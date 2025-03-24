@@ -838,7 +838,17 @@ sap.ui.define([
 				navigationItemKey: oSample.key,
 				routeName: "explore"
 			});
-			this._showSample(oSample, oSubSample);
+
+			this._showSample(oSample, oSubSample)
+				.then(() => {
+					this.byId("splitView").setBusy(false);
+				});
+
+			//switch to text editor
+			var sEditorType = exploreSettingsModel.getProperty("/editorType");
+			if (sEditorType && sEditorType !== Constants.EDITOR_TYPE.TEXT) {
+				this.showTextEditor();
+			}
 		},
 
 		_notFound: function () {
@@ -922,27 +932,13 @@ sap.ui.define([
 			return this.oModel.getProperty("/currentSampleKey");
 		},
 
-		onhandleClosePopover: function(oEvent) {
-			if (this.byId("configurationEditorPopover").isOpen()) {
-				this.byId("configurationEditorPopover").close();
-			}
-			this.byId("openConfigurationEditorButton").setType("Transparent");
-		},
-
 		_showSample: function (oSample, oSubSample) {
-			var oCurrentSample = oSubSample || oSample,
-				oFrameWrapperEl = this.byId("iframeWrapper"),
-				bUseIFrame = !!oCurrentSample.useIFrame;
+			var oCurrentSample = oSubSample || oSample;
 
 			// renew the value
 			oConfigurationCardMFChangesforAdmin = {};
 	        oConfigurationCardMFChangesforContent = {};
 			exploreSettingsModel.getData().manifestChanged = false;
-			if (this._oCardSample) {
-				this._initalChanges = this._initalChanges || [];
-				this._oCardSample.setManifestChanges(this._initalChanges);
-			}
-
 			// set value for preview position of card editor
 			exploreSettingsModel.getData().previewPosition = "right";
 			if (oCurrentSample.previewPosition) {
@@ -950,7 +946,6 @@ sap.ui.define([
 				exploreSettingsModel.refresh();
 			}
 
-			// this._updateConfigurationEditorMenu(oCurrentSample);
 			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
 			this._oCurrSample = oCurrentSample;
 
@@ -961,146 +956,76 @@ sap.ui.define([
 				exploreSettingsModel.refresh();
 			}
 
-			Promise.all([
-				this._initCardSample(oCurrentSample),
-				MockServerManager.initAll(!!oCurrentSample.mockServer),
-				this._initCaching(oCurrentSample)
-			]).then(this._cancelIfSampleChanged(function () {
-				// TODO
-				if (oCurrentSample.key === "mockData") {
-					this._oCardSample.setPreviewMode("MockData");
-				} else {
-					this._oCardSample.setPreviewMode("Off");
-				}
-
-				//invisble "Show Card Configuration Editor" menu item if there is no designtime.js file
-				//load an additional file for manifestchanges
-				if (oCurrentSample && oCurrentSample.files) {
-					exploreSettingsModel.getData().designtimeEnabled = false;
-					for (var j = 0; j < oCurrentSample.files.length; j++) {
-						if (oCurrentSample.files[j].key === "manifestChanges.json") {
-							oCurrentSample.files.splice(j, 1);
-						}
-					}
-					var i = 0;
-					while (i < oCurrentSample.files.length) {
-						if (oCurrentSample.files[i].key === "designtime.js") {
-							oCurrentSample.files.push({
-								key: "manifestChanges.json",
-								name: "manifestChanges",
-								url: "/samples/manifestChanges.json"
-							});
-							exploreSettingsModel.getData().designtimeEnabled = true;
-							break;
-						}
-						i++;
-					}
-				}
-
-				this._oFileEditor
-					.setFiles(oCurrentSample.files || [{
-						url: oCurrentSample.manifestUrl,
-						name: 'manifest.json',
-						key: 'manifest.json',
-						content: ''
-					}]);
-
-				exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
-				this.oModel.setProperty("/sample", oSample);
-
-				if (oSubSample) {
-					this.oModel.setProperty("/subSample", oSubSample);
-				}
-
-				if (bUseIFrame) {
-					oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
-					oFrameWrapperEl.invalidate();
-				} else {
-					var sManifestUrl = this._oFileEditor.getCardManifestFile().url,
-						oLayoutSettings = {
-							minRows: 1,
-							columns: 4
-						};
-
-					oFrameWrapperEl._sSample = '';
-
-					oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
-
-					if (this._oCardSample) {
-						this._oCardSample.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
-						this.byId("cardContainer").invalidate();
-					}
-
-					sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
-					this._sSampleManifestUrl = sManifestUrl;
-				}
-				this.byId("splitView").setBusy(false);
+			return Promise.all([
+				this._initCard(oCurrentSample),
+				MockServerManager.initAll(!!oCurrentSample.mockServer)
+			])
+			.then(this._cancelIfSampleChanged(() => {
+				this._initCaching(oCurrentSample);
+			}))
+			.then(this._cancelIfSampleChanged(function () {
+				this._initConfigurationEditor(oCurrentSample);
+				this._initFileEditor(oCurrentSample);
+				this._initSample(oSample, oSubSample);
 			}))
 			.catch(function (oErr) {
 				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
 					throw oErr;
 				}
 			});
-
-			//switch to text editor
-			var sEditorType = exploreSettingsModel.getProperty("/editorType");
-			if (sEditorType && sEditorType !== Constants.EDITOR_TYPE.TEXT) {
-				this.showTextEditor();
-			}
 		},
 
-		_initCardSample: function (oSample) {
-			if (!this._pInitCardSample) {
-				this._pInitCardSample = Library.load("sap.ui.integration")
-					.then(function () {
-						return Promise.all([
-							Fragment.load({
-								name: "sap.ui.demo.cardExplorer.view.CardSample",
-								controller: this
-							}),
-							new Promise(function (res, rej) {
-								sap.ui.require(["sap/ui/demo/cardExplorer/util/CardGenericHost"], res, rej);
-							})
-						]);
-					}.bind(this))
-					.then(function (aArgs) {
-						var oCard = aArgs[0],
-							oHost = aArgs[1];
+		_initCard: async function (oSample) {
+			if (!this._oCardSample) {
+				await Library.load("sap.ui.integration");
+				const [oCard, oHost] = await Promise.all([
+					Fragment.load({
+						name: "sap.ui.demo.cardExplorer.view.CardSample",
+						controller: this
+					}),
+					new Promise(function (res, rej) {
+						sap.ui.require(["sap/ui/demo/cardExplorer/util/CardGenericHost"], res, rej);
+					})
+				]);
 
-						Card = oCard.getMetadata().getClass();
+				Card = oCard.getMetadata().getClass();
 
-						if (oSample.cache) {
-							oHost.useExperimentalCaching();
-						} else {
-							oHost.stopUsingExperimentalCaching();
-						}
+				if (oSample.cache) {
+					oHost.useExperimentalCaching();
+				} else {
+					oHost.stopUsingExperimentalCaching();
+				}
 
-						this.byId("cardContainer").addItem(oCard);
+				this.byId("cardContainer").addItem(oCard);
 
-						//This catches any error that was produced by the card
-						oCard.attachEvent("_error", this._onCardError, this);
-						oCard.setHost(oHost);
-						this._oCardSample = oCard;
-						this._oHost = oHost;
-					}.bind(this));
+				oCard.attachEvent("_error", this._onCardError, this); // This catches any error that was produced by the card
+				oCard.setHost(oHost);
+				this._oCardSample = oCard;
+				this._oHost = oHost;
 			}
 
-			return this._pInitCardSample;
+			this._oCardSample.setManifest(null);
+
+			if (oSample.key === "mockData") {
+				this._oCardSample.setPreviewMode("MockData");
+			} else {
+				this._oCardSample.setPreviewMode("Off");
+			}
 		},
 
 		_initCaching: function (oSample) {
-			return this._pInitCardSample.then(function () {
-				if (oSample.cache) {
-					this._oHost.useExperimentalCaching();
-					this._oCardSample.setHost(this._oHost);
-					return this._registerCachingServiceWorker();
-				} else {
-					this._oHost.stopUsingExperimentalCaching();
-					this._oCardSample.setHost(this._oHost);
-					this._unregisterCachingServiceWorker();
-					return Promise.resolve();
-				}
-			}.bind(this));
+			if (oSample.cache) {
+				this._oHost.useExperimentalCaching();
+				this._oCardSample.setHost(this._oHost);
+
+				return this._registerCachingServiceWorker();
+			} else {
+				this._oHost.stopUsingExperimentalCaching();
+				this._oCardSample.setHost(this._oHost);
+				this._unregisterCachingServiceWorker();
+
+				return Promise.resolve();
+			}
 		},
 
 		_initIFrameCreation: function () {
@@ -1124,64 +1049,77 @@ sap.ui.define([
 			oFrameWrapperEl.addEventDelegate(oDelegate, this);
 		},
 
-		_updateConfigurationEditorMenu: function (oCurrentSample) {
-			//disable "Configuration Editor" if there is no designtime.js file
+		_initConfigurationEditor: function (oCurrentSample) {
+			this._initalChanges = this._initalChanges || [];
+			this._oCardSample.setManifestChanges(this._initalChanges);
+
+			//invisble "Show Card Configuration Editor" menu item if there is no designtime.js file
+			//load an additional file for manifestchanges
 			if (oCurrentSample && oCurrentSample.files) {
 				exploreSettingsModel.getData().designtimeEnabled = false;
+				for (var j = 0; j < oCurrentSample.files.length; j++) {
+					if (oCurrentSample.files[j].key === "manifestChanges.json") {
+						oCurrentSample.files.splice(j, 1);
+					}
+				}
 				var i = 0;
 				while (i < oCurrentSample.files.length) {
 					if (oCurrentSample.files[i].key === "designtime.js") {
+						oCurrentSample.files.push({
+							key: "manifestChanges.json",
+							name: "manifestChanges",
+							url: "/samples/manifestChanges.json"
+						});
 						exploreSettingsModel.getData().designtimeEnabled = true;
 						break;
 					}
 					i++;
 				}
 			}
-			//open a popover to highlight Configuration Editor button
-			if (exploreSettingsModel.getData().designtimeEnabled) {
-				var configEditorMenuBtn = this.byId("openConfigurationEditorButton");
-				var oView = this.getView();
-				if (!this._pPopover) {
-					this._pPopover = Fragment.load({
-						id: oView.getId(),
-						name: "sap.ui.demo.cardExplorer.view.Popover",
-						controller: this
-					}).then(function(oPopover) {
-						oView.addDependent(oPopover);
-						return oPopover;
-					});
+		},
 
-					configEditorMenuBtn.setType("Ghost");
-					this._pPopover.then(function(oPopover) {
-						setTimeout(function() {
-							oPopover.openBy(configEditorMenuBtn);
-						}, 150);
-					});
+		_initFileEditor: function (oSample) {
+			this._oFileEditor.setFiles(oSample.files || [{
+				url: oSample.manifestUrl,
+				name: 'manifest.json',
+				key: 'manifest.json',
+				content: ''
+			}]);
+		},
+
+		_initSample: function (oSample, oSubSample) {
+			const oCurrentSample = oSubSample || oSample;
+			const bUseIFrame = !!oCurrentSample.useIFrame;
+			const oFrameWrapperEl = this.byId("iframeWrapper");
+
+			exploreSettingsModel.setProperty("/useIFrame", bUseIFrame);
+			this.oModel.setProperty("/sample", oSample);
+
+			if (oSubSample) {
+				this.oModel.setProperty("/subSample", oSubSample);
+			}
+
+			if (bUseIFrame) {
+				oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
+				oFrameWrapperEl.invalidate();
+			} else {
+				var sManifestUrl = this._oFileEditor.getCardManifestFile().url,
+					oLayoutSettings = {
+						minRows: 1,
+						columns: 4
+					};
+
+				oFrameWrapperEl._sSample = '';
+
+				oLayoutSettings = Object.assign(oLayoutSettings, oCurrentSample.settings);
+
+				if (this._oCardSample) {
+					this._oCardSample.setLayoutData(new GridContainerItemLayoutData(oLayoutSettings));
+					this.byId("cardContainer").invalidate();
 				}
-			}
-			//enable/disable menu items of "Configuration Editor" according to card mode, enable all menu items by default
-			exploreSettingsModel.getData().editorMode = "admin";
-			if (oCurrentSample.editorMode) {
-				exploreSettingsModel.getData().editorMode = oCurrentSample.editorMode;
-				exploreSettingsModel.refresh();
-			}
-			//visible/invisible menu item "Show Manifest Changes" in "Configuration Editor"
-			exploreSettingsModel.getData().manifestChanges = "none";
-			if (oConfigurationCardMFChangesforAdmin && oConfigurationCardMFChangesforContent) {
-				exploreSettingsModel.getData().manifestChanges = "both";
-				exploreSettingsModel.refresh();
-			} else if (oConfigurationCardMFChangesforAdmin) {
-				exploreSettingsModel.getData().manifestChanges = "admin";
-				exploreSettingsModel.refresh();
-			} else if (oConfigurationCardMFChangesforContent) {
-				exploreSettingsModel.getData().manifestChanges = "content";
-				exploreSettingsModel.refresh();
-			}
 
-			exploreSettingsModel.getData().previewPosition = "right";
-			if (oCurrentSample.previewPosition) {
-				exploreSettingsModel.getData().previewPosition = oCurrentSample.previewPosition;
-				exploreSettingsModel.refresh();
+				sManifestUrl = sap.ui.require.toUrl("sap/ui/demo/cardExplorer" + sManifestUrl);
+				this._sSampleManifestUrl = sManifestUrl;
 			}
 		},
 
