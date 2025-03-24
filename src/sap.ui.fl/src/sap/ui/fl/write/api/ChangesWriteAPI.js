@@ -180,6 +180,10 @@ sap.ui.define([
 			mPropertyBag.changeSpecificData.adaptationId = ContextBasedAdaptationsAPI.getDisplayedAdaptationId(mContextBasedAdaptationBag);
 		}
 
+		if (mPropertyBag.changeSpecificData.changeType === "deactivateChanges") {
+			return FlexObjectFactory.createFlexObject(mPropertyBag.changeSpecificData);
+		}
+
 		if (mPropertyBag.annotationChange) {
 			return createAnnotationChange(mPropertyBag);
 		}
