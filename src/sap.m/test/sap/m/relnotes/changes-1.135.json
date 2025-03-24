@@ -3,6 +3,51 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "df51e21b4c7c34b71353348e12e76f4dd66da171",
+        "type": "FIX",
+        "text": " sap.m.SplitApp: Fix text page"
+      },
+      {
+        "id": "a75c57ef4ad1ec7219feb33f1c3963e9fe3add1d",
+        "type": "FIX",
+        "text": " sap.m.LightBox: Initial focus is now set"
+      },
+      {
+        "id": "a65eba2e6ed0519ac0e71ec97d159d010c587f2a",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Fix dialog acc text page"
+      },
+      {
+        "id": "078c92a56906765c93b10aaf4b4ef30e8e986952",
+        "type": "FIX",
+        "text": " ListBase: Remove RangeSelection on onItemContextMenu"
+      },
+      {
+        "id": "887b2fdd3d99cb901ba14d81c0c5f8604b255d32",
+        "type": "FIX",
+        "text": " Input controls with Suggestions: Value State message in header is no longer focusable"
+      },
+      {
+        "id": "390962dc2759896e86c83d32b956910445baded7",
+        "type": "FEATURE",
+        "text": " List: formsMode keyboard interaction refinements (Revert)"
+      },
+      {
+        "id": "609e0e40704de39fde1eaa47f5b380ed7f5d2794",
+        "type": "FIX",
+        "text": " sap.m.Input: Speech output for table suggestions is now enhanced"
+      },
+      {
+        "id": "fcb790475cc007aeb1b46e6ac3c93e5713adb7df",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Fix failing qUnit tests"
+      },
+      {
+        "id": "e3d88b46183fbc2c4117f8fd59842f6cbd993bf8",
+        "type": "FIX",
+        "text": " sap.m.Breadcrumbs: Fix issue when in OFT's Popover"
+      },
+      {
         "id": "7c26fbf280882b249887db89460cfa361d8a8c15",
         "type": "FIX",
         "text": " sap.m.DateTimePicker: TimePicker part now is properly initialized"

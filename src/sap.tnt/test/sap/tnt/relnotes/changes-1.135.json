@@ -3,6 +3,16 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "fd2ee5f097daba9e8520c808eabb0d7a4522dba3",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Update visual design"
+      },
+      {
+        "id": "906e7c4cb190f3cec6f7a3dcdb80f96280e5d42b",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: fix firing of press event in popover items"
+      },
+      {
         "id": "c10074d524f6e67a6043bc8a4ab90c8ad6e20a70",
         "type": "FIX",
         "text": " sap.tnt.ToolPage: visual test is fixed"

@@ -1,0 +1,12 @@
+{
+  "1.135.0": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "24584eb209535f4711a56d9ec1649204170a3a37",
+        "type": "FIX",
+        "text": " Integration Cards: Improved showCard method"
+      }
+    ]
+  }
+}

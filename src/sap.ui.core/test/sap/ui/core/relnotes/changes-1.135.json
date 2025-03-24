@@ -3,6 +3,26 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "37fa704f078385ac59260b5e7e18fd67df76fe3f",
+        "type": "FIX",
+        "text": " sap.ui.test.autoWaiter: QUnit stabilized"
+      },
+      {
+        "id": "0d165d5cf208a41a80d837f2391e1f29c5232db5",
+        "type": "FIX",
+        "text": " core/IconPool: make mime type match case insensitive"
+      },
+      {
+        "id": "bb93b302d061562fbf332fcc67d9a2b2600e409a",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
+      },
+      {
+        "id": "a2895e124f0cc44e7b4b1779e7c597940393d11f",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel: no caching of metadata with cache buster segment"
+      },
+      {
         "id": "80bf577585bc6578c3a03317cc7c243ee5efd058",
         "type": "FIX",
         "text": " sap.ui.core.ShortcutHintsMixin: shows correctly the tooltip on mouseover"

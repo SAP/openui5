@@ -3,6 +3,21 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "86d00fb0bbdc6c214e276bbcebc60154ccfde1a3",
+        "type": "FIX",
+        "text": " MDC.ValueHelp: Reconfigure ValueHelp on defaultRow in _updateRow"
+      },
+      {
+        "id": "15c9d947aec6559188295c145818268c4646908d",
+        "type": "FIX",
+        "text": " Field: old Typeahed item announced by arrow navigation"
+      },
+      {
+        "id": "0baf75532cb7f983d8020badc0b164f4b82562a3",
+        "type": "FIX",
+        "text": " MDC.ValueHelp: Popover promise handling improvements"
+      },
+      {
         "id": "977abe7169f1f8efda6df98ca5c731aeb4b46c78",
         "type": "FIX",
         "text": " Field: Boolean default help - no title on phone"

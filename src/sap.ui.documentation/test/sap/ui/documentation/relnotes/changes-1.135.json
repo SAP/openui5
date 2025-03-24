@@ -3,6 +3,21 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "e4714007f75303c71d237fef0260ad1ce11c0943",
+        "type": "FIX",
+        "text": " Demo Kit: DataTables improvements"
+      },
+      {
+        "id": "333851add216ebee80d661dfc55fab72c8235839",
+        "type": "FIX",
+        "text": " DemoKit: Integration test cookie cleaup improved"
+      },
+      {
+        "id": "798a3e97cb6be62808b045577b6b175ac9e39a32",
+        "type": "FIX",
+        "text": " DemoKit: Deprecated API usage replaced"
+      },
+      {
         "id": "5cbe5af5cb150c425cc1b21c5697b5f4acd454b1",
         "type": "FIX",
         "text": " Demo Kit: Datatables improved"
