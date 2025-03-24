@@ -323,7 +323,7 @@ sap.ui.define([
 				this.updateBinding.restore();
 				resolve();
 			});
-			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getItems()[0].getContent().fireChange();
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getEffectiveQuickActions()[0].getContent()[0].fireChange();
 		});
 	});
 
@@ -344,7 +344,7 @@ sap.ui.define([
 				this.updateBinding.restore();
 				resolve();
 			});
-			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getItems()[0].getContent().fireChange();
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getEffectiveQuickActions()[0].getContent()[0].fireChange();
 		});
 	});
 
@@ -365,7 +365,7 @@ sap.ui.define([
 				this.updateBinding.restore();
 				resolve();
 			});
-			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getItems()[0].getContent().fireChange();
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getEffectiveQuickActions()[0].getContent()[0].fireChange();
 		});
 
 		this.oTable.getRowBinding().setAggregation.resetHistory();
@@ -384,7 +384,7 @@ sap.ui.define([
 				this.updateBinding.restore();
 				resolve();
 			});
-			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getItems()[0].getContent().fireChange();
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getEffectiveQuickActions()[0].getContent()[0].fireChange();
 		});
 	});
 
@@ -405,7 +405,7 @@ sap.ui.define([
 				this.updateBinding.restore();
 				resolve();
 			});
-			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getItems()[0].getContent().fireChange();
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickTotal").getEffectiveQuickActions()[0].getContent()[0].fireChange();
 		});
 
 		this.oTable.getRowBinding().setAggregation.resetHistory();
@@ -424,7 +424,7 @@ sap.ui.define([
 				this.updateBinding.restore();
 				resolve();
 			});
-			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getItems()[0].getContent().fireChange();
+			getQuickAction(this.oTable._oColumnHeaderMenu, "QuickGroup").getEffectiveQuickActions()[0].getContent()[0].fireChange();
 		});
 	});
 
