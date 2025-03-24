@@ -2,10 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/Layer",
@@ -14,10 +15,11 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	ManagedObject,
-	ViewType,
 	View,
-	ComponentContainer,
+	ViewType,
 	Component,
+	ComponentContainer,
+	FlexState,
 	ManifestUtils,
 	ControllerExtension,
 	Layer,
@@ -28,9 +30,41 @@ sap.ui.define([
 	"use strict";
 
 	const sandbox = sinon.createSandbox();
-	const sReference = "<sap-app-id> or <component name>";
+	const sReference = "myFancyReference";
+	const oAppComponent = {
+		getManifest() {
+			return {
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
+					}
+				},
+				getEntry() {
+					return {
+						type: "application"
+					};
+				}
+			};
+		},
+		getManifestObject() {
+			return {
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
+					}
+				},
+				getEntry() {
+					return {
+						type: "application"
+					};
+				}
+			};
+		},
+		getManifestEntry() {}
+	};
 
-	const sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+	const sLegacyControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+	const sControllerName = "module:ui/s2p/mm/purchorder/approve/view/S2.controller";
 
 	function createCodeExtChangeContent(oInput) {
 		return {
@@ -48,7 +82,7 @@ sap.ui.define([
 				conditions: {},
 				support: {
 					generator: "WebIde",
-					user: "VIOL"
+					user: "userName"
 				}
 			},
 			...oInput
@@ -60,6 +94,7 @@ sap.ui.define([
 			this.oExtensionProvider = new ControllerExtension();
 		},
 		afterEach() {
+			FlexState.clearState();
 			sandbox.restore();
 		}
 	}, function() {
@@ -94,43 +129,12 @@ sap.ui.define([
 				}
 			});
 
-			var oAppComponent = {
-				getManifest() {
-					return {
-						"sap.app": {
-							applicationVersion: {
-								version: "1.2.3"
-							}
-						},
-						getEntry() {
-							return {
-								type: "application"
-							};
-						}
-					};
-				},
-				getManifestObject() {
-					return {
-						"sap.app": {
-							applicationVersion: {
-								version: "1.2.3"
-							}
-						},
-						getEntry() {
-							return {
-								type: "application"
-							};
-						}
-					};
-				},
-				getManifestEntry() {}
-			};
 			// Don't await the initialization here because in real apps the getControllerExtensions flow
 			// might be called before the FlexState is fully initialized and thus should be able to take
 			// care of waiting for it
-			FlQUnitUtils.initializeFlexStateWithData(sandbox, "ui.s2p.mm.purchorder.approve.view.S2", {changes: [oChange]});
+			FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {changes: [oChange]});
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sControllerName);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			const aCodeExtensions = await this.oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true);
 			assert.strictEqual(aCodeExtensions.length, 1, "one code extension should be returned");
@@ -149,7 +153,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "isApplication").returns(true);
 			ManagedObject._sOwnerId = "<component name>";
 
-			// perparation of the changes
+			// preparation of the changes
 			var sModuleName1 = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/secondCodeExt";
 			var oCodingChange1 = createCodeExtChangeContent({
 				fileName: "myFileName1",
@@ -302,6 +306,51 @@ sap.ui.define([
 
 			const aCodeExtensions = await oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true);
 			assert.equal(aCodeExtensions.length, 0, "No extensions were returned.");
+		});
+
+		[{
+			controllerName: sControllerName,
+			controllerNameInChange: sLegacyControllerName,
+			text: "module controller name and legacy controller name in change"
+		},
+		{
+			controllerName: sControllerName,
+			controllerNameInChange: sControllerName,
+			text: "module controller name and module controller name in change"
+		},
+		{
+			controllerName: sLegacyControllerName,
+			controllerNameInChange: sLegacyControllerName,
+			text: "legacy controller name and legacy controller name in change"
+		},
+		{
+			controllerName: sLegacyControllerName,
+			controllerNameInChange: sControllerName,
+			text: "legacy controller name and module controller name in change"
+		}].forEach((oTestInput) => {
+			QUnit.test(`Given a Controller Extension, with ${oTestInput.text}`, async function(assert) {
+				const sModuleName = "sap/ui/fl/qunit/ControllerExtension/1.0.0/codeExtensions/firstCodeExt";
+				FlQUnitUtils.stubSapUiRequire(sandbox, [{
+					name: [sModuleName],
+					stub: "foo"
+				}]);
+				const oChange = createCodeExtChangeContent({
+					selector: {
+						controllerName: oTestInput.controllerNameInChange
+					},
+					moduleName: sModuleName,
+					content: {
+						codeRef: "myCodeRef.js"
+					}
+				});
+				FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {changes: [oChange]});
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+
+				const aCodeExtensions = await this.oExtensionProvider.getControllerExtensions(oTestInput.controllerName, "myId", true);
+				assert.strictEqual(aCodeExtensions.length, 1, "one code extension should be returned");
+				assert.strictEqual(aCodeExtensions[0], "foo", "the correct module is returned");
+			});
 		});
 	});
 
