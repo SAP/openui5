@@ -4098,6 +4098,9 @@ sap.ui.define([
 			oLegacySelectionPlugin = this._createLegacySelectionPlugin();
 			_private(this).oLegacySelectionPlugin = oLegacySelectionPlugin;
 			oLegacySelectionPlugin.setSelectionMode(this.getSelectionMode());
+			/**
+			 * @deprecated As of version 1.69
+			 */
 			oLegacySelectionPlugin.setSelectedIndex(this.getProperty("selectedIndex"));
 			oLegacySelectionPlugin.attachSelectionChange(onLegacySelectionChanged, this);
 			this.addAggregation("_hiddenDependents", oLegacySelectionPlugin);
