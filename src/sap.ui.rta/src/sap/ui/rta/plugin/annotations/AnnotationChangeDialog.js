@@ -33,15 +33,6 @@ sap.ui.define([
 	 */
 	const AnnotationChangeDialog = ManagedObject.extend("sap.ui.rta.plugin.annotations.AnnotationChangeDialog");
 
-	function replaceObjectKeysWithStrings(aDelegateProperties, aPossibleValues) {
-		aPossibleValues.forEach((oPossibleValue) => {
-			oPossibleValue.key = JSON.stringify(oPossibleValue.key);
-		});
-		aDelegateProperties.forEach((oProperty) => {
-			oProperty.currentValue = JSON.stringify(oProperty.currentValue);
-		});
-	}
-
 	AnnotationChangeDialog.prototype._createDialog = async function() {
 		this._oController = new AnnotationChangeDialogController();
 		const oDialog = await Fragment.load({
@@ -124,21 +115,22 @@ sap.ui.define([
 		const {
 			serviceUrl: sServiceUrl,
 			properties: aDelegateProperties,
-			possibleValues: aPossibleValues,
+			possibleValues: aDelegatePossibleValues,
 			preSelectedProperty: sPreSelectedPropertyKey
 		} = await oDelegate.getAnnotationsChangeInfo(oControl, sAnnotation);
 
+		const bObjectAsKey = !!aDelegatePossibleValues?.some((oPossibleValue) => typeof oPossibleValue.key === "object");
 		// the key could be an object which does not work as property for the Select control
 		// therefore the key must be stringified and later parsed
-		const bObjectAsKey = !!aPossibleValues?.some((oPossibleValue) => typeof oPossibleValue.key === "object");
-		if (bObjectAsKey) {
-			replaceObjectKeysWithStrings(aDelegateProperties, aPossibleValues);
-		}
-
 		const aProperties = aDelegateProperties.map((oProperty) => ({
 			...oProperty,
-			originalValue: oProperty.currentValue,
+			currentValue: bObjectAsKey ? JSON.stringify(oProperty.currentValue) : oProperty.currentValue,
+			originalValue: bObjectAsKey ? JSON.stringify(oProperty.currentValue) : oProperty.currentValue,
 			label: oProperty.label || oProperty.propertyName
+		}));
+		const aPossibleValues = (aDelegatePossibleValues || []).map((oPossibleValue) => ({
+			...oPossibleValue,
+			key: bObjectAsKey ? JSON.stringify(oPossibleValue.key) : oPossibleValue.key
 		}));
 
 		aProperties.sort((oProperty1, oProperty2) => oProperty1.label.localeCompare(oProperty2.label));
@@ -156,6 +148,12 @@ sap.ui.define([
 		const sFilterText = sPreSelectedPropertyKey
 			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).label
 			: "";
+		// default size limit is 100, but we need to display all properties.
+		// As the list size is not dynamic, we can set the size limit to the number of properties
+		// the size influences all binding sizes, so we only set it if the number of properties is greater than 100
+		if (aProperties.length > 100) {
+			this.oChangeAnnotationModel.setSizeLimit(aProperties.length);
+		}
 		this.oChangeAnnotationModel.setData({
 			objectAsKey: bObjectAsKey,
 			title: sAnnotationTitle,
