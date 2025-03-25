@@ -3,12 +3,21 @@
 /* Evening Horizon theme        */
 /* ============================ */
 
-@_sap_m_Table_SelNavColWidth: 2.75rem;
-@_sap_m_Table_CustomFocusMargin: 0;
-
 .sapMListBGTransparent .sapMListTblHeader,
 .sapMListBGTransparent .sapMListTblFooter {
 	background-color: fade(@sapUiListBackground, 0%);
+}
+
+.sapMListTblSelCol,
+.sapMListTblHasNav .sapMListTblNavCol {
+	width: 2.75rem;
+}
+
+.sapMTableRowCustomFocus:focus {
+	& + .sapMListTblSubRow > td::before,
+	& > :not(.sapMListTblDummyCell:last-child)::before {
+		margin-right: 0; /* make the focus border clearly visible on all sides */
+	}
 }
 
 .sapMListBGTranslucent .sapMListTblHeader,
