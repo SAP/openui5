@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
+	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -18,6 +19,7 @@ sap.ui.define([
 	AppDescriptorChange,
 	CompVariant,
 	ControllerExtensionChange,
+	FlexObject,
 	FlexObjectFactory,
 	FlVariant,
 	States,
@@ -114,6 +116,11 @@ sap.ui.define([
 		}, {
 			fileType: "change",
 			expectedType: UIChange
+		},
+		{
+			fileType: "change",
+			changeType: "deactivateChanges",
+			expectedType: FlexObject
 		}].forEach((testParameters) => {
 			QUnit.test(`when a object is provided with different types (${testParameters.fileType} ${testParameters.changeType ? `- ${testParameters.changeType}` : ""})`, function(assert) {
 				const oFile = {

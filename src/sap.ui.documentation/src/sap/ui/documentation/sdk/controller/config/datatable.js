@@ -16,6 +16,12 @@ sap.ui.define([], function () {
 					"buttons": {
 						"colvis": "Show/hide columns"
 					}
+				},
+				"responsive": true,
+				"layout": {
+					"topStart": {
+						"buttons": ['colvis', 'pageLength']
+					}
 				}
 			};
 		}

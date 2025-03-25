@@ -238,9 +238,16 @@ sap.ui.define([
 			..._difference(aNewVariantChanges, aVariantDeletionChanges),
 			...aVariantDeletionChanges.filter((oChange) => oChange.getState() !== States.LifecycleState.NEW)
 		];
-		// Always pass the pre-defined changes here to avoid that UI changes that are part of the FlexState
-		// are also persisted during variant manage save
-		oVariantModel.oChangePersistence.saveDirtyChanges(oVariantModel.oAppComponent, false, aChanges);
+		// From the lowest to the highest layer, save the changes separately to ensure that the condense route is used.
+		const aLayers = Object.values(Layer).reverse();
+		for (const sCurrentLayer of aLayers) {
+			const aChangesOnLayer = aChanges.filter((oChange) => oChange.getLayer() === sCurrentLayer);
+			if (aChangesOnLayer.length > 0) {
+				// Always pass the pre-defined changes here to avoid that UI changes that are part of the FlexState
+				// are also persisted during variant manage save
+				await oVariantModel.oChangePersistence.saveDirtyChanges(oVariantModel.oAppComponent, false, aChangesOnLayer);
+			}
+		}
 	};
 
 	VariantManager.handleSaveEvent = async function(oVariantManagementControl, mParameters, oVariantModel) {

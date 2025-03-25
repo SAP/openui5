@@ -237,10 +237,14 @@ sap.ui.define([
 				oEmbeddedVM.oInputName.setValue("New");
 
 				const oUpdateStorageResponseStub = sandbox.stub(FlexState, "updateStorageResponse").callsFake(async (...aArgs) => {
+					assert.strictEqual(aArgs[1].length, 1, "then updateStorageResponse is called with one update");
+					assert.strictEqual(aArgs[1][0].type, "add", "then updateStorageResponse is called with the correct type");
 					oUpdateStorageResponseStub.wrappedMethod.apply(this, aArgs);
 
-					function updateStorageStubCheck() {
-						oUpdateStorageResponseStub.wrappedMethod.apply(this, aArgs);
+					function updateStorageStubCheck(...aArgs2) {
+						oUpdateStorageResponseStub.wrappedMethod.apply(this, aArgs2);
+						assert.strictEqual(aArgs2[1].length, 1, "then updateStorageResponse is called with one update");
+						assert.strictEqual(aArgs2[1][0].type, "delete", "then updateStorageResponse is called with the correct type");
 						assert.notOk(oUpdateStorageResponseStub.threw(), "then FlexState.updateStorageResponse does not throw an error");
 						fnDone();
 					}

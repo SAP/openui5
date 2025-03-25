@@ -189,40 +189,11 @@ sap.ui.define([
 		const fnOpen = () => {
 			this._initPopover();
 
-			if (this._oQuickSortList) {
-				this._oQuickSortList.destroy();
-				this._oQuickSortList = null;
-			}
 			this._oQuickSortList = this._initQuickActionList(Category.Sort);
-
-			if (this._oQuickFilterList) {
-				this._oQuickFilterList.destroy();
-				this._oQuickFilterList = null;
-			}
 			this._oQuickFilterList = this._initQuickActionList(Category.Filter);
-
-			if (this._oQuickGroupList) {
-				this._oQuickGroupList.destroy();
-				this._oQuickGroupList = null;
-			}
 			this._oQuickGroupList = this._initQuickActionList(Category.Group);
-
-			if (this._oQuickAggregateList) {
-				this._oQuickAggregateList.destroy();
-				this._oQuickAggregateList = null;
-			}
 			this._oQuickAggregateList = this._initQuickActionList(Category.Aggregate);
-
-			if (this._oQuickGenericList) {
-				this._oQuickGenericList.destroy();
-				this._oQuickGenericList = null;
-			}
 			this._oQuickGenericList = this._initQuickActionList(Category.Generic);
-
-			if (this._oItemsContainer) {
-				this._oItemsContainer.destroy();
-				this._oItemsContainer = null;
-			}
 			this._initItemsContainer();
 
 			if (!this.getParent()) {
@@ -297,31 +268,39 @@ sap.ui.define([
 		this._previousView = null;
 		if (this._oPopover && this._oPopover.isOpen()) {
 			if (this._oQuickSortList) {
+				// Destroying the list does not destroy the quick action content, which may be reused somewhere else.
+				// The list is removed from the control tree so that upon destruction its DOM is removed synchronously.
+				this.removeDependent(this._oQuickSortList);
 				this._oQuickSortList.destroy();
 				this._oQuickSortList = null;
 			}
 
 			if (this._oQuickFilterList) {
+				this.removeDependent(this._oQuickFilterList);
 				this._oQuickFilterList.destroy();
 				this._oQuickFilterList = null;
 			}
 
 			if (this._oQuickGroupList) {
+				this.removeDependent(this._oQuickGroupList);
 				this._oQuickGroupList.destroy();
 				this._oQuickGroupList = null;
 			}
 
 			if (this._oQuickAggregateList) {
+				this.removeDependent(this._oQuickAggregateList);
 				this._oQuickAggregateList.destroy();
 				this._oQuickAggregateList = null;
 			}
 
 			if (this._oQuickGenericList) {
+				this.removeDependent(this._oQuickGenericList);
 				this._oQuickGenericList.destroy();
 				this._oQuickGenericList = null;
 			}
 
 			if (this._oItemsContainer) {
+				this.removeDependent(this._oItemsContainer);
 				this._oItemsContainer.destroy();
 				this._oItemsContainer = null;
 			}
@@ -483,6 +462,7 @@ sap.ui.define([
 		},
 		addAriaLabelledBy: function(vAriaLabelledBy) {
 			const oControl = Element.getElementById(this.getControl());
+			oControl?.removeAllAssociation("ariaLabelledBy");
 			oControl?.addAriaLabelledBy?.(vAriaLabelledBy);
 			return this;
 		},
@@ -733,8 +713,8 @@ sap.ui.define([
 					}));
 				}
 			});
+			this.addDependent(oList);
 		}
-		this.addDependent(oList);
 		return oList;
 	};
 
