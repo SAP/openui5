@@ -13,9 +13,9 @@
 				<license url="https://github.com/SAP/theming-base-content/blob/master/LICENSE.txt" type="Apache-2.0" />
 				<copyright>SAP SE or an SAP affiliate company and Theming Base Content contributors</copyright>
 				<pattern>src/sap.ui.core/src/sap/ui/core/themes/base/base.less</pattern>
-				<pattern>src/themelib_sap_belize/src/sap/ui/core/themes/*/base.less</pattern>
-				<pattern>src/themelib_sap_fiori_3/src/sap/ui/core/themes/*/base.less</pattern>
-				<pattern>src/themelib_sap_horizon/src/sap/ui/core/themes/*/base.less</pattern>
+				<pattern>src/themelib_sap_belize/src/sap/ui/core/themes/**/base.less</pattern>
+				<pattern>src/themelib_sap_fiori_3/src/sap/ui/core/themes/**/base.less</pattern>
+				<pattern>src/themelib_sap_horizon/src/sap/ui/core/themes/**/base.less</pattern>
 			</lib>
 		</thirdparty>
 	</appData>
