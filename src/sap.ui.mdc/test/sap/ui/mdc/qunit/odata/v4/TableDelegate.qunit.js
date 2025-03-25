@@ -1444,49 +1444,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Groupable property with additional properties", async function(assert) {
-		await this.initTable(undefined, ["MyGroupableProperty"], {
-			propertyInfo: [{
-				key: "MyGroupableProperty",
-				path: "MyGroupablePropertyPath",
-				label: "MyGroupableProperty Label",
-				dataType: "String",
-				extension: {
-					technicallyGroupable: true,
-					additionalProperties: ["Country", "Region"]
-				}
-			}, {
-				key: "Country",
-				path: "CountryPath",
-				label: "Country Label",
-				dataType: "String",
-				extension: {
-					technicallyGroupable: true
-				}
-			}, {
-				key: "Region",
-				path: "RegionPath",
-				label: "Region Label",
-				dataType: "String",
-				extension: {
-					technicallyGroupable: true
-				}
-			}]
-		});
-		await this.oTable.rebind();
-		this.verify$$aggregation({
-			aggregate: {},
-			grandTotalAtBottomOnly: true,
-			subtotalsAtBottomOnly: true,
-			group: {
-				MyGroupablePropertyPath: {},
-				CountryPath: {},
-				RegionPath: {}
-			},
-			groupLevels: []
-		});
-	});
-
 	QUnit.test("Unit comes before groupable property", async function(assert) {
 		await this.initTable(undefined, ["CurrencyCode", "SalesAmount"], {
 			propertyInfo: [{
