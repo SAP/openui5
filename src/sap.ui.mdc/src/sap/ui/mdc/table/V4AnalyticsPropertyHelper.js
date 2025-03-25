@@ -108,20 +108,20 @@ sap.ui.define([
 
 		if (!bTechnicallyGroupable && !bTechnicallyAggregatable) {
 			// Non-goupable and non-aggregatable properties can't be requested. There's no proper handling for additional properties in that case.
-			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain property keys if the property is neither"
-				+ " technically groupable nor technically aggregatable.", oProperty);
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must be empty if the property is neither technically groupable nor"
+				+ " technically aggregatable.", oProperty);
 		}
 
 		if (bTechnicallyGroupable && bTechnicallyAggregatable) {
 			// It is not clear whether to treat the additional properties in the context of the group or the aggregate. Could also depend on whether
 			// the property is visually grouped or totals are requested for it. Might require a concept.
-			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain property keys if the property is both"
-				+ " technically groupable and technically aggregatable.", oProperty);
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must be empty if the property is both technically groupable and"
+				+ " technically aggregatable.", oProperty);
 		}
 
 		if (oProperty.groupable) {
 			// There is no concept for additional properties in case of visual grouping.
-			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain property keys if the property is groupable.",
+			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must be empty if the property is groupable.",
 				oProperty);
 		}
 
@@ -130,7 +130,7 @@ sap.ui.define([
 			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain the text.", oProperty);
 		}
 
-		if (aAdditionalPropertiesKeys.includes(oProperty.unit)) {
+		if (bTechnicallyAggregatable && aAdditionalPropertiesKeys.includes(oProperty.unit)) {
 			// It can't be decided whether to treat the property as the unit or an additional property.
 			PropertyHelperBase.throwInvalidPropertyError("'additionalProperties' must not contain the unit.", oProperty);
 		}
@@ -154,7 +154,8 @@ sap.ui.define([
 			if (oCurrentProperty.unit === sPropertyKey) {
 				// The unit is requested together with the amount. If the unit has additional properties, these must also be requested. They are
 				// therefore also additional properties of the amount. There is no propery handling for such a relationship.
-				PropertyHelperBase.throwInvalidPropertyError("An additional property must not reference this property in 'unit'.", oProperty);
+				PropertyHelperBase.throwInvalidPropertyError("This property is the unit of another property, and therefore 'additionalProperties'"
+					+ " must be empty.", oProperty);
 			}
 
 			if (aAdditionalPropertiesKeys.includes(sCurrentPropertyKey)) {
