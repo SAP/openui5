@@ -137,6 +137,7 @@ sap.ui.define([
 	 *
 	 * @since 1.68
 	 * @name sap.tnt.IToolHeader
+	 * @deprecated Since version 1.135. This interface is not needed anymore. The <code>ToolPage</code> now accepts any control as a header or subheader.
 	 * @public
 	 * @interface
 	 */
