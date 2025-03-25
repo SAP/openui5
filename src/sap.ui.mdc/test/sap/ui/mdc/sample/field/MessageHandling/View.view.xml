@@ -1,0 +1,114 @@
+<mvc:View
+	controllerName="sap.ui.mdc.sample.field.MessageHandling.Controller"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:layout="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:mdcvh="sap.ui.mdc.valuehelp"
+	xmlns:mdcValueHelpContent="sap.ui.mdc.valuehelp.content"
+	height="100%">
+
+	<App id="MyApp" defaultTransitionName="show">
+		<Page
+			showHeader="false">
+			<content>
+				<form:SimpleForm id="SimpleForm"
+					title="Employee"
+					editable="true"
+					layout="ColumnLayout" >
+					<form:content>
+						<Label text="First Name" />
+						<mdc:Field id="FirstName"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							value="{path: 'FirstName', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 10, nullable: false}}" />
+						<Button id="FirstName-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label text="Last Name" />
+						<mdc:Field id="LastName"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							value="{path: 'LastName', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 20, nullable: false}}" />
+						<Button id="LastName-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label text="ZIP Code/City" />
+						<mdc:Field id="PostalCode"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							value="{path: 'PostalCode', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 10, nullable: true}}">
+							<mdc:layoutData>
+								<form:ColumnElementData cellsLarge="2" cellsSmall="2" />
+							</mdc:layoutData>
+						</mdc:Field>
+						<mdc:Field id="City" value="{path: 'City', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 15, nullable: true}}" />
+						<Button id="City-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label text="Date of hire" />
+						<mdc:Field id="DateOfHire"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							value="{path: 'DateOfHire', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'medium'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" />
+						<Button id="DateOfHire-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label text="Vacation" />
+						<mdc:Field id="Vacation"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							value="{parts: [{path: 'Vacation', type:'sap.ui.model.odata.type.Decimal', formatOptions: {}, constraints: {minimum: '0', precision: 14, scale: 2}}, {path: 'VacationUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}" />
+						<Button id="Vacation-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label text="Tags" />
+						<mdc:MultiValueField id="Tags"
+							delegate='\{"name": "sap/ui/mdc/sample/field/multiValueField/MultiValueFieldODataV2.delegate"\}'
+							items="{path: 'Tags'}"
+							display="Description">
+							<mdcField:MultiValueFieldItem key="{path: 'ID', type:'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 10, nullable: false}}" description="{path: 'Text', type:'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 20, nullable: false}}" />
+						</mdc:MultiValueField>
+						<Button id="Tags-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+					</form:content>
+				</form:SimpleForm>
+			</content>
+
+			<footer>
+				<OverflowToolbar id="otbFooter">
+					<Button
+						icon="sap-icon://alert"
+						text="{=${message>/}.length}"
+						visible="{=${message>/}.length > 0}"
+						type="Emphasized"
+						press="onMessagePopoverPress">
+					</Button>
+
+					<ToolbarSpacer/>
+
+					<Button text="Delete" press="onDelete" type="Reject"/>
+					<Button text="Clear" press="onClearPress"/>
+
+				</OverflowToolbar>
+			</footer>
+
+		</Page>
+	</App>
+
+</mvc:View>
