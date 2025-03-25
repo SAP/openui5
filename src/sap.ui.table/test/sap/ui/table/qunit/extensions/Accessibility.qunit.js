@@ -160,6 +160,7 @@ sap.ui.define([
 			}));
 		});
 
+		oTable.setSelectedIndex(0);
 		oTreeTable.setFixedColumnCount(1);
 		oTreeTable.setSelectedIndex(0);
 
