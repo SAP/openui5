@@ -75,7 +75,7 @@ sap.ui.define([
 		let oQuickGroupItem = this.oQuickGroup.getItems()[0];
 		let sLabel = oQuickGroupItem.getLabel();
 		assert.equal(sLabel, "A", "The label of the first QuickGroupItem is correct");
-		let oContent = oQuickGroupItem.getContent();
+		let oContent = this.oQuickGroup.getEffectiveQuickActions()[0].getContent()[0];
 		assert.ok(oContent, "The first QuickGroupItem has content");
 		assert.ok(oContent.isA("sap.m.Switch"), "The content of the first QuickGroupItem is a Switch");
 		assert.ok(oContent.getState(), "The first switch is on");
@@ -83,7 +83,7 @@ sap.ui.define([
 		oQuickGroupItem = this.oQuickGroup.getItems()[1];
 		sLabel = oQuickGroupItem.getLabel();
 		assert.equal(sLabel, "B", "The label of the second QuickGroupItem is correct");
-		oContent = oQuickGroupItem.getContent();
+		oContent = this.oQuickGroup.getEffectiveQuickActions()[1].getContent()[0];
 		assert.ok(oContent, "The second QuickGroupItem has content");
 		assert.ok(oContent.isA("sap.m.Switch"), "The content of the second QuickGroupItem is a Switch");
 		assert.ok(!oContent.getState(), "The second switch is off");
@@ -91,7 +91,7 @@ sap.ui.define([
 
 	QUnit.test("QuickGroupItem setGrouped", function(assert) {
 		const oQuickGroupItem = this.oQuickGroup.getItems()[0];
-		const oSwitch = oQuickGroupItem.getContent();
+		const oSwitch = this.oQuickGroup.getEffectiveQuickActions()[0].getContent()[0];
 
 		assert.ok(oSwitch.getState(), "The initial state of the switch is correct");
 		oQuickGroupItem.setGrouped(false);
@@ -141,7 +141,7 @@ sap.ui.define([
 		oMenu.openBy(this.oButton);
 
 		const oQuickGroup = oMenu.getAggregation("quickActions")[0];
-		const oSwitch = oQuickGroup.getItems()[1].getContent();
+		const oSwitch = oQuickGroup.getEffectiveQuickActions()[1].getContent()[0];
 
 		oQuickGroup.attachChange(function(oEvent) {
 			assert.ok(true, "Change event has been fired");

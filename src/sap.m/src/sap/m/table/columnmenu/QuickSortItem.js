@@ -117,8 +117,8 @@ sap.ui.define([
 
 		var oQuickAction = this.getAggregation("quickAction");
 		if (oQuickAction) {
-			var aButtons = oQuickAction.getContent();
-			aButtons[0].setSelectedKey(sSortOrder);
+			var oSegmentedButton = oQuickAction.getContent()[0];
+			oSegmentedButton.setSelectedKey(sSortOrder);
 		}
 		return this;
 	};

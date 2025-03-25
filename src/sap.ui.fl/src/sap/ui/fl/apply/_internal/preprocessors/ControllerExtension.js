@@ -3,17 +3,17 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/Utils",
-	"sap/base/Log"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/Utils"
 ], function(
+	Log,
 	Component,
-	ManifestUtils,
 	FlexState,
-	Utils,
-	Log
+	ManifestUtils,
+	Utils
 ) {
 	"use strict";
 
@@ -35,9 +35,25 @@ sap.ui.define([
 		return oChange.getChangeType() === "codeExt";
 	}
 
+	function migrateToNewSyntaxIfNecessary(sControllerName) {
+		if (!sControllerName.startsWith("module:")) {
+			return `module:${sControllerName.replace(/\./g, "/")}.controller`;
+		}
+		return sControllerName;
+	}
+
+	/**
+	 * Checks if the controller name saved in the change matches the provided controller name.
+	 * The syntax for the controller name changed to module syntax in 1.134, so legacy changes need
+	 * to be transformed to module syntax before the check.
+	 *
+	 * @param {string} sControllerName - Name of the controller in module syntax
+	 * @param {sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange} oChange - ControllerExtensionChange instance
+	 * @returns {boolean} - Returns true if the controller name of the change matches the provided controller name
+	 */
 	function isForController(sControllerName, oChange) {
-		var sSelectorControllerName = oChange.getSelector().controllerName;
-		return sControllerName === sSelectorControllerName;
+		var sSelectorControllerName = migrateToNewSyntaxIfNecessary(oChange.getSelector().controllerName);
+		return sSelectorControllerName === migrateToNewSyntaxIfNecessary(sControllerName);
 	}
 
 	function getExtensionModules(aCodeExtModuleNames) {
@@ -56,8 +72,8 @@ sap.ui.define([
 	}
 
 	/**
-	 * Provides an array of extension providers. An extension provider is an object which were defined as controller extensions. These objects
-	 * provides lifecycle and event handler functions of a specific controller.
+	 * Provides an array of extension providers. An extension provider is an object which were defined as controller extensions.
+	 * These objects provide lifecycle and event handler functions of a specific controller.
 	 *
 	 * @param {string} sControllerName - Name of the controller
 	 * @param {string} sComponentId - Unique id for the running controller - unique as well for manifest first

@@ -378,6 +378,26 @@ sap.ui.define([
 			assert.strictEqual(oSaveStub.callCount, 0, "then no changes were saved");
 		});
 
+		QUnit.test("when calling 'handleManageEvent' deleting a USER and a PUBLIC variants", async function(assert) {
+			sandbox.stub(this.oModel, "_collectModelChanges").returns({
+				changes: [{
+					changeType: "setVisible",
+					layer: "PUBLIC",
+					variantReference: sVMReference,
+					visible: false
+				}, {
+					changeType: "setVisible",
+					layer: "USER",
+					variantReference: "variant1",
+					visible: false
+				}],
+				variantsToBeDeleted: ["variant1", "variant3"]
+			});
+			const oSaveStub = sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges");
+			await VariantManager.handleManageEvent({}, {variantManagementReference: sVMReference}, this.oModel);
+			assert.strictEqual(oSaveStub.callCount, 2, "then saveDirtyChanges is called twice, once for each layer");
+		});
+
 		QUnit.test("when calling 'handleSaveEvent' with parameter from SaveAs button and default/execute box checked", async function(assert) {
 			const aChanges = createChanges(sReference);
 			const sCopyVariantName = "variant1";

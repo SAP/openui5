@@ -234,7 +234,7 @@ sap.ui.define([
 			assert.ok(oQuickAction.isA("sap.m.table.columnmenu.QuickGroup"), "The QuickActionContainer contains a QuickGroup");
 
 			const fGroupSpy = sinon.spy(PersonalizationUtils, "createGroupChange");
-			const aGroupItemContent =  oQuickAction.getItems()[0].getContent();
+			const aGroupItemContent = oQuickAction.getEffectiveQuickActions()[0].getContent()[0];
 
 			aGroupItemContent.fireChange();
 			assert.ok(fGroupSpy.calledOnce, "createGroupChange is called");

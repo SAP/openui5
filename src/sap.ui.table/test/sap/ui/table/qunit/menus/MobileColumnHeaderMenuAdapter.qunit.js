@@ -303,7 +303,7 @@ sap.ui.define([
 		return this.openColumnMenu(1).then(function() {
 			oMenu = oTable.getColumns()[1].getHeaderMenuInstance();
 			oQuickTotal = that.getQuickAction(oMenu, "QuickTotal");
-			const oSwitch = oQuickTotal.getItems()[0].getContent();
+			const oSwitch = oQuickTotal.getEffectiveQuickActions()[0].getContent()[0];
 
 			oMenu.attachEventOnce("afterClose", function() {
 				assert.ok(oColumnSetSummedSpy.calledOnceWithExactly(true), "Column#setSummed is called once with the correct parameters");

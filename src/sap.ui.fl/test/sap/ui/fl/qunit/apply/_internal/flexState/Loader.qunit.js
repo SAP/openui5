@@ -462,19 +462,19 @@ sap.ui.define([
 	QUnit.module("misc", {
 		beforeEach() {
 			this.oFlexDataResponse = {
-				appDescriptorChanges: [{fileName: "appDescriptorChange1"}, {fileName: "appDescriptorChange$"}],
-				annotationChanges: [{fileName: "annotationChange1"}, {fileName: "annotationChange%"}],
-				changes: [{fileName: "change1"}, {fileName: "change&"}],
+				appDescriptorChanges: [{changeType: "changeType", fileName: "appDescriptorChange1"}, {changeType: "changeType", fileName: "appDescriptorChange$"}],
+				annotationChanges: [{changeType: "changeType", fileName: "annotationChange1"}, {changeType: "changeType", fileName: "annotationChange%"}],
+				changes: [{changeType: "changeType", fileName: "change1"}, {changeType: "changeType", fileName: "change&"}],
 				comp: {
-					variants: [{fileName: "variant1"}, {fileName: "variant@"}],
-					changes: [{fileName: "compChange1"}, {fileName: "compChange#"}],
-					defaultVariants: [{fileName: "defaultVariant1"}, {fileName: "defaultVariant$"}],
-					standardVariants: [{fileName: "standardVariant1"}, {fileName: "standardVariant%"}]
+					variants: [{changeType: "changeType", fileName: "variant1"}, {changeType: "changeType", fileName: "variant@"}],
+					changes: [{changeType: "changeType", fileName: "compChange1"}, {changeType: "changeType", fileName: "compChange#"}],
+					defaultVariants: [{changeType: "changeType", fileName: "defaultVariant1"}, {changeType: "changeType", fileName: "defaultVariant$"}],
+					standardVariants: [{changeType: "changeType", fileName: "standardVariant1"}, {changeType: "changeType", fileName: "standardVariant%"}]
 				},
-				variants: [{fileName: "variant1"}, {fileName: "variant@"}],
-				variantChanges: [{fileName: "variantChange1"}, {fileName: "variantChange#"}],
-				variantDependentControlChanges: [{fileName: "varDepControlChange1"}, {fileName: "varDepControlChange$"}],
-				variantManagementChanges: [{fileName: "variantManagementChange1"}, {fileName: "variantManagementChange%"}]
+				variants: [{changeType: "changeType", fileName: "variant1"}, {changeType: "changeType", fileName: "variant@"}],
+				variantChanges: [{changeType: "changeType", fileName: "variantChange1"}, {changeType: "changeType", fileName: "variantChange#"}],
+				variantDependentControlChanges: [{changeType: "changeType", fileName: "varDepControlChange1"}, {changeType: "changeType", fileName: "varDepControlChange$"}],
+				variantManagementChanges: [{changeType: "changeType", fileName: "variantManagementChange1"}, {changeType: "changeType", fileName: "variantManagementChange%"}]
 			};
 			this.oLoadFlexDataStub = sandbox.stub(ApplyStorage, "loadFlexData").resolves(this.oFlexDataResponse);
 			sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
@@ -504,6 +504,38 @@ sap.ui.define([
 			assert.equal(oResult.changes.variantChanges.length, 1, "the variantChanges are filtered");
 			assert.equal(oResult.changes.variantDependentControlChanges.length, 1, "the variantDependentControlChanges are filtered");
 			assert.equal(oResult.changes.variantManagementChanges.length, 1, "the variantManagementChanges are filtered");
+		});
+
+		QUnit.test("deactivateChanges", async function(assert) {
+			const mPropertyBag = {
+				manifest: this.oManifest,
+				reference: "reference"
+			};
+			this.oFlexDataResponse.changes.push({
+				fileName: "deactivateChange",
+				changeType: "deactivateChanges",
+				content: {
+					changeIds: ["appDescriptorChange1", "annotationChange1", "variantChange1"]
+				}
+			}, {
+				fileName: "deactivateChange2",
+				changeType: "deactivateChanges",
+				content: {
+					changeIds: ["change1", "compChange1"]
+				}
+			});
+
+			const oResult = await Loader.loadFlexData(mPropertyBag);
+			assert.strictEqual(oResult.changes.appDescriptorChanges.length, 0, "the appDescriptorChanges are filtered");
+			assert.strictEqual(oResult.changes.annotationChanges.length, 0, "the annotationChanges are filtered");
+			assert.strictEqual(oResult.changes.changes.length, 0, "the changes are filtered");
+			assert.strictEqual(oResult.changes.comp.changes.length, 0, "the comp.changes are filtered");
+			assert.strictEqual(oResult.changes.comp.defaultVariants.length, 1, "the comp.defaultVariants are filtered");
+			assert.strictEqual(oResult.changes.comp.standardVariants.length, 1, "the comp.standardVariants are filtered");
+			assert.strictEqual(oResult.changes.variants.length, 1, "the variants are filtered");
+			assert.strictEqual(oResult.changes.variantChanges.length, 0, "the variantChanges are filtered");
+			assert.strictEqual(oResult.changes.variantDependentControlChanges.length, 1, "the variantDependentControlChanges are filtered");
+			assert.strictEqual(oResult.changes.variantManagementChanges.length, 1, "the variantManagementChanges are filtered");
 		});
 	});
 

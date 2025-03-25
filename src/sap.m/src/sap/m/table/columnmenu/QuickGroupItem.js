@@ -44,33 +44,42 @@ sap.ui.define([
 				 * Specifies whether the respective column is grouped.
 				 */
 				grouped: { type: "boolean", defaultValue: false }
+			},
+			aggregations: {
+				/**
+				 * Defines the quick action of the quick group item.
+				 */
+				quickAction: { type: "sap.m.table.columnmenu.QuickAction", multiple: false, visibility: "hidden" }
 			}
 		}
 	});
 
 	QuickGroupItem.prototype._getAction = function() {
+		var oQuickAction = this.getAggregation("quickAction");
 		var sLabel = this.getLabel();
-		var oQuickAction = new QuickAction({
-			label: sLabel,
-			content: [this.getContent()],
-			category: library.table.columnmenu.Category.Group,
-			contentSize: library.InputListItemContentSize.S
-		});
 
-		this.addDependent(oQuickAction);
+		if (oQuickAction) {
+			oQuickAction.setLabel(sLabel);
+		} else {
+			oQuickAction = new QuickAction({
+				label: sLabel,
+				content: [this._createContent()],
+				category: library.table.columnmenu.Category.Group,
+				contentSize: library.InputListItemContentSize.S
+			});
+		}
+
+		this.setAggregation("quickAction", oQuickAction, true);
 		return oQuickAction;
 	};
 
-	QuickGroupItem.prototype.getContent = function() {
-		if (!this._oContent) {
-			this._oContent = new Switch({
-				state: this.getGrouped(),
-				customTextOn: " ",
-				customTextOff: " ",
-				change: [{item: this}, this._onGroupChange, this]
-			});
-		}
-		return this._oContent;
+	QuickGroupItem.prototype._createContent = function() {
+		return new Switch({
+			state: this.getGrouped(),
+			customTextOn: " ",
+			customTextOff: " ",
+			change: [{item: this}, this._onGroupChange, this]
+		});
 	};
 
 	/*
@@ -78,7 +87,12 @@ sap.ui.define([
 	 */
 	QuickGroupItem.prototype.setGrouped = function(bGrouped) {
 		this.setProperty("grouped", bGrouped, true);
-		this.getContent().setState(bGrouped);
+
+		var oQuickAction = this.getAggregation("quickAction");
+		if (oQuickAction) {
+			var oSwitch = oQuickAction.getContent()[0];
+			oSwitch.setState(bGrouped);
+		}
 		return this;
 	};
 

@@ -644,6 +644,11 @@ sap.ui.define([
 			},
 			"service/ControllerExtension": {
 				group: "Service",
+				ui5: {
+					resourceroots: {
+						testdata: "test-resources/sap/ui/rta/qunit/testdata"
+					}
+				},
 				coverage: {
 					only: ["sap/ui/rta/service/ControllerExtension"]
 				}

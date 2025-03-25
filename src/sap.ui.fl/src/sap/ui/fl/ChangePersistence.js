@@ -88,7 +88,7 @@ sap.ui.define([
 	function canGivenChangesBeCondensed(oAppComponent, aChanges, bCondenseAnyLayer) {
 		var bCondenserEnabled = false;
 
-		if (!oAppComponent || aChanges.length < 2 || !checkIfOnlyOne(aChanges, "getLayer")) {
+		if (!oAppComponent || !checkIfOnlyOne(aChanges, "getLayer")) {
 			return false;
 		}
 
