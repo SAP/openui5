@@ -77,9 +77,10 @@ sap.ui.define([
 
 	const sandbox = sinon.createSandbox();
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
-	const oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "someId", {
+	const sReference = "someId";
+	const oComp = RtaQunitUtils.createAndStubAppComponent(sinon, sReference, {
 		"sap.app": {
-			id: "someId"
+			id: sReference
 		}
 	}, new Page("mockPage"));
 	new ComponentContainer({
@@ -703,10 +704,9 @@ sap.ui.define([
 		QUnit.test("when RTA is started a 2nd time, context based adaptation feature is available and data has changed on the backend and another adaptation has been shown by end user", async function(assert) {
 			stubCBA.call(this);
 
-			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "12345" });
+			FlexInfoSession.setByReference({adaptationId: "67890" }, sReference);
 			await ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"});
 			this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
-			this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
 
 			await this.oRta.start();
 			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 2, "CBA Model is loaded again");
@@ -717,10 +717,9 @@ sap.ui.define([
 		QUnit.test("when RTA is doing a restart during switch, context based adaptation feature is available", async function(assert) {
 			stubCBA.call(this);
 
-			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "getByReference").returns({adaptationId: "12345" });
+			FlexInfoSession.setByReference({adaptationId: "67890" }, sReference);
 			await ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"});
 			this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
-			this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
 			sandbox.stub(ReloadManager, "needsAutomaticStart").resolves(true);
 
 			await this.oRta.start();

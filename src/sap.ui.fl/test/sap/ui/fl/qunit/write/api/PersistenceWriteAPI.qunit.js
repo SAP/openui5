@@ -252,11 +252,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when save dirty change and update flex info session", function(assert) {
-			var oExpectedFlexInfo = {
-				isResetEnabled: true,
+			const oExpectedFlexInfo = {
 				adaptationId: "adaptation1",
+				allContextsProvided: true,
+				initialAllContexts: true,
 				isEndUserAdaptation: true,
-				initialAllContexts: true
+				isResetEnabled: true
 			};
 			FlexInfoSession.setByReference({
 				isResetEnabled: false,
@@ -265,19 +266,22 @@ sap.ui.define([
 				initialAllContexts: true,
 				saveChangeKeepSession: true
 			});
-			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves([{change: "test"}]);
-			var oFlexInfo = {
+			const oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves([{change: "test"}]);
+			const oFlexInfo = {
 				isResetEnabled: true
 			};
-			var oPersistenceWriteGetFlexInfoStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").callsFake(function() {
-				return new Promise(function(resolve) {
-					// Delay resolution to simulate a slow call
+			const oPersistenceWriteGetFlexInfoStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
+			sandbox.stub(Storage, "getFlexInfo").callsFake(function() {
+				return new Promise((resolve) => {
 					setTimeout(function() {
 						resolve(oFlexInfo);
 					}, 0);
 				});
 			});
-			var mPropertyBag = { foo: "bar" };
+			const mPropertyBag = { foo: "bar" };
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
+
 			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
 				assert.equal(
 					oFlexObjectManagerSaveStub.callCount,
@@ -734,8 +738,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given KeyUserConnector has implementation of getFlexInfo", function(assert) {
-			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			var mPropertyBag = {
+			const sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
+			const mPropertyBag = {
 				change: {
 					_getMap() {
 						return {
@@ -750,136 +754,143 @@ sap.ui.define([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "sap.com"}
 			]);
 
-			var oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "getFlexInfo");
+			const oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "getFlexInfo");
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function() {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oKeyUserConnectorStub.callCount, 1, "KeyUserConnector getFlexInfo should be called");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when there is change but layer is not transportable", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when there is change but layer is not transportable", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.USER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo");
+			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo");
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
+				const oFlexInfoSession = FlexInfoSession.getByReference();
 				assert.equal(oGetInfoStub.callCount, 0, "flex/info never called");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oFlexInfoSession.isResetEnabled, true, "isResetEnabled is true");
+				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is not available, there is change, layer is transportable but publish is not allowed by system settings", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when get flex/info route is not available, there is change, layer is transportable but publish is not allowed by system settings", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var oBaseLogStub = sandbox.stub(Log, "error");
+			const oBaseLogStub = sandbox.stub(Log, "error");
 
 			sandbox.stub(Storage, "getFlexInfo").rejects({status: 404, text: ""});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
+				const oFlexInfoSession = FlexInfoSession.getByReference();
 				assert.ok(oBaseLogStub.calledOnce, "an error was logged");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
-				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextsProvided is true by default");
+				assert.equal(oFlexInfoSession.isResetEnabled, true, "isResetEnabled is true");
+				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oFlexInfoSession.allContextsProvided, true, "allContextsProvided is true by default");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is allowed by system settings, publish is not enabled by backend", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is allowed by system settings, publish is not enabled by backend", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: false});
+			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: false});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.callCount, 1, "flex/info is called once");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
+				const oFlexInfoSession = FlexInfoSession.getByReference();
+				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is not allowed by system settings, publish is enabled by backend", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is not allowed by system settings, publish is enabled by backend", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
+			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
-				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextProvided is true by default");
+				const oFlexInfoSession = FlexInfoSession.getByReference();
+				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oFlexInfoSession.allContextsProvided, true, "allContextProvided is true by default");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is allowed by system settings, publish is enabled by backend", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when get flex/info route is available, there is no change, layer is transportable, publish is allowed by system settings, publish is enabled by backend", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
+			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.callCount, 1, "flex/info is called once");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
+				const oFlexInfoSession = FlexInfoSession.getByReference();
+				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oFlexInfoSession.isPublishEnabled, true, "isPublishEnabled is true");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable, publish is not allowed by system settings", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable, publish is not allowed by system settings", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
+			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
-				assert.equal(oResetAndPublishInfo.allContextsProvided, true, "allContextProvided is true by default");
+				const oFlexInfoSession = FlexInfoSession.getByReference();
+				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
+				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
+				assert.equal(oFlexInfoSession.allContextsProvided, true, "allContextProvided is true by default");
 			});
 		});
 
-		QUnit.test("getResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable and publish is allowed by system settings", function(assert) {
-			var mPropertyBag = {
+		QUnit.test("updateResetAndPublishInfo when get flex/info route is available, there is change, layer is transportable and publish is allowed by system settings", function(assert) {
+			const mPropertyBag = {
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
 
-			var oGetInfoStub = sandbox.stub(Storage, "getFlexInfo")
+			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo")
 			.resolves({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResetAndPublishInfo) {
+			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
-				assert.equal(oResetAndPublishInfo.isResetEnabled, true, "isResetEnabled is true");
-				assert.equal(oResetAndPublishInfo.isPublishEnabled, true, "isPublishEnabled is true");
-				assert.equal(oResetAndPublishInfo.allContextsProvided, false, "allContextProvided is false");
+				const oFlexInfoSession = FlexInfoSession.getByReference();
+				assert.equal(oFlexInfoSession.isResetEnabled, true, "isResetEnabled is true");
+				assert.equal(oFlexInfoSession.isPublishEnabled, true, "isPublishEnabled is true");
+				assert.equal(oFlexInfoSession.allContextsProvided, false, "allContextProvided is false");
 			});
 		});
 
