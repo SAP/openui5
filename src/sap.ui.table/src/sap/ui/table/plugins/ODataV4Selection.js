@@ -202,7 +202,7 @@ sap.ui.define([
 		let iNumberOfSelectableContexts = -1;
 
 		if (bIsDataAggregation) {
-			const aAllCurrentContexts = oBinding.getAllCurrentContexts();
+			const aAllCurrentContexts = oPlugin.aAllCurrentContexts ?? oBinding.getAllCurrentContexts();
 
 			// If not all contexts are available, we cannot determine the number of selectable contexts, and therefore cannot determine if all are
 			// selected.
@@ -243,19 +243,26 @@ sap.ui.define([
 		if (!this.isActive()) {
 			return SelectionPlugin.prototype.getRenderConfig.apply(this, arguments);
 		}
+		this.aAllCurrentContexts = this.getControl().getBinding()?.getAllCurrentContexts();
 
 		updateHeaderSelectorIcon(this);
 
-		return {
+		const mRenderConfig = {
 			headerSelector: {
 				type: this._isLimitDisabled() ? "toggle" : "custom",
 				icon: this.getAggregation("icon"),
 				visible: this.getSelectionMode() === SelectionMode.MultiToggle && !this.getHideHeaderSelector(),
 				enabled: getSelectableCount(this) !== 0,
 				selected: areAllRowsSelected(this),
-				tooltip: this.getSelectedCount() === 0 ? TableUtils.getResourceText("TBL_SELECT_ALL") : TableUtils.getResourceText("TBL_DESELECT_ALL")
+				tooltip: this.getSelectedCount() === 0
+					? TableUtils.getResourceText("TBL_SELECT_ALL")
+					: TableUtils.getResourceText("TBL_DESELECT_ALL")
 			}
 		};
+
+		delete this.aAllCurrentContexts;
+
+		return mRenderConfig;
 	};
 
 	/**
@@ -537,7 +544,9 @@ sap.ui.define([
 			return [];
 		}
 
-		return oBinding.getAllCurrentContexts().filter((oContext) => oContext.isSelected());
+		const aAllCurrentContexts = this.aAllCurrentContexts ?? oBinding.getAllCurrentContexts();
+
+		return aAllCurrentContexts.filter((oContext) => oContext.isSelected());
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {
