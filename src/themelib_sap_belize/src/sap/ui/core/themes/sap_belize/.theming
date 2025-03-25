@@ -5,6 +5,7 @@
   "sVendor": "SAP",
   "sDeprecated" : "since version 1.120.0",
   "aBundled": ["sap_belize_plus"],
+  "sReleaseStage": "END_OF_LIFE",
   "mCssScopes": {
     "library": {
       "sBaseFile": "library",
