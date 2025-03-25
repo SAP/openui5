@@ -14,6 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	return Library.load("sap.suite.ui.commons").then(function () {
 		QUnit.module("Timeline Card", {
@@ -112,6 +113,9 @@ sap.ui.define([
 
 			assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
 			assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
+
+			const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+			assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_TIMELINE"), "aria text for card type is correct.");
 		});
 	}).catch(function () {
 		QUnit.module("Timeline Card");

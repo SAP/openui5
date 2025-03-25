@@ -1,12 +1,14 @@
 /* global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/m/library",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
+	Library,
 	mLibrary,
 	Card,
 	QUnitUtils,
@@ -19,6 +21,8 @@ sap.ui.define([
 
 	var AvatarSize = mLibrary.AvatarSize;
 	var AvatarColor = mLibrary.AvatarColor;
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
+
 
 	var oManifest_TableCard = {
 		"sap.app": {
@@ -618,6 +622,9 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(oTable.getAriaLabelledBy()[0], this.oCard.getCardHeader().getAggregation("_title").getId(), "Should have correct table aria label");
+
+		const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_TABLE"), "aria text for card type is correct.");
 
 		// Columns titles
 		assert.equal(aColumns[0].getHeader().getText(), oManifestContent.row.columns[0].title, "Should have correct column title");

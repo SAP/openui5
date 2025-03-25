@@ -1,11 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function (
+	Library,
 	library,
 	Card,
 	nextUIUpdate,
@@ -15,6 +17,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var CardPreviewMode = library.CardPreviewMode;
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	QUnit.module("Component Card", {
 		beforeEach: function () {
@@ -55,6 +58,9 @@ sap.ui.define([
 		// Assert
 		assert.ok(this.oCard.getCardContent(), "The card content should be created");
 		assert.notOk(this.oCard.getBlockingMessage(), "There shouldn't be any error during the creation");
+
+		const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_COMPONENT"), "aria text for card type is correct.");
 	});
 
 	QUnit.test("resourceRoots described in the manifest are applied when the manifest is provided as object", async function (assert) {

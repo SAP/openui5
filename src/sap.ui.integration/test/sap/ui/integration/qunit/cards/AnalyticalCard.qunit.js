@@ -22,6 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	var oManifest_AnalyticalCard = {
 		"sap.app": {
@@ -658,6 +659,9 @@ sap.ui.define([
 			assert.ok(oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
 			assert.ok(oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
 			assert.ok(oCard.getAggregation("_content").isA("sap.ui.integration.cards.AnalyticalContent"), "Chart is rendered");
+
+			const aIds = oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+			assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_ANALYTICAL"), "aria text for card type is correct.");
 
 			// Cleanup
 			oCard.destroy();

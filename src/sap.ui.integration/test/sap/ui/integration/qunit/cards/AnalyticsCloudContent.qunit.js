@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Locale",
 	"sap/ui/core/Theming",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"qunit/testResources/nextCardStateChangedEvent",
 	"sap/ui/integration/util/ManifestResolver"
 ], function (
+	Library,
 	Localization,
 	Locale,
 	Theming,
@@ -26,6 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	const oExample1 = {
 		"sap.app": {
@@ -309,6 +312,10 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.fnIncludeScriptStub.calledWith("dummy-src"), "Src was overridden successfully");
+
+		const aIds = oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_ANALYTICSCLOUD"), "aria text for card type is correct.");
+
 
 		// Clean up
 		oCard.destroy();

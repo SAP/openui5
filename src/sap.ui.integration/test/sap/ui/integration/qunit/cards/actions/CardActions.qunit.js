@@ -41,6 +41,9 @@ sap.ui.define([
 		var CardActionType = library.CardActionType;
 		var ListType = mLibrary.ListType;
 
+		const oRbF = Library.getResourceBundleFor("sap.f");
+		const oRbIntegration = Library.getResourceBundleFor("sap.ui.integration");
+
 		var DOM_RENDER_LOCATION = "qunit-fixture",
 			LOG_MESSAGE = "Navigate successfully";
 
@@ -2115,6 +2118,10 @@ sap.ui.define([
 
 			assert.ok(this.oCard.getDomRef().getAttribute("tabindex"),"0", "Tabindex is added");
 			assert.ok(this.oCard.getDomRef().classList["value"].indexOf("sapFCardInteractive") > -1, "Interactive styles are added");
+
+			const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+			assert.strictEqual(document.getElementById(aIds[0]).innerText, oRbIntegration.getText("ARIA_DESCRIPTION_CARD_TYPE_OBJECT"), "aria text for card type is correct");
+			assert.strictEqual(document.getElementById(aIds[1]).innerText, oRbF.getText("ARIA_ACTIVATE_CARD"), "aria text for card activation is correct");
 
 			qutils.triggerKeydown(aItems[1].getDomRef(), KeyCodes.ENTER);
 			await nextUIUpdate();

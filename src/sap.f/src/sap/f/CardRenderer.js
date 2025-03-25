@@ -59,6 +59,13 @@ sap.ui.define([
 
 		oRm.renderControl(oCard._ariaText);
 		oRm.renderControl(oCard._ariaContentText);
+
+		oRm.renderControl(oCard._describedByCardTypeText);
+		oRm.renderControl(oCard._describedByInteractiveText);
+		if (oCard._invisibleTitle) {
+			oRm.renderControl(oCard._invisibleTitle);
+		}
+
 		if (bHasCardBadgeCustomData) {
 			oRm.renderControl(oCard._getInvisibleCardBadgeText());
 		}
@@ -81,7 +88,6 @@ sap.ui.define([
 			bHasContent = !!oContent,
 			bCardHeaderBottom = bHasHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom,
 			sTooltip = oCard.getTooltip_AsString(),
-			bHasCardBadgeCustomData = oCard._getCardBadgeCustomData().length > 0,
 			sAriaRole = oCard.getGridItemRole() || oCard.getSemanticRole().toLowerCase();
 
 		oRm.class("sapFCard")
@@ -127,10 +133,9 @@ sap.ui.define([
 
 		//Accessibility state
 		oRm.accessibilityState(oCard, {
-			// TODO if role is not only used with accessibility values, this should be changed
 			role: sAriaRole,
 			labelledby: { value: oCard._getAriaLabelledIds(), append: true },
-			describedby: {value: bHasCardBadgeCustomData ? oCard._getInvisibleCardBadgeText().getId() : undefined}
+			describedby: { value: oCard._getAriaDescribedByIds(), append: true }
 		});
 	};
 
