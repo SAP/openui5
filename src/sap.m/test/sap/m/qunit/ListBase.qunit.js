@@ -3304,6 +3304,64 @@ sap.ui.define([
 			oList.destroy();
 		});
 
+		QUnit.test("Grouping behaviour with role='list' and 'manual' items", async function(assert) {
+			const oList = new List({
+				items: [
+					new GroupHeaderListItem({ title: "Group A" }),
+					new StandardListItem({ title: "Item A1" }),
+					new StandardListItem({ title: "Item A2" }),
+					new GroupHeaderListItem({ title: "Group B" }),
+					new StandardListItem({ title: "Item B1" }),
+					new StandardListItem({ title: "Item B2" })
+				]
+			});
+			oList.placeAt("qunit-fixture");
+
+			await nextUIUpdate();
+
+			const aGroupHeaderListItems = oList.getVisibleItems().filter(function(oItem) {
+				return oItem.isGroupHeader();
+			});
+
+			const oRb = Library.getResourceBundleFor("sap.m");
+
+			aGroupHeaderListItems.forEach(function(oGroupItem) {
+				const $GroupItem = oGroupItem.$();
+				assert.strictEqual($GroupItem.attr("role"), "listitem", "Group header has role='listitem'");
+				assert.strictEqual($GroupItem.attr("aria-label"), oGroupItem.getTitle(), "correct aria-label is set");
+				assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER"), "correct aria-roledescription assigned");
+				assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset attribute not added to groupHeader");
+				assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize attribute not added to groupHeader");
+
+				const oSubListRef = oGroupItem.getDomRef().querySelector("ul");
+				assert.ok(oSubListRef, "GroupHeader contains a list");
+				assert.ok(oSubListRef.getAttribute("role"), "list", "role='list' is set to the sub list");
+				assert.ok(oSubListRef.getAttribute("aria-owns"), "aria-owns attribute is set to the sub list");
+
+				assert.ok(oGroupItem.getGroupedItems().length, "GroupHeader contains the mapped list items");
+				oGroupItem.getGroupedItems().forEach(function(sId) {
+					assert.ok(oSubListRef.getAttribute("aria-owns").indexOf(sId) > -1, "mapped items are set to aria-owns attribute");
+				});
+			});
+
+			let iSetSize = 0, iPosInSet = 1;
+			oList.getVisibleItems().forEach((oListItem) => {
+				if (oListItem.isGroupHeader()) {
+					iSetSize = oListItem.getGroupedItems().length;
+					iPosInSet = 1;
+					return;
+				}
+
+				const oLIRef = oListItem.getDomRef();
+				assert.strictEqual(oLIRef.getAttribute("role"), "listitem", "role='listitem' is set to the list item");
+				assert.equal(oLIRef.getAttribute("aria-posinset"), `${iPosInSet}`, "aria-posinset attribute has correct value for list item");
+				assert.equal(oLIRef.getAttribute("aria-setsize"), `${iSetSize}`, "aria-setsize attribute has correct value for list item");
+				iPosInSet++;
+			});
+
+			oList.destroy();
+		});
+
 		QUnit.module("Context Menu", {
 			beforeEach: function() {
 				oList = new List();

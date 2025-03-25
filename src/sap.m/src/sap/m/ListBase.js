@@ -1575,6 +1575,10 @@ function(
 			this._oLastGroupHeader.setGroupedItem(oItem);
 		}
 
+		if (oItem.isGroupHeader()) {
+			this.setLastGroupHeader(oItem);
+		}
+
 		if (bSelectedDelayed) {
 			// item was already selected before inserted to the list
 			this.onItemSelectedChange(oItem, true);
@@ -2068,7 +2072,6 @@ function(
 
 		oHeader._bGroupHeader = true;
 		this.addAggregation("items", oHeader, bSuppressInvalidate);
-		this.setLastGroupHeader(oHeader);
 		return oHeader;
 	};
 
