@@ -409,7 +409,7 @@ sap.ui.define([
 				case PreviewableMediaType.Gif: {
 					const oPage = new Image({
 						src: oItem.getUrl()
-					});
+					}).addStyleClass("image-scale");
 
 					return oPage;
 				}
