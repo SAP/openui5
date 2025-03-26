@@ -1245,6 +1245,44 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Update RowCount on 'activateCreate' Event from Binding", function(assert) {
+		const done = assert.async();
+		const sHeaderText = "myTestHeader";
+
+		let iCount = 5;
+		const oRowBinding = {
+			getCount: function() {
+				return iCount;
+			}
+		};
+
+		const fnGetRowBindingStub = sinon.stub(this.oTable, "getRowBinding");
+		fnGetRowBindingStub.returns(oRowBinding);
+
+		this.oTable.initialized().then(function() {
+			this.oTable.setHeader(sHeaderText);
+			this.oTable.setShowRowCount(true);
+			this.oTable._updateHeaderText();
+
+			const oTitle = this.oTable._oTitle;
+			assert.equal(oTitle.getText(), sHeaderText + " (5)", "Header shows the right row count");
+
+			const oBindingInfo = {};
+			this.oTable._finalizeBindingInfo(oBindingInfo);
+			assert.ok(oBindingInfo.events.createActivate, "createActivate event is registered");
+			oBindingInfo.events.createActivate();
+			iCount = 6;
+			assert.equal(oTitle.getText(), sHeaderText + " (5)", "Header shows the right row count");
+
+			Promise.resolve().then(() => {
+				assert.equal(oTitle.getText(), sHeaderText + " (6)", "Header shows the right row count");
+				fnGetRowBindingStub.restore();
+				done();
+			});
+
+		}.bind(this));
+	});
+
 	const fnRearrangeTest = async function(oTable, iColumnIndexFrom, iColumnIndexTo, bKeyboardHandling) {
 		oTable.addColumn(new Column({
 			propertyKey: "col0",
