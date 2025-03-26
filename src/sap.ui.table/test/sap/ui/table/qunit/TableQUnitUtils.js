@@ -1813,7 +1813,6 @@ sap.ui.define([
 
 		oModel.setData(oData);
 		oTable.setModel(oModel);
-		oTable.setSelectedIndex(0);
 		oTreeTable.setModel(oModel);
 		if (!bSkipPlaceAt) {
 			oTable.placeAt("qunit-fixture");

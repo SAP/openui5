@@ -1182,6 +1182,10 @@ sap.ui.define([
 			_addLayoutData.call(this);
 			if (this.getDomRef()) {
 				_updateLayout.call(this);
+				var oForm = this.getAggregation("form");
+				if (!oForm.getDomRef()) { // Form not rendered right now - invalidate to trigger rendering
+					this.invalidate();
+				}
 			}
 		}
 

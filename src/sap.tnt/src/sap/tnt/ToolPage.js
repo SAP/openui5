@@ -71,13 +71,13 @@ sap.ui.define([
 				/**
 				 * The control to appear in the header area.
 				 */
-				header: {type: "sap.tnt.IToolHeader", multiple: false},
+				header: {type: "sap.ui.core.Control", multiple: false},
 
 				/**
 				 * The control to appear in the subheader area.
 				 * @since 1.93
 				 */
-				subHeader: {type: "sap.tnt.IToolHeader", multiple: false },
+				subHeader: {type: "sap.ui.core.Control", multiple: false },
 				/**
 				 * The side menu of the layout.
 				 */

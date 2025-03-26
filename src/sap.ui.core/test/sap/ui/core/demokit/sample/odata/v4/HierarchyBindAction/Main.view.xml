@@ -89,7 +89,7 @@
 						tooltip="Move As Last Child Of..."/>
 					<m:Button enabled="{= %{@$ui5.node.level} > 1 }" icon="sap-icon://back-to-top"
 						press=".onMakeRoot($event, false)" tooltip="Make Root"/>
-					<m:Button enabled="{= %{@$ui5.node.level} > 1 }" icon="sap-icon://slim-arrow-up"
+					<m:Button icon="sap-icon://slim-arrow-up"
 						press=".onMakeRoot($event, false, true)" tooltip="Copy To Root"/>
 					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, true)"
 						tooltip="Make Last Root"/>

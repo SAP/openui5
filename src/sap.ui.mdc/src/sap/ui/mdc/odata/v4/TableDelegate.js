@@ -97,7 +97,8 @@ sap.ui.define([
 	 *     <li>If the property is the unit of another property, it must not reference additional properties.</li>
 	 *     <li>If the property is groupable, it must not reference additional properties.</li>
 	 *     <li>Do not group this property via API, for example, with the <code>StateUtil</code>.</li>
-	 *     <li>Properties that are referenced via <code>text</code> or <code>unit</code> must not be repeated here.</li>
+	 *     <li>Properties referenced via <code>text</code> must not be repeated here.</li>
+	 *     <li>Properties referenced via <code>unit</code> must not be repeated here if the property is technically aggregatable.</li>
 	 *     <li>There must be no bi-directional references. For example, if property A references B, B must not reference A.</li>
 	 *     <li>All nested additional properties must be listed at root level. For example, if property A references B and B references C, A must also
 	 *         reference C.</li>
@@ -882,9 +883,14 @@ sap.ui.define([
 			mGroup.additionally = [oTextProperty.path];
 		}
 
+		const oUnitProperty = oPropertyHelper.getProperty(oProperty.unit);
+		if (oUnitProperty) {
+			mAggregation.group[oUnitProperty.path] ??= {};
+		}
+
 		for (const sAdditionalPropertyKey of oProperty.extension.additionalProperties) {
 			const oAdditionalProperty = oPropertyHelper.getProperty(sAdditionalPropertyKey);
-			mAggregation.group[oAdditionalProperty.path] = {};
+			mAggregation.group[oAdditionalProperty.path] ??= {};
 		}
 	}
 
@@ -899,14 +905,14 @@ sap.ui.define([
 			mAggregate.subtotals = true;
 		}
 
-		if (oProperty.unit) {
-			const oUnitProperty = oPropertyHelper.getProperty(oProperty.unit);
+		const oUnitProperty = oPropertyHelper.getProperty(oProperty.unit);
+		if (oUnitProperty) {
 			mAggregate.unit = oUnitProperty.path;
 		}
 
 		for (const sPropertyKey of oProperty.extension.additionalProperties) {
 			const oProperty = oPropertyHelper.getProperty(sPropertyKey);
-			mAggregation.group[oProperty.path] = {};
+			mAggregation.group[oProperty.path] ??= {};
 		}
 	}
 

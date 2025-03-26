@@ -141,6 +141,29 @@ function (
 		oCard.destroy();
 	});
 
+	QUnit.test("Card with invisible header", async function (assert) {
+		// Arrange
+		var oHeader = new CardHeader({
+			title: "Invisible Title",
+			visible: false
+		});
+		var oCard = new Card({
+			id: "invisibleHeaderCard",
+			header: oHeader
+		});
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		const aIds = oCard.getDomRef().getAttribute("aria-labelledby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).id, "invisibleHeaderCard-invisibleTitle", "Aria labelled by has correct id.");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, "Invisible Title", "Aria label for card invisible header is correct.");
+
+		oCard.destroy();
+		oHeader.destroy();
+	});
+
 	QUnit.module("Semantic Role = ListItem");
 
 	QUnit.test("Rendering and press events", async function (assert) {

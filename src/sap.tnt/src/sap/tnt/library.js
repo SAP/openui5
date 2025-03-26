@@ -37,7 +37,6 @@ sap.ui.define([
 			"sap.tnt.SideNavigationDesign"
 		],
 		interfaces: [
-			"sap.tnt.IToolHeader"
 		],
 		controls: [
 			"sap.tnt.NavigationList",
@@ -131,15 +130,6 @@ sap.ui.define([
 	DataType.registerEnum("sap.tnt.NavigationListItemDesign", thisLib.NavigationListItemDesign);
 	DataType.registerEnum("sap.tnt.SideNavigationDesign", thisLib.SideNavigationDesign);
 
-
-	/**
-	 * Interface for controls suitable for the <code>header</code> aggregation of {@link sap.tnt.ToolPage}.
-	 *
-	 * @since 1.68
-	 * @name sap.tnt.IToolHeader
-	 * @public
-	 * @interface
-	 */
 
 	return thisLib;
 

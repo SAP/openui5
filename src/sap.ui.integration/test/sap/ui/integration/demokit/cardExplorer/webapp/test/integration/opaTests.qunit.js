@@ -3,8 +3,8 @@ sap.ui.define([
 	"./arrangements/Startup",
 	"sap/ui/test/opaQunit",
 	"./DownloadJourney",
-	"./NavigationJourney"
-	// "./EditJourney"
+	"./NavigationJourney",
+	"./SampleJourney"
 ], function (Opa5, Startup) {
 	"use strict";
 

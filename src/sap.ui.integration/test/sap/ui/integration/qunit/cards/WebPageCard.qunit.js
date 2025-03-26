@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/WebPageContent",
 	"sap/ui/integration/cards/WebPageContentRenderer",
 	"sap/ui/integration/widgets/Card",
@@ -8,6 +9,7 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/nextCardManifestAppliedEvent"
 ], function (
+	Library,
 	WebPageContent,
 	WebPageContentRenderer,
 	Card,
@@ -19,6 +21,7 @@ sap.ui.define([
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const BASE_URL = "test-resources/sap/ui/integration/qunit/testResources/";
+	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	function _nextFrameLoaded(oCard) {
 		return new Promise(function (resolve) {
@@ -240,6 +243,10 @@ sap.ui.define([
 			};
 
 		oContent.addEventDelegate(oDelegate);
+
+		//Assert
+		const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+		assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_WEBPAGE"), "aria text for card type is correct.");
 
 		// Act - re-render the card
 		this.oCard.invalidate();

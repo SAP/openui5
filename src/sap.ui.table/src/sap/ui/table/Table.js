@@ -3413,7 +3413,6 @@ sap.ui.define([
 			oLegacySelectionPlugin = this._createLegacySelectionPlugin();
 			_private(this).oLegacySelectionPlugin = oLegacySelectionPlugin;
 			oLegacySelectionPlugin.setSelectionMode(this.getSelectionMode());
-			oLegacySelectionPlugin.setSelectedIndex(-1);
 			oLegacySelectionPlugin.attachSelectionChange(onLegacySelectionChanged, this);
 			this.addAggregation("_hiddenDependents", oLegacySelectionPlugin);
 

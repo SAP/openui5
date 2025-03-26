@@ -4,14 +4,14 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/core/util/File",
-	"sap/ui/thirdparty/jszip",
-	"sap/ui/events/KeyCodes"
-], function(Opa5, Press, File, JSZip, KeyCodes) {
+	"sap/ui/thirdparty/jszip"
+], function(Opa5, Press, File, JSZip) {
 	"use strict";
 
-	var sViewName = "ExploreSamples",
-		oFileSaveStub,
-		oJSZipFileStub;
+	const sViewName = "ExploreSamples";
+	let oFileSaveStub;
+	let oJSZipFileStub;
+	let oActionEventStub;
 
 	Opa5.createPageObjects({
 		onTheExploreSamplesPage: {
@@ -91,31 +91,6 @@ sap.ui.define([
 						}
 					});
 				},
-				iPressOpenAdministratorEditor: function () {
-					var sMenuBtnId = "openConfigurationEditorButton";
-
-					return this.iPressOnToolbarOverflowIfButtonIsThere(sMenuBtnId).and.waitFor({
-						viewName: sViewName,
-						id: sMenuBtnId,
-						actions: function (oMenuBtn) {
-							oMenuBtn._getButtonControl().firePress();
-						},
-						success: function (oMenuBtn) {
-							return this.waitFor({
-								viewName: sViewName,
-								controlType: "sap.ui.unified.MenuItem",
-								actions: new Press(),
-								matchers: {
-									ancestor: oMenuBtn,
-									properties: {
-										text: "Administrator"
-									}
-								},
-								errorMessage: "Could not find MenuItem with text: 'Administrator'"
-							});
-						}
-					});
-				},
 				iSelectFile: function (sName) {
 					return this.waitFor({
 						controlType: "sap.m.IconTabFilter",
@@ -144,13 +119,17 @@ sap.ui.define([
 						}
 					});
 				},
-				iPressEscape: function() {
+				iSpyOnCardActionEvent: function () {
 					return this.waitFor({
-						searchOpenDialogs: true,
-						controlType: "sap.m.Dialog",
-						actions: function (oDialog) {
-							Opa5.getUtils().triggerKeydown(oDialog.getDomRef(), KeyCodes.ESCAPE);
-						}
+						id: "cardSample",
+						actions: function (oCard) {
+							oActionEventStub = sinon.stub();
+							oCard.attachAction(oActionEventStub);
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Action event spy is attached.");
+						},
+						errorMessage: "Could not find card"
 					});
 				}
 			},
@@ -226,27 +205,32 @@ sap.ui.define([
 						errorMessage: "The navigation isn't ended on the correct sub sample: " + sKey
 					});
 				},
-				iShouldSeeAdministratorEditorDialog: function () {
+				iShouldSeeSampleCard: function (sManifestId) {
 					return this.waitFor({
-						controlType: "sap.ui.integration.designtime.editor.CardEditor",
-						searchOpenDialogs: true,
-						success: function () {
-							Opa5.assert.ok("Successfully opened Administrator Editor");
+						controlType: "sap.ui.integration.widgets.Card",
+						matchers: function (oCard) {
+							return oCard.isReady() && oCard.getManifest()?.["sap.app"].id === sManifestId;
 						},
-						errorMessage: "Administrator Editor didn't open"
+						success: function () {
+							Opa5.assert.ok(true, "The card with manifest id " + sManifestId + " is displayed.");
+						},
+						errorMessage: "Could not find card with manifest id " + sManifestId
 					});
 				},
-				iShouldSeeGeneralSettingsInAdministratorDialog: function () {
+				iShouldSeeNoCardActionEventCalls: function () {
 					return this.waitFor({
-						controlType: "sap.m.Panel",
-						properties: {
-							headerText: "General Settings"
+						check: function () {
+							return !oActionEventStub.called;
 						},
-						searchOpenDialogs: true,
 						success: function () {
-							Opa5.assert.ok("Configuration is visible in Administrator Editor");
+							Opa5.assert.ok(true, "Action event was not called.");
 						},
-						errorMessage: "Settings didn't appear in the Administrator Editor"
+						errorMessage: "Action event was called."
+					}).and.waitFor({
+						id: "cardSample",
+						success: function (oCard) {
+							oCard.detachAction(oActionEventStub);
+						}
 					});
 				}
 			}

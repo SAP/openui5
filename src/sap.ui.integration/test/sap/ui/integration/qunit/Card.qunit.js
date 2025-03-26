@@ -1445,6 +1445,30 @@ sap.ui.define([
 			assert.strictEqual(this.oCard.getDomRef("ariaContentText").innerText, this.oRb.getText("ARIA_LABEL_CARD_CONTENT"), "ARIA content hidden text should have the correct value");
 		});
 
+		QUnit.test("Invisible header title - aria labelled by", async function (assert) {
+			const oManifestNoHeaderTest = {
+				"sap.app": {
+					"id": "test3"
+				},
+				"sap.card": {
+					"type": "List",
+					"header": {
+						"title": "Card title",
+						"visible": false
+					}
+				}
+			};
+			this.oCard.setManifest(oManifestNoHeaderTest);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			const aIds = this.oCard.getDomRef().getAttribute("aria-labelledby").split(" ");
+			assert.strictEqual(document.getElementById(aIds[0]).id, "somecard-invisibleTitle", "Aria labelled by has correct id.");
+			assert.strictEqual(document.getElementById(aIds[0]).innerText, "Card title", "Aria label for card invisible header is correct.");
+		});
+
 		QUnit.test("Generic Interactive", async function (assert) {
 			var oManifest_AvatarHeader = {
 				"sap.app": {
