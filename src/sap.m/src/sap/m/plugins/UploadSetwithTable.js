@@ -409,11 +409,14 @@ sap.ui.define([
 		}
 	};
 
+	UploadSetwithTable.prototype.init = function () {
+		this._oRb = Library1.getResourceBundleFor("sap.m");
+	};
+
 	UploadSetwithTable.prototype.onActivate = function (oControl) {
 
 		this._filesTobeUploaded = [];
 		this._filePreviewDialogControl = null;
-		this._oRb = Library1.getResourceBundleFor("sap.m");
 
 		oControl.addDelegate(EventDelegate, false, this);
 
@@ -550,7 +553,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UploadSetwithTable.prototype.getDefaultFileUploader = function () {
-		var sTooltip = "Upload";
+		var sTooltip = this._oRb.getText("UPLOADSET_WITH_TABLE_UPLOADBUTTON_TEXT");
 		if (!this._oFileUploader) {
 			this._oFileUploader = new FileUploader(this.getId() + "-uploader", {
 				buttonOnly: true,
