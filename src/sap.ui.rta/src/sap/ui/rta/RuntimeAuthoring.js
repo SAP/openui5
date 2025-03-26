@@ -1219,6 +1219,10 @@ sap.ui.define([
 				title: sVersionTitle,
 				displayedVersion: sDisplayedVersion
 			});
+			await PersistenceWriteAPI.updateResetAndPublishInfo({
+				selector: oSelector,
+				layer: sLayer
+			});
 			showMessageToast.call(this, "MSG_DRAFT_ACTIVATION_SUCCESS");
 			this.getPluginManager().getPlugin("toolHooks").setVersionWasActivated(true);
 			this.bInitialResetEnabled = true;

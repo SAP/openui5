@@ -5,10 +5,14 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -19,10 +23,14 @@ sap.ui.define([
 	MessageBox,
 	MessageToast,
 	Version,
+	FlexState,
+	ManifestUtils,
+	FlexInfoSession,
 	Versions,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
+	Storage,
 	FlexUtils,
 	ReloadManager,
 	RuntimeAuthoring,
@@ -328,6 +336,11 @@ sap.ui.define([
 
 			sandbox.stub(VersionsAPI, "isOldVersionDisplayed").returns(true);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
+			const oGetResetAndPublishInfoStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
+			sandbox.stub(Storage, "getFlexInfo").resolves({
+				allContextsProvided: false
+			});
+			const setAllContextsProvidedStub = sandbox.stub(FlexState, "setAllContextsProvided");
 			sandbox.stub(PersistenceWriteAPI, "save").resolves();
 			const oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.OK);
 			const oShowMessageToastStub = sandbox.stub(MessageToast, "show");
@@ -352,6 +365,23 @@ sap.ui.define([
 					true, "RestoreEnabled is correctly set in Model"
 				);
 				assert.strictEqual(oShowMessageToastStub.callCount, 1, "and a message is shown");
+				assert.strictEqual(oGetResetAndPublishInfoStub.callCount, 1, "then the getResetAndPublishInfoStub is called once");
+				const sReference = ManifestUtils.getFlexReferenceForControl(oActivationCallPropertyBag.control);
+				assert.strictEqual(
+					FlexInfoSession.getByReference(sReference).allContextsProvided,
+					false,
+					"then the correct allContextsProvided information is stored in the FlexInfoSession"
+				);
+				assert.strictEqual(
+					setAllContextsProvidedStub.callCount,
+					1,
+					"then the FlexState.setAllContextsProvided is called once"
+				);
+				assert.strictEqual(
+					setAllContextsProvidedStub.getCalls(0)[0].args[1],
+					false,
+					"then the correct value is set for FlexState.setAllContextsProvided"
+				);
 				fnDone();
 			}.bind(this));
 
