@@ -92,10 +92,15 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.ui.rta.plugin.annotations.AnnotationChangeDefinition
 	 * @property {string} annotationChangeType - Change type
+	 * @property {string} serviceUrl - Url of the OData service
 	 * @property {object} content - Change content
 	 * @property {string} content.annotationPath - Path of the property
 	 * @property {string} content.value - New value
-	 * @property {string} serviceUrl - Url of the OData service
+	 * @property {string} content.text - New value as translatable text. If given, the value is ignored
+	 * @property {object} [content.objectTemplateInfo] - Object template to construct a return object.
+	 * If given the applyChange function will return an object as value, which is parsed from the template string.
+	 * @property {string} [content.objectTemplateInfo.templateAsString] - Stringified template to be used for constructing the return object
+	 * @property {string} [content.objectTemplateInfo.placeholder] - Placeholder in the template string. Will be replaced by the new value
 	 * @public
 	 */
 
