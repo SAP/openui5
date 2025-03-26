@@ -39,7 +39,6 @@ sap.ui.define([
 
 			oCustomData.setValue(["documentation-ref"]);
 			assert.equal(oElement.updateFieldHelp.callCount, 1, "'updateFieldHelp' is called");
-			assert.equal(oElement.getFieldHelpDisplay(), oElement.getId(), "'fieldHelpDisplay' is set");
 
 			oElement.destroy();
 			assert.equal(oElement.updateFieldHelp.callCount, 2,

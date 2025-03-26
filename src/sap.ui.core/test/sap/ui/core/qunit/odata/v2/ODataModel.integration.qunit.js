@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
@@ -45,9 +46,9 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, Localization, merge, uid, FlexBox, Input, Label, Text, Device, BindingInfo, ManagedObjectObserver,
-		SyncPromise, Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller, View,
-		Rendering, BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode,
-		MessageScope, ODataMetaModel, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
+		SyncPromise, Element, Library, Messaging, UI5Date, FieldHelp, FieldHelpUtil, Message, MessageType, Controller,
+		View, Rendering, BindingMode, Filter, FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel,
+		CountMode, MessageScope, ODataMetaModel, Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -510,10 +511,10 @@ sap.ui.define([
 						}
 				}
 			}
+			if (bHasColumns) { // table has columns => no conversion required
+				continue;
+			}
 			if (iColumnCount) {
-				if (bHasColumns) {
-					throw new Error("Do not use <columns> in sap.m.Table");
-				}
 				if (aControls.length) {
 					if (bHasListItem) {
 						throw new Error("Do not use controls w/ and w/o <ColumnListItem>"
@@ -26900,4 +26901,72 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		await this.waitForChanges(assert);
 	});
 });
+
+	//*********************************************************************************************
+	// Scenario: Explicit field help (set via FieldHelpUtil.setDocumentationRef) has precedence over implicit field help
+	// (set via bound properties from OData metadata). The test covers the following cases:
+	// A: Explicit field help on an aggregated control is displayed at the aggregating control, implicit field help
+	//    is ignored.
+	// B: Explicit field help on an aggregated control is ignored if the aggregating control has explicit field help
+	//    itself.
+	// JIRA: CPOUI5MODELS-1906
+	QUnit.test("FieldHelp: precedence of explicit and implicit field help", async function (assert) {
+		const sView = `
+<Table id="table" items="{/SalesOrderSet}">
+	<columns>
+		<Column> <Text text="Note"/> </Column>
+		<Column> <Text text="Gross Amount"/> </Column>
+	</columns>
+	<ColumnListItem>
+		<Text id="note" text="{Note}" />
+		<Text id="grossAmount" text="{GrossAmount}" />
+	</ColumnListItem>
+</Table>`;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=100", {
+				results : [
+					{Note : "Note0", GrossAmount : "100"},
+					{Note : "Note1", GrossAmount : "200"}
+				]
+			})
+			.expectValue("note", ["Note0", "Note1"])
+			.expectValue("grossAmount", ["100", "200"]);
+
+		await this.createView(assert, sView);
+
+		const oTable = this.oView.byId("table");
+		FieldHelpUtil.setDocumentationRef(oTable.getItems()[0].getCells()[0],
+			"urn:sap-com:documentation:key?=type=DTEL&id=CELL_NOTE");
+		const oAmountCell = oTable.getItems()[0].getCells()[1];
+		FieldHelpUtil.setDocumentationRef(oAmountCell, "urn:sap-com:documentation:key?=type=DTEL&id=CELL_AMOUNT");
+		FieldHelpUtil.setDocumentationRef(Element.getElementById(oAmountCell.getFieldHelpDisplay()),
+			"urn:sap-com:documentation:key?=type=DTEL&id=HEADER_AMOUNT");
+
+		const {promise : oFieldHelpUpdatePromise, resolve : fnResolve} = Promise.withResolvers();
+
+		// code under test
+		FieldHelp.getInstance().activate(fnResolve);
+
+		const aHotspots = await oFieldHelpUpdatePromise;
+		const aExpectedHotspots = [{
+				backendHelpKey : {
+					id : "CELL_NOTE",
+					type : "DTEL"
+				},
+				hotspotId : oTable.getColumns()[0].getId(),
+				labelText : "Note"
+			}, {
+				backendHelpKey : {
+					id : "HEADER_AMOUNT",
+					type : "DTEL"
+				},
+				hotspotId : oTable.getColumns()[1].getId(),
+				labelText : "Gross Amount"
+			}];
+		assert.deepEqual(aHotspots, aExpectedHotspots);
+
+		await this.waitForChanges(assert);
+		FieldHelp.getInstance().deactivate();
+	});
 });
