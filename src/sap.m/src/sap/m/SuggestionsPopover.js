@@ -401,7 +401,7 @@ sap.ui.define([
 
 		// remove focus from everywhere
 		oList && oList.removeStyleClass("sapMListFocus");
-		oPreviousFocusedItem && !bHasTabularSuggestions && oPreviousFocusedItem.removeStyleClass("sapMLIBFocused");
+		oPreviousFocusedItem && oPreviousFocusedItem.removeStyleClass("sapMLIBFocused");
 		oParent.hasStyleClass("sapMFocus") && oParent.removeStyleClass("sapMFocus");
 
 		// add it only where necessary
