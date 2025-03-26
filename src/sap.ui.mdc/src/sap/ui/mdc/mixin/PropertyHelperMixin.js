@@ -4,12 +4,10 @@
 
 sap.ui.define([
 	"sap/base/util/Deferred",
-	"sap/ui/mdc/util/loadModules",
-	"sap/ui/mdc/util/PropertyHelperUtil"
+	"sap/ui/mdc/util/loadModules"
 ], (
 	Deferred,
-	loadModules,
-	PropertyHelperUtil
+	loadModules
 ) => {
 	"use strict";
 
@@ -294,21 +292,13 @@ sap.ui.define([
 				return [aProperties, PropertyHelper];
 			});
 		}).then((aResult) => {
-			return PropertyHelperUtil.checkValidationExceptions().then((bValidationDisabled) => {
-				return aResult.concat(bValidationDisabled);
-			});
-		}).then((aResult) => {
 			if (this.isDestroyed()) {
 				return undefined;
 			}
 			if (Array.isArray(aResult) === false) {
 				return undefined;
 			}
-			const [aProperties, PropertyHelper, bValidationDisabled] = aResult;
-
-			if (bValidationDisabled) {
-				throw new Error(`PropertyInfo validation is disabled for control ${this.getId()}.`);
-			}
+			const [aProperties, PropertyHelper] = aResult;
 
 			this._oPropertyHelper = new PropertyHelper(aProperties, this, undefined/*additional attributes*/);
 
