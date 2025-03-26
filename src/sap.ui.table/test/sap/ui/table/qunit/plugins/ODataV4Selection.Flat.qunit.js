@@ -80,7 +80,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Render config", function(assert) {
+		const oAllCurrentContexts = this.spy(this.oSelectionPlugin.getControl().getBinding(), "getAllCurrentContexts");
+		assert.strictEqual(oAllCurrentContexts.callCount, 0, "getAllCurrentContexts not called");
 		let oHeaderSelector = this.oSelectionPlugin.getRenderConfig().headerSelector;
+
+		assert.strictEqual(oAllCurrentContexts.callCount, 1, "getAllCurrentContexts only called once");
 
 		assert.strictEqual(oHeaderSelector.type, "custom");
 		assert.strictEqual(oHeaderSelector.visible, true);

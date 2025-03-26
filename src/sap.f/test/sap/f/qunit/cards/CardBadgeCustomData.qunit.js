@@ -171,7 +171,7 @@ function (
 
 		const $card = this.oCard.$(),
 			sAriaId = $card.attr("aria-describedby"),
-			oInvText = Element.getElementById(sAriaId);
+			oInvText = Element.getElementById(sAriaId.split(" ")[1]);
 
 		// Assert
 		assert.ok(sAriaId, "Attribute is added to card");
@@ -190,7 +190,7 @@ function (
 
 		const $card = this.oCard.$(),
 			sAriaId = $card.attr("aria-describedby"),
-			oInvText = Element.getElementById(sAriaId);
+			oInvText = Element.getElementById(sAriaId.split(" ")[1]);
 
 		// Assert
 		assert.ok(sAriaId, "Attribute is added to card");
@@ -258,7 +258,7 @@ function (
 
 		const $card = this.oCard.$(),
 			sAriaId = $card.attr("aria-describedby"),
-			text = document.getElementById(sAriaId).textContent,
+			text = document.getElementById(sAriaId.split(" ")[1]).textContent,
 			expectedText = " " + customData.getAnnouncementText() + " " + customData1.getAnnouncementText();
 
 		// Assert
@@ -444,7 +444,7 @@ function (
 
 		const $card = oCard2.$(),
 			sAriaId = $card.attr("aria-describedby"),
-			text = document.getElementById(sAriaId).textContent,
+			text = document.getElementById(sAriaId.split(" ")[1]).textContent,
 			expectedText = " " + oRb.getText("CARD_BADGE", ["Test"]);
 
 		// Assert

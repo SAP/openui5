@@ -182,8 +182,8 @@ sap.ui.define([
 			PropertyHelperBase.throwInvalidPropertyError("A property must not have both a text and a unit.", oProperty);
 		}
 
-		// TODO: Throw if an aggregatable-only property has a text and if a groupable-only property has a unit?
-		// TODO: Throw if a text property has a text and if a unit property has a unit?
+		// TODO: Throw if an aggregatable property has a text?
+		// TODO: Throw if a text property has a text or unit and if a unit property has a unit?
 	};
 
 	/**

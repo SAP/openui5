@@ -428,7 +428,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Analytical features", {
+	QUnit.module("Data aggregation", {
 		afterEach: function() {
 			this.oTable?.destroy();
 		},
@@ -497,6 +497,52 @@ sap.ui.define([
 		});
 		await this.oTable.rebind();
 		this.verify$$aggregation({});
+	});
+
+	QUnit.test("Complex property", async function(assert) {
+		await this.initTable(undefined, ["Location"], {
+			propertyInfo: [{
+				key: "Location",
+				label: "Location Label",
+				propertyInfos: ["Country", "City"]
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				text: "CountryText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CountryText",
+				path: "CountryTextPath",
+				label: "CountryText Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "City",
+				path: "CityPath",
+				label: "City Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {additionally: ["CountryTextPath"]},
+				CityPath: {}
+			},
+			groupLevels: []
+		});
 	});
 
 	QUnit.test("Leaf-level aggregation disabled", async function(assert) {
@@ -1237,6 +1283,71 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Groupable property with visible unit", async function(assert) {
+		await this.initTable(undefined, ["SalesAmount", "Currency"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				SalesAmountPath: {},
+				CurrencyPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Groupable property with invisible unit", async function(assert) {
+		await this.initTable(undefined, ["SalesAmount"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				SalesAmountPath: {},
+				CurrencyPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
 	QUnit.test("Groupable property with additional properties", async function(assert) {
 		await this.initTable(undefined, ["MyGroupableProperty"], {
 			propertyInfo: [{
@@ -1276,6 +1387,204 @@ sap.ui.define([
 				CountryPath: {},
 				RegionPath: {}
 			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Groupable property with unit and additional properties", async function(assert) {
+		await this.initTable(undefined, ["MyGroupableProperty"], {
+			propertyInfo: [{
+				key: "MyGroupableProperty",
+				path: "MyGroupablePropertyPath",
+				label: "MyGroupableProperty Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["Country", "Region", "Currency"]
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				MyGroupablePropertyPath: {},
+				CurrencyPath: {},
+				CountryPath: {},
+				RegionPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Unit comes before groupable property", async function(assert) {
+		await this.initTable(undefined, ["CurrencyCode", "SalesAmount"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "CurrencyCode",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CurrencyCode",
+				path: "CurrencyCodePath",
+				label: "CurrencyCode Label",
+				dataType: "String",
+				text: "CurrencyText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CurrencyText",
+				path: "CurrencyTextPath",
+				label: "CurrencyText Label",
+				dataType: "String"
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CurrencyCodePath: {additionally: ["CurrencyTextPath"]},
+				SalesAmountPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Additional property comes before groupable property", async function(assert) {
+		await this.initTable(undefined, ["CurrencyCode", "SalesAmount"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true,
+					additionalProperties: ["CurrencyCode"]
+				}
+			}, {
+				key: "CurrencyCode",
+				path: "CurrencyCodePath",
+				label: "CurrencyCode Label",
+				dataType: "String",
+				text: "CurrencyText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CurrencyText",
+				path: "CurrencyTextPath",
+				label: "CurrencyText Label",
+				dataType: "String"
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CurrencyCodePath: {additionally: ["CurrencyTextPath"]},
+				SalesAmountPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Aggregatable property with visible unit", async function(assert) {
+		await this.initTable(undefined, ["SalesAmount", "Currency"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CurrencyPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Aggregatable property with invisible unit", async function(assert) {
+		await this.initTable(undefined, ["SalesAmount"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {},
 			groupLevels: []
 		});
 	});
@@ -1324,6 +1633,97 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Aggregatable property with unit and additional properties", async function(assert) {
+		await this.initTable(undefined, ["MyAggregatableProperty"], {
+			propertyInfo: [{
+				key: "MyAggregatableProperty",
+				path: "MyAggregatablePropertyPath",
+				label: "MyAggregatableProperty Label",
+				dataType: "String",
+				unit: "Currency",
+				extension: {
+					technicallyAggregatable: true,
+					additionalProperties: ["Country", "Region"]
+				}
+			}, {
+				key: "Currency",
+				path: "CurrencyPath",
+				label: "Currency Label",
+				dataType: "String"
+			}, {
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "Region",
+				path: "RegionPath",
+				label: "Region Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				MyAggregatablePropertyPath: {unit: "CurrencyPath"}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {},
+				RegionPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Additional property comes before aggregatable property", async function(assert) {
+		await this.initTable(undefined, ["CurrencyCode", "SalesAmount"], {
+			propertyInfo: [{
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				extension: {
+					technicallyAggregatable: true,
+					additionalProperties: ["CurrencyCode"]
+				}
+			}, {
+				key: "CurrencyCode",
+				path: "CurrencyCodePath",
+				label: "CurrencyCode Label",
+				dataType: "String",
+				text: "CurrencyText",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "CurrencyText",
+				path: "CurrencyTextPath",
+				label: "CurrencyText Label",
+				dataType: "String"
+			}]
+		});
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {
+				SalesAmountPath: {}
+			},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CurrencyCodePath: {additionally: ["CurrencyTextPath"]}
+			},
+			groupLevels: []
+		});
+	});
+
 	QUnit.module("#updateBindingInfo", {
 		afterEach: function() {
 			this.destroyTable();
@@ -1363,7 +1763,7 @@ sap.ui.define([
 	});
 
 	// BCP: 2380131026
-	QUnit.test("Sort invisible property if analytical features are enabled", async function(assert) {
+	QUnit.test("Sort invisible property if data aggregation is enabled", async function(assert) {
 		await this.initTable({
 			p13nMode: ["Sort", "Filter", "Group", "Aggregate"],
 			columns: [
@@ -1676,7 +2076,7 @@ sap.ui.define([
 		assert.equal(this.oRebindSpy.callCount, 0, "No rebind was performed");
 	});
 
-	QUnit.test("$search binding parameter if analytical features are enabled", async function(assert) {
+	QUnit.test("$search binding parameter if data aggregation is enabled", async function(assert) {
 		const oUpdateBindingInfo = this.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
 
 		oUpdateBindingInfo.callsFake(function(oTable, oBindingInfo) {
@@ -1775,7 +2175,7 @@ sap.ui.define([
 		}, "$$aggregation parameter");
 	});
 
-	QUnit.test("$$aggregation binding parameter if analytical features are enabled", async function(assert) {
+	QUnit.test("$$aggregation binding parameter if data aggregation is enabled", async function(assert) {
 		this.stub(this.oTable.getControlDelegate(), "updateBindingInfo").callsFake(function(oTable, oBindingInfo) {
 			this.updateBindingInfo.wrappedMethod.apply(this, arguments);
 			oBindingInfo.parameters.$$aggregation = {
@@ -1893,7 +2293,7 @@ sap.ui.define([
 		}, "Sort"), {
 			validation: MessageType.None,
 			message: undefined
-		}, "Sorted property invisible and analytical features not enabled");
+		}, "Sorted property invisible and data aggregation is not enabled");
 	});
 
 	QUnit.test("Group restrictions", function(assert) {

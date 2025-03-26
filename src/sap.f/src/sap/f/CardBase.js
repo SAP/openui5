@@ -124,6 +124,12 @@ sap.ui.define([
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
 
+		this._describedByInteractiveText = new InvisibleText({ id: this.getId() + "-describedByInteractive" });
+		this._describedByInteractiveText.setText(this._oRb.getText("ARIA_ACTIVATE_CARD"));
+
+		this._describedByCardTypeText = new InvisibleText({ id: this.getId() + "-describedByCardTypeText"});
+		this._describedByCardTypeText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
+
 		this._sGridItemRole = null;
 
 		this.initCardBadgeEnablement();
@@ -141,6 +147,17 @@ sap.ui.define([
 		if (this._ariaText) {
 			this._ariaText.destroy();
 			this._ariaText = null;
+		}
+
+		this._describedByInteractiveText.destroy();
+		this._describedByInteractiveText = null;
+
+		this._describedByCardTypeText.destroy();
+		this._describedByCardTypeText = null;
+
+		if (this._invisibleTitle) {
+			this._invisibleTitle.destroy();
+			this._invisibleTitle = null;
 		}
 
 		this.destroyCardBadgeEnablement();
@@ -267,17 +284,40 @@ sap.ui.define([
 	CardBase.prototype._getAriaLabelledIds = function () {
 		var oHeader = this.getCardHeader();
 		const sBlockingMessageAriaLabelsIds = this._getBlockingMessageAriaLabelledByIds();
-
-		if (oHeader) {
+		if (oHeader && oHeader.getVisible()) {
 			if (oHeader._getTitle && oHeader._getTitle()) {
 				if (sBlockingMessageAriaLabelsIds) {
 					return oHeader._getTitle().getId() + " " + sBlockingMessageAriaLabelsIds;
 				}
 				return oHeader._getTitle().getId();
 			}
+		} else if (oHeader?.getTitle()) {
+			if (!this._invisibleTitle) {
+				this._invisibleTitle = new InvisibleText({ id: this.getId() + "-invisibleTitle" });
+			}
+			this._invisibleTitle.setText(oHeader.getTitle());
+
+			return this._invisibleTitle.getId();
 		}
 
 		return this._ariaText.getId();
+	};
+
+	CardBase.prototype._getAriaDescribedByIds = function () {
+		const bHasCardBadgeCustomData = this._getCardBadgeCustomData().length > 0;
+		const aIds = [];
+
+		aIds.push(this._describedByCardTypeText.getId());
+
+		if (this.isInteractive() && this.isRoleListItem()) {
+			aIds.push(this._describedByInteractiveText.getId());
+		}
+
+		if (bHasCardBadgeCustomData) {
+			aIds.push(this._getInvisibleCardBadgeText().getId());
+		}
+
+		return aIds.join(" ");
 	};
 
 	/**

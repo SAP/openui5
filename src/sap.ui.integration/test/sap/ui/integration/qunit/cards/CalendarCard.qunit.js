@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/test/utils/nextUIUpdate",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent"
 ],
 	function (
+		Library,
 		DateFormat,
 		Card,
 		nextUIUpdate,
@@ -21,6 +23,7 @@ sap.ui.define([
 		"use strict";
 
 		var oFormatter = DateFormat.getDateTimeInstance({ pattern: "YYYY-MM-ddTHH:mm" });
+		const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -1338,6 +1341,9 @@ sap.ui.define([
 			// Assert
 			assert.ok(this.oCard.getAggregation("_header").getDomRef(), "Card header should be rendered.");
 			assert.ok(this.oCard.getAggregation("_content").getDomRef(), "Card content should be rendered.");
+
+			const aIds = this.oCard.getDomRef().getAttribute("aria-describedby").split(" ");
+			assert.strictEqual(document.getElementById(aIds[0]).innerText, oRb.getText("ARIA_DESCRIPTION_CARD_TYPE_CALENDAR"), "aria text for card type is correct.");
 		});
 
 		QUnit.test("Initialization - CalendarContent with no selected date", function (assert) {

@@ -85,8 +85,8 @@ function(
 	* <li> When you want the user to select from a predefined set of options. Use {@link sap.m.MultiComboBox} instead.</li>
 	* </ul>
 	* <h3>Responsive Behavior</h3>
-	* If there are many tokens, the control shows only the last selected tokens that fit and for the others a label <i>N-more</i> is provided.
-	* In case the length of the last selected token is exceeding the width of the control, only a label <i>N-Items</i> is shown.
+	* If there are many tokens, the control shows only the first selected tokens that fit and for the others a label <i>N-more</i> is provided.
+	* In case the length of the first selected token is exceeding the width of the control, only a label <i>N-Items</i> is shown.
 	* In both cases, pressing on the label will show the tokens in a popup.
 	* <u>On Phones:</u>
 	* <ul>

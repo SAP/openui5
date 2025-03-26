@@ -2212,11 +2212,17 @@ sap.ui.define([
 	Card.prototype._applyContentManifestSettings = function () {
 		var sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE),
 			oContentManifest = this.getContentManifest(),
-			sAriaText = sCardType + " " + this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"),
+			sAriaText,
 			oContent;
 
+		if (sCardType) {
+			sAriaText = this._oIntegrationRb.getText("ARIA_DESCRIPTION_CARD_TYPE_" + sCardType.toUpperCase());
+		} else {
+			sAriaText = this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD");
+		}
 		this.destroyAggregation("_content");
 		this._ariaText.setText(sAriaText);
+		this._describedByCardTypeText.setText(sAriaText);
 
 		if (this._shouldIgnoreContent()) {
 			this.fireEvent("_contentReady");
