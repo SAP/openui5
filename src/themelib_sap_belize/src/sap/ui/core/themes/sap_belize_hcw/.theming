@@ -3,5 +3,6 @@
   "sId": "sap_belize_hcw",
   "oExtends": "sap_belize_base",
   "sVendor": "SAP",
-  "sDeprecated" : "since version 1.120.0"
+  "sDeprecated" : "since version 1.120.0",
+  "sReleaseStage": "END_OF_LIFE"
 }
