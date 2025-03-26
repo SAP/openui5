@@ -118,11 +118,13 @@ sap.ui.define([
 			return this;
 		}
 		expectNoRequire() {
+			/* ui5lint-disable-next-line no-globals -- sap.ui.require is an allowed global */
 			this.amdMock ??= this.sandbox.mock(sap.ui);
 			this.amdMock.expects("require").never();
 			return this;
 		}
 		expectRequire(dependencies, imports) {
+			/* ui5lint-disable-next-line no-globals -- sap.ui.require is an allowed global */
 			this.amdMock ??= this.sandbox.mock(sap.ui);
 			this.amdMock.expects("require")
 				.withArgs(dependencies, sinon.match.func)
