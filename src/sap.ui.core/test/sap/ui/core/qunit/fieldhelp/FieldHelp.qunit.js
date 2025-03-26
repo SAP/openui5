@@ -378,55 +378,38 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_updateHotspots", function (assert) {
+		const done = assert.async();
 		const oFieldHelp = new FieldHelp();
 		const fnUpdateHotspotsCallback = this.stub();
 		const oFieldHelpMock = this.mock(oFieldHelp);
 		oFieldHelp.activate(fnUpdateHotspotsCallback);
 
 		// code under test
-		const oPromise = oFieldHelp._updateHotspots();
+		oFieldHelp._updateHotspots();
 
-		assert.ok(oPromise instanceof Promise);
-
-		// code under test - as long as data is collected, the same promise is returned
-		assert.strictEqual(oFieldHelp._updateHotspots(), oPromise);
+		// code under test - as long as data is collected, callback is not called again
+		oFieldHelp._updateHotspots();
 
 		// called async
 		assert.strictEqual(fnUpdateHotspotsCallback.callCount, 0); // not yet called; will be called after a timeout
 		oFieldHelpMock.expects("isActive").withExactArgs().returns(true);
-		oFieldHelpMock.expects("_getFieldHelpHotspots").withExactArgs().returns(["~aHotspots"]);
+		oFieldHelpMock.expects("_getFieldHelpHotspots").withExactArgs().returns("~aHotspots");
 
-		return oPromise.then((oResult) => {
-			assert.strictEqual(oResult, undefined); // resolves without any value
+		setTimeout(() => {
 			assert.strictEqual(fnUpdateHotspotsCallback.callCount, 1);
 			assert.strictEqual(fnUpdateHotspotsCallback.getCall(0).args.length, 1);
-			assert.deepEqual(fnUpdateHotspotsCallback.getCall(0).args[0], ["~aHotspots"]);
-			fnUpdateHotspotsCallback.resetHistory();
+			assert.strictEqual(fnUpdateHotspotsCallback.getCall(0).args[0], "~aHotspots");
 
-			// code under test
-			const oPromise2 = oFieldHelp._updateHotspots();
-
-			assert.notStrictEqual(oPromise2, oPromise);
 			oFieldHelpMock.expects("isActive").withExactArgs().returns(false);
-			assert.strictEqual(fnUpdateHotspotsCallback.callCount, 0);
 
-			return oPromise2.catch((oReason) => {
-				assert.strictEqual(oReason, undefined); // rejects without any value
-				assert.strictEqual(fnUpdateHotspotsCallback.callCount, 0); // not called if deactivated
+			// code under test - field help is deactivated
+			oFieldHelp._updateHotspots();
+
+			setTimeout(() => {
+				assert.strictEqual(fnUpdateHotspotsCallback.callCount, 1,
+					"don't call callback again after deactivation");
+				done();
 			});
-		}).then(() => {
-			// code under test
-			const oPromise3 = oFieldHelp._updateHotspots();
-
-			oFieldHelpMock.expects("isActive").withExactArgs().returns(true);
-			oFieldHelpMock.expects("_getFieldHelpHotspots").withExactArgs().returns([]);
-			assert.strictEqual(fnUpdateHotspotsCallback.callCount, 0);
-
-			return oPromise3;
-		}).then(() => {
-			// update hotspots has to be called even if there are no hotspots
-			assert.strictEqual(fnUpdateHotspotsCallback.callCount, 1);
-			assert.deepEqual(fnUpdateHotspotsCallback.getCall(0).args[0], []);
 		});
 	});
 
@@ -453,11 +436,13 @@ sap.ui.define([
 		assert.strictEqual(mText2IdByType.size, 1);
 		assert.deepEqual(Array.from(mText2IdByType.get("Text0")), [["E0", "P0_0"]]);
 
-		oFieldHelp.activate(() => {});
+		const {promise: oFieldHelpUpdatePromise, resolve: fnResolve} = Promise.withResolvers();
+		oFieldHelp.activate(fnResolve);
 
 		// code under test: _updateHotspots clears cache mMetaModel2TextMappingPromise if field help is active
-		await oFieldHelp._updateHotspots();
+		oFieldHelp._updateHotspots();
 
+		await oFieldHelpUpdatePromise;
 		oInterfaceMock.expects("requestTypes").withExactArgs()
 			.resolves([new Map([["E0", "~oEntityType0"], ["E1", "~oEntityType1"]]), new Map()]);
 		// performance: only properties of the lazily loaded type "E1" are analyzed
@@ -696,33 +681,13 @@ sap.ui.define([
 		}].forEach(({sElementId, sProperty, aDocumentationRefs, result}, i) => {
 			const oElement = {getId() {}};
 			this.mock(oElement).expects("getId").withExactArgs().returns(sElementId);
-			const oUpdateHotspotsPromise = {catch() {}};
-			const oUpdateHotspotsPromiseMock = this.mock(oUpdateHotspotsPromise);
-			oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-			// ensure that Promise is caught to avoid uncaught in Promise
-			oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func).callThrough();
+			oFieldHelpMock.expects("_updateHotspots").withExactArgs();
 
 			// code under test
 			oFieldHelp._setFieldHelpDocumentationRefs(oElement, sProperty, aDocumentationRefs);
 
 			assert.deepEqual(oFieldHelp.mDocuRefControlToFieldHelp, result, "result for fixture #" + i);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_setFieldHelpDocumentationRefs: _updateHotspots rejects", function (assert) {
-		const oFieldHelp = new FieldHelp();
-		const oElement0 = {getId() {}};
-		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
-		const oUpdateHotspotsPromise = Promise.reject(new Error("Update hotspots failed"));
-		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-
-		// code under test - set field help, but the update rejects as field help is deactivated in between
-		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
-			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
-		]);
-
-		return Promise.resolve().then(() => {/* wait until _updateHotspots is completely processed */});
 	});
 
 	//*********************************************************************************************
@@ -876,9 +841,7 @@ sap.ui.define([
 			getParent() {}
 		};
 		this.mock(oElement0).expects("getId").withExactArgs().returns("~element0");
-		const oUpdateHotspotsPromise = {catch() {}};
-		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-		this.mock(oUpdateHotspotsPromise).expects("catch").withExactArgs(sinon.match.func);
+		this.mock(oFieldHelp).expects("_updateHotspots").withExactArgs();
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
 			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
 		]);
@@ -904,11 +867,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("_getFieldHelpDisplayMapping", function (assert) {
 		const oFieldHelp = FieldHelp.getInstance();
-		const oUpdateHotspotsPromise = {catch() {}};
 		const oFieldHelpMock = this.mock(oFieldHelp);
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-		const oUpdateHotspotsPromiseMock = this.mock(oUpdateHotspotsPromise);
-		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs();
 		// Element 1 has both a fieldHelpDisplay association and a BindingInfo.OriginalParent
 		// -> fieldHelpDisplay association wins
 		const oElement0 = {
@@ -923,8 +883,7 @@ sap.ui.define([
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement0, undefined, [
 			"urn:sap-com:documentation:key?=type=~customType0&id=~customId0"
 		]);
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs();
 		const oOriginalParent = {getId() {}};
 		// Element 1 has no fieldHelpDisplay association but a BindingInfo.OriginalParent
 		const oElement1 = {
@@ -939,8 +898,7 @@ sap.ui.define([
 		]);
 		// Element 2 has neither a fieldHelpDisplay association nor a BindingInfo.OriginalParent
 		const oElement2 = {getAssociation() {}, getId() {}, getParent() {}};
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs();
 		this.mock(oElement2).expects("getId").withExactArgs().returns("~id2");
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement2, undefined, [
 			"urn:sap-com:documentation:key?=type=~customType2&id=~customId2"
@@ -948,8 +906,7 @@ sap.ui.define([
 		// Element 3 has neither a fieldHelpDisplay association nor a BindingInfo.OriginalParent;
 		// its parent has a fieldHelpDisplay association
 		const oElement3 = {getAssociation() {}, getId() {}, getParent() {}};
-		oFieldHelpMock.expects("_updateHotspots").withExactArgs().returns(oUpdateHotspotsPromise);
-		oUpdateHotspotsPromiseMock.expects("catch").withExactArgs(sinon.match.func);
+		oFieldHelpMock.expects("_updateHotspots").withExactArgs();
 		this.mock(oElement3).expects("getId").withExactArgs().returns("~id3");
 		oFieldHelp._setFieldHelpDocumentationRefs(oElement3, undefined, [
 			"urn:sap-com:documentation:key?=type=~customType3&id=~customId3"
