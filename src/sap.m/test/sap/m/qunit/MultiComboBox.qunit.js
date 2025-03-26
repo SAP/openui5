@@ -5203,7 +5203,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		//act
-		oMultiComboBox.onsapfocusleave(oFakeEvent);
+		oMultiComboBox.onfocusout(oFakeEvent);
 
 		// assert
 		assert.ok(oStub.called, "change should be called");
