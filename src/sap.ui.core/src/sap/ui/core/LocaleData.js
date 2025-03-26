@@ -2426,54 +2426,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Helper to analyze and parse designtime (aka buildtime) variables
-	 *
-	 * At buildtime, the build can detect a pattern like $some-variable-name:some-value$
-	 * and replace 'some-value' with a value determined at buildtime (here: the actual list of locales).
-	 *
-	 * At runtime, this method removes the surrounding pattern ('$some-variable-name:' and '$') and leaves only the 'some-value'.
-	 * Additionally, this value is parsed as a comma-separated list (because this is the only use case here).
-	 *
-	 * The mimic of the comments is borrowed from the CVS (Concurrent Versions System),
-	 * see http://web.mit.edu/gnu/doc/html/cvs_17.html.
-	 *
-	 * If no valid <code>sValue</code> is given, <code>null</code> is returned
-	 *
-	 * @param {string} sValue The raw designtime property e.g. $cldr-rtl-locales:ar,fa,he$
-	 * @returns {string[]|null} The designtime property e.g. ['ar', 'fa', 'he']
-	 * @private
-	 */
-	 function getDesigntimePropertyAsArray(sValue) {
-		var m = /\$([-a-z0-9A-Z._]+)(?::([^$]*))?\$/.exec(sValue);
-		return (m && m[2]) ? m[2].split(/,/) : null;
-	}
-
-	/**
 	 * A list of locales for which CLDR data is bundled with the UI5 runtime.
-	 * @private
-	 */
-	var _cldrLocales = getDesigntimePropertyAsArray("$cldr-locales:ar,ar_EG,ar_SA,bg,ca,cnr,cy,cs,da,de,de_AT,de_CH,el,el_CY,en,en_AU,en_GB,en_HK,en_IE,en_IN,en_NZ,en_PG,en_SG,en_ZA,es,es_AR,es_BO,es_CL,es_CO,es_MX,es_PE,es_UY,es_VE,et,fa,fi,fr,fr_BE,fr_CA,fr_CH,fr_LU,he,hi,hr,hu,id,it,it_CH,ja,kk,ko,lt,lv,mk,ms,nb,nl,nl_BE,pl,pt,pt_PT,ro,ru,ru_UA,sk,sl,sr,sr_Latn,sv,th,tr,uk,vi,zh_CN,zh_HK,zh_SG,zh_TW$");
-
-	/**
-	 * A set of locales for which the UI5 runtime contains a CLDR JSON file.
-	 *
-	 * Helps to avoid unsatisfiable backend calls.
+	 * The value of this constant must only be updated by the CLDR generator; do not modify it manually.
 	 *
 	 * @private
 	 */
-	var M_SUPPORTED_LOCALES = (function() {
-		var LOCALES = _cldrLocales,
-			result = {},
-			i;
-
-		if ( LOCALES ) {
-			for (i = 0; i < LOCALES.length; i++) {
-				result[LOCALES[i]] = true;
-			}
-		}
-
-		return result;
-	}());
+	const A_SUPPORTED_LOCALES = ["ar","ar_EG","ar_SA","bg","ca","cnr","cs","cy","da","de","de_AT","de_CH","el","el_CY",
+		"en","en_AU","en_GB","en_HK","en_IE","en_IN","en_NZ","en_PG","en_SG","en_ZA","es",
+		"es_AR","es_BO","es_CL","es_CO","es_MX","es_PE","es_UY","es_VE","et","fa","fi","fr",
+		"fr_BE","fr_CA","fr_CH","fr_LU","he","hi","hr","hu","id","it","it_CH","ja","kk","ko",
+		"lt","lv","mk","ms","nb","nl","nl_BE","pl","pt","pt_PT","ro","ru","ru_UA","sk","sl",
+		"sr","sr_Latn","sv","th","tr","uk","vi","zh_CN","zh_HK","zh_SG","zh_TW"];
 
 	/**
 	 * Creates a flat map from an object structure which contains a link to the parent ("_parent").
@@ -2604,7 +2567,7 @@ sap.ui.define([
 		}
 
 		function getOrLoad(sId) {
-			if (!mLocaleIdToData[sId] && (!M_SUPPORTED_LOCALES || M_SUPPORTED_LOCALES[sId] === true)
+			if (!mLocaleIdToData[sId] && A_SUPPORTED_LOCALES.includes(sId)
 					|| mLocaleIdToData[sId] instanceof Promise && !bAsync) {
 				mLocaleIdToData[sId] = SyncPromise.resolve(LoaderExtensions.loadResource(`sap/ui/core/cldr/${sId}.json`,
 					{
@@ -2838,7 +2801,7 @@ sap.ui.define([
 		return Promise.resolve(oLocaleData.loaded);
 	};
 
-	LocaleData._cldrLocales = _cldrLocales;
+	LocaleData._cldrLocales = A_SUPPORTED_LOCALES;
 	// maps a locale to a map of time zone translations, which maps an IANA time zone ID to the translated time zone
 	// name
 	LocaleData._mTimezoneTranslations = {};
