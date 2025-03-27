@@ -37,7 +37,7 @@ sap.ui.define([
 		IDFirst: "ID First"
 	};
 
-	async function openDialog(sandbox, oActionConfig, fnAfterOpen) {
+	async function openDialog(sandbox, oActionConfig, fnAfterOpen, iNumberOfProperties, assert) {
 		const oDialog = new AnnotationChangeDialog();
 		const oCreateDialogStub = sandbox.stub(oDialog, "_createDialog");
 		oCreateDialogStub.callsFake(async () => {
@@ -46,6 +46,11 @@ sap.ui.define([
 			return oPopover;
 		});
 		const aChanges = await oDialog.openDialogAndHandleChanges(oActionConfig);
+
+		if (iNumberOfProperties) {
+			assert.strictEqual(oDialog.oChangeAnnotationModel.iSizeLimit, iNumberOfProperties, "the model size limit is set correctly");
+		}
+
 		oDialog.destroy();
 		return aChanges;
 	}
@@ -190,6 +195,42 @@ sap.ui.define([
 				"testAnnotation",
 				"then the annotation was passed to the delegate"
 			);
+		});
+
+		QUnit.test("when the dialog is opened with more than 100 properties", function(assert) {
+			const oTestDelegate = {
+				getAnnotationsChangeInfo: () => {
+					return Promise.resolve({
+						serviceUrl: "testServiceUrl",
+						properties: new Array(111).fill({
+							propertyName: "My Test Label",
+							annotationPath: "path/to/test/label",
+							currentValue: oTextArrangementTypes.TextOnly,
+							label: "My Special Test Label"
+						}),
+						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
+							key: oTextArrangementTypes[sKey],
+							text: oTextArrangementLabels[sKey]
+						}))
+					});
+				}
+			};
+			const oActionConfig = {
+				title: "Change Text Arrangement",
+				description: "Select The Preferred Text Arrangement For Each Entry:",
+				type: AnnotationTypes.ValueListType,
+				control: { id: "testControl" },
+				annotation: "testAnnotation",
+				delegate: oTestDelegate
+			};
+			const fnAfterOpen = () => {
+				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
+				const aFormElements = oList.getFormElements();
+				assert.strictEqual(aFormElements.length, 111, "then only 111 form elements are created");
+				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
+				oCancelButton.firePress();
+			};
+			return openDialog(sandbox, oActionConfig, fnAfterOpen, 111, assert);
 		});
 
 		QUnit.test("When the dialog is closed via cancel or no changes are made", async function(assert) {

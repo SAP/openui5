@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -30,7 +29,6 @@ sap.ui.define([
 	Versions,
 	ContextBasedAdaptationsAPI,
 	VersionsAPI,
-	ChangePersistenceFactory,
 	Layer,
 	Utils,
 	sinon
@@ -567,7 +565,6 @@ sap.ui.define([
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER
 			};
-
 			return VersionsAPI.activate(mPropertyBag).catch(function(sErrorMessage) {
 				assert.equal(sErrorMessage, "No control was provided", "then an Error is thrown");
 			});

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -25,6 +26,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
+	Storage,
 	Layer,
 	FlexUtils,
 	sinon
@@ -43,6 +45,11 @@ sap.ui.define([
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		}
 	}, function() {
+		function stubRequestsForResetAndPublishAPI(configuration) {
+			sandbox.stub(Storage, "getFlexInfo").resolves(configuration);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([]);
+		}
+
 		QUnit.test("initialAllContexts is not saved in the session storage", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
@@ -53,11 +60,9 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
-				isResetEnabled: true,
-				allContextsProvided: true
-			});
+			stubRequestsForResetAndPublishAPI({isResetEnabled: true, allContextsProvided: true});
+			const oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			const oUpdateResetAndPublishInfoAPIStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
@@ -69,7 +74,7 @@ sap.ui.define([
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
-				assert.deepEqual(oGetResetAndPublishInfoAPIStub.callCount, 1, "getResetAndPublishInfo was called");
+				assert.deepEqual(oUpdateResetAndPublishInfoAPIStub.callCount, 1, "updateResetAndPublishInfo was called");
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -81,22 +86,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("allContexts is saved in the session storage and do not call flex/info request", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
 			};
-			var oFlexInfoResponse = {allContextsProvided: true};
-			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
+			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify({allContextsProvided: true}));
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
+			const oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			const oUpdateResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "updateResetAndPublishInfo").resolves();
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
-				var oExpectedArgs = {
+				const oExpectedArgs = {
 					selector: oReloadInfo.selector,
 					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
 					upToLayer: oReloadInfo.layer,
@@ -104,7 +108,7 @@ sap.ui.define([
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
-				assert.deepEqual(oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
+				assert.deepEqual(oUpdateResetAndPublishInfoAPIStub.callCount, 0, "updateResetAndPublishInfo was not called");
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 				assert.deepEqual(oReloadInfo.allContexts, false, "allContexts is set to false");
@@ -215,9 +219,9 @@ sap.ui.define([
 				oExpected: { allContextsProvided: true, initialAllContexts: true, isResetEnabled: undefined }
 			}
 		].forEach((oSetup) => {
-			var sTestDescription = Object.entries(oSetup.oFlexInfoSession).map(([key, value]) => `${key} ${value}`).join(" and ");
+			const sTestDescription = Object.entries(oSetup.oFlexInfoSession).map(([key, value]) => `${key} ${value}`).join(" and ");
 			QUnit.test(sTestDescription, function(assert) {
-				var oStubs = setFlexInfoSessionAndPrepareMocks({ ...oSetup.oFlexInfoSession}, {...oSetup.oFlexInfoResponse });
+				const oStubs = setFlexInfoSessionAndPrepareMocks({ ...oSetup.oFlexInfoSession}, {...oSetup.oFlexInfoResponse });
 				return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function(oReloadInfo) {
 					assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert);
 					window.sessionStorage.removeItem("sap.ui.fl.info.true");
@@ -226,7 +230,7 @@ sap.ui.define([
 		});
 
 		function setFlexInfoSessionAndPrepareMocks(oFlexInfoSession, oFlexInfoResponse) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -235,15 +239,16 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-			var oSetAllContextsProvided = sandbox.spy(FlexState, "setAllContextsProvided");
-			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves(oFlexInfoResponse);
+			const oSetAllContextsProvided = sandbox.spy(FlexState, "setAllContextsProvided");
+			const oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			const oUpdateResetAndPublishInfoAPIStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
+			stubRequestsForResetAndPublishAPI(oFlexInfoResponse);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			return {
 				oReloadInfo,
 				oSetAllContextsProvided,
 				oHasHigherLayerChangesAPIStub,
-				oGetResetAndPublishInfoAPIStub
+				oUpdateResetAndPublishInfoAPIStub
 			};
 		}
 
@@ -267,11 +272,11 @@ sap.ui.define([
 				assert.deepEqual(oReloadInfo.allContexts, !oSetup.oExpected.allContextsProvided, `allContexts is set to ${!oSetup.oExpected.allContextsProvided}`);
 			} else {
 				assert.deepEqual(iSetAllContextsProvidedCallCount, 0, "setAllContextsProvided was not called");
-				assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 0, "getResetAndPublishInfo was not called");
+				assert.deepEqual(oStubs.oUpdateResetAndPublishInfoAPIStub.callCount, 0, "updateResetAndPublishInfo was not called");
 				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, oSetup.oExpected.initialAllContexts, `initialAllContexts is set to ${oSetup.oExpected.initialAllContexts}`);
 			}
 			if (oSetup.oFlexInfoSession.initialAllContexts === undefined && oSetup.oFlexInfoSession.allContextsProvided === undefined) {
-				assert.deepEqual(oStubs.oGetResetAndPublishInfoAPIStub.callCount, 1, "getResetAndPublishInfo was called");
+				assert.deepEqual(oStubs.oUpdateResetAndPublishInfoAPIStub.callCount, 1, "updateResetAndPublishInfo was called");
 			} else if (!oSetup.oFlexInfoSession.initialAllContexts && oSetup.oFlexInfoSession.allContextsProvided !== undefined) {
 				assert.deepEqual(FlexInfoSession.getByReference().initialAllContexts, !oSetup.oExpected.allContextsProvided, `initialAllContexts is set to ${oSetup.oExpected.initialAllContexts}`);
 			}
@@ -279,7 +284,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("allContextsProvided is true and a draft is available and the draft is not present in the session", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -288,8 +293,8 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
-			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			const oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			stubRequestsForResetAndPublishAPI({
 				isResetEnabled: true,
 				isPublishEnabled: true,
 				allContextsProvided: true
@@ -323,7 +328,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			stubRequestsForResetAndPublishAPI({
 				isResetEnabled: true,
 				isPublishEnabled: true,
 				allContextsProvided: false
@@ -348,7 +353,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			stubRequestsForResetAndPublishAPI({
 				isResetEnabled: true,
 				isPublishEnabled: true,
 				allContextsProvided: true
@@ -374,7 +379,7 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(true);
-			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
+			stubRequestsForResetAndPublishAPI({
 				isResetEnabled: true,
 				isPublishEnabled: true,
 				allContextsProvided: true

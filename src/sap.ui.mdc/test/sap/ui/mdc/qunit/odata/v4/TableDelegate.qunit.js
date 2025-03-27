@@ -482,6 +482,43 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Plugin enabled state", async function(assert) {
+		await this.initTable({
+			p13nMode: []
+		});
+
+		const oV4AggregationPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
+
+		assert.notOk(oV4AggregationPlugin.getEnabled(), "Intially no grouping/groupConditions/aggregation/aggregateConditions");
+
+		this.oTable.setP13nMode(["Group"]);
+		assert.ok(oV4AggregationPlugin.getEnabled(), "Grouping enabled");
+
+		this.oTable.setP13nMode();
+		assert.notOk(oV4AggregationPlugin.getEnabled(), "Grouping disabled");
+
+		this.oTable.setP13nMode(["Aggregate"]);
+		assert.ok(oV4AggregationPlugin.getEnabled(), "Aggregation enabled");
+
+		this.oTable.setP13nMode();
+		assert.notOk(oV4AggregationPlugin.getEnabled(), "Aggregation diasabled");
+
+		this.oTable.setGroupConditions({groupLevels: []});
+		assert.notOk(oV4AggregationPlugin.getEnabled(), "Empty group levels");
+
+		this.oTable.setGroupConditions({groupLevels: [{name: "Country"}]});
+		assert.ok(oV4AggregationPlugin.getEnabled(), "Add group level");
+
+		this.oTable.setGroupConditions();
+		assert.notOk(oV4AggregationPlugin.getEnabled(), "Remove group level");
+
+		this.oTable.setAggregateConditions({SalesAmount: {}});
+		assert.ok(oV4AggregationPlugin.getEnabled(), "Add aggregate");
+
+		this.oTable.setAggregateConditions();
+		assert.notOk(oV4AggregationPlugin.getEnabled(), "Remove aggregate");
+	});
+
 	QUnit.test("No visible columns", async function(assert) {
 		await this.initTable(undefined, undefined, {
 			propertyInfo: [{

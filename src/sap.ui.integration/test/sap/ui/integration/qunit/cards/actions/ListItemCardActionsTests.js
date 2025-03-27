@@ -1,12 +1,14 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
 	"sap/ui/qunit/QUnitUtils"
 ], function(
+	Library,
 	KeyCodes,
 	CardActions,
 	nextUIUpdate,
@@ -1017,20 +1019,27 @@ sap.ui.define([
 
 			// Act - Card is not clickable
 			oActionSpy.reset();
-			qutils.triggerMouseEvent(oCard.getFocusDomRef(), "tap");
+			const oCardFocusRef = oCard.getFocusDomRef();
+			qutils.triggerMouseEvent(oCardFocusRef, "tap");
 
 			// Assert
 			assert.strictEqual(oActionSpy.callCount, 0, "Card can not be clicked");
 			assert.ok(oCard.getDomRef().classList.contains("sapFCardDisableMouseInteraction"), "Card has disabled mouse interaction.");
 
+			// Assert - Card has correct acc attributes
+			assert.ok(oCardFocusRef.hasAttribute("tabindex"), "Card is focusable");
+
+			const oRb = Library.getResourceBundleFor("sap.f");
+			const sDescribedBy = oCardFocusRef.getAttribute("aria-describedby").split(" ")[1];
+			assert.strictEqual(document.getElementById(sDescribedBy).innerText, oRb.getText("ARIA_ACTIVATE_CARD"), "Card has the interactive card description");
+
 			// Act - Card can be focused and activated with Enter
 			oActionSpy.reset();
-			qutils.triggerKeydown(oCard.getFocusDomRef(), KeyCodes.ENTER);
+			qutils.triggerKeydown(oCardFocusRef, KeyCodes.ENTER);
 
-			// Assert
+			// Assert - Card is activated with enter
 			assert.strictEqual(oActionSpy.callCount, 1, "Card is activated with ENTER");
 			assert.strictEqual(oActionSpy.args[0][0].source, oHeader, "Header is the source of the event, not the card.");
-			assert.ok(oCard.getFocusDomRef().hasAttribute("tabindex"), "Card is focusable");
 
 			oActionSpy.restore();
 		});

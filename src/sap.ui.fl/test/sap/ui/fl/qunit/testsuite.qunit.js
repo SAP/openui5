@@ -740,6 +740,13 @@ sap.ui.define([
 				}
 			},
 
+			"write/api/BusinessNetworkAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/BusinessNetworkAPI"]
+				}
+			},
+
 			"write/api/ChangesWriteAPI": {
 				group: "Write API",
 				coverage: {

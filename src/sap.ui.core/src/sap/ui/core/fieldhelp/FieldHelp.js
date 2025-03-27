@@ -98,12 +98,12 @@ sap.ui.define([
 		mDocuRefControlToFieldHelp = {};
 
 		/**
-		 * A Promise that resolves when all hotspot updates are done.
+		 * A boolean that is <code>true</code> as long as the hotspots are updated.
 		 *
-		 * @default null
-		 * @type {Promise}
+		 * @default false
+		 * @type {boolean}
 		 */
-		#oUpdateHotspotsPromise = null;
+		#bUpdateHotspotsPending = false;
 
 		/**
 		 * @typedef {Map<string,Map<string,string>>} sap.ui.core.fieldhelp.Text2IdByType
@@ -555,7 +555,7 @@ sap.ui.define([
 					delete this.mDocuRefControlToFieldHelp[sControlID];
 				}
 			}
-			this._updateHotspots().catch(() => {/* avoid uncaught in Promise; do nothing */});
+			this._updateHotspots();
 		}
 
 		/**
@@ -579,34 +579,21 @@ sap.ui.define([
 		/**
 		 * Calls the <code>fnUpdateHotspotsCallback</code> as given in {@link #activate} asynchronously with the latest
 		 * field help hotspots.
-		 *
-		 * @returns {Promise<undefined>}
-		 *   A Promise that resolves when the <code>fnUpdateHotspotsCallback</code> as given in {@link #activate} has
-		 *   been called with the latest field help hotspots; rejects if the field help has been deactivated in between.
 		 */
 		_updateHotspots() {
-			if (this.#oUpdateHotspotsPromise) {
-				return this.#oUpdateHotspotsPromise;
+			if (this.#bUpdateHotspotsPending) {
+				return;
 			}
-			let fnResolve, fnReject;
-			this.#oUpdateHotspotsPromise = new Promise((resolve, reject) => {
-				fnResolve = resolve;
-				fnReject = reject;
-			});
+			this.#bUpdateHotspotsPending = true;
 
 			// gather and send field help info in task so that e.g. field help can be displayed at a column header
 			setTimeout(() => {
 				if (this.isActive()) {
 					this.#fnUpdateHotspotsCallback(this._getFieldHelpHotspots());
 					this.#mMetaModel2TextMappingPromise.clear();
-					fnResolve();
-				} else {
-					fnReject();
 				}
-				this.#oUpdateHotspotsPromise = null;
+				this.#bUpdateHotspotsPending = false;
 			}, 0);
-
-			return this.#oUpdateHotspotsPromise;
 		}
 
 		/**

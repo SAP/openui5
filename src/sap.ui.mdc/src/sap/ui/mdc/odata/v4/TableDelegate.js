@@ -533,6 +533,16 @@ sap.ui.define([
 		const [V4AggregationPlugin] = await loadModules("sap/ui/table/plugins/V4Aggregation");
 
 		oTable._oTable.addDependent(new V4AggregationPlugin({
+			enabled: {
+				parts: [
+					{path: "$sap.ui.mdc.Table>/p13nMode"},
+					{path: "$sap.ui.mdc.Table>/groupConditions"},
+					{path: "$sap.ui.mdc.Table>/aggregateConditions"}
+				],
+				formatter: function(sP13nMode, aGroupConditions, aAggregateConditions) {
+					return isAnalyticsEnabled(oTable);
+				}
+			},
 			groupHeaderFormatter: function(oContext) {
 				const aGroupedPropertyKeys = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
 				const sGroupLevelKey = aGroupedPropertyKeys[oContext.getProperty("@$ui5.node.level") - 1];
@@ -770,8 +780,8 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataListBinding#setAggregation
 	 */
 	function isAnalyticsEnabled(oTable) {
-		return oTable._isOfType(TableType.Table) && (oTable.getGroupConditions() || oTable.isGroupingEnabled() ||
-			oTable.getAggregateConditions() || oTable.isAggregationEnabled());
+		return oTable._isOfType(TableType.Table) && (oTable._getGroupedProperties().length > 0 || oTable.isGroupingEnabled() ||
+			Object.keys(oTable._getAggregatedProperties()).length > 0 || oTable.isAggregationEnabled());
 	}
 
 	function create$$Aggregation(oTable) {
