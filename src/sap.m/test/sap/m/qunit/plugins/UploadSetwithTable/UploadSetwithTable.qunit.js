@@ -21,8 +21,11 @@ sap.ui.define([
 	"sap/m/upload/UploaderTableItem",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/base/Event",
-	"sap/m/upload/UploadItem"
-], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem) {
+	"sap/m/upload/UploadItem",
+        "sap/m/library",
+	"sap/base/Log",
+	"sap/ui/base/Event"
+], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, mLibrary, Log,Event) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -1333,6 +1336,515 @@ sap.ui.define([
 			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
 			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
 		});
-	});
+        });
+        QUnit.module("Plugin Public API Tests");
+	QUnit.test("Validating icons", async function (assert) {
+		const done = assert.async();
+		this.oTable = await createMDCTable({
+			type: "ResponsiveTable"
+		});
+		this.oTable.addDependent(new UploadSetwithTable());
+		await this.oTable.initialized();
 
+		this.oUploadSetwithTablePlugin = this.oTable?.getDependents()?.find((oPlugin) => oPlugin.isA("sap.m.plugins.UploadSetwithTable"));
+
+		const mockReturnValue = "sap-icon://pdf-attachment";
+		const mediaType = "application/pdf";
+		const fileName = "example.pdf";
+		const result = UploadSetwithTable.getIconForFileType(mediaType, fileName);
+		// act
+		this.oTable._oTable.attachEventOnce("updateFinished", () => {
+			assert.strictEqual(result, mockReturnValue, "getIconForFileType returns the expected icon");
+			done();
+		});
+	});
+	QUnit.test("Should not allow files exceeding the max file size limit", function (assert) {
+        const iMaxFileSize = 2 * 1024 * 1024;
+        const oUploadSetTable = new UploadSetwithTable({
+            maxFileSize: iMaxFileSize
+        });
+        const oLargeFile = { name: "large-file.txt", size: iMaxFileSize + 1 };
+        const bIsValid = oUploadSetTable.validateFileSize
+            ? oUploadSetTable.validateFileSize(oLargeFile)
+            : oLargeFile.size <= iMaxFileSize;
+        assert.notOk(bIsValid, "File exceeding max file size should not be allowed.");
+        oUploadSetTable.destroy();
+	});
+	QUnit.test("Should only allow specific file types", function (assert) {
+        const aAllowedFileTypes = ["pdf", "jpg", "png"];
+        const oUploadSetTable = new UploadSetwithTable({
+            fileTypes: aAllowedFileTypes
+        });
+        const oValidFile = { name: "image.jpg", type: "image/jpeg" };
+        const oInvalidFile = { name: "document.exe", type: "application/x-msdownload" };
+
+        const bIsValidFile = oUploadSetTable.validateFileType
+            ? oUploadSetTable.validateFileType(oValidFile)
+            : aAllowedFileTypes.includes(oValidFile.name.split(".").pop().toLowerCase());
+
+        const bIsInvalidFile = oUploadSetTable.validateFileType
+            ? oUploadSetTable.validateFileType(oInvalidFile)
+            : aAllowedFileTypes.includes(oInvalidFile.name.split(".").pop().toLowerCase());
+        assert.ok(bIsValidFile, "Valid file type should be allowed.");
+        assert.notOk(bIsInvalidFile, "Invalid file type should not be allowed.");
+
+        oUploadSetTable.destroy();
+	});
+	QUnit.test("Should only allow files with specific media types", function (assert) {
+        const aAllowedMediaTypes = ["image/png", "image/jpeg", "application/pdf"];
+        const oUploadSetTable = new UploadSetwithTable({
+            mediaTypes: aAllowedMediaTypes
+        });
+
+        const oValidFile = { name: "image.png", type: "image/png" };
+        const oInvalidFile = { name: "script.js", type: "application/javascript" };
+
+        const bIsValidFile = oUploadSetTable.validateMediaType
+            ? oUploadSetTable.validateMediaType(oValidFile)
+            : aAllowedMediaTypes.includes(oValidFile.type);
+
+        const bIsInvalidFile = oUploadSetTable.validateMediaType
+            ? oUploadSetTable.validateMediaType(oInvalidFile)
+            : aAllowedMediaTypes.includes(oInvalidFile.type);
+
+        assert.ok(bIsValidFile, "Valid media type should be allowed.");
+        assert.notOk(bIsInvalidFile, "Invalid media type should not be allowed.");
+
+        oUploadSetTable.destroy();
+    });
+	QUnit.test("Should not allow file names exceeding the max length", function (assert) {
+        const iMaxFileNameLength = 20;
+        const oUploadSetTable = new UploadSetwithTable({
+            maxFileNameLength: iMaxFileNameLength
+        });
+
+        const oValidFile = { name: "short-name.pdf" };
+        const oInvalidFile = { name: "this-is-a-very-long-file-name.pdf" };
+
+        const bIsValidFile = oUploadSetTable.validateFileNameLength
+            ? oUploadSetTable.validateFileNameLength(oValidFile)
+            : oValidFile.name.length <= iMaxFileNameLength;
+
+        const bIsInvalidFile = oUploadSetTable.validateFileNameLength
+            ? oUploadSetTable.validateFileNameLength(oInvalidFile)
+            : oInvalidFile.name.length <= iMaxFileNameLength;
+
+        assert.ok(bIsValidFile, "Valid file name length should be allowed.");
+        assert.notOk(bIsInvalidFile, "File name exceeding max length should not be allowed.");
+
+        oUploadSetTable.destroy();
+    });
+	QUnit.test("getFileSizeWithUnits Test", function (assert) {
+		const resultKB = UploadSetwithTable.getFileSizeWithUnits(512); // Below 1KB
+		const resultKB2 = UploadSetwithTable.getFileSizeWithUnits(2048); // 2KB
+		const resultMB = UploadSetwithTable.getFileSizeWithUnits(1048576); // 1MB
+		const resultGB = UploadSetwithTable.getFileSizeWithUnits(1073741824); // 1GB
+		const resultInvalid = UploadSetwithTable.getFileSizeWithUnits("invalid"); // Invalid input
+		assert.strictEqual(resultKB, "0.50 KB", "512 bytes correctly converted to KB");
+		assert.strictEqual(resultKB2, "2.00 KB", "2048 bytes correctly converted to KB");
+		assert.strictEqual(resultMB, "1.00 MB", "1MB correctly converted");
+		assert.strictEqual(resultGB, "1.00 GB", "1GB correctly converted");
+		assert.strictEqual(resultInvalid, "invalid", "Non-numeric input should return the input itself");
+	});
+	QUnit.test("Upload item via URL", async function (assert) {
+		const done = assert.async();
+
+		this.oTable = await createMDCTable({
+			type: "ResponsiveTable"
+		});
+		this.oTable.addDependent(new UploadSetwithTable());
+		await this.oTable.initialized();
+		this.oUploadSetwithTablePlugin = this.oTable?.getDependents()?.find((oPlugin) =>
+			oPlugin.isA("sap.m.plugins.UploadSetwithTable")
+		);
+		const sName = "testFile.txt";
+		const sUrl = "https://example.com/file.txt";
+		const oMockPromise = new Promise((resolve) => {
+			setTimeout(resolve, 100);
+		});
+		const oItem = this.oUploadSetwithTablePlugin.uploadItemViaUrl(sName, sUrl, oMockPromise);
+		assert.ok(oItem, "Upload item is created");
+		assert.strictEqual(oItem.getFileName(), sName, "File name is set correctly");
+		assert.strictEqual(oItem.getUrl(), sUrl, "URL is set correctly");
+		assert.strictEqual(oItem.getUploadState(), mLibrary.UploadState.Ready, "Upload state is Ready");
+		oMockPromise.then(() => {
+			this.oTable._oTable.attachEventOnce("updateFinished", () => {
+				assert.ok(true, "Upload process was initiated");
+			});
+		});
+		done();
+	});
+	QUnit.test("Upload item without file", async function (assert) {
+		const done = assert.async();
+
+		this.oTable = await createMDCTable({
+			type: "ResponsiveTable"
+		});
+		this.oTable.addDependent(new UploadSetwithTable());
+		await this.oTable.initialized();
+		this.oUploadSetwithTablePlugin = this.oTable?.getDependents()?.find((oPlugin) =>
+			oPlugin.isA("sap.m.plugins.UploadSetwithTable")
+		);
+		const oMockPromise = new Promise((resolve) => {
+			setTimeout(resolve, 100);
+		});
+		const oItem = this.oUploadSetwithTablePlugin.uploadItemWithoutFile(oMockPromise);
+		assert.ok(oItem, "Upload item is created");
+		assert.strictEqual(oItem.getFileName(), "-", "File name is set correctly");
+		assert.strictEqual(oItem.getUploadState(), mLibrary.UploadState.Ready, "Upload state is Ready");
+		oMockPromise.then(() => {
+			this.oTable._oTable.attachEventOnce("updateFinished", () => {
+				assert.ok(true, "Upload process was initiated");
+			});
+		});
+		done();
+	});
+	QUnit.test("Test for renaming the files", async function (assert) {
+		const done = assert.async();
+		this.oTable = await createMDCTable({
+			type: "ResponsiveTable"
+		});
+		this.oTable.addDependent(new UploadSetwithTable());
+		await this.oTable.initialized();
+		this.oUploadSetwithTablePlugin = this.oTable?.getDependents()?.find((oPlugin) =>
+			oPlugin.isA("sap.m.plugins.UploadSetwithTable")
+		);
+		const sName = "testFile.txt";
+		const sNewName = "renamedFile.txt";
+		const sUrl = "https://example.com/file.txt";
+		const oMockPromise = new Promise((resolve) => {
+			setTimeout(resolve, 100);
+		});
+		const oItem = this.oUploadSetwithTablePlugin.uploadItemViaUrl(sName, sUrl, oMockPromise);
+		assert.strictEqual(oItem.getUploadState(), mLibrary.UploadState.Ready, "Upload state is Ready");
+		this.oTable._oTable.attachEventOnce("updateFinished", () => {
+			oItem.setFileName(sNewName);
+			assert.strictEqual(oItem.getFileName(), sNewName, "File name was successfully updated");
+			done();
+		});
+	});
+	QUnit.test("getItemsMap resolves with items from contexts", function (assert) {
+	    const done = assert.async();
+	    const oUploadPlugin = new UploadSetwithTable();
+	    oUploadPlugin.getItemForContext = function (oItemContext) {
+	        return Promise.resolve({ id: oItemContext.id, name: oItemContext.name });
+	    };
+	    const aItemContexts = [
+	        { id: "1", name: "File1" },
+	        { id: "2", name: "File2" }
+	    ];
+	    oUploadPlugin.getItemsMap(aItemContexts).then(function (aItems) {
+	        assert.equal(aItems.length, 2, "Correct number of items returned.");
+	        assert.equal(aItems[0].name, "File1", "First item name is correct.");
+	        assert.equal(aItems[1].name, "File2", "Second item name is correct.");
+	        done();
+	    });
+	});
+	QUnit.module("Plugin Download Tests", {
+		beforeEach: function () {
+			this.sandbox = sinon.createSandbox();
+			this.uploadSetInstance = new UploadSetwithTable();
+			this.sandbox.stub(Log, "error");
+			this.sandbox.stub(this.uploadSetInstance, "getConfig");
+		},
+		afterEach: function () {
+			this.sandbox.restore();
+		}
+	});
+	QUnit.test("download should log an error when getRowConfiguration returns null", function (assert) {
+		this.uploadSetInstance.getRowConfiguration = () => null;
+		this.uploadSetInstance.download({}, true);
+		assert.strictEqual(this.uploadSetInstance.getRowConfiguration(), null, "getRowConfiguration() should return null");
+		assert.ok(Log.error.calledOnce, "Log.error was called once");
+		assert.ok(
+			Log.error.calledWith("Row configuration is not set for the plugin. Download is not possible."),
+			"Correct error message logged"
+		);
+		assert.ok(this.uploadSetInstance.getConfig.notCalled, "getConfig was not called when row configuration is null");
+	});
+	QUnit.test("download should call getConfig with correct parameters when getRowConfiguration is defined", function (assert) {
+		this.uploadSetInstance.getRowConfiguration = () => ({});
+		const oBindingContext = { dummy: "data" };
+		const bAskForLocation = true;
+		this.uploadSetInstance.download(oBindingContext, bAskForLocation);
+		assert.ok(this.uploadSetInstance.getConfig.calledOnce, "getConfig was called once");
+		assert.ok(
+			this.uploadSetInstance.getConfig.calledWith("download", {
+				oBindingContext: oBindingContext,
+				bAskForLocation: bAskForLocation
+			}),
+			"getConfig was called with correct arguments"
+		);
+	});
+    QUnit.module("Plugin Drag and Drop Tests", {
+        beforeEach: function () {
+            this.sandbox = sinon.createSandbox();
+            this.uploadSetInstance = new UploadSetwithTable();
+            this.uploadSetInstance.handleDrop = this.uploadSetInstance.handleDrop || function () {};
+            this.uploadSetInstance.handleDragOver = this.uploadSetInstance.handleDragOver || function () {};
+            this.uploadSetInstance.handleDragEnter = this.uploadSetInstance.handleDragEnter || function () {};
+            this.uploadSetInstance.handleDragLeave = this.uploadSetInstance.handleDragLeave || function () {};
+            this.sandbox.stub(this.uploadSetInstance, "handleDrop");
+            this.sandbox.stub(this.uploadSetInstance, "handleDragOver");
+            this.sandbox.stub(this.uploadSetInstance, "handleDragEnter");
+            this.sandbox.stub(this.uploadSetInstance, "handleDragLeave");
+        },
+        afterEach: function () {
+            this.sandbox.restore();
+        }
+    });
+    QUnit.test("Drag over event should trigger handleDragOver", function (assert) {
+        const oEvent = new Event("dragover", {});
+        this.uploadSetInstance.handleDragOver(oEvent);
+        assert.ok(this.uploadSetInstance.handleDragOver.calledOnce, "handleDragOver was called once");
+    });
+    QUnit.test("Drag enter event should trigger handleDragEnter", function (assert) {
+        const oEvent = new Event("dragenter", {});
+        this.uploadSetInstance.handleDragEnter(oEvent);
+        assert.ok(this.uploadSetInstance.handleDragEnter.calledOnce, "handleDragEnter was called once");
+    });
+    QUnit.test("Drag leave event should trigger handleDragLeave", function (assert) {
+        const oEvent = new Event("dragleave", {});
+        this.uploadSetInstance.handleDragLeave(oEvent);
+        assert.ok(this.uploadSetInstance.handleDragLeave.calledOnce, "handleDragLeave was called once");
+    });
+    QUnit.test("Drop event should trigger handleDrop", function (assert) {
+        const oEvent = new Event("drop", {
+            originalEvent: {
+                dataTransfer: {
+                    files: [{ name: "test-file.txt", size: 1024 }]
+                }
+            }
+        });
+        this.uploadSetInstance.handleDrop(oEvent);
+        assert.ok(this.uploadSetInstance.handleDrop.calledOnce, "handleDrop was called once");
+	});
+    QUnit.module("Plugin Row Item Configuration", {
+        beforeEach: function () {
+            this.sandbox = sinon.createSandbox();
+            this.uploadSetInstance = new UploadSetwithTable();
+            this.uploadSetInstance.rowItemConfiguration = this.uploadSetInstance.rowItemConfiguration || function () {};
+        },
+        afterEach: function () {
+            this.sandbox.restore();
+        }
+    });
+    QUnit.test("rowItemConfiguration should return correct configuration", function (assert) {
+        const mockConfig = { column: "File Name", type: "text", visible: true };
+        this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration").returns(mockConfig);
+        const result = this.uploadSetInstance.rowItemConfiguration();
+        assert.deepEqual(result, mockConfig, "rowItemConfiguration returned the expected object");
+    });
+    QUnit.test("rowItemConfiguration should be called once", function (assert) {
+        this.sandbox.spy(this.uploadSetInstance, "rowItemConfiguration");
+        this.uploadSetInstance.rowItemConfiguration();
+        assert.ok(this.uploadSetInstance.rowItemConfiguration.calledOnce, "rowItemConfiguration was called once");
+	});
+	QUnit.test("rowItemConfiguration should return default configuration if none is set", function (assert) {
+        this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration").returns(undefined);
+        const result = this.uploadSetInstance.rowItemConfiguration();
+        assert.strictEqual(result, undefined, "rowItemConfiguration returned undefined when no config is set");
+    });
+    QUnit.test("rowItemConfiguration should return different configurations for different columns", function (assert) {
+        const columnConfig1 = { column: "File Name", type: "text", visible: true };
+        const columnConfig2 = { column: "File Size", type: "number", visible: false };
+        this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration")
+            .onFirstCall().returns(columnConfig1)
+            .onSecondCall().returns(columnConfig2);
+        const result1 = this.uploadSetInstance.rowItemConfiguration();
+        const result2 = this.uploadSetInstance.rowItemConfiguration();
+        assert.deepEqual(result1, columnConfig1, "First call returned configuration for 'File Name'");
+        assert.deepEqual(result2, columnConfig2, "Second call returned configuration for 'File Size'");
+    });
+    QUnit.test("rowItemConfiguration should not throw an error when called with invalid input", function (assert) {
+        this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration").callsFake(function () {
+            return { column: "Unknown", type: "unknown", visible: false };
+        });
+        const result = this.uploadSetInstance.rowItemConfiguration(null);
+        assert.deepEqual(result, { column: "Unknown", type: "unknown", visible: false }, "rowItemConfiguration handled null input gracefully");
+	});
+	QUnit.module("Plugin visual and aggregation tests");
+	QUnit.test("NoDataIllustration test", async function (assert) {
+		const done = assert.async();
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id: "uploadButton", placeholderFor: "UploadButtonPlaceholder" })
+			]
+		});
+		var oEmptyModel = new sap.ui.model.json.JSONModel({});
+		oMdcTable.setModel(oEmptyModel);
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"]
+		});
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+		oUploadSetwithTablePlugin.setNoDataIllustration("sap-icon://document");
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+		// Ensure "No Data" illustration is correctly set
+		assert.strictEqual(oUploadSetwithTablePlugin.getNoDataIllustration(), "sap-icon://document", "No Data Illustration is correctly set.");
+		done();
+	});
+	QUnit.test("Upload enabled test", async function (assert) {
+		const done = assert.async();
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id: "myuploadButton", placeholderFor: "UploadButtonPlaceholder" })
+			]
+		});
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"]
+		});
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+		oUploadSetwithTablePlugin.setUploadEnabled(false);
+		var bIsUploadEnabled = oUploadSetwithTablePlugin.getUploadEnabled();
+		assert.equal(false, bIsUploadEnabled, "Uploading is not allowed when setUploadEnabled is set to true");
+		done();
+	});
+	QUnit.module("Plugin itemValidationHandler Tests", {
+	    beforeEach: function () {
+	        this.sandbox = sinon.createSandbox();
+	        this.oUploadPlugin = new UploadSetwithTable();
+	        this.oMockItem = new sap.m.UploadCollectionItem({
+	            fileName: "test-file.txt",
+	            mimeType: "text/plain"
+	        });
+	    },
+	    afterEach: function () {
+	        this.sandbox.restore();
+	        this.oUploadPlugin.destroy();
+	    }
+	});
+	QUnit.test("Should invoke itemValidationHandler before upload", async function (assert) {
+	    assert.expect(2);
+	    const done = assert.async();
+	    const validationHandler = sinon.stub().resolves();
+	    this.oUploadPlugin.setItemValidationHandler(validationHandler);
+	    const handlerFunction = this.oUploadPlugin.getItemValidationHandler();
+	    if (handlerFunction) {
+	        await handlerFunction(this.oMockItem);
+	    }
+	    assert.ok(validationHandler.calledOnce, "itemValidationHandler should be called once.");
+	    assert.ok(validationHandler.calledWith(this.oMockItem), "itemValidationHandler called with correct item.");
+	    done();
+	});
+	QUnit.test("Should prevent upload when itemValidationHandler rejects the promise", function (assert) {
+	    const done = assert.async();
+	    const validationHandler = sinon.stub().rejects(new Error("File not allowed"));
+	    this.oUploadPlugin.setItemValidationHandler(validationHandler);
+	    const handlerFunction = this.oUploadPlugin.getItemValidationHandler();
+	    if (handlerFunction) {
+	        handlerFunction(this.oMockItem).catch((error) => {
+	            assert.ok(validationHandler.calledOnce, "itemValidationHandler was called.");
+	            assert.strictEqual(error.message, "File not allowed", "Correct error message received.");
+	            done();
+	        });
+	    }
+	});
+	QUnit.test("Should modify item before upload in itemValidationHandler", async function (assert) {
+	    const done = assert.async();
+	    const validationHandler = function (oItem) {
+			oItem.setFileName("modified-file.txt");
+			return Promise.resolve();
+	    };
+	    this.oUploadPlugin.setItemValidationHandler(validationHandler);
+	    const handlerFunction = this.oUploadPlugin.getItemValidationHandler();
+	    if (handlerFunction) {
+	        await handlerFunction(this.oMockItem);
+	    }
+	    assert.strictEqual(this.oMockItem.getFileName(), "modified-file.txt", "File name was modified before upload.");
+	    done();
+	});
+	QUnit.test("Should allow upload when itemValidationHandler is not set", function (assert) {
+	    const handlerFunction = this.oUploadPlugin.getItemValidationHandler();
+	    assert.ok(handlerFunction === undefined || handlerFunction === null, "No validation handler should be set.");
+	});
+	QUnit.module("Plugin Cloud File Picker Tests");
+	QUnit.test("Cloud file picker correctly creates file with metadata", function (assert) {
+	    const oUploadPlugin = new UploadSetwithTable();
+	    const oCloudFile = {
+	        getFileShareItemName: () => "sample.pdf",
+	        getFileShareItemContentType: () => "application/pdf",
+	        getFileShareItemContentSize: () => 1024,
+	        mProperties: { cloudSource: "Google Drive" }
+	    };
+	    const oResult = oUploadPlugin._createFileFromCloudPickerFile(oCloudFile);
+	    assert.equal(oResult.file.name, "sample.pdf", "File name is correctly set.");
+	    assert.equal(oResult.file.type, "application/pdf", "File type is correctly set.");
+	    assert.equal(oResult.fileShareProperties.cloudSource, "Google Drive", "Cloud source metadata is preserved.");
+	});
+	QUnit.test("Cloud file picker handles missing content type", function (assert) {
+	    const oUploadPlugin = new UploadSetwithTable();
+	    const oCloudFile = {
+	        getFileShareItemName: () => "document.txt",
+	        getFileShareItemContentType: () => null,
+	        getFileShareItemContentSize: () => 2048,
+	        mProperties: { cloudSource: "OneDrive" }
+	    };
+	    const oResult = oUploadPlugin._createFileFromCloudPickerFile(oCloudFile);
+	    assert.equal(oResult.file.name, "document.txt");
+	    assert.equal(oResult.file.type, "null");
+	    assert.equal(oResult.fileShareProperties.cloudSource, "OneDrive");
+	});
+	QUnit.test("Cloud file picker handles missing metadata properties", function (assert) {
+	    const oUploadPlugin = new UploadSetwithTable();
+	    const oCloudFile = {
+	        getFileShareItemName: () => "image.png",
+	        getFileShareItemContentType: () => "image/png",
+	        getFileShareItemContentSize: () => 3072
+	    };
+	    const oResult = oUploadPlugin._createFileFromCloudPickerFile(oCloudFile);
+	    assert.equal(oResult.file.name, "image.png");
+	    assert.equal(oResult.file.type, "image/png");
+	    assert.deepEqual(oResult.fileShareProperties, undefined);
+	});
+	QUnit.test("Cloud picker file change triggers file creation and processing", function (assert) {
+	    const oUploadPlugin = new UploadSetwithTable();
+	    const oMockEvent = {
+	        getParameters: () => ({
+	            selectedFiles: [
+	                {
+	                    getFileShareItemName: () => "test1.docx",
+	                    getFileShareItemContentType: () => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	                    getFileShareItemContentSize: () => 1024
+	                },
+	                {
+	                    getFileShareItemName: () => "test2.xlsx",
+	                    getFileShareItemContentType: () => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+	                    getFileShareItemContentSize: () => 2048
+	                }
+	            ]
+	        })
+	    };
+	    let aProcessedFiles = [];
+	    oUploadPlugin._processNewCloudPickerFileObjects = function (aFiles) {
+	        aProcessedFiles = aFiles;
+	    };
+	    oUploadPlugin._onCloudPickerFileChange(oMockEvent);
+	    assert.equal(aProcessedFiles.length, 2);
+	    assert.equal(aProcessedFiles[0].file.name, "test1.docx");
+	    assert.equal(aProcessedFiles[1].file.name, "test2.xlsx");
+	});
+	QUnit.test("Cloud picker files are processed correctly", function (assert) {
+	    const oUploadPlugin = new UploadSetwithTable();
+	    const oMockFile1 = {
+	        file: new File([""], "cloudfile1.pdf", { type: "application/pdf" }),
+	        fileShareProperties: { source: "OneDrive" }
+	    };
+	    const oMockFile2 = {
+	        file: new File([""], "cloudfile2.docx", { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }),
+	        fileShareProperties: { source: "Google Drive" }
+	    };
+	    const aInitiatedUploads = [];
+	    oUploadPlugin._initateItemUpload = function (oItem) {
+	        aInitiatedUploads.push(oItem);
+	    };
+	    oUploadPlugin._processNewCloudPickerFileObjects([oMockFile1, oMockFile2]);
+	    assert.equal(aInitiatedUploads.length, 2);
+	    assert.equal(aInitiatedUploads[0].getFileName(), "cloudfile1.pdf");
+	    assert.equal(aInitiatedUploads[1].getFileName(), "cloudfile2.docx");
+	});
 });
