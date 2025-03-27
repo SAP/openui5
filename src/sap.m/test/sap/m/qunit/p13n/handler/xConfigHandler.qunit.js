@@ -97,14 +97,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Check #createHandler with 'revertProperties' adds to revert data", async function (assert) {
+	QUnit.test("Check #createHandler with 'additionalProperties' adds to revert data", async function (assert) {
 		const done = assert.async();
 
 		const oHandler = xConfigHandler.createHandler({
 			aggregationBased: true,
 			property: "visible",
 			operation: "add",
-			revertProperties: ["descending"]
+			additionalProperties: ["descending"]
 		});
 
 		const oChangeContent = {
@@ -121,14 +121,14 @@ sap.ui.define([
 		done();
 	});
 
-	QUnit.test("Check #createHandler with 'revertProperties' does not add to revert data", async function (assert) {
+	QUnit.test("Check #createHandler with 'additionalProperties' does not add to revert data", async function (assert) {
 		const done = assert.async();
 
 		const oHandler = xConfigHandler.createHandler({
 			aggregationBased: true,
 			property: "visible",
 			operation: "add",
-			revertProperties: ["descending"]
+			additionalProperties: ["descending"]
 		});
 
 		const oChangeContent = {
@@ -144,14 +144,14 @@ sap.ui.define([
 		done();
 	});
 
-	QUnit.test("Check #createHandler with 'revertProperties' does not add to revert data when missing in revertProperties", async function (assert) {
+	QUnit.test("Check #createHandler with 'additionalProperties' does not add to revert data when missing in additionalProperties", async function (assert) {
 		const done = assert.async();
 
 		const oHandler = xConfigHandler.createHandler({
 			aggregationBased: true,
 			property: "visible",
 			operation: "add",
-			revertProperties: []
+			additionalProperties: []
 		});
 
 		const oChangeContent = {
@@ -260,11 +260,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check correct revert object creation (no existing state, item based change)", function (assert) {
+		function getCurrentItemState(oControl, oPriorAggregationConfig, sAffectedAggregation, oChange, mPropertyBag) {
+			return xConfigAPI.getCurrentItemState(oControl, {propertyBag: mPropertyBag, changeType: oChange.getChangeType()}, oPriorAggregationConfig, sAffectedAggregation);
+		}
 
 		const oHandler = xConfigHandler.createHandler({
 			aggregationBased: true,
 			property: "visible",
-			operation: "add"
+			operation: "add",
+			getCurrentState: getCurrentItemState
 		});
 
 		this.createChangeObject({

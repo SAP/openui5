@@ -54,9 +54,9 @@
 				<f:Form editable="true">
 					<f:layout>
 						<f:ResponsiveGridLayout
-							labelSpanXL="3"
-							labelSpanL="3"
-							labelSpanM="3"
+							labelSpanXL="4"
+							labelSpanL="4"
+							labelSpanM="4"
 							labelSpanS="12"
 							adjustLabelSpan="false"
 							emptySpanXL="0"

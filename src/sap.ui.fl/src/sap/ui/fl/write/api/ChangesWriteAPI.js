@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
@@ -25,7 +24,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
@@ -38,7 +36,6 @@ sap.ui.define([
 	Applier,
 	Reverter,
 	ChangesUtils,
-	ControlVariantUtils,
 	FlexObjectFactory,
 	States,
 	FlexObjectState,
@@ -50,7 +47,6 @@ sap.ui.define([
 	FlexObjectManager,
 	ContextBasedAdaptationsAPI,
 	VersionsAPI,
-	Layer,
 	Utils
 ) {
 	"use strict";
@@ -208,37 +204,6 @@ sap.ui.define([
 		Object.assign(mPropertyBag.changeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, oAppComponent));
 		mPropertyBag.controlType = mPropertyBag.selector.controlType || Utils.getControlType(mPropertyBag.selector);
 		return createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag);
-	};
-
-	/**
-	 * Creates a FlVariant with the passed properties.
-	 *
-	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the app component
-	 * @param {object} mPropertyBag.variantManagementReference - Reference to the variant management control
-	 * @param {object} mPropertyBag.title - Name of the new variant
-	 * @param {object} [mPropertyBag.variantReference] - Reference to the variant the new one should be based on
-	 * @param {object} [mPropertyBag.layer] - Layer of the new variant
-	 * @param {object} [mPropertyBag.generator] - Generator of the new variant
-	 * @param {object} [mPropertyBag.author] - Author of the variant
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlVariant} The created FlVariant
-	 * @private
-	 * @ui5-restricted SAP Business Network
-	 */
-	ChangesWriteAPI.createVariant = function(mPropertyBag) {
-		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
-		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-		const mProperties = {
-			variantManagementReference: mPropertyBag.variantManagementReference,
-			variantReference: mPropertyBag.variantReference || mPropertyBag.variantManagementReference,
-			variantName: mPropertyBag.title,
-			layer: mPropertyBag.layer || Layer.CUSTOMER,
-			user: mPropertyBag.author || ControlVariantUtils.DEFAULT_AUTHOR,
-			reference: sReference,
-			generator: mPropertyBag.generator || "ChangesWriteAPI.createVariant"
-		};
-
-		return FlexObjectFactory.createFlVariant(mProperties);
 	};
 
 	/**

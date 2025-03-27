@@ -30,10 +30,20 @@ sap.ui.define([
 	 * @returns {object} Information for the model to apply the change
 	 */
 	ChangeAnnotation.applyChange = function(oChange) {
-		return {
-			path: oChange.getContent().annotationPath,
-			value: oChange.getText("annotationText") || oChange.getContent().value
+		const oContent = oChange.getContent();
+		const oReturn = {
+			path: oContent.annotationPath
 		};
+
+		const sValue = oChange.getText("annotationText") || oContent.value;
+
+		const oObjectTemplateInfo = oContent.objectTemplateInfo;
+		if (oObjectTemplateInfo) {
+			oReturn.value = JSON.parse(oObjectTemplateInfo.templateAsString.replace(oObjectTemplateInfo.placeholder, sValue));
+		} else {
+			oReturn.value = sValue;
+		}
+		return oReturn;
 	};
 
 	/**
@@ -48,11 +58,20 @@ sap.ui.define([
 	 * @param {object} oSpecificChangeInfo - Information needed to complete the change
 	 * @param {string} oSpecificChangeInfo.content.annotationPath - Path of the annotation to be changed
 	 * @param {string} oSpecificChangeInfo.content.value - Value of the annotation to be changed
+	 * @param {string} oSpecificChangeInfo.content.text - Translatable value of the annotation. If given, the value is ignored
+	 * @param {object} [oSpecificChangeInfo.content.objectTemplateInfo] - Object template to construct a return object
+	 * @param {string} [oSpecificChangeInfo.content.objectTemplateInfo.templateAsString] - Stringified template to be used for constructing the return object
+	 * @param {string} [oSpecificChangeInfo.content.objectTemplateInfo.placeholder] - Placeholder in the template string
 	 */
 	ChangeAnnotation.completeChangeContent = function(oChange, oSpecificChangeInfo) {
 		const oNewContent = {
 			annotationPath: oSpecificChangeInfo.content.annotationPath
 		};
+
+		if (oSpecificChangeInfo.content.objectTemplateInfo) {
+			oNewContent.objectTemplateInfo = oSpecificChangeInfo.content.objectTemplateInfo;
+		}
+
 		if (oSpecificChangeInfo.content.text) {
 			oChange.setText("annotationText", oSpecificChangeInfo.content.text);
 		} else {

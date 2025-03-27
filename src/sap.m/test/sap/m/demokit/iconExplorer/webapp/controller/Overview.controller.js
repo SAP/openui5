@@ -1,13 +1,9 @@
 sap.ui.define([
-	"sap/m/Label",
 	"sap/m/MessageToast",
 	"sap/m/Token",
 	"sap/ui/Device",
-	"sap/ui/core/Element",
+	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/Theming",
-	"sap/ui/core/theming/Parameters",
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/demo/iconexplorer/model/formatter",
 	"sap/ui/model/Filter",
@@ -15,22 +11,18 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/documentation/sdk/controller/util/ThemePicker"
 ], function(
-	Label,
 	MessageToast,
 	Token,
 	Device,
-	Element,
+	Core,
 	Fragment,
-	IconPool,
-	Theming,
-	Parameters,
 	BaseController,
 	formatter,
 	Filter,
 	FilterOperator,
 	JSONModel,
 	ThemePicker
-) {
+	) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -184,69 +176,10 @@ sap.ui.define([
 				iFilteredIcons = oResultItemsBinding.getLength(),
 				iAllIcons = oResultItemsBinding.oList.length;
 
-			function getRootControl(oEvent) {
-				return Element.getElementById(oEvent.currentTarget.id);
-			}
 			// show total count of items
 			this.getModel("view").setProperty("/iconFilterCount", iFilteredIcons, null, true);
 			this.getModel("view").setProperty("/allIconsCount", iAllIcons, null, true);
 			this.getModel("view").setProperty("/iconsFound", iFilteredIcons > 0, null, true);
-
-			// register press callback for grid
-			if (this._oCurrentQueryContext.tab === "grid") {
-				if (!this._oPressLayoutCellDelegate) {
-					this._oPressLayoutCellDelegate = {
-						// tap: set selected and hoverable class
-						ontap: function (oEvent) {
-							var oBindingContext = oEvent.srcControl.getBindingContext();
-							var oRoot = getRootControl(oEvent);
-
-							// prevent setting styles on the favorite button
-							if (oRoot.getMetadata().getName().search("ToggleButton") >= 0 || oEvent.srcControl.getMetadata().getName().search("ToggleButton") >= 0) {
-								return;
-							}
-
-							// select the icon
-							this._updateHash("icon", oBindingContext.getProperty("name"));
-						}.bind(this),
-						// touchstart: set item active and remove hoverable class, invert icon color
-						ontouchstart: function (oEvent) {
-							var oRoot = getRootControl(oEvent);
-
-							oRoot.addStyleClass("sapMLIBActive");
-							oRoot.removeStyleClass("sapMLIBHoverable");
-							if (!this._sNormalIconColor) {
-								this._sNormalIconColor = Element.closestTo(oRoot.$().find(".sapUiIcon")[0]).getColor();
-							}
-							oRoot.$().find(".sapMFlexItem > .sapUiIcon").get().forEach(function (oDomRef) {
-								const oIcon = Element.closestTo(oDomRef);
-								oIcon?.setColor(Parameters.get("sapUiTextInverted"));
-							});
-						}.bind(this),
-						// touchend: remove active class, reset icon color
-						ontouchend: function (oEvent) {
-							var oRoot = getRootControl(oEvent);
-
-							oRoot.removeStyleClass("sapMLIBActive");
-							oRoot.$().find(".sapMFlexItem > .sapUiIcon").get().forEach(function (oDomRef) {
-								const oIcon = Element.closestTo(oDomRef);
-								oIcon?.setColor(this._sNormalIconColor);
-							}.bind(this));
-						}.bind(this)
-					};
-					// enter + space key: same as tab
-					this._oPressLayoutCellDelegate.onsapenter = this._oPressLayoutCellDelegate.ontap;
-				}
-
-				// there is no addEventDelegateOnce so we remove and add it for all items
-				var aItems = this.byId("results").getAggregation(this._sAggregationName);
-				if (aItems) {
-					aItems.forEach(function (oItem) {
-						oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
-						oItem.addEventDelegate(this._oPressLayoutCellDelegate);
-					}.bind(this));
-				}
-			}
 		},
 
 		/**

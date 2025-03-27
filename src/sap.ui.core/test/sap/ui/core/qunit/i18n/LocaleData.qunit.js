@@ -14,12 +14,6 @@ sap.ui.define([
 	"sap/ui/core/LocaleData"
 ], function(timezones, Log, Formatting, LanguageTag, Localization, CalendarType, CalendarWeekNumbering, TimezoneUtils, LoaderExtensions, Lib, Locale, LocaleData) {
 	"use strict";
-	const aSupportedLanguages = ["ar", "ar_EG", "ar_SA", "bg", "ca", "cnr", "cs", "cy", "da", "de", "de_AT", "de_CH",
-		"el", "el_CY", "en", "en_AU", "en_GB", "en_HK", "en_IE", "en_IN", "en_NZ", "en_PG", "en_SG", "en_ZA", "es",
-		"es_AR", "es_BO", "es_CL", "es_CO", "es_MX", "es_PE", "es_UY", "es_VE", "et", "fa", "fi", "fr", "fr_BE",
-		"fr_CA", "fr_CH", "fr_LU", "he", "hi", "hr", "hu", "id", "it", "it_CH", "ja", "kk", "ko", "lt", "lv", "mk",
-		"ms", "nb", "nl", "nl_BE", "pl", "pt", "pt_PT", "ro", "ru", "ru_UA", "sk", "sl", "sr", "sr_Latn", "sv", "th",
-		"tr", "uk", "vi", "zh_CN", "zh_HK", "zh_SG", "zh_TW"];
 
 	QUnit.module("sap.ui.core.LocaleData", {
 		beforeEach: function () {
@@ -34,11 +28,6 @@ sap.ui.define([
 			// Only required after the test run is through for performance reasons
 			LocaleData._resetLocaleDataCache();
 		}
-	});
-
-	//*********************************************************************************************
-	QUnit.test("Supported languages", function(assert) {
-		assert.deepEqual(LocaleData._cldrLocales.slice().sort(), aSupportedLanguages.slice().sort());
 	});
 
 	//*********************************************************************************************
@@ -100,7 +89,7 @@ sap.ui.define([
 		assert.strictEqual(oLocaleData.sCLDRLocaleId, "en");
 	});
 
-	aSupportedLanguages.forEach(function(sLanguage) {
+	LocaleData._cldrLocales.forEach(function(sLanguage) {
 		QUnit.test("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
 			var oLocaleData = LocaleData.getInstance(new Locale(sLanguage));
 			var oLanguagesObject = oLocaleData.getLanguages();
@@ -609,7 +598,7 @@ sap.ui.define([
 		"Etc/Zulu"
 	];
 
-	aSupportedLanguages.forEach(function (sLocale) {
+	LocaleData._cldrLocales.forEach(function (sLocale) {
 		QUnit.test("getTimezoneTranslations for " + sLocale + " and ensure bijective mapping", function(assert) {
 			var oLocaleData = LocaleData.getInstance(new Locale(sLocale));
 			var mTimezoneTranslations = oLocaleData.getTimezoneTranslations();

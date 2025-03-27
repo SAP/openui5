@@ -142,33 +142,26 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
-	PersistenceWriteAPI.save = function(mPropertyBag) {
+	PersistenceWriteAPI.save = async function(mPropertyBag) {
 		// when save or activate a version in rta no reload is triggered but flex/data request is send
 		// and will delete version and maxLayer without saveChangeKeepSession
 		// after the request saveChangeKeepSession needs to be delete again
-		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
-		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		let oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		oFlexInfoSession.saveChangeKeepSession = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-		return FlexObjectManager.saveFlexObjects(mPropertyBag).then(function(aFlexObjects) {
-			if (aFlexObjects?.length > 0) {
-				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
-					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
-					oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-					delete oFlexInfoSession.saveChangeKeepSession;
-					FlexInfoSession.setByReference({ ...oFlexInfoSession, ...oResult }, sReference);
-					return aFlexObjects;
-				});
-			}
-			oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-			delete oFlexInfoSession.saveChangeKeepSession;
-			FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-			return aFlexObjects;
-		});
+		const aFlexObjects = await FlexObjectManager.saveFlexObjects(mPropertyBag);
+		if (aFlexObjects?.length > 0) {
+			await PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag);
+		}
+		oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		delete oFlexInfoSession.saveChangeKeepSession;
+		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
+		return aFlexObjects;
 	};
 
 	/**
-	 * Provides information if content from backend and persistence in an application can be published/reset.
+	 * Updates information in Flex Info Session from backend and persistence in an application if it can be published/reset.
 	 *
 	 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 	 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
@@ -178,42 +171,43 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
-	PersistenceWriteAPI.getResetAndPublishInfo = function(mPropertyBag) {
-		return Promise.all([
+	PersistenceWriteAPI.updateResetAndPublishInfo = async function(mPropertyBag) {
+		const [bHasChanges, bIsPublishAvailable] = await Promise.all([
 			hasChanges(mPropertyBag),
 			FeaturesAPI.isPublishAvailable()
-		]).then(function(aResetPublishInfo) {
-			var bHasChanges = aResetPublishInfo[0];
-			var bIsPublishAvailable = aResetPublishInfo[1];
-			var bIsLayerTransportable = mPropertyBag.layer !== Layer.USER && mPropertyBag.layer !== Layer.PUBLIC;
-			// By default:
-			// Reset is enabled if there is change
-			// Publish is by default disabled
-			// All contexts provided is true to not trigger a reload and add additional parameter to flex/data request
-			var oFlexInfo = {
-				isResetEnabled: bHasChanges,
-				isPublishEnabled: false,
-				allContextsProvided: true
-			};
-			// If there is change and the layer is transportable , the request to back end is always necessary
-			// because of control variant reset logic through setVisible change and app descriptor changes
-			if (bIsLayerTransportable) {
-				return Storage.getFlexInfo(mPropertyBag)
-				.then(function(oResponse) {
-					oFlexInfo.allContextsProvided = oResponse.allContextsProvided === undefined || oResponse.allContextsProvided;
-					oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
-					// Together with publish info from back end,
-					// system setting info for publish availability also need to be checked
-					oFlexInfo.isPublishEnabled = bIsPublishAvailable && oResponse.isPublishEnabled;
-					return oFlexInfo;
-				})
-				.catch(function(oError) {
-					Log.error(`Sending request to flex/info route failed: ${oError.message}`);
-					return oFlexInfo;
-				});
+		]);
+
+		// Default flex info object
+		const oFlexInfo = {
+			isResetEnabled: bHasChanges,
+			isPublishEnabled: false,
+			allContextsProvided: true
+		};
+		const bIsLayerTransportable = mPropertyBag.layer !== Layer.USER && mPropertyBag.layer !== Layer.PUBLIC;
+
+		// If the layer is transportable, fetch additional information from the backend
+		if (bIsLayerTransportable) {
+			try {
+				const oResponse = await Storage.getFlexInfo(mPropertyBag);
+				// default is true, so only set to false if explicitly set to false
+				oFlexInfo.allContextsProvided = oResponse.allContextsProvided !== false;
+				oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
+				oFlexInfo.isPublishEnabled = bIsPublishAvailable && oResponse.isPublishEnabled;
+			} catch (oError) {
+				Log.error(`Sending request to flex/info route failed: ${oError.message}`);
 			}
-			return oFlexInfo;
-		});
+		}
+
+		// Update the Flex Info Session
+		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		const oOldFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		const oNewFlexInfoSession = {
+			...oOldFlexInfoSession,
+			...oFlexInfo
+		};
+
+		FlexInfoSession.setByReference(oNewFlexInfoSession, sReference);
+		FlexState.setAllContextsProvided(sReference, oNewFlexInfoSession.allContextsProvided);
 	};
 
 	/**

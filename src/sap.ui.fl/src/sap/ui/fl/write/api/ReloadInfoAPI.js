@@ -94,15 +94,14 @@ sap.ui.define([
 				selector: oReloadInfo.selector,
 				layer: oReloadInfo.layer
 			};
-			const oFlexInfo = await PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag);
-			oFlexInfoSession = {...oFlexInfoSession, ...oFlexInfo };
-			oFlexInfoSession.initialAllContexts =
-				oFlexInfoSession.allContextsProvided === false || oFlexInfoSession.allContextsProvided === undefined;
+			await PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag);
+			// Refresh oFlexInfoSession with updated backend data updated in updateResetAndPublishInfo
+			oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		} else {
-			oFlexInfoSession.initialAllContexts = !oFlexInfoSession.allContextsProvided;
+			FlexState.setAllContextsProvided(sReference, oFlexInfoSession.allContextsProvided);
 		}
+		oFlexInfoSession.initialAllContexts = !oFlexInfoSession.allContextsProvided;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-		FlexState.setAllContextsProvided(sReference, oFlexInfoSession.allContextsProvided);
 		return !oFlexInfoSession.allContextsProvided;
 	}
 
