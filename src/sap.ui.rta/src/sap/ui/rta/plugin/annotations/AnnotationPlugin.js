@@ -36,7 +36,7 @@ sap.ui.define([
 				{
 					changeType: oAction.changeType,
 					serviceUrl: oChange.serviceUrl,
-					content: oChange.content,
+					content: {...oChange.content, objectTemplateInfo: oAction.objectTemplateInfo},
 					changesToDelete: aLegacyRenameChanges
 				}
 			);

@@ -318,7 +318,7 @@ sap.ui.define([
 				assert.strictEqual(oAnnotationChange.getChangeType(), "myChangeType", "then the first change has the correct change type");
 				assert.strictEqual(oAnnotationChange.getServiceUrl(), "testServiceUrl", "then the first change has the correct service URL");
 				assert.strictEqual(oAnnotationChange.getContent().annotationPath, "Path1", "then the first change has the correct content");
-				assert.strictEqual(oAnnotationChange.getChangeType(), "myChangeType", "then the second change has the correct change type");
+				assert.strictEqual(oAnnotationChange2.getChangeType(), "myChangeType", "then the second change has the correct change type");
 				assert.strictEqual(oAnnotationChange2.getContent().annotationPath, "Path2", "then the second change has the correct content");
 				assert.strictEqual(oAnnotationChange2.getServiceUrl(), "testServiceUrl2", "then the first change has the correct service URL");
 				fnDone();
@@ -463,6 +463,58 @@ sap.ui.define([
 				undefined,
 				"then the dialog reference is removed"
 			);
+		});
+
+		QUnit.test("when the designtime action has objectTemplateInfo", async function(assert) {
+			const fnDone = assert.async();
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange: {
+							changeType: "myChangeType",
+							title: "TITLE_I18N_KEY",
+							isEnabled: () => true,
+							type: AnnotationTypes.StringType,
+							objectTemplateInfo: {
+								templateAsString: "templateAsStringplaceholderfoo",
+								placeholder: "placeholder"
+							}
+						}
+					}
+				}
+			});
+
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+			const aChanges = [
+				{
+					serviceUrl: "testServiceUrl",
+					content: {
+						annotationPath: "Path1",
+						value: "Value1"
+					}
+				}
+			];
+
+			sandbox.stub(this.oAnnotationPlugin._oDialog, "openDialogAndHandleChanges").resolves(aChanges);
+
+			this.oAnnotationPlugin.attachEventOnce("elementModified", function(oEvent) {
+				const oCompositeCommand = oEvent.getParameter("command");
+				const aCommands = oCompositeCommand.getCommands();
+				assert.strictEqual(aCommands.length, 1, "then the composite command contains one annotation commands");
+				const oAnnotationChange = aCommands[0].getPreparedChange();
+				assert.strictEqual(oAnnotationChange.getChangeType(), "myChangeType", "then the change has the correct change type");
+				assert.strictEqual(oAnnotationChange.getServiceUrl(), "testServiceUrl", "then the change has the correct service URL");
+				assert.strictEqual(oAnnotationChange.getContent().annotationPath, "Path1", "then the change has the correct content");
+				assert.deepEqual(oAnnotationChange.getContent().objectTemplateInfo, {
+					templateAsString: "templateAsStringplaceholderfoo",
+					placeholder: "placeholder"
+				}, "then the change has the correct objectTemplateInfo");
+				fnDone();
+			});
+			const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
+			const oMenuItem = aMenuItems[0];
+			await oMenuItem.handler([this.oButtonOverlay]);
 		});
 	});
 
