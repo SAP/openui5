@@ -126,7 +126,7 @@ sap.ui.define([
 				 * 	}
 				 * </code></pre>
 				 *
-				 * @since 1.135
+				 * @since 1.136
 				 **/
 				customPageContentHandler: {type: "function", defaultValue: null}
 			},
