@@ -537,17 +537,17 @@ sap.ui.define([
 				// - for singleSelect only if typeahead is not used as ValueHelp (ComboBox don't opens on click)
 				bShouldOpenOnClick = true;
 			} else {
-				let bUseConent = true;
+				let bUseContent = true;
 
 				/**
 				 *  @deprecated since 1.121.0
 				 */
 				if (!oContainer.isPropertyInitial("opensOnClick")) {
-					bUseConent = false;
+					bUseContent = false;
 					bShouldOpenOnClick = oContainer.getOpensOnClick();
 				}
 
-				if (bUseConent) {
+				if (bUseContent) {
 					const oContent = oContainer._getContent();
 					bShouldOpenOnClick = !!oContent && oContent.shouldOpenOnClick(); //If opensOnClick-property is not explicitly set, the content's preference is used instead.
 				}

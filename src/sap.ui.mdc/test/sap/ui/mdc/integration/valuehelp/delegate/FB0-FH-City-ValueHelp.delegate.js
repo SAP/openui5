@@ -149,7 +149,7 @@ sap.ui.define([
 					autoBindOnInit: !bSuspended,
 					showRowCount: true,
 					width: "100%",
-					selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
+					selectionMode: "{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 					//					type: new ResponsiveTableType(),
 					delegate: {
 						name: "sap/ui/v4demo/delegate/ResponsiveTable.delegate",
@@ -174,13 +174,13 @@ sap.ui.define([
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		const oCountry = Element.getElementById("FB0-FF6");
+		const oCountry = Element.getElementById("appView--FB0-FF6");
 		const aCountryConditions = oCountry && oCountry.getConditions();
 		if (aCountryConditions && aCountryConditions.length) {
 			oConditions["country_code"] = aCountryConditions;
 		}
 
-		const oRegion = Element.getElementById("FB0-FF7");
+		const oRegion = Element.getElementById("appView--FB0-FF7");
 		const aRegionConditions = oRegion && oRegion.getConditions();
 		if (aRegionConditions && aRegionConditions.length) {
 			oConditions["region_code"] = aRegionConditions;

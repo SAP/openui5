@@ -35,9 +35,8 @@
 	"sap.ui5": {
 		"_version": "1.7.0",
 		"rootView": {
-			"viewName": "sap.ui.v4demo.view.App",
+			"viewName": "module:sap/ui/v4demo/view/App",
 			"height": "100%",
-			"type": "XML",
 			"async": true,
 			"id": "app"
 		},

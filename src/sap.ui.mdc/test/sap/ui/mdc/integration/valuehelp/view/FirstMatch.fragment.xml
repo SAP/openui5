@@ -7,7 +7,6 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
-	
 	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
@@ -27,8 +26,8 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/firstmatch/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcvh:Popover title="Test1">
-						<mdcvc:MTable keyPath="key" descriptionPath="text"  useAsValueHelp="true" caseSensitive="{settings>/firstMatch/caseSensitive}">
-							<Table id="mTable1" items='{path : "settings>/firstMatch/data"}' width="30rem" mode="SingleSelectMaster">
+						<mdcvc:MTable keyPath="key" descriptionPath="text"  useAsValueHelp="true" caseSensitive="{runtimeState>/firstMatch/caseSensitive}">
+							<Table id="mTable1" items='{path : "runtimeState>/firstMatch/data"}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -44,8 +43,8 @@
 								<items>
 									<ColumnListItem type="Active">
 										<cells>
-											<Text text="{settings>key}" />
-											<Text text="{settings>text}" />
+											<Text text="{runtimeState>key}" />
+											<Text text="{runtimeState>text}" />
 										</cells>
 									</ColumnListItem>
 								</items>
@@ -64,17 +63,17 @@
 				dataType="String"
 				required="false"
 				valueHelp="FB0-FH1"
-				display="{settings>/firstMatch/display}"
-				maxConditions="{settings>/maxConditions}" />
+				display="{runtimeState>/firstMatch/display}"
+				maxConditions="{runtimeState>/maxConditions}" />
 		</mdc:filterItems>
 	</mdc:FilterBar>
 
 
 	<Label text="Case sensitive" labelFor="switchCaseSensitive" />
-	<Switch id="switchCaseSensitive" state="{settings>/firstMatch/caseSensitive}" />
+	<Switch id="switchCaseSensitive" state="{runtimeState>/firstMatch/caseSensitive}" />
 
 	<Label text="Display mode" labelFor="displayInput" />
-	<SegmentedButton id="SB1" selectedKey="{settings>/firstMatch/display}">
+	<SegmentedButton id="SB1" selectedKey="{runtimeState>/firstMatch/display}">
 				<items>
 					<SegmentedButtonItem key="Value" text="Value" />
 					<SegmentedButtonItem key="ValueDescription" text="ValueDescription" />
@@ -83,7 +82,7 @@
 				</items>
 			</SegmentedButton>
 
-	<TextArea value="{=JSON.stringify(${settings>/firstMatch/data})}" change=".onFirstMatchDataChange" rows="10" width="24rem" />
+	<TextArea value="{=JSON.stringify(${runtimeState>/firstMatch/data})}" change=".onFirstMatchDataChange" rows="10" width="24rem" />
 
 
 </layout:VerticalLayout>

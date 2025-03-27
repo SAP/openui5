@@ -12,21 +12,25 @@ sap.ui.define([
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
-		const vShouldOpenOnClick = oValueHelp.getPayload()?.shouldOpenOnClick;
-		if (typeof vShouldOpenOnClick === "boolean" && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-			return vShouldOpenOnClick;
-		} else {
-			return BaseValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
+		/**
+		 *  @deprecated since 1.121.0
+		 */
+		if (oContainer.getMetadata().hasProperty("opensOnClick")) {
+			return oContainer.getOpensOnClick();
 		}
+
+		return oValueHelp.getPayload()?.shouldOpenOnClick;
 	};
 
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
-		const vShouldOpenOnFocus = oValueHelp.getPayload()?.shouldOpenOnFocus;
-		if (typeof vShouldOpenOnFocus === "boolean" && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-			return vShouldOpenOnFocus;
-		} else {
-			return BaseValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
+		/**
+		 *  @deprecated since 1.121.0
+		 */
+		if (oContainer.getMetadata().hasProperty("opensOnFocus")) {
+			return oContainer.getOpensOnFocus();
 		}
+
+		return oValueHelp.getPayload()?.shouldOpenOnFocus;
 	};
 
 
