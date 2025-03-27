@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/m/VBox",
 	"sap/m/Bar",
-	"sap/m/Title"
-], function(Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Library, VBox, Bar, Title) {
+	"sap/m/Title",
+	"sap/ui/core/Control"
+], function(Core, Element, HTML, Button, Image, PDFViewer, Dialog, IllustratedMessage, IllustratedMessageType, Carousel, Log, Library, VBox, Bar, Title, Control) {
 	"use strict";
 
 	// get resource translation bundle;
@@ -84,7 +85,50 @@ sap.ui.define([
 				 * Size limit of the file in megabytes that is allowed to be previewed.
 				 * <br>If not set, files of any size can be previewed.
 				 */
-				maxFileSizeforPreview: {type: "float", defaultValue: null}
+				maxFileSizeforPreview: {type: "float", defaultValue: null},
+				/**
+				 * Callback function to insert custom content into the preview dialog using a control to display the preview of unsupported file types.
+				 * <br>Use this property as callback function to insert a control with the content into the preview dialog.
+				 * <br>Callback function returns a promise that resolves with a control that is displayed in the preview dialog. Reject the promise to display the default illustrated message.
+				 * <br>Callback function is invoked with {@link sap.m.upload.UploadItem item} for each unsupported file type.
+				 * <br>
+				 * <br>Example: There is a file with an xml extension and you want to display the content inside a codeeditor control for the file type.
+				 *
+				 * <pre><code>
+				 * 	&lt;UploadSetwithTable&gt;
+				 * 		&lt;upload:FilePreviewDialog customPageContentHandler="{onCustomContentHandler}"&gt;&lt;/upload:FilePreviewDialog&gt;
+				 * 	&lt;/UploadSetwithTable&gt;
+				 * </code></pre>
+				 *
+				 * <pre><code>
+				 * 	onCustomContentHandler: function(oItem) {
+				 *
+				 * 			return new Promise(function(resolve, reject) {
+				 *
+				 * 				switch (oItem.getMediaType().toLowerCase()) {
+				 *
+				 * 					case "application/xml":
+				 *
+				 * 						var oCodeEditor = new CodeEditor({
+				 * 							value: "XML content",
+				 * 							width: "100%",
+				 * 							height: "100%"
+				 * 						});
+				 *
+				 * 						resolve(oCodeEditor);
+				 * 						break;
+				 *
+				 * 					default:
+				 * 						reject(); // reject the promise to display the default illustrated message.
+				 * 						break;
+				 * 				}
+				 * 			});
+				 * 	}
+				 * </code></pre>
+				 *
+				 * @since 1.135
+				 **/
+				customPageContentHandler: {type: "function", defaultValue: null}
 			},
 			defaultAggregation: "additionalFooterButtons",
 			aggregations: {
@@ -405,6 +449,19 @@ sap.ui.define([
 					break;
 				}
 				default:
+					if (this.getCustomPageContentHandler() && typeof this.getCustomPageContentHandler() === "function") {
+						const oPromise = this.getCustomPageContentHandler()(oItem);
+						if (oPromise && oPromise instanceof Promise) {
+							try {
+								const oControl = await oPromise;
+								if (oControl instanceof Element || oControl instanceof Control) {
+									oPage = oControl;
+								}
+							} catch (error) {
+								return oPage;
+							}
+						}
+					}
 					return oPage;
 			}
 
