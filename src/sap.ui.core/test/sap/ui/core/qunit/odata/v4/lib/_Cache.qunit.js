@@ -8295,9 +8295,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach((bHasFilter) => {
-	[false, true].forEach((bSelectKeysOnly) => {
+	[false, true].forEach((bMinimal) => {
 		const sTitle = "CollectionCache#requestFilteredOrderedPredicates: w/ filter=" + bHasFilter
-			+ ", keys only=" + bSelectKeysOnly;
+			+ ", keys only=" + bMinimal;
 
 	QUnit.test(sTitle, async function (assert) {
 		const mQueryOptions = {
@@ -8338,7 +8338,7 @@ sap.ui.define([
 		oHelperMock.expects("getKeyFilter").withExactArgs("~oElement3~", "/TEAMS/TEAM_2_EMPLOYEES",
 				sinon.match.same(mTypeForMetaPath))
 			.returns("~key_filter3~");
-		oHelperMock.expects("selectKeyProperties").exactly(bSelectKeysOnly ? 1 : 0)
+		oHelperMock.expects("selectKeyProperties").exactly(bMinimal ? 1 : 0)
 			.withExactArgs(sinon.match.object, "~oType~")
 			.callsFake(function (mQueryOptions0) {
 				mQueryOptions0.$select.push("A");
@@ -8347,13 +8347,13 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs("/TEAMS/TEAM_2_EMPLOYEES", {
 				$apply : "A.P.P.L.E.",
-				...(!bSelectKeysOnly && {$expand : {expand : null}}),
+				...(!bMinimal && {$expand : {expand : null}}),
 				$filter : bHasFilter
 					? "age gt 40 and (~key_filter1~ or ~key_filter2~ or ~key_filter3~)"
 					: "~key_filter1~ or ~key_filter2~ or ~key_filter3~",
-				$orderby : "orderby",
+				...(!bMinimal && {$orderby : "orderby"}),
 				$search : "search",
-				$select : bSelectKeysOnly ? ["A", "B"] : ["Name"],
+				$select : bMinimal ? ["A", "B"] : ["Name"],
 				$top : 3,
 				foo : "bar",
 				"sap-client" : "123"
@@ -8376,40 +8376,40 @@ sap.ui.define([
 				oResponse.value = [oNewElement3, oNewElement1];
 				// oResponse.value.$byPredicate = {}; // not needed
 			});
-		oHelperMock.expects("copySelected").exactly(bSelectKeysOnly ? 0 : 1)
+		oHelperMock.expects("copySelected").exactly(bMinimal ? 0 : 1)
 			.withExactArgs("~oElement3~", sinon.match.same(oNewElement3));
-		oHelperMock.expects("fireChanges").exactly(bSelectKeysOnly ? 0 : 1)
+		oHelperMock.expects("fireChanges").exactly(bMinimal ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('3')", "~oElement3~", true);
-		oHelperMock.expects("fireChanges").exactly(bSelectKeysOnly ? 0 : 1)
+		oHelperMock.expects("fireChanges").exactly(bMinimal ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('3')",
 				sinon.match.same(oNewElement3));
-		oHelperMock.expects("copySelected").exactly(bSelectKeysOnly ? 0 : 1)
+		oHelperMock.expects("copySelected").exactly(bMinimal ? 0 : 1)
 			.withExactArgs("~oElement1~", sinon.match.same(oNewElement1));
-		oHelperMock.expects("fireChanges").exactly(bSelectKeysOnly ? 0 : 1)
+		oHelperMock.expects("fireChanges").exactly(bMinimal ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('1')", "~oElement1~", true);
-		oHelperMock.expects("fireChanges").exactly(bSelectKeysOnly ? 0 : 1)
+		oHelperMock.expects("fireChanges").exactly(bMinimal ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('1')",
 				sinon.match.same(oNewElement1));
 
 		const oPromise
 			// code under test
 			= oCache.requestFilteredOrderedPredicates(["('1')", "('2')", "('3')"], "~oGroupLock~",
-				bSelectKeysOnly);
+				bMinimal);
 
 		assert.ok(oPromise instanceof Promise);
 		assert.deepEqual(await oPromise, ["('3')", "('1')"]);
 		assert.strictEqual(JSON.stringify(oCache.mQueryOptions), sQueryOptions, "unchanged");
 		assert.deepEqual(oCache.aElements, [
 			"~oElement0~",
-			bSelectKeysOnly ? "~oElement1~" : oNewElement1,
+			bMinimal ? "~oElement1~" : oNewElement1,
 			"~oElement2~",
-			bSelectKeysOnly ? "~oElement3~" : oNewElement3
+			bMinimal ? "~oElement3~" : oNewElement3
 		]);
 		assert.deepEqual(oCache.aElements.$byPredicate, {
 			"('0')" : "~oElement0~",
-			"('1')" : bSelectKeysOnly ? "~oElement1~" : oNewElement1,
+			"('1')" : bMinimal ? "~oElement1~" : oNewElement1,
 			"('2')" : "~oElement2~",
-			"('3')" : bSelectKeysOnly ? "~oElement3~" : oNewElement3,
+			"('3')" : bMinimal ? "~oElement3~" : oNewElement3,
 			"('4')" : "~oElement4~"
 		});
 	});
