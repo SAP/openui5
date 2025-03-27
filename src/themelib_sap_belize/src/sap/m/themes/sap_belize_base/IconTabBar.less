@@ -1259,13 +1259,13 @@ html.sap-desktop {
 	.sapMITBHorizontal {
 		height: @_sap_m_IconTabBar_Compact_HorizontalHeight;
 
+		&.sapMITBFilter:first-child .sapMITBFilterWrapper {
+			padding-left: 0;
+		}
+
 		&.sapMITBFilter .sapMITBFilterWrapper {
 			height: @_sap_m_IconTabBar_Compact_TextOnlyVerticalHeight;
 			padding: 0 0.5rem;
-
-			&:first-child {
-				padding-left: 0;
-			}
 
 			.sapMITBHorizontalWrapper {
 				.sapMITBCount {
