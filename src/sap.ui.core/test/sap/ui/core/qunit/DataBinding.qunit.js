@@ -20,6 +20,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// retrieve default propagated properties from a fresh MO (which then is garbage collected)
+	const { oPropagatedProperties: defaultPropagatedProperties } = new ManagedObject();
+
 	var oContent = document.createElement("div");
 	oContent.setAttribute("id", "content");
 	document.body.appendChild(oContent);
@@ -58,6 +61,17 @@ sap.ui.define([
 		data: ["0","1","2"]
 	});
 	var oModel5 = new ODataModel(sUri);
+
+
+	QUnit.module("Default Propagated Properties");
+
+	QUnit.test("Check access and uniqueness", function(assert) {
+		// if this test fails, all usages of defaultPropagatedProperties in sap.ui.core need to be revised!
+		assert.notStrictEqual(defaultPropagatedProperties, null);
+		assert.strictEqual(defaultPropagatedProperties, new ManagedObject().oPropagatedProperties);
+	});
+
+
 
 	QUnit.module("Propagation listener", {
 		beforeEach : function() {
@@ -589,7 +603,7 @@ sap.ui.define([
 		assert.ok(this.ctrl.getModel() == null, "ctrl should have no model");
 		assert.ok(this.child.getBinding("value") != null, "child should have a binding for the default model");
 		assert.ok(this.child.oPropagatedProperties !== this.ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
-		assert.ok(this.ctrl.oPropagatedProperties === ManagedObject._oEmptyPropagatedProperties, "ctrl has no propagated properties");
+		assert.strictEqual(this.ctrl.oPropagatedProperties, defaultPropagatedProperties, "ctrl has no propagated properties");
 
 		//simulate a move by sync adding the control again
 		this.uiArea.addContent(moveCtrl);
@@ -601,7 +615,7 @@ sap.ui.define([
 			assert.ok(this.child.getModel() != null, "child should have a default model");
 			assert.ok(this.ctrl.getModel() != null, "ctrl should have a default model");
 			assert.ok(this.child.getBinding("value") != null, "child should have a binding for the default model");
-			assert.ok(this.child.oPropagatedProperties === this.ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+			assert.strictEqual(this.child.oPropagatedProperties, this.ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
 
 			// remove from parent - no move
 			this.uiArea.removeContent(this.ctrl);
@@ -612,7 +626,7 @@ sap.ui.define([
 			assert.ok(this.ctrl.getModel() == null, "ctrl should have no model");
 			assert.ok(this.child.getBinding("value") != null, "child should have a binding for the default model");
 			assert.ok(this.child.oPropagatedProperties !== this.ctrl.oPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
-			assert.ok(this.ctrl.oPropagatedProperties === ManagedObject._oEmptyPropagatedProperties, "ctrl has no propagated properties");
+			assert.strictEqual(this.ctrl.oPropagatedProperties, defaultPropagatedProperties, "ctrl has no propagated properties");
 
 			setTimeout(function() {
 				// check for expected modifications: async propagation done
@@ -620,8 +634,8 @@ sap.ui.define([
 				assert.ok(this.child.getModel() == null, "child shouldn't have a default model");
 				assert.ok(this.ctrl.getModel() == null, "ctrl shouldn't have a default model");
 				assert.ok(this.child.getBinding("value") == null, "child shouldn't have a binding for the default model");
-				assert.ok(this.child.oPropagatedProperties === ManagedObject._oEmptyPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
-				assert.ok(this.ctrl.oPropagatedProperties === ManagedObject._oEmptyPropagatedProperties, "ctrl should no longer inherit propagatedProperties 1:1 from ctrl");
+				assert.strictEqual(this.child.oPropagatedProperties, defaultPropagatedProperties, "child should no longer inherit propagatedProperties 1:1 from ctrl");
+				assert.strictEqual(this.ctrl.oPropagatedProperties, defaultPropagatedProperties, "ctrl should no longer inherit propagatedProperties 1:1 from ctrl");
 				done();
 			}.bind(this), 0);
 		}.bind(this), 0);

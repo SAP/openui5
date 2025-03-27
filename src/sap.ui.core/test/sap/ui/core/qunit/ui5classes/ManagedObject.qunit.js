@@ -3108,6 +3108,7 @@ sap.ui.define([
 
 	QUnit.module("Contextual settings", {
 		beforeEach: function() {
+			this.defaultContextualSettings = new ManagedObject()._oContextualSettings;
 			this.obj1 = new TestManagedObject();
 			this.obj2 = new TestManagedObject();
 		},
@@ -3119,7 +3120,8 @@ sap.ui.define([
 
 	QUnit.test("Constructor and singleton", function(assert) {
 		assert.ok(this.obj1._oContextualSettings, "A managed object has contextual settings by default");
-		assert.equal(this.obj1._getContextualSettings(), ManagedObject._defaultContextualSettings, "The singleton object is used for the default contextual settings");
+		// if this test fails, all usages of defaultContextualSettings in sap.ui.core need to be revised!
+		assert.strictEqual(this.obj1._getContextualSettings(), this.defaultContextualSettings, "A singleton object is used for the default contextual settings");
 	});
 
 	QUnit.test("Application of contextual settings", function(assert) {
@@ -3186,7 +3188,7 @@ sap.ui.define([
 
 		this.obj2._getContextualSettings();
 
-		assert.equal(this.obj1._getContextualSettings(), this.obj2._getContextualSettings(), "Contextual settings for both managed objects are the same js object");
+		assert.strictEqual(this.obj1._getContextualSettings(), this.obj2._getContextualSettings(), "Contextual settings for both managed objects are the same js object");
 		assert.equal(oSpy.callCount, 2, "Hook method called for both managed objects");
 
 		oSpy.restore();
@@ -3209,7 +3211,7 @@ sap.ui.define([
 
 		this.obj1.setAggregation("singleAggr", null);
 
-		assert.ok(this.obj2._getContextualSettings() === ManagedObject._defaultContextualSettings, "Child now has the default contextual settings");
+		assert.strictEqual(this.obj2._getContextualSettings(), this.defaultContextualSettings, "Child now has the default contextual settings");
 
 	});
 

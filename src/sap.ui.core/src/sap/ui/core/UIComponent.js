@@ -854,7 +854,7 @@ sap.ui.define([
 		if (oContainer) {
 			this._applyContextualSettings(oContainer._getContextualSettings());
 		} else {
-			this._oContextualSettings = ManagedObject._defaultContextualSettings;
+			this._oContextualSettings = defaultContextualSettings;
 			if (!this._bIsBeingDestroyed) {
 				setTimeout(function() {
 					// if object is being destroyed or container is set again (move) no propagation is needed
@@ -975,6 +975,9 @@ sap.ui.define([
 
 		return mRoutingClasses;
 	};
+
+	// retrieve default contextual settings from a fresh MO (which then is garbage collected)
+	const { _oContextualSettings: defaultContextualSettings } = new ManagedObject();
 
 	return UIComponent;
 
