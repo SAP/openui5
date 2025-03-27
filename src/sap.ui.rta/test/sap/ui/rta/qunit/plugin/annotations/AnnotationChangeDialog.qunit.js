@@ -1,7 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/model/json/JSONModel",
@@ -10,7 +12,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
+	Control,
 	Element,
+	ElementUtil,
 	FlexObjectFactory,
 	PersistenceWriteAPI,
 	JSONModel,
@@ -45,14 +49,15 @@ sap.ui.define([
 			oPopover.attachAfterOpen(fnAfterOpen);
 			return oPopover;
 		});
-		const aChanges = await oDialog.openDialogAndHandleChanges(oActionConfig);
+
+		const aAnnotationChanges = await oDialog.openDialogAndHandleChanges(oActionConfig);
 
 		if (iNumberOfProperties) {
 			assert.strictEqual(oDialog.oChangeAnnotationModel.iSizeLimit, iNumberOfProperties, "the model size limit is set correctly");
 		}
 
 		oDialog.destroy();
-		return aChanges;
+		return aAnnotationChanges;
 	}
 
 	QUnit.module("Basic functionality", {
@@ -264,6 +269,9 @@ sap.ui.define([
 			};
 
 			const fnAfterFirstOpen = () => {
+				const oSearchField = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertiesFilter");
+				oSearchField.setValue("Other");
+				oSearchField.fireLiveChange({ newValue: "Other" });
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
 				const [oSelect] = aFormElements[0].getFields().filter((oField) => oField.getVisible());
@@ -276,6 +284,7 @@ sap.ui.define([
 			const fnAfterSecondOpen = () => {
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
+				assert.strictEqual(aFormElements.length, 2, "then both properties are displayed");
 				const [oSelect] = aFormElements[1].getFields().filter((oField) => oField.getVisible());
 				assert.strictEqual(
 					oSelect.getSelectedKey(),
@@ -574,6 +583,51 @@ sap.ui.define([
 			assert.strictEqual(aChanges[0].content.annotationPath, "path/to/test/label", "then the correct path was returned");
 			assert.strictEqual(aChanges[0].content.value, undefined, "then the correct value was returned");
 			assert.strictEqual(aChanges[0].content.text, "Bye", "then the correct text was returned");
+		});
+
+		QUnit.test("when the dialog is opened with singleRename and a different label on the control", async function(assert) {
+			const oTestDelegate = {
+				getAnnotationsChangeInfo: () => {
+					return {
+						serviceUrl: "testServiceUrl",
+						properties: [
+							{
+								propertyName: "My Test Label",
+								annotationPath: "path/to/test/label",
+								currentValue: "Hello"
+							},
+							{
+								propertyName: "My Other Test Label",
+								annotationPath: "path/to/second/test/label",
+								currentValue: "World"
+							}
+						],
+						preSelectedProperty: "path/to/test/label"
+					};
+				}
+			};
+			const oActionConfig = {
+				title: "Change Some String Prop",
+				type: AnnotationTypes.StringType,
+				delegate: oTestDelegate,
+				control: new Control("testControl"),
+				singleRename: true,
+				controlBasedRenameChangeType: "myRename"
+			};
+			const sControlSpecificLabel = "My Control Specific Label";
+			sandbox.stub(ElementUtil, "getLabelForElement").returns(sControlSpecificLabel);
+			const fnAfterOpen = () => {
+				const oHBox = Element.getElementById("sapUiRtaChangeAnnotationDialog_filterHBox");
+				assert.strictEqual(oHBox.getVisible(), false, "then the filter is hidden");
+				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
+				const aFormElements = oList.getFormElements();
+				const oInput = aFormElements[0].getFields().filter((oField) => oField.getVisible())[0];
+				assert.strictEqual(oInput.getValue(), sControlSpecificLabel, "then the correct value is set");
+
+				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
+				oCancelButton.firePress();
+			};
+			await openDialog(sandbox, oActionConfig, fnAfterOpen);
 		});
 	});
 

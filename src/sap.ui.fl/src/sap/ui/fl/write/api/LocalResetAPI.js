@@ -80,43 +80,63 @@ sap.ui.define([
 		return checkChange;
 	}
 
-	LocalResetAPI.resetChanges = function(aChanges, oAppComponent) {
+	/**
+	 * Deletes the given changes from the flex persistence and reverts the changes on the controls.
+	 * The revert can be skipped by providing the bSkipRevert flag.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.flexObject[]} aChanges - All changes to be reset
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @param {boolean} [bSkipRevert] - Flag to skip the revert of the changes
+	 */
+	LocalResetAPI.resetChanges = async function(aChanges, oAppComponent, bSkipRevert) {
+		const aRevertQueue = [];
 		// Reset in reverse order, make sure not to mutate the original order as it is used to restore
-		var aReverseChanges = aChanges.slice().reverse();
+		const aReverseChanges = aChanges.slice().reverse();
+		if (!bSkipRevert) {
+			aRevertQueue.push(...aReverseChanges.map(function(oChange) {
+				const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+				// execPromiseQueueSequentially expects promises wrapped inside a function
+				return function() {
+					oChange.setQueuedForRevert();
+					return ChangesWriteAPI.revert({
+						change: oChange,
+						element: oControl
+					});
+				};
+			}));
+		}
 
-		var aRevertQueue = aReverseChanges.map(function(oChange) {
-			var oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-			// execPromiseQueueSequentially expects promises wrapped inside a function
-			return function() {
-				oChange.setQueuedForRevert();
-				return ChangesWriteAPI.revert({
-					change: oChange,
-					element: oControl
-				});
-			};
-		});
-
-		return PersistenceWriteAPI.remove({
+		await PersistenceWriteAPI.remove({
 			flexObjects: aReverseChanges,
 			selector: oAppComponent
-		})
-		.then(Utils.execPromiseQueueSequentially.bind(Utils, aRevertQueue));
+		});
+		await Utils.execPromiseQueueSequentially(aRevertQueue);
 	};
 
-	LocalResetAPI.restoreChanges = function(aChanges, oAppComponent) {
+	/**
+	 * Restores the given changes on the controls, writes them to the flex persistence and applies them.
+	 * The apply can be skipped by providing the bSkipApply flag.
+	 *
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} aChanges - All changes to be restored
+	 * @param {sap.ui.core.Component} oAppComponent - Application component instance
+	 * @param {boolean} [bSkipApply] - Flag to skip the apply of the changes
+	 */
+	LocalResetAPI.restoreChanges = async function(aChanges, oAppComponent, bSkipApply) {
 		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		UIChangeManager.restoreDeletedChanges(sReference, aChanges, oAppComponent);
-		const aApplyQueue = aChanges.map((oChange) =>
-			() => {
-				const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-				return ChangesWriteAPI.apply({
-					change: oChange,
-					element: oControl,
-					modifier: JsControlTreeModifier
-				});
-			}
-		);
-		return Utils.execPromiseQueueSequentially(aApplyQueue);
+		if (!bSkipApply) {
+			const aApplyQueue = aChanges.map((oChange) =>
+				() => {
+					const oControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+					return ChangesWriteAPI.apply({
+						change: oChange,
+						element: oControl,
+						modifier: JsControlTreeModifier
+					});
+				}
+			);
+			await Utils.execPromiseQueueSequentially(aApplyQueue);
+		}
 	};
 
 	LocalResetAPI.getNestedUIChangesForControl = function(oControl, mPropertyBag) {

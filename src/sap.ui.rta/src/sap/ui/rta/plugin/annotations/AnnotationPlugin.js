@@ -5,30 +5,39 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/Util",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
 	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/rta/plugin/Plugin"
 ], function(
 	BaseLog,
 	DesignTime,
+	JsControlTreeModifier,
 	DtUtil,
+	PersistenceWriteAPI,
+	Utils,
 	AnnotationChangeDialog,
 	AnnotationTypes,
 	Plugin
 ) {
 	"use strict";
 
-	async function handleCompositeCommand(oElement, oAction, aChanges) {
+	async function handleCompositeCommand(oElement, oAction, aAnnotationChanges, aLegacyRenameChanges) {
 		const oCompositeCommand = await this.getCommandFactory().getCommandFor(oElement, "composite");
-		for (const oChange of aChanges) {
+		for (const oChange of aAnnotationChanges) {
+			// aLegacyRenameChanges is only passed for singleRename scenarios, where there is only one annotation change to be saved
+			// so we can simply add it in the loop
 			const oAnnotationCommand = await this.getCommandFactory().getCommandFor(
 				oElement,
 				"annotation",
 				{
 					changeType: oAction.changeType,
 					serviceUrl: oChange.serviceUrl,
-					content: oChange.content
+					content: oChange.content,
+					changesToDelete: aLegacyRenameChanges
 				}
 			);
 			oCompositeCommand.addCommand(oAnnotationCommand);
@@ -68,6 +77,14 @@ sap.ui.define([
 			return sDefaultIcon;
 		}
 		return sActionIcon;
+	}
+
+	function checkDesigntimeActionProperties(oAction) {
+		if (oAction.singleRename && !oAction.controlBasedRenameChangeType) {
+			BaseLog.error("When using singleRename, controlBasedRenameChangeType must also be defined");
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -169,17 +186,32 @@ sap.ui.define([
 		const oElement = oElementOverlay.getElement();
 
 		try {
-			const aChanges = await this._oDialog.openDialogAndHandleChanges({
+			const aAnnotationChanges = await this._oDialog.openDialogAndHandleChanges({
 				title: getActionText(oElementOverlay, oAction),
 				type: oAction.type,
 				control: oElement,
 				delegate: oAction.delegate,
 				annotation: oAction.annotation,
-				description: oAction.description
+				description: oAction.description,
+				singleRename: oAction.singleRename,
+				controlBasedRenameChangeType: oAction.controlBasedRenameChangeType
 			});
 
-			if (aChanges.length > 0) {
-				return handleCompositeCommand.call(this, oElement, oAction, aChanges);
+			if (aAnnotationChanges.length) {
+				const aLegacyRenameChanges = [];
+				// for single rename scenarios we are able to remove any existing control based rename change in the context of
+				// the given control and change type
+				if (oAction.singleRename) {
+					const aUIChanges = await PersistenceWriteAPI._getUIChanges({
+						selector: oElement
+					});
+					const oAppComponent = Utils.getAppComponentForControl(oElement);
+					aLegacyRenameChanges.push(...aUIChanges.filter((oChange) =>
+						oChange.getChangeType() === oAction.controlBasedRenameChangeType
+						&& JsControlTreeModifier.getControlIdBySelector(oChange.getSelector(), oAppComponent) === oElement.getId()
+					));
+				}
+				return handleCompositeCommand.call(this, oElement, oAction, aAnnotationChanges, aLegacyRenameChanges);
 			}
 			return undefined;
 		} catch (vError) {
@@ -217,6 +249,7 @@ sap.ui.define([
 				const iRank = this.getRank(sPluginId);
 				if (
 					this.isAvailable([oResponsibleElementOverlay])
+					&& checkDesigntimeActionProperties(oAction)
 				) {
 					const sActionText = getActionText(oResponsibleElementOverlay, oAction);
 					if (!sActionText) {

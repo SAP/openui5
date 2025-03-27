@@ -119,6 +119,28 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("when reset and restore is called with bSkipRevert", async function(assert) {
+			const aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
+				layer: Layer.CUSTOMER
+			});
+			const oRemoveStub = sandbox.stub(PersistenceWriteAPI, "remove").resolves();
+			const oRevertStub = sandbox.stub(ChangesWriteAPI, "revert").resolves();
+			await LocalResetAPI.resetChanges(aNestedChanges, this.oComponent, true);
+
+			assert.ok(
+				oRemoveStub.calledWith({flexObjects: aNestedChanges.slice().reverse(), selector: this.oComponent}),
+				"Then all changes are removed"
+			);
+			assert.strictEqual(oRevertStub.callCount, 0, "no changes are reverted");
+
+			const oApplyStub = sandbox.stub(ChangesWriteAPI, "apply").resolves();
+			const oRestoreStub = sandbox.stub(UIChangeManager, "restoreDeletedChanges");
+			await LocalResetAPI.restoreChanges(aNestedChanges, this.oComponent, true);
+
+			assert.strictEqual(oRestoreStub.callCount, 1, "the restore was called");
+			assert.strictEqual(oApplyStub.callCount, 0, "no changes were applied");
+		});
+
 		QUnit.test("when a reset is restored", function(assert) {
 			var aNestedChanges = LocalResetAPI.getNestedUIChangesForControl(this.oElement, {
 				layer: Layer.CUSTOMER
