@@ -136,7 +136,7 @@ sap.ui.define([
 				// special focus handling for dropdown boxes - in some cases visual (not real) focus must be in item
 				if (this.isTypeahead()) { // only happens in typeahead dropdown (on Dialog real focus must stay there)
 					if (this.isSingleSelect()) {
-						if (oTable.indexOfItem(oItem) === this._iNavigateIndex || oItem.getSelected()) { // navigated or selected item is shown selected and focused
+						if (oTable.indexOfItem(oItem) === this._iNavigateIndex || (oItem.getSelected() && (!this._sHighlightId || oItem.getId() === this._sHighlightId))) { // navigated or selected item is shown selected and focused (but if another one is highligted use taht one)
 							if (bIsOpen && !oItem.hasStyleClass("sapMLIBFocused")) {
 								oTable.setFakeFocus(oItem);
 							}
@@ -146,7 +146,7 @@ sap.ui.define([
 							if (bIsOpen && oItem.hasStyleClass("sapMLIBFocused")) {
 								oTable.setFakeFocus(); // as navigation could be removed in closed state
 							}
-							if (!oItem.getSelected() && oItem.hasStyleClass("sapMLIBSelected")) {
+							if ((!oItem.getSelected() || (this._sHighlightId && oItem.getId() !== this._sHighlightId)) && oItem.hasStyleClass("sapMLIBSelected")) { // if the highlighted item is shown as selected don't show another one as selected
 								oItem.removeStyleClass("sapMLIBSelected").updateSelectedDOM(false, oItem.$()); // as StyleClassSupport don't recognizes DOM changes
 							}
 						}
@@ -993,12 +993,24 @@ sap.ui.define([
 			let iItems = 0;
 
 			if (aItems?.length) {
-				oFirstMatchContext = oValueHelpDelegate.getFirstMatch(this.getValueHelpInstance(), this, {
-					value: this.getFilterValue(),
-					checkDescription: !!this.getDescriptionPath(),
-					control: this.getControl(),
-					caseSensitive: this.getCaseSensitive()
-				});
+				const aConditions = this.getConditions();
+				if (aConditions.length === 1 && this.isSingleSelect()) { // In single selection show selected condition on reopening
+					for (let i = 0; i < aItems.length; i++) {
+						const oItemContext = this._getListItemBindingContext(aItems[i]);
+						if (this._isContextSelected(oItemContext, aConditions)) {
+							oFirstMatchContext = oItemContext;
+							break;
+						}
+					}
+				}
+				if (!oFirstMatchContext) {
+					oFirstMatchContext = oValueHelpDelegate.getFirstMatch(this.getValueHelpInstance(), this, {
+						value: this.getFilterValue(),
+						checkDescription: !!this.getDescriptionPath(),
+						control: this.getControl(),
+						caseSensitive: this.getCaseSensitive()
+					});
+				}
 				iItems = _getItemCount.call(this);
 			}
 

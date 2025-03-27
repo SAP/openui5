@@ -3344,7 +3344,6 @@ sap.ui.define([
 		sinon.spy(oValueHelp, "attachEvent");
 		await nextUIUpdate();
 		sinon.spy(oValueHelp, "connect");
-		sinon.spy(oValueHelp, "toggleOpen");
 
 		const oConfig = {
 			maxConditions: -1,
@@ -3422,15 +3421,85 @@ sap.ui.define([
 		assert.equal(oContent._$input.val(), "X-Condition", "Field shown value"); // Autocompletre restored
 		assert.ok(oContent.focus.called, "focus set on content");
 
+		oDummyIcon.destroy();
+
+	});
+
+	QUnit.test("open / close via mouse", (assert) => {
+
+		const oValueHelp = Element.getElementById(oField.getValueHelp());
+		sinon.spy(oValueHelp, "toggleOpen");
+		sinon.spy(oValueHelp, "setVisualFocus");
+		sinon.spy(oValueHelp, "removeVisualFocus");
+
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
 		const fnDone = assert.async();
+
 		// simulate value help request to see if ValueHelp opens
-		oContent.fireValueHelpRequest();
+		oField.focus(); // as ValueHelp is connected with focus
+		oContent._$input.val("I");
+		oField._sFilterValue = "I"; // fake filter enetered before
+		oValueHelp.setFilterValue("I");
+		oContent.fireValueHelpRequest({fromKeyboard: false});
 		setTimeout(() => {
 			assert.ok(oValueHelp.toggleOpen.calledOnce, "ValueHelp toggle open called");
-			oContent.fireValueHelpRequest();
+			assert.equal(oField._sFilterValue, "I", "FilterValue still there");
+			assert.equal(oValueHelp.getFilterValue(), "I", "FilterValue on ValueHelp");
+			assert.notOk(oContent.getSelectedText(), "No text selected");
+			const aConditions = oValueHelp.getConditions();
+			assert.equal(aConditions.length, 1, "Condition set on ValueHelp");
+
+			oValueHelp.fireOpened({itemId: "myItem", items: undefined, focused: false});
+			assert.ok(oValueHelp.setVisualFocus.notCalled, "visual focus not set on ValueHelp");
+
+			sinon.stub(oValueHelp, "isOpen").returns(true);
+			oContent.fireValueHelpRequest({fromKeyboard: false});
 			setTimeout(() => {
 				assert.ok(oValueHelp.toggleOpen.calledTwice, "ValueHelp toggle open called again");
-				oDummyIcon.destroy();
+
+				oValueHelp.fireClosed();
+				assert.ok(oValueHelp.removeVisualFocus.calledOnce, "visual focus removed from ValueHelp"); // to be sure as it could move to ValuHelp by interaction (showAll-button...)
+				fnDone();
+			},0);
+		},0);
+	});
+
+	QUnit.test("open / close via keyboard", (assert) => {
+
+		const oValueHelp = Element.getElementById(oField.getValueHelp());
+		sinon.spy(oValueHelp, "toggleOpen");
+		sinon.spy(oValueHelp, "setVisualFocus");
+		sinon.spy(oValueHelp, "removeVisualFocus");
+
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		const fnDone = assert.async();
+
+		// simulate value help request to see if ValueHelp opens
+		oField.focus(); // as ValueHelp is connected with focus
+		oContent._$input.val("I");
+		oField._sFilterValue = "I"; // fake filter enetered before
+		oValueHelp.setFilterValue("I");
+		oContent.fireValueHelpRequest({fromKeyboard: true});
+		setTimeout(() => {
+			assert.ok(oValueHelp.toggleOpen.calledOnce, "ValueHelp toggle open called");
+			assert.equal(oField._sFilterValue, "", "FilterValue cleared");
+			assert.equal(oValueHelp.getFilterValue(), "I", "FilterValue on ValueHelp");
+			assert.ok(oContent.getSelectedText(), "text selected");
+			const aConditions = oValueHelp.getConditions();
+			assert.equal(aConditions.length, 1, "Condition set on ValueHelp");
+
+			oValueHelp.fireOpened({itemId: "myItem", items: undefined, focused: false});
+			assert.ok(oValueHelp.setVisualFocus.calledOnce, "visual focus not set on ValueHelp");
+
+			sinon.stub(oValueHelp, "isOpen").returns(true);
+			oContent.fireValueHelpRequest({fromKeyboard: false});
+			setTimeout(() => {
+				assert.ok(oValueHelp.toggleOpen.calledTwice, "ValueHelp toggle open called again");
+
+				oValueHelp.fireClosed();
+				assert.ok(oValueHelp.removeVisualFocus.calledOnce, "visual focus removed from ValueHelp");
 				fnDone();
 			},0);
 		},0);
@@ -4065,7 +4134,7 @@ sap.ui.define([
 		oField.focus();
 		oContent.setDOMValue("I"); // to test clearing of content
 		oContent.fireLiveChange({ newValue: "I" }); // simulate user input
-		oField._sFilterValue = "I"; // als typeahead is async and nit tested here
+		oField._sFilterValue = "I"; // as typeahead is async and not tested here
 		oContent.fireValueHelpRequest();
 
 		let aConditions = oValueHelp.getConditions();

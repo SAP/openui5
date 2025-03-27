@@ -488,6 +488,7 @@ sap.ui.define([
 			checkDescription: false,
 			exception: ParseException
 		};
+		oFixedList.setConditions(); // as on typing conditions are always empty
 		oFixedList.setUseFirstMatch(true);
 
 		const oPromise = oFixedList.getItemForValue(oConfig);
