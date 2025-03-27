@@ -40,6 +40,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/AggregateController",
 	"sap/m/table/ColumnWidthController",
 	"sap/ui/mdc/p13n/subcontroller/ShowDetailsController",
+	"sap/ui/mdc/p13n/subcontroller/ColumnFreezeController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/ui/mdc/table/menu/QuickActionContainer",
 	"sap/ui/core/theming/Parameters",
@@ -91,6 +92,7 @@ sap.ui.define([
 	AggregateController,
 	ColumnWidthController,
 	ShowDetailsController,
+	ColumnFreezeController,
 	ActionToolbarAction,
 	QuickActionContainer,
 	ThemeParameters,
@@ -1426,7 +1428,12 @@ sap.ui.define([
 			oRegisterConfig.controller["ColumnWidth"] = mRegistryOptions["ColumnWidth"];
 		}
 
-		if (this._isOfType(TableType.ResponsiveTable)) {
+		if (this._isOfType(TableType.Table, true) && this._getType().getEnableColumnFreeze()) {
+			mRegistryOptions["ColumnFreeze"] = new ColumnFreezeController({ control: this });
+			oRegisterConfig.controller["ColumnFreeze"] = mRegistryOptions["ColumnFreeze"];
+		}
+
+		if (this._isOfType(TableType.ResponsiveTable) && this._getType().getShowDetailsButton()) {
 			mRegistryOptions["ShowDetails"] = new ShowDetailsController({ control: this });
 			oRegisterConfig.controller["ShowDetails"] = mRegistryOptions["ShowDetails"];
 		}
@@ -2090,6 +2097,8 @@ sap.ui.define([
 
 		if (this.getEnableColumnResize() || this._getType().showXConfigState()) {
 			oState.xConfig = this._getXConfig();
+			// The state might contain properties that are not used (for example if enableColumnResize is true and enableColumnFreeze is false).
+			// This is not breaking any behavior, but we can optimize it in future by removing them.
 		}
 
 		return oState;

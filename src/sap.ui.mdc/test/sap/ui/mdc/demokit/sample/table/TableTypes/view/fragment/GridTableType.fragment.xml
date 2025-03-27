@@ -5,6 +5,9 @@
 	<Dialog id="gridTableTypeDialog" title="Grid Table Configuration" class="sapUiSmallMargin" afterClose=".closeDialog">
 		<content>
 		  <form:SimpleForm editable="true" id="configForm">
+				<Label text="enableColumnFreeze"/>
+				<Switch id="enableColumnFreeze" state="{view>/gridType/enableColumnFreeze}" customTextOn=" " customTextOff=" " />
+
 				<Label text="fixedColumnCount"/>
 				<StepInput id="fixedColumnCount" value="{view>/gridType/fixedColumnCount}" />
 

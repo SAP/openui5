@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"./QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/GridTableType",
@@ -9,11 +10,15 @@ sap.ui.define([
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/ui/mdc/enums/TableRowActionType",
+	"sap/m/Label",
 	"sap/m/Text",
 	"sap/m/Menu",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/fl/variants/VariantManagement",
+	"test-resources/sap/m/qunit/p13n/TestModificationHandler"
 ], function(
 	TableQUnitUtils,
+	nextUIUpdate,
 	Table,
 	Column,
 	GridTableType,
@@ -21,9 +26,12 @@ sap.ui.define([
 	RowActionItem,
 	RowCountMode,
 	RowActionType,
+	Label,
 	Text,
 	Menu,
-	JSONModel
+	JSONModel,
+	VariantManagement,
+	TestModificationHandler
 ) {
 	"use strict";
 
@@ -171,26 +179,6 @@ sap.ui.define([
 		assert.ok(invalidateSpy.notCalled, "Invalidation not called");
 	});
 
-	QUnit.test("fixedColumnCount property", async function(assert) {
-		const oTable = this.createTable({
-			type: new GridTableType({fixedColumnCount: 1})
-		});
-
-		await oTable.initialized();
-		assert.equal(oTable.getType().getFixedColumnCount(), 1, "fixedColumnCount for type is set to 1");
-		assert.equal(oTable._oTable.getFixedColumnCount(), 1, "Inner table has a fixed column count of 1");
-
-		oTable.getType().setFixedColumnCount(2);
-
-		assert.equal(oTable.getType().getFixedColumnCount(), 2, "fixedColumnCount for type is set to 2");
-		assert.equal(oTable._oTable.getFixedColumnCount(), 2, "Inner table has a fixed column count of 2");
-
-		oTable.getType().setFixedColumnCount(0);
-
-		assert.equal(oTable.getType().getFixedColumnCount(), 0, "fixedColumnCount for type is set to 0");
-		assert.equal(oTable._oTable.getFixedColumnCount(), 0, "Inner table has a fixed column count of 0");
-	});
-
 	QUnit.test("#getTableStyleClasses", function(assert) {
 		const oTable = this.createTable();
 
@@ -221,6 +209,206 @@ sap.ui.define([
 
 		oType.updateSortIndicator(oColumn, "None");
 		assert.strictEqual(oInnerColumn.getSortOrder(), "None", "Inner table column sort order");
+	});
+
+	QUnit.module("Column Freeze", {
+		beforeEach: async function() {
+			this.createTable();
+			await this.oTable.initialized();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		createTable: function() {
+			this.oTable?.destroy();
+
+			const oModel = new JSONModel();
+			oModel.setData({
+				testPath: [
+					{test: "Test1"}, {test: "Test2"}, {test: "Test3"}, {test: "Test4"}, {test: "Test5"}
+				]
+			});
+
+			this.oTable = new Table("table_test", {
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
+				type: new GridTableType({
+					enableColumnFreeze: true,
+					fixedColumnCount: 1
+				}),
+				columns: [
+					new Column({
+						label: new Label({ text: "Column A" }),
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						label: new Label({ text: "Column B" }),
+						template: new Text({
+							text: "{test}"
+						})
+					}),
+					new Column({
+						label: new Label({ text: "Column C" }),
+						template: new Text({
+							text: "{test}"
+						})
+					})
+				]
+			});
+
+			this.oTable.setModel(oModel);
+			this.oTable.placeAt("qunit-fixture");
+			this.oType = this.oTable.getType();
+		}
+	});
+
+	QUnit.test("The controller is registered and deregistered properly", function(assert) {
+		assert.ok(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ColumnFreeze"), "ColumnFreeze controller is registered");
+		this.oTable.getType().setEnableColumnFreeze(false);
+		assert.notOk(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ColumnFreeze"), "ColumnFreeze controller is deregistered");
+	});
+
+	QUnit.test("fixedColumnCount property", function(assert) {
+		assert.equal(this.oTable.getType().getFixedColumnCount(), 1, "fixedColumnCount for type is set to 1");
+		assert.equal(this.oTable._oTable.getFixedColumnCount(), 1, "Inner table has a fixed column count of 1");
+
+		this.oTable.getType().setFixedColumnCount(2);
+
+		assert.equal(this.oTable.getType().getFixedColumnCount(), 2, "fixedColumnCount for type is set to 2");
+		assert.equal(this.oTable._oTable.getFixedColumnCount(), 2, "Inner table has a fixed column count of 2");
+
+		this.oTable.getType().setFixedColumnCount(0);
+
+		assert.equal(this.oTable.getType().getFixedColumnCount(), 0, "fixedColumnCount for type is set to 0");
+		assert.equal(this.oTable._oTable.getFixedColumnCount(), 0, "Inner table has a fixed column count of 0");
+	});
+
+	QUnit.test("State is persisted", async function(assert) {
+		const done = assert.async();
+		const oVariant = new VariantManagement("mdc_test_vm", {
+			"for": ["table_test"]
+		});
+		this.oTable.setVariant(oVariant);
+
+		const oModificationHandler = TestModificationHandler.getInstance();
+		oModificationHandler.processChanges = function(aChanges) {
+			assert.strictEqual(aChanges.length, 1, "One change is created");
+			assert.strictEqual(aChanges[0].changeSpecificData.changeType, "setFixedColumnCount", "Change type is correct");
+			assert.strictEqual(aChanges[0].changeSpecificData.content.value, 2, "Change content value is correct");
+			assert.strictEqual(aChanges[0].changeSpecificData.content.name, "GridTable", "Name is correct");
+
+			done();
+		};
+
+		this.oTable.getEngine()._setModificationHandler(this.oTable, oModificationHandler);
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		await nextUIUpdate();
+
+		this.oTable._oTable.setFixedColumnCount(2);
+		this.oTable._oTable.fireColumnFreeze();
+	});
+
+	QUnit.test("Switch variant (emulation)", async function(assert) {
+		const oVariant = new VariantManagement("mdc_test_vm", {
+			"for": ["table_test"]
+		});
+		this.oTable.setVariant(oVariant);
+
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "_getXConfig");
+		const oType = this.oTable.getType();
+		const oInnerTable = oType.getInnerTable();
+
+		// Initial state
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		await nextUIUpdate();
+		assert.equal(oType.getFixedColumnCount(), 1, "Fixed column count is initially 1");
+
+		fnGetCurrentStateStub.returns({
+			"aggregations": {
+				"type": {
+					"GridTable": {
+						"fixedColumnCount": 2
+					}
+				}
+			}
+		});
+		oType.onModifications(); // Emulate change with ColumnFreeze
+		await nextUIUpdate();
+
+		assert.equal(oInnerTable.getFixedColumnCount(), 2, "Fixed column count is now 2");
+		assert.equal(oType.getFixedColumnCount(), 1, "The value of the fixedColumnCount property is still 1");
+
+		// State (none)
+		fnGetCurrentStateStub.returns({});
+		oType.onModifications(); // Emulate change with ColumnFreeze
+		await nextUIUpdate();
+
+		assert.equal(oInnerTable.getFixedColumnCount(), 0, "Fixed column count is now 2");
+		assert.equal(oType.getFixedColumnCount(), 1, "The value of the fixedColumnCount property is still 1");
+
+		fnGetCurrentStateStub.restore();
+	});
+
+	QUnit.test("State is applied (emulation)", async function(assert) {
+		const oType = this.oTable.getType();
+		const oInnerTable = oType.getInnerTable();
+		const oVariant = new VariantManagement("mdc_test_vm", {
+			"for": ["table_test"]
+		});
+		this.oTable.setVariant(oVariant);
+
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "_getXConfig");
+		fnGetCurrentStateStub.returns({
+			"aggregations": {
+				"type": {
+					"GridTable": {
+						"fixedColumnCount": 2
+					}
+				}
+			}
+		});
+
+		const fnOnModificationsSpy = sinon.spy(oType, "onModifications");
+		const fnSetShowDetailsState = sinon.spy(oInnerTable, "setFixedColumnCount");
+
+		await TableQUnitUtils.waitForBinding(this.oTable);
+		await nextUIUpdate();
+		assert.equal(oInnerTable.getFixedColumnCount(), 1, "Fixed column count is initially 1");
+
+		this.oTable._onModifications();
+		await nextUIUpdate();
+
+		assert.ok(fnOnModificationsSpy.calledOnce, "onModifications is called");
+		assert.ok(fnSetShowDetailsState.calledOnce, "setFixedColumnCount is called");
+		assert.ok(fnSetShowDetailsState.calledWith(2), "setFixedColumnCount is called with 2");
+		assert.equal(oInnerTable.getFixedColumnCount(), 2, "Fixed column count is now 2");
+
+		fnGetCurrentStateStub.returns({
+			"xConfig": {
+				"aggregations": {
+					"type": {
+						"GridTable": {
+							"fixedColumnCount": 0
+						}
+					}
+				}
+			}
+		});
+
+		this.oTable._onModifications();
+		await nextUIUpdate();
+
+		assert.ok(fnOnModificationsSpy.calledTwice, "onModifications is called");
+		assert.ok(fnSetShowDetailsState.calledTwice, "setFixedColumnCount is called");
+		assert.ok(fnSetShowDetailsState.calledWith(0), "setFixedColumnCount is called with 0");
+		assert.equal(oType.getInnerTable().getFixedColumnCount(), 0, "Fixed column count is now 0");
 	});
 
 	QUnit.module("Row settings", {

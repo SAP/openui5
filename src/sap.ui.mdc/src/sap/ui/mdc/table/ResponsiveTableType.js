@@ -422,6 +422,14 @@ sap.ui.define([
 		return false;
 	};
 
+	ResponsiveTableType.prototype.setShowDetailsButton = function(bShowDetailsButton) {
+		if (this.getShowDetailsButton() !== bShowDetailsButton) {
+			this.setProperty("showDetailsButton", bShowDetailsButton, true);
+			this.getTable()?._updateAdaptation();
+		}
+		return this;
+	};
+
 	/**
 	 * Toggles the visibility of the Show Details button.<br>
 	 * If <code>bValue</code> is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code> to
@@ -643,14 +651,12 @@ sap.ui.define([
 		}
 	};
 
-	ResponsiveTableType.prototype.onModifications = function(aAffectedControllers) {
+	ResponsiveTableType.prototype.onModifications = function() {
 		const oTable = this.getTable();
-		const oState = oTable.getCurrentState().xConfig;
+		const oState = oTable._getXConfig();
 		const oTypeState = oState?.aggregations?.type;
 
-		if (aAffectedControllers.indexOf("ShowDetails") !== -1) {
-			this._setShowDetailsState(oTypeState?.ResponsiveTable?.showDetails ?? false, true); // Skip persistance if modified by flex
-		}
+		this._setShowDetailsState(oTypeState?.ResponsiveTable?.showDetails ?? false, true); // Skip persistance if modified by flex
 	};
 
 	/**

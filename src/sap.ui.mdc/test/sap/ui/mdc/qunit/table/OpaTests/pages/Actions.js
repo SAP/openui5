@@ -10,6 +10,7 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/testutils/opa/table/waitForTable",
 	"test-resources/sap/ui/mdc/testutils/opa/table/Actions",
 	"test-resources/sap/ui/mdc/qunit/table/OpaTests/pages/Util",
+	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
 	"sap/ui/mdc/enums/TableType"
@@ -21,6 +22,7 @@ sap.ui.define([
 	/** @type sap.ui.test.Opa5 */ waitForTable,
 	/** @type sap.ui.test.Opa5 */ TableActions,
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
+	/** @type sap.ui.test.actions.EnterText */ EnterText,
 	/** @type sap.ui.test.actions.Drag */ Drag,
 	/** @type sap.ui.test.actions.Drop */ Drop,
 	/** @type sap.ui.mdc.enums.TableType */ TableType) {
@@ -693,6 +695,36 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Column menu QuickTotalItem not found"
+					});
+				}
+			});
+		},
+
+		iUseColumnMenuQuickFreeze: function() {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.table.columnmenu.QuickAction",
+						visible: false,
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								label: "Freeze"
+							}
+						}],
+						success: function(aQuickFreezeItems) {
+							this.waitFor({
+								controlType: "sap.m.Switch",
+								matchers: [{
+									ancestor: aQuickFreezeItems[0].getParent()
+								}],
+								success: function(aSwitches) {
+									new Press().executeOn(aSwitches[0]);
+								},
+								errorMessage: "QuickFreeze content is not visible"
+							});
+						},
+						errorMessage: "Column menu QuickFreeze not found"
 					});
 				}
 			});

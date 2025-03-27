@@ -51,7 +51,7 @@
                 <mdc:type>
                     <template:if test="{= ${data>/tableType} === 'GridTableType'}">
                         <template:then>
-                            <mdcTable:GridTableType/>
+                            <mdcTable:GridTableType enableColumnFreeze="true"/>
                         </template:then>
                         <template:elseif test="{= ${data>/tableType} === 'ResponsiveTableType'}">
                             <mdcTable:ResponsiveTableType detailsButtonSetting="Low,None" showDetailsButton="true"/>
