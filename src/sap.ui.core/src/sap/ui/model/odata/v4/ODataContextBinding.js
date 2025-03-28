@@ -1586,8 +1586,8 @@ sap.ui.define([
 					that.mAggregatedQueryOptions = that.mLateQueryOptions;
 					that.mLateQueryOptions = undefined;
 				}
-				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/false,
-					bKeepCacheOnError ? sGroupId : undefined);
+				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/false, sGroupId,
+					bKeepCacheOnError);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events.
 				if (bHasChangeListeners) {

@@ -1504,7 +1504,7 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
-			sDeepResourcePath, sGroupId, oOldCache) {
+			sDeepResourcePath, sGroupId, bSideEffectsRefresh, oOldCache) {
 		var oCache,
 			aKeepAlivePredicates,
 			mKeptElementsByPredicate,
@@ -1522,13 +1522,14 @@ sap.ui.define([
 					&& oOldCache instanceof _AggregationCache) {
 				if (bResetViaSideEffects && this.mParameters.$$aggregation?.hierarchyQualifier) {
 					sGroupId = this.getGroupId(); // reset via a side-effects refresh
+					bSideEffectsRefresh = true;
 					oOldCache.resetOutOfPlace();
 				}
 				this.validateSelection(oOldCache, sGroupId);
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
-				oOldCache.reset(aKeepAlivePredicates, sGroupId, mQueryOptions,
-					this.mParameters.$$aggregation, this.isGrouped());
+				oOldCache.reset(aKeepAlivePredicates, bSideEffectsRefresh ? sGroupId : undefined,
+					mQueryOptions, this.mParameters.$$aggregation, this.isGrouped());
 
 				return oOldCache;
 			}
@@ -3894,7 +3895,7 @@ sap.ui.define([
 					oCache.reset([]);
 				} else {
 					that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true,
-						bKeepCacheOnError ? sGroupId : undefined);
+						sGroupId, bKeepCacheOnError);
 					oKeptElementsPromise = that.refreshKeptElements(sGroupId,
 						/*bIgnorePendingChanges*/ bKeepCacheOnError);
 					if (that.iCurrentEnd > 0) {

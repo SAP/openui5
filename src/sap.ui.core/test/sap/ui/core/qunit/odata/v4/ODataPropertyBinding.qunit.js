@@ -2242,7 +2242,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding.oCachePromise).expects("then").callsFake(function (fnThen) {
 			that.mock(oBinding).expects("fetchCache")
-				.withExactArgs(oContext, false, /*bKeepQueryOptions*/true, "~bKeepCacheOnError~");
+				.withExactArgs(oContext, false, /*bKeepQueryOptions*/true, "myGroup",
+					"~bKeepCacheOnError~");
 			that.mock(oBinding).expects("checkUpdateInternal")
 				.exactly(bCheckUpdate ? 1 : 0)
 				.withExactArgs(undefined, ChangeReason.Refresh, "myGroup", "~bKeepCacheOnError~")
