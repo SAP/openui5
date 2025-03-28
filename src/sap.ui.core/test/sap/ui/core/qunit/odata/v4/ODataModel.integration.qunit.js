@@ -5683,19 +5683,19 @@ sap.ui.define([
 					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
 
 			oHeaderContext = oBinding.getHeaderContext();
+			checkSelected(assert, oHeaderContext, false);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : false,
 				$count : 3
 			}, "JIRA: CPOUI5ODATAV4-1944");
-			checkSelected(assert, oHeaderContext, false);
 
 			oHeaderContext.setSelected(true); // "select all"
 
+			checkSelected(assert, oHeaderContext, true);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				$count : 3
 			}, "JIRA: CPOUI5ODATAV4-1944");
-			checkSelected(assert, oHeaderContext, true);
 
 			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
@@ -5722,6 +5722,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			checkSelected(assert, oHeaderContext, true);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				$count : 2
@@ -7919,7 +7920,7 @@ sap.ui.define([
 
 			// JIRA: CPOUI5ODATAV4-1404
 			assert.strictEqual(oHeaderContext.getProperty("$count"), 2);
-			assert.deepEqual(oHeaderContext.getObject(),
+			assert.deepEqual(oHeaderContext.getObject(), // no args here!
 				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
 			assert.deepEqual(oHeaderContext.getObject(""),
 				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
@@ -22369,6 +22370,7 @@ sap.ui.define([
 		}).then(function () {
 			assertIDs(["2", "3", "1", "4"]);
 			that.checkMoreButton(assert, "[4/8]");
+			checkSelected(assert, oRowContext, true);
 			assert.deepEqual(oRowContext.getObject(),
 				{"@$ui5.context.isSelected" : true, GrossAmount : "1", SalesOrderID : "2"});
 			assert.deepEqual(oKeptContext1.getObject(), {GrossAmount : "3", SalesOrderID : "1"});
@@ -28378,6 +28380,7 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
+			checkSelected(assert, oKeptAliveNode, true);
 			assert.deepEqual(oKeptAliveNode.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					// NO! "@$ui5.node.level" : 1,
@@ -28483,6 +28486,7 @@ sap.ui.define([
 			]);
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
+			checkSelected(assert, oKeptAliveNode, true);
 			assert.deepEqual(oKeptAliveNode.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.isExpanded" : false,
@@ -33724,6 +33728,7 @@ sap.ui.define([
 			]);
 
 			assert.strictEqual(oGamma.getIndex(), 1);
+			checkSelected(assert, oGamma, true);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
@@ -33762,6 +33767,7 @@ sap.ui.define([
 				[undefined, false, 1, "etag0.1", "Alpha: Αα", "0,false"]
 			], 1);
 			assert.strictEqual(oBeta.getModel(), undefined, "destroyed by collapse");
+			checkSelected(assert, oGamma, true);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
@@ -33815,6 +33821,7 @@ sap.ui.define([
 			// NodeID is not lost after requesting side effects with non-hierarchical requests
 			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
 
+			checkSelected(assert, oGamma, true);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
@@ -33868,6 +33875,7 @@ sap.ui.define([
 			oBeta = aCurrentContexts[2];
 
 			assert.strictEqual(oGamma.getIndex(), 1);
+			checkSelected(assert, oGamma, true);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
@@ -33905,6 +33913,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "select all, deselect Gamma, collapse its parent");
 		}).then(function () {
+			checkSelected(assert, oGamma, false);
 			// code under test (CPOUI5ODATAV4-2624)
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : false,
@@ -33945,6 +33954,7 @@ sap.ui.define([
 				that.waitForChanges(assert, "side effect: Name for all rows")
 			]);
 		}).then(function () {
+			checkSelected(assert, oGamma, false);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : false,
 				"@$ui5.node.level" : 2,
@@ -34060,6 +34070,7 @@ sap.ui.define([
 			assert.strictEqual(oBeta, aCurrentContexts[2], "same instance");
 
 			assert.strictEqual(oGamma.getIndex(), 1);
+			checkSelected(assert, oGamma, true);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.isExpanded" : true,
@@ -34075,6 +34086,7 @@ sap.ui.define([
 			checkPersisted(assert, oGamma);
 
 			assert.strictEqual(oBeta.getIndex(), 2); // unchanged by #move
+			checkSelected(assert, oBeta, false);
 			assert.deepEqual(oBeta.getObject(), {
 				"@$ui5.context.isSelected" : false,
 				"@$ui5.node.level" : 3,
@@ -34310,6 +34322,7 @@ sap.ui.define([
 					"side effect for selected context outside the hierarchy: Name for Gamma")
 			]);
 		}).then(function () {
+			checkSelected(assert, oGamma, true);
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
@@ -44140,6 +44153,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oDelta.getSibling(-1), oBeta);
 
 		oDelta.setSelected(true); // #move, please update nextSibling's index (CPOUI5ODATAV4-2619)
+		checkSelected(assert, oDelta, true);
 		assert.deepEqual(oDelta.getObject(), {
 			"@$ui5.context.isSelected" : true,
 			"@$ui5.node.level" : 2,
@@ -44279,6 +44293,7 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oEpsilon.getBinding(), undefined, "destroyed by side-effects refresh");
 		assert.strictEqual(oDelta.getIndex(), undefined, "not in the collection anymore");
 		assert.strictEqual(oDelta.getBinding(), oListBinding);
+		checkSelected(assert, oDelta, true);
 		assert.deepEqual(oDelta.getObject(), {
 			"@$ui5.context.isSelected" : true,
 			// "@$ui5.node.level" : 2, // not currently part of the hierarchy
@@ -64003,7 +64018,7 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(normalizeUID(oContext2.toString()),
 				"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;destroyed]",
 				"Context#toString: destroyed");
-			assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+			assert.notOk(oContext2.isSelected(), "destroyed (JIRA: CPOUI5ODATAV4-1943)");
 			assert.throws(() => {
 				oContext2.getProperty("@$ui5.context.isSelected");
 				// TypeError("Cannot read properties of undefined (reading 'checkSuspended')")
@@ -70798,13 +70813,16 @@ make root = ${bMakeRoot}`;
 			// code under test
 			setSelected(bUseAnnotation, oCreatedContext, true);
 
-			assert.ok(oCreatedContext.isSelected());
+			assert.strictEqual(oCreatedContext.isSelected(), true);
+			assert.strictEqual(oCreatedContext.getProperty("@$ui5.context.isSelected"), undefined,
+				"oCachePromise still pending");
 
 			return Promise.all([
 				oCreated,
 				that.waitForChanges(assert, "create")
 			]);
 		}).then(function () {
+			checkSelected(assert, oCreatedContext, true);
 			assert.deepEqual(oCreatedContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.context.isTransient" : false,
@@ -70812,7 +70830,6 @@ make root = ${bMakeRoot}`;
 				Team_Id : "NEW"
 			});
 			checkCreatedPersisted(assert, oCreatedContext, oCreated);
-			checkSelected(assert, oCreatedContext, true);
 
 			that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'", {
 					value : [{MEMBER_COUNT : 2, Team_Id : "NEW"}]
@@ -76691,7 +76708,7 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selected", ["Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oContext, oContext0);
 		});
 
@@ -76704,7 +76721,7 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selected", ["No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oContext, oContext0);
 		});
 
@@ -76723,7 +76740,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76741,7 +76758,7 @@ make root = ${bMakeRoot}`;
 
 		assert.ok(oInactiveContext.isTransient());
 		assert.ok(oInactiveContext.isInactive());
-		assert.ok(oInactiveContext.isSelected());
+		checkSelected(assert, oInactiveContext, true);
 
 		await this.waitForChanges(assert, "new row is selected");
 
@@ -76749,7 +76766,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", ["No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76763,7 +76780,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76777,7 +76794,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", ["No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76791,7 +76808,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76819,7 +76836,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", ["No", "No", "No", "No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76898,20 +76915,20 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selected", [, "No"]);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), true);
+			checkSelected(assert, oContext, true);
 			assert.strictEqual(oHeaderContext, oContext);
 		});
 
 		oHeaderContext.setSelected(true);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), false);
+			checkSelected(assert, oContext, false);
 			assert.strictEqual(oItems[1].getBindingContext(), oContext);
 		});
 
 		oItems[1].getBindingContext().setSelected(false);
 
-		assert.strictEqual(oHeaderContext.isSelected(), true);
+		checkSelected(assert, oHeaderContext, true);
 
 		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&"
 				+ (oFixture.method === "filter" ? "$filter" : oFixture.value) + "=" + oFixture.query
@@ -76927,7 +76944,7 @@ make root = ${bMakeRoot}`;
 			.expectChange("selected", [null, null, null]);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), false);
+			checkSelected(assert, oContext, false);
 			assert.strictEqual(oHeaderContext, oContext);
 		});
 
@@ -76945,7 +76962,7 @@ make root = ${bMakeRoot}`;
 			oListBinding.resume();
 		}
 
-		assert.strictEqual(oHeaderContext.isSelected(), false);
+		checkSelected(assert, oHeaderContext, false);
 
 		await this.waitForChanges(assert, "after (1)");
 
@@ -76955,21 +76972,21 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selected", ["No", "No", "No"]); // preparation for test below
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), true);
+			checkSelected(assert, oContext, true);
 			assert.strictEqual(oHeaderContext, oContext);
 		});
 
 		oHeaderContext.setSelected(true);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), false);
+			checkSelected(assert, oContext, false);
 			assert.strictEqual(oItems[0].getBindingContext(), oContext);
 		});
 		oItems[0].getBindingContext().setSelected(false);
 
 		// a row context selection was changed
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), true);
+			checkSelected(assert, oContext, true);
 			assert.strictEqual(oHeaderContext, oContext);
 		});
 
@@ -76978,7 +76995,7 @@ make root = ${bMakeRoot}`;
 		oHeaderContext.setSelected(true);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), false);
+			checkSelected(assert, oContext, false);
 			assert.strictEqual(oHeaderContext, oContext);
 		});
 
@@ -76989,14 +77006,14 @@ make root = ${bMakeRoot}`;
 		this.expectChange("selected", ["Yes", , "Yes"]);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), true);
+			checkSelected(assert, oContext, true);
 			assert.strictEqual(oItems[0].getBindingContext(), oContext);
 		});
 
 		oItems[0].getBindingContext().setSelected(true);
 
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), true);
+			checkSelected(assert, oContext, true);
 			assert.strictEqual(oItems[2].getBindingContext(), oContext);
 		});
 
@@ -77020,7 +77037,7 @@ make root = ${bMakeRoot}`;
 		// selection state of header context did not change, but the selection state of row contexts
 		// was changed
 		aEventHandlers.push((oContext) => {
-			assert.strictEqual(oContext.isSelected(), false);
+			checkSelected(assert, oContext, false);
 			assert.strictEqual(oHeaderContext, oContext);
 		});
 
@@ -77190,7 +77207,7 @@ make root = ${bMakeRoot}`;
 			this.waitForChanges(assert, sMethod)
 		]);
 
-		assert.strictEqual(oContext1.isSelected(), true);
+		checkSelected(assert, oContext1, true);
 		assert.strictEqual(oContext3.getBinding(), undefined, "destroyed");
 	});
 	});
@@ -77335,9 +77352,9 @@ make root = ${bMakeRoot}`;
 			]);
 
 			assert.deepEqual(aContexts, [oContext1, oContext3]);
-			assert.strictEqual(oContext1.isSelected(), true);
-			assert.strictEqual(oContext2.isSelected(), true, "selection state is unchanged");
-			assert.strictEqual(oContext3.isSelected(), true);
+			checkSelected(assert, oContext1, true);
+			checkSelected(assert, oContext2, true, "selection state is unchanged");
+			checkSelected(assert, oContext3, true);
 		}
 	});
 	});
