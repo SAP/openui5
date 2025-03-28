@@ -466,11 +466,11 @@ sap.ui.define([
 	/*
 	 * Closes the container.
 	 */
-	Container.prototype.close = function() {
+	Container.prototype.close = function(bDoNotRestoreFocus) {
 		const oPromise = this._retrievePromise("open");
 		if (oPromise) {
 			if (oPromise.isSettled()) {
-				this.closeContainer();
+				this.closeContainer(bDoNotRestoreFocus);
 			} else {
 				this._cancelPromise(oPromise);
 			}
@@ -504,9 +504,10 @@ sap.ui.define([
 
 	/**
 	 * Closes the container control or element.
+	 * @param {boolean} bDoNotRestoreFocus If set, closing must not restore the focus on the field
 	 * @protected
 	 */
-	Container.prototype.closeContainer = function() {
+	Container.prototype.closeContainer = function(bDoNotRestoreFocus) {
 
 	};
 

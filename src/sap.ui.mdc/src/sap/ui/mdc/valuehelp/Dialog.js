@@ -874,9 +874,12 @@ sap.ui.define([
 		});
 	};
 
-	Dialog.prototype.closeContainer = function() {
+	Dialog.prototype.closeContainer = function(bDoNotRestoreFocus) { // As focused control cannot be changed behind Dialog a preventing to restore the Focus is not needed
 		const oContainer = this.getAggregation("_container");
 		if (oContainer) {
+			if (bDoNotRestoreFocus) {
+				oContainer.oPopup._oPreviousFocus = null; // TODO - find real solution
+			}
 			oContainer.close();
 
 			if (this.oTokenMultiInput) { // remove tokenizer binding to prevent updates if closed
