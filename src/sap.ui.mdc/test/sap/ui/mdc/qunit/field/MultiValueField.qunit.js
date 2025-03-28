@@ -38,7 +38,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/dom/containsOrEquals"
 ], (
 	Element,
 	library,
@@ -73,7 +75,9 @@ sap.ui.define([
 	JSONModel,
 	DateTimeType,
 	KeyCodes,
-	nextUIUpdate
+	nextUIUpdate,
+	qutils,
+	containsOrEquals
 ) => {
 	"use strict";
 
@@ -455,6 +459,82 @@ sap.ui.define([
 				}, 0);
 			}, 0);
 		}, 0);
+
+	});
+
+	let oButton;
+	QUnit.module("user interaction - display mode", {
+		beforeEach: async () => {
+			_initModel();
+			oFieldDisplay = new MultiValueField("F2", {
+				width: "500px",
+				editMode: FieldEditMode.Display,
+				display: FieldDisplay.Description,
+				items: {path: "/items", template: oItemTemplate}
+				}).setModel(oModel);
+			oFieldDisplay.placeAt("content");
+
+			oButton = new Button("B1", {text: "test"}).placeAt("content");
+			await nextUIUpdate();
+		},
+		afterEach() {
+			oFieldDisplay.destroy();
+			oFieldDisplay = undefined;
+			oButton.destroy();
+			oButton = undefined;
+			_cleanupModel();
+			_cleanupEvents();
+		}
+	});
+
+	QUnit.test("focus handling", async (assert) => {
+
+		const aContent = oFieldDisplay.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+
+		assert.ok(oContent._oIndicator.hasClass("sapUiHidden"), "More indicator hidden");
+
+		oFieldDisplay.focus();
+		assert.notOk(containsOrEquals(oFieldDisplay.getDomRef(), document.activeElement), "no focus in Field");
+
+		oFieldDisplay.setWidth("100px");
+		await nextUIUpdate();
+
+		assert.notOk(oContent._oIndicator.hasClass("sapUiHidden"), "More indicator shown");
+		oFieldDisplay.focus();
+		assert.equal(document.activeElement, oContent._oIndicator[0], "focus on more-indicator");
+
+		sinon.spy(oContent, "_togglePopup");
+		qutils.triggerEvent("click", oContent._oIndicator[0]);
+		assert.ok(oContent._togglePopup.calledOnce, "Popup open triggered");
+		await nextUIUpdate();
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait until popover shown
+			const oTokenList = oContent._getTokensList();
+			const aTokenListItems = oTokenList.getItems();
+			assert.ok(containsOrEquals(aTokenListItems[0].getDomRef(), document.activeElement), "focus on first item");
+
+			oContent._togglePopup.reset();
+			qutils.triggerKeydown(aTokenListItems[0].getId(), KeyCodes.ESCAPE, false, false, false);
+			assert.ok(oContent._togglePopup.calledOnce, "Popup close triggered");
+
+			setTimeout(async () => { // to wait until popover closed
+				assert.equal(document.activeElement, oContent._oIndicator[0], "focus on more-indicator");
+
+				qutils.triggerEvent("click", oContent._oIndicator[0]);
+				await nextUIUpdate();
+
+				setTimeout(() => { // to wait until popover shown
+					oButton.focus();
+
+					setTimeout(() => { // to wait until popover closed
+						assert.equal(document.activeElement, oButton.getFocusDomRef(), "focus on Button");
+						fnDone();
+					}, 300);
+				}, 300);
+			}, 300);
+		}, 300);
 
 	});
 
