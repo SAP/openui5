@@ -253,7 +253,7 @@
 								id="mdcTable1"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 								threshold="50">
@@ -297,7 +297,7 @@
 								id="mdcTable2"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 								threshold="50">
@@ -383,7 +383,7 @@
 									id="mdcTable-listcollection-1"
 									width="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+									selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate='\{"name": "sap/ui/v4demo/delegate/ResponsiveTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 									threshold="50">
@@ -424,7 +424,7 @@
 									id="mdcTable-listcollection-2"
 									width="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+									selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate='\{"name": "sap/ui/v4demo/delegate/ResponsiveTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 									threshold="50">
@@ -468,7 +468,7 @@
 									id="mdcTable-listcollection-3"
 									width="100%"
 									headerVisible="true"
-									selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+									selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 									p13nMode="Column,Sort"
 									delegate='\{"name": "sap/ui/v4demo/delegate/ResponsiveTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 									threshold="50">
@@ -719,7 +719,7 @@
 								id="mdcTable-city"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Cities"\}\}'
 								threshold="50">
@@ -795,7 +795,7 @@
 							<mdc:Table id="FH_Books1-MDCTable-table"
 								autoBindOnInit="false"
 								width="100%"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}' threshold="50">
 								<mdc:columns>
@@ -912,7 +912,7 @@
 							<mdc:Table id="FH_Books2-MDCTable-table"
 								autoBindOnInit="false"
 								width="100%"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}' threshold="50">
 								<mdc:columns>
@@ -1029,7 +1029,7 @@
 							<mdc:Table id="FH_Books3-MDCTable-table"
 								autoBindOnInit="false"
 								width="100%"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
+								selectionMode="{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Books"\}\}' threshold="50">
 								<mdc:columns>
@@ -1109,7 +1109,7 @@
 				required="false"
 				valueHelp="FB0-FH1"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-1-multicombo"
 				label="M.Table (useAsValueHelp)"
@@ -1119,7 +1119,7 @@
 				required="false"
 				valueHelp="FB0-FH1-1-multicombo"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-2"
 				label="define Conditions"
@@ -1129,7 +1129,7 @@
 				required="false"
 				valueHelp="FB0-FH1-2"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-10"
 				label="M.Table / MDC.uiTable"
@@ -1139,7 +1139,7 @@
 				required="false"
 				valueHelp="FB0-FH1-10"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF1-11"
 				label="M.Table / MDC.mTable"
@@ -1149,7 +1149,7 @@
 				required="false"
 				valueHelp="FB0-FH1-11"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF2"
 				label="Conditions"
@@ -1159,7 +1159,7 @@
 				required="false"
 				valueHelp="FB0-FH2"
 				display="Value"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF3"
 				label="FixedList"
@@ -1168,7 +1168,7 @@
 				dataType="sap.ui.model.odata.type.String"
 				required="false" valueHelp="FB0-FH3"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF4"
 				label="FixedList only typeahead"
@@ -1177,7 +1177,7 @@
 				dataType="sap.ui.model.odata.type.String"
 				required="false" valueHelp="FB0-FH4"
 				display="ValueDescription"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF5"
 				label="Boolean"
@@ -1197,7 +1197,7 @@
 				dataType="sap.ui.model.odata.type.String"
 				valueHelp="FB0-FH-Country"
 				display="ValueDescription"
-				maxConditions="{settings>/maxConditions}"/>
+				maxConditions="{runtimeState>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF7"
 				label="Region of origin"
@@ -1206,16 +1206,16 @@
 				dataType="sap.ui.model.odata.type.String"
 				valueHelp="FB0-FH-Region"
 				display="ValueDescription"
-				maxConditions="{settings>/maxConditions}"/>
+				maxConditions="{runtimeState>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF8"
 				label="City of origin"
-				conditions="{$filters>/conditions/cityOfOrigin_code}"
-				propertyKey="cityOfOrigin_code"
+				conditions="{$filters>/conditions/cityOfOrigin_city}"
+				propertyKey="cityOfOrigin_city"
 				dataType="sap.ui.model.odata.type.String"
 				valueHelp="FB0-FH-City"
 				display="ValueDescription"
-				maxConditions="{settings>/maxConditions}"/>
+				maxConditions="{runtimeState>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF9"
 				label="Book ($search)"
@@ -1225,9 +1225,10 @@
 				dataTypeFormatOptions='\{"groupingEnabled": false\}'
 				valueHelp="FH-Books1"
 				display="Description"
-				maxConditions="{settings>/maxConditions}"/>
+				maxConditions="{runtimeState>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF10"
+				visible="false"
 				label="Book (FilterFields)"
 				conditions="{$filters>/conditions/ID}"
 				propertyKey="ID"
@@ -1235,7 +1236,7 @@
 				dataTypeFormatOptions='\{"groupingEnabled": false\}'
 				valueHelp="FH-Books2"
 				display="Description"
-				maxConditions="{settings>/maxConditions}"/>
+				maxConditions="{runtimeState>/maxConditions}"/>
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FB0-FF11"
 				label="Book (no search)"
@@ -1245,7 +1246,7 @@
 				dataTypeFormatOptions='\{"groupingEnabled": false\}'
 				valueHelp="FH-Books3"
 				display="Description"
-				maxConditions="{settings>/maxConditions}"/>
+				maxConditions="{runtimeState>/maxConditions}"/>
 		</mdc:filterItems>
 	</mdc:FilterBar>
 

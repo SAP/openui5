@@ -3714,9 +3714,9 @@ sap.ui.define([
 	 *   A list of key predicates for known elements, in no special order
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
-	 * @param {boolean} [bSelectKeysOnly]
-	 *   Whether to select only key properties (and not expand anything); <b>Note:</b> in this case
-	 *   no data is updated from the response
+	 * @param {boolean} [bMinimal]
+	 *   Whether to select only key properties (and not expand anything) in an undefined order;
+	 *   <b>Note:</b> in this case no data is updated from the response
 	 * @returns {Promise<string[]>}
 	 *   A promise that resolves with an array of predicates (see above), or rejects with an
 	 *   instance of <code>Error</code> in case of failure, for exmaple if the cache is shared
@@ -3724,7 +3724,7 @@ sap.ui.define([
 	 * @public
 	 */
 	_CollectionCache.prototype.requestFilteredOrderedPredicates = async function (aPredicates,
-			oGroupLock, bSelectKeysOnly) {
+			oGroupLock, bMinimal) {
 		this.checkSharedRequest();
 
 		const mTypeForMetaPath = this.getTypes();
@@ -3737,8 +3737,9 @@ sap.ui.define([
 			? `${mQueryOptions.$filter} and (${aKeyFilters.join(" or ")})`
 			: aKeyFilters.join(" or ");
 		mQueryOptions.$top = aKeyFilters.length;
-		if (bSelectKeysOnly) {
+		if (bMinimal) {
 			delete mQueryOptions.$expand;
+			delete mQueryOptions.$orderby;
 			mQueryOptions.$select = [];
 			_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
 		}
@@ -3751,7 +3752,7 @@ sap.ui.define([
 
 		return oResponse.value.map((oNewElement) => {
 			const sPredicate = _Helper.getPrivateAnnotation(oNewElement, "predicate");
-			if (!bSelectKeysOnly) {
+			if (!bMinimal) {
 				const oOldElement = this.aElements.$byPredicate[sPredicate];
 				_Helper.copySelected(oOldElement, oNewElement);
 				this.aElements.$byPredicate[sPredicate] = oNewElement;

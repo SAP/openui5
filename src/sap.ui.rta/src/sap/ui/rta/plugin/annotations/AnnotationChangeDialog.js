@@ -5,18 +5,22 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController",
+	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/rta/Utils"
 ], function(
 	ManagedObject,
 	Fragment,
+	ElementUtil,
 	PersistenceWriteAPI,
 	JSONModel,
 	ResourceModel,
 	AnnotationChangeDialogController,
+	AnnotationTypes,
 	RtaUtils
 ) {
 	"use strict";
@@ -32,6 +36,15 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta
 	 */
 	const AnnotationChangeDialog = ManagedObject.extend("sap.ui.rta.plugin.annotations.AnnotationChangeDialog");
+
+	function replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedProperty, oControl) {
+		const oProperty = aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedProperty);
+		const aNewLabel = ElementUtil.getLabelForElement(oControl);
+		if (oProperty && aNewLabel) {
+			oProperty.currentValue = aNewLabel;
+			oProperty.originalValue = aNewLabel;
+		}
+	}
 
 	AnnotationChangeDialog.prototype._createDialog = async function() {
 		this._oController = new AnnotationChangeDialogController();
@@ -115,7 +128,8 @@ sap.ui.define([
 			delegate: oDelegate,
 			control: oControl,
 			annotation: sAnnotation,
-			description: sAnnotationDescription = ""
+			description: sAnnotationDescription,
+			singleRename: bSingleRename
 		} = mPropertyBag;
 		const {
 			serviceUrl: sServiceUrl,
@@ -159,15 +173,22 @@ sap.ui.define([
 		if (aProperties.length > 100) {
 			this.oChangeAnnotationModel.setSizeLimit(aProperties.length);
 		}
+
+		if (bSingleRename) {
+			replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedPropertyKey, oControl);
+		}
+
 		this.oChangeAnnotationModel.setData({
 			objectAsKey: bObjectAsKey,
+			control: oControl,
 			title: sAnnotationTitle,
-			description: sAnnotationDescription,
+			description: sAnnotationDescription || "",
 			properties: aProperties, // all properties
 			changedProperties: aProperties.filter(({ annotationPath }) => aChangedAnnotations.includes(annotationPath)),
 			propertiesToDisplay: aProperties, // switches dynamically between all properties and changed properties
 			showChangedPropertiesOnly: false,
 			filterText: sFilterText,
+			singleRename: bSingleRename || false,
 			possibleValues: aPossibleValues,
 			valueType: sAnnotationValueType,
 			serviceUrl: sServiceUrl
@@ -178,6 +199,8 @@ sap.ui.define([
 		// Ensure that the model is fully refreshed before opening the dialog
 		this.oChangeAnnotationModel.refresh(true);
 		const aChangedProperties = await this._openDialog();
+		// reset filter to not have a filtered list when opening the dialog again
+		this._oController.filterProperties("");
 		this._oDialog.close();
 		return aChangedProperties;
 	};

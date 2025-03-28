@@ -8,8 +8,6 @@
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:table="sap.ui.mdc"
-
-	
 	xmlns:mdcvh="sap.ui.mdc.valuehelp"
 	xmlns:mdcvc="sap.ui.mdc.valuehelp.content"
 	xmlns:mdcf="sap.ui.mdc.field"
@@ -21,7 +19,6 @@
 	xmlns:demo="sap.ui.v4demo.controls"
 	xmlns:ce="sap.ui.codeeditor"
 	>
-	
 
 		<mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate='\{"name": "delegates/odata/v4/FilterBarDelegate", "payload": \{"collectionName": "Books"\}\}'>
 		<mdc:dependents>
@@ -30,9 +27,9 @@
 				validateInput="false"
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcvh:Popover title="Popover1">
+					<mdcvh:Popover id="FH1-Popover" title="Popover1">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
-							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${runtimeState>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -63,9 +60,9 @@
 				validateInput="false"
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{"shouldOpenOnFocus": true\}\}'>
 				<mdc:typeahead>
-					<mdcvh:Popover title="Popover2">
+					<mdcvh:Popover id="FH2-Popover" title="Popover2">
 						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
-							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
+							<Table items='{path : "/Authors", length: 10}' mode="{= ${runtimeState>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">
 										<header>
@@ -108,7 +105,7 @@
 				required="false"
 				valueHelp="FH1"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 			<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 				id="FF1"
 				label="TestField2"
@@ -118,7 +115,7 @@
 				required="false"
 				valueHelp="FH2"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 		</mdc:filterItems>
 	</mdc:FilterBar>
 

@@ -76852,22 +76852,39 @@ sap.ui.define([
 
 		QUnit.test(sTitle, async function (assert) {
 			const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+			const sInitialReadUrl = "SalesOrderList?$apply=A.P.P.L.E.&$count=true"
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID)"
+					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1')"
+					+ "&$orderby=LifecycleStatus,Note desc&$search=foo&custom=baz"
+					+ "&$select=Note,SalesOrderID"
+					+ "&$skip=0&$top=3";
 			const sView = `
 	<Table id="table" growing="true" growingThreshold="3" items="{
+			filters : {path : 'LifecycleStatus', operator : 'EQ', value1 : 'N'},
 			path : '/SalesOrderList',
-			parameters : {$$clearSelectionOnFilter : true, $search : 'foo'}
+			parameters : {
+				$$clearSelectionOnFilter : true,
+				$apply : 'A.P.P.L.E.',
+				$count : true,
+				$expand : {SO_2_BP : {$select : 'BusinessPartnerID'}},
+				$filter : 'SalesOrderID ge \\'1\\'',
+				$orderby : 'Note desc',
+				$search : 'foo',
+				custom : 'baz'
+			},
+			sorter : {path : 'LifecycleStatus'}
 		}">
 		<Text id="id" text="{SalesOrderID}"/>
 		<Text id="note" text="{Note}"/>
 		<Text id="selected" text="{@$ui5.context.isSelected}"/>
 	</Table>`;
 
-			this.expectRequest("SalesOrderList?$search=foo&$select=Note,SalesOrderID"
-					+ "&$skip=0&$top=3", {
+			this.expectRequest(sInitialReadUrl, {
+					"@odata.count" : "4",
 					value : [
-						{Note : "SO 1", SalesOrderID : "1"},
-						{Note : "SO 2", SalesOrderID : "2"},
-						{Note : "SO 3", SalesOrderID : "3"}
+						{Note : "SO 1", SalesOrderID : "1", SO_2_BP : /*not relevant*/null},
+						{Note : "SO 2", SalesOrderID : "2", SO_2_BP : null},
+						{Note : "SO 3", SalesOrderID : "3", SO_2_BP : null}
 					]
 				})
 				.expectChange("id", ["1", "2", "3"])
@@ -76887,7 +76904,9 @@ sap.ui.define([
 
 			this.expectRequest({ // ODLB#validateSelection
 					batchNo : 2,
-					url : "SalesOrderList?$filter=SalesOrderID eq '1' or SalesOrderID eq '3'"
+					url : "SalesOrderList?custom=baz&$apply=A.P.P.L.E."
+						+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1') and"
+							+ " (SalesOrderID eq '1' or SalesOrderID eq '3')"
 						+ "&$search=foo&$select=SalesOrderID&$top=2"
 				}, {
 					value : [
@@ -76898,22 +76917,31 @@ sap.ui.define([
 			if (sMethod === "refresh" || sMethod === "requestSideEffects") {
 				this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
 						batchNo : 2,
-						url : "SalesOrderList?$select=Note,SalesOrderID"
-							+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '3'&$top=2"
+						url : "SalesOrderList?$apply=A.P.P.L.E.&"
+							+ "$expand=SO_2_BP($select=BusinessPartnerID)"
+							+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '3'&custom=baz"
+							+ "&$select=Note,SalesOrderID&$top=2"
 					}, {
 						value : [
-							{Note : "SO 1", SalesOrderID : "1"},
-							{Note : "SO 3", SalesOrderID : "3"}
+							{Note : "SO 1", SalesOrderID : "1", SO_2_BP : /*not relevant*/null},
+							{Note : "SO 3", SalesOrderID : "3", SO_2_BP : null}
 						]
 					});
 			}
+			let sRefreshUrl = sInitialReadUrl;
+			// replace $orderby if needed
+			if (sMethod === "sort") {
+				sRefreshUrl = sRefreshUrl.replace("LifecycleStatus,Note desc",
+					"SalesOrderID,Note desc");
+			} else if (sMethod === "changeParameters") {
+				sRefreshUrl = sRefreshUrl.replace("LifecycleStatus,Note desc",
+					"LifecycleStatus,SalesOrderID");
+			}
 			this.expectRequest({ // "refresh"
 					batchNo : 2,
-					url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
-						+ (sMethod === "sort" || sMethod === "changeParameters"
-							? "&$orderby=SalesOrderID" : "")
-						+ "&$skip=0&$top=3"
+					url : sRefreshUrl
 				}, {
+					"@odata.count" : "3",
 					value : [
 						{Note : "SO 1", SalesOrderID : "1"},
 						{Note : "SO 2", SalesOrderID : "2"},

@@ -18,9 +18,9 @@ sap.ui.define([
 	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
 		const oConditions = BaseValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
 
-		if (oContent.getId() === "FB0-FH-D-Popover-MTable") {
-			oConditions['distributionChannel'] = Element.getElementById('FB0-DC').getConditions();
-			oConditions['salesOrganization'] = Element.getElementById('FB0-SO').getConditions();
+		if (oContent.getId() === "appView--FB0-FH-D-Popover-MTable") {
+			oConditions['distributionChannel'] = Element.getElementById('appView--FB0-DC').getConditions();
+			oConditions['salesOrganization'] = Element.getElementById('appView--FB0-SO').getConditions();
 		}
 
 		return oConditions;

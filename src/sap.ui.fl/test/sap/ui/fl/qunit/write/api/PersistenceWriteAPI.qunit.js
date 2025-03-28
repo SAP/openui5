@@ -393,7 +393,7 @@ sap.ui.define([
 				selector: this.vSelector
 			};
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
+			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
 			assert.strictEqual(
 				PersistenceWriteAPI.add(mPropertyBag),
@@ -402,16 +402,17 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when add is called with multiple flex objects", function(assert) {
+		QUnit.test("when add is called with multiple flex objects and UIChanges", function(assert) {
 			var mPropertyBag = {
 				flexObjects: [
 					{getChangeType() { return "flexChange"; }},
-					{getChangeType() { return "flexChange"; }}
+					FlexObjectFactory.createUIChange({getChangeType() { return "flexChange"; }})
 				],
 				selector: this.vSelector
 			};
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
+			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
 			assert.deepEqual(
 				PersistenceWriteAPI.add(mPropertyBag),
@@ -478,7 +479,7 @@ sap.ui.define([
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				flexObjects: [
-					{getChangeType() { return "flexChange"; }},
+					FlexObjectFactory.createUIChange({getChangeType() { return "flexChange"; }}),
 					{
 						_getMap() {
 							return {

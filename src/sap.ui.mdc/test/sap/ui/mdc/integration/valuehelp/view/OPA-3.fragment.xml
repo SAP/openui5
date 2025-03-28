@@ -73,7 +73,7 @@
 				required="false"
 				valueHelp="FH-DC"
 				display="DescriptionValue"
-				maxConditions="{settings>/maxConditions}" />
+				maxConditions="{runtimeState>/maxConditions}" />
 		</mdc:filterItems>
 	</mdc:FilterBar>
 

@@ -1030,7 +1030,7 @@ sap.ui.define([
 		}
 
 		return new Promise(function(resolve, reject) {
-			 var sViewClass = View._getViewClassName(mParameters);
+			 var sViewClass = getViewClassName(mParameters);
 			 sap.ui.require([sViewClass], function(ViewClass){
 				 resolve(ViewClass);
 			 }, reject);
@@ -1121,7 +1121,7 @@ sap.ui.define([
 			}
 		}
 
-		var sViewClass = View._getViewClassName(oView);
+		var sViewClass = getViewClassName(oView);
 		view = createView(sViewClass, oView);
 		return view;
 	}
@@ -1134,8 +1134,8 @@ sap.ui.define([
 	 * @returns {string|undefined} Name of the view class (in sap.ui.define syntax)
 	 * @private
 	 */
-	View._getViewClassName = function(oViewSettings, bSkipLog) {
-		var sViewClass = View._getModuleName(oViewSettings);
+	function getViewClassName(oViewSettings, bSkipLog) {
+		var sViewClass = getTypedViewModuleName(oViewSettings);
 
 		// view creation
 		if (sViewClass) {
@@ -1158,7 +1158,7 @@ sap.ui.define([
 		}
 
 		return sViewClass;
-	};
+	}
 
 	function createView(sViewClass, oViewSettings) {
 		var ViewClass = sap.ui.require(sViewClass);
@@ -1194,13 +1194,13 @@ sap.ui.define([
 	 * @returns {string|undefined} Name of the module (in sap.ui.define syntax) from which to load the view definition.
 	 * @private
 	 */
-	View._getModuleName = function(mSettings) {
+	function getTypedViewModuleName(mSettings) {
 		var sModuleName;
 		if (mSettings.viewName && mSettings.viewName.startsWith("module:")) {
 			sModuleName = mSettings.viewName.slice(7);
 		}
 		return sModuleName;
-	};
+	}
 
 	/**
 	 * Interface for Preprocessor implementations that can be hooked in the view life cycle.

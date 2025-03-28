@@ -170,7 +170,7 @@ sap.ui.define([
 						autoBindOnInit: !bSuspended,
 						showRowCount: true,
 						width: "100%",
-						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
+						selectionMode: "{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
@@ -227,7 +227,7 @@ sap.ui.define([
 						autoBindOnInit: !bSuspended,
 						showRowCount: true,
 						width: "100%",
-						selectionMode: "{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
+						selectionMode: "{= ${runtimeState>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}",
 						type: new GridTableType({rowCountMode: "Auto"}),
 						delegate: {
 							name: "sap/ui/v4demo/delegate/GridTable.delegate",
@@ -254,7 +254,7 @@ sap.ui.define([
 						});
 						let oConditions;
 						if (bHasCountryOfOrigin) {
-							const aCountryConditions = Element.getElementById("FB0-FF6").getConditions();
+							const aCountryConditions = Element.getElementById("appView--FB0-FF6").getConditions();
 							oConditions = {
 								"countryOfOrigin_code": aCountryConditions
 							};

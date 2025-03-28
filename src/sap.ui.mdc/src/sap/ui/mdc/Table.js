@@ -2930,6 +2930,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Event handler for binding createActivate
+	 *
+	 * @private
+	 */
+	Table.prototype._onCreateActivate = function() {
+		Promise.resolve().then(() => {
+			this._updateTableHeaderState();
+		});
+	};
+
+	/**
 	 * Event handler for binding change
 	 *
 	 * @private
@@ -3078,6 +3089,7 @@ sap.ui.define([
 
 		Table._addBindingListener(oBindingInfo, "dataRequested", this._onDataRequested.bind(this));
 		Table._addBindingListener(oBindingInfo, "dataReceived", this._onDataReceived.bind(this));
+		Table._addBindingListener(oBindingInfo, "createActivate", this._onCreateActivate.bind(this));
 		Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
 	};
 

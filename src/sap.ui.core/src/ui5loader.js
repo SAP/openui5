@@ -796,15 +796,6 @@
 		return getGlobalObject(__global, aNames, aNames.length);
 	}
 
-	function setGlobalProperty(sName, vValue) {
-		const aNames = sName ? sName.split(".") : [];
-
-		if ( aNames.length > 0 ) {
-			const oObject = getGlobalObject(__global, aNames, aNames.length - 1, true);
-			oObject[aNames[aNames.length - 1]] = vValue;
-		}
-	}
-
 	// ---- Modules -------------------------------------------------------------------------------
 
 	function wrapExport(value) {
@@ -2049,14 +2040,6 @@
 	 */
 	const amdRequire = createContextualRequire(null, true);
 
-	function requireSync(sModuleName) {
-		sModuleName = getMappedName(sModuleName + '.js');
-		if ( log.isLoggable() ) {
-			log.warning(`sync require of '${sModuleName}'`);
-		}
-		return unwrapExport(requireModule(null, sModuleName, /* bAsync = */ false));
-	}
-
 	/**
 		 * @private
 		 */
@@ -2153,49 +2136,6 @@
 		return mUrlPrefixesCopy;
 	}
 
-	/**
-	 * Removes a set of resources from the resource cache.
-	 *
-	 * @param {string} sName unified resource name of a resource or the name of a preload group to be removed
-	 * @param {boolean} [bPreloadGroup=true] whether the name specifies a preload group, defaults to true
-	 * @param {boolean} [bUnloadAll] Whether all matching resources should be unloaded, even if they have been executed already.
-	 * @param {boolean} [bDeleteExports] Whether exports (global variables) should be destroyed as well. Will be done for UI5 module names only.
-	 * @private
-	 */
-	function unloadResources(sName, bPreloadGroup, bUnloadAll, bDeleteExports) {
-		const aModules = [];
-
-		if ( bPreloadGroup == null ) {
-			bPreloadGroup = true;
-		}
-
-		if ( bPreloadGroup ) {
-			// collect modules that belong to the given group
-			for ( const sURN in mModules ) {
-				const oModule = mModules[sURN];
-				if ( oModule && oModule.group === sName ) {
-					aModules.push(sURN);
-				}
-			}
-		} else {
-			// single module
-			if ( mModules[sName] ) {
-				aModules.push(sName);
-			}
-		}
-
-		aModules.forEach((sURN) => {
-			const oModule = mModules[sURN];
-			if ( oModule && bDeleteExports && sURN.match(/\.js$/) ) {
-				// @evo-todo move to compat layer?
-				setGlobalProperty(urnToUI5(sURN), undefined);
-			}
-			if ( oModule && (bUnloadAll || oModule.state === PRELOADED) ) {
-			  delete mModules[sURN];
-			}
-		});
-	}
-
 	function getModuleContent(name, url) {
 		if ( name ) {
 			name = getMappedName(name);
@@ -2244,13 +2184,17 @@
 		baseUrl(url) {
 			registerResourcePath("", url);
 		},
-		paths: registerResourcePath, // has length 2
+
+		// has length 2
+		paths: registerResourcePath,
+
 		shim(module, shim) {
 			if ( Array.isArray(shim) ) {
 				shim = { deps : shim };
 			}
 			mShims[module + '.js'] = shim;
 		},
+
 		amd(bValue) {
 			bValue = !!bValue;
 			if ( bExposeAsAMDLoader !== bValue ) {
@@ -2267,36 +2211,44 @@
 				}
 			}
 		},
+
 		async(async) {
 			if (!async) {
 				throw new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed.");
 			}
 		},
+
 		bundles(bundle, modules) {
 			bundle += '.js';
 			modules.forEach(
 				(module) => { Module.get(module + '.js').group = bundle; }
 			);
 		},
+
 		bundlesUI5(bundle, resources) {
 			resources.forEach(
 				(module) => { Module.get(module).group = bundle; }
 			);
 		},
+
 		debugSources(debug) {
 			bDebugSources = !!debug;
 		},
+
 		depCache(module, deps) {
 			mDepCache[module + '.js'] = deps.map((dep) => dep + '.js');
 		},
+
 		depCacheUI5(module, deps) {
 			mDepCache[module] = deps;
 		},
+
 		ignoreBundledResources(filter) {
 			if ( filter == null || typeof filter === 'function' ) {
 				fnIgnorePreload = filter;
 			}
 		},
+
 		map(context, map) {
 			// @evo-todo ignore empty context, empty prefix?
 			if ( map == null ) {
@@ -2311,14 +2263,11 @@
 				});
 			}
 		},
+
 		reportSyncCalls(report) {
 			if ( report === 0 || report === 1 || report === 2 ) {
 				syncCallBehavior = report;
 			}
-		},
-		noConflict(bValue) {
-			log.warning("Config option 'noConflict' has been deprecated, use option 'amd' instead, if still needed.");
-			mUI5ConfigHandlers.amd(!bValue);
 		}
 	};
 
@@ -2459,8 +2408,7 @@
 		loadJSResourceAsync,
 		resolveURL,
 		guessResourceName,
-		toUrl,
-		unloadResources
+		toUrl
 	};
 
 
@@ -2537,6 +2485,7 @@
 		 *     },
 		 *
 		 *     // activate real async loading and module definitions
+		 *     // (will become obsolete in 2.0 contexts as async will be the only mode there)
 		 *     async: true,
 		 *
 		 *     // provide dependency and export metadata for non-UI5 modules
@@ -2664,6 +2613,8 @@
 		 *
 		 *   <b>Note:</b> Switching back from async to sync is not supported and trying to do so will throw
 		 *   an <code>Error</code>
+		 *
+		 *   In the next major version of UI5, this option will become obsolete as async will be the only mode.
 		 *
 		 * @param {boolean} [cfg.amd=false]
 		 *   When set to true, the ui5loader will overwrite the global properties <code>define</code>
@@ -3090,42 +3041,40 @@
 	sap.ui.require = ui5Require;
 
 	/**
-	 * Calculates a URL from the provided resource name.
-	 *
-	 * The calculation takes any configured ID mappings or resource paths into account
-	 * (see {@link sap.ui.loader.config config options map and paths}. It also supports relative
-	 * segments such as <code>./</code> and <code>../</code> within the path, but not at its beginning.
-	 * If relative navigation would cross the root namespace (e.g. <code>sap.ui.require.toUrl("../")</code>)
-	 * or when the resource name starts with a slash or with a relative segment, an error is thrown.
-	 *
-	 * <b>Note:</b> <code>toUrl</code> does not resolve the returned URL; whether it is an absolute
-	 * URL or a relative URL depends on the configured <code>baseUrl</code> and <code>paths</code>.
-	 *
-	 * @example
-	 *   sap.ui.loader.config({
-	 *     baseUrl: "/home"
-	 *   });
-	 *
-	 *   sap.ui.require.toUrl("app/data")              === "/home/app/data"
-	 *   sap.ui.require.toUrl("app/data.json")         === "/home/app/data.json"
-	 *   sap.ui.require.toUrl("app/data/")             === "/home/app/data/"
-	 *   sap.ui.require.toUrl("app/.config")           === "/home/app/.config"
-	 *   sap.ui.require.toUrl("app/test/../data.json") === "/home/data.json"
-	 *   sap.ui.require.toUrl("app/test/./data.json")  === "/home/test/data.json"
-	 *   sap.ui.require.toUrl("app/../../data")        throws Error because root namespace is left
-	 *   sap.ui.require.toUrl("/app")                  throws Error because first character is a slash
-	 *
-	 * @param {string} sName Name of a resource e.g. <code>'app/data.json'</code>
-	 * @returns {string} Path to the resource, e.g. <code>'/home/app/data.json'</code>
-	 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
-	 * @throws {Error} If the input name is absolute (starts with a slash character <code>'/'</code>),
-	 *   starts with a relative segment or if resolving relative segments would cross the root
-	 *   namespace
-	 * @public
-	 * @name sap.ui.require.toUrl
-	 * @function
-	 * @ui5-global-only
-	 */
-
-	sap.ui.requireSync = requireSync;
+		 * Calculates a URL from the provided resource name.
+		 *
+		 * The calculation takes any configured ID mappings or resource paths into account
+		 * (see {@link sap.ui.loader.config config options map and paths}. It also supports relative
+		 * segments such as <code>./</code> and <code>../</code> within the path, but not at its beginning.
+		 * If relative navigation would cross the root namespace (e.g. <code>sap.ui.require.toUrl("../")</code>)
+		 * or when the resource name starts with a slash or with a relative segment, an error is thrown.
+		 *
+		 * <b>Note:</b> <code>toUrl</code> does not resolve the returned URL; whether it is an absolute
+		 * URL or a relative URL depends on the configured <code>baseUrl</code> and <code>paths</code>.
+		 *
+		 * @example
+		 *   sap.ui.loader.config({
+		 *     baseUrl: "/home"
+		 *   });
+		 *
+		 *   sap.ui.require.toUrl("app/data")              === "/home/app/data"
+		 *   sap.ui.require.toUrl("app/data.json")         === "/home/app/data.json"
+		 *   sap.ui.require.toUrl("app/data/")             === "/home/app/data/"
+		 *   sap.ui.require.toUrl("app/.config")           === "/home/app/.config"
+		 *   sap.ui.require.toUrl("app/test/../data.json") === "/home/data.json"
+		 *   sap.ui.require.toUrl("app/test/./data.json")  === "/home/test/data.json"
+		 *   sap.ui.require.toUrl("app/../../data")        throws Error because root namespace is left
+		 *   sap.ui.require.toUrl("/app")                  throws Error because first character is a slash
+		 *
+		 * @param {string} sName Name of a resource e.g. <code>'app/data.json'</code>
+		 * @returns {string} Path to the resource, e.g. <code>'/home/app/data.json'</code>
+		 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
+		 * @throws {Error} If the input name is absolute (starts with a slash character <code>'/'</code>),
+		 *   starts with a relative segment or if resolving relative segments would cross the root
+		 *   namespace
+		 * @public
+		 * @name sap.ui.require.toUrl
+		 * @function
+		 * @ui5-global-only
+		 */
 }(globalThis));

@@ -199,7 +199,7 @@ sap.ui.define([
 
 		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		const oCountry = Element.getElementById("FB0-FF6");
+		const oCountry = Element.getElementById("appView--FB0-FF6");
 		const aCountryConditions = oCountry && oCountry.getConditions();
 		if (aCountryConditions && aCountryConditions.length) {
 			oConditions["country_code"] = aCountryConditions;
@@ -244,7 +244,7 @@ sap.ui.define([
 		}, []);
 
 		if (aAllConditionCountries && aAllConditionCountries.length) {
-			const oFilterBar = Element.getElementById("FB0");
+			const oFilterBar = Element.getElementById("appView--FB0");
 			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 				aAllConditionCountries.forEach(function(sCountry) {
 					const bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {
