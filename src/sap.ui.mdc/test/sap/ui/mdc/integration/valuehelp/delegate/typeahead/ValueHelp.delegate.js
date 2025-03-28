@@ -3,25 +3,38 @@
  */
 
 sap.ui.define([
-	"../ValueHelp.delegate"
+	"../ValueHelp.delegate",
+	'sap/ui/Device'
 ], function(
-	BaseValueHelpDelegate
+	BaseValueHelpDelegate,
+	Device
 ) {
 	"use strict";
 
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
-	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
-		return oValueHelp.getModel("settings").getProperty("/opensOnClick");
-	};
-
-	ValueHelpDelegate.showTypeahead = function (oPayload, oContent, oConfig) {
-		const sShowTypeahead = oContent.getModel("settings").getData().showTypeahead;
+	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+		const sShouldOpenOnFocus = oContainer.getModel("runtimeState").getData().shouldOpenOnFocus;
 
 		/*eslint-disable-next-line no-new-func*/
-		const fnShowTypeahead = new Function('oValueHelp', 'oContent',`return (${sShowTypeahead})(oValueHelp, oContent)`);
+		const fnShouldOpenOnFocus = new Function('oValueHelp', 'oContainer', 'Device', `return (${sShouldOpenOnFocus})(oValueHelp, oContainer);`);
+		return fnShouldOpenOnFocus ? fnShouldOpenOnFocus.apply(this, [oValueHelp, oContainer, Device]) : BaseValueHelpDelegate.sShouldOpenOnFocus.apply(this, arguments);
+	};
 
-		return fnShowTypeahead ? fnShowTypeahead.apply(this, arguments) : BaseValueHelpDelegate.showTypeahead.apply(this, arguments);
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
+		const sShouldOpenOnClick = oContainer.getModel("runtimeState").getData().shouldOpenOnClick;
+
+		/*eslint-disable-next-line no-new-func*/
+		const fnShouldOpenOnClick = new Function('oValueHelp', 'oContainer', 'Device', `return (${sShouldOpenOnClick})(oValueHelp, oContainer);`);
+		return fnShouldOpenOnClick ? fnShouldOpenOnClick.apply(this, [oValueHelp, oContainer, Device]) : BaseValueHelpDelegate.shouldOpenOnClick.apply(this, arguments);
+	};
+
+	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
+		const sShowTypeahead = oContent.getModel("runtimeState").getData().showTypeahead;
+
+		/*eslint-disable-next-line no-new-func*/
+		const fnShowTypeahead = new Function('oValueHelp', 'oContent', 'Device', `return (${sShowTypeahead})(oValueHelp, oContent);`);
+		return fnShowTypeahead ? fnShowTypeahead.apply(this, [oValueHelp, oContent, Device]) : BaseValueHelpDelegate.showTypeahead.apply(this, arguments);
 	};
 
 	return ValueHelpDelegate;

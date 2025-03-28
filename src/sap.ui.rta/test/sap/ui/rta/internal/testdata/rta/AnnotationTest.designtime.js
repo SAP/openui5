@@ -24,7 +24,7 @@ sap.ui.define([
 		IDFirst: "ID First"
 	};
 
-	function createDelegate(bSingleAction) {
+	function createDelegate(bSingleAction, bRename) {
 		return {
 			getAnnotationsChangeInfo: () => {
 				return {
@@ -33,19 +33,19 @@ sap.ui.define([
 						{
 							propertyName: "TechnicalName",
 							annotationPath: "path/to/test/label",
-							currentValue: oTextArrangementTypes.TextOnly,
+							currentValue: bRename ? oTextArrangementLabels.TextOnly : oTextArrangementTypes.TextOnly,
 							tooltip: "My Test Tooltip"
 						},
 						{
 							propertyName: "MyOtherTechnicalName",
 							annotationPath: "path/to/second/test/label",
-							currentValue: oTextArrangementTypes.IDFirst,
+							currentValue: bRename ? oTextArrangementLabels.IDFirst : oTextArrangementTypes.IDFirst,
 							label: "My Other Test Label",
 							tooltip: "My Other Test Tooltip"
 						}
 					],
 					preSelectedProperty: bSingleAction && "path/to/test/label",
-					possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
+					possibleValues: bRename ? undefined : Object.keys(oTextArrangementTypes).map((sKey) => ({
 						key: oTextArrangementTypes[sKey],
 						text: oTextArrangementLabels[sKey]
 					}))
@@ -67,7 +67,7 @@ sap.ui.define([
 					changeType: "labelChange_Test",
 					title: () => "Change Label",
 					type: AnnotationTypes.StringType,
-					delegate: createDelegate()
+					delegate: createDelegate(false, true)
 				},
 				textArrangementSingle: {
 					changeType: "textArrangement_Test",
@@ -76,11 +76,11 @@ sap.ui.define([
 					delegate: createDelegate(true)
 				},
 				labelSingle: {
-					changeType: "anotherChange_Test",
+					changeType: "labelChange_Test",
 					title: () => "Change Label - Single",
-					icon: "sap-icon://endoscopy",
+					icon: "sap-icon://user-edit",
 					type: AnnotationTypes.StringType,
-					delegate: createDelegate(true),
+					delegate: createDelegate(true, true),
 					controlBasedRenameChangeType: "rename",
 					singleRename: true
 				}

@@ -23,14 +23,13 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/type/Boolean",
 	"sap/ui/base/Event",
 	"sap/m/IllustratedMessage",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/mdc/odata/TypeMap",
-	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/ActionToolbar",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/CopyProvider",
@@ -54,7 +53,6 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/Menu",
-	"sap/m/MenuItem",
 	"sap/ui/fl/variants/VariantManagement"
 ], function(
 	TableQUnitUtils,
@@ -78,14 +76,13 @@ sap.ui.define([
 	MessageBox,
 	ODataListBinding,
 	JSONModel,
+	BooleanType,
 	UI5Event,
 	IllustratedMessage,
 	IllustratedMessageType,
 	Control,
 	CoreLibrary,
 	MLibrary,
-	ODataTypeMap,
-	TestModificationHandler,
 	ActionToolbar,
 	ActionToolbarAction,
 	CopyProvider,
@@ -109,7 +106,6 @@ sap.ui.define([
 	ConditionValidated,
 	OperatorName,
 	Menu,
-	MenuItem,
 	VariantManagement
 ) {
 	"use strict";
@@ -1242,6 +1238,44 @@ sap.ui.define([
 
 			fnGetRowBindingStub.restore();
 			done();
+		}.bind(this));
+	});
+
+	QUnit.test("Update RowCount on 'activateCreate' Event from Binding", function(assert) {
+		const done = assert.async();
+		const sHeaderText = "myTestHeader";
+
+		let iCount = 5;
+		const oRowBinding = {
+			getCount: function() {
+				return iCount;
+			}
+		};
+
+		const fnGetRowBindingStub = sinon.stub(this.oTable, "getRowBinding");
+		fnGetRowBindingStub.returns(oRowBinding);
+
+		this.oTable.initialized().then(function() {
+			this.oTable.setHeader(sHeaderText);
+			this.oTable.setShowRowCount(true);
+			this.oTable._updateHeaderText();
+
+			const oTitle = this.oTable._oTitle;
+			assert.equal(oTitle.getText(), sHeaderText + " (5)", "Header shows the right row count");
+
+			const oBindingInfo = {};
+			this.oTable._finalizeBindingInfo(oBindingInfo);
+			assert.ok(oBindingInfo.events.createActivate, "createActivate event is registered");
+			oBindingInfo.events.createActivate();
+			iCount = 6;
+			assert.equal(oTitle.getText(), sHeaderText + " (5)", "Header shows the right row count");
+
+			Promise.resolve().then(() => {
+				assert.equal(oTitle.getText(), sHeaderText + " (6)", "Header shows the right row count");
+				fnGetRowBindingStub.restore();
+				done();
+			});
+
 		}.bind(this));
 	});
 
@@ -3811,8 +3845,8 @@ sap.ui.define([
 					new RowActionItem({
 						type: "Navigation",
 						visible: {
-							path: 'stock',
-							type: 'sap.ui.model.type.Boolean',
+							path: "stock",
+							type: new BooleanType(),
 							formatter: function (sString) {
 								return sString === "Test";
 							}
@@ -3851,8 +3885,8 @@ sap.ui.define([
 					template: new RowActionItem({
 						type: "{type}",
 						visible: {
-							path: 'stock',
-							type: 'sap.ui.model.type.Boolean',
+							path: "stock",
+							type: new BooleanType(),
 							formatter: function (sString) {
 								return sString === "Test";
 							}

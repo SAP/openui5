@@ -1,4 +1,4 @@
-<ToolBar
+<Toolbar
 	xmlns:layout="sap.ui.layout"
 	width="100%"
 	xmlns="sap.m"
@@ -19,18 +19,18 @@
 	xmlns:demo="sap.ui.v4demo.controls">
 
 	<Label text="maxConditions 1 / -1" labelFor="switchMaxConditions" />
-	<Switch id="switchMaxConditions" state="{= ${settings>/maxConditions} === -1}" change=".onMaxConditionsSwitchChange"/>
+	<Switch id="switchMaxConditions" state="{= ${runtimeState>/maxConditions} === -1}" change=".onMaxConditionsSwitchChange"/>
 
 	<Label text="SelectionStrategy:"/>
 	<Label text="by Payload Key" labelFor="swList"/>
-	<Switch id="swList" state="{settings>/selectionConsidersList}"/>
+	<Switch id="swList" state="{runtimeState>/selectionConsidersList}"/>
 	<Label text="by Payload Content" labelFor="swPayload"/>
-	<Switch id="swPayload" state="{settings>/selectionConsidersPayload}"/>
+	<Switch id="swPayload" state="{runtimeState>/selectionConsidersPayload}"/>
 	<Label text="Creation Strategy" labelFor="conditionCreationStrategies" />
-	<Select id="conditionCreationStrategies" forceSelection="false" selectedKey="{settings>/conditionCreationStrategy}" items="{
-		path: 'settings>/conditionCreationStrategies',
+	<Select id="conditionCreationStrategies" forceSelection="false" selectedKey="{runtimeState>/conditionCreationStrategy}" items="{
+		path: 'runtimeState>/conditionCreationStrategies',
 		sorter: { path: 'key' }
 	}">
-		<core:Item key="{settings>key}" text="{settings>key}" />
+		<core:Item key="{runtimeState>key}" text="{runtimeState>key}" />
 	</Select>
-</ToolBar>
+</Toolbar>

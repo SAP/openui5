@@ -327,6 +327,14 @@ sap.ui.define([
 		this._sPreviousValue = this.getDOMValue();
 	};
 
+	DateTimeField.prototype.shouldValueStateMessageBeOpened = function() {
+		return (this.getValueState() !== ValueState.None) &&
+				this.getEditable() &&
+				this.getEnabled() &&
+				this.getShowValueStateMessage() &&
+				!(this._oPopup && this._oPopup.isOpen());
+	};
+
 	/**
 	 * Event handler for user input.
 	 *

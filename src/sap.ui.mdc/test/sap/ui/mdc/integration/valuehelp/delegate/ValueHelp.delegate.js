@@ -58,8 +58,8 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
-		const bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
-		const bSelectionConsidersPayload = oContent.getModel("settings").getProperty("/selectionConsidersPayload");
+		const bSelectionConsidersList = oContent.getModel("runtimeState").getProperty("/selectionConsidersList");
+		const bSelectionConsidersPayload = oContent.getModel("runtimeState").getProperty("/selectionConsidersPayload");
 		return BaseValueHelpDelegate.findConditionsForContext.apply(this, arguments).filter(function (oCondition) {
 			const oCurrentListPayload = oCondition.payload && oCondition.payload[oContent.getId()];
 				if (bSelectionConsidersList) {
@@ -137,7 +137,7 @@ sap.ui.define([
 	// TODO: Share selections between Typeahead and Dialog when similar?
 	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 
-		const sCreationStrategy = oContent.getModel("settings").getProperty("/conditionCreationStrategy");
+		const sCreationStrategy = oContent.getModel("runtimeState").getProperty("/conditionCreationStrategy");
 		const bIsModifyingStrategy = ["Merge", "Replace"].indexOf(sCreationStrategy) >= 0;
 		const bIsReplaceStrategy = sCreationStrategy === "Replace";
 
@@ -227,7 +227,7 @@ sap.ui.define([
 			}, []);
 
 			if (aAllConditionCountries && aAllConditionCountries.length) {
-				const oFilterBar = Element.getElementById("FB0");
+				const oFilterBar = Element.getElementById("appView--FB0");
 				StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 					let bModify = false;
 					aAllConditionCountries.forEach(function(sCountry) {
@@ -267,7 +267,7 @@ sap.ui.define([
 			// Example field extraction:
 			/*
 			var TypeUtil = ODataV4ValueHelpDelegate.getTypeMap();
-			var oField = Element.getElementById("FB0-SO");
+			var oField = Element.getElementById("appView--FB0-SO");
 			var aSalesOrganizationConditions = oField.getConditions();
 			if (aSalesOrganizationConditions && aSalesOrganizationConditions.length) {
 				oConditions["salesOrganization"] = aSalesOrganizationConditions.map(function (oCondition) {
@@ -281,7 +281,7 @@ sap.ui.define([
 			} */
 
 			// Example filterbar extraction:
-			const oSourceFilterBar = Element.getElementById("FB0");
+			const oSourceFilterBar = Element.getElementById("appView--FB0");
 			return StateUtil.retrieveExternalState(oSourceFilterBar).then(function (oExternalFilterBarState) {
 
 				const aSalesOrganizationConditions = oExternalFilterBarState.filter && oExternalFilterBarState.filter["salesOrganization"];
@@ -297,7 +297,7 @@ sap.ui.define([
 
 	// optional
 	ValueHelpDelegate.getCount = function (oValueHelp, oContent, aConditions, sGroup) {
-		const bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
+		const bSelectionConsidersList = oContent.getModel("runtimeState").getProperty("/selectionConsidersList");
 
 		let aRelevantContentPayloadKeys = [oContent.getId()];
 

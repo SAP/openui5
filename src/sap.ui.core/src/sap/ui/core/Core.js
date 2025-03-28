@@ -994,7 +994,6 @@ sap.ui.define([
 			}
 		};
 
-
 		/**
 		 * Friendly function to access the provider from outside the core.
 		 *

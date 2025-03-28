@@ -148,6 +148,10 @@ sap.ui.define([
 		},
 		onDocumentRenamedSuccess: function(oEvent) {
 			// placeholder event handler to initiate a file name change that gets updated in the backend, and then the message is displayed in the application
+			const oItem = oEvent.getParameter("item");
+			const oFileData = oItem.getBindingContext("documents").getObject();
+			oFileData.fileName = oItem.getFileName();
+			this.oMockServer.updateExisitingDocument(oFileData);
 
 			// Toast for sucessful rename.
 			MessageToast.show("Document Renamed.", {duration: 2000});
