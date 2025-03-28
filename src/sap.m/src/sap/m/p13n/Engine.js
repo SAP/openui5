@@ -690,14 +690,6 @@ sap.ui.define([
 
 		let fResolveRTA;
 
-		//var aVMs = this.hasForReference(oControl, "sap.ui.fl.variants.VariantManagement");
-		// TODO: clarify if we need this error handling / what to do with the Link if we want to keep it
-		const aPVs = this.hasForReference(oControl, "sap.m.p13n.PersistenceProvider");
-
-		if (aPVs.length > 0 && !oControl.isA("sap.ui.mdc.link.Panel")) {
-			return Promise.reject("Please do not use a PeristenceProvider in RTA.");
-		}
-
 		const oOriginalModifHandler = this.getModificationHandler(oControl);
 		const oTemporaryRTAHandler = new FlexModificationHandler();
 
