@@ -1,33 +1,42 @@
-/* =============================== */
-/* CSS for control sap.f/SidePanel */
-/* Evening Horizon theme           */
-/* =============================== */
+/* ================================ */
+/* CSS for control sap.f/SidePanel  */
+/* Evening Horizon theme            */
+/* ================================ */
 
-@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiGroupContentBorderColor, transparent;
+@_sap_ui_layout_Splitter_BarDecorationColors: var(--sapGroup_ContentBorderColor), transparent;
 
 .sapFSP {
+
 	.sapFSPSplitterBar {
+
 		.sapFSPSplitterBarGripIcon {
-			color:@sapUiButtonLiteTextColor;
+			color: var(--sapButton_Lite_TextColor);
 		}
 	}
+
 	.sapFSPSide {
+
 		.sapFSPSideInner {
+
 			.sapFSPActionBar {
 
 				.sapFSPItem {
+
 					.sapUiIcon {
 						border-width: 0.125rem;
 					}
+
 					&.sapFSPSelected {
+
 						&::before {
 							width: 0.25rem;
 						}
 					}
 
 					&:focus {
+
 						&::after {
-							border: 0.125rem solid @sapUiContentSelectedForegroundColor;
+							border: 0.125rem solid var(--sapContent_Selected_ForegroundColor);
 						}
 					}
 				}
