@@ -2581,7 +2581,8 @@
 			return {
 				amd: bExposeAsAMDLoader,
 				async: bGlobalAsyncMode,
-				noConflict: !bExposeAsAMDLoader // TODO needed?
+				/** @deprecated As of 1.135, superceded by option <code>amd</code> */
+				noConflict: !bExposeAsAMDLoader
 			};
 		}
 		handleConfigObject(cfg, mUI5ConfigHandlers);
