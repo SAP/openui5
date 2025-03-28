@@ -1526,7 +1526,7 @@ sap.ui.define([
 
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
 		const oChildNode = this.aElements.$byPredicate[sChildPredicate];
-		if (this.oTreeState.isOutOfPlace(sChildPredicate)) {
+		if (!bCopy && this.oTreeState.isOutOfPlace(sChildPredicate)) {
 			// remove OOP for all descendants (incl. itself) of a moved OOP node
 			this.oTreeState.deleteOutOfPlace(sChildPredicate);
 			delete oChildNode["@$ui5.context.isTransient"];
