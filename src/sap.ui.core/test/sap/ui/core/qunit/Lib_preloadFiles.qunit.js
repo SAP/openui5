@@ -1,8 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib"
-], function(jQuery, Library) {
+	"sap/ui/core/Lib",
+	"sap/ui/core/Supportability"
+], function(jQuery, Library, Supportability) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -29,7 +30,6 @@ sap.ui.define([
 	 *   lib5 (js)
 	 */
 	var EXPECTATIONS = {
-		'none':	[ 'none', 'none', 'none' ],
 		'js':   [ 'js', 'js', 'js' ]
 	};
 
@@ -49,8 +49,7 @@ sap.ui.define([
 
 		assert.ok(EXPECTATIONS[cfgLibraryPreloadFiles], "[precondition] configured variants should be described in EXPECTATIONS");
 
-		// sync or async both activate the preload
-		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("sync");
+		this.oLibraryGetPreloadStub = sinon.stub(Supportability, "isPreloadDisabled").returns(false); // enable preload
 
 		this.spy(privateLoaderAPI, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
@@ -85,24 +84,15 @@ sap.ui.define([
 
 				//assert.isLibLoaded('testlibs.scenario7.' + lib);
 
-				if ( expected === 'none' ) {
-					assert.ok(privateLoaderAPI.loadJSResourceAsync.neverCalledWith(matcherLibPreloadJS), "library-preload.js should not have been requested for '" + lib + "'");
-					//assert.ok(sap.ui.require.load.calledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should have been loaded for '" + lib + "'");
-				} else if ( expected === 'js' ) {
+				if ( expected === 'js' ) {
 					assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been loaded for '" + lib + "'");
 					assert.ok(sap.ui.require.load.neverCalledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should not have been requested for '" + lib + "'");
-				} else if ( expected === 'jserror' ) {
-					assert.ok(privateLoaderAPI.loadJSResourceAsync.calledWith(matcherLibPreloadJS), "library-preload.js should have been requested for '" + lib + "'");
-					assert.ok(privateLoaderAPI.logger.error.calledWith(matcher("-preload\\.js").and(sinon.match(/failed to load/))), "error should have been logged for failing request");
-					assert.ok(sap.ui.require.load.calledWith(sinon.match.any, matcherLibraryResource, matcherLibraryModule), "library.js should have been loaded for '" + lib + "'");
 				} else {
 					assert.ok(false, "[test code broken] unhandled expectation " + expected);
 				}
 			});
 
-		}).finally(function () {
-			this.oLibraryGetPreloadStub.restore();
-		}.bind(this));
+		});
 
 	});
 

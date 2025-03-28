@@ -213,29 +213,6 @@ sap.ui.define(function() {
 				}
 			},
 
-			"PreloadCfg-optimized-ui5loader-async": {
-				group: "Configuration",
-				loader: {
-					async: true
-				},
-				ui5: {
-
-				},
-				beforeBootstrap: "./PreloadCfg.beforeBootstrap.qunit",
-				module: "./PreloadCfg.qunit"
-			},
-
-			"PreloadCfg-debug-ui5loader-async": {
-				group: "Configuration",
-				loader: {
-					async: true
-				},
-				ui5: {
-					debug: true
-				},
-				module: "./PreloadCfg.qunit"
-			},
-
 			"ResourceRoot_ResourcesURL_ResOnly": {
 				group: "Resource Root Determination",
 				page: "test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_ResOnly.qunit.html",

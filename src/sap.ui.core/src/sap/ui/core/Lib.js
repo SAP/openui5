@@ -415,8 +415,7 @@ sap.ui.define([
 			mOptions = mOptions || {};
 
 			var sLibPackage = this.name.replace(/\./g, '/'),
-				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js'),
-				bHttp2 = Library.isDepCacheEnabled();
+				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js');
 
 			if (this._loadingStatus == null && mOptions.url) {
 				registerModulePath(this.name, mOptions.url);
@@ -453,15 +452,9 @@ sap.ui.define([
 
 			if (bEntryModuleExists) {
 				aAllPromises.push(Promise.resolve(this));
-			} else {
+			} else if (!Supportability.isPreloadDisabled()) {
 				// first preload code, resolves with list of dependencies (or undefined)
-				var bPreload = Library.getPreloadMode() === 'sync' || Library.getPreloadMode() === 'async';
-				if (bPreload) {
-					aAllPromises.push(this._preloadJSFormat({
-						http2: bHttp2,
-						sync: false
-					}));
-				}
+				aAllPromises.push(this._loadLibraryPreload());
 			}
 
 			// load dependencies, if there are any
@@ -514,22 +507,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Loads the library's preload bundle in JS format.
+		 * Loads the library's preload bundle.
 		 *
-		 * @param {object} [mOptions] The options object that contains the following properties
-		 * @param {boolean} [mOptions.http2] Whether to load the "library-h2-preload" bundle instead of the
-		 * "library-preload" bundle
-		 * @returns {Promise|object} A promise that resolves with the dependency information of the library in async
-		 *  mode or the dependency information directly in sync mode
+		 * @returns {Promise} A promise that resolves when the library-preload is loaded
 		 * @private
 		 */
-		_preloadJSFormat: function(mOptions) {
-			mOptions = mOptions || {};
-
-			var sPreloadModule = this.name.replace(/\./g, '/')
-				+ (mOptions.http2 ? '/library-h2-preload' : '/library-preload')
-				+ ('.js');
-
+		_loadLibraryPreload: function() {
+			var sPreloadModule = `${this.name.replace(/\./g, '/')}/library-preload.js`;
 			return sap.ui.loader._.loadJSResourceAsync(sPreloadModule, true);
 		},
 
@@ -1547,53 +1531,6 @@ sap.ui.define([
 			type: BaseConfig.Type.Boolean,
 			external: true
 		});
-	};
-
-	/**
-	 * Whether dependency cache info files should be loaded instead of preload files.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 * @returns {boolean} whether dep-cache info files should be loaded
-	 */
-	Library.isDepCacheEnabled = function() {
-		return BaseConfig.get({
-			name: "sapUiXxDepCache",
-			type: BaseConfig.Type.Boolean,
-			external: true
-		});
-	};
-
-	/**
-	 * Currently active preload mode for libraries or falsy value.
-	 *
-	 * @returns {string} preload mode
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 * @since 1.120.0
-	 */
-	Library.getPreloadMode = function() {
-		// if debug sources are requested, then the preload feature must be deactivated
-		if (Supportability.isDebugModeEnabled() === true) {
-			return "";
-		}
-		// determine preload mode (e.g. resolve default or auto)
-		let sPreloadMode = BaseConfig.get({
-			name: "sapUiPreload",
-			type: BaseConfig.Type.String,
-			defaultValue: "auto",
-			external: true
-		});
-		// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
-		// depending on whether the ui5loader is configured async
-		if ( sPreloadMode === "auto" ) {
-			if (window["sap-ui-optimized"]) {
-				sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
-			} else {
-				sPreloadMode = "";
-			}
-		}
-		return sPreloadMode;
 	};
 
 	return Library;

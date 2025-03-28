@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
 	"sap/ui/core/theming/ThemeManager",
@@ -21,6 +22,7 @@ sap.ui.define([
 	ComponentHooks,
 	Library,
 	Manifest,
+	Supportability,
 	UIComponent,
 	UIComponentMetadata,
 	ThemeManager,
@@ -143,6 +145,7 @@ sap.ui.define([
 
 	QUnit.module("Async (Pre-)Loading", {
 		beforeEach: function() {
+			this.stub(Supportability, "isPreloadDisabled").returns(false); // activate the preload
 			this.oRegisterResourcePathSpy = this.spy(LoaderExtensions, "registerResourcePath");
 			this.helper = new Helper(this);
 		},
@@ -506,7 +509,7 @@ sap.ui.define([
 
 	QUnit.module("Synchronization of Preloads", {
 		beforeEach: function(assert) {
-			this.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
+			this.stub(Supportability, "isPreloadDisabled").returns(false); // activate the preload
 			this.helper = new Helper(this);
 			this.getManifestStub = sinon.stub(Library.prototype, "loadManifest").callsFake(function() {
 				this.oManifest = {
@@ -522,7 +525,7 @@ sap.ui.define([
 		},
 		afterEach: function(assert) {
 			this.getManifestStub.restore();
-		},
+		}
 	});
 
 	QUnit.test("preload only", async function(assert) {
@@ -653,7 +656,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("dependencies with manifest component", function(assert) {
-		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
+		this.oPreloadDisabledStub = sinon.stub(Supportability, "isPreloadDisabled").returns(false); // activate the preload
 
 		var done = assert.async();
 
@@ -694,13 +697,13 @@ sap.ui.define([
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
 		}).finally(function () {
-			this.oLibraryGetPreloadStub.restore();
+			this.oPreloadDisabledStub.restore();
 			done();
 		}.bind(this));
 	});
 
 	QUnit.test("dependencies with component (no manifest first)", function(assert) {
-		this.oLibraryGetPreloadStub = sinon.stub(Library, "getPreloadMode").returns("async"); // sync or async both activate the preload
+		this.oPreloadDisabledStub = sinon.stub(Supportability, "isPreloadDisabled").returns(false); // activate the preload
 
 		var done = assert.async();
 
@@ -733,7 +736,7 @@ sap.ui.define([
 		}.bind(this), function(oError) {
 			assert.ok(false, "Promise of Component hasn't been resolved correctly.");
 		}).finally(function () {
-			this.oLibraryGetPreloadStub.restore();
+			this.oPreloadDisabledStub.restore();
 			done();
 		}.bind(this));
 	});
@@ -848,6 +851,8 @@ sap.ui.define([
 	 * Library Preload Scenario 15
 	 */
 	QUnit.test("Load library-preload.js instead of Component-preload.js when the Component.js is included in a library preload", function(assert) {
+		this.oPreloadDisabledStub = sinon.stub(Supportability, "isPreloadDisabled").returns(false); // activate the preload
+
 		return VersionInfo.load().then(function() {
 			this.spy(sap.ui, 'require');
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
@@ -889,6 +894,8 @@ sap.ui.define([
 				// lib5 is not requested --> lazy: true
 				sinon.assert.neverCalledWith(privateLoaderAPI.loadJSResourceAsync, sinon.match(/scenario15\/lib5\/library-preload\.js$/));
 			});
+		}.bind(this)).finally(function () {
+			this.oPreloadDisabledStub.restore();
 		}.bind(this));
 	});
 

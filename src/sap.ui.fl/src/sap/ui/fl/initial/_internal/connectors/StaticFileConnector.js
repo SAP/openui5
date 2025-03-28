@@ -6,14 +6,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/merge",
-	"sap/ui/core/Component",
 	"sap/ui/core/Supportability",
 	"sap/ui/fl/interfaces/BaseLoadConnector"
 ], function(
 	Log,
 	LoaderExtensions,
 	merge,
-	Component,
 	Supportability,
 	BaseConnector
 ) {
@@ -24,7 +22,7 @@ sap.ui.define([
 		var bBundleLoaded = !!sap.ui.loader._.getModuleState(sBundleResourcePath);
 		// the bundle is usually part of the component-preload
 		// if the preload is suppressed, we send a potentially failing request
-		if (bBundleLoaded || Supportability.isDebugModeEnabled() || Component.getComponentPreloadMode() === "off") {
+		if (bBundleLoaded || Supportability.isPreloadDisabled()) {
 			try {
 				return LoaderExtensions.loadResource(sBundleResourcePath);
 			} catch (e) {

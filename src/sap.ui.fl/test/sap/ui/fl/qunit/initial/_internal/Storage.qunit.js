@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/core/Component",
+	"sap/ui/core/Supportability",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
-	Component,
+	Supportability,
 	FlexConfiguration,
 	ObjectStorageUtils,
 	FlexObjectFactory,
@@ -1048,7 +1048,7 @@ sap.ui.define([
 				layers: []}
 			]);
 			// enforce the bundle loading by simulating the no-preload scenario
-			sandbox.stub(Component, "getComponentPreloadMode").returns("off");
+			sandbox.stub(Supportability, "isPreloadDisabled").returns(true);
 		},
 		afterEach() {
 			cleanUp();
