@@ -5073,13 +5073,14 @@ sap.ui.define([
 			});
 		assert.strictEqual(oCache.bUnifiedCache, true);
 		const oTreeStateMock = this.mock(oCache.oTreeState);
-		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('23')").returns(false);
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs(undefined).returns(false);
 		oTreeStateMock.expects("deleteOutOfPlace").never();
 		oTreeStateMock.expects("expand").never();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 
-		test(this, assert, oCache, null, undefined, true);
+		test(this, assert, oCache, null, (oChildNode) => {
+			assert.ok("@$ui5.context.isTransient" in oChildNode);
+		}, true);
 	});
 
 	//*********************************************************************************************
@@ -5091,6 +5092,7 @@ sap.ui.define([
 			});
 		assert.strictEqual(oCache.bUnifiedCache, false);
 		const oTreeStateMock = this.mock(oCache.oTreeState);
+		oTreeStateMock.expects("isOutOfPlace").never();
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs("('23')").returns(false);
 		oTreeStateMock.expects("isOutOfPlace").withExactArgs(undefined).returns(false);
 		oTreeStateMock.expects("deleteOutOfPlace").never();

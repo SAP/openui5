@@ -2323,8 +2323,7 @@
 		if ( cfg === undefined ) {
 			return {
 				amd: bExposeAsAMDLoader,
-				async: true,
-				noConflict: !bExposeAsAMDLoader // TODO needed?
+				async: true
 			};
 		}
 		handleConfigObject(cfg, mUI5ConfigHandlers);

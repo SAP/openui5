@@ -46,6 +46,7 @@
 						<Button id="resetChanges" icon="sap-icon://sys-cancel-2"
 							press=".onResetChanges" text="Reset Changes"
 							tooltip="Reset Products Changes"/>
+						<Button icon="sap-icon://create" press=".onCreateInline" tooltip="Create"/>
 						<Button icon="sap-icon://refresh" press=".onRefresh" tooltip="Refresh"/>
 						<Button icon="sap-icon://synchronize"
 							press=".onRefreshKeepingPositionOfCreated"

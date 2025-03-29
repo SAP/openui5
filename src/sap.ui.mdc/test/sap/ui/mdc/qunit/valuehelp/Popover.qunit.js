@@ -350,6 +350,7 @@ sap.ui.define([
 		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 		});
+		oField.focus(); // to test focus restore
 		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
@@ -365,7 +366,9 @@ sap.ui.define([
 					assert.equal(oContainer._getAllContent()[0], oContentField, "Content of sap.m.Popover");
 					assert.equal(oContainer.getFooter(), oToolbar, "footer");
 
+					sinon.spy(oField, "focus");
 					oPopover.close();
+					assert.ok(oField.focus.calledOnce, "previous focus restored");
 					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
@@ -392,6 +395,7 @@ sap.ui.define([
 		oPopover.attachEvent("opened", (oEvent) => {
 			iOpened++;
 		});
+		oField.focus(); // to test focus restore
 		const oPromise = oPopover.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
@@ -411,7 +415,9 @@ sap.ui.define([
 					assert.ok(oFooter.getContent()[0].isA("sap.m.ToolbarSpacer"), "ToolbarSpacer is first content");
 					assert.equal(oFooter.getContent()[1], oIcon, "Icon is second content");
 
-					oPopover.close();
+					sinon.spy(oField, "focus");
+					oPopover.close(true);
+					assert.ok(oField.focus.notCalled, "previous focus not restored");
 					setTimeout(() => { // wait until closed
 						fnDone();
 					}, iPopoverDuration);
