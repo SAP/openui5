@@ -419,7 +419,7 @@ sap.ui.define([
 		const oDialog = this.getDialog();
 
 		if (this._oControl && this._oControl !== oControl) {
-			this.close();
+			this.close(true);
 			this.setFilterValue("");
 			this.setConditions([]);
 
@@ -611,19 +611,20 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
 	 * belongs to, not by the application.
 	 *
+	 * @param {boolean} bDoNotRestoreFocus If set, closing must not restore the focus on the field
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ValueHelp.prototype.close = function() {
+	ValueHelp.prototype.close = function(bDoNotRestoreFocus) {
 		const oTypeahead = this.getTypeahead();
 		const oDialog = this.getDialog();
 
 		if (oTypeahead && oTypeahead.isOpen()) {
-			oTypeahead.close();
+			oTypeahead.close(bDoNotRestoreFocus);
 		}
 
 		if (oDialog && oDialog.isOpen()) {
-			oDialog.close();
+			oDialog.close(bDoNotRestoreFocus);
 		}
 	};
 

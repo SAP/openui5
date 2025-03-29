@@ -53,6 +53,16 @@
 
 
 	QUnit.module("config() API", {
+		before() {
+			// add a custom assertion "lower than"
+			QUnit.assert.loaderConfigEquals = function(expected) {
+				this.deepEqual(sap.ui.loader.config(), expected,
+					`Flags ${Object.keys(expected)} should be returned with the expected values`);
+			};
+		},
+		after() {
+			delete QUnit.assert.loaderConfigEquals;
+		},
 		afterEach: function() {
 			removeUi5Loader();
 		}
@@ -62,7 +72,7 @@
 		var done = assert.async();
 		bootMinimalCore(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			sap.ui.loader.config({
 				amd: true,
@@ -74,7 +84,7 @@
 				}
 			});
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: true, noConflict: false}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: true});
 			done();
 
 		});
@@ -84,7 +94,7 @@
 		var done = assert.async();
 		bootMinimalCore(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			// switch to 'amd' mode, as here relative paths (defined via 'paths' option)
 			// are interpreted relative to the 'baseUrl', and not relative to document.baseURI
@@ -105,33 +115,17 @@
 		});
 	});
 
-	QUnit.test("read (after setting noConflict)", function(assert){
-		var done = assert.async();
-		bootMinimalCore(function() {
-
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
-
-			sap.ui.loader.config({
-				noConflict: false
-			});
-
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: true, noConflict: false}, "Async, amdMode and noConflict flags should be returned with the expected values");
-			done();
-
-		});
-	});
-
 	QUnit.test("async should be enabled after switching to amd mode", function(assert){
 		var done = assert.async();
 		bootMinimalCore(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			sap.ui.loader.config({
 				amd: true
 			});
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: true, noConflict: false}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: true});
 			done();
 
 		});
@@ -141,19 +135,19 @@
 		var done = assert.async();
 		bootMinimalCore(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			sap.ui.loader.config({
 				amd: true
 			});
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: true, noConflict: false}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: true});
 
 			sap.ui.loader.config({
 				amd: false
 			});
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			done();
 
@@ -164,13 +158,13 @@
 		var done = assert.async();
 		bootMinimalCore(function() {
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			sap.ui.loader.config({
 				async: true
 			});
 
-			assert.deepEqual(sap.ui.loader.config(), {async: true, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+			assert.loaderConfigEquals({async: true, amd: false});
 
 			assert.throws(function () {
 				sap.ui.loader.config({

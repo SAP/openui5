@@ -191,14 +191,20 @@ sap.ui.define([
 	/**
 	 * Returns all currently existing contexts of this list binding in no special order.
 	 *
+	 * @param {boolean} [bNoCreated]
+	 *   Whether to exclude created contexts
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   All currently existing contexts of this list binding, in no special order
 	 *
 	 * @private
 	 * @see #getAllCurrentContexts
 	 */
-	ODataListBinding.prototype._getAllExistingContexts = function () {
-		return (this.aContexts ?? []).filter(function (oContext) {
+	ODataListBinding.prototype._getAllExistingContexts = function (bNoCreated) {
+		let aContexts = this.aContexts ?? [];
+		if (bNoCreated) {
+			aContexts = aContexts.slice(this.iCreatedContexts);
+		}
+		return aContexts.filter(function (oContext) {
 			return oContext;
 		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
 			return oContext.isEffectivelyKeptAlive();
@@ -5186,7 +5192,7 @@ sap.ui.define([
 			return;
 		}
 
-		const aSelectedContexts = this._getAllExistingContexts()
+		const aSelectedContexts = this._getAllExistingContexts(true)
 			.filter((oContext) => oContext.isSelected());
 
 		if (!aSelectedContexts.length) {

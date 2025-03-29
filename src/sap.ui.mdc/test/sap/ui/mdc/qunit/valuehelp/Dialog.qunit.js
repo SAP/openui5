@@ -505,6 +505,7 @@ sap.ui.define([
 		sinon.spy(oDialog, "handleClose");
 
 		oDialog.setTitle("Test");
+		oField.focus(); // to test focus restore
 		const oPromise = oDialog.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
@@ -560,6 +561,7 @@ sap.ui.define([
 					assert.ok(bClose, "close parameter");
 
 
+					sinon.spy(oField, "focus");
 					oDialog.close();
 					assert.ok(oDialog.handleClose.calledOnce, "handleClose called");
 					oDialog.handleClose.restore();
@@ -568,6 +570,7 @@ sap.ui.define([
 						assert.equal(iClosed, 1, "Closed event fired once");
 						assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");
 						assert.ok(oContent.onHide.calledOnce, "Content onHide called");
+						assert.ok(oField.focus.calledOnce, "previous focus restored");
 
 						// open again // config changes needs to be applied
 						oType.destroy();
@@ -602,11 +605,14 @@ sap.ui.define([
 									};
 									assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 
-									oDialog.close();
+									oField.focus(); // to test focus restore
+									oField.focus.reset();
+									oDialog.close(true);
 									setTimeout(() => { // wait until closed
 										assert.equal(iClosed, 2, "Closed event fired again");
 										assert.notOk(oContainer.isOpen(), "sap.m.Dialog is not open");
 										assert.ok(oContent.onHide.calledTwice, "Content onHide called again");
+										assert.ok(oField.focus.notCalled, "previous focus not restored");
 										fnDone();
 									}, iDialogDuration);
 								}, iDialogDuration);

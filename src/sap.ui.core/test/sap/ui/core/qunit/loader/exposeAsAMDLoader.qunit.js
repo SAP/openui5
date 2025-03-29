@@ -11,7 +11,7 @@ globalThis.fnInit = () => {
 		// Scenario 1: 'amd' mode has not been activated via URL parameter
 		//             ui5loader-autoconfig should not have modified the global properties
 		QUnit.test("activated early via URL parameter", function (assert) {
-			assert.strictEqual(sap.ui.loader.config().noConflict, true, "loader should already be in noConflict mode");
+			assert.strictEqual(sap.ui.loader.config().amd, false, "loader should not be in amd mode");
 			assert.equal(window.require, requirejs.require, "global require should refer to requireJS implementation");
 			assert.equal(window.define, requirejs.define, "global define should refer to requireJS implementation");
 		});
@@ -22,7 +22,6 @@ globalThis.fnInit = () => {
 		//             global AMD properties should refer to UI5 impl
 		QUnit.test("activated late via API", function (assert) {
 			assert.strictEqual(sap.ui.loader.config().amd, true, "loader must be in amd:true mode");
-			assert.strictEqual(sap.ui.loader.config().noConflict, false, "loader must not be in noConflict mode");
 			assert.strictEqual(typeof window.require, "function", "global require should be a function");
 			assert.strictEqual(typeof window.define, "function", "global define should be a function");
 			assert.notStrictEqual(window.require, requirejs.require, "global require should not refer to requireJS implementation");

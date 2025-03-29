@@ -5680,19 +5680,19 @@ sap.ui.define([
 					+ "&c2=b&$filter=EQUIPMENT_2_PRODUCT/SupplierIdentifier%20eq%202";
 
 			oHeaderContext = oBinding.getHeaderContext();
+			checkSelected(assert, oHeaderContext, false);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : false,
 				$count : 3
 			}, "JIRA: CPOUI5ODATAV4-1944");
-			checkSelected(assert, oHeaderContext, false);
 
 			oHeaderContext.setSelected(true); // "select all"
 
+			checkSelected(assert, oHeaderContext, true);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				$count : 3
 			}, "JIRA: CPOUI5ODATAV4-1944");
-			checkSelected(assert, oHeaderContext, true);
 
 			that.expectRequest(sResourceUrl + "&$skip=0&$top=100", {
 					value : [
@@ -5719,6 +5719,7 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
+			checkSelected(assert, oHeaderContext, true);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				$count : 2
@@ -7916,7 +7917,7 @@ sap.ui.define([
 
 			// JIRA: CPOUI5ODATAV4-1404
 			assert.strictEqual(oHeaderContext.getProperty("$count"), 2);
-			assert.deepEqual(oHeaderContext.getObject(),
+			assert.deepEqual(oHeaderContext.getObject(), // no args here!
 				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
 			assert.deepEqual(oHeaderContext.getObject(""),
 				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
@@ -22351,6 +22352,7 @@ sap.ui.define([
 		}).then(function () {
 			assertIDs(["2", "3", "1", "4"]);
 			that.checkMoreButton(assert, "[4/8]");
+			checkSelected(assert, oRowContext, true);
 			assert.deepEqual(oRowContext.getObject(),
 				{"@$ui5.context.isSelected" : true, GrossAmount : "1", SalesOrderID : "2"});
 			assert.deepEqual(oKeptContext1.getObject(), {GrossAmount : "3", SalesOrderID : "1"});
@@ -28167,6 +28169,7 @@ sap.ui.define([
 				assert.strictEqual(oListBinding.getCount(), 3, "count of nodes"); // code under test
 				assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 					"still kept alive");
+				checkSelected(assert, oKeptAliveNode, true);
 				assert.deepEqual(oKeptAliveNode.getObject(), {
 						"@$ui5.context.isSelected" : true,
 						// NO! "@$ui5.node.level" : 1,
@@ -28272,6 +28275,7 @@ sap.ui.define([
 				]);
 				assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 					"still kept alive");
+				checkSelected(assert, oKeptAliveNode, true);
 				assert.deepEqual(oKeptAliveNode.getObject(), {
 						"@$ui5.context.isSelected" : true,
 						"@$ui5.node.isExpanded" : false,
@@ -33513,6 +33517,7 @@ sap.ui.define([
 				]);
 
 				assert.strictEqual(oGamma.getIndex(), 1);
+				checkSelected(assert, oGamma, true);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.level" : 2,
@@ -33551,6 +33556,7 @@ sap.ui.define([
 					[undefined, false, 1, "etag0.1", "Alpha: Αα", "0,false"]
 				], 1);
 				assert.strictEqual(oBeta.getModel(), undefined, "destroyed by collapse");
+				checkSelected(assert, oGamma, true);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.level" : 2,
@@ -33604,6 +33610,7 @@ sap.ui.define([
 				// NodeID is not lost after requesting side effects with non-hierarchical requests
 				assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
 
+				checkSelected(assert, oGamma, true);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.level" : 2,
@@ -33657,6 +33664,7 @@ sap.ui.define([
 				oBeta = aCurrentContexts[2];
 
 				assert.strictEqual(oGamma.getIndex(), 1);
+				checkSelected(assert, oGamma, true);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.level" : 2,
@@ -33694,6 +33702,7 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "select all, deselect Gamma, collapse its parent");
 			}).then(function () {
+				checkSelected(assert, oGamma, false);
 				// code under test (CPOUI5ODATAV4-2624)
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : false,
@@ -33734,6 +33743,7 @@ sap.ui.define([
 					that.waitForChanges(assert, "side effect: Name for all rows")
 				]);
 			}).then(function () {
+				checkSelected(assert, oGamma, false);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : false,
 					"@$ui5.node.level" : 2,
@@ -33849,6 +33859,7 @@ sap.ui.define([
 				assert.strictEqual(oBeta, aCurrentContexts[2], "same instance");
 
 				assert.strictEqual(oGamma.getIndex(), 1);
+				checkSelected(assert, oGamma, true);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.isExpanded" : true,
@@ -33864,6 +33875,7 @@ sap.ui.define([
 				checkPersisted(assert, oGamma);
 
 				assert.strictEqual(oBeta.getIndex(), 2); // unchanged by #move
+				checkSelected(assert, oBeta, false);
 				assert.deepEqual(oBeta.getObject(), {
 					"@$ui5.context.isSelected" : false,
 					"@$ui5.node.level" : 3,
@@ -34099,6 +34111,7 @@ sap.ui.define([
 						"side effect for selected context outside the hierarchy: Name for Gamma")
 				]);
 			}).then(function () {
+				checkSelected(assert, oGamma, true);
 				assert.deepEqual(oGamma.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.node.level" : 2,
@@ -40933,6 +40946,10 @@ sap.ui.define([
 	// updated, taking the out-of-place node into account. Move the child to another parent w/o a
 	// side-effects refresh - still the out-of-place node must be taken into account for its index.
 	// JIRA: CPOUI5ODATAV4-2573
+	// Copy an out-of-place node, afterwards the creation state of the original node is preserved.
+	// Copy an out-of-place node to itself as parent, afterwards the parent node is no longer an
+	// out-of-place node.
+	// JIRA: CPOUI5ODATAV4-2932
 	QUnit.test("Recursive Hierarchy: move (to nextSibling) & OOP node", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
@@ -41199,6 +41216,190 @@ sap.ui.define([
 			[undefined, 3, "Beta"],
 			[undefined, 2, "Delta"]
 		]);
+
+		// 1 Alpha
+		//   3 Gamma
+		//     2 Beta
+		//   4 Delta
+		//   6 Copy of 5 Epsilon
+		// 5 Epsilon
+		this.expectRequest({
+				batchNo : 7,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {},
+				url : "EMPLOYEES('5')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
+			}, {})
+			.expectRequest({
+				batchNo : 7,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')"
+				},
+				url : "$-1"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 7,
+				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "5" // Edm.Int64
+				}]
+			})
+			.expectRequest({
+				batchNo : 7,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
+			}, {
+				"@odata.count" : "6",
+				value : [{
+					DescendantCount : "4",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			})
+			.expectRequest({
+				batchNo : 7,
+				url : sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+					+ "&$filter=ID eq '5'"
+					+ "&$top=1"
+			}, {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					LimitedRank : "5"
+				}]
+			})
+			.expectRequest({
+				batchNo : 7,
+				url : sUrl.slice(0, -1) + ",Levels=1)"
+					+ "&$select=ID,Name&$filter=ID eq '5'&$top=1"
+			}, {
+				value : [{
+					ID : "5",
+					Name : "Epsilon"
+				}]
+			});
+
+		await Promise.all([
+			oEpsilon.move({copy : true, parent : oAlpha}),
+			this.waitForChanges(assert, "copy 5 (Epsilon) to 1 (Alpha)")
+		]);
+
+		checkTable("after copy 5 (Epsilon) to 1 (Alpha)", assert, oTable, [
+			"/EMPLOYEES('5')", // out of place
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
+		], [
+			[undefined, 1, "Epsilon"],
+			[true, 1, "Alpha"],
+			[true, 2, "Gamma"]
+		], 6);
+		checkCreatedPersisted(assert, oEpsilon);
+		assert.deepEqual(oEpsilon.getObject(), {
+			"@$ui5.context.isTransient" : false,
+			"@$ui5.node.level" : 1,
+			ID : "5",
+			Name : "Epsilon"
+		});
+
+		// 1 Alpha
+		//   3 Gamma
+		//     2 Beta
+		//   4 Delta
+		//   6 Copy of 5 Epsilon
+		// 5 Epsilon
+		//   7 Copy of 5 Epsilon
+		this.expectRequest({
+				batchNo : 8,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "POST",
+				payload : {},
+				url : "EMPLOYEES('5')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
+			}, {})
+			.expectRequest({
+				batchNo : 8,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('5')"
+				},
+				url : "$-1"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 8,
+				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "5" // Edm.Int64
+				}]
+			})
+			.expectRequest({
+				batchNo : 8,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
+			}, {
+				"@odata.count" : "7",
+				value : [{
+					DescendantCount : "4",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			});
+
+		await Promise.all([
+			oEpsilon.move({copy : true, parent : oEpsilon}),
+			this.waitForChanges(assert, "copy 5 (Epsilon) to 5 (Epsilon)")
+		]);
+
+		checkTable("after copy 5 (Epsilon) to 5 (Epsilon)", assert, oTable, [
+			// 5 (Epsilon) is not longer an out-of-place node
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('2')"
+		], [
+			[true, 1, "Alpha"],
+			[true, 2, "Gamma"],
+			[undefined, 3, "Beta"]
+		], 7);
+		assert.strictEqual(oEpsilon.getBinding(), undefined, "destroyed");
 	});
 
 	//*********************************************************************************************
@@ -43929,6 +44130,7 @@ sap.ui.define([
 		assert.strictEqual(oDelta.getSibling(-1), oBeta);
 
 		oDelta.setSelected(true); // #move, please update nextSibling's index (CPOUI5ODATAV4-2619)
+		checkSelected(assert, oDelta, true);
 		assert.deepEqual(oDelta.getObject(), {
 			"@$ui5.context.isSelected" : true,
 			"@$ui5.node.level" : 2,
@@ -44068,6 +44270,7 @@ sap.ui.define([
 		assert.strictEqual(oEpsilon.getBinding(), undefined, "destroyed by side-effects refresh");
 		assert.strictEqual(oDelta.getIndex(), undefined, "not in the collection anymore");
 		assert.strictEqual(oDelta.getBinding(), oListBinding);
+		checkSelected(assert, oDelta, true);
 		assert.deepEqual(oDelta.getObject(), {
 			"@$ui5.context.isSelected" : true,
 			// "@$ui5.node.level" : 2, // not currently part of the hierarchy
@@ -63792,7 +63995,7 @@ sap.ui.define([
 				assert.strictEqual(normalizeUID(oContext2.toString()),
 					"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;destroyed]",
 					"Context#toString: destroyed");
-				assert.notOk(oContext2.isSelected(), "JIRA: CPOUI5ODATAV4-1943");
+				assert.notOk(oContext2.isSelected(), "destroyed (JIRA: CPOUI5ODATAV4-1943)");
 				assert.throws(() => {
 					oContext2.getProperty("@$ui5.context.isSelected");
 					// TypeError("Cannot read properties of undefined (reading 'checkSuspended')")
@@ -70587,13 +70790,16 @@ sap.ui.define([
 				// code under test
 				setSelected(bUseAnnotation, oCreatedContext, true);
 
-				assert.ok(oCreatedContext.isSelected());
+				assert.strictEqual(oCreatedContext.isSelected(), true);
+				assert.strictEqual(oCreatedContext.getProperty("@$ui5.context.isSelected"), undefined,
+					"oCachePromise still pending");
 
 				return Promise.all([
 					oCreated,
 					that.waitForChanges(assert, "create")
 				]);
 			}).then(function () {
+				checkSelected(assert, oCreatedContext, true);
 				assert.deepEqual(oCreatedContext.getObject(), {
 					"@$ui5.context.isSelected" : true,
 					"@$ui5.context.isTransient" : false,
@@ -70601,7 +70807,6 @@ sap.ui.define([
 					Team_Id : "NEW"
 				});
 				checkCreatedPersisted(assert, oCreatedContext, oCreated);
-				checkSelected(assert, oCreatedContext, true);
 
 				that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'", {
 						value : [{MEMBER_COUNT : 2, Team_Id : "NEW"}]
@@ -76480,7 +76685,7 @@ sap.ui.define([
 		this.expectChange("selected", ["Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oContext, oContext0);
 		});
 
@@ -76493,7 +76698,7 @@ sap.ui.define([
 		this.expectChange("selected", ["No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oContext, oContext0);
 		});
 
@@ -76512,7 +76717,7 @@ sap.ui.define([
 			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76530,7 +76735,7 @@ sap.ui.define([
 
 		assert.ok(oInactiveContext.isTransient());
 		assert.ok(oInactiveContext.isInactive());
-		assert.ok(oInactiveContext.isSelected());
+		checkSelected(assert, oInactiveContext, true);
 
 		await this.waitForChanges(assert, "new row is selected");
 
@@ -76538,7 +76743,7 @@ sap.ui.define([
 			.expectChange("selected", ["No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76552,7 +76757,7 @@ sap.ui.define([
 			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76566,7 +76771,7 @@ sap.ui.define([
 			.expectChange("selected", ["No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76580,7 +76785,7 @@ sap.ui.define([
 			.expectChange("selected", ["Yes", "Yes", "Yes"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), true);
+			checkSelected(assert, oContext0, true);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76608,7 +76813,7 @@ sap.ui.define([
 			.expectChange("selected", ["No", "No", "No", "No", "No", "No"]);
 
 		aEventHandlers.push((oContext0) => {
-			assert.strictEqual(oContext0.isSelected(), false);
+			checkSelected(assert, oContext0, false);
 			assert.strictEqual(oHeaderContext, oContext0);
 		});
 
@@ -76687,20 +76892,20 @@ sap.ui.define([
 			this.expectChange("selected", [, "No"]);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), true);
+				checkSelected(assert, oContext, true);
 				assert.strictEqual(oHeaderContext, oContext);
 			});
 
 			oHeaderContext.setSelected(true);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), false);
+				checkSelected(assert, oContext, false);
 				assert.strictEqual(oItems[1].getBindingContext(), oContext);
 			});
 
 			oItems[1].getBindingContext().setSelected(false);
 
-			assert.strictEqual(oHeaderContext.isSelected(), true);
+			checkSelected(assert, oHeaderContext, true);
 
 			this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&"
 					+ (oFixture.method === "filter" ? "$filter" : oFixture.value) + "=" + oFixture.query
@@ -76716,7 +76921,7 @@ sap.ui.define([
 				.expectChange("selected", [null, null, null]);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), false);
+				checkSelected(assert, oContext, false);
 				assert.strictEqual(oHeaderContext, oContext);
 			});
 
@@ -76734,7 +76939,7 @@ sap.ui.define([
 				oListBinding.resume();
 			}
 
-			assert.strictEqual(oHeaderContext.isSelected(), false);
+			checkSelected(assert, oHeaderContext, false);
 
 			await this.waitForChanges(assert, "after (1)");
 
@@ -76744,21 +76949,21 @@ sap.ui.define([
 			this.expectChange("selected", ["No", "No", "No"]); // preparation for test below
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), true);
+				checkSelected(assert, oContext, true);
 				assert.strictEqual(oHeaderContext, oContext);
 			});
 
 			oHeaderContext.setSelected(true);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), false);
+				checkSelected(assert, oContext, false);
 				assert.strictEqual(oItems[0].getBindingContext(), oContext);
 			});
 			oItems[0].getBindingContext().setSelected(false);
 
 			// a row context selection was changed
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), true);
+				checkSelected(assert, oContext, true);
 				assert.strictEqual(oHeaderContext, oContext);
 			});
 
@@ -76767,7 +76972,7 @@ sap.ui.define([
 			oHeaderContext.setSelected(true);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), false);
+				checkSelected(assert, oContext, false);
 				assert.strictEqual(oHeaderContext, oContext);
 			});
 
@@ -76778,14 +76983,14 @@ sap.ui.define([
 			this.expectChange("selected", ["Yes", , "Yes"]);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), true);
+				checkSelected(assert, oContext, true);
 				assert.strictEqual(oItems[0].getBindingContext(), oContext);
 			});
 
 			oItems[0].getBindingContext().setSelected(true);
 
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), true);
+				checkSelected(assert, oContext, true);
 				assert.strictEqual(oItems[2].getBindingContext(), oContext);
 			});
 
@@ -76809,7 +77014,7 @@ sap.ui.define([
 			// selection state of header context did not change, but the selection state of row contexts
 			// was changed
 			aEventHandlers.push((oContext) => {
-				assert.strictEqual(oContext.isSelected(), false);
+				checkSelected(assert, oContext, false);
 				assert.strictEqual(oHeaderContext, oContext);
 			});
 
@@ -76979,9 +77184,246 @@ sap.ui.define([
 				this.waitForChanges(assert, sMethod)
 			]);
 
-			assert.strictEqual(oContext1.isSelected(), true);
+			checkSelected(assert, oContext1, true);
 			assert.strictEqual(oContext3.getBinding(), undefined, "destroyed");
 		});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create 3 sales orders, one that stays transient, one that gets persisted but does
+	// not match the binding's filter, and one that gets persisted and matches the bindings's
+	// filter. Select these 3 sales orders. Then do either a "refresh", a "requestSideEffects"
+	// (side-effects refresh), a "sort" or a "changeParameters" and check that the selection is as
+	// expected. In case of a side-effects refresh "created persisted" entries remain "created
+	// persisted", but in other cases they become "persisted". As a result all created keep the
+	// selection (no validation request). For all non-created entries the selection status depends
+	// on whether the entry matches the binding's filter.
+	// JIRA: CPOUI5ODATAV4-2915
+	["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
+		QUnit.test(`CPOUI5ODATAV4-2915: Selection Validation via ${sMethod} in combination with create`,
+				async function (assert) {
+			const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
+			const sView = `
+	<Table id="table" items="{
+			path : '/SalesOrderList',
+			parameters : {$$clearSelectionOnFilter : true, $search : 'foo'}
+		}">
+		<Text id="id" text="{SalesOrderID}"/>
+		<Text id="note" text="{Note}"/>
+		<Text id="selected" text="{@$ui5.context.isSelected}"/>
+	</Table>`;
+
+			this.expectRequest("SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+					value : [
+						{Note : "SO 1 (foo)", SalesOrderID : "1"}
+					]
+				})
+				.expectChange("id", ["1"])
+				.expectChange("note", ["SO 1 (foo)"])
+				.expectChange("selected", [null]);
+
+			await this.createView(assert, sView, oModel);
+
+			this.expectChange("id", ["", "1"])
+				.expectChange("note", ["SO 2 (n/a) - transient", "SO 1 (foo)"])
+				.expectChange("selected", [, null]);
+
+			const oTable = this.oView.byId("table");
+			const oListBinding = oTable.getBinding("items");
+			// create a transient sales order; selection is never validated
+			const oContextSO2 = oListBinding.create({Note : "SO 2 (n/a) - transient"},
+				/*bSkipRefresh*/true, /*bAtEnd*/false, /*bInactive*/true);
+
+			await this.waitForChanges(assert, "Create transient sales order");
+
+			this.expectChange("id", [, "", "1"])
+				.expectChange("note", [
+					"SO 3 (bar) - created persisted",
+					"SO 2 (n/a) - transient",
+					"SO 1 (foo)"
+				])
+				.expectChange("selected", [,, null])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "SO 3 (bar) - created persisted"}
+				}, {
+					Note : "SO 3 (bar) - created persisted",
+					SalesOrderID : "3"
+				})
+				.expectChange("id", ["3"]);
+
+			// create a persisted sales order that doesn't match the filter; use bInactive true to
+			// ensure that created entries stay at the top of the table when calling requestSideEffects
+			const oContextSO3 = oListBinding.create({}, /*bSkipRefresh*/true, /*bAtEnd*/false,
+				/*bInactive*/true);
+			oContextSO3.setProperty("Note", "SO 3 (bar) - created persisted");
+
+			await Promise.all([
+				oContextSO3.created(),
+				this.waitForChanges(assert, "Create persisted sales order - SalesOrderList('3')")
+			]);
+
+			this.expectChange("id", ["", "3", "", "1"])
+				.expectChange("note", [
+					"SO 4 (foo) - created persisted",
+					"SO 3 (bar) - created persisted",
+					"SO 2 (n/a) - transient",
+					"SO 1 (foo)"
+				])
+				.expectChange("selected", [,,, null])
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrderList",
+					payload : {Note : "SO 4 (foo) - created persisted"}
+				}, {
+					Note : "SO 4 (foo) - created persisted",
+					SalesOrderID : "4"
+				})
+				.expectChange("id", ["4"]);
+
+			// create another persisted sales order that matches the filter
+			const oContextSO4 = oListBinding.create({}, /*bSkipRefresh*/true, /*bAtEnd*/false,
+				/*bInactive*/true);
+			oContextSO4.setProperty("Note", "SO 4 (foo) - created persisted");
+
+			await Promise.all([
+				oContextSO4.created(),
+				this.waitForChanges(assert, "Create persisted sales order - SalesOrderList('4')")
+			]);
+
+			this.expectChange("selected", ["Yes", "Yes", "Yes"]);
+
+			oContextSO2.setSelected(true);
+			oContextSO3.setSelected(true);
+			oContextSO4.setSelected(true);
+
+			await this.waitForChanges(assert, "Select created entries");
+
+			checkTable("State after selecting sales orders", assert, oTable, [
+				"/SalesOrderList('4')",
+				"/SalesOrderList('3')",
+				"/SalesOrderList($uid=...)",
+				"/SalesOrderList('1')"
+			], [
+				["4", "SO 4 (foo) - created persisted", "Yes"],
+				["3", "SO 3 (bar) - created persisted", "Yes"],
+				["", "SO 2 (n/a) - transient", "Yes"],
+				["1", "SO 1 (foo)", ""]
+			]);
+
+			if (sMethod !== "requestSideEffects") {
+				// side-effects refresh keeps position of all created entries regardless of the filter,
+				// therefore no validation for created entries is needed
+				this.expectRequest({ // ODLB#validateSelection
+						batchNo : 4,
+						url : "SalesOrderList?$filter=SalesOrderID eq '4' or SalesOrderID eq '3'"
+							+ "&$search=foo&$select=SalesOrderID&$top=2"
+					}, { // SalesOrderList('3') doesn't match $search
+						value : [{SalesOrderID : "4"}]
+					});
+			}
+			if (sMethod === "refresh" || sMethod === "requestSideEffects") {
+				this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
+						batchNo : 4,
+						url : "SalesOrderList?$select=Note,SalesOrderID"
+							+ "&$filter=SalesOrderID eq '3' or SalesOrderID eq '4'&$top=2"
+					}, {
+						value : [
+							{Note : "SO 3 (bar) - created persisted", SalesOrderID : "3"},
+							{Note : "SO 4 (foo) - created persisted", SalesOrderID : "4"}
+						]
+					});
+			}
+			if (sMethod === "requestSideEffects") {
+				this.expectRequest({ // "refresh"
+						batchNo : 4,
+						url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+							+ "&$filter=not (SalesOrderID eq '3' or SalesOrderID eq '4')"
+							+ "&$skip=0&$top=99"
+					}, {
+						value : [
+							{Note : "SO 1 (foo)", SalesOrderID : "1"}
+						]
+					});
+			} else {
+				this.expectRequest({ // "refresh"
+						batchNo : 4,
+						url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+							+ (sMethod === "sort" || sMethod === "changeParameters"
+								? "&$orderby=SalesOrderID" : "")
+							+ "&$skip=0&$top=99"
+					}, {
+						value : [
+							{Note : "SO 1 (foo)", SalesOrderID : "1"},
+							{Note : "SO 4 (foo) - created persisted", SalesOrderID : "4"}
+						]
+					})
+					.expectChange("id", ["", "1", "4"])
+					.expectChange("note", [
+						"SO 2 (n/a) - transient",
+						"SO 1 (foo)",
+						"SO 4 (foo) - created persisted"
+					])
+					//TODO: "SO 3" is deselected, but expectChange computes the wrong index because
+					// Context#getIndex returns an unexpected value for (created persisted) contexts
+					// which are currently not part of aContexts
+					.expectChange("selected", "No", -1)
+					.expectChange("selected", [, null]);
+			}
+
+			let oPromise;
+			switch (sMethod) {
+				case "refresh":
+					oPromise = oListBinding.requestRefresh();
+					break;
+				case "requestSideEffects":
+					oPromise = oListBinding.getHeaderContext().requestSideEffects([""]);
+					break;
+				case "sort":
+					oListBinding.sort(new Sorter("SalesOrderID"));
+					break;
+				default:
+					oListBinding.changeParameters({$orderby : "SalesOrderID"});
+			}
+
+			await Promise.all([
+				oPromise,
+				this.waitForChanges(assert, sMethod)
+			]);
+
+			if (sMethod === "requestSideEffects") {
+				checkTable("Final state", assert, oTable, [
+					"/SalesOrderList('4')",
+					"/SalesOrderList('3')",
+					"/SalesOrderList($uid=...)",
+					"/SalesOrderList('1')"
+				], [
+					["4", "SO 4 (foo) - created persisted", "Yes"],
+					["3", "SO 3 (bar) - created persisted", "Yes"],
+					["", "SO 2 (n/a) - transient", "Yes"],
+					["1", "SO 1 (foo)", ""]
+				]);
+			} else {
+				checkTable("Final state", assert, oTable, [
+					"/SalesOrderList($uid=...)",
+					"/SalesOrderList('1')",
+					"/SalesOrderList('4')"
+				], [
+					["", "SO 2 (n/a) - transient", "Yes"],
+					["1", "SO 1 (foo)", ""],
+					["4", "SO 4 (foo) - created persisted", "Yes"]
+				]);
+			}
+			checkSelected(assert, oContextSO2, true);
+			if (sMethod === "requestSideEffects") {
+				checkSelected(assert, oContextSO3, true);
+			} else {
+				assert.strictEqual(oContextSO3.getBinding(), undefined, "destroyed");
+			}
+			checkSelected(assert, oContextSO4, true);
 		});
 	});
 
@@ -77124,9 +77566,9 @@ sap.ui.define([
 				]);
 
 				assert.deepEqual(aContexts, [oContext1, oContext3]);
-				assert.strictEqual(oContext1.isSelected(), true);
-				assert.strictEqual(oContext2.isSelected(), true, "selection state is unchanged");
-				assert.strictEqual(oContext3.isSelected(), true);
+				checkSelected(assert, oContext1, true);
+				checkSelected(assert, oContext2, true, "selection state is unchanged");
+				checkSelected(assert, oContext3, true);
 			}
 		});
 		});

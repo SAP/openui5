@@ -4658,6 +4658,54 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Check if the focused suggestion item loses focus when navigating back to the input with tabular suggestions", async function(assert) {
+		const oInputWithTabularSuggestions = new Input({
+			showValueHelp: true,
+			showSuggestion: true,
+			valueState: "Error",
+			suggestionRows: [
+				new ColumnListItem({
+					cells: [new Text({ text: "House in" })]
+				}),
+				new ColumnListItem({
+					cells: [new Text({ text: "House" })]
+				}),
+				new ColumnListItem({
+					cells: [new Text({ text: "House in the forest" })]
+				}),
+				new ColumnListItem({
+					cells: [new Text({ text: "Ho" })]
+				})
+			],
+			suggestionColumns: [
+				new Column({
+					header: new Label({ text: "Text" })
+				})
+			]
+		});
+
+		oInputWithTabularSuggestions.placeAt("content");
+		this.clock = sinon.useFakeTimers();
+		await nextUIUpdate(this.clock);
+
+		oInputWithTabularSuggestions._$input.trigger("focus").val("h").trigger("input");
+		this.clock.tick(500);
+
+		qutils.triggerKeydown(oInputWithTabularSuggestions.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+
+		const oSelectedItem = oInputWithTabularSuggestions._getSuggestionsPopover().getItemsContainer().getItems()[0].$();
+		assert.ok(oSelectedItem.hasClass("sapMLIBFocused"), "First item is focused after ARROW_DOWN");
+
+		qutils.triggerKeydown(oInputWithTabularSuggestions.getDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+
+		assert.notOk(oSelectedItem.hasClass("sapMLIBFocused"), "First item is not focused after ARROW_UP");
+		assert.ok(oInputWithTabularSuggestions.hasStyleClass("sapMInputFocused"), "Input is focused after navigating back to it");
+
+		oInputWithTabularSuggestions.destroy();
+	});
+
 	QUnit.test("Focus handling - Leaving the input field should trigger suggestions item selection", async function(assert) {
 		// Setup
 		this.stub(Device, "system").value({desktop: true, phone: false, tablet: false});

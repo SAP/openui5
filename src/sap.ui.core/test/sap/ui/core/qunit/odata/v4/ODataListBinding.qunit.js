@@ -10937,7 +10937,8 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(oBinding._getAllExistingContexts(), []);
 
-		oBinding.aContexts = [/*empty*/, undefined, "~oTransientContext~"];
+		oBinding.aContexts = ["~oTransientContext~", /*empty*/, undefined, "~oPersistedContext~"];
+		oBinding.iCreatedContexts = 1;
 		const oKeptContext0 = {isEffectivelyKeptAlive : function () {}};
 		const oKeptContext1 = {isEffectivelyKeptAlive : function () {}};
 		const oNotKeptContext = {isEffectivelyKeptAlive : function () {}}; // BCP 2270081950:
@@ -10950,17 +10951,20 @@ sap.ui.define([
 			"~sPath3~" : oNotKeptContext
 		};
 
-		this.mock(oKeptContext0).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
-		this.mock(oKeptContext1).expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
-		this.mock(oNotKeptContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oKeptContext0).expects("isEffectivelyKeptAlive").twice().withExactArgs()
+			.returns(true);
+		this.mock(oKeptContext1).expects("isEffectivelyKeptAlive").twice().withExactArgs()
+			.returns(true);
+		this.mock(oNotKeptContext).expects("isEffectivelyKeptAlive").twice().withExactArgs()
+			.returns(false);
 
 		// code under test
-		const aContexts = oBinding._getAllExistingContexts();
+		assert.deepEqual(oBinding._getAllExistingContexts(),
+			["~oTransientContext~", "~oPersistedContext~", oKeptContext0, oKeptContext1]);
 
-		assert.strictEqual(aContexts.length, 3);
-		assert.strictEqual(aContexts[0], "~oTransientContext~");
-		assert.strictEqual(aContexts[1], oKeptContext0);
-		assert.strictEqual(aContexts[2], oKeptContext1);
+		// code under test - no created contexts
+		assert.deepEqual(oBinding._getAllExistingContexts(true),
+			["~oPersistedContext~", oKeptContext0, oKeptContext1]);
 	});
 
 	//*********************************************************************************************
@@ -13057,7 +13061,7 @@ sap.ui.define([
 		const oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
 			{$$clearSelectionOnFilter : true});
 		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
-		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
+		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs(true)
 			.returns([{
 				isSelected : () => false
 			}, {
@@ -13101,7 +13105,7 @@ sap.ui.define([
 			isSelected : () => false,
 			setSelected : mustBeMocked
 		};
-		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs()
+		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs(true)
 			.returns([oContextIn42, oContextOut, oContextIn43, oContextNoException]);
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~sGroupId~")
 			.returns("~oGroupLock~");
@@ -13132,7 +13136,8 @@ sap.ui.define([
 			getPath : function () { return this.sPath; },
 			isSelected : () => true
 		};
-		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs().returns([oContext]);
+		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs(true)
+			.returns([oContext]);
 		this.mock(oBinding).expects("lockGroup").withExactArgs("~sGroupId~")
 			.returns("~oGroupLock~");
 		const oError = new Error("Intentionally failed");

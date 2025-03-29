@@ -15,6 +15,17 @@ sap.ui.define([
 
 	const ValueState = coreLibrary.ValueState;
 	const SortOrder = coreLibrary.SortOrder;
+	const oCreationDefaults = {
+		// mandatory properties for new entity which are not available on UI
+		Category : "Notebooks",
+		MeasureUnit : "EA", // wrong service expectation
+		SupplierID : "0100000046",
+		TaxTarifCode : 1,
+		TypeCode : "PR",
+		// some useful defaults
+		CurrencyCode : "EUR",
+		WeightUnit : "KG"
+	};
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Products.Main", {
 		/* The number of POST requests which are not yet completed */
@@ -100,6 +111,17 @@ sap.ui.define([
 			if (this.iCreates === 0) {
 				this.byId("ProductList").setBusy(false);
 			}
+		},
+
+		/**
+		 * Creates a new product with some default values within the products table.
+		 */
+		onCreateInline() {
+			this.byId("ProductList").getBinding("items").create({
+					...oCreationDefaults,
+					ProductID : "MY-" + new Date().getMilliseconds(),
+					Name : "My Product"
+				}, /*bSkipRefresh*/true, /*bAtEnd*/false, /*bInactive*/true);
 		},
 
 		/*
@@ -233,17 +255,7 @@ sap.ui.define([
 		 * hidden list binding and shows it in the creation row.
 		 */
 		setNewEntryContext() {
-			var oContext = this.oListBinding.create({
-					// mandatory properties for new entity which are not available on UI
-					Category : "Notebooks",
-					MeasureUnit : "EA", // wrong service expectation
-					SupplierID : "0100000046",
-					TaxTarifCode : 1,
-					TypeCode : "PR",
-					// some useful defaults
-					CurrencyCode : "EUR",
-					WeightUnit : "KG"
-				});
+			var oContext = this.oListBinding.create(oCreationDefaults);
 
 			oContext.created().catch(function (oError) {
 				if (!oError.canceled) {

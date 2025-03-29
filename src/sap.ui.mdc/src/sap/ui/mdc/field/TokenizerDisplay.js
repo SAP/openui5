@@ -15,7 +15,7 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const { EmptyIndicatorMode } = mLibrary;
+	const { EmptyIndicatorMode, TokenizerRenderMode } = mLibrary;
 
 	/**
 	 * Constructor for a new <code>TokenizerDisplay</code>.
@@ -97,6 +97,42 @@ sap.ui.define([
 
 		Tokenizer.prototype.ontap.apply(this, arguments);
 
+	};
+
+	TokenizerDisplay.prototype.onfocusin = function (oEvent) {
+		// don't hide more-indicator
+	};
+
+	TokenizerDisplay.prototype.getTokensPopup = function () {
+		const bInit = !this._oPopup;
+		const oPopover = Tokenizer.prototype.getTokensPopup.apply(this, arguments);
+
+		if (bInit) {
+			const fnAfterOpen = (oEvent) => {
+				this.setRenderMode(TokenizerRenderMode.Narrow); // prevent hiding of more indicator
+				this.fireRenderModeChange({
+					renderMode: TokenizerRenderMode.Narrow
+				});
+			};
+
+			oPopover.attachAfterOpen(fnAfterOpen, this);
+		}
+
+		return oPopover;
+	};
+
+	TokenizerDisplay.prototype.afterPopupClose = function () {
+		if (this.checkFocus()) {
+			this._oIndicator.focus(); // restore focus on Idicator
+		}
+	};
+
+	TokenizerDisplay.prototype.getFocusDomRef = function () {
+		if (this.getHiddenTokensCount() === 0 || !this._oIndicator) {
+			return Tokenizer.prototype.getFocusDomRef.apply(this, arguments);
+		} else {
+			return this._oIndicator[0];
+		}
 	};
 
 	TokenizerDisplay.prototype.getAccessibilityInfo = function() {
