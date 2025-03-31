@@ -1,27 +1,26 @@
-/* =========================================================== */
-/* CSS for control sap.ui.integration.controls/ListContentItem */
-/* Base theme                                                  */
-/* =========================================================== */
+/* ============================================================ */
+/* CSS for control sap.ui.integration.controls/ListContentItem  */
+/* Base theme                                                   */
+/* ============================================================ */
 
 @_sap_ui_integration_ListContentItem_BottomBorderHeight: 1px;
-@_sap_ui_integration_ListContentItem_TextShadow: 0 0 @sapUiListTextColor;
+@_sap_ui_integration_ListContentItem_TextShadow: 0 0 var(--sapList_TextColor);
 
 .sapUiIntLCI {
+	padding: unset;
 
 	&:not(.sapMLIBActionable) {
 		cursor: auto;
 	}
 
-	padding: unset;
-
-	// apply the padding to the contents, to prevent clipping when buttons are hovered for example, due to overflow
+	/* apply the padding to the contents, to prevent clipping when buttons are hovered for example, due to overflow */
 	.sapUiIntLCIContent > * {
 		padding: 0 1rem;
 	}
 
 	&.sapUiIntLCIOneLine .sapUiIntLCIIconAndLines {
 		height: calc(2.75rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
-		align-items: center
+		align-items: center;
 	}
 
 	&.sapUiIntLCIOneLine.sapUiIntLCIWithActionsStrip .sapUiIntLCIIconAndLines {
@@ -31,7 +30,7 @@
 	&.sapUiIntLCITwoLines .sapUiIntLCIIconAndLines,
 	&.sapUiIntLCIOneLine.sapUiIntLCIThumbnail .sapUiIntLCIIconAndLines {
 		height: calc(5rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
-		align-items: center
+		align-items: center;
 	}
 
 	&.sapUiIntLCITwoLines.sapUiIntLCIWithActionsStrip .sapUiIntLCIIconAndLines,
@@ -50,11 +49,11 @@
 
 	&.sapUiIntLCITwoLines,
 	&.sapUiIntLCIMultipleLines {
+
 		.sapUiIntLCITitleWrapper {
 			margin-bottom: 0.25rem;
 		}
 	}
-
 
 	&.sapUiIntLCIWithActionsStrip {
 		padding-bottom: calc(0.5rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
@@ -95,7 +94,7 @@
 			}
 
 			.sapMObjStatusNone .sapMObjStatusText {
-				color: @sapUiContentLabelColor;
+				color: var(--sapContent_LabelColor);
 			}
 		}
 	}
@@ -111,14 +110,14 @@
 }
 
 .sapUiIntLCITitle {
-	color: @sapUiListTextColor;
+	color: var(--sapList_TextColor);
 	text-shadow: @_sap_ui_integration_ListContentItem_TextShadow;
 	font-size: @sapMFontMediumSize;
 	flex: 1;
 }
 
 .sapUiIntLCIDescription {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 	font-size: @sapMFontMediumSize;
 	flex: 1;
 }
@@ -135,7 +134,7 @@
 .sapUiIntLCIDescription,
 .sapUiIntLCIInfo {
 	line-height: 1rem;
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -145,16 +144,18 @@
 	white-space: normal;
 }
 
-// Interactive states
+/* Interactive states */
 .sapUiIntLCI.sapMLIBActive {
+
 	.sapFCardIcon.sapFAvatar .sapUiIcon,
 	.sapUiIntLCIInfo {
-		color: @sapUiListActiveTextColor;
+		color: var(--sapList_Active_TextColor);
 	}
 }
 
-// Styles for compact mode only
+/* Styles for compact mode only */
 .sapUiSizeCompact .sapUiIntLCI {
+
 	&.sapUiIntLCIOneLine .sapUiIntLCIIconAndLines {
 		height: calc(2rem ~"-" @_sap_ui_integration_ListContentItem_BottomBorderHeight);
 	}
