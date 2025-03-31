@@ -9,16 +9,20 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 *  @deprecated since 1.121.0
+	 */
+	const bLegacyEnabled = new URLSearchParams(window.location.search).get("legacy") === "true"	|| false;
+
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
 		/**
 		 *  @deprecated since 1.121.0
 		 */
-		if (oContainer.getMetadata().hasProperty("opensOnClick")) {
+		if (bLegacyEnabled) {
 			return oContainer.getOpensOnClick();
 		}
-
 		return oValueHelp.getPayload()?.shouldOpenOnClick;
 	};
 
@@ -26,10 +30,9 @@ sap.ui.define([
 		/**
 		 *  @deprecated since 1.121.0
 		 */
-		if (oContainer.getMetadata().hasProperty("opensOnFocus")) {
+		if (bLegacyEnabled) {
 			return oContainer.getOpensOnFocus();
 		}
-
 		return oValueHelp.getPayload()?.shouldOpenOnFocus;
 	};
 
