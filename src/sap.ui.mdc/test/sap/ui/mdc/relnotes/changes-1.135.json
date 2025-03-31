@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "e8e961b14303fad23a55d23f660aa5ad80bd52c6",
+        "type": "FIX",
+        "text": " MultiValueField: closing token-popover looses focus"
+      },
+      {
         "id": "86d00fb0bbdc6c214e276bbcebc60154ccfde1a3",
         "type": "FIX",
         "text": " MDC.ValueHelp: Reconfigure ValueHelp on defaultRow in _updateRow"

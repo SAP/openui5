@@ -3,6 +3,41 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "69f44d4e4e18b72d8c6c171e4f4f0be597156805",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: icons are displayed correctly in HCB and HCW themes"
+      },
+      {
+        "id": "a19eb2bf028b00a34d9399db66196dabbfc521d8",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: whole text is shown in popup footer"
+      },
+      {
+        "id": "aeda7593eb011b84732011b73fe08de9614b9738",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: Align both value state messages"
+      },
+      {
+        "id": "afc7c5d5dc5311b8f546b3dae2ac9f42399f3959",
+        "type": "FIX",
+        "text": " sap.m.Input: remove focus of suggestion item"
+      },
+      {
+        "id": "1d453c50d034cc1c278f551616b415c7a366c207",
+        "type": "FIX",
+        "text": " We now use messageBundle to set the text for the Upload button"
+      },
+      {
+        "id": "2fb48fe446333ec3e4958ff23e2af595f77feeed",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Do not collapse tokenizer after input"
+      },
+      {
+        "id": "1e98599793e883480148a4cb82ed59c67ee014a6",
+        "type": "FEATURE",
+        "text": " DOMPurify: Updated to version 3.2.4"
+      },
+      {
         "id": "df51e21b4c7c34b71353348e12e76f4dd66da171",
         "type": "FIX",
         "text": " sap.m.SplitApp: Fix text page"
@@ -23,6 +58,11 @@
         "text": " ListBase: Remove RangeSelection on onItemContextMenu"
       },
       {
+        "id": "2ff594336de15fc12d3852f1e33afe57508b4a16",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Fix documentation related to the \"N-more\" link"
+      },
+      {
         "id": "887b2fdd3d99cb901ba14d81c0c5f8604b255d32",
         "type": "FIX",
         "text": " Input controls with Suggestions: Value State message in header is no longer focusable"
@@ -41,6 +81,11 @@
         "id": "fcb790475cc007aeb1b46e6ac3c93e5713adb7df",
         "type": "FIX",
         "text": " sap.m.Tokenizer: Fix failing qUnit tests"
+      },
+      {
+        "id": "c07e07dae058f381401db78fe527e226c3e31549",
+        "type": "FIX",
+        "text": " We've now fixed the overlap banner issue in OneByOne type genericTile and we've also removed the application of active state color of the banner"
       },
       {
         "id": "e3d88b46183fbc2c4117f8fd59842f6cbd993bf8",

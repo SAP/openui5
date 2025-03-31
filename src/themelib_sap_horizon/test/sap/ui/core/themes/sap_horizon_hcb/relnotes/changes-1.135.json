@@ -3,9 +3,19 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "69f44d4e4e18b72d8c6c171e4f4f0be597156805",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: icons are displayed correctly in HCB and HCW themes"
+      },
+      {
         "id": "fd2ee5f097daba9e8520c808eabb0d7a4522dba3",
         "type": "FEATURE",
         "text": " sap.tnt.SideNavigation: Update visual design"
+      },
+      {
+        "id": "c07e07dae058f381401db78fe527e226c3e31549",
+        "type": "FIX",
+        "text": " We've now fixed the overlap banner issue in OneByOne type genericTile and we've also removed the application of active state color of the banner"
       },
       {
         "id": "b56e75216ddfbca9d91c5ff1d2c03cbdc4157338",

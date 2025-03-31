@@ -3,6 +3,11 @@
     "date": "March 2025",
     "notes": [
       {
+        "id": "a76df3a8a179457c2e5997eccd47cd8b2176a604",
+        "type": "FIX",
+        "text": " Card Explorer: Events from previous card sample are no longer displayed on the current"
+      },
+      {
         "id": "24584eb209535f4711a56d9ec1649204170a3a37",
         "type": "FIX",
         "text": " Integration Cards: Improved showCard method"
