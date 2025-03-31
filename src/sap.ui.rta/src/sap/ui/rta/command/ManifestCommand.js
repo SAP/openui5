@@ -101,7 +101,7 @@ sap.ui.define([
 			generator: "sap.ui.rta.ManifestCommand"
 		});
 		if (!(oManifestChange instanceof DescriptorChange)) {
-			throw new Error("With the given changeSpecificData, no manifest change could be created.");
+			throw new Error(`With the given changeSpecificData, no manifest change could be created. Provided change content: ${JSON.stringify(this.getParameters())} and change type: ${this.getChangeType()}.`);
 		}
 		const oChange = oManifestChange.store();
 		this._oPreparedChange = oChange;
