@@ -397,6 +397,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oItem.$().attr("tabindex"), "0", "TabStripSelectList has tabindex 0 set");
+		assert.ok(oItem.$().attr("aria-describedby"), "TabStripSelectList has describedby set");
 
 		// clean up
 		oTabStrip.destroy();
