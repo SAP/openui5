@@ -33,5 +33,15 @@
         "text": " sap.uxap.ObjectPageLayout: Remove additional role"
       }
     ]
+  },
+  "1.130.6": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "6c77084a65675e337012d272c93425fabaa458a3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Adjustment class added for table"
+      }
+    ]
   }
 }

@@ -78,5 +78,20 @@
         "text": " core/LabelEnablement: handle destroy of label when updating inner control"
       }
     ]
+  },
+  "1.130.6": {
+    "date": "March 2025",
+    "notes": [
+      {
+        "id": "f025fc9024ee63da1bafe1e47802dea51012e1dd",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#format: Fix wrong number of decimals in scientific notation"
+      },
+      {
+        "id": "8f570d1dac6d4a353a82809d12cdfbb6478dd630",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel#createEntry: ignore transient context if path is absolute"
+      }
+    ]
   }
 }
