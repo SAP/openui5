@@ -38,6 +38,8 @@ sap.ui.define([
 		assert.strictEqual(oDate.getMilliseconds(), iMilliseconds, "getRange " + iDuration +  " " + sUnit + ": milliseconds set correctly");
 	};
 
+	QUnit.module("sap.ui.core.date.UniversalDateUtils");
+
 	QUnit.test("Static Methods Test", function (assert) {
 		var oUDate = UniversalDateUtils.resetStartTime(new UniversalDate());
 		assert.strictEqual(oUDate.oDate.getHours(), 0, "resetStartTime: Start hours set correctly");
@@ -64,49 +66,34 @@ sap.ui.define([
 		assert.strictEqual(oUDate.oDate.getMilliseconds(), 999, "resetEndTime: End milliseconds set correctly");
 	});
 
-	QUnit.test("Static Methods Test _getDateFromWeekStartByDayOffset", function (assert) {
-		var oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(undefined, undefined),
-			sCalendarType = Core.getConfiguration().getCalendarType(),
-			oLocale = new Locale(Core.getConfiguration().getFormatLocale()),
-			oUniversalDate = UniversalDateUtils.createNewUniversalDate(),
-			iWeek = oUniversalDate.getWeek().week,
-			iYear = oUniversalDate.getWeek().year,
-			oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.Default),
-			oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0),
-			iOffsetDay = 4;
+[
+	// First day of week + Offset: March 20, 2025
+	{iOffsetDay: 4, sCalendarWeekNumbering: CalendarWeekNumbering.Default, iExpectedTimeInMS: 1742425200000},
+	// First day of week + Offset: March 13, 2025 (due to calendar week numbering)
+	{iOffsetDay: -4, sCalendarWeekNumbering: CalendarWeekNumbering.ISO_8601, iExpectedTimeInMS: 1741820400000},
+	// First day of week + Offset: March 17, 2025 (due to calendar week numbering)
+	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.ISO_8601, iExpectedTimeInMS: 1742166000000},
+	// First day of week + Offset: March 15, 2025 (due to calendar week numbering)
+	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.MiddleEastern, iExpectedTimeInMS: 1741993200000},
+	// First day of week + Offset: March 16, 2025
+	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.WesternTraditional, iExpectedTimeInMS: 1742079600000}
+].forEach(function (oFixture, i) {
+	QUnit.test("Static Methods Test _getDateFromWeekStartByDayOffset #" + i, function (assert) {
+		var oUDate,
+			oDate = new UniversalDate(2025, 2, 16, 0, 0, 0); // First day of the week March 16, 2025
 
-		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+		this.mock(UniversalDateUtils).expects("createNewUniversalDate")
+			.withExactArgs()
+			.returns(oDate);
 
-		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(undefined, iOffsetDay);
-		oDateWithFirstDateOfWeek.setDate(oFirstDateOfWeek.day + iOffsetDay);
+		// code under test
+		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(
+			oFixture.sCalendarWeekNumbering, oFixture.iOffsetDay);
 
-		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
-
-		iOffsetDay = -4;
-		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(undefined, iOffsetDay);
-		oDateWithFirstDateOfWeek.setDate(oFirstDateOfWeek.day + iOffsetDay);
-
-		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
-
-		iOffsetDay = 0;
-		oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.ISO_8601);
-		oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0);
-		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(CalendarWeekNumbering.ISO_8601, iOffsetDay);
-
-		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
-
-		oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.MiddleEastern);
-		oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0);
-		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(CalendarWeekNumbering.MiddleEastern, iOffsetDay);
-
-		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
-
-		oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, iYear, iWeek, oLocale, CalendarWeekNumbering.WesternTraditional);
-		oDateWithFirstDateOfWeek = new UniversalDate(oFirstDateOfWeek.year, oFirstDateOfWeek.month, oFirstDateOfWeek.day, 0, 0, 0);
-		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(CalendarWeekNumbering.WesternTraditional, iOffsetDay);
-
-		assert.strictEqual(oUDate.oDate.getTime(), oDateWithFirstDateOfWeek.oDate.getTime(), "_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
+		assert.strictEqual(oUDate.oDate.getTime(), oFixture.iExpectedTimeInMS,
+			"_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
 	});
+});
 
 	QUnit.test("Static Methods Test getRange", function (assert) {
 
