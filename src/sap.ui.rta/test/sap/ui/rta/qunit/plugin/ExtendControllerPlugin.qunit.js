@@ -74,6 +74,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		this.oControllerHandlerStub = sandbox.stub().resolves({});
+		sandbox.stub(this.oXmlView, "getControllerModuleName").returns("test.controller.TestController");
 
 		this.oCommandFactory = new CommandFactory({
 			flexSettings: {

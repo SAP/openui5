@@ -51,10 +51,7 @@ sap.ui.define([
 		const sCodeRef = this.getCodeRef();
 		const oView = Element.getElementById(sViewId);
 		const oAppComponent = this.getAppComponent();
-		const sControllerName = oView.getControllerName
-		&& oView.getControllerName()
-		|| oView.getController()
-		&& oView.getController().getMetadata().getName();
+		const sControllerName = oView.getControllerModuleName() ? `module:${oView.getControllerModuleName()}` : oView.getController()?.getMetadata().getName();
 		// Calculate moduleName for code extension
 		const sReference = FlexRuntimeInfoAPI.getFlexReference({element: oAppComponent});
 		let sModuleName = sReference.replace(/\.Component/g, "").replace(/\./g, "/");
