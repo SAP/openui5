@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/base/Log"
-], function(MockServer, Log) {
+], (MockServer, Log) => {
 	"use strict";
 
 	return {
@@ -11,11 +11,9 @@ sap.ui.define([
 		 * The local mock data in this folder is returned instead of the real data for testing.
 		 * @public
 		 */
-		init: function() {
+		init() {
 			// create
-			var oMockServer = new MockServer({
-				rootUri: "/"
-			});
+			const oMockServer = new MockServer({ rootUri: "/" });
 
 			// simulate against the metadata and mock data
 			oMockServer.simulate("../localService/metadata.xml", {
@@ -28,7 +26,5 @@ sap.ui.define([
 
 			Log.info("Running the app with mock data");
 		}
-
 	};
-
 });
