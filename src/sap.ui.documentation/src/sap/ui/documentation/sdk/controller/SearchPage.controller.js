@@ -49,7 +49,7 @@ sap.ui.define([
 			 * @param {sap.ui.base.Event} event pattern match event in route 'topicId'
 			 * @private
 			 */
-			_onTopicMatched: function (event) {
+			_onTopicMatched: async function (event) {
 				var sQuery = decodeURIComponent(event.getParameter("arguments").searchParam),
 					oOptions = event.getParameter("arguments")["?options"],
 					sCategory = oOptions && oOptions.category,
@@ -88,7 +88,7 @@ sap.ui.define([
 					this.highlighter.highlight(sQuery);
 				}
 
-				sPageTitle = this.getModel("i18n").getResourceBundle().getText("SEARCH_PAGE_TITLE", [sQuery]);
+				sPageTitle = (await this.getModel("i18n").getResourceBundle()).getText("SEARCH_PAGE_TITLE", [sQuery]);
 				this.appendPageTitle(sPageTitle);
 			},
 

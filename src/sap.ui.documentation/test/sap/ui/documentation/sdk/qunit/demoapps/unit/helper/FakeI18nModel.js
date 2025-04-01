@@ -11,11 +11,11 @@ sap.ui.define([
 		},
 
 		getResourceBundle : function () {
-			return {
+			return Promise.resolve({
 				getText : function (sTextName) {
 					return this.mTexts[sTextName];
 				}.bind(this)
-			};
+			});
 		}
 
 	});
