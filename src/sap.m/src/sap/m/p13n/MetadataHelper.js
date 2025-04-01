@@ -80,6 +80,16 @@ sap.ui.define([
 		return this.getProperty(sKey).path;
 	};
 
+	/**
+	 * Gets a list of properties that are redundant and should be filtered out in the {@link sap.ui.mdc.p13n.SelectionController} for personalization.
+	 *
+	 * @protected
+	 * @returns {object[]} A list of properties
+	 */
+	MetadataHelper.prototype.getRedundantProperties = function() {
+		return [];
+	};
+
 	return MetadataHelper;
 
 });

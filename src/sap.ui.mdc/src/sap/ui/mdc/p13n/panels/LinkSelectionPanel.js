@@ -105,14 +105,14 @@ sap.ui.define([
 		return oSearchField;
 	};
 
-	LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
+	LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSearch) {
 		let oSearchFilter = [],
 			oSelectedFilter = [];
 		if (bShowSelected) {
 			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
 		}
-		if (sSarch) {
-			oSearchFilter = new Filter("text", "Contains", sSarch);
+		if (sSearch) {
+			oSearchFilter = new Filter("text", "Contains", sSearch);
 		}
 		this._oListControl.getBinding("items").filter(new Filter([].concat(oSelectedFilter, oSearchFilter), true));
 	};

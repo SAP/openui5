@@ -156,6 +156,31 @@ sap.ui.define([
 		When.onTheMDCTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
 		// When.onTheMDCTable.iResetThePersonalization(sTableID);
 
+		When.onTheMDCTable.iPressShowSelected(sTableID);
+
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("twfb - start app and test hide description feature of personalization", function(Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html?sap-ui-xx-p13n-hide-descriptions=true#");
+
+		const sTableID = "container-v4demo---books--booksTable";
+		//???? first parameter is called oControl. Why not oTable or vTableIdentifier.....
+		When.onTheMDCTable.iPersonalizeColumns(sTableID, ["Genre", "Sub Genre"]);
+		When.onTheMDCTable.iResetThePersonalization(sTableID);
+		//Then TODO no assertions available
+
+		When.onTheMDCTable.iPersonalizeFilter(sTableID, [{key : "Language", values: ["DE"], inputControl: "container-v4demo---books--booksTable--filter--language_code"}]);
+
+		When.onTheMDCTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
+		// When.onTheMDCTable.iResetThePersonalization(sTableID);
+
+		When.onTheMDCTable.iSetShowSelectedFilters(sTableID, true);
+		When.onTheMDCTable.iSetHideDescriptionsFilters(sTableID, true);
+
+		When.onTheMDCTable.iSetShowSelectedFilters(sTableID, false);
+		When.onTheMDCTable.iSetHideDescriptionsFilters(sTableID, false);
+
 		Then.iTeardownMyAppFrame();
 	});
 

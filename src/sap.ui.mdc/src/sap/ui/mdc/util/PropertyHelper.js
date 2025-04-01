@@ -903,6 +903,16 @@ sap.ui.define([
 		return mPrivate ? merge({}, mPrivate.mAttributeMetadata) : null;
 	};
 
+	/**
+	 * Gets a list of properties that are redundant and should be filtered out in the {@link sap.ui.mdc.p13n.SelectionController} for personalization.
+	 *
+	 * @protected
+	 * @returns {object[]} A list of properties
+	 */
+	PropertyHelper.prototype.getRedundantProperties = function() {
+		return [];
+	};
+
 	Object.defineProperties(PropertyHelper, {
 		reportInvalidProperty: {value: reportInvalidProperty},
 		throwInvalidPropertyError: {value: throwInvalidPropertyError}
