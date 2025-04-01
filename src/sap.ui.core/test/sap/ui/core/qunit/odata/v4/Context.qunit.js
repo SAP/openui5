@@ -4970,12 +4970,20 @@ sap.ui.define([
 		};
 		let oContext = Context.create({/*oModel*/}, oBinding, "/some/path", 42);
 
-		this.mock(oContext).expects("isDeleted").thrice().withExactArgs().returns(true); // toString
+		// Note: also called by #toString
+		this.mock(oContext).expects("isDeleted").atLeast(0).withExactArgs().returns(true);
 
 		assert.throws(function () {
 			// code under test
 			oContext.setSelected(true);
 		}, new Error("Must not select a deleted entity: " + oContext));
+
+		oContext.oBinding = undefined; // simulate #destroy
+
+		assert.throws(function () {
+			// code under test
+			oContext.setSelected(false);
+		}, new Error("Unsupported context: " + oContext));
 
 		// Note: it's about the binding, not the index!
 		oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/some/path", 42);
