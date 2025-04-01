@@ -318,21 +318,54 @@ sap.ui.define([
 	};
 
 	SelectionPanel.prototype._handleActivated = function(oHoveredItem) {
-		//remove move buttons if unselected item is hovered (not covered by updateStarted)
-		this._removeMoveButtons();
-		//Check if the prior hovered item had a visible icon and renable it if required
+		// remove move buttons
+		// 1. if a new item is hovered OR
+		// 1. if the item is not selected
+		if (this._oHoveredItem !== oHoveredItem || !oHoveredItem.getMultiSelectControl()?.getSelected()) {
+			this._removeMoveButtons();
+		}
+
+		// Check if the prior hovered item had a visible icon and renable it if required
 		if (this._oHoveredItem && !this._oHoveredItem.bIsDestroyed && this._oHoveredItem.getBindingContextPath()) {
 			const bVisible = !!this._getP13nModel().getProperty(this._oHoveredItem.getBindingContextPath()).active;
-			const oOldIcon = this._oHoveredItem.getCells()[1].getItems()[0];
+			const [oOldIcon] = this._oHoveredItem.getCells()[1].getItems();
 			oOldIcon.setVisible(bVisible);
 		}
-		//Store (new) hovered item and set its icon to visible: false + add move buttons to it
-		const oIcon = oHoveredItem.getCells()[1].getItems()[0];
-		if (oHoveredItem.getSelected()) {
+		// Store (new) hovered item and set its icon to visible: false + add move buttons to it
+		const oIcon = oHoveredItem.getCells()[1]?.getItems()[0];
+		if (oHoveredItem.getSelected() && oIcon) {
 			oIcon.setVisible(false);
 		}
+
+		// SNOW: DINC0433588:
+		// We call _handleActivated also when the hover state WITHIN a CustomListItem changes.
+		// However, the oHoveredItem is still the same ColumnListItem.
+		// If no selection change was done and the hoveredItem is still the same, we assume that the focus changed within a ColumnListItem.
+		// Hence, there is no need to add the move buttons again as they were already added previously.
+
+		// do not update anything or proceed to add the buttons:
+		// 1. if hover state has not changed (same item is still hovered) AND
+		// 2. if no selection change was done (same item is still hovered and was neither selected nor deselected) AND
+		// 3. if the hovered item is enabled (move buttons are already there, hence there is no need to add them again: SNOW: DINC0433588)
+		if (this._oHoveredItem === oHoveredItem &&
+			this._oLastSelectedItem !== oHoveredItem &&
+			oHoveredItem.getMultiSelectControl()?.getEnabled()
+		) {
+			return;
+		}
+
+
+		// if not the same,
+		// if same, proceed to: add buttons
+
 		this._oHoveredItem = oHoveredItem;
-		if (!(oHoveredItem.getMultiSelectControl()?.getEnabled() == false)) {
+		this._oLastSelectedItem = null;
+		// 1. if checkbox is enabled (disabled checkbox might be the case for rta for ActionToolbar) AND
+		// 2. if checkbox is selected
+		// 3. OR if there is not checkbox
+		if ((oHoveredItem.getMultiSelectControl()?.getEnabled() &&
+			oHoveredItem.getMultiSelectControl()?.getSelected()) ||
+			!oHoveredItem.getMultiSelectControl()) {
 			this._updateEnableOfMoveButtons(oHoveredItem, false);
 			this._addMoveButtons(oHoveredItem);
 		}
