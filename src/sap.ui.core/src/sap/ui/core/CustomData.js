@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.core.CustomData
 	 */
-	var CustomData = Element._CustomData;
+	var CustomData = Element.getMetadata().getAggregation("customData").defaultClass;
 
 	/**
 	 * Creates a new subclass of <code>CustomData</code> with name <code>sClassName</code>

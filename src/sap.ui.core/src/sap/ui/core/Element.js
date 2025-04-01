@@ -7,6 +7,7 @@ sap.ui.define([
 	'../base/DataType',
 	'../base/Object',
 	'../base/ManagedObject',
+	'./ElementHooks',
 	'./ElementMetadata',
 	'./FocusMode',
 	'../Device',
@@ -28,6 +29,7 @@ sap.ui.define([
 		DataType,
 		BaseObject,
 		ManagedObject,
+		ElementHooks,
 		ElementMetadata,
 		FocusMode,
 		Device,
@@ -936,7 +938,7 @@ sap.ui.define([
 		var bHasNoParent = !this.getParent();
 
 		// update the focus information (potentially) stored by the central UI5 focus handling
-		Element._updateFocusInfo(this);
+		updateFocusInfo(this);
 
 
 		ManagedObject.prototype.destroy.call(this, bSuppressInvalidate);
@@ -990,27 +992,10 @@ sap.ui.define([
 		mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
 
-		if (Element._interceptEvent) {
-			Element._interceptEvent(sEventId, this, mParameters);
-		}
+		ElementHooks.interceptEvent?.(sEventId, this, mParameters);
 
 		return ManagedObject.prototype.fireEvent.call(this, sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling);
 	};
-
-	/**
-	 * Intercepts an event. This method is meant for private usages. Apps are not supposed to used it.
-	 * It is created for an experimental purpose.
-	 * Implementation should be injected by outside.
-	 *
-	 * @param {string} sEventId the name of the event
-	 * @param {sap.ui.core.Element} oElement the element itself
-	 * @param {object} mParameters The parameters which complement the event. Hooks must not modify the parameters.
-	 * @function
-	 * @private
-	 * @ui5-restricted
-	 * @experimental Since 1.58
-	 */
-	Element._interceptEvent = undefined;
 
 	/**
 	 * Updates the count of rendering-related delegates and if the given threshold is reached,
@@ -1826,12 +1811,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Expose CustomData class privately
-	 * @private
-	 */
-	Element._CustomData = CustomData;
-
-	/**
 	 * Define CustomData class as the default for the built-in "customData" aggregation.
 	 * We need to do this here via the aggregation itself, since the CustomData class is
 	 * an Element subclass and thus cannot be directly referenced in Element's metadata definition.
@@ -2240,16 +2219,14 @@ sap.ui.define([
 		}
 	};
 
-	var FocusHandler;
-	Element._updateFocusInfo = function(oElement) {
-		FocusHandler = FocusHandler || sap.ui.require("sap/ui/core/FocusHandler");
-		if (FocusHandler) {
-			FocusHandler.updateControlFocusInfo(oElement);
-		}
-	};
+	let FocusHandler;
+	function updateFocusInfo(oElement) {
+		FocusHandler ??= sap.ui.require("sap/ui/core/FocusHandler");
+		FocusHandler?.updateControlFocusInfo(oElement);
+	}
 
 	/**
-	 * Returns the nearest [UI5 Element]{@link sap.ui.core.Element} that wraps the given DOM element.
+	 * Returns the nearest {@link sap.ui.core.Element UI5 Element} that wraps the given DOM element.
 	 *
 	 * A DOM element or a CSS selector is accepted as a given parameter. When a CSS selector is given as parameter, only
 	 * the first DOM element that matches the CSS selector is taken to find the nearest UI5 Element that wraps it. When
