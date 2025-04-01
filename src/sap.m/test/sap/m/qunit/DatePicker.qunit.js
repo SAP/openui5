@@ -1321,6 +1321,22 @@ sap.ui.define([
 		assert.equal(jQuery("#DP2").find("input").val(), "02+04+2014", "PageDown+shift+ctrl: Value in external format displayed");
 	});
 
+	QUnit.test("maxlength attribute", async function (assert) {
+		// Prepare
+		const sMaxLength = "512";
+		const oDP = new DatePicker();
+
+		oDP.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		const oInput = oDP.getDomRef().getElementsByTagName("input")[0];
+
+		// Assert
+		assert.strictEqual(oInput.getAttribute("maxlength"), sMaxLength, "user input is restricted to 512 characters");
+
+		// Clean
+		oDP.destroy();
+	});
+
 	//BCP 1670441899
 	QUnit.test("focused element after picker close", async function(assert) {
 		var bOrigTouch = Device.support.touch,

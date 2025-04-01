@@ -12,6 +12,8 @@ sap.ui.define(["sap/ui/core/Lib", 'sap/ui/core/Renderer', './DateTimeFieldRender
 	var DatePickerRenderer = Renderer.extend(DateTimeFieldRenderer);
 	DatePickerRenderer.apiVersion = 2;
 
+	const MAX_INPUT_VALUE_LENGTH = 512;
+
 	/**
 	 * Write the value of the input.
 	 *
@@ -36,7 +38,7 @@ sap.ui.define(["sap/ui/core/Lib", 'sap/ui/core/Renderer', './DateTimeFieldRender
 	 */
 	DatePickerRenderer.writeInnerAttributes = function(oRm, oDP) {
 		oRm.attr("type", "text");
-
+		oRm.attr("maxlength", MAX_INPUT_VALUE_LENGTH);
 		if (oDP._bMobile) {
 			// prevent keyboard in mobile devices
 			oRm.attr("readonly", "readonly");

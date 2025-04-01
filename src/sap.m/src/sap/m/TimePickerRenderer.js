@@ -17,6 +17,7 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 		TimePickerRenderer.apiVersion = 2;
 
 		TimePickerRenderer.CSS_CLASS = "sapMTimePicker";
+		const MAX_INPUT_VALUE_LENGTH = 512;
 
 		/**
 		 * Adds <code>sap.m.TimePicker</code> control specific classes to the input.
@@ -85,6 +86,8 @@ sap.ui.define(['sap/ui/core/Renderer', './DateTimeFieldRenderer', 'sap/ui/core/l
 			if (oControl.getShowValueStateMessage()) {
 				oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
 			}
+
+			oRm.attr("maxlength", MAX_INPUT_VALUE_LENGTH);
 		};
 
 		return TimePickerRenderer;
