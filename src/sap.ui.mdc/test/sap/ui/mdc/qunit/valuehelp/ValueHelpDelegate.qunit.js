@@ -63,6 +63,7 @@ sap.ui.define([
 	});
 	let oListBinding;
 	let oBindingInfo;
+	let bSingleSelect = false;
 
 	const oFakeContent = {
 		isA: (sName) => true,
@@ -84,7 +85,8 @@ sap.ui.define([
 		getActiveFilterBar: () => oFakeFilterBar,
 		getSearch: () => "",
 		getCaseSensitive: () => true,
-		shouldOpenOnClick: () => false
+		shouldOpenOnClick: () => false,
+		isSingleSelect: () => bSingleSelect
 	};
 
 	const FakeContext = function (oData) {
@@ -112,6 +114,7 @@ sap.ui.define([
 			aConditions = [];
 			aRelevantContexts = [];
 			oConditions = undefined;
+			bSingleSelect = false;
 		}
 	});
 
@@ -435,6 +438,7 @@ sap.ui.define([
 		aConditions = [];
 		aRelevantContexts = [];
 		oConditions = undefined;
+		bSingleSelect = false;
 	}});
 
 	QUnit.test("FieldDisplay.Value", (assert) => {
@@ -465,6 +469,16 @@ sap.ui.define([
 		aConditions.push(oFakeContent.createCondition("A", "", undefined));
 
 		_testIndex(assert, [1, 1, 1], undefined); // selected item must be ignored
+
+		bSingleSelect = true; // selected condition must not be checked
+		aRelevantContexts = [
+			new FakeContext({key: "A", text: "", message: "ci match"}), // key match ci
+			new FakeContext({key: "a", text: "", message: "match"}), // key match
+			new FakeContext({key: "AA", text: "", message: "ci startsWith"}), // startsWith key ci
+			new FakeContext({key: "aa", text: "", message: "startsWith"}) // startsWith key
+		];
+
+		_testIndex(assert, [0, 0, 0, 0], undefined);
 
 	});
 
