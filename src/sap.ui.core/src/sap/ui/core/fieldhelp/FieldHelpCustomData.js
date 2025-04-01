@@ -42,10 +42,6 @@ sap.ui.define([
 		if (oParent
 			&& oCustomData.getKey() === FieldHelpCustomData.DOCUMENTATION_REF_KEY
 			&& Array.isArray(oCustomData.getValue())) {
-			// For elements, for which the field help information is set manually (e.g. filter fields), the
-			// field help has to be displayed at that element, even if there are child bindings (e.g. value help)
-			// that also contribute to the field help information
-			oParent.setFieldHelpDisplay(oParent);
 			oParent.updateFieldHelp?.();
 		}
 	}

@@ -486,28 +486,20 @@ sap.ui.define([
 	QUnit.test("_getFieldHelpHotspots", function (assert) {
 		const oFieldHelp = new FieldHelp();
 		const oFieldHelpMock = this.mock(oFieldHelp);
-		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().atLeast(1).returns({});
+		oFieldHelpMock.expects("_getDisplayControlIDToURNs").withExactArgs().returns(new Map());
 
 		// code under test - there are no registered controls
 		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), []);
 
-		oFieldHelp.mDocuRefControlToFieldHelp = {
-			"~element0": {
-				undefined: ["urn:sap-com:documentation:key?=type=~customType0&id=~customId0"]
-			},
-			"~element1": {
-				undefined: [
-					"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1",
-					"urn:sap-com:documentation:key?=type=~customType2&id=~customId2&origin=~origin2"
-				],
-				"~property0": [
-					"urn:sap-com:documentation:key?=type=~customType3&id=~customId3"
-				],
-				"~property1": [
-					"urn:sap-com:documentation:key?=type=~customType3&id=~customId3"
-				]
-			}
-		};
+		oFieldHelpMock.expects("_getDisplayControlIDToURNs").withExactArgs().returns(
+			new Map([
+				["~element0", new Set(["urn:sap-com:documentation:key?=type=~customType0&id=~customId0"])],
+				["~element1", new Set([
+						"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1",
+						"urn:sap-com:documentation:key?=type=~customType2&id=~customId2&origin=~origin2"
+					])]
+			])
+		);
 
 		const oElementMock = this.mock(Element);
 		oElementMock.expects("getElementById").withExactArgs("~element0").atLeast(1).returns("~oElement0");
@@ -533,68 +525,25 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getFieldHelpHotspots: field help is displayed at another control", function (assert) {
-		const oFieldHelp = new FieldHelp();
-		const oFieldHelpMock = this.mock(oFieldHelp);
-
-		oFieldHelp.mDocuRefControlToFieldHelp = {
-			"~element0": {
-				undefined: ["urn:sap-com:documentation:key?=type=~customType0&id=~customId0"]
-			},
-			"~element1": {
-				undefined: ["urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"]
-			},
-			"~element2": {
-				undefined: ["urn:sap-com:documentation:key?=type=~customType0&id=~customId0"]
-			},
-			"~HeaderElement": {
-				undefined: ["urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"]
-			}
-		};
-
-		const oHeaderElement = {getId() {return "~HeaderElement";}};
-		this.mock(Element).expects("getElementById").withExactArgs("~HeaderElement").returns(oHeaderElement);
-		this.mock(LabelEnablement).expects("_getLabelTexts").withExactArgs(sinon.match.same(oHeaderElement))
-			.returns(["~sLabel"]);
-		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs()
-			.returns({"~element0": "~HeaderElement", "~element1": "~HeaderElement", "~element2": "~HeaderElement"});
-
-		// code under test - field helps of the 3 controls are shown for the header element due to the mapping
-		assert.deepEqual(oFieldHelp._getFieldHelpHotspots(), [{
-			backendHelpKey: {id: "~customId0", type: "~customType0"},
-			hotspotId: "~HeaderElement",
-			labelText: "~sLabel"
-		}, {
-			backendHelpKey: {id: "~customId1", origin: "~origin1", type: "~customType1"},
-			hotspotId: "~HeaderElement",
-			labelText: "~sLabel"
-		}]);
-	});
-
-	//*********************************************************************************************
 	QUnit.test("_getFieldHelpHotspots: no label found", function (assert) {
 		const oFieldHelp = new FieldHelp();
 		const oFieldHelpMock = this.mock(oFieldHelp);
 		const sURNElement0 = "urn:sap-com:documentation:key?=type=~customType0&id=~customId0";
-		oFieldHelp.mDocuRefControlToFieldHelp = {
-			"element0ID": {
-				undefined: [sURNElement0]
-			},
-			"element1ID": {
-				undefined: [
+		oFieldHelpMock.expects("_getDisplayControlIDToURNs").withExactArgs().returns(
+			new Map([
+				["element0ID", new Set([sURNElement0])],
+				["element1ID", new Set([
 					"urn:sap-com:documentation:key?=type=~customType1&id=~customId1&origin=~origin1"
-				]
-			}
-		};
+				])]
+			])
+		);
 
 		const oElementMock = this.mock(Element);
-		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs()
-			.returns({"element0ID": "element0DisplayID"});
-		oElementMock.expects("getElementById").withExactArgs("element0DisplayID").returns("~oElement0");
+		oElementMock.expects("getElementById").withExactArgs("element0ID").returns("~oElement0");
 		const oLabelEnablementMock = this.mock(LabelEnablement);
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs("~oElement0").returns([]);
 		this.oLogMock.expects("error")
-			.withExactArgs("Cannot find a label for control 'element0DisplayID'; ignoring field help",
+			.withExactArgs("Cannot find a label for control 'element0ID'; ignoring field help",
 				sURNElement0, sClassName);
 		oElementMock.expects("getElementById").withExactArgs("element1ID").returns("~oElement1");
 		oLabelEnablementMock.expects("_getLabelTexts").withExactArgs("~oElement1").returns(["label"]);
@@ -1627,6 +1576,98 @@ sap.ui.define([
 		const sResultPath = await FieldHelp.getInstance()._requestIDPropertyPath(oMetaModelInterface, sPath);
 
 		assert.strictEqual(sResultPath, sIDPath, "correct ID path");
+	});
+});
+
+	//*********************************************************************************************
+[{ // no field help
+	mDocuRefControlToFieldHelp: {},
+	mFieldHelpDisplayMapping: {},
+	aResult: []
+}, { // implicit field help, on control itself
+	mDocuRefControlToFieldHelp: {
+		"element0": {"property0": ["urn0"], "property1": ["urn1"]}
+	},
+	mFieldHelpDisplayMapping: {},
+	aResult: [["element0", ["urn0", "urn1"]]]
+}, { // implicit field help, on display control
+	mDocuRefControlToFieldHelp: {
+		"element0": {"property0": ["urn0"], "property1": ["urn1"]}
+	},
+	mFieldHelpDisplayMapping: {"element0": "header"},
+	aResult: [["header", ["urn0", "urn1"]]]
+}, { // union of implicit field help from different controls on display control
+	mDocuRefControlToFieldHelp: {
+		"element0": {"property0": ["urn0"], "property1": ["urn1"]},
+		"element1": {"property2": ["urn2"]},
+		"header": {"property3": ["urn3"]}
+	},
+	mFieldHelpDisplayMapping: {"element0": "header", "element1": "header"},
+	aResult: [["header", ["urn0", "urn1", "urn2", "urn3"]]]
+}, { // explicit field help, on control itself
+	mDocuRefControlToFieldHelp: {
+		"element0": {undefined: ["urn0"], "property1": ["urn1"]}
+	},
+	mFieldHelpDisplayMapping: {},
+	aResult: [["element0", ["urn0"]]]
+}, { // explicit field help, on (a) control itself *and* (b) other control with this control as display control
+	mDocuRefControlToFieldHelp: {
+		"header": {undefined: ["urn1"]},
+		"element0": {undefined: ["urn0"]}
+	},
+	mFieldHelpDisplayMapping: {"element0": "header"},
+	aResult: [["header", ["urn1"]]]
+}, { // *same* explicit field help, on different controls with the same control as display control
+	mDocuRefControlToFieldHelp: {
+		"element0": {undefined: ["urn0"]},
+		"element1": {undefined: ["urn0"]}
+	},
+	mFieldHelpDisplayMapping: {"element0": "header", "element1": "header"},
+	aResult: [["header", ["urn0"]]]
+}].forEach(({mDocuRefControlToFieldHelp, mFieldHelpDisplayMapping, aResult}, i) => {
+	QUnit.test("_getDisplayControlIDToURNs #" + i, function (assert) {
+		const oFieldHelp = FieldHelp.getInstance();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping").withExactArgs().returns(mFieldHelpDisplayMapping);
+		oFieldHelp.mDocuRefControlToFieldHelp = mDocuRefControlToFieldHelp;
+
+		// code under test
+		const mDisplayControlIDToURNs = oFieldHelp._getDisplayControlIDToURNs();
+
+		assert.ok(mDisplayControlIDToURNs instanceof Map, "map returned");
+		assert.strictEqual(mDisplayControlIDToURNs.size, aResult.length, "map size");
+		aResult.forEach(([sElementID, aExpectedURNs]) => {
+			assert.deepEqual(Array.from(mDisplayControlIDToURNs.get(sElementID)), aExpectedURNs, "field help URNs");
+		});
+	});
+});
+
+	//*********************************************************************************************
+[
+	["urn0", "urn1"], ["urn1"]
+].forEach((aWrongFieldHelp, i) => {
+	QUnit.test("_getDisplayControlIDToURNs: error case #" + i, function (assert) {
+		const oFieldHelp = FieldHelp.getInstance();
+		const oFieldHelpMock = this.mock(oFieldHelp);
+
+		oFieldHelpMock.expects("_getFieldHelpDisplayMapping")
+			.withExactArgs()
+			.returns({"element0": "header", "element1": "header"});
+		this.oLogMock.expects("error").withExactArgs(
+			"Cannot display field help for control 'element1': different field help already set on hotspot 'header'",
+			undefined, sClassName);
+		oFieldHelp.mDocuRefControlToFieldHelp = {
+			"element0": {undefined: ["urn0"]},
+			"element1": {undefined: aWrongFieldHelp}
+		};
+
+		// code under test
+		const mDisplayControlIDToURNs = oFieldHelp._getDisplayControlIDToURNs();
+
+		assert.ok(mDisplayControlIDToURNs instanceof Map, "map returned");
+		assert.strictEqual(mDisplayControlIDToURNs.size, 1, "map size");
+		assert.deepEqual(Array.from(mDisplayControlIDToURNs.get("header")), ["urn0"], "field help URNs");
 	});
 });
 });
