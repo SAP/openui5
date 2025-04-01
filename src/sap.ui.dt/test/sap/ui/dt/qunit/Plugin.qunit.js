@@ -183,7 +183,17 @@ sap.ui.define([
 					return {
 						getData: this.fnGetData,
 						getAction: this.fnGetAction,
-						getResponsibleElement: this.fnGetResponsibleElement
+						getPropagatedAction: this.fnGetPropagatedAction,
+						getResponsibleElement: this.fnGetResponsibleElement,
+						getLibraryText(oElement, sName) {
+							if (oElement === "dummypropagatingControl") {
+								return "dummypropagatingControlText";
+							}
+							if (oElement === "dummyElement" && sName === "dummyActionName") {
+								return "dummyText";
+							}
+							return undefined;
+						}
 					};
 				}.bind(this)
 			};
@@ -194,7 +204,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when using common methods of the plugin", function(assert) {
-			assert.expect(6);
+			assert.expect(11);
 			this.oPlugin.getActionName = function() {
 				return "dummyActionName";
 			};
@@ -218,6 +228,40 @@ sap.ui.define([
 				}
 			});
 			this.oPlugin.getSelectedOverlays();
+
+			this.fnGetPropagatedAction = function(sActionName) {
+				assert.equal(sActionName, "dummyActionName", "getPropagatedAction gets called with the plugin action name");
+			};
+			this.oPlugin.getPropagatedAction(this.oOverlay);
+
+			assert.strictEqual(
+				this.oPlugin.getActionText(this.oOverlay, { name: "dummyActionName" }),
+				"dummyText",
+				"then the action text is returned"
+			);
+
+			assert.strictEqual(
+				this.oPlugin.getActionText(this.oOverlay, { name: () => "dummyText" }),
+				"dummyText",
+				"then the action text is returned when name is returned by a function"
+			);
+
+			sandbox.stub(Lib, "getResourceBundleFor").returns({
+				getText(sPluginId) {
+					return sPluginId;
+				}
+			});
+			assert.strictEqual(
+				this.oPlugin.getActionText(this.oOverlay, {}, "pluginText"),
+				"pluginText",
+				"then when the action has no name the text from the plugin ID is returned"
+			);
+
+			assert.strictEqual(
+				this.oPlugin.getActionText(this.oOverlay, { name: "dummyActionName" }, "pluginText", "dummypropagatingControl"),
+				"dummypropagatingControlText",
+				"then when getActionText is called with a propagated action target the text is retrieved using that"
+			);
 		});
 
 		QUnit.test("when getResponsibleElementOverlay() is called for an element overlay, with no responsible element", function(assert) {
