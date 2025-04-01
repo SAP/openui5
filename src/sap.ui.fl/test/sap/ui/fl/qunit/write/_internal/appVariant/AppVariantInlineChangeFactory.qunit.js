@@ -2249,6 +2249,24 @@ sap.ui.define([
 				});
 			});
 		});
+
+		QUnit.test("create change with not existing inline change type implementation", function(assert) {
+			const mPropertyBag = {
+				changeType: "creates_ui5_addLibraries",
+				content: {
+					libraries: {
+						"descriptor.mocha133": {
+							minVersion: "1.44",
+							lazy: false
+						}
+					}
+				}
+			};
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.createDescriptorInlineChange(mPropertyBag);
+			}, Error(`Change type '${mPropertyBag.changeType}' is not supported`),
+			"throws error that the change type is not supported");
+		});
 	});
 
 	QUnit.done(function() {

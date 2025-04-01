@@ -2,9 +2,10 @@
 /* CSS for control sap.f/CardLoading  */
 /* Base theme                         */
 /* ================================== */
+
 @_sap_f_Card_FocusBorderWidth: 1px;
-@_sap_f_Card_Background_Placeholder_Color: @sapUiContentPlaceholderloadingBackground;
-@_sap_f_Card_Placeholder_Gradient: linear-gradient(to right, @sapUiContentPlaceholderloadingBackground 0%, @sapUiContentPlaceholderloadingBackground 35%, darken(@sapUiContentPlaceholderloadingBackground, 5) 50%, @sapUiContentPlaceholderloadingBackground 65%, @sapUiContentPlaceholderloadingBackground 100%);
+@_sap_f_Card_Background_Placeholder_Color: var(--sapContent_Placeholderloading_Background);
+@_sap_f_Card_Placeholder_Gradient: linear-gradient(to right, var(--sapContent_Placeholderloading_Background) 0%, var(--sapContent_Placeholderloading_Background) 35%, darken(@sapUiContentPlaceholderloadingBackground, 5) 50%, var(--sapContent_Placeholderloading_Background) 65%, var(--sapContent_Placeholderloading_Background) 100%);
 
 .sapFCard {
 
@@ -15,7 +16,7 @@
 			height: 3rem;
 			width: 3rem;
 			margin-right: 0.75rem;
-			//hide the fallback icon
+			/* hide the fallback icon */
 		}
 
 		.sapFCardHeaderMainPart .sapFCardHeaderImage .sapFCardHeaderItemBinded::after {
@@ -55,11 +56,11 @@
 		}
 
 		.sapFCardHeaderItemBinded {
-			visibility: hidden; // hide the loaded elements (texts, icons, etc.) behind the loading indicators
+			visibility: hidden; /* hide the loaded elements (texts, icons, etc.) behind the loading indicators */
 		}
 
 		.sapFCardHeaderItemBinded::after {
-			visibility: visible; // ... but show the loading indicator
+			visibility: visible; /* ... but show the loading indicator */
 		}
 
 		.sapFCardHeaderText .sapFCardHeaderTextFirstLine {
@@ -77,7 +78,7 @@
 
 		&:not(.sapFCardLoadingDelayed) .sapFCardHeaderItemBinded::after {
 			.sapFCardLoadingShimmerMixin();
-			content: "";
+			content: '';
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -89,8 +90,10 @@
 
 	&.sapUiIntCardTileFlat,
 	&.sapUiIntCardTileFlatWide {
+
 		.sapFCardHeader.sapFCardHeaderLoading,
 		&.sapFCardPreview .sapFCardHeader {
+
 			.sapFAvatar.sapFCardHeaderItemBinded::after,
 			.sapFAvatar.sapFCardHeaderItemBinded::after {
 				margin-top: 0;
@@ -108,14 +111,14 @@
 		}
 	}
 
-	// no sapFCardHeaderItemBinded class present for the filter?
+	/* no sapFCardHeaderItemBinded class present for the filter? */
 	.sapFCardFilterLoading::after {
 		height: 2rem;
 		margin-top: 0.25rem;
 	}
 
 	.sapFCardFilterLoading .sapMSlt {
-		visibility: hidden; // hide the loaded Select behind the loading indicator
+		visibility: hidden; /* hide the loaded Select behind the loading indicator */
 	}
 
 	&.sapFCardPreview .sapFCardFilter,
@@ -123,7 +126,7 @@
 		position: relative;
 		&::after {
 			.sapFCardLoadingShimmerMixin();
-			content: "";
+			content: '';
 			position: absolute;
 			top: 2px;
 			bottom: 2px;
@@ -134,20 +137,23 @@
 
 	&.sapFCardPreview .sapFCardFooter,
 	.sapFCardFooterLoading {
+
 		.sapUiIntActionsStrip {
 			position: relative;
+
 			&::after {
-				content: "";
+				content: '';
 				position: absolute;
 				width: 100%;
 				height: 100%;
-				background-color: @sapUiTileBackground;
+				background-color: var(--sapTile_Background);
 			}
 		}
 	}
 
 	.sapFCardNumericHeader.sapFCardHeaderLoading,
 	&.sapFCardPreview .sapFCardNumericHeader {
+
 		.sapFCardNumericIndicatorsMain .sapFCardHeaderItemBinded {
 			min-width: 5rem;
 		}
@@ -186,7 +192,7 @@
 			bottom: 1px;
 			right: 1px;
 			top: 1px;
-			border: @_sap_f_Card_FocusBorderWidth dotted @sapUiContentFocusColor;
+			border: @_sap_f_Card_FocusBorderWidth dotted var(--sapContent_FocusColor);
 			pointer-events: none;
 		}
 
@@ -199,7 +205,7 @@
 			height: 100%;
 
 			.sapFCardSVG {
-				fill: @sapUiTileBackground;
+				fill: var(--sapTile_Background);
 			}
 		}
 

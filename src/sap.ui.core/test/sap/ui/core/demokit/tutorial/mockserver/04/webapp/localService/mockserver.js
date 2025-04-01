@@ -3,7 +3,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/util/MockServer",
 	"sap/base/Log"
-], function(jQuery, UI5Date, MockServer, Log) {
+], (jQuery, UI5Date, MockServer, Log) => {
 	"use strict";
 
 	return {
@@ -13,11 +13,9 @@ sap.ui.define([
 		 * The local mock data in this folder is returned instead of the real data for testing.
 		 * @public
 		 */
-		init: function() {
+		init() {
 			// create
-			var oMockServer = new MockServer({
-				rootUri: "/"
-			});
+			const oMockServer = new MockServer({ rootUri: "/" });
 
 			oMockServer.simulate("../localService/metadata.xml", {
 				sMockdataBaseUrl: "../localService/mockdata",
@@ -25,21 +23,23 @@ sap.ui.define([
 			});
 
 			// handling mocking a function import call step
-			var aRequests = oMockServer.getRequests();
+			const aRequests = oMockServer.getRequests();
 			aRequests.push({
 				method: "GET",
 				path: new RegExp("FindUpcomingMeetups(.*)"),
-				response: function(oXhr) {
+				response: (oXhr) => {
 					Log.debug("Incoming request for FindUpcomingMeetups");
-					var today = UI5Date.getInstance();
-					today.setHours(0); // or today.toUTCString(0) due to timezone differences
-					today.setMinutes(0);
-					today.setSeconds(0);
+					const oToday = UI5Date.getInstance();
+					oToday.setHours(0); // or today.toUTCString(0) due to timezone differences
+					oToday.setMinutes(0);
+					oToday.setSeconds(0);
+					// the mock server only works with sap.jQuery.ajax and async: false. But the request does not
+					// actually go to a server, so it does not block the main thread.
 					jQuery.ajax({
-						url: "/Meetups?$filter=EventDate ge " + "/Date(" + today.getTime() + ")/",
+						url: `/Meetups?$filter=EventDate ge datetime'${oToday.toISOString()}'`,
 						dataType : 'json',
 						async: false,
-						success : function(oData) {
+						success : (oData) => {
 							oXhr.respondJSON(200, {}, JSON.stringify(oData));
 						}
 					});
@@ -49,9 +49,9 @@ sap.ui.define([
 			oMockServer.setRequests(aRequests);
 
 			// handling custom URL parameter step
-			var fnCustom = function(oEvent) {
-				var oXhr = oEvent.getParameter("oXhr");
-				if (oXhr && oXhr.url.indexOf("first") > -1) {
+			const fnCustom = (oEvent) => {
+				const oXhr = oEvent.getParameter("oXhr");
+				if (oXhr?.url.includes("first")) {
 					oEvent.getParameter("oFilteredData").results.splice(3, 100);
 				}
 			};
@@ -62,7 +62,5 @@ sap.ui.define([
 
 			Log.info("Running the app with mock data");
 		}
-
 	};
-
 });

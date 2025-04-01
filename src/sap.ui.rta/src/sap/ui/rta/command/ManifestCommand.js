@@ -3,12 +3,12 @@
  */
 sap.ui.define([
 	"sap/ui/rta/command/BaseCommand",
-	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory"
+	"sap/ui/fl/descriptorRelated/api/DescriptorChange",
+	"sap/ui/fl/write/api/ChangesWriteAPI"
 ], function(
 	BaseCommand,
-	AppVariantInlineChangeFactory,
-	DescriptorChangeFactory
+	DescriptorChange,
+	ChangesWriteAPI
 ) {
 	"use strict";
 
@@ -85,28 +85,26 @@ sap.ui.define([
 	 * Create the change for the manifest and adds it to the Flex Persistence.
 	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
-	ManifestCommand.prototype.createAndStoreChange = function() {
-		return AppVariantInlineChangeFactory.createDescriptorInlineChange({
-			changeType: this.getChangeType(),
-			content: this.getParameters(),
-			texts: this.getTexts(),
-			support: {
-				compositeCommand: this._sCompositeId || ""
-			}
-		})
-		.then(function(oManifestChangeContent) {
-			return new DescriptorChangeFactory().createNew(
-				this.getReference(),
-				oManifestChangeContent,
-				this.getLayer(),
-				this.getAppComponent(),
-				"sap.ui.rta.ManifestCommand"
-			);
-		}.bind(this))
-		.then(function(oManifestChange) {
-			const oChange = oManifestChange.store();
-			this._oPreparedChange = oChange;
-		}.bind(this));
+	ManifestCommand.prototype.createAndStoreChange = async function() {
+		const oManifestChange = await ChangesWriteAPI.create({
+			changeSpecificData: {
+				changeType: this.getChangeType(),
+				content: this.getParameters(),
+				texts: this.getTexts(),
+				support: {
+					compositeCommand: this._sCompositeId || ""
+				},
+				reference: this.getReference(),
+				layer: this.getLayer()
+			},
+			selector: this.getAppComponent(),
+			generator: "sap.ui.rta.ManifestCommand"
+		});
+		if (!(oManifestChange instanceof DescriptorChange)) {
+			throw new Error("With the given changeSpecificData, no manifest change could be created.");
+		}
+		const oChange = oManifestChange.store();
+		this._oPreparedChange = oChange;
 	};
 	return ManifestCommand;
 });

@@ -27,46 +27,48 @@ sap.ui.define([
 			return XMLView.create({
 				id: sViewName,
 				definition: sXmlString,
-				controllerName: "test.namespace.TestController",
 				async: true
 			});
 		});
 	}
 
 	QUnit.module("Given an extend controller command with a valid entry in the change registry,", {
-		beforeEach() {
+		async beforeEach() {
+			this.sViewId = "testView";
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			this.oButton = new Button(this.oComponent.createId("myButton"));
-		},
-		afterEach() {
-			this.oComponent.destroy();
-			this.oButton.destroy();
-			sandbox.restore();
-		}
-	}, function() {
-		QUnit.test("when getting an extend controller command for the change ...", async function(assert) {
-			const sViewId = "testView";
-			const oView = await createAsyncView(sViewId, this.oComponent);
-			oView.placeAt("qunit-fixture");
-			var oCommandFactory = new CommandFactory({
+			this.oView = await createAsyncView(this.sViewId, this.oComponent);
+			this.oView.placeAt("qunit-fixture");
+			this.oCommandFactory = new CommandFactory({
 				flexSettings: {
 					layer: Layer.CUSTOMER_BASE,
 					namespace: "test.namespace"
 				}
 			});
+		},
+		afterEach() {
+			this.oComponent.destroy();
+			this.oButton.destroy();
+			this.oView.destroy();
+			this.oCommandFactory.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when getting an extend controller command for the change ...", async function(assert) {
+			sandbox.stub(this.oView, "getControllerModuleName").returns("test.controller.TestController");
 
-			const oExtendControllerCommand = await oCommandFactory.getCommandFor(
+			const oExtendControllerCommand = await this.oCommandFactory.getCommandFor(
 				this.oButton,
 				"codeExt",
 				{
 					codeRef: "TestCodeRef",
-					viewId: sViewId
+					viewId: this.sViewId
 				}
 			);
 
 			assert.ok(oExtendControllerCommand, "then command is available");
 			assert.strictEqual(oExtendControllerCommand.getCodeRef(), "TestCodeRef", "then the codeRef is set correctly");
-			assert.strictEqual(oExtendControllerCommand.getViewId(), sViewId, "then the view id is set correctly");
+			assert.strictEqual(oExtendControllerCommand.getViewId(), this.sViewId, "then the view id is set correctly");
 			assert.strictEqual(oExtendControllerCommand.getChangeType(), "codeExt", "then the change type is set correctly");
 			assert.deepEqual(oExtendControllerCommand.getAppComponent(), this.oComponent, "then the app component is set correctly");
 
@@ -74,6 +76,11 @@ sap.ui.define([
 			assert.ok(oPreparedChange, "then the change is prepared");
 			assert.strictEqual(oPreparedChange.getChangeType(), "codeExt", "then the change type is set correctly");
 			assert.strictEqual(oPreparedChange.getContent().codeRef, "TestCodeRef", "then the codeRef is set correctly");
+			assert.strictEqual(
+				oPreparedChange.getControllerName(),
+				"module:test.controller.TestController",
+				"then the controller name is set correctly"
+			);
 			assert.strictEqual(
 				oPreparedChange.getFlexObjectMetadata().moduleName,
 				"someName/changes/TestCodeRef",
@@ -83,6 +90,35 @@ sap.ui.define([
 				oPreparedChange.getFlexObjectMetadata().namespace,
 				"apps/someName/changes/",
 				"then the namespace is set correctly"
+			);
+		});
+
+		QUnit.test("when getting an extend controller command for the change with legacy controller notation on the view...", async function(assert) {
+			sandbox.stub(this.oView, "getControllerModuleName").returns(undefined);
+			sandbox.stub(this.oView, "getController").returns({
+				getMetadata() {
+					return {
+						getName() {
+							return "test.controller.TestController";
+						}
+					};
+				}
+			});
+
+			const oExtendControllerCommand = await this.oCommandFactory.getCommandFor(
+				this.oButton,
+				"codeExt",
+				{
+					codeRef: "TestCodeRef",
+					viewId: this.sViewId
+				}
+			);
+
+			const oPreparedChange = oExtendControllerCommand.getPreparedChange();
+			assert.strictEqual(
+				oPreparedChange.getControllerName(),
+				"test.controller.TestController",
+				"then the controller name is set correctly"
 			);
 		});
 	});
