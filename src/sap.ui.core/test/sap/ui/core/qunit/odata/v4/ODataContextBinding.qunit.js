@@ -3539,7 +3539,7 @@ sap.ui.define([
 	[false, true].forEach(function (bKeepCacheOnError) {
 		[false, true].forEach(function (bHasLateProperties) {
 			var sTitle = "refreshInternal: bHasChangeListeners=" + bHasChangeListeners
-					+ ", bKeepCacheOnError=" + bKeepCacheOnError + ", bHasLateProperties"
+					+ ", bKeepCacheOnError=" + bKeepCacheOnError + ", bHasLateProperties="
 					+ bHasLateProperties;
 
 	QUnit.test(sTitle, function (assert) {
@@ -3581,8 +3581,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
 		fnFetchCache = oBindingMock.expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, false,
-				bKeepCacheOnError ? "myGroup" : undefined)
+			.withExactArgs(sinon.match.same(oContext), false, false, "myGroup", bKeepCacheOnError)
 			.callsFake(function () {
 				assert.strictEqual(oBinding.mLateQueryOptions, undefined);
 				assert.strictEqual(oBinding.mAggregatedQueryOptions,
@@ -3718,8 +3717,7 @@ sap.ui.define([
 		oBindingMock.expects("createReadGroupLock").withExactArgs("myGroup", false);
 		oBindingMock.expects("removeCachesAndMessages").withExactArgs("path");
 		oBindingMock.expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, false,
-				bKeepCacheOnError ? "myGroup" : undefined)
+			.withExactArgs(sinon.match.same(oContext), false, false, "myGroup", bKeepCacheOnError)
 			.callsFake(function () {
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
@@ -3792,8 +3790,7 @@ sap.ui.define([
 		oBindingMock.expects("createReadGroupLock").twice().withExactArgs("myGroup", false);
 		oBindingMock.expects("removeCachesAndMessages").withExactArgs("path");
 		oBindingMock.expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, false,
-				bKeepCacheOnError ? "myGroup" : undefined)
+			.withExactArgs(sinon.match.same(oContext), false, false, "myGroup", bKeepCacheOnError)
 			.callsFake(function () {
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
@@ -3873,7 +3870,7 @@ sap.ui.define([
 		oBindingMock.expects("createReadGroupLock").withExactArgs("myGroup", bIsRoot);
 		oBindingMock.expects("removeCachesAndMessages").withExactArgs("path");
 		oBindingMock.expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, false, "myGroup")
+			.withExactArgs(sinon.match.same(oContext), false, false, "myGroup", true)
 			.callsFake(function () {
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
@@ -3929,7 +3926,7 @@ sap.ui.define([
 		oBindingMock.expects("createReadGroupLock").withExactArgs("myGroup", bIsRoot);
 		oBindingMock.expects("removeCachesAndMessages").withExactArgs("path");
 		oBindingMock.expects("fetchCache")
-			.withExactArgs(undefined, false, false, "myGroup")
+			.withExactArgs(undefined, false, false, "myGroup", true)
 			.callsFake(function () {
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);

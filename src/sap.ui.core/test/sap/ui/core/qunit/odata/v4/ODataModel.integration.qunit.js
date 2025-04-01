@@ -77257,6 +77257,8 @@ make root = ${bMakeRoot}`;
 	// the selection state of them is reset.
 	// The same applies if these methods are called on a suspended binding and the binding gets
 	// resumed.
+	// If a refresh uses a specific group ID, the selection validation request uses the same group
+	// ID.
 	// JIRA: CPOUI5ODATAV4-2915
 ["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
 	[false, true].forEach((bSuspend) => {
@@ -77318,8 +77320,10 @@ make root = ${bMakeRoot}`;
 
 		await this.waitForChanges(assert, "de-/select '1' and '3'");
 
+		const sExpectedGroupId = sMethod === "refresh" && !bSuspend ? "$auto.foo" : "$auto";
 		this.expectRequest({ // ODLB#validateSelection
 				batchNo : 2,
+				groupId : sExpectedGroupId,
 				url : "SalesOrderList?custom=baz&$apply=A.P.P.L.E."
 					+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1') and"
 						+ " (SalesOrderID eq '1' or SalesOrderID eq '3')"
@@ -77333,6 +77337,7 @@ make root = ${bMakeRoot}`;
 		if (sMethod === "refresh" || sMethod === "requestSideEffects") {
 			this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
 					batchNo : 2,
+					groupId : sExpectedGroupId,
 					url : "SalesOrderList?$apply=A.P.P.L.E.&"
 						+ "$expand=SO_2_BP($select=BusinessPartnerID)"
 						+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '3'&custom=baz"
@@ -77355,6 +77360,7 @@ make root = ${bMakeRoot}`;
 		}
 		this.expectRequest({ // "refresh"
 				batchNo : 2,
+				groupId : sExpectedGroupId,
 				url : sRefreshUrl
 			}, {
 				"@odata.count" : "3",
@@ -77375,7 +77381,7 @@ make root = ${bMakeRoot}`;
 		let oPromise;
 		switch (sMethod) {
 			case "refresh":
-				oPromise = oListBinding.requestRefresh();
+				oPromise = oListBinding.requestRefresh(bSuspend ? undefined : "$auto.foo");
 				break;
 			case "requestSideEffects":
 				oPromise = oListBinding.getHeaderContext().requestSideEffects([""]);
