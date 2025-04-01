@@ -77399,6 +77399,7 @@ make root = ${bMakeRoot}`;
 	// resumed.
 	// If a refresh uses a specific group ID, the selection validation request uses the same group
 	// ID.
+	// If a kept-alive context is deselected via selection validation, it remains kept alive.
 	// JIRA: CPOUI5ODATAV4-2915
 ["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
 	[false, true].forEach((bSuspend) => {
@@ -77456,6 +77457,7 @@ make root = ${bMakeRoot}`;
 		const oListBinding = this.oView.byId("table").getBinding("items");
 		const [oContext1,, oContext3] = oListBinding.getAllCurrentContexts();
 		oContext1.setSelected(true);
+		oContext3.setKeepAlive(true);
 		oContext3.setSelected(true);
 
 		await this.waitForChanges(assert, "de-/select '1' and '3'");
@@ -77542,7 +77544,8 @@ make root = ${bMakeRoot}`;
 		]);
 
 		checkSelected(assert, oContext1, true);
-		assert.strictEqual(oContext3.getBinding(), undefined, "destroyed");
+		checkSelected(assert, oContext3, false);
+		assert.strictEqual(oContext3.isKeepAlive(), true);
 	});
 	});
 });
