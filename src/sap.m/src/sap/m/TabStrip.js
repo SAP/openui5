@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/delegate/ScrollEnablement',
 	'./AccButton',
+	'sap/ui/core/InvisibleText',
 	'./TabStripItem',
 	'sap/m/Select',
 	'sap/m/SelectList',
@@ -47,6 +48,7 @@ function(
 	ManagedObject,
 	ScrollEnablement,
 	AccButton,
+	InvisibleText,
 	TabStripItem,
 	Select,
 	SelectList,
@@ -1423,6 +1425,14 @@ function(
 				oRm.class(SelectListRenderer.CSS_CLASS + "ItemBaseSelected");
 			}
 			oRm.attr("tabindex", 0);
+
+			// aria-describedby references
+			var sDescribedBy = InvisibleText.getStaticId("sap.m", "TABSTRIP_ITEM_CLOSABLE") + " ";
+			sDescribedBy += InvisibleText.getStaticId("sap.m", oItem.getModified() ? "TABSTRIP_ITEM_MODIFIED" : "TABSTRIP_ITEM_NOT_MODIFIED");
+			if (sDescribedBy !== "") {
+				oRm.attr("aria-describedby", sDescribedBy);
+			}
+
 			this.writeItemAccessibilityState.apply(this, arguments);
 			oRm.openEnd();
 
