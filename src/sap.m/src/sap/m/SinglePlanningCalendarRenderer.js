@@ -29,9 +29,7 @@ function() {
 			role: "region",
 			roledescription: oCalendar._oRB.getText("SPC_CONTROL_NAME"),
 			labelledby: {
-				value: oGrid.isA("sap.m.SinglePlanningCalendarGrid")
-					? `${sTitleId} ${oGrid.getId()}-nowMarkerText`
-					: `${sTitleId}`,
+				value: `${sTitleId}`,
 				append: true
 			}
 		});
