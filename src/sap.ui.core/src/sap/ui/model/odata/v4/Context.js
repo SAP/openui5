@@ -2535,7 +2535,7 @@ sap.ui.define([
 	 * @since 1.130.0
 	 */
 	Context.prototype.setSelected = function (bSelected) {
-		if (this.oBinding && !this.oBinding.getHeaderContext) {
+		if (!this.oBinding?.getHeaderContext) {
 			throw new Error("Unsupported context: " + this);
 		}
 		if (bSelected && this.isDeleted()) {
