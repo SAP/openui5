@@ -1132,6 +1132,9 @@ sap.ui.define([
 		// add FieldHelpEndpoint to list of modules
 		this.aModules.push("sap/ui/core/boot/FieldHelpEndpoint");
 
+		// add KeyboardInteractionEndpoint to list of modules
+		this.aModules.push("sap/ui/core/boot/KeyboardInteractionEndpoint");
+
 		// load all modules now
 		if ( bAsync ) {
 			return this._requireModulesAsync().then(function() {

@@ -1,0 +1,31 @@
+<interaction-documentation
+	xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1"
+	library="sap.ui.core">
+	<control-interactions>
+		<control name="sap.ui.core.Control"></control>
+		<interaction>
+            <kbd>Tab</kbd>
+            <description>
+                <p>Moves focus to the next element in the tab chain.</p>
+            </description>
+        </interaction>
+        <interaction>
+            <kbd>Shift + Tab</kbd>
+            <description>
+                <p>Moves focus to the previous element in the tab chain.</p>
+            </description>
+        </interaction>
+        <interaction>
+            <kbd>F6</kbd>
+            <description>
+                <p>Moves focus to first element of the next UI group (F6 group) in the tab chain.</p>
+            </description>
+        </interaction>
+        <interaction>
+            <kbd>Shift + F6</kbd>
+            <description>
+                <p>Moves focus to first element of the previous UI group (F6 group) in the tab chain.</p>
+            </description>
+        </interaction>
+	</control-interactions>
+</interaction-documentation>
