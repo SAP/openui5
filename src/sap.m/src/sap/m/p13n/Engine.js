@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/p13n/modules/UIManager",
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/m/p13n/modules/xConfigAPI",
-	"sap/m/p13n/enums/ProcessingStrategy"
+	"sap/m/p13n/enums/ProcessingStrategy",
+	"sap/m/p13n/enums/PersistenceMode"
 ], (
 	AdaptationProvider,
 	merge,
@@ -29,7 +30,8 @@ sap.ui.define([
 	UIManager,
 	StateHandlerRegistry,
 	xConfigAPI,
-	ProcessingStrategy
+	ProcessingStrategy,
+	PersistenceMode
 ) => {
 	"use strict";
 
@@ -1188,6 +1190,40 @@ sap.ui.define([
 		}
 
 		return oModificationSetting;
+	};
+
+	/**
+	 * Determines global persistence mode enablement based on the given modification payload
+	 *
+	 * @private
+	 * @param {object} oModificationPayload The modification registry entry payload
+	 * @returns {boolean} indicates enablement of global persistence
+	 */
+	Engine.prototype._determineGlobalPersistence = function(oModificationPayload) {
+
+		if (oModificationPayload.hasVM) {
+			return false;
+		}
+
+		if (oModificationPayload.hasPP && oModificationPayload.mode !== PersistenceMode.Transient) {
+			return true;
+		}
+
+		return false;
+	};
+
+	/**
+	 * Executes a given callback only if the control's configuration allows for change persistence
+	 *
+	 * @private
+	 * @param {string|sap.ui.core.Control} vControl The control id or instance
+	 * @param {function(bGlobalPersistenceEnabled:boolean)} fCallback The callback to be executed
+	 * @returns {any} The return value of the callback
+	 */
+	Engine.prototype._runWithPersistence = function(vControl, fCallback) {
+		const {payload} = oEngine._determineModification(vControl);
+		const vGlobalPersistence = oEngine._determineGlobalPersistence(payload);
+		return fCallback(vGlobalPersistence);
 	};
 
 	Engine.prototype.hasForReference = (vControl, sControlType) => {
