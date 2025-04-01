@@ -2873,9 +2873,7 @@ sap.ui.define([
 	 * @since 1.91.0
 	 */
 	ODataListBinding.prototype.getCount = function () {
-		var oHeaderContext = this.getHeaderContext();
-
-		return oHeaderContext ? oHeaderContext.getProperty("$count") : undefined;
+		return this.getHeaderContext()?.getProperty("$count");
 	};
 
 	/**
@@ -3310,6 +3308,25 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.getQueryOptionsFromParameters = function () {
 		return this.mQueryOptions;
+	};
+
+	/**
+	 * Returns the count of selected elements as a number of type <code>Edm.Int64</code>. The count
+	 * is bindable via the header context (see {@link #getHeaderContext}) and path
+	 * <code>$selectionCount</code>; it is either available synchronously or unknown. It is unknown
+	 * if the binding is relative but has no context and also if the list binding's
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#getHeaderContext header context} is selected
+	 * ("select all").
+	 *
+	 * @returns {number|undefined}
+	 *   The count of selected elements or <code>undefined</code> if the count or the header
+	 *   context is not available.
+	 *
+	 * @public
+	 * @since 1.135.0
+	 */
+	ODataListBinding.prototype.getSelectionCount = function () {
+		return this.getHeaderContext()?.getProperty("$selectionCount");
 	};
 
 	/**
@@ -4090,6 +4107,7 @@ sap.ui.define([
 
 					if (!bStillAlive) {
 						bDestroyed = true;
+						oContext.doSetSelected(false, true);
 						oContext.destroy();
 					}
 				}

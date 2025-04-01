@@ -3180,7 +3180,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"].forEach((sInt64Name) => {
+[
+	"$count",
+	"$selectionCount",
+	"@$ui5.node.groupLevelCount",
+	"@$ui5.node.level"
+].forEach((sInt64Name) => {
 	QUnit.test("fetchUI5Type: " + sInt64Name, function (assert) {
 		var sPath = "/some/meta/path/" + sInt64Name,
 			oType;

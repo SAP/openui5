@@ -3,14 +3,17 @@
  */
 
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/MessageBox",
+	"sap/m/MessageToast",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter"
-], function (MessageBox, coreLibrary, Messaging, Controller, Filter, FilterOperator, Sorter) {
+], function (Log, MessageBox, MessageToast, coreLibrary, Messaging, Controller, Filter,
+		FilterOperator, Sorter) {
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
@@ -171,11 +174,35 @@ sap.ui.define([
 		onInit() {
 			this.initMessagePopover("messagesButton");
 
+			const oView = this.getView();
+			const oModel = oView.getModel();
+
 			// set up hidden list binding for creation row
-			this.oListBinding = this.getOwnerComponent().getModel()
+			this.oHiddenListBinding = oModel
 				.bindList("/ProductList", null, [], [], {$$updateGroupId : "doNotSubmit"});
 			// create new "creation row"
 			this.setNewEntryContext();
+
+			const oUriParameters = new URLSearchParams(window.location.search);
+			if (oUriParameters.get("clearSelectionOnFilter") === "false") {
+				const oBindingInfo = this.byId("ProductList").getBindingInfo("items");
+				delete oBindingInfo.parameters.$$clearSelectionOnFilter;
+				this.byId("ProductList").bindItems(oBindingInfo);
+			}
+			const oListBinding = this.byId("ProductList").getBinding("items");
+			oView.setModel(oModel, "header");
+			oView.setBindingContext(oListBinding.getHeaderContext(), "header");
+
+			const sLogLevel = oUriParameters.has("logAsWarning") ? "warning" : "info";
+			oListBinding.attachEvent("selectionChanged", (oEvent) => {
+				const oContext = oEvent.getParameter("context");
+				const iSelectionCount = oContext.getBinding().getSelectionCount();
+
+				Log[sLogLevel](`selectionChanged: $selectionCount = ${iSelectionCount}`, oContext,
+					"sap.ui.core.sample.odata.v4.Products.Main");
+				MessageToast.show(
+					`selectionChanged: $selectionCount = ${iSelectionCount} - ${oContext}`);
+			});
 		},
 
 		/**
@@ -255,7 +282,7 @@ sap.ui.define([
 		 * hidden list binding and shows it in the creation row.
 		 */
 		setNewEntryContext() {
-			var oContext = this.oListBinding.create(oCreationDefaults);
+			var oContext = this.oHiddenListBinding.create(oCreationDefaults);
 
 			oContext.created().catch(function (oError) {
 				if (!oError.canceled) {
