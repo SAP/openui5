@@ -14,7 +14,6 @@ sap.ui.define([
 	'use strict';
 
 	return function (opaTestOrSkip) {
-
 		Opa5.extendConfig({
 			timeout: 75,
 			autoWait: true

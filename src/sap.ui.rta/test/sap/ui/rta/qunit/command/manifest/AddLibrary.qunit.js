@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
+	"sap/ui/fl/descriptorRelated/api/DescriptorChange",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/m/Button",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	Layer,
 	AppVariantInlineChangeFactory,
+	DescriptorChange,
 	DescriptorChangeFactory,
 	CommandFactory,
 	Button,
@@ -23,15 +25,16 @@ sap.ui.define([
 
 	QUnit.module("Given a list of libraries that needs to be added to the manifest...", {
 		before() {
-			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
+			this.sReference = "appReference";
+			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, this.sReference);
 		},
 		after() {
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
 		},
 		beforeEach() {
-			this.sReference = "appReference";
 			this.sLayer = Layer.CUSTOMER;
+			this.oGenerator = "sap.ui.rta.ManifestCommand";
 			this.sChangeType = "appdescr_ui5_addLibraries";
 
 			this.mLibraries = {
@@ -51,16 +54,15 @@ sap.ui.define([
 			const done = assert.async();
 			let oAddLibraryCommand;
 
-			const oMockManifestChange = {
-				store() {
-					assert.ok(true, "the manifest change was submitted");
-					oAddLibraryCommand.execute()
-					.then(function() {
-						assert.ok(
-							Lib.all()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
-						done();
-					});
-				}
+			const oMockManifestChange = new DescriptorChange({});
+			oMockManifestChange.store = function() {
+				assert.ok(true, "the manifest change was submitted");
+				oAddLibraryCommand.execute()
+				.then(function() {
+					assert.ok(
+						Lib.all()["sap.uxap"], "upon execution, 'sap.uxap' library is loaded");
+					done();
+				});
 			};
 
 			const oMockAddLibraryInlineChange = {
@@ -74,11 +76,11 @@ sap.ui.define([
 				return Promise.resolve(oMockAddLibraryInlineChange);
 			}.bind(this));
 
-			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oAddLibraryInlineChange, sLayer, oAppComponent) {
+			this.createNewChangeStub = sinon.stub(DescriptorChangeFactory.prototype, "createNew").callsFake(function(sReference, oAddLibraryInlineChange, sLayer, _, sTool) {
 				assert.equal(sReference, this.sReference, "reference is properly passed to createNew method");
 				assert.equal(oAddLibraryInlineChange.mockName, oMockAddLibraryInlineChange.mockName, "oAddLibraryInlineChange is properly passed to createNew method");
 				assert.equal(sLayer, this.sLayer, "layer is properly passed to createNew method");
-				assert.equal(oAppComponent, this.oMockedAppComponent, "app component is properly passed to createNew method");
+				assert.equal(sTool, this.oGenerator, "app component is properly passed to createNew method");
 
 				this.createNewChangeStub.restore();
 

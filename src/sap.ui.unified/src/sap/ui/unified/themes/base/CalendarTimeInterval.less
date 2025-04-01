@@ -1,0 +1,94 @@
+.sapUiCalTimeInt {
+	min-width: 320px;
+
+	.sapUiCalHeadB0,
+	.sapUiCalHeadB2 {
+		width: 2.5rem;
+	}
+
+	.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
+		font-size: 0.75rem;
+	}
+
+	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText,
+	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText,
+	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText,
+	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText {
+		font-size: 0.735rem;
+	}
+
+	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText:after,
+	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText:after,
+	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText:after,
+	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText:after {
+		content: "";
+		position: absolute;
+		top: 0.125rem;
+		left: 0.125rem;
+		right: 0.125rem;
+		bottom: 0.125rem;
+		border-radius: 0.5rem;
+		font-size: 0.625rem;
+	}
+
+	.sapUiCalItem:focus.sapUiCalItemNow .sapUiCalItemText:after {
+		content: "";
+		position: absolute;
+		top: 0.15rem;
+		left: 0.15rem;
+		right: 0.15rem;
+		bottom: 0.15rem;
+		border-radius: 0.5rem;
+	}
+
+	.sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm,
+	.sapUiCalItemTextAmPm {
+		line-height: 1.5rem;
+		margin-left: -0.925rem;
+	}
+
+	.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText > .sapUiCalItemTextAmPm {
+		line-height: 1.5rem;
+		font-size: 0.525rem;
+	}
+
+	.sapUiCalMonthPicker, .sapUiCalYearPicker {
+		flex-direction: row;
+	}
+}
+
+
+// Compact mode
+
+.sapUiSizeCompact .sapUiCalTimeInt {
+	.sapUiCalItemTextAmPm,
+	.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText > .sapUiCalItemTextAmPm,
+	.sapUiCalItemNow > .sapUiCalItemText > .sapUiCalItemTextAmPm {
+		line-height: 0.9rem;
+		font-size: 0.425rem;
+		margin-left: -0.625rem;
+	}
+
+	.sapUiCalItemSel:not(.sapUiCalItemSelBetween) > .sapUiCalItemText > .sapUiCalItemTextAmPm {
+		line-height: 1rem;
+	}
+
+	.sapUiCalItemNow:not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
+		font-size: 0.625rem;
+		line-height: 1.925rem;
+	}
+
+	.sapUiCalItem:focus.sapUiCalItemSel .sapUiCalItemText:after,
+	.sapUiCalItem:focus.sapUiCalItemSelStart .sapUiCalItemText:after,
+	.sapUiCalItem:focus.sapUiCalItemSelEnd .sapUiCalItemText:after,
+	.sapUiCalItem:focus:not(.sapUiCalItemNow):not(.sapUiCalItemSel) .sapUiCalItemText:after {
+		content: "";
+		position: absolute;
+		top: 0.125rem;
+		left: 0.125rem;
+		right: 0.125rem;
+		bottom: 0.125rem;
+		border-radius: 0.5rem;
+		font-size: 0.525rem;
+	}
+}

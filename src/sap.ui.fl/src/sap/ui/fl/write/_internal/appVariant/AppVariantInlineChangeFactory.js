@@ -73,6 +73,9 @@ sap.ui.define([
 	AppVariantInlineChangeFactory.createDescriptorInlineChange = function(mPropertyBag) {
 		var fnTriggerChangeTypeMethod = mPropertyBag.changeType.replace("appdescr", "create");
 		// This will call the right changeType method and will be validated properly
+		if (!this[fnTriggerChangeTypeMethod]) {
+			throw new Error(`Change type '${mPropertyBag.changeType}' is not supported`);
+		}
 		return this[fnTriggerChangeTypeMethod](mPropertyBag);
 	};
 
