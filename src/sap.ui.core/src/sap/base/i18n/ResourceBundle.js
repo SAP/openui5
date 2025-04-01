@@ -376,8 +376,10 @@ sap.ui.define([
 
 		// load the most specific, existing properties file
 		if (bAsync) {
-			var resolveWithThis = function() { return this; }.bind(this);
-			return loadNextPropertiesAsync(this).then(resolveWithThis, resolveWithThis);
+			return loadNextPropertiesAsync(this).then(() => this, /** @deprecated As of version 1.135 */ (err) => {
+				future.errorThrows(err.message);
+				return this;
+			});
 		}
 		loadNextPropertiesSync(this);
 	}
