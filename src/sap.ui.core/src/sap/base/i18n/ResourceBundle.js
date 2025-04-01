@@ -479,7 +479,7 @@ sap.ui.define([
 		if (typeof sValue === "string") {
 
 			if (aArgs !== undefined && !Array.isArray(aArgs)){
-				Log.error("sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array");
+				future.errorThrows("sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array");
 			}
 
 			if (aArgs) {

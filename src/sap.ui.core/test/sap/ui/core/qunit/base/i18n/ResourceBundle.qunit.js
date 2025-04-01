@@ -17,6 +17,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			ResourceBundle._getPropertiesCache().clear();
+			future.active = undefined;
 		}
 	});
 
@@ -1204,9 +1205,11 @@ sap.ui.define([
 
 	/**
 	 * Note: this test describes an unsupported usage of getText(...) where placeholder values
-	 * are given as positonal parameters, not as an array.
+	 * are given as positional parameters, not as an array.
 	 *
 	 * Future versions of UI5 will forbid this usage!
+	 *
+	 * @deprecated As of version 1.135, will throw an error in future
 	 */
 	QUnit.test("getText - with placeholder values as positional parameters (not supported)", function(assert) {
 		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({sayHello: "Hello {0}"}));
@@ -1215,16 +1218,46 @@ sap.ui.define([
 			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
 
 			this.oLogMock.expects("error").withExactArgs(
-				"sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array"
+				"[FUTURE FATAL] sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array"
 			);
 			// non-falsy, non-array value for 2nd parameter of #getText
 			assert.equal(oResourceBundle.getText("sayHello", "Peter"), "Hello Peter");
 
 			this.oLogMock.expects("error").withExactArgs(
-				"sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array"
+				"[FUTURE FATAL] sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array"
 			);
 			// non-nullish but "falsy" value for 2nd parameter of #getText
 			assert.equal(oResourceBundle.getText("sayHello", ""), "Hello {0}");
+		});
+	});
+
+	/**
+	 * Note: this test describes an unsupported usage of getText(...) where placeholder values
+	 * are given as positional parameters, not as an array.
+	 *
+	 * Future versions of UI5 will forbid this usage!
+	 */
+	QUnit.test("getText - with placeholder values as positional parameters (future=true)", function(assert) {
+		future.active = true;
+
+		var oStub = this.stub(Properties, "create").returns(createFakePropertiesPromise({sayHello: "Hello {0}"}));
+		return ResourceBundle.create({url: 'my.properties', locale: "", async: true, supportedLocales: [""], fallbackLocale: ""}).then((oResourceBundle) => {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my.properties", "raw properties file is requested");
+
+			// non-falsy, non-array value for 2nd parameter of #getText
+			assert.throws(
+				() => oResourceBundle.getText("sayHello", "Peter"),
+				new Error("sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array"),
+				"Error should be thrown with expected message"
+			);
+
+			// non-nullish but "falsy" value for 2nd parameter of #getText
+			assert.throws(
+				() => oResourceBundle.getText("sayHello", ""),
+				new Error("sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array"),
+				"Error should be thrown with expected message"
+			);
 		});
 	});
 
