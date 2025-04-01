@@ -229,8 +229,8 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(async function() {
 				var clock = sinon.useFakeTimers();
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
-				oMenu.getItems()[1].setEnabled(true);
-				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
+				oMenu.getItems().find((oItem) => oItem.getKey() === "CTX_ADD_ELEMENTS_AS_SIBLING").setEnabled(true);
+				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems().find((oItem) => oItem.getIcon() === "sap-icon://add").getDomRef());
 				clock.tick(1000);
 				await nextUIUpdate();
 				clock.restore();
