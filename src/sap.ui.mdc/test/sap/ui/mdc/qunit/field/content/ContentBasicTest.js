@@ -353,6 +353,8 @@ sap.ui.define([
 			isInvalidInput: () => {return false;},
 			_isInvalidInputForContent: (oContent) => {return false;},
 			_getInvalidInputException: (oContent) => {return null;},
+			hasValueStateForContent: () => {return false;},
+			getValueStateForContent: (sContentId) => {return null;},
 			isInvalidateSuppressed: () => {return true;}
 		};
 		fnEnhanceField?.(oFakeField);
