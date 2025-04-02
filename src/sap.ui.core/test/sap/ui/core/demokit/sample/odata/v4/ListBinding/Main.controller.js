@@ -78,7 +78,7 @@ sap.ui.define([
 		},
 
 		onEmployeeSelect : function (oEvent) {
-			var oContext = oEvent.getParameters().listItem.getBindingContext();
+			var oContext = oEvent.getParameter("listItem").getBindingContext();
 
 			this.byId("EmployeeEquipments").setBindingContext(oContext);
 		},
@@ -148,7 +148,7 @@ sap.ui.define([
 			var oView = this.getView(),
 				oEmployeesControl = oView.byId("Employees"),
 				oEmployeesBinding = oEmployeesControl.getBinding("items"),
-				oTeamContext = oEvent.getParameters().selectedItem.getBindingContext();
+				oTeamContext = oEvent.getParameter("selectedItem").getBindingContext();
 
 			function setEquipmentContext() {
 				var oEquipmentControl = oView.byId("EmployeeEquipments");
