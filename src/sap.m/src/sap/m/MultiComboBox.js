@@ -1421,12 +1421,6 @@ function(
 		oDomRef && this.getFocusDomRef().setAttribute("aria-expanded", "true");
 		this._bPickerIsOpening = false;
 
-		// reset the initial focus back to the input
-		if (!this.isPlatformTablet()) {
-			this.getPicker().setInitialFocus(this);
-		}
-
-
 		// close error message when the list is open, otherwise the list can be covered by the message
 		this.closeValueStateMessage();
 	};
