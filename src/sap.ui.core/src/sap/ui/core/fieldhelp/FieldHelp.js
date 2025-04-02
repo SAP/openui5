@@ -21,6 +21,27 @@ sap.ui.define([
 	const sURNPrefix = "urn:sap-com:documentation:key?=";
 
 	/**
+	 * Returns whether the two given sets are identical.
+	 *
+	 * @param {Set<any>} oSet0 The first set
+	 * @param {Set<any>} oSet1 The second set
+	 * @returns {boolean} Whether the given sets are identical
+	 */
+	function isSetIdentical(oSet0, oSet1) {
+		if (oSet0.size !== oSet1.size) {
+			return false;
+		}
+
+		for (const oItem of oSet0) {
+			if (!oSet1.has(oItem)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Replacement for <code>ManagedObject.prototype.updateFieldHelp</code> to update the field help information
 	 * for the given control property name of <code>this</code> control instance, if the corresponding binding has been
 	 * created or destroyed, or its context has been changed.
@@ -484,28 +505,62 @@ sap.ui.define([
 		}
 
 		/**
+		 * Returns the map of control ID to the corresponding set of documentation reference URNs.
+		 *
+		 * The method considers the following precedence for <em>explicit</em> field help set using
+		 * <code>FieldHelpUtil.setDocumentationRef</code> or <code>FieldHelpCustomData</code> and <em>implicit</em>
+		 * field help derived from OData bindings.
+		 * 1. Explicit field help on the control itself
+		 * 2. Explicit field help defined for controls pointing to the control as field help display control
+		 * 3. Union of implicit field helps defined on the control itself and controls pointing to the control as field
+		 *   help display control
+		 *
+		 * @returns {Map<string, Set<string>>}
+		 *   The map of control ID to the corresponding set of documentation reference URNs
+		 */
+		_getDisplayControlIDToURNs() {
+			const mControlIDToDisplayControlID = this._getFieldHelpDisplayMapping();
+			const mExplicitDisplay = new Map();
+			const mExplicitSelf = new Map();
+			const mImplicit = new Map();
+
+			for (const sControlID in this.mDocuRefControlToFieldHelp) {
+				const sDisplayControlID = mControlIDToDisplayControlID[sControlID] || sControlID;
+				const aDocuRefsForControl = this.mDocuRefControlToFieldHelp[sControlID][undefined];
+				if (aDocuRefsForControl) { // explicit field help
+					const oURNSet = new Set(aDocuRefsForControl);
+					if (mControlIDToDisplayControlID[sControlID]) { // on display control
+						const oExistingURNSet = mExplicitDisplay.get(sDisplayControlID);
+						if (oExistingURNSet && !isSetIdentical(oURNSet, oExistingURNSet)) {
+							Log.error("Cannot display field help for control '" + sControlID
+									+ "': different field help already set on hotspot '" + sDisplayControlID + "'",
+								undefined, sClassName);
+							continue;
+						}
+						mExplicitDisplay.set(sDisplayControlID, oURNSet);
+					} else { // on control itself
+						mExplicitSelf.set(sDisplayControlID, oURNSet);
+					}
+				} else {
+					const aDocuRefs = Object.values(this.mDocuRefControlToFieldHelp[sControlID]).flat();
+					// add to a Set to filter duplicates
+					const oURNSet = mImplicit.get(sDisplayControlID) ?? new Set();
+					aDocuRefs.forEach(oURNSet.add.bind(oURNSet));
+					mImplicit.set(sDisplayControlID, oURNSet);
+				}
+			}
+
+			return new Map([...mImplicit, ...mExplicitDisplay, ...mExplicitSelf]);
+		}
+
+		/**
 		 * Gets an array of field help hotspots as required by the SAP Companion.
 		 *
 		 * @returns {module:sap/ui/core/fieldhelp/FieldHelpInfo[]} The array of field help hotspots
 		 */
 		_getFieldHelpHotspots() {
-			const mControlIDToDisplayControlID = this._getFieldHelpDisplayMapping();
-			const mDisplayControlIDToURNs = new Map();
 			const aFieldHelpHotspots = [];
-			Object.keys(this.mDocuRefControlToFieldHelp).forEach((sControlID) => {
-				const sDisplayControlID = mControlIDToDisplayControlID[sControlID] || sControlID;
-				const oURNSet = mDisplayControlIDToURNs.get(sDisplayControlID)
-					?? mDisplayControlIDToURNs.set(sDisplayControlID, new Set()).get(sDisplayControlID);
-				const aDocuRefsForControl = this.mDocuRefControlToFieldHelp[sControlID][undefined];
-				const aDocuRefs = aDocuRefsForControl
-					? [aDocuRefsForControl]
-					: Object.values(this.mDocuRefControlToFieldHelp[sControlID]);
-				aDocuRefs.forEach((aURNs) => {
-					aURNs.forEach(oURNSet.add.bind(oURNSet)); // add to the Set to filter duplicates
-				});
-			});
-
-			for (const [sDisplayControlID, oURNSet] of mDisplayControlIDToURNs) {
+			for (const [sDisplayControlID, oURNSet] of this._getDisplayControlIDToURNs()) {
 				const oControl = Element.getElementById(sDisplayControlID);
 				const sLabel = LabelEnablement._getLabelTexts(oControl)[0];
 				if (!sLabel) {

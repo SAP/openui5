@@ -539,7 +539,8 @@ sap.ui.define([
 			if (that.oCache && that.oCache.reset) {
 				that.oCache.reset();
 			} else {
-				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true, bKeepCacheOnError);
+				that.fetchCache(that.oContext, false, /*bKeepQueryOptions*/true, sGroupId,
+					bKeepCacheOnError);
 			}
 
 			if (bCheckUpdate) {

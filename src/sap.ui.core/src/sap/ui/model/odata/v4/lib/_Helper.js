@@ -1159,7 +1159,7 @@ sap.ui.define([
 		/**
 		 * Fires a change event to all listeners for the given path in mChangeListeners.
 		 *
-		 * @param {object} mChangeListeners A map of change listeners by path
+		 * @param {object} [mChangeListeners] A map of change listeners by path
 		 * @param {string} sPropertyPath The path (must not end with a slash)
 		 * @param {any} vValue The value to report to the listeners (unless within an array)
 		 * @param {boolean} [bForceUpdate] Whether a listener should force an update
@@ -1174,10 +1174,13 @@ sap.ui.define([
 				}
 			}
 
+			if (!mChangeListeners) {
+				return;
+			}
+
 			if (sPropertyPath in mChangeListeners) {
 				inform(mChangeListeners[sPropertyPath], vValue);
 			}
-
 			if (bInArray) {
 				sPropertyPath += "/";
 				Object.keys(mChangeListeners)

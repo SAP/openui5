@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Sibling",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText",
 	"./waitForP13nButtonWithMatchers",
@@ -26,6 +27,7 @@ sap.ui.define([
 	Ancestor,
 	Descendant,
 	PropertyStrictEquals,
+	Sibling,
 	Press,
 	EnterText,
 	waitForP13nButtonWithMatchers,
@@ -570,12 +572,124 @@ sap.ui.define([
 		});
 	};
 
+	const iPressShowSelected = function(oDialog, oSettings) {
+		const sShowSelected = oMBundle.getText("p13n.SHOW_SELECTED");
+		const sShowAll = oMBundle.getText("p13n.SHOW_ALL");
+
+		this.waitFor({
+			controlType: "sap.m.p13n.SelectionPanel",
+			matchers: new Ancestor(oDialog, false),
+			success: function(aListViews) {
+				const oListView = aListViews[0];
+
+				this.waitFor({
+					controlType: "sap.m.Button",
+					matchers:  [
+						new PropertyStrictEquals({
+							name: "text",
+							value: sShowSelected
+						}),
+						new Ancestor(oListView, false)
+					],
+					actions: new Press(),
+					success: function(aButton) {
+						Opa5.assert.ok(aButton.length === 1, `Button with text ${sShowSelected} found`);
+						Opa5.assert.ok(aButton[0].getText() === sShowAll, `Button text is ${sShowAll}`);
+						if (oSettings && typeof oSettings.success === "function") {
+							oSettings.success.call(this);
+						}
+					}
+				});
+			}
+		});
+	};
+
+	const iActivateFilterPopoverFilter = function(oDialog, bActivated, sLabel, oSettings) {
+		const sPopoverTitle = oMBundle.getText("p13n.FILTERS_POPOVER_TITLE");
+
+		this.waitFor({
+			controlType: "sap.m.p13n.SelectionPanel",
+			matchers: new Ancestor(oDialog, false),
+			success: function(aListViews) {
+				const oListView = aListViews[0];
+
+				this.waitFor({
+					controlType: "sap.m.Button",
+					matchers:  [
+						new PropertyStrictEquals({
+							name: "icon",
+							value: Util.icons.filter
+						}),
+						new Ancestor(oListView, false)
+					],
+					actions: new Press(),
+					success: function(aButton) {
+						this.waitFor({
+							controlType: "sap.m.Popover",
+							matchers:  [
+								new PropertyStrictEquals({
+									name: "title",
+									value: sPopoverTitle
+								})
+							],
+							success: function(aPopover) {
+								Opa5.assert.equal(aPopover.length, 1, `should open sap.m.Popover`);
+								this.waitFor({
+									controlType: "sap.m.Label",
+									matchers:  [
+										new PropertyStrictEquals({
+											name: "text",
+											value: sLabel
+										})
+									],
+									success: function(aLabel) {
+										Opa5.assert.equal(aLabel.length, 1, `Label with text ${sLabel} found`);
+										this.waitFor({
+											controlType: "sap.m.Switch",
+											matchers:  [
+												new Sibling(aLabel[0], {
+													level: 1,
+													next: true,
+													prev: false
+												})
+											],
+											success: function(aSwitch) {
+												Opa5.assert.equal(aSwitch.length, 1, `Switch found`);
+												const oSwitch = aSwitch[0];
+												oSwitch.setState(bActivated);
+												aPopover[0].close();
+												if (oSettings && typeof oSettings.success === "function") {
+													oSettings.success.call(this);
+												}
+											}
+										});
+									}
+								});
+							}
+						});
+					}
+				});
+			}
+		});
+	};
+
 	return {
 		iPressTheOKButtonOnTheDialog: function(oDialog, oSettings) {
 			return iPressTheOKButtonOnTheDialog.call(this, oDialog, oSettings);
 		},
 		iOpenThePersonalizationDialog: function(oControl, oSettings) {
 			return iOpenThePersonalizationDialog.call(this, oControl, oSettings);
+		},
+		iCloseThePersonalizationDialogWithCancel: function(oControl, oSettings) {
+			const sDialogTitle = oMDCBundle.getText("p13nDialog.VIEW_SETTINGS");
+			return waitForP13nDialog.call(this, {
+				matchers: [new Properties({
+					title: sDialogTitle
+				})],
+				success:  function(oP13nDialog) {
+					return iPressTheCancelButtonOnTheDialog.call(this, oControl, oSettings);
+				}
+			});
 		},
 		/**
 		 * @typedef {object} ChartPersonalizationConfiguration
@@ -775,7 +889,7 @@ sap.ui.define([
 		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the given control
 		 * @returns {Promise} Opa waitFor
 		 */
-		 iPersonalizeColumns: function(oControl, aColumns, fnOpenThePersonalizationDialog) {
+		iPersonalizeColumns: function(oControl, aColumns, fnOpenThePersonalizationDialog) {
 			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
 			return iPersonalize.call(this, oControl, Util.texts.column, fnOpenThePersonalizationDialog, {
 				success: function(oP13nDialog) {
@@ -1076,8 +1190,99 @@ sap.ui.define([
 				}
 			});
 		},
+		/**
+		 * Opa5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Presses the ShowSelected button.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the <code>mdc.Link</code>
+		 * @returns {Promise} OPA waitFor
+		 */
+		iPressShowSelected: function (oControl, fnOpenThePersonalizationDialog) {
+			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
+			return fnOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
+					iPressShowSelected.call(this, oP13nDialog, {
+						success: function() {
+							iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * Opa5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Presses the ShowSelected toggle on the filters popover.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+		 * @param {boolean} bActivated Determines whether the ShowSelected toggle is activated or not
+		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the <code>mdc.Link</code>
+		 * @returns {Promise} OPA waitFor
+		 */
+		iSetShowSelectedFilters: function (oControl, bActivated, fnOpenThePersonalizationDialog) {
+			const sLabel = oMBundle.getText("p13n.SHOW_SELECTED");
+			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
+			return fnOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
+					iActivateFilterPopoverFilter.call(this, oP13nDialog, bActivated, sLabel, {
+						success: function() {
+							iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+						}
+					});
+				}
+			});
+		},
+		/**
+		 * Opa5 test action
+		 * 1. Opens the personalization dialog of a given chart.
+		 * 2. Presses the Hide Description toggle on the filters popover.
+		 * 3. Closes the personalization dialog.
+		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+		 * @param {boolean} bActivated Determines whether the ShowSelected toggle is activated or not
+		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the <code>mdc.Link</code>
+		 * @returns {Promise} OPA waitFor
+		 */
+		iSetHideDescriptionsFilters: function (oControl, bActivated, fnOpenThePersonalizationDialog) {
+			const sLabel = oMBundle.getText("p13n.HIDE_DESCRIPTIONS");
+			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
+			return fnOpenThePersonalizationDialog.call(this, oControl, {
+				success: function(oP13nDialog) {
+					iActivateFilterPopoverFilter.call(this, oP13nDialog, bActivated, sLabel, {
+						success: function() {
+							iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
+						}
+					});
+				}
+			});
+		},
 		iPersonalizeListViewItems: function(oDialog, aItems) {
 			return iPersonalizeListViewItems.call(this, oDialog, aItems);
+		},
+		iActivateShowSelected: function(bActivated) {
+			const sLabel = oMBundle.getText("p13n.SHOW_SELECTED");
+			const sDialogTitle = oMDCBundle.getText("p13nDialog.VIEW_SETTINGS");
+			return waitForP13nDialog.call(this, {
+				matchers: [new Properties({
+					title: sDialogTitle
+				})],
+				success:  function(oP13nDialog) {
+					return iActivateFilterPopoverFilter.call(this, oP13nDialog, bActivated, sLabel);
+				}
+			});
+		},
+		iActivateHideDescriptions: function(bActivated) {
+			const sLabel = oMBundle.getText("p13n.HIDE_DESCRIPTIONS");
+			const sDialogTitle = oMDCBundle.getText("p13nDialog.VIEW_SETTINGS");
+			return waitForP13nDialog.call(this, {
+				matchers: [new Properties({
+					title: sDialogTitle
+				})],
+				success:  function(oP13nDialog) {
+					return iActivateFilterPopoverFilter.call(this, oP13nDialog, bActivated, sLabel);
+				}
+			});
 		}
 	};
 });

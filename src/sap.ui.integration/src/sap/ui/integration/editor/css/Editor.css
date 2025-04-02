@@ -255,6 +255,10 @@ html[data-sap-ui-browser^="cr"] .sapUiIntegrationEditor .sapMInputBaseInner::sel
 	margin-bottom: 0px !important;
 }
 
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .propertyLabel {
+    padding-top: 0.5rem !important;
+}
+
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldForm .sapUiFormResGrid > div {
     padding-top: 0px;
     box-sizing: border-box;
@@ -278,6 +282,12 @@ html[data-sap-ui-browser^="cr"] .sapUiIntegrationEditor .sapMInputBaseInner::sel
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .sapMTB,
 .sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .sapMTB{
 	height: 2rem !important;
+}
+
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectFieldTable .imageCell,
+.sapUiIntegrationEditor .sapUiIntegrationEditorItem .sapUiIntegrationEditorItemObjectListFieldTable .imageCell{
+	max-height: 1rem;
+	max-width: 1rem;
 }
 
 .sapUiIntegrationEditorPopover .sapUiIntegrationEditorDescriptionText {

@@ -2711,7 +2711,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
 		this.mock(oBinding).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, undefined);
+			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, "myGroup",
+				undefined);
 		this.mock(oBinding).expects("refreshKeptElements").withExactArgs("myGroup", undefined)
 			.callsFake(function () {
 				if (oFixture.destroyedWhileRefreshing) {
@@ -2845,8 +2846,7 @@ sap.ui.define([
 			});
 		});
 		this.mock(oBinding).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, true,
-				bKeepCacheOnError ? "myGroup" : undefined)
+			.withExactArgs(sinon.match.same(oContext), false, true, "myGroup", bKeepCacheOnError)
 			.callsFake(function () {
 				if (!bRestore) { // simulate creation of new cache
 					oBinding.oCache = {
@@ -2933,7 +2933,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", bIsRoot);
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("path");
 		this.mock(oBinding).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, "myGroup")
+			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, "myGroup",
+				true)
 			.callsFake(function () {
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
@@ -2992,7 +2993,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", "bIsRoot");
 		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("path");
 		this.mock(oBinding).expects("fetchCache")
-			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, "myGroup")
+			.withExactArgs(sinon.match.same(oContext), false, /*bKeepQueryOptions*/true, "myGroup",
+				true)
 			.callsFake(function () {
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
@@ -5445,6 +5447,7 @@ sap.ui.define([
 			return oContext.created().then(function () {
 				oBindingMock.expects("checkSuspended").withExactArgs(true);
 				oBindingMock.expects("reset").withExactArgs(undefined, true);
+				oBindingMock.expects("resetKeepAlive").withExactArgs();
 				oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext2));
 				oBindingMock.expects("restoreCreated").withExactArgs();
 
@@ -6186,6 +6189,7 @@ sap.ui.define([
 		this.mock(oContext1).expects("doDelete")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve());
+		this.mock(oContext1).expects("resetKeepAlive").withExactArgs();
 
 		// code under test
 		oBinding.delete(oGroupLock, "~", oContext1);
@@ -6199,6 +6203,7 @@ sap.ui.define([
 		this.mock(oContext2).expects("doDelete")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve());
+		this.mock(oContext2).expects("resetKeepAlive").withExactArgs();
 
 		// code under test
 		oBinding.delete(oGroupLock, "~", oContext2);
@@ -6234,11 +6239,13 @@ sap.ui.define([
 			.withArgs(sinon.match.same(oGroupLock), "~1")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve(Promise.resolve()));
+		this.mock(oContext1).expects("resetKeepAlive").withExactArgs();
 		this.mock(oContext2).expects("isExpanded").withExactArgs().returns(false);
 		this.mock(oContext2).expects("doDelete")
 			.withArgs(null, "~2")
 			.callsArgWith(5, 0, -1) // the callback removing the context
 			.returns(SyncPromise.resolve(Promise)); // finish immediately
+		this.mock(oContext2).expects("resetKeepAlive").withExactArgs();
 
 		// code under test
 		oDeletePromise = oBinding.delete(oGroupLock, "~1", oContext1);
@@ -6282,7 +6289,6 @@ sap.ui.define([
 		oContext.created().catch(function (oError) {
 			assert.ok(oError.canceled, "create promise rejected with 'canceled'");
 		});
-		this.mock(oContext).expects("doSetSelected").withExactArgs(false, true);
 		this.mock(oBinding).expects("removeCreated").withExactArgs(sinon.match.same(oContext))
 			.callThrough();
 		oBindingMock.expects("deleteFromCache").callsFake(function () {
@@ -6297,6 +6303,7 @@ sap.ui.define([
 					});
 			});
 		});
+		this.mock(oContext).expects("resetKeepAlive").withExactArgs();
 
 		// code under test
 		return oContext.delete("$direct");
@@ -7228,7 +7235,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("doCreateCache w/ old cache", function (assert) {
+[true, false].forEach((bSideEffectsRefresh) => {
+	const sTitle = "doCreateCache w/ old cache, bSideEffectsRefresh = " + bSideEffectsRefresh;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oOldCache = {
 				$deepResourcePath : "deep/resource/path",
@@ -7248,16 +7258,18 @@ sap.ui.define([
 		this.mock(oBinding).expects("validateSelection")
 			.withExactArgs(sinon.match.same(oOldCache), "myGroup");
 		this.mock(oOldCache).expects("reset")
-			.withExactArgs(sinon.match.same(aPredicates), "myGroup", "~queryOptions~",
+			.withExactArgs(sinon.match.same(aPredicates),
+				bSideEffectsRefresh ? "myGroup" : undefined, "~queryOptions~",
 				"~$$aggregation~", "~isGrouped~");
 		this.mock(_AggregationCache).expects("create").never();
 
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", "myGroup", oOldCache),
+				"deep/resource/path", "myGroup", bSideEffectsRefresh, oOldCache),
 			oOldCache);
 	});
+});
 
 	//*********************************************************************************************
 ["iCreatedContexts", "iDeletedContexts"].forEach(function (sProperty) {
@@ -7282,7 +7294,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", "myGroup", oOldCache),
+				"deep/resource/path", "myGroup", /*bSideEffectsRefresh*/true, oOldCache),
 			oOldCache);
 		assert.strictEqual(oBinding.bResetViaSideEffects, undefined);
 	});
@@ -7333,7 +7345,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", undefined, oOldCache),
+				"deep/resource/path", undefined, /*bSideEffectsRefresh*/false, oOldCache),
 			bAggregationCache ? oOldCache : "~oNewCache~");
 		assert.strictEqual(oBinding.bResetViaSideEffects, undefined);
 	});
@@ -7420,7 +7432,8 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", undefined, bWithOld ? oOldCache : undefined),
+				"deep/resource/path", undefined, /*bSideEffectsRefresh*/false,
+				bWithOld ? oOldCache : undefined),
 			bAggregation ? oAggregationCache : oCache);
 		if (oGetExpectation) {
 			sinon.assert.callOrder(oMoveExpectation, oGetExpectation);
@@ -7450,7 +7463,7 @@ sap.ui.define([
 		this.oModel.bAutoExpandSelect = "~autoExpandSelect~";
 		oBinding.bSharedRequest = "~sharedRequest~";
 		oBinding.mParameters.$$separate = "~$$separate~";
-		this.mock(oOldCache).expects("getResourcePath").atMost(1).withExactArgs()
+		this.mock(oOldCache).expects("getResourcePath").withExactArgs()
 			.returns(bDeep ? "resource/path" : "W.R.O.N.G.");
 		this.mock(oBinding).expects("getKeepAlivePredicates").never();
 		this.mock(oBinding).expects("inheritQueryOptions")
@@ -7466,7 +7479,7 @@ sap.ui.define([
 		assert.strictEqual(
 			// code under test
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
-				"deep/resource/path", undefined, oOldCache),
+				"deep/resource/path", undefined, /*bSideEffectsRefresh*/false, oOldCache),
 			oCache);
 	});
 });
@@ -8004,6 +8017,9 @@ sap.ui.define([
 							.exactly(bCreated && !bStillAlive ? 1 : 0).withExactArgs(); //TODO order
 						oRemoveCreatedExpectation = that.mock(oBinding).expects("removeCreated")
 							.exactly(bCreated ? 1 : 0).withExactArgs(sinon.match.same(oContext));
+						oContextMock.expects("doSetSelected")
+							.exactly(bCreated || bStillAlive ? 0 : 1)
+							.withExactArgs(false, true);
 						oContextMock.expects("destroy").exactly(bCreated || bStillAlive ? 0 : 1)
 							.withExactArgs();
 						that.mock(oBinding).expects("_fireChange")
@@ -8099,6 +8115,7 @@ sap.ui.define([
 				checkUpdateInternal : function () {},
 				created : function () { return false; },
 				destroy : function () {},
+				doSetSelected : function () {},
 				getModelIndex : function () { return oFixture.index; },
 				getPath : function () { return "~context~path~"; },
 				isEffectivelyKeptAlive : function () { return true; },
@@ -8126,6 +8143,8 @@ sap.ui.define([
 
 		oCacheRequestPromise = SyncPromise.resolve(Promise.resolve()).then(function () {
 			// fnOnRemove Test
+			that.mock(oContext).expects("doSetSelected").exactly(oFixture.stillAlive ? 0 : 1)
+				.withExactArgs(false, true);
 			that.mock(oContext).expects("destroy").exactly(oFixture.stillAlive ? 0 : 1)
 				.withExactArgs();
 			that.mock(oBinding).expects("_fireChange").exactly(oFixture.index ? 1 : 0)
@@ -10566,6 +10585,24 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.getCount(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getSelectionCount", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		const oBindingMock = this.mock(oBinding);
+
+		oBindingMock.expects("getHeaderContext").withExactArgs().returns(oBinding.oHeaderContext);
+		this.mock(oBinding.oHeaderContext).expects("getProperty").withExactArgs("$selectionCount")
+			.returns(42);
+
+		// code under test
+		assert.strictEqual(oBinding.getSelectionCount(), 42);
+
+		oBindingMock.expects("getHeaderContext").withExactArgs().returns(null);
+
+		// code under test
+		assert.strictEqual(oBinding.getSelectionCount(), undefined);
 	});
 
 	//*********************************************************************************************

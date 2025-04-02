@@ -27,13 +27,13 @@ sap.ui.define(["sap/ui/integration/Designtime"
 							},
 							"icon": {
 								"label": "Icon",
+								"type": "Icon",
 								"defaultValue": "sap-icon://add",
 								"column": {
 									"hAlign": "Center",
 									"width": "4rem"
 								},
 								"cell": {
-									"type": "Icon",
 									"color": "{iconcolor}"
 								}
 							},

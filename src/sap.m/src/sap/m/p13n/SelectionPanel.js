@@ -16,10 +16,16 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
+	"sap/m/BadgeCustomData",
+	"sap/m/Switch",
+	"sap/m/Popover",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
 	"sap/m/OverflowToolbar",
 	"sap/ui/model/Filter",
 	"sap/base/util/merge",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Popup"
 ], (
 	BasePanel,
 	Label,
@@ -35,27 +41,33 @@ sap.ui.define([
 	mLibrary,
 	ToolbarSpacer,
 	Button,
+	BadgeCustomData,
+	Switch,
+	Popover,
+	HorizontalLayout,
+	VerticalLayout,
 	OverflowToolbar,
 	Filter,
 	merge,
-	InvisibleText
+	InvisibleText,
+	Popup
 ) => {
 	"use strict";
 
 	// shortcut for sap.ui.core.IconColor
 	const {IconColor} = coreLibrary;
 
-	// shortcut for sap.m.ListKeyboardMode
-	const {ListKeyboardMode} = mLibrary;
-
-	// shortcut for sap.m.FlexJustifyContent
-	const {FlexJustifyContent} = mLibrary;
-
-	// shortcut for sap.m.ListType
-	const {ListType} = mLibrary;
-
-	// shortcut for sap.m.MultiSelectMode
-	const {MultiSelectMode} = mLibrary;
+	// shortcut for sap.m.*
+	const {
+		ListKeyboardMode,
+		FlexJustifyContent,
+		FlexAlignItems,
+		MultiSelectMode,
+		ButtonType,
+		ListType,
+		PlacementType,
+		BadgeAnimationType
+	} = mLibrary;
 
 	/**
 	 * Constructor for a new <code>SelectionPanel</code>.
@@ -142,10 +154,15 @@ sap.ui.define([
 		}
 	});
 
+	BasePanel.prototype.REDUNDANT_ITEMS_ATTRIBUTE = "isRedundant";
 	SelectionPanel.prototype.init = function() {
 		BasePanel.prototype.init.apply(this, arguments);
+
+		this.getModel(this.P13N_MODEL).setProperty("/showSelected", false);
+		this.getModel(this.P13N_MODEL).setProperty("/hideDescriptions", false);
+
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/showSelectedText", this._getResourceText("p13n.SHOW_SELECTED"));
-		this.getModel(this.LOCALIZATION_MODEL).setProperty("/showAllText", this._getResourceText("p13n.SHOW_ALL"));
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/hideDescriptionsText", this._getResourceText("p13n.HIDE_DESCRIPTIONS"));
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/fieldColumn", this._getResourceText("p13n.DEFAULT_DESCRIPTION"));
 		if (this.isPropertyInitial("fieldColumn")) {
 			this.bindProperty("fieldColumn", {
@@ -258,35 +275,163 @@ sap.ui.define([
 		return this;
 	};
 
-	SelectionPanel.prototype.setShowHeader = function(bShowHeader) {
-		if (bShowHeader) {
-			this._oShowSelectedButton = new Button({
+	SelectionPanel.prototype._getListFilterLayout = function() {
+		const aP13nData = this.getP13nData() ?? [];
+		const bHasRendundantColumns = aP13nData.some((oItem) => oItem[this.REDUNDANT_ITEMS_ATTRIBUTE]);
+
+		if (!bHasRendundantColumns) {
+			const oShowSelectedButton = new Button({
 				press: (oEvt) => {
-					this._bShowSelected = !this._bShowSelected;
-					this._filterList(this._bShowSelected, this._sSearch);
+					const bShowSelected = this.getModel(this.P13N_MODEL).getProperty("/showSelected");
+					this.getModel(this.P13N_MODEL).setProperty("/showSelected", !bShowSelected);
+					this._triggerFilter();
 					this._updateShowSelectedButton();
 				},
 				text: `{${this.LOCALIZATION_MODEL}>/showSelectedText}`
 			});
 			this._updateShowSelectedButton();
 
+			return oShowSelectedButton;
+		} else {
+			const oFilterButton = new Button({
+				icon: "sap-icon://filter",
+				type: ButtonType.Transparent,
+				press: (oEvt) => {
+					this._getFilterPopover().openBy(oFilterButton);
+				}
+			});
+
+			oFilterButton.addCustomData(new BadgeCustomData({
+				key: "badge",
+				value: {
+					parts: [{
+						path: this.P13N_MODEL + '>/showSelected'
+					}, {
+						path: this.P13N_MODEL + '>/hideDescriptions'
+					}],
+					formatter: (bShowSelected, bHideDescriptions) => {
+						return [bShowSelected, bHideDescriptions].filter(Boolean).length;
+					}
+				},
+				visible: true,
+				animation: BadgeAnimationType.None
+			}));
+
+			const oFilterLayout = new HorizontalLayout({
+				content: [
+					oFilterButton
+				]
+			});
+
+			return oFilterLayout;
+		}
+
+	};
+
+	SelectionPanel.prototype.setShowHeader = function(bShowHeader) {
+		if (bShowHeader) {
 			this._oListControl.setHeaderToolbar(new OverflowToolbar({
 				content: [
 					this._getSearchField(),
 					new ToolbarSpacer(),
-					this._oShowSelectedButton
+					this._getListFilterLayout()
 				]
 			}));
 		}
 		this.setProperty("showHeader", bShowHeader);
 		return this;
 	};
+	/**
+	 * @param {Object} oEvt Event object
+	 * @param {string} sPath Path of model property that should be updated
+	 */
+	SelectionPanel.prototype._triggerFilter = function() {
+			const bShowSelected = this.getModel(this.P13N_MODEL).getProperty("/showSelected");
+			const bHideDescriptions = this.getModel(this.P13N_MODEL).getProperty("/hideDescriptions");
+			this._filterList(bShowSelected, this._sSearch, bHideDescriptions);
+	};
 
 	SelectionPanel.prototype._updateShowSelectedButton = function() {
 		const sShowSelected = this._getResourceText("p13n.SHOW_SELECTED");
 		const sShowAll = this._getResourceText("p13n.SHOW_ALL");
 
-		this.getModel(this.LOCALIZATION_MODEL).setProperty("/showSelectedText", this._bShowSelected ? sShowAll : sShowSelected);
+		const bShowSelected = this.getModel(this.P13N_MODEL).getProperty("/showSelected");
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/showSelectedText", bShowSelected ? sShowAll : sShowSelected);
+	};
+
+	SelectionPanel.prototype._getFilterPopover = function() {
+		const oExistingPopover = this.getDependents().find((oDependent) => oDependent.isA("sap.m.Popover"));
+		if (oExistingPopover) {
+			return oExistingPopover;
+		}
+
+		const oShowSelectedText = new Label({
+			text: `{${this.LOCALIZATION_MODEL}>/showSelectedText}`
+		});
+		oShowSelectedText.addStyleClass("sapMSelectionPanelFilters");
+
+		const oHideDescriptionsText = new Label({
+			text: `{${this.LOCALIZATION_MODEL}>/hideDescriptionsText}`
+		});
+		oHideDescriptionsText.addStyleClass("sapMSelectionPanelFilters");
+
+		const oShowSelectedButton = new Switch({
+			state: `{${this.P13N_MODEL}>/showSelected}`,
+			ariaLabelledBy: oShowSelectedText,
+			customTextOn: " ",
+			customTextOff: " ",
+			change: this._triggerFilter.bind(this)
+		});
+
+		const oHideDescriptionsButton = new Switch({
+			state: `{${this.P13N_MODEL}>/hideDescriptions}`,
+			ariaLabelledBy: oHideDescriptionsText,
+			customTextOn: " ",
+			customTextOff: " ",
+			change: this._triggerFilter.bind(this)
+		});
+
+		const oHideDescriptionsContainer = new HBox({
+			alignItems: FlexAlignItems.Center,
+			items: [
+				oHideDescriptionsText,
+				oHideDescriptionsButton
+			]
+		});
+		oHideDescriptionsContainer.addStyleClass("sapMSelectionPanelFiltersContainer");
+
+		const oShowSelectedContainer = new HBox({
+			alignItems: FlexAlignItems.Center,
+			items: [
+				oShowSelectedText,
+				oShowSelectedButton
+			]
+		});
+		oShowSelectedContainer.addStyleClass("sapMSelectionPanelFiltersContainer");
+
+		const oPopoverLayout = new VBox({
+			alignItems: FlexAlignItems.End,
+			items: [oHideDescriptionsContainer, oShowSelectedContainer]
+		});
+
+		oPopoverLayout.addStyleClass("sapMSelectionPanelFiltersPopover");
+		const _oFilterPopover = new Popover({
+			title: this._getResourceText("p13n.FILTERS_POPOVER_TITLE"),
+			placement: PlacementType.Bottom,
+			content: [oPopoverLayout],
+			beforeOpen: function (oEvt) {
+				const source = oEvt.getSource();
+				source.setFollowOf(true);
+			},
+			afterOpen: function (oEvt) {
+				const source = oEvt.getSource();
+				source.setFollowOf(false);
+			}
+		});
+
+		this.addDependent(_oFilterPopover);
+
+		return _oFilterPopover;
 	};
 
 	SelectionPanel.prototype.getSelectedFields = function() {
@@ -300,39 +445,77 @@ sap.ui.define([
 		return aSelectedItems;
 	};
 
-	SelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
+	SelectionPanel.prototype._filterList = function(bShowSelected, sSearch, bHideRedundant) {
 		let oSearchFilter = [],
-			oSelectedFilter = [];
+			oSelectedFilter = [],
+			oRedundantFilter = [];
+
 		if (bShowSelected) {
 			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
 		}
-		if (sSarch) {
-			oSearchFilter = new Filter("label", "Contains", sSarch);
+		if (bHideRedundant) {
+			oRedundantFilter = new Filter(this.REDUNDANT_ITEMS_ATTRIBUTE, "NE", true);
 		}
-		this._oListControl.getBinding("items").filter(new Filter([].concat(oSelectedFilter, oSearchFilter), true));
+		if (sSearch) {
+			oSearchFilter = new Filter("label", "Contains", sSearch);
+		}
+		this._oListControl.getBinding("items").filter(new Filter([].concat(oSelectedFilter, oSearchFilter, oRedundantFilter), true));
 	};
 
 	SelectionPanel.prototype._onSearchFieldLiveChange = function(oEvent) {
 		this._sSearch = oEvent.getSource().getValue();
-		this._filterList(this._bShowSelected, this._sSearch);
+		this._filterList(this.getModel(this.P13N_MODEL).getProperty("/showSelected"), this._sSearch, this.getModel(this.P13N_MODEL).getProperty("/hideDescriptions"));
 	};
 
 	SelectionPanel.prototype._handleActivated = function(oHoveredItem) {
-		//remove move buttons if unselected item is hovered (not covered by updateStarted)
-		this._removeMoveButtons();
-		//Check if the prior hovered item had a visible icon and renable it if required
+		// remove move buttons
+		// 1. if a new item is hovered OR
+		// 1. if the item is not selected
+		if (this._oHoveredItem !== oHoveredItem || !oHoveredItem.getMultiSelectControl()?.getSelected()) {
+			this._removeMoveButtons();
+		}
+
+		// Check if the prior hovered item had a visible icon and renable it if required
 		if (this._oHoveredItem && !this._oHoveredItem.bIsDestroyed && this._oHoveredItem.getBindingContextPath()) {
 			const bVisible = !!this._getP13nModel().getProperty(this._oHoveredItem.getBindingContextPath()).active;
-			const oOldIcon = this._oHoveredItem.getCells()[1].getItems()[0];
+			const [oOldIcon] = this._oHoveredItem.getCells()[1].getItems();
 			oOldIcon.setVisible(bVisible);
 		}
-		//Store (new) hovered item and set its icon to visible: false + add move buttons to it
-		const oIcon = oHoveredItem.getCells()[1].getItems()[0];
-		if (oHoveredItem.getSelected()) {
+		// Store (new) hovered item and set its icon to visible: false + add move buttons to it
+		const oIcon = oHoveredItem.getCells()[1]?.getItems()[0];
+		if (oHoveredItem.getSelected() && oIcon) {
 			oIcon.setVisible(false);
 		}
+
+		// SNOW: DINC0433588:
+		// We call _handleActivated also when the hover state WITHIN a CustomListItem changes.
+		// However, the oHoveredItem is still the same ColumnListItem.
+		// If no selection change was done and the hoveredItem is still the same, we assume that the focus changed within a ColumnListItem.
+		// Hence, there is no need to add the move buttons again as they were already added previously.
+
+		// do not update anything or proceed to add the buttons:
+		// 1. if hover state has not changed (same item is still hovered) AND
+		// 2. if no selection change was done (same item is still hovered and was neither selected nor deselected) AND
+		// 3. if the hovered item is enabled (move buttons are already there, hence there is no need to add them again: SNOW: DINC0433588)
+		if (this._oHoveredItem === oHoveredItem &&
+			this._oLastSelectedItem !== oHoveredItem &&
+			oHoveredItem.getMultiSelectControl()?.getEnabled()
+		) {
+			return;
+		}
+
+
+		// if not the same,
+		// if same, proceed to: add buttons
+
 		this._oHoveredItem = oHoveredItem;
-		if (!(oHoveredItem.getMultiSelectControl()?.getEnabled() == false)) {
+		this._oLastSelectedItem = null;
+		// 1. if checkbox is enabled (disabled checkbox might be the case for rta for ActionToolbar) AND
+		// 2. if checkbox is selected
+		// 3. OR if there is not checkbox
+		if ((oHoveredItem.getMultiSelectControl()?.getEnabled() &&
+			oHoveredItem.getMultiSelectControl()?.getSelected()) ||
+			!oHoveredItem.getMultiSelectControl()) {
 			this._updateEnableOfMoveButtons(oHoveredItem, false);
 			this._addMoveButtons(oHoveredItem);
 		}
@@ -405,13 +588,16 @@ sap.ui.define([
 		//remove the reorder buttons from their current location and hence reset the hover logic
 		this._removeMoveButtons();
 		this._oSelectedItem = null;
+
+		// this is needed for updating the header toolbar of the table
+		this.setShowHeader(this.getShowHeader());
 		return this;
 	};
 
 	SelectionPanel.prototype.onReset = function() {
 		BasePanel.prototype.onReset.apply(this, arguments);
 		this._sSearch = "";
-		this._bShowSelected = false;
+		this.getModel(this.P13N_MODEL).setProperty("/showSelected", false);
 		this._updateShowSelectedButton();
 	};
 
@@ -561,6 +747,7 @@ sap.ui.define([
 	SelectionPanel.prototype._updateLocalizationTexts = function() {
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/showSelectedText", this._getResourceText("p13n.SHOW_SELECTED"));
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/showAllText", this._getResourceText("p13n.SHOW_ALL"));
+		this.getModel(this.LOCALIZATION_MODEL).setProperty("/hideDescriptionsText", this._getResourceText("p13n.HIDE_DESCRIPTIONS"));
 		this.getModel(this.LOCALIZATION_MODEL).setProperty("/fieldColumn", this._getResourceText("p13n.DEFAULT_DESCRIPTION"));
 		this._updateShowSelectedButton();
 	};
@@ -571,7 +758,6 @@ sap.ui.define([
 		this._oHoveredItem = null;
 		this._bShowFactory = null;
 		this._sSearch = null;
-		this._bShowSelected = null;
 	};
 	return SelectionPanel;
 });

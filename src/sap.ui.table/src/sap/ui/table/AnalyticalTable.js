@@ -43,8 +43,8 @@ sap.ui.define([
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * Table which handles analytical OData backends. The AnalyticalTable only works with an AnalyticalBinding and
-	 * correctly annotated OData services. Please check on the SAP Annotations for OData Version 2.0 documentation for further details.
+	 * Table that handles analytical OData back-end scenarios. The <code>AnalyticalTable</code> only works with {@link sap.ui.model.analytics.AnalyticalBinding AnalyticalBinding} and
+	 * correctly annotated OData services. Please check out the functionality of analytical binding and the SAP Annotations for OData Version 2.0 documentation for further details.
 	 * @see https://github.com/SAP/odata-vocabularies/blob/main/docs/v2-annotations.md
 	 *
 	 * @extends sap.ui.table.Table

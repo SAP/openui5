@@ -32,6 +32,9 @@ sap.ui.define([
 		 version: "${version}",
 		 designtime: "sap/ui/core/designtime/library.designtime",
 		 apiVersion: 2,
+		 ...{
+			interactionDocumentation: true
+		 },
 		 types: [
 		  // builtin types
 		  "any",

@@ -91,7 +91,12 @@ sap.ui.define([
 			"Edm.GeographyPolygon" : oGeometry
 			// Note: same for "Edm.Geometry*", see end of file
 		},
-		aInt64Names = ["$count", "@$ui5.node.groupLevelCount", "@$ui5.node.level"],
+		aInt64Names = [
+			"$count",
+			"$selectionCount",
+			"@$ui5.node.groupLevelCount",
+			"@$ui5.node.level"
+		],
 		oInt64Type,
 		rLeftBraces = /\$\(/g,
 		rNumber = /^-?\d+$/,

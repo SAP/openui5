@@ -37,6 +37,7 @@ sap.ui.define([
 
 	opaTest("Hiding and adding columns works", function (Given, When, Then) {
 		When.iPersonalizeFields(sTableId, ["Last Name", "City", "Size"]);
+
 		Then.onTheApp.iShouldSeeColumnsInOrder(sTableId, ["Last Name", "City", "Size"]);
 	});
 

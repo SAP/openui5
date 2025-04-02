@@ -3652,6 +3652,15 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("maxlength attribute", function (assert) {
+		// Prepare
+		const sMaxLength = "512";
+		const oInput = this.oTP.getDomRef().getElementsByTagName("input")[0];
+
+		// Assert
+		assert.strictEqual(oInput.getAttribute("maxlength"), sMaxLength, "user input is restricted to 512 characters");
+	});
+
 	QUnit.test("_createPopupContent", function (assert) {
 		var oPopupContent;
 

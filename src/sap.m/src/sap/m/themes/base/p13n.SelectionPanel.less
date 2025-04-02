@@ -36,3 +36,19 @@
 .sapMSelectionPanel .sapMTableTH {
 	padding-left: 0.5rem;
 }
+
+/* filters popover should have correct margins */
+.sapMSelectionPanelFiltersPopover {
+	// right margin is smaller due to margin of switch
+	margin: 1rem 0.5rem 1rem 1rem;
+};
+
+/* distance between two switch filtes should be correct */
+.sapMSelectionPanelFiltersContainer:first-child {
+	margin-bottom: 0.375rem;
+}
+
+/* text should be centered vertically */
+.sapMSelectionPanelFilters {
+	display: flex;
+}

@@ -283,11 +283,13 @@ sap.ui.define([
 				sBaseBundleUrlRelativeTo = "manifest",
 				vI18n = (oManifest["sap.app"] && oManifest["sap.app"]["i18n"]) || "i18n/i18n.properties";
 
+			const fnResourceBundleCreate = bAsync ? ResourceBundle.create : ResourceBundle._createSync;
+
 			if (typeof vI18n === "string") {
 				oI18nURI = new URI(vI18n);
 
 				// load the ResourceBundle relative to the manifest
-				return ResourceBundle.create({
+				return fnResourceBundleCreate({
 					url: this.resolveUri(oI18nURI, sBaseBundleUrlRelativeTo),
 					async: bAsync
 				});
@@ -311,7 +313,7 @@ sap.ui.define([
 					async: bAsync
 				}, vI18n);
 
-				return ResourceBundle.create(mParams);
+				return fnResourceBundleCreate(mParams);
 			}
 		},
 

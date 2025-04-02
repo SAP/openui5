@@ -154,7 +154,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://add", "SimpleForm field2: Has value");
@@ -284,7 +284,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://add", "SimpleForm field2: Has value");
@@ -410,7 +410,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://add", "SimpleForm field2: Has value");
@@ -593,7 +593,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://add", "SimpleForm field2: Has value");
@@ -768,7 +768,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://add", "SimpleForm field2: Has value");
@@ -954,7 +954,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://add", "SimpleForm field2: Has value");
@@ -1151,7 +1151,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Has value");
@@ -1303,7 +1303,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Has value");
@@ -1443,7 +1443,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Has value");
@@ -1601,7 +1601,7 @@ sap.ui.define([
 							oFormField = oContents[3];
 							assert.equal(oFormLabel.getText(), "Icon", "SimpleForm label2: Has label text");
 							assert.ok(oFormLabel.getVisible(), "SimpleForm label2: Visible");
-							assert.ok(oFormField.isA("sap.m.Input"), "SimpleForm Field2: Input Field");
+							assert.ok(oFormField.isA("sap.ui.integration.editor.fields.viz.IconSelect"), "SimpleForm Field2: Icon Select Viz Field");
 							assert.ok(oFormField.getVisible(), "SimpleForm Field2: Visible");
 							assert.ok(oFormField.getEditable(), "SimpleForm Field2: Editable");
 							assert.equal(oFormField.getValue(), "sap-icon://accept", "SimpleForm field2: Has value");

@@ -50,6 +50,11 @@ sap.ui.define([
 		"3Q" : "en-US-x-saprigi"
 	};
 
+	/**
+	 * This mapping converts the old ISO639 codes into the corresponding language code used by ABAP systems,
+	 * particularly for processing the Accept-Language header
+	 * @private
+	 */
 	const M_ISO639_OLD_TO_NEW = {
 		"iw" : "he",
 		"ji" : "yi"

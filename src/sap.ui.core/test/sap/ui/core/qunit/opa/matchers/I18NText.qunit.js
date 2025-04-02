@@ -209,7 +209,7 @@ sap.ui.define([
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("buttonTextParams");
-		this.oMatcher.setParameters(123);
+		this.oMatcher.setParameters([123]);
 		// Act
 		var bResult = this.oMatcher.isMatching(this.oButton);
 		// Assert
@@ -220,7 +220,7 @@ sap.ui.define([
 		// Arrange
 		this.oMatcher.setPropertyName("text");
 		this.oMatcher.setKey("buttonTextParams");
-		this.oMatcher.setParameters(666);
+		this.oMatcher.setParameters([666]);
 		// Act
 		var bResult = this.oMatcher.isMatching(this.oButton);
 		// Assert
