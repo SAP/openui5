@@ -1,0 +1,12 @@
+{
+  "1.135.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "8fd5cd193c4695a2f5c84ea7c80c882ebe6c2136",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarTimeInterval: is displayed correctly now"
+      }
+    ]
+  }
+}

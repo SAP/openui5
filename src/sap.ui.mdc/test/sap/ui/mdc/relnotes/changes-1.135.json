@@ -1,7 +1,12 @@
 {
   "1.135.0": {
-    "date": "March 2025",
+    "date": "April 2025",
     "notes": [
+      {
+        "id": "168d0a6c13d3b944634d827766c3fa48b414af67",
+        "type": "FIX",
+        "text": " Field: opening dropdown selects first item"
+      },
       {
         "id": "e8e961b14303fad23a55d23f660aa5ad80bd52c6",
         "type": "FIX",

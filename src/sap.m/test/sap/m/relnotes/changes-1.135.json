@@ -1,7 +1,22 @@
 {
   "1.135.0": {
-    "date": "March 2025",
+    "date": "April 2025",
     "notes": [
+      {
+        "id": "cec1f944297003a6a428d714f500a81dec1b9d85",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: segmented button text is not truncated now"
+      },
+      {
+        "id": "c8483a22cb3ae7f2dc3262ced9011d74275363ba",
+        "type": "FEATURE",
+        "text": " sap.m.DateRangeSelection & DateTimePicker: maxLength attribute added"
+      },
+      {
+        "id": "eb2b2d185c4323d098772d538994fde1106a8ecf",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: close button in the select drop down is announced now"
+      },
       {
         "id": "69f44d4e4e18b72d8c6c171e4f4f0be597156805",
         "type": "FIX",
