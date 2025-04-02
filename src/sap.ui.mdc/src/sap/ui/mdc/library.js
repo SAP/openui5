@@ -29,6 +29,9 @@ sap.ui.define([
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],
+		...{
+			interactionDocumentation: true
+		},
 		designtime: "sap/ui/mdc/designtime/library.designtime",
 		types: [
 			"sap.ui.mdc.TableType",
