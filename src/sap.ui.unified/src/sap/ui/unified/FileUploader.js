@@ -1486,7 +1486,8 @@ sap.ui.define([
 	};
 
 	FileUploader.prototype.onclick = function(oEvent) {
-		if (this.getSameFilenameAllowed() && this.getEnabled()) {
+		var bFileInput = oEvent.target.getAttribute("type") === "file";
+		if (bFileInput && this.getSameFilenameAllowed() && this.getEnabled()) {
 			this.setValue("", true);
 		}
 		//refocus the Button, except bSupressFocus is set
