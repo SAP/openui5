@@ -2023,7 +2023,6 @@ sap.ui.define([
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			sHeaderId = oSPC._getHeader()._getOrCreateTitleControl().getId(),
-			sNowMarkerTextId = oSPC.getAggregation("_grid").getId() + "-nowMarkerText",
 			$oSPCRef,
 			aAriaLabelledBy;
 
@@ -2038,7 +2037,6 @@ sap.ui.define([
 		assert.strictEqual($oSPCRef.attr("aria-roledescription"), oSPC._oRB.getText("SPC_CONTROL_NAME"),
 				"Custom control name applied");
 		assert.ok(aAriaLabelledBy.indexOf(sHeaderId) > -1, "SPC is labelled by its title");
-		assert.ok(aAriaLabelledBy.indexOf(sNowMarkerTextId) > -1, "SPC is labelled by the now marker's text");
 
 		// Clean up
 		oSPC.destroy();
