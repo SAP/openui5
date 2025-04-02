@@ -194,7 +194,7 @@ sap.ui.define([
 			oView.setBindingContext(oListBinding.getHeaderContext(), "header");
 
 			const sLogLevel = oUriParameters.has("logAsWarning") ? "warning" : "info";
-			oListBinding.attachEvent("selectionChanged", (oEvent) => {
+			oListBinding.attachSelectionChanged((oEvent) => {
 				const oContext = oEvent.getParameter("context");
 				const iSelectionCount = oContext.getBinding().getSelectionCount();
 
