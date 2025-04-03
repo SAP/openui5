@@ -409,5 +409,17 @@ sap.ui.define([
 		return TableUtil.calcColumnWidth(aTypes, sHeader, mWidthCalculation);
 	};
 
+	/**
+	 * @inheritDoc
+	 */
+	PropertyHelper.prototype.getRedundantProperties = function() {
+		const aProperties = this.getProperties();
+		const aTextArrangementProperties = aProperties
+			.filter((oProperty) => oProperty.text)
+			.map((oProperty) => this.getProperty(oProperty.text));
+
+		return [...new Set(aTextArrangementProperties)];
+	};
+
 	return PropertyHelper;
 });

@@ -132,7 +132,7 @@ sap.ui.define([
 
 	UploadItem.prototype.setFileName = function (sFileName) {
 		if (this.getFileName() !== sFileName) {
-			this.setProperty("fileName", sFileName);
+			this.setProperty("fileName", sFileName, true);
 			// File name related controls available no sooner than a parent is set
 			if (this.getParent() && this.getParent().getMaxFileNameLength && this.getParent().getFileTypes) {
 				this._checkNameLengthRestriction(this.getParent()?.getMaxFileNameLength());

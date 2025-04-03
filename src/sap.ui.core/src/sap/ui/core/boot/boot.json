@@ -17,6 +17,7 @@
 		"sap/ui/core/boot/Calendar",
 		"sap/ui/core/boot/Modules",
 		"sap/ui/core/boot/FieldHelpEndpoint",
+		"sap/ui/core/boot/KeyboardInteractionEndpoint",
 		"sap/ui/core/boot/Supportability",
 		"sap/ui/core/boot/Traces"
 	],

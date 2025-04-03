@@ -376,6 +376,25 @@ sap.ui.define([
 		}
 		assert.strictEqual(oContext.getProperty("@$ui5.context.isSelected"), bSelected,
 			sText || "JIRA: CPOUI5ODATAV4-1944");
+
+		checkSelectionCount(assert, oContext.getBinding());
+	}
+
+	/**
+	 * Checks the given list binding's selection count versus the selection state of its existing
+	 * contexts.
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {sap.ui.model.odata.v4.ODataListBinding} oListBinding - A list binding
+	 */
+	function checkSelectionCount(assert, oListBinding) {
+		if (!oListBinding.getHeaderContext().isSelected()) {
+			assert.strictEqual(oListBinding.getSelectionCount(),
+				oListBinding._getAllExistingContexts()
+					.filter((oContext0) => oContext0.isSelected())
+					.length,
+				"$selectionCount vs. filtering");
+		} // else: "select all" currently unsupported
 	}
 
 	/**
@@ -463,6 +482,8 @@ sap.ui.define([
 				});
 			}), aExpectedContent, sTitle);
 		}
+
+		checkSelectionCount(assert, oListBinding);
 
 		const oAggregation = oListBinding.getAggregation();
 		if (oAggregation) {
@@ -1079,6 +1100,7 @@ sap.ui.define([
 
 			strictEqual(oListBinding.isLengthFinal(), true, "length is final");
 			strictEqual(oListBinding.getLength(), aExpectedValues.length, "length as expected");
+			checkSelectionCount(assert, oListBinding);
 
 			const aContexts = await oListBinding.requestContexts(0, oListBinding.getLength());
 
@@ -5415,6 +5437,7 @@ sap.ui.define([
 	//
 	// Selecting a context does not interfere with reset (JIRA: CPOUI5ODATAV4-1944).
 	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
+	// ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	QUnit.test("create an entity and immediately reset changes (no UI) V4-36", function (assert) {
 		var // use autoExpandSelect so that the cache is created asynchronously
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
@@ -5429,12 +5452,14 @@ sap.ui.define([
 				// code under test (JIRA: CPOUI5ODATAV4-2768; Note: no $metadata yet)
 				oContext.getFilter();
 			}, new Error("Not a list context path to an entity: " + oContext));
+			assert.strictEqual(oListBindingWithoutUI.getSelectionCount(), 0);
 
 			oContext.setSelected(true);
 
 			assert.ok(oModel.hasPendingChanges());
 			assert.ok(oListBindingWithoutUI.hasPendingChanges());
 			assert.strictEqual(oListBindingWithoutUI.getLength(), 1 + 10/*length is not final*/);
+			assert.strictEqual(oListBindingWithoutUI.getSelectionCount(), 1);
 
 			oModel.resetChanges();
 
@@ -5442,6 +5467,7 @@ sap.ui.define([
 			assert.notOk(oModel.hasPendingChanges());
 			assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 			assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+			assert.strictEqual(oListBindingWithoutUI.getSelectionCount(), 0);
 
 			return oCreatedPromise.then(mustFail(assert), function (oError) {
 				// create (which ran asynchronously) must not have changed anything
@@ -5450,6 +5476,7 @@ sap.ui.define([
 				assert.notOk(oModel.hasPendingChanges());
 				assert.notOk(oListBindingWithoutUI.hasPendingChanges());
 				assert.strictEqual(oListBindingWithoutUI.getLength(), 0);
+				assert.strictEqual(oListBindingWithoutUI.getSelectionCount(), 0);
 
 				return Promise.all([
 					checkCanceled(assert, oCreatedPromise),
@@ -5683,7 +5710,8 @@ sap.ui.define([
 			checkSelected(assert, oHeaderContext, false);
 			assert.deepEqual(oHeaderContext.getObject(), {
 				"@$ui5.context.isSelected" : false,
-				$count : 3
+				$count : 3,
+				$selectionCount : 0
 			}, "JIRA: CPOUI5ODATAV4-1944");
 
 			oHeaderContext.setSelected(true); // "select all"
@@ -7917,10 +7945,16 @@ sap.ui.define([
 
 			// JIRA: CPOUI5ODATAV4-1404
 			assert.strictEqual(oHeaderContext.getProperty("$count"), 2);
-			assert.deepEqual(oHeaderContext.getObject(), // no args here!
-				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
-			assert.deepEqual(oHeaderContext.getObject(""),
-				{"@$ui5.context.isSelected" : false, $count : 2}, "JIRA: CPOUI5ODATAV4-1944");
+			assert.deepEqual(oHeaderContext.getObject(/* no args here! */), {
+				"@$ui5.context.isSelected" : false,
+				$count : 2,
+				$selectionCount : 0
+			}, "JIRA: CPOUI5ODATAV4-1944");
+			assert.deepEqual(oHeaderContext.getObject(""), {
+				"@$ui5.context.isSelected" : false,
+				$count : 2,
+				$selectionCount : 0
+			}, "JIRA: CPOUI5ODATAV4-1944");
 
 			that.expectChange("count", "2");
 			assert.strictEqual(oTableBinding.getCount(), 2);
@@ -7961,7 +7995,11 @@ sap.ui.define([
 			return Promise.all([
 				// code under test - request the header data while filter is still running
 				oHeaderContext.requestObject().then(function (oResult) {
-					assert.deepEqual(oResult, {"@$ui5.context.isSelected" : false, $count : 1});
+					assert.deepEqual(oResult, {
+						"@$ui5.context.isSelected" : false,
+						$count : 1,
+						$selectionCount : 0
+					});
 				}),
 				that.waitForChanges(assert)
 			]);
@@ -13962,9 +14000,7 @@ sap.ui.define([
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input id="amount" value="{GrossAmount}"/>\
-	</ColumnListItem>\
+	<Input id="amount" value="{GrossAmount}"/>\
 </Table>',
 			that = this;
 
@@ -21419,6 +21455,7 @@ sap.ui.define([
 	// Selection on contexts which are deleted and restored (JIRA: CPOUI5ODATAV4-1943).
 	// Selection is cleared on successful deletion (JIRA: CPOUI5ODATAV4-2053).
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
+	// $selectionCount, ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	[
 		{desc : "submit", success : true},
 		{desc : "reset via model", resetViaModel : true},
@@ -21438,6 +21475,7 @@ sap.ui.define([
 				bReset = oFixture.resetViaModel || oFixture.resetViaBinding,
 				sView = '\
 <Text id="count" text="{$count}"/>\
+<Text id="selectionCount" text="{$selectionCount}"/>\
 <Table id="list" growing="true" growingThreshold="5" \
 		items="{path : \'/SalesOrderList\', parameters : {$count : true}}">\
 	<Text id="listId" text="{SalesOrderID}"/>\
@@ -21463,6 +21501,7 @@ sap.ui.define([
 					]
 				})
 				.expectChange("count")
+				.expectChange("selectionCount")
 				.expectChange("listId", ["1", "2", "3", "4", "5"])
 				.expectChange("id")
 				.expectChange("note")
@@ -21470,12 +21509,16 @@ sap.ui.define([
 				.expectChange("itemCount");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				that.expectChange("count", "20");
+				that.expectChange("count", "20")
+					.expectChange("selectionCount", "0");
 
 				oBinding = that.oView.byId("list").getBinding("items");
+				assert.strictEqual(oBinding.getCount(), 20);
 				that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
+				that.oView.byId("selectionCount").setBindingContext(oBinding.getHeaderContext());
 
-				return that.waitForChanges(assert, "count");
+				return that.waitForChanges(assert, "(selection) count");
 			}).then(function () {
 				var aContexts;
 
@@ -21512,7 +21555,9 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "modify note");
 			}).then(function () {
-				that.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
+				that.expectChange("selectionCount", "1")
+					.expectChange("selectionCount", "2")
+					.expectRequest("SalesOrderList?$count=true&$select=SalesOrderID"
 						+ "&$filter=not (SalesOrderID eq '2' or SalesOrderID eq '4')&$skip=3&$top=2", {
 						"@odata.count" : "18",
 						value : [
@@ -21522,7 +21567,9 @@ sap.ui.define([
 					})
 					.expectChange("listId", [,,, "6", "7"]) // no change events for the moved rows
 					.expectChange("count", "19")
+					.expectChange("selectionCount", "1")
 					.expectChange("count", "18")
+					.expectChange("selectionCount", "0")
 					.expectChange("id", null)
 					.expectChange("note", null);
 
@@ -21532,11 +21579,14 @@ sap.ui.define([
 
 				assert.strictEqual(oContext2.toString(), "/SalesOrderList('2')[1;selected]");
 				checkSelected(assert, oContext2, true);
+				assert.strictEqual(oBinding.getSelectionCount(), 2);
 
+				// code under test
 				oPromise2 = oContext2.delete();
 				oPromise4 = oContext4.delete();
 
 				checkSelected(assert, oContext2, true); // selection hidden while deleted
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
 
 				assert.throws(function () {
 					// code under test (JIRA: CPOUI5ODATAV4-1943)
@@ -21544,8 +21594,9 @@ sap.ui.define([
 				}, new Error("Must not select a deleted entity: /SalesOrderList('2');deleted"));
 				// code under test (JIRA: CPOUI5ODATAV4-1943)
 				oContext2.setSelected(false);
-				checkSelected(assert, oContext2, false);
 
+				checkSelected(assert, oContext2, false);
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
 				assert.ok(oBinding.hasPendingChanges());
 				assert.ok(oModel.hasPendingChanges());
 
@@ -21621,6 +21672,7 @@ sap.ui.define([
 						"Request canceled: PATCH SalesOrderList('2'); group: update");
 					that.expectChange("listId", [, "2", "4"])
 						.expectChange("count", "18") // change handler of $count fired synchronously
+						.expectChange("selectionCount", "1")
 						.expectChange("count", "19")
 						// from the setBindingContext
 						.expectChange("id", "2")
@@ -21675,6 +21727,7 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				assert.strictEqual(oBinding.getLength(), oFixture.success ? 17 : 19);
+				assert.strictEqual(oBinding.getSelectionCount(), oFixture.success ? 0 : 1);
 				assert.notOk(oModel.hasPendingChanges());
 				assert.notOk(oBinding.hasPendingChanges());
 				if (!oFixture.success) { // otherwise they are destroyed
@@ -22174,6 +22227,7 @@ sap.ui.define([
 	//
 	// Selection is hidden, but kept while deleted (JIRA: CPOUI5ODATAV4-2053).
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
+	// ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	QUnit.test("CPOUI5ODATAV4-1638: ODLB: deferred delete w/ isKeepAlive fails", function (assert) {
 		var oBinding,
 			oKeptContext1,
@@ -22228,6 +22282,7 @@ sap.ui.define([
 		}).then(function () {
 			assertIDs(["2", "3"]);
 			that.checkMoreButton(assert, "[2/8]");
+			assert.strictEqual(oBinding.getSelectionCount(), 0);
 
 			that.expectRequest("SalesOrderList?$count=true"
 					+ "&$filter=(LifecycleStatus eq 'N') and not (SalesOrderID eq '2')"
@@ -22240,8 +22295,10 @@ sap.ui.define([
 
 			oRowContext = oBinding.getCurrentContexts()[0];
 			oRowContext.setSelected(true);
+			assert.strictEqual(oBinding.getSelectionCount(), 1);
 			oRowPromise = oRowContext.delete("doNotSubmit");
 			checkSelected(assert, oRowContext, true); // selection hidden while deleted
+			assert.strictEqual(oBinding.getSelectionCount(), 0);
 
 			// code under test (JIRA: CPOUI5ODATAV4-2053)
 			assert.notOk(oBinding.getAllCurrentContexts().includes(oRowContext),
@@ -22344,6 +22401,7 @@ sap.ui.define([
 			assert.notOk(oRowContext.hasPendingChanges());
 			assert.notOk(oRowContext.isDeleted());
 			checkSelected(assert, oRowContext, true, "selection hidden, but kept while deleted");
+			assert.strictEqual(oBinding.getSelectionCount(), 1);
 
 			return Promise.all([
 				checkCanceled(assert, oRowPromise),
@@ -34623,6 +34681,8 @@ sap.ui.define([
 					[undefined, 2, "6", "Iota", "6,false"],
 					[undefined, 2, "7", "Kappa", "7,false"]
 				]);
+
+			checkSelected(assert, oZeta, true);
 		});
 	});
 
@@ -44409,6 +44469,7 @@ sap.ui.define([
 			[true, 1, "etag0.2", "0", "Alpha #2", "0,false", "Alpha's Friend"],
 			[true, 2, "etag1.2", "1", "Beta #2", "1,false", "Beta's Friend"]
 		]);
+		checkSelected(assert, oDelta, true);
 	});
 
 	//*********************************************************************************************
@@ -48993,6 +49054,8 @@ sap.ui.define([
 	// the list). After each action request absolute side effects for the table. Only one
 	// side-effects refresh must be sent.
 	// SNOW: CS20240008208963
+	//
+	// ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	QUnit.test("CS20240008208963", async function (assert) {
 		const oModel = this.createSalesOrdersModel({autoExpandSelect : true});
 		const sView = `
@@ -49010,6 +49073,12 @@ sap.ui.define([
 
 		await this.createView(assert, sView, oModel);
 
+		const oListBinding = this.oView.byId("list").getBinding("items");
+		const aContexts = oListBinding.getCurrentContexts();
+		aContexts.forEach((oContext) => { oContext.setSelected(true); });
+		assert.strictEqual(aContexts.length, 2);
+		assert.strictEqual(oListBinding.getSelectionCount(), 2);
+
 		const sSchema = "com.sap.gateway.default.zui5_epm_sample.v0002";
 		const sAction = sSchema + ".SalesOrder_Confirm";
 		this.expectRequest({
@@ -49024,7 +49093,7 @@ sap.ui.define([
 			})
 			.expectRequest("SalesOrderList?$select=SalesOrderID"
 				+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '2'&$top=2",
-				{value : []})
+				{value : []}) // ODLB#refreshKeptElements
 			.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
 				value : [
 					{SalesOrderID : "3"}
@@ -49032,10 +49101,9 @@ sap.ui.define([
 			})
 			.expectChange("id", ["3"]);
 
-		const aContexts = this.oView.byId("list").getBinding("items").getCurrentContexts();
-		aContexts.forEach((oContext) => { oContext.setSelected(true); });
 		const aPromises = [];
 		aContexts.forEach((oContext) => {
+			// code under test
 			aPromises.push(oModel.bindContext(sAction + "(...)", oContext).invoke());
 			aPromises.push(oContext.requestSideEffects([`/${sSchema}.Container/SalesOrderList`]));
 		});
@@ -49044,6 +49112,11 @@ sap.ui.define([
 			...aPromises,
 			this.waitForChanges(assert, "actions")
 		]);
+
+		aContexts.forEach((oContext) => {
+			assert.strictEqual(oContext.getBinding(), undefined, "destroyed");
+		});
+		assert.strictEqual(oListBinding.getSelectionCount(), 0);
 	});
 
 	//*********************************************************************************************
@@ -63211,15 +63284,13 @@ sap.ui.define([
 		path : \'/EMPLOYEES\',\
 		sorter : {group : true, path : \'AGE\'}\
 	}">\
-	<ColumnListItem>\
-		<Text id="age" text="{AGE}"/>\
-		<List growing="true" items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
-			<CustomListItem>\
-				<Text id="category" text="{Category}"/>\
-			</CustomListItem>\
-		</List>\
-		<Text id="name" text="{Name}"/>\
-	</ColumnListItem>\
+	<Text id="age" text="{AGE}"/>\
+	<List growing="true" items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+		<CustomListItem>\
+			<Text id="category" text="{Category}"/>\
+		</CustomListItem>\
+	</List>\
+	<Text id="name" text="{Name}"/>\
 </Table>';
 			//TODO <Text id="age" text="{AGE}"/> should not be needed for auto-$expand/$select here!
 
@@ -63813,6 +63884,7 @@ sap.ui.define([
 	//
 	// Selection on inactive context which is then deleted and destroyed (JIRA: CPOUI5ODATAV4-1943).
 	// Selection is cleared on successful deletion (JIRA: CPOUI5ODATAV4-2053).
+	// $selectionCount, ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	[false, true].forEach(function (bAPI) {
 		QUnit.test("Multiple creation rows, grid table, SubmitMode.API = " + bAPI, function (assert) {
 			var oBinding,
@@ -63826,6 +63898,7 @@ sap.ui.define([
 				}),
 				sView = '\
 <Text id="count" text="{$count}"/>\
+<Text id="selectionCount" text="{$selectionCount}"/>\
 <t:Table id="table" rows="{path : \'SO_2_SOITEM\',\
 		parameters : {$count : true, $$ownRequest : true}}">\
 	<Text id="inactive" text="{= %{@$ui5.context.isInactive} }"/>\
@@ -63835,12 +63908,14 @@ sap.ui.define([
 				that = this;
 
 			this.expectChange("count")
+				.expectChange("selectionCount")
 				.expectChange("inactive", [])
 				.expectChange("position", [])
 				.expectChange("note", []);
 
 			return this.createView(assert, sView, oModel).then(function () {
-				that.expectChange("inactive", [true, true, true])
+				that.expectChange("selectionCount", "0")
+					.expectChange("inactive", [true, true, true])
 					.expectChange("position", ["", "", ""])
 					.expectChange("note", ["default note", "", ""])
 					.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$count=true"
@@ -63855,7 +63930,10 @@ sap.ui.define([
 
 				oBinding = that.oView.byId("table").getBinding("rows");
 				oBinding.setContext(oModel.createBindingContext("/SalesOrderList('42')"));
+				assert.strictEqual(oBinding.getCount(), undefined);
 				that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
+				that.oView.byId("selectionCount").setBindingContext(oBinding.getHeaderContext());
 				oBinding.attachCreateActivate(function () {
 					iEventCount += 1;
 				});
@@ -63973,12 +64051,18 @@ sap.ui.define([
 						+ "[-1;createdPersisted]",
 					"Context#toString: createdPersisted");
 
+				that.expectChange("selectionCount", "1");
+
 				// code under test
 				oContext2.setSelected(true);
+
+				assert.strictEqual(oBinding.getSelectionCount(), 1);
+				that.expectChange("selectionCount", "0");
 
 				// code under test
 				oContext2.delete();
 
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
 				assert.strictEqual(normalizeUID(oContext2.toString()),
 					"/SalesOrderList('42')/SO_2_SOITEM($uid=...)[-9007199254740991;deleted]",
 					"Context#toString: deleted");
@@ -64030,6 +64114,7 @@ sap.ui.define([
 				]);
 			}).then(function () {
 				assert.strictEqual(oBinding.getCount(), 3);
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
 				assert.strictEqual(oBinding.getLength(), 3);
 				assert.strictEqual(oBinding.isLengthFinal(), true);
 				assert.strictEqual(oContext3.hasPendingChanges(), false);
@@ -66278,6 +66363,7 @@ sap.ui.define([
 	// Do likewise for selection which implicitly keeps alive (JIRA: CPOUI5ODATAV4-2053).
 	// Select via setSelected and setting the client-side annotation (JIRA: CPOUI5ODATAV4-1944).
 	// Filter removes selection (JIRA: CPOUI5ODATAV4-2203).
+	// ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	[false, true].forEach(function (bImplicitly) {
 		[false, true].forEach(function (bUseAnnotation) {
 			var sTitle = "CPOUI5ODATAV4-488: Refresh w/" + (bImplicitly ? " implicitly" : "")
@@ -66304,6 +66390,7 @@ sap.ui.define([
 					setSelected(bUseAnnotation, oKeptContext2, true);
 					checkSelected(assert, oKeptContext, true);
 					checkSelected(assert, oKeptContext2, true);
+					assert.strictEqual(oListBinding.getSelectionCount(), 2);
 				} else {
 					oKeptContext2.setKeepAlive(true);
 				}
@@ -66362,6 +66449,7 @@ sap.ui.define([
 				if (bImplicitly) {
 					setSelected(bUseAnnotation, oKeptContext3, true);
 					checkSelected(assert, oKeptContext3, true);
+					assert.strictEqual(oListBinding.getSelectionCount(), 3);
 				} else {
 					// 3rd kept-alive ontext (CPOUI5ODATAV4-579)
 					oKeptContext3.setKeepAlive(true, fnOnBeforeDestroy);
@@ -66416,8 +66504,10 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "Step 2: Refresh the list (w/ three kept contexts)");
 			}).then(function () {
+				// Note: oKeptContext3 has been destroyed
 				if (bImplicitly) {
 					sinon.assert.notCalled(fnOnBeforeDestroy);
+					assert.strictEqual(oListBinding.getSelectionCount(), 2);
 				} else {
 					sinon.assert.calledOnceWithExactly(fnOnBeforeDestroy);
 				}
@@ -66464,6 +66554,7 @@ sap.ui.define([
 				// in case of !bImplicitly and !bUseAnnotation oKeptContext was never selected.
 				// the annotation stays undefined if it is set (repeatedly) to false then.
 				checkSelected(assert, oKeptContext, bImplicitly || bUseAnnotation ? false : undefined);
+				assert.strictEqual(oListBinding.getSelectionCount(), bImplicitly ? 1 : 0);
 
 				return Promise.all([
 					// code under test
@@ -66482,10 +66573,6 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "filter to make list empty");
 			}).then(function () {
-				if (bImplicitly) { // Filter removes selection (JIRA: CPOUI5ODATAV4-2203)
-					return;
-				}
-
 				that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2'"
 						+ "&$select=GrossAmount,SalesOrderID", {
 						value : [{
@@ -66500,6 +66587,7 @@ sap.ui.define([
 					that.waitForChanges(assert, "request side effects for kept contexts only")
 				]).then(function () {
 					assert.strictEqual(oKeptContext2.getProperty("GrossAmount"), "149.5");
+					assert.strictEqual(oListBinding.getSelectionCount(), bImplicitly ? 1 : 0);
 				});
 			});
 		});
@@ -67951,6 +68039,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1104
 	//
 	// Selection is cleared on destruction (JIRA: CPOUI5ODATAV4-2053).
+	// ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	[false, true].forEach(function (bWithPendingChanges) {
 		var sTitle = "Absolute ODLB: sort/filter/changeParameters/resume/refresh & late properties"
 				+ ", with pending changes: " + bWithPendingChanges;
@@ -68221,9 +68310,14 @@ sap.ui.define([
 
 					oCreatedPromise = oCreationRowContext.created();
 					oCreationRowContext.setSelected(true);
+					const oCreationRowBinding = oCreationRowContext.getBinding();
+					assert.strictEqual(oCreationRowBinding.getSelectionCount(), 1);
+
 					// code under test (& clean up)
 					oModel.resetChanges("doNotSubmit");
+
 					assert.notOk(oCreationRowContext.isSelected(), "already destroyed");
+					assert.strictEqual(oCreationRowBinding.getSelectionCount(), 0);
 					// binding is already destroyed
 					// assert.notOk(oCreationRowContext.getProperty("@$ui5.context.isSelected"));
 					assert.strictEqual(oCreationRowContext.created(), undefined, "already destroyed");
@@ -70279,6 +70373,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2053
 	//
 	// Data binding for selection (JIRA: CPOUI5ODATAV4-1944).
+	// $selectionCount, ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	[
 		"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
 	].forEach(function (sMethod) {
@@ -70296,7 +70391,9 @@ sap.ui.define([
 				},
 				oModel = this.createTeaBusiModel({autoExpandSelect : true}),
 				sView = `
-	<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="3">
+	<Text id="count" text="{$count}"/>\
+	<Text id="selectionCount" text="{$selectionCount}"/>\
+	<t:Table id="table" rows="{/TEAMS}" threshold="0" visibleRowCount="4">
 		<Text id="id" text="{Team_Id}"/>
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>
 	</t:Table>
@@ -70305,7 +70402,7 @@ sap.ui.define([
 	</FlexBox>`,
 				that = this;
 
-			this.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id&$skip=0&$top=3", {
+			this.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id&$skip=0&$top=4", {
 					value : [{
 						MEMBER_COUNT : 9,
 						Team_Id : "TEAM_01"
@@ -70317,20 +70414,36 @@ sap.ui.define([
 						Team_Id : "TEAM_03"
 					}]
 				})
+				.expectChange("count")
+				.expectChange("selectionCount")
 				.expectChange("id", ["TEAM_01", "TEAM_02", "TEAM_03"])
 				.expectChange("memberCount", ["9", "10", "11"])
 				.expectChange("name");
 
 			return this.createView(assert, sView, oModel).then(function () {
-				var aContexts;
-
 				oBinding = that.oView.byId("table").getBinding("rows");
 
-				aContexts = oBinding.getCurrentContexts();
+				that.expectChange("count", "3")
+					.expectChange("selectionCount", "0");
+
+				assert.strictEqual(oBinding.getCount(), 3, "short read");
+				that.oView.byId("count").setBindingContext(oBinding.getHeaderContext());
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
+				that.oView.byId("selectionCount").setBindingContext(oBinding.getHeaderContext());
+
+				return that.waitForChanges(assert, "(selection) count");
+			}).then(function () {
+				var aContexts = oBinding.getCurrentContexts();
+
 				oContext_01 = aContexts[0];
 				oContext_03 = aContexts[2]; // Note: selection should not make a difference here
+
+				that.expectChange("selectionCount", "1");
+
 				// code under test
 				oContext_01.setSelected(true);
+
+				assert.strictEqual(oBinding.getSelectionCount(), 1);
 
 				that.expectRequest("TEAMS('TEAM_01')?$select=Name", {
 						Name : "Team #1"
@@ -70342,7 +70455,11 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "object page with late property");
 			}).then(function () {
-				that.expectRequest({
+				that.expectChange("count", "4")
+					.expectChange("selectionCount", "2")
+					.expectChange("id", ["NEW", "TEAM_01", "TEAM_02", "TEAM_03"])
+					.expectChange("memberCount", ["0", "9", "10", "11"])
+					.expectRequest({
 						method : "POST",
 						url : "TEAMS",
 						payload : {
@@ -70352,15 +70469,15 @@ sap.ui.define([
 					}, {
 						MEMBER_COUNT : 0,
 						Team_Id : "NEW"
-					})
-					.expectChange("id", ["NEW", "TEAM_01", "TEAM_02"])
-					.expectChange("memberCount", ["0", "9", "10"]);
+					});
 
 				oCreatedContext = oBinding.create({MEMBER_COUNT : 0, Team_Id : "NEW"}, true);
 				oCreated = oCreatedContext.created();
 
 				// code under test
 				oCreatedContext.setSelected(true);
+
+				assert.strictEqual(oBinding.getSelectionCount(), 2);
 
 				return Promise.all([
 					oCreated,
@@ -70432,12 +70549,13 @@ sap.ui.define([
 					// no default
 				}
 
-				that.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id" + sInfix + "&$skip=0&$top=3", {
+				that.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id" + sInfix + "&$skip=0&$top=4", {
 						value : [{
 							MEMBER_COUNT : 11,
 							Team_Id : "TEAM_03"
 						}]
 					})
+					.expectChange("count", "1")
 					.expectChange("id", ["TEAM_03"])
 					.expectChange("memberCount", ["11"]);
 
@@ -70448,6 +70566,7 @@ sap.ui.define([
 			}).then(function () {
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
+				assert.strictEqual(oBinding.getSelectionCount(), 2);
 				assert.strictEqual(aAllContexts.length, 3);
 				assert.strictEqual(aAllContexts[0], oContext_03, "still the same");
 				assert.strictEqual(aAllContexts[1], oContext_01, "implicitly kept alive");
@@ -70468,8 +70587,9 @@ sap.ui.define([
 				oModel.bindList("TEAM_2_EMPLOYEES", oContext_01, [], [],
 						{$$updateGroupId : "doNotSubmit"})
 					.create();
-
 				assert.notOk(oBinding.hasPendingChanges(/*bIgnoreKeptAlive*/true));
+
+				that.expectChange("selectionCount", "3");
 
 				// code under test
 				oContext_03.setSelected(true);
@@ -70481,7 +70601,7 @@ sap.ui.define([
 				oBinding.sort([]);
 
 				that.expectRequest("TEAMS?$select=MEMBER_COUNT,Team_Id&$filter=MEMBER_COUNT lt 10"
-						+ "&$skip=0&$top=3", {
+						+ "&$skip=0&$top=4", {
 						value : [{
 							MEMBER_COUNT : 0,
 							Team_Id : "NEW"
@@ -70490,6 +70610,7 @@ sap.ui.define([
 							Team_Id : "TEAM_01"
 						}]
 					})
+					.expectChange("count", "2")
 					.expectChange("id", ["NEW", "TEAM_01"])
 					.expectChange("memberCount", ["0", "9"]);
 
@@ -70500,6 +70621,7 @@ sap.ui.define([
 			}).then(function () {
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
+				assert.strictEqual(oBinding.getSelectionCount(), 3);
 				assert.strictEqual(aAllContexts.length, 3);
 				assert.strictEqual(aAllContexts[0], oCreatedContext);
 				assert.strictEqual(aAllContexts[1], oContext_01);
@@ -70544,6 +70666,7 @@ sap.ui.define([
 			}).then(function () {
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
+				assert.strictEqual(oBinding.getSelectionCount(), 3);
 				assert.strictEqual(aAllContexts.length, 3);
 				assert.strictEqual(aAllContexts[0], oCreatedContext);
 				assert.strictEqual(aAllContexts[1], oContext_01);
@@ -70554,7 +70677,8 @@ sap.ui.define([
 					that.expectRequest("TEAMS?$select=MEMBER_COUNT,Name,Team_Id"
 							+ "&$filter=Team_Id eq 'TEAM_03'", {
 							value : [] // gone for good
-						});
+						})
+						.expectChange("selectionCount", "2");
 
 					return Promise.all([
 						oContext_03.requestRefresh("$auto", /*bAllowRemoval*/true), // code under test
@@ -70569,7 +70693,8 @@ sap.ui.define([
 						},
 						method : "DELETE",
 						url : "TEAMS('TEAM_03')"
-					});
+					})
+					.expectChange("selectionCount", "2");
 
 				return Promise.all([
 					oModel.delete("/TEAMS('TEAM_03')"), // code under test
@@ -70578,6 +70703,7 @@ sap.ui.define([
 			}).then(function () {
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
+				assert.strictEqual(oBinding.getSelectionCount(), 2);
 				assert.strictEqual(aAllContexts.length, 2);
 				assert.strictEqual(aAllContexts[0], oCreatedContext);
 				assert.strictEqual(aAllContexts[1], oContext_01);
@@ -70596,6 +70722,7 @@ sap.ui.define([
 						"@odata.count" : "0", // sorry, too many members
 						value : []
 					})
+					.expectChange("count", "1")
 					.expectChange("id", ["TEAM_01"])
 					.expectChange("memberCount", ["9"]);
 				oExpectedNewObject.MEMBER_COUNT = 99;
@@ -70627,6 +70754,8 @@ sap.ui.define([
 	// not exist on the server anymore. Alternatively, cancel creation and see that the context is
 	// destroyed. An inactive context must be kept intact all the time.
 	// JIRA: CPOUI5ODATAV4-2053
+	//
+	// ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
 	[undefined, false, true].forEach(function (bSingle) {
 		var sTitle = "CPOUI5ODATAV4-2053: removeCreated, w/ UI on top; bSingle=" + bSingle;
 
@@ -70665,9 +70794,12 @@ sap.ui.define([
 				// code under test
 				oCreatedContext.setSelected(true);
 
+				assert.strictEqual(oBinding.getSelectionCount(), 1);
+
 				if (bCancelCreation) { // cancel creation now
 					oCreatedContext.delete();
 					oCreatedPromise = checkCanceled(assert, oCreatedPromise);
+					assert.strictEqual(oBinding.getSelectionCount(), 0);
 				} else {
 					that.expectRequest({
 							method : "POST",
@@ -70697,6 +70829,8 @@ sap.ui.define([
 					return;
 				}
 
+				assert.strictEqual(oBinding.getSelectionCount(), 1);
+
 				that.expectRequest("TEAMS?$filter=Team_Id eq 'NEW'&$select=MEMBER_COUNT,Team_Id", {
 						value : []
 					});
@@ -70720,6 +70854,7 @@ sap.ui.define([
 			}).then(function () {
 				var aAllContexts = oBinding.getAllCurrentContexts();
 
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
 				assert.strictEqual(aAllContexts.length, 1);
 				assert.strictEqual(aAllContexts.shift(), oInactiveContext, "inactive kept intact");
 				assert.strictEqual(oInactiveContext.isInactive(), true, "created, *inactive*");
@@ -70742,6 +70877,7 @@ sap.ui.define([
 					that.waitForChanges(assert, "simulate rerendering")
 				]);
 			}).then(function () {
+				assert.strictEqual(oBinding.getSelectionCount(), 0);
 				assert.notOk(oCreatedContext.isSelected(), "destroyed");
 				// context is already destroyed
 				// assert.notOk(oCreatedContext.getProperty("@$ui5.context.isSelected"));
@@ -77046,6 +77182,9 @@ sap.ui.define([
 	// the selection state of them is reset.
 	// The same applies if these methods are called on a suspended binding and the binding gets
 	// resumed.
+	// If a refresh uses a specific group ID, the selection validation request uses the same group
+	// ID.
+	// If a kept-alive context is deselected via selection validation, it remains kept alive.
 	// JIRA: CPOUI5ODATAV4-2915
 	["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
 		[false, true].forEach((bSuspend) => {
@@ -77103,12 +77242,15 @@ sap.ui.define([
 			const oListBinding = this.oView.byId("table").getBinding("items");
 			const [oContext1,, oContext3] = oListBinding.getAllCurrentContexts();
 			oContext1.setSelected(true);
+			oContext3.setKeepAlive(true);
 			oContext3.setSelected(true);
 
 			await this.waitForChanges(assert, "de-/select '1' and '3'");
 
+			const sExpectedGroupId = sMethod === "refresh" && !bSuspend ? "$auto.foo" : "$auto";
 			this.expectRequest({ // ODLB#validateSelection
 					batchNo : 2,
+					groupId : sExpectedGroupId,
 					url : "SalesOrderList?custom=baz&$apply=A.P.P.L.E."
 						+ "&$filter=LifecycleStatus eq 'N' and (SalesOrderID ge '1') and"
 							+ " (SalesOrderID eq '1' or SalesOrderID eq '3')"
@@ -77122,6 +77264,7 @@ sap.ui.define([
 			if (sMethod === "refresh" || sMethod === "requestSideEffects") {
 				this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
 						batchNo : 2,
+						groupId : sExpectedGroupId,
 						url : "SalesOrderList?$apply=A.P.P.L.E.&"
 							+ "$expand=SO_2_BP($select=BusinessPartnerID)"
 							+ "&$filter=SalesOrderID eq '1' or SalesOrderID eq '3'&custom=baz"
@@ -77144,6 +77287,7 @@ sap.ui.define([
 			}
 			this.expectRequest({ // "refresh"
 					batchNo : 2,
+					groupId : sExpectedGroupId,
 					url : sRefreshUrl
 				}, {
 					"@odata.count" : "3",
@@ -77164,7 +77308,7 @@ sap.ui.define([
 			let oPromise;
 			switch (sMethod) {
 				case "refresh":
-					oPromise = oListBinding.requestRefresh();
+					oPromise = oListBinding.requestRefresh(bSuspend ? undefined : "$auto.foo");
 					break;
 				case "requestSideEffects":
 					oPromise = oListBinding.getHeaderContext().requestSideEffects([""]);
@@ -77185,7 +77329,8 @@ sap.ui.define([
 			]);
 
 			checkSelected(assert, oContext1, true);
-			assert.strictEqual(oContext3.getBinding(), undefined, "destroyed");
+			checkSelected(assert, oContext3, false);
+			assert.strictEqual(oContext3.isKeepAlive(), true);
 		});
 		});
 	});

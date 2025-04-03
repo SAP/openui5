@@ -25,6 +25,8 @@ sap.ui.define([
 
 	BooksTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
+		// url-param sap-ui-xx-p13n-hide-descriptions
+		const hideDescriptionsParam = window.location.search.includes("sap-ui-xx-p13n-hide-descriptions=true");
 
 		return oODataProps.then(function (aProperties) {
 
@@ -35,7 +37,6 @@ sap.ui.define([
 				if (oProperty.name === "title") {
 					oProperty.caseSensitive = false;
 				}
-
 				if (oProperty.name === "subgenre_code") {
 					oProperty.label = "Sub Genre";
 					oProperty.visualSettings = {widthCalculation: {maxWidth: 10}}; // as Text is normally short
@@ -51,6 +52,18 @@ sap.ui.define([
 					oProperty.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown too
 				} else if (oProperty.name === "descr") {
 					oProperty.visualSettings = {widthCalculation: {minWidth: 40}};
+				}
+
+
+				if (hideDescriptionsParam) {
+					// relevant for showing the hideDescription feature of the SelectionPanel
+					if (oProperty.name === "subgenre_code") {
+						oProperty.visible = true;
+					}
+					// relevant for showing the hideDescription feature of the SelectionPanel
+					if (oProperty.name === "genre_code") {
+						oProperty.text = "subgenre_code";
+					}
 				}
 
 			});

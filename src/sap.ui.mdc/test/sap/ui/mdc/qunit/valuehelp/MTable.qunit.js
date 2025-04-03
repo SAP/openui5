@@ -583,15 +583,34 @@ sap.ui.define([
 				setTimeout(() => { // as waiting for Promise
 					// as JSOM-Model does not support $search all items are returned, but test for first of result
 					assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
-					assert.deepEqual(oCondition, Condition.createItemCondition("I2", "Item 2"), "typeaheadSuggested event condition");
+					assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition (selected condition for singleValue)");
 					assert.equal(sFilterValue, "I", "typeaheadSuggested event filterValue");
-					assert.equal(sItemId, aItems[1].getId(), "typeaheadSuggested event itemId");
+					assert.equal(sItemId, aItems[0].getId(), "typeaheadSuggested event itemId");
 					assert.equal(iItems, 3, "typeaheadSuggested event items");
 					assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
 
-					oContainer.getValueHelpDelegate.restore();
-					ValueHelpDelegateV4.updateBinding.restore();
-					fnDone();
+					oTable.setMode(ListMode.MultiSelect);
+					const oConfig = oMTable.getConfig();
+					oConfig.maxConditions = -1;
+					oConfig.caseSensitive = true;
+					oMTable.setConfig(oConfig);
+					oMTable.setCaseSensitive(true); // also triggers new filtering
+					assert.ok(oListBinding.changeParameters.calledWith({$search: "I"}), "ListBinding.changeParameters called with search string");
+
+					iTypeaheadSuggested = 0;
+					setTimeout(() => { // as waiting for Promise
+						// as JSOM-Model does not support $search all items are returned, but test for first of result
+						assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+						assert.deepEqual(oCondition, Condition.createItemCondition("I2", "Item 2"), "typeaheadSuggested event condition (selected condition ignored in multi-select)");
+						assert.equal(sFilterValue, "I", "typeaheadSuggested event filterValue");
+						assert.equal(sItemId, aItems[1].getId(), "typeaheadSuggested event itemId");
+						assert.equal(iItems, 3, "typeaheadSuggested event items");
+						assert.equal(bTypeaheadCaseSensitive, true, "typeaheadSuggested event caseSensitive");
+
+						oContainer.getValueHelpDelegate.restore();
+						ValueHelpDelegateV4.updateBinding.restore();
+						fnDone();
+					}, 0);
 				}, 0);
 			}, 0);
 		}, 0);

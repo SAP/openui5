@@ -71,7 +71,7 @@ sap.ui.define([
 			properties: {
 				value: {
 					type: "string",
-					defaultValue: "sap-icon://accept"
+					defaultValue: ""
 				},
 				allowFile: {
 					type: "boolean",
@@ -89,6 +89,13 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true
 				}
+			},
+			events: {
+				/**
+				 * Fired when selection change
+				 * @since 1.134
+				 */
+				change: {}
 			}
 		},
 		renderer: {
@@ -294,6 +301,7 @@ sap.ui.define([
 					oSelect.getDomRef("hiddenSelect").addEventListener("focus", this._boundFocusBack);
 				} else {
 					this.setValue(sSelectedKey);
+					this.fireChange(oEvent);
 				}
 			}.bind(this)
 		});
@@ -537,13 +545,16 @@ sap.ui.define([
 				oIconDomRef.children[0].title = oResourceBundle.getText("EDITOR_IMAGE_CUSTOMICON_TOOLTIP");
 				oIcon.onclick = function(oEvent) {
 					oEvent.stopImmediatePropagation();
-					oIcon._oImagePopover = new Popover(oIcon.getId() + "-imagePopover", {
-						placement: "Right",
-						showHeader: false,
-						content: new Image(oIcon.getId() + "-imagePopover-image", {
-							src: sCustomImage
-						}).addStyleClass("image")
-					}).addStyleClass("sapUiIntegrationImageSelect");
+					if (!oIcon._oImagePopover) {
+						oIcon._oImagePopover = new Popover(oIcon.getId() + "-imagePopover", {
+							placement: "Right",
+							showHeader: false
+						}).addStyleClass("sapUiIntegrationImageSelect");
+					}
+					oIcon._oImagePopover.destroyContent();
+					oIcon._oImagePopover.addContent(new Image(oIcon.getId() + "-imagePopover-image", {
+						src: sCustomImage
+					}).addStyleClass("image"));
 					oIcon._oImagePopover.openBy(oIcon);
 				};
 			} else {

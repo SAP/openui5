@@ -37,7 +37,7 @@
 			<headerToolbar>
 				<Toolbar id="lineItemsToolbar">
 					<Title id="lineItemsTitle" level="H2"
-						text="{headerContext>$count} Sales Order Line Items"/>
+						text="{headerContext>$count} Sales Order Line Items ({headerContext>$selectionCount} selected)"/>
 					<ToolbarSpacer/>
 					<Button press=".onCreateLineItem" tooltip="Create Line Item"
 						id="createLineItem" icon="sap-icon://add" text="Create"/>

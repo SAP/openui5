@@ -201,6 +201,8 @@
 			},
 			"icon": {
 				"label": "Icon",
+				"type": "icon",
+				"required": true,
 				"placeholder": "placeholder of icon"
 			},
 			"text": {
@@ -304,14 +306,14 @@
 			},
 			"icon": {
 				"label": "Icon",
+				"type": "icon",
 				"defaultValue": "sap-icon://add",
-				"placeholder": "placeholder of icon",
+				"allowFile": false,
 				"column": {
 					"hAlign": "Center",
 					"width": "4rem"
 				},
 				"cell": {
-					"type": "Icon",
 					"color": "{iconcolor}"
 				}
 			},
@@ -414,13 +416,14 @@
 			},
 			"icon": {
 				"label": "Icon",
+				"type": "Icon",
+				"allowFile": false,
 				"defaultValue": "sap-icon://add",
 				"column": {
 					"hAlign": "Center",
 					"width": "4rem"
 				},
 				"cell": {
-					"type": "Icon",
 					"color": "{iconcolor}"
 				}
 			},
@@ -669,14 +672,15 @@
 			},
 			"icon": {
 				"label": "Icon",
+				"type": "icon",
 				"defaultValue": "sap-icon://add",
 				"placeholder": "placeholder of icon",
+				"required": true,
 				"column": {
 					"hAlign": "Center",
 					"width": "4rem"
 				},
 				"cell": {
-					"type": "Icon",
 					"color": "{iconcolor}"
 				}
 			},
@@ -770,7 +774,8 @@
 					"url": "./../objectWithRequestList.json"
 				},
 				"path": "/values"
-			}
+			},
+			"allowAdd": true
 		},
 		"properties": {
 			"key": {
@@ -781,13 +786,14 @@
 			},
 			"icon": {
 				"label": "Icon",
+				"type": "icon",
+				"allowFile": false,
 				"defaultValue": "sap-icon://add",
 				"column": {
 					"hAlign": "Center",
 					"width": "4rem"
 				},
 				"cell": {
-					"type": "Icon",
 					"color": "{iconcolor}"
 				}
 			},

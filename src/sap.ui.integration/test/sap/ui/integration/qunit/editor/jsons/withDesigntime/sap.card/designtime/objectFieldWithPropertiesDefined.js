@@ -14,7 +14,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								"label": "Key"
 							},
 							"icon": {
-								"label": "Icon"
+								"label": "Icon",
+								"type": "icon"
 							},
 							"text": {
 								"label": "Text",

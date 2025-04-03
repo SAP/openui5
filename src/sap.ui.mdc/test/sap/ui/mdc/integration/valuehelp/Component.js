@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent", "sap/base/util/LoaderExtensions"
+	"sap/ui/core/UIComponent", "sap/base/util/LoaderExtensions", "sap/ui/v4demo/view/App"
 ], function (UIComponent, LoaderExtensions) {
 
 	"use strict";

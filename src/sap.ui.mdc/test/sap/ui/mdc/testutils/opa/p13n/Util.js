@@ -34,7 +34,8 @@ sap.ui.define([
 			movetobottom: "sap-icon://expand-group",
 			movedown: "sap-icon://navigation-down-arrow",
 			moveup: "sap-icon://navigation-up-arrow",
-			group: "sap-icon://group-2"
+			group: "sap-icon://group-2",
+			filter: "sap-icon://filter"
 		}
 
 	};

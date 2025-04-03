@@ -38,7 +38,9 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Float",
 	"sap/m/HBox",
-	"sap/ui/core/CustomData"
+	"sap/ui/core/CustomData",
+	"sap/ui/integration/editor/fields/viz/IconSelect",
+	"sap/m/Image"
 ], function (
 	BaseField,
 	Text,
@@ -75,7 +77,9 @@ sap.ui.define([
 	IntegerType,
 	FloatType,
 	HBox,
-	CustomData
+	CustomData,
+	IconSelect,
+	Image
 ) {
 	"use strict";
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
@@ -454,6 +458,7 @@ sap.ui.define([
 				if (sCellType === "Text" && oCell.editable) {
 					sCellType = "Input";
 				}
+				sCellType = sCellType.toLowerCase();
 				switch (sCellType) {
 					case "int":
 					case "number":
@@ -465,7 +470,7 @@ sap.ui.define([
 						oCellTemplate = new Text(oCellSettings);
 						break;
 					case "string":
-					case "Text":
+					case "text":
 						oCellSettings = {
 							text: sDefaultValue,
 							wrapping: false
@@ -509,12 +514,39 @@ sap.ui.define([
 						oCellTemplate = new Text(oCellSettings);
 						oCellTemplate.setModel(oTextSettingsModel,"settings");
 						break;
-					case "Icon":
-						oCellSettings = {
-							src: sDefaultValue
+					case "icon":
+						var oImageSettings = {
+							src: sDefaultValue,
+							visible: "{= $" + sDefaultValue + ".indexOf('data:image/') === 0}",
+							press: function(oEvent) {
+								var oControl = oEvent.getSource();
+								if (!oControl._oImagePopover) {
+									oControl._oImagePopover = new Popover(oControl.getId() + "-imagePopover", {
+										placement: "Right",
+										showHeader: false
+									}).addStyleClass("sapUiIntegrationImageSelect");
+								}
+								oControl._oImagePopover.destroyContent();
+								oControl._oImagePopover.addContent(new Image(oControl.getId() + "-imagePopover-image", {
+									src: oControl.getSrc()
+								}).addStyleClass("image"));
+								oControl._oImagePopover.openBy(oControl);
+							}
 						};
-						oCellSettings = merge(oCellSettings, oCell);
-						oCellTemplate = new Icon(oCellSettings);
+						var oIconSettings = {
+							src: sDefaultValue,
+							visible: "{= $" + sDefaultValue + ".indexOf('data:image/') === -1}"
+						};
+						oImageSettings = merge(oImageSettings, oCell);
+						oIconSettings = merge(oIconSettings, oCell);
+						oCellTemplate = new HBox({
+							alignItems: "Center",
+							justifyContent: "Center",
+							items: [
+								new Image(oImageSettings).addStyleClass("imageCell"),
+								new Icon(oIconSettings)
+							]
+						});
 						break;
 					case "boolean":
 						oCellSettings = {
@@ -524,7 +556,7 @@ sap.ui.define([
 						oCellSettings = merge(oCellSettings, oCell);
 						oCellTemplate = new CheckBox(oCellSettings);
 						break;
-					case "Switch":
+					case "switch":
 						oCellSettings = {
 							state: sDefaultValue,
 							enabled: false
@@ -532,7 +564,7 @@ sap.ui.define([
 						oCellSettings = merge(oCellSettings, oCell);
 						oCellTemplate = new Switch(oCellSettings);
 						break;
-					case "Link":
+					case "link":
 						oCellSettings = {
 							text: sDefaultValue,
 							target: "_blank",
@@ -541,7 +573,7 @@ sap.ui.define([
 						oCellSettings = merge(oCellSettings, oCell);
 						oCellTemplate = new Link(oCellSettings);
 						break;
-					case "ComboBox":
+					case "combobox":
 						var oItem = this.addModelPrefix(oCell.values.item, "settings");
 						oCellSettings = {
 							width: "100%",
@@ -549,7 +581,8 @@ sap.ui.define([
 							editable: false,
 							items: {
 								path: "settings>" + oCell.values.data.path,
-								template: new ListItem(oItem)
+								template: new ListItem(oItem),
+								templateShareable: false
 							}
 						};
 						if (oCell.values.sorter) {
@@ -564,7 +597,7 @@ sap.ui.define([
 						oCellTemplate = new ComboBox(oCellSettings);
 						oCellTemplate.setModel(oComboBoxSettingsModel,"settings");
 						break;
-					case "Input":
+					case "input":
 						oCellSettings = {
 							value: sDefaultValue
 						};
@@ -1193,7 +1226,7 @@ sap.ui.define([
 				visible: "{= ${/editMode} === 'Properties'}",
 				required: oProperty.required || false
 				//wrapping: false
-			});
+			}).addStyleClass("propertyLabel");
 			aPropertyContentList.push(oLable);
 			var oValueControl;
 			oProperty.values = oProperty.values || (oProperty.cell && oProperty.cell.values);
@@ -1210,6 +1243,9 @@ sap.ui.define([
 			delete oPropertySettings.cell;
 			delete oPropertySettings.values;
 			var oSettings;
+			if (oProperty.type) {
+				oProperty.type = oProperty.type.toLowerCase();
+			}
 			switch (oProperty.type) {
 				case "boolean":
 					if (oProperty.cell && oProperty.cell.type === "Switch") {
@@ -1267,7 +1303,7 @@ sap.ui.define([
 					oSettings = merge(oSettings, oPropertySettings);
 					oValueControl = new Input(sPropertyControlId, oSettings);
 					break;
-				case "ComboBox":
+				case "combobox":
 					var oItem = this.addModelPrefix(oProperty.values.item, "settings");
 					oSettings = {
 						width: "100%",
@@ -1276,7 +1312,8 @@ sap.ui.define([
 						editable: oConfig.editable === false ? false : "{= ${" + sPathPrefix + "_dt/_editable} !== false}",
 						items: {
 							path: "settings>" + oProperty.values.data.path,
-							template: new ListItem(oItem)
+							template: new ListItem(oItem),
+							templateShareable: false
 						},
 						change: fnChange
 					};
@@ -1333,6 +1370,22 @@ sap.ui.define([
 					};
 					oSettings = merge(oSettings, oPropertySettings);
 					oValueControl = new TextArea(sPropertyControlId, oSettings);
+					break;
+				case "icon":
+					var oIconSettingsModel = new JSONModel({
+						uuidPath: sPathPrefix + "_dt/_uuid",
+						property: n
+					});
+					oSettings = {
+						value: "{" + sPathPrefix + n + "}",
+						allowNone: !oProperty.required && oProperty.allowNone !== false,
+						allowFile: oProperty.allowFile !== false,
+						visible: "{= ${/editMode} === 'Properties'}",
+						editable: oConfig.editable === false ? false : "{= ${" + sPathPrefix + "_dt/_editable} !== false}",
+						change: fnChange
+					};
+					oValueControl = new IconSelect(sPropertyControlId, oSettings);
+					oValueControl.setModel(oIconSettingsModel,"settings");
 					break;
 				default:
 					var oTextSettingsModel = new JSONModel({

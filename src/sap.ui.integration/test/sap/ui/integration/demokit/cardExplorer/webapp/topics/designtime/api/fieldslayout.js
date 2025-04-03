@@ -71,7 +71,7 @@ function init() {
 					}
 					CardEditor.prototype._startEditor.apply(this, arguments);
 				};
-				oAdvancedEditor.attachReady(function (oEditor, i) {
+				oAdvancedEditor.attachFieldReady(function (oEditor, i) {
 					domElement.innerHTML = "";
 					oAdvancedEditor.placeAt(domElement);
 				}.bind(null, oEditor, i));
@@ -104,7 +104,7 @@ function init() {
 								}
 							}
 						});
-						oEditor.attachReady(function (oEditor, i) {
+						oEditor.attachFieldReady(function (oEditor, i) {
 							aSamples[i].innerHTML = "";
 							oEditor.placeAt(aSamples[i]);
 						}.bind(null, oEditor, i));

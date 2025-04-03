@@ -200,6 +200,23 @@ sap.ui.define([
 		return oMetadataProxy;
 	}
 
+	let pCommandPool;
+
+	const _loadCommandPool = () => {
+		pCommandPool ??= new Promise((resolve, reject) => {
+			sap.ui.require(["sap/ui/core/_CommandPool"], resolve, reject);
+		});
+
+		return pCommandPool;
+	};
+
+	const _resolveCommandsInManifest = async (oManifest) => {
+		if (oManifest?.getEntry("/sap.ui5/commands")) {
+			const _CommandPool = await _loadCommandPool();
+			_CommandPool.resolve(oManifest);
+		}
+	};
+
 	/**
 	 * As <code>Component</code> is an abstract base class for components, applications should not call the constructor.
 	 * For many use cases the static {@link #.create Component.create} factory can be used to instantiate a <code>Component</code>.
@@ -2120,9 +2137,12 @@ sap.ui.define([
 
 					// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
 					return {};
-				}).then(function(oManifestJson) {
+				}).then(async function(oManifestJson) {
 					if (oManifestJson) {
 						oMetadata._applyManifest(oManifestJson, true /* skip processing */);
+						// Resolve command descriptions
+						await _resolveCommandsInManifest(oMetadata.getManifestObject());
+
 						return oMetadata.getManifestObject()._processI18n(true);
 					}
 				});
@@ -2548,6 +2568,7 @@ sap.ui.define([
 		return ComponentRegistry.get(sId);
 	};
 
+
 	/**
 		 * Internal loading method used by the factory methods.
 		 *
@@ -2946,7 +2967,7 @@ sap.ui.define([
 			// // we have a manifest, so we can register the module path for the component
 			// // and resolve any "ui5://" pseudo-protocol URLs inside.
 			// // This needs to be done before we create the "afterPreload" models.
-			oManifest = oManifest.then(function(oManifest) {
+			oManifest = oManifest.then(async function(oManifest) {
 				// if a URL is given we register this URL for the name of the component:
 				// the name is the package in which the component is located (dot separated)
 				var sComponentName = oManifest.getComponentName();
@@ -2957,6 +2978,9 @@ sap.ui.define([
 
 				// define resource roots, so they can be respected for "ui5://..." URL resolution
 				oManifest.defineResourceRoots();
+
+				// Resolve command descriptions
+				await _resolveCommandsInManifest(oManifest);
 
 				oManifest._preprocess({
 					resolveUI5Urls: true,
@@ -3208,7 +3232,12 @@ sap.ui.define([
 					//  urls start with "ui5://" are already resolved in the oManifest.getJson() and
 					//  ComponentMetadata needs to keep them unresolved until the resource roots are set.
 					oMetadata._applyManifest(JSON.parse(JSON.stringify(oManifest.getRawJson())), true /* skip processing */);
-					aPromises.push(oMetadata.getManifestObject()._processI18n(true));
+
+					// Resolve commands description
+					const pI18n = _resolveCommandsInManifest(oMetadata.getManifestObject()).then(() => {
+						return oMetadata.getManifestObject()._processI18n(true);
+					});
+					aPromises.push(pI18n);
 				}
 
 				aPromises.push(loadManifests(oMetadata));
@@ -3232,7 +3261,10 @@ sap.ui.define([
 							process: false,
 							activeTerminologies: aActiveTerminologies
 						});
-						pProcessI18n = oManifest._processI18n(true);
+
+						pProcessI18n = _resolveCommandsInManifest(oMetadata.getManifestObject()).then(() => {
+							return oManifest._processI18n(true);
+						});
 					}
 
 					// prepare the loaded class and resolve with it

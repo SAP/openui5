@@ -1034,6 +1034,42 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test file stays selected after click over the file uploader", async function (assert) {
+		// Prepare
+		var oFileUploader = new FileUploader({
+				sameFilenameAllowed: true
+			}),
+			file = new File(["test"], "test.txt", {
+				type: "text/plain"
+			});
+
+		oFileUploader.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		var oFileInput = oFileUploader.getDomRef("fu");
+
+		// Act
+		var oTransfer = new DataTransfer();
+		oTransfer.items.add(file);
+		oFileInput.files = oTransfer.files;
+		oFileUploader.setValue(file.name);
+		await nextUIUpdate();
+
+		// Assert
+		assert.equal(oFileUploader.getValue(), "test.txt", "File name is set correctly");
+		assert.equal(oFileInput.files.length, 1, "File is selected");
+
+		// Act
+		oFileUploader.onclick({ target: oFileUploader.getDomRef()});
+		await nextUIUpdate();
+
+		// Assert
+		assert.equal(oFileUploader.getValue(), "test.txt", "File name is still set correctly");
+		assert.equal(oFileInput.files.length, 1, "File is still selected");
+
+		// Cleanup
+		oFileUploader.destroy();
+	});
+
 	/**
 	 * Test private functions
 	 */

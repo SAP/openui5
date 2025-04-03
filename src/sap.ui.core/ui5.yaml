@@ -245,6 +245,7 @@ builder:
             - sap/ui/core/boot/config.js
             - sap/ui/core/boot/DOM.js
             - sap/ui/core/boot/FieldHelpEndpoint.js
+            - sap/ui/core/boot/KeyboardInteractionEndpoint.js
             - sap/ui/core/boot/FrameOptions.js
             - sap/ui/core/boot/Init.js
             - sap/ui/core/boot/loadBootManifest.js
@@ -304,6 +305,7 @@ builder:
               - sap/ui/core/boot/config.js
               - sap/ui/core/boot/DOM.js
               - sap/ui/core/boot/FieldHelpEndpoint.js
+              - sap/ui/core/boot/KeyboardInteractionEndpoint.js
               - sap/ui/core/boot/FrameOptions.js
               - sap/ui/core/boot/Init.js
               - sap/ui/core/boot/loadBootManifest.js
@@ -422,6 +424,7 @@ builder:
               - sap/ui/core/boot/config.js
               - sap/ui/core/boot/DOM.js
               - sap/ui/core/boot/FieldHelpEndpoint.js
+              - sap/ui/core/boot/KeyboardInteractionEndpoint.js
               - sap/ui/core/boot/FrameOptions.js
               - sap/ui/core/boot/Init.js
               - sap/ui/core/boot/loadBootManifest.js

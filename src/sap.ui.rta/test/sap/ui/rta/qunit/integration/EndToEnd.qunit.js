@@ -1,8 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
@@ -16,8 +14,6 @@ sap.ui.define([
 	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"
 ], function(
-	Layer,
-	VersionsAPI,
 	RuntimeAuthoring,
 	RtaUtils,
 	OverlayRegistry,
@@ -177,7 +173,7 @@ sap.ui.define([
 					this.oCompanyCodeFieldOverlay.setSelected(true);
 					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(async function() {
 						var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
-						QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
+						QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems().find((oItem) => oItem.getIcon() === "sap-icon://add").getDomRef());
 						await nextUIUpdate();
 
 						oDialog.attachOpened(async function() {
@@ -289,9 +285,9 @@ sap.ui.define([
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
-				var oContextMenuItem = oMenu.getItems()[1];
+				var oContextMenuItem = oMenu.getItems().find((oItem) => oItem.getKey() === "CTX_ADD_ELEMENTS_AS_SIBLING");
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
-				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
+				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems().find((oItem) => oItem.getIcon() === "sap-icon://add").getDomRef());
 				await nextUIUpdate();
 			}.bind(this));
 		});

@@ -4,6 +4,7 @@
 /* ================================================*/
 
 .sapUiIntCard {
+
 	.sapMListTblHeader,
 	.sapMLIBTypeInactive {
 		cursor: default;
@@ -31,11 +32,12 @@
 	}
 
 	.sapFCardHeader {
-		box-shadow: @sapUiContentHeaderShadow;
-		border-radius: @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius 0 0;
+		box-shadow: var(--sapContent_HeaderShadow);
+		border-radius: var(--sapElement_BorderCornerRadius) var(--sapElement_BorderCornerRadius) 0 0;
 	}
 
 	&.sapMDialogDraggable .sapFCardHeader {
+
 		.sapMNC,
 		.sapFCardStatus {
 			cursor: text;
@@ -47,36 +49,36 @@
 	}
 
 	.sapUiIntCard {
-		border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
+		border-radius: 0 0 var(--sapElement_BorderCornerRadius) var(--sapElement_BorderCornerRadius);
 
 		.sapFCardFilterBar {
 			border-bottom: none;
-			box-shadow: @sapUiContentHeaderShadow;
+			box-shadow: var(--sapContent_HeaderShadow);
 		}
 
 		.sapFCardContent {
 			overflow: auto;
-			border-radius: 0 0 @sapUiElementBorderCornerRadius @sapUiElementBorderCornerRadius;
+			border-radius: 0 0 var(--sapElement_BorderCornerRadius) var(--sapElement_BorderCornerRadius);
 		}
 
-		.sapFCardObjectContent>.sapMVBox {
+		.sapFCardObjectContent > .sapMVBox {
 			padding-bottom: 1rem;
 		}
 
 		.sapFCardFooter {
-			border-top: 1px solid @sapUiPageFooterBorderColor;
+			border-top: 1px solid var(--sapPageFooter_BorderColor);
 			padding-top: 0.25rem;
-   			padding-bottom: 0.25rem;
+			padding-bottom: 0.25rem;
 		}
 	}
 
 	&.sapMDialog:not(.sapUiResponsiveContentPadding):not(.sapUiContentPadding) .sapMDialogScroll {
-		padding-bottom: 0px;
-		padding-top: 0px;
+		padding-bottom: 0;
+		padding-top: 0;
 	}
 
 	&.sapMDialog {
-		min-height: 5.5rem;  // 2.75 + 2.75, which is the min-height of the content of the Dialog plus the footer of the Card;
+		min-height: 5.5rem; /* 2.75 + 2.75, which is the min-height of the content of the Dialog plus the footer of the Card; */
 	}
 }
 
@@ -100,8 +102,8 @@
 	visibility: hidden;
 }
 
-.sapUiIntCard .sapFCardBaseContent.sapFCardBaseContentHasMessageLoading>.sapUiLocalBusyIndicator {
-	background-color: @sapUiTileBackground;
+.sapUiIntCard .sapFCardBaseContent.sapFCardBaseContentHasMessageLoading > .sapUiLocalBusyIndicator {
+	background-color: var(--sapTile_Background);
 	opacity: 0.4;
 	transition: unset;
 
@@ -112,7 +114,7 @@
 
 .sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessage {
 	pointer-events: all;
-	box-shadow: 0 0 12px 0 @sapUiListBorderColor;
+	box-shadow: 0 0 12px 0 var(--sapList_BorderColor);
 	width: 100%;
 	position: absolute;
 	border-right: 0;
@@ -120,8 +122,8 @@
 	border-radius: 0;
 
 	&.sapFCardContentMessageToast {
-		background-color: @sapUiTileBackground;
-		border-color: @sapUiGroupContentBorderColor;
+		background-color: var(--sapTile_Background);
+		border-color: var(--sapGroup_ContentBorderColor);
 
 		.sapMBtn .sapMBtnInner:not(:hover):not(:active) {
 			background-color: transparent;
@@ -130,17 +132,18 @@
 	}
 
 	&.sapFCardContentMessageLoading {
-		background-color: @sapUiTileBackground;
+		background-color: var(--sapTile_Background);
 		z-index: 1;
 		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 50% 0, 25% 1px, 0 3px);
 		border-top-width: 2px;
-		border-top-color: @sapUiContentBusyColor;
+		border-top-color: var(--sapContent_BusyColor);
 		opacity: 0.6;
 		animation: sapUiIntCardLoadingMessage 2s linear infinite;
 	}
 }
 
 @keyframes sapUiIntCardLoadingMessage {
+
 	0% {
 		clip-path: polygon(0 0, 100% 0, 100% 0, 75% 0, 50% 0, 25% 1px, 0 3px);
 	}
@@ -175,6 +178,7 @@ html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer 
 }
 
 @keyframes sapUiIntCardShowMessage {
+
 	0% {
 		opacity: 0.7;
 		clip-path: polygon(0 0, 30% 1px, 30% 1px, 0 1px);
@@ -192,6 +196,7 @@ html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer 
 }
 
 html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessage:not(.sapUiIntCardMessageIconAppearFinished) {
+
 	.sapMMsgStripIcon {
 		animation: sapUiIntCardMessageIconAppear 0.5s 0.4s ease-in-out;
 		transform: scale(0);
@@ -201,6 +206,7 @@ html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer 
 }
 
 @keyframes sapUiIntCardMessageIconAppear {
+
 	0% {
 		transform: scale(0);
 	}
@@ -223,7 +229,6 @@ html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer 
 
 html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer .sapFCardContentMessageClosing:not(.sapFCardContentMessageLoading) {
 	animation: sapUiIntCardHideMessage 0.4s ease-in-out;
-
 }
 
 .sapFCardContentMessage.sapUiIntCardHideMessageFinished {
@@ -232,6 +237,7 @@ html[data-sap-ui-animation='on'] .sapUiIntCard .sapFCardContentMessageContainer 
 }
 
 @keyframes sapUiIntCardHideMessage {
+
 	0% {
 		opacity: 1;
 		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);

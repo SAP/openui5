@@ -25,11 +25,11 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/Log",
 	"sap/ui/base/Event",
+	"sap/m/upload/UploadItemConfiguration",
 	"sap/m/Dialog",
 	"sap/m/upload/FilePreviewDialog",
-	"sap/m/upload/UploadItemConfiguration",
 	"sap/m/UploadCollectionItem"
-], function(Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, Dialog, FilePreviewDialog, UploadItemConfiguration, UploadCollectionItem) {
+], function(Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog, FilePreviewDialog, UploadCollectionItem) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -707,6 +707,80 @@ sap.ui.define([
 		assert.ok(oActionPlaceholderControl?.hasStyleClass("customStyleClass"), "Custom class customClass1 is added to the action control");
 
 		oTable.destroy();
+	});
+
+	QUnit.test("File rename must trigger itemRenamed event and must not trigger model updates", async function (assert) {
+
+		const done = assert.async();
+
+		// arrange
+		const oTable = await createMDCTable();
+
+		const oRow = new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			rowConfiguration: oRow
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+		await nextUIUpdate();
+
+		//act
+		const oComputedItem = new UploadItem({
+			fileName: "Invoice summary.doc",
+			mediaType: "application/msword",
+			fileSize: 200
+		});
+		this.stub(oUploadSetwithTablePlugin, "getItemForContext").returns(oComputedItem);
+		const oDialog = oUploadSetwithTablePlugin._getFileRenameDialog(oComputedItem);
+
+		const oInvalidateSpy = this.spy(oComputedItem, "invalidate");
+		const oItemRenamedEventSpy = this.spy(oUploadSetwithTablePlugin, "fireItemRenamed");
+
+		function fnRenamedHandler() {
+			assert.ok(oItemRenamedEventSpy.called , "Item renamed event is fired successfully");
+			assert.ok(oInvalidateSpy.notCalled, "Item model is not updated");
+			done();
+		}
+
+		oDialog.attachAfterOpen(() => {
+
+			oUploadSetwithTablePlugin.attachItemRenamed(fnRenamedHandler);
+
+			const oInput = oDialog.getContent()[1];
+			const oApplyBtn = oDialog.getBeginButton();
+
+			// assert
+
+			oInput.setValue(`Invoice summary test`);
+			oInput.fireLiveChange({
+				value: oInput.getValue()
+			});
+
+			oApplyBtn.firePress();
+
+			// assert input should not have error state
+			assert.ok(oInput.getValueState() === "None", "Input value state is set to none when valid characters are entered");
+
+			oDialog.close();
+			// done();
+		});
+		this.stub(oUploadSetwithTablePlugin, "_getFileRenameDialog").callsFake(function () {
+			oDialog.open();
+			return oDialog;
+		});
+
+		const oContext = oTable?._oTable?.getItems()[0]?.getBindingContext();
+		oUploadSetwithTablePlugin.renameItem(oContext);
+		oTable.destroy();
+
 	});
 
 	QUnit.module("Plugin properties & aggregations", {

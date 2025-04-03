@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.ui.mdc.sample.field.MessageHandling",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui" : {
+		"technology" : "UI5"
+	},
+
+	"sap.ui5": {
+		"rootView": {
+			"async": true,
+			"type": "XML",
+			"viewName": "sap.ui.mdc.sample.field.MessageHandling.View",
+			"id": "MyView",
+			"height": "100%"
+		},
+		"dependencies": {
+			"minUI5Version" : "1.135.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m" : {},
+				"sap.ui.layout" : {},
+				"sap.ui.mdc" : {},
+				"sap.ui.fl" : {"lazy" : false}
+			},
+			"components" : {}
+		}
+	}
+}

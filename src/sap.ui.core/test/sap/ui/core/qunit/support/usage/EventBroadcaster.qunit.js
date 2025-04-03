@@ -5,13 +5,13 @@
 
 sap.ui.define([
 	"sap/ui/core/support/usage/EventBroadcaster",
-	"sap/ui/core/Element",
+	"sap/ui/core/ElementHooks",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/HashChanger",
 	"sap/m/Button",
 	"sap/m/Link",
 	"sap/m/Image"
-], function (EventBroadcaster, Element, Router, HashChanger, Button, Link, Image) {
+], function (EventBroadcaster, ElementHooks, Router, HashChanger, Button, Link, Image) {
 	"use strict";
 
 
@@ -20,14 +20,14 @@ sap.ui.define([
 		EventBroadcaster.disable();
 
 		// Pre-assert
-		assert.notOk(Element._broadcastEvent, "Initially there is no intercept logic attached to Element");
-		assert.notOk(Router._broadcastRouteMatched, "Initially there is no intercept logic attached to Router");
+		assert.notOk(ElementHooks.interceptEvent, "Initially there is no intercept logic attached to ElementHooks");
+		assert.notOk(Router._interceptRouteMatched, "Initially there is no intercept logic attached to Router");
 
 		// Act
 		EventBroadcaster.enable();
 
 		// Assert
-		assert.ok(Element._interceptEvent, "After enabling there is intercept logic attached to Element");
+		assert.ok(ElementHooks.interceptEvent, "After enabling there is intercept logic attached to ElementHooks");
 		assert.ok(Router._interceptRouteMatched, "After enabling there is intercept logic attached to Router");
 	});
 
@@ -36,12 +36,12 @@ sap.ui.define([
 		EventBroadcaster.enable();
 
 		// Pre-assert
-		assert.ok(Element._interceptEvent, "After enabling there is intercept logic attached to Element");
+		assert.ok(ElementHooks.interceptEvent, "After enabling there is intercept logic attached to ElementHooks");
 		assert.ok(Router._interceptRouteMatched, "After enabling there is intercept logic attached to Router");
 
 		// Act
 		EventBroadcaster.disable();
-		assert.notOk(Element._interceptEvent, "After calling #disable there is no broadcasting logic attached to Element");
+		assert.notOk(ElementHooks.interceptEvent, "After calling #disable there is no broadcasting logic attached to ElementHooks");
 		assert.notOk(Router._interceptRouteMatched, "Initially #disable is no intercept logic attached to Router");
 	});
 

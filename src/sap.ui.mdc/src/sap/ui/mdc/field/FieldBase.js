@@ -882,10 +882,13 @@ sap.ui.define([
 					// if only type-ahead but no real value help, only navigate if open
 					const oContent = this.getControlForSuggestion();
 					const bFocusInField = oContent.hasStyleClass("sapMFocus");
+					const bOpen = oValueHelp.isOpen();
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
-					oValueHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-					oValueHelp.navigate(oValueHelp.isOpen() && bFocusInField && iStep === 1 ? 0 : iStep); // on first navigation just initial selected item should be navigated
+					if (!bOpen) {
+						oValueHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value (only update if not already opened)
+					}
+					oValueHelp.navigate(bOpen && bFocusInField && iStep === 1 ? 0 : iStep); // on first navigation just initial selected item should be navigated
 				}
 			}
 		}
@@ -2830,19 +2833,43 @@ sap.ui.define([
 			this._oValueHelpRequestPromise = _waitForFormatting.call(this);
 			await this._oValueHelpRequestPromise;
 			if (!this.isFieldDestroyed()) {
-				oValueHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening ValueHelp
-				const aConditions = this._oNavigateCondition && this.getMaxConditionsForHelp() === 1 ? [this._oNavigateCondition] : this.getConditions(); // if navigated in closed state use navigated condition
-				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
-				oValueHelp.toggleOpen(!!bOpenAsTypeahed);
-				const bIsFocusInHelp = oValueHelp.isFocusInHelp();
-				this._bFocusOnValueHelp = !!oEvent.getSource && !bIsFocusInHelp; // show focus on dropdown if opened via F4 (set it only after really opened)
-				const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
-				if (!bIsFocusInHelp) {
-					// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
-					if (oContent.bValueHelpRequested) {
-						oContent.bValueHelpRequested = false; // TODO: need API
+				if (!oValueHelp.isOpen()) { // when closing clean up after close
+					const bFromKeyboard = oEvent.getParameter?.("fromKeyboard");
+					const bIsFocusInHelp = oValueHelp.isFocusInHelp();
+					const iMaxConditions = this.getMaxConditionsForHelp();
+					const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
+
+					oValueHelp.setFilterValue(this._sFilterValue); // use typed value for filtering, even if reopening ValueHelp
+					let aConditions;
+					if (this._oNavigateCondition && iMaxConditions === 1) {
+						aConditions = [this._oNavigateCondition]; // if navigated in closed state before, use navigated condition, In typeahed reopen with last suggested condition
+					} else if (this._bDirty && iMaxConditions === 1) {
+						aConditions = []; // if changed via typing (e.g. cleared) let typeahead do the work if needed
+					} else {
+						aConditions = this.getConditions();
+					}
+
+					if (bFromKeyboard && this._sFilterValue && !bIsFocusInHelp) {
+						this._sFilterValue = ""; // if dropdown manulally opened via F4 clear typeahed value
+						const sDomValue = oContent.getDOMValue?.();
+						if (oContent.selectText && sDomValue) {
+							oContent.selectText(0, sDomValue.length); // highligh whole text
+						}
+					}
+
+					_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
+
+					this._bFocusOnValueHelp = bFromKeyboard && !bIsFocusInHelp; // show focus on dropdown if opened via F4 (set it only after really opened)
+					if (!bIsFocusInHelp) {
+						// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
+						if (oContent.bValueHelpRequested) {
+							oContent.bValueHelpRequested = false; // TODO: need API
+						}
 					}
 				}
+
+				oValueHelp.toggleOpen(!!bOpenAsTypeahed);
+
 				this._oValueHelpRequestPromise = undefined;
 			}
 		}
@@ -3279,7 +3306,7 @@ sap.ui.define([
 				sItemId = oEvent.getParameter("itemId");
 			}
 
-			if (!this._sFilterValue && !this._oNavigateCondition && this.getConditions().length === 0) {
+			if (!this._sFilterValue && !this._oNavigateCondition && (this._bDirty || this.getConditions().length === 0)) {
 				// to focus first item (if none selected)
 				oValueHelp.navigate(0);
 			}

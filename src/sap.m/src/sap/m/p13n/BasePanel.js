@@ -721,6 +721,8 @@ sap.ui.define([
 
 	BasePanel.prototype._onSelectionChange = function(oEvent) {
 
+		const oSelectedItem = oEvent.getParameter("listItem");
+		this._oLastSelectedItem = oSelectedItem;
 		const aListItems = oEvent.getParameter("listItems");
 		const sSpecialChangeReason = this._checkSpecialChangeReason(oEvent.getParameter("selectAll"), oEvent.getParameter("listItems"));
 
@@ -747,6 +749,10 @@ sap.ui.define([
 			this._getMoveUpButton().setEnabled(false);
 			this._getMoveDownButton().setEnabled(false);
 			this._getMoveBottomButton().setEnabled(false);
+		}
+
+		if (this.getEnableReorder() && oSelectedItem?.isDestroyed() == false) {
+			this._handleActivated(oSelectedItem);
 		}
 	};
 
@@ -930,6 +936,7 @@ sap.ui.define([
 		this._oHoveredItem = null;
 		this._oSelectionBindingInfo = null;
 		this._oSelectedItem = null;
+		this._oLastSelectedItem = null;
 		this._oListControl = null;
 		this._oMoveTopButton = null;
 		this._oMoveUpButton = null;

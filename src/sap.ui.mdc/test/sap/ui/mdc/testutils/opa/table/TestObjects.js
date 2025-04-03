@@ -118,6 +118,50 @@ sap.ui.define([
 				 */
 				iResetThePersonalization: function(oControl) {
 					return p13nActions.iResetThePersonalization.call(this, oControl, TableActions.iOpenThePersonalizationDialog);
+				},
+				/**
+				 * Opa5 test action
+				 * 1. Opens the personalization dialog of a given table.
+				 * 2. Presses the ShowSelected button.
+				 * 3. Closes the personalization dialog.
+				 * @memberof onTheMDCTable
+				 * @method iPressShowSelected
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+				 * @returns {Promise} OPA waitFor
+				 * @public
+				 */
+				iPressShowSelected: function(oControl) {
+					return p13nActions.iPressShowSelected.call(this, oControl, TableActions.iOpenThePersonalizationDialog);
+				},
+				/**
+				 * Opa5 test action
+				 * 1. Opens the personalization dialog of a given table.
+				 * 2. Presses the ShowSelected button.
+				 * 3. Closes the personalization dialog.
+				 * @memberof onTheMDCTable
+				 * @method iSetShowSelectedFilters
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+				 * @param {boolean} bActivated Determines whether the ShowSelected toggle is activated or not
+				 * @returns {Promise} OPA waitFor
+				 * @public
+				 */
+				iSetShowSelectedFilters: function(oControl, bActivated) {
+					return p13nActions.iSetShowSelectedFilters.call(this, oControl, bActivated, TableActions.iOpenThePersonalizationDialog);
+				},
+				/**
+				 * Opa5 test action
+				 * 1. Opens the personalization dialog of a given table.
+				 * 2. Presses the ShowSelected button.
+				 * 3. Closes the personalization dialog.
+				 * @memberof onTheMDCTable
+				 * @method iSetHideDescriptionsFilters
+				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+				 * @param {boolean} bActivated Determines whether the ShowSelected toggle is activated or not
+				 * @returns {Promise} OPA waitFor
+				 * @public
+				 */
+				iSetHideDescriptionsFilters: function(oControl, bActivated) {
+					return p13nActions.iSetHideDescriptionsFilters.call(this, oControl, bActivated, TableActions.iOpenThePersonalizationDialog);
 				}
 			},
 			assertions: {

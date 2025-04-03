@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/base/future",
 	"sap/base/i18n/Localization",
-	'sap/ui/core/Manifest'
-], function(future, Localization, Manifest) {
+	'sap/ui/core/Manifest',
+	'sap/ui/core/_CommandPool'
+], function(future, Localization, Manifest, _CommandPool) {
 	"use strict";
 	/*global QUnit */
 
@@ -228,5 +229,54 @@ sap.ui.define([
 		assert.equal(oJson["sap.app"].description, "Cheap oil prices guaranteed", "App description should be correct");
 
 		Localization.setLanguage(sOldLanguage);
+	});
+
+	QUnit.module("_CommandPool");
+
+	QUnit.test("Resolve command descriptions in manifest", function(assert) {
+		const oManifest = new Manifest({
+			"sap.app": {
+				"id": "testdata.commands",
+				"type": "application",
+				"i18n": "i18n.properties",
+				"title": "{{appTitle}}",
+				"description": "{{appDescription}}",
+				"applicationVersion": {
+					"version": "1.0.0"
+				}
+			},
+			"sap.ui5": {
+				"commands": {
+					"Save": {
+						"ref": "sap:save"
+					},
+					"Create": {
+						"ref": "sap:create"
+					}
+				}
+			}
+		}, {
+			url: "test-resources/sap/ui/core/qunit/component/testdata/commands/manifest.json"
+		});
+
+		const mExpected = {
+			"Save": {
+				"shortcut": "Ctrl+S",
+				"description": "save"
+			},
+			"Create": {
+				"shortcut": "Ctrl+Enter",
+				"description": "create"
+			}
+		};
+
+		_CommandPool.resolve(oManifest);
+
+		const mCommands = oManifest.getEntry("/sap.ui5/commands");
+		assert.equal(mCommands["Create"].description, mExpected["Create"].description, "Create Command description resolved correctly.");
+		assert.equal(mCommands["Create"].shortcut, mExpected["Create"].shortcut, "Create Command shortcut resolved correctly.");
+
+		assert.equal(mCommands["Save"].description, mExpected["Save"].description, "Save Command description resolved correctly.");
+		assert.equal(mCommands["Save"].shortcut, mExpected["Save"].shortcut, "Save Command shortcut resolved correctly.");
 	});
 });

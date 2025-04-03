@@ -36,7 +36,13 @@ sap.ui.define([
 	const _applyFilters = function(aItems, oFilter, oValueHelp, oContent) {
 		const aConditions = oContent.getConditions();
 		const aContexts = FilterProcessor.apply(aItems, oFilter, (oBindingContext, sPath) => oBindingContext && oBindingContext.getProperty(sPath));
-		return aContexts.find((oContext) => !this.findConditionsForContext(oValueHelp, oContent, oContext, aConditions).length);
+
+		if (oContent.isSingleSelect() && aConditions.length > 0) {
+			// in single selection mode use already selected condition as match (reopen after navigate or typeahead should just show the last item again)
+			return aContexts[0];
+		} else {
+			return aContexts.find((oContext) => !this.findConditionsForContext(oValueHelp, oContent, oContext, aConditions).length);
+		}
 	};
 
 	/**
