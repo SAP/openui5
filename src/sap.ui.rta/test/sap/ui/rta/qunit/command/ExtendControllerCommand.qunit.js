@@ -75,6 +75,7 @@ sap.ui.define([
 			const oPreparedChange = oExtendControllerCommand.getPreparedChange();
 			assert.ok(oPreparedChange, "then the change is prepared");
 			assert.strictEqual(oPreparedChange.getChangeType(), "codeExt", "then the change type is set correctly");
+			assert.strictEqual(oPreparedChange.getLayer(), Layer.CUSTOMER_BASE, "then the layer is set correctly");
 			assert.strictEqual(oPreparedChange.getContent().codeRef, "TestCodeRef", "then the codeRef is set correctly");
 			assert.strictEqual(
 				oPreparedChange.getControllerName(),

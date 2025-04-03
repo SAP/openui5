@@ -46,7 +46,7 @@ sap.ui.define([
 		}
 	});
 
-	ExtendControllerCommand.prototype._createChange = function() {
+	ExtendControllerCommand.prototype._createChange = function(mFlexSettings) {
 		const sViewId = this.getViewId();
 		const sCodeRef = this.getCodeRef();
 		const oView = Element.getElementById(sViewId);
@@ -60,6 +60,7 @@ sap.ui.define([
 
 		const oChangeSpecificData = {
 			changeType: this.getChangeType(),
+			layer: mFlexSettings.layer,
 			codeRef: this.getCodeRef(),
 			controllerName: sControllerName,
 			reference: sReference,
