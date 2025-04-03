@@ -225,11 +225,11 @@ sap.ui.define([
 
 		onSalesOrderLineItemSelect : function (oEvent) {
 			this.setSalesOrderLineItemBindingContext(
-				oEvent.getParameters().listItem.getBindingContext());
+				oEvent.getParameter("listItem").getBindingContext());
 		},
 
 		onSalesOrderSelect : function (oEvent) {
-			this.selectSalesOrder(oEvent.getParameters().listItem.getBindingContext());
+			this.selectSalesOrder(oEvent.getParameter("listItem").getBindingContext());
 		},
 
 		onSave : function () {

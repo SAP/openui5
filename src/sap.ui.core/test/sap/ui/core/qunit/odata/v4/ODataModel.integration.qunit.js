@@ -77025,7 +77025,7 @@ make root = ${bMakeRoot}`;
 		const aEventHandlers = [];
 
 		oListBinding.attachEvent("selectionChanged", function (oEvent) {
-			aEventHandlers.shift()(oEvent.getParameters().context);
+			aEventHandlers.shift()(oEvent.getParameter("context"));
 			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 		});
 
@@ -77231,7 +77231,7 @@ make root = ${bMakeRoot}`;
 		const aEventHandlers = [];
 
 		oListBinding.attachEvent("selectionChanged", function (oEvent) {
-			aEventHandlers.shift()(oEvent.getParameters().context);
+			aEventHandlers.shift()(oEvent.getParameter("context"));
 			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 		});
 
