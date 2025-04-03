@@ -77024,7 +77024,7 @@ make root = ${bMakeRoot}`;
 		const oContext = oPropertyBinding.getContext();
 		const aEventHandlers = [];
 
-		oListBinding.attachEvent("selectionChanged", function (oEvent) {
+		oListBinding.attachSelectionChanged(function (oEvent) {
 			aEventHandlers.shift()(oEvent.getParameter("context"));
 			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 		});
@@ -77230,7 +77230,7 @@ make root = ${bMakeRoot}`;
 		const oItems = oTable.getItems();
 		const aEventHandlers = [];
 
-		oListBinding.attachEvent("selectionChanged", function (oEvent) {
+		oListBinding.attachSelectionChanged(function (oEvent) {
 			aEventHandlers.shift()(oEvent.getParameter("context"));
 			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 		});
@@ -78814,7 +78814,7 @@ make root = ${bMakeRoot}`;
 
 		const oListBinding = this.oView.byId("table").getBinding("items");
 		const aEventParameters = [];
-		oListBinding.attachEvent("separateReceived", function (oEvent) {
+		oListBinding.attachSeparateReceived(function (oEvent) {
 			aEventParameters.push(oEvent.getParameters());
 		});
 		const checkEvents = (aParameters) => {
@@ -79521,7 +79521,7 @@ make root = ${bMakeRoot}`;
 
 		const oListBinding = this.oView.byId("table").getBinding("items");
 		const aEventParameters = [];
-		oListBinding.attachEvent("separateReceived", function (oEvent) {
+		oListBinding.attachSeparateReceived(function (oEvent) {
 			aEventParameters.push(oEvent.getParameters());
 			if (bPreventDefault) {
 				oEvent.preventDefault();

@@ -9616,6 +9616,44 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("attachSelectionChanged/detachSelectionChanged", function (assert) {
+		const oBinding = this.bindList("/Set");
+
+		this.mock(oBinding).expects("attachEvent")
+			.withExactArgs("selectionChanged", "~function~", "~listener~")
+			.returns(oBinding);
+
+		// code under test
+		assert.strictEqual(oBinding.attachSelectionChanged("~function~", "~listener~"), oBinding);
+
+		this.mock(oBinding).expects("detachEvent")
+			.withExactArgs("selectionChanged", "~function~", "~listener~")
+			.returns(oBinding);
+
+		// code under test
+		assert.strictEqual(oBinding.detachSelectionChanged("~function~", "~listener~"), oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("attachSeparateReceived/detachSeparateReceived", function (assert) {
+		const oBinding = this.bindList("/Set");
+
+		this.mock(oBinding).expects("attachEvent")
+			.withExactArgs("separateReceived", "~function~", "~listener~")
+			.returns(oBinding);
+
+		// code under test
+		assert.strictEqual(oBinding.attachSeparateReceived("~function~", "~listener~"), oBinding);
+
+		this.mock(oBinding).expects("detachEvent")
+			.withExactArgs("separateReceived", "~function~", "~listener~")
+			.returns(oBinding);
+
+		// code under test
+		assert.strictEqual(oBinding.detachSeparateReceived("~function~", "~listener~"), oBinding);
+	});
+
+	//*********************************************************************************************
 [false, true].forEach(function (bHasPath, i) {
 	QUnit.test("adjustPredicate: single context #" + i, function (assert) {
 		var oBinding = this.bindList("/SalesOrderList"),

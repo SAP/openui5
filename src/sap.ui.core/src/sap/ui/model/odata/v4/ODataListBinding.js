@@ -666,6 +666,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Attach event handler <code>fnFunction</code> to the 'selectionChanged' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.136.0
+	 */
+	ODataListBinding.prototype.attachSelectionChanged = function (fnFunction, oListener) {
+		return this.attachEvent("selectionChanged", fnFunction, oListener);
+	};
+
+	/**
+	 * Attach event handler <code>fnFunction</code> to the 'separateReceived' event of this binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.136.0
+	 */
+	ODataListBinding.prototype.attachSeparateReceived = function (fnFunction, oListener) {
+		return this.attachEvent("separateReceived", fnFunction, oListener);
+	};
+
+	/**
 	 * Checks that deep create is possible in this binding.
 	 *
 	 * @throws {Error} If deep create is not possible
@@ -1497,6 +1525,36 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.detachCreateSent = function (fnFunction, oListener) {
 		return this.detachEvent("createSent", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'selectionChanged' event of this
+	 * binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.136.0
+	 */
+	ODataListBinding.prototype.detachSelectionChanged = function (fnFunction, oListener) {
+		return this.detachEvent("selectionChanged", fnFunction, oListener);
+	};
+
+	/**
+	 * Detach event handler <code>fnFunction</code> from the 'separateReceived' event of this
+	 * binding.
+	 *
+	 * @param {function} fnFunction The function to call when the event occurs
+	 * @param {object} [oListener] Object on which to call the given function
+	 * @returns {this} <code>this</code> to allow method chaining
+	 *
+	 * @public
+	 * @since 1.136.0
+	 */
+	ODataListBinding.prototype.detachSeparateReceived = function (fnFunction, oListener) {
+		return this.detachEvent("separateReceived", fnFunction, oListener);
 	};
 
 	/**
