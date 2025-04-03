@@ -238,8 +238,12 @@ sap.ui.define([
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
 			});
-
 			this.oActivateStub = sandbox.stub(VersionsAPI, "activate").resolves(true);
+
+			const oFlexInfo = JSON.parse(window.sessionStorage.getItem(`sap.ui.fl.info.${oComp.getId()}`));
+			oFlexInfo.allContextsProvided = true;
+			window.sessionStorage.setItem(`sap.ui.fl.info.${oComp.getId()}`, JSON.stringify(oFlexInfo));
+
 			return this.oRta.start().then(function() {
 				this.oRta._oVersionsModel.setProperty("/versions", [{
 					version: Version.Number.Draft,
