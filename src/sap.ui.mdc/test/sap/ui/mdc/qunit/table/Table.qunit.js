@@ -5714,6 +5714,44 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Trigger 'Export' via API", async function(assert) {
+		this.createTable({
+			enableExport: false
+		});
+		this.oTable.placeAt("qunit-fixture");
+		await this.oTable.initialized();
+		await nextUIUpdate();
+
+		const oOnExportSpy = this.spy(this.oTable, "_onExport");
+
+		assert.expect(3);
+
+		const oPromise = this.oTable.triggerExport();
+		try {
+			await oPromise;
+			assert.ok(false, "Promise should be rejected");
+		} catch (oError) {
+			assert.ok(true, "Promise rejected");
+		}
+
+		assert.ok(oOnExportSpy.notCalled, "_onExport not called");
+
+		this.oTable.setEnableExport(true);
+		this.oTable.triggerExport();
+
+		await new Promise((resolve) => {
+			sap.ui.require([
+				"sap/m/MessageBox"
+			], (MessageBox) => {
+				this.stub(MessageBox, "error").callsFake(function() {
+					assert.ok(oOnExportSpy.calledOnce, "_onExport called");
+					MessageBox.error.restore();
+					resolve();
+				});
+			});
+		});
+	});
+
 	QUnit.test("Trigger 'Export as' via keyboard shortcut", async function(assert) {
 		this.createTable({
 			enableExport: true
@@ -5838,6 +5876,15 @@ sap.ui.define([
 		assert.ok(oHandler.isA("sap.ui.export.ExportHandler"), "Parameter is a sap.ui.export.ExportHandler");
 		assert.equal(oHandler, this.oTable._oExportHandler, "Cached instance has been returned");
 
+		const oPromise = this.oTable._getExportHandler();
+		assert.ok(oPromise instanceof Promise, "Promise was returned");
+
+		await oPromise.then(function() {
+			assert.ok(true, "Promise resolved");
+		}).catch(function() {
+			assert.ok(false, "Promise rejected");
+		});
+
 		Library.load.restore();
 		oFetchExportCapabilities.restore();
 		sap.ui.require.restore();
@@ -5846,16 +5893,27 @@ sap.ui.define([
 	QUnit.test("#_getExportHandler when sap.ui.export is missing", async function(assert) {
 		this.createTable();
 
-		assert.expect(2);
+		assert.expect(5);
 
-		sinon.stub(Library, "load").returns(Promise.reject());
+		sinon.stub(Library, "load").returns(Promise.reject("test"));
 		sinon.stub(MessageBox, "error");
 
 		await this.oTable.initialized();
-		await this.oTable._getExportHandler().catch(() => {
+		await this.oTable._getExportHandler().catch((e) => {
 			assert.ok(MessageBox.error.calledOnce, "MessageBox was called");
+
 			assert.ok(MessageBox.error.calledWith(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY")),
 				"Called with proper error message");
+			assert.ok(e === "test", "Error thrown correctly");
+		});
+
+		const oPromise = this.oTable._getExportHandler();
+		assert.ok(oPromise instanceof Promise, "Promise was returned");
+
+		await oPromise.then(function() {
+			assert.ok(false, "Promise resolved");
+		}).catch(function() {
+			assert.ok(true, "Promise rejected");
 		});
 
 		Library.load.restore();
