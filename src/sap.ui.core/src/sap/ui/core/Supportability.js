@@ -33,9 +33,18 @@ sap.ui.define([
 			let bDebug = window["sap-ui-debug"] === true ||
 				BaseConfig.get({
 					name: "sapUiDebug",
-					type: BaseConfig.Type.Boolean,
+					type: BaseConfig.Type.String,
+					defaultValue: false,
 					external: true
 				});
+
+			if ( typeof bDebug === 'string' ) {
+				if ( /^(?:false|true|x|X)$/.test(bDebug) ) {
+					bDebug = bDebug !== 'false';
+				} else {
+					bDebug = false;
+				}
+			}
 
 			try {
 				bDebug = bDebug || /^(?:true|x|X)$/.test(window.localStorage.getItem("sap-ui-debug"));
