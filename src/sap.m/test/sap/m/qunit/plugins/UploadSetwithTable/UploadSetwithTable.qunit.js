@@ -24,8 +24,14 @@ sap.ui.define([
 	"sap/m/upload/UploadItem",
         "sap/m/library",
 	"sap/base/Log",
-	"sap/ui/base/Event"
-], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, mLibrary, Log,Event) {
+	"sap/ui/base/Event",
+	"sap/m/upload/UploadItemConfiguration",
+	"sap/m/Dialog",
+	"sap/m/upload/FilePreviewDialog"
+], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel,
+			qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar,
+			Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog,
+			FilePreviewDialog) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -712,7 +718,7 @@ sap.ui.define([
 		// arrange
 		const oTable = await createMDCTable();
 
-		const oRow = new sap.m.upload.UploadItemConfiguration({
+		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
 			fileUrlPath: "imageUrl",
 			fileTypePath: "mediaType",
@@ -729,7 +735,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		//act
-		const oComputedItem = new sap.m.upload.UploadItem({
+		const oComputedItem = new UploadItem({
 			fileName: "Invoice summary.doc",
 			mediaType: "application/msword",
 			fileSize: 200
@@ -1046,7 +1052,7 @@ sap.ui.define([
 		// arrange
 		const oTable = await createMDCTable();
 		const oUploadPluginInstance = new UploadSetwithTable();
-		const oPreviewDialog = new sap.m.Dialog();
+		const oPreviewDialog = new Dialog();
 
 		// act
 		oTable.addDependent(oUploadPluginInstance);
@@ -1069,10 +1075,10 @@ sap.ui.define([
 
 		// arrange
 
-		const oPreviewDialog = new sap.m.upload.FilePreviewDialog();
+		const oPreviewDialog = new FilePreviewDialog();
 
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
-		const oRow = new sap.m.upload.UploadItemConfiguration({
+		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
 			fileUrlPath: "imageUrl",
 			fileTypePath: "mediaType",
@@ -1153,10 +1159,10 @@ sap.ui.define([
 
 		// arrange
 
-		const oPreviewDialog = new sap.m.upload.FilePreviewDialog();
+		const oPreviewDialog = new FilePreviewDialog();
 
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
-		const oRow = new sap.m.upload.UploadItemConfiguration({
+		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
 			fileUrlPath: "imageUrl",
 			fileTypePath: "mediaType",
@@ -1236,10 +1242,10 @@ sap.ui.define([
 
 		// arrange
 
-		const oPreviewDialog = new sap.m.upload.FilePreviewDialog();
+		const oPreviewDialog = new FilePreviewDialog();
 
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
-		const oRow = new sap.m.upload.UploadItemConfiguration({
+		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
 			fileUrlPath: "imageUrl",
 			fileTypePath: "mediaType",
@@ -1329,10 +1335,10 @@ sap.ui.define([
 
 		// arrange
 
-		const oPreviewDialog = new sap.m.upload.FilePreviewDialog();
+		const oPreviewDialog = new FilePreviewDialog();
 
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
-		const oRow = new sap.m.upload.UploadItemConfiguration({
+		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
 			fileUrlPath: "imageUrl",
 			fileTypePath: "mediaType",
@@ -1782,7 +1788,7 @@ sap.ui.define([
 	    beforeEach: function () {
 	        this.sandbox = sinon.createSandbox();
 	        this.oUploadPlugin = new UploadSetwithTable();
-	        this.oMockItem = new sap.m.UploadCollectionItem({
+	        this.oMockItem = new UploadItem({
 	            fileName: "test-file.txt",
 	            mimeType: "text/plain"
 	        });
