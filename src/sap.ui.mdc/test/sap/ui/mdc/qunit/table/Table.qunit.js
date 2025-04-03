@@ -6175,9 +6175,7 @@ sap.ui.define([
 		"sap_horizon_dark",
 		"sap_horizon_hcb",
 		"sap_horizon_hcw",
-		"sap_fiori_3",
-		/** @deprecated As of version 1.120 */
-		"sap_belize"
+		"sap_fiori_3"
 	]) {
 		QUnit.test(sTheme + "; Export button", async function(assert) {
 			let sExpectedButtontype;

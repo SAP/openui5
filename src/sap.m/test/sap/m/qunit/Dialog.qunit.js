@@ -1043,10 +1043,6 @@ sap.ui.define([
 		assert.ok(oDialog.getDomRef(), "Dialog is rendered");
 		assert.equal(oDialog.getBeginButton(), oBBtn, "Getter of beginButton should return the button itself");
 		assert.equal(oDialog.getEndButton(), oEBtn, "Getter of endButton should return the button itself");
-		/**
-		 * @deprecated As of version 1.120
-		 */
-		assert.equal(oBBtn.$().width(), oEBtn.$().width(), "BeginButton and EndButton are with equal width");
 
 		// add button to "buttons" aggregation while begin/endButton are set
 		aButtons.forEach(function (oButton) {

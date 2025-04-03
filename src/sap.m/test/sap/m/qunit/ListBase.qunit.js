@@ -2666,10 +2666,6 @@ sap.ui.define([
 			const done = assert.async();
 
 			const aThemes = ["sap_fiori_3", "sap_horizon", "sap_horizon_dark", "sap_horizon_hcb", "sap_horizon_hcw"];
-			/**
-			 * @deprecated As of version 1.120
-			 */
-			aThemes.push("sap_belize");
 
 			assert.expect(aThemes.length + 1);
 			assert.ok(this.oListItem.getDeleteControl(true), "Delete Control exists.");
