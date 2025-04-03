@@ -212,13 +212,13 @@ sap.ui.define([
 
 		QUnit.test("when calling command factory for a addLibraries manifest and adding composite command id ...", function(assert) {
 			const sCompositeCommandId = "my-fancy-new-composite-command";
+			const oChangeContent = { libraries: {} };
+			const sChangeType = "create_ui5_addLibraries";
 			return CommandFactory.getCommandFor(this.oButton, "manifest", {
 				reference: this.sReference,
-				parameters: {
-					libraries: {}
-				},
+				parameters: oChangeContent,
 				texts: this.mTexts,
-				changeType: "create_ui5_addLibraries",
+				changeType: sChangeType,
 				appComponent: this.oMockedAppComponent
 			}, {}, {layer: this.sLayer})
 			.then(function(oManifestCommand) {
@@ -228,7 +228,8 @@ sap.ui.define([
 			}).catch((oError) => {
 				assert.strictEqual(
 					oError.message,
-					"With the given changeSpecificData, no manifest change could be created.",
+					"With the given changeSpecificData, no manifest change could be created. " +
+					`Provided change content: ${JSON.stringify(oChangeContent)} and change type: ${sChangeType}.`,
 					"then an error is thrown"
 				);
 			});

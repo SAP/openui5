@@ -14000,9 +14000,7 @@ sap.ui.define([
 			oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="table" items="{/SalesOrderList}">\
-	<ColumnListItem>\
-		<Input id="amount" value="{GrossAmount}"/>\
-	</ColumnListItem>\
+	<Input id="amount" value="{GrossAmount}"/>\
 </Table>',
 			that = this;
 
@@ -63286,15 +63284,13 @@ sap.ui.define([
 		path : \'/EMPLOYEES\',\
 		sorter : {group : true, path : \'AGE\'}\
 	}">\
-	<ColumnListItem>\
-		<Text id="age" text="{AGE}"/>\
-		<List growing="true" items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
-			<CustomListItem>\
-				<Text id="category" text="{Category}"/>\
-			</CustomListItem>\
-		</List>\
-		<Text id="name" text="{Name}"/>\
-	</ColumnListItem>\
+	<Text id="age" text="{AGE}"/>\
+	<List growing="true" items="{path : \'EMPLOYEE_2_EQUIPMENTS\', templateShareable : false}">\
+		<CustomListItem>\
+			<Text id="category" text="{Category}"/>\
+		</CustomListItem>\
+	</List>\
+	<Text id="name" text="{Name}"/>\
 </Table>';
 			//TODO <Text id="age" text="{AGE}"/> should not be needed for auto-$expand/$select here!
 

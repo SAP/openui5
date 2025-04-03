@@ -1197,19 +1197,20 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {object} oModificationPayload The modification registry entry payload
-	 * @returns {boolean} indicates enablement of global persistence
+	 * @returns {boolean|undefined} <code>undefined</code> if the given payload does not allow for persistence, or a boolean indicating enablement of global persistence
 	 */
 	Engine.prototype._determineGlobalPersistence = function(oModificationPayload) {
+		const {mode, hasVM} = oModificationPayload;
 
-		if (oModificationPayload.hasVM) {
-			return false;
+		if (mode === PersistenceMode.Transient) {
+			return undefined;
 		}
 
-		if (oModificationPayload.hasPP && oModificationPayload.mode !== PersistenceMode.Transient) {
-			return true;
+		if (mode === PersistenceMode.Auto) {
+			return hasVM ? false : true;
 		}
 
-		return false;
+		return mode === PersistenceMode.Global;
 	};
 
 	/**
@@ -1217,13 +1218,14 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string|sap.ui.core.Control} vControl The control id or instance
-	 * @param {function(bGlobalPersistenceEnabled:boolean)} fCallback The callback to be executed
+	 * @param {function(bGlobalPersistenceEnabled:boolean)} fCallback The callback to be executed, if change persistence is available
 	 * @returns {any} The return value of the callback
 	 */
 	Engine.prototype._runWithPersistence = function(vControl, fCallback) {
 		const {payload} = oEngine._determineModification(vControl);
 		const vGlobalPersistence = oEngine._determineGlobalPersistence(payload);
-		return fCallback(vGlobalPersistence);
+		const bPersistenceEnabled = typeof vGlobalPersistence === "boolean";
+		return bPersistenceEnabled && fCallback(vGlobalPersistence);
 	};
 
 	Engine.prototype.hasForReference = (vControl, sControlType) => {

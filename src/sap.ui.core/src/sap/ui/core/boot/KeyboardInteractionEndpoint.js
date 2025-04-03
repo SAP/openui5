@@ -89,20 +89,23 @@ sap.ui.define([
 	 * @param {MessageEvent} oEvent the message event triggered when a message is received.
 	 */
 	window.addEventListener("message", (oEvent) => {
-		const sBootstrapOrigin = new URL(sap.ui.require.toUrl(""), document.baseURI)?.origin;
-
-		// TODO: This implementation currently only supports the FE scenario, see FIORITECHP1-24625
-		if (oEvent.origin !== document.location.origin &&
-			oEvent.origin !== sBootstrapOrigin) {
-
-			Log.error(`Received message from an unauthorized origin: ${oEvent.origin}.`);
-			return;
-		}
-
 		const sService = oEvent?.data?.service;
 		const fnAction = mActions[sService];
 
-		fnAction?.(oEvent);
+		// only process messages with a known name
+		if (fnAction) {
+			const sBootstrapOrigin = new URL(sap.ui.require.toUrl(""), document.baseURI)?.origin;
+
+			// TODO: This implementation currently only supports the FE scenario, see FIORITECHP1-24625
+			if (oEvent.origin !== document.location.origin &&
+				oEvent.origin !== sBootstrapOrigin) {
+
+				Log.error(`Received message from an unauthorized origin: ${oEvent.origin}.`);
+				return;
+			}
+
+			fnAction?.(oEvent);
+		}
 	});
 
 	/**
