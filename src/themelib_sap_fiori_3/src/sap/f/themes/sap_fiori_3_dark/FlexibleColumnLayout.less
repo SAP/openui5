@@ -4,16 +4,20 @@
 /* =========================================== */
 
 .sapFFCL {
+
 	&.sapFFCLBackgroundDesignSolid {
-		background: @sapUiShellBackground;
+		background: var(--sapShell_Background);
 	}
+
 	&.sapFFCLBackgroundDesignTranslucent {
-		background: @sapUiGroupContentBackground;
+		background: var(--sapGroup_ContentBackground);
 	}
 }
+
 .sapFFCLNavigationButton,
 .sapUiSizeCompact .sapFFCLNavigationButton {
-	// Reflection: styles overwritten
+
+	/* Reflection: styles overwritten */
 	.sapMBtnInner {
 		height: 1.625rem;
 	}

@@ -1,17 +1,18 @@
 /* =========================================== */
 /* CSS for control sap.f/FlexibleColumnLayout  */
-/* Horizon theme                               */
+/* Morning Horizon theme                       */
 /* =========================================== */
 
-@_sap_f_FCL_SeparatorButtonColor: @sapUiButtonLiteTextColor;
+@_sap_f_FCL_SeparatorButtonColor: var(--sapButton_Lite_TextColor);
 
 .sapFFCL {
+
 	&.sapFFCLBackgroundDesignSolid {
-		background: @sapUiContentForegroundColor;
+		background: var(--sapContent_ForegroundColor);
 	}
 
 	&.sapFFCLBackgroundDesignTranslucent {
-		background: @sapUiGroupContentBackground;
+		background: var(--sapGroup_ContentBackground);
 	}
 
 	&.sapFFCLBackgroundDesignTransparent {
@@ -19,17 +20,17 @@
 	}
 
 	& > .sapFFCLColumnMid.sapFFCLColumnActive {
-		border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
-		border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
+		border-left: 0.0625rem solid var(--sapGroup_ContentBorderColor);
+		border-right: 0.0625rem solid var(--sapGroup_ContentBorderColor);
 	}
 
 	& > .sapFFCLColumnActive.sapFFCLColumnLastActive {
 		border-right: none;
-		border-left: 0.0625rem solid @sapUiGroupContentBorderColor;
+		border-left: 0.0625rem solid var(--sapGroup_ContentBorderColor);
 	}
 
 	& > .sapFFCLColumnActive.sapFFCLColumnFirstActive {
-		border-right: 0.0625rem solid @sapUiGroupContentBorderColor;
+		border-right: 0.0625rem solid var(--sapGroup_ContentBorderColor);
 		border-left: none;
 	}
 
@@ -41,16 +42,17 @@
 
 .sapFFCLNavigationButton,
 .sapUiSizeCompact .sapFFCLNavigationButton {
-	// Reflection: styles overwritten
+
+	/* Reflection: styles overwritten */
 	.sapMBtnInner {
 		height: 1.625rem;
 	}
 
-	&:before {
-		background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, transparent);
+	&::before {
+		background-image: linear-gradient(to top, var(--sapGroup_ContentBorderColor), transparent);
 	}
 
-	&:after {
-		background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, transparent);
+	&::after {
+		background-image: linear-gradient(to bottom, var(--sapGroup_ContentBorderColor), transparent);
 	}
 }
