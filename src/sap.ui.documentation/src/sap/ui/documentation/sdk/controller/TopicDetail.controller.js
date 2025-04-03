@@ -315,6 +315,27 @@ sap.ui.define([
 				if (this.sSubTopicId) {
 					oSection = document.getElementById(this.sSubTopicId);
 					if (oSection) {
+						if (aImgs.length) {
+							var aPromises = [];
+
+							aImgs.each(function (index, image) {
+								var oPromise = new Promise(function (resolve) {
+									image.onload = function () {
+										resolve();
+									};
+									image.onerror = function () {
+										resolve();
+									};
+								});
+
+								aPromises.push(oPromise);
+							});
+
+							Promise.all(aPromises).then(function () {
+								oSection.scrollIntoView(true);
+							});
+						}
+
 						oSection.scrollIntoView(true);
 					}
 				}
