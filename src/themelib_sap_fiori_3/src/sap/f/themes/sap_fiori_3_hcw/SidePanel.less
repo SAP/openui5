@@ -1,31 +1,38 @@
-/* ================================ */
-/* CSS for control sap.f/SidePanel  */
-/* Quartz High Contrast White theme */
-/* ================================ */
+/* ================================= */
+/* CSS for control sap.f/SidePanel   */
+/* Quartz High Contrast White theme  */
+/* ================================= */
 
-@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiObjectHeaderBorderColor, fade(@sapUiObjectHeaderBorderColor, 0);
-@_sap_ui_layout_Splitter_BarActiveDecorationColors: @sapUiObjectHeaderBorderColor, @sapUiObjectHeaderBorderColor;
+@_sap_ui_layout_Splitter_BarDecorationColors: var(--sapObjectHeader_BorderColor), fade(@sapUiObjectHeaderBorderColor, 0);
+@_sap_ui_layout_Splitter_BarActiveDecorationColors: var(--sapObjectHeader_BorderColor), var(--sapObjectHeader_BorderColor);
 
 .sapFSP {
+
 	.sapFSPSplitterBar {
+
 		&:hover {
+
 			.sapFSPSplitterBarGripIcon {
-				border-color: @sapUiButtonLiteHoverBorderColor;
-				background: @sapUiButtonLiteHoverBackground;
+				border-color: var(--sapButton_Lite_Hover_BorderColor);
+				background: var(--sapButton_Lite_Hover_Background);
 			}
 		}
 	}
+
 	.sapFSPSide {
+
 		.sapFSPSideInner {
-			border: 0.0625rem solid @sapUiGroupContentBorderColor;
+			border: 0.0625rem solid var(--sapGroup_ContentBorderColor);
 			box-sizing: content-box;
 
 			.sapFSPActionBar {
 
 				.sapFSPItem {
+
 					&.sapFSPSelected {
+
 						.sapUiIcon {
-							background-color: @sapUiContentSelectedBackground;
+							background-color: var(--sapContent_Selected_Background);
 							border-width: 0.125rem;
 						}
 
@@ -35,8 +42,9 @@
 					}
 
 					&:focus {
+
 						&::after {
-							border: 0.125rem dotted @sapUiContentFocusColor;
+							border: 0.125rem dotted var(--sapContent_FocusColor);
 						}
 					}
 				}
