@@ -3,13 +3,7 @@
 /* Quartz Dark theme                              */
 /* ============================================== */
 
-.sapUxAPObjectPageSubSectionHeaderTitle {
-	font-size: @sapMFontHeader5Size;
-	color: @sapUiGroupTitleTextColor;
-	padding-bottom: 0.5rem;
-}
-
-.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+.sapUxAPObjectPageSubSectionTitleUppercase {
 	text-transform: uppercase;
 }
 
@@ -48,4 +42,13 @@
 	.sapUxAPObjectPageLayout-Std-Phone .sapUxAPBlockContainer{
 		padding-bottom: 1rem;
 	}
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions .sapMIBar .sapMBtnInner:not(.sapMBtnTransparent):not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
+	border-color: @sapUiButtonBorderColor;
+}
+
+.sapUxAPObjectPageSubSectionHeaderActions .sapMIBar .sapMBtn:not(:hover) .sapMBtnInner.sapMBtnDefault:not(.sapMToggleBtnPressed),
+.sapUxAPObjectPageSubSectionHeaderActions .sapMIBar .sapMBtn:not(:hover) .sapMBtnInner.sapMBtnDefault {
+	background-color: @sapUiButtonBackground;
 }

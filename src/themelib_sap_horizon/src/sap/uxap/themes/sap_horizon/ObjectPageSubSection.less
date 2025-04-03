@@ -3,19 +3,17 @@
 /* Horizon theme                                  */
 /* ============================================== */
 
-.sapUxAPObjectPageSubSectionHeaderTitle {
-	font-size: @sapMFontHeader5Size;
-	color: @sapUiGroupTitleTextColor;
-	padding-bottom: 0.5rem;
-	line-height: normal;
-}
-
-.sapUxAPObjectPageSubSectionHeaderTitleUppercase {
+.sapUxAPObjectPageSubSectionTitleUppercase {
 	text-transform: uppercase;
 }
 
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPBlockContainer {
 	padding: 0 1rem;
+}
+
+.sapUiSizeCompact .sapMTB.sapUxAPObjectPageSubSectionHeaderToolbar,
+.sapMTB.sapUxAPObjectPageSubSectionHeaderToolbar {
+	height: 2.75rem;
 }
 
 /* responsive paddings */
@@ -28,15 +26,6 @@
 	&.sapUxAPObjectPageLayout-Std-Desktop-XL .sapUxAPBlockContainer {
 		padding-left: 3rem;
 		padding-right: 3rem;
-	}
-}
-
-/* compact size */
-.sapUiSizeCompact {
-	.sapUxAPObjectPageSubSectionHeaderTitle {
-		height: 1.125rem;
-		line-height: normal;
-		font-weight: bold;
 	}
 }
 

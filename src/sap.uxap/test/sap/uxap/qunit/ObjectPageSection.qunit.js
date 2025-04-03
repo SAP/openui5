@@ -32,14 +32,15 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 			// get the object page section
 			// By default title is not centered, CSS:0120061532 0001349139 2014
 			var oSectionWithTwoSubSection = ObjectPageSectionView.byId("SectionWithSubSection");
-			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "My first section title never visible");
+			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"), false, "My first section title is always visible");
 			assert.strictEqual(oSectionWithTwoSubSection.$().find(".sapUxAPObjectPageSectionHeader").attr("aria-hidden"), undefined, "My first section title is NOT ignored by the screen reader");
 			// Test by finding own class
 			assert.strictEqual(oSectionWithTwoSubSection.$().find('.mysubsectiontotest').length == 2, true, "Section with two SubSections");
 
 
-			var oSectionWithOneSubSection = ObjectPageSectionView.byId("SectionWithoneSubSection");
-			assert.strictEqual(oSectionWithOneSubSection.$().find(".sapUxAPObjectPageSectionTitle").text(), "My third subSection Title", "Section with one SubSections");
+			var oSectionWithOneSubSection = ObjectPageSectionView.byId("SectionWithoneSubSection"),
+				oSingleSubSectionInSection = oSectionWithOneSubSection.getSubSections()[0];
+			assert.strictEqual(oSingleSubSectionInSection.$().find(".sapUxAPObjectPageSubSectionTitle").text(), "My third subSection Title", "Section with one SubSections");
 			// Test by finding own class
 			assert.strictEqual(oSectionWithOneSubSection.$().find(".mysubsectiontotest").length == 1, true, "Section with one SubSections");
 
@@ -82,9 +83,9 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oObjectPageLayout.placeAt('qunit-fixture');
 		await nextUIUpdate();
 
-		assert.strictEqual(oObjectPageLayout.getSections()[0]._getInternalTitleVisible(), true, "title is displayed when there is only 1 section");
-		assert.strictEqual(oObjectPageLayout.getSections()[0]._isTitleAriaVisible(), true, "title is displayed when there is only 1 section");
-		assert.strictEqual(oObjectPageLayout.getSections()[0].getTitleVisible(), true, "title is displayed when there is only 1 section");
+		assert.strictEqual(oObjectPageLayout.getSections()[0].getSubSections()[0]._isTitleAriaVisible(), true, "title is displayed when there is only 1 section");
+		assert.strictEqual(oObjectPageLayout.getSections()[0].getSubSections()[0]._isTitleVisible(), true, "title is displayed when there is only 1 section");
+		assert.strictEqual(oObjectPageLayout.getSections()[0].getSubSections()[0].getTitleVisible(), true, "title is displayed when there is only 1 section");
 
 		oObjectPageLayout.destroy();
 	});
@@ -123,9 +124,90 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		assert.strictEqual(aSections[0].getTitleVisible(), false, "title is hidden when there is more than 1 section");
 		assert.strictEqual(aSections[1].getTitleVisible(), false, "title is hidden when there is more than 1 section");
 
-		assert.strictEqual(aSections[0]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
-		assert.strictEqual(aSections[1]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
+		assert.strictEqual(aSections[0].getSubSections()[0]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
+		assert.strictEqual(aSections[1].getSubSections()[0]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
 
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("First Section title is visible by default, unless showTitle='false': anchor bar mode", async function(assert) {
+		// Arrange
+		var	oSection = new ObjectPageSection({
+				title: "Section Title",
+				subSections: [
+					new ObjectPageSubSection({
+						title: "Title",
+						blocks: [new Text({text: "test"})]
+					}),
+					new ObjectPageSubSection({
+						title: "Title2",
+						blocks: [new Text({text: "test"})]
+					})
+				]
+			}),
+			oObjectPageLayout = new ObjectPageLayout("my-opl", {
+				sections: [
+					oSection
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
+			false, "Title of first Section is visible");
+
+		// Act
+		oSection.setShowTitle(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
+			true, "Title of first Section is not visible if showTitle=false");
+
+		// Clean up
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("First Section title is visible by default, , unless showTitle='false': icon tab bar mode", async function(assert) {
+		// Arrange
+		var	oSection = new ObjectPageSection({
+				title: "Section Title",
+				subSections: [
+					new ObjectPageSubSection({
+						title: "Title",
+						blocks: [new Text({text: "test"})]
+					}),
+					new ObjectPageSubSection({
+						title: "Title2",
+						blocks: [new Text({text: "test"})]
+					})
+				]
+			}),
+			oObjectPageLayout = new ObjectPageLayout("my-opl", {
+				useIconTabBar: true,
+				sections: [
+					oSection
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
+			false, "Title of first Section is visible");
+
+		// Act
+		oSection.setShowTitle(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
+			true, "Title of first Section is not visible if showTitle=false");
+
+		// Clean up
 		oObjectPageLayout.destroy();
 	});
 
@@ -158,6 +240,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 		// Assert
 		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible");
+		assert.strictEqual(oSection._getTitleControl().getVisible(), true, "title is visible");
 
 		// Act
 		oSection.setShowTitle(false);
@@ -165,6 +248,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 		// Assert
 		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
+		assert.strictEqual(oSection._getTitleControl().getVisible(), false, "title is not visible");
 
 		// Clean up
 		oObjectPageLayout.destroy();
@@ -201,13 +285,15 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 		// Assert
 		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
+		assert.strictEqual(oSection._getTitleControl().getVisible(), false, "title is not visible");
 
 		// Act
 		oObjectPageLayout.setShowOnlyHighImportance(true);
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible, as there is a hidden SubSection");
+		assert.strictEqual(oSection.getTitleVisible(), false, "title is still not visible");
+		assert.strictEqual(oSection._isTitleAriaVisible(), true, "title area is visible, as there is a hidden SubSection");
 
 		// Clean up
 		oObjectPageLayout.destroy();
@@ -218,60 +304,39 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 	QUnit.module("Section/SubSection Importance");
 
-	QUnit.test("Section with title has button placeholders", async function(assert) {
+	QUnit.test("Section with Promoted SubSection has hidden header", function(assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
-			sections: new ObjectPageSection({
-				subSections: [
-					new ObjectPageSubSection({
-						title: "Title",
-						blocks: [new Text({text: "test"})]
-					})
-				]
-			})
-		});
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			}),
+			fnDone = assert.async();
 
 		oObjectPageLayout.placeAt('qunit-fixture');
-		await nextUIUpdate();
-
-		var $section = oObjectPageLayout.getSections()[0].$();
-		assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader .sapUiHiddenPlaceholder').length, 2, "subsection has 2 hidden placeholders");
-
-		oObjectPageLayout.destroy();
-	});
-
-	QUnit.test("Section without title has no button placeholders", async function(assert) {
-
-		var oObjectPageLayout = new ObjectPageLayout("page02", {
-			sections: new ObjectPageSection({
-				showTitle: false,
-				subSections: [
-					new ObjectPageSubSection({
-						title: "Title",
-						blocks: [new Text({text: "test"})]
-					})
-				]
-			})
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", async function() {
+			await nextUIUpdate();
+			var $section = oObjectPageLayout.getSections()[0].$();
+			assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader').hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "subsection header is hidden");
+			oObjectPageLayout.destroy();
+			fnDone();
 		});
-
-		oObjectPageLayout.placeAt('qunit-fixture');
-		await nextUIUpdate();
-
-		var $section = oObjectPageLayout.getSections()[0].$();
-		assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader .sapUiHiddenPlaceholder').length, 0, "subsection has no hidden placeholders");
-
-		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("First section has expand buttons when hidden", async function(assert) {
+	QUnit.test("First section has expand buttons when hidden, when there is no promoted SubSection", async function(assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: [
 				new ObjectPageSection({
+					title: "Title",
 					importance: "Low",
 					subSections: [
 						new ObjectPageSubSection({
-							title: "Title",
 							blocks: [new Text({text: "test"})]
 						})
 					]
@@ -302,15 +367,15 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("First section has showMore button when content hidden", async function(assert) {
+	QUnit.test("First section has showMore button when content hidden, when there is no promoted SubSection", async function(assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: [
 				new ObjectPageSection({
+					title: "Title",
 					subSections: [
 						new ObjectPageSubSection({
 							importance: "Low",
-							title: "Title",
 							blocks: [new Text({text: "test"})]
 						})
 					]
@@ -341,34 +406,64 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("Section with dynamically added title has button placeholders", async function(assert) {
+	QUnit.test("Section with dynamically added title has button placeholders", function(assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
-			sections: new ObjectPageSection({
-				showTitle: false,
-				subSections: [
-					new ObjectPageSubSection({
-						title: "Title",
-						blocks: [new Text({text: "test"})]
-					})
-				]
-			})
-		});
+				sections: new ObjectPageSection({
+					showTitle: false,
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			}),
+			fnDone = assert.async();
 
 		oObjectPageLayout.placeAt('qunit-fixture');
 
 		oObjectPageLayout.getSections()[0].setShowTitle(true);
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", async function() {
+			await nextUIUpdate();
+			var $section = oObjectPageLayout.getSections()[0].$();
+			assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader').hasClass("sapUxAPObjectPageSectionHeaderHidden"), true, "subsection header is hidden");
+			var $subSection = oObjectPageLayout.getSections()[0].getSubSections()[0].$();
+			assert.strictEqual($subSection.find(".sapUxAPObjectPageSubSectionTitle").length, 1, "Section title is rendered in SubSection header");
+			oObjectPageLayout.destroy();
+			fnDone();
+		});
+	});
+
+	QUnit.test("SubSection with dynamically added title has button placeholders", async function(assert) {
+
+		var oObjectPageLayout = new ObjectPageLayout("page02", {
+			sections: new ObjectPageSection({
+				subSections: [
+					new ObjectPageSubSection({
+						showTitle: false,
+						title: "Title",
+						blocks: [new Text({text: "test"})]
+					})
+				]
+			})
+		}),
+		oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+
+		oSubSection.setShowTitle(true);
 		await nextUIUpdate();
 
-		var $section = oObjectPageLayout.getSections()[0].$();
-		assert.strictEqual($section.find('.sapUxAPObjectPageSectionHeader .sapUiHiddenPlaceholder').length, 2, "subsection has hidden placeholders");
+		var $subSection = oSubSection.$();
+		assert.strictEqual($subSection.find('.sapUxAPObjectPageSubSectionHeader .sapUiHiddenPlaceholder').length, 1, "subsection has 1 hidden placeholder");
 
 		oObjectPageLayout.destroy();
 	});
 
 	QUnit.test("Default state for hiding/showing the content", function (assert) {
 		var oMockSection = {
-			getImportance: this.stub().returns(Importance.High)
+			_getImportance: this.stub().returns(Importance.High)
 		};
 
 		SectionBasePrototype.init.call(oMockSection);
@@ -432,7 +527,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 				sShouldBeVisible = "The section should be visible",
 				oMockSection = {
 					setImportance: function (sImportance) {
-						this.getImportance = that.stub().returns(sImportance);
+						this._getImportance = that.stub().returns(sImportance);
 					}
 				};
 
@@ -564,6 +659,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 					return;
 				},
 				_updateShowHideState: this.spy(),
+				_updateShowHideButton: this.spy(),
 				$: this.stub().returns(jQueryObject)
 			};
 
@@ -588,6 +684,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 		assert.ok(jQueryObject.children.calledWith(oMockSection._sContainerSelector));
 		assert.ok(jQueryObject.children().toggle.calledWith(true));
+		assert.equal(oMockSection._updateShowHideButton.callCount, 2, "updateShowHideButton is called twice");
 	});
 
 	QUnit.test("Section show/hide all button text and visibility", function (assert) {
@@ -677,8 +774,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 	QUnit.test("Test aria-labelledby attribute", async function(assert) {
 		assert.expect(7);
 
-		var done = assert.async(),
-			oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
+		var oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
 			oSectionWithOneSubsection = this.ObjectPageSectionView.byId("SectionWithoneSubSection"),
 			sSectionWithOneSubsectionAriaLabelledBy = oSectionWithOneSubsection.$().attr("aria-labelledby"),
 			oThirdSubsection = this.ObjectPageSectionView.byId("subsection3"),
@@ -687,31 +783,22 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-labelledby"),
 			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
 			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby"),
-			oLastSectionFirstSubsection = oLastSection.getSubSections()[0],
-			oRenderingAfterTitleUpdate = {
-				onAfterRendering: function () {
-					// assert
-					oLastSection.removeEventDelegate(oRenderingAfterTitleUpdate);
-					assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
-						oLastSection._getTitle(), "aria-labelledby is updated properly");
-					done();
-				}
-			};
+			oLastSectionFirstSubsection = oLastSection.getSubSections()[0];
 
 		// assert
 		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
-			oFirstSection._getTitle(), "aria-labelledby is set properly");
+			oFirstSection.getTitle(), "aria-labelledby is set properly");
 		assert.strictEqual(Element.getElementById(sSectionWithoutTitleAriaLabel).getText(),
 			"", "sections without title, which have more than one subsection do not have aria-labelledby");
 		assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
-			oLastSection._getTitle(), "aria-labelledby is set properly");
+			oLastSectionFirstSubsection.getTitle(), "aria-labelledby is set properly"); //labelled by the subsection title
 
 		// act
 		oFirstSection.setTitle("New title");
 
 		// assert
 		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
-			oFirstSection._getTitle(), "aria-labelledby is updated properly");
+			oFirstSection.getTitle(), "aria-labelledby is updated properly");
 
 		// act
 		// setShowTitle = false should remove the title from the aria-labelledby attribute
@@ -727,15 +814,15 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		assert.strictEqual(Element.getElementById(sSectionWithOneSubsectionAriaLabelledBy).getText(),
 			oThirdSubsection.getTitle(), "sections without title and only one subsection are labelled by the section`s title");
 
-		// arrange
-		oLastSection.addEventDelegate(oRenderingAfterTitleUpdate);
-
 		// act
 		// in this case the subsection title get propagated to the
 		// section title property through _setInternalTitle function
 		oLastSectionFirstSubsection.setTitle("My new title");
 		await nextUIUpdate();
 
+		// assert
+		assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
+			oLastSectionFirstSubsection.getTitle(), "aria-labelledby is updated properly"); //labelled by the subsection title
 	});
 
 	QUnit.module("Invalidation", {
@@ -860,7 +947,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 	QUnit.module("SubSection promoted");
 
-	QUnit.test("Showing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", async function(assert) {
+	QUnit.test("Showing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class and forwards title level", async function(assert) {
 		// Arrange
 		var oObjectPageSubSection1 = new ObjectPageSubSection({
 				title: "SubSection1",
@@ -871,21 +958,34 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 				title: "SubSection2",
 				blocks: new Text({ text: "SubSection2" })
 			}),
-			oObjectPageSection = new ObjectPageSection({
+			oObjectPageSection1 = new ObjectPageSection({
+				title: "Some title",
+				subSections: [new ObjectPageSubSection({
+					title: "SubSection Title",
+					blocks: [new Text({text: "test"})]
+				})]
+			}),
+			oObjectPageSection2 = new ObjectPageSection({
 				title: "Section",
 				subSections: [oObjectPageSubSection1, oObjectPageSubSection2]
 			}),
 			oObjectPageLayout = new ObjectPageLayout({
-				sections: [ oObjectPageSection ]
+				sections: [ oObjectPageSection1, oObjectPageSection2 ]
 			}),
 			done = assert.async();
 
-		assert.expect(2);
+		assert.expect(10);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Assert
+			assert.strictEqual(oObjectPageSection2._hasPromotedSubSection(), true, "Section has promoted SubSection");
+			assert.strictEqual(oObjectPageSubSection2._isPromoted(), true, "SubSection is promoted");
 			assert.ok(oObjectPageSubSection2.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
 				"SubSection has promoted CSS class");
+			assert.strictEqual(oObjectPageSubSection2._getTitleControl().getTitleStyle(), oObjectPageSection2._getTitleControl().getTitleStyle(),
+				"SubSection title style is the same as Section title style (inherited from Section)");
+			assert.strictEqual(oObjectPageSubSection2._getTitleControl().getLevel(), oObjectPageSection2._getTitleControl().getLevel(),
+				"SubSection title level is the same as Section title level (inherited from Section)");
 
 			// Act
 			oObjectPageSubSection1.setVisible(true);
@@ -894,18 +994,24 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 				// Assert
 				assert.ok(!oObjectPageSubSection2.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
 					"SubSection does not have promoted CSS class");
+				assert.strictEqual(oObjectPageSection2._hasPromotedSubSection(), false, "Section does not have promoted SubSection");
+				assert.strictEqual(oObjectPageSubSection2._isPromoted(), false, "SubSection is not promoted");
+				assert.ok(oObjectPageSubSection2._getTitleControl().getTitleStyle() !== oObjectPageSection2._getTitleControl().getTitleStyle(),
+					"SubSection title style is different than Section title style (back to its own)");
+				assert.ok(oObjectPageSubSection2._getTitleControl().getLevel() !== oObjectPageSection2._getTitleControl().getLevel(),
+					"SubSection title level is different than Section title level (back to its own)");
 
 				// Clean-up
 				oObjectPageLayout.destroy();
 				done();
-			}, 400);
+			}, 600);
 		});
 
 		oObjectPageLayout.placeAt('qunit-fixture');
 		await nextUIUpdate();
 	});
 
-	QUnit.test("Adding SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", async function(assert) {
+	QUnit.test("Adding SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class and forwards title settings", async function(assert) {
 		// Arrange
 		var oObjectPageSubSection1 = new ObjectPageSubSection({
 				title: "SubSection1",
@@ -915,113 +1021,114 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 				title: "SubSection2",
 				blocks: new Text({ text: "SubSection2" })
 			}),
-			oObjectPageSection = new ObjectPageSection({
+			oObjectPageSection1 = new ObjectPageSection({
+				title: "Some title",
+				subSections: [new ObjectPageSubSection({
+					blocks: [new Text({text: "test"})]
+				})]
+			}),
+			oObjectPageSection2 = new ObjectPageSection({
 				title: "Section",
 				subSections: [oObjectPageSubSection1]
 			}),
 			oObjectPageLayout = new ObjectPageLayout({
-				sections: [ oObjectPageSection ]
+				sections: [ oObjectPageSection1, oObjectPageSection2 ]
 			}),
 			done = assert.async();
 
-		assert.expect(2);
+		assert.expect(10);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Assert
 			assert.ok(oObjectPageSubSection1.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
 				"SubSection has promoted CSS class");
+			assert.strictEqual(oObjectPageSection2._hasPromotedSubSection(), true, "Section has promoted SubSection");
+			assert.strictEqual(oObjectPageSubSection1._isPromoted(), true, "SubSection is promoted");
+			assert.strictEqual(oObjectPageSubSection1._getTitleControl().getTitleStyle(), oObjectPageSection2._getTitleControl().getTitleStyle(),
+				"SubSection title style is the same as Section title style (inherited from Section)");
+			assert.strictEqual(oObjectPageSubSection1._getTitleControl().getLevel(), oObjectPageSection2._getTitleControl().getLevel(),
+				"SubSection title level is the same as Section title level (inherited from Section)");
 
 			// Act
-			oObjectPageSection.addSubSection(oObjectPageSubSection2);
+			oObjectPageSection2.addSubSection(oObjectPageSubSection2);
 
 			setTimeout(function () {
 				// Assert
-				assert.ok(!oObjectPageSubSection2.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+				assert.ok(!oObjectPageSubSection1.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
 					"SubSection does not have promoted CSS class");
+				assert.strictEqual(oObjectPageSection2._hasPromotedSubSection(), false, "Section does not have promoted SubSection");
+				assert.strictEqual(oObjectPageSubSection1._isPromoted(), false, "SubSection is not promoted");
+				assert.ok(oObjectPageSubSection1._getTitleControl().getTitleStyle() !== oObjectPageSection2._getTitleControl().getTitleStyle(),
+					"SubSection title style is different than Section title style (back to its own)");
+				assert.ok(oObjectPageSubSection1._getTitleControl().getLevel() !== oObjectPageSection2._getTitleControl().getLevel(),
+					"SubSection title level is different than Section title level (back to its own)");
 
 				// Clean-up
 				oObjectPageLayout.destroy();
 				done();
-			}, 400);
+			}, 600);
 		});
 
 		oObjectPageLayout.placeAt('qunit-fixture');
 		await nextUIUpdate();
 	});
 
-	QUnit.test("SubSection with long title has 'sapUxAPObjectPageSectionMultilineContent' class", async function(assert) {
+	QUnit.test("Removing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class and forwards title level", async function(assert) {
 		// Arrange
-		var oObjectPageSubSection = new ObjectPageSubSection({
-				title: "Loooooooooooooooooooooooooooooong loooooooooooooooooooooooooooooooong looooooooooooooooooong tiiiiiiiiiiiiiiiiiiiiiitle",
-				blocks: new Text({ text: "SubSection1" }),
-				actions: [new Button({ text: "Button with looooooooooooooooooooooooong text "})]
+		var oObjectPageSubSection1 = new ObjectPageSubSection({
+				title: "SubSection1",
+				blocks: new Text({ text: "SubSection1" })
 			}),
-			oObjectPageSection = new ObjectPageSection({
-				title: "SubSection",
-				subSections: [oObjectPageSubSection]
+			oObjectPageSubSection2 = new ObjectPageSubSection({
+				title: "SubSection2",
+				blocks: new Text({ text: "SubSection2" })
+			}),
+			oObjectPageSection1 = new ObjectPageSection({
+				title: "Some title",
+				subSections: [new ObjectPageSubSection({
+					blocks: [new Text({text: "test"})]
+				})]
+			}),
+			oObjectPageSection2 = new ObjectPageSection({
+				title: "Section",
+				subSections: [oObjectPageSubSection1, oObjectPageSubSection2]
 			}),
 			oObjectPageLayout = new ObjectPageLayout({
-				sections: [ oObjectPageSection ]
+				sections: [ oObjectPageSection1, oObjectPageSection2 ]
 			}),
 			done = assert.async();
 
-		assert.expect(1);
+		assert.expect(10);
 
 		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
 			// Assert
-			assert.ok(oObjectPageSubSection.$().hasClass("sapUxAPObjectPageSectionMultilineContent"),
-				"SubSection has multine content CSS class");
-
-			// Clean up
-			oObjectPageLayout.destroy();
-			done();
-		});
-
-		oObjectPageLayout.placeAt('qunit-fixture');
-		await nextUIUpdate();
-	});
-
-	QUnit.test("Resizing OPL adds 'sapUxAPObjectPageSectionMultilineContent' class to promoted SubSection", async function(assert) {
-		// Arrange
-		var oObjectPageSubSection = new ObjectPageSubSection({
-				title: "Not too long title",
-				blocks: new Text({ text: "SubSection1" }),
-				actions: [new Button({ text: "Button with looooooooooooooooooooooooong text "})]
-			}),
-			oObjectPageSection = new ObjectPageSection({
-				title: "SubSection",
-				subSections: [oObjectPageSubSection]
-			}),
-			oObjectPageLayout = new ObjectPageLayout({
-				sections: [ oObjectPageSection ]
-			}),
-			$qunitDOMLocation = jQuery("#qunit-fixture"),
-			iInitialWidth = $qunitDOMLocation.width(),
-			done = assert.async();
-
-		assert.expect(2);
-
-		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function () {
-			// Assert
-			assert.ok(!oObjectPageSubSection.$().hasClass("sapUxAPObjectPageSectionMultilineContent"),
-				"SubSection does not have multine content CSS class when width is enough");
+			assert.ok(!oObjectPageSubSection1.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+					"SubSection does not have promoted CSS class");
+			assert.strictEqual(oObjectPageSection2._hasPromotedSubSection(), false, "Section does not have promoted SubSection");
+			assert.strictEqual(oObjectPageSubSection1._isPromoted(), false, "SubSection is not promoted");
+			assert.ok(oObjectPageSubSection1._getTitleControl().getTitleStyle() !== oObjectPageSection2._getTitleControl().getTitleStyle(),
+				"SubSection title style is different than Section title style");
+			assert.ok(oObjectPageSubSection1._getTitleControl().getLevel() !== oObjectPageSection2._getTitleControl().getLevel(),
+			"SubSection title level is different than Section title level");
 
 			// Act
-			$qunitDOMLocation.width(200);
-			oObjectPageLayout._onUpdateContentSize({ size: {
-				width: "200",
-				height: "900"
-			}});
-			oObjectPageSection._onResize();
+			oObjectPageSection2.removeSubSection(oObjectPageSubSection2);
 
-			// Assert
-			assert.ok(oObjectPageSubSection.$().hasClass("sapUxAPObjectPageSectionMultilineContent"),
-				"SubSection has multine content CSS class when width is not enough");
+			setTimeout(function () {
+				// Assert
+				assert.ok(oObjectPageSubSection1.$().hasClass("sapUxAPObjectPageSubSectionPromoted"),
+					"SubSection has promoted CSS class");
+				assert.strictEqual(oObjectPageSection2._hasPromotedSubSection(), true, "Section has promoted SubSection");
+				assert.strictEqual(oObjectPageSubSection1._isPromoted(), true, "SubSection is promoted");
+				assert.strictEqual(oObjectPageSubSection1._getTitleControl().getTitleStyle(), oObjectPageSection2._getTitleControl().getTitleStyle(),
+					"SubSection title style is the same as Section title style (inherited from Section)");
+				assert.strictEqual(oObjectPageSubSection1._getTitleControl().getLevel(), oObjectPageSection2._getTitleControl().getLevel(),
+				"SubSection title level is the same as Section title level (inherited from Section)");
 
-			// Clean up
-			oObjectPageLayout.destroy();
-			$qunitDOMLocation.width(iInitialWidth);
-			done();
+				// Clean-up
+				oObjectPageLayout.destroy();
+				done();
+			}, 600);
 		});
 
 		oObjectPageLayout.placeAt('qunit-fixture');

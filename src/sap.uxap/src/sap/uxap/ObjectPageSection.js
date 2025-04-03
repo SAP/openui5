@@ -7,9 +7,9 @@ sap.ui.define([
 	"./ObjectPageSectionBase",
 	"sap/ui/Device",
 	"sap/m/Button",
+	"sap/m/Title",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
-	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/base/ManagedObjectObserver",
 	"./ObjectPageSubSection",
@@ -21,9 +21,9 @@ sap.ui.define([
 	ObjectPageSectionBase,
 	Device,
 	Button,
+	Title,
 	Element,
 	Library,
-	ResizeHandler,
 	StashedControlSupport,
 	ManagedObjectObserver,
 	ObjectPageSubSection,
@@ -39,6 +39,8 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.IconColor
 	var IconColor = coreLibrary.IconColor;
+
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new <code>ObjectPageSection</code>.
@@ -108,8 +110,12 @@ sap.ui.define([
 				 */
 				heading: {type: "sap.ui.core.Control", multiple: false},
 
-				_showHideAllButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"},
-				_showHideButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
+				/**
+				 * Internal title aggregation
+				 */
+				_title: {type: "sap.m.Title", multiple: false, visibility: "hidden" },
+
+				_showHideAllButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			},
 			associations: {
 
@@ -147,17 +153,6 @@ sap.ui.define([
 		return Library.getResourceBundleFor("sap.uxap");
 	};
 
-	/**
-	 * Returns the control name text.
-	 *
-	 * @override
-	 * @return {string} control name text
-	 * @protected
-	 */
-	ObjectPageSection.prototype.getSectionText = function (sValue) {
-		return ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME");
-	};
-
 	ObjectPageSection.prototype._expandSection = function () {
 		ObjectPageSectionBase.prototype._expandSection.call(this)
 			._updateShowHideAllButton(!this._thereAreHiddenSubSections());
@@ -165,40 +160,57 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.init = function () {
 		ObjectPageSectionBase.prototype.init.call(this);
+		this._bInternalTitleVisible = true;
 		this._sContainerSelector = ".sapUxAPObjectPageSectionContainer";
-		this._onResizeRef = this._onResize.bind(this);
 		this._oGridContentObserver = new ManagedObjectObserver(this._onGridContentChange.bind(this));
+		this._sTitleStyle = TitleLevel.H4;
+		this._sTitleId = this.getId() + "-title";
+		this._bHasPromotedSubSection = false;
+		this._getTitleControl().addStyleClass("sapUxAPObjectPageSectionTitle");
 	};
 
 	ObjectPageSection.prototype.exit = function () {
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
-
-		if (this._iResizeHandlerId) {
-			ResizeHandler.deregister(this._iResizeHandlerId);
-			this._iResizeHandlerId = null;
-		}
+		this._getTitleControl().destroy();
 
 		if (ObjectPageSectionBase.prototype.exit) {
 			ObjectPageSectionBase.prototype.exit.call(this);
 		}
 	};
 
-	ObjectPageSection.prototype._onResize = function () {
-		this._updateMultilineContent();
+	ObjectPageSection.prototype._getTitleControl = function () {
+		if (!this.getAggregation("_title")) {
+			this.setAggregation("_title", new Title(this._sTitleId, {
+				titleStyle: this._getTitleStyle(),
+				level: this._getTitleLevel()
+			}), true); // this is always called onBeforeRendering so suppress invalidate
+		}
+
+		return this.getAggregation("_title");
 	};
 
-	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
-		var oObjectPage = this._getObjectPageLayout(),
-			oMedia = oCurrentMedia || this._getCurrentMediaContainerRange(),
-			bShowOnlyHighImportance = oObjectPage && oObjectPage.getShowOnlyHighImportance();
+	ObjectPageSection.prototype._setHasPromotedSubSection = function (bHasPromotedSubSection, bInvalidate) {
+		if (bHasPromotedSubSection != this._bHasPromotedSubSection) {
+			this._bHasPromotedSubSection = bHasPromotedSubSection;
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
+	};
 
-		return this._determineTheLowestLevelOfImportanceToShow(oMedia.name, bShowOnlyHighImportance);
+	ObjectPageSection.prototype._hasPromotedSubSection = function () {
+		return this._bHasPromotedSubSection;
+	};
+
+	ObjectPageSection.prototype._getFirstVisibleSubSection  = function () {
+		return (this._getVisibleSubSections().length && this._getVisibleSubSections()[0]) || null;
 	};
 
 	ObjectPageSection.prototype._updateImportance = function (oCurrentMedia) {
 		var oObjectPage = this._getObjectPageLayout(),
 			sImportanceLevelToHide = this._getImportanceLevelToHide(oCurrentMedia),
-			oHeaderDOM = this.bOutput && this.getDomRef("header");
+			oHeaderDOM = this.bOutput && this.getDomRef("header"),
+			bTitleAriaVisible;
 
 		this.getSubSections().forEach(function (oSubSection) {
 			oSubSection._applyImportanceRules(sImportanceLevelToHide);
@@ -207,54 +219,25 @@ sap.ui.define([
 		this._applyImportanceRules(sImportanceLevelToHide);
 		this._updateShowHideAllButton(false);
 
-		oHeaderDOM && oHeaderDOM.classList.toggle("sapUxAPObjectPageSectionHeaderHidden", !this._isTitleVisible());
-		oHeaderDOM && oHeaderDOM.setAttribute("aria-hidden", !this._isTitleAriaVisible());
+		bTitleAriaVisible = this._isTitleAriaVisible();
+		oHeaderDOM && oHeaderDOM.classList.toggle("sapUxAPObjectPageSectionHeaderHidden", !bTitleAriaVisible);
+		oHeaderDOM && oHeaderDOM.setAttribute("aria-hidden", !bTitleAriaVisible);
 
 		if (oObjectPage && this.getDomRef()) {
 			oObjectPage._requestAdjustLayout();
 		}
 	};
 
-	ObjectPageSection.prototype._updateMultilineContent = function () {
-		var aSubSections = this.getSubSections(),
-			oFirstSubSection = aSubSections.find(function(oSubSection) {
-				return oSubSection.getVisible();
-			});
-
-		if (oFirstSubSection && oFirstSubSection.getDomRef()) {
-			var sTitleDomId = oFirstSubSection._getTitleDomId(),
-				iTitleWidth,
-				iActionsWidth,
-				iHeaderWidth,
-				bMultiLine,
-				oFirstSubSectionTitle;
-
-				// When there are more than one SubSections with no title, sTitleDomId=false.
-				// However, we are not interested in this case anyway, as there is no promoted SubSection
-				if (!sTitleDomId) {
-					return;
-				}
-
-				oFirstSubSectionTitle = document.getElementById(oFirstSubSection._getTitleDomId());
-				// Title is hidden for the first SubSection of the first Section
-				iTitleWidth = oFirstSubSectionTitle ? oFirstSubSectionTitle.offsetWidth : 0;
-				iActionsWidth = this.$().find(".sapUxAPObjectPageSubSectionHeaderActions").width();
-				iHeaderWidth = this.$("header").width();
-				bMultiLine = (iTitleWidth + iActionsWidth) > iHeaderWidth;
-
-			oFirstSubSection._toggleMultiLineSectionContent(bMultiLine);
-		}
-	};
-
-	ObjectPageSection.prototype._determineTheLowestLevelOfImportanceToShow = function (sMedia, bShowOnlyHighImportance) {
-		if (bShowOnlyHighImportance || sMedia === "Phone") {
+	ObjectPageSection.prototype._getImportance = function () {
+		if (this._hasPromotedSubSection()) {
 			return library.Importance.High;
 		}
-		if (sMedia === "Tablet") {
-			return library.Importance.Medium;
-		}
 
-		return library.Importance.Low;
+		return this.getImportance();
+	};
+
+	ObjectPageSection.prototype._getTitleUpperCaseStyleClass = function () {
+		return "sapUxAPObjectPageSectionTitleUpperCase";
 	};
 
 	/**@deprecated */
@@ -285,15 +268,12 @@ sap.ui.define([
 
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
 
-		this._updateImportance();
-
 		this._applyLayout();
+		this._updateImportance();
 	};
 
 	ObjectPageSection.prototype.onAfterRendering = function () {
-		this._updateMultilineContent();
 		this._attachMediaContainerWidthChange(this._updateImportance, this);
-		this._iResizeHandlerId = ResizeHandler.register(this, this._onResizeRef);
 	};
 
 	ObjectPageSection.prototype._applyLayout = function () {
@@ -361,12 +341,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * set the internal visibility of the Section title. This is set by the ux rules (for example don't display a Section title in IconTabBar mode)
+	 * @param {boolean} bValue
+	 * @param {boolean} bInvalidate if set to true, the Section should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger)
+	 * @private
+	 */
+	ObjectPageSection.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
+		if (bValue != this._bInternalTitleVisible) {
+			this._bInternalTitleVisible = bValue;
+			this.setTitleVisible();
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
+	};
+
+	ObjectPageSection.prototype._getInternalTitleVisible = function () {
+		return this._bInternalTitleVisible;
+	};
+
+	/**
 	 * Determines if the <code>ObjectPageSection</code> title is visible.
 	 * @private
 	 * @returns {boolean}
 	 */
 	ObjectPageSection.prototype._isTitleVisible = function () {
-		return (this.getShowTitle() && this._getInternalTitleVisible()) || this._getInternalTitleForceVisible();
+		var bIsTitleVisibleByUXRule;
+
+		if (this._hasPromotedSubSection()) {
+			return false;
+		}
+
+		bIsTitleVisibleByUXRule = this._getInternalTitleVisible() || this._shouldDisplayButtonsInHeader();
+
+		return this.getShowTitle() && bIsTitleVisibleByUXRule;
 	};
 
 	/**
@@ -375,7 +383,11 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	ObjectPageSection.prototype._isTitleAriaVisible = function () {
-		return this.getShowTitle() || this._getInternalTitleForceVisible();
+		if (this._hasPromotedSubSection()) {
+			return false;
+		}
+
+		return (this.getShowTitle() && this._getInternalTitleVisible()) || this._shouldDisplayButtonsInHeader();
 	};
 
 	/**
@@ -384,8 +396,23 @@ sap.ui.define([
 	 * @private
 	 * @returns {boolean}
 	 */
-	ObjectPageSection.prototype._getInternalTitleForceVisible = function () {
+	ObjectPageSection.prototype._shouldDisplayButtonsInHeader  = function () {
 		return this._getShouldDisplayExpandCollapseButton() || this._getShouldDisplayShowHideAllButton();
+	};
+
+	/**
+	 * Returns the label id for the section.
+	 * @private
+	 * @returns {string} aria-labeled by id
+	 */
+	ObjectPageSection.prototype._getAriaLabelledById = function () {
+		// Each section should be labelled as:
+		// 'titleID' - either its own or the promoted subsection's title
+		if (this._hasPromotedSubSection()) {
+			return this._getFirstVisibleSubSection()?._getTitleControl().getId();
+		} else {
+			return this._getTitleControl().getId();
+		}
 	};
 
 	/**
@@ -408,7 +435,7 @@ sap.ui.define([
 		}
 
 		aSubSections.forEach(function (oSubsection) {
-			if (sLastSelectedSubSectionId === oSubsection.getId() && oSubsection._shouldBeFocusable()) {
+			if (sLastSelectedSubSectionId === oSubsection.getId() && oSubsection.getTitleVisible()) {
 				oSubsection._setToFocusable(true);
 				bPreselectedSection = true;
 			} else {
@@ -418,7 +445,7 @@ sap.ui.define([
 
 		if (!bPreselectedSection) {
 			var oFirstFocusableSubSection = aSubSections.find(function(oSubSection) {
-				return oSubSection._shouldBeFocusable();
+				return oSubSection.getTitleVisible();
 			});
 
 			if (oFirstFocusableSubSection) {
@@ -481,7 +508,6 @@ sap.ui.define([
 			return this;
 		}
 
-		this._updateShowHideButton(bHide);
 		this._getShowHideAllButton().setVisible(this._getShouldDisplayShowHideAllButton());
 
 		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);
@@ -506,37 +532,14 @@ sap.ui.define([
 				text: this._getShowHideAllButtonText(!this._thereAreHiddenSubSections()),
 				press: this._showHideContentAllContent.bind(this),
 				type: ButtonType.Transparent
-			}).addStyleClass("sapUxAPSectionShowHideButton"), true); // this is called from the renderer, so suppress invalidate
+			}).addStyleClass("sapUxAPShowHideButton"), true); // this is called from the renderer, so suppress invalidate
 		}
 
 		return this.getAggregation("_showHideAllButton");
 	};
 
-	ObjectPageSection.prototype._getShowHideButtonText = function (bHide) {
-		return ObjectPageSection._getLibraryResourceBundle().getText(bHide ? "HIDE" : "SHOW");
-	};
-
 	ObjectPageSection.prototype._getShowHideAllButtonText = function (bHide) {
 		return ObjectPageSection._getLibraryResourceBundle().getText(bHide ? "HIDE_ALL" : "SHOW_ALL");
-	};
-
-	ObjectPageSection.prototype._updateShowHideButton = function (bHide) {
-		this._getShowHideButton()
-			.setVisible(this._shouldBeHidden())
-			.setText(this._getShowHideButtonText(!bHide));
-	};
-
-	ObjectPageSection.prototype._getShowHideButton = function () {
-		if (!this.getAggregation("_showHideButton")) {
-			this.setAggregation("_showHideButton", new Button({
-				visible: this._shouldBeHidden(),
-				text: this._getShowHideButtonText(!this._getIsHidden()),
-				press: this._showHideContent.bind(this),
-				type: ButtonType.Transparent
-			}).addStyleClass("sapUxAPSectionShowHideButton"), true); // this is called from the renderer, so suppress invalidate
-		}
-
-		return this.getAggregation("_showHideButton");
 	};
 
 	StashedControlSupport.mixInto(ObjectPageSection);

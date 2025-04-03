@@ -6,6 +6,7 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
+	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/ResizeHandler",
 	"./ObjectPageSectionBase",
@@ -14,7 +15,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/StashedControlSupport",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/m/Title",
 	"sap/m/TitlePropagationSupport",
+	"sap/m/OverflowToolbar",
+	"sap/m/ToolbarSpacer",
 	"./library",
 	"sap/m/library",
 	"./ObjectPageSubSectionRenderer",
@@ -26,6 +30,7 @@ sap.ui.define([
 ], function(
 	Element,
 	Library,
+	coreLibrary,
 	jQuery,
 	ResizeHandler,
 	ObjectPageSectionBase,
@@ -34,7 +39,10 @@ sap.ui.define([
 	Button,
 	StashedControlSupport,
 	ManagedObjectObserver,
+	Title,
 	TitlePropagationSupport,
+	OverflowToolbar,
+	ToolbarSpacer,
 	library,
 	mobileLibrary,
 	ObjectPageSubSectionRenderer,
@@ -47,11 +55,17 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
 
+	var ToolbarStyle = mobileLibrary.ToolbarStyle;
+
+	var ToolbarDesign = mobileLibrary.ToolbarDesign;
+
 	// shortcut for sap.uxap.ObjectPageSubSectionMode
 	var ObjectPageSubSectionMode = library.ObjectPageSubSectionMode;
 
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
 	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
+
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	/**
 	 * Constructor for a new <code>ObjectPageSubSection</code>.
@@ -165,7 +179,12 @@ sap.ui.define([
 				 * of <code>ObjectPageSubSection</code> do NOT have overflow behavior. If the
 				 * available space is not enough, the controls will be displayed on more lines.
 				 */
-				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
+				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"},
+
+				/**
+				 * Internal <code>OverflowToolbar</code> for the <code>ObjectPageSubSection</code> actions.
+				 */
+				_headerToolbar: {type: "sap.m.OverflowToolbar", multiple: false, visibility: "hidden"}
 			},
 			designtime: "sap/uxap/designtime/ObjectPageSubSection.designtime"
 		},
@@ -180,6 +199,9 @@ sap.ui.define([
 
 
 	ObjectPageSubSection.FIT_CONTAINER_CLASS = "sapUxAPObjectPageSubSectionFitContainer";
+
+	// SubSection's Title and Spacer
+	ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS = 2;
 
 	// determines the number of columns the subsection will span accross (inside a single row)
 	ObjectPageSubSection.COLUMN_SPAN = {
@@ -227,11 +249,6 @@ sap.ui.define([
 		this._sMoreContainerSelector = ".sapUxAPSubSectionSeeMoreContainer";
 
 		this._oObserver = new ManagedObjectObserver(ObjectPageSubSection.prototype._observeChanges.bind(this));
-		this._oObserver.observe(this, {
-			aggregations: [
-				"actions"
-			]
-		});
 		this._oBlocksObserver = new ManagedObjectObserver(this._onBlocksChange.bind(this));
 
 		//switch logic for the default mode
@@ -241,6 +258,20 @@ sap.ui.define([
 		this._initTitlePropagationSupport();
 		this._sBorrowedTitleDomId = false;
 		this._height = ""; // css height property
+
+		this._fnActionSubstituteParentFunction = function () {
+			return this;
+		}.bind(this);
+
+		this._oTitle = null;
+		this._bPromoted = false;
+		this._sTitleStyle = TitleLevel.H5;
+		this._sTitleId = this.getId() + "-headerTitle";
+		this._getTitleControl().addStyleClass("sapUxAPObjectPageSubSectionTitle");
+
+		var oActionsToolbar = this._getHeaderToolbar();
+		oActionsToolbar.insertContent(this._getTitleControl(), 0);
+		oActionsToolbar.insertContent(new ToolbarSpacer(), 1);
 	};
 
 	/**
@@ -271,13 +302,172 @@ sap.ui.define([
 		return oResult;
 	};
 
-	ObjectPageSubSection.prototype.setTitle = function (sValue, bSuppressInvalidate) {
-		ObjectPageSectionBase.prototype.setTitle.apply(this, arguments);
+	ObjectPageSubSection.prototype._getTitleControl = function () {
+		if (!this._oTitle) {
+			this._oTitle = new Title(this._sTitleId, {
+				titleStyle: this._getTitleStyle(),
+				level: this._getTitleLevel()
+			});
+		}
 
-		this.setTitleVisible();
+		return this._oTitle;
+	};
+
+	ObjectPageSubSection.prototype._getTitleUpperCaseStyleClass = function () {
+		return "sapUxAPObjectPageSubSectionTitleUppercase";
+	};
+
+	/**
+	 * Returns the label id for the subsection.
+	 * @private
+	 * @returns {string} aria-labeled by id
+	 */
+	ObjectPageSubSection.prototype._getAriaLabelledById = function () {
+		// Each section should be labelled as:
+		// 'titleID' - if title is visible
+		if (this._isPromoted()) {
+			return "";
+		} else {
+			return this._getTitleControl().getId();
+		}
+	};
+
+	/* ========== ObjectPageSubSection actions aggregation methods ========== */
+
+	ObjectPageSubSection.prototype.addAction = function (oAction) {
+		this._getHeaderToolbar().insertContent(oAction, ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS + this.getActions().length);
+		this._preProcessAction(oAction, "actions");
 
 		return this;
 	};
+
+	ObjectPageSubSection.prototype.insertAction = function (oAction, iIndex) {
+		var iIndexToInsertAt = iIndex + ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS;
+		this._getHeaderToolbar().insertContent(oAction, iIndexToInsertAt);
+		this._preProcessAction(oAction, "actions");
+
+		return this;
+	};
+
+	ObjectPageSubSection.prototype.removeAction = function (oAction) {
+		this._getHeaderToolbar().removeContent(oAction);
+		this._postProcessAction(oAction);
+
+		return this.removeAggregation("actions", oAction);
+	};
+
+	ObjectPageSubSection.prototype.removeAllActions = function () {
+		var oActionsToolbar = this._getHeaderToolbar(),
+			oActionsToRemove = this.getActions();
+
+		oActionsToRemove.forEach(function (oAction) {
+			oActionsToolbar.removeContent(oAction);
+			this._postProcessAction(oAction);
+		}, this);
+
+		return this;
+	};
+
+	ObjectPageSubSection.prototype.destroyActions = function () {
+		this._getHeaderToolbar().destroyContent();
+		this.getActions().forEach(function (oAction) {
+			this._postProcessAction(oAction);
+		}, this);
+
+		return this;
+	};
+
+	ObjectPageSubSection.prototype.getActions = function () {
+		return this._getHeaderToolbar().getContent().slice(ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS);
+	};
+
+	ObjectPageSubSection.prototype.indexOfAction = function (oAction) {
+		return this.getActions().indexOf(oAction);
+	};
+
+	ObjectPageSubSection.prototype._setIsPromoted = function (bPromoted, bInvalidate) {
+		if (bPromoted != this._bPromoted) {
+			this._bPromoted = bPromoted;
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
+
+		this.toggleStyleClass("sapUxAPObjectPageSubSectionPromoted", bPromoted);
+	};
+
+	ObjectPageSubSection.prototype._isPromoted = function () {
+		return this._bPromoted;
+	};
+
+	/**
+	 * Lazily retrieves the internal <code>_headerToolbar</code> aggregation.
+	 * @returns {sap.m.OverflowToolbar}
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._getHeaderToolbar = function () {
+		var sId = this.getId() + "-_headerToolbar";
+
+		if (!this.getAggregation("_headerToolbar")) {
+			this.setAggregation("_headerToolbar", new OverflowToolbar({
+				id: sId,
+				style: ToolbarStyle.Clear,
+				design: ToolbarDesign.Transparent,
+				width: "100%"
+			}).addStyleClass("sapUxAPObjectPageSubSectionHeaderToolbar"), true); // suppress invalidate, as this is always called onBeforeRendering
+		}
+
+		return this.getAggregation("_headerToolbar");
+	};
+
+	/**
+	 * Pre-processes a <code>ObjectPageSubSection</code> action before inserting it in the aggregation.
+	 * The action would returns the <code>ObjectPageSubSection</code> as its parent, rather than its real parent (the <code>OverflowToolbar</code>).
+	 * This way, it looks like the <code>ObjectPageSubSection</code> aggregates the actions.
+	 * @param {sap.ui.core.Control} oAction
+	 * @param {string} sParentAggregationName
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._preProcessAction = function (oAction, sParentAggregationName) {
+			if (isFunction(oAction._fnOriginalGetParent)) {
+				return;
+			}
+
+			this._observeAction(oAction);
+
+			oAction._fnOriginalGetParent = oAction.getParent;
+			oAction.getParent = this._fnActionSubstituteParentFunction;
+
+			oAction._sOriginalParentAggregationName = oAction.sParentAggregationName;
+			oAction.sParentAggregationName = sParentAggregationName;
+	};
+
+	/**
+	 * Post-processes a <code>ObjectPageSubSection</code> action before removing it from the aggregation, so it returns its real parent (the <code>OverflowToolbar</code>),
+	 * thus allowing proper processing by the framework.
+	 * @param {sap.ui.core.Control} oAction
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._postProcessAction = function (oAction) {
+		if (!isFunction(oAction._fnOriginalGetParent)) {
+			return;
+		}
+
+		this._unobserveAction(oAction);
+
+		// The runtime adaptation tipically removes and then adds aggregations multiple times.
+		// That is why we need to make sure that the controls are in their previous state
+		// when preprocessed. Otherwise the wrong parent aggregation name is passed
+		oAction.getParent = oAction._fnOriginalGetParent;
+		oAction._fnOriginalGetParent = null;
+
+		oAction.sParentAggregationName = oAction._sOriginalParentAggregationName;
+		oAction._sOriginalParentAggregationName = null;
+	};
+
+	function isFunction(oObject) {
+		return typeof oObject === "function";
+	}
 
 	/**
 	 * Determines if the <code>ObjectPageSubSection</code> title is visible.
@@ -285,7 +475,58 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	ObjectPageSubSection.prototype._isTitleVisible = function () {
-		return this._getInternalTitleVisible() && this.getTitle().trim() !== "" && this.getShowTitle();
+		return this.getShowTitle() && this.getTitle().trim() !== "";
+	};
+
+	ObjectPageSubSection.prototype._getImportance = function () {
+		if (!this._isPromoted()) {
+			return this.getImportance();
+		}
+		var sParentImportance = this.getParent()?.getImportance(),
+			getLowestImportance = function (sImportance1, sImportance2) {
+				return fnToNumber(sImportance1) > fnToNumber(sImportance2) ? sImportance1 : sImportance2;
+			},
+			fnToNumber = function (sImportance) {
+				return ObjectPageSectionBase._importanceMap[sImportance];
+			};
+		return getLowestImportance(sParentImportance, this.getImportance());
+	};
+
+	ObjectPageSubSection.prototype._getWrapTitle = function () {
+		if (this._isPromoted()) { // for backward compatibility
+			return this.getParent()?._getWrapTitle();
+		}
+		return true;
+	};
+
+	ObjectPageSubSection.prototype.getEffectiveTitleLevel = function () {
+		if (this._isPromoted()) {
+			return this.getParent()?._getTitleLevel();
+		} else {
+			return this._getTitleLevel();
+		}
+	};
+
+	ObjectPageSubSection.prototype._getTitleStyle = function () {
+		if (this._isPromoted()) {
+			return this.getParent()?._getTitleStyle();
+		}
+
+		return ObjectPageSectionBase.prototype._getTitleStyle.call(this);
+	};
+
+	ObjectPageSubSection.prototype._updateShowHideState  = function (bHide) {
+		if (this._getIsHidden() === bHide) {
+			return this;
+		}
+
+		this.$().children(this._sMoreContainerSelector).toggle(!bHide);
+
+		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);
+	};
+
+	ObjectPageSubSection.prototype._shouldBeHidden = function () {
+		return ObjectPageSectionBase.prototype._shouldBeHidden.call(this);
 	};
 
 	/**
@@ -357,38 +598,6 @@ sap.ui.define([
 		return this.getAggregation("_grid");
 	};
 
-
-	/**
-	 * Returns the control name text.
-	 *
-	 * @override
-	 * @return {string} control name text
-	 * @protected
-	 */
-	ObjectPageSubSection.prototype.getSectionText = function (sValue) {
-		return ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
-	};
-
-	/**
-	 * @override
-	 * @private
-	 */
-	 ObjectPageSubSection.prototype._getShouldLabelTitle = function () {
-		if (this._getUseTitleOnTheLeft()) {
-			// in case layout is "TitleOnTheLeft", the title of promoted section
-			// is visible and should be labeled if showTitle is true
-			return this.getShowTitle();
-		}
-
-		if (this._sBorrowedTitleDomId) {
-			// in case section is promoted the title is not displayed
-			// on the subsection level - we don't need to include it in the aria label
-			return false;
-		}
-
-		return this.getShowTitle();
-	};
-
 	/**
 	 * Returns Title DOM ID of the Title of this SubSection
 	 * @returns {string|boolean} DOM ID
@@ -401,10 +610,8 @@ sap.ui.define([
 		if (!this.getTitle().trim()) {
 			return false;
 		}
-		if (this._getInternalTitleVisible()) {
-			return this.getId() + "-headerTitle";
-		}
-		return false;
+
+		return this.getId() + "-headerTitle";
 	};
 
 	/**
@@ -417,11 +624,6 @@ sap.ui.define([
 		this._sBorrowedTitleDomId = sId;
 	};
 
-	ObjectPageSubSection.prototype._toggleMultiLineSectionContent = function (bMultiLine) {
-		this.toggleStyleClass("sapUxAPObjectPageSectionMultilineContent", bMultiLine);
-		this._bMultiLine = bMultiLine;
-	};
-
 	ObjectPageSubSection.prototype._expandSection = function () {
 		ObjectPageSectionBase.prototype._expandSection.call(this);
 		var oParent = this.getParent();
@@ -429,14 +631,20 @@ sap.ui.define([
 		return this;
 	};
 
+	ObjectPageSubSection.prototype._updateImportance = function (oCurrentMedia) {
+		var sCurrentImportanceLevel = this._getImportanceLevelToHide(oCurrentMedia);
+		this._applyImportanceRules(sCurrentImportanceLevel);
+	};
+
 	ObjectPageSubSection.prototype._hasVisibleActions = function () {
-		var aActions = this.getActions() || [];
+		var aActions = this.getActions();
 
 		if (aActions.length === 0) {
-		 return false;
+			return false;
 		}
+
 		return aActions.filter(function(oAction) {
-		   return oAction.getVisible();
+			return oAction.getVisible();
 		}).length > 0;
 	};
 
@@ -446,24 +654,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._observeChanges = function (oChanges) {
-		var oObject = oChanges.object,
-			sChangeName = oChanges.name,
-			sMutationName = oChanges.mutation,
-			oChild = oChanges.child,
+		var sChangeName = oChanges.name,
 			bHasTitle;
 
-		if (oObject === this) {// changes on SubSection level
-
-			if (sChangeName === "actions") { // change of the actions aggregation
-				if (sMutationName === "insert") {
-					this._observeAction(oChild);
-				} else if (sMutationName === "remove") {
-					this._unobserveAction(oChild);
-				}
-			}
-
-		} else if (sChangeName === "visible") { // change of the actions elements` visibility
-			bHasTitle = this._getInternalTitleVisible() && this.getTitle().trim() !== "";
+		if (sChangeName === "visible") { // change of the actions elements` visibility
+			bHasTitle = this.getTitle().trim() !== "";
 			if (!bHasTitle) {
 				this.$("header").toggleClass("sapUiHidden", !this._hasVisibleActions());
 			}
@@ -658,6 +853,8 @@ sap.ui.define([
 			this._oSeeLessButton = null;
 		}
 
+		this._getTitleControl().destroy();
+
 		this._unobserveBlocks();
 
 		this._oCurrentlyVisibleSeeMoreLessButton = null;
@@ -713,12 +910,16 @@ sap.ui.define([
 
 		this._toggleContentResizeListener(false);
 
+		this.setTitleVisible();
+
 		this._setAggregationProxy();
 		this._applyLayout(oObjectPageLayout);
 		this.refreshSeeMoreVisibility();
 
 		this.toggleStyleClass("sapUxAPObjectPageSubSectionStashed", this._aStashedControls.length ? true : false);
+		// SubSection is focusable only if it has its OWN title visible
 		this.toggleStyleClass("sapUxAPObjectPageSubSectionFocusable", this.getTitleVisible());
+		this._updateImportance();
 	};
 
 	ObjectPageSubSection.prototype._adaptDomHeight = function() {
@@ -1283,7 +1484,8 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype._setToFocusable = function (bFocusable) {
-		if (this._shouldBeFocusable()) {
+		// SubSection is focusable only if it has its OWN title visible
+		if (this.getTitleVisible()) {
 			this.$().attr("tabindex", bFocusable ? "0" : "-1");
 		} else {
 			this.$().removeAttr("tabindex");
@@ -1291,26 +1493,10 @@ sap.ui.define([
 		return this;
 	};
 
-
-	ObjectPageSubSection.prototype._shouldBeFocusable = function() {
-		return this.getTitleVisible() && this.getTitle().trim() !== "";
-	};
-
-
 	ObjectPageSubSection.prototype._getUseTitleOnTheLeft = function () {
 		var oObjectPageLayout = this._getObjectPageLayout();
 
 		return oObjectPageLayout && (oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft);
-	};
-
-	ObjectPageSubSection.prototype._updateShowHideState = function (bHide) {
-		if (this._getIsHidden() === bHide) {
-			return this;
-		}
-
-		this.$().children(this._sMoreContainerSelector).toggle(!bHide);
-
-		return ObjectPageSectionBase.prototype._updateShowHideState.call(this, bHide);
 	};
 
 	ObjectPageSubSection.prototype.getVisibleBlocksCount = function () {

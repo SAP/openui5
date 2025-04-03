@@ -329,12 +329,16 @@ function(
 
 	QUnit.test("Object Page shows first section title when only one section is visible", function (assert) {
 		//Arrange
-		var oFirstSection = this.oObjectPage.getSections()[0];
+		var oFirstSection = this.oObjectPage.getSections()[0],
+			oSubSection = oFirstSection.getSubSections()[0];
+
 		oFirstSection.setShowTitle(true);
 
 		//Assert
-		assert.ok(oFirstSection.$().find(".sapUxAPObjectPageSectionTitle").length > 0, "Title container is visible in the DOM");
-		assert.ok(oFirstSection.$().hasClass("sapUxAPObjectPageSectionNoTitle") === false, "CSS class for no title shown is missing");
+		assert.ok(oFirstSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
+			"Header container of Section is not visible in the DOM");
+		assert.ok(oFirstSection.$().hasClass("sapUxAPObjectPageSectionNoTitle"), "CSS class for no title shown is there");
+		assert.ok(oSubSection.$().find(".sapUxAPObjectPageSubSectionTitle ").length > 0, "Title container of SubSection is visible in the DOM");
 
 	});
 
@@ -1561,29 +1565,29 @@ function(
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is TitleLevel.Auto", async function (assert) {
 		var oObjectPage = helpers.generateObjectPageWithSubSectionContent(oFactory, 2, 2),
 			oSection,
-			$sectionHeader,
+			$sectionHeaderTitle,
 			oSubSection,
 			$subSectionTitle,
 			oFirstSection,
 			$firstSectionSubSectionTitle,
-			sTitleLevel3 = "3",
-			sTitleLevel4 = "4";
+			sTitleLevel3 = "h3",
+			sTitleLevel4 = "h4";
 
 		await helpers.renderObject(oObjectPage);
 
-		// subsection titles inside the first section should have aria-level 3 because the section title is hidden
+		// subsection titles inside the first section should have aria-level 4 because the section title is no longer hidden
 		oFirstSection = oObjectPage.getSections()[0];
 		$firstSectionSubSectionTitle = oFirstSection.getSubSections()[0].$("headerTitle");
 
 		// get the second section to test the aria-level of the section title and the subsection title
 		oSection = oObjectPage.getSections()[1];
-		$sectionHeader = oSection.$("header");
+		$sectionHeaderTitle = oSection.$("title");
 		oSubSection = oSection.getSubSections()[0];
 		$subSectionTitle = oSubSection.$("headerTitle");
 
-		assert.equal($sectionHeader.attr("aria-level"), sTitleLevel3, "The section has the correct aria-level");
-		assert.equal($firstSectionSubSectionTitle.attr("aria-level"), sTitleLevel3, "The subSection in the first section has the correct aria-level");
-		assert.equal($subSectionTitle.attr("aria-level"), sTitleLevel4, "The subSection has the correct aria-level");
+		assert.equal($sectionHeaderTitle[0].tagName.toLowerCase(), sTitleLevel3, "The section has the correct aria-level");
+		assert.equal($firstSectionSubSectionTitle[0].tagName.toLowerCase(), sTitleLevel4, "The subSection in the first section has the correct aria-level");
+		assert.equal($subSectionTitle[0].tagName.toLowerCase(), sTitleLevel4, "The subSection has the correct aria-level");
 	});
 
 	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", async function(assert) {
@@ -1591,30 +1595,30 @@ function(
 			oObjectPageMinimumSectionTitleLevel = TitleLevel.H6,
 			oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(oObjectPageSectionTitleLevel),
 			oSection,
-			$sectionHeader,
+			$sectionHeaderTitle,
 			oSubSection,
 			$subSectionTitle,
-			sSectionExpectedAriaLevel = "1", // equal to the  sectionTitleLevel(H1)
-			sSubSectionExpectedAriaLevel = "2", // lower than sectionTitleLevel(H1) by 1
-			sMinimumAriaLevel = "6";
+			sSectionExpectedAriaLevel = "h1", // equal to the  sectionTitleLevel(H1)
+			sSubSectionExpectedAriaLevel = "h2", // lower than sectionTitleLevel(H1) by 1
+			sMinimumAriaLevel = "h6";
 
 		await helpers.renderObject(oObjectPage);
 
 		oSection = oObjectPage.getSections()[0];
-		$sectionHeader = oSection.$("header");
+		$sectionHeaderTitle = oSection.$("title");
 		oSubSection = oSection.getSubSections()[0];
 		$subSectionTitle = oSubSection.$("headerTitle");
 
-		assert.equal($sectionHeader.attr("aria-level"), sSectionExpectedAriaLevel, "The section has the correct aria-level");
-		assert.equal($subSectionTitle.attr("aria-level"), sSubSectionExpectedAriaLevel, "The subSection has the correct aria-level");
+		assert.equal($sectionHeaderTitle[0].tagName.toLowerCase(), sSectionExpectedAriaLevel, "The section has the correct aria-level");
+		assert.equal($subSectionTitle[0].tagName.toLowerCase(), sSubSectionExpectedAriaLevel, "The subSection has the correct aria-level");
 
 		oObjectPage.setSectionTitleLevel(oObjectPageMinimumSectionTitleLevel);
 		await nextUIUpdate();
-		$sectionHeader = oSection.$("header");
+		$sectionHeaderTitle = oSection.$("title");
 		$subSectionTitle = oSubSection.$("headerTitle");
 
-		assert.equal($sectionHeader.attr("aria-level"), sMinimumAriaLevel, "The section has the correct aria-level");
-		assert.equal($subSectionTitle.attr("aria-level"), sMinimumAriaLevel, "The subSection has the correct aria-level");
+		assert.equal($sectionHeaderTitle[0].tagName.toLowerCase(), sMinimumAriaLevel, "The section has the correct aria-level");
+		assert.equal($subSectionTitle[0].tagName.toLowerCase(), sMinimumAriaLevel, "The subSection has the correct aria-level");
 
 	});
 
@@ -1630,9 +1634,9 @@ function(
 			$firstSubSectionTitle,
 			$secondSubSectionTitle,
 			$thirdSubSectionTitle,
-			sSubSectionDefaultAriaLevel = "5", // lower than sectionTitleLevel(H4) by 1
-			sFirstSubSectionExpectedAriaLevel = "1", // titleLevel(H1) is set explicitly
-			sSecondSubSectionExpectedAriaLevel = "2"; // titleLevel(H2) is set explicitly
+			sSubSectionDefaultAriaLevel = "h5", // lower than sectionTitleLevel(H4) by 1
+			sFirstSubSectionExpectedAriaLevel = "h1", // titleLevel(H1) is set explicitly
+			sSecondSubSectionExpectedAriaLevel = "h2"; // titleLevel(H2) is set explicitly
 
 		oFirstSubSection.setTitleLevel(TitleLevel.H1);
 		oSecondSubSection.setTitleLevel(TitleLevel.H2);
@@ -1642,13 +1646,13 @@ function(
 		$secondSubSectionTitle = oSecondSubSection.$("headerTitle");
 		$thirdSubSectionTitle = oThirdSubSection.$("headerTitle");
 
-		assert.equal($firstSubSectionTitle.attr("aria-level"), sFirstSubSectionExpectedAriaLevel,
+		assert.equal($firstSubSectionTitle[0].tagName.toLowerCase(), sFirstSubSectionExpectedAriaLevel,
 			"SubSection aria-level " + sFirstSubSectionExpectedAriaLevel + ", although op sectionTitleLevel is " + oObjectPageSectionTitleLevel);
 
-		assert.equal($secondSubSectionTitle.attr("aria-level"), sSecondSubSectionExpectedAriaLevel,
+		assert.equal($secondSubSectionTitle[0].tagName.toLowerCase(), sSecondSubSectionExpectedAriaLevel,
 			"SubSection aria-level " + sSecondSubSectionExpectedAriaLevel + ", although op sectionTitleLevel is " + oObjectPageSectionTitleLevel);
 
-		assert.equal($thirdSubSectionTitle.attr("aria-level"), sSubSectionDefaultAriaLevel,
+		assert.equal($thirdSubSectionTitle[0].tagName.toLowerCase(), sSubSectionDefaultAriaLevel,
 			"SubSection aria-level " + sSubSectionDefaultAriaLevel + ", lower than sectionTitleLevel:" + oObjectPageSectionTitleLevel + " by 1");
 	});
 

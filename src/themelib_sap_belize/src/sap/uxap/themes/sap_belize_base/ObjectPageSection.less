@@ -17,7 +17,7 @@
 	box-sizing: border-box;
 	height: 3rem;
 	line-height: 3rem;
-	padding: 0 3rem 0 3rem;
+	padding: 0 2.25rem 0 3rem;
 }
 
 .sapUxAPObjectPageSectionHeading {
@@ -35,7 +35,7 @@ so we reset it when the section header is hidden */
 
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader {
-	padding: 0 0 0.5rem 2rem;
+	padding: 0 1rem 0.5rem 2rem;
 }
 
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSectionHeading {
@@ -44,7 +44,7 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader {
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
-	padding: 0 0 0.5rem 1rem;
+	padding: 0 1rem 0.5rem 1rem;
 }
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeading {
@@ -61,11 +61,11 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	text-overflow: ellipsis;
 }
 
-.sapUxAPSectionShowHideButton {
+.sapUxAPShowHideButton {
 	float: right;
 }
 
-.sapUxAPSectionShowHideButton:not(:last-child) {
+.sapUxAPShowHideButton:not(:last-child) {
 	float: right;
 	margin-left: 0.5rem;
 }
@@ -77,7 +77,7 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	width: 100%;
 }
 
-.sapUiSizeCompact .sapUxAPSectionShowHideButton {
+.sapUiSizeCompact .sapUxAPShowHideButton {
 	margin-top: 0.5rem;
 }
 
@@ -127,9 +127,15 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 	line-height: inherit;
 	border-bottom: none;
 	vertical-align: bottom;
+	top: 0;
 }
 
 .sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle
 .sapUxAPObjectPageSectionHeader {
+	height: auto;
+	padding-bottom: 0;
+}
+
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle .sapUxAPObjectPageSubSectionHeaderToolbar {
 	height: auto;
 }
