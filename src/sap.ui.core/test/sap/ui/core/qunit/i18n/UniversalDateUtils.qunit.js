@@ -49,21 +49,21 @@ sap.ui.define([
 
 [
 	// First day of week + Offset: March 20, 2025
-	{iOffsetDay: 4, sCalendarWeekNumbering: CalendarWeekNumbering.Default, iExpectedTimeInMS: 1742425200000},
+	{iOffsetDay: 4, sCalendarWeekNumbering: CalendarWeekNumbering.Default, iDay: 20},
 	// First day of week + Offset: March 13, 2025 (due to calendar week numbering)
-	{iOffsetDay: -4, sCalendarWeekNumbering: CalendarWeekNumbering.ISO_8601, iExpectedTimeInMS: 1741820400000},
+	{iOffsetDay: -4, sCalendarWeekNumbering: CalendarWeekNumbering.ISO_8601, iDay: 13},
 	// First day of week + Offset: March 17, 2025 (due to calendar week numbering)
-	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.ISO_8601, iExpectedTimeInMS: 1742166000000},
+	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.ISO_8601, iDay: 17},
 	// First day of week + Offset: March 15, 2025 (due to calendar week numbering)
-	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.MiddleEastern, iExpectedTimeInMS: 1741993200000},
+	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.MiddleEastern, iDay: 15},
 	// First day of week + Offset: March 16, 2025
-	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.WesternTraditional, iExpectedTimeInMS: 1742079600000}
+	{iOffsetDay: 0, sCalendarWeekNumbering: CalendarWeekNumbering.WesternTraditional, iDay: 16}
 ].forEach(function (oFixture, i) {
 	QUnit.test("Static Methods Test _getDateFromWeekStartByDayOffset #" + i, function (assert) {
-		var oUDate, oUniversalDateUtilsMock,
+		var oUDate,
 			oDate = new UniversalDate(2025, 2, 16, 0, 0, 0); // First day of the week March 16, 2025
 
-		oUniversalDateUtilsMock = this.mock(UniversalDateUtils).expects("createNewUniversalDate")
+		this.mock(UniversalDateUtils).expects("createNewUniversalDate")
 			.withExactArgs()
 			.returns(oDate);
 
@@ -71,10 +71,8 @@ sap.ui.define([
 		oUDate = UniversalDateUtils._getDateFromWeekStartByDayOffset(
 			oFixture.sCalendarWeekNumbering, oFixture.iOffsetDay);
 
-		assert.strictEqual(oUDate.oDate.getTime(), oFixture.iExpectedTimeInMS,
+		assert.strictEqual(oUDate.oDate.getTime(), new Date(2025, 2, oFixture.iDay, 0, 0, 0).getTime(),
 			"_getDateFromWeekStartByDayOffset: The date that is returned is correctly created.");
-
-		oUniversalDateUtilsMock.restore();
 	});
 });
 
