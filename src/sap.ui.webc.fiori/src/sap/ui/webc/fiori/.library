@@ -40,7 +40,7 @@ This Web Components consumption model has been discarded. An alternative consump
 			<lib name="ui5-web-components" displayName="UI5 Web Components" npmName="@ui5/webcomponents" version="1.18.0" homepage="https://sap.github.io/ui5-webcomponents/">
 				<license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
 				<copyright>SAP</copyright>
-				<pattern>sap/ui/webc/fiori/thirdparty/*.*</pattern>
+				<pattern>sap/ui/webc/fiori/thirdparty/**</pattern>
 			</lib>
 			<lib name="ZXing" displayName="ZXing" version="0.17.1" npmName="@zxing/library" hash="388b252531769348d61a701c6a83db7a" homepage="https://zxing-js.github.io/library/">
 				<license url="https://github.com/zxing-js/library/blob/master/LICENSE" type="Apache-2.0"></license>

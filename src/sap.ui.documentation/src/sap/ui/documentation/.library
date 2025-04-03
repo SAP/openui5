@@ -42,7 +42,7 @@
       <lib name="highlight.js" displayName="highlight.js" npmName="highlight.js" hash="ad04c8737a21411588b021733d622c49" version="11.9.0" homepage="https://highlightjs.org/" id="73554900106100266829">
         <license url="https://github.com/highlightjs/highlight.js/blob/11.9.0/LICENSE" type="BSD-3-Clause" />
         <copyright>2006-2020, Ivan Sagalaev</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/highlight.js/*</pattern>
+        <pattern>sap/ui/documentation/sdk/thirdparty/highlight.js/**</pattern>
       </lib>
       <lib name="elasticlunr" displayName="Elasticlunr" npmName="elasticlunr" version="0.9.5" hash="bdc2dbed628a3bb7a62d58b999dd7123" homepage="http://elasticlunr.com/" id="73554900106100021592">
         <license url="https://github.com/weixsong/elasticlunr.js/blob/v0.9.5/LICENSE" type="MIT" />
@@ -52,12 +52,12 @@
       <lib name="datatables" displayName="DataTables" npmName="datatables.net-dt" version="2.0.1" hash="290472b66e1c910ae1505c299a40a319" homepage="https://datatables.net/" id="73554900106100300066">
         <license url="https://datatables.net/license/" type="MIT" />
         <copyright>SpryMedia Ltd</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/*</pattern>
+        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/**</pattern>
       </lib>
       <lib name="datatables-buttons" displayName="Buttons extension for DataTables" npmName="datatables.net-buttons-dt" version="3.0.0" hash="8266856cadc3cad4f2d80e56cc566af8" homepage="https://datatables.net/extensions/buttons/" id="73554900106100285921">
         <license url="https://datatables.net/license/" type="MIT" />
         <copyright>SpryMedia Ltd</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/*</pattern>
+        <pattern>sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/**</pattern>
         <!-- not in PPMS because it is a sub-module of DataTables -->
       </lib>
     </thirdparty>
