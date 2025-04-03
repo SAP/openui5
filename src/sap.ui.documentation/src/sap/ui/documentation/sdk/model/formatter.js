@@ -99,12 +99,12 @@ sap.ui.define([
 				return sFormatted;
 			},
 
-			formatVersionTitle: function (sPattern, sTitle) {
+			formatVersionTitle: async function (sPattern, sTitle) {
 				if (sTitle) {
 					return this.formatMessage(sPattern, sTitle);
 				}
 
-				return this.getModel("i18n").getResourceBundle().getText("API_DETAIL_NA_VERSION");
+				return (await this.getModel("i18n").getResourceBundle()).getText("API_DETAIL_NA_VERSION");
 			},
 
 			formatSenderLink: function (sControlName, sEntityName, sEntityType) {
@@ -313,8 +313,9 @@ sap.ui.define([
 			 * @param {string} version - The current version string.
 			 * @returns {string} The formatted version status.
 			 */
-			formatVersionStatus: function (bShowVersionSwitchButton, isDevVersion, version) {
-				var oResourceBundle = this.getModel("i18n").getResourceBundle();
+			formatVersionStatus: async function (bShowVersionSwitchButton, isDevVersion, version) {
+
+				var oResourceBundle = await this.getModel("i18n").getResourceBundle();
 
 				if (bShowVersionSwitchButton) {
 					return "";
@@ -335,8 +336,8 @@ sap.ui.define([
 			 * @param {string} sCategory - The category to use for getting the title.
 			 * @returns {string} The title associated with the category from the resource bundle.
 			 */
-			getDemoAppsCategoryTitle: function (sCategory) {
-				var oResourceBundle = this.getModel("i18n").getResourceBundle();
+			getDemoAppsCategoryTitle: async function (sCategory) {
+				var oResourceBundle = await this.getModel("i18n").getResourceBundle();
 				return oResourceBundle.getText("DEMO_APPS_CATEGORY_" + sCategory.toUpperCase());
 			},
 
