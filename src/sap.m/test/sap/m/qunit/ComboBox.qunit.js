@@ -12868,7 +12868,7 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
-		assert.ok(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[1].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the second item");
+		assert.ok(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
 	});
 
 	QUnit.test("When the FormattedText in the value state header is focused onsapend should move the focus to the last item", function (assert) {
