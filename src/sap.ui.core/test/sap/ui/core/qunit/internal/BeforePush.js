@@ -418,8 +418,8 @@
 				oContent = document.createElement("a");
 				oContent.setAttribute("href", normalizeUrl(sUrl));
 				oContent.appendChild(oTextNode);
-			} else if (arguments.length > 2) {
-				return;
+			} else if (arguments.length > 2) { // empty cell
+				oContent = document.createTextNode("");
 			}
 			oCell.appendChild(oContent);
 			oRow.appendChild(oCell);
@@ -430,10 +430,6 @@
 		}
 		Object.keys(mApps).sort().forEach(function (sApp) {
 			const aLinks = mApps[sApp];
-			if (aLinks.$hidden) {
-				return;
-			}
-
 			const oRow = document.createElement("tr");
 			addCell(oRow, sApp);
 			addCell(oRow, "App", aLinks[0]);
