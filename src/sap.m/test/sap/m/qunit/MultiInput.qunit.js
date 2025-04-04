@@ -2444,6 +2444,33 @@ sap.ui.define([
 		assert.equal(this.multiInput1.getTokens().length, 0, "A token should not be created");
 	});
 
+	QUnit.test("Paste 5 tokens when maxTokens is set to 3", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var sPastedString = 'Token 1\n Token 2\n Token 3\n Token 4\n Token 5';
+		this.multiInput1.setMaxTokens(3);
+
+		this.multiInput1.addValidator(function(args){
+			var text = args.text;
+			return new Token({key: text, text: text});
+		});
+
+		//act
+		qutils.triggerEvent("paste", this.multiInput1.getFocusDomRef(), {
+			originalEvent: {
+				clipboardData: {
+					getData: function () {
+						return sPastedString;
+					}
+				}
+			}
+		});
+
+		this.clock.tick(10);
+		await nextUIUpdate(this.clock);
+
+		assert.equal(this.multiInput1.getTokens().length, 3, "3 tokens should be added to MultiInput");
+	});
+
 	QUnit.test("token update event on paste of a single string", async function(assert) {
 			this.clock = sinon.useFakeTimers();
 			//arrange
