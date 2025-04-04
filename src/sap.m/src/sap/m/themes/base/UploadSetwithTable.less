@@ -1,3 +1,8 @@
+/* ========================================= */
+/* CSS for control sap.m/UploadSetwithTable  */
+/* Base theme                                */
+/* ========================================= */
+
 .sapMUSTItemIconInactive,
 .sapMUSTItemIcon {
 	text-align: initial;
@@ -6,20 +11,21 @@
 .sapMUSTItemIconInactive,
 .sapMUSTItemIcon,
 .sapMUSTItemImage {
-	height:				3rem;
-	width:				3rem;
-	margin-top:			0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	margin-bottom:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	margin-left:		0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
-	flex:				none;
+	height: 3rem;
+	width: 3rem;
+	margin-top: 0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-bottom: 0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	margin-left: 0.1rem; /* is needed so that keyboard frame is visible; after the central focus concept is implemented delete the margin */
+	flex: none;
 }
 
 .sapMUSTItemIcon {
-	color: @sapUiContentIconColor;
+	color: var(--sapContent_IconColor);
 }
+
 /* Item Icon Inactive */
 .sapMUSTItemIconInactive {
-	color: @sapUiContentNonInteractiveIconColor;
+	color: var(--sapContent_NonInteractiveIconColor);
 }
 
 .sapMUSTItemIcon {
@@ -36,8 +42,9 @@
 	justify-content: center;
 	flex-direction: row;
 }
+
 .sapMUST .sapMIllustratedMessage {
-	padding: 0px;
+	padding: 0;
 	text-align: left;
 }
 
@@ -47,18 +54,19 @@
 	margin: 0 1rem;
 }
 
-.sapMUST .sapMIllustratedMessageAdditionalContent,.sapMUST .sapMIllustratedMessage.sapMIllustratedMessage-Spot .sapMIllustratedMessageAdditionalContent {
-	margin-top: 0px;
-	margin-bottom: 0px;
+.sapMUST .sapMIllustratedMessageAdditionalContent,
+.sapMUST .sapMIllustratedMessage.sapMIllustratedMessage-Spot .sapMIllustratedMessageAdditionalContent {
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
-// alignment for illustrated figure captions
+/* alignment for illustrated figure captions */
 .sapMUST .sapMIllustratedMessage.sapMIllustratedMessage-Spot figcaption {
 	margin-top: 1rem;
 }
 
 .sapMUST .sapMListTblCell.sapMListTblCellNoData {
-	padding: 0px;
+	padding: 0;
 }
 
 .sapMUSTRemovePopoverContainer {
@@ -66,8 +74,7 @@
 	max-height: 11rem !important;
 }
 
-// UploadSetwith Table plugin styles 
-
+/* UploadSetwith Table plugin styles */
 .sapMUSTP-IllustratedMessage-container .sapMIllustratedMessageMainContent {
 	justify-content: center;
 	flex-direction: row;
@@ -81,7 +88,8 @@
 	height: 4.75rem;
 }
 
-.sapMUSTP-IllustratedMessage-container .sapMIllustratedMessageAdditionalContent,.sapMUSTP-IllustratedMessage-container.sapMIllustratedMessage.sapMIllustratedMessage-Spot .sapMIllustratedMessageAdditionalContent {
-	margin-top: 0px;
-	margin-bottom: 0px;
+.sapMUSTP-IllustratedMessage-container .sapMIllustratedMessageAdditionalContent,
+.sapMUSTP-IllustratedMessage-container.sapMIllustratedMessage.sapMIllustratedMessage-Spot .sapMIllustratedMessageAdditionalContent {
+	margin-top: 0;
+	margin-bottom: 0;
 }
