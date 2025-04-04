@@ -26,7 +26,7 @@ Component: Ace (Ajax.org Cloud9 Editor), version: 1.36.5
 Copyright: 2010, Ajax.org B.V.
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
-Contained in: src/sap.ui.codeeditor/src/sap/ui/codeeditor/js/ace/*
+Contained in: src/sap.ui.codeeditor/src/sap/ui/codeeditor/js/ace/**
 
 
 Library: sap.ui.core:
@@ -56,7 +56,7 @@ Component: jQuery UI 1.10, version: 1.10.4
 Copyright: 2014 jQuery Foundation and other contributors
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jqueryui/*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jqueryui/**
 	src/sap.ui.core/src/jquery.sap.dom.js
 
 Component: jQuery UI 1.11, version: 1.11.1
@@ -163,7 +163,13 @@ Component: Unicode Common Locale Data Repository, version: 46.1.0
 Copyright: 1991-2024 Unicode, Inc.
 License: LicenseRef-Unicode-3.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-Unicode-3.0.txt
-Contained in: src/sap.ui.core/src/sap/ui/core/cldr/*
+Contained in: src/sap.ui.core/src/sap/ui/core/cldr/**
+
+Component: MobiScroll, version: 2.9.0
+Copyright: 2010-2013, Acid Media
+License: MIT
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/mobiscroll/**
 
 Component: SinonJS, version: 1.14.1
 Copyright: 2010-2014, Christian Johansen, christian@cjohansen.no
@@ -276,7 +282,7 @@ Component: Hyphenopoly, version: 3.4.0
 Copyright: 2021 Mathias Nater
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.core/src/sap/ui/thirdparty/hyphenopoly/*
+Contained in: src/sap.ui.core/src/sap/ui/thirdparty/hyphenopoly/**
 
 Component: p-cancelable, version: 2.0.0
 Copyright: Sindre Sorhus <sindresorhus@gmail.com>
@@ -315,7 +321,7 @@ Component: highlight.js, version: 11.9.0
 Copyright: 2006-2020, Ivan Sagalaev
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
-Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/highlight.js/*
+Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/highlight.js/**
 
 Component: Elasticlunr, version: 0.9.5
 Copyright: 2017 Wei Song and Oliver Nightingale
@@ -327,13 +333,13 @@ Component: DataTables, version: 2.0.1
 Copyright: SpryMedia Ltd
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/*
+Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/**
 
 Component: Buttons extension for DataTables, version: 3.0.0
 Copyright: SpryMedia Ltd
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
-Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/*
+Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/**
 
 
 Library: sap.ui.integration:
@@ -342,7 +348,7 @@ Component: UI5 Web Components, version: 1.7.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
-Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/*
+Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/**
 
 Component: Adaptive Cards, version: 2.9.0
 Copyright: 2017 Microsoft
@@ -389,9 +395,9 @@ Copyright: SAP SE or an SAP affiliate company and Theming Base Content contribut
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/themes/base/base.less
-	src/themelib_sap_belize/src/sap/ui/core/themes/*/base.less
-	src/themelib_sap_fiori_3/src/sap/ui/core/themes/*/base.less
-	src/themelib_sap_horizon/src/sap/ui/core/themes/*/base.less
+	src/themelib_sap_belize/src/sap/ui/core/themes/**/base.less
+	src/themelib_sap_fiori_3/src/sap/ui/core/themes/**/base.less
+	src/themelib_sap_horizon/src/sap/ui/core/themes/**/base.less
 
 
 ALL LICENSE TEXTS:

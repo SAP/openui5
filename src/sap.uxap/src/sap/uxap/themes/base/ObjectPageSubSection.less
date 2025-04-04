@@ -3,7 +3,7 @@
 /* Base theme                                     */
 /* ============================================== */
 
-.sapUxAPObjectPageSubSection {
+.sapUxAPObjectPageSubSection:not(.sapUxAPObjectPageSubSectionPromoted) {
 	padding-top: 1rem;
 	box-sizing: border-box;
 }
@@ -14,8 +14,25 @@
 	height: 20vh;
 }
 
-.sapUxAPObjectPageSubSectionHeaderActions > .sapMBtn {
+.sapUxAPObjectPageSubSectionHeader {
+	width: 100%;
+}
+
+.sapUxAPObjectPageSubSectionHeader > .sapMBtn {
 	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageSubSectionHeader .sapMTB {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.sapUxAPObjectPageSubSectionHeader .sapMIBar :not(.sapMBtnDisabled)>.sapMBtnInner.sapMBtnActive {
+	border-color: @sapUiButtonActiveBorderColor;
+}
+
+.sapUxAPObjectPageSubSectionHeader .sapMIBar.sapMBtn:hover>.sapMBtnHoverable {
+	background-color: @sapUiButtonHoverBackground;
 }
 
 .sapUxAPObjectPageSubSectionHeader {
@@ -23,15 +40,17 @@
 	word-wrap: break-word;
 	padding: 0 3rem 0 3rem;
 	display: flex;
-	justify-content: space-between;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-.sapUxAPObjectPageSubSectionHeaderTitle {
-	white-space: normal;
-	line-height: 3rem;
-	color: @sapUiGroupTitleTextColor;
-	font-size: @sapMFontHeader4Size;
-	font-weight: normal;
+.sapUxAPObjectPageSubSectionTitle {
+	height: 2.75rem;
+	line-height: 2.5rem;
+}
+
+.sapUiRespGrid .sapUxAPObjectPageSubSectionHeader .sapMIBar .sapMBarChild:first-child {
+	margin-left: 0
 }
 
 .sapUxAPSubSectionSeeMoreContainer {
@@ -237,3 +256,26 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 	}
 }
 
+// Styles needed for wrapTitle property
+.sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionWrapTitle
+.sapUxAPObjectPageSubSectionHeader
+.sapUxAPObjectPageSubSectionTitle  {
+	height: auto;
+	word-break: break-word;
+	white-space: break-spaces;
+	overflow: auto;
+	line-height: inherit;
+	border-bottom: none;
+	position: relative;
+	top: 0rem;
+}
+
+.sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionWrapTitle
+.sapUxAPObjectPageSubSectionHeader {
+	height: auto;
+	padding-bottom: 0;
+}
+
+.sapUxAPObjectPageSubSection.sapUxAPObjectPageSubSectionWrapTitle .sapUxAPObjectPageSubSectionHeaderToolbar {
+	height: auto;
+}

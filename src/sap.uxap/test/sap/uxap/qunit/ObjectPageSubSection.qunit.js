@@ -784,7 +784,6 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		},
 		aProperties = oHelpers.generateProperties(aPropertyTypes, aScreenTypes);
 
-
 	QUnit.module("ObjectPageSubSection - FitContainer Height Adaptation", {
 		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
@@ -836,6 +835,130 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 				done();
 			});
 		}, this);
+	});
+
+	QUnit.module("Object Page SubSection - actions aggregation");
+
+	QUnit.test("SubSection action buttons in OverflowToolbar in promoted SubSection", function(assert) {
+		var oActionButton1 = new Button({text: "Button1"}),
+			oActionButton2 = new Button({text: "Button2"}),
+			oSubSection = new ObjectPageSubSectionClass({
+				title: "SubSection Title",
+				actions: [oActionButton1],
+				blocks: new Label({text: "Block1" })
+			}),
+			oSection = new ObjectPageSection({
+				title:"Personal",
+				subSections: [ oSubSection ]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+					sections: [ oSection ]
+				}),
+			fnDone = assert.async();
+
+		assert.expect(7);
+		oObjectPageLayout.placeAt('qunit-fixture');
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//assert
+			assert.ok(oSubSection._getHeaderToolbar().isA("sap.m.OverflowToolbar"), "OverflowToolbar is created");
+			assert.ok(oSubSection._getHeaderToolbar().getDomRef() !== null, "OverflowToolbar is rendered");
+			// Action button is placed on 2nd position, as the first three items are Title of the Section, title of the SubSection (hidden) and spacer.
+			assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[2], oActionButton1, "Action button is placed at correct position");
+			assert.ok(oActionButton1.getParent() === oSubSection, "Action button is a child of the SubSection");
+			assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[0].getVisible(), true, "Section title is visible");
+
+			//act
+			oSubSection.insertAction(oActionButton2, 0);
+
+			//assert
+			assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[2], oActionButton2, "Action button is inserted in correct index in the OverflowToolbar");
+			assert.ok(oActionButton2.getParent() === oSubSection, "Action button is a child of the SubSection");
+
+			oObjectPageLayout.destroy();
+			fnDone();
+		});
+	});
+
+	QUnit.test("SubSection action buttons in OverflowToolbar in non-promoted SubSection", function(assert) {
+		var oActionButton1 = new Button({text: "Button1"}),
+			oActionButton2 = new Button({text: "Button2"}),
+			oSubSection = new ObjectPageSubSectionClass({
+				title: "SubSection Title",
+				actions: [oActionButton1],
+				blocks: new Label({text: "Block1" })
+			}),
+			oSubSection2 = new ObjectPageSubSectionClass({
+				blocks: new Label({text: "Block1" })
+			}),
+			oSection = new ObjectPageSection({
+				title:"Personal",
+				subSections: [ oSubSection, oSubSection2 ]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+					sections: [ oSection ]
+				}),
+			fnDone = assert.async();
+
+		assert.expect(6);
+		oObjectPageLayout.placeAt('qunit-fixture');
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			//assert
+			assert.ok(oSubSection._getHeaderToolbar().isA("sap.m.OverflowToolbar"), "OverflowToolbar is created");
+			assert.ok(oSubSection._getHeaderToolbar().getDomRef() !== null, "OverflowToolbar is rendered");
+			assert.ok(oSubSection.$().find(oSubSection._getHeaderToolbar().getDomRef()), "Toolbar is rendered in the SubSection header");
+			// Action button is placed on 3rd position, as the first three items are Title of the Section, title of the SubSection (hidden) and spacer.
+			assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[2], oActionButton1, "Action button is placed at correct position");
+			assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[0].getVisible(), true, "SubSection title is visible");
+
+			//act
+			oSubSection.insertAction(oActionButton2, 0);
+
+			//assert
+			assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[2], oActionButton2, "Action button is inserted in correct index in the OverflowToolbar");
+
+			oObjectPageLayout.destroy();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Remove (all) action/Index of action", function(assert) {
+		var oActionButton1 = new Button({text: "Button1"}),
+			oActionButton2 = new Button({text: "Button2"}),
+			oSubSection = new ObjectPageSubSectionClass({
+				title: "SubSection Title",
+				actions: [oActionButton1, oActionButton2],
+				blocks: new Label({text: "Block1" })
+			}),
+			oSubSection2 = new ObjectPageSubSectionClass({
+				blocks: new Label({text: "Block1" })
+			}),
+			oSection = new ObjectPageSection({
+				title:"Personal",
+				subSections: [ oSubSection, oSubSection2 ]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+					sections: [ oSection ]
+				});
+
+		//act
+		assert.strictEqual(oSubSection.getActions().length, 2, "SubSection has 2 actions");
+		assert.strictEqual(oSubSection.indexOfAction(oActionButton1), 0, "Correct index of action is returned");
+		assert.strictEqual(oSubSection.indexOfAction(oActionButton2), 1, "Correct index of action is returned");
+		assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[2], oActionButton1, "Action button is placed at correct index");
+		assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[3], oActionButton2, "Action button is placed at correct index");
+
+		oSubSection.removeAction(oActionButton1);
+
+		//assert
+		assert.strictEqual(oSubSection.getActions().length, 1, "SubSection has 1 action");
+		assert.strictEqual(oSubSection.indexOfAction(oActionButton2), 0, "Correct index of action is returned");
+		assert.strictEqual(oSubSection._getHeaderToolbar().getContent()[2], oActionButton2, "Action button is placed at correct index");
+
+		oSubSection.removeAllActions();
+		assert.strictEqual(oSubSection.getActions().length, 0, "SubSection has no actions");
+		assert.strictEqual(oSubSection._getHeaderToolbar().getContent().length, 2, "OverflowToolbar has only 2 items - spacer and title");
+
+		oObjectPageLayout.destroy();
 	});
 
 	QUnit.module("Object Page SubSection - blocks aggregation");
@@ -1219,25 +1342,30 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 					]
 				}),
 				oSubSection1 = oObjectPageLayout.getSections()[0].getSubSections()[0],
-				oSubSection2 = oObjectPageLayout.getSections()[0].getSubSections()[1];
+				oSubSection2 = oObjectPageLayout.getSections()[0].getSubSections()[1],
+				fnDone = assert.async();
 
+		assert.expect(4);
 		oObjectPageLayout.placeAt('qunit-fixture');
 		await nextUIUpdate();
 
 		//assert
-		assert.ok(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should be invisible");
-		assert.notOk(oSubSection2.$("header").hasClass("sapUiHidden"), "SubSection header with title and no visible actions should be visible");
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", async function() {
+			assert.ok(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should be invisible");
+			assert.notOk(oSubSection2.$("header").hasClass("sapUiHidden"), "SubSection header with title and no visible actions should be visible");
 
-		//act
-		oActionButton1.setVisible(true);
-		oSubSection2.setTitle("");
-		await nextUIUpdate();
+			//act
+			oActionButton1.setVisible(true);
+			oSubSection2.setTitle("");
+			await nextUIUpdate();
 
-		//assert
-		assert.notOk(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with visible actions should become visible");
-		assert.ok(oSubSection2.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should become invisible");
+			//assert
+			assert.notOk(oSubSection1.$("header").hasClass("sapUiHidden"), "SubSection header with visible actions should become visible");
+			assert.ok(oSubSection2.$("header").hasClass("sapUiHidden"), "SubSection header with no visisble title and actions should become invisible");
 
-		oObjectPageLayout.destroy();
+			oObjectPageLayout.destroy();
+			fnDone();
+		});
 	});
 
 	QUnit.module("Object Page SubSection media classes", {
@@ -1319,7 +1447,6 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		var oLastSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0],
 		oObjectPageLayout = this.oObjectPageLayout,
 		done = assert.async(),
-		iReRenderingCount = 0,
 		oScrollToSectionSpy = this.spy(oObjectPageLayout, "scrollToSection"),
 		oSelectedSection;
 
@@ -1332,14 +1459,6 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			oLastSubSection.setTitle("changed");
 
 			oLastSubSection.addEventDelegate({ onAfterRendering: function() {
-				iReRenderingCount++;
-				// we are interested in the second rerendering
-				// (there are two rerenderings because two properties of the oLastSubSection (title and internal title)
-				// are changed but at different stages
-				// where the second invalidation happens internally in applyUXRules)
-				if (iReRenderingCount < 2) {
-					return;
-				}
 				assert.ok(oScrollToSectionSpy.alwaysCalledWithMatch(oSelectedSection), "the correct scroll top is preserved");
 				done();
 			}});
@@ -1550,7 +1669,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		oControl.destroy();
 	});
 
-	QUnit.test("_getTitleDomId and _setBorrowedTitleDomId", function (assert) {
+	QUnit.test("_getTitleDomId", function (assert) {
 		// Arrange
 		var oSubSection = new ObjectPageSubSectionClass("TestSubSection");
 
@@ -1563,20 +1682,6 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		// Assert
 		assert.strictEqual(oSubSection._getTitleDomId(), "TestSubSection-headerTitle",
 			"The internal SubSection title DOM ID should be returned");
-
-		// Act - set internal title visible false
-		oSubSection._setInternalTitleVisible(false);
-
-		// Assert
-		assert.strictEqual(oSubSection._getTitleDomId(), false,
-			"If only internal title set to visible false method should return false");
-
-		// Act - _setBorrowedTitleDomId
-		oSubSection._setBorrowedTitleDomId("TestID");
-
-		// Assert
-		assert.strictEqual(oSubSection._getTitleDomId(), "TestID",
-			"The previously set Borrowed Title DOM ID should be returned");
 	});
 
 	QUnit.module("Content fit container", {
@@ -1991,25 +2096,27 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		}
 	});
 
-	QUnit.test("applyUxRules", async function(assert) {
+	QUnit.test("applyUxRules", function(assert) {
 
 		// Setup
 		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
-			oInvalidateSpy = this.spy(oSubSection, "invalidate"),
+			oInvalidateSpy,
 			done = assert.async();
 
 		assert.expect(1);
 
 		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
-			// Check
+			oInvalidateSpy	= this.spy(oSubSection, "invalidate");
+
+			// Act
+			this.oObjectPageLayout._applyUxRules(true);
+
+			// Assert
 			assert.equal(oInvalidateSpy.callCount, 0, "subSection is not invalidated");
 			done();
 		}, this);
 
 		this.oObjectPageLayout.placeAt('qunit-fixture');
-		await nextUIUpdate();
-		// Act
-		this.oObjectPageLayout._applyUxRules(true);
 	});
 
 	QUnit.test("does not reset grid content on rerendering", async function(assert) {
@@ -2063,11 +2170,11 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 	});
 
 	QUnit.test("SubSection without title has no title", function (assert) {
-		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0],
-			$section = oSubSection.$();
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0];
 
-		assert.strictEqual($section.find('.sapUxAPObjectPageSubSectionHeader').length, 0, "subsection has no title");
+		assert.strictEqual(oSubSection._oTitle.getDomRef(), null, "subsection has no title");
 		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is false");
+		assert.strictEqual(oSubSection._oTitle.getVisible(), false, "title is not");
 
 		this.oObjectPage.destroy();
 	});
@@ -2088,6 +2195,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
 		// Assert
 		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is false");
+		assert.strictEqual(oSubSection._oTitle.getVisible(), false, "title is not");
 
 		// Act
 		oSubSection.setShowTitle(true);
@@ -2095,6 +2203,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
 		// Assert
 		assert.strictEqual(oSubSection.getTitleVisible(), true, "titleVisible is true");
+		assert.strictEqual(oSubSection._oTitle.getVisible(), true, "title is visible");
 
 		this.oObjectPage.destroy();
 	});
@@ -2105,6 +2214,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
 		// Assert
 		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is false");
+		assert.strictEqual(oSubSection._oTitle.getVisible(), false, "title is not visible");
 
 		// Act
 		oSubSection.setShowTitle(true);
@@ -2113,6 +2223,7 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
 		// Assert
 		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is still false as title is empty string");
+		assert.strictEqual(oSubSection._oTitle.getVisible(), false, "title is still not visible as title is empty string");
 
 		this.oObjectPage.destroy();
 	});
@@ -2130,7 +2241,11 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
-						oSubSection
+						oSubSection,
+						new ObjectPageSubSectionClass({
+							title: "Title",
+							blocks: [new Text({text: "Test"})]
+						})
 					]
 				})
 			});
@@ -2139,20 +2254,19 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		await nextUIUpdate();
 
 		// act
-		oSubSection._setInternalTitleVisible(true);
 		oSubSection._setInternalTitleLevel(TitleLevel.H5, true);
 
 		await nextUIUpdate();
 
 		// assert
-		assert.strictEqual(oSubSection.$("headerTitle").attr("aria-level") === "5", true,
+		assert.strictEqual(oSubSection.$("headerTitle")[0].tagName.toLowerCase(), "h5",
 			"Title level should not be 'Auto' but auto generate value from 1 to 6");
 
 		// clean up
 		oObjectPage.destroy();
 	});
 
-	QUnit.test("Subsection getEffectiveTitleLevel should return correct title level", async function(assert) {
+	QUnit.test("Subsection getEffectiveTitleLevel should return correct title level with more than one SubSections", async function(assert) {
 		// arrange
 		var sTitleLevel = TitleLevel.H4,
 			oSubSection = new ObjectPageSubSectionClass({
@@ -2164,7 +2278,8 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
-						oSubSection
+						oSubSection,
+						new ObjectPageSubSectionClass({title: "Title", blocks: [new Text({ text: "test" })]})
 					]
 				})
 			});
@@ -2173,6 +2288,34 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
 		// assert
 		assert.strictEqual(oSubSection.getEffectiveTitleLevel(), sTitleLevel, "Title level should be the same as the set one");
+
+		// clean up
+		oObjectPage.destroy();
+	});
+
+	QUnit.test("Subsection getEffectiveTitleLevel should return correct title level with one SubSection", async function(assert) {
+		// arrange
+		var sTitleLevel = TitleLevel.H4,
+			oSubSection = new ObjectPageSubSectionClass({
+				title: "Title",
+				titleLevel: sTitleLevel,
+				showTitle: true,
+				blocks: [new Text({ text: "test" })]
+			}),
+			oSection = new ObjectPageSection({
+				subSections: [
+					oSubSection
+				]
+			}),
+			oObjectPage = new ObjectPageLayout({
+				sections: oSection
+			});
+		oObjectPage.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oSubSection.getEffectiveTitleLevel(), oSection._getTitleLevel(), "Title level should be the same as the Section's one");
+		assert.ok(sTitleLevel !== oSubSection.getEffectiveTitleLevel(), "effective title level of SubSection is different than the set one");
 
 		// clean up
 		oObjectPage.destroy();

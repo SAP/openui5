@@ -57,7 +57,7 @@ sap.ui.define([
 		},
 
 		onProductSelect : function (oEvent) {
-			var oContext = oEvent.getParameters().listItem.getBindingContext(),
+			var oContext = oEvent.getParameter("listItem").getBindingContext(),
 				sPath = oContext.getPath(),
 				sKey = sPath.slice(sPath.lastIndexOf("("));
 

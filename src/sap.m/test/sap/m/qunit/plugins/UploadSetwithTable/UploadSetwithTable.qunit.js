@@ -22,14 +22,16 @@ sap.ui.define([
 	"sap/ui/model/type/Boolean",
 	"sap/ui/base/Event",
 	"sap/m/upload/UploadItem",
-	"sap/m/library",
+        "sap/m/library",
 	"sap/base/Log",
 	"sap/ui/base/Event",
 	"sap/m/upload/UploadItemConfiguration",
 	"sap/m/Dialog",
-	"sap/m/upload/FilePreviewDialog",
-	"sap/m/UploadCollectionItem"
-], function(Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel, qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar, Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog, FilePreviewDialog, UploadCollectionItem) {
+	"sap/m/upload/FilePreviewDialog"
+], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel,
+			qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar,
+			Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog,
+			FilePreviewDialog) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -1786,7 +1788,7 @@ sap.ui.define([
 	    beforeEach: function () {
 	        this.sandbox = sinon.createSandbox();
 	        this.oUploadPlugin = new UploadSetwithTable();
-	        this.oMockItem = new UploadCollectionItem({
+	        this.oMockItem = new UploadItem({
 	            fileName: "test-file.txt",
 	            mimeType: "text/plain"
 	        });

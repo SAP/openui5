@@ -57,7 +57,7 @@
         <lib name="ui5-web-components" displayName="UI5 Web Components" npmName="@ui5/webcomponents" version="1.7.0" homepage="https://sap.github.io/ui5-webcomponents/" id="73554900106100139112">
             <license url="https://github.com/SAP/ui5-webcomponents/blob/master/LICENSE.txt" type="Apache-2.0"></license>
             <copyright>SAP</copyright>
-            <pattern>sap/ui/integration/thirdparty/webcomponents/*</pattern>
+            <pattern>sap/ui/integration/thirdparty/webcomponents/**</pattern>
         </lib>
         <lib name="adaptive-cards" displayName="Adaptive Cards" npmName="adaptivecards" version="2.9.0" hash="25bec245bd5ff88c614d0fe126601390" homepage="https://adaptivecards.io/" id="73555000106100067533">
             <license url="https://github.com/microsoft/AdaptiveCards/blob/master/LICENSE" type="MIT"></license>

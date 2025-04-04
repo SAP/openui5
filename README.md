@@ -15,7 +15,7 @@ and supports data binding to different data models (JSON, XML and OData).
 
 And... it's free and open source: OpenUI5 is licensed under the Apache License, Version 2.0 - see [LICENSE.txt](LICENSE.txt).
 It also contains third-party open source modules. See the list and respective licenses in [THIRDPARTY.txt](THIRDPARTY.txt).
-Third-party module license information is also available in machine-readable format in the [.reuse/dep5](.reuse/dep5) file.
+Third-party module license information is also available in machine-readable format in the [REUSE.toml](REUSE.toml) file.
 
 Try it!
 -------

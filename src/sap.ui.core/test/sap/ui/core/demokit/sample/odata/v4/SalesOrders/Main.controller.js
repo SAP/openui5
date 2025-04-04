@@ -507,12 +507,12 @@ sap.ui.define([
 		},
 
 		onSalesOrdersSelect : function (oEvent) {
-			this.setSalesOrderBindingContext(oEvent.getParameters().listItem.getBindingContext());
+			this.setSalesOrderBindingContext(oEvent.getParameter("listItem").getBindingContext());
 		},
 
 		onSalesOrderLineItemSelect : function (oEvent) {
 			this.setSalesOrderLineItemBindingContext(
-				oEvent.getParameters().listItem.getBindingContext()
+				oEvent.getParameter("listItem").getBindingContext()
 			);
 		},
 

@@ -5,23 +5,26 @@
 // Provides control sap.uxap.ObjectPageSectionBase.
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	"sap/ui/core/Element",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"./library",
+	"sap/m/library",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
+	"sap/m/Button",
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
-], function(Localization, Element, InvisibleText, jQuery, Control, coreLibrary, library, Log, KeyCodes, Grid, GridData) {
+], function(Localization, jQuery, Control, coreLibrary, Library, library, mobileLibrary, Log, KeyCodes, Grid, GridData, Button) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
+
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	 * Constructor for a new <code>ObjectPageSectionBase</code>.
@@ -95,24 +98,27 @@ sap.ui.define([
 			},
 			aggregations: {
 				/**
-				 * Screen Reader ariaLabelledBy
-				 */
-				ariaLabelledBy: {type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden"},
-				/**
 				 * The custom button that will provide a link to the section in the ObjectPageLayout anchor bar.
 				 * This button will be used as a custom template to be into the ObjectPageLayout anchorBar area, therefore property changes happening on this button template after the first rendering won't affect the actual button copy used in the anchorBar.
 				 *
 				 * If you want to change some of the button properties, you would need to bind them to a model.
 				 */
 				customAnchorBarButton: {type: "sap.m.Button", multiple: false},
+
 				/**
 				 * Internal grid aggregation
 				 */
-				_grid: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
+				_grid: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"},
+
+				_showHideButton: {type: "sap.m.Button", multiple: false, visibility: "hidden"}
 			}
 		},
 		renderer: null // control has no renderer (it is an abstract class)
 	});
+
+	ObjectPageSectionBase._getLibraryResourceBundle = function() {
+		return Library.getResourceBundleFor("sap.uxap");
+	};
 
 	/**
 	 * Explicitly ask to connect to the UI5 model tree
@@ -127,14 +133,27 @@ sap.ui.define([
 
 		//handled for ux rules management
 		this._bInternalVisible = true;
-		this._bInternalTitleVisible = true;
-		this._sInternalTitle = "";
 		this._sInternalTitleLevel = TitleLevel.Auto;
 		//hidden status
 		this._isHidden = false;
 		this._oGridContentObserver = null;
+		this._sTitleStyle = "";
 
 		this._bRtl = Localization.getRTL();
+	};
+
+	ObjectPageSectionBase.prototype.onBeforeRendering = function () {
+		var oTitle = this._getTitleControl();
+
+		if (oTitle) {
+			oTitle.setProperty("visible", this._isTitleVisible(), true);
+			oTitle.setProperty("level", this.getEffectiveTitleLevel(), true);
+			oTitle.setProperty("wrapping", this._getWrapTitle(), true);
+			oTitle.setProperty("titleStyle", this._getTitleStyle(), true);
+			oTitle.toggleStyleClass(this._getTitleUpperCaseStyleClass(), this.getTitleUppercase());
+		}
+
+		this._getObjectPageLayout()?._setSectionInfoIsDirty(true);
 	};
 
 	ObjectPageSectionBase.prototype.onAfterRendering = function () {
@@ -146,22 +165,19 @@ sap.ui.define([
 		}
 	};
 
-	ObjectPageSectionBase.prototype.onBeforeRendering = function () {
-		var sAriaLabeledBy = "ariaLabelledBy";
-
-		if (!this.getAggregation(sAriaLabeledBy)) {
-			this.setAggregation(sAriaLabeledBy, this._getAriaLabelledBy(), true); // this is called onBeforeRendering, so suppress invalidate
-		} else {
-			this.updateInvisibleTextLabelValue();
-		}
-		this._getObjectPageLayout()?._setSectionInfoIsDirty(true);
-	};
-
 	ObjectPageSectionBase.prototype.exit = function () {
 		if (this._oInvisibleText) {
 			this._oInvisibleText.destroy();
 			this._oInvisibleText = null;
 		}
+	};
+
+	ObjectPageSectionBase.prototype._getTitleUpperCaseStyleClass = function () {
+		return ""; // will be overwritten in child controls
+	};
+
+	ObjectPageSectionBase.prototype._getWrapTitle = function () {
+		return false; // will be overwritten in child controls
 	};
 
 	ObjectPageSectionBase.prototype.setShowTitle = function (bShow) {
@@ -183,11 +199,30 @@ sap.ui.define([
 
 	/**
 	 * Sets title visibility
-	 * @param {boolean} bVisible
 	 * @protected
 	 */
-	ObjectPageSectionBase.prototype.setTitleVisible = function (bVisible) {
+	ObjectPageSectionBase.prototype.setTitleVisible = function () {
 		return this.setProperty("titleVisible", this._isTitleVisible(), true);
+	};
+
+	ObjectPageSectionBase.prototype._isTitleVisible = function () {
+		return true; // will be overwritten in child controls
+	};
+
+	ObjectPageSectionBase.prototype._isTitleAriaVisible = function () {
+		return this.getShowTitle() || this._shouldDisplayButtonsInHeader();
+	};
+
+	ObjectPageSectionBase.prototype._shouldDisplayButtonsInHeader = function () {
+		return this._getShouldDisplayExpandCollapseButton();
+	};
+
+	ObjectPageSectionBase.prototype._getShouldDisplayExpandCollapseButton = function () {
+		return this._getIsHidden();
+	};
+
+	ObjectPageSectionBase.prototype._getTitleStyle = function () {
+		return this._sTitleStyle;
 	};
 
 	ObjectPageSectionBase.prototype._getGrid = function () {
@@ -214,6 +249,10 @@ sap.ui.define([
 		}
 
 		return this.getAggregation("_grid");
+	};
+
+	ObjectPageSectionBase.prototype._getTitleControl = function () {
+		return null; // will be overwritten in child controls
 	};
 
 	/**
@@ -399,77 +438,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the control name text.
-	 *
-	 * To be overwritten by the specific control method.
-	 *
-	 * @return {string} control name text
-	 * @protected
-	 */
-	ObjectPageSectionBase.prototype.getSectionText = function () {
-		return "";
-	};
-
-	/**
-	 * Performs the update of the invisible text label.
-	 * This method is called for example when the section title is changed.
-	 *
-	 * @return {this} this for chaining
-	 * @protected
-	 */
-	ObjectPageSectionBase.prototype.updateInvisibleTextLabelValue = function () {
-		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy"),
-			sLabel = this._getAriaLabelledByText();
-
-		if (oAriaLabelledBy) {
-			Element.getElementById(oAriaLabelledBy.getId()).setText(sLabel);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Returns the invisible text control with the label already set to be for to the ariaLabelledBy aggregation.
-	 * @private
-	 * @returns {*} sap.ui.core.InvisibleText
-	 */
-	ObjectPageSectionBase.prototype._getAriaLabelledBy = function () {
-		var sLabel = this._getAriaLabelledByText();
-		return this._getInvisibleText().setText(sLabel);
-	};
-
-	/**
-	 * Returns the label string for the section.
-	 * @private
-	 * @returns {string} aria-labeled by text
-	 */
-	ObjectPageSectionBase.prototype._getAriaLabelledByText = function () {
-		// Each section should be labelled as:
-		// 'titleName' - no matter if the section has a title or not
-		return this._getTitle();
-	};
-
-	ObjectPageSectionBase.prototype._getInvisibleText = function () {
-		if (!this._oInvisibleText) {
-			this._oInvisibleText = new InvisibleText();
-			this._oInvisibleText.toStatic();
-		}
-
-		return this._oInvisibleText;
-	};
-
-	/**
-	 * Returns a boolean value indicating whether the title should be added to the section's aria label.
-	 * Aware of whether the subsection is promoted or not.
-	 *
-	 * @returns {boolean} true if title should be part of the label
-	 * @private
-	 */
-	ObjectPageSectionBase.prototype._getShouldLabelTitle = function () {
-		return this.getShowTitle ? this.getShowTitle() : true;
-	};
-
-	/**
 	 * set the internal visibility of the sectionBase. This is set by the ux rules (for example don't display a section that has no subSections)
 	 * @param {boolean} bValue
 	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
@@ -486,81 +454,6 @@ sap.ui.define([
 
 	ObjectPageSectionBase.prototype._getInternalVisible = function () {
 		return this._bInternalVisible;
-	};
-
-	/**
-	 * set the internal visibility of the sectionBase title. This is set by the ux rules (for example don't display a subSection title if there are only 1 in the section)
-	 * @param {boolean} bValue
-	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
-	 * @private
-	 */
-	ObjectPageSectionBase.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
-		if (bValue != this._bInternalTitleVisible) {
-			this._bInternalTitleVisible = bValue;
-			this.setTitleVisible();
-			if (bInvalidate) {
-				this.invalidate();
-			}
-		}
-	};
-
-	ObjectPageSectionBase.prototype._getInternalTitleVisible = function () {
-		return this._bInternalTitleVisible;
-	};
-
-	/**
-	 * set the internal title of the sectionBase. This is set by the ux rules (for example the subSection title becomes the section title if there are only 1 subSection in the section)
-	 * @param {string} sValue
-	 * @param {boolean} bInvalidate if set to true, the sectionBase should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger
-	 * @private
-	 */
-
-	ObjectPageSectionBase.prototype._setInternalTitle = function (sValue, bInvalidate) {
-		if (sValue != this._sInternalTitle) {
-			this._sInternalTitle = sValue;
-			if (bInvalidate) {
-				this.invalidate();
-			}
-		}
-	};
-
-	/**
-	 * Returns the <code>ObjectPageSectionBase</code> internal title if present,
-	 * otherwise - the public title.
-	 * @private
-	 * @returns {string} the title
-	 */
-	ObjectPageSectionBase.prototype._getTitle = function () {
-		return this._getInternalTitle() || this.getTitle();
-	};
-
-	ObjectPageSectionBase.prototype._getInternalTitle = function () {
-		return this._sInternalTitle;
-	};
-
-	/**
-	 * Returns the <code>aria-level</code>, matching to the <code>ObjectPageSectionBase</code> <code>titleLevel</code> or internal <code>titleLevel</code>.
-	 * If the <code>titleLevel</code> is <code>TitleLevel.H1</code>, the result would be "1".
-	 * If the <code>titleLevel</code> is <code>TitleLevel.Auto</code>,
-	 * the result would be "3" for <code>ObjectPageSection</code> and "4" for <code>ObjectPageSubSection</code>.
-	 * The method is used by <code>ObjectPageSectionRenderer</code> and <code>ObjectPageSubSectionRenderer</code>.
-	 *
-	 * If there is a case where a TitleLevel.Auto is returned from _getTitleLevel in order to prevent a wrong
-	 * value to be se to the aria-level attribute title level fallbacks to TitleLevel.H2 as this is the default
-	 * aria-level according to aria specification
-	 *
-	 * @returns {string} the <code>aria-level</code>
-	 * @since 1.44
-	 * @private
-	 */
-	ObjectPageSectionBase.prototype._getARIALevel = function () {
-		var sTitleLevel = this._getTitleLevel();
-
-		if (sTitleLevel === TitleLevel.Auto) {
-			sTitleLevel = TitleLevel.H2;
-		}
-
-		return sTitleLevel.slice(-1);
 	};
 
 	/**
@@ -586,6 +479,7 @@ sap.ui.define([
 	ObjectPageSectionBase.prototype._setInternalTitleLevel = function (sTitleLevel, bInvalidate) {
 		if (sTitleLevel !== this._sInternalTitleLevel) {
 			this._sInternalTitleLevel = sTitleLevel;
+			this._getTitleControl().setLevel(sTitleLevel);
 			if (bInvalidate) {
 				this.invalidate();
 			}
@@ -601,6 +495,10 @@ sap.ui.define([
 	 */
 	ObjectPageSectionBase.prototype._getInternalTitleLevel = function () {
 		return this._sInternalTitleLevel;
+	};
+
+	ObjectPageSectionBase.prototype._getImportance = function () {
+		return this.getImportance();
 	};
 
 	/**
@@ -662,14 +560,21 @@ sap.ui.define([
 
 		this.setProperty("title", sValue, bSuppressInvalidate);
 		this._notifyObjectPageLayout();
+		this._getTitleControl().setText(sValue);
+		this.setTitleVisible();
 
-		this.updateInvisibleTextLabelValue();
+		return this;
+	};
+
+	ObjectPageSectionBase.prototype.setTitleLevel = function (sTitleLevel) {
+		this.setProperty("titleLevel", sTitleLevel);
+		this._getTitleControl().setLevel(sTitleLevel);
 
 		return this;
 	};
 
 	ObjectPageSectionBase.prototype._shouldBeHidden = function () {
-		return ObjectPageSectionBase._importanceMap[this.getImportance()] >
+		return ObjectPageSectionBase._importanceMap[this._getImportance()] >
 			ObjectPageSectionBase._importanceMap[this._sCurrentLowestImportanceLevelToShow];
 	};
 
@@ -684,6 +589,7 @@ sap.ui.define([
 		this._isHidden = bHide;
 		this.setTitleVisible();
 		this.$().children(this._sContainerSelector).toggle(!bHide);
+		this._updateShowHideButton(bHide);
 		if (oObjectPage) {
 			oObjectPage._requestAdjustLayout();
 		}
@@ -719,15 +625,62 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageSectionBase.prototype._applyImportanceRules = function (sCurrentLowestImportanceLevelToShow) {
+		var bImportanceLevelChange = this._sCurrentLowestImportanceLevelToShow !== sCurrentLowestImportanceLevelToShow,
+			bShouldBeHidden;
+
 		this._sCurrentLowestImportanceLevelToShow = sCurrentLowestImportanceLevelToShow;
 		this.setTitleVisible();
 
+		bShouldBeHidden = bImportanceLevelChange ? this._shouldBeHidden() : this._getIsHidden();
 		if (this.getDomRef()) {
-			this._updateShowHideState(this._shouldBeHidden());
+			this._updateShowHideState(bShouldBeHidden);
 		} else {
-			this._isHidden = this._shouldBeHidden();
+			this._isHidden = bShouldBeHidden;
 			this.setTitleVisible();
 		}
+	};
+
+	ObjectPageSectionBase.prototype._updateShowHideButton = function (bHide) {
+		this._getShowHideButton()
+			.setVisible(this._shouldBeHidden())
+			.setText(this._getShowHideButtonText(!bHide));
+	};
+
+	ObjectPageSectionBase.prototype._getShowHideButton = function () {
+		if (!this.getAggregation("_showHideButton")) {
+			this.setAggregation("_showHideButton", new Button({
+				visible: this._shouldBeHidden(),
+				text: this._getShowHideButtonText(!this._getIsHidden()),
+				press: this._showHideContent.bind(this),
+				type: ButtonType.Transparent
+			}).addStyleClass("sapUxAPShowHideButton"), true); // this is called from the renderer, so suppress invalidate
+		}
+
+		return this.getAggregation("_showHideButton");
+	};
+
+	ObjectPageSectionBase.prototype._getShowHideButtonText = function (bHide) {
+		// TODO: replace other similar functions with this one
+		return ObjectPageSectionBase._getLibraryResourceBundle().getText(bHide ? "HIDE" : "SHOW");
+	};
+
+	ObjectPageSectionBase.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
+		var oObjectPage = this._getObjectPageLayout(),
+			oMedia = oCurrentMedia || this._getCurrentMediaContainerRange(),
+			bShowOnlyHighImportance = oObjectPage && oObjectPage.getShowOnlyHighImportance();
+
+		return this._determineTheLowestLevelOfImportanceToShow(oMedia.name, bShowOnlyHighImportance);
+	};
+
+	ObjectPageSectionBase.prototype._determineTheLowestLevelOfImportanceToShow = function (sMedia, bShowOnlyHighImportance) {
+		if (bShowOnlyHighImportance || sMedia === "Phone") {
+			return library.Importance.High;
+		}
+		if (sMedia === "Tablet") {
+			return library.Importance.Medium;
+		}
+
+		return library.Importance.Low;
 	};
 
 	/*******************************************************************************

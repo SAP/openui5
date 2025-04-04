@@ -34,7 +34,7 @@
 			<lib name="ace" displayName="Ace (Ajax.org Cloud9 Editor)" npmName="ace-builds" version="1.36.5" hash="a100b61e724401cd5f616d6db1e4171e" homepage="https://ace.c9.io/" id="73554900106100278574">
 				<license url="https://github.com/ajaxorg/ace/blob/master/LICENSE" type="BSD-3-Clause" />
 				<copyright>2010, Ajax.org B.V.</copyright>
-				<pattern>sap/ui/codeeditor/js/ace/*</pattern>
+				<pattern>sap/ui/codeeditor/js/ace/**</pattern>
 			</lib>
 		</thirdparty>
 		<!-- Demokit content -->
