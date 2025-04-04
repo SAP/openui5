@@ -120,8 +120,7 @@ sap.ui.define(function () {
 			"OPA.OptimisticBatch" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.OptimisticBatch.qunit"],
-				realOData : false, // works also with realOData, but this is not needed
-				$app : "" // no corresponding app, already covered by OPA.LateProperties
+				$app : null // no own app, see OPA.LateProperties
 			},
 			"OPA.Products" : {
 				autostart : false,
@@ -158,7 +157,7 @@ sap.ui.define(function () {
 			"OPA.Tutorial.08" : {
 				autostart : false,
 				module : ["sap/ui/core/tutorial/odatav4/test/integration/opaTests.qunit"],
-				realOData : false, // requires stable test data
+				realOData : false, // cannot run w/o its mock server!
 				loader : {
 					paths : {
 						"sap/ui/core/tutorial/odatav4"
@@ -170,7 +169,7 @@ sap.ui.define(function () {
 			"OPA.Tutorial.11" : {
 				autostart : false,
 				module : ["sap/ui/core/tutorial/odatav4/test/integration/opaTests.qunit"],
-				realOData : false, // requires stable test data
+				realOData : false, // cannot run w/o its mock server!
 				loader : {
 					paths : {
 						"sap/ui/core/tutorial/odatav4"

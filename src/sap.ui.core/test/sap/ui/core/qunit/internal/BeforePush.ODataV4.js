@@ -33,21 +33,22 @@ sap.ui.define([
 						? oTest.$app.replace("test-resources/sap/ui/core/", "")
 						: "demokit/sample/common/index.html?component=odata.v4." + sName;
 
-
 				aLinks = [
 					sApp,
 					sApp + (sApp.includes("?") ? "&" : "?") + "realOData=true",
 					sOpa + "&supportAssistant=true"
 				];
-				// hide OPAs w/o corresponding app
-				aLinks.$hidden = oTest.$app === "";
-
-				mApps[sName] = aLinks;
+				if (oTest.$app === null) {
+					aLinks[0] = aLinks[1] = null;
+				} else if (sName.startsWith("Tutorial")) { // cannot run w/o its mock server!
+					aLinks[1] = null;
+				}
 				mTests[sOpa + "&supportAssistant=true"] = "both";
 				if (oTest.realOData !== false) {
 					mTests[sOpa + "&realOData=true"] = "both";
 					aLinks.push(sOpa + "&realOData=true");
 				}
+				mApps[sName] = aLinks;
 			}
 		});
 	}
@@ -79,14 +80,24 @@ sap.ui.define([
 
 	addAppsAndTests(oODataSuite, "odata/v4/testsuite.odatav4.qunit");
 	addAppsAndTests(oFeatureSuite, "internal/testsuite.feature-odata-v4.qunit");
-	[
-		"Ancestry", "ConsumeV2Service", "DataAggregation_CAP", "DataAggregation_RAP",
-		"FlatDataAggregation", "GridTable", "HierarchyBindAction", "MusicArtists"
-	].forEach((sName) => {
-			mApps[sName] = [
-				"demokit/sample/common/index.html?component=odata.v4." + sName
-			];
-		});
+	const mName2Sandbox = {
+		"Ancestry" : false,
+		"ConsumeV2Service" : true,
+		"DataAggregation_CAP" : false,
+		"DataAggregation_RAP" : false,
+		"FlatDataAggregation" : false,
+		"GridTable" : true,
+		"HierarchyBindAction" : false,
+		"MusicArtists" : true
+	};
+	for (const sName in mName2Sandbox) {
+		mApps[sName] = [
+			mName2Sandbox[sName]
+			 ? "demokit/sample/common/index.html?component=odata.v4." + sName
+			 : null,
+			"demokit/sample/common/index.html?component=odata.v4." + sName + "&realOData=true"
+		];
+	}
 	mApps["DataAggregation_CAP"][4] = "//snippix#303638";
 	mApps["DataAggregation_RAP"][4] = "//snippix#909737";
 
