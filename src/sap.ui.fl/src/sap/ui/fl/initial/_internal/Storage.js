@@ -60,12 +60,7 @@ sap.ui.define([
 			const bIsRtaStarting = !!Object.keys(window.sessionStorage).filter((sKey) => sKey.startsWith("sap.ui.rta.restart.")).length;
 			// save change and activate version do not trigger a reload, need saveChangeKeepSession to keep values in the session
 			if (!bIsRtaStarting && !oFlexInfoSession.saveChangeKeepSession) {
-				delete oFlexInfoSession.version;
-				delete oFlexInfoSession.maxLayer;
-				delete oFlexInfoSession.adaptationLayer;
-				delete oFlexInfoSession.initialAllContexts;
-				delete oFlexInfoSession.allContextsProvided;
-				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
+				FlexInfoSession.removeByReference(mPropertyBag.reference);
 			}
 			// Disable cacheKey when request data for a specific version
 			if (oConnectorSpecificPropertyBag.version) {
