@@ -1,14 +1,14 @@
-/* ===================================== */
-/* CSS for control sap.f/AvatarGroup	 */
-/* Horizon theme            	 		 */
-/* ===================================== */
+/* ================================== */
+/* CSS for control sap.f/AvatarGroup  */
+/* Morning Horizon theme              */
+/* ================================== */
 
 .applyBorderColorAccent(@counter) when (@counter > 0) {
+	.applyBorderColorAccent(@counter - 1);
+
 	.sapFAvatar.sapFAvatarColorAccent@{counter} {
 		border: 0.0625rem solid~"@{sapUiAccent@{counter}}";
 	}
-
-	.applyBorderColorAccent(@counter - 1);
 }
 
 .sapFAvatarGroup {
@@ -19,12 +19,13 @@
 	}
 
 	&:focus {
-		box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+		box-shadow: 0 0 0 0.125rem var(--sapContent_FocusColor);
 		outline: none;
 		border-radius: 0.35rem;
 	}
 
 	&.sapFAvatarGroupIndividual {
+
 		.sapFAvatarGroupItem {
 
 			&:hover:not(:active):not(:focus) {
@@ -32,12 +33,13 @@
 			}
 
 			&:active {
+
 				.sapFAvatar {
-					background-color: @sapUiButtonActiveBackground;
+					background-color: var(--sapButton_Active_Background);
 
 					.sapFAvatarInitialsHolder,
 					&.sapFAvatarIcon {
-						color: @sapUiButtonActiveTextColor;
+						color: var(--sapButton_Active_TextColor);
 					}
 				}
 			}
@@ -47,40 +49,44 @@
 
 				.sapFAvatar {
 					outline: none;
-					box-shadow: 0px 0px 0px 0.125rem @sapUiContentFocusColor;
+					box-shadow: 0 0 0 0.125rem var(--sapContent_FocusColor);
 				}
 			}
-
 		}
 	}
 
 	&.sapFAvatarGroupGroup {
+
 		&:hover:not(:active) {
+
 			.sapFAvatarGroupItem {
 				.applyBorderColorAccent(10);
 			}
 		}
 
 		&:active {
+
 			.sapFAvatarGroupItem {
+
 				.sapFAvatar {
-					border: 0.0625rem solid @sapUiButtonActiveBorderColor;
-					background-color: @sapUiButtonActiveBackground;
+					border: 0.0625rem solid var(--sapButton_Active_BorderColor);
+					background-color: var(--sapButton_Active_Background);
 
 					.sapFAvatarInitialsHolder,
 					&.sapFAvatarIcon {
-						color: @sapUiButtonActiveTextColor;
+						color: var(--sapButton_Active_TextColor);
 					}
 				}
 			}
 
 			.sapFAvatarGroupMoreButton {
+
 				.sapMBtnInner {
-					background-color: @sapUiButtonActiveBackground;
-					border: 0.0625rem solid @sapUiButtonActiveBorderColor;
+					background-color: var(--sapButton_Active_Background);
+					border: 0.0625rem solid var(--sapButton_Active_BorderColor);
 
 					.sapMBtnContent {
-						color: @sapUiButtonActiveTextColor;
+						color: var(--sapButton_Active_TextColor);
 					}
 				}
 			}
@@ -92,7 +98,7 @@
 	border-radius: 0;
 }
 
-html.sap-desktop .sapFAvatarGroupMoreButton.sapMBtn:focus>.sapMFocusable:not(.sapMBadgeIndicator):before {
+html.sap-desktop .sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator)::before {
 	border-radius: 50%;
 	left: 0;
 	right: 0;

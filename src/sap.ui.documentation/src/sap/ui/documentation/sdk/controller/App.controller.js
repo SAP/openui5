@@ -1349,8 +1349,8 @@ sap.ui.define([
 			}
 		},
 
-		addSurveyPopoverCloseBtn: function () {
-			var oResourceBundle = this.getModel("i18n").getResourceBundle(),
+		addSurveyPopoverCloseBtn: async function () {
+			var oResourceBundle = await this.getModel("i18n").getResourceBundle(),
 				fCloseBtnHandler = this.closeSurveyPopover.bind(this),
 				oCloseButton = new Button({
 					text: oResourceBundle.getText("SURVEY_POPOVER_CLOSE_BTN"),
@@ -1716,9 +1716,9 @@ sap.ui.define([
 		 * @param {string} sKey - The key of the selected section.
 		 * @returns {void}
 		 */
-		_setSelectedSectionTitle: function (sKey) {
+		_setSelectedSectionTitle: async function (sKey) {
 			var oViewModel = this.getModel("appView"),
-				oResourceBundle = this.getModel("i18n").getResourceBundle();
+				oResourceBundle = await this.getModel("i18n").getResourceBundle();
 
 			var items = [
 				{ key: "home", 		text: oResourceBundle.getText("APP_TABHEADER_ITEM_HOME") },

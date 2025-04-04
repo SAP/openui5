@@ -1,13 +1,14 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery"
 ],
-function(nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
+function(Element, nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 	"use strict";
 
 	var sRoleAttribute = "role",
@@ -195,14 +196,10 @@ function(nextUIUpdate, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 
 	QUnit.test("Section receives correct AriaLabelledBy", function (assert) {
 		var oSection = this.objectPageView.byId("testSection"),
-				sSectionTitle = oSection.getTitle(),
-				oHiddenLabel = oSection.getAggregation("ariaLabelledBy");
+				sSectionTitle = oSection.getTitle();
 
-		assert.strictEqual(oSection._getAriaLabelledBy().getText(), sSectionTitle,
-			"A hidden text is created with the title of the section");
-
-		assert.strictEqual(oHiddenLabel.sId, oSection.$().attr("aria-labelledby"),
-				"The 'aria-labelledby' attribute is correctly set to the section");
+		assert.strictEqual(Element.getElementById(oSection.$().attr("aria-labelledby")).getText(), sSectionTitle,
+			"Section is labaled correctly");
 	});
 
 	QUnit.module("Screen reader support - ObjectPageDynamicHeaderTitle", {

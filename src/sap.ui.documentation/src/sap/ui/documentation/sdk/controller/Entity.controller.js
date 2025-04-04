@@ -125,7 +125,7 @@ sap.ui.define([
 
 			_TAB_KEYS: ["samples", "about"],
 
-			_loadSample: function (oControlsData) {
+			_loadSample: async function (oControlsData) {
 
 				var sNewId = this._sNewId;
 
@@ -155,36 +155,38 @@ sap.ui.define([
 				// set data model
 				var oData,
 					oView = this.getView();
+
 				if (this._sId !== sNewId) {
 
+					this._oResourceBundle = await oView.getModel("i18n").getResourceBundle();
+
 					// retrieve entity docu from server
-					EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.library).then(function (oDoc) {
+					var oDoc = await EntityInfo.getEntityDocuAsync(sNewId, oEntity && oEntity.library);
 
-						// route to not found page IF there is NO index entry AND NO docu from server
-						if (!oEntity && !oDoc) {
-							this.onRouteNotFound();
-							return;
-						}
-						// get view data
-						oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
+					// route to not found page IF there is NO index entry AND NO docu from server
+					if (!oEntity && !oDoc) {
+						this.onRouteNotFound();
+						return;
+					}
 
-						this.getAPIReferenceCheckPromise(oData.name).then(function (bHasAPIReference) {
-							oData.bHasAPIReference = bHasAPIReference;
+					// get view data
+					oData = this._getViewData(sNewId, oDoc, oEntity, oControlsData);
 
-							// build header layout 3x3 matrix
-							this._buildHeaderLayout(oData);
-						}.bind(this));
+					this.getAPIReferenceCheckPromise(oData.name).then(function (bHasAPIReference) {
+						oData.bHasAPIReference = bHasAPIReference;
 
-						// set view model
-						oView.getModel().setData(oData, false /* no merge with previous data */);
-
-						// done, we can now switch the id
-						this._sId = sNewId;
-
-						updateTabs.call(this);
-						this.appendPageTitle(this.getModel().getProperty("/name"));
-
+						// build header layout 3x3 matrix
+						this._buildHeaderLayout(oData);
 					}.bind(this));
+
+					// set view model
+					oView.getModel().setData(oData, false /* no merge with previous data */);
+
+					// done, we can now switch the id
+					this._sId = sNewId;
+
+					updateTabs.call(this);
+					this.appendPageTitle(this.getModel().getProperty("/name"));
 
 				} else {
 					// get existing data model
@@ -214,7 +216,7 @@ sap.ui.define([
 			},
 
 			// ========= internal ===========================================================================
-			_getViewData: function (sId, oDoc, oEntity, oControlsData) {
+			_getViewData: function (sId, oDoc, oEntity, oControlsData, oResourceBundle) {
 
 				// convert docu
 				var oData = this._convertEntityInfo(sId, oDoc, oControlsData),
@@ -351,8 +353,7 @@ sap.ui.define([
 			 * Converts the deprecated boolean to a human readable text
 			 */
 			_createDeprecatedMark: function (sDeprecated) {
-				var oResourceBundle = this.getModel("i18n").getResourceBundle();
-				return (sDeprecated) ? oResourceBundle.getText("ENTITY_DEPRECATED") : "";
+				return (sDeprecated) ? this._oResourceBundle.getText("ENTITY_DEPRECATED") : "";
 			},
 
 			_switchPageTab: function () {
@@ -369,7 +370,6 @@ sap.ui.define([
 			},
 
 			_getHeaderLayoutUtil: function () {
-				var oResourceBundle;
 
 				if (!this._oHeaderLayoutUtil) {
 					var _getObjectAttributeBlock = function (sTitle, sText) {
@@ -397,14 +397,13 @@ sap.ui.define([
 							return oHBox;
 						};
 
-					oResourceBundle = this.getModel("i18n").getResourceBundle();
 
 					this._oHeaderLayoutUtil = {
 
 						_getApiReferenceBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: oResourceBundle.getText("ENITITY_API")}),
+									_getLabel({design: "Bold", text: this._oResourceBundle.getText("ENITITY_API")}),
 									_getLink({
 										emphasized: true,
 										text: oData.name,
@@ -416,7 +415,7 @@ sap.ui.define([
 						_getDocumentationBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: oResourceBundle.getText("ENTITY_DOCUMENTATION")}),
+									_getLabel({design: "Bold", text: this._oResourceBundle.getText("ENTITY_DOCUMENTATION")}),
 									_getLink({
 										emphasized: true,
 										text: oData.docuLinkText,
@@ -428,7 +427,7 @@ sap.ui.define([
 						_getUXGuidelinesBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({design: "Bold", text: oResourceBundle.getText("ENTITY_UX")}),
+									_getLabel({design: "Bold", text: this._oResourceBundle.getText("ENTITY_UX")}),
 									_getLink({
 										emphasized: true,
 										text: oData.uxGuidelinesLinkText,
@@ -441,7 +440,7 @@ sap.ui.define([
 						_getExtendsBlock: function (oData) {
 							return _getHBox({
 								items: [
-									_getLabel({text: oResourceBundle.getText("ENTITY_EXTENDS")}),
+									_getLabel({text: this._oResourceBundle.getText("ENTITY_EXTENDS")}),
 									_getLink({
 										text: oData.baseTypeText,
 										href: "entity/" + oData.baseType,
@@ -452,16 +451,16 @@ sap.ui.define([
 							}, true);
 						},
 						_getApplicationComponentBlock: function (oData) {
-							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_COMPONENT"), oData.appComponent);
+							return _getObjectAttributeBlock(this._oResourceBundle.getText("ENTITY_COMPONENT"), oData.appComponent);
 						},
 						_getAvailableSinceBlock: function (oData) {
-							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_SINCE"), oData.entity.since);
+							return _getObjectAttributeBlock(this._oResourceBundle.getText("ENTITY_SINCE"), oData.entity.since);
 						},
 						_getCategoryBlock: function (oData) {
-							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_CATEGORY"), oData.entity.category);
+							return _getObjectAttributeBlock(this._oResourceBundle.getText("ENTITY_CATEGORY"), oData.entity.category);
 						},
 						_getContentDensityBlock: function (oData) {
-							return _getObjectAttributeBlock(oResourceBundle.getText("ENTITY_DENSITY"), oData.entity.formFactors);
+							return _getObjectAttributeBlock(this._oResourceBundle.getText("ENTITY_DENSITY"), oData.entity.formFactors);
 						}
 					};
 				}

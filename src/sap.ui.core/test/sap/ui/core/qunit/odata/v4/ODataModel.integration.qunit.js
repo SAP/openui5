@@ -76813,8 +76813,8 @@ sap.ui.define([
 		const oContext = oPropertyBinding.getContext();
 		const aEventHandlers = [];
 
-		oListBinding.attachEvent("selectionChanged", function (oEvent) {
-			aEventHandlers.shift()(oEvent.getParameters().context);
+		oListBinding.attachSelectionChanged(function (oEvent) {
+			aEventHandlers.shift()(oEvent.getParameter("context"));
 			assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 		});
 
@@ -77019,8 +77019,8 @@ sap.ui.define([
 			const oItems = oTable.getItems();
 			const aEventHandlers = [];
 
-			oListBinding.attachEvent("selectionChanged", function (oEvent) {
-				aEventHandlers.shift()(oEvent.getParameters().context);
+			oListBinding.attachSelectionChanged(function (oEvent) {
+				aEventHandlers.shift()(oEvent.getParameter("context"));
 				assert.strictEqual(aEventHandlers.length, 0, "selectionChanged event received");
 			});
 
@@ -78603,7 +78603,7 @@ sap.ui.define([
 
 			const oListBinding = this.oView.byId("table").getBinding("items");
 			const aEventParameters = [];
-			oListBinding.attachEvent("separateReceived", function (oEvent) {
+			oListBinding.attachSeparateReceived(function (oEvent) {
 				aEventParameters.push(oEvent.getParameters());
 			});
 			const checkEvents = (aParameters) => {
@@ -79310,7 +79310,7 @@ sap.ui.define([
 
 			const oListBinding = this.oView.byId("table").getBinding("items");
 			const aEventParameters = [];
-			oListBinding.attachEvent("separateReceived", function (oEvent) {
+			oListBinding.attachSeparateReceived(function (oEvent) {
 				aEventParameters.push(oEvent.getParameters());
 				if (bPreventDefault) {
 					oEvent.preventDefault();

@@ -7947,6 +7947,11 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements, bShortRead ? [0, 1, 2, 3] : [0, 1, 2, 3, 4, 5, 6, 7]);
 		assert.strictEqual(oCache.iLimit, bShortRead ? 2 : Infinity);
 		assert.strictEqual(oCache.aElements.$count, undefined);
+
+		assert.throws(function () {
+			// code under test
+			oCache.setEmpty();
+		}, new Error("Unsupported"));
 	});
 });
 
@@ -11641,6 +11646,11 @@ sap.ui.define([
 		// code under test
 		oCache.reset(aKeptElementPredicates.slice(), sGroupId);
 
+		assert.throws(function () {
+			// code under test
+			oCache.setEmpty();
+		}, new Error("Unsupported"));
+
 		if (!i) {
 			delete mChangeListeners["('3')/bar/baz"];
 			delete mChangeListeners["('3')/foo"];
@@ -11863,6 +11873,18 @@ sap.ui.define([
 
 		assert.strictEqual(oCache.aElements.$count, 0);
 		assert.strictEqual(oCache.iLimit, 0);
+
+		assert.throws(function () {
+			// code under test
+			oCache.setEmpty();
+		}, new Error("Unsupported"));
+
+		oCache.iLimit = Infinity;
+
+		assert.throws(function () {
+			// code under test
+			oCache.setEmpty();
+		}, new Error("Unsupported"));
 	});
 
 	//*********************************************************************************************

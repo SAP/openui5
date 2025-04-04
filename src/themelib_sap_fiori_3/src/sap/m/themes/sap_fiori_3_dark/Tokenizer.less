@@ -21,14 +21,15 @@
 }
 
 html.sap-desktop .sapMTokenizer:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: @_sap_m_Tokenizer_OutlineOffset;
 }
 
 /* editable tokens in read-only tokenizer */
 .sapMTokenizer.sapMTokenizerReadonly {
+
 	.sapMToken {
-		color: @sapUiContentLabelColor;
+		color: var(--sapContent_LabelColor);
 
 		&.sapMTokenSelected {
 			color: @sapUiToggleButtonPressedTextColor;
@@ -42,32 +43,30 @@ html.sap-desktop .sapMTokenizer:focus {
 	}
 }
 
-/* ------------------------------ */
-/* Disabled                       */
-/* ------------------------------ */
+/* Disabled */
 
-.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
-  &.sapMToken:hover,
-  &.sapMToken:focus,
-  &.sapMToken.sapMTokenSelected:hover,
-  &.sapMTokenSelected {
-    background: lighten(@sapUiButtonBackground, 2);
-    cursor: default;
-    color: @sapUiBaseText;
-    outline: none;
-    border: 1px solid lighten(@sapUiButtonBackground, 24);
-  }
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken {
+	&.sapMToken:hover,
+	&.sapMToken:focus,
+	&.sapMToken.sapMTokenSelected:hover,
+	&.sapMTokenSelected {
+		background: lighten(@sapUiButtonBackground, 2);
+		cursor: default;
+		color: var(--sapTextColor);
+		outline: none;
+		border: 1px solid lighten(@sapUiButtonBackground, 24);
+	}
 
-  &.sapMTokenSelected .sapMTokenText {
-    color: @sapUiBaseText;
-  }
+	&.sapMTokenSelected .sapMTokenText {
+		color: var(--sapTextColor);
+	}
 
-  &.sapMTokenSelected .sapMTokenIcon {
-    color: @sapUiContentIconColor;
-    cursor: default;
-  }
+	&.sapMTokenSelected .sapMTokenIcon {
+		color: var(--sapContent_IconColor);
+		cursor: default;
+	}
 
-  & .sapMTokenIcon {
-    cursor: default;
-  }
+	& .sapMTokenIcon {
+		cursor: default;
+	}
 }

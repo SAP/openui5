@@ -4118,9 +4118,15 @@ sap.ui.define([
 	/**
 	 * Sets the cache's $count at the root level to 0.
 	 *
+	 * @throws {Error} If the cache instance is not newly created
+	 *
 	 * @protected
 	 */
 	_CollectionCache.prototype.setEmpty = function () {
+		if (this.iLimit !== Infinity || this.aElements.$count !== undefined
+				|| this.aElements.length) {
+			throw new Error("Unsupported");
+		}
 		this.iLimit = this.aElements.$count = 0;
 	};
 

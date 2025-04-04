@@ -1,24 +1,24 @@
-/* ====================================================== */
-/* CSS for control sap.ui.integration.controls/Microchart */
-/* Base theme                                             */
-/* ====================================================== */
-
+/* ======================================================= */
+/* CSS for control sap.ui.integration.controls/Microchart  */
+/* Base theme                                              */
+/* ======================================================= */
 
 .sapUiIntMicrochartValue {
+
 	&Neutral {
-		color: @sapUiNeutralText;
+		color: var(--sapNeutralTextColor);
 	}
 
 	&Good {
-		color: @sapUiPositiveText;
+		color: var(--sapPositiveTextColor);
 	}
 
 	&Error {
-		color: @sapUiNegativeText;
+		color: var(--sapNegativeTextColor);
 	}
 
 	&Critical {
-		color: @sapUiCriticalText;
+		color: var(--sapCriticalTextColor);
 	}
 }
 
@@ -31,6 +31,7 @@
 
 	.sapUiIntMicrochartChart {
 		flex-grow: 1;
+
 		.sapUiIntMicrochartChartInner {
 			height: 100%;
 		}
@@ -51,6 +52,7 @@
 			max-width: 13rem;
 		}
 	}
+
 	.sapUiIntMicrochartSizeS {
 		height: 3.5rem;
 	}

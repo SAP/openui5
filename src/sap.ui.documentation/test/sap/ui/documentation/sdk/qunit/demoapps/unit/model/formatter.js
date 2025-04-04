@@ -45,7 +45,7 @@ sap.ui.define([
 
 	QUnit.module("formatter - getDemoAppsCategoryTitle");
 
-	function getDemoAppsCategoryTitleTestCase(assert, sCategoryId, sExpectedText) {
+	async function getDemoAppsCategoryTitleTestCase(assert, sCategoryId, sExpectedText) {
 
 		//Act
 		var oControllerStub = {
@@ -58,22 +58,22 @@ sap.ui.define([
 			}
 		};
 		var fnStubbedFormatter = formatter.getDemoAppsCategoryTitle.bind(oControllerStub);
-		var fText = fnStubbedFormatter(sCategoryId);
+		var fText = await fnStubbedFormatter(sCategoryId);
 
 		//Assert
 		assert.strictEqual(fText, sExpectedText);
 	}
 
 	QUnit.test("Should provide 'Showcase' category text", function (assert) {
-		getDemoAppsCategoryTitleTestCase.call(this, assert, "Showcase", 1);
+		return getDemoAppsCategoryTitleTestCase.call(this, assert, "Showcase", 1);
 	});
 
 	QUnit.test("Should provide 'Tutorial' category text", function (assert) {
-		getDemoAppsCategoryTitleTestCase.call(this, assert, "Tutorial", 2);
+		return getDemoAppsCategoryTitleTestCase.call(this, assert, "Tutorial", 2);
 	});
 
 	QUnit.test("Should provide 'Misc' category text", function (assert) {
-		getDemoAppsCategoryTitleTestCase.call(this, assert, "Misc", 3);
+		return getDemoAppsCategoryTitleTestCase.call(this, assert, "Misc", 3);
 	});
 
 });

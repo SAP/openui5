@@ -17,7 +17,28 @@
 	box-sizing: border-box;
 	height: 3rem;
 	line-height: 3rem;
-	padding: 0 3rem 0 3rem;
+	padding: 0 2.25rem 0 3rem;
+}
+
+.sapUxAPObjectPageSectionHeader {
+	width:100%;
+}
+
+.sapUxAPObjectPageSectionHeader > .sapMBtn {
+	margin-left: 0.5rem;
+}
+
+.sapUxAPObjectPageSectionHeader .sapMTB {
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.sapUxAPObjectPageSectionHeader .sapMIBar :not(.sapMBtnDisabled)>.sapMBtnInner.sapMBtnActive {
+	border-color: @sapUiButtonActiveBorderColor;
+}
+
+.sapUxAPObjectPageSectionHeader .sapMIBar.sapMBtn:hover>.sapMBtnHoverable {
+	background-color: @sapUiButtonHoverBackground;
 }
 
 .sapUxAPObjectPageSectionHeading {
@@ -44,7 +65,7 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSectionHeader {
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
-	padding: 0 0 0.5rem 1rem;
+	padding: 0 0 0 1rem;
 }
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSectionHeading {
@@ -52,20 +73,16 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 }
 
 .sapUxAPObjectPageSectionTitle {
-	box-sizing: border-box;
-	display: inline-block;
-	height: 3rem;
+	height: 2.75rem;
+	line-height: 2.25rem;
 	max-width: 100%;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 }
 
-.sapUxAPSectionShowHideButton {
+.sapUxAPShowHideButton {
 	float: right;
 }
 
-.sapUxAPSectionShowHideButton:not(:last-child) {
+.sapUxAPShowHideButton:not(:last-child) {
 	float: right;
 	margin-left: 0.5rem;
 }
@@ -77,19 +94,22 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 	width: 100%;
 }
 
-.sapUiSizeCompact .sapUxAPSectionShowHideButton {
-	margin-top: 0.5rem;
-}
-
 .sapUiSizeCompact .sapUxAPObjectPageSectionTitle {
-	height: 2.5rem;
-	line-height: 2rem;
-	padding-bottom:0.5rem;
+	height: 2.75rem;
+	line-height: 2.25rem;
 }
 
 .sapUiSizeCompact .sapUxAPObjectPageSectionHeader {
-	height: 2.5rem;
-	line-height: 2rem;
+	height: 2.75rem;
+	line-height: 2.25rem;
+}
+
+.sapUxAPObjectPageSectionHeader.sapUxAPObjectPageSectionHeaderCompact .sapUxAPObjectPageSectionTitle,
+.sapUxAPObjectPageSectionHeader.sapUxAPObjectPageSectionHeaderCompact,
+.sapUiSizeCompact .sapUxAPObjectPageSectionHeader.sapUxAPObjectPageSectionHeaderCompact .sapUxAPObjectPageSectionTitle,
+.sapUiSizeCompact .sapUxAPObjectPageSectionHeader.sapUxAPObjectPageSectionHeaderCompact {
+	height: 2rem;
+	line-height: 1.5rem;
 }
 
 html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSection:focus {
@@ -127,11 +147,15 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 	line-height: inherit;
 	border-bottom: none;
 	position: relative;
-	top: 1rem;
+	top: 0rem;
 }
 
 .sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle
 .sapUxAPObjectPageSectionHeader {
 	height: auto;
 	padding-bottom: 0;
+}
+
+.sapUxAPObjectPageSection.sapUxAPObjectPageSectionWrapTitle .sapUxAPObjectPageSubSectionHeaderToolbar {
+	height: auto;
 }

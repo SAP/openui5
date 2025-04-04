@@ -648,29 +648,31 @@ sap.ui.define([
 	 * @see #setSelected
 	 */
 	Context.prototype.doSetSelected = function (bSelected, bDoNotUpdateAnnotation) {
-		if (!bDoNotUpdateAnnotation && this.bSelected !== bSelected) {
+		if (this.bSelected === bSelected) {
+			return false;
+		}
+		this.bSelected = bSelected;
+		this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+		const oHeaderContext = this.oBinding.getHeaderContext();
+		if (oHeaderContext === this) {
+			if (!bSelected) {
+				this.iSelectionCount = 0; // reset after previous "select all"
+			}
+		} else if (!this.isDeleted()) {
+			// Note: deleted contexts can only be deselected, but are not currently counted anyway
+			oHeaderContext.onSelectionChanged(this); // incl. "change" event for "$selectionCount"
+		}
+
+		// Note: data binding may cause #setSelected to be called redundantly!
+		if (!bDoNotUpdateAnnotation) {
 			this.withCache((oCache, sPath) => {
 				if (this.oBinding) {
 					oCache.setProperty("@$ui5.context.isSelected", bSelected, sPath);
 				} // else: context already destroyed
 			}, "");
 		}
-		// Note: data binding may cause #setSelected to be called redundantly!
-		if (this.bSelected === bSelected) {
-			return false;
-		}
 
-		if (!bSelected && this.oBinding.getHeaderContext() === this) {
-			this.iSelectionCount = 0; // reset after previous "select all"
-		}
-		this.bSelected = bSelected;
-		if (!this.isDeleted() && this.oBinding.getHeaderContext() !== this) {
-			// Note: deleted contexts can only be deselected, but are not currently counted anyway
-			this.oBinding.getHeaderContext().onSelectionChanged(this);
-		}
-		this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
-
-		return true;
+		return true; // fire "selectionChanged"
 	};
 
 	/**

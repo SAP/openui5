@@ -163,7 +163,7 @@ sap.ui.define(["sap/ui/core/Lib"], function(Lib) {
 				rename() {
 					return {
 						changeType: "rename",
-						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
+						domRef: ".sapUxAPObjectPageSubSectionTitle",
 						isEnabled(oElement) {
 							return oElement.getDomRef().querySelector("[id*='headerTitle']") !== null;
 						}
@@ -172,7 +172,9 @@ sap.ui.define(["sap/ui/core/Lib"], function(Lib) {
 			},
 			aggregations: {
 				actions: {
-					domRef: ":sap-domref .sapUxAPObjectPageSubSectionHeaderActions",
+					domRef(oElement) {
+						return oElement.$().find(".sapUxAPObjectPageSubSectionHeaderToolbar")[0];
+					},
 					actions: {
 						move: {
 							changeType: "moveControls"

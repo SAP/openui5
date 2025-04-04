@@ -14,19 +14,19 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 	};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
-		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
+		var aActions, bHasTitle, bHasTitleLine, bUseTitleOnTheLeft, bHasActions, bHasVisibleActions,
 			bAccessibilityOn = ControlBehavior.isAccessibilityEnabled(),
-			oLabelledBy = oControl.getAggregation("ariaLabelledBy");
+			oLabelledByTitleID = oControl._getAriaLabelledById();
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
 		}
 
-		aActions = oControl.getActions() || [];
-		bHasActions = aActions.length > 0;
-		bHasTitle = oControl.getTitleVisible();
-		bHasTitleLine = bHasTitle || bHasActions;
+		aActions = oControl._getHeaderToolbar().getContent() || [];
+		bHasActions = aActions.length > 2;
 		bHasVisibleActions = oControl._hasVisibleActions();
+		bHasTitle = oControl._isTitleVisible();
+		bHasTitleLine = bHasTitle || bHasActions;
 
 		oRm.openStart("div", oControl)
 		.style("height", oControl._getHeight());
@@ -39,16 +39,12 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 			oRm.class("sapUxAPObjectPageSubSectionWithSeeMore");
 		}
 
-		if (oControl._bMultiLine) {
-			oRm.class("sapUxAPObjectPageSectionMultilineContent");
-		}
-
 		oRm.class("sapUxAPObjectPageSubSection")
 			.class("ui-helper-clearfix");
 
 
-		if (bAccessibilityOn && oLabelledBy && bHasTitle) {
-			oRm.attr("aria-labelledby", oLabelledBy.getId());
+		if (bAccessibilityOn && oLabelledByTitleID && oControl.getTitleVisible()) {
+			oRm.attr("aria-labelledby", oLabelledByTitleID);
 		}
 
 		oRm.openEnd();
@@ -68,36 +64,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 			oRm.openEnd();
 
-			oRm.openStart("div", oControl.getId() + "-headerTitle");
-
-			if (bHasTitle) {
-				oRm.attr("role", "heading")
-					.attr("aria-level",  oControl._getARIALevel());
-			}
-
-			oRm.class('sapUxAPObjectPageSubSectionHeaderTitle');
-
-			if (oControl.getTitleUppercase()) {
-				oRm.class("sapUxAPObjectPageSubSectionHeaderTitleUppercase");
-			}
-
-			oRm.attr("data-sap-ui-customfastnavgroup", true)
-				.openEnd();
-
-			if (bHasTitle) {
-				oRm.text(oControl.getTitle());
-			}
-
-			oRm.close("div");
-
-			if (bHasActions) {
-				oRm.openStart("div")
-					.class('sapUxAPObjectPageSubSectionHeaderActions')
-					.attr("data-sap-ui-customfastnavgroup", true)
-					.openEnd();
-				aActions.forEach(oRm.renderControl, oRm);
-				oRm.close("div");
-			}
+			oRm.renderControl(oControl._getHeaderToolbar());
+			oRm.renderControl(oControl._getShowHideButton());
 
 			oRm.close("div");
 		}

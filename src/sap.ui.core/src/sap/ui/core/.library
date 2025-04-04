@@ -169,7 +169,7 @@
         <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" npmName="jquery-ui" version="1.10.4" hash="498bcb26a8bc6c4681158baf9623c368" homepage="https://jqueryui.com" id="73554900106100000044">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
-            <pattern>sap/ui/thirdparty/jqueryui/*</pattern>
+            <pattern>sap/ui/thirdparty/jqueryui/**</pattern>
             <pattern partial="true" otherContent="SAP" explanation="jquery.sap.dom.js is overall written by SAP, but contains code taken from jQuery UI Core (see the respective comment)">jquery.sap.dom.js</pattern>
         </lib>
         <lib name="jquery_UI_1-11-1" displayName="jQuery UI 1.11" npmName="n/a" version="1.11.1" homepage="https://jqueryui.com">
@@ -275,12 +275,12 @@
         <lib name="cldr" displayName="Unicode Common Locale Data Repository" npmName="cldr-core" version="46.1.0" hash="9223f0ba34bea363c9b8b212fffad1bd" homepage="http://cldr.unicode.org/" id="73555000106100189306">
             <license url="http://www.unicode.org/copyright.html" type="LicenseRef-Unicode-3.0" />
             <copyright>1991-2024 Unicode, Inc.</copyright>
-            <pattern>sap/ui/core/cldr/*</pattern>
+            <pattern>sap/ui/core/cldr/**</pattern>
         </lib>
         <lib name="mobiscroll" displayName="MobiScroll" npmName="n/a" version="2.9.0" hash="2a76d1439bbc5afaf10324b2108e4d9c" homepage="http://mobiscroll.com" id="73554900106100005562">
             <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
             <copyright>2010-2013, Acid Media</copyright>
-            <pattern>sap/ui/thirdparty/mobiscroll/*</pattern>
+            <pattern>sap/ui/thirdparty/mobiscroll/**</pattern>
         </lib>
         <lib name="sinonjs" displayName="SinonJS" npmName="sinon" version="1.14.1" hash="5bbc65549709e5c7adc2df0c38ba966a" homepage="http://sinonjs.org" id="73554900106100005532">
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
@@ -376,7 +376,7 @@
         <lib name="hyphenopoly" displayName="Hyphenopoly" npmName="hyphenopoly" version="3.4.0" hash="cc7f1e6a04746091b382c81810f5bc84" homepage="https://github.com/mnater/Hyphenopoly" id="73555000106100074224">
             <license url="https://github.com/mnater/Hyphenopoly/blob/master/LICENSE" type="MIT" />
             <copyright>2021 Mathias Nater</copyright>
-            <pattern>sap/ui/thirdparty/hyphenopoly/*</pattern>
+            <pattern>sap/ui/thirdparty/hyphenopoly/**</pattern>
         </lib>
         <lib name="p-cancelable" displayName="p-cancelable" npmName="p-cancelable" version="2.0.0" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0" id="73555000106100034052">
             <license url="https://github.com/sindresorhus/p-cancelable/blob/v2.0.0/license" type="MIT" />

@@ -51,7 +51,8 @@ sap.ui.define([
 			onInit: function() {
 
 				var oMessageBundle = new ResourceModel({
-					bundleName: "sap.ui.documentation.messagebundle"
+					bundleName: "sap.ui.documentation.messagebundle",
+					async: true
 				});
 
 				this._oConfigUtil = this.getOwnerComponent().getConfigUtil();

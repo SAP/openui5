@@ -22,17 +22,19 @@
 }
 
 html.sap-desktop .sapMTokenizer:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: @_sap_m_Tokenizer_OutlineOffset;
 }
 
 /* editable tokens in read-only tokenizer */
 html.sap-desktop .sapMTokenizer.sapMTokenizerReadonly {
-	.sapMToken, .sapMToken:hover,
+
+	.sapMToken,
+	.sapMToken:hover,
 	.sapMToken.sapMTokenSelected:hover {
-		color: @sapUiContentLabelColor;
-		background: @sapUiFieldReadOnlyBackground;
-		border: @sapUiButtonBorderWidth solid @sapUiFieldReadOnlyBorderColor;
+		color: var(--sapContent_LabelColor);
+		background: var(--sapField_ReadOnly_Background);
+		border: var(--sapButton_BorderWidth) solid var(--sapField_ReadOnly_BorderColor);
 	}
 }
 
@@ -41,50 +43,52 @@ html.sap-desktop .sapMTokenizer.sapMTokenizerReadonly {
 }
 
 .sapUiSizeCompact {
+
 	.sapMTokenizer {
 		padding-left: 0.25rem;
+
 		&.sapMTokenizerReadonly .sapMToken.sapMTokenReadOnly {
 			padding: 0.125rem 0.25rem;
 		}
+
 		.sapMToken {
 			margin-right: 0.25rem;
 			margin-top: 0.0625rem;
 			margin-bottom: 0.0625rem;
 		}
+
 		.sapMTokenizerIndicator {
 			line-height: 1.375rem;
 		}
 	}
 }
 
-/* ------------------------------ */
-/* Disabled                       */
-/* ------------------------------ */
+/* Disabled */
 
-.sapMTokenizer.sapMTokenizerDisabled .sapMToken  {
+.sapMTokenizer.sapMTokenizerDisabled .sapMToken {
 	border-color: @sapUiHcReducedAltForeground;
 
 	&.sapMToken:hover,
 	&.sapMToken:focus,
 	&.sapMToken.sapMTokenSelected:hover,
 	&.sapMTokenSelected {
-		background: @sapUiButtonBackground;
+		background: var(--sapButton_Background);
 		cursor: default;
-		color: @sapUiBaseText;
+		color: var(--sapTextColor);
 		outline: none;
 		border-color: @sapUiHcReducedAltForeground;
 	}
 
-	&:focus:after {
+	&:focus::after {
 		content: none;
 	}
 
 	&.sapMTokenSelected .sapMTokenText {
-		color: @sapUiBaseText;
+		color: var(--sapTextColor);
 	}
 
 	&.sapMTokenSelected .sapMTokenIcon {
-		color: @sapUiContentIconColor;
+		color: var(--sapContent_IconColor);
 		cursor: default;
 	}
 
