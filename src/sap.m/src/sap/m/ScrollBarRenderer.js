@@ -41,6 +41,9 @@ sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"], function(Device,
 			// Middle div - ScrollBar itself.
 			oRm.openStart("div", sControlId + "-sb");
 			oRm.class("sapMScrollBarInnerDiv");
+			// prevent tabbing to the scrollbar, as scrollable
+			// elements are added to the tab chain
+			oRm.attr("tabindex", "-1");
 			oRm.openEnd();
 
 				oRm.openStart("div", sControlId + "-sbcnt");

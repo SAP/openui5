@@ -19,7 +19,7 @@
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 	font-size: @sapMFontMediumSize;
 	box-shadow: @sapUiShadowHeader;
 }
@@ -44,7 +44,7 @@
 	text-decoration: none;
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="true"] .sapMWizardProgressNavStepContainer {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='true'] .sapMWizardProgressNavStepContainer {
 	max-width: 100%;
 }
 
@@ -57,15 +57,15 @@
 		outline: none;
 
 		.sapMWizardProgressNavStepContainer {
-			outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+			outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 			outline-offset: 1px;
 		}
 	}
 }
 
-// the separator connecting every two steps
+/* the separator connecting every two steps */
 .sapMWizardProgressNavStep::after {
-	content: "";
+	content: '';
 	display: block;
 	position: absolute;
 	top: @_sap_m_WizardProgressNavigator_ListHeight / 2;
@@ -76,42 +76,43 @@
 	z-index: -1;
 }
 
-// we do not have a separator at the end for known number of steps
+/* we do not have a separator at the end for known number of steps */
 .sapMWizardProgressNavList .sapMWizardProgressNavStep:last-child::after {
 	display: none;
 }
 
-// we have a dashed separator at the end when the number of steps can change
+/* we have a dashed separator at the end when the number of steps can change */
 .sapMWizardProgressNavListVarying .sapMWizardProgressNavStep:last-child::after {
 	display: block;
 	border-bottom-style: dashed;
 }
 
-// the currently selected step
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+/* the currently selected step */
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current='true'] {
 
-	// the current step is underlined as to have a visual cue
+	/* the current step is underlined as to have a visual cue */
 	.sapMWizardProgressNavStepContainer::after {
-		content: "";
+		content: '';
 		display: block;
 		position: absolute;
 		width: 100%;
 		height: @_sap_m_WizardProgressNavigator_StepUnderlineHeight;
 
-		// negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1
-		// bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav
+		/* negative values are needed for the right positioning - (2rem - 4rem) / 2 = -1 */
+		/* bottom:0 positions it at the bottom of the list but we want it at the bottom of the nav */
 		bottom: (@_sap_m_WizardProgressNavigator_ListHeight - @_sap_m_WizardProgressNavigator_NavHeight) / 2;
 	}
-	//all steps after the current one are right aligned so that they dont overflow to the right
+
+	/* all steps after the current one are right aligned so that they dont overflow to the right */
 	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavStepContainer {
 		right: 0;
 	}
 }
 
-// the step up to which progress has been reached
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active="true"] {
+/* the step up to which progress has been reached */
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-active='true'] {
 
-	//all steps after the active one have the default cursor and no focus
+	/* all steps after the active one have the default cursor and no focus */
 	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavStepContainer {
 		cursor: default;
 		display: inline;
@@ -122,8 +123,8 @@
 	}
 }
 
-// all steps that are grouped
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+/* all steps that are grouped */
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='false'] {
 	width: @_sap_m_WizardProgressNavigator_StepWidth - @_sap_m_WizardProgressNavigator_StepOverlapOnPhone;
 	padding: 0;
 
@@ -137,28 +138,28 @@
 	}
 }
 
-// when there are no titles and the number of steps is know the last step should align to the end
+/* when there are no titles and the number of steps is know the last step should align to the end */
 .sapMWizardProgressNavList.sapMWizardProgressNavListNoTitles .sapMWizardProgressNavStep:last-child {
 	width: @_sap_m_WizardProgressNavigator_StepWidth;
 }
 
-// override the previous rule when more than one step is grouped because we want the last step to be
-// shrunk and show below the previous step with [data-sap-ui-wpn-step-open="false"]
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+/* override the previous rule when more than one step is grouped because we want the last step to be */
+/* shrunk and show below the previous step with [data-sap-ui-wpn-step-open="false"] */
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='false'] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='false'] {
 	width: @_sap_m_WizardProgressNavigator_StepWidth - @_sap_m_WizardProgressNavigator_StepOverlapOnPhone;
 }
 
-// select the first grouped step on the right and style it so that it does not collapse
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="true"] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] {
+/* select the first grouped step on the right and style it so that it does not collapse */
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='true'] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='false'] {
 	width: @_sap_m_WizardProgressNavigator_StepWidth;
 	padding-left: @_sap_m_WizardProgressNavigator_StepPadding;
 }
 
-// select the last grouped step on the left and style it so that it does not collapse
-// add the needed padding to the right so that the separator between the steps is visible
-// the second selector is needed for a corner case
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"],
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open="false"] +  .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev="true"] {
+/* select the last grouped step on the left and style it so that it does not collapse */
+/* add the needed padding to the right so that the separator between the steps is visible */
+/* the second selector is needed for a corner case */
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev='true'],
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-open='false'] + .sapMWizardProgressNavStep[data-sap-ui-wpn-step-open-prev='true'] {
 	width: @_sap_m_WizardProgressNavigator_StepWidth;
 	padding-right: @_sap_m_WizardProgressNavigator_StepPadding + @_sap_m_WizardProgressNavigator_SmallSeparator;
 
@@ -178,12 +179,13 @@
 	border-width: 1px;
 	border-style: solid;
 	border-radius: 50%;
-	color: @sapUiBaseText;
-	background: @sapUiObjectHeaderBackground;
-	border-color: @sapUiObjectHeaderBorderColor;
+	color: var(--sapTextColor);
+	background: var(--sapObjectHeader_Background);
+	border-color: var(--sapObjectHeader_BorderColor);
 	font-size: @sapMFontMediumSize;
+
 	.sapUiIcon {
-		font-size: @sapMFontLargeSize;
+		font-size: var(--sapFontLargeSize);
 	}
 }
 
@@ -196,34 +198,34 @@ html.sap-phone .sapMWizardProgressNav {
 }
 
 .sapMWizardProgressNavStep:hover .sapMWizardProgressNavStepCircle {
-	background: @sapUiHighlight;
+	background: var(--sapHighlightColor);
 }
 
 .sapMWizardProgressNavStepIcon {
-	font-size: @sapMFontLargeSize;
+	font-size: var(--sapFontLargeSize);
 	cursor: pointer;
 }
 
 .sapMWizardProgressNavStep::after {
-	border-bottom-color: @sapUiObjectHeaderBorderColor;
+	border-bottom-color: var(--sapObjectHeader_BorderColor);
 }
 
-.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current="true"] {
+.sapMWizardProgressNavStep[data-sap-ui-wpn-step-current='true'] {
+
 	& .sapMWizardProgressNavStepContainer::after {
-		background: @sapUiSelected;
+		background: var(--sapSelectedColor);
 		height: 0.25rem;
 	}
 
 	& .sapMWizardProgressNavStepCircle {
-		background: @sapUiSelected;
-		color: @sapUiContentContrastIconColor;
+		background: var(--sapSelectedColor);
+		color: var(--sapContent_ContrastIconColor);
 	}
 
 	& ~ .sapMWizardProgressNavStep .sapMWizardProgressNavStepIcon {
 		cursor: default;
 	}
 }
-
 
 .sapMWizardProgressNavStepTitleContainer {
 	display: inline-block;
@@ -233,7 +235,7 @@ html.sap-phone .sapMWizardProgressNav {
 	max-height: 3rem;
 	overflow: hidden;
 	max-width: ~"calc(100% - 3rem)";
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }
 
 .sapMWizardProgressNavStepTitle {
@@ -242,7 +244,7 @@ html.sap-phone .sapMWizardProgressNav {
 	max-height: 2.875rem;
 	line-height: @_sap_m_WizardProgressNavigator_ListHeight  / 2;
 	font-size: @sapMFontMediumSize;
-	color: @sapUiGroupTitleTextColor;
+	color: var(--sapGroup_TitleTextColor);
 	vertical-align: middle;
 	display: -webkit-inline-box;
 	-webkit-box-orient: vertical;
@@ -256,7 +258,7 @@ html.sap-phone .sapMWizardProgressNav {
 
 .sapMWizardProgressNavStepLabelOptional {
 	display: table-row;
-	font-size: @sapMFontSmallSize;
-	color: @sapUiContentLabelColor;
+	font-size: var(--sapFontSmallSize);
+	color: var(--sapContent_LabelColor);
 	overflow: hidden;
 }

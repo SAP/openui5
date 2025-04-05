@@ -4,14 +4,14 @@
 /* ============================== */
 
 html.sap-desktop .sapMTBActive.sapMTBFocused {
-	outline: 0.0625rem dotted @sapUiContentFocusColor;
+	outline: 0.0625rem dotted var(--sapContent_FocusColor);
 	outline-offset: -0.1875rem;
 }
 
 .sapMTB {
 	height: 2.75rem;
 	padding: 0 0.5rem;
-	background: @sapUiToolbarBackground;
+	background: var(--sapToolbar_Background);
 }
 
 /* Transparent Toolbar Context */
@@ -26,7 +26,7 @@ html.sap-desktop .sapMTBActive.sapMTBFocused {
 
 /* Solid Toolbar Context */
 .sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiBaseBG;
+	background: var(--sapBackgroundColor);
 }
 
 /* Info Toolbar Context */
@@ -34,11 +34,11 @@ html.sap-desktop .sapMTBActive.sapMTBFocused {
 	background: darken(@sapUiBaseColor, 10);
 
 	> .sapUiIcon {
-		color: @sapUiBaseText;
+		color: var(--sapTextColor);
 	}
 
 	&.sapMTBActive {
-		background: @sapUiInfobarBackground;
+		background: var(--sapInfobar_Background);
 		.generate-contrast-color-toolbar(@sapUiInfobarBackground);
 
 		&:active {
@@ -59,7 +59,7 @@ html.sap-desktop .sapMTBActive.sapMTBFocused {
 }
 
 html.sap-desktop .sapMTB-Info-CTX.sapMTBActive.sapMTBFocused {
-	outline-color: @sapUiContentContrastFocusColor;
+	outline-color: var(--sapContent_ContrastFocusColor);
 }
 
 .generate-contrast-color-toolbar(@backgroundColor) {

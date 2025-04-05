@@ -6,7 +6,7 @@
 @_sap_m_Toolbar_ShrinkItem_MinWidth: 2.5rem;
 @_sap_m_Toolbar_Height: 2rem;
 
-//we want the first visible element on the row to have specific padding-left value
+/* we want the first visible element on the row to have specific padding-left value */
 .sapMIBar.sapMTB .sapMBarChild {
 	margin-left: 0.25rem;
 }
@@ -26,8 +26,6 @@
 .sapMTB {
 	white-space: nowrap;
 	overflow: hidden;
-	-webkit-align-items: center;
-	-webkit-box-align: center;
 	align-items: center;
 	box-sizing: border-box;
 	-webkit-text-size-adjust: none;
@@ -35,7 +33,7 @@
 	height: 3rem;
 	padding-left: 0.25rem;
 	padding-right: 0.25rem;
-	background: @sapUiToolbarBackground;
+	background: var(--sapToolbar_Background);
 }
 
 .sapMTB.sapMTB-Transparent-CTX {
@@ -52,7 +50,7 @@
 }
 
 .sapMTBStandard {
-	border-bottom: solid 0.0625rem @sapUiGroupTitleBorderColor;
+	border-bottom: solid 0.0625rem var(--sapGroup_TitleBorderColor);
 }
 
 .sapMTBClear {
@@ -70,7 +68,7 @@
 
 /* Background and text colors for different states */
 .sapMTB-Info-CTX > .sapUiIcon:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: 0.0625rem;
 }
 
@@ -85,17 +83,14 @@
 
 /* NewFlex */
 .sapMTBNewFlex {
-	display: -webkit-flex;
 	display: flex;
 }
 
 .sapMTBNewFlex > * {
-	-webkit-flex-shrink: 0;
 	flex-shrink: 0;
 }
 
 .sapMTBNewFlex > .sapMTBShrinkItem {
-	-webkit-flex-shrink: 1;
 	flex-shrink: 1;
 }
 
@@ -112,12 +107,12 @@
 
 /* Solid Toolbar Context */
 .sapMTB-Solid-CTX.sapMTB {
-	background: @sapUiListHeaderBackground;
+	background: var(--sapList_HeaderBackground);
 }
 
 /* Info Toolbar Context */
 .sapMTB-Info-CTX.sapMTB {
-	background: @sapUiInfobarBackground;
+	background: var(--sapInfobar_Background);
 	color: contrast(@sapUiInfobarBackground, @sapUiListActiveTextColor, @sapUiListTextColor, @sapUiContentContrastTextThreshold);
 	height: @_sap_m_Toolbar_Height;
 
@@ -128,17 +123,18 @@
 	}
 
 	> .sapMTitle {
-		font-size: @sapMFontHeader6Size;
+		font-size: var(--sapFontHeader6Size);
 		text-shadow: none;
 	}
 
 	&.sapMTBActive {
+
 		&:hover {
-			background: @sapUiInfobarHoverBackground;
+			background: var(--sapInfobar_Hover_Background);
 		}
 
 		&:active {
-			background: @sapUiInfobarActiveBackground;
+			background: var(--sapInfobar_Active_Background);
 		}
 	}
 }
@@ -152,12 +148,12 @@
 
 /* class used to get a height of 3rem in compact mode */
 .sapUiSizeCompact .sapMTB.sapMTBHeader-CTX {
-	height: @sapUiElementLineHeight;
+	height: var(--sapElement_LineHeight);
 }
 
 /* default min-width value for the shrinkable items */
 .sapUiSizeCompact .sapMTBShrinkItem:not(.sapMSF),
-.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem{
+.sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem {
 	min-width: 2rem;
 }
 

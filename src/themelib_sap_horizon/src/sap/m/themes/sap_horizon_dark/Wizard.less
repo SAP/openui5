@@ -4,14 +4,16 @@
 /* ============================= */
 
 .sapMWizard {
+
 	.sapMWizardStepContainer {
 		margin-top: @_sap_m_Wizard_NavHeight;
 	}
 
 	&.sapMWizardBgSolid .sapMWizardStepContainer {
-		background-color: @sapUiShellBackground;
+		background-color: var(--sapShell_Background);
 	}
 }
+
 .sapMWizard .sapMWizardProgressNav {
 	box-shadow: @sapUiShadowHeader;
 }
@@ -31,6 +33,5 @@
 html.sap-phone .sapMWizard .sapMWizardNextButtonVisible {
 	left: 2rem;
 	bottom: 3.5rem;
-	-webkit-transform: none;
 	transform: none;
 }

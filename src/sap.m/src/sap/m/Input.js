@@ -739,7 +739,7 @@ function(
 			while the suggestions popover is open update the value state header.
 			If the input has FormattedText aggregation while the suggestions popover is open then
 			it's new, because the old is already switched to have the value state header as parent */
-			this._updateSuggestionsPopoverValueState();
+			this._updateSuggestionsPopoverValueState(true);
 		}
 	};
 
@@ -3256,10 +3256,10 @@ function(
 
 	/**
 	 * Updates the suggestions popover value state
-	 *
+	 * @param {boolean} bUpdateValueStateLinkDelagate Whether to reinitialize the value state link delegate
 	 * @private
 	 */
-	Input.prototype._updateSuggestionsPopoverValueState = function() {
+	Input.prototype._updateSuggestionsPopoverValueState = function(bUpdateValueStateLinkDelagate) {
 		var oSuggPopover = this._getSuggestionsPopover(),
 			sValueState = this.getValueState(),
 			bNewValueState = this.getValueState() !== oSuggPopover._getValueStateHeader().getValueState(),
@@ -3277,7 +3277,7 @@ function(
 			this.setFormattedValueStateText(oSuggPopover._getValueStateHeader().getFormattedText());
 		}
 
-		oSuggPopover.updateValueState(sValueState, (oNewFormattedValueStateText || sValueStateText), this.getShowValueStateMessage());
+		oSuggPopover.updateValueState(sValueState, (oNewFormattedValueStateText || sValueStateText), this.getShowValueStateMessage(), bUpdateValueStateLinkDelagate);
 
 		if (this.isMobileDevice()) {
 			oSuggPopover.getInput().setValueState(sValueState);

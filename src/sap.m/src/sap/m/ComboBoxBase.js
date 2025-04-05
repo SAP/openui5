@@ -693,7 +693,7 @@ sap.ui.define([
 				while the suggestions popover is open update the value state header.
 				If the input has FormattedText aggregation while the suggestions popover is open then
 				it's new, because the old is already switched to have the value state header as parent */
-				this._updateSuggestionsPopoverValueState();
+				this._updateSuggestionsPopoverValueState(true);
 			}
 		};
 
@@ -934,10 +934,10 @@ sap.ui.define([
 
 		/**
 		 * Updates the suggestions popover value state
-		 *
+		 * @param {boolean} bUpdateValueStateLinkDelagate Whether to reinitialize the value state link delegate
 		 * @private
 		 */
-		ComboBoxBase.prototype._updateSuggestionsPopoverValueState = function() {
+		ComboBoxBase.prototype._updateSuggestionsPopoverValueState = function(bUpdateValueStateLinkDelagate) {
 			var oSuggestionsPopover = this._getSuggestionsPopover();
 			if (!oSuggestionsPopover) {
 				return;
@@ -955,7 +955,7 @@ sap.ui.define([
 			if (oSuggestionsPopover.isOpen() && !bShouldPopoverBeUpdated) {
 				this.setFormattedValueStateText(oSuggestionsPopover._getValueStateHeader().getFormattedText());
 			}
-			oSuggestionsPopover.updateValueState(sValueState, (oNewFormattedValueStateText || sValueStateText), this.getShowValueStateMessage());
+			oSuggestionsPopover.updateValueState(sValueState, (oNewFormattedValueStateText || sValueStateText), this.getShowValueStateMessage(), bUpdateValueStateLinkDelagate);
 		};
 
 		ComboBoxBase.prototype.shouldValueStateMessageBeOpened = function() {

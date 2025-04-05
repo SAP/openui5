@@ -318,7 +318,7 @@ sap.ui.define([
 
 			if (!this.getModel("$i18n")) {
 				// if ResourceModel not provided from outside create own one
-				this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
+				this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: true}), "$i18n");
 			}
 
 			if (this.getConditions().length === 0 && !this._sConditionsTimer) {

@@ -318,9 +318,9 @@ sap.ui.define([
 	MTable.prototype._updateHeaderText = function(bAllowAnnounce) {
 		const oListBinding = this.getListBinding();
 		if (!this.isTypeahead() && this._oTablePanel && oListBinding) {
-			const sNoNumberText = this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER");
+			const sNoNumberText = this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER");
 			const iRowCount = this.getListBinding()?.getCount?.() || 0;
-			const sHeaderText = iRowCount > 0 ? this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLE", [iRowCount]) : sNoNumberText;
+			const sHeaderText = iRowCount > 0 ? this._oResourceBundle.getText("valuehelp.TABLETITLE", [iRowCount]) : sNoNumberText;
 			this._oTablePanel.setHeaderText(sHeaderText);
 			if (bAllowAnnounce && this._bAnnounceTableUpdate) {
 				MTableUtil.announceTableUpdate(sNoNumberText, iRowCount);
@@ -464,11 +464,7 @@ sap.ui.define([
 					"sap/ui/model/resource/ResourceModel"
 				]).then((aModules) => {
 
-					const FixFlex = aModules[0];
-					const VBox = aModules[1];
-					const Panel = aModules[2];
-					const ScrollContainer = aModules[3];
-					const ResourceModel = aModules[4];
+					const [FixFlex, VBox, Panel, ScrollContainer, ResourceModel] = aModules;
 
 					if (!this._oContentLayout && !this.isDestroyed()) {
 
@@ -479,8 +475,12 @@ sap.ui.define([
 							return [this._oWrapper.getActiveFilterBar.call(this._oWrapper)];
 						};
 
-						this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
-						this._oTablePanel = new Panel(this.getId() + "-TablePanel", { expanded: true, height: "100%", headerText: this.getModel("$i18n").getResourceBundle().getText("valuehelp.TABLETITLENONUMBER") });
+						if (!this.getModel("$i18n")) {
+							// if ResourceModel not provided from outside create own one
+							this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: true}), "$i18n");
+						}
+
+						this._oTablePanel = new Panel(this.getId() + "-TablePanel", { expanded: true, height: "100%", headerText: this._oResourceBundle.getText("valuehelp.TABLETITLENONUMBER") });
 						this._oTablePanel.addStyleClass("sapMdcTablePanel");
 
 						this._oContentLayout = new FixFlex(this.getId() + "-FF", { minFlexSize: 200, fixContent: this._oFilterBarVBox, flexContent: this._oTablePanel });

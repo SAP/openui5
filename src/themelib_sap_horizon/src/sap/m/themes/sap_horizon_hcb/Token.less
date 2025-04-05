@@ -12,8 +12,8 @@
 .sapMToken {
 	padding-left: @_sap_m_Token_LeftPadding;
 	border-radius: 0.25rem;
-	color: @sapTextColor;
-	font-size: @sapFontSize;
+	color: var(--sapTextColor);
+	font-size: var(--sapFontSize);
 	overflow: visible;
 }
 
@@ -25,17 +25,17 @@
 }
 
 html.sap-desktop .sapMToken:not(.sapMTokenReadOnly):hover {
-	border: @sapUiButtonBorderWidth solid @sapUiButtonHoverBorderColor;
-	background: @sapUiButtonHoverBackground;
+	border: var(--sapButton_BorderWidth) solid var(--sapButton_Hover_BorderColor);
+	background: var(--sapButton_Hover_Background);
 }
 
 html.sap-desktop .sapMToken.sapMTokenSelected:not(.sapMTokenReadOnly):hover {
-	background: @sapUiButtonSelectedHoverBackground;
-	border: @sapUiButtonBorderWidth solid @sapUiButtonSelectedBorderColor;
+	background: var(--sapButton_Selected_Hover_Background);
+	border: var(--sapButton_BorderWidth) solid var(--sapButton_Selected_BorderColor);
 }
 
 html.sap-desktop .sapMToken:focus {
-	outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	outline-offset: -0.1875rem;
 }
 
@@ -44,15 +44,15 @@ html.sap-desktop .sapMToken {
 	&.sapMTokenReadOnly:hover,
 	&.sapMTokenReadOnly.sapMTokenSelected,
 	&.sapMTokenReadOnly.sapMTokenSelected:hover {
-		color: @sapUiContentLabelColor;
-		background: @sapUiFieldReadOnlyBackground;
-		border: @sapUiButtonBorderWidth solid @sapUiFieldReadOnlyBorderColor;
+		color: var(--sapContent_LabelColor);
+		background: var(--sapField_ReadOnly_Background);
+		border: var(--sapButton_BorderWidth) solid var(--sapField_ReadOnly_BorderColor);
 	}
 }
 
 .sapMToken.sapMTokenReadOnly {
 	padding: 0.25rem 0.3125rem;
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 
 	.sapMTokenText {
 		line-height: 1rem;
@@ -75,7 +75,7 @@ html.sap-desktop .sapMToken {
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
-	right: -@sapUiButtonBorderWidth;
+	right: ~"calc(var(--sapButton_BorderWidth) * -1)";
 }
 
 .sapUiSizeCompact .sapMTokenIcon {
