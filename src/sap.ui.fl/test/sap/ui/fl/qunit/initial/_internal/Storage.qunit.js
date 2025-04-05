@@ -781,6 +781,22 @@ sap.ui.define([
 				assert.deepEqual(oResult, merge(StorageUtils.getEmptyFlexDataResponse(), {cacheKey: null}));
 			});
 		});
+
+		QUnit.test("when save change and activate version do not trigger a reload", function(assert) {
+			FlexInfoSession.setByReference({
+				version: Version.Number.Draft,
+				maxLayer: Layer.CUSTOMER,
+				initialAllContexts: true,
+				saveChangeKeepSession: false
+			}, sFlexReference);
+
+			return Storage.loadFlexData({
+				reference: sFlexReference,
+				version: Version.Number.Draft
+			}).then(function() {
+				assert.deepEqual(FlexInfoSession.getByReference(sFlexReference), {}, "then the flex info session is cleared");
+			});
+		});
 	});
 
 	QUnit.module("Connector disassembles the variantSections", {

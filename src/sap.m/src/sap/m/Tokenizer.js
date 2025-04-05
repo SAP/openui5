@@ -1264,9 +1264,13 @@ sap.ui.define([
 
 			this._bFocusFirstToken = oEvent.srcControl === this.getTokens()[0];
 
-			if (!this._bFocusFirstToken) {
+			if (!this._bFocusFirstToken && !this._bTokenToBeDeleted) {
 				this._ensureTokenVisible(oEvent.srcControl);
 			}
+		};
+
+		Tokenizer.prototype.onmousedown = function (oEvent) {
+			this._bTokenToBeDeleted = oEvent.target.matches(".sapMTokenIcon, .sapMTokenIcon *");
 		};
 
 		Tokenizer.prototype.ontap = function (oEvent) {

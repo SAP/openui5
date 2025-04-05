@@ -216,7 +216,7 @@ sap.ui.define([
 	Dialog.prototype.getContainerControl = function() {
 		if (!this.getModel("$i18n")) {
 			// if ResourceModel not provided from outside create own one
-			this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
+			this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: true }), "$i18n");
 		}
 
 		const oDialog = this.getAggregation("_container");

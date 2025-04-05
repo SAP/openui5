@@ -10,57 +10,57 @@
 .sapMValueStateHeaderRoot {
 	padding: 0.5rem 0.5rem 0.5rem 1.875rem;
 	line-height: 1rem;
-	border-bottom: 2px solid @sapUiFieldBorderColor;
+	border-bottom: 2px solid var(--sapField_BorderColor);
 }
 
-.sapMValueStateHeaderSuccess:before {
-	font-family: SAP-icons;
-	content: "\e1c1";
+.sapMValueStateHeaderSuccess::before {
+	font-family: var(--sapContent_IconFontFamily);
+	content: '\e1c1';
 	position: absolute;
 	top: 0.5rem;
-	left: 0rem;
+	left: 0;
 	vertical-align: middle;
 	font-size: 1rem;
-	color: @sapPositiveElementColor;
+	color: var(--sapPositiveElementColor);
 	padding-left: 0.5rem;
 	padding-right: 0.375rem;
 }
 
-.sapMValueStateHeaderError:before {
-	font-family: SAP-icons;
-	content: "\e1ec";
+.sapMValueStateHeaderError::before {
+	font-family: var(--sapContent_IconFontFamily);
+	content: '\e1ec';
 	position: absolute;
 	top: 0.5rem;
-	left: 0rem;
+	left: 0;
 	vertical-align: middle;
 	font-size: 1rem;
-	color: @sapNegativeElementColor;
+	color: var(--sapNegativeElementColor);
 	padding-left: 0.5rem;
 	padding-right: 0.375rem;
 }
 
-.sapMValueStateHeaderWarning:before {
-	font-family: SAP-icons;
-	content: "\e053";
+.sapMValueStateHeaderWarning::before {
+	font-family: var(--sapContent_IconFontFamily);
+	content: '\e053';
 	position: absolute;
 	top: 0.5rem;
-	left: 0rem;
+	left: 0;
 	vertical-align: middle;
 	font-size: 1rem;
-	color: @sapCriticalElementColor;
+	color: var(--sapCriticalElementColor);
 	padding-left: 0.5rem;
 	padding-right: 0.375rem;
 }
 
-.sapMValueStateHeaderInformation:before {
-	font-family: SAP-icons;
-	content: "\e289";
+.sapMValueStateHeaderInformation::before {
+	font-family: var(--sapContent_IconFontFamily);
+	content: '\e289';
 	position: absolute;
 	top: 0.5rem;
-	left: 0rem;
+	left: 0;
 	vertical-align: middle;
 	font-size: 1rem;
-	color: @sapInformativeElementColor;
+	color: var(--sapInformativeElementColor);
 	padding-left: 0.5rem;
 	padding-right: 0.375rem;
 }

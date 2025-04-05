@@ -3,7 +3,7 @@
 	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
 	<edmx:DataServices
 		xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">
-		<Schema Namespace="NerdMeetup.Models"
+		<Schema Namespace="Meetup.Models"
 			xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices"
 			xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
 			xmlns="http://schemas.microsoft.com/ado/2006/04/edm">
@@ -22,12 +22,12 @@
 				<Property Name="Latitude" Type="Edm.Double" Nullable="false" />
 				<Property Name="Longitude" Type="Edm.Double" Nullable="false" />
 				<Property Name="HostedById" Type="Edm.String" Nullable="true" />
-				<Property Name="Location" Type="NerdMeetup.Models.LocationDetail" Nullable="false" />
+				<Property Name="Location" Type="Meetup.Models.LocationDetail" Nullable="false" />
 			</EntityType>
 			<ComplexType Name="LocationDetail" />
-			<EntityContainer Name="NerdMeetups" m:IsDefaultEntityContainer="true">
-				<EntitySet Name="Meetups" EntityType="NerdMeetup.Models.Meetup" />
-				<FunctionImport Name="FindUpcomingMeetups" EntitySet="Meetups" ReturnType="Collection(NerdMeetup.Models.Meetup)" m:HttpMethod="GET" />
+			<EntityContainer Name="Meetups" m:IsDefaultEntityContainer="true">
+				<EntitySet Name="Meetups" EntityType="Meetup.Models.Meetup" />
+				<FunctionImport Name="FindUpcomingMeetups" EntitySet="Meetups" ReturnType="Collection(Meetup.Models.Meetup)" m:HttpMethod="GET" />
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>
