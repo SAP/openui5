@@ -243,7 +243,7 @@ sap.ui.define([
 	checkFixtures("Boolean literals, &&, ||, !", [
 		{ expression: "true", result: "true" },
 		{ expression: "false", result: "false" },
-		{ expression: "null", result: "null" },
+		{ expression: "null", result: "" },
 		{ expression: "true || false", result: "true" },
 		{ expression: "true && false", result: "false" },
 		{ expression: "false || false || true", result: "true" },
@@ -252,7 +252,7 @@ sap.ui.define([
 		{ expression: "!true", result: "false" },
 		{ expression: "!!true", result: "true" },
 		{ expression: "!true || true", result: "true" },
-		{ expression: "null && null.foo", result: "null" }, //guard may only eval left side
+		{ expression: "null && null.foo", result: "" }, //guard may only eval left side
 		{ expression: "true || null.foo", result: "true" } //default may only eval left side
 	]);
 
@@ -614,10 +614,11 @@ sap.ui.define([
 		// ui5lint-disable-next-line no-globals
 		const oSapUiMock = this.mock(sap.ui);
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(oDataUtils);
-		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
+		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns(-1);
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
 
 		// code under test
 		check(assert, "{=odata.compare(2,3)}", "-1");
@@ -651,10 +652,11 @@ sap.ui.define([
 
 		oSapUiMock.expects("require").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(undefined);
 		oSapUiMock.expects("requireSync").withExactArgs("sap/ui/model/odata/v4/ODataUtils").returns(oDataUtils);
-		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns("-1");
+		this.mock(oDataUtils).expects("compare").withExactArgs(2, 3).returns(-1);
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
 
 		// code under test
 		check(assert, "{=odata.compare(2,3)}", "-1");
@@ -670,6 +672,7 @@ sap.ui.define([
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
 
 		// code under test
 		check(assert, "{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");
@@ -705,6 +708,7 @@ sap.ui.define([
 		// While destroying the control used in the check function, require is sometimes called
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/ResizeHandler").atLeast(0).callThrough();
 		oSapUiMock.expects("require").withExactArgs("sap/ui/core/FocusHandler").atLeast(0).callThrough();
+		oSapUiMock.expects("require").withExactArgs("sap/ui/core/Messaging").atLeast(0).callThrough();
 
 		// code under test
 		check(assert, "{=odata.uriEncode('foo', 'Edm.String')}", "'foo'");

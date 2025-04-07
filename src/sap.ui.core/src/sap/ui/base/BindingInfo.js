@@ -14,9 +14,6 @@ sap.ui.define([
 	function(BaseConfig, DesignTime, getCompatibilityVersion, BindingParser, BindingMode) {
 	"use strict";
 
-	// Marker to not 'forget' ui5Objects
-	const UI5_OBJECT_MARKER = Symbol("ui5object");
-
 	// Marker that is used for aggregation binding. It's set on the instance
 	// cloned from the given template with value pointing to the original
 	// parent where the aggregation is defined. In case the aggregation is
@@ -173,14 +170,15 @@ sap.ui.define([
 				if (oValue.Type) {
 					// if value contains the 'Type' property (capital 'T'), this is not a binding info.
 					oBindingInfo = undefined;
-				} else if (oValue[UI5_OBJECT_MARKER]) {
+				} else if (oValue[this.UI5ObjectMarker]) {
 					// no bindingInfo, delete marker
-					delete oValue[UI5_OBJECT_MARKER];
+					delete oValue[this.UI5ObjectMarker];
 				} else if (oValue.ui5object) {
 					// if value contains ui5object property, this is not a binding info,
 					// remove it and not check for path or parts property
 					delete oValue.ui5object;
-				} else if (oValue.path != undefined || oValue.parts || (bDetectValue && oValue.value != undefined)) {
+				} else if (oValue.path != undefined || oValue.parts
+						|| (bDetectValue || oValue[this.UI5ObjectMarker] === false) && oValue.value != undefined) {
 					oBindingInfo = oValue;
 				}
 			}
@@ -219,7 +217,7 @@ sap.ui.define([
 			}
 		},
 
-		UI5ObjectMarker: UI5_OBJECT_MARKER,
+		UI5ObjectMarker: BindingParser.UI5ObjectMarker,
 		OriginalParent: ORIGINAL_PARENT
 	};
 
