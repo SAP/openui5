@@ -85,6 +85,7 @@ sap.ui.define([
 		+ " codeListModelParameters and sMetadataUrl stored #" + i + ", sServiceUrl: "
 		+ oFixture.sServiceUrl;
 	QUnit.test(sTitle, function (assert) {
+		const aAnnotationURIs = ["annotationURI"];
 		var oDataModelMock = this.mock(ODataModel),
 			oExpectedHeaders = {
 				"Accept" : "application/json",
@@ -100,7 +101,7 @@ sap.ui.define([
 				}
 			},
 			mParameters = {
-				annotationURI : "~annotationURI",
+				annotationURI : aAnnotationURIs,
 				headers : oFixture.oHeaderParameter || {},
 				serviceUrl : oFixture.sServiceUrl,
 				skipMetadataAnnotationParsing : true,
@@ -134,7 +135,9 @@ sap.ui.define([
 		this.mock(oMetadata.oMetadata).expects("loaded").withExactArgs().twice().returns(oPromise);
 		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(ODataAnnotations.prototype).expects("addSource")
-			.withExactArgs(["~annotationURI"]);
+			.withExactArgs(sinon.match((aAnnotationURIs0) => {
+				return aAnnotationURIs0 !== aAnnotationURIs;
+			}));
 		this.mock(Localization).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 		if (oFixture.sExpectedRequestedWithHeader) {
 			oExpectedHeaders["X-Requested-With"] = oFixture.sExpectedRequestedWithHeader;
@@ -155,6 +158,7 @@ sap.ui.define([
 		assert.strictEqual(oModel.oRetryAfterError, null);
 		assert.strictEqual(oModel.pRetryAfter, null);
 		assert.strictEqual(oModel.pAnnotationChanges, null);
+		assert.notStrictEqual(oModel.aAnnotationURIs, aAnnotationURIs);
 	});
 });
 
@@ -245,7 +249,7 @@ sap.ui.define([
 		this.mock(ODataModel.prototype).expects("_initializeMetadata").withExactArgs();
 		this.mock(ODataAnnotations.prototype).expects("addSource")
 			.withExactArgs(oFixture.parameter
-				? "~annotationURI"
+				? ["~annotationURI"]
 				: [{type : "xml", data : sinon.match.instanceOf(Promise)}, "~annotationURI"]);
 		this.mock(Localization).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 
@@ -9204,25 +9208,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	annotationURI : undefined,
+	annotationURI : [],
 	cacheKey : "~metadataUrl#annotations",
 	ignoreAnnotationsFromMetadata : false
 }, {
-	annotationURI : "~annotationURI",
+	annotationURI : ["~annotationURI"],
 	cacheKey : "~metadataUrl#annotations_~annotationURI#annotations",
 	ignoreAnnotationsFromMetadata : false
 }, {
-	annotationURI : undefined,
+	annotationURI : [],
 	cacheKey : undefined,
 	ignoreAnnotationsFromMetadata : true
 }, {
-	annotationURI : "~annotationURI",
+	annotationURI : ["~annotationURI"],
 	cacheKey : "~annotationURI#annotations",
 	ignoreAnnotationsFromMetadata : true
 }].forEach(function (oFixture, i) {
 	QUnit.test("_getAnnotationCacheKey, with ignoreAnnotationsFromMetadata, " + i, function (assert) {
 		var oModel = {
-				sAnnotationURI : oFixture.annotationURI,
+				aAnnotationURIs : oFixture.annotationURI,
 				bIgnoreAnnotationsFromMetadata : oFixture.ignoreAnnotationsFromMetadata,
 				bSkipMetadataAnnotationParsing : false,
 				bUseCache : true
@@ -10060,13 +10064,13 @@ sap.ui.define([
 	{bMetadataCacheable: true, bAnnotationsCacheable: true, bResult: true}
 ].forEach(({bMetadataCacheable, bAnnotationsCacheable, bResult}, i) => {
 	[
-		{vAnnotationURI: undefined},
-		{vAnnotationURI: "~annotationURI", aExpectedAnnotationURI: ["~annotationURI"]},
+		{vAnnotationURI: []},
+		{vAnnotationURI: ["~annotationURI"], aExpectedAnnotationURI: ["~annotationURI"]},
 		{vAnnotationURI: ["~annotationURI1", "~annotationURI2"]}
 	].forEach(({vAnnotationURI, aExpectedAnnotationURI}, j) => {
 	QUnit.test(`_cacheSupported #(${i}, ${j})`, function (assert) {
 		aExpectedAnnotationURI ??= vAnnotationURI;
-		const oModel = {sAnnotationURI: vAnnotationURI};
+		const oModel = {aAnnotationURIs: vAnnotationURI};
 		const oModelMock = this.mock(ODataModel);
 		oModelMock.expects("hasContextToken").withExactArgs("~metadataURL").returns(bMetadataCacheable);
 		oModelMock.expects("isAnnotationsCacheable")
@@ -10077,7 +10081,7 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(ODataModel.prototype._cacheSupported.call(oModel, "~metadataURL"), bResult);
 
-		assert.deepEqual(oModel.sAnnotationURI, aExpectedAnnotationURI);
+		assert.deepEqual(oModel.aAnnotationURIs, aExpectedAnnotationURI);
 	});
 	});
 });
