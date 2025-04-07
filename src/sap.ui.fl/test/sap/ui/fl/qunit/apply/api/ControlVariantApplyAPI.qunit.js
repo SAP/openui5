@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/Log",
-	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
@@ -111,7 +111,7 @@ sap.ui.define([
 				}
 			};
 
-			this.oDummyControl = new VariantManagement("dummyControl");
+			this.oDummyControl = new VariantManagement("variantMgmtId1");
 
 			this.oAppComponent = new Component("AppComponent");
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("myReference");
@@ -166,7 +166,7 @@ sap.ui.define([
 			stubUpdateCurrentVariant.call(this);
 
 			return ControlVariantApplyAPI.activateVariant({
-				element: "dummyControl",
+				element: "variantMgmtId1",
 				variantReference: "variant1"
 			})
 			.then(function() {
@@ -284,7 +284,7 @@ sap.ui.define([
 				});
 			});
 			await ControlVariantApplyAPI.activateVariant({
-				element: "dummyControl",
+				element: "variantMgmtId1",
 				variantReference: "notYetLoadedVariant"
 			});
 			assert.strictEqual(this.oModel.waitForVMControlInit.callCount, 1, "the function waits for the control");
@@ -301,7 +301,7 @@ sap.ui.define([
 
 			try {
 				await ControlVariantApplyAPI.activateVariant({
-					element: "dummyControl",
+					element: "variantMgmtId1",
 					variantReference: "notYetLoadedVariant"
 				});
 			} catch (oError) {
@@ -310,6 +310,35 @@ sap.ui.define([
 			}
 			assert.strictEqual(oLazyLoadStub.callCount, 1, "then the variant loading is triggered");
 			assert.strictEqual(oUpdateVariantStub.callCount, 0, "then the variant is not activated");
+		});
+
+		QUnit.test("when calling 'activateVariant' with standardVariant set", async function(assert) {
+			stubUpdateCurrentVariant.call(this);
+
+			await ControlVariantApplyAPI.activateVariant({
+				element: this.oDummyControl,
+				variantReference: "variant1",
+				standardVariant: true
+
+			});
+			checkUpdateCurrentVariantCalled.call(this, assert, "variantMgmtId1", "variantMgmtId1");
+		});
+
+		QUnit.test("when calling 'activateVariant' with standardVariant set without VM control passed", async function(assert) {
+			const oLogStub = sandbox.stub(Log, "error");
+			stubUpdateCurrentVariant.call(this);
+
+			try {
+				await ControlVariantApplyAPI.activateVariant({
+					element: this.oComponent,
+					variantReference: "variant1",
+					standardVariant: true
+				});
+			} catch (oError) {
+				const sError = "With using standardVariant and no variantReference, a variant management control must be passed as element";
+				assert.strictEqual(oError.message, sError, "then the error is thrown");
+				assert.strictEqual(oLogStub.firstCall.args[0].message, sError, "then an error is logged");
+			}
 		});
 
 		QUnit.test("when calling 'attachVariantApplied' when the model is already set on the app component", function(assert) {
