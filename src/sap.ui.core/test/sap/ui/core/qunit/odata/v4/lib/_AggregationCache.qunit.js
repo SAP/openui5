@@ -5014,19 +5014,30 @@ sap.ui.define([
 
 [undefined, "~iRank~"].forEach((vRank, i) => {
 	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-	function test(self, assert, oCache, sParent = null, fnAssert = () => {}, bCopy = false) {
+	async function test(self, assert, oCache, sParent = null, fnAssert = () => {}, bCopy = false) {
 		const oChildNode = {
 			"@$ui5.context.isTransient" : "n/a"
 		};
 		oCache.aElements.$byPredicate["('23')"] = oChildNode;
 		const oGroupLock = {getUnlockedCopy : mustBeMocked};
+		const oRequestorMock = self.mock(self.oRequestor);
+		self.mock(oCache).expects("getTypes").exactly(bCopy ? 1 : 0).withExactArgs()
+			.returns({"/~sMetaPath~" : "~oType~"});
+		let mQueryOptions;
+		self.mock(_Helper).expects("selectKeyProperties").exactly(bCopy ? 1 : 0)
+			.withExactArgs({$select : []}, "~oType~").callsFake((mQueryOptions0) => {
+				mQueryOptions = mQueryOptions0;
+			});
+		oRequestorMock.expects("buildQueryString").exactly(bCopy ? 1 : 0)
+			.withExactArgs("/~sMetaPath~",
+				sinon.match((mQueryOptions0) => mQueryOptions0 === mQueryOptions),
+				false, true)
+			.returns("?~sSelect~");
 		self.mock(oGroupLock).expects("getUnlockedCopy").exactly(bCopy ? 1 : 0)
 			.withExactArgs().returns("~oGroupLockCopy~");
-		const oRequestorMock = self.mock(self.oRequestor);
 		oRequestorMock.expects("request").exactly(bCopy ? 1 : 0)
-			.withExactArgs("POST", "Foo('23')/copy.Action", "~oGroupLockCopy~", {
-					"If-Match" : sinon.match.same(oChildNode),
-					Prefer : "return=minimal"
+			.withExactArgs("POST", "Foo('23')/copy.Action?~sSelect~", "~oGroupLockCopy~", {
+					"If-Match" : sinon.match.same(oChildNode)
 				}, {})
 			.returns("E");
 		oRequestorMock.expects("request")
@@ -5036,12 +5047,13 @@ sap.ui.define([
 				}, {"myParent@odata.bind" : sParent},
 				/*fnSubmit*/null, /*fnCancel*/sinon.match.func)
 			.returns("A");
-		self.mock(oCache).expects("requestRank")
+		const oCacheMock = self.mock(oCache);
+		oCacheMock.expects("requestRank")
 			.withExactArgs(sinon.match.same(oChildNode), sinon.match.same(oGroupLock), true)
 			.returns("C");
 		self.mock(SyncPromise).expects("all")
 			.withExactArgs(["A", undefined, "C", undefined, bCopy ? "E" : undefined])
-			.returns(SyncPromise.resolve([,, vRank]));
+			.returns(SyncPromise.resolve([,, vRank,, "~oCopy~"]));
 
 		const {promise : oSyncPromise, refresh : bRefresh}
 			// code under test
@@ -5051,21 +5063,32 @@ sap.ui.define([
 		assert.strictEqual(typeof fnGetRank, "function");
 		assert.strictEqual(bRefresh, true, "refresh needed");
 
-		self.mock(oCache).expects("findIndex").exactly(vRank ? 1 : 0)
+		oCacheMock.expects("requestRank").exactly(bCopy ? 1 : 0)
+			.withExactArgs("~oCopy~", sinon.match.same(oGroupLock), true)
+			.resolves("~limitedRank~");
+		oCacheMock.expects("findIndex").exactly(vRank ? 1 : 0)
 			.withExactArgs("~iRank~").returns("~findIndex~");
 
 		// code under test
-		assert.deepEqual(fnGetRank(), [
-			vRank ? "~findIndex~" : undefined,
-			undefined
-		]);
+		const aResult = fnGetRank();
+		assert.strictEqual(aResult.length, 3);
+		assert.strictEqual(aResult[0], vRank ? "~findIndex~" : undefined);
+		assert.strictEqual(aResult[1], undefined);
+
+		if (bCopy) {
+			oCacheMock.expects("findIndex").withExactArgs("~limitedRank~").returns("~copyIndex~");
+			assert.ok(aResult[2] instanceof Promise);
+			assert.strictEqual(await aResult[2], "~copyIndex~");
+		} else {
+			assert.strictEqual(aResult[2], undefined);
+		}
 
 		fnAssert(oChildNode);
 	}
 
 	//*********************************************************************************************
 	QUnit.test(`move: refresh needed (copy) #${i}`, function (assert) {
-		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
+		const oCache = _AggregationCache.create(this.oRequestor, "~sMetaPath~", "", {}, {
 				$Actions : {CopyAction : "copy.Action"},
 				$ParentNavigationProperty : "myParent",
 				expandTo : Number.MAX_SAFE_INTEGER,
@@ -5078,7 +5101,7 @@ sap.ui.define([
 		oTreeStateMock.expects("expand").never();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 
-		test(this, assert, oCache, null, (oChildNode) => {
+		return test(this, assert, oCache, null, (oChildNode) => {
 			assert.ok("@$ui5.context.isTransient" in oChildNode);
 		}, true);
 	});
@@ -5099,7 +5122,7 @@ sap.ui.define([
 		oTreeStateMock.expects("expand").never();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 
-		test(this, assert, oCache);
+		return test(this, assert, oCache);
 	});
 
 	//*********************************************************************************************
@@ -5117,7 +5140,7 @@ sap.ui.define([
 		oTreeStateMock.expects("expand").never();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 
-		test(this, assert, oCache, null, (oChildNode) => {
+		return test(this, assert, oCache, null, (oChildNode) => {
 			assert.notOk("@$ui5.context.isTransient" in oChildNode);
 		});
 	});
@@ -5138,7 +5161,7 @@ sap.ui.define([
 		oTreeStateMock.expects("expand").never();
 		this.mock(_Helper).expects("hasPrivateAnnotation").never();
 
-		test(this, assert, oCache, "Foo('42')");
+		return test(this, assert, oCache, "Foo('42')");
 	});
 
 	//*********************************************************************************************
@@ -5159,7 +5182,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oParentNode), "spliced").returns(false);
 		oTreeStateMock.expects("expand").withExactArgs(sinon.match.same(oParentNode));
 
-		test(this, assert, oCache, "Foo('42')");
+		return test(this, assert, oCache, "Foo('42')");
 	});
 
 	//*********************************************************************************************
@@ -5187,7 +5210,7 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oParentNode), "spliced").returns(false);
 			oTreeStateMock.expects("expand").withExactArgs(sinon.match.same(oParentNode));
 
-			test(this, assert, oCache, "Foo('42')");
+			return test(this, assert, oCache, "Foo('42')");
 		});
 	});
 	//* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -5271,7 +5294,8 @@ sap.ui.define([
 		// code under test
 		assert.deepEqual(fnGetRank(), [
 			vRank ? "~findIndex~child~" : undefined,
-			bRequestSiblingRank && "~findIndex~sibling~"
+			bRequestSiblingRank && "~findIndex~sibling~",
+			undefined
 		]);
 	});
 		});

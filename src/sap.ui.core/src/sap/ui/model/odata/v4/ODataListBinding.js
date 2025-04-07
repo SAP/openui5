@@ -3718,10 +3718,12 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
 	 * @param {sap.ui.model.odata.v4.Context|null} oParentContext - The new parent's context
 	 * @param {sap.ui.model.odata.v4.Context|null} [oSiblingContext] - The next sibling's context
-	 * @param {boolean} [bCopy] - Whether the node should be copied instead of moved
-	 * @returns {sap.ui.base.SyncPromise<void>}
-	 *   A promise which is resolved without a defined result when the move is finished, or
-	 *   rejected in case of an error
+	 * @param {boolean} [bCopy]
+	 *   Whether the node should be copied instead of moved. The returned promise resolves with the
+	 *   index for the copied node.
+	 * @returns {sap.ui.base.SyncPromise<number|undefined>}
+	 *   A promise which is resolved without a defined result when the move is finished, or with the
+	 *   index for the copied node, or rejected in case of an error
 	 * @throws {Error} If there is no recursive hierarchy or if this binding's root binding is
 	 *   suspended
 	 *
@@ -3774,10 +3776,14 @@ sap.ui.define([
 				this.requestSideEffects(sUpdateGroupId, [""])
 			]).then(([fnGetIndices]) => {
 				// Note: wait for side-effects refresh before getting index!
-				const [iChildIndex, iSiblingIndex] = fnGetIndices();
+				const [iChildIndex, iSiblingIndex, oCopyIndexPromise] = fnGetIndices();
 				oChildContext.iIndex = iChildIndex;
 				if (bUpdateSiblingIndex) {
 					oSiblingContext.iIndex = iSiblingIndex;
+				}
+
+				if (bCopy) {
+					return oCopyIndexPromise;
 				}
 			});
 		}
