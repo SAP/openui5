@@ -153,7 +153,10 @@ sap.ui.define([
 	};
 
 	CalendarDateInterval.prototype._initializeYearRangePicker = function() {
-		this.setAggregation("yearRangePicker", this._createYearRangePicker());
+		var oYearRangePicker =  this._createYearRangePicker();
+		this.setAggregation("yearRangePicker", oYearRangePicker);
+
+		oYearRangePicker._setSelectedDatesControlOrigin(this);
 	};
 
 	CalendarDateInterval.prototype.setPickerPopup = function(bPickerPopup) {

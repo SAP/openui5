@@ -1415,6 +1415,132 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Selection continues when switching between the Day and Month picker", function(assert){
+		// Prepare
+		const oStartDate = UI5Date.getInstance(2024, 0, 15);
+		const oExpectedEndDate = UI5Date.getInstance(2024, 3, 6).getTime();
+		const oSelectedDates = [
+			new DateRange({ startDate: oStartDate })
+		];
+		const oCalendar = new Calendar({
+			intervalSelection: true,
+			selectedDates: oSelectedDates,
+			calendarWeekNumbering: "WesternTraditional"
+		}).placeAt("qunit-fixture");
+
+		oCalendar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Open the Calendar to the Month Picker
+		const oHeader = oCalendar.getAggregation("header");
+		const oMonthButton = oHeader.getDomRef("B1");
+		oMonthButton.click();
+		oCore.applyChanges();
+
+		// Assert: Ensure the current picker is the Month Picker
+		const oMonthPicker = oCalendar._getMonthPicker();
+		assert.ok(oMonthPicker.getDomRef(), "Month Picker is open");
+
+		// Act: Select the fourth month (April) in the Month Picker
+		const aMonths = oMonthPicker.getDomRef().querySelectorAll(".sapUiCalItem");
+		assert.ok(aMonths[3], "Grid item exists in the Month Picker");
+
+		qutils.triggerMouseEvent(aMonths[3], "mousedown");
+		qutils.triggerMouseEvent(aMonths[3], "mouseup");
+		oCore.applyChanges();
+
+		// Assert: Ensure the current picker is now the Day Picker
+		const oDayPicker = oCalendar.getAggregation("month")[0];
+		assert.ok(oDayPicker.getDomRef(), "Day Picker is open");
+
+		// Act: Select the 6th day in the Day Picker
+		const aDays = oDayPicker.getDomRef().querySelectorAll(".sapUiCalItem");
+		const oSelectionEndDate = aDays[6];
+		assert.ok(oSelectionEndDate, "Grid item exists in the Day Picker");
+
+		qutils.triggerMouseEvent(oSelectionEndDate, "mousedown");
+		qutils.triggerMouseEvent(oSelectionEndDate, "mouseup");
+		oCore.applyChanges();
+
+		// Assert: Ensure the selected date range is from January 15th to April 6th
+		const aSelectedDates = oCalendar.getSelectedDates();
+		assert.strictEqual(aSelectedDates.length, 1, "There is a selected date range");
+
+		const oSelectedRange = aSelectedDates[0];
+		assert.ok(oSelectedRange.getEndDate(), "End date is set");
+
+		const oStartDateResult = oSelectedRange.getStartDate();
+		const oEndDateResult = oSelectedRange.getEndDate();
+
+		assert.strictEqual(oStartDateResult.getTime(), oStartDate.getTime(), "Start date is January 15th, 2024");
+		assert.strictEqual(oEndDateResult.getTime(), oExpectedEndDate, "End date is April 6th, 2024");
+
+		oCalendar.destroy();
+	});
+
+	QUnit.test("Selection continues when switching between the Day and Year picker", function(assert){
+		// Prepare
+		const oStartDate = UI5Date.getInstance(2024, 2, 15);
+		const oExpectedEndDate = UI5Date.getInstance(2026, 2, 7).getTime();
+		const oSelectedDates = [
+			new DateRange({ startDate: oStartDate })
+		];
+		const oCalendar = new Calendar({
+			intervalSelection: true,
+			selectedDates: oSelectedDates,
+			calendarWeekNumbering: "WesternTraditional"
+		}).placeAt("qunit-fixture");
+
+		oCalendar.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Open the Calendar to the Year Picker
+		const oHeader = oCalendar.getAggregation("header");
+		const oYearButton = oHeader.getDomRef("B2");
+		oYearButton.click();
+		oCore.applyChanges();
+
+		// Assert: Ensure the current picker is the Year Picker
+		const oYearPicker = oCalendar._getYearPicker();
+		assert.ok(oYearPicker.getDomRef(), "Year Picker is open");
+
+		// Act: Select the 12th year (2026) in the Month Picker
+		const aYears = oYearPicker.getDomRef().querySelectorAll(".sapUiCalItem");
+		assert.ok(aYears[12], "Grid item exists in the Year Picker");
+
+		qutils.triggerMouseEvent(aYears[12], "mousedown");
+		qutils.triggerMouseEvent(aYears[12], "mouseup");
+		oCore.applyChanges();
+
+		// Assert: Ensure the current picker is now the Day Picker
+		const oDayPicker = oCalendar.getAggregation("month")[0];
+		assert.ok(oDayPicker.getDomRef(), "Day Picker is open");
+
+		// Act: Select the 6th day in the Day Picker
+		const aDays = oDayPicker.getDomRef().querySelectorAll(".sapUiCalItem");
+		const oSelectionEndDate = aDays[6];
+		assert.ok(oSelectionEndDate, "Grid item exists in the Day Picker");
+
+		qutils.triggerMouseEvent(oSelectionEndDate, "mousedown");
+		qutils.triggerMouseEvent(oSelectionEndDate, "mouseup");
+		oCore.applyChanges();
+
+		// Assert: Ensure the selected date range is from March 15th 2024 to March 7th 2026
+		const aSelectedDates = oCalendar.getSelectedDates();
+		assert.strictEqual(aSelectedDates.length, 1, "There is a selected date range");
+
+		const oSelectedRange = aSelectedDates[0];
+		assert.ok(oSelectedRange.getEndDate(), "End date is set");
+
+		const oStartDateResult = oSelectedRange.getStartDate();
+		const oEndDateResult = oSelectedRange.getEndDate();
+
+		assert.strictEqual(oStartDateResult.getTime(), oStartDate.getTime(), "Start date is January 15th, 2024");
+		assert.strictEqual(oEndDateResult.getTime(), oExpectedEndDate, "End date is March 7th, 2026");
+
+		oCalendar.destroy();
+	});
+
 	QUnit.test("All selected dates are visible in Month, Year & YearRange (multiple selection)", function(assert) {
 		const oSelectedDates = [
 			new DateRange({ startDate: UI5Date.getInstance(2025, 1, 14) }),
