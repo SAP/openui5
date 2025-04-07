@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/Popup",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,
+	Popup,
 	createAndAppendDiv,
 	App,
 	Page,
@@ -145,20 +147,20 @@ sap.ui.define([
 		});
 	};
 
-	isDockPosition("my", "begin top", 0);
-	isDockPosition("my", "begin center", 0);
-	isDockPosition("my", "begin bottom", 0);
-	isDockPosition("my", "left top", 0);
-	isDockPosition("my", "left center", 0);
-	isDockPosition("my", "left bottom", 0);
-	isDockPosition("my", "center top", 0);
-	isDockPosition("my", "center bottom", 0);
-	isDockPosition("my", "right top", 0);
-	isDockPosition("my", "right center", 0);
-	isDockPosition("my", "right bottom", 0);
-	isDockPosition("my", "end top", 0);
-	isDockPosition("my", "end center", 0);
-	isDockPosition("my", "end bottom", 0);
+	isDockPosition("my", Popup.Dock.BeginTop, 0);
+	isDockPosition("my", Popup.Dock.BeginCenter, 0);
+	isDockPosition("my", Popup.Dock.BeginBottom, 0);
+	isDockPosition("my", Popup.Dock.LeftTop, 0);
+	isDockPosition("my", Popup.Dock.LeftCenter, 0);
+	isDockPosition("my", Popup.Dock.LeftBottom, 0);
+	isDockPosition("my", Popup.Dock.CenterTop, 0);
+	isDockPosition("my", Popup.Dock.CenterBottom, 0);
+	isDockPosition("my", Popup.Dock.RightTop, 0);
+	isDockPosition("my", Popup.Dock.RightCenter, 0);
+	isDockPosition("my", Popup.Dock.RightBottom, 0);
+	isDockPosition("my", Popup.Dock.EndTop, 0);
+	isDockPosition("my", Popup.Dock.EndCenter, 0);
+	isDockPosition("my", Popup.Dock.EndBottom, 0);
 	isDockPosition("my", "center other", 1);
 	isDockPosition("at", "center center2", 1);
 

@@ -426,8 +426,8 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bWithKeyboard Indicates whether or not the first item shall be highlighted when the menu is opened (keyboard case)
 	 * @param {sap.ui.core.Element|Element} oOpenerRef The element which will get the focus back again after the menu was closed
-	 * @param {sap.ui.core.Dock} my The reference docking location of the menu for positioning the menu on the screen
-	 * @param {sap.ui.core.Dock} at The 'of' element's reference docking location for positioning the menu on the screen
+	 * @param {sap.ui.core.Popup.Dock} my The reference docking location of the menu for positioning the menu on the screen
+	 * @param {sap.ui.core.Popup.Dock} at The 'of' element's reference docking location for positioning the menu on the screen
 	 * @param {sap.ui.core.Element|Element} of The menu is positioned relatively to this element based on the given dock locations
 	 * @param {string} [offset] The offset relative to the docking point, specified as a string with space-separated pixel values (e.g. "10 0" to move the popup 10 pixels to the right)
 	 * @param {sap.ui.core.Collision} [collision='flipfit flipfit'] The collision defines how the position of the menu should be adjusted in case it overflows the window in some direction

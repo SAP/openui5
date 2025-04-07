@@ -806,6 +806,10 @@ sap.ui.define([
                 // this is the default case if no match was found
                 var sDirection = "Left";
 
+				function splitDock(sDock) {
+					return sDock.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase().split(" ");
+				}
+
                 // if 'my' is not set check if it was previously set via 'setPosition'
                 var my = oThis._my;
                 var at = oThis._at;
@@ -819,8 +823,8 @@ sap.ui.define([
                 oThis._bHorizontalArrow = false;
 
                 if (my && at) {
-                    var aMy = my.split(" ");
-                    var aAt = at.split(" ");
+                    var aMy = splitDock(my);
+                    var aAt = splitDock(at);
                     // create a rule like "my:top|left at:left|top"
                     var sRule = "my:" + aMy[0] + "|" + aMy[1];
                     sRule += " at:" + aAt[0] + "|" + aAt[1];
