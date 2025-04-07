@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/HTML",
 	"sap/ui/core/Icon",
+	'sap/ui/core/ResizeHandler',
 	"./Button",
 	"./Toolbar",
 	"./ToolbarSpacer",
@@ -37,6 +38,7 @@ sap.ui.define([
 	IconPool,
 	HTML,
 	Icon,
+	ResizeHandler,
 	Button,
 	Toolbar,
 	ToolbarSpacer,
@@ -322,6 +324,10 @@ sap.ui.define([
 		});
 	};
 
+	MessageView.prototype._handleResize = function(oListItem){
+		this._setItemType(oListItem);
+	};
+
 	/**
 	 * Handles navigate event of the NavContainer
 	 *
@@ -368,16 +374,24 @@ sap.ui.define([
 	 * @private
 	 */
 	MessageView.prototype._setItemType = function (oListItem) {
-		var oItemTitleRef = oListItem.getTitleRef();
+		const oItemTitleRef = oListItem.getTitleRef();
 
-		if (oItemTitleRef &&  (oItemTitleRef.offsetWidth < oItemTitleRef.scrollWidth)) {
+		if (!oItemTitleRef) {
+			return;
+		}
 
-			// if title's text overflows, make the item type Navigation
+		if (oItemTitleRef.offsetWidth < oItemTitleRef.scrollWidth) {
 			oListItem.setType(ListType.Navigation);
 
 			if (this.getItems().length === 1) {
 				this._fnHandleForwardNavigation(oListItem, "show");
 			}
+
+			return;
+		}
+
+		if (oItemTitleRef.offsetWidth > 0) {
+			oListItem.setType(this._getItemType(oListItem._oMessageItem));
 		}
 	};
 
@@ -798,7 +812,11 @@ sap.ui.define([
 		if (listItemType !== ListType.Navigation) {
 			oListItem.addEventDelegate({
 				onAfterRendering: function () {
-					that._setItemType(oListItem);
+					this._setItemType(oListItem);
+
+					if (!oListItem._sResizeHandlerId) {
+						this._sResizeHandlerId = ResizeHandler.register(oListItem, this._handleResize.bind(this, oListItem));
+					}
 				}
 			}, this);
 		}
