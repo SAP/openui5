@@ -44,6 +44,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					themeRoots: {
 						"fallbackfromurl": {
 							"sap.ui.core": "themeroot/v1/~v=Base:11.1.41,*.*.opensap(sap_fiori_3):20220407T073020Z/UI5"
+						},
+						"2nd_tier_fallback_from_url": {
+							"sap.ui.core": "themeroot/v1/~v=Base:11.1.41,*.*.opensap(sap_unsupported_hcw):20220407T073020Z/UI5"
 						}
 					}
 				}
