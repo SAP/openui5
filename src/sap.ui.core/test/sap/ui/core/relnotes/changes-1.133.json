@@ -48,5 +48,20 @@
         "text": " MessageMixin: fix wrong additionalText"
       }
     ]
+  },
+  "1.133.1": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "0291c89940ee5e99407eb3943aabe9be9ddf58fe",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat#format: Fix wrong number of decimals in scientific notation"
+      },
+      {
+        "id": "a9da41edc3ffdbb41331b44655bfb8aa497ff6bc",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel#createEntry: ignore transient context if path is absolute"
+      }
+    ]
   }
 }

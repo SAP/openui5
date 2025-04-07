@@ -18,5 +18,15 @@
         "text": " sap.ui.unified.FileUploader: Clear files functionality adjusted"
       }
     ]
+  },
+  "1.133.1": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "d94ab6e0bc07317e2b9665afdf9a24a772874fd0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: The calendar week configuration has been properly applied"
+      }
+    ]
   }
 }

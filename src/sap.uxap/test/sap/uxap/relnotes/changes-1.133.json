@@ -8,5 +8,15 @@
         "text": " sap.f.DynamicPageTitle: Fix overlapping of busy indicator"
       }
     ]
+  },
+  "1.133.1": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "ce62f246ba5a18738423f70732f9d8575f3d5897",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Adjustment class added for table"
+      }
+    ]
   }
 }

@@ -168,5 +168,30 @@
         "text": " sap.m.ObjectHeader: IntroPress event now fired properly"
       }
     ]
+  },
+  "1.133.1": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "8aa07dfa501214c50bdec3593580eae49fe8a876",
+        "type": "FIX",
+        "text": " We now use messageBundle to set the text for the Upload button"
+      },
+      {
+        "id": "2e8b3e887322cd1d7e2204dacd39d941fb86c85d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Enable typing with virtual keyboard on Mac"
+      },
+      {
+        "id": "e8a798636d301778e605e9459bb0f7c55ccc4c14",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      },
+      {
+        "id": "d94ab6e0bc07317e2b9665afdf9a24a772874fd0",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: The calendar week configuration has been properly applied"
+      }
+    ]
   }
 }
