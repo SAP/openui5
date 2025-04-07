@@ -133,6 +133,15 @@ describe("sap.m.Wizard", function() {
 		expect(takeScreenshot()).toLookAs("page-size-M");
 	});
 
+	it("Should open action sheet when 1 step is truncated", function () {
+		browser.executeScript(function() {
+			sap.ui.core.Element.getElementById("linear-wiz").setWidth("1100px");
+		});
+
+		element(by.css("#linear-wiz ul.sapMWizardProgressNavList li:last-child")).click();
+		expect(takeScreenshot()).toLookAs("page-with-truncated-step");
+	});
+
 	it("Should load test page with size L", function () {
 		browser.executeScript(function() {
 			sap.ui.core.Element.getElementById("linear-wiz").setWidth("1430px");
