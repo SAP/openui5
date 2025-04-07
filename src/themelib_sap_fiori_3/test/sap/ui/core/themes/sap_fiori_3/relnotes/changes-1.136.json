@@ -1,0 +1,12 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "46328b7b3bb27984cffcf49bc3c48405d5afb14d",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"
+      }
+    ]
+  }
+}

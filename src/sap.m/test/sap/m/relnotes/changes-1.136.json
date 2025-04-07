@@ -1,0 +1,27 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "ffcac1aa530daad5930350a3fbcc7830827bb31a",
+        "type": "FIX",
+        "text": " sap.m.Image: DOMPurify fix"
+      },
+      {
+        "id": "bc8fa5ae297cfdb741a580077605d5b3257fb094",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Visual tests corrected"
+      },
+      {
+        "id": "c79f2e61e3247821b2adf3032003d77dd0a04083",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: now marker announcement is removed as part of the region"
+      },
+      {
+        "id": "382abeaea497cd37b84af9459fa4fff55aa7f27f",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Prevent Scrolling upon Token delete"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "fcac3bda770bc5dd397e485067b05ba69eca8240",
+        "type": "FIX",
+        "text": " sap.ui.fl: Improve FlexInfoSession cleanup"
+      }
+    ]
+  }
+}

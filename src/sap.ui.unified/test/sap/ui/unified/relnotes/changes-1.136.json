@@ -1,0 +1,12 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "c1833bf668e1406392e5d3084cbdc811b719248c",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Selected file stays selected"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "4a7fe89c7efe2359d4bb5e409f36419ca94f9489",
+        "type": "FIX",
+        "text": " KeyboardInteractionEndpoint: Don't log error on each postmessage"
+      },
+      {
+        "id": "594ff39132666bb110178bab17800ceaf69f77e6",
+        "type": "FIX",
+        "text": " sap/base/Log: Update documentation regarding support info logging"
+      }
+    ]
+  }
+}
