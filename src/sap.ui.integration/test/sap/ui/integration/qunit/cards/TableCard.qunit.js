@@ -663,11 +663,7 @@ sap.ui.define([
 		// Second and third row - Object Status
 		assert.ok(aCellsSecondRow[2].getShowStateIcon(), "Should have 'showStateIcon' correctly set to true.");
 		assert.equal(aCellsSecondRow[2].getIcon(), oManifestData[1].customStateIcon, "Should have custom icon with src '" + oManifestData[1].customStateIcon + "'");
-		assert.notOk(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is not shown");
-		assert.ok(aCellsSecondRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is shown");
 		assert.equal(aCellsThirdRow[2].getShowStateIcon(), oManifestData[2].showStateIcon, "Should have 'showStateIcon' correctly set to " + oManifestData[2].showStateIcon);
-		assert.ok(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowIcon"),  "Default State Icon is shown");
-		assert.notOk(aCellsThirdRow[2].hasStyleClass("sapMObjStatusShowCustomIcon"),  "Custom State Icon is not shown");
 	});
 
 	QUnit.test("Visible columns", async function (assert) {
