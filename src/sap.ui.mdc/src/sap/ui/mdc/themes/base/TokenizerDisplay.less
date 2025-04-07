@@ -1,10 +1,13 @@
+/* ============================================ */
+/* CSS for control sap.ui.mdc/TokenizerDisplay  */
+/* Base theme                                   */
+/* ============================================ */
 
 html.sap-desktop .sapUiMdcTokenizerDisplay.sapMTokenizer {
-	outline: none; // hide focus of the tokenizer
-	padding-left: 0px; // remove left padding of Tokenizer for Display mode
-
-	padding-top: 0rem;
-	padding-bottom: 0rem;
+	outline: none; /* hide focus of the tokenizer */
+	padding-left: 0; /* remove left padding of Tokenizer for Display mode */
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
 @mdctokenizer-large-line-height: 1.375rem;
@@ -12,9 +15,9 @@ html.sap-desktop .sapUiMdcTokenizerDisplay.sapMTokenizer {
 @mdctokenizer-large-padding-topbottom: 0.6875rem;
 @mdctokenizer-small-padding-topbottom: 0.3125rem;
 
-// show a focus around the more link
+/* show a focus around the more link */
 .sapUiMdcTokenizerDisplay .sapMTokenizerIndicator:focus {
-	outline: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
+	outline: @sapUiContentFocusWidth dotted var(--sapContent_FocusColor);
 	outline-offset: -1px;
 	text-decoration: underline;
 }
@@ -36,15 +39,12 @@ html.sap-desktop .sapUiMdcTokenizerDisplay.sapMTokenizer {
 	line-height: @mdctokenizer-small-line-height;
 }
 
-
-
-
-// hide emptyIndicator for TokenizerDisplay
+/* hide emptyIndicator for TokenizerDisplay */
 .sapUiMdcTokenizerDisplay .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
 	display: none;
 }
 
-// show emptyIndicator for TokenizerDisplay
+/* show emptyIndicator for TokenizerDisplay */
 .sapMShowEmpty-CTX .sapUiMdcTokenizerDisplay .sapMEmptyIndicator.sapMEmptyIndicatorAuto {
 	line-height: @mdctokenizer-small-line-height;
 	font-size: @sapMFontMediumSize;
@@ -65,21 +65,17 @@ html.sap-desktop .sapUiMdcTokenizerDisplay.sapMTokenizer {
 	padding-bottom: @mdctokenizer-small-padding-topbottom;
 }
 
-
-
-
-// enable mouse selection on scrollcontainer
+/* enable mouse selection on scrollcontainer */
 .sapUiMdcTokenizerDisplay .sapMTokenizerScrollContainer {
-	-moz-user-select: text;
 	-webkit-user-select: text;
 
-	// give the scrollcontainer the required top/bottom paddings so that is works like a text control
-	padding-top: 0rem;
-	padding-bottom: 0rem;
+	/* give the scrollcontainer the required top/bottom paddings so that is works like a text control */
+	padding-top: 0;
+	padding-bottom: 0;
 }
 
 .sapUiSizeCozy .sapUiFormEdit .sapUiMdcTokenizerDisplay .sapMTokenizerScrollContainer {
-	// give the scrollcontainer the required top/bottom paddings so that is works like a text control
+	/* give the scrollcontainer the required top/bottom paddings so that is works like a text control */
 	padding-top: @mdctokenizer-large-padding-topbottom;
 	padding-bottom: @mdctokenizer-large-padding-topbottom;
 }
