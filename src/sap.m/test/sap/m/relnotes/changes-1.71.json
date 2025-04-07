@@ -3972,5 +3972,15 @@
         "text": " sap.m.Dialog: Test page loads correctly"
       }
     ]
+  },
+  "1.71.71": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "2346768bfe9507045852be981bf167feaeb0572f",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      }
+    ]
   }
 }

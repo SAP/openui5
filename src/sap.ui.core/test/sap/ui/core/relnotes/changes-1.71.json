@@ -1592,5 +1592,15 @@
         "text": " sap/base/util/now: Migrate performance.timing"
       }
     ]
+  },
+  "1.71.71": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "d11835b0333d00346d3d5d3ca4c0bc53afb4246e",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
+      }
+    ]
   }
 }
