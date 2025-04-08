@@ -1,4 +1,8 @@
-(function() {
+sap.ui.require([
+	"sap/ui/core/theming/ThemeHelper"
+], (
+	ThemeHelper
+) => {
 	"use strict";
 
 	var oLink = document.createElement("link");
@@ -30,6 +34,8 @@
 	};
 	window["sap-ui-config"]["themeroots"] = {};
 	// Define theme root for current theme for testing purposes
-	window["sap-ui-config"]["themeroots"][window["sap-ui-config"].theme] = "foo/bar";
+	const mDefaultThemeInfo = ThemeHelper.getDefaultThemeInfo();
+	const sTheme = `${mDefaultThemeInfo.DEFAULT_THEME}${mDefaultThemeInfo.DARK_MODE ? "_dark" : ""}`;
+	window["sap-ui-config"]["themeroots"][sTheme] = "foo/bar";
 
-}());
+});
