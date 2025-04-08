@@ -28054,12 +28054,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: A table with aggregation and visual grouping where a leaf is selected and thus
-	// kept alive, even when its parent is collapsed/expanded and the binding is refreshed.
+	// kept alive, even when its parent is collapsed/expanded and the binding is refreshed. Do it
+	// with and without a leaf count.
 	// JIRA: CPOUI5ODATAV4-2969
 	// SNOW: DINC0463228
-	QUnit.test("Data Aggregation: keep alive via selection", async function (assert) {
+[false, true].forEach((bCount) => {
+	const sTitle = "Data Aggregation: keep alive via selection; leaf count=" + bCount;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createAggregationModel();
 		const sView = `
+<Text id="count" text="{$count}"/>
 <Text id="selectionCount" text="{$selectionCount}"/>
 <t:Table id="table" threshold="0" visibleRowCount="3"
 	rows="{path : '/BusinessPartners',
@@ -28069,7 +28074,8 @@ sap.ui.define([
 					SalesNumber : {subtotals : true}
 				},
 				groupLevels : ['Country', 'Region']
-			}
+			},
+			$count : ${bCount}
 		}}">
 	<Text id="isSelected" text="{= %{@$ui5.context.isSelected} }"/>
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
@@ -28079,18 +28085,31 @@ sap.ui.define([
 	<Text id="region" text="{Region}"/>
 	<Text id="salesNumber" text="{SalesNumber}"/>
 </t:Table>`;
-		const sCountryUrl = "BusinessPartners?$apply=groupby((Country),aggregate(SalesNumber))"
-			+ "&$count=true&$skip=0&$top=3";
-		this.expectChange("selectionCount")
-			.expectRequest(sCountryUrl, {
-				"@odata.count" : "26",
+		this.expectChange("count")
+			.expectChange("selectionCount");
+		const sCountryUrl = bCount
+			? "BusinessPartners?$apply=concat("
+				+ "groupby((Country,Region))/aggregate($count as UI5__leaves)"
+				+ ",groupby((Country),aggregate(SalesNumber))"
+					+ "/concat(aggregate($count as UI5__count),top(3)))"
+			: "BusinessPartners?$apply=groupby((Country),aggregate(SalesNumber))"
+				+ "&$count=true&$skip=0&$top=3";
+		const aCountries = [
+			{Country : "A", SalesNumber : 100},
+			{Country : "B", SalesNumber : 200},
+			{Country : "C", SalesNumber : 300}
+		];
+		this.expectRequest(sCountryUrl, bCount ? {
 				value : [
-					{Country : "A", SalesNumber : 100},
-					{Country : "B", SalesNumber : 200},
-					{Country : "C", SalesNumber : 300}
+					{UI5__leaves : "123"},
+					{UI5__count : "26"},
+					...aCountries
 				]
-			})
-			.expectChange("isSelected", [undefined, undefined, undefined])
+			} : {
+				"@odata.count" : "26",
+				value : aCountries
+			});
+		this.expectChange("isSelected", [undefined, undefined, undefined])
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
@@ -28103,6 +28122,10 @@ sap.ui.define([
 		const oListBinding = this.oView.byId("table").getBinding("rows");
 		const oContextA = oListBinding.getCurrentContexts()[0];
 
+		if (bCount) {
+			this.expectChange("count", "123");
+			this.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+		}
 		this.expectChange("selectionCount", "0");
 		this.oView.byId("selectionCount").setBindingContext(oListBinding.getHeaderContext());
 
@@ -28198,14 +28221,24 @@ sap.ui.define([
 		await this.waitForChanges(assert, "collapse 'A' again");
 
 		this.expectChange("salesNumber", ["101", "202", "303"]);
+		if (bCount) {
+			this.expectChange("count", "321");
+		}
 
-		this.expectRequest(sCountryUrl, {
-				"@odata.count" : "23", // "side effect"
+		const aNewCountries = [
+			{Country : "A", SalesNumber : 101},
+			{Country : "B", SalesNumber : 202},
+			{Country : "C", SalesNumber : 303}
+		];
+		this.expectRequest(sCountryUrl, bCount ? {
 				value : [
-					{Country : "A", SalesNumber : 101},
-					{Country : "B", SalesNumber : 202},
-					{Country : "C", SalesNumber : 303}
+					{UI5__leaves : "321"}, // "side effect"
+					{UI5__count : "23"}, // "side effect"
+					...aNewCountries
 				]
+			} : {
+				"@odata.count" : "23", // "side effect"
+				value : aNewCountries
 			});
 
 		await Promise.all([
@@ -28235,6 +28268,10 @@ sap.ui.define([
 			this.waitForChanges(assert, "expand 'A' again after refresh")
 		]);
 	});
+});
+	//TODO keep group header alive via selection
+	//TODO w/ and w/o grandTotal!
+	//TODO w/ and w/o $$filterBeforeAggregate!
 
 	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.
