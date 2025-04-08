@@ -191,7 +191,10 @@ sap.ui.define([
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta)).then(function() {
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oRootControl);
-				this.oElementOverlay = OverlayRegistry.getOverlay(Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
+				const oGroupElement = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+				const oButton = Element.getElementById("Comp1---idMain1--lb1");
+				this.oElementOverlay = OverlayRegistry.getOverlay(oGroupElement);
+				this.oButtonOverlay = OverlayRegistry.getOverlay(oButton);
 			}.bind(this));
 		},
 		afterEach() {
@@ -250,9 +253,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("during rename", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
-				if (mParams.overlay === this.oElementOverlay) {
+				if (mParams.overlay === this.oButtonOverlay) {
 					triggerKeyDownEvent(document, KeyCodes.Z);
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
 
@@ -262,11 +265,11 @@ sap.ui.define([
 				}
 			}, this);
 
-			this.oElementOverlay.focus();
-			this.oElementOverlay.setSelected(true);
-			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(async function() {
-				var clock = sinon.useFakeTimers();
-				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+			this.oButtonOverlay.focus();
+			this.oButtonOverlay.setSelected(true);
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oButtonOverlay, sinon).then(async function() {
+				const clock = sinon.useFakeTimers();
+				const oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[0].getDomRef());
 				clock.tick(1000);
 				await nextUIUpdate();
