@@ -10,12 +10,13 @@
 		data-sap-ui-libs='sap.m'
 		data-sap-ui-compatVersion="edge"
 		data-sap-ui-preload="async"
+		data-sap-ui-resource-roots='{
+			"sap.ui.fl.qunit.integration.async.testComponentWithView": "./"
+		}'
 	>
 	</script>
 
 	<script>
-		jQuery.sap.registerModulePath("sap.ui.fl.qunit.integration.async.testComponentWithView", "./");
-
 		sap.ui.require([
 			"sap/ui/core/Component",
 			"sap/m/Shell",
