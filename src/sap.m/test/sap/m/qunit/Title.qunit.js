@@ -1,15 +1,16 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/HTML",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Title",
 	"sap/m/Link",
 	"sap/m/library",
 	"sap/ui/core/library",
-	"sap/m/Toolbar",
 	"sap/ui/core/Title",
 	"sap/ui/core/Core",
 	"sap/ui/core/Renderer"
-], function (createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Core, Renderer) {
+], function (HTML, qutils, createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, coreTitle, Core, Renderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -372,12 +373,27 @@ sap.ui.define([
 			this.title = new Title({
 				text : "Hello"
 			});
+			this.oCustomTooltipTitle = new Title("customToolTip", {
+				text : "Hello",
+				tooltip: "custom tooltip"
+			});
+			this.oTruncatedTitle = new Title("truncatedToolTip", {
+				text : "This is the text of the title, but in some specific cases it can be very long."
+			});
+			this.oWrapper = createAndAppendDiv("wrapper-title");
+			this.oWrapper.style.width = "45px";
 			this.title.placeAt("uiArea");
+			this.oTruncatedTitle.placeAt("wrapper-title");
+			this.oCustomTooltipTitle.placeAt("uiArea");
 			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.title.destroy();
 			this.title = null;
+			this.oCustomTooltipTitle.destroy();
+			this.oCustomTooltipTitle = null;
+			this.oTruncatedTitle.destroy();
+			this.oTruncatedTitle = null;
 		}
 	});
 
@@ -406,5 +422,21 @@ sap.ui.define([
 		this.title.setTitleStyle(TitleLevel.H5);
 		Core.applyChanges();
 		assert.strictEqual(this.title.$().attr("aria-level"), "5", "The aria-level should be '5' when 'titleStyle' is set to 'H5'");
+	});
+
+	QUnit.test("Custom tooltip is not overwriten", function(assert){
+		qutils.triggerEvent("mouseover", "customToolTip");
+		assert.strictEqual(this.oCustomTooltipTitle.$().attr("title"), "custom tooltip", "The tooltip set by user is present");
+
+		qutils.triggerEvent("mouseout", "customToolTip");
+		assert.strictEqual(this.oCustomTooltipTitle.$().attr("title"), "custom tooltip", "The tooltip set by user is present");
+	});
+
+	QUnit.test("Tooltip is added", function(assert){
+		qutils.triggerEvent("mouseover", "truncatedToolTip");
+		assert.strictEqual(this.oTruncatedTitle.$().attr("title"), this.oTruncatedTitle.getText(), "The tooltip tip is present only on hover");
+
+		qutils.triggerEvent("mouseout", "truncatedToolTip");
+		assert.notOk(this.oTruncatedTitle.$().attr("title"), "The tooltip is removed");
 	});
 });
