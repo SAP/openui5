@@ -442,7 +442,7 @@ sap.ui.define([
 				text: oColumn.value,
 				state: oColumn.state,
 				showStateIcon: oColumn.showStateIcon,
-				icon: oColumn.customStateIcon
+				customIcon: oColumn.customStateIcon
 			});
 		}
 

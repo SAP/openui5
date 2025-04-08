@@ -83,7 +83,7 @@ sap.ui.define([
 	 *   mandatory parameter.
 	 * @param {object} [mParameters]
 	 *   Map which contains the following parameter properties:
-	 * @param {string|string[]} [mParameters.annotationURI]
+	 * @param {string|string[]} [mParameters.annotationURI=[]]
 	 *   The URL (or an array of URLs) from which the annotation metadata should be loaded
 	 * @param {string[]} [mParameters.bindableResponseHeaders=null]
 	 *   Set this array to make custom response headers bindable via the entity's
@@ -230,7 +230,7 @@ sap.ui.define([
 				sMaxDataServiceVersion,
 				bUseBatch,
 				bRefreshAfterChange,
-				sAnnotationURI,
+				aAnnotationURIs,
 				bLoadAnnotationsJoined,
 				sDefaultCountMode,
 				bPreliminaryContext,
@@ -276,7 +276,7 @@ sap.ui.define([
 				sMaxDataServiceVersion = mParameters.maxDataServiceVersion;
 				bUseBatch = mParameters.useBatch;
 				bRefreshAfterChange = mParameters.refreshAfterChange;
-				sAnnotationURI = mParameters.annotationURI;
+				aAnnotationURIs = mParameters.annotationURI;
 				bLoadAnnotationsJoined = mParameters.loadAnnotationsJoined;
 				sDefaultBindingMode = mParameters.defaultBindingMode;
 				sDefaultCountMode = mParameters.defaultCountMode;
@@ -339,7 +339,10 @@ sap.ui.define([
 			this.bRefreshAfterChange = bRefreshAfterChange !== false;
 			this.sMaxDataServiceVersion = sMaxDataServiceVersion;
 			this.bLoadAnnotationsJoined = bLoadAnnotationsJoined !== false;
-			this.sAnnotationURI = sAnnotationURI;
+			this.aAnnotationURIs = [];
+			if (aAnnotationURIs) {
+				this.aAnnotationURIs = Array.isArray(aAnnotationURIs) ? aAnnotationURIs.slice() : [aAnnotationURIs];
+			}
 			// A promise that may resolves with an array of annotation changes, see ODataModel#_requestAnnotationChanges
 			// and ODataModel#setAnnotationChangePromise
 			this.pAnnotationChanges = null;
@@ -449,7 +452,7 @@ sap.ui.define([
 			}
 
 			this.oAnnotations = new ODataAnnotations(this.oMetadata, {
-				source: this.sAnnotationURI,
+				source: this.aAnnotationURIs,
 				skipMetadata: this.bSkipMetadataAnnotationParsing || this.bIgnoreAnnotationsFromMetadata,
 				headers: this.mCustomHeaders,
 				combineEvents: true,
@@ -8351,10 +8354,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._cacheSupported = function (sMetadataUrl) {
-		if (this.sAnnotationURI && !Array.isArray(this.sAnnotationURI)) {
-			this.sAnnotationURI = [this.sAnnotationURI];
-		}
-		const aAnnotationURIs = this.sAnnotationURI ?? [];
+		const aAnnotationURIs = this.aAnnotationURIs;
 
 		return ODataModel.hasContextToken(sMetadataUrl) && ODataModel.isAnnotationsCacheable(aAnnotationURIs);
 	};
@@ -8377,18 +8377,16 @@ sap.ui.define([
 				sCacheKey = sMetadataUrl + "#annotations";
 			}
 
-			if (this.sAnnotationURI) {
-				if (!Array.isArray(this.sAnnotationURI)) {
-					this.sAnnotationURI = [this.sAnnotationURI];
-				}
-				this.sAnnotationURI = this.sAnnotationURI.map(function(sUrl) {
-					return sUrl + "#annotations";
-				});
+			this.aAnnotationURIs = this.aAnnotationURIs.map(function(sUrl) {
+				return sUrl + "#annotations";
+			});
+			if (this.aAnnotationURIs.length) {
 				sCacheKey = bIgnoreAnnotationsFromMetadata
-					? this.sAnnotationURI.join("_")
-					: sCacheKey + "_" + this.sAnnotationURI.join("_");
+					? this.aAnnotationURIs.join("_")
+					: sCacheKey + "_" + this.aAnnotationURIs.join("_");
 			}
 		}
+
 		return sCacheKey;
 	};
 

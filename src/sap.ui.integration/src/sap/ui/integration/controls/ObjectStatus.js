@@ -43,7 +43,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.integration",
 			properties: {
-				showStateIcon: { type: "boolean", defaultValue: false }
+				showStateIcon: { type: "boolean", defaultValue: false },
+				customIcon : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null}
 			}
 		},
 		renderer: MObjectStatusRenderer
@@ -65,15 +66,35 @@ sap.ui.define([
 	};
 
 	ObjectStatus.prototype.onBeforeRendering = function () {
-		if (this.getShowStateIcon()) {
-			if (!this.getIcon()) {
-				this.addStyleClass("sapMObjStatusShowIcon");
-			} else {
-				this.addStyleClass("sapMObjStatusShowCustomIcon");
-			}
+		this.addStyleClass("sapUiIntObjStatus");
+
+		if (!this.getShowStateIcon()) {
+			return;
 		}
 
-		this.addStyleClass("sapUiIntObjStatus");
+		const sCustomIcon = this.getCustomIcon();
+		if (sCustomIcon) {
+			this.setIcon(sCustomIcon);
+		} else {
+			let sStateIcon = "";
+
+			switch (this.getState()) {
+				case ValueState.Success:
+					sStateIcon = "sap-icon://sys-enter-2";
+					break;
+				case ValueState.Error:
+					sStateIcon = "sap-icon://error";
+					break;
+				case ValueState.Warning:
+					sStateIcon = "sap-icon://warning";
+					break;
+				case ValueState.Information:
+					sStateIcon = "sap-icon://information";
+					break;
+			}
+
+			this.setIcon(sStateIcon);
+		}
 	};
 
 	return ObjectStatus;

@@ -53,7 +53,6 @@ sap.ui.define([
 	 *   var oResourceModel = new ResourceModel({
 	 *      // specify url of the base .properties file
 	 *      bundleUrl : "i18n/messagebundle.properties",
-	 *      async : true,
 	 *      enhanceWith: [
 	 *          {
 	 *              bundleUrl: "appvar1/i18n/i18n.properties",
@@ -104,7 +103,6 @@ sap.ui.define([
 	 *          bundleUrl: "i18n/messagebundle.properties",
 	 *          supportedLocales: ["de", "fr"]
 	 *      }),
-	 *      async : true,
 	 *      enhanceWith: [
 	 *          ResourceBundle.create({
 	 *              bundleUrl: "appvar1/i18n/i18n.properties",
@@ -131,8 +129,6 @@ sap.ui.define([
 	 *   {@link module:sap/base/i18n/ResourceBundle.create}). This parameter is ignored when
 	 *   <code>bundle</code> is set. Will cause an error if <code>enhanceWith</code> contains
 	 *   instances of <code>ResourceBundle</code>. Supported since 1.77.0.
-	 * @param {boolean} [oData.async=false]
-	 *   <b>Deprecated as of Version 1.125</b>; always use asynchronous loading for performance reasons
 	 * @param {module:sap/base/i18n/ResourceBundle} [oData.bundle]
 	 *   A resource bundle instance; when given, this bundle is used instead of creating a bundle
 	 *   from the provided <code>bundleUrl</code>, <code>bundleName</code> and
@@ -158,9 +154,6 @@ sap.ui.define([
 	 *   URL pointing to the base ".properties" file of a bundle (".properties" file without any
 	 *   locale information, e.g. "../../i18n/mybundle.properties"); relative URLs are evaluated
 	 *   relative to the document.baseURI
-	 * @param {sap.ui.model.BindingMode} [oData.defaultBindingMode=OneWay]
-	 *   The default binding mode to use; it can be <code>OneWay</code> or <code>OneTime</code>
-	 *   (only when synchronous loading is used); the <code>TwoWay</code> mode is not supported
 	 * @param {module:sap/base/i18n/ResourceBundle[]|module:sap/base/i18n/ResourceBundle.Configuration[]} [oData.enhanceWith]
 	 *   A list of resource bundles or resource bundle configurations that enhance the texts from
 	 *   the main bundle; intended for extensibility scenarios; see also the class documentation.
@@ -219,9 +212,7 @@ sap.ui.define([
 	 * keys, texts for new keys, or both. When texts for existing keys are replaced, the latest
 	 * enhancement wins.
 	 *
-	 * This model supports the binding modes <code>OneWay</code> and <code>OneTime</code>, but not
-	 * <code>TwoWay</code>. When the recommended asynchronous loading of the bundle is used, binding
-	 * mode <code>OneTime</code> can't be used.
+	 * This model only supports the binding mode <code>OneWay</code>; the binding mode cannot be changed.
 	 *
 	 * @extends sap.ui.model.Model
 	 * @public
@@ -238,24 +229,13 @@ sap.ui.define([
 
 			this.bReenhance = false;
 
-			this.bAsync = !!(oData && oData.async);
-
-			if (!this.bAsync) {
-				Log.warning("Usage of synchronous loading is deprecated. For performance reasons, asynchronous loading"
-					+ " is strongly recommended.", undefined, sClassname);
-			}
-
 			this.sDefaultBindingMode = oData.defaultBindingMode || BindingMode.OneWay;
 
 			this.mSupportedBindingModes = {
 				"OneWay" : true,
 				"TwoWay" : false,
-				"OneTime" : !this.bAsync
+				"OneTime" : false
 			};
-
-			if (this.bAsync && this.sDefaultBindingMode == BindingMode.OneTime) {
-				Log.warning("Using binding mode OneTime for asynchronous ResourceModel is not supported!");
-			}
 
 			this.oData = Object.assign({}, oData);
 
@@ -288,13 +268,9 @@ sap.ui.define([
 
 			// ResourceModel's enhance mechanism
 			if (bUseResourceModelEnhanceMechanism && Array.isArray(oData.enhanceWith)) {
-				if (this.bAsync) {
-					this._pEnhanced = oData.enhanceWith.reduce(function (chain, bundle) {
-						return chain.then(this.enhance.bind(this, bundle));
-					}.bind(this), Promise.resolve());
-				} else {
-					oData.enhanceWith.forEach(this.enhance.bind(this));
-				}
+				this._pEnhanced = oData.enhanceWith.reduce(function (chain, bundle) {
+					return chain.then(this.enhance.bind(this, bundle));
+				}.bind(this), Promise.resolve());
 			}
 
 		}
@@ -321,7 +297,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the resource bundle or a promise resolving with the resource bundle.
+	 * Returns a promise resolving with the resource bundle.
 	 *
 	 * @param {object} oData
 	 *   Parameters used to load the resource bundle; see constructor of the
@@ -369,16 +345,13 @@ sap.ui.define([
 	 *   <code>fallbackLocale</code> nor can it be enhanced with <code>enhanceWith</code>. This
 	 *   parameter is passed to the underlying ResourceBundle (see
 	 *   {@link module:sap/base/i18n/ResourceBundle.create}). Supported since 1.77.0.
-	 * @param {boolean} bAsync
-	 *   Whether the resource bundle should be loaded asynchronously
-	 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>}
-	 *   Loaded resource bundle or <code>Promise</code> resolving with the resource bundle in async
-	 *   case
+	 * @returns {Promise<module:sap/base/i18n/ResourceBundle>}
+	 *   A <code>Promise</code> resolving with the resource bundle
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.core.Component
 	 */
-	ResourceModel.loadResourceBundle = function (oData, bAsync) {
+	ResourceModel.loadResourceBundle = function (oData) {
 		var sLocale = oData.bundleLocale,
 			mParams;
 
@@ -386,10 +359,10 @@ sap.ui.define([
 		oData.bundleName = ResourceModel._sanitizeBundleName(oData.bundleName);
 
 		mParams = Object.assign({
-			async: bAsync,
 			includeInfo: Supportability.collectOriginInfo(),
 			locale: sLocale
 		}, oData);
+		mParams.async = true;
 
 		return ResourceBundle.create(mParams);
 	};
@@ -423,44 +396,36 @@ sap.ui.define([
 	 *   URL pointing to the base ".properties" file of a bundle (".properties" file without any
 	 *   locale information, e.g. "../../i18n/mybundle.properties"); relative URLs are evaluated
 	 *   relative to the document.baseURI
-	 * @returns {Promise|null} A Promise resolving when the enhancement is finished or
-	 *   <code>null</code> if the <code>ResourceModel</code> is configured to act synchronously
+	 * @returns {Promise} A promise which resolves when the enhancement is finished
 	 * @since 1.16.1
 	 * @public
 	 */
 	ResourceModel.prototype.enhance = function (oData) {
 		var that = this,
 			fResolve,
-			oPromise = this.bAsync ? new Promise(function (resolve) {
+			oPromise = new Promise(function (resolve) {
 				fResolve = resolve;
-			}) : null;
+			});
 
 		function doEnhance() {
 			if (oData instanceof ResourceBundle) {
 				that._oResourceBundle._enhance(oData);
 				that.checkUpdate(true);
-				if (oPromise) {
-					fResolve(true);
-				}
+				fResolve(true);
 			} else {
 				if (oData.terminologies) {
 					throw new Error("'terminologies' parameter is not"
 						+ " supported for enhancement");
 				}
-				var bundle = ResourceModel.loadResourceBundle(oData, that.bAsync);
+				const pBundle = ResourceModel.loadResourceBundle(oData);
 
-				if (bundle instanceof Promise) {
-					bundle.then(function (customBundle) {
-						that._oResourceBundle._enhance(customBundle);
-						that.checkUpdate(true);
-						fResolve(true);
-					}, function () {
-						fResolve(true);
-					});
-				} else if (bundle) {
-					that._oResourceBundle._enhance(bundle);
+				pBundle.then(function (customBundle) {
+					that._oResourceBundle._enhance(customBundle);
 					that.checkUpdate(true);
-				}
+					fResolve(true);
+				}, function () {
+					fResolve(true);
+				});
 			}
 		}
 
@@ -511,26 +476,22 @@ sap.ui.define([
 	/**
 	 * Gets the resource bundle of this model.
 	 *
-	 * @returns {(module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>)}
-	 *   The loaded resource bundle or a Promise resolving with it in asynchronous case
+	 * @returns {Promise<module:sap/base/i18n/ResourceBundle>}
+	 *   A Promise resolving with the loaded resource bundle
 	 *
 	 * @public
 	 */
 	ResourceModel.prototype.getResourceBundle = function () {
-		if (!this.bAsync) {
-			return this._oResourceBundle;
+		const pResourceBundle = this._oPromise;
+		if (pResourceBundle) {
+			return new Promise(function (resolve, reject) {
+				function _resolve(oBundle) {
+					resolve(oBundle);
+				}
+				pResourceBundle.then(_resolve, _resolve);
+			});
 		} else {
-			var p = this._oPromise;
-			if (p) {
-				return new Promise(function (resolve, reject) {
-					function _resolve(oBundle) {
-						resolve(oBundle);
-					}
-					p.then(_resolve, _resolve);
-				});
-			} else {
-				return Promise.resolve(this._oResourceBundle);
-			}
+			return Promise.resolve(this._oResourceBundle);
 		}
 	};
 
@@ -545,17 +506,13 @@ sap.ui.define([
 		var that = this;
 
 		SyncPromise.resolve(this.getResourceBundle()).then(function (oBundle) {
-			var oEventParameters;
-
-			if (that.bAsync) {
-				oEventParameters = {
-						url: ResourceBundle._getUrl(that.oData.bundleUrl,
-							// sanitize bundleName for backward compatibility
-							ResourceModel._sanitizeBundleName(that.oData.bundleName)),
-						async: true
-					};
-				that.fireRequestSent(oEventParameters);
-			}
+			const oEventParameters = {
+				url: ResourceBundle._getUrl(that.oData.bundleUrl,
+					// sanitize bundleName for backward compatibility
+					ResourceModel._sanitizeBundleName(that.oData.bundleName)),
+				async: true
+			};
+			that.fireRequestSent(oEventParameters);
 			var oRecreateResult = oBundle._recreate();
 			if (oRecreateResult instanceof Promise) {
 				that._oPromise = oRecreateResult;
@@ -566,9 +523,7 @@ sap.ui.define([
 				delete that._oPromise;
 				that.checkUpdate(true);
 			}).finally(function () {
-				if (that.bAsync) {
-					that.fireRequestCompleted(oEventParameters);
-				}
+				that.fireRequestCompleted(oEventParameters);
 			});
 		}).catch(function (oError) {
 			Log.error("Failed to reload bundles after localization change", oError, sClassname);
@@ -601,28 +556,22 @@ sap.ui.define([
 		var oData = oModel.oData;
 
 		if (oData && (oData.bundleUrl || oData.bundleName)) {
-			var res = ResourceModel.loadResourceBundle(oData, oData.async);
-			if (res instanceof Promise) {
+			const pResourceBundle = ResourceModel.loadResourceBundle(oData);
 				// sanitize bundleName for backward compatibility
-				var oEventParam = {
-						url: ResourceBundle._getUrl(oData.bundleUrl,
-							ResourceModel._sanitizeBundleName(oData.bundleName)),
-						async: true
-					};
-				oModel.fireRequestSent(oEventParam);
-				oModel._oPromise = res;
-				oModel._oPromise.then(function (oBundle) {
-					oModel._oResourceBundle = oBundle;
-					oModel._reenhance();
-					delete oModel._oPromise;
-					oModel.checkUpdate(true);
-					oModel.fireRequestCompleted(oEventParam);
-				});
-			} else {
-				oModel._oResourceBundle = res;
+			var oEventParam = {
+					url: ResourceBundle._getUrl(oData.bundleUrl,
+						ResourceModel._sanitizeBundleName(oData.bundleName)),
+					async: true
+				};
+			oModel.fireRequestSent(oEventParam);
+			oModel._oPromise = pResourceBundle;
+			oModel._oPromise.then(function (oBundle) {
+				oModel._oResourceBundle = oBundle;
 				oModel._reenhance();
+				delete oModel._oPromise;
 				oModel.checkUpdate(true);
-			}
+				oModel.fireRequestCompleted(oEventParam);
+			});
 		}
 	}
 

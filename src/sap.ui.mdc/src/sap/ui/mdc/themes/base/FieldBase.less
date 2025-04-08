@@ -1,3 +1,8 @@
+/* ===================================== */
+/* CSS for control sap.ui.mdc/FieldBase  */
+/* Base theme                            */
+/* ===================================== */
+
 .sapUiMdcFieldBase {
 	display: inline-block;
 	box-sizing: border-box;
@@ -19,27 +24,28 @@
 	min-width: calc(@_InputBase_Control_MinWidth ~" + 0.5rem + " @sap_ui_mdc_Field_UnitMinWidth); /* to avoid wrapping of inner controls */
 }
 
-.sapUiMdcFieldBaseMoreFields > *:first-child{
+.sapUiMdcFieldBaseMoreFields > *:first-child {
 	max-width: calc(~"100% - 0.5rem - " @sap_ui_mdc_Field_UnitMinWidth); /* as input has a min-width, to not cut off unit */
 	min-width: @_InputBase_Control_MinWidth; /* as inner input has this min-width */
 }
 
-.sapUiMdcFieldBaseMoreFields > *:last-child{
+.sapUiMdcFieldBaseMoreFields > *:last-child {
 	padding-left: 0.5rem;
 	min-width: calc(~"0.5rem + " @sap_ui_mdc_Field_UnitMinWidth); /* As input has a min-width + padding */
 }
 
 .sapUiSizeCompact {
-	.sapUiMdcFieldBaseMoreFields{
+
+	.sapUiMdcFieldBaseMoreFields {
 		min-width: calc(@_InputBase_Control_MinWidth_Compact ~" + 0.5rem + " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* to avoid wrapping of inner controls */
 	}
 
-	.sapUiMdcFieldBaseMoreFields > *:first-child{
+	.sapUiMdcFieldBaseMoreFields > *:first-child {
 		max-width: calc(~"100% - 0.5rem - " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* as input has a min-width, to not cut off unit */
 		min-width: @_InputBase_Control_MinWidth_Compact; /* as inner input has this min-width */
 	}
 
-	.sapUiMdcFieldBaseMoreFields > *:last-child{
+	.sapUiMdcFieldBaseMoreFields > *:last-child {
 		min-width: calc(~"0.5rem + " @sap_ui_mdc_Field_UnitMinWidth_Compact); /* As input has a min-width + padding */
 	}
 }

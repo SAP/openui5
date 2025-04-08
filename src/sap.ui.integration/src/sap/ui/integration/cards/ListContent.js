@@ -349,7 +349,7 @@ sap.ui.define([
 					emptyIndicatorMode: EmptyIndicatorMode.On,
 					visible: attr.visible,
 					showStateIcon: attr.showStateIcon,
-					icon: attr.customStateIcon
+					customIcon: attr.customStateIcon
 				});
 
 				mSettings.attributes.push(oObjectStatus);

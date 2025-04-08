@@ -615,7 +615,7 @@ function(
 		var iStepNumber = this._getStepNumber($oStep);
 
 		return $oStep.attr(WizardProgressNavigatorRenderer.ATTRIBUTES.OPEN_STEP_NEXT) === "true" &&
-			iStepNumber < this._aCachedSteps.length;
+			iStepNumber <= this._aCachedSteps.length;
 	};
 
 	/**

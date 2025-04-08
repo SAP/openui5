@@ -80,11 +80,11 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("PropertyBinding getValue", async function(assert) {
-		const oModel = new ResourceModel({async : true, bundleName : "testdata.messages"});
+	QUnit.test("PropertyBinding getValue", async function (assert) {
+		const oModel = new ResourceModel({bundleName : "testdata.messages"});
 		await oModel.getResourceBundle();
 		const oBinding = oModel.bindProperty("TEST_TEXT");
 
-		assert.equal(oBinding.getValue(), "A text en", "Property binding value");
+		assert.strictEqual(oBinding.getValue(), "A text en", "Property binding value");
 	});
 });

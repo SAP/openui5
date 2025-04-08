@@ -402,6 +402,11 @@ sap.ui.define([
 							const rBaseTheme = /~v=[^\/]+\(([a-zA-Z0-9_]+)\)/;
 							// base theme should be matched in the first capturing group
 							_sFallbackTheme = rBaseTheme.exec(sThemeRoot)?.[1];
+							// pass derived fallback theme through our default theme handling
+							// in case the fallback theme is not supported anymore, we fall up to the latest default theme
+							if (_sFallbackTheme) {
+								_sFallbackTheme = ThemeHelper.validateAndFallbackTheme(_sFallbackTheme);
+							}
 						}
 					}
 

@@ -112,15 +112,11 @@ describe('sap.m.MultiComboBox', function() {
 			var oMultiComboBoxArrow = element(by.id("MultiComboBoxWithGrouping-arrow"));
 			oMultiComboBoxArrow.click();
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowdown_focus_vsh");
-			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowdown_focus_group");
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowdown_focus_item");
 			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
 			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowup_focus_group");
-			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
-			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowup_focus_vsh");
 			browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
 			expect(takeScreenshot()).toLookAs("mcb_dropdown_arrowup_focus_input");
 			oMultiComboBoxArrow.click();
@@ -205,7 +201,6 @@ describe('sap.m.MultiComboBox', function() {
 		arrow.click();
 
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
-		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 		browser.actions().sendKeys(protractor.Key.SPACE).perform();
 
 		expect(takeScreenshot()).toLookAs("long_vsh_text");
@@ -218,7 +213,6 @@ describe('sap.m.MultiComboBox', function() {
 		browser.executeScript('document.getElementById("MultiComboBoxWithGrouping").scrollIntoView()').then(function() {
 			var oMultiComboBoxArrow = element(by.id("MultiComboBoxWithGrouping-arrow"));
 			oMultiComboBoxArrow.click();
-			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 			browser.actions().sendKeys(protractor.Key.ENTER).perform();
 			expect(takeScreenshot()).toLookAs("mcb_dropdown_open_group");
