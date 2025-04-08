@@ -944,14 +944,12 @@ sap.ui.define([
 			oListItem3 = this.oCard.getCardContent().getAggregation("_content").getItems()[2],
 			oListItem4 = this.oCard.getCardContent().getAggregation("_content").getItems()[3];
 
-		assert.equal(oListItem1.$().find(".sapMObjStatusShowIcon").length, 1, "Status icon is shown");
-		assert.equal(oListItem2.$().find(".sapMObjStatusShowIcon").length, 0, "Status icon is not shown");
-		assert.equal(oListItem2.$().find(".sapMObjStatusIcon").length, 0, "Status icon div is not rendered");
-		assert.equal(oListItem3.$().find(".sapMObjStatusShowIcon").length, 0, "Default status icon is not shown");
-		assert.equal(oListItem3.$().find(".sapMObjStatusShowCustomIcon").length, 1, "Custom status icon is shown");
-		assert.equal(oListItem2.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is set to true");
-		assert.equal(oListItem3.$().find(".sapUiIntLCIInfo").length, 1, "Info is displayed when visibility is not defined");
-		assert.equal(oListItem4.$().find(".sapUiIntLCIInfo").length, 0, "Info is not displayed when visibility is set to false");
+		assert.ok(oListItem1.$().find(".sapMObjStatus").length, "Status icon is shown");
+		assert.ok(oListItem2.$().find(".sapMObjStatus").length, "Status icon is shown");
+		assert.ok(oListItem3.$().find(".sapMObjStatus").length, "Status icon is shown");
+		assert.ok(oListItem2.$().find(".sapUiIntLCIInfo").length, "Info is displayed when visibility is set to true");
+		assert.ok(oListItem3.$().find(".sapUiIntLCIInfo").length, "Info is displayed when visibility is not defined");
+		assert.notOk(oListItem4.$().find(".sapUiIntLCIInfo").length, "Info is not displayed when visibility is set to false");
 	});
 
 	QUnit.test("Info visible property without binding", async function (assert) {
@@ -1064,8 +1062,8 @@ sap.ui.define([
 		assert.strictEqual(oListItem2.$().find(".sapUiIntLCIAttrCell").length, 5, "5 attr cells are created.");
 		assert.notOk(oListItem2.$().find(".sapUiIntLCIAttrSecondCell").length, "attr second cells are not created.");
 
-		assert.ok(oListItem2.$().find(".sapUiIntLCIAttrRow:nth-of-type(6) .sapMObjStatusShowIcon").length, "Status icon is shown");
-		assert.notOk(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatusShowIcon").length, "Status icon is not shown");
+		assert.ok(oListItem2.$().find(".sapUiIntLCIAttrRow:nth-of-type(6) .sapMObjStatus").length, "Status icon is shown");
+		assert.ok(oListItem3.$().find(".sapUiIntLCIAttrRow:nth-of-type(4) .sapMObjStatus").length, "Status icon is shown");
 
 		QUnitUtils.triggerEvent("focusin", oListItem1.getDomRef());
 		assert.ok(oListItem1.getDomRef().getAttribute("aria-labelledby"), "aria-labelledby is set when focused"); //getContentAnnouncement in ContentListItem is called

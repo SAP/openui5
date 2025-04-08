@@ -2,17 +2,20 @@
 /* CSS for control sap.ui.integration.widgets/Card in Tile Variant */
 /* Base theme                                                      */
 /* ================================================================*/
+
 .sapFCard.sapUiIntCardTileStandard,
 .sapFCard.sapUiIntCardTileStandardWide,
 .sapFCard.sapUiIntCardTileFlat,
 .sapFCard.sapUiIntCardTileFlatWide {
+
 	.sapFCardHeader {
 		height: 100%;
 		position: relative;
 		padding: 0;
 
 		&.sapFCardHeaderHasToolbar {
-			// Always hide toolbar for tiles
+
+			/* Always hide toolbar for tiles */
 			.sapFCardHeaderToolbarCont {
 				display: none;
 			}
@@ -45,6 +48,7 @@
 		}
 
 		&.sapFCardNumericHeader {
+
 			.sapFCardHeaderMainPart .sapFCardSubtitle {
 				align-items: flex-start;
 			}
@@ -70,8 +74,6 @@
 		}
 	}
 
-	
-
 	&.sapFCardNoContent .sapFCardHeader .sapFCardHeaderMainPart {
 		border-radius: inherit;
 	}
@@ -82,6 +84,7 @@
 .sapUiIntCardTileFlat,
 .sapUiIntCardTileFlatWide,
 .sapUiIntCardStandardHeader {
+
 	&.sapFCardNoContent .sapFCardHeader.sapFCardHeaderMainPartOnly .sapFCardHeaderMainPart {
 		align-items: unset;
 	}
@@ -89,6 +92,7 @@
 
 .sapFCard.sapUiIntCardTileFlat,
 .sapFCard.sapUiIntCardTileFlatWide {
+
 	.sapFCardHeader {
 
 		.sapFCardHeaderMainPart {
@@ -109,6 +113,7 @@
 
 		&.sapFCardHeaderHasIcon,
 		&.sapFCardHeaderHasNumber {
+
 			.sapFCardSubtitle,
 			.sapFCardUnitOfMeasurement {
 				display: none;
@@ -116,6 +121,7 @@
 		}
 
 		&.sapFCardNumericHeader {
+
 			.sapFCardHeaderMainPart {
 				padding: 1rem 1rem 0.75rem;
 			}
@@ -125,6 +131,7 @@
 			}
 
 			.sapFCardAvatarAndIndicatorsLine {
+
 				.sapFCardIcon.sapFAvatar {
 					margin-top: 0;
 				}
@@ -165,15 +172,17 @@
 
 		.sapFCardHeaderBanner {
 			position: absolute;
-			bottom: 0.75rem;;
+			bottom: 0.75rem;
 			right: 1.125rem;
 		}
 
 		.sapMIllustratedMessage {
 			padding: 0;
+
 			.sapMTitle {
 				font-size: 0.875rem;
 			}
+
 			.sapMIllustratedMessageDescription {
 				font-size: 0.75rem;
 			}
@@ -183,50 +192,60 @@
 
 .sapFCard.sapUiIntCardTileStandard,
 .sapFCard.sapUiIntCardTileFlat {
+
 	.sapFCardHeader .sapFCardNumericIndicatorsSide {
 		display: none;
 	}
+
 	.sapFCardHeader .sapUiIntMicrochartChartWrapper {
 		display: none;
 	}
 }
+
 .sapFCard.sapUiIntCardSmallHeader,
 .sapFCard.sapUiIntCardTileFlatWide {
 
 	.sapFCardHeader .sapFCardNumericIndicatorsSide {
 		flex-wrap: nowrap;
 	}
+
 	.sapFCardHeader.sapFCardNumericHeaderSIMC .sapFCardNumericIndicatorsSide {
 		display: none;
 	}
+
 	.sapFCardHeader .sapUiIntMicrochartChartWrapper .sapUiIntMicrochartChart {
 		max-height: 2.2rem;
 		min-height: 2rem;
 	}
+
 	.sapFCardHeader .sapUiIntMicrochartChartWrapper .sapUiIntMicrochartChart .sapUiIntMicrochartChartInner {
 		height: 2rem;
 	}
+
 	.sapMNCValue.WithoutMargin {
 		justify-content: start;
 	}
 }
 
 .sapFCard.sapUiIntCardTileStandardWide .sapFCardNumericHeader {
+
 	&.sapFCardHeader .sapFCardNumericIndicatorsSide {
 		flex-wrap: nowrap;
 	}
+
 	&.sapFCardNumericHeaderSIMC .sapUiIntMicrochartChartWrapper {
 		position: absolute;
-    	top: 2.5rem;
-   		right: 1rem;
+		top: 2.5rem;
+		right: 1rem;
 		width: 38%;
 	}
+
 	&.sapFCardNumericHeaderSIMC .sapFCardHeaderText {
 		max-width: 58%;
 	}
 
 	&.sapFCardNumericHeaderMC .sapFCardAvatarAndIndicatorsLine .sapUiIntMicrochartChartWrapper {
-    	margin-top: -0.5rem;
+		margin-top: -0.5rem;
 	}
 }
 
@@ -256,13 +275,16 @@
 			width: 1.9rem;
 			font-size: 0.9rem;
 			letter-spacing: -1px;
+
 			&.sapFAvatarColorTransparent .sapUiIcon {
 				font-size: 1.25rem;
 			}
 		}
+
 		.sapFCardHeaderText {
 			height: 2rem;
 		}
+
 		.sapFCardHeaderTextSecondLine {
 			display: inline-block;
 			margin-top: 0;
@@ -276,6 +298,7 @@
 }
 
 .sapUiSizeCompact .sapFCard.sapUiIntCardCompactHeader {
+
 	.sapFCardHeaderToolbarCont {
 		padding-top: 0.25rem;
 	}

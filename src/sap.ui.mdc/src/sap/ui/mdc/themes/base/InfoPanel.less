@@ -1,6 +1,11 @@
-// ------------------------------------------------------------------------------
-// --------------- Header -------------------------------------------------------
-// ------------------------------------------------------------------------------
+/* ===================================== */
+/* CSS for control sap.ui.mdc/InfoPanel  */
+/* Base theme                            */
+/* ===================================== */
+
+/* ------------------------------------------------------------------------------
+--------------- Header ----------------------------------------------------------
+------------------------------------------------------------------------------ */
 
 .mdcbaseinfoPanel .sapUiFormTitle {
 	white-space: normal;
@@ -22,7 +27,7 @@
 
 .mdcbaseinfoPanelTitleH1 .sapMLnkDsbl {
 	opacity: 1;
-	color: @sapUiBaseText;
+	color: var(--sapTextColor);
 }
 
 .mdcbaseinfoPanelThumbnail .mdcbaseinfoPanelListItem .sapMImageContentImageIcon.sapUiIcon {
@@ -42,26 +47,26 @@
 	width: 3rem;
 }
 
-// ------------------------------------------------------------------------------
-// --------------- Additional Content -------------------------------------------
-// ------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------
+------------------ Additional Content -------------------------------------------
+------------------------------------------------------------------------------ */
 
 .mdcbaseinfoPanel .mdcbaseinfoPanelDefaultAdditionalContent .sapUiFormTitle {
-	color: @sapUiBaseText;
+	color: var(--sapTextColor);
 }
 
-// ------------------------------------------------------------------------------
-// --------------- Separator ----------------------------------------------------
-// ------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------
+------------------ Separator ----------------------------------------------------
+------------------------------------------------------------------------------ */
 
 .mdcbaseinfoPanel .mdcbaseinfoPanelSeparator {
 	border-bottom: 1px solid;
-	border-bottom-color: @sapUiToolbarSeparatorColor;
+	border-bottom-color: var(--sapToolbar_SeparatorColor);
 }
 
-// ------------------------------------------------------------------------------
-// --------------- Links --------------------------------------------------------
-// ------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------
+------------------ Links --------------------------------------------------------
+------------------------------------------------------------------------------ */
 
 /* Overwrite background of 'related apps' section */
 .mdcbaseinfoPanel .mdcbaseinfoPanelSectionLinks {
@@ -73,7 +78,7 @@
 	display: none;
 }
 
-.mdcbaseinfoPanelListItem .sapUiFormResLayout.sapUiFormBackgrTranslucent>div {
+.mdcbaseinfoPanelListItem .sapUiFormResLayout.sapUiFormBackgrTranslucent > div {
 	background-color: transparent;
 }
 
@@ -88,7 +93,7 @@
 	font-weight: normal;
 	font-size: 1.5rem;
 	line-height: 1.5rem;
-	padding-bottom: 0rem;
+	padding-bottom: 0;
 	color: @sapUiText;
 }
 
@@ -100,7 +105,7 @@
 .mdcbaseinfoPanelListItem .sapMImageContent {
 	width: auto;
 	height: auto;
-	margin-right: .75rem;
+	margin-right: 0.75rem;
 }
 
 .mdcbaseinfoPanelListItem .sapMImageContentImageIcon {
@@ -127,12 +132,13 @@
 }
 
 .mdcbaseinfoPanelListItem .mdcbaseinfoPanelItemsGroup .sapMText {
-	color: @sapUiContentLabelColor;
+	color: var(--sapContent_LabelColor);
 }
 
-// ------------------------------------------------------------------------------
-// --------------- Button -------------------------------------------------------
-// ------------------------------------------------------------------------------
+/* ------------------------------------------------------------------------------
+------------------ Button -------------------------------------------------------
+------------------------------------------------------------------------------ */
+
 .mdcbaseinfoPanel {
 	padding-top: 0;
 	padding-bottom: 1rem;
