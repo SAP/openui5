@@ -951,10 +951,6 @@ sap.ui.define([
 		}, this);
 
 		this._setTokensAria();
-
-		if (this._oPopup) {
-			this._oPopup.setContentWidth(this.getWidth() || this.getMaxWidth());
-		}
 	};
 
 	/**
