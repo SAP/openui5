@@ -96,44 +96,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("UIComponent initialization callback hook", function(assert) {
-
-		this.oServer.respondWithJSONContent(this.oManifest);
-
-		UIComponent._fnOnInstanceInitialized = function(oComponent) {
-			assert.equal(oComponent.getId(), "myComponent", "Initialization hook was called!");
-		};
-
-		var oComponent = sap.ui.component({
-			id : "myComponent",
-			manifestUrl : "/anylocation/manifest.json"
-		});
-
-		delete UIComponent._fnOnInstanceInitialized;
-
-		oComponent.destroy();
-
-	});
-
-	QUnit.test("UIComponent destruction callback hook", function(assert) {
-
-		this.oServer.respondWithJSONContent(this.oManifest);
-
-		var oComponent = sap.ui.component({
-			id : "myComponent",
-			manifestUrl : "/anylocation/manifest.json"
-		});
-
-		UIComponent._fnOnInstanceDestroy = function(oComponent) {
-			assert.equal(oComponent.getId(), "myComponent", "Destruction hook was called!");
-		};
-
-		oComponent.destroy();
-
-		delete UIComponent._fnOnInstanceDestroy;
-
-	});
-
 	QUnit.test("UIComponent check for no autoPrefixId", async function(assert) {
 
 		this.oServer.respondWithJSONContent(this.oManifest);

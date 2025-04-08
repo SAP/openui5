@@ -1,0 +1,7 @@
+{
+	"sap.app": {
+		"id": "testdata.modelFromManifest",
+		"type": "application"
+	},
+	"sap.ui5": {}
+}
