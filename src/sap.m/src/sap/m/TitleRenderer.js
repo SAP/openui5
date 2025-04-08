@@ -54,7 +54,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 			oRm.style("text-align", sTextAlign);
 		}
 
-		sTooltip = oAssoTitle && !oTitleContent ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
+		sTooltip = oTitle._getTooltipText();
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);
 		}
