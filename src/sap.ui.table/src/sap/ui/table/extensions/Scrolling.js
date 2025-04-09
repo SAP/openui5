@@ -1341,32 +1341,34 @@ sap.ui.define([
 			}
 
 			const oVSb = oTable._getScrollExtension().getVerticalScrollbar();
-			const bScrollingForward = iScrollTop > oVSb.scrollTop;
 
 			if (oVSb) {
 				log("VerticalScrollingHelper.scrollScrollbar: Scroll from " + oVSb.scrollTop + " to " + iScrollTop, oTable);
+
+				const bScrollingForward = iScrollTop > oVSb.scrollTop;
+				let bScrolledToEnd = false;
+
 				oVSb.scrollTop = iScrollTop;
 				oVSb._scrollTop = oVSb.scrollTop;
-			} else {
-				log("VerticalScrollingHelper.scrollScrollbar: Not scrolled - No scrollbar available", oTable);
-			}
 
-			let bScrolledToEnd = false;
-			if (bScrollingForward) {
-				bScrolledToEnd = Math.round(oVSb.scrollTop) === oVSb.scrollHeight - oVSb.offsetHeight;
-			} else {
-				bScrolledToEnd = oVSb.scrollTop === 0;
-			}
+				if (bScrollingForward) {
+					bScrolledToEnd = Math.round(oVSb.scrollTop) === oVSb.scrollHeight - oVSb.offsetHeight;
+				} else {
+					bScrolledToEnd = oVSb.scrollTop === 0;
+				}
 
-			if (bScrolledToEnd && !oVSb._unblockScrolling) {
-				if (!oVSb._timeoutBlock) {
-					oVSb._timeoutBlock = setTimeout(function() {
-						oVSb._unblockScrolling = true;
-						oVSb._timeoutBlock = null;
-					}, SCROLL_BLOCK_TIMEOUT);
+				if (bScrolledToEnd && !oVSb._unblockScrolling) {
+					if (!oVSb._timeoutBlock) {
+						oVSb._timeoutBlock = setTimeout(function() {
+							oVSb._unblockScrolling = true;
+							oVSb._timeoutBlock = null;
+						}, SCROLL_BLOCK_TIMEOUT);
+					}
+				} else {
+					oVSb._unblockScrolling = false;
 				}
 			} else {
-				oVSb._unblockScrolling = false;
+				log("VerticalScrollingHelper.scrollScrollbar: Not scrolled - No scrollbar available", oTable);
 			}
 
 			return Promise.resolve();

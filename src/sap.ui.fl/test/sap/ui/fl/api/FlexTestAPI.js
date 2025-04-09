@@ -128,7 +128,7 @@ sap.ui.define([
 		return oConnector.loadFlexData({ reference: sReference })
 		.then(function(aResponses) {
 			return aResponses.reduce(function(iNumberOfChanges, oResponse) {
-				return iNumberOfChanges + oResponse.changes.length;
+				return iNumberOfChanges + oResponse.changes.length + oResponse.variantDependentControlChanges.length;
 			}, 0);
 		});
 	};

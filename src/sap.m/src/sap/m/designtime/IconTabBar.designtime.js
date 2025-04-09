@@ -4,53 +4,51 @@
 
 // Provides the Design Time Metadata for the sap.m.IconTabBar control
 sap.ui.define([
-	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Fragment"
+	"sap/ui/core/Fragment",
+	"sap/base/i18n/ResourceBundle"
 ],
-	function(ResourceBundle, Element, JSONModel, Fragment) {
+	function(Element, JSONModel, Fragment, ResourceBundle) {
 		"use strict";
 
-		var oTextResources = ResourceBundle.create({
-			bundleName: "sap.m.designtime.messagebundle"
-		});
-
 		var oSelectIconTabBarFilter = function (oControl, mPropertyBag) {
-			return new Promise(function (fnResolve) {
-				var aItemsList = [];
-				var aItems = oControl.getItems();
-
-				aItems.forEach(function (oItem) {
-					if (!oItem.isA("sap.m.IconTabSeparator")){
-						aItemsList.push({
-							'text': oItem.getText() || oItem.getKey(),
-							'key': oItem.getKey()
-						});
-					}
-				});
-
-				var oData = {
-					selectedKey: oControl.getSelectedKey(),
-					titleText: oTextResources.getText("ICON_TAB_BAR_SELECT_TAB"),
-					cancelBtn: oTextResources.getText("ICON_TAB_BAR_CANCEL_BTN"),
-					okBtn: oTextResources.getText("ICON_TAB_BAR_SELECT_BTN"),
-					items: aItemsList
-				};
-				var oModel = new JSONModel();
-				oModel.setData(oData);
-
-				Fragment.load({
+			return Promise.all([
+					ResourceBundle.create({
+						bundleName: "sap.m.designtime.messagebundle",
+						async: true
+					}),
+					Fragment.load({
 						name:"sap.m.designtime.IconTabBarSelectTab",
 						controller: this
-					}).then(function(oDialog){
-					oDialog.setModel(oModel);
+					})
+				]).then(function ([oTextResources, oDialog]) {
+					var aItemsList = [];
+					var aItems = oControl.getItems();
 
-					oDialog.getBeginButton().attachPress(function (oEvent) {
-						var sNewSelectedKey = Element.getElementById("targetCombo").getSelectedKey();
+					aItems.forEach(function (oItem) {
+						if (!oItem.isA("sap.m.IconTabSeparator")){
+							aItemsList.push({
+								'text': oItem.getText() || oItem.getKey(),
+								'key': oItem.getKey()
+							});
+						}
+					});
 
-						fnResolve(sNewSelectedKey);
-						oDialog.close();
+					oDialog.setModel(new JSONModel({
+						selectedKey: oControl.getSelectedKey(),
+						titleText: oTextResources.getText("ICON_TAB_BAR_SELECT_TAB"),
+						cancelBtn: oTextResources.getText("ICON_TAB_BAR_CANCEL_BTN"),
+						okBtn: oTextResources.getText("ICON_TAB_BAR_SELECT_BTN"),
+						items: aItemsList
+					}));
+
+					const pAwaitSelection = new Promise(function (fnResolve) {
+						oDialog.getBeginButton().attachPress(function (oEvent) {
+							var sNewSelectedKey = Element.getElementById("targetCombo").getSelectedKey();
+							fnResolve(sNewSelectedKey);
+							oDialog.close();
+						});
 					});
 
 					oDialog.getEndButton().attachPress(function (oEvent) {
@@ -63,9 +61,9 @@ sap.ui.define([
 
 					oDialog.addStyleClass(mPropertyBag.styleClass);
 					oDialog.open();
-				});
-			}).then(
-				function (sNewSelectedKey) {
+
+					return pAwaitSelection;
+				}).then(function (sNewSelectedKey) {
 					return [{
 						selectorControl: oControl,
 						changeSpecificData: {
@@ -77,8 +75,7 @@ sap.ui.define([
 							}
 						}
 					}];
-				}
-			);
+				});
 		};
 
 		return {
@@ -136,7 +133,7 @@ sap.ui.define([
 				settings: function () {
 					return {
 						"selectIconTabBarFilter": {
-							name: oTextResources.getText("ICON_TAB_BAR_SELECT_TAB"),
+							name: "ICON_TAB_BAR_SELECT_TAB",
 							isEnabled: function (oControl) {
 								return !!oControl._getIconTabHeader().oSelectedItem;
 							},
