@@ -683,7 +683,32 @@ sap.ui.define([
 		}, 500);
 	});
 
+	QUnit.test("onsaptabnext should be prevented", function (assert) {
+		const oActionSheet = new ActionSheet();
+		const oStub = this.stub({
+			preventDefault: function () {
+			}
+		});
 
+		oActionSheet.onsaptabnext(oStub);
+
+		assert.ok(oStub.preventDefault.calledOnce, "tab next should be prevented");
+
+		oActionSheet.destroy();
+	});
+
+	QUnit.test("onsaptabprevious should be prevented", function (assert) {
+		const oActionSheet = new ActionSheet();
+		const oStub = this.stub({
+			preventDefault: function () {
+			}
+		});
+		oActionSheet.onsaptabprevious(oStub);
+
+		assert.ok(oStub.preventDefault.calledOnce, "tab previous should be prevented");
+
+		oActionSheet.destroy();
+	});
 
 	QUnit.module("Screen reader");
 

@@ -614,10 +614,10 @@ sap.ui.define([
 		};
 
 		XMLView.prototype.getControllerModuleName = function() {
-			if (this._controllerName) {
+			if (typeof this._controllerName === "string") {
 				return this._controllerName.replace(/\./g, "/") + ".controller";
 			}
-			return this._controllerModuleName.substring(7);
+			return typeof this._controllerModuleName === "string" ? this._controllerModuleName.substring(7) : "";
 		};
 
 		XMLView.prototype._getControllerModuleName = function() {

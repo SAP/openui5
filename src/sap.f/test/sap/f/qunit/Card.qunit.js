@@ -5,18 +5,22 @@ sap.ui.define([
 	"sap/f/cards/Header",
 	"sap/f/library",
 	"sap/m/Text",
+	"sap/m/TextArea",
 	"sap/ui/core/Control",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/test/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/events/KeyCodes"
 ],
 function (
 	Card,
 	CardHeader,
 	fLibrary,
 	Text,
+	TextArea,
 	Control,
 	QUnitUtils,
-	nextUIUpdate
+	nextUIUpdate,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -164,7 +168,11 @@ function (
 		oHeader.destroy();
 	});
 
-	QUnit.module("Semantic Role = ListItem");
+	QUnit.module("Semantic Role = ListItem", {
+		beforeEach: function () {
+			this.clock.restore();
+		}
+	});
 
 	QUnit.test("Rendering and press events", async function (assert) {
 		// Arrange
@@ -186,7 +194,7 @@ function (
 		});
 
 		oCard.placeAt(DOM_RENDER_LOCATION);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		assert.strictEqual(oCard.getDomRef().getAttribute("role"), "listitem", "Card has correct role attribute");
 
@@ -196,6 +204,46 @@ function (
 
 		QUnitUtils.triggerMouseEvent(oCard.getContent().getDomRef(), "tap");
 		assert.ok(fnCardPressHandler.callCount === 1, "Card content is clicked and card press event is fired");
+
+		oCard.destroy();
+	});
+
+	QUnit.module("Keyboard handling", {
+		beforeEach: function () {
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("Preventing default action of 'Space' keydown", async function (assert) {
+		// Arrange
+		const oTextArea = new TextArea();
+		const oCard = new Card({
+			content: [
+				oTextArea
+			]
+		});
+
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		const oCardEvent = new KeyboardEvent("keydown", {
+			bubbles: true,
+			cancelable: true,
+			keyCode: KeyCodes.SPACE
+		});
+		const oTextAreaEvent = new KeyboardEvent("keydown", {
+			bubbles: true,
+			cancelable: true,
+			keyCode: KeyCodes.SPACE
+		});
+
+		// Act
+		oCard.getDomRef().dispatchEvent(oCardEvent);
+		oTextArea.getDomRef().dispatchEvent(oTextAreaEvent);
+
+		// Assert
+		assert.strictEqual(oCardEvent.defaultPrevented, true, "Default action of 'Space' keydown is prevented on card");
+		assert.strictEqual(oTextAreaEvent.defaultPrevented, false, "Default action of 'Space' keydown is not prevented on TextArea");
 
 		oCard.destroy();
 	});

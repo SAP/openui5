@@ -1074,7 +1074,13 @@
 
 		// first cleanup on an old loader
 		if ( _globalDefine ) {
-			_globalDefine.amd = _globalDefineAMD;
+			// restore old amd flag as normal property
+			Object.defineProperty(_globalDefine, "amd", {
+				value: _globalDefineAMD,
+				configurable: true,
+				enumerable: true,
+				writable: true
+			});
 			_globalDefine =
 			_globalDefineAMD = undefined;
 		}
@@ -1104,6 +1110,8 @@
 		}
 	}
 
+	updateDefineAndInterceptAMDFlag(__global.define);
+
 	try {
 		Object.defineProperty(__global, "define", {
 			get: function() {
@@ -1116,10 +1124,8 @@
 			configurable: true // we have to allow a redefine for debug mode or restart from CDN etc.
 		});
 	} catch (e) {
-		log.warning("could not intercept changes to window.define, ui5loader won't be able to a change of the AMD loader");
+		log.warning("could not intercept changes to window.define, ui5loader won't be able to detect a change of the AMD loader");
 	}
-
-	updateDefineAndInterceptAMDFlag(__global.define);
 
 	// --------------------------------------------------------------------------------------------
 

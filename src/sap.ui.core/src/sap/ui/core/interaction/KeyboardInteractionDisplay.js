@@ -70,19 +70,23 @@ sap.ui.define([
 		}
 
 		if (!sAccessibilityInfoLabel) {
-			const ARIA_LABELLED_BY_SELECTOR = "[aria-labelledby]";
 			const ARIA_LABELLED_BY_ATTR = "aria-labelledby";
 
-			const oDomRef = oControl.getDomRef();
+			let sAriaLabelledById;
+			let oCurrent = oControl;
 
-			let sAriaLabelledById = oDomRef.getAttribute(ARIA_LABELLED_BY_ATTR);
-			if (!sAriaLabelledById) {
-				const oFirstAriaLabelledBy = oDomRef.querySelector(ARIA_LABELLED_BY_SELECTOR);
-				const activeElement = document.activeElement;
+			while (oCurrent && !sAriaLabelledById) {
+				const oDomRef = oControl.getDomRef();
 
-				if (oFirstAriaLabelledBy?.contains(activeElement)) {
-					sAriaLabelledById = oFirstAriaLabelledBy.getAttribute(ARIA_LABELLED_BY_ATTR);
+				if (oDomRef.hasAttribute(ARIA_LABELLED_BY_ATTR)) {
+					sAriaLabelledById = oDomRef.getAttribute(ARIA_LABELLED_BY_ATTR);
+				} else {
+					const oLabelledByElement = oDomRef.querySelector("[aria-labelledby]");
+					if (oLabelledByElement) {
+						sAriaLabelledById = oLabelledByElement.getAttribute(ARIA_LABELLED_BY_ATTR);
+					}
 				}
+				oCurrent = oCurrent.getParent?.();
 			}
 
 			sAccessibilityInfoLabel = sAriaLabelledById

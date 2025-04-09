@@ -262,11 +262,11 @@ sap.ui.define([
 		const mExpected = {
 			"Save": {
 				"shortcut": "Ctrl+S",
-				"description": "save"
+				"description": "Save"
 			},
 			"Create": {
 				"shortcut": "Ctrl+Enter",
-				"description": "create"
+				"description": "Create"
 			}
 		};
 

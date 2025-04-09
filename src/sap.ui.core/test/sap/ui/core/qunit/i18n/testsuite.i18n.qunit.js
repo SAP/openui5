@@ -62,6 +62,12 @@ sap.ui.define(function() {
 					only: "sap/ui/core/date/Persian"
 				}
 			},
+			"LanguageFallback": {
+				module: "./../base/i18n/LanguageFallback.qunit",
+				coverage: {
+					only: "sap/base/i18n/LanguageFallback"
+				}
+			},
 			"ResourceBundle": {
 				module: "./../base/i18n/ResourceBundle.qunit",
 				coverage: {
