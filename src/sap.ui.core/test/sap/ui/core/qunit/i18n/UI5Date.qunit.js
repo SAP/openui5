@@ -1046,6 +1046,8 @@ sap.ui.define([
 	QUnit.test("UI5Date: timestamp string is interpreted as a local timestamp", function (assert) {
 		var oExpectation, oUI5Date,
 			aArguments = [sLocalTimestamp],
+			// setting the local time to 2025-01-05 02:00 to simulate a time far away from DST switch
+			oClock = sinon.useFakeTimers({now: new Date(2025, 0, 5, 2)}),
 			oJSDate = new Date(), // no need to use UI5Date.getInstance
 			oJSDateMock = this.mock(oJSDate);
 
@@ -1068,6 +1070,8 @@ sap.ui.define([
 		oUI5Date = new UI5Date(aArguments, "Pacific/Honolulu");
 
 		assert.strictEqual(oExpectation.thisValues[0], oUI5Date);
+
+		oClock.restore();
 	});
 });
 
