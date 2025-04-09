@@ -54,6 +54,7 @@
 @_sap_tnt_NavigationList_Collapsed_HoverOrFocusItemPosition: relative;
 @_sap_tnt_NavigationList_Collapsed_ItemHoverBoxShadow: @_sap_tnt_SideNavigation_BoxShadow;
 @_sap_tnt_NavigationList_CollapsedIconPaddingLeft: 0;
+@_sap_tnt_NavigationList_CollapsedHiddenExpanderPadding: 0;
 @_sap_tnt_NavigationList_NavigationIndicator: "";
 @_sap_tnt_NavigationList_ExpandIconWidth: 2rem;
 @_sap_tnt_NavigationList_ExpandIconMarginRight: 0;
@@ -308,7 +309,7 @@
 	user-select: none;
 }
 
-.sapTntNLI.sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapTntNLIExpandIcon {
+.sapTntNL:not(.sapTntNLCollapsed) .sapTntNLI.sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapTntNLIExpandIcon {
 	margin-left: 1rem;
 }
 
@@ -390,7 +391,7 @@
 		&.sapTntNLITwoClickAreas:not(.sapTntNLIWithExpander) {
 			[tabindex]:hover,
 			[tabindex]:focus {
-				padding-right: 1rem;
+				padding-right: @_sap_tnt_NavigationList_CollapsedHiddenExpanderPadding;
 			}
 		}
 	}
@@ -465,9 +466,12 @@
 }
 
 .sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapUiIcon:last-of-type {
-	border-left: 0.0625rem solid @sapTextColor;
 	height: @sapUiElementCondensedHeight;
 	line-height: @sapUiElementCondensedHeight;
+}
+
+.sapTntNL:not(.sapTntNLCollapsed) .sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapUiIcon:last-of-type {
+	border-left: 0.0625rem solid @sapTextColor;
 }
 
 .sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapUiIcon:last-of-type::before {
