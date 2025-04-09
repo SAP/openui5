@@ -1444,8 +1444,66 @@ sap.ui.define([
 
 			const oBoundListOverlay = OverlayRegistry.getOverlay(this.oBoundList);
 			const aAggregationTemplateOverlays = oBoundListOverlay.getAggregationBindingTemplateOverlays();
-			assert.strictEqual(aAggregationTemplateOverlays.length, 1, "then the aggregation overlay for the aggregation template exists");
-			assert.strictEqual(aAggregationTemplateOverlays[0].getChildren().length, 1, "and has the template as child");
+			const aElementOverlayChildren = oBoundListOverlay.getAggregationOverlay("items").getChildren();
+			assert.strictEqual(
+				aAggregationTemplateOverlays.length,
+				1,
+				"then the aggregation overlay for the aggregation template exists"
+			);
+			assert.strictEqual(
+				aAggregationTemplateOverlays[0].getChildren().length,
+				1,
+				"and has the template as child created just once"
+			);
+			assert.strictEqual(
+				aElementOverlayChildren.length,
+				2,
+				"then the element overlay children are created once"
+			);
+			assert.strictEqual(
+				aElementOverlayChildren.some((oOverlay) => oOverlay.bIsDestroyed),
+				false,
+				"then children overlays are not destroyed"
+			);
+		});
+
+		QUnit.test("rebind element after overlay creation is finished", async function(assert) {
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oHorizontalLayout]
+			});
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			this.oBoundList.bindAggregation("items", {
+				path: "/",
+				template: this.oCustomListItemTemplate,
+				templateShareable: true
+			});
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			// the binding overlay creation starts after the first designtime sync
+			await DtUtil.waitForSynced(this.oDesignTime)();
+
+			const oBoundListOverlay = OverlayRegistry.getOverlay(this.oBoundList);
+			const aAggregationTemplateOverlays = oBoundListOverlay.getAggregationBindingTemplateOverlays();
+			const aElementOverlayChildren = oBoundListOverlay.getAggregationOverlay("items").getChildren();
+			assert.strictEqual(
+				aAggregationTemplateOverlays.length,
+				1,
+				"then the aggregation overlay for the aggregation template exists"
+			);
+			assert.strictEqual(
+				aAggregationTemplateOverlays[0].getChildren().length,
+				1,
+				"and has the template as child created just once"
+			);
+			assert.strictEqual(
+				aElementOverlayChildren.length,
+				2,
+				"then the element overlay children are created once"
+			);
+			assert.strictEqual(
+				aElementOverlayChildren.some((oOverlay) => oOverlay.bIsDestroyed),
+				false,
+				"then children overlays are not destroyed"
+			);
 		});
 	});
 

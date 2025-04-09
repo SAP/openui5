@@ -954,42 +954,67 @@ sap.ui.define([
 	/**
 	 * Destroy children of an aggregation binding template.
 	 * @param {sap.ui.dt.ElementOverlay} oTargetOverlay - ElementOverlay to destroy children for
-	 * @param {string} sAggregationName - Aggregation name
+	 * @param {string} sAggregationName - The name of the aggregation
 	 */
 	DesignTime.prototype._destroyChildrenForAggregationBindingTemplate = async function(oTargetOverlay, sAggregationName) {
 		await Util.waitForSynced(this)();
+
+		// 1. Destroy template root overlays
 		const oTemplateRootOverlays = oTargetOverlay.getAggregationBindingTemplateOverlays();
 		oTemplateRootOverlays.forEach((oTemplateRootOverlay) => {
 			if (oTemplateRootOverlay.getAggregationName() === sAggregationName) {
 				oTemplateRootOverlay.destroy();
 			}
 		});
+
+		// 2. Destroy children overlays of given aggregation
+		oTargetOverlay.getAggregationOverlay(sAggregationName).destroy();
 	};
 
 	/**
 	 * Create children of an aggregation binding template. It is called when the aggregation binding
 	 * is changed during runtime.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - ElementOverlay to create children for
+ 	 * @param {string} sAggregationName - The name of the aggregation
 	 * @returns {Promise} Resolves when whole hierarchy of children for specified ElementOverlay is created
 	 * @private
 	 */
-	DesignTime.prototype._createChildrenForAggregationBindingTemplate = async function(oElementOverlay) {
+	DesignTime.prototype._createChildrenForAggregationBindingTemplate = async function(oElementOverlay, sAggregationName) {
+		// 1. Wait for DesignTime to be synced
 		await Util.waitForSynced(this)();
-		const aAggregationNames = oElementOverlay.getAggregationNames();
+
+		const oTemplateRootOverlays = oElementOverlay.getAggregationBindingTemplateOverlays();
 		const mParentAggregationMetadata = oElementOverlay.getDesignTimeMetadata().getData();
-		const mAggregationBindingTemplates = getAggregationBindingTemplates(oElementOverlay, aAggregationNames);
-		const aTemplateAggregationNames = Object.keys(mAggregationBindingTemplates);
+		const mAggregationBindingTemplates = getAggregationBindingTemplates(oElementOverlay, [sAggregationName]);
+		const aTemplateAggregationNames = [sAggregationName];
+		const aAggregationNames = [sAggregationName];
+
+		// 2. Destroy children overlays when already created
+		if (oTemplateRootOverlays.length) {
+			// Destroy children for the aggregation as well as the aggregation binding template overlays
+			await this._destroyChildrenForAggregationBindingTemplate(oElementOverlay, sAggregationName);
+		}
+
+		// 3. Create new template overlays
 
 		// Consider each aggregation binding template which is not nested inside an existing template structure as a root template
 		// Separate root templates and their children from the instances of the root template as well as all nested template instances
 		const bHasTemplateAggregation = !isEmptyObject(mAggregationBindingTemplates);
 
-		return this._createChildrenOverlays(
+		await this._createChildrenOverlays(
 			oElementOverlay,
 			mParentAggregationMetadata,
 			aTemplateAggregationNames,
 			bHasTemplateAggregation,
 			mAggregationBindingTemplates
+		);
+
+		// 4. Create new children overlays
+		await this._createChildrenOverlays(
+			oElementOverlay,
+			mParentAggregationMetadata,
+			aAggregationNames,
+			false
 		);
 	};
 
@@ -1304,7 +1329,7 @@ sap.ui.define([
 				}
 				break;
 			case "bindAggregation":
-				this._createChildrenForAggregationBindingTemplate(oElementOverlay);
+				this._createChildrenForAggregationBindingTemplate(oElementOverlay, oParams.name);
 				break;
 			case "unbindAggregation":
 				this._destroyChildrenForAggregationBindingTemplate(oElementOverlay, oParams.name);
