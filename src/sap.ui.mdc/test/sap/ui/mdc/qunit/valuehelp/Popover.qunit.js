@@ -83,6 +83,9 @@ sap.ui.define([
 		getFilterValue() {
 			return oValueHelp.filterValue;
 		},
+		_requestShowContainer() {
+			return true;
+		},
 		bDelegateInitialized: true
 	};
 	let oValueHelpConfig;
@@ -117,11 +120,20 @@ sap.ui.define([
 		assert.notOk(oPopover.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oPopover.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
-		let bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick");
-		bShouldOpen = await oPopover.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
+
+		/**
+		 *  @deprecated As of version 1.136
+		 */
+		assert.notOk(await oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
+		/**
+		 *  @deprecated As of version 1.136
+		 */
+		assert.notOk(await oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		/**
+		 *  @deprecated As of version 1.136
+		 */
 		assert.notOk(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+
 		assert.notOk(oPopover.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.notOk(oPopover.isFocusInHelp(), "isFocusInHelp");
 
@@ -431,7 +443,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Consider canceled opening promise with async showTypeahead", (assert) => {
+	QUnit.test("Consider canceled opening promise with async requestShowContainer", (assert) => {
 
 		const oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		sinon.stub(oContent, "getContainerConfig").returns({
@@ -442,7 +454,7 @@ sap.ui.define([
 		sinon.spy(oPopover, "_openContainerByTarget");
 
 
-		sinon.stub(ValueHelpDelegate, "showTypeahead").callsFake(() => {
+		sinon.stub(oValueHelp, "_requestShowContainer").callsFake(() => {
 			return new Promise((resolve) => {
 				oPopover._cancelPromise("open");
 				resolve(true);
@@ -452,9 +464,9 @@ sap.ui.define([
 		const fnDone = assert.async();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 		setTimeout(() => { // wait until open
-			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during showTypeahead");
+			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during requestShowContainer");
 			oPopover._openContainerByTarget.restore();
-			ValueHelpDelegate.showTypeahead.restore();
+			oValueHelp._requestShowContainer.restore();
 			oIcon.destroy();
 			fnDone();
 		}, iPopoverDuration);
@@ -576,6 +588,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnFocus", async (assert) => {
 
 		const fnFocusStub = sinon.stub(oValueHelp.getControlDelegate(), "shouldOpenOnFocus").returns(true);
@@ -592,6 +607,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
@@ -617,6 +635,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnNavigate").returns(true);
@@ -1420,6 +1441,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnClick").returns(false);

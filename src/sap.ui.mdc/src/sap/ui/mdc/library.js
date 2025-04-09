@@ -294,24 +294,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Defines if the typeahead containers values can be navigated without visibly opening the help
-	 *
-	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContent.shouldOpenOnNavigate
-	 * @function
-	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
-	 * @public
-	 */
-
-	/**
-	 * Defines if the typeahead content desires opening the typeahead whenever a user clicks on a connected control
-	 *
-	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContent.shouldOpenOnClick
-	 * @function
-	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
-	 * @public
-	 */
-
-	/**
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the source control.
 	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContent.removeVisualFocus
 	 * @function
@@ -524,33 +506,6 @@ sap.ui.define([
 	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContainer.isValidationSupported
 	 * @function
 	 * @returns {boolean} True if the typeahead container can be used for input validation
-	 * @public
-	 */
-
-	/**
-	 * Defines if the typeahead containers values can be navigated without visibly opening the help
-	 *
-	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnNavigate
-	 * @function
-	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
-	 * @public
-	 */
-
-	/**
-	 * Defines if the typeahead container desires to be opened whenever a user focuses a connected control
-	 *
-	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnFocus
-	 * @function
-	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
-	 * @public
-	 */
-
-	/**
-	 * Defines if the typeahead container desires to be opened whenever a user clicks on a connected control
-	 *
-	 * @name sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnClick
-	 * @function
-	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
 	 * @public
 	 */
 

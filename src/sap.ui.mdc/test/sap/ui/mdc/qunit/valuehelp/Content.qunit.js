@@ -32,7 +32,14 @@ sap.ui.define([
 	let bIsOpen = false;
 	let bIsOpening = false;
 
-	const oValueHelp = {};
+	const oValueHelp = {
+		getTypeahead: function () {
+			return undefined;
+		},
+		_requestShowContainer: function () {
+			return true;
+		}
+	};
 
 	const oContainer = { //to fake Container
 		getScrollDelegate() {
@@ -112,12 +119,12 @@ sap.ui.define([
 		bIsTypeahead = true;
 		sinon.spy(oContent, "invalidate");
 		sinon.spy(oContent, "handleFilterValueUpdate");
-		sinon.stub(ValueHelpDelegate, "showTypeahead").returns(false);
+		sinon.stub(oValueHelp, "_requestShowContainer").returns(false);
 		oContent.setFilterValue("X");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 		assert.ok(oContent.handleFilterValueUpdate.calledOnce, "handleFilterValueUpdate called");
-		assert.ok(ValueHelpDelegate.showTypeahead.calledOnce, "ValueHelpDelegate.showTypeahead called");
-		ValueHelpDelegate.showTypeahead.restore();
+		assert.ok(oValueHelp._requestShowContainer.calledOnce, "oValueHelp._requestShowContainer called");
+		oValueHelp._requestShowContainer.restore();
 
 		const fnDone = assert.async();
 		setTimeout(() => { // as Promise inside
@@ -377,12 +384,18 @@ sap.ui.define([
 		assert.equal(oContent.isSingleSelect(), true, "single-select correctly determined from maxConditions");
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		assert.notOk(oContent.shouldOpenOnClick(), "shouldOpenOnClick");
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		oContent.setConfig({maxConditions: -1});

@@ -33,7 +33,8 @@ sap.ui.define([
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/events/KeyCodes',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'sap/ui/mdc/enums/RequestShowContainerReason'
 ], (
 	Element,
 	Library,
@@ -66,7 +67,8 @@ sap.ui.define([
 	ManagedObjectModel,
 	ManagedObjectObserver,
 	KeyCodes,
-	Device
+	Device,
+	RequestShowContainerReason
 ) => {
 	"use strict";
 
@@ -662,7 +664,7 @@ sap.ui.define([
 				handleTokenUpdate: _handleTokenUpdate.bind(this),
 				handleContentChange: _handleContentChange.bind(this),
 				handleContentLiveChange: _handleContentLiveChange.bind(this),
-				handleValueHelpRequest: _handleValueHelpRequest.bind(this),
+				handleValueHelpRequest: _handleContentValueHelpRequest.bind(this),
 				handleEnter: _handleEnter.bind(this),
 				handleContentPress: _handleContentPress.bind(this)
 			});
@@ -674,7 +676,7 @@ sap.ui.define([
 		const oValueHelp = _getValueHelp.call(this);
 		const oSuggestControl = this.getControlForSuggestion();
 		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp && !this._iFocusTimer && !oValueHelp.isOpen() && containsOrEquals(oSuggestControl.getDomRef(), oEvent.target)) {
-			oValueHelp.shouldOpenOnFocus().then((bShouldOpen) => {
+			oValueHelp.requestShowTypeahead(RequestShowContainerReason.Focus).then((bShouldOpen) => {
 				if (bShouldOpen) {
 					this._iFocusTimer = setTimeout(() => {
 						if (!this.isFieldDestroyed() && !oValueHelp.isOpen() && _isFocused.call(this)) {
@@ -885,7 +887,7 @@ sap.ui.define([
 		this._handleNavigate(oEvent, 9999); // iStep are relative and can not be set to the last item
 	};
 
-	FieldBase.prototype._handleNavigate = function(oEvent, iStep) {
+	FieldBase.prototype._handleNavigate = async function(oEvent, iStep) {
 
 		if (this.getEditMode() === FieldEditMode.Editable) {
 			const oValueHelp = _getValueHelp.call(this);
@@ -902,6 +904,11 @@ sap.ui.define([
 					oEvent.stopPropagation();
 					if (!bOpen) {
 						oValueHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value (only update if not already opened)
+						const bShowTypeahead = await oValueHelp.requestShowTypeahead(RequestShowContainerReason.Navigate);
+						if (!this.isFieldDestroyed() && !oValueHelp.isOpen() && bShowTypeahead) {
+							await _handleValueHelpRequest.call(this, oEvent, true);
+						}
+
 					}
 					oValueHelp.navigate(bOpen && bFocusInField && iStep === 1 ? 0 : iStep); // on first navigation just initial selected item should be navigated
 				}
@@ -943,12 +950,7 @@ sap.ui.define([
 		}
 	};
 
-	FieldBase.prototype.ontap = function(oEvent) {
-
-		if (oEvent.isMarked("tokenTap") || oEvent.getMark("tokenizerMoreIndicatorTap") || oEvent.srcControl.isA("sap.ui.core.Icon")) {
-			return; // only open if taped into input area (MultiInput case) and not at ValueHelp-Icon
-		}
-
+	FieldBase.prototype._requestShowTypeahead = function(oEvent, sReason) {
 		// in "Select"-case the suggestion help should open on click into field
 		const oValueHelp = _getValueHelp.call(this);
 		const oSuggestControl = this.getControlForSuggestion();
@@ -958,7 +960,7 @@ sap.ui.define([
 			}
 			const bTapBeforeFocus = !_isFocused.call(this); // on thone the Focus event is triggered async after the Tap event
 			if (!oValueHelp.isOpen()) {
-				oValueHelp.shouldOpenOnClick().then((bShouldOpen) => {
+				oValueHelp.requestShowTypeahead(sReason).then((bShouldOpen) => {
 					if (bShouldOpen && !this.isFieldDestroyed() && (bTapBeforeFocus || _isFocused.call(this)) && !oValueHelp.isOpen()) {
 						if (bTapBeforeFocus) {
 							oSuggestControl.focus(); // if focus not already set (on phone) set it now before the popover opens
@@ -969,7 +971,19 @@ sap.ui.define([
 			}
 			this._redirectFocus(oEvent, oValueHelp);
 		}
+	};
 
+	FieldBase.prototype.onkeyup = function(oEvent) {
+		if (oEvent.keyCode === KeyCodes.TAB) {
+			this._requestShowTypeahead(oEvent, RequestShowContainerReason.Tab);
+		}
+	};
+
+	FieldBase.prototype.ontap = function(oEvent) {
+		if (oEvent.isMarked("tokenTap") || oEvent.getMark("tokenizerMoreIndicatorTap") || oEvent.srcControl.isA("sap.ui.core.Icon")) {
+			return; // only open if taped into input area (MultiInput case) and not at ValueHelp-Icon
+		}
+		this._requestShowTypeahead(oEvent, RequestShowContainerReason.Tap);
 	};
 
 	FieldBase.prototype.clone = function(sIdSuffix, aLocalIds) {
@@ -1807,7 +1821,7 @@ sap.ui.define([
 		const aLabels = LabelEnablement.getReferencingLabels(this);
 		for (let i = 0; i < aLabels.length; i++) {
 			const oLabel = Element.getElementById(aLabels[i]);
-			oLabel.setLabelFor(oLabel.getLabelFor()); // to force Label to refreh the mapping
+			oLabel.setLabelFor(oLabel.getLabelFor()); // to force Label to refresh the mapping
 			oLabel.invalidate();
 		}
 
@@ -1954,7 +1968,7 @@ sap.ui.define([
 		}
 		if (oContent.getMetadata().getAllEvents().valueHelpRequest) {
 			// content has valueHelpRequest event -> attach handler
-			oContent.attachEvent("valueHelpRequest", _handleValueHelpRequest, this);
+			oContent.attachEvent("valueHelpRequest", _handleContentValueHelpRequest, this);
 		}
 		if (oContent.getMetadata().getAllEvents().tokenUpdate) {
 			// content has tokenUpdate event -> attach handler
@@ -1966,6 +1980,7 @@ sap.ui.define([
 		}
 
 	}
+
 
 	function _detachContentHandlers(oContent) {
 
@@ -1983,7 +1998,7 @@ sap.ui.define([
 		}
 		if (oContent.getMetadata().getAllEvents().valueHelpRequest) {
 			// oldContent has valueHelpRequest event -> detach handler
-			oContent.detachEvent("valueHelpRequest", _handleValueHelpRequest, this);
+			oContent.detachEvent("valueHelpRequest", _handleContentValueHelpRequest, this);
 		}
 		if (oContent.getMetadata().getAllEvents().tokenUpdate) {
 			// content has tokenUpdate event -> deattach handler
@@ -2647,22 +2662,12 @@ sap.ui.define([
 							}.bind(this);
 
 							if (this._bConnected && this.getCurrentContent()[0]) {
-								oValueHelp.isTypeaheadSupported().then((bTypeahead) => {
+								oValueHelp.requestShowTypeahead(RequestShowContainerReason.Typing).then((bTypeahead) => {
 									return !!bTypeahead && _handleTypeahead();
 								});
 								delete this._vLiveChangeValue;
 							}
 						}, 300, { leading: false, trailing: true });
-					}
-					const vOpenByTyping = oValueHelp.isTypeaheadSupported(); // trigger determination of search functionality
-					if (vOpenByTyping instanceof Promise) {
-						vOpenByTyping.then((bOpenByTyping) => {
-							// trigger open after Promise resolved
-							if (_isFocused.call(this) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
-								this._fnLiveChangeTimer(); // if resolved while initial debounce-time frame, it will not triggered twice
-							}
-							this._bOpenByTyping = bOpenByTyping;
-						});
 					}
 					this._fnLiveChangeTimer();
 				}
@@ -2791,6 +2796,12 @@ sap.ui.define([
 			}
 		}
 
+	}
+
+	async function _handleContentValueHelpRequest(oEvent) {
+		if (await _getValueHelp.call(this)?.requestShowValueHelp()) {
+			_handleValueHelpRequest.call(this, oEvent, false);
+		}
 	}
 
 	// TODO: remove this function and replace by getValueHelp once ValueHelp association is completetly removed.

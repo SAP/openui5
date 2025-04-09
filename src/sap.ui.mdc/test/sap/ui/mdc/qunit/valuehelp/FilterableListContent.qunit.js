@@ -40,14 +40,45 @@ sap.ui.define([
 	let oContent;
 	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
+	const oValueHelp = {
+		getTypeahead: function () {
+			return undefined;
+		},
+		_requestShowContainer: function () {
+			return true;
+		}
+	};
+
+	const oContainer = { //to fake Container
+		getValueHelp() {
+			return oValueHelp;
+		},
+		isOpen() {
+			return false;
+		},
+		isOpening() {
+			return false;
+		},
+		getControl() {
+			return "Control"; // just to test forwarding
+		},
+		getLocalFilterValue: function () {
+			return undefined;
+		}
+	};
 	const _init = () => {
 		oContent = new FilterableListContent("FLC1");
 		sinon.stub(oContent, "getValueHelpDelegate").returns(ValueHelpDelegate);
 		sinon.stub(oContent, "isValueHelpDelegateInitialized").returns(true);
+		sinon.stub(oContent, "getParent").returns(oContainer);
+		oContent.oParent = oContainer; // fake
 		oContent.getListBinding = () => null; // fake implementation
 	};
 
 	const _teardown = () => {
+		oContent.getValueHelpDelegate.restore();
+		oContent.isValueHelpDelegateInitialized.restore();
+		oContent.getParent.restore();
 		oContent.destroy();
 		oContent = null;
 	};
@@ -59,7 +90,7 @@ sap.ui.define([
 
 	QUnit.test("handleFilterValueUpdate", (assert) => {
 		sinon.spy(oContent, "applyFilters");
-		sinon.spy(ValueHelpDelegate, "showTypeahead");
+		sinon.spy(oValueHelp, "_requestShowContainer");
 		sinon.stub(oContent, "isContainerOpen").returns(true);
 		sinon.stub(oContent, "isTypeahead").returns(true);
 		oContent._bContentBound = true;
@@ -69,8 +100,8 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(() => { // as Promise inside
-			assert.ok(ValueHelpDelegate.showTypeahead.calledOnce, "ValueHelpDelegate.showTypeahead called");
-			ValueHelpDelegate.showTypeahead.restore();
+			assert.ok(oValueHelp._requestShowContainer.calledOnce, "oValueHelp._requestShowContainer called");
+			oValueHelp._requestShowContainer.restore();
 			fnDone();
 		}, 0);
 	});
@@ -138,7 +169,7 @@ sap.ui.define([
 				sLocalFilter = sValue;
 			}
 		};
-		sinon.stub(oContent, "getParent").returns(oContainer);
+		oContent.getParent.returns(oContainer);
 		oContent.onContainerClose();
 		assert.notOk(sLocalFilter, "LocalFilter cleared");
 	});
@@ -208,7 +239,7 @@ sap.ui.define([
 				return false;
 			}
 		};
-		sinon.stub(oContent, "getParent").returns(oContainer);
+		oContent.getParent.returns(oContainer);
 		oContent.setFilterValue("I");
 		const oConditions = {test: [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated)]};
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oConditions);
@@ -292,7 +323,7 @@ sap.ui.define([
 				return false;
 			}
 		};
-		sinon.stub(oContent, "getParent").returns(oContainer);
+		oContent.getParent.returns(oContainer);
 		oContent.setFilterValue("I");
 		const oConditions = {test: [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated)]};
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oConditions);

@@ -158,9 +158,9 @@ sap.ui.define([
 
 	FilterableListContent.prototype.handleFilterValueUpdate = function(oChanges) {
 		if ((this.isContainerOpening() || this.isContainerOpen()) && this._bContentBound) {
-			Promise.resolve(this.applyFilters()).finally(function() {
-				ListContent.prototype.handleFilterValueUpdate.apply(this, arguments);
-			}.bind(this));
+			Promise.resolve(this.applyFilters()).finally(() => {
+				ListContent.prototype.handleFilterValueUpdate.call(this, oChanges);
+			});
 		}
 	};
 

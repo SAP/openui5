@@ -314,6 +314,21 @@ sap.ui.define([
 		oFakeContent.getCaseSensitive.restore();
 	});
 
+	QUnit.test("requestShowContainer", async (assert) => {
+		const oFakeContainer = {
+			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
+			getOpensOnFocus: () => true
+		};
+
+		oFakeContainer.getOpensOnFocus = () => true;
+		oFakeContainer.isA = () => false;
+		const bShouldOpen = await ValueHelpDelegate.shouldOpenOnFocus(oFakeValueHelp, oFakeContainer);
+		assert.notOk(bShouldOpen, "other Container");
+	});
+
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnFocus", async (assert) => {
 		const oFakeContainer = {
 			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
@@ -338,6 +353,9 @@ sap.ui.define([
 		assert.notOk(bShouldOpen, "other Container");
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("shouldOpenOnClick", async (assert) => {
 		const oFakeContainer = {
 			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
