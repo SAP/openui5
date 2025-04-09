@@ -131,6 +131,14 @@ sap.ui.define([
 						},
 						errorMessage: "Could not find card"
 					});
+				},
+				iStopSpyingOnCardActionEvent: function () {
+					return this.waitFor({
+						id: "cardSample",
+						actions: function (oCard) {
+							oCard.detachAction(oActionEventStub);
+						}
+					});
 				}
 			},
 
@@ -217,6 +225,18 @@ sap.ui.define([
 						errorMessage: "Could not find card with manifest id " + sManifestId
 					});
 				},
+				iShouldSeeCardActionEventCalls: function () {
+					return this.waitFor({
+						check: function () {
+							return oActionEventStub.called;
+						},
+						success: function () {
+							Opa5.assert.ok(true, "Action event was called.");
+							oActionEventStub.reset();
+						},
+						errorMessage: "Action event was NOT called."
+					});
+				},
 				iShouldSeeNoCardActionEventCalls: function () {
 					return this.waitFor({
 						check: function () {
@@ -226,11 +246,6 @@ sap.ui.define([
 							Opa5.assert.ok(true, "Action event was not called.");
 						},
 						errorMessage: "Action event was called."
-					}).and.waitFor({
-						id: "cardSample",
-						success: function (oCard) {
-							oCard.detachAction(oActionEventStub);
-						}
 					});
 				}
 			}
