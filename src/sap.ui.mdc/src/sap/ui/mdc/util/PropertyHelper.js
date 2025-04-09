@@ -283,17 +283,35 @@ sap.ui.define([
 	];
 	const _private = new WeakMap();
 
-	function stringifyPlainObject(oObject) {
-		return JSON.stringify(oObject, (sKey, oValue) => {
-			return oValue === undefined ? null : oValue;
-		}) || "";
+
+	/**
+	 *
+	 * @param {string} sMessage Additional message that should be shown in the error
+	 * @param {Object | Array} vProperty Property or array of objects with property keys as keys
+	 * @returns {string} Error message that should be thrown
+	 */
+	function getErrorMessage(sMessage, vProperty) {
+		let sError = "";
+
+
+		if (!vProperty) {
+			sError = `Invalid property definition: ${sMessage}`;
+		} else if (Array.isArray(vProperty)) {
+			const sPropertyKeys = vProperty.map((oProp) => `'${Object.keys(oProp)[0]}'`).join(",");
+			sError = `Invalid property definition for properties with keys ${sPropertyKeys}: ${sMessage}`;
+		} else {
+			const sPropertyKey = vProperty.key ?? vProperty.name;
+			sError = `Invalid property definition for property with key '${sPropertyKey}': ${sMessage}`;
+		}
+		return sError;
 	}
 
 	function reportInvalidProperty(sMessage, oProperty) {
-		const sAdditionalInfo = stringifyPlainObject(oProperty);
+		const sError = getErrorMessage(sMessage, oProperty);
+
 		// implementation for this flag is within PropertyHelperMixin#_checkValidationExceptions
 		if (PropertyHelperUtil.bValidationException) {
-			future.errorThrows(`Invalid property definition: ${sMessage} ${sAdditionalInfo ? `\n${sAdditionalInfo}` : ""}.`, {
+			future.errorThrows(sError, {
 				suffix: `Migrate this control's propertyInfo to avoid breaking changes in the future.`
 			});
 		} else {
@@ -302,8 +320,8 @@ sap.ui.define([
 	}
 
 	function throwInvalidPropertyError(sMessage, oProperty) {
-		const sAdditionalInfo = oProperty ? stringifyPlainObject(oProperty) : null;
-		throw new Error("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
+		const sError = getErrorMessage(sMessage, oProperty);
+		throw new Error(sError);
 	}
 
 	function enrichProperties(oPropertyHelper, aProperties) {
