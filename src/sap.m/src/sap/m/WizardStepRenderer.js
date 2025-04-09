@@ -24,6 +24,7 @@ sap.ui.define(function () {
 				role: "region"
 			})
 			.class("sapMWizardStep")
+			.attr("data-sap-ui-customfastnavgroup", true)
 			.openEnd();
 	};
 
