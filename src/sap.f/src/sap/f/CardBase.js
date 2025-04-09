@@ -352,34 +352,25 @@ sap.ui.define([
 			return;
 		}
 
-		if ((oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER || oEvent.which === KeyCodes.ESCAPE || oEvent.which === KeyCodes.SHIFT)
-			&& !oEvent.ctrlKey && !oEvent.metaKey) {
-
+		if (oEvent.target === this.getDomRef() && !oEvent.ctrlKey && !oEvent.metaKey) {
 			if (oEvent.which === KeyCodes.ENTER) {
 				this._handleTap(oEvent);
-			}
-
-			if (oEvent.which === KeyCodes.SPACE) {
+			} else if (oEvent.which === KeyCodes.SPACE) {
 				// To prevent the browser scrolling.
 				oEvent.preventDefault();
-			}
-
-			if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			} else if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
 				this._bPressedEscapeOrShift = true;
 			}
 		}
-
 	};
 
 	CardBase.prototype.onkeyup = function (oEvent) {
-		if (oEvent.which === KeyCodes.SPACE) {
-			if (!this._bPressedEscapeOrShift) {
+		if (oEvent.target === this.getDomRef()) {
+			if (oEvent.which === KeyCodes.SPACE && !this._bPressedEscapeOrShift) {
 				this._handleTap(oEvent);
+			} else if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+				this._bPressedEscapeOrShift = false;
 			}
-		}
-
-		if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
-			this._bPressedEscapeOrShift = false;
 		}
 	};
 
