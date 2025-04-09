@@ -54,7 +54,8 @@
 					"sap.tnt.sample.SideNavigation",
 					"sap.tnt.sample.SideNavigationUnselectableParents",
 					"sap.tnt.sample.SideNavigationActions",
-					"sap.tnt.sample.SideNavigationOverlayMode"
+					"sap.tnt.sample.SideNavigationOverlayMode",
+					"sap.tnt.sample.SideNavigationPressEvent"
 				]
 			},
 			{
@@ -117,8 +118,13 @@
 			},
 			{
 				"id": "sap.tnt.sample.SideNavigationOverlayMode",
-				"name": "Side Navigation Overlay Mode",
+				"name": "Side Navigation - Overlay Mode",
 				"description": "SideNavigation in a responsive popover."
+			},
+			{
+				"id": "sap.tnt.sample.SideNavigationPressEvent",
+				"name": "Side Navigation - Press Event",
+				"description": "SideNavigation with press event parameters and preventDefault."
 			},
 			{
 				"id": "sap.tnt.sample.ToolHeader",

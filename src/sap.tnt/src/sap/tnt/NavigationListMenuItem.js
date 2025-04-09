@@ -215,8 +215,45 @@ sap.ui.define([
 	 * @private
 	 */
 	NavigationListMenuItem.prototype.onclick = function (oEvent) {
+		if (!this._navItem._firePress(oEvent, this._navItem)) {
+			return;
+		}
+
 		oEvent.preventDefault();
 		this._openUrl();
+
+		const oNavigationItem = this._navItem;
+		const oNavigationList = oNavigationItem.getNavigationList();
+
+		if (oNavigationItem.getSelectable()) {
+			oNavigationList._selectItem({
+				item: oNavigationItem
+			});
+
+			const oSelectedItemDomRef = oNavigationList.getDomRef().querySelector(".sapTntNLISelected [tabindex]");
+			oSelectedItemDomRef?.focus();
+		}
+
+		const oMenu = this._oMenu;
+
+		if (oNavigationItem.getSelectable() || !oNavigationItem.getItems().length) {
+			oMenu.close();
+			oMenu.destroy();
+		}
+	};
+
+	/**
+	 * Handle the key up event for SPACE and ENTER.
+	 * @param {jQuery.Event} oEvent - the keyboard event.
+	 * @private
+	 */
+	NavigationListMenuItem.prototype.onkeyup = function (oEvent) {
+		if (oEvent.which === KeyCodes.SPACE && this._bSpacePressed && !this._bPressedEscapeOrShift) {
+			this.onclick(oEvent);
+		}
+
+		this._bSpacePressed = false;
+		this._bPressedEscapeOrShift = false;
 	};
 
 	/**
@@ -224,10 +261,15 @@ sap.ui.define([
 	 * @param {jQuery.Event} oEvent - the keyboard event.
 	 * @private
 	 */
-	NavigationListMenuItem.prototype.onkeyup = function (oEvent) {
-
-		if (oEvent.which === KeyCodes.SPACE || oEvent.which === KeyCodes.ENTER) {
-			this._openUrl();
+	NavigationListMenuItem.prototype.onkeydown = function (oEvent) {
+		if (oEvent.which === KeyCodes.ENTER) {
+			this.onclick(oEvent);
+		} else if (oEvent.which === KeyCodes.SPACE) {
+			// To prevent the browser scrolling.
+			this._bSpacePressed = true;
+			oEvent.preventDefault();
+		} else if (oEvent.which === KeyCodes.SHIFT || oEvent.which === KeyCodes.ESCAPE) {
+			this._bPressedEscapeOrShift = true;
 		}
 	};
 
@@ -276,6 +318,7 @@ sap.ui.define([
 		oRM.openStart("a", `${this.getId()}-a`);
 
 		const sTooltip = this.getTooltip_AsString() || this.getText();
+
 		if (sTooltip) {
 			oRM.attr("title", sTooltip);
 		}
