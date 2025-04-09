@@ -98,6 +98,14 @@ sap.ui.define([
 			_singleSelection : {type : "boolean", group : "Behavior", defaultValue : true,  visibility: "hidden"},
 
 			/**
+			 * When set to <code>true</code>, an interval of months will show as selected even when <code>intervalSelection</code> is set to <code>false</code>.
+			 * If there is no currently selected date range, the end of the date range will be the currently focused or hovered date.
+			 *
+			 * @private
+			 */
+			_showSelectedRange : {type : "boolean", group : "Appearance", defaultValue : false,  visibility: "hidden"},
+
+			/**
 			 * number of months in each row
 			 * The value must be between 0 and 12 (0 means just to have all months in one row, independent of the number)
 			 * @since 1.30.0
@@ -292,6 +300,42 @@ sap.ui.define([
 
 	MonthPicker.prototype.getFocusDomRef = function(){
 		return this.getDomRef() && this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+	};
+
+	/**
+	 * Setter for the property <code>intervalSelection</code>. If set to <code>true</code>, an interval of months can be selected.
+	 *
+	 * @param {boolean} bEnabled Indicates if <code>intervalSelection</code> should be enabled
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @public
+	 */
+	MonthPicker.prototype.setIntervalSelection = function(bEnabled){
+		this._setShowSelectedRange(bEnabled);
+
+		return this.setProperty("intervalSelection", bEnabled);
+	};
+
+	/**
+	 * Setter for property <code>_showSelectedRange</code>. If set to <code>true</code>, an interval of months can be shown as selected.
+	 *
+	 * @param {boolean} bEnabled Indicates if <code>_showSelectedRange</code> should be enabled
+	 * @returns {this} Reference to <code>this</code> for method chaining
+	 * @private
+	 */
+	MonthPicker.prototype._setShowSelectedRange = function(bEnabled){
+
+		return this.setProperty("_showSelectedRange", bEnabled);
+	};
+
+	/**
+	 * Getter for property <code>_showSelectedRange</code>. If set to <code>true</code>, an interval of months can be shown as selected.
+	 *
+	 * @returns {boolean} Returns <code>true</code> if <code>_showSelectedRange</code> is enabled
+	 * @private
+	 */
+	MonthPicker.prototype._getShowSelectedRange = function(){
+
+		return this.getProperty("_showSelectedRange");
 	};
 
 	/**
@@ -714,11 +758,12 @@ sap.ui.define([
 	}
 
 	MonthPicker.prototype._isSelectionInProgress = function() {
-		var oSelectedDates = this._getSelectedDates()[0];
+		const bShowInterval = this._getShowSelectedRange();
+		const oSelectedDates = this._getSelectedDates()[0];
 		if (!oSelectedDates) {
 			return false;
 		}
-		return this.getIntervalSelection() && oSelectedDates.getStartDate() && !oSelectedDates.getEndDate();
+		return bShowInterval && oSelectedDates.getStartDate() && !oSelectedDates.getEndDate();
 	};
 
 	MonthPicker.prototype._extractMonth = function(oCalItem) {
@@ -1054,6 +1099,8 @@ sap.ui.define([
 	 */
 	MonthPicker.prototype._isMonthSelected = function(oCurrentDate) {
 		const aSelectedDateRanges = this.getSelectedDates();
+		const bShowInterval = this._getShowSelectedRange();
+
 		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
@@ -1062,7 +1109,7 @@ sap.ui.define([
 		const oStartDate = oDateRange.getStartDate();
 		const oEndDate = oDateRange.getEndDate();
 
-		if (this.getIntervalSelection() && oStartDate && oEndDate) {
+		if (bShowInterval && oStartDate && oEndDate) {
 			const oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
 			const oCalEndDate = CalendarDate.fromLocalJSDate(oEndDate, this._getPrimaryCalendarType());
 
@@ -1097,6 +1144,8 @@ sap.ui.define([
 	 */
 	MonthPicker.prototype._isMonthInsideSelectionRange = function(oCurrentDate) {
 		const aSelectedDateRanges = this.getSelectedDates();
+		const bShowInterval = this._getShowSelectedRange();
+
 		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
@@ -1106,7 +1155,7 @@ sap.ui.define([
 			return false;
 		}
 
-		if (this.getIntervalSelection()) {
+		if (bShowInterval) {
 			const oStartDate = oDateRange.getStartDate();
 			const oEndDate = oDateRange.getEndDate();
 
