@@ -3480,9 +3480,6 @@ sap.ui.define([
 	 */
 	ManagedObject.prototype.updateModelProperty = function(sName, oValue, oOldValue) { };
 
-	// a non-falsy value used as default for 'templateShareable'.
-	var MAYBE_SHAREABLE_OR_NOT = 1;
-
 	/**
 	 * Configuration for the binding of a managed aggregation of cardinality 0..n.
 	 *
@@ -3498,15 +3495,14 @@ sap.ui.define([
 	 *   Name of the model to bind against; when <code>undefined</code> or omitted, the default model is used
 	 * @property {sap.ui.base.ManagedObject} [template]
 	 *   The template to clone for each item in the aggregation; either a template or a factory must be given
-	 * @property {boolean} [templateShareable=undefined]
+	 * @property {boolean} [templateShareable=false]
 	 *   Whether the framework should assume that the application takes care of the lifecycle of the given
 	 *   template; when set to <code>true</code>, the template can be used in multiple bindings, either in
 	 *   parallel or over time, and the framework won't clone it when this <code>ManagedObject</code> is cloned;
 	 *   when set to <code>false</code>, the lifecycle of the template is bound to the lifecycle of the binding,
 	 *   when the aggregation is unbound or when this <code>ManagedObject</code> is destroyed, the template also
 	 *   will be destroyed, and when this  <code>ManagedObject</code> is cloned, the template will be cloned
-	 *   as well; the third option (<code>undefined</code>) only exists for compatibility reasons, its behavior
-	 *   is not fully reliable and it may leak the template
+	 *   as well
 	 * @property {function(string, sap.ui.model.Context):sap.ui.base.ManagedObject} [factory]
 	 *   A factory function that will be called to create an object for each item in the aggregation;
 	 *   this is an alternative to providing a template object and can be used when the objects should differ
@@ -3615,17 +3611,11 @@ sap.ui.define([
 
 		if (vBindingInfo.template) {
 			// set default for templateShareable
-			if ( vBindingInfo.template._sapui_candidateForDestroy ) {
-				throw new Error("A binding template that is marked as 'candidate for destroy' is reused in a binding. " +
-				"You can use 'templateShareable:true' to fix this issue for all bindings that are affected " +
-				"(The template is used in aggregation '" + sName + "' of object '" + this.getId() + "'). " +
-				"For more information, see documentation under 'Aggregation Binding'.");
-			}
 			if (vBindingInfo.templateShareable === undefined) {
-				vBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
-			} else if (typeof vBindingInfo.templateShareable === "string") {
+				vBindingInfo.templateShareable = false;
+			} else if (typeof vBindingInfo.templateShareable !== "boolean") {
 				throw new Error(
-					`Parameter 'templateShareable' is defined with type boolean but is set for binding template ${vBindingInfo.template.toString()} with string value "${vBindingInfo.templateShareable}". This can easily lead to errors. To avoid unintended behavior, always set the parameter to true or false`
+					`The 'templateShareable' parameter is defined as boolean but is currently set to the non-boolean value "${vBindingInfo.templateShareable}" for the binding template ${vBindingInfo.template.toString()}. This may cause unexpected behavior or runtime errors. To prevent this, set the parameter to true or false, or simply omit it (default is false).`
 				);
 			}
 		}
@@ -3704,12 +3694,9 @@ sap.ui.define([
 				this._unbindAggregation(oBindingInfo, sName);
 			}
 			// remove template if any
-			if (oBindingInfo.template ) {
-				if ( !oBindingInfo.templateShareable && oBindingInfo.template.destroy ) {
+			if (oBindingInfo.template) {
+				if (!oBindingInfo.templateShareable && oBindingInfo.template.destroy) {
 					oBindingInfo.template.destroy();
-				}
-				if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
-					oBindingInfo.template._sapui_candidateForDestroy = true;
 				}
 			}
 			if (this._observer && !this._bIsBeingDestroyed) {
@@ -4478,16 +4465,6 @@ sap.ui.define([
 			if (!oBindingInfo.templateShareable && oBindingInfo.template && oBindingInfo.template.clone) {
 				oCloneBindingInfo.template = oBindingInfo.template.clone(sIdSuffix, aLocalIds);
 				delete oCloneBindingInfo.factory;
-			} else if ( oBindingInfo.templateShareable === MAYBE_SHAREABLE_OR_NOT ) {
-				// a 'clone' operation implies sharing the template (if templateShareable is not set to false)
-				oBindingInfo.templateShareable = oCloneBindingInfo.templateShareable = true;
-
-				throw new Error(
-					"During a clone operation, a template was found that neither was marked with 'templateShareable:true' nor 'templateShareable:false'. " +
-					"The framework won't destroy the template. This could cause errors (e.g. duplicate IDs) or memory leaks " +
-					"(The template is used in aggregation '" + sName + "' of object '" + oSource.getId() + "')." +
-					"For more information, see documentation under 'Aggregation Binding'."
-				);
 			}
 
 			// remove the runtime binding data (otherwise the property will not be connected again!)
