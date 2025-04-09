@@ -230,6 +230,8 @@ sap.ui.define([
 	 */
 	YearRangePicker.prototype._isYearSelected = function(oCurrentYearRangeStart) {
 		const aSelectedDateRanges = this.getSelectedDates();
+		const bShowInterval = this._getShowSelectedRange();
+
 		if (!(aSelectedDateRanges && aSelectedDateRanges.length)) {
 			return false;
 		}
@@ -242,7 +244,7 @@ sap.ui.define([
 		const oStartDate = oDateRange.getStartDate();
 		const oEndDate = oDateRange.getEndDate();
 
-		if (this.getIntervalSelection() && oStartDate && oEndDate) {
+		if (bShowInterval && oStartDate && oEndDate) {
 
 			const oCalStartDate = CalendarDate.fromLocalJSDate(oStartDate, this._getPrimaryCalendarType());
 			oCalStartDate.setMonth(0, 1);

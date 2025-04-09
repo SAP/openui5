@@ -251,6 +251,14 @@ sap.ui.define([
 		}
 	};
 
+	ActionSheet.prototype.onsaptabnext = function(e) {
+		e.preventDefault();
+	};
+
+	ActionSheet.prototype.onsaptabprevious = function(e) {
+		e.preventDefault();
+	};
+
 	ActionSheet.prototype.onBeforeRendering = function() {
 		var sTitle, sPlacement;
 		// The item navigation instance has to be destroyed and created again once the control is rerendered

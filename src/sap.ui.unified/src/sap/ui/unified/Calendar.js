@@ -1158,17 +1158,17 @@ sap.ui.define([
 	Calendar.prototype.setIntervalSelection = function(bEnabled){
 		const oMonthPicker = this._getMonthPicker();
 		if (oMonthPicker) {
-			oMonthPicker.setIntervalSelection(bEnabled);
+			oMonthPicker._setShowSelectedRange(bEnabled);
 		}
 
 		const oYearPicker = this._getYearPicker();
 		if (oYearPicker) {
-			oYearPicker.setIntervalSelection(bEnabled);
+			oYearPicker._setShowSelectedRange(bEnabled);
 		}
 
 		const oYearRangePicker = this._getYearRangePicker();
 		if (oYearRangePicker) {
-			oYearRangePicker.setIntervalSelection(bEnabled);
+			oYearRangePicker._setShowSelectedRange(bEnabled);
 		}
 
 		return this.setProperty("intervalSelection", bEnabled);

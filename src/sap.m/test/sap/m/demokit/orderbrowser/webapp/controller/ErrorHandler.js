@@ -14,11 +14,9 @@ sap.ui.define([
 		 * @alias sap.ui.demo.orderbrowser.controller.ErrorHandler
 		 */
 		constructor : function (oComponent) {
-			this._oResourceBundle = oComponent.getModel("i18n").getResourceBundle();
 			this._oComponent = oComponent;
 			this._oModel = oComponent.getModel();
 			this._bMessageOpen = false;
-			this._sErrorText = this._oResourceBundle.getText("errorText");
 
 			this._oModel.attachMetadataFailed(function (oEvent) {
 				var oParams = oEvent.getParameters();
@@ -42,13 +40,15 @@ sap.ui.define([
 		 * @param {string} sDetails a technical error to be displayed on request
 		 * @private
 		 */
-		_showServiceError : function (sDetails) {
+		_showServiceError : async function (sDetails) {
 			if (this._bMessageOpen) {
 				return;
 			}
 			this._bMessageOpen = true;
+
+			const oResourceBundle = await this._oComponent.getModel("i18n").getResourceBundle();
 			MessageBox.error(
-				this._sErrorText,
+				oResourceBundle.getText("errorText"),
 				{
 					id : "serviceErrorMessageBox",
 					details : sDetails,

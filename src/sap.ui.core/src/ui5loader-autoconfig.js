@@ -275,9 +275,11 @@
 				deps: ['sap/viz/library', 'sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3', 'sap/viz/libs/canvg']
 			},
 			'sap/viz/libs/sap-viz-info-charts': {
+				amd: true,
 				deps: ['sap/viz/libs/sap-viz-info-framework']
 			},
 			'sap/viz/libs/sap-viz-info-framework': {
+				amd: true,
 				deps: ['sap/ui/thirdparty/jquery', 'sap/ui/thirdparty/d3']
 			},
 			'sap/viz/ui5/container/libs/sap-viz-controls-vizcontainer': {

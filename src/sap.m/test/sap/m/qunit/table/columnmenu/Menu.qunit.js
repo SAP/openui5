@@ -50,6 +50,14 @@ sap.ui.define([
 
 	const sText = "Test";
 
+	function menuClosed(oMenu) {
+		return new Promise((resolve) => {
+			oMenu.attachEventOnce("afterClose", function() {
+				resolve();
+			});
+		});
+	}
+
 	QUnit.module("Initialization", {
 		beforeEach: async function() {
 			this.oButton = new Button();
@@ -211,8 +219,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Icons, Labels and Tooltips", function(assert) {
-		const clock = sinon.useFakeTimers();
+	QUnit.test("Icons, Labels and Tooltips", async function(assert) {
 		this.createMenu();
 		this.oColumnMenu.setShowTableSettingsButton(true);
 		this.oColumnMenu.openBy(this.oButton);
@@ -235,14 +242,14 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoColumnsSet,
 					"Illustrated message has correct illustration type");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		this.oColumnMenu.addItem(new ActionItem({label: "Action Item"}));
 		this.oColumnMenu.openBy(this.oButton);
 		let sActionsListTitle = this.oColumnMenu._oItemsContainer._oNavigationList.getHeaderToolbar().getTitleControl().getText();
 		assert.equal(sActionsListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_LIST_ITEMS_ONLY_TITLE"), "Items list title is correct");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		this.oColumnMenu.addQuickAction(new QuickAction({label: "Quick Generic Action", content: new Button({text: "Button"})}));
 		this.oColumnMenu.openBy(this.oButton);
@@ -252,8 +259,7 @@ sap.ui.define([
 		sActionsListTitle = this.oColumnMenu._oItemsContainer._oNavigationList.getHeaderToolbar().getTitleControl().getText();
 		assert.equal(sActionsListTitle, this.oColumnMenu._getResourceText("table.COLUMNMENU_LIST_ITEMS_TITLE"), "Items list title is correct");
 		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
+		await menuClosed(this.oColumnMenu);
 
 		this.oColumnMenu.addQuickAction(new QuickAction({label: "Quick Sort", content: new Button({text: "Button"}), category: "Sort"}));
 		this.oColumnMenu.openBy(this.oButton);
@@ -347,11 +353,9 @@ sap.ui.define([
 			oSpy = this.spy(fnViewSwitch);
 		this.oColumnMenu._oItemsContainer.attachEvent("afterViewSwitch", oSpy);
 
-		const clock = sinon.useFakeTimers();
 		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		clock.tick(500);
-		clock.restore();
+		await nextUIUpdate();
 
 		assert.equal(oSpy.callCount, 1);
 		assert.equal(aCalls[0].source, "$default");
@@ -359,12 +363,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check focus when control specific items are given", async function(assert) {
-		const clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.setShowTableSettingsButton(true);
 		this.oColumnMenu.openBy(this.oButton);
-		clock.tick(500);
-		clock.restore();
 		await nextUIUpdate();
 
 		const sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
@@ -372,12 +373,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check focus when only application specific items are given", async function(assert) {
-		const clock = sinon.useFakeTimers();
 		this.createMenu(true, true, true, false);
 		this.oColumnMenu.setShowTableSettingsButton(true);
 		this.oColumnMenu.openBy(this.oButton);
-		clock.tick(500);
-		clock.restore();
 		await nextUIUpdate();
 
 		const sId = this.oColumnMenu._getAllEffectiveQuickActions()[0].getContent()[0].sId;
@@ -385,11 +383,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check focus when only quick actions are given", async function(assert) {
-		const clock = sinon.useFakeTimers();
 		this.createMenu(true, false, true, false);
 		this.oColumnMenu.openBy(this.oButton);
-		clock.tick(500);
-		clock.restore();
 		await nextUIUpdate();
 
 		const sId = this.oColumnMenu.getAggregation("_quickActions")[0].getContent()[0].getId();
@@ -397,29 +392,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check focus when only application specific quick actions are given", async function(assert) {
-		const clock = sinon.useFakeTimers();
 		this.createMenu(true, false, false, false);
 		this.oColumnMenu.openBy(this.oButton);
-		clock.tick(500);
-		clock.restore();
 		await nextUIUpdate();
 
 		const sId = this.oColumnMenu.getQuickActions()[0].getContent()[0].getId();
 		assert.equal(document.activeElement.id, sId);
 	});
 
-	QUnit.test("Check focus when view is switched", function(assert) {
-		const clock = sinon.useFakeTimers();
+	QUnit.test("Check focus when view is switched", async function(assert) {
 		this.createMenu(false, false, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		clock.tick(500);
+		await nextUIUpdate();
 
 		// Navigate to item
 		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
 
 		this.oColumnMenu._oItemsContainer.switchView(sId);
-		clock.tick(500);
-		clock.restore();
+		await nextUIUpdate();
 
 		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
 	});
@@ -476,9 +466,8 @@ sap.ui.define([
 		this.oButton1.addDependent(oMenu1);
 		await nextUIUpdate();
 
-		const clock = sinon.useFakeTimers();
 		this.oButton.firePress();
-		clock.tick(1000);
+		await nextUIUpdate();
 		assert.ok(oInput.getDomRef(), "Input is rendered");
 		assert.ok(containsOrEquals(oMenu.getDomRef(), oInput.getDomRef()), "Input is rendered inside the first Menu");
 		assert.ok(containsOrEquals(oInput.getDomRef(), document.activeElement), "Focus is on the input field");
@@ -491,15 +480,13 @@ sap.ui.define([
 		assert.notOk(oInput.getDomRef(), "Input is not rendered");
 
 		this.oButton1.firePress();
-		clock.tick(1000);
+		await nextUIUpdate();
 		assert.ok(oInput.getDomRef(), "Input is rendered");
 		assert.ok(containsOrEquals(oMenu1.getDomRef(), oInput.getDomRef()), "Input is rendered inside the second Menu");
 		assert.ok(containsOrEquals(oInput.getDomRef(), document.activeElement), "Focus is on the input field");
-		clock.restore();
 	});
 
-	QUnit.test("Check visibility", function(assert) {
-		const clock = sinon.useFakeTimers();
+	QUnit.test("Check visibility", async function(assert) {
 		function getActiveItems(oColumnMenu) {
 			return oColumnMenu._oItemsContainer._getNavigationList().getItems().filter(function(oItem) {
 				return oItem.getVisible();
@@ -514,7 +501,7 @@ sap.ui.define([
 		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 2, "All quick actions are visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 2, "All items are visible");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		// Public Quick Action hidden
 		this.oColumnMenu.getQuickActions()[0].setVisible(false);
@@ -529,14 +516,14 @@ sap.ui.define([
 		this.oColumnMenu.getItems()[1].setVisible(false);
 		assert.equal(getActiveItems(this.oColumnMenu).length, 0, "No items are visible");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		// All Quick Actions hidden
 		this.oColumnMenu.getAggregation("_quickActions")[0].setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
 		assert.notOk(this.oColumnMenu._oQuickGenericList, "No quick action list is created");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		// Make 1 QuickAction and 1 item visible
 		this.oColumnMenu.getItems()[0].setVisible(true);
@@ -545,7 +532,7 @@ sap.ui.define([
 		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 1, "One quick action is visible");
 		assert.equal(getActiveItems(this.oColumnMenu).length, 1, "One item is visible");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		// Check Visibility when using a QuickActionContainer
 		const oQuickAction1 = new QuickAction({label: sText, content: new Button({text: sText})});
@@ -557,14 +544,14 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 3, "Three quick actions are visible");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		// Case B: Container should not be visible
 		oQuickActionContainer.setVisible(false);
 		this.oColumnMenu.openBy(this.oButton);
 		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 1, "One quick actions is visible");
 		this.oColumnMenu.close();
-		clock.tick(500);
+		await menuClosed(this.oColumnMenu);
 
 		// Case C: One QuickAction in the container is hidden
 		oQuickActionContainer.setVisible(true);
@@ -572,26 +559,22 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		assert.equal(this.oColumnMenu._oQuickGenericList.getItems().length, 2, "Two quick actions are visible");
 		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
 	});
 
 	QUnit.test("Add menu item", async function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 
 		let aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
 		assert.equal(aItems.length, 3, "Menu has exactly 3 items");
 
-		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
+		await menuClosed(this.oColumnMenu);
 
 		const oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
 		this.oColumnMenu.addItem(oItem);
-		await nextUIUpdate(this.clock);
+		await nextUIUpdate();
 		this.oColumnMenu.openBy(this.oButton);
 
 		aItems = this.oColumnMenu._oItemsContainer._getNavigationList().getItems();
@@ -656,10 +639,8 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoColumnsSet, "Illustrated message has the correct illustration type");
 		assert.equal(oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Dot, "Illustrated message has the correct illustration size");
 		assert.ok(oIllustratedMessage.getDomRef(), "Illustrated message is rendered");
-		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
+		await menuClosed(this.oColumnMenu);
 
 		this.oColumnMenu.addQuickAction(new QuickAction({label: sText, content: new Button({text: sText})}));
 		this.oColumnMenu.openBy(this.oButton);
@@ -830,7 +811,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Without parent", function(assert) {
+	QUnit.test("Without parent", async function(assert) {
 		const oStaticArea = StaticArea.getUIArea();
 		const oInvalidateSpy = sinon.spy(oStaticArea, "invalidate");
 		assert.notOk(this.oColumnMenu.getUIArea(), "Before opening, the menu has no connection to the UIArea");
@@ -841,10 +822,8 @@ sap.ui.define([
 		assert.equal(oMenuUIArea, this.oColumnMenu.getParent(), "After opening, the UIArea is the parent");
 		assert.equal(oMenuUIArea, oStaticArea, "The menu is in the static area");
 
-		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
+		await menuClosed(this.oColumnMenu);
 
 		this.oColumnMenu.openBy(this.oButton);
 		assert.ok(oInvalidateSpy.notCalled, "The UIArea is not invalidated when the Menu opens");
@@ -881,18 +860,16 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("beforeOpen", function(assert) {
+	QUnit.test("beforeOpen", async function(assert) {
 		assert.expect(4);
 
 		this.oColumnMenu.attachBeforeOpen(function(oEvent) {
 			assert.deepEqual(oEvent.getParameter("openBy"), this.oButton, "Fired with correct parameters");
 		}, this);
 
-		const clock = sinon.useFakeTimers();
 		this.oColumnMenu.openBy(this.oButton);
 		this.oColumnMenu.close();
-		clock.tick(500);
-		clock.restore();
+		await menuClosed(this.oColumnMenu);
 
 		this.oColumnMenu.openBy(this.oButton.getDomRef());
 		const oOpenSpy = sinon.spy(this.oColumnMenu._oPopover, "openBy");
@@ -949,17 +926,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Item buttons", async function(assert) {
-		const clock = sinon.useFakeTimers();
 		const oMenu = this.oColumnMenu;
 		const oButton = this.oButton;
 		oMenu.openBy(oButton);
-		await nextUIUpdate(clock);
+		await nextUIUpdate();
 
 		// Navigate to first item
 		const oItem = oMenu.getItems()[1];
 		const sId = oItem.getId();
 		oMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate(clock);
+		await nextUIUpdate();
 
 		return new Promise(function(resolve) {
 			oItem.attachEventOnce("confirm", function(oEvent) {
@@ -969,23 +945,21 @@ sap.ui.define([
 			});
 			oMenu._oBtnOk.firePress();
 		}).then(function() {
-			clock.tick(500);
 			assert.ok(oMenu.isOpen(), "default prevented");
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("confirm", function() {
 					assert.ok("confirm event fired");
-					resolve();
+					menuClosed(oMenu).then(resolve);
 				});
 				oMenu._oBtnOk.firePress();
 			});
 		}).then(async function() {
-			clock.tick(500);
 			assert.notOk(oMenu.isOpen(), "menu is closed");
 
 			oMenu.openBy(oButton);
 			oMenu._oItemsContainer.switchView(sId);
-			await nextUIUpdate(clock);
+			await nextUIUpdate();
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("cancel", function(oEvent) {
@@ -996,24 +970,21 @@ sap.ui.define([
 				oMenu._oBtnCancel.firePress();
 			});
 		}).then(function() {
-			clock.tick(500);
 			assert.ok(oMenu.isOpen(), "default prevented");
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("cancel", function() {
 					assert.ok("cancel event fired");
-					resolve();
+					menuClosed(oMenu).then(resolve);
 				});
 				oMenu._oBtnCancel.firePress();
 			});
 		}).then(async function() {
-			clock.tick(500);
-			clock.restore();
 			assert.notOk(oMenu.isOpen(), "menu is closed");
 
 			oMenu.openBy(oButton);
 			oMenu._oItemsContainer.switchView(sId);
-			await nextUIUpdate(clock);
+			await nextUIUpdate();
 
 			return new Promise(function(resolve) {
 				oItem.attachEventOnce("reset", function() {
@@ -1185,20 +1156,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("Close menu before opening by another control", function(assert) {
+		const clock = sinon.useFakeTimers();
 		const oCloseSpy = sinon.spy(this.oColumnMenu, "close");
 
 		this.oColumnMenu.openBy(this.oButton);
+		clock.tick(500);
 		assert.ok(this.oColumnMenu.isOpen());
 		assert.ok(oCloseSpy.notCalled, "Menu was not closed");
 
 		this.oColumnMenu.openBy(this.oButton);
+		clock.tick(500);
 		assert.ok(this.oColumnMenu.isOpen());
 		assert.ok(oCloseSpy.notCalled, "Menu was not closed");
 
 		this.oColumnMenu.openBy(this.oButton1);
+		clock.tick(500);
 		assert.ok(this.oColumnMenu.isOpen());
 		assert.ok(oCloseSpy.calledOnce, "Menu was closed before opening it again.");
 
 		oCloseSpy.restore();
+		clock.restore();
 	});
 });

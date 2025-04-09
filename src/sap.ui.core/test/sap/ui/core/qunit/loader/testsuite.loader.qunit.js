@@ -102,6 +102,14 @@ sap.ui.define(function() {
 				sinon: false
 			},
 
+			"conflictWithAMDLoader_loadedBeforeUI5.qunit": {
+				page: "test-resources/sap/ui/core/qunit/loader/conflictWithAMDLoader_loadedBeforeUI5.qunit.html"
+			},
+
+			"conflictWithAMDLoader_requireJSLoadedBeforeUI5.qunit": {
+				page: "test-resources/sap/ui/core/qunit/loader/conflictWithAMDLoader_requireJSLoadedBeforeUI5.qunit.html"
+			},
+
 			exposeAsAMDLoaderByURL: {
 				page: "test-resources/sap/ui/core/qunit/loader/exposeAsAMDLoader.qunit.html?sap-ui-amd=true&sap-ui-debug=true",
 				title: "Test Page for ui5loader config option 'amd' with activated debug mode"
