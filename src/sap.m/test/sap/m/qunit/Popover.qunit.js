@@ -2530,6 +2530,14 @@ sap.ui.define([
 		return $element[0].scrollWidth > ($element.innerWidth() + iTolerance);
 	}
 
+	function hasVerticalOverflow(element) {
+		return element.scrollHeight > element.clientHeight;
+	}
+
+	function hasHorizontalOverflow(element) {
+		return element.scrollWidth > element.clientWidth;
+	}
+
 	QUnit.test("Popover is auto-closed if the opener is currently not visible", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		// Arrange
@@ -2711,6 +2719,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(isTextTruncated($longTextItem), false, "Long text is not truncated when width is auto");
+		assert.ok(hasVerticalOverflow(this.oPopover.getDomRef("cont")), "Popover has vertical overflow");
+		assert.notOk(hasHorizontalOverflow(this.oPopover.getDomRef("cont")), "Popover has no horizontal overflow");
 	});
 
 	QUnit.test("Text is truncated when width is too small", async function(assert) {
@@ -2724,6 +2734,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(isTextTruncated($longTextItem), true, "Text is truncated when width is small");
+		assert.ok(hasVerticalOverflow(this.oPopover.getDomRef("cont")), "Popover has vertical overflow");
+		assert.notOk(hasHorizontalOverflow(this.oPopover.getDomRef("cont")), "Popover has no horizontal overflow");
 	});
 
 	QUnit.test("Calling _includeScrollWidth with no dom ref", function(assert) {

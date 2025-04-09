@@ -58,6 +58,7 @@ sap.ui.define([
 			this.oGeneralGroup = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument");
 			this.oForm = Element.getElementById("Comp1---idMain1--MainForm");
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oButton = Element.getElementById("Comp1---idMain1--lb1");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oRootControl
@@ -69,6 +70,7 @@ sap.ui.define([
 			this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
 			this.oDatesGroupOverlay = OverlayRegistry.getOverlay(this.oDatesGroup);
 			this.oBoundButton35FieldOverlay = OverlayRegistry.getOverlay(this.oBoundButton35Field);
+			this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 		},
 		afterEach() {
 			this.oRta.destroy();
@@ -104,12 +106,12 @@ sap.ui.define([
 		}
 
 		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameItem, sText) {
-			var oFieldOverlay = this.oCompanyCodeFieldOverlay.getDomRef();
+			const oButtonOverlayDomRef = this.oButtonOverlay.getDomRef();
 
 			return new Promise(function(fnResolve) {
 				EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
-					if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
-						var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
+					if (mParams.overlay === this.oButtonOverlay) {
+						var aEditableFields = Array.from(oButtonOverlayDomRef.querySelectorAll(".sapUiRtaEditableField"));
 
 						assert.strictEqual(aEditableFields.length, 1, " then the rename input field is rendered");
 						assert.ok(aEditableFields[0].contains(document.activeElement), " and focus is in it");
@@ -120,9 +122,9 @@ sap.ui.define([
 									var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
 										assert.strictEqual(
-											this.oCompanyCodeField._getLabel().getText(),
+											this.oButton.getText(),
 											sText,
-											`then label of the group element is ${sText}`
+											`then label of the button is ${sText}`
 										);
 										var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
 										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
@@ -133,10 +135,12 @@ sap.ui.define([
 							new Promise(function(fnResolveWhenRenamed) {
 								EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit",
 									function(sChannel, sEvent, mParams) {
-										if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
-											assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(),
-												" and focus is on field overlay");
-											var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
+										if (mParams.overlay === this.oButtonOverlay) {
+											assert.strictEqual(document.activeElement, oButtonOverlayDomRef,
+												" and focus is on button overlay");
+											var aEditableFields = Array.from(
+												oButtonOverlayDomRef.querySelectorAll(".sapUiRtaEditableField")
+											);
 											assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
 											fnResolveWhenRenamed();
 										}
@@ -545,19 +549,19 @@ sap.ui.define([
 			QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
 		});
 
-		QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label...", function(assert) {
+		QUnit.test("when renaming a button via Context Menu and setting a new label...", function(assert) {
 			var fnDone = assert.async();
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
-			this.oCompanyCodeFieldOverlay.focus();
+			this.oButtonOverlay.focus();
 
 			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "ContextMenu is open");
 				// press rename button
 				var oRenameItem = oContextMenuControl._getVisualParent().getItems()[0];
-				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oCompanyCodeField, oRenameItem, "TestCompactMenu")
+				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oButton, oRenameItem, "TestRenameWithMenu")
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function(iNumberOfChanges) {
 					assert.equal(iNumberOfChanges, 1);
@@ -566,7 +570,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// open context menu (compact menu)
-			QUnitUtils.triggerMouseEvent(this.oCompanyCodeFieldOverlay.getDomRef(), "click");
+			QUnitUtils.triggerMouseEvent(this.oButtonOverlay.getDomRef(), "click");
 		});
 
 		QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {

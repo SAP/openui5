@@ -1,12 +1,13 @@
-/* ====================================================== */
-/* CSS for control sap.ui.integration.cards/ObjectContent */
-/* Base theme                                             */
-/* ====================================================== */
+/* ======================================================= */
+/* CSS for control sap.ui.integration.cards/ObjectContent  */
+/* Base theme                                              */
+/* ======================================================= */
 
 .sapFCardObjectContent {
 	padding: 1rem;
 
 	&.sapFCardObjectContentWithOverlay {
+
 		.sapMFlexBox.sapUiIntImgWithOverlayLayout,
 		.sapMFlexBox.sapFCardObjectGroup:has( > .sapUiIntImageWithOverlay:only-child ),
 		 > .sapMFlexBox,
@@ -47,13 +48,13 @@
 		}
 	}
 
-	// Don't add margin top to the value if it's the first element in the group (not labeled)
+	/* Don't add margin top to the value if it's the first element in the group (not labeled) */
 	.sapFCardObjectItemValue:not(:first-child) {
 		margin-top: 0.25rem;
 	}
 
 	.sapFCardObjectItemPairContainer {
-		min-width: 0; // prevent overflow of the flex container
+		min-width: 0; /* prevent overflow of the flex container */
 	}
 
 	.sapFCardObjectItemAvatar {
@@ -61,13 +62,12 @@
 		flex-shrink: 0;
 	}
 
-	// Rating Indicator
+	/* Rating Indicator */
 	.sapMRI {
 		margin-bottom: 0;
 	}
 
-	// Image
-
+	/* Image */
 	> .sapFCardObjectImage:not(:first-child) {
 		margin-top: 1rem;
 	}
@@ -95,7 +95,7 @@
 		left: -16px;
 	}
 
-	.sapFCardObjectImage  {
+	.sapFCardObjectImage {
 		position: relative;
 	}
 }
@@ -105,41 +105,45 @@
 }
 
 .sapFCard .sapFCardContent {
+
 	.sapFCardObjectContent .sapUiAFLayout .sapUiAFLayoutItem.sapFCardInvisibleContent {
 		display: none;
 	}
 }
 
-// Removing top space of NumericIndicators
+/* Removing top space of NumericIndicators */
 .sapUiIntOCNumericIndicators {
-	// size L
+
+	/* size L */
 	&:not(.sapMTileSmallPhone) {
-		// number
+
+		/* number */
 		.sapMNCValue >:first-child {
 			padding-top: 0;
 			height: 2.5rem;
 			line-height: 2rem;
 		}
 
-		// trend and unit
+		/* trend and unit */
 		.sapMNCValue :nth-child(2) {
 			padding-top: 0;
 			height: 2rem;
 		}
 	}
 
-	// size S
+	/* size S */
 	&.sapMTileSmallPhone {
+
 		.sapMNC {
 			width: auto;
 		}
 
-		// number
+		/* number */
 		.sapMNCValue :first-child {
 			padding-top: 0.25rem;
 		}
 
-		// trend and unit
+		/* trend and unit */
 		.sapMNCValue .sapMNCIndScale {
 			padding-top: 0px;
 
@@ -152,7 +156,7 @@
 }
 
 .sapUiIntOCNumericIndicators .sapUiIntOCNumericIndicatorsDetails {
-	color: @sapUiTileTextColor;
+	color: var(--sapTile_TextColor);
 	height: 1rem;
 }
 

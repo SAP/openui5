@@ -1082,8 +1082,10 @@ sap.ui.define([
 				return;
 			}
 
-			// Browsers except chrome do not increase the width of the container to include scrollbar
-			if (Device.system.desktop && !Device.browser.chrome) {
+			// BrowserScrollbar modifies Safari to display "classic" scrollbars.
+			// In Safari, classic scrollbars occupy space that could otherwise be used by content, possibly causing content truncation.
+			// This workaround aims to expand the content width to prevent truncation.
+			if (Device.system.desktop && Device.browser.safari) {
 				var bHasVerticalScrollbar = $popoverContent[0].clientHeight < $popoverContent[0].scrollHeight;
 
 				if (bHasVerticalScrollbar &&					// - there is a vertical scroll

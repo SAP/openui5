@@ -54,4 +54,10 @@ describe('sap.m.Tokenizer', function() {
 		browser.executeScript('document.getElementsByClassName("sapMTokenizerIndicator")[1].click()');
 		expect(takeScreenshot()).toLookAs("tokenizer-not-editable-n-more-shown");
 	});
+
+	it("should display the Tokenzier's n-more popover at maximum 40rem width", function () {
+
+		browser.executeScript('document.querySelector("#long-token-nmore .sapMTokenizerIndicator").click()');
+		expect(takeScreenshot()).toLookAs("tokenizer-n-more-max-width-shown");
+	});
 });

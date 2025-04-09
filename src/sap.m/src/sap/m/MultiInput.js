@@ -865,6 +865,12 @@ function(
 			return;
 		}
 
+		const iMaxTokens = this.getMaxTokens();
+
+		if (iMaxTokens) {
+			aSeparatedText = aSeparatedText.slice(0, iMaxTokens);
+		}
+
 		setTimeout(function () {
 			if (aSeparatedText) {
 				if (this.fireEvent("_validateOnPaste", {texts: aSeparatedText, textRows: aSeparatedByRows}, true)) {
