@@ -129,6 +129,12 @@ sap.ui.define(function() {
 				},
 				sinon: false
 			},
+			"conflictWithAMDLoader_loadedBeforeUI5.qunit": {
+				page: "test-resources/sap/ui/core/qunit/loader/conflictWithAMDLoader_loadedBeforeUI5.qunit.html"
+			},
+			"conflictWithAMDLoader_requireJSLoadedBeforeUI5.qunit": {
+				page: "test-resources/sap/ui/core/qunit/loader/conflictWithAMDLoader_requireJSLoadedBeforeUI5.qunit.html"
+			},
 			// legacy-relevant: sync path tests
 			"conflictWithRequire_unavoidablySync": {
 				page: "test-resources/sap/ui/core/qunit/loader/conflictWithRequire_unavoidablySync.qunit.html",
