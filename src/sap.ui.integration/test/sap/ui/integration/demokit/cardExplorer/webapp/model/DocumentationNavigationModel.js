@@ -231,6 +231,11 @@ sap.ui.define([
 						experimental: true
 					},
 					{
+						title: 'Interaction Types',
+						target: 'learnDetail',
+						key: 'interactionTypes'
+					},
+					{
 						title: 'Micro Charts',
 						target: 'learnDetail',
 						key: 'microcharts',

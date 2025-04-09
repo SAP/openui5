@@ -106,6 +106,10 @@
 	padding-left: 2.5rem;
 }
 
+.cardInteractionImg {
+	width: 450px;
+}
+
 /* table styles */
 
 .topic table {
