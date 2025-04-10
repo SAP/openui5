@@ -608,6 +608,31 @@ sap.ui.define([
 		assert.equal(this.oMessageView.getItems().length, 1, "The message should be one - from MessageManager");
 	});
 
+	QUnit.test("Resize handler should be attached and _setItemType() called on resize", function (assert) {
+		var oMessageItem = new MessageItem({
+			text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit",
+			type: "Error"
+		});
+		var oSpy;
+
+
+		this.oMessageView.addItem(oMessageItem);
+		this.oMessageView.placeAt("qunit-fixture");
+
+		Core.applyChanges();
+
+		assert.ok(this.oMessageView._sResizeHandlerId, "Resize handler should be set");
+
+		oSpy = this.spy(this.oMessageView, "_setItemType");
+
+		this.oMessageView.setVisible(false);
+		this.oMessageView.setVisible(true);
+
+		Core.applyChanges();
+
+		assert.ok(oSpy.called, "_setItemType should be called");
+	});
+
 	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
 		var oMessageView = new MessageView().placeAt("qunit-fixture");
 		var fnAddMessage = function() {
