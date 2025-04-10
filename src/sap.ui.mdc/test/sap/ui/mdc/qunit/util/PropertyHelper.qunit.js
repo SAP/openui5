@@ -97,8 +97,7 @@ sap.ui.define([
 				dataType: "String",
 				foo: "bar"
 			}]);
-		}, new Error("Invalid property definition: Property contains invalid attribute 'foo'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","foo":"bar"}'));
+		}, new Error("Invalid property definition for property with key 'foo': Property contains invalid attribute 'foo'."));
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -116,8 +115,7 @@ sap.ui.define([
 				}
 			});
 		},
-			new Error("Invalid property definition: Property contains invalid attribute 'additionalAttribute.doesNotExist'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":{"doesNotExist":true}}'),
+			new Error("Invalid property definition for property with key 'foo': Property contains invalid attribute 'additionalAttribute.doesNotExist'."),
 			"Deeply nested attribute"
 		);
 	});
@@ -130,8 +128,7 @@ sap.ui.define([
 				dataType: "String",
 				filterable: true
 			}]);
-		}, new Error("Invalid property definition: Property contains invalid attribute 'filterable'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","filterable":true}'));
+		}, new Error("Invalid property definition for property with key 'foo': Property contains invalid attribute 'filterable'."));
 	});
 
 	QUnit.test("Missing mandatory attribute", function(assert) {
@@ -141,8 +138,7 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'key'."
-					 + '\n{"label":"foo","dataType":"String"}'),
+			new Error("Invalid property definition for property with key 'undefined': Property does not contain mandatory attribute 'key'."),
 			"key"
 		);
 
@@ -151,8 +147,7 @@ sap.ui.define([
 				key: "foo",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition: Property does not contain mandatory attribute 'label'."
-					 + '\n{"key":"foo","dataType":"String"}'),
+		}, new Error("Invalid property definition for property with key 'foo': Property does not contain mandatory attribute 'label'."),
 			"label"
 		);
 
@@ -177,8 +172,7 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'key'."
-					 + '\n{"name":null,"label":"foo","dataType":"String"}'),
+			new Error("Invalid property definition for property with key 'undefined': Property does not contain mandatory attribute 'key'."),
 			"Mandatory attribute is set to 'undefined'"
 		);
 
@@ -189,8 +183,7 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'key'."
-					 + '\n{"name":null,"label":"foo","dataType":"String"}'),
+			new Error("Invalid property definition for property with key 'null': Property does not contain mandatory attribute 'key'."),
 			"Mandatory attribute is set to 'null'"
 		);
 
@@ -204,8 +197,7 @@ sap.ui.define([
 				additionalAttribute: {type: "object", mandatory: true, "default": {value: {}}}
 			});
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			new Error("Invalid property definition for property with key 'foo': Property does not contain mandatory attribute 'additionalAttribute'."),
 			"Mandatory attribute of type 'object' is set to 'null'"
 		);
 
@@ -224,8 +216,7 @@ sap.ui.define([
 				}
 			});
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
-					  + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			new Error("Invalid property definition for property with key 'foo': Property does not contain mandatory attribute 'additionalAttribute'."),
 			"Mandatory complex attribute is set to 'null'"
 		);
 	});
@@ -237,8 +228,7 @@ sap.ui.define([
 				dataType: "String",
 				label: "label"
 			}]);
-		}, new Error("Invalid property definition: The value of 'name' is invalid."
-					 + '\n{"name":true,"dataType":"String","label":"label"}'));
+		}, new Error("Invalid property definition for property with key 'true': The value of 'name' is invalid."));
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -247,8 +237,7 @@ sap.ui.define([
 				propertyInfos: "invalid"
 			}]);
 		},
-			new Error("Invalid property definition: The value of 'propertyInfos' is invalid."
-					  + '\n{"key":"foo","label":"bar","propertyInfos":"invalid"}'),
+			new Error("Invalid property definition for property with key 'foo': The value of 'propertyInfos' is invalid."),
 			"'propertyInfos' attribute"
 		);
 
@@ -260,8 +249,7 @@ sap.ui.define([
 				exportSettings: true
 			}]);
 		},
-			new Error("Invalid property definition: The value of 'exportSettings' is invalid."
-					  + '\n{"key":"foo","label":"bar","dataType":"String","exportSettings":true}'),
+			new Error("Invalid property definition for property with key 'foo': The value of 'exportSettings' is invalid."),
 			"Complex object attribute"
 		);
 
@@ -281,8 +269,7 @@ sap.ui.define([
 				}
 			});
 		},
-			new Error("Invalid property definition: The value of 'additionalAttribute.bar' is invalid."
-					  + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":{"bar":true}}'),
+			new Error("Invalid property definition for property with key 'foo': The value of 'additionalAttribute.bar' is invalid."),
 			"Deeply nested attribute"
 		);
 
@@ -296,8 +283,7 @@ sap.ui.define([
 				additionalAttribute: {type: "string[]"}
 			});
 		},
-			new Error("Invalid property definition: The value of 'additionalAttribute' is invalid."
-					  + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":"bar"}'),
+			new Error("Invalid property definition for property with key 'foo': The value of 'additionalAttribute' is invalid."),
 			"Value for an attribute of type 'string[]' is a string"
 		);
 	});
@@ -310,8 +296,7 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'key'."
-					 + '\n{"name":null,"label":"bar","dataType":"String"}'),
+			new Error("Invalid property definition for property with key 'undefined': Property does not contain mandatory attribute 'key'."),
 			"Attribute of type 'string' is 'undefined'"
 		);
 
@@ -322,8 +307,7 @@ sap.ui.define([
 				dataType: "String"
 			}]);
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'key'."
-					 + '\n{"name":null,"label":"bar","dataType":"String"}'),
+			new Error("Invalid property definition for property with key 'null': Property does not contain mandatory attribute 'key'."),
 			"Attribute of type 'string' is 'null'"
 		);
 
@@ -337,8 +321,7 @@ sap.ui.define([
 				additionalAttribute: {type: "object", mandatory: true}
 			});
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			new Error("Invalid property definition for property with key 'foo': Property does not contain mandatory attribute 'additionalAttribute'."),
 			"Attribute of type 'object' is 'undefined'"
 		);
 
@@ -352,8 +335,7 @@ sap.ui.define([
 				additionalAttribute: {type: "object", mandatory: true}
 			});
 		},
-			new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","additionalAttribute":null}'),
+			new Error("Invalid property definition for property with key 'foo': Property does not contain mandatory attribute 'additionalAttribute'."),
 			"Attribute of type 'object' is 'null'"
 		);
 	});
@@ -420,8 +402,7 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["prop"]
 			}]);
-		}, new Error("Invalid property definition: Property references complex properties in the 'unit' attribute."
-					 + '\n{"key":"prop","label":"Property","dataType":"String","unit":"complexProperty"}'));
+		}, new Error("Invalid property definition for property with key 'prop': Property references complex properties in the 'unit' attribute."));
 	});
 
 	QUnit.test("Single property reference: Referencing a property which does not exist", function(assert) {
@@ -432,8 +413,7 @@ sap.ui.define([
 				dataType: "String",
 				unit: "propB"
 			}]);
-		}, new Error("Invalid property definition: Property references non-existing properties in the 'unit' attribute."
-					 + '\n{"key":"propA","label":"Property A","dataType":"String","unit":"propB"}'));
+		}, new Error("Invalid property definition for property with key 'propA': Property references non-existing properties in the 'unit' attribute."));
 	});
 
 	QUnit.test("Single property reference: Referencing itself", function(assert) {
@@ -444,8 +424,7 @@ sap.ui.define([
 				dataType: "String",
 				unit: "propA"
 			}]);
-		}, new Error("Invalid property definition: Property references itself in the 'unit' attribute."
-					 + '\n{"key":"propA","label":"Property A","dataType":"String","unit":"propA"}'));
+		}, new Error("Invalid property definition for property with key 'propA': Property references itself in the 'unit' attribute."));
 	});
 
 	QUnit.test("Multiple property references: Referencing a complex property", function(assert) {
@@ -463,8 +442,7 @@ sap.ui.define([
 				label: "Complex property B",
 				propertyInfos: ["prop"]
 			}]);
-		}, new Error("Invalid property definition: Property references complex properties in the 'propertyInfos' attribute."
-					 + '\n{"key":"complexPropertyA","label":"Complex property A","propertyInfos":["complexPropertyB"]}'));
+		}, new Error("Invalid property definition for property with key 'complexPropertyA': Property references complex properties in the 'propertyInfos' attribute."));
 	});
 
 	QUnit.test("Multiple property references: One referenced property does not exist", function(assert) {
@@ -478,8 +456,7 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["prop", "nonExistingProperty"]
 			}]);
-		}, new Error("Invalid property definition: Property references non-existing properties in the 'propertyInfos' attribute."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":["prop","nonExistingProperty"]}'));
+		}, new Error("Invalid property definition for property with key 'complexProperty': Property references non-existing properties in the 'propertyInfos' attribute."));
 	});
 
 	QUnit.test("Multiple property references: All referenced properties do not exist", function(assert) {
@@ -489,8 +466,7 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["nonExistingProperty"]
 			}]);
-		}, new Error("Invalid property definition: Property references non-existing properties in the 'propertyInfos' attribute."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":["nonExistingProperty"]}'));
+		}, new Error("Invalid property definition for property with key 'complexProperty': Property references non-existing properties in the 'propertyInfos' attribute."));
 	});
 
 	QUnit.test("Multiple property references: Duplicate keys", function(assert) {
@@ -504,8 +480,7 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["prop", "prop"]
 			}]);
-		}, new Error("Invalid property definition: Property contains duplicate names in the 'propertyInfos' attribute."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":["prop","prop"]}'));
+		}, new Error("Invalid property definition for property with key 'complexProperty': Property contains duplicate names in the 'propertyInfos' attribute."));
 	});
 
 	QUnit.test("Multiple property references: Referencing itself", function(assert) {
@@ -515,8 +490,7 @@ sap.ui.define([
 				label: "Complex property",
 				propertyInfos: ["complexProperty"]
 			}]);
-		}, new Error("Invalid property definition: Property references itself in the 'propertyInfos' attribute."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":["complexProperty"]}'));
+		}, new Error("Invalid property definition for property with key 'complexProperty': Property references itself in the 'propertyInfos' attribute."));
 	});
 
 	QUnit.test("Property references in a nested attribute: Referencing a complex property", function(assert) {
@@ -539,8 +513,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}, new Error("Invalid property definition: Property references complex properties in the 'additionalAttribute.foo' attribute."
-					 + '\n{"key":"prop","label":"Property","dataType":"String","additionalAttribute":{"foo":"complexProperty"}}'));
+		}, new Error("Invalid property definition for property with key 'prop': Property references complex properties in the 'additionalAttribute.foo' attribute."));
 	});
 
 	QUnit.test("Property references in a nested attribute: One referenced property does not exist", function(assert) {
@@ -563,8 +536,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}, new Error("Invalid property definition: Property references non-existing properties in the 'additionalAttribute.foo' attribute."
-					 + '\n{"key":"propA","label":"Property A","dataType":"String","additionalAttribute":{"foo":["propB","nonExistingProperty"]}}'));
+		}, new Error("Invalid property definition for property with key 'propA': Property references non-existing properties in the 'additionalAttribute.foo' attribute."));
 	});
 
 	QUnit.test("Property references in a nested attribute: All referenced properties do not exist", function(assert) {
@@ -583,8 +555,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}, new Error("Invalid property definition: Property references non-existing properties in the 'additionalAttribute.foo' attribute."
-					 + '\n{"key":"prop","label":"Property","dataType":"String","additionalAttribute":{"foo":["nonExistingProperty"]}}'));
+		}, new Error("Invalid property definition for property with key 'prop': Property references non-existing properties in the 'additionalAttribute.foo' attribute."));
 	});
 
 	QUnit.test("Property references in a nested attribute: Duplicate keys", function(assert) {
@@ -607,8 +578,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}, new Error("Invalid property definition: Property contains duplicate names in the 'additionalAttribute.foo' attribute."
-					 + '\n{"key":"propA","label":"Property A","dataType":"String","additionalAttribute":{"foo":["propB","propB"]}}'));
+		}, new Error("Invalid property definition for property with key 'propA': Property contains duplicate names in the 'additionalAttribute.foo' attribute."));
 	});
 
 	QUnit.test("Property references in a nested attribute: Referencing itself", function(assert) {
@@ -627,8 +597,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}, new Error("Invalid property definition: Property references itself in the 'additionalAttribute.foo' attribute."
-					 + '\n{"key":"propA","label":"Property A","dataType":"String","additionalAttribute":{"foo":["propA"]}}'));
+		}, new Error("Invalid property definition for property with key 'propA': Property references itself in the 'additionalAttribute.foo' attribute."));
 	});
 
 	QUnit.test("Property references in a nested attribute: No references", function(assert) {
@@ -661,8 +630,7 @@ sap.ui.define([
 				path: "complexPath", // not allowed in complex properties
 				propertyInfos: ["prop"]
 			}]);
-		}, new Error("Invalid property definition: Complex property contains invalid attribute 'path'."
-					 + '\n{"key":"complexProperty","label":"Complex property","path":"complexPath","propertyInfos":["prop"]}'));
+		}, new Error("Invalid property definition for property with key 'complexProperty': Complex property contains invalid attribute 'path'."));
 	});
 
 	QUnit.test("Complex property does not reference any properties", function(assert) {
@@ -673,8 +641,7 @@ sap.ui.define([
 				propertyInfos: []
 			}]);
 		},
-			new Error("Invalid property definition: Complex property does not reference existing properties."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":[]}'),
+			new Error("Invalid property definition for property with key 'complexProperty': Complex property does not reference existing properties."),
 			"'propertyInfos' is an empty array"
 		);
 
@@ -685,8 +652,7 @@ sap.ui.define([
 				propertyInfos: null
 			}]);
 		},
-			new Error("Invalid property definition: Complex property does not reference existing properties."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":null}'),
+			new Error("Invalid property definition for property with key 'complexProperty': Complex property does not reference existing properties."),
 			"'propertyInfos' is 'null'"
 		);
 	});
@@ -723,8 +689,7 @@ sap.ui.define([
 					"default": {value: {}}
 				}
 			});
-		}, new Error("Invalid property definition: Complex property contains invalid attribute 'foo.bar.propB'."
-				  + '\n{"key":"propB","label":"prop B","propertyInfos":["propA"],"foo":{"bar":{"propB":2}}}'));
+		}, new Error("Invalid property definition for property with key 'propB': Complex property contains invalid attribute 'foo.bar.propB'."));
 	});
 
 	QUnit.test("legacyAlias for key attribute", function (assert) {
@@ -751,7 +716,7 @@ sap.ui.define([
 				label: "prop A",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition: The values of legacy-attribute 'name' and it's replacement 'key' must be identical." + '\n{"key":"propA","name":"propB","label":"prop A","dataType":"String"}'));
+		}, new Error("Invalid property definition for property with key 'propA': The values of legacy-attribute 'name' and it's replacement 'key' must be identical."));
 	});
 
 	QUnit.test("Property info consistency: Property missing", function(assert) {
@@ -762,8 +727,7 @@ sap.ui.define([
 		}]);
 		assert.throws(function() {
 			oPropertyHelper.setProperties([]);
-		}, new Error("Invalid property definition: Detected property info modifications after update:"
-					 + '\n[{"foo":"PROPERTY_MISSING"}]'));
+		}, new Error("Invalid property definition for properties with keys 'foo': Detected property info modifications after update:"));
 
 		oPropertyHelper.destroy();
 	});
@@ -780,8 +744,7 @@ sap.ui.define([
 				label: "bar",
 				dataType: "Integer"
 			}]);
-		}, new Error("Invalid property definition: Detected property info modifications after update:"
-					 + '\n[{"foo":[{"label":["foo","bar"]},{"dataType":["String","Integer"]}]}]'));
+		}, new Error("Invalid property definition for properties with keys 'foo': Detected property info modifications after update:"));
 		oPropertyHelper.destroy();
 	});
 
@@ -798,8 +761,7 @@ sap.ui.define([
 				dataType: "String",
 				tooltip: "bar"
 			}]);
-		}, new Error("Invalid property definition: Detected property info modifications after update:"
-					 + '\n[{"foo":[{"tooltip":["","bar"]}]}]'));
+		}, new Error("Invalid property definition for properties with keys 'foo': Detected property info modifications after update:"));
 		oPropertyHelper.destroy();
 	});
 
@@ -816,8 +778,7 @@ sap.ui.define([
 				label: "foo",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition: Detected property info modifications after update:"
-					 + '\n[{"foo":[{"tooltip":["bar",""]}]}]'));
+		}, new Error("Invalid property definition for properties with keys 'foo': Detected property info modifications after update:"));
 		oPropertyHelper.destroy();
 	});
 
@@ -844,8 +805,7 @@ sap.ui.define([
 					bar: "XYZ"
 				}
 			}]);
-		}, new Error("Invalid property definition: Detected property info modifications after update:"
-					 + '\n[{"foo":[{"foo":[{"bar":"ABC"},{"bar":"XYZ"}]}]}]'));
+		}, new Error("Invalid property definition for properties with keys 'foo': Detected property info modifications after update:"));
 
 		oPropertyHelper.destroy();
 	});
@@ -860,8 +820,7 @@ sap.ui.define([
 				dataType: "String",
 				filterable: true
 			}]);
-		}, new Error("Invalid property definition: Property contains invalid attribute 'filterable'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String","filterable":true}'));
+		}, new Error("Invalid property definition for property with key 'foo': Property contains invalid attribute 'filterable'."));
 	});
 
 	QUnit.test("Add a reserved standard attribute", function(assert) {
@@ -920,8 +879,7 @@ sap.ui.define([
 			}], null, {
 				additionalAttribute: {type: "string", mandatory: true}
 			});
-		}, new Error("Invalid property definition: Property does not contain mandatory attribute 'additionalAttribute'."
-					 + '\n{"key":"foo","label":"bar","dataType":"String"}'));
+		}, new Error("Invalid property definition for property with key 'foo': Property does not contain mandatory attribute 'additionalAttribute'."));
 	});
 
 	QUnit.test("Complex property with an attribute that is not allowed", function(assert) {
@@ -938,8 +896,7 @@ sap.ui.define([
 			}], null, {
 				additionalAttribute: {type: "string"}
 			});
-		}, new Error("Invalid property definition: Complex property contains invalid attribute 'additionalAttribute'."
-					 + '\n{"key":"complexProperty","label":"Complex property","propertyInfos":["prop"],"additionalAttribute":"value"}'));
+		}, new Error("Invalid property definition for property with key 'complexProperty': Complex property contains invalid attribute 'additionalAttribute'."));
 	});
 
 	QUnit.module("Setting defaults and cloning of property infos", {
@@ -1971,11 +1928,7 @@ sap.ui.define([
 
 		assert.throws(() => {
 			_PropertyHelper.throwInvalidPropertyError("Oh no...", this.oPropertyHelper.getProperties()[0]);
-		}, new Error("Invalid property definition: Oh no...\n"
-			+ '{"key":"propA","label":"Property A","dataType":"String","path":"propAPath","unit":"propB","groupLabel":"Property A group label",'
-			+ '"exportSettings":{"width":20,"label":"Property A export label"},"maxConditions":2,"name":"propA","tooltip":"",'
-			+ '"visible":true,"formatOptions":null,"constraints":null,"group":"","caseSensitive":true,"filterable":true,"sortable":true}'
-		), "Error message and property");
+		}, new Error("Invalid property definition for property with key 'propA': Oh no..."), "Error message and property");
 	});
 
 	QUnit.test("_getAttributeMetadata", function(assert) {

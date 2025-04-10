@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
 	"sap/m/upload/UploaderHttpRequestMethod",
-	"sap/m/upload/UploadItem"
-], function (Log, MobileLibrary, Element, FileUtil, Device, UploaderHttpRequestMethod, UploadItem) {
+	"sap/m/upload/UploadItem",
+	"sap/ui/export/ExportUtils"
+], function (Log, MobileLibrary, Element, FileUtil, Device, UploaderHttpRequestMethod, UploadItem, ExportUtils) {
 	"use strict";
 
 	/**
@@ -266,7 +267,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Starts the process of downloading a file.
+	 * Starts the process of downloading a file. Plugin uses the URL set in the item or the downloadUrl set in the uploader class to download the file.
+	 * If the URL is not set, a warning is logged.
+	 * API downloads the file with xhr response of blob type or string type.
 	 *
 	 * @param {sap.m.upload.UploadItem} oItem Item representing the file to be downloaded.
 	 * @param {sap.ui.core.Item[]} aHeaderFields List of header fields to be added to the GET request.
@@ -286,8 +289,8 @@ sap.ui.define([
 			Log.warning("Items to download do not have a URL.");
 			return false;
 		} else if (bAskForLocation) {
-			var oBlob = null,
-				oXhr = new window.XMLHttpRequest();
+			var oResponse = null,
+			oXhr = new window.XMLHttpRequest();
 			oXhr.open("GET", sUrl);
 
 			aHeaderFields.forEach(function (oHeader) {
@@ -302,8 +305,13 @@ sap.ui.define([
 				}
 				var sFileName = oItem.getFileName(),
 					oSplit = targetItem._splitFileName(sFileName, false);
-				oBlob = oXhr.response;
-				FileUtil.save(oBlob, oSplit.name, oSplit.extension, oItem.getMediaType(), "utf-8");
+				oResponse = oXhr.response;
+				if (oResponse instanceof window.Blob) {
+					const sFullFileName =  `${oSplit.name}.${oSplit.extension}`;
+					ExportUtils.saveAsFile(oResponse, sFullFileName);
+				} else if (typeof oResponse === "string") {
+					FileUtil.save(oResponse, oSplit.name, oSplit.extension, oItem.getMediaType(), "utf-8");
+				}
 			};
 			oXhr.send();
 			return true;
