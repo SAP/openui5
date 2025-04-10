@@ -3,6 +3,11 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "6c41661dca51022de30d637a69897dd89be9bcc0",
+        "type": "FIX",
+        "text": " sap.m.Popover: Redundant horizontal scrollbar is now removed from Firefox"
+      },
+      {
         "id": "46328b7b3bb27984cffcf49bc3c48405d5afb14d",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"

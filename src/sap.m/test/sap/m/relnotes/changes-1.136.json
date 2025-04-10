@@ -3,6 +3,56 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "f8ae6545f41c6435a07dc0e913f8d8557802c641",
+        "type": "FIX",
+        "text": " We now ensure that the download API of UploadsetwithTable handles the blob file type responses for the files that are to be downloaded"
+      },
+      {
+        "id": "1c2a0a9ccce272214db274c2bf19aa9c421cd8f1",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now fixed"
+      },
+      {
+        "id": "a556670b0991c075d80f11f3c65bfe75418f0c45",
+        "type": "FEATURE",
+        "text": " We've now introduced customPageContenthandler property hook within the FilePreviewDialog control to display custom content for unsupported file types"
+      },
+      {
+        "id": "2d7f57d24ee7953b51cef02f93e73ac369922a2b",
+        "type": "FIX",
+        "text": " sap.m.ActionSheet: Close popup on tab next / previous"
+      },
+      {
+        "id": "de0edcf4ba251460cb7c20131039cdc75d7546e1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: range selection continues across pickers"
+      },
+      {
+        "id": "6c41661dca51022de30d637a69897dd89be9bcc0",
+        "type": "FIX",
+        "text": " sap.m.Popover: Redundant horizontal scrollbar is now removed from Firefox"
+      },
+      {
+        "id": "a943453b48bbadb60cf72dd5ecd5fc5bf296cb6a",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Adjust popover width according to visual specifications"
+      },
+      {
+        "id": "bff7b33e05e868f9d61b39f2f4a29da2ca1567d6",
+        "type": "FIX",
+        "text": " core.Popup: make Popup.Dock enum have identical key and value"
+      },
+      {
+        "id": "c02bd7ead9f5ad2c5197775b16970db0d4ee61ee",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: check maxTokens when pasting tokens"
+      },
+      {
+        "id": "0067611a81e0ed68f52c6df7e747a547c2d86e10",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Open ActionSheet when 1 title is truncated"
+      },
+      {
         "id": "ffcac1aa530daad5930350a3fbcc7830827bb31a",
         "type": "FIX",
         "text": " sap.m.Image: DOMPurify fix"

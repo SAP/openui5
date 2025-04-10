@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "e9909830a1fb83f90ef6c27b4b6192221c25fbfc",
+        "type": "FIX",
+        "text": " mvc/XMLView: Add typeof checks to resolve controller module name"
+      },
+      {
+        "id": "bff7b33e05e868f9d61b39f2f4a29da2ca1567d6",
+        "type": "FIX",
+        "text": " core.Popup: make Popup.Dock enum have identical key and value"
+      },
+      {
         "id": "4a7fe89c7efe2359d4bb5e409f36419ca94f9489",
         "type": "FIX",
         "text": " KeyboardInteractionEndpoint: Don't log error on each postmessage"

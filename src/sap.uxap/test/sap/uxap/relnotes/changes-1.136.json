@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "d510fcb27ff1b2210c817838893900905bcd322e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Description corrected"
+      },
+      {
+        "id": "f1d4d80164e9472d17df16757b038d0efedafa34",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
+      },
+      {
         "id": "46328b7b3bb27984cffcf49bc3c48405d5afb14d",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"

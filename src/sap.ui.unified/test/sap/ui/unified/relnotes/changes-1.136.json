@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "de0edcf4ba251460cb7c20131039cdc75d7546e1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: range selection continues across pickers"
+      },
+      {
+        "id": "bff7b33e05e868f9d61b39f2f4a29da2ca1567d6",
+        "type": "FIX",
+        "text": " core.Popup: make Popup.Dock enum have identical key and value"
+      },
+      {
         "id": "c1833bf668e1406392e5d3084cbdc811b719248c",
         "type": "FIX",
         "text": " sap.ui.unified.FileUploader: Selected file stays selected"
