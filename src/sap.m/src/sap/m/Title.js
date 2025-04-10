@@ -334,6 +334,58 @@ sap.ui.define([
 		return false;
 	};
 
+	/**
+	* Get tooltip text
+	* @returns {string} Tooltip text
+	* @private
+	*/
+	Title.prototype._getTooltipText = function () {
+		const oAssoTitle = this._getTitle();
+
+		return oAssoTitle && !this.getContent() ? oAssoTitle.getTooltip_AsString() : this.getTooltip_AsString();
+	};
+
+	/**
+	* Handle the mouseover event
+	* @param {jQuery.Event} oEvent The event that occurred in the callout
+	* @private
+	*/
+	Title.prototype.onmouseover = function (oEvent) {
+		const oTarget = this.getDomRef();
+
+		if (!oTarget || oTarget.offsetWidth >= oTarget.scrollWidth) {
+			return;
+		}
+
+		const sTooltip = this._getTooltipText();
+		let sText = this.getText();
+
+		if (sTooltip) {
+			sText += " - " + sTooltip;
+		}
+
+		oTarget.setAttribute("title", sText);
+	};
+
+	/**
+	* Handle the onmouseout event
+	* @param {jQuery.Event} oEvent The event that occurred in the callout
+	* @private
+	*/
+	Title.prototype.onmouseout = function (oEvent) {
+		const oTarget = this.getDomRef();
+		const sTooltip = this._getTooltipText();
+
+		if (!oTarget) {
+			return;
+		}
+
+		if (sTooltip) {
+			oTarget.setAttribute("title", sTooltip);
+		} else {
+			oTarget.removeAttribute("title");
+		}
+	};
 
 	// Add hyphenation to Title functionality
 	HyphenationSupport.mixInto(Title.prototype);
