@@ -293,6 +293,11 @@ sap.ui.define([
 		}
 	});
 
+	BasePropertyEditor.prototype.initI18n = async function(oModel) {
+		this.setModel(oModel, "i18n");
+		this._oResourceBundle = await oModel.getResourceBundle();
+	};
+
 	BasePropertyEditor.prototype.init = function () {
 		this.attachFragmentChange(function (oEvent) {
 			if (this.getContent()) {
@@ -914,8 +919,8 @@ sap.ui.define([
 	};
 
 	BasePropertyEditor.prototype.getI18nProperty = function (sName, aPlaceholders) {
-		if (this.getModel("i18n")) {
-			return this.getModel("i18n").getResourceBundle().getText(sName, aPlaceholders);
+		if (this._oResourceBundle) {
+			return this._oResourceBundle.getText(sName, aPlaceholders);
 		}
 		return sName;
 	};
