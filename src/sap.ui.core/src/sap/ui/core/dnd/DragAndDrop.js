@@ -692,7 +692,7 @@ function(lib, Localization, Device, Element, StaticArea, UIArea, jQuery) {
 		}
 
 		// mobile devices needs text data with a value set on the dataTransfer object to allow dragging
-		if (!Device.system.desktop && !oEvent.originalEvent.dataTransfer.getData("text")) {
+		if (Device.browser.mobile && !oEvent.originalEvent.dataTransfer.getData("text")) {
 			oEvent.originalEvent.dataTransfer.setData("text", " ");
 		}
 

@@ -546,7 +546,6 @@ sap.ui.define([
 	 */
 	PluginBase.setConfigs({
 		"sap.m.Table": {
-			container: "listUl",
 			resizable: ".sapMListTblHeaderCell",
 			cellPaddingStyleClass: "sapMListTblCell",
 			fixAutoWidthColumns: true,

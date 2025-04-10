@@ -139,7 +139,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check Table DOM", async function(assert) {
-		const oTableDomRef  = this.oTable.getDomRef("listUl");
+		const oTableDomRef  = this.oTable.getDomRef();
 		assert.notOk(oTableDomRef.classList.contains("sapMPluginsColumnResizerContainer"), "ColumnResizer container style class not added");
 		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle not created");
 		const oColumnResizer = new ColumnResizer();
@@ -284,7 +284,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resizing style class", function(assert) {
-		const oTableDomRef = this.oTable.getDomRef("listUl"),
+		const oTableDomRef = this.oTable.getDomRef(),
 			oColumn1Dom = this.oTable.getColumns()[1].getDomRef();
 
 		const iClientX = oColumn1Dom.getBoundingClientRect()[this.sEndDirection];
