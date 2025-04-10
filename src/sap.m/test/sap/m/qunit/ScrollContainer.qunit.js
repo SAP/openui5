@@ -34,6 +34,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// give the scrolling results 1px buffer padding as the scroll position is not always exact in the different browsers and versions
+	const fnApproximatelyEqual = (iScrollPosition, iExpectedScrollPosition, iEpsilon = 1) =>	Math.abs(iScrollPosition - iExpectedScrollPosition) < iEpsilon;
+
 	createAndAppendDiv("content");
 	var pStyleLoaded = includeStylesheet({
 		url: require.toUrl("./ScrollContainer.qunit.css")
@@ -317,7 +320,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		oScrollContainer.scrollToElement(this.oTestButton.getDomRef());
-		assert.equal(getScrollPos(oScrollContainer.getId(), "left"), -800, "ScrollContainer should be scrolled to position 800 from the left");
+		assert.ok(fnApproximatelyEqual(getScrollPos(oScrollContainer.getId(), "left"), -800), "ScrollContainer should be scrolled to position about 800 pixels from the left");
 
 		oScrollContainer.destroy();
 
@@ -530,8 +533,7 @@ sap.ui.define([
 
 		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
 
-		intEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
-
+		assert.ok(fnApproximatelyEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF)), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
 	});
 
 	QUnit.test("Press [CTRL] + [DOWN] for ScrollEnablement _customScrollTo with Select", async function(assert) {
@@ -576,7 +578,7 @@ sap.ui.define([
 
 		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_UP", false, false, true);
 
-		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
+		assert.ok(fnApproximatelyEqual(oSC4.$().scrollTop(), 0), "ScrollContainer 4 should be scrolled vertically to  around 0");
 	});
 
 	QUnit.test("Press [CTRL] + [RIGHT]", function(assert) {
@@ -596,8 +598,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press [CTRL] + [END]", function(assert) {
-		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
-		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
+		assert.ok(fnApproximatelyEqual(oSC4.$().scrollLeft(), 0), "ScrollContainer 4 should be scrolled horizontally to position around 0");
+		assert.ok(fnApproximatelyEqual(oSC4.$().scrollTop(), 0), "ScrollContainer 4 should be scrolled vertically to position around 0");
 
 		qutils.triggerKeydown(oSC4.getDomRef(), "END", false, false, true);
 

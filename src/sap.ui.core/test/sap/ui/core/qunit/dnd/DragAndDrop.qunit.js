@@ -764,8 +764,8 @@ sap.ui.define([
 			complexData: ["complexData"]
 		};
 
-		var oSystemStub = sinon.stub(Device, "system");
-		oSystemStub.value({desktop: false});
+		var oSystemStub = sinon.stub(Device, "browser");
+		oSystemStub.value({mobile: true});
 
 		this.oDragInfo.attachDragStart(function(oEvent) {
 			var oSession = oEvent.getParameter("dragSession");
