@@ -2929,7 +2929,8 @@
 							"value": {
 								"option": "dateRange",
 								"values": ["1997-05-01", "1997-05-31"]
-							}
+							},
+							"placeholder": "Date Range"
 						}
 					}
 				},

@@ -43,7 +43,8 @@
 						"nextDays",
 						"lastDays"
 					],
-					"label": "Activity period"
+					"label": "Activity period",
+					"placeholder": "Choose a date range"
 				}
 			}
 		},

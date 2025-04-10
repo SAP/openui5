@@ -1692,7 +1692,7 @@
           "type": "string"
         },
         "placeholder": {
-          "description": "Placeholder for input fields",
+          "description": "Placeholder for items of type 'Input', 'TextArea', 'ComboBox', 'Duration' and 'DateRange'",
           "type": "string"
         },
         "rows": {
@@ -3677,6 +3677,10 @@
         },
         "label": {
           "description": "Label for the filter. Used by screen readers",
+          "type": "string"
+        },
+        "placeholder": {
+          "description": "Placeholder for the filter's input",
           "type": "string"
         },
         "value": {

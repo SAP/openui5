@@ -95,10 +95,13 @@ sap.ui.define([
 		});
 
 		if (aOptions.length === 1 && aOptions[0] === "DATE" && bIsFormInput) {
-			oControl = new DatePicker();
+			oControl = new DatePicker({
+				placeholder: oConfig.placeholder
+			});
 		} else {
 			oControl = new DynamicDateRange({
-				standardOptions: aOptions
+				standardOptions: aOptions,
+				placeholder: oConfig.placeholder
 			});
 		}
 

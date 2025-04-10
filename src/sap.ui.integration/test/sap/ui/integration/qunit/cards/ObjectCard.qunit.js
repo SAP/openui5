@@ -580,7 +580,8 @@ sap.ui.define([
 								"id": "durationValue",
 								"label": "Duration",
 								"type": "Duration",
-								"value": "{/durationValue}"
+								"value": "{/durationValue}",
+								"placeholder": "Pick a time"
 							},
 							{
 								"id": "dateRangeValue",
@@ -589,7 +590,8 @@ sap.ui.define([
 								"value": {
 									"option": "{/dateRangeValue/option}",
 									"values": "{/dateRangeValue/optionValues}"
-								}
+								},
+								"placeholder": "Choose a date"
 							}
 						]
 					}
@@ -668,7 +670,8 @@ sap.ui.define([
 								"id": "durationValue",
 								"label": "Duration",
 								"type": "Duration",
-								"value": "{/durationValue}"
+								"value": "{/durationValue}",
+								"placeholder": "Pick a time"
 							},
 							{
 								"id": "dateRangeValue",
@@ -677,7 +680,8 @@ sap.ui.define([
 								"value": {
 									"option": "{/dateRangeValue/option}",
 									"values": "{/dateRangeValue/optionValues}"
-								}
+								},
+								"placeholder": "Choose a date"
 							}
 						]
 					}
@@ -826,6 +830,7 @@ sap.ui.define([
 								"id": "dateRangeValue",
 								"label": "Date Range",
 								"type": "DateRange",
+								"placeholder": "Choose a date",
 								"validations": [
 									{
 										"required": true
@@ -2465,11 +2470,13 @@ sap.ui.define([
 
 		// Assert Duration
 		assert.ok(oTimePicker.isA("sap.m.TimePicker"), "oTimePicker is created.");
+		assert.strictEqual(oTimePicker.getPlaceholder(), "Pick a time", "TimePicker has correct placeholder.");
 		assert.strictEqual(oTimePicker.getValue(), "11:12", "Duration has correct value.");
 		assert.strictEqual(oTimePicker.getLabels()[0].getText(), "Duration", "Duration is referenced to the correct label.");
 
 		// Assert DateRange
 		assert.ok(oDateRange.isA("sap.m.DatePicker"), "DateRange is created.");
+		assert.strictEqual(oDateRange.getPlaceholder(), "Choose a date", "DateRange has correct placeholder.");
 		assert.strictEqual(oDateRange.getValue(), "2000-01-01T00:00:00.000Z", "DateRange has correct value.");
 		assert.strictEqual(oDateRange.getLabels()[0].getText(), "Date Range", "DateRange is referenced to the correct label.");
 	}
