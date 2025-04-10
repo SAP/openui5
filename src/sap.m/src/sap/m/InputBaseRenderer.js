@@ -329,8 +329,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/core/Value
 		oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
 			.class("sapUiPseudoInvisibleText");
 
-		oRm.openEnd()
-			.text(sValueStateTypeText).text(" ");
+		oRm.openEnd();
+
+		if (sValueState !== ValueState.Error) {
+			oRm.text(sValueStateTypeText).text(" ");
+		}
 
 		if (oFormattedValueStateText) {
 			oRm.renderControl(oFormattedValueStateText);
