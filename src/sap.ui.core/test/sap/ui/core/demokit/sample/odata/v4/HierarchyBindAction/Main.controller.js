@@ -264,6 +264,19 @@ sap.ui.define([
 		},
 
 		/**
+		 * Filters the list of potential new parents.
+		 *
+		 * @param {sap.ui.base.Event} oEvent The event object
+		 */
+		onSearch(oEvent) {
+			const sFilterValue = oEvent.getParameter("value");
+			const aFilters = sFilterValue
+				? [new Filter("Id", FilterOperator.Contains, oEvent.getParameter("value"))]
+				: [];
+			oEvent.getSource().getBinding("items").filter(aFilters);
+		},
+
+		/**
 		 * Shows a message box with the selected items.
 		 */
 		onShowSelection() {
