@@ -5774,7 +5774,8 @@ sap.ui.define([
 		const oAccDomRef = document.getElementById(oMultiComboBox.getValueStateLinksShortcutsId());
 		const aDescribedBy = oMultiComboBox.getFocusDomRef().getAttribute("aria-describedby").split(" ");
 		const bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) { return sId === oMultiComboBox.getValueStateLinksShortcutsId();});
-		const sSingleLink = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINK_MAC" : "INPUTBASE_VALUE_STATE_LINK";
+		const sSingleLink = Core.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		assert.ok(oMultiComboBox.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
 		assert.strictEqual(oAccDomRef.innerText, sSingleLink, "Links shortcuts announcement is as expected" );
@@ -5812,7 +5813,8 @@ sap.ui.define([
 		const oAccDomRef = document.getElementById(oMultiComboBox.getValueStateLinksShortcutsId());
 		const aErrormessage = oMultiComboBox.getFocusDomRef().getAttribute("aria-errormessage").split(" ");
 		const bErrormessageContainsAccForLinks = aErrormessage.some(function (sId) { return sId === oMultiComboBox.getValueStateLinksShortcutsId();});
-		const sMultipleLink = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
+		const sMultipleLink = Core.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		assert.ok(oMultiComboBox.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
 		assert.strictEqual(oAccDomRef.innerText, sMultipleLink, "Links shortcuts announcement is as expected" );

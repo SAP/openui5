@@ -5054,7 +5054,8 @@ sap.ui.define([
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
 
-		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
+		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
@@ -5076,7 +5077,8 @@ sap.ui.define([
 		bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) {
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
-		const sSingleLink = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+		const sLinkTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINK_MAC" : "INPUTBASE_VALUE_STATE_LINK";
+		const sSingleLink = oCore.getLibraryResourceBundle("sap.m").getText(sLinkTextId);
 
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
@@ -5131,7 +5133,8 @@ sap.ui.define([
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
 
-		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
+		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
@@ -5188,7 +5191,8 @@ sap.ui.define([
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
 
-		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
+		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
@@ -5210,7 +5214,8 @@ sap.ui.define([
 		bDescribedByContainsAccForLinks = aDescribedBy.some(function (sId) {
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
-		const sSingleLink = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+		const sLinkTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINK_MAC" : "INPUTBASE_VALUE_STATE_LINK";
+		const sSingleLink = oCore.getLibraryResourceBundle("sap.m").getText(sLinkTextId);
 
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
@@ -5265,7 +5270,8 @@ sap.ui.define([
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
 
-		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINKS");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
+		const sMultipleLinksText = oCore.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
@@ -5368,7 +5374,8 @@ sap.ui.define([
 		oInputWithValueState.setFormattedValueStateText(oNewFormattedValueStateText);
 		oCore.applyChanges();
 
-		const sText = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINK_MAC" : "INPUTBASE_VALUE_STATE_LINK";
+		const sText = oCore.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		assert.strictEqual(oAnnounceSpy.callCount, 1, "Invisible message is announced once");
 		assert.notEqual(oAnnounceSpy.getCalls()[0].args[0].indexOf(sText), -1, "Announced text contains links shortcuts announcement");
@@ -5478,7 +5485,8 @@ sap.ui.define([
 		oInputWithValueState.setFormattedValueStateText(oNewFormattedValueStateText);
 		oCore.applyChanges();
 
-		const sText = oCore.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_LINK");
+		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINK_MAC" : "INPUTBASE_VALUE_STATE_LINK";
+		const sText = oCore.getLibraryResourceBundle("sap.m").getText(sLinksTextId);
 
 		assert.strictEqual(oAnnounceSpy.callCount, 1, "Invisible message is announced once");
 		assert.notEqual(oAnnounceSpy.getCalls()[0].args[0].indexOf(sText), -1, "Announced text contains links shortcuts announcement");
