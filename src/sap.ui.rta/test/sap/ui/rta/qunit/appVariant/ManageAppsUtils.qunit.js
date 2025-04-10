@@ -1,20 +1,20 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/i18n/ResourceBundle",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/rta/appVariant/manageApps/webapp/controller/ManageApps.controller",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ResourceBundle,
 	FlexRuntimeInfoAPI,
 	AppVariantWriteAPI,
 	Layer,
 	FlUtils,
+	ManageAppsController,
 	AppVariantUtils,
 	AppVariantOverviewUtils,
 	sinon
@@ -24,6 +24,11 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
+		async before() {
+			const oManageAppsController = new ManageAppsController();
+			await oManageAppsController._createResourceBundle();
+			this.oI18n = oManageAppsController._oI18n;
+		},
 		beforeEach() {
 			this.oUshellContainerStub = {
 				getServiceAsync() {
@@ -60,7 +65,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
@@ -91,7 +96,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
@@ -125,7 +130,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
@@ -158,7 +163,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
@@ -194,7 +199,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
@@ -231,7 +236,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.subTitle, "", "then the subtitle is an empty string");
 				assert.strictEqual(oAppVariantAttributes.description, "", "then the description is an empty string");
 				assert.strictEqual(oAppVariantAttributes.icon, "", "then the icon is an empty string");
@@ -271,7 +276,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.params, undefined, "then the params property does not exist");
 				assert.equal(oAppVariantAttributes.isS4HanaCloud, false, "then it is an S4/Hana on prem system");
 				assert.equal(oAppVariantAttributes.adaptUIButtonEnabled, true, "then the button Adapt UI is enabled");
@@ -309,7 +314,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
 			});
 		});
@@ -337,7 +342,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(false);
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true).then(function(oAppVariantAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n).then(function(oAppVariantAttributes) {
 				assert.strictEqual(oAppVariantAttributes.params["sap-appvar-id"], "id1", "then the intent property's value is correct");
 			});
 		});
@@ -367,7 +372,7 @@ sap.ui.define([
 				return Promise.reject("Failed to get service");
 			};
 
-			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true)
+			return AppVariantOverviewUtils.getAppVariantOverviewAttributes(oAppVariantInfo, true, this.oI18n)
 			.catch(function(oError) {
 				assert.equal(
 					oError.message,
@@ -410,7 +415,7 @@ sap.ui.define([
 
 			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", true, this.oI18n).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
 				assert.equal(
@@ -434,7 +439,7 @@ sap.ui.define([
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", false, this.oI18n).then(function(aAppVariantOverviewAttributes) {
 				assert.equal(aAppVariantOverviewAttributes.length, 0, "then the result contains no app variant entries");
 				assert.ok(sendRequestStub.calledOnce, "then the sendRequest is called once");
 			});
@@ -464,7 +469,7 @@ sap.ui.define([
 
 			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", false).then(function(aAppVariantOverviewAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", false, this.oI18n).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");
 				assert.equal(
@@ -524,18 +529,10 @@ sap.ui.define([
 			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 			AppVariantUtils.setNewAppVariantId("id1");
 
-			const oResourceBundlePromise = ResourceBundle.create({
-				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
-				async: true
-			});
-
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
-			.then(function(aParams) {
-				const aAppVariantOverviewAttributes = aParams[0];
-				const oResourceBundle = aParams[1];
-
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", true, this.oI18n)
+			.then((aAppVariantOverviewAttributes) => {
 				assert.ok(
 					aAppVariantOverviewAttributes,
 					"then the result contains app variant overview properties"
@@ -593,7 +590,7 @@ sap.ui.define([
 				);
 				assert.equal(
 					aAppVariantOverviewAttributes[0].currentStatus,
-					oResourceBundle.getText("MAA_NEW_APP_VARIANT"),
+					this.oI18n.getText("MAA_NEW_APP_VARIANT"),
 					"then the first app(variant) is highlighted blue"
 				);
 				assert.ok(
@@ -635,20 +632,12 @@ sap.ui.define([
 
 			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			const oResourceBundlePromise = ResourceBundle.create({
-				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
-				async: true
-			});
-
 			AppVariantUtils.setNewAppVariantId(null);
 
 			sandbox.stub(FlexRuntimeInfoAPI, "isAtoEnabled").returns(true);
 
-			return Promise.all([AppVariantOverviewUtils.getAppVariantOverview("testId", true), oResourceBundlePromise])
-			.then(function(aParams) {
-				const aAppVariantOverviewAttributes = aParams[0];
-				const oResourceBundle = aParams[1];
-
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", true, this.oI18n)
+			.then((aAppVariantOverviewAttributes) => {
 				assert.ok(
 					aAppVariantOverviewAttributes,
 					"then the result contains app variant overview properties"
@@ -681,7 +670,7 @@ sap.ui.define([
 				);
 				assert.equal(
 					aAppVariantOverviewAttributes[0].currentStatus,
-					oResourceBundle.getText("MAA_OPERATION_IN_PROGRESS"),
+					this.oI18n.getText("MAA_OPERATION_IN_PROGRESS"),
 					"then the first app(variant) is highlighted blue"
 				);
 				assert.ok(
@@ -693,6 +682,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
+		async before() {
+			const oManageAppsController = new ManageAppsController();
+			await oManageAppsController._createResourceBundle();
+			this.oI18n = oManageAppsController._oI18n;
+		},
 		beforeEach() {
 			this.oUshellContainerStub = {
 				getServiceAsync() {
@@ -740,7 +734,7 @@ sap.ui.define([
 
 			const sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			return AppVariantOverviewUtils.getAppVariantOverview("testId", true).then(function(aAppVariantOverviewAttributes) {
+			return AppVariantOverviewUtils.getAppVariantOverview("testId", true, this.oI18n).then(function(aAppVariantOverviewAttributes) {
 				assert.ok(aAppVariantOverviewAttributes, "then the result contains app variant overview properties");
 
 				assert.strictEqual(aAppVariantOverviewAttributes[0].icon, "sap-icon://history", "then the icon of an app variant is correct");

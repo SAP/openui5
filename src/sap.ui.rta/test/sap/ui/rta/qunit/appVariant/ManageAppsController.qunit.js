@@ -37,7 +37,43 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("Given that a ManageApps controller is instantiated", {
+	const aAppVariantOverviewAttributes = [
+		{
+			appId: "id1",
+			title: "title1",
+			subTitle: "subTitle1",
+			description: "description1",
+			icon: "sap-icon://history",
+			originalId: "id1",
+			isOriginal: true,
+			typeOfApp: "Original App",
+			descriptorUrl: "url1"
+		},
+		{
+			appId: "id2",
+			title: "title2",
+			subTitle: "subTitle2",
+			description: "description2",
+			icon: "sap-icon://history",
+			originalId: "id1",
+			isOriginal: false,
+			typeOfApp: "App Variant",
+			descriptorUrl: "url2"
+		},
+		{
+			appId: "id3",
+			title: "title3",
+			subTitle: "subTitle3",
+			description: "description3",
+			icon: "sap-icon://history",
+			originalId: "id1",
+			isOriginal: false,
+			typeOfApp: "App Variant",
+			descriptorUrl: "url3"
+		}
+	];
+
+	QUnit.module("Given that the controller was not instantiated yet", {
 		afterEach() {
 			sandbox.restore();
 		},
@@ -68,42 +104,6 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getOwnerComponent").returns(fnSimulatedOwnerComponent);
 
 			var highlightAppVariantSpy = sandbox.stub(oManageAppsController, "_highlightNewCreatedAppVariant").resolves();
-
-			var aAppVariantOverviewAttributes = [
-				{
-					appId: "id1",
-					title: "title1",
-					subTitle: "subTitle1",
-					description: "description1",
-					icon: "sap-icon://history",
-					originalId: "id1",
-					isOriginal: true,
-					typeOfApp: "Original App",
-					descriptorUrl: "url1"
-				},
-				{
-					appId: "id2",
-					title: "title2",
-					subTitle: "subTitle2",
-					description: "description2",
-					icon: "sap-icon://history",
-					originalId: "id1",
-					isOriginal: false,
-					typeOfApp: "App Variant",
-					descriptorUrl: "url2"
-				},
-				{
-					appId: "id3",
-					title: "title3",
-					subTitle: "subTitle3",
-					description: "description3",
-					icon: "sap-icon://history",
-					originalId: "id1",
-					isOriginal: false,
-					typeOfApp: "App Variant",
-					descriptorUrl: "url3"
-				}
-			];
 
 			var getAppVariantOverviewSpy = sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
 
@@ -185,12 +185,40 @@ sap.ui.define([
 				assert.ok(showMessageWhenNoAppVariantsSpy.notCalled, "the showMessageWhenNoAppVariantsSpy method is not called");
 			});
 		});
+	});
 
+	QUnit.module("Given that a ManageApps controller is instantiated", {
+		async beforeEach() {
+			this.oManageAppsController = new ManageAppsController();
+			const oFakeControl = new Control();
+			sandbox.stub(this.oManageAppsController, "getView").returns(oFakeControl);
+			const fnSimulatedOwnerComponent = {
+				getIdRunningApp() {
+					return "id1";
+				},
+				getIsOverviewForKeyUser() {
+					return true;
+				},
+				getLayer() {
+					return Layer.CUSTOMER;
+				}
+			};
+			sandbox.stub(this.oManageAppsController, "getOwnerComponent").returns(fnSimulatedOwnerComponent);
+			sandbox.stub(AppVariantOverviewUtils, "getAppVariantOverview").resolves(aAppVariantOverviewAttributes);
+
+			await this.oManageAppsController.onInit();
+		},
+		afterEach() {
+			sandbox.restore();
+		},
+		after() {
+			if (document.getElementById("sapUiBusyIndicator")) {
+				document.getElementById("sapUiBusyIndicator").style.display = "none";
+			}
+		}
+	}, function() {
 		QUnit.test("when copyId is called", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-			oManageAppsController._createResourceBundle();
-
-			var fnModelPropertyStub = sandbox.stub(oManageAppsController, "getModelProperty");
+			const fnModelPropertyStub = sandbox.stub(this.oManageAppsController, "getModelProperty");
 			fnModelPropertyStub.onFirstCall().returns("Idcopied");
 			var fnMessageToastSpy = sandbox.spy(MessageToast, "show");
 
@@ -206,15 +234,13 @@ sap.ui.define([
 				button: oButton
 			});
 
-			oManageAppsController.copyId(oEmptyEvent);
+			this.oManageAppsController.copyId(oEmptyEvent);
 			assert.equal(fnModelPropertyStub.callCount, 1, "the modelProperty method is called once");
 			assert.equal(fnMessageToastSpy.callCount, 1, "MessageToast.show is called once");
 		});
 
 		QUnit.test("when deleteAppVariant is called for app variant", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
-			var modelPropertySpy = sandbox.stub(oManageAppsController, "getModelProperty");
+			const modelPropertySpy = sandbox.stub(this.oManageAppsController, "getModelProperty");
 			modelPropertySpy.onFirstCall().returns("appVarID");
 			modelPropertySpy.onSecondCall().returns(false);
 			modelPropertySpy.onThirdCall().returns(undefined);
@@ -238,73 +264,73 @@ sap.ui.define([
 				mParameters.onClose("Ok");
 			});
 
-			return oManageAppsController.deleteAppVariant(oEmptyEvent).then(function() {
+			return this.oManageAppsController.deleteAppVariant(oEmptyEvent).then(function() {
 				assert.ok(fnOnDeleteFromOverviewDialogStub.calledOnce, "then onDeleteFromOverviewDialogStub is called once");
 				assert.ok(fnShowRelevantDialogStub.calledOnce, "the showRelevantDialog method is called once");
 			});
 		});
 
 		QUnit.test("when onMenuAction is called and copy id is pressed", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
 			var oEmptyEvent = new Event("emptyEventId", new Menu(), {
 				item: new MenuItem({text: "Copy ID"})
 			});
 
-			var fnCopyID = sandbox.stub(oManageAppsController, "copyId");
+			const fnCopyID = sandbox.stub(this.oManageAppsController, "copyId");
 
-			oManageAppsController.onMenuAction(oEmptyEvent);
+			this.oManageAppsController.onMenuAction(oEmptyEvent);
 			assert.ok(fnCopyID.calledOnce, "then copyId is called once");
 		});
 
 		QUnit.test("when onMenuAction is called and handleUiAdaptation is pressed", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
 			var oEmptyEvent = new Event("emptyEventId", new Menu(), {
 				item: new MenuItem({text: "Adapt UI"})
 			});
 
-			var fnHandleUiAdaptation = sandbox.stub(oManageAppsController, "handleUiAdaptation");
+			const fnHandleUiAdaptation = sandbox.stub(this.oManageAppsController, "handleUiAdaptation");
 
-			oManageAppsController.onMenuAction(oEmptyEvent);
+			this.oManageAppsController.onMenuAction(oEmptyEvent);
 			assert.ok(fnHandleUiAdaptation.calledOnce, "then handleUiAdaptation is called once");
 		});
 
 		QUnit.test("when onMenuAction is called and deleteAppVariant is pressed", function(assert) {
-			var oManageAppsController = new ManageAppsController();
-
 			var oEmptyEvent = new Event("emptyEventId", new Menu(), {
 				item: new MenuItem({text: "Delete App Variant"})
 			});
 
-			var fnDeleteAppVariant = sandbox.stub(oManageAppsController, "deleteAppVariant");
+			const fnDeleteAppVariant = sandbox.stub(this.oManageAppsController, "deleteAppVariant");
 
-			oManageAppsController.onMenuAction(oEmptyEvent);
+			this.oManageAppsController.onMenuAction(oEmptyEvent);
 			assert.ok(fnDeleteAppVariant.calledOnce, "then deleteAppVariant is called once");
 		});
 
 		QUnit.test("when formatAdaptUIButtonTooltip is called with different app var statuses", function(assert) {
-			var oManageAppsController = new ManageAppsController();
+			const oGetTextStub = sandbox.stub(ResourceBundle.prototype, "getText");
 
-			var oGetTextStub = sandbox.stub(ResourceBundle.prototype, "getText");
-
-			oManageAppsController.formatAdaptUIButtonTooltip(false, undefined);
+			this.oManageAppsController.formatAdaptUIButtonTooltip(false, undefined);
 			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_ON_PREMISE"), "then tooltip text key is correct");
 
-			oManageAppsController.formatAdaptUIButtonTooltip(false, "R");
+			this.oManageAppsController.formatAdaptUIButtonTooltip(false, "R");
 			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_RUNNING"), "then tooltip text key is correct");
 
-			oManageAppsController.formatAdaptUIButtonTooltip(false, "U");
+			this.oManageAppsController.formatAdaptUIButtonTooltip(false, "U");
 			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR"), "then tooltip text key is correct");
 
-			oManageAppsController.formatAdaptUIButtonTooltip(false, "E");
+			this.oManageAppsController.formatAdaptUIButtonTooltip(false, "E");
 			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR"), "then tooltip text key is correct");
 
-			oManageAppsController.formatAdaptUIButtonTooltip(false, "P");
+			this.oManageAppsController.formatAdaptUIButtonTooltip(false, "P");
 			assert.ok(oGetTextStub.calledWithExactly("TOOLTIP_ADAPTUI_STATUS_PUBLISHED"), "then tooltip text key is correct");
 
-			assert.equal(oManageAppsController.formatAdaptUIButtonTooltip(false, "bla"), undefined, "then no tooltip will be set");
-			assert.equal(oManageAppsController.formatAdaptUIButtonTooltip(true), undefined, "then no tooltip will be set");
+			assert.strictEqual(
+				this.oManageAppsController.formatAdaptUIButtonTooltip(false, "bla"),
+				undefined,
+				"then no tooltip will be set"
+			);
+			assert.strictEqual(
+				this.oManageAppsController.formatAdaptUIButtonTooltip(true),
+				undefined,
+				"then no tooltip will be set"
+			);
 		});
 	});
 
