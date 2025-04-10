@@ -28,11 +28,12 @@ sap.ui.define([
 	"sap/m/upload/UploadItemConfiguration",
 	"sap/m/Dialog",
 	"sap/m/upload/FilePreviewDialog",
-	"sap/ui/codeeditor/CodeEditor"
+	"sap/ui/codeeditor/CodeEditor",
+	"sap/m/Button"
 ], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel,
 			qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar,
 			Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog,
-			FilePreviewDialog, CodeEditor) {
+			FilePreviewDialog, CodeEditor, Button) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -784,6 +785,79 @@ sap.ui.define([
 		oUploadSetwithTablePlugin.renameItem(oContext);
 		oTable.destroy();
 
+	});
+
+	QUnit.test("Test for download API to download the file with current context passed.", async function (assert) {
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		const oUploader = new Uploader();
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow = new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			urlPath: "url",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButtonSample"],
+			rowConfiguration: oRow,
+			uploader: oUploader
+		});
+
+		const oDownloadBtn = new Button({
+			text: "Download",
+			enabled: false
+		});
+
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id: "uploadButtonSample", placeholderFor: "UploadButtonPlaceholder" }),
+				oDownloadBtn
+			],
+			selectionChange: function (oEvent) {
+				const oSelectedContexts = oEvent?.getSource()?.getSelectedContexts();
+				if (oSelectedContexts && oSelectedContexts.length) {
+					oDownloadBtn.setEnabled(true);
+				} else {
+					oDownloadBtn.setEnabled(false);
+				}
+			}
+		});
+
+		oDownloadBtn.attachPress(function () {
+			const oContexts = oMdcTable.getSelectedContexts();
+			if (oContexts && oContexts.length) {
+				oContexts.forEach((oContext) => oUploadSetwithTablePlugin.download(oContext, true));
+			}
+		});
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+		oMdcTable._oTable.setSelectedItem(oMdcTable._oTable.getItems()[0], true, true);
+		// fire selection change event
+		const oDownloadBtnSpy = this.spy(oUploadSetwithTablePlugin, "download");
+		this.stub(oUploader, "download").callsFake( function () {
+			return true;
+		}
+		);
+		assert.ok(oDownloadBtn.getEnabled(), "Download button is enabled after selecting an item");
+		oDownloadBtn.firePress();
+
+		assert.ok(oDownloadBtnSpy.calledOnce, "Download button was pressed");
+		assert.ok(oDownloadBtnSpy.calledWith(oMdcTable._oTable.getItems()[0].getBindingContext()), "Download function was called with correct context");
 	});
 
 	QUnit.module("Plugin properties & aggregations", {
