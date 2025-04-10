@@ -119,6 +119,19 @@
             "lastmodified": "10/03/22, 10:20:00 PM",
             "documentType": "Attachment",
             "previewable": true
+        },
+        {
+            "id": "23004586",
+            "fileName": "External xml file.xml",
+            "mediaType": "application/xml",
+            "url": "test-resources/sap/m/UploadSetwithTableSampleFiles/sample.xml",
+            "revision": "42",
+            "status": "In work",
+            "fileSize": 123,
+            "lastModifiedBy": "Jane Burns",
+            "lastmodified": "10/03/22, 10:20:00 PM",
+            "documentType": "Attachment",
+            "previewable": true
         }
     ] 
 }

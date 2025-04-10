@@ -22,16 +22,17 @@ sap.ui.define([
 	"sap/ui/model/type/Boolean",
 	"sap/ui/base/Event",
 	"sap/m/upload/UploadItem",
-        "sap/m/library",
+    "sap/m/library",
 	"sap/base/Log",
 	"sap/ui/base/Event",
 	"sap/m/upload/UploadItemConfiguration",
 	"sap/m/Dialog",
-	"sap/m/upload/FilePreviewDialog"
+	"sap/m/upload/FilePreviewDialog",
+	"sap/ui/codeeditor/CodeEditor"
 ], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel,
 			qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar,
 			Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog,
-			FilePreviewDialog) {
+			FilePreviewDialog, CodeEditor) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -1417,7 +1418,222 @@ sap.ui.define([
 			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
 		});
         });
-        QUnit.module("Plugin Public API Tests");
+		// Write Qunit to test property CustomPageContentHandler of FilePreviewDialog control
+	QUnit.test("File Preview Dialog to test custom page content handler", async function (assert) {
+		const done = assert.async();
+		var oUploadSetwithTablePluginCarouselPlugin;
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		// arrange
+
+		// create a custom page content which uses codeeditor control with sample xml content
+		const customPageContent = new CodeEditor({
+			type: "xml",
+			value: "<?xml version='1.0' encoding='iso-8859-1'?>\n<mail>\n<from>user1</from>\n<to>user2</to>\n</mail>", // sample xml content
+			editable: false,
+			lineNumbers: true,
+			height: "100%"
+		});
+		const oPreviewDialog = new sap.m.upload.FilePreviewDialog({
+			customPageContentHandler: function (oItem) {
+				return new Promise(function (resolve, reject) {
+					if (oItem.getMediaType() === "application/xml") {
+						resolve(customPageContent);
+					} else {
+						reject();
+					}
+				});
+			}
+		});
+
+		const oCustomContentSpy = this.spy(oPreviewDialog, "getCustomPageContentHandler");
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow = new sap.m.upload.UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow
+		});
+
+		// Simulate a file selection event on the action button
+		fnPreviewHandler = function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oBindingContext = oSource.getBindingContext();
+			if (oBindingContext && oUploadSetwithTablePlugin) {
+				oUploadSetwithTablePlugin.openFilePreview(oBindingContext);
+			}
+		};
+
+		setFilePreviewHandler(fnPreviewHandler);
+
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		// use sap.m.upload.FilePreviewDialog instance
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+
+		// get Link control from the table and trigger press event
+		const lastItemIndex = oMdcTable._oTable.getItems().length - 1;
+		const oLink = oMdcTable._oTable.getItems()[lastItemIndex].getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink.firePress();
+
+		assert.ok(true, `${oLink.getText()} link is pressed for preview.`);
+
+		let oDialog;
+
+		const afterDialogOpen = function (oEvent) {
+			oDialog = oEvent.getSource();
+			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file and custom content with xml code editor is inserted");
+			oDialog?.getButtons()[1].firePress();
+			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			oUploadSetwithTablePluginCarouselPlugin.restore();
+			oMdcTable.destroy();
+			done();
+		};
+
+		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
+			oDialog = oEvent.getParameter("oDialog");
+			assert.ok(oCustomContentSpy.called, "Custom page content handler is called");
+			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
+			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
+		});
+	});
+
+	QUnit.test("File Preview Dialog - custompageConentHandler to display default illustration message on promise rejection", async function (assert) {
+		const done = assert.async();
+		var oUploadSetwithTablePluginCarouselPlugin;
+		/**
+		 * MDC Table with ActionsPlaceholder
+		 */
+
+		// arrange
+
+		// create a custom page content which uses codeeditor control with sample xml content
+		const customPageContent = new CodeEditor({
+			type: "xml",
+			value: "<?xml version='1.0' encoding='iso-8859-1'?>\n<mail>\n<from>user1</from>\n<to>user2</to>\n</mail>", // sample xml content
+			editable: false,
+			lineNumbers: true,
+			height: "100%"
+		});
+		const oPreviewDialog = new sap.m.upload.FilePreviewDialog({
+			customPageContentHandler: function (oItem) {
+				return new Promise(function (resolve, reject) {
+					if (oItem.getMediaType() === "application/xml") {
+						resolve(customPageContent);
+					} else {
+						reject();
+					}
+				});
+			}
+		});
+
+		const oCustomContentSpy = this.spy(oPreviewDialog, "getCustomPageContentHandler");
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow = new sap.m.upload.UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			actions: ["uploadButton"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow
+		});
+
+		// Simulate a file selection event on the action button
+		fnPreviewHandler = function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oBindingContext = oSource.getBindingContext();
+			if (oBindingContext && oUploadSetwithTablePlugin) {
+				oUploadSetwithTablePlugin.openFilePreview(oBindingContext);
+			}
+		};
+
+		setFilePreviewHandler(fnPreviewHandler);
+
+		const oMdcTable = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		// use sap.m.upload.FilePreviewDialog instance
+
+		// act
+		oMdcTable.addDependent(oUploadSetwithTablePlugin);
+
+		oMdcTable.placeAt("qunit-fixture");
+		await oMdcTable.initialized();
+		await nextUIUpdate();
+
+		// Check if the upload is enabled
+		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
+
+		// act
+
+		// get Link control from the table and trigger press event
+		const oLink = oMdcTable._oTable.getItems()[0].getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink.firePress();
+
+		assert.ok(true, `${oLink.getText()} link is pressed for preview.`);
+
+		let oDialog;
+
+		const afterDialogOpen = function (oEvent) {
+			oDialog = oEvent.getSource();
+			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file and custom content handler callback rejects the promise to display default illustration message");
+			oDialog?.getButtons()[1].firePress();
+			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			oUploadSetwithTablePluginCarouselPlugin.restore();
+			oMdcTable.destroy();
+			done();
+		};
+
+		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
+			oDialog = oEvent.getParameter("oDialog");
+			assert.ok(oCustomContentSpy.called, "Custom page content handler is called");
+			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
+			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
+		});
+	});
+
+    QUnit.module("Plugin Public API Tests");
+
 	QUnit.test("Validating icons", async function (assert) {
 		const done = assert.async();
 		this.oTable = await createMDCTable({
