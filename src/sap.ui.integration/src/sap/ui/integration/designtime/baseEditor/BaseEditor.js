@@ -604,8 +604,8 @@ sap.ui.define([
 			this._oConfigObserver = new ObjectBinding();
 
 			this._loadI18nBundles(mConfig.i18n)
-				.then(function (aBundles) {
-					this._oI18nModel = this._createI18nModel(aBundles);
+				.then(async function (aBundles) {
+					this._oI18nModel = await this._createI18nModel(aBundles);
 					this.setModel(this._oI18nModel, "i18n");
 
 					// Setup config observer
@@ -764,17 +764,23 @@ sap.ui.define([
 	 * @returns {sap.ui.model.resource.ResourceModel} I18n model of composed bundles
 	 * @private
 	 */
-	BaseEditor.prototype._createI18nModel = function (aBundles) {
+	BaseEditor.prototype._createI18nModel = async function (aBundles) {
 		var aBundlesList = aBundles.slice();
 		var oI18nModel = new ResourceModel({
 			bundle: aBundlesList.shift()
 		});
 
+		// wait for the promise returned by #getResourceBundle to resolve before accessing model data
+		await oI18nModel.getResourceBundle();
+
 		oI18nModel.setDefaultBindingMode("OneWay");
 
-		aBundlesList.forEach(function (oBundle) {
-			oI18nModel.enhance(oBundle);
+		aBundlesList.forEach(async function (oBundle) {
+			await oI18nModel.enhance(oBundle);
 		});
+
+		// wait for the promise returned by #getResourceBundle to resolve before accessing model data
+		await oI18nModel.getResourceBundle();
 
 		return oI18nModel;
 	};
