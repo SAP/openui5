@@ -1,0 +1,9 @@
+<interaction-documentation
+	xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1"
+	library="sap.f">
+	<control-interactions>
+		<control name="sap.f.DynamicPage">
+			<defaultLabel>Global Shortcuts</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>
