@@ -33,11 +33,18 @@ sap.ui.define([
 
         _defineIllustrationSizes() {
             this._aIllustrationSizes = [
-                "Dot",
-                "Spot",
-                "Dialog",
-                "Scene"
+                "ExtraSmall",
+                "Small",
+                "Medium",
+                "Large"
             ];
+
+            this._sizeResourceMap = {
+                "ExtraSmall": "Dot",
+                "Small": "Spot",
+                "Medium": "Dialog",
+                "Large": "Scene"
+            };
         },
 
         _defineViewModel() {
@@ -50,7 +57,7 @@ sap.ui.define([
                     { set: "tnt", text: "TNT" }
                 ],
                 selectedIllustrationSet: "sapIllus",
-                selectedIllustrationSize: "Dialog",
+                selectedIllustrationSize: "Medium",
                 selectedCategory: "All",
                 currentYear: new Date().getFullYear()
             });
@@ -173,10 +180,12 @@ sap.ui.define([
 
         _applyMediaChange() {
             const sSelectedSize = this.getModel("app").getProperty("/selectedIllustrationSize");
+            const sResourceSize = this._sizeResourceMap[sSelectedSize] || sSelectedSize;
+
             this._aAllIllustrations = this._aAllIllustrations.map((oItem) => {
                 return {
                     ...oItem,
-                    size: sSelectedSize
+                    size: sResourceSize
                 };
             });
             this._applySearch();
