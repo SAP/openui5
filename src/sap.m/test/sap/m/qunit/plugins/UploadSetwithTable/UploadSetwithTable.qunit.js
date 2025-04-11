@@ -1239,9 +1239,9 @@ sap.ui.define([
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
 		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
-			fileTypePath: "mediaType",
-			fileSizePath: "size",
+			urlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "fileSize",
 			documentTypePath: "documentType"
 		});
 
@@ -1283,7 +1283,7 @@ sap.ui.define([
 		// act
 
 		// get Link control from the table and trigger press event
-		const oLink = oMdcTable._oTable.getItems()[0]?.getCells()[0]?.getItems()[2]?.getItems()[0];
+		const oLink = oMdcTable._oTable.getItems()[4]?.getCells()[0]?.getItems()[2]?.getItems()[0];
 		if (!oLink) {
 			assert.ok(false, "File preview link not found in the table");
 		}
@@ -1294,6 +1294,7 @@ sap.ui.define([
 		const afterDialogOpen = function (oEvent) {
 			oDialog = oEvent.getSource();
 			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file");
+			assert.ok(oDialog.getContent()[0].getPages()[4].getAggregation("items")[0].hasStyleClass("image-scale"),"image has style to Fit within the viewport without cropping");
 			oDialog?.getButtons()[1].firePress();
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
