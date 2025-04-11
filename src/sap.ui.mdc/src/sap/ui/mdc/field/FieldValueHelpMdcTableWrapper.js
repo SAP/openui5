@@ -221,6 +221,7 @@ sap.ui.define([
 			this._updateInnerWrapperClass();
 			_handleOuterDelegate.call(this, oTable, true);
 
+			oTable._bSkipClearSelectionOnRebind = true;
 			oInnerTable = this._getWrappedTable();
 			if (oInnerTable) {
 				this._handleInnerTableChanged("insert", oInnerTable);
