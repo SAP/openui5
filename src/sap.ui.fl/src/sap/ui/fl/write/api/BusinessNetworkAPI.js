@@ -68,8 +68,7 @@ sap.ui.define([
 
 		const oResponse = await Storage.write({
 			layer: mProperties.layer,
-			flexObjects: aFlexObjects,
-			reference: mPropertyBag.reference
+			flexObjects: aFlexObjects
 		});
 		return oResponse.response;
 	};
