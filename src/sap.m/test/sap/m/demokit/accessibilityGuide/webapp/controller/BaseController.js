@@ -38,7 +38,7 @@ sap.ui.define([
 		/**
 		 * Getter for the resource bundle.
 		 * @public
-		 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
+		 * @returns {Promise<module:sap/base/i18n/ResourceBundle>} Promise resolving with the resource bundle of the component
 		 */
 		getResourceBundle : function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
