@@ -60,7 +60,19 @@
 				"sizeReplacement": {
 					"Dot": "Spot"
 				}
-			}
+			},
+			"NoChartData" :  "Empty",
+			"AddingColumns" :  "Empty",
+			"AddPeopleToCalendar" :  "Empty",
+			"FilteringColumns" :  "Empty",
+			"GroupingColumns" :  "Empty",
+			"ResizingColumns" :  "Empty",
+			"SortingColumns" :  "Empty",
+			"ReceiveAppreciation" :  "Empty",
+			"DragFilesToUpload" :  "Empty",
+			"UserHasSignedUp" :  "Empty",
+			"Achievement" :  "Empty",
+			"KeyTask" :  "Empty"
 		}
 	}
 }

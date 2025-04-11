@@ -141,6 +141,20 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("All contexts selected", async function(assert) {
+		const aContexts = await TableUtils.loadContexts(this.oTable.getBinding(), 0, this.oTable.getBinding().getLength());
+
+		aContexts.forEach((oContext) => {
+			oContext.setSelected(true);
+		});
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+
+		this.assertHeaderSelector({
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
+			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
+		});
+	});
+
 	QUnit.test("Expand/Collapse", async function(assert) {
 		this.oSelectionPlugin.onHeaderSelectorPress();
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
@@ -157,7 +171,7 @@ sap.ui.define([
 		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertHeaderSelector({
-			src: IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon),
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
 			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
 		});
 	});

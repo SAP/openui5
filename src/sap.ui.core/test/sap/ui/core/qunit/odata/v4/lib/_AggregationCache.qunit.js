@@ -7433,4 +7433,114 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+[undefined, false].forEach((bMinimal) => {
+	QUnit.test("requestFilteredOrderedPredicates: bMinimal = " + bMinimal, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+
+		return assert.rejects(
+			// code under test
+			oCache.requestFilteredOrderedPredicates(["~predicate1~"], "~oGroupLock~", bMinimal),
+			new Error("Not implemented"));
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach((bSuccess) => {
+	QUnit.test("requestFilteredOrderedPredicates: success=" + bSuccess, async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.mQueryOptions = {
+			$count : true,
+			$expand : "~expand~",
+			$orderby : "~orderby~",
+			foo : "bar"
+		};
+		oCache.aElements.$byPredicate = {
+			"~predicate1~" : "~oElement1~",
+			"~predicate2~" : "~oElement2~",
+			"~predicate3~" : "~oElement3~"
+		};
+		const mHierarchyQueryOptions = {
+			$select : ["a", "b"]
+		};
+		// restore _AggregationHelper.buildApply4Hierarchy of beforeEach to allow mocking it again
+		_AggregationHelper.buildApply4Hierarchy.restore();
+		this.mock(_AggregationHelper).expects("buildApply4Hierarchy")
+			.withExactArgs(sinon.match.same(oCache.oAggregation), {foo : "bar"}, true)
+			.returns(mHierarchyQueryOptions);
+		const mTypeForMetaPath = {"/Foo" : "~Type~"};
+		const oCacheMock = this.mock(oCache);
+		oCacheMock.expects("getTypes").withExactArgs().returns(mTypeForMetaPath);
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("selectKeyProperties")
+			.withExactArgs(sinon.match.same(mHierarchyQueryOptions), "~Type~")
+			.callsFake((mQueryOptions0) => {
+				mQueryOptions0.$select.push("~key~");
+			});
+		oHelperMock.expects("getKeyFilter")
+			.withExactArgs("~oElement1~", "/Foo", sinon.match.same(mTypeForMetaPath))
+			.returns("~filterForPredicate1~");
+		oHelperMock.expects("getKeyFilter")
+			.withExactArgs("~oElement2~", "/Foo", sinon.match.same(mTypeForMetaPath))
+			.returns("~filterForPredicate2~");
+		oHelperMock.expects("getKeyFilter")
+			.withExactArgs("~oElement3~", "/Foo", sinon.match.same(mTypeForMetaPath))
+			.returns("~filterForPredicate3~");
+		this.mock(oCache.oRequestor).expects("buildQueryString")
+			.withExactArgs("/Foo", {
+					$filter : "~filterForPredicate1~ or ~filterForPredicate2~ or"
+					+ " ~filterForPredicate3~",
+					$select : ["~key~"],
+					$top : 3
+				}, false, true, true)
+			.returns("?~query~");
+		this.mock(oCache.oRequestor).expects("request")
+			.withExactArgs("GET", "Foo?~query~", "~oGroupLock~")
+			.callsFake(() => {
+				return bSuccess
+					? Promise.resolve({
+						value : ["~oElement1Keys~", "~oElement3Keys~"]
+					})
+					: Promise.reject(new Error("Request failed intentionally"));
+			});
+		oCacheMock.expects("calculateKeyPredicate")
+			.exactly(bSuccess ? 1 : 0)
+			.withExactArgs("~oElement1Keys~", sinon.match.same(mTypeForMetaPath), "/Foo");
+		oHelperMock.expects("getPrivateAnnotation")
+			.exactly(bSuccess ? 1 : 0)
+			.withExactArgs("~oElement1Keys~", "predicate")
+			.returns("~predicate1~");
+		oCacheMock.expects("calculateKeyPredicate")
+			.exactly(bSuccess ? 1 : 0)
+			.withExactArgs("~oElement3Keys~", sinon.match.same(mTypeForMetaPath), "/Foo");
+		oHelperMock.expects("getPrivateAnnotation")
+			.exactly(bSuccess ? 1 : 0)
+			.withExactArgs("~oElement3Keys~", "predicate")
+			.returns("~predicate3~");
+
+		try {
+			// code under test
+			const aPredicatesOut = await oCache.requestFilteredOrderedPredicates(
+				["~predicate1~", "~predicate2~", "~predicate3~"], "~oGroupLock~", true);
+
+			assert.ok(bSuccess);
+			assert.deepEqual(aPredicatesOut, ["~predicate1~", "~predicate3~"]);
+		} catch (oError) {
+			assert.ok(!bSuccess);
+			assert.strictEqual(oError.message, "Request failed intentionally");
+		}
+
+		assert.deepEqual(oCache.mQueryOptions, {
+			$count : true,
+			$expand : "~expand~",
+			$orderby : "~orderby~",
+			foo : "bar"
+		}, "unchanged");
+	});
+});
 });

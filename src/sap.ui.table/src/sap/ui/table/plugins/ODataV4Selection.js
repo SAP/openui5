@@ -115,15 +115,21 @@ sap.ui.define([
 		oTable.setProperty("selectionMode", this.getSelectionMode());
 		attachToBinding(this, oBinding);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, onTableUnbindRows, this);
 	};
 
 	ODataV4Selection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
+		_private(this).bLimitReached = false;
+		_private(this).oRangeSelectionStartContext = null;
 		oTable.setProperty("selectionMode", library.SelectionMode.None);
-		clearTimeout(this.iSelectionChangeTimeout);
-		delete this.iSelectionChangeTimeout;
+		clearTimeout(_private(this).iSelectionChangeTimeout);
+		delete _private(this).iSelectionChangeTimeout;
 		detachFromBinding(this, oTable.getBinding());
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, onTableUnbindRows, this);
+		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
+		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
@@ -169,12 +175,21 @@ sap.ui.define([
 	}
 
 	ODataV4Selection.prototype.isSelected = function(oRow) {
-		const oContext = oRow.getRowBindingContext();
-		return oContext ? this.isActive() && oContext.isSelected() : false;
+		if (!this.isActive()) {
+			return false;
+		}
+
+		return oRow.getRowBindingContext()?.isSelected() ?? false;
 	};
 
 	ODataV4Selection.prototype.getSelectedCount = function() {
-		return this.getSelectedContexts().length;
+		if (!this.isActive()) {
+			return 0;
+		}
+
+		_private(this).iSelectionCount ??= this.getSelectedContexts().length;
+
+		return _private(this).iSelectionCount;
 	};
 
 	/**
@@ -184,36 +199,50 @@ sap.ui.define([
 	 * @returns {int} The number of selectable rows, or -1 if the number cannot be determined.
 	 */
 	function getSelectableCount(oPlugin) {
-		const oBinding = oPlugin.getControl()?.getBinding();
+		const oBinding = oPlugin.getControl().getBinding();
+		let iSelectableCount = -1;
 
-		if (!oBinding) {
+		if (!oBinding || oBinding.getLength() === 0) {
 			return 0;
 		}
 
-		// isLengthFinal is checked in case the count is not requested. Even though it is documented that the count is required if the limit is
-		// disabled (SelectAll enabled), it could still happen.
-		if (!oBinding.isLengthFinal()) {
-			return -1;
+		if (_private(oPlugin).iSelectableCount != null) {
+			return _private(oPlugin).iSelectableCount;
 		}
 
-		const oAggregation = oBinding.getAggregation();
-		const bIsHierarchy = "hierarchyQualifier" in (oAggregation || {});
-		const bIsDataAggregation = !bIsHierarchy && !!oAggregation;
-		let iNumberOfSelectableContexts = -1;
-
-		if (bIsDataAggregation) {
-			const aAllCurrentContexts = oPlugin.aAllCurrentContexts ?? oBinding.getAllCurrentContexts();
-
-			// If not all contexts are available, we cannot determine the number of selectable contexts, and therefore cannot determine if all are
-			// selected.
-			if (oBinding.getLength() === aAllCurrentContexts.length) {
-				iNumberOfSelectableContexts = aAllCurrentContexts.filter(isContextSelectable).length;
+		if (oBinding.getAggregation()) {
+			/* In case of data aggregation with visual grouping and sum rows, we cannot determine the number of selectable contexts.
+			 * The expected behavior is that if all visible selectable rows are selected, the state changes to "everything is selected". For example,
+			 * the Select All checkbox should then be checked.
+			 * visible rows = All rows that can be scrolled to. Does not include children of collapsed rows.
+			 * selectable rows = All visible rows that are not group headers or sums.
+			 * There are no values available to determine the number of selectable rows. Length, count, and selection count are all based on different
+			 * criteria.
+			 * The length would work for hierarchies, but there is nothing to compare it to. For example, selected contexts may be present in
+			 * collapsed rows, increasing the selection count.
+			 * We would have to load all contexts and check if all selectable contexts are selected. This would significantly impact performance.
+			 *
+			 * If the selection limit is disabled, the Select All checkbox is shown. In this case, not reaching the "everything is selected" state is
+			 * not an option. Therefore, we have to accept the loss of performance.
+			 *
+			 * As a consequence:
+			 * - The "everything is selected" state is never reached.
+			 * - If the visible rows in the table are all group headers or sums, the header selector is enabled, but pressing it has no effect.
+			 * - If the selection limit is disabled, the "everything is selected" state is reached when it shouldn't be if there are invisible
+			 *   selected contexts, for example, in collapsed rows.
+			 */
+			if (oPlugin._isLimitDisabled()) {
+				const aAllCurrentContexts = oBinding.getAllCurrentContexts();
+				if (oBinding.getLength() === aAllCurrentContexts.length) {
+					iSelectableCount = aAllCurrentContexts.filter(isContextSelectable).length;
+				}
 			}
-		} else {
-			iNumberOfSelectableContexts = oBinding.getLength();
-		}
+		} else if (oBinding.isLengthFinal()) {
+			iSelectableCount = oBinding.getLength();
+		} // The count is not requested and not all data is loaded.
 
-		return iNumberOfSelectableContexts;
+		_private(oPlugin).iSelectableCount = iSelectableCount;
+		return iSelectableCount;
 	}
 
 	/**
@@ -243,7 +272,6 @@ sap.ui.define([
 		if (!this.isActive()) {
 			return SelectionPlugin.prototype.getRenderConfig.apply(this, arguments);
 		}
-		this.aAllCurrentContexts = this.getControl().getBinding()?.getAllCurrentContexts();
 
 		updateHeaderSelectorIcon(this);
 
@@ -260,8 +288,6 @@ sap.ui.define([
 			}
 		};
 
-		delete this.aAllCurrentContexts;
-
 		return mRenderConfig;
 	};
 
@@ -276,7 +302,7 @@ sap.ui.define([
 			oPlugin.clearSelection();
 			return false;
 		} else if (oPlugin._isLimitDisabled()) {
-			const oBinding = oPlugin.getControl()?.getBinding();
+			const oBinding = oPlugin.getControl().getBinding();
 			if (oBinding?.getLength()) {
 				select(oPlugin, 0, oBinding.getLength() - 1);
 				return true;
@@ -293,6 +319,10 @@ sap.ui.define([
 	 */
 	function areAllRowsSelected(oPlugin) {
 		const iSelectableCount = getSelectableCount(oPlugin);
+		/* Fails to return the correct information if there are selected invisible contexts. For example, if a context is selected and after
+		 * filtering the table contains 1 row with a different, unselected context -> 1 === 1.
+		 * We would have to load all contexts and check if all selectable contexts are selected. This would significantly impact performance.
+		 */
 		return iSelectableCount > 0 && iSelectableCount === oPlugin.getSelectedCount();
 	}
 
@@ -313,7 +343,7 @@ sap.ui.define([
 			if (this.getSelectedCount() > 0) {
 				this.clearSelection();
 			} else {
-				const oBinding = this.getControl()?.getBinding();
+				const oBinding = this.getControl().getBinding();
 				if (oBinding?.getLength() > 0) {
 					select(this, 0, oBinding.getLength() - 1);
 				}
@@ -336,7 +366,7 @@ sap.ui.define([
 					oEvent.setMarked("sapUiTableClearAll");
 				}
 			} else {
-				const oBinding = this.getControl()?.getBinding();
+				const oBinding = this.getControl().getBinding();
 				if (oBinding?.getLength() > 0) {
 					select(this, 0, oBinding.getLength() - 1);
 				}
@@ -348,15 +378,15 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.setSelectionMode = function(sSelectionMode) {
-		const oTable = this.getControl();
-
 		this.setProperty("selectionMode", sSelectionMode, true);
+
+		if (!this.isActive()) {
+			return this;
+		}
+
 		_private(this).oRangeSelectionStartContext = null;
 		this.clearSelection();
-
-		if (oTable) {
-			oTable.setProperty("selectionMode", this.getSelectionMode());
-		}
+		this.getControl().setProperty("selectionMode", this.getSelectionMode());
 
 		return this;
 	};
@@ -394,22 +424,28 @@ sap.ui.define([
 	 *
 	 * @param {object} oPlugin The table plugin instance.
 	 * @param {object} oBinding The binding instance associated with the table.
-	 * @param {object} [oContext] The specific context to validate. If not provided, all selected contexts will be validated.
+	 * @param {object} [oContext] The specific context to validate. If not provided, all selected contexts are validated.
 	 * @throws {Error} If the header context is selected.
 	 * @throws {Error} If a context that is not selectable is selected.
 	 * @throws {Error} If multiple contexts are selected in 'Single' selection mode.
 	 */
 	function validateSelection(oPlugin, oBinding, oContext) {
-		const aAllSelectedContexts = [oBinding.getHeaderContext(), ...oBinding.getAllCurrentContexts()].filter((oContext) => oContext?.isSelected());
-		let aContextsToValidate = aAllSelectedContexts;
+		const oHeaderContext = oBinding.getHeaderContext();
+		let aContextsToValidate = [];
 
 		if (oContext) {
 			aContextsToValidate = oContext.isSelected() ? [oContext] : [];
+		} else {
+			aContextsToValidate = oPlugin.getSelectedContexts();
+
+			if (oHeaderContext?.isSelected()) {
+				aContextsToValidate.unshift(oHeaderContext);
+			}
 		}
 
 		for (const oContext of aContextsToValidate) {
 			// To avoid compatibility issues if support is added. Handling a selected header context might affect UI, behavior, and settings.
-			if (oContext === oBinding.getHeaderContext()) {
+			if (oContext === oHeaderContext) {
 				throw new Error("Header context must not be selected");
 			}
 
@@ -419,7 +455,7 @@ sap.ui.define([
 			}
 		}
 
-		if (oPlugin.getSelectionMode() === SelectionMode.Single && aAllSelectedContexts.length > 1) {
+		if (oPlugin.getSelectionMode() === SelectionMode.Single && oPlugin.getSelectedCount() > 1) {
 			throw new Error("Multiple contexts selected. Cannot select more than one context in selection mode 'Single'");
 		}
 	}
@@ -429,16 +465,26 @@ sap.ui.define([
 		attachToBinding(this, oBinding);
 	}
 
+	function onTableUnbindRows() {
+		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
+		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
+	}
+
 	function attachToBinding(oPlugin, oBinding) {
 		oBinding?.attachEvent("selectionChanged", onBindingSelectionChanged, oPlugin);
+		oBinding?.attachChange(onBindingChange, oPlugin);
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
 		oBinding?.detachEvent("selectionChanged", onBindingSelectionChanged, oPlugin);
+		oBinding?.detachChange(onBindingChange, oPlugin);
 	}
 
 	function onBindingSelectionChanged(oEvent) {
 		const oContext = oEvent.getParameter("context");
+
+		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
+		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
 
 		try {
 			validateSelection(this, oContext.getBinding(), oContext);
@@ -447,14 +493,20 @@ sap.ui.define([
 			throw oError;
 		}
 
-		if (this.iSelectionChangeTimeout) {
+		if (_private(this).iSelectionChangeTimeout) {
 			return;
 		}
 
-		this.iSelectionChangeTimeout = setTimeout(() => {
+		_private(this).iSelectionChangeTimeout = setTimeout(() => {
 			this.fireSelectionChange();
-			delete this.iSelectionChangeTimeout;
+			delete _private(this).iSelectionChangeTimeout;
 		}, 0);
+	}
+
+	function onBindingChange(oEvent) {
+		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
+		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
+		delete _private(this).iSelectableCount; // Delete the cached selectable count to force a recalculation.
 	}
 
 	/**
@@ -532,21 +584,22 @@ sap.ui.define([
 	}
 
 	ODataV4Selection.prototype.clearSelection = function() {
-		for (const oContext of this.getSelectedContexts()) {
-			oContext.setSelected(false);
+		if (!this.isActive()) {
+			return;
 		}
+
+		this.getControl().getBinding()?.getHeaderContext()?.setSelected(false);
 	};
 
 	ODataV4Selection.prototype.getSelectedContexts = function() {
-		const oBinding = this.getControl()?.getBinding();
-
-		if (!this.isActive() || !oBinding) {
+		if (!this.isActive()) {
 			return [];
 		}
 
-		const aAllCurrentContexts = this.aAllCurrentContexts ?? oBinding.getAllCurrentContexts();
+		_private(this).aSelectedContexts ??= this.getControl().getBinding()?.getAllCurrentContexts().filter((oContext) => oContext.isSelected()) ?? [];
+		_private(this).iSelectionCount = _private(this).aSelectedContexts.length;
 
-		return aAllCurrentContexts.filter((oContext) => oContext.isSelected());
+		return _private(this).aSelectedContexts;
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {

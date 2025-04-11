@@ -6,11 +6,17 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/link/LinkItem",
 	"testutils/link/FakeUShellConnector",
-	"sap/base/Log"
-], function(Link,
+	"sap/base/Log",
+	"sap/ui/mdc/ushell/LinkDelegate",
+	"sap/ui/mdc/link/Factory"
+], function(
+	Link,
 	LinkItem,
 	FakeUShellConnector,
-	SapBaseLog) {
+	SapBaseLog,
+	LinkDelegate,
+	Factory
+) {
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.ushell.LinkDelegate: API", {
@@ -790,4 +796,31 @@ sap.ui.define([
 			FakeUShellConnector.disableFakeConnector();
 		}
 	});
+
+	let getServiceAsyncReal;
+
+	QUnit.module("hasDistinctSemanticObjects", {
+		beforeEach: () => {
+			getServiceAsyncReal = Factory.getServiceAsync;
+			Factory.getServiceAsync = function() {
+				return Promise.resolve({
+					getSemanticObjects: () => {
+						return new Promise((resolve) => {
+							setTimeout(() => {resolve(["SO1", "SO2"]);}, 5000);
+						});
+					}
+				});
+			};
+		},
+		afterEach: () => {
+			Factory.getServiceAsync = getServiceAsyncReal;
+		}
+	});
+
+	QUnit.test("should wait for getSemanticObjects of Service", async (assert) => {
+		const bResult = await LinkDelegate.hasDistinctSemanticObjects(["SO1"]);
+
+		assert.equal(bResult, true, "hasDistinctSemanticObjects returns true");
+	});
+
 });

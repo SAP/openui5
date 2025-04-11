@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.HierarchyBindAction.Main", {
-		create : async function (oParentContext, bFilteredOut) {
+		async create(oParentContext, bFilteredOut) {
 			try {
 				const oContext = this.byId("table").getBinding("rows").create({
 					"@$ui5.node.parent" : oParentContext,
@@ -24,7 +24,7 @@ sap.ui.define([
 			}
 		},
 
-		onChangeHierarchy : function (oEvent) {
+		onChangeHierarchy(oEvent) {
 			const oSource = oEvent.getSource();
 			const oContext = oSource.toString().includes("ODataListBinding")
 				? oSource.getAllCurrentContexts()[0]
@@ -40,7 +40,7 @@ sap.ui.define([
 			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
 		},
 
-		onCollapseAll : function (oEvent) {
+		onCollapseAll(oEvent) {
 			try {
 				oEvent.getSource().getBindingContext().collapse(true);
 			} catch (oError) {
@@ -48,15 +48,15 @@ sap.ui.define([
 			}
 		},
 
-		onCreate : function (oEvent, bFilteredOut) {
+		onCreate(oEvent, bFilteredOut) {
 			this.create(oEvent.getSource().getBindingContext(), bFilteredOut);
 		},
 
-		onCreateRoot : function (_oEvent, bFilteredOut) {
+		onCreateRoot(_oEvent, bFilteredOut) {
 			this.create(null, bFilteredOut);
 		},
 
-		onDelete : async function (oEvent) {
+		async onDelete(oEvent) {
 			try {
 				await oEvent.getSource().getBindingContext().delete();
 			} catch (oError) {
@@ -64,14 +64,14 @@ sap.ui.define([
 			}
 		},
 
-		onDescriptionChanged : function (oEvent) {
+		onDescriptionChanged(oEvent) {
 			const oContext = oEvent.getSource().getBindingContext();
 			if (oContext.hasPendingChanges()) {
 				oContext.requestSideEffects(["SiblingOrder"]);
 			} // else: invalid value (has not reached model)
 		},
 
-		onExpandAll : async function (oEvent) {
+		async onExpandAll(oEvent) {
 			try {
 				await oEvent.getSource().getBindingContext().expand(true);
 			} catch (oError) {
@@ -79,12 +79,17 @@ sap.ui.define([
 			}
 		},
 
-		onInit : function () {
+		onInit() {
 			// initialization has to wait for view model/context propagation
 			this.getView().attachEventOnce("modelContextChange", function () {
 				var oTreeTable = this.byId("table"),
 					oUriParameters = new URLSearchParams(window.location.search);
 
+				if (oUriParameters.get("clearSelectionOnFilter") === "false") {
+					const oBindingInfo = this.byId("table").getBindingInfo("rows");
+					delete oBindingInfo.parameters.$$clearSelectionOnFilter;
+					this.byId("table").bindRows(oBindingInfo);
+				}
 				oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
 				const sVisibleRowCount = oUriParameters.get("visibleRowCount");
 				if (sVisibleRowCount) {
@@ -113,7 +118,7 @@ sap.ui.define([
 			}, this);
 		},
 
-		onMakeRoot : async function (oEvent, bLastSibling, bCopy) {
+		async onMakeRoot(oEvent, bLastSibling, bCopy) {
 			try {
 				this.getView().setBusy(true);
 				await oEvent.getSource().getBindingContext().move({
@@ -128,7 +133,7 @@ sap.ui.define([
 			}
 		},
 
-		onMove : function (oEvent, vNextSibling, bCopy) {
+		onMove(oEvent, vNextSibling, bCopy) {
 			this._oNode = oEvent.getSource().getBindingContext();
 			this._vNextSibling = vNextSibling === "" ? undefined : vNextSibling;
 			this._bCopy = bCopy;
@@ -143,7 +148,7 @@ sap.ui.define([
 			oSelectDialog.open();
 		},
 
-		onMoveConfirm : async function (oEvent) {
+		async onMoveConfirm(oEvent) {
 			try {
 				this.getView().setBusy(true);
 				const sParentId = oEvent.getParameter("selectedItem").getTitle();
@@ -181,7 +186,7 @@ sap.ui.define([
 			}
 		},
 
-		onMoveDown : async function (oEvent) {
+		async onMoveDown(oEvent) {
 			var oNode;
 
 			try {
@@ -215,7 +220,7 @@ sap.ui.define([
 			}
 		},
 
-		onMoveUp : async function (oEvent) {
+		async onMoveUp(oEvent) {
 			var oNode;
 
 			try {
@@ -248,7 +253,7 @@ sap.ui.define([
 			}
 		},
 
-		onRefresh : function (_oEvent, bKeepTreeState) {
+		onRefresh(_oEvent, bKeepTreeState) {
 			var oTable = this.byId("table");
 
 			if (bKeepTreeState) {
@@ -258,7 +263,16 @@ sap.ui.define([
 			}
 		},
 
-		scrollTo : function (oNode) {
+		/**
+		 * Shows a message box with the selected items.
+		 */
+		onShowSelection() {
+			const aSelected = this.byId("table").getBinding("rows").getAllCurrentContexts()
+				.filter((oContext) => oContext.isSelected());
+			MessageBox.information((aSelected.join("\n") || "none"), {title : "Selected Items"});
+		},
+
+		scrollTo(oNode) {
 			const iIndex = oNode.getIndex();
 			const oTable = this.byId("table");
 			const iFirstVisibleRow = oTable.getFirstVisibleRow();

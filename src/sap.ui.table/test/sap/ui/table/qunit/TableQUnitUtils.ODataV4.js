@@ -34,7 +34,7 @@ sap.ui.define([
 		return aData;
 	}
 
-	function createResponseMessage(iStartIndex, iLength, iPageSize) {
+	function createResponseMessage(iStartIndex, iLength, iPageSize, iCount) {
 		const mResponse = {};
 		const bPageLimitReached = iPageSize != null && iPageSize > 0 && iLength > iPageSize;
 
@@ -45,6 +45,10 @@ sap.ui.define([
 			mResponse["@odata.nextLink"] = "http://localhost:8088/MyServiceWithPaging/Products?" + sSkipTop + sSkipToken;
 		} else {
 			mResponse.value = createData(iStartIndex, iLength);
+		}
+
+		if (iCount != null) {
+			mResponse["@odata.count"] = iCount;
 		}
 
 		return mResponse;
@@ -66,11 +70,7 @@ sap.ui.define([
 					const bWithCount = !!aMatches[2];
 					const iSkip = parseInt(aMatches[3]);
 					const iTop = parseInt(aMatches[4]);
-					const mResponseMessage = createResponseMessage(iSkip, iTop, iPageSize);
-
-					if (bWithCount) {
-						mResponseMessage["@odata.count"] = iCount;
-					}
+					const mResponseMessage = createResponseMessage(iSkip, iTop, iPageSize, bWithCount ? iCount : undefined);
 
 					oResponse.message = JSON.stringify(mResponseMessage);
 				}
@@ -80,11 +80,17 @@ sap.ui.define([
 			response: {
 				buildResponse: function(aMatches, oResponse) {
 					const bWithCount = !!aMatches[1];
-					const mResponseMessage = createResponseMessage(0, 0);
+					const mResponseMessage = createResponseMessage(0, 0, undefined, bWithCount ? 0 : undefined);
 
-					if (bWithCount) {
-						mResponseMessage["@odata.count"] = 0;
-					}
+					oResponse.message = JSON.stringify(mResponseMessage);
+				}
+			}
+		}, {
+			regExp: /^GET \/MyService\/Products\?(\$count=true&)?\$filter=Name%20eq%20'Test%20Product%20\(1\)'/,
+			response: {
+				buildResponse: function(aMatches, oResponse) {
+					const bWithCount = !!aMatches[1];
+					const mResponseMessage = createResponseMessage(1, 1, undefined, bWithCount ? 1 : undefined);
 
 					oResponse.message = JSON.stringify(mResponseMessage);
 				}

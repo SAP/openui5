@@ -7255,12 +7255,12 @@ sap.ui.define([
 			.returns(aPredicates);
 		this.mock(oBinding).expects("isGrouped").withExactArgs().returns("~isGrouped~");
 		this.mock(oBinding).expects("getGroupId").never();
-		this.mock(oBinding).expects("validateSelection")
-			.withExactArgs(sinon.match.same(oOldCache), "myGroup");
-		this.mock(oOldCache).expects("reset")
+		const oResetCall = this.mock(oOldCache).expects("reset")
 			.withExactArgs(sinon.match.same(aPredicates),
 				bSideEffectsRefresh ? "myGroup" : undefined, "~queryOptions~",
 				"~$$aggregation~", "~isGrouped~");
+		const oValidationCall = this.mock(oBinding).expects("validateSelection")
+			.withExactArgs(sinon.match.same(oOldCache), "myGroup");
 		this.mock(_AggregationCache).expects("create").never();
 
 		assert.strictEqual(
@@ -7268,6 +7268,8 @@ sap.ui.define([
 			oBinding.doCreateCache("resource/path", "~queryOptions~", "~context~",
 				"deep/resource/path", "myGroup", bSideEffectsRefresh, oOldCache),
 			oOldCache);
+
+		assert.ok(oResetCall.calledBefore(oValidationCall), "cache reset before validateSelection");
 	});
 });
 
@@ -11014,32 +11016,48 @@ sap.ui.define([
 
 		oBinding.aContexts = ["~oTransientContext~", /*empty*/, undefined, "~oPersistedContext~"];
 		oBinding.iCreatedContexts = 1;
-		const oKeptContext0 = {isEffectivelyKeptAlive : function () {}};
-		const oKeptContext1 = {isEffectivelyKeptAlive : function () {}};
-		const oNotKeptContext = {isEffectivelyKeptAlive : function () {}}; // BCP 2270081950:
+		const oKeptContext0 = {
+			isEffectivelyKeptAlive : mustBeMocked,
+			isOutOfPlace : mustBeMocked
+		};
+		const oKeptContext0Mock = this.mock(oKeptContext0);
+		const oOutOfPlaceContext = {
+			isEffectivelyKeptAlive : mustBeMocked,
+			isOutOfPlace : mustBeMocked
+		};
+		const oOutOfPlaceContextMock = this.mock(oOutOfPlaceContext);
+		const oNotKeptContext = {
+			isEffectivelyKeptAlive : mustBeMocked,
+			isOutOfPlace : mustBeMocked
+		}; // BCP 2270081950:
 		// there is a point in time when contexts with keepAlive=false are present in
 		// mPreviousContextsByPath which need be filtered out.
+		const oNotKeptContextMock = this.mock(oNotKeptContext);
 
 		oBinding.mPreviousContextsByPath = {
 			"~sPath1~" : oKeptContext0,
-			"~sPath2~" : oKeptContext1,
+			"~sPath2~" : oOutOfPlaceContext,
 			"~sPath3~" : oNotKeptContext
 		};
 
-		this.mock(oKeptContext0).expects("isEffectivelyKeptAlive").twice().withExactArgs()
-			.returns(true);
-		this.mock(oKeptContext1).expects("isEffectivelyKeptAlive").twice().withExactArgs()
-			.returns(true);
-		this.mock(oNotKeptContext).expects("isEffectivelyKeptAlive").twice().withExactArgs()
-			.returns(false);
+		oKeptContext0Mock.expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		oOutOfPlaceContextMock.expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		oNotKeptContextMock.expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
 
 		// code under test
 		assert.deepEqual(oBinding._getAllExistingContexts(),
-			["~oTransientContext~", "~oPersistedContext~", oKeptContext0, oKeptContext1]);
+			["~oTransientContext~", "~oPersistedContext~", oKeptContext0, oOutOfPlaceContext]);
 
-		// code under test - no created contexts
+		oKeptContext0Mock.expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		oKeptContext0Mock.expects("isOutOfPlace").withExactArgs().returns(false);
+		oOutOfPlaceContextMock.expects("isEffectivelyKeptAlive").withExactArgs().returns(true);
+		oOutOfPlaceContextMock.expects("isOutOfPlace").withExactArgs().returns(true);
+		oNotKeptContextMock.expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		oNotKeptContextMock.expects("isOutOfPlace").never();
+
+		// code under test - no created and out of place contexts
 		assert.deepEqual(oBinding._getAllExistingContexts(true),
-			["~oPersistedContext~", oKeptContext0, oKeptContext1]);
+			["~oPersistedContext~", oKeptContext0]);
 	});
 
 	//*********************************************************************************************
@@ -13112,6 +13130,10 @@ sap.ui.define([
 	QUnit.test("validateSelection: nothing to do #" + i, function () {
 		const oBinding = this.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
 			mParameters);
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.exactly(mParameters.$$clearSelectionOnFilter ? 1 : 0)
+			.returns(true);
 		this.mock(oBinding).expects("_getAllExistingContexts").never();
 
 		// code under test
@@ -13124,6 +13146,9 @@ sap.ui.define([
 		const oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			this.oModel.createBindingContext("/TEAMS('23')"), undefined, undefined,
 			{$$clearSelectionOnFilter : true});
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.returns(false);
 		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_getAllExistingContexts").never();
 
@@ -13135,6 +13160,9 @@ sap.ui.define([
 	QUnit.test("validateSelection: no selection", function () {
 		const oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined,
 			{$$clearSelectionOnFilter : true});
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.returns(false);
 		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		this.mock(oBinding).expects("_getAllExistingContexts").withExactArgs(true)
 			.returns([{
@@ -13155,6 +13183,9 @@ sap.ui.define([
 		const oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			this.oModel.createBindingContext("/TEAMS('23')"), undefined, undefined,
 			{$$clearSelectionOnFilter : true});
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.returns(false);
 		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		const oContextIn42 = {
 			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('42')",
@@ -13205,6 +13236,9 @@ sap.ui.define([
 		const oBinding = this.bindList("TEAM_2_EMPLOYEES",
 			this.oModel.createBindingContext("/TEAMS('23')"), undefined, undefined,
 			{$$clearSelectionOnFilter : true});
+		this.mock(_Helper).expects("isDataAggregation")
+			.withExactArgs(sinon.match.same(oBinding.mParameters))
+			.returns(false);
 		this.mock(oBinding.oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		const oContext = {
 			sPath : "/TEAMS('23')/TEAM_2_EMPLOYEES('42')",
