@@ -117,10 +117,13 @@ sap.ui.define([
 		 *
 		 * Activates the passed variant applicable to the passed control/component.
 		 * If the Variant is not available and the backend supports lazy loading, a backend request is made to fetch the variant.
+		 * If the flag standardVariant is set to true, the standard variant is activated and the variantReference is ignored.
+		 * In this scenario the passed element must be the variant management control.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.base.ManagedObject|string} mPropertyBag.element - Component or control (instance or ID) on which the <code>variantModel</code> is set
 		 * @param {string} mPropertyBag.variantReference - Reference to the variant that needs to be activated
+		 * @param {boolean} [mPropertyBag.standardVariant] - If set to true, the standard variant is activated and the variantReference is ignored
 		 *
 		 * @returns {Promise} Resolves after the variant is activated or rejects if an error occurs
 		 *
@@ -156,19 +159,27 @@ sap.ui.define([
 				return logAndReject(Error("No variant management model found for the passed control or application component"));
 			}
 
+			if (mPropertyBag.standardVariant && !oElement.isA("sap.ui.fl.variants.VariantManagement")) {
+				return logAndReject(Error("With using standardVariant and no variantReference, a variant management control must be passed as element"));
+			}
+
+			const sVariantReference = mPropertyBag.standardVariant
+				? oVariantModel.getVariantManagementReferenceForControl(mPropertyBag.element)
+				: mPropertyBag.variantReference;
+
 			// if the variant management reference is not available, the variant is not yet loaded
-			if (!oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference) {
+			if (!oVariantModel.getVariantManagementReference(sVariantReference).variantManagementReference) {
 				try {
 					await VariantManagementState.loadVariant({
 						reference: oVariantModel.sFlexReference,
-						variantReference: mPropertyBag.variantReference
+						variantReference: sVariantReference
 					});
 				} catch (oError) {
-					return logAndReject(Error(`Variant with reference '${mPropertyBag.variantReference}' could not be found`));
+					return logAndReject(Error(`Variant with reference '${sVariantReference}' could not be found`));
 				}
 			}
 
-			const sVariantManagementReference = oVariantModel.getVariantManagementReference(mPropertyBag.variantReference).variantManagementReference;
+			const sVariantManagementReference = oVariantModel.getVariantManagementReference(sVariantReference).variantManagementReference;
 			if (!sVariantManagementReference) {
 				return logAndReject(Error("A valid control or component, and a valid variant/ID combination are required"));
 			}
@@ -179,7 +190,7 @@ sap.ui.define([
 			try {
 				return oVariantModel.updateCurrentVariant({
 					variantManagementReference: sVariantManagementReference,
-					newVariantReference: mPropertyBag.variantReference,
+					newVariantReference: sVariantReference,
 					appComponent: oAppComponent
 				});
 			} catch (oError) {
