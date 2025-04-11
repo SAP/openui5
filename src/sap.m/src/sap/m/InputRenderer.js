@@ -153,8 +153,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap
 			}
 		}
 
-		if (oControl.getShowSuggestion()
-			&& oControl.getValueStateLinksForAcc().length
+		if (oControl.getValueStateLinksForAcc().length
 			&& oControl.getValueState() !== ValueState.Error) {
 			append(oControl.getValueStateLinksShortcutsId());
 		}

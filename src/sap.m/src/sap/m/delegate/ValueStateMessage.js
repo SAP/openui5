@@ -78,6 +78,7 @@ sap.ui.define([
 				BaseObject.apply(this, arguments);
 				this._oControl = oControl;
 				this._oPopup = null;
+				this._oMessageDomRef = null;
 			}
 		});
 
@@ -89,11 +90,13 @@ sap.ui.define([
 		ValueStateMessage.prototype.open = function() {
 			var oControl = this._oControl,
 				oPopup = this.getPopup(),
-				oMessageDomRef = this.createDom(),
 				mDock = Popup.Dock,
 				$Control;
 
-			if (!oControl || !oControl.getDomRef() || !oPopup || !oMessageDomRef) {
+
+			this._oMessageDomRef = this.createDom();
+
+			if (!oControl || !oControl.getDomRef() || !oPopup || !this._oMessageDomRef) {
 				return;
 			}
 			var sValueState = oControl.getValueState();
@@ -101,7 +104,7 @@ sap.ui.define([
 
 			$Control = jQuery(oControl.getDomRefForValueStateMessage());
 
-			oPopup.setContent(oMessageDomRef);
+			oPopup.setContent(this._oMessageDomRef);
 			oPopup.close(0);
 
 			oPopup.open(
@@ -115,9 +118,9 @@ sap.ui.define([
 				Device.system.phone ? true : Popup.CLOSE_ON_SCROLL
 			);
 
-			this.createFormattedTextDOM(vValueStateMessageText, oMessageDomRef);
+			this.createFormattedTextDOM(vValueStateMessageText, this._oMessageDomRef);
 
-			var $DomRef = jQuery(oMessageDomRef);
+			var $DomRef = jQuery(this._oMessageDomRef);
 
 			// check whether popup is below or above the input
 			if ($Control.offset().top < $DomRef.offset().top) {
@@ -146,6 +149,15 @@ sap.ui.define([
 			}
 
 			return (typeof oControl.getValueStateMessageId === "function") ? oControl.getValueStateMessageId() : oControl.getId() + "-message";
+		};
+
+		/**
+		 * Get the DOM reference for the value state message
+		 * @returns {Element} Returns the DOM root element for the value state message popup
+		 * @protected
+		 */
+		ValueStateMessage.prototype.getDomRef = function() {
+			return this._oMessageDomRef;
 		};
 
 		ValueStateMessage.prototype.getOpenDuration = function() {
@@ -266,7 +278,6 @@ sap.ui.define([
 			// This element should be hidden from the accessibility tree, since it has only presentation role
 			// The value state announcement is present via hidden span, referenced via aria-describedby/aria-errormessage
 			oMessageDomRef.setAttribute("role", "presentation");
-			oMessageDomRef.setAttribute("aria-hidden", "true");
 			oMessageDomRef.id = sID;
 
 			return oMessageDomRef;

@@ -9825,4 +9825,73 @@ sap.ui.define([
 		oDeviceStub.restore();
 		oInput.destroy();
 	});
+
+	QUnit.module("Value State Mesage interactions",  {
+		beforeEach: async function () {
+			this.clock = sinon.useFakeTimers();
+			this.oInput = new Input({
+				valueState: "Error",
+				formattedValueStateText: new FormattedText({
+					htmlText: "Value state message containing a %%0",
+					controls: new Link({
+						text: "link",
+						href: "#"
+					})
+				})
+			});
+			this.oInput.placeAt("content");
+			await nextUIUpdate(this.clock);
+		},
+		afterEach: function () {
+			// cleanup
+			this.oInput.destroy();
+			runAllTimersAndRestore(this.clock);
+		}
+	});
+
+	QUnit.test("Ctrl+Alt+F8 moves focus from the input tho the first value state message link", function(assert){
+		this.oInput.focus();
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick(300);
+
+		const aLink = this.oInput._getValueStateLinks();
+
+		assert.strictEqual(aLink.length, 1, "One link is rendered in the value state message");
+		assert.strictEqual(document.activeElement, aLink[0].getDomRef(), "Focus is on the first link in the value state message popup");
+	});
+
+	QUnit.test("Pressing SHIFT+TAB moves focus from the value state link to the input", function(assert){
+		this.oInput.focus();
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick(500);
+
+		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB, true);
+		this.clock.tick(500);
+
+		// assert
+		assert.strictEqual(document.activeElement, this.oInput.getFocusDomRef(), "Focus is on the input");
+	});
+
+	QUnit.test("Pressing TAB from the value state link closes the value state message and moves the focus", function(assert){
+		var fnValueStateCloseSpy = this.spy(this.oInput, "closeValueStateMessage");
+
+		this.oInput.focus();
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.F8, false, true, true);
+		this.clock.tick(500);
+
+		qutils.triggerKeydown(document.activeElement, KeyCodes.TAB);
+		this.clock.tick(500);
+
+		const aLinks = this.oInput._getValueStateLinks();
+
+		// assert
+		assert.strictEqual(fnValueStateCloseSpy.callCount, 1, "Value state message is closed");
+		assert.notStrictEqual(document.activeElement, aLinks[0].getDomRef(), "Focus is not on the link in the value state message popup");
+	});
 });
