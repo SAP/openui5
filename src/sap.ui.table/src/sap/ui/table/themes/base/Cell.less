@@ -85,7 +85,6 @@
 		.sapUiTableRowNavIndicator & {
 			border-right: none;
 			border-left: none;
-			background-color: transparent;
 		}
 	}
 
@@ -159,6 +158,7 @@
 		min-height: @_sap_ui_table_ColumnHeaderHeightCozy;
 	}
 
+	/* Either selectors or highlights visible. */
 	.sapUiTableRowSelectors &,
 	.sapUiTableRowHighlights & {
 		display: inline-block;
@@ -180,6 +180,7 @@
 	/* Only highlights visible. */
 	.sapUiTableRowHighlights:not(.sapUiTableRowSelectors) & {
 		width: @_sap_ui_table_RowHighlightWidth;
+		pointer-events: none;
 	}
 
 	/* Both selectors and highlights visible. */
@@ -200,8 +201,12 @@
 		pointer-events: none;
 	}
 
-	&:not(.sapUiTableSelAllDisabled), &:not(.sapUiTableSelAllDisabled) .sapUiIcon {
+	&:not(.sapUiTableSelAllDisabled) {
 		cursor: pointer;
+
+		> * {
+			cursor: pointer;
+		}
 	}
 }
 
@@ -371,11 +376,10 @@
 
 .sapUiTableRowSelectionCell {
 	cursor: pointer;
-}
 
-.sapUiTableRowSelectionCell,
-.sapUiTableRowActionCell {
-	position: relative;
+	.sapUiTable:not(.sapUiTableRowSelectors) & {
+		pointer-events: none;
+	}
 }
 
 .sapUiTableRowActionCell {
@@ -407,6 +411,7 @@
 
 	.sapUiTableRowNavIndicator & {
 		min-width: @_sap_ui_table_NavIndicatorWidth;
+		pointer-events: none;
 	}
 }
 
