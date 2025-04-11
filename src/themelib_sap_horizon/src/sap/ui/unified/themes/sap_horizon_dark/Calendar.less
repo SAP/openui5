@@ -389,7 +389,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 		}
 		.sapUiCalSpecialDate,
 		&:focus:not(.sapUiCalItemSel) .sapUiCalSpecialDate {
-			width: 80%;
+			width: calc(~'100% - 0.345rem');
 			bottom: 0.1875rem;
 			left: 0.1875rem;
 		}
@@ -410,7 +410,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 		}
 		&.sapUiCalItemSel:not(:focus) {
 			.sapUiCalSpecialDate {
-				width: 78%;
+				width: calc(~'100% - 0.38rem');
 				bottom: 0.1875rem;
 				left: 0.1875rem;
 			}
@@ -426,7 +426,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 				line-height: 2.375rem;
 			}
 			.sapUiCalSpecialDate {
-				width: 78%;
+				width: calc(~'100% - 0.425rem');
 			}
 		}
 		&:focus {
@@ -434,7 +434,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 			&.sapUiCalItemSelBetween:not(.sapUiCalItemSel),
 			&:not(.sapUiCalItemSelBetween):not(.sapUiCalItemSel) {
 				.sapUiCalSpecialDate {
-					width: 66%;
+					width: calc(~'100% - 0.7rem');
 					left: 0.3125rem;
 					bottom: 0.3125rem;
 					height: 0.3125rem;
@@ -482,7 +482,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 
 	&.sapUiCalItemSelBetween:not(.sapUiCalItemSel):not(.sapUiCalItemNow) {
 		.sapUiCalSpecialDate {
-			width: 91%;
+			width: calc(~'100% - 0.125rem');
 			left: 0.0625rem;
 			right: 0.0625rem;
 			bottom: 0.025rem;
@@ -492,7 +492,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 	&.sapUiCalItemSel .sapUiCalSpecialDate {
 		bottom: 0.025rem;
 		left: 0.09375rem;
-		width: 90%;
+		width: calc(~'100% - 0.15rem');
 	}
 
 	.sapUiCalItemText {

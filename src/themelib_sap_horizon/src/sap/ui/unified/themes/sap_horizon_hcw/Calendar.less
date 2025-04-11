@@ -354,13 +354,13 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 			}
 		}
 		.sapUiCalSpecialDate {
-			width: 88%;
+			width: calc(~'100% - 0.25rem');
 			bottom: 0.125rem;
 			left: 0.125rem;
 		}
 		&:focus .sapUiCalSpecialDate,
 		&.sapUiCalItemSel .sapUiCalSpecialDate {
-			width: 75%;
+			width: calc(~'100% - 0.5rem');
 			bottom: 0.25rem;
 			left: 0.25rem;
 		}
@@ -396,6 +396,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 			border: 0.125rem solid @sapUiLegendCurrentDateTime;
 			content: "";
 			border-radius: 0.5rem;
+			z-index: 10;
 		}
 	}
 	.sapUiCalItemText:after {
@@ -415,7 +416,7 @@ html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetw
 	&.sapUiCalItemSel .sapUiCalSpecialDate {
 		bottom: 0.0625rem;
 		left: 0.0625rem;
-		width: 95%;
+		width: calc(~'100% - 0.125rem');
 	}
 	&.sapUiCalItemSel:focus .sapUiCalSpecialDate{
 		bottom: 0.125rem;
