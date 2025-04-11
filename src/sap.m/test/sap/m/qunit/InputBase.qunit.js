@@ -1911,8 +1911,8 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 	QUnit.test("DOM aria properties", async function(assert) {
-
-		var oInput = new InputBase().placeAt("content");
+		var oMobileRB = Library.getResourceBundleFor("sap.m");
+		var oInput = new InputBase("acc-input").placeAt("content");
 		var fnSetErrorAnnounceSpy  = this.spy(oInput, "setErrorMessageAnnouncementState");
 
 		await nextUIUpdate();
@@ -1923,6 +1923,7 @@ sap.ui.define([
 		assert.strictEqual($Input.attr("readonly"), undefined, "No readonly attribute set for editable=true");
 		assert.strictEqual($Input.attr("disabled"), undefined, "No disabled attribute set for enabled=true");
 		assert.strictEqual($Input.attr("aria-labelledby"), undefined, "No aria-labelledby set by default");
+		assert.strictEqual($Input.attr("aria-describedby"), undefined, "No aria-describedby set by default");
 
 		oInput.setValueState(ValueState.Warning);
 		await nextUIUpdate();
@@ -1930,16 +1931,22 @@ sap.ui.define([
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the value state is not Error");
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Warning does not make control invalid");
+		assert.ok($Input.attr("aria-describedby"), "aria-describedby should be rendered for valueState=Warning");
+		assert.ok(jQuery("#acc-input-message-sr").text().includes(oMobileRB.getText("INPUTBASE_VALUE_STATE_WARNING")));
 
 		oInput.setValueState(ValueState.Success);
 		await nextUIUpdate();
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Success does not make control invalid");
+		assert.ok($Input.attr("aria-describedby"), "aria-describedby should be rendered for valueState=Success");
+		assert.ok(jQuery("#acc-input-message-sr").text().includes(oMobileRB.getText("INPUTBASE_VALUE_STATE_SUCCESS")));
 
 		oInput.setValueState(ValueState.Information);
 		await nextUIUpdate();
 
 		assert.strictEqual($Input.attr("aria-invalid"), undefined, "valueState=Information does not make control invalid");
+		assert.ok($Input.attr("aria-describedby"), "aria-describedby should be rendered for valueState=Information");
+		assert.ok(jQuery("#acc-input-message-sr").text().includes(oMobileRB.getText("INPUTBASE_VALUE_STATE_INFORMATION")));
 
 		oInput.setValueState(ValueState.Error);
 		await nextUIUpdate();
@@ -1947,6 +1954,8 @@ sap.ui.define([
 		assert.ok(fnSetErrorAnnounceSpy.calledWith, false,
 			"The error announcement state should not be changed, when the control is not focused");
 		assert.strictEqual($Input.attr("aria-invalid"), "true", "valueState=Error makes control invalid");
+		assert.ok($Input.attr("aria-errormessage"), "aria-errormessage should be rendered for valueState=Error");
+		assert.notOk(jQuery("#acc-input-message-sr").text().includes(oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR")));
 
 		oInput.focus();
 		oInput.setValueState(ValueState.Error);
