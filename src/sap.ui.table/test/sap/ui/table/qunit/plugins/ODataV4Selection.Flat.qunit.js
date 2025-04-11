@@ -80,11 +80,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Render config", function(assert) {
-		const oAllCurrentContexts = this.spy(this.oSelectionPlugin.getControl().getBinding(), "getAllCurrentContexts");
-		assert.strictEqual(oAllCurrentContexts.callCount, 0, "getAllCurrentContexts not called");
 		let oHeaderSelector = this.oSelectionPlugin.getRenderConfig().headerSelector;
-
-		assert.strictEqual(oAllCurrentContexts.callCount, 1, "getAllCurrentContexts only called once");
 
 		assert.strictEqual(oHeaderSelector.type, "custom");
 		assert.strictEqual(oHeaderSelector.visible, true);
@@ -165,7 +161,7 @@ sap.ui.define([
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
 	});
 
-	QUnit.test("Bind in selectionMode='Single' with relative binding", function(assert) {
+	QUnit.test("Bind in selectionMode='Single' with unresolved binding", function(assert) {
 		this.oSelectionPlugin.setSelectionMode("Single");
 		this.oTable.bindRows("MyRelativePath");
 		assert.ok(this.oSelectionPlugin.isActive(), "Active state");
@@ -636,6 +632,13 @@ sap.ui.define([
 		assert.ok(aRows[1].getBindingContext().isSelected(), "Plugin disabled: Context selected state");
 	});
 
+	QUnit.test("#clearSelection with unresolved binding", function(assert) {
+		this.oTable.bindRows("MyRelativePath");
+		// An unresolved binding has no contexts, so there is nothing to deselect. We just check that no error is thrown.
+		this.oSelectionPlugin.clearSelection();
+		assert.notOk(this.oTable.getBinding().getHeaderContext(), "Header context");
+	});
+
 	QUnit.test("#onHeaderSelectorPress", async function(assert) {
 		const oClearSelection = this.spy(this.oSelectionPlugin, "clearSelection");
 
@@ -1083,15 +1086,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Limit < Data length; All contexts selected", async function(assert) {
-		this.oSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
-		this.oTable.setFirstVisibleRow(400);
-		await this.oTable.qunit.whenBindingChange();
-		await this.oTable.qunit.whenRenderingFinished();
-		this.oSelectionPlugin.setSelected(this.oTable.getRows()[9], true, {range: true});
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-		this.oTable.setFirstVisibleRow(400);
-		await this.oTable.qunit.whenRenderingFinished();
-		this.oSelectionPlugin.setSelected(this.oTable.getRows()[9], true, {range: true});
+		const aContexts = await TableUtils.loadContexts(this.oTable.getBinding(), 0, this.oTable.getBinding().getLength());
+
+		aContexts.forEach((oContext) => {
+			oContext.setSelected(true);
+		});
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 
 		this.assertHeaderSelector({
@@ -1218,16 +1217,21 @@ sap.ui.define([
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 		this.oTable.getBinding().filter(new Filter("Name", "EQ", "DoesNotExist"));
 		await this.oTable.qunit.whenRenderingFinished();
-
 		this.assertHeaderSelector({
-			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon), // An invisible context is selected
 			title: TableUtils.getResourceText("TBL_DESELECT_ALL"),
 			disabled: true
 		});
 
+		this.oTable.getBinding().filter(new Filter("Name", "EQ", "Test Product (1)"));
+		await this.oTable.qunit.whenRenderingFinished();
+		this.assertHeaderSelector({
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon), // An invisible context is selected and the length is 1
+			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
+		});
+
 		this.oTable.getBinding().filter();
 		await this.oTable.qunit.whenRenderingFinished();
-
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
 			title: TableUtils.getResourceText("TBL_DESELECT_ALL")

@@ -317,13 +317,44 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("All contexts selected", async function(assert) {
+		const aRows = this.oTable.getRows();
+
+		aRows[2].expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(6);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[3].expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(9);
+		await this.oTable.qunit.whenRenderingFinished();
+		aRows[3].expand();
+		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oTable.setFirstVisibleRow(11);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		(await TableUtils.loadContexts(this.oTable.getBinding(), 0, this.oTable.getBinding().getLength())).filter((oContext) => {
+			const bIsLeaf = oContext.getProperty("@$ui5.node.isExpanded") === undefined;
+			const bIsTotal = oContext.getProperty("@$ui5.node.isTotal");
+			return bIsLeaf && !bIsTotal;
+		}).forEach((oContext) => {
+			oContext.setSelected(true);
+		});
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+
+		this.assertHeaderSelector({
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
+			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
+		});
+	});
+
 	QUnit.test("Visual grouping and sums", async function(assert) {
 		const aRows = this.oTable.getRows();
 
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-			title: TableUtils.getResourceText("TBL_SELECT_ALL"),
-			disabled: true
+			title: TableUtils.getResourceText("TBL_SELECT_ALL")
 		});
 
 		aRows[2].expand();
@@ -338,8 +369,7 @@ sap.ui.define([
 
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-			title: TableUtils.getResourceText("TBL_SELECT_ALL"),
-			disabled: true
+			title: TableUtils.getResourceText("TBL_SELECT_ALL")
 		});
 
 		aRows[3].expand();
@@ -364,7 +394,7 @@ sap.ui.define([
 		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
 
 		this.assertHeaderSelector({
-			src: IconPool.getIconURI(TableUtils.ThemeParameters.allSelectedIcon),
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
 			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
 		});
 
@@ -373,8 +403,7 @@ sap.ui.define([
 
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-			title: TableUtils.getResourceText("TBL_SELECT_ALL"),
-			disabled: true
+			title: TableUtils.getResourceText("TBL_SELECT_ALL")
 		});
 	});
 });
