@@ -879,30 +879,36 @@ sap.ui.define([
 		oModel = null;
 	});
 
-	QUnit.test("_handleSettingsValue when creating internal controls binding i18n text", async function(assert) {
+	QUnit.test("_handleSettingsValue when creating internal controls binding i18n text", function(assert) {
+		var done = assert.async();
+
 		var i18n = new ResourceModel({
-				bundleName: "resourceroot.data.i18n.i18n_menu"
-			}),
-			oInternalMenuItems;
+			bundleName: "resourceroot.data.i18n.i18n_menu",
+			async: true
+		});
 
-		// Act
-		this.sut.setModel(i18n, "i18n");
-		var mi = new MenuItem();
-		mi.setText("{i18n>MENU_ITEM1}");
-		this.sut.addItem(mi);
-		this.sut.addItem(new MenuItem({ text: "{i18n>MENU_ITEM2}" }));
-		await nextUIUpdate(this.clock);
-		this.sut.openBy(this.oButton);
-		await nextUIUpdate(this.clock);
-		oInternalMenuItems = this.sut._getMenu().getItems();
+		i18n.attachEventOnce("requestCompleted", async () => {
+			this.sut.setModel(i18n, "i18n");
 
-		// Assert
-		assert.strictEqual(oInternalMenuItems[0].getText(), "menu item1", 'The first item text was not escaped since it is a valid binding string');
-		assert.strictEqual(oInternalMenuItems[1].getText(), "menu item2", 'The second item text was not escaped since it is a valid binding string');
+			var mi = new MenuItem();
+			mi.setText("{i18n>MENU_ITEM1}");
+			this.sut.addItem(mi);
+			this.sut.addItem(new MenuItem({ text: "{i18n>MENU_ITEM2}" }));
 
-		// Cleanup
-		i18n.destroy();
-		i18n = null;
+			await nextUIUpdate(this.clock);
+			this.sut.openBy(this.oButton);
+			await nextUIUpdate(this.clock);
+
+			var oInternalMenuItems = this.sut._getMenu().getItems();
+
+			// Assert
+			assert.strictEqual(oInternalMenuItems[0].getText(), "menu item1", 'The first item text was not escaped since it is a valid binding string');
+			assert.strictEqual(oInternalMenuItems[1].getText(), "menu item2", 'The second item text was not escaped since it is a valid binding string');
+
+			// Cleanup
+			i18n.destroy();
+			done();
+		});
 	});
 
 	QUnit.module('MenuItem(inside Menu)', {
