@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/base/i18n/Localization",
-	'sap/base/util/array/diff',
+	'sap/m/p13n/util/diff',
 	'sap/ui/base/Object',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
@@ -91,6 +91,8 @@ sap.ui.define([
 		}
 	});
 
+	SelectionController.prototype.DIFF_INSERT_TYPE = "insert";
+	SelectionController.prototype.DIFF_DELETE_TYPE = "delete";
 	/**
 	 * Gets defined <code>persistenceIdentifier</code> of the controller.
 	 * @returns {string|null} String if <code>_sPersistenceIdentifier</code> is defined, otherwise null.
@@ -336,71 +338,61 @@ sap.ui.define([
 			return sDiff;
 		};
 
-		const INSERT_TYPE = "insert";
-		const DELETE_TYPE = "delete";
+		const aDiff = diff(aExistingItems, aChangedItems, {
+			symbol: fnSymbol,
+			includeReference: true
+		});
 
-		const aDeleted = [];
-		const aInserted = [];
-		const aDiff = diff(aExistingItems, aChangedItems, fnSymbol);
+		const aEnhancedDiff = aDiff.map((oDiffEntry) => {
+			oDiffEntry.affectedKey = oDiffEntry.affectedReference[oDiffEntry.affectedIndex].key;
+			return oDiffEntry;
+		});
 
-		for (let i = 0; i < aDiff.length; i++) {
-			const sType = aDiff[i].type;
-			if (sType !== DELETE_TYPE && sType !== INSERT_TYPE) {continue;}
+		for (let i = 0; i < aEnhancedDiff.length; i++) {
+		  if (aEnhancedDiff[i].type === this.DIFF_INSERT_TYPE) {
+			let nIndex = aEnhancedDiff[i].index;
 
-			const {index} = aDiff[i];
-			const oItem = aChangedItems[index];
-			if (!oItem) {continue;}
+			const nIndexDelta = this._getIndexDelta(aEnhancedDiff, i);
+			nIndex += nIndexDelta;
 
-			if (sType === DELETE_TYPE) {
-			  aDeleted.push({ ...oItem, index });
-			  continue;
+			if (nIndex >= aChangedItems.length) {
+			  nIndex = aChangedItems.length;
 			}
-			if (sType === INSERT_TYPE) {
-			  aInserted.push({ ...oItem, index });
-			  continue;
-			}
+
+			aChanges.push(this._createMoveChange(aEnhancedDiff[i].affectedKey, nIndex, sOperation, oControl));
 		  }
-
-
-		for (let i = 0; i < aDiff.length; i++) {
-			if (aDiff[i].type === "insert") {
-				const sKey = aChangedItems[aDiff[i].index].key || aChangedItems[aDiff[i].index].name;
-
-				let nIndex = aDiff[i].index;
-
-				const fnFilter = (item) => {
-					if (!item) {return false;}
-					if (item.index >= nIndex) {return false;}
-					return true;
-				};
-
-				// number of items that were deleted before current index
-				const nDeleted = aDeleted.filter(fnFilter).length;
-				// number of items that were inserted before current index
-				const nInserted = aInserted.filter(fnFilter).length;
-
-				const isNotFirstElement = nIndex > 0;
-				const hasDeletions = nDeleted > 0;
-
-				// either take all ins/dels or just take the ones that are before the current index
-				const hasInsertionAbundance = nInserted > nDeleted;
-				const hasDeletionAbundance = nDeleted > nInserted;
-
-				const shouldDecrease = hasInsertionAbundance && hasDeletions && isNotFirstElement;
-				const shouldIncrease = hasDeletionAbundance && isNotFirstElement;
-
-				if (shouldDecrease) {
-					nIndex -= nInserted;
-				} else if (shouldIncrease) {
-					nIndex += nDeleted;
-				}
-
-				// eslint-enable-next-line no-loop-func
-				aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length - 1), sOperation, oControl));
-			}
 		}
 
 		return aChanges;
+	};
+
+
+	SelectionController.prototype._getIndexDelta = function(aDiff, iCurrentIndex) {
+		const oCurrentDiffEntry = aDiff[iCurrentIndex];
+		const aPreviousDiffs = aDiff.slice(0, iCurrentIndex);
+		const aPosteriorDiffs = aDiff.slice(iCurrentIndex);
+
+		// get all major inserts and minor deletes independent of affectedKey
+		const aMajorInserts = aPosteriorDiffs.filter((oDiffEntry) => oDiffEntry.type === this.DIFF_INSERT_TYPE);
+		const aMinorDeletes = aPreviousDiffs.filter((oDiffEntry) => oDiffEntry.type == this.DIFF_DELETE_TYPE);
+
+		const aRelevantMinorDeletes = aMinorDeletes.filter((oDiffEntry) => {
+			// don't take "me" into account
+		  if (oDiffEntry.affectedKey === oCurrentDiffEntry.affectedKey) {
+			return false;
+		  }
+		  // check if there are major inserts with same affectedKey
+		  const oMajorInsert = aMajorInserts.find((oMajorInsert) => oMajorInsert.affectedKey === oDiffEntry.affectedKey);
+		  // don't take into account
+		  // * if delete and insert condense each other (MajorInsert => don't condense each other)
+		  // * if the delete index is not strict smaller than the current index
+		  if (oMajorInsert && oDiffEntry.index < oCurrentDiffEntry.index) {
+			return true;
+		  }
+		  return false;
+		});
+
+		return aRelevantMinorDeletes.length;
 	};
 
 	SelectionController.prototype._createAddRemoveChanges = function(aItems, oControl, sOperation, aDeltaAttributes) {
