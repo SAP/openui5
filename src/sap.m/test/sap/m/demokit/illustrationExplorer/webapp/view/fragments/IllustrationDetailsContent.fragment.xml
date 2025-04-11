@@ -15,7 +15,7 @@
                 visible="{= ${illustration>/set} !== 'tnt' }" />
         </HBox>
 
-        <Panel headerText="{i18n>illustrationSizeLabel}: Dot">
+        <Panel headerText="{i18n>illustrationSizeLabel}: ExtraSmall">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
                 illustrationSize="Dot"
@@ -26,7 +26,7 @@
             </layoutData>
         </Panel>
 
-        <Panel headerText="{i18n>illustrationSizeLabel}: Spot">
+        <Panel headerText="{i18n>illustrationSizeLabel}: Small">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
                 illustrationSize="Spot"
@@ -37,7 +37,7 @@
             </layoutData>
         </Panel>
 
-        <Panel headerText="{i18n>illustrationSizeLabel}: Dialog">
+        <Panel headerText="{i18n>illustrationSizeLabel}: Medium">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
                 illustrationSize="Dialog"
@@ -48,7 +48,7 @@
             </layoutData>
         </Panel>
 
-        <Panel headerText="{i18n>illustrationSizeLabel}: Scene">
+        <Panel headerText="{i18n>illustrationSizeLabel}: Large">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
                 illustrationSize="Scene"
