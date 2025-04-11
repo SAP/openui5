@@ -17,12 +17,10 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			this.oRBCreateSpy = sinon.spy(ResourceBundle, "create");
-			this.oRBCreateSyncSpy = sinon.spy(ResourceBundle, "_createSync");
 			this.oRBgetUrlSpy = sinon.spy(ResourceBundle, "_getUrl");
 		},
 		afterEach: function() {
 			this.oRBCreateSpy.restore();
-			this.oRBCreateSyncSpy.restore();
 			this.oRBgetUrlSpy.restore();
 		}
 	});
@@ -55,7 +53,7 @@ sap.ui.define([
 
 		const oLibRB = oLib.getResourceBundle("de");
 
-		assert.equal(this.oRBCreateSyncSpy.callCount, 1, "ResourceBundle._createSync should be called " + 1 + " times");
+		assert.equal(this.oRBCreateSpy.callCount, iLoaded + 1, "ResourceBundle.create be called " + (iLoaded + 1) + " times");
 		assert.equal(oLibRB.getText("TEST_TEXT"), "Öl", "'Öl' text is returned, because terminology 'oil' is correctly applied");
 		assert.equal(oLibRB.getText("TEST_TEXT_CUSTOM"), "Ein öliger Text", "'Ein öliger Text' text is returned, because terminology 'oil' is correctly applied");
 	});

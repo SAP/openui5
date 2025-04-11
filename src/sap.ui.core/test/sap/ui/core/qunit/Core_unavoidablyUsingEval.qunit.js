@@ -75,7 +75,7 @@ sap.ui.require([
 			pBundle,
 			oBundle;
 
-		this.stub(ResourceBundle, '_createSync').callsFake(function(options) {
+		this.stub(ResourceBundle, 'create').callsFake(function(options) {
 			iCounter++;
 			if (options.async) {
 				assert.ok(false, "no Promise should be returned");
@@ -89,10 +89,10 @@ sap.ui.require([
 		assert.ok(oBundle, "a Bundle object should be returned");
 		assert.notOk(oBundle instanceof Promise, "a Bundle object should be returned, not a promise");
 
-		assert.equal(iCounter, 1, "ResourceBundle._createSync is called once");
+		assert.equal(iCounter, 1, "ResourceBundle.create is called once");
 		pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test3", "en", true);
 		assert.ok(pBundle instanceof Promise, "a promise should be returned");
-		assert.equal(iCounter, 1, "ResourceBundle._createSync is still called only once");
+		assert.equal(iCounter, 1, "ResourceBundle.create is still called only once");
 
 		return pBundle;
 	});

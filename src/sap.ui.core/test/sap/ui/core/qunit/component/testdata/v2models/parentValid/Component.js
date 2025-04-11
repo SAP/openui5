@@ -219,17 +219,13 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 						"resourceBundle-name": {
 							"type": "sap.ui.model.resource.ResourceModel",
 							"settings": {
-								"bundleName": "testdata.v2models.parent.i18n",
-								"async": true
+								"bundleName": "testdata.v2models.parent.i18n"
 							}
 						},
 
 						"resourceBundle-legacy-uri": {
 							"type": "sap.ui.model.resource.ResourceModel",
-							"uri": "./i18n.properties",
-							"settings": {
-								"async": true
-							}
+							"uri": "./i18n.properties"
 						},
 
 						"custom-uri-string": {

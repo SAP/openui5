@@ -610,14 +610,12 @@ sap.ui.define([
 
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parentValid/i18n.properties",
-				async: true
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parentValid/i18n.properties"
 			});
 
 
@@ -1096,8 +1094,7 @@ sap.ui.define([
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// destroy the component
@@ -1163,8 +1160,7 @@ sap.ui.define([
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// destroy the component
@@ -1234,8 +1230,7 @@ sap.ui.define([
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// destroy the component
@@ -1299,8 +1294,7 @@ sap.ui.define([
 			//ResourceModel should also not have an origin attached
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// destroy the component
@@ -1544,14 +1538,12 @@ sap.ui.define([
 
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parentValid/i18n.properties",
-				async: true
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parentValid/i18n.properties"
 			});
 
 			// testdata.v2models.parent.CustomModel
@@ -1921,14 +1913,12 @@ sap.ui.define([
 
 			// model: "resourceBundle-name"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleName: "testdata.v2models.parent.i18n",
-				async: true
+				bundleName: "testdata.v2models.parent.i18n"
 			});
 
 			// model: "resourceBundle-legacy-uri"
 			sinon.assert.calledWithExactly(this.modelSpy.resource, {
-				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parentValid/i18n.properties",
-				async: true
+				bundleUrl: "test-resources/sap/ui/core/qunit/component/testdata/v2models/parentValid/i18n.properties"
 			});
 
 

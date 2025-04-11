@@ -38,11 +38,9 @@ sap.ui.define([
 	QUnit.module("Library not loaded yet", {
 		beforeEach: function() {
 			this.oRBCreateSpy = sinon.spy(ResourceBundle, "create");
-			this.oRBCreateSyncSpy = sinon.spy(ResourceBundle, "_createSync");
 		},
 		afterEach: function() {
 			this.oRBCreateSpy.restore();
-			this.oRBCreateSyncSpy.restore();
 		}
 	});
 
@@ -51,13 +49,13 @@ sap.ui.define([
 		var oResourceBundle = Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet");
 		assert.equal(oResourceBundle.getText("TEST_TEXT"), "Text from the default bundle", "'Text from the default bundle' text is returned, because the library isn't loaded yet.");
 		assert.equal(oResourceBundle.getText("TEST_TEXT_CUSTOM"), "Custom text from the default bundle", "'Custom text from the default bundle' text is returned, because the library isn't loaded yet.");
-		assert.equal(this.oRBCreateSyncSpy.callCount, 1, "ResourceBundle._createSync should be called the first time. Default ResourceBundle returned.");
+		assert.equal(this.oRBCreateSpy.callCount, 1, "ResourceBundle.create should be called the first time. Default ResourceBundle returned.");
 
 		// Second call without library being loaded
 		oResourceBundle = Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet");
 		assert.equal(oResourceBundle.getText("TEST_TEXT"), "Text from the default bundle", "'Text from the default bundle' text is returned, because the library isn't loaded yet.");
 		assert.equal(oResourceBundle.getText("TEST_TEXT_CUSTOM"), "Custom text from the default bundle", "'Custom text from the default bundle' text is returned, because the library isn't loaded yet.");
-		assert.equal(this.oRBCreateSyncSpy.callCount, 1, "ResourceBundle._createSync shouldn't be called a second time yet. ResourceBundle returned from cache.");
+		assert.equal(this.oRBCreateSpy.callCount, 1, "ResourceBundle.create shouldn't be called a second time yet. ResourceBundle returned from cache.");
 
 		// Loading the library synchronously
 		Core.loadLibrary("testlibs.terminologies.notLoadedYet");
@@ -65,8 +63,6 @@ sap.ui.define([
 		oResourceBundle = Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet");
 		assert.equal(oResourceBundle.getText("TEST_TEXT"), "Retail", "'Retail' text is returned, because the library is available now and terminology 'retail is correctly applied'.");
 		assert.equal(oResourceBundle.getText("TEST_TEXT_CUSTOM"), "Being sold at a retail price", "'Being sold at a retail price' text is returned, because the library is available now and terminology 'retail is correctly applied'.");
-		assert.equal(this.oRBCreateSyncSpy.callCount, 2, "ResourceBundle._createSync should be called a second time. ResourceBundle from the library returned.");
-
-		assert.equal(this.oRBCreateSpy.callCount, 0, "ResourceBundle.create should never be called - only ResourceBundle._createSync");
+		assert.equal(this.oRBCreateSpy.callCount, 2, "ResourceBundle.create should be called a second time. ResourceBundle from the library returned.");
 	});
 });
