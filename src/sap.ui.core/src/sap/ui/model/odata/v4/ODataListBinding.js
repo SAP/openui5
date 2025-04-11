@@ -192,7 +192,7 @@ sap.ui.define([
 	 * Returns all currently existing contexts of this list binding in no special order.
 	 *
 	 * @param {boolean} [bNoCreated]
-	 *   Whether to exclude created contexts
+	 *   Whether to exclude created and out of place contexts
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   All currently existing contexts of this list binding, in no special order
 	 *
@@ -207,7 +207,8 @@ sap.ui.define([
 		return aContexts.filter(function (oContext) {
 			return oContext;
 		}).concat(Object.values(this.mPreviousContextsByPath).filter(function (oContext) {
-			return oContext.isEffectivelyKeptAlive();
+			const bKeptAlive = oContext.isEffectivelyKeptAlive();
+			return bNoCreated ? bKeptAlive && !oContext.isOutOfPlace() : bKeptAlive;
 		}));
 	};
 
@@ -1583,11 +1584,12 @@ sap.ui.define([
 					bSideEffectsRefresh = true;
 					oOldCache.resetOutOfPlace();
 				}
-				this.validateSelection(oOldCache, sGroupId);
 				// Note: #inheritQueryOptions as called below should not matter in case of own
 				// requests, which are a precondition for kept-alive elements
 				oOldCache.reset(aKeepAlivePredicates, bSideEffectsRefresh ? sGroupId : undefined,
 					mQueryOptions, this.mParameters.$$aggregation, this.isGrouped());
+				// validate selection after the old cache is reset
+				this.validateSelection(oOldCache, sGroupId);
 
 				return oOldCache;
 			}
@@ -5273,7 +5275,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.validateSelection = function (oCache, sGroupId) {
-		if (!this.mParameters.$$clearSelectionOnFilter || "$$aggregation" in this.mParameters
+		if (!this.mParameters.$$clearSelectionOnFilter
+			|| _Helper.isDataAggregation(this.mParameters)
 			|| this.oHeaderContext.isSelected()) {
 			return;
 		}
