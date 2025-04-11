@@ -244,12 +244,13 @@ sap.ui.define(
                             if (!TRUST_ARC.CONSENT_PREFERENCES_ORIGIN_WHITELIST.includes(oEvent.origin)) {
                                 return;
                             }
-                            var oData = JSON.parse(oEvent.data);
-                            if (oData.source === "preference_manager" && oData.message === "submit_preferences") {
+
+                            var oData = this._convertResponseToObject(oEvent.data);
+                            if (oData && oData.source === "preference_manager" && oData.message === "submit_preferences") {
                                 resolve();
                                 window.removeEventListener("message", fnListener);
                             }
-                        };
+                        }.bind(this);
                         window.addEventListener("message", fnListener, false);
                     }.bind(this));
                 },
@@ -262,6 +263,19 @@ sap.ui.define(
                         }
                     };
                     return JSON.stringify(apiObject);
+                },
+                _convertResponseToObject: function(oResponse) {
+                    if (oResponse && typeof oResponse === "object") {
+                        return oResponse;
+                    }
+                    if (oResponse && typeof oResponse === "string") {
+                        try {
+                            return JSON.parse(oResponse);
+                        } catch (e) {
+                            Log.warning("Unknown message format: ", e);
+                            return null;
+                        }
+                    }
                 },
                 // override
                 _load: function() {
