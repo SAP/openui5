@@ -80,11 +80,13 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("PropertyBinding getValue", async function (assert) {
+	QUnit.test("PropertyBinding getValue", function(assert) {
+		this.oLogMock.expects("warning")
+			.withExactArgs("Usage of synchronous loading is deprecated. For performance reasons, asynchronous loading"
+				+ " is strongly recommended.", undefined, "sap.ui.model.resource.ResourceModel");
 		const oModel = new ResourceModel({bundleName : "testdata.messages"});
-		await oModel.getResourceBundle();
 		const oBinding = oModel.bindProperty("TEST_TEXT");
 
-		assert.strictEqual(oBinding.getValue(), "A text en", "Property binding value");
+		assert.equal(oBinding.getValue(), "A text en", "Property binding value");
 	});
 });

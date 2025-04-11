@@ -830,9 +830,7 @@ sap.ui.define([
 					// add known library name to cache to avoid later guessing
 					mGuessedLibraries[sBundleUrl] = this;
 
-					const fnResourceBundleCreate = bSync ? ResourceBundle._createSync : ResourceBundle.create;
-
-					vResult = fnResourceBundleCreate({
+					vResult = ResourceBundle.create({
 						bundleUrl: sBundleUrl,
 						supportedLocales: vI18n.supportedLocales,
 						fallbackLocale: vI18n.fallbackLocale,

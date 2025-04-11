@@ -2224,7 +2224,7 @@ function(
 			// if sText's length is 2 or more characters that means that the user is still typing.
 			// If the user is still typing and the string/word is the starting of the currently
 			// selected item we shouldn't move to the next one.
-			if (sText.length > 1 && oSelectedItem.getText().toLowerCase().startsWith(sText.toLowerCase())){
+			if (sText.length > 1 && oSelectedItem && oSelectedItem.getText().toLowerCase().startsWith(sText.toLowerCase())){
 				return oSelectedItem;
 			}
 

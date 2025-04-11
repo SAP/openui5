@@ -31,7 +31,7 @@ sap.ui.define([
 	QUnit.module("BusinessNetworkAPI", {
 		beforeEach() {
 			sandbox.stub(Storage, "write").callsFake((mProperties) => {
-				return Promise.resolve({response: mProperties.flexObjects.map((oChange) => oChange.convertToFileContent())});
+				return Promise.resolve({response: mProperties.flexObjects.map((oChange) => oChange)});
 			});
 		},
 		afterEach() {

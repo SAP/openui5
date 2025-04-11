@@ -40,7 +40,8 @@ sap.ui.define(["sap/m/IllustratedMessageSize", "sap/m/IllustratedMessageType", "
 						{ key: oIllustratedMessageType.BalloonSky, text: 'BalloonSky'},
 						{ key: oIllustratedMessageType.SuccessScreen, text: 'SuccessScreen'},
 						{ key: oIllustratedMessageType.SuccessHighFive, text: 'SuccessHighFive'},
-						{ key: oIllustratedMessageType.Survey, text: 'Survey'}
+						{ key: oIllustratedMessageType.Survey, text: 'Survey'},
+						{ key: oIllustratedMessageType.NoChartData, text: 'NoChartData'}
 					];
 
 				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {

@@ -28567,6 +28567,190 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: If there are selected contexts and "select all" is not set, then the selection is
+	// validated if the binding's data is reloaded, e.g. via ODLB#requestRefresh,
+	// Context#requestSideEffects (side-effects refresh), ODLB#sort and ODLB#changeParameters. If a
+	// created entry is still out of place (e.g. during a side-effects refresh), validation is
+	// skipped for that entry. The selection validation request is part of the same $batch request
+	// as the request for getting the binding's content. If there are entries that do not match any
+	// more to the current filter / search, the selection state of them is reset.
+	// JIRA: CPOUI5ODATAV4-2946
+	["refresh", "requestSideEffects", "sort", "changeParameters"].forEach((sMethod) => {
+		QUnit.test("Recursive Hierarchy: validate selection via " + sMethod, async function (assert) {
+			const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+			const sView = `
+	<t:Table id="table" rows="{path : '/EMPLOYEES',
+			parameters : {
+				$$aggregation : {
+					hierarchyQualifier : 'OrgChart',
+					search : 'covfefe'
+				},
+				$$clearSelectionOnFilter : true,
+				$count : true,
+				$expand : {EMPLOYEE_2_MANAGER : {$select : 'TEAM_ID'}},
+				$filter : 'ID ge \\'0\\'',
+				$orderby : 'Name',
+				custom : 'baz'
+			}}" threshold="0" visibleRowCount="3">
+		<Text id="selected" text="{= %{@$ui5.context.isSelected} }"/>
+		<Text text="{ID}"/>
+	</t:Table>`;
+			const sAncestors = "ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID ge '0')/search(covfefe)"
+				+ ",keep start)";
+			const sTopLevels = "com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				+ ",Levels=1)";
+
+			this.expectRequest("EMPLOYEES/$count?$filter=ID ge '0'&custom=baz&$search=covfefe", 2)
+				.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz"
+					+ "&$apply=" + sAncestors + "/orderby(Name)/" + sTopLevels
+					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3",
+					{
+						"@odata.count" : "2",
+						value : [
+							{DrillState : "leaf", ID : "0"},
+							{DrillState : "leaf", ID : "1"}
+						]
+					})
+				.expectChange("selected", [undefined, undefined]);
+
+			await this.createView(assert, sView, oModel);
+
+			const oTable = this.oView.byId("table");
+			const oListBinding = oTable.getBinding("rows");
+			const [oNode0, oNode1] = oListBinding.getCurrentContexts();
+			const oNodeNew = oListBinding.create({ID : "New"}, true);
+
+			this.expectChange("selected", [,, undefined])
+				.expectRequest({
+					method : "POST",
+					payload : {ID : "New"},
+					url : "EMPLOYEES?custom=baz"
+				}, {ID : "New"});
+
+			await Promise.all([
+				oNodeNew.created(),
+				this.waitForChanges(assert, "create new node")
+			]);
+
+			this.expectChange("selected", [true, true, true]);
+
+			oNodeNew.setSelected(true);
+			oNode0.setSelected(true);
+			oNode1.setSelected(true);
+
+			checkSelected(assert, oListBinding.getHeaderContext(), false);
+			checkSelected(assert, oNodeNew, true);
+			checkSelected(assert, oNode0, true);
+			checkSelected(assert, oNode1, true);
+
+			this.expectRequest({ // ODLB#validateSelection
+					batchNo : 3,
+					url : "EMPLOYEES?custom=baz&$apply=" + sAncestors
+					+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID')"
+					+ "&$filter=" + (sMethod === "requestSideEffects" ? "" : "ID eq 'New' or ")
+					+ "ID eq '0' or ID eq '1'&$select=ID"
+					+ "&$top=" + (sMethod === "requestSideEffects" ? "2" : "3")
+				}, {
+					// node "1" has been changed in the meantime and does not match the filter/search
+					// any more -> selection has to be removed
+					value : sMethod === "requestSideEffects"
+						? [{ID : "0"}]
+						: [{ID : "New"}, {ID : "0"}]
+				})
+				.expectChange("selected", [,, false]);
+			if (sMethod === "refresh" || sMethod === "requestSideEffects") {
+				this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
+						batchNo : 3,
+						url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&"
+						+ "$filter=ID eq '0' or ID eq '1' or ID eq 'New'"
+						+ "&custom=baz&$select=ID&$top=3"
+					}, {
+						value : [
+							{EMPLOYEE_2_MANAGER : /*not relevant*/null, ID : "New"},
+							{EMPLOYEE_2_MANAGER : null, ID : "0"},
+							{EMPLOYEE_2_MANAGER : null, ID : "1"}
+						]
+					});
+			}
+			let sOrderby;
+			switch (sMethod) {
+				case "sort": sOrderby = "/orderby(ID,Name)/"; break;
+				case "changeParameters": sOrderby = "/orderby(ID)/"; break;
+				default: sOrderby = "/orderby(Name)/";
+			}
+			this.expectRequest({ // count request
+					batchNo : 3,
+					url : "EMPLOYEES/$count?$filter=ID ge '0'&custom=baz&$search=covfefe"
+				}, 2)
+				.expectRequest({ // request for reloading the binding's content
+					batchNo : 3,
+					url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz&$apply="
+					+ sAncestors + sOrderby + sTopLevels
+					+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3"
+				}, {
+					"@odata.count" : "2",
+					value : [
+						{DrillState : "leaf", ID : "New"},
+						{DrillState : "leaf", ID : "0"}
+					]
+				});
+			if (sMethod === "requestSideEffects") {
+				this.expectRequest({ // request for getting the tree state of the new node
+						batchNo : 3,
+						url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz&$apply="
+						+ sAncestors + sOrderby + sTopLevels
+						+ "&$select=DistanceFromRoot,DrillState,ID,LimitedRank&$filter=ID eq 'New'"
+						+ "&$top=1"
+					}, {
+						value : [{
+							DistanceFromRoot : 0,
+							DrillState : "leaf",
+							ID : "New",
+							LimitedRank : 2
+						}]
+					})
+					.expectRequest({ // request for getting current values of the new node
+						batchNo : 3,
+						url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz&"
+						+ "$apply=" + sTopLevels + "&$select=ID&$filter=ID eq 'New'&$top=1"
+					}, {
+						value : [{ID : "New"}]
+					});
+			}
+
+			let oPromise;
+			switch (sMethod) {
+				case "refresh":
+					// code under test
+					oPromise = oListBinding.requestRefresh();
+					break;
+				case "requestSideEffects":
+					// code under test
+					oPromise = oListBinding.getHeaderContext().requestSideEffects([""]);
+					break;
+				case "sort":
+					// code under test
+					oListBinding.sort(new Sorter("ID"));
+					break;
+				default:
+					// code under test
+					oListBinding.changeParameters({$orderby : "ID"});
+			}
+
+			await Promise.all([
+				oPromise,
+				this.waitForChanges(assert, "validate selection via " + sMethod)
+			]);
+
+			checkSelected(assert, oNodeNew, true);
+			checkSelected(assert, oNode0, true);
+			assert.strictEqual(oNode1.getBinding(), undefined, "destroyed");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Scroll down
 	// and request a side effect for all rows. Scroll up again and check that unexpected structural
 	// changes are properly detected.

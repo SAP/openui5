@@ -14,367 +14,227 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	 * @since 1.98
 	 */
 	var IllustratedMessageType = {
+	 /**
+	  * "Before Search" illustration type.
+	  * @public
+	  */
+	 BeforeSearch: "sapIllus-BeforeSearch",
 
-		/**
-		 * "Before Search" illustration type.
-		 * @public
-		 */
-		BeforeSearch: "sapIllus-BeforeSearch",
+	 /**
+	  * "No Activities" illustration type.
+	  * @public
+	  */
+	 NoActivities: "sapIllus-NoActivities",
 
-		/**
-		 * "No Activities" illustration type.
-		 * @public
-		 */
-		NoActivities: "sapIllus-NoActivities",
+	 /**
+	  * "No Data" illustration type.
+	  * @public
+	  */
+	 NoData: "sapIllus-NoData",
 
-		/**
-		 * "No Data" illustration type.
-		 * @public
-		 */
-		NoData: "sapIllus-NoData",
+	 /**
+	  * "No Email" illustration type.
+	  * @public
+	  */
+	 NoMail: "sapIllus-NoMail",
 
-		/**
-		 * "No Email" illustration type.
-		 * @public
-		 */
-		NoMail: "sapIllus-NoMail",
+	 /**
+	  * "No Entries" illustration type.
+	  * @public
+	  */
+	 NoEntries: "sapIllus-NoEntries",
 
-		/**
-		 * "No Email v1" illustration type.
-		 * @public
-		 */
-		NoMailV1: "sapIllus-NoMail_v1",
+	 /**
+	  * "No Notifications" illustration type.
+	  * @public
+	  */
+	 NoNotifications: "sapIllus-NoNotifications",
 
-		/**
-		 * "No Entries" illustration type.
-		 * @public
-		 */
-		NoEntries: "sapIllus-NoEntries",
+	 /**
+	  * "No Saved Items" illustration type.
+	  * @public
+	  */
+	 NoSavedItems: "sapIllus-NoSavedItems",
 
-		/**
-		 * "No Notifications" illustration type.
-		 * @public
-		 */
-		NoNotifications: "sapIllus-NoNotifications",
+	 /**
+	  * "No Search Results" illustration type.
+	  * @public
+	  */
+	 NoSearchResults: "sapIllus-NoSearchResults",
 
-		/**
-		 * "No Saved Items" illustration type.
-		 * @public
-		 */
-		NoSavedItems: "sapIllus-NoSavedItems",
+	 /**
+	  * "No Tasks" illustration type.
+	  * @public
+	  */
+	 NoTasks: "sapIllus-NoTasks",
 
-		/**
-		 * "No Saved Items v1" illustration type.
-		 * @public
-		 */
-		NoSavedItemsV1: "sapIllus-NoSavedItems_v1",
+	 /**
+	  * "No Columns Set" illustration type.
+	  * @public
+	  */
+	 NoColumnsSet: "sapIllus-NoColumnsSet",
 
-		/**
-		 * "No Search Results" illustration type.
-		 * @public
-		 */
-		NoSearchResults: "sapIllus-NoSearchResults",
+	 /**
+	  * "Unable To Load" illustration type.
+	  * @public
+	  */
+	 UnableToLoad: "sapIllus-UnableToLoad",
 
-		/**
-		 * "No Tasks" illustration type.
-		 * @public
-		 */
-		NoTasks: "sapIllus-NoTasks",
+	 /**
+	  * "Unable To Load Image" illustration type.
+	  * @public
+	  */
+	 UnableToLoadImage: "sapIllus-UnableToLoadImage",
 
-		/**
-		 * "No Tasks v1" illustration type.
-		 * @public
-		 */
-		NoTasksV1: "sapIllus-NoTasks_v1",
+	 /**
+	  * "Unable To Upload" illustration type.
+	  * @public
+	  */
+	 UnableToUpload: "sapIllus-UnableToUpload",
 
-		/**
-		 * "No Dimensions Set" illustration type.
-		 * @public
-		 */
-		NoDimensionsSet: "sapIllus-NoDimensionsSet",
+	 /**
+	  * "Upload To Cloud" illustration type.
+	  * @public
+	  */
+	 UploadToCloud: "sapIllus-UploadToCloud",
 
-		/**
-		 * "No Columns Set" illustration type.
-		 * @public
-		 */
-		NoColumnsSet: "sapIllus-NoColumnsSet",
+	 /**
+	  * "Add Dimensions" illustration type.
+	  * @public
+	  */
+	 AddDimensions: "sapIllus-AddDimensions",
 
-		/**
-		 * "Unable To Load" illustration type.
-		 * @public
-		 */
-		UnableToLoad: "sapIllus-UnableToLoad",
+	 /**
+	  * "Balloon Sky" illustration type.
+	  * @public
+	  */
+	 BalloonSky: "sapIllus-BalloonSky",
 
-		/**
-		 * "Unable To Load Image" illustration type.
-		 * @public
-		 */
-		UnableToLoadImage: "sapIllus-UnableToLoadImage",
+	 /**
+	  * "Connection" illustration type.
+	  * @public
+	  */
+	 Connection: "sapIllus-Connection",
 
-		/**
-		 * "Unable To Upload" illustration type.
-		 * @public
-		 */
-		UnableToUpload: "sapIllus-UnableToUpload",
+	 /**
+	  * "Empty Planning Calendar" illustration type.
+	  * @public
+	  */
+	 EmptyPlanningCalendar: "sapIllus-EmptyPlanningCalendar",
 
-		/**
-		 * "Upload To Cloud" illustration type.
-		 * @public
-		 */
-		UploadToCloud: "sapIllus-UploadToCloud",
+	 /**
+	  * "New Mail" illustration type.
+	  * @public
+	  */
+	 NewMail: "sapIllus-NewMail",
 
-		/**
-		 * "Add Column" illustration type.
-		 * @public
-		 */
-		AddColumn: "sapIllus-AddColumn",
+	 /**
+	  * "No Filter Results" illustration type.
+	  * @public
+	  */
+	 NoFilterResults: "sapIllus-NoFilterResults",
 
-		/**
-		 * "Add People" illustration type.
-		 * @public
-		 */
-		AddPeople: "sapIllus-AddPeople",
+	 /**
+	  * "Page Not Found" illustration type.
+	  * @public
+	  */
+	 PageNotFound: "sapIllus-PageNotFound",
 
-		/**
-		 * "Add Dimensions" illustration type.
-		 * @public
-		 */
-		AddDimensions: "sapIllus-AddDimensions",
+	 /**
+	  * "Sign Out" illustration type.
+	  * @public
+	  */
+	 SignOut: "sapIllus-SignOut",
 
-		/**
-		 * "Balloon Sky" illustration type.
-		 * @public
-		 */
-		BalloonSky: "sapIllus-BalloonSky",
+	 /**
+	  * "Simple Connection" illustration type.
+	  * @public
+	  */
+	 SimpleConnection: "sapIllus-SimpleConnection",
 
-		/**
-		 * "Connection" illustration type.
-		 * @public
-		 */
-		Connection: "sapIllus-Connection",
+	 /**
+	  * "Survey" illustration type.
+	  * @public
+	  */
+	 Survey: "sapIllus-Survey",
 
-		/**
-		 * "Empty Calendar" illustration type.
-		 * @public
-		 */
-		EmptyCalendar: "sapIllus-EmptyCalendar",
+	 /**
+	  * Empty illustration type. Do not use
+	  * @private
+	  */
+	 Empty: "sapIllus-Empty",
 
-		/**
-		 * "Empty List" illustration type.
-		 * @public
-		 */
-		EmptyList: "sapIllus-EmptyList",
+	 /**
+	  * "No Chart Data" illustration type.
+	  * @public
+	  */
+	 NoChartData: "sapIllus-NoChartData",
 
-		/**
-		 * "Empty Planning Calendar" illustration type.
-		 * @public
-		 */
-		EmptyPlanningCalendar: "sapIllus-EmptyPlanningCalendar",
+	 /**
+	  * "Adding Columns" illustration type.
+	  * @public
+	  */
+	 AddingColumns: "sapIllus-AddingColumns",
 
-		/**
-		 * "Error Screen" illustration type.
-		 * @public
-		 */
-		ErrorScreen: "sapIllus-ErrorScreen",
+	 /**
+	  * "Add People To Calendar" illustration type.
+	  * @public
+	  */
+	 AddPeopleToCalendar: "sapIllus-AddPeopleToCalendar",
 
-		/**
-		 * "Filter Table" illustration type.
-		 * @public
-		 */
-		FilterTable: "sapIllus-FilterTable",
+	 /**
+	  * "Filtering Columns" illustration type.
+	  * @public
+	  */
+	 FilteringColumns: "sapIllus-FilteringColumns",
 
-		/**
-		 * "Group Table" illustration type.
-		 * @public
-		 */
-		GroupTable: "sapIllus-GroupTable",
+	 /**
+	  * "Grouping Columns" illustration type.
+	  * @public
+	  */
+	 GroupingColumns: "sapIllus-GroupingColumns",
 
-		/**
-		 * "New Mail" illustration type.
-		 * @public
-		 */
-		NewMail: "sapIllus-NewMail",
+	 /**
+	  * "Resizing Columns" illustration type.
+	  * @public
+	  */
+	 ResizingColumns: "sapIllus-ResizingColumns",
 
-		/**
-		 * "No Filter Results" illustration type.
-		 * @public
-		 */
-		NoFilterResults: "sapIllus-NoFilterResults",
+	 /**
+	  * "Sorting Columns" illustration type.
+	  * @public
+	  */
+	 SortingColumns: "sapIllus-SortingColumns",
 
-		/**
-		 * "Page Not Found" illustration type.
-		 * @public
-		 */
-		PageNotFound: "sapIllus-PageNotFound",
+	 /**
+	  * "Receive Appreciation" illustration type.
+	  * @public
+	  */
+	 ReceiveAppreciation: "sapIllus-ReceiveAppreciation",
 
-		/**
-		 * "Reload Screen" illustration type.
-		 * @public
-		 */
-		ReloadScreen: "sapIllus-ReloadScreen",
+	 /**
+	  * "Drag Files To Upload" illustration type.
+	  * @public
+	  */
+	 DragFilesToUpload: "sapIllus-DragFilesToUpload",
 
-		/**
-		 * "Resize Column" illustration type.
-		 * @public
-		 */
-		ResizeColumn: "sapIllus-ResizeColumn",
+	 /**
+	  * "User has signed up for an application" illustration type.
+	  * @public
+	  */
+	 UserHasSignedUp: "sapIllus-UserHasSignedUp",
 
-		/**
-		 * "Search Earth" illustration type.
-		 * @public
-		 */
-		SearchEarth: "sapIllus-SearchEarth",
+	 /**
+	  * "Achievement" illustration type.
+	  * @public
+	  */
+	 Achievement: "sapIllus-Achievement",
 
-		/**
-		 * "Search Folder" illustration type.
-		 * @public
-		 */
-		SearchFolder: "sapIllus-SearchFolder",
-
-		/**
-		 * "Sign Out" illustration type.
-		 * @public
-		 */
-		SignOut: "sapIllus-SignOut",
-
-		/**
-		 * "Simple Balloon" illustration type.
-		 * @public
-		 */
-		SimpleBalloon: "sapIllus-SimpleBalloon",
-
-		/**
-		 * "Simple Bell" illustration type.
-		 * @public
-		 */
-		SimpleBell: "sapIllus-SimpleBell",
-
-		/**
-		 * "Simple Calendar" illustration type.
-		 * @public
-		 */
-		SimpleCalendar: "sapIllus-SimpleCalendar",
-
-		/**
-		 * "Simple CheckMark" illustration type.
-		 * @public
-		 */
-		SimpleCheckMark: "sapIllus-SimpleCheckMark",
-
-		/**
-		 * "Simple Connection" illustration type.
-		 * @public
-		 */
-		SimpleConnection: "sapIllus-SimpleConnection",
-
-		/**
-		 * "Simple Empty Doc" illustration type.
-		 * @public
-		 */
-		SimpleEmptyDoc: "sapIllus-SimpleEmptyDoc",
-
-		/**
-		 * "Simple Empty List" illustration type.
-		 * @public
-		 */
-		SimpleEmptyList: "sapIllus-SimpleEmptyList",
-
-		/**
-		 * "Simple Error" illustration type.
-		 * @public
-		 */
-		SimpleError: "sapIllus-SimpleError",
-
-		/**
-		 * "Simple Magnifier" illustration type.
-		 * @public
-		 */
-		SimpleMagnifier: "sapIllus-SimpleMagnifier",
-
-		/**
-		 * "Simple Mail" illustration type.
-		 * @public
-		 */
-		SimpleMail: "sapIllus-SimpleMail",
-
-		/**
-		 * "Simple No Saved Items" illustration type.
-		 * @public
-		 */
-		SimpleNoSavedItems: "sapIllus-SimpleNoSavedItems",
-
-		/**
-		 * "Simple Not Found Magnifier" illustration type.
-		 * @public
-		 */
-		SimpleNotFoundMagnifier: "sapIllus-SimpleNotFoundMagnifier",
-
-		/**
-		 * "Simple Reload" illustration type.
-		 * @public
-		 */
-		SimpleReload: "sapIllus-SimpleReload",
-
-		/**
-		 * "Simple Task" illustration type.
-		 * @public
-		 */
-		SimpleTask: "sapIllus-SimpleTask",
-
-		/**
-		 * "Sleeping Bell" illustration type.
-		 * @public
-		 */
-		SleepingBell: "sapIllus-SleepingBell",
-
-		/**
-		 * "Sort Column" illustration type.
-		 * @public
-		 */
-		SortColumn: "sapIllus-SortColumn",
-
-		/**
-		 * "Success Balloon" illustration type.
-		 * @public
-		 */
-		SuccessBalloon: "sapIllus-SuccessBalloon",
-
-		/**
-		 * "Success CheckMark" illustration type.
-		 * @public
-		 */
-		SuccessCheckMark: "sapIllus-SuccessCheckMark",
-
-		/**
-		 * "Success HighFive" illustration type.
-		 * @public
-		 */
-		SuccessHighFive: "sapIllus-SuccessHighFive",
-
-		/**
-		 * "Success Screen" illustration type.
-		 * @public
-		 */
-		SuccessScreen: "sapIllus-SuccessScreen",
-
-		/**
-		 * "Survey" illustration type.
-		 * @public
-		 */
-		Survey: "sapIllus-Survey",
-
-		/**
-		 * "Tent" illustration type.
-		 * @public
-		 */
-		Tent: "sapIllus-Tent",
-
-		/**
-		 * "Upload Collection" illustration type.
-		 * @public
-		 */
-		UploadCollection: "sapIllus-UploadCollection"
-
+	 /**
+	  * "KeyTask" illustration type.
+	  * @public
+	  */
+	 KeyTask: "sapIllus-KeyTask"
 	};
 
 	DataType.registerEnum("sap.m.IllustratedMessageType", IllustratedMessageType);

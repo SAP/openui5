@@ -132,6 +132,7 @@ sap.ui.define([
 	 * TODO: Only used for the row drag ghost. Replace with getSelectedContexts() (getSelectedContexts().length)? Useful in integration scenarios.
 	 * Check if this is possible with our index-based selection plugins. And if not, does that need to impact the modern interface? Legacy alternative
 	 * possible?
+	 * If we keep this method, rename to getSelectionCount?
 	 *
 	 * @returns {int} The number of selected rows
 	 * @abstract

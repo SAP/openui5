@@ -2086,6 +2086,54 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sends a request for the elements identified by the given key predicates. Returns predicates
+	 * for elements matching the current filter.
+	 *
+	 * @param {string[]} aPredicates
+	 *   A list of key predicates for known elements, in no special order
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @param {boolean} [bMinimal]
+	 *   Whether to select only key properties (and not expand anything) in an undefined order;
+	 *   only <code>true</code> is supported; <b>Note:</b> in this case no data is updated from the
+	 *   response
+	 * @returns {Promise<string[]>}
+	 *   A promise that resolves with an array of predicates (see above), or rejects with an
+	 *   instance of <code>Error</code> in case of failure
+	 *
+	 * @public
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#requestFilteredOrderedPredicates
+	 */
+	_AggregationCache.prototype.requestFilteredOrderedPredicates = async function (aPredicates,
+			oGroupLock, bMinimal) {
+		if (!bMinimal) {
+			throw new Error("Not implemented");
+		}
+		let mQueryOptions = {...this.mQueryOptions};
+		delete mQueryOptions.$count;
+		delete mQueryOptions.$expand;
+		delete mQueryOptions.$orderby;
+		mQueryOptions
+			= _AggregationHelper.buildApply4Hierarchy(this.oAggregation, mQueryOptions, true);
+		mQueryOptions.$select = [];
+		const mTypeForMetaPath = this.getTypes();
+		_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
+		const aKeyFilters = aPredicates.map((sPredicate) => _Helper.getKeyFilter(
+			this.aElements.$byPredicate[sPredicate], this.sMetaPath, mTypeForMetaPath));
+		mQueryOptions.$top = aKeyFilters.length;
+		mQueryOptions.$filter = aKeyFilters.join(" or ");
+		const sResourcePath = this.sResourcePath
+			+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, true, true);
+
+		const oResponse = await this.oRequestor.request("GET", sResourcePath, oGroupLock);
+
+		return oResponse.value.map((oNode) => {
+			this.calculateKeyPredicate(oNode, mTypeForMetaPath, this.sMetaPath);
+			return _Helper.getPrivateAnnotation(oNode, "predicate");
+		});
+	};
+
+	/**
 	 * Requests and updates the NodeProperty ("the hierarchy node value") of the given element,
 	 * unless already available.
 	 *

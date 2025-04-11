@@ -1286,4 +1286,16 @@ function(Element, nextUIUpdate, XMLView, library, ObjectPageLayout, ObjectPageSu
 		assert.strictEqual(oAnchorBarBtn.getIconColor(), oSection.getAnchorBarButtonColor(), "The anchorBarButtonColor property is correctly set and color is applied to the anchorbar button");
 
 	});
+
+	QUnit.test("titleUppercase property sets proper CSS class", async function (assert) {
+		var oObjectPage = this.oObjectPageLayout,
+			oSection = oObjectPage.getAggregation("sections")[0],
+			done = assert.async();
+
+		oSection.setTitleUppercase(true);
+		await nextUIUpdate();
+
+		assert.ok(oSection._getTitleControl().hasStyleClass("sapUxAPObjectPageSectionTitleUppercase"), "The section has the proper CSS class");
+		done();
+	});
 });

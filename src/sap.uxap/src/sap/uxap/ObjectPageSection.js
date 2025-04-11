@@ -237,7 +237,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSection.prototype._getTitleUpperCaseStyleClass = function () {
-		return "sapUxAPObjectPageSectionTitleUpperCase";
+		return "sapUxAPObjectPageSectionTitleUppercase";
 	};
 
 	ObjectPageSection.prototype.connectToModelsAsync = function () {
