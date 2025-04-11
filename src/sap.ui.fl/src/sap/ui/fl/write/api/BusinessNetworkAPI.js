@@ -64,7 +64,7 @@ sap.ui.define([
 			generator: mPropertyBag.generator || "BusinessNetworkAPI.createVariant"
 		};
 
-		const aFlexObjects = [FlexObjectFactory.createFlVariant(mProperties)];
+		const aFlexObjects = [FlexObjectFactory.createFlVariant(mProperties).convertToFileContent()];
 
 		const oResponse = await Storage.write({
 			layer: mProperties.layer,
