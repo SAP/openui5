@@ -524,6 +524,30 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Returns the <code>aria-level</code>, matching to the <code>ObjectPageSectionBase</code> <code>titleLevel</code> or internal <code>titleLevel</code>.
+	 * If the <code>titleLevel</code> is <code>TitleLevel.H1</code>, the result would be "1".
+	 * If the <code>titleLevel</code> is <code>TitleLevel.Auto</code>,
+	 * the result would be "3" for <code>ObjectPageSection</code> and "4" for <code>ObjectPageSubSection</code>.
+	 * The method is used by <code>ObjectPageSectionRenderer</code>.
+	 *
+	 * If there is a case where a TitleLevel.Auto is returned from _getTitleLevel in order to prevent a wrong
+	 * value to be se to the aria-level attribute title level fallbacks to TitleLevel.H2 as this is the default
+	 * aria-level according to aria specification
+	 *
+	 * @returns {string} the <code>aria-level</code>
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._getARIALevel = function () {
+		var sTitleLevel = this._getTitleLevel();
+
+		if (sTitleLevel === TitleLevel.Auto) {
+			sTitleLevel = TitleLevel.H2;
+		}
+
+		return sTitleLevel.slice(-1);
+	};
+
 	// Generate proxies for aggregation mutators
 	["addAggregation", "insertAggregation", "removeAllAggregation", "removeAggregation", "destroyAggregation"].forEach(function (sMethod) {
 		ObjectPageSectionBase.prototype[sMethod] = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
