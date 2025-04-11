@@ -96,35 +96,35 @@ sap.ui.define([
 				return mSemanticObjects[sSemanticObject] && (mSemanticObjects[sSemanticObject].exists === true);
 			});
 		};
-		const fnRetrieveDistinctSemanticObjects = function() {
-			if (!oPromise) {
-				oPromise = Factory.getServiceAsync("Navigation").then((oNavigationService) => {
-					if (!oNavigationService) {
-						SapBaseLog.error("LinkDelegate: Service 'Navigation' could not be obtained");
-						Promise.resolve({});
-						return;
-					}
-					oNavigationService.getSemanticObjects().then((aDistinctSemanticObjects) => {
-						aDistinctSemanticObjects.forEach((sSemanticObject) => {
-							mSemanticObjects[sSemanticObject] = {
-								exists: true
-							};
-						});
-						oPromise = null;
-						return Promise.resolve(mSemanticObjects);
-					}, () => {
-						SapBaseLog.error("LinkDelegate: getSemanticObjects() of service 'Navigation' failed");
-						return Promise.resolve({});
-					});
-				});
+		const fnRetrieveDistinctSemanticObjects = async () => {
+			const oNavigationService = await Factory.getServiceAsync("Navigation");
+			if (!oNavigationService) {
+				SapBaseLog.error("LinkDelegate: Service 'Navigation' could not be obtained");
+				return Promise.resolve({});
 			}
-			return oPromise;
+			try {
+				const aDistinctSemanticObjects = await oNavigationService.getSemanticObjects();
+				aDistinctSemanticObjects.forEach((sSemanticObject) => {
+					mSemanticObjects[sSemanticObject] = {
+						exists: true
+					};
+				});
+				return Promise.resolve(mSemanticObjects);
+			} catch (oError) {
+				SapBaseLog.error("LinkDelegate: getSemanticObjects() of service 'Navigation' failed");
+				return Promise.resolve({});
+			}
 		};
 
 		if (fnHaveBeenRetrievedAllSemanticObjects(aSemanticObjects)) {
 			return Promise.resolve(fnAtLeastOneExistsSemanticObject(aSemanticObjects));
 		}
-		return fnRetrieveDistinctSemanticObjects().then(() => {
+
+		if (!oPromise) {
+			oPromise = fnRetrieveDistinctSemanticObjects();
+		}
+
+		return oPromise.then(() => {
 			return fnAtLeastOneExistsSemanticObject(aSemanticObjects);
 		});
 	};
