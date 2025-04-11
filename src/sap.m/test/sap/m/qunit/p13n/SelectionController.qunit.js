@@ -742,6 +742,121 @@ sap.ui.define([
 		assert.deepEqual(aTarget, data.changedState);
 	});
 
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 9 (CS20250009884917)", function(assert) {
+		// moving
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [
+				{"name":"A","key":"A"},
+				{"name":"B","key":"B"},
+				{"name":"C","key":"C"},
+				{"name":"D","key":"D"},
+				{"name":"E","key":"E"},
+				{"name":"F","key":"F"},
+				{"name":"G","key":"G"}
+			],
+			changedState: [
+				{"name":"A","key":"A"},
+				{"name":"C","key":"C"},
+				{"name":"B","key":"B"},
+				{"name":"D","key":"D"},
+				{"name":"F","key":"F"},
+				{"name":"E","key":"E"},
+				{"name":"G","key":"G"}
+			]
+		};
+		const aTarget = data.existingState;
+
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
+		assert.equal(aChanges.length, 2, "Returned value is an array of change objects");
+
+		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
+		assert.equal(aChanges[0].changeSpecificData.content.key, "C", "Returned the expected name");
+		assert.equal(aChanges[0].changeSpecificData.content.index, 1, "Returned the expected index");
+		simulateMoveItem(aTarget, "C", aChanges[0].changeSpecificData.content.index);
+
+		assert.equal(aChanges[1].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
+		assert.equal(aChanges[1].changeSpecificData.content.key, "F", "Returned the expected name");
+		assert.equal(aChanges[1].changeSpecificData.content.index, 4, "Returned the expected index");
+		simulateMoveItem(aTarget, "F", aChanges[1].changeSpecificData.content.index);
+
+		assert.deepEqual(aTarget, data.changedState);
+	});
+
+	QUnit.test("check 'getArrayDeltaChanges (moving)' - 10 (CS20250009884917)", function(assert) {
+		// moving
+		// arrange
+		const oAdaptationControl = this.oSelectionController.getAdaptationControl();
+
+		var data = {
+			control: oAdaptationControl,
+			deltaAttributes: ["key", "name"],
+			changeOperations: {add: "addFilter", remove: "removeFilter", move: "moveFilter"},
+			existingState: [
+				{"name":"1","key":"1"},
+				{"name":"2","key":"2"},
+				{"name":"3","key":"3"},
+				{"name":"4","key":"4"},
+				{"name":"5","key":"5"},
+				{"name":"6","key":"6"},
+				{"name":"7","key":"7"},
+				{"name":"8","key":"8"},
+				{"name":"9","key":"9"},
+				{"name":"10","key":"10"}
+			],
+
+			changedState: [
+				{"name":"1","key":"1"},
+				{"name":"2","key":"2"},
+				{"name":"4","key":"4"},
+				{"name":"3","key":"3"},
+				{"name":"5","key":"5"},
+				{"name":"8","key":"8"},
+				{"name":"6","key":"6"},
+				{"name":"10","key":"10"},
+				{"name":"9","key":"9"},
+				{"name":"7","key":"7"}
+			]
+		};
+		const aTarget = data.existingState;
+
+		// act
+		const aChanges = this.oSelectionController.getArrayDeltaChanges(data);
+
+		// assert
+		assert.equal(aChanges.length, 4, "Returned value is an array of change objects");
+
+		assert.equal(aChanges[0].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
+		assert.equal(aChanges[0].changeSpecificData.content.key, "4", "Returned the expected name");
+		assert.equal(aChanges[0].changeSpecificData.content.index, 2, "Returned the expected index");
+		simulateMoveItem(aTarget, "4", aChanges[0].changeSpecificData.content.index);
+
+		assert.equal(aChanges[1].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
+		assert.equal(aChanges[1].changeSpecificData.content.key, "8", "Returned the expected name");
+		assert.equal(aChanges[1].changeSpecificData.content.index, 5, "Returned the expected index");
+		simulateMoveItem(aTarget, "8", aChanges[1].changeSpecificData.content.index);
+
+		assert.equal(aChanges[2].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
+		assert.equal(aChanges[2].changeSpecificData.content.key, "10", "Returned the expected name");
+		assert.equal(aChanges[2].changeSpecificData.content.index, 7, "Returned the expected index");
+		simulateMoveItem(aTarget, "10", aChanges[2].changeSpecificData.content.index);
+
+		assert.equal(aChanges[3].changeSpecificData.changeType, "moveFilter", "Returned value is of correct type");
+		assert.equal(aChanges[3].changeSpecificData.content.key, "9", "Returned the expected name");
+		assert.equal(aChanges[3].changeSpecificData.content.index, 8, "Returned the expected index");
+		simulateMoveItem(aTarget, "9", aChanges[3].changeSpecificData.content.index);
+
+		assert.deepEqual(aTarget, data.changedState);
+	});
+
 	QUnit.test("check 'getArrayDeltaChanges (adding/deleting moving up&down)'", function(assert){
 
 		var aChanges;
