@@ -54,55 +54,97 @@ sap.ui.define([
 	/**
 	 * Retrieves the label text for a given control.
 	 * @param  {sap.ui.core.Control} oControl The control to analayze.
+	 * @param {XMLDocument} oInteractionXML The interaction document
 	 * @return {string} The label associated with the control.
 	 */
-	const getLabelFor = (oControl) => {
+	const getLabelFor = (oControl, oInteractionXML) => {
 		const sDisplayControlId = oControl.getFieldHelpDisplay();
 		const oLabelControl = sDisplayControlId
 			? Element.getElementById(sDisplayControlId)
 			: oControl;
 
-		let sAccessibilityInfoLabel = null;
+		// First, try to derive control label from field help, if available
+		let sAccessibilityInfoLabel = LabelEnablement._getLabelTexts(oLabelControl)[0];
 
-		const oAccessibilityInfo = oControl.getAccessibilityInfo?.();
-		if (oAccessibilityInfo) {
-			sAccessibilityInfoLabel = oAccessibilityInfo.description || oAccessibilityInfo.children?.[0]?.getAccessibilityInfo?.()?.description || null;
+		// Then, try derive control label from accessibility info, if available
+		if (!sAccessibilityInfoLabel) {
+			const oAccessibilityInfo = oControl.getAccessibilityInfo?.();
+			if (oAccessibilityInfo) {
+				sAccessibilityInfoLabel = oAccessibilityInfo.description || oAccessibilityInfo.children?.[0]?.getAccessibilityInfo?.()?.description || null;
+			}
 		}
 
-		if (!sAccessibilityInfoLabel) {
-			const ARIA_LABELLED_BY_ATTR = "aria-labelledby";
+		const ARIA_LABELLED_BY_ATTR = "aria-labelledby";
 
+		const tryGetAriaLabelledById = (oDomRef) => {
+			if (oDomRef.hasAttribute(ARIA_LABELLED_BY_ATTR)) {
+				return oDomRef.getAttribute(ARIA_LABELLED_BY_ATTR);
+			}
+			const oLabelledByElement = oDomRef.querySelector("[aria-labelledby]");
+			return oLabelledByElement?.getAttribute(ARIA_LABELLED_BY_ATTR);
+		};
+
+		// Try to derive control label from DOM
+		if (!sAccessibilityInfoLabel) {
 			let sAriaLabelledById;
 			let oCurrent = oControl;
+			let bCheckedInteractionDoc = false;
 
-			while (oCurrent && !sAriaLabelledById) {
+			while (oCurrent && !sAriaLabelledById && !sAccessibilityInfoLabel) {
 				const oDomRef = oControl.getDomRef();
 
-				if (oDomRef.hasAttribute(ARIA_LABELLED_BY_ATTR)) {
-					sAriaLabelledById = oDomRef.getAttribute(ARIA_LABELLED_BY_ATTR);
-				} else {
-					const oLabelledByElement = oDomRef.querySelector("[aria-labelledby]");
-					if (oLabelledByElement) {
-						sAriaLabelledById = oLabelledByElement.getAttribute(ARIA_LABELLED_BY_ATTR);
+				sAriaLabelledById = tryGetAriaLabelledById(oDomRef);
+
+				// Try interaction doc only once
+				if (!sAriaLabelledById && !bCheckedInteractionDoc) {
+					bCheckedInteractionDoc = true;
+
+					const oInteractionDoc = oInteractionXML.documentElement;
+					if (oInteractionDoc) {
+						const aControlInteractionNodes = [...oInteractionDoc.querySelectorAll("control-interactions")];
+						const oMatchingControl = aControlInteractionNodes.find((oNode) => {
+							return oNode.querySelector("control")?.getAttribute("name") === oControl.getMetadata().getName();
+						});
+
+						sAccessibilityInfoLabel = oMatchingControl?.querySelector("control")?.querySelector("defaultLabel")?.textContent;
 					}
 				}
 				oCurrent = oCurrent.getParent?.();
 			}
 
-			sAccessibilityInfoLabel = sAriaLabelledById
-				? document.getElementById(sAriaLabelledById)?.textContent
-				: null;
+			if (!sAccessibilityInfoLabel && sAriaLabelledById) {
+				const oLabelElement = document.getElementById(sAriaLabelledById);
+				sAccessibilityInfoLabel = oLabelElement?.textContent || null;
+			}
 		}
 
-		return LabelEnablement._getLabelTexts(oLabelControl)[0] || sAccessibilityInfoLabel || oControl.getMetadata().getName();
+		return sAccessibilityInfoLabel || oControl.getMetadata().getName();
 	};
 
 	/**
-	 * Load and access interaction-documentation for library
-	 * @param  {string} sLibrary The library to load the interaction document
-	 * @return {null|XMLDocument} The library's interaction document or 'null'.
+	 * Load and access interaction-documentation for given control.
+	 * @param {sap.ui.core.Control} oControl The control to load the interaction document for
+	 * @param {string} sLibrary The library name if already available
+	 * @return {Promise<null|XMLDocument>} The interaction document or 'null'.
 	 */
-	const loadInteractionXMLFor = async (sLibrary) => {
+	const loadInteractionXMLFor = async (oControl, sLibrary) => {
+		let oCurrent = oControl;
+
+		// Traverse up the control hierarchy to find the library name
+		while (oCurrent && !sLibrary) {
+			sLibrary = oCurrent.getMetadata().getLibraryName();
+			oCurrent = oCurrent.getParent();
+		}
+
+		if (!sLibrary) {
+			return null;
+		}
+
+		const oLibrary = Library._get(sLibrary);
+		if (!oLibrary?.interactionDocumentation) {
+			return null;
+		}
+
 		if (oInteractionXMLCache.has(sLibrary)) {
 			return oInteractionXMLCache.get(sLibrary);
 		}
@@ -151,51 +193,19 @@ sap.ui.define([
 			return [];
 		}
 
-		const oControlNode = Array.from(oInteractionDoc.querySelectorAll(`control[name]`)).find((oNode) => {
-			return oNode.getAttribute("name") === sControlName;
+		const aControlInteractionNodes = [...oInteractionDoc.querySelectorAll("control-interactions")];
+		const oMatchingControl = aControlInteractionNodes.find((oNode) => {
+			return oNode.querySelector("control")?.getAttribute("name") === sControlName;
 		});
 
-		if (!oControlNode) {
+		if (!oMatchingControl) {
 			return [];
 		}
 
-		return Array.from(oInteractionDoc.querySelectorAll("interaction")).map((oInteractionNode) => ({
+		return [...oMatchingControl.querySelectorAll("interaction")].map((oInteractionNode) => ({
 			kbd: Array.from(oInteractionNode.children).filter((child) => child.tagName === "kbd").map((kbd) => kbd.textContent.trim()),
 			description: oInteractionNode.querySelector("description")?.innerHTML || ""
 		}));
-	};
-
-	/**
-	 * Retrieves the interaction documentation for the given control.
-	 * @param  {sap.ui.core.Control} oControl The control to analyze.
-	 * @return {Array} List of interaction documentation.
-	 */
-	const getInteractionDocFor = async (oControl) => {
-		let sLibrary = null;
-		let oCurrent = oControl;
-
-		// Traverse up the control hierarchy to find the library name
-		while (oCurrent && !sLibrary) {
-			sLibrary = oCurrent.getMetadata().getLibraryName();
-			oCurrent = oCurrent.getParent();
-		}
-
-		if (!sLibrary) {
-			return [];
-		}
-
-		const oLibrary = Library._get(sLibrary);
-		if (!oLibrary?.interactionDocumentation) {
-			return [];
-		}
-		const oInteractionXML = await loadInteractionXMLFor(sLibrary);
-
-		if (!oInteractionXML) {
-			return [];
-		}
-
-		const sControlName = oControl.getMetadata().getName();
-		return getInteractions(sControlName, oInteractionXML);
 	};
 
 	let oCurrentPort;
@@ -225,7 +235,7 @@ sap.ui.define([
 		}
 
 		// get generic key interactions from sap.ui.core
-		const oCoreXML = await loadInteractionXMLFor("sap.ui.core");
+		const oCoreXML = await loadInteractionXMLFor(null, "sap.ui.core");
 		if (oCoreXML) {
 			const oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 			docs["sap.ui.core.Control"] = {
@@ -248,10 +258,17 @@ sap.ui.define([
 
 		for (let i = 0; i < aControlTree.length; i++) {
 			const oControl = aControlTree[i];
+			const sControlName = oControl.getMetadata().getName();
+
+			// get command infos
 			const aInteractions = getCommandInfosFor(oControl);
-			const aDocs = await getInteractionDocFor(oControl);
+
+			// get interactions from interaction documentation
+			const oInteractionXML = await loadInteractionXMLFor(oControl);
+			const aDocs = oInteractionXML ? getInteractions(sControlName, oInteractionXML) : [];
 
 			if (!aInteractions.length && !aDocs.length) {
+				// no commands and no interaction documentation
 				continue;
 			}
 
@@ -269,7 +286,7 @@ sap.ui.define([
 			elements.push({
 				"id": oControl.getId(),
 				"class": sClassName,
-				"label": getLabelFor(oControl),
+				"label": getLabelFor(oControl, oInteractionXML),
 				"interactions": aInteractions
 			});
 		}

@@ -85,6 +85,9 @@ sap.ui.define([
 		version: "${version}",
 		dependencies : ["sap.ui.core"],
 		designtime: "sap/m/designtime/library.designtime",
+		...{
+			interactionDocumentation: true
+		},
 		types: [
 			"sap.m.AvatarImageFitType",
 			"sap.m.AvatarShape",

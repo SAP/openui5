@@ -47,6 +47,9 @@ sap.ui.define([
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m", "sap.ui.layout"],
 		designtime: "sap/f/designtime/library.designtime",
+		...{
+			interactionDocumentation: true
+		},
 		interfaces: [
 			"sap.f.cards.IHeader",
 			"sap.f.ICard",
