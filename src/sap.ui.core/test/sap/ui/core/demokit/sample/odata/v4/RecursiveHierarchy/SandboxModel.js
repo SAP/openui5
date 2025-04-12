@@ -365,13 +365,24 @@ sap.ui.define([
 		}
 
 		if ("$filter" in mQueryOptions) {
-			// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
-			const aIDs = mQueryOptions.$filter.split("%20or%20")
-				.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
-			if (aIDs.length > 1 || aIDs[0] === "0") { // side effect for all rows or just the root
-				iRevision += 1;
+			const sFilter = mQueryOptions.$filter;
+			let aRows;
+			if (sFilter.startsWith("contains(")) {
+				// contains(ID,'5')%20or%20contains(Name,'5')
+				const sValue = sFilter.split("%20or%20")[0].slice(sFilter.indexOf("'") + 1, -2);
+				aRows = Object.values(mNodeById).filter((oNode) => {
+					return oNode.ID.includes(sValue) || oNode.Name.includes(sValue);
+				});
+			} else {
+				// ID%20eq%20'0'%20or%20ID%20eq%20'1'%20or%20ID%20eq%20'1.1'
+				const aIDs = sFilter.split("%20or%20")
+					.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
+				if (aIDs.length > 1 || aIDs[0] === "0") {
+					// side effect for all rows or just the root
+					iRevision += 1;
+				}
+				aRows = aIDs.map((sId) => mNodeById[sId]);
 			}
-			const aRows = aIDs.map((sId) => mNodeById[sId]);
 			selectCountSkipTop(aRows, mQueryOptions, oResponse);
 			return;
 		}

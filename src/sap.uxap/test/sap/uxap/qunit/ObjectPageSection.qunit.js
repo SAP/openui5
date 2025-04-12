@@ -795,7 +795,6 @@ function(Element, nextUIUpdate, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 		// act
 		oFirstSection.setTitle("New title");
-
 		// assert
 		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection.getTitle(), "aria-labelledby is updated properly");
@@ -823,6 +822,32 @@ function(Element, nextUIUpdate, XMLView, library, ObjectPageLayout, ObjectPageSu
 		// assert
 		assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
 			oLastSectionFirstSubsection.getTitle(), "aria-labelledby is updated properly"); //labelled by the subsection title
+	});
+
+	QUnit.test("Test aria-level attribute", async function(assert) {
+		assert.expect(3);
+		var oSectionWithOneSubsection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
+			oSectionHeader = oSectionWithOneSubsection.$().find(".sapUxAPObjectPageSectionHeader"),
+			sDefaultAriaLevel = "3",
+			sNewAriaLevel = "5";
+
+		// assert
+		assert.strictEqual(oSectionHeader.attr("aria-level"), sDefaultAriaLevel, "default aria-level is set");
+
+		// act
+		oSectionWithOneSubsection.setTitleLevel("H5");
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oSectionHeader.attr("aria-level"), sNewAriaLevel, "aria-level is correctly set");
+
+		// act
+		oSectionWithOneSubsection.setTitleLevel("Auto");
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(oSectionHeader.attr("aria-level"), sDefaultAriaLevel, "default aria-level is set when titleLevel is set to Auto");
+
 	});
 
 	QUnit.module("Invalidation", {

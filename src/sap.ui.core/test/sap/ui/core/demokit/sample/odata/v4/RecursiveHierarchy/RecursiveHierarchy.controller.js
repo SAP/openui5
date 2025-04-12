@@ -3,13 +3,15 @@
  */
 sap.ui.define([
 	"sap/m/MessageBox",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/test/TestUtils"
-], function (MessageBox, Controller, TestUtils) {
+], function (MessageBox, Filter, FilterOperator, Controller, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy", {
-		create : async function (sId, oParentContext, bFilteredOut) {
+		async create(sId, oParentContext, bFilteredOut) {
 			const oTable = this.byId(sId);
 			const oBinding = oParentContext?.getBinding() ?? oTable.getBinding("rows");
 			try {
@@ -24,7 +26,7 @@ sap.ui.define([
 			}
 		},
 
-		onCollapseAll : function (oEvent) {
+		onCollapseAll(oEvent) {
 			try {
 				oEvent.getSource().getBindingContext().collapse(true);
 			} catch (oError) {
@@ -32,20 +34,20 @@ sap.ui.define([
 			}
 		},
 
-		onCreate : function (oEvent, bFilteredOut) {
+		onCreate(oEvent, bFilteredOut) {
 			const sId = oEvent.getSource().getParent().getParent().getParent().getId();
 			this.create(sId, oEvent.getSource().getBindingContext(), bFilteredOut);
 		},
 
-		onCreateRoot : function (_oEvent, bFilteredOut) {
+		onCreateRoot(_oEvent, bFilteredOut) {
 			this.create("table", null, bFilteredOut);
 		},
 
-		onCreateRootInTreeTable : function (_oEvent, bFilteredOut) {
+		onCreateRootInTreeTable(_oEvent, bFilteredOut) {
 			this.create("treeTable", null, bFilteredOut);
 		},
 
-		onDelete : async function (oEvent) {
+		async onDelete(oEvent) {
 			try {
 				await oEvent.getSource().getBindingContext().delete();
 			} catch (oError) {
@@ -53,7 +55,7 @@ sap.ui.define([
 			}
 		},
 
-		onExpandAll : async function (oEvent) {
+		async onExpandAll(oEvent) {
 			try {
 				await oEvent.getSource().getBindingContext().expand(true);
 			} catch (oError) {
@@ -61,7 +63,7 @@ sap.ui.define([
 			}
 		},
 
-		onInit : function () {
+		onInit() {
 			// initialization has to wait for view model/context propagation
 			this.getView().attachEventOnce("modelContextChange", function () {
 				const oUriParameters = new URLSearchParams(window.location.search);
@@ -146,7 +148,7 @@ sap.ui.define([
 			}, this);
 		},
 
-		onMakeRoot : async function (oEvent, vNextSibling) {
+		async onMakeRoot(oEvent, vNextSibling) {
 			try {
 				this.getView().setBusy(true);
 				await oEvent.getSource().getBindingContext().move({
@@ -160,7 +162,7 @@ sap.ui.define([
 			}
 		},
 
-		onMove : function (oEvent, bInTreeTable, vNextSibling) {
+		onMove(oEvent, bInTreeTable, vNextSibling) {
 			this._bInTreeTable = bInTreeTable;
 			this._vNextSibling = vNextSibling;
 			this._oNode = oEvent.getSource().getBindingContext();
@@ -175,7 +177,7 @@ sap.ui.define([
 			oSelectDialog.open();
 		},
 
-		onMoveConfirm : async function (oEvent) {
+		async onMoveConfirm(oEvent) {
 			try {
 				this.getView().setBusy(true);
 				const sParentId = oEvent.getParameter("selectedItem").getBindingContext()
@@ -213,7 +215,7 @@ sap.ui.define([
 			}
 		},
 
-		onMoveDown : async function (oEvent) {
+		async onMoveDown(oEvent) {
 			var oNode;
 
 			try {
@@ -248,7 +250,7 @@ sap.ui.define([
 			}
 		},
 
-		onMoveUp : async function (oEvent) {
+		async onMoveUp(oEvent) {
 			var oNode;
 
 			try {
@@ -282,22 +284,40 @@ sap.ui.define([
 			}
 		},
 
-		onNameChanged : function (oEvent) {
+		onNameChanged(oEvent) {
 			const oContext = oEvent.getSource().getBindingContext();
 			if (oContext.hasPendingChanges()) {
 				oContext.requestSideEffects(["AGE", "Name"]);
 			} // else: invalid value (has not reached model)
 		},
 
-		onRefresh : function (_oEvent, bKeepTreeState) {
+		onRefresh(_oEvent, bKeepTreeState) {
 			this.refresh("table", bKeepTreeState);
 		},
 
-		onRefreshTreeTable : function (_oEvent, bKeepTreeState) {
+		onRefreshTreeTable(_oEvent, bKeepTreeState) {
 			this.refresh("treeTable", bKeepTreeState);
 		},
 
-		onShowSelected : async function (_oEvent, sTableId = "table") {
+		/**
+		 * Filters the list of potential new parents.
+		 *
+		 * @param {sap.ui.base.Event} oEvent The event object
+		 */
+		onSearch(oEvent) {
+			const sFilterValue = oEvent.getParameter("value");
+			const aFilters = sFilterValue
+				? [new Filter({
+					filters : [
+						new Filter("ID", FilterOperator.Contains, oEvent.getParameter("value")),
+						new Filter("Name", FilterOperator.Contains, oEvent.getParameter("value"))
+					]
+				})]
+				: [];
+			oEvent.getSource().getBinding("items").filter(aFilters);
+		},
+
+		async onShowSelected(_oEvent, sTableId = "table") {
 			const oListBinding = this.byId(sTableId).getBinding("rows");
 			const bSelectAll = oListBinding.getHeaderContext().isSelected();
 
@@ -311,15 +331,15 @@ sap.ui.define([
 				{title : "Selected Names"});
 		},
 
-		onSynchronize : function () {
+		onSynchronize() {
 			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
 		},
 
-		onSynchronizeTreeTable : function () {
+		onSynchronizeTreeTable() {
 			this.byId("treeTable").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
 		},
 
-		onToggleExpand : function (oEvent) {
+		onToggleExpand(oEvent) {
 			// get the context from the button's row
 			var oRowContext = oEvent.getSource().getBindingContext();
 
@@ -339,7 +359,7 @@ sap.ui.define([
 			}
 		},
 
-		scrollTo : function (oNode, oTable) {
+		scrollTo(oNode, oTable) {
 			const iIndex = oNode.getIndex();
 			const iFirstVisibleRow = oTable.getFirstVisibleRow();
 			const iRowCount = oTable.getRowMode().getRowCount();

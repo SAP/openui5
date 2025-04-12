@@ -253,7 +253,7 @@
 	<mvc:dependents>
 		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
 			items="{path : '/EMPLOYEES', parameters : {$count : true}, suspended : true}"
-			title="Select New Parent For {ID} ({Name})">
+			search=".onSearch" title="Select New Parent For {ID} ({Name})">
 			<m:StandardListItem title="{ID} ({Name})" type="Active" />
 		</m:SelectDialog>
 	</mvc:dependents>
