@@ -73,6 +73,9 @@ sap.ui.define([
 			"sap.uxap.ObjectPageLazyLoader"
 		],
 		version: "${version}",
+		...{
+			interactionDocumentation: true
+		},
 		extensions: {
 			flChangeHandlers: {
 				"sap.uxap.ObjectPageHeader": "sap/uxap/flexibility/ObjectPageHeader",

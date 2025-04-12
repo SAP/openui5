@@ -496,7 +496,7 @@ sap.ui.define([
 			}
 
 			mPromise.promise.then(function (oPropertyEditor) {
-				oPropertyEditor.setModel(this.getEditor().getModel("i18n"), "i18n");
+				oPropertyEditor.initI18n(this.getEditor().getModel("i18n"));
 				oPropertyEditor.setConfig(_omit(_merge({}, this._mConfig), "__propertyName")); // deep clone to avoid editor modifications to influence the outer config
 
 				oPropertyEditor.attachBeforeValueChange(function (oEvent) {

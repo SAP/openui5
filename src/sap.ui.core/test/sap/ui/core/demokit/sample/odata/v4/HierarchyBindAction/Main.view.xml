@@ -118,7 +118,7 @@
 		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
 			items="{path : '/I_SADL_BHV_HIER_BIND_DIRECTORY(\'1\')/_Hierarchy',
 				parameters : {$count : true, $$sharedRequest : true}, suspended : true}"
-			title="Select New Parent For {Id}">
+			search=".onSearch" title="Select New Parent For {Id}">
 			<!-- description="{Description}" -->
 			<m:StandardListItem title="{Id}" type="Active" />
 		</m:SelectDialog>

@@ -539,7 +539,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RatingIndicator.prototype._calculateSelectedValue = function (oEvent) {
-		var selectedValue = -1.0,
+		var selectedValue = 0,
 			percentageWidth = 0.0,
 			oControlRoot = this.$(),
 			fControlPadding = (oControlRoot.innerWidth() - oControlRoot.width()) / 2,
@@ -749,6 +749,7 @@ sap.ui.define([
 				this._updateUI(fValue, true);
 				if (this._fStartValue !== fValue) {	// if the value if not the same
 					this.fireLiveChange({value: fValue});
+					this._fStartValue = fValue; // update the start value to the new one
 				}
 			}
 		}
