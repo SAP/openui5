@@ -34,7 +34,6 @@
 					"controlId": "shell",
 					"controlAggregation": "content",
 					"containerOptions": {
-						"option": true,
 						"width": "90%"
 					}
 				}

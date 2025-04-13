@@ -103,7 +103,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem,
 		StashedControlSupport.createStashedControl({
 			wrapperId: "iAmStashed"
 		});
-		this.oButton = new this.Button("iAmStashed", {stashed: true});
+		this.oButton = new this.Button("iAmStashed");
 		this.oPanel.addAggregation("content", this.oButton);
 		this.oPanel.destroy();
 		assert.strictEqual(StashedControlSupport.getStashedControls().length, 0, "Stashed control has been destroyed");

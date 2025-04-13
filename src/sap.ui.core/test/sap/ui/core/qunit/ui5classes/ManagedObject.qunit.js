@@ -1798,9 +1798,7 @@ sap.ui.define([
 		// create new UI object with same Id (must not throw exception, class can differ)
 		var oLogSpy = this.spy(Log, "debug");
 		Log.setLevel(Log.Level.DEBUG);
-		var oTemplateNew = new Control("template", {
-			value: "{value}"
-		});
+		var oTemplateNew = new Control("template");
 		assert.ok(oLogSpy.calledWith(sinon.match(/destroying dangling template [\s\S]+ when creating new object with same ID/)), "destroyed elements should be reported with level debug");
 		oLogSpy.restore();
 		assert.ok(oTemplate.bIsDestroyed, "old Template should have been destroyed after object with same Id has been created");
