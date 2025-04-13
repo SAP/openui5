@@ -14,8 +14,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oItem = new Item({
 				label: sText,
-				icon: sIcon,
-				text: sText
+				icon: sIcon
 			});
 		},
 		afterEach: function () {
@@ -57,7 +56,6 @@ sap.ui.define([
 			this.oItem = new Item({
 				label: sText,
 				icon: sIcon,
-				text: sText,
 				showResetButton: false,
 				resetButtonEnabled: false,
 				showConfirmButton: false,

@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/table/Row",
 	"sap/ui/table/library",
 	"sap/ui/core/Element",
+	"sap/m/Title",
 	"sap/m/table/columnmenu/Menu",
 	// provides mock data
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
@@ -37,6 +38,7 @@ sap.ui.define([
 	Row,
 	library,
 	Element,
+	Title,
 	ColumnMenu
 ) {
 	"use strict";
@@ -244,7 +246,11 @@ sap.ui.define([
 	function createTable(mSettings) {
 
 		const mParams = {
-			title: "AnalyticalTable",
+			extension: [
+				new Title({
+					text: "AnalyticalTable"
+				})
+			],
 			columns: [
 				//dimensions + description texts
 				createColumn({grouped: true, name: "CostCenter"}),

@@ -46,6 +46,7 @@ sap.ui.define([
 				sortProperty: "text",
 				filterProperty: "text",
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: false,
 				autoResizable: true,
 				resizable: true
@@ -62,6 +63,7 @@ sap.ui.define([
 				sortProperty: "text",
 				filterProperty: "text",
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: false,
 				autoResizable: true,
 				resizable: true
@@ -77,6 +79,7 @@ sap.ui.define([
 				sortProperty: "text",
 				filterProperty: "text",
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: true,
 				autoResizable: true,
 				resizable: true
@@ -89,6 +92,7 @@ sap.ui.define([
 				template: new TestControl({text: "{text}"}),
 				hAlign: coreLibrary.HorizontalAlign.Center,
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: true,
 				autoResizable: true,
 				resizable: true
@@ -98,6 +102,7 @@ sap.ui.define([
 				label: new TestControl({text: "Some Header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: false,
 				autoResizable: true,
 				resizable: true
@@ -107,6 +112,7 @@ sap.ui.define([
 				label: new TestControl({text: "Some other header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: false,
 				autoResizable: true,
 				resizable: true
@@ -116,6 +122,7 @@ sap.ui.define([
 				label: new TestControl({text: "Just another header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
+				/** @deprecated As of version 1.44 */
 				flexible: false,
 				autoResizable: true,
 				resizable: true

@@ -722,10 +722,9 @@ sap.ui.define([
 
 		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
-			fileTypePath: "mediaType",
-			fileSizePath: "size",
-			documentTypePath: "documentType"
+			urlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -1155,10 +1154,9 @@ sap.ui.define([
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
 		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
-			fileTypePath: "mediaType",
-			fileSizePath: "size",
-			documentTypePath: "documentType"
+			urlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -1241,8 +1239,7 @@ sap.ui.define([
 			fileNamePath: "fileName",
 			urlPath: "imageUrl",
 			mediaTypePath: "mediaType",
-			fileSizePath: "fileSize",
-			documentTypePath: "documentType"
+			fileSizePath: "fileSize"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -1323,10 +1320,9 @@ sap.ui.define([
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
 		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
-			fileTypePath: "mediaType",
-			fileSizePath: "size",
-			documentTypePath: "documentType"
+			urlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -1416,10 +1412,9 @@ sap.ui.define([
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
 		const oRow = new UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
-			fileTypePath: "mediaType",
-			fileSizePath: "size",
-			documentTypePath: "documentType"
+			urlPath: "imageUrl",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -1528,10 +1523,9 @@ sap.ui.define([
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
 		const oRow = new sap.m.upload.UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
+			urlPath: "imageUrl",
 			mediaTypePath: "mediaType",
-			fileSizePath: "size",
-			documentTypePath: "documentType"
+			fileSizePath: "size"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -1635,10 +1629,9 @@ sap.ui.define([
 		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
 		const oRow = new sap.m.upload.UploadItemConfiguration({
 			fileNamePath: "fileName",
-			fileUrlPath: "imageUrl",
+			urlPath: "imageUrl",
 			mediaTypePath: "mediaType",
-			fileSizePath: "size",
-			documentTypePath: "documentType"
+			fileSizePath: "size"
 		});
 
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
@@ -2081,7 +2074,7 @@ sap.ui.define([
 	        this.oUploadPlugin = new UploadSetwithTable();
 	        this.oMockItem = new UploadItem({
 	            fileName: "test-file.txt",
-	            mimeType: "text/plain"
+	            mediaType: "text/plain"
 	        });
 	    },
 	    afterEach: function () {
