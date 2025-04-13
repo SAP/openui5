@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/i18n/Formatting",
+	"sap/base/i18n/date/CalendarWeekNumbering",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ResponsivePopover",
 	"sap/m/SinglePlanningCalendarGrid",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	qutils,
 	Formatting,
+	CalendarWeekNumbering,
 	jQuery,
 	ResponsivePopover,
 	SinglePlanningCalendarGrid,
@@ -486,7 +488,7 @@ sap.ui.define([
 		var iCellIndexInMiddleInWeek = 3,
 			oGrid = new SinglePlanningCalendarGrid({
 				startDate: UI5Date.getInstance(2022,0,1),
-				firstDayOfWeek: 1,
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601,
 				dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
 			});
 
@@ -515,7 +517,7 @@ sap.ui.define([
 		var iCellIndexInMiddleInWeek = 3,
 			oGrid = new SinglePlanningCalendarGrid({
 				startDate: UI5Date.getInstance(2022,0,1),
-				firstDayOfWeek: 1,
+				calendarWeekNumbering: CalendarWeekNumbering.ISO_8601,
 				dateSelectionMode: SinglePlanningCalendarSelectionMode.SingleSelect
 			});
 

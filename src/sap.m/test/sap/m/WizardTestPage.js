@@ -1095,7 +1095,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("fwd-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1104,7 +1103,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("bnd-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1113,7 +1111,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("branch-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1122,7 +1119,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("iconOnly-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1131,7 +1127,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("currentStep-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1140,7 +1135,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("dialog-integration-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1149,7 +1143,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("dialog-wiz-page-mode", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1158,7 +1151,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("background-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1167,7 +1159,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("long-step-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},
@@ -1176,7 +1167,6 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 
 		splitAppContainer.addDetailPage(new Page("long-step-title-wiz-page", {
 			showNavButton: Device.system.phone,
-			navButtonText: "Back",
 			navButtonPress: function() {
 				splitAppContainer.backDetail();
 			},

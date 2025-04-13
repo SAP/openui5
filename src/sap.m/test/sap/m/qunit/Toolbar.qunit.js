@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/ToolbarSeparator",
 	"sap/m/Button",
 	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
 	"sap/m/Select",
 	"sap/ui/core/Item",
 	"sap/m/Title",
@@ -34,6 +35,7 @@ sap.ui.define([
 	ToolbarSeparator,
 	Button,
 	SegmentedButton,
+	SegmentedButtonItem,
 	Select,
 	Item,
 	Title,
@@ -1129,14 +1131,14 @@ sap.ui.define([
 		var oTB = createToolbar();
 
 		var oSB = new SegmentedButton({
-			buttons : [
-				new Button({
+			items : [
+				new SegmentedButtonItem({
 					text: "button 1"
 				}),
-				new Button({
+				new SegmentedButtonItem({
 					text: "button 2"
 				}),
-				new Button({
+				new SegmentedButtonItem({
 					text: "button 3"
 				})
 			]

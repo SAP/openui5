@@ -6832,14 +6832,14 @@ sap.ui.define([
 				new Column({
 					popinDisplay: "Inline",
 					demandPopin: true,
-					content: [
+					header: [
 						new Label({text: "My text label"})
 					]
 				})
 			],
 			suggestionRows: [
 				new ColumnListItem({
-					content: [
+					cells: [
 						new Label({text: "My text label"})
 					]
 				})

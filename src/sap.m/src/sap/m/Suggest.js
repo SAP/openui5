@@ -170,7 +170,6 @@ sap.ui.define([
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: parent,
-				bounce: false,
 				ariaLabelledBy: InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"),
 				afterOpen: function () {
 					oInput._applySuggestionAcc();

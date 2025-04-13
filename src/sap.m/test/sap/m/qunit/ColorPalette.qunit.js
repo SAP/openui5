@@ -2190,8 +2190,6 @@ sap.ui.define([
 					{ color: "hsla(60, 60%, 30%, 0.75)", expected: {r: 122, g: 122, b: 31, a: 0.75} }
 				],
 				oColorPalette = new ColorPalette({
-					showMoreColorsButton: true,
-					showRecentColorsSection: true
 				}).placeAt("qunit-fixture"),
 				oColorPicker;
 
