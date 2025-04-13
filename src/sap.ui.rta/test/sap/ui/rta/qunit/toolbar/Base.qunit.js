@@ -173,8 +173,8 @@ sap.ui.define([
 			var Extension1 = ManagedObject.extend("foo.bar", {
 				metadata: {
 					properties: {
-						context: {
-							type: "sap.ui.rta.toolbar.Base"
+						toolbar: {
+							type: "any"
 						}
 					}
 				}
@@ -182,8 +182,8 @@ sap.ui.define([
 			var Extension2 = ManagedObject.extend("foo.bar.foobar", {
 				metadata: {
 					properties: {
-						context: {
-							type: "sap.ui.rta.toolbar.Base"
+						toolbar: {
+							type: "any"
 						}
 					}
 				}
