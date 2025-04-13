@@ -52,7 +52,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves the label text for a given control.
+	 * Attempts to retrieve a user-friendly label for a given control by examining associated field help,
+	 * accessibility info, ARIA attributes, and a provided interaction XML document.
+	 *
+	 * The method follows this priority order:
+	 * 1. Field help label via `getFieldHelpDisplay`.
+	 * 2. Label metadata via `LabelEnablement._getLabelTexts`.
+	 * 3. Control's accessibility info (`getAccessibilityInfo`).
+	 * 4. Label from interaction XML (if matching control metadata is found).
+	 * 5. ARIA `aria-labelledby` attribute from DOM or descendants.
+	 * 6. Fallback to control metadata name if no label is found.
+	 *
 	 * @param  {sap.ui.core.Control} oControl The control to analayze.
 	 * @param {XMLDocument} oInteractionXML The interaction document
 	 * @return {string} The label associated with the control.
@@ -76,15 +86,6 @@ sap.ui.define([
 
 		const ARIA_LABELLED_BY_ATTR = "aria-labelledby";
 
-		const tryGetAriaLabelledById = (oDomRef) => {
-			if (oDomRef.hasAttribute(ARIA_LABELLED_BY_ATTR)) {
-				return oDomRef.getAttribute(ARIA_LABELLED_BY_ATTR);
-			}
-			const oLabelledByElement = oDomRef.querySelector("[aria-labelledby]");
-			return oLabelledByElement?.getAttribute(ARIA_LABELLED_BY_ATTR);
-		};
-
-		// Try to derive control label from DOM
 		if (!sAccessibilityInfoLabel) {
 			let sAriaLabelledById;
 			let oCurrent = oControl;
@@ -93,7 +94,8 @@ sap.ui.define([
 			while (oCurrent && !sAriaLabelledById && !sAccessibilityInfoLabel) {
 				const oDomRef = oControl.getDomRef();
 
-				sAriaLabelledById = tryGetAriaLabelledById(oDomRef);
+				// Try to derive control label from DOM
+				sAriaLabelledById = oDomRef?.getAttribute(ARIA_LABELLED_BY_ATTR);
 
 				// Try interaction doc only once
 				if (!sAriaLabelledById && !bCheckedInteractionDoc) {
@@ -109,6 +111,13 @@ sap.ui.define([
 						sAccessibilityInfoLabel = oMatchingControl?.querySelector("control")?.querySelector("defaultLabel")?.textContent;
 					}
 				}
+
+				// Try to find aria label from descendents
+				if (!sAriaLabelledById && !sAccessibilityInfoLabel) {
+					const oLabelledByElement = oDomRef.querySelector("[aria-labelledby]");
+					sAriaLabelledById = oLabelledByElement?.getAttribute(ARIA_LABELLED_BY_ATTR);
+				}
+
 				oCurrent = oCurrent.getParent?.();
 			}
 
