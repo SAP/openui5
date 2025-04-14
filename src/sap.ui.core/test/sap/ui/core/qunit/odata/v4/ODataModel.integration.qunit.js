@@ -41401,10 +41401,12 @@ make root = ${bMakeRoot}`;
 	// updated, taking the out-of-place node into account. Move the child to another parent w/o a
 	// side-effects refresh - still the out-of-place node must be taken into account for its index.
 	// JIRA: CPOUI5ODATAV4-2573
+	//
 	// Copy an out-of-place node, afterwards the creation state of the original node is preserved.
 	// Copy an out-of-place node to itself as parent, afterwards the parent node is no longer an
-	// out-of-place node.
-	// JIRA: CPOUI5ODATAV4-2932
+	// out-of-place node. (JIRA: CPOUI5ODATAV4-2932)
+	//
+	// Observe that the indices for the copies are provided. (JIRA: CPOUI5ODATAV4-2919)
 	QUnit.test("Recursive Hierarchy: move (to nextSibling) & OOP node", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sSelect = "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name";
@@ -41676,17 +41678,15 @@ make root = ${bMakeRoot}`;
 		//   3 Gamma
 		//     2 Beta
 		//   4 Delta
-		//   6 Copy of 5 Epsilon
+		//   _6 Copy of 5 Epsilon
 		// 5 Epsilon
 		this.expectRequest({
 				batchNo : 7,
-				headers : {
-					Prefer : "return=minimal"
-				},
 				method : "POST",
 				payload : {},
 				url : "EMPLOYEES('5')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
-			}, {})
+					+ "?$select=ID"
+			}, {ID : "_6"})
 			.expectRequest({
 				batchNo : 7,
 				headers : {
@@ -41754,13 +41754,23 @@ make root = ${bMakeRoot}`;
 					ID : "5",
 					Name : "Epsilon"
 				}]
+			})
+			.expectRequest({
+				batchNo : 8,
+				url : sUrl + "&$filter=ID eq '_6'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "4" // Edm.Int64
+				}]
 			});
 
-		await Promise.all([
+		let [iIndexOfCopy] = await Promise.all([
 			oEpsilon.move({copy : true, parent : oAlpha}),
 			this.waitForChanges(assert, "copy 5 (Epsilon) to 1 (Alpha)")
 		]);
 
+		// code under test (JIRA: CPOUI5ODATAV4-2919)
+		assert.strictEqual(iIndexOfCopy, 5);
 		checkTable("after copy 5 (Epsilon) to 1 (Alpha)", assert, oTable, [
 			"/EMPLOYEES('5')", // out of place
 			"/EMPLOYEES('1')",
@@ -41782,39 +41792,37 @@ make root = ${bMakeRoot}`;
 		//   3 Gamma
 		//     2 Beta
 		//   4 Delta
-		//   6 Copy of 5 Epsilon
+		//   _6 Copy of 5 Epsilon
+		// _7 Copy of 5 Epsilon
 		// 5 Epsilon
-		//   7 Copy of 5 Epsilon
 		this.expectRequest({
-				batchNo : 8,
-				headers : {
-					Prefer : "return=minimal"
-				},
+				batchNo : 9,
 				method : "POST",
 				payload : {},
 				url : "EMPLOYEES('5')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
-			}, {})
+					+ "?$select=ID"
+			}, {ID : "_7"})
 			.expectRequest({
-				batchNo : 8,
+				batchNo : 9,
 				headers : {
 					Prefer : "return=minimal"
 				},
 				method : "PATCH",
 				payload : {
-					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('5')"
+					"EMPLOYEE_2_MANAGER@odata.bind" : null
 				},
 				url : "$-1"
 			}) // 204 No Content
 			.expectRequest({
-				batchNo : 8,
+				batchNo : 9,
 				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
 			}, {
 				value : [{
-					LimitedRank : "5" // Edm.Int64
+					LimitedRank : "6" // Edm.Int64
 				}]
 			})
 			.expectRequest({
-				batchNo : 8,
+				batchNo : 9,
 				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
 			}, {
 				"@odata.count" : "7",
@@ -41837,15 +41845,135 @@ make root = ${bMakeRoot}`;
 					ID : "2",
 					Name : "Beta"
 				}]
+			})
+			.expectRequest({
+				batchNo : 9,
+				url : sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+					+ "&$filter=ID eq '5'"
+					+ "&$top=1"
+			}, {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "5",
+					LimitedRank : "6"
+				}]
+			})
+			.expectRequest({
+				batchNo : 9,
+				url : sUrl.slice(0, -1) + ",Levels=1)"
+					+ "&$select=ID,Name&$filter=ID eq '5'&$top=1"
+			}, {
+				value : [{
+					ID : "5",
+					Name : "Epsilon"
+				}]
+			})
+			.expectRequest({
+				batchNo : 10,
+				url : sUrl + "&$filter=ID eq '_7'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "5" // Edm.Int64
+				}]
 			});
 
-		await Promise.all([
+		[iIndexOfCopy] = await Promise.all([
+			oEpsilon.move({copy : true, parent : null}),
+			this.waitForChanges(assert, "copy 5 (Epsilon) to root")
+		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-2919)
+		assert.strictEqual(iIndexOfCopy, 6);
+		checkTable("after copy 5 (Epsilon) to root", assert, oTable, [
+			"/EMPLOYEES('5')", // out of place
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')"
+		], [
+			[undefined, 1, "Epsilon"],
+			[true, 1, "Alpha"],
+			[true, 2, "Gamma"]
+		], 7);
+
+		// 1 Alpha
+		//   3 Gamma
+		//     2 Beta
+		//   4 Delta
+		//   _6 Copy of 5 Epsilon
+		// _7 Copy of 5 Epsilon
+		// 5 Epsilon
+		//   _8 Copy of 5 Epsilon
+		this.expectRequest({
+				batchNo : 11,
+				method : "POST",
+				payload : {},
+				url : "EMPLOYEES('5')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
+					+ "?$select=ID"
+			}, {ID : "_8"})
+			.expectRequest({
+				batchNo : 11,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('5')"
+				},
+				url : "$-1"
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : 11,
+				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "6" // Edm.Int64
+				}]
+			})
+			.expectRequest({
+				batchNo : 11,
+				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
+			}, {
+				"@odata.count" : "8",
+				value : [{
+					DescendantCount : "4",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "1",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "3",
+					Name : "Gamma"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			})
+			.expectRequest({
+				batchNo : 12,
+				url : sUrl + "&$filter=ID eq '_8'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "7" // Edm.Int64
+				}]
+			});
+
+		[iIndexOfCopy] = await Promise.all([
+			// code under test
 			oEpsilon.move({copy : true, parent : oEpsilon}),
 			this.waitForChanges(assert, "copy 5 (Epsilon) to 5 (Epsilon)")
 		]);
 
+		// code under test (JIRA: CPOUI5ODATAV4-2919)
+		assert.strictEqual(iIndexOfCopy, 7);
 		checkTable("after copy 5 (Epsilon) to 5 (Epsilon)", assert, oTable, [
-			// 5 (Epsilon) is not longer an out-of-place node
+			// 5 (Epsilon) is no longer an out-of-place node
 			"/EMPLOYEES('1')",
 			"/EMPLOYEES('3')",
 			"/EMPLOYEES('2')"
@@ -41853,7 +41981,7 @@ make root = ${bMakeRoot}`;
 			[true, 1, "Alpha"],
 			[true, 2, "Gamma"],
 			[undefined, 3, "Beta"]
-		], 7);
+		], 8);
 		assert.strictEqual(oEpsilon.getBinding(), undefined, "destroyed");
 	});
 
@@ -48511,8 +48639,10 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: Show the top pyramid of a recursive hierarchy, expanded to level 2. Copy a node
-	// with children to a different parent. Observe how the index of the copied node is updated.
+	// with children to a different parent. Observe how the index of the original node is updated.
 	// JIRA: CPOUI5ODATAV4-2902
+	//
+	// Observe that the index of the copy is provided. (JIRA: CPOUI5ODATAV4-2919)
 	QUnit.test("Recursive Hierarchy: copy", async function (assert) {
 		const sBaseUrl = "EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 			+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
@@ -48589,13 +48719,11 @@ make root = ${bMakeRoot}`;
 
 		this.expectRequest({
 				batchNo : 2,
-				headers : {
-					Prefer : "return=minimal"
-				},
 				method : "POST",
 				payload : {},
 				url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcCopy"
-			}, {})
+					+ "?$select=ID"
+			}, {ID : "_1"})
 			.expectRequest({
 				batchNo : 2,
 				headers : {
@@ -48652,14 +48780,24 @@ make root = ${bMakeRoot}`;
 					Name : "Epsilon"
 				}]
 			})
+			.expectRequest({
+				batchNo : 3,
+				url : sBaseUrl + "&$filter=ID eq '_1'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "1" // Edm.Int64
+				}]
+			})
 			.expectChange("id", [, "_1", "0", "1", "2"]);
 
-		await Promise.all([
+		const [iIndexOfCopy] = await Promise.all([
 			// code under test
 			oBeta.move({copy : true, parent : oZeta}),
 			this.waitForChanges(assert, "copy 1 (Beta) to 9 (Zeta)")
 		]);
 
+		// code under test (JIRA: CPOUI5ODATAV4-2919)
+		assert.strictEqual(iIndexOfCopy, 1);
 		checkTable("after copy 1 (Beta) to 9 (Zeta)", assert, oTable, [
 			oZeta,
 			"/EMPLOYEES('_1')",

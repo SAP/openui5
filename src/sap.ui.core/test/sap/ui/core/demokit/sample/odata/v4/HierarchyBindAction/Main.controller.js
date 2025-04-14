@@ -158,27 +158,25 @@ sap.ui.define([
 					throw new Error(`Parent ${sParentId} not yet loaded`);
 				}
 
+				let iCopyIndex;
 				if (this._vNextSibling === "?") {
 					await this._oNode.move({
 						nextSibling : oParent,
 						parent : oParent.getParent()
 					});
 				} else {
-					await this._oNode.move({
+					iCopyIndex = await this._oNode.move({
 						copy : this._bCopy,
 						nextSibling : this._vNextSibling,
 						parent : oParent
 					});
-				}
 
-				const oTable = this.byId("table");
-				const iParentIndex = oParent.getIndex();
-				if (iParentIndex < oTable.getFirstVisibleRow()
-					|| iParentIndex + 1
-						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
-					// make sure parent & child are visible
-					oTable.setFirstVisibleRow(iParentIndex);
+					if (this._bCopy) {
+						MessageBox.information("Index: " + iCopyIndex,
+							{title : "New Node Created"});
+					}
 				}
+				this.byId("table").setFirstVisibleRow(iCopyIndex ?? this._oNode.getIndex());
 			} catch (oError) {
 				MessageBox.error(oError.message);
 			} finally {

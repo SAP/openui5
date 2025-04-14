@@ -11731,8 +11731,11 @@ sap.ui.define([
 [false, true].forEach((bMakeRoot) => {
 	[undefined, null, {}].forEach((oSiblingContext) => {
 		[false, true].forEach((bUpdateSiblingIndex) => {
-			const sTitle = `move: refresh; make root=${bMakeRoot}, with sibling=${oSiblingContext}`
-				+ `, update sibling's index=${bUpdateSiblingIndex}`;
+			[false, true].forEach((bCopy) => {
+				const sTitle = `move: refresh; make root=${bMakeRoot},`
+					+ ` with sibling=${oSiblingContext}`
+					+ `, update sibling's index=${bUpdateSiblingIndex}`
+					+ `, bCopy=${bCopy}`;
 
 			if (bUpdateSiblingIndex && !oSiblingContext) {
 				return;
@@ -11779,11 +11782,15 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		oBinding.oCache = oCache;
-		const fnGetIndices = sinon.stub().returns(["~childIndex~", "~siblingIndex~"]);
+		const fnGetIndices = sinon.stub().returns([
+			"~childIndex~",
+			"~siblingIndex~",
+			bCopy ? Promise.resolve("~copyIndex~") : undefined
+		]);
 		this.mock(oCache).expects("move")
 			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? null : "~parent~", sSiblingPath,
 				bHasSibling ? "~childNonCanonical~" : undefined,
-				oSiblingContext ? bUpdateSiblingIndex : undefined, "~copy~")
+				oSiblingContext ? bUpdateSiblingIndex : undefined, bCopy)
 			.returns({promise : "A", refresh : true});
 		this.mock(oBinding).expects("requestSideEffects").withExactArgs("~group~", [""])
 			.returns("B");
@@ -11794,19 +11801,21 @@ sap.ui.define([
 
 		// code under test
 		const oSyncPromise = oBinding.move(oChildContext, bMakeRoot ? null : oParentContext,
-			oSiblingContext, "~copy~");
+			oSiblingContext, bCopy);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 		assert.notOk(fnGetIndices.called);
 
-		await oSyncPromise;
+		const vResult = await oSyncPromise;
 
+		assert.strictEqual(vResult, bCopy ? "~copyIndex~" : undefined);
 		assert.strictEqual(oChildContext.iIndex, "~childIndex~");
 		if (oSiblingContext) {
 			assert.strictEqual(oSiblingContext.iIndex,
 				bUpdateSiblingIndex ? "~siblingIndex~" : "~old~");
 		}
 	});
+			});
 		});
 	});
 });
