@@ -1239,7 +1239,7 @@ sap.ui.define([
 					return null;
 				}
 
-				return getCellDOM(oRow.getCells()[mPosition.colIndex], this.selectableCells);
+				return getCellDOM(oRow.getCells().filter((oCell) => oCell.getDomRef() || !oCell.getVisible())[mPosition.colIndex], this.selectableCells);
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.
