@@ -1,40 +1,42 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/rta/plugin/rename/RenameDialog",
 	"sap/ui/rta/RuntimeAuthoring",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
 	JsControlTreeModifier,
-	ComponentContainer,
 	Component,
+	ComponentContainer,
 	UIComponent,
 	KeyCodes,
-	Layer,
-	flUtils,
 	Reverter,
 	FlexObjectFactory,
 	FlexRuntimeInfoAPI,
+	SessionStorageConnector,
 	PersistenceWriteAPI,
 	VersionsAPI,
-	SessionStorageConnector,
+	Layer,
+	flUtils,
 	JSONModel,
 	nextUIUpdate,
 	QUnitUtils,
+	RenameDialog,
 	RuntimeAuthoring,
 	FlexTestAPI,
 	FlQUnitUtils
@@ -139,6 +141,33 @@ sap.ui.define([
 			oComponentContainer.placeAt(sDomId);
 			await nextUIUpdate();
 			return oComponentContainer;
+		});
+	};
+
+	RtaQunitUtils.simulateRename = function(sandbox, sNewLabel, fnStartRenameCallback, fnExpectError) {
+		return new Promise(function(resolve) {
+			const oCreatePopupStub = sandbox.stub(RenameDialog.prototype, "_createPopup");
+			oCreatePopupStub.callsFake(async function(...args) {
+				const oPopover = await oCreatePopupStub.wrappedMethod.apply(this, args);
+				oPopover.attachAfterOpen(() => {
+					oPopover.attachAfterClose(() => {
+						oCreatePopupStub.restore();
+						resolve();
+					});
+
+					const oInput = oPopover.getContent()[0].getItems()[1];
+					oInput.setValue(sNewLabel);
+					oInput.fireLiveChange({ value: sNewLabel });
+					if (fnExpectError) {
+						fnExpectError(oInput.getValueStateText());
+						oPopover.getEndButton().firePress();
+						return;
+					}
+					oPopover.getBeginButton().firePress();
+				});
+				return oPopover;
+			});
+			fnStartRenameCallback();
 		});
 	};
 

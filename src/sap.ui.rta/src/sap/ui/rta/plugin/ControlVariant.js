@@ -18,8 +18,8 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/rename/RenameDialog",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils"
 ], function(
 	Log,
@@ -37,8 +37,8 @@ sap.ui.define([
 	ContextSharingAPI,
 	Layer,
 	flUtils,
+	RenameDialog,
 	Plugin,
-	RenameHandler,
 	Utils
 ) {
 	"use strict";
@@ -104,6 +104,11 @@ sap.ui.define([
 		}, oDesignTimeMetadata);
 	}
 
+	ControlVariant.prototype.init = function(...aArgs) {
+		Plugin.prototype.init.apply(this, aArgs);
+		this._oDialog = new RenameDialog();
+	};
+
 	/**
 	 * Registers an overlay.
 	 *
@@ -156,14 +161,12 @@ sap.ui.define([
 					this._propagateVariantManagement(oVariantManagementTargetOverlay, sVariantManagementReference);
 				}
 			}.bind(this));
-			oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 			destroyManageDialog(oOverlay);
 		} else if (!oOverlay.getVariantManagement()) {
 			// Case where overlay is dynamically created - variant management reference should be identified from parent
 			sVariantManagementReference = this._getVariantManagementFromParent(oOverlay);
 			if (sVariantManagementReference) {
 				oOverlay.setVariantManagement(sVariantManagementReference);
-				oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 			}
 		}
 	};
@@ -220,8 +223,6 @@ sap.ui.define([
 		if (this._isVariantManagementControl(oOverlay)) {
 			destroyManageDialog(oOverlay);
 		}
-		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
-		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 		this.removeFromPluginsList(oOverlay);
 		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
@@ -287,13 +288,6 @@ sap.ui.define([
 			return bEnabled;
 		}
 		return false;
-	};
-
-	/**
-	 * @override
-	 */
-	ControlVariant.prototype.setDesignTime = function(oDesignTime) {
-		RenameHandler._setDesignTime.call(this, oDesignTime);
 	};
 
 	/**
@@ -464,21 +458,31 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @public
 	 */
-	ControlVariant.prototype.renameVariant = function(aElementOverlays) {
-		this.startEdit(aElementOverlays[0]);
-	};
-
-	ControlVariant.prototype.startEdit = function(oVariantManagementOverlay) {
-		var vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-		RenameHandler.startEdit.call(this, {
-			overlay: oVariantManagementOverlay,
+	ControlVariant.prototype.renameVariant = async function(aElementOverlays) {
+		const [oOverlay] = aElementOverlays;
+		const sVariantManagementReference = oOverlay.getVariantManagement();
+		const oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		const oRenamedElement = oOverlay.getElement();
+		const vDomRef = oDesignTimeMetadata.getData().variantRenameDomRef;
+		const sNewText = await this._oDialog.openDialogAndHandleRename({
+			overlay: oOverlay,
 			domRef: vDomRef,
-			pluginMethodName: "plugin.ControlVariant.startEdit"
+			action: this.getAction(oOverlay)
 		});
-	};
+		if (!sNewText) {
+			return;
+		}
 
-	ControlVariant.prototype.stopEdit = function(bRestoreFocus) {
-		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.ControlVariant.stopEdit");
+		const oSetTitleCommand = await this._createSetTitleCommand({
+			text: sNewText,
+			element: oRenamedElement,
+			designTimeMetadata: oDesignTimeMetadata,
+			variantManagementReference: sVariantManagementReference
+		});
+
+		this.fireElementModified({
+			command: oSetTitleCommand
+		});
 	};
 
 	ControlVariant.prototype.createSaveCommand = function(aElementOverlays) {
@@ -511,39 +515,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {Promise} empty promise
-	 * @private
-	 */
-	ControlVariant.prototype._emitLabelChangeEvent = function() {
-		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
-		var oOverlay = this._oEditedOverlay;
-		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		var oRenamedElement = oOverlay.getElement();
-		var sVariantManagementReference = oOverlay.getVariantManagement();
-
-		return this._createSetTitleCommand({
-			text: sText,
-			element: oRenamedElement,
-			designTimeMetadata: oDesignTimeMetadata,
-			variantManagementReference: sVariantManagementReference
-		})
-
-		.then(function(oSetTitleCommand) {
-			this.fireElementModified({
-				command: oSetTitleCommand
-			});
-		}.bind(this));
-	};
-
-	/**
 	 * Sets the domref text, creates a setTitle command and fires element modified.
 	 * @param {map} mPropertyBag - (required) contains required properties to create the command
 	 * @returns {object} setTitle command
 	 * @private
 	 */
 	ControlVariant.prototype._createSetTitleCommand = function(mPropertyBag) {
-		this._oEditableControlDomRef.textContent = mPropertyBag.text;
-
 		return this.getCommandFactory().getCommandFor(mPropertyBag.element, "setTitle", {
 			newText: mPropertyBag.text
 		}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference)
@@ -698,6 +675,12 @@ sap.ui.define([
 
 	ControlVariant.prototype.getActionName = function() {
 		return "controlVariant";
+	};
+
+	ControlVariant.prototype.destroy = function(...args) {
+		Plugin.prototype.destroy.apply(this, args);
+		this._oDialog.destroy();
+		delete this._oDialog;
 	};
 
 	return ControlVariant;

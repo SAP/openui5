@@ -105,62 +105,6 @@ sap.ui.define([
 			.resolves(oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 		}
 
-		function fnPressRenameAndEnsureFunctionality(assert, oControl, oRenameItem, sText) {
-			const oButtonOverlayDomRef = this.oButtonOverlay.getDomRef();
-
-			return new Promise(function(fnResolve) {
-				EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
-					if (mParams.overlay === this.oButtonOverlay) {
-						var aEditableFields = Array.from(oButtonOverlayDomRef.querySelectorAll(".sapUiRtaEditableField"));
-
-						assert.strictEqual(aEditableFields.length, 1, " then the rename input field is rendered");
-						assert.ok(aEditableFields[0].contains(document.activeElement), " and focus is in it");
-						Promise.all([
-							new Promise(function(fnResolveOnCommandAdded) {
-								var oCommandStack = this.oRta.getCommandStack();
-								oCommandStack.attachModified(function() {
-									var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-										assert.strictEqual(
-											this.oButton.getText(),
-											sText,
-											`then label of the button is ${sText}`
-										);
-										var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
-										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-										fnResolveOnCommandAdded();
-									}
-								}.bind(this));
-							}.bind(this)),
-							new Promise(function(fnResolveWhenRenamed) {
-								EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit",
-									function(sChannel, sEvent, mParams) {
-										if (mParams.overlay === this.oButtonOverlay) {
-											assert.strictEqual(document.activeElement, oButtonOverlayDomRef,
-												" and focus is on button overlay");
-											var aEditableFields = Array.from(
-												oButtonOverlayDomRef.querySelectorAll(".sapUiRtaEditableField")
-											);
-											assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
-											fnResolveWhenRenamed();
-										}
-									}, this);
-							}.bind(this))
-						]).then(function() {
-							stubShowMessageBoxOnRtaClose(this.oRta);
-							this.oRta.stop().then(fnResolve);
-						}.bind(this));
-
-						var oEvent = new Event("keydown");
-						oEvent.keyCode = KeyCodes.ENTER;
-						document.activeElement.innerHTML = sText;
-						document.activeElement.dispatchEvent(oEvent);
-					}
-				}, this);
-				QUnitUtils.triggerEvent("click", oRenameItem.getDomRef());
-			}.bind(this));
-		}
-
 		QUnit.test("when adding a group element via context menu (expanded context menu - reveal)", function(assert) {
 			var fnDone = assert.async();
 
@@ -363,70 +307,6 @@ sap.ui.define([
 			}.bind(this), 0);
 		});
 
-		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
-
-			this.oDatesGroupOverlay.focus();
-			var oGroupOverlay = this.oDatesGroupOverlay.getDomRef();
-
-			var fnDone = assert.async();
-
-			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
-				if (mParams.overlay === this.oDatesGroupOverlay) {
-					var aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
-
-					assert.strictEqual(aEditableFields.length, 1, " then the rename input field is rendered");
-					assert.strictEqual(aEditableFields[0].contains(document.activeElement), true, " and focus is in it");
-					Promise.all([
-						new Promise(function(fnResolveOnCommandAdded) {
-							var oCommandStack = this.oRta.getCommandStack();
-							oCommandStack.attachModified(function() {
-								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-								if (oFirstExecutedCommand &&
-									oFirstExecutedCommand.getName() === "rename") {
-									assert.strictEqual(this.oDatesGroup.getTitle(), "Test", "then title of the group is Test");
-									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-									assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-									fnResolveOnCommandAdded();
-								}
-							}.bind(this));
-						}.bind(this)),
-						new Promise(function(fnResolveWhenRenamed) {
-							EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
-								if (mParams.overlay === this.oDatesGroupOverlay) {
-									assert.strictEqual(
-										this.oDatesGroupOverlay.getDomRef(),
-										document.activeElement,
-										" and focus is on group overlay"
-									);
-									aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
-									assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
-									fnResolveWhenRenamed();
-								}
-							}, this);
-						}.bind(this))
-					]).then(function() {
-						stubShowMessageBoxOnRtaClose(this.oRta);
-						return this.oRta.stop();
-					}.bind(this))
-					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
-					.then(function(iNumberOfChanges) {
-						assert.equal(iNumberOfChanges, 1);
-					})
-					.then(fnDone);
-
-					var oEvent = new Event("keydown");
-					oEvent.keyCode = KeyCodes.ENTER;
-					document.activeElement.innerHTML = "Test";
-					document.activeElement.dispatchEvent(oEvent);
-				}
-			}, this);
-
-			oGroupOverlay.click();
-			oGroupOverlay.click();
-		});
-
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
@@ -549,27 +429,51 @@ sap.ui.define([
 			QUnitUtils.triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
 		});
 
-		QUnit.test("when renaming a button via Context Menu and setting a new label...", function(assert) {
-			var fnDone = assert.async();
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
+		QUnit.test("when renaming a button", function(assert) {
+			const fnDone = assert.async();
+			const sNewText = "TestRenameWithMenu";
+
+			const iDirtyChangesCount = FlexTestAPI.getDirtyChanges({ selector: this.oCompanyCodeField }).length;
+			assert.strictEqual(iDirtyChangesCount, 0, "then there are initially no dirty changes in the flex persistence");
 
 			this.oButtonOverlay.focus();
-
-			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
-			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
+			const { oContextMenuControl } = this.oRta.getPlugins().contextMenu;
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", async () => {
 				assert.ok(true, "ContextMenu is open");
-				// press rename button
-				var oRenameItem = oContextMenuControl._getVisualParent().getItems()[0];
-				fnPressRenameAndEnsureFunctionality.call(this, assert, this.oButton, oRenameItem, "TestRenameWithMenu")
-				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
-				.then(function(iNumberOfChanges) {
-					assert.equal(iNumberOfChanges, 1);
-				})
-				.then(fnDone);
-			}.bind(this));
 
-			// open context menu (compact menu)
+				const oRenameChecksPromise = new Promise(function(fnResolveOnCommandAdded) {
+					var oCommandStack = this.oRta.getCommandStack();
+					oCommandStack.attachModified(function() {
+						var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+						if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
+							assert.strictEqual(
+								this.oButton.getText(),
+								sNewText,
+								`then label of the button is ${sNewText}`
+							);
+							const iDirtyChangesCount = FlexTestAPI.getDirtyChanges({ selector: this.oButton }).length;
+							assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+							fnResolveOnCommandAdded();
+						}
+					}.bind(this));
+				}.bind(this));
+
+				RtaQunitUtils.simulateRename(sandbox, sNewText, () => {
+					// press rename button
+					const oRenameItem = oContextMenuControl._getVisualParent().getItems()[0];
+					QUnitUtils.triggerEvent("click", oRenameItem.getDomRef());
+				});
+
+				await oRenameChecksPromise;
+				stubShowMessageBoxOnRtaClose(this.oRta);
+				await this.oRta.stop();
+
+				const iNumberOfChanges = await RtaQunitUtils.getNumberOfChangesForTestApp();
+				assert.strictEqual(iNumberOfChanges, 1, "then one change is saved");
+				fnDone();
+			});
+
+			// open context menu
 			QUnitUtils.triggerMouseEvent(this.oButtonOverlay.getDomRef(), "click");
 		});
 

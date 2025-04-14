@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/rename/Rename",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
@@ -204,8 +204,8 @@ sap.ui.define([
 			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
 
 			oOverlay1.getDomRef().dispatchEvent(new Event("click"));
-			assert.ok(oOverlay1.isSelected(), "then after click on innerBtn11, overlay is not selected anymore");
-			assert.notOk(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
+			assert.notOk(oOverlay1.isSelected(), "then after click on innerBtn11, overlay is not selected anymore");
+			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
 		});
 
 		QUnit.test("when trying to select the 2. controls and deselect one overlay by holding SHIFT key", function(assert) {

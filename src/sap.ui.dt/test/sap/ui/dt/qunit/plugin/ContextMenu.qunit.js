@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Util",
-	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/rename/Rename",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
