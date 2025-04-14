@@ -229,7 +229,7 @@ sap.ui.define([
 		});
 	};
 
-	CardEditor.prototype.createManifest = function (vIdOrSettings, bSuppress) {
+	CardEditor.prototype.createManifest = async function (vIdOrSettings, bSuppress) {
 		this._isManifestReady = false;
 		if (this._oEditorManifest) {
 			this._oEditorManifest.destroy();
@@ -261,6 +261,9 @@ sap.ui.define([
 		this._isManifestReady = true;
 		this.fireManifestReady();
 		this._initResourceBundlesForMultiTranslation();
+		if (this.getMode() === "translation") {
+			await this._loadSpecialTranslations();
+		}
 		//add a context model
 		this._createContextModel();
 		if (this._oEditorManifest && this._oEditorManifest.getResourceBundle()) {
@@ -268,11 +271,14 @@ sap.ui.define([
 			var oResourceModel = new ResourceModel({
 				bundle: oResourceBundle
 			});
+			// wait for the promise returned by #getResourceBundle to resolve before accessing model data
+			await oResourceModel.getResourceBundle();
 			this.setModel(oResourceModel, "i18n");
 			if (this._oResourceBundle) {
-				oResourceModel.enhance(this._oResourceBundle);
+				await oResourceModel.enhance(this._oResourceBundle);
 			}
-			this._oResourceBundle = oResourceModel.getResourceBundle();
+			// wait for the promise returned by #getResourceBundle to resolve before accessing model data
+			this._oResourceBundle = await oResourceModel.getResourceBundle();
 		}
 
 		return this._loadExtension().then(function() {
