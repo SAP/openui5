@@ -5,12 +5,14 @@ sap.ui.define([
 	"./BaseFilter",
 	"sap/base/Log",
 	"sap/ui/core/library",
-	"sap/ui/integration/util/DateRangeHelper"
+	"sap/ui/integration/util/DateRangeHelper",
+	"sap/base/util/merge"
 ], function (
 	BaseFilter,
 	Log,
 	coreLibrary,
-	DateRangeHelper
+	DateRangeHelper,
+	merge
 ) {
 	"use strict";
 
@@ -60,7 +62,8 @@ sap.ui.define([
 	 * @override
 	 */
 	DateRangeFilter.prototype.setValueFromOutside = function (vValue) {
-		Log.error("Setting a filter value programatically on a DateRangeFilter is currently unsupported.", null, "sap.ui.integration.widgets.Card");
+		DateRangeHelper.setValue(this.getField(), vValue, this.getCardInstance());
+		this._syncValue();
 	};
 
 	/**
@@ -68,6 +71,15 @@ sap.ui.define([
 	 */
 	DateRangeFilter.prototype.getValueForModel = function () {
 		return DateRangeHelper.getValueForModel(this._getDdr());
+	};
+
+	/**
+	 * @returns {object} Filter configuration with static items
+	 */
+	DateRangeFilter.prototype.getStaticConfiguration = function () {
+		const oStaticConfiguration = merge({}, this.getParsedConfiguration());
+		oStaticConfiguration.value = this.getValueForModel().value;
+		return oStaticConfiguration;
 	};
 
 	/**
