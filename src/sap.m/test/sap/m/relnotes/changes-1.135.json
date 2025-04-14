@@ -128,6 +128,11 @@
         "text": " sap.m.PullToRefresh: Fix failing test on 2.0"
       },
       {
+        "id": "c53149637ad8ae345a7fb5dde375c08185f8880f",
+        "type": "FIX",
+        "text": " File rename will fire the itemRenamed event on completion & will not trigger model updates in UploadsetwithTable plugin"
+      },
+      {
         "id": "ba60e539f91bfa4135c0b25120b8ab29a223ee62",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: remove warning message"

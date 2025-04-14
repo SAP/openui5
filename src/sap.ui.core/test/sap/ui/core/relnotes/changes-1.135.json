@@ -3,6 +3,11 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "a5647d22e7aefadbc02bbc5828881deb5b36b3b4",
+        "type": "FIX",
+        "text": " KeyboardInteractionEndpoint: Don't log error on each postmessage"
+      },
+      {
         "id": "a7a013a8b82e6fce07fe5e45a0cc13a019ae1e0b",
         "type": "FIX",
         "text": " ResourceBundle: Log async create error / throw in future versions"
