@@ -72,11 +72,17 @@ sap.ui.define([
 	});
 
 	var Tooltip = TooltipBase.extend("Tooltip", {
+		metadata: {
+			properties: {
+				title: "string"
+			}
+		},
 		renderer: {
 			apiVersion: 2,
 			render: function(oRm, oTooltip) {
 				oRm.openStart("div", oTooltip)
 					.openEnd()
+					.text(oTooltip.getTitle())
 					.close("div");
 			}
 		}
