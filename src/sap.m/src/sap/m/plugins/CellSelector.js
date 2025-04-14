@@ -1219,18 +1219,19 @@ sap.ui.define([
 			 * Retrieve the cell reference for a given position
 			 * @param {sap.ui.table.Table} oTable table instance
 			 * @param {sap.m.plugins.CellSelector.CellPosition} mPosition position of cell
-			 * @param {boolean} bRange
+			 * @param {boolean} bRange whether the cell is part of a range
 			 * @returns {HTMLElement|undefined} cell's DOM element or undefined if the row or column index are invalid
 			 */
 			getCellRef: function (oTable, mPosition, bRange) {
 				const oRow = getRow(oTable.getRows(), mPosition.rowIndex, bRange, (oRow) => oRow?.getIndex());
+				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
 
-				if (!oRow) {
-					return;
+				if (!oRow || !oColumn) {
+					return null;
 				}
 
-				const oColumn = this.getVisibleColumns(oTable)[mPosition.colIndex];
-				return oColumn && getCellDOM(oRow.getCells(), mPosition.colIndex, this.selectableCells);
+				const aCells = oRow.getCells().filter((oCell) => oCell.getDomRef() || !oCell.getVisible());
+				return getCellDOM(aCells, mPosition.colIndex, this.selectableCells);
 			},
 			/**
 			 * Retrieve cell information for a given DOM element.

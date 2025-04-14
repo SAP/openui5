@@ -470,6 +470,43 @@ sap.ui.define([
 		assert.deepEqual(oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}}, "Cell has been selected");
 	});
 
+	QUnit.test("Ignore non-existent cells (grouping case)", function(assert) {
+		const oTable = this.oTable;
+
+		// Mocking
+		const aMockedCells = [];
+		oTable.getRows().forEach(function(oRow) {
+			const oCell = oRow.getCells()[1];
+			sinon.stub(oCell, "getDomRef").returns(undefined);
+			aMockedCells.push(oCell);
+		});
+
+		const oCell = getCell(oTable, 1, 0); // first cell of first row
+		oCell.focus();
+		qutils.triggerKeydown(oCell, KeyCodes.SPACE);
+		qutils.triggerKeyup(oCell, KeyCodes.SPACE);
+
+		qutils.triggerKeydown(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+		qutils.triggerKeyup(oCell, KeyCodes.ARROW_RIGHT, true, false, false);
+
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 1}}, "Change in selection");
+
+		const oRow = oTable.getRows()[1];
+		const aCells = oRow.getCells();
+
+		assert.ok(aCells[0].getDomRef(), "First cell exists");
+		assert.ok(aCells[0].getDomRef().closest("td").classList.contains("sapMPluginsCellSelectorSelected"), "First cell is selected");
+
+		assert.notOk(aCells[1].getDomRef(), "Second cell does not exist");
+
+		assert.ok(aCells[2].getDomRef(), "Third cell exists");
+		assert.ok(aCells[2].getDomRef().closest("td").classList.contains("sapMPluginsCellSelectorSelected"), "Third cell is selected");
+
+		aMockedCells.forEach(function(oCell) {
+			oCell.getDomRef.restore();
+		});
+	});
+
 	QUnit.test("Remove selection on _rowsUpdated", function(assert) {
 		const oTable = this.oTable;
 		const oCellSelector = this.oCellSelector;
