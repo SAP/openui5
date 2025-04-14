@@ -1,0 +1,513 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:vm="sap.ui.fl.variants"
+	xmlns:Table1="sap.ui.mdc.table.Table"
+	controllerName="multiplePluginInstances.table.sample.controller.Page"
+	xmlns:upload="sap.m.upload"
+	xmlns:mdcat="sap.ui.mdc.actiontoolbar">
+
+	<f:DynamicPage id="page">
+		<f:content>
+			<VBox>
+				<!-- First instance of UploadSetwithTable -->
+				<Table
+					id="table-uploadSet"
+					sticky="ColumnHeaders,HeaderToolbar"
+					width="auto"
+					mode="MultiSelect"
+					fixedLayout="false"
+					inset="true"
+					autoPopinMode="true"
+					hiddenInPopin="None"
+					items="{path: 'documents>/items', templateShareable: false}"
+					selectionChange="onSelectionChange">
+
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title
+								text="Documents ({= ${documents>/items}.length})"
+								level="H2"
+							/>
+							<ToolbarSpacer />
+
+							<SearchField
+								width="20%"
+								liveChange="onSearch"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData
+										priority="NeverOverflow"
+									/>
+								</layoutData>
+							</SearchField>
+							<ToolbarSeparator />
+
+							<!-- Use the UploadButtonPlaceholder to add the UploadButton to the toolbar -->
+							<upload:ActionsPlaceholder id="uploadButton" placeholderFor="UploadButtonPlaceholder" />
+
+							<Button
+								id="downloadSelectedButton"
+								text="Download"
+								enabled="false"
+								press="onDownloadFiles"
+							/>
+							
+						</OverflowToolbar>
+					</headerToolbar>
+
+					<dependents>
+						<plugins.UploadSetwithTable
+							uploadUrl="/uploadFiles"
+							multiple="true"
+							beforeUploadStarts="onBeforeUploadStarts"
+							itemRenamed="onDocumentRenamedSuccess"
+							uploadCompleted="onUploadCompleted"
+							onActivated="onPluginActivated"
+							cloudFilePickerEnabled="true"
+							actions="uploadButton"
+							>
+							<rowConfiguration>
+								<upload.UploadItemConfiguration
+									fileNamePath="fileName"
+									mediaTypePath="mediaType"
+									urlPath="url"
+									previewablePath="previewable"
+									fileSizePath="fileSize"
+									isTrustedSourcePath="trustedSource"
+								/>
+							</rowConfiguration>
+							<customData>
+								<core:CustomData key="itemsPath" value="items" writeToDom="false" />
+							</customData>
+						</plugins.UploadSetwithTable>
+					</dependents>
+
+					<columns>
+						<Column id="fileName" importance="High">
+							<header>
+								<Label text="File Name" />
+							</header>
+						</Column>
+						<Column id="id">
+							<header>
+								<Label text="ID" />
+							</header>
+						</Column>
+						<Column id="revision">
+							<header>
+								<Label text="Revision" />
+							</header>
+						</Column>
+						<Column id="status">
+							<header>
+								<Label text="Status" />
+							</header>
+						</Column>
+						<Column id="fileSize">
+							<header>
+								<Label text="File Size" />
+							</header>
+						</Column>
+						<Column id="lastModified">
+							<header>
+								<Label text="Last Modified" />
+							</header>
+						</Column>
+						<Column id="actionButton" importance="High" />
+					</columns>
+		
+		
+					<items>
+						<ColumnListItem
+							highlight="{= ${documents>uploadState} === 'Complete' ? 'Indication05' : null }"
+						>
+		
+						<!-- Cells with cell template defining content for each column (cells and columns work with 1:1 mapping) -->
+							<cells>
+								<HBox>
+									<Image
+										src="{documents>imageUrl}"
+										class="sapMUSTItemImage sapMUSTItemIcon"
+										visible="{= ${documents>imageUrl} !== undefined}"
+									/>
+									<core:Icon
+										src="{parts: ['documents>mediaType', 'documents>fileName'], formatter: '.getIconSrc' }"
+										visible="{= ${documents>imageUrl} === undefined || ${documents>imageUrl} === '' }"
+										class="sapMUSTItemImage sapMUSTItemIcon"
+									/>
+									<VBox
+										class="sapUiTinyMargin sapUiSmallMarginBegin"
+									>
+										<Link
+											text="{documents>fileName}"
+											press="openPreview"
+											class="sapUiTinyMarginBottom"
+										/>
+										<Text text="{documents>documentType}" />
+									</VBox>
+								</HBox>
+								<Text text="{documents>id}" />
+								<Link text="{documents>revision}" />
+								<Text text="{documents>status}" />
+								<Text
+									text="{parts: ['documents>fileSize'], formatter: '.getFileSizeWithUnits'}"
+								/>
+								<VBox>
+									<Text text="{documents>lastModifiedBy}" />
+									<Text
+										class="sapUiTinyMarginTop"
+										text="{documents>lastmodified}"
+									/>
+								</VBox>
+								<Button
+									class="sapUiTinyMarginBegin"
+									type="Transparent"
+									icon="sap-icon://decline"
+									press="onRemoveHandler"
+								/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+				<!-- End of first instance of UploadSetwithTable -->
+
+				<!-- Second instance of UploadSetwithTable -->
+				<!-- This instance is used to demonstrate the UploadSetwithTable plugin -->
+				<Table
+					id="table-uploadSet-instance2"
+					sticky="ColumnHeaders,HeaderToolbar"
+					width="auto"
+					mode="MultiSelect"
+					fixedLayout="false"
+					inset="true"
+					autoPopinMode="true"
+					hiddenInPopin="None"
+					items="{path: 'documents>/items-instance2', templateShareable: false}"
+					selectionChange="onSelectionChange">
+
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title
+								text="Documents ({= ${documents>/items-instance2}.length})"
+								level="H2"
+							/>
+							<ToolbarSpacer />
+
+							<SearchField
+								width="20%"
+								liveChange="onSearch"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData
+										priority="NeverOverflow"
+									/>
+								</layoutData>
+							</SearchField>
+							<ToolbarSeparator />
+
+							<!-- Use the UploadButtonPlaceholder to add the UploadButton to the toolbar -->
+							<upload:ActionsPlaceholder id="uploadButtonInstance2" placeholderFor="UploadButtonPlaceholder" />
+
+							<Button
+								id="downloadSelectedButton-instance2"
+								text="Download"
+								enabled="false"
+								press="onDownloadFiles"
+							/>
+							
+						</OverflowToolbar>
+					</headerToolbar>
+
+					<dependents>
+						<plugins.UploadSetwithTable
+							uploadUrl="/uploadFiles"
+							multiple="true"
+							beforeUploadStarts="onBeforeUploadStarts"
+							itemRenamed="onDocumentRenamedSuccess"
+							uploadCompleted="onUploadCompleted"
+							onActivated="onPluginActivated"
+							cloudFilePickerEnabled="true"
+							actions="uploadButtonInstance2"
+							>
+							<rowConfiguration>
+								<upload.UploadItemConfiguration
+									fileNamePath="fileName"
+									mediaTypePath="mediaType"
+									urlPath="url"
+									previewablePath="previewable"
+									fileSizePath="fileSize"
+									isTrustedSourcePath="trustedSource"
+								/>
+							</rowConfiguration>
+							<customData>
+								<core:CustomData key="itemsPath" value="items-instance2" writeToDom="false" />
+							</customData>
+						</plugins.UploadSetwithTable>
+					</dependents>
+
+					<columns>
+						<Column id="fileName-instance2" importance="High">
+							<header>
+								<Label text="File Name" />
+							</header>
+						</Column>
+						<Column id="id-instance-2">
+							<header>
+								<Label text="ID" />
+							</header>
+						</Column>
+						<Column id="revision-instance2">
+							<header>
+								<Label text="Revision" />
+							</header>
+						</Column>
+						<Column id="status-instance2">
+							<header>
+								<Label text="Status" />
+							</header>
+						</Column>
+						<Column id="fileSize-instance2">
+							<header>
+								<Label text="File Size" />
+							</header>
+						</Column>
+						<Column id="lastModified-instance2">
+							<header>
+								<Label text="Last Modified" />
+							</header>
+						</Column>
+						<Column id="actionButton-instance2" importance="High" />
+					</columns>
+		
+		
+					<items>
+						<ColumnListItem
+							highlight="{= ${documents>uploadState} === 'Complete' ? 'Indication05' : null }"
+						>
+		
+						<!-- Cells with cell template defining content for each column (cells and columns work with 1:1 mapping) -->
+							<cells>
+								<HBox>
+									<Image
+										src="{documents>imageUrl}"
+										class="sapMUSTItemImage sapMUSTItemIcon"
+										visible="{= ${documents>imageUrl} !== undefined}"
+									/>
+									<core:Icon
+										src="{parts: ['documents>mediaType', 'documents>fileName'], formatter: '.getIconSrc' }"
+										visible="{= ${documents>imageUrl} === undefined || ${documents>imageUrl} === '' }"
+										class="sapMUSTItemImage sapMUSTItemIcon"
+									/>
+									<VBox
+										class="sapUiTinyMargin sapUiSmallMarginBegin"
+									>
+										<Link
+											text="{documents>fileName}"
+											press="openPreview"
+											class="sapUiTinyMarginBottom"
+										/>
+										<Text text="{documents>documentType}" />
+									</VBox>
+								</HBox>
+								<Text text="{documents>id}" />
+								<Link text="{documents>revision}" />
+								<Text text="{documents>status}" />
+								<Text
+									text="{parts: ['documents>fileSize'], formatter: '.getFileSizeWithUnits'}"
+								/>
+								<VBox>
+									<Text text="{documents>lastModifiedBy}" />
+									<Text
+										class="sapUiTinyMarginTop"
+										text="{documents>lastmodified}"
+									/>
+								</VBox>
+								<Button
+									class="sapUiTinyMarginBegin"
+									type="Transparent"
+									icon="sap-icon://decline"
+									press="onRemoveHandler"
+								/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+
+				<!-- End of second instance of UploadSetwithTable -->
+
+				<!-- Third instance of UploadSetwithTable -->
+
+				<Table
+					id="table-uploadSet-instance3"
+					sticky="ColumnHeaders,HeaderToolbar"
+					width="auto"
+					mode="MultiSelect"
+					fixedLayout="false"
+					inset="true"
+					autoPopinMode="true"
+					hiddenInPopin="None"
+					items="{path: 'documents>/items-instance3', templateShareable: false}"
+					selectionChange="onSelectionChange">
+
+					<headerToolbar>
+						<OverflowToolbar>
+							<Title
+								text="Documents ({= ${documents>/items-instance3}.length})"
+								level="H2"
+							/>
+							<ToolbarSpacer />
+
+							<SearchField
+								width="20%"
+								liveChange="onSearch"
+							>
+								<layoutData>
+									<OverflowToolbarLayoutData
+										priority="NeverOverflow"
+									/>
+								</layoutData>
+							</SearchField>
+							<ToolbarSeparator />
+
+							<!-- Use the UploadButtonPlaceholder to add the UploadButton to the toolbar -->
+							<upload:ActionsPlaceholder id="uploadButtonInstance3" placeholderFor="UploadButtonPlaceholder" />
+
+							<Button
+								id="downloadSelectedButton-instance3"
+								text="Download"
+								enabled="false"
+								press="onDownloadFiles"
+							/>
+							
+						</OverflowToolbar>
+					</headerToolbar>
+
+					<dependents>
+						<plugins.UploadSetwithTable
+							uploadUrl="/uploadFiles"
+							multiple="true"
+							beforeUploadStarts="onBeforeUploadStarts"
+							itemRenamed="onDocumentRenamedSuccess"
+							uploadCompleted="onUploadCompleted"
+							onActivated="onPluginActivated"
+							cloudFilePickerEnabled="true"
+							actions="uploadButtonInstance3"
+							>
+							<rowConfiguration>
+								<upload.UploadItemConfiguration
+									fileNamePath="fileName"
+									mediaTypePath="mediaType"
+									urlPath="url"
+									previewablePath="previewable"
+									fileSizePath="fileSize"
+									isTrustedSourcePath="trustedSource"
+								/>
+							</rowConfiguration>
+							<customData>
+								<core:CustomData key="itemsPath" value="items-instance3" writeToDom="false" />
+							</customData>
+						</plugins.UploadSetwithTable>
+					</dependents>
+
+					<columns>
+						<Column id="fileName-instance3" importance="High">
+							<header>
+								<Label text="File Name" />
+							</header>
+						</Column>
+						<Column id="id-instance3">
+							<header>
+								<Label text="ID" />
+							</header>
+						</Column>
+						<Column id="revision-instance3">
+							<header>
+								<Label text="Revision" />
+							</header>
+						</Column>
+						<Column id="status-instance3">
+							<header>
+								<Label text="Status" />
+							</header>
+						</Column>
+						<Column id="fileSize-instance3">
+							<header>
+								<Label text="File Size" />
+							</header>
+						</Column>
+						<Column id="lastModified-instance3">
+							<header>
+								<Label text="Last Modified" />
+							</header>
+						</Column>
+						<Column id="actionButton-instance3" importance="High" />
+					</columns>
+		
+		
+					<items>
+						<ColumnListItem
+							highlight="{= ${documents>uploadState} === 'Complete' ? 'Indication05' : null }"
+						>
+		
+						<!-- Cells with cell template defining content for each column (cells and columns work with 1:1 mapping) -->
+							<cells>
+								<HBox>
+									<Image
+										src="{documents>imageUrl}"
+										class="sapMUSTItemImage sapMUSTItemIcon"
+										visible="{= ${documents>imageUrl} !== undefined}"
+									/>
+									<core:Icon
+										src="{parts: ['documents>mediaType', 'documents>fileName'], formatter: '.getIconSrc' }"
+										visible="{= ${documents>imageUrl} === undefined || ${documents>imageUrl} === '' }"
+										class="sapMUSTItemImage sapMUSTItemIcon"
+									/>
+									<VBox
+										class="sapUiTinyMargin sapUiSmallMarginBegin"
+									>
+										<Link
+											text="{documents>fileName}"
+											press="openPreview"
+											class="sapUiTinyMarginBottom"
+										/>
+										<Text text="{documents>documentType}" />
+									</VBox>
+								</HBox>
+								<Text text="{documents>id}" />
+								<Link text="{documents>revision}" />
+								<Text text="{documents>status}" />
+								<Text
+									text="{parts: ['documents>fileSize'], formatter: '.getFileSizeWithUnits'}"
+								/>
+								<VBox>
+									<Text text="{documents>lastModifiedBy}" />
+									<Text
+										class="sapUiTinyMarginTop"
+										text="{documents>lastmodified}"
+									/>
+								</VBox>
+								<Button
+									class="sapUiTinyMarginBegin"
+									type="Transparent"
+									icon="sap-icon://decline"
+									press="onRemoveHandler"
+								/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+
+				<!-- End of third instance of UploadSetwithTable -->
+
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+
+</mvc:View>
