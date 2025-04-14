@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
@@ -81,6 +82,7 @@ sap.ui.define([
 	"test-resources/sap/m/qunit/plugins/ClipboardUtils"
 ], (
 	Element,
+	LabelEnablement,
 	Library,
 	Messaging,
 	jQuery,
@@ -385,6 +387,7 @@ sap.ui.define([
 		});
 		oStub.callThrough();
 
+		const oLabel = new Label("L1", { text: "test", labelFor: oField }).placeAt("content");
 		oField.placeAt("content");
 		await nextUIUpdate();
 
@@ -403,6 +406,14 @@ sap.ui.define([
 
 				const oDomRef = oField.getDomRef();
 				assert.notOk(oDomRef && jQuery(oDomRef).attr("tabIndex"), "DomRef is not focusable");
+
+				const aContent = oField.getAggregation("_content");
+				const oContent = aContent?.length > 0 && aContent[0];
+				let aLabels = LabelEnablement.getReferencingLabels(oField);
+				assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Field");
+				aLabels = LabelEnablement.getReferencingLabels(oContent);
+				assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Content");
+				oLabel.destroy();
 				fnDone();
 			}, 1);
 		}, 1);// to make sure to be executed after require-timeout
@@ -756,6 +767,10 @@ sap.ui.define([
 		assert.ok(oContent.hasLabelableHTMLElement.called, "hasLabelableHTMLElement of content control called to determine if labelable");
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner-inner", "Label points to DomRef of inner control");
 		assert.equal(document.getElementById("L1").nodeName, "LABEL", "Label ist rendered as LABEL");
+		let aLabels = LabelEnablement.getReferencingLabels(oField);
+		assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Field");
+		aLabels = LabelEnablement.getReferencingLabels(oContent);
+		assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Content");
 
 		oField.setEditMode(FieldEditMode.Display); // TokenizerDispaly rendered
 		await nextUIUpdate();
@@ -766,6 +781,8 @@ sap.ui.define([
 		assert.notOk(oLabel.getLabelForRendering(), "Label for rendering is empty");
 		assert.ok(oContent.hasLabelableHTMLElement.called, "hasLabelableHTMLElement of content control called to determine if labelable");
 		assert.equal(document.getElementById("L1").nodeName, "SPAN", "Label ist rendered as SPAN");
+		aLabels = LabelEnablement.getReferencingLabels(oContent);
+		assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Content");
 		oLabel.destroy();
 
 	});
