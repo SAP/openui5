@@ -564,6 +564,7 @@ sap.ui.define([
 		const oUploadSetwithTablePlugin = new UploadSetwithTable({
 			uploadEnabled: true
 		});
+		this.spy(oUploadSetwithTablePlugin, "getConfig");
 
 		// act
 		oTable.addDependent(oUploadSetwithTablePlugin);
@@ -576,16 +577,22 @@ sap.ui.define([
 		oUploadSetwithTablePlugin.setUploadEnabled(false);
 
 		// assert
+		assert.ok(oUploadSetwithTablePlugin.getConfig.calledWithExactly("resetDragDropConfig", oTable, oUploadSetwithTablePlugin), "oTable Plugin resetDragDropConfig settings are set");
 		assert.ok(!oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to MDC table - uploading is disabled");
 		assert.ok(!oTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+		assert.ok(oUploadSetwithTablePlugin.getConfig.calledWithExactly("setPluginDefaultSettings", oTable, oUploadSetwithTablePlugin), "oTable Plugin setPluginDefaultSettings settings are set");
 
 		oTable.destroy();
+
+		// assert
+		assert.ok(oUploadSetwithTablePlugin.getConfig.calledWithExactly("cleanupPluginInstanceSettings", oTable, oUploadSetwithTablePlugin), "oTable Plugin cleanupPluginInstanceSettings settings are set");
 
 		// write the same test for responsive table
 		const oResponsiveTable = await createResponsiveTable();
 		const oResponsiveUploadSetwithTablePlugin = new UploadSetwithTable({
 			uploadEnabled: true
 		});
+		this.spy(oResponsiveUploadSetwithTablePlugin, "getConfig");
 
 		// act
 		oResponsiveTable.addDependent(oResponsiveUploadSetwithTablePlugin);
@@ -597,16 +604,22 @@ sap.ui.define([
 		oResponsiveUploadSetwithTablePlugin.setUploadEnabled(false);
 
 		// assert
+		assert.ok(oResponsiveUploadSetwithTablePlugin.getConfig.calledWithExactly("resetDragDropConfig", oResponsiveTable, oResponsiveUploadSetwithTablePlugin), "oResponsiveTable Plugin resetDragDropConfig settings are set");
 		assert.ok(!oResponsiveUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Responsive table - uploading is disabled");
 		assert.ok(!oResponsiveTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+		assert.ok(oResponsiveUploadSetwithTablePlugin.getConfig.calledWithExactly("setPluginDefaultSettings", oResponsiveTable, oResponsiveUploadSetwithTablePlugin), "oResponsiveTable Plugin setPluginDefaultSettings settings are set");
 
 		oResponsiveTable.destroy();
+
+		// assert
+		assert.ok(oResponsiveUploadSetwithTablePlugin.getConfig.calledWithExactly("cleanupPluginInstanceSettings", oResponsiveTable, oResponsiveUploadSetwithTablePlugin), "oResponsiveTable Plugin cleanupPluginInstanceSettings settings are set");
 
 		// write the same test for grid table
 		const oGridTable = await createGridTable();
 		const oGridUploadSetwithTablePlugin = new UploadSetwithTable({
 			uploadEnabled: true
 		});
+		this.spy(oGridUploadSetwithTablePlugin, "getConfig");
 
 		// act
 		oGridTable.addDependent(oGridUploadSetwithTablePlugin);
@@ -618,10 +631,15 @@ sap.ui.define([
 		oGridUploadSetwithTablePlugin.setUploadEnabled(false);
 
 		// assert
+		assert.ok(oGridUploadSetwithTablePlugin.getConfig.calledWithExactly("resetDragDropConfig", oGridTable, oGridUploadSetwithTablePlugin), "oGridTable Plugin resetDragDropConfig settings are set");
 		assert.ok(!oGridUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Grid table - uploading is disabled");
 		assert.ok(!oGridTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+		assert.ok(oGridUploadSetwithTablePlugin.getConfig.calledWithExactly("setPluginDefaultSettings", oGridTable, oGridUploadSetwithTablePlugin), "oGridTable Plugin setPluginDefaultSettings settings are set");
 
 		oGridTable.destroy();
+
+		// assert
+		assert.ok(oGridUploadSetwithTablePlugin.getConfig.calledWithExactly("cleanupPluginInstanceSettings", oGridTable, oGridUploadSetwithTablePlugin), "oGridTable Plugin cleanupPluginInstanceSettings settings are set");
 	});
 
 	QUnit.test("Plugin to fire fileTypeMismatch event when file type is not supported", async function (assert) {
@@ -1167,6 +1185,8 @@ sap.ui.define([
 			rowConfiguration: oRow
 		});
 
+		this.spy(oUploadSetwithTablePlugin, "getConfig");
+
 		// Simulate a file selection event on the action button
 		fnPreviewHandler = function (oEvent) {
 			const oSource = oEvent.getSource();
@@ -1193,6 +1213,9 @@ sap.ui.define([
 		await oMdcTable.initialized();
 		await nextUIUpdate();
 
+		// assert
+		assert.ok(oUploadSetwithTablePlugin.getConfig.calledWithExactly("setPluginDefaultSettings", oMdcTable, oUploadSetwithTablePlugin), "Plugin setPluginDefaultSettings settings are set");
+
 		// Check if the upload is enabled
 		assert.ok(oUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin is enabled for file uploads");
 
@@ -1204,6 +1227,9 @@ sap.ui.define([
 			assert.ok(false, "File preview link not found in the table");
 		}
 		oLink.firePress();
+
+		// assert
+		assert.ok(oUploadSetwithTablePlugin.getConfig.calledWithExactly("openFilePreview", oLink.getBindingContext(), oMdcTable, oUploadSetwithTablePlugin), "Plugin setPluginDefaultSettings settings are set");
 
 		let oDialog;
 
@@ -1492,8 +1518,9 @@ sap.ui.define([
 			oUploadSetwithTablePluginCarouselPlugin = this.spy(oUploadSetwithTablePlugin._filePreviewDialogControl._oCarousel, "destroyPages");
 			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
 		});
-        });
-		// Write Qunit to test property CustomPageContentHandler of FilePreviewDialog control
+    });
+
+	// Write Qunit to test property CustomPageContentHandler of FilePreviewDialog control
 	QUnit.test("File Preview Dialog to test custom page content handler", async function (assert) {
 		const done = assert.async();
 		var oUploadSetwithTablePluginCarouselPlugin;
@@ -1729,6 +1756,7 @@ sap.ui.define([
 			done();
 		});
 	});
+
 	QUnit.test("Should not allow files exceeding the max file size limit", function (assert) {
         const iMaxFileSize = 2 * 1024 * 1024;
         const oUploadSetTable = new UploadSetwithTable({
@@ -1741,6 +1769,7 @@ sap.ui.define([
         assert.notOk(bIsValid, "File exceeding max file size should not be allowed.");
         oUploadSetTable.destroy();
 	});
+
 	QUnit.test("Should only allow specific file types", function (assert) {
         const aAllowedFileTypes = ["pdf", "jpg", "png"];
         const oUploadSetTable = new UploadSetwithTable({
@@ -1761,6 +1790,7 @@ sap.ui.define([
 
         oUploadSetTable.destroy();
 	});
+
 	QUnit.test("Should only allow files with specific media types", function (assert) {
         const aAllowedMediaTypes = ["image/png", "image/jpeg", "application/pdf"];
         const oUploadSetTable = new UploadSetwithTable({
@@ -1783,6 +1813,7 @@ sap.ui.define([
 
         oUploadSetTable.destroy();
     });
+
 	QUnit.test("Should not allow file names exceeding the max length", function (assert) {
         const iMaxFileNameLength = 20;
         const oUploadSetTable = new UploadSetwithTable({
@@ -1805,6 +1836,7 @@ sap.ui.define([
 
         oUploadSetTable.destroy();
     });
+
 	QUnit.test("getFileSizeWithUnits Test", function (assert) {
 		const resultKB = UploadSetwithTable.getFileSizeWithUnits(512); // Below 1KB
 		const resultKB2 = UploadSetwithTable.getFileSizeWithUnits(2048); // 2KB
@@ -1817,6 +1849,7 @@ sap.ui.define([
 		assert.strictEqual(resultGB, "1.00 GB", "1GB correctly converted");
 		assert.strictEqual(resultInvalid, "invalid", "Non-numeric input should return the input itself");
 	});
+
 	QUnit.test("Upload item via URL", async function (assert) {
 		const done = assert.async();
 
@@ -1845,6 +1878,7 @@ sap.ui.define([
 		});
 		done();
 	});
+
 	QUnit.test("Upload item without file", async function (assert) {
 		const done = assert.async();
 
@@ -1870,6 +1904,7 @@ sap.ui.define([
 		});
 		done();
 	});
+
 	QUnit.test("Test for renaming the files", async function (assert) {
 		const done = assert.async();
 		this.oTable = await createMDCTable({
@@ -1894,6 +1929,7 @@ sap.ui.define([
 			done();
 		});
 	});
+
 	QUnit.test("getItemsMap resolves with items from contexts", function (assert) {
 	    const done = assert.async();
 	    const oUploadPlugin = new UploadSetwithTable();
@@ -1911,6 +1947,7 @@ sap.ui.define([
 	        done();
 	    });
 	});
+
 	QUnit.module("Plugin Download Tests", {
 		beforeEach: function () {
 			this.sandbox = sinon.createSandbox();
@@ -1922,6 +1959,7 @@ sap.ui.define([
 			this.sandbox.restore();
 		}
 	});
+
 	QUnit.test("download should log an error when getRowConfiguration returns null", function (assert) {
 		this.uploadSetInstance.getRowConfiguration = () => null;
 		this.uploadSetInstance.download({}, true);
@@ -1933,6 +1971,7 @@ sap.ui.define([
 		);
 		assert.ok(this.uploadSetInstance.getConfig.notCalled, "getConfig was not called when row configuration is null");
 	});
+
 	QUnit.test("download should call getConfig with correct parameters when getRowConfiguration is defined", function (assert) {
 		this.uploadSetInstance.getRowConfiguration = () => ({});
 		const oBindingContext = { dummy: "data" };
@@ -1940,13 +1979,14 @@ sap.ui.define([
 		this.uploadSetInstance.download(oBindingContext, bAskForLocation);
 		assert.ok(this.uploadSetInstance.getConfig.calledOnce, "getConfig was called once");
 		assert.ok(
-			this.uploadSetInstance.getConfig.calledWith("download", {
+			this.uploadSetInstance.getConfig.calledWithExactly("download", {
 				oBindingContext: oBindingContext,
 				bAskForLocation: bAskForLocation
-			}),
+			}, null, this.uploadSetInstance),
 			"getConfig was called with correct arguments"
 		);
 	});
+
     QUnit.module("Plugin Drag and Drop Tests", {
         beforeEach: function () {
             this.sandbox = sinon.createSandbox();
@@ -1964,21 +2004,25 @@ sap.ui.define([
             this.sandbox.restore();
         }
     });
+
     QUnit.test("Drag over event should trigger handleDragOver", function (assert) {
         const oEvent = new Event("dragover", {});
         this.uploadSetInstance.handleDragOver(oEvent);
         assert.ok(this.uploadSetInstance.handleDragOver.calledOnce, "handleDragOver was called once");
     });
+
     QUnit.test("Drag enter event should trigger handleDragEnter", function (assert) {
         const oEvent = new Event("dragenter", {});
         this.uploadSetInstance.handleDragEnter(oEvent);
         assert.ok(this.uploadSetInstance.handleDragEnter.calledOnce, "handleDragEnter was called once");
     });
+
     QUnit.test("Drag leave event should trigger handleDragLeave", function (assert) {
         const oEvent = new Event("dragleave", {});
         this.uploadSetInstance.handleDragLeave(oEvent);
         assert.ok(this.uploadSetInstance.handleDragLeave.calledOnce, "handleDragLeave was called once");
     });
+
     QUnit.test("Drop event should trigger handleDrop", function (assert) {
         const oEvent = new Event("drop", {
             originalEvent: {
@@ -1990,6 +2034,7 @@ sap.ui.define([
         this.uploadSetInstance.handleDrop(oEvent);
         assert.ok(this.uploadSetInstance.handleDrop.calledOnce, "handleDrop was called once");
 	});
+
     QUnit.module("Plugin Row Item Configuration", {
         beforeEach: function () {
             this.sandbox = sinon.createSandbox();
@@ -2000,22 +2045,26 @@ sap.ui.define([
             this.sandbox.restore();
         }
     });
+
     QUnit.test("rowItemConfiguration should return correct configuration", function (assert) {
         const mockConfig = { column: "File Name", type: "text", visible: true };
         this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration").returns(mockConfig);
         const result = this.uploadSetInstance.rowItemConfiguration();
         assert.deepEqual(result, mockConfig, "rowItemConfiguration returned the expected object");
     });
+
     QUnit.test("rowItemConfiguration should be called once", function (assert) {
         this.sandbox.spy(this.uploadSetInstance, "rowItemConfiguration");
         this.uploadSetInstance.rowItemConfiguration();
         assert.ok(this.uploadSetInstance.rowItemConfiguration.calledOnce, "rowItemConfiguration was called once");
 	});
+
 	QUnit.test("rowItemConfiguration should return default configuration if none is set", function (assert) {
         this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration").returns(undefined);
         const result = this.uploadSetInstance.rowItemConfiguration();
         assert.strictEqual(result, undefined, "rowItemConfiguration returned undefined when no config is set");
     });
+
     QUnit.test("rowItemConfiguration should return different configurations for different columns", function (assert) {
         const columnConfig1 = { column: "File Name", type: "text", visible: true };
         const columnConfig2 = { column: "File Size", type: "number", visible: false };
@@ -2027,6 +2076,7 @@ sap.ui.define([
         assert.deepEqual(result1, columnConfig1, "First call returned configuration for 'File Name'");
         assert.deepEqual(result2, columnConfig2, "Second call returned configuration for 'File Size'");
     });
+
     QUnit.test("rowItemConfiguration should not throw an error when called with invalid input", function (assert) {
         this.sandbox.stub(this.uploadSetInstance, "rowItemConfiguration").callsFake(function () {
             return { column: "Unknown", type: "unknown", visible: false };
@@ -2034,7 +2084,9 @@ sap.ui.define([
         const result = this.uploadSetInstance.rowItemConfiguration(null);
         assert.deepEqual(result, { column: "Unknown", type: "unknown", visible: false }, "rowItemConfiguration handled null input gracefully");
 	});
+
 	QUnit.module("Plugin visual and aggregation tests");
+
 	QUnit.test("NoDataIllustration test", async function (assert) {
 		const done = assert.async();
 		const oMdcTable = await createMDCTable({
@@ -2056,6 +2108,7 @@ sap.ui.define([
 		assert.strictEqual(oUploadSetwithTablePlugin.getNoDataIllustration(), "sap-icon://document", "No Data Illustration is correctly set.");
 		done();
 	});
+
 	QUnit.test("Upload enabled test", async function (assert) {
 		const done = assert.async();
 		const oMdcTable = await createMDCTable({
@@ -2075,6 +2128,7 @@ sap.ui.define([
 		assert.equal(false, bIsUploadEnabled, "Uploading is not allowed when setUploadEnabled is set to true");
 		done();
 	});
+
 	QUnit.module("Plugin itemValidationHandler Tests", {
 	    beforeEach: function () {
 	        this.sandbox = sinon.createSandbox();
@@ -2089,6 +2143,7 @@ sap.ui.define([
 	        this.oUploadPlugin.destroy();
 	    }
 	});
+
 	QUnit.test("Should invoke itemValidationHandler before upload", async function (assert) {
 	    assert.expect(2);
 	    const done = assert.async();
@@ -2102,6 +2157,7 @@ sap.ui.define([
 	    assert.ok(validationHandler.calledWith(this.oMockItem), "itemValidationHandler called with correct item.");
 	    done();
 	});
+
 	QUnit.test("Should prevent upload when itemValidationHandler rejects the promise", function (assert) {
 	    const done = assert.async();
 	    const validationHandler = sinon.stub().rejects(new Error("File not allowed"));
@@ -2115,6 +2171,7 @@ sap.ui.define([
 	        });
 	    }
 	});
+
 	QUnit.test("Should modify item before upload in itemValidationHandler", async function (assert) {
 	    const done = assert.async();
 	    const validationHandler = function (oItem) {
@@ -2129,11 +2186,14 @@ sap.ui.define([
 	    assert.strictEqual(this.oMockItem.getFileName(), "modified-file.txt", "File name was modified before upload.");
 	    done();
 	});
+
 	QUnit.test("Should allow upload when itemValidationHandler is not set", function (assert) {
 	    const handlerFunction = this.oUploadPlugin.getItemValidationHandler();
 	    assert.ok(handlerFunction === undefined || handlerFunction === null, "No validation handler should be set.");
 	});
+
 	QUnit.module("Plugin Cloud File Picker Tests");
+
 	QUnit.test("Cloud file picker correctly creates file with metadata", function (assert) {
 	    const oUploadPlugin = new UploadSetwithTable();
 	    const oCloudFile = {
@@ -2147,6 +2207,7 @@ sap.ui.define([
 	    assert.equal(oResult.file.type, "application/pdf", "File type is correctly set.");
 	    assert.equal(oResult.fileShareProperties.cloudSource, "Google Drive", "Cloud source metadata is preserved.");
 	});
+
 	QUnit.test("Cloud file picker handles missing content type", function (assert) {
 	    const oUploadPlugin = new UploadSetwithTable();
 	    const oCloudFile = {
@@ -2160,6 +2221,7 @@ sap.ui.define([
 	    assert.equal(oResult.file.type, "null");
 	    assert.equal(oResult.fileShareProperties.cloudSource, "OneDrive");
 	});
+
 	QUnit.test("Cloud file picker handles missing metadata properties", function (assert) {
 	    const oUploadPlugin = new UploadSetwithTable();
 	    const oCloudFile = {
@@ -2172,6 +2234,7 @@ sap.ui.define([
 	    assert.equal(oResult.file.type, "image/png");
 	    assert.deepEqual(oResult.fileShareProperties, undefined);
 	});
+
 	QUnit.test("Cloud picker file change triggers file creation and processing", function (assert) {
 	    const oUploadPlugin = new UploadSetwithTable();
 	    const oMockEvent = {
@@ -2199,6 +2262,7 @@ sap.ui.define([
 	    assert.equal(aProcessedFiles[0].file.name, "test1.docx");
 	    assert.equal(aProcessedFiles[1].file.name, "test2.xlsx");
 	});
+
 	QUnit.test("Cloud picker files are processed correctly", function (assert) {
 	    const oUploadPlugin = new UploadSetwithTable();
 	    const oMockFile1 = {
@@ -2217,5 +2281,127 @@ sap.ui.define([
 	    assert.equal(aInitiatedUploads.length, 2);
 	    assert.equal(aInitiatedUploads[0].getFileName(), "cloudfile1.pdf");
 	    assert.equal(aInitiatedUploads[1].getFileName(), "cloudfile2.docx");
+	});
+
+	QUnit.module("Multiple Table in single page", {
+		beforeEach: function() {
+			this.oTable = null;
+			this.oUploadSetwithTablePlugin = null;
+		},
+		afterEach: function() {
+			if (this.oTable) {
+				this.oTable.destroy();
+			}
+		}
+	});
+
+	QUnit.test("File Preview Dialog opens on file selection for multiple tables", async function (assert) {
+		const done = assert.async();
+		// arrange
+		const oPreviewDialog = new sap.m.upload.FilePreviewDialog();
+
+		// set rowconfiguration aggregation for the plugin to get the binding context of the selected file using sap.m.upload.UploadItemConfiguration.
+		const oRow1 = new sap.m.upload.UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oRow2 = new sap.m.upload.UploadItemConfiguration({
+			fileNamePath: "fileName",
+			fileUrlPath: "imageUrl",
+			fileTypePath: "mediaType",
+			fileSizePath: "size",
+			documentTypePath: "documentType"
+		});
+
+		const oUploadSetwithTablePluginTable1 = new UploadSetwithTable({
+			actions: ["uploadButton1"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow1
+		});
+
+		const oUploadSetwithTablePluginTable2 = new UploadSetwithTable({
+			actions: ["uploadButton2"],
+			previewDialog: oPreviewDialog,
+			rowConfiguration: oRow2
+		});
+
+		this.spy(oUploadSetwithTablePluginTable1, "getConfig");
+		this.spy(oUploadSetwithTablePluginTable2, "getConfig");
+
+		// Simulate a file selection event on the action button
+		fnPreviewHandler = function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oBindingContext = oSource.getBindingContext();
+			if (oBindingContext && oUploadSetwithTablePluginTable1 && oBindingContext.getPath().includes("0")) {
+				oUploadSetwithTablePluginTable1.openFilePreview(oBindingContext);
+			} else if (oBindingContext && oUploadSetwithTablePluginTable2) {
+				oUploadSetwithTablePluginTable2.openFilePreview(oBindingContext);
+			}
+		};
+
+		setFilePreviewHandler(fnPreviewHandler);
+
+		const oMdcTable1 = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton1", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		const oMdcTable2 = await createMDCTable({
+			actions: [
+				new ActionsPlaceholder({ id:"uploadButton2", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		// use sap.m.upload.FilePreviewDialog instance
+
+		// act
+		oMdcTable1.addDependent(oUploadSetwithTablePluginTable1);
+		oMdcTable2.addDependent(oUploadSetwithTablePluginTable2);
+
+		//oMdcTable1.placeAt("qunit-fixture");
+		await oMdcTable1.initialized();
+		await nextUIUpdate();
+
+		//oMdcTable2.placeAt("qunit-fixture");
+		await oMdcTable2.initialized();
+		await nextUIUpdate();
+
+		// act
+
+		// get Link control from the table and trigger press event
+		const oLink1 = oMdcTable1._oTable.getItems()[0]?.getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink1) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink1.firePress();
+
+		let oDialog;
+
+		// get Link control from the table and trigger press event
+		const oLink2 = oMdcTable2._oTable.getItems()[1]?.getCells()[0]?.getItems()[2]?.getItems()[0];
+		if (!oLink2) {
+			assert.ok(false, "File preview link not found in the table");
+		}
+		oLink2.firePress();
+
+		const afterDialogOpen = function (oEvent) {
+			oDialog = oEvent.getSource();
+			assert.ok(oUploadSetwithTablePluginTable1.getConfig.calledWithExactly("openFilePreview", oLink1.getBindingContext(), oMdcTable1, oUploadSetwithTablePluginTable1), "oMdcTable1 Plugin setPluginDefaultSettings settings are set");
+			assert.ok(oUploadSetwithTablePluginTable2.getConfig.calledWithExactly("openFilePreview", oLink2.getBindingContext(), oMdcTable2, oUploadSetwithTablePluginTable2), "oMdcTable2 Plugin setPluginDefaultSettings settings are set");
+			oDialog.close();
+			oMdcTable1.destroy();
+			oMdcTable2.destroy();
+			done();
+		};
+
+		oPreviewDialog.attachEventOnce("beforePreviewDialogOpen", (oEvent) => {
+			oDialog = oEvent.getParameter("oDialog");
+			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
+		});
 	});
 });
