@@ -6,12 +6,15 @@ sap.ui.define([
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
 	"sap/m/Button",
+	"sap/m/Input",
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
-], function(Log, DesignTime, nextUIUpdate, Wizard, WizardStep, Button, ObjectPool, library, Library, coreLibrary, jQuery) {
+], function(Log, DesignTime, nextUIUpdate, Wizard, WizardStep, Button, Input, ObjectPool, library, Library, coreLibrary, qutils, KeyCodes, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -116,6 +119,77 @@ sap.ui.define([
 		assert.strictEqual(oTitleDomRef.tagName, "H5", "HTML element is changed");
 	});
 
+	QUnit.test("Test F6 and Shift+F6 Focus Navigation Across Wizard Steps", async function(assert) {
+		const oWizard = new Wizard("wizard-nav-id-f6", {
+			steps: [
+				new WizardStep({
+					validated: true,
+					title: "Step 1",
+					content: [
+						new Button({ text: "Button Step 1" })
+					]
+				}),
+				new WizardStep({
+					validated: true,
+					title: "Step 2",
+					content: [
+						new Button({ text: "Button Step 2" }),
+						new Input({ placeholder: "Input field" })
+					]
+				}),
+				new WizardStep({
+					title: "Step 3",
+					content: [
+						new Button({ text: "Button Step 3" })
+					]
+				})
+			]
+		});
+
+		oWizard.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		this.clock = sinon.useFakeTimers();
+
+		let oNextButton = oWizard._getNextButton();
+		const oButtonStep1 = oWizard.getSteps()[0].getContent()[0];
+		const oButtonStep2 = oWizard.getSteps()[1].getContent()[0];
+		const oInputStep2 = oWizard.getSteps()[1].getContent()[1];
+
+		// act
+		oButtonStep1.focus();
+		qutils.triggerKeydown(oButtonStep1.getDomRef(), KeyCodes.F6);
+		await nextUIUpdate();
+
+		// assert
+		assert.strictEqual(document.activeElement, oNextButton.getDomRef(), "Focus should move to the next button of the active step after pressing F6.");
+
+		// act
+		oNextButton.$().tap();
+		this.clock.tick(500);
+
+		// assert
+		oNextButton = oWizard._getNextButton();
+		assert.strictEqual(oWizard.getProgressStep().getTitle(), "Step 2", "Wizard should navigate to Step 2 when the Next button is clicked.");
+		assert.strictEqual(oWizard.getProgressStep().getId(), oWizard.getSteps()[1].getId(), "The active step ID should match the ID of Step 2.");
+		assert.strictEqual(document.activeElement, oButtonStep2.getFocusDomRef(), "Focus should move to the first interactive element (Button) in Step 2.");
+
+		// act
+		qutils.triggerKeydown(oButtonStep2.getDomRef(), KeyCodes.F6, true, false, false);
+
+		// assert
+		assert.strictEqual(document.activeElement, oButtonStep1.getFocusDomRef(), "When Shift+F6 is pressed, focus should move back to the first button in Step 1.");
+
+		// act
+		qutils.triggerKeydown(oButtonStep1.getDomRef(), KeyCodes.F6);
+
+		// assert
+		assert.notOk(document.activeElement === oInputStep2.getFocusDomRef(), "Focus should not move to the input field in Step 2 after pressing F6 from Button in Step 1.");
+		assert.strictEqual(document.activeElement, oButtonStep2.getFocusDomRef(), "Focus should move to the first button in Step 2 after pressing F6 from Step 1.");
+
+		oWizard.destroy();
+		runAllTimersAndRestore(this.clock);
+	});
 
 	QUnit.test("getId() should return correct id", function (assert) {
 		var sId = this.oWizard.getId();
