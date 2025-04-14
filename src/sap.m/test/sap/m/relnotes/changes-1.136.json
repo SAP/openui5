@@ -3,6 +3,31 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "4b6f825c32dac406d3e53c1e2d2ca3a67e555137",
+        "type": "FIX",
+        "text": " sap.m.Select: Enhanced error handling"
+      },
+      {
+        "id": "4925debf1cf5de2ea1e69f7e4c33b9b432b00e87",
+        "type": "FIX",
+        "text": " We now ensure that the correct instance of the plugin and control is set within the UploadSetWithTable plugin"
+      },
+      {
+        "id": "5a7cbf443b39c7aef7e3c93c927157e6b9cd2514",
+        "type": "FIX",
+        "text": " We've now improved the image scaling and carousel preview for UploadSetwithTable"
+      },
+      {
+        "id": "879ed694dd54b6f194d75447863bc6b05b4324e5",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Redundant announcement on error state removed"
+      },
+      {
+        "id": "852f33df0264fd40d718044202557f151bed1084",
+        "type": "FIX",
+        "text": " sap.m.Input, sap.m.ComboBoxBase: Tests on macOS corrected"
+      },
+      {
         "id": "f8ae6545f41c6435a07dc0e913f8d8557802c641",
         "type": "FIX",
         "text": " We now ensure that the download API of UploadsetwithTable handles the blob file type responses for the files that are to be downloaded"
@@ -11,6 +36,11 @@
         "id": "1c2a0a9ccce272214db274c2bf19aa9c421cd8f1",
         "type": "FIX",
         "text": " sap.m ScrollContainer: unstable QUnit tests are now fixed"
+      },
+      {
+        "id": "5d4ca6322e30deb63d7c77a0e2df6f5adf108533",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Correct value and UI sync during fast drag interactions"
       },
       {
         "id": "a556670b0991c075d80f11f3c65bfe75418f0c45",

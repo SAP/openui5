@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "6a47a1cfc1b19e66d715ed9c058d8c9d7968ec7d",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSectionBase: aria-level attribute added"
+      },
+      {
+        "id": "db9c62d6a6814a31d5a12dc2a3878008ca796707",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLyout: CSS class name corrected"
+      },
+      {
         "id": "d510fcb27ff1b2210c817838893900905bcd322e",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Description corrected"

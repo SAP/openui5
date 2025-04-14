@@ -3,6 +3,11 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "2a30f6356d876e1f0a8fa92d7d46b9eed0515c37",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Font styling for product name is now correct"
+      },
+      {
         "id": "46328b7b3bb27984cffcf49bc3c48405d5afb14d",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"
