@@ -84,7 +84,7 @@ sap.ui.define([
 		});
 
 		this.oExtendControllerPlugin = new ExtendControllerPlugin({
-			controllerHandler: this.oControllerHandlerStub,
+			handlerFunction: this.oControllerHandlerStub,
 			commandFactory: this.oCommandFactory
 		});
 

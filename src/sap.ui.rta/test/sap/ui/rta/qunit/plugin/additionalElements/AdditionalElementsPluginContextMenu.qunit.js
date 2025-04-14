@@ -33,7 +33,6 @@ sap.ui.define([
 			this.oDialog = new AddElementsDialog();
 
 			this.oPlugin = new AdditionalElementsPlugin({
-				analyzer: AdditionalElementsAnalyzer,
 				dialog: this.oDialog,
 				commandFactory: new CommandFactory()
 			});
