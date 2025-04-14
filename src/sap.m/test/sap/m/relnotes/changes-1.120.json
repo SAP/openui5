@@ -1151,5 +1151,40 @@
         "text": " sap.m.SinglePlanningCalendar: Appointments text is resized depending of the scale factor now"
       }
     ]
+  },
+  "1.120.29": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "e7b41a9a5117fb7eb7fb9c307e52a3fc651bef6b",
+        "type": "FIX",
+        "text": " sap.m.Input, sap.m.ComboBoxBase: Tests on macOS corrected"
+      },
+      {
+        "id": "e514567765f67800b8f0b2548e9704185e7b4fc3",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Redundant announcement on error state removed"
+      },
+      {
+        "id": "e30bfdc458030fc128279138a1fe5e2228dc692d",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Navigate to details view when title is too long"
+      },
+      {
+        "id": "a0eb7d23f92b5141a66d6c78f15804dd6ae1a025",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Speech output corrected"
+      },
+      {
+        "id": "a936fcceebf4aeccf968102e59b02b5b2bb4eb62",
+        "type": "FIX",
+        "text": " sap.m.Input: ValueStateMessage with FormattedText displays links twice"
+      },
+      {
+        "id": "57827f999cf1823f9c9b49adc0d51f506951d7ab",
+        "type": "FIX",
+        "text": " Input controls with Suggestions: Value State message in header is no longer focusable"
+      }
+    ]
   }
 }

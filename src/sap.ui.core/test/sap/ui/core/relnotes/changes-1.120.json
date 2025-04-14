@@ -983,5 +983,15 @@
         "text": " IconPool: Add more mime-type mappings for MS Excel files"
       }
     ]
+  },
+  "1.120.29": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "72e86f0a444faca44206a9bae327013f6cd09486",
+        "type": "FIX",
+        "text": " core/IconPool: make mime type match case insensitive"
+      }
+    ]
   }
 }
