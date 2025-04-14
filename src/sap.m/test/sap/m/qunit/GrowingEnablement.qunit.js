@@ -863,7 +863,7 @@ sap.ui.define([
 			items: {
 				path: "/items",
 				template: new StandardListItem({
-					header: "{Title}"
+					title: "{Title}"
 				})
 			}
 		});

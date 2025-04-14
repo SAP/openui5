@@ -446,7 +446,7 @@ sap.ui.define([
 				})
 			]
 		});
-		const oInput = new Input({text: sText});
+		const oInput = new Input({value: sText});
 		const oReuseQuickAction = new QuickAction({label: sText, content: oInput});
 
 		this.oButton.attachPress(function() {
