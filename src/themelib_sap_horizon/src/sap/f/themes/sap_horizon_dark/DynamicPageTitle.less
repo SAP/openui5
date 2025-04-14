@@ -13,19 +13,21 @@
 }
 
 .sapFDynamicPage-Std-Tablet {
+
 	.sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
 		padding: 0.5rem 2rem;
 	}
 
-	// Needed because on some high-end phones in landscape mode,
-	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	/* Needed because on some high-end phones in landscape mode,
+	the width of the viewport is bigger than 600 (Tablet breakpoint). */
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
 		padding: 0 2rem;
 	}
 }
 
 .sapFDynamicPage-Std-Phone {
+
 	.sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle,
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
@@ -38,7 +40,7 @@
 }
 
 .sapFDynamicPageTitle.sapFDynamicPageTitleTranslucent {
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }
 
 .sapFDynamicPageTitle.sapFDynamicPageTitleTransparent {
@@ -50,8 +52,10 @@
 }
 
 .sapFDynamicPageNavigation .sapFDynamicPageTitleWrapper {
+
 	&.sapFDynamicPageTitleSnapped,
 	&.sapFDynamicPageTitleOnly {
+
 		& > .sapFDynamicPageTitle {
 			box-shadow: none;
 		}
@@ -63,7 +67,7 @@
 	padding: 0;
 }
 
-// General alignment styles for header text
+/* General alignment styles for header text */
 .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading {
 	align-self: center;
 }
@@ -76,58 +80,58 @@
 		box-shadow: @sapUiShadowHeader;
 }
 
-// =====================================
-// =====================================
-// Delta Styles for Horizon
-// =====================================
+/* ========================= */
+/* Delta Styles for Horizon  */
+/* ========================= */
 
 .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
-	font-size: @sapObjectHeader_Title_FontSize;
-	font-family: @sapObjectHeader_Title_FontFamily;
+	font-size: var(--sapObjectHeader_Title_FontSize);
+	font-family: var(--sapObjectHeader_Title_FontFamily);
 }
 
 
-// Expanded Header title is small on small screens
-
+/* Expanded Header title is small on small screens */
 .sapFDynamicPage-Std-Phone .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
-	font-size: @sapObjectHeader_Title_SnappedFontSize;
-	font-family: @sapObjectHeader_Title_FontFamily;
+	font-size: var(--sapObjectHeader_Title_SnappedFontSize);
+	font-family: var(--sapObjectHeader_Title_FontFamily);
 }
 
 
-// Snapped Header title is small on all screen sizes
-
+/* Snapped Header title is small on all screen sizes */
 .sapFDynamicPageTitleSnapped .sapFDynamicPageTitleMain>.sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainHeading .sapFDynamicPageTitleMainHeadingInner .sapMTitle:not(.sapUICompVarMngmtTitle) {
-	font-size: @sapObjectHeader_Title_SnappedFontSize;
-	font-family: @sapObjectHeader_Title_FontFamily;
+	font-size: var(--sapObjectHeader_Title_SnappedFontSize);
+	font-family: var(--sapObjectHeader_Title_FontFamily);
 }
 
-// Overview Page using Dynamic page Header
+/* Overview Page using Dynamic page Header */
 .ovpApplication .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped>.sapFDynamicPageTitle,
 .ovpApplication .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly>.sapFDynamicPageTitle {
-    box-shadow: @sapUiContentHeaderShadow;
+    box-shadow: var(--sapContent_HeaderShadow);
 }
 
-// Dynamic page Title Focus - Experimental
+/* Dynamic page Title Focus - Experimental */
 html.sap-desktop {
-        .sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
-            outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
-            outline-offset: -0.125rem;
-        }
+
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
+		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+		outline-offset: -0.125rem;
+	}
 }
 
-// =====================================
-// GenericTag
-// =====================================
+/* =========== */
+/* GenericTag  */
+/* =========== */
+
 .sapFDynamicPageTitleMain .sapMGenericTag.sapMBarChild  {
-    margin-top: 1rem;
+	margin-top: 1rem;
 }
 
 .sapFDynamicPageTitleSnapped .sapMGenericTag.sapMBarChild  {
-    margin-top: 0.3125rem;
+	margin-top: 0.3125rem;
 }
 
 .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner .sapFDynamicPageTitleMainContent {
+
 	.sapMGenericTag.sapMBarChild {
 		margin-top: 0.5625rem;
 		margin-bottom: 0.5625rem;
