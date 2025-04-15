@@ -1807,6 +1807,7 @@ sap.ui.define([
 		const aLabels = LabelEnablement.getReferencingLabels(this);
 		for (let i = 0; i < aLabels.length; i++) {
 			const oLabel = Element.getElementById(aLabels[i]);
+			oLabel.setLabelFor(oLabel.getLabelFor()); // to force Label to refreh the mapping
 			oLabel.invalidate();
 		}
 
