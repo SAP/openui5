@@ -731,9 +731,16 @@ sap.ui.define([
 				init: () => this.setModel(new ContextModel(), "context")
 			},
 			i18n: {
-				init: () => this.setModel(new ResourceModel({
-					bundle: this._oIntegrationRb
-				}), "i18n")
+				init: () => {
+					this.setModel(new ResourceModel({
+						bundle: this._oIntegrationRb,
+						async: true
+					}), "i18n");
+					this._oActiveRb = this._oIntegrationRb;
+				},
+				reset: () => {
+					this._oActiveRb = this._oIntegrationRb;
+				}
 			},
 			size: {
 				init: () => this.setModel(this._oDisplayVariants.getInitialSizeModel(), "size")
@@ -1110,7 +1117,7 @@ sap.ui.define([
 	/**
 	 * Prepares the manifest and applies all settings.
 	 */
-	Card.prototype._applyManifest = function () {
+	Card.prototype._applyManifest = async function () {
 		var oCardManifest = this._oCardManifest;
 
 		if (!oCardManifest.get("/sap.card")) {
@@ -1118,41 +1125,26 @@ sap.ui.define([
 		}
 
 		if (oCardManifest && oCardManifest.getResourceBundle()) {
-			this._enhanceI18nModel(oCardManifest.getResourceBundle());
+			this._oActiveRb = await this._enhanceI18nModel(oCardManifest.getResourceBundle());
 		}
 
 		this.getModel("context").resetHostProperties();
 
 		if (this._hasContextParams()) {
-			this._resolveContextParams().then(function (oContextParameters) {
-				this._oContextParameters = oContextParameters;
-				this._applyManifestWithParams();
-			}.bind(this));
-			return;
+			this._oContextParameters = await this._resolveContextParams();
 		}
 
-		this._applyManifestWithParams();
-	};
+		oCardManifest.processParameters(this._getContextAndRuntimeParams());
 
-	/**
-	 * Applies all settings with the given parameters.
-	 * @private
-	 */
-	Card.prototype._applyManifestWithParams = function () {
-		var oCardManifest = this._oCardManifest,
-			oParameters = this._getContextAndRuntimeParams();
-
-		oCardManifest.processParameters(oParameters);
-
-		this._prepareToApplyManifestSettings().then(function () {
-			this._applyManifestSettings();
-		}.bind(this));
+		await this._prepareToApplyManifestSettings();
+		this._applyManifestSettings();
 	};
 
 	/**
 	 * Enhances or creates the i18n model for the card.
 	 *
-	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be used to create the model or will enhance it.
+	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be enhanced.
+	 * @returns {Promise<module:sap/base/i18n/ResourceBundle>} The enhanced resource bundle.
 	 * @private
 	 */
 	Card.prototype._enhanceI18nModel = function (oResourceBundle) {
@@ -1162,6 +1154,7 @@ sap.ui.define([
 		// the library resource bundle must not be enhanced
 		// so the card resource bundle should be first
 		oNewResourceModel = new ResourceModel({
+			async: true,
 			bundle: oResourceBundle,
 			enhanceWith: [
 				this._oIntegrationRb
@@ -1170,6 +1163,8 @@ sap.ui.define([
 
 		this.setModel(oNewResourceModel, "i18n");
 		oResourceModel.destroy();
+
+		return oNewResourceModel.getResourceBundle();
 	};
 
 	/**
@@ -1773,17 +1768,14 @@ sap.ui.define([
 	 * @returns {string} The value belonging to the key, if found; otherwise the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
 	 */
 	Card.prototype.getTranslatedText = function (sKey, aArgs, bIgnoreKeyFallback) {
-		var oModel = this.getModel("i18n"),
-			oBundle;
+		var oModel = this.getModel("i18n");
 
-		if (!oModel) {
+		if (!oModel || !this._oActiveRb) {
 			Log.warning("There are no translations available. Either the i18n configuration is missing or the method is called too early.");
 			return null;
 		}
 
-		oBundle = oModel.getResourceBundle();
-
-		return oBundle.getText(sKey, aArgs, bIgnoreKeyFallback);
+		return this._oActiveRb.getText(sKey, aArgs, bIgnoreKeyFallback);
 	};
 
 	/**
