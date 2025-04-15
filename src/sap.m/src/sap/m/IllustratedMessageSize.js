@@ -71,7 +71,7 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 		 * @public
 		 * @since 1.136
 		 */
-		Large : "Scene",
+		Large : "Large",
 
 		/**
 		 * Medium <code>Illustration</code> size.
@@ -79,7 +79,7 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 		 * @public
 		 * @since 1.136
 		 */
-		Medium : "Dialog",
+		Medium : "Medium",
 
 		/**
 		 * Small <code>Illustration</code> size.
@@ -87,7 +87,7 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 		 * @public
 		 * @since 1.136
 		 */
-		Small : "Spot",
+		Small : "Small",
 
 		/**
 		 * Extra Small <code>Illustration</code> size.
@@ -95,7 +95,7 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 		 * @public
 		 * @since 1.136
 		 */
-		ExtraSmall : "Dot"
+		ExtraSmall : "ExtraSmall"
 	};
 
 	DataType.registerEnum("sap.m.IllustratedMessageSize", IllustratedMessageSize);

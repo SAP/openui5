@@ -80,19 +80,19 @@ sap.ui.define([
         Then.iTeardownMyApp();
     });
 
-    // opaTest("Should change the illustration size and see updated illustrations", function (Given, When, Then) {
-    //     // Arrangements
-    //     Given.iStartMyApp();
+    opaTest("Should change the illustration size and see updated illustrations", function (Given, When, Then) {
+        // Arrangements
+        Given.iStartMyApp();
 
-    //     // Actions
-    //     When.onTheAppPage.iSelectIllustrationSize("Medium");
+        // Actions
+        When.onTheAppPage.iSelectIllustrationSize("Medium");
 
-    //     // Assertions
-    //     Then.onTheAppPage.iShouldSeeIllustrationsWithSize("Medium");
+        // Assertions
+        Then.onTheAppPage.iShouldSeeIllustrationsWithSize("Dialog");
 
-    //     // Cleanup
-    //     Then.iTeardownMyApp();
-    // });
+        // Cleanup
+        Then.iTeardownMyApp();
+    });
 
     opaTest("Should change the illustration set and see updated illustrations", function (Given, When, Then) {
         // Arrangements
