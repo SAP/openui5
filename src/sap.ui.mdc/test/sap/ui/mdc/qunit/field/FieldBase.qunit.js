@@ -3851,19 +3851,37 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", (assert) => {
+	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", async (assert) => {
+
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["long text"]); // to show more-indicator
+		oCM.addCondition("Name", oCondition);
+		oField.setWidth("200px");
+		oCM.checkUpdate(true, false); // to update bindings
+		await nextUIUpdate();
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
 		sinon.stub(oValueHelp, "shouldOpenOnClick").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 
-		oField.focus();
 		let oInnerField = oField.getAggregation("_content")[0];
+
+		// tap on More-Indicator should be ignored
+		qutils.triggerEvent("tap", oInnerField.getAggregation("tokenizer").$().children(".sapMTokenizerIndicator")[0]);
+		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tap on More-Indicator: shouldOpenOnClick not called");
+		oValueHelp.shouldOpenOnClick.resetHistory();
+
+		oField.focus();
+		await nextUIUpdate();
 
 		// tap on Token should be ignored
 		qutils.triggerEvent("tap", oInnerField.getTokens()[0].getId());
-		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "shouldOpenOnClick not called");
+		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tap on Token: shouldOpenOnClick not called");
+		oValueHelp.shouldOpenOnClick.resetHistory();
+
+		// tap on ValueHelpIcon should be ignored
+		qutils.triggerEvent("tap", oInnerField._oValueHelpIcon.getId()); // Icon itself listens to "click"-event, so this don't trigger the valueHelpRequest event
+		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tab on ValueHelpIcon: shouldOpenOnClick not called");
 		oValueHelp.shouldOpenOnClick.resetHistory();
 
 		// tap on input should open ValueHelp
