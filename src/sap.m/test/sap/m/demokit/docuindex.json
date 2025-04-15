@@ -1787,7 +1787,8 @@
 					"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview",
 					"sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent",
 					"sap.m.sample.UploadSetwithTablePlugin.GridTableSimple",
-					"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator"
+					"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator",
+					"sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances"
 				]
 			}
 		],
@@ -3971,6 +3972,11 @@
 				"id": "sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent",
 				"name": "Plugin for Responsive Table (sap.m.Table) - File Preview with Custom Page Content for non supported file types",
 				"description": "This example showcases how to display custom page content for non supported file types in the FilePreviewDialog control. The custom page content is displayed when the user tries to preview a file that is not supported by the FilePreviewDialog control. This sample demonstrates usage of customPageConentHandler property as a callback function to display custom page content."
+			},
+			{
+				"id": "sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances",
+				"name": "Plugin for Responsive Table (sap.m.Table) - Multiple plugin instances with multiple tables",
+				"description": "This example demonstrates the usage of multiple plugin instances with multiple tables. The plugin instances are created for each table and the uploaded files are displayed in their respective tables."
 			}
 		]
 	}

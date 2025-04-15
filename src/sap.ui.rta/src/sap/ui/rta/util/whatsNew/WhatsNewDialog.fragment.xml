@@ -24,7 +24,7 @@
 							<Title text="{whatsNewModel>title}" class="sapUiMediumMarginTop sapUiSmallMarginBegin sapUiTinyMarginBottom" level="H3"/>
 							<f:Card width="100%" height="24rem" class="sapUiSmallMarginBottom">
 								<f:content>
-									<Page width="100%" showHeader="false" backgroundDesign="Transparent">
+									<Page showHeader="false" backgroundDesign="Transparent">
 											<VBox items="{path: 'whatsNewModel>information', templateShareable: false}" class="sapUiSmallMargin">
 												<HBox alignItems="Center" class="sapUiTinyMargin">
 													<FormattedText

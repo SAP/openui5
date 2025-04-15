@@ -814,12 +814,12 @@ sap.ui.define([
 		const oList = new List({
 			items: [
 				new InputListItem({
-					inputSize: "L",
+					contentSize: "L",
 					label: "Large size content",
 					content: [new Input()]
 				}),
 				new InputListItem({
-					inputSize: "S",
+					contentSize: "S",
 					label: "Small size content",
 					content: [new Input()]
 				})
@@ -2982,7 +2982,6 @@ sap.ui.define([
 
 	QUnit.test("Accessibility Text for Input List Item", function(assert) {
 		const oInputListItem = new InputListItem({
-			title: "Title",
 			label: "Label",
 			content : new Input({
 				value: "Content"

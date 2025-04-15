@@ -1067,7 +1067,7 @@ sap.ui.define([
 		this._oEditorManifest = new EditorManifest(this.getSection(), vManifest, sBaseUrl, vIdOrSettings.manifestChanges);
 		this._oEditorManifest
 			.load(mOptions)
-			.then(function () {
+			.then(async function () {
 				this._registerManifestModulePath();
 				this._oInitialManifestModel = new JSONModel(this._oEditorManifest._oInitialJson);
 				this.setProperty("json", this._oEditorManifest._oInitialJson, bSuppress);
@@ -1085,6 +1085,9 @@ sap.ui.define([
 				this._initResourceBundlesForMultiTranslation();
 				//use the translations
 				this._loadDefaultTranslations();
+				if (this.getMode() === "translation") {
+					await this._loadSpecialTranslations();
+				}
 				//add a context model
 				this._createContextModel();
 				if (this._oEditorManifest.getResourceBundle()) {
@@ -1136,7 +1139,7 @@ sap.ui.define([
 		}
 	};
 
-	Editor.prototype._loadDefaultTranslations = function () {
+	Editor.prototype._loadDefaultTranslations = async function () {
 		if (this._defaultTranslationsLoaded) {
 			return;
 		}
@@ -1145,15 +1148,18 @@ sap.ui.define([
 			bundle: this._oResourceBundle
 		});
 
+		// wait for the promise returned by #getResourceBundle to resolve before accessing model data
+		await oResourceModel.getResourceBundle();
+
 		this.setModel(oResourceModel, "i18n");
 		this._defaultTranslationsLoaded = true;
 	};
 
-	Editor.prototype._enhanceI18nModel = function (oResourceBundle) {
+	Editor.prototype._enhanceI18nModel = async function (oResourceBundle) {
 		var oResourceModel = this.getModel("i18n");
 		if (oResourceModel.getResourceBundle().oUrlInfo.url !== oResourceBundle.oUrlInfo.url) {
-			oResourceModel.enhance(oResourceBundle);
-			this._oResourceBundle = oResourceModel.getResourceBundle();
+			await oResourceModel.enhance(oResourceBundle);
+			this._oResourceBundle = await oResourceModel.getResourceBundle();
 		}
 	};
 
@@ -2846,15 +2852,22 @@ sap.ui.define([
 			}
 			return sText;
 		}
+		return "";
+	};
+
+	Editor.prototype._loadSpecialTranslations = async function () {
+		if (this._oTranslationBundle) {
+			return;
+		}
 		var sLanguage = this._language;
 		if (!sLanguage) {
-			return "";
+			return;
 		}
 		var vI18n = this._oEditorManifest.get("/sap.app/i18n"),
 			sResourceBundleURL,
 			aSupportedLocales;
 		if (!vI18n) {
-			return "";
+			return;
 		}
 		if (typeof vI18n === "string") {
 			sResourceBundleURL = this.getBaseUrl() + vI18n;
@@ -2880,16 +2893,20 @@ sap.ui.define([
 			}
 			aFallbacks = this._filterSupportedFallbackLanguages(aFallbacks, aSupportedLocales);
 			// load the ResourceBundle relative to the manifest
-			this._oTranslationBundle = ResourceBundle.create({
+			var oResourceBundle = await ResourceBundle.create({
 				url: sResourceBundleURL,
-				async: false,
+				async: true,
 				locale: aFallbacks[0],
 				supportedLocales: aFallbacks,
 				fallbackLocale: "en"
 			});
-			return this._getCurrentLanguageSpecificText(sKey);
-		} else {
-			return "";
+
+			var oResourceModel = new ResourceModel({
+				bundle: oResourceBundle
+			});
+
+			// wait for the promise returned by #getResourceBundle to resolve before accessing model data
+			this._oTranslationBundle = await oResourceModel.getResourceBundle();
 		}
 	};
 
