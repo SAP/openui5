@@ -631,6 +631,29 @@ sap.ui.define([
 		oTokenizer.destroy();
 	});
 
+	QUnit.test("Should not throw exception when the association does not have text property", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		oTokenizer.addAriaLabelledBy(new sap.m.Panel({ headerText: "Panel header text" }));
+		const oTokenPopover = oTokenizer.getTokensPopup();
+		oTokenPopover.isOpen();
+
+		//assert
+		assert.ok(true, "No exception is thrown");
+
+		// Cleanup
+		this.clock.restore();
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("Should open/close suggestion popover on CTRL + I", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 
