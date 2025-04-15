@@ -945,8 +945,8 @@ sap.ui.define([
 
 	FieldBase.prototype.ontap = function(oEvent) {
 
-		if (oEvent.isMarked("tokenTap")) {
-			return; // only open if taped into input area (MultiInput case)
+		if (oEvent.isMarked("tokenTap") || oEvent.getMark("tokenizerMoreIndicatorTap") || oEvent.srcControl.isA("sap.ui.core.Icon")) {
+			return; // only open if taped into input area (MultiInput case) and not at ValueHelp-Icon
 		}
 
 		// in "Select"-case the suggestion help should open on click into field

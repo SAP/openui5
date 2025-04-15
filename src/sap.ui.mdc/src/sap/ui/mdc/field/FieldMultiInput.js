@@ -124,6 +124,16 @@ sap.ui.define([
 
 	};
 
+	FieldMultiInput.prototype.ontap = function(oEvent) {
+
+		if (oEvent.target.classList.contains("sapMTokenizerIndicator")) {
+			oEvent.setMark("tokenizerMoreIndicatorTap");
+		}
+
+		MultiInput.prototype.ontap.apply(this, arguments);
+
+	};
+
 	FieldMultiInput.prototype.onAfterRendering = function () {
 
 		const {bDeletePressed, bTokensUpdated} = this;
