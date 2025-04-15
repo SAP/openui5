@@ -8,22 +8,9 @@
 *
 */
 // ##### BEGIN: MODIFIED BY SAP
-sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
-// ##### END: MODIFIED BY SAP
-	(function ( root, jQuery, doc, factory ) {
-		if ( typeof define === "function" && define.amd ) {
-			// AMD. Register as an anonymous module.
-			// ##### BEGIN: MODIFIED BY SAP
-			define("jquery-mobile-custom", [], function () {
-				factory( jQuery, root, doc );
-				return jQuery.mobile;
-			});
-			// ##### END: MODIFIED BY SAP
-		} else {
-			// Browser globals
-			factory( jQuery, root, doc );
-		}
-	}( /*BEGIN: MODIFIED BY SAP*/ globalThis /*END: MODIFIED BY SAP*/, jQuery, document, function ( jQuery, window, document, undefined ) {
+sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery, Device) => {
+	(function ( jQuery, window, document, undefined ) {
+	// ##### END: MODIFIED BY SAP
 	// Script: jQuery hashchange event
 	//
 	// *Version: 1.3, Last updated: 7/21/2010*
@@ -706,16 +693,12 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
 	})(jQuery);
 
 		(function( $, undefined ) {
-			var support = {
-				touch: "ontouchend" in document
-			};
 			// MODIFIED BY SAP
-			// => if the device API is loaded we override the touch detection
-			// MS Internet Explorer and MS Edge do not fire 'touchstart' and 'touchend' events
-			// Therefore $.mobile.support should not be overriden with the actual device screen capability
-			if (window.sap && sap.ui && sap.ui.Device && sap.ui.Device.support && !(sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
-				support.touch = sap.ui.Device.support.touch
-			}
+			// => override the touch detection based on the sap/ui/Device API
+			var support = {
+				touch: Device.support.touch
+			};
+			// END MODIFIED BY SAP
 
 			$.mobile.support = $.mobile.support || {};
 			$.extend( $.support, support );
@@ -1962,35 +1945,6 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
 					mouseDownEvent,
 					timer;
 
-				// MODIFIED BY SAP: Workaround for an Edge browser issue which occurs with EdgeHTML 14 and higher.
-				// The root cause are inconsistent event targets of fired events, when a button is tapped.
-
-				/**
-				 * Detects whether edge browser special tap handling is necessary.
-				 *
-				 * Inconsistent event targets for the sap.m.Button control:
-				 * EdgeHTML v.| 14 | 15 | 16 | 17 |
-				 * ----------------------------------
-				 * mousedown  |   S|   S|   B|   S|
-				 * mouseup    |   B|   B|   B|   B|
-				 * click      |   S| S/B|   S| S/B|
-				 * ----------------------------------
-				 * S = SPAN, B = BUTTON
-				 *
-				 * @param {object} event either mouseup or click event.
-				 * @returns {boolean} Returns true, when a button was pressed in edge browser with inconsistent event targets.
-				 */
-				function buttonTappedInEdgeBrowser( event ) {
-					var eventTarget = event.target;
-					var browser = sap.ui.Device.browser;
-
-					return browser.edge && browser.version >= 14 &&
-						(eventTarget.tagName.toLowerCase() === "button" &&
-							eventTarget.contains(mouseDownTarget) ||
-							mouseDownTarget.tagName.toLowerCase() === "button" &&
-							mouseDownTarget.contains(eventTarget));
-				}
-
 				// MODIFIED BY SAP: the following event handlers are moved out of the "mousedown" event handler to make it
 				// possible to be deregistered in a later time point
 				function clearTapTimer() {
@@ -2020,7 +1974,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
 				function checkAndClearTapHandlers( mouseUpEvent ) {
 					// if the mouseup event occurs out of the origin target of the mousedown event,
 					// unbind all of the listeners
-					if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target) && !buttonTappedInEdgeBrowser( mouseUpEvent )) {
+					if (mouseUpEvent.target !== mouseDownTarget && !$.contains(mouseDownTarget, mouseUpEvent.target)) {
 						clearTapHandlers();
 					}
 				}
@@ -2030,7 +1984,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
 
 					// ONLY trigger a 'tap' event if the start target is
 					// the same as the stop target.
-					if ( mouseDownTarget === event.target || buttonTappedInEdgeBrowser( event )) {
+					if ( mouseDownTarget === event.target ) {
 						triggerCustomEvent( thisObject, "tap", event );
 					}
 				}
@@ -2187,8 +2141,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/Device'], (jQuery) => {
 	})( jQuery, this );
 
 
-	}));
 	// ##### BEGIN: MODIFIED BY SAP
+	}(jQuery, window, document));
+
 	return jQuery;
 });
 // ##### END: MODIFIED BY SAP
