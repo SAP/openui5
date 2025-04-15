@@ -553,12 +553,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA gets started with an enabled key user translation and already translatable changes", async function(assert) {
+			let fnResolve;
+			const oPromise = new Promise((resolve) => {
+				fnResolve = resolve;
+			});
 			sandbox.stub(FeaturesAPI, "isKeyUserTranslationEnabled").resolves(true);
-			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves(["en"]);
+			sandbox.stub(TranslationAPI, "getSourceLanguages").returns(oPromise);
 
 			await this.oRta.start();
 			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "then the Translate Button is enabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "first Translate Button is disable");
+			fnResolve(["en"]);
+			return oPromise.then(function() {
+				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "then the Translate Button is enabled");
+			}.bind(this));
 		});
 
 		QUnit.test("when the URL parameter set by Fiori tools is set to 'true'", async function(assert) {

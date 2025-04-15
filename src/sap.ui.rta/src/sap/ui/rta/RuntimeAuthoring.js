@@ -1576,11 +1576,12 @@ sap.ui.define([
 		this.getToolbar().setModel(this._oToolbarControlsModel, "controls");
 
 		if (bTranslationAvailable) {
-			const aSourceLanguages = await TranslationAPI.getSourceLanguages(
+			TranslationAPI.getSourceLanguages(
 				{selector: this.getRootControlInstance(), layer: this.getLayer()}
-			);
-			this.bPersistedDataTranslatable = aSourceLanguages.length > 0;
-			this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable);
+			).then(function(aSourceLanguages) {
+				this.bPersistedDataTranslatable = aSourceLanguages.length > 0;
+				this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable);
+			}.bind(this));
 		}
 
 		if (bAppVariantsAvailable) {
