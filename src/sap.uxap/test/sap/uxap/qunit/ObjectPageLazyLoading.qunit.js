@@ -3,8 +3,10 @@ sap.ui.define(["sap/ui/thirdparty/jquery",
                "sap/ui/core/Core",
                "sap/ui/model/json/JSONModel",
                "sap/uxap/ObjectPageLayout",
+               "sap/uxap/ObjectPageSection",
+               "sap/uxap/ObjectPageSubSection",
                "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
+function (jQuery, Core, JSONModel, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, XMLView) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -473,6 +475,44 @@ function (jQuery, Core, JSONModel, ObjectPageLayout, XMLView) {
 			done();
 			oObjectPageLayout.destroy();
 		}, oLazyLoading.LAZY_LOADING_EXTRA_SUBSECTION);
+	});
+
+	QUnit.test("_adjustLayoutAndUxRules triggers lazy-loading", function (assert) {
+		var oObjectPageLayout = new ObjectPageLayout({
+				enableLazyLoading: true,
+				sections: [
+					new ObjectPageSection("section1", {
+						subSections: [
+							new ObjectPageSubSection({
+								id: "subSection1",
+								blocks: [new sap.m.Text()]
+							})
+						]
+					})
+				],
+				selectedSection: "section1"
+			}),
+			oLazyLoading,
+			oLazyLoadingSpy,
+			done = assert.async();
+
+		assert.expect(1);
+
+		// Setup: mock framework call on before rendering
+		oObjectPageLayout.onBeforeRendering();
+
+		// Setup: spy for calls of <code>doLazyLoading</code>
+		oLazyLoading = oObjectPageLayout._oLazyLoading;
+		oLazyLoadingSpy = sinon.spy(oLazyLoading, "doLazyLoading");
+
+		// act
+		oObjectPageLayout._requestAdjustLayoutAndUxRules()
+			.then(function() {
+				// Check
+				assert.strictEqual(oLazyLoadingSpy.callCount, 1 , "lazy loading called once");
+				done();
+				oObjectPageLayout.destroy();
+			});
 	});
 
 });
