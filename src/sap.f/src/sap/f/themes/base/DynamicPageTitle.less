@@ -2,6 +2,7 @@
 /* CSS for control sap.f/DynamicPageTitle  */
 /* Base theme                              */
 /* ======================================= */
+
 .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle,
 .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
 	box-shadow: @sapUiShadowHeader;
@@ -25,11 +26,9 @@
 	min-height: 3rem;
 	padding: 0.5rem 2rem 0.5rem 3rem;
 	display: flex;
-	display: -webkit-flex;
 	flex-direction: column;
-	-webkit-flex-direction: column;
 	box-sizing: border-box;
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 
 	.sapFDynamicPageToggleHeaderIndicator.sapUiHidden {
 		display: none;
@@ -41,6 +40,7 @@
 	}
 
 	.sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
+
 		.sapFDynamicPageTitleMainContent .sapMTB {
 			padding-left: 0.5rem;
 			padding-right: 0.5rem;
@@ -52,8 +52,9 @@
 	}
 
 	html.sap-desktop & {
+
 		&.sapFDynamicPageTitleFocus {
-			outline: 0.0625rem dotted @sapUiContentFocusColor;
+			outline: 0.0625rem dotted var(--sapContent_FocusColor);
 			outline-offset: -0.0625rem;
 		}
 	}
@@ -64,37 +65,30 @@
 
 	.sapFDynamicPageTitleTop {
 		display: flex;
-		display: -webkit-flex;
 		align-items: center;
-		-webkit-align-items: center;
-
 		justify-content: space-between;
-		-webkit-justify-content: space-between;
 
-		&> .sapFDynamicPageTitleTopLeft {
+		& > .sapFDynamicPageTitleTopLeft {
 			min-height: 1rem;
 			width: 75%;
 
-			&> :first-child {
+			& > :first-child {
 				margin: 0;
 			}
 		}
 
-		&> .sapFDynamicPageTitleTopRight {
+		& > .sapFDynamicPageTitleTopRight {
 			width: 25%;
 			display: flex;
-			display: -webkit-flex;
 			align-items: center;
-			-webkit-align-items: center;
 			justify-content: flex-end;
-			-webkit-justify-content: flex-end;
 		}
 
 		&.sapFDynamicPageTitleTopBreadCrumbsOnly > .sapFDynamicPageTitleTopLeft {
 			width: 100%;
 		}
 
-		&.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight{
+		&.sapFDynamicPageTitleTopNavActionsOnly > .sapFDynamicPageTitleTopRight {
 			width: 100%;
 		}
 	}
@@ -102,29 +96,23 @@
 	.sapFDynamicPageTitleMain {
 		position: relative;
 		display: flex;
-		display: -webkit-flex;
 		align-items: flex-start;
-		-webkit-align-items: flex-start;
 		flex-direction: row;
-		-webkit-flex-direction: row;
 		box-sizing: border-box;
 
 		&.sapUiHidden {
 			position: absolute;
 		}
 
-		&> .sapFDynamicPageTitleMainNavigationArea,
-		&> .sapFDynamicPageTitleMainNavigationArea > .sapFDynamicPageTitleMainNavigationAreaInner{
+		& > .sapFDynamicPageTitleMainNavigationArea,
+		& > .sapFDynamicPageTitleMainNavigationArea > .sapFDynamicPageTitleMainNavigationAreaInner {
 			display: flex;
-			display: -webkit-flex;
 			align-items: center;
-			-webkit-align-items: center;
 		}
 	}
 
 	.sapFDynamicPageTitleActionsBar.sapMTB {
 		justify-content: flex-end;
-		-webkit-justify-content: flex-end;
 		overflow: visible;
 	}
 }
@@ -137,76 +125,43 @@
 	margin-left: 0;
 }
 
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapFDynamicPageTitleMain {
-		height: 100%; /* fixes IE flexbox item centering issue BCP: 1680351222 */
-	}
-}
-
-/* IE and Edge ignores outline-offset. Use an overlay: */
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"].sap-desktop,
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
-		outline: none;
-		position: relative;
-	}
-	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
-		content: " ";
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		position: absolute;
-		left: 0;
-		top: 0;
-		border: 0.0625rem dashed @sapUiContentFocusColor;
-		pointer-events: none;
-	}
-}
-
 /* Firefox fix due to focus cut out from top and left */
-html[data-sap-ui-browser^="ff"].sap-desktop {
+html[data-sap-ui-browser^='ff'].sap-desktop {
+
 	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus {
 		outline: none;
 		position: relative;
 	}
-	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus:before {
-		content: " ";
+
+	.sapFDynamicPageTitle.sapFDynamicPageTitleFocus::before {
+		content: '';
 		box-sizing: border-box;
 		width: 100%;
 		height: 100%;
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.0625rem dotted @sapUiContentFocusColor;
+		border: 0.0625rem dotted var(--sapContent_FocusColor);
 		pointer-events: none;
 	}
 }
 
-/* ========== */
-/* Title Main */
-/* ========== */
+/* =========== */
+/* Title Main  */
+/* =========== */
 
 /* Heading area */
 .sapFDynamicPageTitleMain > .sapFDynamicPageTitleMainInner {
 	display: flex;
-	display: -webkit-flex;
 	align-items: flex-start;
-	-webkit-align-items: flex-start;
 	flex-grow: 1;
-	width: 100%; // to make Edge work
+	width: 100%; /* to make Edge work */
 
 	.sapFDynamicPageTitleMainHeading {
 		display: flex;
-		display: -webkit-flex;
 		align-items: flex-start;
-		-webkit-align-items: flex-start;
 		flex-direction: column;
-		-webkit-flex-direction: column;
 		justify-content: space-between;
-		-webkit-justify-content: space-between;
 		min-width: 0;
 
 		.sapFDynamicPageTitleMainHeadingInner,
@@ -220,17 +175,17 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		.sapFDynamicPageTitleMainHeadingInner {
 			min-width: 1px;
 			max-width: 100%;
-			color: @sapUiGroupTitleTextColor;
+			color: var(--sapGroup_TitleTextColor);
 			margin-top: 0.1875rem;
 
 			/* Override Title styles, required by VD */
 			.sapMTitle {
-				font-size: @sapMFontHeader3Size;
+				font-size: var(--sapFontHeader3Size);
 			}
 		}
 
 		.sapFDynamicPageTitleMainHeadingSnappedExpandContent {
-			color: @sapUiContentLabelColor;
+			color: var(--sapContent_LabelColor);
 			font-size: @sapMFontMediumSize;
 		}
 
@@ -262,8 +217,8 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 	.sapFDynamicPageTitleActionsBar .sapMLabel.sapMLabelMaxWidth,
 	.sapFDynamicPageTitleActionsBar .sapMLnk.sapMLnkMaxWidth {
-		// overwriting the existing max-width constraint of sapMLabel and sapMLnk
-		// because in this context the label/link parent should instead adjust its flex-basis with respect to its content width
+		/* overwriting the existing max-width constraint of sapMLabel and sapMLnk
+		because in this context the label/link parent should instead adjust its flex-basis with respect to its content width */
 		max-width: none;
 	}
   }
@@ -279,8 +234,8 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 /* Tablet Size */
 .sapFDynamicPage-Std-Tablet {
 
-	// Needed because on some high-end phones in landscape mode,
-	// the width of the viewport is bigger than 600 (Tablet breakpoint).
+	/* Needed because on some high-end phones in landscape mode,
+	the width of the viewport is bigger than 600 (Tablet breakpoint). */
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnappedTitleOnMobile > .sapFDynamicPageTitle {
 		padding: 0 0.25rem 0 2rem;
 		min-height: 2rem;
@@ -333,7 +288,9 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 .sapFDynamicPage-Std-Phone {
 
 	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+
 		.sapFDynamicPageTitleMain {
+
 			.sapFDynamicPageTitleMainContent {
 				padding-bottom: 0;
 			}

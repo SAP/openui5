@@ -1486,15 +1486,16 @@ sap.ui.define([
 	 *
 	 * @param {object} oParameters - A parameter object
 	 * @param {boolean} [oParameters.copy]
-	 *   Whether the node should be copied instead of moved (@experimental as of version 1.135.0)
+	 *   Whether the node should be copied instead of moved (@experimental as of version 1.135.0).
+	 *   The returned promise resolves with the index for the copied node.
 	 * @param {sap.ui.model.odata.v4.Context|null} [oParameters.nextSibling]
 	 *   The next sibling's context, or <code>null</code> to turn this node into the last sibling.
 	 *   Omitting the sibling moves this node to a position determined by the server.
 	 * @param {sap.ui.model.odata.v4.Context|null} oParameters.parent
 	 *   The new parent's context, or <code>null</code> to turn this node into a root node
-	 * @returns {Promise<void>}
-	 *   A promise which is resolved without a defined result when the move is finished, or
-	 *   rejected in case of an error
+	 * @returns {Promise<number|undefined>}
+	 *   A promise which is resolved without a defined result when the move is finished, or with the
+	 *   index for the copied node, or rejected in case of an error
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> there is no recursive hierarchy,

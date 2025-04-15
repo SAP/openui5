@@ -1268,10 +1268,6 @@ sap.ui.define([
 	QUnit.module("ColumnHeaderMenu Association", {
 		beforeEach: async function() {
 			this.oMenu1 = new ColumnMenu({
-				quickSort: new QuickAction({
-					label: "Custom Quick Sort",
-					content: new Button({text: "Sort by Property A"})
-				}),
 				quickActions: [new QuickAction({label: "Quick Action B", content: new Button({text: "Execute B"})})],
 				items: [new Item({label: "Item C", icon: "sap-icon://sort"})]
 			});

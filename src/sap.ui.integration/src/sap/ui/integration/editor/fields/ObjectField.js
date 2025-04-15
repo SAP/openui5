@@ -537,8 +537,8 @@ sap.ui.define([
 							src: sDefaultValue,
 							visible: "{= $" + sDefaultValue + ".indexOf('data:image/') === -1}"
 						};
-						oImageSettings = merge(oImageSettings, oCell);
-						oIconSettings = merge(oIconSettings, oCell);
+						oImageSettings = merge(oImageSettings, Image.getMetadata().removeUnknownSettings(oCell));
+						oIconSettings = merge(oIconSettings, Icon.getMetadata().removeUnknownSettings(oCell));
 						oCellTemplate = new HBox({
 							alignItems: "Center",
 							justifyContent: "Center",

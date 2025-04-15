@@ -136,7 +136,6 @@ sap.ui.define([
 				}
 			}).getCommandFor(this.oForm, "Property", {
 				propertyName: "title",
-				oldValue: oInitialTitle,
 				newValue: "Test Title"
 			})
 

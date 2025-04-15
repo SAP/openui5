@@ -421,21 +421,19 @@ sap.ui.define([
 
 		oControl.addDelegate(EventDelegate, false, this);
 
-		this.getConfig("setPluginInstance", this);
-		this.getConfig("setControlInstance", this.getControl());
-		this.getConfig("setPluginDefaultSettings");
+		this.getConfig("setPluginDefaultSettings", this.getControl(), this);
 		this._setActions();
 
 		this.fireOnActivated({oPlugin: this});
 	};
 
 	UploadSetwithTable.prototype.onDeactivate = function (oControl) {
-		this.getConfig("cleanupPluginInstanceSettings");
+		this.getConfig("cleanupPluginInstanceSettings", oControl, this);
 		this.fireOnDeactivated({control: oControl});
 	};
 
 	UploadSetwithTable.prototype.exit = function() {
-		this.getConfig("cleanupPluginInstanceSettings");
+		this.getConfig("cleanupPluginInstanceSettings", this.getControl(), this);
 		PluginBase.prototype.exit.call(this);
 	};
 
@@ -512,11 +510,10 @@ sap.ui.define([
 		if (bEnable !== this.getUploadEnabled()) {
 			this.getDefaultFileUploader().setEnabled(bEnable);
 
-			const oPlugin = this.getConfig("getPluginInstance");
-			if (bEnable && !oPlugin._oDragDropConfig) {
-				this.getConfig("setDragDropConfig");
+			if (bEnable && !this._oDragDropConfig) {
+				this.getConfig("setDragDropConfig", this.getControl(), this);
 			} else if (!bEnable) {
-				this.getConfig("resetDragDropConfig");
+				this.getConfig("resetDragDropConfig", this.getControl(), this);
 			}
 
 			this.setProperty("uploadEnabled", bEnable, false);
@@ -537,7 +534,7 @@ sap.ui.define([
 
 	UploadSetwithTable.prototype.setNoDataIllustration = function(oNoDatIllustration) {
 		this._vNoDataIllustration = oNoDatIllustration;
-		this.getConfig("setDefaultIllustrations");
+		this.getConfig("setDefaultIllustrations", this.getControl(), this);
 		return this;
 	};
 
@@ -702,7 +699,7 @@ sap.ui.define([
 			Log.error("Row configuration is not set for the plugin. File preview is not possible.");
 			return;
 		}
-		this.getConfig("openFilePreview", oBindingContext);
+		this.getConfig("openFilePreview", oBindingContext, this.getControl(), this);
 	};
 
 	/**
@@ -720,7 +717,7 @@ sap.ui.define([
 		this.getConfig("download", {
 			oBindingContext: oBindingContext,
 			bAskForLocation: bAskForLocation
-		});
+		}, this.getControl(), this);
 	};
 
 	/**
@@ -1659,28 +1656,13 @@ sap.ui.define([
 	function setPluginBaseConfigs() {
 		PluginBase.setConfigs({
 		 "sap.ui.mdc.Table": {
-			_oPluginInstance: null,
-			_oControlInstance: null,
 			_sModelName: undefined,
 			_bIsTableBound: false,
-			setPluginInstance: function(oPlugin) {
-				this._oPluginInstance = oPlugin;
-			},
-			getPluginInstance: function() {
-				return this._oPluginInstance;
-			},
-			setControlInstance: function(oControl) {
-				this._oControlInstance = oControl;
-			},
-			getControlInstance: function() {
-				return this._oControlInstance;
-			},
-			setPluginDefaultSettings: function() {
-				const oPlugin = this.getPluginInstance();
+			setPluginDefaultSettings: function(oControl, oPlugin) {
 				if (oPlugin.getUploadEnabled()) {
-					this.setDragDropConfig();
+					this.setDragDropConfig(oControl, oPlugin);
 				}
-				this.setDefaultIllustrations();
+				this.setDefaultIllustrations(oControl, oPlugin);
 			},
 			setIsTableBound: function(oControl) {
 				const oTable = oControl?._oTable;
@@ -1705,11 +1687,9 @@ sap.ui.define([
 				return this._sModelName;
 			},
 			// Set the drag and drop configuration for the table when the upload plugin is activated.
-			setDragDropConfig: function () {
+			setDragDropConfig: function (oControl, oPlugin) {
 				// Loading MDC library's Drag and Drop configuration for the table.
 				sap.ui.require(["sap/ui/mdc/table/DragDropConfig"], (MDCDragDropConfig) => {
-					const oPlugin = this.getPluginInstance();
-					const oControl = this.getControlInstance();
 					const oDragDropConfig = oPlugin._oDragDropConfig = new MDCDragDropConfig({
 						droppable: true
 					});
@@ -1719,18 +1699,14 @@ sap.ui.define([
 					Log.error("Failed to load MDC library for Drag and Drop configuration.");
 				});
 			},
-			resetDragDropConfig: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			resetDragDropConfig: function(oControl, oPlugin) {
 				if (oPlugin && oControl && oPlugin._oDragDropConfig) {
 					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
 					oPlugin._oDragDropConfig = null;
 				}
 			},
 			// Set the default illustrations for the table when no data is available and only when the upload plugin is activated.
-			setDefaultIllustrations: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			setDefaultIllustrations: function(oControl, oPlugin) {
 				const oNoDataIllustration = oPlugin?.getNoDataIllustration();
 				if (oControl && oPlugin) {
 					if (!oNoDataIllustration) {
@@ -1741,9 +1717,7 @@ sap.ui.define([
 					oControl.setNoData(oPlugin._illustratedMessage);
 			}
 			},
-			cleanupPluginInstanceSettings: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			cleanupPluginInstanceSettings: function(oControl, oPlugin) {
 				// remove nodata aggregations added from plugin activation.
 				if (oControl) {
 					oControl.setNoData(null);
@@ -1758,9 +1732,7 @@ sap.ui.define([
 				}
 			},
 			// Handles the preview of the passed context. Requires access to all the contexts of inner table to setup the preview along with carousel.
-			openFilePreview: async function(oBindingContext) {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			openFilePreview: async function(oBindingContext, oControl, oPlugin) {
 				const oRowConfiguration = oPlugin.getRowConfiguration();
 				const oContexts = this.getTableContexts(oControl?._oTable);
 				let aUploadSetItems = [];
@@ -1773,9 +1745,8 @@ sap.ui.define([
 				}
 			},
 			// Handles the download of the file through the passed context.
-			download: async function(mDownloadInfo) {
+			download: async function(mDownloadInfo, oPlugin) {
 				const {oBindingContext, bAskForLocation} = mDownloadInfo;
-				const oPlugin = this.getPluginInstance();
 				const oItem = await oPlugin.getItemForContext(oBindingContext);
 				if (oItem && oItem.getUrl()) {
 					return oPlugin._initiateFileDownload(oItem, bAskForLocation);
@@ -1792,28 +1763,13 @@ sap.ui.define([
 			}
 		 },
 		 "sap.m.Table": {
-			_oPluginInstance: null,
-			_oControlInstance: null,
 			_sModelName: undefined,
 			_bIsTableBound: false,
-			setPluginInstance: function(oPlugin) {
-				this._oPluginInstance = oPlugin;
-			},
-			getPluginInstance: function() {
-				return this._oPluginInstance;
-			},
-			setControlInstance: function(oControl) {
-				this._oControlInstance = oControl;
-			},
-			getControlInstance: function() {
-				return this._oControlInstance;
-			},
-			setPluginDefaultSettings: function() {
-				const oPlugin = this.getPluginInstance();
+			setPluginDefaultSettings: function(oControl, oPlugin) {
 				if (oPlugin.getUploadEnabled()) {
-					this.setDragDropConfig();
+					this.setDragDropConfig(oControl, oPlugin);
 				}
-				this.setDefaultIllustrations();
+				this.setDefaultIllustrations(oControl, oPlugin);
 			},
 			setIsTableBound: function(oControl) {
 				if (oControl?.getBinding("items")) {
@@ -1834,9 +1790,7 @@ sap.ui.define([
 				return this._sModelName;
 			},
 			// Set the drag and drop configuration for the table when upload plugin is activated.
-			setDragDropConfig: function () {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			setDragDropConfig: function (oControl, oPlugin) {
 				var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
 					sourceAggregation: "items",
 					targetAggregation: "items"
@@ -1850,9 +1804,7 @@ sap.ui.define([
 				oControl?.addDragDropConfig(oDragDropConfig);
 				oControl?.addDragDropConfig(oDropConfig);
 			},
-			resetDragDropConfig: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			resetDragDropConfig: function(oControl, oPlugin) {
 				if (oPlugin && oControl) {
 					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
 					oControl.removeDragDropConfig(oPlugin._oDropConfig);
@@ -1861,9 +1813,7 @@ sap.ui.define([
 				}
 			},
 			// Set default illustrations for the table when no data is available. Set only when the upload plugin is activated.
-			setDefaultIllustrations: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			setDefaultIllustrations: function(oControl, oPlugin) {
 				const oNoDataIllustration = oPlugin?.getNoDataIllustration();
 				if (oControl && oPlugin) {
 					if (!oNoDataIllustration) {
@@ -1874,9 +1824,7 @@ sap.ui.define([
 					oControl.setNoData(oPlugin._illustratedMessage);
                                 }
 			},
-			cleanupPluginInstanceSettings: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			cleanupPluginInstanceSettings: function(oControl, oPlugin) {
 				// remove nodata aggregations added from plugin activation.
 				if (oControl) {
 					oControl.setNoData(null);
@@ -1891,9 +1839,7 @@ sap.ui.define([
 				}
 			},
 			// Handles preview of the passed context. Requires access to all the contexts of inner table to setup the preview along with carousel.
-			openFilePreview: async function(oBindingContext) {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			openFilePreview: async function(oBindingContext, oControl, oPlugin) {
 				const oRowConfiguration = oPlugin.getRowConfiguration();
 				const oContexts = this.getTableContexts(oControl);
 				let aUploadSetItems = [];
@@ -1906,42 +1852,26 @@ sap.ui.define([
 				}
 			},
 			// Handles download of the file through the passed context.
-			download: async function(mDownloadInfo) {
+			download: async function(mDownloadInfo, oPlugin) {
 				const {oBindingContext, bAskForLocation} = mDownloadInfo;
-				const oPlugin = this.getPluginInstance();
 				const oItem = await oPlugin.getItemForContext(oBindingContext);
 				if (oItem && oItem.getUrl()) {
 					return oPlugin._initiateFileDownload(oItem, bAskForLocation);
 				}
-				return false;
+			return false;
 			},
 			getTableContexts: function(oTable) {
 				return oTable?.getBinding("items")?.getCurrentContexts() || null;
 			}
 		 },
 		 "sap.ui.table.Table": {
-			_oPluginInstance: null,
-			_oControlInstance: null,
 			_sModelName: undefined,
 			_bIsTableBound: false,
-			setPluginInstance: function(oPlugin) {
-				this._oPluginInstance = oPlugin;
-			},
-			getPluginInstance: function() {
-				return this._oPluginInstance;
-			},
-			setControlInstance: function(oControl) {
-				this._oControlInstance = oControl;
-			},
-			getControlInstance: function() {
-				return this._oControlInstance;
-			},
-			setPluginDefaultSettings: function() {
-				const oPlugin = this.getPluginInstance();
+			setPluginDefaultSettings: function(oControl, oPlugin) {
 				if (oPlugin.getUploadEnabled()) {
-					this.setDragDropConfig();
+					this.setDragDropConfig(oControl, oPlugin);
 				}
-				this.setDefaultIllustrations();
+				this.setDefaultIllustrations(oControl, oPlugin);
 			},
 			setIsTableBound: function(oControl) {
 				if (oControl?.getBinding("rows")) {
@@ -1962,9 +1892,7 @@ sap.ui.define([
 				return this._sModelName;
 			},
 			// Set the drag and drop configuration for the table when upload plugin is actived.
-			setDragDropConfig: function () {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			setDragDropConfig: function (oControl, oPlugin) {
 				var oDragDropConfig = oPlugin._oDragDropConfig = new DragDropInfo({
 					sourceAggregation: "rows",
 					targetAggregation: "rows"
@@ -1978,9 +1906,7 @@ sap.ui.define([
 				oControl?.addDragDropConfig(oDragDropConfig);
 				oControl?.addDragDropConfig(oDropConfig);
 			},
-			resetDragDropConfig: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			resetDragDropConfig: function(oControl, oPlugin) {
 				if (oPlugin && oControl) {
 					oControl.removeDragDropConfig(oPlugin._oDragDropConfig);
 					oControl.removeDragDropConfig(oPlugin._oDropConfig);
@@ -1989,9 +1915,7 @@ sap.ui.define([
 				}
 			},
 			// Set the default illustrations for the table when no data is available. Set only when the upload plugin is activated.
-			setDefaultIllustrations: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			setDefaultIllustrations: function(oControl, oPlugin) {
 				const oNoDataIllustration = oPlugin?.getNoDataIllustration();
 				if (oControl && oPlugin) {
 					if (!oNoDataIllustration) {
@@ -2002,9 +1926,7 @@ sap.ui.define([
 					oControl.setNoData(oPlugin._illustratedMessage);
                                 }
 			},
-			cleanupPluginInstanceSettings: function() {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			cleanupPluginInstanceSettings: function(oControl, oPlugin) {
 				// remove nodata aggregations added from plugin activation.
 				if (oControl) {
 					oControl.setNoData(null);
@@ -2019,9 +1941,7 @@ sap.ui.define([
 				}
 			},
 			// Handles preview of the passed context. Requires access to all the contexts of inner table to setup the preview along with carousel.
-			openFilePreview: async function(oBindingContext) {
-				const oPlugin = this.getPluginInstance();
-				const oControl = this.getControlInstance();
+			openFilePreview: async function(oBindingContext, oControl, oPlugin) {
 				const oRowConfiguration = oPlugin.getRowConfiguration();
 				const oContexts = this.getTableContexts(oControl);
 				let aUploadSetItems = [];
@@ -2034,9 +1954,8 @@ sap.ui.define([
 				}
 			},
 			// Handles download of the file through the context passed.
-			download: async function(mDownloadInfo) {
+			download: async function(mDownloadInfo, oPlugin) {
 				const {oBindingContext, bAskForLocation} = mDownloadInfo;
-				const oPlugin = this.getPluginInstance();
 				const oItem = await oPlugin.getItemForContext(oBindingContext);
 				if (oItem && oItem.getUrl()) {
 					return oPlugin._initiateFileDownload(oItem, bAskForLocation);

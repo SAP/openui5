@@ -17,12 +17,23 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	QUnit.module("Select Filter - Base Methods");
+	QUnit.module("Select Filter - Base Methods", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
 
 	QUnit.test("writeValueToConfiguration", async function (assert) {
 		// Arrange
 		const oSF = new SelectFilter({
-			configuration: {
+			config: {
 				value: "all",
 				items: [
 					{
@@ -32,7 +43,8 @@ sap.ui.define([
 						key: "notebooks"
 					}
 				]
-			}
+			},
+			card: this.oCard
 		});
 		oSF.getField().setSelectedKey("notebooks");
 		await nextUIUpdate();

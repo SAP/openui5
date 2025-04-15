@@ -708,7 +708,9 @@ sap.ui.define([
 			var oRuntimeAuthoring = new RuntimeAuthoring({
 				rootControl: oComp,
 				showToolbars: false,
-				layer: Layer.CUSTOMER
+				flexSettings: {
+					layer: Layer.CUSTOMER
+				}
 			});
 			var oDesignTimeAddRootElementSpy = sandbox.spy(DesignTime.prototype, "addRootElement");
 			return oRuntimeAuthoring.start().then(function() {

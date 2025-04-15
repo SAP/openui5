@@ -41,12 +41,12 @@ sap.ui.define([
 					new TestControl({text: "Row:1, Column:1 with a long description"}),
 					new TestControl({text: "Row:2, Column:1"})
 				],
+
 				headerSpan: [3, 1],
 				template: new TestControl({text: "{text}"}),
 				sortProperty: "text",
 				filterProperty: "text",
 				width: "100px",
-				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
@@ -57,12 +57,12 @@ sap.ui.define([
 					new TestControl({text: "Row:1, Column:2 with a long description"}),
 					new TestControl({text: "Row:2, Column:2"})
 				],
+
 				headerSpan: [1, 2, 1],
 				template: new TestControl({text: "{text}"}),
 				sortProperty: "text",
 				filterProperty: "text",
 				width: "100px",
-				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
@@ -73,11 +73,11 @@ sap.ui.define([
 					new TestControl({text: "Row:1, Column:3 - long text"}),
 					new TestControl({text: "Row:2, Column:3"})
 				],
+
 				template: new TestControl({text: "{text}"}),
 				sortProperty: "text",
 				filterProperty: "text",
 				width: "100px",
-				flexible: true,
 				autoResizable: true,
 				resizable: true
 			}));
@@ -89,7 +89,6 @@ sap.ui.define([
 				template: new TestControl({text: "{text}"}),
 				hAlign: coreLibrary.HorizontalAlign.Center,
 				width: "100px",
-				flexible: true,
 				autoResizable: true,
 				resizable: true
 			}));
@@ -98,7 +97,6 @@ sap.ui.define([
 				label: new TestControl({text: "Some Header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
-				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
@@ -107,7 +105,6 @@ sap.ui.define([
 				label: new TestControl({text: "Some other header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
-				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
@@ -116,7 +113,6 @@ sap.ui.define([
 				label: new TestControl({text: "Just another header"}),
 				template: new TestControl({text: "{text}"}),
 				width: "100px",
-				flexible: false,
 				autoResizable: true,
 				resizable: true
 			}));
