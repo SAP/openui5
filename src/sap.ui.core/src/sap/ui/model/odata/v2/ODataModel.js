@@ -7291,10 +7291,6 @@ sap.ui.define([
 	 *   <li><code>properties</code> could be an object which includes the desired properties and
 	 *     the corresponding values which should be used for the created entry. </li>
 	 * </ul>
-	 * If <code>properties</code> is not specified, all properties in the entity type will be
-	 * included in the created entry.
-	 *
-	 * If there are no values specified, the properties will have <code>undefined</code> values.
 	 *
 	 * The <code>properties</code> can be modified via property bindings relative to the returned
 	 * context instance.
