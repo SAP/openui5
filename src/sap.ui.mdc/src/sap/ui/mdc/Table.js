@@ -1669,9 +1669,9 @@ sap.ui.define([
 			vNoData.setDescription(" ");
 			if (this.getFilter()) {
 				vNoData.setTitle(oRb.getText("table.NO_DATA_WITH_FILTERBAR"));
-				vNoData.setIllustrationType(IllustratedMessageType.SearchEarth);
+				vNoData.setIllustrationType(IllustratedMessageType.BeforeSearch);
 			} else {
-				vNoData.setIllustrationType(IllustratedMessageType.EmptyList);
+				vNoData.setIllustrationType(IllustratedMessageType.NoEntries);
 				vNoData.setTitle(oRb.getText("table.NO_DATA"));
 			}
 		} else if (isFiltered(this)) {
