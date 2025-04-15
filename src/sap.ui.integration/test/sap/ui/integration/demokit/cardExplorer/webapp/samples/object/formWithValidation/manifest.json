@@ -156,7 +156,8 @@
 								{
 									"required": true
 								}
-							]
+							],
+							"placeholder": "Select time"
 						},
 						{
 							"id": "date",
@@ -166,7 +167,9 @@
 								{
 									"required": true
 								}
-							]
+							],
+							"placeholder": "Select date"
+
 						}
 					]
 				}
