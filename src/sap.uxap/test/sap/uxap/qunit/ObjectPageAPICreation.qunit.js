@@ -3866,6 +3866,17 @@ function (
 		assert.strictEqual(oObjectPage.$("anchorBar").attr("role"), "navigation", "Navigation role is set correctly.");
 		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-label"), "Navigation", "Navigation label is set correctly.");
 
+		oLandmarkInfo = new ObjectPageAccessibleLandmarkInfo({
+			rootRole: "None",
+			rootLabel: "Root"
+		});
+
+		oObjectPage.setLandmarkInfo(oLandmarkInfo);
+		Core.applyChanges();
+
+		assert.strictEqual(oObjectPage.$().attr("role"), undefined, "Root role is not set");
+		assert.strictEqual(oObjectPage.$().attr("aria-label"), undefined, "Root label is not");
+
 		oObjectPage.destroy();
 	});
 
