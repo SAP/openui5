@@ -643,8 +643,7 @@ sap.ui.define([
 														controlType: "sap.m.Button",
 														matchers: new PropertyStrictEquals({
 															name: "text",
-															value: "Save",
-															actions: new Press()
+															value: "Save"
 														}),
 														actions: new Press()
 													});
