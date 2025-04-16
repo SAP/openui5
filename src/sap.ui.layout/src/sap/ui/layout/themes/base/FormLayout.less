@@ -7,7 +7,7 @@
 @_sap_ui_layout_FormLayout_FormSubTitleSize: ~"H5";
 
 .sapUiFormLayout {
-	border: 1px solid @sapUiGroupTitleBorderColor;
+	border: 1px solid var(--sapGroup_TitleBorderColor);
 	font-size: @sapUiDesktopFontSize;
 }
 
@@ -16,7 +16,7 @@
 }
 
 .sapUiFormTitle {
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
+	border-bottom: 1px solid var(--sapGroup_TitleBorderColor);
 	overflow: hidden;
 	width: 100%;
 	font-synthesis: none;
@@ -35,7 +35,7 @@
 	display: block;
 	width: 100%;
 	font-weight: @sapUiFontHeaderWeight;
-	color: @sapUiGroupTitleTextColor;
+	color: var(--sapGroup_TitleTextColor);
 	margin: 0;
 }
 
@@ -53,48 +53,48 @@
 	line-height: 2rem;
 }
 
-.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable{
+.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable {
 	overflow: visible; /* to allow to put expander outside */
 	padding-left: 2.5rem;
 }
 
-.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable > button{
+.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable > button {
 	position: absolute;
 	left: -0.25rem;
 	padding-right: 0.5rem;
 }
 
 .sapUiFormTitle.sapUiFormTitleEmph {
-	border-color: @sapUiGroupTitleBorderColor;
+	border-color: var(--sapGroup_TitleBorderColor);
 }
 
 /* Title levels - can not use TextView CSS from commons, because also used in mobile */
 .sapUiFormTitleH1 {
-	font-size: @sapMFontHeader1Size;
+	font-size: var(--sapFontHeader1Size);
 	line-height: 122%;
 }
 
 .sapUiFormTitleH2 {
-	font-size: @sapMFontHeader2Size;
+	font-size: var(--sapFontHeader2Size);
 	line-height: 122%;
 }
 
 .sapUiFormTitleH3 {
-	font-size: @sapMFontHeader3Size;
+	font-size: var(--sapFontHeader3Size);
 	line-height: 122%;
 }
 
 .sapUiFormTitleH4 {
-	font-size: @sapMFontHeader4Size;
+	font-size: var(--sapFontHeader4Size);
 }
 
 .sapUiFormTitleH5 {
-	font-size: @sapMFontHeader5Size;
+	font-size: var(--sapFontHeader5Size);
 }
 
 .sapUiFormTitleH6 {
-	font-size: @sapMFontHeader6Size;
-	color: @sapUiGroupTitleTextColor;
+	font-size: var(--sapFontHeader6Size);
+	color: var(--sapGroup_TitleTextColor);
 }
 
 .sapUiFormTitle> img {
@@ -106,12 +106,12 @@
 	margin-bottom: 0.5rem;
 }
 
-.sapUiFormToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
-	font-size: @sapMFontHeader4Size;
+.sapUiFormToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto {
+	font-size: var(--sapFontHeader4Size);
 }
 
-.sapUiFormContainerToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
-	font-size: @sapMFontHeader5Size;
+.sapUiFormContainerToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto {
+	font-size: var(--sapFontHeader5Size);
 }
 
 .sapUiFormM .sapUiFormContainerTitle > .sapUiFormTitle {

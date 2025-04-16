@@ -1,6 +1,6 @@
 /* ========================================= */
 /* CSS for control sap.ui.layout/FormLayout  */
-/* Horizon theme                             */
+/* Morning Horizon theme                     */
 /* ========================================= */
 
 .sapUiFormLayout {
@@ -9,14 +9,14 @@
 
 .sapUiFormLayout.sapUiFormBackgrSolid,
 .sapUiFormLayout.sapUiFormBackgrTranslucent {
-	background-color: @sapUiGroupContentBackground;
-	border-radius: @sapUiElementBorderCornerRadius;
+	background-color: var(--sapGroup_ContentBackground);
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 .sapUiForm .sapUiFormTitle {
 	border-width: 1px;
-	border-color: @sapUiGroupTitleBorderColor;
-	font-family: @sapUiFontHeaderFamily;
+	border-color: var(--sapGroup_TitleBorderColor);
+	font-family: var(--sapFontHeaderFamily);
 	height: 2.75rem;
 	line-height: 2.75rem;
 }
@@ -36,39 +36,39 @@
 }
 
 /* Title levels should be all rendered in same style. Levels can be changed by application to meet page structure without visual effect */
-/* Form Titles are rendered using H4 level, but H5 size*/
+/* Form Titles are rendered using H4 level, but H5 size */
 .sapUiFormTitleH1,
 .sapUiFormTitleH2,
 .sapUiFormTitleH3,
 .sapUiFormTitleH4,
 .sapUiFormTitleH5,
 .sapUiFormTitleH6 {
-	font-size: @sapMFontHeader5Size;
+	font-size: var(--sapFontHeader5Size);
 }
 
-/* FormContainer Titles are rendered using H5 level, but H6 size*/
+/* FormContainer Titles are rendered using H5 level, but H6 size */
 .sapUiFormContainerTitle .sapUiFormTitleH1,
 .sapUiFormContainerTitle .sapUiFormTitleH2,
 .sapUiFormContainerTitle .sapUiFormTitleH3,
 .sapUiFormContainerTitle .sapUiFormTitleH4,
 .sapUiFormContainerTitle .sapUiFormTitleH5,
 .sapUiFormContainerTitle .sapUiFormTitleH6 {
-	font-size: @sapMFontHeader6Size;
-	color: @sapUiGroupTitleTextColor;
+	font-size: var(--sapFontHeader6Size);
+	color: var(--sapGroup_TitleTextColor);
 	font-weight: bold;
 }
 
 /* Toolbar */
-.sapUiFormContainerToolbar > div:first-child > .sapMTitle{
+.sapUiFormContainerToolbar > div:first-child > .sapMTitle {
 	font-weight: bold;
 }
 
-.sapUiFormToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
-	font-size: @sapMFontHeader5Size;
+.sapUiFormToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto {
+	font-size: var(--sapFontHeader5Size);
 }
 
-.sapUiFormContainerToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto{
-	font-size: @sapMFontHeader6Size;
+.sapUiFormContainerToolbar > div:first-child >.sapMTitle.sapMTitleStyleAuto {
+	font-size: var(--sapFontHeader6Size);
 }
 
 .sapUiFormContainerToolbar > .sapMTB-Transparent-CTX.sapMTB.sapMIBar {
