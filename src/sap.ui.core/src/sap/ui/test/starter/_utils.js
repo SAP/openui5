@@ -182,8 +182,7 @@ sap.ui.define([
 		},
 		ui5: {
 			bindingSyntax: 'complex',
-			libs: [],
-			theme: "sap_horizon"
+			libs: []
 		},
 		bootCore: true,
 		autostart: true

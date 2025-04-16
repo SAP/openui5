@@ -63,6 +63,7 @@ sap.ui.define([
 			.class(CLASSES.NAVIGATION)
 			.class("sapContrastPlus")
 			.attr(ATTRIBUTES.STEP_COUNT, oControl.getStepCount())
+			.attr("data-sap-ui-customfastnavgroup", true)
 			.accessibilityState({
 				label: sWizardAriaLabelText
 			})

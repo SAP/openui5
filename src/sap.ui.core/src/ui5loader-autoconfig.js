@@ -73,7 +73,7 @@
 		"sap/ui/core/support/trace/E2eTraceLib.js": ["sap/ui/Device.js","sap/ui/performance/trace/Passport.js","sap/base/Log.js","sap/ui/thirdparty/URI.js","sap/ui/core/support/trace/EppLib.js"],
 		"sap/ui/core/Supportability.js": ["sap/base/config.js"],
 		"sap/ui/core/Theming.js": ["sap/base/assert.js","sap/base/config.js","sap/base/Event.js","sap/base/Eventing.js","sap/base/future.js","sap/base/Log.js","sap/base/i18n/Localization.js","sap/base/util/deepEqual.js","sap/ui/core/theming/ThemeHelper.js"],
-		"sap/ui/core/theming/ThemeHelper.js": ["sap/base/future.js","sap/base/Log.js"],
+		"sap/ui/core/theming/ThemeHelper.js": ["sap/base/Log.js"],
 		"sap/ui/core/theming/ThemeManager.js": ["sap/base/assert.js","sap/base/Eventing.js","sap/base/future.js","sap/base/Log.js","sap/base/i18n/Localization.js","sap/base/util/each.js","sap/base/util/LoaderExtensions.js","sap/ui/Device.js","sap/ui/VersionInfo.js","sap/ui/core/Lib.js","sap/ui/core/Theming.js","sap/ui/core/theming/ThemeHelper.js","sap/ui/dom/includeStylesheet.js"],
 		"sap/ui/model/Filter.js": ["sap/ui/model/FilterOperator.js","sap/base/Log.js","sap/base/i18n/Localization.js","sap/ui/base/Object.js"],
 		"sap/ui/model/Sorter.js": ["sap/base/Log.js","sap/base/i18n/Localization.js","sap/ui/base/Object.js"],

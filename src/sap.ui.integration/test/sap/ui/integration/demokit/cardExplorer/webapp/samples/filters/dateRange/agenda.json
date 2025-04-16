@@ -30,7 +30,8 @@
 						"fromDateTime",
 						"toDateTime"
 					],
-					"label": "Activity period"
+					"label": "Activity period",
+					"placeholder": "Choose a date range"
 				}
 			}
 		},

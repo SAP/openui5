@@ -39,7 +39,6 @@ sap.ui.define([
 	let _sLayer;
 	let _oCrossAppNavService;
 	let sModulePath;
-	let oI18n;
 
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
 		onInit() {
@@ -48,12 +47,8 @@ sap.ui.define([
 			_sLayer = this.getOwnerComponent().getLayer();
 			const oUShellContainer = FlUtils.getUshellContainer();
 
-			if (!oI18n) {
-				this._createResourceBundle();
-			}
-
 			BusyIndicator.show();
-			return Promise.resolve()
+			return this._createResourceBundle()
 			.then(function() {
 				if (oUShellContainer) {
 					return oUShellContainer.getServiceAsync("Navigation")
@@ -63,7 +58,9 @@ sap.ui.define([
 				}
 				return undefined;
 			})
-			.then(AppVariantOverviewUtils.getAppVariantOverview.bind(AppVariantOverviewUtils, _sIdRunningApp, _bKeyUser))
+			.then(() => (
+				AppVariantOverviewUtils.getAppVariantOverview(_sIdRunningApp, _bKeyUser, this._oI18n)
+			))
 			.then(function(aAppVariantOverviewAttributes) {
 				BusyIndicator.hide();
 				if (aAppVariantOverviewAttributes.length) {
@@ -84,10 +81,11 @@ sap.ui.define([
 			});
 		},
 
-		_createResourceBundle() {
-			sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
-			oI18n = ResourceBundle.create({
-				url: `${sModulePath}/i18n/i18n.properties`
+		async _createResourceBundle() {
+			sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp/i18n/i18n.properties`;
+			this._oI18n = await ResourceBundle.create({
+				url: sModulePath,
+				async: true
 			});
 		},
 
@@ -104,9 +102,10 @@ sap.ui.define([
 			}
 			oTable.focus();
 
-			aAppVariantOverviewAttributes.forEach(function(oAppVariantManifest, index) {
-				if (oAppVariantManifest.currentStatus === oI18n.getText("MAA_NEW_APP_VARIANT")
-					|| oAppVariantManifest.currentStatus === oI18n.getText("MAA_OPERATION_IN_PROGRESS")
+			aAppVariantOverviewAttributes.forEach((oAppVariantManifest, index) => {
+				if (
+					oAppVariantManifest.currentStatus === this._oI18n.getText("MAA_NEW_APP_VARIANT")
+					|| oAppVariantManifest.currentStatus === this._oI18n.getText("MAA_OPERATION_IN_PROGRESS")
 				) {
 					if (oTable.getItems().length >= index) {
 						oTable.getItems()[index].focus();
@@ -124,7 +123,7 @@ sap.ui.define([
 
 			const oAdaptingAppAttributes = aAdaptingAppAttributes[0];
 			if (oAdaptingAppAttributes && oAdaptingAppAttributes.appVarStatus !== "R") {
-				oAdaptingAppAttributes.currentStatus = oI18n.getText("MAA_CURRENTLY_ADAPTING");
+				oAdaptingAppAttributes.currentStatus = this._oI18n.getText("MAA_CURRENTLY_ADAPTING");
 			}
 
 			aAppVariantOverviewAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
@@ -159,11 +158,11 @@ sap.ui.define([
 
 		formatRowHighlight(sValue) {
 			// Your logic for rowHighlight goes here
-			if (sValue === oI18n.getText("MAA_CURRENTLY_ADAPTING")) {
+			if (sValue === this._oI18n.getText("MAA_CURRENTLY_ADAPTING")) {
 				return "Success";
-			} else if (sValue === oI18n.getText("MAA_NEW_APP_VARIANT")) {
+			} else if (sValue === this._oI18n.getText("MAA_NEW_APP_VARIANT")) {
 				return "Information";
-			} else if (sValue === oI18n.getText("MAA_OPERATION_IN_PROGRESS")) {
+			} else if (sValue === this._oI18n.getText("MAA_OPERATION_IN_PROGRESS")) {
 				return "Warning";
 			}
 
@@ -171,33 +170,27 @@ sap.ui.define([
 		},
 
 		formatDelButtonTooltip(bDelAppVarButtonEnabled, bIsS4HanaCloud) {
-			if (!oI18n) {
-				this._createResourceBundle();
-			}
 			if (!bDelAppVarButtonEnabled && !bIsS4HanaCloud) {
-				return oI18n.getText("TOOLTIP_DELETE_APP_VAR");
+				return this._oI18n.getText("TOOLTIP_DELETE_APP_VAR");
 			}
 			return undefined;
 		},
 
 		formatAdaptUIButtonTooltip(bAdaptUIButtonEnabled, sAppVarStatus) {
-			if (!oI18n) {
-				this._createResourceBundle();
-			}
 			if (!bAdaptUIButtonEnabled) {
 				switch (sAppVarStatus) {
 					case "R":
 						// For S4/Hana Cloud systems
-						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_RUNNING");
+						return this._oI18n.getText("TOOLTIP_ADAPTUI_STATUS_RUNNING");
 					case "U":
-						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
+						return this._oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
 					case "E":
-						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
+						return this._oI18n.getText("TOOLTIP_ADAPTUI_STATUS_UNPBLSHD_ERROR");
 					case "P":
-						return oI18n.getText("TOOLTIP_ADAPTUI_STATUS_PUBLISHED");
+						return this._oI18n.getText("TOOLTIP_ADAPTUI_STATUS_PUBLISHED");
 					case undefined:
 						// For S4/Hana onPrem systems
-						return oI18n.getText("TOOLTIP_ADAPTUI_ON_PREMISE");
+						return this._oI18n.getText("TOOLTIP_ADAPTUI_ON_PREMISE");
 					default:
 						// Do nothing
 				}
@@ -224,15 +217,11 @@ sap.ui.define([
 
 			sItemPath = sItemPath.substr(0, sItemPath.lastIndexOf(" > "));
 
-			if (!oI18n) {
-				this._createResourceBundle();
-			}
-
-			if (sItemPath === oI18n.getText("MAA_DIALOG_ADAPT_UI")) {
+			if (sItemPath === this._oI18n.getText("MAA_DIALOG_ADAPT_UI")) {
 				return this.handleUiAdaptation(oEvent);
-			} else if (sItemPath === oI18n.getText("MAA_DIALOG_COPY_ID")) {
+			} else if (sItemPath === this._oI18n.getText("MAA_DIALOG_COPY_ID")) {
 				return this.copyId(oEvent);
-			} else if (sItemPath === oI18n.getText("MAA_DIALOG_DELETE_APPVAR")) {
+			} else if (sItemPath === this._oI18n.getText("MAA_DIALOG_DELETE_APPVAR")) {
 				return this.deleteAppVariant(oEvent);
 			}
 
@@ -271,21 +260,18 @@ sap.ui.define([
 		copyId(oEvent) {
 			const sCopiedId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
 			AppVariantUtils.copyId(sCopiedId);
-			MessageToast.show(oI18n.getText("MAA_COPY_ID_SUCCESS"));
+			MessageToast.show(this._oI18n.getText("MAA_COPY_ID_SUCCESS"));
 		},
 
 		deleteAppVariant(oEvent) {
 			const oInfo = {};
-			if (!oI18n) {
-				this._createResourceBundle();
-			}
-			const sMessage = oI18n.getText("MSG_APP_VARIANT_DELETE_CONFIRMATION");
+			const sMessage = this._oI18n.getText("MSG_APP_VARIANT_DELETE_CONFIRMATION");
 			oInfo.text = sMessage;
 			oInfo.deleteAppVariant = true;
 
 			const sAppVarId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
 			const sCurrentStatus = this.getModelProperty("currentStatus", oEvent.getSource().getBindingContext());
-			const bCurrentlyAdapting = sCurrentStatus === oI18n.getText("MAA_CURRENTLY_ADAPTING");
+			const bCurrentlyAdapting = sCurrentStatus === this._oI18n.getText("MAA_CURRENTLY_ADAPTING");
 
 			return AppVariantUtils.showRelevantDialog(oInfo)
 			.then(function() {

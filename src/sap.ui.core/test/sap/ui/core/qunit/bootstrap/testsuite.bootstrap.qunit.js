@@ -1,6 +1,11 @@
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 
 	"use strict";
+
+	// Define theme root for current theme for testing purposes
+	const mDefaultThemeInfo = ThemeHelper.getDefaultThemeInfo();
+	const sDefaultTheme = `${mDefaultThemeInfo.DEFAULT_THEME}${mDefaultThemeInfo.DARK_MODE ? "_dark" : ""}`;
+
 	return {
 		name: "TestSuite for sap.ui.core: GTP testcase CORE/BOOTSTRAP",
 		defaults: {
@@ -74,12 +79,14 @@ sap.ui.define(function() {
 					preloadLibCss: [ "!sap.ui.core", "sap.ui.testlib" ],
 					// Define theme root for current theme for testing purposes
 					themeRoots: {
-						"sap_horizon": "foo/bar"
-					}
+						[sDefaultTheme]: "foo/bar"
+					},
+					libs: ["sap.ui.core", "sap.ui.testlib"]
 				},
 				loader: {
 					paths: {
-						"fantasyLib": "test-resources/sap/ui/core/qunit/bootstrap/preloadedCss"
+						"fantasyLib": "test-resources/sap/ui/core/qunit/bootstrap/preloadedCss",
+						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib"
 					}
 				},
 				bootManifest: "boot/customboot.json@test-resources/sap/ui/core/qunit/bootstrap",

@@ -968,7 +968,8 @@ sap.ui.define([
 	ObjectContent.prototype._createDateRangeItem = function (oItem, vVisible, oLabel, sPath) {
 		var oSettings = {
 			options: ["date"],
-			value: oItem.value
+			value: oItem.value,
+			placeholder: oItem.placeholder
 		};
 		var oForm = this._getForm();
 		var oControl = DateRangeHelper.createInput(oSettings, this.getCardInstance(), true);

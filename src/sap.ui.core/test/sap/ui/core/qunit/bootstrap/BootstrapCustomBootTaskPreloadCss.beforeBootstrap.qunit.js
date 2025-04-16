@@ -1,4 +1,8 @@
-(function() {
+sap.ui.require([
+	"sap/ui/core/theming/ThemeHelper"
+], (
+	ThemeHelper
+) => {
 	"use strict";
 
 	var oLink = document.createElement("link");
@@ -17,4 +21,4 @@
 	oLink.addEventListener("error", listener);
 
 	document.head.appendChild(oLink);
-}());
+});

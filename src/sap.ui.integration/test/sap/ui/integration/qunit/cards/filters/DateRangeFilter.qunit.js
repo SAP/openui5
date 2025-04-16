@@ -484,4 +484,22 @@ sap.ui.define([
 		assert.ok(oLabel.isDestroyed(), "Hidden label should be destroyed when the filter is destroyed");
 	});
 
+	QUnit.test("Placeholder", function (assert) {
+		// Arrange
+		var oConfig = {
+			placeholder: "DateRangeFilter placeholder"
+		};
+		var oDRF = new DateRangeFilter({
+			config: oConfig
+		});
+
+		const sPlaceholder = oDRF.getField().getPlaceholder();
+
+		// Assert
+		assert.strictEqual(sPlaceholder, oConfig.placeholder, "Placeholder is correct");
+
+		// Clean up
+		oDRF.destroy();
+	});
+
 });

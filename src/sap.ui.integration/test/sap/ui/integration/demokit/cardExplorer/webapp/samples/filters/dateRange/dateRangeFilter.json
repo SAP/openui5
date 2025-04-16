@@ -22,7 +22,8 @@
 							"1996-08-16"
 						]
 					},
-					"label": "Order date"
+					"label": "Order date",
+					"placeholder": "Choose a date range"
 				}
 			}
 		},

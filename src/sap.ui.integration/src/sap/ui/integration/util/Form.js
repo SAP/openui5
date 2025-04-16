@@ -298,7 +298,6 @@ sap.ui.define([
 			bValid,
 			sValidationFunctionName,
 			fnValidationFunc,
-			oRB = this.getModel("i18n").getResourceBundle(),
 			bValidationPassed = true;
 
 		for (var sKey in mValidationConfig) {
@@ -322,7 +321,7 @@ sap.ui.define([
 			if (!bValid) {
 				this._addMessageToControl(oControl, bShowValueState, {
 					type: mValidationConfig.type || ValueState.Error,
-					message: mValidationConfig.message || oRB.getText(oValidator[sKey + "Txt"], [oValidationValue]),
+					message: mValidationConfig.message || this._oCard.getTranslatedText(oValidator[sKey + "Txt"], [oValidationValue]),
 					bindingPath: "/" + oItem.id
 				});
 

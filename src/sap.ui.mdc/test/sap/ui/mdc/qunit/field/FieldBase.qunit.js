@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
@@ -81,6 +82,7 @@ sap.ui.define([
 	"test-resources/sap/m/qunit/plugins/ClipboardUtils"
 ], (
 	Element,
+	LabelEnablement,
 	Library,
 	Messaging,
 	jQuery,
@@ -385,6 +387,7 @@ sap.ui.define([
 		});
 		oStub.callThrough();
 
+		const oLabel = new Label("L1", { text: "test", labelFor: oField }).placeAt("content");
 		oField.placeAt("content");
 		await nextUIUpdate();
 
@@ -403,6 +406,14 @@ sap.ui.define([
 
 				const oDomRef = oField.getDomRef();
 				assert.notOk(oDomRef && jQuery(oDomRef).attr("tabIndex"), "DomRef is not focusable");
+
+				const aContent = oField.getAggregation("_content");
+				const oContent = aContent?.length > 0 && aContent[0];
+				let aLabels = LabelEnablement.getReferencingLabels(oField);
+				assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Field");
+				aLabels = LabelEnablement.getReferencingLabels(oContent);
+				assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Content");
+				oLabel.destroy();
 				fnDone();
 			}, 1);
 		}, 1);// to make sure to be executed after require-timeout
@@ -756,6 +767,10 @@ sap.ui.define([
 		assert.ok(oContent.hasLabelableHTMLElement.called, "hasLabelableHTMLElement of content control called to determine if labelable");
 		assert.equal(jQuery("#L1").attr("for"), "F1-inner-inner", "Label points to DomRef of inner control");
 		assert.equal(document.getElementById("L1").nodeName, "LABEL", "Label ist rendered as LABEL");
+		let aLabels = LabelEnablement.getReferencingLabels(oField);
+		assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Field");
+		aLabels = LabelEnablement.getReferencingLabels(oContent);
+		assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Content");
 
 		oField.setEditMode(FieldEditMode.Display); // TokenizerDispaly rendered
 		await nextUIUpdate();
@@ -766,6 +781,8 @@ sap.ui.define([
 		assert.notOk(oLabel.getLabelForRendering(), "Label for rendering is empty");
 		assert.ok(oContent.hasLabelableHTMLElement.called, "hasLabelableHTMLElement of content control called to determine if labelable");
 		assert.equal(document.getElementById("L1").nodeName, "SPAN", "Label ist rendered as SPAN");
+		aLabels = LabelEnablement.getReferencingLabels(oContent);
+		assert.ok(aLabels.indexOf("L1") >= 0, "Label is associated to Content");
 		oLabel.destroy();
 
 	});
@@ -3834,19 +3851,37 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", (assert) => {
+	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", async (assert) => {
+
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["long text"]); // to show more-indicator
+		oCM.addCondition("Name", oCondition);
+		oField.setWidth("200px");
+		oCM.checkUpdate(true, false); // to update bindings
+		await nextUIUpdate();
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
 		sinon.stub(oValueHelp, "shouldOpenOnClick").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 
-		oField.focus();
 		let oInnerField = oField.getAggregation("_content")[0];
+
+		// tap on More-Indicator should be ignored
+		qutils.triggerEvent("tap", oInnerField.getAggregation("tokenizer").$().children(".sapMTokenizerIndicator")[0]);
+		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tap on More-Indicator: shouldOpenOnClick not called");
+		oValueHelp.shouldOpenOnClick.resetHistory();
+
+		oField.focus();
+		await nextUIUpdate();
 
 		// tap on Token should be ignored
 		qutils.triggerEvent("tap", oInnerField.getTokens()[0].getId());
-		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "shouldOpenOnClick not called");
+		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tap on Token: shouldOpenOnClick not called");
+		oValueHelp.shouldOpenOnClick.resetHistory();
+
+		// tap on ValueHelpIcon should be ignored
+		qutils.triggerEvent("tap", oInnerField._oValueHelpIcon.getId()); // Icon itself listens to "click"-event, so this don't trigger the valueHelpRequest event
+		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tab on ValueHelpIcon: shouldOpenOnClick not called");
 		oValueHelp.shouldOpenOnClick.resetHistory();
 
 		// tap on input should open ValueHelp

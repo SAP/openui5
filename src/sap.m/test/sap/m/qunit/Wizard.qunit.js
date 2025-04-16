@@ -124,10 +124,7 @@ sap.ui.define([
 			steps: [
 				new WizardStep({
 					validated: true,
-					title: "Step 1",
-					content: [
-						new Button({ text: "Button Step 1" })
-					]
+					title: "Step 1"
 				}),
 				new WizardStep({
 					validated: true,
@@ -152,19 +149,11 @@ sap.ui.define([
 		this.clock = sinon.useFakeTimers();
 
 		let oNextButton = oWizard._getNextButton();
-		const oButtonStep1 = oWizard.getSteps()[0].getContent()[0];
 		const oButtonStep2 = oWizard.getSteps()[1].getContent()[0];
 		const oInputStep2 = oWizard.getSteps()[1].getContent()[1];
 
 		// act
-		oButtonStep1.focus();
-		qutils.triggerKeydown(oButtonStep1.getDomRef(), KeyCodes.F6);
-		await nextUIUpdate();
-
-		// assert
-		assert.strictEqual(document.activeElement, oNextButton.getDomRef(), "Focus should move to the next button of the active step after pressing F6.");
-
-		// act
+		oNextButton.focus();
 		oNextButton.$().tap();
 		this.clock.tick(500);
 
@@ -178,14 +167,20 @@ sap.ui.define([
 		qutils.triggerKeydown(oButtonStep2.getDomRef(), KeyCodes.F6, true, false, false);
 
 		// assert
-		assert.strictEqual(document.activeElement, oButtonStep1.getFocusDomRef(), "When Shift+F6 is pressed, focus should move back to the first button in Step 1.");
+		assert.strictEqual(Number(document.activeElement.ariaPosInSet),oWizard.getProgress(), "When Shift+F6 is pressed, focus should move back to the Progress navigator, because there is no interactive element in Step 1.");
 
 		// act
-		qutils.triggerKeydown(oButtonStep1.getDomRef(), KeyCodes.F6);
+		qutils.triggerKeydown(oWizard.getDomRef(), KeyCodes.F6);
 
 		// assert
-		assert.notOk(document.activeElement === oInputStep2.getFocusDomRef(), "Focus should not move to the input field in Step 2 after pressing F6 from Button in Step 1.");
-		assert.strictEqual(document.activeElement, oButtonStep2.getFocusDomRef(), "Focus should move to the first button in Step 2 after pressing F6 from Step 1.");
+		assert.notOk(document.activeElement === oInputStep2.getFocusDomRef(), "Focus should not move to the input field in Step 2 after pressing F6 from the Progress Navigator.");
+		assert.strictEqual(document.activeElement, oButtonStep2.getFocusDomRef(), "Focus should move to the first button in Step 2 after pressing F6 from the Progress Navigator.");
+
+		// act
+		qutils.triggerKeydown(oButtonStep2.getDomRef(), KeyCodes.F6);
+
+		// assert
+		assert.strictEqual(document.activeElement, oWizard._getNextButton().getFocusDomRef(), "Focus should move to the Next Step button after pressing F6 from the current interactive element.");
 
 		oWizard.destroy();
 		runAllTimersAndRestore(this.clock);
