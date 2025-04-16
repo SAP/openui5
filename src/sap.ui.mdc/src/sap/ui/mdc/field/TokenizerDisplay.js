@@ -95,6 +95,10 @@ sap.ui.define([
 			return; // on click on token do nothing (on truncated token popover should open)
 		}
 
+		if (oEvent.target.classList.contains("sapMTokenizerIndicator")) {
+			oEvent.setMark("tokenizerMoreIndicatorTap");
+		}
+
 		Tokenizer.prototype.ontap.apply(this, arguments);
 
 	};

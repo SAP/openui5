@@ -122,12 +122,14 @@
 						{
 							"id": "duration",
 							"label": "Duration",
-							"type": "Duration"
+							"type": "Duration",
+							"placeholder": "Select time"
 						},
 						{
 							"id": "date",
 							"label": "Date",
-							"type": "DateRange"
+							"type": "DateRange",
+							"placeholder": "Select date"
 						}
 					]
 				}

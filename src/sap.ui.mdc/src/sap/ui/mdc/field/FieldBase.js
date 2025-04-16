@@ -930,8 +930,8 @@ sap.ui.define([
 
 	FieldBase.prototype.ontap = function(oEvent) {
 
-		if (oEvent.isMarked("tokenTap")) {
-			return; // only open if taped into input area (MultiInput case)
+		if (oEvent.isMarked("tokenTap") || oEvent.getMark("tokenizerMoreIndicatorTap") || oEvent.srcControl.isA("sap.ui.core.Icon")) {
+			return; // only open if taped into input area (MultiInput case) and not at ValueHelp-Icon
 		}
 
 		// in "Select"-case the suggestion help should open on click into field
@@ -1771,6 +1771,7 @@ sap.ui.define([
 		const aLabels = LabelEnablement.getReferencingLabels(this);
 		for (let i = 0; i < aLabels.length; i++) {
 			const oLabel = Element.getElementById(aLabels[i]);
+			oLabel.setLabelFor(oLabel.getLabelFor()); // to force Label to refreh the mapping
 			oLabel.invalidate();
 		}
 

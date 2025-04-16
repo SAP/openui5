@@ -2,14 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/IconPool",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils"
 ], function(
-	ResourceBundle,
 	IconPool,
 	FlexRuntimeInfoAPI,
 	AppVariantWriteAPI,
@@ -19,11 +17,6 @@ sap.ui.define([
 	"use strict";
 
 	const Utils = {};
-
-	const sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
-	const oI18n = ResourceBundle.create({
-		url: `${sModulePath}/i18n/i18n.properties`
-	});
 
 	Utils._checkNavigationSupported = function(oNavigationParams) {
 		const oUShellContainer = FlUtils.getUshellContainer();
@@ -36,7 +29,7 @@ sap.ui.define([
 		});
 	};
 
-	Utils._checkAppType = function(bOriginalApp, bAppVariant) {
+	Utils._checkAppType = function(bOriginalApp, bAppVariant, oI18n) {
 		if (bOriginalApp && bAppVariant) {
 			return oI18n.getText("MAA_ORIGINAL_TYPE");
 		} else if (bAppVariant) {
@@ -48,7 +41,7 @@ sap.ui.define([
 		return undefined;
 	};
 
-	Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus) {
+	Utils._calculateCurrentStatus = function(sAppVariantInfoId, sAppVarStatus, oI18n) {
 		// Get the id of a new created app variant
 		const sNewAppVariantId = AppVariantUtils.getNewAppVariantId();
 
@@ -169,7 +162,7 @@ sap.ui.define([
 		};
 	};
 
-	Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo, bKeyUser) {
+	Utils.getAppVariantOverviewAttributes = function(oAppVariantInfo, bKeyUser, oI18n) {
 		let oAppVariantAttributes;
 		// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
 		const sIconUrl = oAppVariantInfo.iconUrl;
@@ -184,10 +177,10 @@ sap.ui.define([
 		oAppVariantAttributes.isKeyUser = bKeyUser;
 
 		// Type of application required for Overview dialog
-		oAppVariantAttributes.typeOfApp = this._checkAppType(oAppVariantInfo.isOriginal, oAppVariantInfo.isAppVariant);
+		oAppVariantAttributes.typeOfApp = this._checkAppType(oAppVariantInfo.isOriginal, oAppVariantInfo.isAppVariant, oI18n);
 
 		// Calculate current status of application required for Overview Dialog
-		oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId, oAppVariantInfo.appVarStatus);
+		oAppVariantAttributes.currentStatus = this._calculateCurrentStatus(oAppVariantInfo.appId, oAppVariantInfo.appVarStatus, oI18n);
 
 		const bIsS4HanaCloud = FlexRuntimeInfoAPI.isAtoEnabled();
 		// Populate the app variant attributes with the cloud system information
@@ -214,7 +207,7 @@ sap.ui.define([
 		return Promise.resolve(oAppVariantAttributes);
 	};
 
-	Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser) {
+	Utils.getAppVariantOverview = function(sReferenceAppId, bKeyUser, oI18n) {
 		// Customer* means the layer can be either CUSTOMER or CUSTOMER_BASE. This layer determination takes place in backend.
 		const sLayer = bKeyUser ? "CUSTOMER*" : "VENDOR";
 
@@ -236,7 +229,7 @@ sap.ui.define([
 
 			aAppVariantInfo.forEach(function(oAppVariantInfo) {
 				if (!oAppVariantInfo.isDescriptorVariant) {
-					aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo, bKeyUser));
+					aAppVariantOverviewInfo.push(this.getAppVariantOverviewAttributes(oAppVariantInfo, bKeyUser, oI18n));
 				}
 			}, this);
 

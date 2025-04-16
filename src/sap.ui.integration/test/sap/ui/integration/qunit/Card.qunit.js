@@ -2740,16 +2740,15 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("I18n module is initialized with integration library resource bundle", function (assert) {
-			var oModel;
-
+		QUnit.test("I18n module is initialized with integration library resource bundle", async function (assert) {
 			// Arrange
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
 			// Assert
-			oModel = this.oCard.getModel("i18n");
-			assert.strictEqual(oModel.getResourceBundle(), Library.getResourceBundleFor("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
+			const oModel = this.oCard.getModel("i18n");
+			const oResourceBundle = await oModel.getResourceBundle();
+			assert.strictEqual(oResourceBundle, Library.getResourceBundleFor("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
 		});
 
 		QUnit.test("Integration library resource bundle is not enhanced", async function (assert) {
