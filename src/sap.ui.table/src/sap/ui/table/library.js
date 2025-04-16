@@ -34,6 +34,9 @@ sap.ui.define([
 		apiVersion: 2,
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.ui.unified"],
+		...{
+			interactionDocumentation: true
+		},
 		designtime: "sap/ui/table/designtime/library.designtime",
 		types: [
 			/** @deprecated As of version 1.38, the concept has been discarded. */
