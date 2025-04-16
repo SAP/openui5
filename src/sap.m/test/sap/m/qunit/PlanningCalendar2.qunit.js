@@ -3164,7 +3164,7 @@ sap.ui.define([
 				'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">' +
 				'	<PlanningCalendar id="pc" rows="{/people}">' +
 				'		<rows id="idRow">' +
-				'			<PlanningCalendarRow headerContent="{path : \'headerContent\', templateShareable: \'true\'}">' +
+				'			<PlanningCalendarRow headerContent="{path : \'headerContent\', templateShareable: true}">' +
 				'				<headerContent>' +
 				'				<ObjectListItem title="{title}"/>' +
 				'				</headerContent>' +
