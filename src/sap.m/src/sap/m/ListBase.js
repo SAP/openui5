@@ -3130,6 +3130,8 @@ function(
 				aClassList.toggle("sapMSticky", bSticky);
 				aClassList.remove("sapMSticky" + iOldStickyValue);
 				aClassList.toggle("sapMSticky" + iNewStickyValue, bSticky);
+				const oListItemDomRef = document.activeElement.closest(".sapMLIB");
+				oListItemDomRef && this._handleTargetItemFocus(oListItemDomRef);
 			}
 		}
 	};
