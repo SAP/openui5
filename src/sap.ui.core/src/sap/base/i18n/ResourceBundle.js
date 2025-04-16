@@ -479,11 +479,7 @@ sap.ui.define([
 				throw error;
 			}
 		} else {
-			// Use internal factory to bypass async deprecation handling.
-			// This prevents false-positive deprecation warnings in the console
-			// in case the private _createSync has been used and prevents
-			// duplicate warnings in case the public create has been used in sync mode.
-			return createResourceBundle(this._mCreateFactoryParams);
+			return ResourceBundle.create(this._mCreateFactoryParams);
 		}
 	};
 
@@ -881,19 +877,12 @@ sap.ui.define([
 	 *     Note: supportedLocales and fallbackLocale are inherited from the parent ResourceBundle if not present.
 	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
 	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
-	 *     <b>As of version 1.135, synchronous loading is deprecated.</b> The <code>async</code> parameter must have the value <code>true</code>.
+	*     <b>As of version 1.135, synchronous loading is deprecated.</b> The <code>async</code> parameter must have the value <code>true</code>.
 	 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>}
 	 *     A new resource bundle or a Promise on that bundle (in asynchronous case)
 	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
 	 */
 	ResourceBundle.create = function(mParams) {
-		if (mParams?.async !== true) {
-			future.warningThrows("sap/base/i18n/ResourceBundle.create: As of version 1.135, synchronous loading is deprecated. The 'async' parameter must have the value 'true'");
-		}
-		return createResourceBundle(mParams);
-	};
-
-	function createResourceBundle(mParams) {
 		var mOriginalCreateParams = merge({}, mParams);
 
 		mParams = merge({url: "", includeInfo: false}, mParams);
@@ -945,19 +934,6 @@ sap.ui.define([
 			}
 		}
 		return vResourceBundle;
-	}
-
-	/**
-	 * Private synchronous variant of {@link module:sap/base/i18n/ResourceBundle.create}.
-	 *
-	 * @param {object} mParams The configuration for ResourceBundle.create
-	 * @returns {module:sap/base/i18n/ResourceBundle} A new resource bundle
-	 * @private
-	 * @ui5-restricted sap.ui.core.Lib, sap.ui.core.Manifest
-	 */
-	ResourceBundle._createSync = function(mParams) {
-		mParams.async = false;
-		return createResourceBundle(mParams);
 	};
 
 	/**
