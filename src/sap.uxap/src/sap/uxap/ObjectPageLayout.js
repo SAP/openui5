@@ -5193,6 +5193,7 @@ sap.ui.define([
 
 			if (sRole === AccessibleLandmarkRole.None) {
 				sRole = '';
+				sLabel = '';
 			}
 
 			return {
