@@ -44,10 +44,13 @@
 .sapUiTableVSb {
 	width: 100%;
 	position: absolute;
+	bottom: 0;
 	overflow-x: hidden;
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: auto;
 	background-color: var(--sapList_Background);
+	border-top: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
+	border-bottom: @_sap_ui_table_BaseBorderWidth solid var(--sapList_HeaderBorderColor);
 }
 
 .sapUiTableVSbHeader {
