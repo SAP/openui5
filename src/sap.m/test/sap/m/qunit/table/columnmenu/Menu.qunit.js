@@ -635,7 +635,7 @@ sap.ui.define([
 		assert.equal(oIllustratedMessage.getTitle(), this.oColumnMenu._getResourceText("table.COLUMNMENU_EMPTY"), "Illustrated message has a title");
 		assert.equal(oIllustratedMessage.getDescription(), "", "Illustrated message does not have a description");
 		assert.equal(oIllustratedMessage.getIllustrationType(), library.IllustratedMessageType.NoColumnsSet, "Illustrated message has the correct illustration type");
-		assert.equal(oIllustratedMessage.getIllustrationSize(), library.IllustratedMessageSize.Dot, "Illustrated message has the correct illustration size");
+		assert.equal(oIllustratedMessage.getIllustrationSize(), library.IllustratedMessageSize.ExtraSmall, "Illustrated message has the correct illustration size");
 		assert.ok(oIllustratedMessage.getDomRef(), "Illustrated message is rendered");
 		this.oColumnMenu.close();
 		await menuClosed(this.oColumnMenu);
