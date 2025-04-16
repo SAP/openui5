@@ -231,13 +231,15 @@ sap.ui.define([
 				}),
 				new NavigationListItem({
 					text: 'Root 3',
+					tooltip: 'Root 3 - custom tooltip',
 					icon: 'sap-icon://employee',
 					items: [
 						new NavigationListItem({
 							text: 'Child 1'
 						}),
 						new NavigationListItem({
-							text: 'Child 2'
+							text: 'Child 2',
+							tooltip: 'Child 2 - custom tooltip'
 						}),
 						new NavigationListItem({
 							text: 'Child 3'
@@ -1394,6 +1396,8 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(bIsExternalLinkRendered, "External link icon is rendered in the overflow");
+		assert.strictEqual(menuDomRef.children[0].children[1].title, "Root 2", "The default tooltip of the second item in the overflow menu is correct");
+		assert.strictEqual(menuDomRef.children[0].children[2].title, "Root 3 - custom tooltip", "The custom tooltip of the third item in the overflow menu is correct");
 
 		menu = Element.closestTo(menuDomRef);
 
@@ -1473,6 +1477,9 @@ sap.ui.define([
 		assert.notOk(menu.getItems()[7].getDomRef().querySelector(".sapUiMnuItmSbMnu").classList.contains("sapTntNLIExpandIcon"), "correct class is added to the expand icon in the menu item");
 
 		menu.openSubmenu(menu.getItems()[2]);
+
+		assert.strictEqual(document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2].title, "Child 3", "The correct default tooltip is set");
+		assert.strictEqual(document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[1].title, "Child 2 - custom tooltip", "The correct default tooltip is set");
 		QUnitUtils.triggerEvent("click",  document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2]);
 		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
 
