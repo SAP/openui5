@@ -2733,7 +2733,7 @@ function(
 
 	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
 	ListBase.prototype._handleStickyItemFocus = function(oItemDomRef) {
-		if (!this._iStickyValue) {
+		if (!this._iStickyValue || !oItemDomRef.isConnected) {
 			return;
 		}
 
@@ -2780,7 +2780,7 @@ function(
 		var iItemTop = Math.round(oItemDomRef.getBoundingClientRect().top);
 		if (iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
+				oItemDomRef.isConnected && oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
 			});
 		}
 	};
@@ -2975,6 +2975,8 @@ function(
 				aClassList.toggle("sapMSticky", !!iNewStickyValue);
 				aClassList.remove("sapMSticky" + iOldStickyValue);
 				aClassList.toggle("sapMSticky" + iNewStickyValue, !!iNewStickyValue);
+				var oListItemDomRef = document.activeElement.closest(".sapMLIB");
+				oListItemDomRef && setTimeout(this._handleStickyItemFocus.bind(this, oListItemDomRef));
 			}
 		}
 	};
