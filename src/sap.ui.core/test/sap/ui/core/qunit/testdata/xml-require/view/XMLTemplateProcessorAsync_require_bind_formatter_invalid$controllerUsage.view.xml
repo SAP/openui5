@@ -3,7 +3,7 @@
 	xmlns="sap.m" displayBlock="true">
 	<App>
 		<Page title="Hello">
-			<!-- ui5lint-disable-next-line no-globals // global '$controller' is used as true positive in test -->
+			<!-- ui5lint-disable-next-line no-globals --><!-- global '$controller' is used as true positive in test -->
 			<Button id="btn_1" text="{path: '/buttonText', formatter: '$controller.formatter'}"/>
 		</Page>
 	</App>

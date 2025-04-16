@@ -1,4 +1,4 @@
 <mvc:View xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
-	<!-- ui5lint-disable-next-line no-globals // global 'Toast' is used as true positive in test -->
+	<!-- ui5lint-disable-next-line no-globals --><!-- global 'Toast' is used as true positive in test -->
 	<Button id="noRequireBtn" text="Close" press="Toast.show('Do you really want to close?')" />
 </mvc:View>

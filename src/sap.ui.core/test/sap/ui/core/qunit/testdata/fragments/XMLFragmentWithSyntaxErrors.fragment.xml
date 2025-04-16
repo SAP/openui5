@@ -1,4 +1,4 @@
 <core:FragmentDefinition xmlns:core="sap.ui.core" xmlns:m="sap.m">
-	<!-- ui5lint-disable-next-line parsing-error // missing brace '}' is used as true positive in test -->
+	<!-- ui5lint-disable-next-line parsing-error --><!-- missing brace '}' is used as true positive in test -->
 	<m:Button id="brokenButton" text="{This should cause a parse error"></m:Button>
 </core:FragmentDefinition>
