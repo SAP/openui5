@@ -3788,6 +3788,13 @@ sap.ui.define([
 			}
 			if (vBindingInfo.templateShareable === undefined) {
 				vBindingInfo.templateShareable = MAYBE_SHAREABLE_OR_NOT;
+			} else if (typeof vBindingInfo.templateShareable === "string") {
+				Log.warning(`Parameter 'templateShareable' is defined with type boolean but is set for binding template ${vBindingInfo.template.toString()} with string value "${vBindingInfo.templateShareable}". This can easily lead to errors. To avoid unintended behavior, always set the parameter to true or false`);
+				if (vBindingInfo.templateShareable === "true") {
+					vBindingInfo.templateShareable = true;
+				} else if (vBindingInfo.templateShareable === "false") {
+					vBindingInfo.templateShareable = false;
+				}
 			}
 		}
 		vBindingInfo = BindingInfo.createAggregation(vBindingInfo, oAggregationInfo._doesNotRequireFactory);
