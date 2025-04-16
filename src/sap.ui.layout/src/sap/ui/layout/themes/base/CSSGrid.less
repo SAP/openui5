@@ -1,7 +1,7 @@
-/* ============================================= */
-/* CSS for control sap.ui.layout/cssgrid.CSSGrid */
-/* Base theme                                    */
-/* ============================================= */
+/* ============================================== */
+/* CSS for control sap.ui.layout/cssgrid.CSSGrid  */
+/* Base theme                                     */
+/* ============================================== */
 
 .sapUiLayoutCSSGrid {
 	box-sizing: border-box;
@@ -24,8 +24,9 @@
 
 /* Mixins */
 
-// Mixin to generate breakpoints. */
+/* Mixin to generate breakpoints. */
 .sapUiLayoutCSSGridBoxLayoutGenerateBreakpoints(@size, @counter: 0, @i: 1) when (@i =< 12) {
+
 	&.sapUiLayoutCSSGridBoxLayoutSize@{size}.sapUiLayoutCSSGridBoxLayoutSpan@{size}@{i} {
 		grid-template-columns: repeat(auto-fit, minmax(calc(~"(100% - @{counter} * 0.5rem - 1px) / @{i}"), 1fr));
 	}
@@ -34,9 +35,9 @@
 }
 
 .sapUiLayoutCSSGrid .sapUiBlockLayerTabbable {
-	// There are "span" helpers, which purpose is to block navigation into the blocked controls content.
-	// If the focus reaches the span before the blocked/busy control it is forwarded to the one after the control.
-	// These spans should not be visible.
+	/* There are "span" helpers, which purpose is to block navigation into the blocked controls content.
+	If the focus reaches the span before the blocked/busy control it is forwarded to the one after the control.
+	These spans should not be visible. */
 	position: absolute;
 }
 
@@ -56,14 +57,14 @@
 		@pair: extract(@_sap_ui_layout_CSSGrid_RCLColumns, @i);
 		@rangeName: extract(@pair, 1);
 		@columns: extract(@pair, 2);
-	
+
 		.sapUiLayoutCSSGridRCL-Layout@{rangeName} &,
 		.sapUiLayoutCSSGridRCL-Layout@{rangeName}& {
-			grid-template-columns: repeat(@columns, minmax(0px, 1fr));
+			grid-template-columns: repeat(@columns, minmax(0, 1fr));
 			grid-gap: 1rem;
 		}
-	
-		.generateBreakpoint(@i + 1); // next iteration
+
+		.generateBreakpoint(@i + 1); /* next iteration */
 	}
 
 	.generateBreakpoint();
