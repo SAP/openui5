@@ -12,7 +12,7 @@
 	<Text id="xmlDialogTxt" text="test" />
 	<buttons>
 		<Button id="button1" text="Close" press="Box.show('Do you really want to close?')" />
-		<!-- ui5lint-disable-next-line no-globals // global 'Toast' is used as true positive in test -->
+		<!-- ui5lint-disable-next-line no-globals --><!-- global 'Toast' is used as true positive in test -->
 		<Button id="button2" text="Toast" press="Toast.show('This is a toast')" />
 	</buttons>
 </Dialog>
