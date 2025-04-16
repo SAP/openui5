@@ -14,12 +14,12 @@
  *
 **/
 
-@_sap_ui_layout_Splitter_BarActiveDecorationColors: @sapUiHighlight, @sapUiHighlight;
-@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiHighlight, fade(@sapUiHighlight, 0);
-@_sap_ui_layout_Splitter_BarBorder: 0.0625rem solid @sapUiGroupContentBorderColor;
-@_sap_ui_layout_Splitter_BarHoverIconBorderColor: @sapUiButtonLiteBorderColor;
-@_sap_ui_layout_Splitter_BarHoverIconBackground: @sapUiButtonLiteBackground;
-@_sap_ui_layout_Splitter_GripButtonColor: @sapUiContentIconColor;
+@_sap_ui_layout_Splitter_BarActiveDecorationColors: var(--sapHighlightColor), var(--sapHighlightColor);
+@_sap_ui_layout_Splitter_BarDecorationColors: var(--sapHighlightColor), fade(@sapUiHighlight, 0);
+@_sap_ui_layout_Splitter_BarBorder: 0.0625rem solid var(--sapGroup_ContentBorderColor);
+@_sap_ui_layout_Splitter_BarHoverIconBorderColor: var(--sapButton_Lite_BorderColor);
+@_sap_ui_layout_Splitter_BarHoverIconBackground: var(--sapButton_Lite_Background);
+@_sap_ui_layout_Splitter_GripButtonColor: var(--sapContent_IconColor);
 
 /********************************************* General ********************************************/
 
@@ -43,7 +43,7 @@
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	user-select: none;
-	background-color: @sapUiShellBackground;
+	background-color: var(--sapShell_Background);
 	box-sizing: border-box;
 }
 
@@ -131,18 +131,19 @@
 
 		.sapUiLoSplitterBarGripIcon {
 			cursor: col-resize;
-			line-height: 1.625rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth; // center the icon vertically
+			line-height: 1.625rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth; /* center the icon vertically */
 			box-sizing: border-box;
 			height: 1.625rem;
 			width: 1.5rem;
 			margin-top: 3px;
-			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
-			border-radius: @sapUiButtonBorderCornerRadius;
-			background: @sapUiButtonLiteBackground;
+			border: var(--sapButton_BorderWidth) solid var(--sapButton_Lite_BorderColor);
+			border-radius: var(--sapButton_BorderCornerRadius);
+			background: var(--sapButton_Lite_Background);
 		}
 	}
 
 	&:hover {
+
 		.sapUiLoSplitterBarDecorationBefore,
 		.sapUiLoSplitterBarDecorationAfter {
 			flex-grow: 1;
@@ -157,6 +158,7 @@
 }
 
 .sapUiLoSplitter.sapUiLoSplitterH > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+
 	.sapUiLoSplitterBarDecorationBefore {
 		flex-grow: 1;
 		background-image: linear-gradient(to top, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
@@ -225,13 +227,14 @@
 			height: 1.5rem;
 			line-height: 1.5rem - @sapUiButtonBorderWidth - @sapUiButtonBorderWidth; // center the icon vertically
 			margin-left: 3px;
-			border: @sapUiButtonBorderWidth solid @sapUiButtonLiteBorderColor;
-			border-radius: @sapUiButtonBorderCornerRadius;
-			background: @sapUiButtonLiteBackground;
+			border: var(--sapButton_BorderWidth) solid var(--sapButton_Lite_BorderColor);
+			border-radius: var(--sapButton_BorderCornerRadius);
+			background: var(--sapButton_Lite_Background);
 		}
 	}
 
 	&:hover {
+
 		.sapUiLoSplitterBarDecorationBefore,
 		.sapUiLoSplitterBarDecorationAfter {
 			flex-grow: 1;
@@ -246,6 +249,7 @@
 }
 
 .sapUiLoSplitter.sapUiLoSplitterV > .sapUiLoSplitterOverlay .sapUiLoSplitterOverlayBar {
+
 	.sapUiLoSplitterBarDecorationBefore {
 		flex-grow: 1;
 		background-image: linear-gradient(to left, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
@@ -268,13 +272,13 @@
 	}
 
 	&:focus::after {
-		content: "";
+		content: '';
 		display: block;
 		position: absolute;
 		top: 0;
 		right: 0;
 		bottom: 0;
 		left: 0;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	}
 }
