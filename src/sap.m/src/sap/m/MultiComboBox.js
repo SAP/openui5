@@ -646,7 +646,7 @@ function(
 
 		//Open popover with items if in readonly mode and has Nmore indicator
 		if (!this.getEditable() && oTokenizer.getHiddenTokensCount() && oEvent.target === this.getFocusDomRef()) {
-			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
+			oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
 		}
 
 	};
@@ -2082,7 +2082,7 @@ function(
 			oPicker = this.getPicker();
 			oPicker.open();
 		} else {
-			oTokenizer._togglePopup(oTokenizer.getTokensPopup());
+			oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
 		}
 
 		if (this.isPickerDialog()) {
