@@ -534,17 +534,6 @@ sap.ui.define([
 		//Setting invisible text
 		this._oInvisibleText = new InvisibleText();
 		this._oInvisibleText.toStatic();
-		this._oIllustratedMessage = this.getAggregation("illustratedMessage");
-		if (!this._oIllustratedMessage) {
-			this._oIllustratedMessage = new IllustratedMessage({
-				illustrationType: this.getNoDataIllustrationType(),
-				illustrationSize: IllustratedMessageSize.Auto,
-				title: this.getNoDataText(),
-				description: this.getNoDataDescription()
-			});
-		}
-		this._oIllustratedMessage.addIllustrationAriaLabelledBy(this._oInvisibleText.getId());
-		this.setAggregation("illustratedMessage", this._oIllustratedMessage);
 		this._oInvisibleText.setText(this._oRb.getText("UPLOAD_SET_ILLUSTRATED_MESSAGE"));
 		this._cloudFilePickerControl = null;
 		this._oListEventDelegate = null;
@@ -590,8 +579,8 @@ sap.ui.define([
 		this._aGroupHeadersAdded = [];
 		this._clearGroupHeaders();
 		this._fillListWithUploadSetItems(this.getItems());
-		if (this._initialIllustrationClone) {
-			this._oIllustratedMessageClone = this.getAggregation("illustratedMessage").clone();
+		if (this._initialIllustrationClone && this.getAggregation("illustratedMessage")) {
+			this._oIllustratedMessageClone = this.getAggregation("illustratedMessage")?.clone();
 			this._initialIllustrationClone = false;
 		}
 	};
@@ -629,6 +618,16 @@ sap.ui.define([
 			} else {
 				aList.getDomRef().querySelector(".sapMUCNoDataPage").focus();
 			}
+		}
+		if (!this._oIllustratedMessage) {
+			this._oIllustratedMessage = new IllustratedMessage({
+				illustrationType: this.getNoDataIllustrationType(),
+				illustrationSize: IllustratedMessageSize.Auto,
+				title: this.getNoDataText(),
+				description: this.getNoDataDescription()
+			});
+			this._oIllustratedMessage.addIllustrationAriaLabelledBy(this._oInvisibleText.getId());
+			this.setAggregation("illustratedMessage", this._oIllustratedMessage);
 		}
 
 		if (this.getCloudFilePickerEnabled()) {
@@ -770,6 +769,9 @@ sap.ui.define([
 	UploadSet.prototype._setListNoDataText = function (sText, bIsDescription) {
 		var sNoDataText = "";
 		var oIllustratedMessage = this.getAggregation("illustratedMessage");
+		if (!oIllustratedMessage) {
+			return "";
+		}
 		if (!sText) {
 			sNoDataText = oIllustratedMessage.getTitle() + " " + oIllustratedMessage.getDescription();
 		} else if (sText) {

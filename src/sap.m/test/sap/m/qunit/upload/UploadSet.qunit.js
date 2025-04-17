@@ -2241,6 +2241,8 @@ sap.ui.define([
 			beforeEach: function () {
 				this.$RootNode = jQuery(document.body);
 				this.oUploadSet = new UploadSet("uploadSet", {
+					noDataText: 'Hello',
+					noDataDescription: 'World',
 					items: {
 						path: "/items",
 						template: TestUtils.createItemTemplate(),
@@ -2360,6 +2362,12 @@ sap.ui.define([
 				assert.equal(oItem.getUploadType(),UploadType.Cloud,"Item has been uploaded from cloud");
 				done();
 			});
+		});
+
+		QUnit.test("noDataText and noDataDescription is picked up correctly", function (assert) {
+			assert.ok(this.oUploadSet._oIllustratedMessage, "Illustrated message is created");
+			assert.ok(this.oUploadSet._oIllustratedMessage.getTitle() === 'Hello', "Title is set");
+			assert.ok(this.oUploadSet._oIllustratedMessage.getDescription() === 'World', "Description is set");
 		});
 	})
 	.catch(function () {
