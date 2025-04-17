@@ -2029,7 +2029,7 @@ sap.ui.define([
 			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA_WITH_FILTERBAR"),
 				"'To start, set the relevant filters.' is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.SearchEarth);
+			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.BeforeSearch);
 		}.bind(this));
 	});
 
@@ -2049,7 +2049,7 @@ sap.ui.define([
 		return this.oTable.initialized().then(function() {
 			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 			assert.strictEqual(this.oTable._oTable.getNoData().getTitle(), oRb.getText("table.NO_DATA"), "'No data available' is displayed");
-			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.EmptyList);
+			assert.strictEqual(this.oTable._oTable.getNoData().getIllustrationType(), IllustratedMessageType.NoEntries);
 		}.bind(this));
 	});
 

@@ -11,7 +11,7 @@
 		}" />
 
 		<!-- unknown type -->
-		<!-- ui5lint-disable-next-line no-globals // global 'sap.ui.non.existing.Type' used by test as true positive -->
+		<!-- ui5lint-disable-next-line no-globals --><!-- global 'sap.ui.non.existing.Type' used by test as true positive -->
 		<m:Input id="inputField_invalidType" value="{path:'/value', type:'sap.ui.non.existing.Type'}" />
 
 		<!-- custom data-->

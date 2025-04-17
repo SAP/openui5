@@ -19,7 +19,8 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.m.sample.simpleForm.i18n"
+					"bundleName": "sap.m.sample.simpleForm.i18n",
+					"async": true
 				}
 			}
 		}

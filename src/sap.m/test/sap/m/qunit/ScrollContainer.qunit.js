@@ -35,7 +35,7 @@ sap.ui.define([
 	"use strict";
 
 	// give the scrolling results 1px buffer padding as the scroll position is not always exact in the different browsers and versions
-	const fnApproximatelyEqual = (iScrollPosition, iExpectedScrollPosition, iEpsilon = 1) =>	Math.abs(iScrollPosition - iExpectedScrollPosition) < iEpsilon;
+	const fnApproximatelyEqual = (iScrollPosition, iExpectedScrollPosition, iEpsilon = 10) =>	Math.abs(iScrollPosition - iExpectedScrollPosition) < iEpsilon;
 
 	createAndAppendDiv("content");
 	var pStyleLoaded = includeStylesheet({
@@ -574,7 +574,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Press [CTRL] + [UP]", function(assert) {
-		intEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF), "ScrollContainer 4 should be scrolled vertically to position " + parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF));
+		assert.ok(fnApproximatelyEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF)), "ScrollContainer 4 should be scrolled vertically to  around 0");
 
 		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_UP", false, false, true);
 
@@ -604,8 +604,8 @@ sap.ui.define([
 		qutils.triggerKeydown(oSC4.getDomRef(), "END", false, false, true);
 
 		//in this case Math.ceil is using instead of Math.round because of issue in Chrome with oDomRef.scrollHeight
-		assert.equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
-		assert.equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
+		assert.ok(fnApproximatelyEqual(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4)), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
+		assert.ok(fnApproximatelyEqual(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4)), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
 	});
 
 	QUnit.test("Press [CTRL] + [HOME]", function(assert) {

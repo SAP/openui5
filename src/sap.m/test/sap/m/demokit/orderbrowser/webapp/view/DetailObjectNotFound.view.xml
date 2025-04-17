@@ -13,7 +13,7 @@
 		navButtonPress=".onNavBack">
 		<IllustratedMessage
 			title="{i18n>noObjectFoundText}"
-			illustrationType="sapIllus-SearchEarth"
+			illustrationType="sapIllus-BeforeSearch"
 			enableDefaultTitleAndDescription="false"/>
 	</Page>
 </mvc:View>

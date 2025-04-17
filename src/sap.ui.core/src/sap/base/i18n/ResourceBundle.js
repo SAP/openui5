@@ -873,6 +873,7 @@ sap.ui.define([
 		 *     Note: supportedLocales and fallbackLocale are inherited from the parent ResourceBundle if not present.
 		 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
 		 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
+		*     <b>As of version 1.135, synchronous loading is deprecated.</b> The <code>async</code> parameter must have the value <code>true</code>.
 		 * @returns {module:sap/base/i18n/ResourceBundle|Promise<module:sap/base/i18n/ResourceBundle>}
 		 *     A new resource bundle or a Promise on that bundle (in asynchronous case)
 		 * @SecSink {0|PATH} Parameter is used for future HTTP requests
