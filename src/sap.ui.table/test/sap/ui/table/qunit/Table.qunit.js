@@ -1810,8 +1810,8 @@ sap.ui.define([
 			"Top right table has 2 rows");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll.sapUiTableCtrlRowScroll tbody tr").length, 6,
 			"Bottom right table has 6 rows");
-		assert.equal($table.find(".sapUiTableVSb").css("top"), (2 * oTable._getBaseRowHeight() - 1) + "px",
-			"Vertical scrollbar has correct top padding");
+		assert.equal($table.find(".sapUiTableVSb").css("bottom"), "0px",
+			"Vertical scrollbar is positioned correctly");
 	});
 
 	QUnit.module("Fixed top and bottom rows and columns", {
@@ -1862,8 +1862,8 @@ sap.ui.define([
 			"Left fixed bottom table has 2 rows");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScr .sapUiTableCtrlRowFixedBottom tbody tr").length, 2,
 			"Right fixed bottom table has 2 rows");
-		assert.equal($table.find(".sapUiTableVSb").css("top"), (2 * oTable._getBaseRowHeight() - 1) + "px",
-			"Vertical scrollbar has correct top padding");
+		assert.equal($table.find(".sapUiTableVSb").css("bottom"), (2 * oTable._getBaseRowHeight()) + "px",
+			"Vertical scrollbar is positioned correctly");
 		assert.equal($table.find(".sapUiTableVSb").css("height"), (oTable.getDomRef("table").offsetHeight) + "px",
 			"Vertical scrollbar has correct height");
 	});

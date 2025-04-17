@@ -1206,7 +1206,6 @@ sap.ui.define([
 
 	TableRenderer.renderVSb = function(rm, oTable, mConfig) {
 		const oScrollExtension = oTable._getScrollExtension();
-		const mRowCounts = oTable._getRowCounts();
 
 		mConfig = Object.assign({
 			tabIndex: true
@@ -1218,16 +1217,12 @@ sap.ui.define([
 			rm.class("sapUiTableHidden");
 		}
 		rm.class(mConfig.cssClass);
-		const iHeaderHeight = oTable._collectRowHeights(true).reduce((iSum, iHeight) => iSum + iHeight, 0) + 1;
-		rm.style("margin-top", iHeaderHeight + "px");
 		rm.openEnd();
 
 		rm.openStart("div", oTable.getId() + "-vsb");
 		rm.class("sapUiTableVSb");
 		rm.style("max-height", oScrollExtension.getVerticalScrollbarHeight() + "px");
-		if (mRowCounts.fixedTop > 0) {
-			rm.style("top", mRowCounts.fixedTop * oTable._getBaseRowHeight() - 1 + "px");
-		}
+
 		if (mConfig.tabIndex) {
 			// https://bugzilla.mozilla.org/show_bug.cgi?id=1069739
 			// Avoid focusing of the scrollbar in Firefox with tab.
