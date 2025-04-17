@@ -127,7 +127,8 @@ sap.ui.define([
 							}
 							return undefined;
 						},
-						getPropagateActions: () => []
+						getPropagateActions: () => [],
+						getName: () => ({ singular: "Button" })
 					};
 				}
 			};
@@ -185,7 +186,8 @@ sap.ui.define([
 							}
 							return undefined;
 						},
-						getPropagateActions: () => []
+						getPropagateActions: () => [],
+						getName: () => ({ singular: "Button" })
 					};
 				}
 			};
@@ -231,7 +233,8 @@ sap.ui.define([
 							}
 							return undefined;
 						},
-						getPropagateActions: () => []
+						getPropagateActions: () => [],
+						getName: () => ({ singular: "Button" })
 					};
 				}
 			};
@@ -262,7 +265,8 @@ sap.ui.define([
 							}
 							return undefined;
 						},
-						getPropagateActions: () => []
+						getPropagateActions: () => [],
+						getName: () => ({ singular: "Button" })
 					};
 				}
 			};
@@ -302,7 +306,8 @@ sap.ui.define([
 							}
 							return undefined;
 						},
-						getPropagateActions: () => []
+						getPropagateActions: () => [],
+						getName: () => ({ singular: "Button" })
 					};
 				}
 			};
@@ -328,7 +333,8 @@ sap.ui.define([
 					return {
 						getAggregation: () => { return { dummyMetadata: true }; },
 						getAction: (sAction) => { return { changeType: `changeType-${sAction}` }; },
-						getPropagateActions: () => ["myAction", { action: "myAction2", isActive: true }]
+						getPropagateActions: () => ["myAction", { action: "myAction2", isActive: true }],
+						getName: () => ({ singular: "MyButton" })
 					};
 				}
 			};
@@ -341,9 +347,14 @@ sap.ui.define([
 		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called", function(assert) {
 			var mResultData = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oButtonOverlay, "myAggregation");
 			assert.strictEqual(
-				mResultData.propagationInfos[0].propagatedActionInfo.parent.getId(),
+				mResultData.propagationInfos[0].propagatedActionInfo.propagatingControl.getId(),
 				this.oButton.getId(),
 				"then the action parent is properly set"
+			);
+			assert.strictEqual(
+				mResultData.propagationInfos[0].propagatedActionInfo.propagatingControlName,
+				"MyButton",
+				"then the parent name is properly set"
 			);
 			assert.strictEqual(
 				mResultData.propagationInfos[0].propagatedActionInfo.actions[0].name,
@@ -369,6 +380,20 @@ sap.ui.define([
 				mResultData.propagationInfos[0].propagatedActionInfo.actions[1].isActive,
 				true,
 				"then the second action isActive property is properly set"
+			);
+		});
+		QUnit.test("when 'propagateMetadataToAggregationOverlay' is called and the control has no name defined in DT metadata", function(assert) {
+			sandbox.stub(this.oButtonOverlay, "getDesignTimeMetadata").returns({
+				getAggregation: () => { return { dummyMetadata: true }; },
+				getAction: (sAction) => { return { changeType: `changeType-${sAction}` }; },
+				getPropagateActions: () => ["myAction", { action: "myAction2", isActive: true }],
+				getName: () => (undefined)
+			});
+			var mResultData = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(this.oButtonOverlay, "myAggregation");
+			assert.strictEqual(
+				mResultData.propagationInfos[0].propagatedActionInfo.propagatingControlName,
+				"Button",
+				"then the parent name is properly set"
 			);
 		});
 	});
@@ -468,7 +493,8 @@ sap.ui.define([
 				"sap.m.Button", null, null, null
 			);
 			this.oPropagatedActionInfo = {
-				parent: this.oElement,
+				propagatingControl: this.oElement,
+				propagatingControlName: "Button",
 				actions: [
 					{
 						name: "myPropagatedAction",
@@ -555,12 +581,22 @@ sap.ui.define([
 			assert.strictEqual(
 				mResultData.propagatedActions[0].propagatingControl.getId(),
 				this.oElement.getId(),
-				"then propagated action target is set"
+				"then propagating control is set"
+			);
+			assert.strictEqual(
+				mResultData.propagatedActions[0].propagatingControlName,
+				"Button",
+				"then propagating control name is set"
 			);
 			assert.strictEqual(
 				mResultData.propagatedActions[1].propagatingControl.getId(),
 				this.oElement.getId(),
-				"then other propagated action target is set"
+				"then propagating control is set"
+			);
+			assert.strictEqual(
+				mResultData.propagatedActions[1].propagatingControlName,
+				"Button",
+				"then propagating control name is set"
 			);
 			assert.strictEqual(
 				mResultData.propagatedActions.length,

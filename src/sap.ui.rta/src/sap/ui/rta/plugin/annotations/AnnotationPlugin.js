@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
@@ -16,6 +17,7 @@ sap.ui.define([
 	BaseLog,
 	DesignTime,
 	JsControlTreeModifier,
+	OverlayRegistry,
 	DtUtil,
 	PersistenceWriteAPI,
 	Utils,
@@ -50,9 +52,9 @@ sap.ui.define([
 		}
 	}
 
-	function getActionText(oElementOverlay, oAction) {
+	function getActionText(oElementOverlay, oAction, oPropagatingControl) {
 		const vName = oAction.title;
-		const oElement = oElementOverlay.getElement();
+		const oElement = oPropagatingControl || oElementOverlay.getElement();
 		if (vName) {
 			if (typeof vName === "function") {
 				return vName(oElement);
@@ -234,6 +236,7 @@ sap.ui.define([
 		const oElementOverlay = aElementOverlays[0];
 		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
 		const oAnnotationActionMap = this.getAction(oResponsibleElementOverlay);
+		const oPropagatedAnnotationAction = this.getPropagatedAction(oElementOverlay);
 
 		const aMenuItems = [];
 		if (oAnnotationActionMap) {
@@ -266,6 +269,44 @@ sap.ui.define([
 							|| (oAction.isEnabled !== false) && this.isEnabled(aElementOverlays)
 						),
 						handler: this.handler.bind(this, aElementOverlays, oAction)
+					});
+				}
+			}, this);
+		}
+		// TODO todos#8
+		// Improve handling of context menu items for propagated actions
+		if (oPropagatedAnnotationAction) {
+			Object.entries(oPropagatedAnnotationAction.action).forEach(function([sKey, oAction], iIndex) {
+				const oPropagatingControlOverlay = OverlayRegistry.getOverlay(oPropagatedAnnotationAction.propagatingControl);
+				const sPluginId = oAction.type === AnnotationTypes.StringType && oAction.singleRename
+					? sPluginIdSingleLabelChange
+					: sPluginIdDefault;
+				const iRank = this.getRank(sPluginId);
+				if (
+					this.isAvailable([oPropagatingControlOverlay])
+					&& checkDesigntimeActionProperties(oAction)
+				) {
+					const sActionText = getActionText(
+						oResponsibleElementOverlay,
+						oAction,
+						oPropagatedAnnotationAction.propagatingControl
+					);
+					if (!sActionText) {
+						return;
+					}
+
+					aMenuItems.push({
+						id: `${sPluginId}_${sKey}`,
+						rank: iRank + iIndex,
+						text: sActionText,
+						icon: getActionIcon(oAction),
+						enabled: (
+							typeof oAction.isEnabled === "function" && oAction.isEnabled(oPropagatingControlOverlay.getElement())
+							|| (oAction.isEnabled !== false) && this.isEnabled([oPropagatingControlOverlay])
+						),
+						handler: this.handler.bind(this, [oPropagatingControlOverlay], oAction),
+						propagatingControl: oPropagatedAnnotationAction.propagatingControl,
+						propagatingControlName: oPropagatedAnnotationAction.propagatingControlName
 					});
 				}
 			}, this);
