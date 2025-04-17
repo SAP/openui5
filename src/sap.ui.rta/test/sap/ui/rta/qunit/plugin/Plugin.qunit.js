@@ -2,50 +2,58 @@
 
 sap.ui.define([
 	"sap/m/Button",
-	"sap/m/Label",
-	"sap/m/Input",
-	"sap/m/List",
 	"sap/m/CustomListItem",
+	"sap/m/Input",
+	"sap/m/Label",
+	"sap/m/List",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Component",
 	"sap/ui/core/Title",
+	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/plugin/Rename",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
-	Label,
-	Input,
-	List,
 	CustomListItem,
+	Input,
+	Label,
+	List,
+	XMLView,
+	Component,
 	Title,
+	UIComponent,
 	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
 	ChangesWriteAPI,
 	FlexUtils,
-	VerticalLayout,
 	Form,
 	FormContainer,
 	SimpleForm,
+	VerticalLayout,
+	JSONModel,
+	nextUIUpdate,
 	CommandFactory,
 	Plugin,
 	Remove,
 	Rename,
-	JSONModel,
-	sinon,
-	nextUIUpdate
+	Utils,
+	sinon
 ) {
 	"use strict";
 
@@ -854,7 +862,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given this the Plugin is initialized.", {
+	QUnit.module("Given that the Plugin is initialized.", {
 		async beforeEach(assert) {
 			this.oTitle0 = new Title();
 			this.oLabel0 = new Label();
@@ -946,6 +954,116 @@ sap.ui.define([
 				}
 			});
 			assert.notOk(this.oPlugin.hasStableId(this.oFormContainerOverlay), "then it returns false");
+		});
+	});
+
+	QUnit.module("Given a plugin", {
+		async beforeEach(assert) {
+			const fnDone = assert.async();
+			this.oPlugin = new Plugin();
+			const oButton = new Button("button");
+			this.oLayout = new VerticalLayout({
+				content: [
+					oButton
+				]
+			}).placeAt("qunit-fixture");
+			this.oDesignTime = new DesignTime({
+				rootElements: [
+					this.oLayout
+				],
+				plugins: [this.oPlugin]
+			});
+			this.oDesignTime.attachEventOnce("synced", () => {
+				this.oButtonOverlay = OverlayRegistry.getOverlay(oButton);
+				fnDone();
+			});
+			this.oComponent = await Component.create({
+				name: "testComponent",
+				id: "testComponent",
+				metadata: {
+					manifest: "json"
+				}
+			});
+		},
+		afterEach() {
+			this.oLayout.destroy();
+			this.oPlugin.destroy();
+			this.oDesignTime.destroy();
+			this.oComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when isInReuseComponentOnS4HanaCloud is called and the control is in reuse component and on S4 Hana Cloud", function(assert) {
+			sandbox.stub(FlexUtils, "getComponentForControl").returns(this.oComponent);
+
+			const oParentComponent = new (UIComponent.extend("component", {
+				metadata: {
+					manifest: {
+						"sap.ui5": {
+							componentUsages: {
+								reuseComponent: {
+									name: "testComponent"
+								}
+							}
+						}
+					}
+				}
+			}))();
+
+			sandbox.stub(FlexUtils, "getAppComponentForControl")
+			.callThrough()
+			.withArgs(this.oComponent)
+			.returns(oParentComponent);
+
+			sandbox.stub(this.oComponent, "getManifest")
+			.returns({
+				"sap.app": {
+					id: "testComponent"
+				}
+			});
+
+			sandbox.stub(Utils, "isS4HanaCloud").returns(true);
+			assert.ok(this.oPlugin.isInReuseComponentOnS4HanaCloud(this.oButtonOverlay), "then it returns true");
+		});
+
+		QUnit.test("when isInReuseComponentOnS4HanaCloud is called and the control is in reuse component but not on S4 Hana Cloud", function(assert) {
+			sandbox.stub(FlexUtils, "getComponentForControl").returns(this.oComponent);
+
+			const oParentComponent = new (UIComponent.extend("component", {
+				metadata: {
+					manifest: {
+						"sap.ui5": {
+							componentUsages: {
+								reuseComponent: {
+									name: "testComponent"
+								}
+							}
+						}
+					}
+				}
+			}))();
+
+			sandbox.stub(FlexUtils, "getAppComponentForControl")
+			.callThrough()
+			.withArgs(this.oComponent)
+			.returns(oParentComponent);
+
+			sandbox.stub(this.oComponent, "getManifest")
+			.returns({
+				"sap.app": {
+					id: "testComponent"
+				}
+			});
+
+			sandbox.stub(Utils, "isS4HanaCloud").returns(false);
+			assert.notOk(this.oPlugin.isInReuseComponentOnS4HanaCloud(this.oButtonOverlay), "then it returns false");
+		});
+
+		QUnit.test("when isInReuseComponentOnS4HanaCloud is called on S4 Hana Cloud but no reuse component", function(assert) {
+			sandbox.stub(FlexUtils, "getComponentForControl").returns(this.oComponent);
+
+			sandbox.stub(Utils, "isS4HanaCloud").returns(true);
+			assert.notOk(this.oPlugin.isInReuseComponentOnS4HanaCloud(this.oButtonOverlay), "then it returns false");
 		});
 	});
 

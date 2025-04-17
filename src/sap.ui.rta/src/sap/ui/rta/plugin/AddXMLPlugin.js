@@ -3,17 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/Util",
-	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/util/isReuseComponent"
+	"sap/ui/rta/plugin/Plugin"
 ], function(
+	Lib,
 	DtUtil,
-	FlUtils,
-	RtaUtils,
-	Plugin,
-	isReuseComponent
+	Plugin
 ) {
 	"use strict";
 
@@ -70,12 +66,8 @@ sap.ui.define([
 	AddXML.prototype._isEditable = async function(oOverlay) {
 		// Action should be available by default
 		const oAddXMLAction = this.getAction(oOverlay);
-		const oComponent = FlUtils.getComponentForControl(oOverlay.getElement());
-		const bIsS4HanaCloud = RtaUtils.isS4HanaCloud();
 		if (
-			oAddXMLAction === null ||
-			!this.hasStableId(oOverlay) ||
-			(bIsS4HanaCloud && isReuseComponent(oComponent))
+			oAddXMLAction === null
 		) {
 			return Promise.resolve(false);
 		}
@@ -90,25 +82,40 @@ sap.ui.define([
 	 * @public
 	 */
 	AddXML.prototype.isEnabled = function(aElementOverlays) {
-		const bEnabled = aElementOverlays.length === 1;
+		const bEnabled = (aElementOverlays.length === 1) &&
+			!this.isInReuseComponentOnS4HanaCloud(aElementOverlays[0]) &&
+			this.hasStableId(aElementOverlays[0]);
 		return bEnabled;
 	};
 
-	function handleAddXmlCommand(mAddXmlData, oElement) {
-		const mAddXmlSettings = {
-			fragment: mAddXmlData.fragment,
-			fragmentPath: mAddXmlData.fragmentPath,
-			targetAggregation: mAddXmlData.targetAggregation,
-			index: mAddXmlData.index
-
-		};
-
-		return this.getCommandFactory().getCommandFor(
-			oElement,
-			FLEX_CHANGE_TYPE,
-			mAddXmlSettings
-		);
-	}
+	/**
+	 * Redefinition of getActionText to add special texts for the context menu
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
+	 * @param  {object} mAction The action data from the Designtime Metadata
+	 * @param  {string} sPluginId The ID of the plugin
+	 * @returns {string} Returns the text for the menu item
+	 */
+	AddXML.prototype.getActionText = function(oOverlay, mAction, sPluginId) {
+		const vName = mAction.name;
+		const oElement = oOverlay.getElement();
+		let sText;
+		if (vName) {
+			if (typeof vName === "function") {
+				return vName(oElement);
+			}
+			sText = oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(oElement, vName) : "";
+		} else {
+			sText = Lib.getResourceBundleFor("sap.ui.rta").getText(sPluginId);
+		}
+		// The cases where the control is in a reuse component on S4HanaCloud or has no stable ID
+		// are not enabled and have special texts in parenthesis on the context menu
+		if (this.isInReuseComponentOnS4HanaCloud(oOverlay)) {
+			sText += ` (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE")})`;
+		} else if (!this.hasStableId(oOverlay)) {
+			sText += ` (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_NO_STABLE_ID")})`;
+		}
+		return sText;
+	};
 
 	/**
 	 * Triggers the plugin execution.
@@ -128,7 +135,12 @@ sap.ui.define([
 
 			const mAddXmlData = await fnFragmentHandler(oOverlay, aExcludedAggregation);
 
-			const oAddXmlCommand = await handleAddXmlCommand.call(this, mAddXmlData, oOverlay.getElement());
+			const oAddXmlCommand = await this.getCommandFactory().getCommandFor(
+				oOverlay.getElement(),
+				FLEX_CHANGE_TYPE,
+				mAddXmlData
+			);
+
 			this.fireElementModified({
 				command: oAddXmlCommand
 			});
@@ -160,6 +172,16 @@ sap.ui.define([
 	 */
 	AddXML.prototype.getActionName = function() {
 		return "addXML";
+	};
+
+	/**
+	 * Returns the action information when defined in the designtime metadata or an object with only the changeType.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay containing the Designtime Metadata
+	 * @returns {object} Action information
+	 */
+	AddXML.prototype.getAction = function(oOverlay) {
+		const oAction = Plugin.prototype.getAction.apply(this, [oOverlay]);
+		return oAction || { changeType: FLEX_CHANGE_TYPE };
 	};
 
 	return AddXML;

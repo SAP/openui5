@@ -578,6 +578,11 @@ sap.ui.define([
 				group: "Plugin",
 				coverage: {
 					only: ["sap/ui/rta/plugin/Plugin"]
+				},
+				ui5: {
+					resourceroots: {
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
 				}
 			},
 			"plugin/Remove": {
