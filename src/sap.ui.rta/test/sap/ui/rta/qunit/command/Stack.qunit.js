@@ -260,6 +260,30 @@ sap.ui.define([
 			assert.strictEqual(this.oCommandStack.canSave(), false, "then after redo the 'save' is disabled again");
 		});
 
+		QUnit.test("stack with a 'remove' command and its change gets discarded by another command but 'getPreparedChange' returns an Array", async function(assert) {
+			const oDummyChange = {
+				getId: () => {
+					return "dummyChangeId";
+				}
+			};
+			const oCommand = await CommandFactory.getCommandFor(this.oInput1, "Remove", {
+				removedElement: this.oInput1
+			}, this.oInputDesignTimeMetadata);
+			sandbox.stub(oCommand, "execute").resolves();
+			sandbox.stub(oCommand, "getPreparedChange").returns([oDummyChange]);
+			await this.oCommandStack.pushAndExecute(oCommand);
+			const oDiscardingCommand = new ControlVariantSwitchCommand();
+			sandbox.stub(oDiscardingCommand, "getDiscardedChanges").returns([oDummyChange]);
+			sandbox.stub(oDiscardingCommand, "execute").resolves();
+			sandbox.stub(oDiscardingCommand, "undo").resolves();
+			await this.oCommandStack.pushAndExecute(oDiscardingCommand);
+			assert.strictEqual(this.oCommandStack.canSave(), false, "then 'save' is disabled because the remove command was discarded");
+			await this.oCommandStack.undo();
+			assert.strictEqual(this.oCommandStack.canSave(), true, "then after undo the 'save' is enabled");
+			await this.oCommandStack.redo();
+			assert.strictEqual(this.oCommandStack.canSave(), false, "then after redo the 'save' is disabled again");
+		});
+
 		QUnit.test("stack with with a 'remove' command with a change that gets discarded and one that doesn't", async function(assert) {
 			const oDummyChange = {
 				getId: () => {
