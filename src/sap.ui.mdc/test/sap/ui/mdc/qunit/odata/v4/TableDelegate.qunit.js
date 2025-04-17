@@ -1921,7 +1921,6 @@ sap.ui.define([
 				columns: new Column({
 					header: "Name",
 					propertyKey: "Name",
-					dataType: "String",
 					template: new Text({text: "Name"})
 				})
 			});

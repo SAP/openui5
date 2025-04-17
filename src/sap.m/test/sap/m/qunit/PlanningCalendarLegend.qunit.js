@@ -38,8 +38,8 @@ sap.ui.define([
 		"    xmlns=\"sap.m\">" +
 		"    <PlanningCalendarLegend id=\"PlanningCalendarLegend\"" +
 		"        itemsHeader=\"{/itemsHeader}\"" +
-		"        items=\"{path : '/legendItems', templateShareable: 'true'}\"" +
-		"        appointmentItems=\"{path : '/legendAppointmentItems', templateShareable: 'true'}\"" +
+		"        items=\"{path : '/legendItems', templateShareable: true}\"" +
+		"        appointmentItems=\"{path : '/legendAppointmentItems', templateShareable: true}\"" +
 		"        standardItems=\"{/legendStandardItems}\">" +
 		"        <items>" +
 		"            <unified:CalendarLegendItem text=\"{text}\" type=\"{type}\" tooltip=\"{text}\" />" +

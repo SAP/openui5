@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
+	"sap/m/IllustratedMessageType",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
@@ -37,6 +38,7 @@ sap.ui.define([
 	JSONModel,
 	Filter,
 	FilterOperator,
+	IllustratedMessageType,
 	jQuery
 ) {
 	"use strict";
@@ -1794,7 +1796,7 @@ sap.ui.define([
 			assert.strictEqual($Elem.attr("aria-labelledby"), "_noDataControl");
 
 			oTable.setNoData(new IllustratedMessage({
-				illustrationType: "NoSearchResults",
+				illustrationType: IllustratedMessageType.NoSearchResults,
 				title: "No Items found",
 				description: "Adjust your filter settings."
 			}));

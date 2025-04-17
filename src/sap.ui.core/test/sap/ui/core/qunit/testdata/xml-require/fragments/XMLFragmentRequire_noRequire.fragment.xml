@@ -10,7 +10,7 @@
 	title="XML Fragment Dialog">
 	<Text id="xmlDialogTxt" text="test" />
 	<buttons>
-		<!-- ui5lint-disable-next-line no-globals // global 'Toast' is used as true positive in test -->
+		<!-- ui5lint-disable-next-line no-globals --><!-- global 'Toast' is used as true positive in test -->
 		<Button id="badButton" text="Toast" press="Toast.show('Problem occurred')" />
 	</buttons>
 </Dialog>

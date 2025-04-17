@@ -791,7 +791,7 @@ sap.ui.define([
 		this._oIllustratedMessage = new IllustratedMessage({
 			title: this._getResourceText("table.COLUMNMENU_EMPTY"),
 			illustrationType: IllustratedMessageType.NoColumnsSet,
-			illustrationSize: IllustratedMessageSize.Dot,
+			illustrationSize: IllustratedMessageSize.ExtraSmall,
 			enableDefaultTitleAndDescription: false
 		});
 
