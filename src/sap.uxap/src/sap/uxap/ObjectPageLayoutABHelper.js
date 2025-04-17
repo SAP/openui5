@@ -124,7 +124,7 @@ sap.ui.define([
 		oObjectPage._getVisibleSections().forEach(function (oSection) {
 			var sSectionFilterId = oIconTabHeader.getId() + "-" + oSection.getId() + "-anchor",
 				oSectionFilter = new IconTabFilter(sSectionFilterId, {
-					text: ManagedObject.escapeSettingsValue(oSection.getTitle()),
+					text: ManagedObject.escapeSettingsValue(oSection._getTitle()),
 					key: oSection.getId(),
 					iconColor: ManagedObject.escapeSettingsValue(oSection.getAnchorBarButtonColor())
 				}),
@@ -145,7 +145,6 @@ sap.ui.define([
 						this._setupCustomButtonForwarding(oSubSection, oSubSectionFilter);
 					}, this);
 				} else if (aSubSections.length === 1 && !oSection.getCustomAnchorBarButton() && aSubSections[0].getTitle()?.trim()) { // promoted section
-					oSectionFilter.setText(aSubSections[0].getTitle());
 					this._setupCustomButtonForwarding(aSubSections[0], oSectionFilter, bUpperCase);
 				}
 			}

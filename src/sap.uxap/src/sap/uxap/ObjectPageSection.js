@@ -240,6 +240,10 @@ sap.ui.define([
 		return "sapUxAPObjectPageSectionTitleUppercase";
 	};
 
+	ObjectPageSection.prototype._getTitle = function () {
+		return this._hasPromotedSubSection() ? this._getFirstVisibleSubSection().getTitle() : this.getTitle();
+	};
+
 	/**@deprecated */
 	ObjectPageSection.prototype.connectToModels = function () {
 		this.getSubSections().forEach(function (oSubSection) {

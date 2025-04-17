@@ -299,6 +299,22 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("_getTitle provides the title to show in anchorBar", function(assert) {
+		var oSection = new ObjectPageSection({
+				subSections: [
+					new ObjectPageSubSection({
+						title: "Title"
+					})
+				]
+			});
+
+		this.stub(oSection, "_hasPromotedSubSection").returns(true);
+
+		assert.strictEqual(oSection._getTitle(), "Title", "title is correct");
+
+		oSection.destroy();
+	});
+
 	var SectionBasePrototype = ObjectPageSectionBase.prototype,
 		SectionPrototype = ObjectPageSection.prototype;
 
