@@ -2,15 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer', 'sap/ui/core/Lib'],
-	function(library, Localization, Core, Control, TileContentRenderer, CoreLib) {
+sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer', 'sap/ui/core/Lib', 'sap/m/Button'],
+	function(library, Localization, Core, Control, TileContentRenderer, CoreLib, Button) {
 	"use strict";
 
 	var Priority = library.Priority;
-
 	var LoadState = library.LoadState;
-
 	var GenericTileMode = library.GenericTileMode;
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new sap.m.TileContent control.
@@ -59,12 +58,14 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 				 */
 				"frameType" : {type : "sap.m.FrameType", group : "Appearance", defaultValue : "Auto"},
 				/**
-				 * Adds a priority badge before the content. Works only in Generic Tile ActionMode.
+				 * Adds a priority badge before the content. Works only in Generic Tiles in
+				 * ActionMode or Article Mode containing NewsContent.
 				 * @since 1.96
 				 */
 				"priority" : {type: "sap.m.Priority", group: "Misc", defaultValue: Priority.None},
 				/**
-				 * Sets the Text inside the Priority badge in Generic Tile ActionMode.
+				 * Sets the Text inside the Priority badge in Generic Tile. Works only in Generic Tiles in
+				 * ActionMode or Article Mode containing NewsContent.
 				 * @since 1.103
 				 */
 				 "priorityText" : {type: "string", group: "Misc", defaultValue: null},
@@ -340,6 +341,103 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 		return [].slice.call(oChildElements).filter(function(oElement) {
 			return oElement.nodeType === 1;
 		});
+	};
+
+	/**
+	 * Sets the priority of the tile content.
+	 *
+	 * @param {sap.m.Priority} sPriority - The priority level.
+	 * @returns {this} Reference to the current instance for method chaining.
+	 * @public
+	 */
+	TileContent.prototype.setPriority = function(sPriority) {
+		var oPriorityBadge = this._getPriorityBadge();
+		oPriorityBadge?.setType(this._getPriorityButtonType(sPriority));
+		oPriorityBadge?.setIcon(this._getPriorityBadgeIcon(sPriority));
+
+		this.setProperty("priority", sPriority);
+		return this;
+	};
+
+	/**
+	 * Sets the text for the priority badge.
+	 *
+	 * @param {string} sPriorityText - The text to be displayed on the badge.
+	 * @returns {this} Reference to the current instance for method chaining.
+	 * @public
+	 */
+	TileContent.prototype.setPriorityText = function(sPriorityText) {
+		var oPriorityBadge = this._getPriorityBadge();
+		oPriorityBadge?.setText(sPriorityText);
+		oPriorityBadge?.setTooltip(sPriorityText);
+
+		this.setProperty("priorityText", sPriorityText);
+		return this;
+	};
+
+	/**
+	 * Determines the button type based on the given priority.
+	 *
+	 * @private
+	 * @param {sap.m.Priority} sPriority - The priority level.
+	 * @returns {sap.m.ButtonType} The button type corresponding to the priority.
+	 */
+	TileContent.prototype._getPriorityButtonType = function(sPriority) {
+		switch (sPriority) {
+			case Priority.VeryHigh:
+			case Priority.High:
+				return ButtonType.Reject;
+			case Priority.Medium:
+				return ButtonType.Attention;
+			default:
+				return ButtonType.Default;
+		}
+	};
+
+	/**
+	 * Determines the badge icon based on the given priority.
+	 *
+	 * @private
+	 * @param {sap.m.Priority} sPriority - The priority level.
+	 * @returns {string} The icon URI corresponding to the priority.
+	 */
+	TileContent.prototype._getPriorityBadgeIcon = function(sPriority) {
+		switch (sPriority) {
+			case Priority.VeryHigh:
+			case Priority.High:
+				return "sap-icon://alert";
+			case Priority.Medium:
+				return "sap-icon://high-priority";
+			default:
+				return "sap-icon://information";
+		}
+	};
+
+	/**
+	 * Fetches or creates the priority badge button based on the current priority and priority text.
+	 *
+	 * @private
+	 * @returns {sap.m.Button|null} The priority badge button, or null if no priority is set.
+	 */
+	TileContent.prototype._getPriorityBadge = function() {
+		var sPriority = this.getPriority();
+		var sPriorityText = this.getPriorityText();
+
+		if (sPriority && sPriority !== Priority.None && sPriorityText) {
+			if (!this._priorityBadge) {
+				this._priorityBadge = new Button(this.getId() + "-priority", {
+					type: this._getPriorityButtonType(sPriority),
+					icon: this._getPriorityBadgeIcon(sPriority),
+					text: sPriorityText,
+					tooltip: sPriorityText,
+					width: "auto"
+				}).addStyleClass("sapUiSizeCompact sapMGTPriorityBadge");
+				this._priorityBadge._bExcludeFromTabChain = true;
+				this.addDependent(this._priorityBadge);
+			}
+
+			return this._priorityBadge;
+		}
 	};
 
 	return TileContent;
