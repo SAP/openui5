@@ -77,6 +77,43 @@ sap.ui.define([
 		return mNewPropagationInfo;
 	};
 
+	MetadataPropagationUtil._getPropagatedActions = function(oElementDesignTimeMetadata, mMetadata, oElement) {
+		const aPropagatedActions = [];
+		// Get propagated actions from element
+		oElementDesignTimeMetadata.getPropagateActions(oElement).forEach((vAction) => {
+			const sAction = typeof vAction === "string" ? vAction : vAction.action;
+			const oAction = oElementDesignTimeMetadata.getAction(sAction, oElement);
+			if (oAction && !aPropagatedActions.find((oPropagatedAction) => oPropagatedAction.name === sAction)) {
+				const oPropagatedAction = {
+					name: sAction,
+					action: oAction
+				};
+				if (vAction.isActive) {
+					oPropagatedAction.isActive = vAction.isActive;
+				}
+				aPropagatedActions.push(oPropagatedAction);
+			}
+		});
+		// Get propagated actions from aggregation
+		mMetadata.propagatedActions?.forEach((vAction) => {
+			const sAction = typeof vAction === "string" ? vAction : vAction.action;
+			const oAction = mMetadata.actions?.[sAction];
+			if (oAction) {
+				const oPropagatedAction = {
+					name: sAction,
+					action: oAction
+				};
+				if (vAction.isActive) {
+					oPropagatedAction.isActive = vAction.isActive;
+				}
+				aPropagatedActions.push(oPropagatedAction);
+			}
+		});
+		return aPropagatedActions.length
+			? { propagatedActionInfo: { parent: oElement, actions: aPropagatedActions } }
+			: null;
+	};
+
 	MetadataPropagationUtil._setPropagationInfo = function(mMetadata, mNewPropagationInfo, aPropagationInfoListFromParent) {
 		if (!aPropagationInfoListFromParent &&
 			isEmptyObject(mNewPropagationInfo)) {
@@ -93,30 +130,45 @@ sap.ui.define([
 
 	/**
 	 * Extend the passed aggregationOverlay metadata with propagated aggregationOverlay metadata from parent
-	 * and metadata to propagte from passed elementOverlay metadata.
+	 * and metadata to propagate from passed elementOverlay metadata.
 	 *
-	 * @param {object} mOriginalMetadata - Aggregation design time metadata data map to be extended with propagation data
-	 * @param {sap.ui.core.Element} oElement - Element may be used as relevant container
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay for which the metadata should be propagated
+	 * @param {string} sAggregationName - Name of the aggregation for which the metadata should be propagated
 	 * @param {object} mParentAggregationMetadata - Aggregation design time metadata of the parent
 	 * @return {object} Extended data part of the element design time metadata.
 	 */
-	MetadataPropagationUtil.propagateMetadataToAggregationOverlay = function(mOriginalMetadata, oElement, mParentAggregationMetadata) {
-		var mNewPropagationInfo;
-		var mMetadataFunctionPropagation;
-		var mRelevantContainerPropagation;
-		var mMetadata = { ...mOriginalMetadata };
+	MetadataPropagationUtil.propagateMetadataToAggregationOverlay = function(
+		oElementOverlay,
+		sAggregationName,
+		mParentAggregationMetadata
+	) {
+		const oElementDesignTimeMetadata = oElementOverlay.getDesignTimeMetadata();
+		const oOriginalAggregationMetadata = oElementDesignTimeMetadata.getAggregation(sAggregationName);
+		const oElement = oElementOverlay.getElement();
+		let mNewPropagationInfo;
+		let mMetadataFunctionPropagation;
+		let mRelevantContainerPropagation;
+		let mPropagatedActionsPropagation;
+		const mMetadata = { ...oOriginalAggregationMetadata };
 
-		var aPropagatedRelevantContainersFromParent = MetadataPropagationUtil._getParentPropagationInfo(mParentAggregationMetadata);
+		const aPropagatedRelevantContainersFromParent = MetadataPropagationUtil._getParentPropagationInfo(mParentAggregationMetadata);
 
 		if (mMetadata && !isEmptyObject(mMetadata)) {
 			mRelevantContainerPropagation = MetadataPropagationUtil._getCurrentRelevantContainerPropagation(mMetadata, oElement);
 			mMetadataFunctionPropagation = MetadataPropagationUtil._getCurrentDesigntimePropagation(mMetadata, oElement);
+			mPropagatedActionsPropagation = MetadataPropagationUtil._getPropagatedActions(oElementDesignTimeMetadata, mMetadata, oElement);
 		}
 
-		if (aPropagatedRelevantContainersFromParent || !isEmptyObject(mRelevantContainerPropagation) || !isEmptyObject(mMetadataFunctionPropagation)) {
-			mNewPropagationInfo = { ...mRelevantContainerPropagation, ...mMetadataFunctionPropagation };
+		if (
+			aPropagatedRelevantContainersFromParent
+			|| !isEmptyObject(mRelevantContainerPropagation)
+			|| !isEmptyObject(mMetadataFunctionPropagation)
+			|| !isEmptyObject(mPropagatedActionsPropagation)
+		) {
+			mNewPropagationInfo = { ...mRelevantContainerPropagation, ...mMetadataFunctionPropagation, ...mPropagatedActionsPropagation };
 			return MetadataPropagationUtil._setPropagationInfo(mMetadata, mNewPropagationInfo, aPropagatedRelevantContainersFromParent);
 		}
+
 		return mMetadata;
 	};
 
@@ -147,30 +199,55 @@ sap.ui.define([
 	};
 
 	/**
-	 * Method extracts propagated metadata map from given parents metadata if available.
+	 * Method extracts propagated metadata map from given parents metadata if available. This can be defined as a
+	 * propagateMetadata function. Also actions that should be propagated to children can be defined in the parent
+	 * metadata ("propagateActions" on the designtime metadata). They are added to the children's
+	 * dynamic designtime metadata on the "propagatedActions" property.
 	 *
 	 * @param {object} mParentMetadata - aggregation designtime metadata data from parents
 	 * @param {sap.ui.core.Element} oElement - element to check for propagated metadata map
 	 * @return {object|boolean} Returns propagated metadata map if available, otherwise it returns false.
 	 */
 	MetadataPropagationUtil.getMetadataForPropagation = function(mParentMetadata, oElement) {
-		var vReturnMetadata = {};
+		let vReturnMetadata = {};
 
 		if (!mParentMetadata ||
 			!mParentMetadata.propagationInfos) {
 			return false;
 		}
 
+		function addPropagatedActions(oMetadata, oPropagatedInfo) {
+			if (oMetadata && oPropagatedInfo.propagatedActionInfo) {
+				const oParent = oPropagatedInfo.propagatedActionInfo.parent;
+				oPropagatedInfo.propagatedActionInfo.actions.forEach(function(oPropagatedAction) {
+					if (oPropagatedAction.isActive && !oPropagatedAction.isActive(oElement)) {
+						return;
+					}
+					const sActionName = oPropagatedAction.name;
+					oMetadata.propagatedActions ||= [];
+					oMetadata.propagatedActions.push({
+						name: sActionName,
+						action: oPropagatedAction.action,
+						propagatingControl: oParent
+					});
+				});
+			}
+			return oMetadata;
+		}
+
 		// Propagated infos are ordered from highest to lowest parent
 		// The highest parent always "wins", so we need to extend starting from the bottom
-		var aRevertedPropagationInfos = mParentMetadata.propagationInfos.slice().reverse();
+		const aRevertedPropagationInfos = mParentMetadata.propagationInfos.slice().reverse();
 
 		vReturnMetadata = aRevertedPropagationInfos.reduce(function(vReturnMetadata, oPropagatedInfo) {
 			if (oPropagatedInfo.metadataFunction) {
-				var oCurrentMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
+				let oCurrentMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
+				if (oCurrentMetadata && oPropagatedInfo.propagatedActionInfo) {
+					oCurrentMetadata = addPropagatedActions(oCurrentMetadata, oPropagatedInfo);
+				}
 				return merge(vReturnMetadata, oCurrentMetadata);
 			}
-			return vReturnMetadata;
+			return merge(addPropagatedActions(vReturnMetadata, oPropagatedInfo), vReturnMetadata);
 		}, vReturnMetadata);
 
 		return isEmptyObject(vReturnMetadata) ? false : vReturnMetadata;

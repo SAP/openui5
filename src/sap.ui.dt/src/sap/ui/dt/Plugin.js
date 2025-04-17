@@ -281,11 +281,22 @@ sap.ui.define([
 	/**
 	 * Retrieve the action data from the Designtime Metadata
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
-	 * @return {object}          Returns an object with the action data from the Designtime Metadata
+	 * @return {object} Returns an object with the action data from the Designtime Metadata
 	 */
 	Plugin.prototype.getAction = function(oOverlay) {
 		return oOverlay.getDesignTimeMetadata() ?
 			oOverlay.getDesignTimeMetadata().getAction(this.getActionName(), oOverlay.getElement())
+			: null;
+	};
+
+	/**
+	 * Retrieve the propagated action data from the Designtime Metadata
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
+	 * @return {object} Returns an object with the action data from the Designtime Metadata
+	 */
+	Plugin.prototype.getPropagatedAction = function(oOverlay) {
+		return oOverlay.getDesignTimeMetadata() ?
+			oOverlay.getDesignTimeMetadata().getPropagatedAction(this.getActionName())
 			: null;
 	};
 
@@ -300,14 +311,15 @@ sap.ui.define([
 
 	/**
 	 * Retrieve the action text (for context menu item) from the Designtime Metadata
-	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
-	 * @param  {object} mAction The action data from the Designtime Metadata
-	 * @param  {string} sPluginId The ID of the plugin
-	 * @return {string}         Returns the text for the menu item
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
+	 * @param {object} mAction The action data from the Designtime Metadata
+	 * @param {string} sPluginId The ID of the plugin
+	 * @param {sap.ui.core.Element} [propagatingControl] The control where the action is executed
+	 * @return {string} The text for the menu item
 	 */
-	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId) {
-		var vName = mAction.name;
-		var oElement = oOverlay.getElement();
+	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId, propagatingControl) {
+		const vName = mAction.name;
+		const oElement = propagatingControl || oOverlay.getElement();
 		if (vName) {
 			if (typeof vName === "function") {
 				return vName(oElement);
