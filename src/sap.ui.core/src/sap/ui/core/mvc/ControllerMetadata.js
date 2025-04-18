@@ -142,11 +142,6 @@ sap.ui.define([
 				}
 			}
 		}
-
-		//flag each extension as final (but not the class ControllerExtension itself)
-		if (this._oParent && this._oParent.isA("sap.ui.core.mvc.ControllerExtension")) {
-			this._bFinal = true;
-		}
 	};
 
 	/**

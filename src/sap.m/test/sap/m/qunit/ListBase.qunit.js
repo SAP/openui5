@@ -3577,8 +3577,12 @@ sap.ui.define([
 		aClassList = sut.$()[0].classList;
 		assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
 
+		sut.getItems()[0].focus();
+		const fnHandleTargetItemFocusSpy = sinon.spy(sut, "_handleTargetItemFocus");
 		sut.getInfoToolbar().setVisible(true);
 		await nextUIUpdate();
+		assert.ok(fnHandleTargetItemFocusSpy.calledOnce, "Repositining method is called after sticky change");
+
 		aClassList = sut.$()[0].classList;
 		assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 

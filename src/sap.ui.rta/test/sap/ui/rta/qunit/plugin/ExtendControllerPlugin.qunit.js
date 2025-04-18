@@ -1,35 +1,29 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Component",
-	"sap/ui/core/UIComponent",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/plugin/ExtendControllerPlugin",
+	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ExtendControllerCommand",
-	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/rta/plugin/ExtendControllerPlugin",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	DesignTimeConfig,
 	XMLView,
 	Component,
-	UIComponent,
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	Util,
 	Layer,
-	FlUtils,
-	RtaUtils,
-	ExtendControllerPlugin,
+	nextUIUpdate,
 	CommandFactory,
 	ExtendControllerCommand,
-	nextUIUpdate,
+	ExtendControllerPlugin,
 	sinon
 ) {
 	"use strict";
@@ -101,7 +95,6 @@ sap.ui.define([
 
 	QUnit.module("ExtendControllerPlugin", {
 		beforeEach() {
-			this.oIsDesignModeEnabledStub = sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
 			return beforeEachSetup.call(this, "myView");
 		},
 		afterEach() {
@@ -112,7 +105,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When everything is enabled", function(assert) {
+		QUnit.test("isEditable check - positive case", function(assert) {
 			return this.oExtendControllerPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
 				assert.ok(bEditable, "then the Overlay is editable");
 			});
@@ -125,53 +118,25 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When the system is an S4HanaCloud system and the control is in a reuse component", function(assert) {
-			sandbox.stub(RtaUtils, "isS4HanaCloud").returns(true);
+		QUnit.test("When the system is an S4HanaCloud system and the control is in a reuse component", async function(assert) {
+			sandbox.stub(this.oExtendControllerPlugin, "isInReuseComponentOnS4HanaCloud").returns(true);
 
-			const oParentComponent = new (UIComponent.extend("component", {
-				metadata: {
-					manifest: {
-						"sap.ui5": {
-							componentUsages: {
-								reuseComponent: {
-									name: "testComponent"
-								}
-							}
-						}
-					}
-				}
-			}))();
-
-			sandbox.stub(FlUtils, "getAppComponentForControl")
-			.callThrough()
-			.withArgs(this.oComponent)
-			.returns(oParentComponent);
-
-			sandbox.stub(this.oComponent, "getManifest")
-			.returns({
-				"sap.app": {
-					id: "testComponent"
-				}
-			});
-
-			return this.oExtendControllerPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
-				assert.notOk(bEditable, "then the Overlay is not editable");
-			});
+			assert.notOk(this.oExtendControllerPlugin.isEnabled([this.oPanelOverlay]), "then the action is not enabled");
+			const aMenuItems = await this.oExtendControllerPlugin.getMenuItems([this.oPanelOverlay]);
+			assert.strictEqual(
+				aMenuItems[0].text,
+				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_EXTEND_CONTROLLER")} (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE")})`,
+				"then the menu item has the correct text"
+			);
 		});
 
-		QUnit.test("When the Plugin has no changeHandler", function(assert) {
-			this.oHasChangeHandlerStub.reset();
-			this.oHasChangeHandlerStub.resolves(false);
-			return this.oExtendControllerPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
-				assert.notOk(bEditable, "then the Overlay is not editable");
-			});
-		});
-
-		QUnit.test("isEnabled function", function(assert) {
+		QUnit.test("isEnabled function when not in reusable component on S4HanaCloud", function(assert) {
 			const oExtendControllerPlugin = new ExtendControllerPlugin();
 
+			sandbox.stub(this.oExtendControllerPlugin, "isInReuseComponentOnS4HanaCloud").returns(false);
+
 			// Test with one overlay
-			const aElementOverlays = [{}];
+			const aElementOverlays = [{ getElement: () => {} }];
 			assert.strictEqual(
 				oExtendControllerPlugin.isEnabled(aElementOverlays),
 				true,
@@ -232,5 +197,9 @@ sap.ui.define([
 
 			this.oExtendControllerPlugin.handler([this.oPanelOverlay], mPropertyBag);
 		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

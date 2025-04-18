@@ -96,6 +96,11 @@ sap.ui.define([
 				});
 		}
 
+		const sTooltip = this.getTooltip_AsString() || this.getText();
+		if (sTooltip) {
+			oRM.attr("title", sTooltip);
+		}
+
 		oRM.openEnd();
 
 		oRM.openStart("span")

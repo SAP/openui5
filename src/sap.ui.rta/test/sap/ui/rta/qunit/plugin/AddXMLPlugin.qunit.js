@@ -1,14 +1,12 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Component",
-	"sap/ui/core/UIComponent",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/AddXML",
 	"sap/ui/rta/command/CommandFactory",
@@ -16,15 +14,13 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	DesignTimeConfig,
 	XMLView,
 	Component,
-	UIComponent,
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	Util,
 	Layer,
-	FlUtils,
 	nextUIUpdate,
 	AddXMLCommand,
 	CommandFactory,
@@ -99,7 +95,6 @@ sap.ui.define([
 
 	QUnit.module("AddXMLPlugin", {
 		beforeEach() {
-			this.oIsDesignModeEnabledStub = sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
 			return beforeEachSetup.call(this, "myView");
 		},
 		afterEach() {
@@ -110,7 +105,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When everything is enabled", function(assert) {
+		QUnit.test("Editable check - positive case", function(assert) {
 			return this.oAddXmlPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
 				assert.ok(bEditable, "then the Overlay is editable");
 			});
@@ -130,45 +125,27 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When the system is an S4HanaCloud system and the control is in a reuse component", function(assert) {
-			sandbox.stub(RtaUtils, "isS4HanaCloud").returns(true);
+		QUnit.test("When the system is an S4HanaCloud system and the control is in a reuse component", async function(assert) {
+			sandbox.stub(this.oAddXmlPlugin, "isInReuseComponentOnS4HanaCloud").returns(true);
 
-			const oParentComponent = new (UIComponent.extend("component", {
-				metadata: {
-					manifest: {
-						"sap.ui5": {
-							componentUsages: {
-								reuseComponent: {
-									name: "testComponent"
-								}
-							}
-						}
-					}
-				}
-			}))();
-
-			sandbox.stub(FlUtils, "getAppComponentForControl")
-			.callThrough()
-			.withArgs(this.oComponent)
-			.returns(oParentComponent);
-
-			sandbox.stub(this.oComponent, "getManifest")
-			.returns({
-				"sap.app": {
-					id: "testComponent"
-				}
-			});
-
-			return this.oAddXmlPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
-				assert.notOk(bEditable, "then the Overlay is not editable");
-			});
+			assert.notOk(this.oAddXmlPlugin.isEnabled(this.oPanelOverlay), "then the action is not enabled");
+			const aMenuItems = await this.oAddXmlPlugin.getMenuItems([this.oPanelOverlay]);
+			assert.strictEqual(
+				aMenuItems[0].text,
+				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_ADDXML")} (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE")})`,
+				"then the menu item has the correct text"
+			);
 		});
 
-		QUnit.test("When the Element has no Stable Id", function(assert) {
+		QUnit.test("When the Element has no Stable Id", async function(assert) {
 			sandbox.stub(this.oAddXmlPlugin, "hasStableId").returns(false);
-			return this.oAddXmlPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
-				assert.notOk(bEditable, "then the Overlay is not editable");
-			});
+			assert.notOk(this.oAddXmlPlugin.isEnabled(this.oPanelOverlay), "then the action is not enabled");
+			const aMenuItems = await this.oAddXmlPlugin.getMenuItems([this.oPanelOverlay]);
+			assert.strictEqual(
+				aMenuItems[0].text,
+				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_ADDXML")} (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_NO_STABLE_ID")})`,
+				"then the menu item has the correct text"
+			);
 		});
 
 		QUnit.test("When the Plugin has no changeHandler", function(assert) {
@@ -179,11 +156,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("isEnabled function", function(assert) {
+		QUnit.test("isEnabled function when not in reusable component on S4HanaCloud and with stable ID", function(assert) {
 			const oAddXmlPlugin = new AddXMLPlugin();
 
+			sandbox.stub(RtaUtils, "isS4HanaCloud").returns(false);
+			sandbox.stub(oAddXmlPlugin, "hasStableId").returns(true);
+
 			// Test with one overlay
-			const aElementOverlays = [{}];
+			const aElementOverlays = [{ getElement: () => {} }];
 			assert.strictEqual(oAddXmlPlugin.isEnabled(aElementOverlays), true, "then isEnabled returns true when there is one overlay");
 
 			// Test with no overlays
@@ -262,5 +242,9 @@ sap.ui.define([
 
 			this.oAddXmlPlugin.handler([this.oPanelOverlay], mPropertyBag);
 		});
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
 	});
 });

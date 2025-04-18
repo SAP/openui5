@@ -3,17 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/Util",
-	"sap/ui/fl/Utils",
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/util/isReuseComponent",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/plugin/Plugin"
 ], function(
+	Lib,
 	DtUtil,
-	FlUtils,
-	Plugin,
-	isReuseComponent,
-	RtaUtils
+	Plugin
 ) {
 	"use strict";
 
@@ -61,17 +57,8 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} <code>true</code> when editable wrapped in a promise
 	 * @private
 	 */
-	ExtendControllerPlugin.prototype._isEditable = async function(oOverlay) {
-		const oComponent = FlUtils.getComponentForControl(oOverlay.getElement());
-		const bIsS4HanaCloud = RtaUtils.isS4HanaCloud();
-		if (
-			bIsS4HanaCloud ||
-			isReuseComponent(oComponent)
-		) {
-			return false;
-		}
-		const bHasChangeHandler = await this.hasChangeHandler(FLEX_CHANGE_TYPE, oOverlay.getElement());
-		return bHasChangeHandler;
+	ExtendControllerPlugin.prototype._isEditable = function() {
+		return Promise.resolve(true);
 	};
 
 	/**
@@ -81,22 +68,36 @@ sap.ui.define([
 	 * @public
 	 */
 	ExtendControllerPlugin.prototype.isEnabled = function(aElementOverlays) {
-		const bEnabled = aElementOverlays.length === 1;
+		const bEnabled = aElementOverlays.length === 1 && !this.isInReuseComponentOnS4HanaCloud(aElementOverlays[0]);
 		return bEnabled;
 	};
 
-	function handleExtendControllerCommand(mExtendControllerData, oElement) {
-		const mExtendControllerSettings = {
-			codeRef: mExtendControllerData.codeRef,
-			viewId: mExtendControllerData.viewId
-		};
-
-		return this.getCommandFactory().getCommandFor(
-			oElement,
-			FLEX_CHANGE_TYPE,
-			mExtendControllerSettings
-		);
-	}
+	/**
+	 * Redefinition of getActionText to add special texts for the context menu
+	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
+	 * @param  {object} mAction The action data from the Designtime Metadata
+	 * @param  {string} sPluginId The ID of the plugin
+	 * @returns {string} Returns the text for the menu item
+	 */
+	ExtendControllerPlugin.prototype.getActionText = function(oOverlay, mAction, sPluginId) {
+		const vName = mAction.name;
+		const oElement = oOverlay.getElement();
+		let sText;
+		if (vName) {
+			if (typeof vName === "function") {
+				return vName(oElement);
+			}
+			sText = oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(oElement, vName) : "";
+		} else {
+			sText = Lib.getResourceBundleFor("sap.ui.rta").getText(sPluginId);
+		}
+		// The case where the control is in a reuse component on S4HanaCloud
+		// is not enabled and has a special text in parenthesis on the context menu
+		if (this.isInReuseComponentOnS4HanaCloud(oOverlay)) {
+			sText += ` (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE")})`;
+		}
+		return sText;
+	};
 
 	/**
 	 * Triggers the plugin execution.
@@ -116,10 +117,10 @@ sap.ui.define([
 
 			const mExtendControllerData = await fnControllerHandler(oElementOverlay);
 
-			const oExtendControllerCommand = await handleExtendControllerCommand.call(
-				this,
-				mExtendControllerData,
-				oElementOverlay.getElement()
+			const oExtendControllerCommand = await this.getCommandFactory().getCommandFor(
+				oElementOverlay.getElement(),
+				FLEX_CHANGE_TYPE,
+				mExtendControllerData
 			);
 
 			this.fireElementModified({
@@ -153,6 +154,16 @@ sap.ui.define([
 	 */
 	ExtendControllerPlugin.prototype.getActionName = function() {
 		return "extendController";
+	};
+
+	/**
+	 * Returns the action information when defined in the designtime metadata or an object with only the changeType.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay containing the Designtime Metadata
+	 * @returns {object} Action information
+	 */
+	ExtendControllerPlugin.prototype.getAction = function(oOverlay) {
+		const oAction = Plugin.prototype.getAction.apply(this, [oOverlay]);
+		return oAction || { changeType: FLEX_CHANGE_TYPE };
 	};
 
 	return ExtendControllerPlugin;

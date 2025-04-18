@@ -403,6 +403,7 @@ sap.ui.define([
 			var menuItem = new MenuItem({
 				icon: item.getIcon(),
 				text: item.getText(),
+				tooltip: item.getTooltip_AsString() || item.getText(),
 				enabled: item.getEnabled()
 			});
 			menuItem._navItem = item;
@@ -411,6 +412,7 @@ sap.ui.define([
 				var subMenuItem = new MenuItem({
 					icon: subItem.getIcon(),
 					text: subItem.getText(),
+					tooltip: subItem.getTooltip_AsString() || subItem.getText(),
 					enabled: subItem.getEnabled()
 				});
 				subMenuItem._navItem = subItem;

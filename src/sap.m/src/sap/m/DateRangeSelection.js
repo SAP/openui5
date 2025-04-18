@@ -694,7 +694,15 @@ sap.ui.define([
 						aDates[1] = aDates[1].slice(1);
 					}
 				} else {
-					aDates = sValue.split(" " + sDelimiter + " ");// Delimiter appears more than once -> try with separators
+					const aDateInterval = sValue.split(" " + sDelimiter + " ");// Delimiter appears more than once -> try with separators
+					if ( aDateInterval.length >= 1 && aDates.length > 2) {
+						const sFirstDate = aDates.slice(0, aDates.length / 2).join(sDelimiter);
+						const sSecondDate = aDates.slice(aDates.length / 2).join(sDelimiter);
+						aDates = [sFirstDate, sSecondDate];
+					} else {
+						aDates = aDateInterval;
+					}
+
 				}
 
 				if (sValue.indexOf(sDelimiter) === -1) {

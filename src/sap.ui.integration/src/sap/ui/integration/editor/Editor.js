@@ -1248,6 +1248,7 @@ sap.ui.define([
 		this._oDataProviderFactory = new DataProviderFactory({
 			destinations: this._oDestinations,
 			extension: oExtension,
+			csrfTokensConfig: this._oEditorManifest.get(this.getConfigurationPath() + "/csrfTokens"),
 			editor: this
 		});
 	};

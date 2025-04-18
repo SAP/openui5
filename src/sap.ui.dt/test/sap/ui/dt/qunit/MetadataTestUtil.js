@@ -48,7 +48,7 @@ sap.ui.define([
 			});
 		},
 
-		createPropagationInfoObject(vPropagateFunction, oRelevantContainerElement, vMetadataFunction) {
+		createPropagationInfoObject(vPropagateFunction, oRelevantContainerElement, vMetadataFunction, oPropagatedActionInfo) {
 			var mObj = {};
 			if (vPropagateFunction) {
 				mObj.relevantContainerFunction = vPropagateFunction;
@@ -58,6 +58,9 @@ sap.ui.define([
 			}
 			if (vMetadataFunction) {
 				mObj.metadataFunction = vMetadataFunction;
+			}
+			if (oPropagatedActionInfo) {
+				mObj.propagatedActionInfo = oPropagatedActionInfo;
 			}
 			return mObj;
 		},

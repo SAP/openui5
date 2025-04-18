@@ -468,6 +468,7 @@ sap.ui.define([
 			}
 
 			const bHorizontalScrollbarRequired = iColsWidth > mTableSizes.tableCtrlScrWidth;
+			_private(oTable).bHorizontalScrollbarRequired = bHorizontalScrollbarRequired;
 
 			if (bHorizontalScrollbarRequired) {
 				// Show the horizontal scrollbar, if it is not already visible.
@@ -1723,8 +1724,9 @@ sap.ui.define([
 		 * @private
 		 */
 		onUpdateTableSizes: function(sReason) {
-			VerticalScrollingHelper.updateScrollbarVisibility(this);
 			HorizontalScrollingHelper.updateScrollbar(this);
+			VerticalScrollingHelper.updateScrollbarVisibility(this);
+			VerticalScrollingHelper.updateScrollbarPosition(this);
 		},
 
 		updateScrollbarVisibility: function(oTable) {
@@ -1740,6 +1742,27 @@ sap.ui.define([
 
 			oTableElement.classList.toggle("sapUiTableVScr", bVerticalScrollbarRequired && !oScrollExtension.isVerticalScrollbarExternal());
 			oVSb.parentElement.classList.toggle("sapUiTableHidden", !bVerticalScrollbarRequired);
+		},
+
+		updateScrollbarPosition: function(oTable) {
+			const oScrollExtension = oTable._getScrollExtension();
+			const oVSb = oScrollExtension.getVerticalScrollbar();
+
+			if (!oVSb) {
+				return;
+			}
+
+			const oHSb = oScrollExtension.getHorizontalScrollbar();
+			const mRowCounts = oTable._getRowCounts();
+
+			let iOffsetBottom = 0;
+			if (oHSb && _private(oTable).bHorizontalScrollbarRequired && oScrollExtension.isHorizontalScrollbarVisible()) {
+				iOffsetBottom = oHSb.offsetHeight;
+			}
+			if (mRowCounts.fixedBottom > 0) {
+				iOffsetBottom += mRowCounts.fixedBottom * oTable._getBaseRowHeight();
+			}
+			oVSb.style.bottom = iOffsetBottom + "px";
 		},
 
 		/**
@@ -1877,7 +1900,7 @@ sap.ui.define([
 				const oVerticalScrollPosition = _private(this).oVerticalScrollPosition;
 
 				if (bScrollingForward) {
-					bScrolledToEnd = Math.round(oVSb.scrollTop) === oVSb.scrollHeight - oVSb.offsetHeight;
+					bScrolledToEnd = Math.round(oVSb.scrollTop) === oVSb.scrollHeight - oVSb.clientHeight;
 				} else {
 					bScrolledToEnd = oVSb.scrollTop === 0;
 				}
@@ -1997,7 +2020,7 @@ sap.ui.define([
 
 						if (mTouchSessionData.initialScrolledToEnd == null) {
 							if (iTouchDistanceY < 0) { // Scrolling down.
-								mTouchSessionData.initialScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
+								mTouchSessionData.initialScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.clientHeight;
 							} else { // Scrolling up.
 								mTouchSessionData.initialScrolledToEnd = oVSb.scrollTop === 0;
 							}

@@ -483,7 +483,7 @@ sap.ui.define([
 				return Element.getElementById(sLabelID);
 			});
 
-			return aLabeles.length ? aLabeles[0].getText() : oResourceBundle.getText("COMBOBOX_PICKER_TITLE");
+			return aLabeles.length ? aLabeles[0].getText?.() : oResourceBundle.getText("COMBOBOX_PICKER_TITLE");
 		};
 
 		/**

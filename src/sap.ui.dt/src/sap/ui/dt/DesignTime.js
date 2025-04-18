@@ -1077,15 +1077,15 @@ sap.ui.define([
 		}
 		return Promise.all(
 			aAggregationNames.map(function(sAggregationName) {
-				var oElement = oElementOverlay.getElement();
-				var sElementClassName = oElement.getMetadata().getName();
-				var mAggregationMetadata = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(
-					oElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName),
-					oElement,
+				const oElement = oElementOverlay.getElement();
+				const sElementClassName = oElement.getMetadata().getName();
+				const mAggregationMetadata = MetadataPropagationUtil.propagateMetadataToAggregationOverlay(
+					oElementOverlay,
+					sAggregationName,
 					mParentAggregationMetadata
 				);
 
-				var oAggregationOverlay = this._createAggregationOverlay(
+				const oAggregationOverlay = this._createAggregationOverlay(
 					sAggregationName,
 					oElement,
 					mAggregationMetadata,
@@ -1093,7 +1093,7 @@ sap.ui.define([
 				);
 				OverlayRegistry.register(oAggregationOverlay);
 
-				var aChildrenElements;
+				let aChildrenElements;
 				if (bIsTemplateAggregation) {
 					aChildrenElements = [mAggregationBindingTemplates[sAggregationName]];
 				} else {
@@ -1113,7 +1113,7 @@ sap.ui.define([
 						})
 						// If creation of one of the children is aborted, we still continue our execution
 						.catch(function(oError) {
-							var mError = this._enrichChildCreationError(oError, oChildElement, sParentElementClassName, sAggregationName);
+							const mError = this._enrichChildCreationError(oError, oChildElement, sParentElementClassName, sAggregationName);
 							// Omit error message if the parent was already destroyed
 							// e.g. SimpleForm move where many elements are created/destroyed in a row
 							if (!oElement.isDestroyed() && !oElementOverlay.isDestroyed()) {

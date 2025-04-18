@@ -16,8 +16,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/thirdparty/jquery"
-], function(nextUIUpdate, Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery) {
+	"sap/ui/thirdparty/jquery",
+	"sap/m/Panel"
+], function(nextUIUpdate, Element, Library1, qutils, createAndAppendDiv, Tokenizer, Token, Dialog, Label, MultiInput, Event, Device, KeyCodes, Library, JSONModel, jQuery, Panel) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -579,6 +580,29 @@ sap.ui.define([
 		assert.notOk(oToken.getSelected(), "First token is not selected");
 
 		// Cleanup
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Should not throw exception when the association does not have text property", function (assert) {
+		this.clock = sinon.useFakeTimers();
+
+		var oTokenizer = new Tokenizer({
+			width: "300px"
+		}).placeAt("content");
+
+		oTokenizer.addToken(new Token({text: "Token 1", key: "0001"}));
+		oTokenizer.addToken(new Token({text: "Token 2", key: "0002"}));
+		oTokenizer.addToken(new Token({text: "Token 3", key: "0003"}));
+
+		oTokenizer.addAriaLabelledBy(new Panel({ headerText: "Panel header text" }));
+		const oTokenPopover = oTokenizer.getTokensPopup();
+		oTokenPopover.isOpen();
+
+		//assert
+		assert.ok(true, "No exception is thrown");
+
+		// Cleanup
+		this.clock.restore();
 		oTokenizer.destroy();
 	});
 

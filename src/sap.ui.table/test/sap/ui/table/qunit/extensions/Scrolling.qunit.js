@@ -82,17 +82,21 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Horizontal scrollbar visibility", async function(assert) {
+	QUnit.test("Horizontal scrollbar visibility + Vertical scrollbar position", async function(assert) {
 		const oTable = this.oTable;
 		const oScrollExtension = oTable._getScrollExtension();
+		const oVSb = oScrollExtension.getVerticalScrollbar();
 		const oHSb = oScrollExtension.getHorizontalScrollbar();
+		const oHSbComputedStyle = window.getComputedStyle(oHSb);
 		const oModel = oTable.getModel();
 
 		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0, "Table content does not fit: Horizontal scrollbar is visible");
+		assert.equal(oVSb.style.bottom, oHSbComputedStyle.height, "Vertical scrollbar position is correct");
 
 		oTable.getColumns()[0].setWidth("10px");
 		await oTable.qunit.whenRenderingFinished();
 		assert.ok(oHSb.offsetWidth === 0 && oHSb.offsetHeight === 0, "Table content does fit: Horizontal scrollbar is not visible");
+		assert.equal(oVSb.style.bottom, "0px", "Vertical scrollbar position is correct");
 
 		oTable.setSelectionMode(library.SelectionMode.None);
 		oTable.getRowMode().setRowCount(6);
@@ -103,12 +107,14 @@ sap.ui.define([
 		await oTable.qunit.whenRenderingFinished();
 		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0,
 			"Increase binding length so that vertical scrollbar appears: Horizontal scrollbar is visible");
+		assert.equal(oVSb.style.bottom, oHSbComputedStyle.height, "Vertical scrollbar position is correct");
 
 		oTable.setRowMode(RowModeType.Auto);
 		await oTable.qunit.whenRenderingFinished();
 		await oTable.qunit.$resize({height: "400px"});
 		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0,
 			"Decrease visible rows so that vertical scrollbar appears: Horizontal scrollbar is visible");
+		assert.equal(oVSb.style.bottom, oHSbComputedStyle.height, "Vertical scrollbar position is correct");
 		await oTable.qunit.resetSize();
 	});
 
@@ -186,18 +192,20 @@ sap.ui.define([
 	QUnit.test("Vertical scrollbar position", async function(assert) {
 		const oScrollExtension = this.oTable._getScrollExtension();
 		const oVSb = oScrollExtension.getVerticalScrollbar();
+		const oHSb = oScrollExtension.getHorizontalScrollbar();
 		const oVSbComputedStyle = window.getComputedStyle(oVSb);
 
 		this.oTable.setColumnHeaderHeight(78);
 		await this.oTable.qunit.whenRenderingFinished();
-		assert.strictEqual(oVSbComputedStyle.top, "0px", "Top position");
+		assert.strictEqual(oVSbComputedStyle.bottom, oHSb.offsetHeight + "px", "Position bottom");
 
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 2,
-			fixedTopRowCount: 1
+			fixedBottomRowCount: 1
 		}));
 		await this.oTable.qunit.whenRenderingFinished();
-		assert.strictEqual(oVSbComputedStyle.top, TableUtils.BaseSize.sapUiSizeCozy + "px", "Fixed rows: Top position");
+		assert.strictEqual(oVSbComputedStyle.bottom, TableUtils.BaseSize.sapUiSizeCozy + TableUtils.BaseBorderWidth + oHSb.offsetHeight + "px",
+			"Fixed rows: Position bottom");
 	});
 
 	QUnit.test("Vertical scrollbar height if variable row heights enabled", async function(assert) {
@@ -417,20 +425,16 @@ sap.ui.define([
 		const oScrollExtension = this.oTable._getScrollExtension();
 		const oVSb = oScrollExtension.getVerticalScrollbar();
 		const oGetVerticalScrollbarHeightStub = sinon.stub(oScrollExtension, "getVerticalScrollbarHeight");
-		const iInitialVSbHeight = getHeight(oVSb);
-
-		function getHeight(oElement) {
-			return oElement.getBoundingClientRect().height;
-		}
+		const iInitialVSbHeight = oVSb.clientHeight;
 
 		oGetVerticalScrollbarHeightStub.returns(15);
 		oScrollExtension.updateVerticalScrollbarHeight();
-		assert.strictEqual(getHeight(oVSb), 15, "The height is 15px");
+		assert.strictEqual(oVSb.clientHeight, 15, "The height is 15px");
 		assert.strictEqual(window.getComputedStyle(oVSb).maxHeight, "15px", "The maximum height is 15px");
 
 		oGetVerticalScrollbarHeightStub.returns(iInitialVSbHeight);
 		oScrollExtension.updateVerticalScrollbarHeight();
-		assert.strictEqual(getHeight(oVSb), iInitialVSbHeight, "The height is " + iInitialVSbHeight + "px");
+		assert.strictEqual(oVSb.clientHeight, iInitialVSbHeight, "The height is " + iInitialVSbHeight + "px");
 		assert.strictEqual(window.getComputedStyle(oVSb).maxHeight, iInitialVSbHeight + "px", "The maximum height is " + iInitialVSbHeight + "px");
 
 		oGetVerticalScrollbarHeightStub.restore();
