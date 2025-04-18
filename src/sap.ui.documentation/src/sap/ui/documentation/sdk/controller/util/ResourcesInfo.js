@@ -45,8 +45,7 @@ sap.ui.define([], function () {
 			"id": "fpmExplorer",
 			"text": "Flexible Programming Model Explorer",
 			"href": "test-resources/sap/fe/core/fpmExplorer/index.html#/overview/introduction",
-			"isDistributionScope": true,
-			"hideOnPhone": true
+			"isDistributionScope": true
 		},
 		{
 			"id": "businessAppStudio",
@@ -87,8 +86,7 @@ sap.ui.define([], function () {
 		{
 			"id": "testRecorder",
 			"text": "Test Recorder",
-			"href": "topic/2535ef9272064cb6bd6b44e5402d531d",
-			"hideOnPhone": true
+			"href": "topic/2535ef9272064cb6bd6b44e5402d531d"
 		},
 		{
 			"id": "wdi5",

@@ -5,25 +5,33 @@
 // Provides class sap.ui.rta.plugin.Plugin.
 sap.ui.define([
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/dt/Plugin",
-	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/rta/util/hasStableId"
+	"sap/ui/dt/Plugin",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/util/hasStableId",
+	"sap/ui/rta/util/isReuseComponent",
+	"sap/ui/rta/Utils"
 ], function(
 	debounce,
-	Plugin,
-	ChangesWriteAPI,
+	JsControlTreeModifier,
 	OverlayRegistry,
 	OverlayUtil,
-	JsControlTreeModifier,
-	hasStableId
+	Plugin,
+	ChangesWriteAPI,
+	Utils,
+	hasStableId,
+	isReuseComponent,
+	RtaUtils
 ) {
 	"use strict";
 
 	// The ranks define the order of the plugin actions in the context menu
 	const CONTEXT_MENU_RANKS = {
+		CTX_ADDXML: 3,
+		CTX_EXTEND_CONTROLLER: 5,
 		CTX_RENAME: 10,
 		CTX_ANNOTATION_CHANGE_SINGLE_LABEL: 12,
 		CTX_ADD_ELEMENTS_AS_SIBLING: 20,
@@ -38,8 +46,6 @@ sap.ui.define([
 		CTX_GROUP_FIELDS: 90,
 		CTX_UNGROUP_FIELDS: 100,
 		CTX_ADDXML_AT_EXTENSIONPOINT: 105,
-		CTX_ADDXML: 106,
-		CTX_EXTEND_CONTROLLER: 107,
 		// Settings ranks go up 1 by 1 for each setting
 		CTX_SETTINGS: 110,
 		// IFrame ranks go up 1 by 1 for each possible child target
@@ -504,6 +510,18 @@ sap.ui.define([
 	BasePlugin.prototype._getMenuItems = function(aElementOverlays, mPropertyBag) {
 		mPropertyBag.rank ||= this.getRank(mPropertyBag.pluginId);
 		return Plugin.prototype._getMenuItems.apply(this, [aElementOverlays, mPropertyBag]);
+	};
+
+	/**
+	 * Checks if the control is a reuse component on S4HanaCloud. This is used to disable
+	 * certain plugins under these circumstancces, e.g. AddXMLPlugin.
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay for the control to be checked
+	 * @return {boolean} Whether the control is in a reuse component on S4HanaCloud
+	 */
+	BasePlugin.prototype.isInReuseComponentOnS4HanaCloud = function(oOverlay) {
+		const oComponent = Utils.getComponentForControl(oOverlay.getElement());
+		const bIsS4HanaCloud = RtaUtils.isS4HanaCloud();
+		return isReuseComponent(oComponent) && bIsS4HanaCloud;
 	};
 
 	return BasePlugin;

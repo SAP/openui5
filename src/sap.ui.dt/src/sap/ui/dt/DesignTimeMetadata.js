@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DOMUtil",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	merge,
 	ObjectPath,
+	Log,
 	ManagedObject,
 	Lib,
 	DOMUtil,
@@ -160,10 +162,10 @@ sap.ui.define([
 
 	/**
 	 * Returns action sAction part of designTime metadata (object or changeType string)
-	 * @param  {string} sAction action name
-	 * @param  {object} oElement element instance
+	 * @param  {string} sAction Action name
+	 * @param  {object} oElement Element instance
 	 * @param {string} [sSubAction] Sub-action
-	 * @return {map} part of designTimeMetadata, which describes sAction in a map format
+	 * @return {object} Object describing the action
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getAction = function(sAction, oElement, sSubAction) {
@@ -323,6 +325,51 @@ sap.ui.define([
 			return aActionsFromResponsibleElement.includes(sActionName);
 		}
 		return false;
+	};
+
+	/**
+	 * Returns propagated action from DesigntimeMetadata
+	 * @param  {string} sActionName - Action name
+	 * @returns {object} Object with the action and its target (origin element)
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getPropagatedAction = function(sActionName) {
+		const mData = this.getData();
+		const aActions = mData.propagatedActions;
+		if (!aActions) {
+			return undefined;
+		}
+		const oAction = aActions.find((oAction) => oAction.name === sActionName);
+		if (!oAction) {
+			return undefined;
+		}
+		return {
+			action: evaluateAction(oAction.action, oAction.propagatingControl),
+			propagatingControl: oAction.propagatingControl
+		};
+	};
+
+	/**
+	 * Returns the actions to be propagated (= made available also on children elements)
+	 * @param {sap.ui.core.Element} oElement - Source element
+	 * @param {function | string[]} [vPropagateActions] - Function or array of action names
+	 * @returns {string[]} Actions that should be propagated to children
+	 */
+	DesignTimeMetadata.prototype.getPropagateActions = function(oElement, vPropagateActions) {
+		const mData = this.getData();
+		const vPropagatedActions = vPropagateActions || mData.propagateActions;
+		if (vPropagatedActions) {
+			const vReturn = typeof vPropagatedActions === "function" ?
+				vPropagatedActions(oElement) :
+				vPropagatedActions;
+			if (Array.isArray(vReturn)) {
+				return vReturn;
+			}
+			Log.error(
+				"DesignTimeMetadata: propagateActions must be an array of action names or objects with action name and isActive function"
+			);
+		}
+		return [];
 	};
 
 	return DesignTimeMetadata;

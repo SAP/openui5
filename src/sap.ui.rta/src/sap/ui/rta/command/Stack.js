@@ -56,9 +56,24 @@ sap.ui.define([
 		const aAllExecutedCommands = this.getAllExecutedCommands();
 		aDiscardedChanges.forEach((oChange) => {
 			aAllExecutedCommands.some((oExecutedCommand) => {
-				if (oExecutedCommand.getPreparedChange?.().getId() === oChange.getId()) {
-					oExecutedCommand.setRelevantForSave(bSaveRelevant);
-					return true;
+				// As the getPreparedChange method can return an array or a object, we need to
+				// check for type and handle accordingly
+				// for example, the ControlVariantSaveAs command returns an array of changes
+				const vPreparedChange = oExecutedCommand.getPreparedChange?.();
+				if (Array.isArray(vPreparedChange)) {
+					return vPreparedChange.some((oPreparedChangeItem) => {
+						if (oPreparedChangeItem.getId() === oChange.getId()) {
+							oExecutedCommand.setRelevantForSave(bSaveRelevant);
+							return true;
+						}
+						return false;
+					});
+				} else if (vPreparedChange) {
+					if (vPreparedChange.getId() === oChange.getId()) {
+						oExecutedCommand.setRelevantForSave(bSaveRelevant);
+						return true;
+					}
+					return false;
 				}
 				return false;
 			});

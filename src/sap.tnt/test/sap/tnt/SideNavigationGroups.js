@@ -29,6 +29,7 @@ sap.ui.define([
 				new NavigationListItem({ text: "Home", icon: "sap-icon://home" }),
 				new NavigationListGroup({
 					text: "New",
+					tooltip: "New - custom tooltip",
 					items: [
 						new NavigationListItem({ text: "Cards", icon: "sap-icon://card" }),
 						new NavigationListItem({ text: "Building", icon: "sap-icon://building" })
@@ -38,12 +39,12 @@ sap.ui.define([
 					text: "Recently used with a long overflowing title",
 					items: [
 						new NavigationListItem({ text: "Example", icon: "sap-icon://example" }),
-						new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart" }),
+						new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart", tooltip: "Heatmap Chart - custom tooltip", }),
 						new NavigationListItem({
 							text: "Machine some more text to truncate",
 							icon: "sap-icon://machine",
 							items: [
-								new NavigationListItem({ text: "Supply Chain" }),
+								new NavigationListItem({ text: "Supply Chain", tooltip: "Supply Chain - custom tooltip" }),
 								new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
 								new NavigationListItem({ text: "Schematics" })
 							]
