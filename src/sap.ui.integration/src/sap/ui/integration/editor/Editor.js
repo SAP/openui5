@@ -1210,10 +1210,12 @@ sap.ui.define([
 	 * @returns {Promise} Resolves when the request is successful, rejects otherwise.
 	 */
 	 Editor.prototype.request = function (oConfiguration) {
-		return this._oDataProviderFactory
+		var oDataProvider = this._oDataProviderFactory
 			.create({ request: oConfiguration })
-			.setAllowCustomDataType(true)
-			.getData();
+			.setAllowCustomDataType(true);
+		return oDataProvider._waitDependencies().then(function () {
+			return oDataProvider.getData();
+		});
 	};
 
 	Editor.prototype.initDestinations = function (vHost) {
@@ -2260,8 +2262,9 @@ sap.ui.define([
 		oDataProvider.bindObject({
 			path: "context>/"
 		});
-		var oPromise = oDataProvider.getData();
-		return oPromise.then(function (oData) {
+		return oDataProvider._waitDependencies().then(function () {
+			return oDataProvider.getData();
+		}).then(function (oData) {
 			if (oConfig._cancel) {
 				oConfig._values = [];
 				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
@@ -2474,8 +2477,9 @@ sap.ui.define([
 			});
 		}
 		var oDataProvider = this._oDataProviderFactory.create(oExtensionConfig);
-		var oPromise = oDataProvider.getData();
-		return oPromise.then(function (oData) {
+		return oDataProvider._waitDependencies().then(function () {
+			return oDataProvider.getData();
+		}).then(function (oData) {
 			var oValueModel = oExtension.getModel();
 			if (!oValueModel) {
 				oValueModel = new JSONModel(oData || {});

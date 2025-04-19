@@ -22,11 +22,17 @@
 	"sap.card": {
 		"type": "List",
 		"configuration": {
+			"editor": "dt/Configuration",
 			"destinations": {
 				"ProductsMockServerWithCSRF": {
 					"name": "ProductsMockServerWithCSRF",
 					"label": "Products Mock CSRF",
 					"defaultUrl": "/getDataWithCSRF"
+				}
+			},
+			"parameters": {
+				"products": {
+					"value": []
 				}
 			},
 			"csrfTokens": {
