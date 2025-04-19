@@ -2015,6 +2015,11 @@ sap.ui.define([
 										url: '/samples/data/csrf/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
+									},
+									{
+										url: '/samples/data/csrf/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
 									}
 								]
 							},
