@@ -3,6 +3,11 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "9d03ba078afdb5c8ddcc5efc9a1da62bd2fbf56d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: special days are shown correctly now"
+      },
+      {
         "id": "2a30f6356d876e1f0a8fa92d7d46b9eed0515c37",
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Font styling for product name is now correct"

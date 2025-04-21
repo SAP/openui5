@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "1dcf4a70125aefaee60bf5d57de0e57faeaeb991",
+        "type": "FIX",
+        "text": " Demo Kit: Fix card header padding structure"
+      },
+      {
+        "id": "469f3d2e83596bfc486ade784ccfa2e43c825137",
+        "type": "FIX",
+        "text": " Demo Kit: Remove phone visibility restrictions"
+      },
+      {
         "id": "85dc63b4c194e6bf445fabf33a70441d353da0d3",
         "type": "FIX",
         "text": " DemoKit: Error prevented"

@@ -3,6 +3,36 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "a9d35329ba36fa3e6e933851fb4e860bb7103e13",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: fix exception throwing"
+      },
+      {
+        "id": "cce21a0dce750bd1574ee7d66edc29907b20a5ed",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now fixed"
+      },
+      {
+        "id": "429e30cf0e7db330c34967c5a44d01d9d73bb471",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Fix F6 navigation"
+      },
+      {
+        "id": "1827a3842f0af5804321a313a050200bda9ad465",
+        "type": "FIX",
+        "text": " DateRangeSelection: Same separator for both date inputs"
+      },
+      {
+        "id": "c2db91538eedbf9b5a1d3f5ecb6f957d34c486ce",
+        "type": "FIX",
+        "text": " CellSelector: Ignore \"hidden grouped\" columns when selecting"
+      },
+      {
+        "id": "915fe6552f99a2488d6ae1ba042c5d48cc0fb9fb",
+        "type": "FEATURE",
+        "text": " sap.m.Wizard: Enable F6 support"
+      },
+      {
         "id": "4b6f825c32dac406d3e53c1e2d2ca3a67e555137",
         "type": "FIX",
         "text": " sap.m.Select: Enhanced error handling"

@@ -1,0 +1,17 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "008d5c26b36d706ed20884321ba6e8a9328927db",
+        "type": "FIX",
+        "text": " MultiValueField: don't open valueHelp on more-indicator"
+      },
+      {
+        "id": "b302baf3ce1abae14b4f8768f1a85d61536b6b63",
+        "type": "FIX",
+        "text": " Field: Label mapping for inner control missing"
+      }
+    ]
+  }
+}
