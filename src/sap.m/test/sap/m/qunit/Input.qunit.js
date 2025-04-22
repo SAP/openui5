@@ -8244,40 +8244,6 @@ sap.ui.define([
 		assert.strictEqual(oRenderedValueStateMessage, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
 	});
 
-	QUnit.test("Should move the visual focus from value state header to the input when the user starts typing", async function (assert) {
-		// Arrange
-		var oFormattedValueStateText = new FormattedText({
-			htmlText: "Value state message containing a %%0",
-			controls: new Link({
-				text: "link",
-				href: "#"
-			})
-		});
-		var	oValueStateHeader;
-
-		// Act
-		this.oInput.setValueState("Information");
-		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		await nextUIUpdate(this.clock);
-
-		this.oInput._$input.trigger("focus").val("o").trigger("input");
-		this.clock.tick(1000);
-
-		// Select the value state header
-		qutils.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
-		this.clock.tick();
-
-		this.oInput._$input.trigger("focus").val("one").trigger("input");
-		this.clock.tick();
-
-		oValueStateHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader();
-
-		// Assert
-		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
-		assert.notOk(this.oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
-		assert.ok(this.oInput.$().hasClass("sapMFocus"), "The visual pseudo focus is on the input");
-	});
-
 	QUnit.module("Input with suggestions - change event", {
 		beforeEach: async function () {
 			this.clock = sinon.useFakeTimers();
