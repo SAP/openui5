@@ -481,7 +481,8 @@ sap.ui.define([
 								key: '{key}',
 								enabled: '{enabled}'
 							}),
-							path: 'items'
+							path: 'items',
+							templateShareable: false
 						}
 					}),
 

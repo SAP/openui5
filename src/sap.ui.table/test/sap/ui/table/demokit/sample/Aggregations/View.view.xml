@@ -45,7 +45,7 @@
 								key="{key}"
 								mode="MultiSelect"
 								listClose="handleListClose"
-								items="{values}" >
+								items="{ path: 'values', templateShareable: false }" >
 								<m:items>
 									<m:FacetFilterItem
 										text="{text}"
