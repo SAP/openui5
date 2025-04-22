@@ -2927,7 +2927,9 @@ function(
 		var iItemTop = Math.round(oTargetItemDomRef.getBoundingClientRect().top);
 		if (iGHRectBottom > iItemTop || iTHRectBottom > iItemTop || iInfoTBarContainerRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oTargetItemDomRef, 0, [0, -iGHRectHeight - iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
+				if (oTargetItemDomRef.isConnected) {
+					oScrollDelegate.scrollToElement(oTargetItemDomRef, 0, [0, -iGHRectHeight - iTHRectHeight - iInfoTBarContainerRectHeight - iHeaderToolbarRectHeight - iStickyFocusOffset], true);
+				}
 			});
 		}
 	};
