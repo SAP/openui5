@@ -141,7 +141,7 @@ function() {
 			this._highlightSubTree(oNode);
 
 		} else if (oNode.nodeType === document.TEXT_NODE) {
-			sText = oNode.data;
+			sText = oNode.data.replace(/[\n\t]+/g, " ");
 			oMatches = Object.create(null); // Object containing matched queries and their indices.
 			aBlockedIndices = []; // Array which serves for preservation of the already matched indices.
 
