@@ -6,7 +6,7 @@
 		<subSections>
 			<ObjectPageSubSection class="sapUxAPObjectPageSubSectionFitContainer">
 				<m:IllustratedMessage
-					illustrationType="{= ${/inputPopulated} ? 'sapIllus-ErrorScreen' : 'sapIllus-SearchFolder' }"
+					illustrationType="{= ${/inputPopulated} ? 'sapIllus-UnableToUpload' : 'sapIllus-NoSearchResults' }"
 					title="{= ${/inputPopulated} ? ${i18n>NotFoundTitle} : ${i18n>EnterPurchaseTitle} }"
 					description="{= ${/inputPopulated} ? ${i18n>NotFoundDescription} : ${i18n>EnterPurchaseDescription} }"/>
 			</ObjectPageSubSection>
