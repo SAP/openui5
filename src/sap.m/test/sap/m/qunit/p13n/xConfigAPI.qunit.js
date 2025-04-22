@@ -368,7 +368,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Chckeck #getCurrentItemState (empty)", function(assert){
+	QUnit.test("Check #getCurrentItemState (empty)", function(assert){
 
 		return xConfigAPI.getCurrentItemState(this.oControl, {propertyBag: {modifier: JsControlTreeModifier}, changeType: "moveItem"}, null, "items")
 		.then(function(aCurrentState){
@@ -376,7 +376,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Chckeck #getCurrentItemState (with inital control state in xConfig)", function(assert){
+	QUnit.test("Check #getCurrentItemState (with inital control state in xConfig)", function(assert){
 
 		const oModificationPayload = {
 			key: "test_property",
@@ -399,7 +399,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Chckeck #getCurrentItemState (with inital control state in targetAggregation)", function(assert){
+	QUnit.test("Check #getCurrentItemState (with inital control state in targetAggregation)", function(assert){
 
 		const oItem = new Item({id: "test_property"});
 
@@ -414,7 +414,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Chckeck #getCurrentItemState (with inital control state in targetAggregation)", function(assert){
+	QUnit.test("Check #getCurrentItemState (with inital control state in targetAggregation)", function(assert){
 
 		const oItem = new Item({id: "test_property"});
 
@@ -431,6 +431,40 @@ sap.ui.define([
 		.then(function(aCurrentState){
 			assert.deepEqual(aCurrentState, [{key: "test_property"}], "The correct value has been created");
 			JsControlTreeModifier.getProperty.restore();
+		});
+	});
+
+	QUnit.test("Check #getCurrentSortState (empty)", function(assert){
+
+		return xConfigAPI.getCurrentSortState(this.oControl, {propertyBag: {modifier: JsControlTreeModifier}, changeType: "moveSort"}, null, "sortConditions")
+		.then(function(aCurrentState){
+			assert.deepEqual(aCurrentState, [], "The correct value has been created (no item present yet)");
+		});
+	});
+
+	QUnit.test("Check #getCurrentSortState (with inital control state in xConfig)", function(assert){
+
+		const oModificationPayload = {
+			key: "test_property",
+			property: "sortConditions",
+			operation: "add",
+			controlMeta: {
+				property: "sortConditions"
+			},
+			value: {
+				descending: true,
+				index: 2,
+				key: "test_property"
+			}
+		};
+
+
+		return xConfigAPI.enhanceConfig(this.oControl, oModificationPayload)
+		.then(function(oConfig){
+			return xConfigAPI.getCurrentSortState(this.oControl, {propertyBag: {modifier: JsControlTreeModifier}, changeType: "addSort"}, oConfig, "sortConditions");
+		}.bind(this))
+		.then(function(aCurrentState){
+			assert.deepEqual(aCurrentState, [{key: "test_property"}], "The correct value has been created");
 		});
 	});
 
