@@ -1789,7 +1789,8 @@
 					"sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent",
 					"sap.m.sample.UploadSetwithTablePlugin.GridTableSimple",
 					"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator",
-					"sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances"
+					"sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances",
+					"sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample"
 				]
 			}
 		],
@@ -3983,6 +3984,11 @@
 				"id": "sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances",
 				"name": "Plugin for Responsive Table (sap.m.Table) - Multiple plugin instances with multiple tables",
 				"description": "This example demonstrates the usage of multiple plugin instances with multiple tables. The plugin instances are created for each table and the uploaded files are displayed in their respective tables."
+			},
+			{
+				"id": "sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample",
+				"name": "Plugin for Responsive Table (sap.m.Table) - File Name validation configuration",
+				"description": "This example demonstrates the usage of fileNameValidationConfig property to configure file name validation for renaming a file."
 			}
 		]
 	}

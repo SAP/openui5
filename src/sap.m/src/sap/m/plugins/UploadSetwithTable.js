@@ -164,7 +164,42 @@ sap.ui.define([
 				/**
 				  * The text of the CloudFile picker button. The default text is "Upload from cloud" (translated to the respective language).
 				  */
-				cloudFilePickerButtonText: { type: 'string', defaultValue: "" }
+				cloudFilePickerButtonText: { type: 'string', defaultValue: "" },
+
+				/**
+				 * @typedef {object} sap.m.plugins.UploadSetwithTable.FilenameValidationConfigMode
+				 * @description Key property of {@link sap.m.plugins.UploadSetwithTable.FilenameValidationConfig FileNameValidationConfig}. Used to determine the mode for file name validation.
+				 * @property {string} mode - The file name validation mode. The allowed values are 'include', 'exclude', or 'override'.
+				 * <br> <br> If the mode is 'include', the specified characters are added to the default restricted character set.
+				 * <br> If the mode is 'exclude', the specified characters are excluded from the default resrtricted character set.
+				 * <br> If the mode is 'override', the specified characters replace the entire default restricted character set.
+				 * <br> If the mode is not set, the default restricted file name character set is used.
+				 * @public
+				 * @since 1.136
+				 */
+
+				/**
+				 * @typedef {object} sap.m.plugins.UploadSetwithTable.FilenameValidationConfig An object type that represents the file name validation configuration.
+				 * @description This property type is used to define the file name validation configuration. Object is passed to {@link sap.m.plugins.UploadSetwithTable fileNameValidationConfig property}
+				 * @property {sap.m.plugins.UploadSetwithTable.FilenameValidationConfigMode} mode The file name validation config mode.
+				 * @property {string} characters The file name validation configuration characters.
+				 * <br> <br> The default restricted filename character set is: \:/*?"<>|[]{}@#$
+				 * @public
+				 * @since since 1.136
+				**/
+
+				/**
+				 * File name validation configuration.
+				 * <br> Set this property to configure the file name validation characters and the validation mode.
+				 * <br> This configuration is used to validate the file name when a file is selected for renaming.
+				 * <br> For the plugin to pick up this configuration, mode and characters of the property must be set to validate the file name.
+				 * <br> see {@link sap.m.plugins.UploadSetwithTable.FilenameValidationConfigMode mode} to configure the file name validation mode.
+				 * <br> <br> The default restricted filename character set is: \:/*?"<>|[]{}@#$
+				 * @type {sap.m.plugins.UploadSetwithTable.FilenameValidationConfig}
+				 * @public
+				 * @since 1.136
+				 */
+				fileNameValidationConfig: { type: 'object', defaultValue: null }
 			},
 				aggregations: {
 				/**
@@ -400,6 +435,8 @@ sap.ui.define([
 
 	UploadSetwithTable.findOn = PluginBase.findOn;
 
+	UploadSetwithTable.DEFAULT_INVALID_FILENAME_CHARACTERSET = "\\:/*?\"<>|[]{}@#$";
+
 	/**
 	 * Event Delegate that containts events, that need to be executed after control events.
 	 */
@@ -540,6 +577,51 @@ sap.ui.define([
 
 	UploadSetwithTable.prototype.getNoDataIllustration = function() {
 		return this._vNoDataIllustration;
+	};
+
+	UploadSetwithTable.prototype.setFileNameValidationConfig = function (oConfig) {
+
+		// set property to null if no config is passed
+		if (oConfig === undefined || oConfig === null) {
+			this.setProperty("fileNameValidationConfig", null);
+			return this;
+		}
+
+		// Validate that it's an object
+		if (typeof oConfig !== 'object') {
+			throw new Error("fileNameValidationConfig must be a non-null object with mode and characters properties");
+		}
+
+		// Extract keys from the object
+		const keys = Object.keys(oConfig);
+		const expectedKeys = ['mode', 'characters'];
+
+		// Check for exact match in keys (no more, no less)
+		const missingKeys = expectedKeys.filter((key) => !keys.includes(key));
+		const extraKeys = keys.filter((key) => !expectedKeys.includes(key));
+
+		if (missingKeys.length > 0 || extraKeys.length > 0) {
+			throw new Error(
+				`fileNameValidationConfig must contain only the following properties: ${expectedKeys.join(', ')}. ` +
+				(missingKeys.length > 0 ? `Missing: ${missingKeys.join(', ')}. ` : '') +
+				(extraKeys.length > 0 ? `Unexpected: ${extraKeys.join(', ')}.` : '')
+			);
+		}
+
+		// Validate `mode` is a string and one of the allowed values
+		const validModes = ['include', 'exclude', 'override'];
+		if (typeof oConfig.mode !== 'string' || !validModes.includes(oConfig.mode)) {
+			throw new Error(`fileNameValidationConfig.mode must be one of ${validModes.join(', ')}`);
+		}
+
+		// Validate `characters` is a string
+		if (typeof oConfig.characters !== 'string') {
+			throw new Error("fileNameValidationConfig.characters must be a string.");
+		}
+
+		// Call the default property setter (important!)
+		this.setProperty("fileNameValidationConfig", oConfig);
+		return this;
 	};
 
 	// Public API's
@@ -895,15 +977,49 @@ sap.ui.define([
 			return;
 		}
 
-		const oCharacterRegex = new RegExp(/[@#$]/);
+		const sValidationCharacterSet = this._getFileNameValidationChracters();
+		const sEscapedSpecialCharcters = sValidationCharacterSet.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+		const oCharacterRegex = new RegExp(`[${sEscapedSpecialCharcters}]`);
 		if (oCharacterRegex.test(sValue)) {
 			oInput.setShowValueStateMessage(true);
 			oInput.setProperty("valueState", "Error", true);
-			oInput.setValueStateText(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SPLC_VALIDATION_ERROR_MESSAGE", ['@#$']));
+			oInput.setValueStateText(this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_SPLC_VALIDATION_ERROR_MESSAGE", [sValidationCharacterSet]));
 		} else {
 			oInput.setShowValueStateMessage(false);
 			oInput.setProperty("valueState", "None", true);
 		}
+	};
+
+	UploadSetwithTable.prototype._getFileNameValidationChracters = function() {
+		const {mode, characters} = this.getFileNameValidationConfig() || {};
+		switch (mode) {
+			case "include": {
+				// remove duplicate characters and the concatenate with default invalid characters
+				const aUniqueChars = [...new Set((UploadSetwithTable.DEFAULT_INVALID_FILENAME_CHARACTERSET + characters).split(""))];
+				const sUniqueChars = aUniqueChars.join("");
+				return sUniqueChars;
+			}
+
+			case "exclude": {
+				const aExcludeChars = [...new Set(characters.split(""))];
+				const sExcludeChars = aExcludeChars.join("");
+				// remove duplicate characters and the concatenate with default invalid characters
+				return excludeCharacters(UploadSetwithTable.DEFAULT_INVALID_FILENAME_CHARACTERSET, sExcludeChars);
+			}
+
+			case "override":
+				return characters;
+
+			default:
+				return UploadSetwithTable.DEFAULT_INVALID_FILENAME_CHARACTERSET;
+		}
+
+		function excludeCharacters(inputStr, charsToRemove) {
+			for (var char of charsToRemove) {
+			  inputStr = inputStr.split(char).join("");
+			}
+			return inputStr;
+		  }
 	};
 
 	UploadSetwithTable.prototype._onFileUploaderChange = function (oEvent) {
