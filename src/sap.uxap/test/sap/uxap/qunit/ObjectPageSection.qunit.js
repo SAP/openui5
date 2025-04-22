@@ -771,6 +771,12 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		}
 	});
 
+	QUnit.test("Fast nagivation", function (assert) {
+		var oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection");
+
+		assert.strictEqual(oFirstSection.$().attr("data-sap-ui-fastnavgroup"), "true", "Sections are navigable via F6");
+	});
+
 	QUnit.test("Test aria-labelledby attribute", async function(assert) {
 		assert.expect(7);
 
