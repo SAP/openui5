@@ -1,8 +1,10 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
 	"sap/base/assert",
+	"sap/m/Button",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/base/DesignTime",
@@ -14,6 +16,7 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function(
 	assert,
+	Button,
 	Menu,
 	MenuItem,
 	BaseDesignTime,
@@ -131,6 +134,18 @@ sap.ui.define([
 		oOverlay.detachBrowserEvent("keyup", this._onKeyUp, this);
 	};
 
+	function createAdditionalInfo(oMenuItem) {
+		const oAdditionalInfoButton = new Button({
+			id: `${this.sId}-${oMenuItem.id}-additionalInfo-button`,
+			icon: "sap-icon://hint",
+			visible: !oMenuItem.submenu,
+			type: "Transparent",
+			areaLabelledby: this.getId()
+		});
+		oAdditionalInfoButton.setTooltip(oMenuItem.additionalInfo);
+		return oAdditionalInfoButton;
+	}
+
 	/**
 	 * Opens the Context Menu
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
@@ -143,18 +158,25 @@ sap.ui.define([
 			aMenuItems.forEach(function(oMenuItem, index) {
 				const sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oOverlay) : oMenuItem.text;
 				const bEnabled = typeof oMenuItem.enabled === "function" ? oMenuItem.enabled(aSelectedOverlays) : oMenuItem.enabled;
-				oMenu.addItem(
-					new MenuItem({
-						key: oMenuItem.id,
-						icon: oMenuItem.icon,
-						text: sText,
-						enabled: bEnabled
-					})
-				);
-				if (oMenuItem.submenu) {
-					addMenuItems(oMenu.getItems()[index], oMenuItem.submenu);
+				const oMenuItemInstance = new MenuItem({
+					key: oMenuItem.id,
+					icon: oMenuItem.icon,
+					text: sText,
+					enabled: bEnabled
+				});
+
+				oMenu.addItem(oMenuItemInstance);
+
+				// Add additional Info to the menu item
+				if (oMenuItem.additionalInfo) {
+					const oAdditionalInfoButton = createAdditionalInfo.call(this, oMenuItem);
+					oMenuItemInstance.addEndContent(oAdditionalInfoButton);
 				}
-			});
+
+				if (oMenuItem.submenu) {
+					addMenuItems.call(this, oMenu.getItems()[index], oMenuItem.submenu);
+				}
+			}.bind(this));
 		}
 
 		const oNewContextElement = oOverlay.getElement();
@@ -240,7 +262,7 @@ sap.ui.define([
 
 			if (aMenuItems.length > 0) {
 				aMenuItems = this._sortMenuItems(aMenuItems);
-				addMenuItems(this.oContextMenuControl, aMenuItems);
+				addMenuItems.call(this, this.oContextMenuControl, aMenuItems);
 				this.oContextMenuControl.openAsContextMenu(oEvent, oOverlay);
 			}
 
@@ -414,7 +436,8 @@ sap.ui.define([
 	 * @return {boolean} true, if locked; false if not
 	 */
 	ContextMenu.prototype._checkForPluginLock = function() {
-		// As long as Selection doesn't work correctly on ios we need to ensure that the ContextMenu opens even if a plugin mistakenly locks it
+		// As long as Selection doesn't work correctly on ios we need to ensure that the
+		// ContextMenu opens even if a plugin mistakenly locks it
 		if (Device.os.ios) {
 			return false;
 		}
