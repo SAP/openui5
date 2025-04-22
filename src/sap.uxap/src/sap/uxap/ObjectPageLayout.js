@@ -2029,8 +2029,8 @@ sap.ui.define([
 				this._bAllContentFitsContainer = this._hasSingleVisibleFullscreenSubSection(oSelectedSection);
 			}
 			this._requestAdjustLayout(true)
-				.then(function (bSuccess) { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
-					if (bSuccess) {
+				.then(function() { // scrolling must be done after the layout adjustment is done (so the latest section positions are determined)
+					if (this.getEnableLazyLoading() && this._oLazyLoading) {
 						this._oLazyLoading.doLazyLoading();
 					}
 					this._adjustSelectedSectionByUXRules(); //section may have changed again from the app before the promise completed => ensure adjustment
