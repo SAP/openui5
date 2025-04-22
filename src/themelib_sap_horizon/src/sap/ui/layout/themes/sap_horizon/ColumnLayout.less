@@ -1,12 +1,12 @@
 /* ================================================ */
 /* CSS for control sap.ui.layout/form/ColumnLayout  */
-/* Horizon theme                                    */
+/* Morning Horizon theme                            */
 /* ================================================ */
 
 .sapUiFormCL.sapUiFormBackgrSolid,
 .sapUiFormCL.sapUiFormBackgrTranslucent {
-	background-color: @sapUiGroupContentBackground;
-	border-radius: @sapUiElementBorderCornerRadius;
+	background-color: var(--sapGroup_ContentBackground);
+	border-radius: var(--sapElement_BorderCornerRadius);
 }
 
 /* Toolbar */
@@ -19,6 +19,6 @@
 /* edit mode */
 /* labels next to field */
 .sapUiFormEdit > .sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12),
-.sapUiFormEdit > .sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12){
+.sapUiFormEdit > .sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) {
 	padding-top: 0.875rem;
 }
