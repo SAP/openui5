@@ -2,13 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
 	"sap/ui/model/Model",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/base/util/extend",
 	"sap/base/util/isPlainObject"
-], function (ManagedObject, Log, Model, BindingHelper, extend, isPlainObject) {
+], function (BindingInfo, ManagedObject, Log, Model, BindingHelper, extend, isPlainObject) {
 		"use strict";
 
 		/**
@@ -103,7 +104,7 @@ sap.ui.define([
 				return vBinding;
 			}
 
-			var oBindingInfo = typeof vBinding ===  "string" ? ManagedObject.bindingParser(vBinding) : extend({}, vBinding);
+			var oBindingInfo = typeof vBinding ===  "string" ? BindingInfo.parse(vBinding) : extend({}, vBinding);
 
 			if (!oBindingInfo) {
 				return vBinding;

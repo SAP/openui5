@@ -8,12 +8,12 @@ sap.ui.define([
 	"./_AnnotationHelperBasics",
 	"sap/base/Log",
 	"sap/base/i18n/date/CalendarType",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/performance/Measurement"
-], function (Basics, Log, CalendarType, BindingParser, ManagedObject, DateFormat, ODataUtils,
+], function (Basics, Log, CalendarType, BindingInfo, BindingParser, DateFormat, ODataUtils,
 		Measurement) {
 	'use strict';
 
@@ -504,7 +504,7 @@ sap.ui.define([
 			Measurement.average(sPerformanceGetExpression, "", aPerformanceCategories);
 
 			if ( !Expression.simpleParserWarningLogged &&
-					ManagedObject.bindingParser === BindingParser.simpleParser) {
+					BindingInfo.parse === BindingParser.simpleParser) {
 				Log.warning("Complex binding syntax not active", null, sAnnotationHelper);
 				Expression.simpleParserWarningLogged = true;
 			}

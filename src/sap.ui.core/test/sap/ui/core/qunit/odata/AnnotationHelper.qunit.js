@@ -987,7 +987,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 		);
 	});
 	// Q: output simple binding expression in case application has not opted-in to complex ones?
-	//    /* if (ManagedObject.bindingParser === sap.ui.base.BindingParser.simpleParser) {} */
+	//    /* if (BindingInfo.parse === sap.ui.base.BindingParser.simpleParser) {} */
 	// A: rather not, we probably need complex bindings in many cases (e.g. for types)
 
 	//*********************************************************************************************

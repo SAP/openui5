@@ -7,7 +7,7 @@ sap.ui.define([
 	'./TemplateControl',
 	"sap/ui/core/RenderManager",
 	'sap/ui/thirdparty/handlebars',
-	'sap/ui/base/ManagedObject',
+	'sap/ui/base/BindingInfo',
 	'sap/base/util/ObjectPath',
 	"sap/base/security/encodeXML",
 	"sap/base/util/isEmptyObject",
@@ -19,7 +19,7 @@ sap.ui.define([
 		TemplateControl,
 		RenderManager,
 		Handlebars,
-		ManagedObject,
+		BindingInfo,
 		ObjectPath,
 		encodeXML,
 		isEmptyObject
@@ -397,7 +397,7 @@ sap.ui.define([
 								// the aggregation is bound => so we create a binding info object
 								// which is used in the createControl function of the TemplateControl
 								// to create a proper binding
-								var oBindingInfo = ManagedObject.bindingParser(mSettings[sAggregationName], oView && oView.getController());
+								var oBindingInfo = BindingInfo.parse(mSettings[sAggregationName], oView && oView.getController());
 								oBindingInfo.template = oChildControl;
 								oNewControl.bindAggregation(sAggregationName, oBindingInfo);
 							} else {
