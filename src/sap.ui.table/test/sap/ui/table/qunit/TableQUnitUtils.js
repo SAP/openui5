@@ -1481,8 +1481,9 @@ sap.ui.define([
 
 	TableQUnitUtils.startTouchScrolling = function(oTargetElement, iPageX, iPageY) {
 		oTouchTargetElement = oTargetElement;
-		iTouchPositionX = iPageX || 0;
-		iTouchPositionY = iPageY || 0;
+		var oTargetRect = oTargetElement.getBoundingClientRect();
+		iTouchPositionX = iPageX || oTargetRect.left;
+		iTouchPositionY = iPageY || oTargetRect.top;
 
 		var oTouchEvent = this.createTouchEvent("touchstart", {
 			touches: [
