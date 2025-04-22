@@ -125,6 +125,9 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
+	// shortcut for sap.m.IllustratedMessageSize
+	const IllustratedMessageSize = mobileLibrary.IllustratedMessageSize;
+
 	/**
 	 * Constructor for a new <code>VariantManagement</code>.
 	 * @param {string} [sId] - ID for the new control, generated automatically if no ID is given
@@ -1142,8 +1145,8 @@ sap.ui.define([
 				title: this._oRb.getText("VARIANT_MANAGEMENT_NODATA"),
 				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_DESCR"),
 				enableVerticalResponsiveness: true,
-				illustrationSize: "Auto",
-				illustrationType: mobileLibrary.IllustratedMessageType.SimpleEmptyList
+				illustrationSize: IllustratedMessageSize.Auto,
+				illustrationType: mobileLibrary.IllustratedMessageType.NoEntries
 			});
 		}
 		if (!this._oNoDataFoundIllustratedMessage || this._oNoDataFoundIllustratedMessage.bIsDestroyed) {
@@ -1151,7 +1154,7 @@ sap.ui.define([
 				title: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"),
 				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND_DESCR"),
 				enableVerticalResponsiveness: true,
-				illustrationSize: "Auto",
+				illustrationSize: IllustratedMessageSize.Auto,
 				illustrationType: mobileLibrary.IllustratedMessageType.NoSearchResults
 			});
 			this._oNoDataFoundIllustratedMessage.addStyleClass("sapMVarMngmtIllustratedMessage");
