@@ -564,10 +564,14 @@ sap.ui.define([
 			ComboBoxTextField.prototype.onkeydown.apply(this, arguments);
 
 			var oSuggestionsPopover = this._getSuggestionsPopover();
-			if (this.areHotKeysPressed(oEvent) && oSuggestionsPopover && oSuggestionsPopover.isOpen()) {
-				oSuggestionsPopover.setValueStateActiveState(true);
-				oSuggestionsPopover._handleValueStateLinkNav(this, oEvent);
-				oSuggestionsPopover.updateFocus(this, null);
+			if (this.areHotKeysPressed(oEvent)) {
+				if (oSuggestionsPopover && oSuggestionsPopover.isOpen()) {
+					oSuggestionsPopover.setValueStateActiveState(true);
+					oSuggestionsPopover._handleValueStateLinkNav(this, oEvent);
+					oSuggestionsPopover.updateFocus(this, null);
+				} else {
+					this._handleValueStateLinkNav();
+				}
 			}
 		};
 

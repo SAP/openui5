@@ -873,7 +873,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onkeydown = function(oEvent) {
-		if (this.areHotKeysPressed(oEvent) && this.isOpen()) {
+		if (this.areHotKeysPressed(oEvent) && this.isOpen()){
 			// Override the ComboBoxBase onkeydown method to prevent the default behavior
 			// of the ComboBoxBase when the hotkeys are pressed
 			// The default behavior would execute SuggestionsPopover handleKeyboardNavigation method

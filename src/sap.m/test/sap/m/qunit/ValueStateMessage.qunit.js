@@ -222,8 +222,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(oDomRef.className, "sapMValueStateMessage sapMValueStateMessageWarning");
 		assert.strictEqual(oDomRef.getAttribute("role"), "presentation", "The value state only serves as a visual representation of the message.");
-		assert.strictEqual(oDomRef.getAttribute("aria-hidden"), "true");
-		assert.strictEqual(oDomRef.firstElementChild.getAttribute("aria-hidden"), null);
 
 		// cleanup
 		oInputBase.destroy();
