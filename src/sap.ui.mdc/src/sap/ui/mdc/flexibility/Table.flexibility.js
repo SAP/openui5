@@ -36,6 +36,10 @@ sap.ui.define([
 		setShowDetails: xConfigFlex.createSetChangeHandler({
 			aggregation: "type",
 			property: "showDetails"
+		}),
+		setFixedColumnCount: xConfigFlex.createSetChangeHandler({
+			aggregation: "type",
+			property: "fixedColumnCount"
 		})
 	};
 

@@ -7,12 +7,16 @@ sap.ui.define([
 	"./menu/GroupHeaderRowContextMenu",
 	"../enums/TableRowCountMode",
 	"sap/m/table/Util",
+	"./utils/Personalization",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Lib"
 ], (
 	TableTypeBase,
 	GroupHeaderRowContextMenu,
 	TableRowCountMode,
 	MTableUtil,
+	PersonalizationUtils,
+	JSONModel,
 	Library
 ) => {
 	"use strict";
@@ -80,6 +84,16 @@ sap.ui.define([
 					type: "boolean",
 					group: "Appearance",
 					defaultValue: true
+				},
+				/**
+				 * Determines whether the number of fixed columns is configurable via the column menu.
+				 *
+				 * @since 1.136
+				 */
+				enableColumnFreeze: {
+					type: "boolean",
+					group: "Behavior",
+					defaultValue: false
 				},
 				/**
 				 * Defines the number of fixed columns.
@@ -218,6 +232,10 @@ sap.ui.define([
 		const oGridTable = new InnerTable(sId, this.getTableSettings());
 
 		oGridTable.setAggregation("groupHeaderRowContextMenu", new GroupHeaderRowContextMenu());
+		const oSettingsModel = new JSONModel({
+			p13nFixedColumnCount: null
+		});
+		oGridTable.setModel(oSettingsModel, "$typeSettings");
 
 		return oGridTable;
 	};
@@ -250,7 +268,16 @@ sap.ui.define([
 					return mSelectionBehaviorMap[sSelectionMode]; // Default is "RowSelector"
 				}
 			},
-			fixedColumnCount: "{$sap.ui.mdc.Table#type>/fixedColumnCount}",
+			enableColumnFreeze: "{$sap.ui.mdc.Table#type>/enableColumnFreeze}",
+			fixedColumnCount: {
+				parts: [
+					{ path: "$sap.ui.mdc.Table#type>/fixedColumnCount" }, { path: "$typeSettings>/p13nFixedColumnCount" }
+				],
+				formatter: function(iFixedColumnCount, iP13nFixedColumnCount) {
+					return iP13nFixedColumnCount ?? iFixedColumnCount;
+				}
+			},
+			columnFreeze: [onColumnFreeze, this],
 			beforeOpenContextMenu: [onBeforeOpenContextMenu, this]
 		};
 
@@ -328,6 +355,15 @@ sap.ui.define([
 		this.callHook("ColumnResize", oTable, {
 			column: oColumn,
 			width: sWidth
+		});
+	}
+
+	async function onColumnFreeze(oEvent) {
+		const oTable = this.getTable();
+
+		await Promise.resolve(); // Make asynchronous to ensure that the inner table property value is set
+		PersonalizationUtils.createFixedColumnCountChange(oTable, {
+			fixedColumnCount: this.getInnerTable().getFixedColumnCount()
 		});
 	}
 
@@ -527,6 +563,31 @@ sap.ui.define([
 	GridTableType.prototype.setScrollThreshold = function(iThreshold) {
 		this.setProperty("scrollThreshold", iThreshold, true);
 		return this;
+	};
+
+	GridTableType.prototype.setEnableColumnFreeze = function(bEnableColumnFreeze) {
+		if (this.getEnableColumnFreeze() !== bEnableColumnFreeze) {
+			this.setProperty("enableColumnFreeze", bEnableColumnFreeze, true);
+			this.getTable()?._updateAdaptation();
+		}
+		return this;
+	};
+
+	GridTableType.prototype.onModifications = function() {
+		const oTable = this.getTable();
+		const oGridTable = this.getInnerTable();
+		const oState = oTable._getXConfig();
+		const oTypeState = oState?.aggregations?.type;
+
+		oGridTable.getModel("$typeSettings").setProperty("/p13nFixedColumnCount", oTypeState?.GridTable?.fixedColumnCount ?? 0);
+	};
+
+	/**
+	 * Determines whether the xConfig state should be shown.
+	 * @returns {boolean} whether the xConfig state should be shown
+	 */
+	GridTableType.prototype.showXConfigState = function() {
+		return this.getEnableColumnFreeze();
 	};
 
 	return GridTableType;

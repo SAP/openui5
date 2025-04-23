@@ -186,7 +186,7 @@ sap.ui.define([
 		 * @returns {Promise} OPA waitFor
 		 * @private
 		 */
-		iShouldSeeTheVariantManagement: function(oControl) {
+		iShouldSeeTheVariantManagement: function(oControl, bModified) {
 			const sTableId = typeof oControl === "string" ? oControl : oControl.getId();
 
 			return this.waitFor({
@@ -194,6 +194,9 @@ sap.ui.define([
 				controlType: "sap.ui.fl.variants.VariantManagement",
 				success: function(oVariantManagement) {
 					Opa5.assert.ok(oVariantManagement, "Table variant management is visible");
+					if (bModified !== undefined) {
+						Opa5.assert.equal(oVariantManagement.getModified(), bModified, "Variant is " + (bModified ? "modified" : "not modified"));
+					}
 				},
 				errorMessage: "No table variant management found"
 			});
@@ -444,6 +447,15 @@ sap.ui.define([
 			});
 		},
 
+		iCheckFixedColumnCount: function(vTable, iFixedColumnsCount) {
+			return waitForTable.call(this, vTable, {
+				success: function(oTable) {
+					Opa5.assert.equal(oTable._oTable.getFixedColumnCount(), iFixedColumnsCount, "Fixed column count is correct");
+				},
+				errorMessage: "Table not found"
+			});
+		},
+
 		/**
 		 * Checks if the dialog, showing the actual process status of the export,
 		 * is visible on the screen.
@@ -664,6 +676,27 @@ sap.ui.define([
 							});
 						},
 						errorMessage: "Column menu QuickTotalItem not found"
+					});
+				}
+			});
+		},
+
+		iShouldSeeColumnMenuQuickAction: function(sLabel) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.table.columnmenu.QuickAction",
+						visible: false,
+						matchers: [{
+							ancestor: oColumnMenu,
+							properties: {
+								label: sLabel
+							}
+						}],
+						success: function(aQuickActions) {
+							Opa5.assert.equal(aQuickActions.length, 1, "Found column menu QuickAction");
+						},
+						errorMessage: "Column menu QuickAction not found"
 					});
 				}
 			});
