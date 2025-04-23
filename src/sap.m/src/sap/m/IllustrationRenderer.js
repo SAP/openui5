@@ -20,19 +20,26 @@ sap.ui.define([], function () {
 	 * @param {sap.m.Illustration} oIllustration An object representation of the control that should be rendered
 	 */
 	IllustrationRenderer.render = function (oRm, oIllustration) {
-		var sSymbolId = oIllustration._sSymbolId;
+		var sSymbolId = oIllustration._sSymbolId,
+			bDecorative = oIllustration.getDecorative();
 
 		oRm.openStart("svg", oIllustration);
 		oRm.class("sapMIllustration");
 		oRm.accessibilityState(oIllustration);
+
+		if (bDecorative) {
+			oRm.attr("role", "presentation");
+			oRm.attr("aria-hidden", "true");
+		}
+
 		oRm.openEnd();
 
-			oRm.openStart("use");
-			oRm.attr('href', "#" + sSymbolId);
-			oRm.attr('width', "100%");
-			oRm.attr('height', "100%");
-			oRm.openEnd();
-			oRm.close("use");
+		oRm.openStart("use");
+		oRm.attr('href', "#" + sSymbolId);
+		oRm.attr('width', "100%");
+		oRm.attr('height', "100%");
+		oRm.openEnd();
+		oRm.close("use");
 
 		oRm.close("svg");
 	};
