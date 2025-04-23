@@ -54,13 +54,13 @@ sap.ui.define([
 			this.oOverlay.attachEventOnce("geometryChanged", function() {
 				// Math.round is required for IE and Edge
 				assert.equal(
-					Math.ceil(this.oOverlay.$().offset().left),
-					Math.ceil(this.oButton.$().offset().left),
+					Math.ceil(this.oOverlay.getDomRef().getBoundingClientRect().left),
+					Math.ceil(this.oButton.getDomRef().getBoundingClientRect().left),
 					"overlay has same left position as the control"
 				);
 				assert.equal(
-					Math.round(this.oOverlay.$().offset().top),
-					Math.round(this.oButton.$().offset().top),
+					Math.round(this.oOverlay.getDomRef().getBoundingClientRect().top),
+					Math.round(this.oButton.getDomRef().getBoundingClientRect().top),
 					"overlay has same top position as the control"
 				);
 				done();
@@ -98,8 +98,8 @@ sap.ui.define([
 			if (Device.browser.blink) {
 				iScrollLeftValue = -iScrollLeftValue;
 			}
-			jQuery(this.oOuterPanel.$().find(">.sapMPanelContent")).scrollLeftRTL(iScrollLeftValue);
-			this.oOuterPanel.$().find(">.sapMPanelContent").scrollTop(20);
+			jQuery(this.oOuterPanel.getDomRef().querySelector(".sapMPanelContent")).scrollLeftRTL(iScrollLeftValue);
+			this.oOuterPanel.getDomRef().querySelector(".sapMPanelContent").scrollTop = 20;
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oOuterPanel]
@@ -107,8 +107,7 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
-				// FIXME: when synced event is resolved including scrollbar synchronization
-				if (this.oButtonOverlay.$().css("transform") === "none") {
+				if (window.getComputedStyle(this.oButtonOverlay.getDomRef()).transform === "none") {
 					this.oButtonOverlay.attachEventOnce("geometryChanged", done);
 				} else {
 					done();
@@ -123,13 +122,13 @@ sap.ui.define([
 		QUnit.test("then", function(assert) {
 			// Math.round is required for IE and Edge
 			assert.equal(
-				Math.ceil(this.oButtonOverlay.$().offset().top),
-				Math.ceil(this.oButton.$().offset().top),
+				Math.ceil(this.oButtonOverlay.getDomRef().getBoundingClientRect().top),
+				Math.ceil(this.oButton.getDomRef().getBoundingClientRect().top),
 				"overlay has same top position as the control"
 			);
 			assert.equal(
-				Math.ceil(this.oButtonOverlay.$().offset().left),
-				Math.ceil(this.oButton.$().offset().left),
+				Math.ceil(this.oButtonOverlay.getDomRef().getBoundingClientRect().left),
+				Math.ceil(this.oButton.getDomRef().getBoundingClientRect().left),
 				"overlay has same left position as the control"
 			);
 		});

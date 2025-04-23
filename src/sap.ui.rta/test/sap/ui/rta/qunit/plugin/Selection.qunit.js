@@ -527,7 +527,7 @@ sap.ui.define([
 			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "initially the CSS class is not set");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
 			assert.ok(oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the Overlay has the proper CSS class after mouse-over event");
-			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
+			oOverlay.getDomRef().dispatchEvent(new Event("mouseleave"));
 			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is removed again after mouse-leave event");
 		});
 
@@ -537,7 +537,7 @@ sap.ui.define([
 			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "initially the CSS class is not set");
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
 			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is still not not set after mouse-over event");
-			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
+			oOverlay.getDomRef().dispatchEvent(new Event("mouseleave"));
 			assert.ok(!oOverlay.hasStyleClass("sapUiDtOverlayHover"), "then the CSS class is still not not set after mouse-leave event");
 		});
 
@@ -547,7 +547,7 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.getDomRef().dispatchEvent(new Event("mouseover"));
 			assert.notOk(oHBoxOverlay.getMovable(), "then the movable parent is temporarily not movable on mouse-over event");
-			oOverlay.getDomRef().dispatchEvent(new Event("mouseout"));
+			oOverlay.getDomRef().dispatchEvent(new Event("mouseleave"));
 			assert.ok(oHBoxOverlay.getMovable(), "then the parent is movable again after mouse-leave event");
 		});
 

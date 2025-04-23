@@ -237,7 +237,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions: {
 					remove: {
@@ -265,7 +265,10 @@ sap.ui.define([
 				done();
 			}, this);
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.DELETE);
+			const oEvent = new KeyboardEvent("keydown", {
+				keyCode: KeyCodes.DELETE
+			});
+			document.getElementById(this.oButtonOverlay.getDomRef().id).dispatchEvent(oEvent);
 			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 
@@ -295,7 +298,10 @@ sap.ui.define([
 			}.bind(this));
 			sandbox.stub(Utils, "openRemoveConfirmationDialog").resolves(false);
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.DELETE);
+			const oEvent = new KeyboardEvent("keydown", {
+				keyCode: KeyCodes.DELETE
+			});
+			document.getElementById(this.oButtonOverlay.getDomRef().id).dispatchEvent(oEvent);
 			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 
@@ -323,7 +329,10 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.BACKSPACE);
+			const oEvent = new KeyboardEvent("keydown", {
+				keyCode: KeyCodes.BACKSPACE
+			});
+			document.getElementById(this.oButtonOverlay.getDomRef().id).dispatchEvent(oEvent);
 			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 
