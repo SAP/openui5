@@ -9,47 +9,47 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 
 			onInit: function () {
 
-				var aIMISizeData = [],
+				var aIMISizeData = [
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Auto], text: oIllustratedMessageSize.Auto},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Base], text: oIllustratedMessageSize.Base},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.ExtraSmall], text: oIllustratedMessageSize.ExtraSmall},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Small], text: oIllustratedMessageSize.Small},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Medium], text: oIllustratedMessageSize.Medium},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Large], text: oIllustratedMessageSize.Large}
+					],
 					aIMITypeData = [
 						{ key: oIllustratedMessageType.SignOut, text: 'SignOut'},
-						{ key: oIllustratedMessageType.SearchEarth, text: 'SearchEarth'},
-						{ key: oIllustratedMessageType.SearchFolder, text: 'SearchFolder'},
+						{ key: oIllustratedMessageType.BeforeSearch, text: 'BeforeSearch'},
+						{ key: oIllustratedMessageType.NoSearchResults, text: 'NoSearchResults'},
 						{ key: oIllustratedMessageType.NoFilterResults, text: 'NoFilterResults'},
 						{ key: oIllustratedMessageType.PageNotFound, text: 'PageNotFound'},
-						{ key: oIllustratedMessageType.SleepingBell, text: 'SleepingBell'},
+						{ key: oIllustratedMessageType.NoNotifications, text: 'NoNotifications'},
+						{ key: oIllustratedMessageType.NoSavedItems, text: 'NoSavedItems'},
 						{ key: oIllustratedMessageType.NewMail, text: 'NewMail'},
-						{ key: oIllustratedMessageType.NoMailV1, text: 'NoMailV1'},
-						{ key: oIllustratedMessageType.Tent, text: 'Tent'},
-						{ key: oIllustratedMessageType.EmptyList, text: 'EmptyList'},
-						{ key: oIllustratedMessageType.EmptyCalendar, text: 'EmptyCalendar'},
-						{ key: oIllustratedMessageType.NoTasksV1, text: 'NoTasksV1'},
-						{ key: oIllustratedMessageType.NoSavedItemsV1, text: 'NoSavedItemsV1'},
-						{ key: oIllustratedMessageType.AddColumn, text: 'AddColumn'},
-						{ key: oIllustratedMessageType.SortColumn, text: 'SortColumn'},
+						{ key: oIllustratedMessageType.NoData, text: 'NoData'},
+						{ key: oIllustratedMessageType.NoEntries, text: 'NoEntries'},
+						{ key: oIllustratedMessageType.NoActivities, text: 'NoActivities'},
+						{ key: oIllustratedMessageType.AddingColumns, text: 'AddingColumns'},
+						{ key: oIllustratedMessageType.SortingColumns, text: 'SortingColumns'},
 						{ key: oIllustratedMessageType.NoColumnsSet, text: 'NoColumnsSet'},
-						{ key: oIllustratedMessageType.FilterTable, text: 'FilterTable'},
-						{ key: oIllustratedMessageType.ResizeColumn, text: 'ResizeColumn'},
-						{ key: oIllustratedMessageType.GroupTable, text: 'GroupTable'},
+						{ key: oIllustratedMessageType.FilteringColumns, text: 'FilteringColumns'},
+						{ key: oIllustratedMessageType.ResizingColumns, text: 'ResizingColumns'},
+						{ key: oIllustratedMessageType.GroupingColumns, text: 'GroupingColumns'},
 						{ key: oIllustratedMessageType.EmptyPlanningCalendar, text: 'EmptyPlanningCalendar'},
-						{ key: oIllustratedMessageType.AddPeople, text: 'AddPeople'},
-						{ key: oIllustratedMessageType.UploadCollection, text: 'UploadCollection'},
-						{ key: oIllustratedMessageType.NoDimensionsSet, text: 'NoDimensionsSet'},
+						{ key: oIllustratedMessageType.AddPeopleToCalendar, text: 'AddPeopleToCalendar'},
+						{ key: oIllustratedMessageType.DragFilesToUpload, text: 'DragFilesToUpload'},
 						{ key: oIllustratedMessageType.AddDimensions, text: 'AddDimensions'},
 						{ key: oIllustratedMessageType.UploadToCloud, text: 'UploadToCloud'},
-						{ key: oIllustratedMessageType.ReloadScreen, text: 'ReloadScreen'},
-						{ key: oIllustratedMessageType.ErrorScreen, text: 'ErrorScreen'},
+						{ key: oIllustratedMessageType.UnableToLoad, text: 'UnableToLoad'},
+						{ key: oIllustratedMessageType.UnableToUpload, text: 'UnableToUpload'},
 						{ key: oIllustratedMessageType.Connection, text: 'Connection'},
 						{ key: oIllustratedMessageType.UnableToLoadImage, text: 'UnableToLoadImage'},
 						{ key: oIllustratedMessageType.BalloonSky, text: 'BalloonSky'},
-						{ key: oIllustratedMessageType.SuccessScreen, text: 'SuccessScreen'},
-						{ key: oIllustratedMessageType.SuccessHighFive, text: 'SuccessHighFive'},
+						{ key: oIllustratedMessageType.KeyTask, text: 'KeyTask'},
+						{ key: oIllustratedMessageType.ReceiveAppreciation, text: 'ReceiveAppreciation'},
 						{ key: oIllustratedMessageType.Survey, text: 'Survey'},
 						{ key: oIllustratedMessageType.NoChartData, text: 'NoChartData'}
 					];
-
-				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
-					aIMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
-				});
 
 				this.oModel = new JSONModel({
 					sizeTypes: aIMISizeData,

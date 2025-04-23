@@ -9,7 +9,14 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 
 			onInit: function () {
 
-				var aIMISizeData = [],
+				var aIMISizeData = [
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Auto], text: oIllustratedMessageSize.Auto},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Base], text: oIllustratedMessageSize.Base},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.ExtraSmall], text: oIllustratedMessageSize.ExtraSmall},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Small], text: oIllustratedMessageSize.Small},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Medium], text: oIllustratedMessageSize.Medium},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Large], text: oIllustratedMessageSize.Large}
+					],
 					aIMITypeData = [
 						{ key: oIllustratedMessageType.BeforeSearch, text: 'BeforeSearch'},
 						{ key: oIllustratedMessageType.NoSearchResults, text: 'NoSearchResults'},
@@ -22,13 +29,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 						{ key: oIllustratedMessageType.NoSavedItems, text: 'NoSavedItems'},
 						{ key: oIllustratedMessageType.UnableToLoad, text: 'UnableToLoad'},
 						{ key: oIllustratedMessageType.UnableToUpload, text: 'UnableToUpload'},
-						{ key: oIllustratedMessageType.SuccessBalloon, text: 'SuccessBalloon'},
-						{ key: oIllustratedMessageType.SuccessCheckMark, text: 'SuccessCheckMark'}
+						{ key: oIllustratedMessageType.ReceiveAppreciation, text: 'ReceiveAppreciation'},
+						{ key: oIllustratedMessageType.KeyTask, text: 'KeyTask'}
 					];
-
-				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
-					aIMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
-				});
 
 				this.oModel = new JSONModel({
 					sizeTypes: aIMISizeData,
