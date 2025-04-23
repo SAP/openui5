@@ -19,7 +19,7 @@
 		<Label text="Field with typeahead and dropdown"/>
 		<mdc:Field id="F-TypeAheadDropdown" value="{path: 'data>/value2', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-TypeAheadDropdown"/>
 
-		<Label text="Field with typeahead and dropdown, opens on focus"/>
+		<Label text="Field with typeahead and dropdown, opens on click or tab-navigation"/>
 		<mdc:Field id="F-TypeAheadDropdownFocus" value="{path: 'data>/value3', type: 'sap.ui.model.type.String', constraints: {maxLength: 2}}" editMode="Editable" display="Description" valueHelp="VH-TypeAheadDropdownFocus"/>
 
 		<Label text="Field with only dropdown (no typeahead), opens on click"/>
@@ -74,7 +74,7 @@
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-TypeAheadDropdownFocus"
-				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "shouldOpenOnFocus": true\}\}'>
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "openOnClick": true, "openOnTab": true\}\}'>
 				<mdc:typeahead>
 					<mdcvh:Popover id="VH-TypeAheadDropdownFocus-Pop">
 						<mdcValueHelpContent:MTable id="VH-TypeAheadDropdownFocus-Pop-MTable"
@@ -87,7 +87,7 @@
 			</mdc:ValueHelp>
 
 			<mdc:ValueHelp id="VH-DropdownOnly"
-				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "shouldOpenOnClick": true\}\}'>
+				delegate='\{"name": "mdc/sample/ValueHelpDelegate", "payload": \{"searchKeys": ["key", "name"], "openOnClick": true\}\}'>
 				<mdc:typeahead>
 					<mdcvh:Popover id="VH-DropdownOnly-Pop">
 						<mdcValueHelpContent:FixedList id="H-DropdownOnly-Pop-FixedList" filterList="false" useFirstMatch="false" items="{path: 'data>/countries'}" >

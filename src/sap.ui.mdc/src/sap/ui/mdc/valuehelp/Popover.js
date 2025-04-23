@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/library',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'sap/ui/mdc/enums/RequestShowContainerReason'
 ], (
 	Container,
 	OperatorName,
@@ -17,7 +18,8 @@ sap.ui.define([
 	loadModules,
 	jQuery,
 	coreLibrary,
-	Device
+	Device,
+	RequestShowContainerReason
 ) => {
 	"use strict";
 
@@ -568,14 +570,10 @@ sap.ui.define([
 
 		const oContent = this._getContent();
 		const oOpenPromise = this._retrievePromise("open");
-		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(() => { // onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
-			const oDelegate = this.getValueHelpDelegate();
+		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(async () => { // onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
 			const oValueHelp = this.getValueHelp();
-
-			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oValueHelp, oContent) : true).then((bShowTypeahead) => {
-				// Only continue the opening process, if delegate confirms "showTypeahead" and open promise is not canceled (might happen due to focus loss in target control).
-				return bShowTypeahead && !oOpenPromise.isCanceled() ? true : Promise.reject();
-			});
+			const bShowTypeahead = bTypeahead ? await oValueHelp._requestShowContainer(this, RequestShowContainerReason.Filter) : true;
+			return bShowTypeahead && !oOpenPromise.isCanceled() ? true : Promise.reject(); // Only continue the opening process, if delegate confirms "showTypeahead" and open promise is not canceled (might happen due to focus loss in target control).
 		}).then(() => {
 			if (Device.system.phone) {
 				oPopover.open();
@@ -708,6 +706,7 @@ sap.ui.define([
 
 	Popover.prototype.navigateInContent = function(iStep) {
 		const oContent = this._getContent();
+		this.bindContentToContainer(oContent); // adds navigation listener
 		if (oContent) {
 			oContent.navigate(iStep);
 		}
@@ -763,6 +762,12 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if the value help should be opened when the user used the arrow keys.
+	 *
+	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
+ 	 * @deprecated As of version 1.136 with no replacement.
+	 */
 	Popover.prototype.shouldOpenOnNavigate = function() {
 
 		const oContent = this._getContent();
@@ -798,6 +803,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if the content of the container supports typeahead.
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} Flag if searching is supported
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
+ 	 * @deprecated As of version 1.136 with no replacement.
+	 */
 	Popover.prototype.isTypeaheadSupported = function() {
 
 		if (Device.system.phone && (this.isSingleSelect() || this.isDialog())) {

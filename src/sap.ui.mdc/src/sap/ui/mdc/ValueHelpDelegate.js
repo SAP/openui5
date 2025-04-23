@@ -19,7 +19,9 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/Device",
-	"sap/ui/mdc/enums/FieldDisplay"
+	"sap/ui/mdc/enums/FieldDisplay",
+	'sap/ui/mdc/enums/RequestShowContainerReason',
+	"sap/ui/mdc/util/loadModules"
 ], (
 	BaseDelegate,
 	FilterType,
@@ -33,11 +35,13 @@ sap.ui.define([
 	FilterConverter,
 	FilterOperatorUtil,
 	Device,
-	FieldDisplay
+	FieldDisplay,
+	RequestShowContainerReason,
+	loadModules
 ) => {
 	"use strict";
 
-	const _applyFilters = function(aItems, oFilter, oValueHelp, oContent) {
+	const _applyFilters = function (aItems, oFilter, oValueHelp, oContent) {
 		const aConditions = oContent.getConditions();
 		const aContexts = FilterProcessor.apply(aItems, oFilter, (oBindingContext, sPath) => oBindingContext && oBindingContext.getProperty(sPath));
 
@@ -64,7 +68,7 @@ sap.ui.define([
 	/**
 	 * Requests additional content for the value help.
 	 *
-	 * This function is called when the value help is opened or a key or description is requested.
+	 * This method may be called during a ValueHelp's opening phase, whenever a new content should be displayed for a <code>CollectiveSearch</code> dialog configuration or when one of {@link sap.ui.mdc.ValueHelp#getItemForValue getItemForValue}, {@link sap.ui.mdc.ValueHelp#requestShowTypeahead requestShowTypeahead} or {@link sap.ui.mdc.ValueHelp#requestShowValueHelp requestShowValueHelp} are called.
 	 *
 	 * So depending on the value help {@link sap.ui.mdc.valuehelp.base.Content Content} used, all content controls and data need to be assigned.
 	 * Once they are assigned and the data is set, the returned <code>Promise</code> needs to be resolved.
@@ -101,6 +105,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
 	 * @since 1.110.0
 	 * @public
+	 * @deprecated As of version 1.136
 	 */
 	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		if (Device.system.phone) {
@@ -383,7 +388,7 @@ sap.ui.define([
 			oListBindingInfo.template.mAggregations.cells.forEach((oCell) => {
 				Object.values(oCell.mBindingInfos).forEach((oBindingInfo) => {
 					oBindingInfo.parts.forEach((oPartInfo) => {
-						oConditionTypes[oPartInfo.path] = { type: oPartInfo.type || null, baseType: oPartInfo.type ? oTypeMap.getBaseTypeForType(oPartInfo.type) : BaseType.String};
+						oConditionTypes[oPartInfo.path] = { type: oPartInfo.type || null, baseType: oPartInfo.type ? oTypeMap.getBaseTypeForType(oPartInfo.type) : BaseType.String };
 					});
 				});
 			}, {});
@@ -465,16 +470,16 @@ sap.ui.define([
 			aSearchFields = aSearchFields.filter((oEntry) => !!oEntry);
 
 			for (const sPath of aSearchFields) {
-					const aFilters = [
-						new Filter({ path: sPath, operator: FilterOperator.EQ, value1: sInputValue, caseSensitive: bCaseSensitive }),
-						new Filter({ path: sPath, operator: FilterOperator.StartsWith, value1: sInputValue, caseSensitive: bCaseSensitive })
-					];
-					for (const oFilter of aFilters) {
-						oResult = _applyFilters.call(this, aRelevantContexts, oFilter, oValueHelp, oContent);
-						if (oResult) {
-							return oResult;
-						}
+				const aFilters = [
+					new Filter({ path: sPath, operator: FilterOperator.EQ, value1: sInputValue, caseSensitive: bCaseSensitive }),
+					new Filter({ path: sPath, operator: FilterOperator.StartsWith, value1: sInputValue, caseSensitive: bCaseSensitive })
+				];
+				for (const oFilter of aFilters) {
+					oResult = _applyFilters.call(this, aRelevantContexts, oFilter, oValueHelp, oContent);
+					if (oResult) {
+						return oResult;
 					}
+				}
 			}
 		}
 
@@ -497,6 +502,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if a value help container should be opened on user interaction, navigation or configuration changes.
+	 * <b>Note:</b> This method may be called repeatedly with various {@link {sap.ui.mdc.enums.RequestShowContainerReason reasons} depending on the given {@link sap.ui.mdc.valuehelp.base.Container container}.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sRequestShowContainerReason Reason for the request
+	 * @returns {Promise<boolean>} <code>true</code>, if the value help should trigger opening
+	 * @protected
+	 * @since 1.136
+	 */
+	ValueHelpDelegate.requestShowContainer = async function (oValueHelp, oContainer, sRequestShowContainerReason) {
+		const [RequestShowContainerDefault] = await loadModules("sap/ui/mdc/valuehelp/RequestShowContainerDefault");
+		return await RequestShowContainerDefault[sRequestShowContainerReason]?.call(this, oValueHelp, oContainer) || false;
+	};
+
+	/**
 	 * Determines if the value help is opened when the user focuses on the connected control.
 	 * <br/>By default, the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnFocus opensOnFocus} property is returned.
 	 *
@@ -507,6 +528,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user focuses on the connected field control
 	 * @public
 	 * @since 1.121.0
+	 * @deprecated As of version 1.136, replaced by {@link class module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
 		let bShouldOpenOnFocus = false;
@@ -532,6 +554,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user clicks into the connected field control
 	 * @public
 	 * @since 1.121.0
+	 * @deprecated As of version 1.136, replaced by {@link class module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
 		let bShouldOpenOnClick = false;
@@ -561,6 +584,22 @@ sap.ui.define([
 		}
 
 		return Promise.resolve(bShouldOpenOnClick);
+	};
+
+	/**
+	 * Provides a hook to run time-critical tasks as soon as a control connects to a value help.
+	 *
+	 * This method allows to work around any delays that might occur in the connecting <code>control</code>'s user interaction treatment.
+	 * E.g. in {@link sap.ui.mdc.field.FieldBase FieldBase}, <code>setTimeout</code> or <code>debouncing</code> are used to prevent triggering valuehelp requests too early/often.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.core.Control} oControl Control to which the <code>ValueHelp</code> element is connected to
+	 * @param {sap.ui.mdc.valuehelp.base.ConnectConfig} [oConfig] Connect configuration object
+	 * @protected
+	 * @since 1.136
+	 */
+	ValueHelpDelegate.onControlConnect = function (oValueHelp, oControl, oConfig) {
+		// noop
 	};
 
 	return ValueHelpDelegate;

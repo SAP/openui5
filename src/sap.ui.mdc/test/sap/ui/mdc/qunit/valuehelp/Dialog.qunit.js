@@ -145,11 +145,20 @@ sap.ui.define([
 		assert.ok(oDialog.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oDialog.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oDialog.getUseAsValueHelp(), "getUseAsValueHelp");
-		let bShouldOpen = await oDialog.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick");
-		bShouldOpen = await oDialog.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
+
+		/**
+		 *  @deprecated As of version 1.136
+		 */
+		assert.notOk(await oDialog.shouldOpenOnClick(), "shouldOpenOnClick");
+		/**
+		 *  @deprecated As of version 1.136
+		 */
+		assert.notOk(await oDialog.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		/**
+		 *  @deprecated As of version 1.136
+		 */
 		assert.notOk(oDialog.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+
 		assert.ok(oDialog.isFocusInHelp(), "isFocusInHelp");
 		assert.equal(oDialog.getValueHelpIcon(), "sap-icon://value-help", "getValueHelpIcon");
 		sinon.stub(oDialog, "getUIArea").returns("X"); // to test result

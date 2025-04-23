@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/enums/ValueHelpPropagationReason',
+	'sap/ui/mdc/enums/RequestShowContainerReason',
 	'sap/ui/Device',
 	"sap/ui/mdc/enums/FieldDisplay"
 ], (
@@ -22,6 +23,7 @@ sap.ui.define([
 	ManagedObjectModel,
 	ManagedObjectObserver,
 	ValueHelpPropagationReason,
+	RequestShowContainerReason,
 	Device,
 	FieldDisplay
 ) => {
@@ -389,6 +391,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Configuration object to be provided on connect via the connecting control.
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.valuehelp.base.ConnectConfig
+	 * @param {int} [maxConditions=-1] Maximum number of allowed conditions
+	 * @param {sap.ui.model.Type} [dataType] Type of the key (required for condition panel)
+	 * @param {sap.ui.model.Type} [additionalDataType] Type of the description (required for condition panel)
+	 * @param {string[]} [operators] Possible operators to be used in the condition
+	 * @param {sap.ui.mdc.enums.FieldDisplay} [display] Defines whether the value and/or description of the field is shown and in what order
+	 * @param {object} [delegate] Field delegate to handle model-specific logic (required for condition panel)
+	 * @param {object} [delegateName] Field delegate name to handle model-specific logic (required for condition panel)
+	 * @param {object} [payload] Payload of the field delegate (required for condition panel)
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 */
+
+	/**
 	 * Connects the <code>ValueHelp</code> element to a control.
 	 *
 	 * If the <code>ValueHelp</code> element is used as an association to multiple controls, it has to know
@@ -401,15 +421,7 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @param {sap.ui.core.Control} oControl Control to which the <code>ValueHelp</code> element is connected to
-	 * @param {object} [oConfig] Configuration object that holds required data of the connected control
-	 * @param {int} [oConfig.maxConditions=-1] Maximum number of allowed conditions
-	 * @param {sap.ui.model.Type} [oConfig.dataType] Type of the key (required for condition panel)
-	 * @param {sap.ui.model.Type} [oConfig.additionalDataType] Type of the description (required for condition panel)
-	 * @param {string[]} [oConfig.operators] Possible operators to be used in the condition
-	 * @param {sap.ui.mdc.enums.FieldDisplay} [oConfig.display] Defines whether the value and/or description of the field is shown and in what order
-	 * @param {object} [oConfig.delegate] Field delegate to handle model-specific logic (required for condition panel)
-	 * @param {object} [oConfig.delegateName] Field delegate name to handle model-specific logic (required for condition panel)
-	 * @param {object} [oConfig.payload] Payload of the field delegate (required for condition panel)
+	 * @param {sap.ui.mdc.valuehelp.base.ConnectConfig} [oConfig] Configuration object that holds required data of the connected control
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
@@ -444,6 +456,10 @@ sap.ui.define([
 		if (oDialog) {
 			attachContainerEvents.call(this, oDialog, !!this._oControl);
 		}
+
+		this._getControlDelegatePromise().then((oDelegateModule) => {
+			oDelegateModule.onControlConnect(this, oControl, oConfig);
+		});
 
 		return this;
 	};
@@ -539,8 +555,22 @@ sap.ui.define([
 
 	};
 
-	// retrieve delegate based content modifications
-	ValueHelp.prototype._retrieveDelegateContent = function(oContainer, sContentId) {
+	/**
+	 * Retrieves delegate based content modifications
+	 *
+	 * This method may be called during the ValueHelp's opening phase, whenever a new content should be displayed for a <code>CollectiveSearch</code> dialog configuration or when one of {@link #getItemForValue}, {@link #requestShowTypeahead} or {@link #requestShowValueHelp} are called.
+	 *
+	 * So depending on the value help {@link sap.ui.mdc.valuehelp.base.Content Content} used, all content controls and data need to be assigned.
+	 * Once they are assigned and the data is set, the returned <code>Promise</code> needs to be resolved.
+	 * Only then does the value help continue opening or reading data.<br/>This method returns a <code>Promise</code> that resolves into <code>undefined</code>.
+	 *
+	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+	 * @param {string} sContentId ID of the content shown after this call to retrieve content
+	 * @returns {Promise} <code>Promise</code> that is resolved if all content is available
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.ValueHelpDelegate
+	 */
+	ValueHelp.prototype.retrieveDelegateContent = function(oContainer, sContentId) {
 		let oPromise;
 		if (!sContentId) {
 			const oSelectedContent = oContainer.getSelectedContent(); // use currently active content id if no other is given
@@ -591,14 +621,14 @@ sap.ui.define([
 		}
 
 		if (oContainer && !oContainer.isOpen() && !oContainer.isOpening()) {
-			oContainer.open(this._retrieveDelegateContent(oContainer), bTypeahead);
+			oContainer.open(this.retrieveDelegateContent(oContainer), bTypeahead);
 			this.fireOpen({ container: oContainer });
 		}
 	};
 
 	function _handleRequestDelegateContent(oEvent) {
 		const oContainer = oEvent.getSource();
-		this._retrieveDelegateContent(oContainer, oEvent.getParameter("contentId"));
+		this.retrieveDelegateContent(oContainer, oEvent.getParameter("contentId"));
 	}
 
 	function _handleRequestSwitchToDialog(oEvent) {
@@ -710,18 +740,69 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} if <code>true</code>, the field help should open by typing. The result might be returned asynchronously, so a Promise is used.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @deprecated As of version 1.136, replaced by {@link class sap.ui.mdc.ValueHelp#requestShowContainer}.
 	 */
 	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
 
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			return this._retrieveDelegateContent(oTypeahead).then(() => {
+			return this.retrieveDelegateContent(oTypeahead).then(() => {
 				return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
 			});
 		} else {
 			return Promise.resolve(false);
 		}
 
+	};
+
+
+	/**
+	 * Determines if the value help typeahead should be opened on user interaction, navigation or configuration changes.
+	 *
+ 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason interaction event possibly triggering the opening of the value help
+	 * @returns {Promise<boolean>} <code>true</code>, if the value help container should be shown
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.136
+	 */
+	ValueHelp.prototype.requestShowTypeahead = async function(sReason) {
+		const oTypeahead = this.getTypeahead();
+		if (oTypeahead) {
+			return await this._requestShowContainer(oTypeahead, sReason);
+		}
+		return false;
+	};
+
+	/**
+	 * Determines if the value help should be opened with a dialog or typeahead in "valuehelp mode".
+	 *
+	 * @returns {Promise<boolean>} <code>true</code>, if the value help container should be shown
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.136
+	 */
+	ValueHelp.prototype.requestShowValueHelp = async function() {
+		const oDialog = _getValueHelpContainer.call(this);
+		if (oDialog) {
+			return await this._requestShowContainer(oDialog, RequestShowContainerReason.ValueHelpRequest);
+		}
+		return false;
+	};
+
+
+	/**
+	 * Determines if the value help typeahead should be opened on interaction, navigation or configuration changes and executes the opening
+	 *
+ 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+ 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason additional configuration for {@link class module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}
+	 * @returns {Promise<boolean>} <code>true</code>, if the value help container should be shown
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valuehelp.base.Container, sap.ui.mdc.valuehelp.base.Content
+	 * @since 1.136
+	 */
+	ValueHelp.prototype._requestShowContainer = async function(oContainer, sReason) {
+		const oDelegateModule = await this._getControlDelegatePromise();
+		return oDelegateModule.requestShowContainer(this, oContainer, sReason);
 	};
 
 	/**
@@ -736,6 +817,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @deprecated As of version 1.136, replaced by {@link class sap.ui.mdc.ValueHelp#requestShowContainer}.
 	 */
 	ValueHelp.prototype.shouldOpenOnFocus = function() {
 		const oContainer = _getValueHelpContainer.call(this, true);
@@ -756,6 +838,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+ 	 * @deprecated As of version 1.136, replaced by {@link class sap.ui.mdc.ValueHelp#requestShowContainer}.
 	 */
 	ValueHelp.prototype.shouldOpenOnClick = function() {
 		const oContainer = _getValueHelpContainer.call(this, true);
@@ -823,16 +906,11 @@ sap.ui.define([
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			const _fnOnNavigatable = () => {
-				if (oTypeahead.shouldOpenOnNavigate() && !oTypeahead.isOpening() && !oTypeahead.isOpen()) {
-					return oTypeahead.open(true).then(() => {
-						oTypeahead.navigate(iStep);
-					});
-				}
 				return oTypeahead.navigate(iStep);
 			};
 			const oNavigatePromise = this._retrievePromise("navigate");
 			const oExistingPromise = oNavigatePromise && !oNavigatePromise.isSettled() && oNavigatePromise.getInternalPromise();
-			this._addPromise("navigate", oExistingPromise ? oExistingPromise.then(_fnOnNavigatable) : this._retrieveDelegateContent(oTypeahead).then(_fnOnNavigatable));
+			this._addPromise("navigate", oExistingPromise ? oExistingPromise.then(_fnOnNavigatable) : _fnOnNavigatable);
 		}
 	};
 
@@ -917,7 +995,7 @@ sap.ui.define([
 		// TODO: Discuss how we handle binding / typeahead changes ??
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
-			return this._retrieveDelegateContent(oTypeahead).then(() => {
+			return this.retrieveDelegateContent(oTypeahead).then(() => {
 				oConfig.caseSensitive = oConfig.hasOwnProperty("caseSensitive") ? oConfig.caseSensitive : false; // If supported, search case insensitive
 				const pGetItemPromise = oTypeahead.getItemForValue(oConfig);
 				return pGetItemPromise;

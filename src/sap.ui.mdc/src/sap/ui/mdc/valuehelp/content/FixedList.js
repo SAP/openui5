@@ -58,7 +58,7 @@ sap.ui.define([
 				 * For small lists, all values are meant to be shown, independent of the typing in the connected field.
 				 * In this case this property must be set to <code>false</code>.
 				 *
-				 * If not set, the list opens if the user clicks into the connected field.
+				 * By default, if not set, the list opens if the user clicks into the connected field.
 				 */
 				filterList: {
 					type: "boolean",
@@ -632,6 +632,12 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if the value help should be opened when the user clicks into the connected control.
+	 *
+	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 * @deprecated As of version 1.136 with no replacement.
+	 */
 	FixedList.prototype.shouldOpenOnClick = function() {
 
 		return !this.getFilterList(); // TODO: own property, maybe general at content?
@@ -647,12 +653,6 @@ sap.ui.define([
 	FixedList.prototype.isSingleSelect = function(oEvent) {
 
 		return true;
-
-	};
-
-	FixedList.prototype.shouldOpenOnNavigate = function() {
-
-		return !ListContent.prototype.isSingleSelect.apply(this);
 
 	};
 
