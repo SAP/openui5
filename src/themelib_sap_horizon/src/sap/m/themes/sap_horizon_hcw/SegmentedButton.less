@@ -51,14 +51,14 @@ html.sap-desktop .sapMSegBBtnFocusable:hover .sapMSegBBtnInner {
 html.sap-desktop {
 
 	.sapMSegBBtnFocusable:focus .sapMSegBBtnInner {
-		outline: 1px dotted;
-		outline-offset: -3px;
+		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle);
+		outline-offset: -0.25rem;
 		outline-color: var(--sapContent_FocusColor);
 	}
 
 	.sapMSegBBtnFocusable.sapMSegBBtnSel:focus .sapMSegBBtnInner {
-		outline: 1px dotted;
-		outline-offset: -3px;
+		outline: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle);
+		outline-offset: -0.25rem;
 		outline-color: var(--sapContent_ContrastFocusColor);
 	}
 }
