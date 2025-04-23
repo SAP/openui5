@@ -915,6 +915,35 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Rerender during expansion of unselectable parent item", async function (assert) {
+		// Arrange
+		const done = assert.async();
+
+		const unselectableParentItem = this.navigationList.getItems()[0];
+		unselectableParentItem.setProperty("selectable", false);
+
+		await nextUIUpdate(this.clock);
+
+		// Simulate rerender
+		const originalExpand = unselectableParentItem.expand;
+		unselectableParentItem.expand = function () {
+			originalExpand.apply(this, arguments);
+			this.getNavigationList().setProperty("width", "15rem");
+		};
+
+		const $expanderIcon = jQuery(unselectableParentItem.getDomRef().querySelector(".sapTntNLIExpandIcon"));
+
+		// Act: Trigger expansion
+		$expanderIcon.trigger("tap");
+		await nextUIUpdate(this.clock);
+
+		const oContainer = unselectableParentItem.getDomRef().querySelector(".sapTntNLIItemsContainer");
+		assert.ok(oContainer, "The container exists after rerender");
+		assert.notOk(oContainer.classList.contains("sapTntNLIItemsContainerHidden"), "The container is visible after rerender");
+
+		done();
+	});
+
 	QUnit.test("click group expander", async function (assert) {
 		// arrange
 		this.clock.restore(); // use real timeouts for this test
