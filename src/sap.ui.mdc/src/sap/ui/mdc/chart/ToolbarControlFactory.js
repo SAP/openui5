@@ -135,7 +135,7 @@ sap.ui.define([
 
 			noDataTitle: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION"),
 			noDataDescription: MDCRb.getText("chart.NO_DRILLABLE_DIMENSION_DESC"),
-			noDataType: IllustratedMessageType.NoDimensionsSet,
+			noDataType: IllustratedMessageType.NoChartData,
 			searchPlaceholder: MDCRb.getText("chart.CHART_DRILLDOWN_SEARCH"),
 			searchEnabled: true,
 			sortEnabled: false,
