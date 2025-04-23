@@ -13,6 +13,8 @@ sap.ui.define([
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
 	'sap/ui/Device',
+	'sap/ui/core/Popup',
+	"sap/ui/dom/containsOrEquals",
 	'./InputBaseRenderer',
 	'sap/base/Log',
 	"sap/ui/events/KeyCodes",
@@ -36,6 +38,8 @@ function(
 	InvisibleMessage,
 	coreLibrary,
 	Device,
+	Popup,
+	containsOrEquals,
 	InputBaseRenderer,
 	log,
 	KeyCodes,
@@ -322,9 +326,51 @@ function(
 		this.setLastValueStateText("");
 		this.setErrorMessageAnnouncementState(false);
 
-		this.fnCloseValueStateOnClick = function() {
-			this.closeValueStateMessage();
-		};
+		this.fnCloseValueStateOnClick = this.closeValueStateMessage.bind(this);
+	};
+
+	InputBase.prototype._oLinkDelegate = {
+		onfocusout: function (oEvent) {
+			var oRelTarget = oEvent.relatedTarget || (oEvent.relatedControlId && Element.getElementById(oEvent.relatedControlId).getDomRef());
+			const bFocusGoesInInput = oRelTarget && containsOrEquals(this.getDomRef(), oRelTarget);
+			const bFocusGoesToValueState = oRelTarget && containsOrEquals(this._oValueStateMessage.getDomRef(), oRelTarget);
+			if (!bFocusGoesInInput && !bFocusGoesToValueState) {
+				this.closeValueStateMessage();
+			}
+		},
+		onsapup: function(oEvent) {
+			// When focus is on the link, arrow keys should do nothing
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		},
+		onsapdown: function(oEvent) {
+			// When focus is on the link, arrow keys should do nothing
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+		}
+	};
+
+	InputBase.prototype._oFirstLinkDelegate = {
+		onsaptabprevious: function(oEvent){
+			oEvent.preventDefault();
+			oEvent.stopImmediatePropagation();
+			this.getFocusDomRef().focus();
+		}
+	};
+
+	InputBase.prototype._oLastLinkDelegate = {
+		onsaptabnext: function(oEvent) {
+			this.onsapfocusleave(oEvent);
+			// Return focus to the input because the links in the value state message are rendered in the
+			// static area and TAB will focus something rendered before the input
+			this._oPreviousFocus && Popup.applyFocusInfo(this._oPreviousFocus);
+			// Value state message should be closed with delay because Popup.applyfocusInfo returns the focus
+			// to the input in order to proceed with focusing the next element in the tab chain on TAB
+			// If closeValueStateMessage is called without a delay, the next control is focused and the popup remains open
+			setTimeout(() => {
+				this.closeValueStateMessage();
+			}, 0);
+		}
 	};
 
 	/**
@@ -744,6 +790,11 @@ function(
 		return (oEvent.ctrlKey || oEvent.metaKey) && oEvent.altKey && oEvent.which === KeyCodes.F8;
 	};
 
+	InputBase.prototype._handleValueStateLinkNav = function() {
+		const aLinks =  this._getValueStateLinks();
+		aLinks.length && aLinks[0].focus();
+	};
+
 
 	/**
 	 * Handle cut event.
@@ -927,7 +978,7 @@ function(
 		// links can be passed directly to a sap.m.FormattedText control as part of a HTML message (not as an aggregation)
 		if (oRelTarget && oRelTarget.tagName === "A" && oRelTarget.parentElement.classList.contains("sapMFT")) {
 			this._setValueStateLinks([oRelTarget]);
-			this._attachValueStateLinkPress();
+			this._attachValueStateLinkActions();
 
 			return true;
 		}
@@ -941,22 +992,38 @@ function(
 	 *
 	 * @private
 	 */
-	InputBase.prototype._attachValueStateLinkPress = function() {
-		this._getValueStateLinks().forEach(
-			function(oLink) {
+	InputBase.prototype._attachValueStateLinkActions = function () {
+		const aLinks = this._getValueStateLinks();
+		aLinks.forEach(
+			function (oLink, nIndex) {
 				if (oLink.attachPress) {
 					oLink.attachPress(this.fnCloseValueStateOnClick, this);
+					oLink.addDelegate(this._oLinkDelegate, this);
+					if (nIndex === 0) {
+						oLink.addDelegate(this._oFirstLinkDelegate, this);
+					}
+					if (nIndex === this._aValueStateLinks.length - 1) {
+						oLink.addDelegate(this._oLastLinkDelegate, this);
+					}
 				} else {
-					oLink.addEventListener("click", this.fnCloseValueStateOnClick.bind(this));
+					oLink.addEventListener("click", this.fnCloseValueStateOnClick);
 				}
 			}, this);
 	};
 
-	InputBase.prototype._detachValueStateLinkPress = function() {
-		this._getValueStateLinks().forEach(
-			function(oLink) {
+	InputBase.prototype._detachValueStateLinkActions = function () {
+		const aLinks = this._getValueStateLinks();
+		aLinks.forEach(
+			function (oLink, nIndex) {
 				if (oLink.detachPress) {
 					oLink.detachPress(this.fnCloseValueStateOnClick, this);
+					oLink.removeDelegate(this._oLinkDelegate, this);
+					if (nIndex === 0) {
+						oLink.removeDelegate(this._oFirstLinkDelegate, this);
+					}
+					if (nIndex === this._aValueStateLinks.length - 1) {
+						oLink.removeDelegate(this._oLastLinkDelegate, this);
+					}
 				}
 			}, this);
 	};
@@ -1041,13 +1108,15 @@ function(
 		if (Device.system.phone) {
 			setTimeout(function () {
 				if (this._oValueStateMessage){
-					this._detachValueStateLinkPress();
+					this._detachValueStateLinkActions();
 					this._oValueStateMessage.close();
+					this._oPreviousFocus = null;
 				}
 			}.bind(this), 0);
 		} else if (this._oValueStateMessage) {
-			this._detachValueStateLinkPress();
+			this._detachValueStateLinkActions();
 			this._oValueStateMessage.close();
+			this._oPreviousFocus = null;
 		}
 	};
 
@@ -1184,6 +1253,7 @@ function(
 	 */
 	InputBase.prototype.openValueStateMessage = function() {
 		if (this._oValueStateMessage && this.shouldValueStateMessageBeOpened()) {
+			this._oPreviousFocus = Popup.getCurrentFocusInfo();
 			// Render the value state message after closing of the popover
 			// is complete and the FormattedText aggregation is finished the parent
 			// switch from the ValueStateHeader to the InputBase.
@@ -1192,7 +1262,7 @@ function(
 			setTimeout(function () {
 				if (!this.bIsDestroyed) {
 					this._setValueStateLinks([]);
-					this._attachValueStateLinkPress();
+					this._attachValueStateLinkActions();
 					this._oValueStateMessage.open();
 				}
 			}.bind(this), 0);

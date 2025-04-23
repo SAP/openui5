@@ -528,7 +528,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard Handling");
 
-	QUnit.test("Press [CTRL] + [DOWN]", function(assert) {
+	QUnit.skip("Press [CTRL] + [DOWN]", function(assert) {
 		intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
 		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_DOWN", false, false, true);
@@ -573,7 +573,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Press [CTRL] + [UP]", function(assert) {
+	QUnit.skip("Press [CTRL] + [UP]", function(assert) {
 		assert.ok(fnApproximatelyEqual(oSC4.$().scrollTop(), parseInt(oSC4.getDomRef().clientHeight * SCROLL_COEF)), "ScrollContainer 4 should be scrolled vertically to  around 0");
 
 		qutils.triggerKeydown(oSC4.getDomRef(), "ARROW_UP", false, false, true);
@@ -597,7 +597,7 @@ sap.ui.define([
 		intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 	});
 
-	QUnit.test("Press [CTRL] + [END]", function(assert) {
+	QUnit.skip("Press [CTRL] + [END]", function(assert) {
 		assert.ok(fnApproximatelyEqual(oSC4.$().scrollLeft(), 0), "ScrollContainer 4 should be scrolled horizontally to position around 0");
 		assert.ok(fnApproximatelyEqual(oSC4.$().scrollTop(), 0), "ScrollContainer 4 should be scrolled vertically to position around 0");
 

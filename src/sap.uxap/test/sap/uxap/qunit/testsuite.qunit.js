@@ -150,6 +150,12 @@ sap.ui.define(function () {
 				}
 			},
 
+			"ObjectPageNavigationBar": {
+				coverage: {
+					only: ["sap/uxap/ObjectPageNavigationBar"]
+				}
+			},
+
 			"ObjectPageRules": {
 				coverage: {
 					only: ["sap/uxap/ObjectPageRules"]

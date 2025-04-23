@@ -299,6 +299,22 @@ function(Element, nextUIUpdate, XMLView, library, ObjectPageLayout, ObjectPageSu
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("_getTitle provides the title to show in anchorBar", function(assert) {
+		var oSection = new ObjectPageSection({
+				subSections: [
+					new ObjectPageSubSection({
+						title: "Title"
+					})
+				]
+			});
+
+		this.stub(oSection, "_hasPromotedSubSection").returns(true);
+
+		assert.strictEqual(oSection._getTitle(), "Title", "title is correct");
+
+		oSection.destroy();
+	});
+
 	var SectionBasePrototype = ObjectPageSectionBase.prototype,
 		SectionPrototype = ObjectPageSection.prototype;
 
@@ -769,6 +785,12 @@ function(Element, nextUIUpdate, XMLView, library, ObjectPageLayout, ObjectPageSu
 		afterEach: function() {
 			this.ObjectPageSectionView.destroy();
 		}
+	});
+
+	QUnit.test("Fast nagivation", function (assert) {
+		var oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection");
+
+		assert.strictEqual(oFirstSection.$().attr("data-sap-ui-fastnavgroup"), "true", "Sections are navigable via F6");
 	});
 
 	QUnit.test("Test aria-labelledby attribute", async function(assert) {

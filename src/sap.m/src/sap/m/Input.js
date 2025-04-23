@@ -1803,11 +1803,15 @@ function(
 		this._bBackspaceOrDelete = (oEvent.which === KeyCodes.BACKSPACE) || (oEvent.which === KeyCodes.DELETE);
 		this._bDoTypeAhead = !Device.os.android && this.getAutocomplete() && !this._bBackspaceOrDelete;
 
-		if (this.areHotKeysPressed(oEvent) && this._isSuggestionsPopoverOpen()) {
-			var oSuggestionsPopover = this._getSuggestionsPopover();
-			oSuggestionsPopover.setValueStateActiveState(true);
-			oSuggestionsPopover._handleValueStateLinkNav(this, oEvent);
-			oSuggestionsPopover.updateFocus(this, null);
+		if (this.areHotKeysPressed(oEvent)) {
+			if (this._isSuggestionsPopoverOpen()){
+				var oSuggestionsPopover = this._getSuggestionsPopover();
+				oSuggestionsPopover.setValueStateActiveState(true);
+				oSuggestionsPopover._handleValueStateLinkNav(this, oEvent);
+				oSuggestionsPopover.updateFocus(this, null);
+			} else {
+				this._handleValueStateLinkNav();
+			}
 		}
 	};
 

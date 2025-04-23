@@ -144,8 +144,7 @@ InputRenderer.getAriaDescribedBy = function (oControl) {
 		append(InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP"));
 	}
 
-	if (oControl.getShowSuggestion()
-		&& oControl.getValueStateLinksForAcc().length
+	if (oControl.getValueStateLinksForAcc().length
 		&& oControl.getValueState() !== ValueState.Error) {
 		append(oControl.getValueStateLinksShortcutsId());
 	}
