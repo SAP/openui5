@@ -76,7 +76,7 @@ sap.ui.define([
 		);
 	};
 
-	AnnotationChangeDialogController.prototype.onSavePress = function(oEvent) {
+	AnnotationChangeDialogController.prototype.onSave = function(oEvent) {
 		const oModelData = oEvent.getSource().getModel().getData();
 		const aChanges = oModelData.properties
 		.map((oProperty) => {
@@ -98,14 +98,13 @@ sap.ui.define([
 		this._fnResolveAfterClose(aChanges);
 	};
 
-	AnnotationChangeDialogController.prototype.onCancelPress = function() {
+	AnnotationChangeDialogController.prototype.onCancel = function() {
 		this._fnResolveAfterClose([]);
 	};
 
 	function createEditorField(sValueType) {
-		const onChange = () => {
-			// Property updates are handled via two-way binding
-			// However, the binding of the save button doesn't detect changes
+		const updateSaveButtonState = () => {
+			// The binding of the save button doesn't detect changes
 			// within nested object properties, so it has to be refreshed explicitly
 			const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 			oSaveButton.getBinding("enabled").refresh(true);
@@ -114,7 +113,7 @@ sap.ui.define([
 		if (sValueType === AnnotationTypes.ValueListType) {
 			const oSelect = new Select({
 				selectedKey: "{currentValue}",
-				change: onChange
+				change: updateSaveButtonState
 			});
 
 			const oItemTemplate = new Item({
@@ -134,14 +133,19 @@ sap.ui.define([
 		if (sValueType === AnnotationTypes.StringType) {
 			return new Input({
 				value: "{currentValue}",
-				change: onChange
+				liveChange: (oEvent) => {
+					const sValue = oEvent.getParameter("newValue");
+					const oContext = oEvent.getSource().getBindingContext();
+					oEvent.getSource().getModel().setProperty("currentValue", sValue, oContext);
+					updateSaveButtonState();
+				}
 			});
 		}
 
 		if (sValueType === AnnotationTypes.BooleanType) {
 			return new Switch({
 				state: "{currentValue}",
-				change: onChange
+				change: updateSaveButtonState
 			});
 		}
 
