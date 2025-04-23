@@ -2420,9 +2420,30 @@ html[data-sap-ui-browser*='ff'] {
 	font-weight: 700;
 }
 
+.sapMGTBackgroundBadge {
+	display: none;
+	margin-bottom: 0.5rem;
+}
+
+.sapMGTPriorityBadge,
+.sapMGTBackgroundBadge .sapMGTPriorityBadge {
+	height: 1.625rem;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
 .sapMGTArticleMode {
+	display: flex;
+	flex-direction: column;
 
 	.sapMGTContent {
+		flex-grow: 1;
+
+		.sapMGTPriorityBadge {
+			display: flex;
+			padding-top: 0;
+			padding-bottom: 0.5rem;
+		}
 
 		.sapMTileCnt {
 
@@ -2463,7 +2484,19 @@ html[data-sap-ui-browser*='ff'] {
 
 .sapMGTArticleMode.sapMTileSmallPhone {
 
+	.sapMGTHdrContent {
+		align-content: end;
+	}
+
+	.sapMGTBackgroundBadge {
+		display: block;
+	}
+
 	.sapMGTContent {
+
+		.sapMGTPriorityBadge {
+			display: none;
+		}
 
 		.sapMTileCnt {
 
