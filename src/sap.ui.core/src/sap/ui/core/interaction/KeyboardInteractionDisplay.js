@@ -222,7 +222,7 @@ sap.ui.define([
 
 	/**
 	 * Initializes the keyboard interaction information gathering.
-	 * @param  {Event} event The 'focusin' event triggering the initialization.
+	 * @param  {Event} event The 'focusin' or 'focusout' event triggering the initialization.
 	 */
 	const init = async (event) => {
 		if (bThrottled) {
@@ -235,24 +235,30 @@ sap.ui.define([
 		}, 300);
 
 		const aControlTree = [];
-		const elements = [];
 		const docs = {};
-		const oTargetControl = Element.closestTo(event?.target || document.activeElement);
+		let oTargetElement;
 
-		if (!oTargetControl) {
-			return;
+		if (event) {
+			oTargetElement = event.type === "focusin" ? event.target : event.relatedTarget;
 		}
+		oTargetElement ??= document.activeElement;
+
+		const oTargetControl = Element.closestTo(oTargetElement);
+
+		const oLabelMap = new Map();
 
 		// get generic key interactions from sap.ui.core
 		const oCoreXML = await loadInteractionXMLFor(null, "sap.ui.core");
 		if (oCoreXML) {
 			const oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
+			const sLabel = oResourceBundle.getText("Generic.Keyboard.Interaction.Text");
 			docs["sap.ui.core.Control"] = {
 				"interactions": getInteractions("sap.ui.core.Control", oCoreXML)
 			};
-			elements.push({
+			oLabelMap.set(sLabel, {
+				"index": -1,
 				"class": "sap.ui.core.Control",
-				"label": oResourceBundle.getText("Generic.Keyboard.Interaction.Text"),
+				"label": sLabel,
 				"interactions": [{
 					"$ref": `docs/sap.ui.core.Control/interactions`
 				}]
@@ -264,6 +270,7 @@ sap.ui.define([
 			aControlTree.push(oCurrent);
 			oCurrent = oCurrent.getParent();
 		}
+
 
 		for (let i = 0; i < aControlTree.length; i++) {
 			const oControl = aControlTree[i];
@@ -292,16 +299,29 @@ sap.ui.define([
 				});
 			}
 
-			elements.push({
-				"id": oControl.getId(),
-				"class": sClassName,
-				"label": getLabelFor(oControl, oInteractionXML),
-				"interactions": aInteractions
-			});
+			const sLabel = getLabelFor(oControl, oInteractionXML);
+
+			if (!oLabelMap.has(sLabel)) {
+				oLabelMap.set(sLabel, { interactions: [], label: sLabel });
+			}
+
+			const oMapEntry = oLabelMap.get(sLabel);
+			oMapEntry.index = i;
+			oMapEntry.id = oControl.getId();
+			oMapEntry.class = sClassName;
+			oMapEntry.interactions.unshift(...aInteractions.reverse());
 		}
 
 		// Update protocol with gathered elements and documentation
-		oProtocol.elements = elements;
+		oProtocol.elements = Array.from(oLabelMap.values())
+			.sort((a, b) => {
+				return a.index - b.index;
+			})
+			.map((oEntry) => {
+				delete oEntry.index;
+				return oEntry;
+			});
+
 		oProtocol.docs = docs;
 
 			// Send protocol
@@ -314,7 +334,7 @@ sap.ui.define([
 
 	/**
 	 * Module that handles the gathering and sending of keyboard interaction information.
-	 * When active, it starts listening for pointer and focus events to collect the keyboard interaction data.
+	 * When active, it starts listening for focusin and focusout event to collect the keyboard interaction data.
 	 * The gathered data is then sent via a MessagePort to a connected entity.
 	 *
 	 * @private
@@ -325,7 +345,7 @@ sap.ui.define([
 
 		/**
 		 * Activates the keyboard interaction information gathering.
-		 * This methods starts listening for pointer and focus events to gather the keyboard interaction information.
+		 * This methods starts listening for focusin and focusout events to gather the keyboard interaction information.
 		 *
 		 * @param  {MessagePort} oPort The MessagePort used to send the keyboard interaction information.
 		 * @private
@@ -337,13 +357,18 @@ sap.ui.define([
 
 			this._isActive = true;
 			await init();
-			document.addEventListener("pointerdown", init);
+			// need to register for both focusin and focusout event
+			// Browser fires:
+			//  * only focusin when focus is moved from <body> to a focusable element
+			//  * only focusout when focus is moved from a focused element to <body>
+			//  * first focusout then focusin when moved from a focused element to another focusable element
 			document.addEventListener("focusin", init);
+			document.addEventListener("focusout", init);
 		},
 
 		/**
 		 * Deactivates the keyboard interaction information gathering
-		 * This methods stops listening for pointer and focus events, effectively stopping the collection
+		 * This methods stops listening focusin and focusout events, effectively stopping the collection
 		 * of the keyboard interaction information.
 		 *
 		 * @private
@@ -353,8 +378,8 @@ sap.ui.define([
 				return;
 			}
 			this._isActive = false;
-			document.removeEventListener("pointerdown", init);
 			document.removeEventListener("focusin", init);
+			document.removeEventListener("focusout", init);
 		}
 	};
 });
