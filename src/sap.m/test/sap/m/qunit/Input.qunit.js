@@ -7814,8 +7814,16 @@ sap.ui.define([
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 		await nextUIUpdate(this.clock);
 
-		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		await nextUIUpdate(this.clock);
+		const oNewFormattedValueStateText = new FormattedText({
+			htmlText: "New value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+
+		this.oInput.setFormattedValueStateText(oNewFormattedValueStateText);
+		this.clock.tick(1000);
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
 			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
@@ -7843,12 +7851,22 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		await nextUIUpdate(this.clock);
 
 		this.oInput._$input.trigger("focus").val("on").trigger("input");
 		this.clock.tick(1000);
 
-		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
-		await nextUIUpdate(this.clock);
+		const oNewFormattedValueStateText = new FormattedText({
+			htmlText: "New value state message containing a %%0",
+			controls: new Link({
+				text: "link",
+				href: "#"
+			})
+		});
+
+		this.oInput.setFormattedValueStateText(oNewFormattedValueStateText);
+		this.clock.tick(1000);
+
 		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 		// Assert
