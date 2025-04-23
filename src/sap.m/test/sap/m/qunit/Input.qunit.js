@@ -7897,6 +7897,62 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("Value state popup should be closed after setting the correct value", function (assert) {
+		this.oInput.setValueState("Error");
+		this.oInput.setValueStateText("Invalid entry!");
+		this.oInput.setShowValueHelp(true);
+		this.oInput.attachValueHelpRequest(function () {
+			this.oDialog = new Dialog({
+				title: "Select a Value",
+				content: new sap.m.List({
+					items: [
+						new sap.m.StandardListItem({ title: "one" }),
+						new sap.m.StandardListItem({ title: "two" })
+					]
+				}),
+				beginButton: new Button({
+					text: "OK",
+					press: function () {
+						this.oInput.setValue("two");
+						this.oInput.setValueState("None");
+						this.oInput.setValueStateText("");
+						this.oDialog.close();
+					}.bind(this)
+				}),
+				endButton: new Button({
+					text: "Cancel",
+					press: function () {
+						this.oDialog.close();
+					}
+				})
+			});
+
+			this.oDialog.open();
+		}.bind(this));
+		this.clock.tick(500);
+
+		// Show value state message
+		this.oInput.focus();
+		this.clock.tick(500);
+
+		let oPopup = this.oInput._oValueStateMessage._oPopup;
+		assert.ok(oPopup && oPopup.isOpen(), "Value state message is displayed initially");
+
+		// Act
+		this.oInput.fireValueHelpRequest();
+		this.clock.tick(500);
+
+		// After confirming the value, the value state should be cleared and popup should hide
+		this.oDialog.getBeginButton().firePress();
+		this.clock.tick(500);
+
+		oPopup = this.oInput._oValueStateMessage._oPopup;
+
+		// Assert
+		assert.notOk(oPopup.isOpen(), "Value state message is not displayed after selecting valid value");
+		this.oDialog.destroy();
+	});
+
 	QUnit.test("Value state with formatted text containing a link", async function (assert) {
 		// Arrange
 		this.oInput.setValueState("Error");

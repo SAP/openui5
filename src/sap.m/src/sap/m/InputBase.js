@@ -489,6 +489,10 @@ function(
 			this[bClosedValueState ? "closeValueStateMessage" : "openValueStateMessage"]();
 		}
 
+		if (bClosedValueState) {
+			this.closeValueStateMessage();
+		}
+
 		if (this.getAggregation("_invisibleFormattedValueStateText")) {
 			this.getAggregation("_invisibleFormattedValueStateText").getControls().forEach(function(oControl){
 				oControl.getDomRef() && oControl.getDomRef().setAttribute("tabindex", -1);
