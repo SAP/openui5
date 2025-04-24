@@ -204,7 +204,9 @@ sap.ui.define([
 
 		const aControlInteractionNodes = [...oInteractionDoc.querySelectorAll("control-interactions")];
 		const oMatchingControl = aControlInteractionNodes.find((oNode) => {
-			return oNode.querySelector("control")?.getAttribute("name") === sControlName;
+			return Array.from(oInteractionDoc.querySelectorAll(`control[name]`)).find((oNode) => {
+				return oNode.getAttribute("name") === sControlName;
+			});
 		});
 
 		if (!oMatchingControl) {
