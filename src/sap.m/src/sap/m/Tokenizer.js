@@ -595,8 +595,8 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.m.MultiInput, sap.m.MultiComboBox
 	 */
-	Tokenizer.prototype._togglePopup = function (oPopover) {
-		var oDomRef = this.getDomRef(),
+	Tokenizer.prototype._togglePopup = function (oPopover, oOpener) {
+		var oOpenBy = oOpener || this.getDomRef(),
 			oPopoverIsOpen = oPopover.isOpen(),
 			bEditable = this.getEditable();
 
@@ -605,7 +605,7 @@ sap.ui.define([
 		if (oPopoverIsOpen) {
 			oPopover.close();
 		} else {
-			oPopover.openBy(oDomRef);
+			oPopover.openBy(oOpenBy);
 		}
 	};
 
@@ -1733,8 +1733,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._nMoreIndicatorPressed = !this.hasStyleClass("sapMTokenizerIndicatorDisabled") &&
-			oEvent.target.classList.contains("sapMTokenizerIndicator");
+		this._nMoreIndicatorPressed = (!this.hasOneTruncatedToken() && !this.hasStyleClass("sapMTokenizerIndicatorDisabled")) && oEvent.target.classList.contains("sapMTokenizerIndicator");
 
 		if (this._nMoreIndicatorPressed) {
 			this._handleNMoreIndicatorPress();
