@@ -62,10 +62,12 @@ sap.ui.define([
 
 	QUnit.module("Basic functionality", {
 		beforeEach() {
+			this.oTextControl = new Control("testControl");
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 		},
 		afterEach() {
 			this.oComponent.destroy();
+			this.oTextControl.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -395,11 +397,12 @@ sap.ui.define([
 			await openDialog(sandbox, oActionConfig, fnAfterOpen);
 		});
 
-		QUnit.test("When the dialog is opened with existing changeAnnotation changes", async function(assert) {
+		QUnit.test("When the dialog is opened with an existing changeAnnotation change, that is not yet applied", async function(assert) {
 			const oAnnotationChange = FlexObjectFactory.createFromFileContent({
 				changeType: "changeAnnotation",
 				content: {
-					annotationPath: "path/to/test/label"
+					annotationPath: "path/to/test/label",
+					value: oTextArrangementTypes.TextFirst
 				},
 				fileType: "annotation_change"
 			});
@@ -449,6 +452,11 @@ sap.ui.define([
 					aFormElements[0].getBindingContext().getObject().annotationPath,
 					oAnnotationChange.getContent().annotationPath,
 					"then only the property for which a change exists is displayed"
+				);
+				assert.deepEqual(
+					JSON.parse(aFormElements[0].getFields()[0].getSelectedKey()),
+					oTextArrangementTypes.TextFirst,
+					"the value is set correctly"
 				);
 				oToggleAllPropertiesSwitch.fireChange({ state: false });
 				assert.strictEqual(
@@ -585,6 +593,67 @@ sap.ui.define([
 			assert.strictEqual(aChanges[0].content.text, "Bye", "then the correct text was returned");
 		});
 
+		QUnit.test("when the dialog is opened with singleRename, different label on the control and a not yet applied change", async function(assert) {
+			const sAnnotationChangeLabel = "My Annotation Label";
+			const oAnnotationChange = FlexObjectFactory.createFromFileContent({
+				changeType: "changeAnnotation",
+				content: {
+					annotationPath: "path/to/test/label"
+				},
+				fileType: "annotation_change",
+				texts: {
+					annotationText: {
+						value: sAnnotationChangeLabel
+					}
+				}
+			});
+			sandbox.stub(PersistenceWriteAPI, "_getAnnotationChanges").returns([
+				oAnnotationChange
+			]);
+			const oTestDelegate = {
+				getAnnotationsChangeInfo: () => {
+					return {
+						serviceUrl: "testServiceUrl",
+						properties: [
+							{
+								propertyName: "My Test Label",
+								annotationPath: "path/to/test/label",
+								currentValue: "Hello"
+							},
+							{
+								propertyName: "My Other Test Label",
+								annotationPath: "path/to/second/test/label",
+								currentValue: "World"
+							}
+						],
+						preSelectedProperty: "path/to/test/label"
+					};
+				}
+			};
+			const oActionConfig = {
+				title: "Change Some String Prop",
+				type: AnnotationTypes.StringType,
+				delegate: oTestDelegate,
+				control: this.oTestControl,
+				singleRename: true,
+				controlBasedRenameChangeType: "myRename"
+			};
+			const sControlSpecificLabel = "My Control Specific Label";
+			sandbox.stub(ElementUtil, "getLabelForElement").returns(sControlSpecificLabel);
+			const fnAfterOpen = () => {
+				const oHBox = Element.getElementById("sapUiRtaChangeAnnotationDialog_filterHBox");
+				assert.strictEqual(oHBox.getVisible(), false, "then the filter is hidden");
+				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
+				const aFormElements = oList.getFormElements();
+				const oInput = aFormElements[0].getFields().filter((oField) => oField.getVisible())[0];
+				assert.strictEqual(oInput.getValue(), sAnnotationChangeLabel, "then the correct value is set");
+
+				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
+				oCancelButton.firePress();
+			};
+			await openDialog(sandbox, oActionConfig, fnAfterOpen);
+		});
+
 		QUnit.test("when the dialog is opened with singleRename and a different label on the control", async function(assert) {
 			const oTestDelegate = {
 				getAnnotationsChangeInfo: () => {
@@ -610,7 +679,7 @@ sap.ui.define([
 				title: "Change Some String Prop",
 				type: AnnotationTypes.StringType,
 				delegate: oTestDelegate,
-				control: new Control("testControl"),
+				control: this.oTestControl,
 				singleRename: true,
 				controlBasedRenameChangeType: "myRename"
 			};

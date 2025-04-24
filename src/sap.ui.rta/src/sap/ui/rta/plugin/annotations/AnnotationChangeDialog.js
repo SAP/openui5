@@ -37,13 +37,24 @@ sap.ui.define([
 	 */
 	const AnnotationChangeDialog = ManagedObject.extend("sap.ui.rta.plugin.annotations.AnnotationChangeDialog");
 
-	function replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedProperty, oControl) {
-		const oProperty = aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedProperty);
-		const aNewLabel = ElementUtil.getLabelForElement(oControl);
-		if (oProperty && aNewLabel) {
-			oProperty.currentValue = aNewLabel;
-			oProperty.originalValue = aNewLabel;
+	function replaceValue(aProperties, sAnnotationPath, sValue) {
+		const oProperty = aProperties.find((oProperty) => oProperty.annotationPath === sAnnotationPath);
+		if (oProperty) {
+			oProperty.currentValue = sValue;
+			oProperty.originalValue = sValue;
 		}
+	}
+
+	function replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedProperty, oControl) {
+		const aNewLabel = ElementUtil.getLabelForElement(oControl);
+		replaceValue(aProperties, sPreSelectedProperty, aNewLabel);
+	}
+
+	function replaceValuesWithValuesFromPendingChanges(aAnnotationChanges, aProperties, bObjectAsKey) {
+		aAnnotationChanges.forEach((oChange) => {
+			const sAnnotationPath = oChange.getContent().annotationPath;
+			replaceValue(aProperties, sAnnotationPath, bObjectAsKey ? JSON.stringify(oChange.getValue()) : oChange.getValue());
+		});
 	}
 
 	AnnotationChangeDialog.prototype._createDialog = async function() {
@@ -177,6 +188,9 @@ sap.ui.define([
 		if (bSingleRename) {
 			replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedPropertyKey, oControl);
 		}
+
+		// Once a change gets passed to the model during initialization, the property _appliedOnModel is set to true
+		replaceValuesWithValuesFromPendingChanges(aExistingChanges.filter((oChange) => !oChange._appliedOnModel), aProperties, bObjectAsKey);
 
 		this.oChangeAnnotationModel.setData({
 			objectAsKey: bObjectAsKey,
