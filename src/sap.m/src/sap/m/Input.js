@@ -2610,6 +2610,10 @@ function(
 	 * @public
 	 */
 	Input.prototype.setValue = function(sValue) {
+		// set the type syncronously before the value is set
+		// to avoid password field's text to be shown when triggering type
+		this.getDomRef("inner")?.setAttribute("type", this.getType().toLowerCase());
+
 		this._iSetCount++;
 		InputBase.prototype.setValue.call(this, sValue);
 		this._onValueUpdated(sValue);

@@ -1201,6 +1201,26 @@ sap.ui.define([
 		assert.strictEqual(Input._DEFAULTRESULT_TABULAR(), "", "Should return empty string");
 	});
 
+	QUnit.test("When setting type and value in the same time, both should be applied syncronously", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oInput = new Input({
+			type: "Text",
+			value: "Test"
+		});
+
+		oInput.placeAt("content");
+		await nextUIUpdate(this.clock);
+		assert.strictEqual(oInput.getValue(), "Test", "The value is set correctly");
+
+		oInput.setType("Password");
+		oInput.setValue("Some password");
+
+		assert.strictEqual(oInput.getFocusDomRef().getAttribute("type"), "password", "The type is set correctly syncronously");
+
+		// cleanup
+		oInput.destroy();
+	});
+
 	QUnit.module("Destroy", {
 		afterEach: function(){
 			runAllTimersAndRestore(this.clock);
