@@ -1716,6 +1716,43 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(3);
 	});
 
+	QUnit.test("ARIA rowindices - multi headers", async function(assert) {
+		oTable.getColumns()[0].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].addMultiLabel(new TestControl());
+		oTable.getColumns()[2].addMultiLabel(new TestControl());
+		oTable.getColumns()[2].addMultiLabel(new TestControl());
+		oTable.getColumns()[2].addMultiLabel(new TestControl());
+		oTable.getColumns()[3].addMultiLabel(new TestControl());
+		oTable.getColumns()[3].addMultiLabel(new TestControl());
+		oTable.getColumns()[1].setHeaderSpan([3, 2, 1]);
+
+		await nextUIUpdate();
+
+		const iNumberOfRows = oTable.getRows().length;
+		let $Elem; let i;
+
+		await TableQUnitUtils.nextEvent("rowsUpdated", oTable);
+
+		oTable.getDomRef().querySelectorAll(".sapUiTableCtrlScroll .sapUiTableHeaderRow")
+				.forEach((oRowRef, iIndex) => {
+					assert.equal(oRowRef.getAttribute("aria-rowindex"), `${iIndex + 1}`, `Header row has aria-rowindex ${iIndex + 1}`);
+				});
+
+		for (i = 0; i < iNumberOfRows; i++) {
+			$Elem = getCell(i, 0, false, assert).parent();
+			assert.strictEqual($Elem.attr("aria-rowindex"),
+				"" + (oTable.getFirstVisibleRow() + i + 4), "row " + i + ": aria-rowindex of the tr element");
+			$Elem = oTable.$("rowsel" + i).parent();
+			assert.notOk($Elem.attr("aria-rowindex"), "no aria-rowindex on the row header");
+			$Elem = oTable.$("rowact" + i).parent();
+			assert.notOk($Elem.attr("aria-rowindex"), "no aria-rowindex of the row action");
+		}
+
+		oTable.setFirstVisibleRow(3);
+	});
+
 	QUnit.test("ARIA colindices", async function(assert) {
 		const iNumberOfColumns = oTable._getVisibleColumns().length;
 		let $Elem; let i;

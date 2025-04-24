@@ -1006,7 +1006,7 @@ sap.ui.define([
 		rm.class("sapUiTableRow");
 		rm.class("sapUiTableHeaderRow");
 		rm.class("sapUiTableColHdrTr");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ColumnHeaderRow");
+		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ColumnHeaderRow", {rowIndex: iRow});
 		rm.openEnd();
 
 		//
