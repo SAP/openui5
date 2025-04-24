@@ -1778,5 +1778,34 @@ sap.ui.define([
 		assert.ok(overflowMenu.isOpen(), "Overflow menu should still be open");
 	});
 
+	QUnit.module("Collapsed parent items in expanded Side Navigation", {
+		beforeEach: async function () {
+			this.navigationList = getSecondNavigationList();
+			oPage.addContent(this.navigationList);
+
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.navigationList.destroy();
+		}
+	});
+
+	QUnit.test("selected child items", async function (assert) {
+
+		const oSelectedItem = this.navigationList.getItems()[1].getItems()[0].getDomRef();
+		const expandIcon = this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIExpandIcon");
+
+		QUnitUtils.triggerEvent("tap", oSelectedItem);
+		await nextUIUpdate();
+
+		assert.notOk(this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIFirstLevel").classList.contains("sapTntNLISelected"), "sapTntNLISelected class is not set on parent item");
+		assert.ok(oSelectedItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set on selected child item ");
+
+		QUnitUtils.triggerEvent("tap", expandIcon);
+		await nextUIUpdate();
+
+		assert.ok(this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIFirstLevel").classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set on parent item");
+	});
+
 	return waitForThemeApplied();
 });

@@ -183,12 +183,6 @@ sap.ui.define([
 	NavigationListItemBase.prototype._getFocusDomRefs = function () { };
 
 	/**
-	 * Gets DOM reference of the accessibility element.
-	 * @abstract
-	 */
-	NavigationListItemBase.prototype._getAccessibilityRef = function () { };
-
-	/**
 	 * Returns the <code>sap.ui.core.Icon</code> control used to display the expand/collapse icon.
 	 *
 	 * @returns {sap.ui.core.Icon} Icon control instance
@@ -414,32 +408,12 @@ sap.ui.define([
 			return false;
 		}
 
-		this.setProperty("expanded", true, true);
-		this._getExpandIconControl()
-			.setSrc(COLLAPSE_ICON_SRC)
-			.setTooltip(this._getExpandIconTooltip(false));
-
-		this._getAccessibilityRef().setAttribute("aria-expanded", "true");
-
-		const $container = this.$().find(".sapTntNLIItemsContainer").first();
-		$container.stop(true, true).slideDown("fast", () => {
-			this._updateContainerVisibility();
-			this.getNavigationList()?._updateNavItems();
-		});
+		this.setProperty("expanded", true);
+		this._animateExpand = true;
 
 		return true;
 	};
 
-	NavigationListItemBase.prototype._updateContainerVisibility = function () {
-		const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
-		if (oContainerRef) {
-			if (this.getExpanded()) {
-				oContainerRef.classList.remove("sapTntNLIItemsContainerHidden");
-			} else {
-				oContainerRef.classList.add("sapTntNLIItemsContainerHidden");
-			}
-		}
-	};
 
 	/**
 	 * Collapses the child items (works only on first-level items).
@@ -451,18 +425,9 @@ sap.ui.define([
 			return false;
 		}
 
-		this.setProperty("expanded", false, true);
-		this._getExpandIconControl()
-			.setSrc(EXPAND_ICON_SRC)
-			.setTooltip(this._getExpandIconTooltip(true));
+		this.setProperty("expanded", false);
+		this._animateCollapse = true;
 
-		this._getAccessibilityRef().setAttribute("aria-expanded", "false");
-
-		const $container = this.$().find(".sapTntNLIItemsContainer").first();
-		$container.stop(true, true).slideUp("fast", () => {
-			this._updateContainerVisibility();
-			this.getNavigationList()?._updateNavItems();
-		});
 
 		return true;
 	};
