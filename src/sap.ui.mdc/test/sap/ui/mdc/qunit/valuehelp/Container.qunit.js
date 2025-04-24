@@ -556,6 +556,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		const bSupported = oContainer.isTypeaheadSupported();

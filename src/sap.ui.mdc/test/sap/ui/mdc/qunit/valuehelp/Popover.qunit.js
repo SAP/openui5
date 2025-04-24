@@ -524,6 +524,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		let bSupported = oPopover.isTypeaheadSupported();
@@ -1464,6 +1467,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.136
+	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		sinon.stub(oContent, "isSearchSupported").returns(true);

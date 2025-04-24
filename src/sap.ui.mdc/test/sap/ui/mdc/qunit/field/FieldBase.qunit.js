@@ -6186,7 +6186,7 @@ sap.ui.define([
 		beforeEach: async () => {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: true});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
-			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
+			sinon.stub(oValueHelp, "requestShowTypeahead").returns(Promise.resolve(true)); // to simulate suggestion
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
 
 			oCM = new ConditionModel();
@@ -6354,7 +6354,7 @@ sap.ui.define([
 		beforeEach: async () => {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: true});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
-			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
+			sinon.stub(oValueHelp, "requestShowTypeahead").returns(Promise.resolve(true)); // to simulate suggestion
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
 			const fnGetItemForValue = (oConfig) => {
 				vGetItemsForValue = oConfig.value;
