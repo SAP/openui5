@@ -164,9 +164,10 @@ sap.ui.define([
 
 		this._oDialog ||= await this._createDialog();
 
-		const sFilterText = sPreSelectedPropertyKey
-			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).label
-			: "";
+		const sFilterText = (
+			sPreSelectedPropertyKey && aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey)?.label
+		) || "";
+
 		// default size limit is 100, but we need to display all properties.
 		// As the list size is not dynamic, we can set the size limit to the number of properties
 		// the size influences all binding sizes, so we only set it if the number of properties is greater than 100

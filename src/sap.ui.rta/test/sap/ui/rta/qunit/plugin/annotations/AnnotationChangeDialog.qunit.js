@@ -629,6 +629,46 @@ sap.ui.define([
 			};
 			await openDialog(sandbox, oActionConfig, fnAfterOpen);
 		});
+
+		QUnit.test("when the dialog is opened with a preselected property, that does not exist", async function(assert) {
+			const oTestDelegate = {
+				getAnnotationsChangeInfo: () => {
+					return {
+						serviceUrl: "testServiceUrl",
+						properties: [
+							{
+								propertyName: "My Other Test Label",
+								annotationPath: "path/to/second/test/label",
+								currentValue: "World"
+							},
+							{
+								propertyName: "My Test Label",
+								annotationPath: "other/path/to/test/label",
+								currentValue: "Hello"
+							}
+						],
+						preSelectedProperty: "path/to/test/label"
+					};
+				}
+			};
+			const oActionConfig = {
+				title: "Change Some String Prop",
+				type: AnnotationTypes.StringType,
+				delegate: oTestDelegate
+			};
+			const fnAfterOpen = () => {
+				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
+				const aFormElements = oList.getFormElements();
+				assert.strictEqual(aFormElements.length, 2, "then all properties are shown");
+
+				const oSearchField = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertiesFilter");
+				assert.strictEqual(oSearchField.getValue(), "", "then no filter is set");
+
+				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
+				oCancelButton.firePress();
+			};
+			await openDialog(sandbox, oActionConfig, fnAfterOpen);
+		});
 	});
 
 	QUnit.done(function() {
