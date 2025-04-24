@@ -18,7 +18,7 @@
         <Panel headerText="{i18n>illustrationSizeLabel}: ExtraSmall">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
-                illustrationSize="Dot"
+                illustrationSize="ExtraSmall"
                 title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
                 description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
             <layoutData>
@@ -29,7 +29,7 @@
         <Panel headerText="{i18n>illustrationSizeLabel}: Small">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
-                illustrationSize="Spot"
+                illustrationSize="Small"
                 title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
                 description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
             <layoutData>
@@ -40,7 +40,7 @@
         <Panel headerText="{i18n>illustrationSizeLabel}: Medium">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
-                illustrationSize="Dialog"
+                illustrationSize="Medium"
                 title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
                 description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
             <layoutData>
@@ -51,7 +51,7 @@
         <Panel headerText="{i18n>illustrationSizeLabel}: Large">
             <IllustratedMessage
                 illustrationType="{illustration>/type}"
-                illustrationSize="Scene"
+                illustrationSize="Large"
                 title="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntTitle} : '' }"
                 description="{= ${illustration>/set} === 'tnt' ? ${i18n>defaultTntDescription} : '' }" />
         </Panel>
