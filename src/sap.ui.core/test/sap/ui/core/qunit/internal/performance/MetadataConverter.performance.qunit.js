@@ -154,7 +154,9 @@ sap.ui.define([
 		});
 	});
 });
-
+	/**
+	 * @deprecated As of version 1.48
+	 */
 	//*********************************************************************************************
 	QUnit.test("ODataMetaModel (V1)", function (assert) {
 		return repeatAsyncTest(10, function () {
