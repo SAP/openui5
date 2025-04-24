@@ -6,27 +6,30 @@ sap.ui.define(["sap/m/IllustratedMessageSize", "sap/m/IllustratedMessageType", "
 
 			onInit: function () {
 
-				var aIMISizeData = [],
+				var aIMISizeData = [
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Auto], text: oIllustratedMessageSize.Auto},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Base], text: oIllustratedMessageSize.Base},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.ExtraSmall], text: oIllustratedMessageSize.ExtraSmall},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Small], text: oIllustratedMessageSize.Small},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Medium], text: oIllustratedMessageSize.Medium},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Large], text: oIllustratedMessageSize.Large}
+					],
 					aIMITypeData = [
-						{ key: oIllustratedMessageType.SimpleBalloon, text: 'SimpleBalloon'},
-						{ key: oIllustratedMessageType.SimpleBell, text: 'SimpleBell'},
-						{ key: oIllustratedMessageType.SimpleCalendar, text: 'SimpleCalendar'},
-						{ key: oIllustratedMessageType.SimpleCheckMark, text: 'SimpleCheckMark'},
+						{ key: oIllustratedMessageType.ReceiveAppreciation, text: 'ReceiveAppreciation'},
+						{ key: oIllustratedMessageType.NoNotifications, text: 'NoNotifications'},
+						{ key: oIllustratedMessageType.NoActivities, text: 'NoActivities'},
+						{ key: oIllustratedMessageType.KeyTask, text: 'KeyTask'},
 						{ key: oIllustratedMessageType.SimpleConnection, text: 'SimpleConnection'},
-						{ key: oIllustratedMessageType.SimpleEmptyDoc, text: 'SimpleEmptyDoc'},
-						{ key: oIllustratedMessageType.SimpleEmptyList, text: 'SimpleEmptyList'},
-						{ key: oIllustratedMessageType.SimpleError, text: 'SimpleError'},
-						{ key: oIllustratedMessageType.SimpleMagnifier, text: 'SimpleMagnifier'},
-						{ key: oIllustratedMessageType.SimpleMail, text: 'SimpleMail'},
-						{ key: oIllustratedMessageType.SimpleNoSavedItems, text: 'SimpleNoSavedItems'},
-						{ key: oIllustratedMessageType.SimpleNotFoundMagnifier, text: 'SimpleNotFoundMagnifier'},
-						{ key: oIllustratedMessageType.SimpleReload, text: 'SimpleReload'},
-						{ key: oIllustratedMessageType.SimpleTask, text: 'SimpleTask'}
+						{ key: oIllustratedMessageType.NoData, text: 'NoData'},
+						{ key: oIllustratedMessageType.NoEntries, text: 'NoEntries'},
+						{ key: oIllustratedMessageType.UnableToUpload, text: 'UnableToUpload'},
+						{ key: oIllustratedMessageType.BeforeSearch, text: 'BeforeSearch'},
+						{ key: oIllustratedMessageType.NoMail, text: 'NoMail'},
+						{ key: oIllustratedMessageType.NoSavedItems, text: 'NoSavedItems'},
+						{ key: oIllustratedMessageType.NoSearchResults, text: 'NoSearchResults'},
+						{ key: oIllustratedMessageType.UnableToLoad, text: 'UnableToLoad'},
+						{ key: oIllustratedMessageType.NoTasks, text: 'NoTasks'}
 					];
-
-				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
-					aIMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
-				});
 
 				this.oModel = new JSONModel({
 					sizeTypes: aIMISizeData,

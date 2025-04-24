@@ -39,7 +39,7 @@ sap.ui.define([
 
 	let oValueHelp;
 	let oContainer;
-//	var iPopoverDuration = 355;
+	//	var iPopoverDuration = 355;
 	let oField;
 	let oField2;
 	let iDisconnect = 0;
@@ -103,7 +103,7 @@ sap.ui.define([
 
 	/* use dummy control to simulate Field */
 
-//	var oClock;
+	//	var oClock;
 	const _initFields = async () => {
 		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oField2 = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
@@ -162,15 +162,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("default values", async (assert) => {
-
 		assert.equal(oValueHelp.getConditions().length, 0, "Conditions");
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
-		let bShouldOpen = await oValueHelp.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick");
-		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
-		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
 
+		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
 	});
 
 	QUnit.test("isTypeaheadSupported", (assert) => {
@@ -198,11 +193,16 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("connect", (assert) => {
+	QUnit.test("connect", async (assert) => {
 
 		oField.setFieldGroupIds(["myFieldGroup"]);
 		oField2.setFieldGroupIds(["myFieldGroup2"]);
+		sinon.spy(ValueHelpDelegate, "onControlConnect");
+
 		oValueHelp.connect(oField, {test: "X"});
+		await new Promise((resolve) => {setTimeout(resolve,0);});
+		assert.ok(ValueHelpDelegate.onControlConnect.calledOnce, "ValueHelpDelegate.onControlConnect called");
+
 		assert.equal(iDisconnect, 0, "Disconnect not fired");
 		assert.deepEqual(oValueHelp.getProperty("_config"), {test: "X"}, "Config stored");
 		assert.equal(oValueHelp._oControl, oField, "Field internally stored");
@@ -210,13 +210,19 @@ sap.ui.define([
 
 		oValueHelp.setConditions([Condition.createItemCondition("1", "Test")]);
 		oValueHelp.setFilterValue("A");
+
 		oValueHelp.connect(oField2, {test: "Y"});
+		await new Promise((resolve) => {setTimeout(resolve,0);});
+		assert.ok(ValueHelpDelegate.onControlConnect.calledTwice, "ValueHelpDelegate.onControlConnect called twice");
+
 		assert.equal(iDisconnect, 1, "Disconnect fired");
 		assert.equal(oValueHelp.getConditions().length, 0, "Conditions");
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
 		assert.deepEqual(oValueHelp.getProperty("_config"), {test: "Y"}, "Config stored");
 		assert.equal(oValueHelp._oControl, oField2, "Field internally stored");
 		assert.deepEqual(oValueHelp._getFieldGroupIds(), ["myFieldGroup2"], "FieldGroupIDs of Field used"); // as _getFieldGroupIds is used in UIArea to determine current FieldGroup
+
+		ValueHelpDelegate.onControlConnect.restore();
 
 	});
 
@@ -575,34 +581,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnFocus", async (assert) => {
-
-		sinon.stub(oContainer, "shouldOpenOnFocus").returns(Promise.resolve(true));
-		let bShouldOpen = await oValueHelp.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "if only typeahed no opening on focus");
-
-		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
-		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
-		assert.ok(bShouldOpen, "returns value of container (true) if used as valueHelp");
-
-		oContainer.shouldOpenOnFocus.returns(Promise.resolve(false));
-		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "returns value of container (false) if used as valueHelp");
-
-	});
-
-	QUnit.test("shouldOpenOnClick", async (assert) => {
-
-		sinon.stub(oContainer, "shouldOpenOnClick").returns(Promise.resolve(true));
-		let bShouldOpen = await oValueHelp.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "if only typeahed no opening on click");
-
-		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
-		bShouldOpen = await oValueHelp.shouldOpenOnClick();
-		assert.ok(bShouldOpen, "returns value of container if used as valueHelp");
-
-	});
-
 	QUnit.test("isFocusInHelp", (assert) => {
 
 		sinon.stub(oContainer, "isFocusInHelp").returns(true);
@@ -626,48 +604,6 @@ sap.ui.define([
 		sinon.spy(oContainer, "setVisualFocus");
 		oValueHelp.setVisualFocus();
 		assert.ok(oContainer.setVisualFocus.called, "Container.setVisualFocus called");
-
-	});
-
-	QUnit.test("navigate", (assert) => {
-
-		oValueHelp.connect(oField); // to attach events
-		sinon.spy(oContainer, "navigate");
-		sinon.spy(oContainer, "open");
-		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		oValueHelp.navigate(1);
-
-		const fnDone = assert.async();
-		setTimeout(() => { // as Promise used inside
-			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
-			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
-			assert.notOk(oContainer.open.called, "Container not opened");
-
-			ValueHelpDelegate.retrieveContent.restore();
-			fnDone();
-		}, 0);
-
-	});
-
-	QUnit.test("navigate with opening", (assert) => {
-
-		oValueHelp.connect(oField); // to attach events
-		sinon.spy(oContainer, "navigate");
-		sinon.stub(oContainer, "open").returns(Promise.resolve());
-		sinon.stub(oContainer, "shouldOpenOnNavigate").returns(true);
-		sinon.spy(ValueHelpDelegate, "retrieveContent");
-
-		oValueHelp.navigate(1);
-
-		const fnDone = assert.async();
-		setTimeout(() => { // as Promise used inside
-			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
-			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called for navigation");
-			assert.ok(oContainer.open.called, "Container opened");
-
-			ValueHelpDelegate.retrieveContent.restore();
-			fnDone();
-		}, 0);
 
 	});
 
@@ -1193,20 +1129,6 @@ sap.ui.define([
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oAttributes = oValueHelp.getAriaAttributes();
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeaheas");
-
-	});
-
-	QUnit.test("shouldOpenOnFocus", (assert) => {
-
-		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
-		assert.ok(oValueHelp.shouldOpenOnFocus(), "returns value of container");
-
-	});
-
-	QUnit.test("shouldOpenOnClick", (assert) => {
-
-		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
-		assert.ok(oValueHelp.shouldOpenOnClick(), "returns value of container");
 
 	});
 

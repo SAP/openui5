@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
+	"sap/ui/model/FilterOperator",
+	"sap/ui/mdc/enums/RequestShowContainerReason"
 ], (
 	ValueHelpDelegate,
 	Filter,
-	FilterOperator
+	FilterOperator,
+	RequestShowContainerReason
 ) => {
 	"use strict";
 
@@ -67,39 +69,19 @@ sap.ui.define([
 
 	// enable typeahead
 	JSONValueHelpDelegate.isSearchSupported = function (oValueHelp, oContent, oListBinding) {
-		return !!oValueHelp.getPayload()?.searchKeys;
+		const {searchKeys} = oValueHelp.getPayload();
+		return !!searchKeys;
 	};
 
-	JSONValueHelpDelegate.shouldOpenOnClick = function(oValueHelp, oContainer) {
-		const oPayload = oValueHelp.getPayload();
-
-		if (oPayload && oPayload.hasOwnProperty("shouldOpenOnClick")) {
-			return Promise.resolve(oPayload.shouldOpenOnClick);
-		} else {
-			return ValueHelpDelegate.shouldOpenOnClick.apply(this, arguments);
-		}
-	};
-
-	JSONValueHelpDelegate.shouldOpenOnFocus = function(oValueHelp, oContainer) {
-		const oPayload = oValueHelp.getPayload();
-
-		if (oPayload && oPayload.hasOwnProperty("shouldOpenOnFocus")) {
-			return Promise.resolve(oPayload.shouldOpenOnFocus);
-		} else {
-			return ValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
-		}
-	};
-
-	JSONValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {
-
-		const oPayload = oValueHelp.getPayload();
-
-		if (oPayload && oPayload.hasOwnProperty("shouldOpenOnFocus") && !oContent.getFilterValue()) {
-			return true; // open if no filter too
-		} else {
-			return ValueHelpDelegate.showTypeahead.apply(this, arguments);
-		}
-
+	// enable dropdown on click and tab-navigation, ignoring missing filter
+	JSONValueHelpDelegate.requestShowContainer = function (oValueHelp, oContainer, sRequestShowContainerReason) {
+		const {openOnClick, openOnTab} = oValueHelp.getPayload();
+		const mResultMap = {
+			[RequestShowContainerReason.Tap]: !!openOnClick,
+			[RequestShowContainerReason.Tab]: !!openOnTab,
+			[RequestShowContainerReason.Filter]: true
+		};
+		return sRequestShowContainerReason in mResultMap ? mResultMap[sRequestShowContainerReason] : ValueHelpDelegate.requestShowContainer.apply(this, arguments);
 	};
 
 	return JSONValueHelpDelegate;

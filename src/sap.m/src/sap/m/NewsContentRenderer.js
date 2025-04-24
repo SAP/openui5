@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/m/TileContent"], function(TileContent) {
 "use strict";
 
 /**
@@ -36,6 +36,14 @@ NewsContentRenderer.render = function(oRm, oControl) {
 		oRm.attr("tabindex", "0");
 	}
 	oRm.openEnd();
+
+		// render tile content priority, if present
+		var oTileContent = oControl.getParent();
+		var oContentPriorityBadge = oTileContent instanceof TileContent && oTileContent._getPriorityBadge();
+
+		if (oContentPriorityBadge) {
+			oRm.renderControl(oContentPriorityBadge);
+		}
 
 		oRm.openStart("div", oControl.getId() + "-title");
 		oRm.class("sapMNwCCTxt");

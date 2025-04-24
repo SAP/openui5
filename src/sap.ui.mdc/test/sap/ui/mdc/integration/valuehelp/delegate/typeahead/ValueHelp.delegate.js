@@ -14,7 +14,7 @@ sap.ui.define([
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
-		const sShouldOpenOnFocus = oContainer.getModel("runtimeState").getData().shouldOpenOnFocus;
+		const sShouldOpenOnFocus = oContainer.getModel("runtimeState").getData().typeahead.shouldOpenOnFocus;
 
 		/*eslint-disable-next-line no-new-func*/
 		const fnShouldOpenOnFocus = new Function('oValueHelp', 'oContainer', 'Device', `return (${sShouldOpenOnFocus})(oValueHelp, oContainer);`);
@@ -22,7 +22,7 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
-		const sShouldOpenOnClick = oContainer.getModel("runtimeState").getData().shouldOpenOnClick;
+		const sShouldOpenOnClick = oContainer.getModel("runtimeState").getData().typeahead.shouldOpenOnClick;
 
 		/*eslint-disable-next-line no-new-func*/
 		const fnShouldOpenOnClick = new Function('oValueHelp', 'oContainer', 'Device', `return (${sShouldOpenOnClick})(oValueHelp, oContainer);`);
@@ -30,7 +30,7 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
-		const sShowTypeahead = oContent.getModel("runtimeState").getData().showTypeahead;
+		const sShowTypeahead = oContent.getModel("runtimeState").getData().typeahead.showTypeahead;
 
 		/*eslint-disable-next-line no-new-func*/
 		const fnShowTypeahead = new Function('oValueHelp', 'oContent', 'Device', `return (${sShowTypeahead})(oValueHelp, oContent);`);

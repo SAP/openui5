@@ -9,11 +9,14 @@ sap.ui.define([
 
 		onInit: function () {
 
-			var aIMISizeData = [];
-
-			Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
-				aIMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
-			});
+			var aIMISizeData = [
+				{key: oIllustratedMessageSize[oIllustratedMessageSize.Auto], text: oIllustratedMessageSize.Auto},
+				{key: oIllustratedMessageSize[oIllustratedMessageSize.Base], text: oIllustratedMessageSize.Base},
+				{key: oIllustratedMessageSize[oIllustratedMessageSize.ExtraSmall], text: oIllustratedMessageSize.ExtraSmall},
+				{key: oIllustratedMessageSize[oIllustratedMessageSize.Small], text: oIllustratedMessageSize.Small},
+				{key: oIllustratedMessageSize[oIllustratedMessageSize.Medium], text: oIllustratedMessageSize.Medium},
+				{key: oIllustratedMessageSize[oIllustratedMessageSize.Large], text: oIllustratedMessageSize.Large}
+			];
 
 			this.oModel = new JSONModel({
 				sizeTypes: aIMISizeData

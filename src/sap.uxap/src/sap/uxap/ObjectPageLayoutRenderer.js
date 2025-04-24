@@ -38,6 +38,7 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 			bHeaderRoleSet = oLandmarkInfo && oLandmarkInfo.getHeaderRole(),
 			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 			bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
+			sRootRole = bRootRoleSet ? oLandmarkInfo.getRootRole() : undefined,
 			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
 			bShowFooter = oControl.getShowFooter();
 
@@ -49,7 +50,9 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		if (!bRootRoleSet) {
 			oRm.attr("role", "main");
 		}
-		oRm.attr("aria-roledescription", oRb.getText("ROOT_ROLE_DESCRIPTION"));
+		if (sRootRole !== "None") {
+			oRm.attr("aria-roledescription", oRb.getText("ROOT_ROLE_DESCRIPTION"));
+		}
 		if (!bRootLabelSet) {
 			oRm.attr("aria-label", sRootAriaLabelText);
 		}

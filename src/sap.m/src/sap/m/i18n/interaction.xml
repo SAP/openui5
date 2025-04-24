@@ -183,5 +183,17 @@
 					the selection up to the clicked cell.</p>
 			</description>
 		</interaction>
+		<interaction>
+			<kbd>Ctrl + C</kbd>
+			<description>
+				<p>Copies the selected rows or cells to the clipboard, if available and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction>
+			<kbd>Ctrl + V</kbd>
+			<description>
+				<p>Pastes the content from the clipboard, if the feature is enabled.</p>
+			</description>
+		</interaction>
 	</control-interactions>
 </interaction-documentation>

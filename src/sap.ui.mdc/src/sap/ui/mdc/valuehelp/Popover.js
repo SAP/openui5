@@ -9,7 +9,8 @@ sap.ui.define([
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/library',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	'sap/ui/mdc/enums/RequestShowContainerReason'
 ], (
 	Container,
 	OperatorName,
@@ -17,7 +18,8 @@ sap.ui.define([
 	loadModules,
 	jQuery,
 	coreLibrary,
-	Device
+	Device,
+	RequestShowContainerReason
 ) => {
 	"use strict";
 
@@ -568,14 +570,10 @@ sap.ui.define([
 
 		const oContent = this._getContent();
 		const oOpenPromise = this._retrievePromise("open");
-		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(() => { // onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
-			const oDelegate = this.getValueHelpDelegate();
+		Promise.resolve(oContent && oContent.onBeforeShow(true)).then(async () => { // onBeforeShow should guarantee filtering is done, when we observe the table in showTypeahead
 			const oValueHelp = this.getValueHelp();
-
-			return Promise.resolve(bTypeahead ? oDelegate.showTypeahead(oValueHelp, oContent) : true).then((bShowTypeahead) => {
-				// Only continue the opening process, if delegate confirms "showTypeahead" and open promise is not canceled (might happen due to focus loss in target control).
-				return bShowTypeahead && !oOpenPromise.isCanceled() ? true : Promise.reject();
-			});
+			const bShowTypeahead = bTypeahead ? await oValueHelp._requestShowContainer(this, RequestShowContainerReason.Filter) : true;
+			return bShowTypeahead && !oOpenPromise.isCanceled() ? true : Promise.reject(); // Only continue the opening process, if delegate confirms "showTypeahead" and open promise is not canceled (might happen due to focus loss in target control).
 		}).then(() => {
 			if (Device.system.phone) {
 				oPopover.open();
@@ -708,6 +706,7 @@ sap.ui.define([
 
 	Popover.prototype.navigateInContent = function(iStep) {
 		const oContent = this._getContent();
+		this.bindContentToContainer(oContent); // adds navigation listener
 		if (oContent) {
 			oContent.navigate(iStep);
 		}
@@ -763,16 +762,6 @@ sap.ui.define([
 
 	};
 
-	Popover.prototype.shouldOpenOnNavigate = function() {
-
-		const oContent = this._getContent();
-		this.bindContentToContainer(oContent); // Content might need config data to determine it's behaviour
-		return !!oContent && oContent.shouldOpenOnNavigate();
-		// TODO: do we need to unbind here? Re-binding on every navigation would reset selected condition on content what is not wanted
-		// How to know when navigation ends?
-
-	};
-
 	Popover.prototype.isNavigationEnabled = function(iStep) {
 
 		if (this.isOpen() || this.getUseAsValueHelp()) { //Typeahead already open or it is used for typing and as value help (ComboBox case)
@@ -795,18 +784,6 @@ sap.ui.define([
 
 		const oContent = this._getContent();
 		return !!oContent && oContent.isMultiSelect();
-
-	};
-
-	Popover.prototype.isTypeaheadSupported = function() {
-
-		if (Device.system.phone && (this.isSingleSelect() || this.isDialog())) {
-			// on phones ComboBox like use casse has no typeahead. MultiInput use case has typeahead.
-			return false;
-		}
-
-		const oContent = this._getContent();
-		return oContent && oContent.isSearchSupported();
 
 	};
 
@@ -845,5 +822,4 @@ sap.ui.define([
 	};
 
 	return Popover;
-
 });

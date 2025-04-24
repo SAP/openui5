@@ -507,7 +507,7 @@ sap.ui.define([
 	Column.prototype._readP13nValues = function() {
 		const oTable = this.getTable();
 		const sPropertyKey = this.getPropertyKey();
-		const oXConfig = oTable.getCurrentState().xConfig;
+		const oXConfig = oTable._getXConfig();
 		const oColumnConfig = oXConfig?.aggregations?.columns?.[sPropertyKey];
 
 		this._oSettingsModel.setProperty("/p13nWidth", oColumnConfig?.width);

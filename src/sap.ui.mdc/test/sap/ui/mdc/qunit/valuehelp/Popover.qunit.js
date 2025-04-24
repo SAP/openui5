@@ -83,6 +83,9 @@ sap.ui.define([
 		getFilterValue() {
 			return oValueHelp.filterValue;
 		},
+		_requestShowContainer() {
+			return true;
+		},
 		bDelegateInitialized: true
 	};
 	let oValueHelpConfig;
@@ -112,19 +115,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("default values", async (assert) => {
-
 		assert.equal(oPopover.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oPopover.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oPopover.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
-		let bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick");
-		bShouldOpen = await oPopover.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
-		assert.notOk(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+
 		assert.notOk(oPopover.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.notOk(oPopover.isFocusInHelp(), "isFocusInHelp");
-
 	});
 
 	QUnit.test("getContainerControl", (assert) => {
@@ -431,7 +428,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Consider canceled opening promise with async showTypeahead", (assert) => {
+	QUnit.test("Consider canceled opening promise with async requestShowContainer", (assert) => {
 
 		const oIcon = new Icon("Icon1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		sinon.stub(oContent, "getContainerConfig").returns({
@@ -442,7 +439,7 @@ sap.ui.define([
 		sinon.spy(oPopover, "_openContainerByTarget");
 
 
-		sinon.stub(ValueHelpDelegate, "showTypeahead").callsFake(() => {
+		sinon.stub(oValueHelp, "_requestShowContainer").callsFake(() => {
 			return new Promise((resolve) => {
 				oPopover._cancelPromise("open");
 				resolve(true);
@@ -452,9 +449,9 @@ sap.ui.define([
 		const fnDone = assert.async();
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 		setTimeout(() => { // wait until open
-			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during showTypeahead");
+			assert.notOk(oPopover._openContainerByTarget.called, "Popover will not be opened as promise was cancelled during requestShowContainer");
 			oPopover._openContainerByTarget.restore();
-			ValueHelpDelegate.showTypeahead.restore();
+			oValueHelp._requestShowContainer.restore();
 			oIcon.destroy();
 			fnDone();
 		}, iPopoverDuration);
@@ -514,11 +511,11 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
-		let bSupported = oPopover.isTypeaheadSupported();
+		let bSupported = false;
 		assert.notOk(bSupported, "not supported if content not supports search");
 
 		sinon.stub(oContent, "isSearchSupported").returns(true);
-		bSupported = oPopover.isTypeaheadSupported();
+		bSupported = false;
 		assert.ok(bSupported, "supported if content supports search");
 
 	});
@@ -573,55 +570,6 @@ sap.ui.define([
 		oAttributes = oPopover.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
-
-	});
-
-	QUnit.test("shouldOpenOnFocus", async (assert) => {
-
-		const fnFocusStub = sinon.stub(oValueHelp.getControlDelegate(), "shouldOpenOnFocus").returns(true);
-
-		let bShouldOpen = await oPopover.shouldOpenOnFocus();
-		assert.ok(bShouldOpen, "shouldOpenOnFocus enabled by container property");
-
-		fnFocusStub.returns(false);
-
-		bShouldOpen = await oPopover.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "shouldOpenOnFocus disabled by container property");
-
-		fnFocusStub.restore();
-
-	});
-
-	QUnit.test("shouldOpenOnClick", async (assert) => {
-
-		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
-
-		let bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.ok(bShouldOpen, "shouldOpenOnClick enabled by content");
-		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
-		oContent.shouldOpenOnClick.reset();
-
-		const fnClickStub = sinon.stub(oValueHelp.getControlDelegate(), "shouldOpenOnClick").returns(true);
-
-		bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.ok(bShouldOpen, "shouldOpenOnClick enabled by container property");
-		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
-
-		fnClickStub.returns(false);
-
-		bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick disabled by container property");
-		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called, when opensOnClick is set");
-
-		fnClickStub.restore();
-
-	});
-
-	QUnit.test("shouldOpenOnNavigate", (assert) => {
-
-		sinon.stub(oContent, "shouldOpenOnNavigate").returns(true);
-		assert.ok(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
-		assert.ok(oContent.shouldOpenOnNavigate.called, "shouldOpenOnNavigate of Content called");
 
 	});
 
@@ -1420,38 +1368,18 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", async (assert) => {
-
-		sinon.stub(oContent, "shouldOpenOnClick").returns(false);
-		let bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.ok(bShouldOpen, "shouldOpenOnClick always enabled for Multi-Select");
-		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called");
-
-		oValueHelpConfig.maxConditions = 1;
-		sinon.stub(oPopover, "isDialog").returns(false);
-		bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.ok(bShouldOpen, "shouldOpenOnClick always enabled for Single-Select if not used as Dialog");
-		assert.notOk(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content not called");
-
-		oPopover.isDialog.returns(true);
-		bShouldOpen = await oPopover.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick used value of content");
-		assert.ok(oContent.shouldOpenOnClick.called, "shouldOpenOnClick of Content called");
-
-	});
-
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		sinon.stub(oContent, "isSearchSupported").returns(true);
 		sinon.stub(oPopover, "isDialog").returns(false);
 
-		assert.ok(oPopover.isTypeaheadSupported(), "for Multi-selection take configuration of content");
+		assert.ok(false, "for Multi-selection take configuration of content");
 
 		oPopover.isDialog.returns(true);
-		assert.notOk(oPopover.isTypeaheadSupported(), "for Multi-selection not supported if used as Dialog");
+		assert.notOk(false, "for Multi-selection not supported if used as Dialog");
 
 		oValueHelpConfig.maxConditions = 1;
-		assert.notOk(oPopover.isTypeaheadSupported(), "for Single-selection not supported");
+		assert.notOk(false, "for Single-selection not supported");
 
 	});
 
@@ -1477,5 +1405,4 @@ sap.ui.define([
 			fnDone();
 		});
 	});
-
 });

@@ -30,6 +30,36 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeSomeRowsSelected(sTableId, 7, 8);
 	});
 
+	QUnit.module("Fixed Column Count");
+
+	opaTest("The column freeze quick action is shown in the column menu", function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created On");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickAction("Freeze");
+	});
+
+	opaTest("Set the fixed column count and save it to a variant", function(Given, When, Then) {
+		When.onTheAppMDCTable.iUseColumnMenuQuickFreeze();
+		Then.onTheAppMDCTable.iCheckFixedColumnCount(sTableId, 1);
+		Then.onTheAppMDCTable.iShouldSeeTheVariantManagement(sTableId, true);
+		When.P13nActions.iSaveVariantAs("Standard", "TestVariant");
+	});
+
+	opaTest("Selecting the Standard variant reverts the number of Fixed columns", function(Given, When, Then) {
+		When.P13nActions.iSelectVariant("Standard");
+		Then.onTheAppMDCTable.iCheckFixedColumnCount(sTableId, 0);
+		When.P13nActions.iSelectVariant("TestVariant");
+		Then.onTheAppMDCTable.iCheckFixedColumnCount(sTableId, 1);
+	});
+
+	opaTest("Reset the fixed column count", function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created On");
+		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
+		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickAction("Freeze");
+		When.onTheAppMDCTable.iUseColumnMenuQuickFreeze();
+		Then.onTheAppMDCTable.iCheckFixedColumnCount(sTableId, 0);
+	});
+
 	return {
 		tableType: "GridTableType"
 	};

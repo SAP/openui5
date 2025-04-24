@@ -45,24 +45,24 @@ sap.ui.define([
 		});
 	};
 
-	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+	ValueHelpDelegate.requestShowContainer = async function (oValueHelp, oShouldShowTypeaheadSettings) {
 		var oPayload = oValueHelp.getPayload();
+		if (oPayload) {
+			const {event} = oShouldShowTypeaheadSettings || {};
+			const oTypeahead = oValueHelp.getTypeahead();
+			const bContainerValid = oTypeahead.isA("sap.ui.mdc.valuehelp.Popover");
+			const sEventType = event?.getId?.() || event?.originalEvent?.type || event?.type;
+			const {shouldOpenOnFocus, shouldOpenOnClick} = oPayload;
+			if (sEventType === "focusin" && bContainerValid && shouldOpenOnFocus) {
+				return shouldOpenOnFocus;
+			}
 
-		if (oPayload?.hasOwnProperty("shouldOpenOnFocus") && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-			return oPayload.shouldOpenOnFocus;
-		} else {
-			return TestValueHelpDelegate.shouldOpenOnFocus.apply(this, arguments);
+			if (sEventType === "click" && bContainerValid && shouldOpenOnClick) {
+				return shouldOpenOnClick;
+			}
 		}
-	};
 
-	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
-		var oPayload = oValueHelp.getPayload();
-
-		if (oPayload?.hasOwnProperty("shouldOpenOnClick") && oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
-			return oPayload.shouldOpenOnClick;
-		} else {
-			return TestValueHelpDelegate.shouldOpenOnClick.apply(this, arguments);
-		}
+		return await TestValueHelpDelegate.requestShowContainer.apply(this, arguments);
 	};
 
 	ValueHelpDelegate.showTypeahead = function(oValueHelp, oContent) {

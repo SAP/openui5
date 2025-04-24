@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/m/p13n/modules/StateHandlerRegistry",
 	"sap/base/util/merge",
 	"sap/ui/mdc/odata/v4/TypeMap",
-	"sap/ui/mdc/table/ResponsiveTableType"
+	"sap/ui/mdc/table/ResponsiveTableType",
+	"sap/ui/mdc/table/GridTableType"
 ], function (
 	Engine,
 	createAppEnvironment,
@@ -30,7 +31,8 @@ sap.ui.define([
 	StateHandlerRegistry,
 	merge,
 	TypeMap,
-	ResponsiveTableType
+	ResponsiveTableType,
+	GridTableType
 ) {
 	"use strict";
 
@@ -1047,6 +1049,69 @@ sap.ui.define([
 		await applyState(false);
 	});
 
+	QUnit.test("call 'applyExternalState' to set fixed column count", async function(assert) {
+		const applyState = async (iFixedColumnCount) => {
+			const oState = {
+				supplementaryConfig: {
+					aggregations: {
+						type: {
+							GridTable: {
+								fixedColumnCount: iFixedColumnCount
+							}
+						}
+					}
+				}
+			};
+
+			const aChanges = await StateUtil.applyExternalState(this.oTable, oState);
+			assert.equal(aChanges.length, 1, "Only one change was created");
+			assert.equal(aChanges[0].getChangeType(), "setFixedColumnCount", `setFixedColumnCount change should be created`);
+			assert.equal(aChanges[0].getContent().value, iFixedColumnCount, `fixedColumnCount should be ${iFixedColumnCount}`);
+
+			const oRetrievedState = await StateUtil.retrieveExternalState(this.oTable);
+			assert.ok(oRetrievedState.supplementaryConfig, "supplementaryConfig is available");
+			assert.ok(!!oRetrievedState.supplementaryConfig.aggregations?.type, `type is available`);
+			assert.ok(!!oRetrievedState.supplementaryConfig.aggregations?.type?.GridTable, `Table is available`);
+			assert.equal(oRetrievedState.supplementaryConfig.aggregations?.type?.GridTable?.fixedColumnCount, iFixedColumnCount, `fixedColumnCount is available - expected ${iFixedColumnCount}`);
+		};
+
+		this.oTable.setType(new GridTableType({
+			enableColumnFreeze: true,
+			fixedColumnCount: 1
+		}));
+
+		await applyState(2);
+		await applyState(0);
+	});
+
+	QUnit.test("call 'applyExternalState' when enableColumnFreeze is false", async function(assert) {
+		const applyState = async (iFixedColumnCount) => {
+			const oState = {
+				supplementaryConfig: {
+					aggregations: {
+						type: {
+							GridTable: {
+								fixedColumnCount: iFixedColumnCount
+							}
+						}
+					}
+				}
+			};
+
+			const aChanges = await StateUtil.applyExternalState(this.oTable, oState);
+			assert.equal(aChanges.length, 0, "No changes were created");
+
+			const oRetrievedState = await StateUtil.retrieveExternalState(this.oTable);
+			assert.deepEqual(oRetrievedState.supplementaryConfig, {}, "supplementaryConfig is an empty object");
+		};
+
+		this.oTable.setType(new GridTableType({
+			enableColumnFreeze: false
+		}));
+
+		await applyState(2);
+	});
+
 	QUnit.test("call 'diffState' to see the expected change difference for show details state", async function(assert) {
 		this.oTable.setType(new ResponsiveTableType({
 			showDetailsButton: true
@@ -1099,6 +1164,69 @@ sap.ui.define([
 					type: {
 						ResponsiveTable: {
 							showDetails: false
+						}
+					}
+				}
+			}
+		}, "The diff should be the same as the new state");
+
+		oDiff = await StateUtil.diffState(this.oTable, oOldState, oOldState);
+		assert.deepEqual(oDiff, { supplementaryConfig: {} }, "The diff should be empty");
+	});
+
+	QUnit.test("call 'diffState' to see the expected change difference for fixed column count state", async function(assert) {
+		this.oTable.setType(new GridTableType({
+			enableColumnFreeze: true,
+			fixedColumnCount: 1
+		}));
+		await this.oTable.initialized();
+
+		let oOldState = {};
+		let oNewState = {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						GridTable: {
+							fixedColumnCount: 1
+						}
+					}
+				}
+			}
+		};
+
+		let oDiff = await StateUtil.diffState(this.oTable, oOldState, oNewState);
+		assert.deepEqual(oDiff, {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						GridTable: {
+							fixedColumnCount: 1
+						}
+					}
+				}
+			}
+		}, "The diff should be the same as the new state");
+
+		oOldState = Object.assign({}, oNewState);
+		oNewState = {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						GridTable: {
+							fixedColumnCount: 2
+						}
+					}
+				}
+			}
+		};
+
+		oDiff = await StateUtil.diffState(this.oTable, oOldState, oNewState);
+		assert.deepEqual(oDiff, {
+			supplementaryConfig: {
+				aggregations: {
+					type: {
+						GridTable: {
+							fixedColumnCount: 2
 						}
 					}
 				}

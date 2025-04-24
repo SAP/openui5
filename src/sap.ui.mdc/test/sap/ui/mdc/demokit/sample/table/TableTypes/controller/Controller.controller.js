@@ -56,6 +56,7 @@ sap.ui.define([
 		getGridTableType: function() {
 			if (!this.oGridTableType) {
 				this.oGridTableType = new GridTableType({
+					enableColumnFreeze: "{view>/gridType/enableColumnFreeze}",
 					fixedColumnCount: "{view>/gridType/fixedColumnCount}",
 					rowCount: "{view>/gridType/rowCount}",
 					rowCountMode: "{view>/gridType/rowCountMode}",

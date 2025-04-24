@@ -841,14 +841,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnClick", (assert) => {
-
-		assert.notOk(oFixedList.shouldOpenOnClick(), "should not open if filterList set");
-		oFixedList.setFilterList(false);
-		assert.ok(oFixedList.shouldOpenOnClick(), "should open if filterList not set");
-
-	});
-
 	QUnit.test("isFocusInHelp", (assert) => {
 
 		assert.notOk(oFixedList.isFocusInHelp(), "Focus should stay in field");
@@ -858,17 +850,6 @@ sap.ui.define([
 	QUnit.test("isSingleSelect", (assert) => {
 
 		assert.ok(oFixedList.isSingleSelect(), "only singe selection");
-
-	});
-
-	QUnit.test("shouldOpenOnNavigate", (assert) => {
-
-		assert.ok(oFixedList.shouldOpenOnNavigate(), "should open if maxConditions != 1");
-
-		const oConfig = oFixedList.getConfig();
-		oConfig.maxConditions = 1;
-		oFixedList.setConfig(oConfig);
-		assert.notOk(oFixedList.shouldOpenOnNavigate(), "should not open if maxConditions == 1");
 
 	});
 
@@ -1092,5 +1073,4 @@ sap.ui.define([
 		});
 
 	});
-
 });

@@ -58,7 +58,7 @@ sap.ui.define([
 				 * For small lists, all values are meant to be shown, independent of the typing in the connected field.
 				 * In this case this property must be set to <code>false</code>.
 				 *
-				 * If not set, the list opens if the user clicks into the connected field.
+				 * By default, if not set, the list opens if the user clicks into the connected field.
 				 */
 				filterList: {
 					type: "boolean",
@@ -632,12 +632,6 @@ sap.ui.define([
 
 	};
 
-	FixedList.prototype.shouldOpenOnClick = function() {
-
-		return !this.getFilterList(); // TODO: own property, maybe general at content?
-
-	};
-
 	FixedList.prototype.isFocusInHelp = function() {
 
 		return false; // focus should stay in field, even if opened as valueHelp
@@ -647,12 +641,6 @@ sap.ui.define([
 	FixedList.prototype.isSingleSelect = function(oEvent) {
 
 		return true;
-
-	};
-
-	FixedList.prototype.shouldOpenOnNavigate = function() {
-
-		return !ListContent.prototype.isSingleSelect.apply(this);
 
 	};
 

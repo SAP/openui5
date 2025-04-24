@@ -4,6 +4,7 @@
 
 // Provides control sap.m.VariantManagement.
 sap.ui.define([
+	"sap/m/IllustratedMessageSize",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
@@ -48,6 +49,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
+	IllustratedMessageSize,
 	IllustratedMessageType,
 	Element,
 	Library,
@@ -1144,8 +1146,8 @@ sap.ui.define([
 				title: this._oRb.getText("VARIANT_MANAGEMENT_NODATA"),
 				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_DESCR"),
 				enableVerticalResponsiveness: true,
-				illustrationSize: "Auto",
-				illustrationType: IllustratedMessageType.SimpleEmptyList
+				illustrationSize: IllustratedMessageSize.Auto,
+				illustrationType: IllustratedMessageType.NoEntries
 			});
 		}
 		if (!this._oNoDataFoundIllustratedMessage || this._oNoDataFoundIllustratedMessage.bIsDestroyed) {
@@ -1153,7 +1155,7 @@ sap.ui.define([
 				title: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND"),
 				description: this._oRb.getText("VARIANT_MANAGEMENT_NODATA_FOUND_DESCR"),
 				enableVerticalResponsiveness: true,
-				illustrationSize: "Auto",
+				illustrationSize: IllustratedMessageSize.Auto,
 				illustrationType: IllustratedMessageType.NoSearchResults
 			});
 			this._oNoDataFoundIllustratedMessage.addStyleClass("sapMVarMngmtIllustratedMessage");
@@ -2991,9 +2993,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.m.OverflowToolBar, sap.m.Toolbar
 	 */
-	 VariantManagement.prototype._getToolbarInteractive = function () {
-		return true;
-	};
+	VariantManagement.prototype._getToolbarInteractive = function () {
+	   return true;
+   };
 
 	// exit destroy all controls created in init
 	VariantManagement.prototype.exit = function() {
