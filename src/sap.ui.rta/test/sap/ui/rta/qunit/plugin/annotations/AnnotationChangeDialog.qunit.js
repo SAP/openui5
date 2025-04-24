@@ -600,9 +600,19 @@ sap.ui.define([
 								propertyName: "My Other Test Label",
 								annotationPath: "path/to/second/test/label",
 								currentValue: "World"
+							},
+							{
+								propertyName: "Test",
+								annotationPath: "path/to/third/test/label",
+								currentValue: "Bye"
+							},
+							{
+								propertyName: "Other Property",
+								annotationPath: "path/to/other/label",
+								currentValue: "Other"
 							}
 						],
-						preSelectedProperty: "path/to/test/label"
+						preSelectedProperty: "path/to/third/test/label"
 					};
 				}
 			};
@@ -619,8 +629,11 @@ sap.ui.define([
 			const fnAfterOpen = () => {
 				const oHBox = Element.getElementById("sapUiRtaChangeAnnotationDialog_filterHBox");
 				assert.strictEqual(oHBox.getVisible(), false, "then the filter is hidden");
+
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
 				const aFormElements = oList.getFormElements();
+				assert.strictEqual(aFormElements.length, 1, "then only one form element is displayed");
+
 				const oInput = aFormElements[0].getFields().filter((oField) => oField.getVisible())[0];
 				assert.strictEqual(oInput.getValue(), sControlSpecificLabel, "then the correct value is set");
 
