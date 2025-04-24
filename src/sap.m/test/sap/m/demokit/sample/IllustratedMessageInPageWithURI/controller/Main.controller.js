@@ -6,7 +6,14 @@ sap.ui.define(["sap/m/IllustratedMessageSize", "sap/m/IllustratedMessageType", "
 
 			onInit: function () {
 
-				var aIMISizeData = [],
+				var aIMISizeData = [
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Auto], text: oIllustratedMessageSize.Auto},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Base], text: oIllustratedMessageSize.Base},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.ExtraSmall], text: oIllustratedMessageSize.ExtraSmall},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Small], text: oIllustratedMessageSize.Small},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Medium], text: oIllustratedMessageSize.Medium},
+						{key: oIllustratedMessageSize[oIllustratedMessageSize.Large], text: oIllustratedMessageSize.Large}
+					],
 					aIMITypeData = [];
 
 				Object.keys(oMIllustratedMessageType).forEach((key) => {
@@ -17,10 +24,6 @@ sap.ui.define(["sap/m/IllustratedMessageSize", "sap/m/IllustratedMessageType", "
 				Object.keys(oTNTIllustratedMessageType).forEach((key) => {
 					const val = `sap-illustration://tnt/${oTNTIllustratedMessageType[key].split('-')[1]}`;
 					aIMITypeData.push({ key: val, text: val });
-				});
-
-				Object.keys(oIllustratedMessageSize).forEach(function (sKey) {
-					aIMISizeData.push({key: oIllustratedMessageSize[sKey], text: sKey});
 				});
 
 				this.oModel = new JSONModel({

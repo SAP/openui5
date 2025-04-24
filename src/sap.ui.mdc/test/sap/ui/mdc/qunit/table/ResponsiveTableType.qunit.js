@@ -333,6 +333,12 @@ sap.ui.define([
 		assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
 	});
 
+	QUnit.test("The controller is registered and deregistered properly", function(assert) {
+		assert.ok(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ShowDetails"), "ShowDetails controller is registered");
+		this.oType.setShowDetailsButton(false);
+		assert.notOk(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ShowDetails"), "ShowDetails controller is deregistered");
+	});
+
 	QUnit.test("detailsButtonSetting property", function(assert) {
 		const bDesktop = Device.system.desktop;
 		const bTablet = Device.system.tablet;
@@ -523,7 +529,7 @@ sap.ui.define([
 		});
 		this.oTable.setVariant(oVariant);
 
-		const fnGetCurrentStateStub = sinon.stub(this.oTable, "getCurrentState");
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "_getXConfig");
 		const oType = this.oTable.getType();
 
 		// Initial state
@@ -535,58 +541,52 @@ sap.ui.define([
 
 		// State (none) => State (showDetails: true)
 		fnGetCurrentStateStub.returns({
-			"xConfig": {
-				"aggregations": {
-					"type": {
-						"ResponsiveTable": {
-							"showDetails": true
-						}
+			"aggregations": {
+				"type": {
+					"ResponsiveTable": {
+						"showDetails": true
 					}
 				}
 			}
 		});
-		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		oType.onModifications(); // Emulate change with ShowDetails
 		await nextUIUpdate();
 
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are shown");
 
 		// State (showDetails: true) => State (showDetails: false)
 		fnGetCurrentStateStub.returns({
-			"xConfig": {
-				"aggregations": {
-					"type": {
-						"ResponsiveTable": {
-							"showDetails": false
-						}
+			"aggregations": {
+				"type": {
+					"ResponsiveTable": {
+						"showDetails": false
 					}
 				}
 			}
 		});
-		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		oType.onModifications(); // Emulate change with ShowDetails
 		await nextUIUpdate();
 
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden");
 
 		// State (showDetails=false) => State (showDetails=true)
 		fnGetCurrentStateStub.returns({
-			"xConfig": {
-				"aggregations": {
-					"type": {
-						"ResponsiveTable": {
-							"showDetails": true
-						}
+			"aggregations": {
+				"type": {
+					"ResponsiveTable": {
+						"showDetails": true
 					}
 				}
 			}
 		});
-		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		oType.onModifications(); // Emulate change with ShowDetails
 		await nextUIUpdate();
 
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are now shown again");
 
 		// State (showDetails=true) => State (none)
 		fnGetCurrentStateStub.returns({});
-		oType.onModifications(["ShowDetails"]); // Emulate change with ShowDetails
+		oType.onModifications(); // Emulate change with ShowDetails
 		await nextUIUpdate();
 
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are now hidden as default");
@@ -601,14 +601,12 @@ sap.ui.define([
 		});
 		this.oTable.setVariant(oVariant);
 
-		const fnGetCurrentStateStub = sinon.stub(this.oTable, "getCurrentState");
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "_getXConfig");
 		fnGetCurrentStateStub.returns({
-			"xConfig": {
-				"aggregations": {
-					"type": {
-						"ResponsiveTable": {
-							"showDetails": true
-						}
+			"aggregations": {
+				"type": {
+					"ResponsiveTable": {
+						"showDetails": true
 					}
 				}
 			}
@@ -623,7 +621,7 @@ sap.ui.define([
 		assert.ok(oType._oShowDetailsButton.getVisible(), "Show Details button is visible since table has popins");
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "hideDetails", "Details are initially hidden");
 
-		this.oTable._onModifications(["ShowDetails"]);
+		this.oTable._onModifications();
 		await nextUIUpdate();
 
 		assert.ok(fnOnModificationsSpy.calledOnce, "onModifications is called");
@@ -632,18 +630,16 @@ sap.ui.define([
 		assert.equal(oType._oShowDetailsButton.getSelectedKey(), "showDetails", "Details are now shown");
 
 		fnGetCurrentStateStub.returns({
-			"xConfig": {
-				"aggregations": {
-					"type": {
-						"ResponsiveTable": {
-							"showDetails": false
-						}
+			"aggregations": {
+				"type": {
+					"ResponsiveTable": {
+						"showDetails": false
 					}
 				}
 			}
 		});
 
-		this.oTable._onModifications(["ShowDetails"]);
+		this.oTable._onModifications();
 		await nextUIUpdate();
 
 		assert.ok(fnOnModificationsSpy.calledTwice, "onModifications is called");

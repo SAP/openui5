@@ -273,7 +273,7 @@ sap.ui.define([
 		oFakeContent.getCaseSensitive.restore();
 	});
 
-	QUnit.test("shouldOpenOnFocus", async (assert) => {
+	QUnit.test("requestShowContainer", async (assert) => {
 		const oFakeContainer = {
 			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
 			getOpensOnFocus: () => true
@@ -282,44 +282,6 @@ sap.ui.define([
 		oFakeContainer.getOpensOnFocus = () => true;
 		oFakeContainer.isA = () => false;
 		const bShouldOpen = await ValueHelpDelegate.shouldOpenOnFocus(oFakeValueHelp, oFakeContainer);
-		assert.notOk(bShouldOpen, "other Container");
-	});
-
-	QUnit.test("shouldOpenOnClick", async (assert) => {
-		const oFakeContainer = {
-			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
-			getOpensOnClick: () => true,
-			_getContent: () => oFakeContent,
-			isPropertyInitial: (sProperty) => true,
-			isSingleSelect: () => true,
-			isDialog: () => true
-		};
-
-		let bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-		assert.notOk(bShouldOpen, "Popover: Content not should open");
-
-		sinon.stub(oFakeContent, "shouldOpenOnClick").returns(true);
-		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-		assert.ok(bShouldOpen, "Popover: Content should open");
-		oFakeContent.shouldOpenOnClick.restore();
-
-		const oDeviceStub = sinon.stub(Device, "system").value({desktop: false, phone: true, tablet: false});
-		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-		assert.notOk(bShouldOpen, "Popover on Phone: Content should not open");
-
-		oFakeContainer.isSingleSelect = () => false;
-		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-		assert.ok(bShouldOpen, "Popover on Phone and not-SingeSelect: Content should open");
-
-		oFakeContainer.isDialog = () => false;
-		oFakeContainer.isSingleSelect = () => true;
-		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
-		assert.ok(bShouldOpen, "Popover on Phone and not-Dialog: Content should open");
-		oDeviceStub.restore();
-
-		oFakeContainer.getOpensOnClick = () => true;
-		oFakeContainer.isA = () => false;
-		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
 		assert.notOk(bShouldOpen, "other Container");
 	});
 

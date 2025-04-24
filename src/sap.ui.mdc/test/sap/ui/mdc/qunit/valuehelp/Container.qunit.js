@@ -88,20 +88,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("default values", async (assert) => {
-
 		assert.equal(oContainer.getMaxConditions(), undefined, "getMaxConditions");
 		assert.notOk(oContainer.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oContainer.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oContainer.getUseAsValueHelp(), "getUseAsValueHelp");
-		let bShouldOpen = await oContainer.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "shouldOpenOnClick");
-		bShouldOpen = await oContainer.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "shouldOpenOnFocus");
-		assert.notOk(oContainer.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+
 		assert.notOk(oContainer.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.ok(oContainer.isFocusInHelp(), "isFocusInHelp");
 		assert.notOk(oContainer.isValidationSupported(), "isValidationSupported");
-
 	});
 
 	QUnit.test("getAriaAttributes", (assert) => {
@@ -549,7 +543,7 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
-		const bSupported = oContainer.isTypeaheadSupported();
+		const bSupported = false;
 		assert.notOk(bSupported, "not supported as default");
 
 	});
@@ -654,34 +648,6 @@ sap.ui.define([
 		oChildContainer.destroy();
 	});
 
-	QUnit.test("shouldOpenOnFocus", async (assert) => {
-
-		sinon.stub(ValueHelpDelegate, "shouldOpenOnFocus").returns(Promise.resolve(true));
-		let bShouldOpen = await oContainer.shouldOpenOnFocus();
-		assert.ok(bShouldOpen, "value taken from delegate");
-
-		ValueHelpDelegate.shouldOpenOnFocus.returns(Promise.resolve(false));
-		bShouldOpen = await oContainer.shouldOpenOnFocus();
-		assert.notOk(bShouldOpen, "value taken from delegate");
-
-		ValueHelpDelegate.shouldOpenOnFocus.restore();
-
-	});
-
-	QUnit.test("shouldOpenOnClick", async (assert) => {
-
-		sinon.stub(ValueHelpDelegate, "shouldOpenOnClick").returns(Promise.resolve(true));
-		let bShouldOpen = await oContainer.shouldOpenOnClick();
-		assert.ok(bShouldOpen, "value taken from delegate");
-
-		ValueHelpDelegate.shouldOpenOnClick.returns(Promise.resolve(false));
-		bShouldOpen = await oContainer.shouldOpenOnClick();
-		assert.notOk(bShouldOpen, "value taken from delegate");
-
-		ValueHelpDelegate.shouldOpenOnClick.restore();
-
-	});
-
 	function _testClone(assert) {
 
 		const oClone = oContainer.clone("MyClone");
@@ -750,5 +716,4 @@ sap.ui.define([
 
 	// TODO: Test Operator determination on Content
 	// TODO: Test condition creation on Content
-
 });

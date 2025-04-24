@@ -52,7 +52,7 @@
 		"cookie": "^1.0.2",
 		"decompress": "^4.2.1",
 		"eslint": "^8.57.1",
-		"glob": "^11.0.1",
+		"glob": "^11.0.2",
 		"http-proxy": "^1.18.1",
 		"lit-html": "2.2.2",
 		"moment": "^2.30.1",

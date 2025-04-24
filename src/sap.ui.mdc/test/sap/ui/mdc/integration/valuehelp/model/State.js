@@ -1,11 +1,9 @@
-sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/mdc/ValueHelpDelegate"], (JSONModel, ValueHelpDelegate) => {
-
+sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/v4demo/delegate/requestshowtypeahead/ValueHelp.delegate", "sap/ui/v4demo/delegate/oncontrolconnect/ValueHelp.delegate"], (JSONModel, RequestShowTypeaheadValueHelpDelegate, OnControlConnectValueHelpDelegate) => {
 	"use strict";
 
 	const oUrlParams = Object.fromEntries(new URLSearchParams(window.location.search));
 
 	const availableViews = [
-		{path: "sap.ui.v4demo.view.Typeahead", text: "Explore: Controlled Open State for Typeahead", maxConditions: 1, maxConditionsToggleEnabled: true},
 		{path: "sap.ui.v4demo.view.SingleSelect", text: "Explore: ValueHelp Examples SingleSelect", maxConditions: 1, maxConditionsToggleEnabled: false},
 		{path: "sap.ui.v4demo.view.MultiSelect", text: "Explore: ValueHelp Examples MultiSelect", maxConditions: -1, maxConditionsToggleEnabled: false},
 		{path: "sap.ui.v4demo.view.OPA-1", text: "OPA: Standard Configuration (Single)", maxConditions: 1},
@@ -13,10 +11,16 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/mdc/ValueHelpDelegate"], (
 		{path: "sap.ui.v4demo.view.OPA-3", text: "OPA: Define Conditions Popover", maxConditions: -1},
 		{path: "sap.ui.v4demo.view.OPA-4", text: "OPA: Dialog with Default FilterBar Configuration", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.OPA-5", footer: "sap.ui.v4demo.view.OPA-5-Footer",  text: "OPA: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover.opensOnClick", maxConditions: 1},
-		{path: "sap.ui.v4demo.view.OPA-7", text: "OPA: Popover.opensOnFocus", maxConditions: 1},
-		{path: "sap.ui.v4demo.view.FirstMatch", text: "Explore: ValueHelpDelegate.getFirstMatch", maxConditions: 1}
+		{path: "sap.ui.v4demo.view.FirstMatch", text: "Explore: ValueHelpDelegate.getFirstMatch", maxConditions: 1},
+		{path: "sap.ui.v4demo.view.RequestShowTypeahead", text: "Explore: ValueHelpDelegate.requestShowContainer", maxConditions: 1, isView: true},
+		{path: "sap.ui.v4demo.view.OnControlConnect", text: "Explore: ValueHelpDelegate.onControlConnect", maxConditions: 1, isView: true}
+
 	];
+
+	availableViews.push({path: "sap.ui.v4demo.view.OPA-6", text: "Legacy - OPA: Popover.opensOnClick", maxConditions: 1});
+	availableViews.push({path: "sap.ui.v4demo.view.OPA-7", text: "Legacy - OPA: Popover.opensOnFocus", maxConditions: 1});
+
+
 
 	const activeViewPath = oUrlParams.view || "sap.ui.v4demo.view.Typeahead";
 	const activeView = availableViews.find(function (oView) {
@@ -25,7 +29,9 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/mdc/ValueHelpDelegate"], (
 
 	const maxConditions = oUrlParams.maxconditions ? parseInt(oUrlParams.maxconditions) : (activeView.maxConditions || 1);
 
-	const oAppStateModel = new JSONModel({
+
+
+	const oInitialData = {
 
 		activeViewPath,
 		activeView,
@@ -44,11 +50,18 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/mdc/ValueHelpDelegate"], (
 
 		conditionCreationStrategy: "AlwaysNew",
 
-		//Typeahead
-		opensOnClick: false,
-		showTypeahead: ValueHelpDelegate.showTypeahead.toString(),
-		shouldOpenOnFocus: ValueHelpDelegate.shouldOpenOnFocus.toString(),
-		shouldOpenOnClick: ValueHelpDelegate.shouldOpenOnClick.toString(),
+
+		//sap.ui.v4demo.view.OnControlConnect
+		oncontrolconnect: {
+			onControlConnect: OnControlConnectValueHelpDelegate._onControlConnectDefault?.toString(),
+			requestShowContainer: OnControlConnectValueHelpDelegate._requestShowContainerDefault?.toString()
+		},
+
+		//sap.ui.v4demo.view.RequestShowTypeahead
+		typeahead: {
+			opensOnClick: false,
+			requestShowContainer: RequestShowTypeaheadValueHelpDelegate._requestShowContainerDefault?.toString()
+		},
 
 		//SalesOrganization
 		salesOrganisations: [
@@ -99,7 +112,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/mdc/ValueHelpDelegate"], (
 			display: "Value"
 		}
 
-	});
-
+	};
+	const oAppStateModel = new JSONModel(oInitialData);
 	return oAppStateModel;
 });

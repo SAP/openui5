@@ -1,12 +1,13 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/TileContent",
+	"sap/m/NewsContent",
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/m/NumericContent",
 	"sap/m/GenericTile"
-], function(TileContent, Text, library, nextUIUpdate, NumericContent, GenericTile) {
+], function(TileContent, NewsContent, Text, library, nextUIUpdate, NumericContent, GenericTile) {
 	"use strict";
 
 
@@ -226,5 +227,70 @@ sap.ui.define([
 		afterEach : function() {
 			this.oTileContent.destroy();
 		}
+	});
+
+	var sPriorityText = "Medium Priority";
+	QUnit.module("Priority Badge tests",{
+		beforeEach : async function(){
+			this.tileContent = new TileContent("customTileContent", {
+				priority: "Medium",
+				priorityText: sPriorityText,
+				content: new NumericContent({
+					icon: "sap-icon://world",
+					truncateValueTo: 5,
+					value: "0",
+					width: "100%",
+					withMargin: false
+				})
+			});
+
+			this.tile = new GenericTile({
+				header: "Manage my Timesheet",
+				systemInfo: "S/4HANA Cloud",
+				sizeBehavior: "Responsive",
+				wrappingType: "Hyphenated",
+				additionalTooltip: "S/4HANA Cloud",
+				tileContent: this.tileContent
+			});
+			this.tile.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+
+		afterEach : function(){
+			this.tile.destroy();
+		}
+	});
+
+	QUnit.test("ensure that priority badge is not displayed only for NewsContent", async function(assert) {
+		//Assert
+		assert.equal(document.getElementById("customTileContent-priority"), null, "Priority badge is not displayed for NumericContent");
+
+		//Act
+		this.tileContent.setContent(new NewsContent("newsContent", {
+			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+			subheader : "August 21, 2013"
+		}));
+		await nextUIUpdate();
+
+		//Assert
+		assert.ok(document.getElementById("customTileContent-priority"), "Priority badge is displayed for NewsContent");
+		assert.equal(document.getElementById("customTileContent-priority").innerText, sPriorityText, "Priority badge text is correct");
+		assert.equal(document.getElementById('customTileContent-priority-tooltip').innerText, sPriorityText, "Priority badge tooltip is correct");
+		assert.equal(document.querySelectorAll('.sapMGTBackgroundBadge .sapMGTPriorityBadge').length, 0, "Priority badge is only rendered for NewsContent and not for GenericTile");
+	});
+
+	QUnit.test("ensure that priority badge is rendered for GenericTile only in Article Mode", async function(assert) {
+		//Act
+		this.tile.setMode("ArticleMode");
+		this.tileContent.setContent(new NewsContent("newsContent", {
+			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+			subheader : "August 21, 2013"
+		}));
+		await nextUIUpdate();
+
+		//Assert
+		assert.ok(document.getElementById("customTileContent-priority"), "Priority badge is displayed");
+		assert.equal(document.querySelectorAll('.sapMGTPriorityBadge').length, 2, "Priority badge is rendered for both NewsContent and GenericTile");
+		assert.equal(document.querySelectorAll('.sapMGTBackgroundBadge .sapMGTPriorityBadge').length, 1, "Priority badge present for GenericTile");
 	});
 });

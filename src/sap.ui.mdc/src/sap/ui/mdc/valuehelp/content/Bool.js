@@ -128,12 +128,6 @@ sap.ui.define([
 
 	};
 
-	Bool.prototype.shouldOpenOnClick = function() {
-
-		return false;
-
-	};
-
 	Bool.prototype.isNavigationEnabled = function(iStep) {
 
 		return true; // always enable, even if items are created lately on opening or navigation

@@ -79,7 +79,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/Japanese",
 	"./FieldBaseDelegateODataDefaultTypes",
-	"test-resources/sap/m/qunit/plugins/ClipboardUtils"
+	"test-resources/sap/m/qunit/plugins/ClipboardUtils",
+	"sap/ui/mdc/enums/RequestShowContainerReason"
 ], (
 	Element,
 	LabelEnablement,
@@ -156,7 +157,8 @@ sap.ui.define([
 	UI5Date,
 	Japanese,
 	FieldBaseDelegateODataDefaultTypes,
-	ClipboardUtils
+	ClipboardUtils,
+	RequestShowContainerReason
 ) => {
 	"use strict";
 
@@ -3314,6 +3316,7 @@ sap.ui.define([
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: false});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(false);
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
+			sinon.stub(oValueHelp, "requestShowValueHelp").returns(true);
 
 			oCM = new ConditionModel();
 			oField = new FieldBase("F1", {
@@ -3670,6 +3673,7 @@ sap.ui.define([
 
 					oValueHelp.close();
 					setTimeout(() => { // to wait for promises in ValueHelp and close Popover
+						oIconContent.destroy();
 						fnDone();
 					}, 400);
 				}, 400);
@@ -3688,7 +3692,7 @@ sap.ui.define([
 		const oVHPopover = new Popover("P1", {content: oVHContent});
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		oValueHelp.setTypeahead(oVHPopover);
-		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
+		sinon.stub(oVHContent, "isSearchSupported").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "skipOpening");
 		let fnResolve;
 		const oPromise = new Promise((fResolve, fReject) => {
@@ -3707,20 +3711,26 @@ sap.ui.define([
 		oContent.fireLiveChange({ value: "I12" });
 
 		const fnDone = assert.async();
+
 		setTimeout(async () => { // to wait for promises in ValueHelp and open Popover
+			assert.ok(oValueHelp._retrievePromise("delegateContent").isPending(), "retrieveContent is pending");
 			const oPopover = oVHPopover.getAggregation("_container");
-			assert.notOk(oPopover.isOpen(), "Popover is not open");
+			assert.notOk(oPopover?.isOpen(), "Popover is not open");
 			oAlternateFocusTarget.focus();
 			fnResolve();
 			await nextUIUpdate();
 			setTimeout(() => { // to wait for promises in ValueHelp and open Popover
-				assert.notOk(oPopover.isOpen(), "Popover should not open due to focus loss");
+				assert.notOk(oPopover?.isOpen(), "Popover should not open due to focus loss");
 				assert.ok(oValueHelp.skipOpening.called, "Opening of ValueHelp skipped");
 
 				oValueHelp.close();
 				setTimeout(() => { // to wait for promises in ValueHelp and close Popover
 					oAlternateFocusTarget.destroy();
 					ValueHelpDelegate.retrieveContent.restore();
+					oVHContent.getContent.restore();
+					oVHContent.isSearchSupported.restore();
+					oValueHelp.skipOpening.restore();
+					oIconContent.destroy();
 					fnDone();
 				}, 400);
 			}, 400);
@@ -3728,12 +3738,12 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("shouldOpenOnFocus - ValueHelp should open on focus", (assert) => {
 
+	QUnit.test("requestShowTypeahead - ValueHelp should open on focus", (assert) => {
 		const oIcon = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: (oEvent) => {} }).placeAt("content"); // just dummy handler to make Icon focusable
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(Promise.resolve(true));
+		sinon.stub(oValueHelp, "requestShowTypeahead").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 		sinon.spy(oValueHelp, "close");
 		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
@@ -3745,16 +3755,15 @@ sap.ui.define([
 		const oToken = oContent?.getTokens()?.[0];
 
 		oToken.focus(); // focussing Token should not open ValueHelp
-		assert.ok(oValueHelp.shouldOpenOnFocus.notCalled, "shouldOpenOnFocus not called");
+		assert.ok(oValueHelp.requestShowTypeahead.notCalled, "requestShowTypeahead not called");
 
 		oIcon.focus(); // to have focus outside
 
 		return new Promise((resolve, reject) => {
 			setTimeout(() => { // as focussing token rebind tokens - wait until finished
-				oValueHelp.shouldOpenOnFocus.resetHistory();
 				oValueHelp.close.resetHistory();
 				oField.focus();
-				assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+				assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
 				setTimeout(() => {
 					assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
 
@@ -3763,46 +3772,46 @@ sap.ui.define([
 
 					//do the same test with opensOnFocus(false) and the open should not be called
 					oField.getFocusDomRef().blur();
-					oValueHelp.shouldOpenOnFocus.resetHistory();
-					oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(false));
+					oValueHelp.requestShowTypeahead.resetHistory();
+					oValueHelp.requestShowTypeahead.returns(Promise.resolve(false));
 					oValueHelp.toggleOpen.resetHistory();
 					oValueHelp.close.resetHistory();
 
 					oField.focus();
 
 					setTimeout(() => {
-						assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+						assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
 						assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
 						// Should not open if Token focused
 						oField.getFocusDomRef().blur();
-						oValueHelp.shouldOpenOnFocus.resetHistory();
-						oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
+						oValueHelp.requestShowTypeahead.resetHistory();
+						oValueHelp.requestShowTypeahead.returns(Promise.resolve(true));
 						oValueHelp.toggleOpen.resetHistory();
 
 						oToken.focus();
 						setTimeout(() => {
-							assert.notOk(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus not called");
+							assert.notOk(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead not called");
 							assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
 							// Typehaead should not open if Dialog was opened
 							oField.getFocusDomRef().blur();
-							oValueHelp.shouldOpenOnFocus.resetHistory();
-							oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
+							oValueHelp.requestShowTypeahead.resetHistory();
+							oValueHelp.requestShowTypeahead.returns(Promise.resolve(true));
 							oValueHelp.toggleOpen.resetHistory();
 
 							oField.focus();
 							oContent.fireValueHelpRequest(); // simulate value help request to open value help
 
 							setTimeout(() => {
-								assert.ok(oValueHelp.shouldOpenOnFocus.calledOnce, "shouldOpenOnFocus called once");
+								assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
 								assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
 								oValueHelp.close();
 
 								//in display mode value help must not open
 								oField.getFocusDomRef().blur();
-								oValueHelp.shouldOpenOnFocus.resetHistory();
-								oValueHelp.shouldOpenOnFocus.returns(Promise.resolve(true));
+								oValueHelp.requestShowTypeahead.resetHistory();
+								oValueHelp.requestShowTypeahead.returns(Promise.resolve(true));
 								oValueHelp.toggleOpen.resetHistory();
 
 								oField.setEditMode(FieldEditMode.Display);
@@ -3813,11 +3822,17 @@ sap.ui.define([
 									oField.focus();
 
 									setTimeout(() => {
-										assert.notOk(oValueHelp.shouldOpenOnFocus.called, "shouldOpenOnFocus must not be called");
+										assert.notOk(oValueHelp.requestShowTypeahead.called, "requestShowTypeahead must not be called");
 										assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
 										oValueHelp.close();
 										oIcon.destroy();
+
+										oValueHelp.requestShowTypeahead.restore();
+										oValueHelp.toggleOpen.restore();
+										oValueHelp.close.restore();
+										oValueHelp.isOpen.restore();
+
 										resolve();
 									},350);
 								});
@@ -3833,7 +3848,7 @@ sap.ui.define([
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(Promise.resolve(true));
+		sinon.stub(oValueHelp, "_requestShowContainer").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
 			return this.toggleOpen.called;
@@ -3843,7 +3858,7 @@ sap.ui.define([
 
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
-				assert.notOk(oValueHelp.shouldOpenOnFocus.called, "shouldOpenOnFocus called once");
+				assert.notOk(oValueHelp._requestShowContainer.called, "_requestShowContainer called once");
 				assert.notOk(oField._iFocusTimer, "FocusTimer not triggered");
 				assert.notOk(oValueHelp.toggleOpen.called, "open called once");
 				resolve();
@@ -3851,7 +3866,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("shouldOpenOnClick - FieldHelp should open on click", async (assert) => {
+	QUnit.test("requestShowTypeahead - FieldHelp should open on click", async (assert) => {
 
 		const oCondition = Condition.createCondition(OperatorName.EQ, ["long text"]); // to show more-indicator
 		oCM.addCondition("Name", oCondition);
@@ -3861,53 +3876,54 @@ sap.ui.define([
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnClick").returns(Promise.resolve(true));
+		sinon.stub(oValueHelp, "requestShowTypeahead").returns(Promise.resolve(true));
 		sinon.spy(oValueHelp, "toggleOpen");
 
 		let oInnerField = oField.getAggregation("_content")[0];
 
 		// tap on More-Indicator should be ignored
 		qutils.triggerEvent("tap", oInnerField.getAggregation("tokenizer").$().children(".sapMTokenizerIndicator")[0]);
-		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tap on More-Indicator: shouldOpenOnClick not called");
-		oValueHelp.shouldOpenOnClick.resetHistory();
+		assert.ok(oValueHelp.requestShowTypeahead.notCalled, "Tap on More-Indicator: requestShowTypeahead not called");
+		oValueHelp.requestShowTypeahead.resetHistory();
 
 		oField.focus();
 		await nextUIUpdate();
 
 		// tap on Token should be ignored
 		qutils.triggerEvent("tap", oInnerField.getTokens()[0].getId());
-		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tap on Token: shouldOpenOnClick not called");
-		oValueHelp.shouldOpenOnClick.resetHistory();
+		assert.ok(oValueHelp.requestShowTypeahead.notCalled, "Tap on Token: requestShowTypeahead not called");
+		oValueHelp.requestShowTypeahead.resetHistory();
 
 		// tap on ValueHelpIcon should be ignored
 		qutils.triggerEvent("tap", oInnerField._oValueHelpIcon.getId()); // Icon itself listens to "click"-event, so this don't trigger the valueHelpRequest event
-		assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "Tab on ValueHelpIcon: shouldOpenOnClick not called");
-		oValueHelp.shouldOpenOnClick.resetHistory();
+		assert.ok(oValueHelp.requestShowTypeahead.notCalled, "Tab on ValueHelpIcon: requestShowTypeahead not called");
+		oValueHelp.requestShowTypeahead.resetHistory();
 
 		// tap on input should open ValueHelp
 		qutils.triggerEvent("tap", oInnerField.getId());
 
-		assert.ok(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
+		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
 		const fnDone = assert.async();
 		setTimeout(() => { // As opened after Promise is resolved
 			assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
 			assert.ok(oValueHelp.toggleOpen.calledWith(true), "open called for typeahed");
 
 			//do the same test with openByClick(false) and the open should not be called
-			oValueHelp.shouldOpenOnClick.resetHistory();
-			oValueHelp.shouldOpenOnClick.returns(Promise.resolve(false));
+			oValueHelp.requestShowTypeahead.resetHistory();
+			oValueHelp.requestShowTypeahead.returns(Promise.resolve(false));
 			oValueHelp.toggleOpen.resetHistory();
 
 			oField.focus();
+			oValueHelp.requestShowTypeahead.resetHistory(); // as requestShowTypeahead also is called with focusin event
 			qutils.triggerEvent("tap", oInnerField.getId());
 
-			assert.ok(oValueHelp.shouldOpenOnClick.calledOnce, "shouldOpenOnClick called once");
+			assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
 			setTimeout(() => { // As opened after Promise is resolved
 				assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
 				//in display mode value help must not open
-				oValueHelp.shouldOpenOnClick.resetHistory();
-				oValueHelp.shouldOpenOnClick.returns(Promise.resolve(true));
+				oValueHelp.requestShowTypeahead.resetHistory();
+				oValueHelp.requestShowTypeahead.returns(Promise.resolve(true));
 				oValueHelp.toggleOpen.resetHistory();
 
 				oField.setEditMode(FieldEditMode.Display);
@@ -3916,17 +3932,19 @@ sap.ui.define([
 					oField.focus();
 					oInnerField = oField.getAggregation("_content")[0];
 					qutils.triggerEvent("tap", oInnerField.getId());
-					assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "shouldOpenOnClick must not be called");
-					oValueHelp.shouldOpenOnClick.resetHistory();
+					assert.ok(oValueHelp.requestShowTypeahead.notCalled, "requestShowTypeahead must not be called");
+					oValueHelp.requestShowTypeahead.resetHistory();
 
 					// tap on Token should be ignored
 					qutils.triggerEvent("tap", oInnerField.getTokens()[0].getId());
-					assert.ok(oValueHelp.shouldOpenOnClick.notCalled, "shouldOpenOnClick must not be called");
+					assert.ok(oValueHelp.requestShowTypeahead.notCalled, "requestShowTypeahead must not be called");
 
 					setTimeout(() => { // As opened after Promise is resolved
 						assert.notOk(oValueHelp.toggleOpen.called, "open not called");
 
 						oValueHelp.close();
+						oValueHelp.requestShowTypeahead.restore();
+						oValueHelp.toggleOpen.restore();
 						fnDone();
 					}, 0);
 				}, 0);
@@ -3934,7 +3952,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("Opening ValueHelp after isTypeaheadSupported-Promise is resolved", (assert) => {
+	QUnit.test("Opening ValueHelp after requestShowTypeahead-Promise is resolved", async (assert) => {
 
 		const oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: (oEvent) => {} }); // just dummy handler to make Icon focusable
 		const oVHContent = new Content("C1");
@@ -3947,43 +3965,54 @@ sap.ui.define([
 			fnResolve = fResolve;
 		});
 
-		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(oPromise);
+		oField.getFocusDomRef().blur();
+
+		sinon.stub(oValueHelp, "requestShowTypeahead").callsFake(function () {
+			return oPromise;
+		});
 		sinon.spy(oValueHelp, "open");
 
 		oField.focus();
+
+		await new Promise((resolve) => { setTimeout(resolve, 300); });
+
+		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once in debounce interval");
+		assert.ok(oValueHelp.requestShowTypeahead.calledWith(RequestShowContainerReason.Focus), "requestShowTypeahead called during onfocusin");
+
+		oValueHelp.requestShowTypeahead.resetHistory();
 
 		const aContent = oField.getAggregation("_content"),
 		oContent = aContent?.length > 0 && aContent[0];
 
 		oContent._$input.val("I");
 		oContent.fireLiveChange({ value: "I" });
-		assert.ok(oValueHelp.isTypeaheadSupported.calledOnce, "isTypeaheadSupported called once");
-		// oValueHelp.isTypeaheadSupported.returns(Promise.resolve(false));
-		oValueHelp.isTypeaheadSupported.resetHistory();
 
-		const fnDone = assert.async();
-		setTimeout(() => { // to wait for promises in ValueHelp and open Popover
-			assert.ok(oValueHelp.isTypeaheadSupported.calledOnce, "isTypeaheadSupported called once in throttle interval");
-			assert.notOk(oValueHelp.open.called, "oValueHelp not opened");
-			assert.equal(oValueHelp.getFilterValue(), "", "no FilterValue");
+		await new Promise((resolve) => { setTimeout(resolve, 300); });
 
-			oValueHelp.isTypeaheadSupported.resetHistory();
-			// oValueHelp.isTypeaheadSupported.returns(true);
-			fnResolve(true);
-			oPromise.then(() => {
-				setTimeout(() => { // to wait for promises in ValueHelp and open Popover
-					assert.ok(oField._bOpenByTyping, "Promise result stored in Field"); // calles while open again to check focus
-					assert.ok(oValueHelp.open.called, "oValueHelp opened");
-					assert.equal(oValueHelp.getFilterValue(), "I", "FilterValue set");
+		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once in debounce interval");
+		assert.ok(oValueHelp.requestShowTypeahead.calledWith(RequestShowContainerReason.Typing), "requestShowTypeahead called during liveChange");
+		oValueHelp.requestShowTypeahead.resetHistory();
 
-					oValueHelp.close();
-					setTimeout(() => { // to wait for promises in ValueHelp and close Popover
-						fnDone();
-					});
-				}, 400);
-			}, 400);
-		}, 400);
+		await new Promise((resolve) => { setTimeout(resolve, 300); });
 
+		assert.notOk(oValueHelp.open.called, "oValueHelp not opened");
+		assert.equal(oValueHelp.getFilterValue(), "", "no FilterValue");
+
+		fnResolve(true);
+
+		await new Promise((resolve) => { setTimeout(resolve, 400); });
+
+		assert.ok(oValueHelp.open.called, "oValueHelp opened");
+		assert.equal(oValueHelp.getFilterValue(), "I", "FilterValue set");
+
+		oValueHelp.close();
+
+		await new Promise((resolve) => { setTimeout(resolve, 400); });
+
+		oValueHelp.requestShowTypeahead.restore();
+		oValueHelp.open.restore();
+		oVHContent.getContent.restore();
+		oIconContent.destroy();
 	});
 
 	QUnit.test("Closing ValueHelp on escape key", (assert) => {
@@ -4018,6 +4047,7 @@ sap.ui.define([
 					qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ESCAPE, false, false, false);
 					setTimeout(() => { // to wait for promises in ValueHelp and close Popover
 						assert.notOk(oValueHelp.isOpen(), "ValueHelp closed");
+						oIconContent.destroy();
 						fnDone();
 					}, 400);
 				}, 400);
@@ -4030,7 +4060,7 @@ sap.ui.define([
 		const oContent = oField.getCurrentContent()[0];
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 
-		sinon.stub(oValueHelp, "shouldOpenOnFocus").returns(true);
+		sinon.stub(oValueHelp, "_requestShowContainer").returns(true);
 		sinon.spy(oValueHelp, "toggleOpen");
 		sinon.stub(oValueHelp, "isOpen").callsFake(function() {
 			return this.toggleOpen.called;
@@ -4610,9 +4640,10 @@ sap.ui.define([
 		oField.focus(); // as ValueHelp is connected with focus
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+		await new Promise((resolve) => {setTimeout(resolve, 400);});
 		assert.ok(oValueHelp.navigate.calledWith(1), "navigate called");
-
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+		await new Promise((resolve) => {setTimeout(resolve, 400);});
 		assert.ok(oValueHelp.navigate.calledWith(-1), "navigate called");
 
 		// no additionTest for navigation events needed as same as for open value help
@@ -4625,18 +4656,17 @@ sap.ui.define([
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oValueHelp.navigate.notCalled, "navigate not called");
-
-
 	});
 
 	QUnit.test("filtering", async (assert) => {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
+
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		const oVHContent = new Content("C1");
 		const oVHPopover = new Popover("P1", {content: oVHContent});
 		oValueHelp.setTypeahead(oVHPopover);
-		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
+		sinon.stub(oValueHelp, "requestShowTypeahead").returns(Promise.resolve(true));
 		oValueHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		await nextUIUpdate();
 
@@ -4670,17 +4700,19 @@ sap.ui.define([
 
 					setTimeout(() => { // to wait for Promises and opening
 						assert.equal(oValueHelp.getFilterValue(), "C", "FilterValue set");
-
 						sinon.stub(oValueHelp, "isOpen").returns(true); // as it not really opens without content
-						sinon.stub(ValueHelpDelegate, "showTypeahead").returns(false); // to fake closing on empty input
+						sinon.stub(oVHPopover, "isOpen").returns(true);
+
+						sinon.stub(oValueHelp, "_requestShowContainer").returns(Promise.resolve(false));
 						oContent._$input.val("");
 						oContent.fireLiveChange({ value: "" });
 
 						setTimeout(() => { // to wait for Promises and closing
 							assert.ok(oValueHelp.close.called, "close called");
 							oValueHelp.isOpen.restore();
-							ValueHelpDelegate.showTypeahead.restore();
-
+							oValueHelp.requestShowTypeahead.restore();
+							oValueHelp._requestShowContainer.restore();
+							oVHPopover.isOpen.restore();
 							oValueHelp.close(); // to be sure
 							fnDone();
 						}, 400);
@@ -4698,7 +4730,7 @@ sap.ui.define([
 		const oVHContent = new Content("C1");
 		const oVHPopover = new Popover("P1", {content: oVHContent});
 		oValueHelp.setTypeahead(oVHPopover);
-		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
+		sinon.stub(oValueHelp, "requestShowTypeahead").returns(Promise.resolve(true));
 		oValueHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		await nextUIUpdate();
 
@@ -5597,7 +5629,7 @@ sap.ui.define([
 		const oVHContent = new Content("C1");
 		const oVHPopover = new Popover("P1", {content: oVHContent});
 		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(true); // simulate ComboBox case
-		sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true));
+		sinon.stub(oValueHelp, "_requestShowContainer").returns(Promise.resolve(true));
 		oValueHelp.setTypeahead(oVHPopover);
 		const oConditionsType = new ConditionsType();
 		const oInput = new Input("I1", {value: {path: '$field>/conditions', type: oConditionsType}});
@@ -5809,7 +5841,7 @@ sap.ui.define([
 		beforeEach: async () => {
 			const oValueHelp = new ValueHelp("F1-H", {validateInput: true});
 			sinon.stub(oValueHelp, "isValidationSupported").returns(true); // otherwise it will not be taken to determine key or description
-			sinon.stub(oValueHelp, "isTypeaheadSupported").returns(Promise.resolve(true)); // to simulate suggestion
+			sinon.stub(oValueHelp, "_requestShowContainer").returns(Promise.resolve(true)); // to simulate suggestion
 			sinon.stub(oValueHelp, "getIcon").returns("sap-icon://sap-ui5");
 
 			oCM = new ConditionModel();
