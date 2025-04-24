@@ -10,6 +10,13 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * @typedef {object} sap.ui.mdc.actiontoolbar.ActionToolbarActionLayoutInformation
+	 * @property {string} aggregationName The name of the aggregation where the action is displayed. Currently only <code>end</code> is supported.
+	 * @property {sap.ui.mdc.enums.ActionToolbarActionAlignment} alignment The alignment of the action defining if it's displayed before or after the aggregation.
+	 * @public
+	 */
+
+	/**
 	 * Constructor for a new ActionToolbarAction.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
@@ -34,6 +41,7 @@ sap.ui.define([
 			properties: {
 				/**
 				 * Contains the information where the action is displayed on the <code>ActionToolbar</code>.
+				 * The <code>layoutInformation</code> has to be of type {@link sap.ui.mdc.actiontoolbar.ActionToolbarActionLayoutInformation}.
 				 */
 				layoutInformation: {
 					type: "object",
