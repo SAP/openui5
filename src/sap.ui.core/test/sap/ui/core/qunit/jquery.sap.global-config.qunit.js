@@ -11,7 +11,7 @@ sap.ui.require([
 
 	QUnit.test("ExternalConfig", function(assert) {
 		return Core.ready().then(() => {
-			assert.equal(Theming.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
+			assert.equal(Theming.getTheme(), "sap_horizon", "Theme must be sap_horizon");
 			assert.ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
 			assert.ok(sap.m === undefined, "sap.m must not be preloaded");
 		});

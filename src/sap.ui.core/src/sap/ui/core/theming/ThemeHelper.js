@@ -16,8 +16,8 @@ sap.ui.define([
 	// dark mode detection
 	const bDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-	// Theme Fallback
-	const rThemePattern = /^([a-zA-Z0-9_]*)(_(hcb|hcw|dark))$/g;
+	// Theme Fallback for variants
+	const rThemeVariantPattern = /(_hcb|_hcw|_dark)$/g;
 
 	/**
 	 * The list of all known themes incl. their variants.
@@ -36,22 +36,7 @@ sap.ui.define([
 		"sap_fiori_3",
 		"sap_fiori_3_dark",
 		"sap_fiori_3_hcb",
-		"sap_fiori_3_hcw",
-
-		/** @deprecated Obsolete themes should be removed in main */
-		...[
-			// belize (deprecated as of 1.120)
-			"sap_belize",
-			"sap_belize_plus",
-			"sap_belize_hcb",
-			"sap_belize_hcw",
-
-			// bluecrystal (deprecated as of 1.40)
-			"sap_bluecrystal",
-
-			// hcb (deprecated as of 1.46) - the standard HCB theme, newer themes have a dedicated HCB/HCW variant
-			"sap_hcb"
-		]
+		"sap_fiori_3_hcw"
 	];
 
 	// cache for already calculated theme fallbacks
@@ -233,14 +218,9 @@ sap.ui.define([
 		//  * not supported in this version
 		if (sThemeRoot == null && sTheme.startsWith("sap_") && aKnownThemes.indexOf(sTheme) == -1) {
 			// extract the theme variant if given: "_hcb", "_hcw", "_dark"
-			const aThemeMatch = rThemePattern.exec(sTheme) || [];
-			const sVariant = aThemeMatch[2]; //match includes an underscore
+			const sVariant = sTheme.match(rThemeVariantPattern)?.[0] || "";
 
-			if (sVariant) {
-				sNewTheme = `${DEFAULT_THEME}${sVariant}`;
-			} else {
-				sNewTheme = DEFAULT_THEME;
-			}
+			sNewTheme = `${DEFAULT_THEME}${sVariant}`;
 
 			mThemeFallbacks[sTheme] = sNewTheme;
 
