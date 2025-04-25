@@ -658,6 +658,8 @@ sap.ui.define([
 
 			const aAnnoChangesModel3 = await this.oSetAnnotationChangeStub3.getCall(0).args[0];
 			assert.strictEqual(aAnnoChangesModel3.length, 0, "the third model was set with no annotation change");
+
+			assert.ok(this.oAnnotationChanges.every((oChange) => oChange._appliedOnModel), "all changes are marked as passed to the model");
 		});
 
 		QUnit.test("hook gets called with a model on an embedded component", async function(assert) {

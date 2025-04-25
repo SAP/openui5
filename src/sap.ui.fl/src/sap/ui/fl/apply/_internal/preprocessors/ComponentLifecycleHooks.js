@@ -270,6 +270,7 @@ sap.ui.define([
 					changeType: oAnnotationChange.getChangeType()
 				});
 				aReturn.push(await oChangeHandler.applyChange(oAnnotationChange));
+				oAnnotationChange._appliedOnModel = true;
 			}
 			return aReturn;
 		} catch (oError) {

@@ -51,13 +51,19 @@ sap.ui.define([
 				_omit(oAnnotationChangeDefinition, "creation", "fileName"),
 				"the convert function is correct"
 			);
+			assert.strictEqual(oAnnotationChange.getValue(), oAnnotationChangeDefinition.content.value, "the value is correct");
 		});
 
 		QUnit.test("Creation from file content", function(assert) {
-			var oAnnotationChange = FlexObjectFactory.createFromFileContent(oAnnotationChangeDefinition);
+			const oFileContent = {
+				...oAnnotationChangeDefinition,
+				texts: { annotationText: { value: "abc" } }
+			};
+			var oAnnotationChange = FlexObjectFactory.createFromFileContent(oFileContent);
 			assert.ok(oAnnotationChange.isA("sap.ui.fl.apply._internal.flexObjects.AnnotationChange"), "the correct change was created");
 			assert.strictEqual(oAnnotationChange.getFileType(), "annotation_change", "the file type is correct");
-			assert.deepEqual(oAnnotationChange.convertToFileContent(), oAnnotationChangeDefinition, "the convert function is correct");
+			assert.deepEqual(oAnnotationChange.convertToFileContent(), oFileContent, "the convert function is correct");
+			assert.strictEqual(oAnnotationChange.getValue(), "abc", "the value is correct");
 		});
 	});
 });
