@@ -541,13 +541,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", (assert) => {
-
-		const bSupported = false;
-		assert.notOk(bSupported, "not supported as default");
-
-	});
-
 	QUnit.test("isDialog", (assert) => {
 
 		let bDialog = oContainer.isDialog();

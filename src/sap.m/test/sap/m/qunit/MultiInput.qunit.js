@@ -3241,7 +3241,7 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		// act
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		this.multiInput._handleNMoreIndicatorPress();
 		this.clock.tick(1);
 
 		// assert
@@ -3268,7 +3268,7 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		// act
-		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		this.multiInput._handleNMoreIndicatorPress();
 		oPicker = this.multiInput.getAggregation("tokenizer").getTokensPopup();
 		this.clock.tick(100);
 
@@ -3306,6 +3306,29 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick + 1);
 
 		assert.strictEqual(document.activeElement, oTokenizer.getAggregation("tokens")[0].getDomRef(), "The first token is focused after nMore popover is closed");
+	});
+
+	QUnit.test("n-More popover opener should be the MultiInput", function (assert) {
+		const oTokenizer = this.multiInput.getAggregation("tokenizer");
+		const oTogglePopupSpy = this.spy(oTokenizer, "_togglePopup");
+		const oTokenizerPopover = oTokenizer.getTokensPopup();
+		const oFakeEvent = {
+			isMarked: function(){},
+			target: this.multiInput.$().find(".sapMTokenizerIndicator")[0]
+		};
+
+		this.clock = sinon.useFakeTimers();
+		this.multiInput.setTokens([
+			new Token({text: "Token 1"}),
+			new Token({text: "Token 2"}),
+			new Token({text: "Token 3"}),
+			new Token({text: "Token 4"})
+		]);
+
+		this.multiInput.ontap(oFakeEvent);
+		this.clock.tick(nPopoverAnimationTick + 1);
+
+		assert.ok(oTogglePopupSpy.calledWith(oTokenizerPopover, this.multiInput.getDomRef()), "The tokenizer popover has the correct opener");
 	});
 
 	QUnit.test("Popover's interaction - try to delete non editable token", async function(assert) {
@@ -4060,7 +4083,7 @@ sap.ui.define([
 		const oTokenizerSpy = this.spy(oTokenizer, "setRenderMode");
 
 		// Act: Click on n-more
-		oMultiInput.$().find(".sapMTokenizerIndicator")[0].click();
+		oMultiInput._handleNMoreIndicatorPress();
 		let oPicker = oMultiInput.getAggregation("tokenizer").getTokensPopup();
 		this.clock.tick(500);
 

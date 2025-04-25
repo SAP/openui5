@@ -168,19 +168,6 @@ sap.ui.define([
 		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
 	});
 
-	QUnit.test("isTypeaheadSupported", (assert) => {
-
-		const oPromise = oValueHelp.isTypeaheadSupported();
-		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
-
-		return oPromise?.then((bSupported) => {
-			assert.strictEqual(bSupported, false, "TypeAhead not supported per default");
-		}).catch((oError) => {
-			assert.notOk(true, "Promise Catch called");
-		});
-
-	});
-
 	QUnit.test("getIcon", (assert) => {
 
 		assert.notOk(oValueHelp.getIcon(), "without Container no icon returned");
@@ -419,41 +406,6 @@ sap.ui.define([
 		sinon.stub(oContainer, "isOpening").returns(true);
 		oValueHelp.skipOpening();
 		assert.ok(oContainer.close.called, "Container close called");
-
-	});
-
-	QUnit.test("isTypeaheadSupported - not supported(default)", (assert) => {
-
-		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		const oPromise = oValueHelp.isTypeaheadSupported();
-		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
-
-		return oPromise?.then((bSupported) => {
-			assert.strictEqual(bSupported, false, "TypeAhead not supported");
-			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
-			ValueHelpDelegate.retrieveContent.restore();
-		}).catch((oError) => {
-			assert.notOk(true, "Promise Catch called");
-			ValueHelpDelegate.retrieveContent.restore();
-		});
-
-	});
-
-	QUnit.test("isTypeaheadSupported - supported", (assert) => {
-
-		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		sinon.stub(oContainer, "isTypeaheadSupported").returns(true);
-		const oPromise = oValueHelp.isTypeaheadSupported();
-		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
-
-		return oPromise?.then((bSupported) => {
-			assert.strictEqual(bSupported, true, "TypeAhead supported");
-			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
-			ValueHelpDelegate.retrieveContent.restore();
-		}).catch((oError) => {
-			assert.notOk(true, "Promise Catch called");
-			ValueHelpDelegate.retrieveContent.restore();
-		});
 
 	});
 
@@ -1014,23 +966,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", (assert) => {
-
-		sinon.spy(ValueHelpDelegate, "retrieveContent");
-		const oPromise = oValueHelp.isTypeaheadSupported();
-		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
-
-		return oPromise.then((bSupported) => {
-			assert.strictEqual(bSupported, false, "TypeAhead not supported");
-			assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called for dialog");
-			ValueHelpDelegate.retrieveContent.restore();
-		}).catch((oError) => {
-			assert.notOk(true, "Promise Catch called");
-			ValueHelpDelegate.retrieveContent.restore();
-		});
-
-	});
-
 	QUnit.test("getItemForValue", (assert) => {
 
 		sinon.spy(oContainer, "getItemForValue");
@@ -1342,21 +1277,6 @@ sap.ui.define([
 			_teardown();
 			oDeviceStub.restore();
 		}
-	});
-
-	QUnit.test("shouldOpenOnFocus", (assert) => {
-
-		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
-		assert.ok(oValueHelp.shouldOpenOnFocus(), "if only typeahed opening on focus in phone mode");
-
-
-	});
-
-	QUnit.test("shouldOpenOnClick", (assert) => {
-
-		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
-		assert.ok(oValueHelp.shouldOpenOnClick(), "if only typeahed no opening on click in phone mode");
-
 	});
 
 	QUnit.test("setHighlightId", (assert) => {

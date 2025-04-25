@@ -3779,6 +3779,33 @@ function(
 		}
 	});
 
+	QUnit.test("sectionChange event is fired for single/not promoted SubSection", async function (assert) {
+		// Arrange
+		var fnDone = assert.async(),
+			oSubSection = new ObjectPageSubSection({
+				blocks: new Button()
+			}),
+			oSection = oFactory.getSection(1, null, [ oSubSection ]);
+
+		this.oObjectPage.addSection(oSection);
+		await nextUIUpdate();
+
+		this.oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			this.oObjectPage.attachEventOnce("sectionChange", function(oEvent) {
+				// Assert
+				assert.strictEqual(oEvent.getParameter("section").getId(), oSection.getId(),
+					"sectionChange event is fired for the new Section");
+				assert.strictEqual(oEvent.getParameter("subSection").getId(), oSubSection.getId(),
+					"sectionChange event is fired for the new SubSection");
+				fnDone();
+			});
+
+			// Act
+			this.oObjectPage.onAnchorBarTabPress(oSection.getId());
+			this.oObjectPage._onScroll({ target: {scrollTop: this.oObjectPage._computeScrollPosition(oSection)}});
+		}.bind(this));
+	});
+
 	QUnit.test("subSectionVisibilityChange without IconTabBar and changing visibility", function (assert) {
 		// Arrange
 		var fnDone = assert.async();

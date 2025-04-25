@@ -899,13 +899,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", (assert) => {
-
-		const bSupported = false;
-		assert.notOk(bSupported, "not supported for dialog");
-
-	});
-
 	QUnit.test("select event", (assert) => {
 
 		let iSelect = 0;
@@ -1153,5 +1146,4 @@ sap.ui.define([
 		});
 
 	});
-
 });

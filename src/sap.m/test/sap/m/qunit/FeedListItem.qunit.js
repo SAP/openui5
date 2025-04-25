@@ -917,9 +917,9 @@ sap.ui.define([
 		}
 	});
 
-	//	QUnit.test("Special characters in the sender property do not lead to an exception", function (assert) {
-	//		assert.ok(true, "No exception occurred");
-	//	});
+//	QUnit.test("Special characters in the sender property do not lead to an exception", function (assert) {
+//		assert.ok(true, "No exception occurred");
+//	});
 
 	QUnit.module("Actions aggregation and hidden aggregations", {
 		beforeEach: async function () {
@@ -1240,27 +1240,27 @@ sap.ui.define([
 		oFeedListItem = null;
 		oList = null;
 	});
-	QUnit.module("Rendering phone", {
-	beforeEach: async function() {
-			var oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-			this.stub(Device, "system").value(oSystem);
-			jQuery("html").addClass("sap-phone");
-			this.oFeedListItemTemp = new FeedListItem({
-				icon: "sap-icon://person-placeholder",
-				sender: "John Doe",
-				timestamp: "Just now"
-			});
-			this.oFeedListItemTemp.placeAt("qunit-fixture");
-			await nextUIUpdate();
-	},
-	afterEach: function() {
-		this.oFeedListItemTemp.destroy();
-	}
-});
+        QUnit.module("Rendering phone", {
+		beforeEach: async function() {
+				var oSystem = {
+					desktop: false,
+					phone: true,
+					tablet: false
+				};
+				this.stub(Device, "system").value(oSystem);
+				jQuery("html").addClass("sap-phone");
+				this.oFeedListItemTemp = new FeedListItem({
+					icon: "sap-icon://person-placeholder",
+					sender: "John Doe",
+					timestamp: "Just now"
+				});
+				this.oFeedListItemTemp.placeAt("qunit-fixture");
+				await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oFeedListItemTemp.destroy();
+		}
+	});
 
 	QUnit.test('Rendering of the time stamp', function(assert) {
 		this.applyTheme = function(sTheme, fnCallback) {
@@ -1311,4 +1311,5 @@ sap.ui.define([
 		oFocusFeedListItem.destroy();
 		oFocusFeedListItem = null;
 	});
+
 });

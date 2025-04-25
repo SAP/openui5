@@ -409,7 +409,7 @@ function(
 		var fnUpdateMediaSpy = this.spy(this.oIllustratedMessage, "_updateMedia"),
 			fnUpdateSymbolSpy = this.spy(this.oIllustratedMessage, "_updateSymbol"),
 			fnUpdateMediaStyleSpy = this.spy(this.oIllustratedMessage, "_updateMediaStyle"),
-			sNewSize = IllustratedMessageSize.Dialog;
+			sNewSize = IllustratedMessageSize.Medium;
 
 		// Act
 		this.oIllustratedMessage._updateDomSize();
@@ -430,11 +430,11 @@ function(
 		// Assert
 		assert.ok(fnUpdateMediaStyleSpy.calledOnce,
 			"_updateMediaStyle is called once inside the _updateDomSize call when illustrationSize is different from IllustratedMessageSize.Auto");
-		assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA[sNewSize.toUpperCase()]),
+		assert.ok(fnUpdateMediaStyleSpy.calledWithExactly(IllustratedMessage.MEDIA_SIZE[sNewSize.toUpperCase()]),
 			"_updateMediaStyle called width the IllustratedMessage's media with new illustrationSize to upper case as key");
 		assert.ok(fnUpdateSymbolSpy.calledOnce,
 			"_updateSymbol is called once inside the _updateDomSize call when illustrationSize is different from IllustratedMessageSize.Auto");
-		assert.ok(fnUpdateSymbolSpy.calledWithExactly(IllustratedMessage.MEDIA[sNewSize.toUpperCase()]),
+		assert.ok(fnUpdateSymbolSpy.calledWithExactly(IllustratedMessage.MEDIA_SIZE[sNewSize.toUpperCase()]),
 			"_updateSymbol called width the IllustratedMessage's media with new illustrationSize to upper case as key");
 		assert.strictEqual(fnUpdateMediaSpy.callCount, 0, "_updateMedia is not called when illustrationSize is different from IllustratedMessageSize.Auto");
 	});
@@ -479,7 +479,7 @@ function(
 		// Act
 		fnRegisterResizeSpy.resetHistory();
 		this.oIllustratedMessage[sResizeHandlerId] = null;
-		this.oIllustratedMessage.setIllustrationSize(IllustratedMessageSize.Spot);
+		this.oIllustratedMessage.setIllustrationSize(IllustratedMessageSize.Small);
 
 		// Assert
 		assert.strictEqual(fnRegisterResizeSpy.callCount, 0,
@@ -829,10 +829,10 @@ function(
 	QUnit.test("Testing version fallback functionality", function (assert) {
 
 		// Arrange
-		var sOriginalType = "NoTasks",
+		var sOriginalType = IllustratedMessage.ORIGINAL_TEXTS.NoSearchResults,
 			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, undefined, true),
 			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, undefined, true),
-			sVersionType = IllustratedMessageType.NoTasksV1;
+			sVersionType = IllustratedMessageType.NoSearchResults;
 
 		// Act
 		this.oIllustratedMessage.setIllustrationType(sVersionType);
@@ -851,20 +851,17 @@ function(
 		var sOriginalType = IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
 			sOriginalDefaultDescrText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.DESCRIPTION + sOriginalType, undefined, true),
 			sOriginalDefaultTitleText = this.oIllustratedMessage._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + sOriginalType, undefined, true),
-			sNewType = IllustratedMessageType.ReloadScreen;
+			sNewType = IllustratedMessageType.UnableToLoad;
 
 		// Act
 		this.oIllustratedMessage.setIllustrationType(sNewType);
 
 		// Assert
-		assert.strictEqual(IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
-			IllustratedMessage.FALLBACK_TEXTS.ReloadScreen, "ReloadScreen bundle key is UnableToLoad.");
-
 		assert.strictEqual(this.oIllustratedMessage._getDescription().getText(),
-			sOriginalDefaultDescrText, "ReloadScreen Description text fallbacks to the original one (UnableToLoad).");
+			sOriginalDefaultDescrText, "UnableToLoad Description text is correct.");
 
 		assert.strictEqual(this.oIllustratedMessage._getTitle().getText(),
-			sOriginalDefaultTitleText, "ReloadScreen Title text fallbacks to the original one (UnableToLoad).");
+			sOriginalDefaultTitleText, "UnableToLoad Title text is correct.");
 	});
 
 	/* --------------------------- IllustratedMessage Associations -------------------------------------- */

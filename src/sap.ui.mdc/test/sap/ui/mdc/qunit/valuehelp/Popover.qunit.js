@@ -509,17 +509,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("isTypeaheadSupported", (assert) => {
-
-		let bSupported = false;
-		assert.notOk(bSupported, "not supported if content not supports search");
-
-		sinon.stub(oContent, "isSearchSupported").returns(true);
-		bSupported = false;
-		assert.ok(bSupported, "supported if content supports search");
-
-	});
-
 	QUnit.test("getUseAsValueHelp", (assert) => {
 
 		oContent.getUseAsValueHelp = () => {
@@ -1365,21 +1354,6 @@ sap.ui.define([
 				fnDone();
 			});
 		}
-
-	});
-
-	QUnit.test("isTypeaheadSupported", (assert) => {
-
-		sinon.stub(oContent, "isSearchSupported").returns(true);
-		sinon.stub(oPopover, "isDialog").returns(false);
-
-		assert.ok(false, "for Multi-selection take configuration of content");
-
-		oPopover.isDialog.returns(true);
-		assert.notOk(false, "for Multi-selection not supported if used as Dialog");
-
-		oValueHelpConfig.maxConditions = 1;
-		assert.notOk(false, "for Single-selection not supported");
 
 	});
 

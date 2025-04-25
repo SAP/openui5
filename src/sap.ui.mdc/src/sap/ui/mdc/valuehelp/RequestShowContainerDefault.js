@@ -38,7 +38,7 @@ sap.ui.define([
 		}
 
 		const [oContent] = oContainer?.getContent() || [];
-		return oContent.isA("sap.ui.mdc.valuehelp.content.FixedList") && !oContent.isA("sap.ui.mdc.valuehelp.content.Bool") && !oContent.getFilterList();
+		return !!oContent && oContent.isA("sap.ui.mdc.valuehelp.content.FixedList") && !oContent.isA("sap.ui.mdc.valuehelp.content.Bool") && !oContent.getFilterList();
 	};
 
 	/**
@@ -56,12 +56,12 @@ sap.ui.define([
 	RequestShowContainerDefault.Typing = async function (oValueHelp, oContainer) {
 		await oValueHelp.retrieveDelegateContent(oContainer);
 
-		if (Device.system.phone && (this.isSingleSelect() || this.isDialog())) {
+		if (Device.system.phone && (oContainer.isSingleSelect() || oContainer.isDialog())) {
 			return false;
 		}
 
 		const [oContent] = oContainer?.getContent() || [];
-		return await oContent.isSearchSupported();
+		return !!(await oContent?.isSearchSupported());
 	};
 
 	/**
@@ -79,14 +79,14 @@ sap.ui.define([
 	RequestShowContainerDefault.Filter = async function (oValueHelp, oContainer) {
 		const [oContent] = oContainer?.getContent() || [];
 		if (!Device.system.phone) {
-			if (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oValueHelp.getFilterValue()) {
+			if (oContent?.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oValueHelp.getFilterValue()) {
 				return false;
 			}
-			if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) {
+			if (oContent?.isA("sap.ui.mdc.valuehelp.base.ListContent")) {
 				return oContent.getListBinding()?.getCurrentContexts().length > 0;
 			}
 		}
-		return true;
+		return !!oContent;
 	};
 
 	/**

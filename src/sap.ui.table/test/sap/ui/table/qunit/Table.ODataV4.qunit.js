@@ -26,7 +26,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("setBusy not called", async function(assert) {
+	QUnit.test("setBusy call", async function(assert) {
 		const oTable = this.oTable;
 
 		await oTable.qunit.whenRenderingFinished();
@@ -41,10 +41,21 @@ sap.ui.define([
 		oScrollExtension.scrollVertically(true, true);
 		await TableQUnitUtils.nextEvent("dataRequested", oTable.getBinding("rows"));
 
+		/* Table#setBusy will be called to ensure that it reacts to dynamic
+		 * changes in case of multiple requests. In this case, it is called
+		 * with false which does not impact the busy state of the table.
+		 * Nevertheless, we need to wait for 10 ms because removing the
+		 * busy state is done asynchronously to prevent flickering.
+		 */
+		await TableQUnitUtils.wait(10);
+
 		assert.ok(oDataRequestedSpy.calledOnce, "DataRequested event fired");
-		assert.ok(oSetBusySpy.notCalled, "setBusy not called");
+		assert.ok(oSetBusySpy.called, "setBusy is called");
+		assert.ok(oSetBusySpy.calledWith(false), "setBusy called with false");
+		assert.notOk(oSetBusySpy.calledWith(true), "setBusy not called with true");
 
 		oSetBusySpy.restore();
+		oDataRequestedSpy.restore();
 	});
 
 	QUnit.module("Hide/Show table and suspend/resume binding", {
