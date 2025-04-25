@@ -2,17 +2,18 @@ sap.ui.define([
 	"./GridTable.delegate",
 	"./Authors.FB.delegate",
 	"sap/ui/mdc/Field",
+	"sap/ui/mdc/MultiValueField",
+	"sap/ui/mdc/field/MultiValueFieldItem",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
-	"sap/ui/model/odata/type/Int32",
-	'delegates/util/DelegateCache'
-], function (ODataTableDelegate, AuthorsFBDelegate, Field, FieldDisplay, FieldEditMode, Int32Type, DelegateCache) {
+	"delegates/util/DelegateCache"
+], function (ODataTableDelegate, AuthorsFBDelegate, Field, MultiValueField, MultiValueFieldItem, FieldDisplay, FieldEditMode, DelegateCache) {
 	"use strict";
 
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
 
 	AuthorsTableDelegate.fetchProperties = function (oTable) {
-		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
+		const oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
 
 		const oFilterSettings = {
 			"name": { "valueHelp": "fhName" },
@@ -24,6 +25,18 @@ sap.ui.define([
 		};
 
 		return oODataProps.then(function (aProperties) {
+			if (!aProperties.find(function(oProperty) { return oProperty.name === "genres"; } ) ) {
+				aProperties.push({
+					name: "genres",
+					label: "Genres",
+					groupLabel: "none",
+					dataType: "Edm.String",
+					constraints: {maxLength: 1111},
+					sortable: false,
+					filterable: false
+				});
+			}
+
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
 			// Provide the ValueHelp for some of the properties. Without ValueHelp the filter panel will not provide the expected VH.
 			// TODO ValueHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
@@ -62,7 +75,8 @@ sap.ui.define([
 			DelegateCache.add(oTable, {
 				"countryOfOrigin_code_ComplexWithText": {display: FieldDisplay.Description},
 				"regionOfOrigin_code_ComplexWithText": {display: FieldDisplay.Description},
-				"cityOfOrigin_city_ComplexWithText": {display: FieldDisplay.Description}
+				"cityOfOrigin_city_ComplexWithText": {display: FieldDisplay.Description},
+				"genres": {"valueHelp": "VHGenre", "display": FieldDisplay.Description}
 			}, "$Columns");
 
 			return aProperties;
@@ -75,10 +89,10 @@ sap.ui.define([
 				return AuthorsFBDelegate.addItem(oTable, sPropertyName)
 				.then(function(oFilterField) {
 
-					var oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
+					const oProp = oTable.getPropertyHelper().getProperty(sPropertyName);
 
-					var oConstraints = oProp.typeConfig.typeInstance.getConstraints();
-					var oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
+					const oConstraints = oProp.typeConfig.typeInstance.getConstraints();
+					const oFormatOptions = oProp.typeConfig.typeInstance.getFormatOptions();
 
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
@@ -115,11 +129,25 @@ sap.ui.define([
 			} else if (oProperty.exportSettings.template === "{1}") {
 				sDisplay = FieldDisplay.Description;
 			}
+		} else if (oProperty.name === "genres") {
+			const oItem = new MultiValueFieldItem("F_" + oProperty.name + "_item", {
+				key: {path: "genre/code", type: oProperty.typeConfig.typeInstance}
+			});
+			const oCtrlProperties = DelegateCache.merge({
+				id: "F_" + oProperty.name,
+				items: {path: oProperty.path || oProperty.name, template: oItem, templateShareable: false},
+				editMode: FieldEditMode.Display,
+				width:"100%",
+				multipleLines: false, // set always to have property not initial,
+				display: sDisplay,
+				delegate: {name: 'delegates/odata/v4/MultiValueFieldDelegate', payload: {}}
+			}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
+			return new MultiValueField(oCtrlProperties);
 		} else {
 			oValueBindingInfo = {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance};
 		}
 
-		var oCtrlProperties = DelegateCache.merge({
+		const oCtrlProperties = DelegateCache.merge({
 			id: "F_" + oProperty.name,
 			value: oValueBindingInfo,
 			additionalValue: oAdditionalValueBindingInfo,
@@ -135,17 +163,19 @@ sap.ui.define([
 
 	AuthorsTableDelegate.addItem = function (oTable, sPropertyName, mPropertyBag) {
 		return ODataTableDelegate.addItem.apply(this, arguments).then(function (oColumn) {
-			var oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
+			if (oColumn) { // while XML templating phase no Column is returned
+				const oProperty = oTable.getPropertyHelper().getProperty(sPropertyName);
 
-			// oColumn.getTemplate().destroy();
-			// if (oColumn._oTemplateClone) {
-			// 	oColumn._oTemplateClone.destroy();
-			// 	delete oColumn._oTemplateClone;
-			// }
+				// oColumn.getTemplate().destroy();
+				// if (oColumn._oTemplateClone) {
+				// 	oColumn._oTemplateClone.destroy();
+				// 	delete oColumn._oTemplateClone;
+				// }
 
-			if (!oProperty.name.endsWith("_ComplexWithUnit")) {
-				var oTemplate = AuthorsTableDelegate._createColumnTemplate(oTable, oProperty);
-				oColumn.setTemplate(oTemplate);
+				if (!oProperty.name.endsWith("_ComplexWithUnit")) {
+					const oTemplate = AuthorsTableDelegate._createColumnTemplate(oTable, oProperty);
+					oColumn.setTemplate(oTemplate);
+				}
 			}
 
 			return oColumn;
