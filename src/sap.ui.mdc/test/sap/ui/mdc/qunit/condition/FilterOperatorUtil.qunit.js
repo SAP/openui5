@@ -348,6 +348,9 @@ sap.ui.define([
 							}
 						} catch (oException) {
 							assert.notOk(oTest.valid, "Exception fired in validation");
+							if (oTest.validationMessage) {
+								assert.equal(oException.message, oTest.validationMessage, "Validation message");
+							}
 						}
 
 						if (oTest.filter) {
@@ -414,7 +417,7 @@ sap.ui.define([
 		const oIntType = new IntegerType({}, {maximum: 3});
 		const oStringType = new StringType({}, {maxLength: 5});
 		const oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
-		const oUnitType = new UnitType({}, {});
+		const oUnitType = new UnitType({}, {maximum: 100});
 		const oDateTimeWithTimezoneType1 = new DateTimeWithTimezoneType({pattern: "yyyy-MM-dd'T'HH:mm:ss", showTimezone: false});
 		oDateTimeWithTimezoneType1._aCurrentValue = ["2022-02-24T12:15:30Z", "Europe/Berlin"];
 		const oDateTimeWithTimezoneType2 = new DateTimeWithTimezoneType({showTimezone: true, showDate: false, showTime: false});
@@ -422,6 +425,13 @@ sap.ui.define([
 		const oDateTimeOffsetType = new DateTimeOffsetType({}, {V4: true, nullable: false});
 		const sDateTimeFormatted = oDateTimeOffsetType.formatValue("2023-07-31T07:42:30Z", "string");
 		const sDateTimeParsed = oDateTimeOffsetType.parseValue(sDateTimeFormatted, "string");
+
+		let sUnitValidationMessage;
+		try {
+			oUnitType.validateValue([500.123456, "mass-kilogram"]);
+		} catch (oException) {
+			sUnitValidationMessage = oException.message;
+		}
 
 		const aFormatTest = {
 				[OperatorName.EQ]: [{
@@ -702,7 +712,23 @@ sap.ui.define([
 						type: oUnitType,
 						baseType: BaseType.Unit,
 						isEmpty: false,
-						valid: true					},
+						valid: true
+					},
+					{
+						formatArgs: [Condition.createCondition(OperatorName.EQ, [[5, "mass-kilogram"]]), oUnitType, FieldDisplay.Value, true, [oIntType, oStringType], undefined, undefined],
+						formatValue: "5.000 kg",
+						textForCopy: "	5.000 kg",
+						parseArgs: ["500.123456 kg", oUnitType, FieldDisplay.Value, true, [oIntType, oStringType], undefined, undefined],
+						parsedValue: "500.123456,mass-kilogram",
+						condition: Condition.createCondition(OperatorName.EQ, [[500.123456, "mass-kilogram"]], undefined, undefined, ConditionValidated.NotValidated),
+						type: oUnitType,
+						baseType: BaseType.Unit,
+						compositeTypes: [oIntType, oStringType],
+						compositePart: 0,
+						isEmpty: false,
+						valid: false,
+						validationMessage: sUnitValidationMessage
+					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.EQ, [[null, "mass-kilogram"]]), oUnitType, FieldDisplay.Value, true, [oIntType, oStringType], undefined, undefined],
 						formatValue: null,
