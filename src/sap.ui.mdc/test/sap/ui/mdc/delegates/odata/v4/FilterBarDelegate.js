@@ -269,7 +269,7 @@ sap.ui.define([
 	};
 
 	ODataFilterBarDelegate.addItem = function(oFilterBar, sPropertyName, mPropertyBag) {
-		return ODataFilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag).then(function() {
+		return this._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag).then(function() {
 			return Promise.resolve(this._createFilter(sPropertyName, oFilterBar, mPropertyBag));
 		}.bind(this));
 	};
@@ -328,7 +328,7 @@ sap.ui.define([
 		}
 
 		return oModifier.getProperty(oFilterBar, "propertyInfo")
-		.then(function(aPropertyInfo) {
+		.then((aPropertyInfo) => {
 			if (!aPropertyInfo) {
 				return Promise.resolve();
 			}
@@ -338,15 +338,15 @@ sap.ui.define([
 
 			if (nIdx < 0) {
 
-				var aFetchedProperties = ODataFilterBarDelegate._getInstanceCacheEntry(oFilterBar, "fetchedProperties");
+				var aFetchedProperties = this._getInstanceCacheEntry(oFilterBar, "fetchedProperties");
 				if (aFetchedProperties) {
-					ODataFilterBarDelegate._addPropertyInfoEntry(oFilterBar, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
+					this._addPropertyInfoEntry(oFilterBar, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
 				} else {
 					//fetch
-					return ODataFilterBarDelegate.fetchProperties(oFilterBar, mPropertyBag)
-					.then(function(aProperties) {
-						ODataFilterBarDelegate._setInstanceCacheEntry(oFilterBar, "fetchedProperties", aProperties);
-						ODataFilterBarDelegate._addPropertyInfoEntry(oFilterBar, sPropertyName, aPropertyInfo, aProperties, oModifier);
+					return this.fetchProperties(oFilterBar, mPropertyBag)
+					.then((aProperties) => {
+						this._setInstanceCacheEntry(oFilterBar, "fetchedProperties", aProperties);
+						this._addPropertyInfoEntry(oFilterBar, sPropertyName, aPropertyInfo, aProperties, oModifier);
 					});
 				}
 			}
