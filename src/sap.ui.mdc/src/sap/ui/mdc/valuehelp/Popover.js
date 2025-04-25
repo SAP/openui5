@@ -115,11 +115,14 @@ sap.ui.define([
 		const oPopover = this.getAggregation("_container");
 
 		if (!oPopover) {
-			if (Device.system.phone) {
-				return _getContainerControlPhone.call(this);
-			} else {
-				return _getContainerControlDesktop.call(this);
+			if (!this._oGetContainerControlPromise) {
+				if (Device.system.phone) {
+					this._oGetContainerControlPromise = _getContainerControlPhone.call(this);
+				} else {
+					this._oGetContainerControlPromise =  _getContainerControlDesktop.call(this);
+				}
 			}
+			return this._oGetContainerControlPromise;
 		}
 
 		let oValueHelpHeader;
@@ -194,6 +197,11 @@ sap.ui.define([
 			"sap/ui/core/InvisibleText",
 			"sap/ui/core/Lib"
 		]).then((aLoaded) => {
+
+			if (this.isDestroyStarted()) {
+				return null;
+			}
+
 			let MPopover, MLibrary, ValueStateHeader, InvisibleText, Library;
 			[MPopover, MLibrary, Toolbar, ToolbarSpacer, ValueStateHeader, InvisibleText, Library] = aLoaded;
 
@@ -281,8 +289,14 @@ sap.ui.define([
 			"sap/ui/model/ParseException",
 			"sap/ui/mdc/field/ConditionType"
 		]).then((aLoaded) => {
+
+			if (this.isDestroyStarted()) {
+				return null;
+			}
+
 			let Dialog, Input, Button, ToggleButton, Bar, ScrollContainer, Title, ValueStateHeader, List, StandardListItem, MLibrary, IconPool, InvisibleText, Library, BindingMode, ParseException, ConditionType;
 			[Dialog, Input, Button, ToggleButton, Bar, ScrollContainer, Title, Toolbar, ToolbarSpacer, ValueStateHeader, List, StandardListItem, MLibrary, IconPool, InvisibleText, Library, BindingMode, FormatException, ParseException, ConditionType] = aLoaded;
+
 			const {TitleAlignment, ListMode, ListType} = MLibrary;
 			const oResourceBundleM = Library.getResourceBundleFor("sap.m");
 			const bSingleSelect = this.isSingleSelect();
@@ -831,6 +845,9 @@ sap.ui.define([
 	};
 
 	Popover.prototype.exit = function() {
+
+		this._oGetContainerControlPromise = undefined;
+
 		if (this._oCurrentContent) {
 			if (!this._oCurrentContent.isDestroyed()) {
 				this._oCurrentContent.destroy();

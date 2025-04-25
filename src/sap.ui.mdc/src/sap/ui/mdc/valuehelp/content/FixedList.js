@@ -121,6 +121,11 @@ sap.ui.define([
 				"sap/ui/model/base/ManagedObjectModel",
 				"sap/base/strings/whitespaceReplacer"
 			]).then((aModules) => {
+
+				if (this.isDestroyStarted()) {
+					return null;
+				}
+
 				const List = aModules[0];
 				const DisplayListItem = aModules[1];
 				const mLibrary = aModules[2];
