@@ -194,7 +194,7 @@ sap.ui.define([
 			serviceUrl: sServiceUrl
 		});
 		if (sFilterText) {
-			this._oController.filterProperties(sFilterText);
+			this._oController.filterProperties(sFilterText, !!bSingleRename);
 		}
 		// Ensure that the model is fully refreshed before opening the dialog
 		this.oChangeAnnotationModel.refresh(true);

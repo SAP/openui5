@@ -47,10 +47,10 @@ sap.ui.define([
 		});
 	};
 
-	AnnotationChangeDialogController.prototype.filterProperties = function(sQuery) {
+	AnnotationChangeDialogController.prototype.filterProperties = function(sQuery, bEquals) {
 		const aFilters = [];
 		if (sQuery && sQuery.length > 0) {
-			const filter = new Filter("label", FilterOperator.Contains, sQuery);
+			const filter = new Filter("label", bEquals ? FilterOperator.EQ : FilterOperator.Contains, sQuery);
 			aFilters.push(filter);
 		}
 
