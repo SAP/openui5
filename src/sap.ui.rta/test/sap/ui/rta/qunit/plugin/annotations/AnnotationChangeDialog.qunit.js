@@ -4,9 +4,11 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/dt/ElementUtil",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialog",
 	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/thirdparty/sinon-4",
@@ -15,9 +17,11 @@ sap.ui.define([
 	Control,
 	Element,
 	ElementUtil,
+	KeyCodes,
 	FlexObjectFactory,
 	PersistenceWriteAPI,
 	JSONModel,
+	QUnitUtils,
 	AnnotationChangeDialog,
 	AnnotationTypes,
 	sinon,
@@ -332,6 +336,48 @@ sap.ui.define([
 			oDialog.destroy();
 		});
 
+		QUnit.test("When the dialog is closed via Escape", async function(assert) {
+			const oTestDelegate = {
+				getAnnotationsChangeInfo: () => {
+					return {
+						serviceUrl: "testServiceUrl",
+						properties: [
+							{
+								propertyName: "My Other Test Label",
+								annotationPath: "path/to/second/test/label",
+								currentValue: oTextArrangementTypes.IDFirst
+							},
+							{
+								propertyName: "My Test Label",
+								annotationPath: "path/to/test/label",
+								currentValue: oTextArrangementTypes.TextOnly
+							}
+						],
+						possibleValues: Object.keys(oTextArrangementTypes).map((sKey) => ({
+							key: oTextArrangementTypes[sKey],
+							text: oTextArrangementLabels[sKey]
+						}))
+					};
+				}
+			};
+			const oActionConfig = {
+				type: AnnotationTypes.ValueListType,
+				annotation: "testAnnotation",
+				delegate: oTestDelegate
+			};
+
+			const fnAfterOpen = (oEvent) => {
+				const aFormElements = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList").getFormElements();
+				const [oSelect] = aFormElements[0].getFields();
+				const oListItem = oSelect.getItems()[1];
+				oSelect.setSelectedItem(oListItem);
+				oSelect.fireChange({ selectedItem: oListItem });
+				QUnitUtils.triggerKeydown(oEvent.getSource().getFocusDomRef(), KeyCodes.ESCAPE);
+			};
+			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);
+			assert.strictEqual(aChanges.length, 0, "then the handler resolves correctly and no changes are returned");
+		});
+
 		QUnit.test("When the dialog is opened with a preselected annotationPath", async function(assert) {
 			const oTestDelegate = {
 				getAnnotationsChangeInfo: () => {
@@ -600,8 +646,12 @@ sap.ui.define([
 				);
 
 				oInput.setValue("Bye");
-				oInput.fireChange({ value: "Bye" });
+				oInput.fireLiveChange({ newValue: "Bye" });
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
+				assert.ok(
+					oSaveButton.getEnabled(),
+					"then the save button enabled state is updated on live change"
+				);
 				oSaveButton.firePress();
 			};
 			const aChanges = await openDialog(sandbox, oActionConfig, fnAfterOpen);

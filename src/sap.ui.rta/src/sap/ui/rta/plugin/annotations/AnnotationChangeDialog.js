@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController",
-	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/rta/Utils"
 ], function(
 	ManagedObject,
@@ -20,7 +19,6 @@ sap.ui.define([
 	JSONModel,
 	ResourceModel,
 	AnnotationChangeDialogController,
-	AnnotationTypes,
 	RtaUtils
 ) {
 	"use strict";
