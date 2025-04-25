@@ -440,30 +440,48 @@ sap.ui.define([
 			};
 			const fnAfterOpen = () => {
 				const oToggleAllPropertiesSwitch = Element.getElementById("sapUiRtaChangeAnnotationDialog_toggleShowAllPropertiesSwitch");
+				// Show changed properties only for preexisting changes
 				oToggleAllPropertiesSwitch.fireChange({ state: true});
 				const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
-				const aFormElements = oList.getFormElements();
 				assert.strictEqual(
-					aFormElements.length,
+					oList.getFormElements().length,
 					1,
 					"then only one form element is displayed"
 				);
 				assert.strictEqual(
-					aFormElements[0].getBindingContext().getObject().annotationPath,
+					oList.getFormElements()[0].getBindingContext().getObject().annotationPath,
 					oAnnotationChange.getContent().annotationPath,
 					"then only the property for which a change exists is displayed"
 				);
 				assert.deepEqual(
-					JSON.parse(aFormElements[0].getFields()[0].getSelectedKey()),
+					JSON.parse(oList.getFormElements()[0].getFields()[0].getSelectedKey()),
 					oTextArrangementTypes.TextFirst,
 					"the value is set correctly"
 				);
+
+				// Show all properties
 				oToggleAllPropertiesSwitch.fireChange({ state: false });
 				assert.strictEqual(
 					oList.getFormElements().length,
 					2,
 					"then on second toggle press all properties are displayed again"
 				);
+
+				// Make dirty changes and toggle again
+				const [oSelect1, oSelect2] = oList.getFormElements().map((oFormElement) => oFormElement.getFields()[0]);
+				const oListItem1 = oSelect1.getItems()[1];
+				oSelect1.setSelectedItem(oListItem1);
+				oSelect1.fireChange({ selectedItem: oListItem1 });
+				const oListItem2 = oSelect2.getItems()[1];
+				oSelect2.setSelectedItem(oListItem2);
+				oSelect2.fireChange({ selectedItem: oListItem2 });
+				oToggleAllPropertiesSwitch.fireChange({ state: true });
+				assert.strictEqual(
+					oList.getFormElements().length,
+					2,
+					"then the newly dirty property is displayed as well"
+				);
+
 				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
 				oCancelButton.firePress();
 			};

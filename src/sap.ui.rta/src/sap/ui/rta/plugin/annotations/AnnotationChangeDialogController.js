@@ -67,13 +67,21 @@ sap.ui.define([
 	AnnotationChangeDialogController.prototype.switchDisplayMode = function(oEvent) {
 		const bShowChangedPropertiesOnly = oEvent.getParameter("state");
 		const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
-		oList.getModel().setProperty("/showChangedPropertiesOnly", bShowChangedPropertiesOnly);
-		oList.getModel().setProperty(
-			"/propertiesToDisplay",
-			bShowChangedPropertiesOnly
-				? oList.getModel().getProperty("/changedProperties")
-				: oList.getModel().getProperty("/properties")
-		);
+		const oModel = oList.getModel();
+		oModel.setProperty("/showChangedPropertiesOnly", bShowChangedPropertiesOnly);
+
+		if (bShowChangedPropertiesOnly) {
+			const aOriginallyChangedProperties = oModel.getProperty("/changedProperties");
+			const aAllChangedProperties = oModel.getProperty("/properties").filter((oProperty) => (
+				aOriginallyChangedProperties.some((oOriginallyChangedProperty) => (
+					oOriginallyChangedProperty.annotationPath === oProperty.annotationPath
+				))
+				|| oProperty.originalValue !== oProperty.currentValue
+			));
+			oModel.setProperty("/propertiesToDisplay", aAllChangedProperties);
+		} else {
+			oModel.setProperty("/propertiesToDisplay", oModel.getProperty("/properties"));
+		}
 	};
 
 	AnnotationChangeDialogController.prototype.onSavePress = function(oEvent) {
