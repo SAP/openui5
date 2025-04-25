@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/m/Image",
 	"./Adaptation",
 	"../Utils",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/rta/toolbar/AdaptationRenderer"
 ],
 function(
 	Image,
 	Adaptation,
 	Utils,
-	Log
+	Log,
+	AdaptationRenderer
 ) {
 	"use strict";
 
@@ -41,7 +43,7 @@ function(
 		metadata: {
 			library: "sap.ui.rta"
 		},
-		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
+		renderer: AdaptationRenderer,
 		type: "fiori"
 	});
 

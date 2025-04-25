@@ -15,12 +15,43 @@
 		<script>
 			sap.ui.require([
 				"controlEnablementReport/LibraryScanner",
+				"sap/m/MultiComboBox",
+				"sap/m/Button",
+				"sap/m/MessageBox",
+				"sap/m/Text",
+				"sap/m/Toolbar",
+				"sap/ui/comp/filterbar/FilterBar",
+				"sap/ui/comp/filterbar/FilterItem",
 				"sap/ui/core/util/Export",
 				"sap/ui/core/util/ExportTypeCSV",
 				"sap/ui/core/Core",
 				"sap/ui/core/Element",
+				"sap/ui/core/Item",
+				"sap/ui/layout/VerticalLayout",
+				"sap/ui/model/json/JSONModel",
+				"sap/ui/table/Column",
+				"sap/ui/table/Table",
 				"sap/ui/VersionInfo"
-			], function(LibraryScanner, Export, ExportTypeCSV, Core, Element, VersionInfo) {
+			], function(
+				LibraryScanner,
+				MultiComboBox,
+				Button,
+				MessageBox,
+				Text,
+				Toolbar,
+				FilterBar,
+				FilterItem,
+				Export,
+				ExportTypeCSV,
+				Core,
+				Element,
+				Item,
+				VerticalLayout,
+				JSONModel,
+				Column,
+				Table,
+				VersionInfo
+			) {
 				Core.ready().then(async () => {
 					const oVersionInfo = await VersionInfo.load();
 					var aLibs = oVersionInfo.libraries.filter(function(sLib) {
@@ -34,16 +65,16 @@
 						}
 					});
 
-					var oJSONModel = new sap.ui.model.json.JSONModel({
+					var oJSONModel = new JSONModel({
 						libs: aLibs
 					});
 
-					var oTemplateItem = new sap.ui.core.Item({
+					var oTemplateItem = new Item({
 						key: "{name}",
 						text: "{name}"
 					});
 
-					var oMultiComboBox = new sap.m.MultiComboBox("combobox", {
+					var oMultiComboBox = new MultiComboBox("combobox", {
 						items : {
 							path: "/libs",
 							sorter: { path : "Name" },
@@ -51,13 +82,12 @@
 						}
 					}).setModel(oJSONModel);
 
-					var oFilterBar = new sap.ui.comp.filterbar.FilterBar("filterbar", {
+					var oFilterBar = new FilterBar("filterbar", {
 						showFilterConfiguration: false,
-						showClearButton: true,
 						showClearOnFB: true,
 						filterBarExpanded: false,
-						filterItems: [
-							new sap.ui.comp.filterbar.FilterItem("fbItem", {
+						filterGroupItems: [
+							new FilterItem("fbItem", {
 								name: "Search",
 								label: "Libraries",
 								control: oMultiComboBox
@@ -82,7 +112,7 @@
 							oLibraryEnablementTest2.run(aLibraries).then(function(oData) {
 								var oModel;
 								if (oData) {
-									oModel = new sap.ui.model.json.JSONModel(oData);
+									oModel = new JSONModel(oData);
 								} else {
 									oModel = null;
 								}
@@ -113,35 +143,34 @@
 									});
 
 									oExport.saveFile().catch(function(oError) {
-										sap.m.MessageBox.error(`Error when downloading data. Browser might not be supported!\n\n${oError}`);
+										MessageBox.error(`Error when downloading data. Browser might not be supported!\n\n${oError}`);
 									}).then(function() {
 										oExport.destroy();
 									});
 								};
 
-								var oHeaderToolbar = new sap.m.Toolbar("toolbar", {
+								var oHeaderToolbar = new Toolbar("toolbar", {
 									content: [
-										// new sap.m.ToolbarSpacer("toolbar-spacer"),
-										new sap.m.Button("toolbar-export-button", {
+										new Button("toolbar-export-button", {
 											text : "Export to Excel",
 											press : fnExportToExcel
 										})
 									]
 								});
-								var oReport = new sap.ui.table.Table("table", {
+								var oReport = new Table("table", {
 									extension: [oHeaderToolbar],
 									columns: [
-										new sap.ui.table.Column("table-column-name", {
+										new Column("table-column-name", {
 											label: "Name",
 											width: "30em",
-											sorted: true,
-											template: new sap.m.Text({
+											sortOrder: "Ascending",
+											template: new Text({
 												text: "{name}"
 											})
 										}),
-										new sap.ui.table.Column("table-column-actions", {
+										new Column("table-column-actions", {
 											label: "Actions",
-											template: new sap.m.Text({
+											template: new Text({
 												text: "{actions}"
 											})
 										})
@@ -156,7 +185,7 @@
 						}
 					});
 
-					var oVLayout = new sap.ui.layout.VerticalLayout("layout", {
+					var oVLayout = new VerticalLayout("layout", {
 						width: "100%",
 						content: [oFilterBar]
 					});
