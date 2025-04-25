@@ -421,6 +421,18 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Returns the major schema version of the manifest.
+		 * Only used internally to check the manifest schema version for feature toggles.
+		 * @private
+		 *
+		 * @returns {number} The major version of the manifest
+		 */
+		_getSchemaVersion: function() {
+			const oJsonContent = this.getJson();
+			const sVersion = getObject(oJsonContent, "/_version");
+			return new Version(sVersion).getMajor();
+		},
 
 		/**
 		 * Loads the included CSS and JavaScript resources. The resources will be
@@ -446,6 +458,10 @@ sap.ui.define([
 			 * @deprecated As of version 1.94, standard dependencies should be used instead.
 			 */
 			if (mResources["js"]) {
+				if (this._getSchemaVersion() === 2) {
+					throw new Error(`'sap.ui5/resources/js' is deprecated and not supported with manifest version 2 (component '${sComponentName}'.`);
+				}
+
 				var aJSResources = mResources["js"];
 				var requireAsync = function (sModule) {
 					// Wrap promise within function because OPA waitFor (sap/ui/test/autowaiter/_promiseWaiter.js)

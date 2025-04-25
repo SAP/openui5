@@ -523,6 +523,8 @@ sap.ui.define([
 
 				oOptions = deepExtend(oDefaults, this._oConfig, oTargetOptions);
 
+				this._validateOptions(oOptions);
+
 				oTarget = this._constructTarget(oOptions);
 				oTarget.attachDisplay(function (oEvent) {
 					var oParameters = oEvent.getParameters();
@@ -540,6 +542,28 @@ sap.ui.define([
 				this._mTargets[sName] = oTarget;
 
 				return oTarget;
+			},
+
+			_getDeprecatedOptions : function() {
+				return {
+					viewPath: "path",
+					viewName: "name",
+					viewId: "id"
+				};
+			},
+
+			_validateOptions : function(oOptions) {
+				const oManifest = this._oConfig?.router?._oOwner?.getManifestObject();
+
+				if (oManifest?._getSchemaVersion() === 2) {
+					const mValidateProperties = this._getDeprecatedOptions();
+					const sComponentName = oManifest.getComponentName();
+					Object.keys(mValidateProperties).forEach((sProperty) => {
+						if (Object.hasOwn(oOptions, sProperty)) {
+							throw new Error(`sap.ui5/routing/targets/${sProperty} is deprecated and not supported with manifest version 2. Use the option '${mValidateProperties[sProperty]}' instead (component '${sComponentName}').`);
+						}
+					});
+				}
 			},
 
 			/**

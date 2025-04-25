@@ -361,7 +361,7 @@ sap.ui.define([
 			vRoutes = oRoutingManifestEntry.routes;
 
 		// If IAsyncContentCreation interface is implemented we enforce router view creation to async
-		if (this.isA("sap.ui.core.IAsyncContentCreation")) {
+		if (this.getManifestObject()?._getSchemaVersion() === 2 || this.isA("sap.ui.core.IAsyncContentCreation")) {
 			oRoutingConfig.async = true;
 		}
 
@@ -420,7 +420,13 @@ sap.ui.define([
 	function getConstructorFunctionFor (vRoutingObjectConstructor) {
 		var fnConstructor;
 		if (typeof vRoutingObjectConstructor === "string") {
-			const sRoutingClassName = vRoutingObjectConstructor.replace(/\./g, "/");
+			let sRoutingClassName;
+			if (vRoutingObjectConstructor.startsWith("module:")) {
+				sRoutingClassName = vRoutingObjectConstructor.slice("module:".length);
+			} else {
+				sRoutingClassName = vRoutingObjectConstructor.replace(/\./g, "/");
+			}
+
 			fnConstructor = sap.ui.require(sRoutingClassName);
 
 			/** @deprecated As of version 1.120**/
@@ -751,7 +757,7 @@ sap.ui.define([
 
 		if (oRootView && typeof oRootView === "object") {
 			// default ViewType to XML, except for typed views
-			if (!oRootView.type && !oRootView.name?.startsWith("module:")) {
+			if (!oRootView.type && !oRootView.viewName?.startsWith("module:")) {
 				oRootView.type = ViewType.XML;
 			}
 
@@ -759,6 +765,11 @@ sap.ui.define([
 			if (oRootView.id) {
 				oRootView.id = this.createId(oRootView.id);
 			}
+
+			if (this.getManifestObject()?._getSchemaVersion() === 2) {
+				oRootView.async = true;
+			}
+
 			/**
 			 * @deprecated because the 'Sequential' Mode is used by default and it's the only mode that will be supported
 			 * in the next major release
@@ -922,13 +933,16 @@ sap.ui.define([
 		// lookup rootView class
 		let sRootViewType;
 		const oRootView = oMetadata._getManifestEntry("/sap.ui5/rootView");
-		if (typeof oRootView === "string") {
+
+		if (oRootView?.startsWith?.("module:") || oRootView?.viewName?.startsWith?.("module:")) {
+			const viewName = oRootView.viewName || oRootView;
+			mRoutingClasses["viewClass"] = viewName;
+		} else {
 			// String as rootView defaults to ViewType XML
 			// See: UIComponent#createContent and UIComponentMetadata#_convertLegacyMetadata
-			sRootViewType = "XML";
-		} else if (oRootView && typeof oRootView === "object" && oRootView.type) {
-			sRootViewType = oRootView.type;
+			sRootViewType = oRootView?.type || "XML";
 		}
+
 		if (sRootViewType && ViewType[sRootViewType]) {
 			const sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
 			mRoutingClasses["viewClass"] = sViewClass;

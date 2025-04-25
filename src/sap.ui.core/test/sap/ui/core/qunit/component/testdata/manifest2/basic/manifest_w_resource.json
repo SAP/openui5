@@ -1,0 +1,24 @@
+{
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "testdata.manifest2.basic",
+		"type": "application"
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "testdata.manifest2.basic.views.Main"
+		},
+		"resources": {
+			"js": [
+				{
+					"uri": "my/resource.js"
+				}
+			]
+		},
+		"extends": {
+			"extensions": {
+				"sap.ui.viewExtensions": {}
+			}
+		}
+	}
+}
