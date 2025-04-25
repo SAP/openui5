@@ -28,6 +28,15 @@ sap.ui.define([
 	// Cache to store loaded XML documents
 	const oInteractionXMLCache = new Map();
 
+	const getNormalizedShortcutString = (sShortcut) => {
+		const sCtrlKey = Device.os.macintosh ? "Cmd+" : "Ctrl+";
+		let sNormalizedShortcut = /\bctrl\b/i.test(sShortcut) ? sCtrlKey : "";
+		sNormalizedShortcut += /\balt\b/i.test(sShortcut) ? "Alt+" : "";
+		sNormalizedShortcut += /\bshift\b/i.test(sShortcut) ? "Shift+" : "";
+		sNormalizedShortcut += /^(?:.*\+)?(.*)$/.exec(sShortcut.trim())[1] || "";
+		return sNormalizedShortcut;
+	};
+
 	/**
 	 * Retrieves the command information for a given control.
 	 * @param  {sap.ui.core.Control} oControl The control to analyze.
@@ -43,7 +52,7 @@ sap.ui.define([
 
 				aCommandInfos.push({
 					name: oDependent.getCommand(),
-					kbd: Device.os.macintosh ? [oCommandInfo.shortcut.replace("Ctrl", "Cmd")] : [oCommandInfo.shortcut],
+					kbd: [getNormalizedShortcutString(oCommandInfo.shortcut)],
 					description: oCommandInfo.description
 				});
 			}
@@ -105,7 +114,9 @@ sap.ui.define([
 					if (oInteractionDoc) {
 						const aControlInteractionNodes = [...oInteractionDoc.querySelectorAll("control-interactions")];
 						const oMatchingControl = aControlInteractionNodes.find((oNode) => {
-							return oNode.querySelector("control")?.getAttribute("name") === oControl.getMetadata().getName();
+							return Array.from(oNode.querySelectorAll(`control[name]`)).find((oNode) => {
+								return oNode.getAttribute("name") === oControl.getMetadata().getName();
+							});
 						});
 
 						sAccessibilityInfoLabel = oMatchingControl?.querySelector("control")?.querySelector("defaultLabel")?.textContent;
@@ -204,7 +215,7 @@ sap.ui.define([
 
 		const aControlInteractionNodes = [...oInteractionDoc.querySelectorAll("control-interactions")];
 		const oMatchingControl = aControlInteractionNodes.find((oNode) => {
-			return Array.from(oInteractionDoc.querySelectorAll(`control[name]`)).find((oNode) => {
+			return Array.from(oNode.querySelectorAll(`control[name]`)).find((oNode) => {
 				return oNode.getAttribute("name") === sControlName;
 			});
 		});
@@ -214,7 +225,7 @@ sap.ui.define([
 		}
 
 		return [...oMatchingControl.querySelectorAll("interaction")].map((oInteractionNode) => ({
-			kbd: Array.from(oInteractionNode.children).filter((child) => child.tagName === "kbd").map((kbd) => kbd.textContent.trim()),
+			kbd: Array.from(oInteractionNode.children).filter((child) => child.tagName === "kbd").map((kbd) => getNormalizedShortcutString(kbd.textContent)),
 			description: oInteractionNode.querySelector("description")?.innerHTML || ""
 		}));
 	};
