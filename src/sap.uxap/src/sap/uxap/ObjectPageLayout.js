@@ -2632,7 +2632,7 @@ sap.ui.define([
 		this._aSectionBases.forEach(function (oSectionBase) {
 			var oInfo = this._oSectionInfo[oSectionBase.getId()],
 				$this = oSectionBase.$(),
-				bPromoted = false,
+				bIsSingleVisibleSubSection = false,
 				oSection;
 
 			if (!oInfo /* sectionBase is visible */ || !$this.length) {
@@ -2653,10 +2653,9 @@ sap.ui.define([
 			oInfo.positionTop = Math.ceil(realTop);
 
 			if (!oInfo.isSection && (oSection = oSectionBase.getParent())) {
-				// a promoted subSection borrows the title of its parent section
-				bPromoted = oSectionBase._isPromoted();
-				if (bPromoted) {
-					// the scrollTop required to scroll to a promoted subsection
+				bIsSingleVisibleSubSection = oSection._getVisibleSubSections().length === 1;
+				if (bIsSingleVisibleSubSection) {
+					// the scrollTop required to scroll to a single subsection
 					// is the top of the parent section (UX rule)
 					var parentRealTop = oSection.$().position().top;
 					oInfo.positionTop = Math.ceil(parentRealTop);

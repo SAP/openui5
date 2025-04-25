@@ -15,8 +15,8 @@ sap.ui.define([
 	// dark mode detection
 	const bDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-	// Theme Fallback
-	const rThemePattern = /^([a-zA-Z0-9_]*)(_(hcb|hcw|dark))$/g;
+	// Theme Fallback for variants
+	const rThemeVariantPattern = /(_hcb|_hcw|_dark)$/g;
 
 	/**
 	 * The list of all known themes incl. their variants.
@@ -30,6 +30,7 @@ sap.ui.define([
 		"sap_horizon_dark",
 		"sap_horizon_hcb",
 		"sap_horizon_hcw",
+
 		// fiori_3
 		"sap_fiori_3",
 		"sap_fiori_3_dark",
@@ -218,14 +219,9 @@ sap.ui.define([
 		//  * not supported in this version
 		if (sThemeRoot == null && sTheme.startsWith("sap_") && aKnownThemes.indexOf(sTheme) == -1) {
 			// extract the theme variant if given: "_hcb", "_hcw", "_dark"
-			const aThemeMatch = rThemePattern.exec(sTheme) || [];
-			const sVariant = aThemeMatch[2]; //match includes an underscore
+			const sVariant = sTheme.match(rThemeVariantPattern)?.[0] || "";
 
-			if (sVariant) {
-				sNewTheme = `${DEFAULT_THEME}${sVariant}`;
-			} else {
-				sNewTheme = DEFAULT_THEME;
-			}
+			sNewTheme = `${DEFAULT_THEME}${sVariant}`;
 
 			mThemeFallbacks[sTheme] = sNewTheme;
 

@@ -16,8 +16,7 @@ sap.ui.define([], function () {
 		{
 			"id": "accessibilityGuide",
 			"text": "Accessibility Guide",
-			"href": "test-resources/sap/m/demokit/accessibilityGuide/webapp/index.html",
-			"hideOnPhone": true
+			"href": "test-resources/sap/m/demokit/accessibilityGuide/webapp/index.html"
 		},
 
 		// #2 Category: Development Tools

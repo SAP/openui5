@@ -423,14 +423,22 @@ sap.ui.define([
 
 		const $container = this.$().find(".sapTntNLIItemsContainer").first();
 		$container.stop(true, true).slideDown("fast", () => {
-			const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
-			if (oContainerRef) {
-				oContainerRef.classList.toggle("sapTntNLIItemsContainerHidden");
-			}
+			this._updateContainerVisibility();
 			this.getNavigationList()?._updateNavItems();
 		});
 
 		return true;
+	};
+
+	NavigationListItemBase.prototype._updateContainerVisibility = function () {
+		const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
+		if (oContainerRef) {
+			if (this.getExpanded()) {
+				oContainerRef.classList.remove("sapTntNLIItemsContainerHidden");
+			} else {
+				oContainerRef.classList.add("sapTntNLIItemsContainerHidden");
+			}
+		}
 	};
 
 	/**
@@ -452,10 +460,7 @@ sap.ui.define([
 
 		const $container = this.$().find(".sapTntNLIItemsContainer").first();
 		$container.stop(true, true).slideUp("fast", () => {
-			const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
-			if (oContainerRef) {
-				oContainerRef.classList.toggle("sapTntNLIItemsContainerHidden");
-			}
+			this._updateContainerVisibility();
 			this.getNavigationList()?._updateNavItems();
 		});
 
