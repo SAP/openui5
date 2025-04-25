@@ -1051,7 +1051,7 @@ sap.ui.define([
 
 		// Set the illustrated message based on drag indicator presence
 		if (this._getDragIndicator()) {
-			oAggregation.setIllustrationType(IllustratedMessageType.UploadCollection);
+			oAggregation.setIllustrationType(IllustratedMessageType.DragFilesToUpload);
 			oAggregation.setTitle(this.getDragDropText());
 			oAggregation.setDescription(this.getUploadEnabled() ? this.getDragDropDescription() : " ");
 		} else {

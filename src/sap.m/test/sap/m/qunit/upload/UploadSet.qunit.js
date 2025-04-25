@@ -1579,7 +1579,7 @@ sap.ui.define([
 		this.oUploadSet.removeAllItems(); // illustrated message only renders when there are no items in the list.
 		var oDropInfo = this.oUploadSet.getList().getDragDropConfig()[1];
 		oDropInfo.attachDragEnter(function(oEvent) {
-			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.UploadCollection, "The Drop file here illustrated message is rendred");
+			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.DragFilesToUpload, "The Drop file here illustrated message is rendred");
 		}.bind(this));
 
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
@@ -1613,7 +1613,7 @@ sap.ui.define([
 		oTargetDomRef.focus();
 		var oDropInfo = this.oUploadSet.getList().getDragDropConfig()[1];
 		oDropInfo.attachDragEnter(function() {
-			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.UploadCollection, "The Drop file here illustrated message is rendered");
+			assert.equal(this.oUploadSet._getIllustratedMessage().getIllustrationType(), IllustratedMessageType.DragFilesToUpload, "The Drop file here illustrated message is rendered");
 		}.bind(this));
 
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
