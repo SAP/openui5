@@ -1602,8 +1602,8 @@ sap.ui.define([
 
 	UploadSetwithTable.prototype._getDefaultNoDataIllustration = function() {
 		const oIllustratedMessage =  new IllustratedMessage({
-			illustrationType: IllustratedMessageType.UploadCollection,
-			illustrationSize: IllustratedMessageSize.Spot,
+			illustrationType: IllustratedMessageType.DragFilesToUpload,
+			illustrationSize: IllustratedMessageSize.Small,
 			title: this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_TEXT"),
 			description: this._oRb.getText("UPLOADSET_WITH_TABLE_NO_DATA_DESCRIPTION")
 		});
