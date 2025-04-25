@@ -342,7 +342,7 @@ sap.ui.define([
 		if (!oPopover) {
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangeIndicatorCategorySelection",
-				id: this._getComponent().createId("changeVisualization_changesList"),
+				id: `${this._oToolbarButton.sId}--ChangeIndicatorCategorySelection`,
 				controller: this
 			})
 			.then(function(oPopover) {

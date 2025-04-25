@@ -280,6 +280,17 @@ sap.ui.define([
 		 */
 		getSystem() {
 			return Settings.getInstanceOrUndef()?.getSystem();
+		},
+
+		/**
+		 * Returns the user id of the current user.
+		 *
+		 * @returns {string} returns the user id
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		getUserId() {
+			return Settings.getInstanceOrUndef()?.getUserId();
 		}
 	};
 

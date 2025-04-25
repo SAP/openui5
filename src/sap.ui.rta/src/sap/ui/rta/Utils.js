@@ -537,5 +537,22 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * Checks if a DOM element is visible in the UI.
+	 *
+	 * The function determines visibility based on the computed styles of the element
+	 * (`display` and `visibility`) and its dimensions (`offsetWidth` and `offsetHeight`).
+	 *
+	 * @param {HTMLElement} oDomRef - The DOM reference of the element to check.
+	 * @returns {boolean} Returns `true` if the element is visible, otherwise `false`.
+	 */
+	Utils.isElementVisible = function(oDomRef) {
+		if (!oDomRef) {
+			return false;
+		}
+
+		return !!(oDomRef.offsetWidth || oDomRef.offsetHeight || oDomRef.getClientRects().length);
+	};
+
 	return Utils;
 }, /* bExport= */true);

@@ -80,5 +80,10 @@
 				text="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW}"
 				tooltip="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW_TOOLTIP}"
 				press=".openWhatsNewOverviewDialog"/>
+		<MenuItem
+				id="sapUiRta_generalTour"
+				icon="sap-icon://map-3"
+				text="{i18n>BTN_GUIDED_TOUR_START}"
+				press=".openGuidedTour"/>
 	</Menu>
 </core:FragmentDefinition>

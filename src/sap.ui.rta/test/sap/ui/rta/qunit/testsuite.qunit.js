@@ -1132,6 +1132,22 @@ sap.ui.define([
 						flexibilityServices: '[{"loadConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning", "writeConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning"}]'
 					}
 				},
+				"util/guidedTour/GuidedTour": {
+					group: "util",
+					ui5: {
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						}
+					},
+					coverage: {
+						only: [
+							"sap/ui/rta/util/guidedTour/GuidedTour"
+						]
+					}
+				},
 				"util/BindingsExtractor": {
 					group: "util",
 					coverage: {

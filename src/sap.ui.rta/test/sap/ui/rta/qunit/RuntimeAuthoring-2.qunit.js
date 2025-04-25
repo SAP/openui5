@@ -728,36 +728,6 @@ sap.ui.define([
 			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "12345", "then the displayed adaptation is correct");
 		});
 
-		QUnit.test("when RTA is started without any buttons on the actions menu", async function(assert) {
-			sandbox.stub(VersionsAPI, "initialize").callsFake(async function(...aArgs) {
-				const oModel = await VersionsAPI.initialize.wrappedMethod.apply(this, aArgs);
-				oModel.setProperty("/versioningEnabled", true);
-				return oModel;
-			});
-			stubToolbarButtonsVisibility(true, true);
-			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
-			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
-			sandbox.stub(FlexUtils, "getUShellService")
-			.callThrough()
-			.withArgs("AppLifeCycle")
-			.resolves({
-				getCurrentApplication() {
-					return {
-						homePage: true
-					};
-				}
-			});
-
-			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
-			assert.strictEqual(this.oRta.getToolbar().getControl("actionsMenu").getVisible(), false, "then the actions menu button is not visible");
-		});
-
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app cannot be detected for home page check", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);

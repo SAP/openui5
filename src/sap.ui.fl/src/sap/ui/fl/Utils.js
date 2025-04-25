@@ -252,6 +252,19 @@ sap.ui.define([
 			return new URLSearchParams(window.location.search).get("sap-client");
 		},
 
+		/**
+		 * Retrieves the list of connectors configured in the flexibility services.
+		 *
+		 * @returns {string[]} An array of connector names configured in the flexibility services.
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl
+		 */
+		getConnectors() {
+			const aFlexibilityServices = FlexConfiguration.getFlexibilityServices();
+			return aFlexibilityServices.map((oServiceConfig) => oServiceConfig?.connector);
+		},
+
 		getLrepUrl() {
 			const aFlexibilityServices = FlexConfiguration.getFlexibilityServices();
 			const oLrepConfiguration = aFlexibilityServices.find((oServiceConfig) => oServiceConfig.connector === "LrepConnector");

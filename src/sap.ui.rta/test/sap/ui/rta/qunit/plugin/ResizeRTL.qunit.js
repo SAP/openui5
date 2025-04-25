@@ -80,6 +80,7 @@ sap.ui.define([
 		afterEach() {
 			this.oComponent.destroy();
 			this.oContainer.destroy();
+			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
