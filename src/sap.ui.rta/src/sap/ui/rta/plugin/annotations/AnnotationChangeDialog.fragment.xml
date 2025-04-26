@@ -12,6 +12,7 @@
 		contentHeight="{= ${/singleRename} === true ? 'auto' : '25rem'}"
 		title="{/title}"
 		class="sapUiContentPadding"
+		escapeHandler=".onCancel"
 	>
 		<content>
 			<VBox>
@@ -83,8 +84,8 @@
 				id="sapUiRtaChangeAnnotationDialog_saveButton"
 				enabled="{= ${path: '/properties', formatter: '.hasChangesFormatter'}}"
 				type="Emphasized"
-				text="{i18n>ANNOTATION_CHANGE_DIALOG_SAVE}"
-				press="onSavePress"
+				text="{i18n>ANNOTATION_CHANGE_DIALOG_CONFIRM}"
+				press="onSave"
 			/>
 		</beginButton>
 		<endButton>
@@ -92,7 +93,7 @@
 				id="sapUiRtaChangeAnnotationDialog_cancelButton"
 				type="Transparent"
 				text="{i18n>ANNOTATION_CHANGE_DIALOG_CANCEL}"
-				press="onCancelPress"
+				press="onCancel"
 			/>
 		</endButton>
 	</Dialog>

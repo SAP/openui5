@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
 	"sap/ui/rta/toolbar/Base",
+	"sap/ui/rta/toolbar/BaseRenderer",
 	"sap/ui/rta/util/Animation",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/test/utils/nextUIUpdate"
@@ -13,6 +14,7 @@ sap.ui.define([
 	ManagedObject,
 	BusyIndicator,
 	BaseToolbar,
+	BaseRenderer,
 	Animation,
 	sinon,
 	nextUIUpdate
@@ -211,7 +213,7 @@ sap.ui.define([
 	QUnit.module("Inheritance functionality", {
 		beforeEach() {
 			var CustomToolbar = BaseToolbar.extend("CustomToolbar", {
-				renderer: "sap.ui.rta.toolbar.BaseRenderer",
+				renderer: BaseRenderer,
 				metadata: {
 					events: {
 						action: {}
@@ -267,7 +269,7 @@ sap.ui.define([
 	QUnit.module("Animation functionality", {
 		beforeEach() {
 			var CustomToolbar = BaseToolbar.extend("CustomToolbar", {
-				renderer: "sap.ui.rta.toolbar.BaseRenderer",
+				renderer: BaseRenderer,
 				animation: true,
 				type: "fiori"
 			});

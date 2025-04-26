@@ -122,6 +122,22 @@ sap.ui.define([
 					image: getImagePath("MiniMenu.png")
 				}
 			]
+		},
+		{
+			featureId: "GuidedTour",
+			title: oTextResources.getText("TIT_WHATS_NEW_RTA_TOUR_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RTA_TOUR_DESCRIPTION"),
+			documentationUrls: {
+				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
+				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",
+				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/d868950a1e8c4b0f9b9453176939a19b.html"
+			},
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RTA_TOUR_TEXT"),
+					image: getImagePath("GuidedTour.png")
+				}
+			]
 		}
 	];
 

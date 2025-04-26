@@ -888,14 +888,16 @@ sap.ui.define([
 		 * Returns the aria attributes for the row that contains the column headers.
 		 *
 		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension
+		 * @param {object} mParams An object for additional parameters
+		 * @param {int} mParams.rowIndex The index of the row
 		 * @returns {object} An object containing the aria attributes
 		 */
-		getAriaAttributesForColumnHeaderRow: function(oExtension) {
+		getAriaAttributesForColumnHeaderRow: function(oExtension, mParams) {
 			const mAttributes = {"role": "row"};
 			const oTable = oExtension.getTable();
 			const sTableId = oTable.getId();
 
-			mAttributes["aria-rowindex"] = ["1"];
+			mAttributes["aria-rowindex"] = mParams.rowIndex + 1;
 			mAttributes["aria-owns"] = [];
 			if (TableUtils.hasRowHeader(oTable)) {
 				mAttributes["aria-owns"].push(sTableId + "-rowcolhdr");

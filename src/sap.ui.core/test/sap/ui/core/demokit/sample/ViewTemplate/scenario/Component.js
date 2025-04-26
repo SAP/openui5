@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/util/XMLPreprocessor",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(XMLView, BaseComponent, MockServer, XMLPreprocessor, JSONModel, ODataModel2) {
+], function (XMLView, BaseComponent, MockServer, XMLPreprocessor, JSONModel, ODataModel) {
 	"use strict";
 
 	/*
@@ -76,8 +76,7 @@ sap.ui.define([
 				oModel,
 				sServiceUri,
 				oUriParameters = new URLSearchParams(window.location.search),
-				bRealOData = oUriParameters.get("realOData") === "true",
-				fnModel = oUriParameters.get("oldOData") === "true" ? undefined/*ODataModel*/ : ODataModel2;
+				bRealOData = oUriParameters.get("realOData") === "true";
 
 			// GWSAMPLE_BASIC with external annotations
 			sAnnotationUri = "/sap/opu/odata/IWFND/CATALOGSERVICE;v=2"
@@ -112,7 +111,7 @@ sap.ui.define([
 			}));
 			this.aMockServers[this.aMockServers.length - 1].start();
 
-			oModel = new fnModel(sServiceUri, {
+			oModel = new ODataModel(sServiceUri, {
 				annotationURI : [sAnnotationUri, sAnnotationUri2],
 				json : true,
 				loadMetadataAsync : true,

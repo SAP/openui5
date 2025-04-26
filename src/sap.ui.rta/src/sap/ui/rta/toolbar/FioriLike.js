@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
-	"./Adaptation"
+	"./Adaptation",
+	"sap/ui/rta/toolbar/AdaptationRenderer"
 ],
 function(
-	Adaptation
+	Adaptation,
+	AdaptationRenderer
 ) {
 	"use strict";
 
@@ -29,7 +31,7 @@ function(
 		metadata: {
 			library: "sap.ui.rta"
 		},
-		renderer: "sap.ui.rta.toolbar.AdaptationRenderer",
+		renderer: AdaptationRenderer,
 		type: "fiori"
 	});
 

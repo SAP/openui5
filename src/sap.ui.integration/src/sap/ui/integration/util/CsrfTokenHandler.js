@@ -77,15 +77,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the host which is used to resolve tokens.
-	 * @param {sap.ui.integration.Host} oHost The host.
-	 * @deprecated As of version 1.121.0
-	 */
-	CsrfTokenHandler.prototype.setHost = function (oHost) {
-		this._oHost = oHost;
-	};
-
-	/**
 	 * @param {Response} oResponse The response.
 	 * @returns {boolean} Whether the response contains an expired CSRF token
 	 */

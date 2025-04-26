@@ -26,9 +26,10 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
-	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/TranslationAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
@@ -40,6 +41,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/FioriLike",
 	"sap/ui/rta/toolbar/Standalone",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+	"sap/ui/rta/util/guidedTour/content/GeneralTour",
+	"sap/ui/rta/util/guidedTour/GuidedTour",
 	"sap/ui/rta/util/whatsNew/WhatsNew",
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/util/PopupManager",
@@ -71,9 +74,10 @@ sap.ui.define([
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
-	VersionsAPI,
 	TranslationAPI,
+	VersionsAPI,
 	Layer,
+	LayerUtils,
 	FlexUtils,
 	JSONModel,
 	Measurement,
@@ -85,6 +89,8 @@ sap.ui.define([
 	FioriLikeToolbar,
 	StandaloneToolbar,
 	ChangeVisualization,
+	GeneralTour,
+	GuidedTour,
 	WhatsNew,
 	PluginManager,
 	PopupManager,
@@ -254,6 +260,7 @@ sap.ui.define([
 				if (isAvailable && !ReloadManager.getDontShowWhatsNewAfterReload()) {
 					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
 				}
+				this.addDependent(new GuidedTour(), "guidedTour");
 				return Promise.resolve();
 			}.bind(this));
 		}
@@ -462,7 +469,20 @@ sap.ui.define([
 			}
 			setBlockedOnRootElements.call(this, true);
 
-			if (this.getWhatsNew) {
+			const bGuidedTourAutostart = await shouldAutoStartGuidedTour(this.getRootControlInstance(), this.getLayer());
+
+			if (bGuidedTourAutostart) {
+				const oGuidedTour = this.getGuidedTour();
+				oGuidedTour.attachTourClosed(() => {
+					if (this.getWhatsNew) {
+						// we want to exclude the guided tour feature from the whats new dialog if the tour opens before the dialog
+						const aExcludeGuidedTourFeature = ["GuidedTour"];
+						this.getWhatsNew().initializeWhatsNewDialog(aExcludeGuidedTourFeature);
+					}
+				});
+				 GeneralTour.getTourContent();
+				oGuidedTour.autoStart(GeneralTour.getTourContent());
+			} else if (this.getWhatsNew) {
 				this.getWhatsNew().initializeWhatsNewDialog();
 			}
 
@@ -1006,6 +1026,44 @@ sap.ui.define([
 		};
 	}
 
+	/**
+	 * Checks if the guided tour should be started automatically.
+	 *
+	 * @param {sap.ui.core.Control} oRootControl - Root control of the application
+	 * @param {string} sLayer - Layer to get the correct connector
+	 * @returns {Promise<boolean>} Resolves to a boolean indicating if the guided tour should be started automatically
+	 * @ui5-restricted sap.ui.rta
+	 */
+	async function shouldAutoStartGuidedTour(oRootControl, sLayer) {
+		const aConnectors = FlexUtils.getConnectors();
+		const aProhibitedConnectors = ["LocalStorageConnector", "SessionStorageConnector"];
+		const bHasConnectors = aConnectors.length > 0;
+		const bHasOnlyAllowedConnectors = bHasConnectors
+		&& aConnectors.every((sConnector) => !aProhibitedConnectors.includes(sConnector));
+
+		if (!bHasOnlyAllowedConnectors || LayerUtils.isDeveloperLayer(sLayer)) {
+			return false;
+		}
+
+		// We need this check to differentiate between our test systems and real customer systems.
+		const sUserId = await FlexRuntimeInfoAPI.getUserId();
+		if (sUserId === "DEFAULT_USER" || !sUserId) {
+			return false;
+		}
+
+		const aHasOwnChanges = await PersistenceWriteAPI._getFlexObjectsForUser({
+			selector: oRootControl,
+			layer: sLayer
+		});
+
+		if (!aHasOwnChanges || aHasOwnChanges.length > 0) {
+			return false;
+		}
+
+		const bHasSeenWNFeatures = (await FeaturesAPI.getSeenFeatureIds({ layer: sLayer })).length > 0;
+		return !bHasSeenWNFeatures;
+	}
+
 	function showTechnicalError(vError) {
 		BusyIndicator.hide();
 		const sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
@@ -1463,6 +1521,7 @@ sap.ui.define([
 		}
 
 		const oProperties = {
+			id: "sapUIRta_toolbar",
 			rtaInformation: {
 				flexSettings: this.getFlexSettings(),
 				rootControl: this.getRootControlInstance(),

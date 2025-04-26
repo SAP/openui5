@@ -60,6 +60,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns either the 'annotationText' text or the value in the content
+	 * @returns {string} The value of the annotation
+	 */
+	AnnotationChange.prototype.getValue = function() {
+		return this.getText("annotationText") ? this.getText("annotationText") : this.getContent().value;
+	};
+
+	/**
 	 * Returns the Id to be used by the condenser.
 	 * @returns {string} Id for condensing
 	 */

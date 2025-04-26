@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/plugin/annotations/AnnotationChangeDialogController",
-	"sap/ui/rta/plugin/annotations/AnnotationTypes",
 	"sap/ui/rta/Utils"
 ], function(
 	ManagedObject,
@@ -20,7 +19,6 @@ sap.ui.define([
 	JSONModel,
 	ResourceModel,
 	AnnotationChangeDialogController,
-	AnnotationTypes,
 	RtaUtils
 ) {
 	"use strict";
@@ -37,13 +35,24 @@ sap.ui.define([
 	 */
 	const AnnotationChangeDialog = ManagedObject.extend("sap.ui.rta.plugin.annotations.AnnotationChangeDialog");
 
-	function replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedProperty, oControl) {
-		const oProperty = aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedProperty);
-		const aNewLabel = ElementUtil.getLabelForElement(oControl);
-		if (oProperty && aNewLabel) {
-			oProperty.currentValue = aNewLabel;
-			oProperty.originalValue = aNewLabel;
+	function replaceValue(aProperties, sAnnotationPath, sValue) {
+		const oProperty = aProperties.find((oProperty) => oProperty.annotationPath === sAnnotationPath);
+		if (oProperty) {
+			oProperty.currentValue = sValue;
+			oProperty.originalValue = sValue;
 		}
+	}
+
+	function replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedProperty, oControl) {
+		const aNewLabel = ElementUtil.getLabelForElement(oControl);
+		replaceValue(aProperties, sPreSelectedProperty, aNewLabel);
+	}
+
+	function replaceValuesWithValuesFromPendingChanges(aAnnotationChanges, aProperties, bObjectAsKey) {
+		aAnnotationChanges.forEach((oChange) => {
+			const sAnnotationPath = oChange.getContent().annotationPath;
+			replaceValue(aProperties, sAnnotationPath, bObjectAsKey ? JSON.stringify(oChange.getValue()) : oChange.getValue());
+		});
 	}
 
 	AnnotationChangeDialog.prototype._createDialog = async function() {
@@ -164,9 +173,10 @@ sap.ui.define([
 
 		this._oDialog ||= await this._createDialog();
 
-		const sFilterText = sPreSelectedPropertyKey
-			? aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey).label
-			: "";
+		const sFilterText = (
+			sPreSelectedPropertyKey && aProperties.find((oProperty) => oProperty.annotationPath === sPreSelectedPropertyKey)?.label
+		) || "";
+
 		// default size limit is 100, but we need to display all properties.
 		// As the list size is not dynamic, we can set the size limit to the number of properties
 		// the size influences all binding sizes, so we only set it if the number of properties is greater than 100
@@ -177,6 +187,9 @@ sap.ui.define([
 		if (bSingleRename) {
 			replaceCurrentValueWithTextFromControl(aProperties, sPreSelectedPropertyKey, oControl);
 		}
+
+		// Once a change gets passed to the model during initialization, the property _appliedOnModel is set to true
+		replaceValuesWithValuesFromPendingChanges(aExistingChanges.filter((oChange) => !oChange._appliedOnModel), aProperties, bObjectAsKey);
 
 		this.oChangeAnnotationModel.setData({
 			objectAsKey: bObjectAsKey,
@@ -194,7 +207,7 @@ sap.ui.define([
 			serviceUrl: sServiceUrl
 		});
 		if (sFilterText) {
-			this._oController.filterProperties(sFilterText);
+			this._oController.filterProperties(sFilterText, !!bSingleRename);
 		}
 		// Ensure that the model is fully refreshed before opening the dialog
 		this.oChangeAnnotationModel.refresh(true);

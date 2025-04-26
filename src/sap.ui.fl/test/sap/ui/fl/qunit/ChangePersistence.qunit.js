@@ -206,6 +206,23 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("Shall call the condense route for PUBLIC layer changes", async function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled() {
+					return true;
+				},
+				hasPersoConnector() {
+					return false;
+				}
+			});
+
+			addTwoChanges(sReference, this.oComponentInstance, Layer.PUBLIC);
+			await this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			assert.strictEqual(this.oWriteStub.callCount, 0);
+			assert.strictEqual(this.oStorageCondenseStub.callCount, 1, "the condense route of the storage is called");
+			assert.strictEqual(this.oCondenserStub.callCount, 1, "the condenser was called");
+		});
+
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled() {

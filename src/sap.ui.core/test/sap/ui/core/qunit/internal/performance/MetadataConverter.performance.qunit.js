@@ -121,80 +121,64 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["/fake/v2", "/fake/v2/QM_INSP_PLAN_SRV"].forEach(function (sBase) {
-	QUnit.test("V2 AnnotationParser#parse: " + sBase, function (assert) {
-		var oModelParameters = {
-				annotationURI : sBase + "AnnotationsOnly/",
-				serviceUrl : sBase + "MetadataOnly/"},
-			fnOriginalParse = AnnotationParser.parse,
-			oTestResult = {};
+	["/fake/v2", "/fake/v2/QM_INSP_PLAN_SRV"].forEach(function (sBase) {
+		QUnit.test("V2 AnnotationParser#parse: " + sBase, function (assert) {
+			var oModelParameters = {
+					annotationURI : sBase + "AnnotationsOnly/",
+					serviceUrl : sBase + "MetadataOnly/"},
+				fnOriginalParse = AnnotationParser.parse,
+				oTestResult = {};
 
-		AnnotationParser.parse = function (oMetadata, oXMLDoc, sSourceUrl) {
-			var iStart = Date.now(),
-				oParseResult = fnOriginalParse(oMetadata, oXMLDoc, sSourceUrl);
+			AnnotationParser.parse = function (oMetadata, oXMLDoc, sSourceUrl) {
+				var iStart = Date.now(),
+					oParseResult = fnOriginalParse(oMetadata, oXMLDoc, sSourceUrl);
 
-			if (sSourceUrl) {
-				// measure only annotations file, NOT the metadata document (that is also parsed)
+				if (sSourceUrl) {
+					// measure only annotations file, NOT the metadata document (that is also parsed)
+					oTestResult.time = Date.now() - iStart;
+				}
+				return oParseResult;
+			};
+
+			return repeatAsyncTest(10, function () {
+				oTestResult = {};
+				ODataModelV2.mSharedData = {server: {}, service: {}, meta: {}};
+				return new ODataModelV2(oModelParameters).getMetaModel().loaded().then(function () {
+					return oTestResult;
+				});
+			}).then(function (oResult) {
+				assert.ok(true, "time: " + oResult.time + " ms");
+				AnnotationParser.parse = fnOriginalParse;
+			});
+		});
+	});
+	["/fake/v2", "/fake/v2/QM_INSP_PLAN_SRV"].forEach(function (sServiceUrl) {
+		QUnit.test("v2.ODataMetaModel: " + sServiceUrl, function (assert) {
+			var	fnOriginalParse = AnnotationParser.parse,
+				oTestResult = {};
+
+			AnnotationParser.parse = function (oMetadata, oXMLDoc, sSourceUrl) {
+				var iStart = Date.now(),
+					oParseResult = fnOriginalParse(oMetadata, oXMLDoc, sSourceUrl);
+
 				oTestResult.time = Date.now() - iStart;
-			}
-			return oParseResult;
-		};
+				return oParseResult;
+			};
+			return repeatAsyncTest(10, function () {
+				var iStart = Date.now();
 
-		return repeatAsyncTest(10, function () {
-			oTestResult = {};
-			ODataModelV2.mSharedData = {server: {}, service: {}, meta: {}};
-			return new ODataModelV2(oModelParameters).getMetaModel().loaded().then(function () {
-				return oTestResult;
+				oTestResult = {};
+				ODataModelV2.mSharedData = {server: {}, service: {}, meta: {}}; // clear the cache for compatibility
+				return new ODataModelV2(sServiceUrl).getMetaModel().loaded().then(function () {
+					return {time: Date.now() - iStart, parse: oTestResult.time};
+				});
+			}).then(function (oResult) {
+				assert.ok(true, "parse: " + oResult.parse + " ms");
+				assert.ok(true, "total: " + oResult.time + " ms");
+				AnnotationParser.parse = fnOriginalParse;
 			});
-		}).then(function (oResult) {
-			assert.ok(true, "time: " + oResult.time + " ms");
-			AnnotationParser.parse = fnOriginalParse;
 		});
 	});
-});
-
-	//*********************************************************************************************
-	QUnit.test("ODataMetaModel (V1)", function (assert) {
-		return repeatAsyncTest(10, function () {
-			var iStart = Date.now();
-
-			undefined/*ODataModelV1*/.mServiceData = {}; // clear the cache for compatibility
-			return new undefined/*ODataModelV1*/("/fake/v2/").getMetaModel().loaded().then(function () {
-				return {time: Date.now() - iStart};
-			});
-		}).then(function (oResult) {
-			assert.ok(true, "time: " + oResult.time + " ms");
-		});
-	});
-
-	//*********************************************************************************************
-["/fake/v2", "/fake/v2/QM_INSP_PLAN_SRV"].forEach(function (sServiceUrl) {
-	QUnit.test("v2.ODataMetaModel: " + sServiceUrl, function (assert) {
-		var	fnOriginalParse = AnnotationParser.parse,
-			oTestResult = {};
-
-		AnnotationParser.parse = function (oMetadata, oXMLDoc, sSourceUrl) {
-			var iStart = Date.now(),
-				oParseResult = fnOriginalParse(oMetadata, oXMLDoc, sSourceUrl);
-
-			oTestResult.time = Date.now() - iStart;
-			return oParseResult;
-		};
-		return repeatAsyncTest(10, function () {
-			var iStart = Date.now();
-
-			oTestResult = {};
-			ODataModelV2.mSharedData = {server: {}, service: {}, meta: {}}; // clear the cache for compatibility
-			return new ODataModelV2(sServiceUrl).getMetaModel().loaded().then(function () {
-				return {time: Date.now() - iStart, parse: oTestResult.time};
-			});
-		}).then(function (oResult) {
-			assert.ok(true, "parse: " + oResult.parse + " ms");
-			assert.ok(true, "total: " + oResult.time + " ms");
-			AnnotationParser.parse = fnOriginalParse;
-		});
-	});
-});
 
 	//*********************************************************************************************
 	QUnit.test("v4.ODataMetaModel", function (assert) {
