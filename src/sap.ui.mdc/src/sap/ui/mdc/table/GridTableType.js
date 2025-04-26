@@ -232,10 +232,6 @@ sap.ui.define([
 		const oGridTable = new InnerTable(sId, this.getTableSettings());
 
 		oGridTable.setAggregation("groupHeaderRowContextMenu", new GroupHeaderRowContextMenu());
-		const oSettingsModel = new JSONModel({
-			p13nFixedColumnCount: null
-		});
-		oGridTable.setModel(oSettingsModel, "$typeSettings");
 
 		return oGridTable;
 	};
@@ -276,6 +272,11 @@ sap.ui.define([
 				formatter: function(iFixedColumnCount, iP13nFixedColumnCount) {
 					return iP13nFixedColumnCount ?? iFixedColumnCount;
 				}
+			},
+			models: {
+				$typeSettings: new JSONModel({
+					p13nFixedColumnCount: null
+				})
 			},
 			columnFreeze: [onColumnFreeze, this],
 			beforeOpenContextMenu: [onBeforeOpenContextMenu, this]

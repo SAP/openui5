@@ -24,6 +24,8 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/toolbar/AdaptationRenderer",
 	"sap/ui/rta/toolbar/Base",
+	"sap/ui/rta/util/guidedTour/content/GeneralTour",
+	"sap/ui/rta/util/guidedTour/GuidedTour",
 	"sap/ui/rta/util/whatsNew/WhatsNewOverview",
 	"sap/ui/rta/Utils"
 ], function(
@@ -48,6 +50,8 @@ sap.ui.define([
 	Versioning,
 	AdaptationRenderer,
 	Base,
+	GeneralTour,
+	GuidedTour,
 	WhatsNewOverview,
 	Utils
 ) {
@@ -279,7 +283,8 @@ sap.ui.define([
 					restore: this.eventHandler.bind(this, "Restore"),
 					formatSaveAsEnabled,
 					saveAs: onSaveAsPressed.bind(this),
-					openWhatsNewOverviewDialog
+					openWhatsNewOverviewDialog,
+					openGuidedTour
 				}
 			}).then(function(oMenu) {
 				oMenu.addStyleClass(Utils.getRtaStyleClassName());
@@ -501,6 +506,10 @@ sap.ui.define([
 
 	function openWhatsNewOverviewDialog() {
 		WhatsNewOverview.openWhatsNewOverviewDialog();
+	}
+
+	function openGuidedTour() {
+		new GuidedTour().start(GeneralTour.getTourContent());
 	}
 
 	Adaptation.prototype.getControl = function(sName) {

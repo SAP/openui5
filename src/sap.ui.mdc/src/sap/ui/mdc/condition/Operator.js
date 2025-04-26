@@ -608,28 +608,33 @@ sap.ui.define([
 					if (vValue === undefined || vValue === null) {
 						vValue = oUseType ? oUseType.parseValue("", "string") : ""; // for empty value use initial value of type
 					}
+					let vValidateValues = vValue;
 
-					if (oUseType.isA("sap.ui.model.CompositeType") && Array.isArray(vValue) && aUseCompositeTypes) {
-						// validate for basic types too
-						vValue = merge([], vValue); // use copy to not change original array
-						for (let j = 0; j < vValue.length; j++) {
+					if (oUseType.isA("sap.ui.model.CompositeType") && Array.isArray(vValue) && aUseCompositeTypes && oUseType.getUseInternalValues()) {
+						vValidateValues = merge([], vValue); // use copy to not change original array
+						for (let j = 0; j < vValidateValues.length; j++) {
 							if (aUseCompositeTypes[j]) {
-								if (iCompositePart === undefined || j === iCompositePart) { // validate only the part that has changed. (if number has changed but not unit, no validation for units type is needed)
-									aUseCompositeTypes[j].validateValue(vValue[j]);
-								}
-
-								if (oUseType.getUseInternalValues()) {
-									// use internal format for validation on CompositeType
-									const oFormat = aUseCompositeTypes[j].getModelFormat();
-									if (oFormat && typeof oFormat.parse === "function") {
-										vValue[j] = oFormat.parse(vValue[j]);
-									}
+								// use internal format for validation on CompositeType
+								const oFormat = aUseCompositeTypes[j].getModelFormat();
+								if (oFormat && typeof oFormat.parse === "function") {
+									vValidateValues[j] = oFormat.parse(vValidateValues[j]);
 								}
 							}
 						}
 					}
 
-					oUseType.validateValue(vValue);
+					oUseType.validateValue(vValidateValues);
+
+					if (oUseType.isA("sap.ui.model.CompositeType") && Array.isArray(vValue) && aUseCompositeTypes) {
+						// validate for basic types too
+						for (let j = 0; j < vValue.length; j++) {
+							if (aUseCompositeTypes[j]) {
+								if (iCompositePart === undefined || j === iCompositePart) { // validate only the part that has changed. (if number has changed but not unit, no validation for units type is needed)
+									aUseCompositeTypes[j].validateValue(vValue[j]);
+								}
+							}
+						}
+					}
 				}
 			}
 		}

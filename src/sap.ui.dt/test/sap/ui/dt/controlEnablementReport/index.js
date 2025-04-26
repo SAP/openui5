@@ -2,22 +2,39 @@
 
 sap.ui.define([
 	"controlEnablementReport/LibraryScanner",
-	"sap/ui/core/Core",
-	"sap/ui/core/Element",
-	"sap/ui/VersionInfo",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Item",
 	"sap/m/MultiComboBox",
+	"sap/m/Button",
+	"sap/m/MessageBox",
+	"sap/m/Text",
+	"sap/m/Toolbar",
 	"sap/ui/comp/filterbar/FilterBar",
 	"sap/ui/comp/filterbar/FilterItem",
-	"sap/m/MessageBox",
-	"sap/m/Toolbar",
-	"sap/m/Button",
-	"sap/ui/table/Table",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Item",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Column",
-	"sap/m/Text",
-	"sap/ui/layout/VerticalLayout"
-], function(LibraryScanner, Core, Element, VersionInfo, JSONModel, Item, MultiComboBox, FilterBar, FilterItem, MessageBox, Toolbar, Button, Table, Column, Text, VerticalLayout) {
+	"sap/ui/table/Table",
+	"sap/ui/VersionInfo"
+], function(
+	LibraryScanner,
+	MultiComboBox,
+	Button,
+	MessageBox,
+	Text,
+	Toolbar,
+	FilterBar,
+	FilterItem,
+	Core,
+	Element,
+	Item,
+	VerticalLayout,
+	JSONModel,
+	Column,
+	Table,
+	VersionInfo
+) {
 	"use strict";
 	Core.ready().then(async () => {
 		const oVersionInfo = await VersionInfo.load();
@@ -51,10 +68,9 @@ sap.ui.define([
 
 		var oFilterBar = new FilterBar("filterbar", {
 			showFilterConfiguration: false,
-			showClearButton: true,
 			showClearOnFB: true,
 			filterBarExpanded: false,
-			filterItems: [
+			filterGroupItems: [
 				new FilterItem("fbItem", {
 					name: "Search",
 					label: "Libraries",
@@ -119,7 +135,6 @@ sap.ui.define([
 
 					var oHeaderToolbar = new Toolbar("toolbar", {
 						content: [
-							// new sap.m.ToolbarSpacer("toolbar-spacer"),
 							new Button("toolbar-export-button", {
 								text : "Export to Excel",
 								press : fnExportToExcel
@@ -132,7 +147,7 @@ sap.ui.define([
 							new Column("table-column-name", {
 								label: "Name",
 								width: "30em",
-								sorted: true,
+								sortOrder: "Ascending",
 								template: new Text({
 									text: "{name}"
 								})

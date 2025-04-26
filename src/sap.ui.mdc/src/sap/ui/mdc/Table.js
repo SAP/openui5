@@ -2506,10 +2506,32 @@ sap.ui.define([
 	};
 
 	/**
+	* Allows to manually trigger the default export without the Export As features and resolves even if <code>preventDefault()</code> is called in the <code>beforeExport</code> event if no error is thrown.<br>
+	* <b>Note:</b><br>
+	* <ul>
+	* <li>Export must be enabled by setting the property <code>enableExport</code> to <code>true</code></li>
+	* <li>The "sap.ui.export" library must be available.</li>
+	* <li>The table must have at least one visible column.</li>
+	* <li>Resolves even if <code>preventDefault()</code> is called in the <code>beforeExport</code> event if no error is thrown.</li>
+	* </ul>
+	*
+	* @ui5-restricted sap.ux.eng.fioriai.reuse
+	* @returns {Promise} Promise that resolves when the export is finished, rejects if the table does not have columns, the export is disabled or the sap.ui.export library is unavailable.
+	* @private
+	*/
+	Table.prototype.triggerExport = function() {
+		if (!this._isExportEnabled()) {
+			return Promise.reject("Export is not enabled for this table.");
+		}
+
+		return this._onExport();
+	};
+
+	/**
 	 * Triggers export via "sap.ui.export"/"Document Export Services" export functionality
 	 *
 	 * @param {boolean} bExportAs controls whether the regular export or the Export As dialog should be called
-	 * @returns {Promise} export build process promise
+	 * @returns {Promise} Resolves when the export process is finished
 	 * @private
 	 */
 	Table.prototype._onExport = function(bExportAs) {
@@ -2518,12 +2540,14 @@ sap.ui.define([
 
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
+				const sErrorMessage = Library.getResourceBundleFor("sap.ui.mdc").getText("table.NO_COLS_EXPORT");
+
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
-					MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
+					MessageBox.error(sErrorMessage, {
 						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
 					});
 				}.bind(that));
-				return;
+				throw new Error(sErrorMessage);
 			}
 
 			const oRowBinding = that.getRowBinding();
@@ -2540,7 +2564,7 @@ sap.ui.define([
 				fileName: that.getHeader()
 			};
 
-			that._getExportHandler().then((oHandler) => {
+			return that._getExportHandler().then((oHandler) => {
 				oHandler[sExportFunctionName](mExportSettings, fnGetColumnLabel);
 			});
 		});
@@ -2572,6 +2596,7 @@ sap.ui.define([
 					that._oExportHandler.attachBeforeExport(that._onBeforeExport, that);
 					fnResolve(that._oExportHandler);
 				});
+
 			}).catch((vError) => {
 				// If sap.ui.export is not loaded, show an error message and return without exporting
 				if (!Library.all().hasOwnProperty("sap.ui.export")) {

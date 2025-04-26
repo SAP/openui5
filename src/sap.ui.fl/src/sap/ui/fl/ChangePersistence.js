@@ -96,7 +96,7 @@ sap.ui.define([
 			bCondenserEnabled = true;
 		} else {
 			var sLayer = aChanges[0].getLayer();
-			if ([Layer.CUSTOMER, Layer.USER].includes(sLayer)) {
+			if ([Layer.CUSTOMER, Layer.PUBLIC, Layer.USER].includes(sLayer)) {
 				bCondenserEnabled = true;
 			}
 		}

@@ -30,4 +30,10 @@ sap.ui.define([
 		await this.oTable.initialized();
 		assert.strictEqual(this.oTable._oTable._oProxy._bEnableV4, true, "'_bEnableV4' flag on the TreeBinding proxy");
 	});
+
+	QUnit.test("typeSettings", async function(assert) {
+		await this.oTable.initialized();
+		assert.deepEqual(this.oTable._oTable.getModel("$typeSettings").oData, {p13nFixedColumnCount: null},
+			"TreeTable has a model with the typeSettings");
+	});
 });

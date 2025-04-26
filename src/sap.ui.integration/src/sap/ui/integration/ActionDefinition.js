@@ -3,15 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/m/library",
 	"sap/ui/core/Element"
-], function (
-	mLibrary,
+], function(
 	Element
 ) {
 	"use strict";
-
-	var ButtonType = mLibrary.ButtonType;
 
 	/**
 	 * Constructor for a new <code>ActionDefinition</code>.
@@ -57,14 +53,6 @@ sap.ui.define([
 				 */
 				icon: {
 					type: "sap.ui.core.URI"
-				},
-
-				/**
-				 * The type of the action button.
-				 * @deprecated Since 1.130 All <code>ActionDefinitions</code> are now rendered as menu items and don't have <code>buttonType</code>.
-				 */
-				buttonType: {
-					type: "sap.m.ButtonType", defaultValue: ButtonType.Transparent
 				},
 
 				/**

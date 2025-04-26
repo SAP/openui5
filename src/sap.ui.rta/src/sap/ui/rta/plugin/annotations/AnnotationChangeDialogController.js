@@ -47,10 +47,10 @@ sap.ui.define([
 		});
 	};
 
-	AnnotationChangeDialogController.prototype.filterProperties = function(sQuery) {
+	AnnotationChangeDialogController.prototype.filterProperties = function(sQuery, bEquals) {
 		const aFilters = [];
 		if (sQuery && sQuery.length > 0) {
-			const filter = new Filter("label", FilterOperator.Contains, sQuery);
+			const filter = new Filter("label", bEquals ? FilterOperator.EQ : FilterOperator.Contains, sQuery);
 			aFilters.push(filter);
 		}
 
@@ -67,16 +67,24 @@ sap.ui.define([
 	AnnotationChangeDialogController.prototype.switchDisplayMode = function(oEvent) {
 		const bShowChangedPropertiesOnly = oEvent.getParameter("state");
 		const oList = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList");
-		oList.getModel().setProperty("/showChangedPropertiesOnly", bShowChangedPropertiesOnly);
-		oList.getModel().setProperty(
-			"/propertiesToDisplay",
-			bShowChangedPropertiesOnly
-				? oList.getModel().getProperty("/changedProperties")
-				: oList.getModel().getProperty("/properties")
-		);
+		const oModel = oList.getModel();
+		oModel.setProperty("/showChangedPropertiesOnly", bShowChangedPropertiesOnly);
+
+		if (bShowChangedPropertiesOnly) {
+			const aOriginallyChangedProperties = oModel.getProperty("/changedProperties");
+			const aAllChangedProperties = oModel.getProperty("/properties").filter((oProperty) => (
+				aOriginallyChangedProperties.some((oOriginallyChangedProperty) => (
+					oOriginallyChangedProperty.annotationPath === oProperty.annotationPath
+				))
+				|| oProperty.originalValue !== oProperty.currentValue
+			));
+			oModel.setProperty("/propertiesToDisplay", aAllChangedProperties);
+		} else {
+			oModel.setProperty("/propertiesToDisplay", oModel.getProperty("/properties"));
+		}
 	};
 
-	AnnotationChangeDialogController.prototype.onSavePress = function(oEvent) {
+	AnnotationChangeDialogController.prototype.onSave = function(oEvent) {
 		const oModelData = oEvent.getSource().getModel().getData();
 		const aChanges = oModelData.properties
 		.map((oProperty) => {
@@ -98,14 +106,13 @@ sap.ui.define([
 		this._fnResolveAfterClose(aChanges);
 	};
 
-	AnnotationChangeDialogController.prototype.onCancelPress = function() {
+	AnnotationChangeDialogController.prototype.onCancel = function() {
 		this._fnResolveAfterClose([]);
 	};
 
 	function createEditorField(sValueType) {
-		const onChange = () => {
-			// Property updates are handled via two-way binding
-			// However, the binding of the save button doesn't detect changes
+		const updateSaveButtonState = () => {
+			// The binding of the save button doesn't detect changes
 			// within nested object properties, so it has to be refreshed explicitly
 			const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 			oSaveButton.getBinding("enabled").refresh(true);
@@ -114,7 +121,7 @@ sap.ui.define([
 		if (sValueType === AnnotationTypes.ValueListType) {
 			const oSelect = new Select({
 				selectedKey: "{currentValue}",
-				change: onChange
+				change: updateSaveButtonState
 			});
 
 			const oItemTemplate = new Item({
@@ -134,14 +141,19 @@ sap.ui.define([
 		if (sValueType === AnnotationTypes.StringType) {
 			return new Input({
 				value: "{currentValue}",
-				change: onChange
+				liveChange: (oEvent) => {
+					const sValue = oEvent.getParameter("newValue");
+					const oContext = oEvent.getSource().getBindingContext();
+					oEvent.getSource().getModel().setProperty("currentValue", sValue, oContext);
+					updateSaveButtonState();
+				}
 			});
 		}
 
 		if (sValueType === AnnotationTypes.BooleanType) {
 			return new Switch({
 				state: "{currentValue}",
-				change: onChange
+				change: updateSaveButtonState
 			});
 		}
 

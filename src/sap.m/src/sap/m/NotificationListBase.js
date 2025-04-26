@@ -115,12 +115,6 @@ sap.ui.define([
 					title: {type: 'string', group: 'Data', defaultValue: ''},
 
 					/**
-					 * The time stamp of the Notification.
-					 * @deprecated As of version 1.123, this property is available directly on {@link sap.m.NotificationListItem}.
-					 */
-					datetime: {type: 'string', group: 'Appearance', defaultValue: ''},
-
-					/**
 					 * Determines the action buttons visibility.
 					 *
 					 * <b>Note:</b> Action buttons are not shown when Notification List Groups are collapsed.
@@ -130,20 +124,7 @@ sap.ui.define([
 					/**
 					 * Determines the visibility of the close button.
 					 */
-					showCloseButton: {type: 'boolean', group: 'Behavior', defaultValue: true},
-
-					/**
-					 * Determines the notification author name.
-					 * @deprecated As of version 1.123. This property is available directly on {@link sap.m.NotificationListItem}.
-					 */
-					authorName: {type: 'string', group: 'Appearance', defaultValue: ''},
-
-					/**
-					 * Determines the URL of the notification author picture.
-					 * @deprecated As of version 1.123. This property is available directly on {@link sap.m.NotificationListItem}.
-					 */
-					authorPicture: {type: 'sap.ui.core.URI'}
-
+					showCloseButton: {type: 'boolean', group: 'Behavior', defaultValue: true}
 				},
 				aggregations: {
 					/**

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
@@ -30,6 +31,7 @@ sap.ui.define([
 	UIChange,
 	FlexState,
 	ManifestUtils,
+	FlexRuntimeInfoAPI,
 	FlexInfoSession,
 	Settings,
 	Condenser,
@@ -461,6 +463,21 @@ sap.ui.define([
 	PersistenceWriteAPI._getAnnotationChanges = function(mPropertyBag) {
 		const sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 		return FlexState.getAnnotationChanges(sFlexReference);
+	};
+
+	/**
+	 * Returns FlexObjects that are created by the current user.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Retrieves the associated flex persistence
+	 * @param {string} [mPropertyBag.layer] - Layer for which changes should be checked
+	 * @returns {Promise} Resolves with array of FlexObjects for the user
+	 * @ui5-restricted sap.ui.rta
+	 */
+	PersistenceWriteAPI._getFlexObjectsForUser = async function(mPropertyBag) {
+		const sUserId = FlexRuntimeInfoAPI.getUserId();
+		const aChanges = await PersistenceWriteAPI._getUIChanges(mPropertyBag);
+		return aChanges.filter((oChange) => oChange.getSupportInformation().user === sUserId);
 	};
 
 	/**

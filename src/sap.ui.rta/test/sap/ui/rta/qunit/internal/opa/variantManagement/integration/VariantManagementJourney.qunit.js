@@ -24,7 +24,7 @@ sap.ui.define([
 	const sVMControlId = "__component0---app--variantManagementOrdersTable";
 	const sContainedVMControlId = "__component0---app--variantManagementContained";
 	const sNewContainedVariantName = "ContainedVariant";
-	const sCVizDropDownId = "__component0---changeVisualization_changesList--popover";
+	const sCVizDropDownId = "sapUIRta_toolbar_fragment--sapUiRta_toggleChangeVisualizationMenuButton--ChangeIndicatorCategorySelection--popover";
 	const sStandardVariantName = "Standard";
 	const sNewVariantName = "TestVariant1";
 	const sTitleId = "__component0---app--TitleForVM1";
