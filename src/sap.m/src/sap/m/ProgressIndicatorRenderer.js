@@ -33,7 +33,7 @@ ProgressIndicatorRenderer.render = function(oRm, oControl) {
 		sState = oControl.getState(),
 		sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
 		sControlId = oControl.getId(),
-		bEnabled = oControl.getEnabled(),
+		bEnabled = true,
 		sAnimationMode = ControlBehavior.getAnimationMode(),
 		bAnimate = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal
 			&& oControl.getDisplayAnimation();
@@ -48,11 +48,7 @@ ProgressIndicatorRenderer.render = function(oRm, oControl) {
 
 	oRm.style("height", iHeightControl);
 
-	if (oControl.getEnabled()) {
-		oRm.attr('tabindex', '-1');
-	} else {
-		oRm.class("sapMPIBarDisabled");
-	}
+	oRm.attr('tabindex', '-1');
 
 	if (oControl.getDisplayOnly()) {
 		oRm.class("sapMPIDisplayOnly");
