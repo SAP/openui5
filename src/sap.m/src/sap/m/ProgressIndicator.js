@@ -71,12 +71,6 @@ sap.ui.define([
 			library : "sap.m",
 			properties : {
 				/**
-				 * Switches enabled state of the control. Disabled fields have different colors, and cannot be focused.
-				 * @deprecated As of version 1.130 with no replacement.
-				 */
-				enabled : {type : "boolean", group : "Behavior", defaultValue : true},
-
-				/**
 				 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error, Warning, Success, Information, None (default value).
 				 * The color for each state depends on the theme.
 				 */
@@ -409,7 +403,7 @@ sap.ui.define([
 	};
 
 	ProgressIndicator.prototype._getStateText = function () {
-		return this.getEnabled() ? ValueStateSupport.getAdditionalText(this.getState()) : "";
+		return ValueStateSupport.getAdditionalText(this.getState());
 	};
 
 	/**
@@ -429,8 +423,8 @@ sap.ui.define([
 			role: "progressbar",
 			type: oBundle.getText("ACC_CTR_TYPE_PROGRESS"),
 			description: sDescription,
-			focusable: this.getEnabled(),
-			enabled: this.getEnabled()
+			focusable: true,
+			enabled: true
 		};
 	};
 

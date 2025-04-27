@@ -395,7 +395,6 @@ sap.ui.define([
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
-		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
@@ -614,8 +613,6 @@ sap.ui.define([
 			// assert
 			assert.notOk(jQuery(oProgIndBar).hasClass("sapMPIBarNegative"));
 
-			// act
-			oProgInd.setEnabled(true);
 			nextUIUpdate.runSync()/*fake timer is used in module*/;
 
 			// assert
@@ -623,7 +620,6 @@ sap.ui.define([
 
 			// cleanup
 			oProgInd.destroy();
-
 		});
 
 });

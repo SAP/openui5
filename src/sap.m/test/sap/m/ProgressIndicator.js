@@ -177,9 +177,7 @@ sap.ui.define([
 
 	var oButton4 = new Button("disable_pi", {
 		text: "Set PI to disable",
-		press: function () {
-			oProgInd8.setEnabled(false);
-		}
+		press: function () {}
 	});
 
 	var oButton5 = new Button("state_pi", {
