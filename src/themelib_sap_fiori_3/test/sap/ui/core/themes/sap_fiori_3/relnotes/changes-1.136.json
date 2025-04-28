@@ -3,6 +3,11 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "c21df37a1941c3f98f6ed2d6d33c32365d61fd87",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus outline is now according to spec"
+      },
+      {
         "id": "46328b7b3bb27984cffcf49bc3c48405d5afb14d",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"

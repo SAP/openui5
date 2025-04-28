@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "8222578f05f036f736900a850d8bb36c19947971",
+        "type": "FIX",
+        "text": " KeyboardInteractionDisplay: Fix detection of related controls"
+      },
+      {
+        "id": "f6b72eb24bd24b2096086537db7c332715b23e2b",
+        "type": "FIX",
+        "text": " KeyboardInteractionDisplay: Fix missing interactions"
+      },
+      {
         "id": "e9909830a1fb83f90ef6c27b4b6192221c25fbfc",
         "type": "FIX",
         "text": " mvc/XMLView: Add typeof checks to resolve controller module name"

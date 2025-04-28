@@ -1,0 +1,17 @@
+{
+  "1.136.0": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "fe3788dae17f92e6cfc134266141765d837d9c7f",
+        "type": "FIX",
+        "text": " GridTable: Set correct rowindex for Multi Headers"
+      },
+      {
+        "id": "b62b16540f7cab8e02bc35465aec58e7e07a1b3a",
+        "type": "FEATURE",
+        "text": " mdc.Table: Option to enable column freeze P13n (GridTableType)"
+      }
+    ]
+  }
+}

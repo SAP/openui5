@@ -3,6 +3,21 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "813afb8b31eb03ee265e77726ff10979d10ecd17",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix scrollTop of single SubSection"
+      },
+      {
+        "id": "05ade874e35d21207ea8786372d9f2ecd95201aa",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Section title in anchorBar corrected"
+      },
+      {
+        "id": "43c43d7b826c1e30972314294f9a72094bf87097",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improve accessibility behavior"
+      },
+      {
         "id": "6a47a1cfc1b19e66d715ed9c058d8c9d7968ec7d",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSectionBase: aria-level attribute added"
@@ -26,6 +41,11 @@
         "id": "46328b7b3bb27984cffcf49bc3c48405d5afb14d",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"
+      },
+      {
+        "id": "f1d75509f2a95bfbd7234b16beab58493c9b6aff",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Fix fast navigation"
       }
     ]
   }

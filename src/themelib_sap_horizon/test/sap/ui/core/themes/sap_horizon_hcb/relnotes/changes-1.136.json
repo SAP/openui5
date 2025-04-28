@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "48230f7427cf1bd7177db2f547f4daf1c196e076",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Label color aligned to spec"
+      },
+      {
+        "id": "c21df37a1941c3f98f6ed2d6d33c32365d61fd87",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Focus outline is now according to spec"
+      },
+      {
         "id": "9d03ba078afdb5c8ddcc5efc9a1da62bd2fbf56d",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: special days are shown correctly now"

@@ -3,6 +3,26 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "8040ff7b90d110e2602368d7adc3dd79eca8e456",
+        "type": "FIX",
+        "text": " sap.m.MultiInput:  Tokenizer Opener is now adjusted"
+      },
+      {
+        "id": "867012a9a47cc5a671e983a341870264b4f4da17",
+        "type": "FIX",
+        "text": " sap.m.Input: Value state is correctly hidden"
+      },
+      {
+        "id": "bbcb2d5d39ce57d8e11bc65ed49372ca79d67fb3",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now skipped"
+      },
+      {
+        "id": "a9cbf9b7dd17188775b7be7837eabf4a373ffe2f",
+        "type": "FEATURE",
+        "text": " We've now introduced fileNameValidationConfig property to configure the restricted character set for file name validation in the UploadSetwithTable plugin"
+      },
+      {
         "id": "a9d35329ba36fa3e6e933851fb4e860bb7103e13",
         "type": "FIX",
         "text": " sap.m.Tokenizer: fix exception throwing"
@@ -56,6 +76,11 @@
         "id": "852f33df0264fd40d718044202557f151bed1084",
         "type": "FIX",
         "text": " sap.m.Input, sap.m.ComboBoxBase: Tests on macOS corrected"
+      },
+      {
+        "id": "e90acecb97fd1bb1068e264e9a3e6bc3fe2fdcb3",
+        "type": "FIX",
+        "text": " sap.m.Input: prevent displaying password value when switching type"
       },
       {
         "id": "f8ae6545f41c6435a07dc0e913f8d8557802c641",

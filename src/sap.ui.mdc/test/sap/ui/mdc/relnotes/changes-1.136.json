@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "c963d0468ef6a66544252a11524ea3aaff4e143b",
+        "type": "FIX",
+        "text": " Field: wrong error message on number for currency or unit"
+      },
+      {
+        "id": "b62b16540f7cab8e02bc35465aec58e7e07a1b3a",
+        "type": "FEATURE",
+        "text": " mdc.Table: Option to enable column freeze P13n (GridTableType)"
+      },
+      {
         "id": "008d5c26b36d706ed20884321ba6e8a9328927db",
         "type": "FIX",
         "text": " MultiValueField: don't open valueHelp on more-indicator"
