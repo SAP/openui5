@@ -1176,7 +1176,7 @@ sap.ui.define([
 
 	async function saveAndReload() {
 		if (this.canSave()) {
-			const sAction = await Utils.showMessageBox("warning", "MSG_SAVE_AND_RELOAD_DIALOG", {
+			const sAction = await Utils.showMessageBox("information", "MSG_SAVE_AND_RELOAD_DIALOG", {
 				actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 				emphasizedAction: MessageBox.Action.OK
 			});
