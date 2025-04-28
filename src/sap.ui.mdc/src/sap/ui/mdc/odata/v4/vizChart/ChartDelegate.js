@@ -975,7 +975,7 @@ sap.ui.define([
 	ChartDelegate.getChartTypeInfo = function(oChart) {
 		const sType = oChart.getChartType(),
 			oMDCResourceBundle = Library.getResourceBundleFor("sap.ui.mdc"),
-			oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
+			oChartResourceBundle = Library.getResourceBundleFor("sap.chart");
 
 		const mInfo = {
 			icon: ChartDelegate.mMatchingIcon[sType],
@@ -992,7 +992,7 @@ sap.ui.define([
 
 		if (this._getChart(oChart)) {
 			const aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
-			const oChartResourceBundle = Library.getResourceBundleFor("sap.chart.messages");
+			const oChartResourceBundle = Library.getResourceBundleFor("sap.chart");
 
 			for (let i = 0; i < aAvailableChartTypes.length; i++) {
 				const sType = aAvailableChartTypes[i].chart;
