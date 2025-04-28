@@ -70,6 +70,9 @@ sap.ui.define([
 			Then.iTeardownMyAppFrame();
 		});
 
+		/**
+		 * @deprecated As of version 1.136
+		 */
 		opaTestOrSkip("Popover.opensOnFocus", function (Given, When, Then) {
 			Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-7");
 			Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField1"});
