@@ -268,16 +268,14 @@ sap.ui.define([
 	 * {@link sap.ui.table.Row#initDomRefs}.
 	 *
 	 * @param {boolean} [bJQuery=false] If set to <code>true</code>, jQuery objects are returned, otherwise native DOM references.
-	 * @param {boolean} [bCollection=false] If set to <code>true</code>, the DOM references will be returned as an array, otherwise as an object.
 	 * @returns {Object|Array} An object (or array, if <code>bCollection</code> is true) containing jQuery objects, or native references to the DOM
 	 *                         elements of the row.
 	 * @see sap.ui.core.Element#getDomRef
 	 * @see sap.ui.table.Row#initDomRefs
 	 * @private
 	 */
-	Row.prototype.getDomRefs = function(bJQuery, bCollection) {
+	Row.prototype.getDomRefs = function(bJQuery) {
 		bJQuery = bJQuery === true;
-		bCollection = bCollection === true;
 
 		const sKey = bJQuery ? "jQuery" : "dom";
 		const mDomRefs = this._mDomRefs;
@@ -328,14 +326,7 @@ sap.ui.define([
 			}
 		}
 
-		const mKeyDomRefs = mDomRefs[sKey];
-		if (bCollection) {
-			return Object.keys(mKeyDomRefs).map(function(sKey) {
-				return sKey === "row" ? null : mKeyDomRefs[sKey];
-			}).filter(Boolean);
-		}
-
-		return mKeyDomRefs;
+		return mDomRefs[sKey];
 	};
 
 	/**
