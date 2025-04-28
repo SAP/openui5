@@ -240,5 +240,20 @@
         "text": " sap.m.FormattedText: Formatting issue fixed"
       }
     ]
+  },
+  "1.130.7": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "0c997907e3bb7f25e63c1dbb28955c6393a9c615",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now skipped"
+      },
+      {
+        "id": "e3701d6033626ea7a8bcc56580396b94ccce0b9e",
+        "type": "FIX",
+        "text": " CellSelector: Ignore \"hidden grouped\" columns when selecting"
+      }
+    ]
   }
 }
