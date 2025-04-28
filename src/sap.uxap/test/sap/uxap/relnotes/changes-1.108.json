@@ -155,5 +155,15 @@
         ]
       }
     ]
+  },
+  "1.108.41": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "efa206aa119dd9581c197c3350d523e3144c6c21",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
+      }
+    ]
   }
 }

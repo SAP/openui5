@@ -1856,5 +1856,31 @@
         "text": " sap.m.Input: preserve value after rerendering of password field"
       }
     ]
+  },
+  "1.108.41": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "cadd447d71fee24c5d7552e626c6e923a33b49ea",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now skipped"
+      },
+      {
+        "id": "9ed46506c8c1a4a0fdeb62bbb99970ffe8abc699",
+        "type": "FIX",
+        "text": " sap.m.Table: Table content mixup when grouping and growing"
+      },
+      {
+        "id": "b176096b1e18745cfeab3a90a2f56a70ef903697",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Reposition ValueStateHeader when long text is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380052154"
+          }
+        ]
+      }
+    ]
   }
 }
