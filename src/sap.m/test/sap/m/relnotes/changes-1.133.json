@@ -193,5 +193,25 @@
         "text": " sap.ui.unified.Calendar: The calendar week configuration has been properly applied"
       }
     ]
+  },
+  "1.133.2": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "83a3fdc8d9c7d25d00105231f9d32a902eaae25d",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now skipped"
+      },
+      {
+        "id": "0c7ba87fc3eb501a4a283c97ac5590cbcdc2913e",
+        "type": "FIX",
+        "text": " CellSelector: Ignore \"hidden grouped\" columns when selecting"
+      },
+      {
+        "id": "c549e4d7a97598af4c8c062061d63c257b0b83b2",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer:popover width adjusted to spec"
+      }
+    ]
   }
 }

@@ -63,5 +63,15 @@
         "text": " sap.m.ProgressIndicator: Condensed styles fixed"
       }
     ]
+  },
+  "1.133.2": {
+    "date": "April 2025",
+    "notes": [
+      {
+        "id": "2c3deb132fe5de57e57baa38d8b3356d136e5493",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Font styling for product name is now correct"
+      }
+    ]
   }
 }
