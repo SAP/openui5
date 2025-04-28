@@ -906,7 +906,8 @@ sap.ui.define([
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			const _fnOnNavigatable = () => {
-				return oTypeahead.navigate(iStep);
+				const oTypeahead = this.getTypeahead(); // as might already be destroyed and removed
+				return oTypeahead?.navigate(iStep);
 			};
 			const oNavigatePromise = this._retrievePromise("navigate");
 			const oExistingPromise = oNavigatePromise && !oNavigatePromise.isSettled() && oNavigatePromise.getInternalPromise();

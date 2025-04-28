@@ -162,6 +162,8 @@ sap.ui.define([
 ) => {
 	"use strict";
 
+	jQuery("#content").css("position", "absolute").css("right", "0").css("top", "0"); //absolute position to prevent cloding of popup if qunit area grows.
+
 	let oField;
 	let oCM;
 	let sId;
@@ -4463,6 +4465,9 @@ sap.ui.define([
 		sinon.stub(oVHContent, "isNavigationEnabled").returns(true);
 		sinon.stub(oVHPopover, "isOpen").returns(true);
 		sinon.stub(oVHPopover, "getUseAsValueHelp").returns(false);
+		oValueHelp.navigate.restore();
+		sinon.stub(oValueHelp, "navigate").callsFake();
+
 
 		oField.focus(); // as ValueHelp is connected with focus
 		const aContent = oField.getAggregation("_content");
@@ -4503,6 +4508,8 @@ sap.ui.define([
 
 		qutils.triggerKeydown(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
 		assert.ok(oContent.onsapbackspace.called, "onsapbackspace called on content control");
+
+		oValueHelp.navigate.restore();
 
 	});
 
@@ -4658,7 +4665,7 @@ sap.ui.define([
 		assert.ok(oValueHelp.navigate.notCalled, "navigate not called");
 	});
 
-	/* QUnit.test("filtering", async (assert) => {
+	QUnit.test("filtering", async (assert) => {
 
 		oField.setDisplay(FieldDisplay.DescriptionValue);
 
@@ -4720,7 +4727,7 @@ sap.ui.define([
 		oValueHelp._requestShowContainer.restore();
 		oVHPopover.isOpen.restore();
 		oValueHelp.close(); // to be sure
-	}); */
+	});
 
 	QUnit.test("filtering and switching to value help", async (assert) => {
 
