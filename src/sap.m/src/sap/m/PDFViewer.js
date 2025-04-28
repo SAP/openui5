@@ -12,8 +12,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Lib",
-	"sap/m/IllustrationPool"
+	"sap/ui/core/Lib"
 ],
 	function(
 		library,
@@ -24,8 +23,7 @@ sap.ui.define([
 		Log,
 		assert,
 		jQuery,
-		CoreLib,
-		IllustrationPool
+		CoreLib
 	) {
 		"use strict";
 
@@ -209,14 +207,6 @@ sap.ui.define([
 			this._initOverflowToolbarControl();
 
 			this._initControlState();
-
-			var oTntIllustrationSet = {
-				setFamily: "tnt",
-				setURI: sap.ui.require.toUrl("sap/tnt/themes/base/illustrations")
-			};
-
-			// register tnt illustration set
-			IllustrationPool.registerIllustrationSet(oTntIllustrationSet, false);
 		};
 
 		/**
