@@ -230,6 +230,7 @@ function(
 	 * Lazy loads attachments icon.
 	 * @returns {object} The attachments icon
 	 * @private
+	 * @deprecated as of version 1.24.0
 	 */
 	ObjectIdentifier.prototype._getAttachmentsIcon = function() {
 
@@ -244,6 +245,7 @@ function(
 	 * Lazy loads people icon.
 	 * @returns {object} The people icon
 	 * @private
+	 * @deprecated as of version 1.24.0
 	 */
 	ObjectIdentifier.prototype._getPeopleIcon = function() {
 
@@ -258,6 +260,7 @@ function(
 	 * Lazy loads notes icon.
 	 * @returns {object} The notes icon
 	 * @private
+	 * @deprecated as of version 1.24.0
 	 */
 	ObjectIdentifier.prototype._getNotesIcon = function() {
 

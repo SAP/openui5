@@ -983,11 +983,7 @@ var FrameType = library.FrameType;
 				layout: ({columns: 6, rowSize: "80px", columnSize: "80px", gap: sGap}),
 				items: [
 					this.oTile1 = new SlideTile({
-						header: "headerText 1",
-						subheader: "subheaderText",
-						state:"Loaded",
-						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 }),
-						items: [this.oTile3 = new GenericTile({
+						tiles: [this.oTile3 = new GenericTile({
 							header: "headerText 2",
 							subheader: "subheaderText",
 							frameType : FrameType.TwoByOne,

@@ -216,6 +216,9 @@ sap.ui.define([
 	/***********************************************************************************************************************/
 	QUnit.module("Internals");
 
+	/**
+	 * @deprecated as of version 1.24.0
+	 */
 	QUnit.test("Icon Getters", function(assert) {
 
 		//SUT
