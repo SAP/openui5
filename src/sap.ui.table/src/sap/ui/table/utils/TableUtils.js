@@ -202,7 +202,7 @@ sap.ui.define([
 	 * @static
 	 * @constant
 	 */
-	const INTERACTIVE_ELEMENT_SELECTORS = ":sapTabbable, .sapUiTableTreeIcon:not(.sapUiTableTreeIconLeaf)";
+	const INTERACTIVE_ELEMENT_SELECTOR = ":sapTabbable";
 
 	/**
 	 * Static collection of utility functions related to the sap.ui.table.Table, ...
@@ -227,7 +227,7 @@ sap.ui.define([
 		RowHorizontalFrameSize: iRowHorizontalFrameSize,
 		DefaultRowHeight: mDefaultRowHeight,
 		RowsUpdateReason: ROWS_UPDATE_REASON,
-		INTERACTIVE_ELEMENT_SELECTORS: INTERACTIVE_ELEMENT_SELECTORS,
+		INTERACTIVE_ELEMENT_SELECTOR: INTERACTIVE_ELEMENT_SELECTOR,
 		ThemeParameters: mThemeParameters,
 
 		/**
@@ -1344,7 +1344,7 @@ sap.ui.define([
 			const oCellInfo = TableUtils.getCellInfo($Cell);
 
 			if (oCellInfo.isOfType(CELLTYPE.ANY | CELLTYPE.PSEUDO)) {
-				const $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTORS);
+				const $InteractiveElements = $Cell.find(INTERACTIVE_ELEMENT_SELECTOR);
 				if ($InteractiveElements.length > 0) {
 					return $InteractiveElements;
 				}

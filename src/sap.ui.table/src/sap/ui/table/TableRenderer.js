@@ -1202,7 +1202,7 @@ sap.ui.define([
 			const oRow = oCell.getParent();
 			rm.openStart("span", oRow.getId() + "-treeicon");
 			rm.class("sapUiTableTreeIcon");
-			rm.attr("tabindex", "-1");
+			rm.attr("tabindex", "0");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TreeIcon", {row: oRow});
 			rm.openEnd();
 			rm.close("span");
