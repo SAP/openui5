@@ -2007,6 +2007,21 @@ sap.ui.define([
 			assert.deepEqual(oResult, ["feature1", "feature2"], "the seen feature ids are returned");
 		});
 
+		QUnit.test("getSeenFeatureIds returning an empty string", async function(assert) {
+			sandbox.stub(FlexUtils, "getUrlParameter").returns("120");
+			const oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves(
+				{response: ""}
+			);
+			const oResult = await WriteLrepConnector.getSeenFeatureIds({
+				layer: Layer.CUSTOMER, url: "/sap/bc/lrep"
+			});
+			const sUrl = "/sap/bc/lrep/seen_features/?sap-client=120";
+			assert.ok(oStubSendRequest.calledWith(sUrl, "GET", {
+				initialConnector: InitialLrepConnector
+			}), "a GET request with correct parameters is sent");
+			assert.deepEqual(oResult, [], "an empty array is returned");
+		});
+
 		QUnit.test("setSeenFeatureIds", async function(assert) {
 			sandbox.stub(FlexUtils, "getUrlParameter").returns("120");
 			const oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves(
