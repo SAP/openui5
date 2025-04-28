@@ -1,46 +1,6 @@
 {
 	"pathSymbolsConfig": {
 		"root" : {
-			"BeforeSearch" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoActivities" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoData" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoEntries" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoMail" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoNotifications" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoSavedItems" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoTasks" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
 			"SuccessBalloon" :  {
 				"sizeReplacement": {
 					"Dot": "Spot"
@@ -50,29 +10,7 @@
 				"sizeReplacement": {
 					"Dot": "Spot"
 				}
-			},
-			"UnableToLoad" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"UnableToUpload" :  {
-				"sizeReplacement": {
-					"Dot": "Spot"
-				}
-			},
-			"NoChartData" :  "Empty",
-			"AddingColumns" :  "Empty",
-			"AddPeopleToCalendar" :  "Empty",
-			"FilteringColumns" :  "Empty",
-			"GroupingColumns" :  "Empty",
-			"ResizingColumns" :  "Empty",
-			"SortingColumns" :  "Empty",
-			"ReceiveAppreciation" :  "Empty",
-			"DragFilesToUpload" :  "Empty",
-			"UserHasSignedUp" :  "Empty",
-			"Achievement" :  "Empty",
-			"KeyTask" :  "Empty"
+			}
 		}
 	}
 }
