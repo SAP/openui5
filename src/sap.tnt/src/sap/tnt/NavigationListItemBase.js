@@ -297,11 +297,42 @@ sap.ui.define([
 	 * @private
 	 */
 	NavigationListItemBase.prototype.onkeydown = function (oEvent) {
+		const bRtl = Localization.getRTL();
+
 		if (oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) {
 			oEvent.preventDefault();
 		}
 
+		if (this._isInsidePopover()) {
+			if ((oEvent.which == KeyCodes.ARROW_LEFT && !bRtl) || (oEvent.which == KeyCodes.ARROW_RIGHT && bRtl)) {
+				this.getNavigationList().oParent.close();
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
+			if 	((oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl) ||	(oEvent.which == KeyCodes.ARROW_LEFT && bRtl)) {
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
+			return;
+		}
+
 		if (!this._isListExpanded()) {
+			if 	((oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl) ||	(oEvent.which == KeyCodes.ARROW_LEFT && bRtl)) {
+				if (this.getItems().length > 0 ) {
+					this.ontap(oEvent);
+				}
+
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
+			if ((oEvent.which == KeyCodes.ARROW_LEFT && !bRtl) || (oEvent.which == KeyCodes.ARROW_RIGHT && bRtl)) {
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
 			return;
 		}
 
@@ -314,10 +345,15 @@ sap.ui.define([
 		}
 
 		if (this.getLevel() !== 0) {
+
+			if (oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl || oEvent.which == KeyCodes.ARROW_LEFT && bRtl ||
+				oEvent.which == KeyCodes.ARROW_LEFT && !bRtl || oEvent.which == KeyCodes.ARROW_RIGHT && bRtl) {
+					// prevent ItemNavigation to move the focus to the next/previous item
+					oEvent.stopPropagation();
+				}
+
 			return;
 		}
-
-		const bRtl = Localization.getRTL();
 
 		//  KeyCodes.MINUS is not returning 189
 		if ((oEvent.shiftKey && oEvent.which == 189) ||
