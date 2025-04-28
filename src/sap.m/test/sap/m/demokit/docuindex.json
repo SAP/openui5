@@ -644,6 +644,7 @@
 			"sap.m.sample.IllustratedMessageInPageWithURI",
 			"sap.m.sample.IllustratedMessageInPageTNT",
 			"sap.m.sample.IllustratedMessageInPageCustom",
+			"sap.m.sample.IllustratedMessageInAppCustom",
 			"sap.m.sample.IllustratedMessageSessionTimeout"
 			]
 		},
@@ -2343,6 +2344,11 @@
 			"id": "sap.m.sample.IllustratedMessageInPageCustom",
 			"name": "Illustrated Message in a Page with Configurable Properties (Custom Illustration Set)",
 			"description": "The available properties of the IllustratedMessage are configurable in this sample. The available illustrations are from the 'custom' illustration set."
+		},
+		{
+			"id": "sap.m.sample.IllustratedMessageInAppCustom",
+			"name": "A demo application that imports a Custom Illustration Set from an npm package",
+			"description": "Shows how to import a Custom Illustration from an npm package into a UI5 application for usage with IllustratedMessage."
 		},
 		{
 			"id": "sap.m.sample.IllustratedMessageSessionTimeout",

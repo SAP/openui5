@@ -1,0 +1,42 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IllustratedMessageInAppCustom",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/view/Main.view.xml",
+					"webapp/controller/Main.controller.js",
+					"webapp/Component.js",
+					"webapp/resources/illustrations/metadata.json",
+					"webapp/resources/illustrations/Custom-Dialog-EmptyCart.svg",
+					"webapp/resources/illustrations/Custom-Dot-EmptyCart.svg",
+					"webapp/resources/illustrations/Custom-Scene-EmptyCart.svg",
+					"webapp/resources/illustrations/Custom-Spot-EmptyCart.svg",
+					"webapp/index.html",
+					"webapp/index.js",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json",
+					"add-illustrations-task.js",
+					"mock-external-package/ui5-illustrations-library/illustrations/metadata.json",
+					"mock-external-package/ui5-illustrations-library/illustrations/Custom-Dialog-EmptyCart.svg",
+					"mock-external-package/ui5-illustrations-library/illustrations/Custom-Dot-EmptyCart.svg",
+					"mock-external-package/ui5-illustrations-library/illustrations/Custom-Scene-EmptyCart.svg",
+					"mock-external-package/ui5-illustrations-library/illustrations/Custom-Spot-EmptyCart.svg",
+					"mock-external-package/ui5-illustrations-library/illustrationsValidator.js",
+					"mock-external-package/ui5-illustrations-library/index.js",
+					"mock-external-package/ui5-illustrations-library/package.json",
+					"mock-external-package/ui5-illustrations-library/README.md",
+					"README.md"
+				]
+			}
+		}
+	}
+}
