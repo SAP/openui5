@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/core/Lib"], function(WizardStep, nextUIUpdate, Library) {
+sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/core/Lib", "sap/ui/layout/form/Form"], function(WizardStep, nextUIUpdate, Library, Form) {
 	"use strict";
 
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -125,6 +125,25 @@ sap.ui.define(["sap/m/WizardStep", "sap/ui/qunit/utils/nextUIUpdate", "sap/ui/co
 
 		// Cleanup
 		oControl.destroy();
+	});
+
+	QUnit.test("Title is correctly propagated on the first control in the step - Form", async function (assert) {
+		// Arrange
+		var oForm = new Form();
+		var oControl = new WizardStep({title: "Test", content: [oForm]});
+		var oSpy = this.spy(oForm, "_suggestTitleId");
+
+		// Act
+		oControl.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Method _suggestTitleId called once");
+		assert.equal(oForm.$().attr("aria-labelledby"), oControl.getId() + "-Title", "Title id is correctly propagated");
+
+		// Cleanup
+		oControl.destroy();
+		oForm.destroy();
 	});
 
 	QUnit.module("Title change");
