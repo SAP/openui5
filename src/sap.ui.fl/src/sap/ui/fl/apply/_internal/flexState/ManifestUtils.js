@@ -139,7 +139,7 @@ function(
 		},
 
 		getCacheKeyFromAsyncHints(sReference, oAsyncHints) {
-			var oFlAsyncHint = getFlAsyncHintRequest(oAsyncHints, sReference);
+			const oFlAsyncHint = getFlAsyncHintRequest(oAsyncHints, sReference);
 			if (oFlAsyncHint) {
 				return oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 			}
@@ -152,13 +152,11 @@ function(
 			}
 		},
 
-		getChangeManifestFromAsyncHints(oAsyncHints) {
-			// whenever there is a back end providing a fl async hint it is also not necessary to merge on client side
-			var oFlAsyncHint = getFlAsyncHintRequest(oAsyncHints);
-			if (oFlAsyncHint) {
-				return false;
-			}
-			return true;
+		getChangeManifestFromAsyncHints(oAsyncHints, sReference) {
+			const oFlAsyncHint = sReference && getFlAsyncHintRequest(oAsyncHints, sReference);
+			// Request entry might indicate that no changes exist.
+			// If entry is not there, it is unknown and there might be changes
+			return !!(!oFlAsyncHint || oFlAsyncHint.cachebusterToken);
 		},
 
 		getBaseComponentNameFromManifest(oManifest) {
