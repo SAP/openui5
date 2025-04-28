@@ -3,39 +3,41 @@
 /* Base theme                                 */
 /* ========================================== */
 
-@_sap_ui_layout_BlockLayout_FontSizeLandXL: @sapMFontHeader1Size;
+@_sap_ui_layout_BlockLayout_FontSizeLandXL: var(--sapFontHeader1Size);
 
 @_sap_ui_layout_BlockLayout_BackgroundDashboardMargin: 0.25rem;
 @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin: 0.5rem;
 @_sap_ui_layout_BlockLayout_BackgroundDashboardAfterScrollbarMargin: 0.375rem;
-@_sap_ui_layout_BlockLayout_BackgroundDashboardColor: @sapUiContentForegroundTextColor;
+@_sap_ui_layout_BlockLayout_BackgroundDashboardColor: var(--sapContent_ForegroundTextColor);
 @_sap_ui_layout_BlockLayout_BackgroundDashboardBorderRadius: 0;
 @_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadow: @sapUiShadowLevel0;
 @_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadowOffset: 0;
 
 @_sap_ui_layout_BlockLayout_LinkTextShadow: @sapUiShadowText;
-@_sap_ui_layout_BlockLayout_CellTextColor: @sapUiContentForegroundTextColor;
+@_sap_ui_layout_BlockLayout_CellTextColor: var(--sapContent_ForegroundTextColor);
 
 .setCellsColorDoubles (@evenCell, @oddCell) {
-	// Match every even cell
+
+	/* Match every even cell */
 	.sapUiBlockLayoutEvenCell {
 		background-color: @evenCell;
 	}
 
-	// Match every odd cell
+	/* Match every odd cell */
 	.sapUiBlockLayoutOddCell {
 		background-color: @oddCell;
 	}
 }
 
 .sapUiBlockLayout {
+
 	.sapUiFormResLayout > div {
 		background-color: inherit;
 	}
 }
 
 .sapUiBlockCellContent {
-	font-family: @sapUiFontFamily;
+	font-family: var(--sapFontFamily);
 	font-weight: normal;
 	font-size: 0.875rem;
 	color: @_sap_ui_layout_BlockLayout_CellTextColor;
@@ -46,7 +48,7 @@
 	}
 
 	.sapUiBlockCellTitle {
-		font-size: @sapMFontHeader3Size;
+		font-size: var(--sapFontHeader3Size);
 
 		.sapMLnk {
 			text-shadow: @_sap_ui_layout_BlockLayout_LinkTextShadow;
@@ -59,11 +61,13 @@
 	font-size: 1.25rem;
 }
 
-// Styles & Sizes for Tablet
+/* Styles & Sizes for Tablet */
 .sapUiBlockLayoutSizeM:not(.sapUiBlockLayoutKeepFontSize) {
+
 	.sapUiNoContentPadding .sapUiBlockCellContent {
 		padding: 0;
 	}
+
 	.sapUiBlockCellContent {
 		padding: 1rem 2rem;
 		font-size: @sapMFontMediumSize;
@@ -78,17 +82,19 @@
 	}
 }
 
-// Styles & Sizes for Desktop
+/* Styles & Sizes for Desktop */
 .sapUiBlockLayoutSizeL:not(.sapUiBlockLayoutKeepFontSize) {
+
 	.sapUiNoContentPadding .sapUiBlockCellContent {
 		padding: 0;
 	}
+
 	.sapUiBlockCellContent {
 		padding: 2rem 3rem;
-		font-size: @sapMFontLargeSize;
+		font-size: var(--sapFontLargeSize);
 
 		> .sapMText {
-			font-size: @sapMFontLargeSize;
+			font-size: var(--sapFontLargeSize);
 		}
 
 		> .sapUiIcon {
@@ -102,17 +108,19 @@
 	}
 }
 
-// Styles & Sizes for LargeDesktop
+/* Styles & Sizes for LargeDesktop */
 .sapUiBlockLayoutSizeXL:not(.sapUiBlockLayoutKeepFontSize) {
+
 	.sapUiNoContentPadding .sapUiBlockCellContent {
 		padding: 0;
 	}
+
 	.sapUiBlockCellContent {
 		padding: 2rem 3rem;
-		font-size: @sapMFontLargeSize;
+		font-size: var(--sapFontLargeSize);
 
 		> .sapMText {
-			font-size: @sapMFontLargeSize;
+			font-size: var(--sapFontLargeSize);
 		}
 
 		> .sapUiIcon {
@@ -128,17 +136,18 @@
 
 /* ============ Background type: Dashboard ============== */
 .sapUiBlockLayoutBackgroundDashboard {
+
 	.sapUiBlockLayoutCell {
 		font-weight: normal;
 		color: @_sap_ui_layout_BlockLayout_BackgroundDashboardColor;
 
-		// use padding and negative margin to display box-shadow outside of the cell, because it has overflow: hidden
+		/* use padding and negative margin to display box-shadow outside of the cell, because it has overflow: hidden */
 		padding: @_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadowOffset;
 		margin: -@_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadowOffset;
 	}
 
 	.sapUiBlockCellContent {
-		background-color: @sapUiGroupContentBackground;
+		background-color: var(--sapGroup_ContentBackground);
 		box-shadow: @_sap_ui_layout_BlockLayout_BackgroundDashboardCellShadow;
 		margin: @_sap_ui_layout_BlockLayout_BackgroundDashboardMargin;
 		border-radius: @_sap_ui_layout_BlockLayout_BackgroundDashboardBorderRadius;
@@ -152,12 +161,13 @@
 	}
 
 	&:not(.sapUiBlockLayoutSizeS) {
+
 		.sapUiBlockLayoutCell:first-of-type {
 			margin-left: 0;
 			padding-left: 0;
 
 			.sapUiBlockCellContent {
-				margin-left: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust first cell in a row with 0.5rem on the left
+				margin-left: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; /* Adjust first cell in a row with 0.5rem on the left */
 			}
 		}
 
@@ -166,59 +176,64 @@
 			padding-right: 0;
 
 			.sapUiBlockCellContent {
-				margin-right: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust last cell in a row with 0.5rem on the right
+				margin-right: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; /* Adjust last cell in a row with 0.5rem on the right */
 			}
 		}
 
 		.sapUiBlockLayoutRow:first-of-type {
+
 			.sapUiBlockLayoutCell {
 				margin-top: 0;
 				padding-top: 0;
 			}
 
 			.sapUiBlockCellContent {
-				margin-top: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust spacing at the top for all cells in the first row
-			}	
+				margin-top: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; /* Adjust spacing at the top for all cells in the first row */
+			}
 		}
 
 		.sapUiBlockLayoutRow:last-of-type {
+
 			.sapUiBlockLayoutCell {
 				margin-bottom: 0;
 				padding-bottom: 0;
 			}
 
 			.sapUiBlockCellContent {
-				margin-bottom: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; // Adjust spacing at the bottom for all cells in the last row
+				margin-bottom: @_sap_ui_layout_BlockLayout_BackgroundDashboardEdgeChildMargin; /* Adjust spacing at the bottom for all cells in the last row */
 			}
 		}
 	}
 
-	// Block Layout with size S (Phone) puts every cell into a single row
-	// Therefore spacing should be altered in this case
+	/* Block Layout with size S (Phone) puts every cell into a single row
+	Therefore spacing should be altered in this case */
 	&.sapUiBlockLayoutSizeS {
+
 		.sapUiBlockCellContent {
 			margin-left: 0.5rem;
 			margin-right: 0.5rem;
 		}
 
 		.sapUiBlockLayoutRow:first-of-type {
+
 			.sapUiBlockLayoutCell {
 				margin-top: 0;
 				padding-top: 0;
 
 				&:first-of-type .sapUiBlockCellContent {
-					margin-top: 0.5rem; // Add 0.5rem spacing for the first cell in the first row
+					margin-top: 0.5rem; /* Add 0.5rem spacing for the first cell in the first row */
 				}
 			}
 		}
 
 		.sapUiBlockLayoutRow:last-of-type {
+
 			.sapUiBlockLayoutCell {
 				margin-bottom: 0;
 				padding-bottom: 0;
-	
+
 				&:last-of-type .sapUiBlockCellContent {
-					margin-bottom: 0.5rem; // Add 0.5rem spacing for the last cell in the last row
+					margin-bottom: 0.5rem; /* Add 0.5rem spacing for the last cell in the last row */
 				}
 			}
 		}
