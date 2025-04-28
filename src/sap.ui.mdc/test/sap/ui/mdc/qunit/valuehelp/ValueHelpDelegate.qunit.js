@@ -133,7 +133,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("requestShowContainer", async (assert) => {
-		const oFakeContainer = {isA: (sName) => false};
+		const oFakeContainer = {isA: (sName) => false, getContent: () => []};
 		const sFakeReason = "Tap";
 
 		sinon.spy(ValueHelpDelegate, "requestShowContainer");
