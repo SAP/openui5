@@ -68,7 +68,7 @@ sap.ui.define([
 	/**
 	 * Requests additional content for the value help.
 	 *
-	 * This method may be called during a ValueHelp's opening phase, whenever a new content should be displayed for a <code>CollectiveSearch</code> dialog configuration or when one of {@link sap.ui.mdc.ValueHelp#getItemForValue getItemForValue}, {@link sap.ui.mdc.ValueHelp#requestShowTypeahead requestShowTypeahead} or {@link sap.ui.mdc.ValueHelp#requestShowValueHelp requestShowValueHelp} are called.
+	 * This method is called during the opening phase of a <code>ValueHelp</code>, if a new content is displayed for a <code>CollectiveSearch</code> dialog or if one of the following methods is called: {@link sap.ui.mdc.ValueHelp#getItemForValue getItemForValue}, {@link sap.ui.mdc.ValueHelp#requestShowTypeahead requestShowTypeahead}, {@link sap.ui.mdc.ValueHelp#requestShowValueHelp requestShowValueHelp}
 	 *
 	 * So depending on the value help {@link sap.ui.mdc.valuehelp.base.Content Content} used, all content controls and data need to be assigned.
 	 * Once they are assigned and the data is set, the returned <code>Promise</code> needs to be resolved.
@@ -105,7 +105,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
 	 * @since 1.110.0
 	 * @public
-	 * @deprecated As of version 1.136
+	 * @deprecated As of version 1.136, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		if (Device.system.phone) {
@@ -502,13 +502,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if a value help container should be opened on user interaction, navigation or configuration changes.
-	 * <b>Note:</b> This method may be called repeatedly with various {@link {sap.ui.mdc.enums.RequestShowContainerReason reasons} depending on the given {@link sap.ui.mdc.valuehelp.base.Container container}.
+	 * Determines if a value help container is to be opened on user interaction, navigation, or configuration changes.
+	 * <b>Note:</b> This method can be called repeatedly with various {@link {sap.ui.mdc.enums.RequestShowContainerReason reasons} depending on the given {@link sap.ui.mdc.valuehelp.base.Container container}.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sRequestShowContainerReason Reason for the request
-	 * @returns {Promise<boolean>} <code>true</code>, if the value help should trigger opening
+	 * @returns {Promise<boolean>} <code>true</code>, if the value help is to be triggered
 	 * @protected
 	 * @since 1.136
 	 */
@@ -528,7 +528,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user focuses on the connected field control
 	 * @public
 	 * @since 1.121.0
-	 * @deprecated As of version 1.136, replaced by {@link class module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
+	 * @deprecated As of version 1.136, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
 		let bShouldOpenOnFocus = false;
@@ -554,7 +554,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user clicks into the connected field control
 	 * @public
 	 * @since 1.121.0
-	 * @deprecated As of version 1.136, replaced by {@link class module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
+	 * @deprecated As of version 1.136, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
 		let bShouldOpenOnClick = false;
@@ -587,13 +587,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides a hook to run time-critical tasks as soon as a control connects to a value help.
+	 * Provides a hook to run time-critical tasks once a control connects to a value help.
 	 *
-	 * This method allows to work around any delays that might occur in the connecting <code>control</code>'s user interaction treatment.
-	 * E.g. in {@link sap.ui.mdc.field.FieldBase FieldBase}, <code>setTimeout</code> or <code>debouncing</code> are used to prevent triggering valuehelp requests too early/often.
+	 * This method allows for working around any delays that might occur during user interaction treatment of the connecting <code>control</code>.
+	 * For example, <code>setTimeout</code> or <code>debouncing</code> are used in {@link sap.ui.mdc.field.FieldBase FieldBase} to prevent triggering value help requests too early/often.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
-	 * @param {sap.ui.core.Control} oControl Control to which the <code>ValueHelp</code> element is connected to
+	 * @param {sap.ui.core.Control} oControl Control to which the <code>ValueHelp</code> element is connected
 	 * @param {sap.ui.mdc.valuehelp.base.ConnectConfig} [oConfig] Connect configuration object
 	 * @protected
 	 * @since 1.136
