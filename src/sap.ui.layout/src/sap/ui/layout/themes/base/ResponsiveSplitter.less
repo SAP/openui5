@@ -7,8 +7,8 @@
 @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonWidth: 2.5rem;
 @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight: 2.375rem;
 @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusBorderRadius: unset;
-@_sap_ui_layout_ResponsiveSplitter_PaginatorSelectedButton: @sapUiContentIconColor;
-@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonActive: @sapUiContentContrastIconColor;
+@_sap_ui_layout_ResponsiveSplitter_PaginatorSelectedButton: var(--sapContent_IconColor);
+@_sap_ui_layout_ResponsiveSplitter_PaginatorButtonActive: var(--sapContent_ContrastIconColor);
 @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHoverShadow: none;
 
 .sapUiResponsiveSplitter {
@@ -25,6 +25,7 @@
 }
 
 .sapUiRSVisiblePaginator {
+
 	& .sapUiResponsiveSplitterPaginator {
 		width: 100%;
 		display: flex;
@@ -32,9 +33,9 @@
 		box-sizing: border-box;
 		outline: none;
 		height: @_sap_ui_layout_ResponsiveSplitter_PaginatorHeight;
-		background-color: @sapUiPageFooterBackground;
-		border-top: 0.0625rem solid @sapUiPageFooterBorderColor;
-		border-bottom: 0.0625rem solid transparent; // needed to properly align buttons vertically
+		background-color: var(--sapPageFooter_Background);
+		border-top: 0.0625rem solid var(--sapPageFooter_BorderColor);
+		border-bottom: 0.0625rem solid transparent; /* needed to properly align buttons vertically */
 	}
 
 	& .sapUiResponsiveSplitterPage {
@@ -56,14 +57,14 @@
 	height: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHeight;
 	cursor: pointer;
 	background-color: transparent;
-	border-radius: @sapUiButtonBorderCornerRadius;
+	border-radius: var(--sapButton_BorderCornerRadius);
 	position: relative;
 
 	&::after {
-		content: "";
+		content: '';
 		width: 0.25rem;
 		height: 0.25rem;
-		background-color: @sapUiContentNonInteractiveIconColor;
+		background-color: var(--sapContent_NonInteractiveIconColor);
 		margin: auto;
 		display: block;
 		margin-top: 16px;
@@ -75,27 +76,27 @@
 	}
 
 	&:focus::before {
-		content: "";
+		content: '';
 		position: absolute;
 		top: 0;
 		bottom: 0;
 		right: 0;
 		left: 0;
-		border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 		border-radius: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonFocusBorderRadius;
 	}
 
 	&:hover {
-		background-color: @sapUiButtonLiteHoverBackground;
+		background-color: var(--sapButton_Lite_Hover_Background);
 		box-shadow: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonHoverShadow;
 
 		&::after {
-			background-color: @sapUiContentNonInteractiveIconColor;
+			background-color: var(--sapContent_NonInteractiveIconColor);
 		}
 	}
 
 	&:active {
-		background-color: @sapUiButtonLiteActiveBackground;
+		background-color: var(--sapButton_Lite_Active_Background);
 
 		&::after {
 			background-color: @_sap_ui_layout_ResponsiveSplitter_PaginatorButtonActive;
@@ -112,6 +113,7 @@
 	}
 
 	&:hover {
+
 		&::after {
 			background-color: @_sap_ui_layout_ResponsiveSplitter_PaginatorSelectedButton;
 		}
@@ -148,7 +150,7 @@
 }
 
 .sapUiResponsiveSplitterHiddenBackButton,
- .sapUiResponsiveSplitterHiddenPaginatorButton {
+.sapUiResponsiveSplitterHiddenPaginatorButton {
 	display: none !important;
-	background-color: @sapUiSelected;
+	background-color: var(--sapSelectedColor);
 }
