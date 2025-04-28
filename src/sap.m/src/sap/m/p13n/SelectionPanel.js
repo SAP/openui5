@@ -454,7 +454,9 @@ sap.ui.define([
 			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
 		}
 		if (bHideRedundant) {
-			oRedundantFilter = new Filter(this.REDUNDANT_ITEMS_ATTRIBUTE, "NE", true);
+			const oFilter1 = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
+			const oFilter2 = new Filter(this.REDUNDANT_ITEMS_ATTRIBUTE, "NE", true);
+			oRedundantFilter = new Filter([oFilter1, oFilter2], false);
 		}
 		if (sSearch) {
 			oSearchFilter = new Filter("label", "Contains", sSearch);
