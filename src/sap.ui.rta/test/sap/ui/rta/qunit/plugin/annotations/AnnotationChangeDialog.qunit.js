@@ -205,8 +205,8 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
-					false,
-					"then the save button is disabled"
+					true,
+					"then the save button is enabled"
 				);
 				assert.strictEqual(aFormElements.length, 3, "then for each property a form element is created");
 				assert.strictEqual(aFormElements[0].getLabel().getText(), "My First Test Label", "then the properties are properly sorted");
@@ -336,8 +336,8 @@ sap.ui.define([
 				oSelect.fireChange({ selectedItem: oFirstListItem });
 				assert.strictEqual(
 					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
-					false,
-					"then the save button is disabled"
+					true,
+					"then the save button is enabled"
 				);
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 				oSaveButton.firePress();
