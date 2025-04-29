@@ -110,7 +110,7 @@ sap.ui.define([
 	 * @private
 	 */
 	RowMode.prototype.detachEvents = function() {
-		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+		this.getTable()?.removeEventDelegate(TableDelegate);
 	};
 
 	/**

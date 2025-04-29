@@ -7,7 +7,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	"use strict";
 
 	const Hooks = new window.WeakMap();
-	const MASTER_HOOK_KEY = {};
 	const mKeyMapForExternalUsage = {};
 	const mHookMetadataByKey = {};
 	const aForbiddenTypes = ["function"];
@@ -46,30 +45,6 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	 *     this.doSomethingThatTriggersHook();
 	 * };
 	 * MyClass.prototype.myProtectedMethod = function() {...};
-	 *
-	 * @example
-	 * MyClass.prototype.init = function() {
-	 *     TableUtils.Hook.install(oTable, MyClass.prototype.hooks, this);
-	 * };
-	 * MyClass.prototype.myMethod = function() {...};
-	 * MyClass.prototype.hooks = {
-	 *     MyHook: function() {this.myMethod();}
-	 * };
-	 * MyClass.prototype.hooks[TableUtils.Hook.Keys.MyOtherHook] = function() {...};
-	 * MyClass.prototype.exit = function() {
-	 *     TableUtils.Hook.uninstall(oTable, MyClass.prototype.hooks, this);
-	 * };
-	 * // Be careful with inheritance!
-	 * MyClassSubclass.prototype.hooks[TableUtils.Hook.Keys.YetAnotherHook] = function() {...};
-	 * oInstanceOfMyClass.hooks.YetAnotherHook === oInstanceOfMyClassSubclass.hooks.YetAnotherHook // equals true
-	 *
-	 * @example
-	 * var oMyHookInstallation = {};
-	 * oMyHookInstallation.myMethod = function() {...};
-	 * oMyHookInstallation[TableUtils.Hook.Keys.MyHook] = function() {this.myMethod();};
-	 * TableUtils.Hook.install(oTable, oMyHookInstallation);
-	 * oMyHookInstallation[TableUtils.Hook.Keys.MyOtherHook] = function() {this.myMethod();};
-	 * TableUtils.Hook.uninstall(oTable, oMyHookInstallation);
 	 *
 	 * @private
 	 */
@@ -262,86 +237,11 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 			throw new Error("Hook with key " + sKey + " was not called. Invalid arguments passed\n" + oScope);
 		}
 
-		aHooks.map((oHook) => {
-			if (oHook.key === MASTER_HOOK_KEY) {
-				const oCall = {};
-				const oHandlerContext = oHook.handlerContext == null ? oHook.target : oHook.handlerContext;
-
-				oCall[sKey] = aArguments;
-				HookUtils.TableUtils.dynamicCall(oHook.target, oCall, oHandlerContext);
-			} else if (oHook.key === sKey) {
+		aHooks.forEach((oHook) => {
+			if (oHook.key === sKey) {
 				oHook.handler.apply(oHook.handlerContext, aArguments);
 			}
 		});
-	};
-
-	/**
-	 * Installs the hooks of a table in an object.
-	 * Installation of hooks is a short way of registering to all hooks. The target object needs to have hook keys as the keys,
-	 * and functions as the values. For example: <code>oTarget.MyHook = function() {...}</code> will be called, if the
-	 * "MyHook" hook is called.
-	 * There can only be one installation in the target object for every context.
-	 *
-	 * @param {sap.ui.table.Table} oScope The table whose hooks are installed.
-	 * @param {Object} oTarget The object the hooks are installed in.
-	 * @param {Object} [oThis] The context of hook handler calls.
-	 */
-	HookUtils.install = function(oScope, oTarget, oThis) {
-		if (!oTarget || !isValidScope(oScope)) {
-			return;
-		}
-
-		let aHooks = Hooks.get(oScope);
-
-		if (aHooks == null) {
-			aHooks = [];
-		}
-
-		const bMasterHookInstalled = aHooks.some(function(oHook) {
-			return oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis;
-		});
-
-		if (bMasterHookInstalled) {
-			return;
-		}
-
-		aHooks.push({
-			key: MASTER_HOOK_KEY,
-			target: oTarget,
-			handlerContext: oThis
-		});
-
-		Hooks.set(oScope, aHooks);
-	};
-
-	/**
-	 * Uninstalls hooks of a table from the target object.
-	 *
-	 * @param {sap.ui.table.Table} oScope The table whose hooks are uninstalled.
-	 * @param {Object} oTarget The object the hooks are uninstalled from.
-	 * @param {Object} [oThis] The context of hook handler calls.
-	 */
-	HookUtils.uninstall = function(oScope, oTarget, oThis) {
-		const aHooks = Hooks.get(oScope);
-
-		if (aHooks == null || !oTarget) {
-			return;
-		}
-
-		for (let i = 0; i < aHooks.length; i++) {
-			const oHook = aHooks[i];
-
-			if (oHook.key === MASTER_HOOK_KEY && oHook.target === oTarget && oHook.handlerContext === oThis) {
-				aHooks.splice(i, 1);
-				break;
-			}
-		}
-
-		if (aHooks.length === 0) {
-			Hooks.delete(oScope);
-		} else {
-			Hooks.set(oScope, aHooks);
-		}
 	};
 
 	/**

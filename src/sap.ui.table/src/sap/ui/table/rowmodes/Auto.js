@@ -155,7 +155,7 @@ sap.ui.define([
 
 	AutoRowMode.prototype.detachEvents = function() {
 		RowMode.prototype.detachEvents.apply(this, arguments);
-		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+		this.getTable()?.removeEventDelegate(TableDelegate);
 	};
 
 	AutoRowMode.prototype.cancelAsyncOperations = function() {

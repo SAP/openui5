@@ -206,10 +206,13 @@ sap.ui.define([
 		this.pFocusHandlingFinished = Promise.resolve();
 		this.fnResolveFocusHandlingFinished = null;
 	};
-	HelperPlugin.prototype.hooks = {};
 
 	HelperPlugin.prototype.onActivate = function(oTable) {
-		TableUtils.Hook.install(oTable, this.hooks, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RefreshRows, _fireRenderingTriggered, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateRows, _fireRenderingTriggered, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, _fireRenderingTriggered, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsUnbound, onTableRowsUnbound, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Signal, onTableSignal, this);
 
 		const wrapForRenderingDetection = function(oObject, sFunctionName) {
 			const fnOriginalFunction = oObject[sFunctionName];
@@ -225,22 +228,27 @@ sap.ui.define([
 		wrapForRenderingDetection(oTable, "invalidate");
 		wrapForRenderingDetection(UIArea, "rerenderControl");
 	};
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RefreshRows] = function() { this.fireRenderingTriggered(); };
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UpdateRows] = function() { this.fireRenderingTriggered(); };
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UnbindRows] = function() { this.fireRenderingTriggered(); };
+
+	HelperPlugin.prototype.onDeactivate = function(oTable) {
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RefreshRows, _fireRenderingTriggered, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.UpdateRows, _fireRenderingTriggered, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.UnbindRows, _fireRenderingTriggered, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsUnbound, onTableRowsUnbound, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Signal, onTableSignal, this);
+	};
+
+	function _fireRenderingTriggered() {
+		this.fireRenderingTriggered();
+	}
 
 	// If the table is unbound during initial rendering, it does not fire any rowsUpdated events. Handled in waitForFullRendering.
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RowsUnbound] = function() {
+	function onTableRowsUnbound() {
 		if (!this.getControl().getDomRef()) {
 			this.fireRenderingTriggered();
 		}
-	};
+	}
 
-	HelperPlugin.prototype.onDeactivate = function(oTable) {
-		TableUtils.Hook.uninstall(oTable, this);
-	};
-
-	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Signal] = function(sSignal) {
+	function onTableSignal(sSignal) {
 		switch (sSignal) {
 			case "StartTableUpdate":
 				if (this.iTableUpdateProcesses === 0) {
@@ -274,7 +282,7 @@ sap.ui.define([
 				break;
 			default:
 		}
-	};
+	}
 
 	HelperPlugin.prototype.whenTableUpdateFinished = function() {
 		return this.pTableUpdateFinished;
@@ -1031,7 +1039,7 @@ sap.ui.define([
 				oTable.qunit._mSetRowStates.rowStates = aRowStates;
 			} else if (oTable.qunit._mSetRowStates) {
 				oTable.detachRowsUpdated(oTable.qunit._mSetRowStates.resetCounter);
-				oTable.removeDelegate(oTable.qunit._mSetRowStates);
+				oTable.removeEventDelegate(oTable.qunit._mSetRowStates);
 				TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, oTable.qunit._mSetRowStates.updateRowState);
 				delete oTable.qunit._mSetRowStates;
 			}
@@ -1284,7 +1292,7 @@ sap.ui.define([
 		const oDelegate = {};
 
 		oDelegate[sEventName] = function() {
-			this.removeDelegate(oDelegate);
+			this.removeEventDelegate(oDelegate);
 			fnHandler.apply(this, arguments);
 		};
 
@@ -1292,7 +1300,7 @@ sap.ui.define([
 
 		return {
 			remove: function() {
-				oElement.removeDelegate(oDelegate);
+				oElement.removeEventDelegate(oDelegate);
 			}
 		};
 	};

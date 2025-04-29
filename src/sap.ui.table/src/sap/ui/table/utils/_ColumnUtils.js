@@ -26,18 +26,6 @@ sap.ui.define([
 		TableUtils: null, // Avoid cyclic dependency. Will be filled by TableUtils
 
 		/**
-		 * Collects and updates the column info object if it's not yet defined.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @private
-		 */
-		initColumnUtils: function(oTable) {
-			if (!oTable._oColumnInfo) {
-				ColumnUtils.updateColumnInfo(oTable, ColumnUtils.collectColumnInfo(oTable));
-			}
-		},
-
-		/**
 		 * Invalidates the cached column utils information on changes.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
@@ -46,54 +34,12 @@ sap.ui.define([
 			oTable._oColumnInfo = null;
 		},
 
-		// TODO: @type definitions below does not work with the JSDoc generation -> should be cleaned up
-		//  but not so important because the functions are anyhow private
-
 		/**
 		 * A Column info object.
 		 * @typedef sap.ui.table.ColumnInfo
 		 * @property {int} columnCount Number of columns in the columns aggregation.
 		 * @property {int} visibleColumnCount Number of columns which should be rendered.
 		 * @property {Object.<string, sap.ui.table.ColumnMapItem>} columnMap Map of detailed column information, keyed by column IDs
-		 * @private
-		 */
-
-		/**
-		 * Updates the column info object.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @param {sap.ui.table.ColumnInfo} oColumnInfo Column info object.
-		 * @private
-		 */
-		updateColumnInfo: function(oTable, oColumnInfo) {
-			oTable._oColumnInfo = oColumnInfo;
-		},
-
-		/**
-		 * Collects and returns column info.
-		 *
-		 * @param {sap.ui.table.Table} oTable Instance of the table.
-		 * @returns {sap.ui.table.ColumnInfo} Map of detailed column information.
-		 * @private
-		 */
-		collectColumnInfo: function(oTable) {
-			return {
-				columnCount: oTable.getColumns().length,
-				visibleColumnCount: ColumnUtils.TableUtils.getVisibleColumnCount(oTable),
-				columnMap: ColumnUtils.getColumnMap(oTable)
-			};
-		},
-
-		/**
-		 * @typedef sap.ui.table.ColumnMapItemLevelInfo
-		 * @property {sap.ui.table.Column[]} spannedColumns Array of columns which are spanned by the source column
-		 * @private
-		 */
-
-		/**
-		 * @typedef sap.ui.table.ColumnMapItemParents
-		 * @property {sap.ui.table.Column} column Column reference
-		 * @property {int} level Level as which the parent resides
 		 * @private
 		 */
 
@@ -109,13 +55,26 @@ sap.ui.define([
 		 */
 
 		/**
+		 * @typedef sap.ui.table.ColumnMapItemLevelInfo
+		 * @property {sap.ui.table.Column[]} spannedColumns Array of columns which are spanned by the source column
+		 * @private
+		 */
+
+		/**
+		 * @typedef sap.ui.table.ColumnMapItemParents
+		 * @property {sap.ui.table.Column} column Column reference
+		 * @property {int} level Level as which the parent resides
+		 * @private
+		 */
+
+		/**
 		 * Collects and returns information about the current column configuration of the table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 * @returns {Object.<string, sap.ui.table.ColumnMapItem>} Map of column information where the key is the column ID, and the value is a
 		 * @private
 		 */
-		getColumnMap: function(oTable) {
+		_getColumnMap: function(oTable) {
 			let i;
 			let oColumn;
 			let oColumnMapItem = {};
@@ -173,9 +132,17 @@ sap.ui.define([
 		 * @returns {sap.ui.table.ColumnMapItem | undefined} Column map item with detailed column information.
 		 * @private
 		 */
-		getColumnMapItem: function(oTable, sColumnId) {
-			ColumnUtils.initColumnUtils(oTable);
+		_getColumnMapItem: function(oTable, sColumnId) {
+			if (!oTable._oColumnInfo) {
+				oTable._oColumnInfo = {
+					columnCount: oTable.getColumns().length,
+					visibleColumnCount: ColumnUtils.TableUtils.getVisibleColumnCount(oTable),
+					columnMap: ColumnUtils._getColumnMap(oTable)
+				};
+			}
+
 			const oSourceColumnMapItem = oTable._oColumnInfo.columnMap[sColumnId];
+
 			if (!oSourceColumnMapItem) {
 				Log.error("Column with ID '" + sColumnId + "' not found", oTable);
 			} else {
@@ -193,7 +160,7 @@ sap.ui.define([
 		 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information.
 		 */
 		getParentSpannedColumns: function(oTable, sColumnId, iLevel) {
-			const oColumnMapItem = ColumnUtils.getColumnMapItem(oTable, sColumnId);
+			const oColumnMapItem = ColumnUtils._getColumnMapItem(oTable, sColumnId);
 			if (!oColumnMapItem) {
 				return undefined;
 			}
@@ -219,8 +186,8 @@ sap.ui.define([
 		 * @returns {Array.<{column: sap.ui.table.Column, level: int}>|undefined} Array of column information.
 		 * @private
 		 */
-		getChildrenSpannedColumns: function(oTable, sColumnId, iLevel) {
-			const oColumnMapItem = ColumnUtils.getColumnMapItem(oTable, sColumnId);
+		_getChildrenSpannedColumns: function(oTable, sColumnId, iLevel) {
+			const oColumnMapItem = ColumnUtils._getColumnMapItem(oTable, sColumnId);
 			if (!oColumnMapItem) {
 				return undefined;
 			}
@@ -285,7 +252,7 @@ sap.ui.define([
 		 * @returns {int} Total header span of the column.
 		 * @private
 		 */
-		getMaxHeaderSpan: function(oColumn) {
+		_getMaxHeaderSpan: function(oColumn) {
 			return ColumnUtils.getHeaderSpan(oColumn);
 		},
 
@@ -296,7 +263,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the column has a higher header span than 1.
 		 * @private
 		 */
-		hasHeaderSpan: function(oColumn) {
+		_hasHeaderSpan: function(oColumn) {
 			return ColumnUtils.getHeaderSpan(oColumn) > 1;
 		},
 
@@ -310,8 +277,8 @@ sap.ui.define([
 		 * Map of column boundaries.
 		 * @private
 		 */
-		getColumnBoundaries: function(oTable, sColumnId) {
-			const oColumnMapItem = ColumnUtils.getColumnMapItem(oTable, sColumnId);
+		_getColumnBoundaries: function(oTable, sColumnId) {
+			const oColumnMapItem = ColumnUtils._getColumnMapItem(oTable, sColumnId);
 			if (!oColumnMapItem) {
 				return undefined;
 			}
@@ -335,7 +302,7 @@ sap.ui.define([
 				for (i = 0; i < aNewRelations.length; i++) {
 					oColumn = mColumns[aNewRelations[i]];
 					aDirectRelations = aDirectRelations.concat(ColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()));
-					aDirectRelations = aDirectRelations.concat(ColumnUtils.getChildrenSpannedColumns(oTable, oColumn.getId()));
+					aDirectRelations = aDirectRelations.concat(ColumnUtils._getChildrenSpannedColumns(oTable, oColumn.getId()));
 				}
 
 				aNewRelations = [];
@@ -371,7 +338,7 @@ sap.ui.define([
 			for (let i = 0; i < aKeys.length; i++) {
 				const oColumn = mColumns[aKeys[i]];
 				iColumnIndex = oTable.indexOfColumn(oColumn);
-				const iHeaderSpan = ColumnUtils.getMaxHeaderSpan(oColumn);
+				const iHeaderSpan = ColumnUtils._getMaxHeaderSpan(oColumn);
 				// start
 				if (iColumnIndex < mBoundaries.startIndex) {
 					mBoundaries.startIndex = iColumnIndex;
@@ -412,7 +379,7 @@ sap.ui.define([
 				return false;
 			}
 
-			if (ColumnUtils.hasHeaderSpan(oColumn)
+			if (ColumnUtils._hasHeaderSpan(oColumn)
 				|| ColumnUtils.getParentSpannedColumns(oTable, oColumn.getId()).length !== 0) {
 				// No movement if the column is spanned by an other column or itself defines a span
 				return false;
@@ -428,7 +395,7 @@ sap.ui.define([
 		 * @returns {int} The corrected index.
 		 * @private
 		 */
-		normalizeColumnMoveTargetIndex: function(oColumn, iNewIndex) {
+		_normalizeColumnMoveTargetIndex: function(oColumn, iNewIndex) {
 			const oTable = oColumn._getTable();
 			const iCurrentIndex = oTable.indexOfColumn(oColumn);
 			const aColumns = oTable.getColumns();
@@ -466,7 +433,7 @@ sap.ui.define([
 				return false;
 			}
 
-			iNewIndex = ColumnUtils.normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
+			iNewIndex = ColumnUtils._normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
 
 			if (iNewIndex < oTable.getComputedFixedColumnCount() || iNewIndex < oTable._iFirstReorderableIndex) {
 				// No movement of fixed columns or e.g. the first column in the TreeTable
@@ -479,8 +446,8 @@ sap.ui.define([
 			if (iNewIndex > iCurrentIndex) { // Column moved to higher index
 				// The column to be moved will appear after this column.
 				const oBeforeColumn = aColumns[iNewIndex >= aColumns.length ? aColumns.length - 1 : iNewIndex];
-				const oTargetBoundaries = ColumnUtils.getColumnBoundaries(oTable, oBeforeColumn.getId());
-				if (ColumnUtils.hasHeaderSpan(oBeforeColumn) || oTargetBoundaries.endIndex > iNewIndex) {
+				const oTargetBoundaries = ColumnUtils._getColumnBoundaries(oTable, oBeforeColumn.getId());
+				if (ColumnUtils._hasHeaderSpan(oBeforeColumn) || oTargetBoundaries.endIndex > iNewIndex) {
 					return false;
 				}
 			} else {
@@ -516,7 +483,7 @@ sap.ui.define([
 				return false;
 			}
 
-			iNewIndex = ColumnUtils.normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
+			iNewIndex = ColumnUtils._normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
 
 			const bExecuteDefault = oTable.fireColumnMove({
 				column: oColumn,
@@ -555,60 +522,6 @@ sap.ui.define([
 		 */
 		getMinColumnWidth: function() {
 			return Device.system.desktop ? 48 : 88;
-		},
-
-		/**
-		 * Resizes the given column to its optimal width.
-		 * Cleans up the state which is created while resizing a column via drag&drop
-		 * and sets the new width to the column.
-		 *
-		 * @param {sap.ui.table.Column} oColumn The column which should be resized
-		 * @private
-		 */
-		autoResizeColumn: function(oColumn) {
-			const oTable = oColumn._getTable();
-			const sCurrentWidth = oColumn.getWidth();
-			const iNewWidth = ColumnUtils._calculateColumnWidth(oColumn);
-
-			if (iNewWidth + "px" !== sCurrentWidth) {
-				ColumnUtils.resizeColumn(oTable, oColumn, iNewWidth);
-			}
-		},
-
-		/**
-		 * Calculates the widest content width of the currently visible column cells including headers.
-		 * Headers with column span are not taken into account.
-		 *
-		 * @param {sap.ui.table.Column} oColumn The column control
-		 * @returns {int} iWidth Calculated column width
-		 * @private
-		 */
-		_calculateColumnWidth: function(oColumn) {
-			const oTableElement = oColumn._getTable().getDomRef();
-			const oHiddenArea = document.createElement("div");
-
-			oHiddenArea.classList.add("sapUiTableHiddenSizeDetector", "sapUiTableHeaderDataCell", "sapUiTableDataCell");
-			oTableElement.appendChild(oHiddenArea);
-
-			// Create a copy of all visible cells in the column, including the header cells without colspan
-			const aCells = Array.from(oTableElement.querySelectorAll(`td[data-sap-ui-colid="${oColumn.getId()}"]:not([colspan])`))
-				.filter((element) => !element.classList.contains("sapUiTableHidden"))
-				.map((element) => element.firstElementChild.cloneNode(true));
-
-			aCells.forEach((cell) => {
-				cell.removeAttribute('id');
-				oHiddenArea.appendChild(cell);
-			});
-
-			// Determine the column width
-			let iWidth = oHiddenArea.getBoundingClientRect().width + 4; // widest cell + 4px for borders and rounding
-			const iTableWidth = oTableElement.querySelector('.sapUiTableCnt').getBoundingClientRect().width;
-			iWidth = Math.min(iWidth, iTableWidth); // no wider as the table
-			iWidth = Math.max(iWidth, ColumnUtils.getMinColumnWidth()); // not too small
-
-			oTableElement.removeChild(oHiddenArea);
-
-			return Math.round(iWidth);
 		},
 
 		/**

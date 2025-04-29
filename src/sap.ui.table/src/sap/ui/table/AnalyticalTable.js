@@ -229,7 +229,7 @@ sap.ui.define([
 		this._aGroupedColumns = [];
 		this._bSuspendUpdateAnalyticalInfo = false;
 
-		TableUtils.Grouping.setToDefaultGroupMode(this);
+		TableUtils.Grouping.setHierarchyMode(this, TableUtils.Grouping.HierarchyMode.Group);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
@@ -353,10 +353,29 @@ sap.ui.define([
 
 		if (sName === "rows") {
 			this._updateTotalRow(true);
-			TableUtils.Binding.metadataLoaded(this).then(function() {
+			this._metadataLoaded().then(function() {
 				this._updateColumns(true);
 			}.bind(this));
 		}
+	};
+
+	AnalyticalTable.prototype._metadataLoaded = function() {
+		const oModel = this.getBinding()?.getModel() ?? null;
+		const oMetadataLoaded = Promise.withResolvers();
+
+		if (!oModel) {
+			oMetadataLoaded.reject();
+		} else if (oModel.metadataLoaded) { // v2
+			oModel.metadataLoaded().then(() => oMetadataLoaded.resolve());
+		} else if (oModel.attachMetadataLoaded) { // v1
+			if (oModel.oMetadata?.isLoaded()) {
+				oMetadataLoaded.resolve();
+			} else {
+				oModel.attachMetadataLoaded(() => oMetadataLoaded.resolve());
+			}
+		}
+
+		return oMetadataLoaded.promise;
 	};
 
 	AnalyticalTable.prototype._applyAnalyticalBindingInfo = function(oBindingInfo) {
