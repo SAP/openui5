@@ -516,6 +516,7 @@ sap.ui.define([
 					actions: {
 						compVariant: {
 							name: "myFancyName",
+							additionalInfoKey: "ADDITIONALINFO_I18N_KEY",
 							changeType: "variantContent",
 							handler: this.oDTHandlerStub
 						}
@@ -533,6 +534,11 @@ sap.ui.define([
 						propagatingControlName: "HBox"
 					}]
 				});
+				sandbox.stub(this.oOverlay.getDesignTimeMetadata(), "getLibraryText")
+				.callThrough()
+				.withArgs(this.oControl, "ADDITIONALINFO_I18N_KEY")
+				.returns("Additional Info");
+
 				// make sure _isEditable is checked with the newly set action
 				this.oPlugin.deregisterElementOverlay(this.oOverlay);
 				this.oPlugin.registerElementOverlay(this.oOverlay);
@@ -551,6 +557,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin.getMenuItems([this.oOverlay]);
 			assert.strictEqual(aMenuItems.length, 1, "one context menu item is visible");
 			assert.strictEqual(aMenuItems[0].id, "CTX_COMP_VARIANT_CONTENT", "VariantContent is the only entry");
+			assert.strictEqual(aMenuItems[0].additionalInfo, "Additional Info", "the additional info is set");
 		});
 
 		QUnit.test("getMenuItems on child control", function(assert) {
@@ -559,6 +566,7 @@ sap.ui.define([
 			assert.strictEqual(aMenuItems[0].id, "CTX_COMP_VARIANT_CONTENT", "VariantContent is the only entry");
 			assert.strictEqual(aMenuItems[0].propagatingControl.getId(), this.oControl.getId(), "the propagating control is set");
 			assert.strictEqual(aMenuItems[0].propagatingControlName, "HBox", "the propagating control name is set");
+			assert.strictEqual(aMenuItems[0].additionalInfo, undefined, "the additional info is not provided");
 		});
 
 		QUnit.test("the handler is called", function(assert) {

@@ -145,7 +145,8 @@ sap.ui.define([
 					annotation: {
 						annotationChange1: {
 							changeType: "myChangeType",
-							title: "My Action Title"
+							title: "My Action Title",
+							additionalInfoKey: "ADDITIONALINFO_I18N_KEY"
 						}
 					}
 				},
@@ -154,7 +155,8 @@ sap.ui.define([
 					action: {
 						annotationPropagatedChange1: {
 							changeType: "myPropagatedChangeType",
-							title: "My Propagated Action Title"
+							title: "My Propagated Action Title",
+							additionalInfoKey: "ADDITIONALINFO_I18N_KEY"
 						},
 						annotationPropagatedChange2: {
 							changeType: "myPropagatedChangeType2",
@@ -168,6 +170,10 @@ sap.ui.define([
 			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
 			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
 
+			sandbox.stub(this.oButtonOverlay.getDesignTimeMetadata(), "getLibraryText")
+			.callThrough()
+			.withArgs(this.oButton, "ADDITIONALINFO_I18N_KEY")
+			.returns("Additional Info");
 			sandbox.stub(this.oAnnotationPlugin, "isAvailable").withArgs([this.oButtonOverlay]).returns(true)
 			.withArgs([this.oLayoutOverlay]).returns(true);
 			sandbox.stub(this.oAnnotationPlugin, "isEnabled").withArgs([this.oButtonOverlay]).returns(true)
@@ -179,11 +185,13 @@ sap.ui.define([
 			assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is correct");
 			assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
 			assert.strictEqual(aMenuItems[0].rank, 300, "then the menu item rank is correct");
+			assert.strictEqual(aMenuItems[0].additionalInfo, "Additional Info", "then the menu item additional info is correct");
 			assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION_annotationPropagatedChange1", "then the menu item id is correct");
 			assert.strictEqual(aMenuItems[1].text, "My Propagated Action Title", "then the menu item text is correct");
 			assert.strictEqual(aMenuItems[1].icon, "sap-icon://request", "then the menu item icon is correct");
 			assert.strictEqual(aMenuItems[1].enabled, true, "then the menu item is enabled");
 			assert.strictEqual(aMenuItems[1].rank, 300, "then the menu item rank is correct");
+			assert.strictEqual(aMenuItems[1].additionalInfo, "Additional Info", "then the menu item additional info is correct");
 			assert.strictEqual(
 				aMenuItems[1].propagatingControl.getId(),
 				this.oVerticalLayout.getId(),
@@ -201,6 +209,7 @@ sap.ui.define([
 				"then the menu item propagating control is correct"
 			);
 			assert.strictEqual(aMenuItems[2].propagatingControlName, "Layout", "then the menu item propagating control name is correct");
+			assert.strictEqual(aMenuItems[2].additionalInfo, undefined, "then the menu item additional info is not provided as expected");
 		});
 
 		QUnit.test("When multiple editable overlays are selected", function(assert) {

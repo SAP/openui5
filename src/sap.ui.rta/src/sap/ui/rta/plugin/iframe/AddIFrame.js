@@ -184,6 +184,9 @@ sap.ui.define([
 			if (oAction) {
 				var oSiblingMenuItem = {
 					id: "CTX_CREATE_SIBLING_IFRAME",
+					additionalInfo: this._getAdditionalInfo(aElementOverlays[0], oAction, {
+						additionalInfoKey: "IFRAME_RTA_CONTEXT_MENU_INFO"
+					}),
 					rank: iBaseRank,
 					action: oAction,
 					...getCommonProperties.call(this)
@@ -200,6 +203,9 @@ sap.ui.define([
 				var oParentMenuItem = {
 					action: oAction,
 					id: `CTX_CREATE_CHILD_IFRAME_${oAction.aggregation.toUpperCase()}`,
+					additionalInfo: this._getAdditionalInfo(aElementOverlays[0], oAction, {
+						additionalInfoKey: "IFRAME_RTA_CONTEXT_MENU_INFO"
+					}),
 					rank: ++iBaseRank,
 					...getCommonProperties.call(this, oAction.aggregation)
 				};

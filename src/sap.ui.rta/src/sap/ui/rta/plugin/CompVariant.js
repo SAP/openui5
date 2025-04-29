@@ -356,6 +356,7 @@ sap.ui.define([
 				if (oPropagatedAction.action?.changeType === "variantContent") {
 					aMenuItems.push({
 						id: "CTX_COMP_VARIANT_CONTENT",
+						additionalInfo: this._getAdditionalInfo(oElementOverlay, oPropagatedAction.action),
 						text: this.getActionText(
 							oElementOverlay,
 							oPropagatedAction.action,
@@ -377,6 +378,7 @@ sap.ui.define([
 				if (oAction.changeType === "variantContent") {
 					aMenuItems.push({
 						id: "CTX_COMP_VARIANT_CONTENT",
+						additionalInfo: this._getAdditionalInfo(oElementOverlay, oAction),
 						text: this.getActionText(oElementOverlay, oAction),
 						handler: changeContent.bind(this, oAction),
 						enabled: true,

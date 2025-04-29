@@ -290,6 +290,7 @@ sap.ui.define([
 
 					aMenuItems.push({
 						id: bSingleAction ? sPluginId : sPluginId + iIndex,
+						additionalInfo: this._getAdditionalInfo(oResponsibleElementOverlay, oSettingsAction),
 						rank: bSingleAction ? iRank : iRank + iIndex,
 						text: this.getActionText(oResponsibleElementOverlay, oSettingsAction, sPluginId),
 						icon: getActionIcon(oSettingsAction),
@@ -334,6 +335,7 @@ sap.ui.define([
 
 					aMenuItems.push({
 						id: bSingleAction ? sPluginId : sPluginId + iIndex,
+						additionalInfo: this._getAdditionalInfo(oPropagatingControlOverlay, oSettingsAction),
 						rank: bSingleAction ? iRank : iRank + iIndex,
 						text: this.getActionText(
 							oPropagatingControlOverlay,
