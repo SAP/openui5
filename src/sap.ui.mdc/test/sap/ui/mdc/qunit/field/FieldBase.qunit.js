@@ -3769,6 +3769,7 @@ sap.ui.define([
 				setTimeout(() => {
 					assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
 
+					const oToken = oContent?.getTokens()?.[0];
 					oToken.focus(); // focus Token should close ValueHelp
 					assert.ok(oValueHelp.close.calledOnce, "close called once");
 
@@ -3791,6 +3792,7 @@ sap.ui.define([
 						oValueHelp.requestShowTypeahead.returns(Promise.resolve(true));
 						oValueHelp.toggleOpen.resetHistory();
 
+						const oToken = oContent?.getTokens()?.[0];
 						oToken.focus();
 						setTimeout(() => {
 							assert.notOk(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead not called");
