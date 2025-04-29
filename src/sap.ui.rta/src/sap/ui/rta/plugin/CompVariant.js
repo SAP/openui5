@@ -3,27 +3,27 @@
  */
 
 sap.ui.define([
-	"sap/m/MessageBox",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/isEmptyObject",
+	"sap/m/MessageBox",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
+	"sap/ui/fl/write/api/ContextSharingAPI",
+	"sap/ui/rta/plugin/rename/RenameDialog",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/plugin/RenameHandler",
-	"sap/ui/rta/Utils",
-	"sap/ui/fl/write/api/ContextSharingAPI"
+	"sap/ui/rta/Utils"
 ], function(
-	MessageBox,
 	_omit,
 	isEmptyObject,
+	MessageBox,
 	Lib,
 	OverlayRegistry,
 	DtUtil,
+	ContextSharingAPI,
+	RenameDialog,
 	Plugin,
-	RenameHandler,
-	Utils,
-	ContextSharingAPI
+	Utils
 ) {
 	"use strict";
 
@@ -86,17 +86,33 @@ sap.ui.define([
 		return oOverlay.getElement().getAllVariants();
 	}
 
-	// ------ rename ------
-	function renameVariant(aOverlays) {
-		this.startEdit(aOverlays[0]);
-	}
-
-	/**
-	 * @override
-	 */
-	CompVariant.prototype.setDesignTime = function(oDesignTime) {
-		RenameHandler._setDesignTime.call(this, oDesignTime);
+	CompVariant.prototype.init = function(...aArgs) {
+		Plugin.prototype.init.apply(this, aArgs);
+		this._oDialog = new RenameDialog();
 	};
+
+	// ------ rename ------
+	async function renameVariant(aOverlays) {
+		const [oOverlay] = aOverlays;
+		const sVariantId = oOverlay.getElement().getPresentVariantId();
+		const vDomRef = oOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
+		const sNewText = await this._oDialog.openDialogAndHandleRename({
+			overlay: oOverlay,
+			domRef: vDomRef,
+			action: this.getAction(oOverlay)
+		});
+		if (!sNewText) {
+			return;
+		}
+		const mPropertyBag = {
+			newVariantProperties: {
+				[sVariantId]: {
+					name: sNewText
+				}
+			}
+		};
+		createCommandAndFireEvent.call(this, oOverlay, ["compVariantUpdate"], mPropertyBag);
+	}
 
 	/**
 	 * Checks if variant rename is available for the overlay.
@@ -126,32 +142,6 @@ sap.ui.define([
 	 */
 	CompVariant.prototype.isRenameEnabled = function(aElementOverlays) {
 		return this.isRenameAvailable(aElementOverlays[0]);
-	};
-
-	CompVariant.prototype.startEdit = function(oOverlay) {
-		var vDomRef = oOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-		RenameHandler.startEdit.call(this, {
-			overlay: oOverlay,
-			domRef: vDomRef,
-			pluginMethodName: "plugin.CompVariant.startEdit"
-		});
-	};
-
-	CompVariant.prototype.stopEdit = function(bRestoreFocus) {
-		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.CompVariant.stopEdit");
-	};
-
-	CompVariant.prototype._emitLabelChangeEvent = function() {
-		var oOverlay = this._oEditedOverlay;
-		var sVariantId = oOverlay.getElement().getPresentVariantId();
-		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
-		var mPropertyBag = {
-			newVariantProperties: {}
-		};
-		mPropertyBag.newVariantProperties[sVariantId] = {
-			name: sText
-		};
-		createCommandAndFireEvent.call(this, oOverlay, ["compVariantUpdate"], mPropertyBag);
 	};
 
 	// ------ configure ------
@@ -444,6 +434,12 @@ sap.ui.define([
 
 	CompVariant.prototype.getActionName = function() {
 		return "compVariant";
+	};
+
+	CompVariant.prototype.destroy = function(...args) {
+		Plugin.prototype.destroy.apply(this, args);
+		this._oDialog.destroy();
+		delete this._oDialog;
 	};
 
 	return CompVariant;

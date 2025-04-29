@@ -21,7 +21,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/rta/plugin/LocalReset",
 	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/rename/Rename",
 	"sap/ui/rta/plugin/Resize",
 	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/plugin/Selection",

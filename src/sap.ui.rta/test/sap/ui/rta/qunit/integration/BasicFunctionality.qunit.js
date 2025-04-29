@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Element",
-	"sap/ui/core/EventBus"
+	"sap/ui/core/Element"
 ], function(
 	RuntimeAuthoring,
 	Stack,
@@ -28,8 +27,7 @@ sap.ui.define([
 	KeyCodes,
 	sinon,
 	nextUIUpdate,
-	Element,
-	EventBus
+	Element
 ) {
 	"use strict";
 
@@ -248,31 +246,6 @@ sap.ui.define([
 					await nextUIUpdate();
 					done();
 				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("during rename", function(assert) {
-			const fnDone = assert.async();
-			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
-				if (mParams.overlay === this.oButtonOverlay) {
-					triggerKeyDownEvent(document, KeyCodes.Z);
-					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
-
-					triggerKeyDownEvent(document, KeyCodes.Y);
-					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
-					fnDone();
-				}
-			}, this);
-
-			this.oButtonOverlay.focus();
-			this.oButtonOverlay.setSelected(true);
-			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oButtonOverlay, sinon).then(async function() {
-				const clock = sinon.useFakeTimers();
-				const oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
-				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[0].getDomRef());
-				clock.tick(1000);
-				await nextUIUpdate();
-				clock.restore();
 			}.bind(this));
 		});
 	});

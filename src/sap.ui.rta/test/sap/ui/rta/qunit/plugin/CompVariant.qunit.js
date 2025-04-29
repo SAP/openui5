@@ -64,14 +64,6 @@ sap.ui.define([
 		return oReturn;
 	}
 
-	function setTextAndTriggerEnterOnEditableField(oPlugin, sText) {
-		oPlugin._oEditableControlDomRef.textContent = sText;
-		oPlugin._oEditableField.textContent = oPlugin._oEditableControlDomRef.textContent;
-		var oEvent = new Event("keydown");
-		oEvent.keyCode = KeyCodes.ENTER;
-		oPlugin._oEditableField.dispatchEvent(oEvent);
-	}
-
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
 		before() {
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
@@ -151,8 +143,9 @@ sap.ui.define([
 		QUnit.test("Rename", async function(assert) {
 			const sNewText = "myFancyText";
 			var oMenuItem = getContextMenuEntryById.call(this, "CTX_COMP_VARIANT_RENAME");
-			oMenuItem.handler([this.oVariantManagementOverlay]);
-			setTextAndTriggerEnterOnEditableField(this.oPlugin, sNewText);
+			RtaQunitUtils.simulateRename(sandbox, sNewText, () => {
+				oMenuItem.handler([this.oVariantManagementOverlay]);
+			});
 			const oParameters = await waitForCommandToBeCreated(this.oPlugin);
 			const oCommand = oParameters.command;
 			const mExpectedNewVariantProps = {};

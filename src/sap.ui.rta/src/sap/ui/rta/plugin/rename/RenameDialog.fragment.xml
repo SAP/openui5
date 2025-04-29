@@ -1,0 +1,63 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+>
+	<Dialog
+		id="sapUiRtaRenameDialog"
+		resizable="false"
+		draggable="true"
+		contentWidth="50rem"
+		title="{i18n>RENAME_DIALOG_TITLE}"
+		class="sapUiContentPadding"
+		initialFocus="sapUiRtaRenameDialog_input"
+		escapeHandler=".onCancel"
+	>
+		<content>
+			<HBox
+				alignItems="Center"
+				justifyContent="Start"
+				fitContainer="true"
+			>
+				<Label
+					text="{i18n>RENAME_DIALOG_LABEL}"
+					labelFor="sapUiRtaRenameDialog_input"
+					wrapping="true"
+				>
+					<layoutData>
+						<FlexItemData maxWidth="10rem" />
+					</layoutData>
+				</Label>
+				<Input
+					id="sapUiRtaRenameDialog_input"
+					value="{/newText}"
+					placeholder="{i18n>RENAME_DIALOG_PLACEHOLDER}"
+					liveChange="onTextChange"
+					valueState="{= ${/validationError} === undefined ? 'None' : 'Error'}"
+					valueStateText="{/validationError}"
+					width="100%"
+				>
+					<layoutData>
+						<FlexItemData growFactor="1" styleClass="sapUiTinyMarginBegin" />
+					</layoutData>
+				</Input>
+			</HBox>
+		</content>
+		<beginButton>
+			<Button
+				id="sapUiRtaRenameDialog_saveButton"
+				enabled="{= ${/validationError} === undefined }"
+				type="Emphasized"
+				text="{i18n>RENAME_DIALOG_CONFIRM}"
+				press="onSave"
+			/>
+		</beginButton>
+		<endButton>
+			<Button
+				id="sapUiRtaRenameDialog_cancelButton"
+				type="Transparent"
+				text="{i18n>RENAME_DIALOG_CANCEL}"
+				press="onCancel"
+			/>
+		</endButton>
+	</Dialog>
+</core:FragmentDefinition>

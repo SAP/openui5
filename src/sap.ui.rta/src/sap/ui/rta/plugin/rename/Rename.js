@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/plugin/RenameHandler",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/rta/plugin/rename/RenameDialog",
+	"sap/ui/rta/plugin/Plugin"
 ], function(
-	Plugin,
-	RenameHandler,
-	Log
+	Log,
+	RenameDialog,
+	Plugin
 ) {
 	"use strict";
 
@@ -54,41 +54,28 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @override
-	 */
-	Rename.prototype.exit = function(...aArgs) {
-		Plugin.prototype.exit.apply(this, aArgs);
-
-		this.setBusy(false);
-		RenameHandler._exit.call(this);
+	Rename.prototype.init = function(...aArgs) {
+		Plugin.prototype.init.apply(this, aArgs);
+		this._oDialog = new RenameDialog();
 	};
 
-	/**
-	 * @override
-	 */
-	Rename.prototype.setDesignTime = function(oDesignTime) {
-		RenameHandler._setDesignTime.call(this, oDesignTime);
-	};
-
-	Rename.prototype.startEdit = function(oOverlay) {
-		var vDomRef = this.getAction(oOverlay).domRef;
-		var fnGetTextMutators = this.getAction(oOverlay).getTextMutators;
-		RenameHandler.startEdit.call(this, {
+	Rename.prototype.startEdit = async function(oOverlay) {
+		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oOverlay);
+		const oDomRef = this.getAction(oOverlay).domRef;
+		const sNewText = await this._oDialog.openDialogAndHandleRename({
 			overlay: oOverlay,
-			domRef: vDomRef,
-			getTextMutators: fnGetTextMutators,
-			pluginMethodName: "plugin.Rename.startEdit"
+			domRef: oDomRef,
+			action: this.getAction(oResponsibleElementOverlay)
 		});
-	};
-
-	Rename.prototype.stopEdit = function(bRestoreFocus) {
-		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.Rename.stopEdit");
+		if (sNewText) {
+			this.createRenameCommand(oOverlay, sNewText);
+		}
 	};
 
 	Rename.prototype.handler = function(aElementOverlays) {
-		aElementOverlays = this.getSelectedOverlays() || aElementOverlays;
-		this.startEdit(aElementOverlays[0]);
+		const aSelectedOverlays = this.getSelectedOverlays();
+		const [oOverlay] = aSelectedOverlays?.length > 0 ? aSelectedOverlays : aElementOverlays;
+		this.startEdit(oOverlay);
 	};
 
 	/**
@@ -144,33 +131,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 */
-	Rename.prototype.registerElementOverlay = function(...aArgs) {
-		const [oOverlay] = aArgs;
-		oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
-
-		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
-	};
-
-	/**
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for editable
 	 * @returns {Promise.<boolean>|booolean} <code>true</code> if it's editable wrapped in a promise.
 	 * @private
 	 */
 	Rename.prototype._isEditable = function(oOverlay) {
 		return this._checkChangeHandlerAndStableId(oOverlay);
-	};
-
-	/**
-	 * @override
-	 */
-	Rename.prototype.deregisterElementOverlay = function(...aArgs) {
-		const [oOverlay] = aArgs;
-		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
-		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
-
-		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	Rename.prototype.createRenameCommand = function(oElementOverlay, sNewText) {
@@ -196,16 +162,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @returns {Promise} Empty promise
-	 * @private
-	 */
-	Rename.prototype._emitLabelChangeEvent = function() {
-		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
-		this._fnSetControlText(sText);
-		return this.createRenameCommand(this._oEditedOverlay, sText);
-	};
-
-	/**
 	 * Retrieve the context menu item for the action.
 	 * @param {sap.ui.dt.ElementOverlay|sap.ui.dt.ElementOverlay[]} vElementOverlays - Target overlay(s)
 	 * @return {object[]} - array of the items with required data
@@ -220,6 +176,12 @@ sap.ui.define([
 	 */
 	Rename.prototype.getActionName = function() {
 		return "rename";
+	};
+
+	Rename.prototype.destroy = function(...args) {
+		Plugin.prototype.destroy.apply(this, args);
+		this._oDialog.destroy();
+		delete this._oDialog;
 	};
 
 	return Rename;
