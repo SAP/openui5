@@ -119,7 +119,7 @@ sap.ui.define([
 			properties: {
 				"text": {type: "string", defaultValue: ""},
 				"visible": {type: "boolean", defaultValue: true},
-				"tabbable": {type: "boolean", defaultValue: false},
+				"tabbable": {type: "boolean", defaultValue: true},
 				"type": {type: "string", defaultValue: "text"}
 			},
 			associations: {
@@ -133,8 +133,8 @@ sap.ui.define([
 				oRm.voidStart("input", oControl);
 				oRm.attr("type", oControl.getType());
 				oRm.attr("value", oControl.getText());
-				if (oControl.getTabbable()) {
-					oRm.attr("tabindex", "0");
+				if (!oControl.getTabbable()) {
+					oRm.attr("tabindex", "-1");
 				}
 				if (!oControl.getVisible()) {
 					oRm.style("display", "none");
@@ -159,6 +159,31 @@ sap.ui.define([
 				oRm.style("overflow", "hidden");
 				oRm.style("background", "linear-gradient(blue 1px, orange 1px, orange calc(100% - 1px), blue)");
 				oRm.openEnd();
+				oRm.close("div");
+			}
+		}
+	});
+
+	const TestLayoutControl = Control.extend("sap.ui.table.test.TestLayoutControl", {
+		metadata: {
+			aggregations: {
+				items: {type: "sap.ui.core.Control", multiple: true, singularName: "item"}
+			},
+			associations: {
+				"ariaLabelledBy": {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
+			}
+		},
+
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.style("display", "flex");
+				oRm.style("flex-direction", "row");
+				oRm.openEnd();
+				oControl.getItems().forEach((oItem) => {
+					oRm.renderControl(oItem);
+				});
 				oRm.close("div");
 			}
 		}
@@ -1020,6 +1045,7 @@ sap.ui.define([
 	TableQUnitUtils.TestControl = TestControl;
 	TableQUnitUtils.TestInputControl = TestInputControl;
 	TableQUnitUtils.HeightTestControl = HeightTestControl;
+	TableQUnitUtils.TestLayoutControl = TestLayoutControl;
 	TableQUnitUtils.ColumnHeaderMenu = Control.extend("sap.ui.table.test.TestContextMenu", {
 		metadata: {
 			interfaces: ["sap.ui.core.IColumnHeaderMenu"]
@@ -1197,7 +1223,7 @@ sap.ui.define([
 	 * @param {boolean} [mConfig.bind=false] Whether the text represents a binding path and the text property of the template should be bound.
 	 *                                       The corresponding entry in the default test data is created if it does not yet exist.
 	 * @param {string} [mConfig.type=text] The type of the input element.
-	 * @param {boolean} [mConfig.tabbable=false] Whether the input is tabbable.
+	 * @param {boolean} [mConfig.tabbable=true] Whether the input is tabbable.
 	 * @param {string} [mConfig.label=undefined] The text of the label.
 	 * @param {boolean} [mConfig.interactiveLabel=false] Whether the label should be interactive (focusable & tabbable).
 	 * @returns {sap.ui.table.Column} The column.
@@ -1213,7 +1239,7 @@ sap.ui.define([
 			}),
 			template: new TestInputControl({
 				text: mConfig.bind === true ? "{" + mConfig.text + "}" : mConfig.text,
-				tabbable: mConfig.tabbable === true,
+				tabbable: mConfig.tabbable,
 				type: mConfig.type
 			}),
 			width: "100px"
