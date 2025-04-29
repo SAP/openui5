@@ -268,7 +268,8 @@ sap.ui.define([
 							typeof oAction.isEnabled === "function" && oAction.isEnabled(aElementOverlays[0].getElement())
 							|| (oAction.isEnabled !== false) && this.isEnabled(aElementOverlays)
 						),
-						handler: this.handler.bind(this, aElementOverlays, oAction)
+						handler: this.handler.bind(this, aElementOverlays, oAction),
+						additionalInfo: this._getAdditionalInfo(oResponsibleElementOverlay, oAction)
 					});
 				}
 			}, this);
@@ -306,7 +307,8 @@ sap.ui.define([
 						),
 						handler: this.handler.bind(this, [oPropagatingControlOverlay], oAction),
 						propagatingControl: oPropagatedAnnotationAction.propagatingControl,
-						propagatingControlName: oPropagatedAnnotationAction.propagatingControlName
+						propagatingControlName: oPropagatedAnnotationAction.propagatingControlName,
+						additionalInfo: this._getAdditionalInfo(oResponsibleElementOverlay, oAction)
 					});
 				}
 			}, this);

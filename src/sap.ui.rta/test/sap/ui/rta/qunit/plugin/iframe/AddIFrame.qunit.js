@@ -139,7 +139,8 @@ sap.ui.define([
 						actions: {
 							addIFrame: {
 								changeType: "addIFrame",
-								text: "as foo"
+								text: "as foo",
+								additionalInfoKey: "ADDITIONALINFO_I18N_KEY"
 							}
 						}
 					},
@@ -154,6 +155,11 @@ sap.ui.define([
 				}
 			});
 
+			sandbox.stub(this.oObjectPageLayoutOverlay.getDesignTimeMetadata(), "getLibraryText")
+			.callThrough()
+			.withArgs(this.oObjectPageLayoutOverlay.getElement(), "ADDITIONALINFO_I18N_KEY")
+			.returns("Additional Info");
+
 			const aMenuItems = await this.oAddIFrame.getMenuItems([this.oObjectPageLayoutOverlay]);
 
 			assert.strictEqual(oRegisterFontSpy.callCount, 1, "the font was registered");
@@ -163,8 +169,18 @@ sap.ui.define([
 				"the Section text via the designtime is correct"
 			);
 			assert.strictEqual(
+				aMenuItems[0].additionalInfo,
+				"Additional Info",
+				"the additionalInfo is correct"
+			);
+			assert.strictEqual(
 				aMenuItems[1].text(this.oObjectPageLayoutOverlay), sExpectedHeaderText,
 				"the header text via the aggregation names is correct"
+			);
+			assert.strictEqual(
+				aMenuItems[1].additionalInfo,
+				undefined,
+				"the additionalInfo is not given as expected"
 			);
 		});
 

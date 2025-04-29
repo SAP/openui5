@@ -1144,6 +1144,7 @@ sap.ui.define([
 			const oButtonOverlay = createOverlayWithSettingsAction(this.oButton, [
 				{
 					name: "CTX_ACTION1",
+					additionalInfoKey: "ADDITIONALINFO_I18N_KEY",
 					icon: sIconAction1,
 					handler() {
 						return new Promise(function(resolve) {
@@ -1165,6 +1166,7 @@ sap.ui.define([
 					name() {
 						return "Action 3 Name";
 					},
+					additionalInfoKey: "ADDITIONALINFO_I18N_KEY",
 					icon: { name: "icon should be a STRING not an Object" },
 					handler() {
 						return new Promise(function(resolve) {
@@ -1176,21 +1178,28 @@ sap.ui.define([
 
 			const oLogErrorStub = sandbox.stub(BaseLog, "error");
 			sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+			sandbox.stub(oButtonOverlay.getDesignTimeMetadata(), "getLibraryText")
+			.callThrough()
+			.withArgs(this.oButton, "ADDITIONALINFO_I18N_KEY")
+			.returns("Additional Info");
 
 			const aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
 			assert.strictEqual(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 			assert.strictEqual(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
 			assert.strictEqual(aMenuItems[0].icon, sIconAction1, "'getMenuItems' returns the correct item icon for action 1");
+			assert.strictEqual(aMenuItems[0].additionalInfo, "Additional Info", "then the menu item additional info is correct");
 			aMenuItems[0].handler([oButtonOverlay]);
 			assert.strictEqual(aMenuItems[1].id, "CTX_SETTINGS1", "'getMenuItems' returns the context menu item for action 2");
 			assert.strictEqual(aMenuItems[1].text, "Action 2 Name", "'getMenuItems' returns the correct item text for action 2");
 			assert.strictEqual(aMenuItems[1].rank, 111, "'getMenuItems' returns the correct item rank for action 2");
 			assert.strictEqual(aMenuItems[1].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 2");
+			assert.strictEqual(aMenuItems[1].additionalInfo, undefined, "then the menu item additional info not available");
 			aMenuItems[1].handler([oButtonOverlay]);
 			assert.strictEqual(aMenuItems[2].id, "CTX_SETTINGS2", "'getMenuItems' returns the context menu item for action 3");
 			assert.strictEqual(aMenuItems[2].text, "Action 3 Name", "'getMenuItems' returns the correct item text for action 3");
 			assert.strictEqual(aMenuItems[2].rank, 112, "'getMenuItems' returns the correct item rank for action 3");
 			assert.strictEqual(aMenuItems[2].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 3");
+			assert.strictEqual(aMenuItems[2].additionalInfo, "Additional Info", "then the menu item additional info is correct");
 			assert.strictEqual(
 				oLogErrorStub.getCall(0).args[0],
 				"Icon setting for settingsAction should be a string",
