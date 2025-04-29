@@ -34,6 +34,9 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.navigate as #navigate
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.getUseAsValueHelp as #getUseAsValueHelp
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.isValidationSupported as #isValidationSupported
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnNavigate as #shouldOpenOnNavigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnFocus as #shouldOpenOnFocus
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnClick as #shouldOpenOnClick
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.removeVisualFocus as #removeVisualFocus
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.setVisualFocus as #setVisualFocus
 	 *
@@ -710,7 +713,6 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
- 	 * @deprecated As of version 1.136 with no replacement.
 	 */
 	Container.prototype.isTypeaheadSupported = function() {
 		return false;
@@ -898,36 +900,18 @@ sap.ui.define([
 		return oContainer && oContainer.getScrollDelegate && oContainer.getScrollDelegate();
 	};
 
-	/**
-	 * Determines if the value help should be opened when the user focuses the connected control.
-	 *
-	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
-	 * @deprecated As of version 1.136 with no replacement.
-	 */
 	Container.prototype.shouldOpenOnFocus = function() {
 		const oDelegate = this.getValueHelpDelegate();
 		const oValueHelp = this.getValueHelp();
 		return oDelegate ? oDelegate.shouldOpenOnFocus(oValueHelp, this) : Promise.resolve(false);
 	};
 
-	/**
-	 * Determines if the value help should be opened when the user clicks into the connected control.
-	 *
-	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
-	 * @deprecated As of version 1.136 with no replacement.
-	 */
 	Container.prototype.shouldOpenOnClick = function() {
 		const oDelegate = this.getValueHelpDelegate();
 		const oValueHelp = this.getValueHelp();
 		return oDelegate ? oDelegate.shouldOpenOnClick(oValueHelp, this) : Promise.resolve(false);
 	};
 
-	/**
-	 * Determines if the value help should be opened when the user used the arrow keys.
-	 *
-	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
-	 * @deprecated As of version 1.136 with no replacement.
-	 */
 	Container.prototype.shouldOpenOnNavigate = function() {
 		return false;
 	};

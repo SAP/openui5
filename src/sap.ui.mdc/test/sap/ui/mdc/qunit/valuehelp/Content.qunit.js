@@ -384,18 +384,12 @@ sap.ui.define([
 		assert.equal(oContent.isSingleSelect(), true, "single-select correctly determined from maxConditions");
 	});
 
-	/**
-	 *  @deprecated As of version 1.136
-	 */
 	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		assert.notOk(oContent.shouldOpenOnClick(), "shouldOpenOnClick");
 
 	});
 
-	/**
-	 *  @deprecated As of version 1.136
-	 */
 	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		oContent.setConfig({maxConditions: -1});
