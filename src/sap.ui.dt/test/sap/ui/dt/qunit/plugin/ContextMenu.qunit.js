@@ -65,6 +65,7 @@ sap.ui.define([
 			};
 			this.oMenuEntries.enabledBtn1 = {
 				id: "CTX_ENABLED_BUTTON1",
+				additionalInfo: "AdditionalInfo_enabledBtn1",
 				text: "enabled for button 1",
 				handler: sinon.spy(),
 				enabled: function(vElementOverlays) {
@@ -75,6 +76,7 @@ sap.ui.define([
 			};
 			this.oMenuEntries.disabledBtn1 = {
 				id: "CTX_DISABLED_BUTTON1",
+				additionalInfo: "AdditionalInfo_disabledBtn1",
 				text: "disabled for button 1",
 				handler: sinon.spy(),
 				enabled: function(vElementOverlays) {
@@ -97,7 +99,8 @@ sap.ui.define([
 				submenu: [
 					{
 						id: "CTX_BUTTON2_SUB01",
-						text: "text",
+						additionalInfo: "AdditionalInfo_button2_sub01",
+						text: "first submenu icon text",
 						icon: "sap-icon://fridge",
 						enabled: true
 					},
@@ -177,17 +180,46 @@ sap.ui.define([
 			this.oContextMenuPlugin.attachEventOnce("closedContextMenu", function() {
 				assert.ok(true, "then the event closedContextMenu is fired");
 			});
-			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", function(oEvent) {
-				var {oContextMenuControl} = oEvent.getSource();
+			const onOpenedContextMenu = function(oEvent) {
+				const {oContextMenuControl} = oEvent.getSource();
 				// Works only with events on unified menu
-				var aItems = oContextMenuControl._getMenu().getItems();
-				var oMenuItem = aItems[aItems.length - 1];
+				const aItems = oContextMenuControl._getMenu().getItems();
+				const oLastMenuItem = aItems[aItems.length - 1];
 
 				// triggers menu item handler()
-				QUnitUtils.triggerEvent("click", oMenuItem.sId, {});
+				QUnitUtils.triggerEvent("click", oLastMenuItem.sId, {});
 				assert.equal(oItemSelectedStub.callCount, 1, "then the method '_onItemSelected' was called");
+
+				// additional information on menu items
+				const oEnabledButton1Item = aItems.find((oItem) => {
+					return oItem.getText() === "enabled for button 1";
+				});
+				const oDisabledButton1Item = aItems.find((oItem) => {
+					return oItem.getText() === "disabled for button 1";
+				});
+				const oButton2SubmenuItem = aItems.find((oItem) => {
+					return oItem.getText() === "button 2 submenu";
+				});
+				const oFirstSubmenuItem = oButton2SubmenuItem?.getSubmenu()?.getItems()?.[0];
+				assert.strictEqual(
+					oEnabledButton1Item.getEndContent()[0].getTooltip_Text(),
+					"AdditionalInfo_enabledBtn1",
+					"then the additional info on the enabled item is set correctly"
+				);
+				assert.strictEqual(
+					oDisabledButton1Item.getEndContent()[0].getTooltip_Text(),
+					"AdditionalInfo_disabledBtn1",
+					"then the additional info on the disabled item is set correctly"
+				);
+				assert.strictEqual(
+					oFirstSubmenuItem.getEndContent()[0].getTooltip_Text(),
+					"AdditionalInfo_button2_sub01",
+					"then the additional info on the first submenu item is set correctly"
+				);
+
 				done();
-			});
+			};
+			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", onOpenedContextMenu);
 
 			sandbox.stub(this.oRenamePlugin, "getMenuItems")
 			.callThrough()
@@ -239,7 +271,11 @@ sap.ui.define([
 				group: "Test1"
 			};
 			this.oContextMenuPlugin._addMenuItemToGroup(oTestItem);
-			assert.strictEqual(this.oContextMenuPlugin._aGroupedItems.length, 1, "should add an Item to grouped Items");
+			assert.strictEqual(
+				this.oContextMenuPlugin._aGroupedItems.length,
+				1,
+				"should add an Item to grouped Items"
+			);
 			var oTestItem2 = {
 				id: "CTX_ENABLED_BUTTON1",
 				text: "enabled for button 1",
@@ -251,7 +287,11 @@ sap.ui.define([
 				group: "Test1"
 			};
 			this.oContextMenuPlugin._addMenuItemToGroup(oTestItem2);
-			assert.strictEqual(this.oContextMenuPlugin._aGroupedItems.length, 1, "should add an Item to grouped Items without creating a new group");
+			assert.strictEqual(
+				this.oContextMenuPlugin._aGroupedItems.length,
+				1,
+				"should add an Item to grouped Items without creating a new group"
+			);
 			var oTestItem3 = {
 				id: "CTX_ENABLED_BUTTON1",
 				text: "enabled for button 1",
@@ -263,7 +303,11 @@ sap.ui.define([
 				group: "Test2"
 			};
 			this.oContextMenuPlugin._addMenuItemToGroup(oTestItem3);
-			assert.strictEqual(this.oContextMenuPlugin._aGroupedItems.length, 2, "should add an Item to grouped Items and creating a new group");
+			assert.strictEqual(
+				this.oContextMenuPlugin._aGroupedItems.length,
+				2,
+				"should add an Item to grouped Items and creating a new group"
+			);
 		});
 
 		QUnit.test("Adding a Submenu", function(assert) {
@@ -348,13 +392,41 @@ sap.ui.define([
 			};
 			this.oContextMenuPlugin._addSubMenu(oTestItem0);
 			this.oContextMenuPlugin._addSubMenu(oTestItem1);
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus.length, 2, "there should be two submenu");
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus[0].sSubMenuId, sId0, "should add submenu 0");
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus[0].aSubMenuItems[0].id, sSubId0, "should add submenu item 0 to sub menu 0");
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus[0].aSubMenuItems[1].id, sSubId1, "should add submenu item 1 to sub menu 0");
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus[1].sSubMenuId, sId1, "should add submenu 1");
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus[1].aSubMenuItems[0].id, sSubId2, "should add submenu item 2 to sub menu 1");
-			assert.strictEqual(this.oContextMenuPlugin._aSubMenus[1].aSubMenuItems[1].id, sSubId3, "should add submenu item 3 to sub menu 1");
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus.length,
+				2,
+				"there should be two submenu"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus[0].sSubMenuId,
+				sId0,
+				"should add submenu 0"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus[0].aSubMenuItems[0].id,
+				sSubId0,
+				"should add submenu item 0 to sub menu 0"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus[0].aSubMenuItems[1].id,
+				sSubId1,
+				"should add submenu item 1 to sub menu 0"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus[1].sSubMenuId,
+				sId1,
+				"should add submenu 1"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus[1].aSubMenuItems[0].id,
+				sSubId2,
+				"should add submenu item 2 to sub menu 1"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aSubMenus[1].aSubMenuItems[1].id,
+				sSubId3,
+				"should add submenu item 3 to sub menu 1"
+			);
 		});
 
 		QUnit.test("Calling _addItemGroupsToMenu", function(assert) {
@@ -386,8 +458,16 @@ sap.ui.define([
 			this.oContextMenuPlugin._addMenuItemToGroup(oTestItem2);
 			this.oContextMenuPlugin._addMenuItemToGroup(oTestItem2);
 			this.oContextMenuPlugin._addItemGroupsToMenu(this.oTestEvent, this.oButton2Overlay);
-			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 10, "Should have added 2 Items");
-			assert.strictEqual(this.oContextMenuPlugin._aMenuItems[this.oContextMenuPlugin._aMenuItems.length - 1].menuItem.submenu.length, 2, "The second group has a submenu with two items");
+			assert.strictEqual(
+				this.oContextMenuPlugin._aMenuItems.length,
+				10,
+				"Should have added 2 Items"
+			);
+			assert.strictEqual(
+				this.oContextMenuPlugin._aMenuItems[this.oContextMenuPlugin._aMenuItems.length - 1].menuItem.submenu.length,
+				2,
+				"The second group has a submenu with two items"
+			);
 		});
 
 		QUnit.test("Testing click event when overlay is not selected", function(assert) {
