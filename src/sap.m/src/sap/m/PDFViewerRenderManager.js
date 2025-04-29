@@ -122,13 +122,13 @@ sap.ui.define([
 				this._objectsRegister[sPlaceholderIllustratedMessageFactoryFunctionName] = function () {
 					var oIllustratedMessage = new IllustratedMessage({
 						title: that._getIllustratedMessageErrorMessage(),
-						illustrationType: IllustratedMessageType.SimpleError,
+						illustrationType: IllustratedMessageType.UnableToUpload,
 						enableDefaultTitleAndDescription: false
 					});
 					that.setAggregation("_illustratedMessage", oIllustratedMessage);
 					that._objectsRegister[sPlaceholderIllustratedMessageFactoryFunctionName] = function () {
 						oIllustratedMessage.setTitle(that._getIllustratedMessageErrorMessage());
-						oIllustratedMessage.setIllustrationType(IllustratedMessageType.SimpleError);
+						oIllustratedMessage.setIllustrationType(IllustratedMessageType.UnableToUpload);
 						oIllustratedMessage.setEnableDefaultTitleAndDescription(false);
 						return oIllustratedMessage;
 					};
@@ -242,7 +242,8 @@ sap.ui.define([
 				if (!oIllustratedMessage) {
 					oIllustratedMessage = new IllustratedMessage({
 						title: this._getLibraryResourceBundle().getText("PDF_VIEWER_NONTRUSTEDSOURCEMESSAGE_TITLE"),
-						illustrationType: "tnt-ExternalLink",
+						description:  this._getLibraryResourceBundle().getText("PDF_VIEWER_NONTRUSTEDSOURCEMESSAGE_SUBTITLE"),
+						illustrationType: IllustratedMessageType.UnableToLoad,
 						enableDefaultTitleAndDescription: false,
 						additionalContent: [oButtonContent]
 					});
