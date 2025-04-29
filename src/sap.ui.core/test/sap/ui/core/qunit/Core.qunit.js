@@ -26,6 +26,7 @@ sap.ui.define([
 	 * @deprecated As of version 1.120 as it is used by deprecated tests only
 	 */
 	const privateLoaderAPI = sap.ui.loader._;
+	const sCoreVersion = Library.all()["sap.ui.core"].version;
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 		var aMethodNames = fnClass.getMetadata().getAllPublicMethods(),
@@ -316,7 +317,7 @@ sap.ui.define([
 			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
 
 			assert.equal(corePath, "/foo/sap/ui/core/themes/test_theme/", "path should be as configured");
-			assert.equal(oCoreLink.getAttribute("href"), new URL("/foo/sap/ui/core/themes/test_theme/library.css", document.baseURI).href, "Stylesheet should have been updated");
+			assert.equal(oCoreLink.getAttribute("href"), new URL(`/foo/sap/ui/core/themes/test_theme/library.css?version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
 
 			// Set theme root for sap.ui.core lib with forceUpdate
 			oCore.setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
@@ -325,7 +326,7 @@ sap.ui.define([
 			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
 
 			assert.equal(corePath, "/bar/sap/ui/core/themes/test_theme/", "path should be as configured");
-			assert.equal(oCoreLink.getAttribute("href"), new URL("/bar/sap/ui/core/themes/test_theme/library.css", document.baseURI).href, "Stylesheet should have been updated");
+			assert.equal(oCoreLink.getAttribute("href"), new URL(`/bar/sap/ui/core/themes/test_theme/library.css?version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
 		});
 
 	});

@@ -66,7 +66,7 @@ sap.ui.define([
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
 		return performance.getEntriesByType("resource").filter(function (oResource) {
-			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_horizon_hcb/library-parameters.json");
+			return oResource.name.endsWith(`themeParameters/lib${sLibNumber}/themes/sap_horizon_hcb/library-parameters.json?version=1.0.0`);
 		});
 	}
 	function createLinkElement (sId, bBase) {

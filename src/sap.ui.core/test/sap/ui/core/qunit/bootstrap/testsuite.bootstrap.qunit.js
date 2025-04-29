@@ -535,36 +535,6 @@ sap.ui.define(function() {
 				group: "Bootstrap",
 				bootCore: false
 			},
-			"ThemeVersion-off-async": {
-				group: "Theme Versioning",
-				title: "QUnit Page for Theme Version Parameter - off - async",
-				ui5: {
-					libs: ["sap.ui.core"],
-					language: "en",
-					preload: "async",
-					theme: "base",
-					versionedLibCss: false,
-					XxWaitForTheme: "init"
-				},
-				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit"
-			},
-			/**
-			 * @deprecated
-			 */
-			"ThemeVersion-off-sync": {
-				group: "Theme Versioning",
-				title: "QUnit Page for Theme Version Parameter - off - sync",
-				ui5: {
-					language: "en",
-					preload: "sync",
-					theme: "base",
-					versionedLibCss: false,
-					XxWaitForTheme: "init"
-				},
-				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit"
-			},
 			"ThemeVersion-on-async-customcss": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async (with custom.css)",
