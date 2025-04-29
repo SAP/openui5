@@ -135,6 +135,30 @@ sap.ui.define([
 				},
 				handler: sinon.spy()
 			};
+			this.oMenuEntries.propagatedBtn1 = {
+				id: "CTX_PROPAGATED_BUTTON1",
+				text: "propagated for button 1",
+				propagatingControl: "parent1",
+				propagatingControlName: "propagatingControl1",
+				handler: sinon.spy(),
+				enabled: function(vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					var oElement = aElementOverlays[0].getElement();
+					return oElement === this.oButton1;
+				}.bind(this)
+			};
+			this.oMenuEntries.propagatedBtn2 = {
+				id: "CTX_PROPAGATED_BUTTON2",
+				text: "propagated for button 2",
+				propagatingControl: "parent2",
+				propagatingControlName: "propagatingControl2",
+				handler: sinon.spy(),
+				enabled: function(vElementOverlays) {
+					var aElementOverlays = DtUtil.castArray(vElementOverlays);
+					var oElement = aElementOverlays[0].getElement();
+					return oElement === this.oButton1;
+				}.bind(this)
+			};
 			var oCommandFactory = new CommandFactory();
 			this.oContextMenuPlugin = new ContextMenuPlugin();
 			for (var key in this.oMenuEntries) {
@@ -183,8 +207,8 @@ sap.ui.define([
 			const onOpenedContextMenu = function(oEvent) {
 				const {oContextMenuControl} = oEvent.getSource();
 				// Works only with events on unified menu
-				const aItems = oContextMenuControl._getMenu().getItems();
-				const oLastMenuItem = aItems[aItems.length - 1];
+				var aItems = oContextMenuControl._getMenu().getItems();
+				var oLastMenuItem = aItems[aItems.length - 3];
 
 				// triggers menu item handler()
 				QUnitUtils.triggerEvent("click", oLastMenuItem.sId, {});
@@ -202,17 +226,17 @@ sap.ui.define([
 				});
 				const oFirstSubmenuItem = oButton2SubmenuItem?.getSubmenu()?.getItems()?.[0];
 				assert.strictEqual(
-					oEnabledButton1Item.getEndContent()[0].getTooltip_Text(),
+					oEnabledButton1Item.getEndContent()[0].getItems()[0].getTooltip_Text(),
 					"AdditionalInfo_enabledBtn1",
 					"then the additional info on the enabled item is set correctly"
 				);
 				assert.strictEqual(
-					oDisabledButton1Item.getEndContent()[0].getTooltip_Text(),
+					oDisabledButton1Item.getEndContent()[0].getItems()[0].getTooltip_Text(),
 					"AdditionalInfo_disabledBtn1",
 					"then the additional info on the disabled item is set correctly"
 				);
 				assert.strictEqual(
-					oFirstSubmenuItem.getEndContent()[0].getTooltip_Text(),
+					oFirstSubmenuItem.getEndContent()[0].getItems()[0].getTooltip_Text(),
 					"AdditionalInfo_button2_sub01",
 					"then the additional info on the first submenu item is set correctly"
 				);
@@ -253,9 +277,34 @@ sap.ui.define([
 				group: "Test1"
 			};
 			this.oContextMenuPlugin.addMenuItem(oTestItem1, true);
-			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 9, "there are 9 items in the array for the menu items");
+			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 11, "there are 9 items in the array for the menu items");
 			this.oContextMenuPlugin.open(this.oButton1Overlay, false, {});
-			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 8, "there is 1 item less in the array for the menu items");
+			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 10, "there is 1 item less in the array for the menu items");
+		});
+
+		QUnit.test("Calling method 'open' after adding a propagated menu item", function(assert) {
+			const done = assert.async();
+			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", function(oEvent) {
+				const {oContextMenuControl} = oEvent.getSource();
+				// Works only with events on unified menu
+				const aItems = oContextMenuControl._getMenu().getItems();
+				const oMenuItem1 = aItems[aItems.length - 2];
+				const oMenuItem2 = aItems[aItems.length - 1];
+				assert.ok(oMenuItem1.getStartsSection(), "Propagated Item is in a new section");
+				assert.strictEqual(
+					oMenuItem1.getEndContent()[0].getItems()[0].getHtmlText(),
+					"<strong>propagatingControl1</strong>",
+					"and has the correct end content"
+				);
+				assert.notOk(oMenuItem2.getStartsSection(), "Propagated Item is in the same section");
+				assert.strictEqual(
+					oMenuItem2.getEndContent()[0].getItems()[0].getHtmlText(),
+					"<strong>propagatingControl2</strong>",
+					"and has the correct end content"
+				);
+				done();
+			});
+			this.oContextMenuPlugin.open(this.oButton1Overlay, false, {});
 		});
 
 		QUnit.test("Calling method '_addMenuItemToGroup'", function(assert) {
@@ -460,7 +509,7 @@ sap.ui.define([
 			this.oContextMenuPlugin._addItemGroupsToMenu(this.oTestEvent, this.oButton2Overlay);
 			assert.strictEqual(
 				this.oContextMenuPlugin._aMenuItems.length,
-				10,
+				12,
 				"Should have added 2 Items"
 			);
 			assert.strictEqual(

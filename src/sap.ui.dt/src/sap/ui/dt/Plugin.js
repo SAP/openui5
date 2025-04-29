@@ -314,12 +314,12 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
 	 * @param {object} mAction The action data from the Designtime Metadata
 	 * @param {string} sPluginId The ID of the plugin
-	 * @param {sap.ui.core.Element} [propagatingControl] The control where the action is executed
+	 * @param {sap.ui.core.Element} [oPropagatingControl] The control where the action is executed
 	 * @return {string} The text for the menu item
 	 */
-	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId, propagatingControl) {
+	Plugin.prototype.getActionText = function(oOverlay, mAction, sPluginId, oPropagatingControl) {
 		const vName = mAction.name;
-		const oElement = propagatingControl || oOverlay.getElement();
+		const oElement = oPropagatingControl || oOverlay.getElement();
 		if (vName) {
 			if (typeof vName === "function") {
 				return vName(oElement);

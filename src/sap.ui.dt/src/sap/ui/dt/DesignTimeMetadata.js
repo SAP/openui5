@@ -345,7 +345,8 @@ sap.ui.define([
 		}
 		return {
 			action: evaluateAction(oAction.action, oAction.propagatingControl),
-			propagatingControl: oAction.propagatingControl
+			propagatingControl: oAction.propagatingControl,
+			propagatingControlName: oAction.propagatingControlName
 		};
 	};
 
