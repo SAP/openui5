@@ -405,12 +405,6 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 		Tent: "sapIllus-Tent",
 
 		/**
-		 * Empty illustration type. Do not use
-		 * @private
-		 */
-		Empty: "sapIllus-Empty",
-
-		/**
 		 * "No Chart Data" illustration type.
 		 * @public
 		 */
