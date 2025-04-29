@@ -61,8 +61,8 @@
     "npm": ">= 8"
   },
   "devDependencies": {
-    "@ui5/builder": "^4.0.5",
-    "@ui5/cli": "^4.0.14",
+    "@ui5/builder": "^4.0.6",
+    "@ui5/cli": "^4.0.15",
     "@ui5/project": "^4.0.4",
     "@ui5/server": "^4.0.5",
     "@ui5/tooling-webc": "^0.2.14",
