@@ -5,6 +5,7 @@ sap.ui.define([
 	"use strict";
 	return Library.init({
 		name: 'testlibs.themeParameters.lib2',
+		version: '1.0.0',
 		apiVersion: 2,
 		dependencies: [
 		]
