@@ -391,7 +391,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Configuration object to be provided on connect via the connecting control.
+	 * Configuration object to be provided when connecting with a control.
 	 *
 	 * @static
 	 * @constant
@@ -556,11 +556,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieves delegate based content modifications
+	 * Retrieves delegate-based content modifications.
 	 *
 	 * This method may be called during the ValueHelp's opening phase, whenever a new content should be displayed for a <code>CollectiveSearch</code> dialog configuration or when one of {@link #getItemForValue}, {@link #requestShowTypeahead} or {@link #requestShowValueHelp} are called.
 	 *
-	 * So depending on the value help {@link sap.ui.mdc.valuehelp.base.Content Content} used, all content controls and data need to be assigned.
+	 * So depending on the value help {@link sap.ui.mdc.valuehelp.base.Content Content} used, all content controls and the relevant data need to be assigned.
 	 * Once they are assigned and the data is set, the returned <code>Promise</code> needs to be resolved.
 	 * Only then does the value help continue opening or reading data.<br/>This method returns a <code>Promise</code> that resolves into <code>undefined</code>.
 	 *
@@ -730,10 +730,10 @@ sap.ui.define([
 
 
 	/**
-	 * Determines if the value help typeahead should be opened on user interaction, navigation or configuration changes.
+	 * Determines if the value help typeahead is to be opened on user interaction, navigation, or configuration changes.
 	 *
- 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason interaction event possibly triggering the opening of the value help
-	 * @returns {Promise<boolean>} <code>true</code>, if the value help container should be shown
+ 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason Interaction event possibly triggering the opening of the value help
+	 * @returns {Promise<boolean>} <code>true</code> if the value help container is shown
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.136
@@ -747,9 +747,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines if the value help should be opened with a dialog or typeahead in "valuehelp mode".
+	 * Determines if the value help is to be opened with a dialog or typeahead in value help mode.
 	 *
-	 * @returns {Promise<boolean>} <code>true</code>, if the value help container should be shown
+	 * @returns {Promise<boolean>} <code>true</code> if the value help container is to be shown
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @since 1.136
@@ -764,11 +764,11 @@ sap.ui.define([
 
 
 	/**
-	 * Determines if the value help typeahead should be opened on interaction, navigation or configuration changes and executes the opening
+	 * Determines if the value help typeahead is to be opened on interaction, navigation or configuration changes.
 	 *
  	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
- 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason additional configuration for {@link class module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}
-	 * @returns {Promise<boolean>} <code>true</code>, if the value help container should be shown
+ 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason Additional configuration for {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}
+	 * @returns {Promise<boolean>} <code>true</code> if the value help container is to be shown
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valuehelp.base.Container, sap.ui.mdc.valuehelp.base.Content
 	 * @since 1.136
@@ -837,7 +837,8 @@ sap.ui.define([
 		const oTypeahead = this.getTypeahead();
 		if (oTypeahead) {
 			const _fnOnNavigatable = () => {
-				return oTypeahead.navigate(iStep);
+				const oTypeahead = this.getTypeahead(); // as might already be destroyed and removed
+				return oTypeahead?.navigate(iStep);
 			};
 			const oNavigatePromise = this._retrievePromise("navigate");
 			const oExistingPromise = oNavigatePromise && !oNavigatePromise.isSettled() && oNavigatePromise.getInternalPromise();

@@ -210,48 +210,6 @@ function(
 	};
 
 	/**
-	 * Lazy loads attachments icon.
-	 * @returns {object} The attachments icon
-	 * @private
-	 */
-	ObjectIdentifier.prototype._getAttachmentsIcon = function() {
-
-		if (!this._attachmentsIcon) {
-			this._attachmentsIcon = this._getIcon(IconPool.getIconURI("attachment"), this.getId() + "-attachments");
-		}
-
-		return this._attachmentsIcon;
-	};
-
-	/**
-	 * Lazy loads people icon.
-	 * @returns {object} The people icon
-	 * @private
-	 */
-	ObjectIdentifier.prototype._getPeopleIcon = function() {
-
-		if (!this._peopleIcon) {
-			this._peopleIcon = this._getIcon(IconPool.getIconURI("group"), this.getId() + "-people");
-		}
-
-		return this._peopleIcon;
-	};
-
-	/**
-	 * Lazy loads notes icon.
-	 * @returns {object} The notes icon
-	 * @private
-	 */
-	ObjectIdentifier.prototype._getNotesIcon = function() {
-
-		if (!this._notesIcon ) {
-			this._notesIcon  = this._getIcon(IconPool.getIconURI("notes"), this.getId() + "-notes");
-		}
-
-		return this._notesIcon;
-	};
-
-	/**
 	 * Creates icon image.
 	 * @param {string} sURI The URL of the icon image
 	 * @param {string} sImageId The ID of the icon image
@@ -524,5 +482,4 @@ function(
 	};
 
 	return ObjectIdentifier;
-
 });

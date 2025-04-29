@@ -64,6 +64,11 @@ sap.ui.define([
 			return loadModules([
 				"sap/ui/mdc/valuehelp/content/FixedListItem", "sap/ui/model/json/JSONModel"
 			]).then(function(aModules) {
+
+				if (this.isDestroyStarted()) {
+					return null;
+				}
+
 				const FixedListItem = aModules[0];
 				const JSONModel = aModules[1];
 				this._oModel = new JSONModel({

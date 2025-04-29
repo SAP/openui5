@@ -218,6 +218,10 @@ sap.ui.define([
 				"sap/ui/layout/FixFlex", "sap/m/VBox", "sap/m/ScrollContainer"
 			]).then((aModules) => {
 
+				if (this.isDestroyStarted()) {
+					return null;
+				}
+
 				const FixFlex = aModules[0];
 				const VBox = aModules[1];
 				const ScrollContainer = aModules[2];

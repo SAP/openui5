@@ -2453,7 +2453,7 @@ sap.ui.define([
 		this.stepInput.setStep(5.0);
 
 		var oStepInputNoMandatory = new StepInput({
-			mandatory: false,
+			/* mandatory: false, */// there is no mandatory property ?!
 			value: -7.0,
 			displayValuePrecision: 1,
 			step: 5.0
