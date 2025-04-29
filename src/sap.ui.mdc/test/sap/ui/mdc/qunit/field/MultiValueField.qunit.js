@@ -406,7 +406,7 @@ sap.ui.define([
 	QUnit.test("internal control creation", (assert) => {
 
 		let oField = new MultiValueField("F3", {
-			items: {path: "/items", template: oItemTemplate}
+			items: {path: "/items", template: oItemTemplate, templateShareable: true}
 		});
 
 		const fnDone = assert.async();
@@ -422,7 +422,7 @@ sap.ui.define([
 
 			oField.destroy();
 			oField = new MultiValueField("F3", {
-				items: {path: "/items", template: oItemTemplate},
+				items: {path: "/items", template: oItemTemplate, templateShareable: true},
 				editMode: FieldEditMode.Editable
 			});
 
@@ -433,7 +433,7 @@ sap.ui.define([
 
 				oField.destroy();
 				oField = new MultiValueField("F3", {
-					items: {path: "/items", template: oItemTemplate},
+					items: {path: "/items", template: oItemTemplate, templateShareable: true},
 					editMode: { path: "/editMode"}
 				});
 
@@ -444,7 +444,7 @@ sap.ui.define([
 
 					oField.destroy();
 					oField = new MultiValueField("F3", {
-						items: {path: "/items", template: oItemTemplate},
+						items: {path: "/items", template: oItemTemplate, templateShareable: true},
 						editMode: { path: "/editMode"}
 					});
 					oField.setModel(oModel);

@@ -3873,7 +3873,8 @@ sap.ui.define([
 					template: new RowActionItem({
 						type: "{type}",
 						visible: true
-					})
+					}),
+					templateShareable: false
 				}
 			});
 			this.oTable.setRowSettings(oRowSettings);
@@ -3893,7 +3894,8 @@ sap.ui.define([
 								return sString === "Test";
 							}
 						}
-					})
+					}),
+					templateShareable: false
 				}
 			});
 			this.oTable.setRowSettings(oRowSettings);
