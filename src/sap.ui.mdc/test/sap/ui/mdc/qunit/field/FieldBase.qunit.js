@@ -3989,6 +3989,9 @@ sap.ui.define([
 		oContent._$input.val("I");
 		oContent.fireLiveChange({ value: "I" });
 
+		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
+		oValueHelp.requestShowTypeahead.resetHistory();
+
 		await new Promise((resolve) => { setTimeout(resolve, 300); });
 
 		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once in debounce interval");
