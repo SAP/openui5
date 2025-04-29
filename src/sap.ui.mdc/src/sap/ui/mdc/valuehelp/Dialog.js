@@ -235,6 +235,10 @@ sap.ui.define([
 					ManagedObjectModel = aModules[2];
 					MLibrary = aModules[3];
 
+					if (this.isDestroyStarted()) {
+						return null;
+					}
+
 					const { ButtonType } = MLibrary;
 
 					if (!this._oResourceBundle) {
@@ -476,6 +480,10 @@ sap.ui.define([
 					const Item = aModules[1];
 					const JSONModel = aModules[2];
 
+					if (this.isDestroyStarted()) {
+						return null;
+					}
+
 					if (!this._oGroupSelectModel) {
 						this._oGroupSelectModel = new JSONModel();
 					}
@@ -515,6 +523,10 @@ sap.ui.define([
 					IconTabBar = aModules[0];
 					IconTabFilter = aModules[1];
 					const { IconTabHeaderMode } = MLibrary;
+
+					if (this.isDestroyStarted()) {
+						return null;
+					}
 
 					this._oIconTabBar = new IconTabBar(this.getId() + "-ITB", {
 						expandable: false,
@@ -585,6 +597,10 @@ sap.ui.define([
 					const ConditionType = aModules[6];
 					const { BackgroundDesign } = MLibrary;
 					const { ButtonType } = MLibrary;
+
+					if (this.isDestroyStarted()) {
+						return null;
+					}
 
 					this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
 						backgroundDesign: BackgroundDesign.Transparent,

@@ -2,31 +2,29 @@
  * ${copyright}
  */
 
+/* eslint-disable valid-jsdoc */
+
 sap.ui.define([
-	"../ValueHelp.delegate"
+	"../ValueHelp.delegate",
+	'sap/ui/mdc/enums/RequestShowContainerReason'
 ], function(
-	BaseValueHelpDelegate
+	BaseValueHelpDelegate,
+	RequestShowContainerReason
 ) {
 	"use strict";
 
 	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
-	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
-		return oValueHelp.getPayload()?.shouldOpenOnClick;
-	};
+	ValueHelpDelegate.requestShowContainer = function (oValueHelp, oContainer, sRequestShowContainerReason) {
+		const {shouldOpenOnClick} = oValueHelp.getPayload();
 
-	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
-		return oValueHelp.getPayload()?.shouldOpenOnFocus;
-	};
+		if (shouldOpenOnClick && sRequestShowContainerReason === RequestShowContainerReason.Tap) {
+			return true;
+		} else if (sRequestShowContainerReason === RequestShowContainerReason.Filter) {
+			return new Promise((resolve) => {setTimeout(() => resolve(true), 1000);	});
+		}
 
-
-	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
-		//return true;
-		return new Promise((resolve) => {
-			setTimeout(() => {
-				resolve(true);
-			}, 1000);
-		});
+		return BaseValueHelpDelegate.requestShowContainer.apply(this, arguments);
 	};
 
 	return ValueHelpDelegate;

@@ -7,10 +7,8 @@
 sap.ui.define([
 	'sap/ui/test/Opa5',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/v4demo/test/pages/Opa',
-	'test-resources/sap/ui/mdc/testutils/opa/filterfield/waitForFilterField'
-
-], function (Opa5, KeyCodes, OpaPage, waitForFilterField) {
+	'sap/ui/v4demo/test/pages/Opa'
+], function(Opa5, KeyCodes, OpaPage) {
 	'use strict';
 
 	return function (opaTestOrSkip) {
@@ -64,60 +62,6 @@ sap.ui.define([
 			]);
 
 			When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField"}, KeyCodes.ESCAPE);
-			Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
-
-			Then.iTeardownMyAppFrame();
-		});
-
-		opaTestOrSkip("Popover.opensOnFocus", function (Given, When, Then) {
-			Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-7");
-			Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField1"});
-			Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField2"});
-
-			When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField1"}, KeyCodes.TAB);
-
-			Then.onTheOPAPage.iShouldSeeValueHelpListItems([
-				"101", "Austen, Jane",
-				"102", "Gilman, Charlotte Perkins",
-				"103", "Carroll, Lewis",
-				"104", "Shelley, Mary Wollstonecraft",
-				"105", "Kafka, Franz",
-				"106", "Twain, Mark",
-				"107", "Wilde, Oscar",
-				"109", "Douglass, Frederick",
-				"110", "Ibsen, Henrik",
-				"111", "Melville, Herman"
-			], "appView--FH1");
-
-			When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField2"}, KeyCodes.TAB);
-
-			Then.onTheOPAPage.iShouldSeeValueHelpListItems([
-				"101", "Austen, Jane",
-				"102", "Gilman, Charlotte Perkins",
-				"103", "Carroll, Lewis",
-				"104", "Shelley, Mary Wollstonecraft",
-				"105", "Kafka, Franz",
-				"106", "Twain, Mark",
-				"107", "Wilde, Oscar",
-				"109", "Douglass, Frederick",
-				"110", "Ibsen, Henrik",
-				"111", "Melville, Herman"
-			], "appView--FH2");
-
-			waitForFilterField.call(When, {
-				properties: {
-					label: "TestField1"
-				},
-				actions: function (oField) {
-					return new Promise(function (resolve, reject) {
-						oField.getFocusDomRef().focus();
-						setTimeout(function () {
-							oField.getFocusDomRef().blur();
-						},50);
-					});
-				}
-			});
-
 			Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
 
 			Then.iTeardownMyAppFrame();

@@ -942,7 +942,6 @@ sap.ui.define([
 				title: "Detail 1",
 				content: [],
 				showNavButton: Device.system.phone,
-				navButtonText: "Back",
 				navButtonPress: function() {
 					this.oSplitApp.backDetail();
 				},

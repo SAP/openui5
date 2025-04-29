@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/m/ObjectIdentifier",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/IconPool",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
@@ -29,7 +28,6 @@ sap.ui.define([
 	ObjectIdentifier,
 	nextUIUpdate,
 	jQuery,
-	IconPool,
 	ManagedObject,
 	coreLibrary,
 	JSONModel,
@@ -149,29 +147,6 @@ sap.ui.define([
 
 	/***********************************************************************************************************************/
 	QUnit.module("Internals");
-
-	QUnit.test("Icon Getters", function(assert) {
-
-		//SUT
-		var sTitle = "My Title";
-		var sText = "My Text";
-		var sut = new ObjectIdentifier({
-			title: sTitle,
-			text: sText,
-			badgeNotes: true,
-			badgePeople: true,
-			badgeAttachments: true
-		});
-
-		//Assert
-		assert.equal(sut._getAttachmentsIcon().getSrc(), IconPool.getIconURI("attachment"),
-			"Attachments icon is returned.");
-		assert.equal(sut._getNotesIcon().getSrc(), IconPool.getIconURI("notes"), "Notes icon is returned.");
-		assert.equal(sut._getPeopleIcon().getSrc(), IconPool.getIconURI("group"), "People icon is returned.");
-
-		//Cleanup
-		sut.destroy();
-	});
 
 	QUnit.test("setTitle escaping, chaining", function(assert) {
 		// Arrange

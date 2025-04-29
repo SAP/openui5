@@ -464,6 +464,10 @@ sap.ui.define([
 					"sap/ui/model/resource/ResourceModel"
 				]).then((aModules) => {
 
+					if (this.isDestroyStarted()) {
+						return null;
+					}
+
 					const [FixFlex, VBox, Panel, ScrollContainer, ResourceModel] = aModules;
 
 					if (!this._oContentLayout && !this.isDestroyed()) {
@@ -1042,6 +1046,11 @@ sap.ui.define([
 
 							if (bDialogExist && oBindingInfo && oBindingInfo.length && !Device.system.phone) {
 								return loadModules(["sap/m/Button", "sap/m/Toolbar", "sap/m/ToolbarSpacer"]).then((aModules) => {
+
+									if (this.isDestroyStarted()) {
+										return null;
+									}
+
 									const [Button, Toolbar, ToolbarSpacer] = aModules;
 
 									const oShowAllButtonDelegate = {

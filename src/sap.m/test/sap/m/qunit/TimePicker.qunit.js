@@ -256,7 +256,6 @@ sap.ui.define([
 	QUnit.module("step precision in clocks", {
 		beforeEach: async function() {
 			this.oClocks = new TimePickerClocks({
-				labelText: "label",
 				minutesStep: this.STEP
 			});
 			this.oClocks.placeAt("qunit-fixture");
@@ -3198,7 +3197,6 @@ sap.ui.define([
 			oInitialFocusedDateValue = UI5Date.getInstance(2017, 2, 3, 4, 5, 6, 7),
 			oTimePickerClocks = new TimePickerClocks(this.oTp.getId() + "-clocks", {
 				displayFormat: "hh:mm",
-				labelText: "",
 				minutesStep: this.oTp.getMinutesStep(),
 				secondsStep: this.oTp.getSecondsStep()
 			}),
@@ -3231,7 +3229,6 @@ sap.ui.define([
 		var oExpectedDateValue = UI5Date.getInstance(2017, 8, 9, 10, 11, 12, 13),
 			oTimePickerClocks = new TimePickerClocks(this.oTp.getId() + "-clocks", {
 				displayFormat: "hh:mm",
-				labelText: "",
 				minutesStep: this.oTp.getMinutesStep(),
 				secondsStep: this.oTp.getSecondsStep()
 			}),
