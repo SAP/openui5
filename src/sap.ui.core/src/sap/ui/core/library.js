@@ -892,9 +892,12 @@ sap.ui.define([
 	};
 	DataType.registerEnum("sap.ui.core.BusyIndicatorSize", thisLib.BusyIndicatorSize);
 
+	/** @deprecated */
+	(() => {
 	// this assignment here is kept so that imports via the library module continue to work
 	// even when the export via globals is abandoned
 	thisLib.CalendarType = CalendarType;
+	})();
 
 	/**
 	 * @classdesc A string type that represents CSS color values (CSS Color Level 3).
