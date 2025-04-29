@@ -2191,11 +2191,11 @@ sap.ui.define([
 		}).then(oTable.qunit.$scrollVSbBy(-1)).then(function() {
 			that.assertPosition(assert, 95, iMaxScrollTop - 1, 655, "ScrollTop set to MAX - 1");
 		}).then(oTable.qunit.$scrollVSbBy(-48)).then(function() {
-			that.assertPosition(assert, 92, iMaxScrollTop - 49, 373, "ScrollTop set to MAX - 49");
+			that.assertPosition(assert, 92, iMaxScrollTop - 49, 374, "ScrollTop set to MAX - 49");
 		}).then(oTable.qunit.$scrollVSbBy(-1)).then(function() {
 			that.assertPosition(assert, 92, iMaxScrollTop - 50, 370, "ScrollTop set to MAX - 50");
 		}).then(oTable.qunit.$scrollVSbBy(1)).then(function() {
-			that.assertPosition(assert, 92, iMaxScrollTop - 49, 373, "ScrollTop set to MAX - 49");
+			that.assertPosition(assert, 92, iMaxScrollTop - 49, 374, "ScrollTop set to MAX - 49");
 		}).then(oTable.qunit.$scrollVSbTo(iMaxScrollTop - 1)).then(function() {
 			that.assertPosition(assert, 95, iMaxScrollTop - 1, 655, "ScrollTop set to MAX - 1");
 		}).then(oTable.qunit.$scrollVSbBy(1)).then(function() {
@@ -2315,7 +2315,7 @@ sap.ui.define([
 		}).then(oTable.qunit.$scrollVSbBy(-1)).then(function() {
 			that.assertPosition(assert, 999999995, iMaxScrollTop - 1, 655, "ScrollTop set to MAX - 1");
 		}).then(oTable.qunit.$scrollVSbBy(-9)).then(function() {
-			that.assertPosition(assert, 999999995, iMaxScrollTop - 10, 639, "ScrollTop set to MAX - 10");
+			that.assertPosition(assert, 999999995, iMaxScrollTop - 10, 640, "ScrollTop set to MAX - 10");
 		}).then(oTable.qunit.$scrollVSbBy(-38)).then(function() {
 			that.assertPosition(assert, 999999992, iMaxScrollTop - 48, 377, "ScrollTop set to MAX - 48");
 		}).then(oTable.qunit.$scrollVSbTo(iMaxScrollTop - 1)).then(function() {
@@ -2746,11 +2746,11 @@ sap.ui.define([
 		}).then(scrollWithMouseWheel(-1, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 95, iMaxScrollTop - 1, 655, "Scrolled 1 pixel up");
 		}).then(scrollWithMouseWheel(-20, MouseWheelDeltaMode.PIXEL)).then(function() {
-			that.assertPosition(assert, 94, iMaxScrollTop - 21, 572, "Scrolled 20 pixels up");
+			that.assertPosition(assert, 94, iMaxScrollTop - 21, 573, "Scrolled 20 pixels up");
 		}).then(scrollWithMouseWheel(-2, MouseWheelDeltaMode.LINE)).then(function() {
 			that.assertPosition(assert, 89, 89 * that.defaultRowHeight, 0, "Scrolled 2 rows up");
 		}).then(scrollWithMouseWheel(15, MouseWheelDeltaMode.PIXEL)).then(function() {
-			that.assertPosition(assert, 90, 89 * that.defaultRowHeight + 15, 153, "Scrolled 15 pixels down");
+			that.assertPosition(assert, 90, 89 * that.defaultRowHeight + 15, 154, "Scrolled 15 pixels down");
 		}).then(scrollWithMouseWheel(-16, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 89, 89 * that.defaultRowHeight, 0, "Scrolled 16 pixels up");
 		}).then(scrollWithMouseWheel(-1, MouseWheelDeltaMode.PIXEL)).then(function() {
@@ -2866,11 +2866,11 @@ sap.ui.define([
 		}).then(scrollWithMouseWheel(-1, MouseWheelDeltaMode.PIXEL)).then(function() {
 			that.assertPosition(assert, 999999995, iMaxScrollTop - 1, 655, "Scrolled 1 pixel up");
 		}).then(scrollWithMouseWheel(-20, MouseWheelDeltaMode.PIXEL)).then(function() {
-			that.assertPosition(assert, 999999994, iMaxScrollTop - 21, 572, "Scrolled 20 pixels up");
+			that.assertPosition(assert, 999999994, iMaxScrollTop - 21, 573, "Scrolled 20 pixels up");
 		}).then(scrollWithMouseWheel(-1, MouseWheelDeltaMode.LINE)).then(function() {
 			that.assertPosition(assert, 999999991, iMaxScrollTop - 21 - that.defaultRowHeight, 199, "Scrolled 1 row up");
 		}).then(scrollWithMouseWheel(1, MouseWheelDeltaMode.LINE)).then(function() {
-			that.assertPosition(assert, 999999994, iMaxScrollTop - 21, 572, "Scrolled 1 row down");
+			that.assertPosition(assert, 999999994, iMaxScrollTop - 21, 573, "Scrolled 1 row down");
 		}).then(scrollWithMouseWheel(-1, MouseWheelDeltaMode.PAGE)).then(function() {
 			that.assertPosition(assert, iMaxFirstRenderedRow, 999412, 0, "Scrolled 1 page up");
 		}).then(scrollWithMouseWheel(15, MouseWheelDeltaMode.PIXEL)).then(function() {
@@ -3095,7 +3095,7 @@ sap.ui.define([
 		}).then(scrollWithTouch(4559, true, "Scrolled to the bottom")).then(function() {
 			that.assertPosition(assert, 96, 4459, 655, "Scrolled to the bottom");
 		}).then(scrollWithTouch(-50)).then(function() {
-			that.assertPosition(assert, 93, 4429, 526, "Scrolled 30 pixels up");
+			that.assertPosition(assert, 93, 4429, 527, "Scrolled 30 pixels up");
 		}).then(scrollWithTouch(-100)).then(function() {
 			that.assertPosition(assert, 88, 4329, 17, "Scrolled 100 pixels up");
 		}).then(scrollWithTouch(-50)).then(function() {
@@ -3193,7 +3193,7 @@ sap.ui.define([
 		}).then(scrollWithTouch(-2)).then(function() {
 			that.assertPosition(assert, 999999995, iMaxScrollTop - 1, 655, "Scrolled 1 pixel up");
 		}).then(scrollWithTouch(-48)).then(function() {
-			that.assertPosition(assert, 999999992, iMaxScrollTop - 49, 373, "Scrolled 48 pixels up");
+			that.assertPosition(assert, 999999992, iMaxScrollTop - 49, 374, "Scrolled 48 pixels up");
 		}).then(scrollWithTouch(-500000)).then(function() {
 			that.assertPosition(assert, 499754850, iMaxScrollTop - 500049, 42, "Scrolled 500000 pixels up");
 		}).then(function() {
