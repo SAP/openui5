@@ -137,7 +137,6 @@ sap.ui.define([
 	 * Determines if the value help should be opened when the user clicks into the connected control.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
-	 * @deprecated As of version 1.136 with no replacement.
 	 */
 	Bool.prototype.shouldOpenOnClick = function() {
 

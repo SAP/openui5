@@ -740,7 +740,6 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} if <code>true</code>, the field help should open by typing. The result might be returned asynchronously, so a Promise is used.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @deprecated As of version 1.136, replaced by {@link sap.ui.mdc.ValueHelp#requestShowContainer}.
 	 */
 	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
 
@@ -817,7 +816,6 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
-	 * @deprecated As of version 1.136, replaced by {@link sap.ui.mdc.ValueHelp#requestShowContainer}.
 	 */
 	ValueHelp.prototype.shouldOpenOnFocus = function() {
 		const oContainer = _getValueHelpContainer.call(this, true);
@@ -838,7 +836,6 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
- 	 * @deprecated As of version 1.136, replaced by {@link sap.ui.mdc.ValueHelp#requestShowContainer}.
 	 */
 	ValueHelp.prototype.shouldOpenOnClick = function() {
 		const oContainer = _getValueHelpContainer.call(this, true);

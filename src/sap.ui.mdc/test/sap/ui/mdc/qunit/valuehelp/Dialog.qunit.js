@@ -145,18 +145,8 @@ sap.ui.define([
 		assert.ok(oDialog.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oDialog.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oDialog.getUseAsValueHelp(), "getUseAsValueHelp");
-
-		/**
-		 *  @deprecated As of version 1.136
-		 */
 		assert.notOk(await oDialog.shouldOpenOnClick(), "shouldOpenOnClick");
-		/**
-		 *  @deprecated As of version 1.136
-		 */
 		assert.notOk(await oDialog.shouldOpenOnFocus(), "shouldOpenOnFocus");
-		/**
-		 *  @deprecated As of version 1.136
-		 */
 		assert.notOk(oDialog.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 
 		assert.ok(oDialog.isFocusInHelp(), "isFocusInHelp");
@@ -914,9 +904,6 @@ sap.ui.define([
 
 	});
 
-	/**
-	 *  @deprecated As of version 1.136
-	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		const bSupported = oDialog.isTypeaheadSupported();

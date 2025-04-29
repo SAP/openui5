@@ -32,9 +32,6 @@ sap.ui.define([
 		return BaseValueHelpDelegate.requestShowContainer.apply(this, arguments);
 	};
 
-	/**
- 	 * @deprecated As of version 1.136
-	 */
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
 		/**
 		 *  @deprecated since 1.121.0
@@ -45,9 +42,6 @@ sap.ui.define([
 		return oValueHelp.getPayload()?.shouldOpenOnClick;
 	};
 
-	/**
-	 *  @deprecated As of version 1.136
-	 */
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
 		/**
 		 *  @deprecated since 1.121.0
@@ -58,10 +52,6 @@ sap.ui.define([
 		return oValueHelp.getPayload()?.shouldOpenOnFocus;
 	};
 
-
-	/**
- 	 * @deprecated As of version 1.136
-	 */
 	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		//return true;
 		return new Promise((resolve) => {
