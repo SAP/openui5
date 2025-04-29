@@ -291,4 +291,12 @@ describe("sap.m.Label", function() {
 			expect(takeScreenshot(lbls)).toLookAs("36_labels_percent_width");
 		});
 	});
+
+	it("should visualize label in Info toolbar", function () {
+		var toolbar = element(by.id('infoToolbar'));
+
+		browser.executeScript("document.getElementById('infoToolbar').scrollIntoView()").then(function () {
+			expect(takeScreenshot(toolbar)).toLookAs("37_label_info_toolbar");
+		});
+	});
 });
