@@ -2,6 +2,8 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLi
 	"use strict";
 	sap.ui.getCore().initLibrary({
 		name: 'testlibs.themeParameters.lib5',
+		version: '1.0.0',
+		apiVersion:2,
 		dependencies: [
 		]
 	});

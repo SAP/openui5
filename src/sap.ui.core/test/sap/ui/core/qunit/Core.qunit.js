@@ -218,6 +218,7 @@ sap.ui.define([
 
 	QUnit.test("testSetThemeRoot", function(assert) {
 		var corePath, mobilePath, otherPath, oCoreLink;
+		var sCoreVersion = Library.all()["sap.ui.core"].version;
 
 		oCore.setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
 		oCore.setThemeRoot("my_theme", "http://custom.something.corp");
@@ -247,7 +248,7 @@ sap.ui.define([
 			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
 
 			assert.equal(corePath, "/foo/sap/ui/core/themes/test_theme/", "path should be as configured");
-			assert.equal(oCoreLink.getAttribute("href"), new URL("/foo/sap/ui/core/themes/test_theme/library.css", document.baseURI).href, "Stylesheet should have been updated");
+			assert.equal(oCoreLink.getAttribute("href"), new URL(`/foo/sap/ui/core/themes/test_theme/library.css?version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
 
 			// Set theme root for sap.ui.core lib with forceUpdate
 			oCore.setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
@@ -256,7 +257,7 @@ sap.ui.define([
 			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
 
 			assert.equal(corePath, "/bar/sap/ui/core/themes/test_theme/", "path should be as configured");
-			assert.equal(oCoreLink.getAttribute("href"), new URL("/bar/sap/ui/core/themes/test_theme/library.css", document.baseURI).href, "Stylesheet should have been updated");
+			assert.equal(oCoreLink.getAttribute("href"), new URL(`/bar/sap/ui/core/themes/test_theme/library.css?version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
 		});
 
 	});
