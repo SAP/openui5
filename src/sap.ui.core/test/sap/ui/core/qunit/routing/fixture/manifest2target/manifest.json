@@ -1,0 +1,28 @@
+{
+	"_version": "2.0.0",
+	"sap.ui5": {
+		"rootView" : {
+			"viewName": "test.routing.target.manifest2target.App",
+			"type": "XML"
+		},
+		"routing": {
+			"config": {
+				"viewType": "XML"
+			},
+			"routes": [{
+				"pattern": "",
+				"name": "home",
+				"target": "home"
+			}],
+			"targets": {
+				"home": {
+					"type": "View",
+					"name": "test.routing.target.Async2",
+					"viewId": "async2",
+					"controlAggregation": "pages",
+					"controlId": "container"
+				}
+			}
+		}
+	}
+}

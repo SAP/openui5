@@ -229,6 +229,8 @@ sap.ui.define([
 				this._oRoutes = {};
 				this._oOwner = oOwner;
 
+				this._oConfig.router = this;
+
 				// temporarily: for checking the url param
 				function checkUrl() {
 					if (new URLSearchParams(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {

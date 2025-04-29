@@ -1723,7 +1723,8 @@ function(
 				var sType = node.getAttribute("type");
 
 				var oOwnerComponent = Component.getOwnerComponentFor(oView);
-				var bIsAsyncComponent = oOwnerComponent && oOwnerComponent.isA("sap.ui.core.IAsyncContentCreation");
+				var bIsAsyncComponent = oOwnerComponent?.getManifestObject()?._getSchemaVersion() === 2 ||
+										oOwnerComponent?.isA("sap.ui.core.IAsyncContentCreation");
 
 				if (bEnrichFullIds) {
 					if (!bRootArea && node.hasAttribute("id")) {
@@ -1741,7 +1742,7 @@ function(
 						// legacy check: async=false is not supported with an async-component
 						if (bIsAsyncComponent && mSettings.async === false) {
 							throw new Error(
-								"A nested view contained in a Component implementing 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
+								"A nested view contained in a Component that uses manifest version 2 or implements 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
 								"Affected Component '" + oOwnerComponent.getMetadata().getComponentName() + "' and View '" + mSettings.viewName + "'."
 							);
 						}

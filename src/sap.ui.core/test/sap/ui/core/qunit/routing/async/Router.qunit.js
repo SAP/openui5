@@ -4602,4 +4602,39 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.module("Target option validation for manifest 2", {
+		beforeEach: function() {
+			hasher.setHash("");
+		}
+	});
+
+	QUnit.test("Deprecated option (viewName) in common config should lead to an error", function(assert) {
+		return Component.create({
+			name: "test.routing.target.manifest2commonconfig",
+			manifest: false
+		}).then((oComponent) => {
+			assert.ok(false, "component should not be created");
+		}, (oError) => {
+			assert.ok(oError, "Error is thrown");
+			assert.ok(oError.message.includes("viewName is deprecated"), "Error message points out the deprecated property name");
+			assert.ok(oError.message.includes("'name' instead"), "Error message points the alternative");
+			assert.ok(oError.message.includes("manifest2commonconfig"), "Error message contains the component information");
+		});
+	});
+
+	QUnit.test("Deprecated option (viewId) target config should lead to an error", function(assert) {
+		return Component.create({
+			name: "test.routing.target.manifest2target",
+			manifest: false
+		}).then((oComponent) => {
+			assert.ok(false, "component should not be created");
+		}, (oError) => {
+			assert.ok(oError, "Error is thrown");
+			assert.ok(oError.message.includes("viewId is deprecated"), "Error message points out the deprecated property name");
+			assert.ok(oError.message.includes("'id' instead"), "Error message points the alternative");
+			assert.ok(oError.message.includes("manifest2target"), "Error message contains the component information");
+		});
+	});
 });
+
