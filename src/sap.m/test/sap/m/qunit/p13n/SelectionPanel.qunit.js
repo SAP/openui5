@@ -680,4 +680,74 @@ sap.ui.define([
 		assert.strictEqual(oPanel.getFieldColumn(), "Feld", "fieldColumn value is correctly translated");
 		assert.strictEqual(sShowSelectedTranslated, "Auswahl einblenden", "showSelected text is correctly initialized");
 	});
+
+	const aTestFilter = [
+		{
+			filter: {
+				search: "",
+				showSelected: false,
+				hideDescriptions: false
+			},
+			resultDelta: 0
+		},
+		{
+			filter: {
+				search: "Field 4",
+				showSelected: false,
+				hideDescriptions: false
+			},
+			resultDelta: -5 // 1 item is shown
+		},
+		{
+			filter: {
+				search: "",
+				showSelected: true,
+				hideDescriptions: false
+			},
+			resultDelta: -3 // 3 items are selected
+		},
+		{
+			filter: {
+				search: "",
+				showSelected: false,
+				hideDescriptions: true
+			},
+			resultDelta: -3 // 3 items are selected
+		},
+		{
+			filter: {
+				search: "",
+				showSelected: true,
+				hideDescriptions: true
+			},
+			resultDelta: -3 // 3 items are selected
+		},
+		{
+			filter: {
+				search: "Field 5",
+				showSelected: true,
+				hideDescriptions: true
+			},
+			resultDelta: -6 // 0 items are selected, because 5 has isRedundant=true
+		}
+	];
+
+	aTestFilter.forEach(function(oTestData, index) {
+		QUnit.test(`Check '_filterList' - ${index}`, function(assert) {
+			// Arrange
+			const oP13nData = this.getTestData();
+			oP13nData[2].isRedundant = true;
+			oP13nData[4].isRedundant = true;
+			this.oSelectionPanel.setP13nData(oP13nData);
+
+			// Act
+			this.oSelectionPanel._filterList(oTestData.filter.showSelected, oTestData.filter.search, oTestData.filter.hideDescriptions);
+
+			// Assert
+			const oResultItems = this.oSelectionPanel._oListControl.getItems();
+
+			const actualDelta = oResultItems.length - this.getTestData().length;
+			assert.equal(actualDelta, oTestData.resultDelta, "No length difference for items");
+		});
+	});
 });
