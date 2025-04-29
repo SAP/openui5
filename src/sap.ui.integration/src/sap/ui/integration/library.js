@@ -419,7 +419,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Defines the layout type of the List card attributes.
+	 * Defines the layout type of the List Card attributes.
 	 * @enum {string}
 	 * @public
 	 * @since 1.96

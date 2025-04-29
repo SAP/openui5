@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/RatingIndicator",
 	"sap/m/Image",
-	"sap/ui/integration/controls/ObjectStatus",
 	"sap/m/ComboBox",
 	"sap/m/TextArea",
 	"sap/m/Input",
@@ -28,6 +27,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
+	"sap/ui/integration/util/ObjectStatusFactory",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/Utils",
@@ -59,7 +59,6 @@ sap.ui.define([
 	Label,
 	RatingIndicator,
 	Image,
-	ObjectStatus,
 	ComboBox,
 	TextArea,
 	Input,
@@ -71,6 +70,7 @@ sap.ui.define([
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
+	ObjectStatusFactory,
 	BindingHelper,
 	BindingResolver,
 	Utils,
@@ -503,7 +503,7 @@ sap.ui.define([
 				oControl = this._createNumericDataItem(oItem, vVisible);
 				break;
 			case "Status":
-				oControl = this._createStatusItem(oItem, vVisible);
+				oControl = ObjectStatusFactory.createStatusItem(oItem);
 				break;
 			case "IconGroup":
 				oControl = this._createIconGroupItem(oItem, vVisible);
@@ -624,18 +624,6 @@ sap.ui.define([
 		}
 
 		return oVbox;
-	};
-
-	ObjectContent.prototype._createStatusItem = function (oItem, vVisible) {
-		var oControl = new ObjectStatus({
-			text: oItem.value,
-			visible: BindingHelper.reuse(vVisible),
-			state: oItem.state,
-			showStateIcon: oItem.showStateIcon,
-			customIcon: oItem.customStateIcon
-		});
-
-		return oControl;
 	};
 
 	ObjectContent.prototype._createTextItem = function (oItem, vVisible, oLabel) {
