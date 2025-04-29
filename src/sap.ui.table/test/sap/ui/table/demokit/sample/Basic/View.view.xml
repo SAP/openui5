@@ -5,6 +5,7 @@
 	xmlns:u="sap.ui.unified"
 	xmlns:c="sap.ui.core"
 	xmlns:m="sap.m"
+	xmlns:p="sap.m.plugins"
     height="100%">
 	<m:Page
 		showHeader="false"
@@ -27,6 +28,9 @@
 						<template>
 							<m:Text text="{Name}" wrapping="false" />
 						</template>
+						<dependents>
+							<p:ColumnAIAction press="onAIActionPress"></p:ColumnAIAction>
+						</dependents>
 					</Column>
 					<Column width="11rem">
 						<m:Label text="Product Id" />

@@ -287,6 +287,8 @@ sap.ui.define([
 			/**
 			 * Labels of the column which are displayed in the column header. Define a control for
 			 * each header row in the table. Use this aggregation if you want to use multiple headers per column.
+			 *
+			 * <bNote:</b> The {@link sap.m.plugins.ColumnAIAction ColumnAIAction} plugin is not compatible with multi labels.
 			 * @since 1.13.1
 			 */
 			multiLabels: {type: "sap.ui.core.Control", multiple: true, singularName: "multiLabel"},
@@ -333,7 +335,13 @@ sap.ui.define([
 			 *
 			 * @deprecated As of version 1.117, use the <code>headerMenu</code> association instead.
 			 */
-			menu: {type: "sap.ui.unified.Menu", multiple: false}
+			menu: {type: "sap.ui.unified.Menu", multiple: false},
+
+			/**
+			 * Control to be displayed as an action in the column header.
+			 * @since 1.136
+			 */
+			_action: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 		},
 		associations: {
 			/**

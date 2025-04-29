@@ -595,9 +595,15 @@ sap.ui.define([
 		rm.style("justify-content", mFlexCellContentAlignment[sHAlign]);
 		rm.openEnd();
 
-		if (oLabel) {
-			rm.renderControl(oLabel);
+		const oAction = oColumn.getAggregation("_action");
+		if (oAction && iHeader === 0) {
+			if (oColumn.getMultiLabels().length > 0) {
+				Log.error(`${oColumn}: ColumnAIAction is not compatible with multi labels`);
+			} else {
+				rm.renderControl(oAction);
+			}
 		}
+		rm.renderControl(oLabel);
 
 		rm.close("div");
 

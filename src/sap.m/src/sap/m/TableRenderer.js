@@ -230,6 +230,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 						rm.style("text-align", sAlign);
 					}
 					rm.openEnd();
+					rm.renderControl(oColumn.getAggregation("_action"));
 					rm.renderControl(oControl.addStyleClass("sapMColumnHeaderContent"));
 					rm.close("div");
 				} else {
