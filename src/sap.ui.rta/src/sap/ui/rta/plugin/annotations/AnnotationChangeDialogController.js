@@ -111,17 +111,9 @@ sap.ui.define([
 	};
 
 	function createEditorField(sValueType) {
-		const updateSaveButtonState = () => {
-			// The binding of the save button doesn't detect changes
-			// within nested object properties, so it has to be refreshed explicitly
-			const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
-			oSaveButton.getBinding("enabled").refresh(true);
-		};
-
 		if (sValueType === AnnotationTypes.ValueListType) {
 			const oSelect = new Select({
-				selectedKey: "{currentValue}",
-				change: updateSaveButtonState
+				selectedKey: "{currentValue}"
 			});
 
 			const oItemTemplate = new Item({
@@ -145,15 +137,13 @@ sap.ui.define([
 					const sValue = oEvent.getParameter("newValue");
 					const oContext = oEvent.getSource().getBindingContext();
 					oEvent.getSource().getModel().setProperty("currentValue", sValue, oContext);
-					updateSaveButtonState();
 				}
 			});
 		}
 
 		if (sValueType === AnnotationTypes.BooleanType) {
 			return new Switch({
-				state: "{currentValue}",
-				change: updateSaveButtonState
+				state: "{currentValue}"
 			});
 		}
 
@@ -174,10 +164,6 @@ sap.ui.define([
 				createEditorField.call(this, sValueType)
 			]
 		});
-	};
-
-	AnnotationChangeDialogController.prototype.hasChangesFormatter = function(aProperties) {
-		return aProperties?.some((oProperty) => oProperty.originalValue !== oProperty.currentValue);
 	};
 
 	return AnnotationChangeDialogController;
