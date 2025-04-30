@@ -268,21 +268,6 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 				title: "Test Page for Resource Root when 'src' contains 'sap-ui-custom-some-ext.js' but no 'resources/'"
 			},
 
-			"ThemeVersion-off-async": {
-				group: "Theme Versioning",
-				title: "QUnit Page for Theme Version Parameter - off - async",
-				ui5: {
-					libs: ["sap.ui.core"],
-					language: "en",
-					preload: "async",
-					theme: "base",
-					versionedLibCss: false,
-					XxWaitForTheme: "init"
-				},
-				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
-				module: "./ThemeVersion.qunit"
-			},
-
 			"ThemeVersion-on-async-customcss": {
 				group: "Theme Versioning",
 				title: "QUnit Page for Theme Version Parameter - on - async (with custom.css)",

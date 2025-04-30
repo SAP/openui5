@@ -22,9 +22,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/plugin/rename/Rename",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -49,9 +49,9 @@ sap.ui.define([
 	JSONModel,
 	nextUIUpdate,
 	CommandFactory,
+	Rename,
 	Plugin,
 	Remove,
-	Rename,
 	Utils,
 	sinon
 ) {

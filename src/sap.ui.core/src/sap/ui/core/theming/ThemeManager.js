@@ -692,7 +692,7 @@ sap.ui.define([
 	 */
 	function getLibraryCssQueryParams(oLibInfo) {
 		var sQuery;
-		if (Library.getVersionedLibCss() && oLibInfo) {
+		if (oLibInfo) {
 			sQuery = "?version=" + oLibInfo.version;
 
 			// distribution version may not be available

@@ -113,7 +113,8 @@ sap.ui.define([
 	LocalReset.prototype.getMenuItems = function(vElementOverlays) {
 		return this._getMenuItems(vElementOverlays, {
 			pluginId: "CTX_LOCAL_RESET",
-			icon: "sap-icon://reset"
+			icon: "sap-icon://reset",
+			additionalInfoKey: "LOCALRESET_RTA_CONTEXT_MENU_INFO"
 		});
 	};
 

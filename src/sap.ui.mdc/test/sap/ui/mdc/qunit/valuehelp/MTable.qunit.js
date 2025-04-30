@@ -1940,6 +1940,15 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("shouldOpenOnNavigate", (assert) => {
+
+		assert.notOk(oMTable.shouldOpenOnNavigate(), "should not open on navigate for single Select");
+
+		oTable.setMode(ListMode.MultiSelect);
+		assert.notOk(oMTable.shouldOpenOnNavigate(), "should open on navigate for multi Select");
+
+	});
+
 	QUnit.test("getContainerConfig - getContentHeight", (assert) => {
 
 		const oFakeDom = {

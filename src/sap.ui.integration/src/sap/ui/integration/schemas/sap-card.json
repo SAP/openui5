@@ -76,7 +76,7 @@
       "additionalProperties": false,
       "properties": {
         "editor": {
-          "description": "The path to the design time configuration file. Used for Configuration Editor.",
+          "description": "The path to the design time configuration file. Used for Configuration Editor",
           "type": "string"
         },
         "enableMarkdown": {
@@ -84,11 +84,11 @@
           "type": "boolean"
         },
         "helpId": {
-          "description": "[Experimental] The help-id which will be rendered as data-help-id on the base element of the card.",
+          "description": "[Experimental] The help-id which will be rendered as data-help-id on the base element of the card",
           "type": "string"
         },
         "modelSizeLimit": {
-          "description": "[Experimental] Represents the maximum number of entries that are used for list bindings.",
+          "description": "[Experimental] Represents the maximum number of entries that are used for list bindings",
           "oneOf": [
             {
               "type": "number"
@@ -272,7 +272,7 @@
           "$ref": "#/$defs/visibility"
         },
         "closeButton": {
-          "description": "[Experimental] Defines the Close button when the card is opened by the ShowCard action.",
+          "description": "[Experimental] Defines the Close button when the card is opened by the ShowCard action",
           "$ref": "#/$defs/closeButton"
         }
       }
@@ -480,7 +480,7 @@
           }
         },
         "titleMaxLines": {
-          "description": "[Experimental] Limit the number of lines for the title.",
+          "description": "[Experimental] Limit the number of lines for the title",
           "oneOf": [
             {
               "type": "number"
@@ -500,7 +500,7 @@
           }
         },
         "subTitleMaxLines": {
-          "description": "[Experimental] Limit the number of lines for the sub title.",
+          "description": "[Experimental] Limit the number of lines for the sub title",
           "oneOf": [
             {
               "type": "number"
@@ -530,17 +530,21 @@
           "$ref": "#/$defs/status"
         },
         "closeButton": {
-          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
+          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action",
           "$ref": "#/$defs/closeButton",
           "deprecated": true
         },
         "wrappingType": {
-          "description": "[Experimental] The wrapping type for texts inside the header.",
+          "description": "[Experimental] The wrapping type for texts inside the header",
           "$ref": "#/$defs/wrappingType"
         },
         "visible": {
           "description": "[Experimental] Visibility of the header",
           "$ref": "#/$defs/visibility"
+        },
+        "infoSection": {
+          "description": "[Experimental] Represents the info section of the header",
+          "$ref": "#/$defs/HeaderType.InfoSection"
         }
       }
     },
@@ -568,7 +572,7 @@
           }
         },
         "titleMaxLines": {
-          "description": "[Experimental] Limit the number of lines for the title.",
+          "description": "[Experimental] Limit the number of lines for the title",
           "oneOf": [
             {
               "type": "number"
@@ -588,7 +592,7 @@
           }
         },
         "subTitleMaxLines": {
-          "description": "[Experimental] Limit the number of lines for the sub title.",
+          "description": "[Experimental] Limit the number of lines for the sub title",
           "oneOf": [
             {
               "type": "number"
@@ -637,7 +641,7 @@
           "type": "string"
         },
         "detailsMaxLines": {
-          "description": "[Experimental] Limit the number of lines for the details text.",
+          "description": "[Experimental] Limit the number of lines for the details text",
           "oneOf": [
             {
               "type": "number"
@@ -661,17 +665,21 @@
           "$ref": "#/$defs/status"
         },
         "closeButton": {
-          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
+          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action",
           "$ref": "#/$defs/closeButton",
           "deprecated": true
         },
         "wrappingType": {
-          "description": "[Experimental] The wrapping type for texts inside the header.",
+          "description": "[Experimental] The wrapping type for texts inside the header",
           "$ref": "#/$defs/wrappingType"
         },
         "visible": {
           "description": "[Experimental] Visibility of the header",
           "$ref": "#/$defs/visibility"
+        },
+        "infoSection": {
+          "description": "[Experimental] Represents the info section of the header",
+          "$ref": "#/$defs/HeaderType.InfoSection"
         },
         "chart": {
           "$ref": "#/$defs/MicroChart"
@@ -763,6 +771,73 @@
         }
       }
     },
+    "HeaderType.InfoSection": {
+      "description": "Represents the info section of the header",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rows": {
+          "description": "Represents the rows of the info section",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HeaderType.InfoSection.Row"
+          }
+        }
+      }
+    },
+    "HeaderType.InfoSection.Item": {
+      "description": "Represents an info section item",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/objectStatus"
+        }
+      ]
+    },
+    "HeaderType.InfoSection.Row": {
+      "description": "Represents a row of the info section",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "justifyContent": {
+          "$ref": "#/$defs/justifyContent"
+        },
+        "columns": {
+          "description": "Represents the columns of the row",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HeaderType.InfoSection.Column"
+          }
+        },
+        "items": {
+          "description": "Represents the items of the row",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HeaderType.InfoSection.Item"
+          }
+        }
+      }
+    },
+    "HeaderType.InfoSection.Column": {
+      "description": "Represents a column of the info section",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "rows": {
+          "description": "Represents the rows of the column",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HeaderType.InfoSection.Row"
+          }
+        },
+        "items": {
+          "description": "Represents the items of the column",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/HeaderType.InfoSection.Item"
+          }
+        }
+      }
+    },
     "ContentType.Component": {
       "description": "Represents the configuration for a component card's content",
       "type": "object",
@@ -840,7 +915,7 @@
         },
         "info": {
           "description": "Defines an additional information text",
-          "$ref": "#/$defs/ContentType.List.Item.ValueStateItem"
+          "$ref": "#/$defs/objectStatus"
         },
         "highlight": {
           "type": "string",
@@ -856,7 +931,7 @@
         },
         "highlightText": {
           "type": "string",
-          "description": "Defines the semantics of the 'highlight' property. It is used for accessibility purposes."
+          "description": "Defines the semantics of the 'highlight' property. It is used for accessibility purposes"
         },
         "icon": {
           "$ref": "#/$defs/icon"
@@ -880,7 +955,7 @@
           "description": "Defines the attributes",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/ContentType.List.Item.ValueStateItem"
+            "$ref": "#/$defs/objectStatus"
           }
         },
         "actions": {
@@ -906,51 +981,6 @@
               "$ref": "#/$defs/actionsStrip"
             }
           ]
-        }
-      }
-    },
-    "ContentType.List.Item.ValueStateItem": {
-      "description": "Represents value and state information for an object",
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "value": {
-          "type": "string",
-          "description": "The value of the field"
-        },
-        "state": {
-          "description": "The state of the field",
-          "oneOf": [
-            {
-              "$ref": "#/$defs/state"
-            },
-            {
-              "$ref": "#/$defs/simpleBinding"
-            }
-          ]
-        },
-        "showStateIcon": {
-          "description": "Defines if a default state icon is shown",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/$defs/simpleBinding"
-            }
-          ]
-        },
-        "customStateIcon": {
-          "description": "The custom state icon",
-          "type": "string"
-        },
-        "visible": {
-          "description": "Visibility of the item",
-          "$ref": "#/$defs/visibility"
-        },
-        "title": {
-          "description": "Title of the data point. This is just a placeholder to store the title, title will not be rendered on the screen. This is needed to prevent the loss of columnn names while transforming table card to list card.",
-          "type": "string"
         }
       }
     },
@@ -1439,7 +1469,7 @@
           }
         },
         "titleMaxLines": {
-          "description": "[Experimental] Limits the number of lines for wrapping the group title.",
+          "description": "[Experimental] Limits the number of lines for wrapping the group title",
           "oneOf": [
             {
               "type": "number"
@@ -1451,7 +1481,7 @@
           "default": 1
         },
         "labelWrapping": {
-          "description": "[Experimental] Determines whether the labels of the group items will be wrapped.",
+          "description": "[Experimental] Determines whether the labels of the group items will be wrapped",
           "oneOf": [
             {
               "type": "boolean"
@@ -1683,12 +1713,23 @@
           "description": "The custom state icon",
           "type": "string"
         },
+        "inverted": {
+          "description": "Specifies whether the background color reflects the set \"state\" instead of the control's text",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
         "id": {
           "description": "ID for input fields",
           "type": "string"
         },
         "selectedKey": {
-          "description": "Defines the initially selected key from the given options for combo box.",
+          "description": "Defines the initially selected key from the given options for combo box",
           "type": "string"
         },
         "placeholder": {
@@ -1761,7 +1802,7 @@
         },
         "alt": {
           "type": "string",
-          "description": "The alternative text that is displayed in case the image is not available, or cannot be displayed."
+          "description": "The alternative text that is displayed in case the image is not available, or cannot be displayed"
         },
         "fullWidth": {
           "description": "Defines if the image will take the full width of the group, including the paddings. If set to false there will be padding. For best result use together with 'alignment': 'Stretched' for the group",
@@ -1780,11 +1821,11 @@
           "type": "string"
         },
         "imageFit": {
-          "description": "This property is for adjusting the image size using the CSS style <code>background-size</code>.",
+          "description": "This property is for adjusting the image size using the CSS style <code>background-size</code>",
           "type": "string"
         },
         "imagePosition": {
-          "description": "This property is for adjusting the image position using the CSS style <code>background-position</code>.",
+          "description": "This property is for adjusting the image position using the CSS style <code>background-position</code>",
           "type": "string"
         },
         "overlay": {
@@ -1812,7 +1853,7 @@
               "type": "string"
             },
             "padding": {
-              "description": "Set to 'MediumStart' to have medium size padding in the beginning of the texts.",
+              "description": "Set to 'MediumStart' to have medium size padding in the beginning of the texts",
               "type": "string"
             },
             "textColor": {
@@ -1820,7 +1861,7 @@
               "type": "string"
             },
             "textFilter": {
-              "description": "The CSS filter which will be applied to the text.",
+              "description": "The CSS filter which will be applied to the text",
               "type": "string"
             },
             "background": {
@@ -1828,7 +1869,7 @@
               "type": "string"
             },
             "animation": {
-              "description": "Defines the animation that should be used to show up the overlay.",
+              "description": "Defines the animation that should be used to show up the overlay",
               "type": "string"
             }
           }
@@ -2075,7 +2116,7 @@
             },
             "highlightText": {
               "type": "string",
-              "description": "Defines the semantics of the 'highlight' property. It is used for accessibility purposes."
+              "description": "Defines the semantics of the 'highlight' property. It is used for accessibility purposes"
             }
           }
         },
@@ -2139,7 +2180,7 @@
           "type": "string"
         },
         "additionalText": {
-          "description": "Represents the additional text for the identifier column.",
+          "description": "Represents the additional text for the identifier column",
           "type": "string"
         },
         "icon": {
@@ -2279,7 +2320,7 @@
           ]
         },
         "use12HourFormat": {
-          "description": "Displays the time for calendar appointments in either 12h or 24h formats. By default, time is displayed in 24h format.",
+          "description": "Displays the time for calendar appointments in either 12h or 24h formats. By default, time is displayed in 24h format",
           "oneOf": [
             {
               "type": "boolean"
@@ -2290,7 +2331,7 @@
           ]
         },
         "calendarWeekNumbering": {
-          "description": "Set the first day of week based on one of the available options Default, ISO_8601, MiddleEastern, or WesternTraditional.",
+          "description": "Set the first day of week based on one of the available options Default, ISO_8601, MiddleEastern, or WesternTraditional",
           "oneOf": [
             {
               "enum": [
@@ -2565,7 +2606,7 @@
           ]
         },
         "omitSandbox": {
-          "description": "If set to 'true' the 'sandbox' attribute will not be added to the iframe.",
+          "description": "If set to 'true' the 'sandbox' attribute will not be added to the iframe",
           "oneOf": [
             {
               "type": "boolean",
@@ -2959,7 +3000,7 @@
           ]
         },
         "timeout": {
-          "description": "A timeout (in milliseconds) for the request. A value of 0 means there will be no timeout.",
+          "description": "A timeout (in milliseconds) for the request. A value of 0 means there will be no timeout",
           "oneOf": [
             {
               "type": "number",
@@ -3566,11 +3607,11 @@
           "description": "The value of the filter"
         },
         "selectedKey": {
-          "description": "Defines the initially selected key from the given options for combo box.",
+          "description": "Defines the initially selected key from the given options for combo box",
           "type": "string"
         },
         "selectedIndex": {
-          "description": "Specifies the index of the selected item. Index value for no selection is -1.",
+          "description": "Specifies the index of the selected item. Index value for no selection is -1",
           "oneOf": [
             {
               "type": "number",
@@ -3654,7 +3695,7 @@
           "type": "string"
         },
         "additionalText": {
-          "description": "The secondary value for the combo box item.",
+          "description": "The secondary value for the combo box item",
           "type": "string"
         }
       }
@@ -4307,6 +4348,86 @@
               ]
             }
           }
+        }
+      }
+    },
+    "justifyContent": {
+      "description": "Defines how the space is distributed between and around content items",
+      "type": "string",
+      "oneOf": [
+        {
+          "enum": [
+            "SpaceBetween",
+            "Start",
+            "End"
+          ],
+          "default": "SpaceBetween"
+        },
+        {
+          "$ref": "#/$defs/simpleBinding"
+        }
+      ]
+    },
+    "objectStatus": {
+      "description": "Represents value and state information for an object",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "Represents the type of the object",
+          "type": "string",
+          "enum": [
+            "Status"
+          ]
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the field"
+        },
+        "state": {
+          "description": "The state of the field",
+          "oneOf": [
+            {
+              "$ref": "#/$defs/state"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "showStateIcon": {
+          "description": "Defines if a default state icon is shown",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
+        },
+        "customStateIcon": {
+          "description": "The custom state icon",
+          "type": "string"
+        },
+        "visible": {
+          "description": "Visibility of the item",
+          "$ref": "#/$defs/visibility"
+        },
+        "title": {
+          "description": "Title of the data point. This is just a placeholder to store the title, title will not be rendered on the screen. This is needed to prevent the loss of column names while transforming table card to list card",
+          "type": "string"
+        },
+        "inverted": {
+          "description": "Specifies whether the background color reflects the set \"state\" instead of the control's text",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ]
         }
       }
     }

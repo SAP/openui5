@@ -407,6 +407,16 @@ sap.ui.define([
 		]
 	});
 
+	const oInfoToolbar = new Toolbar({
+		id: "infoToolbar",
+		design: "Info",
+		content: [
+			new Label({
+				text: "2 Products Selected"
+			})
+		]
+	});
+
 	var oPage = new Page("myPage", {
 		title: "sap.m.Label Test Page",
 		subHeader: new Toolbar({
@@ -489,14 +499,15 @@ sap.ui.define([
 					oVL4,
 					oVL5,
 					oVL6,
-					sf, sf2
+					sf,
+					sf2,
+					new Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}),
+					new Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}),
+					oInfoToolbar
 				]
 			})
 		]
 	});
-
-	oPage.addContent(new Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}));
-	oPage.addContent(new Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}));
 
 	var oApp = new App("myApp", {
 		initialPage:"myPage"

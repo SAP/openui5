@@ -14,6 +14,7 @@ module.exports = [
 	"CardSecurityPerformanceVisualTests.spec.js",
 	"CardVariantsVisualTests.spec.js",
 	"ComponentCardVisualTests.spec.js",
+	"HeaderInfoSectionVisualTests.spec.js",
 	"ListCardVisualTests.spec.js",
 	"ObjectCardVisualTests.spec.js",
 	"sapFCardVisualTests.spec.js",

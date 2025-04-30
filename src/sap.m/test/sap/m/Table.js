@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/m/Button",
 	"sap/m/plugins/CopyProvider",
+	"sap/m/plugins/ColumnAIAction",
 	"sap/m/plugins/PasteProvider",
 	"sap/m/Column",
 	"sap/m/Link",
@@ -50,6 +51,7 @@ sap.ui.define([
 	Title,
 	Button,
 	CopyProvider,
+	ColumnAIAction,
 	PasteProvider,
 	Column,
 	Link,
@@ -372,8 +374,13 @@ sap.ui.define([
 		new Column({
 			header : new Label({
 				text : "LastName",
-				wrapping: true,
+				wrapping: false,
 				wrappingType: "Hyphenated"
+			}),
+			dependents: new ColumnAIAction({
+				press: function(oEvent) {
+					MessageBox.show("ColumnAIAction pressed " + oEvent.getParameter("action").getId());
+				}
 			})
 		}).data("clipboard", "lastName"),
 		new Column({
@@ -442,7 +449,12 @@ sap.ui.define([
 			footer : oSalaryFooter.clone(),
 			minScreenWidth : "Desktop",
 			popinDisplay : "Inline",
-			demandPopin : true
+			demandPopin : true,
+			dependents: new ColumnAIAction({
+				press: function(oEvent) {
+					MessageBox.show("ColumnAIAction pressed " + oEvent.getParameter("action").getId());
+				}
+			})
 		}).data("clipboard", "money")
 	];
 	aColumns[0].setHeaderMenu(oMenu.getId());

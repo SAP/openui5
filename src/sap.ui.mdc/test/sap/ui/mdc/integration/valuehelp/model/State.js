@@ -1,4 +1,5 @@
-sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/v4demo/delegate/requestshowtypeahead/ValueHelp.delegate", "sap/ui/v4demo/delegate/oncontrolconnect/ValueHelp.delegate"], (JSONModel, RequestShowTypeaheadValueHelpDelegate, OnControlConnectValueHelpDelegate) => {
+sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/mdc/ValueHelpDelegate", "sap/ui/v4demo/delegate/requestshowtypeahead/ValueHelp.delegate", "sap/ui/v4demo/delegate/oncontrolconnect/ValueHelp.delegate"], (JSONModel, ValueHelpDelegate, RequestShowTypeaheadValueHelpDelegate, OnControlConnectValueHelpDelegate) => {
+
 	"use strict";
 
 	const oUrlParams = Object.fromEntries(new URLSearchParams(window.location.search));
@@ -11,15 +12,13 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/v4demo/delegate/requestsho
 		{path: "sap.ui.v4demo.view.OPA-3", text: "OPA: Define Conditions Popover", maxConditions: -1},
 		{path: "sap.ui.v4demo.view.OPA-4", text: "OPA: Dialog with Default FilterBar Configuration", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.OPA-5", footer: "sap.ui.v4demo.view.OPA-5-Footer",  text: "OPA: ValueHelps With Complex Keys", maxConditions: -1, maxConditionsToggleEnabled: true},
-		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover.opensOnClick", maxConditions: 1},
+		{path: "sap.ui.v4demo.view.OPA-6", text: "OPA: Popover: open on click", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.FirstMatch", text: "Explore: ValueHelpDelegate.getFirstMatch", maxConditions: 1},
 		{path: "sap.ui.v4demo.view.RequestShowTypeahead", text: "Explore: ValueHelpDelegate.requestShowContainer", maxConditions: 1, isView: true},
-		{path: "sap.ui.v4demo.view.OnControlConnect", text: "Explore: ValueHelpDelegate.onControlConnect", maxConditions: 1, isView: true}
-
+		{path: "sap.ui.v4demo.view.OnControlConnect", text: "Explore: ValueHelpDelegate.onControlConnect", maxConditions: 1, isView: true},
+		{path: "sap.ui.v4demo.view.Typeahead", text: "Explore: Controlled Open State for Typeahead", maxConditions: 1, maxConditionsToggleEnabled: true},
+		{path: "sap.ui.v4demo.view.OPA-7", text: "OPA: Popover: open on focus", maxConditions: 1}
 	];
-
-	availableViews.push({path: "sap.ui.v4demo.view.OPA-7", text: "Legacy - OPA: Popover.opensOnFocus", maxConditions: 1});
-
 
 
 	const activeViewPath = oUrlParams.view || "sap.ui.v4demo.view.Typeahead";
@@ -113,6 +112,12 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/v4demo/delegate/requestsho
 		}
 
 	};
+
+	if (oInitialData) {
+		oInitialData.typeahead.showTypeahead = ValueHelpDelegate.showTypeahead.toString();
+		oInitialData.typeahead.shouldOpenOnFocus = ValueHelpDelegate.shouldOpenOnFocus.toString();
+		oInitialData.typeahead.shouldOpenOnClick = ValueHelpDelegate.shouldOpenOnClick.toString();
+	}
 	const oAppStateModel = new JSONModel(oInitialData);
 	return oAppStateModel;
 });

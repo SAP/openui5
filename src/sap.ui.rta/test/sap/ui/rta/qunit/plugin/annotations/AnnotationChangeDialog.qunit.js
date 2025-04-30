@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 	Control,
 	Element,
+	Lib,
 	ElementUtil,
 	KeyCodes,
 	FlexObjectFactory,
@@ -30,6 +32,7 @@ sap.ui.define([
 	"use strict";
 
 	const sandbox = sinon.createSandbox();
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	const oTextArrangementTypes = {
 		TextOnly: { EnumMember: "com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly" },
@@ -202,8 +205,8 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
-					false,
-					"then the save button is disabled"
+					true,
+					"then the save button is enabled"
 				);
 				assert.strictEqual(aFormElements.length, 3, "then for each property a form element is created");
 				assert.strictEqual(aFormElements[0].getLabel().getText(), "My First Test Label", "then the properties are properly sorted");
@@ -333,8 +336,8 @@ sap.ui.define([
 				oSelect.fireChange({ selectedItem: oFirstListItem });
 				assert.strictEqual(
 					Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton").getEnabled(),
-					false,
-					"then the save button is disabled"
+					true,
+					"then the save button is enabled"
 				);
 				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
 				oSaveButton.firePress();
@@ -566,6 +569,11 @@ sap.ui.define([
 				const aFormElements = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyList").getFormElements();
 				const oInput = aFormElements[0].getFields().filter((oField) => oField.getVisible())[0];
 				assert.strictEqual(oInput.getValue(), sAnnotationChangeLabel, "then the correct value is set");
+				assert.strictEqual(
+					aFormElements[0].getLabel().getText(),
+					oResourceBundle.getText("ANNOTATION_CHANGE_DIALOG_SINGLE_RENAME_LABEL"),
+					"then the dedicated single rename label is displayed"
+				);
 
 				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
 				oCancelButton.firePress();

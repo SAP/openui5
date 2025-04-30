@@ -229,6 +229,7 @@ TableRenderer.renderColumns = function(rm, oTable, sType) {
 					rm.style("text-align", sAlign);
 				}
 				rm.openEnd();
+				rm.renderControl(oColumn.getAggregation("_action"));
 				rm.renderControl(oControl.addStyleClass("sapMColumnHeaderContent"));
 				rm.close("div");
 			} else {

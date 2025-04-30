@@ -61,6 +61,7 @@ function makeLib(lib, dependencies) {
 	"use strict";
 	return Library.init({
 		name: "${makeName(lib)}",
+		version: '1.0.0',
 		apiVersion: 2,
 		dependencies: [${deps.map((dep) => `
 			"${makeName(dep)}"`).join(",")}

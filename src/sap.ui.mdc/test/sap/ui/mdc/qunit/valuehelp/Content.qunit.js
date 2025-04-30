@@ -384,6 +384,20 @@ sap.ui.define([
 		assert.equal(oContent.isSingleSelect(), true, "single-select correctly determined from maxConditions");
 	});
 
+	QUnit.test("shouldOpenOnClick", (assert) => {
+
+		assert.notOk(oContent.shouldOpenOnClick(), "shouldOpenOnClick");
+
+	});
+
+	QUnit.test("shouldOpenOnNavigate", (assert) => {
+
+		oContent.setConfig({maxConditions: -1});
+		assert.notOk(oContent.shouldOpenOnNavigate(), "multi-value");
+		oContent.setConfig({maxConditions: 1});
+		assert.notOk(oContent.shouldOpenOnNavigate(), "single-value");
+	});
+
 	QUnit.test("isNavigationEnabled", (assert) => {
 
 		assert.notOk(oContent.isNavigationEnabled(1), "isNavigationEnabled");
@@ -484,4 +498,5 @@ sap.ui.define([
 		assert.notOk(oContent.setHighlightId("ID"), "Just existance check");
 
 	});
+
 });

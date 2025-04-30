@@ -136,7 +136,7 @@ sap.ui.define([
 	var ButtonType = library.ButtonType;
 
 	// Add title propagation support
-	TitlePropagationSupport.call(WizardStep.prototype, "content", function () {return this.getId() + "-title";});
+	TitlePropagationSupport.call(WizardStep.prototype, "content", function () {return this.getId() + "-Title";});
 
 	WizardStep.prototype.init = function () {
 		this._oResourceBundle = Library.getResourceBundleFor("sap.m");

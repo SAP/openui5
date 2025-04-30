@@ -377,7 +377,8 @@ sap.ui.define([
 			InitialConnector._addClientInfo(mParameters);
 			const sUrl = InitialUtils.getUrl(ROUTES.SEEN_FEATURES, mPropertyBag, mParameters);
 			const oResult = await InitialUtils.sendRequest(sUrl, "GET", {initialConnector: InitialConnector});
-			return oResult.response?.seenFeatureIds;
+			// The ABAP backend returns an empty string if no seen feature ids are available instead of { seenFeatureIds: [] }
+			return oResult.response?.seenFeatureIds || [];
 		},
 
 		/**

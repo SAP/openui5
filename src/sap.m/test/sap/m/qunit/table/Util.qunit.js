@@ -178,6 +178,8 @@ sap.ui.define([
 		assert.equal(Util.calcHeaderWidth("Hea", 2, 0, 4), 4, "iMinWidth > iHeaderLength");
 		assert.equal(Util.calcHeaderWidth("He", 3, 0, 5), 5, "min width");
 
+		assert.equal(Util.calcHeaderWidth("Header", 2, 19, 2, false, false), Util.calcHeaderWidth("Header", 2, 19, 2, false, true) - 1.75, "Column header with action is 1.75rem wider than column header without action");
+
 		assert.notEqual(Util.calcHeaderWidth("A", 5), 5, "no fContentWidth > iHeaderLength optimization");
 
 		assert.equal(Util.calcHeaderWidth("A".repeat(100), 10, 8), 8);

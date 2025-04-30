@@ -12,31 +12,32 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
-	// as basic ListBinding class has not al functions defined, only as JSDoc
-	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/json/JSONListBinding", // as basic ListBinding class has not al functions defined, only as JSDoc
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/String",
-	"sap/ui/mdc/valuehelp/RequestShowContainerDefault",
-	"sap/ui/mdc/util/loadModules"
+	"sap/ui/Device",
+	"sap/ui/mdc/util/loadModules",
+	"sap/ui/mdc/enums/RequestShowContainerReason"
 ], (
-	ValueHelpDelegate,
-	FieldDisplay,
-	Condition,
-	BaseType,
-	ConditionValidated,
-	OperatorName,
-	ValueHelpPropagationReason,
-	Filter,
-	FilterOperator,
-	FilterType,
-	ListBinding,
-	JSONModel,
-	IntegerType,
-	StringType,
-	RequestShowContainerDefault,
-	loadModules
-) => {
+		ValueHelpDelegate,
+		FieldDisplay,
+		Condition,
+		BaseType,
+		ConditionValidated,
+		OperatorName,
+		ValueHelpPropagationReason,
+		Filter,
+		FilterOperator,
+		FilterType,
+		ListBinding,
+		JSONModel,
+		IntegerType,
+		StringType,
+		Device,
+		loadModules,
+		RequestShowContainerReason
+	) => {
 	"use strict";
 
 	let aRelevantContexts = [];
@@ -127,22 +128,30 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("isSearchSupported", (assert) => {
-		assert.notOk(ValueHelpDelegate.isSearchSupported(oFakeValueHelp, oFakeContent, oListBinding), "Search not supported");
-	});
+	QUnit.test("showTypeahead", (assert) => {
+		assert.notOk(ValueHelpDelegate.showTypeahead(oFakeValueHelp, null), "without Content");
 
-	QUnit.test("requestShowContainer", async (assert) => {
-		const oFakeContainer = {isA: (sName) => false, getContent: () => []};
-		const sFakeReason = "Tap";
+		sinon.stub(oFakeContent, "isA").withArgs("sap.ui.mdc.valuehelp.base.FilterableListContent").returns(true);
+		assert.notOk(ValueHelpDelegate.showTypeahead(oFakeValueHelp, oFakeContent), "for FilterableListContent without filterValue");
 
-		sinon.spy(ValueHelpDelegate, "requestShowContainer");
-		sinon.spy(RequestShowContainerDefault, sFakeReason);
+		sinon.stub(oFakeContent, "getFilterValue").returns("A");
+		assert.ok(ValueHelpDelegate.showTypeahead(oFakeValueHelp, oFakeContent), "for FilterableListContent with filterValue");
 
-		await ValueHelpDelegate.requestShowContainer(oFakeValueHelp,  oFakeContainer, sFakeReason);
+		oFakeContent.isA.withArgs("sap.ui.mdc.valuehelp.base.FilterableListContent").returns(false);
+		oFakeContent.isA.withArgs("sap.ui.mdc.valuehelp.base.ListContent").returns(true);
+		assert.notOk(ValueHelpDelegate.showTypeahead(oFakeValueHelp, oFakeContent), "for ListContent with ListBinding without Contexts");
 
-		assert.ok(RequestShowContainerDefault[sFakeReason].calledWith(oFakeValueHelp,oFakeContainer), "executes default method");
-		RequestShowContainerDefault[sFakeReason].restore();
-		ValueHelpDelegate.requestShowContainer.restore();
+		aRelevantContexts = [
+			new FakeContext({key: "A", text: "", message: "ci match"}), // key match ci
+			new FakeContext({key: "AA", text: "", message: "ci startsWith"}) // startsWith key ci
+		];
+		assert.ok(ValueHelpDelegate.showTypeahead(oFakeValueHelp, oFakeContent), "for ListContent with ListBinding with Contexts");
+
+		const oDeviceStub = sinon.stub(Device, "system").value({desktop: false, phone: true, tablet: false});
+		assert.ok(ValueHelpDelegate.showTypeahead(oFakeValueHelp, null), "on phone always true");
+		oDeviceStub.restore();
+		oFakeContent.isA.restore();
+		oFakeContent.getFilterValue.restore();
 	});
 
 
@@ -263,6 +272,56 @@ sap.ui.define([
 		sinon.stub(oFakeContent, "getCaseSensitive").returns(false);
 		assert.notOk(ValueHelpDelegate.isFilteringCaseSensitive(oFakeValueHelp, oFakeContent), "Not case Sensitive");
 		oFakeContent.getCaseSensitive.restore();
+	});
+
+	QUnit.test("shouldOpenOnFocus", async (assert) => {
+		const oFakeContainer = {
+			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
+			getOpensOnFocus: () => true
+		};
+
+		oFakeContainer.getOpensOnFocus = () => true;
+		oFakeContainer.isA = () => false;
+		const bShouldOpen = await ValueHelpDelegate.shouldOpenOnFocus(oFakeValueHelp, oFakeContainer);
+		assert.notOk(bShouldOpen, "other Container");
+	});
+
+	QUnit.test("shouldOpenOnClick", async (assert) => {
+		const oFakeContainer = {
+			isA: (sName) => (sName === "sap.ui.mdc.valuehelp.Popover" ? true : false),
+			getOpensOnClick: () => true,
+			_getContent: () => oFakeContent,
+			isPropertyInitial: (sProperty) => true,
+			isSingleSelect: () => true,
+			isDialog: () => true
+		};
+
+		let bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
+		assert.notOk(bShouldOpen, "Popover: Content not should open");
+
+		sinon.stub(oFakeContent, "shouldOpenOnClick").returns(true);
+		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
+		assert.ok(bShouldOpen, "Popover: Content should open");
+		oFakeContent.shouldOpenOnClick.restore();
+
+		const oDeviceStub = sinon.stub(Device, "system").value({desktop: false, phone: true, tablet: false});
+		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
+		assert.notOk(bShouldOpen, "Popover on Phone: Content should not open");
+
+		oFakeContainer.isSingleSelect = () => false;
+		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
+		assert.ok(bShouldOpen, "Popover on Phone and not-SingeSelect: Content should open");
+
+		oFakeContainer.isDialog = () => false;
+		oFakeContainer.isSingleSelect = () => true;
+		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
+		assert.ok(bShouldOpen, "Popover on Phone and not-Dialog: Content should open");
+		oDeviceStub.restore();
+
+		oFakeContainer.getOpensOnClick = () => true;
+		oFakeContainer.isA = () => false;
+		bShouldOpen = await ValueHelpDelegate.shouldOpenOnClick(oFakeValueHelp, oFakeContainer);
+		assert.notOk(bShouldOpen, "other Container");
 	});
 
 	QUnit.test("compareConditions", (assert) => {
@@ -489,5 +548,18 @@ sap.ui.define([
 
 		_testIndex(assert, [1, 1, 1, 2, 2, 2], undefined); // selected item must be ignored
 
+	});
+
+	QUnit.test("isSearchSupported", (assert) => {
+		assert.notOk(ValueHelpDelegate.isSearchSupported(oFakeValueHelp, oFakeContent, oListBinding), "Search not supported");
+	});
+
+	QUnit.module("requestShowContainer");
+
+	QUnit.test(RequestShowContainerReason.Tap, async (assert) => {
+		sinon.spy(ValueHelpDelegate, "shouldOpenOnClick");
+		const oFakeContainer = {getContent: () => [], isA: () => false};
+		await ValueHelpDelegate.requestShowContainer(oFakeValueHelp, oFakeContainer, RequestShowContainerReason.Tap);
+		assert.ok(ValueHelpDelegate.shouldOpenOnClick.calledWith(oFakeValueHelp, oFakeContainer), "shouldOpenOnClick was called");
 	});
 });

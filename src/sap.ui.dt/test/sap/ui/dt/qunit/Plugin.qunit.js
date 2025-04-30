@@ -569,6 +569,130 @@ sap.ui.define([
 			assert.strictEqual(oEvaluateEditableStub.callCount, 1, "then the evaluateEditable check is executed");
 			assert.strictEqual(aMenuItems.length, 1, "then the action is available");
 		});
+
+		QUnit.test("when info reference for additional information is defined in the action", async function(assert) {
+			this.fnGetAction = function() {
+				return {
+					name: "dummyActionName",
+					additionalInfoKey: "ADDITIONAL_INFORMATION_KEY"
+				};
+			};
+			this.fnGetLibraryText = function(oElement, sKey) {
+				assert.ok(
+					["dummyActionName", "ADDITIONAL_INFORMATION_KEY"].includes(sKey),
+					"then the right key is passed to getLibraryText method"
+				);
+				return "dummyAdditionalInformation";
+			};
+
+			const mMenuItem = (await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "dummyPluginId", rank: 10}))[0];
+
+			assert.strictEqual(
+				mMenuItem.additionalInfo,
+				"dummyAdditionalInformation",
+				"the method returns the right additional information for the menu item"
+			);
+		});
+
+		QUnit.test("when info reference for additional information is defined in the action but not provided in the messagebundle", async function(assert) {
+			this.fnGetAction = function() {
+				return {
+					name: "dummyActionName",
+					additionalInfoKey: "ADDITIONAL_INFORMATION_KEY"
+				};
+			};
+			this.fnGetLibraryText = function(oElement, sKey) {
+				assert.ok(
+					["dummyActionName", "ADDITIONAL_INFORMATION_KEY"].includes(sKey),
+					"then the right key is passed to getLibraryText method"
+				);
+				return undefined;
+			};
+
+			const mMenuItem = (await this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "dummyPluginId", rank: 10}))[0];
+
+			assert.strictEqual(
+				mMenuItem.additionalInfo,
+				undefined,
+				"the method returns undefined property for the menu item"
+			);
+		});
+
+		QUnit.test("when info reference for additional information is defined into the plugin", async function(assert) {
+			this.fnGetAction = function() {
+				return {
+					name: "dummyActionName"
+				};
+			};
+			sandbox.stub(Lib, "getResourceBundleFor").returns({
+				getText(sKey) {
+					assert.strictEqual(sKey, "ADDITIONAL_INFORMATION_KEY", "then the right key is passed to getText method");
+					return "dummyAdditionalInformationFromPlugin";
+				}
+			});
+			const mMenuItem = (await this.oPlugin._getMenuItems(
+				[this.oOverlay],
+				{pluginId: "dummyPluginId", rank: 10, additionalInfoKey: "ADDITIONAL_INFORMATION_KEY"}
+			))[0];
+			assert.strictEqual(
+				mMenuItem.additionalInfo,
+				"dummyAdditionalInformationFromPlugin",
+				"the method returns the right additional information for the menu item"
+			);
+		});
+
+		QUnit.test("when info reference for additional information is defined into the plugin but not provided in the messagebundle", async function(assert) {
+			this.fnGetAction = function() {
+				return {
+					name: "dummyActionName"
+				};
+			};
+			sandbox.stub(Lib, "getResourceBundleFor").returns({
+				getText(sKey) {
+					assert.strictEqual(sKey, "ADDITIONAL_INFORMATION_KEY", "then the right key is passed to getText method");
+					return undefined;
+				}
+			});
+			const mMenuItem = (await this.oPlugin._getMenuItems(
+				[this.oOverlay],
+				{pluginId: "dummyPluginId", rank: 10, additionalInfoKey: "ADDITIONAL_INFORMATION_KEY"}
+			))[0];
+			assert.strictEqual(
+				mMenuItem.additionalInfo,
+				undefined,
+				"the method returns the right additional information for the menu item"
+			);
+		});
+
+		QUnit.test("when info reference for additional information is defined into both the plugin and the action info", async function(assert) {
+			this.fnGetAction = function() {
+				return {
+					name: "dummyActionName",
+					additionalInfoKey: "ADDITIONAL_INFORMATION_KEY_FROM_ACTION"
+				};
+			};
+			this.fnGetLibraryText = function(oElement, sKey) {
+				assert.ok(
+					["dummyActionName", "ADDITIONAL_INFORMATION_KEY_FROM_ACTION"].includes(sKey),
+					"then the right key is passed to getLibraryText method");
+				return "dummyAdditionalInformationFromAction";
+			};
+			sandbox.stub(Lib, "getResourceBundleFor").returns({
+				getText(sKey) {
+					assert.strictEqual(sKey, "ADDITIONAL_INFORMATION_KEY_FROM_PLUGIN", "then the right key is passed to getText method");
+					return "dummyAdditionalInformationFromPlugin";
+				}
+			});
+			const mMenuItem = (await this.oPlugin._getMenuItems(
+				[this.oOverlay],
+				{pluginId: "dummyPluginId", rank: 10, additionalInfoKey: "ADDITIONAL_INFORMATION_KEY_FROM_PLUGIN"}
+			))[0];
+			assert.strictEqual(
+				mMenuItem.additionalInfo,
+				"dummyAdditionalInformationFromAction",
+				"the method returns the right additional information for the menu item"
+			);
+		});
 	});
 
 	QUnit.done(function() {

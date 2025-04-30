@@ -64,6 +64,90 @@ sap.ui.define([
 	const aWhatsNewFeaturesContent =
 	[
 		{
+			featureId: "GuidedTour",
+			title: oTextResources.getText("TIT_WHATS_NEW_RTA_TOUR_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RTA_TOUR_DESCRIPTION"),
+			documentationUrls: {
+				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
+				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",
+				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/d868950a1e8c4b0f9b9453176939a19b.html"
+			},
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RTA_TOUR_TEXT"),
+					image: getImagePath("GuidedTour.png")
+				}
+			]
+		},
+		{
+			featureId: "RenameRework",
+			title: oTextResources.getText("TIT_WHATS_NEW_RENAME_REWORK_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RENAME_REWORK_DESCRIPTION"),
+			documentationUrls: {
+				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/making-ui-changes#renaming-a-ui-element",
+				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/54270a390b194c3e97be2424592c3352.html#renaming-a-ui-element",
+				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/54270a390b194c3e97be2424592c3352.html#renaming-a-ui-element"
+			},
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RENAME_REWORK_TEXT_1"),
+					image: getImagePath("RenameDialog.png")
+				},
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RENAME_REWORK_TEXT_2"),
+					image: getImagePath("ChangeLabelsAction.png")
+				},
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RENAME_REWORK_TEXT_3"),
+					image: getImagePath("ReloadButtonToolbar.png")
+				}
+			]
+		},
+		{
+			featureId: "TextArrangement",
+			title: oTextResources.getText("TIT_WHATS_NEW_TEXT_ARRANGEMENT_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_TEXT_ARRANGEMENT_DESCRIPTION"),
+			documentationUrls: {
+				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/making-ui-changes#text-arrangement",
+				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/54270a390b194c3e97be2424592c3352.html#text-arrangement",
+				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/54270a390b194c3e97be2424592c3352.html#text-arrangement"
+			},
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_TEXT_ARRANGEMENT_TEXT_1"),
+					image: getImagePath("DisplayBehavior.png")
+				},
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_TEXT_ARRANGEMENT_TEXT_2"),
+					image: null
+				},
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_TEXT_ARRANGEMENT_TEXT_3"),
+					image: getImagePath("ReloadButtonToolbar.png")
+				}
+			]
+		},
+		{
+			featureId: "ExtendedActions",
+			title: oTextResources.getText("TIT_WHATS_NEW_TEXT_ARRANGEMENT_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_TEXT_ARRANGEMENT_DESCRIPTION"),
+			documentationUrls: {
+				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
+				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",
+				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/d868950a1e8c4b0f9b9453176939a19b.html"
+			},
+			information: [
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_EXTENDED_ACTIONS_TEXT_1"),
+					image: null
+				},
+				{
+					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_EXTENDED_ACTIONS_TEXT_2"),
+					image: getImagePath("ExtendedActions.png")
+				}
+			]
+		},
+		{
 			featureId: "WhatsNewFeature",
 			title: oTextResources.getText("TIT_WHATS_NEW_DIALOG_WHATS_NEW_FEATURE_TITLE"),
 			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_WHATS_NEW_FEATURE_DESCRIPTION"),
@@ -120,22 +204,6 @@ sap.ui.define([
 				{
 					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_MINIMENU_REMOVAL_TEXT"),
 					image: getImagePath("MiniMenu.png")
-				}
-			]
-		},
-		{
-			featureId: "GuidedTour",
-			title: oTextResources.getText("TIT_WHATS_NEW_RTA_TOUR_TITLE"),
-			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RTA_TOUR_DESCRIPTION"),
-			documentationUrls: {
-				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
-				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",
-				s4HanaOnPremUrl: "https://help.sap.com/docs/ABAP_PLATFORM_NEW/a7b390faab1140c087b8926571e942b7/d868950a1e8c4b0f9b9453176939a19b.html"
-			},
-			information: [
-				{
-					text: oTextResources.getText("TXT_WHATS_NEW_DIALOG_RTA_TOUR_TEXT"),
-					image: getImagePath("GuidedTour.png")
 				}
 			]
 		}

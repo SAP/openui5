@@ -180,7 +180,13 @@ sap.ui.define([
 			/**
 			 * Control to be displayed in the column footer.
 			 */
-			footer : {type : "sap.ui.core.Control", multiple : false}
+			footer : {type : "sap.ui.core.Control", multiple : false},
+
+			/**
+			 * Control to be displayed as an action in the column header.
+			 * @since 1.136
+			 */
+			_action: {type: "sap.ui.core.Control", multiple: false, visibility: "hidden"}
 		},
 		associations: {
 			/**

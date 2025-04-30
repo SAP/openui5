@@ -144,6 +144,11 @@ sap.ui.define([
 				showInfoStateIcon: { type: "boolean", defaultValue: false },
 
 				/**
+				 * Defines if info state is inverted.
+				 */
+				infoStateInverted: { type: "boolean", defaultValue: false },
+
+				/**
 				 * Defines the custom info status icon that should be shown.
 				 */
 				customInfoStatusIcon: { type : "string", group: "Misc", defaultValue: null },
@@ -329,7 +334,8 @@ sap.ui.define([
 			.setText(this.getInfo())
 			.setState(this.getInfoState())
 			.setShowStateIcon(this.getShowInfoStateIcon())
-			.setCustomIcon(this.getCustomInfoStatusIcon());
+			.setCustomIcon(this.getCustomInfoStatusIcon())
+			.setInverted(this.getInfoStateInverted());
 
 		return oObjectStatus;
 	};

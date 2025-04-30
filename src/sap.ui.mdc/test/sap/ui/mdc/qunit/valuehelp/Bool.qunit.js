@@ -286,9 +286,16 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("shouldOpenOnClick", (assert) => {
+
+		assert.notOk(oBool.shouldOpenOnClick(), "should not open on click");
+
+	});
+
 	QUnit.test("isNavigationEnabled", (assert) => {
 
 		assert.ok(oBool.isNavigationEnabled(), "navigation is enabled");
 
 	});
+
 });

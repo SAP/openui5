@@ -27,5 +27,22 @@ sap.ui.define([
 		return BaseValueHelpDelegate.requestShowContainer.apply(this, arguments);
 	};
 
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
+		return oValueHelp.getPayload()?.shouldOpenOnClick;
+	};
+
+	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+		return oValueHelp.getPayload()?.shouldOpenOnFocus;
+	};
+
+	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
+		//return true;
+		return new Promise((resolve) => {
+			setTimeout(() => {
+				resolve(true);
+			}, 1000);
+		});
+	};
+
 	return ValueHelpDelegate;
 });

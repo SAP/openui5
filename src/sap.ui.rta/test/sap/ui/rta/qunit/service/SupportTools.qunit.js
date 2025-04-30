@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/rename/Rename",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/thirdparty/sinon-4",

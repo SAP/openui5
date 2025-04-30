@@ -8,15 +8,33 @@ sap.ui.define([
 	'sap/ui/core/ComponentRegistry',
 	'sap/ui/core/Messaging',
 	'sap/ui/core/UIComponentMetadata',
+	'sap/ui/core/mvc/View',
 	'testdata/routing/Component',
 	'testdata/routing/RouterExtension',
 	'sap/base/Log',
 	'sap/base/util/deepExtend',
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
-	'sap/base/i18n/ResourceBundle',
-	'sap/ui/VersionInfo'
-], function (createAndAppendDiv, nextUIUpdate, Component, ComponentHooks, Supportability, ComponentContainer, ComponentRegistry, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle, VersionInfo) {
+	'sap/base/i18n/ResourceBundle'
+], function (
+	createAndAppendDiv,
+	nextUIUpdate,
+	Component,
+	ComponentHooks,
+	Supportability,
+	ComponentContainer,
+	ComponentRegistry,
+	Messaging,
+	UIComponentMetadata,
+	View,
+	SamplesRoutingComponent,
+	SamplesRouterExtension,
+	Log,
+	deepExtend,
+	LoaderExtensions,
+	Manifest,
+	ResourceBundle
+) {
 	"use strict";
 	/*global sinon, QUnit*/
 
@@ -2750,5 +2768,61 @@ sap.ui.define([
 			oStub.restore();
 			oLogStub.restore();
 		});
+	});
+
+	QUnit.module("Manifest 2.0");
+
+	QUnit.test("Manifest 2.0 is supported", async function(assert) {
+		const oViewCreateSpy = sinon.spy(View, "_create");
+		const oComponent = await Component.create({
+			name: "testdata.manifest2.basic"
+		}).catch((error) => {
+			assert.notOk(error, "An error occurred while creating the component");
+		});
+
+		assert.ok(oComponent, "Component created successfully");
+
+		// check if we correctly identified the manifest version
+		assert.ok(oComponent.getManifestObject()._getSchemaVersion() === 2, "Manifest version is 2");
+
+		assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.XMLView"), "Root control is XMLView");
+
+		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "testdata.manifest2.basic.views.Main", type: "XML", async: true, processingMode: "Sequential"}), "View._create called with correct parameters");
+
+		oComponent.destroy();
+		oViewCreateSpy.restore();
+	});
+
+	QUnit.test("Manifest 2.0 is supported (typed view)", async function(assert) {
+		const oViewCreateSpy = sinon.spy(View, "_create");
+		const oComponent = await Component.create({
+			manifest: sap.ui.require.toUrl("testdata/manifest2/basic/manifest_variant.json")
+		}).catch((error) => {
+			assert.notOk(error, "An error occurred while creating the component");
+		});
+
+		assert.ok(oComponent, "Component created successfully");
+
+		// check if we correctly identified the manifest version
+		assert.ok(oComponent.getManifestObject()._getSchemaVersion() === 2, "Manifest version is 2");
+
+		// check view typing
+		const TypedMain = sap.ui.require("testdata/manifest2/basic/views/TypedMain");
+		assert.ok(oComponent.getRootControl() instanceof TypedMain, "Root control is TypedMain");
+
+		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "module:testdata/manifest2/basic/views/TypedMain", async: true}), "View._create called with correct parameters");
+
+		oComponent.destroy();
+		oViewCreateSpy.restore();
+	});
+
+	QUnit.test("Manifest 2.0 is supported, component creation fails due to declared 'js' resources", async function(assert) {
+		const oComponent = await Component.create({
+			manifest: sap.ui.require.toUrl("testdata/manifest2/basic/manifest_w_resource.json")
+		}).catch((error) => {
+			assert.deepEqual(error, new Error("'sap.ui5/resources/js' is deprecated and not supported with manifest version 2 (component 'testdata.manifest2.basic'."), "Expected error occurred while creating the component");
+		});
+
+		assert.notOk(oComponent, "Component not created successfully due to error");
 	});
 });

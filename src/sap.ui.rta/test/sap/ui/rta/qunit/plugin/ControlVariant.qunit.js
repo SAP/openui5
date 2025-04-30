@@ -6,14 +6,12 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/m/MessageBox",
 	"sap/m/Page",
-	"sap/ui/core/EventBus",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
@@ -32,7 +30,6 @@ sap.ui.define([
 	"sap/ui/rta/command/ControlVariantSetTitle",
 	"sap/ui/rta/command/ControlVariantSwitch",
 	"sap/ui/rta/plugin/ControlVariant",
-	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/uxap/ObjectPageLayout",
@@ -46,14 +43,12 @@ sap.ui.define([
 	FlexBox,
 	MessageBox,
 	Page,
-	EventBus,
 	Lib,
 	ToolHooksPlugin,
 	DesignTime,
 	ElementOverlay,
 	OverlayRegistry,
 	DtUtil,
-	KeyCodes,
 	FlexObjectFactory,
 	FlexObjectState,
 	ControlVariantApplyAPI,
@@ -72,7 +67,6 @@ sap.ui.define([
 	ControlVariantSetTitle,
 	ControlVariantSwitch,
 	ControlVariantPlugin,
-	RenameHandler,
 	RtaUtils,
 	sinon,
 	ObjectPageLayout,
@@ -84,17 +78,8 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-
-	var fnCheckErrorRequirements = function(assert, fnMessageBoxShowStub, oPlugin, bShowError) {
-		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0, "then _createSetTitleCommand() was not called");
-		assert.equal(oPlugin.stopEdit.callCount, 1, "then stopEdit() was called once");
-
-		if (bShowError) {
-			assert.notOk(oPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown is unset");
-			assert.ok(oPlugin.stopEdit.calledBefore(oPlugin.startEdit), "then startEdit() was called after stopEdit() was called");
-			assert.equal(fnMessageBoxShowStub.callCount, 1, "then RtaUtils.showMessageBox was called once");
-		}
-	};
+	const oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
+	const oMLibraryBundle = Lib.getResourceBundleFor("sap.m");
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
 		beforeEach(assert) {
@@ -354,7 +339,6 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'save'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -380,7 +364,6 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'discard'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -399,31 +382,25 @@ sap.ui.define([
 			this.oControlVariantPlugin.switchVariant(this.oVariantManagementOverlay, "variant2", "variant1");
 		});
 
-		QUnit.test("when renameVariant is called via startEdit", function(assert) {
+		QUnit.test("when renameVariant is called", function(assert) {
+			const fnDone = assert.async();
+
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oVariantManagementOverlay.setSelectable(true);
 
-			var done = assert.async();
-			var done2 = assert.async();
-
-			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", async function() {
-				assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
-				this.oControlVariantPlugin._oEditableControlDomRef.textContent = "Test";
-				this.oControlVariantPlugin._oEditableField.textContent = this.oControlVariantPlugin._oEditableControlDomRef.textContent;
-				var oEvent = new Event("keydown");
-				oEvent.keyCode = KeyCodes.ENTER;
-				this.oControlVariantPlugin._oEditableField.dispatchEvent(oEvent);
-				await nextUIUpdate();
-				done2();
-			}, this);
-
-			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
-
-			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+			this.oControlVariantPlugin.attachElementModified((oEvent) => {
 				assert.ok(oEvent, "then fireElementModified is called once");
-				var oCommand = oEvent.getParameter("command");
-				assert.ok(oCommand instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
-				done();
+				const oCommand = oEvent.getParameter("command");
+				assert.ok(
+					oCommand instanceof ControlVariantSetTitle,
+					"then an elementModified event is received with a controlVariantSetTitle command"
+				);
+				assert.strictEqual(oCommand.getNewText(), "Test", "then the command contains the correct new title");
+				fnDone();
+			});
+
+			RtaQunitUtils.simulateRename(sandbox, "Test", () => {
+				this.oControlVariantPlugin.renameVariant([this.oVariantManagementOverlay]);
 			});
 		});
 
@@ -871,7 +848,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given variant management control rename is started", {
+	QUnit.module("Rename", {
 		beforeEach(assert) {
 			var done = assert.async();
 
@@ -905,7 +882,6 @@ sap.ui.define([
 					});
 					this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 					this.oVariantManagementOverlay.setSelectable(true);
-					this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 					done();
 				}.bind(this));
 			}.bind(this));
@@ -918,49 +894,40 @@ sap.ui.define([
 			this.oModel.destroy();
 		}
 	}, function() {
-		QUnit.test("when variant is renamed with a new title", function(assert) {
+		QUnit.test("when a variant is renamed to a new title", function(assert) {
 			assert.expect(2);
-			var sOldVariantTitle = "Old Variant Title";
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			this.oControlVariantPlugin._oEditableControlDomRef.textContent = "New Variant Title  ";
-			this.oControlVariantPlugin._oEditableField.textContent = this.oControlVariantPlugin._oEditableControlDomRef.textContent;
 
-			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
-				assert.ok(oEvent.getParameter("command") instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
-				assert.equal(oEvent.getParameter("command").getNewText(), "New Variant Title", "then the new title is trimmed for ending spaces");
+			this.oModel.setData({
+				varMgtKey: {
+					variants: [
+						{
+							title: "someOtherName",
+							visible: true
+						}
+					]
+				}
 			});
 
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
+			this.oControlVariantPlugin.attachElementModified((oEvent) => {
+				assert.ok(
+					oEvent.getParameter("command") instanceof ControlVariantSetTitle,
+					"then a variant modification event with a setControlVariantTitle command is fired"
+				);
+				assert.strictEqual(
+					oEvent.getParameter("command").getNewText(),
+					"New Variant Title",
+					"then the new title is set correctly and trimmed"
+				);
+			});
+
+			return RtaQunitUtils.simulateRename(sandbox, "New Variant Title  ", () => {
+				this.oControlVariantPlugin.renameVariant([this.oVariantManagementOverlay]);
+			});
 		});
 
-		QUnit.test("when _handlePostRename is called two times back to back", async function(assert) {
-			await nextUIUpdate();
-
-			sandbox.stub(this.oControlVariantPlugin, "_emitLabelChangeEvent").resolves();
-			sandbox.stub(RenameHandler, "_validateNewText");
-			sandbox.stub(this.oControlVariantPlugin, "stopEdit");
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-			.then(function() {
-				assert.strictEqual(this.oControlVariantPlugin._emitLabelChangeEvent.callCount, 1, "then RenameHandler._emitLabelChangeEvent called once");
-				assert.strictEqual(this.oControlVariantPlugin.stopEdit.callCount, 1, "then RenameHandler._stopEdit called once");
-				assert.ok(this.oControlVariantPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown event is set");
-				return RenameHandler._handlePostRename.call(this.oControlVariantPlugin).then(function() {
-					assert.strictEqual(this.oControlVariantPlugin._emitLabelChangeEvent.callCount, 1, "then RenameHandler._emitLabelChangeEvent not called another time");
-					assert.strictEqual(this.oControlVariantPlugin.stopEdit.callCount, 1, "then RenameHandler._stopEdit not called another time");
-					assert.ok(this.oControlVariantPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown is still set");
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("when variant is RENAMED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", async function(assert) {
-			var sNewVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-
-			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.spy(this.oControlVariantPlugin, "startEdit");
-			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
-			sandbox.spy(RenameHandler, "startEdit");
+		QUnit.test("when a variant is renamed to an existing variant title", async function(assert) {
+			const sNewVariantTitle = "Existing Variant Title";
+			const oCreateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
 			this.oModel.setData({
 				varMgtKey: {
@@ -973,19 +940,25 @@ sap.ui.define([
 				}
 			});
 
-			var sOldVariantTitle = "Old Variant Title";
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			this.oControlVariantPlugin._oEditableControlDomRef.textContent = sOldVariantTitle;
-			await nextUIUpdate();
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-			.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true, true));
+			await RtaQunitUtils.simulateRename(
+				sandbox,
+				sNewVariantTitle,
+				() => {
+					this.oControlVariantPlugin.renameVariant([this.oVariantManagementOverlay]);
+				},
+				(sErrorMessage) => {
+					assert.strictEqual(
+						sErrorMessage,
+						oMLibraryBundle.getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE"),
+						"then an error is displayed in the dialog"
+					);
+				}
+			);
+			assert.strictEqual(oCreateCommandSpy.callCount, 0, "then _createSetTitleCommand() was not called");
 		});
 
-		QUnit.test("when variant is RENAMED with the TITLE OF ANOTHER INVISIBLE VARIANT, after which _handlePostRename is called", async function(assert) {
-			assert.expect(1);
-			var sNewVariantTitle = "Existing Variant Title";
+		QUnit.test("when a variant is renamed to title of an invisible variant", function(assert) {
+			const sNewVariantTitle = "Existing Variant Title";
 
 			this.oModel.setData({
 				varMgtKey: {
@@ -1002,354 +975,38 @@ sap.ui.define([
 				}
 			});
 
-			var sOldVariantTitle = "Old Variant Title";
-
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			await nextUIUpdate();
-
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
-				assert.ok(oEvent.getParameter("command") instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
+				assert.strictEqual(
+					oEvent.getParameter("command").getNewText(),
+					sNewVariantTitle,
+					"then the variant is renamed"
+				);
 			});
 
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
+			return RtaQunitUtils.simulateRename(sandbox, sNewVariantTitle, () => {
+				this.oControlVariantPlugin.renameVariant([this.oVariantManagementOverlay]);
+			});
 		});
 
-		QUnit.test("when variant is RENAMED with a BLANK TITLE", async function(assert) {
-			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
+		QUnit.test("when a variant is renamed to en empty string", async function(assert) {
+			const sNewVariantTitle = "\xa0  ";
+			const oCreateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
-			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.stub(this.oControlVariantPlugin, "startEdit");
-			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
-
-			this.oModel.setData({
-				varMgtKey: {
-					variants: [
-						{
-							title: sExistingVariantTitle,
-							visible: true
-						}
-					]
+			await RtaQunitUtils.simulateRename(
+				sandbox,
+				sNewVariantTitle,
+				() => {
+					this.oControlVariantPlugin.renameVariant([this.oVariantManagementOverlay]);
+				},
+				(sErrorMessage) => {
+					assert.strictEqual(
+						sErrorMessage,
+						oLibraryBundle.getText("RENAME_EMPTY_ERROR_TEXT"),
+						"then an error is displayed in the dialog"
+					);
 				}
-			});
-
-			var sOldVariantTitle = "Old Variant Title";
-
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("\xa0");
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			this.oControlVariantPlugin._oEditableControlDomRef.textContent = sOldVariantTitle;
-			await nextUIUpdate();
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-			.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
-		});
-
-		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", async function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-			var sExistingVariantTitle = "Existing Variant Title";
-
-			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.stub(this.oControlVariantPlugin, "startEdit");
-			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
-
-			this.oModel.setData({
-				varMgtKey: {
-					variants: [
-						{
-							title: sExistingVariantTitle,
-							visible: true
-						}
-					]
-				}
-			});
-
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sExistingVariantTitle);
-			this.oControlVariantPlugin.setOldValue("Source Variant Title");
-			await nextUIUpdate();
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-			.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
-		});
-
-		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", async function(assert) {
-			assert.expect(7);
-			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-
-			this.oModel.setData({
-				varMgtKey: {
-					variants: [
-						{
-							title: sExistingVariantTitle,
-							visible: true
-						}
-					]
-				}
-			});
-			var sOldVariantTitle = "Old Variant Title";
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title Copy");
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			await nextUIUpdate();
-
-			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
-				assert.ok(oEvent, "then fireElementModified is called once");
-				var oCommand = oEvent.getParameter("command");
-
-				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1, "then ControlVariantPlugin._createSetTitleCommand called once");
-				assert.ok(oCommand instanceof ControlVariantSetTitle, "then an event is received with a setTitle command, returned from ControlVariantPlugin._createSetTitleCommand");
-				assert.equal(oCommand.getNewText(), "Existing Variant Title Copy", "then command has the correct new title");
-				assert.equal(oCommand.getElement(), this.oVariantManagementControl, "then command has the correct control");
-
-				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
-			}.bind(this));
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
-		});
-
-		QUnit.test("when variant is RENAMED with a CHANGED TITLE, after which _handlePostRename is called", async function(assert) {
-			var sExistingVariantTitle = "Source Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-
-			this.oModel.setData({
-				varMgtKey: {
-					variants: [
-						{
-							title: sExistingVariantTitle,
-							visible: true
-						}
-					]
-				}
-			});
-
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Modified Source Variant Title Copy");
-			sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
-			this.oControlVariantPlugin.setOldValue(`${sExistingVariantTitle} Copy`);
-			await nextUIUpdate();
-
-			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
-				assert.ok(oEvent, "then fireElementModified is called once");
-
-				var oSetTitleCommand = oEvent.getParameter("command");
-
-				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1, "then ControlVariantPlugin._createSetTitleCommand called once");
-				assert.ok(oSetTitleCommand instanceof ControlVariantSetTitle, "then an event is received with a setTitle command, returned from ControlVariantPlugin._createSetTitleCommand");
-				assert.equal(oSetTitleCommand .getNewText(), "Modified Source Variant Title Copy", "then setTitle command has the correct new title");
-				assert.equal(oSetTitleCommand .getElement(), this.oVariantManagementControl, "then setTitle command has the correct control");
-
-				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
-			}.bind(this));
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
-		});
-
-		QUnit.test("when stopEdit is called in non-error mode", function(assert) {
-			var oControl = this.oVariantManagementControl.getTitle();
-			var oControlInnerDOM = oControl.getDomRef().querySelector("[id*='inner']");
-			var sOldText = "Title Old";
-			this.oControlVariantPlugin.setOldValue(sOldText);
-			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-
-			oControlInnerDOM.style.visible = "hidden";
-			this.oControlVariantPlugin.stopEdit();
-
-			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok(getComputedStyle(oControlInnerDOM).visibility, "visible", "then control visibility set back to visible");
-			assert.notOk(this._oEditableControlDomRef);
-			assert.notOk(this._oEditedOverlay);
-		});
-
-		QUnit.test("when stopEdit is called in error mode", function(assert) {
-			var oControl = this.oVariantManagementControl.getTitle();
-			var oControlInnerDOM = oControl.getDomRef().querySelector("[id*='inner']");
-			var sOldText = "Title Old";
-			this.oControlVariantPlugin.setOldValue(sOldText);
-			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-			sandbox.stub(this.oVariantManagementOverlay, "hasStyleClass").returns(true);
-
-			oControlInnerDOM.style.visible = "hidden";
-			this.oControlVariantPlugin.stopEdit();
-
-			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok(getComputedStyle(oControlInnerDOM).visibility, "visible", "then control visibility set back to visible");
-			assert.notOk(this._oEditableControlDomRef);
-			assert.notOk(this._oEditedOverlay);
-		});
-	});
-
-	QUnit.module("Given variant management control is renamed", {
-		beforeEach(assert) {
-			var done = assert.async();
-
-			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
-
-			return FlexTestAPI.createVariantModel({
-				data: {variantManagementReference: {variants: []}},
-				appComponent: this.oMockedAppComponent,
-				initFlexState: true
-			}).then(async function(oInitializedModel) {
-				this.oModel = oInitializedModel;
-				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
-				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
-				this.oVariantManagementControl.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
-
-				var oVariantManagementDesignTimeMetadata = {
-					"sap.ui.fl.variants.VariantManagement": {
-						actions: {}
-					}
-				};
-				await nextUIUpdate();
-				this.oDesignTime = new DesignTime({
-					designTimeMetadata: oVariantManagementDesignTimeMetadata,
-					rootElements: [this.oVariantManagementControl]
-				});
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					this.oVariantManagementOverlay = OverlayRegistry.getOverlay(this.oVariantManagementControl);
-					this.oControlVariantPlugin = new ControlVariantPlugin({
-						commandFactory: new CommandFactory()
-					});
-					this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-					this.oVariantManagementOverlay.setSelectable(true);
-					done();
-				}.bind(this));
-			}.bind(this));
-		},
-		afterEach() {
-			this.oMockedAppComponent.destroy();
-			sandbox.restore();
-			this.oVariantManagementControl.destroy();
-			this.oDesignTime.destroy();
-		}
-	}, function() {
-		QUnit.test("when startEdit is called and renamed control's text container has overflow", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-
-			var oEditableControlDomRef = this.oVariantManagementOverlay
-			.getDesignTimeMetadata()
-			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
-			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().offsetWidth);
-
-			oControlDOM.style.width = "10px";
-			oControlDOM.style.maxWidth = "10px";
-			oControlDOM.style.position = "fixed";
-			oEditableControlDomRef.style.minWidth = "15px";
-			oEditableControlDomRef.style.width = "15px";
-			oEditableControlDomRef.style.position = "fixed";
-			oEditableControlDomRef.parentElement.style.width = "8px";
-			oEditableControlDomRef.parentElement.style.maxWidth = "8px";
-			oEditableControlDomRef.parentElement.style.position = "fixed";
-			var iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt(oEditableControlDomRef.parentElement.offsetWidth);
-			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
-
-			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-			assert.strictEqual(oEditableWrapperDOM.getBoundingClientRect().width, iOverlayInnerWidth - iWidthDiff, "then correct width set for the editable field wrapper");
-		});
-
-		QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-
-			var oEditableControlDomRef = this.oVariantManagementOverlay
-			.getDesignTimeMetadata()
-			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
-			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
-
-			const iWidthDiff = parseInt(oControlDOM.offsetWidth) - parseInt(oEditableControlDomRef.offsetWidth);
-			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
-
-			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-			assert.strictEqual(
-				oEditableWrapperDOM.offsetWidth,
-				iOverlayInnerWidth - iWidthDiff,
-				"then correct width set for the editable field wrapper"
 			);
-		});
-
-		QUnit.test("when startEdit is called and renamed control's text container and parent container having overflow", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-
-			var oEditableControlDomRef = this.oVariantManagementOverlay
-			.getDesignTimeMetadata()
-			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
-			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
-
-			oControlDOM.style.width = "10px";
-			oControlDOM.style.maxWidth = "10px";
-			oControlDOM.style.position = "fixed";
-			oEditableControlDomRef.parentElement.style.width = "20px";
-			oEditableControlDomRef.parentElement.style.minWidth = "20px";
-			oEditableControlDomRef.parentElement.style.position = "fixed";
-			var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.getDomRef().clientWidth);
-
-			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
-
-			var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-			assert.equal(oEditableWrapperDOM.getBoundingClientRect().width, iOverlayInnerWidth, "then correct width set for the editable field wrapper");
-		});
-
-		QUnit.test("when startEdit is called and renamed control's editable dom has its own overlay", function(assert) {
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-
-			var oEditableControlDomRef = this.oVariantManagementOverlay
-			.getDesignTimeMetadata()
-			.getAssociatedDomRef(this.oVariantManagementControl, vDomRef);
-			var oControlDOM = this.oVariantManagementControl.getDomRef(); /* Main control */
-			var sInnerControlOverlayWidth = "10px";
-			oControlDOM.style.width = "10px";
-			oControlDOM.style.maxWidth = "10px";
-			oControlDOM.style.position = "fixed";
-
-			return new Promise(function(fnResolve) {
-				// eslint-disable-next-line no-new
-				new ElementOverlay({
-					element: this.oVariantManagementControl.getTitle(),
-					init: function(oEvent) {
-						var oTitleOverlay = oEvent.getSource();
-						oTitleOverlay.render();
-						this.oVariantManagementOverlay.getDomRef().append(oTitleOverlay.getDomRef());
-						fnResolve(oTitleOverlay);
-					}.bind(this)
-				});
-			}.bind(this))
-			.then(function(oTitleOverlay) {
-				oTitleOverlay.getDomRef().style.width = sInnerControlOverlayWidth;
-				oTitleOverlay.getDomRef().style.minWidth = sInnerControlOverlayWidth;
-				oTitleOverlay.getDomRef().style.position = "fixed";
-
-				sandbox.stub(OverlayRegistry, "getOverlay")
-				.callThrough()
-				.withArgs(oEditableControlDomRef.id)
-				.returns(oTitleOverlay);
-
-				this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
-
-				var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-				assert.equal(`${oEditableWrapperDOM.getBoundingClientRect().width}px`, sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
-			}.bind(this));
-		});
-
-		QUnit.test("when startEdit is called", function(assert) {
-			var done = assert.async();
-			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-
-			var mPropertyBag = {
-				domRef: vDomRef,
-				overlay: this.oVariantManagementOverlay,
-				pluginMethodName: "plugin.ControlVariant.startEdit"
-			};
-
-			sandbox.stub(RenameHandler, "startEdit").callsFake(function(...aArgs) {
-				assert.ok(true, "RenameHandler.startEdit called in the end");
-				assert.deepEqual(aArgs[0], mPropertyBag, "then correct map argument passed to RenameHandler");
-				done();
-			});
-			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
+			assert.strictEqual(oCreateCommandSpy.callCount, 0, "then _createSetTitleCommand() was not called");
 		});
 	});
 

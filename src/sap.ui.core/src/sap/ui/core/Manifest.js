@@ -419,6 +419,18 @@ sap.ui.define([
 			}
 		},
 
+		/**
+		 * Returns the major schema version of the manifest.
+		 * Only used internally to check the manifest schema version for feature toggles.
+		 * @private
+		 *
+		 * @returns {number} The major version of the manifest
+		 */
+		_getSchemaVersion: function() {
+			const oJsonContent = this.getJson();
+			const sVersion = getObject(oJsonContent, "/_version");
+			return new Version(sVersion).getMajor();
+		},
 
 		/**
 				 * Loads the included CSS and JavaScript resources. The resources will be

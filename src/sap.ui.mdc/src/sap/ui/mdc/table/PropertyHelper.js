@@ -378,7 +378,8 @@ sap.ui.define([
 			includeLabel: true,
 			truncateLabel: true,
 			excludeProperties: [],
-			required: oMDCColumn.getRequired()
+			required: oMDCColumn.getRequired(),
+			hasAction: Boolean(oMDCColumn._getAIAction())
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
 
 		const oMDCTable = oMDCColumn.getParent();

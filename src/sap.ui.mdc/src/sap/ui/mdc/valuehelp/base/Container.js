@@ -34,6 +34,9 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.navigate as #navigate
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.getUseAsValueHelp as #getUseAsValueHelp
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.isValidationSupported as #isValidationSupported
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnNavigate as #shouldOpenOnNavigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnFocus as #shouldOpenOnFocus
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.shouldOpenOnClick as #shouldOpenOnClick
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.removeVisualFocus as #removeVisualFocus
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContainer.setVisualFocus as #setVisualFocus
 	 *
@@ -702,6 +705,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Determines if the content of the container supports typeahead.
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} Flag if searching is supported
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
+	 */
+	Container.prototype.isTypeaheadSupported = function() {
+		return false;
+	};
+
+	/**
 	 * Determines if the container is used as dialog inside the value help.
 	 *
 	 * The container is also used as dialog if <code>useAsValueHelp</code> is set on content and no other dialog is set.
@@ -883,6 +900,22 @@ sap.ui.define([
 		return oContainer && oContainer.getScrollDelegate && oContainer.getScrollDelegate();
 	};
 
+	Container.prototype.shouldOpenOnFocus = function() {
+		const oDelegate = this.getValueHelpDelegate();
+		const oValueHelp = this.getValueHelp();
+		return oDelegate ? oDelegate.shouldOpenOnFocus(oValueHelp, this) : Promise.resolve(false);
+	};
+
+	Container.prototype.shouldOpenOnClick = function() {
+		const oDelegate = this.getValueHelpDelegate();
+		const oValueHelp = this.getValueHelp();
+		return oDelegate ? oDelegate.shouldOpenOnClick(oValueHelp, this) : Promise.resolve(false);
+	};
+
+	Container.prototype.shouldOpenOnNavigate = function() {
+		return false;
+	};
+
 	/**
 	 * Determines if navigation via arrow keys should be possible.
 	 *
@@ -1031,4 +1064,5 @@ sap.ui.define([
 	PromiseMixin.call(Container.prototype);
 
 	return Container;
+
 });

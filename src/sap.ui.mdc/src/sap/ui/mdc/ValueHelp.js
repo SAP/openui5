@@ -728,6 +728,32 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Determines if the value help should be opened when something is typed into the field.
+	 *
+	 * Opening the value help must be triggered by the control the <code>ValueHelp</code> element
+	 * belongs to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {Promise<boolean>} if <code>true</code>, the field help should open by typing. The result might be returned asynchronously, so a Promise is used.
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 */
+	ValueHelp.prototype.isTypeaheadSupported = function() { // always return promise ?
+
+		const oTypeahead = this.getTypeahead();
+		if (oTypeahead) {
+			return this.retrieveDelegateContent(oTypeahead).then(() => {
+				return !!oTypeahead && oTypeahead.isTypeaheadSupported(); // as might depend on binding in content
+			});
+		} else {
+			return Promise.resolve(false);
+		}
+
+	};
+
 
 	/**
 	 * Determines if the value help typeahead is to be opened on user interaction, navigation, or configuration changes.
@@ -776,6 +802,46 @@ sap.ui.define([
 	ValueHelp.prototype._requestShowContainer = async function(oContainer, sReason) {
 		const oDelegateModule = await this._getControlDelegatePromise();
 		return oDelegateModule.requestShowContainer(this, oContainer, sReason);
+	};
+
+	/**
+	 * Determines if the value help should be opened when the user focuses the connected control.
+	 *
+	 * Opening the value help must be triggered by the control the <code>ValueHelp</code> element
+	 * belongs to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user focuses the connected field control
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 */
+	ValueHelp.prototype.shouldOpenOnFocus = function() {
+		const oContainer = _getValueHelpContainer.call(this, true);
+		return this._getControlDelegatePromise().then((oDelegateModule) => {
+			return oContainer ? oContainer.shouldOpenOnFocus() : Promise.resolve(false);
+		});
+	};
+
+	/**
+	 * Determines if the value help should be opened when the user clicks into the connected control.
+	 *
+	 * Opening the value help must be triggered by the control the <code>ValueHelp</code> element
+	 * belongs to.
+	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 */
+	ValueHelp.prototype.shouldOpenOnClick = function() {
+		const oContainer = _getValueHelpContainer.call(this, true);
+		return this._getControlDelegatePromise().then((oDelegateModule) => {
+			return oContainer ? oContainer.shouldOpenOnClick() : Promise.resolve(false);
+		});
 	};
 
 	/**
@@ -1268,4 +1334,5 @@ sap.ui.define([
 
 
 	return ValueHelp;
+
 });

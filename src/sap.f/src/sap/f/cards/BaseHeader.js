@@ -141,6 +141,14 @@ sap.ui.define([
 				target: { type: "string" }
 			},
 			aggregations: {
+
+				/**
+				 * Info sections to be displayed in the header.
+				 * @experimental Since 1.136
+				 * @since 1.136
+				 */
+				infoSection: {type: "sap.ui.core.Control", multiple: true, singularName: "infoSection"},
+
 				/**
 				 * Holds the internal data timestamp text aggregation.
 				 */

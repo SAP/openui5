@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/Device",
 	"sap/ui/mdc/enums/FieldDisplay",
 	'sap/ui/mdc/enums/RequestShowContainerReason',
 	"sap/ui/mdc/util/loadModules"
@@ -29,6 +30,7 @@ sap.ui.define([
 	FilterProcessor,
 	FilterConverter,
 	FilterOperatorUtil,
+	Device,
 	FieldDisplay,
 	RequestShowContainerReason,
 	loadModules
@@ -89,6 +91,31 @@ sap.ui.define([
 	 */
 	ValueHelpDelegate.isSearchSupported = function (oValueHelp, oContent, oListBinding) {
 		return false;
+	};
+
+	/**
+	 * Controls if a type-ahead is opened or closed.<br/>By default, this method returns <code>false</code> if a given content is a {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent} but no (truthy) <code>filterValue</code> is applied. Otherwise, if the given content is either a {@link sap.ui.mdc.valuehelp.base.ListContent ListContent} with available contexts or any other type of {@link sap.ui.mdc.valuehelp.base.Content Content}, <code>true</code> is returned.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent <code>ValueHelp</code> Content requesting conditions configuration
+	 * @returns {Promise<boolean>|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
+	 * @since 1.110.0
+	 * @public
+	 */
+	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
+		if (Device.system.phone) {
+			// on phone also open typeahead if no filter is set or no result is found
+			return true;
+		}
+
+		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
+			return false;
+		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
+			const oListBinding = oContent.getListBinding();
+			const iLength = oListBinding && oListBinding.getCurrentContexts().length;
+			return iLength > 0;
+		}
+		return true; // All other content should be shown by default
 	};
 
 	/**
@@ -405,12 +432,91 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sRequestShowContainerReason Reason for the request
 	 * @returns {Promise<boolean>} <code>true</code>, if the value help is to be triggered
-	 * @protected
+	 * @private
+	 * @ui5-restricted sap.ui.mdc, sap.fe
 	 * @since 1.136
 	 */
 	ValueHelpDelegate.requestShowContainer = async function (oValueHelp, oContainer, sRequestShowContainerReason) {
-		const [RequestShowContainerDefault] = await loadModules("sap/ui/mdc/valuehelp/RequestShowContainerDefault");
-		return (await RequestShowContainerDefault[sRequestShowContainerReason]?.call(this, oValueHelp, oContainer)) || false;
+		if (sRequestShowContainerReason === RequestShowContainerReason.Tap) {
+			return !!(await this.shouldOpenOnClick?.(oValueHelp, oContainer));
+		}
+
+		if (sRequestShowContainerReason === RequestShowContainerReason.Typing) {
+			await oValueHelp.retrieveDelegateContent(oContainer);
+			return !!(await oContainer.isTypeaheadSupported());
+		}
+
+		if (sRequestShowContainerReason === RequestShowContainerReason.Filter) {
+			const [oContent] = oContainer?.getContent() || [];
+			return !!(await this.showTypeahead?.(oValueHelp, oContent));
+		}
+
+		if (sRequestShowContainerReason === RequestShowContainerReason.Focus) {
+			return !!(await this.shouldOpenOnFocus?.(oValueHelp, oContainer));
+		}
+
+		if (sRequestShowContainerReason === RequestShowContainerReason.Navigate) {
+			await oValueHelp.retrieveDelegateContent(oContainer); // preload potentially necessary content
+			return !!(await oContainer.shouldOpenOnNavigate());
+		}
+
+		if (sRequestShowContainerReason === RequestShowContainerReason.ValueHelpRequest) {
+			return oContainer.isDialog();
+		}
+
+		return false;
+	};
+
+	/**
+	 * Determines if the value help is opened when the user focuses on the connected control.
+	 * <br/>By default, the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnFocus opensOnFocus} property is returned.
+	 *
+	 * Currently this is only supported for the type-ahead container.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user focuses on the connected field control
+	 * @public
+	 * @since 1.121.0
+	 */
+	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
+		const bShouldOpenOnFocus = false;
+
+		return Promise.resolve(bShouldOpenOnFocus);
+	};
+
+	/**
+	 * Determines if the value help is opened when the user clicks into the connected control.
+	 * <br/>By default, the value of the {@link sap.ui.mdc.valuehelp.Popover#getOpensOnClick opensOnClick} property is returned, if set, or the content configuration is checked.
+	 *
+	 * Currently this is only supported for the type-ahead container.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
+	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user clicks into the connected field control
+	 * @public
+	 * @since 1.121.0
+	 */
+	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
+		let bShouldOpenOnClick = false;
+
+		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
+			if (Device.system.phone && (!oContainer.isSingleSelect() || !oContainer.isDialog())) {
+				// on phones open:
+				// - always for multi-select fields
+				// - for singleSelect only if typeahead is not used as ValueHelp (ComboBox don't opens on click)
+				bShouldOpenOnClick = true;
+			} else {
+				const bUseContent = true;
+
+				if (bUseContent) {
+					const oContent = oContainer._getContent();
+					bShouldOpenOnClick = !!oContent && oContent.shouldOpenOnClick(); //If opensOnClick-property is not explicitly set, the content's preference is used instead.
+				}
+			}
+		}
+
+		return Promise.resolve(bShouldOpenOnClick);
 	};
 
 	/**
