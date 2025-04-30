@@ -1658,6 +1658,448 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Card Preview With changes", {
+		beforeEach: function () {
+			Localization.setLanguage("en");
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Check changes in Admin Mode: change from Admin", function (assert) {
+			var adminchanges = {
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Admin"
+					},
+					"ru": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 RU Admin"
+					}
+				}
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isFieldReady(this.oCardEditor).then(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "CardEditor fields are ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.equal(oField.getAggregation("_field").getValue(), "String1 EN Admin", "Field: Value from admin change");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var oManifestChanges = card.getManifestChanges();
+							assert.deepEqual(oManifestChanges, [{}, adminchanges], "Card Editor has correct manifest changes");
+							resolve();
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changes in Content Mode: change from Admin", function (assert) {
+			var adminchanges = {
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Admin"
+					},
+					"ru": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 RU Admin"
+					}
+				}
+			};
+			var contentchanges = {};
+			var translationchanges = {};
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isFieldReady(this.oCardEditor).then(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "CardEditor fields are ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.equal(oField.getAggregation("_field").getValue(), "String1 EN Admin", "Field: Value from admin change");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var oManifestChanges = card.getManifestChanges();
+							assert.deepEqual(oManifestChanges, [adminchanges, {
+								":layer": 5,
+								":errors": false
+							}], "Card Editor has correct manifest changes");
+							resolve();
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changes in Content Mode: change from Admin, empty change from Content", function (assert) {
+			var adminchanges = {
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Admin"
+					},
+					"ru": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 RU Admin"
+					}
+				}
+			};
+			var contentchanges = {
+				":layer": 5,
+				":errors": false
+			};
+			var translationchanges = {};
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isFieldReady(this.oCardEditor).then(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "CardEditor fields are ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.equal(oField.getAggregation("_field").getValue(), "String1 EN Admin", "Field: Value from admin change");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var oManifestChanges = card.getManifestChanges();
+							assert.deepEqual(oManifestChanges, [adminchanges, {
+								":layer": 5,
+								":errors": false
+							}], "Card Editor has correct manifest changes");
+							resolve();
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changes in Content Mode: change from Admin, change from Content", function (assert) {
+			var adminchanges = {
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Admin"
+					},
+					"ru": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 RU Admin"
+					}
+				}
+			};
+			var contentchanges = {
+				":layer": 5,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Content"
+					}
+				}
+			};
+			var translationchanges = {};
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isFieldReady(this.oCardEditor).then(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "CardEditor fields are ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.equal(oField.getAggregation("_field").getValue(), "String1 EN Content", "Field: Value from content change");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					cardPreview.addEventDelegate({
+						onAfterRendering: function () {
+							var card = cardPreview._getCardPreview();
+							assert.ok(card, "Preview mode card: OK");
+							var oManifestChanges = card.getManifestChanges();
+							assert.deepEqual(oManifestChanges, [adminchanges, contentchanges], "Card Editor has correct manifest changes");
+							resolve();
+						}
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changes in Content Mode: change from Admin, change from Content, then set content change to match admin change", function (assert) {
+			var adminchanges = {
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Admin"
+					},
+					"ru": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 RU Admin"
+					}
+				}
+			};
+			var contentchanges = {
+				":layer": 5,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Content"
+					}
+				}
+			};
+			var translationchanges = {};
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isFieldReady(this.oCardEditor).then(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "CardEditor fields are ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					var oInput = oField.getAggregation("_field");
+					assert.equal(oInput.getValue(), "String1 EN Content", "Field: Value from content change");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					EditorQunitUtils.isReady(this.oCardEditor).then(function () {
+						cardPreview.addEventDelegate({
+							onAfterRendering: function () {
+								var card = cardPreview._getCardPreview();
+								assert.ok(card, "Preview mode card: OK");
+								var oManifestChanges = card.getManifestChanges();
+								assert.deepEqual(oManifestChanges, [adminchanges, {
+									":errors": false,
+									":layer": 5
+								}], "Card Editor has correct manifest changes");
+								resolve();
+							}
+						});
+						oInput.setValue("String1 EN Admin");
+						oInput.fireChange({ value: "String1 EN Admin" });
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Check changes in Content Mode: change from Admin, change from Content, then set content change to new value which not match admin change", function (assert) {
+			var adminchanges = {
+				":layer": 0,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Admin"
+					},
+					"ru": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 RU Admin"
+					}
+				}
+			};
+			var contentchanges = {
+				":layer": 5,
+				":errors": false,
+				"texts": {
+					"en": {
+						"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Content"
+					}
+				}
+			};
+			var translationchanges = {};
+			this.oCardEditor.setMode("content");
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringtrans",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringParameter": {
+									"value": "stringParameter Value"
+								}
+							}
+						}
+					}
+				},
+				manifestChanges: [adminchanges, contentchanges, translationchanges]
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isFieldReady(this.oCardEditor).then(function () {
+					assert.ok(this.oCardEditor.isFieldReady(), "CardEditor fields are ready");
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "StringLabelTrans", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					var oInput = oField.getAggregation("_field");
+					assert.equal(oInput.getValue(), "String1 EN Content", "Field: Value from content change");
+					var cardPreview = this.oCardEditor.getAggregation("_preview");
+					EditorQunitUtils.isReady(this.oCardEditor).then(function () {
+						cardPreview.addEventDelegate({
+							onAfterRendering: function () {
+								var card = cardPreview._getCardPreview();
+								assert.ok(card, "Preview mode card: OK");
+								var oManifestChanges = card.getManifestChanges();
+								assert.deepEqual(oManifestChanges, [adminchanges, {
+									":errors": false,
+									":layer": 5,
+									"texts": {
+										"en": {
+											"/sap.card/configuration/parameters/stringParameter/value": "String1 EN Content new"
+										}
+									}
+								}], "Card Editor has correct manifest changes");
+								resolve();
+							}
+						});
+						oInput.setValue("String1 EN Content new");
+						oInput.fireChange({ value: "String1 EN Admin Content new" });
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
 	QUnit.module("Special cases", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
