@@ -133,7 +133,7 @@
 						<t:Column width="12rem">
 							<Label text="Supplier" />
 							<t:template>
-								<ComboBox value="{SupplierName}" items="{/Suppliers}">
+								<ComboBox value="{SupplierName}" items="{path: '/Suppliers', templateShareable: false}">
 									<c:Item text="{Name}"/>
 								</ComboBox>
 							</t:template>
@@ -162,7 +162,7 @@
 						<t:Column width="12rem">
 							<Label text="Category" />
 							<t:template>
-								<Select selectedKey="{Category}" items="{/Categories}">
+								<Select selectedKey="{Category}" items="{path: '/Categories', templateShareable: false}">
 									<c:Item text="{Name}" key="{Name}"/>
 								</Select>
 							</t:template>

@@ -1451,7 +1451,8 @@ sap.ui.define([
 							template: new TestItem({
 								key: "{key}",
 								text: "{text}"
-							})
+							}),
+							templateShareable: false
 						}
 					})
 				},
@@ -1492,7 +1493,8 @@ sap.ui.define([
 								template: new Item({
 									key: "{key}",
 									text: "{text}"
-								})
+								}),
+								templateShareable: false
 							}
 						})
 					]

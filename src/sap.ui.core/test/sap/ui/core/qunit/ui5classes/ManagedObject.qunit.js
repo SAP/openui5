@@ -1730,6 +1730,9 @@ sap.ui.define([
 		assert.equal(this.obj.getAggregation("singleAggr").getValue(), "testvalue3", "Value matches the last array entry");
 	});
 
+	/**
+	 * @deprecated As of version 1.136
+	 */
 	QUnit.test("Bind aggregation without templateShareable (default)", function(assert) {
 
 		var Log = sap.ui.require("sap/base/Log");
@@ -1817,6 +1820,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated As of version 1.136
+	 */
 	QUnit.test("Bind aggregation without templateShareable (default, Component)", function(assert) {
 
 		var Log = sap.ui.require("sap/base/Log");
@@ -1870,6 +1876,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated As of version 1.136
+	 */
 	QUnit.test("Bind aggregation and clone with different templateShareable values", function(assert) {
 
 		var Log = sap.ui.require("sap/base/Log");
@@ -2059,6 +2068,7 @@ sap.ui.define([
 			this.obj.bindAggregation("subObjects", {
 				path: "/list",
 				template: this.template,
+				templateShareable: true,
 				sorter: new Sorter(sGroupProperty, false, true)
 			});
 			assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
@@ -2076,6 +2086,8 @@ sap.ui.define([
 			assert.equal(subobjects[1].getBooleanValue(), false, "Entry must not be a header entry");
 			assert.equal(subobjects[2].getBooleanValue(), false, "Entry must not be a header entry");
 		}.bind(this));
+
+		this.template.destroy();
 	});
 
 	QUnit.test("Bind aggregation with grouping, but without grouping function", function(assert) {
@@ -2101,6 +2113,7 @@ sap.ui.define([
 			this.obj.bindAggregation("subObjects", {
 				path: "/list",
 				template: this.template,
+				templateShareable: true,
 				sorter: new Sorter(sGroupProperty, false, true),
 				groupHeaderFactory: function(oGroup) {
 					return new TestManagedObject({
@@ -2124,6 +2137,8 @@ sap.ui.define([
 			assert.equal(subobjects[1].getBooleanValue(), false, "Entry must not be a header entry");
 			assert.equal(subobjects[2].getBooleanValue(), false, "Entry must not be a header entry");
 		}.bind(this));
+
+		this.template.destroy();
 	});
 
 	QUnit.test("Unbind aggregation", function(assert) {
@@ -2607,7 +2622,11 @@ sap.ui.define([
 			}]
 		});
 		this.obj.setModel(oModel);
-		this.obj.bindAggregation("subObjects", "/testpath", this.template);
+		this.obj.bindAggregation("subObjects", {
+			path: "/testpath",
+			template: this.template,
+			templateShareable: true
+		});
 		assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
 		var oClone = this.obj.clone(null, null, {
 			cloneChildren: false,
@@ -2630,6 +2649,8 @@ sap.ui.define([
 		var result = oClone.getAggregation("subObjects", []);
 		assert.equal(result.length, 2, "children cloned");
 		assert.equal(oClone.isBound("subObjects"), false, "isBound must return false for bound aggregations");
+
+		this.template.destroy();
 	});
 
 	QUnit.test("Clone Object: Nested ObjectBindings: cloneBinding:true/false", function(assert) {
