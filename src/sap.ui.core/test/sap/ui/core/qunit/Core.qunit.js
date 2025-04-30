@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @deprecated As of version 1.120 as it is used by deprecated tests only
 	 */
 	const privateLoaderAPI = sap.ui.loader._;
-	const sCoreVersion = Library.all()["sap.ui.core"].version;
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 		var aMethodNames = fnClass.getMetadata().getAllPublicMethods(),
@@ -288,6 +287,8 @@ sap.ui.define([
 	 */
 	QUnit.test("testSetThemeRoot", function(assert) {
 		var corePath, mobilePath, otherPath, oCoreLink;
+
+		const sCoreVersion = Library.all()["sap.ui.core"].version;
 
 		oCore.setThemeRoot("my_theme", ["sap.ui.core"], "http://core.something.corp");
 		oCore.setThemeRoot("my_theme", "http://custom.something.corp");
