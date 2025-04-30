@@ -39,7 +39,7 @@
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
-					} EUR"
+					}"
 					class="sapUiTinyMarginBegin"/>
 				<ToolbarSpacer/>
 				<Button

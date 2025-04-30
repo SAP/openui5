@@ -47,8 +47,8 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart().
-		and.iShouldSeeTheEditButtonEnabled().
-		and.iShouldSeeTheProceedButtonEnabled;
+			and.iShouldSeeTheEditButtonEnabled().
+			and.iShouldSeeTheProceedButtonEnabled();
 	});
 
 	opaTest("Should see the delete button after pressing the edit button", function (Given, When, Then) {
@@ -98,7 +98,7 @@ sap.ui.define([
 		When.onTheCart.iPressOnTheSaveChangesButton();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheEditButtonDisabled().
-		and.iShouldSeeTheProceedButtonDisabled();
+			and.iShouldSeeTheProceedButtonDisabled();
 		// Cleanup
 		Then.iTeardownMyApp();
 	});

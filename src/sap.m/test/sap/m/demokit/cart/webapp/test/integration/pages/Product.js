@@ -1,12 +1,10 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./Common",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
 ], function (
 	Opa5,
-	Common,
 	PropertyStrictEquals,
 	Press,
 	Properties) {
@@ -14,7 +12,6 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheProduct: {
-			baseClass: Common,
 			viewName: "Product",
 
 			actions: {
@@ -29,9 +26,12 @@ sap.ui.define([
 				iAddTheDisplayedProductToTheCart: function () {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oControl){
-							return this.I18NTextExtended(oControl, "addToCartShort", "text");
-						}.bind(this),
+						matchers: {
+							i18NText: {
+								propertyName: "text",
+								key : "addToCartShort"
+							}
+						},
 						actions : new Press(),
 						errorMessage: "The press action could not be executed"
 					});
