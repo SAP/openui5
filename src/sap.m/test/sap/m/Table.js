@@ -27,7 +27,7 @@ sap.ui.define([
 	"sap/m/RatingIndicator",
 	"sap/m/DatePicker",
 	"sap/m/Table",
-	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/Page"
@@ -366,7 +366,7 @@ sap.ui.define([
 			new ColumnMenuQuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})
 		],
 		items: [
-			new ColumnMenuItem({label: "Item A", icon: "sap-icon://sort", content: new Button({text: "Execute"})})
+			new ColumnMenuItem({label: "Item A", icon: "sap-icon://sort"})
 		]
 	});
 
