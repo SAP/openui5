@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/ActionItem",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -566,7 +566,7 @@ sap.ui.define([
 		beforeEach: async function () {
 			this.oMenu = new ColumnMenu({
 				quickActions: [new QuickAction({label: "Quick Action A", content: new Button({text: "Execute"})})],
-				items: [new Item({label: "Item A", icon: "sap-icon://sort", content: new Button({text: "Execute"})})]
+				items: [new Item({label: "Item A", icon: "sap-icon://sort"})]
 			});
 			this.oColumn = new Column({
 				hAlign: "Center",

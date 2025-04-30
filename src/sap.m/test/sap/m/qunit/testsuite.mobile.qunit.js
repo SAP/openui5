@@ -1706,6 +1706,9 @@ sap.ui.define([
 					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
 				}
 			},
+			/**
+			 * @deprecated since 1.132
+			 */
 			"table.columnmenu.Item": {
 				title: "Test Page for sap.m.table.columnmenu.Item",
 				module: "test-resources/sap/m/qunit/table/columnmenu/Item.qunit",
