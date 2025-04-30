@@ -800,6 +800,7 @@ sap.ui.define([
 
 		QUnit.test("when a change needing a hard reload is made", async function(assert) {
 			const done = assert.async();
+			sandbox.stub(FeaturesAPI, "areAnnotationChangesEnabled").returns(true);
 			await this.oRta.start();
 			// annotation plugin creates changes that needs a hard reload
 			const oAnnotationCommand = new AnnotationCommand({

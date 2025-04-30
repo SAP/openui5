@@ -203,6 +203,22 @@ sap.ui.define([
 				}
 			});
 
+			QUnit.test("when areAnnotationChangesEnabled is called with settings already loaded", function(assert) {
+				sandbox.stub(Settings, "getInstanceOrUndef").returns({
+					isAnnotationChangeEnabled() {
+						return true;
+					}
+				});
+				const bIsEnabled = FeaturesAPI.areAnnotationChangesEnabled();
+				assert.strictEqual(bIsEnabled, true, "then the correct value is returned");
+			});
+
+			QUnit.test("when areAnnotationChangesEnabled is called without settings loaded", function(assert) {
+				sandbox.stub(Settings, "getInstanceOrUndef").returns();
+				const bIsEnabled = FeaturesAPI.areAnnotationChangesEnabled();
+				assert.strictEqual(bIsEnabled, undefined, "then the correct value is returned");
+			});
+
 			/**
 			 * @deprecated Since version 1.108
 			 */

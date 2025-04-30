@@ -104,6 +104,7 @@ sap.ui.define([
 					isKeyUserTranslationEnabled: false,
 					isVariantSharingEnabled: false,
 					isVariantPersonalizationEnabled: true,
+					isAnnotationChangeEnabled: true,
 					isAtoAvailable: false,
 					isAtoEnabled: false,
 					isAppVariantSaveAsEnabled: false,
@@ -400,6 +401,15 @@ sap.ui.define([
 	 */
 	 Settings.prototype.isSeenFeaturesAvailable = function() {
 		return this._getBooleanProperty("isSeenFeaturesAvailable");
+	};
+
+	/**
+	 * Returns the information if a backend supports annotation changes.
+	 *
+	 * @returns {boolean} <code>true</code> if annotation changes are supported
+	 */
+	 Settings.prototype.isAnnotationChangeEnabled = function() {
+		return this._getBooleanProperty("isAnnotationChangeEnabled");
 	};
 
 	/**
