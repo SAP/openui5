@@ -1015,14 +1015,11 @@ sap.ui.define([
 		const bIsContextBasedAdaptationAvailable = await FeaturesAPI.isContextBasedAdaptationAvailable(sLayer);
 		const oAppLifeCycleService = await FlexUtils.getUShellService("AppLifeCycle");
 		const bIsHomePage = oAppLifeCycleService?.getCurrentApplication()?.homePage || false;
-		const oManifest = FlexUtils.getAppDescriptor(oRootControl);
-		// context based adaptation is not supported for overview pages
-		const bIsContextBasedAdaptationSupported = oManifest && !ManifestUtils.getOvpEntry(oManifest);
 
 		return {
 			publishAvailable: bIsPublishAvailable,
 			saveAsAvailable: !bIsHomePage && bIsPublishAvailable && bIsSaveAsAvailable,
-			contextBasedAdaptationAvailable: !bIsHomePage && bIsContextBasedAdaptationSupported && bIsContextBasedAdaptationAvailable
+			contextBasedAdaptationAvailable: !bIsHomePage && bIsContextBasedAdaptationAvailable
 		};
 	}
 
