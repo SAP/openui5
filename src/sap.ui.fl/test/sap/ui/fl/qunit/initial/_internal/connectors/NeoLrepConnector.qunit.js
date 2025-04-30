@@ -23,6 +23,7 @@ sap.ui.define([
 
 			const oExpectedResponse = { ...oServerResponse };
 			oExpectedResponse.isContextSharingEnabled = false;
+			oExpectedResponse.isAnnotationChangeEnabled = false;
 			const oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({ response: oServerResponse });
 			const mPropertyBag = { url: "/sap/bc/lrep" };
 			const sUrl = "/sap/bc/lrep/flex/settings";

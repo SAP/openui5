@@ -21,6 +21,7 @@ sap.ui.define([
 				isKeyUser: false,
 				isAtoAvailable: false,
 				isKeyUserTranslationEnabled: false,
+				isAnnotationChangeEnabled: true,
 				isAtoEnabled: false,
 				isPublicLayerAvailable: false,
 				isVariantPersonalizationEnabled: true,
@@ -164,6 +165,11 @@ sap.ui.define([
 			this.cut._oSettings.isSeenFeaturesAvailable = true;
 			const bIsSeenFeaturesAvailable = this.cut.isSeenFeaturesAvailable();
 			assert.equal(bIsSeenFeaturesAvailable, true);
+		});
+
+		QUnit.test("isAnnotationChangeEnabled is true", function(assert) {
+			const bIsAnnotationChangeEnabled = this.cut.isAnnotationChangeEnabled();
+			assert.strictEqual(bIsAnnotationChangeEnabled, true);
 		});
 
 		QUnit.test("isPublicLayerAvailable is set to true", function(assert) {
