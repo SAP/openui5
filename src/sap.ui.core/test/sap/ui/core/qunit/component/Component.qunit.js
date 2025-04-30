@@ -2974,6 +2974,10 @@ sap.ui.define([
 
 	QUnit.module("Manifest 2.0");
 
+	/**
+	 * Only relevant for testing if root view is created asynchronously with Manifest 2.0 in UI5 1.x.
+	 * @deprecated
+	 */
 	QUnit.test("Manifest 2.0 is supported", async function(assert) {
 		const oViewCreateSpy = sinon.spy(View, "_create");
 		const oComponent = await Component.create({
@@ -3018,6 +3022,11 @@ sap.ui.define([
 		oViewCreateSpy.restore();
 	});
 
+	/**
+	 * Only relevant for testing if deprecated section is present in 1.x codeline.
+	 * Manifest 2.0 enforces the removal of said section.
+	 * @deprecated
+	 */
 	QUnit.test("Manifest 2.0 is supported, component creation fails due to declared 'js' resources", async function(assert) {
 		const oComponent = await Component.create({
 			manifest: sap.ui.require.toUrl("testdata/manifest2/basic/manifest_w_resource.json")
