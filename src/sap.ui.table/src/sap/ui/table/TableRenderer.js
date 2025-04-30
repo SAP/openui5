@@ -541,9 +541,15 @@ sap.ui.define([
 		rm.style("justify-content", mFlexCellContentAlignment[sHAlign]);
 		rm.openEnd();
 
-		if (oLabel) {
-			rm.renderControl(oLabel);
+		const oAction = oColumn.getAggregation("_action");
+		if (oAction && iHeader === 0) {
+			if (oColumn.getMultiLabels().length > 0) {
+				Log.error(`${oColumn}: ColumnAIAction is not compatible with multi labels`);
+			} else {
+				rm.renderControl(oAction);
+			}
 		}
+		rm.renderControl(oLabel);
 
 		rm.close("div");
 
@@ -1142,7 +1148,7 @@ sap.ui.define([
 			const oRow = oCell.getParent();
 			rm.openStart("span", oRow.getId() + "-treeicon");
 			rm.class("sapUiTableTreeIcon");
-			rm.attr("tabindex", "-1");
+			rm.attr("tabindex", "0");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TreeIcon", {row: oRow});
 			rm.openEnd();
 			rm.close("span");

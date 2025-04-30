@@ -1,0 +1,274 @@
+{
+	"_version": "1.14.0",
+	"sap.app": {
+		"id": "list.card",
+		"type": "card",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://list"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Header Info Section with Flex Layout",
+			"subTitle": "Revenue",
+			"unitOfMeasurement": "EUR",
+			"infoSection": {
+				"rows": [
+					{
+						"justifyContent": "End",
+						"columns": [
+							{
+								"rows": [
+									{
+										"justifyContent": "End",
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Information",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									},
+									{
+										"items": [
+											{
+												"value": "Days Days Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									}
+								]
+							}
+						]
+					},
+					{
+						"columns": [
+							{
+								"rows": [
+									{
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Information",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									},
+									{
+										"items": [
+											{
+												"value": "Days Days Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									}
+								]
+							},
+							{
+								"rows": [
+									{
+										"justifyContent": "End",
+										"items": [
+											{
+												"value": "Days Days Days",
+												"type": "Status",
+												"state": "Information",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									},
+									{
+										"justifyContent": "End",
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									}
+								]
+							}
+						]
+					},
+					{
+						"columns": [
+							{
+								"rows": [
+									{
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											},
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Error",
+												"inverted": true,
+												"showStateIcon": true
+											},
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Information",
+												"inverted": true,
+												"showStateIcon": true
+											},
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											},
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Error",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									},
+									{
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									}
+								]
+							},
+							{
+								"rows": [
+									{
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Error",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									},
+									{
+										"items": [
+											{
+												"value": "Days",
+												"type": "Status",
+												"state": "Success",
+												"inverted": true,
+												"showStateIcon": true
+											}
+										]
+									}
+								]
+							},
+							{
+								"items": [
+									{
+										"value": "Days",
+										"type": "Status",
+										"state": "Error",
+										"inverted": true,
+										"showStateIcon": true
+									},
+									{
+										"value": "Days",
+										"type": "Status",
+										"state": "Success",
+										"inverted": true,
+										"showStateIcon": true
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"title": "Item 1"
+					},
+					{
+						"title": "Item 2"
+					},
+					{
+						"title": "Item 3"
+					},
+					{
+						"title": "Item 4"
+					}
+				]
+			},
+			"item": {
+				"title": "{title}"
+			},
+			"maxItems": 4
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"type": "ToolbarSpacer"
+				},
+				{
+					"type": "Link",
+					"text": "Agenda",
+					"icon": "sap-icon://action",
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "{agendaUrl}"
+							}
+						}
+					]
+				},
+				{
+					"text": "Approve",
+					"overflowPriority": "High",
+					"actions": [
+						{
+							"type": "Custom",
+							"parameters": {
+								"method": "approve"
+							}
+						}
+					]
+				}
+			]
+		}
+	}
+}

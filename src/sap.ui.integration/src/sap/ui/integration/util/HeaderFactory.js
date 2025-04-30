@@ -12,8 +12,11 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
+	"sap/ui/integration/controls/HeaderInfoSectionRow",
+	"sap/ui/integration/controls/HeaderInfoSectionColumn",
 	"sap/ui/integration/util/Utils",
 	"sap/m/Button",
+	"./ObjectStatusFactory",
 	"sap/m/AvatarImageFitType",
 	"sap/f/library"
 ], function (
@@ -27,8 +30,11 @@ sap.ui.define([
 	mLibrary,
 	NumericHeader,
 	Header,
+	HeaderInfoSectionRow,
+	HeaderInfoSectionColumn,
 	Utils,
 	Button,
+	ObjectStatusFactory,
 	AvatarImageFitType,
 	fLibrary
 ) {
@@ -129,6 +135,11 @@ sap.ui.define([
 		if (oCard.getSemanticRole() === SemanticRole.ListItem && !oHeader.isInteractive()){
 			oHeader.setProperty("focusable", false);
 		}
+
+		oHeader.applySettings({
+			infoSection: HeaderFactory._createInfoSection(mConfiguration)
+		});
+
 		return oHeader;
 	};
 
@@ -213,6 +224,56 @@ sap.ui.define([
 				oSideIndicator.setProperty("useTooltips", true);
 			});
 		}
+	};
+
+	HeaderFactory._createInfoSection = function (mConfiguration) {
+		const oRows = [];
+		const oInfoSection = mConfiguration.infoSection;
+
+		(oInfoSection?.rows || []).forEach((oRow) => {
+			oRows.push(HeaderFactory._createRow(oRow));
+		});
+
+		return oRows;
+	};
+
+
+
+	HeaderFactory._createRow = function (oRow) {
+		const aItems = [];
+		const aColumns = [];
+
+		(oRow.items || []).forEach((oItem) => {
+			aItems.push(ObjectStatusFactory.createStatusItem(oItem));
+		});
+
+		(oRow.columns || []).forEach((oColumn) => {
+			aColumns.push(HeaderFactory._createColumn(oColumn));
+		});
+
+		return new HeaderInfoSectionRow({
+			justifyContent: oRow.justifyContent,
+			columns: aColumns,
+			items: aItems
+		});
+	};
+
+	HeaderFactory._createColumn = function (oColumn) {
+		const aItems = [];
+		const aRows = [];
+
+		(oColumn.items || []).forEach((oItem) => {
+			aItems.push(ObjectStatusFactory.createStatusItem(oItem));
+		});
+
+		(oColumn.rows || []).forEach((oRow) => {
+			aRows.push(HeaderFactory._createRow(oRow));
+		});
+
+		return new HeaderInfoSectionColumn({
+			rows: aRows,
+			items: aItems
+		});
 	};
 
 	return HeaderFactory;

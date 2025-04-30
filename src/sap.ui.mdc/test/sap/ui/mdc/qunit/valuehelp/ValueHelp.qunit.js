@@ -39,7 +39,7 @@ sap.ui.define([
 
 	let oValueHelp;
 	let oContainer;
-	//	var iPopoverDuration = 355;
+//	var iPopoverDuration = 355;
 	let oField;
 	let oField2;
 	let iDisconnect = 0;
@@ -103,7 +103,7 @@ sap.ui.define([
 
 	/* use dummy control to simulate Field */
 
-	//	var oClock;
+//	var oClock;
 	const _initFields = async () => {
 		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oField2 = new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
@@ -162,10 +162,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("default values", async (assert) => {
+
 		assert.equal(oValueHelp.getConditions().length, 0, "Conditions");
 		assert.equal(oValueHelp.getFilterValue(), "", "FilterValue");
-
+		assert.notOk(await oValueHelp.shouldOpenOnClick(), "shouldOpenOnClick");
+		assert.notOk(await oValueHelp.shouldOpenOnFocus(), "shouldOpenOnFocus");
 		assert.notOk(oValueHelp.isFocusInHelp(), "isFocusInHelp");
+
+	});
+
+	QUnit.test("isTypeaheadSupported", (assert) => {
+
+		const oPromise = oValueHelp.isTypeaheadSupported();
+		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
+
+		return oPromise?.then((bSupported) => {
+			assert.strictEqual(bSupported, false, "TypeAhead not supported per default");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+		});
+
 	});
 
 	QUnit.test("getIcon", (assert) => {
@@ -409,6 +425,41 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isTypeaheadSupported - not supported(default)", (assert) => {
+
+		sinon.spy(ValueHelpDelegate, "retrieveContent");
+		const oPromise = oValueHelp.isTypeaheadSupported();
+		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
+
+		return oPromise?.then((bSupported) => {
+			assert.strictEqual(bSupported, false, "TypeAhead not supported");
+			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
+			ValueHelpDelegate.retrieveContent.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			ValueHelpDelegate.retrieveContent.restore();
+		});
+
+	});
+
+	QUnit.test("isTypeaheadSupported - supported", (assert) => {
+
+		sinon.spy(ValueHelpDelegate, "retrieveContent");
+		sinon.stub(oContainer, "isTypeaheadSupported").returns(true);
+		const oPromise = oValueHelp.isTypeaheadSupported();
+		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
+
+		return oPromise?.then((bSupported) => {
+			assert.strictEqual(bSupported, true, "TypeAhead supported");
+			assert.ok(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent called to check if search supported");
+			ValueHelpDelegate.retrieveContent.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			ValueHelpDelegate.retrieveContent.restore();
+		});
+
+	});
+
 	QUnit.test("getItemForValue with result", (assert) => {
 
 		sinon.stub(oContainer, "getItemForValue").returns(Promise.resolve({key: "X", description: "Text"}));
@@ -533,6 +584,34 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("shouldOpenOnFocus", async (assert) => {
+
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(Promise.resolve(true));
+		let bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "if only typeahed no opening on focus");
+
+		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
+		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.ok(bShouldOpen, "returns value of container (true) if used as valueHelp");
+
+		oContainer.shouldOpenOnFocus.returns(Promise.resolve(false));
+		bShouldOpen = await oValueHelp.shouldOpenOnFocus();
+		assert.notOk(bShouldOpen, "returns value of container (false) if used as valueHelp");
+
+	});
+
+	QUnit.test("shouldOpenOnClick", async (assert) => {
+
+		sinon.stub(oContainer, "shouldOpenOnClick").returns(Promise.resolve(true));
+		let bShouldOpen = await oValueHelp.shouldOpenOnClick();
+		assert.notOk(bShouldOpen, "if only typeahed no opening on click");
+
+		sinon.stub(oContainer, "getUseAsValueHelp").returns(true);
+		bShouldOpen = await oValueHelp.shouldOpenOnClick();
+		assert.ok(bShouldOpen, "returns value of container if used as valueHelp");
+
+	});
+
 	QUnit.test("isFocusInHelp", (assert) => {
 
 		sinon.stub(oContainer, "isFocusInHelp").returns(true);
@@ -556,6 +635,22 @@ sap.ui.define([
 		sinon.spy(oContainer, "setVisualFocus");
 		oValueHelp.setVisualFocus();
 		assert.ok(oContainer.setVisualFocus.called, "Container.setVisualFocus called");
+
+	});
+
+	QUnit.test("navigate", (assert) => {
+
+		oValueHelp.connect(oField); // to attach events
+		sinon.spy(oContainer, "navigate");
+		sinon.spy(oContainer, "open");
+		oValueHelp.navigate(1);
+
+		const fnDone = assert.async();
+		setTimeout(() => { // as Promise used inside
+			assert.ok(oContainer.navigate.calledWith(1), "Container.navigate called");
+			assert.notOk(oContainer.open.called, "Container not opened");
+			fnDone();
+		}, 0);
 
 	});
 
@@ -966,6 +1061,23 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isTypeaheadSupported", (assert) => {
+
+		sinon.spy(ValueHelpDelegate, "retrieveContent");
+		const oPromise = oValueHelp.isTypeaheadSupported();
+		assert.ok(oPromise instanceof Promise, "isTypeaheadSupported returns promise");
+
+		return oPromise.then((bSupported) => {
+			assert.strictEqual(bSupported, false, "TypeAhead not supported");
+			assert.notOk(ValueHelpDelegate.retrieveContent.called, "ValueHelpDelegate.retrieveContent not called for dialog");
+			ValueHelpDelegate.retrieveContent.restore();
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called");
+			ValueHelpDelegate.retrieveContent.restore();
+		});
+
+	});
+
 	QUnit.test("getItemForValue", (assert) => {
 
 		sinon.spy(oContainer, "getItemForValue");
@@ -1064,6 +1176,20 @@ sap.ui.define([
 		sinon.stub(oContainer, "isOpen").returns(true);
 		oAttributes = oValueHelp.getAriaAttributes();
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes on open typeaheas");
+
+	});
+
+	QUnit.test("shouldOpenOnFocus", (assert) => {
+
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnFocus(), "returns value of container");
+
+	});
+
+	QUnit.test("shouldOpenOnClick", (assert) => {
+
+		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnClick(), "returns value of container");
 
 	});
 
@@ -1277,6 +1403,21 @@ sap.ui.define([
 			_teardown();
 			oDeviceStub.restore();
 		}
+	});
+
+	QUnit.test("shouldOpenOnFocus", (assert) => {
+
+		sinon.stub(oContainer, "shouldOpenOnFocus").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnFocus(), "if only typeahed opening on focus in phone mode");
+
+
+	});
+
+	QUnit.test("shouldOpenOnClick", (assert) => {
+
+		sinon.stub(oContainer, "shouldOpenOnClick").returns(true);
+		assert.ok(oValueHelp.shouldOpenOnClick(), "if only typeahed no opening on click in phone mode");
+
 	});
 
 	QUnit.test("setHighlightId", (assert) => {

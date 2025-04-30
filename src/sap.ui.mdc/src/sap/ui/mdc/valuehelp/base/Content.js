@@ -44,6 +44,8 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.navigate as #navigate
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.getUseAsValueHelp as #getUseAsValueHelp
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.isValidationSupported as #isValidationSupported
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.shouldOpenOnNavigate as #shouldOpenOnNavigate
+	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.shouldOpenOnClick as #shouldOpenOnClick
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.removeVisualFocus as #removeVisualFocus
 	 * @borrows sap.ui.mdc.valuehelp.base.ITypeaheadContent.setVisualFocus as #setVisualFocus
 	 * @borrows sap.ui.mdc.valuehelp.base.IDialogContent.getCount as #getCount
@@ -443,7 +445,7 @@ sap.ui.define([
 
 			// Everytime the filterValue changes, we consult the delegate again to decide if the typeahead should still be shown or hidden via a cancel event
 			// Please also see the default implementation of sap.ui.mdc.ValueHelpDelegate.showTypeahead
-			const bCancelOpen = !(await oValueHelp._requestShowContainer(this.getParent(), RequestShowContainerReason.Filter));
+			const bCancelOpen = !await oValueHelp._requestShowContainer(this.getParent(), RequestShowContainerReason.Filter);
 			if (bCancelOpen) {
 				this.fireCancel();
 			}
@@ -691,6 +693,14 @@ sap.ui.define([
 		return this.getMaxConditions() === 1;
 	};
 
+	Content.prototype.shouldOpenOnClick = function() {
+		return false;
+	};
+
+	Content.prototype.shouldOpenOnNavigate = function() {
+		return false;
+	};
+
 	/**
 	 * Determines if navigation via arrow keys should be possible.
 	 *
@@ -882,4 +892,5 @@ sap.ui.define([
 
 
 	return Content;
+
 });

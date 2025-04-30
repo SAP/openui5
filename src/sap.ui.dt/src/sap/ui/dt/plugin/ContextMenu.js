@@ -1,8 +1,11 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
 	"sap/base/assert",
+	"sap/m/Button",
+	"sap/m/FormattedText",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/base/DesignTime",
@@ -11,9 +14,12 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/m/FlexBox"
 ], function(
 	assert,
+	Button,
+	FormattedText,
 	Menu,
 	MenuItem,
 	BaseDesignTime,
@@ -22,7 +28,8 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	KeyCodes,
-	Device
+	Device,
+	FlexBox
 ) {
 	"use strict";
 
@@ -131,6 +138,18 @@ sap.ui.define([
 		oOverlay.detachBrowserEvent("keyup", this._onKeyUp, this);
 	};
 
+	function createAdditionalInfo(oMenuItem) {
+		const oAdditionalInfoButton = new Button({
+			id: `${this.sId}-${oMenuItem.id}-additionalInfo-button`,
+			icon: "sap-icon://hint",
+			visible: !oMenuItem.submenu,
+			type: "Transparent",
+			areaLabelledby: this.getId()
+		});
+		oAdditionalInfoButton.setTooltip(oMenuItem.additionalInfo);
+		return oAdditionalInfoButton;
+	}
+
 	/**
 	 * Opens the Context Menu
 	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
@@ -139,22 +158,44 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype.open = function(oOverlay, bIsSubMenu, oEvent) {
 		let aSelectedOverlays;
-		function addMenuItems(oMenu, aMenuItems) {
+		function addMenuItems(oMenu, aMenuItems, bPropagatedMenu) {
+			let bStartsSection = bPropagatedMenu;
 			aMenuItems.forEach(function(oMenuItem, index) {
 				const sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oOverlay) : oMenuItem.text;
 				const bEnabled = typeof oMenuItem.enabled === "function" ? oMenuItem.enabled(aSelectedOverlays) : oMenuItem.enabled;
-				oMenu.addItem(
-					new MenuItem({
-						key: oMenuItem.id,
-						icon: oMenuItem.icon,
-						text: sText,
-						enabled: bEnabled
-					})
-				);
-				if (oMenuItem.submenu) {
-					addMenuItems(oMenu.getItems()[index], oMenuItem.submenu);
+				const oMenuItemInstance = new MenuItem({
+					key: oMenuItem.id,
+					icon: oMenuItem.icon,
+					text: sText,
+					enabled: bEnabled,
+					startsSection: bStartsSection
+				});
+
+				oMenu.addItem(oMenuItemInstance);
+
+				// Add end content to the menu item
+				if (oMenuItem.propagatingControlName || oMenuItem.additionalInfo) {
+					const oHBox = new FlexBox({
+						justifyContent: "SpaceBetween",
+						alignItems: "Center"
+					});
+					if (oMenuItem.propagatingControlName) {
+						oHBox.addItem(new FormattedText({
+							htmlText: `<strong>${oMenuItem.propagatingControlName}</strong>`
+						}));
+					}
+					if (oMenuItem.additionalInfo) {
+						const oAdditionalInfoButton = createAdditionalInfo.call(this, oMenuItem);
+						oHBox.addItem(oAdditionalInfoButton);
+					}
+					oMenuItemInstance.addEndContent(oHBox);
 				}
-			});
+
+				if (oMenuItem.submenu) {
+					addMenuItems.call(this, oMenu.getItems()[index], oMenuItem.submenu);
+				}
+				bStartsSection = false;
+			}.bind(this));
 		}
 
 		const oNewContextElement = oOverlay.getElement();
@@ -234,13 +275,15 @@ sap.ui.define([
 		}
 
 		oPromise.then(function() {
-			let aMenuItems = this._aMenuItems.map(function(mMenuItemEntry) {
+			const aAllMenuItems = this._aMenuItems.map(function(mMenuItemEntry) {
 				return mMenuItemEntry.menuItem;
 			});
 
-			if (aMenuItems.length > 0) {
-				aMenuItems = this._sortMenuItems(aMenuItems);
-				addMenuItems(this.oContextMenuControl, aMenuItems);
+			if (aAllMenuItems.length > 0) {
+				const aMenuItems = this._sortMenuItems(aAllMenuItems.filter((mMenuItem) => !mMenuItem.propagatingControl));
+				const aPropagatedMenuItems = this._sortMenuItems(aAllMenuItems.filter((mMenuItem) => mMenuItem.propagatingControl));
+				addMenuItems.call(this, this.oContextMenuControl, aMenuItems);
+				addMenuItems.call(this, this.oContextMenuControl, aPropagatedMenuItems, true);
 				this.oContextMenuControl.openAsContextMenu(oEvent, oOverlay);
 			}
 
@@ -257,7 +300,7 @@ sap.ui.define([
 	/**
 	 * Collect menu items sorted by rank (entries without rank come first)
 	 * @param  {object[]} aMenuItems List of menu items
-	 * @return {object[]}            Returned a sorted list of menu items; higher rank come later
+	 * @return {object[]} Returns a sorted list of menu items; higher rank comes later
 	 */
 	ContextMenu.prototype._sortMenuItems = function(aMenuItems) {
 		return aMenuItems.sort(function(mFirstEntry, mSecondEntry) {
@@ -414,7 +457,8 @@ sap.ui.define([
 	 * @return {boolean} true, if locked; false if not
 	 */
 	ContextMenu.prototype._checkForPluginLock = function() {
-		// As long as Selection doesn't work correctly on ios we need to ensure that the ContextMenu opens even if a plugin mistakenly locks it
+		// As long as Selection doesn't work correctly on ios we need to ensure that the
+		// ContextMenu opens even if a plugin mistakenly locks it
 		if (Device.os.ios) {
 			return false;
 		}

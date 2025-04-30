@@ -188,6 +188,17 @@
 	}
 }
 
+.sapFCardHeaderInfoSection {
+	padding: 0.5rem 1rem 0.25rem 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.sapFCardHeaderInfoSection:not(:has(+ .sapFCardNumericHeaderNumericPart))  {
+	padding-block-end: 1rem;
+}
+
 .sapFCardHeader.sapFCardNumericHeader {
 
 	.sapFCardNumericHeaderNumericPart {

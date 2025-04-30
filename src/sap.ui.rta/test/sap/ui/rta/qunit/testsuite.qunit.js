@@ -501,6 +501,18 @@ sap.ui.define([
 					]
 				}
 			},
+			"plugin/rename/Rename": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/rename/Rename"]
+				}
+			},
+			"plugin/rename/RenameDialog": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/rename/RenameDialog"]
+				}
+			},
 			"plugin/AddXMLAtExtensionPoint": {
 				group: "Plugin",
 				coverage: {
@@ -589,12 +601,6 @@ sap.ui.define([
 				group: "Plugin",
 				coverage: {
 					only: ["sap/ui/rta/plugin/Remove"]
-				}
-			},
-			"plugin/Rename": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/Rename"]
 				}
 			},
 			"plugin/Resize": {

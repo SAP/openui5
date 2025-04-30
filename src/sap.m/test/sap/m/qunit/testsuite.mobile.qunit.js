@@ -2474,6 +2474,19 @@ sap.ui.define([
 				title: "Test Page for sap.m.plugins.DataStateIndicator"
 			},
 
+			"plugins/ColumnAIAction": {
+				title: "Test Page for sap.m.plugins.ColumnAIAction",
+				sinon: {
+					version: 'edge'
+				},
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/m/plugins/ColumnAIAction"]
+				}
+			},
+
 			"plugins/ColumnResizer": {
 				title: "Test Page for sap.m.plugins.ColumnResizer"
 			},

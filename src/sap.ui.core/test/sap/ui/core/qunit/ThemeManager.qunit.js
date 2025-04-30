@@ -20,6 +20,7 @@ sap.ui.define([
 
 
 	var aLibraries = ["sap.ui.core", "sap.ui.testlib"];
+	const sCoreVersion = Library.all()["sap.ui.core"].version;
 
 	function testApplyTheme(assert, sTheme) {
 
@@ -89,7 +90,7 @@ sap.ui.define([
 				assert.ok(false, "Custom CSS file hasn't been included");
 			} else {
 				var oCustomCssHref = oCustomCss.getAttribute("href");
-				var sExpectedCustomCssPath = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/legacy/custom.css";
+				var sExpectedCustomCssPath = `test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/legacy/custom.css?version=${sCoreVersion}`;
 				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 			}
 		});
@@ -112,7 +113,7 @@ sap.ui.define([
 				assert.ok(false, "Custom CSS file hasn't been included");
 			} else {
 				var oCustomCssHref = oCustomCss.getAttribute("href");
-				var sExpectedCustomCssPath = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/customcss/custom.css";
+				var sExpectedCustomCssPath = `test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/customcss/custom.css?version=${sCoreVersion}`;
 				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 			}
 		});
@@ -138,8 +139,8 @@ sap.ui.define([
 	QUnit.test("Provide custom css using metadata of custom lib after core was booted and theme fully applied", function(assert) {
 		assert.expect(3);
 		var mExpectedLinkURIs = {
-			"sap-ui-theme-sap.ui.core": "/sap/ui/core/themes/sap_hcb/library.css", // Fallback to sap_hcb for core lib because of theme metadata
-			"sap-ui-theme-testlibs.customCss.lib1": "/libraries/customCss/lib1/themes/customTheme/library.css"
+			"sap-ui-theme-sap.ui.core": `/sap/ui/core/themes/sap_hcb/library.css?version=${sCoreVersion}`, // Fallback to sap_hcb for core lib because of theme metadata
+			"sap-ui-theme-testlibs.customCss.lib1": "/libraries/customCss/lib1/themes/customTheme/library.css?version=1.2.3"
 		};
 		var checkLoadedCss = function () {
 			var aAllThemeLinksForLibs = document.querySelectorAll("link[id^=sap-ui-theme]");
@@ -152,7 +153,7 @@ sap.ui.define([
 				}
 			});
 			assert.ok(aCustomCssLink[0].getAttribute("href")
-				.endsWith("/libraries/customCss/sap/ui/core/themes/customTheme/custom.css"), "URI of custom.css link tag is correct");
+				.endsWith(`/libraries/customCss/sap/ui/core/themes/customTheme/custom.css?version=${sCoreVersion}`), "URI of custom.css link tag is correct");
 		};
 		Theming.setTheme("customTheme");
 

@@ -140,16 +140,21 @@ sap.ui.define([
 	});
 
 	QUnit.test("default values", async (assert) => {
+
 		assert.equal(oDialog.getMaxConditions(), undefined, "getMaxConditions");
 		assert.ok(oDialog.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oDialog.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oDialog.getUseAsValueHelp(), "getUseAsValueHelp");
+		assert.notOk(await oDialog.shouldOpenOnClick(), "shouldOpenOnClick");
+		assert.notOk(await oDialog.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		assert.notOk(oDialog.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
 
 		assert.ok(oDialog.isFocusInHelp(), "isFocusInHelp");
 		assert.equal(oDialog.getValueHelpIcon(), "sap-icon://value-help", "getValueHelpIcon");
 		sinon.stub(oDialog, "getUIArea").returns("X"); // to test result
 		assert.equal(oDialog.getUIAreaForContent(), "X", "getUIAreaForContent returns own UiArea");
 		oDialog.getUIArea.restore();
+
 	});
 
 	QUnit.test("getContainerControl", (assert) => {
@@ -899,6 +904,13 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isTypeaheadSupported", (assert) => {
+
+		const bSupported = oDialog.isTypeaheadSupported();
+		assert.notOk(bSupported, "not supported for dialog");
+
+	});
+
 	QUnit.test("select event", (assert) => {
 
 		let iSelect = 0;
@@ -1146,4 +1158,5 @@ sap.ui.define([
 		});
 
 	});
+
 });

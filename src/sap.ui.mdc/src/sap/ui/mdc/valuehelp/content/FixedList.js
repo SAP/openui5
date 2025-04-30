@@ -637,6 +637,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if the value help should be opened when the user clicks into the connected control.
+	 *
+	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 */
+	FixedList.prototype.shouldOpenOnClick = function() {
+
+		return !this.getFilterList(); // TODO: own property, maybe general at content?
+
+	};
+
 	FixedList.prototype.isFocusInHelp = function() {
 
 		return false; // focus should stay in field, even if opened as valueHelp

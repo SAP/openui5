@@ -1536,6 +1536,39 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	QUnit.test("EndContent controls have their aggregations cloned", async function (oAssert) {
+		// Arrange
+		var oMenu = new Menu({
+			items: [
+				new MenuItem({
+					tooltip: "Custom Menu Item",
+					endContent: [
+						new Button("endContentButton",{
+							tooltip: "Custom Tooltip",
+							icon: "sap-icon://open-folder"
+						})
+					]
+				})
+			]
+
+		});
+
+		var oButton = new Button();
+		oButton.placeAt('qunit-fixture');
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		var oEndContentButton = Element.getElementById("endContentButton--unifiedmenu");
+		oAssert.strictEqual(oEndContentButton.getTooltip(), "Custom Tooltip", "Tooltip is set correctly on the end content button");
+
+		// Clean
+		oButton.destroy();
+	});
+
 	QUnit.module('MenuItem Shortcut', {
 		beforeEach: async function () {
 			this.sut = new Menu({

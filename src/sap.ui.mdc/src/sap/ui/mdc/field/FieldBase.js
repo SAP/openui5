@@ -2633,6 +2633,11 @@ sap.ui.define([
 							}
 						}, 300, { leading: false, trailing: true });
 					}
+					oValueHelp.requestShowTypeahead(RequestShowContainerReason.Typing).then((bOpenByTyping) => { // keeping this for compatibility, as it allows service handling before the debounce interval
+						if (_isFocused.call(this) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
+							this._fnLiveChangeTimer(); // if resolved while initial debounce-time frame, it will not triggered twice
+						}
+					});
 					this._fnLiveChangeTimer();
 				}
 			}

@@ -14,6 +14,24 @@
 				}
 			}
 
+			.sapUiMnuEndContent{
+				.sapMBtn {
+					&:hover >.sapMBtnHoverable{
+						background-color: transparent;
+						border-color: transparent;
+				 	}
+					&:focus-visible > .sapMFocusable,
+					&:focus > .sapMFocusable{
+						&::before{
+							content: none;
+				  		}
+				 	}
+					.sapUiIcon {
+				  		color: var(--sapTextColor)!important;
+					}
+				}
+			}
+			
 			&.sapUiMnuItmDsbl {
 				opacity: 0.5;
 			}

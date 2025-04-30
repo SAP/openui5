@@ -362,14 +362,16 @@ sap.ui.define([
 						{
 							name: "propagatedAction1",
 							action: "firstChangeType",
-							propagatingControl: "propagatingControl"
+							propagatingControl: "propagatingControl",
+							propagatingControlName: "propagatingControlName"
 						},
 						{
 							name: "propagatedAction2",
 							action: {
 								changeType: "secondChangeType"
 							},
-							propagatingControl: "propagatingControl"
+							propagatingControl: "propagatingControl",
+							propagatingControlName: "propagatingControlName"
 						},
 						{
 							name: "propagatedAction3",
@@ -378,7 +380,8 @@ sap.ui.define([
 									changeType: oElement.name
 								};
 							},
-							propagatingControl: this.opropagatingControl
+							propagatingControl: this.opropagatingControl,
+							propagatingControlName: this.opropagatingControl.name
 						}
 					]
 				}
@@ -390,7 +393,8 @@ sap.ui.define([
 					action: {
 						changeType: "firstChangeType"
 					},
-					propagatingControl: "propagatingControl"
+					propagatingControl: "propagatingControl",
+					propagatingControlName: "propagatingControlName"
 				},
 				"...for string action, the correct action is returned"
 			);
@@ -400,7 +404,8 @@ sap.ui.define([
 					action: {
 						changeType: "secondChangeType"
 					},
-					propagatingControl: "propagatingControl"
+					propagatingControl: "propagatingControl",
+					propagatingControlName: "propagatingControlName"
 				},
 				"...for object action, the correct action is returned"
 			);
@@ -410,7 +415,8 @@ sap.ui.define([
 					action: {
 						changeType: "propagatingControl"
 					},
-					propagatingControl: this.opropagatingControl
+					propagatingControl: this.opropagatingControl,
+					propagatingControlName: this.opropagatingControl.name
 				},
 				"...for function action, the correct action is returned"
 			);

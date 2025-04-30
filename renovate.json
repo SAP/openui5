@@ -16,9 +16,20 @@
     "rangeStrategy": "bump",
     "reviewers": ["UI5 Foundation"],
     "maven": {
-       "enabled": false
+        "enabled": false
     },
     "lockFileMaintenance": {
         "enabled": true
-    }
+    },
+    "packageRules": [
+        {
+            "matchPackageNames": [
+                "@ui5/builder",
+                "@ui5/cli",
+                "@ui5/project",
+                "@ui5/server"
+            ],
+            "groupName": "All UI5 Tooling devDependencies"
+        }
+    ]
 }

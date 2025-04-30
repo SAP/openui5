@@ -1325,7 +1325,7 @@ sap.ui.define([
 		}).catch(function(oError) {
 			assert.equal(
 				oError.message,
-				"A nested view contained in a Component implementing 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
+				"A nested view contained in a Component that uses manifest version 2 or implements 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
 				"Affected Component 'manifestModules.scenario8' and View 'testdata.view.Nested'."
 			);
 		});

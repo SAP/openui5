@@ -1124,7 +1124,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("getInteractiveElements", async function(assert) {
-		TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabSpan", false, true, false);
 		TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocus&NoTabSpan", false, false, false);
 		TableQUnitUtils.addColumn(oTable, "Focusable & Tabbable", "Focus&TabInput", true, null, true, null, null, true);
 		TableQUnitUtils.addColumn(oTable, "Focusable & Not Tabbable", "Focus&NoTabInput", true, null, false);
@@ -1135,27 +1134,23 @@ sap.ui.define([
 		/* Data cells */
 
 		let $InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 1));
-		assert.strictEqual($InteractiveElements.length, 1, "(JQuery) Data cell with focusable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "Focus&NoTabInput1",
-			"(JQuery) Data cell with focusable element: The correct element was returned");
+		assert.strictEqual($InteractiveElements, null, "(JQuery) Data cell with focusable and non-tabbable element: Null was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 1)[0]);
-		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "Focus&NoTabInput1",
-			"(HTMLElement) Data cell with focusable element: The correct element was returned");
+		assert.strictEqual($InteractiveElements, null, "(HTMLElement) Data cell with focusable and non-tabbable element: Null was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 2));
-		assert.strictEqual($InteractiveElements.length, 1, "(jQuery) Data cell with focusable & tabbable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "Focus&TabInput1",
+		assert.strictEqual($InteractiveElements?.length, 1, "(jQuery) Data cell with focusable & tabbable element: One element was returned");
+		assert.strictEqual($InteractiveElements?.[0].value, "Focus&TabInput1",
 			"(jQuery) Data cell with focusable & tabbable element: The correct element was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 2)[0]);
-		assert.strictEqual($InteractiveElements.length, 1, "(HTMLElement) Data cell with focusable & tabbable element: One element was returned");
-		assert.strictEqual($InteractiveElements[0].value, "Focus&TabInput1",
+		assert.strictEqual($InteractiveElements?.length, 1, "(HTMLElement) Data cell with focusable & tabbable element: One element was returned");
+		assert.strictEqual($InteractiveElements?.[0].value, "Focus&TabInput1",
 			"(HTMLElement) Data cell with focusable & tabbable element: The correct element was returned");
 
 		$InteractiveElements = TableUtils.getInteractiveElements(getCell(0, oTable.columnCount - 3));
-		assert.strictEqual($InteractiveElements, null, "Data cell without interactive element: Null was returned");
+		assert.strictEqual($InteractiveElements, null, "Data cell with non-focusable and non-tabbable: Null was returned");
 
 		/* Row action cells */
 

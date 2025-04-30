@@ -133,6 +133,17 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if the value help should be opened when the user clicks into the connected control.
+	 *
+	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
+	 */
+	Bool.prototype.shouldOpenOnClick = function() {
+
+		return false;
+
+	};
+
 	Bool.prototype.isNavigationEnabled = function(iStep) {
 
 		return true; // always enable, even if items are created lately on opening or navigation

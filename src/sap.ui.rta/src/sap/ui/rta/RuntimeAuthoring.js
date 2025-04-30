@@ -1747,7 +1747,16 @@ sap.ui.define([
 	 */
 	function scheduleRenameOnCreatedContainer(vAction, sNewControlID, sNewContainerName) {
 		const fnStartEdit = function(oElementOverlay) {
-			oElementOverlay.setSelected(true);
+			if (oElementOverlay.getSelectable()) {
+				oElementOverlay.setSelected(true);
+			} else {
+				// TODO todos#7
+				// The async editableByPlugin evaluation has not finished yet
+				// thus the overlay is not selectable yet and setSelected would fail
+				oElementOverlay.attachEventOnce("selectableChange", () => {
+					oElementOverlay.setSelected(true);
+				});
+			}
 			this.getPluginManager().getPlugin("rename").startEdit(oElementOverlay);
 		}.bind(this);
 

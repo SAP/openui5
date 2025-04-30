@@ -750,9 +750,9 @@ sap.ui.define([
 				});
 			}.bind(this));
 		},
-		afterEach: function(){
+		afterEach: async function(){
 			this.oTable.getInbuiltFilter()._toInternal.restore();
-			this.oTable.setSortConditions(undefined);
+			await StateUtil.resetState(this.oTable);
 		},
 		after: function(){
 			this.oUiComponentContainer = null;

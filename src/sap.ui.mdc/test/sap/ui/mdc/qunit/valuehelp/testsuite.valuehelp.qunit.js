@@ -167,15 +167,6 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 					qunitBridge: true
 				}
 			},
-			"RequestShowContainerDefault": {
-				module: "./RequestShowContainerDefault.qunit",
-				ui5: {
-					animationMode: "none"
-				},
-				sinon: {
-					qunitBridge: true
-				}
-			},
 			"CollectiveSearchSelect": {
 				module: "./CollectiveSearchSelect.qunit",
 				coverage: {

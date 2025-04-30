@@ -1,24 +1,20 @@
 sap.ui.define([
-	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/actions/EnterText",
-	"sap/ui/test/actions/Press",
+	"sap/ui/core/Lib",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Lib",
+	"sap/ui/test/actions/EnterText",
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/Opa5",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
-	Opa5,
-	PropertyStrictEquals,
-	EnterText,
-	Press,
+	Lib,
 	Drag,
 	Drop,
-	QUnitUtils,
-	KeyCodes,
-	Lib,
+	EnterText,
+	Press,
+	PropertyStrictEquals,
+	Opa5,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -248,21 +244,18 @@ sap.ui.define([
 				},
 				iEnterANewName(sNewLabel) {
 					return this.waitFor({
-						controlType: "sap.ui.dt.ElementOverlay",
-						matchers(oOverlay) {
-							if (oOverlay.getDomRef().classList.contains("sapUiDtOverlaySelected")) {
-								const oOverlayDOM = oOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-								const oEditableFieldDomNode = oOverlayDOM.children[0];
-								return oEditableFieldDomNode;
-							}
-							return undefined;
+						controlType: "sap.m.Dialog",
+						matchers(oRenameDialog) {
+							return oRenameDialog.getId().includes("sapUiRtaRenameDialog");
 						},
-						actions(oEditableFieldDomNode) {
-							oEditableFieldDomNode.innerHTML = sNewLabel;
-							QUnitUtils.triggerEvent("keypress", oEditableFieldDomNode, { which: KeyCodes.ENTER, keyCode: KeyCodes.ENTER });
-							oEditableFieldDomNode.blur();
+						actions(oDialog) {
+							const oInput = oDialog.getContent()[0].getItems()[1];
+							new EnterText({
+								text: sNewLabel
+							}).executeOn(oInput);
+							new Press().executeOn(oDialog.getBeginButton());
 						},
-						errorMessage: "Did not find the Selected Element Overlay"
+						errorMessage: "Did not find the rename dialog"
 					});
 				},
 				iSelectAFieldByBindingPathInTheAddDialog(sBindingPath) {

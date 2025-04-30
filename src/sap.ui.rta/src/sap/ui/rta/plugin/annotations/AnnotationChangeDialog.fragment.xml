@@ -82,7 +82,6 @@
 		<beginButton>
 			<Button
 				id="sapUiRtaChangeAnnotationDialog_saveButton"
-				enabled="{= ${path: '/properties', formatter: '.hasChangesFormatter'}}"
 				type="Emphasized"
 				text="{i18n>ANNOTATION_CHANGE_DIALOG_CONFIRM}"
 				press="onSave"

@@ -48,34 +48,7 @@ sap.ui.define([
 			interfaces: [
 				"sap.ui.mdc.valuehelp.base.ITypeaheadContainer", "sap.ui.mdc.valuehelp.base.IDialogContainer", "sap.ui.core.PopupInterface"
 			],
-			properties: {
-				/**
-				 * Controls the possibility to open this popover container by clicking on a connected control, even if no content enforces it.
-				 *
-				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
-				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
-				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
-				 * @since 1.110.0
-				 * @deprecated As of version 1.121.0, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnClick shouldOpenOnClick}
-				 */
-				opensOnClick: {
-					type: "boolean",
-					defaultValue: false
-				},
-				/**
-				 * Controls the possibility to open this popover container by focussing on a connected control.
-				 *
-				 * <b>Note:</b> By default, a type-ahead is only shown to provide suggestions when users enter input in a connected control.
-				 * This property enables scenarios where popovers need to be shown earlier (for example, recommendations or recently entered values).
-				 * See also {@link module:sap/ui/mdc/ValueHelpDelegate.showTypeahead showTypeahead}
-				 * @since 1.112.0
-				 * @deprecated As of version 1.121.0, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.shouldOpenOnFocus shouldOpenOnFocus}
-				 */
-				opensOnFocus: {
-					type: "boolean",
-					defaultValue: false
-				}
-			},
+			properties: {},
 			defaultAggregation: "content"
 		}
 	});
@@ -776,6 +749,21 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Determines if the value help should be opened when the user used the arrow keys.
+	 *
+	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
+	 */
+	Popover.prototype.shouldOpenOnNavigate = function() {
+
+		const oContent = this._getContent();
+		this.bindContentToContainer(oContent); // Content might need config data to determine it's behaviour
+		return !!oContent && oContent.shouldOpenOnNavigate();
+		// TODO: do we need to unbind here? Re-binding on every navigation would reset selected condition on content what is not wanted
+		// How to know when navigation ends?
+
+	};
+
 	Popover.prototype.isNavigationEnabled = function(iStep) {
 
 		if (this.isOpen() || this.getUseAsValueHelp()) { //Typeahead already open or it is used for typing and as value help (ComboBox case)
@@ -798,6 +786,28 @@ sap.ui.define([
 
 		const oContent = this._getContent();
 		return !!oContent && oContent.isMultiSelect();
+
+	};
+
+	/**
+	 * Determines if the content of the container supports typeahead.
+	 *
+	 * <b>Note:</b> This function is used by the container and content and must not be used from outside
+	 *
+	 * @returns {boolean} Flag if searching is supported
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
+	 */
+	Popover.prototype.isTypeaheadSupported = function() {
+
+		if (Device.system.phone && (this.isSingleSelect() || this.isDialog())) {
+			// on phones ComboBox like use casse has no typeahead. MultiInput use case has typeahead.
+			return false;
+		}
+
+		const oContent = this._getContent();
+		return oContent && oContent.isSearchSupported();
 
 	};
 
@@ -839,4 +849,5 @@ sap.ui.define([
 	};
 
 	return Popover;
+
 });

@@ -113,7 +113,10 @@ sap.ui.define([
 			sandbox.stub(Log, "error");
 			const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
 			assert.strictEqual(aMenuItems.length, 1, "only 1 menu item is returned");
-			assert.ok(Log.error.calledWith("When using singleRename, controlBasedRenameChangeType must also be defined"), "the proper error is logged");
+			assert.ok(
+				Log.error.calledWith("When using singleRename, controlBasedRenameChangeType must also be defined"),
+				"the proper error is logged"
+			);
 		});
 
 		QUnit.test("When an overlay has an annotation action in the designtime metadata", async function(assert) {
@@ -136,6 +139,79 @@ sap.ui.define([
 			assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is correct");
 			assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
 			assert.strictEqual(aMenuItems[0].rank, 300, "then the menu item rank is correct");
+		});
+
+		QUnit.test("When an overlay has propagated annotation actions in the designtime metadata", async function(assert) {
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: "My Action Title",
+							additionalInfoKey: "ADDITIONALINFO_I18N_KEY"
+						}
+					}
+				},
+				propagatedActions: [{
+					name: "annotation",
+					action: {
+						annotationPropagatedChange1: {
+							changeType: "myPropagatedChangeType",
+							title: "My Propagated Action Title",
+							additionalInfoKey: "ADDITIONALINFO_I18N_KEY"
+						},
+						annotationPropagatedChange2: {
+							changeType: "myPropagatedChangeType2",
+							title: "My Propagated Action Title 2"
+						}
+					},
+					propagatingControl: this.oVerticalLayout,
+					propagatingControlName: "Layout"
+				}]
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+
+			sandbox.stub(this.oButtonOverlay.getDesignTimeMetadata(), "getLibraryText")
+			.callThrough()
+			.withArgs(this.oButton, "ADDITIONALINFO_I18N_KEY")
+			.returns("Additional Info");
+			sandbox.stub(this.oAnnotationPlugin, "isAvailable").withArgs([this.oButtonOverlay]).returns(true)
+			.withArgs([this.oLayoutOverlay]).returns(true);
+			sandbox.stub(this.oAnnotationPlugin, "isEnabled").withArgs([this.oButtonOverlay]).returns(true)
+			.withArgs([this.oLayoutOverlay]).returns(true);
+
+			const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
+			assert.strictEqual(aMenuItems[0].id, "CTX_ANNOTATION_annotationChange1", "then the menu item id is correct");
+			assert.strictEqual(aMenuItems[0].text, "My Action Title", "then the menu item text is correct");
+			assert.strictEqual(aMenuItems[0].icon, "sap-icon://request", "then the menu item icon is correct");
+			assert.strictEqual(aMenuItems[0].enabled, true, "then the menu item is enabled");
+			assert.strictEqual(aMenuItems[0].rank, 300, "then the menu item rank is correct");
+			assert.strictEqual(aMenuItems[0].additionalInfo, "Additional Info", "then the menu item additional info is correct");
+			assert.strictEqual(aMenuItems[1].id, "CTX_ANNOTATION_annotationPropagatedChange1", "then the menu item id is correct");
+			assert.strictEqual(aMenuItems[1].text, "My Propagated Action Title", "then the menu item text is correct");
+			assert.strictEqual(aMenuItems[1].icon, "sap-icon://request", "then the menu item icon is correct");
+			assert.strictEqual(aMenuItems[1].enabled, true, "then the menu item is enabled");
+			assert.strictEqual(aMenuItems[1].rank, 300, "then the menu item rank is correct");
+			assert.strictEqual(aMenuItems[1].additionalInfo, "Additional Info", "then the menu item additional info is correct");
+			assert.strictEqual(
+				aMenuItems[1].propagatingControl.getId(),
+				this.oVerticalLayout.getId(),
+				"then the menu item propagating control is correct"
+			);
+			assert.strictEqual(aMenuItems[1].propagatingControlName, "Layout", "then the menu item propagating control name is correct");
+			assert.strictEqual(aMenuItems[2].id, "CTX_ANNOTATION_annotationPropagatedChange2", "then the menu item id is correct");
+			assert.strictEqual(aMenuItems[2].text, "My Propagated Action Title 2", "then the menu item text is correct");
+			assert.strictEqual(aMenuItems[2].icon, "sap-icon://request", "then the menu item icon is correct");
+			assert.strictEqual(aMenuItems[2].enabled, true, "then the menu item is enabled");
+			assert.strictEqual(aMenuItems[2].rank, 301, "then the menu item rank is correct");
+			assert.strictEqual(
+				aMenuItems[2].propagatingControl.getId(),
+				this.oVerticalLayout.getId(),
+				"then the menu item propagating control is correct"
+			);
+			assert.strictEqual(aMenuItems[2].propagatingControlName, "Layout", "then the menu item propagating control name is correct");
+			assert.strictEqual(aMenuItems[2].additionalInfo, undefined, "then the menu item additional info is not provided as expected");
 		});
 
 		QUnit.test("When multiple editable overlays are selected", function(assert) {
@@ -217,7 +293,11 @@ sap.ui.define([
 			assert.strictEqual(aMenuItems[2].enabled, true, "then the third menu item is enabled");
 			assert.strictEqual(aMenuItems[2].rank, 302, "then the third menu item rank is correct");
 
-			assert.strictEqual(aMenuItems[3].id, "CTX_ANNOTATION_CHANGE_SINGLE_LABEL_annotationChange4", "then the fourth menu item id is correct");
+			assert.strictEqual(
+				aMenuItems[3].id,
+				"CTX_ANNOTATION_CHANGE_SINGLE_LABEL_annotationChange4",
+				"then the fourth menu item id is correct"
+			);
 			assert.strictEqual(aMenuItems[3].text, sActionTitle2, "then the third menu item text is correct");
 			assert.strictEqual(aMenuItems[3].icon, "sap-icon://edit", "then the third menu item icon is correct");
 			assert.strictEqual(aMenuItems[3].enabled, true, "then the third menu item is enabled");
@@ -227,7 +307,11 @@ sap.ui.define([
 		QUnit.test("When an overlay has an annotation action in the designtime metadata but the control has no stable ID", function(assert) {
 			configureDefaultActionAndUpdateOverlay.call(this);
 
-			assert.strictEqual(this.oAnnotationPlugin.isAvailable([this.oButtonNoStableIDOverlay]), false, "then isAvailable returns false");
+			assert.strictEqual(
+				this.oAnnotationPlugin.isAvailable([this.oButtonNoStableIDOverlay]),
+				false,
+				"then isAvailable returns false"
+			);
 			assert.strictEqual(this.oAnnotationPlugin.isEnabled([this.oButtonNoStableIDOverlay]), false, "then isEnabled returns false");
 			assert.strictEqual(this.oAnnotationPlugin._isEditable(this.oButtonNoStableIDOverlay), false, "then _isEditable returns false");
 		});
@@ -318,11 +402,27 @@ sap.ui.define([
 				const oAnnotationChange = aCommands[0].getPreparedChange();
 				const oAnnotationChange2 = aCommands[1].getPreparedChange();
 				assert.strictEqual(oAnnotationChange.getChangeType(), "myChangeType", "then the first change has the correct change type");
-				assert.strictEqual(oAnnotationChange.getServiceUrl(), "testServiceUrl", "then the first change has the correct service URL");
+				assert.strictEqual(
+					oAnnotationChange.getServiceUrl(),
+					"testServiceUrl",
+					"then the first change has the correct service URL"
+				);
 				assert.strictEqual(oAnnotationChange.getContent().annotationPath, "Path1", "then the first change has the correct content");
-				assert.strictEqual(oAnnotationChange2.getChangeType(), "myChangeType", "then the second change has the correct change type");
-				assert.strictEqual(oAnnotationChange2.getContent().annotationPath, "Path2", "then the second change has the correct content");
-				assert.strictEqual(oAnnotationChange2.getServiceUrl(), "testServiceUrl2", "then the first change has the correct service URL");
+				assert.strictEqual(
+					oAnnotationChange2.getChangeType(),
+					"myChangeType",
+					"then the second change has the correct change type"
+				);
+				assert.strictEqual(
+					oAnnotationChange2.getContent().annotationPath,
+					"Path2",
+					"then the second change has the correct content"
+				);
+				assert.strictEqual(
+					oAnnotationChange2.getServiceUrl(),
+					"testServiceUrl2",
+					"then the first change has the correct service URL"
+				);
 				fnDone();
 			});
 
