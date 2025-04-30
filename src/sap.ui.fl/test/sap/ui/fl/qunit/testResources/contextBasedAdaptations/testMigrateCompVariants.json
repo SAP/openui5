@@ -1,6 +1,110 @@
 {
 "appDescriptorChanges": [],
 "changes": [
+	{
+		"changeType":"textArrangement",
+		"reference":"ZDEMOOVP_RESIZE",
+		"namespace":"apps/ZDEMOOVP_RESIZE/changes/",
+		"projectId":"ZDEMOOVP_RESIZE",
+		"packageName":"",
+		"support":
+		{
+		 "generator":"sap.ui.rta.command",
+		 "user":"TESTUSER1",
+		 "sapui5Version":"1.130.0-SNAPSHOT"
+		},
+		"originalLanguage":"EN",
+		"layer":"CUSTOMER",
+		"fileType":"annotation_change",
+		"fileName":"nonVariantAnnotationChange",
+		"content":
+		{
+		 "path":"/dataServices/schema/0/entityType/[${name}==='C_SalesOrderWl_F1873']/property/[${name}==='SoldToParty']/com.sap.vocabularies.Common.v1.Text/com.sap.vocabularies.UI.v1.TextArrangement",
+		 "value":
+		 {
+		  "EnumMember":"com.sap.vocabularies.UI.v1.TextArrangementType/TextOnly"
+		 }
+		},
+		"texts":
+		{},
+		"selector":
+		{
+		 "serviceUrl":"url"
+		},
+		"dependentSelector":
+		{},
+		"jsOnly":false,
+		"versionId":"410B1B96B0291EEFA2B52D945ADF627A",
+		"creation":"2024-10-13T21:23:58.2330470Z"
+	},
+	{
+		"changeType": "appdescr_ovp_addNewCard",
+		"reference": "ZDEMOOVP_RESIZE",
+		"namespace": "apps/ZDEMOOVP_RESIZE/changes/",
+		"projectId": "ZDEMOOVP_RESIZE",
+		"packageName": "",
+		"support": {
+			"generator": "sap.ui.rta.ManifestCommand",
+			"user": "TESTUSER1",
+			"sapui5Version": "1.136.0-SNAPSHOT",
+			"compositeCommand": "id_1745935762072_911_composite"
+		},
+		"originalLanguage": "EN",
+		"layer": "CUSTOMER",
+		"fileType": "change",
+		"fileName": "nonVariantManifestChange",
+		"content": {
+			"card": {
+				"customer.ZDEMOOVP_card00_C1": {
+					"model": "Z_OVP_DEMO_TESTING_CDS",
+					"template": "sap.ovp.cards.table",
+					"settings": {
+						"title": "{{ZDEMOOVP_RESIZE_sap.ovp.cards.customer.ZDEMOOVP_card00_C1.settings.title}}",
+						"entitySet": "Z_Ovp_Demo_Testing",
+						"addODataSelect": false,
+						"tabs": [
+							{
+								"annotationPath": "com.sap.vocabularies.UI.v1.LineItem#ordOverView",
+								"value": "{{ZDEMOOVP_RESIZE_sap.ovp.cards.customer.ZDEMOOVP_card00_C1.settings.tabs.0.value}}"
+							},
+							{
+								"annotationPath": "com.sap.vocabularies.UI.v1.LineItem#ordOverView2",
+								"value": "{{ZDEMOOVP_RESIZE_sap.ovp.cards.customer.ZDEMOOVP_card00_C1.settings.tabs.1.value}}"
+							}
+						],
+						"annotationPath": "com.sap.vocabularies.UI.v1.LineItem#ordOverView",
+						"selectedKey": 1
+					}
+				}
+			}
+		},
+		"texts": {
+			"ZDEMOOVP_RESIZE_sap.ovp.cards.customer.ZDEMOOVP_card00_C1.settings.title": {
+				"type": "XTIT",
+				"maxLength": 40,
+				"value": {
+					"": "Table Card 1"
+				}
+			},
+			"ZDEMOOVP_RESIZE_sap.ovp.cards.customer.ZDEMOOVP_card00_C1.settings.tabs.0.value": {
+				"type": "XTIT",
+				"maxLength": 40,
+				"value": {
+					"": "First View"
+				}
+			},
+			"ZDEMOOVP_RESIZE_sap.ovp.cards.customer.ZDEMOOVP_card00_C1.settings.tabs.1.value": {
+				"type": "XTIT",
+				"maxLength": 40,
+				"value": {
+					"": "Second View"
+				}
+			}
+		},
+		"appDescriptorChange": true,
+		"versionId": "87B8628080CC1FE089A071ED82CAF10C",
+		"creation": "2025-04-29T14:09:27.2701110Z"
+	},
     {
         "changeType": "dragOrResize",
         "reference": "ZDEMOOVP_RESIZE",

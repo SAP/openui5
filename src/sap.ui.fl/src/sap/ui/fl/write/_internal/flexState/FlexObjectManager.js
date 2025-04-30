@@ -143,6 +143,8 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.currentLayer] - Specifies a single layer to filtering changes (without filtering ctrl variant changes)
 	 * @param {boolean} [mPropertyBag.invalidateCache] - Flag if the cache should be invalidated
 	 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Flag if all control variant changes should be included - otherwise only initially applied UIChanges are included
+	 * @param {boolean} [mPropertyBag.includeManifestChanges] - Flag if manifest changes should be included
+	 * @param {boolean} [mPropertyBag.includeAnnotationChanges] - Flag if annotation changes should be included
 	 * @param {boolean} [mPropertyBag.onlyCurrentVariants] - Flag if only current variants should be included. Is only considered if includeCtrlVariants is true
 	 * @param {boolean} [mPropertyBag.version] - The version for which the objects are retrieved if the Cache should be invalidated
 	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
@@ -171,6 +173,18 @@ sap.ui.define([
 		} else {
 			aRelevantFlexObjects = aRelevantFlexObjects.concat(
 				VariantManagementState.getAllCurrentFlexObjects({reference: mPropertyBag.reference})
+			);
+		}
+
+		if (mPropertyBag.includeManifestChanges) {
+			aRelevantFlexObjects = aRelevantFlexObjects.concat(
+				FlexState.getAppDescriptorChanges(mPropertyBag.reference)
+			);
+		}
+
+		if (mPropertyBag.includeAnnotationChanges) {
+			aRelevantFlexObjects = aRelevantFlexObjects.concat(
+				FlexState.getAnnotationChanges(mPropertyBag.reference)
 			);
 		}
 
