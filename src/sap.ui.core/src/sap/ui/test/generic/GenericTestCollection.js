@@ -169,7 +169,7 @@ sap.ui.define([], function() {
 						title: "QUnit Page for duplicate ID issues detection in UI5 controls"
 					},
 					SettersContextReturn: {
-						title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
+						title: "All setters should return correct context (Reason: https://github.com/UI5/openui5/blob/master/docs/guidelines.md#creating-classes)"
 					},
 					EnforceSemanticRendering: {
 						title: "QUnit Page for Semantic Rendering Coverage"

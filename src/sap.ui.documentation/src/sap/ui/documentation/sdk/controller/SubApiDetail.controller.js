@@ -34,7 +34,7 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
 
 			NOT_AVAILABLE: 'N/A',
-			PUBLIC_GITHUB_FRAMEWORK_DOMAIN: 'https://github.com/SAP/openui5/blob/master/src/',
+			PUBLIC_GITHUB_FRAMEWORK_DOMAIN: 'https://github.com/UI5/openui5/blob/master/src/',
 			SECTION_MAP: {
 				"properties": "controlProperties",
 				"fields": "properties",
@@ -540,7 +540,7 @@ sap.ui.define([
 								return _getObjectAttributeBlock("Module", oControlData.module);
 							}
 
-							const sGitHubUrl = `https://github.com/SAP/openui5/blob/${version}/src/${oEntityData.lib}/src/${oControlData.module}.js`;
+							const sGitHubUrl = `https://github.com/UI5/openui5/blob/${version}/src/${oEntityData.lib}/src/${oControlData.module}.js`;
 
 							return _getHBox({
 								items: [

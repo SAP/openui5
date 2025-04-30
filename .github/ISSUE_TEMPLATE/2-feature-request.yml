@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: | 
-        Please have a look at our [contributing guidelines](https://github.com/SAP/openui5/blob/main/CONTRIBUTING.md#request-features) on requesting features to be added to OpenUI5.
+        Please have a look at our [contributing guidelines](https://github.com/UI5/openui5/blob/main/CONTRIBUTING.md#request-features) on requesting features to be added to OpenUI5.
   - type: textarea
     id: background-information
     attributes:

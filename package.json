@@ -54,7 +54,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/SAP/openui5.git"
+    "url": "https://github.com/UI5/openui5.git"
   },
   "engines": {
     "node": "^20.11.0 || >=22.0.0",
