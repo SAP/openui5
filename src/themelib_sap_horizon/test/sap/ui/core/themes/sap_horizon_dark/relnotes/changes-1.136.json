@@ -18,6 +18,11 @@
         "text": " sap.ui.unified.Calendar: special days are shown correctly now"
       },
       {
+        "id": "4eeefa49ba7f174484ea44f305b535b012719465",
+        "type": "FIX",
+        "text": " sap.m.Label: Avoid truncation of last character in Info toolbar"
+      },
+      {
         "id": "2a30f6356d876e1f0a8fa92d7d46b9eed0515c37",
         "type": "FIX",
         "text": " sap.tnt.ToolHeader: Font styling for product name is now correct"

@@ -3,6 +3,16 @@
     "date": "April 2025",
     "notes": [
       {
+        "id": "9120db9ac1ceba6bb95bdb632703db3b519eb9b8",
+        "type": "FIX",
+        "text": " sap.m.WizardStep: Title propagation id is adapted"
+      },
+      {
+        "id": "0e8d4965d1d4ffe0420d8bc265bb5781353a567b",
+        "type": "FIX",
+        "text": " sap.m.Menu: End content controls properly applied"
+      },
+      {
         "id": "8040ff7b90d110e2602368d7adc3dd79eca8e456",
         "type": "FIX",
         "text": " sap.m.MultiInput:  Tokenizer Opener is now adjusted"
@@ -51,6 +61,11 @@
         "id": "915fe6552f99a2488d6ae1ba042c5d48cc0fb9fb",
         "type": "FEATURE",
         "text": " sap.m.Wizard: Enable F6 support"
+      },
+      {
+        "id": "4eeefa49ba7f174484ea44f305b535b012719465",
+        "type": "FIX",
+        "text": " sap.m.Label: Avoid truncation of last character in Info toolbar"
       },
       {
         "id": "4b6f825c32dac406d3e53c1e2d2ca3a67e555137",
