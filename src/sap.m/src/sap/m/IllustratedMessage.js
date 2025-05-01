@@ -197,7 +197,16 @@ sap.ui.define([
 				 * @public
 				 * @since 1.111
 				 */
-				ariaTitleLevel: {type: "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto}
+				ariaTitleLevel: {type: "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.Auto},
+
+				/**
+				 * Defines whether the illustration is decorative.
+				 *
+				 * When set to true, the attributes <code>role="presentation"</code> and <code>aria-hidden="true"</code> are applied to the SVG element.
+				 * @public
+				 * @since 1.137
+				 */
+				decorative: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			aggregations: {
 
@@ -281,9 +290,14 @@ sap.ui.define([
 		NoMail: "NoMail",
 		NoSavedItems: "NoSavedItems",
 		NoTasks: "NoTasks",
-		UploadToCloud: "UploadToCloud",
 		NoDimensionsSet: "NoDimensionsSet",
-		AddDimensions: "AddDimensions"
+		AddPeople: "AddPeople",
+		AddColumn: "AddColumn",
+		SortColumn: "SortColumn",
+		FilterTable: "FilterTable",
+		ResizeColumn: "ResizeColumn",
+		GroupTable: "GroupTable",
+		UploadCollection: "UploadCollection"
 	};
 
 	IllustratedMessage.FALLBACK_TEXTS = {
@@ -310,6 +324,16 @@ sap.ui.define([
 		SimpleNotFoundMagnifier: IllustratedMessage.ORIGINAL_TEXTS.NoSearchResults,
 		SimpleReload: IllustratedMessage.ORIGINAL_TEXTS.UnableToLoad,
 		SimpleTask: IllustratedMessage.ORIGINAL_TEXTS.NoTasks,
+		NoChartData: IllustratedMessage.ORIGINAL_TEXTS.NoDimensionsSet,
+		AddingColumns: IllustratedMessage.ORIGINAL_TEXTS.AddColumn,
+		SortingColumns: IllustratedMessage.ORIGINAL_TEXTS.SortColumn,
+		FilteringColumns: IllustratedMessage.ORIGINAL_TEXTS.FilterTable,
+		ResizingColumns: IllustratedMessage.ORIGINAL_TEXTS.ResizeColumn,
+		GroupingColumns: IllustratedMessage.ORIGINAL_TEXTS.GroupTable,
+		AddPeopleToCalendar: IllustratedMessage.ORIGINAL_TEXTS.AddPeople,
+		DragFilesToUpload: IllustratedMessage.ORIGINAL_TEXTS.UploadCollection,
+		KeyTask: IllustratedMessage.ORIGINAL_TEXTS.SuccessScreen,
+		ReceiveAppreciation: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky,
 		SuccessBalloon: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky,
 		SuccessCheckMark: IllustratedMessage.ORIGINAL_TEXTS.SuccessScreen,
 		SuccessHighFive: IllustratedMessage.ORIGINAL_TEXTS.BalloonSky
@@ -413,9 +437,12 @@ sap.ui.define([
 		var aAriaLabelledBy = this.getAssociation("ariaLabelledBy"),
 			sTitleId = this._getTitle().sId;
 
-		// check if falsy or empty array
-		if (!aAriaLabelledBy || !aAriaLabelledBy.length) {
-			this.addIllustrationAriaLabelledBy(sTitleId);
+		// Set default aria-labelledby only if the Illustration is not decorative
+		if (!this.getDecorative()) {
+			// check if falsy or empty array
+			if (!aAriaLabelledBy || !aAriaLabelledBy.length) {
+				this.addIllustrationAriaLabelledBy(sTitleId);
+			}
 		}
 	};
 
@@ -527,11 +554,28 @@ sap.ui.define([
 		if (!oIllustration) {
 			oIllustration = new Illustration();
 
+			oIllustration.setDecorative(this.getDecorative());
 			this.setAggregation("_illustration", oIllustration);
 		}
 
 		return oIllustration;
 	};
+
+	/**
+	 * Pass the decorative property to the Illustration
+	 */
+	IllustratedMessage.prototype.setDecorative = function(bValue) {
+		var oIllustration = this.getAggregation("_illustration");
+
+		this.setProperty("decorative", bValue, true);
+
+		if (oIllustration) {
+			oIllustration.setDecorative(bValue);
+		}
+
+		return this;
+	};
+
 
 	IllustratedMessage.prototype._getResourceBundle = function () {
 		return Library.getResourceBundleFor("sap.m");
@@ -877,13 +921,18 @@ sap.ui.define([
 			sTitleId = this._getTitle().sId,
 			oIllustratedMessageIllustration = this._getIllustration();
 
-		this.addAssociation("ariaLabelledBy", sID, true);
+		// Add aria-labelledby only if the Illustration is not decorative
+		if (!this.getDecorative()) {
+			this.addAssociation("ariaLabelledBy", sID, true);
+		}
 
 		if (aAriaLabelledBy && aAriaLabelledBy.includes(sTitleId)) {
 			this.removeIllustrationAriaLabelledBy(sTitleId);
 		}
 
-		oIllustratedMessageIllustration.addAriaLabelledBy(sID);
+		if (!this.getDecorative()) {
+			oIllustratedMessageIllustration.addAriaLabelledBy(sID);
+		}
 
 		return this;
 	};
@@ -912,13 +961,17 @@ sap.ui.define([
 	};
 
 	IllustratedMessage.prototype.addIllustrationAriaDescribedBy = function(sID) {
-		this.addAssociation("ariaDescribedBy", sID, true);
+		// Add aria-describedby only if the Illustration is not decorative
+		if (!this.getDecorative()) {
+			this.addAssociation("ariaDescribedBy", sID, true);
 
-		var oIllustratedMessageIllustration = this._getIllustration();
-		oIllustratedMessageIllustration.addAriaDescribedBy(sID);
+			var oIllustratedMessageIllustration = this._getIllustration();
+			oIllustratedMessageIllustration.addAriaDescribedBy(sID);
+		}
 
 		return this;
 	};
+
 
 	IllustratedMessage.prototype.removeIllustrationAriaDescribedBy = function(sID) {
 		this.removeAssociation("ariaDescribedBy", sID, true);

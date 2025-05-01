@@ -129,8 +129,8 @@ sap.ui.define([
 		},
 		{
 			featureId: "ExtendedActions",
-			title: oTextResources.getText("TIT_WHATS_NEW_TEXT_ARRANGEMENT_TITLE"),
-			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_TEXT_ARRANGEMENT_DESCRIPTION"),
+			title: oTextResources.getText("TIT_WHATS_NEW_EXTENDED_ACTIONS_TITLE"),
+			description: oTextResources.getText("TXT_WHATS_NEW_DIALOG_EXTENDED_ACTIONS_DESCRIPTION"),
 			documentationUrls: {
 				btpUrl: "https://help.sap.com/docs/ui5-flexibility-for-key-users/ui5-flexibility-for-key-users/adapting-ui",
 				s4HanaCloudUrl: "https://help.sap.com/docs/SAP_S4HANA_CLOUD/4fc8d03390c342da8a60f8ee387bca1a/d868950a1e8c4b0f9b9453176939a19b.html",

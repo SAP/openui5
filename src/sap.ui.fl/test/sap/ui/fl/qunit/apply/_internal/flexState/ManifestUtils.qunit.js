@@ -405,7 +405,7 @@ sap.ui.define([
 					}
 				]
 			};
-			assert.equal(ManifestUtils.getChangeManifestFromAsyncHints(oAsyncHints), false, "true is returned");
+			assert.equal(ManifestUtils.getChangeManifestFromAsyncHints(oAsyncHints, sReference), true, "true is returned");
 		});
 	});
 

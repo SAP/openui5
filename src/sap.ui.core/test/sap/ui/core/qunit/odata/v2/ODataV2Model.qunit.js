@@ -2114,15 +2114,17 @@ sap.ui.define([
 		});
 	});
 
-	var oLB = new List("myLb");
-	var oItemTemplate = new ListItem();
-
 	QUnit.test("test model bindAggregation on Listbox", function(assert) {
+		var oLB = new List("myLb");
+		var oItemTemplate = new ListItem();
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		oLB.setModel(oModel);
 		oItemTemplate.bindProperty("value", "CategoryName").bindProperty("label", "Description");
-		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
+		var oBinding = oLB.bindAggregation("items", {
+			path: "/Categories",
+			template: oItemTemplate
+		}).getBinding('items');
 
 		var handler = function() {
 			var listItems = oLB.getItems();
@@ -2130,6 +2132,7 @@ sap.ui.define([
 			assert.equal(listItems[0].getValue(), "Beverages", "category 1 name");
 			assert.equal(listItems[7].getLabel(), "Seaweed and fish", "category 8 description");
 			oBinding.detachChange(handler);
+			oLB.destroy();
 			done();          // resume normal testing
 		};
 		oBinding.attachChange(handler);
@@ -2137,12 +2140,17 @@ sap.ui.define([
 
 	QUnit.test("test model bindAggregation on Listbox events", function(assert) {
 		assert.expect(2);
+		var oLB = new List("myLb");
+		var oItemTemplate = new ListItem();
 		var done = assert.async();
 		cleanSharedData();
 		var oModel = initModel(sURI, {json:false});
 		oLB.setModel(oModel);
 		oItemTemplate.bindProperty("value", "CategoryName").bindProperty("label", "Description");
-		var oBinding = oLB.bindAggregation("items", "/Categories", oItemTemplate).getBinding('items');
+		var oBinding = oLB.bindAggregation("items", {
+			path: "/Categories",
+			template: oItemTemplate
+		}).getBinding('items');
 
 		//Currently no event fired on bind element
 		var fnRequestedHandler = function() {
@@ -2150,6 +2158,7 @@ sap.ui.define([
 		};
 		var fnRecievedHandler = function() {
 			assert.equal(true, true, "Data received event was fired");
+			oLB.destroy();
 			done();
 		};
 		oBinding.attachDataRequested(fnRequestedHandler);

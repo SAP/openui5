@@ -796,7 +796,8 @@ sap.ui.define([
 
 		return FlexObjectManager.getFlexObjects({
 			selector: mPropertyBag.control,
-			invalidateCache: false,
+			includeManifestChanges: true,
+			includeAnnotationChanges: true,
 			includeCtrlVariants: true,
 			includeDirtyChanges: true
 		})

@@ -1589,16 +1589,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("[bindAggregation] Binding the control to a model makes it load the items from the model", function (assert) {
-		var oOverflowTB,
-				oModel,
-				oButtonTemplate,
-				oData,
-				widthTypes = getSampleWidths();
+		var oModel, oData,
+			widthTypes = getSampleWidths();
 
 		// The template
-		oButtonTemplate = new Button({
-			text: "{text}"
-		});
 
 		// The data
 		oData = {
@@ -1635,10 +1629,16 @@ sap.ui.define([
 		oModel = new JSONModel();
 		oModel.setData(oData);
 
-		widthTypes.forEach(function (sWidth) {
-			oOverflowTB = createOverflowToolbar({width: sWidth}, getDefaultContent());
+		widthTypes.forEach((sWidth) => {
+			const oOverflowTB = createOverflowToolbar({width: sWidth}, getDefaultContent());
+			const oButtonTemplate = new Button({
+				text: "{text}"
+			});
 			oOverflowTB.setModel(oModel);
-			oOverflowTB.bindAggregation("content", "/buttons", oButtonTemplate);
+			oOverflowTB.bindAggregation("content", {
+				path: "/buttons",
+				template: oButtonTemplate
+			});
 			this.clock.tick(1000);
 			assert.strictEqual(oOverflowTB.getContent().length, oData.buttons.length, "When the width is: " + sWidth + ", the toolbar properly displays all buttons from the data source");
 
@@ -1649,7 +1649,7 @@ sap.ui.define([
 			}
 
 			oOverflowTB.destroy();
-		}, this);
+		});
 
 	});
 

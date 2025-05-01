@@ -2058,7 +2058,9 @@ sap.ui.define([
 								"unrestricted_customer_page_UIChange",
 								"nonVariantUIChange",
 								"control1_defaultVariant",
-								"control2_defaultVariant"
+								"control2_defaultVariant",
+								"nonVariantManifestChange",
+								"nonVariantAnnotationChange"
 							],
 							hides4CompVar: []
 						}
@@ -2082,7 +2084,9 @@ sap.ui.define([
 								"unrestricted_customer_page_UIChange",
 								"nonVariantUIChange",
 								"control1_defaultVariant",
-								"control2_defaultVariant"
+								"control2_defaultVariant",
+								"nonVariantManifestChange",
+								"nonVariantAnnotationChange"
 							],
 							hides4CompVar: [
 								"restricted4Manager_vendor_page"
@@ -2105,7 +2109,9 @@ sap.ui.define([
 								"unrestricted_customer_page_UIChange",
 								"nonVariantUIChange",
 								"control1_defaultVariant",
-								"control2_defaultVariant"
+								"control2_defaultVariant",
+								"nonVariantManifestChange",
+								"nonVariantAnnotationChange"
 							],
 							hides4CompVar: [
 								"restricted4Manager_vendor_page"
@@ -2114,7 +2120,8 @@ sap.ui.define([
 					},
 					{
 						changes: {
-							clonedFrom: [],
+							clonedFrom: [
+							],
 							hides4CompVar: [
 								"restricted4Manager_vendor_page",
 								"restricted4managerKeyUser_customer_page",
@@ -2159,7 +2166,9 @@ sap.ui.define([
 								"standard_page_UIChange",
 								"nonVariantUIChange",
 								"control1_defaultVariant",
-								"control2_defaultVariant"
+								"control2_defaultVariant",
+								"nonVariantManifestChange",
+								"nonVariantAnnotationChange"
 							],
 							hides4FLVar: []
 						}
@@ -2184,7 +2193,9 @@ sap.ui.define([
 								"standard_page_UIChange",
 								"nonVariantUIChange",
 								"control1_defaultVariant",
-								"control2_defaultVariant"
+								"control2_defaultVariant",
+								"nonVariantManifestChange",
+								"nonVariantAnnotationChange"
 							],
 							hides4FLVar: [
 								"restricted4Manager_vendor_page"
@@ -2208,7 +2219,9 @@ sap.ui.define([
 								"standard_page_UIChange",
 								"nonVariantUIChange",
 								"control1_defaultVariant",
-								"control2_defaultVariant"
+								"control2_defaultVariant",
+								"nonVariantManifestChange",
+								"nonVariantAnnotationChange"
 							],
 							hides4FLVar: [
 								"restricted4Manager_vendor_page"
