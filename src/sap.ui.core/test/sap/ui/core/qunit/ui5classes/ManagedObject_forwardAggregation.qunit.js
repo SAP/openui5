@@ -554,7 +554,8 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver',
 			});
 			var result = this.composite.bindAggregation("outerAggregationWithForwardedBinding", {
 				path: "/",
-				template: this.itemTemplate
+				template: this.itemTemplate,
+				templateShareable: true
 			});
 			assert.equal(result, this.composite, "bindAggregation should return the outer control even if the binding is forwarded"); // GitHub issue #2378
 			this.composite.setModel(this.model);

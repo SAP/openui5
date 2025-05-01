@@ -31,7 +31,16 @@ sap.ui.define([
 		beforeEach(assert) {
 			this.oConfig = {
 				componentData: {},
-				asyncHints: {},
+				asyncHints: {
+					requests: [
+						{
+							cachebusterToken: "abc",
+							name: "sap.ui.fl.changes",
+							reference: "sap.app.descriptor.test",
+							url: "/sap/bc/lrep/flex/data/~abc=~/sap.app.descriptor.test"
+						}
+					]
+				},
 				id: "componentId"
 			};
 
@@ -182,7 +191,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling 'preprocessManifest' with one change and load changes-bundle only after second FlexState.initialize call", function(assert) {
 			const sReference = "applier.test.reference";
-			const oManifest = {"sap.app": {id: sReference, type: "application" }, "sap.ui5": {appVariantId: sReference}};
+			const oManifest = { "sap.app": { id: sReference, type: "application" }, "sap.ui5": { appVariantId: sReference } };
 
 			const oStorageLoadFlexData = sandbox.spy(Storage, "loadFlexData");
 			const oStorageCompleteFlexData = sandbox.spy(Storage, "completeFlexData");
@@ -211,6 +220,18 @@ sap.ui.define([
 					}
 				]
 			});
+
+			this.oConfig.asyncHints = {
+				requests: [
+					{
+						id: "componentId",
+						cachebusterToken: "abc",
+						name: "sap.ui.fl.changes",
+						reference: sReference,
+						url: "/sap/bc/lrep/flex/data/~abc=~/sap.app.descriptor.test"
+					}
+				]
+			};
 
 			return Preprocessor.preprocessManifest(oManifest, this.oConfig)
 			.then(function() {
@@ -245,6 +266,11 @@ sap.ui.define([
 
 	QUnit.module("Preprocessor", {
 		beforeEach(assert) {
+			this.oConfig = {
+				componentData: {},
+				asyncHints: {},
+				id: "componentId"
+			};
 			const done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 			.then(function(oTestApplierManifestResponse) {
@@ -263,14 +289,46 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling 'preprocessManifest' with a fl-asyncHint", function(assert) {
+		QUnit.test("when calling 'preprocessManifest' with a fl-asyncHint and cachbusterToken", function(assert) {
+			this.oConfig.asyncHints = {
+				requests: [
+					{
+						cachebusterToken: "abc",
+						name: "sap.ui.fl.changes",
+						reference: "sap.app.descriptor.test",
+						url: "/sap/bc/lrep/flex/data/~abc=~/sap.app.descriptor.test"
+					}
+				]
+			};
+			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function(oManifest) {
+				assert.deepEqual(oManifest, this.oManifest, "the manifest is returned");
+				assert.equal(this.fnFlexStateStub.callCount, 1, "FlexState was initialized once");
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is called once");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'preprocessManifest' with a fl-asyncHint and without cachebusterToken", function(assert) {
+			this.oConfig.asyncHints = {
+				requests: [
+					{
+						name: "sap.ui.fl.changes",
+						reference: "sap.app.descriptor.test",
+						url: "/sap/bc/lrep/flex/data/sap.app.descriptor.test"
+					}
+				]
+			};
+			return Preprocessor.preprocessManifest(this.oManifest, this.oConfig).then(function(oManifest) {
+				assert.deepEqual(oManifest, this.oManifest, "the manifest is returned");
+				assert.equal(this.fnFlexStateStub.callCount, 1, "FlexState was initialized once");
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is called once");
+			}.bind(this));
+		});
+
+		QUnit.test("when calling 'preprocessManifest' without a fl-asyncHint", function(assert) {
 			const oConfig = {
 				componentData: {},
 				asyncHints: {
-					requests: [{
-						name: "sap.ui.fl.changes",
-						reference: "sap.app.descriptor.test"
-					}]
+					requests: []
 				},
 				id: "componentId"
 			};
@@ -278,7 +336,7 @@ sap.ui.define([
 			return Preprocessor.preprocessManifest(this.oManifest, oConfig).then(function(oManifest) {
 				assert.deepEqual(oManifest, this.oManifest, "the manifest is returned");
 				assert.equal(this.fnFlexStateStub.callCount, 1, "FlexState was initialized once");
-				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is never called");
+				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is never called");
 			}.bind(this));
 		});
 	});

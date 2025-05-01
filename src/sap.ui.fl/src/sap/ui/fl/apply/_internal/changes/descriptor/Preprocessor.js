@@ -56,7 +56,7 @@ sap.ui.define([
 
 			// in case the asyncHints already mention that there is no change for the manifest, just trigger the loading
 			// partialFlexState has to be true as there is no guarantee that the flex bundle is already available at this point
-			if (!ManifestUtils.getChangeManifestFromAsyncHints(oConfig.asyncHints)) {
+			if (!ManifestUtils.getChangeManifestFromAsyncHints(oConfig.asyncHints, sReference)) {
 				FlexState.initialize({
 					componentData: oComponentData,
 					asyncHints: oConfig.asyncHints,

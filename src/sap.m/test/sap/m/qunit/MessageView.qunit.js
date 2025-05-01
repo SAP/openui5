@@ -215,9 +215,13 @@ sap.ui.define([
 		oModel.setData(this.oMockupData);
 		this.oMessageView.setModel(oModel);
 
+		// this.oMessageTemplate will be destroyed when bindAggregation is called again
+		// Create a clone which is used in the next bindAggregation
+		const oTemplate = this.oMessageTemplate.clone();
+
 		this.oMessageView.bindAggregation("items", {
 			path: "/messages",
-			template: this.oMessageTemplate
+			template: oTemplate
 		});
 
 		this.oButton.firePress();

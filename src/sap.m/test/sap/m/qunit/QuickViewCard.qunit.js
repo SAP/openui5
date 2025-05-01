@@ -270,9 +270,11 @@ sap.ui.define([
 									type: "{elementType}",
 									pageLinkId: "{pageLinkId}",
 									emailSubject: '{emailSubject}'
-								})
+								}),
+								templateShareable: false
 							}
-						})
+						}),
+						templateShareable: false
 					}
 				})
 			}

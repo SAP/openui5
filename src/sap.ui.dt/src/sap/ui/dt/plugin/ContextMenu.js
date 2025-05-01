@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/m/Button",
+	"sap/m/FlexBox",
 	"sap/m/FormattedText",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
@@ -14,11 +15,11 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/Device",
-	"sap/m/FlexBox"
+	"sap/ui/Device"
 ], function(
 	assert,
 	Button,
+	FlexBox,
 	FormattedText,
 	Menu,
 	MenuItem,
@@ -28,8 +29,7 @@ sap.ui.define([
 	OverlayRegistry,
 	DtUtil,
 	KeyCodes,
-	Device,
-	FlexBox
+	Device
 ) {
 	"use strict";
 
@@ -175,20 +175,20 @@ sap.ui.define([
 
 				// Add end content to the menu item
 				if (oMenuItem.propagatingControlName || oMenuItem.additionalInfo) {
-					const oHBox = new FlexBox({
+					const oFlexBox = new FlexBox({
 						justifyContent: "SpaceBetween",
 						alignItems: "Center"
 					});
 					if (oMenuItem.propagatingControlName) {
-						oHBox.addItem(new FormattedText({
+						oFlexBox.addItem(new FormattedText({
 							htmlText: `<strong>${oMenuItem.propagatingControlName}</strong>`
 						}));
 					}
 					if (oMenuItem.additionalInfo) {
 						const oAdditionalInfoButton = createAdditionalInfo.call(this, oMenuItem);
-						oHBox.addItem(oAdditionalInfoButton);
+						oFlexBox.addItem(oAdditionalInfoButton);
 					}
-					oMenuItemInstance.addEndContent(oHBox);
+					oMenuItemInstance.addEndContent(oFlexBox);
 				}
 
 				if (oMenuItem.submenu) {

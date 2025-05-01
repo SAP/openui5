@@ -3,25 +3,25 @@ sap.ui.define([
 	"sap/m/IllustratedMessageSize",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/core/Lib",
-	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	'sap/ui/core/library',
 	"sap/ui/core/InvisibleText",
-	"sap/ui/dom/getScrollbarSize"
+	"sap/ui/dom/getScrollbarSize",
+	"sap/ui/test/utils/nextUIUpdate"
 ],
 function(
 	IllustratedMessageSize,
 	IllustratedMessageType,
 	Library,
-	nextUIUpdate,
 	jQuery,
 	IllustratedMessage,
 	Button,
 	coreLibrary,
 	InvisibleText,
-	getScrollbarSize
+	getScrollbarSize,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -811,6 +811,19 @@ function(
 		assert.strictEqual(oAccInfo.children.length, 1, "Message has button as child");
 	});
 
+	QUnit.test("Tests the accessibility attributes with decorative property", async function (assert) {
+		var $illustration = this.oIllustratedMessage._getIllustration().$();
+
+		assert.notOk($illustration.attr("role"), "The SVG element does not have role=presentation when it is with decorative default value false");
+		assert.notOk($illustration.attr("aria-hidden"), "The SVG element does not have aria-hidden=true when it is with decorative default value false");
+
+		this.oIllustratedMessage.setDecorative(true);
+		await nextUIUpdate();
+
+		assert.strictEqual($illustration.attr("role"), "presentation", "The SVG element has role=presentation when decorative is true");
+		assert.strictEqual($illustration.attr("aria-hidden"), "true", "The SVG element has aria-hidden=true when decorative is true");
+	});
+
 	/* --------------------------- IllustratedMessage Default Text Fallback -------------------------------------- */
 	QUnit.module("IllustratedMessage - Default Text Fallback logic ", {
 		beforeEach: async function() {
@@ -951,5 +964,17 @@ function(
 
 		// Assert
 		assert.equal($illustration.attr("aria-describedby"), 'illustration_label3');
+	});
+
+	QUnit.test("Should clear aria associations when decorative=true", async function (assert) {
+		// Arrange
+		new InvisibleText("illustration_label4", {text: "My label"}).toStatic();
+		this.oIllustratedMessage.setDecorative(true);
+		this.oIllustratedMessage.addIllustrationAriaLabelledBy("illustration_label4");
+		await nextUIUpdate();
+
+		// Assert
+		var $illustration = this.oIllustratedMessage._getIllustration().$();
+		assert.notOk($illustration.attr("aria-labelledby"), "Clears aria-labelledby when decorative");
 	});
 });

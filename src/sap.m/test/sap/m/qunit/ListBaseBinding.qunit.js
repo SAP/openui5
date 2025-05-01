@@ -670,6 +670,7 @@ sap.ui.define([
 			const oUpdateItemsSpy = sinon.spy(oList, "_updateFinished");
 			const oInvalidateSpy = sinon.spy(oList, "invalidate");
 			const oBinding = oList.getBinding("items");
+			const oBindingInfoCopy = Object.assign({}, oList.getBindingInfo("items"));
 
 			// Fake the virtual context process.
 
@@ -708,7 +709,10 @@ sap.ui.define([
 				reason: "change"
 			});
 			oVirtualItem = oList._oVirtualItem;
-			oList.bindItems(oList.getBindingInfo("items"));
+
+			// create a clone of the template since the original template will be destroyed before rebind
+			oBindingInfoCopy.template = oBindingInfoCopy.template.clone();
+			oList.bindItems(oBindingInfoCopy);
 
 			assert.ok(oList.indexOfDependent(oVirtualItem) === -1, "BindItems: Virtual item removed from dependents aggregation");
 			assert.ok(oVirtualItem.bIsDestroyed, "BindItems: Virtual item is destroyed");
@@ -756,7 +760,7 @@ sap.ui.define([
 
 	QUnit.module("Rebind", Object.assign({}, oModuleConfig, {
 		beforeEach: async function() {
-			this.oList = await createList();
+			this.oList = await createList(undefined, {templateShareable: true});
 			this.oList.setModel(createODataModel());
 			await ui5Event("updateFinished", this.oList);
 		}

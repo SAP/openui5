@@ -60,7 +60,14 @@ sap.ui.define([
 				 *
 				 * @since 1.98
 				 */
-				type: {type: "string", defaultValue: null}
+				type: {type: "string", defaultValue: null},
+
+				/**
+				 * Defines whether the illustration is decorative.
+				 *
+				 * @since 1.137
+				 */
+				decorative: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			associations : {
 				/**

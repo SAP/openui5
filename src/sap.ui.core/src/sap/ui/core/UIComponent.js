@@ -891,22 +891,20 @@ sap.ui.define([
 			const oMetadata = this.getMetadata();
 
 			// lookup rootView class
-			let sRootViewType;
 			const oRootView = oMetadata._getManifestEntry("/sap.ui5/rootView");
-
-			if (oRootView?.startsWith?.("module:") || oRootView?.viewName?.startsWith?.("module:")) {
-				const viewName = oRootView.viewName || oRootView;
-				mRoutingClasses["viewClass"] = viewName;
-			} else {
-				// String as rootView defaults to ViewType XML
+			const sRootViewName = typeof oRootView === "string" ? oRootView : oRootView?.viewName;
+			if (sRootViewName?.startsWith("module:")) {
+				mRoutingClasses["viewClass"] = sRootViewName;
+			} else if (sRootViewName) {
+				// View type defaults to ViewType XML
 				// See: UIComponent#createContent and UIComponentMetadata#_convertLegacyMetadata
-				sRootViewType = oRootView?.type || "XML";
+				const sRootViewType = oRootView.type || "XML";
+				if (ViewType[sRootViewType]) {
+					const sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
+					mRoutingClasses["viewClass"] = sViewClass;
+				}
 			}
 
-			if (sRootViewType && ViewType[sRootViewType]) {
-				const sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
-				mRoutingClasses["viewClass"] = sViewClass;
-			}
 
 			// lookup of the router / targets and views class
 			// ASYNC Only: prevents lazy synchronous loading in UIComponent#init (regardless of manifirst or manilast)

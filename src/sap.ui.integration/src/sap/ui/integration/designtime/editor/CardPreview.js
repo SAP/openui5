@@ -288,7 +288,7 @@ sap.ui.define([
 		} else if (this._currentMode === "Live") {
 			this._oCardPreview.setPreviewMode(CardPreviewMode.Off);
 		}
-		this._initalChanges = this._initalChanges || this._oCardPreview.getManifestChanges() || [];
+		this._initalChanges = this._initalChanges || [this.getEditor()._beforeLayerManifestChanges];
 		var aChanges = this._initalChanges.concat([this.getEditor().getCurrentSettings()]);
 		this._oCardPreview.setManifestChanges(aChanges);
 		this._oCardPreview.setManifest(this.getCard()._oCardManifest._oManifest.getRawJson());
