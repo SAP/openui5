@@ -2,12 +2,9 @@
 sap.ui.define([
 	'sap/base/i18n/Localization',
 	'sap/ui/Device',
-	'sap/ui/core/Lib',
 	"sap/ui/test/utils/nextUIUpdate"
-], function(Localization, Device, Library, nextUIUpdate) {
+], function(Localization, Device, nextUIUpdate) {
 	"use strict";
-
-	Library.all()["sap.ui.core"].version;
 
 
 	// ---------------------------------------------------------------------------
