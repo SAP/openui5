@@ -748,53 +748,6 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when retrieving the context menu item when 'settings' action is propagated", async function(assert) {
-			const oParentControl = new VerticalLayout("parentControl");
-			const oButtonOverlay = new ElementOverlay({
-				element: this.oButton,
-				designTimeMetadata: new ElementDesignTimeMetadata({
-					data: {
-						propagatedActions: [{
-							name: "settings",
-							action: {
-								handler() {}
-							},
-							propagatingControl: oParentControl,
-							propagatingControlName: "Layout"
-						}]
-					}
-				})
-			});
-			const oLayoutOverlay = new ElementOverlay({
-				element: oParentControl
-			});
-			OverlayRegistry.register(oLayoutOverlay);
-
-			sandbox.stub(this.oSettingsPlugin, "isAvailable").callsFake(function(aElementOverlays) {
-				assert.strictEqual(
-					aElementOverlays[0].getId(),
-					oLayoutOverlay.getId(),
-					"the 'available' function calls isAvailable with the correct overlay"
-				);
-				return true;
-			});
-
-			sandbox.stub(this.oSettingsPlugin, "handler").callsFake(function(aOverlays) {
-				assert.deepEqual(aOverlays, [oLayoutOverlay], "the 'handler' method is called with the right overlays");
-			});
-			sandbox.stub(this.oSettingsPlugin, "isEnabled").callsFake(function(aElementOverlays) {
-				assert.strictEqual(
-					aElementOverlays[0].getId(), oLayoutOverlay.getId(), "the 'enabled' function calls isEnabled with the correct overlay"
-				);
-			});
-
-			const aMenuItems = await this.oSettingsPlugin.getMenuItems([oButtonOverlay]);
-			assert.strictEqual(aMenuItems[0].id, "CTX_SETTINGS", "'getMenuItems' returns the context menu item for the plugin");
-			assert.strictEqual(aMenuItems[0].propagatingControl.getId(), oParentControl.getId(), "the propagating control is correct");
-			assert.strictEqual(aMenuItems[0].propagatingControlName, "Layout", "the propagating control name is correct");
-			aMenuItems[0].handler(["foo"]); // The parameter here is irrelevant because the function is bound with the parent overlay
-		});
-
 		QUnit.test("when retrieving the context menu item for single 'settings' action with a submenu", async function(assert) {
 			const oButtonOverlay = createOverlayWithSettingsAction(this.oButton, {
 				handler() {},

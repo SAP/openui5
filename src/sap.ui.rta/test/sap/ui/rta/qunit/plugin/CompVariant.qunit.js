@@ -466,11 +466,7 @@ sap.ui.define([
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
 			});
-			this.oChildControl = new Button("childControl");
-			this.oControl = new HBox("stableId", {
-				items: [this.oChildControl]
-			});
-
+			this.oControl = new Button("stableId");
 			this.oHBox = new HBox("box", {
 				items: [this.oControl, this.oVariantManagementControl]
 			});
@@ -510,7 +506,6 @@ sap.ui.define([
 			});
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oOverlay = OverlayRegistry.getOverlay(this.oControl);
-				this.oChildOverlay = OverlayRegistry.getOverlay(this.oChildControl);
 				this.oDTHandlerStub = sandbox.stub();
 				this.oOverlay.setDesignTimeMetadata({
 					actions: {
@@ -521,18 +516,6 @@ sap.ui.define([
 							handler: this.oDTHandlerStub
 						}
 					}
-				});
-				this.oChildOverlay.setDesignTimeMetadata({
-					propagatedActions: [{
-						name: "compVariant",
-						action: {
-							name: "myFancyName",
-							changeType: "variantContent",
-							handler: this.oDTHandlerStub
-						},
-						propagatingControl: this.oControl,
-						propagatingControlName: "HBox"
-					}]
 				});
 				sandbox.stub(this.oOverlay.getDesignTimeMetadata(), "getLibraryText")
 				.callThrough()
@@ -558,15 +541,6 @@ sap.ui.define([
 			assert.strictEqual(aMenuItems.length, 1, "one context menu item is visible");
 			assert.strictEqual(aMenuItems[0].id, "CTX_COMP_VARIANT_CONTENT", "VariantContent is the only entry");
 			assert.strictEqual(aMenuItems[0].additionalInfo, "Additional Info", "the additional info is set");
-		});
-
-		QUnit.test("getMenuItems on child control", function(assert) {
-			var aMenuItems = this.oPlugin.getMenuItems([this.oChildOverlay]);
-			assert.strictEqual(aMenuItems.length, 1, "one context menu item is visible");
-			assert.strictEqual(aMenuItems[0].id, "CTX_COMP_VARIANT_CONTENT", "VariantContent is the only entry");
-			assert.strictEqual(aMenuItems[0].propagatingControl.getId(), this.oControl.getId(), "the propagating control is set");
-			assert.strictEqual(aMenuItems[0].propagatingControlName, "HBox", "the propagating control name is set");
-			assert.strictEqual(aMenuItems[0].additionalInfo, undefined, "the additional info is not provided");
 		});
 
 		QUnit.test("the handler is called", function(assert) {
