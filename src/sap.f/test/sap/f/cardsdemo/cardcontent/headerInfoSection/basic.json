@@ -57,10 +57,17 @@
 							},
 							{
 								"type": "Status",
-								"value": "Goal Template Available",
+								"value": "Interactive Status",
 								"state": "Information",
 								"inverted": true,
-								"showStateIcon": true
+								"showStateIcon": true,
+								"actions": [{
+									"type": "Navigation",
+									"parameters": {
+										"url": "https://www.sap.com",
+										"target": "_blank"
+									}
+								}]
 							}
 						]
 					}

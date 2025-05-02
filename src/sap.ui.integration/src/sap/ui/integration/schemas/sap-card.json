@@ -4429,6 +4429,13 @@
               "$ref": "#/$defs/simpleBinding"
             }
           ]
+        },
+        "actions": {
+          "description": "Actions that can be applied on the status",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/action"
+          }
         }
       }
     }

@@ -1,14 +1,16 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/genericTests/actionEnablementTests",
 	"sap/m/library"
 ], (
 	Card,
 	nextUIUpdate,
 	nextCardReadyEvent,
+	actionEnablementTests,
 	mLibrary
 ) => {
 	"use strict";
@@ -17,6 +19,57 @@ sap.ui.define([
 	const WrappingType = mLibrary.WrappingType;
 	const AvatarColor = mLibrary.AvatarColor;
 	const AvatarImageFitType = mLibrary.AvatarImageFitType;
+
+	actionEnablementTests("Default Header", {
+		manifest: {
+			"sap.app": {
+				"id": "test.card.header.genericActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Card Title"
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/header",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
+
+	actionEnablementTests("Status in Default Header", {
+		manifest: {
+			"sap.app": {
+				"id": "test.card.header.statusGenericActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Card Title",
+					"infoSection": {
+						"rows": [
+							{
+								"items": [
+									{
+										"type": "Status",
+										"value": "Interactive Status",
+										"inverted": true
+									}
+								]
+							}
+						]
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/header/infoSection/rows/0/items/0",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
 
 	QUnit.module("Default Header", {
 		beforeEach: async function () {

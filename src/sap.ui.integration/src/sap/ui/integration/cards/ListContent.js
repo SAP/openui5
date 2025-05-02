@@ -344,7 +344,7 @@ sap.ui.define([
 		}
 
 		if (mItem.attributes) {
-			mItem.attributes.forEach(function (attr) {
+			mItem.attributes.forEach((attr) => {
 				oObjectStatus = new ObjectStatus({
 					text: attr.value,
 					state: attr.state,
@@ -353,6 +353,13 @@ sap.ui.define([
 					showStateIcon: attr.showStateIcon,
 					customIcon: attr.customStateIcon,
 					inverted: attr.inverted
+				});
+
+				this._oActions.attach({
+					area: ActionArea.ContentItem,
+					actions: attr.actions,
+					control: oObjectStatus,
+					enabledPropertyName: "active"
 				});
 
 				mSettings.attributes.push(oObjectStatus);
@@ -381,6 +388,14 @@ sap.ui.define([
 			enabledPropertyName: "type",
 			enabledPropertyValue: ListType.Active,
 			disabledPropertyValue: ListType.Inactive
+		});
+
+		this._oActions.attach({
+			area: ActionArea.ContentItem,
+			actions: mItem?.info?.actions,
+			control: this._oItemTemplate,
+			enabledPropertyName: "infoActive",
+			eventName: "infoPress"
 		});
 
 		var oGroup = oConfiguration.group;

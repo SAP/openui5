@@ -2172,6 +2172,17 @@ sap.ui.define([
 										key: 'manifest.json'
 									}
 								]
+							},
+							{
+								title: 'Interactive Status',
+								key: 'interactiveStatus',
+								files: [
+									{
+										url: '/samples/headerInfoSection/interactiveStatus/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
