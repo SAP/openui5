@@ -129,15 +129,27 @@
 							"value": "{name}"
 						},
 						{
-							"title": "Net Amount",
-							"value": "{netAmount}"
+							"title": "Status",
+							"value": "{status}",
+							"state": "{statusState}",
+							"showStateIcon": "{showStateIcon}",
+							"customStateIcon": "{customStateIcon}"
 						},
 						{
 							"title": "Status",
 							"value": "{status}",
 							"state": "{statusState}",
 							"showStateIcon": "{showStateIcon}",
-							"customStateIcon": "{customStateIcon}"
+							"customStateIcon": "{customStateIcon}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "https://www.sap.com",
+										"target": "_blank"
+									}
+								}
+							]
 						}
 					]
 				}
