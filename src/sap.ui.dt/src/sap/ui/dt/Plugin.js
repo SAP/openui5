@@ -290,13 +290,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieve the propagated action data from the Designtime Metadata
+	 * Retrieve the propagated action info from the Designtime Metadata, like the propagating control
+	 * and its name.
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay Overlay containing the Designtime Metadata
-	 * @return {object} Returns an object with the action data from the Designtime Metadata
+	 * @return {object} Returns an object with the propagated action info from the Designtime Metadata
 	 */
-	Plugin.prototype.getPropagatedAction = function(oOverlay) {
+	Plugin.prototype.getPropagatedActionInfo = function(oOverlay) {
 		return oOverlay.getDesignTimeMetadata() ?
-			oOverlay.getDesignTimeMetadata().getPropagatedAction(this.getActionName())
+			oOverlay.getDesignTimeMetadata().getPropagatedActionInfo(this.getActionName())
 			: null;
 	};
 
