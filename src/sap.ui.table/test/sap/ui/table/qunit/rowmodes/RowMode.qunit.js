@@ -46,7 +46,7 @@ sap.ui.define([
 			TableUtils.addDelegate(this.getTable(), this.delegate, this);
 		},
 		detachEvents: function() {
-			TableUtils.removeDelegate(this.getTable(), this.delegate);
+			this.getTable()?.removeEventDelegate(this.delegate);
 		}
 	});
 

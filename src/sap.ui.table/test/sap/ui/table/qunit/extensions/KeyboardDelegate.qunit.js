@@ -7267,10 +7267,9 @@ sap.ui.define([
 						}
 					}
 
+					const bIsLastScrollableRow = iRowIndex === iVisibleRowCount - iFixedBottomRowCount - 1;
 					const oRow = this.oTable.getRows()[iRowIndex];
-					const bScrolled = bIsLastElementInRow
-						&& TableUtils.isLastScrollableRow(this.oTable, TableUtils.getCell(this.oTable, oElem))
-						&& oRow.getIndex() + iFixedBottomRowCount !== iRowCount - 1;
+					const bScrolled = bIsLastElementInRow && bIsLastScrollableRow && oRow.getIndex() + iFixedBottomRowCount !== iRowCount - 1;
 
 					if (bShowInfo) {
 						assert.ok(true, "[INFO] Simulating TAB event on: " + document.activeElement.id);
@@ -7433,7 +7432,7 @@ sap.ui.define([
 						continue;
 					}
 
-					const bIsFirstScrollableRow = TableUtils.isFirstScrollableRow(this.oTable, TableUtils.getCell(this.oTable, oElem));
+					const bIsFirstScrollableRow = iRowIndex === iFixedRowCount;
 					const oRow = this.oTable.getRows()[iRowIndex];
 					const bScrolled = iColumnIndex === (oRow.isGroupHeader() || bTableHasRowSelectors ? -1 : 0)
 						&& bIsFirstScrollableRow

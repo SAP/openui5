@@ -63,7 +63,7 @@ sap.ui.define([
 	 */
 	V4Aggregation.prototype.onActivate = function(oTable) {
 		validateBinding(oTable.getBinding());
-		TableUtils.Grouping.setToDefaultGroupMode(oTable);
+		TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Group);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, validateBinding);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
@@ -78,7 +78,7 @@ sap.ui.define([
 		for (const oColumn of oTable.getColumns()) {
 			oColumn._setCellContentVisibilitySettings();
 		}
-		TableUtils.Grouping.setToDefaultFlatMode(oTable);
+		TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Flat);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, validateBinding);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
