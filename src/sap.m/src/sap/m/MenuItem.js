@@ -373,7 +373,9 @@ sap.ui.define([
 		 */
 		MenuItem.prototype._observeEndContentChanges = function (oEndContent) {
 			this._getEndContentObserver().observe(oEndContent, {
-				properties: true
+				properties: true,
+				aggregations: ["tooltip"],
+				associations: ["ariaLabelledBy", "ariaDescribedBy"]
 			});
 		};
 
@@ -394,7 +396,24 @@ sap.ui.define([
 		 * @private
 		 */
 		MenuItem.prototype._endContentObserverCallbackFunction = function (oChanges) {
-			Element.getElementById(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setProperty(oChanges.name, oChanges.current);
+			const oEndContentControl = Element.getElementById(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX);
+			switch (oChanges.type) {
+			case "aggregation":
+				oEndContentControl.setAggregation(oChanges.name, oChanges.child);
+				break;
+			case "association":
+				if (oChanges.mutation === "insert") {
+					oEndContentControl.addAssociation(oChanges.name, oChanges.ids);
+				} else if (oChanges.mutation === "remove") {
+					const aIds = Array.isArray(oChanges.ids) ? oChanges.ids : [oChanges.ids];
+					aIds.forEach(function (sId) {
+						oEndContentControl.removeAssociation(oChanges.name, sId);
+					});
+				}
+				break;
+			default:
+				oEndContentControl.setProperty(oChanges.name, oChanges.current);
+			}
 		};
 
 		/**
