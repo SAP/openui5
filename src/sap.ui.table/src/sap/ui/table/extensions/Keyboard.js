@@ -460,7 +460,7 @@ sap.ui.define([
 
 	function setFocusFallback(oTable, oKeyboardExtension) {
 		if (oTable.getColumnHeaderVisible()) {
-			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(oKeyboardExtension));
+			oKeyboardExtension.focusItem(ExtensionHelper.getInitialItemNavigationIndex(oKeyboardExtension));
 			oKeyboardExtension._oLastFocus = null;
 		} else if (TableUtils.isNoDataVisible(oTable)) {
 			oTable.getDomRef("noDataCnt").focus();
@@ -563,6 +563,16 @@ sap.ui.define([
 		} else {
 			oElement.trigger("focus");
 		}
+	};
+
+	/**
+	 * Focus the item with the given index in the item navigation.
+	 *
+	 * @param {int} iIndex Index of item in ItemNavigation which shall get the focus.
+	 * @param {Object} oEvent The event object.
+	 */
+	KeyboardExtension.prototype.focusItem = function(iIndex, oEvent) {
+		this.getTable()._getItemNavigation()?.focusItem(iIndex, oEvent);
 	};
 
 	return KeyboardExtension;

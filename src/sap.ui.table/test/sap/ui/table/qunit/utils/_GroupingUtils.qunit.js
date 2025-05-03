@@ -47,24 +47,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("isInSummaryRow", async function(assert) {
-		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.Summary}]);
-
-		assert.ok(Grouping.isInSummaryRow(this.oTable.qunit.getDataCell(0, 0)), "DATACELL in sum row");
-		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getDataCell(1, 0)), "DATACELL in normal row");
-
-		assert.ok(Grouping.isInSummaryRow(this.oTable.qunit.getRowHeaderCell(0)), "ROWHEADER in sum row");
-		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getRowHeaderCell(1)), "ROWHEADER in normal row");
-
-		assert.ok(Grouping.isInSummaryRow(this.oTable.qunit.getRowActionCell(0)), "ROWACTION in sum row");
-		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getRowActionCell(1)), "ROWACTION in normal row");
-
-		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getColumnHeaderCell(0)), "COLUMNHEADER");
-		assert.ok(!Grouping.isInSummaryRow(this.oTable.qunit.getSelectAllCell()), "COLUMNROWHEADER");
-		assert.ok(!Grouping.isInSummaryRow(null), "null");
-		assert.ok(!Grouping.isInSummaryRow(document.getElementById("outerelement")), "Foreign DOM");
-	});
-
 	QUnit.test("isInGroupHeaderRow", async function(assert) {
 		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Group);
 		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.GroupHeader, expandable: true}]);
@@ -125,25 +107,6 @@ sap.ui.define([
 		this.assertAccessorsForFlatMode(assert);
 	});
 
-	QUnit.test("Set to default flat mode", function(assert) {
-		Grouping.setToDefaultGroupMode(this.oTable);
-		Grouping.setToDefaultFlatMode(this.oTable);
-		this.assertMode(assert, Grouping.HierarchyMode.Flat);
-		this.assertAccessorsForFlatMode(assert);
-	});
-
-	QUnit.test("Set to default group mode", function(assert) {
-		Grouping.setToDefaultGroupMode(this.oTable);
-		this.assertMode(assert, Grouping.HierarchyMode.Group);
-		this.assertAccessorsForGroupMode(assert);
-	});
-
-	QUnit.test("Set to default tree mode", function(assert) {
-		Grouping.setToDefaultTreeMode(this.oTable);
-		this.assertMode(assert, Grouping.HierarchyMode.Tree);
-		this.assertAccessorsForTreeMode(assert);
-	});
-
 	QUnit.test("Set mode to '" + Grouping.HierarchyMode.Flat + "'", function(assert) {
 		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Group);
 		Grouping.setHierarchyMode(this.oTable, Grouping.HierarchyMode.Flat);
@@ -185,28 +148,20 @@ sap.ui.define([
 		const mGroupModeSetter = {};
 		const HierarchyMode = Grouping.HierarchyMode;
 
-		mGroupModeSetter["default flat"] = Grouping.setToDefaultFlatMode.bind(Grouping, this.oTable);
-		mGroupModeSetter["default group"] = Grouping.setToDefaultGroupMode.bind(Grouping, this.oTable);
-		mGroupModeSetter["default tree"] = Grouping.setToDefaultTreeMode.bind(Grouping, this.oTable);
 		mGroupModeSetter[HierarchyMode.Flat] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.Flat);
 		mGroupModeSetter[HierarchyMode.Group] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.Group);
 		mGroupModeSetter[HierarchyMode.Tree] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.Tree);
 		mGroupModeSetter[HierarchyMode.GroupedTree] = Grouping.setHierarchyMode.bind(Grouping, this.oTable, HierarchyMode.GroupedTree);
 
 		[
-			{newMode: "default flat", expectInvalidation: false},
 			{newMode: HierarchyMode.Flat, expectInvalidation: false},
-			{newMode: "default group", expectInvalidation: true},
-			{newMode: "default group", expectInvalidation: false},
-			{newMode: HierarchyMode.Group, expectInvalidation: false},
-			{newMode: "default tree", expectInvalidation: true},
-			{newMode: "default tree", expectInvalidation: false},
-			{newMode: HierarchyMode.Tree, expectInvalidation: false},
-			{newMode: HierarchyMode.Flat, expectInvalidation: true},
 			{newMode: HierarchyMode.Group, expectInvalidation: true},
-			{newMode: HierarchyMode.GroupedTree, expectInvalidation: true},
+			{newMode: HierarchyMode.Group, expectInvalidation: false},
 			{newMode: HierarchyMode.Tree, expectInvalidation: true},
-			{newMode: HierarchyMode.GroupedTree, expectInvalidation: true}
+			{newMode: HierarchyMode.Tree, expectInvalidation: false},
+			{newMode: HierarchyMode.GroupedTree, expectInvalidation: true},
+			{newMode: HierarchyMode.GroupedTree, expectInvalidation: false},
+			{newMode: HierarchyMode.Flat, expectInvalidation: true}
 		].forEach(function(mTestSettings) {
 			mGroupModeSetter[mTestSettings.newMode]();
 			assert.equal(oInvalidate.callCount, mTestSettings.expectInvalidation ? 1 : 0,
@@ -233,44 +188,44 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("calcGroupIndent", function(assert) {
+	QUnit.test("_calcGroupIndent", function(assert) {
 		const oRow = new Row();
 		const oRowGetLevel = sinon.stub(oRow, "getLevel");
 
 		oRowGetLevel.returns(1);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 0, "Level 1");
+		assert.strictEqual(Grouping._calcGroupIndent(oRow), 0, "Level 1");
 
 		oRowGetLevel.returns(2);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 0, "Level 2");
+		assert.strictEqual(Grouping._calcGroupIndent(oRow), 0, "Level 2");
 
 		oRowGetLevel.returns(3);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 24, "Level 3");
+		assert.strictEqual(Grouping._calcGroupIndent(oRow), 24, "Level 3");
 
 		oRowGetLevel.returns(4);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 36, "Level 4");
+		assert.strictEqual(Grouping._calcGroupIndent(oRow), 36, "Level 4");
 
 		oRowGetLevel.returns(5);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 44, "Level 5");
+		assert.strictEqual(Grouping._calcGroupIndent(oRow), 44, "Level 5");
 
 		oRowGetLevel.returns(6);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 52, "Level 6");
+		assert.strictEqual(Grouping._calcGroupIndent(oRow), 52, "Level 6");
 	});
 
-	QUnit.test("calcTreeIndent", function(assert) {
+	QUnit.test("_calcTreeIndent", function(assert) {
 		const oRow = new Row();
 		const oRowGetLevel = sinon.stub(oRow, "getLevel");
 
 		oRowGetLevel.returns(1);
-		assert.strictEqual(Grouping.calcTreeIndent(oRow), 0, "Level 1");
+		assert.strictEqual(Grouping._calcTreeIndent(oRow), 0, "Level 1");
 
 		oRowGetLevel.returns(2);
-		assert.strictEqual(Grouping.calcTreeIndent(oRow), 17, "Level 2");
+		assert.strictEqual(Grouping._calcTreeIndent(oRow), 17, "Level 2");
 
 		oRowGetLevel.returns(3);
-		assert.strictEqual(Grouping.calcTreeIndent(oRow), 34, "Level 3");
+		assert.strictEqual(Grouping._calcTreeIndent(oRow), 34, "Level 3");
 
 		oRowGetLevel.returns(4);
-		assert.strictEqual(Grouping.calcTreeIndent(oRow), 51, "Level 4");
+		assert.strictEqual(Grouping._calcTreeIndent(oRow), 51, "Level 4");
 	});
 
 	QUnit.test("Tree Mode", function(assert) {

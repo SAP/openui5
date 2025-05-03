@@ -49,7 +49,7 @@ sap.ui.define([
 		destroy: function() {
 			const oTable = this.getTable();
 
-			TableUtils.removeDelegate(oTable, ExtensionDelegate);
+			oTable.removeEventDelegate(ExtensionDelegate);
 			clearTimeout(this._iUpdateDefaultScrollbarPositionTimeoutId);
 			ExtensionBase.prototype.destroy.apply(this, arguments);
 		},

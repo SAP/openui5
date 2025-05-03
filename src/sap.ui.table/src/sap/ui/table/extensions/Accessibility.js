@@ -218,20 +218,20 @@ sap.ui.define([
 			return aLabels;
 		},
 
-		/*
-		 * Returns whether the given cell is hidden
+		/**
+		 * Checks whether the given cell is hidden.
+		 *
+		 * @param {jQuery} $Cell The cell DOM element
+		 * @param {sap.ui.table.Column} oCell The control in the cell
+		 * @param {sap.ui.table.Row} oRow The row the cell is inside
+		 * @returns {boolean} Whether the cell is hidden
 		 */
-		isHiddenCell: function($Cell, oCell) {
-			const bGroup = TableUtils.Grouping.isInGroupHeaderRow($Cell);
-			const bSum = TableUtils.Grouping.isInSummaryRow($Cell);
-			const bSupportStyleClass = !!oCell && !!oCell.hasStyleClass;
-
-			const bIsRowHidden = $Cell.parent().hasClass("sapUiTableRowHidden");
+		isHiddenCell: function($Cell, oCell, oRow) {
 			const bIsCellHidden = $Cell.hasClass("sapUiTableCellHidden");
-			const bGroupCellHiddenByApp = bGroup && bSupportStyleClass && oCell.hasStyleClass("sapUiAnalyticalTableGroupCellHidden");
-			const bSumCellHiddenByApp = bSum && bSupportStyleClass && oCell.hasStyleClass("sapUiAnalyticalTableSumCellHidden");
+			const bGroupCellHiddenByApp = oRow.isGroupHeader() && (oCell?.hasStyleClass?.("sapUiAnalyticalTableGroupCellHidden") ?? false);
+			const bSumCellHiddenByApp = oRow.isSummary() && (oCell?.hasStyleClass?.("sapUiAnalyticalTableSumCellHidden") ?? false);
 
-			return bIsRowHidden || bIsCellHidden || bGroupCellHiddenByApp || bSumCellHiddenByApp;
+			return oRow.isContentHidden() || bIsCellHidden || bGroupCellHiddenByApp || bSumCellHiddenByApp;
 		},
 
 		/*
@@ -420,7 +420,7 @@ sap.ui.define([
 			let oInfo = null;
 			const oRow = oTableInstances.row;
 			const sRowId = oRow.getId();
-			const bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell);
+			const bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell, oRow);
 			const bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell);
 			const aDefaultLabels = ExtensionHelper.getAriaAttributesForDataCell(this, {
 					index: iCol,
@@ -592,7 +592,7 @@ sap.ui.define([
 			const $Cell = jQuery(oCellInfo.cell);
 			const oRow = oTable.getRows()[oCellInfo.rowIndex];
 			const sRowId = oRow.getId();
-			const bHidden = ExtensionHelper.isHiddenCell($Cell);
+			const bHidden = ExtensionHelper.isHiddenCell($Cell, null, oRow);
 			const aDefaultLabels = ExtensionHelper.getAriaAttributesForRowAction(this)["aria-labelledby"] || [];
 			const aLabels = [].concat(aDefaultLabels);
 			const aDescriptions = [];
