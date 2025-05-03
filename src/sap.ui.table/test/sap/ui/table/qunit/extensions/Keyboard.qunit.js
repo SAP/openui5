@@ -206,6 +206,20 @@ sap.ui.define([
 		assert.ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
 	});
 
+	QUnit.test("#focusItem", function(assert) {
+		const oExtension = oTable._getKeyboardExtension();
+		let oCell;
+
+		oCell = getCell(1, 1);
+		oExtension.focusItem(14 /*SelectAll + 5 Headers + 1st Row (Rowselector + 5 cells) + 2nd row (Rowselector + 2 cells)*/);
+		assert.ok(oCell.get(0) !== document.activeElement, "Focus not set because item navigation not yet initialized");
+		getCell(0, 0, true);
+
+		oExtension.focusItem(14 /*SelectAll + 5 Headers + 1st Row (Rowselector + 5 cells) + 2nd row (Rowselector + 2 cells)*/);
+		oCell = getCell(1, 1);
+		assert.ok(oCell.get(0) === document.activeElement, "Focus set");
+	});
+
 	QUnit.module("Misc", {
 		beforeEach: async function() {
 			await createTables();

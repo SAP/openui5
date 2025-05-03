@@ -75,7 +75,7 @@ sap.ui.define([
 
 	FixedRowMode.prototype.detachEvents = function() {
 		RowMode.prototype.detachEvents.apply(this, arguments);
-		TableUtils.removeDelegate(this.getTable(), TableDelegate);
+		this.getTable()?.removeEventDelegate(TableDelegate);
 	};
 
 	FixedRowMode.prototype.registerHooks = function() {

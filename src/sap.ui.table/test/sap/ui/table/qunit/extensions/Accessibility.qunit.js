@@ -616,7 +616,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sum row", async function(assert) {
-		TableUtils.Grouping.setToDefaultGroupMode(this.oTable);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
 		this.oTable.setSelectionMode(SelectionMode.Row);
 		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.Summary}]);
 
@@ -655,7 +655,7 @@ sap.ui.define([
 		await TableQUnitUtils.wait(100);
 		testAriaLabelsForNonFocusedDataCell(this.oTable, this.oTable.qunit.getDataCell(0, -1), 0, this.oTable.getColumns().length - 1, assert);
 
-		TableUtils.Grouping.setToDefaultFlatMode(this.oTable);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		assert.notOk(oRowDomRefs.rowScrollPart.getAttribute("aria-level"), "aria-level is not set on scrollable part");
@@ -1131,7 +1131,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sum row", async function(assert) {
-		TableUtils.Grouping.setToDefaultGroupMode(this.oTable);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
 		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.Summary}]);
 
 		const oRowDomRefs = this.oTable.getRows()[0].getDomRefs();
@@ -1161,7 +1161,7 @@ sap.ui.define([
 		await TableQUnitUtils.wait(100);
 		this.testAriaLabels(oCell, 0, assert);
 
-		TableUtils.Grouping.setToDefaultFlatMode(this.oTable);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.notOk(oRowDomRefs.rowHeaderPart.hasAttribute("aria-level"), "Has aria-level");
 	});
@@ -1371,7 +1371,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sum row", async function(assert) {
-		TableUtils.Grouping.setToDefaultGroupMode(this.oTable);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Group);
 		await this.oTable.qunit.setRowStates([{type: Row.prototype.Type.Summary}]);
 
 		const oRowDomRefs = this.oTable.getRows()[0].getDomRefs();
@@ -1401,7 +1401,7 @@ sap.ui.define([
 		await TableQUnitUtils.wait(100);
 		this.testAriaLabels(oCell, 0, assert);
 
-		TableUtils.Grouping.setToDefaultFlatMode(this.oTable);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.notOk(oRowDomRefs.rowActionPart.hasAttribute("aria-level"), "Has aria-level");
 	});

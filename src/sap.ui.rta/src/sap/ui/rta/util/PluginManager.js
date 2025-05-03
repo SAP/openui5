@@ -208,9 +208,11 @@ sap.ui.define([
 				});
 			}
 
-			this._mDefaultPlugins.annotation = new AnnotationPlugin({
-				commandFactory: this._oCommandFactory
-			});
+			if (FeaturesAPI.areAnnotationChangesEnabled()) {
+				this._mDefaultPlugins.annotation = new AnnotationPlugin({
+					commandFactory: this._oCommandFactory
+				});
+			}
 		}
 
 		return { ...this._mDefaultPlugins };

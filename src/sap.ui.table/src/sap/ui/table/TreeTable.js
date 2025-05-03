@@ -102,7 +102,7 @@ sap.ui.define([
 
 			_private(this).bPendingRequest = false;
 
-			TableUtils.Grouping.setToDefaultTreeMode(this);
+			TableUtils.Grouping.setHierarchyMode(this, TableUtils.Grouping.HierarchyMode.Tree);
 			TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 			TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 			TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
@@ -437,9 +437,9 @@ sap.ui.define([
 			if (oTable.getUseGroupMode()) {
 				TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.GroupedTree);
 			} else if (oTable._bFlatMode) {
-				TableUtils.Grouping.setToDefaultFlatMode(oTable);
+				TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Flat);
 			} else if (!oTable._bFlatMode) {
-				TableUtils.Grouping.setToDefaultTreeMode(oTable);
+				TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Tree);
 			}
 		}
 

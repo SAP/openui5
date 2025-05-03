@@ -180,11 +180,6 @@ sap.ui.define([
 				module: "./utils/_{name}.qunit"
 			},
 
-			"BindingUtils": {
-				group: "Utils",
-				module: "./utils/_{name}.qunit"
-			},
-
 			"HookUtils": {
 				group: "Utils",
 				module: "./utils/_{name}.qunit"

@@ -2394,7 +2394,7 @@ sap.ui.define([
 			this._clearCache();
 
 			if (oTable) {
-				TableUtils.removeDelegate(oTable, ExtensionDelegate);
+				oTable.removeEventDelegate(ExtensionDelegate);
 
 				if (_private(oTable).pVerticalScrollUpdateProcess) {
 					_private(oTable).pVerticalScrollUpdateProcess.cancel();

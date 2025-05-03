@@ -206,6 +206,17 @@ sap.ui.define([
 		isLocalResetEnabled() {
 			const oSettings = Settings.getInstanceOrUndef();
 			return oSettings?.isLocalResetEnabled();
+		},
+
+		/**
+		 * Checks the settings if annotation changes are enabled. If the settings are not yet loaded, it returns false.
+		 * @returns {boolean} Returns a boolean indicating if annotation changes are enabled
+		 * @private
+		 * @ui5-restricted sap.ui.rta, controls implementing annotation actions
+		 */
+		areAnnotationChangesEnabled() {
+			const oSettings = Settings.getInstanceOrUndef();
+			return oSettings?.isAnnotationChangeEnabled();
 		}
 	};
 

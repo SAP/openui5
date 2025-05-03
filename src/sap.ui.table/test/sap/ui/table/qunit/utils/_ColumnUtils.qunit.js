@@ -101,7 +101,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column("c3", {headerSpan: 1, template: new Control()}));
 
 		// strip returned data to minimum for better analysis
-		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
+		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
 
 		const oExpectedColumnMap = {
 			c1: {id: "c1", levelInfo: [{spannedColumns: []}], parents: []},
@@ -110,17 +110,17 @@ sap.ui.define([
 		};
 		assert.deepEqual(oColumnMap, oExpectedColumnMap, "ColumnMap OK");
 		assert.deepEqual(ColumnUtils.getParentSpannedColumns(this.oTable, "c1"), [], "No parents");
-		assert.deepEqual(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c1"), [], "No children");
-		assert.strictEqual(ColumnUtils.getChildrenSpannedColumns(this.oTable, "unknownColumnID"), undefined, "Wrong column ID");
+		assert.deepEqual(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c1"), [], "No children");
+		assert.strictEqual(ColumnUtils._getChildrenSpannedColumns(this.oTable, "unknownColumnID"), undefined, "Wrong column ID");
 
-		const aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c1"));
+		const aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c1"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
 			endColumn: "c1",
 			endIndex: 0
 		}, "ColumnBoundaries OK");
-		assert.strictEqual(ColumnUtils.getColumnBoundaries(this.oTable, "unknownColumnID"), undefined, "Wrong column ID");
+		assert.strictEqual(ColumnUtils._getColumnBoundaries(this.oTable, "unknownColumnID"), undefined, "Wrong column ID");
 	});
 
 	QUnit.test("Header Spans", function(assert) {
@@ -132,7 +132,7 @@ sap.ui.define([
 		this.oTable.addColumn(new Column("c6", {headerSpan: 1, template: new Control()}));
 
 		// strip returned data to minimum for better analysis
-		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
+		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
 
 		const oExpectedColumnMap = {
 			c1: {id: "c1", levelInfo: [{spannedColumns: ["c2"]}], parents: []},
@@ -164,16 +164,16 @@ sap.ui.define([
 		assert.deepEqual(aParents, [{column: "c4", level: 0}], "Parent is c4");
 
 		const aColumns = this.oTable.getColumns();
-		assert.equal(ColumnUtils.getMaxHeaderSpan(aColumns[0]), 2, "MaxHeaderSpan for column c1 is 2");
-		assert.equal(ColumnUtils.hasHeaderSpan(aColumns[0]), true, "c1 has headerSpan");
+		assert.equal(ColumnUtils._getMaxHeaderSpan(aColumns[0]), 2, "MaxHeaderSpan for column c1 is 2");
+		assert.equal(ColumnUtils._hasHeaderSpan(aColumns[0]), true, "c1 has headerSpan");
 
-		assert.equal(ColumnUtils.getMaxHeaderSpan(aColumns[1]), 1, "MaxHeaderSpan for column c2 is 1");
-		assert.equal(ColumnUtils.hasHeaderSpan(aColumns[1]), false, "c2 has no headerSpan");
+		assert.equal(ColumnUtils._getMaxHeaderSpan(aColumns[1]), 1, "MaxHeaderSpan for column c2 is 1");
+		assert.equal(ColumnUtils._hasHeaderSpan(aColumns[1]), false, "c2 has no headerSpan");
 
-		let aChildren = this.fnColumnArrayToIdArray(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c1"));
+		let aChildren = this.fnColumnArrayToIdArray(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c1"));
 		assert.deepEqual(aChildren, [{column: "c2", level: 0}], "c2 is child of c1");
 
-		aChildren = this.fnColumnArrayToIdArray(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c4"));
+		aChildren = this.fnColumnArrayToIdArray(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c4"));
 		assert.deepEqual(aChildren, [
 			{column: "c5", level: 0}, {
 				column: "c6",
@@ -181,7 +181,7 @@ sap.ui.define([
 			}
 		], "c5 and c6 are children of c4");
 
-		let aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c1"));
+		let aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c1"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -189,7 +189,7 @@ sap.ui.define([
 			endIndex: 1
 		}, "ColumnBoundaries c1 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c2"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c2"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -197,7 +197,7 @@ sap.ui.define([
 			endIndex: 1
 		}, "ColumnBoundaries c2 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c3"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c3"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c3",
 			startIndex: 2,
@@ -205,7 +205,7 @@ sap.ui.define([
 			endIndex: 2
 		}, "ColumnBoundaries c3 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c4"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c4"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c4",
 			startIndex: 3,
@@ -213,7 +213,7 @@ sap.ui.define([
 			endIndex: 5
 		}, "ColumnBoundaries c4 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c5"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c5"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c4",
 			startIndex: 3,
@@ -221,7 +221,7 @@ sap.ui.define([
 			endIndex: 5
 		}, "ColumnBoundaries c5 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c6"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c6"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c4",
 			startIndex: 3,
@@ -248,7 +248,7 @@ sap.ui.define([
 		}));
 
 		// strip returned data to minimum for better analysis
-		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
+		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
 
 		const oExpectedColumnMap = {
 			c1: {id: "c1", levelInfo: [{spannedColumns: ["c2"]}, {spannedColumns: []}], parents: []},
@@ -296,7 +296,7 @@ sap.ui.define([
 		}));
 
 		// strip returned data to minimum for better analysis
-		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils.getColumnMap(this.oTable));
+		const oColumnMap = this.fnColumnMapToMinimum(ColumnUtils._getColumnMap(this.oTable));
 
 		const oExpectedColumnMap = {
 			c1: {
@@ -338,15 +338,15 @@ sap.ui.define([
 		assert.deepEqual(aParents, [{column: "c2", level: 1}], "Parent c2 at level 1");
 
 		const aColumns = this.oTable.getColumns();
-		assert.equal(ColumnUtils.getMaxHeaderSpan(aColumns[0]), 3, "MaxHeaderSpan for column c1 is 3");
-		assert.equal(ColumnUtils.getMaxHeaderSpan(aColumns[1]), 2, "MaxHeaderSpan for column c2 is 2");
-		assert.equal(ColumnUtils.getMaxHeaderSpan(aColumns[2]), 1, "MaxHeaderSpan for column c3 is 1");
+		assert.equal(ColumnUtils._getMaxHeaderSpan(aColumns[0]), 3, "MaxHeaderSpan for column c1 is 3");
+		assert.equal(ColumnUtils._getMaxHeaderSpan(aColumns[1]), 2, "MaxHeaderSpan for column c2 is 2");
+		assert.equal(ColumnUtils._getMaxHeaderSpan(aColumns[2]), 1, "MaxHeaderSpan for column c3 is 1");
 
-		assert.equal(ColumnUtils.hasHeaderSpan(aColumns[0]), true, "c1 has headerSpan");
-		assert.equal(ColumnUtils.hasHeaderSpan(aColumns[1]), true, "c2 has headerSpan");
-		assert.equal(ColumnUtils.hasHeaderSpan(aColumns[2]), false, "c3 has headerSpan");
+		assert.equal(ColumnUtils._hasHeaderSpan(aColumns[0]), true, "c1 has headerSpan");
+		assert.equal(ColumnUtils._hasHeaderSpan(aColumns[1]), true, "c2 has headerSpan");
+		assert.equal(ColumnUtils._hasHeaderSpan(aColumns[2]), false, "c3 has headerSpan");
 
-		let aChildren = this.fnColumnArrayToIdArray(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c1"));
+		let aChildren = this.fnColumnArrayToIdArray(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c1"));
 		assert.deepEqual(aChildren, [
 			{column: "c2", level: 0}, {
 				column: "c3",
@@ -354,16 +354,16 @@ sap.ui.define([
 			}
 		], "c2 and c3 are children of c1");
 
-		aChildren = this.fnColumnArrayToIdArray(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c2"));
+		aChildren = this.fnColumnArrayToIdArray(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c2"));
 		assert.deepEqual(aChildren, [{column: "c3", level: 1}], "c3 is child of c2 at level 1");
 
-		aChildren = this.fnColumnArrayToIdArray(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c2", 0));
+		aChildren = this.fnColumnArrayToIdArray(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c2", 0));
 		assert.deepEqual(aChildren, [], "c2 has no children at level 0");
 
-		aChildren = this.fnColumnArrayToIdArray(ColumnUtils.getChildrenSpannedColumns(this.oTable, "c2", 1));
+		aChildren = this.fnColumnArrayToIdArray(ColumnUtils._getChildrenSpannedColumns(this.oTable, "c2", 1));
 		assert.deepEqual(aChildren, [{column: "c3", level: 1}], "c3 is child of c2 at level 1");
 
-		const aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c2"));
+		const aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c2"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -404,7 +404,7 @@ sap.ui.define([
 			template: new Control()
 		}));
 
-		let aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c1"));
+		let aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c1"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -412,7 +412,7 @@ sap.ui.define([
 			endIndex: 3
 		}, "ColumnBoundaries c1 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c2"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c2"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -420,7 +420,7 @@ sap.ui.define([
 			endIndex: 3
 		}, "ColumnBoundaries c2 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c3"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c3"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -428,7 +428,7 @@ sap.ui.define([
 			endIndex: 3
 		}, "ColumnBoundaries c3 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c4"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c4"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c1",
 			startIndex: 0,
@@ -436,7 +436,7 @@ sap.ui.define([
 			endIndex: 3
 		}, "ColumnBoundaries c4 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c5"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c5"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c5",
 			startIndex: 4,
@@ -444,7 +444,7 @@ sap.ui.define([
 			endIndex: 5
 		}, "ColumnBoundaries c5 OK");
 
-		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils.getColumnBoundaries(this.oTable, "c6"));
+		aBoundaries = this.fnColumnBoundariesToId(ColumnUtils._getColumnBoundaries(this.oTable, "c6"));
 		assert.deepEqual(aBoundaries, {
 			startColumn: "c5",
 			startIndex: 4,
@@ -1033,131 +1033,5 @@ sap.ui.define([
 
 		aVisibleColumns = ColumnUtils._getVisibleColumnsInSpan(oTable, 5, 5);
 		assert.strictEqual(aVisibleColumns, false, "_getVisibleColumnsInSpan returns false due of exiding index of available columns");
-	});
-
-	QUnit.test("autoResizeColumn", async function(assert) {
-		oTable.removeAllColumns();
-		const oColumnResizeHandler = this.stub();
-		const oModel = new JSONModel([{x: "x"}]);
-
-		const oColumn1 = new Column({
-			width: "3rem",
-			autoResizable: true,
-			label: new TableQUnitUtils.TestControl({text: "Simple Text"}),
-			template: new TableQUnitUtils.TestControl({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"})
-		});
-
-		const oColumn2 = new Column({
-			width: "3rem",
-			autoResizable: true,
-			label: new Label({text: "Simple Text"}),
-			template: new Label({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", wrapping: false})
-		});
-
-		const oColumn3 = new Column({
-			width: "3rem",
-			autoResizable: true,
-			label: new Label({text: "Simple Text"}),
-			template: new Text({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", wrapping: false})
-		});
-
-		const oColumn4 = new Column({
-			width: "3rem",
-			autoResizable: true,
-			label: new Label({text: "Simple Text"}),
-			template: new Link({text: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", href: "https://www.sap.com", wrapping: false})
-		});
-
-		oTable.addColumn(oColumn1);
-		oTable.addColumn(oColumn2);
-		oTable.addColumn(oColumn3);
-		oTable.addColumn(oColumn4);
-
-		oTable.bindRows("/");
-		oTable.setModel(oModel);
-		oTable.attachColumnResize(function(oEvent) {
-			return oColumnResizeHandler.call(oEvent.getParameters());
-		});
-		oTable.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		// Create a hidden div element with a text to estimate its width
-		const hiddenDiv = document.createElement("div");
-		hiddenDiv.style.position = "absolute";
-		hiddenDiv.style.visibility = "hidden";
-		hiddenDiv.style.whiteSpace = "nowrap";
-		hiddenDiv.style.fontSize = "14px";
-		hiddenDiv.textContent = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		document.body.appendChild(hiddenDiv);
-		const iDivWidth = hiddenDiv.offsetWidth;
-
-		assert.ok(oColumn1.getDomRef().offsetWidth < iDivWidth, "Column1 width is " + oColumn1.getDomRef().offsetWidth + "px => text is truncated");
-		assert.ok(oColumn2.getDomRef().offsetWidth < iDivWidth, "Column2 width is " + oColumn2.getDomRef().offsetWidth + "px => text is truncated");
-		assert.ok(oColumn3.getDomRef().offsetWidth < iDivWidth, "Column3 width is " + oColumn3.getDomRef().offsetWidth + "px => text is truncated");
-		assert.ok(oColumn4.getDomRef().offsetWidth < iDivWidth, "Column4 width is " + oColumn4.getDomRef().offsetWidth + "px => text is truncated");
-
-		ColumnUtils.autoResizeColumn(oColumn1);
-		await nextUIUpdate();
-
-		assert.ok(true, "Column has been resized via autoResizeColumn");
-		assert.ok(oColumn1.getDomRef().offsetWidth > iDivWidth,
-			`Column1 width is ${oColumn1.getDomRef().offsetWidth}px => text fits and it is not truncated`);
-		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
-		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
-			column: oColumn1,
-			id: oTable.getId(),
-			width: oColumn1.getWidth()
-		}, "columnResize event parameters");
-
-		oColumnResizeHandler.resetHistory();
-		ColumnUtils.autoResizeColumn(oColumn2);
-		await nextUIUpdate();
-
-		assert.ok(true, "Column has been resized via autoResizeColumn");
-		assert.ok(oColumn2.getDomRef().offsetWidth > iDivWidth,
-			`Column2 width is ${oColumn2.getDomRef().offsetWidth}px => text fits and it is not truncated`);
-		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
-		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
-			column: oColumn2,
-			id: oTable.getId(),
-			width: oColumn2.getWidth()
-		}, "columnResize event parameters");
-
-		oColumnResizeHandler.resetHistory();
-		ColumnUtils.autoResizeColumn(oColumn3);
-		await nextUIUpdate();
-
-		assert.ok(true, "Column has been resized via autoResizeColumn");
-		assert.ok(oColumn3.getDomRef().offsetWidth > iDivWidth,
-			`Column3 width is ${oColumn3.getDomRef().offsetWidth}px => text fits and it is not truncated`);
-		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
-		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
-			column: oColumn3,
-			id: oTable.getId(),
-			width: oColumn3.getWidth()
-		}, "columnResize event parameters");
-
-		oColumnResizeHandler.resetHistory();
-		ColumnUtils.autoResizeColumn(oColumn4);
-		await nextUIUpdate();
-
-		assert.ok(true, "Column has been resized via autoResize");
-		assert.ok(oColumn4.getDomRef().offsetWidth > iDivWidth,
-			`Column4 width is ${oColumn4.getDomRef().offsetWidth}px => text fits and it is not truncated`);
-		assert.ok(oColumnResizeHandler.calledOnce, "columnResize event handler was called once");
-		assert.deepEqual(oColumnResizeHandler.lastCall.thisValue, {
-			column: oColumn4,
-			id: oTable.getId(),
-			width: oColumn4.getWidth()
-		}, "columnResize event parameters");
-
-		oColumnResizeHandler.resetHistory();
-		ColumnUtils.autoResizeColumn(oColumn2);
-		await nextUIUpdate();
-		assert.ok(oColumnResizeHandler.notCalled, "columnResize event handler was not called when trying to auto-resize the same column again");
-
-		// Remove the hidden div from the DOM
-		document.body.removeChild(hiddenDiv);
-		oTable.destroy();
 	});
 });

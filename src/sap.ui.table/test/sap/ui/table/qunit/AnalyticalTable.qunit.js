@@ -432,7 +432,7 @@ sap.ui.define([
 				oTable.bindRows(mTestSettings.bindingInfo);
 			}
 
-			return TableUtils.Binding.metadataLoaded(oTable).then(function() {
+			return oTable._metadataLoaded().then(function() {
 				mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
 				oTable.destroy();
 			}).catch(function() {
@@ -516,6 +516,32 @@ sap.ui.define([
 		assert.ok(oDataRequestedSpy.calledOnce, "The original dataRequested event listener was called once");
 		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
 		assert.ok(oSelectionChangedSpy.calledOnce, "The original selectionChanged event listener was called once");
+	});
+
+	QUnit.test("_metadataLoaded", function(assert) {
+		const oModel = this.oTable.getModel();
+
+		assert.expect(3);
+		this.oTable.setModel(null);
+
+		return this.oTable._metadataLoaded()
+			.catch(() => {
+				assert.ok(true, "No binding, no model: Promise rejected");
+			})
+			.then(() => {
+				this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
+				return this.oTable._metadataLoaded();
+			})
+			.catch(() => {
+				assert.ok(true, "No model: Promise rejected");
+			})
+			.then(() => {
+				this.oTable.setModel(oModel);
+				return this.oTable._metadataLoaded();
+			})
+			.then(() => {
+				assert.ok(true, "Binding, model and metadata available: Promise resolved");
+			});
 	});
 
 	QUnit.module("Context menu", {
