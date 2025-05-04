@@ -1567,6 +1567,52 @@ sap.ui.define([
 
 		// Clean
 		oButton.destroy();
+		oMenu.destroy();
+	});
+
+	QUnit.test("EndContent controls have their associations and aggregations cloned and updated", async function (oAssert) {
+		// Arrange
+		var oMenu = new Menu({
+			items: [
+				new MenuItem({
+					endContent: [
+						new Button("endContentButton", {
+							icon: "sap-icon://open-folder",
+							ariaLabelledBy: ["labelledbyid"],
+							ariaDescribedBy: ["describedbyid"],
+							tooltip: "Custom Tooltip"
+						})
+					]
+				})
+			]
+		});
+
+		var oButton = new Button();
+		oButton.placeAt('qunit-fixture');
+		await nextUIUpdate(this.clock);
+
+		// Act
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		var oEndContent = Element.getElementById("endContentButton--unifiedmenu");
+		oAssert.strictEqual(oEndContent.getTooltip(), "Custom Tooltip", "Tooltip is set correctly on the end content button");
+		oAssert.deepEqual(oEndContent.getAriaLabelledBy(), ["labelledbyid"], "Aria labelled by is set correctly on the end content button");
+		oAssert.deepEqual(oEndContent.getAriaDescribedBy(), ["describedbyid"], "Aria described by is set correctly on the end content button");
+
+		// Act
+		oEndContent.removeAriaLabelledBy("labelledbyid");
+		oEndContent.removeAriaDescribedBy("describedbyid");
+		oEndContent.setTooltip("New Tooltip");
+
+		oAssert.strictEqual(oEndContent.getTooltip(), "New Tooltip", "Tooltip is set correctly on the end content button");
+		oAssert.deepEqual(oEndContent.getAriaLabelledBy(), [], "Aria labelled by is set correctly on the end content button");
+		oAssert.deepEqual(oEndContent.getAriaDescribedBy(), [], "Aria described by is set correctly on the end content button");
+
+		// Clean
+		oButton.destroy();
+		oMenu.destroy();
 	});
 
 	QUnit.module('MenuItem Shortcut', {
