@@ -236,7 +236,6 @@ sap.ui.define([
 		const oElementOverlay = aElementOverlays[0];
 		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
 		const oAnnotationActionMap = this.getAction(oResponsibleElementOverlay);
-		const oPropagatedAnnotationAction = this.getPropagatedAction(oElementOverlay);
 
 		const aMenuItems = [];
 		if (oAnnotationActionMap) {
@@ -269,45 +268,6 @@ sap.ui.define([
 							|| (oAction.isEnabled !== false) && this.isEnabled(aElementOverlays)
 						),
 						handler: this.handler.bind(this, aElementOverlays, oAction),
-						additionalInfo: this._getAdditionalInfo(oResponsibleElementOverlay, oAction)
-					});
-				}
-			}, this);
-		}
-		// TODO todos#8
-		// Improve handling of context menu items for propagated actions
-		if (oPropagatedAnnotationAction) {
-			Object.entries(oPropagatedAnnotationAction.action).forEach(function([sKey, oAction], iIndex) {
-				const oPropagatingControlOverlay = OverlayRegistry.getOverlay(oPropagatedAnnotationAction.propagatingControl);
-				const sPluginId = oAction.type === AnnotationTypes.StringType && oAction.singleRename
-					? sPluginIdSingleLabelChange
-					: sPluginIdDefault;
-				const iRank = this.getRank(sPluginId);
-				if (
-					this.isAvailable([oPropagatingControlOverlay])
-					&& checkDesigntimeActionProperties(oAction)
-				) {
-					const sActionText = getActionText(
-						oResponsibleElementOverlay,
-						oAction,
-						oPropagatedAnnotationAction.propagatingControl
-					);
-					if (!sActionText) {
-						return;
-					}
-
-					aMenuItems.push({
-						id: `${sPluginId}_${sKey}`,
-						rank: iRank + iIndex,
-						text: sActionText,
-						icon: getActionIcon(oAction),
-						enabled: (
-							typeof oAction.isEnabled === "function" && oAction.isEnabled(oPropagatingControlOverlay.getElement())
-							|| (oAction.isEnabled !== false) && this.isEnabled([oPropagatingControlOverlay])
-						),
-						handler: this.handler.bind(this, [oPropagatingControlOverlay], oAction),
-						propagatingControl: oPropagatedAnnotationAction.propagatingControl,
-						propagatingControlName: oPropagatedAnnotationAction.propagatingControlName,
 						additionalInfo: this._getAdditionalInfo(oResponsibleElementOverlay, oAction)
 					});
 				}
