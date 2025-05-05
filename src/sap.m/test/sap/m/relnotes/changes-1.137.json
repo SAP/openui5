@@ -1,0 +1,22 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "73bc3e242f2b0fbd3a530d67dc313e27383baa9e",
+        "type": "FIX",
+        "text": " sap.m.Link: emptyIndicatorMode has correct color now"
+      },
+      {
+        "id": "0b5dd2035b3cd015dc28ca2a4f2fcc2e0fbbaba2",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Decorative property added"
+      },
+      {
+        "id": "7322ddf307f79ab287e9e37678395cd3110f7285",
+        "type": "FIX",
+        "text": " sap.m.Menu: End content controls properly updated"
+      }
+    ]
+  }
+}
