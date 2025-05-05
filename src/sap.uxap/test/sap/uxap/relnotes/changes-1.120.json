@@ -107,5 +107,15 @@
         "text": " ColumnLayout: render as <dl> in display mode"
       }
     ]
+  },
+  "1.120.30": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "b7431bad84f01f842d243f5a6c88d1ae5771a35c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
+      }
+    ]
   }
 }

@@ -1186,5 +1186,25 @@
         "text": " Input controls with Suggestions: Value State message in header is no longer focusable"
       }
     ]
+  },
+  "1.120.30": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "3a9bde3571075ac28d0d121ad6fa05890ff130e4",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now skipped"
+      },
+      {
+        "id": "0dc46d52be84abd4b18bd0ffbbf161937925e761",
+        "type": "FIX",
+        "text": " DateRangeSelection: Same separator for both date inputs"
+      },
+      {
+        "id": "0d5c2adb7e16fba71fef84fc70eb6aceef075ef4",
+        "type": "FIX",
+        "text": " We've fixed issue where noDataText and noDataDescription was not getting set correctly"
+      }
+    ]
   }
 }
