@@ -6289,5 +6289,15 @@
         ]
       }
     ]
+  },
+  "1.38.65": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "c0de1462858cde328a9e553f8f6a5bb3a8e6a2d8",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Formatting issue fixed"
+      }
+    ]
   }
 }

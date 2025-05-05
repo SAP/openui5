@@ -3776,5 +3776,15 @@
         ]
       }
     ]
+  },
+  "1.38.65": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "670cb8c670d2bbbf35e327b62d7f1799cdd82da6",
+        "type": "FIX",
+        "text": " sap/ui/core/qunit/DateFormat.qunit.html: Fix failing year two digits tests"
+      }
+    ]
   }
 }
