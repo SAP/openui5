@@ -9,7 +9,7 @@ sap.ui.define(["sap/ui/core/mvc/View"], function(View) {
 	 * @private
 	 * @experimental
 	 * @since 1.33
-	 * @deprecated Since 1.90. Use a {@link sap.ui.core.routing.async.TargetCache async.TargetCache} instead
+	 * @deprecated Since 1.90
 	 */
 	return {
 

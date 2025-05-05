@@ -2,18 +2,22 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/EventProvider',
-	'sap/ui/core/routing/async/TargetCache',
-	'sap/ui/core/routing/sync/TargetCache',
+	"sap/base/Log",
 	"sap/base/assert",
-	"sap/base/Log"
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/Component",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/routing/HashChanger",
+	"sap/ui/core/routing/sync/TargetCache"
 ],
 	function (
-		EventProvider,
-		asyncCache,
-		syncCache,
+		Log,
 		assert,
-		Log
+		EventProvider,
+		Component,
+		View,
+		HashChanger,
+		SyncCache
 	) {
 		"use strict";
 
@@ -34,12 +38,18 @@ sap.ui.define([
 		 * This option can be set only when TargetCache is used standalone without the involvement of a Router.
 		 * Otherwise the async option is inherited from the Router.
 		 * @alias sap.ui.core.routing.TargetCache
+		 * @ui5-transform-hint replace-param oOptions.async true
 		 */
 		var TargetCache = EventProvider.extend("sap.ui.core.routing.TargetCache", /** @lends sap.ui.core.routing.TargetCache.prototype */ {
 
 			constructor : function (oOptions) {
 				if (!oOptions) {
 					oOptions = {};
+				}
+
+				// make the default value for async to true
+				if (oOptions.async === undefined) {
+					oOptions.async = true;
 				}
 
 				this._oCache = {
@@ -55,15 +65,11 @@ sap.ui.define([
 				EventProvider.apply(this, arguments);
 
 				this.async = oOptions.async;
-				if (this.async === undefined) {
-					// make the default value for async to true
-					this.async = true;
-				}
 
-				var CacheStub = this.async ? asyncCache : syncCache;
-
-				for (var fn in CacheStub) {
-					this[fn] = CacheStub[fn];
+				if (!oOptions.async) {
+					for (const fn in SyncCache) {
+						this[fn] = SyncCache[fn];
+					}
 				}
 			},
 
@@ -90,6 +96,9 @@ sap.ui.define([
 				var oObject;
 
 				try {
+					/**
+					 * @deprecated
+					 */
 					if (sType === "Component" && !this.async) {
 						Log.error("sap.ui.core.routing.Target doesn't support loading component in synchronous mode, please switch routing to async");
 						throw new Error("sap.ui.core.routing.Target doesn't support loading component in synchronous mode, please switch routing to async");
@@ -263,7 +272,6 @@ sap.ui.define([
 			/*
 			 * Privates
 			 */
-
 			_get : function (oOptions, sType, bGlobalId, oInfo, bNoCreate) {
 				var oObject;
 				switch (sType) {
@@ -310,14 +318,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * hook for the deprecated property viewId on the route, will not prefix the id with the component
-			 *
-			 * @name sap.ui.core.routing.TargetCache#_getViewWithGlobalId
-			 * @returns {*}
-			 * @private
-			 */
-
-			/**
 			 * @param {string} sName logs an error if it is empty or undefined
 			 * @param {string} sType whether it's a 'View' or 'Component'
 			 * @private
@@ -330,7 +330,185 @@ sap.ui.define([
 					throw Error(sMessage);
 				}
 
+			},
+
+			/**
+			 * Determines the object with the given <code>oOptions</code>, <code>sType</code> and <code>oTargetCreateInfo</code>
+			 *
+			 * @param {object} oOptions The options of the desired object
+			 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
+			 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
+			 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
+			 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
+			 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+			 * @private
+			 * @ui5-transform-hint replace-param bSynchronousCreate false
+			 * @ui5-transform-hint replace-param oOptions.async true
+			 */
+			_getObjectWithGlobalId : function (oOptions, sType, oTargetCreateInfo, bSynchronousCreate, bNoCreate) {
+				var that = this,
+					vPromiseOrObject,
+					sName,
+					oInstanceCache,
+					oOwnerComponent = this._oComponent,
+					aWrittenIds = [];
+
+				oTargetCreateInfo = oTargetCreateInfo || {};
+
+				function fnCreateObjectAsync() {
+					/**
+					 * @ui5-transform-hint replace-local false
+					 */
+					const bLegacyCreate = !oOptions.async || bSynchronousCreate;
+
+					switch (sType) {
+						case "View":
+							oOptions.viewName = oOptions.name;
+							delete oOptions.name;
+							if (bLegacyCreate) {
+								return View._create(oOptions);
+							} else {
+								return View.create(oOptions);
+							}
+						case "Component":
+							oOptions.settings = oOptions.settings || {};
+
+							// forward info, if parent component expects title propagation
+							oOptions.settings._propagateTitle = oTargetCreateInfo.propagateTitle;
+
+							// create the RouterHashChanger for the component which is going to be created
+							var oRouterHashChanger = that._createRouterHashChanger(oTargetCreateInfo.prefix);
+							if (oRouterHashChanger) {
+								// put the RouterHashChanger as a private property to the Component constructor
+								oOptions.settings._routerHashChanger = oRouterHashChanger;
+							}
+
+							if (oOptions.usage) {
+								return oOwnerComponent.createComponent(oOptions);
+							} else {
+								return Component.create(oOptions);
+							}
+						default:
+							// do nothing
+					}
+				}
+
+				function afterLoaded(oObject) {
+					if (that._oCache) { // the TargetCache may already be destroyed
+						aWrittenIds.forEach(function(sId) {
+							oInstanceCache[sId] = oObject;
+						});
+
+						if (oTargetCreateInfo.afterCreate) {
+							oTargetCreateInfo.afterCreate(oObject);
+						}
+
+						that.fireCreated({
+							object: oObject,
+							type: sType,
+							options: oOptions
+						});
+					}
+
+					return oObject;
+				}
+
+				if (oOptions.async === undefined) {
+					oOptions.async = true;
+				}
+
+				sName = oOptions.usage || oOptions.name;
+				this._checkName(sName, sType);
+
+				oInstanceCache = this._oCache[sType.toLowerCase()][sName];
+
+				vPromiseOrObject = oInstanceCache && oInstanceCache[oOptions.id];
+
+				if (bNoCreate || vPromiseOrObject) {
+					return vPromiseOrObject;
+				}
+
+				if (oOwnerComponent) {
+					vPromiseOrObject = oOwnerComponent.runAsOwner(fnCreateObjectAsync);
+
+					if (vPromiseOrObject instanceof Promise) {
+						oOwnerComponent.registerForDestroy(vPromiseOrObject);
+					}
+				} else {
+					vPromiseOrObject = fnCreateObjectAsync();
+				}
+
+				if (vPromiseOrObject instanceof Promise) {
+					vPromiseOrObject = vPromiseOrObject.then(afterLoaded);
+				} else {
+					vPromiseOrObject.loaded().then(afterLoaded);
+				}
+
+				if (!oInstanceCache) {
+					oInstanceCache = this._oCache[sType.toLowerCase()][sName] = {};
+					// save the object also to the undefined key if this is the first object created for its class
+					oInstanceCache[undefined] = vPromiseOrObject;
+					aWrittenIds.push(undefined);
+				}
+
+				if (oOptions.id !== undefined) {
+					oInstanceCache[oOptions.id] = vPromiseOrObject;
+					aWrittenIds.push(oOptions.id);
+				}
+
+				return vPromiseOrObject;
+			},
+
+			/**
+			 * Determines the view with the given <code>oOptions</code>
+			 *
+			 * @param {object} oOptions The options of the desired object
+			 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
+			 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
+			 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+			 * @private
+			 * @ui5-transform-hint replace-param bSynchronousCreate false
+			 */
+			_getViewWithGlobalId : function (oOptions, bSynchronousCreate, bNoCreate) {
+				if (oOptions && !oOptions.name) {
+					oOptions.name = oOptions.viewName;
+				}
+				return this._getObjectWithGlobalId(oOptions, "View", undefined, bSynchronousCreate, bNoCreate);
+			},
+
+			/**
+			 * Determines the component with the given <code>oOptions</code> and <code>oTargetCreateInfo</code>
+			 *
+			 * @param {object} oOptions The options of the desired object
+			 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
+			 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
+			 * @private
+			 */
+			_getComponentWithGlobalId : function(oOptions, oTargetCreateInfo, bNoCreate) {
+				return this._getObjectWithGlobalId(oOptions, "Component", oTargetCreateInfo, bNoCreate);
+			},
+
+			/**
+			 * Creates a new hash changer for the nested component
+			 *
+			 * @param {string} [sPrefix] The prefix of the target
+			 * @returns {sap.ui.core.routing.HashChanger} The created sub hash changer, if creation was not possible the hash changer of the current component is returned
+			 * @private
+			 */
+			_createRouterHashChanger: function(sPrefix) {
+				var oRouterHashChanger;
+
+				var oRouter = this._oComponent && this._oComponent.getRouter();
+				if (oRouter) {
+					oRouterHashChanger = oRouter.getHashChanger();
+					if (oRouterHashChanger && sPrefix) {
+						oRouterHashChanger = oRouterHashChanger.createSubHashChanger(sPrefix);
+					}
+				}
+				// default to the root RouterHashChanger
+				return oRouterHashChanger || HashChanger.getInstance().createRouterHashChanger();
 			}
+
 		});
 
 		return TargetCache;

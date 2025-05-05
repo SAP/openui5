@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target', 'sap/f/FlexibleColumnLayout', './async/Target'],
-	function(Target, FCL, asyncTarget) {
+sap.ui.define(['sap/ui/core/routing/Target', 'sap/f/FlexibleColumnLayout'],
+	function(Target, FCL) {
 		"use strict";
 
 		/**
@@ -21,16 +21,7 @@ sap.ui.define(['sap/ui/core/routing/Target', 'sap/f/FlexibleColumnLayout', './as
 		var MobileTarget = Target.extend("sap.f.routing.Target", /** @lends sap.f.routing.Target.prototype */ {
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
 				this._oTargetHandler = oTargetHandler;
-
 				Target.prototype.constructor.apply(this, arguments);
-
-				var TargetStub = asyncTarget;
-
-				this._super = {};
-				for (var fn in TargetStub) {
-					this._super[fn] = this[fn];
-					this[fn] = TargetStub[fn];
-				}
 			},
 
 			_beforePlacingViewIntoContainer : function(mArguments) {
@@ -41,6 +32,42 @@ sap.ui.define(['sap/ui/core/routing/Target', 'sap/f/FlexibleColumnLayout', './as
 					oContainer.setLayout(oRouteConfig.layout);
 				}
 				Target.prototype._beforePlacingViewIntoContainer.apply(this, arguments);
+			},
+
+			/**
+			 * @private
+			 */
+			_place : function (vData) {
+				var oPromise = Target.prototype._place.apply(this, arguments),
+					oRouteConfig = vData && vData.routeConfig || {},
+					that = this;
+
+				// chain to navigation promise to keep the order of navigations!
+				return this._oTargetHandler._chainNavigation(function() {
+					return oPromise.then(function(oViewInfo) {
+						that._oTargetHandler.addNavigation({
+							navigationIdentifier : that._oOptions._name,
+							transition: that._oOptions.transition,
+							transitionParameters: that._oOptions.transitionParameters,
+							eventData: vData,
+							targetControl: oViewInfo.control,
+							view: oViewInfo.view,
+							layout: oRouteConfig.layout,
+							placeholderConfig: oViewInfo.placeholderConfig
+						});
+						return oViewInfo;
+					});
+				}, this._oOptions._name);
+
+			},
+			showPlaceholder : function(mSettings) {
+				return this._oTargetHandler.showPlaceholder(mSettings);
+			},
+			hidePlaceholder : function(mSettings) {
+				/**
+				 * Overriding the hidePlaceholder to empty function because the placeholder is removed
+				 * after all targets are displayed
+				 */
 			}
 		});
 

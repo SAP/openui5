@@ -9,7 +9,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Element"], function(Log, Element) {
 	 * @private
 	 * @experimental
 	 * @since 1.33
-	 * @deprecated Since 1.90. Use a {@link sap.ui.core.routing.async.Target async.Target} instead
+	 * @deprecated Since 1.90
 	 */
 	return {
 
@@ -203,6 +203,16 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Element"], function(Log, Element) {
 			}
 
 			return bIsValid;
+		},
+
+		_getEffectiveObjectName : function (sName) {
+			var sPath = this._oOptions.viewPath;
+
+			if (sPath && sName && !sName.startsWith("module:")) {
+				sName = sPath + "." + sName;
+			}
+
+			return sName;
 		}
 	};
 });

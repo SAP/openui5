@@ -217,19 +217,21 @@ sap.ui.define([
 		 * </pre>
 		 * @public
 		 * @alias sap.ui.core.routing.Router
+		 * @ui5-transform-hint replace-param oConfig.async true
+		 * @ui5-transform-hint replace-param oConfig._async true
 		 */
 		var Router = EventProvider.extend("sap.ui.core.routing.Router", /** @lends sap.ui.core.routing.Router.prototype */ {
 
 			constructor : function(oRoutes, oConfig, oOwner, oTargetsConfig, oRouterHashChanger) {
 				EventProvider.apply(this);
 
-				this._oConfig = oConfig || {};
+				oConfig = oConfig || {};
 				this._oRouter = crossroads.create();
 				this._oRouter.ignoreState = true;
 				this._oRoutes = {};
 				this._oOwner = oOwner;
 
-				this._oConfig.router = this;
+				oConfig.router = this;
 
 				// temporarily: for checking the url param
 				function checkUrl() {
@@ -240,16 +242,17 @@ sap.ui.define([
 					return false;
 				}
 
-				// set the default view loading mode to sync for compatibility reasons
-				this._oConfig._async = this._oConfig.async;
-				if (this._oConfig._async === undefined) {
+				oConfig._async = oConfig.async;
+				if (oConfig._async === undefined) {
 					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
-					this._oConfig._async = checkUrl();
+					oConfig._async = checkUrl();
 				}
+
+				this._oConfig = oConfig;
 
 				this._oViews = new Views({
 					component : oOwner,
-					async : this._oConfig._async
+					async : oConfig._async
 				});
 
 				if (oTargetsConfig) {
@@ -879,6 +882,9 @@ sap.ui.define([
 				}
 
 				if (oComponentTargetInfo && !isEmptyObject(oComponentTargetInfo)) {
+					/**
+					 * @deprecated
+					 */
 					if (!this._oConfig._async) {
 						Log.error("navTo with component target info is only supported with async router", this);
 						return this;
@@ -1498,7 +1504,9 @@ sap.ui.define([
 				}
 
 				if (bImmediateFire) {
-					if (this._bMatchingProcessStarted && this._isAsync()) {
+					/** @ui5-transform-hint replace-local true */
+					const bAsync = this._isAsync();
+					if (this._bMatchingProcessStarted && bAsync) {
 						this.attachEventOnce("routeMatched", function(){
 							this.fireEvent(Router.M_EVENTS.TITLE_CHANGED, mParameters);
 						}, this);
@@ -1579,6 +1587,9 @@ sap.ui.define([
 				fnFireEvent();
 			},
 
+			/**
+			 * @deprecated
+			 */
 			_isAsync : function() {
 				return this._oConfig._async;
 			},
