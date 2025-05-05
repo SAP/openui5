@@ -47,10 +47,10 @@ sap.ui.define([
 
 
 		opaTestOrSkip("Popover: open on click", function (Given, When, Then) {
-			Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-6");
+			Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.RequestShowTypeahead");
 
-			Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"});
-			When.onTheOPAPage.iPressOnTheFilterField({label: "TestField"});
+			Then.onTheOPAPage.iShouldSeeTheField({label: "TestField"});
+			When.onTheOPAPage.iPressOnTheField({label: "TestField"});
 			Then.onTheOPAPage.iShouldSeeValueHelpListItems([
 				"101", "Austen, Jane",
 				"102", "Gilman, Charlotte Perkins",
@@ -64,12 +64,15 @@ sap.ui.define([
 				"111", "Melville, Herman"
 			]);
 
-			When.onTheOPAPage.iPressKeyOnTheFilterField({label: "TestField"}, KeyCodes.ESCAPE);
+			When.onTheOPAPage.iPressKeyOnTheField({label: "TestField"}, KeyCodes.ESCAPE);
 			Then.onTheOPAPage.iShouldNotSeeTheValueHelp();
 
 			Then.iTeardownMyAppFrame();
 		});
 
+		/**
+		 * @deprecated As of version 1.137
+		 */
 		opaTestOrSkip("Popover: open on focus", function (Given, When, Then) {
 			Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-7");
 			Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField1"});

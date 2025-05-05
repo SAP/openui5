@@ -286,6 +286,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 * @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		assert.notOk(oBool.shouldOpenOnClick(), "should not open on click");
