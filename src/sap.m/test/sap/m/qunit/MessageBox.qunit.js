@@ -116,7 +116,7 @@ sap.ui.define([
 		var oMessageBox = Element.getElementById("messagebox1");
 		assert.ok(oMessageBox, "Dialog should be created");
 		assert.equal(oMessageBox.getType(), DialogType.Message, "Dialog should have type Message");
-		assert.strictEqual(oMessageBox.getProperty("role"), DialogRoleType.AlertDialog, "The correct accessibility role is applied");
+		assert.strictEqual(oMessageBox.$().attr("role"), DialogRoleType.AlertDialog.toLowerCase(), "The correct accessibility role is applied");
 		assert.equal(oMessageBox.getButtons().length, 3, "All three buttons are added to dialog");
 		assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 		assert.ok(oMessageBox.$().hasClass(sClassName));

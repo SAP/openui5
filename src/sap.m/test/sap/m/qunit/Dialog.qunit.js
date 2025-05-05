@@ -1101,20 +1101,36 @@ sap.ui.define([
 		oDialog.destroy();
 	});
 
-	QUnit.test("Set role", function (assert) {
+	QUnit.test("ACC role 'dialog'", function (assert) {
 		// Arrange
 		var oDialog = new Dialog();
-		oDialog.setProperty("role", DialogRoleType.AlertDialog);
 
 		// Act
 		oDialog.open();
 
 		// Assert
-		assert.strictEqual(oDialog.$().attr("role"), DialogRoleType.AlertDialog, "Should be able to set the role of the dialog.");
+		assert.strictEqual(oDialog.$().attr("role"), DialogRoleType.Dialog.toLowerCase(), "Role of the dialog is correct.");
 
 		// Clean up
 		oDialog.destroy();
 	});
+
+	QUnit.test("ACC role 'alertdialog'", function (assert) {
+
+		// Arrange
+		var oDialogWarning = new Dialog();
+		oDialogWarning.setState(ValueState.Warning);
+
+		// Act
+		oDialogWarning.open();
+
+		// Assert
+		assert.strictEqual(oDialogWarning.$().attr("role"), DialogRoleType.AlertDialog.toLowerCase(), "Role of the dialog is correct.");
+
+		// Clean up
+		oDialogWarning.destroy();
+	});
+
 
 	QUnit.test("Set closeOnNavigation", function (assert) {
 		// Arrange
