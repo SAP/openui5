@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
-	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/table/columnmenu/ItemContainer",
 	"sap/m/Button",
 	"sap/ui/core/library",
