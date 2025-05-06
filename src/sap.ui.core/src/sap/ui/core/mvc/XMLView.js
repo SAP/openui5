@@ -562,6 +562,7 @@ sap.ui.define([
 		function processView(xContent) {
 			that._xContent = xContent;
 
+			/** @deprecated since 1.120.0 */
 			if (View._supportInfo) {
 				View._supportInfo({context: that._xContent, env: {caller:"view", viewinfo: merge({}, that), settings: merge({}, mSettings || {}), type: "xmlview"}});
 			}

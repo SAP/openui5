@@ -142,7 +142,10 @@ sap.ui.define([
 				componentId : `this._sOwnerId`,
 				name : `this.sViewName`,
 				sync : !bAsync,
-				//TODO TDD is missing for support info calls!
+				/**
+				 * TODO TDD is missing for support info calls!
+				 * @deprecated since 1.120.0
+				 */
 				_supportInfo : function () {} // Note: FAKE support info handler
 			};
 
