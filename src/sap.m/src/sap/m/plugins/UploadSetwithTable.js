@@ -26,8 +26,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/m/VBox",
-	"sap/ui/model/BindingMode"
-], function(PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, TextField, VBox, BindingMode) {
+	"sap/ui/model/BindingMode",
+	"sap/ui/core/CustomData"
+], function (PluginBase, Element, Log, Library1, FileUploader, UploaderHttpRequestMethod, UploadItem, deepEqual, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, TextField, VBox, BindingMode, CustomData) {
 	"use strict";
 
 	/**
@@ -1637,11 +1638,11 @@ sap.ui.define([
 
 			const oUploadSetItem = new UploadItem({
 				customData: [
-					new sap.ui.core.CustomData({
+					new CustomData({
 					key: "path",
 					value: oBindingContext.getPath()
 				}),
-				new sap.ui.core.CustomData({
+				new CustomData({
 					key: "context",
 					value: oBindingContext
 				})

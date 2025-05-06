@@ -1,10 +1,16 @@
 sap.ui.define([
   "sap/ui/table/Table",
+  "sap/ui/commons/Toolbar",
+  "sap/ui/commons/Button",
+  "sap/ui/commons/MessageBox",
+  "sap/ui/commons/ToggleButton",
   "sap/ui/table/Column",
+  "sap/ui/commons/Label",
+  "sap/ui/core/CustomData",
   "sap/ui/model/json/JSONModel",
   "sap/ui/table/TablePersoController",
   "sap/ui/thirdparty/jquery"
-], function(Table, Column, JSONModel, TablePersoController, jQuery) {
+], function(Table, Toolbar, Button, MessageBox, ToggleButton, Column, Label, CustomData, JSONModel, TablePersoController, jQuery) {
   "use strict";
   // Note: the HTML page 'Personalization.html' loads this module via data-sap-ui-on-init
 
@@ -20,30 +26,30 @@ sap.ui.define([
 
 	  //make sure table id suffix is set (this is necessary for personalization)
 	  const oTable = new Table({
-		  toolbar: new sap.ui.commons.Toolbar({
+		  toolbar: new Toolbar({
 			  items: [
-				  new sap.ui.commons.Button({
+				  new Button({
 					  text: "Clear and Refresh",
 					  icon: "sap-icon://refresh",
 					  press: function(oEvent) {
 						  oPersoService.delPersData();
 						  oTPC.refresh().done(function() {
-							  sap.ui.commons.MessageBox.show("Done!", "INFORMATION", "Refresh");
+							  MessageBox.show("Done!", "INFORMATION", "Refresh");
 						  });
 					  }
 				  }),
-				  new sap.ui.commons.Button({
+				  new Button({
 					  text: "Save",
 					  icon: "sap-icon://save",
 					  press: function(oEvent) {
 						  oTPC.savePersonalizations().done(function() {
-							  sap.ui.commons.MessageBox.show("Done!", "INFORMATION", "Save");
+							  MessageBox.show("Done!", "INFORMATION", "Save");
 						  });
 					  }
 				  })
 			  ],
 			  rightItems: [
-				  new sap.ui.commons.ToggleButton({
+				  new ToggleButton({
 					  text: "AutoSave",
 					  icon: "sap-icon://save",
 					  pressed: true,
@@ -56,15 +62,15 @@ sap.ui.define([
 
 		  columns: jQuery.map(oData.cols, function(sColumn) {
 			  return new Column({
-				  label: new sap.ui.commons.Label({text: sColumn}),
+				  label: new Label({text: sColumn}),
 				  visible: sColumn === "Color" ? false : true, // Color column should be invisible by default
-				  template: new sap.ui.commons.Label({
+				  template: new Label({
 					  text: {
 						  path: sColumn.toLowerCase()
 					  }
 				  }),
 				  customData: [
-					  new sap.ui.core.CustomData({ // PersoService: customDataKey
+					  new CustomData({ // PersoService: customDataKey
 						  key: "persoKey",
 						  value: sColumn
 					  })
@@ -75,7 +81,7 @@ sap.ui.define([
 		  }),
 
 		  customData: [
-			  new sap.ui.core.CustomData({ // PersoService: customDataKey
+			  new CustomData({ // PersoService: customDataKey
 				  key: "persoKey",
 				  value: "PersoTable"
 			  })

@@ -7,11 +7,11 @@ sap.ui.define([
   "sap/m/ObjectMarker",
   "sap/m/library",
   "sap/m/ScrollContainer",
+  "sap/ui/Device",
   "sap/m/Label",
   "sap/ui/layout/Grid",
   "sap/m/Page",
-  "sap/m/App",
-  "sap/ui/Device"
+  "sap/m/App"
 ], function(
   IconPool,
   ObjectAttribute,
@@ -21,11 +21,11 @@ sap.ui.define([
   ObjectMarker,
   mobileLibrary,
   ScrollContainer,
+  Device,
   Label,
   Grid,
   Page,
-  App,
-  Device
+  App
 ) {
   "use strict";
 
@@ -198,7 +198,7 @@ sap.ui.define([
 
   var scrollContainer = new ScrollContainer({
 	  width : "100%",
-	  horizontal : sap.ui.Device.system.phone,
+	  horizontal : Device.system.phone,
 	  content: [new Label({text: "This label is displayed on the Object Header's right hand side"})]
   });
 

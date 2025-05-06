@@ -11,6 +11,10 @@ sap.ui.define([
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
 	"sap/m/Button",
+	"sap/ui/commons/Label",
+	"sap/ui/commons/TextField",
+	"sap/ui/commons/Slider",
+	"sap/ui/commons/RadioButtonGroup",
 	"sap/ui/core/Item"
 ], function(
 	Library,
@@ -20,6 +24,10 @@ sap.ui.define([
 	RadioButtonGroup,
 	RadioButton,
 	Button,
+	CommonsLabel,
+	TextField,
+	CommonsSlider,
+	CommonsRadioButtonGroup,
 	Item
 ) {
 	"use strict";
@@ -57,24 +65,24 @@ sap.ui.define([
 		},
 		factory: {
 			createLabel: function (mConfig) {
-				return new sap.ui.commons.Label(mConfig);
+				return new CommonsLabel(mConfig);
 			},
 			createInput: function (sId, mConfig) {
-				return new sap.ui.commons.TextField(sId, mConfig);
+				return new TextField(sId, mConfig);
 			},
 			createSlider: function (sId, mConfig) {
 				if (mConfig && mConfig.step) {
 					mConfig.smallStepWidth = mConfig.step;
 					delete mConfig.step;
 				}
-				return new sap.ui.commons.Slider(sId, mConfig);
+				return new CommonsSlider(sId, mConfig);
 			},
 			createRadioButtonGroup: function (mConfig) {
 				if (mConfig && mConfig.buttons) {
 					mConfig.items = mConfig.buttons;
 					delete mConfig.buttons;
 				}
-				return new sap.ui.commons.RadioButtonGroup(mConfig);
+				return new CommonsRadioButtonGroup(mConfig);
 			},
 			createRadioButtonItem: function (mConfig) {
 				return new Item(mConfig);

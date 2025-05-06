@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/integration/Extension",
 	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
+	"sap/m/IllustratedMessageType",
 	"sap/m/IllustrationPool"
 ], function(
 	Log,
@@ -13,6 +14,7 @@ sap.ui.define([
 	Extension,
 	nextUIUpdate,
 	nextCardReadyEvent,
+	IllustratedMessageType,
 	IllustrationPool
 ) {
 	"use strict";
@@ -687,7 +689,7 @@ sap.ui.define([
 		var oMessage = this.oCard.getCardContent().getAggregation("_blockingMessage");
 
 		// Assert
-		assert.strictEqual(oMessage.getIllustrationType(), sap.m.IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
+		assert.strictEqual(oMessage.getIllustrationType(), IllustratedMessageType.SimpleError, "The no data message type set by expression binding is correct");
 		assert.strictEqual(oMessage.getDescription(), "Test", "The no data message description set by expression binding is correct");
 		assert.strictEqual(oMessage.getTitle(), "No Data", "The no data message title set by expression binding is correct");
 		assert.strictEqual(oMessage.getIllustrationSize(), "Auto", "The no data message size set by expression binding is correct");

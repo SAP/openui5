@@ -1,5 +1,6 @@
 sap.ui.define([
   "sap/m/Page",
+  "sap/ui/Device",
   "sap/m/Bar",
   "sap/m/Button",
   "sap/m/library",
@@ -12,7 +13,22 @@ sap.ui.define([
   "sap/ui/core/Item",
   "sap/ui/core/IconPool",
   "sap/ui/util/Mobile"
-], function(Page, Bar, Button, mobileLibrary, Label, Image, Text, SearchField, SegmentedButton, Select, Item, IconPool, Mobile) {
+], function(
+  Page,
+  Device,
+  Bar,
+  Button,
+  mobileLibrary,
+  Label,
+  Image,
+  Text,
+  SearchField,
+  SegmentedButton,
+  Select,
+  Item,
+  IconPool,
+  Mobile
+) {
   "use strict";
 
   // shortcut for sap.m.BarDesign
@@ -30,7 +46,7 @@ sap.ui.define([
 
   var page = new Page("page");
 
-  if (sap.ui.Device.os.ios){
+  if (Device.os.ios){
 	  var Bar = new Bar({
 		  contentLeft: [new Button('Button', {text: "Back", type:ButtonType.Back})],
 		  contentMiddle: [new Label("myLabel2", {text: "this is the title of header with a very very very very very very very very long text to test the ellipsis effect in the middle"})],

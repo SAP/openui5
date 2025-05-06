@@ -13,6 +13,7 @@ sap.ui.define([
   "sap/m/HBox",
   "sap/m/library",
   "sap/m/Switch",
+  "sap/ui/Device",
   "sap/m/Button",
   "sap/ui/thirdparty/jquery"
 ], function(
@@ -30,6 +31,7 @@ sap.ui.define([
   HBox,
   mobileLibrary,
   Switch,
+  Device,
   Button,
   jQuery
 ) {
@@ -250,8 +252,8 @@ sap.ui.define([
 					  state: false,
 					  change: function(oEvent) {
 						  var bState = oEvent.getParameter("state");
-						  sap.ui.Device.system.desktop = !bState;
-						  sap.ui.Device.system.phone = bState;
+						  Device.system.desktop = !bState;
+						  Device.system.phone = bState;
 					  }
 				  })
 			  ]

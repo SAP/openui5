@@ -7,8 +7,9 @@ sap.ui.define([
   "sap/m/library",
   "sap/m/StandardListItem",
   "sap/m/List",
+  "sap/ui/core/CustomData",
   "sap/ui/thirdparty/jquery"
-], function(JSONModel, App, Page, Bar, Button, mobileLibrary, StandardListItem, List, jQuery) {
+], function(JSONModel, App, Page, Bar, Button, mobileLibrary, StandardListItem, List, CustomData, jQuery) {
   "use strict";
 
   // shortcut for sap.m.ListMode
@@ -118,7 +119,7 @@ sap.ui.define([
 	  list.setModel(oModel, "test");
 
 	  // create a CustomData template, set its key to "answer" and bind its value to the answer data
-	  var oDataTemplate = new sap.ui.core.CustomData({
+	  var oDataTemplate = new CustomData({
 		  key : "xyz"
 	  });
 	  oDataTemplate.bindProperty("value", "press");
@@ -136,7 +137,7 @@ sap.ui.define([
 	  list.setModel(oModel, "test");
 
 	  // create a CustomData template, set its key to "answer" and bind its value to the answer data
-	  var oDataTemplate = new sap.ui.core.CustomData({
+	  var oDataTemplate = new CustomData({
 		  key : "xyz"
 	  });
 	  oDataTemplate.bindProperty("value", "press");

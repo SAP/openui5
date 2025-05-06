@@ -1,6 +1,7 @@
 sap.ui.define([
   "sap/m/Select",
   "sap/ui/core/Item",
+  "sap/ui/unified/ColorPickerDisplayMode",
   "sap/m/App",
   "sap/m/Page",
   "sap/ui/layout/VerticalLayout",
@@ -10,7 +11,20 @@ sap.ui.define([
   "sap/ui/unified/library",
   "sap/m/Button",
   "sap/m/ToggleButton"
-], function(Select, Item, App, Page, VerticalLayout, Label, HorizontalLayout, ColorPicker, unifiedLibrary, Button, ToggleButton) {
+], function(
+  Select,
+  Item,
+  ColorPickerDisplayMode,
+  App,
+  Page,
+  VerticalLayout,
+  Label,
+  HorizontalLayout,
+  ColorPicker,
+  unifiedLibrary,
+  Button,
+  ToggleButton
+) {
   "use strict";
 
   // shortcut for sap.ui.unified.ColorPickerMode
@@ -22,15 +36,15 @@ sap.ui.define([
 	  items: [
 		  new Item("default_mode", {
 			  text: 'Default',
-			  key: sap.ui.unified.ColorPickerDisplayMode.Default
+			  key: ColorPickerDisplayMode.Default
 		  }),
 		  new Item("large_mode", {
 			  text: 'Large',
-			  key: sap.ui.unified.ColorPickerDisplayMode.Large
+			  key: ColorPickerDisplayMode.Large
 		  }),
 		  new Item("simplified_mode", {
 			  text: 'Simplified',
-			  key: sap.ui.unified.ColorPickerDisplayMode.Simplified
+			  key: ColorPickerDisplayMode.Simplified
 		  })
 	  ],
 	  change: function(oEvent) {

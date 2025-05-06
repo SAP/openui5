@@ -5,6 +5,7 @@ sap.ui.define([
   "sap/m/MessageToast",
   "sap/ui/model/json/JSONModel",
   "sap/m/GenericTile",
+  "sap/ui/core/CustomData",
   "sap/m/Panel",
   "sap/m/OverflowToolbar",
   "sap/m/Label",
@@ -32,6 +33,7 @@ sap.ui.define([
   MessageToast,
   JSONModel,
   GenericTile,
+  CustomData,
   Panel,
   OverflowToolbar,
   Label,
@@ -127,7 +129,7 @@ sap.ui.define([
 		  state: "{state}",
 		  scope: "{scope}"
 	  });
-	  oTile.addCustomData(new sap.ui.core.CustomData({
+	  oTile.addCustomData(new CustomData({
 		  key: "hasPress",
 		  value: {
 			  path: "hasPress",
