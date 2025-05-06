@@ -20,7 +20,6 @@ sap.ui.define([
   "sap/m/CheckBox",
   "sap/m/MessageToast",
   "sap/m/Input",
-  "sap/ui/Device",
   "sap/ui/layout/form/SimpleForm",
   "sap/ui/layout/library",
   "sap/ui/core/library",
@@ -47,7 +46,6 @@ sap.ui.define([
   CheckBox,
   MessageToast,
   Input,
-  Device,
   SimpleForm,
   layoutLibrary,
   coreLibrary,
@@ -60,6 +58,8 @@ sap.ui.define([
 
   // shortcut for sap.ui.layout.BackgroundDesign
   const BackgroundDesign = layoutLibrary.BackgroundDesign;
+
+  var Device = sap.ui.Device;
 
   new VBox({
 	  items: [

@@ -14,7 +14,6 @@ sap.ui.define([
   "sap/m/Dialog",
   "sap/m/Panel",
   "sap/m/Toolbar",
-  "sap/ui/core/mvc/ViewType",
   "sap/m/ViewSettingsDialog",
   "sap/m/ViewSettingsItem",
   "sap/m/ViewSettingsFilterItem",
@@ -27,8 +26,7 @@ sap.ui.define([
   "sap/m/List",
   "sap/m/InputListItem",
   "sap/ui/thirdparty/jquery",
-  "sap/base/Log",
-  "sap/ui/core/mvc/View"
+  "sap/base/Log"
 ], function(
   Element,
   HTML,
@@ -45,7 +43,6 @@ sap.ui.define([
   Dialog,
   Panel,
   Toolbar,
-  ViewType,
   ViewSettingsDialog,
   ViewSettingsItem,
   ViewSettingsFilterItem,
@@ -793,7 +790,7 @@ sap.ui.define([
 
 		  var oSimpleFormView = sap.ui.view({
 			  viewContent: jQuery('#simpleFormExample').html(),
-			  type: ViewType.XML
+			  type: sap.ui.core.mvc.ViewType.XML
 		  });
 
 		  vBox.addItem(createLabel("SegmentedButton in sap.ui.SimpleForm:"));

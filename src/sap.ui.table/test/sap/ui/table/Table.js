@@ -2,7 +2,6 @@ sap.ui.define([
   "sap/m/Title",
   "sap/ui/table/Table",
   "sap/m/IllustratedMessage",
-  "sap/m/IllustratedMessageType",
   "sap/m/Button",
   "sap/m/Toolbar",
   "sap/m/MessageToast",
@@ -36,7 +35,6 @@ sap.ui.define([
   Title,
   Table,
   IllustratedMessage,
-  IllustratedMessageType,
   Button,
   Toolbar,
   MessageToast,
@@ -92,7 +90,7 @@ sap.ui.define([
 	  firstVisibleRow: 1,
 	  ariaLabelledBy: oTitle,
 	  noData: new IllustratedMessage({
-		  illustrationType: IllustratedMessageType.NoSearchResults,
+		  illustrationType: sap.m.IllustratedMessageType.NoSearchResults,
 		  title: "No Items found",
 		  description: "Adjust your filter settings.",
 		  additionalContent: [

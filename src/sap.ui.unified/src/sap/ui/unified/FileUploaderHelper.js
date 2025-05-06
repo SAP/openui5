@@ -6,15 +6,11 @@
 sap.ui.define([
 	'sap/ui/core/Lib',
 	"sap/m/Input",
-	"sap/m/Button",
-	"sap/ui/commons/TextField",
-	"sap/ui/commons/Button"
+	"sap/m/Button"
 ], function(
 	Library,
 	Input,
-	Button,
-	TextField,
-	CommonsButton
+	Button
 ) {
 	"use strict";
 
@@ -35,14 +31,14 @@ sap.ui.define([
 
 	var oCommonsLibraryLoad = {
 		createTextField: function(sId){
-			var oTextField = new TextField(sId);
+			var oTextField = new sap.ui.commons.TextField(sId);
 			return oTextField;
 		},
 		setTextFieldContent: function(oTextField, sWidth){
 			oTextField.setWidth(sWidth);
 		},
 		createButton: function(sId){
-			var oButton = new CommonsButton(sId);
+			var oButton = new sap.ui.commons.Button(sId);
 			return oButton;
 		},
 		addFormClass: function(){ return "sapUiCFUM"; }

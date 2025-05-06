@@ -24,7 +24,6 @@ sap.ui.define([
   "sap/m/SegmentedButton",
   "sap/m/SegmentedButtonItem",
   "sap/m/Image",
-  "sap/ui/Device",
   "sap/m/Carousel",
   "sap/m/App",
   "sap/base/Log",
@@ -55,7 +54,6 @@ sap.ui.define([
   SegmentedButton,
   SegmentedButtonItem,
   Image,
-  Device,
   Carousel,
   App,
   Log,
@@ -337,7 +335,7 @@ sap.ui.define([
 		  };
 
 		  oDialog = new Dialog({
-			  stretch: Device.system.phone,
+			  stretch: sap.ui.Device.system.phone,
 			  customHeader: new Bar({
 				  contentLeft: new Label({
 					  text: this.getAlt()

@@ -34,7 +34,6 @@ sap.ui.define([
   "sap/m/Switch",
   "sap/m/ObjectListItem",
   "sap/m/PlanningCalendar",
-  "sap/ui/core/CustomData",
   "sap/m/FlexBox",
   "sap/m/Text",
   "sap/ui/core/Icon",
@@ -77,7 +76,6 @@ sap.ui.define([
   Switch,
   ObjectListItem,
   PlanningCalendar,
-  CustomData,
   FlexBox,
   Text,
   Icon,
@@ -781,7 +779,7 @@ sap.ui.define([
 	  startDate: UI5Date.getInstance("2015", "0", "1", "08", "00"),
 	  rows: [
 		  new PlanningCalendarRow("Row1", {
-			  customData: new CustomData({key: "myKey", value: "myValue", writeToDom: true}),
+			  customData: new sap.ui.core.CustomData({key: "myKey", value: "myValue", writeToDom: true}),
 			  icon: "../ui/unified/images/m_01.png",
 			  title: "Max Mustermann",
 			  text: "Musterteam",

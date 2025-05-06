@@ -2,14 +2,9 @@ sap.ui.define([
   "sap/m/Page",
   "sap/m/List",
   "sap/m/DisplayListItem",
-  "sap/m/library",
   "sap/m/App"
-], function(Page, List, DisplayListItem, mobileLibrary, App) {
+], function(Page, List, DisplayListItem, App) {
   "use strict";
-
-  // shortcut for sap.m.URLHelper
-  const URLHelper = mobileLibrary.URLHelper;
-
   // Note: the HTML page 'URLHelper.html' loads this module via data-sap-ui-on-init
 
   var person = {
@@ -34,14 +29,14 @@ sap.ui.define([
 			  value : person.tel,
 			  type : "Active",
 			  press : function() {
-				  URLHelper.triggerTel(person.sms);
+				  sap.m.URLHelper.triggerTel(person.sms);
 			  }
 		  }), new DisplayListItem({
 			  label : "Sms",
 			  value : person.sms,
 			  type : "Active",
 			  press : function() {
-				  URLHelper.triggerSms(person.sms);
+				  sap.m.URLHelper.triggerSms(person.sms);
 			  }
 		  }), new DisplayListItem({
 			  id : "email",
@@ -49,14 +44,14 @@ sap.ui.define([
 			  value : person.email,
 			  type : "Active",
 			  press : function() {
-				  URLHelper.triggerEmail(person.email, "Info", "Dear " + person.name + ",\nThis is a test messsage &cc=test@sap.com ");
+				  sap.m.URLHelper.triggerEmail(person.email, "Info", "Dear " + person.name + ",\nThis is a test messsage &cc=test@sap.com ");
 			  }
 		  }), new DisplayListItem({
 			  label : "Address",
 			  value : person.address,
 			  type : "Active",
 			  press : function() {
-				  URLHelper.redirect("http://maps.apple.com/?q=" + person.address, true);
+				  sap.m.URLHelper.redirect("http://maps.apple.com/?q=" + person.address, true);
 			  }
 		  }), new DisplayListItem({
 			  id : "website",
@@ -64,7 +59,7 @@ sap.ui.define([
 			  value : person.website,
 			  type : "Active",
 			  press : function() {
-				  URLHelper.redirect(person.website, true);
+				  sap.m.URLHelper.redirect(person.website, true);
 			  }
 		  })]
 	  })]

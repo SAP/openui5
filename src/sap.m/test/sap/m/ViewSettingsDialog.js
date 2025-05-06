@@ -20,7 +20,6 @@ sap.ui.define([
   "sap/ui/model/FilterOperator",
   "sap/m/ViewSettingsDialog",
   "sap/m/ViewSettingsItem",
-  "sap/ui/core/CustomData",
   "sap/ui/model/Sorter",
   "sap/m/ViewSettingsFilterItem",
   "sap/m/ViewSettingsCustomItem",
@@ -49,7 +48,6 @@ sap.ui.define([
   FilterOperator,
   ViewSettingsDialog,
   ViewSettingsItem,
-  CustomData,
   Sorter,
   ViewSettingsFilterItem,
   ViewSettingsCustomItem,
@@ -556,7 +554,7 @@ sap.ui.define([
 	  key: "myNameSorter",
 	  text: "{i18n>/I18N_NAME}",
 	  selected: true,
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("name", false)
 	  })
@@ -564,7 +562,7 @@ sap.ui.define([
   vsd1.addSortItem(new ViewSettingsItem({
 	  key: "myStatusSorter",
 	  text: "{i18n>/I18N_STATUS}",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("status", false)
 	  })
@@ -572,7 +570,7 @@ sap.ui.define([
   vsd1.addSortItem(new ViewSettingsItem({
 	  key: "myValueSorter",
 	  text: "{i18n>/I18N_VALUE}",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("limit", false)
 	  })
@@ -580,7 +578,7 @@ sap.ui.define([
   vsd1.addSortItem(new ViewSettingsItem({
 	  key: "myPriceSorter",
 	  text: "{i18n>/I18N_PRICE}",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("price", false)
 	  })
@@ -590,7 +588,7 @@ sap.ui.define([
   vsd1.addGroupItem(new ViewSettingsItem({
 	  key: "myNameGrouper",
 	  text: "Name",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("name", false, util.Grouper.name)
 	  })
@@ -599,7 +597,7 @@ sap.ui.define([
 	  key: "myStatusGrouper",
 	  text: "Status",
 	  selected: true,
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("status", false, true)
 	  })
@@ -607,7 +605,7 @@ sap.ui.define([
   vsd1.addGroupItem(new ViewSettingsItem({
 	  key: "myValueGrouper",
 	  text: "Value",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("limit", false, util.Grouper.value)
 	  })
@@ -615,7 +613,7 @@ sap.ui.define([
   vsd1.addGroupItem(new ViewSettingsItem({
 	  key: "myPriceGrouper",
 	  text: "Price",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("price", false, util.Grouper.price)
 	  })
@@ -628,7 +626,7 @@ sap.ui.define([
   vsd1.addPresetFilterItem(new ViewSettingsItem({
 	  key: "myPresetFilter1",
 	  text: "A very complex filter",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "filter",
 		  value: presetFilters1
 	  })
@@ -636,7 +634,7 @@ sap.ui.define([
   vsd1.addPresetFilterItem(new ViewSettingsItem({
 	  key: "myPresetFilter2",
 	  text: "Ridiculously complex filter",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "filter",
 		  value: presetFilters2
 	  })
@@ -644,7 +642,7 @@ sap.ui.define([
   vsd1.addPresetFilterItem(new ViewSettingsItem({
 	  key: "myPresetFilter3",
 	  text: "Expensive stuff",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "filter",
 		  value: presetFilters2
 	  })
@@ -1127,7 +1125,7 @@ sap.ui.define([
 	  key: "myNameSorter",
 	  text: "Name",
 	  selected: true,
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("name", false)
 	  })
@@ -1135,7 +1133,7 @@ sap.ui.define([
   vsd4.addSortItem(new ViewSettingsItem({
 	  key: "myStatusSorter",
 	  text: "Status",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("status", false)
 	  })
@@ -1143,7 +1141,7 @@ sap.ui.define([
   vsd4.addSortItem(new ViewSettingsItem({
 	  key: "myValueSorter",
 	  text: "Value",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("limit", false)
 	  })
@@ -1151,7 +1149,7 @@ sap.ui.define([
   vsd4.addSortItem(new ViewSettingsItem({
 	  key: "myPriceSorter",
 	  text: "Price",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("price", false)
 	  })
@@ -1190,7 +1188,7 @@ sap.ui.define([
   vsd5.addGroupItem(new ViewSettingsItem({
 	  key: "myNameGrouper",
 	  text: "Name",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("name", false, util.Grouper.name)
 	  })
@@ -1199,7 +1197,7 @@ sap.ui.define([
 	  key: "myStatusGrouper",
 	  text: "Status",
 	  selected: true,
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("status", false, true)
 	  })
@@ -1207,7 +1205,7 @@ sap.ui.define([
   vsd5.addGroupItem(new ViewSettingsItem({
 	  key: "myValueGrouper",
 	  text: "Value",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("limit", false, util.Grouper.value)
 	  })
@@ -1215,7 +1213,7 @@ sap.ui.define([
   vsd5.addGroupItem(new ViewSettingsItem({
 	  key: "myPriceGrouper",
 	  text: "Price",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "sorter",
 		  value: new Sorter("price", false, util.Grouper.price)
 	  })
@@ -1263,7 +1261,7 @@ sap.ui.define([
   vsd6.addPresetFilterItem(new ViewSettingsItem({
 	  key: "myPresetFilter1",
 	  text: "A very complex filter",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "filter",
 		  value: presetFilters1
 	  })
@@ -1272,7 +1270,7 @@ sap.ui.define([
 	  key: "myPresetFilter2",
 	  text: "Ridiculously complex filter",
 	  selected: true,
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "filter",
 		  value: presetFilters2
 	  })
@@ -1280,7 +1278,7 @@ sap.ui.define([
   vsd6.addPresetFilterItem(new ViewSettingsItem({
 	  key: "myPresetFilter3",
 	  text: "Expensive stuff",
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "filter",
 		  value: presetFilters2
 	  })
@@ -1348,7 +1346,7 @@ sap.ui.define([
 			  key: "name1",
 			  text: "Headphone",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Headphone")
 			  })
@@ -1357,7 +1355,7 @@ sap.ui.define([
 			  key: "name2",
 			  text: "Mousepad",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Mouse Pad")
 			  })
@@ -1365,7 +1363,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "name3",
 			  text: "Monitor",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Monitor")
 			  })
@@ -1373,7 +1371,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "name4",
 			  text: "Backpack",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Backpack")
 			  })
@@ -1382,7 +1380,7 @@ sap.ui.define([
 			  key: "name5",
 			  text: "Printer",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Printer")
 			  })
@@ -1391,7 +1389,7 @@ sap.ui.define([
 			  key: "name6",
 			  text: "Optic Mouse",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Optic Mouse")
 			  })
@@ -1399,7 +1397,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "name7",
 			  text: "Dock Station",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("name", FilterOperator.EQ, "Dock Station")
 			  })
@@ -1415,7 +1413,7 @@ sap.ui.define([
 			  key: "status1",
 			  text: "Approved",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("status", FilterOperator.EQ, "A")
 			  })
@@ -1424,7 +1422,7 @@ sap.ui.define([
 			  key: "status2",
 			  text: "Open",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("status", FilterOperator.EQ, "O")
 			  })
@@ -1433,7 +1431,7 @@ sap.ui.define([
 			  key: "status3",
 			  text: "Denied",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("status", FilterOperator.EQ, "D")
 			  })
@@ -1449,7 +1447,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "value1",
 			  text: "< 10 EUR",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("limit", FilterOperator.LT, 10)
 			  })
@@ -1457,7 +1455,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "value2",
 			  text: "10 - 30 EUR",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("limit", FilterOperator.BT, 10, 30)
 			  })
@@ -1466,7 +1464,7 @@ sap.ui.define([
 			  key: "value3",
 			  text: "30 - 50 EUR",
 			  selected: true,
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("limit", FilterOperator.BT, 30, 50)
 			  })
@@ -1474,7 +1472,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "value4",
 			  text: "50 - 70 EUR",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("limit", FilterOperator.BT, 50, 70)
 			  })
@@ -1482,7 +1480,7 @@ sap.ui.define([
 		  new ViewSettingsItem({
 			  key: "value5",
 			  text: "> 70 EUR",
-			  customData: new CustomData({
+			  customData: new sap.ui.core.CustomData({
 				  key: "filter",
 				  value: new Filter("limit", FilterOperator.GT, 70)
 			  })
@@ -1495,7 +1493,7 @@ sap.ui.define([
 	  key: "myPriceFilter",
 	  text: "Price",
 	  customControl: customPriceFilter.clone(),
-	  customData: new CustomData({
+	  customData: new sap.ui.core.CustomData({
 		  key: "callback",
 		  value: customPriceCallback // callback to add filters based on the control
 	  })

@@ -4,6 +4,7 @@
 	xmlns="sap.ui.table"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.ui.table.plugins"
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<!-- Note: for $$aggregation, see controller's onInit! -->
@@ -11,51 +12,57 @@
 	<TreeTable id="table" ariaLabelledBy="title"
 		rows="{path : '/Bookings',
 			filters : {path : 'status', operator : 'NE', value1 : ''},
-			parameters : {
-				$count : true,
-				$orderby : 'status,FlightPrice desc'
-			}, suspended : true}"
+			parameters : {$count : true},
+			sorter : [{path : 'status'}, {path : 'FlightPrice', descending : true}],
+			suspended : true}"
 		selectionMode="None" threshold="100">
+		<dependents>
+			<!-- plugins:ODataV4Selection enableNotification="true"/ -->
+		</dependents>
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
-				<m:Title id="title" level="H1" text="{$count} Flight Bookings"/>
+				<m:Title id="title" level="H1"
+					text="{header>$count} Flight Bookings ({header>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
 				<m:SearchField id="search" placeholder="Search for anything..." search=".onSearch"
 					value="{ui>/sSearch}" width="40%"/>
 				<m:Button icon="sap-icon://download" press=".onDownload" tooltip="Download"/>
+				<m:Button icon="sap-icon://refresh" press=".onRefresh" tooltip="Refresh"/>
 				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press=".onToggleMessagePopover" text="{ui>/iMessages}"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+				<m:Button icon="sap-icon://multi-select" press=".onShowSelection"
+					tooltip="Show Selection"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
 			<rm:Interactive rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1"/>
 		</rowMode>
-		<Column width="20em">
+		<Column sortProperty="airline" width="20em">
 			<m:Label text="Airline"/>
 			<template>
 				<m:Text text="{airline} - {airlineName}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="7em">
+		<Column sortProperty="ConnectionID" width="7em">
 			<m:Label text="Connection ID"/>
 			<template>
 				<m:Text text="{ConnectionID}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="10em">
+		<Column sortProperty="DepAirport" width="10em">
 			<m:Label text="Departure"/>
 			<template>
 				<m:Text text="{DepAirport} - {DepCity}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="10em">
+		<Column sortProperty="DestAirport" width="10em">
 			<m:Label text="Destination"/>
 			<template>
 				<m:Text text="{DestAirport} - {DestCity}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column hAlign="End" width="7em">
+		<Column hAlign="End" sortProperty="Distance" width="7em">
 			<m:Label text="Distance"/>
 			<template>
 				<m:Text text="{
@@ -68,43 +75,43 @@
 				}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="7em">
+		<Column sortProperty="FlightDate" width="7em">
 			<m:Label text="Flight Date"/>
 			<template>
 				<m:Text text="{FlightDate}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="6em">
+		<Column sortProperty="PlaneType" width="6em">
 			<m:Label text="Plane Type"/>
 			<template>
 				<m:Text text="{PlaneType}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="7em">
+		<Column sortProperty="status" width="7em">
 			<m:Label text="Status"/>
 			<template>
 				<m:Text text="{status} - {statusName}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="5em">
+		<Column sortProperty="TravelID" width="5em">
 			<m:Label text="Travel ID"/>
 			<template>
 				<m:Text text="{TravelID}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="7em">
+		<Column sortProperty="BookingDate" width="7em">
 			<m:Label text="Booking Date"/>
 			<template>
 				<m:Text text="{BookingDate}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="6em">
+		<Column sortProperty="BookingID" width="6em">
 			<m:Label text="Booking ID"/>
 			<template>
 				<m:Text text="{BookingID}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column hAlign="End" width="7em">
+		<Column sortProperty="FlightPrice" hAlign="End" width="7em">
 			<m:Label text="Flight Price"/>
 			<template>
 				<m:Text text="{
@@ -118,7 +125,7 @@
 				}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="5em">
+		<Column sortProperty="CurrencyCode_code" width="5em">
 			<m:Label text="Currency"/>
 			<template>
 				<m:Text text="{CurrencyCode_code}" wrapping="false"/>
@@ -128,6 +135,12 @@
 			<m:Label text="G.L.C." tooltip="Group Level Count"/>
 			<template>
 				<m:Label text="{= %{@$ui5.node.groupLevelCount} }"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<m:CheckBox selected="{header>@$ui5.context.isSelected}" tooltip="Select All"/>
+			<template>
+				<m:CheckBox selected="{@$ui5.context.isSelected}"/>
 			</template>
 		</Column>
 	</TreeTable>
@@ -140,10 +153,10 @@
 				USD,FlightPrice GT 1234&lt;/code>
 			&lt;li> &lt;code>grandTotalAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
 				true) or &lt;code>off&lt;/code> to turn off grand totals
+			&lt;li> &lt;code>sort&lt;/code> - Comma separated list of UI5-like sorter conditions,
+				for example &lt;code>status,FlightPrice desc&lt;/code>
 			&lt;li> &lt;code>subtotalsAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
 				true) or &lt;code>off&lt;/code> to turn off subtotals
 			&lt;li> &lt;code>threshold&lt;/code> - A number; default 100
-			&lt;li> &lt;code>visibleRowCount&lt;/code> - A number; default 20
-			&lt;li> &lt;code>$orderby&lt;/code> - OData system query option for sorting,
-				for example &lt;code>FlightPrice asc&lt;/code>"/>
+			&lt;li> &lt;code>visibleRowCount&lt;/code> - A number; default 20"/>
 </mvc:View>

@@ -18,13 +18,10 @@ sap.ui.define([
   "sap/ui/layout/form/FormContainer",
   "sap/ui/layout/form/FormElement",
   "sap/m/Input",
-  "sap/ui/core/mvc/ViewType",
   "sap/ui/core/UIComponent",
   "sap/m/App",
   "sap/m/Page",
-  "sap/ui/core/ComponentContainer",
-  "sap/ui/core/mvc/JSView",
-  "sap/ui/core/mvc/Controller"
+  "sap/ui/core/ComponentContainer"
 ], async function(
   Element,
   View,
@@ -45,7 +42,6 @@ sap.ui.define([
   FormContainer,
   FormElement,
   Input,
-  ViewType,
   UIComponent,
   App,
   Page,
@@ -215,7 +211,7 @@ sap.ui.define([
 	  }
   });
 
-  var JSView = await View.create({type:ViewType.JS, viewName:"my.own.view"});
+  var JSView = await View.create({type:sap.ui.core.mvc.ViewType.JS, viewName:"my.own.view"});
 
 
   var MyComponent = UIComponent.extend("MyComponent", {

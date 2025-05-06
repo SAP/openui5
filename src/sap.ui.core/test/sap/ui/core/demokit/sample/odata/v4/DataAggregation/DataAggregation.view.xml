@@ -14,20 +14,27 @@
 				$count : false,
 				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
 			}, suspended : true}" selectionMode="None" threshold="0">
+		<dependents>
+			<!-- plugins:ODataV4Selection enableNotification="true"/ -->
+		</dependents>
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
-				<m:Title id="title" level="H1" text="Sales Amount by Account Responsible"/>
+				<m:Title id="title" level="H1"
+					text="Sales Amount by Account Responsible ({header>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
 				<m:SearchField id="search" placeholder="Search for anything..." search=".onSearch"
 					value="{ui>/sSearch}" width="40%"/>
 				<m:Button icon="sap-icon://download" press=".onDownload" tooltip="Download"/>
+				<m:Button icon="sap-icon://refresh" press=".onRefresh" tooltip="Refresh"/>
 				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press=".onToggleMessagePopover" text="{ui>/iMessages}"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+				<m:Button icon="sap-icon://multi-select" press=".onShowSelection"
+					tooltip="Show Selection"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
-			<rm:Fixed rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1"/>
+			<rm:Interactive rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1"/>
 		</rowMode>
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
@@ -117,5 +124,22 @@
 				<m:CheckBox selected="{= %{@$ui5.node.isTotal} }" editable="false"/>
 			</template>
 		</Column>
+		<Column width="4em">
+			<m:CheckBox selected="{header>@$ui5.context.isSelected}" tooltip="Select All"/>
+			<template>
+				<m:CheckBox selected="{@$ui5.context.isSelected}"/>
+			</template>
+		</Column>
 	</Table>
+
+	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+		&lt;ul>
+			&lt;li> &lt;code>filter&lt;/code> - Comma separated list of UI5-like filter conditions,
+				for example &lt;code>Region GT M&lt;/code>
+			&lt;li> &lt;code>grandTotalAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
+				true) or &lt;code>off&lt;/code> to turn off grand totals
+			&lt;li> &lt;code>leafCount&lt;/code> - Optional boolean to show leaf count
+			&lt;li> &lt;code>subtotalsAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
+				true) or &lt;code>off&lt;/code> to turn off subtotals
+			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 5"/>
 </mvc:View>

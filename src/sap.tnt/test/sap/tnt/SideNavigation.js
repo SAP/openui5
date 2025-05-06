@@ -5,10 +5,9 @@ sap.ui.define([
   "sap/tnt/NavigationListItem",
   "sap/tnt/NavigationListGroup",
   "sap/m/ToggleButton",
-  "sap/ui/Device",
   "sap/m/Button",
   "sap/ui/thirdparty/jquery"
-], function(JSONModel, SideNavigation, NavigationList, NavigationListItem, NavigationListGroup, ToggleButton, Device, Button, jQuery) {
+], function(JSONModel, SideNavigation, NavigationList, NavigationListItem, NavigationListGroup, ToggleButton, Button, jQuery) {
   "use strict";
   // Note: the HTML page 'SideNavigation.html' loads this module via data-sap-ui-on-init
 
@@ -391,7 +390,7 @@ sap.ui.define([
 
   new ToggleButton({
 	  text: "Compact Mode",
-	  pressed: !Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+	  pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
 	  press: function () {
 		  jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
 		  jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());

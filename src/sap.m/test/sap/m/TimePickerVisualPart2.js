@@ -12,25 +12,8 @@ sap.ui.define([
   "sap/m/HBox",
   "sap/m/library",
   "sap/m/Switch",
-  "sap/ui/Device",
   "sap/ui/thirdparty/jquery"
-], function(
-  Element,
-  HTML,
-  IconPool,
-  App,
-  Toolbar,
-  TimePicker,
-  Text,
-  Time,
-  JSONModel,
-  Page,
-  HBox,
-  mobileLibrary,
-  Switch,
-  Device,
-  jQuery
-) {
+], function(Element, HTML, IconPool, App, Toolbar, TimePicker, Text, Time, JSONModel, Page, HBox, mobileLibrary, Switch, jQuery) {
   "use strict";
 
   // shortcut for sap.m.TimePickerMaskMode
@@ -142,8 +125,8 @@ sap.ui.define([
 					  state: false,
 					  change: function(oEvent) {
 						  var bState = oEvent.getParameter("state");
-						  Device.system.desktop = !bState;
-						  Device.system.phone = bState;
+						  sap.ui.Device.system.desktop = !bState;
+						  sap.ui.Device.system.phone = bState;
 					  }
 				  })
 			  ]

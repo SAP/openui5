@@ -2,10 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
+	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
 	"sap/ui/model/json/JSONModel"
-], function (Controller, Filter, JSONModel) {
+], function (Log, MessageBox, Controller, Filter, Sorter, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP", {
@@ -27,10 +30,9 @@ sap.ui.define([
 					bBookingID = oUriParameters.has("BookingID"),
 					sFilter = oUriParameters.get("filter"),
 					sGrandTotalAtBottomOnly = oUriParameters.get("grandTotalAtBottomOnly"),
-					sOrderby = oUriParameters.get("$orderby"),
+					sSort = oUriParameters.get("sort"),
 					sSubtotalsAtBottomOnly = oUriParameters.get("subtotalsAtBottomOnly"),
 					oTable = this.byId("table"),
-					oTitle = this.byId("title"),
 					sThreshold = oUriParameters.get("threshold") || "100",
 					oRowsBinding = oTable.getBinding("rows"),
 					sVisibleRowCount = oUriParameters.get("visibleRowCount");
@@ -72,9 +74,9 @@ sap.ui.define([
 						oColumn.destroy(); // destroy BookingID column
 					}
 				}
-				// enable V4 tree table flag
-				oTable._oProxy._bEnableV4 = true;
-				oTitle.setBindingContext(oRowsBinding.getHeaderContext());
+				oTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
+				this.getView().setModel(oRowsBinding.getModel(), "header");
+				this.getView().setBindingContext(oRowsBinding.getHeaderContext(), "header");
 				if (sThreshold) {
 					oTable.setThreshold(parseInt(sThreshold));
 				}
@@ -106,17 +108,47 @@ sap.ui.define([
 						});
 					}));
 				}
-				if (sOrderby) {
-					oRowsBinding.changeParameters({$orderby : sOrderby});
+				if (sSort) {
+					oRowsBinding.sort(sSort.split(",").map((sSingleSort) => {
+						const aPieces = sSingleSort.split(" ");
+
+						return new Sorter({
+							path : aPieces[0],
+							descending : aPieces[1] === "desc"
+						});
+					}));
 				}
 				oRowsBinding.resume(); // now that "ui" model is available...
 			}, this);
+		},
+
+		onRefresh : function () {
+			this.byId("table").getBinding("rows").refresh();
 		},
 
 		onSearch : function () {
 			this._oAggregation.search
 				= this.getView().getModel("ui").getProperty("/sSearch");
 			this.byId("table").getBinding("rows").setAggregation(this._oAggregation);
+		},
+
+		onShowSelection : function () {
+			const oListBinding = this.byId("table").getBinding("rows");
+			const bSelectAll = oListBinding.getHeaderContext().isSelected();
+			const aPaths = oListBinding.getAllCurrentContexts()
+				.filter((oContext) => oContext.isSelected() !== bSelectAll)
+				.map((oContext) => oContext.getPath());
+			MessageBox.information((bSelectAll ? "All except " : "") + aPaths.join("\n"),
+				{title : "Selected Rows"});
+
+			oListBinding.getAllCurrentContexts().forEach((oContext) => {
+				const bSelectedGetter = oContext.isSelected();
+				const bSelectedProperty = oContext.getProperty("@$ui5.context.isSelected") ?? false;
+				if (bSelectedGetter !== bSelectedProperty) {
+					Log.warning(`${bSelectedGetter} vs. ${bSelectedProperty}`,
+						oContext, "sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP");
+				}
+			});
 		}
 	});
 });

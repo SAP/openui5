@@ -4,10 +4,9 @@ sap.ui.define([
   "sap/m/Button",
   "sap/m/List",
   "sap/m/StandardListItem",
-  "sap/ui/core/CustomData",
   "sap/m/SplitApp",
   "sap/ui/thirdparty/jquery"
-], async function(XMLView, Controller, Button, List, StandardListItem, CustomData, SplitApp, jQuery) {
+], async function(XMLView, Controller, Button, List, StandardListItem, SplitApp, jQuery) {
   "use strict";
   // INFO VIEW
 
@@ -114,7 +113,7 @@ sap.ui.define([
 			  new StandardListItem({
 				  title: "Info",
 				  type: "Active",
-				  customData: new CustomData({
+				  customData: new sap.ui.core.CustomData({
 					  key:"to",
 					  value:"info"
 				  })
@@ -122,7 +121,7 @@ sap.ui.define([
 			  new StandardListItem({
 				  title: "VBox",
 				  type: "Active",
-				  customData: new CustomData({
+				  customData: new sap.ui.core.CustomData({
 					  key:"to",
 					  value:"vbox"
 				  })
@@ -130,7 +129,7 @@ sap.ui.define([
 			  new StandardListItem({
 				  title: "Analytical Table",
 				  type: "Active",
-				  customData: new CustomData({
+				  customData: new sap.ui.core.CustomData({
 					  key:"to",
 					  value:"analyticalTable"
 				  })
@@ -138,7 +137,7 @@ sap.ui.define([
 			  new StandardListItem({
 				  title: "IconTabBar > Analytical Table",
 				  type: "Active",
-				  customData: new CustomData({
+				  customData: new sap.ui.core.CustomData({
 					  key:"to",
 					  value:"iconTabBarAnalyticalTable"
 				  })
