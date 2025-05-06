@@ -152,7 +152,8 @@ sap.ui.define([
 		}, oGermany];
 		checkTable(aInitialTableState);
 		if (sLeafCount === "true") {
-			Then.onTheMainPage.checkTitle("Sales Amount by Account Responsible (90)");
+			Then.onTheMainPage.checkTitle(
+				"Sales Amount by Account Responsible (Leaves: 90, Selected: 0)");
 		}
 
 		toggleExpandInRow(3, "Expand Germany.");
@@ -389,7 +390,8 @@ sap.ui.define([
 		checkTable(aAfterExpandBwSmall);
 		checkSubtotalsAtBottom(16, oBwSmall, true);
 		if (sLeafCount === "true") {
-			Then.onTheMainPage.checkTitle("Sales Amount by Account Responsible (90)");
+			Then.onTheMainPage.checkTitle(
+				"Sales Amount by Account Responsible (Leaves: 90, Selected: 0)");
 		}
 
 		When.onTheMainPage.scrollToRow(0, "Scroll to top.");
