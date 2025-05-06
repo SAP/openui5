@@ -362,19 +362,9 @@ sap.ui.define([
 				"then the first action name is properly set"
 			);
 			assert.strictEqual(
-				mResultData.propagationInfos[0].propagatedActionInfo.actions[0].action.changeType,
-				"changeType-myAction",
-				"then the first action change type is properly set"
-			);
-			assert.strictEqual(
 				mResultData.propagationInfos[0].propagatedActionInfo.actions[1].name,
 				"myAction2",
 				"then the second action name is properly set"
-			);
-			assert.strictEqual(
-				mResultData.propagationInfos[0].propagatedActionInfo.actions[1].action.changeType,
-				"changeType-myAction2",
-				"then the second action change type is properly set"
 			);
 			assert.strictEqual(
 				mResultData.propagationInfos[0].propagatedActionInfo.actions[1].isActive,
@@ -497,25 +487,16 @@ sap.ui.define([
 				propagatingControlName: "Button",
 				actions: [
 					{
-						name: "myPropagatedAction",
-						action: {
-							changeType: "propagatedActionChangeType"
-						}
+						name: "myPropagatedAction"
 					},
 					{
 						name: "myOtherPropagatedAction",
-						action: {
-							changeType: "otherPropagatedActionChangeType"
-						},
 						isActive: (oChildElement) => {
 							return oChildElement.getId() === this.oButton.getId();
 						}
 					},
 					{
 						name: "excludedPropagatedAction",
-						action: {
-							changeType: "excludedPropagatedActionChangeType"
-						},
 						isActive: (oChildElement) => {
 							return oChildElement.getId() !== this.oButton.getId();
 						}
@@ -564,19 +545,9 @@ sap.ui.define([
 				"then propagated action name is correct"
 			);
 			assert.strictEqual(
-				mResultData.propagatedActions[0].action.changeType,
-				"propagatedActionChangeType",
-				"then propagated action change type is correct"
-			);
-			assert.strictEqual(
 				mResultData.propagatedActions[1].name,
 				"myOtherPropagatedAction",
 				"then other propagated action name is correct"
-			);
-			assert.strictEqual(
-				mResultData.propagatedActions[1].action.changeType,
-				"otherPropagatedActionChangeType",
-				"then other propagated action change type is correct"
 			);
 			assert.strictEqual(
 				mResultData.propagatedActions[0].propagatingControl.getId(),

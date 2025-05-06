@@ -44,9 +44,18 @@ sap.ui.define([
 		return this.key ? (this.key + "-" + sKey) : sKey;
 	};
 
-	/*
-	 * @param {string} sKey the prefix for the sub RouterHashChanger
-	 * @return {sap.ui.core.routing.RouterHashChanger} the sub RouterHashChanger
+	/**
+	 * Returns a managed instance of {@link sap.ui.core.routing.RouterHashChanger} associated with the current instance.
+	 *
+	 * This sub-instance handles a specific part of the URL hash. When the sub-instance modifies the hash,
+	 * it notifies the parent instance, which then updates the browser’s hash accordingly.
+	 * Likewise, when the relevant part of the hash changes externally, the parent instance notifies the sub-instance.
+	 *
+	 * The provided <code>sKey</code> is used as an identifier for caching the sub-instance.
+	 * If this method is called again with the same key, the previously created instance is returned.
+	 *
+	 * @param {string} sKey A unique key used as the prefix for the sub RouterHashChanger.
+	 * @returns {sap.ui.core.routing.RouterHashChanger} The corresponding sub RouterHashChanger instance.
 	 * @protected
 	 */
 	RouterHashChanger.prototype.createSubHashChanger = function(sKey) {

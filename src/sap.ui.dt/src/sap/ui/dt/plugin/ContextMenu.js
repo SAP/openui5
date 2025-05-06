@@ -11,8 +11,8 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/ui/base/DesignTime",
 	"sap/ui/dt/util/_createPromise",
-	"sap/ui/dt/Plugin",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device"
@@ -25,8 +25,8 @@ sap.ui.define([
 	MenuItem,
 	BaseDesignTime,
 	_createPromise,
-	Plugin,
 	OverlayRegistry,
+	Plugin,
 	DtUtil,
 	KeyCodes,
 	Device
@@ -144,10 +144,34 @@ sap.ui.define([
 			icon: "sap-icon://hint",
 			visible: !oMenuItem.submenu,
 			type: "Transparent",
-			areaLabelledby: this.getId()
+			ariaLabelledBy: this.getId()
 		});
 		oAdditionalInfoButton.setTooltip(oMenuItem.additionalInfo);
 		return oAdditionalInfoButton;
+	}
+
+	function collectPropagatedMenuItemPromises(aPlugins, oSelectedOverlay) {
+		return aPlugins.map((oPlugin) => {
+			const oPropagatedActionInfo = oPlugin.getPropagatedActionInfo(oSelectedOverlay);
+			if (oPropagatedActionInfo) {
+				const oPropagatingControlOverlay = OverlayRegistry.getOverlay(oPropagatedActionInfo.propagatingControl);
+				let vPropagatedMenuItems = oPlugin.getMenuItems([oPropagatingControlOverlay]);
+				if (!(vPropagatedMenuItems instanceof Promise)) {
+					vPropagatedMenuItems = Promise.resolve(vPropagatedMenuItems);
+				}
+				return new Promise((resolve, reject) => {
+					vPropagatedMenuItems.then((aMenuItems) => {
+						const aMenuItemsWithPropagatingControl = aMenuItems.map((oMenuItem) => {
+							oMenuItem.propagatingControl = oPropagatedActionInfo.propagatingControl;
+							oMenuItem.propagatingControlName = oPropagatedActionInfo.propagatingControlName;
+							return oMenuItem;
+						});
+						resolve(aMenuItemsWithPropagatingControl);
+					}).catch(reject);
+				});
+			}
+			return null;
+		}).filter(Boolean);
 	}
 
 	/**
@@ -158,11 +182,17 @@ sap.ui.define([
 	 */
 	ContextMenu.prototype.open = function(oOverlay, bIsSubMenu, oEvent) {
 		let aSelectedOverlays;
-		function addMenuItems(oMenu, aMenuItems, bPropagatedMenu) {
-			let bStartsSection = bPropagatedMenu;
+		function addMenuItems(oMenu, aMenuItems) {
+			let bStartsSection = !!aMenuItems[0]?.propagatingControl;
+			let oTargetOverlay = oOverlay;
+			let aTargetSelectedOverlays = aSelectedOverlays;
 			aMenuItems.forEach(function(oMenuItem, index) {
-				const sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oOverlay) : oMenuItem.text;
-				const bEnabled = typeof oMenuItem.enabled === "function" ? oMenuItem.enabled(aSelectedOverlays) : oMenuItem.enabled;
+				if (oMenuItem.propagatingControl) {
+					oTargetOverlay = OverlayRegistry.getOverlay(oMenuItem.propagatingControl);
+					aTargetSelectedOverlays = [oTargetOverlay];
+				}
+				const sText = typeof oMenuItem.text === "function" ? oMenuItem.text(oTargetOverlay) : oMenuItem.text;
+				const bEnabled = typeof oMenuItem.enabled === "function" ? oMenuItem.enabled(aTargetSelectedOverlays) : oMenuItem.enabled;
 				const oMenuItemInstance = new MenuItem({
 					key: oMenuItem.id,
 					icon: oMenuItem.icon,
@@ -240,8 +270,8 @@ sap.ui.define([
 				this._aGroupedItems = [];
 				this._aSubMenus = [];
 				const aPluginItemPromises = [];
-				const oPlugins = this.getDesignTime().getPlugins();
-				oPlugins.forEach(function(oPlugin) {
+				const aPlugins = this.getDesignTime().getPlugins();
+				aPlugins.forEach(function(oPlugin) {
 					let vMenuItems = oPlugin.getMenuItems(aSelectedOverlays);
 					if (!(vMenuItems instanceof Promise)) {
 						vMenuItems = Promise.resolve(vMenuItems);
@@ -249,15 +279,22 @@ sap.ui.define([
 					aPluginItemPromises.push(vMenuItems);
 				});
 
+				// Propagated actions are only possible for single selection
+				let aPropagatedMenuItemPromises = [];
+				if (aSelectedOverlays.length === 1) {
+					aPropagatedMenuItemPromises = collectPropagatedMenuItemPromises(aPlugins, aSelectedOverlays[0]);
+				}
+
 				const oPluginItemsPromise = _createPromise(function(resolve, reject) {
+					aPluginItemPromises.push(...aPropagatedMenuItemPromises);
 					Promise.all(aPluginItemPromises).then(resolve).catch(reject);
 				});
 				this._fnCancelMenuPromise = oPluginItemsPromise.cancel;
 				return oPluginItemsPromise.promise;
 			}.bind(this))
 			.then(function(aPluginMenuItems) {
-				return aPluginMenuItems.reduce(function(aConcatinatedMenuItems, aMenuItems) {
-					return aConcatinatedMenuItems.concat(aMenuItems);
+				return aPluginMenuItems.reduce(function(aConcatenatedMenuItems, aMenuItems) {
+					return aConcatenatedMenuItems.concat(aMenuItems);
 				});
 			})
 			.then(function(aPluginMenuItems) {
@@ -329,7 +366,12 @@ sap.ui.define([
 		this._ensureSelection(this._oCurrentOverlay);
 
 		function callHandler(oMenuItem, oEventItem) {
-			const aSelection = oMenuItem.responsible || this.getSelectedOverlays() || [];
+			let aSelection;
+			if (oMenuItem.propagatingControl) {
+				aSelection = [OverlayRegistry.getOverlay(oMenuItem.propagatingControl)];
+			} else {
+				aSelection = oMenuItem.responsible || this.getSelectedOverlays() || [];
+			}
 			assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 			const mPropertiesBag = {};
 			mPropertiesBag.eventItem = oEventItem;

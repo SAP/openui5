@@ -183,7 +183,7 @@ sap.ui.define([
 					return {
 						getData: this.fnGetData,
 						getAction: this.fnGetAction,
-						getPropagatedAction: this.fnGetPropagatedAction,
+						getPropagatedActionInfo: this.fnGetPropagatedActionInfo,
 						getResponsibleElement: this.fnGetResponsibleElement,
 						getLibraryText(oElement, sName) {
 							if (oElement === "dummypropagatingControl") {
@@ -229,10 +229,10 @@ sap.ui.define([
 			});
 			this.oPlugin.getSelectedOverlays();
 
-			this.fnGetPropagatedAction = function(sActionName) {
-				assert.equal(sActionName, "dummyActionName", "getPropagatedAction gets called with the plugin action name");
+			this.fnGetPropagatedActionInfo = function(sActionName) {
+				assert.equal(sActionName, "dummyActionName", "getPropagatedActionInfo gets called with the plugin action name");
 			};
-			this.oPlugin.getPropagatedAction(this.oOverlay);
+			this.oPlugin.getPropagatedActionInfo(this.oOverlay);
 
 			assert.strictEqual(
 				this.oPlugin.getActionText(this.oOverlay, { name: "dummyActionName" }),

@@ -9,9 +9,7 @@ sap.ui.define([
   "sap/m/Text",
   "sap/m/table/columnmenu/Menu",
   "sap/m/table/columnmenu/QuickAction",
-  "sap/m/table/columnmenu/Item",
-  "sap/m/ComboBox",
-  "sap/ui/core/Item",
+  "sap/m/table/columnmenu/ActionItem",
   "sap/ui/table/Column",
   "sap/m/Input",
   "sap/m/Label",
@@ -21,6 +19,8 @@ sap.ui.define([
   "sap/m/DatePicker",
   "sap/ui/model/type/Date",
   "sap/m/Select",
+  "sap/ui/core/Item",
+  "sap/m/ComboBox",
   "sap/m/MultiComboBox",
   "sap/m/CheckBox",
   "sap/m/HBox",
@@ -43,9 +43,7 @@ sap.ui.define([
   Text,
   Menu,
   QuickAction,
-  Item,
-  ComboBox,
-  CoreItem,
+  ActionItem,
   Column,
   Input,
   Label,
@@ -55,6 +53,8 @@ sap.ui.define([
   DatePicker,
   TypeDate,
   Select,
+  Item,
+  ComboBox,
   MultiComboBox,
   CheckBox,
   HBox,
@@ -115,15 +115,9 @@ sap.ui.define([
 		  })
 	  ],
 	  items: [
-		  new Item({
+		  new ActionItem({
 			  label: "Item A",
-			  icon: "sap-icon://sort",
-			  content: new ComboBox({
-				  items: [
-					  new CoreItem({key: "v1", text: "Value 1"}),
-					  new CoreItem({key: "v2", text: "Value 2"})
-				  ]
-			  })
+			  icon: "sap-icon://sort"
 		  })
 	  ]
   });
@@ -199,10 +193,10 @@ sap.ui.define([
   // sap.m.Select
   oControl = new Select({
 	  items: [
-		  new CoreItem({key: "v1", text: "Value 1"}),
-		  new CoreItem({key: "v2", text: "Value 2"}),
-		  new CoreItem({key: "v3", text: "Value 3"}),
-		  new CoreItem({key: "v4", text: "Value 4"})
+		  new Item({key: "v1", text: "Value 1"}),
+		  new Item({key: "v2", text: "Value 2"}),
+		  new Item({key: "v3", text: "Value 3"}),
+		  new Item({key: "v4", text: "Value 4"})
 	  ]
   });
   oColumn = new Column({label: new Label({text: "m.Select"}), template: oControl, width: "150px"});
@@ -212,10 +206,10 @@ sap.ui.define([
   // sap.m.ComboBox
   oControl = new ComboBox({
 	  items: [
-		  new CoreItem({key: "v1", text: "Value 1"}),
-		  new CoreItem({key: "v2", text: "Value 2"}),
-		  new CoreItem({key: "v3", text: "Value 3"}),
-		  new CoreItem({key: "v4", text: "Value 4"})
+		  new Item({key: "v1", text: "Value 1"}),
+		  new Item({key: "v2", text: "Value 2"}),
+		  new Item({key: "v3", text: "Value 3"}),
+		  new Item({key: "v4", text: "Value 4"})
 	  ]
   });
   oColumn = new Column({label: new Label({text: "m.ComboBox"}), template: oControl, width: "150px"});
@@ -224,10 +218,10 @@ sap.ui.define([
   // sap.m.MultiComboBox
   oControl = new MultiComboBox({
 	  items: [
-		  new CoreItem({key: "v1", text: "Value 1"}),
-		  new CoreItem({key: "v2", text: "Value 2"}),
-		  new CoreItem({key: "v3", text: "Value 3"}),
-		  new CoreItem({key: "v4", text: "Value 4"})
+		  new Item({key: "v1", text: "Value 1"}),
+		  new Item({key: "v2", text: "Value 2"}),
+		  new Item({key: "v3", text: "Value 3"}),
+		  new Item({key: "v4", text: "Value 4"})
 	  ]
   });
   oColumn = new Column({label: new Label({text: "m.MultiComboBox"}), template: oControl, width: "250px"});
@@ -364,8 +358,8 @@ sap.ui.define([
 		  new Select({
 			  width: "100px",
 			  items: [
-				  new CoreItem({key: "Bare", text: "Bare"}),
-				  new CoreItem({key: "Div", text: "Div"})
+				  new Item({key: "Bare", text: "Bare"}),
+				  new Item({key: "Div", text: "Div"})
 			  ],
 			  selectedKey: "Div",
 			  change: function(oEvent) {
