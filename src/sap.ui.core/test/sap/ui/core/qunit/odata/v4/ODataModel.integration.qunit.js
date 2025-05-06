@@ -24879,6 +24879,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: List binding with aggregation, no visual grouping, and grand total at both top and
+	// bottom - or at top/bottom only. Grand total not shown because there is no data.
+	// JIRA: CPOUI5ODATAV4-2979
+[undefined, false, true].forEach((bGrandTotalAtBottomOnly) => {
+	const sTitle = "Data Aggregation: no data, grandTotalAtBottomOnly=" + bGrandTotalAtBottomOnly;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oModel = this.createAggregationModel();
+
+		await this.createView(assert, "", oModel);
+
+		const oListBinding = oModel.bindList("/BusinessPartners", null, [], [], {
+			$$aggregation : {
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				grandTotalAtBottomOnly : bGrandTotalAtBottomOnly,
+				group : {Country : {}}
+			}
+		});
+
+		this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+				+ ",groupby((Country),aggregate(SalesNumber))"
+					+ "/concat(aggregate($count as UI5__count),top("
+					+ (bGrandTotalAtBottomOnly ? 100 : 99)
+					+ ")))", {
+				value : [{
+					SalesNumber : 0 // think "sum" here ;-)
+				}, {
+					UI5__count : "0" // no data
+				}]
+			});
+
+		const [aContexts] = await Promise.all([
+			oListBinding.requestContexts(),
+			this.waitForChanges(assert)
+		]);
+
+		assert.deepEqual(aContexts.map(getNormalizedPath), [], "no data - no grand total");
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation, no visual grouping, and grand total at both
 	// top and bottom - or at bottom only.
 	// JIRA: CPOUI5ODATAV4-558

@@ -1878,7 +1878,7 @@ sap.ui.define([
 				oCache.oFirstLevel.bSentRequest = true;
 				return SyncPromise.resolve(Promise.resolve(oReadResult));
 			});
-		this.mock(oCache).expects("requestOutOfPlaceNodes")
+		oCacheMock.expects("requestOutOfPlaceNodes")
 			.exactly(oFixture.bSentRequest ? 0 : 1).withExactArgs("~oGroupLock~")
 			.returns([Promise.resolve("~outOfPlaceResult0~"),
 				Promise.resolve("~outOfPlaceResult1~"), Promise.resolve("~outOfPlaceResult2~")]);
@@ -1921,7 +1921,7 @@ sap.ui.define([
 				.withExactArgs(iExpectedLevel, j, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + j);
 		}
-		const oHandleOutOfPlaceNodesExpectation = this.mock(oCache).expects("handleOutOfPlaceNodes")
+		const oHandleOutOfPlaceNodesExpectation = oCacheMock.expects("handleOutOfPlaceNodes")
 			.exactly(bSkipResponse ? 0 : 1)
 			.withExactArgs(oFixture.bSentRequest
 				? []
@@ -1965,6 +1965,46 @@ sap.ui.define([
 
 				sinon.assert.callOrder(oAddElementsExpectation, oHandleOutOfPlaceNodesExpectation);
 			});
+	});
+});
+
+	//*********************************************************************************************
+[undefined, false, true].forEach((bGrandTotalAtBottomOnly) => {
+	const sTitle = "readFirst: no data => no grand total; grandTotalAtBottomOnly="
+		+ bGrandTotalAtBottomOnly;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			aggregate : {
+				SalesNumber : {grandTotal : true}
+			},
+			grandTotalAtBottomOnly : bGrandTotalAtBottomOnly,
+			group : {},
+			groupLevels : ["group"]
+		});
+		oCache.oGrandTotalPromise = SyncPromise.resolve({/*oGrandTotal*/});
+		this.mock(oCache.oTreeState).expects("getOutOfPlaceCount").withExactArgs().returns(0);
+		const oReadResult = {
+			value : []
+		};
+		oReadResult.value.$count = 0; // no data
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(0, 30, 0, "~oGroupLock~", "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
+		this.mock(oCache).expects("requestOutOfPlaceNodes").withExactArgs("~oGroupLock~")
+			.returns([]);
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult.value), 0,
+				sinon.match.same(oCache.oFirstLevel), 0);
+		this.mock(_AggregationHelper).expects("createPlaceholder").never();
+		this.mock(oCache).expects("handleOutOfPlaceNodes").withExactArgs([]);
+
+		// code under test
+		await oCache.readFirst(0, 10, 20, "~oGroupLock~", "~fnDataRequested~");
+
+		assert.deepEqual(oCache.aElements, []);
+		assert.strictEqual(oCache.aElements.length, 0);
+		assert.strictEqual(oCache.aElements.$count, 0);
 	});
 });
 

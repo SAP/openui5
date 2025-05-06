@@ -1952,7 +1952,7 @@ sap.ui.define([
 
 				that.aElements.length = that.aElements.$count = oResult.value.$count;
 
-				if (that.oGrandTotalPromise) {
+				if (that.aElements.length && that.oGrandTotalPromise) {
 					that.aElements.$count += 1;
 					that.aElements.length += 1;
 					oGrandTotal = that.oGrandTotalPromise.getResult();
