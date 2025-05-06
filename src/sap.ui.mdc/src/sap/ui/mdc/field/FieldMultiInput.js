@@ -244,7 +244,7 @@ sap.ui.define([
 		if (!this._oUpdateBindingTimer && (oBindingInfo.length || oBindingInfo.startIndex)) {
 			const fnUpdate = () => {
 				let oToken = oBindingInfo.template;
-				if (oBindingInfo.hasOwnProperty("templateShareable") && !oBindingInfo.templateShareable) {
+				if (oBindingInfo.templateShareable !== true) {
 					oToken = oToken.clone();
 				}
 

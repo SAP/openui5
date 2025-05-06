@@ -305,7 +305,7 @@ sap.ui.define([
 	function changeContent(oAction, aOverlays) {
 		var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		var oElementOverlay = aOverlays[0];
-		var oControl = oAction.propagatingControl || oElementOverlay.getElement();
+		var oControl = oElementOverlay.getElement();
 		oAction = oAction.action || oAction;
 		var oVariantManagementControl = oControl.getVariantManagement();
 		// the modified flag might be changed before the dialog is closed, so it has to be saved here already
@@ -348,31 +348,7 @@ sap.ui.define([
 		var oElementOverlay = aElementOverlays[0];
 		var oVariantManagementControl = oElementOverlay.getElement();
 		const oAction = this.getAction(oElementOverlay);
-		const oPropagatedAction = this.getPropagatedAction(oElementOverlay);
 		var aMenuItems = [];
-		if (oPropagatedAction) {
-			const oPropagatingControlOverlay = OverlayRegistry.getOverlay(oPropagatedAction.propagatingControl);
-			if (this.isAvailable([oPropagatingControlOverlay])) {
-				if (oPropagatedAction.action?.changeType === "variantContent") {
-					aMenuItems.push({
-						id: "CTX_COMP_VARIANT_CONTENT",
-						additionalInfo: this._getAdditionalInfo(oElementOverlay, oPropagatedAction.action),
-						text: this.getActionText(
-							oElementOverlay,
-							oPropagatedAction.action,
-							undefined,
-							oPropagatedAction.propagatingControl
-						),
-						handler: changeContent.bind(this, oPropagatedAction),
-						enabled: true,
-						rank: this.getRank("CTX_COMP_VARIANT_CONTENT"),
-						icon: "sap-icon://key-user-settings",
-						propagatingControl: oPropagatedAction.propagatingControl,
-						propagatingControlName: oPropagatedAction.propagatingControlName
-					});
-				}
-			}
-		}
 		if (this.isAvailable([oElementOverlay])) {
 			if (oAction) {
 				if (oAction.changeType === "variantContent") {

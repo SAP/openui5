@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/Text",

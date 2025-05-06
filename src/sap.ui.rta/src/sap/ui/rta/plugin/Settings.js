@@ -268,7 +268,6 @@ sap.ui.define([
 		const oElementOverlay = aElementOverlays[0];
 		const oResponsibleElementOverlay = this.getResponsibleElementOverlay(oElementOverlay);
 		const vSettingsActions = this.getAction(oResponsibleElementOverlay);
-		const oPropagatedSettingsActionInfo = this.getPropagatedAction(oElementOverlay);
 
 		const aMenuItems = [];
 		if (vSettingsActions) {
@@ -308,58 +307,6 @@ sap.ui.define([
 							return this.handler(aElementOverlays, mPropertyBag, oSettingsAction);
 						}.bind(this, oSettingsAction.handler),
 						submenu: formatSubMenuItems(oSettingsAction.submenu)
-					});
-				} else {
-					BaseLog.warning("Action is not available or relevant container has no stable id");
-				}
-			}, this);
-		}
-		// TODO todos#8
-		// Improve handling of context menu items for propagated actions
-		if (oPropagatedSettingsActionInfo) {
-			const iRank = this.getRank("CTX_SETTINGS");
-			const oPropagatingControlOverlay = OverlayRegistry.getOverlay(oPropagatedSettingsActionInfo.propagatingControl);
-			const aSettingsActions = getValidActions(oPropagatedSettingsActionInfo.action, oPropagatingControlOverlay);
-
-			if (this._isEditableByPlugin(oPropagatingControlOverlay) === undefined) {
-				// The responsibleElement editableByPlugin state was not evaluated yet e.g. because it
-				// has no visible geometry, thus evaluateEditable now
-				await this.evaluateEditable([oPropagatingControlOverlay], { onRegistration: false });
-			}
-			aSettingsActions.forEach(function(oSettingsAction, iIndex, aActions) {
-				if (
-					this._checkRelevantContainerStableID(oSettingsAction, oPropagatingControlOverlay)
-					&& this.isAvailable([oPropagatingControlOverlay])
-				) {
-					const bSingleAction = aActions.length === 1;
-
-					aMenuItems.push({
-						id: bSingleAction ? sPluginId : sPluginId + iIndex,
-						additionalInfo: this._getAdditionalInfo(oPropagatingControlOverlay, oSettingsAction),
-						rank: bSingleAction ? iRank : iRank + iIndex,
-						text: this.getActionText(
-							oPropagatingControlOverlay,
-							oSettingsAction,
-							sPluginId,
-							oPropagatedSettingsActionInfo.propagatingControl
-						),
-						icon: getActionIcon(oSettingsAction),
-						enabled: (
-							typeof oSettingsAction.isEnabled === "function"
-							&& function() {
-								return oSettingsAction.isEnabled(oPropagatedSettingsActionInfo.propagatingControl);
-							}
-							|| oSettingsAction.isEnabled
-							|| this.isEnabled([oPropagatingControlOverlay])
-						),
-						handler: function(fnHandler, mPropertyBag) {
-							mPropertyBag ||= {};
-							mPropertyBag.fnHandler = fnHandler;
-							return this.handler([oPropagatingControlOverlay], mPropertyBag, oSettingsAction);
-						}.bind(this, oSettingsAction.handler),
-						submenu: formatSubMenuItems(oSettingsAction.submenu),
-						propagatingControl: oPropagatedSettingsActionInfo.propagatingControl,
-						propagatingControlName: oPropagatedSettingsActionInfo.propagatingControlName
 					});
 				} else {
 					BaseLog.warning("Action is not available or relevant container has no stable id");

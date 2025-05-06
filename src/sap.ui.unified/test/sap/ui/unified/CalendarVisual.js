@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/m/Button",
-	"sap/ui/layout/VerticalLayout"
+	"sap/ui/layout/VerticalLayout",
+	'sap/ui/core/date/UI5Date'
 ], function(
 	Localization,
 	CalendarType,
@@ -21,7 +22,8 @@ sap.ui.define([
 	DateRange,
 	DateTypeRange,
 	Button,
-	VerticalLayout
+	VerticalLayout,
+	UI5Date
 ) {
 	"use strict";
 	var CalendarDayType = unifiedLibrary.CalendarDayType,
@@ -36,7 +38,7 @@ sap.ui.define([
 				oCalendar1.setSingleSelection(true);
 				oPage.insertContent(oCalendar1, 0);
 				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-				oCalendar1.focusDate(new Date(2015, 0, 2));
+				oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 			}
 		});
 
@@ -52,7 +54,7 @@ sap.ui.define([
 			oCalendar1.setSingleSelection(true);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -66,7 +68,7 @@ sap.ui.define([
 			oCalendar1.setSingleSelection(false);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -81,7 +83,7 @@ sap.ui.define([
 			oCalendar1.setSecondaryCalendarType(CalendarType.Islamic);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -95,15 +97,15 @@ sap.ui.define([
 			oCalendar1.setSingleSelection(true);
 			oCalendar1.setWidth("400px");
 			oCalendar1.addDisabledDate(new DateRange({
-				startDate: new Date(2015, 0, 8)
+				startDate: UI5Date.getInstance(2015, 0, 8)
 			}));
 			oCalendar1.addDisabledDate(new DateRange({
-				startDate: new Date(2015, 0, 16),
-				endDate: new Date(2015, 0, 20)
+				startDate: UI5Date.getInstance(2015, 0, 16),
+				endDate: UI5Date.getInstance(2015, 0, 20)
 			}));
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -119,7 +121,7 @@ sap.ui.define([
 			oCalendar1.setMonths(4);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 31));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 31));
 		}
 	});
 
@@ -133,7 +135,7 @@ sap.ui.define([
 			oCalendar1.destroySelectedDates();
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -148,7 +150,7 @@ sap.ui.define([
 			oCalendar1.setMonths(2);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -160,10 +162,10 @@ sap.ui.define([
 			oCalendar1 = fnCalendarFactory();
 			oCalendar1.destroySelectedDates();
 			oCalendar1.setMonths(2);
-			oCalendar1.setMaxDate(new Date(2015, 7, 24));
+			oCalendar1.setMaxDate(UI5Date.getInstance(2015, 7, 24));
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -178,7 +180,7 @@ sap.ui.define([
 				oCalendar1.setShowCurrentDateButton(true);
 				oPage.insertContent(oCalendar1, 0);
 				nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-				oCalendar1.focusDate(new Date(2015, 0, 2));
+				oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 			}
 		});
 
@@ -193,7 +195,7 @@ sap.ui.define([
 			oCalendar1.setMonths(2);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -205,12 +207,12 @@ sap.ui.define([
 			oCalendar1 = fnCalendarFactory();
 			oCalendar1.destroySelectedDates();
 			oCalendar1.setMonths(2);
-			oCalendar1.setMaxDate(new Date(2015, 7, 24));
+			oCalendar1.setMaxDate(UI5Date.getInstance(2015, 7, 24));
 			oCalendar1.setWidth("90%");
 			oVL.addContent(oCalendar1);
 			oVL.setWidth("270px");
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
-			oCalendar1.focusDate(new Date(2015, 0, 2));
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 2));
 		}
 	});
 
@@ -224,6 +226,7 @@ sap.ui.define([
 			oCalendar1.setNonWorkingDays([]);
 			oPage.insertContent(oCalendar1, 0);
 			nextUIUpdate.runSync()/*context not obviously suitable for an async function*/;
+			oCalendar1.focusDate(UI5Date.getInstance(2015, 0, 1));
 		}
 	});
 
@@ -252,20 +255,20 @@ sap.ui.define([
 
 	function fnCalendarFactory() {
 		return new Calendar("Cal1", {
-			selectedDates: [new DateRange("DR1",{startDate: new Date(2015, 0, 2)})],
-			specialDates: [ new DateTypeRange("SDR01",{startDate: new Date(2015, 1, 2), type: CalendarDayType.Type01}),
-							new DateTypeRange("SDR02",{startDate: new Date(2015, 1, 3), type: CalendarDayType.Type02}),
-							new DateTypeRange("SDR03",{startDate: new Date(2015, 1, 4), type: CalendarDayType.Type03}),
-							new DateTypeRange("SDR04",{startDate: new Date(2015, 1, 5), type: CalendarDayType.Type04}),
-							new DateTypeRange("SDR05",{startDate: new Date(2015, 1, 6), type: CalendarDayType.Type05}),
-							new DateTypeRange("SDR06",{startDate: new Date(2015, 1, 7), type: CalendarDayType.Type06}),
-							new DateTypeRange("SDR07",{startDate: new Date(2015, 1, 8), type: CalendarDayType.Type07}),
-							new DateTypeRange("SDR08",{startDate: new Date(2015, 1, 9), type: CalendarDayType.Type08}),
-							new DateTypeRange("SDR09",{startDate: new Date(2015, 1, 10), type: CalendarDayType.Type09}),
-							new DateTypeRange("SDR10",{startDate: new Date(2015, 1, 11), type: CalendarDayType.Type10}),
-							new DateTypeRange("SDR11",{startDate: new Date(2015, 1, 12), type: CalendarDayType.Type10, color:"#ffffff"}),
-							new DateTypeRange("SDR12",{startDate: new Date(2015, 1, 13), type: CalendarDayType.Type10, color:"#ffff66"}),
-							new DateTypeRange("SDR13",{startDate: new Date(2015, 1, 14), endDate: new Date(2015, 1, 16), type: CalendarDayType.Type10})
+			selectedDates: [new DateRange("DR1",{startDate: UI5Date.getInstance(2015, 0, 2)})],
+			specialDates: [ new DateTypeRange("SDR01",{startDate: UI5Date.getInstance(2015, 1, 2), type: CalendarDayType.Type01}),
+							new DateTypeRange("SDR02",{startDate: UI5Date.getInstance(2015, 1, 3), type: CalendarDayType.Type02}),
+							new DateTypeRange("SDR03",{startDate: UI5Date.getInstance(2015, 1, 4), type: CalendarDayType.Type03}),
+							new DateTypeRange("SDR04",{startDate: UI5Date.getInstance(2015, 1, 5), type: CalendarDayType.Type04}),
+							new DateTypeRange("SDR05",{startDate: UI5Date.getInstance(2015, 1, 6), type: CalendarDayType.Type05}),
+							new DateTypeRange("SDR06",{startDate: UI5Date.getInstance(2015, 1, 7), type: CalendarDayType.Type06}),
+							new DateTypeRange("SDR07",{startDate: UI5Date.getInstance(2015, 1, 8), type: CalendarDayType.Type07}),
+							new DateTypeRange("SDR08",{startDate: UI5Date.getInstance(2015, 1, 9), type: CalendarDayType.Type08}),
+							new DateTypeRange("SDR09",{startDate: UI5Date.getInstance(2015, 1, 10), type: CalendarDayType.Type09}),
+							new DateTypeRange("SDR10",{startDate: UI5Date.getInstance(2015, 1, 11), type: CalendarDayType.Type10}),
+							new DateTypeRange("SDR11",{startDate: UI5Date.getInstance(2015, 1, 12), type: CalendarDayType.Type10, color:"#ffffff"}),
+							new DateTypeRange("SDR12",{startDate: UI5Date.getInstance(2015, 1, 13), type: CalendarDayType.Type10, color:"#ffff66"}),
+							new DateTypeRange("SDR13",{startDate: UI5Date.getInstance(2015, 1, 14), endDate: UI5Date.getInstance(2015, 1, 16), type: CalendarDayType.Type10})
 						]
 		});
 	}

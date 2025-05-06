@@ -20,7 +20,9 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/m/table/columnmenu/Menu",
-	"sap/m/table/columnmenu/Item",
+	"sap/m/table/columnmenu/ActionItem",
+	"sap/m/Dialog",
+	"sap/m/Button",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/RuleSerializer",
@@ -45,7 +47,9 @@ sap.ui.define([
 	List,
 	StandardListItem,
 	ColumnMenu,
-	ColumnMenuItem,
+	ActionItem,
+	Dialog,
+	Button,
 	CommunicationBus,
 	channelNames,
 	RuleSerializer,
@@ -1094,18 +1098,41 @@ sap.ui.define([
 					});
 				},
 				items: [
-					new ColumnMenuItem({
+					new ActionItem({
 						label: "Columns",
 						content: oList,
 						showResetButton: false,
-						confirm: function () {
-							oList.getItems().forEach(function (oItem) {
-								TableSettingsModel.setProperty(oItem.getBinding("selected").getPath(), oItem.getSelected());
-							});
+						press: function(oEvent) {
+							var oDialog = oEvent.getSource().getDependents()[0];
+							if (!oDialog) {
+								oDialog = new Dialog({
+									type: mLibrary.DialogType.Message,
+									title: "Columns",
+									content: oList,
+									beginButton: new Button({
+										type: mLibrary.ButtonType.Emphasized,
+										text: "Ok",
+										press: function () {
+											oList.getItems().forEach(function (oItem) {
+												TableSettingsModel.setProperty(oItem.getBinding("selected").getPath(), oItem.getSelected());
+											});
 
-							if (this.model.getProperty("/persistingSettings")) {
-								this.persistVisibleColumns();
+											if (this.model.getProperty("/persistingSettings")) {
+												this.persistVisibleColumns();
+											}
+											oDialog.close();
+										}.bind(this)
+									}),
+									endButton: new Button({
+										text: "Cancel",
+										press: function () {
+											oDialog.close();
+										}
+									})
+								});
+								oEvent.getSource().addDependent(oDialog);
 							}
+							oDialog.open();
 						}.bind(this)
 					})
 				]

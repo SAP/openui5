@@ -1734,14 +1734,6 @@ sap.ui.define([
 				}
 			},
 
-			"table.columnmenu.Item": {
-				title: "Test Page for sap.m.table.columnmenu.Item",
-				module: "test-resources/sap/m/qunit/table/columnmenu/Item.qunit",
-				paths: {
-					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
-				}
-			},
-
 			"table.columnmenu.ItemBase": {
 				title: "Test Page for sap.m.table.columnmenu.ItemBase",
 				module: "test-resources/sap/m/qunit/table/columnmenu/ItemBase.qunit",

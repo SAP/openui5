@@ -328,12 +328,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns propagated action from DesigntimeMetadata
-	 * @param  {string} sActionName - Action name
-	 * @returns {object} Object with the action and its target (origin element)
+	 * Returns the propagated action info from DesigntimeMetadata
+	 * @param {string} sActionName - Action name
+	 * @returns {object} Object with the propagating control and its name
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getPropagatedAction = function(sActionName) {
+	DesignTimeMetadata.prototype.getPropagatedActionInfo = function(sActionName) {
 		const mData = this.getData();
 		const aActions = mData.propagatedActions;
 		if (!aActions) {
@@ -344,7 +344,6 @@ sap.ui.define([
 			return undefined;
 		}
 		return {
-			action: evaluateAction(oAction.action, oAction.propagatingControl),
 			propagatingControl: oAction.propagatingControl,
 			propagatingControlName: oAction.propagatingControlName
 		};

@@ -351,74 +351,40 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when getPropagatedAction is called", function(assert) {
-			this.opropagatingControl = {
-				name: "propagatingControl"
-			};
+		QUnit.test("when getPropagatedActionInfo is called", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
 				data: {
 					// Propagated actions are built in runtime from the "propagateActions" property (see MetadataPropagationUtil)
 					propagatedActions: [
 						{
 							name: "propagatedAction1",
-							action: "firstChangeType",
 							propagatingControl: "propagatingControl",
 							propagatingControlName: "propagatingControlName"
 						},
 						{
 							name: "propagatedAction2",
-							action: {
-								changeType: "secondChangeType"
-							},
-							propagatingControl: "propagatingControl",
-							propagatingControlName: "propagatingControlName"
-						},
-						{
-							name: "propagatedAction3",
-							action(oElement) {
-								return {
-									changeType: oElement.name
-								};
-							},
-							propagatingControl: this.opropagatingControl,
-							propagatingControlName: this.opropagatingControl.name
+							propagatingControl: "propagatingControl2",
+							propagatingControlName: "propagatingControlName2"
 						}
 					]
 				}
 			});
 
 			assert.propEqual(
-				this.oDesignTimeMetadata.getPropagatedAction("propagatedAction1"),
+				this.oDesignTimeMetadata.getPropagatedActionInfo("propagatedAction1"),
 				{
-					action: {
-						changeType: "firstChangeType"
-					},
 					propagatingControl: "propagatingControl",
 					propagatingControlName: "propagatingControlName"
 				},
-				"...for string action, the correct action is returned"
+				"the correct action info is returned for the first action"
 			);
 			assert.propEqual(
-				this.oDesignTimeMetadata.getPropagatedAction("propagatedAction2"),
+				this.oDesignTimeMetadata.getPropagatedActionInfo("propagatedAction2"),
 				{
-					action: {
-						changeType: "secondChangeType"
-					},
-					propagatingControl: "propagatingControl",
-					propagatingControlName: "propagatingControlName"
+					propagatingControl: "propagatingControl2",
+					propagatingControlName: "propagatingControlName2"
 				},
-				"...for object action, the correct action is returned"
-			);
-			assert.propEqual(
-				this.oDesignTimeMetadata.getPropagatedAction("propagatedAction3"),
-				{
-					action: {
-						changeType: "propagatingControl"
-					},
-					propagatingControl: this.opropagatingControl,
-					propagatingControlName: this.opropagatingControl.name
-				},
-				"...for function action, the correct action is returned"
+				"the correct action info is returned for the second action"
 			);
 		});
 	});
