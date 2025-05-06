@@ -23,7 +23,6 @@
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 				"sap/m/table/columnmenu/Menu",
-				"sap/m/table/columnmenu/Item",
 				"sap/m/table/columnmenu/QuickAction",
 				"sap/m/table/columnmenu/QuickSort",
 				"sap/m/table/columnmenu/QuickSortItem",
@@ -32,12 +31,22 @@
 				"sap/m/table/columnmenu/QuickTotal",
 				"sap/m/table/columnmenu/QuickTotalItem",
 				"sap/m/table/columnmenu/ActionItem",
-				"sap/m/Table",
+				"sap/m/Button",
+				"sap/m/Column",
+				"sap/m/ColumnListItem",
+				"sap/m/ComboBox",
+				"sap/m/FlexBox",
 				"sap/m/SegmentedButton",
-				"sap/m/SegmentedButtonItem"
+				"sap/m/SegmentedButtonItem",
+				"sap/m/Table",
+				"sap/m/Text",
+				"sap/m/Toolbar",
+				"sap/m/ToolbarSpacer",
+				"sap/m/library",
+				"sap/ui/layout/GridData",
+				"sap/ui/model/json/JSONModel"
 			], function (
 				ColumnMenu,
-				Item,
 				QuickAction,
 				QuickSort,
 				QuickSortItem,
@@ -46,12 +55,23 @@
 				QuickTotal,
 				QuickTotalItem,
 				ActionItem,
-				Table,
+				Button,
+				Column,
+				ColumnListItem,
+				ComboBox,
+				FlexBox,
 				SegmentedButton,
-				SegmentedButtonItem
+				SegmentedButtonItem,
+				Table,
+				Text,
+				Toolbar,
+				ToolbarSpacer,
+				library,
+				GridData,
+				JSONModel
 			) {
 				var oData = {"items": []};
-				for (var i = 0; i < 25; i++) {
+				for (var i = 0; i < 10; i++) {
 					oData["items"].push({
 						name: "Name " + i,
 						street: "Street " + i,
@@ -76,7 +96,7 @@
 
 				var oQuickFilter = new QuickAction({
 					label: "Quick Filter",
-					content: new sap.m.ComboBox(),
+					content: new ComboBox(),
 					category: "Filter"
 				});
 
@@ -112,105 +132,46 @@
 
 				var oQuickCustomAction = new QuickAction({
 					label: "Quick Custom",
-					content: new sap.m.Button({ text: "Execute Custom Action" }),
+					content: new Button({ text: "Execute Custom Action" }),
 					category: "Sort"
 				});
 
 				var oQuickCustomFilter = new QuickAction({
 					label: "Quick Filter",
-					content: new sap.m.Button({ text: "Execute Custom Filter" }),
+					content: new Button({ text: "Execute Custom Filter" }),
 					category: "Filter"
 				});
 
 				var oQuickCustomLayoutNormal = new QuickAction({
 					label: "Quick Custom Layout Long",
 					content: [
-						new sap.m.Button({ text: "Button 1", layoutData: new sap.ui.layout.GridData({spanS: 4, spanM: 3}) }),
-						new sap.m.Button({ text: "Button 2", layoutData: new sap.ui.layout.GridData({spanS: 4, spanM: 3}) }),
-						new sap.m.Button({ text: "Button 3", layoutData: new sap.ui.layout.GridData({spanS: 4, spanM: 2}) })
+						new Button({ text: "Button 1", layoutData: new GridData({spanS: 4, spanM: 3}) }),
+						new Button({ text: "Button 2", layoutData: new GridData({spanS: 4, spanM: 3}) }),
+						new Button({ text: "Button 3", layoutData: new GridData({spanS: 4, spanM: 2}) })
 					]
 				});
 
 				var oQuickCustomActionLong = new QuickAction({
 					label: "Quick Custom Long",
-					content: new sap.m.FlexBox({
+					content: new FlexBox({
 						items: [
-							new sap.m.Button({ text: "Execute Custom Action 1" }),
-							new sap.m.Button({ text: "Execute Custom Action 2" }),
-							new sap.m.Button({ text: "Execute Custom Action 3" })
+							new Button({ text: "Execute Custom Action 1" }),
+							new Button({ text: "Execute Custom Action 2" }),
+							new Button({ text: "Execute Custom Action 3" })
 						],
-						wrap: sap.m.FlexWrap.Wrap
+						wrap: library.FlexWrap.Wrap
 					})
 				});
 
 				var oQuickMultiCustomActionLong = new QuickAction({
 					label: "Quick Custom Long with HBox and just items",
 					content: [
-						new sap.m.Button({ text: "Standalone Button 1"}),
-						new sap.m.FlexBox({
-							items: [new sap.m.Button({ text: "Execute Custom Action 1" }), new sap.m.Button({ text: "Execute Custom Action 2" }), new sap.m.Button({ text: "Execute Custom Action 3" })],
-							wrap: sap.m.FlexWrap.Wrap
+						new Button({ text: "Standalone Button 1"}),
+						new FlexBox({
+							items: [new Button({ text: "Execute Custom Action 1" }), new Button({ text: "Execute Custom Action 2" }), new Button({ text: "Execute Custom Action 3" })],
+							wrap: library.FlexWrap.Wrap
 						})
 					]
-				});
-
-				var oItemFilter = new Item({
-					label: "Filter",
-					icon: "sap-icon://filter",
-					content: new sap.m.Button({
-						text: "Sample Filter"
-					})
-				});
-
-				var oItemGroup = new Item({
-					label: "Group",
-					icon: "sap-icon://group-2",
-					content: new sap.m.Button({
-						text: "Sample Group"
-					})
-				});
-
-				var oTable = new Table({
-					sticky: [sap.m.Sticky.ColumnHeaders, sap.m.Sticky.HeaderToolbar],
-					headerToolbar: new sap.m.Toolbar({
-						content: [
-							new sap.m.Text({text: "Example Table"}),
-							new sap.m.ToolbarSpacer(),
-							new sap.m.Button({text: "Example Button"})
-						]
-					}),
-					columns: [
-						new sap.m.Column({
-							header: new sap.m.Text({text: "Column A"})
-						}),
-						new sap.m.Column({
-							header: new sap.m.Text({text: "Column B"})
-						}),
-						new sap.m.Column({
-							header: new sap.m.Text({text: "Column C"})
-						})
-					]
-				});
-
-				var oTemplate = new sap.m.ColumnListItem({
-					cells : [
-						new sap.m.Text({text : "{name}"}),
-						new sap.m.Text({text : "{street}"}),
-						new sap.m.Text({text : "{city}"})
-					]
-				});
-				oTable.setModel(new sap.ui.model.json.JSONModel(oData));
-				oTable.bindItems({
-					path: "/items",
-					template : oTemplate,
-					key: "name"
-				});
-
-				var oItemTable = new Item({
-					label: "Table",
-					icon: "sap-icon://table-column",
-					content: oTable,
-					resetButtonEnabled: false
 				});
 
 				var oActionItem = new ActionItem({
@@ -218,27 +179,24 @@
 					icon: "sap-icon://table-column"
 				});
 
-				var aItems = [];
+				var oItemFilter = new ActionItem({
+					label: "Filter",
+					icon: "sap-icon://filter"
+				});
 
-				for (var i = 0; i < 5; i++) {
-					aItems.push(new Item({
-						label: "Custom Action " + i,
-						icon: "sap-icon://action-settings",
-						content: new sap.m.Button({ text: "Sample Action" }),
-						showResetButton: i % 2 == 0,
-						showConfirmButton: i % 3 == 0,
-						showCancelButton: i % 5 == 0
-					}));
-				}
+				var oItemGroup = new ActionItem({
+					label: "Group",
+					icon: "sap-icon://group-2"
+				});
 
 				// Test Menu
 				var oMenu = new ColumnMenu({
 					showTableSettingsButton: true,
 					quickActions: [oQuickSort, oQuickFilter, oQuickGroup, oQuickTotal, oQuickCustomLayoutNormal, oQuickCustomActionLong, oQuickMultiCustomActionLong],
-					items: [oActionItem, oItemFilter, oItemGroup, oItemTable]
+					items: [oActionItem, oItemFilter, oItemGroup]
 				});
 
-				var oButton = new sap.m.Button({
+				var oButton = new Button({
 					text: "Open ColumnMenu",
 					width: "200px",
 					press: function () {
@@ -247,6 +205,69 @@
 				});
 				oButton.addDependent(oMenu);
 				oButton.placeAt("body");
+
+				/**
+				 * @deprecated As of version 1.132
+				 */
+				(function() {
+					var oButtonAddItem = new Button({
+						text: "Add Item",
+						width: "200px",
+						press: addItemToMenu
+					});
+					oButtonAddItem.placeAt("body");
+
+					function addItemToMenu() {
+						var oTable = new Table({
+							sticky: [library.Sticky.ColumnHeaders, library.Sticky.HeaderToolbar],
+							headerToolbar: new Toolbar({
+								content: [
+									new Text({text: "Example Table"}),
+									new ToolbarSpacer(),
+									new Button({text: "Example Button"})
+								]
+							}),
+							columns: [
+								new Column({
+									header: new Text({text: "Column A"})
+								}),
+								new Column({
+									header: new Text({text: "Column B"})
+								}),
+								new Column({
+									header: new Text({text: "Column C"})
+								})
+							]
+						});
+
+						var oTemplate = new ColumnListItem({
+							cells : [
+								new Text({text : "{name}"}),
+								new Text({text : "{street}"}),
+								new Text({text : "{city}"})
+							]
+						});
+						oTable.setModel(new JSONModel(oData));
+						oTable.bindItems({
+							path: "/items",
+							template : oTemplate,
+							key: "name"
+						});
+
+						sap.ui.require([
+							"sap/m/table/columnmenu/Item"
+						], function (Item) {
+								var oItemTable = new Item({
+								label: "Table",
+								icon: "sap-icon://table-column",
+								content: oTable,
+								resetButtonEnabled: false
+							});
+
+							oMenu.addItem(oItemTable);
+						});
+					}
+				})();
 			});
 		});
 	</script>
