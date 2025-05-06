@@ -52,14 +52,13 @@ sap.ui.define([
 			bHasGrandTotal) {
 		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
 			fnLeaves = null,
-			fnResolve,
-			that = this;
+			fnResolve;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
 		this.oAggregation = oAggregation;
 		// #getDownloadUrl must be called early (for recursive hierarchy to determine
-		// $DistanceFromRoot and for data aggregation before adding $$leaves)
+		// $DistanceFromRoot)
 		this.sToString = this.getDownloadUrl("");
 		this.aElements = [];
 		this.aElements.$byPredicate = {};
@@ -73,7 +72,7 @@ sap.ui.define([
 				});
 				this.oCountPromise.$resolve = fnResolve;
 			} else if (oAggregation.groupLevels.length) {
-				mQueryOptions.$$leaves = true; // do this after #getDownloadUrl
+				mQueryOptions.$$leaves = true;
 				this.oCountPromise = new SyncPromise(function (resolve) {
 					fnLeaves = function (oLeaves) {
 						// Note: count has type Edm.Int64, represented as string in OData responses;
@@ -89,8 +88,8 @@ sap.ui.define([
 		this.requestSideEffects = this.oFirstLevel.requestSideEffects; // @borrows ...
 		this.oGrandTotalPromise = undefined;
 		if (bHasGrandTotal) {
-			this.oGrandTotalPromise = new SyncPromise(function (resolve) {
-				_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves,
+			this.oGrandTotalPromise = new SyncPromise((resolve) => {
+				_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves,
 					function (oGrandTotal) {
 						var oGrandTotalCopy;
 
@@ -115,7 +114,7 @@ sap.ui.define([
 					}, fnCount]);
 			});
 		} else if (fnLeaves) {
-			_ConcatHelper.enhanceCache(that.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
+			_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
 		}
 		this.oTreeState = new _TreeState(oAggregation.$NodeProperty,
 			(oNode) => _Helper.getKeyFilter(oNode, this.sMetaPath, this.getTypes()));
