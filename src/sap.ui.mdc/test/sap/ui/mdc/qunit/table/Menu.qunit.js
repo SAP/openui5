@@ -225,6 +225,29 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Responsive table - Accessible resize alternative", function(assert) {
+		const oTable = this.oTable;
+
+		oTable.setType("ResponsiveTable");
+
+		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
+			const oQuickResize = oTable._oQuickActionContainer.getQuickActions().filter(function(oQuickAction) {
+				return oQuickAction.isA("sap.m.table.columnmenu.QuickResize");
+			})[0];
+			assert.ok(oQuickResize, "The QuickActionContainer contains a QuickResize");
+			const oQuickResizeAction = oQuickResize.getEffectiveQuickActions()[0];
+			const oStepInput = oQuickResizeAction.getContent()[0];
+			assert.ok(oStepInput.isA("sap.m.StepInput"), "The content is a StepInput");
+
+			const oColumn = oTable.getColumns()[0].getInnerColumn();
+			assert.equal(oStepInput.getValue(), parseInt(getComputedStyle(oColumn.getDomRef()).width),
+						"The StepInput value is correct");
+			oStepInput.setValue(300);
+			oStepInput.fireChange({value: 300});
+			assert.equal(oColumn.getWidth(), "300px", "The column width is set correctly");
+		});
+	});
+
 	QUnit.test("Grid table - Group", function(assert) {
 		const oTable = this.oTable;
 

@@ -429,6 +429,59 @@ sap.ui.define([
 		Device.system.desktop = bOriginalDesktopSupport;
 	});
 
+	QUnit.test("Resize Input", async function(assert) {
+		const oTable = this.oTable;
+		const oColumnResizeSpy = this.spy();
+		oTable.attachColumnResize(function(oEvent) {
+			oColumnResizeSpy(oEvent.getParameters());
+		});
+		await this.openColumnMenu(0);
+		let oColumn = oTable.getColumns()[0];
+		let oMenu = oColumn.getHeaderMenuInstance();
+		let oQuickResize = this.getQuickAction(oMenu, "QuickResize");
+
+		assert.ok(oQuickResize, "QuickResizeInput is available");
+		assert.ok(oQuickResize.getVisible(), "QuickResizeInput is visible");
+		let oStepInput = oQuickResize.getContent()[0];
+		assert.ok(oStepInput.isA("sap.m.StepInput"), "The QuickResize contains a StepInput");
+		assert.equal(oStepInput.getValue(), 100, "Resize input value is correct (px)");
+
+		oStepInput.setValue("200");
+		oStepInput.fireChange({width: 200});
+		assert.equal(oColumn.getWidth(), "200px", "Column width is set correctly");
+		assert.ok(oColumnResizeSpy.calledOnceWithExactly({
+			id: oTable.getId(),
+			column: oColumn,
+			width: "200px"
+		}), "columnResize event is fired once with the correct parameters");
+		assert.ok(oMenu.isOpen(), "Menu is still open");
+
+		oColumn = oTable.getColumns()[1];
+		oColumn.setWidth("10rem");
+		oMenu.close();
+		await nextUIUpdate();
+
+		await this.openColumnMenu(1);
+		oMenu = oColumn.getHeaderMenuInstance();
+		oQuickResize = this.getQuickAction(oMenu, "QuickResize");
+
+		assert.ok(oQuickResize, "QuickResizeInput is available");
+		assert.ok(oQuickResize.getVisible(), "QuickResizeInput is visible");
+		oStepInput = oQuickResize.getContent()[0];
+		assert.ok(oStepInput.isA("sap.m.StepInput"), "The QuickResizeInput contains a StepInput");
+		assert.equal(oStepInput.getValue(), 160, "Resize input value is correct (px)");
+		oMenu.close();
+		await nextUIUpdate();
+
+		oColumn = oTable.getColumns()[0];
+		oColumn.setResizable(false);
+		await this.openColumnMenu(0);
+		oMenu = oColumn.getHeaderMenuInstance();
+		oQuickResize = this.getQuickAction(oMenu, "QuickResize");
+		assert.notOk(oQuickResize.getVisible(), "QuickResizeInput is not visible");
+		oMenu.close();
+	});
+
 	QUnit.module("API", {
 		beforeEach: function() {
 			this.oMenu = new ColumnMenu();
@@ -452,8 +505,8 @@ sap.ui.define([
 		const oAddAggregationSpy = sinon.spy(this.oMenu, "addAggregation");
 
 		this.oAdapter.injectMenuItems(this.oMenu, this.oColumn);
-		assert.equal(oAddAggregationSpy.callCount, 7,
-			"Menu.addAggregation is called 7 times (sort, filter, group, total, freeze, resize, items)");
+		assert.equal(oAddAggregationSpy.callCount, 8,
+			"Menu.addAggregation is called 8 times (sort, filter, group, total, freeze, resize, resize alternative, items)");
 		assert.ok(oAddAggregationSpy.calledWith("_items", this.oAdapter._oItemContainer),
 			"ItemContainer is added to the menu");
 	});
@@ -462,7 +515,7 @@ sap.ui.define([
 		const oRemoveAggregationSpy = sinon.spy(this.oMenu, "removeAggregation");
 
 		this.oAdapter.removeMenuItems(this.oMenu);
-		assert.equal(oRemoveAggregationSpy.callCount, 7, "Menu.removeAggregation is called 7 times");
+		assert.equal(oRemoveAggregationSpy.callCount, 8, "Menu.removeAggregation is called 8 times");
 		assert.ok(oRemoveAggregationSpy.calledWith("_items", this.oAdapter._oItemContainer),
 			"ItemContainer is removed from the menu");
 	});

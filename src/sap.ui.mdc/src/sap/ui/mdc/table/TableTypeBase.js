@@ -175,6 +175,7 @@ sap.ui.define([
 	TableTypeBase.prototype.enableColumnResize = function() {};
 	TableTypeBase.prototype.disableColumnResize = function() {};
 	TableTypeBase.prototype.createColumnResizeMenuItem = function() {};
+	TableTypeBase.prototype.createColumnResizeInputMenuItem = function() {};
 	TableTypeBase.prototype.updateRowActions = function() {};
 	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
 	TableTypeBase.prototype.getTableStyleClasses = function() { return []; };
