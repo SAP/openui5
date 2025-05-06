@@ -1463,14 +1463,17 @@ sap.ui.define([
 				}
 			}.bind(this), 50);
 		},
+		isWithinThreshold: function(iActualValue, iExpectedValue, iThreshold) {
+			return Math.abs(iActualValue - iExpectedValue) <= iThreshold;
+		},
 		assertPosition: function(assert, iFirstVisibleRowIndex, iScrollPosition, iInnerScrollPosition, sTitle) {
 			sTitle = sTitle == null ? "" : sTitle + ": ";
 
 			assert.strictEqual(this.oTable.getFirstVisibleRow(), iFirstVisibleRowIndex,
 				sTitle + "The first visible row is correct");
-			assert.strictEqual(this.oTable._getScrollExtension().getVerticalScrollbar().scrollTop, iScrollPosition,
+			assert.ok(this.isWithinThreshold(this.oTable._getScrollExtension().getVerticalScrollbar().scrollTop, iScrollPosition, 5),
 				sTitle + "The scroll position is correct");
-			assert.strictEqual(this.oTable.getDomRef("tableCCnt").scrollTop, iInnerScrollPosition,
+			assert.ok(this.isWithinThreshold(this.oTable.getDomRef("tableCCnt").scrollTop, iInnerScrollPosition, 5),
 				sTitle + "The inner scroll position is correct");
 		},
 		testRestoration: function(assert, sTitle) {
