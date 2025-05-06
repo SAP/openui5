@@ -3,22 +3,26 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/command/CompositeCommand",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/rta/util/showMessageBox",
-	"sap/ui/core/Lib"
+	"sap/ui/rta/command/FlexCommand",
+	"sap/ui/rta/command/ManifestCommand",
+	"sap/ui/rta/command/Settings",
+	"sap/ui/rta/util/showMessageBox"
 ], function(
 	ManagedObject,
+	JsControlTreeModifier,
+	Lib,
 	PersistenceWriteAPI,
 	FlUtils,
-	Settings,
 	CompositeCommand,
-	JsControlTreeModifier,
-	showMessageBox,
-	Lib
+	FlexCommand,
+	ManifestCommand,
+	Settings,
+	showMessageBox
 ) {
 	"use strict";
 
@@ -110,7 +114,16 @@ sap.ui.define([
 				lastCommandExecuted: {
 					type: "object",
 					defaultValue: Promise.resolve()
+				},
+
+				/**
+				 * Promise is resolved when last command of the stack is unexecuted
+				 */
+				lastCommandUnExecuted: {
+					type: "object",
+					defaultValue: Promise.resolve()
 				}
+
 			},
 			aggregations: {
 				commands: {
@@ -254,22 +267,81 @@ sap.ui.define([
 		return this.getCommands().length === 0;
 	};
 
+	async function addCommandChangesToPersistence(oCommand) {
+		let oAppComponent;
+		const aSubCommands = this.getSubCommands(oCommand);
+		const aManifestPromises = [];
+		let aChanges = aSubCommands.map((oSubCommand) => {
+			// Filter out runtime only changes
+			if (oSubCommand.getRuntimeOnly()) {
+				return undefined;
+			}
+			// Manifest changes are stored separately
+			if (oSubCommand instanceof ManifestCommand) {
+				aManifestPromises.push(oSubCommand.createAndStoreChange());
+				return undefined;
+			}
+			if (oSubCommand instanceof FlexCommand) {
+				oAppComponent = oSubCommand.getAppComponent();
+				if (oAppComponent) {
+					return oSubCommand.getPreparedChange();
+				}
+			}
+			return undefined;
+		}).filter(Boolean);
+		await Promise.all(aManifestPromises);
+		// Filter out persisted changes
+		if (this._aPersistedChanges) {
+			aChanges = aChanges.filter((oChange) => this._aPersistedChanges.indexOf(oChange.getId()) === -1);
+		}
+		if (oAppComponent) {
+			PersistenceWriteAPI.add({
+				flexObjects: aChanges,
+				selector: oAppComponent
+			});
+		}
+	}
+
+	function removeCommandChangesFromPersistence(oCommand) {
+		let oAppComponent;
+		const aFlexObjects = [];
+		const aSubCommands = this.getSubCommands(oCommand);
+		aSubCommands.forEach((oSubCommand) => {
+			// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
+			if (!(oSubCommand instanceof FlexCommand || oSubCommand instanceof ManifestCommand)
+				|| oSubCommand.getRuntimeOnly()) {
+				return;
+			}
+			const oChange = oSubCommand.getPreparedChange();
+			oAppComponent = oSubCommand.getAppComponent();
+			if (oAppComponent) {
+				aFlexObjects.push(oChange);
+			}
+		});
+		if (oAppComponent) {
+			PersistenceWriteAPI.remove({
+				flexObjects: aFlexObjects,
+				selector: oAppComponent
+			});
+		}
+	}
+
 	Stack.prototype.execute = function() {
 		this.setLastCommandExecuted(
-			this.getLastCommandExecuted().catch(function() {
+			this.getLastCommandExecuted().catch(() => {
 			// continue also if previous command failed
-			}).then(function() {
+			}).then(async () => {
 				var oCommand = this._getCommandToBeExecuted();
 				if (oCommand) {
 					var mParam = {
 						command: oCommand,
 						undo: false
 					};
-					return oCommand.execute()
 
-					.then(this._waitForCommandExecutionHandler.bind(this, mParam))
-
-					.then(function() {
+					try {
+						await addCommandChangesToPersistence.call(this, oCommand);
+						await oCommand.execute();
+						await this._waitForCommandExecutionHandler(mParam);
 						this._toBeExecuted--;
 						const aDiscardedChanges = oCommand.getDiscardedChanges?.();
 						if (aDiscardedChanges) {
@@ -277,13 +349,13 @@ sap.ui.define([
 						}
 						this.fireCommandExecuted(mParam);
 						this.fireModified();
-					}.bind(this))
-
-					.catch(function(oError) {
-						oError ||= new Error("Executing of the change failed.");
+					} catch (oCaughtError) {
+						const oError = oCaughtError || new Error("Executing of the change failed.");
 						oError.index = this._toBeExecuted;
 						oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
 						this._toBeExecuted--;
+						// Remove Flex Changes for failed command from persistence
+						removeCommandChangesFromPersistence.call(this, oError.command);
 						var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 						// AddXMLAtExtensionPoint errors explain to the user what they did wrong, so they shouldn't open an incident
 						const sErrorMessage = oCommand.isA("sap.ui.rta.command.AddXMLAtExtensionPoint") ?
@@ -293,41 +365,43 @@ sap.ui.define([
 							{title: oRtaResourceBundle.getText("HEADER_ERROR")},
 							"error"
 						);
-						return Promise.reject(oError);
-					}.bind(this));
+						throw oError;
+					}
 				}
 				return undefined;
-			}.bind(this))
+			})
 		);
 		return this.getLastCommandExecuted();
 	};
 
 	Stack.prototype._unExecute = function() {
-		if (this.canUndo()) {
-			this._bUndoneCommands = true;
-			this._toBeExecuted++;
-			var oCommand = this._getCommandToBeExecuted();
-			const aDiscardedChanges = oCommand.getDiscardedChanges?.();
-			if (oCommand) {
-				var mParam = {
-					command: oCommand,
-					undo: true
-				};
-				return oCommand.undo()
-
-				.then(this._waitForCommandExecutionHandler.bind(this, mParam))
-
-				.then(function() {
-					if (aDiscardedChanges) {
-						handleDiscardedChanges.call(this, aDiscardedChanges, true);
+		this.setLastCommandUnExecuted(
+			this.getLastCommandUnExecuted().catch(() => {
+			// continue also if previous undo failed
+			}).then(async () => {
+				if (this.canUndo()) {
+					this._bUndoneCommands = true;
+					this._toBeExecuted++;
+					var oCommand = this._getCommandToBeExecuted();
+					const aDiscardedChanges = oCommand.getDiscardedChanges?.();
+					if (oCommand) {
+						var mParam = {
+							command: oCommand,
+							undo: true
+						};
+						await oCommand.undo();
+						removeCommandChangesFromPersistence.call(this, oCommand);
+						this._waitForCommandExecutionHandler(mParam);
+						if (aDiscardedChanges) {
+							handleDiscardedChanges.call(this, aDiscardedChanges, true);
+						}
+						this.fireCommandExecuted(mParam);
+						this.fireModified();
 					}
-					this.fireCommandExecuted(mParam);
-					this.fireModified();
-				}.bind(this));
-			}
-			return Promise.resolve();
-		}
-		return Promise.resolve();
+				}
+			})
+		);
+		return this.getLastCommandUnExecuted();
 	};
 
 	Stack.prototype.canUndo = function() {

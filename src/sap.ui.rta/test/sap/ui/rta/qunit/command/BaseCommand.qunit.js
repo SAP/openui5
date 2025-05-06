@@ -811,8 +811,12 @@ sap.ui.define([
 			this.command = new BaseCommand();
 			this.command2 = new BaseCommand();
 			this.command3 = new BaseCommand();
-			this.command4 = new FlexCommand();
-			this.command5 = new FlexCommand();
+			this.command4 = new FlexCommand({
+				selector: { id: "mySelectorId" }
+			});
+			this.command5 = new FlexCommand({
+				selector: { id: "mySelectorId" }
+			});
 			this.compositeCommand = new CompositeCommand();
 			sandbox.stub(MessageBox, "error");
 		},
