@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
-	"sap/m/table/columnmenu/Item",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickSort",
 	"sap/m/table/columnmenu/QuickSortItem",
@@ -9,23 +8,15 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
 	"sap/m/table/columnmenu/ActionItem",
-	"sap/m/Table",
+	"sap/m/Button",
+	"sap/m/ComboBox",
+	"sap/m/FlexBox",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
-	"sap/m/ComboBox",
-	"sap/m/Button",
-	"sap/ui/layout/GridData",
-	"sap/m/FlexBox",
 	"sap/m/library",
-	"sap/m/Toolbar",
-	"sap/m/Text",
-	"sap/m/ToolbarSpacer",
-	"sap/m/Column",
-	"sap/m/ColumnListItem",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/layout/GridData"
 ], function(
 	ColumnMenu,
-	Item,
 	QuickAction,
 	QuickSort,
 	QuickSortItem,
@@ -34,31 +25,17 @@ sap.ui.define([
 	QuickTotal,
 	QuickTotalItem,
 	ActionItem,
-	Table,
+	Button,
+	ComboBox,
+	FlexBox,
 	SegmentedButton,
 	SegmentedButtonItem,
-	ComboBox,
-	Button,
-	GridData,
-	FlexBox,
-	mobileLibrary,
-	Toolbar,
-	Text,
-	ToolbarSpacer,
-	Column,
-	ColumnListItem,
-	JSONModel
+	library,
+	GridData
 ) {
 	"use strict";
-
-	// shortcut for sap.m.Sticky
-	const Sticky = mobileLibrary.Sticky;
-
-	// shortcut for sap.m.FlexWrap
-	const FlexWrap = mobileLibrary.FlexWrap;
-
 	var oData = {"items": []};
-	for (var i = 0; i < 25; i++) {
+	for (var i = 0; i < 10; i++) {
 		oData["items"].push({
 			name: "Name " + i,
 			street: "Street " + i,
@@ -146,7 +123,7 @@ sap.ui.define([
 				new Button({ text: "Execute Custom Action 2" }),
 				new Button({ text: "Execute Custom Action 3" })
 			],
-			wrap: FlexWrap.Wrap
+			wrap: library.FlexWrap.Wrap
 		})
 	});
 
@@ -156,68 +133,9 @@ sap.ui.define([
 			new Button({ text: "Standalone Button 1"}),
 			new FlexBox({
 				items: [new Button({ text: "Execute Custom Action 1" }), new Button({ text: "Execute Custom Action 2" }), new Button({ text: "Execute Custom Action 3" })],
-				wrap: FlexWrap.Wrap
+				wrap: library.FlexWrap.Wrap
 			})
 		]
-	});
-
-	var oItemFilter = new Item({
-		label: "Filter",
-		icon: "sap-icon://filter",
-		content: new Button({
-			text: "Sample Filter"
-		})
-	});
-
-	var oItemGroup = new Item({
-		label: "Group",
-		icon: "sap-icon://group-2",
-		content: new Button({
-			text: "Sample Group"
-		})
-	});
-
-	var oTable = new Table({
-		sticky: [Sticky.ColumnHeaders, Sticky.HeaderToolbar],
-		headerToolbar: new Toolbar({
-			content: [
-				new Text({text: "Example Table"}),
-				new ToolbarSpacer(),
-				new Button({text: "Example Button"})
-			]
-		}),
-		columns: [
-			new Column({
-				header: new Text({text: "Column A"})
-			}),
-			new Column({
-				header: new Text({text: "Column B"})
-			}),
-			new Column({
-				header: new Text({text: "Column C"})
-			})
-		]
-	});
-
-	var oTemplate = new ColumnListItem({
-		cells : [
-			new Text({text : "{name}"}),
-			new Text({text : "{street}"}),
-			new Text({text : "{city}"})
-		]
-	});
-	oTable.setModel(new JSONModel(oData));
-	oTable.bindItems({
-		path: "/items",
-		template : oTemplate,
-		key: "name"
-	});
-
-	var oItemTable = new Item({
-		label: "Table",
-		icon: "sap-icon://table-column",
-		content: oTable,
-		resetButtonEnabled: false
 	});
 
 	var oActionItem = new ActionItem({
@@ -225,24 +143,21 @@ sap.ui.define([
 		icon: "sap-icon://table-column"
 	});
 
-	var aItems = [];
+	var oItemFilter = new ActionItem({
+		label: "Filter",
+		icon: "sap-icon://filter"
+	});
 
-	for (var i = 0; i < 5; i++) {
-		aItems.push(new Item({
-			label: "Custom Action " + i,
-			icon: "sap-icon://action-settings",
-			content: new Button({ text: "Sample Action" }),
-			showResetButton: i % 2 == 0,
-			showConfirmButton: i % 3 == 0,
-			showCancelButton: i % 5 == 0
-		}));
-	}
+	var oItemGroup = new ActionItem({
+		label: "Group",
+		icon: "sap-icon://group-2"
+	});
 
 	// Test Menu
 	var oMenu = new ColumnMenu({
 		showTableSettingsButton: true,
 		quickActions: [oQuickSort, oQuickFilter, oQuickGroup, oQuickTotal, oQuickCustomLayoutNormal, oQuickCustomActionLong, oQuickMultiCustomActionLong],
-		items: [oActionItem, oItemFilter, oItemGroup, oItemTable]
+		items: [oActionItem, oItemFilter, oItemGroup]
 	});
 
 	var oButton = new Button({

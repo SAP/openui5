@@ -302,11 +302,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("conditions & Tokens", (assert) => {
+	QUnit.test("conditions & Tokens", async (assert) => {
 
 		assert.equal(MultiValueFieldDelegate.createCondition.callCount, 6, "Conditions created via delegate");
 
-		const aConditions = oFieldEdit.getConditions();
+		let aConditions = oFieldEdit.getConditions();
 		assert.ok(aConditions.length, 3, "Conditions created");
 		assert.equal(aConditions[0].operator, OperatorName.EQ, "Condition0 operator");
 		assert.equal(aConditions[0].values[0], 1, "Condition0 value0");
@@ -328,6 +328,32 @@ sap.ui.define([
 		assert.equal(aTokens[0].getText(), "Text 1", "Token0 text");
 		assert.equal(aTokens[1].getText(), "Text 2", "Token1 text");
 		assert.equal(aTokens[2].getText(), "Text 3", "Token2 text");
+
+		oModel.setData({
+			items: [{key: undefined, description: undefined}] // fake pending data
+		});
+		oModel.checkUpdate(true);
+
+		await new Promise((resolve) => {setTimeout(resolve,0);});
+
+		aConditions = oFieldEdit.getConditions();
+		assert.ok(aConditions.length, 1, "Conditions created");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "Condition0 operator");
+		assert.equal(aConditions[0].values[0], undefined, "Condition0 value0");
+		assert.equal(aConditions[0].values[1], undefined, "Condition0 value1");
+		assert.equal(aConditions[0].validated, ConditionValidated.NotValidated, "Condition0 validated");
+
+		aContent = oFieldEdit.getAggregation("_content");
+		oContent = aContent?.length > 0 && aContent[0];
+		aTokens = oContent.getTokens();
+		assert.ok(aTokens.length, 1, "Tokens created");
+		assert.equal(aTokens[0].getText(), "0", "Token0 text"); // as Integer formats undefined into 0
+
+		aContent = oFieldDisplay.getAggregation("_content");
+		oContent = aContent?.length > 0 && aContent[0];
+		aTokens = oContent.getTokens();
+		assert.ok(aTokens.length, 1, "Tokens created");
+		assert.equal(aTokens[0].getText(), "0", "Token0 text"); // as Integer formats undefined into 0
 
 	});
 

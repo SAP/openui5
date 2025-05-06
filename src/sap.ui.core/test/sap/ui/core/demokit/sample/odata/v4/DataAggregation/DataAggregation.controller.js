@@ -2,11 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/Log",
+	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (Controller, Filter, JSONModel, TestUtils) {
+], function (Log, MessageBox, Controller, Filter, JSONModel, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation", {
@@ -72,11 +74,13 @@ sap.ui.define([
 					oTable.getRowMode().setFixedBottomRowCount(1);
 					this._oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
 				}
+				this.getView().setModel(oRowsBinding.getModel(), "header");
+				this.getView().setBindingContext(oRowsBinding.getHeaderContext(), "header");
 				if (sLeafCount) {
 					oRowsBinding.changeParameters({$count : sLeafCount === "true"});
-					oTitle.setBindingContext(oRowsBinding.getHeaderContext());
 					oTitle.applySettings({
-						text : "Sales Amount by Account Responsible ({$count})"
+						text : "Sales Amount by Account Responsible"
+							+ " (Leaves: {header>$count}, Selected: {header>$selectionCount})"
 					});
 				}
 				if (sSubtotalsAtBottomOnly) {
@@ -99,10 +103,33 @@ sap.ui.define([
 			}, this);
 		},
 
+		onRefresh : function () {
+			this.byId("table").getBinding("rows").refresh();
+		},
+
 		onSearch : function () {
 			this._oAggregation.search
 				= this.getView().getModel("ui").getProperty("/sSearch");
 			this.byId("table").getBinding("rows").setAggregation(this._oAggregation);
+		},
+
+		onShowSelection : function () {
+			const oListBinding = this.byId("table").getBinding("rows");
+			const bSelectAll = oListBinding.getHeaderContext().isSelected();
+			const aPaths = oListBinding.getAllCurrentContexts()
+				.filter((oContext) => oContext.isSelected() !== bSelectAll)
+				.map((oContext) => oContext.getPath());
+			MessageBox.information((bSelectAll ? "All except " : "") + aPaths.join("\n"),
+				{title : "Selected Rows"});
+
+			oListBinding.getAllCurrentContexts().forEach((oContext) => {
+				const bSelectedGetter = oContext.isSelected();
+				const bSelectedProperty = oContext.getProperty("@$ui5.context.isSelected") ?? false;
+				if (bSelectedGetter !== bSelectedProperty) {
+					Log.warning(`${bSelectedGetter} vs. ${bSelectedProperty}`,
+						oContext, "sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation");
+				}
+			});
 		},
 
 		onToggleExpand : function (oEvent) {
