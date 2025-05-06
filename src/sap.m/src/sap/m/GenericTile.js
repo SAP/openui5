@@ -1609,23 +1609,40 @@ sap.ui.define([
 	 */
 	 GenericTile.prototype._getSizeDescription = function () {
 		var sText = "",
-			frameType = this.getFrameType();
+		    frameType = this.getFrameType(),
+                    bHasPress = this.hasListeners("press"),
+                    sUrl = this.getUrl();
 		if (this.getMode() === GenericTileMode.LineMode) {
 			var bIsLink = this.getUrl() && !this._isInActionScope() && this.getState() !== LoadState.Disabled;
-			var bHasPress = this.hasListeners("press");
 			if (bIsLink || bHasPress) {
 				sText = "GENERIC_TILE_LINK";
 			} else {
 				sText = "GENERIC_TILE_LINE_SIZE";
 			}
 		} else if (frameType === FrameType.OneByHalf) {
-			sText = "GENERIC_TILE_FLAT_SIZE";
-		} else if (frameType === FrameType.TwoByHalf) {
-			sText = "GENERIC_TILE_FLAT_WIDE_SIZE";
-		} else if (frameType === FrameType.TwoByOne) {
-			sText = "GENERIC_TILE_WIDE_SIZE";
-		} else if (frameType === FrameType.OneByOne) {
-			sText = "GENERIC_TILE_ROLE_DESCRIPTION";
+            if (bHasPress || sUrl) {
+                sText = "GENERIC_TILE_NAVIGATIONAL_FLAT_SIZE";
+            } else {
+                sText = "GENERIC_TILE_ACTION_FLAT_SIZE";
+            }
+       } else if (frameType === FrameType.TwoByHalf) {
+            if (bHasPress || sUrl) {
+                sText = "GENERIC_TILE_NAVIGATIONAL_FLAT_WIDE_SIZE";
+            } else {
+                sText = "GENERIC_TILE_ACTION_FLAT_WIDE_SIZE";
+            }
+       } else if (frameType === FrameType.TwoByOne) {
+            if (bHasPress || sUrl) {
+                sText = "GENERIC_TILE_NAVIGATIONAL_WIDE_SIZE";
+            } else {
+                sText = "GENERIC_TILE_ACTION_WIDE_SIZE";
+            }
+       } else if (frameType === FrameType.OneByOne) {
+            if (bHasPress || sUrl) {
+                sText = "GENERIC_TILE_NAVIGATIONAL_ROLE_DESCRIPTION";
+            } else {
+                sText = "GENERIC_TILE_ACTION_ROLE_DESCRIPTION";
+            }
 		}
 		return this._oRb.getText(sText);
 	};
