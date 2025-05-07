@@ -129,6 +129,17 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
+	GridTableType.prototype.init = function() {
+		TableTypeBase.prototype.init.apply(this, arguments);
+
+		this.oTypeSettingsModel = new JSONModel({
+			p13nFixedColumnCount: null
+		});
+	};
+
+	/**
+	 * @inheritDoc
+	 */
 	GridTableType.prototype.exit = function() {
 		TableTypeBase.prototype.exit.apply(this, arguments);
 		this.disableColumnResize();
@@ -242,7 +253,6 @@ sap.ui.define([
 			SingleMaster: "RowOnly"
 		};
 		const mRowSettingsConfig = this.getRowSettingsConfig();
-
 		const mSettings = {
 			enableBusyIndicator: true,
 			enableColumnReordering: false,
@@ -274,9 +284,7 @@ sap.ui.define([
 				}
 			},
 			models: {
-				$typeSettings: new JSONModel({
-					p13nFixedColumnCount: null
-				})
+				$typeSettings: this.oTypeSettingsModel
 			},
 			columnFreeze: [onColumnFreeze, this],
 			beforeOpenContextMenu: [onBeforeOpenContextMenu, this]
@@ -576,11 +584,10 @@ sap.ui.define([
 
 	GridTableType.prototype.onModifications = function() {
 		const oTable = this.getTable();
-		const oGridTable = this.getInnerTable();
 		const oState = oTable._getXConfig();
 		const oTypeState = oState?.aggregations?.type;
 
-		oGridTable.getModel("$typeSettings").setProperty("/p13nFixedColumnCount", oTypeState?.GridTable?.fixedColumnCount ?? 0);
+		this.oTypeSettingsModel.setProperty("/p13nFixedColumnCount", oTypeState?.GridTable?.fixedColumnCount ?? 0);
 	};
 
 	/**
