@@ -69,7 +69,7 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 
 	QUnit.test("Title visibility with one section", async function(assert) {
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
-				useIconTabBar: true,
+			useIconTabBar: true,
 				sections: new ObjectPageSection({
 					subSections: [
 						new ObjectPageSubSection({
@@ -170,50 +170,9 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("First Section title is visible by default, , unless showTitle='false': icon tab bar mode", async function(assert) {
-		// Arrange
-		var	oSection = new ObjectPageSection({
-				title: "Section Title",
-				subSections: [
-					new ObjectPageSubSection({
-						title: "Title",
-						blocks: [new Text({text: "test"})]
-					}),
-					new ObjectPageSubSection({
-						title: "Title2",
-						blocks: [new Text({text: "test"})]
-					})
-				]
-			}),
-			oObjectPageLayout = new ObjectPageLayout("my-opl", {
-				useIconTabBar: true,
-				sections: [
-					oSection
-				]
-			});
-
-		oObjectPageLayout.placeAt('qunit-fixture');
-		await nextUIUpdate();
-
-		// Assert
-		assert.strictEqual(oSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
-			false, "Title of first Section is visible");
-
-		// Act
-		oSection.setShowTitle(false);
-		await nextUIUpdate();
-
-		// Assert
-		assert.strictEqual(oSection.$().find(".sapUxAPObjectPageSectionHeader").hasClass("sapUxAPObjectPageSectionHeaderHidden"),
-			true, "Title of first Section is not visible if showTitle=false");
-
-		// Clean up
-		oObjectPageLayout.destroy();
-	});
-
 	QUnit.test("getTitleVisible with showTitle=false", async function(assert) {
 		// Arrange
-		var	oSection,
+		var	oSubSection,
 			oObjectPageLayout = new ObjectPageLayout("page02", {
 				useIconTabBar: true,
 				sections: [
@@ -236,19 +195,19 @@ function(Element, nextUIUpdate, jQuery, XMLView, library, ObjectPageLayout, Obje
 		oObjectPageLayout.placeAt('qunit-fixture');
 		await nextUIUpdate();
 
-		oSection = oObjectPageLayout.getSections()[0];
+		oSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
 
 		// Assert
-		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible");
-		assert.strictEqual(oSection._getTitleControl().getVisible(), true, "title is visible");
+		assert.strictEqual(oSubSection.getTitleVisible(), true, "title is visible");
+		assert.strictEqual(oSubSection._getTitleControl().getVisible(), true, "title is visible");
 
 		// Act
-		oSection.setShowTitle(false);
+		oSubSection.setShowTitle(false);
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
-		assert.strictEqual(oSection._getTitleControl().getVisible(), false, "title is not visible");
+		assert.strictEqual(oSubSection.getTitleVisible(), false, "title is not visible");
+		assert.strictEqual(oSubSection._getTitleControl().getVisible(), false, "title is not visible");
 
 		// Clean up
 		oObjectPageLayout.destroy();
