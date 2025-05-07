@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/IllustratedMessageType",
 	"sap/m/table/columnmenu/ActionItem",
-	"sap/m/table/columnmenu/Item",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/table/columnmenu/QuickActionContainer",
@@ -29,7 +28,6 @@ sap.ui.define([
 	library,
 	IllustratedMessageType,
 	ActionItem,
-	Item,
 	Menu,
 	QuickAction,
 	QuickActionContainer,
@@ -70,15 +68,15 @@ sap.ui.define([
 
 			aQuickActions.push(new QuickAction({label: sText})); //quick action without content
 			aPQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
-			aItems.push(new Item({label: sText, content: new Button({text: sText})}));
-			aPItems.push(new Item({label: sText, content: new Button({text: sText})}));
+			aItems.push(new ActionItem({label: sText}));
+			aPItems.push(new ActionItem({label: sText}));
 
 			if (bMultiple) {
 				for (let i = 0; i < 2; i++) {
 					aQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
 					aPQuickActions.push(new QuickAction({label: sText, content: new Button({text: sText})}));
-					aItems.push(new Item({label: sText, content: new Button({text: sText})}));
-					aPItems.push(new Item({label: sText, content: new Button({text: sText})}));
+					aItems.push(new ActionItem({label: sText}));
+					aPItems.push(new ActionItem({label: sText}));
 				}
 			}
 
@@ -140,8 +138,8 @@ sap.ui.define([
 		this.oColumnMenu = new Menu({
 			quickActions: [new QuickAction({label: "My Label", content: new Button({text: "My button"}), visible: false})],
 			items: [
-				new Item({label: "My Visible and then Invisible Label", content: new Button({text: "My button"}), visible: true}),
-				new Item({label: "My Visible Label", content: new Button({text: "My button"}), visible: true})
+				new ActionItem({label: "My Visible and then Invisible Label", visible: true}),
+				new ActionItem({label: "My Visible Label", visible: true})
 			]
 		});
 
@@ -159,7 +157,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				items: [new Item({label: sText, content: new Button({text: sText})})]
+				items: [new ActionItem({label: sText})]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
@@ -196,9 +194,9 @@ sap.ui.define([
 			const aPQuickActions = bPQuickActions ? [new QuickAction({label: sText, content: new Button({text: sText})})] : [];
 			const aItems = bItems ? [
 				new ActionItem({label: sText, press: function() {}}),
-				new Item({label: sText, content: new Button({text: sText})})
+				new ActionItem({label: sText})
 			] : [];
-			const aPItems = bPItems ? [new Item({label: sText, content: new Button({text: sText})})] : [];
+			const aPItems = bPItems ? [new ActionItem({label: sText, content: new Button({text: sText})})] : [];
 
 			this.oColumnMenu = new Menu({
 				quickActions: aQuickActions,
@@ -339,27 +337,6 @@ sap.ui.define([
 		assert.notOk(this.oColumnMenu._oItemsContainer.oLayout.getShowFooter());
 	});
 
-	QUnit.test("View switch event", async function(assert) {
-		this.createMenu(false, false, true, true);
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		const aCalls = [],
-			fnViewSwitch = function(oEvt) {
-				aCalls.push({source: oEvt.getParameter("source"), target: oEvt.getParameter("target")});
-			},
-			oSpy = this.spy(fnViewSwitch);
-		this.oColumnMenu._oItemsContainer.attachEvent("afterViewSwitch", oSpy);
-
-		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		assert.equal(oSpy.callCount, 1);
-		assert.equal(aCalls[0].source, "$default");
-		assert.equal(aCalls[0].target, sId);
-	});
-
 	QUnit.test("Check focus when control specific items are given", async function(assert) {
 		this.createMenu(true, true, true, true);
 		this.oColumnMenu.setShowTableSettingsButton(true);
@@ -396,37 +373,6 @@ sap.ui.define([
 
 		const sId = this.oColumnMenu.getQuickActions()[0].getContent()[0].getId();
 		assert.equal(document.activeElement.id, sId);
-	});
-
-	QUnit.test("Check focus when view is switched", async function(assert) {
-		this.createMenu(false, false, true, true);
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		// Navigate to item
-		const sId = this.oColumnMenu.getAggregation("_items")[0].getId();
-
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
-	});
-
-	QUnit.test("Check focus when view is switched back", async function(assert) {
-		this.createMenu(true, true, true, true);
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		// Navigate to item
-		const sId = this.oColumnMenu.getItems()[1].getId(); // Third item (Control Item, App Item, *App Item*)
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		// Navigate to item
-		this.oColumnMenu._oItemsContainer.switchView("$default");
-		await nextUIUpdate();
-
-		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[2].getId());
 	});
 
 	QUnit.test("Reusing quick actions in menus", async function(assert) {
@@ -570,7 +516,7 @@ sap.ui.define([
 		this.oColumnMenu.close();
 		await menuClosed(this.oColumnMenu);
 
-		const oItem = new Item({label: "Added Item", content: new Button({text: "Added Button"})});
+		const oItem = new ActionItem({label: "Added Item"});
 		this.oColumnMenu.addItem(oItem);
 		await nextUIUpdate();
 		this.oColumnMenu.openBy(this.oButton);
@@ -647,106 +593,6 @@ sap.ui.define([
 		assert.notOk(this.oColumnMenu._oIllustratedMessage.getDomRef(), "Illustrated message is not rendered");
 	});
 
-	QUnit.module("Button states", {
-		beforeEach: async function() {
-			this.oItem = new Item({label: sText, content: new Button({text: sText})});
-			this.oColumnMenu = new Menu({
-				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				items: [this.oItem]
-			});
-			this.oButton = new Button();
-			this.oButton.placeAt("qunit-fixture");
-			await nextUIUpdate();
-		},
-		afterEach: function() {
-			this.oColumnMenu.destroy();
-			this.oButton.destroy();
-			this.oItem.destroy();
-		}
-	});
-
-	QUnit.test("Check default button settings", async function(assert) {
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		// Navigate to first item
-		const sId = this.oColumnMenu.getItems()[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		assert.ok(this.oColumnMenu._oBtnOk.getVisible());
-		assert.ok(this.oColumnMenu._oBtnCancel.getVisible());
-		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
-
-		assert.ok(this.oColumnMenu._oBtnOk.getEnabled());
-		assert.ok(this.oColumnMenu._oBtnCancel.getEnabled());
-		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
-	});
-
-	QUnit.test("Switch reset button states", async function(assert) {
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		// Navigate to first item
-		const sId = this.oColumnMenu.getItems()[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		this.oItem.changeButtonSettings({
-			reset: {visible: false}
-		});
-		await nextUIUpdate();
-
-		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
-		assert.notOk(this.oItem.getButtonSettings()["reset"]["visible"]);
-
-		this.oItem.changeButtonSettings({
-			reset: {visible: true, enabled: false}
-		});
-		await nextUIUpdate();
-
-		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
-		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
-		assert.ok(this.oItem.getButtonSettings()["reset"]["visible"]);
-		assert.notOk(this.oItem.getButtonSettings()["reset"]["enabled"]);
-	});
-
-	QUnit.test("Switch cancel button states", async function(assert) {
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		// Navigate to first item
-		const sId = this.oColumnMenu.getItems()[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		this.oItem.changeButtonSettings({
-			cancel: {visible: false}
-		});
-		await nextUIUpdate();
-
-		assert.notOk(this.oColumnMenu._oBtnCancel.getVisible());
-		assert.notOk(this.oItem.getButtonSettings()["cancel"]["visible"]);
-	});
-
-	QUnit.test("Switch confirm button states", async function(assert) {
-		this.oColumnMenu.openBy(this.oButton);
-		await nextUIUpdate();
-
-		// Navigate to first item
-		const sId = this.oColumnMenu.getItems()[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		this.oItem.changeButtonSettings({
-			confirm: {visible: false}
-		});
-		await nextUIUpdate();
-
-		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
-		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);
-	});
-
 	QUnit.module("Accessibility", {
 		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
@@ -756,7 +602,7 @@ sap.ui.define([
 				],
 				items: [
 					new ActionItem({label: sText, press: function() {}}),
-					new Item({label: sText, content: new Button({text: sText})})
+					new ActionItem({label: sText})
 				]
 			});
 			this.oButton = new Button();
@@ -797,7 +643,7 @@ sap.ui.define([
 		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
 				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
-				items: [new Item({label: sText, content: new Button({text: sText})})]
+				items: [new ActionItem({label: sText})]
 			});
 			this.oButton = new Button();
 			this.oButton.placeAt("qunit-fixture");
@@ -843,7 +689,7 @@ sap.ui.define([
 					new ActionItem({
 						label: "Test ActionItem"
 					}),
-					new Item({
+					new ActionItem({
 						label: "Test Item"
 					})
 				]
@@ -921,77 +767,6 @@ sap.ui.define([
 		clock.tick(1000);
 		clock.restore();
 		assert.ok(this.oColumnMenu.isOpen(), "The column menu is still open because preventDefault was called in the event handler");
-	});
-
-	QUnit.test("Item buttons", async function(assert) {
-		const oMenu = this.oColumnMenu;
-		const oButton = this.oButton;
-		oMenu.openBy(oButton);
-		await nextUIUpdate();
-
-		// Navigate to first item
-		const oItem = oMenu.getItems()[1];
-		const sId = oItem.getId();
-		oMenu._oItemsContainer.switchView(sId);
-		await nextUIUpdate();
-
-		return new Promise(function(resolve) {
-			oItem.attachEventOnce("confirm", function(oEvent) {
-				oEvent.preventDefault();
-				assert.ok("confirm event fired");
-				resolve();
-			});
-			oMenu._oBtnOk.firePress();
-		}).then(function() {
-			assert.ok(oMenu.isOpen(), "default prevented");
-
-			return new Promise(function(resolve) {
-				oItem.attachEventOnce("confirm", function() {
-					assert.ok("confirm event fired");
-					menuClosed(oMenu).then(resolve);
-				});
-				oMenu._oBtnOk.firePress();
-			});
-		}).then(async function() {
-			assert.notOk(oMenu.isOpen(), "menu is closed");
-
-			oMenu.openBy(oButton);
-			oMenu._oItemsContainer.switchView(sId);
-			await nextUIUpdate();
-
-			return new Promise(function(resolve) {
-				oItem.attachEventOnce("cancel", function(oEvent) {
-					oEvent.preventDefault();
-					assert.ok("cancel event fired");
-					resolve();
-				});
-				oMenu._oBtnCancel.firePress();
-			});
-		}).then(function() {
-			assert.ok(oMenu.isOpen(), "default prevented");
-
-			return new Promise(function(resolve) {
-				oItem.attachEventOnce("cancel", function() {
-					assert.ok("cancel event fired");
-					menuClosed(oMenu).then(resolve);
-				});
-				oMenu._oBtnCancel.firePress();
-			});
-		}).then(async function() {
-			assert.notOk(oMenu.isOpen(), "menu is closed");
-
-			oMenu.openBy(oButton);
-			oMenu._oItemsContainer.switchView(sId);
-			await nextUIUpdate();
-
-			return new Promise(function(resolve) {
-				oItem.attachEventOnce("reset", function() {
-					assert.ok("reset event fired");
-					resolve();
-				});
-				oMenu._oItemsContainer.getHeader().getContentRight()[0].firePress();
-			});
-		});
 	});
 
 	QUnit.module("Auto close behavior", {
@@ -1086,73 +861,6 @@ sap.ui.define([
 		oButton2.destroy();
 	});
 
-	QUnit.test("Auto close behavior when the Menu contains a control that opens a popup", function(assert) {
-		const clock = sinon.useFakeTimers();
-		const oComboBox = new ComboBox({
-			items: [
-				new CoreItem({key: "v1", text: "Value 1"}),
-				new CoreItem({key: "v2", text: "Value 2"})
-			]
-		});
-
-		this.oColumnMenu.addItem(
-			new Item({
-				label: "test item",
-				content: oComboBox
-			})
-		);
-
-		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu.isOpen());
-
-		const sId = this.oColumnMenu.getItems()[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		clock.tick(1000);
-		oComboBox.open();
-		QUnitUtils.triggerEvent("mousedown", oComboBox._getList().getItems()[0].$()[0].firstChild);
-		clock.tick(1000);
-		clock.restore();
-		assert.ok(this.oColumnMenu.isOpen());
-	});
-
-	QUnit.test("Auto close behavior when the Menu item opens a dialog", function(assert) {
-		const oButtonInsideDialog = new Button();
-		const oDialog = new Dialog({
-			content: [oButtonInsideDialog]
-		});
-
-		const oButtonOpenDialog = new Button({
-			press: function() {
-				oDialog.open();
-			}
-		});
-
-		this.oColumnMenu.addItem(
-			new Item({
-				label: "test item",
-				content: oButtonOpenDialog
-			})
-		);
-
-		this.oColumnMenu.addDependent(oDialog);
-		this.oColumnMenu.openBy(this.oButton);
-		assert.ok(this.oColumnMenu.isOpen());
-
-		const clock = sinon.useFakeTimers();
-		const sId = this.oColumnMenu.getItems()[0].getId();
-		this.oColumnMenu._oItemsContainer.switchView(sId);
-		clock.tick(1000);
-
-		oButtonOpenDialog.firePress();
-		clock.tick(1000);
-		assert.ok(this.oColumnMenu.isOpen());
-		oButtonInsideDialog.firePress();
-		clock.tick(1000);
-		clock.restore();
-		assert.ok(this.oColumnMenu.isOpen());
-		this.oColumnMenu.close();
-	});
-
 	QUnit.test("Close menu before opening by another control", function(assert) {
 		const clock = sinon.useFakeTimers();
 		const oCloseSpy = sinon.spy(this.oColumnMenu, "close");
@@ -1174,5 +882,319 @@ sap.ui.define([
 
 		oCloseSpy.restore();
 		clock.restore();
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.module("Item, view switch and auto-close", {
+		beforeEach: async function() {
+			await new Promise((resolve) => {
+				sap.ui.require(["sap/m/table/columnmenu/Item"], (Item) => {
+					this.oItem = new Item({label: sText, content: new Button({text: sText})});
+					resolve();
+				});
+			});
+			this.oColumnMenu = new Menu({
+				quickActions: [new QuickAction({label: sText, content: new Button({text: sText})})],
+				items: [this.oItem]
+			});
+			this.oButton = new Button();
+			this.oButton.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oColumnMenu.destroy();
+			this.oButton.destroy();
+			this.oItem.destroy();
+		}
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Item buttons", async function(assert) {
+		const oMenu = this.oColumnMenu;
+		const oButton = this.oButton;
+		oMenu.openBy(oButton);
+		await nextUIUpdate();
+
+		// Navigate to first item
+		const oItem = oMenu._getAllEffectiveItems()[0];
+		const sId = oItem.getId();
+		oMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		return new Promise(function(resolve) {
+			oItem.attachEventOnce("confirm", function(oEvent) {
+				oEvent.preventDefault();
+				assert.ok("confirm event fired");
+				resolve();
+			});
+			oMenu._oBtnOk.firePress();
+		}).then(function() {
+			assert.ok(oMenu.isOpen(), "default prevented");
+
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("confirm", function() {
+					assert.ok("confirm event fired");
+					menuClosed(oMenu).then(resolve);
+				});
+				oMenu._oBtnOk.firePress();
+			});
+		}).then(async function() {
+			assert.notOk(oMenu.isOpen(), "menu is closed");
+
+			oMenu.openBy(oButton);
+			oMenu._oItemsContainer.switchView(sId);
+			await nextUIUpdate();
+
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("cancel", function(oEvent) {
+					oEvent.preventDefault();
+					assert.ok("cancel event fired");
+					resolve();
+				});
+				oMenu._oBtnCancel.firePress();
+			});
+		}).then(function() {
+			assert.ok(oMenu.isOpen(), "default prevented");
+
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("cancel", function() {
+					assert.ok("cancel event fired");
+					menuClosed(oMenu).then(resolve);
+				});
+				oMenu._oBtnCancel.firePress();
+			});
+		}).then(async function() {
+			assert.notOk(oMenu.isOpen(), "menu is closed");
+
+			oMenu.openBy(oButton);
+			oMenu._oItemsContainer.switchView(sId);
+			await nextUIUpdate();
+
+			return new Promise(function(resolve) {
+				oItem.attachEventOnce("reset", function() {
+					assert.ok("reset event fired");
+					resolve();
+				});
+				oMenu._oItemsContainer.getHeader().getContentRight()[0].firePress();
+			});
+		});
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Check default button settings", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		// Navigate to first item
+		const sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		assert.ok(this.oColumnMenu._oBtnOk.getVisible());
+		assert.ok(this.oColumnMenu._oBtnCancel.getVisible());
+		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
+
+		assert.ok(this.oColumnMenu._oBtnOk.getEnabled());
+		assert.ok(this.oColumnMenu._oBtnCancel.getEnabled());
+		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Switch reset button states", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		// Navigate to first item
+		const sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		this.oItem.changeButtonSettings({
+			reset: {visible: false}
+		});
+		await nextUIUpdate();
+
+		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
+		assert.notOk(this.oItem.getButtonSettings()["reset"]["visible"]);
+
+		this.oItem.changeButtonSettings({
+			reset: {visible: true, enabled: false}
+		});
+		await nextUIUpdate();
+
+		assert.ok(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getVisible());
+		assert.notOk(this.oColumnMenu._oItemsContainer.getHeader().getContentRight()[0].getEnabled());
+		assert.ok(this.oItem.getButtonSettings()["reset"]["visible"]);
+		assert.notOk(this.oItem.getButtonSettings()["reset"]["enabled"]);
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Switch cancel button states", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		// Navigate to first item
+		const sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		this.oItem.changeButtonSettings({
+			cancel: {visible: false}
+		});
+		await nextUIUpdate();
+
+		assert.notOk(this.oColumnMenu._oBtnCancel.getVisible());
+		assert.notOk(this.oItem.getButtonSettings()["cancel"]["visible"]);
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Switch confirm button states", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		// Navigate to first item
+		const sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		this.oItem.changeButtonSettings({
+			confirm: {visible: false}
+		});
+		await nextUIUpdate();
+
+		assert.notOk(this.oColumnMenu._oBtnOk.getVisible());
+		assert.notOk(this.oItem.getButtonSettings()["confirm"]["visible"]);
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("View switch event", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		const aCalls = [],
+			fnViewSwitch = function(oEvt) {
+				aCalls.push({source: oEvt.getParameter("source"), target: oEvt.getParameter("target")});
+			},
+			oSpy = this.spy(fnViewSwitch);
+		this.oColumnMenu._oItemsContainer.attachEvent("afterViewSwitch", oSpy);
+
+		const sId = this.oColumnMenu._getAllEffectiveItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		assert.equal(oSpy.callCount, 1);
+		assert.equal(aCalls[0].source, "$default");
+		assert.equal(aCalls[0].target, sId);
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Check focus when view is switched", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		// Navigate to item
+		const sId = this.oColumnMenu._getAllEffectiveItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavBackBtn().getId());
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Check focus when view is switched back", async function(assert) {
+		this.oColumnMenu.openBy(this.oButton);
+		await nextUIUpdate();
+
+		// Navigate to item
+		const sId = this.oColumnMenu._getAllEffectiveItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		await nextUIUpdate();
+
+		// Navigate to item
+		this.oColumnMenu._oItemsContainer.switchView("$default");
+		await nextUIUpdate();
+
+		assert.equal(document.activeElement.id, this.oColumnMenu._oItemsContainer._getNavigationList().getItems()[0].getId());
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Auto close behavior when the Menu contains a control that opens a popup", function(assert) {
+		const clock = sinon.useFakeTimers();
+		const oComboBox = new ComboBox({
+			items: [
+				new CoreItem({key: "v1", text: "Value 1"}),
+				new CoreItem({key: "v2", text: "Value 2"})
+			]
+		});
+
+		this.oColumnMenu._getAllEffectiveItems()[0].setContent(oComboBox);
+
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		const sId = this.oColumnMenu._getAllEffectiveItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		clock.tick(1000);
+		oComboBox.open();
+		QUnitUtils.triggerEvent("mousedown", oComboBox._getList().getItems()[0].$()[0].firstChild);
+		clock.tick(1000);
+		clock.restore();
+		assert.ok(this.oColumnMenu.isOpen());
+	});
+
+	/**
+	 * @deprecated As of version 1.132
+	 */
+	QUnit.test("Auto close behavior when the Menu item opens a dialog", function(assert) {
+		const oButtonInsideDialog = new Button();
+		const oDialog = new Dialog({
+			content: [oButtonInsideDialog]
+		});
+
+		const oButtonOpenDialog = new Button({
+			press: function() {
+				oDialog.open();
+			}
+		});
+
+		this.oColumnMenu._getAllEffectiveItems()[0].setContent(oButtonOpenDialog);
+
+		this.oColumnMenu.addDependent(oDialog);
+		this.oColumnMenu.openBy(this.oButton);
+		assert.ok(this.oColumnMenu.isOpen());
+
+		const clock = sinon.useFakeTimers();
+		const sId = this.oColumnMenu.getItems()[0].getId();
+		this.oColumnMenu._oItemsContainer.switchView(sId);
+		clock.tick(1000);
+
+		oButtonOpenDialog.firePress();
+		clock.tick(1000);
+		assert.ok(this.oColumnMenu.isOpen());
+		oButtonInsideDialog.firePress();
+		clock.tick(1000);
+		clock.restore();
+		assert.ok(this.oColumnMenu.isOpen());
+		this.oColumnMenu.close();
 	});
 });
