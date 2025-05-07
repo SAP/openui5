@@ -436,6 +436,27 @@ sap.ui.define([
 		oMessageStrip.destroy();
 	});
 
+	QUnit.test("Labelledby attribute when enableFormattedText: true", async function (assert) {
+		//Arrange
+		var oMessageStrip = new MessageStrip({
+			text: "Some text",
+			showCloseButton: true,
+			enableFormattedText: true
+		});
+
+		oMessageStrip.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		var oMessageStripDomRef = oMessageStrip.getDomRef(),
+			sLabelledBy = oMessageStripDomRef.getAttribute("aria-labelledby");
+
+		//Assert
+		assert.strictEqual(sLabelledBy, oMessageStrip.getId() + "-info" + " " + oMessageStrip.getAggregation("_formattedText").getId(),
+			"should point to the MessageStrip formatted text content and the invisible message of the control.");
+		//Clean up
+		oMessageStrip.destroy();
+	});
+
 	QUnit.test("Invisible aria type text should be present in the root element", function (assert) {
 		var msgStripDom = this.oMessageStrip.getDomRef(),
 			invisibleText = msgStripDom.querySelectorAll(".sapUiPseudoInvisibleText");
@@ -458,6 +479,31 @@ sap.ui.define([
 
 			//assert
 			assert.strictEqual(describedBy, sId, "aria-describedby is not changed");
+	});
+
+	QUnit.test("When link is set it should have aria-describedby attribute when enableFormattedText: true", async function (assert) {
+		//Arrange
+		var oMessageStrip = new MessageStrip({
+			text: "Test",
+			showCloseButton: true,
+			enableFormattedText: true,
+			link: new Link({text: "Sample link"})
+		}),
+			oLink = oMessageStrip.getLink(),
+			sId = oMessageStrip.getId() + "-info" + " " + oMessageStrip.getAggregation("_formattedText").getId();
+
+
+		oMessageStrip.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		var oLinkDom = oLink.getDomRef(),
+			sDescribedBy = oLinkDom.getAttribute("aria-describedby");
+
+		//Assert
+		assert.strictEqual(sDescribedBy, sId, "link aria-describedby should point to the MessageStrip formatted text and the invisible message of the control.");
+
+		//Clean up
+		oMessageStrip.destroy();
 	});
 
 	QUnit.test("When we have a close button it should have an aria-labelledby attribute", async function (assert) {
