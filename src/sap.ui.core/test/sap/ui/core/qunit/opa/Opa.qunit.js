@@ -8,10 +8,13 @@ sap.ui.define([
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/Opa",
+	"sap/ui/test/Opa5",
+	'sap/ui/test/launchers/iFrameLauncher',
+	'sap/ui/test/launchers/componentLauncher',
 	"./utils/browser",
 	"./utils/sinon",
 	"sap/ui/Device"
-], function ($, URI, _OpaUriParameterParser, _LogCollector, _OpaLogger, Opa, browser, sinonUtils, Device) {
+], function ($, URI, _OpaUriParameterParser, _LogCollector, _OpaLogger, Opa, Opa5, iFrameLauncher, componentLauncher, browser, sinonUtils, Device) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -245,7 +248,7 @@ sap.ui.define([
 
 		//check for faster polling
 		this.clock.tick(1000);
-		assert.strictEqual(oSecondCheckSpy.callCount, 10, "Did apply the polling of the waitFor");
+		assert.strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
 
@@ -834,5 +837,42 @@ sap.ui.define([
 		// no exception should be thrown now after the queue is stopped
 		Opa.emptyQueue();
 	});
+
+	QUnit.module("Opa teardown");
+
+	QUnit.test("Should tear down iframe launcher if iTeardownMyAppFrame is called with empty queue", function (assert) {
+		// Arrange
+		var oOpa5 = new Opa5(),
+			oStubTearDown = this.stub(iFrameLauncher, "teardown"),
+			oStubGetQueue = this.stub(Opa5.prototype, "_getQueue").returns([]);
+
+		// Act
+		oOpa5.iTeardownMyAppFrame();
+
+		// Assert
+		assert.strictEqual(oStubTearDown.callCount,  1, "teardown of iframe launcher is called");
+
+		// Clean up
+		oStubTearDown.restore();
+		oStubGetQueue.restore();
+	});
+
+	QUnit.test("Should tear down component launcher if iTeardownMyUIComponent is called with empty queue", function (assert) {
+		// Arrange
+		var oOpa5 = new Opa5(),
+			oStubTearDown = this.stub(componentLauncher, "teardown"),
+			oStubGetQueue = this.stub(Opa5.prototype, "_getQueue").returns([]);
+
+		// Act
+		oOpa5.iTeardownMyUIComponent();
+
+		// Assert
+		assert.strictEqual(oStubTearDown.callCount,  1, "teardown of component launcher is called");
+
+		// Clean up
+		oStubTearDown.restore();
+		oStubGetQueue.restore();
+	});
+
 
 });
