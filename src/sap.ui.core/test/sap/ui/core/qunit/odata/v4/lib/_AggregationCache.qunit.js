@@ -4113,31 +4113,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addElements: duplicate key predicate (outside)", function (assert) {
-		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["a"]
-			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			oElement = {},
-			oGroupLevelCache = {fixDuplicatePredicate : mustBeMocked};
-
-		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
-		oCache.aElements.$byPredicate["foo"] = {/*unexpected element outside*/};
-		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
-		this.mock(oGroupLevelCache).expects("fixDuplicatePredicate")
-			.withExactArgs(sinon.match.same(oElement), "foo").returns(undefined);
-		this.mock(_Helper).expects("updateNonExisting").never();
-		this.mock(oCache).expects("hasPendingChangesForPath").never();
-
-		assert.throws(function () {
-			// code under test
-			oCache.addElements([oElement], 1, oGroupLevelCache); // iStart does not matter here
-		}, new Error("Duplicate key predicate: foo"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("addElements: duplicate key predicate (inside)", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
@@ -4189,11 +4164,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bIgnore) {
-	var sTitle = "addElements: known predicate -> kept element, ignore = " + bIgnore;
+	[false, true].forEach(function (bRecursiveHierarchy) {
+		var sTitle = "addElements: known predicate -> kept element, ignore = " + bIgnore
+				+ ", recursive hierarchy = " + bRecursiveHierarchy;
 
 	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {
+		var oAggregation = bRecursiveHierarchy ? {
 				hierarchyQualifier : "X"
+			} : { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, oAggregation),
 			aElements = [{},, {}],
@@ -4223,6 +4204,7 @@ sap.ui.define([
 			"@odata.etag" : "X",
 			"@$ui5._" : {parent : "~parent~", predicate : "(1)", rank : 42}
 		});
+	});
 	});
 });
 
@@ -4311,6 +4293,24 @@ sap.ui.define([
 			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~", "~bIgnorePendingChanges~",
 				"~bDropApply~"),
 			"~result~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshKeptElements: data aggregation", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["foo"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
+
+		this.mock(oCache.oFirstLevel).expects("refreshKeptElements").never();
+
+		assert.strictEqual(
+			// code under test
+			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~"),
+			undefined,
+			"nothing happens");
 	});
 
 	//*********************************************************************************************
@@ -4926,33 +4926,23 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach((bRecursiveHierarchy) => {
-	[undefined, false, true].forEach((bElementSelected) => {
-		[undefined, false, true].forEach((bCollectionSelected) => {
-			const sTitle = `isSelectionDifferent: recursive hierarchy = ${bRecursiveHierarchy},
-				element selected = ${bElementSelected},
-				collection selected = ${bCollectionSelected}`;
+[undefined, false, true].forEach((bElementSelected) => {
+	[undefined, false, true].forEach((bCollectionSelected) => {
+		const sTitle = `isSelectionDifferent: element selected = ${bElementSelected},
+			collection selected = ${bCollectionSelected}`;
 
 	QUnit.test(sTitle, function (assert) {
-		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
-			bRecursiveHierarchy ? {
-				hierarchyQualifier : "X"
-			} : { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["foo"]
-			});
+		const oCache = {
+			aElements : []
+		};
 		oCache.aElements["@$ui5.context.isSelected"] = bCollectionSelected;
 		const oElement = {"@$ui5.context.isSelected" : bElementSelected};
 
-		const bExpectation = bRecursiveHierarchy
-			? !!bElementSelected !== !!bCollectionSelected
-			: undefined;
-
-		// code under test
-		assert.strictEqual(oCache.isSelectionDifferent(oElement), bExpectation);
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.prototype.isSelectionDifferent.call(oCache, oElement),
+			!!bElementSelected !== !!bCollectionSelected);
 	});
-		});
 	});
 });
 
