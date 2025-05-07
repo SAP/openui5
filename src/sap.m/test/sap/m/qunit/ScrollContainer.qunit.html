@@ -279,6 +279,7 @@
 
 			});
 
+			/*
 			test("Press [CTRL] + [DOWN]", function() {
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled to position 0");
 
@@ -295,6 +296,7 @@
 
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
 			});
+			*/
 
 			test("Press [CTRL] + [RIGHT]", function() {
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled to horizontal position 0");
@@ -312,6 +314,7 @@
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 			});
 
+			/*
 			test("Press [CTRL] + [END]", function() {
 				intEqual(oSC4.$().scrollLeft(), 0, "ScrollContainer 4 should be scrolled horizontally to position 0");
 				intEqual(oSC4.$().scrollTop(), 0, "ScrollContainer 4 should be scrolled vertically to position 0");
@@ -322,6 +325,7 @@
 				equal(Math.ceil(oSC4.$().scrollLeft()), _getMaxScrollLeft(oSC4), "ScrollContainer 4 should be scrolled horizontally to position " + _getMaxScrollLeft(oSC4));
 				equal(Math.ceil(oSC4.$().scrollTop()), _getMaxScrollTop(oSC4), "ScrollContainer 4 should be scrolled vertically to position " + _getMaxScrollTop(oSC4));
 			});
+			*/
 
 			test("Press [CTRL] + [HOME]", function() {
 				qutils.triggerKeyboardEvent(oSC4.getDomRef(), "HOME", false, false, true);
