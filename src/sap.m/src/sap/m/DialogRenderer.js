@@ -110,7 +110,7 @@ sap.ui.define([
 		}
 
 		oRM.accessibilityState(oDialog, {
-			role: sRole,
+			role: sRole.toLowerCase(),
 			modal: true
 		});
 
