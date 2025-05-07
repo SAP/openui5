@@ -1,11 +1,18 @@
 <svg width="45" height="45" viewBox="0 0 45 45" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Dot-SignOut">
-<path d="M0 32.7764L25.5445 33.0758L34.933 40.8052L17.9653 40.3771L0 32.7764Z" fill="var(--sapContent_Illustrative_Color21)"/>
-<path d="M33.2109 39.0639L33.763 6.18311H19.1968V38.226L31.4101 43.0001H45.0001L33.2109 39.0639Z" fill="var(--sapContent_Illustrative_Color26)"/>
-<path d="M17.9277 4.55713H34.5809V39.0639H33.2107V5.67295H18.8894V38.6545H17.9647L17.9277 4.55713Z" fill="var(--sapContent_Illustrative_Color15)"/>
-<path d="M18.8896 5.67285L18.8981 5.68452L18.8896 38.6544L19.4491 38.1082V6.51821H33.211V5.67285H18.8896Z" fill="var(--sapContent_Illustrative_Color28)"/>
-<path d="M34.9326 4.55713H34.5811V39.0639H34.9326V4.55713Z" fill="var(--sapContent_Illustrative_Color28)"/>
-<path d="M18.8896 5.67285V38.6544L19.4491 38.1082L19.1968 6.18303L18.8896 5.67285Z" fill="var(--sapContent_Illustrative_Color30)"/>
-<path d="M19.1968 5.46097V38.398L27.7566 41.5917V2L19.1968 5.46097Z" fill="var(--sapContent_Illustrative_Color15)"/>
-<path d="M28.3237 2H27.7568V41.5917L28.3237 41.4633V2Z" fill="var(--sapContent_Illustrative_Color30)"/>
-<ellipse cx="1.43152" cy="1.43152" rx="1.43152" ry="1.43152" transform="matrix(0.866025 0.5 -0.309017 0.951057 25.6143 20.0708)" fill="var(--sapContent_Illustrative_Color26)"/>
+<g clip-path="url(#clip0_123057_19496)">
+<path d="M-0.382874 31.3965L25.3144 31.6826L34.7591 39.0685L17.6899 38.6594L-0.382874 31.3965Z" fill="var(--sapContent_Illustrative_Color21)"/>
+<path d="M33.0267 39.0682L33.5821 6.21387H18.9287V38.231L31.2151 43.0012H44.8864L33.0267 39.0682Z" fill="var(--sapContent_Illustrative_Color26)"/>
+<path d="M17.6525 4.58984H34.4052V39.0689H33.0269V5.70477H18.6199V38.6598H17.6896L17.6525 4.58984Z" fill="var(--sapContent_Illustrative_Color15)"/>
+<path d="M18.6198 5.7041L18.6282 5.71576L18.6198 38.6591L19.1826 38.1133V6.54878H33.0268V5.7041H18.6198Z" fill="var(--sapContent_Illustrative_Color28)"/>
+<path d="M34.759 4.58984H34.4054V39.0689H34.759V4.58984Z" fill="var(--sapContent_Illustrative_Color28)"/>
+<path d="M18.6198 5.7041V38.6591L19.1826 38.1133L18.9288 6.21387L18.6198 5.7041Z" fill="var(--sapContent_Illustrative_Color30)"/>
+<path d="M18.9288 5.49237V38.4029L27.5399 41.594V2.03418L18.9288 5.49237Z" fill="var(--sapContent_Illustrative_Color15)"/>
+<path d="M28.1102 2.03418H27.5399V41.594L28.1102 41.4658V2.03418Z" fill="var(--sapContent_Illustrative_Color30)"/>
+<ellipse cx="1.43152" cy="1.43152" rx="1.43152" ry="1.43152" transform="matrix(0.866025 0.5 -0.309017 0.951057 25.2313 20.1045)" fill="var(--sapContent_Illustrative_Color26)"/>
+</g>
+<defs>
+<clipPath id="clip0_123057_19496">
+<rect width="45" height="43.0347" fill="var(--sapContent_Illustrative_Color8)" transform="translate(0 0.982422)"/>
+</clipPath>
+</defs>
 </svg>
