@@ -1681,6 +1681,13 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		// Assert
 		assert.strictEqual(oSubSection._getTitleDomId(), "TestSubSection-headerTitle",
 			"The internal SubSection title DOM ID should be returned");
+
+		// Act - set internal title visible false
+		oSubSection._setInternalTitleVisible(false);
+
+		// Assert
+		assert.strictEqual(oSubSection._getTitleDomId(), false,
+			"If only internal title set to visible false method should return false");
 	});
 
 	QUnit.module("Content fit container", {

@@ -153,7 +153,7 @@
 			</ObjectPageSection>
 			<ObjectPageSection titleUppercase="false" id="connections" title="Connections">
 				<subSections>
-					<ObjectPageSubSection id="connectionsSS1" titleUppercase="false">
+					<ObjectPageSubSection id="connectionsSS1" titleUppercase="false" title="Connections">
 						<blocks>
 							<connections:ConnectionsBlock id="connectionsblock">
 								<connections:mappings>
