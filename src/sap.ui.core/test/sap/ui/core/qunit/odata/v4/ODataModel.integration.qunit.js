@@ -28010,6 +28010,136 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A table with aggregation and visual grouping where a leaf is selected and thus
+	// kept alive, even when its parent is collapsed/expanded.
+	// JIRA: CPOUI5ODATAV4-2969
+	// SNOW: DINC0463228
+	QUnit.test("Data Aggregation: keep alive via selection", async function (assert) {
+		const oModel = this.createAggregationModel();
+		const sView = `
+<Text id="selectionCount" text="{$selectionCount}"/>
+<t:Table id="table" threshold="0" visibleRowCount="3"
+	rows="{path : '/BusinessPartners',
+		parameters : {
+			$$aggregation : {
+				aggregate : {
+					SalesNumber : {subtotals : true}
+				},
+				groupLevels : ['Country', 'Region']
+			}
+		}}">
+	<Text id="isSelected" text="{= %{@$ui5.context.isSelected} }"/>
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>
+	<Text id="country" text="{Country}"/>
+	<Text id="region" text="{Region}"/>
+	<Text id="salesNumber" text="{SalesNumber}"/>
+</t:Table>`;
+		this.expectChange("selectionCount")
+			.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesNumber))"
+				+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "26",
+				value : [
+					{Country : "A", SalesNumber : 100},
+					{Country : "B", SalesNumber : 200},
+					{Country : "C", SalesNumber : 300}
+				]
+			})
+			.expectChange("isSelected", [undefined, undefined, undefined])
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("country", ["A", "B", "C"])
+			.expectChange("region", [null, null, null])
+			.expectChange("salesNumber", ["100", "200", "300"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oListBinding = this.oView.byId("table").getBinding("rows");
+		const oContextA = oListBinding.getCurrentContexts()[0];
+
+		this.expectChange("selectionCount", "0");
+		this.oView.byId("selectionCount").setBindingContext(oListBinding.getHeaderContext());
+
+		this.expectChange("isExpanded", [true])
+			.expectRequest("BusinessPartners"
+				+ "?$apply=filter(Country eq 'A')/groupby((Region),aggregate(SalesNumber))"
+				+ "&$count=true&$skip=0&$top=3", {
+				"@odata.count" : "2",
+				value : [
+					{Region : "A1", SalesNumber : 20},
+					{Region : "A2", SalesNumber : 80}
+				]
+			})
+			.expectChange("isExpanded", [, undefined, undefined])
+			.expectChange("isTotal", [, false, false])
+			.expectChange("level", [, 2, 2])
+			.expectChange("country", [, "A", "A"])
+			.expectChange("region", [, "A1", "A2"])
+			.expectChange("salesNumber", [, "20", "80"]);
+
+		await Promise.all([
+			oContextA.expand(),
+			this.waitForChanges(assert, "expand 'A'")
+		]);
+
+		const oContextA1 = oListBinding.getCurrentContexts()[1];
+		this.expectChange("selectionCount", "1")
+			.expectChange("isSelected", [, true]);
+
+		// code under test
+		oContextA1.setSelected(true);
+
+		await this.waitForChanges(assert, "select 'A1'");
+
+		this.expectChange("isSelected", [, undefined])
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [, true, true])
+			.expectChange("level", [, 1, 1])
+			.expectChange("country", [, "B", "C"])
+			.expectChange("region", [, null, null])
+			.expectChange("salesNumber", [, "200", "300"]);
+
+		oContextA.collapse();
+
+		await this.waitForChanges(assert, "collapse 'A'");
+
+		this.expectChange("isSelected", [, true])
+			.expectChange("isExpanded", [true, undefined, undefined])
+			.expectChange("isTotal", [, false, false])
+			.expectChange("level", [, 2, 2])
+			.expectChange("country", [, "A", "A"])
+			.expectChange("region", [, "A1", "A2"])
+			.expectChange("salesNumber", [, "20", "80"]);
+
+		await Promise.all([
+			oContextA.expand(),
+			this.waitForChanges(assert, "expand 'A' again")
+		]);
+
+		assert.strictEqual(oListBinding.getCurrentContexts()[1], oContextA1,
+			"context has been kept alive");
+		checkSelected(assert, oContextA1, true, "'A1' still selected");
+
+		this.expectChange("selectionCount", "0")
+			.expectChange("isSelected", [, false]);
+
+		// code under test (SNOW: DINC0463228)
+		oContextA1.setSelected(false);
+
+		await this.waitForChanges(assert, "deselect 'A1'");
+
+		this.expectChange("selectionCount", "1")
+			.expectChange("isSelected", [, true]);
+
+		// code under test (SNOW: DINC0463228)
+		oContextA1.setSelected(true);
+
+		await this.waitForChanges(assert, "select 'A1' again");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Show the single root node of a recursive hierarchy, which happens to be a leaf.
 	// Show that auto-$expand/$select and late property requests work.
 	// JIRA: CPOUI5ODATAV4-1643

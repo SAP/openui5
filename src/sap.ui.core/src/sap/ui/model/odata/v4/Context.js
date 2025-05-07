@@ -1326,8 +1326,7 @@ sap.ui.define([
 			&& this.oBinding.getHeaderContext?.()
 			&& this.oBinding.getHeaderContext().isSelected() !== this.isSelected()
 			&& (mParameters.$$ownRequest || !this.oBinding.isRelative())
-			&& !_Helper.isDataAggregation(mParameters)
-			// check for key predicate in the last path segment
+			// check for "key predicate" (not index) in the last path segment
 			&& this.sPath.indexOf("(", this.sPath.lastIndexOf("/")) > 0;
 	};
 
