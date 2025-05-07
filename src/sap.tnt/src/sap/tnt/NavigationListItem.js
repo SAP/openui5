@@ -285,16 +285,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets DOM reference of the accessibility element.
-	 *
-	 * @private
-	 * @returns {HTMLElement} dom ref
-	 */
-	NavigationListItem.prototype._getAccessibilityRef = function () {
-		return this.getDomRef().querySelector(".sapTntNLIFirstLevel");
-	};
-
-	/**
 	 * Handles tap event.
 	 *
 	 * @param {sap.ui.base.Event} oEvent tap event
@@ -422,7 +412,7 @@ sap.ui.define([
 					label: this.getText()
 				});
 
-			if (!this.getExpanded()) {
+			if (!this.getExpanded() && !this._animateCollapse || this._animateExpand) {
 				oRM.class("sapTntNLIItemsContainerHidden");
 			}
 
@@ -479,7 +469,7 @@ sap.ui.define([
 			bSelected = true;
 		}
 
-		if (!bListExpanded && aItems.includes(oNavigationList._selectedItem)) {
+		if ((!bListExpanded || !bExpanded) && aItems.includes(oNavigationList._selectedItem)) {
 			oRM.class("sapTntNLISelected");
 			bSelected = true;
 		}

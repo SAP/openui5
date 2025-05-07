@@ -218,6 +218,9 @@ sap.ui.define([
 	 */
 	NavigationList.prototype.onAfterRendering = function () {
 		this._oItemNavigation.setRootDomRef(this.getDomRef());
+
+		this._animateExpandCollapse();
+
 		this._updateNavItems();
 
 		if (this.getExpanded()) {
@@ -229,6 +232,35 @@ sap.ui.define([
 		this._sResizeListenerId = ResizeHandler.register(this.getDomRef().parentNode, this._resize.bind(this));
 
 		Theming.attachApplied(this._handleThemeAppliedBound);
+	};
+
+	NavigationList.prototype._animateExpandCollapse = function () {
+		const aAllItems = this.getItems().flatMap((item) => [item, ...item.getItems()]);
+		const oAnimateExpandItem = aAllItems.find((oItem) => oItem._animateExpand);
+
+		if (oAnimateExpandItem) {
+			oAnimateExpandItem._animateExpand = false;
+			oAnimateExpandItem.$()
+				.find(".sapTntNLIItemsContainer")
+				.first()
+				.stop(true, true)
+				.slideDown("fast", () => {
+					oAnimateExpandItem.$().find(".sapTntNLIItemsContainer").removeClass("sapTntNLIItemsContainerHidden");
+				});
+		}
+
+		const oAnimateCollapseItem = aAllItems.find((oItem) => oItem._animateCollapse);
+
+		if (oAnimateCollapseItem) {
+			oAnimateCollapseItem._animateCollapse = false;
+			oAnimateCollapseItem.$()
+				.find(".sapTntNLIItemsContainer")
+				.first()
+				.stop(true, true)
+				.slideUp("fast", () => {
+					oAnimateCollapseItem.$().find(".sapTntNLIItemsContainer").addClass("sapTntNLIItemsContainerHidden");
+				});
+		}
 	};
 
 	NavigationList.prototype._deregisterResizeHandler = function () {
