@@ -1830,6 +1830,58 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[undefined, false, true].forEach(function (bGrandTotalAtBottomOnly) {
+	[false, true].forEach(function (bGrandTotalLike184) {
+		const sTitle = "handleGrandTotal: (either) grandTotal or groupLevels"
+			+ ", grandTotalAtBottomOnly = " + bGrandTotalAtBottomOnly
+			+ ", grandTotal like 1.84 = " + bGrandTotalLike184;
+
+	QUnit.test(sTitle, function () {
+		const oAggregation = { // filled before by buildApply
+			aggregate : {
+				y : {grandTotal : true}
+			},
+			"grandTotal like 1.84" : bGrandTotalLike184,
+			group : {
+				a : {}
+			},
+			groupLevels : []
+		};
+		if (bGrandTotalAtBottomOnly !== undefined) {
+			oAggregation.grandTotalAtBottomOnly = bGrandTotalAtBottomOnly;
+		}
+
+		const oGrandTotal = {};
+		this.mock(_AggregationHelper).expects("removeUI5grand__")
+			.exactly(bGrandTotalLike184 ? 1 : 0)
+			.withExactArgs(sinon.match.same(oGrandTotal));
+		const aAllProperties = [];
+		this.mock(_AggregationHelper).expects("getAllProperties")
+			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
+		this.mock(_AggregationHelper).expects("setAnnotations")
+			.withExactArgs(sinon.match.same(oGrandTotal), true, true, 0,
+				sinon.match.same(aAllProperties));
+		const iTopBottomCallCount = bGrandTotalAtBottomOnly === false ? 1 : 0;
+		const oGrandTotalCopy = {};
+		this.mock(Object).expects("assign").exactly(iTopBottomCallCount)
+			.withExactArgs({}, sinon.match.same(oGrandTotal), {"@$ui5.node.isExpanded" : undefined})
+			.returns(oGrandTotalCopy);
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
+			.withExactArgs(sinon.match.same(oGrandTotalCopy), "predicate", "($isTotal=true)");
+		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
+			.withExactArgs(sinon.match.same(oGrandTotal), "copy",
+				sinon.match.same(oGrandTotalCopy));
+		oHelperMock.expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oGrandTotal), "predicate", "()");
+
+		// code under test
+		_AggregationHelper.handleGrandTotal(oAggregation, oGrandTotal);
+	});
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("hasGrandTotal", function (assert) {
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasGrandTotal(), undefined);

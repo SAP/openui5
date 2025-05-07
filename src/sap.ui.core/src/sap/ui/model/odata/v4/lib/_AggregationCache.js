@@ -91,25 +91,7 @@ sap.ui.define([
 			this.oGrandTotalPromise = new SyncPromise((resolve) => {
 				_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves,
 					function (oGrandTotal) {
-						var oGrandTotalCopy;
-
-						if (oAggregation["grandTotal like 1.84"]) { // rename measures
-							_AggregationHelper.removeUI5grand__(oGrandTotal);
-						}
-						_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
-							_AggregationHelper.getAllProperties(oAggregation));
-
-						if (oAggregation.grandTotalAtBottomOnly === false) {
-							// Note: make shallow copy *before* there are private annotations!
-							oGrandTotalCopy = Object.assign({}, oGrandTotal, {
-									"@$ui5.node.isExpanded" : undefined // treat copy as a leaf
-								});
-							_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
-							_Helper.setPrivateAnnotation(oGrandTotalCopy, "predicate",
-								"($isTotal=true)");
-						}
-						_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
-
+						_AggregationHelper.handleGrandTotal(oAggregation, oGrandTotal);
 						resolve(oGrandTotal);
 					}, fnCount]);
 			});
