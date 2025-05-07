@@ -77,11 +77,36 @@ sap.ui.define([
 				 * @since 1.133
 				 */
 				press: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The pressed item.
 						 */
-						item: { type: "sap.ui.core.Item" }
+						item: { type: "sap.ui.core.Item" },
+						/**
+						 * Indicates whether the CTRL key was pressed when the link was selected.
+						 * @since 1.137
+						 */
+						ctrlKey: { type: "boolean" },
+						/**
+						 * Indicates whether the Shift key was pressed when the link was selected.
+						 * @since 1.137
+						 */
+						shiftKey: { type: "boolean" },
+						/**
+						 * Indicates whether the Alt key was pressed when the link was selected.
+						 * @since 1.137
+						 */
+						altKey: { type: "boolean" },
+						/**
+						 * Indicates whether the "meta" key was pressed when the link was selected.
+						 *
+						 * On Macintosh keyboards, this is the command key (⌘).
+						 * On Windows keyboards, this is the windows key (⊞).
+						 *
+						 * @since 1.137
+						 */
+						metaKey: { type: "boolean" }
 					}
 				}
 			}
@@ -330,13 +355,10 @@ sap.ui.define([
 	 * @returns {boolean} whether the event was handled
 	 */
 	NavigationListItemBase.prototype.ontap = function (oEvent) {
-		const oParams = {
-			item: this
-		};
-
 		if (this.getEnabled() && !(oEvent.srcControl.isA("sap.ui.core.Icon")) && !this._isOverflow && !(!this.getNavigationList().getExpanded() && this.getItems().length)) {
-			this._firePress(oParams);
-
+			if (!this._firePress(oEvent, this)) {
+				return true;
+			}
 			oEvent.stopPropagation();
 		}
 
@@ -359,14 +381,32 @@ sap.ui.define([
 
 	/**
 	 * Fires a press event on an item.
-	 * @param {object} oParams The event parameters
+	 * @param {sap.ui.base.Event} oEvent press event
+	 * @param {sap.tnt.NavigationListMenuItem|sap.tnt.NavigationListItem} oItem The item that triggered the event
+	 * @returns {boolean} whether the event was successfully fired
 	 * @private
 	 */
-	NavigationListItemBase.prototype._firePress = function(oParams) {
+	NavigationListItemBase.prototype._firePress = function(oEvent, oItem) {
 		const oNavList = this.getNavigationList();
+		const oParams = oEvent.getParameters ? oEvent.getParameters() : {
+			item: oItem,
+			ctrlKey: !!oEvent.ctrlKey,
+			shiftKey: !!oEvent.shiftKey,
+			altKey: !!oEvent.altKey,
+			metaKey: !!oEvent.metaKey
+		};
 
-		oNavList?.fireItemPress({ item: this });
-		this.firePress(oParams);
+		if (!this.firePress(oParams)) {
+			oEvent.preventDefault();
+			return false;
+		}
+
+		if (!oNavList?.fireItemPress(oParams)) {
+			oEvent.preventDefault();
+			return false;
+		}
+
+		return true;
 	};
 
 	/**

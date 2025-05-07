@@ -247,7 +247,9 @@ sap.ui.define([
 		const oItemInPopup = oEvent.getParameter("item"),
 			oRealItem = Element.getElementById(oItemInPopup.getKey());
 
-		oRealItem._firePress({ item: oRealItem });
+		if (!oRealItem._firePress(oEvent, oRealItem)) {
+			oEvent.preventDefault();
+		}
 	};
 
 	/**
@@ -329,12 +331,10 @@ sap.ui.define([
 			return;
 		}
 
-		const bHasModifierKey = this._hasModifierKey(oEvent);
-
-		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) && !bHasModifierKey) {
+		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) ) {
 			this.getDomRef().classList.add("sapTntNLIActive");
 			this.ontap(oEvent);
-		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) && !bHasModifierKey) {
+		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) ) {
 			this.getDomRef().classList.add("sapTntNLIActive");
 		}
 
@@ -351,16 +351,11 @@ sap.ui.define([
 			return;
 		}
 
-		const bHasModifierKey = this._hasModifierKey(oEvent);
-
-		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) && !bHasModifierKey) {
+		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) ) {
 			this.getDomRef().classList.remove("sapTntNLIActive");
 		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE)) {
 			this.getDomRef().classList.remove("sapTntNLIActive");
-
-			if (!bHasModifierKey) {
-				this.ontap(oEvent);
-			}
+			this.ontap(oEvent);
 		}
 
 		if (oEvent.srcControl.getLevel() === 1) {
@@ -882,10 +877,6 @@ sap.ui.define([
 	};
 
 	NavigationListItem.prototype.onmouseover = NavigationListItem.prototype.onfocusout;
-
-	NavigationListItem.prototype._hasModifierKey = 	function hasModifierKeys(oEvent) {
-		return oEvent.shiftKey || oEvent.altKey || oEvent.ctrlKey || oEvent.metaKey;
-	};
 
 	return NavigationListItem;
 });
