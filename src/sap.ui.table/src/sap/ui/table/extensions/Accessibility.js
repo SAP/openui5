@@ -446,7 +446,7 @@ sap.ui.define([
 
 			aLabels = aLabels.concat(aDefaultLabels);
 
-			if (!bHidden) {
+			if (!bHidden && oTableInstances.cell) {
 				oInfo = ACCInfoHelper.getAccInfoOfControl(oTableInstances.cell);
 				aLabels.push(oInfo ? (sTableId + "-cellacc") : oTableInstances.cell.getId());
 			}
