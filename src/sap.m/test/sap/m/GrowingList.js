@@ -2,8 +2,10 @@ sap.ui.define([
   "sap/ui/core/util/MockServer",
   "sap/ui/model/odata/v2/ODataModel",
   "sap/m/StandardListItem",
+  "sap/m/ListItemAction",
   "sap/m/List",
   "sap/m/library",
+  "sap/m/MessageToast",
   "sap/m/Page",
   "sap/m/Bar",
   "sap/ui/model/json/JSONModel",
@@ -21,8 +23,10 @@ sap.ui.define([
   MockServer,
   ODataModel,
   StandardListItem,
+  ListItemAction,
   List,
   mobileLibrary,
+  MessageToast,
   Page,
   Bar,
   JSONModel,
@@ -83,7 +87,19 @@ sap.ui.define([
 		  formatter : function(value) {
 			  return value > 300 ? "Warning" : "Success";
 		  }
-	  }
+	  },
+	  actions: [
+		  new ListItemAction({
+			  text: "Accept",
+			  icon: "sap-icon://accept"
+		  }),
+		  new ListItemAction({
+			  type: "Edit"
+		  }),
+		  new ListItemAction({
+			  type: "Delete"
+		  })
+	  ]
   });
 
   var oList = new List({
@@ -97,7 +113,15 @@ sap.ui.define([
 	  },
 	  growingScrollToLoad : "{growing>/scrollToLoad}",
 	  mode: ListMode.MultiSelect,
-	  showNoData: true
+	  showNoData: true,
+	  itemActionCount: 2,
+	  itemActionPress: function(oEvent) {
+		  const oItem = oEvent.getParameter("listItem");
+		  const oAction = oEvent.getParameter("action");
+		  const iItemIndex = oItem.getParent().indexOfItem(oItem);
+		  const sAction = oAction.getText() || oAction.getType();
+		  MessageToast.show(`${sAction} action of item ${iItemIndex} is pressed`);
+	  }
   });
 
   var oPage = new Page({

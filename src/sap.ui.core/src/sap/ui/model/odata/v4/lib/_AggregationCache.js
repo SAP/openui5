@@ -91,25 +91,7 @@ sap.ui.define([
 			this.oGrandTotalPromise = new SyncPromise((resolve) => {
 				_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves,
 					function (oGrandTotal) {
-						var oGrandTotalCopy;
-
-						if (oAggregation["grandTotal like 1.84"]) { // rename measures
-							_AggregationHelper.removeUI5grand__(oGrandTotal);
-						}
-						_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
-							_AggregationHelper.getAllProperties(oAggregation));
-
-						if (oAggregation.grandTotalAtBottomOnly === false) {
-							// Note: make shallow copy *before* there are private annotations!
-							oGrandTotalCopy = Object.assign({}, oGrandTotal, {
-									"@$ui5.node.isExpanded" : undefined // treat copy as a leaf
-								});
-							_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
-							_Helper.setPrivateAnnotation(oGrandTotalCopy, "predicate",
-								"($isTotal=true)");
-						}
-						_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
-
+						_AggregationHelper.handleGrandTotal(oAggregation, oGrandTotal);
 						resolve(oGrandTotal);
 					}, fnCount]);
 			});
@@ -2360,7 +2342,9 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.reset = function (aKeptElementPredicates, sGroupId, mQueryOptions,
 			oAggregation, bIsGrouped) {
-		var fnResolve,
+		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
+			fnLeaves,
+			fnResolve,
 			that = this;
 
 		if (bIsGrouped) {
@@ -2396,12 +2380,25 @@ sap.ui.define([
 		this.oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 		this.oCountPromise = undefined;
 		if (mQueryOptions.$count) {
-			this.oCountPromise = new SyncPromise(function (resolve) {
-				fnResolve = resolve;
-			});
-			this.oCountPromise.$resolve = fnResolve;
+			if (oAggregation.hierarchyQualifier) {
+				this.oCountPromise = new SyncPromise(function (resolve) {
+					fnResolve = resolve;
+				});
+				this.oCountPromise.$resolve = fnResolve;
+			} else if (oAggregation.groupLevels.length) {
+				this.oCountPromise = new SyncPromise(function (resolve) {
+					fnLeaves = function (oLeaves) {
+						// Note: count has type Edm.Int64, represented as string in OData responses;
+						// $count should be a number and the loss of precision is acceptable
+						resolve(parseInt(oLeaves.UI5__leaves));
+					};
+				});
+			}
 		}
-		this.oFirstLevel = this.createGroupLevelCache();
+		this.oFirstLevel = this.createGroupLevelCache(null, !!fnLeaves);
+		if (fnLeaves) {
+			_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
+		}
 	};
 
 	/**

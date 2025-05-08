@@ -249,7 +249,7 @@
 }
 
 .sapMLIBImgNav {
-	width: var(--sapElement_LineHeight);
+	width: 2.5rem;
 	font-size: 0.75rem;
 	color: var(--sapContent_LabelColor);
 }
@@ -308,6 +308,17 @@
 	top: 2px;
 }
 
+.sapMLIBActions {
+	display: flex;
+	align-items: center;
+	margin-inline: 0.5rem -0.125rem;
+	gap: 0.125rem;
+}
+
+.sapMLIBActionHidden {
+	width: 2.25rem;
+}
+
 /* Compact size */
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectS:first-child,
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectM:first-child {
@@ -319,4 +330,8 @@
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectM + .sapMLIBContent,
 .sapUiSizeCompact .sapMLIB > .sapMLIBSelectS + .sapMLIBContent {
 	margin-left: -0.5rem;
+}
+
+.sapUiSizeCompact .sapMLIBActionHidden {
+	width: 2rem;
 }

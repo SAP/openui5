@@ -4533,11 +4533,6 @@ sap.ui.define([
 			}
 		}
 
-		// Clone the support info
-		if (ManagedObject._supportInfo) {
-			ManagedObject._supportInfo.addSupportInfo(oClone.getId(), ManagedObject._supportInfo.byId(this.getId()));
-		}
-
 		// Clone the meta data contexts interpretation
 		if (this._cloneMetadataContexts) {
 			this._cloneMetadataContexts(oClone);

@@ -17,7 +17,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/syncStyleClass",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/m/InstanceManager"
 ], (
 	Control,
 	Button,
@@ -34,7 +35,8 @@ sap.ui.define([
 	Library,
 	coreLibrary,
 	syncStyleClass,
-	JSONModel
+	JSONModel,
+	InstanceManager
 ) => {
 	"use strict";
 
@@ -538,6 +540,7 @@ sap.ui.define([
 		}
 		this._aPanels = null;
 		this._aCustomStyles = null;
+		InstanceManager.closeAllDialogs();
 	};
 
 	return Popup;

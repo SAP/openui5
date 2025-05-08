@@ -47,16 +47,10 @@ function(
 ) {
 	"use strict";
 
-
-	// shortcut for sap.m.ListMode
-	var ListMode = library.ListMode;
-
-	// shortcut for sap.m.ListType
-	var ListItemType = library.ListType;
-
-	// shortcut for sap.m.ButtonType
-	var ButtonType = library.ButtonType;
-
+	const ListMode = library.ListMode;
+	const ListItemType = library.ListType;
+	const ButtonType = library.ButtonType;
+	const ListItemActionType = library.ListItemActionType;
 
 	/**
 	 * Constructor for a new ListItemBase.
@@ -142,6 +136,16 @@ function(
 				 * @since 1.72
 				 */
 				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
+			},
+			defaultAggregation: "actions",
+			aggregations : {
+
+				/**
+				 * Defines the actions contained within this control.
+				 *
+				 * @since 1.137
+				 */
+				actions : { type: "sap.m.ListItemActionBase", multiple: true, singularName: "action" }
 			},
 			associations: {
 
@@ -1133,12 +1137,16 @@ function(
 	ListItemBase.prototype.onsapdelete = function(oEvent) {
 		if (oEvent.isMarked() ||
 			oEvent.srcControl !== this ||
-			this.getMode() != ListMode.Delete ||
 			oEvent.target !== this.getDomRef()) {
 			return;
 		}
 
-		this.informList("Delete");
+		if (this.getMode() === ListMode.Delete && this._getMaxActionsCount() === -1) {
+			this.informList("Delete");
+		} else {
+			const oDeleteAction = this._getActionByType(ListItemActionType.Delete);
+			oDeleteAction?._onActionPress();
+		}
 		oEvent.preventDefault();
 		oEvent.setMarked();
 	};
@@ -1150,12 +1158,15 @@ function(
 		}
 
 		// Ctrl+E fires detail event or handle editing
-		if (this.getType().startsWith("Detail") && oEvent.code == "KeyE" && (oEvent.metaKey || oEvent.ctrlKey)) {
-			if (oEvent.target === this.getDomRef() && (this.hasListeners("detailPress") || this.hasListeners("detailTap"))) {
+		if (oEvent.code == "KeyE" && (oEvent.metaKey || oEvent.ctrlKey) && oEvent.target === this.getDomRef()) {
+			if (this.getType().startsWith("Detail") && (this.hasListeners("detailPress") || this.hasListeners("detailTap")) && this._getMaxActionsCount() === -1) {
 				this.fireDetailPress();
-				oEvent.preventDefault();
-				oEvent.setMarked();
+			} else {
+				const oEditAction = this._getActionByType(ListItemActionType.Edit);
+				oEditAction?._onActionPress();
 			}
+			oEvent.preventDefault();
+			oEvent.setMarked();
 		}
 
 		if (oEvent.srcControl !== this || oEvent.target !== this.getDomRef()) {
@@ -1245,6 +1256,66 @@ function(
 			document.activeElement.matches(".sapMLIB,.sapMListTblCell,.sapMListTblSubRow,.sapMListTblSubCnt")) {
 			this.informList("ContextMenu", oEvent);
 		}
+	};
+
+	ListItemBase.prototype._getMaxActionsCount = function() {
+		const oList = this.getList();
+		return oList ? oList._getItemActionCount() : -1;
+	};
+
+	ListItemBase.prototype._getVisibleActions = function() {
+		return this.getActions().filter((oAction) => oAction.getVisible());
+	};
+
+	ListItemBase.prototype._getActionByType = function(sListItemActionType) {
+		return this._getVisibleActions().find((oAction) => oAction.getType() === sListItemActionType);
+	};
+
+	ListItemBase.prototype._hasOverflowActions = function() {
+		return this._getVisibleActions().length > this._getMaxActionsCount();
+	};
+
+	ListItemBase.prototype._getActionsToRender = function() {
+		const aActions = this.getActions();
+		let iMaxActionsCount = this._getMaxActionsCount();
+		if (aActions.length <= iMaxActionsCount) {
+			return aActions; // all actions fit the available space
+		}
+
+		const aVisibleActions = aActions.filter((oAction) => oAction.getVisible());
+		if (aVisibleActions.length > iMaxActionsCount) {
+			iMaxActionsCount--;	// preserve space for the overflow button
+		}
+		return aVisibleActions.slice(0, iMaxActionsCount);
+	};
+
+	ListItemBase.prototype._getOverflowActions = function() {
+		const aActionsToRender = this._getActionsToRender();
+		return this.getActions().flatMap((oAction) => {
+			return oAction.getVisible() && !aActionsToRender.includes(oAction) ? [oAction] : [];
+		});
+	};
+
+	ListItemBase.prototype._onOverflowButtonPress = function(oEvent) {
+		const ListItemAction = this.getActions()[0].constructor;
+		ListItemAction._showMenu(this._getOverflowActions(), oEvent.getSource());
+	};
+
+	ListItemBase.prototype._getOverflowButton = function() {
+		if (this._oOverflowButton) {
+			return this._oOverflowButton;
+		}
+
+		this._oOverflowButton = new Button({
+			id: this.getId() + "-overflow",
+			icon: IconPool.getIconURI("overflow"),
+			press: [this._onOverflowButtonPress, this],
+			type: ButtonType.Transparent
+		});
+
+		this._oOverflowButton.useEnabledPropagator(false);
+		this.addDependent(this._oOverflowButton);
+		return this._oOverflowButton;
 	};
 
 	return ListItemBase;

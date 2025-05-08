@@ -418,8 +418,18 @@ ListItemBaseRenderer.renderContentFormer = function(rm, oLI) {
  */
 ListItemBaseRenderer.renderContentLatter = function(rm, oLI) {
 	this.renderCounter(rm, oLI);
-	this.renderType(rm, oLI);
-	this.renderMode(rm, oLI, 1);
+	const iMaxActionsCount = oLI._getMaxActionsCount();
+	if (iMaxActionsCount < 0) {
+		this.renderType(rm, oLI);
+		this.renderMode(rm, oLI, 1);
+	} else {
+		if (iMaxActionsCount > 0) {
+			this.renderActions(rm, oLI);
+		}
+		if (oLI.getType() === ListItemType.Navigation) {
+			this.renderType(rm, oLI);
+		}
+	}
 	this.renderNavigated(rm, oLI);
 };
 
@@ -442,6 +452,25 @@ ListItemBaseRenderer.renderNavigated = function(rm, oLI) {
 	rm.openStart("div");
 	rm.class("sapMLIBNavigated");
 	rm.openEnd();
+	rm.close("div");
+};
+
+ListItemBaseRenderer.renderActions = function(rm, oLI) {
+	rm.openStart("div", oLI.getId() + "-actions");
+	rm.class("sapMLIBActions");
+	rm.openEnd();
+
+	oLI._getActionsToRender().forEach((oAction) => {
+		if (oAction.getVisible()) {
+			rm.renderControl(oAction._getAction());
+		} else {
+			rm.openStart("div", oAction.getId() + "-hidden").class("sapMLIBActionHidden").openEnd().close("div");
+		}
+	});
+	if (oLI._hasOverflowActions()) {
+		rm.renderControl(oLI._getOverflowButton());
+	}
+
 	rm.close("div");
 };
 
@@ -468,7 +497,9 @@ ListItemBaseRenderer.render = function(rm, oLI) {
 	rm.class("sapMLIB");
 	rm.class("sapMLIB-CTX");
 	rm.class("sapMLIBShowSeparator");
-	rm.class("sapMLIBType" + oLI.getType());
+	if (oLI._getMaxActionsCount() === -1 || !oLI.getType().startsWith("Detail")) {
+		rm.class("sapMLIBType" + oLI.getType());
+	}
 
 	if (oLI.isActionable(true)) {
 		rm.class("sapMLIBActionable");

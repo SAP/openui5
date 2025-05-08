@@ -770,6 +770,7 @@
 					"sap.m.sample.ListItemTypes",
 					"sap.m.sample.ListLoading",
 					"sap.m.sample.ListNavType",
+					"sap.m.sample.ListActions",
 					"sap.m.sample.ListNoData",
 					"sap.m.sample.ListSelection",
 					"sap.m.sample.ListSelectionSearch",
@@ -3103,6 +3104,11 @@
 				"id": "sap.m.sample.ListNavType",
 				"name": "List - Navigation Indication",
 				"description": "If only a subset of the list items are navigable you should indicate those by setting their 'type' to 'Navigation'. This displays an navigation arrow. Do not show arrows if all items are navigable. This achieved by setting the 'type' to 'Active'."
+			},
+			{
+				"id": "sap.m.sample.ListActions",
+				"name": "List - Custom Actions",
+				"description": "This example demonstrates how to add custom actions to list items. Dedicated 'Delete' and 'Edit' types can be used to add predefined actions to the list items. The 'Custom' type can be used to add custom actions to the list items. Those actions are independent of the selection mode of the list."
 			},
 			{
 				"id": "sap.m.sample.ListCounter",

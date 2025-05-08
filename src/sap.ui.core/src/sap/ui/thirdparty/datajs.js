@@ -2547,16 +2547,6 @@
                       	// ##### END: MODIFIED BY SAP
                         error({ message: "HTTP request failed", request: request, response: response });
                     }
-                    // ##### BEGIN: MODIFIED BY SAP
-                    if (datajs._sap && response.requestUri.indexOf("$metadata") > -1) {
-
-                    	var mSettings = {
-                      	   supportXML: xml,
-                      	   response: response
-                      	};
-                    	datajs._sap._supportInfo({context: xml, env: {caller:'datajs', settings: mSettings, type:"metadata"}});
-                    }
-                    // ##### END: MODIFIED BY SAP
                 };
 
                 // ##### BEGIN: MODIFIED BY SAP
