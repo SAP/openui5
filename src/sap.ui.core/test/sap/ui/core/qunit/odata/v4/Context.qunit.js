@@ -5286,7 +5286,6 @@ sap.ui.define([
 		const oContextMock = this.mock(oContext);
 		oContextMock.expects("isDeleted").withExactArgs().returns(false);
 		this.mock(_Helper).expects("isSelected").never();
-		this.mock(_Helper).expects("isDataAggregation").never();
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), true);
@@ -5335,8 +5334,6 @@ sap.ui.define([
 		this.mock(oContext).expects("isSelected").withExactArgs().returns(bSameSelection);
 		this.mock(oBinding).expects("isRelative").exactly(bSameSelection ? 0 : 1)
 			.withExactArgs().returns(false);
-		this.mock(_Helper).expects("isDataAggregation").exactly(bSameSelection ? 0 : 1)
-			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), !bSameSelection);
@@ -5366,15 +5363,12 @@ sap.ui.define([
 
 		oContextMock.expects("isSelected").withExactArgs().returns(true);
 		oBindingMock.expects("isRelative").withExactArgs().returns(false);
-		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), true);
 
 		oContextMock.expects("isSelected").withExactArgs().returns(true);
 		oBindingMock.expects("isRelative").withExactArgs().returns(true);
-		// Note: #isDataAggregation not invoked
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);
@@ -5388,7 +5382,6 @@ sap.ui.define([
 			oContext = Context.create({/*oModel*/}, oBinding, "/TEAMS('1')");
 
 		this.mock(oContext).expects("isSelected").never();
-		this.mock(_Helper).expects("isDataAggregation").never();
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);
@@ -5415,35 +5408,11 @@ sap.ui.define([
 		this.mock(oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		this.mock(oContext).expects("isSelected").withExactArgs().returns(true);
 		this.mock(oBinding).expects("isRelative").never();
-		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), true);
 	});
 });
-
-	//*********************************************************************************************
-	QUnit.test("isEffectivelyKeptAlive: data aggregation", function (assert) {
-		var oBinding = {
-				getHeaderContext : mustBeMocked,
-				isRelative : mustBeMocked,
-				mParameters : {}
-			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/TEAMS('1')"),
-			oHeaderContext = Context.create({/*oModel*/}, oBinding, "/TEAMS");
-
-		this.mock(oBinding).expects("getHeaderContext").twice()
-			.withExactArgs().returns(oHeaderContext);
-		this.mock(oHeaderContext).expects("isSelected").withExactArgs().returns(false);
-		this.mock(oContext).expects("isSelected").withExactArgs().returns(true);
-		this.mock(oBinding).expects("isRelative").withExactArgs().returns(false);
-		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(true);
-
-		// code under test
-		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);
-	});
 
 	//*********************************************************************************************
 	QUnit.test("isEffectivelyKeptAlive: no key predicate", function (assert) {
@@ -5459,8 +5428,6 @@ sap.ui.define([
 			.withExactArgs().returns(oHeaderContext);
 		this.mock(oHeaderContext).expects("isSelected").withExactArgs().returns(false);
 		this.mock(oContext).expects("isSelected").withExactArgs().returns(true);
-		this.mock(_Helper).expects("isDataAggregation")
-			.withExactArgs(sinon.match.same(oBinding.mParameters)).returns(false);
 
 		// code under test
 		assert.strictEqual(oContext.isEffectivelyKeptAlive(), false);

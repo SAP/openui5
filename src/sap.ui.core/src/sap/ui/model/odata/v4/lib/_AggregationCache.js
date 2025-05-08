@@ -225,7 +225,6 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.addElements = function (vReadElements, iOffset, oCache, iStart) {
 		var aElements = this.aElements,
-			sHierarchyQualifier = this.oAggregation.hierarchyQualifier,
 			sNodeProperty = this.oAggregation.$NodeProperty,
 			that = this;
 
@@ -247,7 +246,7 @@ sap.ui.define([
 			oKeptElement = aElements.$byPredicate[sPredicate];
 			if (oKeptElement && oKeptElement !== oElement
 					&& !(oKeptElement instanceof SyncPromise)) {
-				if (!sHierarchyQualifier || aElements.includes(oKeptElement)) {
+				if (aElements.includes(oKeptElement)) {
 					const sNewPredicate = oCache.fixDuplicatePredicate(oElement, sPredicate);
 					if (sNewPredicate) {
 						sPredicate = sNewPredicate;
@@ -423,7 +422,7 @@ sap.ui.define([
 				iRemaining -= this.collapse(
 					_Helper.getPrivateAnnotation(oElement, "predicate"), oGroupLock, bSilent, true);
 			}
-			// exceptions of selection are effectively kept alive (with recursive hierarchy)
+			// exceptions of selection are effectively kept alive
 			if (!this.isSelectionDifferent(oElement)) {
 				delete aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")];
 				delete aElements.$byPredicate[
@@ -1408,18 +1407,15 @@ sap.ui.define([
 
 	/**
 	 * Determines if the "@$ui5.context.isSelected" annotation of the given element differs from the
-	 * annotation at the collection. Only relevant in case of a recursive hierarchy. Note: A missing
-	 * annotation is treated as <code>false</code>.
+	 * annotation at the collection. Note: A missing annotation is treated as <code>false</code>.
 	 *
 	 * @param {object} oElement - The element
-	 * @returns {boolean} Whether recursive hierarchy is used and the selection state of the element
-	 *   differs from the collection
+	 * @returns {boolean} Whether the selection state of the element differs from the collection
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.isSelectionDifferent = function (oElement) {
-		return this.oAggregation.hierarchyQualifier
-			&& (oElement["@$ui5.context.isSelected"] ?? false)
+		return (oElement["@$ui5.context.isSelected"] ?? false)
 				!== (this.aElements["@$ui5.context.isSelected"] ?? false);
 	};
 
@@ -1952,7 +1948,7 @@ sap.ui.define([
 
 				that.aElements.length = that.aElements.$count = oResult.value.$count;
 
-				if (that.oGrandTotalPromise) {
+				if (that.aElements.length && that.oGrandTotalPromise) {
 					that.aElements.$count += 1;
 					that.aElements.length += 1;
 					oGrandTotal = that.oGrandTotalPromise.getResult();
@@ -2089,6 +2085,10 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove,
 			bIgnorePendingChanges, _bDropApply) {
+		if (!this.oAggregation.hierarchyQualifier) {
+			return; // no own request for data aggregation
+		}
+
 		// "super" call (like @borrows ...)
 		const fnSuper = this.oFirstLevel.refreshKeptElements;
 		return fnSuper.call(this, oGroupLock, fnOnRemove, bIgnorePendingChanges,
@@ -2854,7 +2854,7 @@ sap.ui.define([
 			sDeepResourcePath, bSharedRequest);
 	};
 
-	// @override sap.ui.model.odata.v4.lib._Cache#fixDuplicatePredicate
+	// @override sap.ui.model.odata.v4.lib._CollectionCache#fixDuplicatePredicate
 	_AggregationCache.fixDuplicatePredicate = function (oElement, sPredicate) {
 		if (sPredicate === "('')" || sPredicate.includes("=''")) {
 			Log.warning("Duplicate key predicate: " + sPredicate, this.toString(),

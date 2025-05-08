@@ -898,7 +898,8 @@ sap.ui.define([
 						text: "{namedModel>text}",
 						icon: "{namedModel>icon}",
 						visible: "{namedModel>visible}"
-					})
+					}),
+					templateShareable: false
 				}
 			})
 		});

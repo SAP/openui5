@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/base/Log',
+	'sap/base/util/isEmptyObject',
 	'sap/ui/core/Element',
 	'sap/ui/Device',
 	'sap/ui/dom/containsOrEquals',
@@ -34,6 +35,7 @@ sap.ui.define([
 	merge,
 	ValueHelpSelectionType,
 	Log,
+	isEmptyObject,
 	Element,
 	Device,
 	containsOrEquals,
@@ -630,7 +632,7 @@ sap.ui.define([
 
 		let oFilter = aFilters.length > 1 ? new Filter({ filters: aFilters, and: false }) : aFilters[0];
 
-		if (oFilter && oConditions) {
+		if (oFilter && oConditions && !isEmptyObject(oConditions)) {
 			const oConditionTypes = this._getTypesForConditions(oConditions);
 			const oConditionsFilter = FilterConverter.createFilters(oConditions, oConditionTypes, undefined, this.getCaseSensitive());
 			if (oConditionsFilter) {

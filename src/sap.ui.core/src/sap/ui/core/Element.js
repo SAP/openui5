@@ -1399,8 +1399,6 @@ sap.ui.define([
 			return this.getAggregation("tooltip");
 		};
 
-		Element.runWithPreprocessors = ManagedObject.runWithPreprocessors;
-
 		/**
 		 * Returns the tooltip for this element but only if it is a simple string.
 		 * Otherwise, <code>undefined</code> is returned.

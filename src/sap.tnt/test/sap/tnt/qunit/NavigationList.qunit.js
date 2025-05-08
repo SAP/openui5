@@ -1487,10 +1487,21 @@ sap.ui.define([
 		const oAttachItemPressSpy = this.spy(oMenuNavigationItem, "_firePress");
 		const oAttachItemPressedSpy = this.spy(this.navigationList, "fireItemPress");
 
-		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(3)"));
+		QUnitUtils.triggerEvent("click", document.querySelector(".sapUiMnuItm:nth-child(3)"), {
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: true,
+			metaKey: false
+		});
 		await nextUIUpdate(this.clock);
 
 		assert.ok(oAttachItemPressSpy.called, "press event is fired on the parent item in the overflow");
+		const eventParams = oAttachItemPressSpy.args[0][0];
+		assert.ok(eventParams.ctrlKey, "ctrlKey parameter is true");
+		assert.ok(eventParams.shiftKey, "shiftKey parameter is true");
+		assert.ok(eventParams.altKey, "altKey parameter is true");
+		assert.notOk(eventParams.metaKey, "metaKey parameter is false");
+
 		assert.strictEqual(oAttachItemPressedSpy.callCount, 1, "itemPress event is fired if the parent item in the overflow is clicked");
 
 		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
@@ -1705,6 +1716,51 @@ sap.ui.define([
 		);
 	});
 
+	QUnit.test("Press event parameters include key modifiers", function (assert) {
+		// Arrange
+		const oTestItem = this.navigationList.getItems()[1];
+		const oAttachPressSpy = this.spy(oTestItem, "firePress");
+
+		// Act
+		QUnitUtils.triggerEvent("tap", oTestItem.getDomRef().querySelector(".sapTntNLI"), { ctrlKey: true, shiftKey: true, altKey: false, metaKey: false });
+
+		// Assert
+		assert.ok(oAttachPressSpy.calledOnce, "Press event is fired");
+		const eventParams = oAttachPressSpy.args[0][0];
+		assert.ok(eventParams.ctrlKey, "ctrlKey parameter is true");
+		assert.ok(eventParams.shiftKey, "shiftKey parameter is true");
+		assert.notOk(eventParams.altKey, "altKey parameter is false");
+		assert.notOk(eventParams.metaKey, "metaKey parameter is false");
+	});
+
+	QUnit.test("Press event with key modifiers on child item in collapsed", async function (assert) {
+		// Arrange
+		this.navigationList.setExpanded(false);
+		await nextUIUpdate();
+
+		const oParentItem = this.navigationList.getItems()[0]; // Assuming the first item is the parent
+		const oChildItem = oParentItem.getItems()[0]; // First child item
+		const oAttachPressSpy = this.spy(oChildItem, "firePress");
+
+		QUnitUtils.triggerEvent("tap", oParentItem.getDomRef().querySelector(".sapTntNLI"));
+		await nextUIUpdate();
+
+		assert.ok(this.navigationList._oPopover.isOpen(), "Popover is opened");
+
+		// Act
+		const oChildItemInPopover = this.navigationList._oPopover.getContent()[0].getItems()[0].getItems()[0];
+		QUnitUtils.triggerEvent("tap", oChildItemInPopover.getDomRef(), { ctrlKey: true, shiftKey: true, altKey: true, metaKey: false });
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oAttachPressSpy.calledOnce, "Press event is fired for the child item");
+		const eventParams = oAttachPressSpy.args[0][0];
+		assert.ok(eventParams.ctrlKey, "ctrlKey parameter is true");
+		assert.ok(eventParams.shiftKey, "shiftKey parameter is true");
+		assert.ok(eventParams.altKey, "altKey parameter is true");
+		assert.notOk(eventParams.metaKey, "metaKey parameter is false");
+	});
+
 	QUnit.module("Unselectable parent items in collapsed Side Navigation", {
 		beforeEach: async function () {
 			this.unselectableParentItem = new NavigationListItem({
@@ -1776,6 +1832,35 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(overflowMenu.isOpen(), "Overflow menu should still be open");
+	});
+
+	QUnit.module("Collapsed parent items in expanded Side Navigation", {
+		beforeEach: async function () {
+			this.navigationList = getSecondNavigationList();
+			oPage.addContent(this.navigationList);
+
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.navigationList.destroy();
+		}
+	});
+
+	QUnit.test("selected child items", async function (assert) {
+
+		const oSelectedItem = this.navigationList.getItems()[1].getItems()[0].getDomRef();
+		const expandIcon = this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIExpandIcon");
+
+		QUnitUtils.triggerEvent("tap", oSelectedItem);
+		await nextUIUpdate();
+
+		assert.notOk(this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIFirstLevel").classList.contains("sapTntNLISelected"), "sapTntNLISelected class is not set on parent item");
+		assert.ok(oSelectedItem.classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set on selected child item ");
+
+		QUnitUtils.triggerEvent("tap", expandIcon);
+		await nextUIUpdate();
+
+		assert.ok(this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIFirstLevel").classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set on parent item");
 	});
 
 	return waitForThemeApplied();

@@ -1,0 +1,46 @@
+<mvc:View
+	controllerName="sap.tnt.sample.SideNavigationPressEvent.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+	height="100%">
+	<VBox renderType="Bare" alignItems="Start" height="100%">
+		<HBox renderType="Bare">
+			<Button
+				text="Toggle Collapse/Expand"
+				icon="sap-icon://menu2"
+				press=".onCollapseExpandPress" />
+			<CheckBox id="preventDefaultCheckbox" text="Press event - PreventDefault" select="onCheckBoxSelect"/>
+		</HBox>
+		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="false">
+			<tnt:NavigationList>
+				<tnt:NavigationListItem text="Home" icon="sap-icon://home" press=".itemPress" />
+				<tnt:NavigationListItem text="Building" icon="sap-icon://building" press=".itemPress" />
+				<tnt:NavigationListItem text="Mileage" press=".itemPress" icon="sap-icon://mileage" >
+					<tnt:NavigationListItem press=".itemPress" text="Driven" />
+					<tnt:NavigationListItem press=".itemPress" text="Walked" />
+				</tnt:NavigationListItem>
+				<tnt:NavigationListItem
+					text="Link 1"
+					icon="sap-icon://attachment"
+					selectable="false"
+					href="https://sap.com"
+					target="_blank"
+					press=".itemPress" />
+				<tnt:NavigationListItem
+					text="Link 2"
+					icon="sap-icon://attachment"
+					selectable="false"
+					href="https://sap.com"
+					target="_blank"
+					press=".itemPress" />
+			</tnt:NavigationList>
+			<tnt:fixedItem>
+				<tnt:NavigationList>
+					<tnt:NavigationListItem ariaHasPopup="Dialog" id="quickCreate" press=".quickActionPress" text="Quick Create" icon="sap-icon://write-new"  design="Action" selectable="false" />
+					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" press=".itemPress" />
+				</tnt:NavigationList>
+			</tnt:fixedItem>
+		</tnt:SideNavigation>
+	</VBox>
+</mvc:View>

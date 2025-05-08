@@ -191,13 +191,13 @@ sap.ui.define([
 		aRows[0].collapse();
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Node collapsed: selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Node collapse: Selected contexts");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 2, "Node collapse: Selected contexts");
 
 		this.oSelectionChangeHandler.resetHistory();
 		aRows[0].expand();
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Node expanded: selectionChange event");
-		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Node expanded: Selected contexts");
+		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 2, "Node expanded: Selected contexts");
 	});
 
 	QUnit.module("Binding selection API", {
@@ -402,8 +402,8 @@ sap.ui.define([
 		await this.oTable.qunit.whenNextRenderingFinished();
 
 		this.assertHeaderSelector({
-			src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
-			title: TableUtils.getResourceText("TBL_SELECT_ALL")
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
+			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
 		});
 	});
 });
