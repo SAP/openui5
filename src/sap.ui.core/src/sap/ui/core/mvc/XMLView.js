@@ -427,10 +427,6 @@ sap.ui.define([
 			function processView(xContent) {
 				that._xContent = xContent;
 
-				if (View._supportInfo) {
-					View._supportInfo({context: that._xContent, env: {caller:"view", viewinfo: merge({}, that), settings: merge({}, mSettings || {}), type: "xmlview"}});
-				}
-
 				// extract the properties of the view from the XML element
 				if (!that.isSubView()) {
 					// extract the internal settings from the XML and set on the view. The standard properties, event

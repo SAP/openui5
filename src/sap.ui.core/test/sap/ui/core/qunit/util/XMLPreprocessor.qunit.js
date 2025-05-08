@@ -138,13 +138,11 @@ sap.ui.define([
 	 */
 	function process(oViewContent, mSettings, bAsync) {
 		var oViewInfo = {
-				caller : `qux`,
-				componentId : `this._sOwnerId`,
-				name : `this.sViewName`,
-				sync : !bAsync,
-				//TODO TDD is missing for support info calls!
-				_supportInfo : function () {} // Note: FAKE support info handler
-			};
+			caller : `qux`,
+			componentId : `this._sOwnerId`,
+			name : `this.sViewName`,
+			sync : !bAsync
+		};
 
 		return XMLPreprocessor.process(oViewContent, oViewInfo, mSettings);
 	}

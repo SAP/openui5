@@ -58,7 +58,8 @@ function(
 	 * @class
 	 * The control provides a set of properties for text, sender information, time stamp.
 	 * Beginning with release 1.23 the new feature expand / collapse was introduced, which uses the property maxCharacters.
-	 * Beginning with release 1.44, sap.m.FormattedText was introduced which allows html formatted text to be displayed
+	 * Beginning with release 1.44, sap.m.FormattedText was introduced which allows html formatted text to be displayed.
+	 * The <code>actions</code> aggregation must contain instances of {@link sap.m.FeedListItemAction} in order to display them in the action sheet.
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
@@ -177,14 +178,7 @@ function(
 				 */
 				disableStyleAttribute : {type : "boolean", group : "Appearance", defaultValue : false}
 			},
-			defaultAggregation: "actions",
 			aggregations: {
-
-				/**
-				 * Contains {@link sap.m.FeedListItemAction elements} that are displayed in the action sheet.
-				 * @since 1.52.0
-				 */
-				actions: {type: "sap.m.FeedListItemAction", multiple: true},
 
 				/**
 				 * Hidden aggregation which contains the text value
@@ -263,6 +257,14 @@ function(
 		this._oInvisibleText = new InvisibleText();
 		this._oInvisibleText.toStatic();
 		this._oInvisibleText.setText(FeedListItem._sTextListItem);
+	};
+
+	FeedListItem.prototype.validateAggregation = function(sAggregationName, vObject) {
+		var oResult = ListItemBase.prototype.validateAggregation.apply(this, arguments);
+		if (oResult && sAggregationName === "actions" && !vObject.isA("sap.m.FeedListItemAction")) {
+			throw new Error(vObject + " is not a valid action aggregation of " + this + ". The actions aggregation in this control only supports sap.m.FeedListItemAction.");
+		}
+		return oResult;
 	};
 
 	/**

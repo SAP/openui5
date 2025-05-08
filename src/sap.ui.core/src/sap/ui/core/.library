@@ -250,7 +250,7 @@
             <copyright>2009-2014, Alexis Sellier</copyright>
             <pattern>sap/ui/thirdparty/less.js</pattern>
         </lib>
-        <lib name="datajs" displayName="DataJS" npmName="n/a" version="unknown" hash="0df06fd64d1ebdeb81cdd00d1cf04494" homepage="http://datajs.codeplex.com/" id="73554900106100001652">
+        <lib name="datajs" displayName="DataJS" npmName="n/a" version="unknown" hash="073c16105db43f4ea0c3aa28754c79c3" homepage="http://datajs.codeplex.com/" id="73554900106100001652">
             <!-- hints in the source code suggest this is version 1.1.0 with fixes from 1.1.1.beta2,
                  but it could also be version 1.1.2 as modeled in PPMS -->
             <license url="http://datajs.codeplex.com/license" type="MIT" />

@@ -150,7 +150,9 @@ ListBaseRenderer.render = function(rm, oControl) {
 	rm.class("sapMListShowSeparators" + oControl.getShowSeparators());
 
 	// modes
-	rm.class("sapMListMode" + oControl.getMode());
+	if (oControl._getItemActionCount() === -1 || oControl.getMode() !== "Delete") {
+		rm.class("sapMListMode" + oControl.getMode());
+	}
 
 	// navigated indicator
 	if (oControl._iItemNeedsNavigated) {

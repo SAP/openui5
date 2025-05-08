@@ -383,13 +383,12 @@ sap.ui.define([
 
 	// determines whether type column for this item is necessary or not
 	ColumnListItem.prototype._needsTypeColumn = function() {
-		var sType = this.getType();
+		if (!this.getVisible()) {
+			return false;
+		}
 
-		return this.getVisible() && (
-			sType == ListItemType.Detail ||
-			sType == ListItemType.Navigation ||
-			sType == ListItemType.DetailAndActive
-		);
+		var sType = this.getType();
+		return sType === ListItemType.Navigation ? true : sType.startsWith(ListItemType.Detail) && this._getMaxActionsCount() === -1;
 	};
 
 	// Adds cloned header to the local collection

@@ -23,7 +23,7 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 	 *
 	 * @class
 	 * <code>sap.m.GroupHeaderListItem</code> is used to display the title of a group and act as separator between groups in <code>sap.m.List</code> and <code>sap.m.Table</code>.
-	 * <b>Note:</b> The inherited properties <code>unread</code>, <code>selected</code>, <code>counter</code> and <code>press</code> event from <code>sap.m.ListItemBase</code> are not supported.
+	 * <b>Note:</b> The inherited properties <code>unread</code>, <code>selected</code>, <code>counter</code>, the <code>press</code> event, and the <code>actions</code> aggregation from <code>sap.m.ListItemBase</code> are not supported.
 	 *
 	 * There are the following known restrictions:
 	 * <ul>
@@ -111,6 +111,10 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 
 	GroupHeaderListItem.prototype.isGroupHeader = function() {
 		return true;
+	};
+
+	GroupHeaderListItem.prototype._getMaxActionsCount = function() {
+		return -1; // no actions for group headers
 	};
 
 	return GroupHeaderListItem;

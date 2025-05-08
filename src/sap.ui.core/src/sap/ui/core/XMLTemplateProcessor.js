@@ -1141,16 +1141,6 @@ sap.ui.define([
 							}
 						} else {
 							assert(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
-							if (XMLTemplateProcessor._supportInfo) {
-								XMLTemplateProcessor._supportInfo({
-									context : node,
-									env : {
-										caller:"createRegularControls",
-										error: true,
-										info: "unknown setting '" + sName + "' for class " + oMetadata.getName()
-									}
-								});
-							}
 						}
 					}
 					//add custom settings as custom data "sap-ui-custom-settings"
@@ -1463,20 +1453,7 @@ sap.ui.define([
 					}
 
 					//apply support info if needed
-					if (XMLTemplateProcessor._supportInfo && vFinalInstance) {
-						for (var i = 0, iLength = vFinalInstance.length; i < iLength; i++) {
-							var oInstance = vFinalInstance[i];
-							if (oInstance && oInstance.getId()) {
-								//create a support info for id creation and add it to the support data
-								var iSupportIndex = XMLTemplateProcessor._supportInfo({ context: node, env: { caller: "createRegularControls", nodeid: node.getAttribute("id"), controlid: oInstance.getId() } }),
-									sData = sSupportData ? sSupportData + "," : "";
-								sData += iSupportIndex;
-								//add the controls support data to the indexed map of support info control instance map
-								XMLTemplateProcessor._supportInfo.addSupportInfo(oInstance.getId(), sData);
-							}
-						}
-					}
-
+					/* -------------------------------------- */
 					if (bDesignMode) {
 						vFinalInstance.forEach(function (oInstance) {
 							if (oMetadata.getCompositeAggregationName) {

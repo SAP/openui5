@@ -106,6 +106,7 @@ sap.ui.define([
 						}
 						return mHash;
 					},
+					getCurrentApplication() {},
 					unregisterNavigationFilter() {},
 					registerNavigationFilter() {},
 					reloadCurrentApp: fnFLPReloadStub,
@@ -500,6 +501,7 @@ sap.ui.define([
 
 	QUnit.module("Toolbar handling", {
 		beforeEach() {
+			sandbox.stub(FlexUtils, "getUShellServices").resolves({});
 			this.oFlexSettings = {
 				layer: Layer.CUSTOMER,
 				developerMode: true
@@ -515,6 +517,11 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		function stubToolbarButtonsVisibility(bPublish, bSaveAs) {
+			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(bPublish);
+			sandbox.stub(AppVariantFeature, "isSaveAsAvailable").returns(bSaveAs);
+		}
+
 		QUnit.test("when RTA gets started", async function(assert) {
 			await this.oRta.start();
 			assert.strictEqual(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
@@ -534,6 +541,7 @@ sap.ui.define([
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
 			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/changesNeedHardReload"), false, "then no changes need a hard reload");
+			assert.strictEqual(this.oRta.getToolbar().isA("sap.ui.rta.toolbar.Standalone"), true, "then the toolbar is of type Standalone");
 
 			const oExpectedSettings = {
 				flexSettings: this.oFlexSettings,
@@ -541,6 +549,33 @@ sap.ui.define([
 				commandStack: this.oRta.getCommandStack()
 			};
 			assert.deepEqual(this.oRta.getToolbar().getRtaInformation(), oExpectedSettings, "the rta settings were passed to the toolbar");
+		});
+
+		QUnit.test("when RTA gets started in FLP context with original toolbar available", async function(assert) {
+			givenAnFLP();
+			sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
+				getRootControl() {
+					return {
+						getShellHeader() {
+							return {
+								addStyleClass: () => {},
+								removeStyleClass: () => {}
+							};
+						}
+					};
+				}
+			});
+			stubToolbarButtonsVisibility(false, false);
+			const oApiStub = sandbox.stub().returns("");
+			sandbox.stub(RtaUtils, "isOriginalFioriToolbarAccessible").returns(true);
+			RtaQunitUtils.stubSapUiRequire(sandbox, [{
+				name: "sap/ushell/api/RTA",
+				stub: {getLogo: oApiStub}
+			}]);
+			await this.oRta.start();
+
+			assert.strictEqual(this.oRta.getToolbar().isA("sap.ui.rta.toolbar.Fiori"), true, "then the toolbar is of type Fiori");
+			assert.deepEqual(this.oRta.getToolbar().getUshellApi(), {getLogo: oApiStub}, "then the api is passed to the toolbar");
 		});
 
 		QUnit.test("when RTA gets started with an enabled key user translation", async function(assert) {
@@ -594,11 +629,6 @@ sap.ui.define([
 			const oToolbar = this.oRta.getToolbar();
 			assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
 		});
-
-		function stubToolbarButtonsVisibility(bPublish, bSaveAs) {
-			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(bPublish);
-			sandbox.stub(AppVariantFeature, "isSaveAsAvailable").returns(bSaveAs);
-		}
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);

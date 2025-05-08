@@ -578,6 +578,35 @@ sap.ui.define([
 		oDateRangeSelection.destroy();
 	});
 
+	QUnit.test("Correct selection when submitting only one date.", function(assert) {
+		//arrange
+		const oFirstDate = UI5Date.getInstance(2022, 10, 1);
+		const sFirstDate = `Nov 1, 2022`;
+		const oDateRangeSelection = new DateRangeSelection({
+				displayFormat: "MMM d, yyyy",
+				displayFormatType: CalendarType.Gregorian,
+				delimiter:'-',
+				value: "Nov 1, 2022"
+			});
+		let aDates;
+
+		// act
+		aDates = oDateRangeSelection._splitValueByDelimiter(sFirstDate);
+		//assert
+		assert.strictEqual(aDates.length, 3, "");
+
+		// act
+		aDates = oDateRangeSelection._parseValue(sFirstDate);
+
+		//assert
+		assert.strictEqual(aDates.length, 2, "When a date is submitted, it is expected to be broken down into three components.");
+		assert.ok(CalendarDate.fromLocalJSDate(oFirstDate).isSame(CalendarDate.fromLocalJSDate(aDates[0]), "The first date is correctly parsed"));
+		assert.notOk(aDates[1], "The second date does not exist");
+
+		//clean
+		oDateRangeSelection.destroy();
+	});
+
 	QUnit.test("weekNumberSelect applies new selection", async function(assert) {
 		// Arrange
 		var oDateRangeSelection = new DateRangeSelection({

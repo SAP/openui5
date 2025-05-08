@@ -118,6 +118,16 @@ ColumnListItemRenderer.renderModeContent = function(rm, oLI) {
 	rm.close("td");
 };
 
+// wrap actions with a cell
+ColumnListItemRenderer.renderActions = function(rm, oLI) {
+	this.openStartGridCell(rm, oLI, "td", oLI.getId() + "-Actions", "sapMListTblActionsCol").openEnd();
+
+	// let the list item base render the actions
+	ListItemBaseRenderer.renderActions.apply(this, arguments);
+
+	rm.close("td");
+};
+
 // ColumnListItem does not respect counter property of the LIB
 ColumnListItemRenderer.renderCounter = function(rm, oLI) {
 };

@@ -10,7 +10,7 @@
 				text="Toggle Collapse/Expand"
 				icon="sap-icon://menu2"
 				press=".onCollapseExpandPress" />
-			<CheckBox id="preventDefaultCheckbox" text="Press event - PreventDefault" select="onCheckBoxSelect"/>
+			<CheckBox id="preventDefaultCheckbox" text="Press event - PreventDefault" />
 		</HBox>
 		<tnt:SideNavigation id="sideNavigation" selectedKey="walked" expanded="false">
 			<tnt:NavigationList>

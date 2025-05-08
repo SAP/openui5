@@ -527,7 +527,23 @@ sap.ui.define([
 				tokenText: _getText(OperatorName.Empty, false),
 				valueTypes: [],
 				getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-					if (sBaseType === BaseType.String) { // depending on backend and/or Type configuration filter is "" or null
+					const oAnyAllPath = _getAnyAllPath(sFieldPath);
+					if (oAnyAllPath) {
+						// Any or All Filter -> Empty needs to filter for non-existance of navigation targets
+						// once the NOT-filtering exists this can be changed into NOT-Any (at least for oData V4)
+						return new Filter({
+							path: oAnyAllPath.navPath,
+							operator: ModelOperator.All,
+							variable: "L1",
+							condition: new Filter({
+									filters: [ // create a Filter that cannot bring a result
+										new Filter({path: "L1/" + oAnyAllPath.propertyPath, operator: ModelOperator.EQ, value1: null}),
+										new Filter({path: "L1/" + oAnyAllPath.propertyPath, operator: ModelOperator.NE, value1: null})
+										],
+									and: true
+								})
+							});
+					} else if (sBaseType === BaseType.String) { // depending on backend and/or Type configuration filter is "" or null
 						let isNullable = false;
 						if (oType) {
 							const vResult = oType.parseValue("", "string");
@@ -564,7 +580,14 @@ sap.ui.define([
 				valueTypes: [],
 				exclude: true,
 				getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
-					if (sBaseType === BaseType.String) { // depending on backend and/or Type configuration filter is "" or null
+					const oAnyAllPath = _getAnyAllPath(sFieldPath);
+					if (oAnyAllPath) {
+						// Any or All Filter -> NotEmpty needs to filter for existance of navigation targets
+						return new Filter({
+							path: oAnyAllPath.navPath,
+							operator: ModelOperator.Any
+							});
+					} else if (sBaseType === BaseType.String) { // depending on backend and/or Type configuration filter is "" or null
 						let isNullable = false;
 						if (oType) {
 							const vResult = oType.parseValue("", "string");
@@ -2556,6 +2579,20 @@ sap.ui.define([
 			oTexts[aBaseTypes[i]] = oMessageBundle.getText(sTextKey + "." + aBaseTypes[i].toLowerCase(), undefined, true);
 		}
 		return oTexts;
+
+	}
+
+	function _getAnyAllPath(sFieldPath) {
+
+		const [sNavPath, sPattern, sPropertyPath, sWrongPart] = sFieldPath.split(/([\*\+]\/)/);
+		if (sPattern) {
+			// Any or All Filter -> Empty needs to filter for non-existance of navigation targets
+			if (!sWrongPart) { // only one occurence of pattern allowed
+				return {navPath: sNavPath, propertyPath: sPropertyPath};
+			} else {
+				throw new Error("FilterOperatorUtil: not supported binding " + sFieldPath);
+			}
+		}
 
 	}
 

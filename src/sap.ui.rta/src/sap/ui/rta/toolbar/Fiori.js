@@ -41,7 +41,13 @@ function(
 	 */
 	const Fiori = Adaptation.extend("sap.ui.rta.toolbar.Fiori", {
 		metadata: {
-			library: "sap.ui.rta"
+			library: "sap.ui.rta",
+			properties: {
+				ushellApi: {
+					type: "any", // sap.ushell.api.RTA
+					defaultValue: null
+				}
+			}
 		},
 		renderer: AdaptationRenderer,
 		type: "fiori"
@@ -60,9 +66,9 @@ function(
 
 	Fiori.prototype.buildControls = function(...aArgs) {
 		return Adaptation.prototype.buildControls.apply(this, aArgs).then(function(aControls) {
-			const sLogoPath = this._oFioriHeader.getLogo();
+			const sLogoPath = this.getUshellApi().getLogo();
 
-			if (this._oFioriHeader.getShowLogo() && sLogoPath) {
+			if (sLogoPath) {
 				// Unstable: if FLP changes ID of <img> element, logo could be not found
 				const oLogo = this._oFioriHeader.getDomRef().querySelector("#shell-header-icon");
 				let iWidth;

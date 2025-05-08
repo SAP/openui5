@@ -777,9 +777,6 @@ sap.ui.define([
 				sync: !!bSync
 			};
 		}
-		if (View._supportInfo) {
-			this.oPreprocessorInfo._supportInfo = View._supportInfo;
-		}
 		return this.oPreprocessorInfo;
 	};
 
