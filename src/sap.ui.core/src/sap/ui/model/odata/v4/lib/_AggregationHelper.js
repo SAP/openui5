@@ -1122,6 +1122,35 @@ sap.ui.define([
 		},
 
 		/**
+		 * Handles the given server response for a grand total row and updates it as needed by the
+		 * client.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see {@link .buildApply}
+		 * @param {object} oGrandTotal
+		 *   An object representing a grand total row response from the server
+		 *
+		 * @public
+		 */
+		handleGrandTotal : function (oAggregation, oGrandTotal) {
+			if (oAggregation["grandTotal like 1.84"]) { // rename measures
+				_AggregationHelper.removeUI5grand__(oGrandTotal);
+			}
+			_AggregationHelper.setAnnotations(oGrandTotal, true, true, 0,
+				_AggregationHelper.getAllProperties(oAggregation));
+
+			if (oAggregation.grandTotalAtBottomOnly === false) {
+				// Note: make shallow copy *before* there are private annotations!
+				const oGrandTotalCopy = Object.assign({}, oGrandTotal, {
+					"@$ui5.node.isExpanded" : undefined // treat copy as a leaf
+				});
+				_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
+				_Helper.setPrivateAnnotation(oGrandTotalCopy, "predicate", "($isTotal=true)");
+			}
+			_Helper.setPrivateAnnotation(oGrandTotal, "predicate", "()");
+		},
+
+		/**
 		 * Tells whether grand total values are needed for at least one aggregatable property.
 		 *
 		 * @param {object} [mAggregate]

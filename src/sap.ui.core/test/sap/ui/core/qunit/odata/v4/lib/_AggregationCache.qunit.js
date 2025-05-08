@@ -150,6 +150,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	/** @deprecated As of version 1.89.0 */
+	QUnit.test("create: $filter w/ grandTotal like 1.84", function (assert) {
+		const oAggregation = { // filled before by buildApply
+			aggregate : {
+				y : {
+					grandTotal : true
+				}
+			},
+			"grandTotal like 1.84" : true,
+			group : {
+				a : {}
+			},
+			groupLevels : []
+		};
+
+		// code under test
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "",
+			{$filter : "answer eq 42"}, oAggregation);
+
+		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create: min/max", function (assert) {
 		var oAggregation = {
 				aggregate : {},
@@ -302,22 +325,13 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-["none", "top", "bottom", "top&bottom"].forEach(function (sGrandTotalPosition) {
-	[false, true].forEach(function (bGrandTotalLike184) {
-		[false, true].forEach(function (bCountLeaves) {
-			var sTitle = "create: (either) grandTotal or groupLevels, position = "
-					+ sGrandTotalPosition + ", grandTotal like 1.84 = " + bGrandTotalLike184
-					+ ", count leaves = " + bCountLeaves;
-
-			// Note: counting of leaves only makes sense with group levels, which cannot be combined
-			// with "grandTotal like 1.84"
-			if (bCountLeaves && bGrandTotalLike184) {
-				return;
-			}
+[false, true].forEach(function (bHasGrandTotal) {
+	[false, true].forEach(function (bCountLeaves) {
+		var sTitle = "create: (either) grandTotal or groupLevels, has grand total = "
+				+ bHasGrandTotal + ", count leaves = " + bCountLeaves;
 
 	QUnit.test(sTitle, function (assert) {
-		var bHasGrandTotal = sGrandTotalPosition !== "none",
-			oAggregation = { // filled before by buildApply
+		var oAggregation = { // filled before by buildApply
 				aggregate : {
 					x : {},
 					y : {
@@ -325,15 +339,13 @@ sap.ui.define([
 						unit : "UnitY"
 					}
 				},
-				"grandTotal like 1.84" : bGrandTotalLike184,
 				group : {
-					c : {}, // intentionally out of ABC order
 					a : {},
-					b : {}
+					b : {},
+					c : {}
 				},
 				groupLevels : bHasGrandTotal && !bCountLeaves ? [] : ["a"]
 			},
-			aAllProperties = [],
 			oCache,
 			oEnhanceCacheWithGrandTotalExpectation,
 			oFirstLevelCache = {
@@ -343,27 +355,18 @@ sap.ui.define([
 			},
 			oGetDownloadUrlExpectation,
 			oGrandTotal = {},
-			oGrandTotalCopy = {},
 			oGroupLock = {
 				unlock : function () {}
 			},
-			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {
 				$count : bHasGrandTotal || bCountLeaves,
-				//TODO get rid of bGrandTotalLike184 here (JIRA: CPOUI5ODATAV4-713)
-				$filter : bHasGrandTotal && bGrandTotalLike184 ? "answer eq 42" : "",
+				$filter : "",
 				$orderby : "a",
 				"sap-client" : "123"
 			},
 			oReadPromise,
-			sResourcePath = "Foo",
-			iTopBottomCallCount = sGrandTotalPosition === "top&bottom" ? 1 : 0;
+			sResourcePath = "Foo";
 
-		if (sGrandTotalPosition === "top&bottom") {
-			oAggregation.grandTotalAtBottomOnly = false;
-		} else if (sGrandTotalPosition === "bottom") {
-			oAggregation.grandTotalAtBottomOnly = true;
-		}
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(bHasGrandTotal);
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
@@ -454,41 +457,23 @@ sap.ui.define([
 		assert.strictEqual(oCache.oTreeState.sNodeProperty, undefined);
 		assert.strictEqual(oCache.bUnifiedCache, false);
 
-		if (sGrandTotalPosition !== "bottom") {
-			[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
-				assert.throws(function () {
-					// code under test
-					// (read grand total row separately, but with iPrefetchLength !== 0)
-					oCache.read(0, 1, iPrefetchLength);
-				}, new Error("Unsupported prefetch length: " + iPrefetchLength));
-			});
+		[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
+			assert.throws(function () {
+				// code under test
+				// (read grand total row separately, but with iPrefetchLength !== 0)
+				oCache.read(0, 1, iPrefetchLength);
+			}, new Error("Unsupported prefetch length: " + iPrefetchLength));
+		});
 
-			this.mock(oGroupLock).expects("unlock").withExactArgs();
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
-			// code under test (read grand total row separately)
-			oReadPromise = oCache.read(0, 1, 0, oGroupLock);
+		// code under test (read grand total row separately)
+		oReadPromise = oCache.read(0, 1, 0, oGroupLock);
 
-			assert.strictEqual(oReadPromise.isPending(), true);
-		}
+		assert.strictEqual(oReadPromise.isPending(), true);
 
-		this.mock(_AggregationHelper).expects("removeUI5grand__")
-			.exactly(bGrandTotalLike184 ? 1 : 0)
-			.withExactArgs(sinon.match.same(oGrandTotal));
-		this.mock(_AggregationHelper).expects("getAllProperties")
-			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
-		this.mock(_AggregationHelper).expects("setAnnotations")
-			.withExactArgs(sinon.match.same(oGrandTotal), true, true, 0,
-				sinon.match.same(aAllProperties));
-		this.mock(Object).expects("assign").exactly(iTopBottomCallCount)
-			.withExactArgs({}, sinon.match.same(oGrandTotal), {"@$ui5.node.isExpanded" : undefined})
-			.returns(oGrandTotalCopy);
-		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
-			.withExactArgs(sinon.match.same(oGrandTotalCopy), "predicate", "($isTotal=true)");
-		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
-			.withExactArgs(sinon.match.same(oGrandTotal), "copy",
-				sinon.match.same(oGrandTotalCopy));
-		oHelperMock.expects("setPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oGrandTotal), "predicate", "()");
+		this.mock(_AggregationHelper).expects("handleGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGrandTotal));
 
 		// code under test (fnGrandTotal)
 		oEnhanceCacheWithGrandTotalExpectation.args[0][2][1](oGrandTotal);
@@ -500,10 +485,6 @@ sap.ui.define([
 		assert.ok("$count" in oCache.aElements);
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.strictEqual(oCache.aElements.$created, 0);
-
-		if (sGrandTotalPosition === "bottom") {
-			return null; // be nice to eslint's "consistent-return" rule ---------------------------
-		}
 		assert.strictEqual(oReadPromise.isPending(), true, "still async...");
 
 		return oReadPromise.then(function (oReadResult) {
@@ -512,7 +493,6 @@ sap.ui.define([
 			assert.notOk("$count" in oReadResult.value, "$count not available here");
 		});
 	});
-		});
 	});
 });
 
