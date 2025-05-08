@@ -28,8 +28,7 @@ sap.ui.define([
 	if (Supportability.getSupportSettings() !== null) {
 		aSupportModules.push(
 			new Promise((res, rej) => {
-				sap.ui.require(["sap/ui/core/support/Support", "sap/ui/support/Bootstrap"], (Support, Bootstrap) => {
-					Support.initializeSupportMode(Supportability.getSupportSettings());
+				sap.ui.require(["sap/ui/support/Bootstrap", "sap/ui/core/support/Support"], (Bootstrap /*, Support */) => {
 					Bootstrap.initSupportRules(Supportability.getSupportSettings());
 					res();
 				}, rej);
