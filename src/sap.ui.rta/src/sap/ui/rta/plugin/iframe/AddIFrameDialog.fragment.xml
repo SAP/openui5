@@ -17,7 +17,7 @@
 		contentWidth="50rem"
 		contentHeight="44rem"
 		core:require="{ FloatType: 'sap/ui/model/type/Float' }"
-		afterOpen="configureMultiInput"
+		beforeOpen="onBeforeOpen"
 	>
 		<content>
 			<layout:VerticalLayout
@@ -420,7 +420,7 @@
 				type="Emphasized"
 				text="{dialogInfo>/text/saveText}"
 				press="onSavePress"
-				enabled="{=!!${dialogInfo>/frameUrl/value} &amp;&amp; !${dialogInfo>/frameUrlError/value} &amp;&amp; ${dialogInfo>/areAllFieldsValid}}"
+				enabled="{= !!${dialogInfo>/areAllFieldsValid}}"
 			/>
 		</beginButton>
 		<endButton>
