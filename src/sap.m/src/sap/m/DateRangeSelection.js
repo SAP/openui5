@@ -755,7 +755,8 @@ sap.ui.define([
 				}
 			} else {
 				const aDateInterval = sValue.split(" " + sDelimiter + " ");// Delimiter appears more than once -> try with separators
-				if ( aDateInterval.length >= 1 && aDates.length > 2) {
+
+				if ( (aDateInterval.length  === 1 || aDateInterval.length  % 2 === 0) && aDates.length % 2 === 0) {
 					const sFirstDate = aDates.slice(0, aDates.length / 2).join(sDelimiter);
 					const sSecondDate = aDates.slice(aDates.length / 2).join(sDelimiter);
 					aDates = [sFirstDate, sSecondDate];
