@@ -1878,7 +1878,7 @@ sap.ui.define([
 				oCache.oFirstLevel.bSentRequest = true;
 				return SyncPromise.resolve(Promise.resolve(oReadResult));
 			});
-		this.mock(oCache).expects("requestOutOfPlaceNodes")
+		oCacheMock.expects("requestOutOfPlaceNodes")
 			.exactly(oFixture.bSentRequest ? 0 : 1).withExactArgs("~oGroupLock~")
 			.returns([Promise.resolve("~outOfPlaceResult0~"),
 				Promise.resolve("~outOfPlaceResult1~"), Promise.resolve("~outOfPlaceResult2~")]);
@@ -1921,7 +1921,7 @@ sap.ui.define([
 				.withExactArgs(iExpectedLevel, j, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + j);
 		}
-		const oHandleOutOfPlaceNodesExpectation = this.mock(oCache).expects("handleOutOfPlaceNodes")
+		const oHandleOutOfPlaceNodesExpectation = oCacheMock.expects("handleOutOfPlaceNodes")
 			.exactly(bSkipResponse ? 0 : 1)
 			.withExactArgs(oFixture.bSentRequest
 				? []
@@ -1965,6 +1965,46 @@ sap.ui.define([
 
 				sinon.assert.callOrder(oAddElementsExpectation, oHandleOutOfPlaceNodesExpectation);
 			});
+	});
+});
+
+	//*********************************************************************************************
+[undefined, false, true].forEach((bGrandTotalAtBottomOnly) => {
+	const sTitle = "readFirst: no data => no grand total; grandTotalAtBottomOnly="
+		+ bGrandTotalAtBottomOnly;
+
+	QUnit.test(sTitle, async function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+			aggregate : {
+				SalesNumber : {grandTotal : true}
+			},
+			grandTotalAtBottomOnly : bGrandTotalAtBottomOnly,
+			group : {},
+			groupLevels : ["group"]
+		});
+		oCache.oGrandTotalPromise = SyncPromise.resolve({/*oGrandTotal*/});
+		this.mock(oCache.oTreeState).expects("getOutOfPlaceCount").withExactArgs().returns(0);
+		const oReadResult = {
+			value : []
+		};
+		oReadResult.value.$count = 0; // no data
+		this.mock(oCache.oFirstLevel).expects("read")
+			.withExactArgs(0, 30, 0, "~oGroupLock~", "~fnDataRequested~")
+			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
+		this.mock(oCache).expects("requestOutOfPlaceNodes").withExactArgs("~oGroupLock~")
+			.returns([]);
+		this.mock(oCache).expects("addElements")
+			.withExactArgs(sinon.match.same(oReadResult.value), 0,
+				sinon.match.same(oCache.oFirstLevel), 0);
+		this.mock(_AggregationHelper).expects("createPlaceholder").never();
+		this.mock(oCache).expects("handleOutOfPlaceNodes").withExactArgs([]);
+
+		// code under test
+		await oCache.readFirst(0, 10, 20, "~oGroupLock~", "~fnDataRequested~");
+
+		assert.deepEqual(oCache.aElements, []);
+		assert.strictEqual(oCache.aElements.length, 0);
+		assert.strictEqual(oCache.aElements.$count, 0);
 	});
 });
 
@@ -4073,31 +4113,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("addElements: duplicate key predicate (outside)", function (assert) {
-		var oAggregation = { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["a"]
-			},
-			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
-			oElement = {},
-			oGroupLevelCache = {fixDuplicatePredicate : mustBeMocked};
-
-		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
-		oCache.aElements.$byPredicate["foo"] = {/*unexpected element outside*/};
-		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
-		this.mock(oGroupLevelCache).expects("fixDuplicatePredicate")
-			.withExactArgs(sinon.match.same(oElement), "foo").returns(undefined);
-		this.mock(_Helper).expects("updateNonExisting").never();
-		this.mock(oCache).expects("hasPendingChangesForPath").never();
-
-		assert.throws(function () {
-			// code under test
-			oCache.addElements([oElement], 1, oGroupLevelCache); // iStart does not matter here
-		}, new Error("Duplicate key predicate: foo"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("addElements: duplicate key predicate (inside)", function (assert) {
 		var oAggregation = {
 				hierarchyQualifier : "X"
@@ -4149,11 +4164,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bIgnore) {
-	var sTitle = "addElements: known predicate -> kept element, ignore = " + bIgnore;
+	[false, true].forEach(function (bRecursiveHierarchy) {
+		var sTitle = "addElements: known predicate -> kept element, ignore = " + bIgnore
+				+ ", recursive hierarchy = " + bRecursiveHierarchy;
 
 	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {
+		var oAggregation = bRecursiveHierarchy ? {
 				hierarchyQualifier : "X"
+			} : { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, oAggregation),
 			aElements = [{},, {}],
@@ -4183,6 +4204,7 @@ sap.ui.define([
 			"@odata.etag" : "X",
 			"@$ui5._" : {parent : "~parent~", predicate : "(1)", rank : 42}
 		});
+	});
 	});
 });
 
@@ -4271,6 +4293,24 @@ sap.ui.define([
 			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~", "~bIgnorePendingChanges~",
 				"~bDropApply~"),
 			"~result~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refreshKeptElements: data aggregation", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group : {},
+				groupLevels : ["foo"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation);
+
+		this.mock(oCache.oFirstLevel).expects("refreshKeptElements").never();
+
+		assert.strictEqual(
+			// code under test
+			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~"),
+			undefined,
+			"nothing happens");
 	});
 
 	//*********************************************************************************************
@@ -4886,33 +4926,23 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach((bRecursiveHierarchy) => {
-	[undefined, false, true].forEach((bElementSelected) => {
-		[undefined, false, true].forEach((bCollectionSelected) => {
-			const sTitle = `isSelectionDifferent: recursive hierarchy = ${bRecursiveHierarchy},
-				element selected = ${bElementSelected},
-				collection selected = ${bCollectionSelected}`;
+[undefined, false, true].forEach((bElementSelected) => {
+	[undefined, false, true].forEach((bCollectionSelected) => {
+		const sTitle = `isSelectionDifferent: element selected = ${bElementSelected},
+			collection selected = ${bCollectionSelected}`;
 
 	QUnit.test(sTitle, function (assert) {
-		const oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
-			bRecursiveHierarchy ? {
-				hierarchyQualifier : "X"
-			} : { // filled before by buildApply
-				aggregate : {},
-				group : {},
-				groupLevels : ["foo"]
-			});
+		const oCache = {
+			aElements : []
+		};
 		oCache.aElements["@$ui5.context.isSelected"] = bCollectionSelected;
 		const oElement = {"@$ui5.context.isSelected" : bElementSelected};
 
-		const bExpectation = bRecursiveHierarchy
-			? !!bElementSelected !== !!bCollectionSelected
-			: undefined;
-
-		// code under test
-		assert.strictEqual(oCache.isSelectionDifferent(oElement), bExpectation);
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.prototype.isSelectionDifferent.call(oCache, oElement),
+			!!bElementSelected !== !!bCollectionSelected);
 	});
-		});
 	});
 });
 

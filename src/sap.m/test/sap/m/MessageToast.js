@@ -68,8 +68,8 @@ sap.ui.define([
 			  onClose: function() {
 				  MessageToast.show("The onClose callback function was called", {
 					  width: "100%",
-					  my: "center bottom",
-					  at: "center bottom"
+					  my: "CenterBottom",
+					  at: "CenterBottom"
 				  });
 			  }
 		  });
@@ -103,73 +103,73 @@ sap.ui.define([
 		  }),
 
 		  new Item("begin-center" ,{
-			  key: "begin center",
-			  text: "begin center"
+			  key: "BeginCenter",
+			  text: "BeginCenter"
 		  }),
 
 		  new Item("begin-top" ,{
-			  key: "begin top",
-			  text: "begin top"
+			  key: "BeginTop",
+			  text: "BeginTop"
 		  }),
 
 		  new Item("center-bottom" ,{
-			  key: "center bottom",
-			  text: "center bottom"
+			  key: "CenterBottom",
+			  text: "CenterBottom"
 		  }),
 
 		  new Item("center-center" ,{
-			  key: "center center",
-			  text: "center center"
+			  key: "CenterCenter",
+			  text: "CenterCenter"
 		  }),
 
 		  new Item("center-top" ,{
-			  key: "center top",
-			  text: "center top"
+			  key: "CenterTop",
+			  text: "CenterTop"
 		  }),
 
 		  new Item("end-bottom" ,{
-			  key: "end bottom",
-			  text: "end bottom"
+			  key: "EndBottom",
+			  text: "EndBottom"
 		  }),
 
 		  new Item("end-center" ,{
-			  key: "end center",
-			  text: "end center"
+			  key: "EndCenter",
+			  text: "EndCenter"
 		  }),
 
 		  new Item("end-top" ,{
-			  key: "end top",
-			  text: "end top"
+			  key: "EndTop",
+			  text: "EndTop"
 		  }),
 
 		  new Item("left-bottom" ,{
-			  key: "left bottom",
-			  text: "left bottom"
+			  key: "LeftBottom",
+			  text: "LeftBottom"
 		  }),
 
 		  new Item("left-center" ,{
-			  key: "left center",
-			  text: "left center"
+			  key: "LeftCenter",
+			  text: "LeftCenter"
 		  }),
 
 		  new Item("left-top" ,{
-			  key: "left top",
-			  text: "left top"
+			  key: "LeftTop",
+			  text: "LeftTop"
 		  }),
 
 		  new Item("right-bottom" ,{
-			  key: "right bottom",
-			  text: "right bottom"
+			  key: "RightBottom",
+			  text: "RightBottom"
 		  }),
 
 		  new Item("right-center" ,{
-			  key: "right center",
-			  text: "right center"
+			  key: "RightCenter",
+			  text: "RightCenter"
 		  }),
 
 		  new Item("right-top" ,{
-			  key: "right top",
-			  text: "right top"
+			  key: "RightTop",
+			  text: "RightTop"
 		  })
 	  ],
 

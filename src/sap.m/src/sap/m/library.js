@@ -1192,13 +1192,13 @@ sap.ui.define([
 		  * Represents the ARIA role <code>dialog</code>.
 		  * @public
 		  */
-		 Dialog : "dialog",
+		 Dialog : "Dialog",
 
 		 /**
 		  * Represents the ARIA role <code>alertdialog</code>.
 		  * @public
 		  */
-		 AlertDialog : "alertdialog"
+		 AlertDialog : "AlertDialog"
 	 };
 
 	 /**

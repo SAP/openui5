@@ -77,11 +77,36 @@ sap.ui.define([
 				 * @since 1.133
 				 */
 				press: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The pressed item.
 						 */
-						item: { type: "sap.ui.core.Item" }
+						item: { type: "sap.ui.core.Item" },
+						/**
+						 * Indicates whether the CTRL key was pressed when the link was selected.
+						 * @since 1.137
+						 */
+						ctrlKey: { type: "boolean" },
+						/**
+						 * Indicates whether the Shift key was pressed when the link was selected.
+						 * @since 1.137
+						 */
+						shiftKey: { type: "boolean" },
+						/**
+						 * Indicates whether the Alt key was pressed when the link was selected.
+						 * @since 1.137
+						 */
+						altKey: { type: "boolean" },
+						/**
+						 * Indicates whether the "meta" key was pressed when the link was selected.
+						 *
+						 * On Macintosh keyboards, this is the command key (⌘).
+						 * On Windows keyboards, this is the windows key (⊞).
+						 *
+						 * @since 1.137
+						 */
+						metaKey: { type: "boolean" }
 					}
 				}
 			}
@@ -181,12 +206,6 @@ sap.ui.define([
 	 * @abstract
 	 */
 	NavigationListItemBase.prototype._getFocusDomRefs = function () { };
-
-	/**
-	 * Gets DOM reference of the accessibility element.
-	 * @abstract
-	 */
-	NavigationListItemBase.prototype._getAccessibilityRef = function () { };
 
 	/**
 	 * Returns the <code>sap.ui.core.Icon</code> control used to display the expand/collapse icon.
@@ -330,13 +349,10 @@ sap.ui.define([
 	 * @returns {boolean} whether the event was handled
 	 */
 	NavigationListItemBase.prototype.ontap = function (oEvent) {
-		const oParams = {
-			item: this
-		};
-
 		if (this.getEnabled() && !(oEvent.srcControl.isA("sap.ui.core.Icon")) && !this._isOverflow && !(!this.getNavigationList().getExpanded() && this.getItems().length)) {
-			this._firePress(oParams);
-
+			if (!this._firePress(oEvent, this)) {
+				return true;
+			}
 			oEvent.stopPropagation();
 		}
 
@@ -359,14 +375,32 @@ sap.ui.define([
 
 	/**
 	 * Fires a press event on an item.
-	 * @param {object} oParams The event parameters
+	 * @param {sap.ui.base.Event} oEvent press event
+	 * @param {sap.tnt.NavigationListMenuItem|sap.tnt.NavigationListItem} oItem The item that triggered the event
+	 * @returns {boolean} whether the event was successfully fired
 	 * @private
 	 */
-	NavigationListItemBase.prototype._firePress = function(oParams) {
+	NavigationListItemBase.prototype._firePress = function(oEvent, oItem) {
 		const oNavList = this.getNavigationList();
+		const oParams = oEvent.getParameters ? oEvent.getParameters() : {
+			item: oItem,
+			ctrlKey: !!oEvent.ctrlKey,
+			shiftKey: !!oEvent.shiftKey,
+			altKey: !!oEvent.altKey,
+			metaKey: !!oEvent.metaKey
+		};
 
-		oNavList?.fireItemPress({ item: this });
-		this.firePress(oParams);
+		if (!this.firePress(oParams)) {
+			oEvent.preventDefault();
+			return false;
+		}
+
+		if (!oNavList?.fireItemPress(oParams)) {
+			oEvent.preventDefault();
+			return false;
+		}
+
+		return true;
 	};
 
 	/**
@@ -414,32 +448,12 @@ sap.ui.define([
 			return false;
 		}
 
-		this.setProperty("expanded", true, true);
-		this._getExpandIconControl()
-			.setSrc(COLLAPSE_ICON_SRC)
-			.setTooltip(this._getExpandIconTooltip(false));
-
-		this._getAccessibilityRef().setAttribute("aria-expanded", "true");
-
-		const $container = this.$().find(".sapTntNLIItemsContainer").first();
-		$container.stop(true, true).slideDown("fast", () => {
-			this._updateContainerVisibility();
-			this.getNavigationList()?._updateNavItems();
-		});
+		this.setProperty("expanded", true);
+		this._animateExpand = true;
 
 		return true;
 	};
 
-	NavigationListItemBase.prototype._updateContainerVisibility = function () {
-		const oContainerRef = this.getDomRef()?.querySelector(".sapTntNLIItemsContainer");
-		if (oContainerRef) {
-			if (this.getExpanded()) {
-				oContainerRef.classList.remove("sapTntNLIItemsContainerHidden");
-			} else {
-				oContainerRef.classList.add("sapTntNLIItemsContainerHidden");
-			}
-		}
-	};
 
 	/**
 	 * Collapses the child items (works only on first-level items).
@@ -451,18 +465,9 @@ sap.ui.define([
 			return false;
 		}
 
-		this.setProperty("expanded", false, true);
-		this._getExpandIconControl()
-			.setSrc(EXPAND_ICON_SRC)
-			.setTooltip(this._getExpandIconTooltip(true));
+		this.setProperty("expanded", false);
+		this._animateCollapse = true;
 
-		this._getAccessibilityRef().setAttribute("aria-expanded", "false");
-
-		const $container = this.$().find(".sapTntNLIItemsContainer").first();
-		$container.stop(true, true).slideUp("fast", () => {
-			this._updateContainerVisibility();
-			this.getNavigationList()?._updateNavItems();
-		});
 
 		return true;
 	};

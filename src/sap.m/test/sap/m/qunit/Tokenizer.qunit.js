@@ -482,6 +482,51 @@ sap.ui.define([
 		// Cleanup
 		oTokenizer.destroy();
 	});
+
+	QUnit.test("Handle mapping between List items and Tokens on Token deletion when fired from a token", async function (assert) {
+		// Setup
+		this.clock = sinon.useFakeTimers();
+		const oModel = new JSONModel({
+				items: [
+					{text: "Token 0"},
+					{text: "Token 1"},
+					{text: "Token 2"}
+				]
+			}),
+			oTokenizer = new Tokenizer({
+				tokens: {path: "/items", template: new Token({text: {path: "text"}})},
+				width: "150px",
+				renderMode: "Narrow",
+				tokenDelete: function(oEvent) {
+					oModel.setData({
+						items: [
+							{text: "Token 1"},
+							{text: "Token 2"}
+						]
+					});
+				}
+			})
+			.setModel(oModel)
+			.placeAt("content");
+		await nextUIUpdate(this.clock);
+
+		oTokenizer._handleNMoreIndicatorPress();
+		this.clock.tick(500);
+
+		// Act
+		oTokenizer.getTokens()[0].getAggregation("deleteIcon").firePress();
+		this.clock.tick(500);
+
+		// Assert
+		const aItems = oTokenizer._getTokensList().getItems();
+		assert.strictEqual(aItems.length, 2, "There should be 2 items in the list");
+		assert.strictEqual(oTokenizer.getTokens().length, 2, "The Tokenizer should have 2 tokens");
+
+		// Cleanup
+		this.clock.restore();
+		oTokenizer.destroy();
+	});
+
 	QUnit.test("should fire press event coming from n-more list", function (assert) {
 		// Setup
 		var oList, oHandleListItemPressSpy,

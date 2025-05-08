@@ -24861,6 +24861,49 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: List binding with aggregation, no visual grouping, and grand total at both top and
+	// bottom - or at top/bottom only. Grand total not shown because there is no data.
+	// JIRA: CPOUI5ODATAV4-2979
+	[undefined, false, true].forEach((bGrandTotalAtBottomOnly) => {
+		const sTitle = "Data Aggregation: no data, grandTotalAtBottomOnly=" + bGrandTotalAtBottomOnly;
+
+		QUnit.test(sTitle, async function (assert) {
+			const oModel = this.createAggregationModel();
+
+			await this.createView(assert, "", oModel);
+
+			const oListBinding = oModel.bindList("/BusinessPartners", null, [], [], {
+				$$aggregation : {
+					aggregate : {
+						SalesNumber : {grandTotal : true}
+					},
+					grandTotalAtBottomOnly : bGrandTotalAtBottomOnly,
+					group : {Country : {}}
+				}
+			});
+
+			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+					+ ",groupby((Country),aggregate(SalesNumber))"
+						+ "/concat(aggregate($count as UI5__count),top("
+						+ (bGrandTotalAtBottomOnly ? 100 : 99)
+						+ ")))", {
+					value : [{
+						SalesNumber : 0 // think "sum" here ;-)
+					}, {
+						UI5__count : "0" // no data
+					}]
+				});
+
+			const [aContexts] = await Promise.all([
+				oListBinding.requestContexts(),
+				this.waitForChanges(assert)
+			]);
+
+			assert.deepEqual(aContexts.map(getNormalizedPath), [], "no data - no grand total");
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation, no visual grouping, and grand total at both
 	// top and bottom - or at bottom only.
 	// JIRA: CPOUI5ODATAV4-558
@@ -27796,6 +27839,190 @@ sap.ui.define([
 						"Must not request side effects when using data aggregation");
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table with aggregation and visual grouping where a leaf is selected and thus
+	// kept alive, even when its parent is collapsed/expanded and the binding is refreshed.
+	// JIRA: CPOUI5ODATAV4-2969
+	// SNOW: DINC0463228
+	QUnit.test("Data Aggregation: keep alive via selection", async function (assert) {
+		const oModel = this.createAggregationModel();
+		const sView = `
+<Text id="selectionCount" text="{$selectionCount}"/>
+<t:Table id="table" threshold="0" visibleRowCount="3"
+	rows="{path : '/BusinessPartners',
+		parameters : {
+			$$aggregation : {
+				aggregate : {
+					SalesNumber : {subtotals : true}
+				},
+				groupLevels : ['Country', 'Region']
+			}
+		}}">
+	<Text id="isSelected" text="{= %{@$ui5.context.isSelected} }"/>
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>
+	<Text id="country" text="{Country}"/>
+	<Text id="region" text="{Region}"/>
+	<Text id="salesNumber" text="{SalesNumber}"/>
+</t:Table>`;
+		const sCountryUrl = "BusinessPartners?$apply=groupby((Country),aggregate(SalesNumber))"
+			+ "&$count=true&$skip=0&$top=3";
+		this.expectChange("selectionCount")
+			.expectRequest(sCountryUrl, {
+				"@odata.count" : "26",
+				value : [
+					{Country : "A", SalesNumber : 100},
+					{Country : "B", SalesNumber : 200},
+					{Country : "C", SalesNumber : 300}
+				]
+			})
+			.expectChange("isSelected", [undefined, undefined, undefined])
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("country", ["A", "B", "C"])
+			.expectChange("region", [null, null, null])
+			.expectChange("salesNumber", ["100", "200", "300"]);
+
+		await this.createView(assert, sView, oModel);
+
+		const oListBinding = this.oView.byId("table").getBinding("rows");
+		const oContextA = oListBinding.getCurrentContexts()[0];
+
+		this.expectChange("selectionCount", "0");
+		this.oView.byId("selectionCount").setBindingContext(oListBinding.getHeaderContext());
+
+		const sRegionUrl = "BusinessPartners"
+			+ "?$apply=filter(Country eq 'A')/groupby((Region),aggregate(SalesNumber))"
+			+ "&$count=true&$skip=0&$top=3";
+		this.expectChange("isExpanded", [true])
+			.expectRequest(sRegionUrl, {
+				"@odata.count" : "2",
+				value : [
+					{Region : "A1", SalesNumber : 20},
+					{Region : "A2", SalesNumber : 80}
+				]
+			})
+			.expectChange("isExpanded", [, undefined, undefined])
+			.expectChange("isTotal", [, false, false])
+			.expectChange("level", [, 2, 2])
+			.expectChange("country", [, "A", "A"])
+			.expectChange("region", [, "A1", "A2"])
+			.expectChange("salesNumber", [, "20", "80"]);
+
+		await Promise.all([
+			oContextA.expand(),
+			this.waitForChanges(assert, "expand 'A'")
+		]);
+
+		const oContextA1 = oListBinding.getCurrentContexts()[1];
+		this.expectChange("selectionCount", "1")
+			.expectChange("isSelected", [, true]);
+
+		// code under test
+		oContextA1.setSelected(true);
+
+		await this.waitForChanges(assert, "select 'A1'");
+
+		this.expectChange("isSelected", [, undefined])
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [, true, true])
+			.expectChange("level", [, 1, 1])
+			.expectChange("country", [, "B", "C"])
+			.expectChange("region", [, null, null])
+			.expectChange("salesNumber", [, "200", "300"]);
+
+		oContextA.collapse();
+
+		await this.waitForChanges(assert, "collapse 'A'");
+
+		this.expectChange("isSelected", [, true])
+			.expectChange("isExpanded", [true, undefined, undefined])
+			.expectChange("isTotal", [, false, false])
+			.expectChange("level", [, 2, 2])
+			.expectChange("country", [, "A", "A"])
+			.expectChange("region", [, "A1", "A2"])
+			.expectChange("salesNumber", [, "20", "80"]);
+
+		await Promise.all([
+			oContextA.expand(),
+			this.waitForChanges(assert, "expand 'A' again")
+		]);
+
+		assert.strictEqual(oListBinding.getCurrentContexts()[1], oContextA1,
+			"context has been kept alive");
+		checkSelected(assert, oContextA1, true, "'A1' still selected");
+
+		this.expectChange("selectionCount", "0")
+			.expectChange("isSelected", [, false]);
+
+		// code under test (SNOW: DINC0463228)
+		oContextA1.setSelected(false);
+
+		await this.waitForChanges(assert, "deselect 'A1'");
+
+		this.expectChange("selectionCount", "1")
+			.expectChange("isSelected", [, true]);
+
+		// code under test (SNOW: DINC0463228)
+		oContextA1.setSelected(true);
+
+		await this.waitForChanges(assert, "select 'A1' again");
+
+		this.expectChange("isSelected", [, undefined])
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [, true, true])
+			.expectChange("level", [, 1, 1])
+			.expectChange("country", [, "B", "C"])
+			.expectChange("region", [, null, null])
+			.expectChange("salesNumber", [, "200", "300"]);
+
+		// Note: while #requestRefresh does not keep the tree state and thus implicitly collapses,
+		// this still poses some addt'l complication w.r.t. _AC#isSelectionDifferent
+		oContextA.collapse();
+
+		await this.waitForChanges(assert, "collapse 'A' again");
+
+		this.expectChange("salesNumber", ["101", "202", "303"]);
+
+		this.expectRequest(sCountryUrl, {
+				"@odata.count" : "23", // "side effect"
+				value : [
+					{Country : "A", SalesNumber : 101},
+					{Country : "B", SalesNumber : 202},
+					{Country : "C", SalesNumber : 303}
+				]
+			});
+
+		await Promise.all([
+			// code under test
+			oListBinding.requestRefresh(),
+			this.waitForChanges(assert, "refresh")
+		]);
+
+		this.expectChange("isExpanded", [true])
+			.expectRequest(sRegionUrl, {
+				"@odata.count" : "2",
+				value : [
+					{Region : "A0", SalesNumber : 70},
+					{Region : "A1", SalesNumber : 31}
+				]
+			})
+			.expectChange("isSelected", [,, true])
+			.expectChange("isExpanded", [, undefined, undefined])
+			.expectChange("isTotal", [, false, false])
+			.expectChange("level", [, 2, 2])
+			.expectChange("country", [, "A", "A"])
+			.expectChange("region", [, "A0", "A1"])
+			.expectChange("salesNumber", [, "70", "31"]);
+
+		await Promise.all([
+			oContextA.expand(),
+			this.waitForChanges(assert, "expand 'A' again after refresh")
+		]);
 	});
 
 	//*********************************************************************************************

@@ -161,6 +161,7 @@ sap.ui.define([
 	isDockPosition("my", Popup.Dock.EndTop, 0);
 	isDockPosition("my", Popup.Dock.EndCenter, 0);
 	isDockPosition("my", Popup.Dock.EndBottom, 0);
+	isDockPosition("my", "CenterCenter", 0);
 	isDockPosition("my", "center other", 1);
 	isDockPosition("at", "center center2", 1);
 
@@ -346,8 +347,8 @@ sap.ui.define([
 
 			// act
 			MessageToast.show("message toast", {
-				my: "end top",
-				at: "end top",
+				my: "EndTop",
+				at: "EndTop",
 				closeOnBrowserNavigation: bCloseOnBrowserNavigation
 			});
 
@@ -401,8 +402,8 @@ sap.ui.define([
 
 			// act
 			MessageToast.show("message toast", {
-				my: "center center",
-				at: "center center",
+				my: "CenterCenter",
+				at: "CenterCenter",
 				onClose: fnCloseSpy
 			});
 
@@ -427,8 +428,8 @@ sap.ui.define([
 
 			// act
 			fnShow.call(fnShow, "message toast reference call", {
-				my: "center center",
-				at: "center center",
+				my: "CenterCenter",
+				at: "CenterCenter",
 				onClose: fnCloseSpy
 			});
 

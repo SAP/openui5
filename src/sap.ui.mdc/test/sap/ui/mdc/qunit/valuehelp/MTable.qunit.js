@@ -182,7 +182,7 @@ sap.ui.define([
 			columns: [ new Column({header: new Label({text: "Id"})}),
 					   new Column({header: new Label({text: "Text"})}),
 					   new Column({header: new Label({text: "Info"})})],
-			items: {path: "/items", template: oItemTemplate}
+			items: {path: "/items", template: oItemTemplate, templateShareable: false}
 		});
 
 		oTable.setModel(oModel); // as ValueHelp is faked
@@ -448,7 +448,7 @@ sap.ui.define([
 
 	QUnit.test("getContainerConfig - footer with length limitation", (assert) => {
 
-		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
+		oTable.bindItems({path: "/items", template: oItemTemplate.clone(), length: 10});
 
 		let iSwitchToDialog = 0;
 		oMTable.attachEvent("requestSwitchToDialog", (oEvent) => {
@@ -1380,7 +1380,7 @@ sap.ui.define([
 
 	QUnit.test("navigate to footer button", async (assert) => {
 
-		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
+		oTable.bindItems({path: "/items", template: oItemTemplate.clone(), length: 10});
 		_attachNavigated();
 
 		await _renderScrollContainer();
@@ -1514,7 +1514,7 @@ sap.ui.define([
 
 	QUnit.test("navigate to footer button (multi-value)", async (assert) => {
 
-		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
+		oTable.bindItems({path: "/items", template: oItemTemplate.clone(), length: 10});
 		_attachNavigated();
 
 		await _renderScrollContainer();
@@ -1580,7 +1580,7 @@ sap.ui.define([
 			]
 		});
 		const oSorter = new Sorter("group", false, true);
-		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
+		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate.clone()});
 		const oListBinding = oTable.getBinding("items");
 
 		_attachNavigated();
@@ -1633,7 +1633,7 @@ sap.ui.define([
 			]
 		});
 		const oSorter = new Sorter("group", false, true);
-		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
+		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate.clone()});
 		const oListBinding = oTable.getBinding("items");
 
 		_fakeV4Binding(oListBinding);

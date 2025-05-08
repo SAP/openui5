@@ -247,7 +247,9 @@ sap.ui.define([
 		const oItemInPopup = oEvent.getParameter("item"),
 			oRealItem = Element.getElementById(oItemInPopup.getKey());
 
-		oRealItem._firePress({ item: oRealItem });
+		if (!oRealItem._firePress(oEvent, oRealItem)) {
+			oEvent.preventDefault();
+		}
 	};
 
 	/**
@@ -280,16 +282,6 @@ sap.ui.define([
 		if (sHref) {
 			openWindow(sHref, this.getTarget() || "_self");
 		}
-	};
-
-	/**
-	 * Gets DOM reference of the accessibility element.
-	 *
-	 * @private
-	 * @returns {HTMLElement} dom ref
-	 */
-	NavigationListItem.prototype._getAccessibilityRef = function () {
-		return this.getDomRef().querySelector(".sapTntNLIFirstLevel");
 	};
 
 	/**
@@ -329,12 +321,10 @@ sap.ui.define([
 			return;
 		}
 
-		const bHasModifierKey = this._hasModifierKey(oEvent);
-
-		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) && !bHasModifierKey) {
+		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) ) {
 			this.getDomRef().classList.add("sapTntNLIActive");
 			this.ontap(oEvent);
-		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) && !bHasModifierKey) {
+		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) ) {
 			this.getDomRef().classList.add("sapTntNLIActive");
 		}
 
@@ -351,16 +341,11 @@ sap.ui.define([
 			return;
 		}
 
-		const bHasModifierKey = this._hasModifierKey(oEvent);
-
-		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) && !bHasModifierKey) {
+		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) ) {
 			this.getDomRef().classList.remove("sapTntNLIActive");
 		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE)) {
 			this.getDomRef().classList.remove("sapTntNLIActive");
-
-			if (!bHasModifierKey) {
-				this.ontap(oEvent);
-			}
+			this.ontap(oEvent);
 		}
 
 		if (oEvent.srcControl.getLevel() === 1) {
@@ -427,7 +412,7 @@ sap.ui.define([
 					label: this.getText()
 				});
 
-			if (!this.getExpanded()) {
+			if (!this.getExpanded() && !this._animateCollapse || this._animateExpand) {
 				oRM.class("sapTntNLIItemsContainerHidden");
 			}
 
@@ -484,7 +469,7 @@ sap.ui.define([
 			bSelected = true;
 		}
 
-		if (!bListExpanded && aItems.includes(oNavigationList._selectedItem)) {
+		if ((!bListExpanded || !bExpanded) && aItems.includes(oNavigationList._selectedItem)) {
 			oRM.class("sapTntNLISelected");
 			bSelected = true;
 		}
@@ -882,10 +867,6 @@ sap.ui.define([
 	};
 
 	NavigationListItem.prototype.onmouseover = NavigationListItem.prototype.onfocusout;
-
-	NavigationListItem.prototype._hasModifierKey = 	function hasModifierKeys(oEvent) {
-		return oEvent.shiftKey || oEvent.altKey || oEvent.ctrlKey || oEvent.metaKey;
-	};
 
 	return NavigationListItem;
 });

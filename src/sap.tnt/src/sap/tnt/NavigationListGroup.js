@@ -8,6 +8,9 @@ sap.ui.define([
 ], function (library, NavigationListItemBase) {
 	"use strict";
 
+	const EXPAND_ICON_SRC = "sap-icon://navigation-right-arrow";
+	const COLLAPSE_ICON_SRC = "sap-icon://navigation-down-arrow";
+
 	/**
 	 * Constructor for a new NavigationListGroup.
 	 *
@@ -109,7 +112,9 @@ sap.ui.define([
 			.text(this.getText())
 			.close("span");
 
-		oRM.renderControl(this._getExpandIconControl());
+		const oIcon = this._getExpandIconControl();
+		oIcon.setSrc(this.getExpanded() ? COLLAPSE_ICON_SRC : EXPAND_ICON_SRC);
+		oRM.renderControl(oIcon);
 
 		oRM.close("div");
 
@@ -120,7 +125,7 @@ sap.ui.define([
 				label: this.getText()
 			});
 
-		if (!this.getExpanded()) {
+		if (!this.getExpanded() && !this._animateCollapse || this._animateExpand) {
 			oRM.class("sapTntNLIItemsContainerHidden");
 		}
 
@@ -171,16 +176,6 @@ sap.ui.define([
 		}
 
 		return aDomRefs;
-	};
-
-	/**
-	 * Gets DOM reference of the accessibility element.
-	 *
-	 * @private
-	 * @returns {HTMLElement} dom ref
-	 */
-	NavigationListGroup.prototype._getAccessibilityRef = function () {
-		return this.getDomRef().querySelector(".sapTntNLGroup");
 	};
 
 	NavigationListGroup.prototype._getExpandIconStyleClass = function () {

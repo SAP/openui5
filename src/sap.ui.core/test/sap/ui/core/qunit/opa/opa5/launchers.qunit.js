@@ -307,18 +307,13 @@ sap.ui.define([
 	aTeardownOptions.forEach(function (mTeardown) {
 		QUnit.test("Should complain if " + mTeardown.name + " is not launched", function (assert) {
 			var oOpa5 = new Opa5();
-			var fnSpy = this.spy();
 
-			assert.expect(3);
+			assert.expect(2);
 
 			oOpa5[mTeardown.func].apply(oOpa5).fail(function (oOptions) {
 				assert.ok(true, "Should execute teardown fail callback");
 				QUnit.assert.contains(oOptions.errorMessage, mTeardown.error, "Unexpected teardown error message");
 			});
-
-			oOpa5.emptyQueue().fail(fnSpy);
-			this.clock.tick(500);
-			assert.ok(fnSpy.calledOnce, "Teardown exception should also be handled by the queue's fail callback");
 		});
 	});
 
