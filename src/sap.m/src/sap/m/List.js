@@ -89,6 +89,26 @@ sap.ui.define(["./library", "./ListBase", "./ListRenderer", "sap/ui/core/Lib", "
 		this._sAriaRole = sRole;
 	};
 
+	List.prototype._sAriaRoleDescriptionKey = "LIST_ROLE_DESCRIPTION";
+
+	/**
+	 * Applies the aria role description with the given text key to the control.
+	 *
+	 * <b>Note:</b>
+	 * <ul>
+	 * <li>This method must be called before the control renders.</li>
+	 * <li>The description is only applied when the role is 'list'.</li>
+	 * </ul>
+	 *
+	 * @param {string} [sTextKey] role attribute for the control
+	 * @private
+	 * @ui5-restricted sap.m.UploadSet
+	 * @since 1.120
+	 */
+	List.prototype.applyAriaRoleDescription = function(sTextKey) {
+		this._sAriaRoleDescriptionKey = sTextKey;
+	};
+
 	List.prototype._skipGroupHeaderFocus = function() {
 		// Currently hidden behind a URL flag, as ComboBox and MultiComboBox are not compatible with the new behavior
 		// As they set the focus themselves (focus the first visible item), it leads to a lot of issues.
