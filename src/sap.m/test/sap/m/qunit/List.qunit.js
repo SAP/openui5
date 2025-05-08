@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/model/json/JSONModel",
@@ -29,8 +30,9 @@ sap.ui.define([
 	"sap/m/ListItemBase",
 	"sap/base/Log",
 	"sap/ui/model/Sorter",
-	"sap/ui/core/date/UI5Date"
-], function(jQuery, Core, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/InvisibleText"
+], function(jQuery, Core, nextUIUpdate, createAndAppendDiv, qutils, JSONModel, Parameters, CustomData, coreLibrary, library, Device, App, Page, Avatar, Button, Bar, List, DisplayListItem, StandardListItem, InputListItem, CustomListItem, ActionListItem, Input, Text, KeyCodes, Control, Element, ListItemBase, Log, Sorter, UI5Date, InvisibleText) {
 	"use strict";
 	createAndAppendDiv("content").style.height = "100%";
 
@@ -2506,6 +2508,28 @@ sap.ui.define([
 		// ActionListItem check
 		var oALIDomRef = this.oALI.getDomRef();
 		assert.strictEqual(oALIDomRef.getAttribute("role"), "option", "role='option' applied to list items");
+	});
+
+	QUnit.test("applyAriaRoleDescription", async function(assert) {
+		const sTextId = InvisibleText.getStaticId("sap.m", this.oList._sAriaRoleDescriptionKey);
+
+		assert.strictEqual(this.oList._sAriaRoleDescriptionKey, "LIST_ROLE_DESCRIPTION", "Default role description text key is set");
+
+		this.oList.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.strictEqual(this.oList.getAriaRole(), "list", "'list' role is applied");
+		let oListDomRef = this.oList.getDomRef("listUl");
+		assert.ok((oListDomRef.getAttribute("aria-describedby") || "").indexOf(sTextId) >= 0, "aria-describedby contains reference to the role description");
+
+		this.oList.applyAriaRole("listbox");
+		this.oList.invalidate();
+		await nextUIUpdate();
+		assert.strictEqual(this.oList.getAriaRole(), "listbox", "'listbox' role is applied");
+		oListDomRef = this.oList.getDomRef("listUl");
+		assert.ok((oListDomRef.getAttribute("aria-describedby") || "").indexOf(sTextId) < 0, "aria-describedby does not contain reference to the role description");
+
+		this.oList.applyAriaRoleDescription("SOME_CUSTOM_ROLE_DESCRIPTION");
+		assert.strictEqual(this.oList._sAriaRoleDescriptionKey, "SOME_CUSTOM_ROLE_DESCRIPTION", "Custom role description text key is set");
 	});
 
 	QUnit.test("Grouping behavior role='listbox'", function(assert) {

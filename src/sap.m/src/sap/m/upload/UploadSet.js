@@ -1130,6 +1130,7 @@ sap.ui.define([
 				noDataText: this._setListNoDataText()
 			});
 			this._oList.addStyleClass("sapMUCList");
+			this._oList.applyAriaRoleDescription("UPLOAD_SET_LIST_ROLE_DESCRIPTION");
 			this.addDependent(this._oList);
 		}
 
