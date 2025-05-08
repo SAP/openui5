@@ -2416,4 +2416,24 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		});
 		assert.equal(oSpy.callCount, 2, "parent section is invalidated");
 	});
+
+	QUnit.module("ObjectPageSubSection - focus");
+
+	QUnit.test("Focus span is rendered", async function (assert) {
+		// Arrange
+		var oSubSection = new ObjectPageSubSectionClass({
+			title: "Title",
+			blocks: [new Text({text: "Test"})]
+		});
+
+		// Act
+		oSubSection.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		// Assert
+		assert.strictEqual(oSubSection.$().find(".sapUxAPObjectPageSubSectionFocusSpan").length, 1, "Focus span is rendered");
+
+		// Clean up
+		oSubSection.destroy();
+	});
 });

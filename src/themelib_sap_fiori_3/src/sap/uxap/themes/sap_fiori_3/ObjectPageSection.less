@@ -4,8 +4,8 @@
 /* =========================================== */
 
 .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPObjectPageSubSectionHeader {
-	padding-left: 2rem;
-	padding-right: 2rem;
+	padding-left: 1rem;
+	padding-right: 1.25rem;
 }
 
 .sapUxAPObjectPageSection {
@@ -38,9 +38,18 @@
 	line-height: 2.25rem;
 }
 
-.sapUxAPObjectPageSection:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
+// Page Section Focus
+.sapUxAPObjectPageSection:focus::before {
+	content: '';
+	position: absolute;
+	display: block;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	z-index: 6;
+	pointer-events: none;
 }
 
 .sapUxAPObjectPageSectionHeader,

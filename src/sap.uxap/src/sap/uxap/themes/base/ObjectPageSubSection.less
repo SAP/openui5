@@ -3,6 +3,10 @@
 /* Base theme                                     */
 /* ============================================== */
 
+.sapUxAPObjectPageSubSection {
+	position: relative;
+}
+
 .sapUxAPObjectPageSubSection:not(.sapUxAPObjectPageSubSectionPromoted) {
 	padding-top: 1rem;
 	box-sizing: border-box;
@@ -18,13 +22,23 @@
 	width: 100%;
 }
 
+.sapUxAPObjectPageSubSection .sapUxAPObjectPageSubSectionHeader {
+	.sapMTB.sapUxAPObjectPageSubSectionHeaderToolbar {
+		background-color: @sapUiGlobalBackgroundColor;
+	}
+
+	position: sticky;
+	top: 0;
+	z-index: 5;
+}
+
 .sapUxAPObjectPageSubSectionHeader > .sapMBtn {
 	margin-left: 0.5rem;
 }
 
 .sapUxAPObjectPageSubSectionHeader .sapMTB {
-	padding-left: 0;
-	padding-right: 0;
+	padding-left: 1rem;
+	padding-right: 0.75rem;
 }
 
 .sapUxAPObjectPageSubSectionHeader .sapMIBar :not(.sapMBtnDisabled)>.sapMBtnInner.sapMBtnActive {
@@ -38,7 +52,7 @@
 .sapUxAPObjectPageSubSectionHeader {
 	height: auto;
 	word-wrap: break-word;
-	padding: 0 3rem 0 3rem;
+	padding: 0 2rem 0 2rem;
 	display: flex;
 	width: 100%;
 	box-sizing: border-box;
@@ -76,7 +90,7 @@
 /* phone display */
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeader {
-	padding: 0 1rem;
+	padding: 0 0.25rem 0 0;
 }
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSectionHeaderTitle,
@@ -93,7 +107,7 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSubSectionHeaderTitle {
 
 .sapUxAPObjectPageLayout-Std-Tablet .sapUxAPObjectPageSubSectionHeader,
 html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
-	padding: 0 2rem 0 2rem;
+	padding: 0 1.25rem 0 1rem;
 }
 
 /* Those styles apply Desktop and Desktop-XL.

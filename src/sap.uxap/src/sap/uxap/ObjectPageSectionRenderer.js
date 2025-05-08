@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 	};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
-		var bTitleVisible, bTitleAriaHidden, bShouldDisplayButtonsInHeader, bHasMoreThanOneVisibleSubSection,
+		var bTitleVisible, bTitleAriaHidden, bShouldDisplayButtonsInHeader, bHasMoreThanOneVisibleSubSection, bShouldStick,
 			bAccessibilityOn = ControlBehavior.isAccessibilityEnabled(),
 			oLabelledByTitleID = oControl._getAriaLabelledById(),
 			oHeading = oControl.getHeading(),
@@ -28,6 +28,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 		bTitleAriaHidden = !oControl._isTitleAriaVisible();
 		bShouldDisplayButtonsInHeader = oControl._shouldDisplayButtonsInHeader();
 		bHasMoreThanOneVisibleSubSection = oControl._getVisibleSubSections().length > 1;
+		bShouldStick = !bHasMoreThanOneVisibleSubSection;
 
 		oRm.openStart("section", oControl)
 			.class("sapUxAPObjectPageSection");
@@ -63,7 +64,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 			.attr("aria-level", oControl._getARIALevel())
 			.class("sapUxAPObjectPageSectionHeader")
 			.class(bTitleAriaHidden ? "sapUxAPObjectPageSectionHeaderHidden" : "")
-			.class(bHasMoreThanOneVisibleSubSection && !bShouldDisplayButtonsInHeader ? "sapUxAPObjectPageSectionHeaderCompact" : "");
+			.class(bHasMoreThanOneVisibleSubSection && !bShouldDisplayButtonsInHeader ? "sapUxAPObjectPageSectionHeaderCompact" : "")
+			.class(bShouldStick ? "sapUxAPObjectPageSectionHeaderSticky" : "");
 
 		if (bTitleAriaHidden) {
 			oRm.attr("aria-hidden", "true");

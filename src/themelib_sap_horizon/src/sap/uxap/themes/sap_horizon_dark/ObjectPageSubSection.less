@@ -45,10 +45,15 @@
 // Delta Styles for Horizon
 // =====================================
 
-// Page Sub Section Focus - Experimental
-.sapUxAPObjectPageSubSectionFocusable:focus {
-    outline: 2px solid @sapUiContentFocusColor;
-    outline-offset: -0.1875rem;
+// Page Sub Section Focus
+.sapUxAPObjectPageSubSectionFocusable:focus .sapUxAPObjectPageSubSectionFocusSpan {
+	content: '';
+	position: absolute;
+	display: block;
+	inset: 0;
+	border: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
+	z-index: 6;
+	pointer-events: none;
 }
 
 .sapUxAPObjectPageLayout-Std-Phone .sapUxAPObjectPageSubSection .sapUiRespGrid.sapUiRespGridHSpace1 {
