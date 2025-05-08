@@ -108,6 +108,7 @@ sap.ui.define([
 			this.sideNavigation.$().find(".sapTntNLOverflow").each(function (index, item) {
 				assert.strictEqual(item.querySelector("a").getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
 				assert.strictEqual(item.querySelector("a").getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
+				assert.strictEqual(item.querySelector("a").getAttribute('aria-label'), oRB.getText("NAVIGATION_LIST_OVERFLOW_ITEM_LABEL"), 'li should have aria-label "Displays remaining navigation items"');
 				assert.ok(item.classList.contains("sapTntNLIHidden"), 'overflow item is hidden');
 			});
 
