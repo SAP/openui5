@@ -5,7 +5,7 @@
 
 QUnit.config.autostart = false;
 
-// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
+// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage-istanbul.js" is included!
 sap.ui.require([
 	"sap/ui/core/Core"
 ], function (Core) {
