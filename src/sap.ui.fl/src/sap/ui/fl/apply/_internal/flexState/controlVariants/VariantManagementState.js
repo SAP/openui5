@@ -109,7 +109,7 @@ sap.ui.define([
 		do {
 			oFoundVariant = findVariantInFlexObjects(aFlexObjects, oCurrentVariant.getVariantReference());
 			if (oFoundVariant) {
-				aVariants.push(oCurrentVariant);
+				aVariants.push(oFoundVariant);
 				oCurrentVariant = oFoundVariant;
 			}
 		} while (oFoundVariant);
