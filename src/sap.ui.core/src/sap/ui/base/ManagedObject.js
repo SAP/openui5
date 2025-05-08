@@ -4685,6 +4685,7 @@ sap.ui.define([
 			}
 		}
 
+		/** @deprecated since 1.120.0 */
 		// Clone the support info
 		if (ManagedObject._supportInfo) {
 			ManagedObject._supportInfo.addSupportInfo(oClone.getId(), ManagedObject._supportInfo.byId(this.getId()));

@@ -1465,6 +1465,7 @@ function(
 							}
 						} else {
 							future.assertThrows(sName === 'xmlns', oView + ": encountered unknown setting '" + sName + "' for class " + oMetadata.getName() + " (value:'" + sValue + "')");
+							/** @deprecated since 1.120.0 */
 							if (XMLTemplateProcessor._supportInfo) {
 								XMLTemplateProcessor._supportInfo({
 									context : node,
@@ -1869,6 +1870,7 @@ function(
 					}
 
 					//apply support info if needed
+					/** @deprecated since 1.120.0 */
 					if (XMLTemplateProcessor._supportInfo && vFinalInstance) {
 						for (var i = 0, iLength = vFinalInstance.length; i < iLength; i++) {
 							var oInstance = vFinalInstance[i];
