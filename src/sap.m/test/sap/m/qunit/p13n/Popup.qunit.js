@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/p13n/SortPanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/i18n/Localization",
+	"sap/m/InstanceManager",
 	"sap/ui/thirdparty/sinon"
-], function(P13nPopup, Button, Element, Control, nextUIUpdate, SelectionPanel, SortPanel, JSONModel, Localization, sinon) {
+], function(P13nPopup, Button, Element, Control, nextUIUpdate, SelectionPanel, SortPanel, JSONModel, Localization, InstanceManager, sinon) {
 	"use strict";
 
 	QUnit.module("p13n.Popup API tests", {
@@ -300,6 +301,39 @@ sap.ui.define([
 		oMessageBox.getButtons()[0].firePress();
 		await nextUIUpdate();
 
+	});
+
+	QUnit.test("Check closing of the warning dialog", async function(assert){
+		this.fnReset = function() {};
+		const oSelectionPanel = new SelectionPanel();
+
+		oSelectionPanel.onReset = function() {
+			assert.ok(true, "Reset hook as been executed");
+		};
+
+		const oCloseDialogsSpy = sinon.spy(InstanceManager, "closeAllDialogs");
+
+		this.oPopup.addPanel(oSelectionPanel);
+		this.oPopup.open(this.oSource);
+		const oResetBtn = this.oPopup._oPopup.getCustomHeader().getContentRight()[0];
+
+		oResetBtn.firePress();
+
+		// --> Find MessageBox opened by Dialog
+		const oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+		assert.notOk(oMessageBox.isDestroyed(), "The warning dialog is not destroyed");
+
+		await nextUIUpdate();
+		// act
+		this.oPopup.exit();
+		await nextUIUpdate();
+
+		assert.ok(oCloseDialogsSpy.called, "closeAllDialogs has been called");
+		await nextUIUpdate();
+		await new Promise((resolve) => {
+			setTimeout(resolve, 300);
+		});
+		oCloseDialogsSpy.restore();
 	});
 
 	QUnit.test("Check focus handling after reset", async function(assert){
