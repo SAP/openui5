@@ -30,6 +30,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/requireAsync",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement",
@@ -78,6 +79,7 @@ sap.ui.define([
 	VersionsAPI,
 	Layer,
 	LayerUtils,
+	requireAsync,
 	FlexUtils,
 	JSONModel,
 	Measurement,
@@ -1545,10 +1547,15 @@ sap.ui.define([
 		oProperties.saveAndReload = saveAndReload.bind(this);
 
 		let oToolbar;
-		if (Utils.isOriginalFioriToolbarAccessible()) {
-			oToolbar = new FioriToolbar(oProperties);
-		} else if (Utils.getFiori2Renderer()) {
-			oToolbar = new FioriLikeToolbar(oProperties);
+		const bUshellAvailable = !!FlexUtils.getUshellContainer();
+		if (bUshellAvailable) {
+			const oUshellRtaApi = await requireAsync("sap/ushell/api/RTA");
+			oProperties.ushellApi = oUshellRtaApi;
+			if (Utils.isOriginalFioriToolbarAccessible()) {
+				oToolbar = new FioriToolbar(oProperties);
+			} else {
+				oToolbar = new FioriLikeToolbar(oProperties);
+			}
 		} else {
 			oToolbar = new StandaloneToolbar(oProperties);
 		}
