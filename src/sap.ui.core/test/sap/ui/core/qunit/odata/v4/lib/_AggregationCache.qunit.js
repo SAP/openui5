@@ -4408,15 +4408,28 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bCount) {
 		[undefined, "~group~"].forEach(function (sGroupId) {
-			var sTitle = "reset: $count = " + bCount + ", sGroupId = " + sGroupId;
+			[{ // no oCountPromise needed
+				aggregate : {
+					SalesNumber : {grandTotal : true}
+				},
+				group : {},
+				groupLevels : []
+			}, {
+				hierarchyQualifier : "X"
+			}, {
+				aggregate : {},
+				group : {},
+				groupLevels : ["group"]
+			}].forEach(function (oNewAggregation, i) {
+				var sTitle = "reset: $count = " + bCount + ", sGroupId = " + sGroupId
+						+ ", $$aggregation = " + JSON.stringify(oNewAggregation);
 
 		QUnit.test(sTitle, function (assert) {
 			var oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
-					hierarchyQualifier : "X"
+					hierarchyQualifier : "n/a" // unrealistic for i !== 1, but never mind
 				}),
 				oFirstLevel = oCache.oFirstLevel,
 				aKeptElementPredicates = ["foo", "bar"],
-				oNewAggregation = {},
 				mQueryOptions = {
 					$count : bCount
 				};
@@ -4459,8 +4472,15 @@ sap.ui.define([
 				.exactly(sGroupId ? 0 : 1).withExactArgs();
 			const oGetExpandLevelsExpectation = this.mock(oCache.oTreeState).expects("getExpandLevels")
 				.withExactArgs().returns("~sExpandLevels~");
-			this.mock(oCache).expects("createGroupLevelCache").withExactArgs()
+			this.mock(oCache).expects("createGroupLevelCache").withExactArgs(null, bCount && i === 2)
 				.returns("~oFirstLevelCache~");
+			let fnLeaves; let fnCount;
+			this.mock(_ConcatHelper).expects("enhanceCache").exactly(bCount && i === 2 ? 1 : 0)
+				.withExactArgs("~oFirstLevelCache~", sinon.match.same(oNewAggregation),
+					sinon.match((aFunctions) => {
+						[fnLeaves, fnCount] = aFunctions;
+						return true;
+					}));
 
 			// code under test
 			oCache.reset(aKeptElementPredicates, sGroupId, mQueryOptions, oNewAggregation);
@@ -4497,18 +4517,28 @@ sap.ui.define([
 				assert.strictEqual(oCache.oBackup.bUnifiedCache, "~bUnifiedCache~");
 				assert.strictEqual(oCache.bUnifiedCache, true);
 			}
-			if (bCount) {
+			if (bCount && i) {
 				assert.ok(oCache.oCountPromise.isPending());
 
-				// code under test
-				oCache.oCountPromise.$resolve(42);
+				if (i === 1) { // recursive hierarchy
+					// code under test
+					oCache.oCountPromise.$resolve(42);
+				} else { // visual grouping
+					// code under test (fnCount) - nothing should happen :-)
+					fnCount({});
 
+					// code under test
+					fnLeaves({UI5__leaves : "42"});
+				}
+
+				assert.ok(oCache.oCountPromise.isFulfilled());
 				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
 			} else {
 				assert.strictEqual(oCache.oCountPromise, undefined);
 			}
 			assert.strictEqual(oCache.oFirstLevel, "~oFirstLevelCache~");
 		});
+			});
 		});
 	});
 
