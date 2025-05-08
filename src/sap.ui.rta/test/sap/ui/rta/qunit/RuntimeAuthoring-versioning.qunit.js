@@ -69,6 +69,11 @@ sap.ui.define([
 				});
 			}
 		});
+		const oApiStub = sandbox.stub().returns("");
+		RtaQunitUtils.stubSapUiRequire(sandbox, [{
+			name: "sap/ushell/api/RTA",
+			stub: { getLogo: oApiStub }
+		}]);
 	}
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {

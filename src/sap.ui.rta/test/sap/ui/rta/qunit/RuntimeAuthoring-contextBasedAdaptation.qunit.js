@@ -3,7 +3,6 @@
 sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
@@ -16,7 +15,6 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	FlexState,
 	ContextBasedAdaptationsAPI,
 	VersionsAPI,
 	Versions,
@@ -59,6 +57,11 @@ sap.ui.define([
 				});
 			}
 		});
+		const oApiStub = sandbox.stub().returns("");
+		RtaQunitUtils.stubSapUiRequire(sandbox, [{
+			name: "sap/ushell/api/RTA",
+			stub: { getLogo: oApiStub }
+		}]);
 	}
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP", {
