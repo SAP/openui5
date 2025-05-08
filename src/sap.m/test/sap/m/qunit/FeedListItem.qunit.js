@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/FeedListItem",
 	"sap/m/FeedListItemAction",
+	"sap/m/ListItemAction",
 	"sap/m/List",
 	"sap/m/StandardListItem",
 	"sap/ui/model/json/JSONModel",
@@ -22,7 +23,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, nextUIUpdate) {
+], function(Theming, qutils, jQuery, FeedListItem, FeedListItemAction, ListItemAction, List, StandardListItem, JSONModel, Button, Popover, Bar, ActionSheet, App, Page, Device, FormattedText, IconPool, library, Log, KeyCodes, oCore, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -934,6 +935,14 @@ sap.ui.define([
 		afterEach: function () {
 			this.oFeedListItem.destroy();
 		}
+	});
+
+	QUnit.test("type validation", function(assert) {
+		assert.throws(function() {
+			const oListItemAction = new ListItemAction();
+			const oFeedListItem = new FeedListItem();
+			oFeedListItem.addAction(oListItemAction);
+		}, "supports only FeedListItemAction");
 	});
 
 	QUnit.test("Action aggregation and hidden aggregations", function (assert) {

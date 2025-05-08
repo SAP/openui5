@@ -451,6 +451,7 @@ sap.ui.define([
 			"sap.m.ImageCustomData",
 			"sap.m.LightBoxItem",
 			"sap.m.LinkTileContent",
+			"sap.m.ListItemAction",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MenuItem",
@@ -3262,6 +3263,36 @@ sap.ui.define([
 		 */
 		DetailAndActive : "DetailAndActive"
 
+	};
+
+	/**
+	 * Defines the action types available for list items.
+	 *
+	 * @enum {string}
+	 * @since 1.137
+	 * @public
+	 */
+	thisLib.ListItemActionType = {
+		/**
+		 * Defines a custom action for a list item.
+		 * <b>Note:</b> The <code>icon</code> and <code>text</code> properties in the <code>sap.m.ListItemAction</code> are required for this action type.
+		 * @public
+		 */
+		Custom : "Custom",
+
+		/**
+		 * Indicates that the list item is editable.
+		 * <b>Note:</b> The <code>icon</code> and <code>text</code> properties must not be set in <code>sap.m.ListItemAction</code> for this action type.
+		 * @public
+		 */
+		Edit : "Edit",
+
+		/**
+		 * Indicates that the list item is deletable.
+		 * <b>Note:</b> The <code>icon</code> and <code>text</code> properties must not be set in <code>sap.m.ListItemAction</code> for this action type.
+		 * @public
+		 */
+		Delete : "Delete"
 	};
 
 	/**
@@ -6666,6 +6697,7 @@ sap.ui.define([
 	DataType.registerEnum("sap.m.ListMode", thisLib.ListMode);
 	DataType.registerEnum("sap.m.ListSeparators", thisLib.ListSeparators);
 	DataType.registerEnum("sap.m.ListType", thisLib.ListType);
+	DataType.registerEnum("sap.m.ListItemActionType", thisLib.ListItemActionType);
 	DataType.registerEnum("sap.m.LoadState", thisLib.LoadState);
 	DataType.registerEnum("sap.m.MenuButtonMode", thisLib.MenuButtonMode);
 	DataType.registerEnum("sap.m.MultiSelectMode", thisLib.MultiSelectMode);
