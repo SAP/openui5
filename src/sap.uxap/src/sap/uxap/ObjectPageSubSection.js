@@ -722,10 +722,13 @@ sap.ui.define([
 
 		if (!this._bUnstashed) {
 			this._aStashedControls.forEach(function (oControlHandle) {
-				this._aUnStashedControls.push(oControlHandle.control.unstash(true).then(function() {
-					oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
-					this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
-				}.bind(this)));
+				var oUnstashResult = Promise.resolve(oControlHandle.control.unstash(true));
+				this._aUnStashedControls.push(
+					oUnstashResult.then(function () {
+						oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
+						this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
+					}.bind(this))
+				);
 			}.bind(this));
 
 			this._bUnstashed = true;
