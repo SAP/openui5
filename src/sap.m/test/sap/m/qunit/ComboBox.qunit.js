@@ -10303,7 +10303,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("aria-errormessage for value state with links contains announcement for the value state links shortcut", async function (assert) {
+	QUnit.test("aria-errormessage for value state with links not contains announcement for the value state links shortcut", async function (assert) {
 		const oFormattedValueStateText = new FormattedText({
 			htmlText: "Value state message containing %%0 and %%1",
 			controls: [new Link({
@@ -10331,12 +10331,15 @@ sap.ui.define([
 		const oAccDomRef = document.getElementById(oComboBox.getValueStateLinksShortcutsId());
 		const aErrormessage = oComboBox.getFocusDomRef().getAttribute("aria-errormessage").split(" ");
 		const bErrormessageContainsAccForLinks = aErrormessage.some(function (sId) { return sId === oComboBox.getValueStateLinksShortcutsId();});
+		const aAriaDescribedBy = oComboBox.getFocusDomRef().getAttribute("aria-describedby").split(" ");
+		const bAriaDescribedByContainsAccForLinks = aAriaDescribedBy.some(function (sId) { return sId === oComboBox.getValueStateLinksShortcutsId();});
 		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
 		const sMultipleLink = Library.getResourceBundleFor("sap.m").getText(sLinksTextId);
 
 		assert.ok(oComboBox.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
 		assert.strictEqual(oAccDomRef.innerText, sMultipleLink, "Links shortcuts announcement is as expected" );
-		assert.ok(bErrormessageContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is added to aria-errormessage");
+		assert.notOk(bErrormessageContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is not added to aria-errormessage");
+		assert.ok(bAriaDescribedByContainsAccForLinks, "Accessibility DOM for links shortcuts announcement is added to aria-describedby");
 
 		oComboBox.destroy();
 	});

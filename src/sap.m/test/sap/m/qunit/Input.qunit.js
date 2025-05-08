@@ -5351,6 +5351,9 @@ sap.ui.define([
 		let bErrorMessageConainsAccForLinks = aErrorMessages.some(function (sId) {
 			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
 		});
+		const bAriaDescribedByContainsAccForLinks = aDescribedBy.split(' ').some(function (sId) {
+			return sId === oInputWithValueState.getValueStateLinksShortcutsId();
+		});
 
 		const sLinksTextId = Device.os.macintosh ?  "INPUTBASE_VALUE_STATE_LINKS_MAC" : "INPUTBASE_VALUE_STATE_LINKS";
 		const sMultipleLinksText = Library.getResourceBundleFor("sap.m").getText(sLinksTextId);
@@ -5358,8 +5361,9 @@ sap.ui.define([
 		//Assert
 		assert.ok(oInputWithValueState.getDomRef().contains(oAccDomRef), "Accessibility DOM for links shortcuts announcement is created");
 		assert.strictEqual(oAccDomRef.innerText, sMultipleLinksText, "Links shortcuts announcement is as expected" );
-		assert.notOk(aDescribedBy, "Area-describedby for input does not exist");
-		assert.ok(bErrorMessageConainsAccForLinks, "Area-errormessage for input contains the links shortcuts element ID");
+		assert.ok(aDescribedBy, "Area-describedby for input should exist");
+		assert.notOk(bErrorMessageConainsAccForLinks, "Area-errormessage for input shouldn't contains the links shortcuts element ID");
+		assert.ok(bAriaDescribedByContainsAccForLinks, "Area-describedby for input contains the links shortcuts element ID");
 
 		// Remove formatted value state with link(s)
 		oInputWithValueState.setFormattedValueStateText(null);

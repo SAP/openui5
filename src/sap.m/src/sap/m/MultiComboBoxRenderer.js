@@ -5,8 +5,6 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', "sap/ui/c
 	function(ComboBoxBaseRenderer, ComboBoxTextFieldRenderer, Library, Renderer, coreLibrary) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
-
 	/**
 	 * MultiComboBox renderer.
 	 * @namespace
@@ -45,7 +43,7 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', "sap/ui/c
 			oTokenizer = oControl.getAggregation("tokenizer"),
 			oInvisibleTextId = oTokenizer && oTokenizer.getTokensInfoId();
 
-		if (oControl.getValueState() !== ValueState.Error && oControl.getValueStateLinksForAcc().length ){
+		if (oControl.getValueStateLinksForAcc().length ){
 			sAriaDescribedBy = sAriaDescribedBy
 				? `${sAriaDescribedBy} ${oControl.getValueStateLinksShortcutsId()}`
 				: oControl.getValueStateLinksShortcutsId();
@@ -65,12 +63,6 @@ sap.ui.define(['./ComboBoxBaseRenderer','./ComboBoxTextFieldRenderer', "sap/ui/c
 			oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		mAccessibilityState.roledescription = oResourceBundle.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION");
-
-		if (oControl.getValueState() === ValueState.Error && oControl.getValueStateLinksForAcc().length) {
-			mAccessibilityState.errormessage = mAccessibilityState.errormessage
-			? `${mAccessibilityState.errormessage} ${oControl.getValueStateLinksShortcutsId()}`
-			: oControl.getValueStateLinksShortcutsId();
-		}
 
 		return mAccessibilityState;
 	};
