@@ -4,13 +4,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/deepEqual",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/v4/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (Log, deepEqual, BindingParser, ManagedObject, SyncPromise, Basics, Expression,
+], function (Log, deepEqual, BindingInfo, BindingParser, SyncPromise, Basics, Expression,
 		Measurement) {
 	"use strict";
 
@@ -1938,7 +1938,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getExpression: complex binding mode is disabled", function () {
 		var oPathValue = {value : 42},
-			oParser = ManagedObject.bindingParser;
+			fnParse = BindingInfo.parse;
 
 		this.oLogMock.expects("warning")
 			.withExactArgs(
@@ -1946,7 +1946,7 @@ sap.ui.define([
 			.once(); // just a single warning, no matter how many calls to getExpression()!
 
 		// preparation
-		ManagedObject.bindingParser = BindingParser.simpleParser;
+		BindingInfo.parse = BindingParser.simpleParser;
 
 		try {
 			// code under test
@@ -1954,7 +1954,7 @@ sap.ui.define([
 			Expression.getExpression(oPathValue);
 		} finally {
 			// clean up
-			ManagedObject.bindingParser = oParser;
+			BindingInfo.parse = fnParse;
 		}
 	});
 

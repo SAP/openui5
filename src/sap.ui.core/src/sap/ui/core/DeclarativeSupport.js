@@ -5,8 +5,8 @@
 // Provides class sap.ui.core.DeclarativeSupport
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
+	'sap/ui/base/BindingInfo',
 	'sap/ui/base/DataType',
-	'sap/ui/base/ManagedObject',
 	'./Control',
 	'./CustomData',
 	'./HTML',
@@ -19,8 +19,8 @@ sap.ui.define([
 ],
 	function(
 		jQuery,
+		BindingInfo,
 		DataType,
-		ManagedObject,
 		Control,
 		CustomData,
 		HTML,
@@ -64,7 +64,7 @@ sap.ui.define([
 		"data-sap-ui-aggregation" : true,
 		"data-sap-ui-default-aggregation" : true,
 		"data-sap-ui-binding" : function(sValue, mSettings) {
-			var oBindingInfo = ManagedObject.bindingParser(sValue);
+			var oBindingInfo = BindingInfo.parse(sValue);
 			// TODO reject complex bindings, types, formatters; enable 'parameters'?
 			mSettings.objectBindings = mSettings.objectBindings || {};
 			mSettings.objectBindings[oBindingInfo.model || undefined] = oBindingInfo;
@@ -256,7 +256,7 @@ sap.ui.define([
 	DeclarativeSupport._addSettingsForAttributes = function(mSettings, fnClass, oElement, oView) {
 		var that = this;
 		var oSpecialAttributes = DeclarativeSupport.attributes;
-		var fnBindingParser = ManagedObject.bindingParser;
+		var fnParse = BindingInfo.parse;
 		var aCustomData = [];
 		var reCustomData = /^data-custom-data:(.+)/i;
 		var aAttributes = oElement.getAttributeNames();
@@ -273,7 +273,7 @@ sap.ui.define([
 					sName = that.convertAttributeToSettingName(sName, mSettings.id);
 					var oProperty = that._getProperty(fnClass, sName);
 					if (oProperty) {
-						var oBindingInfo = fnBindingParser(sValue, oView && oView.getController(), true );
+						var oBindingInfo = fnParse(sValue, oView && oView.getController(), true );
 						if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 							mSettings[sName] = oBindingInfo;
 						} else {
@@ -294,14 +294,14 @@ sap.ui.define([
 					} else if (that._getAggregation(fnClass, sName)) {
 						var oAggregation = that._getAggregation(fnClass, sName);
 						if (oAggregation.multiple) {
-							var oBindingInfo = fnBindingParser(sValue, oView && oView.getController());
+							var oBindingInfo = fnParse(sValue, oView && oView.getController());
 							if (oBindingInfo) {
 								mSettings[sName] = oBindingInfo;
 							} else {
 								throw new Error("Aggregation " + sName + " with cardinality 0..n only allows binding paths as attribute value");
 							}
 						} else if (oAggregation.altTypes) {
-							var oBindingInfo = fnBindingParser(sValue, oView && oView.getController(), true);
+							var oBindingInfo = fnParse(sValue, oView && oView.getController(), true);
 							if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 								mSettings[sName] = oBindingInfo;
 							} else {
@@ -333,7 +333,7 @@ sap.ui.define([
 				sName = camelize(reCustomData.exec(sName)[1]);
 
 				// create a binding info object if necessary
-				var oBindingInfo = fnBindingParser(sValue, oView && oView.getController());
+				var oBindingInfo = fnParse(sValue, oView && oView.getController());
 
 				// create the custom data object
 				aCustomData.push(new CustomData({
@@ -480,7 +480,7 @@ sap.ui.define([
 		}
 		// else return original sValue (e.g. for enums)
 		// Note: to avoid double resolution of binding expressions, we have to escape string values once again
-		return typeof sValue === "string" ? ManagedObject.bindingParser.escape(sValue) : sValue;
+		return typeof sValue === "string" ? BindingInfo.parse.escape(sValue) : sValue;
 	};
 
 

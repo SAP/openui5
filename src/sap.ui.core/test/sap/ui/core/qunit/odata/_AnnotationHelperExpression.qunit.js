@@ -6,15 +6,15 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/date/CalendarType",
 	"sap/base/util/deepEqual",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (Log, Formatting, CalendarType, deepEqual, BindingParser, ManagedObject, UI5Date,
+], function (Log, Formatting, CalendarType, deepEqual, BindingInfo, BindingParser, UI5Date,
 		DateFormat, JSONModel, Basics, Expression, Measurement
 ) {
 	/*global QUnit, sinon */
@@ -1627,7 +1627,7 @@ sap.ui.define([
 		var oInterface = {
 				getPath : function () { return ""; }
 			},
-			oParser = ManagedObject.bindingParser,
+			fnParse = BindingInfo.parse,
 			oRawValue = {
 				Bool : "true"
 			};
@@ -1638,7 +1638,7 @@ sap.ui.define([
 			.once(); // just a single warning, no matter how many calls to getExpression()!
 
 		// preparation
-		ManagedObject.bindingParser = BindingParser.simpleParser;
+		BindingInfo.parse = BindingParser.simpleParser;
 
 		try {
 			// code under test
@@ -1646,7 +1646,7 @@ sap.ui.define([
 			Expression.getExpression(oInterface, oRawValue, false);
 		} finally {
 			// clean up
-			ManagedObject.bindingParser = oParser;
+			BindingInfo.parse = fnParse;
 		}
 	});
 

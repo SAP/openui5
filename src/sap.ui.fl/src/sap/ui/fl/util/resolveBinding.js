@@ -2,9 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils"
 ], function(
+	BindingInfo,
 	ManagedObject,
 	FlUtils
 ) {
@@ -45,7 +47,7 @@ sap.ui.define([
 			return undefined;
 		}
 		const oBindingInfo = typeof vValue === "string"
-			? ManagedObject.bindingParser(vValue, oController)
+			? BindingInfo.parse(vValue, oController)
 			: { ...vValue };
 
 		if (!oBindingInfo) {

@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/base/Log",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/integration/cards/actions/CustomAction",
 	"sap/ui/integration/cards/actions/DateChangeAction",
@@ -19,6 +20,7 @@ sap.ui.define([
 ], function (
 	library,
 	Log,
+	BindingInfo,
 	ManagedObject,
 	CustomAction,
 	DateChangeAction,
@@ -177,7 +179,7 @@ sap.ui.define([
 			sEnabledPropertyName = oConfig.enabledPropertyName,
 			vEnabled = oConfig.enabledPropertyValue,
 			vDisabled = oConfig.disabledPropertyValue,
-			oBindingInfo = ManagedObject.bindingParser("{path:''}");
+			oBindingInfo = BindingInfo.parse("{path:''}");
 
 		// Async formatter to set oActionControl's property depending
 		// if the list item context is a correct navigation target (decided by the navigation service).

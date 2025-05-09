@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/restricted/_isEqual",
 	"sap/base/Log",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
@@ -23,6 +24,7 @@ sap.ui.define([
 	uid,
 	isEqual,
 	Log,
+	BindingInfo,
 	SyncPromise,
 	ManagedObject,
 	BaseTreeModifier,
@@ -108,7 +110,7 @@ sap.ui.define([
 		isBinding(vPropertyValue, oContext) {
 			let sBinding;
 			try {
-				sBinding = ManagedObject.bindingParser(vPropertyValue, oContext);
+				sBinding = BindingInfo.parse(vPropertyValue, oContext);
 			} catch (e) {
 				return false;
 			}

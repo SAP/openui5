@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/support/controls/ObjectViewer",
 	"sap/ui/Device",
 	"sap/base/Log",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/DataType",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/jquery"
@@ -22,6 +23,7 @@ sap.ui.define([
 	ObjectViewer,
 	Device,
 	Log,
+	BindingInfo,
 	DataType,
 	ManagedObject,
 	$
@@ -424,7 +426,7 @@ sap.ui.define([
 		ViewInfo.prototype.parseScalarType = function(sType, sValue, sName, oController) {
 			// check for a binding expression (string)
 			try {
-				var oBindingInfo =  ManagedObject.bindingParser(sValue, oController, true);
+				var oBindingInfo = BindingInfo.parse(sValue, oController, true);
 				if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 					return {binding:oBindingInfo};
 				}
