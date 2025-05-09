@@ -4,7 +4,7 @@
 
 // Provides object sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/ControllerExtensionProvider",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor"
 ], function(
-	MvcController,
+	MvcControllerExtensionProvider,
 	XMLView,
 	ComponentHooks,
 	ExtensionPoint,
@@ -69,7 +69,7 @@ sap.ui.define([
 	}
 
 	function registerExtensionProvider() {
-		MvcController.registerExtensionProvider("sap/ui/fl/apply/_internal/preprocessors/ControllerExtension");
+		MvcControllerExtensionProvider.registerExtensionProvider("sap/ui/fl/apply/_internal/preprocessors/ControllerExtension");
 	}
 
 	function registerXMLPreprocessor() {

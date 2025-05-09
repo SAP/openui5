@@ -18,9 +18,9 @@
 		// load and start the customized application
 		sap.ui.require(["sap/ui/core/Core"], function(Core) {
 			Core.ready().then(function() {
-				sap.ui.require(["sap/ui/core/mvc/Controller"], function(Controller) {
+				sap.ui.require(["sap/ui/core/mvc/ControllerExtensionProvider"], function(ControllerExtensionProvider) {
 					//register an extension provider to simulate a real extension coming from flex
-					Controller.registerExtensionProvider("sample.ExtensionProvider_legacyAPIs");
+					ControllerExtensionProvider.registerExtensionProvider("sample.ExtensionProvider_legacyAPIs");
 
 					//add an async view
 					var oView = sap.ui.xmlview({viewName: "sample.Main", async:true});
