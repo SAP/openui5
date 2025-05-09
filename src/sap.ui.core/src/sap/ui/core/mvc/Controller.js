@@ -907,9 +907,8 @@ sap.ui.define([
 		 *
 		 * @param {string} sExtensionProvider the module name of the extension provider
 		 * @since 1.34.0
-		 * @private
-		 * @ui5-restricted sap.ui.fl
-		 * @deprecated As of version 1.136.0, Use {@link sap.ui.core.mvc.ControllerExtensionProvider.registerExtensionProvider} instead.
+		 * @public
+		 * @deprecated As of version 1.136.0 without replacement, the extension provider concept is intended for framework internal use only.
 		 */
 		Controller.registerExtensionProvider = function(sExtensionProvider) {
 			ControllerExtensionProvider.registerExtensionProvider(sExtensionProvider);
