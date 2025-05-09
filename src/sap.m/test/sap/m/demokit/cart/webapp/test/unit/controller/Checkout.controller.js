@@ -16,17 +16,11 @@ sap.ui.define([
 					return new Button();
 				}
 			};
-			sinon.stub(this.Checkout, "byId", function () {
-				return undefined;
-			});
+			sinon.stub(this.Checkout, "byId").returns(undefined);
 
-			sinon.stub(this.Checkout, "createId", function (sId) {
-				return sId;
-			});
+			sinon.stub(this.Checkout, "createId").callsFake((sId) => sId);
 
-			sinon.stub(this.Checkout, "_addDependent", function () {
-				return true;
-			});
+			sinon.stub(this.Checkout, "_addDependent").returns(true);
 		},
 
 		afterEach: function () {
