@@ -227,6 +227,15 @@ sap.ui.define([
 
 			this._oSkeletonCard.setFilterValue("city", "Berlin");
 			this.byId("demoCard").setFilterValue("city", "Berlin");
+
+			this._oSkeletonCard.setFilterValue("orderDate", {
+				option: "dateRange",
+				values: ["1997-10-03T00:00:00.000Z", "1997-10-04T00:00:00.000Z"]
+			});
+			this.byId("demoCard").setFilterValue("orderDate", {
+				option: "dateRange",
+				values: ["1997-10-03T00:00:00.000Z", "1997-10-04T00:00:00.000Z"]
+			});
 		},
 
 		onInitialSelectFilter: function () {
@@ -238,6 +247,15 @@ sap.ui.define([
 
 			this._oSkeletonCard.setFilterValue("city", "Toulouse");
 			this.byId("demoCard").setFilterValue("city", "Toulouse");
+
+			this._oSkeletonCard.setFilterValue("orderDate", {
+				option: "dateRange",
+				values: ["1997-02-21T00:00:00.000Z", "1997-04-03T00:00:00.000Z"]
+			});
+			this.byId("demoCard").setFilterValue("orderDate", {
+				option: "dateRange",
+				values: ["1997-02-21T00:00:00.000Z", "1997-04-03T00:00:00.000Z"]
+			});
 		},
 
 		onSimulateLiveInput: function () {
