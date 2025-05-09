@@ -80,6 +80,12 @@ sap.ui.define([
 				icon: 'sap-icon://wrench',
 				target: 'integrate',
 				key: 'troubleshooting'
+			},
+			{
+				title: 'Card Interactions',
+				icon: 'sap-icon://action',
+				target: 'integrate',
+				key: 'interactions'
 			}
 		]
 	});

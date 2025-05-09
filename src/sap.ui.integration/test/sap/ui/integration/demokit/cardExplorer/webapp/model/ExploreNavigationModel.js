@@ -1848,6 +1848,27 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Whole Card Interaction',
+								key: 'wholeCardInteraction',
+								target: 'exploreSamples',
+								experimental: true,
+								settings: {
+									columns: 3
+								},
+								files: [
+									{
+										url: '/samples/actions/wholeCardInteraction/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/actions/wholeCardInteraction/detailsManifest.json',
+										name: 'detailsManifest.json',
+										key: 'detailsManifest.json'
+									}
+								]
+							},
+							{
 								title: 'Approve/Deny with popup',
 								key: 'approve',
 								target: 'exploreSamples',

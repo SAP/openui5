@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Interaction Types</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">
+				Interaction Types
+			</h1>
+			<p>The card developer can specify several combinations for card interactions:</p>
+			<ul>
+				<li>
+					<p>Non-interactive Card - the card only shows data</p>
+				</li>
+				<li>
+					<p>Card Header Interaction - the card can have interactions configured for the entire header, for
+						example an action navigating to an underlying
+						business application.</p>
+				</li>
+				<li>
+					<p>Whole Card Interaction (Experimental) - clicking anywhere in the card can trigger an action, making the whole card interactive.
+						<br>
+						<b>Note:</b> Whole Card Interaction has specific requirements, related to the host environment: the card must have the role of
+						"listitem" and it must be located within a "list." If the card is not designated as a "listitem," this type of
+						interaction will not function properly. For more details see the <a
+							href="../../../index.html#/integrate/interactions" target="_parent">Card Interactions</a> in
+						Integrate Section.
+					</p>
+				</li>
+				<li>
+					<p>A range of separate interactive elements inside the card can be used as well - like links and
+						buttons.</p>
+				</li>
+				<li>
+					<p>Whole Card and Card Header Interaction <b>(not recommended)</b> - clicking on card level or on card header Level can trigger different actions.
+					This combination of interactions is not
+					recommended. You should choose either Whole Card Interaction or Card Header Interaction.
+					</p>
+				</li>
+			</ul>
+			</p>
+			<p>Examples:</p>
+			<ul>
+				<li>
+					<p>The card is not interactive - no actions are set in the card's manifest</p>
+					<img class="cardInteractionImg" src="../../images/NonInteractiveCard.png"
+						alt="Example of interactive card">
+				</li>
+				<li>
+					<p>The whole card is interactive (Experimental) - actions are set on card level in the card's
+						manifest.
+						<br>
+						<b>Note:</b> Whole Card Interaction has specific requirements, related to the host environment: the card must have the role of
+						"listitem" and it must be located within a "list." If the card is not designated as a "listitem," this type of
+						interaction will not function properly. For more details see the <a
+							href="../../../index.html#/integrate/interactions" target="_parent">Card Interactions</a> in
+						Integrate Section.
+					</p>
+					<pre class="lang-json">
+"sap.card": {
+	"actions": [{
+		"type": "Navigation",
+		"parameters": {
+			"url": "https://sap.com",
+			"target": "_blank"
+		}
+	}]
+},</pre>
+					<img class="cardInteractionImg" src="../../images/CardLevelInteraction.png"
+						alt="Example of interactive card">
+				</li>
+				<div>
+					<a class="try-button" href="../../../index.html#/explore/cardActions/wholeCardInteraction"
+						target="_parent">Try it Out</a>
+				</div>
+				<li>
+					<p>The header of the card is interactive - actions are set on card header level in the card's
+						manifest</p>
+
+					<pre class="lang-json">
+"header": {
+	"title": "Card Header Actions",
+		"actions": [{
+			"type": "Navigation",
+			"parameters": {
+				"url": "https://sap.com",
+				"target": "_blank"
+			}
+		}]
+},</pre>
+
+					<img class="cardInteractionImg" src="../../images/InteractiveHeader.png"
+						alt="Example of interactive header">
+				</li>
+				<li>
+					<p>Individual interactive elements inside the card. Actions can be set on these elements. Such
+						elements are available in
+						the header, the content, and the footer.</p>
+					<pre class="lang-json">
+"content": {
+	"data": {
+		"path": "/items"
+	},
+	"item": {
+		"title": "{title}",
+		"actions": [{
+			"type": "Navigation",
+			"parameters": {
+			"url": "https://sap.com",
+			"target": "_blank"
+			}
+		}]
+	},
+},
+"footer": {
+	"actionsStrip": [
+		{
+			"type": "ToolbarSpacer"
+		},
+		{
+			"type": "Link",
+			"text": "Agenda",
+			"icon": "sap-icon://action",
+			"actions": [{
+				"type": "Navigation",
+				"parameters": {
+					"url": "{agendaUrl}"
+				}
+			}]
+		},
+		{
+			"text": "Approve",
+			"overflowPriority": "High",
+			"actions": [{
+				"type": "Custom",
+				"parameters": {
+					"method": "approve"
+				}
+			}]
+		}
+	]
+}</pre>
+					<img class="cardInteractionImg" src="../../images/ListItemAction.png"
+						alt="Example of interactive content element">
+					<div>
+						<a class="try-button" href="../../../index.html#/explore/cardActions/navigation"
+							target="_parent">Try it Out</a>
+					</div>
+				</li>
+			</ul>
+
+			<h2 id="accessibility">Accessibility</h2>
+			<p>
+				To provide comprehensive information about the card <code> aria-describedby</code> attribute will
+				contain the
+				following information:</p>
+			<ul>
+				<li> Card Type - i.e. List Card, Object Card etc.</li>
+				<li> Interactivity - whether the card is active or not</li>
+				<li> Interaction Guidance - instructions on how to interact with the card</li>
+				<li> Badge and Indicator Explanations</li>
+			</ul>
+			<h2 id="keyboardInterction">Keyboard Interaction</h2>
+			<h3 id="navigation">Navigation</h3>
+			<table>
+				<tr>
+					<th>Keys</th>
+					<th>Behavior</th>
+				</tr>
+				<tr>
+					<td>Tab</td>
+					<td>
+						Forward Navigation.
+					</td>
+				</tr>
+				<tr>
+					<td>Shift + Tab</td>
+					<td>Backward Navigation.</td>
+				</tr>
+			</table>
+
+			<h3 id="navigation">Navigation In Enabled Container</h3>
+			<p>This keyboard handling depends on surrounding container implementation. For example, you can use <a data-demokit-href="#/api/sap.f.GridContainer" target="_blank">sap.f.GridContainer</a>.  <br> For more information see <a href="../../../index.html#/integrate/interactions" target="_parent">Card Interactions</a> in Integrate Section.</p>
+			<table>
+				<tr>
+					<th>Keys</th>
+					<th>Behavior</th>
+				</tr>
+
+				<tr>
+					<td>F7</td>
+					<td>If the focus is currently set on the card level, F7 shifts back the focus to the UI element within
+						the card that previously
+						had the focus.
+						If the focus is currently set on an UI element inside the card, F7 saves the focus position for
+						later re-entry and shifts
+						the focus back on the card level.
+					</td>
+				</tr>
+				<tr>
+					<td>Arrow Keys</td>
+					<td>If the focus is currently set on the card level, Arrow Keys move the focus between different cards in the enabled container.
+					</td>
+				</tr>
+			</table>
+			<h3 id="selection">Selection</h3>
+			<table>
+				<tr>
+					<th>Keys</th>
+					<th>Behaviour</th>
+				</tr>
+				<tr>
+					<td>Spacebar, Enter, Return</td>
+					<td>
+						Triggers the action of the focused interactive card / element.
+						Pressing Enter or Return will trigger the action on keydown.
+						Pressing Spacebar will trigger the action on keyup.
+					</td>
+				</tr>
+				<tr>
+					<td>Esc, Shift</td>
+					<td>While the Spacebar key is pressed, pressing simultaneously either Shift or Escape will cancel the
+						action without triggering
+						it.
+					</td>
+				</tr>
+			</table>
+			<br>
+
+		</div>
+	</div>
+</body>
+
+</html>
