@@ -180,6 +180,32 @@ sap.ui.define([
 			this.getModel("view").setProperty("/iconFilterCount", iFilteredIcons, null, true);
 			this.getModel("view").setProperty("/allIconsCount", iAllIcons, null, true);
 			this.getModel("view").setProperty("/iconsFound", iFilteredIcons > 0, null, true);
+
+			// register press callback for grid
+			if (this._oCurrentQueryContext.tab === "grid") {
+				if (!this._oPressLayoutCellDelegate) {
+					this._oPressLayoutCellDelegate = {
+						// tap: set selected and hoverable class
+						ontap: function (oEvent) {
+							var oBindingContext = oEvent.srcControl.getBindingContext();
+
+							// select the icon
+							this._updateHash("icon", oBindingContext.getProperty("name"));
+						}.bind(this)
+					};
+					// enter + space key: same as tab
+					this._oPressLayoutCellDelegate.onsapenter = this._oPressLayoutCellDelegate.ontap;
+				}
+
+				// there is no addEventDelegateOnce so we remove and add it for all items
+				var aItems = this.byId("results").getAggregation(this._sAggregationName);
+				if (aItems) {
+					aItems.forEach(function (oItem) {
+						oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
+						oItem.addEventDelegate(this._oPressLayoutCellDelegate);
+					}.bind(this));
+				}
+			}
 		},
 
 		/**
