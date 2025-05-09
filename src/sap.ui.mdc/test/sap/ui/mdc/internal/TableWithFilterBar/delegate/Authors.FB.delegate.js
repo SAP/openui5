@@ -29,25 +29,36 @@ sap.ui.define([
 		return oNamedProperty;
 	};
 
-	FilterBarAuthorsSampleDelegate.fetchProperties = function(oFilterBar) {
+	FilterBarAuthorsSampleDelegate.fetchProperties = function(oFilterBar, mPropertyBag) {
 
 		var bSearchExists = false;
 
 		return new Promise(function(fResolve) {
 
-			FilterBarDelegate.fetchProperties(oFilterBar).then(function(aProperties) {
+			FilterBarDelegate.fetchProperties(oFilterBar, mPropertyBag).then(function(aProperties) {
+
+				if (!aProperties.find(function(oProperty) { return oProperty.name === "genres*/genre/code"; } ) ) {
+					aProperties.push({
+						name: "genres*/genre/code",
+						label: "Genre (Any)",
+						groupLabel: "none",
+						dataType: "Edm.String",
+						constraints: {maxLength: 1111}
+					});
+				}
 
 				const oCacheSettings = {
 					"name": { "valueHelp": "fhName" },
 					"dateOfBirth": { "valueHelp": "fhAdob", "operators": ["RENAISSANCE", "MEDIEVAL", "MODERN", "CUSTOMRANGE", "NOTINRANGE"] },
 					"cityOfOrigin_city": { "valueHelp": "IOFFVHCity", "display": FieldDisplay.ValueDescription},
 					"countryOfOrigin_code": { "valueHelp": "IOFFVHCountry", "display": FieldDisplay.ValueDescription, "delegate": {"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": {"pasteDescription": true}}},
-					"regionOfOrigin_code": { "valueHelp": "IOFFVHRegion", "display": FieldDisplay.ValueDescription}
+					"regionOfOrigin_code": { "valueHelp": "IOFFVHRegion", "display": FieldDisplay.ValueDescription},
+					"genres*/genre/code": {"valueHelp": "VHGenre", "display": FieldDisplay.Description}
 				};
 
 				aProperties.forEach(function(oProperty) {
 
-					if (oProperty.name.indexOf("/") >= 0) {
+					if (oProperty.name.indexOf("/") >= 0 && oProperty.name !== "genres*/genre/code") {
 						oProperty.hiddenFilter = true;
 					}
 

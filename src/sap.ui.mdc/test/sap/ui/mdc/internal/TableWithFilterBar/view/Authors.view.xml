@@ -416,5 +416,120 @@
 				</mdc:Table>
 
 		</f2:content>
+		<f2:dependents>
+			<mdc:ValueHelp id="VHGenre"
+				delegate='\{"name": "sap/ui/v4demo/delegate/FilterbarInOutValueHelp.delegate", "payload": \{
+							"payloadInfos": [\{"contentId":"container-v4demo---books--genre", "path":"classification_code"\},
+										   \{"contentId":"container-v4demo---books--genreTypeAhead", "path":"classification_code"\}]
+					\}\}'>
+				<mdc:typeahead>
+					<mdcvh:Popover id="VHGenre-Popover" title="Genre">
+						<mdcvc:MTable id="VHGenre-TypeAhead" keyPath="code" descriptionPath="title"
+							useAsValueHelp="false">
+							<Table id="VHGenre-mTable1"
+								items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}'
+								width="{= ${device>/system/phone} ? '100%' : '30rem'}" mode="MultiSelect">
+								<columns>
+									<Column width="10rem">
+										<header>
+											<Text text="Code" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Title" />
+										</header>
+									</Column>
+									<Column>
+										<header>
+											<Text text="Classification" />
+										</header>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem type="Active">
+										<cells>
+											<Text text="{code}" />
+											<Text text="{title}" />
+											<Text text="{classification/title}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</mdcvc:MTable>
+					</mdcvh:Popover>
+				</mdc:typeahead>
+				<mdc:dialog>
+					<mdcvh:Dialog id="VHGenre-Dialog" title="Genre">
+						<mdcvc:MDCTable id="VHGenre-MDCTable" keyPath="code" descriptionPath="title" forceBind="true">
+							<mdcvc:filterBar>
+								<mdcvh:FilterBar id="VHGenre-FB" liveMode="false" expandFilterFields="true"
+									delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
+									<mdcvh:basicSearchField>
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											dataType="Edm.String"
+											conditions="{$filters>/conditions/$search}"
+											propertyKey="$search"
+											width="50%"
+											maxConditions="1"
+											placeholder="Search" />
+									</mdcvh:basicSearchField>
+									<mdcvh:filterItems>
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											label="Code" dataType="Edm.String"
+											conditions="{$filters>/conditions/code}"
+											propertyKey="code" />
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											label="Title"
+											conditions="{$filters>/conditions/title}"
+											propertyKey="title" />
+										<mdc:FilterField
+											delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+											label="Classification" dataType="Edm.String"
+											conditions="{$filters>/conditions/classification_code}"
+											propertyKey="classification_code"
+											display="Description" valueHelp="FHClassification" />
+									</mdcvh:filterItems>
+								</mdcvh:FilterBar>
+							</mdcvc:filterBar>
+							<mdc:Table id="VHGenre-MDCTable-Table"
+								autoBindOnInit="false"
+								width="100%"
+								selectionMode="Multi"
+								p13nMode="Sort"
+								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Genres", "$select": ["classification_code"]\}\}'
+								threshold="50"
+								enableAutoColumnWidth="true">
+								<mdc:columns>
+									<mdc:table.Column id="FHGenre-MDCTable--code" header="Code" propertyKey="code">
+										<Text text="{code}" />
+									</mdc:table.Column>
+									<mdc:table.Column id="FHGenre-MDCTable--title" header="Title" propertyKey="title">
+										<Text text="{title}" />
+									</mdc:table.Column>
+									<mdc:table.Column id="FHGenre-MDCTable--classification" header="Classification"
+										propertyKey="classification/title">
+										<Text text="{classification/title}" />
+									</mdc:table.Column>
+								</mdc:columns>
+								<mdc:type>
+									<mdc:table.GridTableType rowCountMode="Auto" />
+								</mdc:type>
+								<mdc:copyProvider>
+									<plugins:CopyProvider />
+								</mdc:copyProvider>
+								<mdc:cellSelector>
+									<plugins:CellSelector />
+								</mdc:cellSelector>
+							</mdc:Table>
+						</mdcvc:MDCTable>
+						<mdcvc:Conditions label="Genre" />
+					</mdcvh:Dialog>
+				</mdc:dialog>
+			</mdc:ValueHelp>
+		</f2:dependents>
 	</f2:DynamicPage>
 </mvc:View>
