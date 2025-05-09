@@ -54,6 +54,19 @@ function(XMLView, StashedSupport, nextUIUpdate, ObjectPageLazyLoader) {
 		assert.equal(oDestroySpy.callCount, stashedObjects, "LazyLoaders are properly disposed of");
 	});
 
+	QUnit.test("ObjectPageSubSection async unstashing does not throw an error if a control is already unstashed", async function (assert) {
+		var oTestedSection = this.objectPageSampleView.byId("subsection10"),
+			oStashedControl = oTestedSection._aStashedControls[0].control;
+
+		this.stub(oStashedControl, "isStashed").returns(false);
+
+		// Act
+		await oTestedSection.connectToModelsAsync();
+
+		// Assert
+		assert.ok(true, "No error is thrown");
+	});
+
 	QUnit.module("Stashing optimization", {
 		beforeEach: function (assert) {
 			var done = assert.async();
