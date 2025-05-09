@@ -1,0 +1,32 @@
+<mvc:View
+	controllerName="sap.ui.integration.sample.interactionInGrid.InteractionInGrid"
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns:ic="sap.ui.integration.controls"
+	xmlns:f="sap.f"
+	xmlns:card="sap.f.cards"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	class="interactionInGrid">
+	<f:GridContainer inlineBlockLayout="true" snapToRow="true">
+		<w:Card id="cardId1" manifest="./cardManifests/orderManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="3" />
+			</w:layoutData>
+		</w:Card>
+		<w:Card id="cardId2" manifest="./cardManifests/listManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="3" />
+			</w:layoutData>
+		</w:Card>
+		<w:Card id="cardId3" manifest="./cardManifests/analyticalManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="3" />
+			</w:layoutData>
+		</w:Card>
+		<w:Card id="cardId4" manifest="./cardManifests/objectManifest.json">
+			<w:layoutData>
+				<f:GridContainerItemLayoutData columns="5" />
+			</w:layoutData>
+		</w:Card>
+	</f:GridContainer>
+</mvc:View>

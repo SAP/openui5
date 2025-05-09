@@ -176,6 +176,14 @@
 		},
 		"sap.card": {
 			"type": "Object",
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "users/donnaMendez"
+					}
+				}
+			],
 			"data": {
 				"json": {
 					"firstName": "Donna",
@@ -191,15 +199,7 @@
 					"text": "DM"
 				},
 				"title": "{firstName} {lastName}",
-				"subTitle": "{position}",
-				"actions": [
-					{
-						"type": "Navigation",
-						"parameters": {
-							"url": "users/donnaMendez"
-						}
-					}
-				]
+				"subTitle": "{position}"
 			},
 			"content": {
 				"groups": [
@@ -243,14 +243,6 @@
 								]
 							}
 						]
-					}
-				],
-				"actions": [
-					{
-						"type": "Navigation",
-						"parameters": {
-							"url": "users/donnaMendez"
-						}
 					}
 				]
 			}
@@ -767,5 +759,5 @@
 				}
 			}
 		}
-	  }
+	}
 }
