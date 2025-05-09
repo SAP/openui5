@@ -28,11 +28,6 @@
 	margin-left: 0.5rem;
 }
 
-.sapUxAPObjectPageSectionHeader .sapMTB {
-	padding-left: 0;
-	padding-right: 0;
-}
-
 .sapUxAPObjectPageSectionHeader .sapMIBar :not(.sapMBtnDisabled)>.sapMBtnInner.sapMBtnActive {
 	border-color: @sapUiButtonActiveBorderColor;
 }
@@ -110,6 +105,13 @@ html .sapUiContainer-Narrow .sapUxAPObjectPageSectionHeader {
 .sapUiSizeCompact .sapUxAPObjectPageSectionHeader.sapUxAPObjectPageSectionHeaderCompact {
 	height: 2rem;
 	line-height: 1.5rem;
+}
+
+.sapUxAPObjectPageSectionHeaderSticky {
+	background-color: @sapUiGlobalBackgroundColor;
+	position: sticky;
+	top: 0;
+	z-index: 5;
 }
 
 html[data-sap-ui-browser^="ed"].sap-desktop .sapUxAPObjectPageSection:focus {
