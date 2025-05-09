@@ -6,16 +6,21 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/CheckBox",
 	"sap/m/App"
-], function(Shell, Label, Page, Toolbar, ToolbarSpacer, CheckBox, App) {
+], function(TextArea, Label, Page, Toolbar, ToolbarSpacer, CheckBox, App) {
 	"use strict";
 
 	var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
-		oOverLimitTA = new Shell({
+		oOverLimitTA = new TextArea({
 			value: "This is text",
 			maxLength: 6,
+			width: "100%",
 			showExceededText: true
 		}),
-		oContentTA = new Shell({
+		oOverLimitTALabel = new Label({
+			labelFor: oOverLimitTA,
+			text: "TextArea with maxLength set to 6"
+		}),
+		oContentTA = new TextArea({
 			placeholder: "{/placeholder}",
 			showExceededText: true,
 			value: lorem,
@@ -24,23 +29,35 @@ sap.ui.define([
 			growing: true,
 			maxLength: 40
 		}),
-		oDefaultTA = new Shell({
+		oContentTALabel = new Label({
+			labelFor: oContentTA,
+			text: "TextArea with growing set to true"
+		}),
+		oDefaultTA = new TextArea({
 			placeholder: "{/placeholder}",
 			showExceededText: true,
 			editable: true,
 			width: "100%",
 			maxLength: 40
 		}),
-		oCaunterTA = new Shell({
+		oDefaultTALabel = new Label({
+			labelFor: oDefaultTA,
+			text: "TextArea with maxLength set to 40"
+		}),
+		oCounterTA = new TextArea({
 			placeholder: "{/placeholder}",
 			showExceededText: true,
 			value: "This is text",
 			editable: true,
-			width: "60%",
+			width: "100%",
 			rows: 4,
 			maxLength: 40
 		}),
-		oDisabledTA = new Shell({
+		oCounterTALabel = new Label({
+			labelFor: oCounterTA,
+			text: "TextArea with rows set to 4"
+		}),
+		oDisabledTA = new TextArea({
 			value : "Disabled Textarea:\n\n" + lorem + lorem,
 			enabled : false,
 			editable : false,
@@ -53,7 +70,7 @@ sap.ui.define([
 			text: "Not interactable sample",
 			labelFor: oDisabledTA
 		}),
-		oWarningTA = new Shell({
+		oWarningTA = new TextArea({
 			value : "ValueState : Warning \n\n" + lorem + lorem,
 			valueState : "Warning",
 			width : "100%",
@@ -65,7 +82,7 @@ sap.ui.define([
 			text: "Warning value state sample",
 			labelFor: oWarningTA
 		}),
-		oErrorTA = new Shell({
+		oErrorTA = new TextArea({
 			value : "ValueState : Error \r\n\n" + lorem + lorem,
 			valueState : "Error",
 			width : "90%",
@@ -77,7 +94,7 @@ sap.ui.define([
 			text: "Error value state sample",
 			labelFor: oErrorTA
 		}),
-		oWrappingTA = new Shell({
+		oWrappingTA = new TextArea({
 			value : "Wrapping: Off Scroll horizontal --- " + lorem,
 			wrapping : "Off",
 			width : "90%",
@@ -89,7 +106,7 @@ sap.ui.define([
 			text: "Wrapping sample",
 			labelFor: oWrappingTA
 		}),
-		oReadOnlyTA = new Shell({
+		oReadOnlyTA = new TextArea({
 			value : "Not Editable: " + lorem,
 			editable : false,
 			width : "100%",
@@ -105,10 +122,14 @@ sap.ui.define([
 			title: "TextArea Accessibility Test Page",
 			enableScrolling: true,
 			content: [
+				oOverLimitTALabel,
 				oOverLimitTA,
+				oContentTALabel,
 				oContentTA,
+				oDefaultTALabel,
 				oDefaultTA,
-				oCaunterTA,
+				oCounterTALabel,
+				oCounterTA,
 				oLabelDisabled,
 				oDisabledTA,
 				oLabelWarning,
