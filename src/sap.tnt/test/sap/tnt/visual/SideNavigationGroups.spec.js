@@ -25,7 +25,7 @@ describe("sap.tnt.SideNavigationGroups", function() {
 	// click on menu item
 	// only for desktop
 	it("should click on first item (collapsed)", function () {
-		element(by.css("#NList > .sapTntNLOverflow [tabindex]")).click();
+		element(by.css("#NL > .sapTntNLOverflow [tabindex]")).click();
 		expect(takeScreenshot()).toLookAs("3_click_on_overflow");
 	});
 });
