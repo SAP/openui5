@@ -50,60 +50,25 @@ sap.ui.define([
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bHasGrandTotal) {
-		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
-			fnLeaves = null,
-			fnResolve;
-
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
-		this.oAggregation = oAggregation;
-		// #getDownloadUrl must be called early (for recursive hierarchy to determine
-		// $DistanceFromRoot)
-		this.sToString = this.getDownloadUrl("");
+		this.oCountPromise = undefined;
 		this.aElements = [];
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;
 		this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
-		this.oCountPromise = undefined;
-		if (mQueryOptions.$count) {
-			if (oAggregation.hierarchyQualifier) {
-				this.oCountPromise = new SyncPromise(function (resolve) {
-					fnResolve = resolve;
-				});
-				this.oCountPromise.$resolve = fnResolve;
-			} else if (oAggregation.groupLevels.length) {
-				mQueryOptions.$$leaves = true;
-				this.oCountPromise = new SyncPromise(function (resolve) {
-					fnLeaves = function (oLeaves) {
-						// Note: count has type Edm.Int64, represented as string in OData responses;
-						// $count should be a number and the loss of precision is acceptable
-						resolve(parseInt(oLeaves.UI5__leaves));
-					};
-				});
-			}
-		}
-		this.oFirstLevel = this.createGroupLevelCache(null, bHasGrandTotal || !!fnLeaves);
+		this.oGrandTotalPromise = undefined;
+		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
+		// separate group level caches
+		this.bUnifiedCache = oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
+			|| !!oAggregation.createInPlace;
+
+		this.doReset(oAggregation, mQueryOptions, bHasGrandTotal);
 		this.addKeptElement = this.oFirstLevel.addKeptElement; // @borrows ...
 		this.removeKeptElement = this.oFirstLevel.removeKeptElement; // @borrows ...
 		this.requestSideEffects = this.oFirstLevel.requestSideEffects; // @borrows ...
-		this.oGrandTotalPromise = undefined;
-		if (bHasGrandTotal) {
-			this.oGrandTotalPromise = new SyncPromise((resolve) => {
-				_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves,
-					function (oGrandTotal) {
-						_AggregationHelper.handleGrandTotal(oAggregation, oGrandTotal);
-						resolve(oGrandTotal);
-					}, fnCount]);
-			});
-		} else if (fnLeaves) {
-			_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
-		}
 		this.oTreeState = new _TreeState(oAggregation.$NodeProperty,
 			(oNode) => _Helper.getKeyFilter(oNode, this.sMetaPath, this.getTypes()));
-		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
-		// separate group level caches
-		this.bUnifiedCache = this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
-			|| !!this.oAggregation.createInPlace;
 	}
 
 	// make _AggregationCache a _Cache, but actively disinherit some critical methods
@@ -695,6 +660,66 @@ sap.ui.define([
 		}
 
 		return oCache;
+	};
+
+	/**
+	 * Hook method for both {@link #constructor} and {@link #reset}. Creates the promises needed
+	 * for the leaf count and grand total, if applicable. Creates a first level cache and
+	 * calculates the result of {@link #toString}. Remembers <code>oAggregation</code>, enhancing
+	 * it with "$NodeProperty" etc. in case of a recursive hierarchy (see
+	 * {@link sap.ui.model.odata.v4.lib._AggregationHelper.buildApply4Hierarchy} for details).
+	 *
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also "OData Extension
+	 *   for Data Aggregation Version 4.0"; must already be normalized by
+	 *   {@link _AggregationHelper.buildApply} - it's MODIFIED here!
+	 * @param {object} mQueryOptions
+	 *   A map of key-value pairs representing the query string - it's MODIFIED here!
+	 * @param {boolean} bHasGrandTotal
+	 *   Whether a grand total is needed
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.doReset = function (oAggregation, mQueryOptions, bHasGrandTotal) {
+		this.oAggregation = oAggregation;
+		// early call of _AggregationHelper.buildApply to determine $NodeProperty etc.
+		this.sToString = this.getDownloadUrl("");
+
+		const aAdditionalRowHandlers = [];
+		if (mQueryOptions.$count) {
+			if (oAggregation.hierarchyQualifier) {
+				let fnResolve;
+				this.oCountPromise = new SyncPromise(function (resolve) {
+					fnResolve = resolve;
+				});
+				this.oCountPromise.$resolve = fnResolve;
+			} else if (oAggregation.groupLevels.length) {
+				mQueryOptions.$$leaves = true;
+				this.oCountPromise = new SyncPromise(function (resolve) {
+					aAdditionalRowHandlers.push((oLeaves) => {
+						// Note: count has type Edm.Int64, represented as string in OData responses;
+						// $count should be a number and the loss of precision is acceptable
+						resolve(parseInt(oLeaves.UI5__leaves));
+					});
+				});
+			}
+		}
+		if (bHasGrandTotal) {
+			this.oGrandTotalPromise = new SyncPromise((resolve) => {
+				aAdditionalRowHandlers.push((oGrandTotal) => {
+					_AggregationHelper.handleGrandTotal(oAggregation, oGrandTotal);
+					resolve(oGrandTotal);
+				});
+			});
+		}
+
+		const bHasConcatHelper = aAdditionalRowHandlers.length > 0;
+		this.oFirstLevel = this.createGroupLevelCache(null, bHasConcatHelper);
+		if (bHasConcatHelper) {
+			// no specific handling needed for "UI5__count" here
+			aAdditionalRowHandlers.push(function () {});
+			_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, aAdditionalRowHandlers);
+		}
 	};
 
 	/**
@@ -2342,17 +2367,12 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.reset = function (aKeptElementPredicates, sGroupId, mQueryOptions,
 			oAggregation, bIsGrouped) {
-		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
-			fnLeaves,
-			fnResolve,
-			that = this;
-
 		if (bIsGrouped) {
 			throw new Error("Unsupported grouping via sorter");
 		}
 
-		aKeptElementPredicates.forEach(function (sPredicate) {
-			var oKeptElement = that.aElements.$byPredicate[sPredicate];
+		aKeptElementPredicates.forEach((sPredicate) => {
+			var oKeptElement = this.aElements.$byPredicate[sPredicate];
 
 			if (_Helper.hasPrivateAnnotation(oKeptElement, "placeholder")) {
 				throw new Error("Unexpected placeholder");
@@ -2363,12 +2383,9 @@ sap.ui.define([
 			_Helper.setPrivateAnnotation(oKeptElement, "predicate", sPredicate);
 		});
 
-		this.oAggregation = oAggregation;
 		// "super" call (like @borrows ...)
 		const fnSuper = this.oFirstLevel.reset;
 		fnSuper.call(this, aKeptElementPredicates, sGroupId, mQueryOptions);
-		// reset modifies the cache's query options => recalculate result of #toString
-		this.sToString = this.getDownloadUrl("");
 		if (sGroupId) { // sGroupId means we are in a side-effects refresh
 			this.oBackup.oCountPromise = this.oCountPromise;
 			this.oBackup.oFirstLevel = this.oFirstLevel;
@@ -2377,28 +2394,9 @@ sap.ui.define([
 		} else {
 			this.oTreeState.reset();
 		}
-		this.oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
-		this.oCountPromise = undefined;
-		if (mQueryOptions.$count) {
-			if (oAggregation.hierarchyQualifier) {
-				this.oCountPromise = new SyncPromise(function (resolve) {
-					fnResolve = resolve;
-				});
-				this.oCountPromise.$resolve = fnResolve;
-			} else if (oAggregation.groupLevels.length) {
-				this.oCountPromise = new SyncPromise(function (resolve) {
-					fnLeaves = function (oLeaves) {
-						// Note: count has type Edm.Int64, represented as string in OData responses;
-						// $count should be a number and the loss of precision is acceptable
-						resolve(parseInt(oLeaves.UI5__leaves));
-					};
-				});
-			}
-		}
-		this.oFirstLevel = this.createGroupLevelCache(null, !!fnLeaves);
-		if (fnLeaves) {
-			_ConcatHelper.enhanceCache(this.oFirstLevel, oAggregation, [fnLeaves, fnCount]);
-		}
+		oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
+
+		this.doReset(oAggregation, mQueryOptions, !!this.oGrandTotalPromise);
 	};
 
 	/**

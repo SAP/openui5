@@ -160,7 +160,6 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.init = function () {
 		ObjectPageSectionBase.prototype.init.call(this);
-		this._bInternalTitleVisible = true;
 		this._sContainerSelector = ".sapUxAPObjectPageSectionContainer";
 		this._oGridContentObserver = new ManagedObjectObserver(this._onGridContentChange.bind(this));
 		this._sTitleStyle = TitleLevel.H4;
@@ -335,26 +334,6 @@ sap.ui.define([
 				this.setTitleVisible();
 			}
 		}
-	};
-
-	/**
-	 * set the internal visibility of the Section title. This is set by the ux rules (for example don't display a Section title in IconTabBar mode)
-	 * @param {boolean} bValue
-	 * @param {boolean} bInvalidate if set to true, the Section should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger)
-	 * @private
-	 */
-	ObjectPageSection.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
-		if (bValue != this._bInternalTitleVisible) {
-			this._bInternalTitleVisible = bValue;
-			this.setTitleVisible();
-			if (bInvalidate) {
-				this.invalidate();
-			}
-		}
-	};
-
-	ObjectPageSection.prototype._getInternalTitleVisible = function () {
-		return this._bInternalTitleVisible;
 	};
 
 	/**

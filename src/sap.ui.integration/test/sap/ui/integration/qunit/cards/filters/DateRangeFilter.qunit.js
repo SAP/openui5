@@ -166,6 +166,28 @@ sap.ui.define([
 		assert.ok(oModelValue.rangeOData.hasOwnProperty("end"), "'end' property should be part of rangeOData");
 	});
 
+	QUnit.test("setValueFromOutside", function (assert) {
+		// Arrange
+		var oDateStart = UI5Date.getInstance("1997-05-01T00:00:00.000Z"),
+			oDateEnd = UI5Date.getInstance("2000-01-01T00:00:00.000Z"),
+			aLocalDates = DynamicDateRange.toDates({
+				operator: "DATERANGE",
+				values: [oDateStart, oDateEnd]
+			});
+		this.oDRF.setValueFromOutside({
+			option: "dateRange",
+			values: ["1997-05-01T00:00:00.000Z", "2000-01-01T00:00:00.000Z"]
+		});
+		var oModelValue = this.oDRF.getValueForModel();
+
+		// Assert
+		assert.strictEqual(oModelValue.range.start, aLocalDates[0].toISOString(), "Range start should be in ISO format");
+		assert.strictEqual(oModelValue.range.end, aLocalDates[1].toISOString(), "Range end should be in ISO format");
+
+		assert.strictEqual(oModelValue.range.startLocalDate, "1997-05-01", "Range start local date should be correct and in short ISO 8601 date format");
+		assert.strictEqual(oModelValue.range.endLocalDate, "2000-01-01", "Range end local date should be correct and in short ISO date format");
+	});
+
 	QUnit.test("Dates in the value are in ISO format", function (assert) {
 		// Arrange
 		var oDate = UI5Date.getInstance("1997-05-01T00:00:00.000Z");

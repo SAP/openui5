@@ -302,205 +302,113 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bHasGrandTotal) {
-		[false, true].forEach(function (bCountLeaves) {
-			var sTitle = "create: (either) grandTotal or groupLevels, has grand total = "
-					+ bHasGrandTotal + ", count leaves = " + bCountLeaves;
+	QUnit.test("create: grand total handling", function (assert) {
+		const oEnhanceCacheWithGrandTotalExpectation = this.mock(_ConcatHelper)
+			.expects("enhanceCache")
+			.withExactArgs(sinon.match.object, sinon.match.object, [
+				/*fnGrandTotal*/sinon.match.func,
+				/*fnCount*/sinon.match.func
+			]);
+		const oAggregation = { // filled before by buildApply
+			aggregate : {
+				x : {grandTotal : true}
+			},
+			group : {
+				a : {}
+			},
+			groupLevels : []
+		};
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {
+			$count : true // Note: no leaf count because of missing group levels!
+		}, oAggregation);
+		this.mock(oCache).expects("readCount").never();
+		this.mock(oCache).expects("readFirst").never();
+		this.mock(oCache).expects("readGap").never();
 
-		QUnit.test(sTitle, function (assert) {
-			var oAggregation = { // filled before by buildApply
-					aggregate : {
-						x : {},
-						y : {
-							grandTotal : bHasGrandTotal,
-							unit : "UnitY"
-						}
-					},
-					group : {
-						a : {},
-						b : {},
-						c : {}
-					},
-					groupLevels : bHasGrandTotal && !bCountLeaves ? [] : ["a"]
-				},
-				oCache,
-				oEnhanceCacheWithGrandTotalExpectation,
-				oFirstLevelCache = {
-					addKeptElement : "~addKeptElement~",
-					removeKeptElement : "~removeKeptElement~",
-					requestSideEffects : "~requestSideEffects~"
-				},
-				oGetDownloadUrlExpectation,
-				oGrandTotal = {},
-				oGroupLock = {
-					unlock : function () {}
-				},
-				mQueryOptions = {
-					$count : bHasGrandTotal || bCountLeaves,
-					$filter : "",
-					$orderby : "a",
-					"sap-client" : "123"
-				},
-				oReadPromise,
-				sResourcePath = "Foo";
-
-			this.mock(_AggregationHelper).expects("hasGrandTotal")
-				.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(bHasGrandTotal);
-			this.mock(_AggregationHelper).expects("hasMinOrMax")
-				.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
-			this.mock(_MinMaxHelper).expects("createCache").never();
-			this.mock(_Cache).expects("create").never();
-			oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
-				.withExactArgs("").returns("~downloadUrl~");
-			this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
-				.withExactArgs(null, bHasGrandTotal || bCountLeaves).returns(oFirstLevelCache);
-			if (bHasGrandTotal) {
-				oEnhanceCacheWithGrandTotalExpectation = this.mock(_ConcatHelper)
-					.expects("enhanceCache")
-					.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation), [
-						bCountLeaves ? /*fnLeaves*/sinon.match.func : null,
-						/*fnGrandTotal*/sinon.match.func,
-						/*fnCount*/sinon.match.func
-					]);
-			} else if (bCountLeaves) {
-				oEnhanceCacheWithGrandTotalExpectation = this.mock(_ConcatHelper)
-					.expects("enhanceCache")
-					.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-						[/*fnLeaves*/sinon.match.func, /*fnCount*/sinon.match.func]);
-			} else {
-				this.mock(_ConcatHelper).expects("enhanceCache").never();
-			}
-
-			// code under test
-			oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", mQueryOptions,
-				oAggregation);
-
-			// "super" call
-			assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
-			assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
-			assert.strictEqual(oCache.addTransientCollection, null, "disinherit");
-			assert.strictEqual(oCache.oRequestor, this.oRequestor);
-			assert.strictEqual(oCache.sResourcePath, sResourcePath);
-			assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
-			assert.strictEqual(oCache.bSortExpandSelect, true);
-			assert.strictEqual(typeof oCache.fetchValue, "function");
-			assert.strictEqual(typeof oCache.read, "function");
-			// c'tor itself
-			assert.strictEqual(oCache.oAggregation, oAggregation);
-			assert.strictEqual(oCache.sToString, "~downloadUrl~");
-			assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
-			assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
-			assert.deepEqual(oCache.aElements, []);
-			assert.deepEqual(oCache.aElements.$byPredicate, {});
-			assert.ok("$count" in oCache.aElements);
-			assert.strictEqual(oCache.aElements.$count, undefined);
-			assert.strictEqual(oCache.aElements.$created, 0);
-			assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
-			assert.strictEqual(oCache.addKeptElement, oFirstLevelCache.addKeptElement, "@borrows ...");
-			assert.strictEqual(oCache.removeKeptElement, oFirstLevelCache.removeKeptElement,
-				"@borrows ...");
-			assert.strictEqual(oCache.requestSideEffects, oFirstLevelCache.requestSideEffects,
-				"@borrows ...");
-			if (bCountLeaves) {
-				assert.strictEqual(oCache.mQueryOptions.$$leaves, true);
-				assert.ok(oCache.oCountPromise instanceof SyncPromise);
-				assert.strictEqual(oCache.oCountPromise.isPending(), true);
-
-				// code under test (fnLeaves)
-				oEnhanceCacheWithGrandTotalExpectation.args[0][2][0]({UI5__leaves : "42"});
-
-				assert.strictEqual(oCache.oCountPromise.isFulfilled(), true);
-				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
-
+		[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
+			assert.throws(function () {
 				// code under test
-				assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oCountPromise);
-			} else {
-				assert.notOk("$$leaves" in oCache.mQueryOptions);
-				assert.ok("oCountPromise" in oCache, "be nice to V8");
-				assert.strictEqual(oCache.oCountPromise, undefined);
-			}
-			if (bHasGrandTotal || bCountLeaves) {
-				// code under test (fnCount) - nothing should happen :-)
-				oEnhanceCacheWithGrandTotalExpectation.args[0][2][bHasGrandTotal ? 2 : 1]({});
-			}
-			if (!bHasGrandTotal) {
-				assert.strictEqual(oCache.oGrandTotalPromise, undefined);
-				assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
-				return null; // be nice to eslint's "consistent-return" rule ---------------------------
-			}
-			assert.ok(oCache.oGrandTotalPromise instanceof SyncPromise);
-			assert.strictEqual(oCache.oGrandTotalPromise.isPending(), true);
-			assert.ok(oCache.oTreeState instanceof _TreeState);
-			assert.strictEqual(oCache.oTreeState.sNodeProperty, undefined);
-			assert.strictEqual(oCache.bUnifiedCache, false);
+				// (read grand total row separately, but with iPrefetchLength !== 0)
+				oCache.read(0, 1, iPrefetchLength);
+			}, new Error("Unsupported prefetch length: " + iPrefetchLength));
+		});
 
-			[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
-				assert.throws(function () {
-					// code under test
-					// (read grand total row separately, but with iPrefetchLength !== 0)
-					oCache.read(0, 1, iPrefetchLength);
-				}, new Error("Unsupported prefetch length: " + iPrefetchLength));
-			});
+		// code under test (read grand total row separately)
+		const oReadPromise = oCache.read(0, 1, 0, _GroupLock.$cached);
 
-			this.mock(oGroupLock).expects("unlock").withExactArgs();
+		assert.strictEqual(oReadPromise.isPending(), true);
 
-			// code under test (read grand total row separately)
-			oReadPromise = oCache.read(0, 1, 0, oGroupLock);
+		this.mock(_AggregationHelper).expects("handleGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation), "~oGrandTotal~");
 
-			assert.strictEqual(oReadPromise.isPending(), true);
+		// code under test (fnGrandTotal)
+		oEnhanceCacheWithGrandTotalExpectation.args[0][2][0]("~oGrandTotal~");
 
-			this.mock(_AggregationHelper).expects("handleGrandTotal")
-				.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGrandTotal));
+		assert.strictEqual(oReadPromise.isPending(), true, "still async...");
 
-			// code under test (fnGrandTotal)
-			oEnhanceCacheWithGrandTotalExpectation.args[0][2][1](oGrandTotal);
+		return oReadPromise.then(function (oReadResult) {
+			assert.deepEqual(oReadResult, {value : ["~oGrandTotal~"]});
+			assert.strictEqual(oReadResult.value[0], "~oGrandTotal~");
+			assert.notOk("$count" in oReadResult.value, "$count not available here");
 
-			assert.strictEqual(oCache.oGrandTotalPromise.isFulfilled(), true);
-			assert.strictEqual(oCache.oGrandTotalPromise.getResult(), oGrandTotal);
+			// no internal state changes!
 			assert.deepEqual(oCache.aElements, []);
 			assert.deepEqual(oCache.aElements.$byPredicate, {});
 			assert.ok("$count" in oCache.aElements);
 			assert.strictEqual(oCache.aElements.$count, undefined);
 			assert.strictEqual(oCache.aElements.$created, 0);
-			assert.strictEqual(oReadPromise.isPending(), true, "still async...");
-
-			return oReadPromise.then(function (oReadResult) {
-				assert.deepEqual(oReadResult, {value : [oGrandTotal]});
-				assert.strictEqual(oReadResult.value[0], oGrandTotal);
-				assert.notOk("$count" in oReadResult.value, "$count not available here");
-			});
-		});
 		});
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCount) {
-		QUnit.test("create: hierarchyQualifier, $count=" + bCount, function (assert) {
-			var oAggregation = {
-					hierarchyQualifier : "X",
-					$NodeProperty : "node/property"
-				},
-				oCache,
-				oGetDownloadUrlExpectation,
-				mQueryOptions = {
-					$count : bCount,
+	[{ // grand total
+		aggregate : {
+			SalesNumber : {grandTotal : true}
+		},
+		group : {},
+		groupLevels : []
+	}, { // group levels
+		aggregate : {},
+		group : {},
+		groupLevels : ["group"]
+	}, { // recursive hierarchy
+		hierarchyQualifier : "X"
+	}].forEach(function (oAggregation, i) {
+		QUnit.test("create: #" + i, function (assert) {
+			var oCache,
+				oDoResetExpectation,
+				bHasGrandTotal = i === 0,
+				// Note: $expand/$select and $filter only allowed for recursive hierarchy
+				mQueryOptions = oAggregation.hierarchyQualifier ? {
 					$expand : {
 						EMPLOYEE_2_TEAM : {$select : ["Team_Id", "Name"]}
 					},
+					$filter : "allowed",
 					$select : ["ID", "MANAGER_ID"]
+				} : {
+					$filter : "" // needs to be falsy
 				};
 
-			this.mock(_AggregationHelper).expects("hasGrandTotal").withExactArgs(undefined)
-				.returns(undefined);
-			this.mock(_AggregationHelper).expects("hasMinOrMax").withExactArgs(undefined)
-				.returns(undefined);
+			this.mock(_AggregationHelper).expects("hasGrandTotal")
+				.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(bHasGrandTotal);
+			this.mock(_AggregationHelper).expects("hasMinOrMax")
+				.withExactArgs(sinon.match.same(oAggregation.aggregate))
+				.returns(false);
 			this.mock(_MinMaxHelper).expects("createCache").never();
 			this.mock(_Cache).expects("create").never();
-			oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
-				.withExactArgs("").returns("~downloadUrl~");
-			this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
-				.withExactArgs(null, false).returns("~firstLevelCache~");
-			this.mock(_ConcatHelper).expects("enhanceCache").never();
+			oDoResetExpectation = this.mock(_AggregationCache.prototype).expects("doReset")
+				.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions),
+					bHasGrandTotal)
+				.callsFake(function () {
+					this.oFirstLevel = {
+						addKeptElement : "~addKeptElement~",
+						removeKeptElement : "~removeKeptElement~",
+						requestSideEffects : "~requestSideEffects~"
+					};
+					if (i === 2) {
+						oAggregation.$NodeProperty = "node/property";
+					}
+				});
 
 			// code under test
 			oCache = _AggregationCache.create(this.oRequestor, "resource/path", "~n/a~", mQueryOptions,
@@ -509,6 +417,7 @@ sap.ui.define([
 			// "super" call
 			assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
 			assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
+			assert.strictEqual(oCache.addTransientCollection, null, "disinherit");
 			assert.strictEqual(oCache.oRequestor, this.oRequestor);
 			assert.strictEqual(oCache.sResourcePath, "resource/path");
 			assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
@@ -516,33 +425,22 @@ sap.ui.define([
 			assert.strictEqual(typeof oCache.fetchValue, "function");
 			assert.strictEqual(typeof oCache.read, "function");
 			// c'tor itself
-			assert.strictEqual(oCache.oAggregation, oAggregation);
-			assert.strictEqual(oCache.sToString, "~downloadUrl~");
-			assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
-			assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
+			assert.ok(oDoResetExpectation.alwaysCalledOn(oCache));
 			assert.deepEqual(oCache.aElements, []);
 			assert.deepEqual(oCache.aElements.$byPredicate, {});
 			assert.ok("$count" in oCache.aElements);
 			assert.strictEqual(oCache.aElements.$count, undefined);
 			assert.strictEqual(oCache.aElements.$created, 0);
-			assert.strictEqual(oCache.oFirstLevel, "~firstLevelCache~");
-			assert.notOk("$$leaves" in oCache.mQueryOptions);
 			assert.ok("oCountPromise" in oCache, "be nice to V8");
-			assert.strictEqual(oCache.oGrandTotalPromise, undefined);
+			assert.strictEqual(oCache.oCountPromise, undefined);
 			assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
-			assert.strictEqual(oCache.isDeletingInOtherGroup(), false);
-			if (bCount) {
-				assert.ok(oCache.oCountPromise.isPending());
-
-				// code under test
-				oCache.oCountPromise.$resolve(42);
-
-				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
-			} else {
-				assert.strictEqual(oCache.oCountPromise, undefined);
-			}
+			assert.strictEqual(oCache.oGrandTotalPromise, undefined);
+			assert.strictEqual(oCache.addKeptElement, "~addKeptElement~", "@borrows ...");
+			assert.strictEqual(oCache.removeKeptElement, "~removeKeptElement~", "@borrows ...");
+			assert.strictEqual(oCache.requestSideEffects, "~requestSideEffects~", "@borrows ...");
+			assert.strictEqual(oCache.isDeletingInOtherGroup(), false); // <-- code under test
 			assert.ok(oCache.oTreeState instanceof _TreeState);
-			assert.strictEqual(oCache.oTreeState.sNodeProperty, "node/property");
+			assert.strictEqual(oCache.oTreeState.sNodeProperty, i === 2 ? "node/property" : undefined);
 			assert.strictEqual(oCache.bUnifiedCache, false);
 
 			this.mock(oCache).expects("getTypes").withExactArgs().returns("~types~");
@@ -755,7 +653,7 @@ sap.ui.define([
 							? o.$$filterBeforeAggregate === "~filter~"
 							: !("$$filterBeforeAggregate" in o));
 					})),
-					iLevel) //TODO actually, we currently do not care about this level for RH...
+					iLevel) // actually, we currently do not care about this level for RH...
 				.returns(mCacheQueryOptions);
 			this.mock(_Cache).expects("create")
 				.withExactArgs(sinon.match.same(oAggregationCache.oRequestor), "Foo",
@@ -788,6 +686,114 @@ sap.ui.define([
 			} else {
 				assert.notOk("$parentFilter" in oCache);
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	[{ // only oGrandTotalPromise needed
+		aggregate : {
+			SalesNumber : {grandTotal : true}
+		},
+		group : {},
+		groupLevels : []
+	}, { // only oCountPromise needed
+		hierarchyQualifier : "X"
+	}, { // only oCountPromise needed
+		aggregate : {},
+		group : {},
+		groupLevels : ["group"]
+	}, { // both oCountPromise and oGrandTotalPromise needed
+		aggregate : {
+			SalesNumber : {grandTotal : true}
+		},
+		group : {},
+		groupLevels : ["group"]
+	}].forEach(function (oNewAggregation, i) {
+		[false, true].forEach(function (bCount) {
+			const sTitle = "doReset: #" + i + ", bCount=" + bCount;
+			const bCountLeaves = bCount && oNewAggregation.groupLevels?.length > 0;
+			const bHasGrandTotal = !!oNewAggregation.aggregate?.SalesNumber?.grandTotal;
+
+		QUnit.test(sTitle, function (assert) {
+			const oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
+				hierarchyQualifier : "n/a" // unrealistic for i !== 1, but never mind
+			});
+			this.mock(oCache).expects("getDownloadUrl").withExactArgs("").returns("~sDownloadUrl~");
+			this.mock(oCache).expects("createGroupLevelCache")
+				.withExactArgs(null, bHasGrandTotal || bCountLeaves)
+				.returns("~oFirstLevelCache~");
+			let fnLeaves;
+			let fnGrandTotal;
+			this.mock(_ConcatHelper).expects("enhanceCache")
+				.exactly(bHasGrandTotal || bCountLeaves ? 1 : 0)
+				.withExactArgs("~oFirstLevelCache~", sinon.match.same(oNewAggregation),
+					sinon.match((aAdditionalRowHandlers) => {
+						let iIndex = 0;
+						if (bCountLeaves) {
+							fnLeaves = aAdditionalRowHandlers[iIndex];
+							iIndex += 1;
+						}
+						if (bHasGrandTotal) {
+							fnGrandTotal = aAdditionalRowHandlers[iIndex];
+							iIndex += 1;
+						}
+
+						// code under test (fnCount) - nothing should happen :-)
+						aAdditionalRowHandlers[iIndex]({});
+						iIndex += 1;
+
+						return aAdditionalRowHandlers.length === iIndex;
+					}));
+			const mQueryOptions = {
+				$count : bCount
+			};
+
+			// code under test
+			oCache.doReset(oNewAggregation, mQueryOptions, bHasGrandTotal);
+
+			assert.strictEqual(oCache.oAggregation, oNewAggregation);
+			assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
+			assert.strictEqual(oCache.toString(), "~sDownloadUrl~"); // <-- code under test
+			assert.strictEqual(oCache.oFirstLevel, "~oFirstLevelCache~");
+
+			if (bCount && i) {
+				assert.ok(oCache.oCountPromise.isPending());
+				if (i === 1) { // recursive hierarchy
+					assert.notOk("$$leaves" in mQueryOptions);
+					// code under test
+					oCache.oCountPromise.$resolve(42);
+				} else { // visual grouping (bCountLeaves)
+					assert.strictEqual(mQueryOptions.$$leaves, true);
+
+					// code under test
+					assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oCountPromise);
+
+					// code under test
+					fnLeaves({UI5__leaves : "42"});
+				}
+
+				assert.ok(oCache.oCountPromise.isFulfilled());
+				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
+			} else {
+				assert.notOk("$$leaves" in mQueryOptions);
+				assert.strictEqual(oCache.oCountPromise, undefined);
+			}
+
+			if (bHasGrandTotal) {
+				assert.strictEqual(oCache.oGrandTotalPromise.isPending(), true);
+
+				this.mock(_AggregationHelper).expects("handleGrandTotal")
+					.withExactArgs(sinon.match.same(oNewAggregation), "~oGrandTotal~");
+
+				// code under test
+				fnGrandTotal("~oGrandTotal~");
+
+				assert.strictEqual(oCache.oGrandTotalPromise.isFulfilled(), true);
+				assert.strictEqual(oCache.oGrandTotalPromise.getResult(), "~oGrandTotal~");
+			} else {
+				assert.strictEqual(oCache.oGrandTotalPromise, undefined);
+			}
+		});
 		});
 	});
 
@@ -4406,32 +4412,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function (bCount) {
-		[undefined, "~group~"].forEach(function (sGroupId) {
-			[{ // no oCountPromise needed
-				aggregate : {
-					SalesNumber : {grandTotal : true}
-				},
-				group : {},
-				groupLevels : []
-			}, {
-				hierarchyQualifier : "X"
-			}, {
-				aggregate : {},
-				group : {},
-				groupLevels : ["group"]
-			}].forEach(function (oNewAggregation, i) {
-				var sTitle = "reset: $count = " + bCount + ", sGroupId = " + sGroupId
-						+ ", $$aggregation = " + JSON.stringify(oNewAggregation);
+	[undefined, "~group~"].forEach(function (sGroupId) {
+		[false, true].forEach(function (bHasGrandTotal) {
+			var sTitle = "reset: sGroupId = " + sGroupId + ", has grand total = " + bHasGrandTotal;
 
 		QUnit.test(sTitle, function (assert) {
 			var oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, {
-					hierarchyQualifier : "n/a" // unrealistic for i !== 1, but never mind
+					hierarchyQualifier : "X"
 				}),
 				oFirstLevel = oCache.oFirstLevel,
 				aKeptElementPredicates = ["foo", "bar"],
-				mQueryOptions = {
-					$count : bCount
+				oNewAggregation = {
+					hierarchyQualifier : "Y"
 				};
 
 			oCache.aElements.$byPredicate = {
@@ -4459,39 +4451,27 @@ sap.ui.define([
 			};
 			oCache.oCountPromise = "~oCountPromise~";
 			oCache.bUnifiedCache = "~bUnifiedCache~";
+			oCache.oGrandTotalPromise = bHasGrandTotal ? "~oGrandTotalPromise~" : undefined;
 			const oResetExpectation = this.mock(oCache.oFirstLevel).expects("reset").on(oCache)
-				.withExactArgs(sinon.match.same(aKeptElementPredicates), sGroupId,
-					sinon.match.same(mQueryOptions))
+				.withExactArgs(sinon.match.same(aKeptElementPredicates), sGroupId, "~mQueryOptions~")
 				.callsFake(function () {
 					oCache.oBackup = sGroupId ? {} : null;
 				});
-			const oGetDownloadUrlExpectation = this.mock(oCache).expects("getDownloadUrl")
-				.withExactArgs("")
-				.returns("~sDownloadUrl~");
 			const oTreeStateResetExpectation = this.mock(oCache.oTreeState).expects("reset")
 				.exactly(sGroupId ? 0 : 1).withExactArgs();
 			const oGetExpandLevelsExpectation = this.mock(oCache.oTreeState).expects("getExpandLevels")
 				.withExactArgs().returns("~sExpandLevels~");
-			this.mock(oCache).expects("createGroupLevelCache").withExactArgs(null, bCount && i === 2)
-				.returns("~oFirstLevelCache~");
-			let fnLeaves; let fnCount;
-			this.mock(_ConcatHelper).expects("enhanceCache").exactly(bCount && i === 2 ? 1 : 0)
-				.withExactArgs("~oFirstLevelCache~", sinon.match.same(oNewAggregation),
-					sinon.match((aFunctions) => {
-						[fnLeaves, fnCount] = aFunctions;
-						return true;
-					}));
+			const oDoResetExpectation = this.mock(oCache).expects("doReset")
+				.withExactArgs(sinon.match.same(oNewAggregation), "~mQueryOptions~", bHasGrandTotal);
 
 			// code under test
-			oCache.reset(aKeptElementPredicates, sGroupId, mQueryOptions, oNewAggregation);
+			oCache.reset(aKeptElementPredicates, sGroupId, "~mQueryOptions~", oNewAggregation);
 
 			if (!sGroupId) {
 				sinon.assert.callOrder(oTreeStateResetExpectation, oGetExpandLevelsExpectation);
 			}
-			sinon.assert.callOrder(oResetExpectation, oGetDownloadUrlExpectation);
-			assert.strictEqual(oCache.oAggregation, oNewAggregation);
-			assert.strictEqual(oCache.oAggregation.$ExpandLevels, "~sExpandLevels~");
-			assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
+			sinon.assert.callOrder(oResetExpectation, oGetExpandLevelsExpectation, oDoResetExpectation);
+			assert.strictEqual(oNewAggregation.$ExpandLevels, "~sExpandLevels~");
 			assert.deepEqual(oCache.aElements.$byPredicate, {
 				bar : {
 					"@$ui5._" : {predicate : "bar"},
@@ -4517,28 +4497,7 @@ sap.ui.define([
 				assert.strictEqual(oCache.oBackup.bUnifiedCache, "~bUnifiedCache~");
 				assert.strictEqual(oCache.bUnifiedCache, true);
 			}
-			if (bCount && i) {
-				assert.ok(oCache.oCountPromise.isPending());
-
-				if (i === 1) { // recursive hierarchy
-					// code under test
-					oCache.oCountPromise.$resolve(42);
-				} else { // visual grouping
-					// code under test (fnCount) - nothing should happen :-)
-					fnCount({});
-
-					// code under test
-					fnLeaves({UI5__leaves : "42"});
-				}
-
-				assert.ok(oCache.oCountPromise.isFulfilled());
-				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
-			} else {
-				assert.strictEqual(oCache.oCountPromise, undefined);
-			}
-			assert.strictEqual(oCache.oFirstLevel, "~oFirstLevelCache~");
 		});
-			});
 		});
 	});
 
@@ -4556,9 +4515,8 @@ sap.ui.define([
 		this.mock(_Helper).expects("hasPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oCache.aElements.$byPredicate.foo), "placeholder")
 			.returns(true);
-		this.mock(oCache).expects("getDownloadUrl").never();
 		this.mock(oCache.oFirstLevel).expects("reset").never();
-		this.mock(oCache).expects("createGroupLevelCache").never();
+		this.mock(oCache).expects("doReset").never();
 
 		assert.throws(function () {
 			// code under test
@@ -4576,9 +4534,8 @@ sap.ui.define([
 		var oCache = _AggregationCache.create(this.oRequestor, "~", "", {},
 				{hierarchyQualifier : "X"});
 
-		this.mock(oCache).expects("getDownloadUrl").never();
 		this.mock(oCache.oFirstLevel).expects("reset").never();
-		this.mock(oCache).expects("createGroupLevelCache").never();
+		this.mock(oCache).expects("doReset").never();
 
 		assert.throws(function () {
 			// code under test

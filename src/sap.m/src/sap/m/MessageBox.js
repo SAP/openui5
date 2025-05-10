@@ -177,7 +177,7 @@ sap.ui.define([
 		 * Shows no icon in the message box.
 		 * @public
 		 */
-		NONE: undefined,
+		NONE: "NONE",
 
 		/**
 		 * Shows the information icon in the message box.

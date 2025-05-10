@@ -27,7 +27,7 @@ sap.ui.define([
 
 		const aItems = oControl.getItems();
 		if (aItems.length) {
-			oRm.openStart("div", oControl)
+			oRm.openStart("div")
 				.class("sapUiIntHeaderInfoSectionItemsGroup")
 				.openEnd();
 

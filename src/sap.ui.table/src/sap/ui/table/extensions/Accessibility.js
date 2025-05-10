@@ -1108,10 +1108,15 @@ sap.ui.define([
 		/**
 		 * Returns the aria attributes for the header of the row actions column.
 		 *
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension
 		 * @returns {object} An object containing the aria attributes
 		 */
-		getAriaAttributesForRowActionHeader: function() {
-			return {"aria-hidden": "true"};
+		getAriaAttributesForRowActionHeader: function(oExtension) {
+			const oTable = oExtension.getTable();
+			return {
+				"role": "columnheader",
+				"aria-colindex": TableUtils.getVisibleColumnCount(oTable) + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0)
+			};
 		},
 
 		/**

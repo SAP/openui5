@@ -182,6 +182,25 @@ sap.ui.define([
 		await nextUIUpdate();
 	}
 
+	function setTextAreaValue(oDialog, sValue) {
+		const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+		return new Promise((resolve) => {
+			oUrlTextArea.attachEventOnce("validateFieldGroup", resolve);
+
+			// Trigger focusin directly since the FieldGroup only reacts on focusin/focusout
+			// which is not always triggered/bubbled in regular .focus() flows
+			QUnitUtils.triggerEvent("focusin", oUrlTextArea.getFocusDomRef());
+			oUrlTextArea.setValue(sValue);
+			// Timeout is explicitly required by the field group before accepting further focus events, otherwise
+			// the events are aggregated and the validation is not triggered because it doesn't count as a change
+			// This can be removed when the dialog no longer relies on onValidationSuccess/Error
+			setTimeout(() => {
+				// Simulate focus loss on the input to trigger the validation
+				QUnitUtils.triggerEvent("focusin", oDialog.getFocusDomRef());
+			});
+		});
+	}
+
 	QUnit.module("Given that a AddIFrameDialog is available...", {
 		async before() {
 			const mParameters = await AddIFrameDialog.buildUrlBuilderParametersFor(oReferenceControl);
@@ -293,40 +312,34 @@ sap.ui.define([
 		});
 
 		QUnit.test("When URL parameters are added then the frame URL is built correctly", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-				oUrlTextArea.setValue("someUrl");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+			this.oAddIFrameDialog.attachOpened(async () => {
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl");
 
 				const sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: "{firstParameter}"});
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				assert.strictEqual(sUrl, "someUrl{firstParameter}", "Found firstParameter");
 
 				clickOnCancel();
-			}, this);
+			});
 			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When a V4 model Edm.String property URL parameter is added then the frame URL is built like with V2 model", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-				oUrlTextArea.setValue("someUrl");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+			this.oAddIFrameDialog.attachOpened(async () => {
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl");
 
 				const sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: "{stringParameter}", type: "Edm.String"});
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				assert.strictEqual(sUrl, "someUrl{stringParameter}", "Found stringParameter");
 
 				clickOnCancel();
-			}, this);
+			});
 			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("When a V4 model Edm.Boolean property URL parameter is added then the frame URL sets its type to 'any'", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-				oUrlTextArea.setValue("someUrl");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+			this.oAddIFrameDialog.attachOpened(async () => {
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl");
 
 				const sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: "{booleanParameter}", type: "Edm.Boolean"});
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
@@ -338,11 +351,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("When a parameter is added while there is a text selection in the edit field", function(assert) {
-			this.oAddIFrameDialog.attachOpened(() => {
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oParameterList = Element.getElementById("sapUiRtaAddIFrameDialog_ParameterTable");
-				oUrlTextArea.setValue("thisIsSomeUrl");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "thisIsSomeUrl");
 
 				return new Promise((resolve) => {
 					// eslint-disable-next-line max-nested-callbacks
@@ -383,11 +395,7 @@ sap.ui.define([
 		QUnit.test("When Show Preview is clicked then preview URL is built correctly", function(assert) {
 			let sUrl;
 			this.oAddIFrameDialog.attachOpened(async function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-				oUrlTextArea.setValue("someUrl");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				this.oAddIFrameDialog._oController._oJSONModel.refresh();
-				await nextUIUpdate();
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl");
 
 				function checkParam(oParam) {
 					sUrl = this.oAddIFrameDialog._oController._addURLParameter({key: oParam.key});
@@ -440,13 +448,11 @@ sap.ui.define([
 
 		QUnit.test("when an url is entered", function(assert) {
 			this.oAddIFrameDialog.attachOpened(async () => {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled before anything is entered");
-				oUrlTextArea.setValue("someUrl");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				this.oAddIFrameDialog._oController._oJSONModel.refresh();
-				await nextUIUpdate();
+
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl");
+
 				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after url was entered");
 				assert.strictEqual(
 					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
@@ -519,12 +525,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("When the sandbox parameters are updated", function(assert) {
-			this.oAddIFrameDialog.attachOpened(async function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
 				const oAllowFormsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowFormsSwitch");
 				const oPreviewIframe = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
-				oUrlTextArea.setValue("https://example.com");
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl");
 				oAllowFormsSwitch.setState(true);
 				this.oAddIFrameDialog._oController.onShowPreview();
 				await nextUIUpdate();
@@ -538,90 +543,75 @@ sap.ui.define([
 				assert.strictEqual(oPreviewIframe.getDomRef().sandbox.contains("allow-forms"), false, "then the property is set correctly");
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
 				clickOnCancel();
-			}.bind(this));
+			});
 			return this.oAddIFrameDialog.open(this.oDialogSettings, oReferenceControl);
 		});
 
 		QUnit.test("when you enter an invalid url", async function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oSaveButton = Element.getElementById("sapUiRtaAddIFrameDialogSaveButton");
-				oUrlTextArea.attachEventOnce("validateFieldGroup", () => {
-					assert.strictEqual(oUrlTextArea.getValueState(), ValueState.Error, "then an error is displayed");
-					this.oAddIFrameDialog._oController.onShowPreview();
-					assert.strictEqual(
-						this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
-						"",
-						"then the preview is not updated"
-					);
-					assert.strictEqual(
-						Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
-						false,
-						"then the save button is disabled"
-					);
-				});
-				// eslint-disable-next-line no-script-url
-				oUrlTextArea.setValue("javascript:someJs");
-				oUrlTextArea.getFocusDomRef().focus();
 
-				setTimeout(() => {
-					oSaveButton.getFocusDomRef().focus();
-					clickOnSave();
-				}, 0);
+				// eslint-disable-next-line no-script-url
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "javascript:someJs");
+				assert.strictEqual(oUrlTextArea.getValueState(), ValueState.Error, "then an error is displayed");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
+					"",
+					"then the preview is not updated"
+				);
+				assert.strictEqual(
+					oSaveButton.getEnabled(),
+					false,
+					"then the save button is disabled"
+				);
+
 				clickOnCancel();
-			}.bind(this));
+			});
 			const oResponse = await this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 			assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
 		});
 
 		QUnit.test("when an empty string is entered as url", async function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
-				const oSaveButton = Element.getElementById("sapUiRtaAddIFrameDialogSaveButton");
-				oUrlTextArea.attachEventOnce("validateFieldGroup", () => {
-					assert.strictEqual(oUrlTextArea.getValueState(), ValueState.Error, "then an error is displayed");
-					this.oAddIFrameDialog._oController.onShowPreview();
-					assert.strictEqual(
-						this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
-						"",
-						"then empty string is trimmed and the preview is not updated"
-					);
-					assert.strictEqual(
-						Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
-						false,
-						"then the save button is disabled"
-					);
-				});
 
 				// Set a value beforehand to ensure that the empty string is really refused as input
-				oUrlTextArea.setValue("someValue");
-				oUrlTextArea.setValue("   ");
-				oUrlTextArea.getFocusDomRef().focus();
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someValue");
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "   ");
 
-				setTimeout(() => {
-					oSaveButton.getFocusDomRef().focus();
-					clickOnSave();
-				}, 0);
+				assert.strictEqual(oUrlTextArea.getValueState(), ValueState.Error, "then an error is displayed");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.strictEqual(
+					this.oAddIFrameDialog._oJSONModel.getProperty("/previewUrl/value"),
+					"",
+					"then empty string is trimmed and the preview is not updated"
+				);
+				assert.strictEqual(
+					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					false,
+					"then the save button is disabled"
+				);
 				clickOnCancel();
-			}.bind(this));
+			});
 			const oResponse = await this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 			assert.strictEqual(oResponse, undefined, "then the dialog can only be closed via cancel");
 		});
 
 		QUnit.test("when a url with bindings is entered", function(assert) {
-			this.oAddIFrameDialog.attachOpened(async function() {
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
-				oUrlTextArea.setValue("https://example.com/{ProductCategory}");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				await nextUIUpdate();
+
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "someUrl/{ProductCategory}");
 
 				assert.strictEqual(oUrlTextArea.getValueState(), ValueState.None, "then it is not showing an error");
 				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after url was entered");
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
 				clickOnCancel();
-			}.bind(this));
+			});
 			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 		});
 
@@ -635,13 +625,9 @@ sap.ui.define([
 					getLastName: () => "User"
 				})
 			});
-			this.oAddIFrameDialog.attachOpened(async function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
-				oUrlTextArea.setValue("https://www.example.com/{$user>/fullName}");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				await nextUIUpdate();
-
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "https://www.example.com/{$user>/fullName}");
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
 					oPreviewLink.getText(),
@@ -649,18 +635,14 @@ sap.ui.define([
 					"then it is properly resolved"
 				);
 				clickOnCancel();
-			}.bind(this));
+			});
 			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 		});
 
 		QUnit.test("when a url with an expression binding is entered", function(assert) {
-			this.oAddIFrameDialog.attachOpened(async function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
-				oUrlTextArea.setValue("https://www.example.com/{= ${ProductCategory}}");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				await nextUIUpdate();
-
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "https://www.example.com/{= ${ProductCategory}}");
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
 					oPreviewLink.getText(),
@@ -668,17 +650,14 @@ sap.ui.define([
 					"then it is properly resolved"
 				);
 				clickOnCancel();
-			}.bind(this));
+			});
 			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 		});
 
 		QUnit.test("when a relative url is entered", function(assert) {
-			this.oAddIFrameDialog.attachOpened(async function() {
-				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+			this.oAddIFrameDialog.attachOpened(async () => {
 				const oPreviewLink = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink");
-				oUrlTextArea.setValue("potato.html");
-				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				await nextUIUpdate();
+				await setTextAreaValue(this.oAddIFrameDialog._oDialog, "potato.html");
 
 				this.oAddIFrameDialog._oController.onShowPreview();
 				assert.strictEqual(
@@ -687,7 +666,7 @@ sap.ui.define([
 					"then the preview shows the full url"
 				);
 				clickOnCancel();
-			}.bind(this));
+			});
 			return this.oAddIFrameDialog.open(mTestURLBuilderData, oReferenceControl);
 		});
 

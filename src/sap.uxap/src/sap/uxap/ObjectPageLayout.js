@@ -1774,6 +1774,9 @@ sap.ui.define([
 				});
 			}
 
+			var bHasPromotedSubSection = this.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnTop &&
+				iVisibleSubSections === 1 && oFirstVisibleSubSection.getTitle().trim() !== "";
+
 			//rule noVisibleSubSection: If a section has no content (or only empty subsections) the section will be hidden.
 			if (iVisibleSubSections == 0) {
 				oSection._setInternalVisible(false, bInvalidate);
@@ -1785,9 +1788,6 @@ sap.ui.define([
 					oFirstVisibleSection = oSection;
 					oFirstVisibleSection.addStyleClass("sapUxAPObjectPageSectionFirstVisible");
 				}
-
-				var bHasPromotedSubSection = this.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnTop &&
-					iVisibleSubSections === 1 && oFirstVisibleSubSection.getTitle().trim() !== "";
 
 				//rule TitleOnTop.sectionGetSingleSubSectionTitle: If a section as only 1 subsection and the subsection title is not empty, the SubSection takes the Section's title level with titleOnTop layout only
 				if (bHasPromotedSubSection) {
@@ -1804,6 +1804,8 @@ sap.ui.define([
 
 			if (bUseIconTabBar) {
 				oTitleVisibilityInfo[oSection.getId()] = false;
+				// hide the title of the promoted subsection in iconTabBar mode only
+				bHasPromotedSubSection && oFirstVisibleSubSection && (oTitleVisibilityInfo[oFirstVisibleSubSection.getId()] = false);
 				oSection.addStyleClass("sapUxAPObjectPageSectionFirstVisible");
 			}
 		}, this);
@@ -1814,7 +1816,12 @@ sap.ui.define([
 			Log.info("ObjectPageLayout :: notEnoughVisibleSection UX rule matched", "anchorBar forced to hidden");
 			//rule firstSectionTitleHidden: the first section title is never visible if there is an anchorBar
 			if (bUseIconTabBar && oFirstVisibleSection) {
-				oTitleVisibilityInfo[oFirstVisibleSection.getId()] = true;
+				if (oFirstVisibleSection._hasPromotedSubSection() && oFirstVisibleSubSection) {
+					oTitleVisibilityInfo[oFirstVisibleSubSection.getId()] = true; // SubSection has title - show SubSection title
+				} else {
+					oTitleVisibilityInfo[oFirstVisibleSection.getId()] = true; // SubSection does not have title - show Section title
+				}
+
 			}
 		}
 

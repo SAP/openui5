@@ -475,7 +475,7 @@ sap.ui.define([
 	 * @returns {boolean}
 	 */
 	ObjectPageSubSection.prototype._isTitleVisible = function () {
-		return this.getShowTitle() && this.getTitle().trim() !== "";
+		return this._getInternalTitleVisible() && this.getShowTitle() && this.getTitle().trim() !== "";
 	};
 
 	ObjectPageSubSection.prototype._getImportance = function () {
@@ -611,7 +611,10 @@ sap.ui.define([
 			return false;
 		}
 
-		return this.getId() + "-headerTitle";
+		if (this._getInternalTitleVisible()) {
+			return this.getId() + "-headerTitle";
+		}
+		return false;
 	};
 
 	/**
@@ -658,7 +661,7 @@ sap.ui.define([
 			bHasTitle;
 
 		if (sChangeName === "visible") { // change of the actions elements` visibility
-			bHasTitle = this.getTitle().trim() !== "";
+			bHasTitle = this._getInternalTitleVisible() && this.getTitle().trim() !== "";
 			if (!bHasTitle) {
 				this.$("header").toggleClass("sapUiHidden", !this._hasVisibleActions());
 			}
@@ -711,10 +714,13 @@ sap.ui.define([
 
 		if (!this._bUnstashed) {
 			this._aStashedControls.forEach(function (oControlHandle) {
-				this._aUnStashedControls.push(oControlHandle.control.unstash(true).then(function() {
-					oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
-					this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
-				}.bind(this)));
+				var oUnstashResult = Promise.resolve(oControlHandle.control.unstash(true));
+				this._aUnStashedControls.push(
+					oUnstashResult.then(function () {
+						oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
+						this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
+					}.bind(this))
+				);
 			}.bind(this));
 
 			this._bUnstashed = true;

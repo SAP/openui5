@@ -278,21 +278,21 @@ sap.ui.define([
 		assert.deepEqual(obj1.getOwnModels(), {}, "No models are defined. Empty object is returned.");
 	});
 
-	QUnit.test("[legacy] ManagedObject.bindingParser is available/correctly set", function(assert) {
+	QUnit.test("[legacy] BindingInfo.parse is available/correctly set", function(assert) {
 		// Before fixing this call would produce an error ("undefined is not a function")
 		var sEscaped = BindingInfo.escape("{model>myPath}");
 		assert.strictEqual('\\{model>myPath\\}', sEscaped, "Binding string correctly escaped");
 
 		// asserts
-		assert.strictEqual(ManagedObject.bindingParser, BindingParser.complexParser, "Default complex binding parser is correctly set");
-		assert.strictEqual(ManagedObject.bindingParser, BindingInfo.parse, "ManagedObject.bindingParser function is in line with the BindingInfo.parse function");
+		assert.strictEqual(BindingInfo.parse, BindingParser.complexParser, "Default complex binding parser is correctly set");
+		assert.strictEqual(BindingInfo.parse, BindingInfo.parse, "BindingInfo.parse function is in line with the BindingInfo.parse function");
 
-		ManagedObject.bindingParser = BindingParser.simpleParser;
+		BindingInfo.parse = BindingParser.simpleParser;
 
-		assert.strictEqual(ManagedObject.bindingParser, BindingParser.simpleParser, "Default complex binding parser is correctly set");
-		assert.strictEqual(ManagedObject.bindingParser, BindingInfo.parse, "ManagedObject.bindingParser function is in line with the BindingInfo.parse function");
+		assert.strictEqual(BindingInfo.parse, BindingParser.simpleParser, "Default complex binding parser is correctly set");
+		assert.strictEqual(BindingInfo.parse, BindingInfo.parse, "BindingInfo.parse function is in line with the BindingInfo.parse function");
 
-		ManagedObject.bindingParser = BindingParser.complexParser;
+		BindingInfo.parse = BindingParser.complexParser;
 	});
 
 	QUnit.module("Property Metadata", {
@@ -556,14 +556,14 @@ sap.ui.define([
 
 	QUnit.test("Escape property before setting", function(assert) {
 		// cannot test actual escaping because it does not change the value when bindingSyntax is not set to "complex"
-		sinon.spy(ManagedObject.bindingParser, "escape");
+		sinon.spy(BindingInfo.parse, "escape");
 
 		// string
 		ManagedObject.escapeSettingsValue("x");
-		assert.equal(ManagedObject.bindingParser.escape.callCount, 1, "strings should be escaped by escapeSettingsValue");
+		assert.equal(BindingInfo.parse.escape.callCount, 1, "strings should be escaped by escapeSettingsValue");
 
 		ManagedObject.escapeSettingsValue(41);
-		assert.equal(ManagedObject.bindingParser.escape.callCount, 1, "non-strings should not be escaped by escapeSettingsValue");
+		assert.equal(BindingInfo.parse.escape.callCount, 1, "non-strings should not be escaped by escapeSettingsValue");
 	});
 
 	QUnit.test("Bind / Unbind functions", function(assert) {

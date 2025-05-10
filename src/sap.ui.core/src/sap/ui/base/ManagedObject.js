@@ -552,18 +552,6 @@ sap.ui.define([
 
 	}, /* Metadata constructor */ ManagedObjectMetadata);
 
-	// The current BindingParser implementation is exposed via "ManagedObject.bindingParser".
-	// This is used in tests for switching the BindingParser implementation on the fly.
-	// We delegate any changes to this property back to the BindingInfo.
-	Object.defineProperty(ManagedObject, "bindingParser", {
-		set: function(v) {
-			BindingInfo.parse = v;
-		},
-		get: function() {
-			return BindingInfo.parse;
-		}
-	});
-
 	function assertModelName(sModelName) {
 		assert(sModelName === undefined || (typeof sModelName === "string" && !/^(undefined|null)?$/.test(sModelName)), "sModelName must be a string or omitted");
 	}

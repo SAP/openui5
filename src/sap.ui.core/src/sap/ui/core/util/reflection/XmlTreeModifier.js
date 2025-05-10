@@ -7,16 +7,16 @@
 sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/DataType",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/core/Fragment",
 	"sap/ui/util/XMLHelper"
 ], function(
 	isPlainObject,
 	merge,
+	BindingInfo,
 	DataType,
-	ManagedObject,
 	BaseTreeModifier,
 	Fragment,
 	XMLHelper
@@ -143,7 +143,7 @@ sap.ui.define([
 					vPropertyValue = oPropertyInfo.getDefaultValue() || oType.getDefaultValue();
 				} else {
 					// unescape binding like XMLTemplateProcessor
-					const vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
+					const vUnescaped = BindingInfo.parse(vPropertyValue, undefined, true);
 					// if it is a binding, return undefined as it has to be handled differently
 					if (isPlainObject(vUnescaped)) {
 						if (vUnescaped.path || vUnescaped.parts) {
@@ -183,7 +183,7 @@ sap.ui.define([
 		getPropertyBinding: function(oControl, sPropertyName) {
 			const vPropertyValue = oControl.getAttribute(sPropertyName);
 			if (vPropertyValue) {
-				const vUnescaped = ManagedObject.bindingParser(vPropertyValue, undefined, true);
+				const vUnescaped = BindingInfo.parse(vPropertyValue, undefined, true);
 				if (vUnescaped && (vUnescaped.path || vUnescaped.parts)) {
 					return vUnescaped;
 				}

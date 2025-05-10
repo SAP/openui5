@@ -264,7 +264,6 @@ sap.ui.define([
 
 	QUnit.module("Context checks", {
 		beforeEach: function() {
-			Controller.registerExtensionProvider("my.test.ExtensionProvider");
 			this.pView = Controller.create({name:"my.test.MainContext"}).then(function(oController) {
 				return XMLView.create({
 					viewName: "my.test.Main",
@@ -297,7 +296,6 @@ sap.ui.define([
 	QUnit.module("Controller final checks", {
 		beforeEach: function() {
 			future.active = true;
-			Controller.registerExtensionProvider("");
 			this.pView = Controller.create({name:"my.test.ExtendMain"}).then(function(oController) {
 				return XMLView.create({
 					viewName: "my.test.Main",

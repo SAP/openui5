@@ -22,6 +22,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Popup",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element"
 ],
@@ -44,6 +45,7 @@ sap.ui.define([
 		EnabledPropagator,
 		jQuery,
 		Popup,
+		BindingInfo,
 		ManagedObject,
 		Element
 	) {
@@ -1164,7 +1166,7 @@ sap.ui.define([
 				return sValue;
 			}
 			try {
-				ManagedObject.bindingParser(sValue);
+				BindingInfo.parse(sValue);
 				return sValue;
 			} catch {
 				return ManagedObject.escapeSettingsValue(sValue);

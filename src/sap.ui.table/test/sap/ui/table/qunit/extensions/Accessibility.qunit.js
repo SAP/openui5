@@ -1283,6 +1283,12 @@ sap.ui.define([
 		}
 	});
 
+	QUnit.test("column header", function(assert) {
+		const oColumnHeader = this.oTable.qunit.getRowActionHeaderCell();
+		assert.equal(oColumnHeader.getAttribute("role"), "columnheader", "role is correct");
+		assert.equal(oColumnHeader.getAttribute("aria-colindex"), 3, "aria-colindex is correct");
+	});
+
 	QUnit.test("aria-labelledby with focus", async function(assert) {
 		for (let i = 0; i < 2; i++) {
 			const oCell = this.oTable.qunit.getRowActionCell(i);
