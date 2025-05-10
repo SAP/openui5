@@ -409,7 +409,7 @@ sap.ui.define([
         assert.equal(this.oGenericTile.$().css('width'), '304px', 'Rendering successful');
     });
 
-	QUnit.module("FrameType rendering tests", {
+	QUnit.module("FrameType rendering tests for action tile", {
 		beforeEach: async function() {
 			this.oGenericTile = new GenericTile({
 				frameType: FrameType.Auto,
@@ -428,7 +428,7 @@ sap.ui.define([
 		//Arrange
 		//Act
 		//Assert
-		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION");
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.OneByOne, "FrameType Auto set to OneByOne");
 		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
 	});
@@ -440,13 +440,13 @@ sap.ui.define([
 		await nextUIUpdate();
 		//Assert
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByOne, "FrameType Auto set to TwoByOne");
-		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes("Wide Tile"),"Size description rendered successfully");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes("Action Wide Tile"),"Size description rendered successfully");
 	});
 
 	QUnit.test("FrameType is in OneByHalf", async function(assert) {
 		//Arrange
 		this.oGenericTile.setFrameType(FrameType.OneByHalf);
-		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_FLAT_SIZE");
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_FLAT_SIZE");
 
 		//Act
 		await nextUIUpdate();
@@ -459,7 +459,7 @@ sap.ui.define([
 	QUnit.test("FrameType is in TwoByHalf", async function(assert) {
 		//Arrange
 		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
-		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_FLAT_WIDE_SIZE");
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_FLAT_WIDE_SIZE");
 
 		//Act
 		await nextUIUpdate();
@@ -470,6 +470,58 @@ sap.ui.define([
 		assert.equal(this.oGenericTile.getFrameType(), FrameType.TwoByHalf, "FrameType Auto set to TwoByOne");
 		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
 		assert.ok(oTile > oContent,"Inner content height cant exceed the tiles height");
+	});
+
+	QUnit.module("FrameType rendering tests for Navigation Tile", {
+	beforeEach: async function() {
+		this.oGenericTile = new GenericTile({
+			frameType: FrameType.Auto,
+			header: "This is a header",
+			subheader: "This is a subheader",
+							url: "www.sap.com"
+		}).placeAt("qunit-fixture");
+		await nextUIUpdate();
+	},
+	afterEach: function() {
+		this.oGenericTile.destroy();
+		this.oGenericTile = null;
+	}
+});
+
+	QUnit.test("FrameType is in OneByOne", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_NAVIGATIONAL_ROLE_DESCRIPTION");
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
+	});
+
+	QUnit.test("FrameType is in TwoByOne", async function(assert) {
+		//Arrange
+		this.oGenericTile.setFrameType(FrameType.TwoByOne);
+		//Act
+		await nextUIUpdate();
+		//Assert
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes("Navigation Wide Tile"),"Size description rendered successfully");
+	});
+
+	QUnit.test("FrameType is in OneByHalf", async function(assert) {
+		//Arrange
+		this.oGenericTile.setFrameType(FrameType.OneByHalf);
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_NAVIGATIONAL_FLAT_SIZE");
+
+		//Act
+		await nextUIUpdate();
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
+	});
+
+	QUnit.test("FrameType is in TwoByHalf", async function(assert) {
+		//Arrange
+		this.oGenericTile.setFrameType(FrameType.TwoByHalf);
+		var sSizeDescription = this.oGenericTile._oRb.getText("GENERIC_TILE_NAVIGATIONAL_FLAT_WIDE_SIZE");
+		//Act
+		await nextUIUpdate();
+		assert.ok(this.oGenericTile.getDomRef().getAttribute("aria-label").includes(sSizeDescription),"Size description rendered successfully");
 	});
 
 	QUnit.module("Scope rendering tests", {
@@ -1813,12 +1865,12 @@ sap.ui.define([
 		//Act
 		sAriaText = this.oGenericTile._getAriaText();
 		//Assert
-		assert.equal(sAriaText, "ARIA and tooltip text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated if no tooltip set");
+		assert.equal(sAriaText, "ARIA and tooltip text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated if no tooltip set");
 		//Act
 		this.oGenericTile.setTooltip(" ");
 		sAriaText = this.oGenericTile._getAriaText();
 		//Assert
-		assert.equal(sAriaText, "ARIA and tooltip text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated in case tooltip is supressed");
+		assert.equal(sAriaText, "ARIA and tooltip text\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated in case tooltip is supressed");
 		//Act
 		this.oGenericTile.setTooltip("someTooltipText");
 		await nextUIUpdate();
@@ -1842,7 +1894,35 @@ sap.ui.define([
 		var sAriaText = this.oGenericTile._getAriaText();
 		var sActionsText = this.oGenericTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT");
 		//Assert
-		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actions scope");
+		assert.equal(sAriaText, sActionsText + " ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actions scope");
+	});
+
+	QUnit.test("Internal method _getAriaText for navigation tile with Url", async function(assert) {
+	 //Arrange
+	 this.oGenericTile._getAriaAndTooltipText = function() {
+		 return "ARIA and tooltip test";
+	 };
+	 this.oGenericTile.setUrl("www.sap.com");
+	 await nextUIUpdate();
+	 //Act
+	 var sAriaText = this.oGenericTile._getAriaText();
+	 //Assert
+	 assert.equal(sAriaText, "ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_NAVIGATIONAL_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actions scope");
+ });
+
+	QUnit.test("Internal method _getAriaText for navigation tile with Press event", async function(assert) {
+		function handlePress(oEvent) {
+		}
+		//Arrange
+		this.oGenericTile._getAriaAndTooltipText = function() {
+			return "ARIA and tooltip test";
+		};
+		this.oGenericTile.attachEvent("press", handlePress);
+		await nextUIUpdate();
+		//Act
+		var sAriaText = this.oGenericTile._getAriaText();
+		//Assert
+		assert.equal(sAriaText, "ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_NAVIGATIONAL_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actions scope");
 	});
 
 	QUnit.test("Internal method _getAriaText for ActionMore scope", async function(assert) {
@@ -1855,7 +1935,7 @@ sap.ui.define([
 		//Act
 		var sAriaText = this.oGenericTile._getAriaText();
 		//Assert
-		assert.equal(sAriaText, "ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actionMore scope");
+		assert.equal(sAriaText, "ARIA and tooltip test\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION"), "Expected text for ARIA-label generated for actionMore scope");
 	});
 
 	QUnit.test("Internal method _getTooltipText", function(assert) {
@@ -2002,7 +2082,7 @@ sap.ui.define([
 		sTooltipText = this.oGenericTile._getTooltipText();
 		//Assert
 		assert.equal(sAriaAndTooltipText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label and tooltip has been generated after content was updated and tooltip was suppressed");
-		sExpectedAriaAndTooltipText += ("\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION"));
+		sExpectedAriaAndTooltipText += ("\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION"));
 		assert.equal(sAriaText, sExpectedAriaAndTooltipText, "Expected text for ARIA-label has been generated after content was updated and tooltip was suppressed");
 		assert.equal(sTooltipText, null, "No text for tooltip has been generated after content was updated and tooltip was suppressed");
 		//Arrange
@@ -2046,7 +2126,7 @@ sap.ui.define([
 		this.oGenericTile.setAdditionalTooltip("System U1Y");
 		// Trigger the mouseenter event on the element
 		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
-		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION");
 		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\nSystem U1Y";
 
 		//Act
@@ -2060,7 +2140,7 @@ sap.ui.define([
 	QUnit.test("GenericTile tooltip provided by the control", function(assert) {
 		// Trigger the mouseenter event on the element
 		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
-		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
+		var sAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION");
 		var sTooltip = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2";
 
 		//Act
@@ -2122,7 +2202,7 @@ sap.ui.define([
 		await nextUIUpdate();
 		// Trigger the mouseenter event on the element
 		this.oGenericTile.getDomRef().dispatchEvent(createMouseEnterEvent());
-		var sExpectedAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ROLE_DESCRIPTION");
+		var sExpectedAriaLabel = "Header text\nsubheader text\nARIA and tooltip text of TileContent 1\nARIA and tooltip text of TileContent 2\n" + this.oGenericTile._oRb.getText("GENERIC_TILE_ACTION_ROLE_DESCRIPTION");
 		//Act
 		var sGenericTileTooltip = this.oGenericTile.$()[0].getAttribute("title");
 		var sGenericTileAriaLabel = this.oGenericTile.$()[0].getAttribute("aria-label");

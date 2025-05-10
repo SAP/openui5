@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/base/DesignTime",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/ControllerExtensionProvider",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/ExtensionPoint",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DesignTime,
-	MvcController,
+	MvcControllerExtensionProvider,
 	XMLView,
 	ComponentHooks,
 	ExtensionPoint,
@@ -57,7 +57,7 @@ sap.ui.define([
 			const oRegisterPredefinedChangeHandlersStub = sandbox.stub(ChangeHandlerRegistration, "registerPredefinedChangeHandlers");
 			const oRegisterAnnotationChangeHandlerStub = sandbox.stub(ChangeHandlerRegistration, "registerAnnotationChangeHandler");
 
-			const oRegisterExtensionProviderStub = sandbox.stub(MvcController, "registerExtensionProvider");
+			const oRegisterExtensionProviderStub = sandbox.stub(MvcControllerExtensionProvider, "registerExtensionProvider");
 			const oRegisterXMLPreprocessorStub = sandbox.stub(XMLView, "registerPreprocessor");
 			const oRegisterExtensionPointProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 			const oRegisterReadDelegateStub = sandbox.stub(DelegateMediatorAPI, "registerReadDelegate");

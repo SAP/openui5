@@ -417,8 +417,6 @@ sap.ui.define([
 		return ExtensionProvider;
 	}, true);
 
-	Controller.registerExtensionProvider("example.ExtensionProvider");
-
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Basic Class Building");
 
@@ -514,8 +512,6 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Direct Member Extension + 2 Provider Extension", {
 		beforeEach: function() {
-			Controller.registerExtensionProvider("example.ExtensionProvider");
-
 			var oXMLContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 				'  <Button id="btn1"></Button>',
@@ -628,7 +624,6 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Direct Member Extension: async", {
 		beforeEach: function() {
-			Controller.registerExtensionProvider("example.ExtensionProvider");
 			var oXMLContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" controllerName="example.BaseController" xmlns="sap.m">',
 				'  <Button id="btn1"></Button>',
@@ -704,8 +699,6 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Direct Member Extension + 2 Provider Extension: async", {
 		beforeEach: function() {
-			Controller.registerExtensionProvider("example.ExtensionProvider");
-
 			var oXMLContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" controllerName="example.BaseController" xmlns="sap.m">',
 				'  <Button id="btn1"></Button>',
@@ -715,11 +708,8 @@ sap.ui.define([
 			this.view = XMLView.create({
 				definition: oXMLContent
 			});
-
 		},
 		afterEach: function() {
-			//ObjectPath.set("sample.ExtensionProvider", null);
-			Controller.registerExtensionProvider(null);
 			this.view.destroy();
 			this.view = null;
 		}
@@ -820,5 +810,4 @@ sap.ui.define([
 
 	//TODO: Test to bind event and formatter from view to public methods of extension
 	//TODO: Test to bind event and formatter from view to private methods of extension (do we allow this?)
-
 });

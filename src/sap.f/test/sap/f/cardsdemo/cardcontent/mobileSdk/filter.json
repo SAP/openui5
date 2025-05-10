@@ -59,6 +59,18 @@
 					"label": "City",
 					"value": "Toulouse",
 					"placeholder": "Enter a city"
+				},
+				"orderDate": {
+					"type": "DateRange",
+					"label": "Order Date",
+					"placeholder": "Select the date range of the Order",
+					"value": {
+						"option": "dateRange",
+						"values": [
+							"1997-02-21T00:00:00.000Z",
+							"1997-04-03T00:00:00.000Z"
+						]
+					}
 				}
 			},
 			"destinations": {
@@ -89,7 +101,7 @@
 					"$count": true,
 					"$skip": "{paginator>/skip}",
 					"$top": "{parameters>/maxOrdersShown/value}",
-					"$filter": "Shipper/ShipperID eq {filters>/shipper/value} and contains(ShipCountry, '{filters>/country/value}') and contains(ShipCity, '{filters>/city/value}')"
+					"$filter": "Shipper/ShipperID eq {filters>/shipper/value} and contains(ShipCountry, '{filters>/country/value}') and contains(ShipCity, '{filters>/city/value}') and OrderDate gt {filters>/orderDate/rangeOData/start} and OrderDate lt {filters>/orderDate/rangeOData/end}"
 				}
 			},
 			"path": "/value/"
@@ -118,7 +130,12 @@
 				"description": "{context>/cardExplorer/stateChangedEvent/contextTest}",
 				"info": {
 					"value": "{ShipCountry} / {ShipCity}"
-				}
+				},
+				"attributes": [
+					{
+						"value": "{= format.dateTime(${OrderDate}, {pattern: 'MMM dd, y'})}"
+					}
+				]
 			}
 		},
 		"footer": {

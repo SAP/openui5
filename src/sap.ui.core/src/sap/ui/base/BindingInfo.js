@@ -55,7 +55,7 @@ sap.ui.define([
 		 * @alias sap.ui.base.BindingInfo
 		 * @namespace
 		 * @private
-		 * @ui5-restricted sap.ui.base, sap.ui.core
+		 * @ui5-restricted sap.ui.base, sap.ui.core, sap.ui.model, sap.m, sap.ui.integration, sap.ui.fl, sap.fe
 		 */
 		var BindingInfo = {
 			/**
@@ -221,6 +221,12 @@ sap.ui.define([
 			OriginalParent: ORIGINAL_PARENT
 		};
 
+		/**
+		 * Parses the given binding info string and returns a binding info object if valid.
+		 * @see sap.ui.base.BindingParser
+		 * @private
+		 * @ui5-restricted sap.ui.base, sap.ui.core, sap.ui.model, sap.m, sap.ui.integration, sap.ui.fl, sap.fe
+		 */
 		Object.defineProperty(BindingInfo, "parse", {
 			get: function () {
 				if (!this.oParser) {

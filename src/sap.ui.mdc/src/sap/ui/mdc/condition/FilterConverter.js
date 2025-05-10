@@ -4,14 +4,12 @@
 sap.ui.define([
 		"sap/ui/mdc/condition/FilterOperatorUtil",
 		"sap/ui/mdc/enums/BaseType",
-		"sap/ui/mdc/enums/OperatorName",
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
 		"sap/base/Log"
 	], (
 	FilterOperatorUtil,
 	BaseType,
-	OperatorName,
 	Filter,
 	FilterOperator,
 	Log

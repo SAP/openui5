@@ -326,7 +326,7 @@ sap.ui.define([
 		}
 
 		// Do not change href if it's already changed or if it's a stand-alone HTML page
-		if (!sTargetHref || (oUri = URI(sTargetHref)).is("absolute") || oUri.suffix() === "html") {
+		if (!sTargetHref || (oUri = URI(sTargetHref)).is("absolute") || (sTargetHref.indexOf("#") <= 0 && oUri.suffix() === "html")) {
 			return;
 		}
 

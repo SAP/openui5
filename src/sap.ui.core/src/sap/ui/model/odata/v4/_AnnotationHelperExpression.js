@@ -7,11 +7,11 @@
 sap.ui.define([
 	"../_AnnotationHelperBasics",
 	"sap/base/Log",
+	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/performance/Measurement"
-], function (Basics, Log, BindingParser, ManagedObject, SyncPromise, Measurement) {
+], function (Basics, Log, BindingInfo, BindingParser, SyncPromise, Measurement) {
 	"use strict";
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
@@ -678,7 +678,7 @@ sap.ui.define([
 			Measurement.average(sPerformanceGetExpression, "", aPerformanceCategories);
 
 			if (!bSimpleParserWarningLogged
-					&& ManagedObject.bindingParser === BindingParser.simpleParser) {
+					&& BindingInfo.parse === BindingParser.simpleParser) {
 				Log.warning("Complex binding syntax not active", null, sAnnotationHelper);
 				bSimpleParserWarningLogged = true;
 			}

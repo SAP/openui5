@@ -2092,6 +2092,18 @@ sap.ui.define([
 							"visible": "{= !!${parameters>/someParameter/value}}",
 							"value": "{parameters>/someParameter/value}",
 							"items": []
+						},
+						"filter4": {
+							"type": "DateRange",
+							"label": "{parameters>/someParameter/value}",
+							"visible": "{= !!${parameters>/someParameter/value}}",
+							"value": {
+								"option": "dateRange",
+								"values": [
+									"1996-08-06T00:00:00.000Z",
+									"1996-08-16T00:00:00.000Z"
+								]
+							}
 						}
 					}
 				}
@@ -2111,6 +2123,7 @@ sap.ui.define([
 				"label": "SomeValue",
 				"visible": true,
 				"value": "SomeValue",
+				"index": 0,
 				"items": []
 			},
 			"Values are resolved."
@@ -2122,6 +2135,7 @@ sap.ui.define([
 				"type": "Search",
 				"label": "SomeValue",
 				"value": "SomeValue",
+				"index": 1,
 				"visible": true
 			},
 			"Values are resolved."
@@ -2134,7 +2148,26 @@ sap.ui.define([
 				"label": "SomeValue",
 				"value": "SomeValue",
 				"visible": true,
+				"index": 2,
 				"items": []
+			},
+			"Values are resolved."
+		);
+
+		assert.deepEqual(
+			oRes["sap.card"].configuration.filters.filter4,
+			{
+				"type": "DateRange",
+				"label": "SomeValue",
+				"visible": true,
+				"index": 3,
+				"value": {
+					"option": "dateRange",
+					"values": [
+						"1996-08-06T00:00:00.000Z",
+						"1996-08-16T00:00:00.000Z"
+					]
+				}
 			},
 			"Values are resolved."
 		);

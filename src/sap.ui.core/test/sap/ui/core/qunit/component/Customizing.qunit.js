@@ -278,7 +278,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Register ExtensionProvider (async)", function(assert) {
-
 		assert.expect(20);
 
 		// test processing will be completed in onExit of the view extension
@@ -312,11 +311,7 @@ sap.ui.define([
 			return ExtensionProvider;
 		}, true);
 
-		//...and reinitialize - with registered ExtensionProvider
-		Controller.registerExtensionProvider("sap.my.async.ExtensionProvider");
-
 		return  createComponentAndContainer();
-
 	});
 
 });
