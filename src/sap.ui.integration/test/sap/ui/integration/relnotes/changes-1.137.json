@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "796f81c2476b6d6dee81d080e89849c606061682",
+        "type": "FIX",
+        "text": " Integration Cards: Updated documentation"
+      }
+    ]
+  }
+}

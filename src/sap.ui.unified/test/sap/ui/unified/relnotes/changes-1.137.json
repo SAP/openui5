@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "a6b4a5386332b5128ef3ca5393d26e905cfa0673",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarVisual: Fix calendar visual test"
+      }
+    ]
+  }
+}

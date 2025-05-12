@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "760e34fb7cb56077dfbaf99d8643d059f3d5eafc",
+        "type": "FIX",
+        "text": " Demo Kit: Fix section link navigation in new tabs"
+      }
+    ]
+  }
+}

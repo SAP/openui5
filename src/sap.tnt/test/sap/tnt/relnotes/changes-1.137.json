@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "02b79f0069c0a7ebde2e89345862638d33c81010",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: fixed visual test"
+      }
+    ]
+  }
+}

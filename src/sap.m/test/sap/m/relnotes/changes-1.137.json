@@ -3,6 +3,36 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "aab35fae34b33dc2d3cee1f8fee97ca998e71110",
+        "type": "FIX",
+        "text": " We've now enabled the screen reader announcement for navigation and action tiles"
+      },
+      {
+        "id": "de24b3e57e9c61a4856af1b7dec2f6b029f3c916",
+        "type": "FIX",
+        "text": " DateRangeSelection: Valid selection of only one date"
+      },
+      {
+        "id": "bef1242accb5439fa47f10a309f781fe4827eda3",
+        "type": "FEATURE",
+        "text": " ListItemBase: List item actions"
+      },
+      {
+        "id": "9ae38d5c3aca38f1d1e685d9cbfd8859e87a0efb",
+        "type": "FIX",
+        "text": " Demokit VariantManagement: Fix Header Levels"
+      },
+      {
+        "id": "a3c301ad1fd84c61624b06f158dcad6f9d19ac04",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Aria attributes are now correctly updated when enableFormattedText:true is set"
+      },
+      {
+        "id": "0fb0b8655310dd361e337b28d2bad6fd1389f043",
+        "type": "FIX",
+        "text": " sap.m.MessageToast: Message positions logic is now updated"
+      },
+      {
         "id": "73bc3e242f2b0fbd3a530d67dc313e27383baa9e",
         "type": "FIX",
         "text": " sap.m.Link: emptyIndicatorMode has correct color now"
@@ -16,6 +46,11 @@
         "id": "7322ddf307f79ab287e9e37678395cd3110f7285",
         "type": "FIX",
         "text": " sap.m.Menu: End content controls properly updated"
+      },
+      {
+        "id": "d1b8e02d7dd7cd714aaf95a092b869419843bbe5",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Tokens are properly updated in the n-more list after delete"
       }
     ]
   }

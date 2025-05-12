@@ -1,0 +1,17 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "da8ab70cd17e5ba1c86ce83c16a53b5f1473e7bb",
+        "type": "FIX",
+        "text": " Empty Filter for navigation properties"
+      },
+      {
+        "id": "b2582f014685757e3b7f12e305c8cd9e79dc7725",
+        "type": "FIX",
+        "text": " MDCTable: runtime error on selecting null as key"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "683386722ebe9eaaf99a80e825e45974546ae52c",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: sticky Section/SubSection headers"
+      }
+    ]
+  }
+}
