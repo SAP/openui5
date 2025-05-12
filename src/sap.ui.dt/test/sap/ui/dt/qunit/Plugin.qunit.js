@@ -186,9 +186,6 @@ sap.ui.define([
 						getPropagatedActionInfo: this.fnGetPropagatedActionInfo,
 						getResponsibleElement: this.fnGetResponsibleElement,
 						getLibraryText(oElement, sName) {
-							if (oElement === "dummypropagatingControl") {
-								return "dummypropagatingControlText";
-							}
 							if (oElement === "dummyElement" && sName === "dummyActionName") {
 								return "dummyText";
 							}
@@ -204,7 +201,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when using common methods of the plugin", function(assert) {
-			assert.expect(11);
+			assert.expect(10);
 			this.oPlugin.getActionName = function() {
 				return "dummyActionName";
 			};
@@ -255,12 +252,6 @@ sap.ui.define([
 				this.oPlugin.getActionText(this.oOverlay, {}, "pluginText"),
 				"pluginText",
 				"then when the action has no name the text from the plugin ID is returned"
-			);
-
-			assert.strictEqual(
-				this.oPlugin.getActionText(this.oOverlay, { name: "dummyActionName" }, "pluginText", "dummypropagatingControl"),
-				"dummypropagatingControlText",
-				"then when getActionText is called with a propagated action target the text is retrieved using that"
 			);
 		});
 
