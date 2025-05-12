@@ -1,3 +1,8 @@
+/* =============================== */
+/* CSS for control sap.f/ShellBar  */
+/* Base theme                      */
+/* =============================== */
+
 @_sap_f_ShellBar_PaddingDesktop: 3rem;
 @_sap_f_ShellBar_PaddingTablet: 2rem;
 @_sap_f_ShellBar_PaddingPhone: 1rem;
@@ -6,7 +11,7 @@
 @_sap_f_ShellBar_SearchHalfMaxWidth: 17.5rem;
 
 @_sap_f_ShellBar_PrimaryTitle_FontSize: @sapMFontMediumSize;
-@_sap_f_ShellBar_SecondTitle_FontSize: @sapMFontSmallSize;
+@_sap_f_ShellBar_SecondTitle_FontSize: var(--sapFontSmallSize);
 
 .sapFShellBar {
 	height: 3rem;
@@ -73,32 +78,36 @@
 		margin: 0 0 0 0.5rem;
 	}
 
-	.sapFShellBarOLHB>.sapFShellBarItem:first-child,
-	.sapFShellBarOLHB>.sapFShellBarOAHB:first-child > .sapFShellBarItem:first-child {
+	.sapFShellBarOLHB > .sapFShellBarItem:first-child,
+	.sapFShellBarOLHB > .sapFShellBarOAHB:first-child > .sapFShellBarItem:first-child {
 		margin-left: 0;
 	}
+
 	.sapMIBar.sapMTB .sapMTBSpacer + .sapFShellBarItem.sapMBarChild,
 	.sapFShellBarCopilot + .sapFShellBarItem {
 		margin-left: 0;
 	}
 
-	// Assistant
+	/* Assistant */
 	.sapMTB-Transparent-CTX .sapFShellBarAssistantBtn.sapFShellBarItemActive.sapFShellBarItem,
 	.sapFShellBarAssistantBtn.sapFShellBarItemActive.sapFShellBarItem {
 		color: @sapShell_Assistant_ForegroundColor;
+
 		.sapMBtnIcon,
 		&.sapFShellBarItem.sapMBtn:hover:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnHoverable:not(.sapMToggleBtnPressed) > .sapMBtnIcon {
 			color: @sapShell_Assistant_ForegroundColor;
 		}
 	}
 
-	// Reflection: styles overwritten
+	/* Reflection: styles overwritten */
 	.sapMBtn .sapMBtnInner {
+
 		.sapFAvatar {
 			vertical-align: middle;
 		}
-		&:after {
-			content: "";
+
+		&::after {
+			content: '';
 			display: inline-block;
 			vertical-align: middle;
 			height: 100%;
@@ -112,7 +121,8 @@
 		flex-grow: 1;
 		overflow: visible;
 		min-width: 0;
-		>:first-child {
+
+		> :first-child {
 			margin-left: 0;
 		}
 
@@ -132,12 +142,13 @@
 		font-weight: bold;
 		overflow: hidden;
 
-		// Reflection: styles overwritten
+		/* Reflection: styles overwritten */
 		.sapMBtnInner > img {
 			width: auto !important;
 			max-width: none !important;
 			height: 2rem;
 		}
+
 		.sapMBtnInner::after {
 			content: '\E287';
 			font-size: 1rem;
@@ -149,13 +160,14 @@
 	.sapFShellBarHomeIcon {
 		height: 2rem;
 		vertical-align: middle;
+
 		&.sapMNoImg {
 			width: 0;
 		}
 	}
 
 	.sapFShellBarSearch {
-		max-width: 28rem; // max width of searchField + button width
+		max-width: 28rem; /* max width of searchField + button width */
 		width: 100%;
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -171,6 +183,7 @@
 			margin-left: 0.5rem;
 			display: none;
 		}
+
 		.sapFShellBarSearchWrap {
 			display: flex;
 			width: 100%;
@@ -192,6 +205,7 @@
 		top: 50%;
 		transform: translate(-50%, -50%);
 		margin: 0;
+
 		html[data-sap-ui-animation='on'] & {
 			&:hover svg {
 				transition: transform 0.30s;
@@ -202,6 +216,7 @@
 				transform: scale(1.2);
 			}
 		}
+
 		html[data-sap-ui-animation='off'] & {
 			&:hover svg {
 				transform: scale(1.1);
@@ -210,41 +225,30 @@
 				transform: scale(1.2);
 			}
 		}
+
 		.color1 {
 			stop-color: #00B8F3;
 		}
+
 		.color2 {
 			stop-color: #1C61BA;
 		}
+
 		.opacity7 {
 			stop-opacity:0.7;
 		}
+
 		.opacity36 {
 			stop-opacity: 0.36;
 		}
+
 		.opacity2 {
 			stop-opacity: 0.2;
 		}
+
 		&:focus {
 			outline: 1px dotted @sapUiContentFocusColor;
 			outline-offset: -0.3125rem;
-		}
-		html[data-sap-ui-browser^="ed"] &:focus {
-			outline-style: dashed;
-		}
-		html[data-sap-ui-browser^="ie"] &:focus {
-			outline: none;
-		}
-		html[data-sap-ui-browser^="ie"] &:focus:before {
-			content: " ";
-			box-sizing: border-box;
-			width: 88%;
-			height: 88%;
-			position: absolute;
-			left: 3px;
-			top: 3px;
-			border: 1px dashed @sapUiContentFocusColor;
-			pointer-events: none;
 		}
 	}
 
@@ -259,9 +263,11 @@
 
 	&.sapFShellBarSizePhone {
 		padding: 0 @_sap_f_ShellBar_PaddingPhone;
+
 		.sapFShellBarProfile {
 			margin-right: 0;
 		}
+
 		.sapFShellBarORHB {
 			padding-left: ~"@{_sap_f_ShellBar_CoPilotHalfWidth}";
 		}
@@ -273,22 +279,22 @@
 		margin-left: 0.5rem;
 
 		&::before {
-			content: "";
+			content: '';
 			position: absolute;
 			top: -0.125rem;
 			left: -0.125rem;
 			bottom: -0.125rem;
 			right: -0.125rem;
 			z-index: -1;
-			border-radius: @sapUiButtonBorderCornerRadius;
+			border-radius: var(--sapButton_BorderCornerRadius);
 		}
 
 		&:hover::before {
-			background-color: @sapUiShellHoverBackground;
+			background-color: var(--sapShell_Hover_Background);
 		}
 
 		&:active::before {
-			background-color: @sapUiShellActiveBackground;
+			background-color: var(--sapShell_Active_Background);
 		}
 	}
 
@@ -301,7 +307,7 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		background: transparent;
-		color: @sapUiShellTextColor;
+		color: var(--sapShell_TextColor);
 		font-size: @_sap_f_ShellBar_PrimaryTitle_FontSize;
 		line-height: 2.75rem;
 		vertical-align: middle;
@@ -309,9 +315,9 @@
 	}
 
 	.sapFShellBarSecondTitle {
-		font-family: @sapUiFontFamily;
+		font-family: var(--sapFontFamily);
 		font-size: @_sap_f_ShellBar_SecondTitle_FontSize;
-		color: @sapUiShellTextColor;
+		color: var(--sapShell_TextColor);
 		line-height: 2rem;
 		vertical-align: middle;
 	}
@@ -323,15 +329,17 @@
 	}
 
 	.sapUiSizeCompact & {
+
 		&.sapMPageHeader .sapMIBar {
 			height: 3rem;
 		}
+
 		.sapFShellBarProfile {
 			height: 2rem;
 		}
 
 		.sapFShellBarSearch {
-			max-width: 27.5rem; // max width of searchField + button width
+			max-width: 27.5rem; /* max width of searchField + button width */
 
 			.sapMSF {
 				max-width: 25rem;
@@ -341,24 +349,29 @@
 
 			&.sapFShellBarSearchFullWidth {
 				max-width: 100%;
+
 				.sapMSF {
 					max-width: 100%;
 				}
 			}
 		}
+
 		&.sapFShellBarFullSearch {
+
 			.sapFShellBarSearch,
 			.sapMSF {
 				max-width: 100%;
 			}
 		}
 
-		// Reflection: styles overwritten
+		/* Reflection: styles overwritten */
 		.sapMBtnInner {
+
 			&.sapMBtnIconFirst:not(.sapMBtnText),
-			&.sapMBadgeTopRight.sapMBadge.sapMBtnIconFirst:not(.sapMBtnText){
+			&.sapMBadgeTopRight.sapMBadge.sapMBtnIconFirst:not(.sapMBtnText) {
 				padding: 0;
 			}
+
 			&.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
 				top: -0.3125rem;
 				right: -0.4375rem;
@@ -369,19 +382,24 @@
 			}
 		}
 	}
-	&.sapFShellBarFullSearch  {
+
+	&.sapFShellBarFullSearch {
+
 		.sapFShellBarOLHB,
 		.sapFShellBarORHB,
 		.sapFShellBarOTB {
 			position: static;
 		}
+
 		& * {
 			visibility: hidden;
 		}
+
 		.sapFShellBarSearch,
 		.sapFShellBarSearch * {
 			visibility: visible;
 		}
+
 		.sapFShellBarSearchWrap {
 			 box-sizing: border-box;
 			 padding: 0 1.25rem;
@@ -392,14 +410,17 @@
 			 top: 0;
 			 bottom: 0;
 		 }
+
 		.sapMSF,
 		.sapFShellBarSearch {
 			max-width: 100%;
 		}
+
 		.sapFShellBarSearchFullWidth {
 			height: 100%;
 			min-width: 1px;
 		}
+
 		.sapFShellBarSearchCancelButton {
 			display: block;
 		}
@@ -407,8 +428,9 @@
 }
 
 .sapFShellBar.sapFShellBarSizeExtraLargeDesktop {
+
 	.sapFShellBarSearch {
-		max-width: 35rem; // max width of searchField + button width
+		max-width: 35rem; /* max width of searchField + button width */
 		width: 100%;
 		flex-grow: 1;
 		flex-shrink: 1;
@@ -423,10 +445,12 @@
 	}
 
 	&.sapFShellBarWithSearch {
+
 		.sapFShellBarORHB {
 			width: 50%;
 			padding-left: ~"calc(@{_sap_f_ShellBar_SearchHalfMaxWidth} + 0.5rem)";
 		}
+
 		.sapFShellBarOLHB {
 			width: 50%;
 			padding-right: ~"calc(@{_sap_f_ShellBar_SearchHalfMaxWidth} + 0.5rem)";
@@ -434,11 +458,12 @@
 		}
 	}
 }
+
 .sapFButtonNotifications[data-notifications],
 .sapFShellBarOverflowButton[data-notifications] {
 	overflow: visible;
-	&:after
-	{
+
+	&::after {
 		content: attr(data-notifications);
 		position: absolute;
 		top: 0.125rem;
@@ -474,21 +499,24 @@
 }
 
 .sapFButtonNotifications ~ .sapFShellBarOverflowButton,
-.sapFButtonNotifications[data-notifications=""],
-.sapFShellBarOverflowButton[data-notifications=""] {
-	&:after {
+.sapFButtonNotifications[data-notifications=''],
+.sapFShellBarOverflowButton[data-notifications=''] {
+
+	&::after {
 		display: none;
 	}
 }
 
 .sapFShellBar:not(.sapFShellBarNotifications) {
-	.sapFShellBarOverflowButton[data-notifications]:after {
+
+	.sapFShellBarOverflowButton[data-notifications]::after {
 		display: none;
 	}
 }
 
 .sapFShellBarTitleCollapsed {
-	&>span {
+
+	& > span {
 		display: none;
 	}
 
