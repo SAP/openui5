@@ -146,7 +146,7 @@ sap.ui.define([
 	 */
 	Uploader.uploadFile = function (oFile, sUrl, aHeaderFields) {
 		var oXhr = new window.XMLHttpRequest();
-		var sHttpRequestMethod = this.getHttpRequestMethod();
+		var sHttpRequestMethod = this.getHttpRequestMethod()?.toUpperCase();
 
 		return new Promise(function(resolve, reject) {
 			oXhr.open(sHttpRequestMethod, sUrl, true);
@@ -190,7 +190,7 @@ sap.ui.define([
 				xhr: oXhr,
 				item: oItem
 			},
-			sHttpRequestMethod = this.getHttpRequestMethod(),
+			sHttpRequestMethod = this.getHttpRequestMethod()?.toUpperCase(),
 			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
 
 		oXhr.open(sHttpRequestMethod, sUploadUrl, true);

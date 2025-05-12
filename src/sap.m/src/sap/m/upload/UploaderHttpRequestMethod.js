@@ -20,13 +20,13 @@
 		 * HTTP request POST method.
 		 * @public
 		 */
-		Post : "POST",
+		Post : "Post",
 
 		/**
 		 * HTTP request PUT method.
 		 * @public
 		 */
-		Put : "PUT"
+		Put : "Put"
 
 	};
 

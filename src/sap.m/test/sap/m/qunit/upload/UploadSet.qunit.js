@@ -661,7 +661,7 @@ sap.ui.define([
 	QUnit.test("Test httpRequestMethod property with XMLHttpRequest", async function (assert) {
 		//Setup
 		var oUploader = new Uploader({
-			httpRequestMethod: "PUT"
+			httpRequestMethod: "Put"
 		}),
 		oItem = this.oUploadSet.getItems()[0],
 		oXMLHttpRequestOpenSpy = this.spy(window.XMLHttpRequest.prototype, "open");
