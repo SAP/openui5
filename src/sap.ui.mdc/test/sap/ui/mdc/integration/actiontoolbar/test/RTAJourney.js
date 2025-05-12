@@ -256,6 +256,50 @@ sap.ui.define([
 			});
 		});
 
+		opaTest("should fail on hide 'Action 4'", function(Given, When, Then) {
+			When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
+			Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
+
+			// Open Context Menu of ActionToolbar
+			When.onPageWithRTA.iRightClickOnAnElementOverlay(oTestSetting.toolbarID);
+
+			Then.onPageWithRTA.iShouldSeetheContextMenu();
+			Then.onPageWithRTA.iShouldSeetheContextMenuEntriesWithKeys(oTestSetting.contextMenuEntriesKeys);
+			When.onPageWithRTA.iClickOnAContextMenuEntryWithKey("CTX_SETTINGS");
+
+			When.onTheApp.iCannotDeselect("Action 4");
+
+			// Close dialog
+			When.onTheApp.iPressOkButtonOnP13nDialog();
+
+			// Close RTA
+			When.onPageWithRTA.iExitRtaMode(true);
+
+			// Check button order
+			Then.onTheApp.iShouldSeeActionToolbarWithActions(oTestSetting.toolbarID, {
+				"Action 5": {
+					alignment: ActionToolbarActionAlignment.Begin,
+					aggregationName: "end"
+				},
+				"Action 4": {
+					alignment: ActionToolbarActionAlignment.Begin,
+					aggregationName: "end"
+				},
+				"Action 6": {
+					alignment: ActionToolbarActionAlignment.Begin,
+					aggregationName: "end"
+				},
+				"Action 3": {
+					alignment: ActionToolbarActionAlignment.End,
+					aggregationName: "end"
+				},
+				"Action 2": {
+					alignment: ActionToolbarActionAlignment.End,
+					aggregationName: "end"
+				}
+			});
+		});
+
 		opaTest("should rename 'Action 4'", function(Given, When, Then) {
 			When.onTheApp.iPressOnStartRtaButton().and.iWaitUntilTheBusyIndicatorIsGone("ActionToolbarTesting---app");
 			Then.onPageWithRTA.iShouldSeeTheToolbar().and.iShouldSeeTheOverlayForTheApp("ActionToolbarTesting---app", undefined);
