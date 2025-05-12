@@ -11,10 +11,9 @@ sap.ui.define([
     'sap/ui/core/library',
     'sap/ui/Device',
     'sap/base/Log',
-    "sap/ui/base/EventProvider",
     "sap/ui/core/Configuration"
 ],
-	function(jQuery, Callout, Element, library, coreLibrary, Device, Log, EventProvider, Configuration) {
+	function(jQuery, Callout, Element, library, coreLibrary, Device, Log, Configuration) {
 	"use strict";
 
 
@@ -200,7 +199,7 @@ sap.ui.define([
 			};
 
 			this._proxyEnableMessageSelect = jQuery.proxy(fnEnableMessageSelect, this);
-			this.attachEvent(EventProvider.M_EVENTS.EventHandlerChange, this._proxyEnableMessageSelect);
+			this.attachEvent("EventHandlerChange", this._proxyEnableMessageSelect);
 		};
 
 		/**
@@ -237,7 +236,7 @@ sap.ui.define([
 				delete this._oMessageView;
 			}
 
-			this.detachEvent(EventProvider.M_EVENTS.EventHandlerChange, this._proxyEnableMessageSelect);
+			this.detachEvent("EventHandlerChange", this._proxyEnableMessageSelect);
 			delete this._proxyEnableMessageSelect;
 		};
 
