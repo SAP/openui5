@@ -2,6 +2,7 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP"
 	xmlns="sap.ui.table"
+	xmlns:core="sap.ui.core"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:plugins="sap.ui.table.plugins"
@@ -33,6 +34,13 @@
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
 				<m:Button icon="sap-icon://multi-select" press=".onShowSelection"
 					tooltip="Show Selection"/>
+				<m:CheckBox select=".onToggleCount" selected="true" text="$count"/>
+				<m:Select change=".onChangeGrandTotal" id="grandTotalAtBottomOnly">
+					<core:Item key="" text="Grand Total At Top"/>
+					<core:Item key="false" text="Grand Total At Top &amp; Bottom"/>
+					<core:Item key="true" text="Grand Total At Bottom"/>
+					<core:Item key="off" text="No Grand Total"/>
+				</m:Select>
 			</m:Toolbar>
 		</extension>
 		<rowMode>

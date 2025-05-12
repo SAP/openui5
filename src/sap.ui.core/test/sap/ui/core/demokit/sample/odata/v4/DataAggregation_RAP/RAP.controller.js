@@ -12,6 +12,37 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation_RAP.RAP", {
+		onChangeGrandTotal : function (vEventOrSelectedKey) {
+			const sGrandTotalAtBottomOnly = typeof vEventOrSelectedKey === "string"
+				? vEventOrSelectedKey
+				: vEventOrSelectedKey.getSource().getSelectedKey();
+			const oTable = this.byId("table");
+
+			oTable.getRowMode().setFixedTopRowCount(
+				["", "false"].includes(sGrandTotalAtBottomOnly) ? 1 : 0);
+			oTable.getRowMode().setFixedBottomRowCount(
+				["false", "true"].includes(sGrandTotalAtBottomOnly) ? 1 : 0);
+			switch (sGrandTotalAtBottomOnly) {
+				case "":
+					this._oAggregation.grandTotalAtBottomOnly = undefined;
+					break;
+
+				case "false":
+					this._oAggregation.grandTotalAtBottomOnly = false;
+					break;
+
+				case "true":
+					this._oAggregation.grandTotalAtBottomOnly = true;
+					break;
+
+				// case "off":
+				// no default
+			}
+			this._oAggregation.aggregate.FlightPrice.grandTotal = sGrandTotalAtBottomOnly !== "off";
+
+			oTable.getBinding("rows").setAggregation(this._oAggregation);
+		},
+
 		onDownload : function () {
 			this.byId("table").getBinding("rows").requestDownloadUrl().then(function (sUrl) {
 				window.open(sUrl, sUrl);
@@ -76,16 +107,12 @@ sap.ui.define([
 				if (sThreshold) {
 					oTable.setThreshold(parseInt(sThreshold));
 				}
-				if (sGrandTotalAtBottomOnly === "off") {
-					oTable.getRowMode().setFixedTopRowCount(0);
-					this._oAggregation.aggregate.FlightPrice.grandTotal = false;
-				} else if (sGrandTotalAtBottomOnly) {
-					if (sGrandTotalAtBottomOnly === "true") {
-						oTable.getRowMode().setFixedTopRowCount(0);
-					}
-					oTable.getRowMode().setFixedBottomRowCount(1);
-					this._oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
+				if (!["", "false", "off", "true"].includes(sGrandTotalAtBottomOnly)) {
+					sGrandTotalAtBottomOnly = ""; // ignore invalid values
 				}
+				// Note: no "change" event fired!
+				this.byId("grandTotalAtBottomOnly").setSelectedKey(sGrandTotalAtBottomOnly);
+				this.onChangeGrandTotal(sGrandTotalAtBottomOnly);
 				if (sSubtotalsAtBottomOnly === "off") {
 					this._oAggregation.aggregate.FlightPrice.subtotals = false;
 				} else if (sSubtotalsAtBottomOnly) {
@@ -145,6 +172,12 @@ sap.ui.define([
 						oContext, "sap.ui.core.sample.odata.v4.DataAggregation_RAP.RAP");
 				}
 			});
+		},
+
+		onToggleCount : function (oEvent) {
+			const bCount = oEvent.getSource().getSelected();
+			const oListBinding = this.byId("table").getBinding("rows");
+			oListBinding.changeParameters({$count : bCount});
 		}
 	});
 });

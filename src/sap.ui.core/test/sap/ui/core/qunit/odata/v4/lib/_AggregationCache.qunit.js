@@ -454,10 +454,6 @@ sap.ui.define([
 		assert.ok("$count" in oCache.aElements);
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.strictEqual(oCache.aElements.$created, 0);
-		assert.ok("oCountPromise" in oCache, "be nice to V8");
-		assert.strictEqual(oCache.oCountPromise, undefined);
-		assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
-		assert.strictEqual(oCache.oGrandTotalPromise, undefined);
 		assert.strictEqual(oCache.addKeptElement, "~addKeptElement~", "@borrows ...");
 		assert.strictEqual(oCache.removeKeptElement, "~removeKeptElement~", "@borrows ...");
 		assert.strictEqual(oCache.requestSideEffects, "~requestSideEffects~", "@borrows ...");
@@ -778,6 +774,8 @@ sap.ui.define([
 		assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
 		assert.strictEqual(oCache.toString(), "~sDownloadUrl~"); // <-- code under test
 		assert.strictEqual(oCache.oFirstLevel, "~oFirstLevelCache~");
+		assert.ok("oCountPromise" in oCache, "be nice to V8");
+		assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
 
 		if (bCount && i) {
 			assert.ok(oCache.oCountPromise.isPending());
@@ -4474,7 +4472,7 @@ sap.ui.define([
 		};
 		oCache.oCountPromise = "~oCountPromise~";
 		oCache.bUnifiedCache = "~bUnifiedCache~";
-		oCache.oGrandTotalPromise = bHasGrandTotal ? "~oGrandTotalPromise~" : undefined;
+		oCache.oGrandTotalPromise = "~oGrandTotalPromise~";
 		const oResetExpectation = this.mock(oCache.oFirstLevel).expects("reset").on(oCache)
 			.withExactArgs(sinon.match.same(aKeptElementPredicates), sGroupId, "~mQueryOptions~")
 			.callsFake(function () {
@@ -4484,6 +4482,8 @@ sap.ui.define([
 			.exactly(sGroupId ? 0 : 1).withExactArgs();
 		const oGetExpandLevelsExpectation = this.mock(oCache.oTreeState).expects("getExpandLevels")
 			.withExactArgs().returns("~sExpandLevels~");
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oNewAggregation.aggregate)).returns(bHasGrandTotal);
 		const oDoResetExpectation = this.mock(oCache).expects("doReset")
 			.withExactArgs(sinon.match.same(oNewAggregation), "~mQueryOptions~", bHasGrandTotal);
 
@@ -4515,9 +4515,13 @@ sap.ui.define([
 			}
 		});
 		if (sGroupId) {
-			assert.strictEqual(oCache.oBackup.oCountPromise, "~oCountPromise~");
+			assert.deepEqual(oCache.oBackup, {
+				oCountPromise : "~oCountPromise~",
+				oFirstLevel : oFirstLevel,
+				oGrandTotalPromise : "~oGrandTotalPromise~",
+				bUnifiedCache : "~bUnifiedCache~"
+			});
 			assert.strictEqual(oCache.oBackup.oFirstLevel, oFirstLevel);
-			assert.strictEqual(oCache.oBackup.bUnifiedCache, "~bUnifiedCache~");
 			assert.strictEqual(oCache.bUnifiedCache, true);
 		}
 	});
@@ -4575,7 +4579,6 @@ sap.ui.define([
 			oNewFirstLevel = {
 				restore : function () {}
 			},
-			oOldCountPromise = oCache.oCountPromise,
 			oOldFirstLevel = oCache.oFirstLevel;
 
 		oCache.bUnifiedCache = "~bOldUnifiedCache~";
@@ -4583,9 +4586,12 @@ sap.ui.define([
 			? {
 				oCountPromise : "~oNewCountPromise~",
 				oFirstLevel : oNewFirstLevel,
+				oGrandTotalPromise : "~oNewGrandTotalPromise~",
 				bUnifiedCache : "~bNewUnifiedCache~"
 			}
 			: null;
+		oCache.oCountPromise = "~oOldCountPromise~";
+		oCache.oGrandTotalPromise = "~oOldGrandTotalPromise~";
 		this.mock(bReally ? oNewFirstLevel : oOldFirstLevel).expects("restore").on(oCache)
 			.withExactArgs(bReally)
 			.callsFake(function () {
@@ -4596,8 +4602,10 @@ sap.ui.define([
 		oCache.restore(bReally);
 
 		assert.strictEqual(oCache.oCountPromise,
-			bReally ? "~oNewCountPromise~" : oOldCountPromise);
+			bReally ? "~oNewCountPromise~" : "~oOldCountPromise~");
 		assert.strictEqual(oCache.oFirstLevel, bReally ? oNewFirstLevel : oOldFirstLevel);
+		assert.strictEqual(oCache.oGrandTotalPromise,
+			bReally ? "~oNewGrandTotalPromise~" : "~oOldGrandTotalPromise~");
 		assert.strictEqual(oCache.bUnifiedCache,
 			bReally ? "~bNewUnifiedCache~" : "~bOldUnifiedCache~");
 	});
