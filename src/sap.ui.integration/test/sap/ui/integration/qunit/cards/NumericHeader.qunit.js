@@ -1,14 +1,16 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/genericTests/actionEnablementTests",
 	"sap/m/library"
 ], (
 	Card,
 	nextUIUpdate,
 	nextCardReadyEvent,
+	actionEnablementTests,
 	mLibrary
 ) => {
 	"use strict";
@@ -16,6 +18,59 @@ sap.ui.define([
 	const AvatarImageFitType = mLibrary.AvatarImageFitType;
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const WrappingType = mLibrary.WrappingType;
+
+	actionEnablementTests("Numeric Header", {
+		manifest: {
+			"sap.app": {
+				"id": "test.card.header.genericActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Card Title"
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/header",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
+
+	actionEnablementTests("Status in NumericHeader", {
+		manifest: {
+			"sap.app": {
+				"id": "test.card.numericHeader.statusGenericActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Card Title",
+					"infoSection": {
+						"rows": [
+							{
+								"items": [
+									{
+										"type": "Status",
+										"value": "Interactive Status",
+										"inverted": true
+									}
+								]
+							}
+						]
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/header/infoSection/rows/0/items/0",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
 
 	QUnit.module("Numeric Header", {
 		beforeEach: function () {

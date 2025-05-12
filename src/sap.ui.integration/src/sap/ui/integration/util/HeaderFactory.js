@@ -5,17 +5,14 @@ sap.ui.define([
 	"./BaseFactory",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/library",
-	"sap/m/library",
 	"sap/ui/integration/cards/NumericHeader",
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/controls/HeaderInfoSectionRow",
 	"sap/ui/integration/controls/HeaderInfoSectionColumn",
 	"sap/ui/integration/util/Utils",
-	"sap/m/Button",
 	"./ObjectStatusFactory",
 	"sap/m/AvatarImageFitType",
 	"sap/f/library"
@@ -23,17 +20,14 @@ sap.ui.define([
 	BaseFactory,
 	Log,
 	isEmptyObject,
-	Library,
 	CardActions,
 	NavigationAction,
 	library,
-	mLibrary,
 	NumericHeader,
 	Header,
 	HeaderInfoSectionRow,
 	HeaderInfoSectionColumn,
 	Utils,
-	Button,
 	ObjectStatusFactory,
 	AvatarImageFitType,
 	fLibrary
@@ -137,7 +131,7 @@ sap.ui.define([
 		}
 
 		oHeader.applySettings({
-			infoSection: HeaderFactory._createInfoSection(mConfiguration)
+			infoSection: HeaderFactory._createInfoSection(mConfiguration, oActions)
 		});
 
 		return oHeader;
@@ -226,29 +220,27 @@ sap.ui.define([
 		}
 	};
 
-	HeaderFactory._createInfoSection = function (mConfiguration) {
+	HeaderFactory._createInfoSection = function (mConfiguration, oActions) {
 		const oRows = [];
 		const oInfoSection = mConfiguration.infoSection;
 
 		(oInfoSection?.rows || []).forEach((oRow) => {
-			oRows.push(HeaderFactory._createRow(oRow));
+			oRows.push(HeaderFactory._createRow(oRow, oActions));
 		});
 
 		return oRows;
 	};
 
-
-
-	HeaderFactory._createRow = function (oRow) {
+	HeaderFactory._createRow = function (oRow, oActions) {
 		const aItems = [];
 		const aColumns = [];
 
 		(oRow.items || []).forEach((oItem) => {
-			aItems.push(ObjectStatusFactory.createStatusItem(oItem));
+			aItems.push(HeaderFactory._createStatusItem(oItem, oActions));
 		});
 
 		(oRow.columns || []).forEach((oColumn) => {
-			aColumns.push(HeaderFactory._createColumn(oColumn));
+			aColumns.push(HeaderFactory._createColumn(oColumn, oActions));
 		});
 
 		return new HeaderInfoSectionRow({
@@ -258,22 +250,35 @@ sap.ui.define([
 		});
 	};
 
-	HeaderFactory._createColumn = function (oColumn) {
+	HeaderFactory._createColumn = function (oColumn, oActions) {
 		const aItems = [];
 		const aRows = [];
 
 		(oColumn.items || []).forEach((oItem) => {
-			aItems.push(ObjectStatusFactory.createStatusItem(oItem));
+			aItems.push(HeaderFactory._createStatusItem(oItem, oActions));
 		});
 
 		(oColumn.rows || []).forEach((oRow) => {
-			aRows.push(HeaderFactory._createRow(oRow));
+			aRows.push(HeaderFactory._createRow(oRow, oActions));
 		});
 
 		return new HeaderInfoSectionColumn({
 			rows: aRows,
 			items: aItems
 		});
+	};
+
+	HeaderFactory._createStatusItem = function (oItem, oActions) {
+		const oStatus = ObjectStatusFactory.createStatusItem(oItem);
+
+		oActions.attach({
+			area: ActionArea.Header,
+			actions: oItem.actions,
+			control: oStatus,
+			enabledPropertyName: "active"
+		});
+
+		return oStatus;
 	};
 
 	return HeaderFactory;
