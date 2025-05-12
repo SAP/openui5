@@ -780,6 +780,7 @@ sap.ui.define([
 	 * Determines if the value help should be opened when the user used the arrow keys.
 	 *
 	 * @returns {boolean} If <code>true</code>, the value help should open when user used the arrow keys in the connected field control
+ 	 * @deprecated As of version 1.137 with no replacement.
 	 */
 	Popover.prototype.shouldOpenOnNavigate = function() {
 
@@ -825,6 +826,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.ValueHelp, sap.ui.mdc.valueHelp.base.Content
+ 	 * @deprecated As of version 1.137 with no replacement.
 	 */
 	Popover.prototype.isTypeaheadSupported = function() {
 

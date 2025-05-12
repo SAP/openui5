@@ -841,6 +841,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnClick", (assert) => {
 
 		assert.notOk(oFixedList.shouldOpenOnClick(), "should not open if filterList set");
@@ -861,6 +864,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		assert.notOk(oFixedList.shouldOpenOnNavigate(), "should not open if maxConditions != 1");

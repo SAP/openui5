@@ -120,9 +120,20 @@ sap.ui.define([
 		assert.notOk(oPopover.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oPopover.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oPopover.getUseAsValueHelp(), "getUseAsValueHelp");
+
+		/**
+		 *  @deprecated As of version 1.137
+		 */
 		assert.notOk(await oPopover.shouldOpenOnClick(), "shouldOpenOnClick");
+		/**
+		 *  @deprecated As of version 1.137
+		 */
 		assert.notOk(await oPopover.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		/**
+		 *  @deprecated As of version 1.137
+		 */
 		assert.notOk(oPopover.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+
 		assert.notOk(oPopover.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.notOk(oPopover.isFocusInHelp(), "isFocusInHelp");
 
@@ -513,6 +524,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		let bSupported = oPopover.isTypeaheadSupported();
@@ -577,6 +591,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnFocus", async (assert) => {
 
 		const fnFocusStub = sinon.stub(oValueHelp.getControlDelegate(), "shouldOpenOnFocus").returns(true);
@@ -593,6 +610,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnClick").returns(true);
@@ -618,6 +638,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnNavigate").returns(true);
@@ -1421,6 +1444,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(oContent, "shouldOpenOnClick").returns(false);
@@ -1441,6 +1467,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		sinon.stub(oContent, "isSearchSupported").returns(true);
