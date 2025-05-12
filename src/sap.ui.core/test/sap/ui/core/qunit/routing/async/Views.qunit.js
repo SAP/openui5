@@ -3,9 +3,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/_ViewFactory",
 	"sap/ui/core/routing/Views",
 	"./AsyncViewModuleHook"
-], function (Log, UIComponent, View, Views, ModuleHook) {
+], function (Log, UIComponent, View, _ViewFactory, Views, ModuleHook) {
 	"use strict";
 
 	function createXmlView () {
@@ -36,7 +37,7 @@ sap.ui.define([
 				this.fnCreateViewStub = sinon.stub(View, "create").callsFake(function () {
 					return Promise.resolve(oView);
 				});
-				this.fnGenericCreateViewSpy = sinon.stub(View, "_create").callsFake(function () {
+				this.fnGenericCreateViewSpy = sinon.stub(_ViewFactory, "create").callsFake(function () {
 					return oView;
 				});
 			}.bind(this));
@@ -56,7 +57,7 @@ sap.ui.define([
 		return oReturnValue.then(function (oView) {
 			assert.deepEqual(oView.getContent(), this.oView.getContent(), "the view was created");
 			assert.strictEqual(this.fnCreateViewStub.callCount, 1, "The 'View.create' factory is called");
-			assert.strictEqual(this.fnGenericCreateViewSpy.callCount, 0, "The 'View._create' factory is not called");
+			assert.strictEqual(this.fnGenericCreateViewSpy.callCount, 0, "The '_ViewFactory.create' factory is not called");
 		}.bind(this));
 	});
 
@@ -74,7 +75,7 @@ sap.ui.define([
 		return oReturnValue.then(function (oView) {
 			assert.deepEqual(oView.getContent(), this.oView.getContent(), "the view was created");
 			assert.strictEqual(this.fnCreateViewStub.callCount, 0, "The 'View.create' factory is not called");
-			assert.strictEqual(this.fnGenericCreateViewSpy.callCount, 1, "The 'View._create' factory is called");
+			assert.strictEqual(this.fnGenericCreateViewSpy.callCount, 1, "The '_ViewFactory.create' factory is called");
 		}.bind(this));
 	});
 
@@ -88,7 +89,7 @@ sap.ui.define([
 			assert.deepEqual(oView.getContent(), this.oView.getContent(), "the view was returned");
 			assert.strictEqual(oReturnValue, this.oViews, "able to chain this function");
 			assert.strictEqual(this.fnCreateViewStub.callCount, 0, "The 'View.create' factory is not called");
-			assert.strictEqual(this.fnGenericCreateViewSpy.callCount, 0, "The 'View._create' factory is not called");
+			assert.strictEqual(this.fnGenericCreateViewSpy.callCount, 0, "The '_ViewFactory.create' factory is not called");
 		}.bind(this));
 	});
 
@@ -320,8 +321,7 @@ sap.ui.define([
 			fnEventSpy = this.spy(function (oEvent) {
 				oParameters = oEvent.getParameters();
 			}),
-			fnCreateViewSpy = this.spy(View, "create"),
-			fnGenericCreateViewSpy = this.spy(View, "_create");
+			fnCreateViewSpy = this.spy(View, "create");
 
 		this.oViews.attachCreated(fnEventSpy);
 
@@ -341,7 +341,6 @@ sap.ui.define([
 			assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
 			assert.strictEqual(oParameters.viewOptions, oViewOption, "Did pass the option to the event parameters");
 			assert.strictEqual(fnCreateViewSpy.callCount, 1, "The 'View.create' factory is called");
-			assert.strictEqual(fnGenericCreateViewSpy.callCount, 0, "The 'View._create' factory is not called");
 		});
 	});
 
@@ -359,7 +358,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			}),
 			fnCreateViewSpy = this.spy(View, "create"),
-			fnGenericCreateViewSpy = this.spy(View, "_create");
+			fnGenericCreateViewSpy = this.spy(_ViewFactory, "create");
 
 		this.oViews.attachCreated(fnEventSpy);
 
@@ -377,7 +376,7 @@ sap.ui.define([
 			assert.strictEqual(oParameters.view, oView, "Did pass the view to the event parameters");
 			assert.strictEqual(oParameters.viewOptions, oViewOption, "Did pass the option to the event parameters");
 			assert.strictEqual(fnCreateViewSpy.callCount, 0, "The 'View.create' factory is not called");
-			assert.strictEqual(fnGenericCreateViewSpy.callCount, 1, "The 'View._create' factory is called");
+			assert.strictEqual(fnGenericCreateViewSpy.callCount, 1, "The '_ViewFactory.create' factory is called");
 		});
 	});
 

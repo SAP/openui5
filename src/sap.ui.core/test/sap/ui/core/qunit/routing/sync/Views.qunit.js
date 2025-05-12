@@ -1,10 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/_ViewFactory",
 	"sap/ui/core/routing/Views",
 	"sap/ui/core/UIComponent"
-], function (Log, View, Views, UIComponent) {
+], function (Log, _ViewFactory, Views, UIComponent) {
 	"use strict";
 
 	function createXmlView () {
@@ -38,7 +38,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should create a view", function (assert) {
-		var fnStub = this.stub(View, "_create").callsFake(function () {
+		var fnStub = this.stub(_ViewFactory, "create").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 
@@ -55,7 +55,7 @@ sap.ui.define([
 
 	QUnit.test("Should set a view to the cache", function (assert) {
 		var oReturnValue,
-			fnStub = this.stub(View, "_create").callsFake(function () {
+			fnStub = this.stub(_ViewFactory, "create").callsFake(function () {
 				return this.oView;
 			});
 
@@ -87,7 +87,7 @@ sap.ui.define([
 		// Arrange
 		var fnOwnerSpy = this.spy(this.oUIComponent, "runAsOwner"),
 			oView = createXmlView(),
-			fnViewStub = this.stub(View, "_create").callsFake(function () {
+			fnViewStub = this.stub(_ViewFactory, "create").callsFake(function () {
 				return oView;
 			});
 
@@ -107,7 +107,7 @@ sap.ui.define([
 		// Arrange
 		var sViewId = "ViewId",
 			oView = createXmlView(),
-			fnViewStub = this.stub(View, "_create").callsFake(function () {
+			fnViewStub = this.stub(_ViewFactory, "create").callsFake(function () {
 				return oView;
 			}),
 			oOptions = {
@@ -129,7 +129,7 @@ sap.ui.define([
 		// Arrange
 		var sViewId = "ViewId",
 			oView = createXmlView(),
-			fnViewStub = this.stub(View, "_create").callsFake(function () {
+			fnViewStub = this.stub(_ViewFactory, "create").callsFake(function () {
 				return oView;
 			});
 
@@ -246,7 +246,7 @@ sap.ui.define([
 				oParameters = oEvent.getParameters();
 			});
 
-		this.stub(View, "_create").callsFake(function () {
+		this.stub(_ViewFactory, "create").callsFake(function () {
 			return oView;
 		});
 
@@ -276,7 +276,7 @@ sap.ui.define([
 
 			this.oView = createXmlView();
 
-			this.oSapUiViewStub = sinon.stub(View, "_create").callsFake(function () {
+			this.oSapUiViewStub = sinon.stub(_ViewFactory, "create").callsFake(function () {
 				return this.oView;
 			}.bind(this));
 		},

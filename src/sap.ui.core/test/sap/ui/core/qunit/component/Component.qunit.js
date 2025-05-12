@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Messaging',
 	'sap/ui/core/UIComponentMetadata',
 	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/_ViewFactory',
 	'testdata/routing/Component',
 	'testdata/routing/RouterExtension',
 	'sap/base/Log',
@@ -27,6 +28,7 @@ sap.ui.define([
 	Messaging,
 	UIComponentMetadata,
 	View,
+	_ViewFactory,
 	SamplesRoutingComponent,
 	SamplesRouterExtension,
 	Log,
@@ -2982,7 +2984,7 @@ sap.ui.define([
 	 * @deprecated
 	 */
 	QUnit.test("Manifest 2.0 is supported", async function(assert) {
-		const oViewCreateSpy = sinon.spy(View, "_create");
+		const oViewCreateSpy = sinon.spy(_ViewFactory, "create");
 		const oComponent = await Component.create({
 			name: "testdata.manifest2.basic"
 		}).catch((error) => {
@@ -2996,14 +2998,14 @@ sap.ui.define([
 
 		assert.ok(oComponent.getRootControl().isA("sap.ui.core.mvc.XMLView"), "Root control is XMLView");
 
-		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "testdata.manifest2.basic.views.Main", type: "XML", async: true, processingMode: "Sequential"}), "View._create called with correct parameters");
+		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "testdata.manifest2.basic.views.Main", type: "XML", async: true, processingMode: "Sequential"}), "_ViewFactory.create called with correct parameters");
 
 		oComponent.destroy();
 		oViewCreateSpy.restore();
 	});
 
 	QUnit.test("Manifest 2.0 is supported (typed view)", async function(assert) {
-		const oViewCreateSpy = sinon.spy(View, "_create");
+		const oViewCreateSpy = sinon.spy(_ViewFactory, "create");
 		const oComponent = await Component.create({
 			manifest: sap.ui.require.toUrl("testdata/manifest2/basic/manifest_variant.json")
 		}).catch((error) => {
@@ -3019,7 +3021,7 @@ sap.ui.define([
 		const TypedMain = sap.ui.require("testdata/manifest2/basic/views/TypedMain");
 		assert.ok(oComponent.getRootControl() instanceof TypedMain, "Root control is TypedMain");
 
-		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "module:testdata/manifest2/basic/views/TypedMain", async: true}), "View._create called with correct parameters");
+		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "module:testdata/manifest2/basic/views/TypedMain", async: true}), "_ViewFactory.create called with correct parameters");
 
 		oComponent.destroy();
 		oViewCreateSpy.restore();

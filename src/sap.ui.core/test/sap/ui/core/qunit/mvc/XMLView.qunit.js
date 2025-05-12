@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/_ViewFactory',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/RenderManager',
 	'sap/ui/model/json/JSONModel',
@@ -19,7 +20,7 @@ sap.ui.define([
 	'./AnyView.qunit',
 	'sap/ui/thirdparty/jquery',
 	"sap/ui/test/utils/nextUIUpdate"
-], function(future, Log, Localization, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, nextUIUpdate) {
+], function(future, Log, Localization, ResourceBundle, Element, coreLibrary, Controller, View, _ViewFactory, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -400,7 +401,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		// load and place view, force rendering
-		var oView = View._create({
+		var oView = _ViewFactory.create({
 			viewName: 'example.mvc.legacy.test',
 			type: ViewType.XML,
 			async: true
