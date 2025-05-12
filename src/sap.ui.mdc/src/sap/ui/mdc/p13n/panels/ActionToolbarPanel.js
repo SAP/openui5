@@ -225,7 +225,7 @@ sap.ui.define([
 		oMultiSelectControl.bindProperty("enabled", {
 			path: `${this.P13N_MODEL}>enabled`,
 			formatter: function(oValue) {
-				return oValue ?? true;
+				return oValue === true;
 			}
 		});
 	};
