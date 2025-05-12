@@ -3,8 +3,9 @@
 sap.ui.define([
 	'sap/base/future',
 	'sap/ui/core/mvc/Controller',
+	'sap/ui/core/mvc/ControllerExtensionProvider',
 	'sap/ui/core/mvc/XMLView'
-], function(future, Controller, XMLView) {
+], function(future, Controller, ControllerExtensionProvider, XMLView) {
 	"use strict";
 
 	// create content div
@@ -293,7 +294,7 @@ sap.ui.define([
 
 	QUnit.module("Context checks", {
 		beforeEach: function() {
-			Controller.registerExtensionProvider("my.test.ExtensionProvider");
+			ControllerExtensionProvider.registerExtensionProvider("my.test.ExtensionProvider");
 			this.pView = Controller.create({name:"my.test.MainContext"}).then(function(oController) {
 				return XMLView.create({
 					viewName: "my.test.Main",
@@ -326,7 +327,7 @@ sap.ui.define([
 	QUnit.module("Controller final checks", {
 		beforeEach: function() {
 			future.active = true;
-			Controller.registerExtensionProvider("");
+			ControllerExtensionProvider.registerExtensionProvider("");
 			this.pView = Controller.create({name:"my.test.ExtendMain"}).then(function(oController) {
 				return XMLView.create({
 					viewName: "my.test.Main",
@@ -353,7 +354,7 @@ sap.ui.define([
 	QUnit.module("Controller final checks", {
 		beforeEach: function() {
 			future.active = false;
-			Controller.registerExtensionProvider("");
+			ControllerExtensionProvider.registerExtensionProvider("");
 			this.pView = Controller.create({name:"my.test.ExtendMainLegacy"}).then(function(oController) {
 				return XMLView.create({
 					viewName: "my.test.Main",
