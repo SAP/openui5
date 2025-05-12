@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/ControllerExtensionProvider",
 	"sap/ui/core/mvc/View",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(Event, Component, ComponentContainer, Element, Controller, View, createAndAppendDiv, nextUIUpdate) {
+], function(Event, Component, ComponentContainer, Element, Controller, ControllerExtensionProvider, View, createAndAppendDiv, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -313,7 +314,7 @@ sap.ui.define([
 		}, true);
 
 		//...and reinitialize - with registered ExtensionProvider
-		Controller.registerExtensionProvider("sap.my.async.ExtensionProvider");
+		ControllerExtensionProvider.registerExtensionProvider("sap.my.async.ExtensionProvider");
 
 		return  createComponentAndContainer();
 
