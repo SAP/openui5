@@ -1,4 +1,4 @@
-/* global QUnit*/
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Lib",
@@ -6,23 +6,23 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/genericTests/actionEnablementTests"
 ], function (
 	Library,
 	mLibrary,
 	Card,
 	QUnitUtils,
 	nextUIUpdate,
-	nextCardReadyEvent
+	nextCardReadyEvent,
+	actionEnablementTests
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
-
 	var AvatarSize = mLibrary.AvatarSize;
 	var AvatarColor = mLibrary.AvatarColor;
 	const oRb = Library.getResourceBundleFor("sap.ui.integration");
-
 
 	var oManifest_TableCard = {
 		"sap.app": {
@@ -576,6 +576,33 @@ sap.ui.define([
 			}
 		}
 	};
+
+	actionEnablementTests("Status in Table Card", {
+		manifest: {
+			"sap.app": {
+				"id": "card.tableCard.statusActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Card Title"
+				},
+				"content": {
+					"row": {
+						"columns": [{
+							"value": "Status",
+							"state": "Success"
+						}]
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/content/row/columns/0",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
 
 	QUnit.module("Table Card", {
 		beforeEach: function () {
