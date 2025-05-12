@@ -119,8 +119,7 @@ sap.ui.define([
 				this.setSelector(oSelector);
 			}
 
-			const oChange = await this._createChange(mFlexSettings, sVariantManagementReference, sCommand);
-			this._oPreparedChange = oChange;
+			this._oPreparedChange = await this._createChange(mFlexSettings, sVariantManagementReference, sCommand);
 			return true;
 		} catch (oError) {
 			Log.error(oError.message || oError.name);
