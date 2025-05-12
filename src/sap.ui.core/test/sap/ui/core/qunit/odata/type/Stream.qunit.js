@@ -32,6 +32,9 @@ sap.ui.define([
 		assert.throws(function () {
 			return new Stream(false);
 		}, new Error("Unsupported arguments"));
+
+		assert.strictEqual((new Stream(null)).getName(), "sap.ui.model.odata.type.Stream",
+			"format options may be null");
 	});
 
 	//*********************************************************************************************
