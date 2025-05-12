@@ -411,6 +411,31 @@ sap.ui.define([
 		assert.equal(oType.getInnerTable().getFixedColumnCount(), 0, "Fixed column count is now 0");
 	});
 
+	QUnit.test("State is applied before the table is initialized", async function(assert) {
+		this.oTable.destroy();
+		this.createTable();
+
+		const fnGetCurrentStateStub = sinon.stub(this.oTable, "_getXConfig");
+		fnGetCurrentStateStub.returns({
+			"aggregations": {
+				"type": {
+					"GridTable": {
+						"fixedColumnCount": 2
+					}
+				}
+			}
+		});
+
+		assert.notOk(this.oTable.getType().getInnerTable(), "Inner table is not created yet");
+
+		this.oTable._onModifications();
+		await this.oTable.initialized();
+		const oType = this.oTable.getType();
+		const oInnerTable = oType.getInnerTable();
+
+		assert.equal(oInnerTable.getFixedColumnCount(), 2, "Fixed column count is 2");
+	});
+
 	QUnit.module("Row settings", {
 		afterEach: function() {
 			this.destroyTable();
