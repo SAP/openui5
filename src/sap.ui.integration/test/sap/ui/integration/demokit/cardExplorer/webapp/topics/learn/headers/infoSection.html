@@ -48,7 +48,7 @@
 				</table>
 			</div>
 
-			<h3 id="infoSectionRowApi">Info Section Row</h3>
+			<h3 id="infoSectionRowApi">InfoSectionRow</h3>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -67,6 +67,8 @@
 						<td>No</td>
 						<td>
 							An array of columns.
+							<br>
+							<b>Note:</b> Either <code>columns</code> or <code>items</code> should be provided, but not both.
 						</td>
 						<td>1.73.0</td>
 						<td>1.136</td>
@@ -95,6 +97,8 @@
 						<td>No</td>
 						<td>
 							An array of items.
+							<br>
+							<b>Note:</b> Either <code>items</code> or <code>columns</code> should be provided, but not both.
 						</td>
 						<td>1.73.0</td>
 						<td>1.136</td>
@@ -102,7 +106,7 @@
 				</table>
 			</div>
 
-			<h3 id="infoSectionColumnApi">Info Section Column</h3>
+			<h3 id="infoSectionColumnApi">InfoSectionColumn</h3>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -121,6 +125,8 @@
 						<td>No</td>
 						<td>
 							An array of rows.
+							<br>
+							<b>Note:</b> Either <code>rows</code> or <code>items</code> should be provided, but not both.
 						</td>
 						<td>1.73.0</td>
 						<td>1.136</td>
@@ -132,6 +138,8 @@
 						<td>No</td>
 						<td>
 							An array of items.
+							<br>
+							<b>Note:</b> Either <code>items</code> or <code>rows</code> should be provided, but not both.
 						</td>
 						<td>1.73.0</td>
 						<td>1.136</td>
@@ -139,7 +147,7 @@
 				</table>
 			</div>
 
-			<h3 id="infoSectionItemApi">Info Section Item</h3>
+			<h3 id="infoSectionItemApi">InfoSectionItem</h3>
 			<div class="tableWrapper">
 					<table>
 						<tr>
@@ -243,39 +251,40 @@
 				</div>
 
 			<h2 id="example">Example</h2>
-			<pre class="lang-json">"header": {
+			<pre class="lang-json">
+"header": {
 	"title": "Project Cloud Transformation",
 	"subTitle": "Revenue",
 	"unitOfMeasurement": "EUR",
-	"infoSection": {
-	"rows": [
-	  {
-		"items": [
-		  {
-			"type": "Status",
-			"value": "On Track",
-			"state": "Success",
-			"inverted": true,
-			"showStateIcon": true
-		  },
-		  {
-			"type": "Status",
-			"value": "OKR Relevant",
-			"state": "None",
-			"inverted": true,
-			"showStateIcon": true
-		  },
-		  {
-			"type": "Status",
-			"value": "Goal Template Available",
-			"state": "Information",
-			"inverted": true,
-			"showStateIcon": true
-		  }
+	<mark>"infoSection": {
+		"rows": [
+			{
+				"items": [
+					{
+						"type": "Status",
+						"value": "On Track",
+						"state": "Success",
+						"inverted": true,
+						"showStateIcon": true
+					},
+					{
+						"type": "Status",
+						"value": "OKR Relevant",
+						"state": "None",
+						"inverted": true,
+						"showStateIcon": true
+					},
+					{
+						"type": "Status",
+						"value": "Goal Template Available",
+						"state": "Information",
+						"inverted": true,
+						"showStateIcon": true
+					}
+				]
+			}
 		]
-	  }
-	]
-  }
+	}</mark>
 }</pre>
 
 			<a href="../../../index.html#/explore/headerInfoSection" target="_parent" class="try-button">Try It Out</a>
