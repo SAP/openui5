@@ -79680,6 +79680,10 @@ make root = ${bMakeRoot}`;
 	// corresponds to the affected context index (to be used as #requestContexts parameter) instead
 	// of the actual $skip index.
 	// JIRA: CPOUI5ODATAV4-2696
+	//
+	// Messages contained in a successful $$separate response are handled automatically and they are
+	// not passed to the "separateReceived" event handler.
+	// JIRA: CPOUI5ODATAV4-2878
 [false, true].forEach(function (bAutoExpandSelect) {
 	QUnit.test("$$separate: autoExpandSelect=" + bAutoExpandSelect, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : bAutoExpandSelect});
@@ -79766,7 +79770,12 @@ make root = ${bMakeRoot}`;
 						IsActiveEntity : true
 					}, {
 						ArtistID : "20",
-						BestFriend : {ArtistID : "F2", IsActiveEntity : true, Name : "Friend B"},
+						BestFriend : {
+							ArtistID : "F2",
+							IsActiveEntity : true,
+							Messages : [{code : "CODE", message : "MESSAGE", numericSeverity : 2}],
+							Name : "Friend B"
+						},
 						IsActiveEntity : true
 					}]
 				});
@@ -79822,7 +79831,13 @@ make root = ${bMakeRoot}`;
 		});
 
 		this.expectChange("friend", ["Friend A", "Friend B"])
-			.expectChange("friendBusy__AS_COMPOSITE", [false, false]);
+			.expectChange("friendBusy__AS_COMPOSITE", [false, false])
+			.expectMessages([{
+				code : "CODE",
+				message : "MESSAGE",
+				persistent : true,
+				type : "Information"
+			}]);
 
 		fnResolveBestFriend();
 
@@ -79843,6 +79858,7 @@ make root = ${bMakeRoot}`;
 			Name : "Artist A"
 			// SiblingEntity missing
 		});
+		// Success messages are not passed as "messagesOnError" parameter to the event handler
 		checkEvents([{property : "BestFriend", start : 0, length : 2}]);
 
 		this.expectRequest({
@@ -80457,13 +80473,14 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: A list binding uses binding parameter $$separate. If a main list request fails, the
 	// response of the separate request is ignored. If the separate request fails, the column for
-	// the separate data remains empty. In both cases the error is reported as UI5 message.
+	// the separate data remains empty. In both cases the messages contained in the error response
+	// are reported as UI5 messages.
 	// JIRA: CPOUI5ODATAV4-2776
 	//
-	// The UI5 message of the failed separate request is also provided as "errorMessage" parameter
-	// to the "separateReceived" event. Calling preventDefault on this event prevents that this UI5
-	// message is automatically reported to the message model.
-	// JIRA: CPOUI5ODATAV4-2792
+	// The UI5 messages of the failed separate request are also provided as "messagesOnError"
+	// parameter to the "separateReceived" event. Calling preventDefault on this event prevents that
+	// these UI5 messages are automatically reported to the message model.
+	// JIRA: CPOUI5ODATAV4-2792, CPOUI5ODATAV4-2878
 	//
 	// Context#requestObject can be used to wait for the separate data while waiting for the
 	// pending separate GET request. If the separate request fails, the promise returned by
@@ -80514,7 +80531,13 @@ make root = ${bMakeRoot}`;
 		}
 		let fnReject;
 		const oResponsePromise = new Promise(function (_resolve, reject) {
-			fnReject = reject.bind(null, createErrorInsideBatch());
+			fnReject = reject.bind(null, createErrorInsideBatch({
+					details : [{
+						"@Common.numericSeverity" : 3,
+						code : "DETAIL",
+						message : "Detail Message"
+					}]
+				}));
 		});
 		this.expectRequest({
 				batchNo : 1,
@@ -80572,6 +80595,11 @@ make root = ${bMakeRoot}`;
 				persistent : true,
 				technical : true,
 				type : "Error"
+			}, {
+				code : "DETAIL",
+				message : "Detail Message",
+				persistent : true,
+				type : "Warning"
 			}]);
 
 		fnReject();
@@ -80586,14 +80614,20 @@ make root = ${bMakeRoot}`;
 			assert.strictEqual(oParameters.property, "EMPLOYEE_2_TEAM");
 			assert.strictEqual(oParameters.start, 0);
 			assert.strictEqual(oParameters.length, 2);
-			assert.strictEqual(oParameters.errorMessage.getCode(), "CODE");
-			assert.strictEqual(oParameters.errorMessage.getMessage(),
+			assert.strictEqual(oParameters.messagesOnError.length, 2);
+			assert.strictEqual(oParameters.messagesOnError[0].getCode(), "CODE");
+			assert.strictEqual(oParameters.messagesOnError[0].getMessage(),
 				"Request intentionally failed");
-			assert.strictEqual(oParameters.errorMessage.getPersistent(), true);
-			assert.strictEqual(oParameters.errorMessage.getType(), "Error");
+			assert.strictEqual(oParameters.messagesOnError[0].getPersistent(), true);
+			assert.strictEqual(oParameters.messagesOnError[0].getType(), "Error");
+			assert.strictEqual(oParameters.messagesOnError[1].getCode(), "DETAIL");
+			assert.strictEqual(oParameters.messagesOnError[1].getMessage(), "Detail Message");
+			assert.strictEqual(oParameters.messagesOnError[1].getPersistent(), true);
+			assert.strictEqual(oParameters.messagesOnError[1].getType(), "Warning");
 			if (!bPreventDefault) {
-				assert.strictEqual(oParameters.errorMessage,
-					Messaging.getMessageModel().getObject("/")[0]);
+				const aMessages = Messaging.getMessageModel().getObject("/");
+				assert.strictEqual(oParameters.messagesOnError[0], aMessages[0]);
+				assert.strictEqual(oParameters.messagesOnError[1], aMessages[1]);
 			}
 		}
 		assert.deepEqual(aEventParameters, []);
