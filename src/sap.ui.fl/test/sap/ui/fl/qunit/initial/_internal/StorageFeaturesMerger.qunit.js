@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/initial/_internal/StorageFeaturesMerger"
+	"sap/ui/fl/initial/_internal/StorageFeaturesMerger",
+	"sap/base/Log"
 ], function(
 	sinon,
 	Layer,
-	StorageFeaturesMerger
+	StorageFeaturesMerger,
+	Log
 ) {
 	"use strict";
 
@@ -50,7 +52,7 @@ sap.ui.define([
 				features: {isProductiveSystem: false, isVariantAuthorNameAvailable: true}
 			};
 			var oResponse2 = {
-				layers: [],
+				layers: [Layer.CUSTOMER],
 				features: {isAtoAvailable: true, isKeyUser: true, isKeyUserTranslationEnabled: true},
 				isContextSharingEnabled: true
 			};
@@ -93,6 +95,132 @@ sap.ui.define([
 			assert.equal(oResult.versioning.PARTNER, undefined);
 			assert.equal(oResult.versioning.CUSTOMER, true);
 			assert.equal(oResult.versioning.USER, undefined);
+		});
+	});
+
+	QUnit.module("Layer specific handling if isKeyUser", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		[{
+			description: "no layer are configured and ",
+			expectedLogs: 0,
+			connectors: [{
+				layers: [],
+				isKeyUser: undefined
+			}],
+			expectedValue: false
+		}, {
+			description: "no CUSTOMER layer",
+			expectedLogs: 0,
+			connectors: [{
+				layers: [],
+				isKeyUser: undefined
+			}],
+			expectedValue: false
+		}, {
+			description: "the CUSTOMER layer configured",
+			expectedLogs: 0,
+			connectors: [{
+				layers: [Layer.CUSTOMER_BASE, Layer.CUSTOMER, Layer.PUBLIC, Layer.USER],
+				isKeyUser: undefined
+			}],
+			expectedValue: false
+		}, {
+			description: "with layers configured to ALL",
+			expectedLogs: 0,
+			connectors: [{
+				layers: ["ALL"],
+				isKeyUser: undefined
+			}],
+			expectedValue: false
+		}, {
+			description: "no layer are configured and the key user flag is set to false",
+			expectedLogs: 1,
+			connectors: [{
+				layers: [],
+				isKeyUser: false
+			}],
+			expectedValue: false
+		}, {
+			description: "no CUSTOMER layer and the key user flag is set to false",
+			expectedLogs: 1,
+			connectors: [{
+				layers: [Layer.CUSTOMER_BASE],
+				isKeyUser: false
+			}],
+			expectedValue: false
+		}, {
+			description: "the CUSTOMER layer configured and the key user flag is set to false",
+			expectedLogs: 0,
+			connectors: [{
+				layers: [Layer.CUSTOMER],
+				isKeyUser: false
+			}],
+			expectedValue: false
+		}, {
+			description: "with layers configured to ALL and the key user flag is set to false",
+			expectedLogs: 0,
+			connectors: [{
+				layers: ["ALL"],
+				isKeyUser: false
+			}],
+			expectedValue: false
+		}, {
+			description: "no layer are configured and the key user flag is set to true",
+			expectedLogs: 1,
+			connectors: [{
+				layers: [],
+				isKeyUser: true
+			}],
+			expectedValue: false
+		}, {
+			description: "no CUSTOMER layer and the key user flag is set to true",
+			expectedLogs: 1,
+			connectors: [{
+				layers: [Layer.CUSTOMER_BASE],
+				isKeyUser: true
+			}],
+			expectedValue: false
+		}, {
+			description: "the CUSTOMER layer configured and the key user flag is set to true",
+			expectedLogs: 0,
+			connectors: [{
+				layers: [Layer.CUSTOMER],
+				isKeyUser: true
+			}],
+			expectedValue: true
+		}, {
+			description: "with layers configured to ALL and the key user flag is set to true",
+			expectedLogs: 0,
+			connectors: [{
+				layers: ["ALL"],
+				isKeyUser: true
+			}],
+			expectedValue: true
+		}].forEach(function(oTestSetup) {
+			QUnit.test(`merge handles the layer specific key user flag: ${oTestSetup.description}`, (assert) => {
+				const oLogMock = sandbox.stub(Log, "warning");
+
+				const aConnectors = oTestSetup.connectors.map((oConnector) => {
+					const oFeatures = {};
+
+					if (oConnector.isKeyUser !== undefined) {
+						oFeatures.isKeyUser = oConnector.isKeyUser;
+					}
+
+					return {
+						layers: oConnector.layers,
+						features: oFeatures
+					};
+				});
+
+				const oResult = StorageFeaturesMerger.mergeResults(aConnectors);
+
+				assert.equal(oResult.isKeyUser, oTestSetup.expectedValue);
+				assert.equal(oLogMock.callCount, oTestSetup.expectedLogs);
+			});
 		});
 	});
 
