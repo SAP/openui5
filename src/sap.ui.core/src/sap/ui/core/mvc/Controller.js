@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/util/extend',
 	'sap/ui/base/EventProvider',
+	'sap/ui/base/_runWithOwner',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/mvc/ControllerMetadata',
 	'sap/ui/core/mvc/ControllerExtension',
@@ -19,6 +20,7 @@ sap.ui.define([
 	ObjectPath,
 	extend,
 	EventProvider,
+	_runWithOwner,
 	ManagedObject,
 	ControllerMetadata,
 	ControllerExtension,
@@ -577,7 +579,7 @@ sap.ui.define([
 		function controllerFactory(sName, oControllerImpl, sViewId, bAsync) {
 			var oController,
 				ControllerClass,
-				sOwnerId = ManagedObject._sOwnerId;
+				sOwnerId = _runWithOwner.getCurrentOwnerId();
 
 			if (typeof oControllerImpl === "boolean") {
 				oControllerImpl = undefined;

@@ -1,5 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/base/_runWithOwner",
 	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/DataType",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/base/future",
 	"sap/base/Log"
-], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, UnitType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, future, Log) {
+], function(_runWithOwner, BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, UnitType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath, future, Log) {
 	"use strict";
 	var mObjects = {};
 
@@ -1330,7 +1331,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind aggregation with Owner", function(assert) {
-		var oObjWithOwner = ManagedObject.runWithOwner(function() {
+		var oObjWithOwner = _runWithOwner(function() {
 			return new TestManagedObject();
 		}, "myOwnerComponent");
 
@@ -1381,7 +1382,7 @@ sap.ui.define([
 		oClone.destroy();
 
 		// new MO with different owner ID
-		var oObjWithDifferentOwner = ManagedObject.runWithOwner(function() {
+		var oObjWithDifferentOwner = _runWithOwner(function() {
 			return new TestManagedObject();
 		}, "myOwnerComponent2");
 
@@ -1403,7 +1404,7 @@ sap.ui.define([
 		oObjWithOwner.bindAggregation("subObjects", {
 			path: "/list",
 			factory: function(id) {
-				return ManagedObject.runWithOwner(function() {
+				return _runWithOwner(function() {
 					return new TestManagedObject(id);
 				}, "myAppOwnerComponent");
 			}

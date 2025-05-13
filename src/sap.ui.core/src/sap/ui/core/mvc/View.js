@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
+	"sap/ui/base/_runWithOwner",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
 	"sap/ui/base/DesignTime",
@@ -25,6 +26,7 @@ sap.ui.define([
 		extend,
 		isEmptyObject,
 		merge,
+		_runWithOwner,
 		ManagedObject,
 		Control,
 		DesignTime,
@@ -480,7 +482,7 @@ sap.ui.define([
 			} else {
 				oThis.bControllerIsViewManaged = false;
 				// if passed controller is not extended yet we need to do it.
-				var sOwnerId = ManagedObject._sOwnerId;
+				var sOwnerId = _runWithOwner.getCurrentOwnerId();
 				if (!oController._isExtended()) {
 					oController = Controller.applyExtensions(oController, sName, sOwnerId, oThis.sId, bAsync);
 				} else if (bAsync) {
@@ -1104,8 +1106,8 @@ sap.ui.define([
 		// This is required as the viewFactory is called async
 		var Component = sap.ui.require("sap/ui/core/Component");
 		var oOwnerComponent;
-		if (Component && ManagedObject._sOwnerId) {
-			oOwnerComponent = Component.getComponentById(ManagedObject._sOwnerId);
+		if (Component && _runWithOwner.getCurrentOwnerId()) {
+			oOwnerComponent = Component.getComponentById(_runWithOwner.getCurrentOwnerId());
 		}
 
 		function createView() {
@@ -1270,8 +1272,8 @@ sap.ui.define([
 		// get current owner component
 		var Component = sap.ui.require("sap/ui/core/Component");
 
-		if (Component && ManagedObject._sOwnerId) {
-			var customViewConfig = Component.getCustomizing(ManagedObject._sOwnerId, {
+		if (Component && _runWithOwner.getCurrentOwnerId()) {
+			var customViewConfig = Component.getCustomizing(_runWithOwner.getCurrentOwnerId(), {
 				type: "sap.ui.viewReplacements",
 				name: oView.viewName
 			});
