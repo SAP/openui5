@@ -2333,7 +2333,7 @@ sap.ui.define([
 			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
+			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns([]);
 			VariantManagementState.getCurrentVariantReference.restore();
 
 			return Promise.all([
@@ -2361,7 +2361,7 @@ sap.ui.define([
 			var sVMReference1 = "mockview--VariantManagement2";
 			var sVMControlId = `testComponent---${sVMReference1}`;
 			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
-			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
+			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns([]);
 			VariantManagementState.getCurrentVariantReference.restore();
 			this.oVariantModel.getData()[sVMReference1].currentVariant = "variant2";
 
@@ -2383,7 +2383,7 @@ sap.ui.define([
 			var sVMControlId = `testComponent---${sVMReference1}`;
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
+			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns([]);
 			VariantManagementState.getCurrentVariantReference.restore();
 
 			return Promise.all([
@@ -2409,9 +2409,17 @@ sap.ui.define([
 		QUnit.test("when 'attachVariantApplied' is called with executeOnSelectionForStandardDefault set, standard being default and a flex change for apply automatically", function(assert) {
 			var sVMReference1 = "mockview--VariantManagement2";
 			var sVMControlId = `testComponent---${sVMReference1}`;
+			this.oView.byId(sVMControlId).setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({setExecuteOnSelect: {}});
+			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns([
+				FlexObjectFactory.createVariantChange({
+					content: {
+						executeOnSelect: false
+					},
+					changeType: "setExecuteOnSelect"
+				})
+			]);
 			VariantManagementState.getCurrentVariantReference.restore();
 
 			return Promise.all([
@@ -2440,7 +2448,7 @@ sap.ui.define([
 			oVMControl.setExecuteOnSelectionForStandardDefault(true);
 			var fnCallback1 = sandbox.stub();
 			var fnCallback2 = sandbox.stub();
-			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns({});
+			sandbox.stub(VariantManagementState, "getVariantChangesForVariant").returns([]);
 
 			return Promise.all([
 				this.oVariantModel.attachVariantApplied({

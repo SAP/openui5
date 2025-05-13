@@ -540,11 +540,11 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 * @param {string} [mPropertyBag.vReference] - Variant reference
-	 * @returns {object} All variant changes of the variant
+	 * @returns {object[]} All variant changes of the variant
 	 */
 	VariantManagementState.getVariantChangesForVariant = function(mPropertyBag) {
 		var oVariant = VariantManagementState.getVariant(mPropertyBag);
-		return oVariant && oVariant.variantChanges || {};
+		return oVariant?.variantChanges || [];
 	};
 
 	/**
