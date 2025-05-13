@@ -750,12 +750,17 @@ sap.ui.define([
 		NotificationListBase.prototype.close = function () {
 			var parent = this.getParent();
 			this.fireClose();
-			var bHasParentAfterClose = !!this.getParent(); // no parent after close means the notification is removed or destroyed - in such case move the focus
+			var sItemId = this.getId();
 
-			if (!bHasParentAfterClose && parent && parent instanceof Element) {
+
+			if (parent && parent instanceof Element) {
 				var delegate = {
 					onAfterRendering: function () {
-						parent.focus();
+						// SNOW - CS20250009263199
+						// item is deleted after close/rendering  means the notification item is removed or destroyed - in such case move the focus
+						if (document.getElementById(sItemId) === null) {
+							parent.focus();
+						}
 						parent.removeEventDelegate(delegate);
 					}
 				};
