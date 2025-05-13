@@ -1,7 +1,12 @@
 {
   "1.136.0": {
-    "date": "April 2025",
+    "date": "May 2025",
     "notes": [
+      {
+        "id": "fb8468048595e596c9e32899ee280ee27366ff20",
+        "type": "FIX",
+        "text": " Controller: remove static functions"
+      },
       {
         "id": "8222578f05f036f736900a850d8bb36c19947971",
         "type": "FIX",

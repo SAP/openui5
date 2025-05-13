@@ -1,7 +1,12 @@
 {
   "1.136.0": {
-    "date": "April 2025",
+    "date": "May 2025",
     "notes": [
+      {
+        "id": "4600473595ca60f82a7a2853300c5a16ced2aede",
+        "type": "FIX",
+        "text": " Empty Filter for navigation properties"
+      },
       {
         "id": "c963d0468ef6a66544252a11524ea3aaff4e143b",
         "type": "FIX",
