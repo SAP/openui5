@@ -169,6 +169,16 @@ sap.ui.define([
 
 			this.oToolbar.destroy();
 		});
+
+		QUnit.test("when there is an exception in the init", function(assert) {
+			sandbox.stub(BaseToolbar.prototype, "buildContent").rejects("error");
+			sandbox.spy(BaseToolbar.prototype, "exit");
+			this.oToolbar = new Adaptation({
+				textResources: this.oTextResources
+			});
+			this.oToolbar.destroy();
+			assert.ok(BaseToolbar.prototype.exit.calledOnce, "then the exit function is called");
+		});
 	});
 
 	QUnit.module("Test Adaptation Model binding & formatter and save as", {
