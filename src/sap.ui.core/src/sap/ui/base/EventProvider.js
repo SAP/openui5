@@ -38,13 +38,6 @@ sap.ui.define(['./Event', './Object', "sap/base/assert", "sap/base/Log"],
 	var EVENT__LISTENERS_CHANGED = "EventHandlerChange";
 
 	/**
-	 * Map of event names and ids, that are provided by this class
-	 * @private
-	 * @static
-	 */
-	EventProvider.M_EVENTS = {EventHandlerChange:EVENT__LISTENERS_CHANGED};
-
-	/**
 	 * Attaches an event handler to the event with the given identifier.
 	 *
 	 * @param {string}
