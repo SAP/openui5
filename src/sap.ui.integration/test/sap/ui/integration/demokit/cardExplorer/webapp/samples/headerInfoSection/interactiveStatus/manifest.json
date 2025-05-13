@@ -1,0 +1,121 @@
+{
+	"_version": "1.74.0",
+	"sap.app": {
+		"id": "card.explorer.header.info.section.card",
+		"type": "card",
+		"title": "Sample of anHeader Info Section",
+		"subTitle": "Sample of a Header Info Section",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Header Info Section",
+				"Analytical",
+				"Card",
+				"Line",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://line-chart"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"title": "Card Header with Info Section",
+			"subTitle": "Information",
+			"infoSection": {
+				"rows": [
+					{
+						"items": [
+							{
+								"type": "Status",
+								"value": "On Track",
+								"state": "Success",
+								"inverted": true,
+								"showStateIcon": true,
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "https://www.sap.com"
+										}
+									}
+								]
+							},
+							{
+								"type": "Status",
+								"value": "OKR Relevant",
+								"state": "None",
+								"inverted": true,
+								"showStateIcon": true,
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "https://www.sap.com"
+										}
+									}
+								]
+							},
+							{
+								"type": "Status",
+								"value": "Goal Template Available",
+								"state": "Information",
+								"inverted": true,
+								"showStateIcon": true,
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "https://www.sap.com"
+										}
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		},
+		"content": {
+			"data": {
+				"json": [
+					{
+						"title": "Item 1",
+						"description": "Description 2"
+					},
+					{
+						"title": "Item 2",
+						"description": "Description 2"
+					},
+					{
+						"title": "Item 3",
+						"description": "Description 3"
+					},
+					{
+						"title": "Item 4",
+						"description": "Description 3"
+					},
+					{
+						"title": "Item 5",
+						"description": "Description 5"
+					}
+				]
+			},
+			"item": {
+				"title": "{title}",
+				"description": "{description}"
+			},
+			"maxItems": 5
+		}
+	}
+}

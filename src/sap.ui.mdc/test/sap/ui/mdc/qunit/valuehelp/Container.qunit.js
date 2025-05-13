@@ -93,9 +93,20 @@ sap.ui.define([
 		assert.notOk(oContainer.isMultiSelect(), "isMultiSelect");
 		assert.notOk(oContainer.isSingleSelect(), "isSingleSelect");
 		assert.notOk(oContainer.getUseAsValueHelp(), "getUseAsValueHelp");
+
+		/**
+		 *  @deprecated As of version 1.137
+		 */
 		assert.notOk(await oContainer.shouldOpenOnClick(), "shouldOpenOnClick");
+		/**
+		 *  @deprecated As of version 1.137
+		 */
 		assert.notOk(await oContainer.shouldOpenOnFocus(), "shouldOpenOnFocus");
+		/**
+		 *  @deprecated As of version 1.137
+		 */
 		assert.notOk(oContainer.shouldOpenOnNavigate(), "shouldOpenOnNavigate");
+
 		assert.notOk(oContainer.isNavigationEnabled(1), "isNavigationEnabled");
 		assert.ok(oContainer.isFocusInHelp(), "isFocusInHelp");
 		assert.notOk(oContainer.isValidationSupported(), "isValidationSupported");
@@ -545,6 +556,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("isTypeaheadSupported", (assert) => {
 
 		const bSupported = oContainer.isTypeaheadSupported();
@@ -652,6 +666,9 @@ sap.ui.define([
 		oChildContainer.destroy();
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnFocus", async (assert) => {
 
 		sinon.stub(ValueHelpDelegate, "shouldOpenOnFocus").returns(Promise.resolve(true));
@@ -666,6 +683,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnClick", async (assert) => {
 
 		sinon.stub(ValueHelpDelegate, "shouldOpenOnClick").returns(Promise.resolve(true));

@@ -19,9 +19,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	const DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("Rendering");
 
@@ -284,5 +284,56 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.oLCI.getContentAnnouncement(), sExpectedAnnouncement, "Content announcement should be correct");
+	});
+
+	QUnit.module("Events");
+
+	QUnit.test("infoPress event", async function (assert) {
+		// arrange
+		const infoPressStub = this.stub();
+		const oLCI = new ListContentItem({
+			info: "Info",
+			hasInfo: true,
+			infoActive: true,
+			infoPress: infoPressStub
+		});
+		oLCI.placeAt(DOM_RENDER_LOCATION);
+		await nextUIUpdate();
+
+		// act
+		oLCI._getObjectStatus().firePress();
+
+		// assert
+		assert.ok(infoPressStub.calledOnce, "infoPress event should be fired");
+
+		// clean up
+		oLCI.destroy();
+	});
+
+	QUnit.module("Info Status");
+
+	QUnit.test("Info status is set correctly", function (assert) {
+		// arrange
+		const oLCI = new ListContentItem({
+			info: "Info",
+			infoState: ValueState.Error,
+			showInfoStateIcon: true,
+			customInfoStatusIcon: "sap-icon://error",
+			infoStateInverted: true,
+			infoActive: true
+		});
+
+		const oInfoStatus = oLCI._getObjectStatus();
+
+		// assert
+		assert.strictEqual(oInfoStatus.getText(), oLCI.getInfo(), "Text should be set correctly");
+		assert.strictEqual(oInfoStatus.getState(), oLCI.getInfoState(), "State should be set correctly");
+		assert.strictEqual(oInfoStatus.getShowStateIcon(), oLCI.getShowInfoStateIcon(), "showStateIcon should be set correctly");
+		assert.strictEqual(oInfoStatus.getCustomIcon(), oLCI.getCustomInfoStatusIcon(), "customIcon should be set correctly");
+		assert.strictEqual(oInfoStatus.getInverted(), oLCI.getInfoStateInverted(), "inverted should be set correctly");
+		assert.strictEqual(oInfoStatus.getActive(), oLCI.getInfoActive(), "infoActive should be set correctly");
+
+		// clean up
+		oLCI.destroy();
 	});
 });

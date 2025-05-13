@@ -29,7 +29,16 @@
 					},
 					"info": {
 						"value": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Exceeded' : 'In Range' }",
-						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }"
+						"state": "{= ${departmentBudget}  > ${departmentBudgetThreshold} ? 'Error' : 'Success' }",
+						"actions": [
+							{
+								"type": "Navigation",
+								"parameters": {
+									"url": "http://sap.com"
+								},
+								"enabled": "{= !!(${departmentBudget} > ${departmentBudgetThreshold}) }"
+							}
+						]
 					}
 				},
 				"maxItems": 3
@@ -663,7 +672,7 @@
 									"showStateIcon": true
 								},
 								{
-									"name": "Success",
+									"name": "Success (Interactive)",
 									"state": "Success",
 									"showStateIcon": true
 								},
@@ -771,7 +780,15 @@
 						{
 							"value": "{attributes/2/name}",
 							"state": "{attributes/2/state}",
-							"showStateIcon": "{attributes/2/showStateIcon}"
+							"showStateIcon": "{attributes/2/showStateIcon}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "http://sap.com"
+									}
+								}
+							]
 						},
 						{
 							"value": "{attributes/3/name}",

@@ -1940,6 +1940,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated As of version 1.137
+	 */
 	QUnit.test("shouldOpenOnNavigate", (assert) => {
 
 		assert.notOk(oMTable.shouldOpenOnNavigate(), "should not open on navigate for single Select");

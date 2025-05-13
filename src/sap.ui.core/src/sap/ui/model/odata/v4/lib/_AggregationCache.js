@@ -52,12 +52,10 @@ sap.ui.define([
 			bHasGrandTotal) {
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
 
-		this.oCountPromise = undefined;
 		this.aElements = [];
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;
 		this.aElements.$created = 0; // required for _Cache#drillDown (see _Cache.from$skip)
-		this.oGrandTotalPromise = undefined;
 		// Whether this cache is a unified cache, using oFirstLevel with ExpandLevels instead of
 		// separate group level caches
 		this.bUnifiedCache = oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
@@ -686,6 +684,7 @@ sap.ui.define([
 		this.sToString = this.getDownloadUrl("");
 
 		const aAdditionalRowHandlers = [];
+		this.oCountPromise = undefined;
 		if (mQueryOptions.$count) {
 			if (oAggregation.hierarchyQualifier) {
 				let fnResolve;
@@ -704,14 +703,14 @@ sap.ui.define([
 				});
 			}
 		}
-		if (bHasGrandTotal) {
-			this.oGrandTotalPromise = new SyncPromise((resolve) => {
+		this.oGrandTotalPromise = bHasGrandTotal
+			? new SyncPromise((resolve) => {
 				aAdditionalRowHandlers.push((oGrandTotal) => {
 					_AggregationHelper.handleGrandTotal(oAggregation, oGrandTotal);
 					resolve(oGrandTotal);
 				});
-			});
-		}
+			})
+			: undefined;
 
 		const bHasConcatHelper = aAdditionalRowHandlers.length > 0;
 		this.oFirstLevel = this.createGroupLevelCache(null, bHasConcatHelper);
@@ -2389,6 +2388,7 @@ sap.ui.define([
 		if (sGroupId) { // sGroupId means we are in a side-effects refresh
 			this.oBackup.oCountPromise = this.oCountPromise;
 			this.oBackup.oFirstLevel = this.oFirstLevel;
+			this.oBackup.oGrandTotalPromise = this.oGrandTotalPromise;
 			this.oBackup.bUnifiedCache = this.bUnifiedCache;
 			this.bUnifiedCache = true;
 		} else {
@@ -2396,7 +2396,8 @@ sap.ui.define([
 		}
 		oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 
-		this.doReset(oAggregation, mQueryOptions, !!this.oGrandTotalPromise);
+		this.doReset(oAggregation, mQueryOptions,
+			_AggregationHelper.hasGrandTotal(oAggregation.aggregate));
 	};
 
 	/**
@@ -2416,6 +2417,7 @@ sap.ui.define([
 		if (bReally) {
 			this.oCountPromise = this.oBackup.oCountPromise;
 			this.oFirstLevel = this.oBackup.oFirstLevel;
+			this.oGrandTotalPromise = this.oBackup.oGrandTotalPromise;
 			this.bUnifiedCache = this.oBackup.bUnifiedCache;
 		}
 		// "super" call (like @borrows ...)

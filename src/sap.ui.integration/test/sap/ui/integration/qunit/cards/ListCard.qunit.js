@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/MemoryLeakCheck",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/test/utils/nextUIUpdate",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/genericTests/actionEnablementTests"
 ], function (
 	AvatarColor,
 	Library,
@@ -21,7 +22,8 @@ sap.ui.define([
 	MemoryLeakCheck,
 	QUnitUtils,
 	nextUIUpdate,
-	nextCardReadyEvent
+	nextCardReadyEvent,
+	actionEnablementTests
 ) {
 	"use strict";
 
@@ -807,6 +809,76 @@ sap.ui.define([
 			}
 		}
 	};
+
+	actionEnablementTests("Info Status in List Card Item", {
+		manifest: {
+			"sap.app": {
+				"id": "card.list.statusActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Card Title"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Product 1"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"info": {
+							"value": "Status"
+						}
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/content/item/info",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
+
+	actionEnablementTests("List Card Item Attribute", {
+		manifest: {
+			"sap.app": {
+				"id": "card.list.statusActionsTestInAttribute",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Card Title"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Product 1"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"attributes": [
+							{
+								"value": "Status Attribute"
+							}
+						]
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/content/item/attributes/0",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
 
 	QUnit.module("List Card", {
 		beforeEach: function () {
