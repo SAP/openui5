@@ -324,20 +324,18 @@ sap.ui.define([
 			oEvent.which == KeyCodes.NUMPAD_MINUS ||
 			(oEvent.which == KeyCodes.ARROW_RIGHT && bRtl) ||
 			(oEvent.which == KeyCodes.ARROW_LEFT && !bRtl)) {
-			if (this.collapse()) {
-				oEvent.preventDefault();
-				// prevent ItemNavigation to move the focus to the next/previous item
-				oEvent.stopPropagation();
-			}
+			this.collapse();
+			oEvent.preventDefault();
+			// prevent ItemNavigation to move the focus to the next/previous item
+			oEvent.stopPropagation();
 		} else if (oEvent.which == KeyCodes.NUMPAD_PLUS ||
 			(oEvent.shiftKey && oEvent.which == KeyCodes.PLUS) ||
 			oEvent.which == KeyCodes.ARROW_LEFT && bRtl ||
 			oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl) {
-			if (this.expand()) {
-				oEvent.preventDefault();
-				// prevent ItemNavigation to move the focus to the next/previous item
-				oEvent.stopPropagation();
-			}
+			this.expand();
+			oEvent.preventDefault();
+			// prevent ItemNavigation to move the focus to the next/previous item
+			oEvent.stopPropagation();
 		}
 	};
 
@@ -363,6 +361,7 @@ sap.ui.define([
 		oEvent.setMarked("subItem");
 
 		if (!this.getEnabled() || !this.getAllParentsEnabled()) {
+			oEvent.stopPropagation();
 			return true;
 		}
 
@@ -389,6 +388,10 @@ sap.ui.define([
 			altKey: !!oEvent.altKey,
 			metaKey: !!oEvent.metaKey
 		};
+
+		if (!this.getEnabled()) {
+			return false;
+		}
 
 		if (!this.firePress(oParams)) {
 			oEvent.preventDefault();
@@ -444,7 +447,7 @@ sap.ui.define([
 	 * @returns {boolean} whether the items will be expanded
 	 */
 	NavigationListItemBase.prototype.expand = function () {
-		if (this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
+		if (!this.getEnabled() || this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
 			return false;
 		}
 
@@ -461,7 +464,7 @@ sap.ui.define([
 	 * @returns {boolean} whether the items will be collapsed
 	 */
 	NavigationListItemBase.prototype.collapse = function () {
-		if (!this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
+		if (!this.getEnabled() || !this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
 			return false;
 		}
 

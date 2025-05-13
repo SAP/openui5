@@ -543,7 +543,8 @@ sap.ui.define([
 		});
 
 		this.navigationList.$().find('div.sapTntNLIFirstLevel.sapTntNLIDisabled a').each(function (index, item) {
-			assert.notOk(item.getAttribute('tabindex'), jQuery(item).text() + ' does not have a tab index');
+			assert.equal(item.getAttribute('tabindex'), '-1', jQuery(item).text() + ' has a tab index');
+			assert.ok(item.getAttribute('aria-disabled'), jQuery(item).text() + ' has aria-disabled attribute.');
 		});
 
 		this.navigationList.$().find('li.sapTntNLISecondLevel:not(.sapTntNLIDisabled) a').each(function (index, item) {
@@ -551,7 +552,8 @@ sap.ui.define([
 		});
 
 		this.navigationList.$().find('li.sapTntNLISecondLevel.sapTntNLIDisabled a').each(function (index, item) {
-			assert.ok(item.getAttribute('tabindex') === null, 'Disabled ' + jQuery(item).text() + ' does not have a tab index.');
+			assert.equal(item.getAttribute('tabindex'), '-1', 'Disabled ' + jQuery(item).text() + ' has a tab index.');
+			assert.ok(item.getAttribute('aria-disabled'), jQuery(item).text() + ' has aria-disabled attribute.');
 		});
 	});
 

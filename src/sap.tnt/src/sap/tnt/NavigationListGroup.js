@@ -90,14 +90,12 @@ sap.ui.define([
 		}
 
 		const sSubtreeId = `${this.getId()}-subtree`;
-		if (bEnabled) {
-			oRM.attr("tabindex", "-1")
-				.accessibilityState({
-					role: "treeitem",
-					owns: sSubtreeId,
-					expanded: oNavigationList.getExpanded() && this.getExpanded() ? "true" : "false"
-				});
-		}
+		oRM.attr("tabindex", "-1")
+			.accessibilityState({
+				role: "treeitem",
+				owns: sSubtreeId,
+				expanded: oNavigationList.getExpanded() && this.getExpanded() ? "true" : "false"
+			});
 
 		const sTooltip = this.getTooltip_AsString() || this.getText();
 		if (sTooltip) {
@@ -167,7 +165,7 @@ sap.ui.define([
 		const oFocusRef = this.getFocusDomRef(),
 			aDomRefs = this.getItems().flatMap((item) => item._getFocusDomRefs());
 
-		if (!this.getEnabled() || !this.getVisible()) {
+		if (!this.getVisible()) {
 			return [];
 		}
 

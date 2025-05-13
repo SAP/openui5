@@ -215,6 +215,10 @@ sap.ui.define([
 	 * @private
 	 */
 	NavigationListMenuItem.prototype.onclick = function (oEvent) {
+		if (!this.getEnabled()) {
+			return;
+		}
+
 		if (!this._navItem._firePress(oEvent, this._navItem)) {
 			return;
 		}
