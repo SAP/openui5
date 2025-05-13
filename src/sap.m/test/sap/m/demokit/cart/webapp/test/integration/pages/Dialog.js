@@ -1,24 +1,25 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./Common",
-	"sap/ui/test/actions/Press"
+	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/I18NText"
 ], function (
 	Opa5,
-	Common,
-	Press) {
+	Press,
+	I18NText) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheDialog : {
-			baseClass: Common,
 			actions : {
 
 				iPressDeleteButtonOnTheConfirmationDialog : function () {
 					return this.waitFor({
 							controlType : "sap.m.Button",
-							matchers: function(oControl){
-								return this.I18NTextExtended(oControl, "MSGBOX_DELETE", "text", "sap.m");
-							}.bind(this),
+							matchers: {
+								properties : {
+									text : "Delete"
+								}
+							},
 							actions : new Press(),
 							errorMessage : "The delete button could not be pressed"
 						}
@@ -27,9 +28,11 @@ sap.ui.define([
 				iPressCancelOnTheConfirmationDialog : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: function(oControl){
-							return this.I18NTextExtended(oControl, "MSGBOX_CANCEL", "text", "sap.m");
-						}.bind(this),
+						matchers: {
+							properties : {
+								text : "Cancel"
+							}
+						},
 						actions : new Press(),
 						errorMessage : "The cancel button could not be pressed"
 					});
@@ -41,9 +44,11 @@ sap.ui.define([
 				iShouldBeTakenToTheConfirmationDialog : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: function(oControl){
-							return this.I18NTextExtended(oControl, "MSGBOX_DELETE", "text", "sap.m");
-						}.bind(this),
+						matchers: {
+							properties : {
+								text : "Delete"
+							}
+						},
 						success : function (aControl) {
 							Opa5.assert.ok(
 								aControl,

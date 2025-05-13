@@ -42,51 +42,51 @@ sap.ui.define([
 
 	QUnit.module("totalPrice");
 
-	function totalPriceTestCase(assert, oProducts, sExpectedText) {
+	const totalPriceTestCase = async (assert, oProducts, sExpectedText) => {
 
 		//Act
 		var oControllerStub = {
-			getResourceBundle: function () {
+			requestResourceBundle: function () {
 				return new FakeI18nModel({
-					"cartTotalPrice": "Foo: {0}"
+					"cartTotalPrice": "Foo: {0} {1}"
 				}).getResourceBundle();
 			}
 		};
 		var fnStubbedFormatter = formatter.totalPrice.bind(oControllerStub);
-		var sText = fnStubbedFormatter(oProducts);
+		var sText = await fnStubbedFormatter(oProducts);
 
 		//Assert
 		assert.strictEqual(sText, sExpectedText, "Correct total text was assigned");
-	}
+	};
 
-	QUnit.test("Should multiply the price with the quantity for  1 product", function (assert) {
+	QUnit.test("Should multiply the price with the quantity for 1 product", async function (assert) {
 		var oProducts = {
 			1: {Price: 123, Quantity: 2}
 		};
-		totalPriceTestCase.call(this, assert, oProducts, "Foo: 246,00");
+		await totalPriceTestCase(assert, oProducts, "Foo: 246,00 EUR");
 	});
 
-	QUnit.test("Should format a quantity of 0 to a total of zero for one product", function (assert) {
+	QUnit.test("Should format a quantity of 0 to a total of zero for one product", async function (assert) {
 		var oProducts = {
 			1: {Price: 123, Quantity: 0}
 		};
-		totalPriceTestCase.call(this, assert, oProducts, "Foo: 0,00");
+		await totalPriceTestCase(assert, oProducts, "Foo: 0,00 EUR");
 	});
 
-	QUnit.test("Should format two products with quantities and digits to the correct price", function (assert) {
+	QUnit.test("Should format two products with quantities and digits to the correct price", async function (assert) {
 		var oProducts = {
 			1: {Price: 123.45, Quantity: 1},
 			2: {Price: 456.78, Quantity: 2}
 		};
-		totalPriceTestCase.call(this, assert, oProducts, "Foo: 1.037,01");
+		await totalPriceTestCase(assert, oProducts, "Foo: 1.037,01 EUR");
 	});
 
 	QUnit.module("statusText");
-	function statusTextTestCase(assert, sStatus, sExpectedText) {
+	const statusTextTestCase = async (assert, sStatus, sExpectedText) => {
 
 		//Act
 		var oControllerStub = {
-			getResourceBundle: function () {
+			requestResourceBundle: function () {
 				return new FakeI18nModel({
 					"statusA": "1",
 					"statusO": "2",
@@ -95,27 +95,27 @@ sap.ui.define([
 			}
 		};
 		var fnStubbedFormatter = formatter.statusText.bind(oControllerStub);
-		var sText = fnStubbedFormatter(sStatus);
+		var sText = await fnStubbedFormatter(sStatus);
 
 		//Assert
 		assert.strictEqual(sText, sExpectedText, "Correct text was assigned");
-	}
+	};
 
-	QUnit.test("Should provide the status text 'statusA' for products with status A", function (assert) {
-		statusTextTestCase.call(this, assert, "A", "1");
+	QUnit.test("Should provide the status text 'statusA' for products with status A", async function (assert) {
+		await statusTextTestCase( assert, "A", "1");
 	});
 
-	QUnit.test("Should provide the status text 'statusO' for products with status O", function (assert) {
-		statusTextTestCase.call(this, assert, "O", "2");
+	QUnit.test("Should provide the status text 'statusO' for products with status O", async function (assert) {
+		await statusTextTestCase(assert, "O", "2");
 	});
 
-	QUnit.test("Should provide the status text 'statusD' for products with status D", function (assert) {
-		statusTextTestCase.call(this, assert, "D", "3");
+	QUnit.test("Should provide the status text 'statusD' for products with status D", async function (assert) {
+		await statusTextTestCase(assert, "D", "3");
 	});
 
-	QUnit.test("Should provide the original input for all other values", function (assert) {
-		statusTextTestCase.call(this, assert, "foo", "foo");
-		statusTextTestCase.call(this, assert, "", "");
+	QUnit.test("Should provide the original input for all other values", async function (assert) {
+		await statusTextTestCase(assert, "foo", "foo");
+		await statusTextTestCase(assert, "", "");
 	});
 
 	QUnit.module("statusState");
