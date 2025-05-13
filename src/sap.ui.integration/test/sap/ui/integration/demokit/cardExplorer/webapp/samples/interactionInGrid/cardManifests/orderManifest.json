@@ -1,9 +1,9 @@
 {
 	"sap.app": {
-		"id": "card.explorer.actions.wholeCardInteraction",
+		"id": "card.explorer.interactionInGrid.wholeCardInteraction",
 		"type": "card",
-		"title": "Sample of a Bite Card",
-		"subTitle": "Sample of a Bite Card",
+		"title": "Sample of a Whole Card Interaction",
+		"subTitle": "Sample of a Whole Card Interaction",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -15,7 +15,8 @@
 				"Object",
 				"Card",
 				"Sample",
-				"Bite"
+				"Bite",
+				"Grid"
 			]
 		}
 	},
@@ -31,7 +32,7 @@
 			{
 				"type": "ShowCard",
 				"parameters": {
-					"manifest": "./detailsManifest.json",
+					"manifest": "./orderDetailsManifest.json",
 					"parameters": {
 						"orderId": "{parameters>/orderId/value}"
 					},
@@ -70,7 +71,7 @@
 			"icon": {
 				"src": "sap-icon://contacts"
 			},
-			"title": "Details For Order {parameters>/orderId/value}",
+			"title": "Order {parameters>/orderId/value}",
 			"subTitle": "Press card to show details"
 		},
 		"content": {
@@ -80,6 +81,14 @@
 						{
 							"label": "Country",
 							"value": "{ShipCountry}"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "City",
+							"value": "{ShipCity}"
 						}
 					]
 				},
