@@ -4,21 +4,23 @@
 	<title>Integration tests for OData V4 Tutorial</title>
 	<meta charset="UTF-8">
 
+	<base href="../../../../../../../../../../../">
+
 	<script id="sap-ui-bootstrap"
-			src="../../../../../../../../../../../resources/sap-ui-core.js"
+			src="resources/sap-ui-core.js"
 			data-sap-ui-resourceroots='{
-					"sap.ui.core.tutorial.odatav4": "../../"
-				}'
+				"sap.ui.core.tutorial.odatav4": "test-resources/sap/ui/core/demokit/tutorial/odatav4/08/webapp"
+			}'
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-async="true">
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="../../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.css">
+	<link rel="stylesheet" type="text/css" href="test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css">
 
-	<script src="../../../../../../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
-	<script src="../../../../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.js"></script>
+	<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
 
-	<script src="opaTests.qunit.js"></script>
+	<script src="test-resources/sap/ui/core/demokit/tutorial/odatav4/08/webapp/test/integration/opaTests.qunit.js"></script>
 </head>
 <body>
 	<div id="qunit"></div>
