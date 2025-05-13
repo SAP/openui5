@@ -5,11 +5,13 @@
 sap.ui.define([
 	'sap/ui/core/Renderer',
 	"sap/ui/util/defaultLinkTypes",
-	'sap/m/MenuItemRenderer'
+	'sap/m/MenuItemRenderer',
+	'sap/tnt/NavigationListItem'
 ], function(
 	Renderer,
 	defaultLinkTypes,
-	MenuItemRenderer
+	MenuItemRenderer,
+	NavigationListItem
 ) {
 	"use strict";
 
@@ -103,6 +105,11 @@ sap.ui.define([
 		if (sTarget) {
 			oRm.attr("target", sTarget)
 				.attr("rel", defaultLinkTypes("", sTarget));
+		}
+
+		if (sHref && sTarget === "_blank") {
+			const oInvisibleText = NavigationListItem._getInvisibleText();
+			oRm.attr("aria-describedby", oInvisibleText.getId());
 		}
 
 		oRm.openEnd();

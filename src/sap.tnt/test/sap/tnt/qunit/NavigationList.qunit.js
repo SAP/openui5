@@ -297,6 +297,7 @@ sap.ui.define([
 				}),
 				new NavigationListItem({
 					text: 'External Link',
+					id: 'externalLinkItem',
 					selectable: false,
 					target: "_blank",
 					href: "https://sap.com",
@@ -682,6 +683,16 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 
 		assert.strictEqual(this.navigationList.getItems()[1].getDomRef().querySelector("li a").getAttribute("aria-haspopup"), null, "aria-haspopup is not set");
+
+		//aria-describedby for external links
+		const sExpectedAriaRoleDescribedby = Library.getResourceBundleFor("sap.tnt")
+			.getText("NAVIGATION_LIST_EXTERNAL_LINK_DESCRIPTION");
+
+		const oExternalLinkItemRef = this.navigationList.getDomRef().querySelector("#externalLinkItem a");
+		assert.ok(oExternalLinkItemRef.getAttribute("aria-describedby"), "aria-describedby is set");
+		const oInvisibleTextId = oExternalLinkItemRef.getAttribute("aria-describedby");
+		const oInvisibleTextRef = document.getElementById(oInvisibleTextId);
+		assert.strictEqual(oInvisibleTextRef.innerText, sExpectedAriaRoleDescribedby, "aria-describedby is set to the correct value");
 
 		this.navigationList.setExpanded(false);
 		await nextUIUpdate(this.clock);
