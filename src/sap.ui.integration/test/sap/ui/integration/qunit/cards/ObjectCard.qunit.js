@@ -1081,6 +1081,9 @@ sap.ui.define([
 			}
 		},
 		partUnderTestPath: "/sap.card/content/groups/0/items/0",
+		getActionControl: (oCard) => {
+			return oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[0];
+		},
 		DOM_RENDER_LOCATION,
 		QUnit,
 		sinon

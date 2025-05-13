@@ -577,7 +577,39 @@ sap.ui.define([
 		}
 	};
 
-	actionEnablementTests("Status in Table Card", {
+	actionEnablementTests("Text Cell in Table Card", {
+		manifest: {
+			"sap.app": {
+				"type": "card",
+				"id": "card.test.actions.card14"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Card Title"
+				},
+				"content": {
+					"data": {
+						"json": [{ }]
+					},
+					"row": {
+						"columns": [{
+							"value": "Text"
+						}]
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/content/row/columns/0",
+		getActionControl: (oCard) => {
+			return oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+		},
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
+
+	actionEnablementTests("Status Cell in Table Card", {
 		manifest: {
 			"sap.app": {
 				"id": "card.tableCard.statusActionsTest",
@@ -589,6 +621,9 @@ sap.ui.define([
 					"title": "Card Title"
 				},
 				"content": {
+					"data": {
+						"json": [{ }]
+					},
 					"row": {
 						"columns": [{
 							"value": "Status",
@@ -599,6 +634,9 @@ sap.ui.define([
 			}
 		},
 		partUnderTestPath: "/sap.card/content/row/columns/0",
+		getActionControl: (oCard) => {
+			return oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
+		},
 		DOM_RENDER_LOCATION,
 		QUnit,
 		sinon

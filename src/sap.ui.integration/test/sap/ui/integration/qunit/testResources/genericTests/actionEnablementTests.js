@@ -20,7 +20,9 @@ sap.ui.define([
 	return (moduleName, {
 		manifest,
 		partUnderTestPath,
+		getActionControl,
 		DOM_RENDER_LOCATION,
+		skipEnabledTests,
 		QUnit,
 		sinon
 	}) => {
@@ -62,10 +64,14 @@ sap.ui.define([
 
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
-			const { actionControl, enabledPropertyName, enabledPropertyValue, eventName } = oAttachActionSpy.firstCall.args[0];
+
+			const { enabledPropertyName = "enabled", enabledPropertyValue, eventName } = oAttachActionSpy.firstCall.args[0];
+			const actionControl = getActionControl(this.oCard);
 
 			// Assert
-			assert.strictEqual(actionControl.getMetadata().getProperty(enabledPropertyName).get(actionControl), enabledPropertyValue, "Enabled property should be correctly set");
+			if (!skipEnabledTests) {
+				assert.strictEqual(actionControl.getMetadata().getProperty(enabledPropertyName).get(actionControl), enabledPropertyValue, `Enabled property "${enabledPropertyName}" should be correctly set`);
+			}
 
 			// Act
 			actionControl.fireEvent(eventName);
@@ -81,7 +87,7 @@ sap.ui.define([
 			oFireActionSpy.restore();
 		});
 
-		QUnit.test("Enabled property of action set to 'false'", async function (assert) {
+		QUnit[skipEnabledTests ? "skip" : "test"]("Enabled property of action set to 'false'", async function (assert) {
 			// Arrange
 			const oAttachActionSpy = sinon.spy(CardActions.prototype, "_attachAction");
 			const oManifest = deepClone(manifest);
@@ -103,16 +109,17 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			const { actionControl, enabledPropertyName, disabledPropertyValue } = oAttachActionSpy.firstCall.args[0];
+			const { enabledPropertyName = "enabled", disabledPropertyValue } = oAttachActionSpy.firstCall.args[0];
+			const actionControl = getActionControl(this.oCard);
 
 			// Assert
-			assert.strictEqual(actionControl.getMetadata().getProperty(enabledPropertyName).get(actionControl), disabledPropertyValue, "Enabled property should be correctly set");
+			assert.strictEqual(actionControl.getMetadata().getProperty(enabledPropertyName).get(actionControl), disabledPropertyValue, `Enabled property "${enabledPropertyName}" should be correctly set`);
 
 			// Clean up
 			oAttachActionSpy.restore();
 		});
 
-		QUnit.test("Enabled property of action set to 'false' with binding", async function (assert) {
+		QUnit[skipEnabledTests ? "skip" : "test"]("Enabled property of action set to 'false' with binding", async function (assert) {
 			// Arrange
 			const oAttachActionSpy = sinon.spy(CardActions.prototype, "_attachAction");
 			const oManifest = deepClone(manifest);
@@ -144,10 +151,11 @@ sap.ui.define([
 			await nextCardReadyEvent(this.oCard);
 			await nextUIUpdate();
 
-			const { actionControl, enabledPropertyName, disabledPropertyValue } = oAttachActionSpy.firstCall.args[0];
+			const { enabledPropertyName = "enabled", disabledPropertyValue } = oAttachActionSpy.firstCall.args[0];
+			const actionControl = getActionControl(this.oCard);
 
 			// Assert
-			assert.strictEqual(actionControl.getMetadata().getProperty(enabledPropertyName).get(actionControl), disabledPropertyValue, "Enabled property should be correctly set");
+			assert.strictEqual(actionControl.getMetadata().getProperty(enabledPropertyName).get(actionControl), disabledPropertyValue, `Enabled property "${enabledPropertyName}" should be correctly set`);
 
 			// Clean up
 			oAttachActionSpy.restore();

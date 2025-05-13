@@ -1,22 +1,80 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/TimelineContent",
 	"sap/ui/integration/widgets/Card",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/genericTests/actionEnablementTests"
 ], function (
 	Library,
 	TimelineContent,
 	Card,
-	nextCardReadyEvent
+	nextCardReadyEvent,
+	actionEnablementTests
 ) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const oRb = Library.getResourceBundleFor("sap.ui.integration");
 
 	return Library.load("sap.suite.ui.commons").then(function () {
+		actionEnablementTests("TimelineCard", {
+			manifest: {
+				"sap.app": {
+					"id": "test.card.actions.card.timeline",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Timeline",
+					"header": {
+						"title": "Card Title"
+					},
+					"content": {
+						"data": {
+							"json": [{
+								"Title": "Weekly sync: Marketplace / Design Stream",
+								"Description": "MRR WDF18 C3.2(GLASSBOX)",
+								"Time": "2021-10-25T10:00:00.000Z"
+							}]
+						},
+						"item": {
+							"dateTime": {
+								"value": "{Time}"
+							},
+							"description": {
+								"value": "{Description}"
+							},
+							"title": {
+								"value": "{Title}"
+							}
+						}
+					}
+				}
+			},
+			partUnderTestPath: "/sap.card/content/item",
+			getActionControl: (oCard) => {
+				return oCard.getCardContent().getInnerList().getContent()[0];
+			},
+			skipEnabledTests: true,
+			DOM_RENDER_LOCATION,
+			QUnit,
+			sinon
+		});
+
+		QUnit.module("Navigation Action - Timeline Content", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
 		QUnit.module("Timeline Card", {
 			beforeEach: function () {
 				this.oTimelineContent = new TimelineContent();

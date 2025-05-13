@@ -34,6 +34,9 @@ sap.ui.define([
 			}
 		},
 		partUnderTestPath: "/sap.card/header",
+		getActionControl: (oCard) => {
+			return oCard.getCardHeader();
+		},
 		DOM_RENDER_LOCATION,
 		QUnit,
 		sinon
@@ -66,6 +69,9 @@ sap.ui.define([
 			}
 		},
 		partUnderTestPath: "/sap.card/header/infoSection/rows/0/items/0",
+		getActionControl: (oCard) => {
+			return oCard.getCardHeader().getInfoSection()[0].getItems()[0];
+		},
 		DOM_RENDER_LOCATION,
 		QUnit,
 		sinon
