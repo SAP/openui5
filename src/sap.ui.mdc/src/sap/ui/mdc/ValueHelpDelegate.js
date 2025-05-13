@@ -101,6 +101,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
 	 * @since 1.110.0
 	 * @public
+	 * @deprecated As of version 1.137, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.showTypeahead = function (oValueHelp, oContent) {
 		if (Device.system.phone) {
@@ -432,39 +433,12 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
 	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sRequestShowContainerReason Reason for the request
 	 * @returns {Promise<boolean>} <code>true</code>, if the value help is to be triggered
-	 * @private
-	 * @ui5-restricted sap.ui.mdc, sap.fe
+	 * @protected
 	 * @since 1.136
 	 */
 	ValueHelpDelegate.requestShowContainer = async function (oValueHelp, oContainer, sRequestShowContainerReason) {
-		if (sRequestShowContainerReason === RequestShowContainerReason.Tap) {
-			return !!(await this.shouldOpenOnClick?.(oValueHelp, oContainer));
-		}
-
-		if (sRequestShowContainerReason === RequestShowContainerReason.Typing) {
-			await oValueHelp.retrieveDelegateContent(oContainer);
-			return !!(await oContainer.isTypeaheadSupported());
-		}
-
-		if (sRequestShowContainerReason === RequestShowContainerReason.Filter) {
-			const [oContent] = oContainer?.getContent() || [];
-			return !!(await this.showTypeahead?.(oValueHelp, oContent));
-		}
-
-		if (sRequestShowContainerReason === RequestShowContainerReason.Focus) {
-			return !!(await this.shouldOpenOnFocus?.(oValueHelp, oContainer));
-		}
-
-		if (sRequestShowContainerReason === RequestShowContainerReason.Navigate) {
-			await oValueHelp.retrieveDelegateContent(oContainer); // preload potentially necessary content
-			return !!(await oContainer.shouldOpenOnNavigate());
-		}
-
-		if (sRequestShowContainerReason === RequestShowContainerReason.ValueHelpRequest) {
-			return oContainer.isDialog();
-		}
-
-		return false;
+		const [RequestShowContainerDefault] = await loadModules("sap/ui/mdc/valuehelp/RequestShowContainerDefault");
+		return (await RequestShowContainerDefault[sRequestShowContainerReason]?.call(this, oValueHelp, oContainer)) || false;
 	};
 
 	/**
@@ -478,6 +452,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user focuses on the connected field control
 	 * @public
 	 * @since 1.121.0
+	 * @deprecated As of version 1.137, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.shouldOpenOnFocus = function (oValueHelp, oContainer) {
 		const bShouldOpenOnFocus = false;
@@ -496,6 +471,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} If <code>true</code>, the value help is opened when user clicks into the connected field control
 	 * @public
 	 * @since 1.121.0
+	 * @deprecated As of version 1.137, replaced by {@link module:sap/ui/mdc/ValueHelpDelegate.requestShowContainer}.
 	 */
 	ValueHelpDelegate.shouldOpenOnClick = function (oValueHelp, oContainer) {
 		let bShouldOpenOnClick = false;

@@ -6,7 +6,8 @@
             "startingFolderPath": "./src/",
             "sourceFilters": [
                 "*/src/**/messagebundle.properties",
-                "*/src/**/i18n.properties"
+                "*/src/**/i18n.properties",
+                "*/src/**/i18n/interaction.xml"
             ],
             "excludedSourceFilters": [
                 "sap.ui.fl/src/sap/ui/fl/support/apps/contentbrowser/i18n/i18n.properties",

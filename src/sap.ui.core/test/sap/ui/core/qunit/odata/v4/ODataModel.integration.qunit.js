@@ -27844,7 +27844,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: A table with aggregation and visual grouping where a leaf is selected and thus
 	// kept alive, even when its parent is collapsed/expanded and the binding is refreshed. Do it
-	// with and without a leaf count.
+	// with and without a leaf count. In the end, turn off leaf count and turn on grand total; this
+	// resets the cache due to the kept-alive element and must work fine.
 	// JIRA: CPOUI5ODATAV4-2969
 	// SNOW: DINC0463228
 	[false, true].forEach((bCount) => {
@@ -27917,6 +27918,8 @@ sap.ui.define([
 			}
 			this.expectChange("selectionCount", "0");
 			this.oView.byId("selectionCount").setBindingContext(oListBinding.getHeaderContext());
+
+			await this.waitForChanges(assert, "set header context");
 
 			const sRegionUrl = "BusinessPartners"
 				+ "?$apply=filter(Country eq 'A')/groupby((Region),aggregate(SalesNumber))"
@@ -28079,6 +28082,46 @@ sap.ui.define([
 				Region : "A1",
 				SalesNumber : 31 // updated
 			});
+
+			if (!bCount) {
+				return; // already off
+			}
+
+			this.expectRequest("BusinessPartners?$apply=concat(aggregate(SalesNumber)"
+					+ ",groupby((Country),aggregate(SalesNumber))"
+						+ "/concat(aggregate($count as UI5__count),top(2)))", {
+					value : [
+						{SalesNumber : 1234},
+						{UI5__count : "26"},
+						{Country : "A", SalesNumber : 100},
+						{Country : "B", SalesNumber : 200}
+					]
+				})
+				.expectChange("count", null)
+				.expectChange("isSelected", [,, undefined])
+				.expectChange("isExpanded", [, false, false])
+				.expectChange("isTotal", [, true, true])
+				.expectChange("level", [0, 1, 1])
+				.expectChange("country", [null,, "B"])
+				.expectChange("region", [, null, null])
+				.expectChange("salesNumber", ["1,234", "100", "200"]);
+			this.oLogMock.expects("error").withExactArgs("Failed to drill-down into $count, "
+				+ "invalid segment: $count",
+				oListBinding.getDownloadUrl(),
+				"sap.ui.model.odata.v4.lib._Cache");
+
+			oListBinding.suspend();
+			// code under test
+			oListBinding.changeParameters({$count : false});
+			const oAggregation = oListBinding.getAggregation();
+			oAggregation.aggregate.SalesNumber.grandTotal = true;
+			// code under test
+			oListBinding.setAggregation(oAggregation);
+
+			await Promise.all([
+				oListBinding.resumeAsync(),
+				this.waitForChanges(assert, "turn off leaf count, turn on grand total")
+			]);
 		});
 	});
 
@@ -28086,7 +28129,8 @@ sap.ui.define([
 	// Scenario: A table with aggregation and visual grouping where a leaf is selected and thus
 	// kept alive, even when its parent is collapsed/expanded and the binding is refreshed. Do it
 	// with and without a leaf count, but always with a grand total. See that sorting also works
-	// fine (same should hold for filter/search).
+	// fine (same should hold for filter/search). In the end, turn on leaf count and turn off grand
+	// total; this resets the cache due to the kept-alive element and must work fine.
 	// JIRA: CPOUI5ODATAV4-2969
 	// SNOW: DINC0463228
 	[false, true].forEach((bCount) => {
@@ -28161,6 +28205,8 @@ sap.ui.define([
 			}
 			this.expectChange("selectionCount", "0");
 			this.oView.byId("selectionCount").setBindingContext(oListBinding.getHeaderContext());
+
+			await this.waitForChanges(assert, "set header context");
 
 			const sRegionUrl = "BusinessPartners"
 				+ "?$apply=filter(Country eq 'A')/groupby((Region),aggregate(SalesNumber))"
@@ -28364,6 +28410,48 @@ sap.ui.define([
 				Region : "A1",
 				SalesNumber : 101
 			});
+
+			if (bCount) {
+				return; // already on
+			}
+
+			this.expectRequest("BusinessPartners?$apply=concat("
+					+ "groupby((Country,Region))/aggregate($count as UI5__leaves)"
+					+ ",groupby((Country),aggregate(SalesNumber))/orderby(Country)"
+						+ "/concat(aggregate($count as UI5__count),top(3)))", {
+					value : [
+						{UI5__leaves : "321"},
+						{UI5__count : "26"},
+						{Country : "A", SalesNumber : 100},
+						{Country : "B", SalesNumber : 200},
+						{Country : "C", SalesNumber : 300}
+					]
+				})
+				.expectChange("isSelected", [,, undefined])
+				.expectChange("isExpanded", [false, false, false])
+				.expectChange("isTotal", [,, true])
+				.expectChange("level", [1,, 1])
+				.expectChange("country", ["A", "B", "C"])
+				.expectChange("region", [,, null])
+				.expectChange("salesNumber", ["100", "200", "300"]);
+
+			oListBinding.suspend();
+			// code under test
+			oListBinding.changeParameters({$count : true});
+			const oAggregation = oListBinding.getAggregation();
+			oAggregation.aggregate.SalesNumber.grandTotal = false;
+			// code under test
+			oListBinding.setAggregation(oAggregation);
+
+			await Promise.all([
+				oListBinding.resumeAsync(),
+				this.waitForChanges(assert, "turn on leaf count, turn off grand total")
+			]);
+
+			this.expectChange("count", "321");
+			this.oView.byId("count").setBindingContext(oListBinding.getHeaderContext());
+
+			await this.waitForChanges(assert, "set header context");
 		});
 	});
 

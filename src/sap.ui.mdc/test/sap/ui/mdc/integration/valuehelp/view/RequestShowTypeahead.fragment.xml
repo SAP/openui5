@@ -57,15 +57,15 @@
 
 	<Title class="sapUiSmallMarginBottom" level="H3" text="How to control the Typeahead via Delegate" />
 	<Toolbar>
-		<Label text="Field with Typeahead-ValueHelp:" labelFor="fAuthor" />
-
 		<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
 		id="fAuthor"
 		value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"
 		valueHelp="FH1"
 		display="ValueDescription"
 		editMode="Editable"
-		multipleLines="false"/>
+		multipleLines="false"
+		label="TestField"
+/>
 	</Toolbar>
 
 	<FormattedText class="sapUiSmallMarginTopBottom" htmlText="

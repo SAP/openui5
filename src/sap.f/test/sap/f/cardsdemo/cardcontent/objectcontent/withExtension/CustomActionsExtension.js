@@ -8,7 +8,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 
 		oCard.addActionDefinition(new ActionDefinition({
 			type: "Custom",
-			text: "{i18n>reportActionText}",
+			text: "Report action text",
 			enabled: true,
 			press: function (oEvent) {
 				var oReportAction = oEvent.getSource();

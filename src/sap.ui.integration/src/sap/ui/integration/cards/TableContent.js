@@ -409,6 +409,24 @@ sap.ui.define([
 			return oControl;
 		}
 
+		if (oColumn.state) {
+			const oStatus = new ObjectStatus({
+				text: oColumn.value,
+				state: oColumn.state,
+				showStateIcon: oColumn.showStateIcon,
+				customIcon: oColumn.customStateIcon
+			});
+
+			this._oActions.attach({
+				area: ActionArea.ContentItemDetail,
+				actions: oColumn.actions,
+				control: oStatus,
+				enabledPropertyName: "active"
+			});
+
+			return oStatus;
+		}
+
 		if (oColumn.url) {
 			Log.warning("Usage of column property 'url' is deprecated. Use card actions for navigation.", null, "sap.ui.integration.widgets.Card");
 
@@ -435,15 +453,6 @@ sap.ui.define([
 			});
 
 			return oControl;
-		}
-
-		if (oColumn.state) {
-			return new ObjectStatus({
-				text: oColumn.value,
-				state: oColumn.state,
-				showStateIcon: oColumn.showStateIcon,
-				customIcon: oColumn.customStateIcon
-			});
 		}
 
 		if (oColumn.value) {

@@ -139,10 +139,17 @@
 							"showStateIcon": true
 						},
 						{
-							"value": "Information",
+							"value": "Information (Interactive)",
 							"state": "Information",
 							"type": "Status",
-							"showStateIcon": true
+							"showStateIcon": true,
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "https://www.sap.com",
+									"target": "_blank"
+								}
+							}]
 						},
 						{
 							"value": "Information - custom state icon",

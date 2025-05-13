@@ -8,10 +8,6 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/ControlBehavior", 'sap
 
 // shortcut for sap.m.InputType
 var InputType = library.InputType;
-
-var ValueState = coreLibrary.ValueState;
-
-
 /**
  * Input renderer.
  *
@@ -144,8 +140,7 @@ InputRenderer.getAriaDescribedBy = function (oControl) {
 		append(InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP"));
 	}
 
-	if (oControl.getValueStateLinksForAcc().length
-		&& oControl.getValueState() !== ValueState.Error) {
+	if (oControl.getValueStateLinksForAcc().length) {
 		append(oControl.getValueStateLinksShortcutsId());
 	}
 
@@ -172,14 +167,6 @@ InputRenderer.getAccessibilityState = function (oControl) {
 
 	if (bShowSuggestions && oControl.getEditable() && oControl.getEnabled()) {
 		mAccessibilityState["haspopup"] = "dialog";
-	}
-
-	if (oControl.getShowSuggestion()
-		&& oControl.getValueStateLinksForAcc().length
-		&& oControl.getValueState() === ValueState.Error) {
-		mAccessibilityState.errormessage = mAccessibilityState.errormessage
-			? `${mAccessibilityState.errormessage} ${oControl.getValueStateLinksShortcutsId()}`
-			: oControl.getValueStateLinksShortcutsId();
 	}
 
 	return mAccessibilityState;

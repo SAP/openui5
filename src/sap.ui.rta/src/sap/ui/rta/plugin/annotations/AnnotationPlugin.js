@@ -52,9 +52,9 @@ sap.ui.define([
 		}
 	}
 
-	function getActionText(oElementOverlay, oAction, oPropagatingControl) {
+	function getActionText(oElementOverlay, oAction) {
 		const vName = oAction.title;
-		const oElement = oPropagatingControl || oElementOverlay.getElement();
+		const oElement = oElementOverlay.getElement();
 		if (vName) {
 			if (typeof vName === "function") {
 				return vName(oElement);

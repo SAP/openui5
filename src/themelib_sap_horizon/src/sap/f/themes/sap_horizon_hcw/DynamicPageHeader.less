@@ -3,22 +3,23 @@
 /* Horizon High Contrast White theme        */
 /* ======================================== */
 
-// Specific icon for the pin button for the horizon theme
+/* Specific icon for the pin button for the horizon theme */
 @_sap_f_DynamicPageHeader_PinButton_Icon: pushpin-on;
 
 .sapFDynamicPageHeader {
-    &.sapFDynamicPageHeaderSolid,
-    &.sapFDynamicPageHeaderTransparent,
-    &.sapFDynamicPageHeaderTranslucent {
-        background: @sapUiObjectHeaderBackground;
-    }
+
+	&.sapFDynamicPageHeaderSolid,
+	&.sapFDynamicPageHeaderTransparent,
+	&.sapFDynamicPageHeaderTranslucent {
+		background: var(--sapObjectHeader_Background);
+	}
 }
 
 .sapFDynamicPageNavigation .sapFDynamicPageHeader.sapFDynamicPageHeaderWithContent {
 	box-shadow: none;
 }
 
-.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton:before {
+.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton::before {
 	display: none;
 }
 

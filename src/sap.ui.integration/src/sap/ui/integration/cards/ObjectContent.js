@@ -500,7 +500,7 @@ sap.ui.define([
 				oControl = this._createNumericDataItem(oItem, vVisible);
 				break;
 			case "Status":
-				oControl = ObjectStatusFactory.createStatusItem(oItem);
+				oControl = this._createStatusItem(oItem);
 				break;
 			case "IconGroup":
 				oControl = this._createIconGroupItem(oItem, vVisible);
@@ -621,6 +621,19 @@ sap.ui.define([
 		}
 
 		return oVbox;
+	};
+
+	ObjectContent.prototype._createStatusItem = function (oItem) {
+		const oStatus = ObjectStatusFactory.createStatusItem(oItem);
+
+		this._oActions.attach({
+			area: ActionArea.ContentItemDetail,
+			actions: oItem.actions,
+			control: oStatus,
+			enabledPropertyName: "active"
+		});
+
+		return oStatus;
 	};
 
 	ObjectContent.prototype._createTextItem = function (oItem, vVisible, oLabel) {

@@ -1,21 +1,21 @@
 /* ======================================== */
 /* CSS for control sap.f/DynamicPageHeader  */
-/* Horizon theme                            */
+/* Morning Horizon theme                    */
 /* ======================================== */
 
-// Specific icon for the pin button for the horizon theme
+/* Specific icon for the pin button for the horizon theme */
 @_sap_f_DynamicPageHeader_PinButton_Icon: pushpin-on;
 
 .sapFDynamicPageHeader.sapFDynamicPageHeaderSolid,
 .sapFDynamicPageHeader.sapFDynamicPageHeaderTranslucent {
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }
 
 .sapFDynamicPageHeader.sapFDynamicPageHeaderTransparent {
 	background: transparent;
 }
 
-.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton:before {
+.sapFDynamicPageToggleHeaderIndicator:not(.sapUiHidden) + .sapFDynamicPageHeaderPinButton::before {
 	display: none;
 }
 

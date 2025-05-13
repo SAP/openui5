@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/integration/util/DateRangeHelper",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
 	"sap/ui/test/utils/nextUIUpdate",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"qunit/testResources/genericTests/actionEnablementTests"
 ], function(
 	Log,
 	AvatarColor,
@@ -37,7 +38,8 @@ sap.ui.define([
 	DateRangeHelper,
 	MemoryLeakCheck,
 	nextUIUpdate,
-	nextCardReadyEvent
+	nextCardReadyEvent,
+	actionEnablementTests
 ) {
 	"use strict";
 
@@ -1058,6 +1060,33 @@ sap.ui.define([
 			}
 		}
 	};
+
+	actionEnablementTests("Status in NumericHeader", {
+		manifest: {
+			"sap.app": {
+				"id": "card.objectCard.statusActionsTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "Card Title"
+				},
+				"content": {
+					"groups": [{
+						"items": [{
+							"type": "Status",
+							"value": "Status"
+						}]
+					}]
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/content/groups/0/items/0",
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
 
 	QUnit.module("Object Card", {
 		beforeEach: function() {
