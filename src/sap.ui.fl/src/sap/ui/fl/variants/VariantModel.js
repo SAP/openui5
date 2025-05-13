@@ -370,7 +370,7 @@ sap.ui.define([
 	};
 
 	function handleInitialLoadScenario(sVMReference, oVariantManagementControl) {
-		var oVariantChangesForVariant = VariantManagementState.getVariantChangesForVariant({
+		var aVariantChangesForVariant = VariantManagementState.getVariantChangesForVariant({
 			vmReference: sVMReference,
 			reference: this.sFlexReference
 		});
@@ -378,7 +378,7 @@ sap.ui.define([
 		if (
 			oVariantManagementControl.getExecuteOnSelectionForStandardDefault()
 			&& sDefaultVariantReference === sVMReference
-			&& !oVariantChangesForVariant.setExecuteOnSelect
+			&& !aVariantChangesForVariant.some((oVariantChange) => oVariantChange.getChangeType() === "setExecuteOnSelect")
 		) {
 			var oStandardVariant = getVariant(this.oData[sVMReference].variants, sVMReference);
 			// set executeOnSelect in model and State without creating a change
