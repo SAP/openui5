@@ -170,7 +170,11 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 		applyTagAndContextClassFor : function (sContext) {
 			this._applyTag(sContext);
 
-			return this._applyContextClassFor(sContext);
+			if (!this.getRenderer().shouldAddIBarContext?.()) {
+				this.addStyleClass(IBAR_CSS_CLASS + "-CTX");
+			}
+
+			return this._applyContextClassFor && this._applyContextClassFor(sContext);
 		},
 
 		/**
@@ -192,11 +196,6 @@ sap.ui.define(['sap/ui/base/Object', 'sap/m/library', "sap/base/Log"],
 			if (!this.isContextSensitive) {
 				Log.error("The bar control you are using does not implement all the members of the IBar interface", this);
 				return this;
-			}
-
-			//If this class does not gets added by the renderer, add it here
-			if (!this.getRenderer().shouldAddIBarContext()) {
-				this.addStyleClass(IBAR_CSS_CLASS + "-CTX");
 			}
 
 			if (this.isContextSensitive()) {

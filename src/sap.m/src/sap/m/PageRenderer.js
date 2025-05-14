@@ -99,7 +99,9 @@ sap.ui.define(["sap/m/library", "sap/ui/Device"],
 			return;
 		}
 
-		oBarControl._applyContextClassFor(oOptions.context.toLowerCase());
+		if (oBarControl._applyContextClassFor) {
+			oBarControl._applyContextClassFor(oOptions.context.toLowerCase());
+		}
 
 		oBarControl.addStyleClass(oOptions.styleClass || "");
 
