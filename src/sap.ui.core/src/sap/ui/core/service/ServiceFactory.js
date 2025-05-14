@@ -3,10 +3,50 @@
  */
 
 // Provides class sap.ui.core.service.ServiceFactory
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/service/Service', "sap/base/assert"],
-	function(BaseObject, Service, assert) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/service/Service', "sap/base/assert", "sap/base/Log"],
+	function(BaseObject, Service, assert, Log) {
 	"use strict";
 
+	/**
+	 * Creates an anonymous service for the provided structured object with
+	 * service information. It allows to define an anonymous service without
+	 * extending it as follows:
+	 *
+	 * <pre>
+	 *   var oAnonymousService = create({
+	 *
+	 *     init: function() { ... },
+	 *     exit: function() { ... },
+	 *
+	 *     doSomething: function() { ... }
+	 *
+	 *  });
+	 * </pre>
+	 *
+	 * The anonymous service is defined as object literal and must not implement
+	 * members called <code>metadata</code>, <code>constructor</code>,
+	 * <code>getContext</code> or <code>destroy</code>. Those members will be
+	 * ignored and not applied to the service instance. A warning will be
+	 * reported in the log.
+	 *
+	 * @param {object} oServiceInfo Structured object with information about the service
+	 * @return {function} function to create a new anonymous service instance
+	 * @private
+	 */
+	const create = function(oServiceInfo) {
+		var AnonymousService = function AnonymousService(oServiceContext) {
+			for (var sMember in oServiceInfo) {
+				if (!sMember.match(/^(metadata|constructor|getContext|destroy)$/)) {
+					this[sMember] = oServiceInfo[sMember];
+				} else {
+					Log.warning("The member " + sMember + " is not allowed for anonymous service declaration and will be ignored!");
+				}
+			}
+			Service.apply(this, arguments);
+		};
+		AnonymousService.prototype = Object.create(Service.prototype);
+		return AnonymousService;
+	};
 
 	/**
 	 * Creates a service factory.
@@ -97,7 +137,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/service/Service', "sap/base/as
 
 			BaseObject.apply(this);
 
-			var fnService = typeof vService === "object" ? Service.create(vService) : vService;
+			var fnService = typeof vService === "object" ? create(vService) : vService;
 
 			assert(!fnService || fnService && typeof fnService === "function", "The service constructor either should be undefined or a constructor function!");
 

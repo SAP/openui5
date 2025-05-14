@@ -112,53 +112,6 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert", "sap/base/Log"],
 	 */
 
 	/**
-	 * Creates an anonymous service for the provided structured object with
-	 * service information. It allows to define an anonymous service without
-	 * extending it as follows:
-	 * <pre>
-	 * sap.ui.require([
-	 *   "sap/ui/core/service/Service"
-	 * ], function(Service) {
-	 *
-	 *   var oAnonymousService = Service.create({
-	 *
-	 *     init: function() { ... },
-	 *     exit: function() { ... },
-	 *
-	 *     doSomething: function() { ... }
-	 *
-	 *  });
-	 *
-	 * });
-	 * </pre>
-	 *
-	 * The anonymous service is defined as object literal and must not implement
-	 * members called <code>metadata</code>, <code>constructor</code>,
-	 * <code>getContext</code> or <code>destroy</code>. Those members will be
-	 * ignored and not applied to the service instance. A warning will be
-	 * reported in the log.
-	 *
-	 * @param {object} oServiceInfo Structured object with information about the service
-	 * @return {function} function to create a new anonymous service instance
-	 * @private
-	 */
-	Service.create = function(oServiceInfo) {
-		var AnonymousService = function AnonymousService(oServiceContext) {
-			for (var sMember in oServiceInfo) {
-				if (!sMember.match(/^(metadata|constructor|getContext|destroy)$/)) {
-					this[sMember] = oServiceInfo[sMember];
-				} else {
-					Log.warning("The member " + sMember + " is not allowed for anonymous service declaration and will be ignored!");
-				}
-			}
-			Service.apply(this, arguments);
-		};
-		AnonymousService.prototype = Object.create(Service.prototype);
-		return AnonymousService;
-	};
-
-
-	/**
 	 * Returns the public interface of the service. By default, this filters the
 	 * internal functions like <code>getInterface</code>, <code>getContext</code>
 	 * and all other functions starting with "_". Additionally the lifecycle
