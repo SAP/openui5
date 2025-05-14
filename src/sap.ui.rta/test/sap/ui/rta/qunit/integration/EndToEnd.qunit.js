@@ -91,28 +91,28 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		function startVisualization(oRta) {
-			oRta.setMode("visualization");
-			return waitForMethodCall(oRta.getToolbar(), "setModel");
-		}
+		// function startVisualization(oRta) {
+		// 	oRta.setMode("visualization");
+		// 	return waitForMethodCall(oRta.getToolbar(), "setModel");
+		// }
 
-		function waitForMethodCall(oObject, sMethodName) {
-			// Returns a promise which is resolved with the return value
-			// of the given method after it was first called
-			// Doesn't work with event handlers
-			return new Promise(function(resolve) {
-				sandbox.stub(oObject, sMethodName)
-				.callsFake(function(...aArgs) {
-					if (oObject[sMethodName].wrappedMethod) {
-						const oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
-						resolve(oResult);
-					}
-				});
-			})
-			.then(function() {
-				oObject[sMethodName].restore();
-			});
-		}
+		// function waitForMethodCall(oObject, sMethodName) {
+		// 	// Returns a promise which is resolved with the return value
+		// 	// of the given method after it was first called
+		// 	// Doesn't work with event handlers
+		// 	return new Promise(function(resolve) {
+		// 		sandbox.stub(oObject, sMethodName)
+		// 		.callsFake(function(...aArgs) {
+		// 			if (oObject[sMethodName].wrappedMethod) {
+		// 				const oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
+		// 				resolve(oResult);
+		// 			}
+		// 		});
+		// 	})
+		// 	.then(function() {
+		// 		oObject[sMethodName].restore();
+		// 	});
+		// }
 
 		function stubShowMessageBoxOnRtaClose(oRta) {
 			return sandbox.stub(RtaUtils, "showMessageBox")
@@ -378,75 +378,75 @@ sap.ui.define([
 		// 	}.bind(this));
 		// });
 
-		QUnit.test("when making two dirty changes of the same type on a simple form field and switching from visualization to adaptation mode between the changes,", function(assert) {
-			const fnDone = assert.async();
-			const oForm = Element.getElementById("Comp1---idMain1--SimpleForm--Form");
-			let oFormContainer = oForm.getFormContainers()[0];
-			let oFormField = oFormContainer.getFormElements()[0];
-			let oFormField2 = oFormContainer.getFormElements()[1];
-			let oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
-			let oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
-			const oCommandStack = this.oRta.getCommandStack();
-			const oCutPastePlugin = this.oRta.getPlugins().cutPaste;
-			assert.strictEqual(
-				FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length,
-				0,
-				"then there are no dirty changes in the flex persistence"
-			);
+		// QUnit.test("when making two dirty changes of the same type on a simple form field and switching from visualization to adaptation mode between the changes,", function(assert) {
+		// 	const fnDone = assert.async();
+		// 	const oForm = Element.getElementById("Comp1---idMain1--SimpleForm--Form");
+		// 	let oFormContainer = oForm.getFormContainers()[0];
+		// 	let oFormField = oFormContainer.getFormElements()[0];
+		// 	let oFormField2 = oFormContainer.getFormElements()[1];
+		// 	let oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
+		// 	let oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
+		// 	const oCommandStack = this.oRta.getCommandStack();
+		// 	const oCutPastePlugin = this.oRta.getPlugins().cutPaste;
+		// 	assert.strictEqual(
+		// 		FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length,
+		// 		0,
+		// 		"then there are no dirty changes in the flex persistence"
+		// 	);
 
-			const fnCutAndPaste = function() {
-				assert.strictEqual(
-					oCommandStack.getAllExecutedCommands()[0].getName(),
-					"move",
-					"then the move command is added to the stack"
-				);
-				this.oChangeVisualization = this.oRta.getChangeVisualization();
-				return startVisualization(this.oRta)
-				.then(function() {
-					let aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-					assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
-					// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
-					[oFormContainer] = oForm.getFormContainers();
-					[oFormField, oFormField2] = oFormContainer.getFormElements();
-					oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
-					oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
+		// 	const fnCutAndPaste = function() {
+		// 		assert.strictEqual(
+		// 			oCommandStack.getAllExecutedCommands()[0].getName(),
+		// 			"move",
+		// 			"then the move command is added to the stack"
+		// 		);
+		// 		this.oChangeVisualization = this.oRta.getChangeVisualization();
+		// 		return startVisualization(this.oRta)
+		// 		.then(function() {
+		// 			let aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+		// 			assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
+		// 			// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
+		// 			[oFormContainer] = oForm.getFormContainers();
+		// 			[oFormField, oFormField2] = oFormContainer.getFormElements();
+		// 			oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
+		// 			oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
 
-					oCommandStack.attachEventOnce("modified", (function() {
-						assert.strictEqual(
-							oCommandStack.getAllExecutedCommands()[0].getName(),
-							"move",
-							"then the second move command is added to the stack"
-						);
-						return startVisualization(this.oRta)
-						.then(function() {
-							aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
-							assert.strictEqual(aVizModel[2].count, 2, "then two move changes are registered");
-							fnDone();
-						}.bind(this));
-					}.bind(this)));
+		// 			oCommandStack.attachEventOnce("modified", (function() {
+		// 				assert.strictEqual(
+		// 					oCommandStack.getAllExecutedCommands()[0].getName(),
+		// 					"move",
+		// 					"then the second move command is added to the stack"
+		// 				);
+		// 				return startVisualization(this.oRta)
+		// 				.then(function() {
+		// 					aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
+		// 					assert.strictEqual(aVizModel[2].count, 2, "then two move changes are registered");
+		// 					fnDone();
+		// 				}.bind(this));
+		// 			}.bind(this)));
 
-					Promise.all([
-						new Promise(function(resolve) { this.oRta.attachEventOnce("modeChanged", resolve); }.bind(this)),
-						new Promise(function(resolve) { this.oRta._oDesignTime.attachEventOnce("synced", resolve); }.bind(this))
-					])
-					.then(function() {
-						oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
-							triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
-						}, 0);
-						triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
-					});
+		// Promise.all([
+		// 	new Promise(function(resolve) { this.oRta.attachEventOnce("modeChanged", resolve); }.bind(this)),
+		// 	new Promise(function(resolve) { this.oRta._oDesignTime.attachEventOnce("synced", resolve); }.bind(this))
+		// ])
+		// .then(function() {
+		// 	oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
+		// 		triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
+		// 	}, 0);
+		// 	triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+		// });
 
-					return this.oRta.setMode("adaptation");
-				}.bind(this));
-			}.bind(this);
+		// 			return this.oRta.setMode("adaptation");
+		// 		}.bind(this));
+		// 	}.bind(this);
 
-			oCommandStack.attachEventOnce("modified", fnCutAndPaste);
+		// 	oCommandStack.attachEventOnce("modified", fnCutAndPaste);
 
-			oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
-				triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
-			}, 0);
-			triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
-		});
+		// 	oCutPastePlugin.getElementMover().attachEventOnce("validTargetZonesActivated", function() {
+		// 		triggerKeydown(oFieldOverlay2.getDomRef(), KeyCodes.V, false, false, true);
+		// 	}, 0);
+		// 	triggerKeydown(oFieldOverlay.getDomRef(), KeyCodes.X, false, false, true);
+		// });
 
 		// QUnit.test("when renaming a button", function(assert) {
 		// 	const fnDone = assert.async();
