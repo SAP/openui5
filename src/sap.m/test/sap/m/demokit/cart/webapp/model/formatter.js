@@ -31,16 +31,16 @@ sap.ui.define([
 		 * @param {object} oCartEntries current cart entries
 		 * @return {string} string with the total value
 		 */
-		totalPrice: function (oCartEntries) {
-			var oBundle = this.getResourceBundle(),
-				fTotalPrice = 0;
+		totalPrice: async function (oCartEntries) {
+			let fTotalPrice = 0;
 
 			Object.keys(oCartEntries).forEach(function (sProductId) {
 				var oProduct = oCartEntries[sProductId];
 				fTotalPrice += parseFloat(oProduct.Price) * oProduct.Quantity;
 			});
 
-			return oBundle.getText("cartTotalPrice", [formatter.price(fTotalPrice)]);
+			return (await this.requestResourceBundle())
+				.getText("cartTotalPrice", [formatter.price(fTotalPrice), "EUR"]);
 		},
 
 		/**
@@ -48,8 +48,8 @@ sap.ui.define([
 		 * @param {string} sStatus product status
 		 * @return {string} the corresponding text if found or the original value
 		 */
-		statusText: function (sStatus) {
-			var oBundle = this.getResourceBundle();
+		statusText: async function (sStatus) {
+			const oBundle = await this.requestResourceBundle();
 
 			var mStatusText = {
 				"A": oBundle.getText("statusA"),

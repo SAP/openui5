@@ -1,6 +1,5 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./Common",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/AggregationEmpty",
 	"sap/ui/test/matchers/Properties",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/test/actions/Press"
 ], function (
 	Opa5,
-	Common,
 	AggregationFilled,
 	AggregationEmpty,
 	Properties,
@@ -22,7 +20,6 @@ sap.ui.define([
 
 	Opa5.createPageObjects({
 		onTheCart : {
-			baseClass: Common,
 			viewName : "Cart",
 
 			actions : {
@@ -50,9 +47,12 @@ sap.ui.define([
 				iPressOnTheSaveChangesButton : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers: function(oControl){
-							return this.I18NTextExtended(oControl, "cartDoneButtonText", "text");
-						}.bind(this),
+						matchers: {
+							i18NText : {
+								propertyName : "text",
+								key : "cartDoneButtonText"
+							}
+						},
 						actions : new Press(),
 						errorMessage : "The accept button could not be pressed"
 					});
@@ -273,9 +273,13 @@ sap.ui.define([
 				iShouldSeeTheTotalPriceEqualToZero : function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: function(oControl){
-							return this.I18NTextExtended(oControl, "cartTotalPrice", "text", null, ["0,00 EUR"]);
-						}.bind(this),
+						matchers: {
+							i18NText : {
+								propertyName : "text",
+								key : "cartTotalPrice",
+								parameters: ["0,00", "EUR"]
+							}
+						},
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},
@@ -286,9 +290,13 @@ sap.ui.define([
 				iShouldSeeTheTotalPriceUpdated: function () {
 					return this.waitFor({
 						id: "totalPriceText",
-						matchers: function(oControl){
-							return this.I18NTextExtended(oControl, "cartTotalPrice", "text", null, ["250,00 EUR"]);
-						}.bind(this),
+						matchers: {
+							i18NText : {
+								propertyName : "text",
+								key : "cartTotalPrice",
+								parameters: ["250,00", "EUR"]
+							}
+						},
 						success: function () {
 							Opa5.assert.ok(true, "Total price is updated correctly");
 						},

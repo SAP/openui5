@@ -47,7 +47,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 		/**
 		 * Map of event names, that are provided by the MessageProcessor.
 		 */
-		MessageProcessor.M_EVENTS = {
+		const M_EVENTS = {
 			/**
 			 * MessageChange should be fired when the MessageProcessor provides message changes
 			 *
@@ -93,7 +93,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 		 * @public
 		 */
 		MessageProcessor.prototype.attachMessageChange = function(oData, fnFunction, oListener) {
-			this.attachEvent("messageChange", oData, fnFunction, oListener);
+			this.attachEvent(M_EVENTS.messageChange, oData, fnFunction, oListener);
 			return this;
 		};
 
@@ -111,7 +111,7 @@ sap.ui.define(['sap/ui/base/EventProvider', "sap/base/util/uid"],
 		 * @public
 		 */
 		MessageProcessor.prototype.detachMessageChange = function(fnFunction, oListener) {
-			this.detachEvent("messageChange", fnFunction, oListener);
+			this.detachEvent(M_EVENTS.messageChange, fnFunction, oListener);
 			return this;
 		};
 

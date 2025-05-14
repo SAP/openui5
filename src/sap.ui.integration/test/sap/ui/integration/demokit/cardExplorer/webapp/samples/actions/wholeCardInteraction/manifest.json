@@ -70,7 +70,7 @@
 			"icon": {
 				"src": "sap-icon://contacts"
 			},
-			"title": "Address details for {ShipName}",
+			"title": "Details For Order {parameters>/orderId/value}",
 			"subTitle": "Press card to show details"
 		},
 		"content": {
@@ -86,8 +86,8 @@
 				{
 					"items": [
 						{
-							"label": "ID",
-							"value": "{parameters>/orderId/value}"
+							"label": "Name",
+							"value": "{ShipName}"
 						}
 					]
 				}

@@ -84,7 +84,7 @@
 											text="{
 												path : 'cartProducts>/cartEntries',
 												formatter : '.formatter.totalPrice'
-											} EUR"/>
+											}"/>
 									</contentRight>
 								</Bar>
 							</WizardStep>

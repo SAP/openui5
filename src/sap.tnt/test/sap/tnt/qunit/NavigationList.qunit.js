@@ -543,7 +543,8 @@ sap.ui.define([
 		});
 
 		this.navigationList.$().find('div.sapTntNLIFirstLevel.sapTntNLIDisabled a').each(function (index, item) {
-			assert.notOk(item.getAttribute('tabindex'), jQuery(item).text() + ' does not have a tab index');
+			assert.equal(item.getAttribute('tabindex'), '-1', jQuery(item).text() + ' has a tab index');
+			assert.ok(item.getAttribute('aria-disabled'), jQuery(item).text() + ' has aria-disabled attribute.');
 		});
 
 		this.navigationList.$().find('li.sapTntNLISecondLevel:not(.sapTntNLIDisabled) a').each(function (index, item) {
@@ -551,7 +552,8 @@ sap.ui.define([
 		});
 
 		this.navigationList.$().find('li.sapTntNLISecondLevel.sapTntNLIDisabled a').each(function (index, item) {
-			assert.ok(item.getAttribute('tabindex') === null, 'Disabled ' + jQuery(item).text() + ' does not have a tab index.');
+			assert.equal(item.getAttribute('tabindex'), '-1', 'Disabled ' + jQuery(item).text() + ' has a tab index.');
+			assert.ok(item.getAttribute('aria-disabled'), jQuery(item).text() + ' has aria-disabled attribute.');
 		});
 	});
 
@@ -998,6 +1000,30 @@ sap.ui.define([
 		// Assert expanded
 		assert.strictEqual(oItem.getExpanded(), true, "The item expands when right arrow is pressed");
 		assert.ok($focusableElement.is(":focus"), "The item is still focused");
+
+		// Act move focus to child item
+		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_DOWN);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+
+		var focusedElement = document.activeElement;
+
+		QUnitUtils.triggerKeydown(focusedElement, KeyCodes.ARROW_RIGHT);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		var focusedElement2 = document.activeElement;
+
+		assert.strictEqual(focusedElement, focusedElement2, "focus is not moved by pressing right arrow key");
+
+		QUnitUtils.triggerKeydown(focusedElement, KeyCodes.ARROW_LEFT);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		var focusedElement3 = document.activeElement;
+
+		assert.strictEqual(focusedElement2, focusedElement3, "focus is not moved by pressing left arrow key");
 	});
 
 	QUnit.test("Expand/collapse with mouse", async function (assert) {
@@ -1260,6 +1286,34 @@ sap.ui.define([
 		assert.ok(!this.navigationList._oPopover, "should clean popover reference");
 
 		assert.ok(oStub.calledTwice, "2 urls are open");
+
+		QUnitUtils.triggerKeydown($item, KeyCodes.ARROW_RIGHT);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		var $focusedElement = document.activeElement;
+		assert.strictEqual(jQuery(".sapTntNLPopup").length, 1, "popup is shown");
+		assert.strictEqual(jQuery(".sapTntNLPopup li ul li a").first()[0], document.activeElement, "Child 1 is focused");
+
+		QUnitUtils.triggerKeydown($focusedElement, KeyCodes.ARROW_RIGHT);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		assert.strictEqual(jQuery(".sapTntNLPopup li ul li a").first()[0], document.activeElement, "Child 1 is still focused");
+
+		QUnitUtils.triggerKeydown($focusedElement, KeyCodes.ARROW_LEFT);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		assert.strictEqual(jQuery(".sapTntNLPopup").length, 0, "popup is closed");
+
+		var focusedElement2 = document.activeElement;
+		QUnitUtils.triggerKeydown(focusedElement2, KeyCodes.ARROW_LEFT);
+		await nextUIUpdate(this.clock);
+		this.clock.tick(500);
+
+		var focusedElement3 = document.activeElement;
+		assert.strictEqual(focusedElement2, focusedElement3, "focus is not moved by pressing left arrow key");
 
 		oStub.restore();
 	});

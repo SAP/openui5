@@ -117,8 +117,8 @@ sap.ui.define([
 		 * Event handler to determine which button was clicked
 		 * @param {sap.ui.base.Event} oEvent the button press event
 		 */
-		onAddToCart: function (oEvent) {
-			var oResourceBundle = this.getModel("i18n").getResourceBundle();
+		onAddToCart: async function (oEvent) {
+			var oResourceBundle = await this.getModel("i18n").getResourceBundle();
 			var oProduct = oEvent.getSource().getBindingContext("view").getObject();
 			var oCartModel = this.getModel("cartProducts");
 			cart.addToCart(oResourceBundle, oProduct, oCartModel);

@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/Layer",
+	"sap/base/Log"
 ], function(
 	merge,
-	Layer
+	Layer,
+	Log
 ) {
 	"use strict";
 
@@ -62,10 +64,21 @@ sap.ui.define([
 		 * @returns {object} Merged result
 		 */
 		mergeResults(aResponses) {
-			var oResult = DEFAULT_FEATURES;
+			var oResult = {...DEFAULT_FEATURES};
 
 			aResponses.forEach(function(oResponse) {
 				Object.keys(oResponse.features).forEach(function(sKey) {
+					// only allow the connector in charge of the customer layer to determine the key user property
+					if
+					(
+						sKey === "isKeyUser" &&
+						oResponse.features.isKeyUser !== undefined &&
+						![Layer.CUSTOMER, "ALL"].some((sLayer) => oResponse.layers.includes(sLayer))
+					) {
+						Log.warning("removed a layer specific setting from a connector not configure for the specific layer");
+						return;
+					}
+
 					if (sKey !== "isVersioningEnabled") {
 						oResult[sKey] = oResponse.features[sKey];
 					}

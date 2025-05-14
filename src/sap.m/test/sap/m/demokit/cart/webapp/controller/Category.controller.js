@@ -154,7 +154,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent the press event of the sap.m.Button
 		 * @private
 		 */
-		_applyFilter : function (oEvent) {
+		_applyFilter : async function (oEvent) {
 			var oList = this.byId("productList"),
 				oBinding = oList.getBinding("items"),
 				aSelectedFilterItems = oEvent.getParameter("filterItems"),
@@ -216,15 +216,16 @@ sap.ui.define([
 			}
 			oFilter = new Filter({filters: aFilters, and: true});
 			if (aFilters.length > 0) {
+				const oResourceBundle = await this.requestResourceBundle();
 				oBinding.filter(oFilter);
 				this.byId("categoryInfoToolbar").setVisible(true);
-				var sText = this.getResourceBundle().getText("filterByText") + " ";
+				var sText = oResourceBundle.getText("filterByText") + " ";
 				var sSeparator = "";
 				var oFilterKey = oEvent.getParameter("filterCompoundKeys");
 				var oKeys = Object.assign(oFilterKey, oCustomKeys);
 				for (var key in oKeys) {
 					if (oKeys.hasOwnProperty(key)) {
-						sText = sText + sSeparator  + this.getResourceBundle().getText(key, [this._iLowFilterPreviousValue, this._iHighFilterPreviousValue]);
+						sText = sText + sSeparator  + oResourceBundle.getText(key, [this._iLowFilterPreviousValue, this._iHighFilterPreviousValue]);
 						sSeparator = ", ";
 					}
 				}
@@ -262,12 +263,12 @@ sap.ui.define([
 		 * Updates the previous slider values
 		 * @param {sap.ui.base.Event} oEvent the press event of the sap.m.Button
 		 */
-		handleConfirm: function (oEvent) {
+		handleConfirm: async function (oEvent) {
 			var oCustomFilter = this.byId("categoryFilterDialog").getFilterItems()[1];
 			var oSlider = oCustomFilter.getCustomControl().getAggregation("content")[0];
 			this._iLowFilterPreviousValue = oSlider.getValue();
 			this._iHighFilterPreviousValue = oSlider.getValue2();
-			this._applyFilter(oEvent);
+			await this._applyFilter(oEvent);
 		},
 
 		/**
