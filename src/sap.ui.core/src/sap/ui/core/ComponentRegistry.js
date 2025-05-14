@@ -12,19 +12,6 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const fnOnDeregister = function(sComponentId) {
-		var Component = sap.ui.require("sap/ui/core/Component");
-		ElementRegistry.forEach(function(oElement, sId) {
-			var sElementOwnerId = Component.getOwnerIdFor(oElement);
-			if (sElementOwnerId === sComponentId && !oElement.getParent()) {
-				if ( oElement._sapui_candidateForDestroy) {
-					Log.debug("destroying dangling template " + oElement + " when destroying the owner component");
-					oElement.destroy();
-				}
-			}
-		});
-	};
-
 	/**
 	 * Registry of all <code>Component</code>s that currently exist.
 	 *
@@ -34,9 +21,7 @@ sap.ui.define([
 	 * @since 1.120
 	 *
 	 */
-	const ComponentRegistry = ManagedObjectRegistry.create({
-		"onDeregister": fnOnDeregister
-	});
+	const ComponentRegistry = ManagedObjectRegistry.create();
 
 	/**
 	 * Number of existing components.

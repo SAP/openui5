@@ -11,14 +11,9 @@ sap.ui.define([
 	"use strict";
 
 	const fnOnDuplicate = function(sId, oldElement, newElement) {
-		if ( oldElement._sapui_candidateForDestroy ) {
-			Log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
-			oldElement.destroy();
-		} else {
-		 var sMsg = "adding element with duplicate id '" + sId + "'";
-		 Log.error(sMsg);
-		 throw new Error("Error: " + sMsg);
-		}
+		var sMsg = "adding element with duplicate id '" + sId + "'";
+		Log.error(sMsg);
+		throw new Error("Error: " + sMsg);
 	};
 
 	/**
