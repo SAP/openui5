@@ -394,6 +394,35 @@ sap.ui.define([
 		await nextUIUpdate(this.clock);
 	});
 
+	QUnit.test("_isNowMarkerInView", function(assert) {
+		// Prepare
+		var oGrid = new SinglePlanningCalendarGrid(),
+			oDateInFuture = UI5Date.getInstance(),
+			oDate = UI5Date.getInstance(),
+			oDSTDateOne = UI5Date.getInstance(2025, 2, 30, 1),
+			oDSTDateTwo = UI5Date.getInstance(2025, 9, 26, 1),
+			oDateInPast = UI5Date.getInstance();
+
+		oDateInFuture.setDate(oDateInFuture.getDate() + 1);
+		oGrid.setStartDate(oDateInFuture);
+
+		//assert
+		assert.strictEqual(oGrid._isNowMarkerInView(oDate), false, "Now marker should not be visible.");
+		// Prepare
+		oDateInPast.setDate(oDateInPast.getDate() - 1);
+		oGrid.setStartDate(oDateInPast);
+		//assert
+		assert.strictEqual(oGrid._isNowMarkerInView(oDate), true, "Now marker should be visible.");
+		//Prepare
+		oGrid.setStartDate(oDSTDateOne);
+		assert.strictEqual(oGrid._isNowMarkerInView(UI5Date.getInstance(2025, 2, 30, 3, 30)), true, "Now marker should be visible.");
+		//Prepare
+		oGrid.setStartDate(oDSTDateTwo);
+		assert.strictEqual(oGrid._isNowMarkerInView(UI5Date.getInstance(2025, 9, 26, 3, 30)), true, "Now marker should be visible.");
+		// cleanup
+		oGrid.destroy();
+	});
+
 	QUnit.test("Formatters pattern is correct", function (assert) {
 		// Prepare
 		var oGrid = new SinglePlanningCalendarGrid();
