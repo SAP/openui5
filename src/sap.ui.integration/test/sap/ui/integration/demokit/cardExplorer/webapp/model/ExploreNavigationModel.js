@@ -1852,6 +1852,7 @@ sap.ui.define([
 								key: 'wholeCardInteraction',
 								target: 'exploreSamples',
 								experimental: true,
+								additionalInfo: "The whole card is interactive when the property “actions” is set in the “sap.card” section.",
 								settings: {
 									columns: 3
 								},
@@ -3249,6 +3250,61 @@ sap.ui.define([
 							},
 							{
 								url: '/samples/hostAndExtensionActions/Component.js',
+								name: 'Component.js',
+								key: 'Component.js'
+							}
+						]
+					},
+					{
+						key: 'interactionInGrid',
+						target: 'exploreSamples',
+						title: 'Interactions in Grid',
+						useIFrame: true,
+						isApplication: true,
+						files: [
+							{
+								url: '/samples/interactionInGrid/indexTemplate.html',
+								name: 'index.html',
+								key: 'index.html'
+							},
+							{
+								url: '/samples/interactionInGrid/cardManifests/orderManifest.json',
+								name: 'orderManifest.json',
+								key: 'orderManifest.json'
+							},
+							{
+								url: '/samples/interactionInGrid/cardManifests/orderDetailsManifest.json',
+								name: 'orderDetailsManifest.json',
+								key: 'orderDetailsManifest.json'
+							},
+							{
+								url: '/samples/interactionInGrid/cardManifests/listManifest.json',
+								name: 'listManifest.json',
+								key: 'listManifest.json'
+							},
+							{
+								url: '/samples/interactionInGrid/cardManifests/analyticalManifest.json',
+								name: 'analyticalManifest.json',
+								key: 'analyticalManifest.json'
+							},
+							{
+								url: '/samples/interactionInGrid/cardManifests/objectManifest.json',
+								name: 'objectManifest.json',
+								key: 'objectManifest.json'
+							},
+							{
+								url: '/samples/interactionInGrid/InteractionInGrid.view.xml',
+								name: 'InteractionInGrid.view.xml',
+								key: 'InteractionInGrid.view.xml'
+							},
+							{
+								url: '/samples/interactionInGrid/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json',
+								isApplicationManifest: true
+							},
+							{
+								url: '/samples/interactionInGrid/Component.js',
 								name: 'Component.js',
 								key: 'Component.js'
 							}

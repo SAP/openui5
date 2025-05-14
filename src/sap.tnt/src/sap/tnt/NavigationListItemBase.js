@@ -297,11 +297,42 @@ sap.ui.define([
 	 * @private
 	 */
 	NavigationListItemBase.prototype.onkeydown = function (oEvent) {
+		const bRtl = Localization.getRTL();
+
 		if (oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) {
 			oEvent.preventDefault();
 		}
 
+		if (this._isInsidePopover()) {
+			if ((oEvent.which == KeyCodes.ARROW_LEFT && !bRtl) || (oEvent.which == KeyCodes.ARROW_RIGHT && bRtl)) {
+				this.getNavigationList().oParent.close();
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
+			if 	((oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl) ||	(oEvent.which == KeyCodes.ARROW_LEFT && bRtl)) {
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
+			return;
+		}
+
 		if (!this._isListExpanded()) {
+			if 	((oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl) ||	(oEvent.which == KeyCodes.ARROW_LEFT && bRtl)) {
+				if (this.getItems().length > 0 ) {
+					this.ontap(oEvent);
+				}
+
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
+			if ((oEvent.which == KeyCodes.ARROW_LEFT && !bRtl) || (oEvent.which == KeyCodes.ARROW_RIGHT && bRtl)) {
+				// prevent ItemNavigation to move the focus to the next/previous item
+				oEvent.stopPropagation();
+			}
+
 			return;
 		}
 
@@ -314,30 +345,33 @@ sap.ui.define([
 		}
 
 		if (this.getLevel() !== 0) {
+
+			if (oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl || oEvent.which == KeyCodes.ARROW_LEFT && bRtl ||
+				oEvent.which == KeyCodes.ARROW_LEFT && !bRtl || oEvent.which == KeyCodes.ARROW_RIGHT && bRtl) {
+					// prevent ItemNavigation to move the focus to the next/previous item
+					oEvent.stopPropagation();
+				}
+
 			return;
 		}
-
-		const bRtl = Localization.getRTL();
 
 		//  KeyCodes.MINUS is not returning 189
 		if ((oEvent.shiftKey && oEvent.which == 189) ||
 			oEvent.which == KeyCodes.NUMPAD_MINUS ||
 			(oEvent.which == KeyCodes.ARROW_RIGHT && bRtl) ||
 			(oEvent.which == KeyCodes.ARROW_LEFT && !bRtl)) {
-			if (this.collapse()) {
-				oEvent.preventDefault();
-				// prevent ItemNavigation to move the focus to the next/previous item
-				oEvent.stopPropagation();
-			}
+			this.collapse();
+			oEvent.preventDefault();
+			// prevent ItemNavigation to move the focus to the next/previous item
+			oEvent.stopPropagation();
 		} else if (oEvent.which == KeyCodes.NUMPAD_PLUS ||
 			(oEvent.shiftKey && oEvent.which == KeyCodes.PLUS) ||
 			oEvent.which == KeyCodes.ARROW_LEFT && bRtl ||
 			oEvent.which == KeyCodes.ARROW_RIGHT && !bRtl) {
-			if (this.expand()) {
-				oEvent.preventDefault();
-				// prevent ItemNavigation to move the focus to the next/previous item
-				oEvent.stopPropagation();
-			}
+			this.expand();
+			oEvent.preventDefault();
+			// prevent ItemNavigation to move the focus to the next/previous item
+			oEvent.stopPropagation();
 		}
 	};
 
@@ -363,6 +397,7 @@ sap.ui.define([
 		oEvent.setMarked("subItem");
 
 		if (!this.getEnabled() || !this.getAllParentsEnabled()) {
+			oEvent.stopPropagation();
 			return true;
 		}
 
@@ -389,6 +424,10 @@ sap.ui.define([
 			altKey: !!oEvent.altKey,
 			metaKey: !!oEvent.metaKey
 		};
+
+		if (!this.getEnabled()) {
+			return false;
+		}
 
 		if (!this.firePress(oParams)) {
 			oEvent.preventDefault();
@@ -444,7 +483,7 @@ sap.ui.define([
 	 * @returns {boolean} whether the items will be expanded
 	 */
 	NavigationListItemBase.prototype.expand = function () {
-		if (this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
+		if (!this.getEnabled() || this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
 			return false;
 		}
 
@@ -461,7 +500,7 @@ sap.ui.define([
 	 * @returns {boolean} whether the items will be collapsed
 	 */
 	NavigationListItemBase.prototype.collapse = function () {
-		if (!this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
+		if (!this.getEnabled() || !this.getExpanded() || !this.getHasExpander() || this.getItems().length == 0 || this.getLevel() !== 0) {
 			return false;
 		}
 

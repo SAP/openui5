@@ -1,0 +1,106 @@
+{
+	"sap.app": {
+		"id": "card.explorer.interactionInGrid.wholeCardInteraction",
+		"type": "card",
+		"title": "Sample of a Whole Card Interaction",
+		"subTitle": "Sample of a Whole Card Interaction",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Object",
+				"Card",
+				"Sample",
+				"Bite",
+				"Grid"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://switch-classes"
+		}
+	},
+	"sap.card": {
+		"type": "Object",
+		"actions": [
+			{
+				"type": "ShowCard",
+				"parameters": {
+					"manifest": "./orderDetailsManifest.json",
+					"parameters": {
+						"orderId": "{parameters>/orderId/value}"
+					},
+					"data": {
+						"orderData": "{/value/0}"
+					}
+				}
+			}
+		],
+		"configuration": {
+			"destinations": {
+				"myDestination": {
+					"name": "Northwind_V4"
+				}
+			},
+			"parameters": {
+				"orderId": {
+					"value": 10249
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.myDestination}}/Orders",
+				"parameters": {
+					"$format": "json",
+					"$filter": "OrderID eq {parameters>/orderId/value}"
+				}
+			},
+			"path": "/value/0"
+		},
+		"header": {
+			"data": {
+				"path": "/value/0"
+			},
+			"icon": {
+				"src": "sap-icon://contacts"
+			},
+			"title": "Order {parameters>/orderId/value}",
+			"subTitle": "Press card to show details"
+		},
+		"content": {
+			"groups": [
+				{
+					"items": [
+						{
+							"label": "Country",
+							"value": "{ShipCountry}"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "City",
+							"value": "{ShipCity}"
+						}
+					]
+				},
+				{
+					"items": [
+						{
+							"label": "Name",
+							"value": "{ShipName}"
+						}
+					]
+				}
+			]
+		}
+	}
+}

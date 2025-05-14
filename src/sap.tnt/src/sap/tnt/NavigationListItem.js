@@ -638,9 +638,11 @@ sap.ui.define([
 			oRM.attr("title", sTooltip);
 		}
 
-		if (!bDisabled) {
-			oRM.attr("tabindex", "-1");
+		if (bDisabled) {
+			oRM.attr("aria-disabled", "true");
 		}
+
+		oRM.attr("tabindex", "-1");
 
 		if (sHref) {
 			oRM.attr("href", sHref);
@@ -789,7 +791,7 @@ sap.ui.define([
 	NavigationListItem.prototype._getFocusDomRefs = function () {
 		const aDomRefs = [];
 
-		if (!this.getEnabled() || !this.getVisible()) {
+		if (!this.getVisible()) {
 			return aDomRefs;
 		}
 
@@ -798,7 +800,7 @@ sap.ui.define([
 		}
 
 		if (this._isListExpanded() && this.getExpanded()) {
-			aDomRefs.push(...this.getDomRef().querySelectorAll(".sapTntNLISecondLevel:not(.sapTntNLIDisabled) a"));
+			aDomRefs.push(...this.getDomRef().querySelectorAll(".sapTntNLISecondLevel a"));
 		}
 
 		return aDomRefs;

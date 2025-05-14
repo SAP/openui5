@@ -895,6 +895,36 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
+	QUnit.test("Icon decorative state when the ObjectMarker is not visible", async function (assert) {
+		// Arrange
+		var oMarker = new ObjectMarker({
+				type: ObjectMarkerType.Unsaved
+			}),
+			oIcon = oMarker._getInnerControl()._getIconAggregation();
+
+		oMarker.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		oMarker.setVisibility(ObjectMarkerVisibility.IconOnly);
+		await nextUIUpdate();
+
+		// Assert
+		assert.notOk(oIcon.getDecorative(), "Icon shouldn't be decorative if there's no additional text");
+		assert.notEqual(oIcon.getAccessibilityInfo(), null, "getAccessibilityInfo of the Icon is not null");
+
+		// Act
+		oMarker.setVisible(false);
+		await nextUIUpdate();
+
+		// Assert
+		assert.ok(oIcon.getDecorative(), "Icon is decorative when the ObjectMarker is not visible");
+		assert.equal(oIcon.getAccessibilityInfo(), null, "getAccessibilityInfo of the Icon is null");
+
+		// Cleanup
+		oMarker.destroy();
+	});
+
 	QUnit.test("aria-label of the icon - IconOnly", async function (assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({

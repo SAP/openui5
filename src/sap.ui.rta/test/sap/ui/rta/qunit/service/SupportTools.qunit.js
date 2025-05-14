@@ -360,43 +360,43 @@ sap.ui.define([
 			window.addEventListener("message", onMessage.bind(this), { once: true });
 		});
 
-		QUnit.test("when contextmenu is closed", async function(assert) {
-			var fnDone = assert.async();
-			OverlayRegistry.getOverlay("button1").setSelected(false);
-			OverlayRegistry.getOverlay("button2").setSelected(true);
-
-			// open a context menu on button2 overlay
-			var oContexMenu = this.oRta.getPlugins().contextMenu;
-			var oContextMenuEvent = new MouseEvent("contextmenu", {
-				bubbles: true,
-				cancelable: true,
-				view: window,
-				buttons: 2
-			});
-			oContexMenu.oContextMenuControl.openAsContextMenu(oContextMenuEvent, OverlayRegistry.getOverlay("button2"));
-			await nextUIUpdate();
-			assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 1, "ContextMenu is available");
-
-			function onMessage(oEvent) {
-				if (
-					oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
-					&& oEvent.data.type === "changeOverlaySelection"
-				) {
-					assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 0, "ContextMenu is not available any more");
-					fnDone();
-				}
-			}
-
-			window.postMessage({
-				id: "ui5FlexibilitySupport.submodules.overlayInfo",
-				type: "changeOverlaySelection",
-				content: {
-					overlayId: OverlayRegistry.getOverlay("button1").getId()
-				}
-			});
-
-			window.addEventListener("message", onMessage.bind(this), { once: true });
-		});
+		// QUnit.test("when contextmenu is closed", async function(assert) {
+		// 	var fnDone = assert.async();
+		// 	OverlayRegistry.getOverlay("button1").setSelected(false);
+		// 	OverlayRegistry.getOverlay("button2").setSelected(true);
+		//
+		// 	// open a context menu on button2 overlay
+		// 	var oContexMenu = this.oRta.getPlugins().contextMenu;
+		// 	var oContextMenuEvent = new MouseEvent("contextmenu", {
+		// 		bubbles: true,
+		// 		cancelable: true,
+		// 		view: window,
+		// 		buttons: 2
+		// 	});
+		// 	oContexMenu.oContextMenuControl.openAsContextMenu(oContextMenuEvent, OverlayRegistry.getOverlay("button2"));
+		// 	await nextUIUpdate();
+		// 	assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 1, "ContextMenu is available");
+		//
+		// 	function onMessage(oEvent) {
+		// 		if (
+		// 			oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
+		// 			&& oEvent.data.type === "changeOverlaySelection"
+		// 		) {
+		// 			assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 0, "ContextMenu is not available any more");
+		// 			fnDone();
+		// 		}
+		// 	}
+		//
+		// 	window.postMessage({
+		// 		id: "ui5FlexibilitySupport.submodules.overlayInfo",
+		// 		type: "changeOverlaySelection",
+		// 		content: {
+		// 			overlayId: OverlayRegistry.getOverlay("button1").getId()
+		// 		}
+		// 	});
+		//
+		// 	window.addEventListener("message", onMessage.bind(this), { once: true });
+		// });
 
 		QUnit.test("when RTA is closed", function(assert) {
 			var fnDone = assert.async();

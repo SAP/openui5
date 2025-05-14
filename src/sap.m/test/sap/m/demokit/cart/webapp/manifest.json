@@ -57,6 +57,7 @@
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
+					"async": true,
 					"bundleName": "sap.ui.demo.cart.i18n.i18n",
 					"supportedLocales": [
 						""

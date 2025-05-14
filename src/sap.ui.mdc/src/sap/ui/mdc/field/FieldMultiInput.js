@@ -244,12 +244,14 @@ sap.ui.define([
 		if (!this._oUpdateBindingTimer && (oBindingInfo.length || oBindingInfo.startIndex)) {
 			const fnUpdate = () => {
 				let oToken = oBindingInfo.template;
+				let bTemplateShareable = true;
 				if (oBindingInfo.templateShareable !== true) {
 					oToken = oToken.clone();
+					bTemplateShareable = false;
 				}
 
 				this._bUpdateBinding = true;
-				this.bindAggregation("tokens", { path: oBindingInfo.path, model: oBindingInfo.model, template: oToken });
+				this.bindAggregation("tokens", { path: oBindingInfo.path, model: oBindingInfo.model, template: oToken, templateShareable: bTemplateShareable });
 			};
 
 			if (bAsync) {

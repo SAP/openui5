@@ -51,7 +51,15 @@ sap.ui.define([
 						})
 					]
 				}),
-				new NavigationListItem({ text: "People", icon: "sap-icon://people-connected" }),
+				new NavigationListItem({
+					text: "People",
+					icon: "sap-icon://people-connected",
+					selectable: false,
+					items: [
+						new NavigationListItem({ text: "Internal"}),
+						new NavigationListItem({ text: "External" })
+					]
+				}),
 				new NavigationListItem({ text: "Overview Chart", icon: "sap-icon://overview-chart" }),
 				new NavigationListItem({ text: "Managing My Area", icon: "sap-icon://kpi-managing-my-area" }),
 				new NavigationListItem({ text: "Curriculum", icon: "sap-icon://curriculum" }),

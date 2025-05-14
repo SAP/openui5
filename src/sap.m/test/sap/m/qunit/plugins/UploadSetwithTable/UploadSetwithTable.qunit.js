@@ -912,7 +912,7 @@ sap.ui.define([
 		assert.equal(oUploadPluginInstance.getCloudFilePickerServiceUrl(), "", "UploadSetwithTable Plugin has no cloud file picker service url initially");
 		assert.equal(oUploadPluginInstance.getCloudFilePickerButtonText(), "", "UploadSetwithTable Plugin has no cloud file picker button text initially");
 		assert.deepEqual(oUploadPluginInstance.getFileTypes(), undefined, "UploadSetwithTable Plugin has no file types association initially");
-		assert.equal(oUploadPluginInstance.getHttpRequestMethod(), "POST", "UploadSetwithTable Plugin has POST http request method by default");
+		assert.equal(oUploadPluginInstance.getHttpRequestMethod().toUpperCase(), "POST", "UploadSetwithTable Plugin has POST http request method by default");
 		assert.equal(oUploadPluginInstance.getItemValidationHandler(), null, "UploadSetwithTable Plugin has no item validation handler initially");
 
 		oTable.destroy();
@@ -941,7 +941,7 @@ sap.ui.define([
 			cloudFilePickerServiceUrl: "/cloudFiles/root/",
 			cloudFilePickerButtonText: "Select from Cloud",
 			fileTypes: ["jpg", "png"],
-			httpRequestMethod: "PUT",
+			httpRequestMethod: "Put",
 			itemValidationHandler: fnValidationHandler
 		};
 		const oUploadSetwithTablePlugin = new UploadSetwithTable(mSettings);
@@ -966,7 +966,7 @@ sap.ui.define([
 		assert.equal(oUploadSetwithTablePlugin.getCloudFilePickerServiceUrl(), "/cloudFiles/root/", "UploadSetwithTable Plugin has cloud file picker service url set");
 		assert.equal(oUploadSetwithTablePlugin.getCloudFilePickerButtonText(), "Select from Cloud", "UploadSetwithTable Plugin has cloud file picker button text set");
 		assert.deepEqual(oUploadSetwithTablePlugin.getFileTypes(), ["jpg", "png"], "UploadSetwithTable Plugin has file types association set");
-		assert.equal(oUploadSetwithTablePlugin.getHttpRequestMethod(), "PUT", "UploadSetwithTable Plugin has PUT http request method set");
+		assert.equal(oUploadSetwithTablePlugin.getHttpRequestMethod().toUpperCase(), "PUT", "UploadSetwithTable Plugin has PUT http request method set");
 		assert.equal(oUploadSetwithTablePlugin.getItemValidationHandler(), fnValidationHandler, "UploadSetwithTable Plugin has item validation handler set");
 	});
 

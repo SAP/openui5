@@ -157,9 +157,9 @@ sap.ui.define([
 		/**
 		 * Shows warning message if user changes previously selected payment method
 		 */
-		setPaymentMethod: function () {
+		setPaymentMethod: async function () {
 			this._setDiscardableProperty({
-				message: this.getResourceBundle().getText("checkoutControllerChangePayment"),
+				message: (await this.requestResourceBundle()).getText("checkoutControllerChangePayment"),
 				discardStep: this.byId("paymentTypeStep"),
 				modelPath: "/SelectedPayment",
 				historyPath: "prevPaymentSelect"
@@ -169,9 +169,9 @@ sap.ui.define([
 		/**
 		 * Shows warning message if user changes previously selected delivery address
 		 */
-		setDifferentDeliveryAddress: function () {
+		setDifferentDeliveryAddress: async function () {
 			this._setDiscardableProperty({
-				message: this.getResourceBundle().getText("checkoutControllerChangeDelivery"),
+				message: (await this.requestResourceBundle()).getText("checkoutControllerChangeDelivery"),
 				discardStep: this.byId("invoiceStep"),
 				modelPath: "/DifferentDeliveryAddress",
 				historyPath: "prevDiffDeliverySelect"
@@ -194,8 +194,8 @@ sap.ui.define([
 		 * Called from <code>ordersummary</code>
 		 * shows warning message and cancels order if confirmed
 		 */
-		handleWizardCancel: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureCancel");
+		handleWizardCancel: async function () {
+			var sText = (await this.requestResourceBundle()).getText("checkoutControllerAreYouSureCancel");
 			this._handleSubmitOrCancel(sText, "warning", "home");
 		},
 
@@ -203,8 +203,8 @@ sap.ui.define([
 		 * Called from <code>ordersummary</code>
 		 * shows warning message and submits order if confirmed
 		 */
-		handleWizardSubmit: function () {
-			var sText = this.getResourceBundle().getText("checkoutControllerAreYouSureSubmit");
+		handleWizardSubmit: async function () {
+			var sText = (await this.requestResourceBundle()).getText("checkoutControllerAreYouSureSubmit");
 			this._handleSubmitOrCancel(sText, "confirm", "ordercompleted");
 		},
 
@@ -319,9 +319,9 @@ sap.ui.define([
 		 * Called from  Wizard on <code>complete</code>
 		 * Navigates to the summary page in case there are no errors
 		 */
-		checkCompleted: function () {
+		checkCompleted: async function () {
 			if (Messaging.getMessageModel().getData().length > 0) {
-				MessageBox.error(this.getResourceBundle().getText("popOverMessageText"));
+				MessageBox.error((await this.requestResourceBundle()).getText("popOverMessageText"));
 			} else {
 				this.byId("wizardNavContainer").to(this.byId("summaryPage"));
 			}

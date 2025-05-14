@@ -40,11 +40,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Getter for the resource bundle.
+		 * Retrieves the resource bundle from the "i18n" model of the owning component
+		 *
 		 * @public
-		 * @returns {sap.ui.model.resource.ResourceModel} the resourceModel of the component
+		 * @returns {Promise<sap.ui.model.resource.ResourceBundle>}
+		 *    A promise that resolves to the resource bundle of the component
 		 */
-		getResourceBundle: function () {
+		requestResourceBundle: function () {
 			return this.getOwnerComponent().getModel("i18n").getResourceBundle();
 		},
 
@@ -52,8 +54,8 @@ sap.ui.define([
 		 * Handler for the Avatar button press event
 		 * @public
 		 */
-		onAvatarPress: function () {
-			var sMessage = this.getResourceBundle().getText("avatarButtonMessageToastText");
+		onAvatarPress: async function () {
+			var sMessage = (await this.requestResourceBundle()).getText("avatarButtonMessageToastText");
 			MessageToast.show(sMessage);
 		},
 
@@ -107,10 +109,9 @@ sap.ui.define([
 		 * @public
 		 */
 		onAddToCart : function () {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 			var oEntry =  arguments[0].getSource().getBindingContext().getObject();
 			var oCartModel = this.getView().getModel("cartProducts");
-			cart.addToCart(oResourceBundle, oEntry, oCartModel);
+			cart.addToCart(this.requestResourceBundle(), oEntry, oCartModel);
 		},
 		/**
 		 * Clear comparison model

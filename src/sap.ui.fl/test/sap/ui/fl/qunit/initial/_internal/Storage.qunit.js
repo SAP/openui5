@@ -90,10 +90,10 @@ sap.ui.define([
 				{
 					connector: "LrepConnector",
 					url: this.url,
-					layers: []
+					layers: [Layer.CUSTOMER]
 				}, {
 					connector: "JsObjectConnector",
-					layers: [Layer.CUSTOMER]
+					layers: [Layer.PUBLIC]
 				}, {
 					connector: "PersonalizationConnector",
 					url: this.url,

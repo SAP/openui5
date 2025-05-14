@@ -51,7 +51,7 @@ var BusyIndicator = Object.assign( new EventProvider(), {
 	sDOM_ID: "sapUiBusyIndicator"
 });
 
-BusyIndicator.M_EVENTS = {
+const M_EVENTS = {
 	Open: "Open",
 
 	Close: "Close"
@@ -284,7 +284,7 @@ BusyIndicator.hide = function() {
  * @public
  */
 BusyIndicator.attachOpen = function(fnFunction, oListener) {
-	this.attachEvent(BusyIndicator.M_EVENTS.Open, fnFunction, oListener);
+	this.attachEvent(M_EVENTS.Open, fnFunction, oListener);
 	return this;
 };
 
@@ -299,7 +299,7 @@ BusyIndicator.attachOpen = function(fnFunction, oListener) {
  * @public
  */
 BusyIndicator.detachOpen = function(fnFunction, oListener) {
-	this.detachEvent(BusyIndicator.M_EVENTS.Open, fnFunction, oListener);
+	this.detachEvent(M_EVENTS.Open, fnFunction, oListener);
 	return this;
 };
 
@@ -318,7 +318,7 @@ BusyIndicator.detachOpen = function(fnFunction, oListener) {
  * @public
  */
 BusyIndicator.attachClose = function(fnFunction, oListener) {
-	this.attachEvent(BusyIndicator.M_EVENTS.Close, fnFunction, oListener);
+	this.attachEvent(M_EVENTS.Close, fnFunction, oListener);
 	return this;
 };
 
@@ -333,16 +333,16 @@ BusyIndicator.attachClose = function(fnFunction, oListener) {
  * @public
  */
 BusyIndicator.detachClose = function(fnFunction, oListener) {
-	this.detachEvent(BusyIndicator.M_EVENTS.Close, fnFunction, oListener);
+	this.detachEvent(M_EVENTS.Close, fnFunction, oListener);
 	return this;
 };
 
 BusyIndicator.fireOpen = function(mParameters) {
-	this.fireEvent(BusyIndicator.M_EVENTS.Open, mParameters);
+	this.fireEvent(M_EVENTS.Open, mParameters);
 };
 
 BusyIndicator.fireClose = function(mParameters) {
-	this.fireEvent(BusyIndicator.M_EVENTS.Close, mParameters);
+	this.fireEvent(M_EVENTS.Close, mParameters);
 };
 
 return BusyIndicator;

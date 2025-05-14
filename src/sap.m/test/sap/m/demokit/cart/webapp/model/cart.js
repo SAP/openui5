@@ -12,43 +12,44 @@ sap.ui.define([
 		 * Checks for the status of the product that is added to the cart.
 		 * If the product is not available, a message dialog will open.
 		 * @public
-		 * @param {Object} oBundle i18n bundle
+		 * @param {Object} oBundlePromise a promise that resolves with an i18n bundle
 		 * @param {Object} oProduct Product that is added to the cart
 		 * @param {Object} oCartModel Cart model
 		 */
-		addToCart: function (oBundle, oProduct, oCartModel) {
+		addToCart: async function (oBundlePromise, oProduct, oCartModel) {
 			// Items to be added from the welcome view have it's content inside product object
 			if (oProduct.Product !== undefined) {
 				oProduct = oProduct.Product;
 			}
+			const oResourceBundle = await oBundlePromise;
 			switch (oProduct.Status) {
 				case "D":
 					//show message dialog
 					MessageBox.show(
-						oBundle.getText("productStatusDiscontinuedMsg"), {
+						oResourceBundle.getText("productStatusDiscontinuedMsg"), {
 							icon: MessageBox.Icon.ERROR,
-							titles: oBundle.getText("productStatusDiscontinuedTitle"),
+							titles: oResourceBundle.getText("productStatusDiscontinuedTitle"),
 							actions: [MessageBox.Action.CLOSE]
 						});
 					break;
 				case "O":
 					// show message dialog
 					MessageBox.show(
-						oBundle.getText("productStatusOutOfStockMsg"), {
+						oResourceBundle.getText("productStatusOutOfStockMsg"), {
 							icon: MessageBox.Icon.QUESTION,
-							title: oBundle.getText("productStatusOutOfStockTitle"),
+							title: oResourceBundle.getText("productStatusOutOfStockTitle"),
 							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 							onClose: function (oAction) {
 								// order
 								if (MessageBox.Action.OK === oAction) {
-									this._updateCartItem(oBundle, oProduct, oCartModel);
+									this._updateCartItem(oResourceBundle, oProduct, oCartModel);
 								}
 							}.bind(this)
 						});
 					break;
 				case "A":
 				default:
-					this._updateCartItem(oBundle, oProduct, oCartModel);
+					this._updateCartItem(oResourceBundle, oProduct, oCartModel);
 					break;
 			}
 		},

@@ -67,10 +67,10 @@ sap.ui.define([
 			this._toggleCfgModel();
 		},
 
-		_toggleCfgModel: function () {
+		_toggleCfgModel: async function () {
 			var oCfgModel = this.getView().getModel("cfg");
 			var oData = oCfgModel.getData();
-			var oBundle = this.getResourceBundle();
+			var oBundle = await this.requestResourceBundle();
 			var bDataNoSetYet = !oData.hasOwnProperty("inDelete");
 			var bInDelete = (bDataNoSetYet ? true : oData.inDelete);
 			var sPhoneMode = (Device.system.phone ? "None" : "SingleSelectMaster");
@@ -176,9 +176,9 @@ sap.ui.define([
 		 * @param {string} sCollection the collection name
 		 * @param {sap.ui.base.Event} oEvent Event object
 		 */
-		_deleteProduct: function (sCollection, oEvent) {
+		_deleteProduct: async function (sCollection, oEvent) {
 			var oBindingContext = oEvent.getParameter("listItem").getBindingContext(sCartModelName),
-				oBundle = this.getResourceBundle(),
+				oBundle = await this.requestResourceBundle(),
 				sEntryId = oBindingContext.getProperty("ProductId"),
 				sEntryName = oBindingContext.getProperty("Name");
 
