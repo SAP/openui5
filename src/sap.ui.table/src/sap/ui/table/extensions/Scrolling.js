@@ -1762,6 +1762,13 @@ sap.ui.define([
 			if (mRowCounts.fixedBottom > 0) {
 				iOffsetBottom += mRowCounts.fixedBottom * oTable._getBaseRowHeight();
 			}
+			const oCreationRow = oTable.getCreationRow();
+			if (oCreationRow) {
+				const oCreationRowDomRef = oCreationRow.getDomRef();
+				if (oCreationRowDomRef && oCreationRow.getVisible()) {
+					iOffsetBottom += oCreationRowDomRef.offsetHeight;
+				}
+			}
 			oVSb.style.bottom = iOffsetBottom + "px";
 		},
 
