@@ -2,12 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device",
-	"sap/ui/dom/jquery/scrollLeftRTL"
+	"sap/ui/Device"
 ], function(
 	DOMUtil,
-	jQuery,
 	Device
 ) {
 	"use strict";

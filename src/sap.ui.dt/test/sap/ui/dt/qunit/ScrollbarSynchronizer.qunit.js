@@ -1,185 +1,185 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/dt/ScrollbarSynchronizer",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dt/ScrollbarSynchronizer"
 ],
 function(
-	ScrollbarSynchronizer,
-	jQuery
+	ScrollbarSynchronizer
 ) {
 	"use strict";
 
 	QUnit.module("Given three elements with vertical and horizontal scrollbars...", {
 		beforeEach() {
-			var $content = jQuery("#qunit-fixture");
+			const oContent = document.getElementById("qunit-fixture");
 
-			var fnCreatePanelWithBiggerSubPanel = function(sId, sColour) {
-				var $Panel = jQuery("<div></div>", {
-					id: sId
-				}).css({
-					"max-width": "100px",
-					"max-height": "100px",
+			const fnCreatePanelWithBiggerSubPanel = function(sId, sColor) {
+				const oPanel = document.createElement("div");
+				oPanel.id = sId;
+				Object.assign(oPanel.style, {
+					maxWidth: "100px",
+					maxHeight: "100px",
 					overflow: "auto",
 					display: "inline-block"
-				}).appendTo($content);
+				});
+				oContent.appendChild(oPanel);
 
-				jQuery("<div></div>", {
-					id: `${sId}-sub`
-				}).css({
+				const subPanel = document.createElement("div");
+				subPanel.id = `${sId}-sub`;
+				Object.assign(subPanel.style, {
 					width: "200px",
 					height: "200px",
 					overflow: "auto",
-					background: sColour
-				}).appendTo($Panel);
+					background: sColor
+				});
+				oPanel.appendChild(subPanel);
 
-				return $Panel;
+				return oPanel;
 			};
 
-			this.$Panel1 = fnCreatePanelWithBiggerSubPanel("panel1", "#555");
-			this.$Panel2 = fnCreatePanelWithBiggerSubPanel("panel2", "#abc");
-			this.$Panel3 = fnCreatePanelWithBiggerSubPanel("panel3", "#def");
+			this.oPanel1 = fnCreatePanelWithBiggerSubPanel("panel1", "#555");
+			this.oPanel2 = fnCreatePanelWithBiggerSubPanel("panel2", "#abc");
+			this.oPanel3 = fnCreatePanelWithBiggerSubPanel("panel3", "#def");
 
 			this.oScrollbarSynchronizer = new ScrollbarSynchronizer();
 		},
 		afterEach() {
-			this.$Panel1.remove();
-			this.$Panel2.remove();
-			this.$Panel3.remove();
+			this.oPanel1.remove();
+			this.oPanel2.remove();
+			this.oPanel3.remove();
 
 			this.oScrollbarSynchronizer.destroy();
 		}
 	}, function() {
 		QUnit.test("when scrollbar syncronizer is destroyed", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oScrollbarSynchronizer.attachEventOnce("destroyed", function() {
 				assert.ok(true, "then the destroyed event is thrown by scrollbar synchroniser");
 				assert.notOk(this.oScrollbarSynchronizer.isSyncing(), "then after destroy the scrollbarSynchronizer should not be in 'syncing' state anymore");
 				fnDone();
 			}.bind(this));
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
 			assert.ok(this.oScrollbarSynchronizer.isSyncing(), "then before destroy and after addTarget the scrollbarSynchronizer should be in 'syncing' state");
 			this.oScrollbarSynchronizer.destroy();
 		});
 
 		QUnit.test("when panel1 and panel2 are both added as targets to the ScrollbarSynchronizer", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 
-			assert.deepEqual(this.oScrollbarSynchronizer.getTargets(), [this.$Panel1[0], this.$Panel2[0]], "then the function getTargets returns both elements");
+			assert.deepEqual(this.oScrollbarSynchronizer.getTargets(), [this.oPanel1, this.oPanel2], "then the function getTargets returns both elements");
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				assert.equal(this.$Panel2.scrollTop(), 20, "then vertical scrolling on Panel1 is reflected on Panel2");
-				assert.equal(this.$Panel2.scrollLeft(), 30, "then horizontal scrolling on Panel1 is reflected on Panel2");
+				assert.equal(this.oPanel2.scrollTop, 20, "then vertical scrolling on Panel1 is reflected on Panel2");
+				assert.equal(this.oPanel2.scrollLeft, 30, "then horizontal scrolling on Panel1 is reflected on Panel2");
 				this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-					assert.equal(this.$Panel1.scrollTop(), 50, "then vertical scrolling on Panel2 is reflected on Panel1");
-					assert.equal(this.$Panel1.scrollLeft(), 70, "then horizontal scrolling on Panel2 is reflected on Panel1");
+					assert.equal(this.oPanel1.scrollTop, 50, "then vertical scrolling on Panel2 is reflected on Panel1");
+					assert.equal(this.oPanel1.scrollLeft, 70, "then horizontal scrolling on Panel2 is reflected on Panel1");
 					fnDone();
 				}.bind(this));
-				this.$Panel2.scrollTop(50);
-				this.$Panel2.scrollLeft(70);
+				this.oPanel2.scrollTop = 50;
+				this.oPanel2.scrollLeft = 70;
 			}.bind(this));
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
 		});
 
 		QUnit.test("when panel2 is removed from the targets", function(assert) {
-			var fnDone = assert.async();
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			const fnDone = assert.async();
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				this.oScrollbarSynchronizer.removeTarget(this.$Panel2[0]);
+				this.oScrollbarSynchronizer.removeTarget(this.oPanel2);
 
 				this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-					assert.equal(this.$Panel2.scrollTop(), 20, "then further vertical scrolling on Panel1 is not reflected on Panel2");
-					assert.equal(this.$Panel2.scrollLeft(), 30, "then further horizontal scrolling on Panel1 is not reflected on Panel2");
-					this.$Panel2.scrollTop(80);
-					this.$Panel2.scrollLeft(90);
+					assert.equal(this.oPanel2.scrollTop, 20, "then further vertical scrolling on Panel1 is not reflected on Panel2");
+					assert.equal(this.oPanel2.scrollLeft, 30, "then further horizontal scrolling on Panel1 is not reflected on Panel2");
+					this.oPanel2.scrollTop = 80;
+					this.oPanel2.scrollLeft = 90;
 					window.requestAnimationFrame(function() {
-						assert.equal(this.$Panel1.scrollTop(), 40, "then vertical scrolling on Panel2 is not reflected on Panel1");
-						assert.equal(this.$Panel1.scrollLeft(), 50, "then horizontal scrolling on Panel2 is not reflected on Panel1");
+						assert.equal(this.oPanel1.scrollTop, 40, "then vertical scrolling on Panel2 is not reflected on Panel1");
+						assert.equal(this.oPanel1.scrollLeft, 50, "then horizontal scrolling on Panel2 is not reflected on Panel1");
 						fnDone();
 					}.bind(this));
 				}.bind(this));
-				this.$Panel1.scrollTop(40);
-				this.$Panel1.scrollLeft(50);
+				this.oPanel1.scrollTop = 40;
+				this.oPanel1.scrollLeft = 50;
 			}.bind(this));
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
 		});
 
 		QUnit.test("when panel1 and panel2 are both added as targets, then we set targets to panel1 and panel3", function(assert) {
-			var fnDone = assert.async();
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			const fnDone = assert.async();
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				this.oScrollbarSynchronizer.setTargets([this.$Panel1[0], this.$Panel3[0]]);
+				this.oScrollbarSynchronizer.setTargets([this.oPanel1, this.oPanel3]);
 
 				this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-					assert.equal(this.$Panel3.scrollTop(), 40, "then vertical scrolling on Panel1 is reflected on Panel3");
-					assert.equal(this.$Panel3.scrollLeft(), 50, "then horizontal scrolling on Panel1 is reflected on Panel3");
-					assert.equal(this.$Panel2.scrollTop(), 20, "then vertical scrolling on Panel1 is no longer reflected on Panel2");
-					assert.equal(this.$Panel2.scrollLeft(), 30, "then horizontal scrolling on Panel1 is no longer reflected on Panel2");
+					assert.equal(this.oPanel3.scrollTop, 40, "then vertical scrolling on Panel1 is reflected on Panel3");
+					assert.equal(this.oPanel3.scrollLeft, 50, "then horizontal scrolling on Panel1 is reflected on Panel3");
+					assert.equal(this.oPanel2.scrollTop, 20, "then vertical scrolling on Panel1 is no longer reflected on Panel2");
+					assert.equal(this.oPanel2.scrollLeft, 30, "then horizontal scrolling on Panel1 is no longer reflected on Panel2");
 					fnDone();
 				}.bind(this));
-				this.$Panel1.scrollTop(40);
-				this.$Panel1.scrollLeft(50);
+				this.oPanel1.scrollTop = 40;
+				this.oPanel1.scrollLeft = 50;
 			}.bind(this));
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
 		});
 
 		QUnit.test("when panel1 is already scrolled when it is added as a target", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				assert.equal(this.$Panel2.scrollTop(), 20, "then vertical scrolling on Panel1 is reflected on Panel2");
-				assert.equal(this.$Panel2.scrollLeft(), 30, "then horizontal scrolling on Panel1 is reflected on Panel2");
+				assert.equal(this.oPanel2.scrollTop, 20, "then vertical scrolling on Panel1 is reflected on Panel2");
+				assert.equal(this.oPanel2.scrollLeft, 30, "then horizontal scrolling on Panel1 is reflected on Panel2");
 				fnDone();
 			}.bind(this));
 
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 		});
 
 		QUnit.test("when panel1 is a target, gets scrolled and then panel2 is added as a target", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				assert.equal(this.$Panel2.scrollTop(), 20, "then vertical scrolling on Panel1 is reflected on Panel2");
-				assert.equal(this.$Panel2.scrollLeft(), 30, "then horizontal scrolling on Panel1 is reflected on Panel2");
+				assert.equal(this.oPanel2.scrollTop, 20, "then vertical scrolling on Panel1 is reflected on Panel2");
+				assert.equal(this.oPanel2.scrollLeft, 30, "then horizontal scrolling on Panel1 is reflected on Panel2");
 				fnDone();
 			}.bind(this));
 
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 		});
 
 		QUnit.test("when Panel1 is added as Target and function 'hasTarget' is called with Panel1", function(assert) {
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			assert.ok(this.oScrollbarSynchronizer.hasTarget(this.$Panel1[0]), "then the function returns true");
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			assert.ok(this.oScrollbarSynchronizer.hasTarget(this.oPanel1), "then the function returns true");
 
-			this.oScrollbarSynchronizer.removeTarget(this.$Panel1[0]);
+			this.oScrollbarSynchronizer.removeTarget(this.oPanel1);
 
-			assert.notOk(this.oScrollbarSynchronizer.hasTarget(this.$Panel1[0]), "and after removing it from targets the function returns false");
+			assert.notOk(this.oScrollbarSynchronizer.hasTarget(this.oPanel1), "and after removing it from targets the function returns false");
 		});
 
 		QUnit.test("when Panel3 is added as Target and then removed from the DOM", function(assert) {
-			this.oScrollbarSynchronizer.addTarget(this.$Panel3[0]);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel3);
 
-			this.$Panel3.remove();
+			this.oPanel3.remove();
 
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
 
-			assert.deepEqual(this.oScrollbarSynchronizer.getTargets(), [this.$Panel1[0]], "then the function getTargets returns only Panel1");
+			assert.deepEqual(this.oScrollbarSynchronizer.getTargets(), [this.oPanel1], "then the function getTargets returns only Panel1");
 		});
 
 		QUnit.test("when addTarget is called without a parameter", function(assert) {
@@ -189,51 +189,51 @@ function(
 		});
 
 		QUnit.test("when listeners are re-attached properly via refreshLisneters()", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				this.$Panel2.off();
+				this.oPanel2.removeEventListener("scroll", this.oScrollbarSynchronizer._scrollEventHandler);
 
 				this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-					assert.equal(this.$Panel1.scrollTop(), 40, "then vertical scrolling on Panel2 is reflected on Panel1");
-					assert.equal(this.$Panel1.scrollLeft(), 60, "then horizontal scrolling on Panel2 is reflected on Panel1");
+					assert.equal(this.oPanel1.scrollTop, 40, "then vertical scrolling on Panel2 is reflected on Panel1");
+					assert.equal(this.oPanel1.scrollLeft, 60, "then horizontal scrolling on Panel2 is reflected on Panel1");
 					fnDone();
 				}, this);
 
 				this.oScrollbarSynchronizer.refreshListeners();
-				this.$Panel2.scrollTop(40);
-				this.$Panel2.scrollLeft(60);
+				this.oPanel2.scrollTop = 40;
+				this.oPanel2.scrollLeft = 60;
 			}, this);
 
-			this.$Panel1.scrollTop(20);
-			this.$Panel1.scrollLeft(30);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 		});
 
 		QUnit.test("when panel1 and panel2 are both change scrollbar position simultaneously", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
 				this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
-					assert.equal(this.$Panel1.scrollTop(), 50, "then vertical scrolling on Panel1 is correct");
-					assert.equal(this.$Panel1.scrollLeft(), 70, "then horizontal scrolling on Panel1 is correct");
+					assert.equal(this.oPanel1.scrollTop, 50, "then vertical scrolling on Panel1 is correct");
+					assert.equal(this.oPanel1.scrollLeft, 70, "then horizontal scrolling on Panel1 is correct");
 
-					assert.equal(this.$Panel2.scrollTop(), 50, "then vertical scrolling on Panel2 is correct");
-					assert.equal(this.$Panel2.scrollLeft(), 70, "then horizontal scrolling on Panel2 is correct");
+					assert.equal(this.oPanel2.scrollTop, 50, "then vertical scrolling on Panel2 is correct");
+					assert.equal(this.oPanel2.scrollLeft, 70, "then horizontal scrolling on Panel2 is correct");
 
 					fnDone();
 				}, this);
 
-				this.$Panel1.scrollTop(20);
-				this.$Panel1.scrollLeft(30);
+				this.oPanel1.scrollTop = 20;
+				this.oPanel1.scrollLeft = 30;
 
-				this.$Panel2.scrollTop(50);
-				this.$Panel2.scrollLeft(70);
+				this.oPanel2.scrollTop = 50;
+				this.oPanel2.scrollLeft = 70;
 			}, this);
 
-			this.oScrollbarSynchronizer.addTarget(this.$Panel1[0]);
-			this.oScrollbarSynchronizer.addTarget(this.$Panel2[0]);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 		});
 	});
 

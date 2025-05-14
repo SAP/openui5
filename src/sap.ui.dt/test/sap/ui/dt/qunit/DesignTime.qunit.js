@@ -1,7 +1,6 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/m/List",
@@ -33,7 +32,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
-	jQuery,
 	Log,
 	merge,
 	List,

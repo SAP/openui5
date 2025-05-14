@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/plugin/CutPaste",
 	"sap/ui/Device",
-	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/utils/nextUIUpdate"
@@ -19,7 +18,6 @@ function(
 	OverlayRegistry,
 	CutPaste,
 	Device,
-	QUnitUtils,
 	KeyCodes,
 	sinon,
 	nextUIUpdate
@@ -27,14 +25,16 @@ function(
 	"use strict";
 
 	function triggerKeydown(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
-		var oParams = {};
-		oParams.keyCode = iKeyCode;
-		oParams.which = oParams.keyCode;
-		oParams.shiftKey = bShiftKey;
-		oParams.altKey = bAltKey;
-		oParams.metaKey = bMetaKey;
-		oParams.ctrlKey = bCtrlKey;
-		QUnitUtils.triggerEvent("keydown", oTargetDomRef, oParams);
+		const oEvent = new KeyboardEvent("keydown", {
+			keyCode: iKeyCode,
+			which: iKeyCode,
+			shiftKey: bShiftKey || false,
+			altKey: bAltKey || false,
+			ctrlKey: bCtrlKey || false,
+			metaKey: bMetaKey || false
+		});
+
+		oTargetDomRef.dispatchEvent(oEvent);
 	}
 
 	QUnit.module("Given that a CutPaste is initialized", {

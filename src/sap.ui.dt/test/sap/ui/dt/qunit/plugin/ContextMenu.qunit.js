@@ -40,7 +40,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", resolve);
 			oOverlay.setSelected(true);
-			QUnitUtils.triggerMouseEvent(oOverlay.getDomRef(), "contextmenu");
+			oOverlay.getDomRef().dispatchEvent(new MouseEvent("contextmenu"));
 		}.bind(this));
 	}
 
@@ -204,12 +204,12 @@ sap.ui.define([
 		// 	this.oContextMenuPlugin.attachEventOnce("closedContextMenu", function() {
 		// 		assert.ok(true, "then the event closedContextMenu is fired");
 		// 	});
-		//
+
 		// 	const onOpenedContextMenuAgain = function(oEvent) {
 		// 		const {oContextMenuControl} = oEvent.getSource();
 		// 		// Works only with events on unified menu
 		// 		const aItems = oContextMenuControl._getMenu().getItems();
-		//
+
 		// 		// triggers menu item handler() on propagated item
 		// 		const oPropagatedMenuItem = aItems.find((oItem) => {
 		// 			return oItem.getText() === "propagated for button 1";
@@ -219,10 +219,10 @@ sap.ui.define([
 		// 			oClickedPropagatedItem.handler.calledWith([this.oLayoutOverlay]),
 		// 			"then the menu item handler was called with the propagating control"
 		// 		);
-		//
+
 		// 		done();
 		// 	};
-		//
+
 		// 	const onOpenedContextMenu = function(oEvent) {
 		// 		const {oContextMenuControl} = oEvent.getSource();
 		// 		// Works only with events on unified menu
@@ -230,11 +230,11 @@ sap.ui.define([
 		// 		const oRenameMenuItem = aItems.find((oItem) => {
 		// 			return oItem.getText() === "Rename for button 2";
 		// 		});
-		//
+
 		// 		// triggers menu item handler() on normal item
 		// 		QUnitUtils.triggerEvent("click", oRenameMenuItem.sId, {});
 		// 		assert.ok(oItemSelectedStub.calledWith([this.oButton2Overlay]), "then the method '_onItemSelected' was called");
-		//
+
 		// 		// additional information on menu items
 		// 		const oEnabledButton1Item = aItems.find((oItem) => {
 		// 			return oItem.getText() === "enabled for button 1";
@@ -261,15 +261,15 @@ sap.ui.define([
 		// 			"AdditionalInfo_button2_sub01",
 		// 			"then the additional info on the first submenu item is set correctly"
 		// 		);
-		//
+
 		// 		this.oContextMenuPlugin.attachEventOnce("openedContextMenu", onOpenedContextMenuAgain.bind(this));
-		//
+
 		// 		this.oButton2Overlay.setSelected(true);
-		// 		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		// 		this.oButton2Overlay.getDomRef().dispatchEvent(new MouseEvent("contextmenu"));
 		// 		this.clock.tick(50);
 		// 	};
 		// 	this.oContextMenuPlugin.attachEventOnce("openedContextMenu", onOpenedContextMenu.bind(this));
-		//
+
 		// 	sandbox.stub(this.oRenamePlugin, "getMenuItems")
 		// 	.callThrough()
 		// 	.withArgs([this.oButton2Overlay])
@@ -287,9 +287,10 @@ sap.ui.define([
 		// 			handler: oItemSelectedStub
 		// 		}
 		// 	]);
-		//
+
 		// 	this.oButton2Overlay.setSelected(true);
-		// 	QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		// 	var oTargetDomRef = this.oButton2Overlay.getDomRef();
+		// 	oTargetDomRef.dispatchEvent(new MouseEvent("contextmenu"));
 		// 	this.clock.tick(50);
 		// });
 
@@ -549,63 +550,64 @@ sap.ui.define([
 			// if it is not "rename"-able. In this case ContextMenu shouldn't be opened
 			const oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
 			this.oButton2Overlay.setSelected(false);
-			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.oButton2Overlay.getDomRef().dispatchEvent(new MouseEvent("click"));
 			assert.equal(oOpenStub.callCount, 0, "the open function was not triggered");
 		});
 
 		QUnit.test("Testing click event when in design mode", function(assert) {
 			sandbox.stub(BaseDesignTime, "isDesignModeEnabled").returns(true);
 			const oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
-			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.oButton2Overlay.getDomRef().dispatchEvent(new MouseEvent("click"));
 			assert.equal(oOpenStub.callCount, 0, "the open function was not triggered");
 		});
 
 		QUnit.test("Testing onKeyUp function opening the expanded contextMenu", function(assert) {
-			const oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
-			const _tempListener = function(oEvent) {
-				oEvent.keyCode = KeyCodes.F10;
-				oEvent.shiftKey = true;
-				oEvent.altKey = false;
-				oEvent.ctrlKey = false;
-				this.oContextMenuPlugin._onKeyUp(oEvent);
-				assert.equal(oOpenStub.callCount, 1, "the open function was triggered");
-			}.bind(this);
+			const oOpenSpy = sandbox.spy(this.oContextMenuPlugin, "open");
+			const _tempListener = function() {
+				assert.equal(oOpenSpy.callCount, 1, "the open function was triggered");
+			};
 			this.oButton2Overlay.setSelected(true);
 			this.oButton2Overlay.attachBrowserEvent("keyup", _tempListener, this);
-			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
+			const oTargetDomRef = this.oButton2Overlay.getDomRef();
+			const oKeyUpEvent = new KeyboardEvent("keyup", {
+				keyCode: KeyCodes.F10,
+				which: KeyCodes.F10,
+				shiftKey: true
+			});
+			oTargetDomRef.dispatchEvent(oKeyUpEvent);
 		});
 
 		QUnit.test("Testing onKeyUp function opening the compact contextMenu", function(assert) {
-			const oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
-			const _tempListener = function(oEvent) {
-				oEvent.keyCode = KeyCodes.ENTER;
-				oEvent.shiftKey = false;
-				oEvent.altKey = false;
-				oEvent.ctrlKey = false;
-				this.oContextMenuPlugin._onKeyUp(oEvent);
-				assert.equal(oOpenStub.callCount, 1, "the open function was triggered");
-			}.bind(this);
+			const oOpenSpy = sandbox.spy(this.oContextMenuPlugin, "open");
+			const _tempListener = function() {
+				assert.equal(oOpenSpy.callCount, 1, "the open function was triggered");
+			};
 			this.oButton2Overlay.setSelected(true);
 			this.oButton2Overlay.attachBrowserEvent("keyup", _tempListener, this);
+			const oTargetDomRef = this.oButton2Overlay.getDomRef();
+			const oKeyUpEvent = new KeyboardEvent("keyup", {
+				keyCode: KeyCodes.ENTER,
+				which: KeyCodes.ENTER
+			});
+			oTargetDomRef.dispatchEvent(oKeyUpEvent);
 			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
 		});
 
 		QUnit.test("Testing onKeyUp function (ENTER) with other plugin busy", function(assert) {
-			const oOpenStub = sandbox.stub(this.oContextMenuPlugin, "open");
+			const oOpenSpy = sandbox.spy(this.oContextMenuPlugin, "open");
 			const oCheckPluginLockStub = sandbox.stub(this.oContextMenuPlugin, "_checkForPluginLock").returns(true);
-			const _tempListener = function(oEvent) {
-				oEvent.keyCode = KeyCodes.ENTER;
-				oEvent.shiftKey = false;
-				oEvent.altKey = false;
-				oEvent.ctrlKey = false;
-				this.oContextMenuPlugin._onKeyUp(oEvent);
-				assert.equal(oOpenStub.callCount, 0, "the open function was not triggered");
+			const _tempListener = function() {
+				assert.equal(oOpenSpy.callCount, 0, "the open function was not triggered");
 				oCheckPluginLockStub.reset();
-			}.bind(this);
+			};
 			this.oButton2Overlay.attachBrowserEvent("keyup", _tempListener, this);
-			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keyup");
+			const oTargetDomRef = this.oButton2Overlay.getDomRef();
+			const oKeyUpEvent = new KeyboardEvent("keyup", {
+				keyCode: KeyCodes.ENTER,
+				which: KeyCodes.ENTER
+			});
+			oTargetDomRef.dispatchEvent(oKeyUpEvent);
 		});
-
 		QUnit.test("Deregistering an Overlay", function(assert) {
 			this.oContextMenuPlugin.deregisterElementOverlay(this.oButton1Overlay);
 			assert.ok(true, "should throw no error");

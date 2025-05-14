@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/dt/DOMUtil",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dt/DOMUtil"
 ],
 function(
 	ManagedObject,
-	DOMUtil,
-	jQuery
+	DOMUtil
 ) {
 	"use strict";
 
@@ -129,11 +127,11 @@ function(
 	};
 
 	ScrollbarSynchronizer.prototype._attachScrollEvent = function(oDomNode) {
-		jQuery(oDomNode).on("scroll", this._scrollEventHandler);
+		oDomNode.addEventListener("scroll", this._scrollEventHandler);
 	};
 
 	ScrollbarSynchronizer.prototype._detachScrollEvent = function(oDomNode) {
-		jQuery(oDomNode).off("scroll", this._scrollEventHandler);
+		oDomNode.removeEventListener("scroll", this._scrollEventHandler);
 	};
 
 	ScrollbarSynchronizer.prototype._scrollEventHandler = function(oEvent) {
@@ -149,11 +147,10 @@ function(
 		if (
 			bForce
 			|| this.getScrollTop() !== oSourceDomNode.scrollTop
-			|| this.getScrollLeft() !== jQuery(oSourceDomNode).scrollLeft()
+			|| this.getScrollLeft() !== oSourceDomNode.scrollLeft
 		) {
 			this.setScrollTop(oSourceDomNode.scrollTop);
-			this.setScrollLeft(jQuery(oSourceDomNode).scrollLeft());
-
+			this.setScrollLeft(oSourceDomNode.scrollLeft);
 			if (this._bSyncing) {
 				this._abortSync();
 			}

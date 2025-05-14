@@ -174,14 +174,16 @@ sap.ui.define([
 	RtaQunitUtils.openContextMenuWithKeyboard = function(oTarget) {
 		return new Promise(function(resolve) {
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", resolve);
-			var oParams = {};
-			oParams.keyCode = KeyCodes.F10;
-			oParams.which = oParams.keyCode;
-			oParams.shiftKey = true;
-			oParams.altKey = false;
-			oParams.metaKey = false;
-			oParams.ctrlKey = false;
-			QUnitUtils.triggerEvent("keyup", oTarget.getDomRef(), oParams);
+
+			var oEvent = new KeyboardEvent("keyup", {
+				keyCode: KeyCodes.F10,
+				which: KeyCodes.F10,
+				shiftKey: true,
+				altKey: false,
+				metaKey: false,
+				ctrlKey: false
+			});
+			oTarget.getDomRef().dispatchEvent(oEvent);
 		}.bind(this));
 	};
 
