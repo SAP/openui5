@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>ย้ายโฟกัสไปยังองค์ประกอบถัดไปในลำดับแท็บ</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>ย้ายโฟกัสไปยังองค์ประกอบก่อนหน้าในลำดับแท็บ</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>ย้ายโฟกัสไปยังองค์ประกอบแรกของกลุ่ม UI ถัดไป (กลุ่ม F6) ในลำดับแท็บ</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>ย้ายโฟกัสไปยังองค์ประกอบแรกของกลุ่ม UI ก่อนหน้า (กลุ่ม F6) ในลำดับแท็บ</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>ทางลัดส่วนกลาง</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

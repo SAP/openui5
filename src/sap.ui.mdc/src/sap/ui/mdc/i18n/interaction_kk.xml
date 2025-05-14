@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Қолжетімді болса, <span class="uicontrol">Кесте параметрлері</span> диалогін ашады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Қолжетімді болса, кестенің <span class="uicontrol">Басқаша экспорттау</span> диалогін ашады.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Сүзгі жолағы үшін іздеуді іске қосады.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p><span class="uicontrol">Көрініс параметрлері</span> диалогін ашады</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p><span class="uicontrol">Көрініс параметрлері</span> диалогіндегі тармақты жояды</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

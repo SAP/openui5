@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>A lapsorozat következő elemére helyezi a fókuszt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>A lapsorozat előző elemére helyezi a fókuszt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>A lapsorozat következő UI-csoportjának (F6-csoportjának) első elemére helyezi a fókuszt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>A lapsorozat előző UI-csoportjának (F6-csoportjánakl) első elemére helyezi a fókuszt.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Globális billentyűparancsok</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

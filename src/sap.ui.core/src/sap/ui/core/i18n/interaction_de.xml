@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Verschiebt den Fokus zum nächsten Element in der Tabulatorfolge.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Verschiebt den Fokus zum vorherigen Element in der Tabulatorfolge.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Verschiebt den Fokus zum ersten Element der nächsten UI-Gruppe (F6-Gruppe) in der Tabulatorfolge.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Verschiebt den Fokus zum ersten Element der vorherigen UI-Gruppe (F6-Gruppe) in der Tabulatorfolge.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Globale Tastaturkürzel</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>यदि उपलब्ध हो तो <span class="uicontrol">तालिका सेटिंग</span> डायलॉग खोलता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>यदि उपलब्ध हो तो तालिका का <span class="uicontrol">इस तरह निर्यात करें</span> डायलॉग खोलता है.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>फ़िल्टर बार के लिए खोज ट्रिगर करता है.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p><span class="uicontrol">दृश्य सेटिंग</span> डायलॉग खोलता है</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p><span class="uicontrol">दृश्य सेटिंग</span> डायलॉग में कोई आइटम हटाता है</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

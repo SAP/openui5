@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Avaa <span class="uicontrol">Tauluasetukset</span> -valintaikkunan, jos se on käytettävissä.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Avaa taulun <span class="uicontrol">Vie nimellä</span> -valintaikkunan, jos se on käytettävissä.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Käynnistää suodatinpalkin haun.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Avaa <span class="uicontrol">Näytä asetukset</span> -valintaikkunan</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Poistaa kohteen <span class="uicontrol">Näytä asetukset</span> -valintaikkunasta</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Yn agor y ddeialog <span class="uicontrol">Gosodiadau Tabl</span>, os yw ar gael.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Yn agor deialog <span class="uicontrol">Allgludo fel</span> y tabl, os yw ar gael.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Yn sbarduno chwilio am far hidlo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Yn agor y ddeialog <span class="uicontrol">Gweld Gosodiadau</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Yn dileu eitem yn y ddeialog <span class="uicontrol">Gweld Gosodiadau</span></p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

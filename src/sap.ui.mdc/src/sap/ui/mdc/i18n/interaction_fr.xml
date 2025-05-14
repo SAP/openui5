@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Ouvre la boîte de dialogue <span class="uicontrol">Options de table</span>, si elle est disponible.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Ouvre la boîte de dialogue <span class="uicontrol">Exporter en tant que</span> de la table, si elle est disponible.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Déclenche la recherche pour la barre de filtres.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Ouvre la boîte de dialogue <span class="uicontrol">Options de vue</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Supprime un élément dans la boîte de dialogue <span class="uicontrol">Options de vue</span>.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

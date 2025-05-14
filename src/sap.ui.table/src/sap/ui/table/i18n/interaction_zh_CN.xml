@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>将焦点沿相应方向移动到同一列或行内的下一个单元格。</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>如果焦点位于第一行，则焦点会移动到列标题。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>如果焦点位于列标题，则焦点会移动到此列可见的第一行中的单元格，这取决于当前滚动位置。</p>
+				<p>如果焦点位于<span class="uicontrol">全选</span>复选框，则焦点会移动到可见的第一行中的行选择器，这取决于当前滚动位置。</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>如果焦点位于第一列中的单元格，则焦点会移动到行选择器。</p>
+				<p>如果焦点位于列标题，则焦点会移动到左侧的列标题。</p>
+				<p>如果焦点位于第一列的列标题，则焦点会移动到<span class="uicontrol">全选</span>复选框。</p>
+				<p>如果焦点位于某个展开组的组标题，则会折叠该组。</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>如果焦点位于列标题，则焦点会移动到右侧的列标题。</p>
+				<p>如果焦点位于行选择器，则焦点会移动到同一行内第一列的单元格。</p>
+				<p>如果焦点位于<span class="uicontrol">全选</span>复选框，则焦点会移动到第一列的列标题。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>如果焦点处于单元格级别，则焦点会移动到同一列最顶端的单元格。如果焦点已处于该级别，则焦点会上移一页并留在需要滚动的同一列。</p>
+				<p>如果焦点位于第一行，则焦点会移动到列标题。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>如果焦点处于单元格级别，则焦点会移动到同一列中可见的最后一个单元格。如果焦点已处于该级别，则焦点会下移一页并留在需要滚动的同一列。</p>
+				<p>如果焦点位于列标题，则焦点会移动到第一行。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>如果焦点处于单元格级别或位于列标题，则焦点会向左移动五列（缺省页面大小）。如果左侧的列数小于当前页面大小，则焦点会移动到第一列。</p>
+				<p>如果焦点位于单元格级别的第一列，则焦点会移动到行选择器。</p>
+				<p>如果焦点位于第一列的列标题，则焦点会移动到<span class="uicontrol">全选</span>。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>如果焦点处于单元格级别，则焦点会向右移动五列（缺省页面大小）。</p>
+				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>如果焦点位于行选择器，则焦点会移动到同一行中的第一列。</p>
+				<p>如果焦点位于<span class="uicontrol">全选</span>，则焦点会移动到第一列的标题。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>如果焦点位于单元格，则焦点会移动到同一行中的第一列。</p>
+				<p>如果焦点位于第一列中的单元格，则焦点会移动到行选择器。</p>
+				<p>如果焦点位于列标题，则焦点会移动到第一列的标题。</p>
+				<p>如果焦点位于第一列标题，则焦点会移动到<span class="uicontrol">全选</span>。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>如果焦点位于单元格或列标题，则焦点会移动到最后一列。</p>
+				<p>如果焦点位于行选择器，则焦点会移动到同一行中的第一列。</p>
+				<p>如果焦点位于<span class="uicontrol">全选</span>，则焦点会移动到第一列的标题。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>如果焦点位于单元格，则焦点会移动到列标题。</p>
+				<p>如果焦点位于行选择器，则焦点会移动到<span class="uicontrol">全选</span>。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>如果焦点位于单元格或列标题，则焦点会移动到同一列中的最后一行。</p>
+				<p>如果焦点位于行选择器或<span class="uicontrol">全选</span>，则焦点会移动到最后一个行选择器。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+				<p>如果焦点位于单元格，则焦点会移动到单元格中的第一个可聚焦控件。</p>
+				<p>如果焦点位于<span class="uicontrol">全选</span>复选框或行选择器，则会切换复选框状态。</p>
+				<p>如果焦点位于列标题，则会打开列标题菜单。</p>
+				<p>如果焦点位于组标题，则会折叠或展开相关组。</p>
+				<p><kbd>Enter</kbd></p>
+				<p>如果焦点位于组标题，则会打开组标题菜单。</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>如果焦点位于某个单元格，则会选择聚焦的单元格。</p>
+				<p>如果焦点位于某个单元格选择块，则会移除单元格的选择。</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>如果焦点位于单元格或行选择器，这会切换当前行的选择。</p>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>如果焦点位于某个单元格选择块，则会将该单元格选择块更改成行选择。单元格选择会被移除。</p>
+				<p>视行选择模式而定会发生以下情况：</p>
+				<ul>
+					<li>选择块的所有行（多重选择）</li>
+					<li>仅选择含有当前聚焦单元格的行（单一选择）</li>
+					<li>不选择任何行</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>在单元格及其内容之间切换焦点（只读文本除外）。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift</kbd> <description>
+				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>如果焦点位于已选择的单元格，则上面的单元格会获得焦点，并且会将单元格选择上升到此单元格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>如果焦点位于已选择的单元格，则下面的单元格会获得焦点，并且会将单元格选择上升到此单元格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>如果焦点位于列标题，则会将此列的宽度增加 1 em。如果键保持按下，则会重复此操作。</p>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>如果焦点位于<span class="emphasis">未</span>选择的单元格，则会选择聚焦的单元格和右侧的单元格。焦点会移动到聚焦的单元格右侧的单元格。</p>
+				<p>如果焦点位于已选择的单元格，则右侧的单元格会获得焦点，并且会将单元格选择上升到此单元格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>如果焦点位于列标题，则会将此列的宽度减少 1 em。如果键保持按下，则会重复此操作。</p>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>如果焦点位于<span class="emphasis">未</span>选择的单元格，则会选择聚焦的单元格和左侧的单元格。焦点会移动到聚焦的单元格左侧的单元格。</p>
+				<p>如果焦点位于已选择的单元格，则左侧的单元格会获得焦点，并且会将单元格选择上升到此单元格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>如果焦点位于列标题，则相关列会向右移动一个位置。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>如果焦点位于列标题，则相关列会向左移动一个位置。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>将焦点移动到上面的行中的下一个可聚焦元素。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>将焦点移动到下面的行中的下一个可聚焦元素。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>如果焦点位于单元格、行选择器或<span class="uicontrol">全选</span>，这会切换<span class="uicontrol">全选</span>复选框；相应会选择或取消选择所有行。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>如果焦点位于表的内部，则会移除任何行和单元格的选择。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>如果焦点位于单元格，则焦点会移动到其内容（只读文本除外）。</p>
+				<p>如果焦点位于组标题或树的非叶节点，这会切换组的展开：相应会展开或折叠组。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>如果焦点位于组标题，则会打开组标题菜单。</p>
+				<p>如果焦点位于列标题，则会打开列标题菜单。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">如果启用单元格选择：</span></p>
+				<p>如果已选择单元格，则在另一不同单元格上按 <kbd>Shift + click</kbd> 会将选择上升到单击的单元格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

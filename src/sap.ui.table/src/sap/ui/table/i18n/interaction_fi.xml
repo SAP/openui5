@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Siirtää kohdistuksen saman sarakkeen tai rivin seuraavaan soluun vastaavassa suunnassa.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Jos kohdistus on ensimmäisellä rivillä, se siirtyy sarakeotsikkoon.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Jos kohdistus on sarakeotsikossa, se siirtyy kyseisen sarakkeen ensimmäisellä näkyvissä olevalla rivillä olevaan soluun, joka määräytyy nykyisen vierityskohdan mukaan.</p>
+				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy ensimmäisellä näkyvissä olevalla rivillä olevaan rivivalitsimeen, joka määräytyy nykyisen vierityskohdan mukaan.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Jos kohdistus on ensimmäisen sarakkeen solussa, se siirtyy rivivalitsimeen.</p>
+				<p>Jos kohdistus on sarakeotsikossa, se siirtyy vasemmalla puolella olevaan sarakeotsikkoon.</p>
+				<p>Jos kohdistus on ensimmäisen sarakkeen sarakeotsikossa, se siirtyy <span class="uicontrol">Valitse kaikki</span> -valintaruutuun.</p>
+				<p>Jos kohdistus on laajennetun ryhmän ryhmäotsikossa, ryhmä tiivistetään.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Jos kohdistus on sarakeotsikossa, se siirtyy oikealla puolella olevaan sarakeotsikkoon.</p>
+				<p>Jos kohdistus on rivivalitsimessa, se siirtyy saman rivin ensimmäisessä sarakkeessa olevaan soluun.</p>
+				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy ensimmäisen sarakkeen sarakeotsikkoon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Jos kohdistus on solutasolla, kohdistus siirtyy saman sarakkeen ylimpään soluun. Jos kohdistus on jo kyseisellä tasolla, se siirtyy yhden sivun ylöspäin ja pysyy samassa sarakkeessa tarvittavaa vieritystä käyttäen.</p>
+				<p>Jos kohdistus on ensimmäisellä rivillä, se siirtyy sarakeotsikkoon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Jos kohdistus on solutasolla, se siirtyy saman sarakkeen viimeiseen näkyvissä olevaan soluun. Jos kohdistus on jo kyseisellä tasolla, se siirtyy yhden sivun alaspäin ja pysyy samassa sarakkeessa tarvittavaa vieritystä käyttäen.</p>
+				<p>Jos kohdistus on sarakeotsikossa, se siirtyy ensimmäiselle riville.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Jos kohdistus on solutasolla tai sarakeotsikossa, se siirtyy viisi saraketta vasemmalle (sivun oletuskoko). Jos vasemmalla on nykyistä sivukokoa vähemmän sarakkeita, kohdistus siirtyy ensimmäiseen sarakkeeseen.</p>
+				<p>Jos kohdistus on ensimmäisessä sarakkeessa solutasolla, kohdistus siirtyy rivivalitsimeen.</p>
+				<p>Jos kohdistus on ensimmäisen sarakkeen sarakeotsikossa, se siirtyy <span class="uicontrol">Valitse kaikki</span> -valintaruutuun.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Jos kohdistus on solutasolla, se siirtyy viisi saraketta oikealle (sivun oletuskoko).</p>
+				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Jos kohdistus on rivivalitsimessa, se siirtyy saman rivin ensimmäiseen sarakkeeseen.</p>
+				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy ensimmäisen sarakkeen otsikkoon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Jos kohdistus on solussa, se siirtyy saman rivin ensimmäiseen sarakkeeseen.</p>
+				<p>Jos kohdistus on ensimmäisen sarakkeen solussa, se siirtyy rivivalitsimeen.</p>
+				<p>Jos kohdistus on sarakeotsikossa, se siirtyy ensimmäisen sarakkeen otsikkoon.</p>
+				<p>Jos kohdistus on ensimmäisessä sarakeotsikossa, se siirtyy <span class="uicontrol">Valitse kaikki</span> -valintaruutuun.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Jos kohdistus on solussa tai sarakeotsikossa, se siirtyy viimeiseen sarakkeeseen.</p>
+				<p>Jos kohdistus on rivivalitsimessa, se siirtyy saman rivin ensimmäiseen sarakkeeseen.</p>
+				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy ensimmäisen sarakkeen otsikkoon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Jos kohdistus on solussa, se siirtyy sarakeotsikkoon.</p>
+				<p>Jos kohdistus on rivivalitsimessa, se siirtyy <span class="uicontrol">Valitse kaikki</span> -valintaruutuun.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Jos kohdistus on solussa tai sarakeotsikossa, se siirtyy saman sarakkeen viimeiselle riville.</p>
+				<p>Jos kohdistus on rivivalitsimessa tai <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy viimeiseen rivivalitsimeen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+				<p>Jos kohdistus on solussa, se siirtyy solun ensimmäiseen kohdistettavissa olevaan ohjausobjektiin.</p>
+				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa tai rivivalitsimessa, vaihtelee valintaruudun tilaa.</p>
+				<p>Jos kohdistus on sarakeotsikossa, sarakeotsikkovalikko avautuu.</p>
+				<p>Jos kohdistus on ryhmäotsikossa, liittyvä ryhmä tiivistetään tai laajennetaan.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Jos kohdistus on ryhmäotsikossa, ryhmäotsikkovalikko avautuu.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>Jos kohdistus on solussa, valitaan kohdistettu solu.</p>
+				<p>Jos kohdistus on solun valintalohkossa, solujen valinnat poistetaan.</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa, tämä vaihtelee nykyisen rivin valintaa.</p>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>Jos kohdistus on solun valintalohkossa, solun valintalohko muutetaan rivin valinnaksi. Solun valinta poistetaan.</p>
+				<p>Rivin valintatilasta riippuen tapahtuu seuraavaa:</p>
+				<ul>
+					<li>Lohkon kaikki rivit valitaan (monivalinta)</li>
+					<li>Valitaan vain tällä hetkellä kohdistettuna olevan solun sisältävä rivi (yksittäinen valinta)</li>
+					<li>Mitään riviä ei valita</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Vaihtelee kohdistusta solun ja sen sisällön välillä (kirjoitussuojattua tekstiä lukuun ottamatta).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift</kbd> <description>
+				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Jos kohdistus on sarakeotsikossa, kyseisen sarakkeen leveyttä lisätään yhden em-yksikön verran. Jos näppäintä painetaan pitkään, toiminto toistetaan.</p>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, valitaan kohdistettu solu ja sen oikealla puolella oleva solu. Kohdistus siirtyy kohdistetun solun oikealla puolella olevaan soluun.</p>
+				<p>Jos kohdistus on valitussa solussa, se siirtyy oikealla puolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Jos kohdistus on sarakeotsikossa, kyseisen sarakkeen leveyttä vähennetään yhden em-yksikön verran. Jos näppäintä painetaan pitkään, toiminto toistetaan.</p>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, valitaan kohdistettu solu sekä sen vasemmalla puolella oleva solu. Kohdistus siirtyy kohdistetun solun vasemmalla puolella olevaan soluun.</p>
+				<p>Jos kohdistus on valitussa solussa, se siirtyy vasemmalla puolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Jos kohdistus on sarakeotsikossa, asianomainen sarake siirtyy yhden sijan oikealle.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Jos kohdistus on sarakeotsikossa, asianomainen sarake siirtyy yhden sijan vasemmalle.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Siirtää kohdistuksen yläpuolella olevan rivin seuraavaan kohdistettavissa olevaan elementtiin.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Siirtää kohdstuksen alapuolella olevan rivin seuraavaan kohdistettavissa olevaan elementtiin.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Jos kohdistus on solussa, rivivalitsimessa tai <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, tämä vaihtelee <span class="uicontrol">Valitse kaikki</span> -valintaruutua: joko kaikki rivit valitaan tai kaikkien rivien valinnat poistetaan.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>Jos kohdistus on taulukon sisällä, kaikkien rivien ja solujen valinta poistetaan.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Jos kohdistus on solussa, se siirtyy sen sisältöön (kirjoitussuojattua tekstiä lukuun ottamatta).</p>
+				<p>Jos kohdistus on ryhmäotsikossa tai puun ei-lehtisolmussa, tämä vaihtelee ryhmän laajennusta: ryhmä joko laajennetaan tai tiivistetään.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Jos kohdistus on ryhmäotsikossa, ryhmäotsikkovalikko avautuu.</p>
+				<p>Jos kohdistus on sarakeotsikossa, sarakeotsikkovalikko avautuu.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
+				<p>Jos solut on valittu, <kbd>Shift + click</kbd> eri solun kohdalla laajentaa valinnan napsautettuun soluun asti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>
