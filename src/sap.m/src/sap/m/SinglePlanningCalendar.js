@@ -1641,10 +1641,21 @@ function(
 	};
 
 	/**
-	 * Finds the start and end dates in the visible range.
+	 * @typedef {object} sap.m.SinglePlanningCalendar.VisibleDates
+	 * @description Object which contains the start and end dates in the currently visible range.
+	 *
+	 * @property {Date|module:sap/ui/core/date/UI5Date} [oStartDate]
+	 *   The start date in the currently visible range.
+	 * @property {Date|module:sap/ui/core/date/UI5Date} [oEndDate]
+	 *   The end date in the currently visible range.
+	 * @public
+	 */
+
+	/**
+	 * Returns an object containing the start and end dates in the currently visible range.
 	 * @public
 	 * @since 1.133
-	 * @returns {Object} returns an object that stores both the start and end date within the currently visible range.
+	 * @returns {sap.m.SinglePlanningCalendar.VisibleDates} An object containing the start and end date in the currently visible range.
 	 */
 	SinglePlanningCalendar.prototype.getFirstAndLastVisibleDates = function () {
 		return this._getCurrentGrid()._getFirstAndLastVisibleDates();
