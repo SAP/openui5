@@ -847,6 +847,32 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("_getDateTypes doesn't call _getSpecialDates", function (assert) {
+			// Prepare
+			var oMonth = new Month();
+			var oInternalSelectedDatesSpy = this.spy(oMonth, "_getSpecialDates");
+
+			// Act
+			oMonth._getDateTypes(createCalendarDate(2017, 1, 1, true));
+
+			// Assert
+			assert.ok(oInternalSelectedDatesSpy.called, "_getSpecialDates was not called");
+
+			// Prepare
+			oMonth.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oInternalSelectedDatesSpy.reset();
+
+			// Act
+			oMonth._getDateTypes(createCalendarDate(2017, 1, 1, true));
+
+			// Assert
+			assert.ok(oInternalSelectedDatesSpy.notCalled, "_getSpecialDates was not called");
+
+			// Clean
+			oMonth.destroy();
+		});
+
 		QUnit.test("_getDateTypes when Type01 and NonWorking types are set", function (assert) {
 			var aDayTypes,
 				oDate = new Date(2017, 1, 20),
@@ -861,6 +887,9 @@ sap.ui.define([
 
 			this.oM.addSpecialDate(oSpecialDate1);
 			this.oM.addSpecialDate(oSpecialDate2);
+
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
@@ -884,6 +913,9 @@ sap.ui.define([
 
 			this.oM.addSpecialDate(oSpecialDate1);
 			this.oM.addSpecialDate(oSpecialDate2);
+
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
@@ -913,6 +945,9 @@ sap.ui.define([
 			this.oM.addSpecialDate(oSpecialDate2);
 			this.oM.addSpecialDate(oSpecialDate3);
 
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
 			// Assert
@@ -936,6 +971,9 @@ sap.ui.define([
 			this.oM.addSpecialDate(oSpecialDate1);
 			this.oM.addSpecialDate(oSpecialDate2);
 
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
 			// Assert
@@ -952,6 +990,8 @@ sap.ui.define([
 				});
 
 			this.oM.addSpecialDate(oSpecialDate1);
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
@@ -969,6 +1009,8 @@ sap.ui.define([
 				});
 
 			this.oM.addSpecialDate(oSpecialDate1);
+			this.oM.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
