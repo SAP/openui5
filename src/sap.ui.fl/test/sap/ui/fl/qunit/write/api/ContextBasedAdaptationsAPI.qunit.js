@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
@@ -59,13 +59,13 @@ sap.ui.define([
 
 	function stubSettings(sandbox) {
 		sandbox.stub(Settings, "getInstance").resolves({
-			isContextBasedAdaptationEnabled() {
+			getIsContextBasedAdaptationEnabled() {
 				return true;
 			},
-			isSystemWithTransports() {
+			getIsSystemWithTransports() {
 				return false;
 			},
-			isVariantAuthorNameAvailable() {
+			getIsVariantAuthorNameAvailable() {
 				return false;
 			}
 		});

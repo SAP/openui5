@@ -21,29 +21,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("mergeResults with empty aResponse", function(assert) {
-			var DEFAULT_FEATURES = {
-				isKeyUser: false,
-				isKeyUserTranslationEnabled: false,
-				isVariantSharingEnabled: false,
-				isContextSharingEnabled: true,
-				isPublicFlVariantEnabled: false,
-				isVariantPersonalizationEnabled: true,
-				isAtoAvailable: false,
-				isAtoEnabled: false,
-				isProductiveSystem: true,
-				isPublicLayerAvailable: false,
-				isLocalResetEnabled: false,
-				versioning: {},
-				isZeroDowntimeUpgradeRunning: false,
-				isVariantAuthorNameAvailable: false,
-				system: "",
-				client: ""
-			};
 			var aResponse = [];
 
 			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
-
-			assert.deepEqual(oResult, DEFAULT_FEATURES, "get default values");
+			assert.deepEqual(oResult, {}, "empty response");
 		});
 
 		QUnit.test("mergeResults with different responses", function(assert) {
@@ -53,7 +34,7 @@ sap.ui.define([
 			};
 			var oResponse2 = {
 				layers: [Layer.CUSTOMER],
-				features: {isAtoAvailable: true, isKeyUser: true, isKeyUserTranslationEnabled: true},
+				features: { isKeyUser: true, isKeyUserTranslationEnabled: true },
 				isContextSharingEnabled: true
 			};
 			var oResponse3 = {
@@ -65,8 +46,7 @@ sap.ui.define([
 			var oResult = StorageFeaturesMerger.mergeResults(aResponse);
 
 			assert.equal(oResult.newKey, true, "get new key");
-			assert.equal(oResult.isKeyUser, true, "last isKeyuser is true");
-			assert.equal(oResult.isAtoAvailable, true, "isAtoAvailable to true");
+			assert.equal(oResult.isKeyUser, true, "last isKeyUser is true");
 			assert.equal(oResult.isProductiveSystem, false, "isProductiveSystem is false");
 			assert.equal(oResult.isKeyUserTranslationEnabled, true, "isKeyUserTranslationEnabled is true");
 			assert.equal(oResult.isContextSharingEnabled, true, "isContextSharingEnabled is true");
@@ -110,7 +90,7 @@ sap.ui.define([
 				layers: [],
 				isKeyUser: undefined
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "no CUSTOMER layer",
 			expectedLogs: 0,
@@ -118,7 +98,7 @@ sap.ui.define([
 				layers: [],
 				isKeyUser: undefined
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "the CUSTOMER layer configured",
 			expectedLogs: 0,
@@ -126,7 +106,7 @@ sap.ui.define([
 				layers: [Layer.CUSTOMER_BASE, Layer.CUSTOMER, Layer.PUBLIC, Layer.USER],
 				isKeyUser: undefined
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "with layers configured to ALL",
 			expectedLogs: 0,
@@ -134,7 +114,7 @@ sap.ui.define([
 				layers: ["ALL"],
 				isKeyUser: undefined
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "no layer are configured and the key user flag is set to false",
 			expectedLogs: 1,
@@ -142,7 +122,7 @@ sap.ui.define([
 				layers: [],
 				isKeyUser: false
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "no CUSTOMER layer and the key user flag is set to false",
 			expectedLogs: 1,
@@ -150,7 +130,7 @@ sap.ui.define([
 				layers: [Layer.CUSTOMER_BASE],
 				isKeyUser: false
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "the CUSTOMER layer configured and the key user flag is set to false",
 			expectedLogs: 0,
@@ -174,7 +154,7 @@ sap.ui.define([
 				layers: [],
 				isKeyUser: true
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "no CUSTOMER layer and the key user flag is set to true",
 			expectedLogs: 1,
@@ -182,7 +162,7 @@ sap.ui.define([
 				layers: [Layer.CUSTOMER_BASE],
 				isKeyUser: true
 			}],
-			expectedValue: false
+			expectedValue: undefined
 		}, {
 			description: "the CUSTOMER layer configured and the key user flag is set to true",
 			expectedLogs: 0,

@@ -24,7 +24,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantManager",
 	"sap/ui/fl/variants/VariantModel",
@@ -401,13 +401,13 @@ sap.ui.define([
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isKeyUser() {
+				getIsKeyUser() {
 					return false;
 				},
-				isPublicFlVariantEnabled() {
+				getIsPublicFlVariantEnabled() {
 					return false;
 				},
-				isVariantPersonalizationEnabled() {
+				getIsVariantPersonalizationEnabled() {
 					return false;
 				},
 				getUserId() {
@@ -439,16 +439,16 @@ sap.ui.define([
 			var bIsPublicFlVariantEnabled = true;
 			var sUserId;
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isKeyUser() {
+				getIsKeyUser() {
 					return bIsKeyUser;
 				},
-				isPublicFlVariantEnabled() {
+				getIsPublicFlVariantEnabled() {
 					return bIsPublicFlVariantEnabled;
 				},
 				getUserId() {
 					return sUserId;
 				},
-				isVariantPersonalizationEnabled() {
+				getIsVariantPersonalizationEnabled() {
 					return true;
 				}
 			});
@@ -1128,7 +1128,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_collectModelChanges' and public variant is enabled", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isPublicFlVariantEnabled() {
+				getIsPublicFlVariantEnabled() {
 					return true;
 				}
 			});

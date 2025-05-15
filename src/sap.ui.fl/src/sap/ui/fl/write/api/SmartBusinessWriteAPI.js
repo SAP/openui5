@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/SaveAs",
@@ -25,7 +25,7 @@ sap.ui.define([
 
 	function _checkSettingsAndExecuteActionByName(sActionName, mPropertyBag) {
 		return Settings.getInstance().then(function(oSettings) {
-			if (oSettings.isAtoEnabled()) {
+			if (oSettings.getIsAtoEnabled()) {
 				// For smart business, we already set the transport and skipIam flag,
 				// so that there should be no transport handling done on connector level.
 				mPropertyBag.skipIam = true;

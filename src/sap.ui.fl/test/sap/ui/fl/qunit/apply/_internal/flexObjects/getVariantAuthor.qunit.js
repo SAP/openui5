@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/getVariantAuthor",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager"
 ], function(
 	VariantManagementState,
@@ -26,7 +26,7 @@ sap.ui.define([
 	 */
 	ControlVariantWriteUtils.deleteVariant = function(sReference, sVMReference, sVariantReference) {
 		// Deletion of variant-related objects is only supported for backends with condensing enabled
-		if (!Settings.getInstanceOrUndef()?.isCondensingEnabled()) {
+		if (!Settings.getInstanceOrUndef()?.getIsCondensingEnabled()) {
 			return [];
 		}
 

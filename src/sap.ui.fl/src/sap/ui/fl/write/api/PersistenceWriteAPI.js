@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
@@ -377,14 +377,19 @@ sap.ui.define([
 	 */
 	PersistenceWriteAPI.getChangesWarning = function(mPropertyBag) {
 		return this._getUIChanges(mPropertyBag).then(function(aChanges) {
-			var bHasChangesFromOtherSystem = aChanges.some(function(oChange) {
+			const bHasChangesFromOtherSystem = aChanges.some(function(oChange) {
 				return oChange.isChangeFromOtherSystem();
 			});
 
-			var oSettingsInstance = Settings.getInstanceOrUndef();
-			var isProductiveSystemWithTransports = oSettingsInstance && oSettingsInstance.isProductiveSystemWithTransports();
-			var bHasNoChanges = aChanges.length === 0;
-			var oChangesWarning = {showWarning: false};
+			const oSettingsInstance = Settings.getInstanceOrUndef();
+			// TODO System and Client info have nothing to do with the transport system
+			const isProductiveSystemWithTransports =
+				oSettingsInstance
+				&& oSettingsInstance.getIsProductiveSystem()
+				&& oSettingsInstance.getSystem()
+				&& oSettingsInstance.getClient();
+			const bHasNoChanges = aChanges.length === 0;
+			let oChangesWarning = {showWarning: false};
 
 			if (bHasChangesFromOtherSystem) {
 				oChangesWarning = {showWarning: true, warningType: "mixedChangesWarning"};

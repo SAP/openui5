@@ -2,16 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexObjectFactory,
-	VariantManagementState,
 	FlexState,
 	Settings,
 	ControlVariantWriteUtils,
@@ -106,7 +104,7 @@ sap.ui.define([
 		QUnit.test("when deleteVariant is called and condensing is enabled", (assert) => {
 			sandbox.stub(Settings, "getInstanceOrUndef").callsFake(() => {
 				return {
-					isCondensingEnabled: () => true,
+					getIsCondensingEnabled: () => true,
 					getUserId: () => "testUser"
 				};
 			});
@@ -145,7 +143,7 @@ sap.ui.define([
 		QUnit.test("when deleteVariant is called and condensing is disabled", (assert) => {
 			sandbox.stub(Settings, "getInstanceOrUndef").callsFake(() => {
 				return {
-					isCondensingEnabled: () => false,
+					getIsCondensingEnabled: () => false,
 					getUserId: () => "testUser"
 				};
 			});

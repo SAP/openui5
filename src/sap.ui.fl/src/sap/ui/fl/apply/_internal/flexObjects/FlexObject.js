@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
 	deepClone,
@@ -20,8 +20,8 @@ sap.ui.define([
 	_omit,
 	ManagedObject,
 	States,
-	Layer,
 	Settings,
+	Layer,
 	Utils
 ) {
 	"use strict";

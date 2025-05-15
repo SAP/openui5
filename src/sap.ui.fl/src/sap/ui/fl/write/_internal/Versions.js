@@ -3,17 +3,17 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
-	Version,
 	FlexInfoSession,
-	Settings,
+	Version,
 	Storage,
+	FeaturesAPI,
 	JSONModel,
 	BindingMode
 ) {
@@ -171,31 +171,28 @@ sap.ui.define([
 	 *  <code>dirtyChanges</code> and <code>backendDraft</code>
 	 * rejects if an error occurs or the layer does not support draft handling
 	 */
-	Versions.initialize = function(mPropertyBag) {
+	Versions.initialize = async function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 		mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
 
-		return Settings.getInstance()
-		.then(function(oSettings) {
-			var bVersionsEnabled = oSettings.isVersioningEnabled(sLayer);
-			// TODO: similar to ContextBasedAdaptationsAPI this could also be moved outside
-			if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
-				return _mInstances[sReference][sLayer];
-			}
-			var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
-			return aVersionsPromise
-			.then(function(aVersions) {
-				mPropertyBag.versioningEnabled = bVersionsEnabled;
-				mPropertyBag.versions = aVersions;
-				return createModel(mPropertyBag);
-			})
-			.then(function(oModel) {
-				_mInstances[sReference] ||= {};
-				_mInstances[sReference][sLayer] ||= {};
-				_mInstances[sReference][sLayer] = oModel;
-				return _mInstances[sReference][sLayer];
-			});
+		const bVersionsEnabled = await FeaturesAPI.isVersioningEnabled(sLayer);
+		// TODO: similar to ContextBasedAdaptationsAPI this could also be moved outside
+		if (_mInstances && _mInstances[sReference] && _mInstances[sReference][sLayer]) {
+			return _mInstances[sReference][sLayer];
+		}
+		var aVersionsPromise = bVersionsEnabled ? Storage.versions.load(mPropertyBag) : Promise.resolve([]);
+		return aVersionsPromise
+		.then(function(aVersions) {
+			mPropertyBag.versioningEnabled = bVersionsEnabled;
+			mPropertyBag.versions = aVersions;
+			return createModel(mPropertyBag);
+		})
+		.then(function(oModel) {
+			_mInstances[sReference] ||= {};
+			_mInstances[sReference][sLayer] ||= {};
+			_mInstances[sReference][sLayer] = oModel;
+			return _mInstances[sReference][sLayer];
 		});
 	};
 

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

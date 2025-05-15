@@ -4,12 +4,12 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/initial/_internal/Settings",
+	"sap/ui/fl/Layer"
 ], function(
 	Lib,
-	Layer,
-	Settings
+	Settings,
+	Layer
 ) {
 	"use strict";
 

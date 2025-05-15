@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
@@ -23,8 +23,8 @@ sap.ui.define([
 	DependencyHandler,
 	FlexObjectState,
 	FlexState,
-	Version,
 	Settings,
+	Version,
 	Condenser,
 	FlexObjectManager,
 	Storage,
@@ -110,7 +110,7 @@ sap.ui.define([
 	}
 
 	function isBackendCondensingEnabled() {
-		return Settings.getInstanceOrUndef()?.isCondensingEnabled();
+		return Settings.getInstanceOrUndef()?.getIsCondensingEnabled();
 	}
 
 	function updateCacheAndDeleteUnsavedChanges(aAllChanges, aCondensedChanges, bSkipUpdateCache, bAlreadyDeletedViaCondense) {
@@ -148,7 +148,7 @@ sap.ui.define([
 		if (aDirtyChanges.length) {
 			var aRequests = getRequests(aDirtyChanges);
 			var bCheckLayer = true;
-			if (Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().hasPersoConnector()) {
+			if (Settings.getInstanceOrUndef()?.getHasPersoConnector()) {
 				// Created public fl-Variant as default variant will created public and user changes
 				// no single request can be used, because CF needs PersoConnector and KeyuserConntector
 				var aLayers = getLayers(aDirtyChanges);

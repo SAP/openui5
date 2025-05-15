@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/SACIntegrationUpdateVariant",
 	"sap/ui/fl/Layer",
@@ -246,7 +246,7 @@ sap.ui.define([
 
 			const oSettingsInstance = await Settings.getInstance();
 			sandbox.stub(oSettingsInstance, "getUserId").returns("SANTA");
-			sandbox.stub(oSettingsInstance, "isKeyUser").returns(false);
+			sandbox.stub(oSettingsInstance, "getIsKeyUser").returns(false);
 
 			return callCatchAndExpectMessage(assert, "the user is not authorized to edit the PUBLIC variant (no author nor key user)", mPropertyBag);
 		});

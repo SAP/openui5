@@ -103,23 +103,9 @@ sap.ui.define([
 
 			const oExpectedResponse = {
 				isKeyUser: true,
-				isKeyUserTranslationEnabled: false,
-				isVariantSharingEnabled: false,
-				isContextSharingEnabled: true,
-				isPublicFlVariantEnabled: false,
-				isVariantPersonalizationEnabled: true,
-				isVariantAuthorNameAvailable: false,
-				isLocalResetEnabled: false,
-				isAtoAvailable: false,
-				isAtoEnabled: false,
 				versioning: {
 					CUSTOMER: false
-				},
-				isProductiveSystem: true,
-				isPublicLayerAvailable: false,
-				isZeroDowntimeUpgradeRunning: false,
-				system: "",
-				client: ""
+				}
 			};
 			const oLogResolveSpy = sandbox.spy(StorageUtils, "logAndResolveDefault");
 
@@ -183,27 +169,7 @@ sap.ui.define([
 				isProductiveSystem: true
 			});
 
-			const DEFAULT_FEATURES = {
-				isKeyUser: false,
-				isKeyUserTranslationEnabled: false,
-				isVariantSharingEnabled: false,
-				isContextSharingEnabled: false,
-				isPublicFlVariantEnabled: false,
-				isVariantPersonalizationEnabled: true,
-				isVariantAuthorNameAvailable: false,
-				isAtoAvailable: false,
-				isAtoEnabled: false,
-				draft: {},
-				isProductiveSystem: true,
-				isPublicLayerAvailable: false,
-				isLocalResetEnabled: false,
-				isZeroDowntimeUpgradeRunning: false,
-				system: "",
-				client: ""
-			};
-
 			return Storage.loadFeatures().then(function(mFeatures) {
-				assert.strictEqual(Object.keys(mFeatures).length, Object.keys(DEFAULT_FEATURES).length, "only 13 feature was provided");
 				assert.strictEqual(mFeatures.isProductiveSystem, true, "the property was overruled by the second connector");
 			});
 		});

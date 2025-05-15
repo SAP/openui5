@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
@@ -994,7 +994,11 @@ sap.ui.define([
 			var aChanges = [];
 			var mPropertyBag = {};
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports() {return true;}});
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({
+				isProductiveSystem: true,
+				client: "bar",
+				system: "pSystem"
+			}));
 			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 			.then(function(oMessage) {
 				assert.ok(oMessage.showWarning, "then the warning is shown");
@@ -1007,7 +1011,11 @@ sap.ui.define([
 			var aChanges = [];
 			var mPropertyBag = {};
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports() {return false;}});
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({
+				isProductiveSystem: false,
+				client: "bar",
+				system: "pSystem"
+			}));
 			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 			.then(function(oMessage) {
 				assert.equal(oMessage.showWarning, false);
@@ -1024,8 +1032,8 @@ sap.ui.define([
 
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isProductiveSystem() {return true;},
-				isProductiveSystemWithTransports() {return true;},
+				getIsProductiveSystem() {return true;},
+				getIsProductiveSystemWithTransports() {return true;},
 				getSystem() {return "pSystem";},
 				getClient() {return "bar";}
 			});

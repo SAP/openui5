@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
@@ -42,10 +42,8 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function setVersioningEnabled(oVersioning) {
-		sandbox.stub(Settings, "getInstance").resolves({
-			isVersioningEnabled(sLayer) {
-				return oVersioning[sLayer];
-			}
+		sandbox.stub(FeaturesAPI, "isVersioningEnabled").callsFake((sLayer) => {
+			return oVersioning[sLayer];
 		});
 	}
 
