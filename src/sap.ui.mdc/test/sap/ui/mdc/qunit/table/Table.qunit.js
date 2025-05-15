@@ -4633,7 +4633,7 @@ sap.ui.define([
 			}, {
 				columnId: "agecol",
 				label: "Age",
-				property: "age",
+				property: ["age"],
 				textAlign: "Begin",
 				type: "String",
 				width: ""
@@ -6134,14 +6134,14 @@ sap.ui.define([
 
 		const aExpectedOutput = [{
 			columnId: "firstNameColumn",
-			property: "firstName",
+			property: ["firstName"],
 			type: "String",
 			label: "First_Name",
 			width: 19,
 			textAlign: "Begin"
 		}, {
 			columnId: "lastNameColumn",
-			property: "lastName",
+			property: ["lastName"],
 			type: "String",
 			label: "Last name",
 			width: 10,
@@ -6149,14 +6149,14 @@ sap.ui.define([
 		}, {
 			columnId: "fullName",
 			label: "First_Name",
-			property: "firstName",
+			property: ["firstName"],
 			textAlign: "Begin",
 			type: "String",
 			width: 19
 		}, {
 			columnId: "fullName-additionalProperty1",
 			label: "Last name",
-			property: "lastName",
+			property: ["lastName"],
 			textAlign: "Begin",
 			type: "String",
 			width: 15
@@ -6170,14 +6170,14 @@ sap.ui.define([
 			width: 15
 		}, {
 			columnId: "ageColumn",
-			property: "age",
+			property: ["age"],
 			type: "Number",
 			label: "Age",
 			width: 8,
 			textAlign: "Right"
 		}, {
 			columnId: "dobColumn",
-			property: "dob",
+			property: ["dob"],
 			type: "Date",
 			label: "Date of Birth",
 			width: 15,
@@ -6188,7 +6188,7 @@ sap.ui.define([
 			columnId: "salaryColumn",
 			displayUnit: true,
 			label: "Salary",
-			property: "salary",
+			property: ["salary"],
 			template: "{0} {1}",
 			textAlign: "Right",
 			unitProperty: "currency",
@@ -6197,14 +6197,14 @@ sap.ui.define([
 		}, {
 			columnId: "noDataColumn1",
 			label: "NoDataColumn1",
-			property: "",
+			property: [""],
 			textAlign: "Begin",
 			type: "String",
 			width: 5
 		}, {
 			columnId: "noDataColumn2",
 			label: "NoDataColumn2",
-			property: "",
+			property: [""],
 			textAlign: "Begin",
 			type: "String",
 			width: ""

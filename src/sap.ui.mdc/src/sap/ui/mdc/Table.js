@@ -168,16 +168,16 @@ sap.ui.define([
 	 *   Key of the unit property that is related to this property. A property must not have both a unit and a text.
 	 * @property {string} [text]
 	 *   Key of the text property that is related to this property in a 1:1 relation. A property must not have both a unit and a text.
-	 * @property {object} [exportSettings]
-	 *   Object that contains information about the export settings, see {@link sap.ui.export.Spreadsheet}.
-	 * @property {object} [clipboardSettings]
-	 *   Object that contains information about the clipboard settings. Setting this value to <code>null</code> disables the copy function.
+	 * @property {sap.ui.export.Column|null} [exportSettings]
+	 *   The export settings. Set to <code>null</code> to prevent this property from being exported.
+	 * @property {object|null} [clipboardSettings]
+	 *   The clipboard settings. Set to <code>null</code> prevent this property from being copied to clipboard.
 	 * @property {string} [clipboardSettings.template]
 	 *   Defines the formatting template that supports indexed placeholders of <code>propertyInfos</code> within curly brackets, for example, "{0} ({1})".
-	 * @property {Object} [visualSettings]
+	 * @property {object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
-	 * @property {Object} [visualSettings.widthCalculation]
-	 *   This object contains all properties and their default values for the column width calculation
+	 * @property {object|null} [visualSettings.widthCalculation]
+	 *   Settings for column width calculation. Set to <code>null</code> to disable the automatic column width calculation for this property.
 	 * @property {int} [visualSettings.widthCalculation.minWidth=2]
 	 *   The minimum content width in rem
 	 * @property {int} [visualSettings.widthCalculation.maxWidth=19]
