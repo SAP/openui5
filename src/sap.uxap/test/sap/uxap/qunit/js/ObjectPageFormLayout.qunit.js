@@ -6,6 +6,7 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
+	jQuery.sap.require("sap.uxap.BlockBase");
 
 	sinon.config.useFakeTimers = true;
 	QUnit.module("form layout");
@@ -107,5 +108,65 @@
 
 		oObjectPageFormView.destroy();
 	});
+
+	QUnit.test("Form adjustment destroys the obsolete form layout", function (assert) {
+		var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form">' +
+				'<form:Form>' +
+					'<form:layout>' +
+						'<form:ResponsiveGridLayout id="idResponsiveGridLayout" />' +
+					'</form:layout>' +
+					'</form:Form>' +
+				'</mvc:View>',
+			MyBlock = sap.uxap.BlockBase.extend("my.custom.Block", {
+				metadata: {
+					views: {
+						// Define the view for the block
+						Collapsed: {
+							type: "XML",
+							viewContent:viewContent
+						},
+						Expanded: {
+							type: "XML",
+							viewContent:viewContent
+						}
+					}
+				},
+				renderer: {}
+			}),
+			myBlock = new MyBlock({
+				id: "myBlock",
+				formAdjustment: sap.uxap.BlockBaseFormAdjustment.BlockColumns
+			}),
+			oSubSection = new sap.uxap.ObjectPageSubSection({
+				id: "mySubSection",
+				blocks: [myBlock]
+			}),
+			oSection = new sap.uxap.ObjectPageSection({
+				id: "mySection",
+				title: "Test Section",
+				subSections: [oSubSection]
+			}),
+			oObjectPageLayout = new sap.uxap.ObjectPageLayout({
+				id: "myObjectPageLayout",
+				sections: [oSection]
+			});
+		oObjectPageLayout.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oView = myBlock._getSelectedViewContent()
+		var oFormLayout = oView.byId("idResponsiveGridLayout");
+
+		// Assert: check if the obsolete form layout is destroyed
+		assert.ok(oFormLayout, "The form layout is created");
+
+		// Act: trigger the adjustment of the form layout
+		myBlock._applyFormAdjustment();
+
+		// Act: destroy the block parent
+		oSubSection.destroy();
+		// Assert: check if the obsolete form layout is destroyed
+		assert.ok(oFormLayout.bIsDestroyed, "The obsolete form layout is destroyed");
+	});
+
 
 }(jQuery, QUnit, sinon));

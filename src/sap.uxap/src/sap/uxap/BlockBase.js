@@ -586,6 +586,7 @@ sap.ui.define([
 						} else {
 							oResponsiveGridLayout = new ResponsiveGridLayout();
 							oItem.setLayout(oResponsiveGridLayout);
+							oLayout && oLayout.destroy(); // destroy the old layout if it exists
 						}
 
 						if (!oFormAdjustmentFields) {
