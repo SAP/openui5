@@ -27,7 +27,9 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	let InnerTable, InnerColumn, InnerRow;
+	let InnerTable;
+	let InnerColumn;
+	let InnerRow;
 
 	/**
 	 * Constructor for a new <code>ResponsiveTableType</code>.
@@ -195,7 +197,7 @@ sap.ui.define([
 			mSettings.itemPress = [onItemPress, this];
 		}
 
-		return  Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
+		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
 	};
 
 	function onItemPress(oEvent) {
@@ -255,6 +257,8 @@ sap.ui.define([
 		this.updateRowActions();
 	};
 
+	// TODO: Reduce complexity
+	// eslint-disable-next-line complexity
 	ResponsiveTableType.prototype.updateRowActions = function() {
 		const oTable = this.getTable();
 		const oRowActionsInfo = this.getRowActionsConfig();
@@ -272,24 +276,26 @@ sap.ui.define([
 			this._detachItemPress();
 		}
 
-		let vRowType, bVisibleBound, fnVisibleFormatter;
+		let vRowType;
+		let bVisibleBound;
+		let fnVisibleFormatter;
 		// If templateInfo is given, the rowActions are bound
 		if ("templateInfo" in oRowActionsInfo) {
 			const oTemplateInfo = oRowActionsInfo.templateInfo;
 
 			fnVisibleFormatter = oTemplateInfo.visible.formatter;
 			// If visible property is of type object, we know for certain the property is bound (see RowSettings.getAllActions)
-			bVisibleBound = typeof oTemplateInfo.visible == "object";
+			bVisibleBound = typeof oTemplateInfo.visible === "object";
 			vRowType = oTemplateInfo.visible;
 		} else if (oRowActionsInfo && oRowActionsInfo.items) {
-			if (oRowActionsInfo.items.length == 0) {
+			if (oRowActionsInfo.items.length === 0) {
 				oTable._oRowTemplate.setType(sType);
 				return;
 			}
 
 			// Check if rowActions are of type Navigation. ResponsiveTable currently only supports RowActionItem<Navigation>
 			const _oRowActionItem = oRowActionsInfo.items.find((oRowAction) => {
-				return oRowAction.getType() == "Navigation";
+				return oRowAction.getType() === "Navigation";
 			});
 			if (!_oRowActionItem && oRowActionsInfo.items.length > 0) {
 				throw new Error("No row action of type 'Navigation' found. ResponsiveTableType only accepts row actions of type 'Navigation'.");
@@ -308,7 +314,7 @@ sap.ui.define([
 		if (bVisibleBound) {
 			vRowType.formatter = (sValue) => {
 				const vVisible = fnVisibleFormatter ? fnVisibleFormatter(sValue) : sValue;
-				const vRowType =  vVisible === true ? RowActionType.Navigation : sType;
+				const vRowType = vVisible === true ? RowActionType.Navigation : sType;
 				if (vRowType === RowActionType.Navigation) {
 					this._attachItemPress();
 				}
@@ -431,10 +437,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Toggles the visibility of the Show Details button.<br>
-	 * If <code>bValue</code> is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code> to
-	 * hide columns based on the <code>Table</code> configuration (<code>showDetailsButton</code> and <code>detailsButtonSetting</code> properties).
-	 * Otherwise an empty array is set to show all columns.
+	 * Toggles the visibility of the Show Details button.
+	 * If <code>bValue</code> is set to <code>true</code>, it sets the <code>hiddenInPopin</code> property on the inner <code>ResponsiveTable</code>
+	 * to hide columns based on the <code>Table</code> configuration (<code>showDetailsButton</code> and <code>detailsButtonSetting</code>
+	 * properties). Otherwise an empty array is set to show all columns.
 	 *
 	 * @param {boolean} bValue - Whether to hide details and display the Show Details button
 	 * @private

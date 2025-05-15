@@ -5,7 +5,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/mdc/table/V4AnalyticsPropertyHelper"
+	"sap/ui/mdc/table/ODataV4PropertyHelper"
 ], function(
 	PropertyHelper
 ) {
@@ -24,8 +24,7 @@ sap.ui.define([
 					technicallyGroupable: false
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'prop': A property cannot be groupable when not technically groupable.")
-		);
+		}, new Error("Invalid property definition for property with key 'prop': A property cannot be groupable when not technically groupable."));
 	});
 
 	QUnit.test("aggregatable=true and technicallyAggregatable=false", function(assert) {
@@ -39,8 +38,8 @@ sap.ui.define([
 					technicallyAggregatable: false
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'prop': A property cannot be aggregatable when not technically aggregatable.")
-		);
+		}, new Error("Invalid property definition for property with key 'prop': A property cannot be aggregatable when not technically "
+			+ "aggregatable."));
 	});
 
 	QUnit.test("isKey=true and technicallyGroupable=false", function(assert) {
@@ -51,8 +50,7 @@ sap.ui.define([
 				dataType: "String",
 				isKey: true
 			}]);
-		}, new Error("Invalid property definition for property with key 'prop': A key property must be technically groupable.")
-		);
+		}, new Error("Invalid property definition for property with key 'prop': A key property must be technically groupable."));
 	});
 
 	QUnit.test("isKey=true and technicallyAggregatable=true", function(assert) {
@@ -68,8 +66,7 @@ sap.ui.define([
 					technicallyAggregatable: true
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'prop': A key property must not be technically aggregatable.")
-		);
+		}, new Error("Invalid property definition for property with key 'prop': A key property must not be technically aggregatable."));
 	});
 
 	QUnit.test("additionalProperties and technicallyGroupable=false & technicallyAggregatable=false", function(assert) {
@@ -86,9 +83,8 @@ sap.ui.define([
 					additionalProperties: ["prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'textProperty': 'additionalProperties' must be empty if the property is neither technically groupable nor"
-			+ " technically aggregatable.")
-		);
+		}, new Error("Invalid property definition for property with key 'textProperty': 'additionalProperties' must be empty if the property is "
+			+ "neither technically groupable nor technically aggregatable."));
 	});
 
 	QUnit.test("additionalProperties and technicallyGroupable=true & technicallyAggregatable=true", function(assert) {
@@ -107,9 +103,8 @@ sap.ui.define([
 					additionalProperties: ["prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'textProperty': 'additionalProperties' must be empty if the property is both technically groupable and technically"
-			+ " aggregatable.")
-		);
+		}, new Error("Invalid property definition for property with key 'textProperty': 'additionalProperties' must be empty if the property is both "
+			+ "technically groupable and technically aggregatable."));
 	});
 
 	QUnit.test("additionalProperties and groupable=true", function(assert) {
@@ -127,8 +122,7 @@ sap.ui.define([
 					additionalProperties: ["contextDefiningProperty"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'prop': 'additionalProperties' must be empty if the property is groupable.")
-		);
+		}, new Error("Invalid property definition for property with key 'prop': 'additionalProperties' must be empty if the property is groupable."));
 	});
 
 	QUnit.test("additionalProperties contains the text", function(assert) {
@@ -147,8 +141,7 @@ sap.ui.define([
 				label: "Text Property",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition for property with key 'idProperty': 'additionalProperties' must not contain the text.")
-		);
+		}, new Error("Invalid property definition for property with key 'idProperty': 'additionalProperties' must not contain the text."));
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -165,8 +158,7 @@ sap.ui.define([
 				label: "Text Property",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition for property with key 'idProperty': 'additionalProperties' must not contain the text.")
-		);
+		}, new Error("Invalid property definition for property with key 'idProperty': 'additionalProperties' must not contain the text."));
 	});
 
 	QUnit.test("additionalProperties contains the unit", function(assert) {
@@ -185,8 +177,7 @@ sap.ui.define([
 				label: "Unit Property",
 				dataType: "String"
 			}]);
-		}, new Error("Invalid property definition for property with key 'idProperty': 'additionalProperties' must not contain the unit.")
-		);
+		}, new Error("Invalid property definition for property with key 'idProperty': 'additionalProperties' must not contain the unit."));
 	});
 
 	QUnit.test("additionalProperties of a text property", function(assert) {
@@ -215,9 +206,8 @@ sap.ui.define([
 					additionalProperties: ["idProperty", "prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'textProperty': This property is the text of another property, and therefore 'additionalProperties' must not"
-			+ " contain other properties than the related ID.")
-		);
+		}, new Error("Invalid property definition for property with key 'textProperty': This property is the text of another property, and therefore "
+			+ "'additionalProperties' must not contain other properties than the related ID."));
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -241,9 +231,8 @@ sap.ui.define([
 					additionalProperties: ["prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'textProperty': This property is the text of another property, and therefore 'additionalProperties' must not"
-			+ " contain other properties than the related ID.")
-		);
+		}, new Error("Invalid property definition for property with key 'textProperty': This property is the text of another property, and therefore "
+			+ "'additionalProperties' must not contain other properties than the related ID."));
 	});
 
 	QUnit.test("additionalProperties of a unit property", function(assert) {
@@ -269,7 +258,8 @@ sap.ui.define([
 					additionalProperties: ["prop"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'unitProperty': This property is the unit of another property, and therefore 'additionalProperties' must be empty."));
+		}, new Error("Invalid property definition for property with key 'unitProperty': This property is the unit of another property, and therefore "
+			+ "'additionalProperties' must be empty."));
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -289,7 +279,8 @@ sap.ui.define([
 					additionalProperties: ["amountProperty"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'unitProperty': This property is the unit of another property, and therefore 'additionalProperties' must be empty."));
+		}, new Error("Invalid property definition for property with key 'unitProperty': This property is the unit of another property, and therefore "
+			+ "'additionalProperties' must be empty."));
 	});
 
 	QUnit.test("additionalProperties of a property that is both a unit and a text", function(assert) {
@@ -316,8 +307,8 @@ sap.ui.define([
 					additionalProperties: ["amountProperty"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'unitAndTextProperty': This property is the text of another property, and therefore 'additionalProperties' must not"
-			+ " contain other properties than the related ID."));
+		}, new Error("Invalid property definition for property with key 'unitAndTextProperty': This property is the text of another property, and "
+			+ "therefore 'additionalProperties' must not contain other properties than the related ID."));
 
 		assert.throws(function() {
 			new PropertyHelper([{
@@ -342,7 +333,8 @@ sap.ui.define([
 					additionalProperties: ["idProperty"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'unitAndTextProperty': This property is the unit of another property, and therefore 'additionalProperties' must be empty."));
+		}, new Error("Invalid property definition for property with key 'unitAndTextProperty': This property is the unit of another property, and "
+			+ "therefore 'additionalProperties' must be empty."));
 	});
 
 	QUnit.test("additionalProperties with bi-directional references", function(assert) {
@@ -371,7 +363,8 @@ sap.ui.define([
 					additionalProperties: ["propB"]
 				}
 			}]);
-		}, new Error("Invalid property definition for property with key 'propB': An additional property must not reference this property in 'additionalProperties'."));
+		}, new Error("Invalid property definition for property with key 'propB': An additional property must not reference this property in "
+			+ "'additionalProperties'."));
 	});
 
 	QUnit.test("additionalProperties that are technicallyGroupable=false", function(assert) {
@@ -452,7 +445,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property with attribute 'aggregatable'", function(assert) {
-		assert.throws(function () {
+		assert.throws(function() {
             new PropertyHelper([{
 				key: "prop",
 				label: "Property",
@@ -467,7 +460,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex property with attribute 'extension.technicallyGroupable'", function(assert) {
-		assert.throws(function () {
+		assert.throws(function() {
             new PropertyHelper([{
 				key: "prop",
 				label: "Property",
@@ -480,11 +473,12 @@ sap.ui.define([
 					technicallyGroupable: false
 				}
 			}]).destroy();
-		}, new Error("Invalid property definition for property with key 'complexProp': Complex property contains invalid attribute 'extension.technicallyGroupable'."));
+		}, new Error("Invalid property definition for property with key 'complexProp': Complex property contains invalid attribute "
+			+ "'extension.technicallyGroupable'."));
 	});
 
 	QUnit.test("Complex property with attribute 'extension.technicallyAggregatable'", function(assert) {
-		assert.throws(function () {
+		assert.throws(function() {
             new PropertyHelper([{
 				key: "prop",
 				label: "Property",
@@ -497,11 +491,12 @@ sap.ui.define([
 					technicallyAggregatable: false
 				}
 			}]).destroy();
-		}, new Error("Invalid property definition for property with key 'complexProp': Complex property contains invalid attribute 'extension.technicallyAggregatable'."));
+		}, new Error("Invalid property definition for property with key 'complexProp': Complex property contains invalid attribute "
+			+ "'extension.technicallyAggregatable'."));
 	});
 
 	QUnit.test("Complex property with attribute 'extension.additionalProperties'", function(assert) {
-		assert.throws(function () {
+		assert.throws(function() {
             new PropertyHelper([{
 				key: "prop",
 				label: "Property",
@@ -514,7 +509,8 @@ sap.ui.define([
 					additionalProperties: ["prop"]
 				}
 			}]).destroy();
-		}, new Error("Invalid property definition for property with key 'complexProp': Complex property contains invalid attribute 'extension.additionalProperties'."));
+		}, new Error("Invalid property definition for property with key 'complexProp': Complex property contains invalid attribute "
+			+ "'extension.additionalProperties'."));
 	});
 
 	QUnit.module("Defaults", {

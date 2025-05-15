@@ -249,7 +249,8 @@ sap.ui.define([
 		await TableQUnitUtils.waitForP13nPopup(oTable);
 		await TableQUnitUtils.closeP13nPopup(oTable);
 		PersonalizationUtils.openSettingsDialog(oTable, oTable.getColumns()[0]);
-		assert.ok(oInbuiltFilterVisibleFieldsSpy.calledWith(["colA"]), "setVisibleFields is called with an array of the column's filterable properties");
+		assert.ok(oInbuiltFilterVisibleFieldsSpy.calledWith(["colA"]),
+			"setVisibleFields is called with an array of the column's filterable properties");
 		await TableQUnitUtils.waitForP13nPopup(oTable);
 		await TableQUnitUtils.closeP13nPopup(oTable);
 		oInbuiltFilterVisibleFieldsSpy.restore();

@@ -157,7 +157,7 @@ sap.ui.define([
 	 */
 	PersonalizationUtils.createGroupChange = function(oTable, mSettings) {
 		const bIsGrouped = (oTable.getCurrentState().groupLevels || []).some((oGroupLevel) => {
-			return oGroupLevel.name == mSettings.propertyKey;
+			return oGroupLevel.name === mSettings.propertyKey;
 		});
 
 		oTable.getEngine().createChanges({

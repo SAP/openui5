@@ -26,7 +26,7 @@ sap.ui.define([
 				"@$ui5.node.level": 1,
 				Country: "USA",
 				Country_Code: "1",
-				SalesAmountLocalCurrency: 40405175,
+				SalesAmountLocalCurrency: "40405175",
 				LocalCurrency: "USD"
 			}
 		});
@@ -42,7 +42,7 @@ sap.ui.define([
 				"@$ui5.node.level": 1,
 				Country: "United Kingdom",
 				Country_Code: "2",
-				SalesAmountLocalCurrency: 14548502,
+				SalesAmountLocalCurrency: "14548502",
 				LocalCurrency: "GBP"
 			}
 		});
@@ -58,7 +58,7 @@ sap.ui.define([
 				"@$ui5.node.level": 1,
 				Country: "Germany",
 				Country_Code: "3",
-				SalesAmountLocalCurrency: 24489638,
+				SalesAmountLocalCurrency: "24489638",
 				LocalCurrency: "EUR"
 			}
 		});
@@ -71,7 +71,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 0,
-				SalesAmountLocalCurrency: 79443315,
+				SalesAmountLocalCurrency: "79443315",
 				LocalCurrency: null
 			}
 		});
@@ -105,7 +105,7 @@ sap.ui.define([
 				"@$ui5.node.isExpanded": true,
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 0,
-				SalesAmountLocalCurrency: 79443315,
+				SalesAmountLocalCurrency: "79443315",
 				LocalCurrency: null
 			}
 		});
@@ -166,7 +166,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 1,
-				SalesAmountLocalCurrency: 24489638,
+				SalesAmountLocalCurrency: "24489638",
 				LocalCurrency: "EUR"
 			}
 		});
@@ -188,7 +188,7 @@ sap.ui.define([
 				"@$ui5.node.level": 1,
 				Country: "USA",
 				Country_Code: "1",
-				SalesAmountLocalCurrency: 26040410,
+				SalesAmountLocalCurrency: "26040410",
 				LocalCurrency: "USD"
 			}
 		});
@@ -201,7 +201,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 0,
-				SalesAmountLocalCurrency: 29709155,
+				SalesAmountLocalCurrency: "29709155",
 				LocalCurrency: null
 			}
 		});
@@ -240,7 +240,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 1,
-				SalesAmountLocalCurrency: 1161590,
+				SalesAmountLocalCurrency: "1161590",
 				LocalCurrency: "EUR"
 			}
 		});
@@ -262,7 +262,7 @@ sap.ui.define([
 				"@$ui5.node.level": 1,
 				Country: "United Kingdom",
 				Country_Code: "UK",
-				SalesAmountLocalCurrency: 815825,
+				SalesAmountLocalCurrency: "815825",
 				LocalCurrency: "GBP"
 			}
 		});
@@ -275,7 +275,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 0,
-				SalesAmountLocalCurrency: 815825,
+				SalesAmountLocalCurrency: "815825",
 				LocalCurrency: "GBP"
 			}
 		});
@@ -297,7 +297,7 @@ sap.ui.define([
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 2,
 				Region: "Wales",
-				SalesAmountLocalCurrency: 815825,
+				SalesAmountLocalCurrency: "815825",
 				LocalCurrency: "GBP"
 			}
 		});
@@ -306,7 +306,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 1,
-				SalesAmountLocalCurrency: 815825,
+				SalesAmountLocalCurrency: "815825",
 				LocalCurrency: "GBP"
 			}
 		});
@@ -315,7 +315,7 @@ sap.ui.define([
 			data: {
 				"@$ui5.node.isTotal": true,
 				"@$ui5.node.level": 0,
-				SalesAmountLocalCurrency: 815825,
+				SalesAmountLocalCurrency: "815825",
 				LocalCurrency: "GBP"
 			}
 		});
@@ -346,7 +346,7 @@ sap.ui.define([
 	});
 
 	opaTest('Open column menu with groupable property (p13nMode = ["Column","Sort","Filter","Group","Aggregate"])', function(Given, When, Then) {
-		When.onTheAppMDCTable.iSetP13nMode(sTableId, ["Column","Sort","Filter","Group","Aggregate"]);
+		When.onTheAppMDCTable.iSetP13nMode(sTableId, ["Column", "Sort", "Filter", "Group", "Aggregate"]);
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Region");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);

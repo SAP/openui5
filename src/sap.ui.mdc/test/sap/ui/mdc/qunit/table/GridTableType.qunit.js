@@ -169,13 +169,15 @@ sap.ui.define([
 		assert.equal(oInnerTable.getScrollThreshold(), oTableType.getScrollThreshold(), "Inner table has correct scrollThreshold");
 
 		oTableType.setScrollThreshold(-1);
-		assert.equal(oInnerTable.getScrollThreshold(), oInnerTable.getMetadata().getProperty("scrollThreshold").defaultValue, "scrollThreshold is reset to default");
+		assert.equal(oInnerTable.getScrollThreshold(), oInnerTable.getMetadata().getProperty("scrollThreshold").defaultValue,
+			"scrollThreshold is reset to default");
 
 		oTableType.setScrollThreshold(50);
 		assert.equal(oInnerTable.getScrollThreshold(), 50, "scrollThreshold is set correctly");
 
 		oTableType.setScrollThreshold(undefined);
-		assert.equal(oInnerTable.getScrollThreshold(), oInnerTable.getMetadata().getProperty("scrollThreshold").defaultValue, "scrollThreshold is reset to default");
+		assert.equal(oInnerTable.getScrollThreshold(), oInnerTable.getMetadata().getProperty("scrollThreshold").defaultValue,
+			"scrollThreshold is reset to default");
 		assert.ok(invalidateSpy.notCalled, "Invalidation not called");
 	});
 
@@ -202,7 +204,7 @@ sap.ui.define([
 		const oInnerColumn = oTable._oTable.getColumns()[0];
 
 		oType.updateSortIndicator(oColumn, "Ascending");
-		assert.strictEqual(oInnerColumn.getSortOrder(),"Ascending", "Inner table column sort order");
+		assert.strictEqual(oInnerColumn.getSortOrder(), "Ascending", "Inner table column sort order");
 
 		oType.updateSortIndicator(oColumn, "Descending");
 		assert.strictEqual(oInnerColumn.getSortOrder(), "Descending", "Inner table column sort order");
@@ -242,19 +244,19 @@ sap.ui.define([
 				}),
 				columns: [
 					new Column({
-						label: new Label({ text: "Column A" }),
+						label: new Label({text: "Column A"}),
 						template: new Text({
 							text: "{test}"
 						})
 					}),
 					new Column({
-						label: new Label({ text: "Column B" }),
+						label: new Label({text: "Column B"}),
 						template: new Text({
 							text: "{test}"
 						})
 					}),
 					new Column({
-						label: new Label({ text: "Column C" }),
+						label: new Label({text: "Column C"}),
 						template: new Text({
 							text: "{test}"
 						})
@@ -271,7 +273,8 @@ sap.ui.define([
 	QUnit.test("The controller is registered and deregistered properly", function(assert) {
 		assert.ok(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ColumnFreeze"), "ColumnFreeze controller is registered");
 		this.oTable.getType().setEnableColumnFreeze(false);
-		assert.notOk(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ColumnFreeze"), "ColumnFreeze controller is deregistered");
+		assert.notOk(this.oTable.getEngine().getRegisteredControllers(this.oTable).includes("ColumnFreeze"),
+			"ColumnFreeze controller is deregistered");
 	});
 
 	QUnit.test("fixedColumnCount property", function(assert) {
@@ -493,7 +496,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Row actions with default settings", async function (assert) {
+	QUnit.test("Row actions with default settings", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
@@ -509,7 +512,7 @@ sap.ui.define([
 		this.assertRowActionValues(oInnerRowAction.getItems()[0], "Custom", "", "", true);
 	});
 
-	QUnit.test("Row actions with static settings", async function (assert) {
+	QUnit.test("Row actions with static settings", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
@@ -535,7 +538,7 @@ sap.ui.define([
 		this.assertRowActionValues(oInnerRowAction.getItems()[1], "Custom", "My other custom action", "sap-icon://decline", true);
 	});
 
-	QUnit.test("Row actions with bound settings", async function (assert) {
+	QUnit.test("Row actions with bound settings", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
@@ -556,7 +559,7 @@ sap.ui.define([
 		this.assertRowActionBindingInfos(oInnerRowAction.getItems()[0]);
 	});
 
-	QUnit.test("Bound row actions", async function (assert) {
+	QUnit.test("Bound row actions", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: {
@@ -774,7 +777,7 @@ sap.ui.define([
 		const oContextMenu = this.oTable._oTable.getAggregation("groupHeaderRowContextMenu");
 		let oInnerTableEvent;
 
-		assert.ok(oContextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu"), "GroupHeaderRowContextMenu is set");
+		assert.ok(oContextMenu.isA("sap.ui.mdc.table.menus.GroupHeaderRowContextMenu"), "GroupHeaderRowContextMenu is set");
 
 		this.spy(this.oTable, "_onBeforeOpenContextMenu");
 		this.oTable._oTable.attachBeforeOpenContextMenu((oEvent) => {
