@@ -45,10 +45,12 @@ sap.ui.define([
 		 */
 		loadFeatures(mPropertyBag) {
 			return KeyUserConnector.loadFeatures.call(this, mPropertyBag).then(function(oFeatures) {
-				// the backend supports also older versions where condensing was not enabled
+				// the backend supports also older versions where condensing and local reset was not enabled
 				// that is why the flag can't be taken as is. Older versions just ignore the flag
 				oFeatures.isCondensingEnabled = oFeatures.isCondensingEnabledOnBtp;
 				delete oFeatures.isCondensingEnabledOnBtp;
+				oFeatures.isLocalResetEnabled = oFeatures.isLocalResetEnabledOnBtp;
+				delete oFeatures.isLocalResetEnabledOnBtp;
 				return oFeatures;
 			});
 		},

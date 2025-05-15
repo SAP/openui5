@@ -1205,6 +1205,62 @@ sap.ui.define([
 		assert.equal(this.oPC.getVisibleIntervalsCount(), 31, "correct number of shown intervals");
 	});
 
+	QUnit.test("Next button is disabled when maxDate is reached in month view", async function(assert) {
+		// Prepare
+		const oPCView = new PlanningCalendarView({
+			key: "1Month",
+			intervalType: "Month",
+			intervalsS: 1,
+			intervalsM: 1,
+			intervalsL: 1,
+			showSubIntervals: true
+		});
+		const oPC = new PlanningCalendar({
+			startDate: UI5Date.getInstance(2025, 0, 1),
+			minDate: UI5Date.getInstance(2025, 0, 1),
+			maxDate: UI5Date.getInstance(2025, 2, 23),
+			views: [oPCView],
+			viewKey: "1Month"
+		}).placeAt("smallUiArea");
+
+		await nextUIUpdate();
+
+		// Act: Navigate to the max month
+		const sNextButtonId = oPC.getId() + "-Header-NavToolbar-NextBtn";
+		qutils.triggerEvent("tap", sNextButtonId); // Navigate to February
+		await nextUIUpdate();
+		qutils.triggerEvent("tap", sNextButtonId); // Navigate to March
+		await nextUIUpdate();
+
+		// Assert: The next button should be disabled
+		const oNextButton = Element.getElementById(sNextButtonId);
+		assert.ok(oNextButton.getEnabled() === false, "Next button is disabled when maxDate is reached.");
+
+		// Clean up
+		oPC.destroy();
+	});
+
+	QUnit.test("Next button is disabled when maxDate is reached in 3 month view", async function(assert) {
+		// Prepare
+		const oPC = new PlanningCalendar({
+			startDate: UI5Date.getInstance(2025, 0, 1),
+			minDate: UI5Date.getInstance(2025, 0, 1),
+			maxDate: UI5Date.getInstance(2025, 2, 30),
+			viewKey: CalendarIntervalType.Month
+		}).placeAt("verySmallUiArea");
+
+		await nextUIUpdate();
+
+		const sNextButtonId = oPC.getId() + "-Header-NavToolbar-NextBtn";
+		const oNextButton = Element.getElementById(sNextButtonId);
+
+		// Assert: The next button should be disabled
+		assert.notOk(oNextButton.getEnabled(), "Next button is disabled when maxDate is reached.");
+
+		// Clean up
+		oPC.destroy();
+	});
+
 	QUnit.module("rendering - relativeView",{
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());

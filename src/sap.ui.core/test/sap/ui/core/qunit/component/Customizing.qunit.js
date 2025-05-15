@@ -4,10 +4,11 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/ControllerExtensionProvider",
 	"sap/ui/core/mvc/View",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(Event, Component, ComponentContainer, Element, Controller, View, createAndAppendDiv, nextUIUpdate) {
+], function(Event, Component, ComponentContainer, Element, Controller, ControllerExtensionProvider, View, createAndAppendDiv, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -278,6 +279,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Register ExtensionProvider (async)", function(assert) {
+
 		assert.expect(20);
 
 		// test processing will be completed in onExit of the view extension
@@ -311,7 +313,11 @@ sap.ui.define([
 			return ExtensionProvider;
 		}, true);
 
+		//...and reinitialize - with registered ExtensionProvider
+		ControllerExtensionProvider.registerExtensionProvider("sap.my.async.ExtensionProvider");
+
 		return  createComponentAndContainer();
+
 	});
 
 });

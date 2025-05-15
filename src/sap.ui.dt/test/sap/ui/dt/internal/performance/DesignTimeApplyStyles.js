@@ -73,7 +73,10 @@ window.measureApplyStylesAsync = function() {
 			oRootOverlay.attachEventOnce("beforeGeometryChanged", function() {
 				performance.mark("applyStyles.start");
 			});
-			oRootOverlay.getElement().$("content").get(0).scrollTop = 200;
+			const oContentDomRef = oRootOverlay.getElement().getDomRef("content");
+			if (oContentDomRef) {
+				oContentDomRef.scrollTop = 200;
+			}
 			oRootOverlay.getElement().setWidth("2100px");
 			oRootOverlay.attachEventOnce("geometryChanged", function() {
 				performance.mark("applyStyles.stop");

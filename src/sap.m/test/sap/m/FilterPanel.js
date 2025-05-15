@@ -1,11 +1,10 @@
 sap.ui.define([
-  "sap/m/P13nConditionPanel",
-  "sap/m/P13nFilterPanel",
   "sap/ui/core/format/DateFormat",
   "sap/ui/layout/Grid",
   "sap/m/Dialog",
   "sap/m/Button",
   "sap/ui/model/json/JSONModel",
+  "sap/m/P13nFilterPanel",
   "sap/m/MessageToast",
   "sap/m/P13nItem",
   "sap/m/P13nFilterItem",
@@ -13,13 +12,12 @@ sap.ui.define([
   "sap/m/CheckBox",
   "sap/ui/thirdparty/jquery"
 ], function(
-  P13nConditionPanel,
-  P13nFilterPanel,
   DateFormat,
   Grid,
   Dialog,
   Button,
   JSONModel,
+  P13nFilterPanel,
   MessageToast,
   P13nItem,
   P13nFilterItem,

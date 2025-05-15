@@ -4,6 +4,7 @@
 
 // Provides the base class for all objects with managed properties and aggregations.
 sap.ui.define([
+	"./_runWithOwner",
 	"./DataType",
 	"./EventProvider",
 	"./ManagedObjectMetadata",
@@ -19,6 +20,7 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject"
 ], function(
+	_runWithOwner,
 	DataType,
 	EventProvider,
 	ManagedObjectMetadata,
@@ -505,7 +507,7 @@ sap.ui.define([
 			this._oContextualSettings = defaultContextualSettings;
 
 			// apply the owner id if defined
-			this._sOwnerId = ManagedObject._sOwnerId;
+			this._sOwnerId = _runWithOwner.getCurrentOwnerId();
 
 			// make sure that the object is registered before initializing
 			// and to deregister the object in case of errors
@@ -1112,31 +1114,6 @@ sap.ui.define([
 		}
 
 	};
-
-	/**
-	 * Calls the function <code>fn</code> once and marks all ManagedObjects
-	 * created during that call as "owned" by the given ID.
-	 *
-	 * @param {function} fn Function to execute
-	 * @param {string} sOwnerId Id of the owner
-	 * @param {Object} [oThisArg=undefined] Value to use as <code>this</code> when executing <code>fn</code>
-	 * @return {any} result of function <code>fn</code>
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 */
-	ManagedObject.runWithOwner = function(fn, sOwnerId, oThisArg) {
-
-	   assert(typeof fn === "function", "fn must be a function");
-
-	   var oldOwnerId = ManagedObject._sOwnerId;
-	   try {
-		   ManagedObject._sOwnerId = sOwnerId;
-		   return fn.call(oThisArg);
-	   } finally {
-		   ManagedObject._sOwnerId = oldOwnerId;
-	   }
-
-   };
 
 	/**
 	 * Sets all the properties, aggregations, associations and event handlers as given in
@@ -3636,7 +3613,7 @@ sap.ui.define([
 			var sOwnerId = this._sOwnerId;
 			vBindingInfo.factory = function(sId, oContext) {
 				// bind original factory with the two arguments: id and bindingContext
-				return ManagedObject.runWithOwner(fnOriginalFactory.bind(null, sId, oContext), sOwnerId);
+				return _runWithOwner(fnOriginalFactory.bind(null, sId, oContext), sOwnerId);
 			};
 			vBindingInfo.factory[BINDING_INFO_FACTORY_SYMBOL] = fnOriginalFactory;
 		}

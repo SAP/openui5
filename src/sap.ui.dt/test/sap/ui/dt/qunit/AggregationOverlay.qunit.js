@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Panel",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/test/utils/nextUIUpdate"
 
 ], function(
 	Overlay,
@@ -23,8 +22,7 @@ sap.ui.define([
 	Button,
 	Panel,
 	sinon,
-	nextUIUpdate,
-	jQuery
+	nextUIUpdate
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -39,8 +37,7 @@ sap.ui.define([
 				element: this.oPage,
 				designTimeMetadata: new AggregationDesignTimeMetadata()
 			});
-			// TODO remove jQuery when Overlay.render() returns DOM Element
-			jQuery(Overlay.getOverlayContainer()).append(this.oAggregationOverlay.render());
+			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
 		},
 		afterEach() {
 			this.oPage.destroy();
@@ -69,8 +66,7 @@ sap.ui.define([
 					}
 				})
 			});
-			// TODO remove jQuery when Overlay.render() returns DOM Element
-			jQuery(Overlay.getOverlayContainer()).append(this.oAggregationOverlay.render());
+			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
 
 			this.oAggregationOverlay.applyStyles();
 		},
@@ -81,7 +77,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {
-			assert.strictEqual(this.oAggregationOverlay.getGeometry().domRef, this.oPage.$().find(">section").get(0), "domRef for the overlay is correct");
+			assert.strictEqual(
+				this.oAggregationOverlay.getGeometry().domRef,
+				this.oPage.getDomRef().querySelector(":scope > section"),
+				"domRef for the overlay is correct"
+			);
 			assert.strictEqual(DOMUtil.isVisible(this.oAggregationOverlay.getDomRef()), true, "aggregation is rendered");
 		});
 	});
@@ -120,8 +120,7 @@ sap.ui.define([
 					designTimeMetadata: new AggregationDesignTimeMetadata(),
 					children: [aOverlays[0]],
 					init: function(oEvent) {
-						// TODO remove jQuery when Overlay.render() returns DOM Element
-						jQuery(Overlay.getOverlayContainer()).append(oEvent.getSource().render());
+						Overlay.getOverlayContainer().append(oEvent.getSource().render());
 						this.oAggregationOverlay.applyStyles();
 						fnDone();
 					}.bind(this)
@@ -189,8 +188,7 @@ sap.ui.define([
 				})
 			});
 
-			// TODO remove jQuery when Overlay.render() returns DOM Element
-			jQuery(Overlay.getOverlayContainer()).append(this.oAggregationOverlay.render());
+			Overlay.getOverlayContainer().append(this.oAggregationOverlay.render());
 			this.oAggregationOverlay.attachEventOnce("scrollSynced", fnDone);
 			this.oAggregationOverlay.applyStyles();
 

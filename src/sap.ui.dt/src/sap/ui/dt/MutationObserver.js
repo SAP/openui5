@@ -9,16 +9,14 @@ sap.ui.define([
 	"sap/ui/core/StaticArea",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/dt/OverlayUtil",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dt/OverlayUtil"
 ], function(
 	_intersection,
 	_uniq,
 	StaticArea,
 	ManagedObject,
 	DOMUtil,
-	OverlayUtil,
-	jQuery
+	OverlayUtil
 ) {
 	"use strict";
 
@@ -67,7 +65,7 @@ sap.ui.define([
 		window.addEventListener("transitionend", this._mutationOnTransitionend, true);
 		window.addEventListener("animationend", this._mutationOnAnimationEnd, true);
 		window.addEventListener("scroll", this._fireDomChangeOnScroll, true);
-		jQuery(window).on("resize", this._mutationOnResize);
+		window.addEventListener("resize", this._mutationOnResize);
 
 		this._aIgnoredMutations = [];
 		this._bHandlerRegistered = false;
@@ -87,7 +85,7 @@ sap.ui.define([
 		window.removeEventListener("transitionend", this._mutationOnTransitionend, true);
 		window.removeEventListener("animationend", this._mutationOnAnimationEnd, true);
 		window.removeEventListener("scroll", this._fireDomChangeOnScroll, true);
-		jQuery(window).off("resize", this._mutationOnResize);
+		window.removeEventListener("resize", this._mutationOnResize);
 
 		this._aIgnoredMutations = [];
 		this._bHandlerRegistered = false;
@@ -136,8 +134,8 @@ sap.ui.define([
 		});
 	};
 
-	MutationObserver.prototype._hasScrollbar = function(bScrollbarOnElement, $Element) {
-		return bScrollbarOnElement || DOMUtil.hasScrollBar($Element);
+	MutationObserver.prototype._hasScrollbar = function(bScrollbarOnElement, oElement) {
+		return bScrollbarOnElement || DOMUtil.hasScrollBar(oElement);
 	};
 
 	MutationObserver.prototype._getIdsWhenRegistered = function(bScrollbarOnElement, sElementId, mElementIds) {
@@ -178,19 +176,18 @@ sap.ui.define([
 			result: undefined
 		};
 		var bScrollbarOnElement = false;
-		var $ClosestParentElement = jQuery(oNode);
+		var oClosestParentElement = oNode;
 		var sClosestParentElementId = sNodeId;
 
 		do {
-			bScrollbarOnElement = this._hasScrollbar(bScrollbarOnElement, $ClosestParentElement);
+			bScrollbarOnElement = this._hasScrollbar(bScrollbarOnElement, oClosestParentElement);
 			mElementIds = this._getIdsWhenRegistered(bScrollbarOnElement, sClosestParentElementId, mElementIds);
-			$ClosestParentElement = $ClosestParentElement.parent();
-			// $Element could also be a dome node without data-sap-ui attribute
-			sClosestParentElementId = $ClosestParentElement.attr("data-sap-ui");
+			oClosestParentElement = oClosestParentElement.parentElement;
+			sClosestParentElementId = oClosestParentElement ? oClosestParentElement.getAttribute("data-sap-ui") : null;
 		} while (
 			!(mElementIds.result && bScrollbarOnElement)
-			&& $ClosestParentElement.length
-			&& $ClosestParentElement[0] !== document
+			&& oClosestParentElement.length
+			&& oClosestParentElement[0] !== document
 		);
 
 		return mElementIds.result

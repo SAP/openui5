@@ -106,8 +106,7 @@ html.sap-tablet .sapMRI:focus {
 .sapMRI .sapMImg {
 	padding-right: @sapUiRIIconPaddingCozy;
 	height: @sapUiRIIconSizeCozy;
-	overflow: hidden;
-	vertical-align:top;
+	vertical-align: top;
 }
 
 .sapMRI .sapUiIcon:last-child,
@@ -207,4 +206,10 @@ html.sap-tablet .sapMRI:focus {
 	.sapMRIIconSel {
 		color: var(--sapTextColor);
 	}
+}
+
+.sapMRIReadOnly .sapMRIUnsel .sapMRIunratedIcon,
+.sapMRIDisplayOnly .sapMRIUnsel .sapMRIunratedIcon,
+.sapMRIDisabled .sapMRIUnsel .sapMRIunratedIcon {
+	vertical-align: baseline;
 }

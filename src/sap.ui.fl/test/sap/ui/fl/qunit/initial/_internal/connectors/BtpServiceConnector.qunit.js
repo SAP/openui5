@@ -133,10 +133,12 @@ sap.ui.define([
 
 		QUnit.test("loadFeatures", async function(assert) {
 			sandbox.stub(KeyUserConnector, "loadFeatures").resolves({
-				isCondensingEnabledOnBtp: true
+				isCondensingEnabledOnBtp: true,
+				isLocalResetEnabledOnBtp: true
 			});
 			const oFeatures = await BtpServiceConnector.loadFeatures();
 			assert.strictEqual(oFeatures.isCondensingEnabled, true, "then the condensing flag is set to the value from the backend");
+			assert.strictEqual(oFeatures.isLocalResetEnabled, true, "then local reset flag is set to true");
 		});
 	});
 

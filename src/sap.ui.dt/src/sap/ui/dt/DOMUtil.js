@@ -34,7 +34,6 @@ sap.ui.define([
 
 	/**
 	 * Returns the offset for an element
-	 * Replaces the jQuery method offset
 	 * @param {HTMLElement} oElement - Element
 	 * @returns {PositionObject} the calculated offset containing left and top values
 	 */
@@ -50,12 +49,10 @@ sap.ui.define([
 	/**
 	 * Returns if the <code>oDomElement</code> is currently visible on the screen.
 	 *
-	 * @param {HTMLElement|jQuery} oDomElement Element to be evaluated
+	 * @param {HTMLElement} oDomElement Element to be evaluated
 	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
 	 */
 	DOMUtil.isElementInViewport = function(oDomElement) {
-		oDomElement = oDomElement.jquery ? oDomElement.get(0) : oDomElement;
-
 		var mRect = oDomElement.getBoundingClientRect();
 
 		return (
@@ -76,9 +73,8 @@ sap.ui.define([
 
 	/**
 	 * Returns the parents for an element
-	 * Replaces the jQuery method parents
 	 * @param {HTMLElement} oElement - Element
-	 * @param {string} sSelector - jQuery (CSS-like) selector to search for
+	 * @param {string} sSelector - CSS selector to search for
 	 * @returns {Array} aParents - Array containing Parents which match selector
 	 */
 	DOMUtil.getParents = function(oElement, sSelector) {
@@ -306,30 +302,32 @@ sap.ui.define([
 	};
 
 	/**
-	 * returns jQuery object found in oDomRef for sCSSSelector
-	 * @param {Element|jQuery} oDomRef - to search in
-	 * @param {string} sCSSSelector - jQuery (CSS-like) selector to look for
-	 * @returns {jQuery} found domRef
+	 * Returns HTML Element found in oDomRef for sCSSSelector
+	 * @param {Element} oDomRef - to search in
+	 * @param {string} sCSSSelector - CSS-like selector to look for
+	 * @returns {Element} found domRef
 	 */
+
 	DOMUtil.getDomRefForCSSSelector = function(oDomRef, sCSSSelector) {
 		if (sCSSSelector && oDomRef) {
-			var $domRef = jQuery(oDomRef);
-
 			if (sCSSSelector === ":sap-domref") {
-				return $domRef;
+				return oDomRef;
 			}
 
-			// ":sap-domref > sapMPage" scenario
+			// Replace ":sap-domref" with ":scope" to make the selector compatible with browsers.
+			// Example: ":sap-domref > sapMPage" becomes ":scope > sapMPage", scoping the query to oDomRef.
 			if (sCSSSelector.indexOf(":sap-domref") > -1) {
-				return $domRef.find(sCSSSelector.replace(/:sap-domref/g, ""));
+				const sModifiedSelector = sCSSSelector.replace(/:sap-domref/g, ":scope");
+				return oDomRef.querySelector(sModifiedSelector);
 			}
 
-			// normal selector
-			return $domRef.find(sCSSSelector);
+			// Prefix ":scope" to child selectors (>) to scope the query to oDomRef.
+			// Example: "div > p, span > a" becomes "div :scope > p, span :scope > a".
+			const sScopedSelector = sCSSSelector.replace(/(^|,)\s*(>)/g, "$1:scope$2");
+			return oDomRef.querySelector(sScopedSelector);
 		}
 
-		// empty jQuery object for typing
-		return jQuery();
+		return undefined;
 	};
 
 	/**
@@ -408,16 +406,16 @@ sap.ui.define([
 
 			// pseudo elements can't be inserted via js, so we should create a real elements,
 			// which copy pseudo styling
-			var oPseudoElement = jQuery("<span></span>");
+			var oPseudoElement = document.createElement("span");
 			if (sPseudoElement === ":after") {
-				oPseudoElement.appendTo(oDest);
+				oDest.appendChild(oPseudoElement);
 			} else {
-				oPseudoElement.prependTo(oDest);
+				oDest.insertBefore(oPseudoElement, oDest.firstChild);
 			}
 
-			oPseudoElement.text(sContent.replace(/(^['"])|(['"]$)/g, ""));
-			DOMUtil._copyStylesTo(mStyles, oPseudoElement.get(0));
-			oPseudoElement.css("display", "inline");
+			oPseudoElement.textContent = sContent.replace(/(^['"])|(['"]$)/g, "");
+			DOMUtil._copyStylesTo(mStyles, oPseudoElement);
+			oPseudoElement.style.display = "inline";
 		}
 	};
 

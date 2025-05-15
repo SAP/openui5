@@ -98,7 +98,9 @@ PageRenderer.renderBarControl = function (oRm, oPage, oBarControl, oOptions) {
 		return;
 	}
 
-	oBarControl._applyContextClassFor(oOptions.context.toLowerCase());
+	if (oBarControl._applyContextClassFor) {
+		oBarControl._applyContextClassFor(oOptions.context.toLowerCase());
+	}
 
 	oBarControl.addStyleClass(oOptions.styleClass || "");
 

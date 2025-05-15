@@ -141,20 +141,18 @@ sap.ui.define([
 
 			if (typeof (vDomRef) === "function") {
 				try {
-					// TODO: replace jQuery when we know that vDomRef will always return a DOM Element
 					var vRes = vDomRef(...aArgs);
-					// convert Nodelist and jQuery-Selection to an Array
-					if ((vRes.jquery && vRes.length > 1) || vRes instanceof NodeList) {
+					// convert NodeList to an Array
+					if (vRes instanceof NodeList) {
 						vRes = Array.from(vRes);
 					}
-					// we return an Array or a Node
-					return vRes.jquery ? vRes.get(0) : vRes;
+					// we return an Array of DOM elements
+					return vRes;
 				} catch (error) {
 					return undefined;
 				}
 			} else if (oElementDomRef && typeof (vDomRef) === "string") {
-				// TODO: replace jQuery when we know that getDomRefForCSSSelector will always return a DOM Element
-				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef).get(0);
+				return DOMUtil.getDomRefForCSSSelector(oElementDomRef, vDomRef);
 			}
 		}
 		return undefined;

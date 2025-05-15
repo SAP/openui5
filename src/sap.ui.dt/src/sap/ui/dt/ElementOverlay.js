@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/Util",
 	"sap/ui/core/Control",
-	"sap/ui/thirdparty/jquery",
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
@@ -32,7 +31,6 @@ sap.ui.define([
 	DOMUtil,
 	Util,
 	Control,
-	jQuery,
 	Log,
 	isPlainObject,
 	merge,
@@ -514,8 +512,7 @@ sap.ui.define([
 		if (this._bInit) {
 			if (this.isRoot()) {
 				if (!this.isRendered()) {
-					// TODO remove jQuery when Overlay.render() returns DOM Element
-					jQuery(Overlay.getOverlayContainer()).append(this.render());
+					Overlay.getOverlayContainer().append(this.render());
 					this.applyStyles();
 				} else {
 					Log.error("sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?");
@@ -581,11 +578,11 @@ sap.ui.define([
 
 	/**
 	 * Renders children of the current overlay
-	 * @return {jQuery[]} - returns array of children DOM Nodes each wrapped into jQuery object.
+	 * @return {Array<Element>} - returns array of children DOM Nodes
 	 * @private
 	 */
 	ElementOverlay.prototype._renderChildren = function(...aArgs) {
-		var a$Children = Overlay.prototype._renderChildren.apply(this, aArgs);
+		var aChildren = Overlay.prototype._renderChildren.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			var oScrollContainer = document.createElement("div");
@@ -598,18 +595,16 @@ sap.ui.define([
 					this.getAggregationNames()
 				).forEach(function(sAggregationName) {
 					var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
-					var iAggregationOverlayIndex = a$Children.indexOf(oAggregationOverlay.$());
+					var iAggregationOverlayIndex = aChildren.indexOf(oAggregationOverlay.getDomRef());
 					oAggregationOverlay.setScrollContainerId(iIndex);
-					oScrollContainer.append(a$Children[iAggregationOverlayIndex].get(0));
-					a$Children.splice(iAggregationOverlayIndex, 1);
+					oScrollContainer.append(aChildren[iAggregationOverlayIndex]);
+					aChildren.splice(iAggregationOverlayIndex, 1);
 				}, this);
 			}
-
-			// TODO remove jQuery when Overlay._renderChildren / .render() returns DOM Element
-			a$Children.push(jQuery(oScrollContainer));
+			aChildren.push(oScrollContainer);
 		}, this);
 
-		return a$Children;
+		return aChildren;
 	};
 
 	/**
@@ -775,12 +770,12 @@ sap.ui.define([
 	ElementOverlay.prototype._onChildAdded = function(oEvent) {
 		var oAggregationOverlay = oEvent.getSource();
 		if (this.isRendered() && !oAggregationOverlay.isRendered()) {
-			var $Target = (
+			var oTarget = (
 				Util.isInteger(oAggregationOverlay.getScrollContainerId())
 					? this.getScrollContainerById(oAggregationOverlay.getScrollContainerId())
-					: jQuery(this.getChildrenDomRef())
+					: this.getChildrenDomRef()
 			);
-			$Target.append(oAggregationOverlay.render());
+			oTarget.append(oAggregationOverlay.render());
 		}
 	};
 

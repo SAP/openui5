@@ -3,9 +3,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/ControllerExtension",
+	"sap/ui/core/mvc/ControllerExtensionProvider",
 	"sap/ui/core/mvc/OverrideExecution",
 	"sap/base/util/deepEqual"
-], function(Controller, XMLView, ControllerExtension, OverrideExecution, deepEqual) {
+], function(Controller, XMLView, ControllerExtension, ControllerExtensionProvider, OverrideExecution, deepEqual) {
 	"use strict";
 
 	const oParams = new URLSearchParams(window.location.search);
@@ -417,6 +418,8 @@ sap.ui.define([
 		return ExtensionProvider;
 	}, true);
 
+	ControllerExtensionProvider.registerExtensionProvider("example.ExtensionProvider");
+
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Basic Class Building");
 
@@ -512,6 +515,8 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Direct Member Extension + 2 Provider Extension", {
 		beforeEach: function() {
+			ControllerExtensionProvider.registerExtensionProvider("example.ExtensionProvider");
+
 			var oXMLContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">',
 				'  <Button id="btn1"></Button>',
@@ -624,6 +629,7 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Direct Member Extension: async", {
 		beforeEach: function() {
+			ControllerExtensionProvider.registerExtensionProvider("example.ExtensionProvider");
 			var oXMLContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" controllerName="example.BaseController" xmlns="sap.m">',
 				'  <Button id="btn1"></Button>',
@@ -699,6 +705,8 @@ sap.ui.define([
 	/* ------------------------------------------------------------------------------------------------- */
 	QUnit.module("Direct Member Extension + 2 Provider Extension: async", {
 		beforeEach: function() {
+			ControllerExtensionProvider.registerExtensionProvider("example.ExtensionProvider");
+
 			var oXMLContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" controllerName="example.BaseController" xmlns="sap.m">',
 				'  <Button id="btn1"></Button>',
@@ -708,8 +716,11 @@ sap.ui.define([
 			this.view = XMLView.create({
 				definition: oXMLContent
 			});
+
 		},
 		afterEach: function() {
+			//ObjectPath.set("sample.ExtensionProvider", null);
+			ControllerExtensionProvider.registerExtensionProvider(null);
 			this.view.destroy();
 			this.view = null;
 		}
@@ -810,4 +821,5 @@ sap.ui.define([
 
 	//TODO: Test to bind event and formatter from view to public methods of extension
 	//TODO: Test to bind event and formatter from view to private methods of extension (do we allow this?)
+
 });

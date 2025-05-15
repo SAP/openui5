@@ -5,15 +5,13 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	DOMUtil,
 	Button,
 	HTML,
 	HorizontalLayout,
-	nextUIUpdate,
-	jQuery
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -252,39 +250,38 @@ sap.ui.define([
 			this.oDomElement.remove();
 		}
 	}, function() {
-		// TODO: change when getDomRefForCSSSelector does not return jQuery Object any more
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
-			assert.strictEqual(oDomRef.length, 1, "one element found");
-			assert.strictEqual(oDomRef.get(0).getAttribute("id"), "parent", "right element found");
+			assert.ok(oDomRef, "one element found");
+			assert.strictEqual(oDomRef.getAttribute("id"), "parent", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > #first-child", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > #first-child");
-			assert.strictEqual(oDomRef.length, 1, "one element found");
-			assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
+			assert.ok(oDomRef, "one element found");
+			assert.strictEqual(oDomRef.getAttribute("id"), "first-child", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for :first-child", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":first-child");
-			assert.strictEqual(oDomRef.length, 1, "one element found");
-			assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
+			assert.ok(oDomRef, "one element found");
+			assert.strictEqual(oDomRef.getAttribute("id"), "first-child", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > .child", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > .child");
-			assert.strictEqual(oDomRef.length, 2, "two elements found");
+			assert.strictEqual(oDomRef.id, "first-child", "then the first element is returned");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for '> #third-child,> #first-child'", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, "> #third-child, > #first-child");
-			assert.strictEqual(oDomRef.length, 1, "one element found");
-			assert.strictEqual(oDomRef.get(0).getAttribute("id"), "first-child", "right element found");
+			assert.ok(oDomRef, "one element found");
+			assert.strictEqual(oDomRef.getAttribute("id"), "first-child", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called without arguments", function(assert) {
 			var oDomRef = DOMUtil.getDomRefForCSSSelector();
-			assert.ok(oDomRef instanceof jQuery);
+			assert.notOk(oDomRef, "then no element is returned");
 		});
 	});
 

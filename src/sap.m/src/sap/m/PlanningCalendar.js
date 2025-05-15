@@ -2196,6 +2196,7 @@ sap.ui.define([
 		}
 
 		this._updateTodayButtonState();
+		this._updateHeaderButtons();
 
 		return this;
 
@@ -4957,6 +4958,11 @@ sap.ui.define([
 			oMaxDate && oMaxDate.setHours(23, 59, 59, 999);
 			oStartDate.setHours(0, 0, 0, 0);
 			oEndDate.setHours(23, 59, 59, 999);
+		}
+
+		if (sCurrentViewIntervalType === CalendarIntervalType.Month) {
+			const oEndCalendarDate = CalendarDate.fromLocalJSDate(oEndDate);
+			oEndDate.setDate(CalendarUtils._daysInMonth(oEndCalendarDate));
 		}
 
 		this._getHeader()._oPrevBtn.setEnabled(!oMinDate || oStartDate.getTime() > oMinDate.getTime());
