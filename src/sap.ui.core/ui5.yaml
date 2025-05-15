@@ -13,85 +13,102 @@ resources:
 builder:
   bundles:
     - bundleDefinition:
-        name: sap/ui/core/library-preload.js
+        name: sap-ui-core.js
+        sections:
+          - mode: raw
+            filters:
+              - ui5loader.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          # - mode: preload
+          #   name: sap-ui-boot-preload
+          #   filters:
+          #     - sap/ui/core/boot.js
+          #     - "!ui5loader-autoconfig.js"
+          #   resolve: true
+          # - mode: bundleInfo
+          #   name: Calendar-preload.js
+          #   filters:
+          #     - sap/ui/core/date/
+          #   resolve: true
+          # - mode: bundleInfo
+          #   name: Eventing-preload.js
+          #   filters:
+          #     - sap/ui/events/jquery/EventSimulation.js
+          #   resolve: true
+          # - mode: bundleInfo
+          #   name: Theming-preload.js
+          #   filters:
+          #     - sap/ui/core/theming/ThemeManager.js
+          #   resolve: true
+          - mode: raw
+            filters:
+              - ui5loader-autoconfig.js
+            declareRawModules: false
+            resolve: true
+            sort: true
+          - mode: preload
+            name: sap-ui-core-preload
+            filters: &filters-core
+            - sap/ui/base/config/
+            - sap/ui/core/boot/config.js
+            - sap/ui/core/boot/boot.json
+            - sap/ui/core/Core.js
+            resolve: true
+          - mode: require
+            filters:
+              - sap/ui/core/Core.js
+      bundleOptions:
+        optimize: true
+        decorateBootstrapModule: true
+        addTryCatchRestartWrapper: true
+    - bundleDefinition:
+        name: sap/ui/core/library-content.js
         sections:
           - mode: provided
             filters:
-              # bundle sap-ui-core.js
               - ui5loader-autoconfig.js
-              - sap/ui/core/Core.js
-              - sap/ui/core/boot/
-              # end bundle sap-ui-core.js
+              - ui5loader.js
             resolve: true
           - mode: provided
-            filters:
+            filters: *filters-core
+            resolve: true
+          - mode: provided
+            filters: &filters-boot
+              - sap/ui/core/library.js
+              - sap/ui/core/boot/AppCacheBuster.js
+              - "sap/ui/core/AppCacheBuster"
+              - sap/ui/core/boot/boot.json
+              - sap/ui/core/boot/Calendar.js
+              - sap/ui/core/boot/DOM.js
+              - "sap/ui/core/util/_LocalizationHelper"
+              - sap/ui/core/boot/FieldHelpEndpoint.js
+              - sap/ui/core/boot/FrameOptions.js
+              - "sap/ui/security/FrameOptions"
+              - "sap/ui/security/Security"
+              - sap/ui/core/boot/Init.js
+              - sap/ui/core/boot/loadBootManifest.js
+              - sap/ui/core/boot/Log.js
+              - sap/ui/core/boot/Modules.js
+              - sap/ui/core/boot/Polyfills.js
+              - "sap/ui/base/syncXHRFix"
+              - "sap/ui/events/PasteEventFix"
+              - sap/ui/core/boot/Supportability.js
+              - sap/ui/core/boot/Traces.js
+              - "sap/ui/performance/trace/FESR"
+              - "sap/ui/core/support/trace/E2eTraceLib"
               - "sap/ui/core/date/Gregorian.js"
               - "sap/ui/core/date/Buddhist.js"
               - "sap/ui/core/date/Japanese.js"
               - "sap/ui/core/date/Islamic.js"
               - "sap/ui/core/date/Persian.js"
-              - "sap/base/util/Properties.js"
-              - "sap/ui/core/AppCacheBuster.js"
-              - "sap/base/strings/capitalize.js"
-              - "sap/ui/base/ExpressionParser.js"
-              - "sap/ui/core/Theming.js"
-              - "sap/ui/core/theming/ThemeManager.js"
-              - "sap/ui/core/Rendering.js"
-              - "sap/ui/performance/trace/FESRHelper.js"
-              - "sap/ui/performance/trace/FESR.js"
-              - "sap/ui/performance/BeaconRequest.js"
-              - "sap/ui/base/DataType.js"
-              - "sap/base/future.js"
-              - "sap/base/util/resolveReference.js"
-              - "sap/base/util/ObjectPath.js"
-              - "sap/ui/core/date/UniversalDate.js"
-              - "sap/base/i18n/Formatting.js"
-              - "sap/ui/core/date/UI5Date.js"
-              - "sap/ui/core/date/_Calendars.js"
-              - "sap/base/i18n/date/CalendarWeekNumbering.js"
-              - "sap/base/util/deepEqual.js"
-              - "sap/base/util/isEmptyObject.js"
-              - "sap/base/util/array/uniqueSort.js"
-              - "sap/base/i18n/ResourceBundle.js"
-              - "sap/base/util/Version.js"
-              - "sap/base/util/deepExtend.js"
-              - "sap/ui/VersionInfo.js"
-              - "sap/ui/base/EventProvider.js"
-              - "sap/ui/core/Supportability.js"
-              - "sap/ui/core/_UrlResolver.js"
-              - "sap/base/strings/formatMessage.js"
-              - "sap/base/util/merge.js"
-              - "sap/ui/base/Event.js"
-              - "sap/ui/core/Locale.js"
-              - "sap/ui/core/date/CalendarUtils.js"
-              - "sap/ui/core/LocaleData.js"
-              - "sap/ui/base/Object.js"
-              - "sap/ui/base/Metadata.js"
-              - "sap/ui/base/ManagedObject.js"
-              - "sap/base/util/deepClone.js"
-              - "sap/ui/base/ManagedObjectMetadata.js"
-              - "sap/ui/util/ActivityDetection.js"
-              - "sap/ui/util/_enforceNoReturnValue.js"
-              - "sap/ui/base/DesignTime.js"
-              - "sap/ui/model/BindingMode.js"
-              - "sap/base/util/JSTokenizer.js"
-              - "sap/ui/model/Filter.js"
-              - "sap/ui/model/Sorter.js"
-              - "sap/ui/core/theming/ThemeHelper.js"
-              - "sap/ui/performance/Measurement.js"
-              - "sap/ui/base/BindingInfo.js"
-              - "sap/base/strings/escapeRegExp.js"
-              - "sap/ui/model/FilterOperator.js"
-              - "sap/ui/base/BindingParser.js"
-              - "sap/ui/core/_IconRegistry.js"
-              - "sap/base/util/syncFetch.js"
-              - "sap/ui/performance/trace/Passport.js"
-              - "sap/ui/performance/XHRInterceptor.js"
-              - "sap/ui/core/support/trace/E2eTraceLib.js"
-            resolve: false
+              - "sap/ui/core/boot/boot.json"
+            resolve: true
+            resolveConditional: false
           - mode: preload
-            name: sap/ui/core/library-preload
-            filters:
+            name: sap/ui/core/library-content
+            filters: &filters-library-content
               # NOTE: In some scenarios, more files are available during bundling, so only specific includes must be used
               - sap/ui/core/
               - sap/ui/core/**/manifest.json
@@ -100,6 +117,7 @@ builder:
               - sap/ui/dom/
               - sap/ui/events/
               - sap/ui/model/
+              - sap/ui/performance/
               - sap/ui/security/
               - sap/ui/util/
               - sap/ui/Device.js
@@ -108,14 +126,14 @@ builder:
               #- "jquery.sap.*.js"
 
               # include only thirdparty that is very likely to be used
-              #- "sap/ui/thirdparty/crossroads.js"
-              #- "sap/ui/thirdparty/caja-html-sanitizer.js"
-              #- "sap/ui/thirdparty/hasher.js"
-              #- "sap/ui/thirdparty/signals.js"
-              #- "sap/ui/thirdparty/jquery-mobile-custom.js"
-              #- "sap/ui/thirdparty/jqueryui/jquery-ui-core.js"
-              #- "sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js"
-              #- "sap/ui/thirdparty/jqueryui/jquery-ui-position.js"
+              - "sap/ui/thirdparty/crossroads.js"
+              - "sap/ui/thirdparty/caja-html-sanitizer.js"
+              - "sap/ui/thirdparty/hasher.js"
+              - "sap/ui/thirdparty/signals.js"
+              - "sap/ui/thirdparty/jquery-mobile-custom.js"
+              - "sap/ui/thirdparty/jqueryui/jquery-ui-core.js"
+              - "sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js"
+              - "sap/ui/thirdparty/jqueryui/jquery-ui-position.js"
 
               # exclude all merged files as well as the top level jQuery copy (not visible in OpenUI5)
               - "!sap-*.js"
@@ -143,10 +161,31 @@ builder:
 
               # CLDR files must not be packaged
               - "!sap/ui/core/cldr/"
-
             resolve: false
             resolveConditional: false
             renderer: true
+      bundleOptions:
+        optimize: true
+    - bundleDefinition:
+        name: sap/ui/core/library-preload.js
+        sections:
+          - mode: provided
+            filters:
+              - ui5loader-autoconfig.js
+              - ui5loader.js
+            resolve: true
+          - mode: provided
+            filters: *filters-core
+            resolve: true
+          - mode: preload
+            filters: *filters-boot
+            resolve: true
+            resolveConditional: false
+          - mode: bundleInfo
+            name: sap/ui/core/library-content.js
+            filters: *filters-library-content
+            resolve: false
+            resolveConditional: false
       bundleOptions:
         optimize: true
     - bundleDefinition:
@@ -199,71 +238,6 @@ builder:
       bundleOptions:
         optimize: true
     - bundleDefinition:
-        name: sap-ui-core.js
-        sections:
-          - mode: raw
-            filters:
-              - ui5loader.js
-            declareRawModules: false
-            resolve: true
-            sort: true
-          # - mode: preload
-          #   name: sap-ui-boot-preload
-          #   filters:
-          #     - sap/ui/core/boot.js
-          #     - "!ui5loader-autoconfig.js"
-          #   resolve: true
-          # - mode: bundleInfo
-          #   name: Calendar-preload.js
-          #   filters:
-          #     - sap/ui/core/date/
-          #   resolve: true
-          # - mode: bundleInfo
-          #   name: Eventing-preload.js
-          #   filters:
-          #     - sap/ui/events/jquery/EventSimulation.js
-          #   resolve: true
-          # - mode: bundleInfo
-          #   name: Theming-preload.js
-          #   filters:
-          #     - sap/ui/core/theming/ThemeManager.js
-          #   resolve: true
-          - mode: raw
-            filters:
-              - ui5loader-autoconfig.js
-            declareRawModules: false
-            resolve: true
-            sort: true
-          - mode: preload
-            name: sap-ui-core-preload
-            filters:
-            - sap/ui/base/config/
-            - sap/ui/core/Core.js
-            - sap/ui/core/boot/AppCacheBuster.js
-            - sap/ui/core/boot/boot.json
-            - sap/ui/core/boot/Calendar.js
-            - sap/ui/core/boot/config.js
-            - sap/ui/core/boot/DOM.js
-            - sap/ui/core/boot/FieldHelpEndpoint.js
-            - sap/ui/core/boot/KeyboardInteractionEndpoint.js
-            - sap/ui/core/boot/FrameOptions.js
-            - sap/ui/core/boot/Init.js
-            - sap/ui/core/boot/loadBootManifest.js
-            - sap/ui/core/boot/Log.js
-            - sap/ui/core/boot/Modules.js
-            - sap/ui/core/boot/Polyfills.js
-            - sap/ui/core/boot/Splash.js
-            - sap/ui/core/boot/Supportability.js
-            - sap/ui/core/boot/Traces.js
-            resolve: true
-          - mode: require
-            filters:
-              - sap/ui/core/Core.js
-      bundleOptions:
-        optimize: true
-        decorateBootstrapModule: true
-        addTryCatchRestartWrapper: true
-    - bundleDefinition:
         name: sap-ui-core-dbg.js
         sections:
           - mode: raw
@@ -296,25 +270,7 @@ builder:
             sort: true
           - mode: preload
             name: sap-ui-core-preload
-            filters:
-              - sap/ui/base/config/
-              - sap/ui/core/Core.js
-              - sap/ui/core/boot/AppCacheBuster.js
-              - sap/ui/core/boot/boot.json
-              - sap/ui/core/boot/Calendar.js
-              - sap/ui/core/boot/config.js
-              - sap/ui/core/boot/DOM.js
-              - sap/ui/core/boot/FieldHelpEndpoint.js
-              - sap/ui/core/boot/KeyboardInteractionEndpoint.js
-              - sap/ui/core/boot/FrameOptions.js
-              - sap/ui/core/boot/Init.js
-              - sap/ui/core/boot/loadBootManifest.js
-              - sap/ui/core/boot/Log.js
-              - sap/ui/core/boot/Modules.js
-              - sap/ui/core/boot/Polyfills.js
-              - sap/ui/core/boot/Splash.js
-              - sap/ui/core/boot/Supportability.js
-              - sap/ui/core/boot/Traces.js
+            filters: *filters-core
             resolve: true
           - mode: require
             filters:
@@ -409,6 +365,14 @@ builder:
             sort: true
           - mode: preload
             name: runTest-preload
+            filters: *filters-core
+            resolve: true
+          - mode: preload
+            filters: *filters-boot
+            resolve: true
+            resolveConditional: true
+          - mode: preload
+            name: runTest-preload
             filters:
               - sap/ui/test/starter/_setupAndStart.js
               - sap/ui/test/starter/QUnitConfigurationProvider.js
@@ -416,24 +380,6 @@ builder:
               - sap/ui/test/starter/qunitBoot.json
               - sap/ui/thirdparty/qunit*
               - sap/ui/thirdparty/sinon*
-              - sap/ui/base/config/
-              - sap/ui/core/Core.js
-              - sap/ui/core/boot/AppCacheBuster.js
-              - sap/ui/core/boot/boot.json
-              - sap/ui/core/boot/Calendar.js
-              - sap/ui/core/boot/config.js
-              - sap/ui/core/boot/DOM.js
-              - sap/ui/core/boot/FieldHelpEndpoint.js
-              - sap/ui/core/boot/KeyboardInteractionEndpoint.js
-              - sap/ui/core/boot/FrameOptions.js
-              - sap/ui/core/boot/Init.js
-              - sap/ui/core/boot/loadBootManifest.js
-              - sap/ui/core/boot/Log.js
-              - sap/ui/core/boot/Modules.js
-              - sap/ui/core/boot/Polyfills.js
-              - sap/ui/core/boot/Splash.js
-              - sap/ui/core/boot/Supportability.js
-              - sap/ui/core/boot/Traces.js
             resolve: true
           - mode: require
             filters:
@@ -462,377 +408,6 @@ builder:
               - sap/ui/test/starter/_runQUnit.js
       bundleOptions:
         optimize: false
-    - bundleDefinition:
-        name: bootCalendar.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-bootCalendar.js
-              - "sap/ui/core/date/Gregorian.js"
-              - "sap/ui/core/date/Buddhist.js"
-              - "sap/ui/core/date/Japanese.js"
-              - "sap/ui/core/date/Islamic.js"
-              - "sap/ui/core/date/Persian.js"
-              - "sap/base/util/Properties.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: bootAppCacheBuster.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-bootAppCacheBuster.js
-              - "sap/ui/core/AppCacheBuster.js"
-              - "sap/base/strings/capitalize.js"
-              - "sap/ui/base/ExpressionParser.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: bootTheming.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-bootTheming.js
-              - "sap/ui/core/Theming.js"
-              - "sap/ui/core/theming/ThemeManager.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: bootRendering.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-bootRendering.js
-              - "sap/ui/core/Rendering.js"
-              - "sap/ui/performance/trace/FESRHelper.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: bootFESR.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-bootFESR.js
-              - "sap/ui/performance/trace/FESR.js"
-              - "sap/ui/performance/BeaconRequest.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_core_CalendarType.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_core_CalendarType.js
-              - "sap/base/i18n/CalendarType.js"
-              - "sap/ui/base/DataType.js"
-              - "sap/base/future.js"
-              - "sap/base/util/resolveReference.js"
-              - "sap/base/util/ObjectPath.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_core_date_UniversalDate.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_core_date_UniversalDate.js
-              - "sap/ui/core/date/UniversalDate.js"
-              - "sap/base/i18n/Formatting.js"
-              - "sap/ui/core/date/UI5Date.js"
-              - "sap/ui/core/date/_Calendars.js"
-              - "sap/base/i18n/date/CalendarWeekNumbering.js"
-              - "sap/base/util/deepEqual.js"
-              - "sap/base/util/isEmptyObject.js"
-              - "sap/base/util/array/uniqueSort.js"
-              - "sap/base/i18n/ResourceBundle.js"
-              - "sap/base/util/Version.js"
-              - "sap/base/util/deepExtend.js"
-              - "sap/ui/VersionInfo.js"
-              - "sap/ui/base/EventProvider.js"
-              - "sap/ui/core/Supportability.js"
-              - "sap/ui/core/_UrlResolver.js"
-              - "sap/base/strings/formatMessage.js"
-              - "sap/base/util/merge.js"
-              - "sap/ui/base/Event.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_base_ManagedObject.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_base_ManagedObject.js
-              - "sap/ui/base/ManagedObject.js"
-              - "sap/base/util/deepClone.js"
-              - "sap/ui/base/ManagedObjectMetadata.js"
-              - "sap/ui/util/ActivityDetection.js"
-              - "sap/ui/util/_enforceNoReturnValue.js"
-              - "sap/ui/base/DesignTime.js"
-              - "sap/ui/model/BindingMode.js"
-              - "sap/base/util/JSTokenizer.js"
-              - "sap/ui/model/Filter.js"
-              - "sap/ui/model/Sorter.js"
-              - "sap/ui/core/theming/ThemeHelper.js"
-              - "sap/ui/performance/Measurement.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_core_Locale.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_core_Locale.js
-            - "sap/ui/core/Locale.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_core_date_CalendarUtils.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_core_date_CalendarUtils.js
-              - "sap/ui/core/date/CalendarUtils.js"
-              - "sap/ui/core/LocaleData.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_base_Object.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_base_Object.js
-              - "sap/ui/base/Object.js"
-              - "sap/ui/base/Metadata.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_base_BindingInfo.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_base_BindingInfo.js
-              - "sap/ui/base/BindingInfo.js"
-              - "sap/base/strings/escapeRegExp.js"
-              - "sap/ui/model/FilterOperator.js"
-              - "sap/ui/base/BindingParser.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_core__IconRegistry.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_core__IconRegistry.js
-              - "sap/ui/core/_IconRegistry.js"
-              - "sap/base/util/syncFetch.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_performance_trace_Passport.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_performance_trace_Passport.js
-              - "sap/ui/performance/trace/Passport.js"
-              - "sap/ui/performance/XHRInterceptor.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/chunk_sap_ui_core_support_trace_E2eTraceLib.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: preload
-            filters: &filters-sap/ui/core/chunk_sap_ui_core_support_trace_E2eTraceLib.js
-              - "sap/ui/core/support/trace/E2eTraceLib.js"
-            resolve: false
-            resolveConditional: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
-    - bundleDefinition:
-        name: sap/ui/core/boot/_ui5loader-config.js
-        defaultFileTypes:
-        - ".js"
-        sections:
-          - mode: bundleInfo
-            name: bootCalendar.js
-            filters: *filters-bootCalendar.js
-            resolve: false
-          - mode: bundleInfo
-            name: bootAppCacheBuster.js
-            filters: *filters-bootAppCacheBuster.js
-            resolve: false
-          - mode: bundleInfo
-            name: bootTheming.js
-            filters: *filters-bootTheming.js
-            resolve: false
-          - mode: bundleInfo
-            name: bootRendering.js
-            filters: *filters-bootRendering.js
-            resolve: false
-          - mode: bundleInfo
-            name: bootFESR.js
-            filters: *filters-bootFESR.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_core_CalendarType.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_CalendarType.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_core_date_UniversalDate.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_date_UniversalDate.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_base_ManagedObject.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_base_ManagedObject.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_core_Locale.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_Locale.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_core_date_CalendarUtils.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_date_CalendarUtils.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_base_Object.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_base_Object.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_base_BindingInfo.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_base_BindingInfo.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_core__IconRegistry.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_core__IconRegistry.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_performance_trace_Passport.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_performance_trace_Passport.js
-            resolve: false
-          - mode: bundleInfo
-            name: sap/ui/core/chunk_sap_ui_core_support_trace_E2eTraceLib.js
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_support_trace_E2eTraceLib.js
-            resolve: false
-          - mode: depCache
-            name: bootCalendar.js-depCache
-            filters: *filters-bootCalendar.js
-            resolve: false
-          - mode: depCache
-            name: bootAppCacheBuster.js-depCache
-            filters: *filters-bootAppCacheBuster.js
-            resolve: false
-          - mode: depCache
-            filters: *filters-bootTheming.js
-            resolve: false
-          - mode: depCache
-            name: bootRendering.js-depCache
-            filters: *filters-bootRendering.js
-            resolve: false
-          - mode: depCache
-            name: bootFESR.js-depCache
-            filters: *filters-bootFESR.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_core_CalendarType.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_CalendarType.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_core_date_UniversalDate.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_date_UniversalDate.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_base_ManagedObject.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_base_ManagedObject.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_core_Locale.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_Locale.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_core_date_CalendarUtils.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_date_CalendarUtils.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_base_Object.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_base_Object.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_base_BindingInfo.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_base_BindingInfo.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_core__IconRegistry.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_core__IconRegistry.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_performance_trace_Passport.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_performance_trace_Passport.js
-            resolve: false
-          - mode: depCache
-            name: sap/ui/core/chunk_sap_ui_core_support_trace_E2eTraceLib.js-depCache
-            filters: *filters-sap/ui/core/chunk_sap_ui_core_support_trace_E2eTraceLib.js
-            resolve: false
-      bundleOptions:
-        optimize: true
-        numberOfParts: 1
   jsdoc:
     excludes:
       - "jquery-*"

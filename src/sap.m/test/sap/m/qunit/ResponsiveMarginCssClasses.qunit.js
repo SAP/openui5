@@ -7,6 +7,8 @@ sap.ui.define([
 ], function(Component, ComponentContainer, nextUIUpdate) {
 	"use strict";
 
+	globalThis.require.resolve();
+
 	sap.ui.define("margin/qunit/controller.controller", [
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/model/json/JSONModel"

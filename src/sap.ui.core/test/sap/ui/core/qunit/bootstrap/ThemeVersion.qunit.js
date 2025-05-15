@@ -25,9 +25,9 @@ sap.ui.define([
 
 	QUnit.test("Implicit loading of the VersionInfo", function(assert) {
 		if (mOptions.versionedLibCss) {
-			assert.ok(window.oVersionInfo, "VersionInfo should have been loaded.");
+			assert.ok(sap.ui.require("sap/ui/VersionInfo")?._content, "VersionInfo should have been loaded.");
 		} else {
-			assert.notOk(window.oVersionInfo, "VersionInfo should not have been loaded.");
+			assert.notOk(sap.ui.require("sap/ui/VersionInfo")?._content, "VersionInfo should not have been loaded.");
 		}
 	});
 
@@ -48,7 +48,7 @@ sap.ui.define([
 		if (mOptions.versionedLibCss) {
 			assert.equal(
 				sHref,
-				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
+				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + sap.ui.require("sap/ui/VersionInfo")?._content.version,
 				"'sap.ui.core' library.css URL should contain version parameters."
 			);
 		} else {
@@ -75,7 +75,7 @@ sap.ui.define([
 
 		assert.equal(
 			sHref,
-			sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
+			sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + sap.ui.require("sap/ui/VersionInfo")?._content.version,
 			"'sap.ui.core' library.css URL should contain version parameters."
 		);
 	});
@@ -96,7 +96,7 @@ sap.ui.define([
 				if (mOptions.versionedLibCss) {
 					assert.equal(
 						sHref,
-						sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
+						sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + sap.ui.require("sap/ui/VersionInfo")?._content.version,
 						"'sap.ui.core' library.css URL should contain version parameters."
 					);
 				} else {
@@ -126,7 +126,7 @@ sap.ui.define([
 		if (mOptions.versionedLibCss) {
 			assert.equal(
 				sHref,
-				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + window.oVersionInfo.version,
+				sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + sap.ui.require("sap/ui/VersionInfo")?._content.version,
 				"'sap.ui.core' library-RTL.css URL should contain version parameters."
 			);
 		} else {

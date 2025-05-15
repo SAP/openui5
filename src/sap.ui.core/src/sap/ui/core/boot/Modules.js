@@ -14,9 +14,8 @@ sap.ui.define([
 	config
 ) => {
 	"use strict";
-
+	let Library;
 	let pLoadModules = Promise.resolve();
-	let pLoadLibraries = Promise.resolve();
 
 	const aModules = config.get({
 		name: "sapUiModules",
@@ -47,8 +46,7 @@ sap.ui.define([
 
 	// load libraries
 	if (aLibs.length > 0) {
-		let Library;
-		pLoadLibraries = new Promise((resolve, reject) => {
+		new Promise((resolve, reject) => {
 			sap.ui.require(["sap/ui/core/Lib"], (Lib) => {
 				Library = Lib;
 				resolve(Library);
@@ -56,48 +54,9 @@ sap.ui.define([
 		}).then((Library) => {
 			return Promise.all(
 				aLibs.map((lib) => {
-					return Library.load({
-						name: lib,
-						preloadOnly: true
-					});
+					return Library._load({ name: lib }, { preloadOnly: true});
 				})
 			);
-		}).then(() => {
-			const aLibInfos = Library.getAllInstancesRequiringCss();
-			let pReady = Promise.resolve();
-			if (aLibInfos.length > 0) {
-				pReady = Promise.all(
-					aLibInfos.map((libInfo) => {
-						return libInfo.started;
-					})
-				);
-			}
-			return pReady;
-		}).then(() => {
-			if (sWaitForTheme) {
-				return new Promise((resolve, reject) => {
-					sap.ui.require(["sap/ui/core/Rendering", "sap/ui/core/Theming"], (Rendering, Theming) => {
-						Rendering.suspend();
-						if (sWaitForTheme === "rendering") {
-							Rendering.notifyInteractionStep();
-							resolve();
-							Rendering.getLogger().debug("delay initial rendering until theme has been loaded");
-							Theming.attachAppliedOnce(() => {
-								Rendering.resume("after theme has been loaded");
-							});
-						} else if (sWaitForTheme === "init") {
-							Rendering.getLogger().debug("delay init event and initial rendering until theme has been loaded");
-							Rendering.notifyInteractionStep();
-							Theming.attachAppliedOnce(() => {
-								resolve();
-								Rendering.resume("after theme has been loaded");
-							});
-						}
-					}, reject);
-				});
-			}
-		}).catch((exc) => {
-			throw (exc);
 		});
 	}
 
@@ -118,7 +77,59 @@ sap.ui.define([
 
 	return {
 		run: () => {
-			return Promise.all([pLoadModules, pLoadLibraries]);
+			return Promise.resolve();
+		},
+		beforeReady: (context) => {
+			let pInitLibraries = Promise.resolve();
+			if (aLibs.length > 0) {
+				pInitLibraries = Promise.all(
+					aLibs.map((lib) => {
+						return Library.load({
+							name: lib
+						});
+					})
+				).then(() => {
+					if (sWaitForTheme) {
+						const aLibInfos = Library.getAllInstancesRequiringCss();
+						let pReady = Promise.resolve();
+						if (aLibInfos.length > 0) {
+							pReady = Promise.all([
+								context,
+								...aLibInfos.map((libInfo) => {
+									// wait for the library.started which indicates theme loading
+									return libInfo.started;
+								})
+							]);
+						}
+						return pReady.then(() => {
+							return new Promise((resolve, reject) => {
+								sap.ui.require(["sap/ui/core/Rendering", "sap/ui/core/Theming"], (Rendering, Theming) => {
+									Rendering.suspend();
+									if (sWaitForTheme === "rendering") {
+										Rendering.notifyInteractionStep();
+										resolve();
+										Rendering.getLogger().debug("delay initial rendering until theme has been loaded");
+										Theming.attachAppliedOnce(() => {
+											Rendering.resume("after theme has been loaded");
+										});
+									} else if (sWaitForTheme === "init") {
+										Rendering.getLogger().debug("delay init event and initial rendering until theme has been loaded");
+										Rendering.notifyInteractionStep();
+										Theming.attachAppliedOnce(() => {
+											resolve();
+											Rendering.resume("after theme has been loaded");
+										});
+									}
+								}, reject);
+							});
+						});
+					}
+				});
+			}
+			return Promise.all([
+				pLoadModules,
+				pInitLibraries
+			]);
 		}
 	};
 });

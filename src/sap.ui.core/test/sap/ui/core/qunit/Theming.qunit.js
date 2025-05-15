@@ -31,8 +31,7 @@ sap.ui.define([
 		oQUnitConfigurationProviderStub,
 		oGlobalConfigurationProviderStub,
 		mConfigStubValues,
-		mEventCalls,
-		bThemeManagerNotActive = !!globalThis["sap-ui-test-config"].themeManagerNotActive;
+		mEventCalls;
 
 	function checkChange(oEvent) {
 		mEventCalls.aChange.push(BaseEvent.getParameters(oEvent));
@@ -82,10 +81,7 @@ sap.ui.define([
 		};
 		Theming.attachChange(checkChange);
 		Theming.attachApplied(checkApplied);
-		if (bThemeManagerNotActive) {
-			assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
-			mEventCalls.aApplied.pop();
-		}
+
 		mEventCalls = {
 			aChange: [],
 			aApplied: []
@@ -116,7 +112,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getTheme", function (assert) {
-		assert.expect(bThemeManagerNotActive ? 28 : 27);
+		assert.expect(27);
 		BaseConfig._.invalidate();
 
 		const sExpectedDefaultTheme = ThemeHelper.getDefaultThemeInfo().DEFAULT_THEME;
@@ -429,7 +425,7 @@ sap.ui.define([
 
 		// check if isApplied flag is reset after setting a new theme
 		Theming.setTheme("my_test_theme_for_applied");
-		assert.strictEqual(isApplied(), bThemeManagerNotActive, "'true' if ThemeManager is active; else 'false'");
+		assert.strictEqual(isApplied(), false, "'true' for active ThemeManager");
 
 		await themeApplied();
 
@@ -521,7 +517,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getFavicon", async function(assert) {
-		assert.expect(bThemeManagerNotActive ? 9 : 10);
+		assert.expect(10);
 
 		const oLogSpy = sinon.spy(Log, "error");
 
@@ -542,12 +538,10 @@ sap.ui.define([
 		await this.mobileDeferred.promise;
 
 		assert.ok(!!this.Mobile, "Mobile module should be available after themeApplied, in case a favicon is configured (independed whether ThemeManager is active or not)");
-		assert.strictEqual(!!this.Parameters, !bThemeManagerNotActive, "Parameters module should be available depending whether ThemeManager is active or not");
+		assert.strictEqual(!!this.Parameters, true, "Parameters module should be available");
 
-		if (!bThemeManagerNotActive) {
-			assert.strictEqual(await Theming.getFavicon(), this.sThemingServiceFaviconPath,
-				`getFavicon should return path '${this.sThemingServiceFaviconPath}' to custom favicon since favicon is set to 'true' and there is an explicit favicon configured for the custom theme`);
-		}
+		assert.strictEqual(await Theming.getFavicon(), this.sThemingServiceFaviconPath,
+			`getFavicon should return path '${this.sThemingServiceFaviconPath}' to custom favicon since favicon is set to 'true' and there is an explicit favicon configured for the custom theme`);
 
 		Theming.setTheme("sap_horizon");
 		await themeApplied();
@@ -581,7 +575,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("setFavicon", async function(assert) {
-		assert.expect(bThemeManagerNotActive ? 9 : 10);
+		assert.expect(10);
 		await Theming.setFavicon();
 
 		assert.strictEqual(await Theming.getFavicon(), undefined, "favicon should be 'undefined' when 'setFavicon' is called with 'undefined'");
@@ -599,16 +593,13 @@ sap.ui.define([
 
 		// Set a custom theme and wait for parameterswhich should be loaded to check for favicon from custom theme
 		Theming.setTheme("my_custom_theme");
-		if (!bThemeManagerNotActive) {
-			await this.parametersDeferred.promise;
-		}
+		await this.parametersDeferred.promise;
 
-		assert.strictEqual(!!this.Parameters, !bThemeManagerNotActive, "Parameters module should be available depending whether ThemeManager is active or not");
-		if (!bThemeManagerNotActive) {
-			await Theming.setFavicon(true);
-			assert.ok(this.oMobileSetIconsSpy.calledWith({ favicon: this.sThemingServiceFaviconPath }),
-				`setIcons should be called with '${this.sThemingServiceFaviconPath}' from custom theme`);
-		}
+		assert.strictEqual(!!this.Parameters, true, "Parameters module should be available");
+
+		await Theming.setFavicon(true);
+		assert.ok(this.oMobileSetIconsSpy.calledWith({ favicon: this.sThemingServiceFaviconPath }),
+			`setIcons should be called with '${this.sThemingServiceFaviconPath}' from custom theme`);
 
 		await Theming.setFavicon("/path/to/my/favicon.ico");
 		assert.ok(this.oMobileSetIconsSpy.calledWith({ favicon: "/path/to/my/favicon.ico" }), "setIcons should not be called when 'setFavicon' is called with a falsy value");

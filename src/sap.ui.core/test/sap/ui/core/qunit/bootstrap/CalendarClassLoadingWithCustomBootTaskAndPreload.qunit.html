@@ -1,0 +1,25 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="data-sap-ui-boot-manifest" content="boot/calendarcustomboot.json@test-resources/sap/ui/core/qunit/bootstrap">
+		<title>Custom Bootstrap Code</title>
+
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-on-init="fnInit"
+		>
+		</script>
+		<!-- end of nojQuery bootstrap code -->
+
+		<link href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage-istanbul.js" data-cover-flags="branchTracking">
+		</script>
+		<script src="CalendarClassLoadingWithCustomBootTaskAndPreload.qunit.js"></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

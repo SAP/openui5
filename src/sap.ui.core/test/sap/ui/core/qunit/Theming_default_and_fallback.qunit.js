@@ -17,8 +17,7 @@ sap.ui.define([
 
 	var oURLConfigurationProviderStub,
 		mConfigStubValues,
-		mEventCalls,
-		bThemeManagerNotActive = !!globalThis["sap-ui-test-config"].themeManagerNotActive;
+		mEventCalls;
 
 	function checkChange(oEvent) {
 		mEventCalls.aChange.push(BaseEvent.getParameters(oEvent));
@@ -64,10 +63,7 @@ sap.ui.define([
 			});
 			Theming.attachChange(checkChange);
 			Theming.attachApplied(checkApplied);
-			if (bThemeManagerNotActive) {
-				assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
-				mEventCalls.aApplied.pop();
-			}
+
 			mEventCalls = {
 				aChange: [],
 				aApplied: []

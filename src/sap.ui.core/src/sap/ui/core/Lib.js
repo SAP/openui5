@@ -414,6 +414,10 @@ sap.ui.define([
 		_preload: async function(mOptions) {
 			mOptions = mOptions || {};
 
+			if (this._loadingStatus?.promise) {
+				return this._loadingStatus.promise;
+			}
+
 			var sLibPackage = this.name.replace(/\./g, '/'),
 				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js');
 
@@ -427,11 +431,6 @@ sap.ui.define([
 			// A library should load dependencies first to ensure correct css order. Therefore a deferred is needed to delay the library promise resolve.
 			this._loadingStatus.cssLoaded = new Deferred();
 			await this.loadManifest();
-
-			if (this._loadingStatus.promise) {
-				// in the sync case, we can do a immediate return only when the library is fully loaded.
-				return this._loadingStatus.promise;
-			}
 
 			if (mOptions.lazy) {
 				// For selected lazy dependencies, we load a library-preload-lazy module.
@@ -1318,7 +1317,6 @@ sap.ui.define([
 		const aLibraryModuleNames = [];
 
 		await Promise.all(aLibs.map(function(oLib) {
-			const mOptions = {};
 			aLibraryModuleNames.push(oLib.name.replace(/\./g, "/") + "/library");
 			return oLib._preload(mOptions);
 		}));
