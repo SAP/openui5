@@ -29,7 +29,20 @@
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
+					"manifest.json",
 					"SandboxModel.js",
+					"data/equipments.json",
+					"data/equipments2.json",
+					"data/metadata_product.xml",
+					"data/metadata_supplier.xml",
+					"data/metadata.xml",
+					"data/Team01_skip0_top1.json",
+					"data/Team01_skip1_top1.json",
+					"data/Team02_skip0_top1.json",
+					"data/Team02_skip1_top1.json",
+					"data/Team03_skip0_top1.json",
+					"data/Team03_skip1_top1.json",
+					"data/TEAMS.json",
 					"../../../common/SandboxModelHelper.js"
 				]
 			}
