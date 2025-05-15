@@ -39,19 +39,6 @@
 		content: counter(steps-counter) '. ';
 	}
 
-	.sapMWizardNextButtonHidden {
-		bottom: -3rem;
-		opacity: 0;
-		animation-name: hideWizardButton;
-	}
-
-	.sapMWizardNextButtonVisible {
-		margin-top: 0.5rem;
-		bottom: 0;
-		opacity: 1;
-		animation-name: showWizardButton;
-	}
-
 	.sapMDialogSection {
 		height: auto;
 	}
@@ -77,37 +64,21 @@
 	min-height: ~"calc(100% - 1rem)"; /* 1rem is the margin from the top of the container*/
 }
 
-html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible,
-html[data-sap-ui-animation='on'] .sapMWizardNextButtonVisible {
-	animation-timing-function: linear;
-	animation-duration: @_sap_m_WizardStep_Animation_Duration;
-}
+html.sap-desktop .sapMWizard .sapMWizardNextButton,
+html.sap-tablet .sapMWizard .sapMWizardNextButton {
+	& {
+		display: block;
+		opacity: 0;
+		transform: translateY(3rem);
+		transition: opacity @_sap_m_WizardStep_Animation_Duration ease, transform @_sap_m_WizardStep_Animation_Duration ease;
+	}
 
-@keyframes showWizardButton {
+	&.sapMWizardNextButtonAnimated {
+		transform: translateY(0);
+		opacity: 1;
+	}
 
-	from {opacity: 0; bottom: -3rem;}
-
-	to {opacity: 1; bottom: 0rem;}
-}
-
-@keyframes hideWizardButton {
-
-	from {opacity: 1; bottom: 0rem;}
-
-	to {opacity: 0; bottom: -3rem;}
-}
-
-html.sap-desktop .sapMWizard .sapMWizardNextButtonVisible,
-html.sap-tablet .sapMWizard .sapMWizardNextButtonVisible {
-	display: block;
-}
-
-html.sap-phone .sapMWizard {
-
-	.sapMWizardNextButtonVisible {
-		position: fixed;
-		left: 50%;
-		transform: translate(-50%, 0);
-		bottom: 3rem;
+	&.sapMWizardNextButtonHidden {
+		display: none;
 	}
 }
