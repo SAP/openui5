@@ -677,6 +677,7 @@ sap.ui.define([
 						} else {
 							oColumnLayout = new ColumnLayout();
 							oItem.setLayout(oColumnLayout);
+							oLayout && oLayout.destroy();
 						}
 
 						if (!oFormAdjustmentFields) {
