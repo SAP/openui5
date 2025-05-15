@@ -366,7 +366,7 @@ sap.ui.define([
 		}
 
 	  // create the router for the component instance
-		const mRoutingClasses = UIComponent.collectRoutingClasses.call(this.getMetadata().getClass(), this) || {};
+		const mRoutingClasses = this.getMetadata().collectRoutingClasses(this) || {};
 		if (mRoutingClasses.routerClass) {
 			var fnRouterConstructor = mRoutingClasses.routerClass;
 
@@ -924,14 +924,13 @@ sap.ui.define([
 	 * <code>_fnGetRouterClassName</code> hook, which is expected to be defined within a subclass of the UIComponent.
 	 *
 	 * @param {sap.ui.core.UIComponent} oInstance An UIComponent instance provided by the {@link sap.ui.core.UIComponent#init}.
-	 * @returns {object} Returns a map containing routing module names. Returns routing classes if <code>oInstane</code> is provided.
+	 * @returns {object} Returns a map containing routing module names. Returns routing classes if <code>oInstance</code> is provided.
 	 */
-	UIComponent.collectRoutingClasses = function(oInstance) {
+	UIComponentMetadata.prototype.collectRoutingClasses = function(oInstance) {
 		const mRoutingClasses = {};
-		const oMetadata = this.getMetadata();
 
 		// lookup rootView class
-		const oRootView = oMetadata._getManifestEntry("/sap.ui5/rootView");
+		const oRootView = this._getManifestEntry("/sap.ui5/rootView");
 		const sRootViewName = typeof oRootView === "string" ? oRootView : oRootView?.viewName;
 		if (sRootViewName?.startsWith("module:")) {
 			mRoutingClasses["viewClass"] = sRootViewName;
@@ -948,15 +947,15 @@ sap.ui.define([
 
 		// lookup of the router / targets and views class
 		// ASYNC Only: prevents lazy synchronous loading in UIComponent#init (regardless of manifirst or manilast)
-		const oRouting = oMetadata._getManifestEntry("/sap.ui5/routing", true);
+		const oRouting = this._getManifestEntry("/sap.ui5/routing", true);
 		if (oRouting) {
 			if (oRouting.routes) {
 				// the "sap.ui5/routing/config/routerClass" entry can also contain a Router constructor
 				// See the typedef "sap.ui.core.UIComponent.RoutingMetadata" in sap/ui/core/UIComponent.js
 				let vRouterClass;
-				const _fnGetRouterClassName = this.getMetadata().getStaticProperty("_fnGetRouterClassName");
+				const _fnGetRouterClassName = this.getStaticProperty("_fnGetRouterClassName");
 				if (typeof _fnGetRouterClassName === "function") {
-					vRouterClass = _fnGetRouterClassName(this.getMetadata().getManifestObject());
+					vRouterClass = _fnGetRouterClassName(this.getManifestObject());
 				}
 				vRouterClass ??= oInstance?._getRouterClassName() || oRouting.config?.routerClass || "sap.ui.core.routing.Router";
 
