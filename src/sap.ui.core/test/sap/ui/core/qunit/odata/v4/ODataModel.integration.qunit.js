@@ -10067,7 +10067,7 @@ sap.ui.define([
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-2768)
 				oContext.getFilter();
-			}, Error("Key1: Unsupported type: undefined"), "no support for key aliases");
+			}, /Key1: Unsupported type: /, "no support for key aliases");
 		});
 	});
 
@@ -10422,6 +10422,180 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An entity and a complex type, which are both open types, are used for a list report
+	// (with auto-$expand/$select) and an object page (with late properties). See that dynamic
+	// property names are not an issue, not even for editing in connection with complex types and
+	// annotations.
+	// JIRA: CPOUI5ODATAV4-2996
+	QUnit.test("OpenType: 1/2", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/EntitiesWithComplexKey', parameters : {$select : 'Alpha'}}">
+	<Text id="beta" text="{path : 'Beta', type : 'sap.ui.model.odata.type.Boolean'}"/>
+	<Text id="gamma" text="{= %{Key/Gamma} }"/>
+</Table>
+<FlexBox id="form">
+	<Input id="delta" value="{= %{Delta} }"/>
+	<Text id="zeta" text="{= %{Key/Epsilon/Zeta} }"/>
+</FlexBox>`;
+
+		this.expectRequest("EntitiesWithComplexKey?$select=Alpha,Beta,Key/Gamma,Key/P1,Key/P2"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Alpha : "n/a", // unused
+					Beta : true,
+					Key : {
+						Gamma : "gamma",
+						P1 : "p1",
+						P2 : "p2"
+					}
+				}]
+			})
+			.expectChange("beta", ["Yes"])
+			.expectChange("gamma", ["gamma"])
+			.expectChange("delta")
+			.expectChange("zeta");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EntitiesWithComplexKey(Key1='p1',Key2=p2)"
+				+ "?$select=Delta,Key/Epsilon/Zeta", {
+				Delta : "delta",
+				Key : {
+					Epsilon : {
+						Zeta : "zeta"
+					}
+				}
+			})
+			.expectChange("delta", "delta")
+			.expectChange("zeta", "zeta");
+
+		const oListBinding = this.oView.byId("table").getBinding("items");
+		this.oView.byId("form").setBindingContext(oListBinding.getCurrentContexts()[0]);
+
+		await this.waitForChanges(assert, "late properties");
+
+		this.expectChange("delta", "Hello, World!")
+			.expectRequest({
+				method : "PATCH",
+				payload : {
+					Delta : "Hello, World!",
+					"Delta@complexAnnotation" : {
+						Eta : "eta"
+					},
+					Theta : {
+						"Iota@simpleAnnotation" : "iota"
+					}
+				},
+				url : "EntitiesWithComplexKey(Key1='p1',Key2=p2)"
+			}, {
+				Delta : "hello, world", // like Brian Kernighan said
+				Key : {
+					P1 : "p1",
+					P2 : "p2"
+				}
+
+			})
+			.expectChange("delta", "hello, world");
+
+		const oPropertyBinding = this.oView.byId("delta").getBinding("value");
+		// code under test
+		oPropertyBinding.setValue("Hello, World!");
+
+		await Promise.all([
+			// code under test
+			oPropertyBinding.getContext().setProperty("Delta@complexAnnotation/Eta", "eta"),
+			// code under test
+			oPropertyBinding.getContext().setProperty("Theta/Iota@simpleAnnotation", "iota"),
+			this.waitForChanges(assert, "edit")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: An entity and a complex type, which are both open types, are used for a list report
+	// (with auto-$expand/$select) and an object page (with late properties). See that dynamic
+	// property names are not an issue, even when reached via some navigation property, but that
+	// being an open type is not "inherited".
+	// JIRA: CPOUI5ODATAV4-2996
+	QUnit.test("OpenType: 2/2", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/As}">
+	<Text id="beta" text="{= %{AtoEntityWithComplexKey/Beta} }"/>
+	<Text id="gamma" text="{= %{AtoEntityWithComplexKey/Key/Gamma} }"/>
+</Table>
+<FlexBox id="form" binding="{AtoEntityWithComplexKey}">
+	<Text id="delta" text="{= %{Delta} }"/>
+	<Text id="epsilon" text="{= %{Key/Epsilon} }"/>
+</FlexBox>`;
+
+		this.expectRequest("As?$select=AID"
+				+ "&$expand=AtoEntityWithComplexKey($select=Beta,Key/Gamma,Key/P1,Key/P2)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					AID : "aid",
+					AtoEntityWithComplexKey : {
+						Beta : "beta",
+						Key : {
+							Gamma : "gamma",
+							P1 : "p1",
+							P2 : "p2"
+						}
+					}
+				}]
+			})
+			.expectChange("beta", ["beta"])
+			.expectChange("gamma", ["gamma"])
+			.expectChange("delta")
+			.expectChange("epsilon");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("As(aid)/AtoEntityWithComplexKey"
+				+ "?$select=Delta,Key/Epsilon,Key/P1,Key/P2", {
+				Delta : "delta",
+				Key : {
+					Epsilon : "epsilon",
+					P1 : "p1",
+					P2 : "p2"
+				}
+			})
+			.expectChange("delta", "delta")
+			.expectChange("epsilon", "epsilon");
+
+		const oListBinding = this.oView.byId("table").getBinding("items");
+		const oContext = oListBinding.getCurrentContexts()[0];
+		this.oView.byId("form").setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "late properties");
+
+		assert.deepEqual(oContext.getObject(), {
+			AID : "aid",
+			AtoEntityWithComplexKey : {
+				Beta : "beta",
+				Delta : "delta",
+				Key : {
+					Epsilon : "epsilon",
+					Gamma : "gamma",
+					P1 : "p1",
+					P2 : "p2"
+				}
+			}
+		});
+
+		this.oLogMock.expects("error").withExactArgs("Failed to enhance query options for "
+			+ "auto-$expand/$select as the path '/As(aid)/Messages/0/Delta'"
+			+ " does not point to a property",
+			undefined, "sap.ui.model.odata.v4.ODataParentBinding"
+		);
+		this.oLogMock.expects("error").withExactArgs("Not a valid property path: Messages/0/Delta",
+			undefined, sContext);
+
+		assert.strictEqual(await oContext.requestProperty("Messages/0/Delta"), undefined,
+			"being an open type is not inherited");
 	});
 
 	//*********************************************************************************************
