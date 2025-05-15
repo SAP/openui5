@@ -698,6 +698,7 @@ sap.ui.define([
 				} else {
 					oColumnLayout = new ColumnLayout();
 					oForm.setLayout(oColumnLayout);
+					oLayout?.destroy();
 				}
 
 				oColumnLayout._iBreakPointTablet -= BlockBase.FORM_ADUSTMENT_OFFSET;
