@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	"sap/ui/core/Lib",
 	'sap/ui/core/delegate/ScrollEnablement',
+	"sap/ui/base/ManagedObjectObserver",
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/ResizeHandler',
@@ -39,6 +40,7 @@ sap.ui.define([
 		Element,
 		Library,
 		ScrollEnablement,
+		ManagedObjectObserver,
 		Device,
 		InvisibleText,
 		ResizeHandler,
@@ -320,6 +322,8 @@ sap.ui.define([
 		};
 
 		Theming.attachApplied(this._handleThemeApplied);
+
+		this._observeTokens();
 	};
 
 	/**
@@ -1186,6 +1190,29 @@ sap.ui.define([
 		if (!this._shouldPreventModifier(oEvent)) {
 			this.onsapprevious(oEvent);
 		}
+	};
+
+	Tokenizer.prototype._observeTokens = function () {
+		var oTokensObserver = new ManagedObjectObserver(function(oChange) {
+			var sMutation = oChange.mutation;
+			var oItem = oChange.child;
+
+			switch (sMutation) {
+				case "insert":
+					// invalidate tokens to recalculate the sizes
+					oItem.attachEvent("_change", this.invalidate, this);
+					break;
+				case "remove":
+					oItem.detachEvent("_change", this.invalidate, this);
+					break;
+				default:
+					break;
+			}
+		}.bind(this));
+
+		oTokensObserver.observe(this, {
+			aggregations: ["tokens"]
+		});
 	};
 
 	/**
