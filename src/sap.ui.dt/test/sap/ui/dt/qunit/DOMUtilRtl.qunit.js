@@ -2,13 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery",
+	/* jQuery Plugin "scrollLeftRTL"*/
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
 	DOMUtil,
-	jQuery,
-	Device
+	Device,
+	jQuery
 ) {
 	"use strict";
 
@@ -59,6 +60,7 @@ sap.ui.define([
 			var iMaxScrollWidth = this.oContainer.scrollWidth - this.oContainer.clientWidth;
 			iScrollValue = iMaxScrollWidth + iScrollValue;
 			// scrollLeftRTL is a function from UI5 Core JQuery
+			// jQuery Plugin "scrollLeftRTL"
 			jQuery(this.oContainer).scrollLeftRTL(iScrollValue);
 			this.oContainer.scrollTop = 60;
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
@@ -92,6 +94,7 @@ sap.ui.define([
 		QUnit.test("scrolled to the most left position", function(assert) {
 			var iMaxScrollLeftValue = this.oPanel.scrollWidth - this.oPanel.clientWidth;
 			// scrollLeftRTL is a function from UI5 Core JQuery
+			// jQuery Plugin "scrollLeftRTL"
 			jQuery(this.oPanel).scrollLeftRTL(0);
 			var iScrollLeftResult = DOMUtil.getScrollLeft(this.oPanel);
 			assert.strictEqual(Math.round(iScrollLeftResult), -iMaxScrollLeftValue);

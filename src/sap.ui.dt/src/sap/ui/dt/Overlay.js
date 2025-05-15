@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Element",
 	"sap/ui/dt/MutationObserver",
 	"sap/ui/dt/ElementUtil",
@@ -14,7 +13,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/dt/util/ZIndexManager"
 ], function(
-	jQuery,
 	Element,
 	MutationObserver,
 	ElementUtil,
@@ -262,11 +260,11 @@ sap.ui.define([
 		_bRendered: false,
 
 		/**
-		 * Stores reference to the rendered DOM Element wrapped into jQuery object
-		 * @type {jQuery}
+		 * Stores reference to the rendered DOM Element
+		 * @type {HTMLElement}
 		 * @private
 		 */
-		_$DomRef: null,
+		_oDomRef: null,
 
 		/**
 		 * Stores CSS classes for overlay. Please do not mutate this array manually.
@@ -355,10 +353,12 @@ sap.ui.define([
 	};
 
 	Overlay.prototype._renderChildren = function() {
-		return this.getChildren().map(function(oChild) {
-			// If a rendered element is being moved to a parent that was just created, it should not be rendered again
-			return oChild.isRendered() ? oChild.$() : oChild.render();
-		});
+		return this.getChildren()
+		.map((oChild) => {
+			// Return the DOM reference of rendered children or render them if not rendered
+			return oChild.isRendered() ? oChild.getDomRef() : oChild.render();
+		})
+		.filter((oChild) => oChild instanceof HTMLElement);
 	};
 
 	Overlay.prototype.render = function(bSuppressEvent) {
@@ -366,23 +366,35 @@ sap.ui.define([
 			return this.getDomRef();
 		}
 
-		this._$DomRef = jQuery("<div></div>").attr(this._getAttributes());
+		// Create the main DOM element
+		this._oDomRef = document.createElement("div");
+		const oAttributes = this._getAttributes();
+		Object.entries(oAttributes).forEach(([key, value]) => {
+			if (value !== null) {
+				this._oDomRef.setAttribute(key, value);
+			}
+		});
 
-		this._$Children = jQuery("<div></div>").attr({
-			"class": "sapUiDtOverlayChildren"
-		}).appendTo(this._$DomRef);
+		// Create the children container
+		this._oChildren = document.createElement("div");
+		this._oChildren.setAttribute("class", "sapUiDtOverlayChildren");
+		this._oDomRef.append(this._oChildren);
 
-		this._$Children.append(this._renderChildren());
+		// Append rendered children
+		const aChildren = this._renderChildren();
+		aChildren.forEach((oChild) => {
+			this._oChildren.append(oChild);
+		});
 
 		this._bRendered = true;
 
 		if (!bSuppressEvent) {
 			this.fireAfterRendering({
-				domRef: this._$DomRef.get(0)
+				domRef: this._oDomRef
 			});
 		}
 
-		return this._$DomRef;
+		return this._oDomRef;
 	};
 
 	Overlay.prototype.isInit = function() {
@@ -463,7 +475,7 @@ sap.ui.define([
 
 		delete this._bInit;
 		delete this._bShouldBeDestroyed;
-		delete this._$DomRef;
+		delete this._oDomRef;
 		delete this._oScrollbarSynchronizers;
 		this.fireDestroyed();
 	};
@@ -482,20 +494,11 @@ sap.ui.define([
 	 * @public
 	 */
 	Overlay.prototype.getDomRef = function() {
-		return this.$().get(0);
+		return this._oDomRef;
 	};
 
 	Overlay.prototype.getChildrenDomRef = function() {
-		return this._$Children.get(0);
-	};
-
-	/**
-	 * Retrieves reference to the DOM Element wrapped into jQuery object
-	 * @return {jQuery} - jQuery with DOM Element inside
-	 * @public
-	 */
-	Overlay.prototype.$ = function() {
-		return this._$DomRef || jQuery();
+		return this._oChildren;
 	};
 
 	/**
@@ -612,10 +615,10 @@ sap.ui.define([
 					oGeometryChangedPromise = this._applySizes(oGeometry, oRenderingParent, bForceScrollbarSync);
 				}
 			} else {
-				this.$().css("display", "none");
+				this.getDomRef().style.display = "none";
 			}
 		} else {
-			this.$().css("display", "none");
+			this.getDomRef().style.display = "none";
 		}
 
 		// TODO: refactor geometryChanged event
@@ -723,7 +726,6 @@ sap.ui.define([
 				this._aBindParameters ||= [];
 				oListener ||= this;
 
-				// FWE jQuery.proxy can't be used as it breaks our contract when used with same function but different listeners
 				var fnProxy = fnHandler.bind(oListener);
 
 				this._aBindParameters.push({
@@ -734,7 +736,10 @@ sap.ui.define([
 				});
 
 				// If the control is rendered, directly add the event listener
-				this.$().on(sEventType, fnProxy);
+				const oDomRef = this.getDomRef();
+				if (oDomRef) {
+					oDomRef.addEventListener(sEventType, fnProxy);
+				}
 			}
 		}
 
@@ -761,13 +766,15 @@ sap.ui.define([
 				// remove the bind parameters from the stored array
 				if (this._aBindParameters) {
 					var oParamSet;
-					var $ = this.$();
+					var oDomRef = this.getDomRef();
 					for (var i = this._aBindParameters.length - 1; i >= 0; i--) {
 						oParamSet = this._aBindParameters[i];
 						if (oParamSet.sEventType === sEventType && oParamSet.fnHandler === fnHandler && oParamSet.oListener === oListener) {
 							this._aBindParameters.splice(i, 1);
 							// if control is rendered, directly call off()
-							$.off(sEventType, oParamSet.fnProxy);
+							if (oDomRef) {
+								oDomRef.removeEventListener(sEventType, oParamSet.fnProxy);
+							}
 						}
 					}
 				}

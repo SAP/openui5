@@ -11,8 +11,6 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
@@ -25,13 +23,27 @@ sap.ui.define([
 	OverlayRegistry,
 	VerticalLayout,
 	nextUIUpdate,
-	QUnitUtils,
-	jQuery,
 	sinon
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
+
+	function triggerEvent(sEventName, oTarget, oParams) {
+		if (typeof oTarget === "string") {
+			oTarget = oTarget ? document.getElementById(oTarget) : null;
+		}
+
+		if (!oTarget) {
+			return;
+		}
+
+		var oEvent = new Event(sEventName);
+
+		Object.assign(oEvent, oParams);
+
+		oTarget.dispatchEvent(oEvent);
+	}
 
 	function testDragAndDropEventHandlerTriggering(
 		sHandlerFunctionName, oOverlay, aDomDragEvents, assert, mFakeTouchEvents, oTargetOverlay
@@ -51,7 +63,7 @@ sap.ui.define([
 		if (aDomDragEvents.length) {
 			for (var i = 0; i < aDomDragEvents.length; i++) {
 				var oEventData = mFakeTouchEvents && mFakeTouchEvents[aDomDragEvents[i]];
-				QUnitUtils.triggerEvent(aDomDragEvents[i], oOverlay.$(), oEventData);
+				triggerEvent(aDomDragEvents[i], oOverlay.getDomRef(), oEventData);
 			}
 		}
 	}
@@ -471,17 +483,16 @@ sap.ui.define([
 			QUnit.test("when a dragover event happens in a an overlay with a scrollbar near the edge...", function(assert) {
 				var done = assert.async();
 				var oPageContentOverlay = this.oPageOverlay.getAggregationOverlay("content");
-				var $PageContentOverlay = oPageContentOverlay.$();
-				var $PageContent = jQuery(oPageContentOverlay.getGeometry().domRef);
+				var oPageContent = oPageContentOverlay.getGeometry().domRef;
 				var oEvent;
 
-				var oOffset = $PageContentOverlay.offset();
+				var oOffset = oPageContentOverlay.offset();
 
 				var iX = oOffset.left + 10;
-				var iY = oOffset.top + $PageContentOverlay.height() - 10;
+				var iY = oOffset.top + oPageContentOverlay.height - 10;
 
-				$PageContent.on("scroll", function() {
-					assert.notStrictEqual($PageContent.scrollTop(), 0, "page content is scrolled after drag event");
+				oPageContent.addEventListener("scroll", function() {
+					assert.notStrictEqual(oPageContent.scrollTop, 0, "page content is scrolled after drag event");
 					done();
 				});
 
@@ -493,7 +504,7 @@ sap.ui.define([
 					clientY: iY
 				});
 
-				$PageContentOverlay.get(0).dispatchEvent(oEvent);
+				oPageContentOverlay.dispatchEvent(oEvent);
 			});
 		});
 	}

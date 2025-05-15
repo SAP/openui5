@@ -143,8 +143,6 @@ function(
 
 				if (!bChildRendered) {
 					var oRenderResult = oChild.render(true);
-					// TODO: change when renderer does not return jquery object any more!
-					oRenderResult = oRenderResult.jquery ? oRenderResult.get(0) : oRenderResult;
 				}
 
 				var oChildDOM = bChildRendered ? oChild.getDomRef() : oRenderResult;

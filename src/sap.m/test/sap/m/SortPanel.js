@@ -1,5 +1,4 @@
 sap.ui.define([
-  "sap/m/P13nConditionPanel",
   "sap/ui/layout/Grid",
   "sap/m/Dialog",
   "sap/m/Button",
@@ -11,20 +10,7 @@ sap.ui.define([
   "sap/m/Input",
   "sap/m/CheckBox",
   "sap/ui/thirdparty/jquery"
-], function(
-  P13nConditionPanel,
-  Grid,
-  Dialog,
-  Button,
-  JSONModel,
-  P13nSortPanel,
-  MessageToast,
-  P13nItem,
-  P13nSortItem,
-  Input,
-  CheckBox,
-  jQuery
-) {
+], function(Grid, Dialog, Button, JSONModel, P13nSortPanel, MessageToast, P13nItem, P13nSortItem, Input, CheckBox, jQuery) {
   "use strict";
 
   var aConditions = [];

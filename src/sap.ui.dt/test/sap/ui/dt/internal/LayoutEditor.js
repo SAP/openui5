@@ -5,26 +5,25 @@ sap.ui.define([
 	"sap/ui/dt/plugin/ControlDragDrop",
 	"sap/ui/dt/plugin/MouseSelection",
 	"sap/ui/core/mvc/XMLView",
-	"sap/m/Button",
-	"sap/ui/thirdparty/jquery"
+	"sap/m/Button"
 ],
-function(
+function (
 	DesignTime,
 	ControlDragDrop,
 	MouseSelection,
 	XMLView,
-	Button,
-	jQuery
+	Button
 ) {
 	"use strict";
 
-	XMLView.create({definition: jQuery("#view1").html()})
+	const oViewDefinition = document.getElementById("view1").innerHTML;
+	XMLView.create({definition: oViewDefinition})
 		.then(function(oView) {
 			oView.placeAt("content");
 
-			var aMOVABLE_TYPES = ["sap.m.Button"];
-			var oSelectionPlugin = new MouseSelection();
-			var oDragPlugin = new ControlDragDrop({
+			const aMOVABLE_TYPES = ["sap.m.Button"];
+			const oSelectionPlugin = new MouseSelection();
+			const oDragPlugin = new ControlDragDrop({
 				draggableTypes: aMOVABLE_TYPES
 			});
 
@@ -36,22 +35,23 @@ function(
 				]
 			});
 
-			var oDraggedOverlay;
-			jQuery("#pallete_button")
-				.on("dragstart", function() {
-					var oButton = new Button({text: "New button"});
+			let oDraggedOverlay;
+			// Add event listeners for dragstart and dragend
+			const oPaletteButton = document.getElementById("pallete_button");
+			oPaletteButton.addEventListener("dragstart", function() {
+				const oButton = new Button({text: "New button"});
 
-					oDesignTime.createOverlay({
-						element: oButton,
-						root: true,
-					}).then(function(oOverlay) {
-						oDraggedOverlay = oOverlay;
-						oDraggedOverlay.placeInOverlayContainer();
-						oDraggedOverlay.$().trigger("dragstart");
-					});
-				})
-				.on("dragend", function() {
-					oDraggedOverlay.$().trigger("dragend");
+				oDesignTime.createOverlay({
+					element: oButton,
+					root: true,
+				}).then(function(oOverlay) {
+					oDraggedOverlay = oOverlay;
+					oDraggedOverlay.placeInOverlayContainer();
+					oDraggedOverlay.getDomRef().dispatchEvent(new Event("dragstart"));
 				});
+			});
+			oPaletteButton.addEventListener("dragend", function() {
+				oDraggedOverlay.getDomRef().dispatchEvent(new Event("dragend"));
+			});
 		});
 });

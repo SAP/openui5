@@ -26,8 +26,7 @@ sap.ui.define([
 	"sap/ui/dt/TaskManager",
 	"sap/ui/dt/TaskRunner",
 	"sap/ui/dt/util/ZIndexManager",
-	"sap/ui/dt/Util",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/dt/Util"
 ], function(
 	_curry,
 	_difference,
@@ -52,8 +51,7 @@ sap.ui.define([
 	TaskManager,
 	TaskRunner,
 	ZIndexManager,
-	Util,
-	jQuery
+	Util
 ) {
 	"use strict";
 
@@ -632,8 +630,7 @@ sap.ui.define([
 		})
 		.then(
 			function(oElementOverlay) {
-				// TODO remove jQuery when Overlay.render() returns DOM Element
-				jQuery(Overlay.getOverlayContainer()).append(oElementOverlay.render());
+				Overlay.getOverlayContainer().append(oElementOverlay.render());
 				this._oTaskManager.add({
 					type: "applyStyles",
 					callbackFn: oElementOverlay.applyStyles.bind(oElementOverlay),

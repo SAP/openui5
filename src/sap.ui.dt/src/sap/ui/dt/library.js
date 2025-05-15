@@ -86,7 +86,7 @@ sap.ui.define([
 	 * @property {string|function} [domRef] - Defines the DOM reference of the control
 	 * @property {function} isVisible - Needed for Elements that are not derived from sap.ui.core.Control.
 	 * The function should return the visibility of the Element as a boolean (true = visible).
-	 * This function can be called before the DOM is ready, so e.g. jQuery.is(":visible") should not be used.
+	 * This function can be called before the DOM is ready.
 	 * @property {object|function} palette - Palette settings for the control.
 	 * @property {string|function} palette.group - Possible values: "ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE"
 	 * @property {string|function} palette.icon - Preferable as SVG as this icon scales

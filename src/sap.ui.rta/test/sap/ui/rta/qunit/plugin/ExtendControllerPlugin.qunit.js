@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ExtendControllerCommand",
@@ -20,6 +21,7 @@ sap.ui.define([
 	OverlayRegistry,
 	Util,
 	Layer,
+	Utils,
 	nextUIUpdate,
 	CommandFactory,
 	ExtendControllerCommand,
@@ -123,9 +125,25 @@ sap.ui.define([
 
 			assert.notOk(this.oExtendControllerPlugin.isEnabled([this.oPanelOverlay]), "then the action is not enabled");
 			const aMenuItems = await this.oExtendControllerPlugin.getMenuItems([this.oPanelOverlay]);
+			const sFoundText = Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE");
+			assert.notStrictEqual(sFoundText, "CTX_DISABLED_REUSE", "then the text is found in the resource bundle");
 			assert.strictEqual(
 				aMenuItems[0].text,
-				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_EXTEND_CONTROLLER")} (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE")})`,
+				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_EXTEND_CONTROLLER")} (${sFoundText})`,
+				"then the menu item has the correct text"
+			);
+		});
+
+		QUnit.test("When the control is not in an async view", async function(assert) {
+			sandbox.stub(Utils, "getViewForControl").returns({});
+
+			assert.notOk(this.oExtendControllerPlugin.isEnabled([this.oPanelOverlay]), "then the action is not enabled");
+			const aMenuItems = await this.oExtendControllerPlugin.getMenuItems([this.oPanelOverlay]);
+			const sFoundText = Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_NOT_ASYNC");
+			assert.notStrictEqual(sFoundText, "CTX_DISABLED_NOT_ASYNC", "then the text is found in the resource bundle");
+			assert.strictEqual(
+				aMenuItems[0].text,
+				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_EXTEND_CONTROLLER")} (${sFoundText})`,
 				"then the menu item has the correct text"
 			);
 		});
@@ -134,6 +152,7 @@ sap.ui.define([
 			const oExtendControllerPlugin = new ExtendControllerPlugin();
 
 			sandbox.stub(this.oExtendControllerPlugin, "isInReuseComponentOnS4HanaCloud").returns(false);
+			sandbox.stub(Utils, "getViewForControl").returns({ oAsyncState: { promise: Promise.resolve() } });
 
 			// Test with one overlay
 			const aElementOverlays = [{ getElement: () => {} }];

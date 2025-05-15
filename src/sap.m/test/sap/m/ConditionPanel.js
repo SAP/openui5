@@ -1,13 +1,13 @@
 sap.ui.define([
-  "sap/m/P13nConditionPanel",
   "sap/ui/layout/Grid",
   "sap/m/Dialog",
   "sap/m/Button",
   "sap/m/library",
+  "sap/m/P13nConditionPanel",
   "sap/m/MessageToast",
   "sap/m/CheckBox",
   "sap/ui/thirdparty/jquery"
-], function(P13nConditionPanel, Grid, Dialog, Button, mobileLibrary, MessageToast, CheckBox, jQuery) {
+], function(Grid, Dialog, Button, mobileLibrary, P13nConditionPanel, MessageToast, CheckBox, jQuery) {
   "use strict";
 
   // shortcut for sap.m.P13nConditionOperation

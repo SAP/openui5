@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	'../base/_runWithOwner',
 	'../base/ManagedObject',
 	'./Element',
 	'./XMLTemplateProcessor',
@@ -12,6 +13,7 @@ sap.ui.define([
 	'sap/ui/core/Component'
 ],
 function(
+	_runWithOwner,
 	ManagedObject,
 	Element,
 	XMLTemplateProcessor,
@@ -480,7 +482,7 @@ function(
 		mParameters.fragmentName = mParameters.fragmentName || mParameters.name;
 		mParameters.fragmentContent = mParameters.fragmentContent || mParameters.definition;
 		mParameters.oController = mParameters.controller;
-		mParameters.sOwnerId = ManagedObject._sOwnerId;
+		mParameters.sOwnerId = _runWithOwner.getCurrentOwnerId();
 		delete mParameters.name;
 		delete mParameters.definition;
 		delete mParameters.controller;

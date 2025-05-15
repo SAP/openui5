@@ -118,7 +118,8 @@ sap.ui.define(['sap/ui/Device', "sap/ui/core/Lib"], function(Device, Library) {
 		oRm.attr("title", sColorNameAria);
 		oRm.accessibilityState(oColorPalette, {
 			"role": "button",
-			"label": sColorNameAria
+			"label": sColorNameAria,
+			"pressed": bIsSelected
 		});
 		oRm.openEnd();
 		oRm.openStart("div");
