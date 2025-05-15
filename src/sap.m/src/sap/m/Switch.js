@@ -461,8 +461,7 @@ function(
 
 		Switch.prototype.getAccessibilityInfo = function() {
 			var oBundle = Library.getResourceBundleFor("sap.m"),
-				bState = this.getState(),
-				sDesc = this.getInvisibleElementText(bState);
+				sDesc = this._getAccDescription();
 
 			return {
 				role: "switch",
@@ -498,6 +497,23 @@ function(
 	 */
 	 Switch.prototype._getToolbarInteractive = function () {
 		return true;
+	};
+
+	/**
+	 * Returns accessibility description of the control
+	 *
+	 * @returns {string} description text
+	 *
+	 * @private
+	 *
+	 */
+	 Switch.prototype._getAccDescription = function () {
+		var bState = this.getState(),
+			oBundle = Library.getResourceBundleFor("sap.m"),
+			sStateDescr = bState ? oBundle.getText("SWITCH_ON") : oBundle.getText("SWITCH_OFF"),
+			sInvisibleText = this.getInvisibleElementText(bState);
+
+		return sStateDescr + (sInvisibleText ? ", " + sInvisibleText : "");
 	};
 
 	return Switch;
