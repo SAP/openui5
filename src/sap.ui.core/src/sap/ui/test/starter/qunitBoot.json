@@ -5,5 +5,8 @@
 	],
 	"preBoot": [
 		"sap/ui/test/starter/startQUnit"
+	],
+	"bundles": [
+		"sap/ui/test/starter/QUnitBoot"
 	]
 }

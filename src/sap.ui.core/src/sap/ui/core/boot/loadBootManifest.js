@@ -23,9 +23,10 @@ sap.ui.define([
 
 	function _mergeBootManifest(oParentManifest, oChildManifest) {
 		const oMergedManifest = Object.assign({}, oParentManifest);
-		delete oChildManifest.boot;
 		oMergedManifest.config = oMergedManifest.config ? oMergedManifest.config : [];
 		oMergedManifest.config = oMergedManifest.config.concat(oChildManifest.config || []);
+		oMergedManifest.bundles = oMergedManifest.bundles ? oMergedManifest.bundles : [];
+		oMergedManifest.bundles = oMergedManifest.bundles.concat(oChildManifest.bundles || []);
 		oMergedManifest.preBoot = oMergedManifest.preBoot ? oMergedManifest.preBoot : [];
 		oMergedManifest.preBoot = oMergedManifest.preBoot.concat(oChildManifest.preBoot || []);
 		oMergedManifest.postBoot = oMergedManifest.postBoot ? oMergedManifest.postBoot : [];
