@@ -84,8 +84,8 @@
 			</description>
 		</interaction>
 		<interaction>
+			<kbd>Shift + ArrowUp</kbd>
 			<description>
-				<kbd>Shift + ArrowUp</kbd>
 				<p>If the focus is on a cell or the row selector and the relevant row is selected, the focus moves to the row
 					above, and the selection is enhanced up to this row.</p>
 				<p>If the focus is on a cell or the row selector and the relevant row is <span class="emphasis">not</span>
@@ -99,8 +99,8 @@
 			</description>
 		</interaction>
 		<interaction>
+			<kbd>Shift + ArrowDown</kbd>
 			<description>
-				<kbd>Shift + ArrowDown</kbd>
 				<p>If the focus is on a cell or the row selector and the relevant row is selected, the focus moves to the row
 					below, and the selection is enhanced up to this row.</p>
 				<p>If the focus is on a cell or the row selector and the relevant row is <span class="emphasis">not</span>

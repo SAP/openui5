@@ -109,7 +109,7 @@
 				<p>If the focus is on a cell selection block, the selection of the cells is removed.</p>
 				<p>If the focus is on a cell and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
-				<p>If the focus is on a cell or row selector, this toggles the selection of the current row.</p>
+				<p>If the focus is on a cell or the row selector, this toggles the selection of the current row.</p>
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
 				<p>If the focus is on a cell selection block, the cell selection block is changed into a row selection. The cell selection is removed.</p>
 				<p>Depending on the row selection mode the following happens:</p>
@@ -227,8 +227,8 @@
 		<interaction>
 			<kbd>Shift + F10</kbd>
 			<description>
-				<p>If the focus is on a group header, the group header menu is opened.</p>
-				<p>If the focus is on a column header, the column header menu is opened.</p>
+				<p>If the focus is on the group header, the group header menu is opened.</p>
+				<p>If the focus is on the column header, the column header menu is opened.</p>
 			</description>
 		</interaction>
 		<interaction>
