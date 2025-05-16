@@ -13,10 +13,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/uxap/library"
 ],
-function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView, Controller, JSONModel) {
+function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView, Controller, JSONModel, library) {
 	"use strict";
+
+	// shortcut for sap.uxap.BlockBaseFormAdjustment
+	var BlockBaseFormAdjustment = library.BlockBaseFormAdjustment;
 
 	QUnit.module("BlockBase");
 
@@ -511,6 +515,66 @@ function(ComponentContainer, Control, Shell, Element, nextUIUpdate, BlockBase, O
 			done();
 		});
 
+	});
+
+	QUnit.test("Form adjustment destroys the obsolete form layout", function (assert) {
+		var done = assert.async(),
+			viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:form="sap.ui.layout.form">' +
+				'<form:Form>' +
+					'<form:layout>' +
+						'<form:ResponsiveGridLayout id="idResponsiveGridLayout" />' +
+					'</form:layout>' +
+					'</form:Form>' +
+				'</mvc:View>',
+			MyBlock = BlockBase.extend("my.custom.Block", {
+				metadata: {
+					views: {
+						// Define the view for the block
+						Collapsed: {
+							type: "XML",
+							async: true,
+							definition:viewContent
+						},
+						Expanded: {
+							type: "XML",
+							async: true,
+							definition:viewContent
+						}
+					}
+				},
+				renderer: {}
+			}),
+			myBlock = new MyBlock({
+				id: "myBlock",
+				formAdjustment: BlockBaseFormAdjustment.BlockColumns
+			}),
+			oSubSection = new ObjectPageSubSection({
+				id: "mySubSection",
+				blocks: [myBlock]
+			});
+
+		oSubSection._oLayoutConfig = {M: 2, L: 3, XL: 4};
+
+		myBlock.attachEventOnce("viewInit", function (oEvent) {
+			var oView = oEvent.getParameter("view");
+			var oFormLayout = oView.byId("idResponsiveGridLayout");
+
+			// Assert: check if the obsolete form layout is destroyed
+			assert.ok(oFormLayout, "The form layout is created");
+
+			setTimeout(function () {
+				// Act: trigger the adjustment of the form layout
+				myBlock._applyFormAdjustment();
+
+				// Act: destroy the block parent
+				oSubSection.destroy();
+				// Assert: check if the obsolete form layout is destroyed
+				assert.ok(oFormLayout.bIsDestroyed, "The obsolete form layout is destroyed");
+				done();
+			}, 0);
+		});
+
+		myBlock._selectView("Expanded");
 	});
 
 	// utils:
