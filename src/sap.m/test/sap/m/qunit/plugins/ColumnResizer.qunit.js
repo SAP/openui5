@@ -139,7 +139,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check Table DOM", async function(assert) {
-		const oTableDomRef  = this.oTable.getDomRef();
+		const oTableDomRef  = this.oTable.getDomRef("listUl");
 		assert.notOk(oTableDomRef.classList.contains("sapMPluginsColumnResizerContainer"), "ColumnResizer container style class not added");
 		assert.notOk(oTableDomRef.children[oTableDomRef.children.length - 1].classList.contains("sapMPluginsColumnResizerHandle"), "ColumnResizer handle not created");
 		const oColumnResizer = new ColumnResizer();
@@ -266,6 +266,7 @@ sap.ui.define([
 
 		QUtils.triggerEvent("mouseleave", this.oColumnResizer._oHandle);
 		assert.notOk(this.oColumnResizer._oHandle.style[this.sBeginDirection], "Handle is not visible after mouse leave");
+		assert.notOk(document.querySelector("sapMPluginsColumnResizerHandle"), "Resize Handle is removed");
 	});
 
 	QUnit.test("Resize handle should have a circle in mobile device", function(assert) {
@@ -284,7 +285,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resizing style class", function(assert) {
-		const oTableDomRef = this.oTable.getDomRef(),
+		const oTableDomRef = this.oTable.getDomRef("listUl"),
 			oColumn1Dom = this.oTable.getColumns()[1].getDomRef();
 
 		const iClientX = oColumn1Dom.getBoundingClientRect()[this.sEndDirection];
@@ -341,6 +342,8 @@ sap.ui.define([
 		this.oTable.getColumns().forEach(function(oColumn) {
 			assert.ok(oColumn.getWidth().indexOf("px") > -1, "All columns should have static width once a column is resized"); // # 12-15
 		});
+
+		assert.notOk(document.querySelector("sapMPluginsColumnResizerHandle"), "Resize Handle is removed");
 	});
 
 	QUnit.test("Resize columns with Table having dummy column", async function(assert) {
@@ -613,6 +616,7 @@ sap.ui.define([
 		const fnCancelReszing = sinon.spy(this.oColumnResizer, "_cancelResizing");
 		QUtils.triggerKeydown(oTableDomRef, KeyCodes.ESCAPE);
 		assert.ok(fnCancelReszing.called, "Column resizing cancelled");
+		assert.notOk(document.querySelector("sapMPluginsColumnResizerHandle"), "Resize Handle is removed");
 	});
 
 

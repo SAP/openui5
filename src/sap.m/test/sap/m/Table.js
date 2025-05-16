@@ -578,15 +578,16 @@ sap.ui.define([
 		growingThreshold: 5,
 		growingScrollToLoad : true,
 		footerText : "Static table footer text",
+		sticky: ["HeaderToolbar", "InfoToolbar", "ColumnHeaders", "GroupHeaders"],
 		headerToolbar : oTableHeader,
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
 		columns : aColumns,
-		dependents: new CopyProvider({
+		dependents: [new CopyProvider({
 			extractData: function(oContext, oColumn) {
 				return oContext.getProperty(oColumn.data("clipboard"));
 			}
-		}),
+		}), new sap.m.plugins.ColumnResizer()],
 		selectionChange : function(e) {
 			MessageToast.show("selection is changed");
 		},
