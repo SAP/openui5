@@ -34,12 +34,6 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 	const sReference = "sap.ui.rta.test";
 
-	function waitForCommandExecuted(oCommandStack) {
-		return new Promise((resolve) => {
-			oCommandStack.attachEventOnce("commandExecuted", resolve);
-		});
-	}
-
 	QUnit.module("Given an app with a control variant...", {
 		before: async () => {
 			this.oCompContainer = await RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
@@ -74,8 +68,7 @@ sap.ui.define([
 			const oRemoveCommand = await new CommandFactory().getCommandFor(oButton, "Remove", {
 				removedElement: oButton
 			}, oButtonOverlay.getDesignTimeMetadata(), sVMReference);
-			this.oCommandStack.pushAndExecute(oRemoveCommand);
-			await waitForCommandExecuted(this.oCommandStack);
+			await this.oCommandStack.pushAndExecute(oRemoveCommand);
 			assert.strictEqual(oButton.getVisible(), false, "then the button is removed");
 			assert.strictEqual(oVMControl.getModified(), true, "then the variant management control is modified");
 
@@ -88,8 +81,8 @@ sap.ui.define([
 				});
 			});
 			const oControlVariantPlugin = this.oRta.getPlugins().controlVariant;
-			oControlVariantPlugin.createSaveAsCommand([oVMControlOverlay]);
-			await waitForCommandExecuted(this.oCommandStack);
+			await oControlVariantPlugin.createSaveAsCommand([oVMControlOverlay]);
+			await this.oCommandStack.getLastCommandExecuted();
 			const oNewVariant = oEmbeddedVM.getItems().find((oItem) => {
 				return oItem.getKey() === oVMControl._oVM.getSelectedKey();
 			});
@@ -116,8 +109,7 @@ sap.ui.define([
 			const oRemoveCommand2 = await new CommandFactory().getCommandFor(oButton2, "Remove", {
 				removedElement: oButton
 			}, oButton2Overlay.getDesignTimeMetadata(), sVMReference);
-			this.oCommandStack.pushAndExecute(oRemoveCommand2);
-			await waitForCommandExecuted(this.oCommandStack);
+			await this.oCommandStack.pushAndExecute(oRemoveCommand2);
 			assert.strictEqual(oButton2.getVisible(), false, "then the button is removed");
 			assert.strictEqual(oVMControl.getModified(), true, "then the variant management control is modified");
 
@@ -134,8 +126,8 @@ sap.ui.define([
 					deleted: [oNewVariant.getKey()]
 				});
 			});
-			oControlVariantPlugin.configureVariants([oVMControlOverlay]);
-			await waitForCommandExecuted(this.oCommandStack);
+			await oControlVariantPlugin.configureVariants([oVMControlOverlay]);
+			await this.oCommandStack.getLastCommandExecuted();
 
 			const fnRunChecksAfterRemove = () => {
 				assert.strictEqual(oVMControl.getModified(), false, "then the variant management control is not modified anymore");
