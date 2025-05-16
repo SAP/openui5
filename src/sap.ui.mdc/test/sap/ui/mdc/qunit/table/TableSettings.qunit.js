@@ -107,7 +107,7 @@ sap.ui.define([
 
 					// Set calculated values for settings
 					oTableRowSettings = new RowSettings();
-					oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
+					oTableRowSettings.bindProperty("navigated", {path: 'description', type: 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 					oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 					that.oTable.setRowSettings(oTableRowSettings);
 					await nextUIUpdate();
@@ -148,7 +148,7 @@ sap.ui.define([
 
 					// Set calculated values for settings
 					const oTableRowSettings = new RowSettings();
-					oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
+					oTableRowSettings.bindProperty("navigated", {path: 'description', type: 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 					oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 					that.oTable.setRowSettings(oTableRowSettings);
 					await nextUIUpdate();
@@ -171,7 +171,7 @@ sap.ui.define([
 		let iCalled = 0;
 		const that = this;
 		const oTest = {
-			getBindingContext: function () {}
+			getBindingContext: function() {}
 		};
 
 		function testOnFirePress(oEvent) {
@@ -335,7 +335,7 @@ sap.ui.define([
 
 			// Set calculated values for settings
 			oTableRowSettings = new RowSettings();
-			oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
+			oTableRowSettings.bindProperty("navigated", {path: 'description', type: 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 			oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 			that.oTable.setRowSettings(oTableRowSettings);
 			await nextUIUpdate();
@@ -370,7 +370,7 @@ sap.ui.define([
 
 			 // Set calculated values for settings
 			const oTableRowSettings = new RowSettings();
-			oTableRowSettings.bindProperty("navigated", {path: 'description', type : 'sap.ui.model.type.Boolean', formatter: formatNavigated});
+			oTableRowSettings.bindProperty("navigated", {path: 'description', type: 'sap.ui.model.type.Boolean', formatter: formatNavigated});
 			oTableRowSettings.bindProperty("highlight", {path: 'description', formatter: formatHighlight});
 			that.oTable.setRowSettings(oTableRowSettings);
 			await nextUIUpdate();

@@ -3,9 +3,10 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Element',
-	'sap/ui/mdc/enums/TableRowActionType'
-], (Element) => {
+	"sap/ui/core/Element"
+], (
+	Element
+) => {
 	"use strict";
 
 	/**
@@ -35,23 +36,23 @@ sap.ui.define([
 				 * Setting the type ensures default values for the properties <code>icon</code> and <code>text</code>. If an icon or text is set
 				 * explicitly, this setting is used.
 				 */
-				type: { type: "sap.ui.mdc.enums.TableRowActionType" },
+				type: {type: "sap.ui.mdc.enums.TableRowActionType"},
 				/**
 				 * Text for the row action item.
 				 *
 				 * <b>Note:</b> A custom text cannot be set when the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
 				 */
-				text: { type: "string" },
+				text: {type: "string"},
 				/**
 				 * Icon for the row action item.
 				 *
 				 * <b>Note:</b> A custom icon cannot be set when the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}.
 				 */
-				icon: { type: "sap.ui.core.URI" },
+				icon: {type: "sap.ui.core.URI"},
 				/**
 				 * Whether the item should be visible on the screen.
 				 */
-				visible: { type: "boolean", defaultValue: true }
+				visible: {type: "boolean", defaultValue: true}
 			},
 			events: {
 				/**

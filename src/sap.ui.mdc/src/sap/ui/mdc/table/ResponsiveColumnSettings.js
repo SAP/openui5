@@ -4,7 +4,9 @@
 
 sap.ui.define([
 	"./ColumnSettings"
-], (ColumnSettings) => {
+], (
+	ColumnSettings
+) => {
 	"use strict";
 
 	/**

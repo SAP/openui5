@@ -25,9 +25,9 @@ sap.ui.define([
 	 * @implements sap.ui.core.IContextMenu
 	 * @author SAP SE
 	 * @private
-	 * @alias sap.ui.mdc.table.menu.GroupHeaderRowContextMenu
+	 * @alias sap.ui.mdc.table.menus.GroupHeaderRowContextMenu
 	 */
-	const GroupHeaderRowContextMenu = Element.extend("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu", {
+	const GroupHeaderRowContextMenu = Element.extend("sap.ui.mdc.table.menus.GroupHeaderRowContextMenu", {
 		metadata: {
 			library: "sap.ui.mdc",
 			interfaces: ["sap.ui.core.IContextMenu"],

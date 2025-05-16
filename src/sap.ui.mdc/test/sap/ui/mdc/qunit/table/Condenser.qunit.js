@@ -12,7 +12,7 @@ sap.ui.define([
 			'<mdc:Table id="myMDCTable" ' +
 				'selectionMode="Multi" ' +
 				'type="Table" ' +
-				'delegate=\'' +  sDelegate + '\' ' +
+				'delegate=\'' + sDelegate + '\' ' +
 				'p13nMode="Column,Group,Sort">' +
 				'<mdc:columns>' +
 					'<Column id="IDTableName_01" header="Name" propertyKey="name"></Column>' +
@@ -61,7 +61,7 @@ sap.ui.define([
 	}
 
 	function fnConfirmColumnGotAdded(sPropertyName) {
-		return function (oUiComponent, oViewAfterAction, assert) {
+		return function(oUiComponent, oViewAfterAction, assert) {
 			const oTable = oViewAfterAction.byId("myMDCTable");
 			assert.ok(oTable, "then the mdc.Table exists");
 			assert.ok(fnHasColumn(oTable, getIdForPropertyName(sPropertyName)), "then the column '" + sPropertyName + "' got added");
@@ -69,7 +69,7 @@ sap.ui.define([
 	}
 
 	function fnConfirmColumnGotRemoved(sPropertyName) {
-		return function (oUiComponent, oViewAfterAction, assert) {
+		return function(oUiComponent, oViewAfterAction, assert) {
 			const oTable = oViewAfterAction.byId("myMDCTable");
 			assert.ok(oTable, "then the mdc.Table exists");
 			assert.ok(!fnHasColumn(oTable, getIdForPropertyName(sPropertyName)), "then the column '" + sPropertyName + "' got removed");
@@ -77,10 +77,11 @@ sap.ui.define([
 	}
 
 	function fnConfirmColumnGotMoved(sPropertyName, iIndex) {
-		return function (oUiComponent, oViewAfterAction, assert) {
+		return function(oUiComponent, oViewAfterAction, assert) {
 			const oTable = oViewAfterAction.byId("myMDCTable");
 			assert.ok(oTable, "then the mdc.Table exists");
-			assert.equal(oTable.getColumns()[iIndex].getId(), getIdForPropertyName(sPropertyName), "then the column '" + sPropertyName + "' is on Index " + iIndex);
+			assert.equal(oTable.getColumns()[iIndex].getId(), getIdForPropertyName(sPropertyName),
+				"then the column '" + sPropertyName + "' is on Index " + iIndex);
 		};
 	}
 
@@ -89,7 +90,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "addColumn",
 					content: {
@@ -102,7 +103,7 @@ sap.ui.define([
 		previousActions: [{
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function () {
+			parameter: function() {
 				return {
 					changeType: "removeColumn",
 					content: {
@@ -122,7 +123,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "removeColumn",
 					content: {
@@ -142,7 +143,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "moveColumn",
 					content: {
@@ -163,7 +164,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "moveColumn",
 					content: {
@@ -176,7 +177,7 @@ sap.ui.define([
 		previousActions: [{
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function () {
+			parameter: function() {
 				return {
 					changeType: "moveColumn",
 					content: {
@@ -197,7 +198,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "moveColumn",
 					content: {
@@ -210,7 +211,7 @@ sap.ui.define([
 		previousActions: [{
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function () {
+			parameter: function() {
 				return {
 					changeType: "moveColumn",
 					content: {
@@ -329,7 +330,7 @@ sap.ui.define([
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc.table" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc">' +
 			'<mdc:Table id="myMDCTable" ' +
 				'selectionMode="Multi" ' +
-				'delegate=\'' +  sDelegate + '\' ' +
+				'delegate=\'' + sDelegate + '\' ' +
 				'p13nMode="Column,Group,Sort">' +
 				'<mdc:columns>' +
 					'<Column id="IDTableName_01" header="Name" propertyKey="name" importance="High"></Column>' +
@@ -363,7 +364,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "setShowDetails",
 					content: {
@@ -395,7 +396,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "setShowDetails",
 					content: {
@@ -409,7 +410,7 @@ sap.ui.define([
 			{
 				name: "settings",
 				controlId: "myMDCTable",
-				parameter: function (oView) {
+				parameter: function(oView) {
 					return {
 						changeType: "setShowDetails",
 						content: {
@@ -418,7 +419,7 @@ sap.ui.define([
 						}
 					};
 				}
-			} ,{
+			}, {
 			name: "settings",
 			controlId: "myMDCTable",
 			parameter: function() {
@@ -452,7 +453,7 @@ sap.ui.define([
 		const sView =
 		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.mdc.table" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc">' +
 			'<mdc:Table id="myMDCTable" ' +
-				'delegate=\'' +  sDelegate + '\' ' +
+				'delegate=\'' + sDelegate + '\' ' +
 				'p13nMode="Column,Group,Sort">' +
 				'<mdc:columns>' +
 					'<Column id="IDTableName_01" header="Name" propertyKey="name"></Column>' +
@@ -486,7 +487,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "setFixedColumnCount",
 					content: {
@@ -518,7 +519,7 @@ sap.ui.define([
 		action: {
 			name: "settings",
 			controlId: "myMDCTable",
-			parameter: function (oView) {
+			parameter: function(oView) {
 				return {
 					changeType: "setFixedColumnCount",
 					content: {
@@ -532,7 +533,7 @@ sap.ui.define([
 			{
 				name: "settings",
 				controlId: "myMDCTable",
-				parameter: function (oView) {
+				parameter: function(oView) {
 					return {
 						changeType: "setFixedColumnCount",
 						content: {
@@ -541,7 +542,7 @@ sap.ui.define([
 						}
 					};
 				}
-			} ,{
+			}, {
 			name: "settings",
 			controlId: "myMDCTable",
 			parameter: function() {

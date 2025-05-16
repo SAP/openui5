@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"./TableTypeBase",
-	"./menu/GroupHeaderRowContextMenu",
+	"./menus/GroupHeaderRowContextMenu",
 	"../enums/TableRowCountMode",
 	"sap/m/table/Util",
 	"./utils/Personalization",
@@ -21,7 +21,12 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	let InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerRowModeMap, InnerRowSettings;
+	let InnerTable;
+	let InnerColumn;
+	let InnerRowAction;
+	let InnerRowActionItem;
+	let InnerRowModeMap;
+	let InnerRowSettings;
 
 	/**
 	 * Constructor for a new <code>GridTableType</code>.
@@ -48,9 +53,10 @@ sap.ui.define([
 					defaultValue: TableRowCountMode.Auto
 				},
 				/**
-				 * Row count of the inner table.<br>
-				 * This property specifies the minimum row count if <code>sap.ui.mdc.enums.TableRowCountMode.Auto</code> is used.<br>
-				 * This property specifies the row count if <code>sap.ui.mdc.enums.TableRowCountMode.Interactive</code> or <code>sap.ui.mdc.enums.TableRowCountMode.Fixed</code> is used.<br>
+				 * Row count of the inner table.
+				 * This property specifies the minimum row count if <code>sap.ui.mdc.enums.TableRowCountMode.Auto</code> is used.
+				 * This property specifies the row count if <code>sap.ui.mdc.enums.TableRowCountMode.Interactive</code> or
+				 * <code>sap.ui.mdc.enums.TableRowCountMode.Fixed</code> is used.
 				 */
 				rowCount: {
 					type: "int",
@@ -146,48 +152,63 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateTableByProperty = function(sProperty, vValue) {
+		if (sProperty === "rowCountMode") {
+			this._updateRowCountMode();
+		} else if (sProperty === "rowCount") {
+			this._updateRowCount();
+		}
+	};
+
+	GridTableType.prototype._updateRowCountMode = function() {
 		const oGridTable = this.getInnerTable();
+		const sRowCountMode = this.getRowCountMode();
+		let oRowMode = oGridTable?.getRowMode();
 
 		if (!oGridTable) {
 			return;
 		}
 
-		if (sProperty === "rowCountMode") {
-			let oRowMode = oGridTable.getRowMode();
-			let bHideEmptyRows = false;
-
-			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.Fixed") ||
-					vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto") ||
-					vValue === TableRowCountMode.Interactive && !oRowMode.isA("sap.ui.table.rowmodes.Interactive"))) {
-				const oCreationRow = this.getTable().getCreationRow();
-				if (oCreationRow) {
-					bHideEmptyRows = oCreationRow.getVisible();
-				}
-				oRowMode.destroy();
-				oRowMode = null;
-			}
-
-			if (!oRowMode) {
-				const RowMode = InnerRowModeMap[vValue] ?? InnerRowModeMap[TableRowCountMode.Auto];
-				const oRowMode = new RowMode({
-					fixedBottomRowCount: "{= ${$sap.ui.mdc.Table>/@custom/hasGrandTotal} ? 1 : 0}"
-				});
-				oGridTable.setRowMode(oRowMode.setHideEmptyRows?.(bHideEmptyRows) ?? oRowMode);
-			}
-
-			this._updateTableRowCount();
-		} else if (sProperty === "rowCount") {
-			this._updateTableRowCount();
+		if (shouldDestroyRowMode(oRowMode, sRowCountMode)) {
+			oRowMode.destroy();
+			oRowMode = null;
 		}
+
+		if (!oRowMode) {
+			const RowMode = InnerRowModeMap[sRowCountMode] ?? InnerRowModeMap[TableRowCountMode.Auto];
+			const bHideEmptyRows = this.getTable().getCreationRow()?.getVisible() ?? false;
+
+			oRowMode = new RowMode({
+				fixedBottomRowCount: "{= ${$sap.ui.mdc.Table>/@custom/hasGrandTotal} ? 1 : 0}"
+			});
+			oRowMode.setHideEmptyRows?.(bHideEmptyRows);
+			oGridTable.setRowMode(oRowMode);
+		}
+
+		this._updateRowCount();
 	};
 
-	GridTableType.prototype._updateTableRowCount = function() {
-		const oGridTable = this.getInnerTable();
+	function shouldDestroyRowMode(oRowMode, sNewRowCountMode) {
+		return oRowMode && (
+			(sNewRowCountMode === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.Fixed")) ||
+			(sNewRowCountMode === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto")) ||
+			(sNewRowCountMode === TableRowCountMode.Interactive && !oRowMode.isA("sap.ui.table.rowmodes.Interactive"))
+		);
+	}
 
-		if (this.getRowCountMode() === TableRowCountMode.Fixed || this.getRowCountMode() === TableRowCountMode.Interactive) {
-			oGridTable.getRowMode().setRowCount(this.getRowCount());
+	GridTableType.prototype._updateRowCount = function() {
+		const oGridTable = this.getInnerTable();
+		const oRowMode = oGridTable?.getRowMode();
+		const iRowCount = this.getRowCount();
+		const sRowCountMode = this.getRowCountMode();
+
+		if (!oGridTable || !oRowMode) {
+			return;
+		}
+
+		if (sRowCountMode === TableRowCountMode.Fixed || sRowCountMode === TableRowCountMode.Interactive) {
+			oRowMode.setRowCount(iRowCount);
 		} else {
-			oGridTable.getRowMode().setMinRowCount(this.getRowCount());
+			oRowMode.setMinRowCount(iRowCount);
 		}
 	};
 
@@ -277,7 +298,7 @@ sap.ui.define([
 			enableColumnFreeze: "{$sap.ui.mdc.Table#type>/enableColumnFreeze}",
 			fixedColumnCount: {
 				parts: [
-					{ path: "$sap.ui.mdc.Table#type>/fixedColumnCount" }, { path: "$typeSettings>/p13nFixedColumnCount" }
+					{path: "$sap.ui.mdc.Table#type>/fixedColumnCount"}, {path: "$typeSettings>/p13nFixedColumnCount"}
 				],
 				formatter: function(iFixedColumnCount, iP13nFixedColumnCount) {
 					return iP13nFixedColumnCount ?? iFixedColumnCount;
@@ -314,7 +335,7 @@ sap.ui.define([
 			column: oTable.getColumns()[mEventParameters.columnIndex],
 			contextMenu: mEventParameters.contextMenu,
 			event: oEvent,
-			groupLevel: mEventParameters.contextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu") ? oRow.getLevel() : undefined
+			groupLevel: mEventParameters.contextMenu.isA("sap.ui.mdc.table.menus.GroupHeaderRowContextMenu") ? oRow.getLevel() : undefined
 		});
 	}
 
@@ -399,7 +420,7 @@ sap.ui.define([
 
 		this._removeRowActions();
 
-		if (!oRowSettings || !oRowSettings.isBound("rowActions") && (!oRowSettings.getRowActions() || oRowSettings.getRowActions().length == 0)) {
+		if (!oRowSettings || !oRowSettings.isBound("rowActions") && (!oRowSettings.getRowActions() || oRowSettings.getRowActions().length === 0)) {
 			return;
 		}
 

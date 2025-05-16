@@ -12,7 +12,8 @@ sap.ui.define([
 
 		started: null,
 		init: function() {
-			let mockData, metadata;
+			let mockData;
+			let metadata;
 			const sLocalServicePath = sap.ui.require.toUrl("sap/ui/mdc/table/OpaTests/mockserver");
 
 			this.started = jQuery.get(sLocalServicePath + "/ProductList.json").then(function(data, status, jqXHR) {
@@ -65,12 +66,15 @@ sap.ui.define([
 						if (xhr.url.indexOf("desc") > -1) {
 							bDesc = true;
 						}
-						const sOrderByProperty = oParams.get("$orderby"),
-							//sEntitySet = "ProductList",
-							//sEntityType = "Product",
-							sOrderByString = sOrderByProperty.split(' ')[0],
-							//oFilteredData.value = sortData(sOrderByString, oFilteredData.value);
-							aSearchableProperty = ["ProductID", "TypeCode", "Category", "Name", "NameLanguage", "Description", "DescriptionLanguage", "SupplierID", "SupplierName", "MeasureUnit", "WeightUnit", "CurrencyCode", "DimUnit"];
+						const sOrderByProperty = oParams.get("$orderby");
+						//sEntitySet = "ProductList",
+						//sEntityType = "Product",
+						const sOrderByString = sOrderByProperty.split(' ')[0];
+						//oFilteredData.value = sortData(sOrderByString, oFilteredData.value);
+						const aSearchableProperty = [
+							"ProductID", "TypeCode", "Category", "Name", "NameLanguage", "Description", "DescriptionLanguage", "SupplierID",
+							"SupplierName", "MeasureUnit", "WeightUnit", "CurrencyCode", "DimUnit"
+						];
 						oFilteredData.value = sortData(sOrderByString, oFilteredData.value, aSearchableProperty, bDesc);
 					}
 					if (xhr.url.indexOf("ProductList") > -1) {
@@ -104,6 +108,7 @@ sap.ui.define([
 				});
 			}
 
+			// eslint-disable-next-line complexity
 			function filterData(aData, sODataQueryValue) {
 				if (aData.length === 0) {
 					return aData;
@@ -154,9 +159,13 @@ sap.ui.define([
 					return aData.filter(function(oEntry) {
 						// return false if not found
 						if (aODataFilterValues[3].match(/'([^']+)'/)) {
-							return oEntry.hasOwnProperty(aODataFilterValues[1]) ? oEntry[aODataFilterValues[1]].toString() === aODataFilterValues[3].match(/'([^']+)'/)[1] : false;
+							return oEntry.hasOwnProperty(aODataFilterValues[1])
+								? oEntry[aODataFilterValues[1]].toString() === aODataFilterValues[3].match(/'([^']+)'/)[1]
+								: false;
 						} else { //In case the property is of numeric type, it wont be enclosed inside braces
-							return oEntry.hasOwnProperty(aODataFilterValues[1]) ? oEntry[aODataFilterValues[1]].toString() === aODataFilterValues[3] : false;
+							return oEntry.hasOwnProperty(aODataFilterValues[1])
+								? oEntry[aODataFilterValues[1]].toString() === aODataFilterValues[3]
+								: false;
 						}
 					});
 				}
@@ -164,9 +173,13 @@ sap.ui.define([
 					return aData.filter(function(oEntry) {
 						// return false if not found
 						if (aODataFilterValues[3].match(/'([^']+)'/)) {
-							return oEntry.hasOwnProperty(aODataFilterValues[1]) ? oEntry[aODataFilterValues[1]].toString() !== aODataFilterValues[3].match(/'([^']+)'/)[1] : false;
+							return oEntry.hasOwnProperty(aODataFilterValues[1])
+								? oEntry[aODataFilterValues[1]].toString() !== aODataFilterValues[3].match(/'([^']+)'/)[1]
+								: false;
 						} else { //In case the property is of numeric type, it wont be enclosed inside braces
-							return oEntry.hasOwnProperty(aODataFilterValues[1]) ? oEntry[aODataFilterValues[1]].toString() !== aODataFilterValues[3] : false;
+							return oEntry.hasOwnProperty(aODataFilterValues[1])
+								? oEntry[aODataFilterValues[1]].toString() !== aODataFilterValues[3]
+								: false;
 						}
 					});
 				}
@@ -177,7 +190,9 @@ sap.ui.define([
 			function _getBracketIndices(sString) {
 				const aStack = [];
 				let bReserved = false;
-				let iStartIndex, iEndIndex = 0;
+				let iStartIndex;
+				let iEndIndex = 0;
+
 				for (let character = 0; character < sString.length; character++) {
 					if (sString[character] === '(') {
 						if (/[contains|endswith|startswith]$/.test(sString.substring(0, character))) {
@@ -230,6 +245,7 @@ sap.ui.define([
 				}, array);
 			}
 
+			// eslint-disable-next-line complexity
 			function recursiveOdataQueryFilter(aDataSet, sODataQueryValue) {
 				if (sODataQueryValue) {
 
@@ -242,9 +258,10 @@ sap.ui.define([
 
 					// find brackets that are not related to the reserved words
 					const rExp = /([^contains|endswith|startswith]|^)\((.*)\)/;
-					let aSet2, aParts;
-
+					let aSet2;
+					let aParts;
 					let sOperator;
+
 					if (rExp.test(sODataQueryValue)) {
 						const sBracketed = sODataQueryValue.substring(oIndices.start, oIndices.end + 1);
 						let rExp1 = new RegExp("(.*) +(or|and) +(" + trim(escapeStringForRegExp(sBracketed)) + ".*)");

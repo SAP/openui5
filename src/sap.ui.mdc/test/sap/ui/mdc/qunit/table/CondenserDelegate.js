@@ -43,7 +43,7 @@ sap.ui.define([
         }
         const oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
         const oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oTable);
-		const oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oTable);
+		const oView = (mPropertyBag && mPropertyBag.view) ? mPropertyBag.view : FlUtils.getViewForControl(oTable);
 		let sViewId = mPropertyBag ? mPropertyBag.viewId : null;
 
 		let oColumn;

@@ -42,7 +42,7 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/subcontroller/ShowDetailsController",
 	"sap/ui/mdc/p13n/subcontroller/ColumnFreezeController",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
-	"sap/ui/mdc/table/menu/QuickActionContainer",
+	"sap/ui/mdc/table/menus/QuickActionContainer",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/Log",
 	"sap/ui/performance/trace/FESRHelper",
@@ -105,11 +105,11 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const { ToolbarDesign } = MLibrary;
-	const { ToolbarStyle } = MLibrary;
-	const { IllustratedMessageType } = MLibrary;
-	const { TitleLevel } = coreLibrary;
-	const { SortOrder } = coreLibrary;
+	const {ToolbarDesign} = MLibrary;
+	const {ToolbarStyle} = MLibrary;
+	const {IllustratedMessageType} = MLibrary;
+	const {TitleLevel} = coreLibrary;
+	const {SortOrder} = coreLibrary;
 	const internalMap = new window.WeakMap();
 	const internal = function(oTable) {
 		if (!internalMap.has(oTable)) {
@@ -173,7 +173,8 @@ sap.ui.define([
 	 * @property {object|null} [clipboardSettings]
 	 *   The clipboard settings. Set to <code>null</code> prevent this property from being copied to clipboard.
 	 * @property {string} [clipboardSettings.template]
-	 *   Defines the formatting template that supports indexed placeholders of <code>propertyInfos</code> within curly brackets, for example, "{0} ({1})".
+	 *   Defines the formatting template that supports indexed placeholders of <code>propertyInfos</code> within curly brackets,
+	 *   for example, "{0} ({1})".
 	 * @property {object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {object|null} [visualSettings.widthCalculation]
@@ -252,9 +253,10 @@ sap.ui.define([
 				},
 				/**
 				 * Personalization options for the table.
+				 * The order of the provided options does not influence their order on the UI.
 				 *
 				 * <b>Note:</b> Whether a personalization option is supported depends on the used delegate. Please refer to the documentation of the
-				 * individual delegates. The order of the provided options does not influence their order on the UI.
+				 * individual delegates.
 				 *
 				 * @since 1.62
 				 */
@@ -264,21 +266,23 @@ sap.ui.define([
 					defaultValue: []
 				},
 				/**
-				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.
+				 *
 				 * The object has the following properties:
 				 * <ul>
-				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from
-				 *      {@link module:sap/ui/mdc/TableDelegate TableDelegate}.</li>
-				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
+				 *   <li><code>name</code> defines the path to the <code>Delegate</code> module. The used delegate module must inherit from
+				 *       {@link module:sap/ui/mdc/TableDelegate TableDelegate}.</li>
+				 *   <li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
 				 * </ul>
+				 *
 				 * <i>Sample delegate object:</i>
 				 * <pre>{
 				 * 	name: "sap/ui/mdc/TableDelegate",
 				 * 	payload: {}
 				 * }</pre>
 				 *
-				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
-				 * Do not bind or modify the module. This property can only be configured during control initialization.
+				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that). Do not bind or
+				 * modify the module. This property can only be configured during control initialization.
 				 *
 				 */
 				delegate: {
@@ -382,8 +386,7 @@ sap.ui.define([
 				 * data records from the back-end system are pre-fetched. If the <code>threshold</code> is lower than the number of visible rows, the
 				 * number of visible rows is used as the <code>threshold</code>. If the value is 0, thresholding is disabled.
 				 *
-				 * <b>Note:</b> This property only takes effect if it is set to a positive integer value. Otherwise the table uses a type-dependent
-				 * default value.
+				 * If the value is -1, a type-dependent default value is used.
 				 *
 				 * @since 1.63
 				 */
@@ -396,8 +399,8 @@ sap.ui.define([
 				/**
 				 * Defines the sort conditions.
 				 *
-				 * <b>Note:</b> This property must not be bound.<br>
-				 * This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound. It is used exclusively for handling SAPUI5 flexibility changes. Do not use it
+				 * otherwise.
 				 *
 				 * @since 1.73
 				 */
@@ -408,8 +411,8 @@ sap.ui.define([
 				/**
 				 * Defines the filter conditions.
 				 *
-				 * <b>Note:</b> This property must not be bound.<br>
-				 * This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound. It is used exclusively for handling SAPUI5 flexibility changes. Do not use it
+				 * otherwise.
 				 *
 				 * @since 1.80.0
 				 */
@@ -421,8 +424,8 @@ sap.ui.define([
 				/**
 				 * Defines the group conditions.
 				 *
-				 * <b>Note:</b> This property must not be bound.<br>
-				 * This property is used exclusively for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound. It is used exclusively for handling SAPUI5 flexibility changes. Do not use it
+				 * otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -433,8 +436,8 @@ sap.ui.define([
 				/**
 				 * Defines the aggregate conditions.
 				 *
-				 * <b>Note:</b> This property must not be bound.<br>
-				 * This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it otherwise.
+				 * <b>Note:</b> This property must not be bound. It is exclusively used for handling SAPUI5 flexibility changes. Do not use it
+				 * otherwise.
 				 *
 				 * @since 1.87
 				 */
@@ -501,9 +504,8 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This property has no effect in the following cases:
 				 * <ul>
-				 * 	<li>Table type is not {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}. This is subject to change in the
-				 *      future.</li>
-				 * 	<li>Selection mode is not <code>Multi</code>.</li>
+				 *   <li>Table type is not {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}. This is subject to change in the future.</li>
+				 *   <li>Selection mode is not <code>Multi</code>.</li>
 				 * </ul>
 				 *
 				 * @since 1.93
@@ -545,15 +547,16 @@ sap.ui.define([
 				 * will use the <code>PropertyInfo</code> objects specified here for rendering-specific tasks, e.g. automatic column width
 				 * calculation, and to trigger the initial data request.
 				 *
-				 * To enable the table for these tasks, certain attributes of a <code>PropertyInfo</code> must be specified. You can
-				 * find the list of required attributes in the documentation of the <code>PropertyInfo</code>, for example, in
-				 * {@link sap.ui.mdc.table.PropertyInfo}.
-				 *
-				 * This property is processed only once during the instantiation of the table. Any subsequent changes have no effect.
-				 *
-				 * <b>Note</b>: This property must not be bound.
-				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility / Fiori Elements. Do not use it otherwise.
-				 * <b>Note</b>: Existing properties (set via <code>sap.ui.mdc.Table#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
+				 * <b>Note:</b>
+				 * <ul>
+				 *   <li>This property is processed only once during the instantiation of the table. Any subsequent changes have no effect.</li>
+				 *   <li>This property must not be bound.</li>
+				 *   <li>This property is used exclusively for SAPUI5 flexibility / Fiori Elements. Do not use it otherwise.</li>
+				 *   <li>Existing properties (set via <code>sap.ui.mdc.Table#setPropertyInfo</code>) must not be removed and their attributes must
+				 *       not be changed during the {@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties} callback. Otherwise
+				 *       validation errors might occur whenever personalization-related control features (such as the opening of any personalization
+				 *       dialog) are activated.</li>
+				 * </ul>
 				 *
 				 * @since 1.111
 				 */
@@ -565,16 +568,22 @@ sap.ui.define([
 				/**
 				 * Determines whether the toolbar is visible.
 				 *
-				 * <b>Note:</b> Hiding the toolbar limits the functionality of the table in the following ways:<br>
+				 * <b>Note:</b> Hiding the toolbar limits the functionality of the table in the following ways:
 				 * <ul>
-				 * 	<li>The <code>showRowCount</code> property <b>must</b> be set to <code>false</code>.</li>
-				 * 	<li>The export <b>must</b> be disabled by setting the <code>enableExport</code> property to <code>false</code>.</li>
-				 * 	<li>For {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, show and hide details won't be visible as the table will always run in "Show Details" mode.</li>
-				 * 	<li>Copy and paste will only work via keyboard.</li>
-				 * 	<li>For {@link sap.ui.mdc.table.TreeTableType TreeTable}, "Collapse All" and "Expand All" won't be possible.</li>
-				 * 	<li>The <code>actions</code> and the <code>quickFilter</code> aggregations and a table-related {@link sap.ui.fl.variants.VariantManagement} <b>must not</b> be used.</li>
-				 * 	<li>The table title will not be displayed but will be replaced by an <code>InvisibleText</code>. The <code>header</code> property <b>must</b> be set. In addition, <code>headerVisible</code> <b>must</b> be set to <code>false</code> to ensure accessibility compatibility.</li>
-				 * 	<li>Personalization (<code>p13nMode</code>) can still be used via the column headers. If the option to show or hide columns is activated, it is recommended to use an {@link sap.m.IllustratedMessage} for the <code>nodata</code> display. It ensures that columns can be made visible again when the user has accidentally hidden them all.</li>
+				 *   <li>The <code>showRowCount</code> property <b>must</b> be set to <code>false</code>.</li>
+				 *   <li>The export <b>must</b> be disabled by setting the <code>enableExport</code> property to <code>false</code>.</li>
+				 *   <li>For {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, show and hide details won't be visible as the table will
+				 *       always run in "Show Details" mode.</li>
+				 *   <li>Copy and paste will only work via keyboard.</li>
+				 *   <li>For {@link sap.ui.mdc.table.TreeTableType TreeTable}, "Collapse All" and "Expand All" won't be possible.</li>
+				 *   <li>The <code>actions</code> and the <code>quickFilter</code> aggregations and a table-related
+				 *       {@link sap.ui.fl.variants.VariantManagement} <b>must not</b> be used.</li>
+				 *   <li>The table title will not be displayed but will be replaced by an <code>InvisibleText</code>. The <code>header</code>
+				 *       property <b>must</b> be set. In addition, <code>headerVisible</code> <b>must</b> be set to <code>false</code> to ensure
+				 *       accessibility compatibility.</li>
+				 *   <li>Personalization (<code>p13nMode</code>) can still be used via the column headers. If the option to show or hide columns is
+				 *       activated, it is recommended to use an {@link sap.m.IllustratedMessage} for the <code>nodata</code> display. It ensures that
+				 *       columns can be made visible again when the user has accidentally hidden them all.</li>
 				 * </ul>
 				 *
 				 * @since 1.121
@@ -605,10 +614,9 @@ sap.ui.define([
 				/**
 				 * Columns of the table.
 				 *
-				 * <b>Note:</b>
-				 * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
-				 * Any changes of the initial aggregation content might result in undesired effects.
-				 * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
+				 * <b>Note:</b> This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not
+				 * bindable. Any changes of the initial aggregation content might result in undesired effects. Changes of the aggregation have to be
+				 * made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
 				 */
 				columns: {
 					type: "sap.ui.mdc.table.Column",
@@ -666,7 +674,7 @@ sap.ui.define([
 				 * <b>Note:</b> Each time the properties of the settings are changed, they have to be applied again via <code>setRowSettings</code>
 				 * for the changes to take effect.
 				 */
-				rowSettings: { type: "sap.ui.mdc.table.RowSettings", multiple: false },
+				rowSettings: {type: "sap.ui.mdc.table.RowSettings", multiple: false},
 
 				/**
 				 * <code>DataStateIndicator</code> plugin that can be used to show binding-related messages.
@@ -687,7 +695,7 @@ sap.ui.define([
 				 *
 				 * @since 1.106
 				 */
-				noData: { type: "sap.ui.core.Control", multiple: false, altTypes: ["string"] },
+				noData: {type: "sap.ui.core.Control", multiple: false, altTypes: ["string"]},
 
 				/**
 				 * Defines an aggregation for the <code>CopyProvider</code> plugin that provides copy to clipboard capabilities for the selected rows
@@ -696,9 +704,8 @@ sap.ui.define([
 				 * toolbar, the <code>visible</code> property of the <code>CopyProvider</code> must be set to <code>false</code>.
 				 *
 				 * <b>Note:</b> The {@link sap.m.plugins.CopyProvider#extractData extractData} property of the <code>CopyProvider</code> must not be
-				 * managed by the application.<br>
-				 * The <code>CopyProvider</code> requires a secure context to access the clipboard API. If the context is not secure, the plugin will
-				 * not be added, and the Copy button will not be generated.
+				 * managed by the application. The <code>CopyProvider</code> requires a secure context to access the clipboard API. If the context
+				 * is not secure, the plugin will not be added, and the Copy button will not be generated.
 				 *
 				 * @since 1.114
 				 */
@@ -712,7 +719,7 @@ sap.ui.define([
 				 *
 				 * @since 1.118
 				 */
-				contextMenu: { type: "sap.ui.core.IContextMenu", multiple: false },
+				contextMenu: {type: "sap.ui.core.IContextMenu", multiple: false},
 
 				/**
 				 * Defines an aggregation for the <code>CellSelector</code> plugin that provides cell selection capabilities.
@@ -781,8 +788,8 @@ sap.ui.define([
 						/**
 						 * Contains <code>workbook.columns, dataSource</code>, and other export-related information.
 						 *
-						 * <b>Note:</b> The <code>exportSettings</code> parameter can be modified by the listener.
-						 * Thus the parameter can be different if multiple listeners are registered which manipulate the parameter.
+						 * <b>Note:</b> The <code>exportSettings</code> parameter can be modified by the listener. Thus the parameter can be
+						 * different if multiple listeners are registered which manipulate the parameter.
 						 */
 						exportSettings: {
 							type: "object"
@@ -836,7 +843,7 @@ sap.ui.define([
 						 *
 						 * <b>Note:</b> This parameter can be undefined if the area where the context menu opens is not related to a column instance.
 						 */
-						column: { type: "sap.ui.mdc.table.Column" }
+						column: {type: "sap.ui.mdc.table.Column"}
 					}
 				}
 			}
@@ -873,11 +880,12 @@ sap.ui.define([
 	 * Several different Table aggregations are passed to the same ToolBar aggregation (Between)
 	 */
 	aToolBarBetweenAggregations.forEach((sAggregationName) => {
-		const sCapAggregationName = capitalize(sAggregationName),
-			sPropertyName = "_o" + sCapAggregationName,
-			sGetter = "get" + sCapAggregationName,
-			sSetter = "set" + sCapAggregationName,
-			sDestroyer = "destroy" + sCapAggregationName;
+		const sCapAggregationName = capitalize(sAggregationName);
+		const sPropertyName = "_o" + sCapAggregationName;
+		const sGetter = "get" + sCapAggregationName;
+		const sSetter = "set" + sCapAggregationName;
+		const sDestroyer = "destroy" + sCapAggregationName;
+
 		Table.prototype[sGetter] = function() {
 			return this[sPropertyName];
 		};
@@ -893,8 +901,8 @@ sap.ui.define([
 
 		Table.prototype[sSetter] = function(oControl) {
 			this.validateAggregation(sAggregationName, oControl, false);
-			const oToolBar = this._createToolbar(),
-				bNewValue = oControl !== this[sPropertyName];
+			const oToolBar = this._createToolbar();
+			const bNewValue = oControl !== this[sPropertyName];
 			if (!oControl || bNewValue) {
 				oToolBar.removeBetween((this[sGetter]()));
 				this[sPropertyName] = oControl;
@@ -942,7 +950,7 @@ sap.ui.define([
 		// (incorrect) default type instance can be avoided.
 		// The delegate must be part of the early settings, because it can only be applied once (see sap.ui.mdc.mixin.DelegateMixin).
 		if (mSettings && "type" in mSettings) {
-			const mEarlySettings = { type: mSettings.type };
+			const mEarlySettings = {type: mSettings.type};
 
 			if ("delegate" in mSettings) {
 				mEarlySettings.delegate = mSettings.delegate;
@@ -998,7 +1006,7 @@ sap.ui.define([
 
 	Table.prototype.attachEvent = function(sEventId) {
 		Control.prototype.attachEvent.apply(this, arguments);
-		if (sEventId == "rowPress") {
+		if (sEventId === "rowPress") {
 			this._getType().prepareRowPress();
 		}
 		return this;
@@ -1006,7 +1014,7 @@ sap.ui.define([
 
 	Table.prototype.detachEvent = function(sEventId) {
 		Control.prototype.detachEvent.apply(this, arguments);
-		if (sEventId == "rowPress") {
+		if (sEventId === "rowPress") {
 			this._getType().cleanupRowPress();
 		}
 		return this;
@@ -1109,7 +1117,7 @@ sap.ui.define([
 		const oContextMenu = mPropertyBag.contextMenu;
 		let bPreventDefault = true;
 
-		if (oContextMenu.isA("sap.ui.mdc.table.menu.GroupHeaderRowContextMenu")) {
+		if (oContextMenu.isA("sap.ui.mdc.table.menus.GroupHeaderRowContextMenu")) {
 			oContextMenu.initContent(this, {
 				groupLevel: mPropertyBag.groupLevel
 			});
@@ -1274,7 +1282,7 @@ sap.ui.define([
 		}
 		this.setProperty("headerStyle", sStyle, true);
 
-		const sHeaderStyle = this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })];
+		const sHeaderStyle = this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})];
 		this._oTitle?.setTitleStyle(sHeaderStyle);
 		this._updateVariantManagementStyle();
 		return this;
@@ -1412,12 +1420,12 @@ sap.ui.define([
 		}
 
 		const mRegistryOptions = {
-			Column: new ColumnController({ control: this, stableKeys: aStableKeys }),
-			Sort: new SortController({ control: this }),
-			Group: new GroupController({ control: this }),
-			Filter: new FilterController({ control: this }),
-			Aggregate: new AggregateController({ control: this }),
-			ColumnWidth: new ColumnWidthController({ control: this, exposeXConfig: true })
+			Column: new ColumnController({control: this, stableKeys: aStableKeys}),
+			Sort: new SortController({control: this}),
+			Group: new GroupController({control: this}),
+			Filter: new FilterController({control: this}),
+			Aggregate: new AggregateController({control: this}),
+			ColumnWidth: new ColumnWidthController({control: this, exposeXConfig: true})
 		};
 
 		this.getActiveP13nModes().forEach((sMode) => {
@@ -1429,12 +1437,12 @@ sap.ui.define([
 		}
 
 		if (this._isOfType(TableType.Table, true) && this._getType().getEnableColumnFreeze()) {
-			mRegistryOptions["ColumnFreeze"] = new ColumnFreezeController({ control: this });
+			mRegistryOptions["ColumnFreeze"] = new ColumnFreezeController({control: this});
 			oRegisterConfig.controller["ColumnFreeze"] = mRegistryOptions["ColumnFreeze"];
 		}
 
 		if (this._isOfType(TableType.ResponsiveTable) && this._getType().getShowDetailsButton()) {
-			mRegistryOptions["ShowDetails"] = new ShowDetailsController({ control: this });
+			mRegistryOptions["ShowDetails"] = new ShowDetailsController({control: this});
 			oRegisterConfig.controller["ShowDetails"] = mRegistryOptions["ShowDetails"];
 		}
 
@@ -1583,7 +1591,7 @@ sap.ui.define([
 	}
 
 	function getFilterInfoBar(oTable) {
-		const { oFilterInfoBar } = internal(oTable);
+		const {oFilterInfoBar} = internal(oTable);
 
 		if (oFilterInfoBar?.isDestroyStarted()) {
 			return null;
@@ -1663,11 +1671,11 @@ sap.ui.define([
 
 	Table.prototype._updateInnerTableNoData = function() {
 		const vNoData = this.getNoData();
-		if (!vNoData || typeof vNoData == "string") {
+		if (!vNoData || typeof vNoData === "string") {
 			return this._updateInnerTableNoDataText();
 		}
 
-		if (!vNoData.isA("sap.m.IllustratedMessage") || this._sLastNoDataTitle != vNoData.getTitle()) {
+		if (!vNoData.isA("sap.m.IllustratedMessage") || this._sLastNoDataTitle !== vNoData.getTitle()) {
 			return;
 		}
 
@@ -1700,7 +1708,7 @@ sap.ui.define([
 
 	Table.prototype._getNoDataText = function() {
 		const vNoData = this.getNoData();
-		if (vNoData && typeof vNoData == "string") {
+		if (vNoData && typeof vNoData === "string") {
 			return vNoData;
 		}
 
@@ -1710,7 +1718,8 @@ sap.ui.define([
 		}
 
 		// Table is bound, but does not show any data.
-		// If the table is filtered internally or externally, e.g. FilterBar, then show the message that no data was found and that filters can be adjusted.
+		// If the table is filtered internally or externally, for example via the FilterBar, then show the message that no data was found and that
+		// filters can be adjusted.
 		if (isFiltered(this)) {
 			return oRb.getText("table.NO_RESULTS");
 		}
@@ -1889,7 +1898,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.setShowPasteButton = function(bShowPasteButton) {
-		if ((bShowPasteButton = !!bShowPasteButton) == this.getShowPasteButton()) {
+		if ((bShowPasteButton = !!bShowPasteButton) === this.getShowPasteButton()) {
 			return this;
 		}
 		this.setProperty("showPasteButton", bShowPasteButton, true);
@@ -1917,9 +1926,9 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b>
 	 * <ul>
-	 * <li>This setting only takes effect when the given <code>p13nMode</code> makes the button visible.</li>
-	 * <li>Hiding the button also removes the option for the user to open the personalization dialog. This can lead to situations
-	 * in which the user can't adjust certain settings although it is required, for example, show some columns again when all columns are hidden.</li>
+	 *   <li>This setting only takes effect when the given <code>p13nMode</code> makes the button visible.</li>
+	 *   <li>Hiding the button also removes the option for the user to open the personalization dialog. This can lead to situations in which the user
+	 *       can't adjust certain settings although it is required, for example, show some columns again when all columns are hidden.</li>
 	 * </ul>
 	 *
 	 * @param {boolean} bShowP13nButton
@@ -1947,11 +1956,11 @@ sap.ui.define([
 				text: this.getHeader(),
 				width: this.getHeaderVisible() ? undefined : "0px",
 				level: this.getHeaderLevel(),
-				titleStyle: this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })]
+				titleStyle: this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})]
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
-				design: ToolbarDesign[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ToolbarDesign" })],
+				design: ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})],
 				begin: [
 					this._oTitle
 				],
@@ -2065,8 +2074,9 @@ sap.ui.define([
 	}
 
 	/**
-	 * Fetches the current state of the table (as a JSON)
-	 * <b>Note:</b> This API may return attributes corresponding to the <code>p13nMode</code> property configuration.
+	 * Fetches the current state of the table (as a JSON).
+	 *
+	 * <b>Note:</b> Returns state information only for enabled personalization options, for example according to the <code>p13nMode</code> property.
 	 *
 	 * @private
 	 * @returns {Object} Current state of the table
@@ -2200,7 +2210,7 @@ sap.ui.define([
 
 	Table.prototype._getCopyButton = function() {
 		if (window.isSecureContext) {
-			return this.getCopyProvider()?.getCopyButton({ id: this.getId() + "-copy" });
+			return this.getCopyProvider()?.getCopyButton({id: this.getId() + "-copy"});
 		}
 	};
 
@@ -2305,7 +2315,7 @@ sap.ui.define([
 		if (!this.isControlDelegateInitialized()) {
 			return false;
 		}
-		const oConfig =  await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
+		const oConfig = await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
 		let bAvailable = false;
 
 		if ("collapseAll" in oConfig) {
@@ -2372,7 +2382,7 @@ sap.ui.define([
 		if (!this.isControlDelegateInitialized()) {
 			return false;
 		}
-		const oConfig =  await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
+		const oConfig = await this.getControlDelegate().fetchExpandAndCollapseConfiguration(this);
 		let bAvailable = false;
 
 		if ("expandAll" in oConfig) {
@@ -2471,7 +2481,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._createExpandCollapseButton = function(bIsExpand, mConfig) {
-		const { tree: fnTree, node: fnNode, isExpanded: fnIsExpanded } = mConfig;
+		const {tree: fnTree, node: fnNode, isExpanded: fnIsExpanded} = mConfig;
 
 		if (this.getSelectionMode() === "None" || typeof fnNode !== "function" || typeof fnIsExpanded !== "function") {
 			return TableSettings.createExpandCollapseButton(this.getId(), bIsExpand, () => fnTree(this));
@@ -2490,7 +2500,7 @@ sap.ui.define([
 			// Node needs to be expanded to collapse it and vice versa
 			const bShowNodeOption = aContexts.length === 1 && fnIsExpanded(this, aContexts[0]) === !bIsExpand;
 
-			oMenuButton.getMenu().getItems()[0].setEnabled(fnTree != undefined);
+			oMenuButton.getMenu().getItems()[0].setEnabled(fnTree !== undefined);
 			oMenuButton.getMenu().getItems()[1].setEnabled(bShowNodeOption);
 		});
 
@@ -2510,19 +2520,23 @@ sap.ui.define([
 	};
 
 	/**
-	* Allows to manually trigger the default export without the Export As features and resolves even if <code>preventDefault()</code> is called in the <code>beforeExport</code> event if no error is thrown.<br>
-	* <b>Note:</b><br>
-	* <ul>
-	* <li>Export must be enabled by setting the property <code>enableExport</code> to <code>true</code></li>
-	* <li>The "sap.ui.export" library must be available.</li>
-	* <li>The table must have at least one visible column.</li>
-	* <li>Resolves even if <code>preventDefault()</code> is called in the <code>beforeExport</code> event if no error is thrown.</li>
-	* </ul>
-	*
-	* @ui5-restricted sap.ux.eng.fioriai.reuse
-	* @returns {Promise} Promise that resolves when the export is finished, rejects if the table does not have columns, the export is disabled or the sap.ui.export library is unavailable.
-	* @private
-	*/
+	 * Allows to manually trigger the default export without the Export As features and resolves even if <code>preventDefault()</code> is called in
+	 * the <code>beforeExport</code> event if no error is thrown.
+	 *
+	 * <b>Note:</b>
+	 * <ul>
+	 *   <li>Export must be enabled by setting the property <code>enableExport</code> to <code>true</code></li>
+	 *   <li>The "sap.ui.export" library must be available.</li>
+	 *   <li>The table must have at least one visible column.</li>
+	 *   <li>Resolves even if <code>preventDefault()</code> is called in the <code>beforeExport</code> event if no error is thrown.</li>
+	 * </ul>
+	 *
+	 * @ui5-restricted sap.ux.eng.fioriai.reuse
+	 * @returns {Promise}
+	 *   Promise that resolves when the export is finished, rejects if the table does not have columns, the export is disabled, or the sap.ui.export
+	 *   library is unavailable.
+	 * @private
+	 */
 	Table.prototype.triggerExport = function() {
 		if (!this._isExportEnabled()) {
 			return Promise.reject("Export is not enabled for this table.");
@@ -2591,7 +2605,7 @@ sap.ui.define([
 
 		return new Promise((fnResolve, fnReject) => {
 			Promise.all([
-				that.getControlDelegate().fetchExportCapabilities(that), Library.load({ name: "sap.ui.export" })
+				that.getControlDelegate().fetchExportCapabilities(that), Library.load({name: "sap.ui.export"})
 			]).then((aResult) => {
 				const [oExportCapabilities] = aResult;
 
@@ -2657,7 +2671,7 @@ sap.ui.define([
 			return;
 		}
 
-		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E) {
+		if (isExportShortcut(oEvent)) {
 			if (this._oExportButton && this._oExportButton.getEnabled() && this._isExportEnabled()) {
 				this._onExport(true);
 				oEvent.setMarked();
@@ -2665,19 +2679,25 @@ sap.ui.define([
 			}
 		}
 
-		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
-			// CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
+		if (isOpenPersonalizationShortcut(oEvent)) {
 			if (this._oP13nButton && this._oP13nButton.getVisible()) {
 				this._oP13nButton.firePress();
 
-				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
-				// (e.g. Cmd+, opens browser settings on Mac).
+				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser
+				// defaults (e.g. Cmd+, opens browser settings on Mac).
 				oEvent.setMarked();
 				oEvent.preventDefault();
 			}
 		}
-
 	};
+
+	function isExportShortcut(oEvent) {
+		return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.shiftKey && oEvent.which === KeyCodes.E;
+	}
+
+	function isOpenPersonalizationShortcut(oEvent) {
+		return (oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA;
+	}
 
 	Table.prototype._createTable = function() {
 		const oType = this._getType();
@@ -2701,7 +2721,7 @@ sap.ui.define([
 		}
 
 		if (!this._oColumnHeaderMenu) {
-			this._oQuickActionContainer = new QuickActionContainer({ table: this });
+			this._oQuickActionContainer = new QuickActionContainer({table: this});
 			this._oColumnHeaderMenu = new ColumnMenu({
 				id: this.getId() + "-columnHeaderMenu",
 				showTableSettingsButton: true
@@ -2873,7 +2893,8 @@ sap.ui.define([
 			return;
 		}
 
-		let oCellTemplate, iCellIndex;
+		let oCellTemplate;
+		let iCellIndex;
 		// TODO: Check if this can be moved inside the m.Table.
 
 		// Remove cell template when column is hidden
@@ -3008,7 +3029,8 @@ sap.ui.define([
 	};
 
 	Table.prototype._updateHeaderText = function() {
-		let sHeader, iRowCount;
+		let sHeader;
+		let iRowCount;
 
 		if (!this._oNumberFormatInstance) {
 			this._oNumberFormatInstance = NumberFormat.getFloatInstance();
@@ -3053,14 +3075,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the row/items binding of the internal table.<br>
-	 * <i>Note</i>:
-	 * <li>Do not use this API to keep the reference of the binding.</li>
-	 * <li>Also, do not use it to trigger sort/filter on the binding.</li>
+	 * Returns the row binding instance of the table.
+	 *
+	 * <b>Note:</b>
+	 * <ul>
+	 *   <li>Do not use this API to keep the reference of the binding.</li>
+	 *   <li>Do not trigger any actions on the binding that are the responsibility of the delegate, such as sorting and filtering.</li>
+	 * </ul>
 	 *
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * @returns {sap.ui.model.Binding} the row/items binding
+	 * @returns {sap.ui.model.Binding} The binding instance
 	 */
 	Table.prototype.getRowBinding = function() {
 		return this._getType().getRowBinding();
@@ -3112,7 +3137,7 @@ sap.ui.define([
 		this._finalizeBindingInfo(oBindingInfo);
 		this._oTable.setShowOverlay(false);
 		this._updateColumnsBeforeBinding();
-		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), { forceRefresh: bForceRefresh });
+		this.getControlDelegate().updateBinding(this, oBindingInfo, this._bForceRebind ? null : this.getRowBinding(), {forceRefresh: bForceRefresh});
 		this._updateInnerTableNoData();
 		this._bForceRebind = false;
 	};
@@ -3188,17 +3213,17 @@ sap.ui.define([
 	 */
 	Table.prototype.onThemeChanged = function() {
 		if (this._oExportButton) {
-			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" })];
+			const sButtonType = MLibrary.ButtonType[ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"})];
 			this._oExportButton.setType(sButtonType);
 		}
 
 		if (this._oToolbar) {
-			const sToolBarDesign = ToolbarDesign[ThemeParameters.get({ name: "_sap_ui_mdc_Table_ToolbarDesign" })];
+			const sToolBarDesign = ToolbarDesign[ThemeParameters.get({name: "_sap_ui_mdc_Table_ToolbarDesign"})];
 			this._oToolbar.setDesign(sToolBarDesign);
 		}
 
 		if (!this.getHeaderStyle()) {
-			const sHeaderStyle = TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })];
+			const sHeaderStyle = TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})];
 			this._oTitle?.setTitleStyle(sHeaderStyle);
 			this.getVariant()?.setTitleStyle(sHeaderStyle);
 		}
@@ -3220,7 +3245,7 @@ sap.ui.define([
 		if (oVariantManagement) {
 			oVariantManagement.setShowAsText(this.getHeaderVisible());
 			oVariantManagement.setHeaderLevel(this.getHeaderLevel());
-			oVariantManagement.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({ name: "_sap_ui_mdc_Table_HeaderStyle" })]);
+			oVariantManagement.setTitleStyle(this.getHeaderStyle() || TitleLevel[ThemeParameters.get({name: "_sap_ui_mdc_Table_HeaderStyle"})]);
 		}
 	};
 

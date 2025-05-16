@@ -154,7 +154,7 @@ sap.ui.define([
 		const oInnerColumn = oTable._oTable.getColumns()[0];
 
 		oType.updateSortIndicator(oColumn, "Ascending");
-		assert.strictEqual(oInnerColumn.getSortIndicator(),"Ascending", "Inner table column sort order");
+		assert.strictEqual(oInnerColumn.getSortIndicator(), "Ascending", "Inner table column sort order");
 
 		oType.updateSortIndicator(oColumn, "Descending");
 		assert.strictEqual(oInnerColumn.getSortIndicator(), "Descending", "Inner table column sort order");
@@ -409,7 +409,9 @@ sap.ui.define([
 		const oModificationHandler = TestModificationHandler.getInstance();
 		oModificationHandler.processChanges = function(aChanges) {
 			counter++;
-			let bExpectedValue, sExpectedName, sAction;
+			let bExpectedValue;
+			let sExpectedName;
+			let sAction;
 
 			if (counter === 1) {
 				bExpectedValue = true;
@@ -452,7 +454,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		sinon.stub(this.oTable, "getCurrentState").returns({
-			xConfig: { aggregations: { type: { ResponsiveTable: { showDetails: true } } } }
+			xConfig: {aggregations: {type: {ResponsiveTable: {showDetails: true}}}}
 		});
 
 		assert.equal(counter, 1, "No modification happened since show/hide state did not change");
@@ -650,7 +652,7 @@ sap.ui.define([
 
 	QUnit.module("extendedSettings");
 
-	QUnit.test("Merge cell", async function (assert) {
+	QUnit.test("Merge cell", async function(assert) {
 		const oModel = new JSONModel();
 		oModel.setData({
 			testPath: [{
@@ -717,7 +719,7 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		return TableQUnitUtils.waitForBindingInfo(oTable).then(function () {
+		return TableQUnitUtils.waitForBindingInfo(oTable).then(function() {
 			const aColumns = oTable._oTable.getColumns();
 
 			assert.ok(aColumns[0].getMergeDuplicates(), "First column property mergeDuplicates = true");
@@ -727,7 +729,8 @@ sap.ui.define([
 			assert.strictEqual(aColumns[1].getMergeFunctionName(), "getSrc", "Second column property mergeFunctionName = getSrc");
 
 			assert.notOk(aColumns[2].getMergeDuplicates(), "Third column property mergeDuplicates = false");
-			assert.strictEqual(aColumns[0].getMergeFunctionName(), "getText", "Third column property mergeFunctionName = getText as it's the default value");
+			assert.strictEqual(aColumns[0].getMergeFunctionName(), "getText",
+				"Third column property mergeFunctionName = getText as it's the default value");
 		});
 	});
 
@@ -789,7 +792,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Row actions with static settings", async function (assert) {
+	QUnit.test("Row actions with static settings", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
@@ -821,7 +824,7 @@ sap.ui.define([
 			"Error thrown when setting wrong type");
 	});
 
-	QUnit.test("Row actions with bound settings", async function (assert) {
+	QUnit.test("Row actions with bound settings", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
@@ -852,7 +855,7 @@ sap.ui.define([
 		assert.strictEqual(aItems[2].getType(), "Inactive", "Item 3 type");
 	});
 
-	QUnit.test("Row actions with bound settings and custom formatters", async function (assert) {
+	QUnit.test("Row actions with bound settings and custom formatters", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: [
@@ -888,7 +891,7 @@ sap.ui.define([
 		assert.strictEqual(aItems[2].getType(), "Navigation", "Item 3 type");
 	});
 
-	QUnit.test("Bound row actions", async function (assert) {
+	QUnit.test("Bound row actions", async function(assert) {
 		await this.createTable({
 			rowSettings: new RowSettings({
 				rowActions: {

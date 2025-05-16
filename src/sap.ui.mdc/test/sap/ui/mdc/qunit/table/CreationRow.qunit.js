@@ -111,7 +111,8 @@ sap.ui.define([
 		sinon.stub(this.oCreationRow, "_getTable").returns(this.oMDCGridTable);
 
 		this.oCreationRow.update().then(function() {
-			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"), "Table: Inner creation row is a sap.ui.table.CreationRow");
+			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"),
+				"Table: Inner creation row is a sap.ui.table.CreationRow");
 
 		}).then(function() {
 			that.oCreationRow._getTable.returns(that.oMDCResponsiveTable);
@@ -123,13 +124,15 @@ sap.ui.define([
 			that.oCreationRow._getTable.returns(that.oMDCGridTable);
 			return that.oCreationRow.update();
 		}).then(function() {
-			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"), "Change from ResponsiveTable to Table: Inner creation row is a sap.ui.table.CreationRow");
+			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"),
+				"Change from ResponsiveTable to Table: Inner creation row is a sap.ui.table.CreationRow");
 
 		}).then(function() {
 			that.oCreationRow._getTable.returns(that.oMDCGridTableInteractive);
 			return that.oCreationRow.update();
 		}).then(function() {
-			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"), "Change from ResponsiveTable to Table: Inner creation row is a sap.ui.table.CreationRow");
+			assert.ok(that.oCreationRow._oInnerCreationRow.isA("sap.ui.table.CreationRow"),
+				"Change from ResponsiveTable to Table: Inner creation row is a sap.ui.table.CreationRow");
 
 		}).then(function() {
 			that.oCreationRow._getTable.restore();
@@ -217,15 +220,19 @@ sap.ui.define([
 		this.oCreationRow.setBindingContext(oModel.createBindingContext("/path"), "modelName");
 
 		this.oCreationRow.update().then(function() {
-			assert.strictEqual(that.oCreationRow._oInnerCreationRow.getBindingContext(), null, "Binding context of unnamed model was forwarded to the inner creation row on initialization");
-			assert.strictEqual(that.oCreationRow.getBindingContext("modelName"), that.oCreationRow._oInnerCreationRow.getBindingContext("modelName"), "Binding context of named model was forwarded to the inner creation row on initialization");
+			assert.strictEqual(that.oCreationRow._oInnerCreationRow.getBindingContext(), null,
+				"Binding context of unnamed model was forwarded to the inner creation row on initialization");
+			assert.strictEqual(that.oCreationRow.getBindingContext("modelName"), that.oCreationRow._oInnerCreationRow.getBindingContext("modelName"),
+				"Binding context of named model was forwarded to the inner creation row on initialization");
 
 			const oContext = oModel.createBindingContext("/path");
 			that.oCreationRow.setBindingContext(undefined);
 			that.oCreationRow.setBindingContext(oContext, "modelName");
 
-			assert.strictEqual(that.oCreationRow.getBindingContext(), undefined, "Binding context of unnamed model was forwarded to the inner creation row on setBindingContext");
-			assert.strictEqual(that.oCreationRow.getBindingContext("modelName"), oContext, "Binding context of named model was forwarded to the inner creation row on setBindingContext");
+			assert.strictEqual(that.oCreationRow.getBindingContext(), undefined,
+				"Binding context of unnamed model was forwarded to the inner creation row on setBindingContext");
+			assert.strictEqual(that.oCreationRow.getBindingContext("modelName"), oContext,
+				"Binding context of named model was forwarded to the inner creation row on setBindingContext");
 		}).then(function() {
 			that.oCreationRow._getTable.restore();
 			done();
