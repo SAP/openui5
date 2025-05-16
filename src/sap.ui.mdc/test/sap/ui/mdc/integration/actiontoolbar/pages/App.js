@@ -119,6 +119,14 @@ sap.ui.require([
 		});
 	};
 
+	const iCannotDeselectAction = function(sActionLabel) {
+		return waitForP13nColumListItem.call(this, sActionLabel, (aArgs) => {
+			const oColumnListItem = aArgs[0];
+			const bEnabled = oColumnListItem.getMultiSelectControl().getEnabled();
+			Opa5.assert.notOk(bEnabled, "Checkbox is disabled");
+		});
+	};
+
 	Opa5.createPageObjects({
 		onTheApp: {
 			actions: {
@@ -163,6 +171,9 @@ sap.ui.require([
 						Util.icons.movetotop,
 						Util.icons.movetobottom
 					]);
+				},
+				iCannotDeselect: function(sActionLabel) {
+					iCannotDeselectAction.call(this, sActionLabel);
 				},
 				iMoveActionUp: function(sActionLabel) {
 					iMoveAction.call(this, sActionLabel, Util.icons.moveup);

@@ -430,14 +430,14 @@ sap.ui.define([
 	ActionToolbar.prototype.initPropertyHelper = async function() {
 		const aProperties = await Promise.all(this.getActions().map(async (oAction) => {
 			const oDesignTime = await oAction.getAction().getMetadata().loadDesignTime(oAction);
-			const bEnabled = this._getEnabledFromDesignTime(oDesignTime);
+			const vEnabled = this._getEnabledFromDesignTime(oDesignTime);
 
 			return {
 				name: oAction.getId(),
 				alignment: oAction.getLayoutInformation().alignment,
 				label: oAction.getLabel(),
 				visible: true,
-				enabled: bEnabled
+				enabled: vEnabled
 			};
 		}));
 
@@ -456,11 +456,11 @@ sap.ui.define([
 		}
 
 		if (oDesignTime.actions.reveal === null) {
-			return false;
+			return "visibility";
 		}
 
 		if (oDesignTime.actions.remove === null) {
-			return false;
+			return "visibility";
 		}
 
 		return true;

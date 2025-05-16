@@ -197,6 +197,11 @@ sap.ui.define([
 			return 2; // instance specific manifest => metadata version 2!
 		};
 
+		/*
+		 * Provide oMetadataProxy to collectRoutingClasses, to derive routing classes from correct manifest object
+		 */
+		oMetadataProxy.collectRoutingClasses = oMetadata.collectRoutingClasses;
+
 		oMetadataProxy[Symbol("isProxy")] = true;
 
 		return oMetadataProxy;
@@ -2309,8 +2314,7 @@ sap.ui.define([
 	}
 
 	function findRoutingClasses(oClassMetadata) {
-		const fnCollectRoutingClasses = oClassMetadata.getStaticProperty("collectRoutingClasses");
-		const mRoutingClasses = typeof fnCollectRoutingClasses == "function" ? fnCollectRoutingClasses.call(oClassMetadata.getClass()) : {};
+		const mRoutingClasses =  oClassMetadata.collectRoutingClasses?.() ?? {};
 		return Object.values(mRoutingClasses);
 	}
 

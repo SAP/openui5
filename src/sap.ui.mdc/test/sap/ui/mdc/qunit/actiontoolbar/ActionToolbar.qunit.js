@@ -1028,7 +1028,7 @@ sap.ui.define([
 		const bEnabled = oToolbar._getEnabledFromDesignTime(oDesignTimeData);
 
 		// assert
-		assert.notOk(bEnabled, "Enabled is false");
+		assert.equal(bEnabled, "visibility", "Enabled is 'visibility'");
 	});
 
 	QUnit.test("returns false for nullish 'remove' property", function (assert) {
@@ -1045,7 +1045,7 @@ sap.ui.define([
 		const bEnabled = oToolbar._getEnabledFromDesignTime(oDesignTimeData);
 
 		// assert
-		assert.notOk(bEnabled, "Enabled is false");
+		assert.equal(bEnabled, "visibility", "Enabled is 'visibility'");
 	});
 
 	QUnit.test("returns true if anything is correct", function (assert) {

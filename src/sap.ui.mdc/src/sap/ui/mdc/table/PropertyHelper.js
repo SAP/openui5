@@ -322,19 +322,13 @@ sap.ui.define([
 	 * @private
 	 */
 	function getColumnExportSettingsObject(oColumn, oProperty, oExportSettings) {
-		const aPaths = [];
-		if (oProperty.isComplex()) {
-			oProperty.getSimpleProperties().forEach((oProperty) => {
-				aPaths.push(oProperty.path);
-			});
-		}
 		return Object.assign({
 			columnId: oColumn.getId(),
 			label: oProperty.label,
 			width: getColumnWidthNumber(oColumn.getWidth()),
 			textAlign: oColumn.getHAlign(),
 			type: "String",
-			property: aPaths.length ? aPaths : oProperty.path
+			property: oProperty.getSimpleProperties().map((oProperty) => oProperty.path)
 		}, oExportSettings);
 	}
 

@@ -878,8 +878,9 @@ sap.ui.define([
 
 	BasePanel.prototype._onRearrange = function(oEvent) {
 		const oDraggedItem = oEvent.getParameter("draggedControl");
+		const oModelEntry = this._getModelEntry(oDraggedItem);
 		// SNOW DINC0418886: dedicated check, if a disabled checkbox exists. If a checkbox exists, or it is enabled, skip this check
-		if (oDraggedItem?.getMultiSelectControl() && !oDraggedItem.getMultiSelectControl().getEnabled()) {
+		if (oDraggedItem?.getMultiSelectControl() && !oDraggedItem.getMultiSelectControl().getEnabled() && oModelEntry.enabled !== "visibility") {
 			return;
 		}
 
