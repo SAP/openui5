@@ -80640,10 +80640,20 @@ make root = ${bMakeRoot}`;
 	// Create a new list binding (matching the kept-alive element) with $$separate and see that the
 	// kept-alive element becomes part of the binding.
 	// JIRA: CPOUI5ODATAV4-2697
+	//
+	// Load another kept-alive element and bind it to an object page. This page contains properties
+	// which are reachable via a $$separate navigation property (EMPLOYEE_2_TEAM). One of them is
+	// not part of the list binding's $expand/$select query options (EMPLOYEE_2_TEAM/MEMBER_COUNT).
+	// When paging in the table, the kept-alive element is loaded, but the EMPLOYEE_2_TEAM has a new
+	// ETag. As a result, the new EMPLOYEE_2_TEAM overwrites the old one, and the missing
+	// MEMBER_COUNT is requested in a subsequent late property request. When doing the same scenario
+	// but with a matching ETag, then the known MEMBER_COUNT can be used and no late property
+	// request is needed.
+	// JIRA: CPOUI5ODATAV4-2998
 	QUnit.test("$$separate: ODM#getKeepAliveContext", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
-<Table growing="true" growingThreshold="1" id="table"
+<Table growing="true" growingThreshold="1" id="list"
 		items="{
 			path : 'EMPLOYEES',
 			parameters : {
@@ -80653,47 +80663,154 @@ make root = ${bMakeRoot}`;
 			}
 		}">
 	<Text id="name" text="{Name}"/>
-	<Text id="team" text="{EMPLOYEE_2_TEAM/Name}"/>
-</Table>`;
+	<Text id="listTeamName" text="{EMPLOYEE_2_TEAM/Name}"/>
+</Table>
+<FlexBox id="object">
+	<Text id="objectTeamName" text="{EMPLOYEE_2_TEAM/Name}"/>
+	<Text id="memberCount" text="{EMPLOYEE_2_TEAM/MEMBER_COUNT}"/>
+</FlexBox>`;
 
 		this.expectChange("name", [])
-			.expectChange("team", []);
+			.expectChange("listTeamName", [])
+			.expectChange("objectTeamName")
+			.expectChange("memberCount");
 
 		await this.createView(assert, sView, oModel);
 
 		this.expectRequest("EMPLOYEES('0')?$select=ID", {ID : "0"});
 
-		const oContext = oModel.getKeepAliveContext("/EMPLOYEES('0')");
+		const oContext0 = oModel.getKeepAliveContext("/EMPLOYEES('0')");
 
-		await this.waitForChanges(assert, "load keep alive context");
+		await this.waitForChanges(assert, "load keep alive context 0");
 
 		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
 				+ "&$skip=0&$top=1", {
 				value : [{
-					EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
+					EMPLOYEE_2_TEAM : {
+						"@odata.etag" : "A.0",
+						Name : "Team A",
+						Team_Id : "A"
+					},
 					ID : "0"
 				}]
 			})
 			.expectRequest("EMPLOYEES?$select=ID,Name&$skip=0&$top=1", {
-				value : [{
+				value : [{ // ETag irrelevant
 					ID : "0",
 					Name : "Frederic Fall"
 				}]
 			})
 			.expectChange("name", ["Frederic Fall"])
-			.expectChange("team", ["Team A"]);
+			.expectChange("listTeamName", ["Team A"]);
 
-		const oTable = this.oView.byId("table");
+		const oTable = this.oView.byId("list");
 		// code under test
 		oTable.setBindingContext(oModel.createBindingContext("/"));
 
 		await this.waitForChanges(assert, "bind table");
 
-		assert.deepEqual(oContext.getObject(), {
-			EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
+		assert.deepEqual(oContext0.getObject(), {
+			EMPLOYEE_2_TEAM : {
+				"@odata.etag" : "A.0",
+				Name : "Team A",
+				Team_Id : "A"
+			},
 			ID : "0",
 			Name : "Frederic Fall"
 		});
+
+		this.expectRequest("EMPLOYEES('1')?$select=ID"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=MEMBER_COUNT,Name,Team_Id)", {
+				EMPLOYEE_2_TEAM : {
+					"@odata.etag" : "B.0",
+					MEMBER_COUNT : 22,
+					Name : "Team B",
+					Team_Id : "B"
+				},
+				ID : "1"
+			})
+			.expectChange("objectTeamName", "Team B")
+			.expectChange("memberCount", "22");
+
+		const oContext1 = oModel.getKeepAliveContext("/EMPLOYEES('1')");
+		this.oView.byId("object").setBindingContext(oContext1);
+
+		await this.waitForChanges(assert, "load keep alive context 1");
+
+		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+				+ "&$skip=1&$top=1", {
+				value : [{
+					EMPLOYEE_2_TEAM : {
+						"@odata.etag" : "B.1",
+						Name : "Team B #2",
+						Team_Id : "B"
+					},
+					ID : "1"
+				}]
+			})
+			.expectRequest("EMPLOYEES?$select=ID,Name&$skip=1&$top=1", {
+				value : [{
+					ID : "1",
+					Name : "Jonathan Smith"
+				}]
+			})
+			.expectChange("name", [, "Jonathan Smith"])
+			.expectChange("listTeamName", [, "Team B #2"])
+			.expectChange("objectTeamName", "Team B #2")
+			.expectRequest("EMPLOYEES('1')/EMPLOYEE_2_TEAM?$select=MEMBER_COUNT,Team_Id", {
+				"@odata.etag" : "B.1",
+				MEMBER_COUNT : 42,
+				Team_Id : "B"
+			})
+			.expectChange("memberCount", "42");
+
+		// code under test (CPOUI5ODATAV4-2998)
+		oTable.requestItems();
+
+		await this.waitForChanges(assert, "scroll to ('1'): ETag conflict");
+
+		this.expectRequest("EMPLOYEES('2')?$select=ID"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=MEMBER_COUNT,Name,Team_Id)", {
+				EMPLOYEE_2_TEAM : {
+					"@odata.etag" : "C.0",
+					MEMBER_COUNT : 7,
+					Name : "Team C",
+					Team_Id : "C"
+				},
+				ID : "2"
+			})
+			.expectChange("objectTeamName", "Team C")
+			.expectChange("memberCount", "7");
+
+		const oContext2 = oModel.getKeepAliveContext("/EMPLOYEES('2')");
+		this.oView.byId("object").setBindingContext(oContext2);
+
+		await this.waitForChanges(assert, "load keep alive context 2");
+
+		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+				+ "&$skip=2&$top=1", {
+				value : [{
+					EMPLOYEE_2_TEAM : {
+						"@odata.etag" : "C.0",
+						Name : "Team C",
+						Team_Id : "C"
+					},
+					ID : "2"
+				}]
+			})
+			.expectRequest("EMPLOYEES?$select=ID,Name&$skip=2&$top=1", {
+				value : [{ // ETag irrelevant
+					ID : "2",
+					Name : "Jane Doe"
+				}]
+			})
+			.expectChange("name", [,, "Jane Doe"])
+			.expectChange("listTeamName", [,, "Team C"]);
+
+		// code under test (CPOUI5ODATAV4-2998)
+		oTable.requestItems();
+
+		await this.waitForChanges(assert, "scroll to ('2'): with ETag, but no conflict");
 	});
 
 	//*********************************************************************************************

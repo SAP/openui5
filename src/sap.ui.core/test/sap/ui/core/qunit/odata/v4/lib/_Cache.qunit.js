@@ -13963,32 +13963,33 @@ sap.ui.define([
 			bar : ["~range~", {start : 3, end : 5}]
 		});
 
-		const oBarResult = {value : ["bar0", "bar1"]};
+		const oBarResult = {value : [{bar : "~bar0~"}, {bar : "~bar1~"}]};
 
 		// code under test: resolve separate promise for "bar", separate promise order is
 		// irrelevant, but processing is delayed until main promise is resolved
 		fnResolveBar(oBarResult);
 
 		const iCallCount = bMainSuccessful ? 1 : 0;
-		oCacheMock.expects("visitResponse").exactly(iCallCount)
+		const oVisitResponseMock0 = oCacheMock.expects("visitResponse").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oBarResult), "~types~", undefined, undefined, 3);
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
-			.withExactArgs("bar0", "predicate").returns("('bar0')");
-		oHelperMock.expects("updateSelected").exactly(iCallCount)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar0')", "~bar0~", "bar0",
-				["bar"]);
-		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
-			.withExactArgs("bar1", "predicate").returns("('bar1')");
-		oHelperMock.expects("updateSelected").exactly(iCallCount)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar1')", "~bar1~", "bar1",
-				["bar"]);
-
+			.withExactArgs(sinon.match.same(oBarResult.value[0]), "predicate").returns("('bar0')");
 		oCache.aElements.$byPredicate = {
-			"('bar0')" : "~bar0~",
-			"('bar1')" : "~bar1~",
-			"('foo0')" : "~foo0~"
+			"('bar0')" : {key : "bar0"},
+			"('bar1')" : {key : "bar1"},
+			"('foo0')" : {key : "foo0"}
 		};
+		const oUpdateSelectedMock0 = oHelperMock.expects("updateSelected").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar0')",
+				sinon.match.same(oCache.aElements.$byPredicate["('bar0')"]),
+				sinon.match.same(oBarResult.value[0]), ["bar"]);
+		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oBarResult.value[1]), "predicate").returns("('bar1')");
+		const oUpdateSelectedMock1 = oHelperMock.expects("updateSelected").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('bar1')",
+				sinon.match.same(oCache.aElements.$byPredicate["('bar1')"]),
+				sinon.match.same(oBarResult.value[1]), ["bar"]);
 
 		sinon.assert.callCount(fnSeparateReceived, 0);
 
@@ -14003,6 +14004,8 @@ sap.ui.define([
 			bar : ["~range~"]
 		});
 		if (bMainSuccessful) {
+			sinon.assert.callOrder(oVisitResponseMock0, oUpdateSelectedMock0, oUpdateSelectedMock1,
+				fnSeparateReceived);
 			sinon.assert.callCount(fnSeparateReceived, 1);
 			sinon.assert.calledWithExactly(fnSeparateReceived, "bar", 3, 5);
 			fnSeparateReceived.resetHistory();
@@ -14016,16 +14019,17 @@ sap.ui.define([
 			});
 		}
 
-		const oFooResult = {value : ["foo0", "unknown"]};
-		oCacheMock.expects("visitResponse").exactly(iCallCount)
+		const oFooResult = {value : [{foo : "~foo0~"}, "~unknown~"]};
+		const oVisitResponseMock1 = oCacheMock.expects("visitResponse").exactly(iCallCount)
 			.withExactArgs(sinon.match.same(oFooResult), "~types~", undefined, undefined, 3);
 		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
-			.withExactArgs("foo0", "predicate").returns("('foo0')");
-		oHelperMock.expects("updateSelected").exactly(iCallCount)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('foo0')", "~foo0~", "foo0",
-				["foo"]);
+			.withExactArgs(sinon.match.same(oFooResult.value[0]), "predicate").returns("('foo0')");
+		const oUpdateSelectedMock2 = oHelperMock.expects("updateSelected").exactly(iCallCount)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('foo0')",
+				sinon.match.same(oCache.aElements.$byPredicate["('foo0')"]),
+				sinon.match.same(oFooResult.value[0]), ["foo"]);
 		oHelperMock.expects("getPrivateAnnotation").exactly(iCallCount)
-			.withExactArgs("unknown", "predicate").returns("('unknown')");
+			.withExactArgs("~unknown~", "predicate").returns("('unknown')");
 
 		// code under test: resolve separate promise for "foo"
 		fnResolveFoo(oFooResult);
@@ -14038,6 +14042,7 @@ sap.ui.define([
 			bar : ["~range~"]
 		});
 		if (bMainSuccessful) {
+			sinon.assert.callOrder(oVisitResponseMock1, oUpdateSelectedMock2, fnSeparateReceived);
 			sinon.assert.callCount(fnSeparateReceived, 1);
 			sinon.assert.calledWithExactly(fnSeparateReceived, "foo", 3, 5);
 			assert.strictEqual(await oBarRangePromise, undefined); // resolved with no value
@@ -14059,8 +14064,10 @@ sap.ui.define([
 	QUnit.test("CollectionCache#requestSeparateProperties: ETag changed", async function (assert) {
 		const oCache = _Cache.create(this.oRequestor, "SalesOrders");
 		oCache.aElements.$byPredicate = {
-			"(0)" : {"@odata.etag" : "etag0"},
-			"(1)" : {"@odata.etag" : "etag1"}
+			"(0)" : {"@odata.etag" : "old.0"},
+			"(1)" : {"@odata.etag" : "same.1"},
+			"(2)" : {foo : {"@odata.etag" : "old.2"}},
+			"(3)" : {foo : {"@odata.etag" : "same.3"}}
 		};
 		oCache.setSeparate(["foo"]);
 		const fnSeparateReceived = this.spy();
@@ -14071,14 +14078,21 @@ sap.ui.define([
 		this.mock(oCache.oRequestor).expects("lockGroup")
 			.withExactArgs("$single", sinon.match.same(oCache)).returns("~lock~");
 		const oResponse = {
-			value : [
-				{"@odata.etag" : "AnotherETag"},
-				{"@odata.etag" : "etag1"}
-			]
+			value : [{ // (0)
+				"@odata.etag" : "new.0: different ETag on source entity",
+				foo : {}
+			}, { // (1)
+				"@odata.etag" : "same.1",
+				foo : null
+			}, { // (2)
+				foo : {"@odata.etag" : "new.2: different ETag on $$separate property"}
+			}, { // (3)
+				foo : {"@odata.etag" : "same.3"}
+			}]
 		};
 		this.mock(oCache.oRequestor).expects("request")
 			.withExactArgs("GET", "~path~", "~lock~").resolves(oResponse);
-		this.mock(oCache).expects("visitResponse")
+		const oVisitResponseMock = this.mock(oCache).expects("visitResponse")
 			.withExactArgs(sinon.match.same(oResponse), "~types~", undefined, undefined,
 				"~iStart~");
 		const oHelperMock = this.mock(_Helper);
@@ -14088,10 +14102,28 @@ sap.ui.define([
 			.withExactArgs("ETag changed: SalesOrders(0)", "~path~", sClassName);
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oResponse.value[1]), "predicate").returns("(1)");
-		oHelperMock.expects("updateSelected")
+		const oUpdateSelectedMock0 = oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "(1)",
 				sinon.match.same(oCache.aElements.$byPredicate["(1)"]),
 				sinon.match.same(oResponse.value[1]), ["foo"]);
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oResponse.value[2]), "predicate").returns("(2)");
+		const oUpdateSelectedMock1 = oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "(2)",
+				sinon.match.same(oCache.aElements.$byPredicate["(2)"]),
+				sinon.match.same(oResponse.value[2]), ["foo"])
+			.callsFake(function (_mChangeListeners, _sBasePath, oOldValue) {
+				assert.notOk("foo" in oOldValue); // must not keep outdated data
+			});
+		oHelperMock.expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oResponse.value[3]), "predicate").returns("(3)");
+		const oUpdateSelectedMock2 = oHelperMock.expects("updateSelected")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "(3)",
+				sinon.match.same(oCache.aElements.$byPredicate["(3)"]),
+				sinon.match.same(oResponse.value[3]), ["foo"])
+			.callsFake(function (_mChangeListeners, _sBasePath, oOldValue) {
+				assert.ok("foo" in oOldValue);
+			});
 
 		// code under test
 		await oCache.requestSeparateProperties("~iStart~", "~iEnd~",
@@ -14102,6 +14134,8 @@ sap.ui.define([
 		await oCache.mSeparateProperty2ReadRequests.foo[0].promise;
 
 		assert.deepEqual(oCache.mSeparateProperty2ReadRequests, {foo : []});
+		sinon.assert.callOrder(oVisitResponseMock, oUpdateSelectedMock0, oUpdateSelectedMock1,
+			oUpdateSelectedMock2, fnSeparateReceived);
 		sinon.assert.callCount(fnSeparateReceived, 1);
 		sinon.assert.calledWithExactly(fnSeparateReceived, "foo", "~iStart~", "~iEnd~");
 	});
