@@ -422,9 +422,7 @@ sap.ui.define([
 		return {
 			role: "progressbar",
 			type: oBundle.getText("ACC_CTR_TYPE_PROGRESS"),
-			description: sDescription,
-			focusable: true,
-			enabled: true
+			description: sDescription
 		};
 	};
 

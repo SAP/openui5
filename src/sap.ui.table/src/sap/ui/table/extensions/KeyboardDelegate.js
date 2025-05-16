@@ -813,19 +813,7 @@ sap.ui.define([
 		}
 	};
 
-	KeyboardDelegate.prototype.onfocusout = function(oEvent) {
-		if (this.getRows().length || this.getColumnHeaderVisible()) {
-			this.$().find(".sapUiTableCtrlBefore").attr("tabindex", "0");
-			this.$().find(".sapUiTableCtrlAfter").attr("tabindex", "0");
-		}
-	};
-
 	KeyboardDelegate.prototype.onfocusin = function(oEvent) {
-		if (this.getDomRef("sapUiTableCnt").contains(oEvent.target)) {
-			this.$().find(".sapUiTableCtrlBefore").attr("tabindex", "-1");
-			this.$().find(".sapUiTableCtrlAfter").attr("tabindex", "-1");
-		}
-
 		if (oEvent.isMarked("sapUiTableIgnoreFocusIn")) {
 			return;
 		}
@@ -1058,7 +1046,7 @@ sap.ui.define([
 		if (oKeyboardExtension.isInActionMode()) {
 			onTabNextInActionMode.call(this, oEvent);
 		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
-			if (this.getCreationRow() && this.getCreationRow().getVisible() && !TableUtils.hasData(this)) {
+			if (this.getRows().length === 0) {
 				forwardFocusToTabDummy(this, "sapUiTableCtrlAfter");
 			} else if (TableUtils.isNoDataVisible(this)) {
 				this.$("noDataCnt").trigger("focus");
@@ -1134,6 +1122,9 @@ sap.ui.define([
 
 		} else if (oEvent.target === this.getDomRef("overlay")) {
 			this._getKeyboardExtension().setSilentFocus(this.$().find(".sapUiTableOuterBefore"));
+
+		} else if (oCellInfo.isOfType(CellType.ANYCOLUMNHEADER)) {
+			forwardFocusToTabDummy(this, "sapUiTableCtrlBefore");
 
 		} else if (!oCellInfo.isOfType(CellType.ANY)) {
 			$Cell = TableUtils.getParentCell(this, oEvent.target);

@@ -11,12 +11,16 @@ sap.ui.define([
 	"sap/ui/mdc/odata/v4/vizChart/ChartDelegate",
 	"delegates/odata/v4/ODataMetaModelUtil",
 	"sap/ui/mdc/enums/ChartItemRoleType",
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
+	'sap/base/Log',
 	"sap/viz/ui5/format/ChartFormatter"
 ], function(
 	FilterBarDelegate,
 	VizChartDelegate,
 	ODataMetaModelUtil,
 	ChartItemRoleType,
+	JsControlTreeModifier,
+	Log,
 	ChartFormatter
 ) {
 	"use strict";
@@ -24,7 +28,98 @@ sap.ui.define([
 	var ChartDelegate = Object.assign({}, VizChartDelegate);
 
 	ChartDelegate.getFilterDelegate = function() {
+		FilterBarDelegate.addCondition = ChartDelegate._addCondition;
 		return FilterBarDelegate;
+	};
+
+	/**
+	 * This methods is called during the appliance of the add condition change.
+	 * This intention is to update the propertyInfo property.
+	 *
+	 * @param {sap.ui.mdc.FilterBar} oFilterBar - the instance of filter bar
+	 * @param {string} sPropertyName The name of a property.
+	 * @param {Object} mPropertyBag Instance of property bag from Flex change API
+	 * @returns {Promise} Promise that resolves once the properyInfo property was updated
+	 */
+	ChartDelegate._addCondition = function(oFilterBar, sPropertyName, mPropertyBag) {
+		if (oFilterBar.isA("sap.ui.mdc.FilterBar")) {
+			return FilterBarDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag);
+		} else {
+			return ChartDelegate._updatePropertyInfo(sPropertyName, oFilterBar, mPropertyBag);
+		}
+	};
+
+	const InstanceCache = new Map();
+
+	ChartDelegate._getInstanceCacheEntry = function(oControl, sKey) {
+		var sId = oControl.getId && oControl.getId() || oControl.id;
+		var oCacheEntry = InstanceCache.get(sId);
+		return oCacheEntry && oCacheEntry[sKey];
+	};
+	ChartDelegate._setInstanceCacheEntry = function(oControl, sKey, oValue) {
+		var sId = oControl.getId && oControl.getId() || oControl.id;
+		var oCacheEntry = InstanceCache.get(sId) || {};
+		oCacheEntry[sKey] = oValue;
+		InstanceCache.set(sId, oCacheEntry);
+	};
+
+	ChartDelegate._updatePropertyInfo = function(sPropertyName, oChart, mPropertyBag) {
+
+		var oModifier = mPropertyBag?.modifier;
+		if (!oModifier || (oModifier === JsControlTreeModifier)) {
+			return Promise.resolve();
+		}
+
+		return oModifier.getProperty(oChart, "propertyInfo")
+		.then((aPropertyInfo) => {
+			if (!aPropertyInfo) {
+				return Promise.resolve();
+			}
+			var nIdx = aPropertyInfo.findIndex(function(oEntry) {
+				return oEntry.name === sPropertyName;
+			});
+
+			if (nIdx < 0) {
+
+				var aFetchedProperties = this._getInstanceCacheEntry(oChart, "fetchedProperties");
+				if (aFetchedProperties) {
+					this._addPropertyInfoEntry(oChart, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier);
+				} else {
+					//fetch
+					return this.fetchProperties(oChart, mPropertyBag)
+					.then((aProperties) => {
+						this._setInstanceCacheEntry(oChart, "fetchedProperties", aProperties);
+						this._addPropertyInfoEntry(oChart, sPropertyName, aPropertyInfo, aProperties, oModifier);
+					});
+				}
+			}
+		});
+	};
+
+	ChartDelegate._addPropertyInfoEntry = function(oControl, sPropertyName, aPropertyInfo, aFetchedProperties, oModifier) {
+
+		if (aFetchedProperties) {
+			var nIdx = aFetchedProperties.findIndex(function(oEntry) {
+				return oEntry.name === sPropertyName;
+			});
+
+			if (nIdx >= 0) {
+				aPropertyInfo.push({
+					key: sPropertyName,
+					label: aFetchedProperties[nIdx].label,
+					dataType: aFetchedProperties[nIdx].dataType,
+					maxConditions: aFetchedProperties[nIdx].maxConditions,
+					constraints: aFetchedProperties[nIdx].constraints,
+					formatOptions: aFetchedProperties[nIdx].formatOptions,
+					caseSensitive: aFetchedProperties[nIdx].caseSensitive,
+					group: aFetchedProperties[nIdx].group,
+					groupLabel: aFetchedProperties[nIdx].groupLabel
+				});
+				oModifier.setProperty(oControl, "propertyInfo", aPropertyInfo);
+			} else {
+				Log.error("ConditionFlex-ChangeHandler: no type info for property '" + sPropertyName + "'");
+			}
+		}
 	};
 
 	ChartDelegate.fetchProperties = function (oChart) {

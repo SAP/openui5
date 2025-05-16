@@ -76,40 +76,6 @@ sap.ui.define([
 		assert.equal(aItems[2].getCells()[0].getItems()[0].getText(), "Test3");
 	});
 
-	QUnit.test("check drag & drop eventhandler for dropping on disabled elements", function(assert) {
-
-		// Setup Fake drop event
-		const oDropItem = this.oActionToolbarPanel._oListControl.getItems()[0];
-		oDropItem.getMultiSelectControl()?.setEnabled(false);
-		const oDragItem = this.oActionToolbarPanel._oListControl.getItems()[2];
-		const oFakeSession = {
-			getDropControl: function() {
-				return oDropItem;
-			},
-			getDragControl: function() {
-				return oDragItem;
-			},
-			setIndicatorConfig: sinon.stub(),
-			setDropControl: sinon.stub(),
-			getDropPosition: sinon.stub()
-		};
-
-		const oFakeEvent = new Event("fakeDropEvent", this.oActionToolbarPanel, {
-			dragSession: oFakeSession,
-			draggedControl: oDragItem,
-			droppedControl: oDropItem
-		});
-
-		// fire event for drag and drop
-		this.oActionToolbarPanel._onRearrange(oFakeEvent);
-
-		// Test results: no repositioning
-		const aItems = this.oActionToolbarPanel._oListControl.getItems();
-		assert.equal(aItems[0].getCells()[0].getItems()[0].getText(), "Test");
-		assert.equal(aItems[1].getCells()[0].getItems()[0].getText(), "Test3");
-		assert.equal(aItems[2].getCells()[0].getItems()[0].getText(), "Test2");
-	});
-
 	QUnit.test("check drag & drop eventhandler for dragging elements without multiselect control", function(assert) {
 
 		// Setup Fake drop event

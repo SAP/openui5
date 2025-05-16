@@ -13,8 +13,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var DEFAULT_TIMEOUT = 20000; // 20 seconds
-
 	/**
 	 * Creates <code>Error<code> object from <code>XMLHttpRequest<code> and an additional message for end user
 	 *
@@ -156,7 +154,6 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
-				xhr.timeout = DEFAULT_TIMEOUT; // TODO Implement logic for connectors to configure dedicated timeout values which overwrite the default
 				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || (!mPropertyBag.initialConnector || !mPropertyBag.initialConnector.xsrfToken) && !mPropertyBag.cacheable)) {
 					xhr.setRequestHeader("X-CSRF-Token", "fetch");
 				}

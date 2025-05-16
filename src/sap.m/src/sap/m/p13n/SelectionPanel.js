@@ -470,6 +470,8 @@ sap.ui.define([
 	};
 
 	SelectionPanel.prototype._handleActivated = function(oHoveredItem) {
+		const oModelEntry = this._getModelEntry(oHoveredItem);
+
 		// remove move buttons
 		// 1. if a new item is hovered OR
 		// 1. if the item is not selected
@@ -514,9 +516,11 @@ sap.ui.define([
 		this._oLastSelectedItem = null;
 		// 1. if checkbox is enabled (disabled checkbox might be the case for rta for ActionToolbar) AND
 		// 2. if checkbox is selected
-		// 3. OR if there is not checkbox
+		// 3. this is is only disabled in RTA for visibility actions (remove, reveal)
+		// 4. OR if there is not checkbox
 		if ((oHoveredItem.getMultiSelectControl()?.getEnabled() &&
 			oHoveredItem.getMultiSelectControl()?.getSelected()) ||
+			oModelEntry.enabled === "visibility" ||
 			!oHoveredItem.getMultiSelectControl()) {
 			this._updateEnableOfMoveButtons(oHoveredItem, false);
 			this._addMoveButtons(oHoveredItem);

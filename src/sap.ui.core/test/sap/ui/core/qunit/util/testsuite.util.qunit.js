@@ -83,7 +83,13 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				module: [
 					"sap/ui/core/sample/common/pages/Any",
 					"sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"
-				]
+				],
+				qunit: {
+					version: "2.18"
+				},
+				sinon: {
+					version: "14.0"
+				}
 			},
 
 			SyncPromise: {

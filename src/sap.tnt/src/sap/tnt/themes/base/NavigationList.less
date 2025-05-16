@@ -20,6 +20,7 @@
 @_sap_tnt_NavigationList_ItemBottomMarginInOverflowPopup: 0.1875rem;
 @_sap_tnt_NavigationList_ItemTransition: none;
 @_sap_tnt_NavigationList_ItemTextFontFamily: var(--sapFontFamily);
+@_sap_tnt_NavigationList_ParentItemTextFontFamily: var(--sapFontSemiboldDuplexFamily);
 @_sap_tnt_NavigationList_NoIconsGroupPadding: 1rem;
 @_sap_tnt_NavigationList_NoIconsNestedItemPadding: 1rem;
 @_sap_tnt_NavigationList_ItemFocusBorderOffset: 1px;
@@ -338,7 +339,7 @@
 }
 
 .sapTntNLIFirstLevel .sapTntNLIText {
-	font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
+	font-family: @_sap_tnt_NavigationList_ParentItemTextFontFamily;
 }
 
 .sapTntNLCollapsed {
@@ -607,7 +608,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 
 	// parent menu
 	&:not(.sapUiSubmenu) .sapUiMnuLst .sapUiMnuItm  {
-		font-weight: @_sap_tnt_NavigationList_GroupTextWeight;
+		font-family: @_sap_tnt_NavigationList_ParentItemTextFontFamily;
 
 		.sapUiMnuItmIco {
 			position: relative !important;

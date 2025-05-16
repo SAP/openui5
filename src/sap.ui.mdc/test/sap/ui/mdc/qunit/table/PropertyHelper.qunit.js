@@ -301,7 +301,8 @@ sap.ui.define([
 					type: "Currency",
 					displayUnit: true,
 					unitProperty: "currency",
-					textAlign: "End"
+					textAlign: "End",
+					property: "price"
 				}
 			}, {
 				key: "currencyCode",
@@ -461,7 +462,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnPropA), [{
 			columnId: "propAColumn",
 			label: "Export label",
-			property: "propAPath",
+			property: ["propAPath"],
 			textAlign: "Begin",
 			type: "Number",
 			width: 20
@@ -472,7 +473,7 @@ sap.ui.define([
 			textAlign: "End",
 			type: "String",
 			width: "",
-			property: "propBPath"
+			property: ["propBPath"]
 		}], "Expected column export settings returned");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropA), [{
 			columnId: "columnComplexPropA",
@@ -504,7 +505,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oNoDataColumn1), [{
 			columnId: "noDataColumn1",
 			label: "NoDataColumn1",
-			property: "",
+			property: [""],
 			textAlign: "Begin",
 			type: "String",
 			width: 5
@@ -512,7 +513,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oNoDataColumn2), [{
 			columnId: "noDataColumn2",
 			label: "NoDataColumn2",
-			property: "",
+			property: [""],
 			textAlign: "Begin",
 			type: "String",
 			width: ""
@@ -528,7 +529,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropD), [{
 			columnId: "columnComplexPropD",
 			label: "Export label",
-			property: "propAPath",
+			property: ["propAPath"],
 			textAlign: "Begin",
 			type: "Number",
 			width: 20
@@ -538,7 +539,7 @@ sap.ui.define([
 			textAlign: "Begin",
 			type: "String",
 			width: "",
-			property: "propBPath"
+			property: ["propBPath"]
 		}], "Complex property without exportSettings referencing property with exportSettings=null");
 
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropExport), [{

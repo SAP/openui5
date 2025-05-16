@@ -22,9 +22,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const getDeepActiveElement = () => {
+		let element = document.activeElement;
+		while (element && element.shadowRoot && element.shadowRoot.activeElement) {
+			element = element.shadowRoot.activeElement;
+		}
+		return element;
+	};
+
 	createAndAppendDiv("webc-fixture-container");
 	const coreValueStateEnum = coreLibrary.ValueState;
-
 
 	QUnit.module("Metadata", {
 		beforeEach: function () {
@@ -690,4 +697,73 @@ sap.ui.define([
 		assert.ok(true);
 	});
 
+	QUnit.module("Focus Handling", {
+		beforeEach: function () {
+		},
+		afterEach: async function() {
+			// clean up the pool after each test, so we don't leak anything
+			// the pool automatically awaits the rendering, so that we can start with a clean DOM
+			await WebcWrapperPool.clear();
+		}
+	});
+
+	QUnit.test("getFocusDomRef returns the web component itself", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper);
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		const focusDomRef = myWebComponent.getFocusDomRef();
+		assert.ok(focusDomRef, "Focus DOM ref is available.");
+		assert.equal(focusDomRef.tagName, "SAMPLE-WEBC", "Focus DOM ref is the web component itself.");
+	});
+
+	QUnit.test("getFocusDomRef calls the web component's getFocusDomRef", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper);
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		myWebComponent.getDomRef().getFocusDomRef = () => {
+			return myWebComponent.getDomRef().shadowRoot.querySelector("#focusable");
+		};
+
+		const focusDomRef = myWebComponent.getFocusDomRef();
+
+		assert.ok(focusDomRef, "Focus DOM ref is available.");
+		assert.equal(focusDomRef.tagName, "DIV", "Focus DOM ref is the DIV element inside the shadow root.");
+	});
+
+	QUnit.test("getFocusInfo returns the active element inside the shadow root", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper);
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		const focusable = myWebComponent.getDomRef().shadowRoot.querySelector("#focusable");
+		focusable.focus();
+
+		const focusInfo = myWebComponent.getFocusInfo();
+
+		assert.equal(document.activeElement, myWebComponent.getDomRef(), "Active element is the web component itself.");
+		assert.ok(focusInfo, "Focus info is available.");
+		assert.equal(focusInfo.id, focusable.id, "Focus info ID is the focusable element's ID.");
+		assert.equal(focusInfo.oFocusedElement, focusable, "Focus info element is the focusable element.");
+	});
+
+	QUnit.test("focus method respects oFocusInfo", async function(assert) {
+		const myWebComponent = await WebcWrapperPool.create(ControlWrapper);
+		myWebComponent.placeAt("webc-fixture-container");
+		await renderingFor(myWebComponent);
+
+		const focusable = myWebComponent.getDomRef().shadowRoot.querySelector("#focusable");
+
+		const focusInfo = {
+			id: focusable.id,
+			oFocusedElement: focusable
+		};
+
+		myWebComponent.focus(focusInfo);
+		const deepActiveElement = getDeepActiveElement();
+
+		assert.equal(document.activeElement, myWebComponent.getDomRef(), "Active element is the web component itself.");
+		assert.equal(deepActiveElement, focusable, "Deep active element is the focusable element inside the shadow root.");
+	});
 });
