@@ -137,6 +137,7 @@ sap.ui.define([
 
 		//handled for ux rules management
 		this._bInternalVisible = true;
+		this._bInternalTitleVisible = true;
 		this._sInternalTitleLevel = TitleLevel.Auto;
 		//hidden status
 		this._isHidden = false;
@@ -454,6 +455,26 @@ sap.ui.define([
 				this.invalidate();
 			}
 		}
+	};
+
+	/**
+	 * set the internal visibility of the Section title. This is set by the ux rules (for example don't display a Section/SubSection title in IconTabBar mode)
+	 * @param {boolean} bValue
+	 * @param {boolean} bInvalidate if set to true, the Section should be rerendered in order to be added or removed to the dom (similar to what a "real" internalVisibility property would trigger)
+	 * @private
+	 */
+	ObjectPageSectionBase.prototype._setInternalTitleVisible = function (bValue, bInvalidate) {
+		if (bValue != this._bInternalTitleVisible) {
+			this._bInternalTitleVisible = bValue;
+			this.setTitleVisible();
+			if (bInvalidate) {
+				this.invalidate();
+			}
+		}
+	};
+
+	ObjectPageSectionBase.prototype._getInternalTitleVisible = function () {
+		return this._bInternalTitleVisible;
 	};
 
 	ObjectPageSectionBase.prototype._getInternalVisible = function () {
