@@ -282,7 +282,7 @@
 						<mdc:ValueHelp id="F6-Select-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcvh:Popover id="F6-Select-H-Pop">
-									<mdcValueHelpContent:FixedList id="F6-Select-H-FL" filterList="false" useFirstMatch="true" items="{path: '/ProductCollection'}" >
+									<mdcValueHelpContent:FixedList id="F6-Select-H-FL" filterList="false" useFirstMatch="true" restrictedToFixedValues="true" items="{path: '/ProductCollection'}" >
 										<mdcValueHelpContent:FixedListItem key="{ProductId}" text="{Name}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcvh:Popover>

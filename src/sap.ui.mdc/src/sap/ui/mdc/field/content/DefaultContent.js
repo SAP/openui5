@@ -48,6 +48,9 @@ sap.ui.define([
 		getEditForHelp: function() {
 			return this.getEdit();
 		},
+		getEditSelect: function() {
+			return ["sap/ui/mdc/field/FieldSelect"];
+		},
 		getUseDefaultEnterHandler: function() {
 			return true;
 		},
@@ -87,6 +90,9 @@ sap.ui.define([
 					break;
 				case ContentMode.EditForHelp:
 					aControlNames = this.getEditForHelp();
+					break;
+				case ContentMode.EditSelect:
+					aControlNames = this.getEditSelect();
 					break;
 				default:
 					aControlNames = this.getEdit();
@@ -136,6 +142,8 @@ sap.ui.define([
 					return [null];
 				case ContentMode.EditForHelp:
 					return this.createEditForHelp(oContentFactory, aControls, sId);
+				case ContentMode.EditSelect:
+					return this.createEditSelect(oContentFactory, aControls, sId);
 				default:
 					return this.createEdit(oContentFactory, aControls, sId);
 			}
@@ -352,6 +360,42 @@ sap.ui.define([
 				oContentFactory.setIsMeasure(true); // handle only Number or Unit (in single Field)
 			}
 			return this.createEdit(oContentFactory, aControlClasses, sId); // In normal cases there is no difference between EditForHelp and Edit.
+		},
+
+		/**
+		 * Creates the suitable controls for content mode <code>EditSelect</code>.
+		 * @param {sap.ui.mdc.field.content.ContentFactory} oContentFactory The content factory that calls the create function
+		 * @param {Object[]} aControlClasses Array containing the control classes which are to be created
+		 * @param {string} sId ID of the field control
+		 * @returns {sap.ui.core.Control[]} Array containing the created controls
+		 */
+		createEditSelect: function(oContentFactory, aControlClasses, sId) {
+			const [Select] = aControlClasses;
+
+			oContentFactory.setUseValue(true); // use only key as SelectedKey, no description
+			const oConditionsType = oContentFactory.getConditionsType();
+			const oSelect = new Select(sId, {
+				selectedKey: { path: "$field>/conditions", type: oConditionsType },
+				textAlign: "{$field>/textAlign}",
+				textDirection: "{$field>/textDirection}",
+				required: "{$field>/required}",
+				editable: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEditable },
+				enabled: { path: "$field>/editMode", formatter: oContentFactory.getMetadata()._oClass._getEnabled },
+				valueState: "{$field>/valueState}",
+				valueStateText: "{$field>/valueStateText}",
+				ariaAttributes: "{$field>/_ariaAttributes}",
+				width: "100%",
+				// fieldGroupIds: are taken from parent if not automatically set (see Element.prototype._getFieldGroupIds) -> so no binding needed
+				tooltip: "{$field>/tooltip}",
+				change: oContentFactory.getHandleContentChange(),
+				liveChange: oContentFactory.getHandleContentLiveChange(),
+				valueHelpRequest: oContentFactory.getHandleValueHelpRequest()
+			});
+
+			oContentFactory.setAriaLabelledBy(oSelect);
+			oContentFactory.setFocusClass("sapMSltFocused");
+
+			return [oSelect];
 		}
 	};
 

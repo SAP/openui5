@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/LinkContent",
 	"sap/ui/mdc/field/content/BooleanContent",
 	"sap/ui/mdc/field/content/UnitContent",
-	'sap/ui/mdc/field/ConditionType',
-	'sap/ui/mdc/field/ConditionsType',
+	"sap/ui/mdc/field/ConditionType",
+	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/base/SyncPromise"
 ], (BaseObject, FieldEditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType, SyncPromise) => {
 	"use strict";
@@ -87,7 +87,8 @@ sap.ui.define([
 				control: undefined,
 				updateTitle: function(oValueHelp, sTitle) {
 					oValueHelp.getTypeahead().setTitle(sTitle); // on phone mode, title is shown
-				}
+				},
+				restrictedToFixedValues: true
 			},
 			defineConditions: {
 				modules: ["sap/ui/mdc/ValueHelp", "sap/ui/mdc/valuehelp/Dialog", "sap/ui/mdc/valuehelp/content/Conditions"],
@@ -98,7 +99,8 @@ sap.ui.define([
 				updateTitle: function(oValueHelp, sTitle) {
 					oValueHelp.getDialog().setTitle(sTitle);
 					oValueHelp.getDialog().getContent()[0].setLabel(sTitle);
-				}
+				},
+				restrictedToFixedValues: false
 			}
 		};
 
@@ -111,6 +113,7 @@ sap.ui.define([
 		this._sOperator = undefined;
 		this._bNoFormatting = false;
 		this._bHideOperator = false;
+		this._sFocusClass = "sapMFocus";
 	};
 
 	ContentFactory.prototype.exit = function() {
@@ -152,9 +155,9 @@ sap.ui.define([
 	 */
 	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId, bProvideDefaultValueHelp) {
 		const sOperator = this._sOperator;
-		let aControlNames = oContentType.getControlNames(sContentMode, sOperator);
 		const sDefaultValueHelpName = bProvideDefaultValueHelp && oContentType.getUseDefaultValueHelp().name;
 		const oDefaultHelp = sDefaultValueHelpName && mDefaultHelps[sDefaultValueHelpName];
+		let aControlNames = oContentType.getControlNames(sContentMode, sOperator);
 		let oLoadModulesPromise;
 
 		this.setNoFormatting(oContentType.getNoFormatting(sContentMode));
@@ -184,6 +187,9 @@ sap.ui.define([
 				aControlNames = aControlNames.concat(oDefaultHelp.modules);
 			}
 		}
+
+		// initialize focus class
+		this.setFocusClass("sapMFocus");
 
 		try {
 			oLoadModulesPromise = loadModules(aControlNames)
@@ -231,12 +237,16 @@ sap.ui.define([
 	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {boolean} bMultipleLines Determines if the content type has a multiple line input
 	 * @param {string[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
+	 * @param {boolean} bProvideDefaultValueHelp If set, a default value help should be provided.
+	 * @param {boolean} bRestrictedToFixedValues If set, the ValueHelp only allows fixed values
 	 * @returns {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
-	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
+	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators, bProvideDefaultValueHelp, bRestrictedToFixedValues) {
 		let sContentMode = ContentMode.Edit;
+		const sDefaultValueHelpName = bProvideDefaultValueHelp && oContentType.getUseDefaultValueHelp().name;
+		const oDefaultHelp = sDefaultValueHelpName && mDefaultHelps[sDefaultValueHelpName];
 
 		if (sEditMode === FieldEditMode.Display) {
 			if (iMaxConditions !== 1) {
@@ -250,6 +260,8 @@ sap.ui.define([
 			sContentMode = ContentMode.EditMultiValue;
 		} else if (bMultipleLines) {
 			sContentMode = ContentMode.EditMultiLine;
+		} else if (bRestrictedToFixedValues || oDefaultHelp?.restrictedToFixedValues) {
+			sContentMode = ContentMode.EditSelect;
 		} else if (this.getField()._getValueHelp()) { // if ValueHelp assigned use control supporting help
 			sContentMode = ContentMode.EditForHelp;
 		} else if (aOperators.length === 1 && oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) {
@@ -597,6 +609,15 @@ sap.ui.define([
 
 	ContentFactory.prototype.setIsMeasure = function(bIsMeasure) {
 		this._bIsMeasure = bIsMeasure;
+		this.setUseValue(bIsMeasure);
+	};
+
+	ContentFactory.prototype.useValue = function() {
+		return this._bUseValue;
+	};
+
+	ContentFactory.prototype.setUseValue = function(bUseValue) {
+		this._bUseValue = bUseValue;
 	};
 
 	ContentFactory.prototype.getDisplayFormat = function() {
@@ -755,6 +776,14 @@ sap.ui.define([
 		return oDefaultHelp?.control;
 
 	}
+
+	ContentFactory.prototype.getFocusClass = function() {
+		return this._sFocusClass;
+	};
+
+	ContentFactory.prototype.setFocusClass = function(sClass) {
+		this._sFocusClass = sClass;
+	};
 
 	return ContentFactory;
 });

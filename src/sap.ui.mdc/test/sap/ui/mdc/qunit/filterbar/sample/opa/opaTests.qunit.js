@@ -3,10 +3,12 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
+	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/mdc/testutils/opa/TestLibrary"
 ], function (
 	Opa5,
-	opaTest
+	opaTest,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -76,10 +78,10 @@ sap.ui.define([
 
 	opaTest("2. assign filter values via Adapt Filters dialog", function(Given, When, Then) {
 
-		When.onTheMDCFilterBar.iEnterFilterValue(sFBId, {
+		When.onTheMDCFilterBar.iNavigateOnTheFilter(sFBId, {
 			Basic: {
 				label: "Boolean",
-				values: "false"
+				keyCode: KeyCodes.ARROW_DOWN
 			}
 		});
 
@@ -93,7 +95,7 @@ sap.ui.define([
 		Then.onTheMDCFilterBar.iShouldSeeFilters(sFBId, {
 			"Boolean": [{
 				operator: "EQ",
-				values: [ false ]
+				values: [ true ]
 			}],
 			"String single": [{
 				operator: "EQ",
@@ -114,7 +116,7 @@ sap.ui.define([
 		Then.onTheMDCFilterBar.iShouldSeeFilters(sFBId, {
 			"Boolean": [{
 				operator: "EQ",
-				values: [ false ]
+				values: [ true ]
 			}],
 			"String single": [{
 				operator: "EQ",

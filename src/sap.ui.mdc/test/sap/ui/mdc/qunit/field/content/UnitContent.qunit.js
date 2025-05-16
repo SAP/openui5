@@ -267,6 +267,17 @@ sap.ui.define([
 	ContentBasicTest.controlMap.EditForHelp.getPathsFunction = "getEditForHelp";
 	ContentBasicTest.controlMap.EditForHelp.createFunction = "createEditForHelp";
 
+	ContentBasicTest.controlMap.EditSelect = {
+		getPathsFunction: "getEditSelect",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditSelect",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
+	};
+
 	const sInvisibleTextIdNumber = InvisibleText.getStaticId("sap.ui.mdc", "field.NUMBER");
 	const sInvisibleTextIdUnit = InvisibleText.getStaticId("sap.ui.mdc", "field.UNIT");
 	const sInvisibleTextIdCurrency = InvisibleText.getStaticId("sap.ui.mdc", "field.CURRENCY");

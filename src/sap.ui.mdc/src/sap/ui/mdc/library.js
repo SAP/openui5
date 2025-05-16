@@ -59,6 +59,7 @@ sap.ui.define([
 			"sap.ui.mdc.field.FieldBase",
 			"sap.ui.mdc.field.FieldInput",
 			"sap.ui.mdc.field.FieldMultiInput",
+			"sap.ui.mdc.field.FieldSelect",
 			"sap.ui.mdc.valuehelp.base.DefineConditionPanel",
 			"sap.ui.mdc.Field",
 			"sap.ui.mdc.FilterField",

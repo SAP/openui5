@@ -182,7 +182,7 @@ sap.ui.define([
 				oIcon.setColor("Positive");
 			} else {
 				oIcon.setSrc("sap-icon://sys-cancel");
-				oIcon.setColor("Warning");
+				oIcon.setColor("Critical");
 			}
 		},
 

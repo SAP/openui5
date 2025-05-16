@@ -90,6 +90,7 @@ sap.ui.define([
 		 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
 		 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
 		 * @param {boolean} [oFormatOptions.multipleLines] If set, the input and output might contain multiple lines
+		 * @param {boolean} [oFormatOptions.emptyAllowed] If <code>true</code> the connected control could be made empty (no Conditions)
 		 * @param {object} [oConstraints] Value constraints
 		 * @alias sap.ui.mdc.field.ConditionType
 		 */
@@ -977,7 +978,8 @@ sap.ui.define([
 				caseSensitive: bExactMatch ? true : undefined,
 				exception: ParseException,
 				exactMatch: bExactMatch,
-				control: oControl
+				control: oControl,
+				emptyAllowed: !!this.oFormatOptions.emptyAllowed
 			};
 
 			return oDelegate.getItemForValue(oControl, oValueHelp, oConfig);
@@ -989,8 +991,9 @@ sap.ui.define([
 			const oValueHelp = this._getValueHelp();
 			const oDelegate = this._getDelegate();
 			const oControl = this.oFormatOptions.control;
+			const bEmptyAllowed = !!this.oFormatOptions.emptyAllowed;
 
-			return oDelegate.getDescription(oControl, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType);
+			return oDelegate.getDescription(oControl, oValueHelp, vKey, oCondition.inParameters, oCondition.outParameters, oBindingContext, undefined, undefined, oCondition.payload, oControl, oType, bEmptyAllowed);
 
 		}
 

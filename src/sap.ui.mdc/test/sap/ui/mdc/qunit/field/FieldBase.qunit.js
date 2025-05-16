@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/FocusHandler",
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
@@ -19,12 +20,14 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/valuehelp/content/Bool",
 	"sap/ui/mdc/valuehelp/content/Conditions",
+	"sap/ui/mdc/valuehelp/RequestShowContainerDefault",
 	"sap/ui/mdc/field/FieldInfoBase",
 	// to test V4 logic too
 	"delegates/odata/v4/FieldBaseDelegate",
 	"delegates/odata/v4/ValueHelpDelegate",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/FieldSelect",
 	"sap/ui/mdc/field/TokenizerDisplay",
 	"sap/ui/mdc/field/TokenDisplay",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
@@ -83,6 +86,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/RequestShowContainerReason"
 ], (
 	Element,
+	FocusHandler,
 	LabelEnablement,
 	Library,
 	Messaging,
@@ -98,11 +102,13 @@ sap.ui.define([
 	ListContent,
 	Bool,
 	Conditions,
+	RequestShowContainerDefault,
 	FieldInfoBase,
 	FieldBaseDelegate,
 	ValueHelpDelegateV4,
 	FieldInput,
 	FieldMultiInput,
+	FieldSelect,
 	TokenizerDisplay,
 	TokenDisplay,
 	DynamicDateRangeConditionsType,
@@ -335,6 +341,7 @@ sap.ui.define([
 			oCM.destroy();
 			oCM = undefined;
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -1025,6 +1032,7 @@ sap.ui.define([
 			oCM.destroy();
 			oCM = undefined;
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -1257,6 +1265,15 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isEmptyAllowed", (assert) => {
+
+		assert.ok(oField.isEmptyAllowed(), "Empty is allowed");
+
+		oField.setRequired(true);
+		assert.notOk(oField.isEmptyAllowed(), "Empty is not allowed for required Field");
+
+	});
+
 	let oFieldEditMulti, oFieldEditSingle, oFieldDisplay, oFieldSearch;
 
 	QUnit.module("conditions & properties", {
@@ -1297,6 +1314,7 @@ sap.ui.define([
 			oCM.destroy();
 			oCM = undefined;
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -1668,11 +1686,18 @@ sap.ui.define([
 		sap.ui.require(["sap/ui/model/odata/type/Boolean"], (aModules) => { // as type-module is loaded by creating control, check after this is done
 			setTimeout(async () => { // to update ConditionModel
 				await nextUIUpdate();
-				setTimeout(() => { // to load delegates in ValueHelp
-					let aContent = oFieldEditSingle.getAggregation("_content");
+				setTimeout(async () => { // to load delegates in ValueHelp
+					// Display mode
+					let aContent = oFieldDisplay.getAggregation("_content");
 					let oContent = aContent?.length > 0 && aContent[0];
-					assert.ok(oContent instanceof Input, "Input rendered");
-					assert.equal(oFieldEditSingle._sDefaultValueHelp, "BoolDefaultHelp", "Default Field help set");
+					assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+					assert.equal(oContent.getText(), "Yes", "Text set on Text control");
+
+					// edit mode
+					aContent = oFieldEditSingle.getAggregation("_content");
+					oContent = aContent?.length > 0 && aContent[0];
+					assert.ok(oContent instanceof FieldSelect, "Select rendered");
+					assert.equal(oFieldEditSingle._sDefaultValueHelp, "BoolDefaultHelp", "Default ValueHelp set");
 					const oValueHelp = Element.getElementById("BoolDefaultHelp");
 					assert.ok(oValueHelp instanceof ValueHelp, "ValueHelp used");
 					const oPopover = oValueHelp?.getTypeahead();
@@ -1680,15 +1705,122 @@ sap.ui.define([
 					assert.ok(oPopover instanceof Popover, "Popover used");
 					const aPopoverContent = oPopover?.getContent()[0];
 					assert.ok(aPopoverContent instanceof Bool, "Bool content used");
-					assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
+					assert.equal(oContent.getSelectedKey(), "Yes", "SelectedKey set on Select control");
 					assert.deepEqual(oValueHelp.getDelegate(), {name: "sap/ui/mdc/ValueHelpDelegate", payload: {isDefaultHelp: true}}, "base delegate used on ValueHelp");
 					oFieldEditSingle.focus();
 					assert.equal(oPopover.getTitle(), "Test", "title on typeahead");
 
-					aContent = oFieldDisplay.getAggregation("_content");
-					oContent = aContent?.length > 0 && aContent[0];
-					assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
-					assert.equal(oContent.getText(), "Yes", "Text set on Text control");
+					// test interaction with Select control
+					oFieldEditSingle.fireChangeEvent = _myFireChange;
+					oFieldEditSingle.attachEvent("change", _myChangeHandler);
+					oFieldEditSingle.attachLiveChange(_myLiveChangeHandler);
+					const $FocusDomRef = jQuery(oContent.getFocusDomRef());
+					// arrow navigation
+					sinon.spy(oValueHelp, "navigate");
+					sinon.spy(oContent, "setDOMValue");
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 100);}); // initial request takes longer
+					assert.ok(oValueHelp.navigate.calledOnce, "navigate called once");
+					assert.ok(oValueHelp.navigate.calledWith(1), "navigate called with 1");
+					assert.ok(oContent.setDOMValue.calledWith("No"), "DomValue updated on content");
+					assert.equal(oContent.getDOMValue(), "No", "shown value");
+					assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+					assert.deepEqual(sLiveValue, false, "liveChange event value");
+					oValueHelp.navigate.reset();
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.ARROW_UP, false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 0);});
+					assert.ok(oValueHelp.navigate.calledOnce, "navigate called once");
+					assert.ok(oValueHelp.navigate.calledWith(-1), "navigate called with -1");
+					assert.ok(oContent.setDOMValue.calledWith("Yes"), "DomValue updated on content");
+					assert.equal(oContent.getDOMValue(), "Yes", "shown value");
+					oValueHelp.fireNavigated({ condition: Condition.createCondition(OperatorName.EQ, [false], undefined, undefined, ConditionValidated.Validated) });
+					await new Promise((resolve) => {setTimeout(resolve, 0);});
+					assert.ok(oContent.setDOMValue.calledWith("No"), "DomValue updated on content");
+					assert.equal(oContent.getDOMValue(), "No", "shown value");
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.ENTER, false, false, false);
+					qutils.triggerKeyup(oContent.getFocusDomRef(), KeyCodes.ENTER, false, false, false); // as ENTER memorizes keydown in Select
+					await new Promise((resolve) => {setTimeout(resolve, 0);});
+					assert.equal(oContent.getSelectedKey(), "No", "SelectedKey set on Select control after Enter");
+					assert.equal(iCount, 1, "change event fired once");
+					assert.deepEqual(sValue, false, "change event value");
+					// navigate to empty-item
+					oContent.setDOMValue.reset();
+					// eslint-disable-next-line require-atomic-updates
+					iLiveCount = 0;
+					const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+					oValueHelp.fireNavigated({ condition: null, itemId: "X" });
+					await new Promise((resolve) => {setTimeout(resolve, 0);});
+					assert.deepEqual(oFieldEditSingle._oNavigateCondition, null, "NavigatedCondition is null");
+					assert.ok(oContent.setDOMValue.calledWith(""), "DomValue updated on content");
+					assert.equal(oContent.getDOMValue(), oResourceBundle.getText("valuehelp.NOT_SELECTED"), "shown value");
+					assert.equal(oFieldEditSingle.getConditions().length, 1, "Conditions on Field not changed");
+					assert.equal(oContent.getSelectedKey(), "No", "SelectedKey set on Select control");
+					assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+					assert.deepEqual(sLiveValue, null, "liveChange event value");
+					// opening on click
+					sinon.spy(oValueHelp, "toggleOpen");
+					qutils.triggerEvent("tap", oContent.getFocusDomRef());
+					await new Promise((resolve) => {setTimeout(resolve, 100);}); // to wait until really opened
+					const [oBool] = oValueHelp.getTypeahead().getContent();
+					const aItems = oBool.getAggregation("displayContent").getItems();
+					assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+					assert.ok(oValueHelp.toggleOpen.calledWith(true), "open called for Typeahead");
+					assert.equal($FocusDomRef.attr("aria-controls"), "BoolDefaultHelp-content-List", "Opening: aria-controls set");
+					assert.equal($FocusDomRef.attr("aria-activedescendant"), aItems[0].getId(), "Navigation: aria-activedescendant set");
+					// selecting empty-item on ValueHelp
+					// eslint-disable-next-line require-atomic-updates
+					iCount = 0;
+					oValueHelp.fireSelect({ conditions: [] });
+					assert.equal(oFieldEditSingle.getConditions().length, 0, "no Conditions on Field");
+					assert.equal(oContent.getSelectedKey(), "", "SelectedKey set on Select control");
+					assert.equal(oContent.getDOMValue(), oResourceBundle.getText("valuehelp.NOT_SELECTED"), "shown value");
+					assert.equal(iCount, 1, "change event fired once");
+					assert.deepEqual(sValue, false, "change event value");
+					// close via click
+					oValueHelp.toggleOpen.reset();
+					qutils.triggerEvent("tap", oContent.getFocusDomRef());
+					await new Promise((resolve) => {setTimeout(resolve, 100);}); // to wait until really closed
+					assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+					// open via keyboard
+					oValueHelp.toggleOpen.reset();
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.F4, false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 100);}); // to wait until really opened
+					assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+					// close via keyboard
+					oValueHelp.toggleOpen.reset();
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.F4, false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 0);});
+					assert.ok(oValueHelp.toggleOpen.calledOnce, "open called once");
+					// typeahead
+					oContent.setDOMValue.reset();
+					// eslint-disable-next-line require-atomic-updates
+					iLiveCount = 0;
+					qutils.triggerKeypress(oContent.getFocusDomRef(), "y", false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 500);}); // because of debounce & opening
+					assert.ok(oContent.setDOMValue.calledWith("Yes"), "DomValue updated on content");
+					assert.equal(oContent.getDOMValue(), "Yes", "shown value");
+					assert.equal(oValueHelp.getFilterValue(), "y", "FilterValue set on ValueHelp");
+					assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+					assert.equal(sLiveValue, "y", "liveChange event value");
+					// revert via esc
+					oContent.setDOMValue.reset();
+					iLiveCount = 0;
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.ESCAPE, false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 100);}); // to close
+					assert.equal(oContent.getDOMValue(), oResourceBundle.getText("valuehelp.NOT_SELECTED"), "shown value");
+					assert.equal(iLiveCount, 1, "LiveChange Event fired once");
+					assert.equal(sLiveValue, "", "liveChange event value");
+					// navigate & focusout
+					// eslint-disable-next-line require-atomic-updates
+					iCount = 0;
+					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, false, false);
+					await new Promise((resolve) => {setTimeout(resolve, 0);});
+					oFieldEditMulti.focus();
+					assert.equal(iCount, 1, "change event fired once");
+					assert.deepEqual(sValue, true, "change event value");
+					iCount = 0;
+					// eslint-disable-next-line require-atomic-updates
+					iLiveCount = 0;
 
 					// setting ValueHelp needs to remove default help
 					oFieldEditSingle.setValueHelp("X");
@@ -1728,7 +1860,7 @@ sap.ui.define([
 				setTimeout(() => { // to load delegates in ValueHelp
 					let aContent = oFieldEditSingle.getAggregation("_content");
 					let oContent = aContent?.length > 0 && aContent[0];
-					assert.ok(oContent instanceof Input, "Input rendered");
+					assert.ok(oContent instanceof FieldSelect, "Select rendered");
 					assert.equal(oFieldEditSingle._sDefaultValueHelp, "BoolDefaultHelp", "Default Field help set");
 					oValueHelp = Element.getElementById("BoolDefaultHelp");
 					assert.ok(oValueHelp instanceof ValueHelp, "ValueHelp used");
@@ -1737,7 +1869,7 @@ sap.ui.define([
 					assert.ok(oPopover instanceof Popover, "Popover used");
 					const aPopoverContent = oPopover?.getContent()[0];
 					assert.ok(aPopoverContent instanceof Bool, "Bool content used");
-					assert.equal(oContent.getValue(), "Yes", "Value set on Input control");
+					assert.equal(oContent.getSelectedKey(), "Yes", "Value set on Input control");
 
 					aContent = oFieldDisplay.getAggregation("_content");
 					oContent = aContent?.length > 0 && aContent[0];
@@ -2109,6 +2241,7 @@ sap.ui.define([
 			iValidationError = 0;
 			iValidationSuccess = 0;
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -3181,6 +3314,7 @@ sap.ui.define([
 			sId = "";
 			sValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -3353,6 +3487,7 @@ sap.ui.define([
 			sLiveId = "";
 			sLiveValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -3376,7 +3511,8 @@ sap.ui.define([
 			delegate: oField.getControlDelegate(),
 			delegateName: oField.getDelegate().name,
 			payload: oField.getPayload(),
-			defaultOperatorName: null
+			defaultOperatorName: null,
+			emptyAllowed: true
 		};
 
 		oField.focus(); // as ValueHelp is connected with focus
@@ -4169,6 +4305,7 @@ sap.ui.define([
 			FieldBase._init();
 			vGetItemsForValue = undefined;
 			bAsync = false;
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -4190,7 +4327,8 @@ sap.ui.define([
 			dataType: oField.getContentFactory().retrieveDataType(),
 			exactMatch: true,
 			exception: FormatException,
-			bindingContext: undefined
+			bindingContext: undefined,
+			emptyAllowed: true
 		};
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		oField.setDisplay(FieldDisplay.DescriptionValue);
@@ -4354,7 +4492,8 @@ sap.ui.define([
 				dataType: oField.getContentFactory().retrieveDataType(),
 				exactMatch: true,
 				exception: FormatException,
-				bindingContext: undefined
+				bindingContext: undefined,
+				emptyAllowed: true
 			};
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 			fnDone();
@@ -4795,7 +4934,8 @@ sap.ui.define([
 			exactMatch: true,
 			caseSensitive: true,
 			exception: ParseException,
-			bindingContext: undefined
+			bindingContext: undefined,
+			emptyAllowed: true
 		};
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		let aConditions = oValueHelp.getConditions();
@@ -4831,7 +4971,8 @@ sap.ui.define([
 			exactMatch: false,
 			caseSensitive: undefined,
 			exception: ParseException,
-			bindingContext: undefined
+			bindingContext: undefined,
+			emptyAllowed: true
 		};
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		setTimeout(() => { // to wait for update of valueState via Model
@@ -4902,7 +5043,8 @@ sap.ui.define([
 			exactMatch: false,
 			caseSensitive: undefined,
 			exception: ParseException,
-			bindingContext: undefined
+			bindingContext: undefined,
+			emptyAllowed: true
 		};
 		assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 		setTimeout(() => { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
@@ -5893,6 +6035,7 @@ sap.ui.define([
 			sLiveId = "";
 			sLiveValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -6238,6 +6381,7 @@ sap.ui.define([
 			sLiveId = "";
 			sLiveValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -6411,6 +6555,7 @@ sap.ui.define([
 			sLiveId = "";
 			sLiveValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -6508,6 +6653,7 @@ sap.ui.define([
 			sLiveId = "";
 			sLiveValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -6571,6 +6717,7 @@ sap.ui.define([
 			sLiveId = "";
 			sLiveValue = "";
 			FieldBase._init();
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 
@@ -6740,6 +6887,7 @@ sap.ui.define([
 			FieldBase._init();
 			aFieldGroupIds = undefined;
 			sFieldGroupControl = undefined;
+			FocusHandler.oLastFocusedControlInfo = null; // prevent restore of last focus
 		}
 	});
 

@@ -42,6 +42,9 @@ sap.ui.define([
 		getEditMultiLine: function() {
 			return [null];
 		},
+		getEditSelect: function() {
+			return [null];
+		},
 		getUseDefaultValueHelp: function() {
 			return false;
 		},
@@ -218,6 +221,9 @@ sap.ui.define([
 				oContentFactory.setUnitType(oNewType);
 				oContentFactory.updateConditionType();
 			}
+		},
+		createEditSelect: function() {
+			throw new Error("sap.ui.mdc.field.content.UnitContent - createEditSelect not defined!");
 		}
 	});
 

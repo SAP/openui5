@@ -19,10 +19,11 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/DefaultTypeMap",
 	"sap/ui/mdc/Link",
+	"sap/ui/mdc/ValueHelp",
 	"sap/m/Link",
 	"sap/ui/model/type/String",
 	"sap/base/i18n/date/CalendarType"
-], function(QUnit, FieldBase, ConditionType, ConditionsType, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, BaseType, FieldEditMode, ContentMode, OperatorName, DefaultTypeMap, MdcLink, Link, StringType, CalendarType) {
+], function(QUnit, FieldBase, ConditionType, ConditionsType, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, BaseType, FieldEditMode, ContentMode, OperatorName, DefaultTypeMap, MdcLink, ValueHelp, Link, StringType, CalendarType) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
@@ -344,11 +345,20 @@ sap.ui.define([
 		assert.notOk(this.oContentFactory.getHideOperator(), "Correct value returned.");
 	});
 
+	QUnit.test("useValue", function(assert) {
+		this.oContentFactory.setUseValue(true);
+		assert.ok(this.oContentFactory.useValue(), "Correct value returned.");
+		this.oContentFactory.setUseValue(false);
+		assert.notOk(this.oContentFactory.useValue(), "Correct value returned.");
+	});
+
 	QUnit.test("isMeasure", function(assert) {
 		this.oContentFactory.setIsMeasure(true);
 		assert.ok(this.oContentFactory.isMeasure(), "Correct value returned.");
+		assert.ok(this.oContentFactory.useValue(), "useValue: Correct value returned.");
 		this.oContentFactory.setIsMeasure(false);
 		assert.notOk(this.oContentFactory.isMeasure(), "Correct value returned.");
+		assert.notOk(this.oContentFactory.useValue(), "useValue: Correct value returned.");
 	});
 
 	/* Can't check if the handler is correct as it's a local function inside of FieldBase */
@@ -387,7 +397,14 @@ sap.ui.define([
 		/* ContentMode EditForHelp */
 		sinon.stub(oFakeField, "_getValueHelp").returns("X");
 		assert.equal(this.oContentFactory.getContentMode(null, FieldEditMode.Editable, 1, false, []), ContentMode.EditForHelp, "ContentMode 'EditForHelp' returned.");
+
+		/* ContentMode EditSelect */
+		const oValueHelp = new ValueHelp("X");
+		sinon.stub(oValueHelp, "isRestrictedToFixedValues").returns(true);
+		assert.equal(this.oContentFactory.getContentMode(null, FieldEditMode.Editable, 1, false, [], false, true), ContentMode.EditSelect, "ContentMode 'EditSelect' returned.");
 		oFakeField._getValueHelp.restore();
+		oValueHelp.destroy();
+		assert.equal(this.oContentFactory.getContentMode(BooleanContent, FieldEditMode.Editable, 1, false, [], true, false), ContentMode.EditSelect, "ContentMode 'EditSelect' returned.");
 	});
 
 	QUnit.test("getContentType", function(assert) {
@@ -435,6 +452,12 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, true), SearchContent, "SearchContent returned.");
 		oFakeField.isSearchField.restore();
 		oFakeField.getMaxConditions.restore();
+	});
+
+	QUnit.test("getFocusClass", function(assert) {
+		assert.equal(this.oContentFactory.getFocusClass(), "sapMFocus", "Correct value returned.");
+		this.oContentFactory.setFocusClass("XXX");
+		assert.equal(this.oContentFactory.getFocusClass(), "XXX", "Correct value returned.");
 	});
 
 	QUnit.module("Other", {
@@ -494,6 +517,7 @@ sap.ui.define([
 		this.oContentFactory._sOperator = OperatorName.BT;
 		const oCreateEditOperatorBTPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + OperatorName.BT, false);
 		const oCreateEditForHelpPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditForHelp, sContentTypeName + "-" + ContentMode.EditForHelp, false);
+		const oCreateEditSelectPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditSelect, sContentTypeName + "-" + ContentMode.EditSelect, oContentType === BooleanContent);
 
 		return [
 			oCreateDisplayPromise,
@@ -504,7 +528,8 @@ sap.ui.define([
 			oCreateEditMutliLinePromise,
 			oCreateEditOperatorEQPromise,
 			oCreateEditOperatorBTPromise,
-			oCreateEditForHelpPromise
+			oCreateEditForHelpPromise,
+			oCreateEditSelectPromise
 		];
 	};
 
@@ -518,7 +543,8 @@ sap.ui.define([
 			ContentMode.EditMultiLine,
 			ContentMode.EditOperator + " (EQ)",
 			ContentMode.EditOperator + " (BT)",
-			ContentMode.EditForHelp
+			ContentMode.EditForHelp,
+			ContentMode.EditSelect
 		];
 		const oContentType = oExpectedContentControl.contentType;
 		const sContentTypeName = oExpectedContentControl.contentTypeName;
@@ -576,7 +602,8 @@ sap.ui.define([
 					[], // EditMultiLine
 					[], // EditOperator EQ
 					[], // EditOperator BT
-					["sap.ui.mdc.field.FieldInput"] // EditForHelp
+					["sap.ui.mdc.field.FieldInput"], // EditForHelp,
+					["sap.ui.mdc.field.FieldSelect", "sap.ui.mdc.ValueHelp"] // EditSelect
 				],
 				defaultHelp: {typeahead: "sap.ui.mdc.valuehelp.Popover", content: "sap.ui.mdc.valuehelp.content.Bool", updateTitle: "Update"}
 			},
@@ -592,7 +619,8 @@ sap.ui.define([
 					[],
 					["sap.m.DatePicker"],
 					["sap.m.DateRangeSelection"],
-					["sap.ui.mdc.field.FieldInput"]
+					["sap.ui.mdc.field.FieldInput"],
+					[]
 				],
 				defaultHelp: {dialog: "sap.ui.mdc.valuehelp.Dialog", content: "sap.ui.mdc.valuehelp.content.Conditions", updateTitle: "Update"}
 			},
@@ -608,7 +636,8 @@ sap.ui.define([
 					[],
 					["sap.m.DateTimePicker"],
 					[],
-					["sap.ui.mdc.field.FieldInput"]
+					["sap.ui.mdc.field.FieldInput"],
+					[]
 				],
 				defaultHelp: {dialog: "sap.ui.mdc.valuehelp.Dialog", content: "sap.ui.mdc.valuehelp.content.Conditions", updateTitle: "Update"}
 			},
@@ -624,7 +653,8 @@ sap.ui.define([
 					["sap.m.TextArea"],
 					[],
 					[],
-					["sap.ui.mdc.field.FieldInput"]
+					["sap.ui.mdc.field.FieldInput"],
+					["sap.ui.mdc.field.FieldSelect"] // EditSelect
 				],
 				defaultHelp: {dialog: "sap.ui.mdc.valuehelp.Dialog", content: "sap.ui.mdc.valuehelp.content.Conditions", updateTitle: "Update"}
 			},
@@ -640,7 +670,8 @@ sap.ui.define([
 					["sap.m.TextArea"],
 					[],
 					[],
-					["sap.ui.mdc.field.FieldInput"]
+					["sap.ui.mdc.field.FieldInput"],
+					[]
 				]
 			},
 			{
@@ -651,6 +682,7 @@ sap.ui.define([
 					[],
 					[],
 					["sap.m.SearchField"],
+					[],
 					[],
 					[],
 					[],
@@ -670,7 +702,8 @@ sap.ui.define([
 					[],
 					["sap.m.TimePicker"],
 					[],
-					["sap.ui.mdc.field.FieldInput"]
+					["sap.ui.mdc.field.FieldInput"],
+					[]
 				],
 				defaultHelp: {dialog: "sap.ui.mdc.valuehelp.Dialog", content: "sap.ui.mdc.valuehelp.content.Conditions", updateTitle: "Update"}
 			},
@@ -686,7 +719,8 @@ sap.ui.define([
 					[],
 					[],
 					[],
-					["sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput"]
+					["sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput"],
+					[]
 				]
 			}
 		];
