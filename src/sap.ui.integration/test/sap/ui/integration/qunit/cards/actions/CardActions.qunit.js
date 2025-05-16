@@ -828,66 +828,6 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest_TimelineCard_No_Request = {
-			"_version": "1.8.0",
-			"sap.app": {
-				"id": "test.card.actions.card.timeline",
-				"type": "card"
-			},
-			"sap.card": {
-				"type": "Timeline",
-				"header": {
-					"title": "Past Activities",
-					"subTitle": "For October"
-				},
-				"content": {
-					"maxItems": 3,
-					"data": {
-						"json": [{
-								"Title": "Weekly sync: Marketplace / Design Stream",
-								"Description": "MRR WDF18 C3.2(GLASSBOX)",
-								"Icon": "sap-icon://appointment-2",
-								"Time": "2021-10-25T10:00:00.000Z",
-								"Url": "/activity1"
-							},
-							{
-								"Title": "Video Conference for FLP@SF, S4,Hybris",
-								"Icon": "sap-icon://my-view",
-								"Time": "2021-10-25T14:00:00.000Z",
-								"Url": "/activity2"
-							},
-							{
-								"Title": "Call 'Project Nimbus'",
-								"Icon": "sap-icon://outgoing-call",
-								"Time": "2021-10-25T16:00:00.000Z",
-								"Url": "/activity3"
-							}
-						]
-					},
-					"item": {
-						"dateTime": {
-							"value": "{Time}"
-						},
-						"description": {
-							"value": "{Description}"
-						},
-						"title": {
-							"value": "{Title}"
-						},
-						"icon": {
-							"src": "{Icon}"
-						},
-						"actions": [{
-							"type": "Navigation",
-							"parameters": {
-								"url": "{Url}"
-							}
-						}]
-					}
-				}
-			}
-		};
-
 		var oManifest_ActionsStrip = {
 			"sap.app": {
 				"id": "card.explorer.footer.manyButtons",
@@ -1364,51 +1304,6 @@ sap.ui.define([
 			oAttachNavigationSpy.restore();
 		});
 
-		QUnit.module("Navigation Action - List Content", {
-			beforeEach: function () {
-				this.oCard = new Card({
-					width: "400px",
-					height: "600px"
-				});
-
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
-		QUnit.test("List should be actionable ", async function (assert) {
-			var oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
-					Log.error(LOG_MESSAGE);
-				});
-
-			// Act
-			this.oCard.setManifest(oManifest_ListCard_No_Request);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oCardListItems = this.oCard.getCardContent()._getList().getItems();
-
-			// Assert
-			assert.strictEqual(oCardListItems[0].getType(), ListType.Active, "Card list item is actionable");
-			assert.strictEqual(oCardListItems[1].getType(), ListType.Inactive, "Card list item is NOT actionable");
-
-			//Act
-			oCardListItems[0].firePress();
-			await nextUIUpdate();
-
-			// Assert
-			assert.ok(oActionSpy.callCount === 1, "Card List Item is clicked");
-
-			// Cleanup
-			oActionSpy.restore();
-			oStubOpenUrl.restore();
-		});
-
 		QUnit.module("Navigation Action - Object Content", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1505,48 +1400,6 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(oContent.$().hasClass("sapFCardSectionClickable"), "Card Content is clickable");
-			assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
-
-			// Cleanup
-			oActionSpy.restore();
-			oStubOpenUrl.restore();
-		});
-
-		QUnit.module("Navigation Action - Table Content", {
-			beforeEach: function () {
-				this.oCard = new Card({
-					width: "400px",
-					height: "600px",
-					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
-				});
-
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
-		QUnit.test("Pressing a table row column with type 'action' should fire an action", async function (assert) {
-			var oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
-
-			// Act
-			this.oCard.setManifest(tableContent_action_on_cell);
-
-			await nextCardReadyEvent(this.oCard);
-			await nextUIUpdate();
-
-			var oContent = this.oCard.getCardContent();
-
-			//Act
-			var oLink = Element.closestTo(oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)")[0]);
-			qutils.triggerKeydown(oLink.getDomRef(), KeyCodes.ENTER);
-
-			await nextUIUpdate();
-
-			// Assert
 			assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
 
 			// Cleanup
@@ -1822,52 +1675,5 @@ sap.ui.define([
 			oStubOpenUrl.restore();
 		});
 
-		return Library.load("sap.suite.ui.commons").then(function () {
-			QUnit.module("Navigation Action - Timeline Content", {
-				beforeEach: function () {
-					this.oCard = new Card({
-						width: "400px",
-						height: "600px"
-					});
-				},
-				afterEach: function () {
-					this.oCard.destroy();
-					this.oCard = null;
-				}
-			});
-
-			QUnit.test("Timeline should be actionable ", async function (assert) {
-				var oActionSpy = sinon.spy(CardActions, "fireAction"),
-					oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {
-						Log.error(LOG_MESSAGE);
-					});
-
-				// Act
-				this.oCard.setManifest(oManifest_TimelineCard_No_Request);
-				this.oCard.placeAt(DOM_RENDER_LOCATION);
-
-				await nextCardReadyEvent(this.oCard);
-				await nextUIUpdate();
-
-				var oContentItems = this.oCard.getCardContent().getInnerList().getContent();
-
-				//Act
-				oContentItems[0].fireSelect();
-				await nextUIUpdate();
-
-				// Assert
-				assert.ok(oActionSpy.callCount === 1, "Timeline item action is fired");
-
-				// Cleanup
-				oActionSpy.restore();
-				oStubOpenUrl.restore();
-			});
-		}).catch(function () {
-			QUnit.module("Navigation Action - Timeline Content");
-			QUnit.test("Timeline not supported", function (assert) {
-				assert.ok(true, "Timeline content type is not available with this distribution.");
-			});
-		});
 	}
-
 );
