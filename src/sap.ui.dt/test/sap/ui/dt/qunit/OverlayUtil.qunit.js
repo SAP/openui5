@@ -103,56 +103,6 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-		QUnit.test("when Overlays are created and the getNextOverlay function is called", function(assert) {
-			var oNextOverlay = OverlayUtil.getNextOverlay(this.oLayoutOverlay2);
-			assert.strictEqual(oNextOverlay, this.oLayoutOverlay1, "layoutOverlay2 -> layoutOverlay1");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oLayoutOverlay1);
-			assert.strictEqual(oNextOverlay, this.oLayoutOverlay0, "layoutOverlay1 -> layoutOverlay0");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oLayoutOverlay0);
-			assert.strictEqual(oNextOverlay, this.oButtonOverlay01, "layoutOverlay0 -> oButtonOverlay01");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oButtonOverlay01);
-			assert.strictEqual(oNextOverlay, this.oButtonOverlay02, "oButtonOverlay01 -> oButtonOverlay02");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oButtonOverlay02);
-			assert.strictEqual(oNextOverlay, this.oButtonOverlay21, "oButtonOverlay02 -> oButtonOverlay21");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oButtonOverlay21);
-			assert.strictEqual(oNextOverlay, this.oLayoutOverlay3, "oButtonOverlay21 -> oLayoutOverlay3");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oLayoutOverlay3);
-			assert.strictEqual(oNextOverlay, this.oButtonOverlay31, "oLayoutOverlay3 -> oButtonOverlay31");
-
-			oNextOverlay = OverlayUtil.getNextOverlay(this.oButtonOverlay31);
-			assert.strictEqual(oNextOverlay, undefined, "oButtonOverlay31 -> undefined");
-			// call getNextOverlay without an Overlay
-			assert.strictEqual(OverlayUtil.getNextOverlay(), undefined, "() -> undefined");
-		});
-
-		QUnit.test("when Overlays are created and the getPreviousOverlay function is called", function(assert) {
-			var oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oButtonOverlay21);
-			assert.strictEqual(oPreviousOverlay, this.oButtonOverlay02, "oButtonOverlay21 -> oButtonOverlay02");
-
-			oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oButtonOverlay02);
-			assert.strictEqual(oPreviousOverlay, this.oButtonOverlay01, "oButtonOverlay02 -> oButtonOverlay01");
-
-			oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oButtonOverlay01);
-			assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay0, "oButtonOverlay01 -> layoutOverlay0");
-
-			oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oLayoutOverlay0);
-			assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay1, "oLayoutOverlay0 -> layoutOverlay1");
-
-			oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oLayoutOverlay1);
-			assert.strictEqual(oPreviousOverlay, this.oLayoutOverlay2, "oLayoutOverlay1 -> oLayoutOverlay2");
-
-			oPreviousOverlay = OverlayUtil.getPreviousOverlay(this.oLayoutOverlay2);
-			assert.strictEqual(oPreviousOverlay, undefined, "oLayoutOverlay2 -> undefined");
-			// call getPreviousOverlay without an Overlay
-			assert.strictEqual(OverlayUtil.getPreviousOverlay(), undefined, "() -> undefined");
-		});
-
 		QUnit.test("when Overlays are created and the getAllChildOverlays function is called", function(assert) {
 			var aChildOverlays = OverlayUtil.getAllChildOverlays(this.oLayoutOverlay0);
 			assert.strictEqual(aChildOverlays.length, 2, "oLayoutOverlay0 has 2 children");
@@ -166,34 +116,6 @@ sap.ui.define([
 			aChildOverlays = OverlayUtil.getAllChildOverlays(undefined);
 			assert.ok(Array.isArray(aChildOverlays), "undefined as function-parameter returns an empty array");
 			assert.strictEqual(aChildOverlays.length, 0, "undefined as function-parameter has no children");
-		});
-
-		QUnit.test("when Overlays are created and the getFirstChildOverlay function is called", function(assert) {
-			var oChildOverlay = OverlayUtil.getFirstChildOverlay(this.oLayoutOverlay0);
-			assert.strictEqual(oChildOverlay, this.oButtonOverlay01, "oLayoutOverlay0 -> oButtonOverlay01 is the first child");
-
-			oChildOverlay = OverlayUtil.getFirstChildOverlay(this.oLayoutOverlay1);
-			assert.strictEqual(oChildOverlay, this.oLayoutOverlay0, "oLayoutOverlay1 -> oLayoutOverlay0 is the first child");
-
-			oChildOverlay = OverlayUtil.getFirstChildOverlay(this.oButtonOverlay01);
-			assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
-
-			oChildOverlay = OverlayUtil.getFirstChildOverlay(undefined);
-			assert.strictEqual(oChildOverlay, undefined, "undefined as function-parameter has no children and returns 'undefined'");
-		});
-
-		QUnit.test("when Overlays are created and the getLastChildOverlay function is called", function(assert) {
-			var oChildOverlay = OverlayUtil.getLastChildOverlay(this.oLayoutOverlay0);
-			assert.strictEqual(oChildOverlay, this.oButtonOverlay02, "oLayoutOverlay0 -> oButtonOverlay02 is the last child");
-
-			oChildOverlay = OverlayUtil.getLastChildOverlay(this.oLayoutOverlay1);
-			assert.strictEqual(oChildOverlay, this.oLayoutOverlay0, "oLayoutOverlay1 -> oLayoutOverlay0 is the last child");
-
-			oChildOverlay = OverlayUtil.getLastChildOverlay(this.oButtonOverlay01);
-			assert.strictEqual(oChildOverlay, undefined, "oButtonOverlay01 has no children and returns 'undefined'");
-
-			oChildOverlay = OverlayUtil.getLastChildOverlay(undefined);
-			assert.strictEqual(oChildOverlay, undefined, "undefined as function-parameter has no children and returns 'undefined'");
 		});
 
 		QUnit.test("when Overlays are created and the getFirstDescendantByCondition function is called", function(assert) {

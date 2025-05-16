@@ -157,7 +157,7 @@ sap.ui.define([
 			if (fnCondition(oChildOverlay)) {
 				return oChildOverlay;
 			}
-			var oDescendantOverlay = this.getFirstDescendantByCondition(oChildOverlay, fnCondition);
+			var oDescendantOverlay = OverlayUtil.getFirstDescendantByCondition(oChildOverlay, fnCondition);
 			if (oDescendantOverlay) {
 				return oDescendantOverlay;
 			}
@@ -184,7 +184,7 @@ sap.ui.define([
 			if (fnCondition(oChildOverlay)) {
 				return oChildOverlay;
 			}
-			var oDescendantOverlay = this.getLastDescendantByCondition(oChildOverlay, fnCondition);
+			var oDescendantOverlay = OverlayUtil.getLastDescendantByCondition(oChildOverlay, fnCondition);
 			if (oDescendantOverlay) {
 				return oDescendantOverlay;
 			}
@@ -213,36 +213,6 @@ sap.ui.define([
 			}
 		}
 		return aChildElementOverlays;
-	};
-
-	/**
-	 * Returns first child overlay.
-	 *
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
-	 * @returns {sap.ui.dt.ElementOverlay} Returns the first child overlay
-	 * @private
-	 */
-	OverlayUtil.getFirstChildOverlay = function(oOverlay) {
-		var aChildren = this.getAllChildOverlays(oOverlay);
-		if (aChildren.length) {
-			return aChildren[0];
-		}
-		return undefined;
-	};
-
-	/**
-	 * Returns last child overlay.
-	 *
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Source overlay object
-	 * @returns {sap.ui.dt.ElementOverlay} Returns the last child overlay
-	 * @private
-	 */
-	OverlayUtil.getLastChildOverlay = function(oOverlay) {
-		var aChildren = this.getAllChildOverlays(oOverlay);
-		if (aChildren.length) {
-			return aChildren[aChildren.length - 1];
-		}
-		return undefined;
 	};
 
 	/**
@@ -310,64 +280,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get next overlay (look first in children, then next siblings).
-	 * @param  {sap.ui.dt.Overlay} oOverlay The source overlay
-	 * @return {sap.ui.dt.Overlay} Returns the overlay that was found first
-	 * @private
-	 */
-	OverlayUtil.getNextOverlay = function(oOverlay) {
-		if (!oOverlay) {
-			return undefined;
-		}
-
-		var oFirstChildOverlay = this.getFirstChildOverlay(oOverlay);
-		if (oFirstChildOverlay) {
-			return oFirstChildOverlay;
-		}
-
-		var oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
-		if (oNextSiblingOverlay) {
-			return oNextSiblingOverlay;
-		}
-
-		do {
-			oOverlay = oOverlay.getParentElementOverlay();
-			oNextSiblingOverlay = this.getNextSiblingOverlay(oOverlay);
-		} while (oOverlay && !oNextSiblingOverlay);
-
-		return oNextSiblingOverlay;
-	};
-
-	/**
-	 * Get next overlay (look first in parent, then previous siblings).
-	 * @param  {sap.ui.dt.Overlay} oOverlay The source overlay
-	 * @return {sap.ui.dt.Overlay} Returns the overlay that was found first
-	 */
-	OverlayUtil.getPreviousOverlay = function(oOverlay) {
-		if (!oOverlay) {
-			return undefined;
-		}
-
-		var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
-		if (!oParentAggregationOverlay) {
-			return undefined;
-		}
-
-		var oPreviousSiblingOverlay = this.getPreviousSiblingOverlay(oOverlay);
-		if (oPreviousSiblingOverlay) {
-			var oLastChildOverlay = oPreviousSiblingOverlay;
-			do {
-				oPreviousSiblingOverlay = oLastChildOverlay;
-				oLastChildOverlay = this.getLastChildOverlay(oPreviousSiblingOverlay);
-			} while (oLastChildOverlay);
-
-			return oPreviousSiblingOverlay;
-		}
-
-		return oOverlay.getParentElementOverlay();
-	};
-
-	/**
 	 * Applies a function to every element in an overlay's element tree.
 	 * @param  {sap.ui.dt.ElementOverlay} oElementOverlay The source overlay
 	 * @param  {function} fnCallback The function to be applied
@@ -378,9 +290,9 @@ sap.ui.define([
 
 		oElementOverlay.getChildren().forEach(function(oAggregationOverlay) {
 			oAggregationOverlay.getChildren().forEach(function(oChildOverlay) {
-				this.iterateOverlayElementTree(oChildOverlay, fnCallback);
-			}, this);
-		}, this);
+				OverlayUtil.iterateOverlayElementTree(oChildOverlay, fnCallback);
+			});
+		});
 	};
 
 	/**
@@ -402,7 +314,7 @@ sap.ui.define([
 	 */
 	OverlayUtil.setFirstParentMovable = function(oOverlay, bMovable) {
 		if (!bMovable) {
-			const oFirstMovableParentOverlay = this.getFirstMovableParentOverlay(oOverlay);
+			const oFirstMovableParentOverlay = OverlayUtil.getFirstMovableParentOverlay(oOverlay);
 			if (oFirstMovableParentOverlay) {
 				oOverlay._firstMovableParentOverlay = oFirstMovableParentOverlay;
 				oFirstMovableParentOverlay.setMovable(false);
@@ -684,26 +596,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all parent overlays that have scrollbars (with scrollbar synchronizers) on the tree
-	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay being checked
-	 * @returns {sap.ui.dt.Overlay[]} - Array with all parent overlays containing scrollbars
-	 */
-	OverlayUtil.findParentOverlaysWithScrollbar = function(oElementOverlay) {
-		var aOverlaysWithScrollbar = [];
-		function findParentsWithScrollbar(oOverlay) {
-			if (oOverlay._oScrollbarSynchronizers.size > 0) {
-				aOverlaysWithScrollbar.push(oOverlay);
-			}
-			if (!oOverlay.getParent()) {
-				return aOverlaysWithScrollbar;
-			}
-			return findParentsWithScrollbar(oOverlay.getParent());
-		}
-
-		return findParentsWithScrollbar(oElementOverlay);
-	};
-
-	/**
 	 * Returns the first parent overlay that is movable
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay being checked
 	 * @returns {sap.ui.dt.Overlay} - First parent overlay that is movable or undefined
@@ -727,4 +619,4 @@ sap.ui.define([
 	};
 
 	return OverlayUtil;
-}, /* bExport= */true);
+});

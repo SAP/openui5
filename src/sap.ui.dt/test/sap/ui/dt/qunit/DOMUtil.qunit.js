@@ -44,31 +44,6 @@ sap.ui.define([
 	");
 
 	/**
-	 * getSize
-	 */
-	QUnit.module("Given that a container is rendered", {
-		beforeEach() {
-			this.oContainer = document.createElement("div");
-			this.oContainer.style.background = "blue";
-			this.oContainer.style.width = "200px";
-			this.oContainer.style.height = "200px";
-			document.getElementById("qunit-fixture").append(this.oContainer);
-		},
-		afterEach() {
-			this.oContainer.remove();
-		}
-	}, function() {
-		QUnit.test("when getSize is called for the container", function(assert) {
-			var mExpectedSize = {
-				width: 200,
-				height: 200
-			};
-			assert.strictEqual(DOMUtil.getSize(this.oContainer).width, mExpectedSize.width, "then the width is returned correctly");
-			assert.strictEqual(DOMUtil.getSize(this.oContainer).height, mExpectedSize.height, "then the height is returned correctly");
-		});
-	});
-
-	/**
 	 * getOffsetFromParent
 	 */
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
@@ -119,31 +94,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given some dom elements in and out of viewport...", {
-		beforeEach() {
-			this.oInsideDom = document.createElement("input");
-			document.getElementById("qunit-fixture").append(this.oInsideDom);
-			this.oOutsideDom = document.createElement("button");
-			document.getElementById("qunit-fixture").append(this.oOutsideDom);
-
-			this.oInsideDom.style.marginBottom = `${document.getElementById("qunit-fixture").clientHeight}px`;
-			this.oInsideDom.style.marginRight = `${document.getElementById("qunit-fixture").clientWidth}px`;
-			this.oInsideDom.style.marginTop = "10px";
-		},
-		afterEach() {
-			this.oInsideDom.remove();
-			this.oOutsideDom.remove();
-		}
-	}, function() {
-		QUnit.test("when isElementInViewport is called from inside viewport", function(assert) {
-			assert.ok(DOMUtil.isElementInViewport(this.oInsideDom), "then the function returns true");
-		});
-
-		QUnit.test("when isElementInViewport is called from outside viewport", function(assert) {
-			assert.notOk(DOMUtil.isElementInViewport(this.oOutsideDom), "then the function returns false");
-		});
-	});
-
 	/**
 	 * getZIndex
 	 */
@@ -163,15 +113,6 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the DOM reference is available", function(assert) {
 			var oButtonDomRef = this.oButton.getDomRef();
-			var oBoundingClientRect = oButtonDomRef.getBoundingClientRect();
-			var oExpected = {
-				width: Math.round(oBoundingClientRect.width),
-				height: Math.round(oBoundingClientRect.height)
-			};
-			var mSize = DOMUtil.getSize(oButtonDomRef);
-			mSize.width = Math.round(mSize.width);
-			mSize.height = Math.round(mSize.height);
-			assert.deepEqual(mSize, oExpected, "then the static method getSize returns the right value");
 
 			document.getElementById("qunit-fixture").style.zIndex = 1000;
 			var zIndex = DOMUtil.getZIndex(oButtonDomRef);
@@ -208,21 +149,6 @@ sap.ui.define([
 			const zIndex = DOMUtil.getZIndex(this.oButton.getDomRef());
 			assert.strictEqual(zIndex, 5, "the z-index is taken from non ui5 parent");
 			oParentElement.destroy();
-		});
-
-		QUnit.test("when a transition style is applied to the underlying element", function(assert) {
-			var oButtonDomRef = this.oButton.getDomRef();
-			var oBoundingClientRect = oButtonDomRef.getBoundingClientRect();
-			var oExpected = {
-				width: Math.round(0.1 * oBoundingClientRect.width),
-				height: Math.round(0.5 * oBoundingClientRect.height)
-			};
-			this.oButton.addStyleClass("shrink");
-			var mSizeAfterTransition = DOMUtil.getSize(oButtonDomRef);
-			mSizeAfterTransition.width = Math.round(mSizeAfterTransition.width);
-			mSizeAfterTransition.height = Math.round(mSizeAfterTransition.height);
-			assert.deepEqual(mSizeAfterTransition, oExpected, 'then the static method "getSize" returns the right value');
-			this.oButton.removeStyleClass("shrink");
 		});
 	});
 
@@ -721,40 +647,6 @@ sap.ui.define([
 			oFixtureNode.appendChild(oNode2);
 
 			assert.strictEqual(DOMUtil.contains("node1", oNode2), false);
-		});
-	});
-
-	QUnit.module("setDraggable()", function() {
-		QUnit.test("basic functionality", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
-			var oNode = document.createElement("div");
-			oFixtureNode.appendChild(oNode);
-
-			DOMUtil.setDraggable(oNode, false);
-			assert.strictEqual(oNode.getAttribute("draggable"), "false");
-			DOMUtil.setDraggable(oNode, true);
-			assert.strictEqual(oNode.getAttribute("draggable"), "true");
-		});
-	});
-
-	QUnit.module("getDraggable()", function() {
-		QUnit.test("check boolean result", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
-			var oNode = document.createElement("div");
-			oFixtureNode.appendChild(oNode);
-
-			oNode.setAttribute("draggable", false);
-			assert.strictEqual(DOMUtil.getDraggable(oNode), false);
-			oNode.setAttribute("draggable", true);
-			assert.strictEqual(DOMUtil.getDraggable(oNode), true);
-		});
-
-		QUnit.test("check undefined if there is no attribute defined", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
-			var oNode = document.createElement("div");
-			oFixtureNode.appendChild(oNode);
-
-			assert.strictEqual(DOMUtil.getDraggable(oNode), undefined);
 		});
 	});
 
