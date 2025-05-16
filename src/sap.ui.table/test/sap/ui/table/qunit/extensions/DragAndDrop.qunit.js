@@ -331,7 +331,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("draggable attribute of row with data", function(assert) {
+	QUnit.test("draggable attribute of row with data", async function(assert) {
 		const oRowDomRefs = this.oTable.getRows()[0].getDomRefs();
 
 		assert.strictEqual(oRowDomRefs.rowScrollPart.getAttribute("draggable"), "true", "Scrollable part");
@@ -342,9 +342,17 @@ sap.ui.define([
 		assert.notOk(oRowDomRefs.rowHeaderPart.getAttribute("data-sap-ui-draggable"), "Row header part");
 		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("draggable"), "Row action part");
 		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("data-sap-ui-draggable"), "Row action part");
+
+		this.oTable.getDragDropConfig()[0].setEnabled(false);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.notOk(oRowDomRefs.rowScrollPart.getAttribute("draggable"), "Scrollable part not draggable");
+		assert.notOk(oRowDomRefs.rowScrollPart.getAttribute("data-sap-ui-draggable"), "Scrollable part not draggable");
+		assert.notOk(oRowDomRefs.rowFixedPart.getAttribute("draggable"), "Fixed part not draggable");
+		assert.notOk(oRowDomRefs.rowFixedPart.getAttribute("data-sap-ui-draggable"), "Fixed part not draggable");
 	});
 
-	QUnit.test("draggable attribute of empty row", function(assert) {
+	QUnit.test("draggable attribute of empty row", async function(assert) {
 		const oRowDomRefs = this.oTable.getRows()[9].getDomRefs();
 
 		assert.strictEqual(oRowDomRefs.rowScrollPart.getAttribute("draggable"), "true", "Scrollable part");
@@ -355,6 +363,14 @@ sap.ui.define([
 		assert.notOk(oRowDomRefs.rowHeaderPart.getAttribute("data-sap-ui-draggable"), "Row header part");
 		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("draggable"), "Row action part");
 		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("data-sap-ui-draggable"), "Row action part");
+
+		this.oTable.getDragDropConfig()[0].setEnabled(false);
+		await this.oTable.qunit.whenRenderingFinished();
+
+		assert.notOk(oRowDomRefs.rowScrollPart.getAttribute("draggable"), "Scrollable part not draggable");
+		assert.notOk(oRowDomRefs.rowScrollPart.getAttribute("data-sap-ui-draggable"), "Scrollable part not draggable");
+		assert.notOk(oRowDomRefs.rowFixedPart.getAttribute("draggable"), "Fixed part not draggable");
+		assert.notOk(oRowDomRefs.rowFixedPart.getAttribute("data-sap-ui-draggable"), "Fixed part not draggable");
 	});
 
 	QUnit.test("Draggable", async function(assert) {

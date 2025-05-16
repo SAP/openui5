@@ -932,7 +932,7 @@ sap.ui.define([
 			// check whether the row can be clicked to change the selection
 			const bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(oTable);
 			const bRowsDraggable = oTable.getDragDropConfig().some(function(oDragDropInfo) {
-				return oDragDropInfo.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo") && oDragDropInfo.getSourceAggregation() === "rows";
+				return oDragDropInfo.isDraggable(oTable, "rows");
 			});
 
 			const iLastFixedColumnIndex = this.getLastFixedColumnIndex(oTable);
