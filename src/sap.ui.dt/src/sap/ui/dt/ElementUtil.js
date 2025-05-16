@@ -42,10 +42,10 @@ sap.ui.define([
 
 		aAggregationNames.forEach(function(sAggregationName) {
 			var oAggregation = mAggregations[sAggregationName];
-			var vAggregationValue = this.getAggregation(oElement, sAggregationName);
+			var vAggregationValue = ElementUtil.getAggregation(oElement, sAggregationName);
 
 			fnCallback(oAggregation, vAggregationValue);
-		}, this);
+		});
 	};
 
 	ElementUtil.getElementInstance = function(vElement) {
@@ -57,11 +57,11 @@ sap.ui.define([
 	};
 
 	ElementUtil.hasAncestor = function(oElement, oAncestor) {
-		oAncestor = this.fixComponentContainerElement(oAncestor);
+		oAncestor = ElementUtil.fixComponentContainerElement(oAncestor);
 		var oFixedParent;
 
 		while (oElement && oElement !== oAncestor) {
-			oFixedParent = this.fixComponentParent(oElement);
+			oFixedParent = ElementUtil.fixComponentParent(oElement);
 			// fixComponentParent already returns the parent
 			if (oElement === oFixedParent) {
 				oElement = oElement.getParent();
@@ -158,7 +158,7 @@ sap.ui.define([
 	ElementUtil.getAggregation = function(oElement, sAggregationName) {
 		var oValue;
 
-		var sGetter = this.getAggregationAccessors(oElement, sAggregationName).get;
+		var sGetter = ElementUtil.getAggregationAccessors(oElement, sAggregationName).get;
 		if (sGetter) {
 			oValue = oElement[sGetter]();
 		} else {
@@ -178,14 +178,14 @@ sap.ui.define([
 	};
 
 	ElementUtil.getIndexInAggregation = function(oElement, oParent, sAggregationName) {
-		return this.getAggregation(oParent, sAggregationName).indexOf(oElement);
+		return ElementUtil.getAggregation(oParent, sAggregationName).indexOf(oElement);
 	};
 
 	ElementUtil.addAggregation = function(oParent, sAggregationName, oElement) {
-		if (this.hasAncestor(oParent, oElement)) {
+		if (ElementUtil.hasAncestor(oParent, oElement)) {
 			throw new Error("Trying to add an element to itself or its successors");
 		}
-		var sAggregationAddMutator = this.getAggregationAccessors(oParent, sAggregationName).add;
+		var sAggregationAddMutator = ElementUtil.getAggregationAccessors(oParent, sAggregationName).add;
 		if (sAggregationAddMutator) {
 			oParent[sAggregationAddMutator](oElement);
 		} else {
@@ -194,7 +194,7 @@ sap.ui.define([
 	};
 
 	ElementUtil.removeAggregation = function(oParent, sAggregationName, oElement, bSuppressInvalidate) {
-		var sAggregationRemoveMutator = this.getAggregationAccessors(oParent, sAggregationName).remove;
+		var sAggregationRemoveMutator = ElementUtil.getAggregationAccessors(oParent, sAggregationName).remove;
 		if (sAggregationRemoveMutator) {
 			oParent[sAggregationRemoveMutator](oElement, bSuppressInvalidate);
 		} else {
@@ -203,22 +203,22 @@ sap.ui.define([
 	};
 
 	ElementUtil.insertAggregation = function(oParent, sAggregationName, oElement, iIndex) {
-		if (this.hasAncestor(oParent, oElement)) {
+		if (ElementUtil.hasAncestor(oParent, oElement)) {
 			throw new Error("Trying to add an element to itself or its successors");
 		}
-		if (this.getIndexInAggregation(oElement, oParent, sAggregationName) !== -1) {
+		if (ElementUtil.getIndexInAggregation(oElement, oParent, sAggregationName) !== -1) {
 			// ManagedObject.insertAggregation won't reposition element, if it's already inside of same aggregation
 			// therefore we need to remove the element and then insert it again. To prevent ManagedObjectObserver from
 			// firing
 			// setParent event with parent null, private flag is set.
 			oElement.__bSapUiDtSupressParentChangeEvent = true;
 			try {
-				this.removeAggregation(oParent, sAggregationName, oElement, true);
+				ElementUtil.removeAggregation(oParent, sAggregationName, oElement, true);
 			} finally {
 				delete oElement.__bSapUiDtSupressParentChangeEvent;
 			}
 		}
-		var sAggregationInsertMutator = this.getAggregationAccessors(oParent, sAggregationName).insert;
+		var sAggregationInsertMutator = ElementUtil.getAggregationAccessors(oParent, sAggregationName).insert;
 		if (sAggregationInsertMutator) {
 			oParent[sAggregationInsertMutator](oElement, iIndex);
 		} else {
@@ -232,7 +232,7 @@ sap.ui.define([
 		// Make sure that the parent is not inside of the element, or is not the element itself,
 		// e.g. insert a layout inside it's content aggregation.
 		// This check needed as UI5 will have a maximum call stack error otherwise.
-		if (this.hasAncestor(oParent, oElement)) {
+		if (ElementUtil.hasAncestor(oParent, oElement)) {
 			return false;
 		}
 
@@ -242,11 +242,11 @@ sap.ui.define([
 			var sTypeOrInterface = oAggregationMetadata.type;
 
 			// if aggregation is not multiple and already has element inside, then it is not valid for element
-			if (oAggregationMetadata.multiple === false && this.getAggregation(oParent, sAggregationName) &&
-					this.getAggregation(oParent, sAggregationName).length > 0) {
+			if (oAggregationMetadata.multiple === false && ElementUtil.getAggregation(oParent, sAggregationName) &&
+					ElementUtil.getAggregation(oParent, sAggregationName).length > 0) {
 				return false;
 			}
-			return BaseObject.isObjectA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
+			return BaseObject.isObjectA(oElement, sTypeOrInterface) || ElementUtil.hasInterface(oElement, sTypeOrInterface);
 		}
 	};
 
@@ -268,7 +268,7 @@ sap.ui.define([
 
 	ElementUtil.getAssociation = function(oElement, sAssociationName) {
 		var oValue;
-		var sGetter = this.getAssociationAccessors(oElement, sAssociationName).get;
+		var sGetter = ElementUtil.getAssociationAccessors(oElement, sAssociationName).get;
 		if (sGetter) {
 			oValue = oElement[sGetter]();
 		}
@@ -276,15 +276,15 @@ sap.ui.define([
 	};
 
 	ElementUtil.getIndexInAssociation = function(oElement, oParent, sAssociationName) {
-		return this.getAssociationInstances(oParent, sAssociationName).indexOf(oElement);
+		return ElementUtil.getAssociationInstances(oParent, sAssociationName).indexOf(oElement);
 	};
 
 	ElementUtil.getAssociationInstances = function(oElement, sAssociationName) {
-		var vValue = Util.castArray(this.getAssociation(oElement, sAssociationName));
+		var vValue = Util.castArray(ElementUtil.getAssociation(oElement, sAssociationName));
 		return vValue
 		.map(function(sId) {
-			return this.getElementInstance(sId);
-		}, this);
+			return ElementUtil.getElementInstance(sId);
+		});
 	};
 
 	ElementUtil.hasInterface = function(oElement, sInterface) {
@@ -351,12 +351,6 @@ sap.ui.define([
 		);
 
 		return bValid;
-	};
-
-	ElementUtil.getParent = function(oElement) {
-		return BaseObject.isObjectA(oElement, "sap.ui.core.Component")
-			? oElement.oContainer
-			: oElement.getParent();
 	};
 
 	/**
@@ -450,7 +444,7 @@ sap.ui.define([
 	 */
 	ElementUtil.getAggregationInformation = function(oElement) {
 		var aStack = [];
-		return this._evaluateBinding(oElement, aStack);
+		return ElementUtil._evaluateBinding(oElement, aStack);
 	};
 
 	ElementUtil._evaluateBinding = function(oElement, aStack) {
@@ -508,7 +502,7 @@ sap.ui.define([
 				stack: aStack
 			}
 			: (
-				this._evaluateBinding(
+				ElementUtil._evaluateBinding(
 					oParent,
 					aStack
 				)
@@ -592,4 +586,4 @@ sap.ui.define([
 	};
 
 	return ElementUtil;
-}, /* bExport= */true);
+});
