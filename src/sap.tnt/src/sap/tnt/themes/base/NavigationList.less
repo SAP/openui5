@@ -141,10 +141,10 @@
 
 	&.sapTntNLIDisabled {
 		cursor: default;
-		opacity: @sapUiContentDisabledOpacity;
 
 		span {
 			cursor: default;
+			opacity: @sapUiContentDisabledOpacity;
 		}
 	}
 
@@ -703,6 +703,11 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 
 			.sapTntNLIExternalLinkIcon {
 				margin-right: 0;
+			}
+
+			&.sapUiMnuItmDsbl .sapUiMnuItmIco,
+			&.sapUiMnuItmDsbl .sapTntNLIExpandIcon {
+				opacity: @sapUiContentDisabledOpacity;
 			}
 		}
 	}

@@ -35,7 +35,7 @@ sap.ui.define([
 				return new MDCColumn({
 					header: sKey,
 					propertyKey: sKey,
-					template: new Text({ text: "{" + sKey + "}" })
+					template: new Text({text: "{" + sKey + "}"})
 				});
 			}),
 			models: oJSONModel
@@ -92,7 +92,8 @@ sap.ui.define([
 			assert.ok(oInnerTable.indexOfDragDropConfig(this.oDragDropConfig._oDropInfo) > -1, "DropInfo object added to the inner Table");
 			assert.equal(this.oDragDropConfig._oDragInfo.getSourceAggregation(), "items", "sourceAggregation is set correctly");
 			assert.equal(this.oDragDropConfig.getDropEffect(), this.oDragDropConfig._oDropInfo.getDropEffect(), "DropEffect is set on the DropInfo");
-			assert.equal(this.oDragDropConfig.getDropPosition(), this.oDragDropConfig._oDropInfo.getDropPosition(), "DropPosition is set on the DropInfo");
+			assert.equal(this.oDragDropConfig.getDropPosition(), this.oDragDropConfig._oDropInfo.getDropPosition(),
+				"DropPosition is set on the DropInfo");
 			assert.equal(this.oDragDropConfig.getGroupName(), this.oDragDropConfig._oDropInfo.getGroupName(), "GroupName is set on the DropInfo");
 
 			this.oDragDropConfig.setEnabled(false);
@@ -156,7 +157,8 @@ sap.ui.define([
 
 			const fnPreventDefaultSpy = sinon.spy(window.Event.prototype, "preventDefault");
 			this.oDragDropConfig.attachEventOnce("dragStart", (oEvent) => {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oDraggedRow.getBindingContext(), "dragStart event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("bindingContext"), this.oDraggedRow.getBindingContext(),
+					"dragStart event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragStart event is provided");
 				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 				oEvent.preventDefault();
@@ -170,7 +172,8 @@ sap.ui.define([
 			assert.ok(document.querySelector(".sapUiDnDIndicator").clientWidth, "Drop indicator is visible");
 
 			this.oDragDropConfig.attachEventOnce("dragEnter", (oEvent) => {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oInvalidDroppedRow.getBindingContext(), "dragEnter event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("bindingContext"), this.oInvalidDroppedRow.getBindingContext(),
+					"dragEnter event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragEnter event is provided");
 				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 				assert.equal(oEvent.getParameter("dropPosition"), "On", "Drop position is provided for dragenter");
@@ -197,21 +200,25 @@ sap.ui.define([
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
 		}).then(async () => {
 			this.oDragDropConfig.attachDragOver((oEvent) => {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(), "dragOver event bindingContext parameter is correct");
-				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(), "dragOver event dragSource parameter is correct");
+				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(),
+					"dragOver event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(),
+					"dragOver event dragSource parameter is correct");
 				assert.equal(oEvent.getParameter("dropPosition"), "On", "dragOver event dropPosition parameter is correct");
 				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragOver event is provided");
 				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 			});
 			this.oDragDropConfig.attachDrop((oEvent) => {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(), "drop event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(),
+					"drop event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(), "drop event dragSource parameter is correct");
 				assert.equal(oEvent.getParameter("dropPosition"), "On", "drop event dropPosition parameter is correct");
 				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of drop event is provided");
 				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 			});
 			this.oDragDropConfig.attachDragEnd((oEvent) => {
-				assert.equal(oEvent.getParameter("bindingContext"), this.oDraggedRow.getBindingContext(), "dragEnd event bindingContext parameter is correct");
+				assert.equal(oEvent.getParameter("bindingContext"), this.oDraggedRow.getBindingContext(),
+					"dragEnd event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("browserEvent"), oDragEvent, "browserEvent parameter of dragEnd event is provided");
 				assert.equal(oEvent.getParameter("browserEvent").type, oEvent.getId().toLowerCase(), "event types are matched");
 			});

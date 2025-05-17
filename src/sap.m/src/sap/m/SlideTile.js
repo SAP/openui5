@@ -82,6 +82,7 @@ sap.ui.define([
 				sizeBehavior: {type: "sap.m.TileSizeBehavior", defaultValue: TileSizeBehavior.Responsive},
 				/**
 				 * Width of the control.
+				 * If the tiles within the SlideTile are in ArticleMode and have a frameType of Stretch, and if the SlideTile's width exceeds 799px, the image in the tile appears on the right side
 				 * @since 1.72
 				 */
 				width: {type: "sap.ui.core.CSSSize", group: "Appearance"},
@@ -262,6 +263,10 @@ sap.ui.define([
 		//Sets the aria-describedby attribute and uses the _invisibleText id in it
 		if (this.getDomRef()) {
 			this.getDomRef().setAttribute("aria-describedby",this.getAggregation("_invisibleText").getId());
+		}
+
+		if (this.getDomRef()?.offsetWidth > 799) {
+			this.addStyleClass("sapMSTLargeScreen");
 		}
 	};
 

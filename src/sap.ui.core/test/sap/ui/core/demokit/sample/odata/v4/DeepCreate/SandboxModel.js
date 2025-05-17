@@ -19,6 +19,9 @@ sap.ui.define([
 				"SalesOrderList('0500000000')?$select=LifecycleStatusDesc,Messages,Note" : {
 					source : "SalesOrderList('0500000000').json"
 				},
+				"SalesOrderList('0500000001')?$select=LifecycleStatusDesc,Messages,Note" : {
+					source : "SalesOrderList('0500000001').json"
+				},
 				"SalesOrderList('0500000000')/SO_2_SOITEM?$count=true&$select=CurrencyCode,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID&$skip=0&$top=5" : {
 					source : "SalesOrderList('0500000000')-SO_2_SOITEM.json"
 				},

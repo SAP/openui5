@@ -31,6 +31,40 @@
 			"files": [
 				"src/**/*.js"
 			]
+		},
+		{
+			"files": [
+				"src/sap/ui/mdc/Table.js",
+				"src/sap/ui/mdc/TableDelegate.js",
+				"src/sap/ui/mdc/odata/v4/TableDelegate.js",
+				"src/sap/ui/mdc/table/**/*.js",
+				"test/sap/ui/mdc/qunit/table/**/*.js"
+			],
+			"rules": {
+				"one-var": ["error", {"const": "never", "let": "never"}],
+				"one-var-declaration-per-line": ["error", "always"],
+				"space-before-function-paren": ["error", {
+					"anonymous": "never",
+					"named": "never",
+					"asyncArrow": "always"
+				}],
+				"space-before-blocks": "error",
+				"space-in-parens": "error",
+				"block-spacing": "error",
+				"key-spacing": "error",
+				"comma-spacing": "error",
+				"comma-style": "error",
+				"array-bracket-spacing": "error",
+				"no-multi-spaces": "error",
+				"no-multiple-empty-lines": ["error", {"max": 1}],
+				"no-whitespace-before-property": "error",
+				"object-curly-newline": ["error", {"consistent": true}],
+				"object-curly-spacing": "error",
+				"eqeqeq": ["error", "always", {"null": "ignore"}],
+				"max-depth": ["error", 4],
+				"max-len": ["error", 150],
+				"complexity": ["error", { "max": 12 }]
+			}
 		}
 	]
 }

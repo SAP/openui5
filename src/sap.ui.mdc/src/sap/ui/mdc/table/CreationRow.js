@@ -3,8 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Element", "sap/ui/mdc/enums/TableType"
-], (Element, TableType) => {
+	"sap/ui/core/Element",
+	"sap/ui/mdc/enums/TableType"
+], (
+	Element,
+	TableType
+) => {
 	"use strict";
 
 	/**

@@ -26,12 +26,21 @@ sap.ui.define([
 ) => {
 	"use strict";
 
-	const QuickActionContainer = QuickActionContainerBase.extend("sap.ui.mdc.table.menu.QuickActionContainer", {
+	/**
+	 * Constructor for a new <code>QuickActionContainer</code>.
+	 *
+	 * @class
+	 * @extends sap.m.table.columnmenu.QuickActionContainer
+	 * @author SAP SE
+	 * @private
+	 * @alias sap.ui.mdc.table.menus.QuickActionContainer
+	 */
+	const QuickActionContainer = QuickActionContainerBase.extend("sap.ui.mdc.table.menus.QuickActionContainer", {
 		metadata: {
 			library: "sap.ui.mdc",
 			associations: {
-				table: { type: "sap.ui.mdc.Table" },
-				column: { type: "sap.ui.mdc.table.Column" }
+				table: {type: "sap.ui.mdc.Table"},
+				column: {type: "sap.ui.mdc.table.Column"}
 			}
 		}
 	});

@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"../../TableDelegate",
-	"../../table/V4AnalyticsPropertyHelper",
+	"../../table/ODataV4PropertyHelper",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
 	"sap/ui/mdc/enums/TableSelectionMode",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/message/MessageType"
 ], (
 	TableDelegate,
-	V4AnalyticsPropertyHelper,
+	ODataV4PropertyHelper,
 	P13nMode,
 	TableType,
 	SelectionMode,
@@ -185,12 +185,12 @@ sap.ui.define([
 	/**
 	 * Gets the model-specific <code>PropertyHelper</code> class to create an instance of.
 	 *
-	 * @returns {sap.ui.mdc.table.V4AnalyticsPropertyHelper} The <code>PropertyHelper</code> class.
+	 * @returns {sap.ui.mdc.table.ODataV4PropertyHelper} The <code>PropertyHelper</code> class.
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	Delegate.getPropertyHelperClass = function() {
-		return V4AnalyticsPropertyHelper;
+		return ODataV4PropertyHelper;
 	};
 
 	/**
@@ -280,7 +280,7 @@ sap.ui.define([
 			updateAggregation(oTable, oBindingInfo);
 		}
 
-		if (!oBinding || oBinding.getPath() != oBindingInfo.path) {
+		if (!oBinding || oBinding.getPath() !== oBindingInfo.path) {
 			this.rebind(oTable, oBindingInfo);
 			return;
 		}
@@ -308,7 +308,7 @@ sap.ui.define([
 			}
 		} catch (e) {
 			this.rebind(oTable, oBindingInfo);
-			if (oRootBinding == oBinding) {
+			if (oRootBinding === oBinding) {
 				// If we resume before the rebind, you get an extra request therefore we must
 				// resume after rebind, but only if the list binding was not the root binding.
 				bHasRootBindingAndWasNotSuspended = false;
@@ -412,11 +412,11 @@ sap.ui.define([
 		const oBaseValidationResult = TableDelegate.validateState.apply(this, arguments);
 		let oValidationResult;
 
-		if (sKey == "Sort") {
+		if (sKey === "Sort") {
 			oValidationResult = validateSortState(oTable, oState);
-		} else if (sKey == "Group") {
+		} else if (sKey === "Group") {
 			oValidationResult = validateGroupState(oTable, oState);
-		} else if (sKey == "Column") {
+		} else if (sKey === "Column") {
 			oValidationResult = validateColumnState(oTable, oState);
 		}
 

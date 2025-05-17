@@ -46,23 +46,6 @@ sap.ui.define([
 		};
 	};
 
-	/**
-	 * Returns if the <code>oDomElement</code> is currently visible on the screen.
-	 *
-	 * @param {HTMLElement} oDomElement Element to be evaluated
-	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
-	 */
-	DOMUtil.isElementInViewport = function(oDomElement) {
-		var mRect = oDomElement.getBoundingClientRect();
-
-		return (
-			mRect.top >= 0 &&
-			mRect.left >= 0 &&
-			mRect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-			mRect.right <= (window.innerWidth || document.documentElement.clientWidth)
-		);
-	};
-
 	DOMUtil.getSize = function(oDomRef) {
 		var oClientRec = oDomRef.getBoundingClientRect();
 		return {
@@ -107,7 +90,7 @@ sap.ui.define([
 		var iScrollTop = oParent ? oParent.scrollTop : null;
 		var iScrollLeft = oParent ? DOMUtil.getScrollLeft(oParent) : null;
 
-		var mParentOffset = oParent ? this.getOffset(oParent) : null;
+		var mParentOffset = oParent ? DOMUtil.getOffset(oParent) : null;
 
 		var mOffset = {
 			left: oGeometry.position.left,
@@ -270,7 +253,7 @@ sap.ui.define([
 
 	DOMUtil.getGeometry = function(oDomRef, bUseWindowOffset) {
 		if (oDomRef) {
-			var oOffset = this.getOffset(oDomRef);
+			var oOffset = DOMUtil.getOffset(oDomRef);
 			if (bUseWindowOffset) {
 				oOffset.left = oOffset.left - window.scrollX;
 				oOffset.top = oOffset.top - window.scrollY;
@@ -278,9 +261,9 @@ sap.ui.define([
 
 			return {
 				domRef: oDomRef,
-				size: this.getSize(oDomRef),
+				size: DOMUtil.getSize(oDomRef),
 				position: oOffset,
-				visible: this.isVisible(oDomRef)
+				visible: DOMUtil.isVisible(oDomRef)
 			};
 		}
 		return undefined;
@@ -347,31 +330,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the draggable attribute to a specified node
-	 * @param {HTMLElement} oNode - Target node to add the attribute to
-	 * @param {boolean} bValue - Attribute value
-	 */
-	DOMUtil.setDraggable = function(oNode, bValue) {
-		oNode.setAttribute("draggable", bValue);
-	};
-
-	/**
-	 * Sets the draggable attribute of a specified node
-	 * @param {HTMLElement} oNode - Target node to set the draggable attribute on
-	 * @returns {boolean|undefined} undefined when draggable is not set to the node
-	 */
-	DOMUtil.getDraggable = function(oNode) {
-		switch (oNode.getAttribute("draggable")) {
-			case "true":
-				return true;
-			case "false":
-				return false;
-			default:
-				return undefined;
-		}
-	};
-
-	/**
 	 * Copy the given styles object to a destination DOM node.
 	 * @param {Object} oStyles A styles object, which is retrieved from window.getComputedStyle
 	 * @param {Element} oDest The element to which the styles should be copied.
@@ -429,13 +387,13 @@ sap.ui.define([
 
 		DOMUtil._copyStylesTo(mStyles, oDest);
 
-		this._copyPseudoElement(":after", oSrc, oDest);
-		this._copyPseudoElement(":before", oSrc, oDest);
+		DOMUtil._copyPseudoElement(":after", oSrc, oDest);
+		DOMUtil._copyPseudoElement(":before", oSrc, oDest);
 	};
 
 	DOMUtil.copyComputedStyles = function(oSrc, oDest) {
 		for (var i = 0; i < oSrc.children.length; i++) {
-			this.copyComputedStyles(oSrc.children[i], oDest.children[i]);
+			DOMUtil.copyComputedStyles(oSrc.children[i], oDest.children[i]);
 		}
 
 		// we shouldn't copy classes because they can affect styling
@@ -447,12 +405,12 @@ sap.ui.define([
 		oDest.setAttribute("for", "");
 		oDest.setAttribute("tabindex", -1);
 
-		this.copyComputedStyle(oSrc, oDest);
+		DOMUtil.copyComputedStyle(oSrc, oDest);
 	};
 
 	DOMUtil.cloneDOMAndStyles = function(oNode, oTarget) {
 		var oCopy = oNode.cloneNode(true);
-		this.copyComputedStyles(oNode, oCopy);
+		DOMUtil.copyComputedStyles(oNode, oCopy);
 
 		oTarget.append(oCopy);
 	};

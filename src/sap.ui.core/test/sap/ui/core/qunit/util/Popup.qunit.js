@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/test/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/webc/main/Button"
 ], function(
 	Popup,
 	Localization,
@@ -31,7 +32,8 @@ sap.ui.define([
 	ResizeHandler,
 	containsOrEquals,
 	KeyCodes,
-	nextUIUpdate
+	nextUIUpdate,
+	WebCButton
 ){
 	"use strict";
 
@@ -2415,6 +2417,57 @@ sap.ui.define([
 
 		assert.ok(this.oPopup.isOpen(), "Popup should be opened");
 	});
+
+	QUnit.test("Set web component opener as extra content of a autoclose popup", async function(assert) {
+		// Setup
+		const oWebCButton = new WebCButton({text: "WebC Button"});
+		oWebCButton.placeAt("uiarea");
+		await nextUIUpdate();
+
+		this.oPopup.setExtraContent([oWebCButton]);
+		this.oPopup.setAutoClose(true);
+
+		this.oPopup.open();
+
+		// wait for open
+		await new Promise((resolve, reject) => {
+			const fnOpened = () => {
+				this.oPopup.detachOpened(fnOpened);
+				resolve();
+			};
+			this.oPopup.attachOpened(fnOpened);
+		});
+
+		assert.ok(this.oPopup.getContent().contains(document.activeElement), "focus is in the Popup content after open");
+
+		oWebCButton.focus();
+
+		// wait for the autoclose detection
+		await new Promise((resolve, reject) => {
+			setTimeout(resolve, 100);
+		});
+
+		assert.ok(this.oPopup.isOpen(), "Popup is still open");
+
+		const oDOM = jQuery("#focusableElement2");
+		if (this.oPopup.touchEnabled) {
+			QUnitUtils.triggerEvent("touchstart", oDOM);
+		} else {
+			oDOM.focus();
+		}
+
+		// wait for close
+		await new Promise((resolve, reject) => {
+			const fnClosed = () => {
+				this.oPopup.detachClosed(fnClosed);
+				resolve();
+			};
+			this.oPopup.attachClosed(fnClosed);
+		});
+
+		oWebCButton.destroy();
+	});
+
 
 	QUnit.test("The previous active element isn't blurred before the opening animation, if it's the same element which gets the focus after popup open", async function(assert) {
 		var done = assert.async(),

@@ -1,7 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/mdc/table/menu/GroupHeaderRowContextMenu",
+	"sap/ui/mdc/table/menus/GroupHeaderRowContextMenu",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/utils/Personalization",

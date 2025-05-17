@@ -817,26 +817,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("getParent()", {
-		beforeEach() {
-			fnCreateMinimumControls.call(this);
-			fnCreateComponent.call(this);
-		},
-		afterEach() {
-			fnDestroyMinimumControls.call(this);
-			fnDestroyComponent.call(this);
-		}
-	}, function() {
-		QUnit.test("when getParent() is called for oButton", function(assert) {
-			assert.equal(ElementUtil.getParent(this.oButton), this.oHorizontalLayoutChild, "then the right parent is returned");
-		});
-
-		QUnit.test("when getParent() is called for a Component", function(assert) {
-			this.oCompContainer.setComponent(this.oComponent);
-			assert.equal(ElementUtil.getParent(this.oComponent), this.oCompContainer, "then the ComponentContainer is returned");
-		});
-	});
-
 	QUnit.module("isElementValid()", {
 		afterEach() {
 			if (this.oObject) {

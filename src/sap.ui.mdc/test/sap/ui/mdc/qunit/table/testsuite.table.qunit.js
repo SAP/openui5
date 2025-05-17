@@ -55,7 +55,7 @@ sap.ui.define(function() {
 			},
 			"GroupHeaderRowContextMenu": {
 				group: "Controls",
-				module: "./menu/{name}.qunit"
+				module: "./menus/{name}.qunit"
 			},
 			"TableTypeBase": {
 				group: "Table types"
@@ -86,7 +86,7 @@ sap.ui.define(function() {
 			},
 			"PropertyHelper for ODataV4": {
 				group: "PropertyHelper",
-				module: "./PropertyHelper.ODataV4.qunit"
+				module: "./ODataV4PropertyHelper.qunit"
 			},
 			"Personalization": {
 				group: "Utils",
