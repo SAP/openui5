@@ -69,11 +69,13 @@ sap.ui.define([
 	 * By default, this method returns a <code>Promise</code> that resolves with an empty array.
 	 *
 	 * <b>Note:</b>
-	 * The result of this function must be kept stable throughout the lifecycle of your application.
-	 * Any changes of the returned values might result in undesired effects.
-	 *
-	 * <b>Note</b>:
-	 * Existing properties (set via <code>sap.ui.mdc.Table#setPropertyInfo</code>) must not be removed and their attributes must not be changed during the {@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur whenever personalization-related control features (such as the opening of any personalization dialog) are activated.
+	 * <ul>
+	 *   <li>The result of this function must be kept stable throughout the lifecycle of your application. Any changes of the returned values
+	 *       might result in undesired effects.</li>
+	 *   <li>Existing properties (set via <code>sap.ui.mdc.Table#setPropertyInfo</code>) must not be removed and their attributes must not be changed
+	 *       during the {@link module:sap/ui/mdc/TableDelegate.fetchProperties fetchProperties} callback. Otherwise validation errors might occur
+	 *       whenever personalization-related control features (such as the opening of any personalization dialog) are activated.</li>
+	 * </ul>
 	 *
 	 * @name module:sap/ui/mdc/TableDelegate.fetchProperties
 	 * @function
@@ -152,7 +154,6 @@ sap.ui.define([
 		if (oGroupSorter) {
 			oBindingInfo.sorter.push(oGroupSorter);
 		}
-
 
 		const aSorters = this.getSorters(oTable);
 		oBindingInfo.sorter = oBindingInfo.sorter.concat(
@@ -351,7 +352,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	TableDelegate.fetchExportCapabilities = function(oTable) {
-		return Promise.resolve({ XLSX: {} });
+		return Promise.resolve({XLSX: {}});
 	};
 
 	/**
@@ -363,8 +364,10 @@ sap.ui.define([
 	 * <ul>
 	 *   <li>To enable <b>Expand Entire Tree</b>, the <code>expandAll</code> function needs to be implemented.</li>
 	 *   <li>To enable <b>Collapse Entire Tree</b>, the <code>collapseAll</code> function needs to be implemented.</li>
-	 *   <li>To enable <b>Expand Entire Node</b>, the <code>expandAllFromNode</code> and <code>isNodeExpanded</code> functions need to be implemented.</li>
-	 *   <li>To enable <b>Collapse Entire Node</b>, the <code>collapseAllFromNode</code> and <code>isNodeExpanded</code> functions need to be implemented.</li>
+	 *   <li>To enable <b>Expand Entire Node</b>, the <code>expandAllFromNode</code> and <code>isNodeExpanded</code> functions need to be
+	 *       implemented.</li>
+	 *   <li>To enable <b>Collapse Entire Node</b>, the <code>collapseAllFromNode</code> and <code>isNodeExpanded</code> functions need to be
+	 *       implemented.</li>
 	 * </ul>
 	 *
 	 * <b>Note:</b> Expand and collapse all from a specific node is only supported if the table rows are selectable.
@@ -381,7 +384,8 @@ sap.ui.define([
 	 * 		});
 	 * }
 	 * @param {sap.ui.mdc.Table} oTable Table instance
-	 * @returns {Promise<sap.ui.mdc.TableDelegate.ExpandAndCollapseConfiguration>} A <code>Promise</code> that resolves with an object containing the expand and collapse functions
+	 * @returns {Promise<sap.ui.mdc.TableDelegate.ExpandAndCollapseConfiguration>}
+	 *   A <code>Promise</code> that resolves with an object containing the expand and collapse functions
 	 * @protected
 	 */
 	TableDelegate.fetchExpandAndCollapseConfiguration = function(oTable) {
@@ -414,7 +418,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	TableDelegate.validateState = function(oTable, oState, sKey) {
-		if (sKey == "Filter" && oTable._oMessageFilter) {
+		if (sKey === "Filter" && oTable._oMessageFilter) {
 			const oResourceBundle = Lib.getResourceBundleFor("sap.ui.mdc");
 			return {
 				validation: MessageType.Information,

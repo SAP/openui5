@@ -55,7 +55,7 @@ sap.ui.define([
 	Util.waitForP13nDialog = function(mConfig) {
 		return this.waitFor({
 			controlType: "sap.m.Dialog",
-			success: function (aDialogs) {
+			success: function(aDialogs) {
 				mConfig?.success?.call(this, aDialogs[0]);
 			},
 			errorMessage: "No dialog was found"
@@ -107,7 +107,7 @@ sap.ui.define([
 								}, {});
 
 								return aPaths.length > 0 && aPaths.every((sPath) => {
-									return mModelValues[sPath] == mConfig.data[sPath];
+									return mModelValues[sPath] === mConfig.data[sPath];
 								});
 							}
 						});

@@ -27,9 +27,13 @@
 			"sample" : {
 				"files" : [
 					"Component.js",
+					"Main.controller.js",
 					"Main.view.xml",
 					"manifest.json",
 					"SandboxModel.js",
+					"data/EdmTypesV2_SingleEntity.json",
+					"data/EdmTypesV2.json",
+					"data/metadata.xml",
 					"../../../common/SandboxModelHelper.js"
 				]
 			}

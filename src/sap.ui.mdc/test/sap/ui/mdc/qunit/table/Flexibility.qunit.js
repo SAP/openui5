@@ -136,7 +136,8 @@ sap.ui.define([
 					appComponent: this.oUiComponent,
 					view: this.oView
 				}).then(function() {
-					assert.strictEqual(this.oColumn1.getId(), this.oTable.getAggregation('columns')[1].getId(), "column has been restored successfully");
+					assert.strictEqual(this.oColumn1.getId(), this.oTable.getAggregation('columns')[1].getId(),
+						"column has been restored successfully");
 					assert.strictEqual(this.oTable.getColumns().length, 3);
 					done();
 				}.bind(this));
@@ -174,8 +175,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert){
-
+	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert) {
 		const mNewConditions = {
 			column0: [
 				{
@@ -199,13 +199,10 @@ sap.ui.define([
 
 		//1) Initialize inbuilt filter
 		return this.oTable.retrieveInbuiltFilter()
-		.then(function(oP13nFilter){
-
+		.then(function(oP13nFilter) {
 			return oP13nFilter.initialized();
-
 		})
-		.then(function(oP13nFilter){
-
+		.then(function(oP13nFilter) {
 			//Trigger change creation via Engine
 			return this.oTable.getEngine().createChanges({
 				control: this.oTable,
@@ -214,11 +211,9 @@ sap.ui.define([
 				applyAbsolute: false,
 				suppressAppliance: true
 			});
-
 		}.bind(this))
 		//2) Check 'raw' changes
-		.then(function(aChanges){
-
+		.then(function(aChanges) {
 			//check raw changes
 			assert.equal(aChanges[0].selectorElement.getId(), this.oTable.getId(), "Correct Selector");
 			assert.equal(aChanges[1].selectorElement.getId(), this.oTable.getId(), "Correct Selector");
@@ -227,7 +222,7 @@ sap.ui.define([
 			return FlexUtil.handleChanges(aChanges);
 		}.bind(this))
 		//3) Check flex processed changes
-		.then(function(){
+		.then(function() {
 			//check updates via changehandler
 			assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
 			assert.deepEqual(this.oTable.getInbuiltFilter().getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");

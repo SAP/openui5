@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper", "sap/m/table/Util", "sap/ui/base/Object"
+	"../util/PropertyHelper",
+	"sap/m/table/Util",
+	"sap/ui/base/Object"
 ], (
 	PropertyHelperBase,
 	TableUtil,
@@ -377,7 +379,7 @@ sap.ui.define([
 		}, oProperty.visualSettings && oProperty.visualSettings.widthCalculation);
 
 		const oMDCTable = oMDCColumn.getParent();
-		if (oMDCTable && oMDCTable._isOfType("TreeTable") && oMDCTable.indexOfColumn(oMDCColumn) == 0) {
+		if (oMDCTable && oMDCTable._isOfType("TreeTable") && oMDCTable.indexOfColumn(oMDCColumn) === 0) {
 			mWidthCalculation.treeColumn = true;
 		}
 

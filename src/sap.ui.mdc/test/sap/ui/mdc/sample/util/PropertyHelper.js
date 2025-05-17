@@ -56,7 +56,7 @@ sap.ui.require([
 	const aKnownPropertyHelperClasses = [
 		"sap.ui.mdc.util.PropertyHelper",
 		"sap.ui.mdc.table.PropertyHelper",
-		"sap.ui.mdc.table.V4AnalyticsPropertyHelper",
+		"sap.ui.mdc.table.ODataV4PropertyHelper",
 		"sap.ui.mdc.chart.PropertyHelper",
 		"sap.ui.mdc.filterbar.PropertyHelper",
 		"sap.ui.mdc.p13n.PropertyHelper"

@@ -810,6 +810,40 @@ sap.ui.define([
 		}
 	};
 
+	actionEnablementTests("List Card Item", {
+		manifest: {
+			"sap.app": {
+				"id": "card.list.itemActionTest",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Card Title"
+				},
+				"content": {
+					"data": {
+						"json": [{
+							"Name": "Comfort Easy"
+						}]
+					},
+					"item": {
+						"title": {
+							"value": "{Name}"
+						}
+					}
+				}
+			}
+		},
+		partUnderTestPath: "/sap.card/content/item",
+		getActionControl: (oCard) => {
+			return oCard.getCardContent().getAggregation("_content").getItems()[0];
+		},
+		DOM_RENDER_LOCATION,
+		QUnit,
+		sinon
+	});
+
 	actionEnablementTests("Info Status in List Card Item", {
 		manifest: {
 			"sap.app": {
@@ -823,11 +857,9 @@ sap.ui.define([
 				},
 				"content": {
 					"data": {
-						"json": [
-							{
-								"Name": "Product 1"
-							}
-						]
+						"json": [{
+							"Name": "Product 1"
+						}]
 					},
 					"item": {
 						"title": "{Name}",
@@ -839,6 +871,9 @@ sap.ui.define([
 			}
 		},
 		partUnderTestPath: "/sap.card/content/item/info",
+		getActionControl: (oCard) => {
+			return oCard.getCardContent().getAggregation("_content").getItems()[0];
+		},
 		DOM_RENDER_LOCATION,
 		QUnit,
 		sinon
@@ -857,24 +892,23 @@ sap.ui.define([
 				},
 				"content": {
 					"data": {
-						"json": [
-							{
-								"Name": "Product 1"
-							}
-						]
+						"json": [{
+							"Name": "Product 1"
+						}]
 					},
 					"item": {
 						"title": "{Name}",
-						"attributes": [
-							{
-								"value": "Status Attribute"
-							}
-						]
+						"attributes": [{
+							"value": "Status Attribute"
+						}]
 					}
 				}
 			}
 		},
 		partUnderTestPath: "/sap.card/content/item/attributes/0",
+		getActionControl: (oCard) => {
+			return oCard.getCardContent().getAggregation("_content").getItems()[0].getAttributes()[0];
+		},
 		DOM_RENDER_LOCATION,
 		QUnit,
 		sinon

@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Constructor for a new table property helper for V4 analytics.
+	 * Constructor for a new table property helper to be used in combination with <code>sap.ui.mdc.odata.v4.TableDelegate</code>.
 	 *
 	 * @param {sap.ui.mdc.odata.v4.TablePropertyInfo[]} aProperties
 	 *     The properties to process in this helper
@@ -27,9 +27,9 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @since 1.85
-	 * @alias sap.ui.mdc.table.V4AnalyticsPropertyHelper
+	 * @alias sap.ui.mdc.table.ODataV4PropertyHelper
 	 */
-	const PropertyHelper = TablePropertyHelper.extend("sap.ui.mdc.table.V4AnalyticsPropertyHelper", {
+	const PropertyHelper = TablePropertyHelper.extend("sap.ui.mdc.table.ODataV4PropertyHelper", {
 		constructor: function(aProperties, oParent) {
 			this._bEnableAggregatableAttribute = true;
 			TablePropertyHelper.call(this, aProperties, oParent, {
@@ -96,6 +96,8 @@ sap.ui.define([
 		}
 	}
 
+	// TODO: Reduce complexity
+	// eslint-disable-next-line complexity
 	function validateAdditionalProperties(oProperty, aProperties) {
 		const aAdditionalPropertiesKeys = oProperty.extension?.additionalProperties ?? [];
 

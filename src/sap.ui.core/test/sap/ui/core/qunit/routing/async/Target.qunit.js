@@ -459,8 +459,7 @@ sap.ui.define([
 			sinon.assert.calledWithMatch(oComponentContainerSettingsSpy, sinon.match({
 				height: "100%",
 				width: "90%",
-				lifecycle: "Application",
-				option: true
+				lifecycle: "Application"
 			}));
 
 			var oComponentContainer = oEvent.getParameter("view");

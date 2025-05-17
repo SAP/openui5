@@ -381,13 +381,15 @@ sap.ui.define([
 						let oItem;
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
 							oItem = oInnerTable.getItems()[iIndex];
-							Opa5.assert.ok(oItem.getSelected() && Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected'), "Row at index " + iIndex + " is selected");
+							Opa5.assert.ok(oItem.getSelected() && Opa5.getJQuery()('#' + oItem.getId()).hasClass('sapMLIBSelected'),
+								"Row at index " + iIndex + " is selected");
 						}
 					} else {
 						let oRow;
 						for (iIndex; iIndex <= iEndIndex; iIndex++) {
 							oRow = oInnerTable.getRows()[iIndex];
-							Opa5.assert.ok(Opa5.getJQuery()('#' + oRow.getId()).hasClass('sapUiTableRowSel'), "Row at index " + iIndex + " is selected");
+							Opa5.assert.ok(Opa5.getJQuery()('#' + oRow.getId()).hasClass('sapUiTableRowSel'),
+								"Row at index " + iIndex + " is selected");
 						}
 					}
 				},
@@ -556,7 +558,8 @@ sap.ui.define([
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
 					this.waitFor({
-						controlType: "sap.m.InputListItem", // QuickActions themselves are not rendered. We expect there's one InputListItem for every QuickAction.
+						// QuickActions themselves are not rendered. We expect there's one InputListItem for every QuickAction.
+						controlType: "sap.m.InputListItem",
 						matchers: [{
 							ancestor: oColumnMenu
 						}],
@@ -822,13 +825,19 @@ sap.ui.define([
 					const aSortConditions = oTable.getSortConditions().sorters;
 
 					for (let i = 0; i < aSortConditions.length; i++) {
-						if (typeof vColumn === 'object' && aSortConditions[i].name === vColumn.getHeader() && aSortConditions[i].descending === bDescending) {
+						if (
+							typeof vColumn === 'object' &&
+							aSortConditions[i].name === vColumn.getHeader() &&
+							aSortConditions[i].descending === bDescending
+						) {
 							Opa5.assert.equal(aSortConditions[i].name, vColumn.getHeader(), "Column " + vColumn + " has sorting condition");
-							Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + " is sorted " + ((bDescending) ? "descending" : "ascending"));
+							Opa5.assert.equal(aSortConditions[i].descending, bDescending,
+								"Column " + vColumn + " is sorted " + ((bDescending) ? "descending" : "ascending"));
 							return;
-						} else if (aSortConditions[i].descending === bDescending && aSortConditions[i].name === vColumn){
+						} else if (aSortConditions[i].descending === bDescending && aSortConditions[i].name === vColumn) {
 							Opa5.assert.equal(aSortConditions[i].name, vColumn, "Column " + vColumn + "has sorting condition");
-							Opa5.assert.equal(aSortConditions[i].descending, bDescending, "Column " + vColumn + "is sorted " + ((bDescending) ? "descending" : "ascending"));
+							Opa5.assert.equal(aSortConditions[i].descending, bDescending,
+								"Column " + vColumn + "is sorted " + ((bDescending) ? "descending" : "ascending"));
 							return;
 						}
 					}
@@ -884,7 +893,8 @@ sap.ui.define([
 
 							for (let i = 0; i < aButtons.length; i++) {
 								if (aButtons[i].getId() === sButton) {
-									Opa5.assert.equal(aButtons[i].getProperty("key"), ((bDescending) ? "desc" : "asc"), ((bDescending) ? "Descending" : "Ascending") + " is selected");
+									Opa5.assert.equal(aButtons[i].getProperty("key"), ((bDescending) ? "desc" : "asc"),
+										((bDescending) ? "Descending" : "Ascending") + " is selected");
 								}
 							}
 						},
@@ -909,7 +919,8 @@ sap.ui.define([
 				controlType: "sap.m.OverflowToolbar",
 				success: function(oToolbar) {
 					aFilteredColumns.forEach(function(sFilteredColumns) {
-						Opa5.assert.ok(oToolbar.getContent()[0].getText().includes(sFilteredColumns), "Info filterbar is visible and contains expected columns.");
+						Opa5.assert.ok(oToolbar.getContent()[0].getText().includes(sFilteredColumns),
+							"Info filterbar is visible and contains expected columns.");
 					});
 				}
 			});
@@ -993,10 +1004,10 @@ sap.ui.define([
 						controlType: "sap.ui.mdc.ActionToolbar"
 					}
 				},
-				check: function (aVariantManagements) {
+				check: function(aVariantManagements) {
 					return !!aVariantManagements.length;
 				},
-				success: function (aVariantManagements) {
+				success: function(aVariantManagements) {
 					Opa5.assert.equal(aVariantManagements.length, 1, "VariantManagement found");
 					this.waitFor({
 						controlType: "sap.m.Title",
@@ -1005,7 +1016,7 @@ sap.ui.define([
 								text: sVariantName
 							})
 						],
-						success: function (aItems) {
+						success: function(aItems) {
 							Opa5.assert.equal(aItems.length, 1, "Variant '" + sVariantName + "' found");
 						},
 						errorMessage: "Could not find core item with text " + sVariantName

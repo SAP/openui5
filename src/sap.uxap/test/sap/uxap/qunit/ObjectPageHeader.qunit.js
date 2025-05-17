@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/m/Button",
+	"sap/m/MenuButton",
 	"sap/m/Link",
 	"sap/m/Text",
 	"sap/m/Breadcrumbs",
@@ -18,7 +19,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils"
 ],
-function(nextUIUpdate, jQuery, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
+function(nextUIUpdate, jQuery, Element, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, ObjectPageSection, ObjectPageSubSection, Button, MenuButton, Link, Text, Breadcrumbs, XMLView, Device, QUtils) {
 	"use strict";
 
 	var oFactory = {
@@ -764,6 +765,17 @@ function(nextUIUpdate, jQuery, Element, IconPool, ObjectPageLayout, ObjectPageHe
 			this.oHeaderView.destroy();
 			this._oHeader = null;
 		}
+	});
+
+	QUnit.test("MenuButton overflows", async function(assert) {
+		var sMenuButtonText = "looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong text";
+
+		this._oHeader.insertAction(new MenuButton({ text: sMenuButtonText }), 0);
+		await nextUIUpdate();
+
+		assert.ok(this._oHeader._oOverflowButton.$().is(':visible'), "Overflow button is visible");
+		assert.ok(this._oHeader._oOverflowActionSheet.getButtons().length > 0, "Overflow button has items");
+		assert.ok(this._oHeader._oOverflowActionSheet.getButtons()[0].getText() === sMenuButtonText, "Overflow button has the correct text");
 	});
 
 	QUnit.test("Adding action buttons as invisible doesn't prevent them from becoming default", async function(assert) {

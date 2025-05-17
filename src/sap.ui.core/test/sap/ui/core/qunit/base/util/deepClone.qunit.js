@@ -8,7 +8,7 @@ sap.ui.define(['sap/base/util/deepClone', 'sap/ui/core/Control'], function(deepC
 	var Dummy = Control.extend("sap.ui.deepClone.Dummy",{
 		metadata: {
 			properties: {
-				test: {
+				text: {
 					type: "string"
 				}
 			}

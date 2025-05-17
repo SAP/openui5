@@ -2,12 +2,6 @@
  * ${copyright}
  */
 
-// TODO: this is just a draft version and is not yet finalized --> just for verifying flex/p13n concepts. We could move some code here to a base
-// implementaton for re-use elsewhere
-// ---------------------------------------------------------------------------------------
-// Helper class used to help handle p13n related tasks and export service in the table and provide change
-// ---------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
 sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/library",
@@ -20,13 +14,24 @@ sap.ui.define([
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/performance/trace/FESRHelper"
-], (OverflowToolbarButton, MLibrary, OverflowToolbarMenuButton, Menu, MenuItem, Library, CoreLibrary, Device, ShortcutHintsMixin, ThemeParameters, FESRHelper) => {
+], (
+	OverflowToolbarButton,
+	MLibrary,
+	OverflowToolbarMenuButton,
+	Menu,
+	MenuItem,
+	Library,
+	CoreLibrary,
+	Device,
+	ShortcutHintsMixin,
+	ThemeParameters,
+	FESRHelper
+) => {
 	"use strict";
 
-	const { HasPopup } = CoreLibrary.aria;
-
-	// TODO: this is just a draft version and is not final --> just for verifying flex/p13n concepts
+	const {HasPopup} = CoreLibrary.aria;
 	let oRb;
+
 	/**
 	 * P13n/Settings helper class for sap.ui.mdc.Table.
 	 *
@@ -75,7 +80,7 @@ sap.ui.define([
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
-			const sButtonType = ThemeParameters.get({ name: "_sap_ui_mdc_Table_ExportButtonType" });
+			const sButtonType = ThemeParameters.get({name: "_sap_ui_mdc_Table_ExportButtonType"});
 			const oMenuButton = new OverflowToolbarMenuButton(sIdPrefix + "-export", {
 				icon: "sap-icon://excel-attachment",
 				text: oRb.getText("table.QUICK_EXPORT"),
@@ -104,10 +109,10 @@ sap.ui.define([
 			FESRHelper.setSemanticStepname(oMenu.getItems()[1], "press", "OI:EXP:SETTINGS");
 
 			ShortcutHintsMixin.addConfig(oMenuButton._getButtonControl(), {
-					addAccessibilityLabel: true,
-					messageBundleKey: Device.os.macintosh ? "table.SHORTCUT_EXPORT_TO_EXCEL_MAC" : "table.SHORTCUT_EXPORT_TO_EXCEL" // Cmd+Shift+E or Ctrl+Shift+E
-				}, mEventInfo.exportAs[1] // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
-			);
+				addAccessibilityLabel: true,
+				// Cmd+Shift+E or Ctrl+Shift+E
+				messageBundleKey: Device.os.macintosh ? "table.SHORTCUT_EXPORT_TO_EXCEL_MAC" : "table.SHORTCUT_EXPORT_TO_EXCEL"
+			}, mEventInfo.exportAs[1]); // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
 
 			return oMenuButton;
 		},
@@ -116,9 +121,8 @@ sap.ui.define([
 				this._loadResourceBundle();
 			}
 
-			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
-				sText = bIsExpand ? oRb.getText("table.EXPAND_TREE") : oRb.getText("table.COLLAPSE_TREE");
-
+			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll";
+			const sText = bIsExpand ? oRb.getText("table.EXPAND_TREE") : oRb.getText("table.COLLAPSE_TREE");
 			const oButton = this._createButton(sId, {
 				icon: bIsExpand ? "sap-icon://expand-all" : "sap-icon://collapse-all",
 				text: sText,
@@ -135,11 +139,10 @@ sap.ui.define([
 				this._loadResourceBundle();
 			}
 
-			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll",
-				sTree = bIsExpand ? oRb.getText("table.EXPAND_TREE") : oRb.getText("table.COLLAPSE_TREE"),
-				sNode = bIsExpand ? oRb.getText("table.EXPAND_NODE") : oRb.getText("table.COLLAPSE_NODE"),
-				sText = bIsExpand ? oRb.getText("table.EXPAND_MENU_BUTTON_TEXT") : oRb.getText("table.COLLAPSE_MENU_BUTTON_TEXT");
-
+			const sId = bIsExpand ? sIdPrefix + "-expandAll" : sIdPrefix + "-collapseAll";
+			const sTree = bIsExpand ? oRb.getText("table.EXPAND_TREE") : oRb.getText("table.COLLAPSE_TREE");
+			const sNode = bIsExpand ? oRb.getText("table.EXPAND_NODE") : oRb.getText("table.COLLAPSE_NODE");
+			const sText = bIsExpand ? oRb.getText("table.EXPAND_MENU_BUTTON_TEXT") : oRb.getText("table.COLLAPSE_MENU_BUTTON_TEXT");
 			const oMenuButton = new OverflowToolbarMenuButton(sId, {
 				icon: bIsExpand ? "sap-icon://expand-all" : "sap-icon://collapse-all",
 				tooltip: sText,

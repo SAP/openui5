@@ -509,6 +509,7 @@ sap.ui.define([
 
 			if (this._isOverflow) {
 				oLinkAriaProps.haspopup = "menu";
+				oLinkAriaProps.label = this._resourceBundleTnt.getText("NAVIGATION_LIST_OVERFLOW_ITEM_LABEL");
 			}
 
 			if (bSelectable) {

@@ -121,7 +121,7 @@ sap.ui.define([
 		assert.strictEqual(oColumnHeaderLabel.getText(), "", "Initial: Label control 'text'");
 		assert.strictEqual(oColumnHeaderLabel.getTextAlign(), "Begin", "Initial: Label control 'textAlign'");
 		assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "Initial: Label control 'wrapping'");
-		assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Normal" , "Initial: Label control 'wrappingType'");
+		assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Normal", "Initial: Label control 'wrappingType'");
 		assert.strictEqual(oColumnHeaderLabel.getWidth(), "100%", "Initial: Label control 'width'");
 		assert.strictEqual(oColumnHeaderLabel.getRequired(), false, "Initial: Label control 'required'");
 		assert.strictEqual(oColumnHeaderLabel.getTooltip(), null, "Initial: Label control 'tooltip'");
@@ -175,7 +175,7 @@ sap.ui.define([
 		assert.strictEqual(oColumnHeaderLabel.getText(), "", "Initial: Label control 'text'");
 		assert.strictEqual(oColumnHeaderLabel.getTextAlign(), "Begin", "Initial: Label control 'textAlign'");
 		assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "Initial: Label control 'wrapping'");
-		assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Hyphenated" , "Initial: Label control 'wrappingType'");
+		assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Hyphenated", "Initial: Label control 'wrappingType'");
 		assert.strictEqual(oColumnHeaderLabel.getWidth(), "100%", "Initial: Label control 'width'");
 		assert.strictEqual(oColumnHeaderLabel.getRequired(), false, "Initial: Label control 'required'");
 		assert.strictEqual(oColumnHeaderLabel.getTooltip(), null, "Initial: Label control 'tooltip'");

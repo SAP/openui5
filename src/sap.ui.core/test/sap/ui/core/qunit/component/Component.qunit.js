@@ -1163,6 +1163,9 @@ sap.ui.define([
 							}
 						}
 					}
+				},
+				properties: {
+					key1: { type: "string" }
 				}
 			},
 			constructor: function(mSettings) {

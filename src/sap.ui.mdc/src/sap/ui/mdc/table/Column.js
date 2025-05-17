@@ -120,9 +120,10 @@ sap.ui.define([
 
 				/**
 				 * Indicates whether the content of the column is required.
-				 * <b>Note:</b> The table only takes care of announcing the state of the column header as defined by the <code>required</code> property.
-				 * The application needs to take care of the screen reader announcement of the state of the table cells,
-				 * for example, by setting the <code>required</code> property to <code>true</code> for <code>sap.m.Input</code>.
+				 *
+				 * <b>Note:</b> The table only takes care of announcing the state of the column header as defined by the <code>required</code>
+				 * property. The application needs to take care of the screen reader announcement of the state of the table cells, for example, by
+				 * setting the <code>required</code> property to <code>true</code> for <code>sap.m.Input</code>.
 				 */
 				required: {
 					type: "boolean",
@@ -215,7 +216,7 @@ sap.ui.define([
 
 		const oWidthBindingInfo = {
 			parts: [
-				{ path: "$this>/width" }, { path: "$columnSettings>/calculatedWidth" }, { path: "$columnSettings>/p13nWidth" }
+				{path: "$this>/width"}, {path: "$columnSettings>/calculatedWidth"}, {path: "$columnSettings>/p13nWidth"}
 			],
 			formatter: function(sWidth, sCalculatedWidth, sP13nWidth) {
 				return sP13nWidth || sCalculatedWidth || sWidth;
@@ -224,10 +225,10 @@ sap.ui.define([
 
 		const oTooltipBindingInfo = {
 			parts: [
-				{ path: "$this>/tooltip" },
-				{ path: "$this>/header" },
-				{ path: "$this>/headerVisible" },
-				{ path: "$sap.ui.mdc.Table>/useColumnLabelsAsTooltips" }
+				{path: "$this>/tooltip"},
+				{path: "$this>/header"},
+				{path: "$this>/headerVisible"},
+				{path: "$sap.ui.mdc.Table>/useColumnLabelsAsTooltips"}
 			],
 			formatter: function(sTooltip, sHeader, bHeaderVisible, bUseColumnLabelsAsTooltips) {
 				if (sTooltip || !bUseColumnLabelsAsTooltips) {
@@ -247,7 +248,7 @@ sap.ui.define([
 				header: this._getColumnHeaderLabel(oTooltipBindingInfo),
 				importance: {
 					parts: [
-						{ path: "$this>/importance" }, { path: "$this>/extendedSettings/importance" }, { path: "$this>/extendedSettings/@className" }
+						{path: "$this>/importance"}, {path: "$this>/extendedSettings/importance"}, {path: "$this>/extendedSettings/@className"}
 					],
 					formatter: function(sLegacyImportance, sImportance, sClassName) {
 						if (sImportance && sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings") {
@@ -260,7 +261,7 @@ sap.ui.define([
 				popinDisplay: "{= ${$this>/headerVisible} ? 'Inline' : 'WithoutHeader' }",
 				mergeDuplicates: {
 					parts: [
-						{ path: "$this>/extendedSettings/mergeFunction" }, { path: "$this>/extendedSettings/@className" }
+						{path: "$this>/extendedSettings/mergeFunction"}, {path: "$this>/extendedSettings/@className"}
 					],
 					formatter: function(sMergeFunction, sClassName) {
 						return sMergeFunction && sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings";
@@ -268,7 +269,7 @@ sap.ui.define([
 				},
 				mergeFunctionName: {
 					parts: [
-						{ path: "$this>/extendedSettings/mergeFunction" }, { path: "$this>/extendedSettings/@className" }
+						{path: "$this>/extendedSettings/mergeFunction"}, {path: "$this>/extendedSettings/@className"}
 					],
 					formatter: function(sMergeFunction, sClassName) {
 						if (sClassName === "sap.ui.mdc.table.ResponsiveColumnSettings") {
@@ -311,10 +312,10 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			"final": true,
 			aggregations: {
-				label: { type: "sap.m.Label", multiple: false }
+				label: {type: "sap.m.Label", multiple: false}
 			},
 			associations: {
-				column: { type: "sap.ui.mdc.table.Column" }
+				column: {type: "sap.ui.mdc.table.Column"}
 			}
 		},
 		renderer: {

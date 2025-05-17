@@ -2,10 +2,11 @@
  * ${copyright}
  */
 
-// Provides control sap.ui.mdc.table.RowSettings
 sap.ui.define([
 	'sap/ui/core/Element'
-], (Element) => {
+], (
+	Element
+) => {
 	"use strict";
 	/**
 	 * Constructor for new <code>RowSettings</code>.
@@ -34,45 +35,44 @@ sap.ui.define([
 				 * The highlight state of the rows.
 				 *
 				 * If the highlight is set to {@link module:sap/ui/core/message/MessageType MessageType.None} (default), no highlights are visible.
-				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link module:sap/ui/core/message/MessageType} or
-				 * {@link sap.ui.core.IndicationColor} (only values of <code>Indication01</code> to <code>Indication10</code> are supported
+				 * Valid values for the <code>highlight</code> property are values of the enumerations {@link module:sap/ui/core/message/MessageType}
+				 * or {@link sap.ui.core.IndicationColor} (only values of <code>Indication01</code> to <code>Indication10</code> are supported
 				 * for accessibility contrast reasons).
 				 *
 				 * Accessibility support is provided with the {@link sap.ui.mdc.table.RowSettings#setHighlightText highlightText} property.
-				 * If the <code>highlight</code> property is set to a value of {@link module:sap/ui/core/message/MessageType}, the <code>highlightText</code>
-				 * property does not need to be set because a default text is used. However, the default text can be overridden by setting the
-				 * <code>highlightText</code> property.
+				 * If the <code>highlight</code> property is set to a value of {@link module:sap/ui/core/message/MessageType}, the
+				 * <code>highlightText</code> property does not need to be set because a default text is used. However, the default text can be
+				 * overridden by setting the <code>highlightText</code> property.
 				 * In all other cases the <code>highlightText</code> property must be set.
 				 *
 				 */
-				highlight: { type: "string", group: "Appearance", defaultValue: "None" },
+				highlight: {type: "string", group: "Appearance", defaultValue: "None"},
 
 				/**
 				 * Defines the semantics of the {@link sap.ui.mdc.table.RowSettings#setHighlight highlight} property for accessibility purposes.
 				 */
-				highlightText: { type: "string", group: "Misc", defaultValue: "" },
+				highlightText: {type: "string", group: "Misc", defaultValue: ""},
 
 				/**
 				 * The navigated state of a row. The navigation indicator is displayed at the end of a row.
 				 */
-				navigated: { type: "boolean", group: "Appearance", defaultValue: false }
+				navigated: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			aggregations: {
 				/**
 				 * The actions that appear at the end of a row.
 				 *
-				 * <b>Note:</b> This aggregation cannot be bound with a factory.<br>
-				 * If the table type is {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, only the <code>Navigation</code> row action type
-				 * is supported.
+				 * <b>Note:</b> This aggregation cannot be bound with a factory. If the table type is
+				 * {@link sap.ui.mdc.table.ResponsiveTableType ResponsiveTable}, only the <code>Navigation</code> row action type is supported.
 				 */
-				rowActions: { type: "sap.ui.mdc.table.RowActionItem", multiple: true }
+				rowActions: {type: "sap.ui.mdc.table.RowActionItem", multiple: true}
 			}
 		}
 	});
 
 	RowSettings.prototype.getAllSettings = function() {
-		const mSettings = {},
-			thisCloned = this.clone(); // To make sure the binding info instances are not shared between different tables
+		const mSettings = {};
+		const thisCloned = this.clone(); // To make sure the binding info instances are not shared between different tables
 
 		if (this.isBound("navigated")) {
 			mSettings.navigated = thisCloned.getBindingInfo("navigated");
@@ -96,8 +96,8 @@ sap.ui.define([
 	};
 
 	RowSettings.prototype.getAllActions = function() {
-		const mSettings = {},
-			thisCloned = this.clone();
+		const mSettings = {};
+		const thisCloned = this.clone();
 
 		if (this.isBound("rowActions")) {
 			// Set bindingInfo for items aggregation to bindingInfo of rowActions
