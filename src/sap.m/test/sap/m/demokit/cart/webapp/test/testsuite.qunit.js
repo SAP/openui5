@@ -5,11 +5,23 @@ sap.ui.define(() => {
 		name: "QUnit test suite for Shopping Cart",
 		defaults: {
 			page: "ui5://test-resources/sap/ui/demo/cart/Test.qunit.html?testsuite={suite}&test={name}",
-			qunit: {
-				version: 2
+			qunit : {
+				versions : {
+					"2.18" : {
+						module : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18",
+						css : "test-resources/sap/ui/core/qunit/thirdparty/qunit-2.18.css"
+					}
+				},
+				version : "2.18"
 			},
-			sinon: {
-				version: 1
+			sinon : {
+				versions : {
+					"14.0" : {
+						module : "test-resources/sap/ui/core/qunit/thirdparty/sinon-14.0",
+						bridge : "sap/ui/qunit/sinon-qunit-bridge"
+					}
+				},
+				version : "14.0"
 			},
 			ui5: {
 				language: "en",
