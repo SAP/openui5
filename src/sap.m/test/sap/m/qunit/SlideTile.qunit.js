@@ -1101,6 +1101,21 @@ var FrameType = library.FrameType;
 		}
 	});
 
+	QUnit.test("Slide Tile should have the class sapMSTLargeScreen if its more than 800px", async function(assert) {
+		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.ok(this.oSlideTile.hasStyleClass("sapMSTLargeScreen"),"The class is present");
+
+	});
+
+	QUnit.test("Slide Tile should not have the class sapMSTLargeScreen if its less than 800px", async function(assert) {
+		this.initializeMobileView();
+		this.oSlideTile = this.createSlideTile(true).placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		assert.notOk(this.oSlideTile.hasStyleClass("sapMSTLargeScreen"),"The class is not present");
+	});
+
 	QUnit.test("Slide Tile should get paused when the it gets focus on it", async function(assert) {
 		var bForward = true;
 		this.oTile1 = this.createTile().placeAt("qunit-fixture");
