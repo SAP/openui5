@@ -619,6 +619,7 @@ sap.ui.define([
 				aList.getDomRef().querySelector(".sapMUCNoDataPage").focus();
 			}
 		}
+		this._oIllustratedMessage = this.getAggregation("illustratedMessage");
 		if (!this._oIllustratedMessage) {
 			this._oIllustratedMessage = new IllustratedMessage({
 				illustrationType: this.getNoDataIllustrationType(),

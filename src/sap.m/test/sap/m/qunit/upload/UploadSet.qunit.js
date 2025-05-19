@@ -1003,7 +1003,12 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oUploadSet = new UploadSet("uploadSet", {
 				uploadEnabled: false,
-				uploadButtonInvisible: false
+				uploadButtonInvisible: false,
+				illustratedMessage: new IllustratedMessage({
+					illustrationType: "sapIllus-NoActivities",
+					id:"illustratedMessage1",
+					title: "IllustratedTitle"
+				})
 			}).setModel(new JSONModel(getData()));
 			this.oUploadSet.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1019,6 +1024,19 @@ sap.ui.define([
 
 		assert.equal(button.getEnabled(), false, "Upload button on illustrated message section is disabled when uploadEnabled is set to false");
 		assert.equal(button.getVisible(), true, "Upload button on illustrated message section is visible when uploadButtonInvisible is set to false");
+	});
+
+	QUnit.test("Test to check Illustrated Message is picked up correctly", function(assert) {
+		// Arrange
+		var oIllustratedMessage = this.oUploadSet._getIllustratedMessage();
+
+		// Act
+		var oParent = oIllustratedMessage.getParent();
+
+		// Assert
+		assert.ok(oParent, "The parent of the 'illustratedMessage' aggregation exists.");
+		assert.equal(oParent.getMetadata().getName(), "sap.m.upload.UploadSet", "The parent of the 'illustratedMessage' aggregation is of type 'sap.m.upload.UploadSet'.");
+		assert.equal(oCore.byId("illustratedMessage1")?.getParent()?.getMetadata()?.getName(), "sap.m.upload.UploadSet", "The parent of the element with id 'illustratedMessage1'  is of type 'sap.m.upload.UploadSet'.");
 	});
 
 	QUnit.module("UploadSet general functionality", {
