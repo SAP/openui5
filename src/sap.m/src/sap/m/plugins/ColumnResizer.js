@@ -127,7 +127,7 @@ sap.ui.define([
 	ColumnResizer.prototype.ontouchstart = function(oEvent) {
 		if (this.getConfig("allowTouchResizing") && jQuery(oEvent.target).closest(this._aResizables)[0]) {
 			this._onmousemove(oEvent);
-		} else if (this._iHoveredColumnIndex == -1 && this._oHandle && this._oHandle.style[sBeginDirection]) {
+		} else if (this._iHoveredColumnIndex == -1 && this._oHandle?.isConnected && this._oHandle.style[sBeginDirection]) {
 			this._onmousemove(oEvent);
 
 			if (this._iHoveredColumnIndex == -1) {
@@ -285,7 +285,11 @@ sap.ui.define([
 			}
 		}
 
-		this._oHandle.style[sBeginDirection] = (iColumnIndex > -1) ? (this._aPositions[iColumnIndex] - this._fContainerX) * iDirectionFactor + "px" : "";
+		if (iColumnIndex > -1) {
+			this._oHandle.style[sBeginDirection] = (this._aPositions[iColumnIndex] - this._fContainerX) * iDirectionFactor + "px";
+		} else {
+			this._oHandle.remove();
+		}
 
 		if (bMobileHandle) {
 			this._oAlternateHandle.style[sBeginDirection] = (--iColumnIndex > -1) ? (this._aPositions[iColumnIndex] - this._fContainerX) * iDirectionFactor + "px" : "";
@@ -307,14 +311,14 @@ sap.ui.define([
 		this._$Container.removeClass(CSS_CLASS + "Resizing");
 
 		if (oSession.iDistanceX || !bDelayHideHandle) {
-			this._oHandle.style[sBeginDirection] = "";
+			this._oHandle.remove();
 		} else {
 			// delay hiding the handle so that in case of double-click mouse event,
 			// the resize handle does not disappear in the initial mousedown and mouseup event
 			// this will also prevent column press event to trigger
-			setTimeout(function() {
-				this._oHandle.style[sBeginDirection] = "";
-			}.bind(this), 300);
+			setTimeout(() => {
+				this._oHandle.remove();
+			}, 300);
 		}
 
 		this._iHoveredColumnIndex = -1;
@@ -546,6 +550,7 @@ sap.ui.define([
 	 */
 	PluginBase.setConfigs({
 		"sap.m.Table": {
+			container: "listUl",
 			resizable: ".sapMListTblHeaderCell",
 			cellPaddingStyleClass: "sapMListTblCell",
 			fixAutoWidthColumns: true,
