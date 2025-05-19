@@ -47,7 +47,7 @@
 							<Button text="Action 3" id="standaloneButton3" />
 						</mdcat:ActionToolbarAction>
 
-						<mdcat:ActionToolbarAction id="standaloneAction4">
+						<mdcat:ActionToolbarAction id="standaloneAction4" dt:designtime="not-adaptable-visibility">
 							<Button text="Action 4" id="standaloneButton4" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="standaloneAction5">
@@ -101,7 +101,7 @@
 							<Button text="Action 3" id="tableButton3" />
 						</mdcat:ActionToolbarAction>
 
-						<mdcat:ActionToolbarAction id="tableAction4">
+						<mdcat:ActionToolbarAction id="tableAction4" dt:designtime="not-adaptable-visibility">
 							<Button text="Action 4" id="tableButton4" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="tableAction5">
@@ -176,7 +176,7 @@
 							<Button text="Action 3" id="chartButton3" />
 						</mdcat:ActionToolbarAction>
 
-						<mdcat:ActionToolbarAction id="chartAction4">
+						<mdcat:ActionToolbarAction id="chartAction4" dt:designtime="not-adaptable-visibility">
 							<Button text="Action 4" id="chartButton4" />
 						</mdcat:ActionToolbarAction>
 						<mdcat:ActionToolbarAction id="chartAction5">
