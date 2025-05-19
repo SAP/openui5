@@ -171,29 +171,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets a flag in sessionStorage to indicate that the "What's New" dialog should not be shown after rta reload.
-	 */
-	ReloadManager.setDontShowWhatsNewAfterReload = () => {
-		window.sessionStorage.setItem("sap.ui.rta.whatsNew", true);
-	};
-
-	/**
-	 * Checks if the "What's New" dialog should be shown rta after reload.
-	 *
-	 * @returns {boolean} Returns true if the "What's New" dialog should be shown, false otherwise.
-	 */
-	ReloadManager.getDontShowWhatsNewAfterReload = () => {
-		return window.sessionStorage.getItem("sap.ui.rta.whatsNew");
-	};
-
-	/**
-	 * Removes the flag from sessionStorage that indicates the "What's New" dialog should not be shown after reload.
-	 */
-	ReloadManager.removeDontShowWhatsNewAfterReload = () => {
-		window.sessionStorage.removeItem("sap.ui.rta.whatsNew");
-	};
-
-	/**
 	 * Triggers the reload of the page. Can either be a soft reload inside the FLP or a hard reload.
 	 *
 	 * @param {object} oReloadInfo - Information needed for the reload
