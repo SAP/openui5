@@ -64,7 +64,7 @@ sap.ui.define([
 
 	var Component = BaseComponent.extend("sap.ui.core.sample.ViewTemplate.scenario.Component", {
 		metadata : {
-			interfaces: ["sap.ui.core.IAsyncContentCreation"],
+			interfaces : ["sap.ui.core.IAsyncContentCreation"],
 			manifest : "json"
 		},
 
@@ -98,13 +98,13 @@ sap.ui.define([
 				requests : [{
 					method : "GET",
 					path : new RegExp(MockServer.prototype._escapeStringForRegExp(sAnnotationUri)),
-					response : function(oXHR) {
+					response : function (oXHR) {
 						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations.xml");
 					}
 				}, {
 					method : "GET",
 					path : new RegExp(MockServer.prototype._escapeStringForRegExp(sAnnotationUri2)),
-					response : function(oXHR) {
+					response : function (oXHR) {
 						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations2.xml");
 					}
 				}]

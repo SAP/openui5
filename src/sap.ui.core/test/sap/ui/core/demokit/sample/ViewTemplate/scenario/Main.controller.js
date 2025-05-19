@@ -13,25 +13,24 @@ sap.ui.define([
 ], function (Log, MessageBox, Component, library, ListItem, View, Controller, XMLHelper) {
 	"use strict";
 
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
+	var MainController,
+		// shortcut for sap.ui.core.mvc.ViewType
+		ViewType = library.mvc.ViewType;
 
 	function alertError(oError) {
 		Log.error(oError, oError.stack, "sap.ui.core.sample.ViewTemplate.scenario.Main");
-		MessageBox.alert(oError.message, {
-			icon : MessageBox.Icon.ERROR,
-			title : "Error"});
+		MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 	}
 
-	var MainController = Controller.extend("sap.ui.core.sample.ViewTemplate.scenario.Main", {
+	MainController = Controller.extend("sap.ui.core.sample.ViewTemplate.scenario.Main", {
 		/**
 		 * Function is called by <code>onSourceCode</code> before the source code is pretty printed.
 		 * It returns the XML of the detail view.
 		 *
-		 * @param {string} sSourceCode The source code
+		 * @param {string} _sSourceCode The source code
 		 * @returns {string} The XML of the detail view
 		 */
-		beforePrettyPrinting : function (sSourceCode) {
+		beforePrettyPrinting : function (_sSourceCode) {
 			return XMLHelper.serialize(this._getDetailView()._xContent);
 		},
 
@@ -64,11 +63,11 @@ sap.ui.define([
 			}
 		},
 
-		onChangeType : function (oEvent) {
+		onChangeType : function () {
 			this._bindSelectInstance();
 		},
 
-		onChangeInstance : function (oEvent) {
+		onChangeInstance : function () {
 			var sInstanceId = this.getView().getModel("ui").getProperty("/selectedInstance"),
 				sPath = this.id2Path(sInstanceId);
 
@@ -141,7 +140,6 @@ sap.ui.define([
 						that.onSourceCode();
 					});
 				});
-
 			}).catch(alertError);
 		}
 	});
