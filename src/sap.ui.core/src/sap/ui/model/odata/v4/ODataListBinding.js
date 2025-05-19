@@ -578,8 +578,8 @@ sap.ui.define([
 	 * <code>start</code> and <code>length</code> parameters can be used to retrieve the received
 	 * data via {@link #requestContexts}.
 	 *
-	 * If the request fails, the <code>errorMessage</code> is a UI5 message containing the back-end
-	 * error. It is reported to the message model by default unless
+	 * If the request fails, the <code>messagesOnError</code> is an array of UI5 messages containing
+	 * the back-end messages. They are reported to the message model by default unless
 	 * {@link sap.ui.base.Event#preventDefault} is called.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
@@ -594,8 +594,8 @@ sap.ui.define([
 	 *   The start index of the requested range
 	 * @param {number} oEvent.getParameters.length
 	 *   The length of the requested range
-	 * @param {sap.ui.core.message.Message} [oEvent.getParameters.errorMessage]
-	 *   A UI5 message of type {@link module:sap/ui/core/message/MessageType MessageType.Error}
+	 * @param {sap.ui.core.message.Message[]} [oEvent.getParameters.messagesOnError]
+	 *   An array of UI5 messages if the request failed; <code>undefined</code> otherwise
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#separateReceived
 	 * @experimental As of version 1.131.0
@@ -2530,14 +2530,14 @@ sap.ui.define([
 			length : iEnd - iStart
 		};
 		if (oError) {
-			oParameters.errorMessage = this.oModel.reportTransitionMessages(
-				_Helper.extractMessages(oError), oError.resourcePath, /*bSilent*/true)[0];
+			oParameters.messagesOnError = this.oModel.reportTransitionMessages(
+				_Helper.extractMessages(oError), oError.resourcePath, /*bSilent*/true);
 		}
 
 		const bDefaultAction = this.fireEvent("separateReceived", oParameters, true);
 
 		if (oError && bDefaultAction) {
-			Messaging.updateMessages(undefined, [oParameters.errorMessage]);
+			Messaging.updateMessages(undefined, oParameters.messagesOnError);
 		}
 	};
 
