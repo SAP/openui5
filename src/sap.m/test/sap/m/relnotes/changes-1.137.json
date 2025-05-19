@@ -3,6 +3,46 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "ce433ecd07a39b64412eb43c527228183c93af62",
+        "type": "FIX",
+        "text": " We now ensure that the image inside a slide tile is adjusted based on the width of the tile"
+      },
+      {
+        "id": "2e0f19e39273dfb0c8a91dd659f6a4aaa066927c",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Extra speech output removed"
+      },
+      {
+        "id": "7fe6ab529f5615079dab1efb183d2ee74d4c98b6",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Documentation is now improved"
+      },
+      {
+        "id": "09e0b0ed85c0a451281aa8260edbb39ce2ac9589",
+        "type": "FIX",
+        "text": " We've now addressed the unidentical key value pairs issue with the UploaderHttpRequestMethod enum"
+      },
+      {
+        "id": "73b9eabc2610129a02dd9392fd10bb3f7931b5cd",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: Icon is decorative when the control is not visible"
+      },
+      {
+        "id": "6a363acab332b8cab5f5282cabdb6b6754ff568f",
+        "type": "FIX",
+        "text": " sap.m.TextArea: Accessibility page improvements"
+      },
+      {
+        "id": "a7a65a9c4e52540614e06572b40b0eb0c8ebecf4",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Disable navigation past max date"
+      },
+      {
+        "id": "44e1caf5581ecf60e138d0557d4a654b97590abf",
+        "type": "FIX",
+        "text": " sap.m.Input, sap.m.ComboBoxBase: Links in value state error messages are now correct"
+      },
+      {
         "id": "aab35fae34b33dc2d3cee1f8fee97ca998e71110",
         "type": "FIX",
         "text": " We've now enabled the screen reader announcement for navigation and action tiles"

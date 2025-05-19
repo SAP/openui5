@@ -3,6 +3,16 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "911f6eeb9ef95197b52faa8755fc2e97b7f30f04",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
+      },
+      {
+        "id": "5a0dfa0a9143692f42e23200d6a3439e4ceccd7f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: fix overflowing behavior"
+      },
+      {
         "id": "249659507452b4118c36b4242bcbf59ac5db81d2",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSubSection: ensure consistent async unstashing"

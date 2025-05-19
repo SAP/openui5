@@ -1,0 +1,17 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "40c989d1821f07e61f4288b6011037a7d33ac02d",
+        "type": "FIX",
+        "text": " Fix further ControllerExtensionProvider qunit tests"
+      },
+      {
+        "id": "4c85be5fd2632174841709fd4dab8ab7732cf31e",
+        "type": "FIX",
+        "text": " Add registerExtensionProvider call to QUnit again"
+      }
+    ]
+  }
+}

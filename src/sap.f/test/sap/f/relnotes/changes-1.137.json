@@ -11,11 +11,6 @@
         "id": "76ccbb6fe2d0e2dcb8f17858cc98bc4e72c72cfe",
         "type": "FEATURE",
         "text": " Integration Cards: Statuses in Header, NumericHeader and List now support actions"
-      },
-      {
-        "id": "796f81c2476b6d6dee81d080e89849c606061682",
-        "type": "FIX",
-        "text": " Integration Cards: Updated documentation"
       }
     ]
   }

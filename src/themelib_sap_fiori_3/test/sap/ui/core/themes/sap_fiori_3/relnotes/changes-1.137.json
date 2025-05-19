@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "55bb71cff5199d7f255af3984e89784919eca5ca",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: fix header buttons visibility"
+      },
+      {
         "id": "683386722ebe9eaaf99a80e825e45974546ae52c",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: sticky Section/SubSection headers"

@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "9b87feb808e5d0f31a8c87e06e5acc67e4db2c0e",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: CSS parameter 'sapFontSemiboldFamily' is changed to 'sapFontSemiboldDuplexFamily'"
+      },
+      {
         "id": "683386722ebe9eaaf99a80e825e45974546ae52c",
         "type": "FEATURE",
         "text": " sap.uxap.ObjectPageLayout: sticky Section/SubSection headers"

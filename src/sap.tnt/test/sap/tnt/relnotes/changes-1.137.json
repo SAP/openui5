@@ -3,6 +3,16 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "9b87feb808e5d0f31a8c87e06e5acc67e4db2c0e",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: CSS parameter 'sapFontSemiboldFamily' is changed to 'sapFontSemiboldDuplexFamily'"
+      },
+      {
+        "id": "8bd4e0aa9da7f31e0a7792526c642141b42a14f2",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: `Right arrow` and `Left arrow` behavior fixed"
+      },
+      {
         "id": "02b79f0069c0a7ebde2e89345862638d33c81010",
         "type": "FIX",
         "text": " sap.tnt.SideNavigation: fixed visual test"
