@@ -181,10 +181,12 @@ sap.ui.define([
 				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-			sinon.stub(this.oToolbar._oFioriHeader.getDomRef(), "querySelector")
+			const oImage = document.createElement("img");
+			oImage.src = sLogoSource;
+			sinon.stub(this.oToolbar._oFioriHeader.getDomRef(), "querySelectorAll")
 			.callThrough()
-			.withArgs("#shell-header-icon")
-			.returns(document.createElement("div"));
+			.withArgs("img")
+			.returns([oImage]);
 
 			await this.oToolbar.onFragmentLoaded();
 			this.oToolbar.show();
@@ -197,6 +199,38 @@ sap.ui.define([
 				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getHeight(),
 				"0px",
 				"Image should have a height of 0px"
+			);
+			this.oToolbar.destroy();
+		});
+
+		QUnit.test("when there is more than one image in the header", async function(assert) {
+			this.oToolbar = new Fiori({
+				ushellApi: {
+					getLogo() {
+						return sLogoSource;
+					}
+				},
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
+			});
+			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
+			const oImage = document.createElement("img");
+			oImage.src = "fakeLogoSource.png";
+			sinon.stub(this.oToolbar._oFioriHeader.getDomRef(), "querySelectorAll")
+			.callThrough()
+			.withArgs("img")
+			.returns([this.oImage.getDomRef(), oImage]);
+
+			await this.oToolbar.onFragmentLoaded();
+			this.oToolbar.show();
+			assert.strictEqual(
+				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getWidth(),
+				"55px",
+				"Correct Image with a width of 55px is found"
+			);
+			assert.strictEqual(
+				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getHeight(),
+				"27px",
+				"Correct Image with a height of 27px is found"
 			);
 			this.oToolbar.destroy();
 		});
