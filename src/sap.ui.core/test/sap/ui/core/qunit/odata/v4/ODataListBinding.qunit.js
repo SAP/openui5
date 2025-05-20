@@ -12893,16 +12893,16 @@ sap.ui.define([
 			.returns("~aMessages~");
 		this.mock(oBinding.oModel).expects("reportTransitionMessages")
 			.withExactArgs("~aMessages~", "~resourcePath~", true)
-			.returns(["~errorMessage~"]);
+			.returns(["~errorMessage~", "~anotherMessage~"]);
 		this.mock(oBinding).expects("fireEvent").withExactArgs("separateReceived", {
 				property : "~sProperty~",
 				start : 42,
 				length : 23,
-				errorMessage : "~errorMessage~"
+				messagesOnError : ["~errorMessage~", "~anotherMessage~"]
 			}, true)
 			.returns(bDefaultAction);
 		this.mock(Messaging).expects("updateMessages").exactly(bDefaultAction ? 1 : 0)
-			.withExactArgs(undefined, ["~errorMessage~"]);
+			.withExactArgs(undefined, ["~errorMessage~", "~anotherMessage~"]);
 
 		// code under test
 		oBinding.fireSeparateReceived("~sProperty~", 42, 42 + 23, oError);
