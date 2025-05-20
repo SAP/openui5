@@ -322,15 +322,7 @@ sap.ui.define([
 		}
 
 		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) ) {
-			this.getDomRef().classList.add("sapTntNLIActive");
 			this.ontap(oEvent);
-		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE) ) {
-			this.getDomRef().classList.add("sapTntNLIActive");
-		}
-
-		//onkeyup is not called when new page is opened
-		if (this.getHref() && this.getTarget() === "_blank") {
-			this.getDomRef().classList.remove("sapTntNLIActive");
 		}
 
 		NavigationListItemBase.prototype.onkeydown.apply(this, arguments);
@@ -341,10 +333,7 @@ sap.ui.define([
 			return;
 		}
 
-		if ((oEvent.key ? oEvent.key === "Enter" : oEvent.keyCode === KeyCodes.ENTER) ) {
-			this.getDomRef().classList.remove("sapTntNLIActive");
-		} else if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE)) {
-			this.getDomRef().classList.remove("sapTntNLIActive");
+		if ((oEvent.key ? oEvent.key === " " : oEvent.keyCode === KeyCodes.SPACE)) {
 			this.ontap(oEvent);
 		}
 
