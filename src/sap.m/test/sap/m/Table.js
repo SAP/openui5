@@ -32,7 +32,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickAction",
-	"sap/m/Page"
+	"sap/m/Page",
+	"sap/m/plugins/ColumnResizer"
 ], function(
 	App,
 	MessageBox,
@@ -67,7 +68,8 @@ sap.ui.define([
 	ColumnMenuItem,
 	ColumnMenu,
 	ColumnMenuQuickAction,
-	Page
+	Page,
+	ColumnResizer
 ) {
 	"use strict";
 
@@ -578,15 +580,16 @@ sap.ui.define([
 		growingThreshold: 5,
 		growingScrollToLoad : true,
 		footerText : "Static table footer text",
+		sticky: ["HeaderToolbar", "InfoToolbar", "ColumnHeaders", "GroupHeaders"],
 		headerToolbar : oTableHeader,
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
 		columns : aColumns,
-		dependents: new CopyProvider({
+		dependents: [new CopyProvider({
 			extractData: function(oContext, oColumn) {
 				return oContext.getProperty(oColumn.data("clipboard"));
 			}
-		}),
+		}), new ColumnResizer()],
 		selectionChange : function(e) {
 			MessageToast.show("selection is changed");
 		},

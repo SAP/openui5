@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/syncStyleClass",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/InstanceManager"
+	"sap/ui/model/json/JSONModel"
 ], (
 	Control,
 	Button,
@@ -35,8 +34,7 @@ sap.ui.define([
 	Library,
 	coreLibrary,
 	syncStyleClass,
-	JSONModel,
-	InstanceManager
+	JSONModel
 ) => {
 	"use strict";
 
@@ -463,6 +461,8 @@ sap.ui.define([
 					MessageBox.warning(sResetText, {
 						actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 						emphasizedAction: MessageBox.Action.OK,
+						closeOnNavigation: true,
+						dependentOn: this,
 						onClose: (sAction) => {
 							if (sAction === MessageBox.Action.OK) {
 								// --> focus "OK" button after 'reset' has been triggered
@@ -540,7 +540,6 @@ sap.ui.define([
 		}
 		this._aPanels = null;
 		this._aCustomStyles = null;
-		InstanceManager.closeAllDialogs();
 	};
 
 	return Popup;

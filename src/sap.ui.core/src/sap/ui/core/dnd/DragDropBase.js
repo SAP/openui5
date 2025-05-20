@@ -79,13 +79,23 @@ sap.ui.define([
 	DragDropBase.prototype.bIgnoreMetadataCheck = false;
 
 	/**
+	 * Determines whether the specified control or its aggregation support dragging.
+	 *
+	 * @param {sap.ui.core.Element} oControl The control instance
+	 * @param {string} [sAggregationName] The draggable aggregation name
+	 * @returns {boolean} Whether the control or its aggregation is draggable
 	 * @abstract
 	 */
-	DragDropBase.prototype.isDraggable = function(oControl) {
+	DragDropBase.prototype.isDraggable = function(oControl, sAggregationName) {
 		return false;
 	};
 
 	/**
+	 * Determines whether the specified control is a valid drop target based on the given drag event.
+	 *
+	 * @param {sap.ui.core.Element} oControl The control instance
+	 * @param {DragEvent} oEvent The drag event
+	 * @returns {boolean} Whether the control can accept the drop
 	 * @abstract
 	 */
 	DragDropBase.prototype.isDroppable = function(oControl, oEvent) {

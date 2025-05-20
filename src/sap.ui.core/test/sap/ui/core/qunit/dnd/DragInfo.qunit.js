@@ -74,6 +74,23 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+	QUnit.test("isDraggable - The aggregation of the control", function(assert) {
+		var oDragInfo = new DragInfo({
+			sourceAggregation: "children"
+		});
+		var oControl = new TestControl();
+		var oParent = new TestControl({
+			dragDropConfig: oDragInfo,
+			children: oControl
+		});
+
+		assert.ok(oDragInfo.isDraggable(oParent, "children"), "Draggable: The aggregation of the parent matches the parameter");
+		assert.notOk(oDragInfo.isDraggable(oParent, "thereIsNoSuchAggregation"), "Not Draggable: The aggregation of the parent does not match the parameter");
+		assert.notOk(oDragInfo.isDraggable(oParent), "Not Draggable: The sourceAggregation is available but the parameter is not provided ");
+
+		oControl.destroy();
+	});
+
 	QUnit.test("isDraggable - Aggregated child element", async function(assert) {
 		var oDragInfo = new DragInfo({
 			sourceAggregation: "children"

@@ -988,7 +988,33 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("_getDateTypes when Type01 and NonWorking types are set", function (assert) {
+		QUnit.test("_getDateTypes doesn't call _getSpecialDates", async function (assert) {
+			// Prepare
+			var oMonth = new Month();
+			var oInternalSelectedDatesSpy = this.spy(oMonth, "_getSpecialDates");
+
+			// Act
+			oMonth._getDateTypes(createCalendarDate(2017, 1, 1, true));
+
+			// Assert
+			assert.ok(oInternalSelectedDatesSpy.called, "_getSpecialDates was not called");
+
+			// Prepare
+			oMonth.placeAt("qunit-fixture");
+			await nextUIUpdate();
+			oInternalSelectedDatesSpy.resetHistory();
+
+			// Act
+			oMonth._getDateTypes(createCalendarDate(2017, 1, 1, true));
+
+			// Assert
+			assert.ok(oInternalSelectedDatesSpy.notCalled, "_getSpecialDates was not called");
+
+			// Clean
+			oMonth.destroy();
+		});
+
+		QUnit.test("_getDateTypes when Type01 and NonWorking types are set", async function (assert) {
 			var aDayTypes,
 				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
@@ -1002,6 +1028,9 @@ sap.ui.define([
 
 			this.oM.addSpecialDate(oSpecialDate1);
 			this.oM.addSpecialDate(oSpecialDate2);
+
+			this.oM.placeAt("qunit-fixture");
+			await nextUIUpdate();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
@@ -1011,7 +1040,7 @@ sap.ui.define([
 			assert.equal(aDayTypes[1].type, "NonWorking", "NonWorking type is returned");
 		});
 
-		QUnit.test("_getDateTypes when NonWorking and Type01 types are set", function (assert) {
+		QUnit.test("_getDateTypes when NonWorking and Type01 types are set", async function (assert) {
 			var aDayTypes,
 				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
@@ -1026,6 +1055,9 @@ sap.ui.define([
 			this.oM.addSpecialDate(oSpecialDate1);
 			this.oM.addSpecialDate(oSpecialDate2);
 
+			this.oM.placeAt("qunit-fixture");
+			await nextUIUpdate();
+
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
 			// Assert
@@ -1034,7 +1066,7 @@ sap.ui.define([
 			assert.equal(aDayTypes[1].type, "Type01", "Type01 is returned");
 		});
 
-		QUnit.test("_getDateTypes when Type01, NonWorking and Type03 types are set", function (assert) {
+		QUnit.test("_getDateTypes when Type01, NonWorking and Type03 types are set", async function (assert) {
 			var aDayTypes,
 				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
@@ -1054,6 +1086,9 @@ sap.ui.define([
 			this.oM.addSpecialDate(oSpecialDate2);
 			this.oM.addSpecialDate(oSpecialDate3);
 
+			this.oM.placeAt("qunit-fixture");
+			await nextUIUpdate();
+
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
 			// Assert
@@ -1062,7 +1097,7 @@ sap.ui.define([
 			assert.equal(aDayTypes[1].type, "NonWorking", "NonWorking type is returned");
 		});
 
-		QUnit.test("_getDateTypes when Type02 and Type01 types are set", function (assert) {
+		QUnit.test("_getDateTypes when Type02 and Type01 types are set", async function (assert) {
 			var aDayTypes,
 				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
@@ -1077,6 +1112,9 @@ sap.ui.define([
 			this.oM.addSpecialDate(oSpecialDate1);
 			this.oM.addSpecialDate(oSpecialDate2);
 
+			this.oM.placeAt("qunit-fixture");
+			await nextUIUpdate();
+
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
 			// Assert
@@ -1084,7 +1122,7 @@ sap.ui.define([
 			assert.equal(aDayTypes[0].type, "Type02", "Type02 is returned since it was set first");
 		});
 
-		QUnit.test("_getDateTypes when only Type01 is set", function (assert) {
+		QUnit.test("_getDateTypes when only Type01 is set", async function (assert) {
 			var aDayTypes,
 				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
@@ -1093,6 +1131,8 @@ sap.ui.define([
 				});
 
 			this.oM.addSpecialDate(oSpecialDate1);
+			this.oM.placeAt("qunit-fixture");
+			await nextUIUpdate();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 
@@ -1101,7 +1141,7 @@ sap.ui.define([
 			assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned");
 		});
 
-		QUnit.test("_getDateTypes when only NonWorking is set", function (assert) {
+		QUnit.test("_getDateTypes when only NonWorking is set", async function (assert) {
 			var aDayTypes,
 				oDate = UI5Date.getInstance(2017, 1, 20),
 				oSpecialDate1 = new DateTypeRange({
@@ -1110,6 +1150,8 @@ sap.ui.define([
 				});
 
 			this.oM.addSpecialDate(oSpecialDate1);
+			this.oM.placeAt("qunit-fixture");
+			await nextUIUpdate();
 
 			aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
 

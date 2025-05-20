@@ -54,7 +54,7 @@ sap.ui.define([
 			return this.waitFor({
 				id : sStepId,
 				success : function (oStep) {
-					Opa5.assert.notOk(oStep._oNextButton.getVisible(), "The next button step is hidden.");
+					Opa5.assert.ok(oStep._oNextButton.hasStyleClass("sapMWizardNextButtonHidden"), "The next button step is hidden.");
 				},
 				errorMessage : "The next button step is visible."
 			});

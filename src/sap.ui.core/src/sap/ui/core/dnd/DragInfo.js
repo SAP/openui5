@@ -85,7 +85,7 @@ sap.ui.define(["./DragDropBase"],
 	 */
 	DragInfo.Mixin = function() {
 
-		this.isDraggable = function(oControl) {
+		this.isDraggable = function(oControl, sAggregationName) {
 			if (!this.getEnabled()) {
 				return false;
 			}
@@ -102,8 +102,10 @@ sap.ui.define(["./DragDropBase"],
 			}
 
 			// control itself is the drag source or
-			// control is in the aggregation of the drag source
+			// the provided aggregation name matches with the sourceAggregation or
+			// the control is in the aggregation of the drag source
 			if ((oDragSource === oControl && !sSourceAggregation) ||
+				(oDragSource === oControl && sAggregationName && sSourceAggregation === sAggregationName) ||
 				(oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName)) {
 				return oControl.isDragAllowed && !oControl.isDragAllowed(this) ? false : true;
 			}
