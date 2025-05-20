@@ -1111,9 +1111,9 @@ sap.ui.define([
 						// If creation of one of the children is aborted, we still continue our execution
 						.catch(function(oError) {
 							const mError = this._enrichChildCreationError(oError, oChildElement, sParentElementClassName, sAggregationName);
-							// Omit error message if the parent was already destroyed
+							// Omit error message if the parent or the DesignTime instance was already destroyed
 							// e.g. SimpleForm move where many elements are created/destroyed in a row
-							if (!oElement.isDestroyed() && !oElementOverlay.isDestroyed()) {
+							if (!oElement.isDestroyed() && !oElementOverlay.isDestroyed() && !this.bIsDestroyed) {
 								Log[mError.severity](mError.message);
 							}
 							return mError.errorObject;
