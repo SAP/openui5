@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Yn symud y ffocws i'r gell nesaf o fewn yr un golofn neu res yn y cyfeiriadau perthnasol.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Os yw'r ffocws ar y rhes gyntaf, bydd y ffocws yn symud i bennawd y golofn.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd y ffocws yn symud i'r gell yn rhes weladwy gyntaf y golofn hon, sy'n dibynnu ar y safle sgrolio presennol.</p>
+				<p>Os yw'r ffocws ar y blwch ticio <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i'r dewisydd celloedd yn y rhes weladwy gyntaf, sy'n dibynnu ar y safle sgrolio presennol.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Os yw'r ffocws ar gell yn y golofn gyntaf, bydd y ffocws yn symud i'r dewisydd rhesi.</p>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd y ffocws yn symud i bennawd y golofn ar y chwith.</p>
+				<p>Os yw'r ffocws ar bennawd colofn y golofn gyntaf, bydd y ffocws yn symud i'r blwch ticio <span class="uicontrol">Dewis Pob Un</span>.</p>
+				<p>Os yw'r ffocws ar bennawd grŵp sydd wedi'i ehangu, bydd y grŵp yn cael ei grebachu.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd y ffocws yn symud i bennawd y golofn ar y dde.</p>
+				<p>Os yw'r ffocws ar y dewisydd rhesi, bydd y ffocws yn symud i gell y golofn gyntaf o fewn yr un rhes.</p>
+				<p>Os yw'r ffocws ar y blwch ticio <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i bennawd colofn y golofn gyntaf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Os yw'r ffocws ar lefel cell, bydd y ffocws yn symud i'r gell ar frig uchaf yr un golofn. Os yw'r ffocws eisoes ar y lefel honno, bydd y ffocws yn symud un dudalen i fyny ac yn aros ar yr un golofn gyda'r sgrolio gofynnol.</p>
+				<p>Os yw'r ffocws ar y rhes gyntaf, bydd y ffocws yn symud i bennawd y golofn.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Os yw'r ffocws ar lefel cell, bydd y ffocws yn symud i'r gell weladwy olaf yn yr un golofn. Os yw'r ffocws eisoes ar y lefel honno, bydd yn symud un dudalen i lawr ac yn aros ar yr un golofn gyda'r sgrolio gofynnol.</p>
+				<p>Os yw'r ffocws ar bennawd y golofn, bydd y ffocws yn symud i'r rhes gyntaf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Os yw'r ffocws ar lefel cell neu bennawd colofn, bydd y ffocws yn symud pum colofn i'r chwith (maint diofyn tudalen). Os oes llai o golofnau ar y chwith na maint cyfredol y dudalen, bydd y ffocws yn symud i’r golofn gyntaf.</p>
+				<p>Os yw'r ffocws ar y golofn gyntaf ar lefel cell, bydd y ffocws yn symud i'r dewisydd rhesi.</p>
+				<p>Os yw'r ffocws ar bennawd colofn y golofn gyntaf, bydd y ffocws yn symud i <span class="uicontrol">Dewis Pob Un</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Os yw'r ffocws ar lefel cell, bydd y ffocws yn symud pum colofn i'r dde (maint diofyn y dudalen).</p>
+				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Os yw'r ffocws ar y dewisydd rhesi, bydd y ffocws yn symud i'r golofn gyntaf yn yr un rhes.</p>
+				<p>Os yw'r ffocws ar <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i bennawd y golofn gyntaf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Os yw'r ffocws ar y gell, bydd y ffocws yn symud i'r golofn gyntaf yn yr un rhes.</p>
+				<p>Os yw'r ffocws ar y gell yn y golofn gyntaf, bydd y ffocws yn symud i'r dewisydd rhesi.</p>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd y ffocws yn symud i bennawd y golofn gyntaf.</p>
+				<p>Os yw'r ffocws ar bennawd y golofn gyntaf, bydd y ffocws yn symud i <span class="uicontrol">Dewis Pob Un</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Os yw'r ffocws ar y gell neu ar bennawd colofn, bydd y ffocws yn symud i'r golofn olaf.</p>
+				<p>Os yw'r ffocws ar y dewisydd rhesi, bydd y ffocws yn symud i'r golofn gyntaf yn yr un rhes.</p>
+				<p>Os yw'r ffocws ar <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i bennawd y golofn gyntaf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Os yw'r ffocws ar y gell, bydd y ffocws yn symud i bennawd y golofn.</p>
+				<p>Os yw'r ffocws ar y dewisydd rhesi, bydd y ffocws yn symud i <span class="uicontrol">Dewis Pob Un</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Os yw'r ffocws ar y gell neu ar bennawd colofn, bydd y ffocws yn symud i'r rhes olaf yn yr un golofn.</p>
+				<p>Os yw'r ffocws ar y dewisydd rhesi neu ar <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i ddewisydd y rhes olaf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+				<p>Os yw'r ffocws ar y gell, bydd y ffocws yn symud i'r rheolydd cyntaf y gellir rhoi ffocws arno yn y gell.</p>
+				<p>Os yw'r ffocws ar y blwch ticio <span class="uicontrol">Dewis Pob Un</span> neu ddewisydd rhesi, bydd yn toglo'r cyflwr blwch ticio.</p>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd dewislen pennawd y golofn yn agor.</p>
+				<p>Os yw'r ffocws ar bennawd grŵp, bydd y grŵp cysylltiedig yn cael ei grebachu neu ei ehangu.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Os yw'r ffocws ar bennawd grŵp, bydd dewislen pennawd y grŵp yn agor.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>Os yw'r ffocws ar gell, caiff y gell lle mae'r ffocws ei dewis.</p>
+				<p>Os yw'r ffocws ar floc dewis celloedd, bydd y dewis o gelloedd yn cael ei dynnu.</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi, mae hyn yn toglo dewis y rhes gyfredol.</p>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>Os yw'r ffocws ar floc dewis celloedd, bydd y bloc dewis celloedd yn newid i ddewis rhesi. Bydd y dewis o gelloedd yn cael ei dynnu.</p>
+				<p>Yn dibynnu ar y modd dewis rhesi, bydd y canlynol yn digwydd:</p>
+				<ul>
+					<li>Bydd pob rhes yn y bloc yn cael ei dewis (amlddewis)</li>
+					<li>Dim ond y rhes sydd â'r gell lle mae'r ffocws ar hyn o bryd fydd yn cael ei dewis (dewis un)</li>
+					<li>Dim rhesi yn cael eu dewis</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Yn toglo'r ffocws rhwng y gell a'i chynnwys (ac eithrio testun darllen-yn-unig).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift</kbd> <description>
+				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell uwchlaw yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell islaw yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd lled y golofn yn cynyddu 1 em. Mae hyn yn cael ei ailadrodd os byddwch yn dal yn pwyso ar y fysell.</p>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell i'r dde yn cael eu dewis. Bydd y ffocws yn symud i'r gell ar y dde i'r gell lle mae'r ffocws.</p>
+				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell ar y dde yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd lled y golofn yn gostwng 1 em. Mae hyn yn cael ei ailadrodd os byddwch yn dal yn pwyso ar y fysell.</p>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell i'r chwith yn cael eu dewis. Bydd y ffocws yn symud i'r gell ar y chwith i'r gell lle mae'r ffocws.</p>
+				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell ar y chwith yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd y golofn berthnasol yn symud un safle i'r dde.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd y golofn berthnasol yn symud un safle i'r chwith.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Yn symud y ffocws i'r elfen nesaf y gellir rhoi ffocws arni yn y rhes uchod.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Yn symud y ffocws i'r elfen nesaf y gellir rhoi ffocws arni yn y rhes isod.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Os yw'r ffocws ar gell, dewisydd rhesi, neu <span class="uicontrol">Dewis Pob Un</span>, mae hyn yn toglo'r blwch ticio <span class="uicontrol">Dewis Pob Un</span>: Bydd pob rhes yn cael ei dewis neu ei dad-ddewis yn y drefn honno.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>Os yw'r ffocws y tu mewn i'r tabl, bydd y dewis ar gyfer unrhyw resi a chelloedd yn cael ei dynnu.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Os yw'r ffocws ar gell, bydd y ffocws yn symud i'w chynnwys (ac eithrio testun darllen-yn-unig).</p>
+				<p>Os yw'r ffocws ar bennawd grŵp neu gwgn heb fod yn ddeilen mewn coeden, bydd hyn yn toglo ehangu'r grŵp: Bydd y grŵp yn ehangu neu'n cwympo yn y drefn honno.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Os yw'r ffocws ar bennawd grŵp, bydd dewislen pennawd y grŵp yn agor.</p>
+				<p>Os yw'r ffocws ar bennawd colofn, bydd dewislen pennawd y golofn yn agor.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
+				<p>Os caiff celloedd eu dewis, bydd <kbd>Shift + click</kbd> ar gell wahanol yn ymestyn y dewis hyd at y gell y cliciwyd arni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

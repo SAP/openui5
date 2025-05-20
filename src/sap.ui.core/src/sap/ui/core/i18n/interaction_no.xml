@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Flytter fokus til det neste elementet i tabulatorrekkefølgen. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Flytter fokus til det forrige elementet i tabulatorrekkefølgen. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Flytter fokus til det første elementet i den neste UI-gruppen (F6-gruppe) i tabulatorrekkefølgen. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Flytter fokus til det første elementet i den foregående UI-gruppen (F6-gruppe) i tabulatorrekkefølgen. </p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Globale snarveier</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

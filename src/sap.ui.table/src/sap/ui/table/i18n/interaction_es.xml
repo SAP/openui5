@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Desplaza el foco a la siguiente celda que hay dentro de la misma columna o fila en las direcciones respectivas.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Si el foco está en la fila de cabecera de la columna, se desplazará a la primera fila.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Si el foco está en una cabecera de columna, se desplazará a la celda de la primera fila visible de esta columna, que depende de la posición de desplazamiento actual.</p>
+				<p>Si el foco está en la casilla de selección <span class="uicontrol">Seleccionar todo</span>, se desplazará al selector de filas de la primera fila visible, que depende de la posición de desplazamiento actual.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Si el foco está en una celda de la primera columna, se desplazará al selector de filas.</p>
+				<p>Si el foco está en una cabecera de columna, se desplazará a la cabecera de columna situada a la izquierda.</p>
+				<p>Si el foco está en la cabecera de la primera columna, se desplazará a la casilla de selección <span class="uicontrol">Seleccionar todo</span>.</p>
+				<p>Si el foco está en la cabecera de un grupo ampliado, este se comprimirá.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Si el foco está en la cabecera de columna, se desplazará a la cabecera de columna situada a la derecha.</p>
+				<p>Si el foco está en el selector de filas, se desplazará a la celda de la primera columna que hay dentro de la misma fila.</p>
+				<p>Si el foco está en la casilla de selección <span class="uicontrol">Seleccionar todo</span>, se desplazará a la cabecera de la primera columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Si el foco está a nivel de celda, se desplazará a la celda situada al principio de la misma columna. Si ya está en ese nivel, se desplazará una página hacia arriba y permanecerá en la misma columna con el desplazamiento necesario.</p>
+				<p>Si el foco está en la fila de cabecera de la columna, se desplazará a la primera fila.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Si el foco está a nivel de celda, se desplazará a la última celda visible de la misma columna. Si ya está en ese nivel, se desplazará una página hacia abajo y permanecerá en la misma columna con el desplazamiento necesario.</p>
+				<p>Si el foco está en la cabecera de columna, se desplazará a la primera fila.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Si el foco está a nivel de celda o en una cabecera de columna, se desplazará cinco columnas a la izquierda (tamaño de página predeterminado). Si hay menos columnas a la izquierda que el tamaño de página actual, el foco se desplazará a la primera columna.</p>
+				<p>Si el foco está en la primera columna a nivel de celda, se desplazará al selector de filas.</p>
+				<p>Si el foco está en la cabecera de la primera columna, se desplazará a <span class="uicontrol">Seleccionar todo</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Si el foco está a nivel de celda, se desplazará cinco columnas a la derecha (tamaño de página predeterminado).</p>
+				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Si el foco está en el selector de filas, se desplazará a la primera columna de la misma fila.</p>
+				<p>Si el foco está en <span class="uicontrol">Seleccionar todo</span>, se desplazará a la cabecera de la primera columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Si el foco está en la celda, se desplazará a la primera columna de la misma fila.</p>
+				<p>Si el foco está en la celda de la primera columna, se desplazará al selector de filas.</p>
+				<p>Si el foco está en la cabecera de columna, se desplazará a la cabecera de la primera columna.</p>
+				<p>Si el foco está en la primera cabecera de columna, se desplazará a <span class="uicontrol">Seleccionar todo</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Si el foco está en la cabecera de la celda o de la columna, se desplazará a la última columna.</p>
+				<p>Si el foco está en el selector de filas, se desplazará a la primera columna de la misma fila.</p>
+				<p>Si el foco está en <span class="uicontrol">Seleccionar todo</span>, se desplazará a la cabecera de la primera columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Si el foco está en la celda, se desplazará a la cabecera de columna.</p>
+				<p>Si el foco está en el selector de filas, se desplazará a <span class="uicontrol">Seleccionar todo</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Si el foco está en la cabecera de la celda o de la columna, se desplazará a la última fila de la misma columna.</p>
+				<p>Si el foco está en el selector de filas o en <span class="uicontrol">Seleccionar todo</span>, se desplazará al último selector de filas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+				<p>Si el foco está en la celda, se desplazará al primer control enfocable de la celda.</p>
+				<p>Si el foco está en la casilla de selección <span class="uicontrol">Seleccionar todo</span> o en el selector de filas, cambia el estado de la casilla.</p>
+				<p>Si el foco está en la cabecera de columna, se abrirá el menú de cabeceras de columna.</p>
+				<p>Si el foco está en la cabecera de grupo, se comprimirá o ampliará el grupo en cuestión.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Si el foco está en la cabecera de grupo, se abrirá el menú de cabeceras de grupo.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>Si el foco está en una celda, se seleccionará dicha celda.</p>
+				<p>Si el foco está en un bloque de selección de celdas, se eliminará dicha selección.</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Si el foco está en un selector de celdas o de filas, cambia la selección de la fila actual.</p>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>Si el foco está en un bloque de selección de celdas, dicho bloque se convertirá en una selección de filas y se eliminará la selección de celdas.</p>
+				<p>En función del modo de selección de filas, ocurrirá lo siguiente:</p>
+				<ul>
+					<li>Se seleccionarán todas las filas del bloque (selección múltiple)</li>
+					<li>Solo se seleccionará la fila que contiene la celda con el foco (selección única)</li>
+					<li>No se seleccionará ninguna de las filas</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Cambia el foco entre la celda y su contenido (excepto los textos de solo lectura).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift</kbd> <description>
+				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Si el foco está en una celda seleccionada, la celda superior recibirá el foco y la selección de celdas se ampliará hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Si el foco está en una celda seleccionada, la celda inferior recibirá el foco y la selección de celdas se ampliará hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Si el foco está en una cabecera de columna, el ancho de esta columna se incrementa en 1 em. Esto se repite si la tecla permanece pulsada.</p>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionarán la celda que tiene el foco y la celda situada a la derecha. El foco se desplazará a la celda situada a la derecha de la celda que tiene el foco.</p>
+				<p>Si el foco está en una celda seleccionada, la celda situada a la derecha recibe el foco y la selección de celdas se amplía hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Si el foco está en una cabecera de columna, el ancho de esta columna se reduce en 1 em. Esto se repite si la tecla permanece pulsada.</p>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionarán la celda que tiene el foco y la celda situada a la izquierda. El foco se desplazará a la celda situada a la izquierda de la celda que tiene el foco.</p>
+				<p>Si el foco está en una celda seleccionada, la celda situada a la izquierda recibirá el foco y la selección de celdas se ampliará hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Si el foco está en una cabecera de columna, la columna correspondiente se desplazará una posición hacia la derecha.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Si el foco está en una cabecera de columna, la columna correspondiente se desplazará una posición hacia la izquierda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Desplaza el foco al siguiente elemento enfocable de la fila superior.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Desplaza el foco al siguiente elemento enfocable de la fila inferior.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Si el foco está en una celda, en el selector de filas o en <span class="uicontrol">Seleccionar todo</span>, cambia la casilla de selección <span class="uicontrol">Seleccionar todo</span>. Se seleccionan o se desmarcan todas las filas, respectivamente.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>Si el foco está dentro de la tabla, se eliminará la selección de todas las filas y celdas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Si el foco está en una celda, se desplazará a su contenido (excepto los textos de solo lectura).</p>
+				<p>Si el foco está en la cabecera de grupo o en un nodo no final de un árbol, cambia la ampliación del grupo. Este se amplía o se comprime, respectivamente.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Si el foco está en una cabecera de grupo, se abrirá el menú de cabeceras de grupo.</p>
+				<p>Si el foco está en una cabecera de columna, se abrirá el menú de cabeceras de columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
+				<p>Si hay celdas seleccionadas, al pulsar <kbd>Shift + click</kbd> en otra celda se ampliará la selección hasta la celda en la que se ha hecho clic.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>
