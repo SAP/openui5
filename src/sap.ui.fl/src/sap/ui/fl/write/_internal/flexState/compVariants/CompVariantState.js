@@ -17,8 +17,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions"
 ], function(
@@ -36,8 +36,8 @@ sap.ui.define([
 	CompVariantMerger,
 	CompVariantManagementState,
 	FlexState,
-	Version,
 	Settings,
+	Version,
 	Storage,
 	Versions
 ) {
@@ -224,7 +224,7 @@ sap.ui.define([
 			return Layer.CUSTOMER;
 		}
 
-		var bPublicLayerAvailable = Settings.getInstanceOrUndef().isPublicLayerAvailable();
+		var bPublicLayerAvailable = Settings.getInstanceOrUndef().getIsPublicLayerAvailable();
 		return bPublicLayerAvailable ? Layer.PUBLIC : Layer.CUSTOMER;
 	}
 
@@ -283,7 +283,7 @@ sap.ui.define([
 			oChangeSpecificData.support = {
 				user: "SAP"
 			};
-		} else if (Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId()) {
+		} else if (Settings.getInstanceOrUndef()?.getUserId()) {
 			oChangeSpecificData.support = {
 				user: Settings.getInstanceOrUndef().getUserId()
 			};

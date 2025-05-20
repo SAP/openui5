@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/VariantItem",
 	"sap/m/VariantManagement",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/core/Control",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
@@ -824,8 +824,8 @@ sap.ui.define([
 	VariantManagement.prototype._updateWithSettingsInfo = function() {
 		flSettings.getInstance().then(function(oSettings) {
 			if (this._oVM) {
-				this._oVM.setShowSaveAs(oSettings.isVariantPersonalizationEnabled());
-				this._oVM.setSupportPublic(oSettings.isPublicFlVariantEnabled());
+				this._oVM.setShowSaveAs(oSettings.getIsVariantPersonalizationEnabled());
+				this._oVM.setSupportPublic(oSettings.getIsPublicFlVariantEnabled());
 			}
 		}.bind(this)).catch(function(oEx) {
 			Log.error(oEx);

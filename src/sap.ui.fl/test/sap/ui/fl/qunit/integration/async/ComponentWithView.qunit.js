@@ -81,7 +81,6 @@ sap.ui.define([
 				contexts: [],
 				settings: {
 					isKeyUser: true,
-					isAtoAvailable: false,
 					isAtoEnabled: false,
 					isProductiveSystem: false
 				},

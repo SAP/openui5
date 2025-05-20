@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/model/resource/ResourceModel"
 ], function(
 	Log,

@@ -35,7 +35,6 @@ builder:
               - sap/ui/fl/initial/
               - sap/ui/fl/interfaces/Delegate.js
               - sap/ui/fl/interfaces/BaseLoadConnector.js
-              - sap/ui/fl/registry/Settings.js
               - sap/ui/fl/util/ManagedObjectModel.js
               - sap/ui/fl/variants/VariantManagement.js
               # exclude all bundles

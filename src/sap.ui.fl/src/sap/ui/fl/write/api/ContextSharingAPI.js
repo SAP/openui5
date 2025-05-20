@@ -4,18 +4,18 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/Settings",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/Layer"
 ], function(
 	Component,
-	ManifestUtils,
-	ContextBasedAdaptationsAPI,
 	ComponentContainer,
-	Layer,
-	Settings
+	ManifestUtils,
+	Settings,
+	ContextBasedAdaptationsAPI,
+	Layer
 ) {
 	"use strict";
 
@@ -44,7 +44,7 @@ sap.ui.define([
 			}
 			const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.variantManagementControl);
 			const oSettings = await Settings.getInstance();
-			const bIsEnabled = oSettings.isContextSharingEnabled()
+			const bIsEnabled = oSettings.getIsContextSharingEnabled()
 				&& !ContextBasedAdaptationsAPI.adaptationExists({reference: sReference, layer: Layer.CUSTOMER});
 			return bIsEnabled;
 		},

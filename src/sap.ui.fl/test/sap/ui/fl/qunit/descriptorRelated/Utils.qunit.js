@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/descriptorRelated/Utils",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Utils,
@@ -17,7 +17,6 @@ sap.ui.define([
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
-					isAtoAvailable: false,
 					isAtoEnabled: true,
 					isProductiveSystem: false
 				})

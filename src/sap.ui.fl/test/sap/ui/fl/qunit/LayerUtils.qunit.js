@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	FlexObject,
 	FlexInfoSession,
 	Layer,
 	LayerUtils,
-	Settings,
 	sinon
 ) {
 	"use strict";
@@ -32,7 +30,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.LayerUtils", {
 		beforeEach() {
-			Settings._instance = new Settings({});
 		},
 		afterEach() {
 			sandbox.restore();
