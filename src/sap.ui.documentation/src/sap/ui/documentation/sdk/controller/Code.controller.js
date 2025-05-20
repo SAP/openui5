@@ -128,14 +128,15 @@ sap.ui.define(
 					}.bind(this));
 			},
 
-			onChangeSplitterOrientation: function (oEvent) {
+			onChangeSplitterOrientation: function () {
+				var oView = this.getView();
 				//Toggles the value of splitter orientation
 				ExploreSettingsModel.setProperty("/splitViewVertically", !ExploreSettingsModel.getProperty("/splitViewVertically"));
 				var isOrientationVertical = ExploreSettingsModel.getProperty("/splitViewVertically");
-				this.getView()
-					.byId("splitView")
+				oView.byId("splitView")
 					.getRootPaneContainer()
 					.setOrientation(isOrientationVertical ? "Vertical" : "Horizontal");
+				oView.byId("splitButton").setIcon(isOrientationVertical ? "sap-icon://screen-split-one" : "sap-icon://header");
 			},
 
 			_attachPaternMatched: function () {
