@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/webc/main/Button"
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
 	Popup,
 	Localization,
@@ -33,7 +33,7 @@ sap.ui.define([
 	containsOrEquals,
 	KeyCodes,
 	nextUIUpdate,
-	WebCButton
+	createAndAppendDiv
 ){
 	"use strict";
 
@@ -2419,12 +2419,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set web component opener as extra content of a autoclose popup", async function(assert) {
-		// Setup
-		const oWebCButton = new WebCButton({text: "WebC Button"});
-		oWebCButton.placeAt("uiarea");
-		await nextUIUpdate();
 
-		this.oPopup.setExtraContent([oWebCButton]);
+		customElements.define(
+			"my-popup-opener",
+			class extends HTMLElement {
+				constructor() {
+					super();
+					const shadowRoot = this.attachShadow({ mode: "open" });
+					// Create a button and add it to the shadow DOM
+					const button = document.createElement('button');
+					button.id = "button";
+					button.textContent = 'Click Me';
+					shadowRoot.appendChild(button);
+				}
+			}
+		);
+
+		const oDiv = createAndAppendDiv("my-web-component-parent");
+
+		const oMyWebComponent = document.createElement("my-popup-opener");
+
+		oDiv.appendChild(oMyWebComponent);
+
+		const oInternalButton = oMyWebComponent.shadowRoot.querySelector('button');
+
+		this.oPopup.setExtraContent([oInternalButton]);
 		this.oPopup.setAutoClose(true);
 
 		this.oPopup.open();
@@ -2440,7 +2459,7 @@ sap.ui.define([
 
 		assert.ok(this.oPopup.getContent().contains(document.activeElement), "focus is in the Popup content after open");
 
-		oWebCButton.focus();
+		oInternalButton.focus();
 
 		// wait for the autoclose detection
 		await new Promise((resolve, reject) => {
@@ -2448,6 +2467,8 @@ sap.ui.define([
 		});
 
 		assert.ok(this.oPopup.isOpen(), "Popup is still open");
+
+		this.oPopup.getContent().focus();
 
 		const oDOM = jQuery("#focusableElement2");
 		if (this.oPopup.touchEnabled) {
@@ -2465,7 +2486,7 @@ sap.ui.define([
 			this.oPopup.attachClosed(fnClosed);
 		});
 
-		oWebCButton.destroy();
+		oDiv.remove();
 	});
 
 
