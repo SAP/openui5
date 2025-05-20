@@ -1975,7 +1975,7 @@ sap.ui.define([
 			this.uploadSetInstance.getConfig.calledWithExactly("download", {
 				oBindingContext: oBindingContext,
 				bAskForLocation: bAskForLocation
-			}, null, this.uploadSetInstance),
+			}, this.uploadSetInstance, null),
 			"getConfig was called with correct arguments"
 		);
 	});
