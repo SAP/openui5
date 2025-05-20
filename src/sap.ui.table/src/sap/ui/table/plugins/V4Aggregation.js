@@ -37,10 +37,10 @@ sap.ui.define([
 				enabled: {type: "boolean", defaultValue: true}, // TODO: Inherited from private PluginBase. Remove once PluginBase is public.
 
 				/**
-				 * If the formatter returns undefined, the default group header title is set.
+				 * Provide a custom group header title.
 				 *
 				 * Parameters: Binding context (sap.ui.model.Context), Name of the grouped property (string)
-				 * Returns: The group header title or undefined
+				 * Returns: The group header title
 				 */
 				groupHeaderFormatter: {type: "function"}
 			}
@@ -63,8 +63,9 @@ sap.ui.define([
 	 */
 	V4Aggregation.prototype.onActivate = function(oTable) {
 		validateBinding(oTable.getBinding());
-		TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Group);
+		updateTableHierarchyMode(oTable);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, validateBinding);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RefreshRows, onTableRefreshRows, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
@@ -80,9 +81,10 @@ sap.ui.define([
 		}
 		TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Flat);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, validateBinding);
-		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RefreshRows, onTableRefreshRows, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 	};
 
 	V4Aggregation.prototype.declareColumnsHavingTotals = function(aColumnsWithTotals) {
@@ -108,45 +110,64 @@ sap.ui.define([
 		}
 	}
 
+	function onTableRefreshRows() {
+		updateTableHierarchyMode(this.getControl());
+	}
+
+	function updateTableHierarchyMode(oTable) {
+		if ("hierarchyQualifier" in (oTable.getBinding()?.getAggregation() || {})) {
+			TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Tree);
+		} else {
+			TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.Group);
+		}
+	}
+
 	function updateRowState(oState) {
-		const iLevel = oState.context.getProperty("@$ui5.node.level");
-		const bContainsTotals = oState.context.getProperty("@$ui5.node.isTotal");
-		const bIsLeaf = oState.context.getProperty("@$ui5.node.isExpanded") === undefined;
-		const bIsGrandTotal = iLevel === 0 && bContainsTotals;
-		const bIsGroupHeader = iLevel > 0 && !bIsLeaf;
-		const bIsGroupTotal = !bIsGroupHeader && bContainsTotals;
+		const iLevel = oState.context.getProperty("@$ui5.node.level") ?? 1;
+		const bContainsTotals = oState.context.getProperty("@$ui5.node.isTotal") === true;
+		const vIsExpanded = oState.context.getProperty("@$ui5.node.isExpanded");
+		const bIsGrandTotal = bContainsTotals && iLevel === 0;
+		const bIsGroupTotal = bContainsTotals && vIsExpanded === undefined;
+		const bIsGroupHeader = iLevel > 0 && vIsExpanded !== undefined;
 
 		oState.level = iLevel;
-		oState.expandable = bIsGroupHeader;
-		oState.expanded = oState.context.getProperty("@$ui5.node.isExpanded") === true;
+		oState.expandable = vIsExpanded !== undefined;
+		oState.expanded = vIsExpanded;
 
 		if (bIsGrandTotal || bIsGroupTotal) {
 			oState.type = oState.Type.Summary;
-			oState.level = iLevel + 1;
+			oState.level = iLevel + 1; // In the binding context, summary rows are one level higher than needed in the table.
+			oState.expandable = false; // In the binding context, the total summary (grand total) is expanded.
 		} else if (bIsGroupHeader) {
-			oState.type = oState.Type.GroupHeader;
+			oState.type = oState.Type.GroupHeader; // In tree mode, the row type GroupHeader is ignored and treated like row type Standard.
+			setGroupHeaderTitle(oState, this.getGroupHeaderFormatter());
+		}
+	}
+
+	function setGroupHeaderTitle(oState, fnFormatter) {
+		const aGroupLevels = oState.context.getBinding().getAggregation()?.groupLevels ?? [];
+
+		if (aGroupLevels.length === 0) {
+			return;
 		}
 
-		if (bIsGroupHeader) {
-			const sGroupHeaderPath = oState.context.getBinding().getAggregation().groupLevels[iLevel - 1];
-			const fnCustomGroupHeaderFormatter = this.getGroupHeaderFormatter();
+		const sGroupHeaderPath = aGroupLevels[oState.level - 1];
 
-			if (fnCustomGroupHeaderFormatter) {
-				const sCustomGroupHeaderTitle = fnCustomGroupHeaderFormatter(oState.context, sGroupHeaderPath);
+		if (fnFormatter) {
+			const sCustomGroupHeaderTitle = fnFormatter(oState.context, sGroupHeaderPath);
 
-				if (typeof sCustomGroupHeaderTitle !== "string") {
-					throw new Error("The group header title must be a string");
-				}
-
-				oState.title = sCustomGroupHeaderTitle;
-			} else {
-				oState.title = oState.context.getProperty(sGroupHeaderPath, true);
+			if (typeof sCustomGroupHeaderTitle !== "string") {
+				throw new Error("The group header title must be a string");
 			}
+
+			oState.title = sCustomGroupHeaderTitle;
+		} else {
+			oState.title = oState.context.getProperty(sGroupHeaderPath, true);
 		}
 	}
 
 	function expandRow(oRow) {
-		const oBindingContext = oRow.getRowBindingContext();
+		const oBindingContext = TableUtils.getBindingContextOfRow(oRow);
 
 		if (oBindingContext) {
 			oBindingContext.expand();
@@ -154,7 +175,7 @@ sap.ui.define([
 	}
 
 	function collapseRow(oRow) {
-		const oBindingContext = oRow.getRowBindingContext();
+		const oBindingContext = TableUtils.getBindingContextOfRow(oRow);
 
 		if (oBindingContext) {
 			oBindingContext.collapse();

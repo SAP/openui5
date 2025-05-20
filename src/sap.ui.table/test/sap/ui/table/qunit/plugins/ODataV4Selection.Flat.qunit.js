@@ -19,14 +19,7 @@ sap.ui.define([
 
 	TableQUnitUtils.setDefaultSettings({
 		dependents: [new ODataV4Selection({enableNotification: true})],
-		rows: {
-			path: "/Products",
-			parameters: {
-				$count: true
-			}
-		},
-		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true}),
-		models: TableQUnitUtils.createModelForListDataService()
+		...TableQUnitUtils.createSettingsForList()
 	});
 
 	QUnit.module("Basic checks", {
@@ -1206,7 +1199,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filter with $$clearSelectionOnFilter=false", async function(assert) {
-		this.oTable.setModel(TableQUnitUtils.createModelForListDataService({
+		this.oTable.setModel(TableQUnitUtils.createModelForList({
 			modelParameters: {
 				operationMode: "Server"
 			}
@@ -1239,7 +1232,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filter with $$clearSelectionOnFilter=true", async function(assert) {
-		this.oTable.setModel(TableQUnitUtils.createModelForListDataService({
+		this.oTable.setModel(TableQUnitUtils.createModelForList({
 			modelParameters: {
 				operationMode: "Server"
 			}

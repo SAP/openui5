@@ -2,55 +2,21 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/ODataV4Selection"
 ], function(
 	TableQUnitUtils,
-	Fixed,
 	ODataV4Selection
 ) {
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
 		dependents: [new ODataV4Selection()],
-		rows: {
-			path: '/BusinessPartners',
-			parameters: {
-				$count: false,
-				$orderby: 'Country desc,Region desc,Segment,AccountResponsible',
-				$$aggregation: {
-					aggregate: {
-						SalesAmountLocalCurrency: {
-							grandTotal: true,
-							subtotals: true,
-							unit: "LocalCurrency"
-						},
-						SalesNumber: {}
-					},
-					group: {
-						AccountResponsible: {},
-						Country_Code: {additionally: ["Country"]}
-					},
-					groupLevels: ["Country_Code", "Region", "Segment"]
-				}
-			},
-			suspended: true
-		},
-		columns: [
-			TableQUnitUtils.createTextColumn({label: "Country", text: "Country", bind: true}),
-			TableQUnitUtils.createTextColumn({label: "Region", text: "Region", bind: true}),
-			TableQUnitUtils.createTextColumn({label: "Local Currency", text: "LocalCurrency", bind: true})
-		],
-		models: TableQUnitUtils.createModelForDataAggregationService(),
-		rowMode: new Fixed({
-			rowCount: 5
-		}),
-		threshold: 0
+		...TableQUnitUtils.createSettingsForDataAggregation()
 	});
 
 	QUnit.module("Selection API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
+			this.oTable = TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];

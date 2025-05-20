@@ -2,11 +2,13 @@ sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
+	"sap/m/MessageBox",
 	"sap/ui/model/odata/type/Currency"
 ], function(
 	TableDelegate,
 	Column,
 	Text,
+	MessageBox,
 	CurrencyType
 ) {
 	"use strict";
@@ -92,6 +94,18 @@ sap.ui.define([
 	CustomTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
 		oBindingInfo.parameters.$orderby = "Country desc,Region desc,Segment,AccountResponsible";
+		oBindingInfo.events = {
+			dataReceived: function(oEvent) {
+				const sErrorMessage = oEvent.getParameter("error")?.message;
+
+				if (sErrorMessage) {
+					MessageBox.show(sErrorMessage, {
+						icon: MessageBox.Icon.ERROR,
+						actions: [MessageBox.Action.OK]
+					});
+				}
+			}
+		};
 	};
 
 	return CustomTableDelegate;

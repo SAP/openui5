@@ -1,0 +1,128 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+
+<title>Table - sap.ui.table</title>
+<link rel="shortcut icon" type="image/x-icon" href="images/controls/sap.ui.table.Table.gif">
+
+<script src="shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.ui.table,sap.m"
+		data-sap-ui-compatVersion="edge"
+		src="../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{
+			"sap/ui/table/qunit": "../../../../test-resources/sap/ui/table/qunit/",
+			"sap/ui/core/sample": "../../../../test-resources/sap/ui/core/demokit/sample/"
+		}'></script>
+
+<script src="Settings.js"></script>
+
+<script>
+	sap.ui.require([
+		"sap/ui/table/Table",
+		"sap/ui/table/Column",
+		"sap/ui/table/rowmodes/Fixed",
+		"sap/ui/table/plugins/V4Aggregation",
+		"sap/ui/table/plugins/ODataV4Selection",
+		"sap/m/OverflowToolbar",
+		"sap/m/Title",
+		"sap/m/Text",
+		"sap/m/MessageBox",
+		"sap/ui/model/odata/type/Currency",
+		"sap/ui/table/qunit/TableQUnitUtils.ODataV4"
+	], function(
+		Table,
+		Column,
+		FixedRowMode,
+		V4Aggregation,
+		ODataV4Selection,
+		OverflowToolbar,
+		Title,
+		Text,
+		MessageBox,
+		CurrencyType,
+		TableQUnitUtils
+	) {
+		const mTableSettingsForDataAggregation = TableQUnitUtils.createSettingsForDataAggregation();
+
+		mTableSettingsForDataAggregation.rows.events = {
+			dataReceived: function(oEvent) {
+				const sErrorMessage = oEvent.getParameter("error")?.message;
+
+				if (sErrorMessage) {
+					MessageBox.show(sErrorMessage, {
+						icon: MessageBox.Icon.ERROR,
+						actions: [MessageBox.Action.OK]
+					});
+				}
+			}
+		};
+
+		const oTable = new Table({
+			...mTableSettingsForDataAggregation,
+			columns: mTableSettingsForDataAggregation.columns.concat([
+				new Column({
+					label: new Title({text: "Segment"}),
+					template: new Text({text: "{Segment}"})
+				}),
+				new Column({
+					label: new Title({text: "Sales Amount (local currency)"}),
+					template: new Text({
+						text: {
+							parts: [
+								{path: 'SalesAmountLocalCurrency'},
+								{path: 'LocalCurrency'},
+								{path: '/##@@requestCurrencyCodes', mode: 'OneTime', targetType: 'any'}
+							],
+							type: new CurrencyType()
+						}
+					})
+				}),
+				new Column({
+					label: new Title({text: "Sales Number"}),
+					template: new Text({text: "{SalesNumber}"})
+				}),
+				new Column({
+					label: new Title({text: "Account Responsible"}),
+					template: new Text({text: "{AccountResponsible}"})
+				})
+			]),
+			extension: [
+				new OverflowToolbar({
+					content: [
+						new Title({text: "Products"})
+					]
+				})
+			],
+			enableBusyIndicator: true,
+			busyIndicatorDelay: 0,
+			dependents: [
+				new V4Aggregation(),
+				new ODataV4Selection({enableNotification: true})
+			]
+		});
+		window.oTable = oTable;
+
+		TABLESETTINGS.init(oTable, function(oButton) {
+			let oToolbar = oTable.getExtension()[0];
+
+			if (!oToolbar) {
+				oToolbar = new OverflowToolbar();
+				oTable.addExtension(oToolbar);
+			}
+
+			oToolbar.addContent(oButton);
+		});
+
+		oTable.getBinding().resume();
+		oTable.placeAt("content");
+	});
+</script>
+</head>
+<body class="sapUiBody sapUiSizeCozy">
+<h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.ui.model.odata.v4.ODataModel (Data aggregation)</code></h1>
+<div id="content"></div>
+</body>
+</html>

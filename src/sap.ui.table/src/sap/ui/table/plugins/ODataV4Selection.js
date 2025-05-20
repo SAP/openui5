@@ -133,7 +133,7 @@ sap.ui.define([
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
-		const oContext = oRow.getRowBindingContext();
+		const oContext = TableUtils.getBindingContextOfRow(oRow);
 		const sSelectionMode = this.getSelectionMode();
 
 		if (!this.isActive() || !oContext || !isContextSelectable(oContext)) {
@@ -163,7 +163,7 @@ sap.ui.define([
 		}
 
 		let iIndexFrom = _private(oPlugin).oRangeSelectionStartContext.getIndex();
-		const oContext = oRow.getRowBindingContext();
+		const oContext = TableUtils.getBindingContextOfRow(oRow);
 		const iIndexTo = oContext ? oContext.getIndex() : -1;
 
 		// The start index is already selected in case of range selection, so the range needs to start from the next index.
@@ -179,7 +179,7 @@ sap.ui.define([
 			return false;
 		}
 
-		return oRow.getRowBindingContext()?.isSelected() ?? false;
+		return TableUtils.getBindingContextOfRow(oRow)?.isSelected() ?? false;
 	};
 
 	ODataV4Selection.prototype.getSelectedCount = function() {
