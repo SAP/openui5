@@ -73,84 +73,65 @@ sap.ui.define(function () {
 			"lib/_V2MetadataConverter" : {},
 			"lib/_V2Requestor" : {},
 			"lib/_V4MetadataConverter" : {},
-			// the following tests set autostart=false because they require modules asynchronously
-			// and start QUnit on their own
 			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.DataAggregation" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.DeepCreate" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/DeepCreate/Opa.qunit"]
 			},
 			"OPA.Draft" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Draft/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.FieldGroups" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/FieldGroups/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.FlexibleColumnLayout" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/FlexibleColumnLayout/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.LateProperties" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.qunit"]
 			},
 			"OPA.ListBinding" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ListBinding/Opa.qunit"]
 			},
 			"OPA.ListBindingTemplate" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ListBindingTemplate/Opa.qunit"]
 			},
 			"OPA.MultipleInlineCreationRowsGrid" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.OptimisticBatch" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/LateProperties/Opa.OptimisticBatch.qunit"],
 				$app : null // no own app, see OPA.LateProperties
 			},
 			"OPA.Products" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Products/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.RecursiveHierarchy" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/RecursiveHierarchy/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
 			"OPA.SalesOrders" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrders/Opa.qunit"]
 			},
 			"OPA.SalesOrdersRTATest" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrdersRTATest/Opa.qunit"],
 				realOData : false // realOData brings nothing new
 			},
 			"OPA.SalesOrdersTemplate" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/SalesOrdersTemplate/Opa.qunit"]
 			},
 			"OPA.ServerDrivenPaging" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/ServerDrivenPaging/Opa.qunit"]
 			},
 			"OPA.Sticky" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/Sticky/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
