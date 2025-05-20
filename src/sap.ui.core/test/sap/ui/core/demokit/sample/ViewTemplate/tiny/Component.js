@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(MessageBox, Title, VBox, library, UIComponent, View, ODataModel) {
+], function (MessageBox, Title, VBox, library, UIComponent, View, ODataModel) {
 	"use strict";
 
 	var TitleLevel = library.TitleLevel, // shortcut for sap.ui.core.TitleLevel
@@ -68,7 +68,8 @@ sap.ui.define([
 				}, function (oError) {
 					MessageBox.alert(oError.message, {
 						icon : MessageBox.Icon.ERROR,
-						title : "Missing Proxy?"});
+						title : "Missing Proxy?"
+					});
 				});
 			});
 
