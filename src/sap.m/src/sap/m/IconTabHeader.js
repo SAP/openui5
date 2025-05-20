@@ -784,7 +784,7 @@ sap.ui.define([
 			var sKey = oItem.getKey();
 			// check if key is a duplicate
 			if (this._aTabKeys.indexOf(sKey) !== -1) {
-				Log.warning("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
+				Log.info("sap.m.IconTabHeader: duplicate key '" + sKey + "' inside the IconTabFilter. Please use unique keys.");
 			}
 			this._aTabKeys.push(sKey);
 		}
