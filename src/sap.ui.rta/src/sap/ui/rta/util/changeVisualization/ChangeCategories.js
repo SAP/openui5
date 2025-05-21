@@ -9,12 +9,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ChangeCategories = {};
+	const ChangeCategories = {};
 
 	ChangeCategories.ALL = "all";
 
 	// Assignment of commands to change categories
-	var COMMANDS = {};
+	const COMMANDS = {};
 	COMMANDS[FlChangeCategories.ADD] = [
 		"createContainer",
 		"addDelegateProperty",
@@ -27,7 +27,7 @@ sap.ui.define([
 	COMMANDS[FlChangeCategories.REMOVE] = ["remove"];
 	COMMANDS[FlChangeCategories.OTHER] = [];
 
-	var CATEGORY_ICONS = {};
+	const CATEGORY_ICONS = {};
 	CATEGORY_ICONS[ChangeCategories.ALL] = "sap-icon://show";
 	CATEGORY_ICONS[FlChangeCategories.ADD] = "sap-icon://add";
 	CATEGORY_ICONS[FlChangeCategories.MOVE] = "sap-icon://move";

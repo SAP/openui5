@@ -2,12 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define([
-], function(
-) {
+sap.ui.define([], function() {
 	"use strict";
 
-	var ChangeStates = {};
+	const ChangeStates = {};
 
 	ChangeStates.ALL = "all";
 	ChangeStates.DRAFT = "draft";
