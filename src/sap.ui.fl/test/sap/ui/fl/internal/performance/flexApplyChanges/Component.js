@@ -48,7 +48,7 @@ sap.ui.define([
 					window.fnResolve();
 				});
 			} else {
-				FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing();
+				FlexPerformanceTestUtil.injectMeasurementForXmlPreprocessing();
 				XMLView.create(mViewProperties).then(function(oView) {
 					oApp.addPage(oView);
 
