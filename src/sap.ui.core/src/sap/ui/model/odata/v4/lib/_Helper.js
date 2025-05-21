@@ -589,8 +589,6 @@ sap.ui.define([
 		 *       response JSON object (if available)
 		 *     <li> <code>isConcurrentModification</code>: (optional) <code>true</code> In case of a
 		 *       concurrent modification detected via ETags (i.e. HTTP status code 412)
-		 *     <li> <code>strictHandlingFailed</code>: (optional) <code>true</code> In case of HTTP
-		 *       status code 412 and response header "Preference-Applied:handling=strict"
 		 *     <li> <code>message</code>: Error message
 		 *     <li> <code>requestUrl</code>: (optional) The absolute request URL
 		 *     <li> <code>resourcePath</code>: (optional) The path by which this resource has
@@ -600,6 +598,8 @@ sap.ui.define([
 		 *       that header value was an HTTP date or a delay in seconds.
 		 *     <li> <code>status</code>: HTTP status code
 		 *     <li> <code>statusText</code>: (optional) HTTP status text
+		 *     <li> <code>strictHandlingFailed</code>: (optional) <code>true</code> In case of HTTP
+		 *       status code 412 and response header "Preference-Applied:handling=strict"
 		 *   </ul>
 		 * @see <a href=
 		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Representing_Errors_in"
@@ -805,7 +805,8 @@ sap.ui.define([
 		 *   URL of the service document used to resolve relative request URLs
 		 * @returns {Error[]}
 		 *   One error for each request given, suitable for
-		 *   {@link sap.ui.model.odata.v4.ODataModel#reportError}
+		 *   {@link sap.ui.model.odata.v4.ODataModel#reportError} and marked as
+		 *   <code>decomposed</code>
 		 *
 		 * @public
 		 */
@@ -840,6 +841,7 @@ sap.ui.define([
 					return sContentID === oRequest.$ContentID;
 				}
 
+				oClone.decomposed = true;
 				oClone.error = _Helper.clone(oError.error);
 				oClone.requestUrl = sServiceUrl + oRequest.url;
 				oClone.resourcePath = oRequest.$resourcePath;

@@ -12362,8 +12362,9 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bBound) {
 	[false, true].forEach(function (bConfirm) {
-		var sTitle = "SingleCache: post failure: strict handling, bound=" + bBound + ", confirm="
-				+ bConfirm;
+		[false, true].forEach(function (bNoSerialNumber) {
+			var sTitle = "SingleCache: post failure: strict handling, bound=" + bBound
+				+ ", confirm=" + bConfirm + ", no serial no.=" + bNoSerialNumber;
 
 	QUnit.test(sTitle, function (assert) {
 		var that = this,
@@ -12397,7 +12398,7 @@ sap.ui.define([
 						return false;
 					}
 					assert.strictEqual(oCache.bPosting, false);
-					that.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
+					that.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs(bNoSerialNumber)
 						.returns("~GroupLockCopy~");
 					that.oRequestorMock.expects("request")
 						.withExactArgs("POST", sResourcePath, "~GroupLockCopy~", mExpectedHeaders1,
@@ -12417,6 +12418,9 @@ sap.ui.define([
 
 		if (bBound) {
 			mExpectedHeaders0["If-Match"] = mExpectedHeaders1["If-Match"] = oEntity;
+		}
+		if (!bNoSerialNumber) {
+			oError.decomposed = true;
 		}
 		oError.strictHandlingFailed = true;
 		this.mock(oGroupLock).expects("getGroupId").exactly(bBound ? 1 : 0)
@@ -12459,6 +12463,7 @@ sap.ui.define([
 				assert.strictEqual(oCanceledError.canceled, true);
 			});
 	});
+		});
 	});
 });
 

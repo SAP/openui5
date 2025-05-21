@@ -145,10 +145,12 @@ sap.ui.define([
 		 *
 		 * @param {string} [sGroupId="groupId"]
 		 *   The group lock's group ID
+		 * @param {number} [iSerialNumber]
+		 *   The group lock's serial number
 		 * @returns {object}
 		 *   A group lock mock
 		 */
-		createGroupLock : function (sGroupId) {
+		createGroupLock : function (sGroupId, iSerialNumber = Infinity) {
 			var oGroupLock = {
 					getGroupId : mustBeMocked,
 					getSerialNumber : mustBeMocked,
@@ -159,7 +161,7 @@ sap.ui.define([
 			this.mock(oGroupLock).expects("getGroupId").withExactArgs()
 				.returns(sGroupId || "groupId");
 			this.mock(oGroupLock).expects("isCanceled").withExactArgs().returns(false);
-			this.mock(oGroupLock).expects("getSerialNumber").withExactArgs().returns(Infinity);
+			this.mock(oGroupLock).expects("getSerialNumber").withExactArgs().returns(iSerialNumber);
 			this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 			return oGroupLock;
@@ -1480,6 +1482,79 @@ sap.ui.define([
 				undefined, undefined, undefined, "R#V#C"),
 			"~oResult~");
 	});
+
+	//*********************************************************************************************
+[false, true].forEach((bEmptyChangeSet) => {
+	const sTitle = "request: no serial number, initial change set empty = " + bEmptyChangeSet;
+
+	QUnit.test(sTitle, function (assert) {
+		const oRequestor = _Requestor.create("/", oModelInterface);
+		this.mock(oRequestor).expects("convertResourcePath").withExactArgs("resource/path")
+			.returns("converted/resource/path");
+		const aRequests = [["~some request~"]];
+		aRequests[0].iSerialNumber = 0;
+		aRequests.iChangeSet = 0;
+		const addChangeSet = () => {
+			aRequests.push([]);
+			aRequests[1].iSerialNumber = Infinity; // must not matter
+			aRequests.iChangeSet = 1;
+		};
+		if (bEmptyChangeSet) {
+			addChangeSet();
+		}
+		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("groupId")
+			.returns(aRequests);
+		let oRequest;
+		this.mock(oRequestor).expects("addChangeSet").exactly(bEmptyChangeSet ? 1 : 2)
+			.withExactArgs("groupId")
+			.callsFake(() => {
+				if (!bEmptyChangeSet && !oRequest) {
+					addChangeSet();
+				} else {
+					assert.strictEqual(aRequests[1].length, 1, "request already added here");
+					assert.strictEqual(aRequests[1][0], oRequest);
+				}
+			});
+		this.mock(oRequestor).expects("checkConflictingStrictRequest")
+			.withExactArgs(sinon.match.object, sinon.match.same(aRequests), 1)
+			.callsFake((oRequest0) => {
+				oRequest = oRequest0;
+			});
+		this.mock(oRequestor).expects("addQueryString").never();
+		this.mock(oRequestor).expects("sendRequest").never();
+		const oGroupLock = this.createGroupLock("groupId", NaN);
+
+		// code under test
+		const oPromise = oRequestor.request("non-GET", "resource/path", oGroupLock, {},
+			"~oPayload~", "~fnSubmit~", "~fnCancel~", "/meta/path", "original/resource/path",
+			/*bAtFront*/false, "~mQueryOptions~", "~vOwner~", "~fnMergeRequests~");
+
+		assert.strictEqual(aRequests.length, 2, "two change sets");
+		assert.strictEqual(aRequests[1].length, 1, "request added here");
+		assert.strictEqual(aRequests[1].pop(), oRequest);
+		assert.strictEqual(oRequest.$promise, oPromise);
+		delete oRequest.$promise;
+		delete oRequest.$reject;
+		delete oRequest.$resolve;
+		assert.deepEqual(oRequest, {
+			$cancel : "~fnCancel~",
+			$mergeRequests : "~fnMergeRequests~",
+			$metaPath : "/meta/path",
+			$owner : "~vOwner~",
+			$queryOptions : "~mQueryOptions~",
+			$resourcePath : "original/resource/path",
+			$submit : "~fnSubmit~",
+			body : "~oPayload~",
+			headers : {
+				Accept : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+				"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+			},
+			method : "non-GET",
+			url : "converted/resource/path"
+		});
+		assert.deepEqual(aRequests, [["~some request~"], [/*oRequest*/]], "nothing else");
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("request: sOriginalPath, $batch", function () {
@@ -5583,6 +5658,7 @@ sap.ui.define([
 			aRequests.push({});
 			oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
 			assert.throws(function () {
+				// code under test
 				oRequestor.checkConflictingStrictRequest(oStrictRequest, aRequests, iChangeSetNo);
 			}, new Error("All requests with strict handling must belong to the same change set"));
 		}
@@ -5600,6 +5676,44 @@ sap.ui.define([
 		fail([[oRequest], [oRequest, oStrictRequest], []], 2);
 		fail([[oRequest], [oRequest, oStrictRequest], [oRequest]], 2);
 		fail([[oRequest], [], [oStrictRequest]], 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkConflictingStrictRequest: odata.continue-on-error", function (assert) {
+		const oRequestor = _Requestor.create("/~/");
+
+		function fail(oRequest, aRequests, iChangeSetNo) {
+			aRequests.bContinueOnError = true;
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
+			}, new Error("Each request with strict handling must belong to its own change set due"
+					+ ' to the "odata.continue-on-error" preference'));
+		}
+
+		function success(oRequest, aRequests, iChangeSetNo) {
+			aRequests.bContinueOnError = true;
+			aRequests.iChangeSet = aRequests.length - 1;
+
+			// code under test
+			oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
+		}
+
+		const oStrictRequest = {
+			headers : {Prefer : "foo,handling=strict,bar"}
+		};
+		const oAlmostStrictRequest = {headers : {Prefer : "handling,strict"}}; // almost ;-)
+		const oNonStrictRequest = {headers : {}}; // no header needed, but map itself
+
+		fail(oStrictRequest, [[oNonStrictRequest]], 0); // change set not empty
+		fail(oStrictRequest, [[], [oNonStrictRequest], []], 1); // iChangeSetNo matters
+		fail(oNonStrictRequest, [[oStrictRequest]], 0); // cannot add non-strict later
+
+		success(oStrictRequest, [[oNonStrictRequest], []], 1); // empty change set
+		success(oAlmostStrictRequest, [[oNonStrictRequest]], 0); // non-strict
+		success(oNonStrictRequest, [[oNonStrictRequest]], 0); // missing "Prefer" header is OK
+		success(oNonStrictRequest, [[]], 0); // empty change set is OK
 	});
 
 	//*****************************************************************************************

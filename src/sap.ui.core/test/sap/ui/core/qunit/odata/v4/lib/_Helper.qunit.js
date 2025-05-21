@@ -37,6 +37,7 @@ sap.ui.define([
 			bStrictHandlingFailed) {
 		assert.notStrictEqual(oClone, oOriginal);
 		assert.ok(oClone instanceof Error);
+		assert.strictEqual(oClone.decomposed, true);
 		assert.strictEqual(oClone.message, "Message");
 		assert.strictEqual(oClone.requestUrl, sUrl);
 		assert.strictEqual(oClone.resourcePath, sResourcePath);
