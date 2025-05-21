@@ -601,6 +601,7 @@ sap.ui.define([
 		if (bHasRedundantColumns) {
 			this._triggerFilter();
 		}
+		this.getModel(this.P13N_MODEL).setProperty("/hideDescriptions", bHasRedundantColumns);
 		return this;
 	};
 
