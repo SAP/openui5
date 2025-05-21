@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Als de focus op celniveau ligt, wordt de focus vijf kolommen naar rechts verplaatst (standaardpaginagrootte).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Als de focus op de kolomkop ligt en er minder kolommen rechts zijn dan de huidige paginagrootte, wordt de focus naar de laatste kolom verplaatst.</p>
 				<p>Als de focus op een rijselector ligt, wordt de focus naar de eerst cel van dezelfde rij verplaatst.</p>
 				<p>Als de focus op <span class="uicontrol">Alles selecteren</span> ligt, wordt de focus naar de kop van de eerste kolom verplaatst.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
 				<p>Als de focus op een cel ligt, wordt de gefocusseerde cel geselecteerd.</p>
 				<p>Als de focus op een celselectieblok ligt, wordt de selectie van de cellen verwijderd.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Als de focus op een cel ligt en de tabel een bepaalde configuratie heeft van het selectiegedrag (om een rij te selecteren, kunt u de rij zelf of het aankruisvakje selecteren, indien beschikbaar) wordt alleen de gefocusseerde cel geselecteerd, in plaats van de rij.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Als de focus op een cel of rijselector ligt, wordt hierdoor de selectie van de huidige rij omgeschakeld.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Als de focus binnen de tabel ligt en cellen zijn geselecteerd, wordt de selectie van cellen verwijderd.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Als de focus op <span class="uicontrol">Alles selecteren</span> ligt en op <kbd>Spacebar</kbd> wordt gedrukt, wordt het bijhorende event niet gestart. <kbd>Shift</kbd> voorkomt deze activiteit.</p>
+				<p>Als de focus op een kolomkop ligt en op <kbd>Spacebar</kbd> of <kbd>Enter</kbd> wordt gedrukt, wordt het bijhorende event niet gestart.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij bovenaan verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij bovenaan verplaatst en wordt de selectie voor deze rij verwijderd.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel bovenaan geselecteerd. De focus wordt naar de cel boven de gefocusseerde cel verplaatst.</p>
 				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel bovenaan gelegd en de celselectie uitgebreid tot deze cel.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij eronder verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij eronder verplaatst en wordt de selectie voor deze rij verwijderd.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel eronder geselecteerd. De focus wordt naar de cel onder de gefocusseerde cel verplaatst.</p>
 				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel onderaan gelegd en de celselectie uitgebreid tot deze cel.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopieert de geselecteerde rijen of cellen naar het klembord (indien beschikbaar) en de functie wordt ingeschakeld.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Plakt de inhoud uit het klembord (indien de functie is ingeschakeld).</p>
 			</description>
 		</interaction>
 	</control-interactions>

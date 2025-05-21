@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Kui fookus on lahtritasemel, viiakse fookus viie veeru (lehe vaikesuuruse) võrra paremale.</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Kui fookus on veerupäisel ja paremal on praegusest lehesuurusest vähem veerge, viiakse fookus viimasele veerule.</p>
 				<p>Kui fookus on reaselektoril, viiakse fookus sama rea esimesele veerule.</p>
 				<p>Kui fookus on suvandil <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
 				<p>Kui fookus on lahtril, valitakse fookuses olev lahter.</p>
 				<p>Kui fookus on lahtrivaliku plokil, eemaldatakse lahtrite valik.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Kui fookus on lahtril ja tabelil on konkreetne valikukäitumise konfiguratsioon (rea valimiseks saate valida soovitud rea enda või märkida valiku märkeruudu, kui see on saadaval), valitakse rea asemel ainult fookuses olev lahter.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Kui fookus on lahtril või reaselektoril, lülitab see ümber praeguse rea valikut.</p>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Kui fookus on tabelis ja valitud on lahtreid, eemaldatakse lahtrite valik.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Kui fookus on nupul <span class="uicontrol">Vali kõik</span> ja vajutatakse otseteed <kbd>Spacebar</kbd>, siis vastavat sündmust ei käivitata. <kbd>Shift</kbd> takistab seda tegevust.</p>
+				<p>Kui fookus on veerupäisel ja vajutatakse otseteed <kbd>Spacebar</kbd> või <kbd>Enter</kbd>, siis vastavat sündmust ei käivitata.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida on valitud, viiakse fookus ülalolevale reale ja valikut laiendatakse kuni selle reani.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida <span class="emphasis">ei</span> ole valitud, viiakse fookus ülalolevale reale ja valik eemaldatakse sellelt realt.</p>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, ja rida <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja selle kohal olev lahter. Fookus viiakse fookuses oleva lahtri kohal olevale lahtrile.</p>
 				<p>Kui fookus on valitud lahtril, viiakse fookus ülalolevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida on valitud, viiakse fookus allolevale reale ja valikut laiendatakse kuni selle reani.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida <span class="emphasis">ei</span> ole valitud, viiakse fookus allolevale reale ja valik eemaldatakse sellelt realt.</p>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, ja rida <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja selle all olev lahter. Fookus viiakse fookuses oleva lahtri all olevale lahtrile.</p>
 				<p>Kui fookus on valitud lahtril, viiakse fookus allolevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopeerib valitud read või lahtrid lõikelauale, kui see on saadaval ja funktsioon on lubatud.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Kleebib lõikelaualt sisu, kui funktsioon on lubatud.</p>
 			</description>
 		</interaction>
 	</control-interactions>

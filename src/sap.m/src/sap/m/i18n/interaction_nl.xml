@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Als de focus op de cel- of rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie voor deze rij verwijderd.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel erboven geselecteerd. De focus wordt naar de cel boven de gefocusseerde cel verplaatst.</p>
 				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel bovenaan gelegd en de celselectie uitgebreid tot deze cel.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Als de focus op de cel- of rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij eronder verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij eronder verplaatst en wordt de selectie voor deze rij verwijderd.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel eronder geselecteerd. De focus wordt naar de cel onder de gefocusseerde cel verplaatst. </p>
 				<p>Als de focus op een geselecteerde cel ligt, wordt de focus naar de cel onderaan verplaatst en wordt de celselectie tot deze cel uitgebreid.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Als de focus binnen de tabel ligt en cellen zijn geselecteerd, wordt de selectie van cellen verwijderd.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopieert de geselecteerde rijen of cellen naar het klembord (indien beschikbaar) en de functie wordt ingeschakeld.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Plakt de inhoud uit het klembord (indien de functie is ingeschakeld).</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Verplaatst het element één positie omhoog (indien beschikbaar).</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Verplaatst het element één positie omlaag (indien beschikbaar).</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Verplaatst het element naar boven (indien beschikbaar).</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Verplaatst het element naar het einde (indien beschikbaar).</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,9 +156,9 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Verplaatst het element één positie omhoog (indien beschikbaar).</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Verplaatst de positie een positie omlaag (indien beschikbaar).</p>
+				<p>Verplaatst het element één positie omlaag (indien beschikbaar).</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Verplaatst het element één positie omhoog (indien beschikbaar).</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Verplaatst het element één positie omlaag (indien beschikbaar).</p>
 			</description>
 		</interaction>
 	</control-interactions>

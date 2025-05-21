@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco é movido para a linha acima, e a seleção é expandida até essa linha.</p>
+				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> for selecionada, o foco é movido para a linha acima, e a seleção é removida para essa linha.</p>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Se o foco estiver em uma célula que <span class="emphasis">não</span> é selecionada e a linha <span class="emphasis">não</span> é selecionada, são selecionadas a célula focada e a célula acima. O foco é movido para a célula acima da célula focada.</p>
 				<p>Se o foco estiver em uma célula selecionada, o foco é movido para a célula acima e a seleção de células é expandida até essa célula.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco é movido para a linha abaixo, e a seleção é expandida até essa linha.</p>
+				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> for selecionada, o foco é movido para a linha abaixo, e a seleção é removida para essa linha.</p>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Se o foco estiver em uma célula que <span class="emphasis">não</span> é selecionada e a linha <span class="emphasis">não</span> é selecionada, são selecionadas a célula focada e a célula abaixo. O foco é movido para a célula abaixo da célula focada. </p>
 				<p>Se o foco estiver em uma célula selecionada, o foco é movido para a célula abaixo e a seleção de células é expandida até essa célula.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Se o foco estiver dentro da tabela e as células estiverem selecionadas, a seleção das células é removida.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copia as linhas ou células selecionadas para o clipboard, se disponível, e o recurso é ativado.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Cola o conteúdo do clipboard, se o recurso estiver ativado.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Move o item uma posição para cima, se disponível.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Move o item uma posição para baixo, se disponível.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Move o item para o topo, se disponível.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Move o item para o final, se disponível.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Move o item uma posição para cima, se disponível.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Move o item uma posição para baixo, se disponível.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Move o item uma posição para cima, se disponível.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Move o item uma posição para baixo, se disponível.</p>
 			</description>
 		</interaction>
 	</control-interactions>

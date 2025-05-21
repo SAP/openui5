@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Ако је фокус на нивоу ћелије, фокус се помера пет колона надесно (стандардна величина странице).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Ако је фокус на заглављу колоне и с десне стране је мање колона у односу на тренутну величину странице, фокус се помера на последњу колону.</p>
 				<p>Ако је фокус на селектору реда, фокус се помера на прву колону у истом реду.</p>
 				<p>Ако је фокус на <span class="uicontrol">Одабери све</span>, фокус се помера на заглавље прве колоне.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
 				<p>Ако је фокус на ћелији, бира се ћелија у фокусу.</p>
 				<p>Ако је фокус на блоку одабира ћелија, одабир ћелија се уклања.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Ако је фокус на ћелији и табела има одређену конфигурацију понашања одабира (да бисте одабрали ред, можете одабрати сам ред или квадратић за потврду одабира ако је доступан), уместо реда бира се само ћелија у фокусу.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Ако је фокус на селектору ћелије или реда, ово пребацује одабир тренутног реда.</p>
 				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
@@ -94,31 +94,31 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Ако је фокус унутар табеле и ћелије су одабране, одабир ћелија се уклања.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
-				<p>Пребацује фокус између ћелије и њеног садржаја (с изузетком текста који је само за читање).</p>
+				<p>Пребацује фокус између ћелије и њеног садржаја (са изузетком текста који је само за читање).</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Ако је фокус на <span class="uicontrol">Одабери све</span> и притисне се <kbd>Spacebar</kbd>, одговарајући догађај се не покреће. <kbd>Shift</kbd> спречава ову активност.</p>
+				<p>Ако је фокус на заглављу колоне и <kbd>Spacebar</kbd> или се притисне <kbd>Enter</kbd>, одговарајући догађај се не покреће.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Ако је фокус на селектору ћелије или реда и одабран је релевантни ред, фокус се помера на ред изнад, а одабир се проширује до овог реда.</p>
+				<p>Ако је фокус на селектору ћелије или реда, а релевантни ред <span class="emphasis">није</span> одабран, фокус се помера на ред изнад, а одабир се уклања за овај ред.</p>
 				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Ако је фокус на ћелији која <span class="emphasis">није</span> одабрана и реду који <span class="emphasis">није</span> одабран, бирају се ћелија у фокусу и ћелија изнад. Фокус се помера на ћелију изнад ћелије која је у фокусу.</p>
 				<p>Ако је фокус на одабраној ћелији, ћелија изнад се ставља у фокус, а одабир ћелија се проширује до ове ћелије.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Ако је фокус на селектору ћелије или реда и одабран је релевантни ред, фокус се помера на ред испод, а одабир се проширује до овог реда.</p>
+				<p>Ако је фокус на селектору ћелије или реда, а релевантни ред <span class="emphasis">није</span> одабран, фокус се помера на ред испод, а одабир се уклања за овај ред.</p>
 				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Ако је фокус на ћелији која <span class="emphasis">није</span> одабрана и реду који <span class="emphasis">није</span> одабран, бирају се ћелија у фокусу и ћелија испод. Фокус се помера на ћелију испод ћелије која је у фокусу.</p>
 				<p>Ако је фокус на одабраној ћелији, ћелија испод се ставља у фокус, а одабир ћелија се проширује до ове ћелије.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Копира одабране редове или ћелије у прелазну меморију, ако је доступно и ако је функција активирана.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Лепи садржај из прелазне меморије, ако је функција активирана.</p>
 			</description>
 		</interaction>
 	</control-interactions>
