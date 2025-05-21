@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Открывает диалог <span class="uicontrol">Настройки таблицы</span>, если он доступен.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Открывает диалог <span class="uicontrol">Экспорт как</span> таблицы, если он доступен.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Инициирует поиск панели фильтра.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Открывает диалог <span class="uicontrol">Настройки ракурса</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Удаляет позицию в диалоге <span class="uicontrol">Настройки ракурса</span></p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

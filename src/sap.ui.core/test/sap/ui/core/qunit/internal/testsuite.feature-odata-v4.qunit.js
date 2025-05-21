@@ -57,11 +57,8 @@ sap.ui.define(function () {
 			"XMLPreprocessor" : {
 				module : ["sap/ui/core/qunit/util/XMLPreprocessor.qunit"]
 			},
-			// the following tests set autostart=false because they require modules asynchronously
-			// and start QUnit on their own
 			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.ViewTemplate" : {
-				autostart : false,
 				module : ["sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"],
 				$app : "test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.scenario"
 			}

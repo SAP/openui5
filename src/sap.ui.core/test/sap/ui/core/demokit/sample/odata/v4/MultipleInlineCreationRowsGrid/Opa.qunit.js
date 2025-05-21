@@ -1,11 +1,8 @@
 /*!
  * ${copyright}
  */
-QUnit.config.autostart = false;
-
-sap.ui.require([
+sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/common/pages/Any",
@@ -13,16 +10,15 @@ sap.ui.require([
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/SandboxModel" // preload only
-], function (Log, Core, MessageType, Helper, Any, Main, opaTest, TestUtils) {
+], function (Log, MessageType, Helper, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
-	Core.ready().then(function () {
-		Helper.qUnitModule("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid");
+	Helper.qUnitModule("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid");
 
-		if (TestUtils.isRealOData()) {
-			QUnit.skip("Test runs only with realOData=false");
-		} else {
-			//*****************************************************************************
+	if (TestUtils.isRealOData()) {
+		QUnit.skip("Test runs only with realOData=false");
+	} else {
+		//*****************************************************************************
 [undefined, true].forEach(function (bLegacyPosition) {
 	[false, true].forEach(function (bSubmitModeAPI) {
 		var sTitle = "Edit Product: API group: " + bSubmitModeAPI + ", legacy position: "
@@ -451,7 +447,5 @@ sap.ui.require([
 		Then.onAnyPage.analyzeSupportAssistant();
 	});
 });
-			QUnit.start();
-		}
-	});
+	}
 });

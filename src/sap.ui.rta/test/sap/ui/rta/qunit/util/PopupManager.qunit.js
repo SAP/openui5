@@ -88,7 +88,7 @@ sap.ui.define([
 
 	function spyBefore() {
 		this.fnAddDialogInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideAddPopupInstance");
-		this.fnCreateDialogSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
+		this.oCreatePopupOverlaysSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
 		this.fnRemoveDialogInstanceSpy = sandbox.spy(this.oRta._oDesignTime, "removeRootElement");
 	}
 
@@ -132,7 +132,7 @@ sap.ui.define([
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
 			this.fnAddPopupInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideAddPopupInstance");
 			this.fnRemovePopupInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideRemovePopupInstance");
-			this.fnCreateDialogSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
+			this.oCreatePopupOverlaysSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
 		},
 		afterEach() {
 			this.oRta.destroy();
@@ -167,8 +167,8 @@ sap.ui.define([
 					assert.strictEqual(this.fnAddPopupInstanceSpy.callCount, 1, "then '_overrideAddPopupInstance' is called once since RTA is set");
 					assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 1, "then '_overrideInstanceFunctions' is called once since RTA is set");
 					assert.strictEqual(this.fnRemovePopupInstanceSpy.callCount, 1, "then '_overrideRemovePopupInstance' is called once since RTA is set");
-					assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called for the already opened dialog");
-					assert.ok(this.fnCreateDialogSpy.calledWith(this.oDialog), "then _createPopupOverlays called for the in-app dialog");
+					assert.strictEqual(this.oCreatePopupOverlaysSpy.callCount, 1, "then _createPopupOverlays called for the already opened dialog");
+					assert.ok(this.oCreatePopupOverlaysSpy.calledWith(this.oDialog), "then _createPopupOverlays called for the in-app dialog");
 
 					this.oDialog.destroy();
 					done();
@@ -204,6 +204,9 @@ sap.ui.define([
 					contentMinWidth: "250px",
 					contentWidth: "20%"
 				});
+				// a MessageToast creates a core/Popup instance and adds it to the InstanceManager
+				this.oPopup = new Popup(new Text({ text: "Test" }));
+				InstanceManager.addPopoverInstance(this.oPopup);
 				this.oPopover.oPopup.setAutoClose(false); /* when focus is taken away popover might close - resulting in failing tests */
 				this.oDialog.addStyleClass("sapUiNoContentPadding");
 				oView.addContent(this.oDialog);
@@ -217,7 +220,7 @@ sap.ui.define([
 			this.fnOverrideAddFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideAddFunctions");
 			this.fnRemovePopupInstanceSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideRemovePopupInstance");
 			this.fnOverrideRemoveFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideRemoveFunctions");
-			this.fnCreateDialogSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
+			this.oCreatePopupOverlaysSpy = sandbox.spy(this.oRta.getPopupManager(), "_createPopupOverlays");
 			this.fnAddPopupListeners = sandbox.spy(Popup.prototype, "_activateFocusHandle");
 			this.fnRemovePopupListeners = sandbox.spy(Popup.prototype, "_deactivateFocusHandle");
 			this.fnIsPopupAdaptableSpy = sandbox.spy(this.oRta.getPopupManager(), "_isPopupAdaptable");
@@ -229,18 +232,11 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach() {
-			if (this.oRta) {
-				this.oRta.destroy();
-			}
-			if (this.oDialog) {
-				this.oDialog.destroy();
-			}
-			if (this.oNonRtaDialog) {
-				this.oNonRtaDialog.destroy();
-			}
-			if (this.oPopover) {
-				this.oPopover.destroy();
-			}
+			this.oRta?.destroy();
+			this.oDialog?.destroy();
+			this.oNonRtaDialog?.destroy();
+			this.oPopover?.destroy();
+			this.oPopup?.destroy();
 			delete this.oOriginalInstanceManager;
 			sandbox.restore();
 		}
@@ -252,7 +248,7 @@ sap.ui.define([
 			assert.strictEqual(this.fnAddPopupInstanceSpy.callCount, 1, "then '_overrideAddPopupInstance' is called once since RTA is set");
 			assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 1, "then '_overrideInstanceFunctions' is called once since RTA is set");
 			assert.strictEqual(this.fnRemovePopupInstanceSpy.callCount, 1, "then '_overrideRemovePopupInstance' is called once since RTA is set");
-			assert.strictEqual(this.fnCreateDialogSpy.callCount, 0, "then _createPopupOverlays not called");
+			assert.strictEqual(this.oCreatePopupOverlaysSpy.callCount, 0, "then _createPopupOverlays not called");
 		});
 
 		QUnit.test("when _overrideAddPopupInstance for dialog is called", function(assert) {
@@ -274,8 +270,8 @@ sap.ui.define([
 					assert.ok(this.fnIsPopupAdaptableSpy.calledWith(this.oNonRtaDialog), "the isPopupAdaptable is called with the non in-app Dialog");
 					// when dialog is opened, PopupManager.open() triggers bringToFront
 					assert.notStrictEqual(this.fnToolsMenuBringToFrontSpy.callCount, 0, "then 'bringToFront' is called at least once");
-					assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
-					assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then _createPopupOverlays called with the context of PopupManager");
+					assert.strictEqual(this.oCreatePopupOverlaysSpy.callCount, 1, "then _createPopupOverlays called once for the relevant dialog");
+					assert.ok(this.oCreatePopupOverlaysSpy.calledOn(this.oRta.getPopupManager()), "then _createPopupOverlays called with the context of PopupManager");
 					done();
 				}.bind(this));
 				this.oNonRtaDialog.open();
@@ -288,7 +284,7 @@ sap.ui.define([
 			var oComp = Component.getOwnerComponentFor(this.oDialog);
 			var oPopupManager = this.oRta.getPopupManager();
 			var oDialogNotAllowed;
-			this.fnCreateDialogSpy.restore();
+			this.oCreatePopupOverlaysSpy.restore();
 			sandbox.stub(oPopupManager, "_createPopupOverlays");
 
 			oComp.runAsOwner(function() {
@@ -315,7 +311,7 @@ sap.ui.define([
 			var done = assert.async();
 			var oComp = Component.getOwnerComponentFor(this.oDialog);
 			var oPopupManager = this.oRta.getPopupManager();
-			this.fnCreateDialogSpy.restore();
+			this.oCreatePopupOverlaysSpy.restore();
 			sandbox.stub(oPopupManager, "_createPopupOverlays");
 			var oInnerDialog;
 
@@ -519,7 +515,6 @@ sap.ui.define([
 			this.oRta.getPopupManager().oRtaRootAppComponent = oComp;
 			var aRelevantPopups = this.oRta.getPopupManager()._getValidatedPopups(aPopups).relevant;
 			assert.strictEqual(aRelevantPopups.length, 2, "then relevant dialog and popover with same component are returned");
-			assert.ok(this.fnIsPopupAdaptableSpy.calledThrice, "then _isPopupAdaptable called thrice for all 3 popups");
 			assert.deepEqual(aRelevantPopups[0], this.oDialog, "then dialog returned");
 			assert.deepEqual(aRelevantPopups[1], this.oPopover, "then popover returned");
 		});
@@ -634,11 +629,11 @@ sap.ui.define([
 			this.oButton.firePress();
 			var fnCloseDone = assert.async();
 			this.oDialog.attachAfterOpen(function() {
-				assert.strictEqual(this.fnCreateDialogSpy.callCount, 1, "then '_createPopupOverlays' called once");
+				assert.strictEqual(this.oCreatePopupOverlaysSpy.callCount, 1, "then '_createPopupOverlays' called once");
 				assert.notEqual(this.oRta._oDesignTime.getRootElements().map(function(oRootElement) {
 					return oRootElement.getId();
 				}).indexOf(this.oDialog.getId()), -1, "then the opened dialog was added as a root element");
-				assert.ok(this.fnCreateDialogSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
+				assert.ok(this.oCreatePopupOverlaysSpy.calledOn(this.oRta.getPopupManager()), "then '_createPopupOverlays' with the opened dialog");
 				this.oRta._oDesignTime.attachEventOnce("synced", function() {
 					assert.ok(findOverlay(this.oDialog, this.oRta._oDesignTime), "then overlay exists for root dialog element");
 					assert.ok(findOverlay(Element.getElementById("formindialog"), this.oRta._oDesignTime), "then overlay exists for root dialog element");
@@ -661,8 +656,8 @@ sap.ui.define([
 			}.bind(this));
 			this.oNonRtaDialog.open();
 			this.oNonRtaDialog.attachAfterOpen(function() {
-				assert.strictEqual(this.fnCreateDialogSpy.callCount, 0, "then '_createPopupOverlays' is never called");
-				assert.ok(this.fnCreateDialogSpy.neverCalledWith(this.oNonRtaDialog), "then '_createPopupOverlays' is not called");
+				assert.strictEqual(this.oCreatePopupOverlaysSpy.callCount, 0, "then '_createPopupOverlays' is never called");
+				assert.ok(this.oCreatePopupOverlaysSpy.neverCalledWith(this.oNonRtaDialog), "then '_createPopupOverlays' is not called");
 				this.oRta._oDesignTime.fireSynced();
 			}.bind(this));
 		});

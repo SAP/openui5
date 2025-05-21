@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Move o foco para o próximo elemento na cadeia de separadores.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Move o foco para o elemento anterior na cadeia de separadores.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Move o foco para o primeiro elemento do próximo grupo da IU (grupo F6) na cadeia de separadores.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Move o foco para o primeiro elemento do grupo da IU anterior (grupo F6) na cadeia de separadores.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Atalhos globais</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

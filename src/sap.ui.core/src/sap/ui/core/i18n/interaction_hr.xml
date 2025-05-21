@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Premješta fokus na sljedeći element u redoslijedu tabulatora.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Premješta fokus na prethodni element u redoslijedu tabulatora.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Premješta fokus na prvi element sljedeće grupe korisničkog sučelja (F6 grupa) u redoslijedu tabulatora.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Premješta fokus na prvi element prethodne grupe korisničkog sučelja (F6 grupa) u redoslijedu tabulatora.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Globalni prečaci</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

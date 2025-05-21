@@ -37,14 +37,17 @@ sap.ui.define([
 					oMetaModel = oModel.getMetaModel(),
 					sAbsolutePath = oModel.resolve(oBinding.getPath(), oBinding.getContext()),
 					that = this;
+
 				if (!this.bValueHelpDetermined) {
 					this.bValueHelpDetermined = true;
 					oMetaModel.loaded().then(function () {
 						var oContext = oMetaModel.getMetaContext(sAbsolutePath);
+
 						if (oContext.getProperty("sap:value-list")) {
 							oMetaModel.getODataValueLists(oContext)
 								.then(function (mValueList) {
 									var oValueList = mValueList[that.getQualifier()];
+
 									that._parameters = [];
 									oValueList.Parameters.forEach(function (oParameter) {
 										// put parameters written back to entity at the beginning
@@ -52,7 +55,8 @@ sap.ui.define([
 											that._parameters.unshift(
 												oParameter.ValueListProperty.String);
 										} else {
-											that._parameters.push(oParameter.ValueListProperty.String);
+											that._parameters.push(
+												oParameter.ValueListProperty.String);
 										}
 									});
 									that._collectionPath = oValueList.CollectionPath.String;
@@ -60,7 +64,9 @@ sap.ui.define([
 										? oValueList.Label.String
 										: that._collectionPath;
 									that._valueListDetails = "ValueList"
-										+ (that.getQualifier() !== "" ? "#" + that.getQualifier() : "")
+										+ (that.getQualifier() !== ""
+											? "#" + that.getQualifier()
+											: "")
 										+ "\n"
 										+ JSON.stringify(oValueList, undefined, 2);
 									that.updateDetails();
@@ -73,7 +79,8 @@ sap.ui.define([
 					}, function (oError) {
 						MessageBox.alert(oError.message, {
 							icon : MessageBox.Icon.ERROR,
-							title : "Error"});
+							title : "Error"
+						});
 					});
 				}
 				Input.prototype.onBeforeRendering.call(this);

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>如果可用，打开<span class="uicontrol">表设置</span>对话框。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>如果可用，打开表的<span class="uicontrol">导出为</span>对话框。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>触发过滤器栏的搜索。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>打开<span class="uicontrol">视图设置</span>对话框</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>在<span class="uicontrol">视图设置</span>对话框中删除某个项目</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

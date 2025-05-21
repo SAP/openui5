@@ -41,12 +41,12 @@
 .sapTntToolHeader {
 	.sapMBarChild:not(.sapMMenuBtn) {
 		&.sapMBtn {
-			.sapMBtnInner::after,
-			.sapMBtnIcon {
+			.sapMBtnInner:not(.sapMBtnEmphasized)::after,
+            .sapMBtnInner:not(.sapMBtnEmphasized) .sapMBtnIcon {
 				background: transparent;
 				color: @sapUiShellInteractiveTextColor;
 			}
-			.sapMBtnContent {
+			.sapMBtnInner:not(.sapMBtnEmphasized) .sapMBtnContent {
 				background: transparent;
 				color: @sapUiShellTextColor;
 			}

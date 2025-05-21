@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
@@ -44,7 +44,7 @@ sap.ui.define([
 					mPropertyBag.layer === Layer.VENDOR
 					|| (
 						mPropertyBag.layer === Layer.CUSTOMER_BASE
-						&& !oSettings.isAtoEnabled()
+						&& !oSettings.getIsAtoEnabled()
 					)
 				)
 			) {
@@ -59,7 +59,7 @@ sap.ui.define([
 					&& mPropertyBag.package !== ""
 				)
 				&& !mPropertyBag.transport
-				&& !oSettings.isAtoEnabled()
+				&& !oSettings.getIsAtoEnabled()
 			) {
 				return Promise.reject("Transport must be provided");
 			}

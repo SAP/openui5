@@ -482,6 +482,11 @@ sap.ui.define([
 			new MenuButton({
 				type: ButtonType.Emphasized,
 				text: "Mega Menu"
+			}),
+			new Button({
+				type: ButtonType.Emphasized,
+				text: "Add Item",
+				icon: IconPool.getIconURI("add")
 			})
 		]
 	}).addStyleClass("sapUiLargeMarginTop");

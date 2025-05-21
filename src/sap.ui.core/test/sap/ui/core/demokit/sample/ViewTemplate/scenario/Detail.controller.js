@@ -23,5 +23,4 @@ sap.ui.define([
 	});
 
 	return DetailController;
-
 });

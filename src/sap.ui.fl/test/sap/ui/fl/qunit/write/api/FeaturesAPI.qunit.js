@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/api/InitialFlexAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
@@ -23,87 +23,61 @@ sap.ui.define([
 
 	QUnit.module("Given FeaturesAPI", {
 		afterEach() {
-			Settings._instance = undefined;
 			sandbox.restore();
 		}
 	}, function() {
 		[true, false].forEach(function(bValueToBeSet) {
-			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system with transports and no publish available info`, function(assert) {
-				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem() {
-						return bValueToBeSet;
-					},
-					isSystemWithTransports() {
-						return true;
-					},
-					isPublishAvailable() {
-						return false;
-					}
-				});
+			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system with transports and no publish available info`, async function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves(new Settings({
+					isProductiveSystem: bValueToBeSet,
+					isPublishAvailable: false,
+					system: "dummySystem",
+					client: "dummyClient"
+				}));
 
-				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
-					assert.strictEqual(bReturnValue, !bValueToBeSet, `then ${!bValueToBeSet} is returned`);
-				});
+				const bIsPublishAvailable = await FeaturesAPI.isPublishAvailable();
+				assert.strictEqual(bIsPublishAvailable, !bValueToBeSet, `then ${!bValueToBeSet} is returned`);
 			});
 
-			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system without transports and no publish available info`, function(assert) {
-				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem() {
-						return bValueToBeSet;
-					},
-					isSystemWithTransports() {
-						return false;
-					},
-					isPublishAvailable() {
-						return false;
-					}
-				});
+			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system without transports and no publish available info`, async function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves(new Settings({
+					isProductiveSystem: bValueToBeSet,
+					isPublishAvailable: false
+				}));
 
-				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
-					assert.notOk(bReturnValue, "then false is returned");
-				});
+				const bIsPublishAvailable = await FeaturesAPI.isPublishAvailable();
+				assert.notOk(bIsPublishAvailable, "then false is returned");
 			});
 
-			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system with transports and publish available info`, function(assert) {
-				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem() {
-						return bValueToBeSet;
-					},
-					isSystemWithTransports() {
-						return true;
-					},
-					isPublishAvailable() {
-						return true;
-					}
-				});
+			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system with transports and publish available info`, async function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves(new Settings({
+					isProductiveSystem: bValueToBeSet,
+					isPublishAvailable: true,
+					system: "dummySystem",
+					client: "dummyClient"
+				}));
 
-				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
-					assert.ok(bReturnValue, "then true is returned");
-				});
+				const bIsPublishAvailable = await FeaturesAPI.isPublishAvailable();
+				assert.ok(bIsPublishAvailable, "then true is returned");
 			});
 
-			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system without transports and publish available info`, function(assert) {
-				sandbox.stub(Settings, "getInstance").resolves({
-					isProductiveSystem() {
-						return bValueToBeSet;
-					},
-					isSystemWithTransports() {
-						return false;
-					},
-					isPublishAvailable() {
-						return true;
-					}
-				});
+			QUnit.test(`when isPublishAvailable() is called for ${bValueToBeSet ? "a" : "not a"} productive system without transports and publish available info`, async function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves(new Settings({
+					isProductiveSystem: bValueToBeSet,
+					isPublishAvailable: true
+				}));
 
-				return FeaturesAPI.isPublishAvailable().then(function(bReturnValue) {
-					assert.ok(bReturnValue, "then true is returned");
-				});
+				const bIsPublishAvailable = await FeaturesAPI.isPublishAvailable();
+				assert.ok(bIsPublishAvailable, "then true is returned");
 			});
 
 			QUnit.test(`when isSaveAsAvailable() is called for ${bValueToBeSet ? "not a" : "a"} steampunk system`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isAppVariantSaveAsEnabled() {
+					getIsAppVariantSaveAsEnabled() {
 						return bValueToBeSet;
+					},
+					getIsContextBasedAdaptationEnabled() {
+						return false;
 					}
 				});
 
@@ -116,7 +90,7 @@ sap.ui.define([
 
 			QUnit.test(`when isSaveAsAvailable() is called for ${bValueToBeSet ? "not a" : "a"} steampunk system and standalone app without Navigation service`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isAppVariantSaveAsEnabled() {
+					getIsAppVariantSaveAsEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -138,7 +112,7 @@ sap.ui.define([
 
 			QUnit.test(`when isKeyUserTranslationEnabled() is called for ${bValueToBeSet ? "a" : "not a"} admin key user`, function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isKeyUserTranslationEnabled() {
+					getIsKeyUserTranslationEnabled() {
 						return bValueToBeSet;
 					}
 				});
@@ -149,21 +123,28 @@ sap.ui.define([
 			});
 
 			QUnit.test(`when isVersioningEnabled(sLayer) is called in a ${
-				bValueToBeSet ? "draft enabled" : "non draft enabled"} layer`, function(assert) {
+				bValueToBeSet ? "draft enabled" : "non draft enabled"} layer`, async function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isVersioningEnabled() {
-						return bValueToBeSet;
+					getVersioning() {
+						return bValueToBeSet ? {
+							[Layer.CUSTOMER]: true,
+							ALL: false
+						} : {
+							[Layer.CUSTOMER]: false,
+							ALL: false
+						};
 					}
 				});
-				return FeaturesAPI.isVersioningEnabled(Layer.CUSTOMER)
-				.then(function(bReturnValue) {
-					assert.strictEqual(bReturnValue, bValueToBeSet, `then ${bValueToBeSet} is returned`);
-				});
+				const bVersioningEnabled1 = await FeaturesAPI.isVersioningEnabled(Layer.CUSTOMER);
+				assert.strictEqual(bVersioningEnabled1, bValueToBeSet, `then ${bValueToBeSet} is returned`);
+
+				const bVersioningEnabled2 = await FeaturesAPI.isVersioningEnabled(Layer.USER);
+				assert.strictEqual(bVersioningEnabled2, false, "then false is returned");
 			});
 
 			QUnit.test(`when getSeenFeatureIds is called with the feature ${bValueToBeSet ? "enabled" : "disabled"}`, async function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isSeenFeaturesAvailable() {
+					getIsSeenFeaturesAvailable() {
 						return bValueToBeSet;
 					}
 				});
@@ -177,7 +158,7 @@ sap.ui.define([
 
 			QUnit.test(`when setSeenFeatureIds is called with the feature ${bValueToBeSet ? "enabled" : "disabled"}`, async function(assert) {
 				sandbox.stub(Settings, "getInstance").resolves({
-					isSeenFeaturesAvailable() {
+					getIsSeenFeaturesAvailable() {
 						return bValueToBeSet;
 					}
 				});
@@ -203,7 +184,7 @@ sap.ui.define([
 
 			QUnit.test("when areAnnotationChangesEnabled is called with settings already loaded", function(assert) {
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					isAnnotationChangeEnabled() {
+					getIsAnnotationChangeEnabled() {
 						return true;
 					}
 				});

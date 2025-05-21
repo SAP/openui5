@@ -108,7 +108,7 @@ sap.ui.define([
 				"testComponent2---mockview--VariantManagementNotAvailable"
 			];
 			assertVMControlFound("ObjectPageSubSection1", "VariantManagement1", aVMControlIds, assert);
-			assertVMControlFound("ObjectPageSection3", "VariantManagement1", aVMControlIds, assert);
+			assertVMControlFound("ObjectPageSection3", "VariantManagement2", aVMControlIds, assert);
 			assertVMControlFound("ObjectPageSubSection3", "VariantManagement2", aVMControlIds, assert);
 			assertVMControlFound("TextTitle1", "VariantManagement2", aVMControlIds, assert);
 			assertVMControlFound("hbox2InnerButton1", "VariantManagement3", aVMControlIds, assert);

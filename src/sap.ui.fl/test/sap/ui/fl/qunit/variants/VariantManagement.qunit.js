@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/layout/Grid",
 	"sap/m/OverflowToolbar",
 	"sap/m/Input",
@@ -70,8 +70,8 @@ sap.ui.define([
 	QUnit.module("sap.ui.fl.variants.VariantManagement", {
 		beforeEach() {
 			sinon.stub(flSettings, "getInstance").returns(Promise.resolve({
-				isVariantPersonalizationEnabled() { return true; },
-				isPublicFlVariantEnabled() { return true; }
+				getIsVariantPersonalizationEnabled() { return true; },
+				getIsPublicFlVariantEnabled() { return true; }
 			}));
 
 			this.oVariantManagement = new VariantManagement("One", {});

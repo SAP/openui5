@@ -17,13 +17,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/Switcher",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
@@ -44,7 +43,6 @@ sap.ui.define([
 	URLHandler,
 	VariantUtil,
 	FlexObjectFactory,
-	States,
 	DependencyHandler,
 	Switcher,
 	VariantManagementState,
@@ -108,7 +106,7 @@ sap.ui.define([
 
 	function updatePersonalVariantPropertiesWithFlpSettings(oVariant) {
 		var oSettings = Settings.getInstanceOrUndef();
-		if (oSettings && !oSettings.isVariantPersonalizationEnabled()) {
+		if (oSettings && !oSettings.getIsVariantPersonalizationEnabled()) {
 			oVariant.remove = false;
 			oVariant.rename = false;
 			oVariant.change = false;
@@ -118,8 +116,8 @@ sap.ui.define([
 	function updatePublicVariantPropertiesWithSettings(oVariant) {
 		var oSettings = Settings.getInstanceOrUndef();
 		var bUserIsAuthorized = oSettings &&
-			(oSettings.isKeyUser() || !oSettings.getUserId() ||
-			(oSettings.isPublicFlVariantEnabled() && oSettings.getUserId().toUpperCase() === oVariant.instance.getSupportInformation().user.toUpperCase()));
+			(oSettings.getIsKeyUser() || !oSettings.getUserId() ||
+			(oSettings.getIsPublicFlVariantEnabled() && oSettings.getUserId().toUpperCase() === oVariant.instance.getSupportInformation().user.toUpperCase()));
 		oVariant.remove = bUserIsAuthorized;
 		oVariant.rename = bUserIsAuthorized;
 		oVariant.change = bUserIsAuthorized;
@@ -573,7 +571,7 @@ sap.ui.define([
 			const bSupportsPublicChange = ["setTitle", "setExecuteOnSelect", "setVisible"].includes(sChangeType);
 			const sChangeLayer = (
 				bSupportsPublicChange
-				&& oSettings?.isPublicFlVariantEnabled()
+				&& oSettings?.getIsPublicFlVariantEnabled()
 				&& oVariant.layer === Layer.PUBLIC
 			) ? Layer.PUBLIC : sLayer;
 

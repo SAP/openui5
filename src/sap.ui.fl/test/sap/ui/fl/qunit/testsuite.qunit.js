@@ -106,6 +106,13 @@ sap.ui.define([
 				}
 			},
 
+			"initial/_internal/Settings": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/Settings"]
+				}
+			},
+
 			"initial/_internal/Storage": {
 				group: "Initial Internal",
 				ui5: {
@@ -1559,13 +1566,6 @@ sap.ui.define([
 					resourceroots: {
 						"sap.ui.fl.qunit.integration": "test-resources/sap/ui/fl/qunit/integration"
 					}
-				}
-			},
-
-			"registry/Settings": {
-				group: "Registry",
-				coverage: {
-					only: ["sap/ui/fl/registry/Settings"]
 				}
 			},
 

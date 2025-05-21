@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantFactory",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
@@ -34,7 +34,6 @@ sap.ui.define([
 		sandbox.stub(Settings, "getInstance").resolves(
 			new Settings({
 				isKeyUser: true,
-				isAtoAvailable: bIsCloudSystem,
 				isAtoEnabled: bIsCloudSystem,
 				isProductiveSystem: false
 			})

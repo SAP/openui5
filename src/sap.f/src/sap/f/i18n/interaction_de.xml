@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.f" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.f.DynamicPage">
+			<defaultLabel>Globale Tastaturkürzel</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Го отвора дијалогот <span class="uicontrol">Поставки на табелата</span>, ако е достапен.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Го отвора дијалогот <span class="uicontrol">Извези како</span> од табелата, ако е достапен.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Активира пребарување лента со филтри.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Го отвора дијалогот <span class="uicontrol">Поставки за приказ</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Ја брише ставката во дијалогот <span class="uicontrol">Поставки за приказ</span></p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

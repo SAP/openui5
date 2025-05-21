@@ -532,7 +532,7 @@ sap.ui.define([
 		if (!oEvent) {
 			return;
 		}
-		var oPopupElement = (oEvent instanceof Element) ? oEvent : oEvent.getSource();
+		var oPopupElement = oEvent.isA("sap.ui.base.Event") ? oEvent.getSource() : oEvent;
 
 		// when application is opened in a popup, rootElement should not be added more than once
 		if (
@@ -599,9 +599,14 @@ sap.ui.define([
 	}
 
 	PopupManager.prototype._isPopupAdaptable = function(oPopupElement) {
-		if (oPopupElement.isPopupAdaptationAllowed && !oPopupElement.isPopupAdaptationAllowed()) {
+		if (oPopupElement.isPopupAdaptationAllowed) {
+			return oPopupElement.isPopupAdaptationAllowed();
+		}
+		// the event is needed for the RTA integration
+		if (!oPopupElement.getMetadata().getEvents().afterOpen) {
 			return false;
 		}
+
 		var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
 		if (
 			(oPopupAppComponent && this.oRtaRootAppComponent === oPopupAppComponent)

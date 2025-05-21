@@ -13,8 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
@@ -34,8 +34,8 @@ sap.ui.define([
 	VariantManagementState,
 	FlexObjectState,
 	FlexState,
-	Version,
 	Settings,
+	Version,
 	Condenser,
 	UIChangeManager,
 	CompVariantState,
@@ -190,10 +190,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of enabled condensing on the backend", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -208,10 +208,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route for PUBLIC layer changes", async function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -225,10 +225,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -283,10 +283,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and one persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -339,10 +339,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condense route of the storage in case of dirty change and no persisted draft filename", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -418,10 +418,10 @@ sap.ui.define([
 			QUnit.test(sName, function(assert) {
 				if (bBackendEnablement) {
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
-						isCondensingEnabled() {
+						getIsCondensingEnabled() {
 							return true;
 						},
-						hasPersoConnector() {
+						getHasPersoConnector() {
 							return false;
 						}
 					});
@@ -459,10 +459,10 @@ sap.ui.define([
 			QUnit.test(sName2, function(assert) {
 				if (bBackendEnablement) {
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
-						isCondensingEnabled() {
+						getIsCondensingEnabled() {
 							return true;
 						},
-						hasPersoConnector() {
+						getHasPersoConnector() {
 							return false;
 						}
 					});
@@ -478,10 +478,10 @@ sap.ui.define([
 		QUnit.test("Shall call condenser without dirty changes but backend condensing enabled and condenseAnyLayer set and persisted changes available", function(assert) {
 			addTwoChanges(sReference, this._oComponentInstance, Layer.VENDOR);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -500,10 +500,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call condenser when persisted changes contain different namespaces", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -549,10 +549,10 @@ sap.ui.define([
 
 		QUnit.test("Shall do backend condensing with 'bSkipUpdateCache' flag present", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -591,10 +591,10 @@ sap.ui.define([
 
 		QUnit.test("Shall save the dirty changes when adding two new changes with different layers with 2 requests when PersoConnector exists and return a promise", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return true;
 				}
 			});
@@ -633,10 +633,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -674,10 +674,10 @@ sap.ui.define([
 
 		QUnit.test("Shall not call the condenser without any changes - backend condensing enabled", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -698,10 +698,10 @@ sap.ui.define([
 
 		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled - only one dirty change passed", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -752,10 +752,10 @@ sap.ui.define([
 
 		QUnit.test("With two persisted changes, shall not call the storage when the condenser returns no change", async function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled() {
+				getIsCondensingEnabled() {
 					return true;
 				},
-				hasPersoConnector() {
+				getHasPersoConnector() {
 					return false;
 				}
 			});
@@ -793,9 +793,9 @@ sap.ui.define([
 		QUnit.test("Persisted CompVariant flex objects should not be part of the condense process", async function(assert) {
 			const sPersistenceKey = "persistenceKey";
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: () => true,
-				hasPersoConnector: () => false,
-				isPublicLayerAvailable: () => false,
+				getIsCondensingEnabled: () => true,
+				getHasPersoConnector: () => false,
+				getIsPublicLayerAvailable: () => false,
 				getUserId: () => "USER_123"
 			});
 
@@ -828,9 +828,9 @@ sap.ui.define([
 		QUnit.test("Persisted flex objects with a different reference should not be part of the condense process", async function(assert) {
 			// Example scenario: Changes from base app inside adaptation project
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isCondensingEnabled: () => true,
-				hasPersoConnector: () => false,
-				isPublicLayerAvailable: () => false,
+				getIsCondensingEnabled: () => true,
+				getHasPersoConnector: () => false,
+				getIsPublicLayerAvailable: () => false,
 				getUserId: () => "USER_123"
 			});
 

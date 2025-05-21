@@ -22,7 +22,7 @@
 				"src/sap/ui/test/TestUtils.js",
 				"test/sap/ui/core/demokit/sample/common/**/*.js",
 				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
-				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js",
+				"test/sap/ui/core/demokit/sample/ViewTemplate/**/*.js",
 				"test/sap/ui/core/demokit/tutorial/odatav4/**/*.js",
 				"test/sap/ui/core/qunit/odata/v4/**/*.js",
 				"test/sap/ui/core/qunit/util/SyncPromise.qunit.js",
@@ -125,7 +125,7 @@
 			"files": [
 				"test/sap/ui/core/demokit/sample/common/**/*.js",
 				"test/sap/ui/core/demokit/sample/odata/v4/**/*.js",
-				"test/sap/ui/core/demokit/sample/ViewTemplate/types/**/*.js",
+				"test/sap/ui/core/demokit/sample/ViewTemplate/**/*.js",
 				"test/sap/ui/core/demokit/tutorial/odatav4/??/webapp/test/**/*.js",
 				"test/sap/ui/core/qunit/odata/v4/**/*.js",
 				"test/sap/ui/core/qunit/util/SyncPromise.qunit.js",
@@ -146,7 +146,7 @@
 		{
 			"files": [
 				"test/sap/ui/core/demokit/sample/odata/v4/**/Opa*.qunit.js",
-				"test/sap/ui/core/demokit/sample/ViewTemplate/types/Opa.qunit.js"
+				"test/sap/ui/core/demokit/sample/ViewTemplate/*/Opa.qunit.js"
 			],
 			"rules": {
 				// Opa does not work without these imports

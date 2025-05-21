@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/initial/_internal/Settings"
 ], function(
 	FlexInfoSession,
 	Settings
@@ -34,7 +34,7 @@ sap.ui.define([
 	 */
 	InitialFlexAPI.isKeyUser = async function() {
 		const oSettings = await Settings.getInstance();
-		return oSettings.isKeyUser();
+		return oSettings.getIsKeyUser();
 	};
 
 	/**

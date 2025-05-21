@@ -93,7 +93,7 @@
 							<l:Grid>
 								<Bar>
 									<contentRight>
-										<vm:VariantManagement id="VariantManagement2" for="ObjectPageSubSection3" updateVariantInURL="true"></vm:VariantManagement>
+										<vm:VariantManagement id="VariantManagement2" for="ObjectPageSection3" updateVariantInURL="true"></vm:VariantManagement>
 									</contentRight>
 								</Bar>
 								<Title id="TextTitle1" text="Text Title 1"></Title>
@@ -102,6 +102,15 @@
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
 
+				</uxap:sections>
+			</uxap:ObjectPageLayout>
+
+			<uxap:ObjectPageLayout id="ObjectPageLayout2">
+				<uxap:sections>
+					<uxap:ObjectPageSection id="ObjectPageSection21">
+						<uxap:ObjectPageSubSection  id="ObjectPageSubSection21" title="SubSectionTitle21">
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
 				</uxap:sections>
 			</uxap:ObjectPageLayout>
 

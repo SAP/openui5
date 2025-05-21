@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Го преместува фокусот на следниот елемент во синџирот на картички.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Го преместува фокусот на претходниот елемент во синџирот на картички.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Го преместува фокусот на првиот интерактивен елемент од следната група на кориснички интерфејс (Група F6) во синџирот на картички.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Го преместува фокусот на првиот интерактивен елемент од претходната група на кориснички интерфејс (Група F6) во синџирот на картички.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Глобални кратенки</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

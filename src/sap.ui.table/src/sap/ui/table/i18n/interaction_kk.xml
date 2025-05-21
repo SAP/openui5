@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Фокусты тиісті бағыттардағы бір бағандағы немесе жолдағы келесі ұяшыққа жылжытады.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Фокус бірінші жолда болса, фокус баған тақырыбына жылжиды.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Фокус баған тақырыбында болса, фокус ағымдағы айналдыру позициясына байланысты осы бағанның бірінші көрінетін жолындағы ұяшыққа жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында болса, фокус ағымдағы айналдыру позициясына байланысты көрінетін бірінші жолдағы жол селекторына жылжиды.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Фокус бірінші бағандағы ұяшықта болса, фокус жол селекторына жылжиды.</p>
+				<p>Фокус баған тақырыбында болса, фокус солға қарай баған тақырыбына жылжиды.</p>
+				<p>Фокус бірінші бағанның баған тақырыбында болса, фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығына жылжиды.</p>
+				<p>Фокус жайылған топтың топ тақырыбында болса, топ жиылады.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Фокус баған тақырыбында болса, фокус оңға қарай баған тақырыбына жылжиды.</p>
+				<p>Фокус жол селекторында болса, фокус сол жолдағы бірінші бағанның ұяшығына жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында болса, фокус бірінші бағанның баған тақырыбына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Фокус ұяшық деңгейінде болса, фокус сол бағанның ең жоғарғы жағындағы ұяшыққа жылжиды. Фокус әлдеқашан сол деңгейде болса, фокус бір бетке жоғары жылжиды және қажетті айналдырумен бір бағанда қалады.</p>
+				<p>Фокус бірінші жолда болса, фокус баған тақырыбына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Фокус ұяшық деңгейінде болса, фокус сол бағандағы көрінетін ең соңғы ұяшыққа жылжиды. Фокус әлдеқашан сол деңгейде болса, ол бір бетке төмен жылжиды және қажетті айналдырумен бір бағанда қалады.</p>
+				<p>Фокус баған тақырыбында болса, фокус бірінші жолға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Фокус ұяшық деңгейінде немесе баған тақырыбында болса, фокус солға қарай бес бағанға жыжлжиды (әдепкі бет өлшемі). Сол жақтағы бағандар ағымдағы бет өлшемінен аз болса, фокус бірінші бағанға жылжиды.</p>
+				<p>Фокус ұяшық деңгейінде ұяшықта болса, фокус жол селекторына жылжиды.</p>
+				<p>Фокус бірінші бағанның баған тақырыбында болса, фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Фокус ұяшық деңгейінде болса, фокус оңға қарай бес бағанға жылжиды (әдепкі бет өлшемі).</p>
+				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Фокус жол селекторында болса, фокус сол жолдағы бірінші бағанға жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында болса, фокус бірінші бағанның тақырыбына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Фокус ұяшықта болса, фокус сол жолдағы бірінші бағанға жылжиды.</p>
+				<p>Фокус бірінші бағандағы ұяшықта болса, фокус жол селекторына жылжиды.</p>
+				<p>Фокус баған тақырыбында болса, фокус бірінші бағанның тақырыбына жылжиды.</p>
+				<p>Фокус бірінші бағанның тақырыбында болса, фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Фокус ұяшықта немесе баған тақырыбында болса, фокус соңғы бағанға жылжиды.</p>
+				<p>Фокус жол селекторында болса, фокус сол жолдағы бірінші бағанға жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында болса, фокус бірінші бағанның тақырыбына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Фокус ұяшықта болса, фокус баған тақырыбына жылжиды.</p>
+				<p>Фокус жол селекторында болса, фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Фокус ұяшықта немесе баған тақырыбында болса, фокус сол бағандағы соңғы жолға жылжиды.</p>
+				<p>Фокус жол селекторында немесе <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында болса, фокус соңғы жол селекторына жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+				<p>Фокус ұяшықта болса, фокус ұяшықтағы фокустауға болатын бірінші басқару элементіне жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында немесе жол селекторында болса, құсбелгі ұяшығының күйін ауыстырып қосады.</p>
+				<p>Фокус баған тақырыбында болса, баған тақырыбының мәзірі ашылады.</p>
+				<p>Фокус топ тақырыбында болса, сәйкес топ жиылады немесе жайылады.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Фокус топ тақырыбында болса, топ тақырыбының мәзірі ашылады.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус ұяшықта болса, фокусталған ұяшық таңдалады.</p>
+				<p>Фокус ұяшықты таңдау блогында болса, ұяшықтар таңдауы алып тасталады.</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Фокус ұяшықта немесе жол селекторында болса, бұл ағымдағы жолдың таңдауын ауыстырып қосады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус ұяшықты таңдау блогында болса, ұяшықты таңдау блогы жол таңдауына өзгертіледі. Ұяшық таңдауы алып тасталады. </p>
+				<p>Жолды таңдау режиміне байланысты мыналар орын алады:</p>
+				<ul>
+					<li>Блоктың барлық жолдары таңдалады (бірнеше таңдау)</li>
+					<li>Ағымдағы фокусталған ұяшық бар жол ғана таңдалады (жеке таңдау)</li>
+					<li>Ешбір жол таңдалмайды</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Ұяшық пен оның мазмұны арасында фокусты ауыстырып қосады (тек оқуға арналған мәтінді қоспағанда).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift</kbd> <description>
+				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Фокус таңдалған ұяшықта болса, жоғарыдағы ұяшық фокусталады және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Фокус таңдалған ұяшықта болса, төмендегі ұяшық фокусталады және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Фокус баған тақырыбында болса, бұл бағанның ені 1 см-ге артады. Пернені басып тұрсаңыз, бұл қайталанады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус <span class="emphasis">таңдалмаған</span> ұяшықта болса, фокусталған ұяшық пен оң жақтағы ұяшық таңдалады. Фокус фокусталған ұяшықтың оң жағындағы ұяшыққа жылжиды.</p>
+				<p>Фокус таңдалған ұяшықта болса, оң жақтағы ұяшық фокусталады және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Фокус баған тақырыбында болса, бұл бағанның ені 1 см-ге азаяды. Пернені басып тұрсаңыз, бұл қайталанады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус <span class="emphasis">таңдалмаған</span> ұяшықта болса, фокусталған ұяшық пен сол жақтағы ұяшық таңдалады. Фокус фокусталған ұяшықтың сол жағындағы ұяшыққа жылжиды.</p>
+				<p>Фокус таңдалған ұяшықта болса, сол жақтағы ұяшық фокусталады және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Фокус баған тақырыбында болса, сәйкес баған оңға қарай бір позицияға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Фокус баған тақырыбында болса, сәйкес баған солға қарай бір позицияға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Фокусты жоғарыдағы жолдағы фокустауға болатын келесі элементке жылжытады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Фокусты төмендегі жолдағы фокустауға болатын келесі элементке жылжытады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Фокус ұяшықта, жол селекторында немесе <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығында болса, бұл <span class="uicontrol">Барлығын таңдау</span> құсбелгі ұяшығын ауыстырып қосады: барлық жолдар сәйкесінше таңдалады немесе таңдауы алынады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус кесте ішінде болса, кез келген жолдар мен ұяшықтардың таңдауы алып тасталады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Фокус ұяшықта болса, фокус оның мазмұнына (тек оқуға арналған мәтінді қоспағанда) жылжиды.</p>
+				<p>Фокус топ тақырыбында немесе тармақты құрылымның соңғы емес түйінінде болса, бұл топтың жаймасын ауыстырып қосады: топ сәйкесінше жайылады немесе жиылады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Фокус топ тақырыбында болса, топ тақырыбының мәзірі ашылады.</p>
+				<p>Фокус баған тақырыбында болса, баған тақырыбының мәзірі ашылады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Ұяшықтар таңдалса, басқа ұяшықта <kbd>Shift + click</kbd> таңдауды басылған ұяшыққа дейін кеңейтеді.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

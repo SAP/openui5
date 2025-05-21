@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -13,12 +14,12 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
 	FlexState,
 	ManifestUtils,
 	FlexInfoSession,
+	Settings,
 	Version,
 	CompVariantState,
 	FeaturesAPI,
@@ -26,7 +27,6 @@ sap.ui.define([
 	VersionsAPI,
 	Layer,
 	LayerUtils,
-	Settings,
 	Utils
 ) {
 	"use strict";
@@ -105,8 +105,8 @@ sap.ui.define([
 		return !oFlexInfoSession.allContextsProvided;
 	}
 
-	function isAllContextsAvailable(sReference, sLayer) {
-		if (!Settings.getInstanceOrUndef()?.isContextSharingEnabled(sLayer)) {
+	function isAllContextsAvailable(sReference) {
+		if (!Settings.getInstanceOrUndef()?.getIsContextSharingEnabled()) {
 			return false;
 		}
 
@@ -355,7 +355,7 @@ sap.ui.define([
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}
-			oReloadInfo.allContexts = isAllContextsAvailable(sReference, oReloadInfo.layer);
+			oReloadInfo.allContexts = isAllContextsAvailable(sReference);
 			oReloadInfo.switchEndUserAdaptation = needAdaptationReloadOnExit(sReference);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.isDraftAvailable

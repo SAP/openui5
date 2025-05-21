@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/InitialFlexAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], (
 	FlexInfoSession,
@@ -23,7 +23,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("isKeyUser", function(assert) {
 			sandbox.stub(Settings, "getInstance").resolves({
-				isKeyUser: () => true
+				getIsKeyUser: () => true
 			});
 			const bIsKeyUser = InitialFlexAPI.isKeyUser();
 			assert.ok(bIsKeyUser, "the user is a key user");

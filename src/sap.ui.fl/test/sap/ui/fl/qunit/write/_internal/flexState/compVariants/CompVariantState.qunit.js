@@ -8,13 +8,11 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/write/_internal/Storage",
@@ -32,11 +30,9 @@ sap.ui.define([
 	CompVariant,
 	FlexObjectFactory,
 	States,
-	UIChange,
 	UpdatableChange,
 	CompVariantMerger,
 	FlexState,
-	SmartVariantManagementApplyAPI,
 	Version,
 	Settings,
 	CompVariantState,
@@ -178,7 +174,7 @@ sap.ui.define([
 					...oTestData.propertyBag
 				};
 
-				sandbox.stub(Settings.getInstanceOrUndef(), "isPublicLayerAvailable").returns(oTestData.publicLayerAvailable);
+				sandbox.stub(Settings.getInstanceOrUndef(), "getIsPublicLayerAvailable").returns(oTestData.publicLayerAvailable);
 
 				const oAddedObject = CompVariantState.addVariant(mPropertyBag);
 				const mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
@@ -251,7 +247,7 @@ sap.ui.define([
 		QUnit.test("also stores passed executeOnSelection, favorite, contexts and author", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				getUserId() {return "test user";},
-				isPublicLayerAvailable() {return false;}
+				getIsPublicLayerAvailable() {return false;}
 			});
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
@@ -378,7 +374,7 @@ sap.ui.define([
 	QUnit.module("persist", {
 		beforeEach() {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isPublicLayerAvailable() {
+				getIsPublicLayerAvailable() {
 					return true;
 				},
 				getUserId() {
@@ -732,7 +728,7 @@ sap.ui.define([
 		QUnit.test("Given setDefault is called twice with adaptationId", function(assert) {
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(this.sPersistencyKey);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVersioningEnabled() {
+				getIsVersioningEnabled() {
 					return false;
 				}
 			});
@@ -1114,7 +1110,7 @@ sap.ui.define([
 		beforeEach() {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				getUserId() {return "test user";},
-				isPublicLayerAvailable() {return false;}
+				getIsPublicLayerAvailable() {return false;}
 			});
 			this.sPersistencyKey = "persistency.key";
 			this.oVariantData = {

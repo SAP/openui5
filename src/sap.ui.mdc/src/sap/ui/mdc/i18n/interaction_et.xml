@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Avab dialoogi <span class="uicontrol">Tabelisätted</span>, kui see on saadaval.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Avab tabeli dialoogi <span class="uicontrol">Ekspordi nimega</span>, kui see on saadaval.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Käivitab filtririba otsingu.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Avab dialoogi <span class="uicontrol">Kuva sätted</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Kustutab dialoogis <span class="uicontrol">Kuva sätted</span> üksuse</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>
