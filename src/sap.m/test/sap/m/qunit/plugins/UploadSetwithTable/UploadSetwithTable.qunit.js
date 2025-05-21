@@ -776,6 +776,7 @@ sap.ui.define([
 			oUploadSetwithTablePlugin.attachItemRenamed(fnRenamedHandler);
 
 			const oInput = oDialog.getContent()[1];
+			const iTextFieldId = oDialog.getContent()[2].getId();
 			const oApplyBtn = oDialog.getBeginButton();
 
 			// assert
@@ -789,6 +790,8 @@ sap.ui.define([
 
 			// assert input should not have error state
 			assert.ok(oInput.getValueState() === "None", "Input value state is set to none when valid characters are entered");
+			assert.ok(oInput.getDomRef().querySelector(".sapMInputBaseInner").hasAttribute('aria-describedby'), "Input has aria-describedby attribute");
+			assert.ok(oInput.getDomRef().querySelector(".sapMInputBaseInner").getAttribute('aria-describedby').includes(iTextFieldId), "Input has aria-describedby attribute with iTextFieldId id");
 
 			oDialog.close();
 			// done();
