@@ -7,7 +7,6 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
-	"sap/ui/core/InvisibleText",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/AccessKeysEnablement",
 	"sap/ui/core/LabelEnablement",
@@ -25,7 +24,6 @@ function(
 	library,
 	Control,
 	Element,
-	InvisibleText,
 	EnabledPropagator,
 	AccessKeysEnablement,
 	LabelEnablement,
@@ -517,29 +515,6 @@ function(
 			// for controls which need to know whether they should handle events bubbling from here
 			oEvent.setMarked();
 		}
-	};
-
-
-	/* override standard setters */
-
-	Link.prototype.setSubtle = function(bSubtle){
-		this.setProperty("subtle", bSubtle);
-
-		if (bSubtle && !Link.prototype._sAriaLinkSubtleId) {
-			Link.prototype._sAriaLinkSubtleId = InvisibleText.getStaticId("sap.m", "LINK_SUBTLE");
-		}
-
-		return this;
-	};
-
-	Link.prototype.setEmphasized = function(bEmphasized){
-		this.setProperty("emphasized", bEmphasized);
-
-		if (bEmphasized && !Link.prototype._sAriaLinkEmphasizedId) {
-			Link.prototype._sAriaLinkEmphasizedId = InvisibleText.getStaticId("sap.m", "LINK_EMPHASIZED");
-		}
-
-		return this;
 	};
 
 	Link.prototype.setIcon = function(sSrc) {
