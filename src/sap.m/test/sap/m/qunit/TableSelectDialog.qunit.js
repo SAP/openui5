@@ -1305,12 +1305,6 @@ sap.ui.define([
 
 
 	QUnit.module("OpenClose", {
-		beforeEach : function () {
-			sinon.config.useFakeTimers = true;
-		},
-		afterEach : function () {
-			sinon.config.useFakeTimers = false;
-		}
 	});
 
 	QUnit.test("Closing without filtering doesn't re-filter the model", function(assert) {
@@ -1327,36 +1321,36 @@ sap.ui.define([
 	});
 
 	QUnit.test("LiveSearchUpdates", function(assert) {
+		var done = assert.async();
+		var searchField = oTableSelectDialog1._oSearchField;
+
 		oTableSelectDialog1.open();
 
-		var searchField = oTableSelectDialog1._oSearchField;
+		oTableSelectDialog1.attachEventOnce("updateFinished", () => {
+			var oTable = UI5Element.getElementById("oTableSelectDialog1-table");
+
+			assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
+
+			oTableSelectDialog1.attachEventOnce("updateFinished", () => {
+				oTableSelectDialog1.attachEventOnce("updateFinished", () => {
+					assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
+
+					oTableSelectDialog1._oDialog.close();
+					oTableSelectDialog1._fireConfirmAndUpdateSelection();
+
+					done();
+				});
+
+				searchField.setValue("m");
+				searchField.fireLiveChange({newValue: "m"});
+			});
+
+			searchField.setValue("");
+			searchField.fireLiveChange({newValue: ""});
+		});
+
 		searchField.setValue('m');
 		searchField.fireLiveChange({newValue: "m"});
-
-		oCore.applyChanges();
-		this.clock.tick(500);
-
-		var oTable = UI5Element.getElementById("oTableSelectDialog1-table");
-
-		assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
-
-		oTableSelectDialog1._fireConfirmAndUpdateSelection();
-		oTableSelectDialog1._oDialog.close();
-
-		oCore.applyChanges();
-		this.clock.tick(500);
-
-		oTableSelectDialog1.open();
-		searchField.fireLiveChange({newValue: ""});
-		searchField.fireLiveChange({newValue: "m"});
-
-		oCore.applyChanges();
-		this.clock.tick(500);
-
-		assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
-
-		oTableSelectDialog1._oDialog.close();
-		oTableSelectDialog1._fireConfirmAndUpdateSelection();
 	});
 
 	QUnit.module("Clear functionality", {
