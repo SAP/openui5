@@ -88,7 +88,7 @@ sap.ui.define([
 				 *
 				 * <b>Guidelines:</b>
 				 * <ul>
-				 * <li>External links should not be selectable.</li>
+				 * <li>Items that have a set href and target set to <code>_blank</code> should not be selectable.</li>
 				 * <li>Items that trigger actions (with design "Action") should not be selectable.</li>
 				 * </ul>
 				 *
@@ -101,6 +101,7 @@ sap.ui.define([
 				/**
 				 * Defines the link target URI. Supports standard hyperlink behavior. If a JavaScript action should be triggered,
 				 * this should not be set, but instead an event handler for the <code>select</code> event should be registered.
+				 *
 				 */
 				href: { type: "sap.ui.core.URI", group: "Data", defaultValue: null },
 
@@ -109,7 +110,14 @@ sap.ui.define([
 				 *
 				 * Options are the standard values for window.open() supported by browsers:
 				 * <code>_self</code>, <code>_top</code>, <code>_blank</code>, <code>_parent</code>, <code>_search</code>.
-				 * Alternatively, a frame name can be entered. This property is only used when the <code>href</code> property is set.
+				 * Alternatively, a frame name can be entered.
+				 *
+				 * <b>Guidelines:</b>
+                 * <ul>
+				 * <li>Use only when <code>href</code> property is set.</li>
+                 * <li>Items that have a set href and target set to <code>_blank</code> should not have children</li>
+                 * <li>Items that have a set href, should not use target for internal navigation/li>
+                 * </ul>
 				 */
 				target: { type: "string", group: "Behavior", defaultValue: null },
 
