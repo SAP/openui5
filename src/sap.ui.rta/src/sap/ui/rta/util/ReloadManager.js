@@ -32,18 +32,18 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	var ReloadManager = {};
+	const ReloadManager = {};
 
-	var mUShellServices = {};
-	var mReloadMethods = {
+	let mUShellServices = {};
+	const mReloadMethods = {
 		NOT_NEEDED: "NO_RELOAD",
 		VIA_HASH: "CROSS_APP_NAVIGATION",
 		RELOAD_PAGE: "HARD_RELOAD"
 	};
 
 	function getReloadMessageOnStart(oReloadInfo) {
-		var sReason;
-		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
+		let sReason;
+		const bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
 		if (oReloadInfo.hasHigherLayerChanges && oReloadInfo.isDraftAvailable) {
 			sReason = bIsCustomerLayer ? "MSG_VIEWS_OR_PERSONALIZATION_AND_DRAFT_EXISTS" : "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS";
@@ -60,7 +60,7 @@ sap.ui.define([
 	}
 
 	function getReloadMessageOnExit(oReloadInfo) {
-		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
+		const bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
 
 		if (oReloadInfo.hasHigherLayerChanges) {
 			if (!bIsCustomerLayer) {
@@ -101,7 +101,7 @@ sap.ui.define([
 	}
 
 	function handleReloadMessageBoxOnExit(oReloadReasons) {
-		var sReason = getReloadMessageOnExit(oReloadReasons);
+		const sReason = getReloadMessageOnExit(oReloadReasons);
 
 		if (sReason) {
 			return Utils.showMessageBox("information", sReason, {
@@ -111,37 +111,34 @@ sap.ui.define([
 		return Promise.resolve();
 	}
 
-	function triggerReloadOnStart(oReloadInfo, bVersioningEnabled, bDeveloperMode) {
-		return Promise.resolve().then(function() {
-			if (mUShellServices.Navigation && bVersioningEnabled) {
-				// clears FlexState and triggers reloading of the flex data without blocking
-				if (oReloadInfo.isDraftAvailable) {
-					return VersionsAPI.loadDraftForApplication({
-						control: oReloadInfo.selector,
-						layer: oReloadInfo.layer,
-						allContexts: oReloadInfo.allContexts,
-						adaptationId: oReloadInfo.adaptationId
-					});
-				}
-				return VersionsAPI.loadVersionForApplication({
+	async function triggerReloadOnStart(oReloadInfo, bVersioningEnabled, bDeveloperMode) {
+		if (mUShellServices.Navigation && bVersioningEnabled) {
+			// clears FlexState and triggers reloading of the flex data without blocking
+			if (oReloadInfo.isDraftAvailable) {
+				await VersionsAPI.loadDraftForApplication({
+					control: oReloadInfo.selector,
+					layer: oReloadInfo.layer,
+					allContexts: oReloadInfo.allContexts,
+					adaptationId: oReloadInfo.adaptationId
+				});
+			} else {
+				await VersionsAPI.loadVersionForApplication({
 					control: oReloadInfo.selector,
 					layer: oReloadInfo.layer,
 					allContexts: oReloadInfo.allContexts,
 					adaptationId: oReloadInfo.adaptationId
 				});
 			}
-			return undefined;
-		}).then(function() {
-			var sReason = getReloadMessageOnStart(oReloadInfo);
-			// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
-			return bDeveloperMode ? undefined : Utils.showMessageBox("information", sReason);
-		}).then(function() {
-			ReloadManager.enableAutomaticStart(oReloadInfo.layer, oReloadInfo.selector);
-			oReloadInfo.onStart = true;
-			return ReloadManager.triggerReload(oReloadInfo);
-		}).then(function() {
-			return true;
-		});
+		}
+		const sReason = getReloadMessageOnStart(oReloadInfo);
+		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
+		if (!bDeveloperMode) {
+			await Utils.showMessageBox("information", sReason);
+		}
+		ReloadManager.enableAutomaticStart(oReloadInfo.layer, oReloadInfo.selector);
+		oReloadInfo.onStart = true;
+		ReloadManager.triggerReload(oReloadInfo);
+		return true;
 	}
 
 	ReloadManager.setUShellServices = function(mPassedUShellServices) {
@@ -155,8 +152,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oRootControl - Root control for which key user adaptation was started
 	 */
 	ReloadManager.enableAutomaticStart = function(sLayer, oRootControl) {
-		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oRootControl});
-		var vParameter = sFlexReference || true;
+		const sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oRootControl});
+		const vParameter = sFlexReference || true;
 		window.sessionStorage.setItem(`sap.ui.rta.restart.${sLayer}`, vParameter);
 	};
 
@@ -258,7 +255,7 @@ sap.ui.define([
 	 *
 	 * @return {Promise<boolean>} Resolving to <code>false</code> means that reload is not necessary
 	 */
-	ReloadManager.handleReloadOnStart = function(mProperties) {
+	ReloadManager.handleReloadOnStart = async function(mProperties) {
 		merge(mProperties, {
 			hasHigherLayerChanges: false,
 			isDraftAvailable: false,
@@ -266,17 +263,16 @@ sap.ui.define([
 			includeCtrlVariants: true,
 			URLParsingService: mUShellServices.URLParsing
 		});
-		return ReloadInfoAPI.getReloadReasonsForStart(mProperties).then(function(oReloadInfo) {
-			if (
-				oReloadInfo.hasHigherLayerChanges
-				|| oReloadInfo.isDraftAvailable
-				|| oReloadInfo.allContexts
-				|| oReloadInfo.switchAdaptation
-			) {
-				return triggerReloadOnStart(oReloadInfo, mProperties.versioningEnabled, mProperties.developerMode);
-			}
-			return undefined;
-		});
+		const oReloadInfo = await ReloadInfoAPI.getReloadReasonsForStart(mProperties);
+		if (
+			oReloadInfo.hasHigherLayerChanges
+			|| oReloadInfo.isDraftAvailable
+			|| oReloadInfo.allContexts
+			|| oReloadInfo.switchAdaptation
+		) {
+			return triggerReloadOnStart(oReloadInfo, mProperties.versioningEnabled, mProperties.developerMode);
+		}
+		return undefined;
 	};
 
 	/**
@@ -293,16 +289,14 @@ sap.ui.define([
 	 *
 	 * @return {Promise<object>} Resolving to an object containing information about whether a reload is needed and how to handle it
 	 */
-	ReloadManager.checkReloadOnExit = function(mProperties) {
-		return mProperties.changesNeedReloadPromise.then(function(bChangesNeedReload) {
-			mProperties.changesNeedReload = bChangesNeedReload;
-			mProperties.URLParsingService = mUShellServices.URLParsing;
-			var oReloadInfo = ReloadInfoAPI.getReloadMethod(mProperties);
-			return handleReloadMessageBoxOnExit(oReloadInfo).then(function() {
-				oReloadInfo.triggerHardReload = oReloadInfo.reloadMethod === mReloadMethods.RELOAD_PAGE;
-				return oReloadInfo;
-			});
-		});
+	ReloadManager.checkReloadOnExit = async function(mProperties) {
+		const bChangesNeedReload = await mProperties.changesNeedReloadPromise;
+		mProperties.changesNeedReload = bChangesNeedReload;
+		mProperties.URLParsingService = mUShellServices.URLParsing;
+		const oReloadInfo = ReloadInfoAPI.getReloadMethod(mProperties);
+		await handleReloadMessageBoxOnExit(oReloadInfo);
+		oReloadInfo.triggerHardReload = oReloadInfo.reloadMethod === mReloadMethods.RELOAD_PAGE;
+		return oReloadInfo;
 	};
 
 	/**

@@ -22,13 +22,14 @@ sap.ui.define([
 	DtUtil
 ) {
 	"use strict";
-	return function(oRta) {
-		var mMessageBoxShow = {};
-		var aPendingOverlaysToValidate = [];
-		var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
 
-		function _displayMessage(oRta, oComponent, sText, sIconType, sTitle) {
-			var sComponentId = oComponent.getId();
+	return function(oRta) {
+		const mMessageBoxShow = {};
+		let aPendingOverlaysToValidate = [];
+		const oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
+
+		function displayMessage(oRta, oComponent, sText, sIconType, sTitle) {
+			const sComponentId = oComponent.getId();
 			if (!mMessageBoxShow[sComponentId]) {
 				showMessageBox(
 					oRta._getTextResources().getText(sText),
@@ -39,16 +40,16 @@ sap.ui.define([
 					},
 					"show"
 				);
-				_setMessageBoxShow(sComponentId, true);
+				setMessageBoxShow(sComponentId, true);
 			}
 		}
 
-		function _setMessageBoxShow(sComponentId, bValue) {
+		function setMessageBoxShow(sComponentId, bValue) {
 			mMessageBoxShow[sComponentId] = bValue;
 		}
 
-		function _isValidApp(oComponent) {
-			var oManifest = oComponent.getManifest();
+		function isValidApp(oComponent) {
+			const oManifest = oComponent.getManifest();
 
 			return (
 				ObjectPath.get(["sap.app", "id"], oManifest) !== "sap.ui.documentation.sdk"
@@ -57,7 +58,7 @@ sap.ui.define([
 			);
 		}
 
-		function _isTestEnvironment() {
+		function isTestEnvironment() {
 			return (
 				"QUnit" in window
 				|| (
@@ -67,28 +68,28 @@ sap.ui.define([
 			);
 		}
 
-		function _isControlAvailable(oControl) {
+		function isControlAvailable(oControl) {
 			return oControl && !oControl._bIsBeingDestroyed;
 		}
 
-		function _handleModeChanged(oEvent) {
-			var sNewMode = oEvent.getParameters().mode;
+		function handleModeChanged(oEvent) {
+			const sNewMode = oEvent.getParameters().mode;
 			if (sNewMode === "adaptation") {
-				var oRta = oEvent.getSource();
-				var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
-				aPendingOverlaysToValidate = aPendingOverlaysToValidate.filter(_isControlAvailable);
-				_handleUnstableIds(oRta, oComponent, aPendingOverlaysToValidate);
+				const oRta = oEvent.getSource();
+				const oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
+				aPendingOverlaysToValidate = aPendingOverlaysToValidate.filter(isControlAvailable);
+				handleUnstableIds(oRta, oComponent, aPendingOverlaysToValidate);
 				aPendingOverlaysToValidate = [];
 			}
 		}
 
-		function _validateCreatedOverlay(oEvent, oRta) {
-			var oElementOverlayCreated = oEvent.getParameters().elementOverlay;
+		function validateCreatedOverlay(oEvent, oRta) {
+			const oElementOverlayCreated = oEvent.getParameters().elementOverlay;
 			if (oRta.getMode() === "adaptation") {
-				var oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
+				const oComponent = FlUtils.getAppComponentForControl(oRta.getRootControlInstance());
 				DtUtil.waitForSynced(oRta._oDesignTime, function(oOverlay) {
-					if (_isControlAvailable(oOverlay)) {
-						_handleUnstableIds(oRta, oComponent, [oOverlay]);
+					if (isControlAvailable(oOverlay)) {
+						handleUnstableIds(oRta, oComponent, [oOverlay]);
 					}
 				})(oElementOverlayCreated);
 			} else {
@@ -96,33 +97,33 @@ sap.ui.define([
 			}
 		}
 
-		function _handleUnstableIds(oRta, oComponent, aElementOverlays) {
-			var aUnstableOverlays = validateStableIds(aElementOverlays, oComponent);
+		function handleUnstableIds(oRta, oComponent, aElementOverlays) {
+			const aUnstableOverlays = validateStableIds(aElementOverlays, oComponent);
 
 			if (aUnstableOverlays.length) {
 				aUnstableOverlays.forEach(function(oElementOverlay) {
 					Log.error("Control ID was generated dynamically by SAPUI5. To support SAPUI5 flexibility, a stable control ID is needed to assign the changes to.", oElementOverlay.getElement().getId());
 				});
-				_displayMessage(oRta, oComponent, "MSG_UNSTABLE_ID_FOUND", "ERROR", "HEADER_ERROR");
+				displayMessage(oRta, oComponent, "MSG_UNSTABLE_ID_FOUND", "ERROR", "HEADER_ERROR");
 			}
 		}
 
 		oRta.attachEventOnce("stop", function() {
-			_setMessageBoxShow(oComponent.getId(), false);
+			setMessageBoxShow(oComponent.getId(), false);
 		});
 
-		if (oComponent && _isValidApp(oComponent)) {
-			var oManifest = oComponent.getManifest();
-			var vFlexEnabled = ObjectPath.get(["sap.ui5", "flexEnabled"], oManifest);
+		if (oComponent && isValidApp(oComponent)) {
+			const oManifest = oComponent.getManifest();
+			const vFlexEnabled = ObjectPath.get(["sap.ui5", "flexEnabled"], oManifest);
 
 			if (typeof vFlexEnabled !== "boolean") {
-				if (!_isTestEnvironment()) {
-					_displayMessage(oRta, oComponent, "MSG_NO_FLEX_ENABLED_FLAG", "WARNING", "HEADER_WARNING");
+				if (!isTestEnvironment()) {
+					displayMessage(oRta, oComponent, "MSG_NO_FLEX_ENABLED_FLAG", "WARNING", "HEADER_WARNING");
 				}
 			} else { // flexEnabled === true
-				oRta.attachEvent("modeChanged", _handleModeChanged);
-				oRta._oDesignTime.attachEvent("elementOverlayCreated", oRta, _validateCreatedOverlay);
-				_handleUnstableIds(oRta, oComponent, oRta._oDesignTime.getElementOverlays());
+				oRta.attachEvent("modeChanged", handleModeChanged);
+				oRta._oDesignTime.attachEvent("elementOverlayCreated", oRta, validateCreatedOverlay);
+				handleUnstableIds(oRta, oComponent, oRta._oDesignTime.getElementOverlays());
 			}
 		}
 	};

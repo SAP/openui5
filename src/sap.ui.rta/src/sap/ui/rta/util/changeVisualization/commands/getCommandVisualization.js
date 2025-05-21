@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var mCommands = {
+	const mCommands = {
 		rename: RenameVisualization,
 		move: MoveVisualization,
 		combine: CombineVisualization,
@@ -26,7 +26,7 @@ sap.ui.define([
 	};
 
 	return function(mIndicatorInformation) {
-		var sCommandName = mIndicatorInformation.commandName;
+		let sCommandName = mIndicatorInformation.commandName;
 
 		// Settings commands can be assigned to existing categories
 		// (e.g. "move" to display the "Show Source" button)

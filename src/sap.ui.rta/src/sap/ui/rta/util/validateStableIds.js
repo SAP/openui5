@@ -5,40 +5,36 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/rta/util/hasStableId",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/Fragment",
 	"sap/ui/dt/OverlayUtil",
 	"sap/base/util/isPlainObject"
 ], function(
 	ObjectPath,
 	hasStableId,
-	View,
-	Fragment,
 	OverlayUtil,
 	isPlainObject
 ) {
 	"use strict";
 
 	function isFioriElementsApp(oComponent) {
-		var mManifest = oComponent.getManifest();
+		const mManifest = oComponent.getManifest();
 
-		var isV4 = !!ObjectPath.get(["sap.ui5", "dependencies", "libs", "sap.fe.templates"], mManifest);
-		var isV2 = !!ObjectPath.get(["sap.ui.generic.app"], mManifest);
-		var isOVP = !!ObjectPath.get(["sap.ovp"], mManifest);
+		const isV4 = !!ObjectPath.get(["sap.ui5", "dependencies", "libs", "sap.fe.templates"], mManifest);
+		const isV2 = !!ObjectPath.get(["sap.ui.generic.app"], mManifest);
+		const isOVP = !!ObjectPath.get(["sap.ovp"], mManifest);
 		return isV2 || isV4 || isOVP;
 	}
 
 	function getFioriElementsExtensions(oComponent) {
-		var oManifest = oComponent.getManifest();
+		const oManifest = oComponent.getManifest();
 
-		var mViewExtensions = ObjectPath.get(["sap.ui5", "extends", "extensions", "sap.ui.viewExtensions"], oManifest);
+		const mViewExtensions = ObjectPath.get(["sap.ui5", "extends", "extensions", "sap.ui.viewExtensions"], oManifest);
 
-		var aViewExtensions = [];
+		const aViewExtensions = [];
 
 		if (isPlainObject(mViewExtensions)) {
 			Object.keys(mViewExtensions).forEach(function(sViewExtensionGroupName) {
 				if (sViewExtensionGroupName.startsWith("sap.suite.ui.generic.template")) {
-					var mViewExtensionGroup = mViewExtensions[sViewExtensionGroupName];
+					const mViewExtensionGroup = mViewExtensions[sViewExtensionGroupName];
 
 					Object.keys(mViewExtensionGroup).forEach(function(sViewExtensionName) {
 						aViewExtensions.push(mViewExtensionGroup[sViewExtensionName]);
@@ -51,20 +47,19 @@ sap.ui.define([
 	}
 
 	function getExtensionOverlays(aExtensionList, aElementOverlays) {
-		var aExtensionOverlays = [];
+		const aExtensionOverlays = [];
 
-		for (var i = 0, l = aElementOverlays.length; i < l; i++) {
-			var oElementOverlay = aElementOverlays[i];
-			var oElement = oElementOverlay.getElement();
-			var bIsExtensionOverlay = aExtensionList.some(function(mViewExtension) { // eslint-disable-line no-loop-func
-				var ClassDeclaration = sap.ui.require(mViewExtension.className.replace(/\./g, "/"));
-				var sExtensionName;
-				var sElementName;
+		for (let i = 0, l = aElementOverlays.length; i < l; i++) {
+			const oElementOverlay = aElementOverlays[i];
+			const oElement = oElementOverlay.getElement();
+			const bIsExtensionOverlay = aExtensionList.some(function(mViewExtension) { // eslint-disable-line no-loop-func
+				let sExtensionName;
+				let sElementName;
 
-				if (oElement instanceof View) {
+				if (oElement.isA("sap.ui.core.mvc.View")) {
 					sElementName = oElement.getViewName();
 					sExtensionName = mViewExtension.viewName;
-				} else if (oElement instanceof Fragment) {
+				} else if (oElement.isA("sap.ui.core.Fragment")) {
 					sElementName = oElement.getFragmentName();
 				} else {
 					// viewName/fragmentName are essential for proper element detection
@@ -72,7 +67,7 @@ sap.ui.define([
 				}
 
 				return (
-					oElement instanceof ClassDeclaration
+					oElement.isA(mViewExtension.className)
 					&& sElementName === sExtensionName
 				);
 			});
@@ -87,7 +82,7 @@ sap.ui.define([
 			}
 		}
 
-		var aRelevantOverlays = [];
+		const aRelevantOverlays = [];
 
 		aExtensionOverlays.forEach(function(oElementOverlay) {
 			OverlayUtil.iterateOverlayElementTree(oElementOverlay, function(oElementOverlay) {
@@ -99,12 +94,10 @@ sap.ui.define([
 	}
 
 	return function(aElementOverlays, oComponent) {
-		var aResult = [];
-
-		var aRelevantOverlays = aElementOverlays.slice(0);
+		let aRelevantOverlays = aElementOverlays.slice(0);
 
 		if (isFioriElementsApp(oComponent)) {
-			var aExtensionList = getFioriElementsExtensions(oComponent);
+			const aExtensionList = getFioriElementsExtensions(oComponent);
 
 			aRelevantOverlays = (
 				aExtensionList.length
@@ -113,13 +106,11 @@ sap.ui.define([
 			);
 		}
 
-		aResult = aRelevantOverlays.filter(function(oElementOverlay) {
+		return aRelevantOverlays.filter(function(oElementOverlay) {
 			return (
 				!oElementOverlay.getDesignTimeMetadata().markedAsNotAdaptable()
 				&& !hasStableId(oElementOverlay)
 			);
 		});
-
-		return aResult;
 	};
 });
