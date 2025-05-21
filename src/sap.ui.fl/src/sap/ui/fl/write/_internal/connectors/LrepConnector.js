@@ -8,9 +8,9 @@ sap.ui.define([
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Component",
@@ -24,9 +24,9 @@ sap.ui.define([
 	BaseConnector,
 	InitialConnector,
 	InitialUtils,
+	Settings,
 	WriteUtils,
 	TransportSelection,
-	Settings,
 	Layer,
 	Utils,
 	Component,
@@ -196,7 +196,7 @@ sap.ui.define([
 			if (mPropertyBag.layer !== Layer.USER) {
 				aChanges = mPropertyBag.changes;
 				oTransportSelectionPromise = Settings.getInstance().then(function(oSettings) {
-					if (!oSettings.isProductiveSystem()) {
+					if (!oSettings.getIsProductiveSystem()) {
 						return new TransportSelection().setTransports(aChanges, Component.getComponentById(mPropertyBag.reference)).then(function() {
 							// Make sure we include one request in case of mixed changes (local and transported)
 							aChanges.some(function(oChange) {

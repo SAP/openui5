@@ -21,9 +21,8 @@ sap.ui.define([
 			'internal/samples/odata/v2/Products/Opa.qunit.html' : 'both',
 			'../../../sap/m/demokit/cart/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/cart/testsuite.qunit&test=integration/opaTestsComponent': 'both',
 			'../../../sap/m/demokit/cart/webapp/test/Test.qunit.html?testsuite=test-resources/sap/ui/demo/cart/testsuite.qunit&test=integration/opaTestsGherkinComponent': 'both',
-			'demokit/sample/ViewTemplate/scenario/Opa.qunit.html?supportAssistant=true' : 'both',
-			'demokit/sample/ViewTemplate/types/Opa.qunit.html?supportAssistant=true' : 'both',
-			'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true' : 'both',
+			'Test.qunit.html?testsuite=test-resources/sap/ui/core/qunit/odata/type/testsuite.odata.types.qunit&test=OPA.ViewTemplate.Types&supportAssistant=true' : 'both',
+			'Test.qunit.html?testsuite=test-resources/sap/ui/core/qunit/odata/type/testsuite.odata.types.qunit&test=OPA.ViewTemplate.Types&realOData=true' : 'both',
 			'qunit/internal/AnnotationParser.qunit.html?hidepassed&coverage' : 'both'
 		};
 

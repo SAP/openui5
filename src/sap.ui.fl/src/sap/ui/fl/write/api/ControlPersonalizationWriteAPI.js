@@ -13,7 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
@@ -420,13 +420,11 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<boolean>} Resolves to a boolean indicating if condensing is enabled
 		 * @private
-		 * @sapui5-restricted sap.ovp
+		 * @ui5-restricted sap.ovp
 		 */
-		isCondensingEnabled() {
-			return Settings.getInstance()
-			.then(function(oSettings) {
-				return oSettings.isCondensingEnabled(Layer.USER);
-			});
+		async isCondensingEnabled() {
+			const oSettings = await Settings.getInstance();
+			return oSettings.getIsCondensingEnabled();
 		},
 
 		/**

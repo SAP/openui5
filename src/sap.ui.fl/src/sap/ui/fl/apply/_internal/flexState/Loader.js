@@ -6,16 +6,16 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/initial/_internal/StorageUtils"
 ], function(
 	ObjectPath,
 	ManagedObject,
 	ManifestUtils,
+	Settings,
 	ApplyStorage,
-	StorageUtils,
-	Settings
+	StorageUtils
 ) {
 	"use strict";
 
@@ -198,7 +198,7 @@ sap.ui.define([
 			// the settings are available due to previous loadFlexData calls or
 			// not available due to an async hint stating that no changes are available, thus also no author mapping needed
 			const oSettings = Settings.getInstanceOrUndef();
-			return oSettings?.isVariantAuthorNameAvailable() ? ApplyStorage.loadVariantsAuthors(sReference) : Promise.resolve({});
+			return oSettings?.getIsVariantAuthorNameAvailable() ? ApplyStorage.loadVariantsAuthors(sReference) : Promise.resolve({});
 		}
 	};
 });

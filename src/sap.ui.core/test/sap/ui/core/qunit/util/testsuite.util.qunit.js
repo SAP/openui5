@@ -76,7 +76,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 
 			ViewTemplate: {
-				autostart: false,
 				coverage: {
 					only: "[/odata/type/,ODataMetaModel,XMLPreprocessor,AnnotationHelper]"
 				},

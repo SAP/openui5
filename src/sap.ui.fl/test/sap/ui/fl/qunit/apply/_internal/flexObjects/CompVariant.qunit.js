@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -544,10 +544,9 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Given a standard variant", function(assert) {
-			// mocked settings
-			Settings._instance = new Settings({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({
 				isPublicLayerAvailable: false
-			});
+			}));
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
@@ -560,10 +559,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a standard variant and the active layer is CUSTOMER", function(assert) {
-			// mocked settings
-			Settings._instance = new Settings({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({
 				isPublicLayerAvailable: false
-			});
+			}));
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
@@ -576,10 +574,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a standard variant and the active layer is CUSTOMER_BASE", function(assert) {
-			// mocked settings
-			Settings._instance = new Settings({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({
 				isPublicLayerAvailable: false
-			});
+			}));
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
@@ -592,10 +589,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given a standard variant and the active layer is VENDOR", function(assert) {
-			// mocked settings
-			Settings._instance = new Settings({
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings({
 				isPublicLayerAvailable: false
-			});
+			}));
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
@@ -608,8 +604,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given settings instance is undefined", function(assert) {
-			// mocked settings
-			Settings._instance = undefined;
+			sandbox.stub(Settings, "getInstanceOrUndef").returns();
 
 			var oVariant = createVariant({});
 			oVariant.setStandardVariant(true);
@@ -624,7 +619,7 @@ sap.ui.define([
 		aScenarios.forEach(function(mTestSetup) {
 			QUnit.test(mTestSetup.testName, function(assert) {
 				// mocked settings
-				Settings._instance = new Settings(mTestSetup.settings);
+				sandbox.stub(Settings, "getInstanceOrUndef").returns(new Settings(mTestSetup.settings));
 				stubCurrentUser(mTestSetup.currentUser);
 				if (mTestSetup.sapUiLayerUrlParameter) {
 					sandbox.stub(URLSearchParams.prototype, "get").returns(

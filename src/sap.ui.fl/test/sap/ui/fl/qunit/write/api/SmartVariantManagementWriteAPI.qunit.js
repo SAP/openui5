@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
@@ -53,8 +53,7 @@ sap.ui.define([
 				oControl.destroy();
 			}
 			FlexState.clearState(sReference);
-			delete Settings._instance;
-			delete Settings._oLoadSettingsPromise;
+			Settings.clearInstance();
 		}
 	}, function() {
 		[{
@@ -793,11 +792,11 @@ sap.ui.define([
 					}
 				});
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					isVersioningEnabled() {
+					getIsVersioningEnabled() {
 						return false;
 					},
 					getUserId() {},
-					isVariantAuthorNameAvailable() {
+					getIsVariantAuthorNameAvailable() {
 						return false;
 					}
 				});
@@ -1129,7 +1128,6 @@ sap.ui.define([
 		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns true", function(assert) {
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: true,
 				isVariantSharingEnabled: true
 			};
 
@@ -1145,7 +1143,6 @@ sap.ui.define([
 		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns false", function(assert) {
 			var oSetting = {
 				isKeyUser: false,
-				isAtoAvailable: true,
 				isVariantSharingEnabled: false
 			};
 

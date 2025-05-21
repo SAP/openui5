@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -663,7 +663,7 @@ sap.ui.define([
 			var oFlexInfoResponse = {allContextsProvided: false};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isContextSharingEnabled: () => {return true;}
+				getIsContextSharingEnabled: () => {return true;}
 			});
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);

@@ -69,7 +69,8 @@ sap.ui.define([
 				}, function (oError) {
 					MessageBox.alert(oError.message, {
 						icon : MessageBox.Icon.ERROR,
-						title : "Missing Proxy?"});
+						title : "Missing Proxy?"
+					});
 				});
 			});
 

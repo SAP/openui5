@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/test/utils/nextUIUpdate"
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/core/Element"
+
 ], function(
 	ElementRegistry,
 	qutils,
@@ -24,7 +26,8 @@ sap.ui.define([
 	jQuery,
 	Device,
 	KeyCodes,
-	nextUIUpdate
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
@@ -380,7 +383,6 @@ sap.ui.define([
 		oTabStrip.destroy();
 	});
 
-
 	QUnit.test("TabStripSelectList rendering", async function (assert) {
 		var oItem = new TabStripItem("tab1", {text: "Tab 1"}),
 			oTabStrip = new TabStrip(),
@@ -454,6 +456,7 @@ sap.ui.define([
 		afterEach: async function () {
 			this.sut.destroy();
 			await nextUIUpdate(this.clock);
+			this.sut = null;
 		}
 	});
 
@@ -553,6 +556,84 @@ sap.ui.define([
 		assert.ok(oModifiers["saphome"].indexOf("alt") !== -1, "home is not handled when alt is pressed");
 		assert.ok(oModifiers["saphome"].indexOf("meta") !== -1, "home is not handled when meta key is pressed");
 		assert.ok(oModifiers["sapend"].indexOf("meta") !== -1, "end is not handled when meta key is pressed");
+	});
+
+	QUnit.test("fireItemDelete delete item succesfully", function(assert) {
+		//prepare
+		var items = [
+				new TabStripItem({
+					text: "Tab 1"
+				}),
+				new TabStripItem({
+					text: "Tab 2"
+				}),
+				new TabStripItem({
+					text: "Tab 3"
+				}),
+				new TabStripItem({
+					text: "Tab 4"
+				}),
+				new TabStripItem({
+					text: "Tab 5"
+				})
+			],
+			sut = new TabStrip({
+				selectedItem: 0,
+				items: items
+			}),
+			oItemToDelete = items[0],
+			oEvent = { type: "onsapdelete", target: ".myCustomClass", isDefaultPrevented: function() {return true;}, preventDefault: function() {return true;}, setMarked: function() {return true;} };
+		sut.setSelectedItem(oItemToDelete);
+		sut.addStyleClass("myCustomClass");
+		sut.placeAt('qunit-fixture');
+		assert.equal(sut.getItems().length, 5, "Items count");
+		//act
+		sut.onsapdelete(oEvent);
+		//assert
+		assert.equal(sut.getItems().length, 4, "Items count");
+		assert.equal(sut.getItems().indexOf(oItemToDelete), -1, "The item should not exist at any index");
+		//cleanup
+		sut.destroy();
+	});
+
+	QUnit.test("fireItemDelete delete item succesfully when delete is triggered from item in popover", function(assert) {
+		//prepare
+		var items = [
+				new TabStripItem({
+					text: "Tab 1"
+				}),
+				new TabStripItem({
+					text: "Tab 2"
+				}),
+				new TabStripItem({
+					text: "Tab 3"
+				}),
+				new TabStripItem({
+					text: "Tab 4"
+				}),
+				new TabStripItem({
+					text: "Tab 5"
+				})
+			],
+			sut = new TabStrip({
+				selectedItem: 0,
+				items: items
+			}),
+			oItemToDelete = items[0],
+			oEvent = { type: "onsapdelete", target: ".sapMSltHiddenSelect", isDefaultPrevented: function() {return true;}, preventDefault: function() {return true;}, setMarked: function() {return true;} };
+		sut.setSelectedItem(oItemToDelete);
+		sut.placeAt('qunit-fixture');
+		sinon.stub(Element, "closestTo").returns(new Select());
+
+		assert.equal(sut.getItems().length, 5, "Items count");
+		//act
+		sut.onsapdelete(oEvent);
+		//assert
+		assert.equal(sut.getItems().length, 4, "Items count");
+		assert.equal(sut.getItems().indexOf(oItemToDelete), -1, "The item should not exist at any index");
+		//cleanup
+		sinon.stub.reset();
+		sut.destroy();
 	});
 
 	QUnit.module("Scrolling", {

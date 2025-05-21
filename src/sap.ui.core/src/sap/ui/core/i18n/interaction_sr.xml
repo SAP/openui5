@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Помера фокус на следећи елемент у ланцу картица.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Помера фокус на претходни елемент у ланцу картица.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Помера фокус на први елемент следеће групе КИ (група Ф6) у ланцу картица.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Помера фокус на први елемент претходне групе КИ (група Ф6) у ланцу картица.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Глобалне пречице</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

@@ -5,17 +5,17 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/registry/Settings"
+	"sap/ui/fl/write/_internal/transport/TransportSelection"
 ], function(
 	CompVariantUtils,
 	ManifestUtils,
+	Settings,
 	ContextBasedAdaptationsAPI,
 	CompVariantState,
-	TransportSelection,
-	Settings
+	TransportSelection
 ) {
 	"use strict";
 
@@ -291,7 +291,7 @@ sap.ui.define([
 		 */
 		isVariantSharingEnabled() {
 			return Settings.getInstance().then(function(oInstance) {
-				return oInstance.isVariantSharingEnabled();
+				return oInstance.getIsVariantSharingEnabled();
 			});
 		},
 
@@ -306,7 +306,7 @@ sap.ui.define([
 		 */
 		isVariantPersonalizationEnabled() {
 			return Settings.getInstance().then(function(oInstance) {
-				return oInstance.isVariantPersonalizationEnabled();
+				return oInstance.getIsVariantPersonalizationEnabled();
 			});
 		},
 
@@ -321,7 +321,7 @@ sap.ui.define([
 		 */
 		isVariantAdaptationEnabled() {
 			return Settings.getInstance().then(function(oInstance) {
-				return oInstance.isVariantAdaptationEnabled();
+				return oInstance.getIsVariantAdaptationEnabled();
 			});
 		},
 

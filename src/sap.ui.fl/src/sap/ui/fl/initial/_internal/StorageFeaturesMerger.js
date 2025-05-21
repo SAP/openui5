@@ -23,25 +23,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage
 	 */
 
-	var DEFAULT_FEATURES = {
-		isKeyUser: false,
-		isKeyUserTranslationEnabled: false,
-		isVariantSharingEnabled: false,
-		isPublicFlVariantEnabled: false,
-		isVariantPersonalizationEnabled: true,
-		isContextSharingEnabled: true,
-		isAtoAvailable: false,
-		isAtoEnabled: false,
-		versioning: {},
-		isProductiveSystem: true,
-		isPublicLayerAvailable: false,
-		isLocalResetEnabled: false,
-		isZeroDowntimeUpgradeRunning: false,
-		isVariantAuthorNameAvailable: false,
-		system: "",
-		client: ""
-	};
-
 	function _getVersioningFromResponse(oResponse) {
 		var oVersioning = {};
 		var bVersioningEnabled = !!oResponse.features.isVersioningEnabled;
@@ -64,7 +45,7 @@ sap.ui.define([
 		 * @returns {object} Merged result
 		 */
 		mergeResults(aResponses) {
-			var oResult = {...DEFAULT_FEATURES};
+			var oResult = {};
 
 			aResponses.forEach(function(oResponse) {
 				Object.keys(oResponse.features).forEach(function(sKey) {
@@ -83,7 +64,7 @@ sap.ui.define([
 						oResult[sKey] = oResponse.features[sKey];
 					}
 				});
-				oResult.versioning = merge(oResult.versioning, _getVersioningFromResponse(oResponse));
+				oResult.versioning = merge((oResult.versioning || {}), _getVersioningFromResponse(oResponse));
 				if (oResponse.isContextSharingEnabled !== undefined) {
 					oResult.isContextSharingEnabled = oResponse.isContextSharingEnabled;
 				}

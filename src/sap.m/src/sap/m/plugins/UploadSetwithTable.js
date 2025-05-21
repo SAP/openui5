@@ -799,7 +799,7 @@ sap.ui.define([
 		this.getConfig("download", {
 			oBindingContext: oBindingContext,
 			bAskForLocation: bAskForLocation
-		}, this.getControl(), this);
+		}, this, this.getControl());
 	};
 
 	/**

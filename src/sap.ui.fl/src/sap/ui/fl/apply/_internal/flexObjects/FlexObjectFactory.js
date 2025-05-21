@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/UpdatableChange",
 	"sap/ui/fl/apply/_internal/flexObjects/VariantChange",
 	"sap/ui/fl/apply/_internal/flexObjects/VariantManagementChange",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
@@ -100,7 +100,7 @@ sap.ui.define([
 		}
 		const sUser = mProperties.user ||
 			(!LayerUtils.isDeveloperLayer(mProperties.layer)
-				? Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().getUserId()
+				? Settings.getInstanceOrUndef()?.getUserId()
 				: undefined);
 
 		return {

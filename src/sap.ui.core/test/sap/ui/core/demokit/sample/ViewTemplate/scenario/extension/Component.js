@@ -11,14 +11,6 @@ sap.ui.define([
 ], function (BaseComponent) {
 	"use strict";
 
-	function fragment(sFileName) {
-		return {
-				className : "sap.ui.core.Fragment",
-				fragmentName : sPackage + sFileName,
-				type : "XML"
-			};
-	}
-
 	var sPackage = "sap.ui.core.sample.ViewTemplate.scenario.extension.",
 		oExtendedComponent = BaseComponent.extend(
 			"sap.ui.core.sample.ViewTemplate.scenario.extension.Component", {
@@ -36,10 +28,10 @@ sap.ui.define([
 					customizing : {
 						"sap.ui.viewExtensions" : {
 							"sap.ui.core.sample.ViewTemplate.scenario.Detail" : {
-								"HeaderInfo" : fragment("HeaderInfo")
+								HeaderInfo : fragment("HeaderInfo")
 							},
 							"sap.ui.core.sample.ViewTemplate.scenario.FormFacet" : {
-								"afterTitle" : fragment("ReferenceFacet")
+								afterTitle : fragment("ReferenceFacet")
 							},
 							"sap.ui.core.sample.ViewTemplate.scenario.extension.ReferenceFacet" : {
 								"replace.me" : fragment("AnnotationPath")
@@ -50,5 +42,13 @@ sap.ui.define([
 			}
 		);
 
-		return oExtendedComponent;
+	function fragment(sFileName) {
+		return {
+				className : "sap.ui.core.Fragment",
+				fragmentName : sPackage + sFileName,
+				type : "XML"
+			};
+	}
+
+	return oExtendedComponent;
 });

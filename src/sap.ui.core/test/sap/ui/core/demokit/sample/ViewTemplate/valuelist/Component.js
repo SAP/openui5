@@ -43,8 +43,8 @@ sap.ui.define([
 				}
 			} else {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
-				this.aMockServers[0].simulate(sMockServerBaseUri + (sValueList === "none" ?
-						"metadata_none.xml" : "metadata.xml"), {
+				this.aMockServers[0].simulate(sMockServerBaseUri + (sValueList === "none"
+						? "metadata_none.xml" : "metadata.xml"), {
 					sMockdataBaseUrl : sMockServerBaseUri,
 					bGenerateMissingMockData : false
 				});
@@ -124,9 +124,9 @@ sap.ui.define([
 								response : function (oXHR) {
 									Log.debug("Mocked response sent:" + oXHR.url, null,
 										"sap.ui.core.sample.ViewTemplate.valuelist.Component");
-									if  (oMockData.response){
-										oXHR.respondFile(200, {}, sMockServerBaseUri +
-											oMockData.response);
+									if (oMockData.response) {
+										oXHR.respondFile(200, {}, sMockServerBaseUri
+											+ oMockData.response);
 									} else {
 										oXHR.respond(204, {}, "100");
 									}

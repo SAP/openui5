@@ -105,18 +105,6 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	 AddDimensions: "sapIllus-AddDimensions",
 
 	 /**
-	  * "Balloon Sky" illustration type.
-	  * @public
-	  */
-	 BalloonSky: "sapIllus-BalloonSky",
-
-	 /**
-	  * "Connection" illustration type.
-	  * @public
-	  */
-	 Connection: "sapIllus-Connection",
-
-	 /**
 	  * "Empty Planning Calendar" illustration type.
 	  * @public
 	  */
@@ -145,12 +133,6 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	  * @public
 	  */
 	 SignOut: "sapIllus-SignOut",
-
-	 /**
-	  * "Simple Connection" illustration type.
-	  * @public
-	  */
-	 SimpleConnection: "sapIllus-SimpleConnection",
 
 	 /**
 	  * "Survey" illustration type.

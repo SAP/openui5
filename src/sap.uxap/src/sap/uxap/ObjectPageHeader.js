@@ -589,7 +589,7 @@ sap.ui.define([
 			//create responsive equivalents of the provided controls
 			aActions.forEach(function (oAction) {
 				// Set internal visibility for normal buttons like for ObjectPageHeaderActionButton
-				if ((oAction.isA("sap.m.Button") || oAction.isA("sap.m.MenuButton")) && !(oAction instanceof ObjectPageHeaderActionButton)) {
+				if (oAction instanceof Button && !(oAction instanceof ObjectPageHeaderActionButton)) {
 
 					oAction._bInternalVisible = oAction.getVisible();
 					oAction._getInternalVisible = function () {
@@ -621,7 +621,7 @@ sap.ui.define([
 					};
 				}
 
-				if ((oAction.isA("sap.m.Button") || oAction.isA("sap.m.MenuButton")) && oAction.getVisible()) {
+				if (oAction instanceof Button && oAction.getVisible()) {
 					var oActionSheetButton = this._createActionSheetButton(oAction);
 
 					this._oActionSheetButtonMap[oAction.getId()] = oActionSheetButton; //store the originalId/reference for later use (adaptLayout)
@@ -730,7 +730,7 @@ sap.ui.define([
 			return;
 		}
 		aActions.forEach(function (oAction) {
-			if (oAction.isA("sap.m.Button") || oAction.isA("sap.m.MenuButton")) {
+			if (oAction instanceof Button) {
 				var oActionSheetButton = this._oActionSheetButtonMap[oAction.getId()];
 				if (bAttach) {
 					oAction.attachEvent("_change", this._adaptLayoutDelayed, this);
@@ -793,7 +793,7 @@ sap.ui.define([
 
 		if (aActions[0] instanceof ObjectPageHeaderActionButton) {
 			bOneButtonShowingText = (!aActions[0].getHideText() && aActions[0].getText() != "" );
-		} else if (aActions[0].isA("sap.m.Button") || aActions[0].isA("sap.m.MenuButton")) {
+		} else if (aActions[0] instanceof Button) {
 			bOneButtonShowingText = (aActions[0].getText() != "" );
 		}
 
@@ -830,7 +830,7 @@ sap.ui.define([
 		if (Device.system.phone) {
 			// revert the visibility css style only for the actions whose style was modified by _getActionsWidth
 			this.getActions().forEach(function (oAction) {
-				if (oAction.isA("sap.m.Button") || oAction.isA("sap.m.MenuButton")) {
+				if (oAction instanceof Button) {
 					oAction.$().css("visibility", "visible");
 				}
 			});
@@ -993,7 +993,7 @@ sap.ui.define([
 		var iWidthSum = 0;
 
 		this.getActions().forEach(function (oAction) {
-			if (oAction.isA("sap.m.Button") || oAction.isA("sap.m.MenuButton")) {
+			if (oAction instanceof Button) {
 				oAction.$().show();
 
 				if (Device.system.phone) {

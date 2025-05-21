@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Переміщує фокус до наступного елемента в ланцюгу вкладок.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Переміщує фокус до попереднього елемента в ланцюгу вкладок.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Переміщує фокус до першого елемента наступної групи інтерфейсу користувача (група F6) в ланцюгу вкладок.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Переміщує фокус до першого елемента попередньої групи інтерфейсу користувача (група F6) в ланцюгу вкладок.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Глобальні сполучення клавіш</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

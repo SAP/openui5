@@ -125,8 +125,8 @@ sap.ui.define([
 
 	Adaptation.prototype.exit = function(...aArgs) {
 		window.removeEventListener("resize", this._onResize);
-		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
-			oInstersectionObserver.disconnect();
+		(this._aIntersectionObservers || []).forEach(function(oIntersectionObserver) {
+			oIntersectionObserver.disconnect();
 		});
 		Base.prototype.exit.apply(this, aArgs);
 	};

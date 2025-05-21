@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Mở hộp thoại <span class="uicontrol">Thiết lập bảng</span>, nếu có sẵn.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Mở hộp thoại <span class="uicontrol">Xuất dưới dạng</span> của bảng, nếu có sẵn.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Kích hoạt tìm kiếm cho thanh lọc.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Mở hộp thoại <span class="uicontrol">Thiết lập màn hình</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Xóa một mục trong hộp thoại <span class="uicontrol">Thiết lập màn hình</span></p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

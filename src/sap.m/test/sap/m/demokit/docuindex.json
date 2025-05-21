@@ -628,8 +628,6 @@
 					"sap.m.sample.IllustratedMessageInCardNoEmail",
 					"sap.m.sample.IllustratedMessageInDialog",
 					"sap.m.sample.IllustratedMessageInPage",
-					"sap.m.sample.IllustratedMessageInPageSimple",
-					"sap.m.sample.IllustratedMessageInPageIllustrative",
 					"sap.m.sample.IllustratedMessageInPageWithURI",
 					"sap.m.sample.IllustratedMessageInPageTNT",
 					"sap.m.sample.IllustratedMessageInPageCustom",
@@ -2303,18 +2301,8 @@
 			},
 			{
 				"id": "sap.m.sample.IllustratedMessageInPage",
-				"name": "Classic style illustrations (Default for Quartz)",
-				"description": "This set is not recommended by UX and no longer receives design support. For new use cases use the default for Horizon. The available illustrations are from the default ('sapIllus') illustration set and are recommended for SAP Quartz and older themes."
-			},
-			{
-				"id": "sap.m.sample.IllustratedMessageInPageSimple",
-				"name": "Simple style illustrations (Alternative Style for Horizon)",
-				"description": "The available illustrations are simplified version from the default ('sapIllus') illustration set. And they are recommended for a more minimalistic look in Horizon and new use cases are added in this and the illustrative style."
-			},
-			{
-				"id": "sap.m.sample.IllustratedMessageInPageIllustrative",
-				"name": "Illustrative style illustrations (Default Illustration Set for Horizon)",
-				"description": "The available illustrations are from the default ('sapIllus') illustration set and are recommended for SAP Horizon theme. New use cases are added in this and the simple style."
+				"name": "Default Illustration Set (sapIllus)",
+				"description": "The available illustrations are from the default ('sapIllus') illustration set."
 			},
 			{
 				"id": "sap.m.sample.IllustratedMessageInPageWithURI",

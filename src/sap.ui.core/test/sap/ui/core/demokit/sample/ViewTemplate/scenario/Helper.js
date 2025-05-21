@@ -29,15 +29,16 @@ sap.ui.define([
 		 * Delegates to {@link sap.ui.model.odata.AnnotationHelper#format} and wraps label texts
 		 * in square brackets.
 		 *
-		 * @param {sap.ui.model.Context} oInterface
+		 * @param {sap.ui.model.Context} oMyInterface
 		 *   the callback interface related to the current formatter call
 		 * @param {any} [vRawValue0]
 		 *   the raw value from the meta model
 		 * @returns {string}
 		 */
-		function formatLabelValue(oInterface, vRawValue0) {
-			var sResult = AnnotationHelper.format(oInterface, vRawValue0);
-			return oInterface.getPath().endsWith("/Label")
+		function formatLabelValue(oMyInterface, vRawValue0) {
+			var sResult = AnnotationHelper.format(oMyInterface, vRawValue0);
+
+			return oMyInterface.getPath().endsWith("/Label")
 				? "[" + sResult + "]"
 				: sResult;
 		}
@@ -45,18 +46,17 @@ sap.ui.define([
 		try {
 			if (oInterface.getModel()) {
 				return formatLabelValue(oInterface, vRawValue);
-			} else {
-				// root formatter for a composite binding
-				aResult = [];
-				// "probe for the smallest non-negative integer"
-				for (i = 0; oInterface.getModel(i); i += 1) {
-					aResult.push(
-						// Note: arguments[i + 1] is the raw value of the ith part!
-						formatLabelValue(oInterface.getInterface(i), arguments[i + 1])
-					);
-				}
-				return aResult.join(" ");
 			}
+			// root formatter for a composite binding
+			aResult = [];
+			// "probe for the smallest non-negative integer"
+			for (i = 0; oInterface.getModel(i); i += 1) {
+				aResult.push(
+					// Note: arguments[i + 1] is the raw value of the ith part!
+					formatLabelValue(oInterface.getInterface(i), arguments[i + 1])
+				);
+			}
+			return aResult.join(" ");
 		} catch (e) {
 			return e.message;
 		}
@@ -78,14 +78,13 @@ sap.ui.define([
 
 		if (sPath) {
 			return sPath.replace(rBadIdChars, ".");
-		} else {
-			aResult = [];
-			// "probe for the smallest non-negative integer"
-			for (i = 0; oInterface.getPath(i); i += 1) {
-				aResult.push(oInterface.getPath(i).replace(rBadIdChars, "."));
-			}
-			return aResult.join("::");
 		}
+		aResult = [];
+		// "probe for the smallest non-negative integer"
+		for (i = 0; oInterface.getPath(i); i += 1) {
+			aResult.push(oInterface.getPath(i).replace(rBadIdChars, "."));
+		}
+		return aResult.join("::");
 	}
 	id.requiresIContext = true;
 

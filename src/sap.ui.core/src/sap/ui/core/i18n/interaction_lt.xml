@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Suaktyvinamas paskesnis elementas tabuliavimo grandinėje.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Suaktyvinamas ankstesnis elementas tabuliavimo grandinėje.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Suaktyvinamas pirmas elementas paskesnėje tabuliavimo grandinės UI grupėje (F6 grupė).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Suaktyvinamas pirmas elementas ankstesnėje tabuliavimo grandinės UI grupėje (F6 grupė).</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Visuotinės nuorodos</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

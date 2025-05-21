@@ -441,44 +441,44 @@ sap.ui.define([
 
 		QUnit.test("when an element is inserted into an already existing aggregation", function(assert) {
 			const done = assert.async();
-			const oExpectedResponse1 = {
-				type: "new",
-				targetIndex: 1,
-				targetId: "layout0",
-				targetAggregation: "content",
-				element: {
-					id: "newLabelId",
-					instanceName: "newLabel",
-					name: "Label",
-					technicalName: "sap.m.Label",
-					editable: false,
-					icon: "sap/m/designtime/Label.icon.svg",
-					type: "element",
-					visible: true
-				}
-			};
-			const oExpectedResponse2 = {
-				type: "editableChange",
-				element: {
-					id: "newLabelId",
-					editable: true
-				}
-			};
 			function onUpdate(aUpdates) {
 				aUpdates.some(function(oUpdate) {
 					switch (oUpdate.type) {
 						case "new": {
 							const oNewLabel = this.oLayout.getContent().find((oControl) => oControl.getId() === "newLabelId");
 							const oNewLabelOverlay = OverlayRegistry.getOverlay(oNewLabel);
-							// oExpectedResponse1.element.visible = oNewLabelOverlay.isVisible();
+							const oExpectedResponse1 = {
+								type: "new",
+								targetIndex: 1,
+								targetId: "layout0",
+								targetAggregation: "content",
+								element: {
+									id: "newLabelId",
+									instanceName: "newLabel",
+									name: "Label",
+									technicalName: "sap.m.Label",
+									editable: false,
+									icon: "sap/m/designtime/Label.icon.svg",
+									type: "element",
+									visible: oNewLabelOverlay.isVisible()
+								}
+							};
 							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
 							oNewLabelOverlay.setEditable(true);
 							break;
 						}
-						case "editableChange":
+						case "editableChange": {
+							const oExpectedResponse2 = {
+								type: "editableChange",
+								element: {
+									id: "newLabelId",
+									editable: true
+								}
+							};
 							assert.deepEqual(oUpdate, oExpectedResponse2, "then expected response for editableChange update was received");
 							done();
 							break;
+						}
 						default:
 					}
 				}.bind(this));

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Memindahkan fokus ke elemen selanjutnya dalam urutan tab.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Memindahkan fokus ke elemen sebelumnya dalam urutan tab.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Memindahkan fokus ke elemen pertama dari grup UI selanjutnya (grup F6) dalam urutan tab.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Memindahkan fokus ke elemen pertama dari grup UI sebelumnya (grup F6) dalam urutan tab.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Pintasan Global</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Utils"
 ], function(
 	Settings,
@@ -13,8 +13,8 @@ sap.ui.define([
 
 	async function getSettings() {
 		const oSettings = await Settings.getInstance();
-		return Object.keys(oSettings._oSettings).map(function(sKey) {
-			var vValue = oSettings._oSettings[sKey];
+		return Object.entries(oSettings.getMetadata().getProperties()).map(function([sKey, oProperty]) {
+			let vValue = oSettings[oProperty._sGetter]();
 
 			if (sKey === "versioning") {
 				vValue = vValue.CUSTOMER || vValue.ALL;

@@ -4,17 +4,13 @@
 
 sap.ui.define([
 	"sap/base/util/each",
-	"sap/base/util/ObjectPath",
 	"sap/base/Log",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/requireAsync"
 ], function(
 	each,
-	ObjectPath,
 	Log,
 	Layer,
-	Settings,
 	requireAsync
 ) {
 	"use strict";
@@ -37,6 +33,22 @@ sap.ui.define([
 	let mPredefinedChangeHandlers = {};
 	let mAnnotationChangeHandlers = {};
 	const sDefaultAnnoChangeType = "defaultForAll";
+
+	const oDefaultLayerPermissions = {
+		VENDOR: true,
+		CUSTOMER_BASE: true,
+		CUSTOMER: true,
+		PUBLIC: false,
+		USER: false
+	};
+
+	const oDeveloperModeLayerPermissions = {
+		VENDOR: true,
+		CUSTOMER_BASE: true,
+		CUSTOMER: false,
+		PUBLIC: false,
+		USER: false
+	};
 
 	function checkPreconditions(oChangeHandlerEntry) {
 		if (!oChangeHandlerEntry.changeHandler) {
@@ -77,7 +89,7 @@ sap.ui.define([
 			const oChangeRegistryItem = {
 				controlType: "defaultActiveForAll",
 				changeHandler: oChangeHandler,
-				layers: Settings.getDeveloperModeLayerPermissions(),
+				layers: { ...oDeveloperModeLayerPermissions },
 				changeType: sChangeType
 			};
 			mActiveForAllItems[sChangeType] = oChangeRegistryItem;
@@ -86,7 +98,7 @@ sap.ui.define([
 
 	function createChangeRegistryItem(sControlType, sChangeType, oChangeHandler) {
 		oChangeHandler = replaceDefault(sChangeType, oChangeHandler);
-		const mLayerPermissions = { ...Settings.getDefaultLayerPermissions() };
+		const mLayerPermissions = { ...oDefaultLayerPermissions };
 
 		if (oChangeHandler.layers) {
 			each(oChangeHandler.layers, function(sLayer, bLayerPermission) {

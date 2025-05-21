@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
@@ -670,9 +670,8 @@ sap.ui.define([
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: false,
-				isProductiveSystem() {return false;},
-				isAtoEnabled() {return false;}
+				isProductiveSystem: false,
+				isAtoEnabled: false
 			};
 			var oAdjustedResponse = {
 				response: [
@@ -680,7 +679,7 @@ sap.ui.define([
 					{fileName: "c2"}
 				]
 			};
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSetting));
 			sandbox.spy(BusyIndicator, "hide");
 			sandbox.spy(BusyIndicator, "show");
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
@@ -750,11 +749,10 @@ sap.ui.define([
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: false,
-				isProductiveSystem() {return false;},
-				isAtoEnabled() {return false;}
+				isProductiveSystem: false,
+				isAtoEnabled: false
 			};
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=VENDOR&changelist=transportId&selector=abc123&changeType=labelChange";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
@@ -837,11 +835,10 @@ sap.ui.define([
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: true,
-				isProductiveSystem() {return false;},
-				isAtoEnabled() {return true;}
+				isProductiveSystem: false,
+				isAtoEnabled: true
 			};
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves(oMockTransportInfo);
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&changelist=ATO_NOTIFICATION&generator=Change.createInitialFileContent";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
@@ -866,11 +863,10 @@ sap.ui.define([
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: true,
-				isProductiveSystem() {return false;},
-				isAtoEnabled() {return true;}
+				isProductiveSystem: false,
+				isAtoEnabled: true
 			};
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&selector=view--control1,feview--control2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 
@@ -898,11 +894,10 @@ sap.ui.define([
 			// Settings in registry
 			var oSetting = {
 				isKeyUser: true,
-				isAtoAvailable: true,
-				isProductiveSystem() {return false;},
-				isAtoEnabled() {return true;}
+				isProductiveSystem: false,
+				isAtoEnabled: true
 			};
-			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
+			sandbox.stub(Settings, "getInstance").resolves(new Settings(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
 			var oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves({response: []});
 			var aControlIds = [

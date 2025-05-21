@@ -48,12 +48,12 @@
 			padding: 0.125rem 0;
 			min-width: 2.5rem;
 
-			.sapMBtnInner::after,
-			.sapMBtnIcon {
+			.sapMBtnInner:not(.sapMBtnEmphasized)::after,
+            .sapMBtnInner:not(.sapMBtnEmphasized) .sapMBtnIcon {
 				background: transparent;
 				color: @sapUiShellInteractiveTextColor;
 			}
-			.sapMBtnContent {
+			.sapMBtnInner:not(.sapMBtnEmphasized) .sapMBtnContent {
 				background: transparent;
 				color: @sapUiShellTextColor;
 			}

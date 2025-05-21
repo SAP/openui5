@@ -18,7 +18,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
@@ -80,7 +80,6 @@ sap.ui.define([
 		sandbox.stub(Settings, "getInstance").resolves(
 			new Settings({
 				isKeyUser: true,
-				isAtoAvailable: bIsCloudSystem,
 				isAtoEnabled: bIsCloudSystem,
 				isProductiveSystem: false
 			})

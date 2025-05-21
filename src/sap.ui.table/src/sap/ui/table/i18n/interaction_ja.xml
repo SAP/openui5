@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>フォーカスを同じ列または行内の次のセルにそれぞれの方向で移動します。</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>フォーカスが最初の行にある場合、フォーカスは列ヘッダに移動します。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>フォーカスが列ヘッダにある場合、フォーカスはこの列の最初の表示行のセルに移動します。これは現在のスクロール位置に依存します。</p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>チェックボックスにある場合、フォーカスは最初の表示行の行セレクタに移動します。これは現在のスクロール位置に依存します。</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>フォーカスが最初の列のセルにある場合、フォーカスは行セレクタに移動します。</p>
+				<p>フォーカスが列ヘッダにある場合、フォーカスは左の列ヘッダに移動します。</p>
+				<p>フォーカスが最初の列の列ヘッダにある場合、フォーカスは<span class="uicontrol">すべて選択</span>チェックボックスに移動します。</p>
+				<p>フォーカスが展開されたグループのグループヘッダにある場合、グループが圧縮されます。</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>フォーカスが列ヘッダにある場合、フォーカスは右の列ヘッダに移動します。</p>
+				<p>フォーカスが行セレクタにある場合、フォーカスは同じ行内の最初の列のセルに移動します。</p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>チェックボックスにある場合、フォーカスは最初の列の列ヘッダに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>フォーカスがセルレベルにある場合、フォーカスは同じ列の最上部のセルに移動します。フォーカスがすでにそのレベルにある場合、フォーカスは 1 ページ上へ移動し、必要なスクローリングが行われて同じ列に留まります。</p>
+				<p>フォーカスが最初の行にある場合、フォーカスは列ヘッダに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>フォーカスがセルレベルにある場合、フォーカスは同じ列の最後の表示セルに移動します。フォーカスがすでにそのレベルにある場合、フォーカスは 1 ページ下へ移動し、必要なスクローリングが行われて同じ列に留まります。</p>
+				<p>フォーカスが列ヘッダにある場合、フォーカスは最初の行に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>フォーカスがセルレベルまたは列ヘッダにある場合、フォーカスは左側の 5 列 (デフォルトページサイズ) に移動します。左側の列数が現在のページサイズを下回る場合、フォーカスは最初の列に移動します。</p>
+				<p>フォーカスがセルレベルで最初の列にある場合、フォーカスは行セレクタに移動します。</p>
+				<p>フォーカスが最初の列の列ヘッダにある場合、フォーカスは<span class="uicontrol">すべて選択</span>に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>フォーカスがセルレベルにある場合、フォーカスは右側の 5 列 (デフォルトページサイズ) に移動します。</p>
+				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>フォーカスが行セレクタにある場合、フォーカスは同じ行内の最初の列に移動します。</p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>にある場合、フォーカスは最初の列のヘッダに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>フォーカスがセルにある場合、フォーカスは同じ行内の最初の列に移動します。</p>
+				<p>フォーカスが最初の列のセルにある場合、フォーカスは行セレクタに移動します。</p>
+				<p>フォーカスが列ヘッダにある場合、フォーカスは最初の列のヘッダに移動します。</p>
+				<p>フォーカスが最初の列ヘッダにある場合、フォーカスは<span class="uicontrol">すべて選択</span>に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>フォーカスがセルまたは列ヘッダにある場合、フォーカスは最後の列に移動します。</p>
+				<p>フォーカスが行セレクタにある場合、フォーカスは同じ行内の最初の列に移動します。</p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>にある場合、フォーカスは最初の列のヘッダに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>フォーカスがセルにある場合、フォーカスは列ヘッダに移動します。</p>
+				<p>フォーカスが行セレクタにある場合、フォーカスは<span class="uicontrol">すべて選択</span>に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>フォーカスがセルまたは列ヘッダにある場合、フォーカスは同じ列の最後の行に移動します。</p>
+				<p>フォーカスが行セレクタまたは<span class="uicontrol">すべて選択</span>にある場合、フォーカスは最後の行セレクタに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+				<p>フォーカスがセルにある場合、フォーカスはセルの最初にフォーカス可能なコントロールに移動します。</p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>チェックボックスまたは行セレクタにある場合、チェックボックスの状態が切り替わります。</p>
+				<p>フォーカスが列ヘッダにある場合、列ヘッダメニューが開きます。</p>
+				<p>フォーカスがグループヘッダにある場合、関連するグループが圧縮または展開されます。</p>
+				<p><kbd>Enter</kbd></p>
+				<p>フォーカスがグループヘッダにある場合、グループヘッダメニューが開きます。</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがセルにある場合、フォーカスされたセルが選択されます。</p>
+				<p>フォーカスがセル選択ブロックにある場合、セルの選択が解除されます。</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>フォーカスがセルまたは行セレクタにある場合、これにより現在の行の選択が切り替わります。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがセル選択ブロックにある場合、このセル選択ブロックは行選択に変更されます。セル選択は解除されます。</p>
+				<p>行選択モードに応じて、以下の処理が行われます。</p>
+				<ul>
+					<li>ブロックの全行が選択される (複数選択)</li>
+					<li>現在フォーカスされているセルの行のみが選択される (個別選択)</li>
+					<li>行が一切選択されない</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>フォーカスをセルとその内容の間で切り替えます (読み込み専用テキストは除く) 。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift</kbd> <description>
+				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>フォーカスが選択されたセルにある場合、上のセルがフォーカスされ、セル選択がこのセルまで拡張されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
+				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>フォーカスが選択されたセルにある場合、下のセルがフォーカスされ、セル選択がこのセルまで拡張されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>フォーカスが列ヘッダにある場合、この列の幅は 1 em 増加します。これは、キーを押したままにすると繰り返されます。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスが、選択されて<span class="emphasis">いない</span>セルにある場合、フォーカスされたセルと右側のセルが選択されます。フォーカスは、フォーカスされたセルの右側のセルに移動します。</p>
+				<p>フォーカスが選択されたセルにある場合、右側のセルがフォーカスされ、セル選択がこのセルまで拡張されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>フォーカスが列ヘッダにある場合、この列の幅は 1 em 減少します。これは、キーを押したままにすると繰り返されます。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスが、選択されて<span class="emphasis">いない</span>セルにある場合、フォーカスされたセルと左側のセルが選択されます。フォーカスは、フォーカスされたセルの左側のセルに移動します。</p>
+				<p>フォーカスが選択されたセルにある場合、左側のセルがフォーカスされ、セル選択がこのセルまで拡張されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>フォーカスが列ヘッダにある場合、関連する列が 1 つ右の位置に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>フォーカスが列ヘッダにある場合、関連する列が 1 つ左の位置に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>フォーカスが、上の行の次にフォーカス可能なエレメントに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>フォーカスが、下の行の次にフォーカス可能なエレメントに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>フォーカスがセル、行セレクタ、または<span class="uicontrol">すべて選択</span>にある場合、これにより<span class="uicontrol">すべて選択</span>チェックボックスが切り替わります。つまり、すべての行がそれぞれ選択または選択解除されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがテーブルの内部にある場合、すべての行およびセルの選択が解除されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>フォーカスがセルにある場合、フォーカスはセルの内容に移動します (読み込み専用テキストは除く)。</p>
+				<p>フォーカスがグループヘッダまたはツリーの非最下位ノードにある場合、これによりグループの展開が切り替わります。つまり、グループがそれぞれ展開または圧縮されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>フォーカスがグループヘッダにある場合、グループヘッダメニューが開きます。</p>
+				<p>フォーカスが列ヘッダにある場合、列ヘッダメニューが開きます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>セルが選択されている場合、別のセルを <kbd>Shift + click</kbd> すると、クリックしたセルまで選択が拡張されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

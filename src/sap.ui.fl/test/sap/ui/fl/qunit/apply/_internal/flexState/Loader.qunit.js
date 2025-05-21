@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
@@ -416,7 +416,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAuthorNameAvailable() {
+				getIsVariantAuthorNameAvailable() {
 					return false;
 				}
 			});
@@ -446,7 +446,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAuthorNameAvailable() {
+				getIsVariantAuthorNameAvailable() {
 					return true;
 				}
 			});

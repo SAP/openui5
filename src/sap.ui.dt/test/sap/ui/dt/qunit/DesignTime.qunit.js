@@ -185,7 +185,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given a Designtime with plugins", {
+	QUnit.module("Given a DesignTime with plugins", {
 		beforeEach() {
 			this.oContextMenuPlugin = new ContextMenuPlugin();
 			this.oDragDropPlugin = new DragDrop();
@@ -2547,41 +2547,39 @@ sap.ui.define([
 		});
 
 		QUnit.test("when DesignTime instance is destroyed while creating an element overlay", async function(assert) {
-			var fnDone = assert.async();
-			var oButton = new Button();
+			const oButton = new Button();
+			const oPanel = new Panel({
+				content: [oButton]
+			});
 
+			sandbox.stub(Log, "error");
 			sandbox.stub(ManagedObjectMetadata.prototype, "loadDesignTime").callsFake(function() {
 				this.oDesignTime.destroy();
 				return Promise.resolve({});
 			}.bind(this));
 
-			var fnElementOverlayCreatedSpy = sandbox.spy();
+			const fnElementOverlayCreatedSpy = sandbox.spy();
 			this.oDesignTime.attachEventOnce("elementOverlayCreated", fnElementOverlayCreatedSpy);
-			var fnElementOverlayDestroyedSpy = sandbox.spy();
+			const fnElementOverlayDestroyedSpy = sandbox.spy();
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", fnElementOverlayDestroyedSpy);
 
-			oButton.placeAt("qunit-fixture");
+			oPanel.placeAt("qunit-fixture");
 			await nextUIUpdate();
-			this.oDesignTime.createOverlay(oButton)
-			.then(
-				// Fulfilled
-				function() {
-					assert.ok(false, "this must never be called");
-				},
-				// Rejected
-				function(oError) {
-					assert.ok(true, "promise is rejected");
-					assert.ok(oError instanceof Error, "proper rejection reason is provided");
-					assert.ok(
-						oError.toString().indexOf("while creating overlay, DesignTime instance has been destroyed") !== -1,
-						"proper rejection reason is provided"
-					);
-					assert.notOk(OverlayRegistry.getOverlay(oButton), "no overlay for Button is registered");
-					assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' is not called");
-					assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' is not called");
-					fnDone();
-				}
-			);
+			try {
+				await this.oDesignTime.createOverlay(oPanel);
+			} catch (oError) {
+				assert.ok(Log.error.notCalled, "then the error must not be raised");
+				assert.ok(true, "promise is rejected");
+				assert.ok(oError instanceof Error, "proper rejection reason is provided");
+				assert.ok(
+					oError.toString().indexOf("while creating overlay, DesignTime instance has been destroyed") !== -1,
+					"proper rejection reason is provided"
+				);
+				assert.notOk(OverlayRegistry.getOverlay(oButton), "no overlay for Button is registered");
+				assert.notOk(fnElementOverlayCreatedSpy.called, "then event 'elementOverlayCreated' is not called");
+				assert.notOk(fnElementOverlayDestroyedSpy.called, "then event 'elementOverlayDestroyed' is not called");
+				oPanel.destroy();
+			}
 		});
 
 		QUnit.test("when an overlay with actionsFromResponsibleElement is created", function(assert) {
