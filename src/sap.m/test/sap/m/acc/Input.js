@@ -183,7 +183,7 @@ sap.ui.define([
 						})
 					}).setModel(oModel1).bindAggregation("suggestionItems", "/", new Item({text: "{name}"}))
 				]
-			}).addStyleClass("sapUiContentPadding")
+			}).addStyleClass("sapUiContentPadding sapUiMediumMarginBottom")
 		]
 	});
 	app.addPage(page1);
