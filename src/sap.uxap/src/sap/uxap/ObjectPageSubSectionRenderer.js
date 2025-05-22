@@ -22,7 +22,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 			return;
 		}
 
-		aActions = oControl._getHeaderToolbar().getContent() || [];
+		aActions = oControl._getHeaderToolbar()?.getContent() || [];
 		bHasActions = aActions.length > 2;
 		bHasVisibleActions = oControl._hasVisibleActions();
 		bHasTitle = oControl._isTitleVisible();
