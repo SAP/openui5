@@ -5,8 +5,8 @@ sap.ui.define([
 	"./RowMode",
 	"../utils/TableUtils",
 	"sap/ui/Device",
-	"sap/m/Menu",
-	"sap/m/MenuItem",
+	"sap/ui/unified/Menu",
+	"sap/ui/unified/MenuItem",
 	"sap/ui/core/InvisibleMessage"
 ], function(
 	RowMode,
@@ -553,7 +553,7 @@ sap.ui.define([
 					new MenuItem({
 						text: TableUtils.getResourceText("TBL_RSZ_ROW_UP"),
 						shortcutText: TableUtils.getResourceText("TBL_RSZ_ROW_UP_SHORTCUT"),
-						press: function() {
+						select: function() {
 							const iRowCount = oMode.getActualRowCount();
 							_private(oMode).rowCount = Math.max(iRowCount - 1, oMode.getMinRowCount());
 							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
@@ -562,7 +562,7 @@ sap.ui.define([
 					new MenuItem({
 						text: TableUtils.getResourceText("TBL_RSZ_ROW_DOWN"),
 						shortcutText: TableUtils.getResourceText("TBL_RSZ_ROW_DOWN_SHORTCUT"),
-						press: function() {
+						select: function() {
 							const iRowCount = oMode.getActualRowCount();
 							_private(oMode).rowCount = Math.min(iRowCount + 1, oMode._getMaxRowCount());
 							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
@@ -571,7 +571,7 @@ sap.ui.define([
 					new MenuItem({
 						text: TableUtils.getResourceText("TBL_RSZ_MINIMIZE"),
 						shortcutText: TableUtils.getResourceText("TBL_RSZ_MINIMIZE_SHORTCUT"),
-						press: function() {
+						select: function() {
 							_private(oMode).rowCount = oMode.getMinRowCount();
 							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
 						}
@@ -579,7 +579,7 @@ sap.ui.define([
 					new MenuItem({
 						text: TableUtils.getResourceText("TBL_RSZ_MAXIMIZE"),
 						shortcutText: TableUtils.getResourceText("TBL_RSZ_MAXIMIZE_SHORTCUT"),
-						press: function() {
+						select: function() {
 							_private(oMode).rowCount = oMode._getMaxRowCount();
 							oMode.updateTable(TableUtils.RowsUpdateReason.Render);
 						}
