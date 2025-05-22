@@ -165,7 +165,7 @@ sap.ui.define([
 					new Label({text: "Price", labelFor: "I10"}),
 					new Input("I10", { value: "220", description: "EUR", fieldWidth: "30%", change: handleChange}),
 					new Label({text: "only \"hello\" is valid", labelFor: "I11"}),
-					new Input("I11", {type: InputType.Text, value: "Hello", valueStateText: "Valid Value is Hello", change: handleChange2 }),
+					new Input("I11", {type: InputType.Text, value: "hello", valueStateText: "Valid Value is hello", change: handleChange2 }),
 					new Label({text: "Input with aria-describedby", labelFor: "I13"}),
 					new Input("I13", {type: InputType.Text, change: handleChange, ariaDescribedBy: "descriptionNodeId"}),
 					new Label({text: "Input with value state Error", labelFor: "I12"}),
