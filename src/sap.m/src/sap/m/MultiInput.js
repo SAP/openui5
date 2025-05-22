@@ -72,6 +72,8 @@ function(
 	* <li> When a single value is copied and pasted in the field, it is shown as a text value, as further editing might be required before it is converted into a token.</li>
 	* <li> Provide meaningful labels for all input fields. Do not use the placeholder as a replacement for the label.</li>
 	* <li> The <code>showValueHelp</code> property is overwritten and after initialization of the control, its value becomes <code>truthy</code>.</li>
+	* <li> A mix of read-only and deletable tokens isn't supported. </li>
+	* <li> The read-only state of tokens should be controlled using the <code>editable</code> property of the MultiInput control.</li>
 	* </ul>
 	* <h3>Usage</h3>
 	* <h4>When to use:</h4>

@@ -12,8 +12,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/Device"
-], function(Library, qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, DragInfo, Panel, mobileLibrary, nextUIUpdate, jQuery, Device) {
+	"sap/ui/Device",
+	"sap/ui/core/Element"
+], function(Library, qutils, createAndAppendDiv, Link, Text, KeyCodes, coreLibrary, DragInfo, Panel, mobileLibrary, nextUIUpdate, jQuery, Device, Element) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -365,9 +366,9 @@ sap.ui.define([
 		oLink.setSubtle(true);
 		await nextUIUpdate();
 
+		let oDescribedByInvisibleText = Element.getElementById(oLinkDomRef.getAttribute("aria-describedby"));
 		assert.strictEqual(oLinkDomRef.getAttribute("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
-		assert.strictEqual(((oLinkDomRef.getAttribute("aria-describedby").indexOf(oLink._sAriaLinkSubtleId)) !== -1), true,
-			"Subtle ID: " + oLink._sAriaLinkSubtleId + " should be included in aria-describedby");
+		assert.strictEqual(oDescribedByInvisibleText.getText(), oRb.getText("LINK_SUBTLE"), "Subtle text description is properly set");
 
 		oLink.setSubtle(false);
 		await nextUIUpdate();
@@ -378,9 +379,9 @@ sap.ui.define([
 		oLink.setEmphasized(true);
 		await nextUIUpdate();
 
+		oDescribedByInvisibleText = Element.getElementById(oLinkDomRef.getAttribute("aria-describedby"));
 		assert.strictEqual(oLinkDomRef.getAttribute("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
-		assert.strictEqual(((oLinkDomRef.getAttribute("aria-describedby").indexOf(oLink._sAriaLinkEmphasizedId)) !== -1), true,
-			"Emphasized ID: " + oLink._sAriaLinkEmphasizedId + " should be included in aria-describedby");
+		assert.strictEqual(oDescribedByInvisibleText.getText(), oRb.getText("LINK_EMPHASIZED"), "Emphasized text description is properly set");
 
 		oLink.setEmphasized(false);
 		await nextUIUpdate();
@@ -582,16 +583,20 @@ sap.ui.define([
 				ariaDescribedBy: oDescr,
 				subtle: true,
 				emphasized: true
-			}),
-			oLinkDescription;
+			});
 
 		oLink.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		oLinkDescription = oLink.$().attr("aria-describedby");
-		assert.ok(oLinkDescription.indexOf(oDescr.getId()) !== -1, "Default description is still present");
-		assert.ok(oLinkDescription.indexOf(oLink._sAriaLinkSubtleId) !== -1, "Subtle description is present");
-		assert.ok(oLinkDescription.indexOf(oLink._sAriaLinkEmphasizedId) !== -1, "Emphasized description is present");
+		var aLinkDescriptions = oLink.$().attr("aria-describedby")
+			.split(" ")
+			.map(function (sId) {
+				return Element.getElementById(sId).getText();
+			});
+
+		assert.strictEqual(aLinkDescriptions[0], oDescr.getText(), "Default description is present");
+		assert.strictEqual(aLinkDescriptions[1], oRb.getText("LINK_SUBTLE"), "Subtle description is present");
+		assert.strictEqual(aLinkDescriptions[2], oRb.getText("LINK_EMPHASIZED"), "Emphasized description is present");
 
 		oDescr.destroy();
 		oLink.destroy();

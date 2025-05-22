@@ -133,20 +133,9 @@ sap.ui.define([
 			},
 			events: {
 				/**
-				 * Fired if the Stack changes because of a change execution or if all commands get removed.
-				 * In case of change execution the modified event will be fired after the commandExecuted event.
+				 * Fired if the Stack changes because of a change execution or if commands get removed.
 				 */
-				modified: {},
-
-				/**
-				 * Fired after a successful execution of a command (also includes undo).
-				 */
-				commandExecuted: {
-					parameters: {
-						command: {type: "object"},
-						undo: {type: "boolean"}
-					}
-				}
+				modified: {}
 			}
 		}
 	});
@@ -184,31 +173,9 @@ sap.ui.define([
 		return Promise.resolve(oStack);
 	};
 
-	/**
-	* @param {function} fnHandler Handler are called when commands are executed or undone. They get parameter
-	* like the commandExecuted event and the stack will wait for any processing
-	* until they are done.
-	*/
-	Stack.prototype.addCommandExecutionHandler = function(fnHandler) {
-		this._aCommandExecutionHandler.push(fnHandler);
-	};
-
-	Stack.prototype.removeCommandExecutionHandler = function(fnHandler) {
-		var i = this._aCommandExecutionHandler.indexOf(fnHandler);
-		if (i > -1) {
-			this._aCommandExecutionHandler.splice(i, 1);
-		}
-	};
-
 	Stack.prototype.init = function() {
 		this._aCommandExecutionHandler = [];
 		this._toBeExecuted = -1;
-	};
-
-	Stack.prototype._waitForCommandExecutionHandler = function(mParam) {
-		return Promise.all(this._aCommandExecutionHandler.map(function(fnHandler) {
-			return fnHandler(mParam);
-		}));
 	};
 
 	Stack.prototype._getCommandToBeExecuted = function() {
@@ -333,21 +300,14 @@ sap.ui.define([
 			}).then(async () => {
 				var oCommand = this._getCommandToBeExecuted();
 				if (oCommand) {
-					var mParam = {
-						command: oCommand,
-						undo: false
-					};
-
 					try {
 						await addCommandChangesToPersistence.call(this, oCommand);
 						await oCommand.execute();
-						await this._waitForCommandExecutionHandler(mParam);
 						this._toBeExecuted--;
 						const aDiscardedChanges = oCommand.getDiscardedChanges?.();
 						if (aDiscardedChanges) {
 							handleDiscardedChanges.call(this, aDiscardedChanges, false);
 						}
-						this.fireCommandExecuted(mParam);
 						this.fireModified();
 					} catch (oCaughtError) {
 						const oError = oCaughtError || new Error("Executing of the change failed.");
@@ -385,17 +345,11 @@ sap.ui.define([
 					var oCommand = this._getCommandToBeExecuted();
 					const aDiscardedChanges = oCommand.getDiscardedChanges?.();
 					if (oCommand) {
-						var mParam = {
-							command: oCommand,
-							undo: true
-						};
 						await oCommand.undo();
 						removeCommandChangesFromPersistence.call(this, oCommand);
-						this._waitForCommandExecutionHandler(mParam);
 						if (aDiscardedChanges) {
 							handleDiscardedChanges.call(this, aDiscardedChanges, true);
 						}
-						this.fireCommandExecuted(mParam);
 						this.fireModified();
 					}
 				}

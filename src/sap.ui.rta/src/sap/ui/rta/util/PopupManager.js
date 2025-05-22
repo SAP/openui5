@@ -3,38 +3,71 @@
  */
 
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
+	"sap/base/util/restricted/_curry",
 	"sap/m/InstanceManager",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Component",
+	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/Component",
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Element",
-	"sap/ui/dt/util/ZIndexManager",
-	"sap/m/Dialog",
-	"sap/m/Popover",
-	"sap/base/util/restricted/_curry"
+	"sap/ui/fl/Utils"
 ], function(
-	ManagedObject,
+	_curry,
 	InstanceManager,
+	ManagedObject,
+	Component,
+	ZIndexManager,
 	Overlay,
 	OverlayRegistry,
-	flUtils,
-	Component,
-	ComponentContainer,
-	Element,
-	ZIndexManager,
-	Dialog,
-	Popover,
-	_curry
+	FlUtils
 ) {
 	"use strict";
 
-	var FOCUS_EVENT_NAMES = {
+	const FOCUS_EVENT_NAMES = {
 		add: "_activateFocusHandle",
 		remove: "_deactivateFocusHandle"
 	};
+
+	// TODO harmonize with FlUtils.getAppComponentForControl, todos#9
+	function getAppComponentForControl(oControl) {
+		let oComponent;
+		let oAppComponent;
+
+		if (oControl.isA("sap.ui.core.Component")) {
+			oComponent = oControl;
+		} else {
+			oComponent = getComponentForControl(oControl);
+		}
+
+		if (oComponent) {
+			oAppComponent = FlUtils.getAppComponentForControl(oComponent);
+		}
+		return oAppComponent;
+	}
+
+	function getComponentForControl(oControl) {
+		let oComponent;
+		let oRootComponent;
+		let oParentControl;
+		if (oControl) {
+			oComponent = Component.getOwnerComponentFor(oControl);
+			if (
+				!oComponent
+				&& typeof oControl.getParent === "function"
+				&& oControl.getParent()?.isA("sap.ui.core.Element")
+			) {
+				oParentControl = oControl.getParent();
+			} else if (oComponent) {
+				oParentControl = oComponent;
+			}
+
+			if (oParentControl) {
+				oRootComponent = getComponentForControl(oParentControl);
+			}
+		}
+
+		return oRootComponent || oComponent;
+	}
 
 	/**
 	 * Constructor for a new sap.ui.rta.util.PopupManager
@@ -46,7 +79,7 @@ sap.ui.define([
 	 * @since 1.48
 	 * @alias sap.ui.rta.util.PopupManager
 	 */
-	var PopupManager = ManagedObject.extend("sap.ui.rta.util.PopupManager", {
+	const PopupManager = ManagedObject.extend("sap.ui.rta.util.PopupManager", {
 		metadata: {
 			properties: {
 				rta: "any"
@@ -118,20 +151,17 @@ sap.ui.define([
 	 * @public
 	 */
 	PopupManager.prototype.getCategorizedOpenPopups = function() {
-		var aOpenDialogs;
-		var aOpenPopovers;
-
 		// check if dialogs are already open when RTA is started
-		aOpenDialogs = InstanceManager.getOpenDialogs();
+		const aOpenDialogs = InstanceManager.getOpenDialogs();
 		// separate adaptable dialogs from all supported dialogs
-		var oCategorizedDialogs = this._getValidatedPopups(aOpenDialogs);
+		const oCategorizedDialogs = this._getValidatedPopups(aOpenDialogs);
 
 		// check if popovers are already open when RTA is started
-		aOpenPopovers = InstanceManager.getOpenPopovers();
+		const aOpenPopovers = InstanceManager.getOpenPopovers();
 		// separate adaptable popovers from all supported popovers
-		var oCategorizedPopovers = this._getValidatedPopups(aOpenPopovers);
+		const oCategorizedPopovers = this._getValidatedPopups(aOpenPopovers);
 
-		var oOpenPopups = {
+		const oOpenPopups = {
 			aDialogs: oCategorizedDialogs.relevant,
 			aPopovers: oCategorizedPopovers.relevant,
 			aAllSupportedPopups: oCategorizedDialogs.allSupported.concat(oCategorizedPopovers.allSupported)
@@ -148,12 +178,12 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._getValidatedPopups = function(aOpenPopups) {
-		var aAllSupportedPopups = [];
+		const aAllSupportedPopups = [];
 		aOpenPopups = aOpenPopups.filter(function(oPopupElement) {
 			if (this._isPopupAdaptable(oPopupElement)) {
 				aAllSupportedPopups.push(oPopupElement);
 				return true;
-			} else if (oPopupElement instanceof Dialog) {
+			} else if (oPopupElement.isA("sap.m.Dialog")) {
 				// all modal type popups are supported for which modal property is later turned true, when in Adaptation mode
 				aAllSupportedPopups.push(oPopupElement);
 			}
@@ -178,8 +208,8 @@ sap.ui.define([
 		return Array.isArray(oPopup.getContent())
 			? oPopup.getContent().some(
 				function(oContent) {
-					if (oContent instanceof ComponentContainer) {
-						return this.oRtaRootAppComponent === this._getAppComponentForControl(Component.getComponentById(oContent.getComponent()));
+					if (oContent.isA("sap.ui.core.ComponentContainer")) {
+						return this.oRtaRootAppComponent === getAppComponentForControl(Component.getComponentById(oContent.getComponent()));
 					}
 					return undefined;
 				}.bind(this))
@@ -194,7 +224,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._isSupportedPopup = function(oPopup) {
-		return (oPopup instanceof Dialog || oPopup instanceof Popover);
+		return (oPopup.isA("sap.m.Dialog") || oPopup.isA("sap.m.Popover"));
 	};
 
 	/**
@@ -206,10 +236,10 @@ sap.ui.define([
 	PopupManager.prototype.setRta = function(oRta) {
 		if (oRta && oRta._oDesignTime) {
 			this.setProperty("rta", oRta);
-			var oRootControl = oRta.getRootControlInstance();
-			this.oRtaRootAppComponent = this._getAppComponentForControl(oRootControl);
+			const oRootControl = oRta.getRootControlInstance();
+			this.oRtaRootAppComponent = getAppComponentForControl(oRootControl);
 			// listener for RTA mode change
-			var fnModeChange = this._onModeChange.bind(this);
+			const fnModeChange = this._onModeChange.bind(this);
 			oRta.attachModeChanged(fnModeChange);
 			this._overrideInstanceFunctions();
 		}
@@ -234,8 +264,8 @@ sap.ui.define([
 	 * @param  {sap.ui.base.Event} oEvent The Event triggered by the mode change
 	 */
 	PopupManager.prototype._onModeChange = function(oEvent) {
-		var sNewMode = oEvent.getParameters().mode;
-		var fnApplyFocusAndSetModal = function(sMode, oPopover) {
+		const sNewMode = oEvent.getParameters().mode;
+		const fnApplyFocusAndSetModal = function(sMode, oPopover) {
 			if (sMode === "navigation") {
 				// add focus handlers
 				oPopover.oPopup[this._getFocusEventName("add")]();
@@ -317,7 +347,7 @@ sap.ui.define([
 	PopupManager.prototype._overrideAddFunctions = function(fnOriginalFunction) {
 		return function(...aArgs) {
 			const [oPopupElement] = aArgs;
-			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, aArgs);
+			const vOriginalReturn = fnOriginalFunction.apply(InstanceManager, aArgs);
 			if (this._isSupportedPopup(oPopupElement)) {
 				if (this._isPopupAdaptable(oPopupElement)
 					&& this.getRta()._oDesignTime) {
@@ -325,7 +355,7 @@ sap.ui.define([
 					// PopupManager internal method
 					oPopupElement.attachEventOnce("afterOpen", this.fireOpen, this);
 					this._setModal(true, oPopupElement);
-				} else if (!(oPopupElement instanceof Popover)) {
+				} else if (!(oPopupElement.isA("sap.m.Popover"))) {
 					// for all popups which are non-adaptable and non-popovers
 					this._setModal(true, oPopupElement);
 				}
@@ -343,7 +373,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._setModal = function(bSetModal, oPopupElement) {
-		var bOriginalModalState = this._oModalState.get(oPopupElement.oPopup);
+		const bOriginalModalState = this._oModalState.get(oPopupElement.oPopup);
 		if (typeof bOriginalModalState !== "boolean" && bSetModal && this.getRta().getMode() !== "navigation") {
 			this._oModalState.set(oPopupElement.oPopup, oPopupElement.oPopup.getModal());
 			if (this._isPopupAdaptable(oPopupElement)) {
@@ -361,7 +391,7 @@ sap.ui.define([
 
 	PopupManager.prototype._applyPopupAttributes = function(mPropertyBag) {
 		// check if popups are open
-		var oRelevantPopups = this.getCategorizedOpenPopups();
+		const oRelevantPopups = this.getCategorizedOpenPopups();
 
 		["aDialogs", "aPopovers"].forEach(function(sKey) {
 			if (oRelevantPopups[sKey].length > 0) {
@@ -390,9 +420,9 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._applyPopupPatch = function(oPopupElement) {
-		var oOverlayContainer = Overlay.getOverlayContainer();
-		var {oPopup} = oPopupElement;
-		var aAutoCloseAreas = [
+		const oOverlayContainer = Overlay.getOverlayContainer();
+		const {oPopup} = oPopupElement;
+		const aAutoCloseAreas = [
 			oPopup.oContent.getDomRef(),
 			oOverlayContainer
 		].concat(
@@ -400,8 +430,8 @@ sap.ui.define([
 		);
 
 		if (this.getRta().getShowToolbars()) {
-			var oRtaToolbar = this.getRta().getToolbar();
-			var bVisible = !!oRtaToolbar.getVisible();
+			const oRtaToolbar = this.getRta().getToolbar();
+			const bVisible = !!oRtaToolbar.getVisible();
 			// Check if  RTA is not started -> toolbar is not visible
 			if (!bVisible) {
 				this.getRta().attachEventOnce("start", function() {
@@ -417,7 +447,7 @@ sap.ui.define([
 		// cases when onAfterRendering is called after this function - app inside popup
 		this.fnOriginalPopupOnAfterRendering ||= oPopup.onAfterRendering;
 		oPopup.onAfterRendering = function(...aArgs) {
-			var vOriginalReturn = this.fnOriginalPopupOnAfterRendering.apply(oPopup, aArgs);
+			const vOriginalReturn = this.fnOriginalPopupOnAfterRendering.apply(oPopup, aArgs);
 			oPopup[this._getFocusEventName("remove")]();
 			return vOriginalReturn;
 		}.bind(this);
@@ -453,7 +483,7 @@ sap.ui.define([
 	PopupManager.prototype._overrideRemoveFunctions = function(fnOriginalFunction) {
 		return function(...aArgs) {
 			const [oPopupElement] = aArgs;
-			var vOriginalReturn = fnOriginalFunction.apply(InstanceManager, aArgs);
+			const vOriginalReturn = fnOriginalFunction.apply(InstanceManager, aArgs);
 			if (this._isSupportedPopup(oPopupElement)) {
 				if (this._isPopupAdaptable(oPopupElement)
 					&& this.getRta()._oDesignTime) {
@@ -469,60 +499,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the app component of the passed control is exists
-	 *
-	 * @param {sap.ui.core.Control} oControl Control object
-	 * @returns {object|undefined} component object if exists
-	 * @private
-	 */
-	PopupManager.prototype._getAppComponentForControl = function(oControl) {
-		var oComponent;
-		var oAppComponent;
-
-		if (oControl instanceof Component) {
-			oComponent = oControl;
-		} else {
-			oComponent = this._getComponentForControl(oControl);
-		}
-
-		if (oComponent) {
-			oAppComponent = flUtils.getAppComponentForControl(oComponent);
-		}
-		return oAppComponent;
-	};
-
-	/**
-	 * Returns the component of the passed control, navigating through control tree, except if parent is sap.ui.core.UIArea
-	 *
-	 * @param {sap.ui.core.Control} oControl Control object
-	 * @returns {object|undefined} component object if exists
-	 * @private
-	 */
-	PopupManager.prototype._getComponentForControl = function(oControl) {
-		var oComponent;
-		var oRootComponent;
-		var oParentControl;
-		if (oControl) {
-			oComponent = Component.getOwnerComponentFor(oControl);
-			if (
-				!oComponent
-				&& typeof oControl.getParent === "function"
-				&& oControl.getParent() instanceof Element
-			) {
-				oParentControl = oControl.getParent();
-			} else if (oComponent) {
-				oParentControl = oComponent;
-			}
-
-			if (oParentControl) {
-				oRootComponent = this._getComponentForControl(oParentControl);
-			}
-		}
-
-		return oRootComponent || oComponent;
-	};
-
-	/**
 	 * Create popup overlays
 	 *
 	 * @param {object} oEvent Browser Event or sap.ui.core.Control object
@@ -532,7 +508,7 @@ sap.ui.define([
 		if (!oEvent) {
 			return;
 		}
-		var oPopupElement = oEvent.isA("sap.ui.base.Event") ? oEvent.getSource() : oEvent;
+		const oPopupElement = oEvent.isA("sap.ui.base.Event") ? oEvent.getSource() : oEvent;
 
 		// when application is opened in a popup, rootElement should not be added more than once
 		if (
@@ -581,7 +557,7 @@ sap.ui.define([
 	 * @private
 	 */
 	PopupManager.prototype._removePopupPatch = function(oPopupElement) {
-		var {oPopup} = oPopupElement;
+		const {oPopup} = oPopupElement;
 		oPopup[this._getFocusEventName("add")]();
 		if (this.fnOriginalPopupOnAfterRendering) {
 			oPopup.onAfterRendering = this.fnOriginalPopupOnAfterRendering;
@@ -589,7 +565,7 @@ sap.ui.define([
 	};
 
 	function checkPopupAncestorsAdaptation(oPopupElement) {
-		if (!oPopupElement || oPopupElement instanceof Component) {
+		if (!oPopupElement || oPopupElement.isA("sap.ui.core.Component")) {
 			return true;
 		}
 		if (!oPopupElement.isPopupAdaptationAllowed || oPopupElement.isPopupAdaptationAllowed()) {
@@ -607,7 +583,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var oPopupAppComponent = this._getAppComponentForControl(oPopupElement);
+		const oPopupAppComponent = getAppComponentForControl(oPopupElement);
 		if (
 			(oPopupAppComponent && this.oRtaRootAppComponent === oPopupAppComponent)
 			|| this._isComponentInsidePopup(oPopupElement)

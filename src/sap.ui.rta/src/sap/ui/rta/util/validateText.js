@@ -10,8 +10,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sEmptyTextKey = "\xa0";
-	var oValidators = {
+	const sEmptyTextKey = "\xa0";
+	const oValidators = {
 		noEmptyText: {
 			validatorFunction(sNewText) {
 				return sNewText !== sEmptyTextKey;
@@ -24,8 +24,8 @@ sap.ui.define([
 		if (sOldText === sNewText) {
 			throw Error("sameTextError");
 		}
-		var oBindingParserResult;
-		var bError;
+		let oBindingParserResult;
+		let bError;
 
 		try {
 			oBindingParserResult = BindingParser.complexParser(sNewText, undefined, true);
@@ -40,11 +40,11 @@ sap.ui.define([
 
 	return function(sNewText, sOldText, oAction) {
 		checkPreconditionsAndThrowError(sNewText, sOldText);
-		var sErrorText;
-		var aValidators = oAction && oAction.validators || [];
+		let sErrorText;
+		const aValidators = oAction && oAction.validators || [];
 
 		aValidators.some(function(vValidator) {
-			var oValidator;
+			let oValidator;
 
 			if (
 				typeof vValidator === "string" && oValidators[vValidator]

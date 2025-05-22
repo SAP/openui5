@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Log,
 	MessageBox,
 	Control,
+	Element,
 	Lib,
 	InitialFlexAPI,
 	PersistenceWriteAPI,
@@ -325,7 +327,7 @@ sap.ui.define([
 		QUnit.test("When the passed root control does not meet expectations", function(assert) {
 			setIsKeyUser(true);
 			return adaptationStarter({
-				rootControl: {},
+				rootControl: new Element(),
 				flexSettings: {
 					layer: "CUSTOMER"
 				}

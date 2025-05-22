@@ -17,9 +17,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+	const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
-	var CombineVisualization = {};
+	const CombineVisualization = {};
 
 	/**
 	 * Creates a localized description for combine changes based on the provided
@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @returns {object} Map containing localized description text and tooltip
 	 */
 	CombineVisualization.getDescription = function(mPayload, sLabel, mPropertyBag) {
-		var iOriginalSelectorCount = (mPayload.originalSelectors || []).length;
+		const iOriginalSelectorCount = (mPayload.originalSelectors || []).length;
 		if (iOriginalSelectorCount < 2) {
 			// Fallback if no payload was provided
 			return {
@@ -48,14 +48,14 @@ sap.ui.define([
 			};
 		}
 
-		var oAppComponent = mPropertyBag.appComponent;
-		var aOriginalSelectors = mPayload.originalSelectors;
-		var aLabels = aOriginalSelectors.map(function(oSelector) {
-			var sId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
-			var oControl = Element.getElementById(sId);
+		const oAppComponent = mPropertyBag.appComponent;
+		const aOriginalSelectors = mPayload.originalSelectors;
+		const aLabels = aOriginalSelectors.map(function(oSelector) {
+			const sId = JsControlTreeModifier.getControlIdBySelector(oSelector, oAppComponent);
+			const oControl = Element.getElementById(sId);
 			return oControl ? ElementUtil.getLabelForElement(oControl) : sId;
 		});
-		var aShortLabels = aLabels.map(ChangeVisualizationUtils.shortenString);
+		const aShortLabels = aLabels.map(ChangeVisualizationUtils.shortenString);
 
 		if (iOriginalSelectorCount === 2) {
 			return {
