@@ -401,3 +401,39 @@
 		}
 	}
 }
+
+.sapMPlanCal .sapMTblCellFocusable.sapMPlanCalAppRow:focus {
+	position: relative;
+	outline: none;
+
+	&::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0.0625rem;
+		bottom: 0.0625rem;
+		right: 0.0625rem;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+	}
+}
+
+.sapMPlanCal .sapMLIBFocusable:focus {
+	position: relative;
+	outline: none;
+
+	&.sapMListTblRow:not(.sapMTableRowCustomFocus)::after {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0.0625rem;
+		bottom: 0.0625rem;
+		right: 0.0625rem;
+		border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
+	}
+
+	.sapMListTblHighlightCell,
+	.sapMListTblNavigatedCell {
+		display: block;
+	}
+
+}

@@ -317,22 +317,22 @@ sap.ui.define([
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "switch", "AriaRole");
 		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_SWITCH"), "Type");
-		assert.strictEqual(oInfo.description, oSwitch.getCustomTextOff(), "Description");
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_OFF") + ", " + oSwitch.getCustomTextOff(), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 
 		oSwitch.setState(true);
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oSwitch.getCustomTextOn(), "Description");
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ON") + ", " + oSwitch.getCustomTextOn(), "Description");
 
 		oSwitch.setCustomTextOn("");
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.notOk(oInfo.description, "There is no additional default description of the state");
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ON"), "Description");
 
 		oSwitch.setType("AcceptReject");
 		oInfo = oSwitch.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
+		assert.strictEqual(oInfo.description, oBundle.getText("SWITCH_ON") + ", " + oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
 
 		oSwitch.setEnabled(false);
 		oInfo = oSwitch.getAccessibilityInfo();
@@ -995,4 +995,5 @@ sap.ui.define([
 		// assert
 		assert.notOk($IT.html(), "There is no default 'On' state text");
 	});
+
 });

@@ -69,8 +69,10 @@ function(
 			const sLogoPath = this.getUshellApi().getLogo();
 
 			if (sLogoPath) {
-				// Unstable: if FLP changes ID of <img> element, logo could be not found
-				const oLogo = this._oFioriHeader.getDomRef().querySelector("#shell-header-icon");
+				// get all images from the Fiori Header
+				const aHeaderImages = this._oFioriHeader.getDomRef().querySelectorAll("img");
+				// check if one of the images is the logo
+				const oLogo = Array.from(aHeaderImages).find((oImage) => oImage.src.includes(sLogoPath));
 				let iWidth;
 				let iHeight;
 

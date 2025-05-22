@@ -650,7 +650,7 @@ sap.ui.define([
 		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.SelectAll, "Correct value forwarded to inner ListControl.");
 	});
 
-	QUnit.skip("Check 'onlocalizationChanged'", function(assert) {
+	QUnit.test("Check 'onlocalizationChanged'", function(assert) {
 		var oPanel = this.oSelectionPanel;
 		oPanel.setShowHeader(true);
 		// Arrange

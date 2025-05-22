@@ -2,12 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define([
-],
-function() {
+sap.ui.define([], function() {
 	"use strict";
 
-	var module = {};
+	const module = {};
 
 	/**
 	 * CSS Transition helper
@@ -24,8 +22,8 @@ function() {
 			oElement.addEventListener("transitionend", fnResolve, {once: true});
 
 			// perform animation in the next animation frame, normally 16-17ms later.
-			var iTimestampInitial;
-			var fnAnimCallback = function(iTimestamp) {
+			let iTimestampInitial;
+			const fnAnimCallback = function(iTimestamp) {
 				iTimestampInitial ||= iTimestamp;
 				if (iTimestamp !== iTimestampInitial) {
 					fnCallback();

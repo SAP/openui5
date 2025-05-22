@@ -13,7 +13,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var MoveVisualization = {};
+	const MoveVisualization = {};
 
 	/**
 	 * Creates a localized description and button text for move changes based on the provided
@@ -27,17 +27,17 @@ sap.ui.define([
 	 * @returns {object} Localized description text and button text
 	 */
 	MoveVisualization.getDescription = function(mPayload, sLabel, mPropertyBag) {
-		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [ChangeVisualizationUtils.shortenString(sLabel)]);
-		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [sLabel]);
-		var sButtonText;
-		var oAppComponent = mPropertyBag.appComponent;
+		const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		let sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [ChangeVisualizationUtils.shortenString(sLabel)]);
+		let sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [sLabel]);
+		let sButtonText;
+		const oAppComponent = mPropertyBag.appComponent;
 
-		var sSourceId = (
+		const sSourceId = (
 			mPayload.sourceContainer
 			&& JsControlTreeModifier.getControlIdBySelector(mPayload.sourceContainer, oAppComponent)
 		);
-		var sTargetId = (
+		const sTargetId = (
 			mPayload.targetContainer
 			&& JsControlTreeModifier.getControlIdBySelector(mPayload.targetContainer, oAppComponent)
 		);

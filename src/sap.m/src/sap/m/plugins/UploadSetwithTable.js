@@ -855,6 +855,8 @@ sap.ui.define([
 		oTextField.addStyleClass("sapUiTinyMarginBegin");
 		oTextField.addStyleClass("sapUiTinyMarginTop");
 
+		oInput.addAriaDescribedBy(oTextField.getId());
+
 		// Label for Input
 		const oLabel = new Label({
 			text: this._oRb.getText("UPLOADSET_WITH_TABLE_DOCUMENT_RENAME_INPUT_LABEL"),

@@ -2,12 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define([
-], function(
-) {
+sap.ui.define([], function() {
 	"use strict";
 
-	var ChangeVisualizationUtils = {};
+	const ChangeVisualizationUtils = {};
 
 	/**
 	 *
@@ -22,10 +20,10 @@ sap.ui.define([
 		if (!sString) {
 			return null;
 		}
-		var iStringLength = sString.length;
+		const iStringLength = sString.length;
 		if (iStringLength > 60) {
-			var sFirstPart = sString.substring(0, 27);
-			var sLastPart = sString.substring(iStringLength - 27);
+			const sFirstPart = sString.substring(0, 27);
+			const sLastPart = sString.substring(iStringLength - 27);
 			sString = `${sFirstPart}(...)${sLastPart}`;
 		}
 		return sString;

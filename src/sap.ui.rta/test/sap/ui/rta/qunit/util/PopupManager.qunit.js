@@ -9,15 +9,14 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/ui/base/Event",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
-	"sap/ui/core/UIArea",
-	"sap/ui/core/UIComponent",
 	"sap/ui/core/Popup",
+	"sap/ui/core/UIComponent",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/dt/Overlay",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/layout/form/Form",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -31,15 +30,14 @@ sap.ui.define([
 	Popover,
 	Event,
 	XMLView,
-	ComponentContainer,
 	Component,
+	ComponentContainer,
 	Element,
-	UIArea,
-	UIComponent,
 	Popup,
+	UIComponent,
 	ZIndexManager,
 	Overlay,
-	PersistenceWriteAPI,
+	FlUtils,
 	Form,
 	nextUIUpdate,
 	RuntimeAuthoring,
@@ -48,7 +46,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	sinon.stub(PersistenceWriteAPI, "save");
 	let oViewPromise;
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
@@ -145,6 +142,7 @@ sap.ui.define([
 			assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, undefined, "then RTA root element is not set for PopupManager before RTA is started");
 			assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 0, "then '_overrideInstanceFunctions' not called since rta is not set");
 		});
+
 		// _getFocusEventName
 		QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
 			assert.strictEqual(this.oRta.getPopupManager()._getFocusEventName("add"), "_activateFocusHandle", "then 'add' as parameter returns _addFocusEventListeners");
@@ -163,7 +161,7 @@ sap.ui.define([
 			}.bind(this));
 			this.oDialog.attachAfterOpen(function() {
 				return this.oRta.start().then(function() {
-					assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, this.oRta.getPopupManager()._getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
+					assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, FlUtils.getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
 					assert.strictEqual(this.fnAddPopupInstanceSpy.callCount, 1, "then '_overrideAddPopupInstance' is called once since RTA is set");
 					assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 1, "then '_overrideInstanceFunctions' is called once since RTA is set");
 					assert.strictEqual(this.fnRemovePopupInstanceSpy.callCount, 1, "then '_overrideRemovePopupInstance' is called once since RTA is set");
@@ -244,7 +242,7 @@ sap.ui.define([
 		QUnit.test("when _overrideInstanceFunctions is called with no open dialog", function(assert) {
 			this.oDialog.open();
 			assert.strictEqual(this.oRta.getPopupManager().getRta(), this.oRta, "then RTA instance is set");
-			assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, this.oRta.getPopupManager()._getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
+			assert.strictEqual(this.oRta.getPopupManager().oRtaRootAppComponent, FlUtils.getAppComponentForControl(oComp.getAggregation("rootControl")), "then component of RTA root element is set for PopupManager");
 			assert.strictEqual(this.fnAddPopupInstanceSpy.callCount, 1, "then '_overrideAddPopupInstance' is called once since RTA is set");
 			assert.strictEqual(this.fnOverrideFunctionsSpy.callCount, 1, "then '_overrideInstanceFunctions' is called once since RTA is set");
 			assert.strictEqual(this.fnRemovePopupInstanceSpy.callCount, 1, "then '_overrideRemovePopupInstance' is called once since RTA is set");
@@ -483,30 +481,6 @@ sap.ui.define([
 				done();
 			}.bind(this));
 			this.oPopover.openBy(oComponentContainer);
-		});
-
-		QUnit.test("when _getAppComponentForControl is called with a dialog created inside Component.runAsOwner", function(assert) {
-			sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
-			var oAppComponentForDialog = this.oRta.getPopupManager()._getAppComponentForControl(this.oDialog);
-			assert.strictEqual(oAppComponentForDialog, oComp, "then main component returned");
-		});
-
-		QUnit.test("when _getAppComponentForControl is called with a dialog with view as parent", function(assert) {
-			sandbox.stub(this.oRta.getPopupManager(), "getRta").returns(this.oRta);
-			oComp.byId("mockview").addDependent(this.oNonRtaDialog);
-			var oAppComponentForNonRtaDialog = this.oRta.getPopupManager()._getAppComponentForControl(this.oNonRtaDialog);
-			assert.strictEqual(oAppComponentForNonRtaDialog, oComp, "then view's component returned");
-		});
-
-		QUnit.test("when _getAppComponentForControl is called with a dialog with UIArea as parent", function(assert) {
-			var done = assert.async();
-			this.oNonRtaDialog.attachAfterOpen(function() {
-				var oAppComponentForNonRtaDialog = this.oRta.getPopupManager()._getAppComponentForControl(this.oNonRtaDialog);
-				assert.ok(this.oNonRtaDialog.getParent() instanceof UIArea, "then UIArea returned as parent");
-				assert.strictEqual(oAppComponentForNonRtaDialog, undefined, "then no component returned");
-				done();
-			}.bind(this));
-			this.oNonRtaDialog.open();
 		});
 
 		QUnit.test("when _getValidatedPopups is called with 2 relevant and one non-relevant popups", function(assert) {
@@ -749,41 +723,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach(assert) {
-			// mock RTA instance
-			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp.getAggregation("rootControl")
-			});
-			var done = assert.async();
-			this.oNonRtaDialog = new Dialog("nonRtaDialog");
-			oComp.runAsOwner(async function() {
-				this.oCompContInside = new ComponentContainer("CompContInside", {
-					component: new MockComponent("compInside")
-				});
-				await oViewPromise;
-				oComp.byId("mockview").addContent(this.oCompContInside);
-				this.oCompContInside.getComponentInstance().byId("mockview").addContent(this.oNonRtaDialog);
-				done();
-			}.bind(this));
-		},
-		afterEach() {
-			if (this.oRta) {
-				this.oRta.destroy();
-			}
-			this.oCompContInside.destroy();
-			this.oNonRtaDialog.destroy();
-		}
-	}, function() {
-		// _getComponentForControl
-		QUnit.test("when _getComponentForControl is called with a dialog inside an embedded component", function(assert) {
-			var sBaseCompId = this.oRta.getPopupManager()._getComponentForControl(this.oNonRtaDialog).getId();
-			assert.strictEqual(sBaseCompId, oComp.getId(), "then base component id returned");
-		});
-	});
-
 	QUnit.done(function() {
-		PersistenceWriteAPI.save.restore();
 		document.body.classList.remove("sapUiRtaMode");
 		document.getElementById("qunit-fixture").style.display = "none";
 	});
