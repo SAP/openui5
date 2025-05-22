@@ -11,12 +11,19 @@ sap.ui.define([
 ], function (oFeatureSuite, oODataSuite) {
 	"use strict";
 
-	var mApps = {},
-		mTests = { // the tests run in IFrames where no coverage is checked
-			'qunit/internal/1Ring.qunit.html?hidepassed&realOData=true' : 'full',
-			// realOData=true is appended so that the module is run in variant "POC verification"
-			'qunit/internal/1Ring.qunit.html?hidepassed&module=sap.ui.model.odata.v4.ODataModel.integration&realOData=true' : 'integration',
-			'qunit/internal/1Ring.qunit.html?hidepassed&module=sap.ui.model.odata.v4.ODataModel.realOData&realOData=true' : 'integration'
+	var s1Ring = "qunit/internal/1Ring.qunit.html?hidepassed&realOData=true",
+		mApps = {
+			"1Ring" : [
+				"qunit/internal/1Ring.qunit.html?hidepassed&coverage",
+				// no coverage for single module
+				s1Ring + "&module=sap.ui.model.odata.v4.ODataModel.realOData"
+			]
+		},
+		mTests = {
+			[s1Ring] : "full", // the test runs in IFrames where no coverage is checked
+			[s1Ring + "&module=sap.ui.model.odata.v4.ODataModel.realOData"] : "integration",
+			// realOData=true is used so that this module is run in variant "POC verification"
+			[s1Ring + "&module=sap.ui.model.odata.v4.ODataModel.integration"] : "integration"
 		};
 
 	function addAppsAndTests(oSuite, sName) {
@@ -70,7 +77,7 @@ sap.ui.define([
 		}
 		const oActionResponse = await fetch(`${sService}RegenerateEPMData`, {
 			method : "POST",
-			headers : {"X-CSRF-Token" : oHeaderResponse.headers.get('X-CSRF-Token')}
+			headers : {"X-CSRF-Token" : oHeaderResponse.headers.get("X-CSRF-Token")}
 		});
 		fnSetStatus(oActionResponse.ok
 			? "\u2714 SalesOrders data reset"
