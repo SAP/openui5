@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/Column",
+	"sap/ui/table/CreationRow",
 	"sap/ui/table/rowmodes/Type",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/rowmodes/Auto",
@@ -20,6 +21,7 @@ sap.ui.define([
 	TableQUnitUtils,
 	nextUIUpdate,
 	Column,
+	CreationRow,
 	RowModeType,
 	FixedRowMode,
 	AutoRowMode,
@@ -115,6 +117,12 @@ sap.ui.define([
 		assert.ok(oHSb.offsetWidth > 0 && oHSb.offsetHeight > 0,
 			"Decrease visible rows so that vertical scrollbar appears: Horizontal scrollbar is visible");
 		assert.equal(oVSb.style.bottom, oHSbComputedStyle.height, "Vertical scrollbar position is correct");
+
+		const oCreationRow = new CreationRow();
+		oTable.setCreationRow(oCreationRow);
+		await oTable.qunit.whenRenderingFinished();
+		assert.equal(oVSb.style.bottom, oHSb.offsetHeight + oCreationRow.getDomRef().offsetHeight + "px", "Vertical scrollbar position is correct");
+
 		await oTable.qunit.resetSize();
 	});
 
