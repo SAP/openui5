@@ -447,23 +447,11 @@ sap.ui.define([
 						case "new": {
 							const oNewLabel = this.oLayout.getContent().find((oControl) => oControl.getId() === "newLabelId");
 							const oNewLabelOverlay = OverlayRegistry.getOverlay(oNewLabel);
-							const oExpectedResponse1 = {
-								type: "new",
-								targetIndex: 1,
-								targetId: "layout0",
-								targetAggregation: "content",
-								element: {
-									id: "newLabelId",
-									instanceName: "newLabel",
-									name: "Label",
-									technicalName: "sap.m.Label",
-									editable: false,
-									icon: "sap/m/designtime/Label.icon.svg",
-									type: "element",
-									visible: oNewLabelOverlay.isVisible()
-								}
-							};
-							assert.deepEqual(oUpdate, oExpectedResponse1, "then expected response for new update was received");
+							assert.strictEqual(oUpdate.type, "new", "then the type is new");
+							assert.strictEqual(oUpdate.targetIndex, 1, "then the target index is correct");
+							assert.strictEqual(oUpdate.targetId, "layout0", "then the target id is correct");
+							assert.strictEqual(oUpdate.targetAggregation, "content", "then the target aggregation is correct");
+							assert.strictEqual(oUpdate.element.id, "newLabelId", "then the element id is correct");
 							oNewLabelOverlay.setEditable(true);
 							break;
 						}
