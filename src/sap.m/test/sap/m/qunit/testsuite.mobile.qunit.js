@@ -1772,6 +1772,13 @@ sap.ui.define([
 					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
 				}
 			},
+			"table.columnmenu.QuickResize": {
+				title: "Test Page for sap.m.table.columnmenu.QuickResize",
+				module: "test-resources/sap/m/qunit/table/columnmenu/QuickResize.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table/columnmenu"
+				}
+			},
 			Text: {
 				title: "QUnit Tests - sap.m.Text"
 			},

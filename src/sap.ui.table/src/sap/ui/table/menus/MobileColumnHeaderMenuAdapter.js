@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
+	"sap/m/table/columnmenu/QuickResize",
 	"sap/m/table/columnmenu/ItemContainer",
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
@@ -32,6 +33,7 @@ sap.ui.define([
 	QuickGroupItem,
 	QuickTotal,
 	QuickTotalItem,
+	QuickResize,
 	ItemContainer,
 	ActionItem,
 	Button,
@@ -78,6 +80,7 @@ sap.ui.define([
 		this._oMenu.addAggregation("_quickActions", this._oQuickTotal);
 		this._oMenu.addAggregation("_quickActions", this._oQuickFreeze);
 		this._oMenu.addAggregation("_quickActions", this._oQuickResize);
+		this._oMenu.addAggregation("_quickActions", this._oQuickResizeInput);
 
 		this._prepareItems(oColumn);
 		oMenu.addAggregation("_items", this._oItemContainer);
@@ -96,6 +99,7 @@ sap.ui.define([
 		oMenu.removeAggregation("_quickActions", this._oQuickTotal);
 		oMenu.removeAggregation("_quickActions", this._oQuickFreeze);
 		oMenu.removeAggregation("_quickActions", this._oQuickResize);
+		oMenu.removeAggregation("_quickActions", this._oQuickResizeInput);
 
 		oMenu.removeAggregation("_items", this._oItemContainer);
 	};
@@ -117,6 +121,7 @@ sap.ui.define([
 		delete this._oQuickTotal;
 		delete this._oQuickFreeze;
 		delete this._oQuickResize;
+		delete this._oQuickResizeInput;
 
 		delete this._oItemContainer;
 		delete this._oCustomFilterItem;
@@ -143,6 +148,7 @@ sap.ui.define([
 		this._prepareQuickTotal(oColumn);
 		this._prepareQuickFreeze(oColumn);
 		this._prepareQuickResize(oColumn);
+		this._prepareQuickResizeInput(oColumn);
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareItems = function(oColumn) {
@@ -178,6 +184,9 @@ sap.ui.define([
 		if (this._oQuickResize) {
 			this._oQuickResize.destroy();
 		}
+		if (this._oQuickResizeInput) {
+			this._oQuickResizeInput.destroy();
+		}
 
 		delete this._oQuickSort;
 		delete this._oQuickFilter;
@@ -185,6 +194,7 @@ sap.ui.define([
 		delete this._oQuickTotal;
 		delete this._oQuickFreeze;
 		delete this._oQuickResize;
+		delete this._oQuickResizeInput;
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._destroyItems = function() {
@@ -417,6 +427,32 @@ sap.ui.define([
 		oTable.$().toggleClass("sapUiTableResizing", true);
 		oTable._$colResize = oTable.$("rsz");
 		oTable._$colResize.toggleClass("sapUiTableColRszActive", true);
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._prepareQuickResizeInput = function(oColumn) {
+		if (oColumn.getResizable()) {
+			if (!this._oQuickResizeInput) {
+				this._oQuickResizeInput = this._createQuickResizeInput(oColumn);
+			}
+			this._updateQuickResizeInput(oColumn);
+			this._oQuickResizeInput.setVisible(true);
+		} else if (this._oQuickResizeInput) {
+			this._oQuickResizeInput.setVisible(false);
+		}
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._createQuickResizeInput = function() {
+		const oTable = this._oColumn._getTable();
+		return new QuickResize({
+			change: [function(oEvent) {
+				TableUtils.Column.resizeColumn(oTable, this._oColumn, oEvent.getParameter("width"));
+			}, this]
+		});
+	};
+
+	MobileColumnHeaderMenuAdapter.prototype._updateQuickResizeInput = function(oColumn) {
+		const oTable = oColumn._getTable();
+		this._oQuickResizeInput.setWidth(Math.round(TableUtils.Column.getColumnWidth(oTable, oColumn.getIndex())));
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._removeHeaderCellColumnResizer = function(oTable) {

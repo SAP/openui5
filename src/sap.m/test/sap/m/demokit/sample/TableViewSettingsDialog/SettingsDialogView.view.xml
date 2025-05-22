@@ -31,7 +31,7 @@
 				</OverflowToolbar>
 			</infoToolbar>
 			<columns>
-				<Column id="product" width="12em" headerMenu="columnHeaderMenu"><Text text="Product" /></Column>
+				<Column id="product" headerMenu="columnHeaderMenu"><Text text="Product" /></Column>
 				<Column minScreenWidth="Tablet" demandPopin="true"><Text text="Supplier" /></Column>
 				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End"><Text text="Dimensions" /></Column>
 				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="Center"><Text text="Weight" /></Column>

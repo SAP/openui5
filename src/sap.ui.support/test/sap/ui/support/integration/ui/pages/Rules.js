@@ -3,8 +3,10 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/matchers/Ancestor",
+	"sap/ui/test/matchers/Matcher",
 	"sap/ui/test/actions/EnterText"
-], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, EnterText) {
+], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, Ancestor, Matcher, EnterText) {
 	"use strict";
 
 	var sTreeTableId = "ruleList",
@@ -135,14 +137,29 @@ sap.ui.define([
 						id: "tableColumnMenu",
 						success: function (oMenu) {
 							this.waitFor({
-								controlType: "sap.m.Input",
+								controlType: "sap.m.InputListItem",
 								matchers: {
 									ancestor: oMenu
 								},
-								actions: new EnterText({
-									text: sFilteringString
-								}),
-								errorMessage: "Was not able to find input element or enter filtering text"
+								success: function (aInputListItems) {
+									const oInputListItem = aInputListItems.filter(function (oItem) {
+										return oItem.getParent().getHeaderToolbar().getTitleControl().getText() === "Filter By";
+									})[0];
+									this.waitFor({
+										controlType: "sap.m.Input",
+										matchers: [
+											new Ancestor(oMenu),
+											new Matcher().isMatching = function (oInput) {
+												return oInputListItem.getDomRef().contains(oInput.getDomRef());
+											}
+										],
+										actions: new EnterText({
+											text: sFilteringString
+										}),
+										errorMessage: "Was not able to find input element or enter filtering text"
+									});
+								},
+								errorMessage: "Quick filter was not found"
 							});
 						},
 						errorMessage: "Column list menu was not found"
