@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/ResizeHandler",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
@@ -23,7 +24,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/core/HTML"
 ],
-function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
+function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, ResizeHandler, KeyCodes, Log, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -806,9 +807,10 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			oSection = this.oObjectPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
 			oBlock = oSubSection.getBlocks()[0],
+			oSpy = this.spy(oSubSection, "_executeAfterNextResizeHandlerChecks"),
 			done = assert.async();
 
-		assert.expect(2);
+		assert.expect(3);
 
 		//act
 		oBlock.setHeight("845px");
@@ -817,21 +819,25 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 		}));
 		await nextUIUpdate();
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+		oSpy.resetHistory();
 
 		//setup
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-			//check
-			var sHeight = oSubSection._height;
-			assert.strictEqual(sHeight, "", "Height is auto when content is bigger than SubSection's height");
+			assert.ok(oSpy.called, 1, "_executeAfterNextResizeHandlerChecks is called");
+			window.requestAnimationFrame(function () {
+				//check
+				var sHeight = oSubSection._height;
+				assert.strictEqual(sHeight, "", "Height is auto when content is bigger than SubSection's height");
 
-			//act
-			oPage.destroyHeaderTitle();
+				//act
+				oPage.destroyHeaderTitle();
 
-			oPage.attachEventOnce("onAfterRenderingDOMReady", function () {
-				var sNewHeight = oSubSection._height;
-				assert.ok(sHeight !== sNewHeight, "Fixed height is changed when headerTitle is added/removed");
+				oPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+					var sNewHeight = oSubSection._height;
+					assert.ok(sHeight !== sNewHeight, "Fixed height is changed when headerTitle is added/removed");
 
-				done();
+					done();
+				});
 			});
 		}, this);
 	});
@@ -2065,7 +2071,8 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 			oQunitFixtureElement = document.getElementById("qunit-fixture"),
 			sPageHeight = "200px",
 			sPageContentHeight = "300px",
-			done = assert.async();
+			done = assert.async(),
+			oSpy;
 
 		// Setup: content height is bigger than page height
 		oSubSection.removeAllBlocks();
@@ -2074,14 +2081,40 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, KeyCodes, Log,
 
 		//act
 		oSubSection.addStyleClass(ObjectPageSubSectionClass.FIT_CONTAINER_CLASS);
+		oSpy = this.spy(oSubSection, "_executeAfterNextResizeHandlerChecks");
 
 		//setup
 		oPage.attachEventOnce("onAfterRenderingDOMReady", function() {
 			//check
-			assert.strictEqual(oSubSection.getDomRef().style.height, "", "the height of the section is not restricted");
-			oQunitFixtureElement.style.height = ""; // clean up
-			done();
+			assert.ok(oSpy.called, 1, "_executeAfterNextResizeHandlerChecks is called");
+			window.requestAnimationFrame(function() {
+				assert.strictEqual(oSubSection.getDomRef().style.height, "", "the height of the section is not restricted");
+				oQunitFixtureElement.style.height = ""; // clean up
+				done();
+			});
 		}, this);
+	});
+
+	QUnit.test("callback to _executeAfterNextResizeHandlerChecks executes after the ResizeHandler listeners", async function (assert) {
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0],
+			oSubSectionContent = new HTML({content: '<div style="height:300px"></div>'}),
+			done = assert.async(),
+			fnOnSubSectionContentResize = this.spy();
+
+		oSubSection.addBlock(oSubSectionContent);
+		await nextUIUpdate();
+
+		// setup: listen for resize event
+		ResizeHandler.register(oSubSectionContent.getDomRef(), fnOnSubSectionContentResize);
+		fnOnSubSectionContentResize.resetHistory();
+
+		//act: resize the content
+		oSubSectionContent.getDomRef().style.height = "100px";
+		oSubSection._executeAfterNextResizeHandlerChecks(function() {
+			// check: the callback is executed after the ResizeHandler listeners
+			assert.ok(fnOnSubSectionContentResize.called, "_checkSizes is called");
+			done();
+		});
 	});
 
 	QUnit.module("Invalidation", {
