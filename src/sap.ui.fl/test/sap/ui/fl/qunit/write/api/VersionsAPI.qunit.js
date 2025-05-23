@@ -836,5 +836,33 @@ sap.ui.define([
 				assert.deepEqual(oPublishStub.getCall(0).args[0].version, "abc", "the version was passed");
 			});
 		});
+
+		QUnit.test("when getCreatedVersionsByUser is called", function(assert) {
+			const mPropertyBag = {
+				control: new Control(),
+				layer: Layer.CUSTOMER
+			};
+			const sUser = "testUser";
+			const aMockVersions = [
+				{ version: "1", activatedBy: "testUser" },
+				{ version: "2", activatedBy: "otherUser" },
+				{ version: "3", activatedBy: "testUser" }
+			];
+			const oModelStub = {
+				getProperty: sinon.stub().withArgs("/versions").returns(aMockVersions)
+			};
+			sandbox.stub(Versions, "getVersionsModel").returns(oModelStub);
+
+			const aUserCreatedVersions = VersionsAPI.getCreatedVersionsByUser(mPropertyBag, sUser);
+
+			assert.deepEqual(
+				aUserCreatedVersions,
+				[
+					{ version: "1", activatedBy: "testUser" },
+					{ version: "3", activatedBy: "testUser" }
+				],
+				"then only versions created by 'testUser' are returned"
+			);
+		});
 	});
 });

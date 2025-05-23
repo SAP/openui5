@@ -389,5 +389,20 @@ sap.ui.define([
 		return Versions.publish(mPropertyBag);
 	};
 
+	/**
+	 * Returns the list of versions created by a specific user
+	 *
+	 * @param {object} mPropertyBag - Property bag
+	 * @param {sap.ui.core.Control} mPropertyBag.control - Control for which the request is done
+	 * @param {string} mPropertyBag.layer - Layer for which the versions should be retrieved
+	 * @param {string} sUser - User ID for which the versions should be retrieved
+	 * @returns {Array} List of versions created by the user
+	 */
+	VersionsAPI.getCreatedVersionsByUser = function(mPropertyBag, sUser) {
+		const oModel = getVersionsModel(mPropertyBag);
+		const aVersions = oModel.getProperty("/versions");
+		return aVersions.filter((oVersion) => oVersion.activatedBy === sUser);
+	};
+
 	return VersionsAPI;
 });
