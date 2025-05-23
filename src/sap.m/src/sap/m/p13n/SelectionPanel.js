@@ -446,22 +446,27 @@ sap.ui.define([
 	};
 
 	SelectionPanel.prototype._filterList = function(bShowSelected, sSearch, bHideRedundant) {
-		let oSearchFilter = [],
-			oSelectedFilter = [],
-			oRedundantFilter = [];
+		const aFilter = [];
 
-		if (bShowSelected) {
-			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
-		}
-		if (bHideRedundant) {
+		if (bHideRedundant && bShowSelected) {
 			const oFilter1 = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
 			const oFilter2 = new Filter(this.REDUNDANT_ITEMS_ATTRIBUTE, "NE", true);
-			oRedundantFilter = new Filter([oFilter1, oFilter2], false);
+			const oRedundantFilter = new Filter({filters: [oFilter1, oFilter2], and: true});
+			aFilter.push(oRedundantFilter);
+		} else if (bShowSelected) {
+			const oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
+			aFilter.push(oSelectedFilter);
+		} else if (bHideRedundant) {
+			const oRedundantFilter = new Filter(this.REDUNDANT_ITEMS_ATTRIBUTE, "NE", true);
+			aFilter.push(oRedundantFilter);
 		}
+
 		if (sSearch) {
-			oSearchFilter = new Filter("label", "Contains", sSearch);
+			const oSearchFilter = new Filter("label", "Contains", sSearch);
+			aFilter.push(oSearchFilter);
 		}
-		this._oListControl.getBinding("items").filter(new Filter([].concat(oSelectedFilter, oSearchFilter, oRedundantFilter), true));
+
+		this._oListControl.getBinding("items").filter(new Filter(aFilter, true));
 	};
 
 	SelectionPanel.prototype._onSearchFieldLiveChange = function(oEvent) {
@@ -601,6 +606,7 @@ sap.ui.define([
 		if (bHasRedundantColumns) {
 			this._triggerFilter();
 		}
+		this.getModel(this.P13N_MODEL).setProperty("/hideDescriptions", bHasRedundantColumns);
 		return this;
 	};
 

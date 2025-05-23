@@ -253,7 +253,7 @@ sap.ui.define([
 		oResizerDomRef.focus();
 		qutils.triggerMouseEvent(oResizerDomRef, "contextmenu");
 		assert.ok(oResizerDomRef.classList.contains("sapUiTableHeightResizerActive"), "The resizer is active");
-		const oMenu = Element.closestTo(".sapMMenu");
+		const oMenu = Element.closestTo(".sapUiMnu");
 		const aMenuItems = oMenu.getItems();
 		assert.ok(oMenu, "The context menu is rendered");
 		assert.ok(oMenu.isOpen(), "The context menu is open");

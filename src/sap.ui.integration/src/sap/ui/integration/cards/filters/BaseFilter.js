@@ -61,7 +61,7 @@ sap.ui.define([
 				/**
 				 * The configuration object, defined in the manifest.
 				 */
-				config: { type: "object", defaultValue: "null" },
+				config: { type: "object", defaultValue: {} },
 
 				/**
 				 * The value of the filter that can be used in the manifest.

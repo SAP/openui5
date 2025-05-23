@@ -326,7 +326,7 @@ sap.ui.define([
 	opaTest('Open column menu of grouped column (p13nMode = ["Column","Sort","Filter"])', function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Region");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(1);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Region", label: "Region", sortOrder: coreLibrary.SortOrder.None});
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
 		Then.onTheAppMDCTable.iShouldSeeTableSettingsButton();
@@ -335,7 +335,7 @@ sap.ui.define([
 	opaTest('Open column menu of aggregated column (p13nMode = ["Column","Sort","Filter"])', function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Sales Amount (local currency)");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(1);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({
 			key: "SalesAmountLocalCurrency",
 			label: "Sales Amount (local currency)",
@@ -349,7 +349,7 @@ sap.ui.define([
 		When.onTheAppMDCTable.iSetP13nMode(sTableId, ["Column", "Sort", "Filter", "Group", "Aggregate"]);
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Region");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(3);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({key: "Region", label: "Region", sortOrder: coreLibrary.SortOrder.None});
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickGroup({key: "Region", label: "Region", grouped: true});
 		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuItems(0);
@@ -359,7 +359,7 @@ sap.ui.define([
 	opaTest('Open column menu with aggregatable property (p13nMode = ["Column","Sort","Filter","Group","Aggregate"])', function(Given, When, Then) {
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Sales Amount (local currency)");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
-		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(2);
+		Then.onTheAppMDCTable.iShouldSeeNumberOfColumnMenuQuickActions(3);
 		Then.onTheAppMDCTable.iShouldSeeColumnMenuQuickSort({
 			key: "SalesAmountLocalCurrency",
 			label: "Sales Amount (local currency)",

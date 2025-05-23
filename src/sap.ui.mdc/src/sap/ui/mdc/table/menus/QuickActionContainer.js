@@ -134,6 +134,7 @@ sap.ui.define([
 
 		if (oTable.getEnableColumnResize()) {
 			this.addQuickAction(oTable._getType().createColumnResizeMenuItem(oColumn, this.getMenu()));
+			this.addQuickAction(oTable._getType().createColumnResizeInputMenuItem(oColumn, this.getMenu()));
 		}
 	};
 

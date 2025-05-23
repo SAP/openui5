@@ -92,6 +92,27 @@ sap.ui.define([
 		Then.onTheAppMDCTable.iShouldSeeTheShowHideDetailsButton(sTableId, "showDetails", true);
 	});
 
+	QUnit.module("Column resize");
+
+	opaTest("Resize column and persist the change", function(Given, When, Then) {
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created On");
+		When.onTheAppMDCTable.iEnterColumnWidthValue(100);
+		Then.onTheAppMDCTable.iCheckColumnWidth(sTableId, `${sTableId}-CreatedAt`, 100);
+		When.onTheAppMDCTable.iCloseTheColumnMenu();
+		Then.onTheAppMDCTable.iShouldSeeTheVariantManagement(sTableId, true);
+
+		When.P13nActions.iSaveVariantAs("Standard", "TestVariant3");
+		When.iSelectVariant("Standard");
+
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created On");
+		When.onTheAppMDCTable.iEnterColumnWidthValue(200);
+		Then.onTheAppMDCTable.iCheckColumnWidth(sTableId, `${sTableId}-CreatedAt`, 200);
+		When.onTheAppMDCTable.iCloseTheColumnMenu();
+
+		When.iSelectVariant("TestVariant3");
+		Then.onTheAppMDCTable.iCheckColumnWidth(sTableId, `${sTableId}-CreatedAt`, 100);
+	});
+
 	return {
 		tableType: "ResponsiveTableType"
 	};

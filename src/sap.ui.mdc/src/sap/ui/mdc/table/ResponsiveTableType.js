@@ -397,6 +397,16 @@ sap.ui.define([
 		}
 	};
 
+	ResponsiveTableType.prototype.createColumnResizeInputMenuItem = function(oColumn, oColumnMenu) {
+		const oColumnResizer = ColumnResizer.findOn(this.getInnerTable());
+
+		if (!oColumnResizer) {
+			return;
+		}
+
+		return oColumnResizer.getColumnResizeInputQuickAction(oColumn.getInnerColumn(), oColumnMenu);
+	};
+
 	/**
 	 * Tries to attach the itemPress event to the inner table. If a listener is already attached, this function does nothing.
 	 *
