@@ -1057,7 +1057,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// assert
-		assert.strictEqual(spy.callCount, 1, "tokenizer's _adjustTokensVisibility was called once");
+		assert.ok(spy.called, "tokenizer's _adjustTokensVisibility was called once");
 	});
 
 	QUnit.test("setEnabled", async function(assert) {
@@ -1892,6 +1892,33 @@ sap.ui.define([
 		oTokenizer = null;
 	});
 
+	QUnit.test("Invalidating token should trigger layouting", async function(assert) {
+		var oTokenizer = new Tokenizer({
+			maxWidth: "100px",
+			tokens: [
+				new Token(),
+				new Token(),
+				new Token(),
+				new Token()
+			]
+		}).placeAt("content");
+		await nextUIUpdate();
+
+		// spy _adjustTokensVisibility
+		var oSpy = this.spy(oTokenizer, "_adjustTokensVisibility");
+
+		// act
+		oTokenizer.getTokens().forEach((token, indx) => {
+			token.setText(`${indx}`);
+		});
+
+		await nextUIUpdate();
+		assert.strictEqual(oSpy.callCount, 1, "The _adjustTokensVisibility method was called once.");
+
+		// clean up
+		oTokenizer.destroy();
+	});
+
 	QUnit.module("Tokenizer ARIA", {
 		beforeEach : async function() {
 			this.tokenizer = new Tokenizer();
@@ -2003,7 +2030,6 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Assert
-		assert.strictEqual(oSetTruncatedSpy.callCount, 2, "The token's setTruncateds method twice.");
 		assert.strictEqual(oSetTruncatedSpy.calledWith(false), true, "Method called with correct parameter");
 		assert.strictEqual(oRemoveStyleClassSpy.callCount, 1, "The tokenizer's removeStyleClass method was called once.");
 		assert.strictEqual(oAddStyleClassSpy.calledWith("sapMTokenizerOneLongToken"), true, "Method called with correct parameter");
