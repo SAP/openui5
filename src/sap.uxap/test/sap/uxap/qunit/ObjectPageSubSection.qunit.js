@@ -2476,4 +2476,61 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, ResizeHandler,
 		// Clean up
 		oSubSection.destroy();
 	});
+
+	QUnit.module("ObjectPageSubSection - special cases");
+
+	QUnit.test("ObjectPageSubSection destroyed and recreated with same ID does not throw an error", function (assert) {
+		// Arrange
+		var oObjectPageLayout = new ObjectPageLayout("page", {
+				enableLazyLoading: true,
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSectionClass("subsection1", {
+							title: "Title",
+							blocks: [new Text({text: "Test"})]
+						}),
+						new ObjectPageSubSectionClass("subsection2", {
+							title: "Title",
+							blocks: [new Text({text: "Test"})]
+						})
+					]
+				})
+			}),
+			oObjectPageSection = oObjectPageLayout.getSections()[0],
+			oObjectPageSubSection = oObjectPageSection.getSubSections()[1],
+			fnDone = assert.async(),
+			fnOnSubSectionEnteredViewPort = function() {
+				oObjectPageLayout.detachEvent("subSectionEnteredViewPort", fnOnSubSectionEnteredViewPort);
+				// Act - when the destroyed SubSection entered the viewport, simulate app working with the "actions" aggregation
+				// -> this will create a new toolbar on the already destroyed ObjectPageSubSection
+				oObjectPageSubSection.getActions();
+				// Act - creating ObjectPageSubSection with same ID
+				// -> this will create a new toolbar on the newly created ObjectPageSubSection and error for duplicate ID would be thrown, if not handled correctly
+				oObjectPageSubSection = new ObjectPageSubSectionClass("subsection2", {
+					title: "Title",
+					blocks: [new Text({text: "Test"})]
+				});
+				oObjectPageSection.addSubSection(oObjectPageSubSection);
+
+				// Assert
+				assert.ok(true, "No error is thrown when creating ObjectPageSubSection with same ID");
+
+				// Cleanup
+				oObjectPageLayout.destroy();
+				fnDone();
+			};
+
+		oObjectPageLayout.setSelectedSection(oObjectPageSection.getId());
+		oObjectPageSection.setSelectedSubSection(oObjectPageSubSection.getId());
+		oObjectPageLayout.placeAt('qunit-fixture');
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPageLayout.attachEvent("subSectionEnteredViewPort", fnOnSubSectionEnteredViewPort);
+			// Act - destroying the ObjectPageSubSection
+			oObjectPageSubSection.destroy();
+			// Act - calling _triggerVisibleSubSectionsEvents
+			oObjectPageLayout._triggerVisibleSubSectionsEvents();
+		});
+	});
+
 });
