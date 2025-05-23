@@ -449,6 +449,24 @@ sap.ui.define([
 			});
 		},
 
+		iCheckColumnWidth: function(vTable, sColumnId, iColumnWidth) {
+			return waitForTable.call(this, vTable, {
+				success: function(oTable) {
+					this.waitFor({
+						id: sColumnId,
+						matchers: [{
+							ancestor: oTable
+						}],
+						success: function(oColumn) {
+							Opa5.assert.equal(oColumn.getInnerColumn().getWidth(), iColumnWidth + "px",
+								`Column ${oColumn.getId()} has width ${iColumnWidth}`);
+						},
+						errorMessage: "Column not found"
+					});
+				}
+			});
+		},
+
 		iCheckFixedColumnCount: function(vTable, iFixedColumnsCount) {
 			return waitForTable.call(this, vTable, {
 				success: function(oTable) {

@@ -82,7 +82,7 @@ sap.ui.define([
 			var fnComplete = (bSuccess) ?
 				this._fnResolvePromise :
 				this._fnRejectPromise;
-			fnComplete();
+				fnComplete && fnComplete();
 
 			// remove reference to promise (because once executed, the same promise cannot be reused again)
 			this._oPromise = null;

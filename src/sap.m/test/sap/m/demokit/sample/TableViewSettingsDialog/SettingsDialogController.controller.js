@@ -201,6 +201,18 @@ sap.ui.define([
 
 		onActionItemPress: function() {
 			MessageToast.show('Action Item Pressed');
+		},
+
+		onBeforeColumnMenuOpen: function(oEvent) {
+			const oColumn = this.byId("product");
+			const oQuickResize = this.byId("quickResize");
+			oQuickResize.setWidth(parseInt(getComputedStyle(oColumn.getDomRef()).width));
+		},
+
+		onResize: function(oEvent) {
+			const oColumn = this.byId("product");
+			const iWidth = oEvent.getParameter("width");
+			oColumn.setWidth(iWidth + "px");
 		}
 	});
 

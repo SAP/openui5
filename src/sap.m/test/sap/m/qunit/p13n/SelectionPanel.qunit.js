@@ -684,7 +684,7 @@ sap.ui.define([
 	const aTestFilter = [
 		{
 			filter: {
-				search: "",
+				search: undefined,
 				showSelected: false,
 				hideDescriptions: false
 			},
@@ -700,7 +700,7 @@ sap.ui.define([
 		},
 		{
 			filter: {
-				search: "",
+				search: undefined,
 				showSelected: true,
 				hideDescriptions: false
 			},
@@ -708,19 +708,19 @@ sap.ui.define([
 		},
 		{
 			filter: {
-				search: "",
+				search: undefined,
 				showSelected: false,
 				hideDescriptions: true
 			},
-			resultDelta: -3 // 3 items are selected
+			resultDelta: -6 // 0 items are selected
 		},
 		{
 			filter: {
-				search: "",
+				search: undefined,
 				showSelected: true,
 				hideDescriptions: true
 			},
-			resultDelta: -3 // 3 items are selected
+			resultDelta: -6 // 0 items are selected
 		},
 		{
 			filter: {
@@ -740,6 +740,8 @@ sap.ui.define([
 			oP13nData[4].isRedundant = true;
 			this.oSelectionPanel.setP13nData(oP13nData);
 
+			this.oSelectionPanel._oListControl.getBinding("items").filter(null); // reset any previous filters
+
 			// Act
 			this.oSelectionPanel._filterList(oTestData.filter.showSelected, oTestData.filter.search, oTestData.filter.hideDescriptions);
 
@@ -749,5 +751,34 @@ sap.ui.define([
 			const actualDelta = oResultItems.length - this.getTestData().length;
 			assert.equal(actualDelta, oTestData.resultDelta, "No length difference for items");
 		});
+	});
+
+	QUnit.test("hideDescriptions - check default value without redundant items", function(assert){
+		// arrange
+		assert.ok(this.oSelectionPanel, "Panel created");
+
+		// act
+		this.oSelectionPanel.setP13nData(this.getTestData());
+
+		// assert
+		const bHideDescriptions = this.oSelectionPanel.getModel(this.oSelectionPanel.P13N_MODEL).getProperty("/hideDescriptions");
+		assert.equal(bHideDescriptions, false, "Hide descriptions is set to false by default");
+	});
+
+	QUnit.test("hideDescriptions - check default value with redundant items", function(assert){
+		// arrange
+		assert.ok(this.oSelectionPanel, "Panel created");
+
+		const oP13nData = this.getTestData();
+		oP13nData[2].isRedundant = true;
+		oP13nData[4].isRedundant = true;
+		this.oSelectionPanel.setP13nData(oP13nData);
+
+		// act
+		this.oSelectionPanel.setP13nData(oP13nData);
+
+		// assert
+		const bHideDescriptions = this.oSelectionPanel.getModel(this.oSelectionPanel.P13N_MODEL).getProperty("/hideDescriptions");
+		assert.equal(bHideDescriptions, true, "Hide descriptions is set to false by default");
 	});
 });

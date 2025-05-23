@@ -592,6 +592,20 @@ sap.ui.define([
 			});
 		},
 
+		iEnterColumnWidthValue: function(iWidth) {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					const oStepInput = oColumnMenu._getAllEffectiveQuickActions().find(function(oAction) {
+						return oAction.isA("sap.m.table.columnmenu.QuickResize");
+					}).getContent()[0];
+
+					new EnterText({
+						text: iWidth
+					}).executeOn(oStepInput);
+				}
+			});
+		},
+
 		iCloseTheColumnMenu: function() {
 			return Util.waitForColumnMenu.call(this, {
 				success: function(oColumnMenu) {
