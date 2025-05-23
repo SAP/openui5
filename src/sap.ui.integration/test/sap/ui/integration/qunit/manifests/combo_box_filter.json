@@ -14,10 +14,32 @@
 			"filters": {
 				"category": {
 					"data": {
-						"request": {
-							"url": "categories.json"
-						},
-						"path": "/"
+						"json": [
+							{
+								"title": "Flat Screen Monitors",
+								"key": "FSM",
+								"additionalText": "FSM",
+								"group": "Group 1"
+							},
+							{
+								"title": "Graphic Cards",
+								"key": "GC",
+								"additionalText": "GC",
+								"group": "Group 1"
+							},
+							{
+								"title": "Mouses and Keyboards",
+								"key": "MK",
+								"additionalText": "MK",
+								"group": "Group 2"
+							},
+							{
+								"title": "Motherboards",
+								"key": "MB",
+								"additionalText": "MB",
+								"group": "Group 2"
+							}
+						]
 					},
 					"selectedKey": "FSM",
 					"type": "ComboBox",
@@ -36,10 +58,32 @@
 		},
 		"type": "List",
 		"data": {
-			"request": {
-				"url": "categories.json"
-			},
-			"path": "/"
+			"json": [
+				{
+					"title": "Flat Screen Monitors",
+					"key": "FSM",
+					"additionalText": "FSM",
+					"group": "Group 1"
+				},
+				{
+					"title": "Graphic Cards",
+					"key": "GC",
+					"additionalText": "GC",
+					"group": "Group 1"
+				},
+				{
+					"title": "Mouses and Keyboards",
+					"key": "MK",
+					"additionalText": "MK",
+					"group": "Group 2"
+				},
+				{
+					"title": "Motherboards",
+					"key": "MB",
+					"additionalText": "MB",
+					"group": "Group 2"
+				}
+			]
 		},
 		"header": {
 			"title": "{filters>/category/selectedItem/title}",
