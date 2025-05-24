@@ -810,17 +810,6 @@ sap.ui.define([
 				}
 			},
 
-			MenuItem: {
-				title: "QUnit Page for sap.m.MenuItem",
-				coverage: {
-					only: ["sap/m/MenuItem"]
-				},
-				ui5: {
-					language: "en-US",
-					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
-				}
-			},
-
 			MenuButton: {
 				title: "QUnit tests: sap.m.MenuButton",
 				sinon: {

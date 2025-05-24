@@ -1,10 +1,43 @@
-/* ================================= */
-/* CSS for control sap.m/Menu        */
-/* Quartz High Contrast White theme  */
-/* ================================= */
+/* ==================================== */
+/* CSS for control sap.m/Menu           */
+/* Quartz High Contrast White theme     */
+/* ==================================== */
 
-html.sap-phone .sapMRespMenuDialog .sapMPage {
-  .sapMBar-CTX.sapMHeader-CTX,.sapMBarPH {
-    box-shadow: var(--sapContent_HeaderShadow);
+.sapMMenu {
+
+	box-shadow: @sapUiContentShadow1;
+
+	.sapMMenuItem {
+		padding: 0 0.75rem;
+	}
+
+	.sapMMenuItem.sapMMenuItemDisabled .sapMMenuItemIcon {
+		opacity: @sapUiContentDisabledOpacity;
+	}
+
+	.sapMMenuItem.sapMMenuItemSubMenuOpen {
+    background-color: @sapUiListSelectionBackgroundColor
   }
+
+  .sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
+		background-color: @sapUiListActiveBackground;
+	}
+
+	.sapMMenuItemIcon {
+		min-width: 1rem;
+		max-width: 1rem;
+		padding-inline-end: 0.5rem;
+
+		&:empty {
+			min-width: 0;
+			max-width: 0;
+			padding-inline-end: 0;
+		}
+	}
+
+	.sapMMenuItemSubMenu > div:after {
+		font-size: 0.75rem;
+	}
+
 }

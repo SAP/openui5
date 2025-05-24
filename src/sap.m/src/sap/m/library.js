@@ -214,6 +214,7 @@ sap.ui.define([
 			 "sap.m.IconTab",
 			 "sap.m.IScale",
 			 "sap.m.IMenuItem",
+			 "sap.m.IMenuItemBehavior",
 			 "sap.m.semantic.IGroup",
 			 "sap.m.semantic.IFilter",
 			 "sap.m.semantic.ISort",
@@ -288,6 +289,8 @@ sap.ui.define([
 		  "sap.m.ListItemBase",
 		  "sap.m.MaskInput",
 		  "sap.m.Menu",
+		  "sap.m.MenuItem",
+		  "sap.m.MenuWrapper",
 		  "sap.m.MenuButton",
 		  "sap.m.MessagePopover",
 		  "sap.m.MessageView",
@@ -419,7 +422,6 @@ sap.ui.define([
 		  "sap.m.ListItemAction",
 		  "sap.m.OverflowToolbarLayoutData",
 		  "sap.m.MaskInputRule",
-		  "sap.m.MenuItem",
 		  "sap.m.MessageItem",
 		  "sap.m.PageAccessibleLandmarkInfo",
 		  "sap.m.PlanningCalendarRow",
@@ -2270,13 +2272,55 @@ sap.ui.define([
 
 	 /**
 	  *
-	  * Interface for controls which are suitable to be added as items of sap.m.Menu.
+	  * Interface definition for controls suitable to be used as items of <code>sap.m.Menu</code>.
 	  *
 	  *
 	  * @since 1.127.0
 	  * @name sap.m.IMenuItem
 	  * @interface
 	  * @public
+	  */
+
+	 /**
+	  *
+	  * Interface definition for controls suitable to be used as items of <code>sap.m.Menu</code>.
+	  * This interface is used to define the behavior of the menu item.
+	  *
+	  *
+	  * @since 1.137.0
+	  * @name sap.m.IMenuItemBehavior
+	  * @interface
+	  * @public
+	  */
+
+	 /**
+	  * Returns whether the firing of <code>press</code> event is allowed.
+	  * <b>Note:</b> This method can be overridden by subclasses to implement custom behavior.
+	  *
+	  * @public
+	  * @returns {boolean} Whether the item is enabled for click/press
+	  * @function
+	  * @name sap.m.IMenuItemBehavior.isInteractive
+	  */
+
+	 /**
+	  * Returns whether the item can be focused.
+	  * <b>Note:</b> This method can be overridden by subclasses to implement custom behavior.
+	  *
+	  * @public
+	  * @returns {boolean} Whether the item is enabled for focus
+	  * @function
+	  * @name sap.m.IMenuItemBehavior.isFocusable
+	  */
+
+	 /**
+	  * Returns whether the item can be counted in total items count.
+	  * <b>Note:</b> This method can be overridden by subclasses to implement custom behavior.
+	  *
+	  * @public
+	  * @returns {boolean} Whether the item is counted in total items count
+	  * @function
+	  * @name sap.m.IMenuItemBehavior.isCountable
 	  */
 
 	 /**

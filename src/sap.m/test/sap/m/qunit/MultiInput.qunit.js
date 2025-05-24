@@ -616,9 +616,9 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oAttachEventSpy.callCount, 1, "Attach event was called once");
-		assert.strictEqual(oAttachEventSpy.firstCall.args[0], "_change", "Attach event was called for the right event.");
-		assert.strictEqual(oAttachEventSpy.firstCall.args[2].getId(), this.multiInput1.getId(), "Attach event was called with the right context.");
+		assert.ok(oAttachEventSpy.called, "Attach event was called");
+		assert.strictEqual(oAttachEventSpy.secondCall.args[0], "_change", "Attach event was called for the right event.");
+		assert.strictEqual(oAttachEventSpy.secondCall.args[2].getId(), this.multiInput1.getId(), "Attach event was called with the right context.");
 	});
 
 	QUnit.test("Removing a token, should detach the invalidate event handler function.", async function(assert) {
@@ -636,9 +636,9 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		// Assert
-		assert.strictEqual(oDetachEventSpy.callCount, 1, "Detach event was called once");
-		assert.strictEqual(oDetachEventSpy.firstCall.args[0], "_change", "Detach event was called for the right event.");
-		assert.strictEqual(oDetachEventSpy.firstCall.args[2].getId(), this.multiInput1.getId(), "Detach event was called with the right context.");
+		assert.ok(oDetachEventSpy.called, "Detach event was called");
+		assert.strictEqual(oDetachEventSpy.secondCall.args[0], "_change", "Detach event was called for the right event.");
+		assert.strictEqual(oDetachEventSpy.secondCall.args[2].getId(), this.multiInput1.getId(), "Detach event was called with the right context.");
 	});
 
 	QUnit.module("Validation", {

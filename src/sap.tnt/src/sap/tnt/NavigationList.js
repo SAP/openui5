@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/Popup",
+	"sap/m/library",
 	"sap/m/Popover",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/InvisibleText",
@@ -18,7 +19,6 @@ sap.ui.define([
 	"./NavigationListMenuItem",
 	"./NavigationListRenderer",
 	"sap/m/Menu",
-	"sap/m/MenuItem",
 	"sap/base/Log"
 ], function (
 	library,
@@ -28,6 +28,7 @@ sap.ui.define([
 	Control,
 	ResizeHandler,
 	Popup,
+	mLibrary,
 	Popover,
 	ItemNavigation,
 	InvisibleText,
@@ -35,10 +36,12 @@ sap.ui.define([
 	NavigationListMenuItem,
 	NavigationListRenderer,
 	Menu,
-	MenuItem,
 	Log
 ) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = mLibrary.PlacementType;
 
 	/**
 	 * Constructor for a new <code>NavigationList</code>.
@@ -354,73 +357,30 @@ sap.ui.define([
 		oOpener.getDomRef().querySelector(".sapTntNLI").classList.add("sapTntNLIActive");
 
 		const oMenu = this._createOverflowMenu(oOpener);
+
+		const oPopover = oMenu._getPopover();
+		oPopover.setPlacement(PlacementType.Right);
+
 		oMenu.openBy(oOpener, false, Popup.Dock.EndCenter);
 	};
 
 	NavigationList.prototype._createOverflowMenu = function (opener) {
 		const oMenu = new Menu({
-			items: this._createNavigationMenuItems(),
 			closed: function () {
 				opener.getDomRef().querySelector(".sapTntNLI").classList.remove("sapTntNLIActive");
 			}
 		});
 
+		oMenu.applySettings({
+			items: this._createNavigationMenuItems(oMenu)
+		});
+
 		oMenu.addStyleClass("sapTntNLMenu");
-
-		// override this method, so we can have a selection
-		// on a menu item with subitems
-		oMenu._handleMenuItemSelect = function (oEvent) {
-			const oUnfdItem = oEvent.getParameter("item");
-			if (!oUnfdItem) {
-				return;
-			}
-
-			const oMenuItem = this._findMenuItemByUnfdMenuItem(oUnfdItem);
-			if (oMenuItem) {
-				this.fireItemSelected({ item: oMenuItem });
-			}
-		}.bind(oMenu);
-
-		oMenu._createVisualMenuItemFromItem = function(oItem) {
-			var sUfMenuItemId = this._generateUnifiedMenuItemId(oItem.getId()),
-				oUfMenuItem = Element.getElementById(sUfMenuItemId),
-				aCustomData = oItem.getCustomData(), i;
-
-			if (oUfMenuItem) {
-				return oUfMenuItem;
-			}
-
-			oUfMenuItem = new NavigationListMenuItem({
-				id: sUfMenuItemId,
-				icon: oItem.getIcon(),
-				text: oItem.getText(),
-				startsSection: oItem.getStartsSection(),
-				tooltip: oItem.getTooltip(),
-				visible: oItem.getVisible(),
-				enabled: oItem.getEnabled(),
-				href: oItem._navItem.getHref(),
-				target: oItem._navItem.getTarget()
-			});
-
-			oUfMenuItem._navItem = oItem._navItem;
-			oUfMenuItem._oMenu = oMenu;
-
-			for (i = 0; i < aCustomData.length; i++) {
-				oItem._addCustomData(oUfMenuItem, aCustomData[i]);
-			}
-
-			oItem.aDelegates.forEach(function(oDelegateObject) {
-				oUfMenuItem.addEventDelegate(oDelegateObject.oDelegate, oDelegateObject.vThis);
-			});
-
-			return oUfMenuItem;
-		}.bind(oMenu);
-
 		this.addDependent(oMenu);
 		return oMenu;
 	};
 
-	NavigationList.prototype._createNavigationMenuItems = function () {
+	NavigationList.prototype._createNavigationMenuItems = function (oMenu) {
 		var items = [],
 			menuItems = [];
 
@@ -437,22 +397,30 @@ sap.ui.define([
 				return;
 			}
 
-			var menuItem = new MenuItem({
+			var menuItem = new NavigationListMenuItem({
 				icon: item.getIcon(),
 				text: item.getText(),
 				tooltip: item.getTooltip_AsString() || item.getText(),
-				enabled: item.getEnabled()
+				visible: item.getVisible(),
+				enabled: item.getEnabled(),
+				href: item.getHref(),
+				target: item.getTarget()
 			});
 			menuItem._navItem = item;
+			menuItem._oMenu = oMenu;
 
 			item.getItems().forEach(function (subItem) {
-				var subMenuItem = new MenuItem({
+				var subMenuItem = new NavigationListMenuItem({
 					icon: subItem.getIcon(),
 					text: subItem.getText(),
 					tooltip: subItem.getTooltip_AsString() || subItem.getText(),
-					enabled: subItem.getEnabled()
+					visible: subItem.getVisible(),
+					enabled: subItem.getEnabled(),
+					href: subItem.getHref(),
+					target: subItem.getTarget()
 				});
 				subMenuItem._navItem = subItem;
+				subMenuItem._oMenu = oMenu;
 
 				menuItem.addItem(subMenuItem);
 			});
