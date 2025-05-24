@@ -214,18 +214,12 @@ sap.ui.define([
 				},
 				iClickOnAContextMenuEntryWithKey(sKey) {
 					return this.waitFor({
-						controlType: "sap.ui.unified.Menu",
-						matchers(oMenu) {
-							return oMenu.getDomRef().classList.contains("sapUiDtContextMenu");
+						controlType: "sap.m.MenuItem",
+						matchers(oMenuItem) {
+							return oMenuItem.getKey() === sKey;
 						},
-						success(aMenu) {
-							// The key is only available in the parent menu (sap.m.Menu)
-							// This works only because the indices are the same in the parent and the context menu
-							const oParentMenu = aMenu[0].getParent();
-							const aItems = oParentMenu.getItems();
-							// get the index of the item with the key
-							const iIndex = aItems.findIndex((oItem) => oItem.getKey() === sKey);
-							aMenu[0].getItems()[iIndex].getDomRef().click();
+						success(aMenuItem) {
+							aMenuItem[0].getDomRef().click();
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
@@ -233,7 +227,7 @@ sap.ui.define([
 				iClickOnAVariantMenu(sVariantName) {
 					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
-						controlType: "sap.ui.unified.MenuItem",
+						controlType: "sap.m.MenuItem",
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: oResources.getText(sVariantName)
@@ -600,28 +594,26 @@ sap.ui.define([
 				},
 				iShouldSeetheContextMenu() {
 					return this.waitFor({
-						controlType: "sap.ui.unified.Menu",
-						matchers(oMenu) {
-							return oMenu.hasStyleClass("sapUiDtContextMenu");
+						controlType: "sap.m.Popover",
+						matchers(oPopover) {
+							return oPopover.hasStyleClass("sapUiDtContextMenu");
 						},
-						success(oMenu) {
-							Opa5.assert.ok(oMenu[0], "The context menu is shown.");
+						success(aPopover) {
+							Opa5.assert.ok(aPopover[0], "The context menu is shown.");
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
 				},
 				iShouldSeetheContextMenuEntriesWithKeys(aContextEntriesKeys) {
 					return this.waitFor({
-						controlType: "sap.ui.unified.Menu",
-						matchers(oMenu) {
-							return oMenu.hasStyleClass("sapUiDtContextMenu");
+						controlType: "sap.m.Popover",
+						matchers(oPopover) {
+							return oPopover.hasStyleClass("sapUiDtContextMenu");
 						},
-						success(aMenu) {
+						success(aPopover) {
 							const aIsContextEntriesKeys = [];
-							// The key is only available in the parent menu (sap.m.Menu)
-							// This works only because the indices are the same in the parent and the context menu
-							const oParentMenu = aMenu[0].getParent();
-							const aItems = oParentMenu.getItems();
+							const oMenu = aPopover[0].getContent()[0];
+							const aItems = oMenu.getItems();
 							aItems.forEach(function(oItem) {
 								aIsContextEntriesKeys.push(oItem.getKey());
 							});
@@ -632,13 +624,14 @@ sap.ui.define([
 				},
 				iShouldSeetheNumberOfContextMenuActions(iActions) {
 					return this.waitFor({
-						controlType: "sap.ui.unified.Menu",
-						matchers(oMenu) {
-							return oMenu.hasStyleClass("sapUiDtContextMenu");
+						controlType: "sap.m.Popover",
+						matchers(oPopover) {
+							return oPopover.hasStyleClass("sapUiDtContextMenu");
 						},
-						success(oMenu) {
+						success(aPopover) {
 							let iItems = 0;
-							oMenu[0].getItems().forEach(function(oItem) {
+							const oMenu = aPopover[0].getContent()[0];
+							oMenu.getItems().forEach(function(oItem) {
 								if (oItem.getVisible()) {
 									iItems++;
 								}

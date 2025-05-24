@@ -32,19 +32,19 @@ sap.ui.define([
 ) {
 		"use strict";
 
-		// shortcut for sap.m.MenuButtonMode
+		// Shortcut for sap.m.MenuButtonMode
 		var MenuButtonMode = library.MenuButtonMode;
 
-		// shortcut for sap.ui.core.TextDirection
+		// Shortcut for sap.ui.core.TextDirection
 		var TextDirection = coreLibrary.TextDirection;
 
-		// shortcut for sap.m.ButtonType
+		// Shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
 
-		// shortcut for sap.ui.core.Popup.Dock
+		// Shortcut for sap.ui.core.Popup.Dock
 		var Dock = Popup.Dock;
 
-		// properties which shouldn't be applied on inner Button or SplitButton control since they don't have such properties
+		// Properties which shouldn't be applied on inner Button or SplitButton control since they don't have such properties
 		var aNoneForwardableProps = ["buttonMode", "useDefaultActionOnly", "width", "menuPosition"];
 
 		/**
@@ -359,7 +359,7 @@ sap.ui.define([
 		/**
 		 * Gets the button part of a <code>MenuButton</code>.
 		 * @private
-		 * @returns {sap.m.Button | sap.m.SplitButton}
+		 * @returns {sap.m.Button | sap.m.SplitButton} the Button control
 		 */
 		MenuButton.prototype._getButtonControl = function() {
 			return this.getAggregation("_button");
@@ -371,14 +371,7 @@ sap.ui.define([
 		 * @private
 		 */
 		MenuButton.prototype._handleButtonPress = function(oEvent) {
-			var oMenu = this.getMenu(),
-				oOffset = {
-					zero: "0 0",
-					plus2_right: "0 +2",
-					minus2_right: "0 -2",
-					plus2_left: "+2 0",
-					minus2_left: "-2 0"
-				};
+			var oMenu = this.getMenu();
 
 			this.fireBeforeMenuOpen();
 
@@ -398,54 +391,10 @@ sap.ui.define([
 
 			var aParam = [this, oEvent.getParameter("keyboard")];
 
-			switch (this.getMenuPosition()) {
-				case Dock.BeginTop:
-					aParam.push(Dock.BeginBottom, Dock.BeginTop, oOffset.plus2_right);
-					break;
-				case Dock.BeginCenter:
-					aParam.push(Dock.BeginCenter, Dock.BeginCenter, oOffset.zero);
-					break;
-				case Dock.LeftTop:
-					aParam.push(Dock.RightBottom, Dock.LeftBottom, oOffset.plus2_left);
-					break;
-				case Dock.LeftCenter:
-					aParam.push(Dock.RightCenter, Dock.LeftCenter, oOffset.plus2_left);
-					break;
-				case Dock.LeftBottom:
-					aParam.push(Dock.RightTop, Dock.LeftTop, oOffset.plus2_left);
-					break;
-				case Dock.CenterTop:
-					aParam.push(Dock.CenterBottom, Dock.CenterTop, oOffset.plus2_left);
-					break;
-				case Dock.CenterCenter:
-					aParam.push(Dock.CenterCenter, Dock.CenterCenter, oOffset.zero);
-					break;
-				case Dock.CenterBottom:
-					aParam.push(Dock.CenterTop, Dock.CenterBottom, oOffset.minus2_right);
-					break;
-				case Dock.RightTop:
-					aParam.push(Dock.LeftBottom, Dock.RightBottom, oOffset.minus2_left);
-					break;
-				case Dock.RightCenter:
-					aParam.push(Dock.LeftCenter, Dock.RightCenter, oOffset.minus2_left);
-					break;
-				case Dock.RightBottom:
-					aParam.push(Dock.LeftTop, Dock.RightTop, oOffset.minus2_left);
-					break;
-				case Dock.EndTop:
-					aParam.push(Dock.EndBottom, Dock.EndTop, oOffset.plus2_right);
-					break;
-				case Dock.EndCenter:
-					aParam.push(Dock.EndCenter, Dock.EndCenter, oOffset.zero);
-					break;
-				case Dock.EndBottom:
-					aParam.push(Dock.EndTop, Dock.EndBottom, oOffset.minus2_right);
-					break;
-				case Dock.BeginBottom:
-				default:
-					aParam.push(Dock.BeginTop, Dock.BeginBottom, oOffset.minus2_right);
-					break;
-			}
+			// adjust the positioning of the Menu Popover to align with MenuButton, because of padding around inner button
+			var oPopover = oMenu._getPopover();
+
+			oPopover && oPopover.setOffsetX(1).setOffsetY(-3);
 
 			oMenu.openBy.apply(oMenu, aParam);
 
@@ -475,14 +424,14 @@ sap.ui.define([
 			var oButtonControl = this._getButtonControl(),
 				bOpeningMenuButton = oButtonControl,
 				oMenu = this.getMenu(),
-				oUnifiedMenu = oMenu && oMenu._getMenu && oMenu._getMenu();
+				oPopover = oMenu && oMenu._getPopover();
 
 			if (this._isSplitButton()) {
 				oButtonControl.setArrowState(false);
 				bOpeningMenuButton = oButtonControl._getArrowButton();
 			}
 
-			if (oUnifiedMenu && oUnifiedMenu._bLeavingMenu){
+			if (oPopover && !oPopover.isOpen()) {
 				this._bPopupOpen = false;
 			}
 
@@ -690,18 +639,6 @@ sap.ui.define([
 			return this._getButtonControl().getDomRef();
 		};
 
-		MenuButton.prototype.onsapescape = function(oEvent) {
-			var oMenu = this.getMenu(),
-				oUnifiedMenu = oMenu && oMenu._getMenu && oMenu._getMenu();
-
-			if (oUnifiedMenu && this._bPopupOpen) {
-				oUnifiedMenu._bLeavingMenu = true;
-				oUnifiedMenu.close();
-				this._menuClosed();
-				oEvent.preventDefault();
-			}
-		};
-
 		MenuButton.prototype.onsapup = function(oEvent) {
 			this.openMenuByKeyboard();
 			// If there is a different behavior defined in the parent container for the same event,
@@ -732,7 +669,9 @@ sap.ui.define([
 		};
 
 		MenuButton.prototype.ontouchstart = function() {
-			this._bPopupOpen = this.getMenu() && this.getMenu()._getMenu() && this.getMenu()._getMenu().getPopup().isOpen();
+			const oMenu = this.getMenu(),
+				oPopover = oMenu && oMenu._getPopover();
+			this._bPopupOpen = oMenu && oPopover && oPopover.isOpen();
 		};
 
 		MenuButton.prototype.handleKeydown = function(oEvent) {

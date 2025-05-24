@@ -3,8 +3,17 @@
 /* Horizon High Contrast White theme  */
 /* ================================== */
 
-html.sap-phone .sapMRespMenuDialog .sapMPage {
-  .sapMBar-CTX.sapMHeader-CTX,.sapMBarPH {
-    box-shadow: var(--sapContent_HeaderShadow);
-  }
+.sapMMenu {
+
+	box-shadow: @sapUiContentShadow1;
+
+	.sapMMenuItem.sapMMenuItemSubMenuOpen {
+		background-color: @sapUiListSelectionBackgroundColor
+	}
+
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
+		background-color: @sapUiListActiveBackground;
+	}
+
 }

@@ -305,7 +305,7 @@
 }
 
 .sapTntNL .sapTntNLIExpandIcon,
-.sapUiMnuItmSbMnu.sapTntNLIExpandIcon,
+.sapMMenuItemSubMenu.sapTntNLIExpandIcon,
 .sapTntNLIExternalLinkIcon {
 	min-width: @_sap_tnt_NavigationList_ExpandIconWidth;
 	margin-right: @_sap_tnt_NavigationList_ExpandIconMarginRight;
@@ -595,13 +595,13 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	}
 }
 
-.sapTntNLMenu.sapUiMnu {
+.sapTntNLMenu.sapMMenu {
 
-	&:not(.sapUiSubmenu) {
+	&:not(.sapMSubmenu) {
 		padding: @_sap_tnt_NavigationList_PopupPadding;
 	}
 
-	.sapUiMnuItmSbMnu:empty {
+	.sapMMenuItemSubMenu:empty {
 		min-width: initial;
 		padding-inline-end: initial;
 	}
@@ -610,17 +610,14 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	&:not(.sapUiSubmenu) .sapUiMnuLst .sapUiMnuItm  {
 		font-family: @_sap_tnt_NavigationList_ParentItemTextFontFamily;
 
-		.sapUiMnuItmIco {
-			position: relative !important;
-			width: auto;
-
+		.sapMMenuItemIcon {
 			.sapUiIcon {
 				color: @_sap_tnt_NavigationList_IconColor;
 				display: block;
 			}
 		}
 
-		.sapUiMnuItmSbMnu {
+		.sapMMenuItemSubMenu {
 			position: static; // default one
 			display: flex;
 			align-items: center;
@@ -643,12 +640,8 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			}
 		}
 
-		.sapUiMnuItmR {
-			display: none;
-		}
-
-		&.sapUiMnuItmSubMnuOpen,
-		&.sapUiMnuItmSubMnuOpen.sapUiMnuItmHov {
+		&.sapMMenuItemSubMenuOpen,
+		&.sapMMenuItemSubMenuOpen:hover {
 			border-bottom: none;
 			background-color: @sapUiListHoverBackground;
 
@@ -662,8 +655,8 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 		}
 	}
 
-	.sapUiMnuLst {
-		li.sapUiMnuItm {
+	.sapMMenuList {
+		li.sapMMenuItem {
 			display: flex;
 			align-items: center;
 			height: @_sap_tnt_NavigationList_ItemHeight;
@@ -672,11 +665,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			transition: @_sap_tnt_NavigationList_ItemTransition;
 			font-size: @sapMFontMediumSize;
 
-			.sapUiMnuItmL {
-				display: none;
-			}
-
-			.sapUiMnuItmTxt {
+			.sapMMenuItemText {
 				display: flex;
 				align-items: center;
 				margin: 0 !important;
@@ -688,8 +677,6 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			&:focus {
 				outline: @sapUiContentFocusStyle @sapUiContentFocusWidth @sapUiContentFocusColor;
 			}
-
-			outline-offset: 0;
 
 			&:not(:last-child) {
 				margin-bottom: @_sap_tnt_NavigationList_ItemBottomMarginInOverflowPopup;
@@ -712,27 +699,21 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 		}
 	}
 
-	.sapUiMnuItmIco {
+	.sapMMenuItemIcon {
 		min-width: 1rem;
 		max-width: 1rem;
 		padding-inline-end: 0.5rem;
 	}
 }
 
-.sapTntNLMenu.sapUiMnu.sapUiSubmenu {
+.sapTntNLMenu.sapMMenu.sapMSubmenu {
 	padding: 0.5rem;
 
-	.sapUiMnuLst .sapUiMnuItm {
+	.sapMMenuList .sapMMenuItem {
 		padding-inline: 1rem;
 
-		.sapUiMnuItmIco {
-			position: relative !important;
-			width: auto;
-
-			.sapUiIcon {
-				color: @_sap_tnt_NavigationList_IconColor;
-				display: block;
-			}
+		.sapMMenuItemIcon {
+			display: none;
 		}
 
 		.sapTntNLIExtLinkOverflowIcon {
@@ -741,18 +722,15 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 			font-size: 0.875rem;
 			pointer-events: all;
 			outline: none;
-			-webkit-user-select: none;  /* Chrome all / Safari all */
-			-moz-user-select: none;     /* Firefox all */
-			user-select: none;
 		}
 	}
 }
 
-.sapTntNLPopup .sapTntNLISecondLevel .sapMText{
+.sapTntNLPopup .sapTntNLISecondLevel .sapMText {
 	padding-left: 0;
 }
 
-.sapUiMnuItmExternalLink a{
+.sapTntNavMenuItemExternalLink a {
 	min-width: 100%;
 	height: 100%;
 	text-decoration: none;
@@ -777,9 +755,13 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 		min-height: @_sap_tnt_NavigationList_ItemHeightCompact + @_sap_tnt_NavigationList_ItemBottomMargin;
 	}
 
-	.sapTntNLMenu.sapUiMnu li.sapUiMnuItm,
+	.sapTntNLMenu.sapMMenu li.sapMMenuItem,
 	.sapTntNLI {
 		height: @_sap_tnt_NavigationList_ItemHeightCompact;
+	}
+
+	.sapTntNLMenu.sapMMenu .sapUiIcon {
+		line-height: @_sap_tnt_NavigationList_ItemHeightCompact;
 	}
 
 	.sapTntNLPopup .sapTntNLISecondLevel .sapMText {

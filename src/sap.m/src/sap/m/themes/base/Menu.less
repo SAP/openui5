@@ -1,19 +1,334 @@
-/* =========================== */
-/* CSS for control sap.m/Menu  */
-/* Base theme                  */
-/* =========================== */
+/* ==================================== */
+/* CSS for control sap.m/Menu  			*/
+/* Base theme                           */
+/* ==================================== */
 
-.sapMRespMenuDialog .sapMLIB {
-	border-bottom: none;
+@_sap_m_Menu_ItmHeightCozy: 2.75rem;
+@_sap_m_Menu_ItmHeightCompact: 2rem;
+@_sap_m_Menu_ItmPaddingCozy: 0.625rem;
+@_sap_m_Menu_ItmPaddingCompact: 0.5rem;
+
+.sapMMenu {
+
+	max-width: 100%;
+	background-color: @sapUiGroupContentBackground;
+	cursor: default;
+	outline: none;
+	overflow: hidden;
+	font-family: @sapUiFontFamily;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiListTextColor;
+	box-shadow: @sapUiContentShadow1;
+	border-radius: @sapUiElementBorderCornerRadius;
+
+	&.sapMPopover .sapMPopoverCont {
+		padding: 0;
+	}
+
+	.sapMMenuList {
+		padding: 0;
+		margin: 0;
+		display: block;
+		cursor: default;
+		color: @sapUiListTextColor;
+		font-size: @sapMFontMediumSize;
+		font-family: @sapUiFontFamily;
+	}
+
+	.sapMMenuItem {
+		display: flex;
+		height: @_sap_m_Menu_ItmHeightCozy;
+		white-space: nowrap;
+		position: relative;
+		align-items: center;
+		flex: 0 0 auto;
+		padding: 0 @_sap_m_Menu_ItmPaddingCozy;
+		-webkit-user-select: none; /* Safari */
+		-ms-user-select: none; /* IE 10 and IE 11 */
+		user-select: none; /* Standard syntax */
+		border-bottom: 0.0625rem solid transparent;
+	}
+
+	/* mobile view */
+	&.sapMDialog .sapMMenuItem {
+		padding: 0 0.875rem;
+	}
+
+	.sapMMenuItem:not(.sapMMenuItemDisabled) {
+		cursor: pointer;
+	}
+
+	.sapMMenuItem:hover {
+		color: @sapUiListTextColor;
+		background-color: @sapUiListHoverBackground;
+	}
+
+	.sapMMenuItem:focus {
+		outline: @sapContent_FocusWidth @sapContent_FocusStyle @sapUiContentFocusColor;
+		outline-offset: -3px;
+		color: @sapUiListTextColor;
+	}
+
+	.sapMMenuItem:hover {
+		background-color: @sapUiListHoverBackground;
+	}
+
+	.sapMMenuItem.sapMMenuItemDisabled {
+		color: @sapUiContentDisabledTextColor;
+	}
+
+	.sapMMenuItemText {
+		margin-inline-start: 0;
+		flex-grow: 1;
+		flex-shrink: 1;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+	}
+
+	.sapMMenuItemShortcut {
+		padding-inline-start: 1rem;
+		padding-inline-end: 0.25rem;
+		color: @sapContent_LabelColor;
+		font-weight: normal;
+		text-align: right;
+
+		&:empty {
+			padding-inline-start: 0;
+			padding-inline-end: 0;
+		}
+	}
+
+	.sapMMenuEndContent {
+		padding-inline-start: 0.5rem;
+	}
+
+	.sapMMenuItemSelected {
+		padding-inline-start: 0.5rem;
+		padding-inline-end: 0;
+		font-weight: normal;
+		text-align: center;
+		&::after {
+			color: @sapSelectedColor;
+			content: "\e05b";
+			font-family: 'SAP-icons';
+			outline: none;
+			line-height: inherit;
+			padding-inline-end: 0.125rem;
+			width: 2rem;
+			height: 2rem;
+		}
+	}
+
+	.sapMMenuItemIcon {
+		min-width: 1.125rem;
+		max-width: 1.125rem;
+		text-align: center;
+		color: @sapUiContentNonInteractiveIconColor;
+		padding-inline-end: 0.625rem;
+	}
+
+	/* mobile view */
+	&.sapMDialog .sapMMenuItemIcon {
+		min-width: 1rem;
+		max-width: 1rem;
+		padding-inline-end: 0.875rem;
+
+		&:empty {
+			min-width: 0;
+			width: 0;
+		}
+	}
+
+	.sapMMenuItemIcon > .sapUiIcon {
+		line-height: @_sap_m_Menu_ItmHeightCozy;
+		font-size: @_sap_m_Menu_ItmHeightCozy / 2 - 0.125rem;
+	}
+
+	.sapMMenuItemIcon > .sapUiIcon {
+		cursor: inherit;
+	}
+
+	.sapMMenuList .sapMMenuItemIcon .sapUiIcon {
+		font-size: 1rem;
+	}
+
+	.sapMMenuItemIcon > img {
+		max-width: 1rem;
+		max-height: 1rem;
+		vertical-align: middle;
+		padding-inline-start: 0;
+	}
+
+	.sapMMenuItemDisabled > .sapMMenuItemIcon > img {
+		opacity: 0.5;
+		filter: alpha(opacity=50);
+	}
+
+	.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemIcon,
+	.sapMMenuNoIcons > div > .sapMMenuItem > .sapMMenuItemIcon {
+		width: 0px;
+		display: none;
+	}
+
+	.sapMMenuItemText {
+		white-space: nowrap;
+	}
+
+	.sapMMenuItemSubMenu {
+		min-width: 1.375rem;
+		max-width: 1.375rem;
+		justify-content: end;
+		text-align: end;
+		font-size: 0.75rem;
+		padding-inline-end: 0.25rem;
+	}
+
+	.sapMMenuItemSubMenu > div:after {
+		content: "\e066";
+		color: @sapUiContentNonInteractiveIconColor;
+		font-family: 'SAP-icons';
+		outline: none;
+		font-size: 1rem;
+	}
+
+	.sapMMenuSeparator {
+		position: relative;
+		height: 0.125rem;
+
+		hr {
+			display: inline-block;
+			margin: 0;
+			position: absolute;
+			left: 0;
+			right: 0;
+			margin-top: 1px;
+			margin-bottom: 1px;
+			border-width: 0;
+			border-top: 0.0625rem solid @sapUiGroupContentBorderColor;
+			height: 1px;
+			color: @sapUiToolbarSeparatorColor;
+		}
+	}
+
+	.sapMMenuItem.sapMMenuItemSubMenuOpen,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
+		background-color: @sapUiListSelectionBackgroundColor;
+	}
+
+	.sapMMenuItem.sapMMenuItemSubMenuOpen,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
+		border-bottom: 1px solid @sapUiListSelectionBorderColor;
+	}
+
+	.sapMMenuItem:focus:active,
+	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus:active {
+		color: @sapUiListActiveTextColor;
+		background-color: @sapUiListActiveBackground;
+	}
+
+	.sapMMenuItem.sapMMenuItemDisabled:hover,
+	.sapMMenuItem.sapMMenuItemDisabled:focus,
+	.sapMMenuItem.sapMMenuItemDisabled:focus:active {
+		color: @sapUiContentDisabledTextColor;
+		background-color: transparent;
+	}
+
+	.sapMMenuItem.sapMMenuItemDisabled .sapMMenuItemIcon {
+		color: @sapUiContentDisabledTextColor;
+	}
+
+	.sapMMenuItem:focus:active .sapMMenuItemIcon {
+		color: @sapUiListActiveTextColor;
+	}
+
+	.sapMMenuItem.sapMMenuItemDisabled:focus:active .sapMMenuItemIcon {
+		color: @sapUiContentDisabledTextColor;
+	}
+
+	.sapMMenuNoIcons .sapMMenuItemText {
+		padding-inline-start: 0;
+	}
+
+	.sapMMenuItem:focus .sapMMenuItemSubMenu > div:after {
+		color: @sapUiContentNonInteractiveIconColor;
+	}
+
+	.sapMMenuItem:focus:active .sapMMenuItemSubMenu > div:after {
+		color: @sapUiListActiveTextColor;
+	}
+
+	.sapMMenuItem .sapMMenuItemIcon + .sapMMenuItemText {
+		padding-inline-start: 0;
+	}
+
+	/* Compact size */
+	.sapUiSizeCompact {
+
+		.sapMMenu {
+			min-width: 50px;
+		}
+
+		.sapMMenuItem {
+			height: @_sap_m_Menu_ItmHeightCompact;
+			padding: 0 @_sap_m_Menu_ItmPaddingCompact;
+		}
+
+		.sapMMenuNoIcons.sapMMenuNoSubMenu > .sapMMenuItem > .sapMMenuItemText {
+			padding-inline-end: 0.75rem;
+		}
+
+		.sapMMenuList > .sapMMenuItem > .sapMMenuItemText {
+			padding-inline-start: 2rem;
+		}
+
+		.sapMMenuList > .sapMMenuItem > .sapMMenuItemIcon + .sapMMenuItemText {
+			padding-inline-start: 0rem;
+		}
+
+		.sapMMenuList.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemText,
+		.sapMMenuList.sapMMenuNoIcons > .sapMMenuItem > .sapMMenuItemIcon + .sapMMenuItemText{
+			padding-inline-start: 0;
+		}
+
+		.sapMMenuItemSubMenu {
+			min-width: 1.5rem;
+			max-width: 1.5rem;
+		}
+
+		.sapMMenuItemIcon {
+			min-width: 1rem;
+			max-width: 1rem;
+			padding-inline-end: 0.5rem;
+		}
+
+		.sapMMenuItemIcon > .sapUiIcon {
+			line-height: @_sap_m_Menu_ItmHeightCompact;
+		}
+
+	}
+
 }
 
-/* compact */
-.sapUiSizeCompact .sapMMenu.sapUiMnu {
-	min-width: 50px;
+/* mobile view */
+.sapMMenu.sapMDialog > header:last-of-type .sapMIBar {
+    box-shadow: inset 0 -1px #ebebeb;
 }
 
-.sapUiSizeCompact .sapMMenu .sapUiMnuItmIco > .sapUiIcon {
-	font-size: 1rem;
+.sap-phone .sapMMenu .sapMMenuItem:focus {
+	outline: none;
+	background-color: initial;
 }
 
-/* end compact */
+/* openAsContextMenu pointer */
+.sapMMenuContextMenuPointer {
+	position: absolute;
+	inset-block-start: 0px;
+	inset-inline-start: 0px;
+	width: 0;
+	height: 0;
+	z-index: 100;
+	opacity: 0;
+}

@@ -416,29 +416,22 @@
 	overflow: hidden;
 }
 
-.sapFSPOverflowMenu .sapUiMnuItm {
-
-	.sapUiMnuItmIco {
+.sapFSPOverflowMenu .sapMMenuItem {
+	.sapMMenuItemIcon {
 		color: var(--sapContent_Selected_ForegroundColor);
 	}
 
-	.sapUiMnuItmTxt {
+	.sapMMenuItemText {
 		font-family: var(--sapFontFamily);
 		font-size: var(--sapFontHeader6Size);
 		font-style: normal;
 		font-weight: 600;
 	}
 
-	&.sapUiMnuItmDsbl {
-
-		.sapUiMnuItmTxt {
+	&.sapMMenuItemDisabled {
+		.sapMMenuItemText {
 			opacity: var(--sapContent_DisabledOpacity);
 		}
-	}
-
-	&:not(.sapUiMnuItmHov:active) .sapUiMnuItmTxt,
-	&.sapUiMnuItmDsbl.sapUiMnuItmHov:active .sapUiMnuItmTxt {
-		color: var(--sapTextColor);
 	}
 }
 

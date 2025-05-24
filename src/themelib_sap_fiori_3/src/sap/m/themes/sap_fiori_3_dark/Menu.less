@@ -1,11 +1,9 @@
-/* ==================================== */
-/* CSS for control sap.m/Menu           */
-/* Quartz High Contrast Black theme     */
-/* ==================================== */
+/* =========================== */
+/* CSS for control sap.m/Menu  */
+/* Quartz Dark theme           */
+/* =========================== */
 
 .sapMMenu {
-
-	box-shadow: @sapUiContentShadow1;
 
 	.sapMMenuItem {
 		padding: 0 0.75rem;
@@ -15,13 +13,10 @@
 		opacity: @sapUiContentDisabledOpacity;
 	}
 
-	.sapMMenuItem.sapMMenuItemSubMenuOpen {
-		background-color: @sapUiListSelectionBackgroundColor
-	}
-
+	.sapMMenuItem.sapMMenuItemSubMenuOpen,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:hover,
 	.sapMMenuItem.sapMMenuItemSubMenuOpen:focus {
-		background-color: @sapUiListActiveBackground;
+		background-color: @sapUiListSelectionHoverBackground;
 	}
 
 	.sapMMenuItemIcon {
