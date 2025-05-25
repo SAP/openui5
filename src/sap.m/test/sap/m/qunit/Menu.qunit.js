@@ -931,4 +931,46 @@ sap.ui.define([
 		assert.notOk(oItem0.getSelected(), "First item is not selected");
 	});
 
+	QUnit.module("Miscellaneous", {
+		beforeEach: async function () {
+			this.oMenu = new Menu({
+				items: [
+					new MenuItem("Item1::some-addon::some-more-addon", {
+						text: "Item 1"
+					})
+				]
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate(this.clock);
+		},
+		afterEach: async function () {
+			this.oMenu.destroy();
+			this.oMenu = null;
+			await nextUIUpdate(this.clock);
+		}
+	});
+
+	QUnit.test("MenuWrapper's onclick does not throw JS error", async function (assert) {
+		// Arrange
+		var oMenuWrapper = this.oMenu._getMenuWrapper(),
+			oEvent = {
+				preventDefault: function () {},
+				stopPropagation: function () {}
+			};
+
+
+		this.oMenu.openBy(document.body);
+		await nextUIUpdate(this.clock);
+
+		// simulate click on the first menu item
+		oEvent.target = this.oMenu.getItems()[0].getDomRef();
+
+		try {
+			oMenuWrapper.onclick(oEvent);
+			assert.ok(true, "No error thrown in onclick");
+		} catch (e) {
+			assert.ok(false, "Error thrown: " + e.message);
+		}
+
+	});
+
 });

@@ -163,7 +163,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (oEvent.target.closest(`#${oItem.getId()}-endContent`)) {
+		if (oEvent.target.closest(CSS.escape(`#${oItem.getId()}-endContent`))) {
 			this.fireClosePopover({ bubbleToRoot: true });
 			return;
 		}
