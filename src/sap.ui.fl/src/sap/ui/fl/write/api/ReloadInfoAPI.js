@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/LayerUtils"
 ], function(
 	FlexState,
 	ManifestUtils,
@@ -26,8 +25,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	VersionsAPI,
 	Layer,
-	LayerUtils,
-	Utils
+	LayerUtils
 ) {
 	"use strict";
 
@@ -214,7 +212,6 @@ sap.ui.define([
 		 * @param {string} oReloadInfo.removeVersionParameter - Indicates if the version parameter should be removed
 		 * @param {string} oReloadInfo.removeDraft - Indicates if the draft parameter should be removed
 		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
-		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} Indicates if the parameters have changed
 		 *
@@ -255,7 +252,6 @@ sap.ui.define([
 		 * @param {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
-		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} <code>true</code> to indicate that the session has been changed
 		 *
@@ -303,75 +299,59 @@ sap.ui.define([
 		},
 
 		/**
-		 * Determines if a reload on exit is needed and if yes - it returns what kind of reload should happen
-		 * (ushell Navigation or hard reload).
+		 * Determines if a reload on exit is needed and why.
 		 *
-		 * @param {object} oReloadInfo - Contains the information needed to check if a reload on exit should happen
-		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
-		 * @param {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
-		 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
-		 * @param {boolean} oReloadInfo.changesNeedReload - Indicates if changes (e.g. app descriptor changes) need a hard reload
-		 * @param {boolean} oReloadInfo.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when the key user entered UI adaptation
-		 * @param {boolean} oReloadInfo.activeVersion - Indicates the current active version
-		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
+		 * @param {object} oPropertyBag - Contains the information needed to check if a reload on exit should happen
+		 * @param {sap.ui.fl.Layer} oPropertyBag.layer - Current layer
+		 * @param {boolean} oPropertyBag.isDraftAvailable - Indicates if a draft is available
+		 * @param {boolean} oPropertyBag.hasHigherLayerChanges - Indicates if higher layer changes exist
+		 * @param {boolean} oPropertyBag.initialDraftGotActivated - Indicates if a draft got activated and had a draft initially when the key user entered UI adaptation
+		 * @param {boolean} oPropertyBag.activeVersion - Indicates the current active version
+		 * @param {sap.ui.fl.Selector} oPropertyBag.selector - Root control instance
 		 *
-		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
+		 * @returns {object} An object containing the reload information
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.rta
 		 */
-		getReloadMethod(oReloadInfo) {
-			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
-			var oRELOAD = {
-				NOT_NEEDED: "NO_RELOAD",
-				RELOAD_PAGE: "HARD_RELOAD",
-				VIA_HASH: "CROSS_APP_NAVIGATION"
-			};
-			oReloadInfo.reloadMethod = oRELOAD.NOT_NEEDED;
+		getReloadInfo(oPropertyBag) {
+			const sReference = ManifestUtils.getFlexReferenceForControl(oPropertyBag.selector);
+			const oReloadInfo = {};
 
-			// TODO fix app descriptor handling and reload behavior
-			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.isDraftAvailable ||= ReloadInfoAPI.hasVersionStorage(
-				{value: Version.Number.Draft},
-				oReloadInfo.selector
+			oReloadInfo.isDraftAvailable = oPropertyBag.isDraftAvailable || ReloadInfoAPI.hasVersionStorage(
+				{ value: Version.Number.Draft },
+				oPropertyBag.selector
 			);
 
-			oReloadInfo.isDraftAvailable ||= ReloadInfoAPI.hasVersionStorage({value: Version.Number.Draft}, oReloadInfo.selector);
+			oReloadInfo.isDraftAvailable = oPropertyBag.isDraftAvailable || ReloadInfoAPI.hasVersionStorage(
+				{ value: Version.Number.Draft }, oPropertyBag.selector
+			);
 			oReloadInfo.hasVersionStorage = !!FlexInfoSession.getByReference(sReference).version;
 
 			if (
-				oReloadInfo.activeVersion
-				&& oReloadInfo.activeVersion !== Version.Number.Original
+				oPropertyBag.activeVersion
+				&& oPropertyBag.activeVersion !== Version.Number.Original
 				&& oReloadInfo.hasVersionStorage
 			) {
 				oReloadInfo.activeVersionNotSelected = !ReloadInfoAPI.hasVersionStorage(
-					{value: oReloadInfo.activeVersion},
-					oReloadInfo.selector
+					{ value: oPropertyBag.activeVersion }, oPropertyBag.selector
 				);
 			}
 
-			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerStorage({value: oReloadInfo.layer}, oReloadInfo.selector);
+			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerStorage({ value: oReloadInfo.layer }, oReloadInfo.selector);
 			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}
 			oReloadInfo.allContexts = isAllContextsAvailable(sReference);
 			oReloadInfo.switchEndUserAdaptation = needAdaptationReloadOnExit(sReference);
-			if (oReloadInfo.changesNeedReload
-				|| oReloadInfo.isDraftAvailable
+			oReloadInfo.reloadNeeded = oReloadInfo.isDraftAvailable
 				|| oReloadInfo.hasHigherLayerChanges
 				|| oReloadInfo.initialDraftGotActivated
 				|| oReloadInfo.activeVersionNotSelected
 				|| oReloadInfo.allContexts
-				|| oReloadInfo.switchEndUserAdaptation
-			) {
-				oReloadInfo.reloadMethod = oRELOAD.RELOAD_PAGE;
-				// always try cross-app navigation (via hash); we only need a hard reload because of appdescr changes
-				// (changesNeedReload = true)
-				if (!oReloadInfo.changesNeedReload && Utils.getUshellContainer()) {
-					oReloadInfo.reloadMethod = oRELOAD.VIA_HASH;
-				}
-			}
+				|| oReloadInfo.switchEndUserAdaptation;
+
 			return oReloadInfo;
 		}
 	};
