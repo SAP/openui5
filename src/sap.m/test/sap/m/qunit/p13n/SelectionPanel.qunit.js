@@ -750,4 +750,33 @@ sap.ui.define([
 			assert.equal(actualDelta, oTestData.resultDelta, "No length difference for items");
 		});
 	});
+
+	QUnit.test("hideDescriptions - check default value without redundant items", function(assert){
+		// arrange
+		assert.ok(this.oSelectionPanel, "Panel created");
+
+		// act
+		this.oSelectionPanel.setP13nData(this.getTestData());
+
+		// assert
+		const bHideDescriptions = this.oSelectionPanel.getModel(this.oSelectionPanel.P13N_MODEL).getProperty("/hideDescriptions");
+		assert.equal(bHideDescriptions, false, "Hide descriptions is set to false by default");
+	});
+
+	QUnit.test("hideDescriptions - check default value with redundant items", function(assert){
+		// arrange
+		assert.ok(this.oSelectionPanel, "Panel created");
+
+		const oP13nData = this.getTestData();
+		oP13nData[2].isRedundant = true;
+		oP13nData[4].isRedundant = true;
+		this.oSelectionPanel.setP13nData(oP13nData);
+
+		// act
+		this.oSelectionPanel.setP13nData(oP13nData);
+
+		// assert
+		const bHideDescriptions = this.oSelectionPanel.getModel(this.oSelectionPanel.P13N_MODEL).getProperty("/hideDescriptions");
+		assert.equal(bHideDescriptions, true, "Hide descriptions is set to false by default");
+	});
 });
