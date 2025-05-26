@@ -3,6 +3,16 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      },
+      {
+        "id": "f8180641bb76e0c35dc6c1d498c0ca52a16f1fa4",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed focus on Planning Calendar Row"
+      },
+      {
         "id": "55bb71cff5199d7f255af3984e89784919eca5ca",
         "type": "FIX",
         "text": " sap.uxap.ObjectPageSection: fix header buttons visibility"

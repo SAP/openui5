@@ -3,9 +3,19 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      },
+      {
         "id": "9b87feb808e5d0f31a8c87e06e5acc67e4db2c0e",
         "type": "FIX",
         "text": " sap.tnt.SideNavigation: CSS parameter 'sapFontSemiboldFamily' is changed to 'sapFontSemiboldDuplexFamily'"
+      },
+      {
+        "id": "9df772c15d8898beccb7fdd3e990daabf643f102",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fix visibility issue for emphasized button text"
       },
       {
         "id": "8bd4e0aa9da7f31e0a7792526c642141b42a14f2",

@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      }
+    ]
+  }
+}

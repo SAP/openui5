@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "1abdeabedb0cd0a3e3138b58bc6b1a0eff2d16a3",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
+      },
+      {
         "id": "a6b4a5386332b5128ef3ca5393d26e905cfa0673",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarVisual: Fix calendar visual test"

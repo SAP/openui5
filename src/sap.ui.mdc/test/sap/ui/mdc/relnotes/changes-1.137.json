@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "9a65ba63cf910ce84ac9f5faf9d9f187a5f55d0c",
+        "type": "FEATURE",
+        "text": " ColumnMenu: Implement Accessible Resize Option"
+      },
+      {
         "id": "da8ab70cd17e5ba1c86ce83c16a53b5f1473e7bb",
         "type": "FIX",
         "text": " Empty Filter for navigation properties"

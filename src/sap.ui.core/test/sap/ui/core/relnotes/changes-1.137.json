@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      },
+      {
         "id": "40c989d1821f07e61f4288b6011037a7d33ac02d",
         "type": "FIX",
         "text": " Fix further ControllerExtensionProvider qunit tests"

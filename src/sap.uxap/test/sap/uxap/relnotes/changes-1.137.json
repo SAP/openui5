@@ -3,9 +3,24 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "50ebfcfe9fe27cb08c15a9e480d3113d67af66b6",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: prevent duplicate ID error"
+      },
+      {
+        "id": "b700a1e87931acc1ffd6bae47e91c2f95a626365",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: fix overflowing behavior - revert"
+      },
+      {
         "id": "911f6eeb9ef95197b52faa8755fc2e97b7f30f04",
         "type": "FIX",
         "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
+      },
+      {
+        "id": "30cf732ac04ea916e26abb7e2e939e8743d1b190",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix table flickering"
       },
       {
         "id": "5a0dfa0a9143692f42e23200d6a3439e4ceccd7f",

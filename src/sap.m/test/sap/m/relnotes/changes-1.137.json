@@ -3,9 +3,104 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      },
+      {
+        "id": "9a65ba63cf910ce84ac9f5faf9d9f187a5f55d0c",
+        "type": "FEATURE",
+        "text": " ColumnMenu: Implement Accessible Resize Option"
+      },
+      {
+        "id": "b3cea434a160ea01acec3865b3b4efa52e7c470a",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: Labels overlapping is prevented"
+      },
+      {
+        "id": "7fedf84fd3538b795adfaa92e13de78b549a3003",
+        "type": "FIX",
+        "text": " sap.m.Input: Update suggestion popover to display 'hello' in lowercase"
+      },
+      {
+        "id": "b7bb48da30d6eafa958a634bd2a46206b342ee4f",
+        "type": "FIX",
+        "text": " sap.m.Input: Add bottom margin to prevent label overlap"
+      },
+      {
+        "id": "f8180641bb76e0c35dc6c1d498c0ca52a16f1fa4",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed focus on Planning Calendar Row"
+      },
+      {
+        "id": "b3a3a4637990a170731c97ca1edc755eb0caaa46",
+        "type": "FIX",
+        "text": " Input controls: announced text is now following the guidelines"
+      },
+      {
+        "id": "f3f8914e2240d87c584045aa6012d66bf7430857",
+        "type": "FIX",
+        "text": " We've now set the correct aria value within the Rename dialog box for the input area"
+      },
+      {
+        "id": "540f63ad409e2de0a6b8dfe721bca9d6dcf5c225",
+        "type": "FIX",
+        "text": " sap.m.Switch: state information is announced correctly now"
+      },
+      {
+        "id": "edc01e198068974fa0896f6354f865c6102abcb7",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Changed logging from warning to info for duplicate keys"
+      },
+      {
+        "id": "474b994a53122006172f2ec51c4b8d62c5670b54",
+        "type": "FIX",
+        "text": " sap.m.MultiInput documentation update"
+      },
+      {
+        "id": "9c5a7847b23078e2daa99e1905e68457d820c3d0",
+        "type": "FIX",
+        "text": " sap.m.NotificationList: Focus correctly restored"
+      },
+      {
+        "id": "d119efb020da549420b65fef7dd16affe144b365",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: adjust narrow mode on token invalidation"
+      },
+      {
+        "id": "7895051d879da807de4abe1105aac94259f4a81d",
+        "type": "FIX",
+        "text": " We now ensure that the correct download parameter is set while downloading uploaded items using the table's download functionality"
+      },
+      {
+        "id": "16cf3777f24af1d42fb08460518d2079233b3874",
+        "type": "FIX",
+        "text": " sap.m.TabStrip items can be deleted from keyboard with delete button when they are rendered in overflow popover"
+      },
+      {
+        "id": "46bb3ed57a8829004f68131b3fc5851c64af6ffe",
+        "type": "FIX",
+        "text": " sap.m Button: fix typo in the color parameter"
+      },
+      {
+        "id": "1abdeabedb0cd0a3e3138b58bc6b1a0eff2d16a3",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
+      },
+      {
+        "id": "b61fa363f141a0d25fe1c3a4bac7172ccc79f090",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarRow: custom header row background on hover is correct now"
+      },
+      {
         "id": "ce433ecd07a39b64412eb43c527228183c93af62",
         "type": "FIX",
         "text": " We now ensure that the image inside a slide tile is adjusted based on the width of the tile"
+      },
+      {
+        "id": "bbc2064420925cf7ad9924fa672a1d69d718c336",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: MonthPicker fits in width on 200% zoom"
       },
       {
         "id": "2e0f19e39273dfb0c8a91dd659f6a4aaa066927c",

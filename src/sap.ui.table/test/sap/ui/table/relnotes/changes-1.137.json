@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "9a65ba63cf910ce84ac9f5faf9d9f187a5f55d0c",
+        "type": "FEATURE",
+        "text": " ColumnMenu: Implement Accessible Resize Option"
+      }
+    ]
+  }
+}

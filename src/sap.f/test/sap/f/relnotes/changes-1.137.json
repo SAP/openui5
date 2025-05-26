@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      },
+      {
         "id": "2f1673bfabcee68a3f247120fdf9d4ea951e99a9",
         "type": "FEATURE",
         "text": " Integration Cards: Statuses in Object and Table cards now support actions"

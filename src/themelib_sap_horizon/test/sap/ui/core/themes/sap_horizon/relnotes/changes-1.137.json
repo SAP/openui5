@@ -3,9 +3,24 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Implemented now as a standalone control"
+      },
+      {
+        "id": "f8180641bb76e0c35dc6c1d498c0ca52a16f1fa4",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed focus on Planning Calendar Row"
+      },
+      {
         "id": "9b87feb808e5d0f31a8c87e06e5acc67e4db2c0e",
         "type": "FIX",
         "text": " sap.tnt.SideNavigation: CSS parameter 'sapFontSemiboldFamily' is changed to 'sapFontSemiboldDuplexFamily'"
+      },
+      {
+        "id": "9df772c15d8898beccb7fdd3e990daabf643f102",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: fix visibility issue for emphasized button text"
       },
       {
         "id": "683386722ebe9eaaf99a80e825e45974546ae52c",
