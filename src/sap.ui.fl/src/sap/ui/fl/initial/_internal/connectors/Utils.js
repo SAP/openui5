@@ -13,6 +13,11 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// The flex data request can contain manifest changes and so potentially block the app loading.
+	// Therefore, a default timeout keeps the app working when a technical difficulty makes flex data request not responsible.
+	// 20 seconds is applied unless there is valid use case that requires a longer response time.
+	var DEFAULT_TIMEOUT = 20000;
+
 	/**
 	 * Creates <code>Error<code> object from <code>XMLHttpRequest<code> and an additional message for end user
 	 *
@@ -154,6 +159,7 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open(sMethod, sUrl);
+				xhr.timeout = DEFAULT_TIMEOUT; // TODO Implement logic for connectors to configure dedicated timeout values which overwrite the default
 				if ((sMethod === "GET" || sMethod === "HEAD") && (!mPropertyBag || (!mPropertyBag.initialConnector || !mPropertyBag.initialConnector.xsrfToken) && !mPropertyBag.cacheable)) {
 					xhr.setRequestHeader("X-CSRF-Token", "fetch");
 				}
