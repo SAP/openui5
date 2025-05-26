@@ -97,7 +97,7 @@ sap.ui.define([
 		var oCopyContent = oCopy.content;
 
 		if (bIsChange) {
-			if (oCopy.selector.variantId) {
+			if (oCopy.selector?.variantId) {
 				assert.strictEqual(oCopy.selector.persistencyKey, oOriginal.getSelector().persistencyKey, "there is the same persistencyKey");
 				assert.notStrictEqual(oCopy.selector.variantId, oOriginal.getSelector().variantId, "there is not the same variantId");
 			}
@@ -121,7 +121,9 @@ sap.ui.define([
 				assert.notOk(oCopyContent.contexts, "there is no contexts set on views");
 				assert.deepEqual(oCopyContent, oOrigContent, "there is the same content object");
 			}
-			assert.deepEqual(oCopy.dependentSelector, oOriginal.getDependentSelectors(), "there is the same dependentSelector");
+			if (typeof oOriginal.getDependentSelectors === "function") {
+				assert.deepEqual(oCopy.dependentSelector, oOriginal.getDependentSelectors(), "there is the same dependentSelector");
+			}
 		} else {
 			assert.strictEqual(oOriginal.getExecuteOnSelection(), oCopy.executeOnSelection, "there is the same executeOnSelection value");
 			assert.strictEqual(oOriginal.getFavorite(), oCopy.favorite, "there is the same favorite value");
@@ -150,7 +152,14 @@ sap.ui.define([
 	}
 
 	function verifyChangesAreCopiedCorrectly(aCopiedChangeDefinitions, assert) {
-		return FlexObjectManager.getFlexObjects({ selector: this.mPropertyBag.control, invalidateCache: false, includeCtrlVariants: true, includeDirtyChanges: true })
+		return FlexObjectManager.getFlexObjects({
+			selector: this.mPropertyBag.control,
+			invalidateCache: false,
+			includeCtrlVariants: true,
+			includeDirtyChanges: true,
+			includeManifestChanges: true,
+			includeAnnotationChanges: true
+		 })
 		.then(function(aFlexObjects) {
 			var aCustomerFlexObjects = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aFlexObjects, Layer.CUSTOMER);
 			assert.strictEqual(aCustomerFlexObjects.length, aCopiedChangeDefinitions.length, "we have the length of objects");
@@ -1262,6 +1271,17 @@ sap.ui.define([
 			url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testSaveAsFLVariants.json"),
 			async: false
 		});
+
+		const oCompVariantFlexDataResponseForMigration = LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateCompVariants.json"),
+			async: false
+		});
+
+		oCompVariantFlexDataResponseForMigration.changes = oCompVariantFlexDataResponseForMigration.changes
+		.filter((oChange) => ["nonVariantAnnotationChange", "nonVariantManifestChange"].includes(oChange.fileName));
+		oCompVariantFlexDataResponseForMigration.comp = {};
+
 		[{
 			testName: "when there are control variant changes and no draft exists",
 			stubResponse: oFLVariantFlexDataResponse,
@@ -1296,6 +1316,23 @@ sap.ui.define([
 				{ version: "1" }
 			],
 			stubVersionModel: Version.Number.Draft
+		}, {
+			testName: "when there are manifest and annotation changes, no views and a draft exists",
+			stubResponse: oCompVariantFlexDataResponseForMigration,
+			aReturnedVersions: [
+				{ version: Version.Number.Draft },
+				{ version: "2" },
+				{ version: "1" }
+			],
+			stubVersionModel: Version.Number.Draft
+		}, {
+			testName: "when there are manifest and annotation changes, no views and no draft exists",
+			stubResponse: oCompVariantFlexDataResponseForMigration,
+			aReturnedVersions: [
+				{ version: "2" },
+				{ version: "1" }
+			],
+			stubVersionModel: 1
 		}].forEach(function(mSetup) {
 			QUnit.test(mSetup.testName, async function(assert) {
 				sandbox.stub(Versions, "getVersionsModel").returns({
@@ -1305,7 +1342,7 @@ sap.ui.define([
 				});
 
 				sandbox.stub(Storage.versions, "load").resolves(mSetup.aReturnedVersions);
-				await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", mSetup.stubResponse);
+				await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.test.app", mSetup.stubResponse);
 				var oStorageCreateStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves({status: 201});
 
 				assert.notOk(ContextBasedAdaptationsAPI.hasAdaptationsModel(this.mPropertyBag),
