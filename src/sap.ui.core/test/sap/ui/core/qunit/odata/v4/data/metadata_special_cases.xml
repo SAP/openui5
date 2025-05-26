@@ -54,7 +54,7 @@
 				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
 				<NavigationProperty Name="_Artist" Type="special.cases.ArtistsType" Partner="_Publication"/>
 			</EntityType>
-			<EntityType Name="EntityWithComplexKey">
+			<EntityType Name="EntityWithComplexKey" OpenType="true">
 				<Key>
 					<PropertyRef Name="Key/P1" Alias="Key1"/>
 					<PropertyRef Name="Key/P2" Alias="Key2"/>
@@ -126,7 +126,7 @@
 				<Property Name="GeoFence" Type="Edm.GeographyPolygon"/>
 				<Property Name="GeoLocation" Type="Edm.GeographyPoint"/>
 			</ComplexType>
-			<ComplexType Name="ComplexKey">
+			<ComplexType Name="ComplexKey" OpenType="true">
 				<Property Name="P1" Type="Edm.String"/>
 				<Property Name="P2" Type="Edm.Int32"/>
 			</ComplexType>
