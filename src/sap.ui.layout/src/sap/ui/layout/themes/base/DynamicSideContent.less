@@ -4,25 +4,27 @@
 /* ================================================= */
 
 .sapUiDSC {
+
 	.sapUiDSCM:not(.sapUiHidden),
 	.sapUiDSCS:not(.sapUiHidden) {
 		position: relative;
 	}
-	&:after {
+
+	&::after {
 		clear: both;
-		content: " ";
+		content: '';
 		display: block;
 		font-size: 0;
 		height: 0;
 		visibility: hidden;
 	}
 
-	> div[class^="sapUiDSCSpan"] {
+	> div[class^='sapUiDSCSpan'] {
 		float: left;
 		overflow: auto;
 	}
 
-	> aside[class^="sapUiDSCSpan"] {
+	> aside[class^='sapUiDSCSpan'] {
 		float: left;
 		overflow: auto;
 	}
