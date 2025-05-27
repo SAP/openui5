@@ -13908,7 +13908,7 @@ sap.ui.define([
 
 		let fnHandleMainPromise;
 		const oMainPromise = new Promise(function (resolve, reject) {
-			fnHandleMainPromise = bMainSuccessful ? resolve : reject;
+			fnHandleMainPromise = bMainSuccessful ? resolve : reject.bind(null, "~mainError~");
 		});
 		let fnResolveTypes;
 		const oTypesPromise = new Promise(function (resolve) { fnResolveTypes = resolve; });
@@ -14016,6 +14016,7 @@ sap.ui.define([
 			}, function (oError) {
 				assert.strictEqual(oError.canceled, true);
 				assert.strictEqual(oError.message, "$$separate: canceled bar");
+				assert.strictEqual(oError.cause, "~mainError~");
 			});
 		}
 
@@ -14053,6 +14054,7 @@ sap.ui.define([
 			}, function (oError) {
 				assert.strictEqual(oError.canceled, true);
 				assert.strictEqual(oError.message, "$$separate: canceled foo");
+				assert.strictEqual(oError.cause, "~mainError~");
 			});
 		}
 
@@ -14208,6 +14210,7 @@ sap.ui.define([
 		}, function (oError) {
 			assert.strictEqual(oError.canceled, true);
 			assert.strictEqual(oError.message, "$$separate: canceled foo");
+			assert.strictEqual(oError.cause, "~fooError~");
 		});
 
 		// code under test: reject separate promise for "bar"
@@ -14225,6 +14228,7 @@ sap.ui.define([
 		}, function (oError) {
 			assert.strictEqual(oError.canceled, true);
 			assert.strictEqual(oError.message, "$$separate: canceled bar");
+			assert.strictEqual(oError.cause, "~barError~");
 		});
 	});
 
@@ -14265,6 +14269,7 @@ sap.ui.define([
 		}, function (oError) {
 			assert.strictEqual(oError.canceled, true);
 			assert.strictEqual(oError.message, "$$separate: canceled separate");
+			assert.strictEqual(oError.cause, undefined);
 		});
 	});
 

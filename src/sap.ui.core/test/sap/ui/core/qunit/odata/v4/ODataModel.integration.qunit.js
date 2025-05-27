@@ -80785,6 +80785,7 @@ make root = ${bMakeRoot}`;
 			}, function (oError) {
 				assert.strictEqual(oError.canceled, true);
 				assert.strictEqual(oError.message, "$$separate: canceled EMPLOYEE_2_TEAM");
+				assert.strictEqual(oError.cause.message, "Request intentionally failed");
 			});
 
 			this.expectCanceledError("Failed to read path /EMPLOYEES('0')/EMPLOYEE_2_TEAM/Name",
