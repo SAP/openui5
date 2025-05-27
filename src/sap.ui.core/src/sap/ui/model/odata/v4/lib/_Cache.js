@@ -3840,6 +3840,10 @@ sap.ui.define([
 					const oElement = this.aElements.$byPredicate[sPredicate];
 					if (oElement) {
 						if (oElement["@odata.etag"] === oSeparateData["@odata.etag"]) {
+							if (oElement[sProperty]?.["@odata.etag"]
+									!== oSeparateData[sProperty]?.["@odata.etag"]) {
+								delete oElement[sProperty];
+							}
 							_Helper.updateSelected(this.mChangeListeners, sPredicate, oElement,
 								oSeparateData, [sProperty]);
 						} else {
