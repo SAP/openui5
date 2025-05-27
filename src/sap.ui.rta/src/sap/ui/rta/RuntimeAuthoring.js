@@ -1193,7 +1193,7 @@ sap.ui.define([
 		}
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 		await this.stop(true, true, true);
-		ReloadManager.reloadPage();
+		ReloadManager.triggerReload({});
 	}
 
 	function saveOnly(oEvent) {
@@ -1658,9 +1658,6 @@ sap.ui.define([
 
 	/**
 	 * Delete all changes for current layer and root control's component.
-	 * In case of Base Applications (no App Variants) the manifest Changes and UI Changes are saved
-	 * in different Flex Persistence instances, the changes for both places will be deleted. For App Variants
-	 * all the changes are saved in one place.
 	 *
 	 * @returns {Promise} Resolves when change persistence is reset
 	 */
@@ -1676,8 +1673,7 @@ sap.ui.define([
 			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
 			const oReloadInfo = {
 				layer: sLayer,
-				ignoreMaxLayerParameter: true,
-				triggerHardReload: true
+				ignoreMaxLayerParameter: true
 			};
 			return ReloadManager.triggerReload(oReloadInfo);
 		}.bind(this))

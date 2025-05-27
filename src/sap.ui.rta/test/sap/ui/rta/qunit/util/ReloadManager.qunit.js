@@ -24,11 +24,6 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var mReloadMethods = {
-		NOT_NEEDED: "NO_RELOAD",
-		VIA_HASH: "CROSS_APP_NAVIGATION",
-		RELOAD_PAGE: "HARD_RELOAD"
-	};
 
 	QUnit.module("handleReloadOnExit", {
 		beforeEach() {
@@ -38,13 +33,13 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with reloadMethod NOT_NEEDED", function(assert) {
-			ReloadManager.handleReloadOnExit({reloadMethod: mReloadMethods.NOT_NEEDED});
+		QUnit.test("with reloadNeeded false", function(assert) {
+			ReloadManager.handleReloadOnExit({ reloadNeeded: false });
 			assert.strictEqual(this.oReloadStub.callCount, 0, "the reload method was not called");
 		});
 
 		QUnit.test("with reload needed", function(assert) {
-			ReloadManager.handleReloadOnExit({});
+			ReloadManager.handleReloadOnExit({ reloadNeeded: true });
 			assert.strictEqual(this.oReloadStub.callCount, 1, "the reload method was called");
 			assert.deepEqual(this.oReloadStub.lastCall.args[0].removeVersionParameter, true, "the parameter was added");
 		});
@@ -60,7 +55,7 @@ sap.ui.define([
 	QUnit.module("checkReloadOnExit", {
 		beforeEach() {
 			this.oMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
-			this.oGetReloadMethodStub = sandbox.stub(ReloadInfoAPI, "getReloadMethod");
+			this.oGetReloadInfoInfoStub = sandbox.stub(ReloadInfoAPI, "getReloadInfo");
 			ReloadManager.setUShellServices({URLParsing: "foo"});
 		},
 		afterEach() {
@@ -71,7 +66,7 @@ sap.ui.define([
 			var mProperties = {
 				changesNeedReloadPromise: Promise.resolve("false")
 			};
-			this.oGetReloadMethodStub.returns({});
+			this.oGetReloadInfoInfoStub.returns({});
 			return ReloadManager.checkReloadOnExit(mProperties).then(function() {
 				assert.strictEqual(mProperties.changesNeedReload, "false", "the value is taken over to the property bag");
 				assert.strictEqual(this.oMessageBoxStub.callCount, 0, "the message box is not opened");
@@ -212,7 +207,7 @@ sap.ui.define([
 				var mProperties = {
 					changesNeedReloadPromise: Promise.resolve()
 				};
-				this.oGetReloadMethodStub.returns(oTestInfo.oReloadInfo);
+				this.oGetReloadInfoInfoStub.returns(oTestInfo.oReloadInfo);
 				return ReloadManager.checkReloadOnExit(mProperties).then(function() {
 					assert.strictEqual(this.oMessageBoxStub.callCount, 1, "the message box is opened");
 					assert.strictEqual(this.oMessageBoxStub.lastCall.args[0], "information", "the type is correct");
@@ -443,27 +438,6 @@ sap.ui.define([
 				onStart: true
 			});
 			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was called");
-		});
-
-		QUnit.test("onStart with changed params and triggerHardReload", function(assert) {
-			this.oHandleReloadInfoOnStartStub.returns(true);
-			ReloadManager.triggerReload({
-				onStart: true,
-				triggerHardReload: true
-			});
-			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was called");
-			assert.strictEqual(this.oHardReloadStub.callCount, 1, "the hardReload was triggered");
-		});
-
-		QUnit.test("not on start without changed params", function(assert) {
-			this.oHandleReloadInfoStub.returns(true);
-			ReloadManager.triggerReload({
-				onStart: false,
-				triggerHardReload: true
-			});
-			assert.strictEqual(this.oHandleReloadInfoStub.callCount, 1, "the handleParams was called");
-			assert.strictEqual(this.oReloadCurrentAppStub.callCount, 1, "the reloadCurrentApp was called");
-			assert.strictEqual(this.oHardReloadStub.callCount, 1, "the hardReload was triggered");
 		});
 	});
 
