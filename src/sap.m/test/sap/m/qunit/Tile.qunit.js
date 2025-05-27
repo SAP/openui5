@@ -252,9 +252,10 @@ sap.ui.define([
 
 	QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 		// SUT
-		var sut 	= new Tile(),
-			tiles 	= [sut, new Tile()],
-			cnt 	= new TileContainer({tiles: tiles});
+		var sut = new Tile(),
+			tiles = [sut, new Tile()],
+			cnt = new TileContainer({tiles: tiles}),
+			sRoleDescr = Library.getResourceBundleFor("sap.m").getText("TILE_ROLE_DESCRIPTION");
 
 		cnt.placeAt("qunit-fixture");
 
@@ -263,7 +264,7 @@ sap.ui.define([
 
 		// Assert
 		assert.equal(sut.$().attr('role'), 'option', 'option, option; equal success');
-		assert.equal(sut.$().attr('aria-roledescription'), 'Tile', 'Proper custom semantics applied');
+		assert.equal(sut.$().attr('aria-roledescription'), sRoleDescr, 'Proper custom semantics applied');
 		assert.equal(sut.$().attr('aria-posinset'), "1", 'position in the set must equal to 1');
 		assert.equal(sut.$().attr('aria-setsize'), "2", 'the size of the set must equal to 2');
 
