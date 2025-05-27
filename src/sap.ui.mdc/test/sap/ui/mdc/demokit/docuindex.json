@@ -5,10 +5,6 @@
 		},
 		"samplesRef": [
 			{
-				"namespace": "sap.ui.mdc.sample",
-				"ref": "test-resources/sap/ui/mdc/demokit/internal/sample"
-			},
-			{
 				"namespace": "delegates",
 				"ref": "test-resources/sap/ui/mdc/delegates"
 			},

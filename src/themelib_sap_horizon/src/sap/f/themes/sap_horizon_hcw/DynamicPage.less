@@ -9,6 +9,7 @@
 }
 
 .sapFDynamicPage-Std-Desktop-XL {
+
 	.sapFDynamicPageContent,
 	.sapFDynamicPageContentFitContainer {
 		padding: 1rem 3rem 0 3rem;
@@ -16,7 +17,9 @@
 }
 
 .sapFDynamicPage.sapUiResponsiveContentPadding {
+
 	&.sapFDynamicPage-Std-Phone {
+
 		.sapFDynamicPageContent,
 		.sapFDynamicPageContentFitContainer {
 			padding-left: 1rem;
@@ -25,6 +28,7 @@
 	}
 
 	&.sapFDynamicPage-Std-Tablet {
+
 		.sapFDynamicPageContent,
 		.sapFDynamicPageContentFitContainer {
 			padding-left: 2rem;
@@ -33,6 +37,7 @@
 	}
 
 	&.sapFDynamicPage-Std-Desktop-XL {
+
 		.sapFDynamicPageContent,
 		.sapFDynamicPageContentFitContainer {
 			padding-left: 3rem;
@@ -48,7 +53,7 @@
 	height: 2.5rem;
 	font-size: 1.375rem;
 
-	// Reflection: styles overwritten
+	/* Reflection: styles overwritten */
 	.sapMBtnInner {
 		height: 2rem;
 		bottom: 0.5rem;
@@ -58,53 +63,51 @@
 		}
 	}
 
-	overflow: visible; // enforcement needed for IE11
-
-	&:before,
-	&:after {
-		content: "";
+	&::before,
+	&::after {
+		content: '';
 		position: absolute;
 		width: 4rem;
-		top: 50%; // enforcement needed for IE11
 		height: 0.0625rem;
 	}
 
-	&:before {
-		background-image: linear-gradient(to left, @sapUiObjectHeaderBorderColor, transparent);
+	&::before {
+		background-image: linear-gradient(to left, var(--sapObjectHeader_BorderColor), transparent);
 		right: 100%;
 	}
 
-	&:after {
-		background-image: linear-gradient(to right, @sapUiObjectHeaderBorderColor, transparent);
+	&::after {
+		background-image: linear-gradient(to right, var(--sapObjectHeader_BorderColor), transparent);
 		left: 100%;
 	}
 }
 
-// when we have both pin and toggle header indicator, pseudo-elements overlap siblings on EDGE
-html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDynamicPageHeaderPinButton:before {
+/* when we have both pin and toggle header indicator, pseudo-elements overlap siblings on EDGE */
+html[data-sap-ui-browser^='ed'] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDynamicPageHeaderPinButton:before {
 	display: none;
 }
 
 .sapFDynamicPageHeaderPinButton > .sapMBtnInner {
 		border: 0.0625rem solid;
-		&:not(.sapMToggleBtnPressed) {
-			background-color: @sapUiButtonBackground;
-		}
 
+		&:not(.sapMToggleBtnPressed) {
+			background-color: var(--sapButton_Background);
+		}
 }
 
 .sapFDynamicPage {
 
 	.sapFDynamicPageContentWrapperList,
 	.sapFDynamicPageContentWrapperTransparent {
-		&>.sapFDynamicPageContent {
-			background: @sapUiBaseBG;
+
+		& > .sapFDynamicPageContent {
+			background: var(--sapBackgroundColor);
 		}
 	}
 }
 
 .sapFDynamicPageHeaderPinButton:hover > .sapMBtnInner.sapMBtnHoverable {
-	background-color: @sapUiButtonHoverBackground;
+	background-color: var(--sapButton_Hover_Background);
 
 	&.sapMToggleBtnPressed {
 		background-color: @sapUiToggleButtonPressedHoverBackground;
@@ -113,40 +116,45 @@ html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDyn
 
 .sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive,
 .sapFDynamicPageHeaderPinButton > .sapMBtnInner.sapMBtnActive.sapMBtnHoverable {
-	background-color: @sapUiButtonActiveBackground;
+	background-color: var(--sapButton_Active_Background);
 }
 
 .sapFDynamicPage {
 	/* DynamicPageTitle and Toggle Header Visual Indicator hover state */
 	&.sapFDynamicPageTitleClickEnabled {
+
 		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
-			background: @sapUiObjectHeaderHoverBackground;
+			background: var(--sapObjectHeader_Hover_Background);
 			box-shadow: @sapUiShadowHeader;
 		}
+
 		&.sapFDynamicPageTitleForceHovered {
+
 			.sapFDynamicPageToggleHeaderIndicator {
+
 				.sapMBtnInner {
-					background-color: @sapUiHighlight;
+					background-color: var(--sapHighlightColor);
 				}
 			}
 		}
 	}
 
-	// Footer
+	/* Footer */
 	.sapFDynamicPageFooter {
 		opacity: 1;
 
 		.sapFDynamicPageActualFooterControl.sapMTB {
-			background: @sapUiPageFooterBackground;
-			color: @sapUiPageFooterTextColor;
-			box-shadow: @sapUiContentShadow1;
-			border-radius: @sapUiElementBorderCornerRadius;
+			background: var(--sapPageFooter_Background);
+			color: var(--sapPageFooter_TextColor);
+			box-shadow: var(--sapContent_Shadow1);
+			border-radius: var(--sapElement_BorderCornerRadius);
 			border: none;
 		}
 	}
 
 	&.sapFDynamicPage-Std-Tablet,
 	&.sapFDynamicPage-Std-Phone {
+
 		.sapFDynamicPageFooter .sapFDynamicPageActualFooterControl.sapMIBar {
 			height: 2.75rem;
 		}
@@ -157,9 +165,9 @@ html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDyn
 .sapFDynamicPageHeaderPinButton {
 	width: 1.5rem;
 	height: 2rem;
-	bottom: -0.95rem; // needs refactoring in the base file
+	bottom: -0.95rem; /* needs refactoring in the base file */
 
-	// Reflection: styles overwritten
+	/* Reflection: styles overwritten */
 	.sapMBtnInner {
 		min-width: 1.5rem;
 		width: 1.5rem;
@@ -173,31 +181,28 @@ html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDyn
 		}
 	}
 
-	overflow: visible; // enforcement needed for IE11
-
-	&:before,
-	&:after {
-		content: "";
+	&::before,
+	&::after {
+		content: '';
 		position: absolute;
 		width: 4rem;
-		top: 50%; // enforcement needed for IE11
 		height: 0.0625rem;
 	}
 
-	&:before {
-		background-image: linear-gradient(to left, @sapUiObjectHeaderBorderColor, transparent);
+	&::before {
+		background-image: linear-gradient(to left, var(--sapObjectHeader_BorderColor), transparent);
 		right: 100%;
 	}
 
-	&:after {
-		background-image: linear-gradient(to right, @sapUiObjectHeaderBorderColor, transparent);
+	&::after {
+		background-image: linear-gradient(to right, var(--sapObjectHeader_BorderColor), transparent);
 		left: 100%;
 	}
 }
 
 .sapFDynamicPageToggleHeaderIndicator.sapMBtn .sapMBtnInner, .sapFDynamicPageHeaderPinButton.sapMBtn .sapMBtnInner {
-	border: 1px solid @sapUiButtonBorderColor;
-	border-radius: @sapButton_BorderCornerRadius;
+	border: 1px solid var(--sapButton_BorderColor);
+	border-radius: var(--sapButton_BorderCornerRadius);
 }
 
 .sapFDynamicPageToggleHeaderIndicator,
@@ -211,9 +216,11 @@ html[data-sap-ui-browser^="ed"] .sapFDynamicPageToggleHeaderIndicator ~ .sapFDyn
 
 /* Compact */
 .sapUiSizeCompact {
+
 	.sapFDynamicPageToggleHeaderIndicator {
 		margin-left: -1rem;
 	}
+
 	.sapFDynamicPageHeaderPinnable .sapFDynamicPageToggleHeaderIndicator {
 		margin-left: -2rem;
 	}
