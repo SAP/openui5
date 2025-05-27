@@ -3803,8 +3803,9 @@ sap.ui.define([
 				end : iEnd,
 				promise : new SyncPromise(function (resolve, reject) {
 					fnResolve = resolve;
-					fnReject = function () {
-						const oError = new Error("$$separate: canceled " + sProperty);
+					fnReject = function (oError0) {
+						const oError = new Error("$$separate: canceled " + sProperty,
+							{cause : oError0});
 						oError.canceled = true;
 						reject(oError);
 					};
@@ -3817,9 +3818,9 @@ sap.ui.define([
 				const oResult = await this.oRequestor.request("GET", sReadUrl,
 					this.oRequestor.lockGroup("$single", this));
 
-				let bMainFailed;
-				await oMainPromise.catch(() => { /* handled by caller */
-					bMainFailed = true;
+				let oMainError;
+				await oMainPromise.catch((oError) => { /* handled by caller */
+					oMainError = oError;
 				});
 
 				const iIndex = this.mSeparateProperty2ReadRequests[sProperty].indexOf(oReadRange);
@@ -3829,8 +3830,8 @@ sap.ui.define([
 				}
 
 				this.mSeparateProperty2ReadRequests[sProperty].splice(iIndex, 1);
-				if (bMainFailed) {
-					fnReject();
+				if (oMainError) {
+					fnReject(oMainError);
 					return;
 				}
 
@@ -3855,7 +3856,7 @@ sap.ui.define([
 				fnResolve();
 				fnSeparateReceived(sProperty, iStart, iEnd);
 			} catch (oError) {
-				fnReject();
+				fnReject(oError);
 				// do not clean up mSeparateProperty2ReadRequests to avoid late property requests
 				fnSeparateReceived(sProperty, iStart, iEnd, oError);
 			}
