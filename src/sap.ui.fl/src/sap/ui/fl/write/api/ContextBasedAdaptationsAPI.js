@@ -904,6 +904,8 @@ sap.ui.define([
 		.then(function() {
 			return FlexObjectManager.getFlexObjects({
 				selector: mPropertyBag.control,
+				includeManifestChanges: true,
+				includeAnnotationChanges: true,
 				invalidateCache: false,
 				includeCtrlVariants: true,
 				includeDirtyChanges: true,
