@@ -80853,7 +80853,14 @@ make root = ${bMakeRoot}`;
 	// but with a matching ETag, then the known MEMBER_COUNT can be used and no late property
 	// request is needed.
 	// JIRA: CPOUI5ODATAV4-2998
-	QUnit.test("$$separate: ODM#getKeepAliveContext", async function (assert) {
+	//
+	// Due to a deletion in the back end (between processing main and separate request), the
+	// separate request responds with an unexpected entity which was not part of the main list
+	// response. The unexpected data is ignored. Instead, the missing separate data is tried to be
+	// fetched with a subsequent late property request. This request fails with 404, and the
+	// affected table column remains empty.
+	// JIRA: CPOUI5ODATAV4-2777
+	QUnit.test("$$separate: ODM#getKeepAliveContext, deleted entity", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <Table growing="true" growingThreshold="1" id="list"
@@ -81014,6 +81021,40 @@ make root = ${bMakeRoot}`;
 		oTable.requestItems();
 
 		await this.waitForChanges(assert, "scroll to ('2'): with ETag, but no conflict");
+
+		this.expectRequest("EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+				+ "&$skip=3&$top=1", {
+				value : [{
+					EMPLOYEE_2_TEAM : null, // not relevant
+					ID : "unexpected entity"
+				}]
+			})
+			.expectRequest("EMPLOYEES?$select=ID,Name&$skip=3&$top=1", {
+				value : [{
+					ID : "3",
+					Name : "Peter Burke"
+				}]
+			})
+			.expectChange("name", [,,, "Peter Burke"])
+			.expectRequest("EMPLOYEES('3')?$select=EMPLOYEE_2_TEAM"
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)",
+				createErrorInsideBatch({message : "Not found"}, 404))
+			.expectChange("listTeamName", [,,, null])
+			.expectMessage({
+				code : "CODE",
+				message : "Not found",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			});
+		this.oLogMock.expects("error")
+			.withExactArgs("Failed to read path /EMPLOYEES('3')/EMPLOYEE_2_TEAM/Name",
+				sinon.match("Not found"), sODPrB);
+
+		// code under test (CPOUI5ODATAV4-2777)
+		oTable.requestItems();
+
+		await this.waitForChanges(assert, "scroll to ('3'): entity deleted, separate fails");
 	});
 
 	//*********************************************************************************************
