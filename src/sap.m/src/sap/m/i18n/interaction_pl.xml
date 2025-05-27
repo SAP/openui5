@@ -13,7 +13,7 @@
 				<p>Jeśli fokus jest ustawiony na pierwszym wierszu, następuje jego przesunięcie do wiersza nagłówka kolumny.</p>
 				<p>Jeśli fokus jest ustawiony na komórce pierwszego wiersza, następuje jego przesunięcie do nagłówka powiązanej kolumny.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Jeśli fokus jest ustawiony na polu wyboru <span class="uicontrol">Zaznacz wszystko</span> lub <span class="uicontrol">Wyczyść wszystko</span>, następuje jego przesunięcie do selektora wiersza w pierwszym widocznym wierszu.</p>
+				<p>Jeśli fokus jest ustawiony na polu wyboru <span class="uicontrol">Wybierz wszystkie</span> lub <span class="uicontrol">Wyczyść wszystko</span>, następuje jego przesunięcie do selektora wiersza w pierwszym widocznym wierszu.</p>
 				<p>Jeśli fokus jest ustawiony na wierszu nagłówka kolumny, następuje jego przesunięcie do pierwszego wiersza.</p>
 				<p>Jeśli fokus jest ustawiony na wierszu, następuje jego przesunięcie do wiersza poniżej.</p>
 				<p>Jeśli fokus jest ustawiony na komórce, następuje jego przesunięcie do komórki poniżej.</p>
@@ -42,14 +42,14 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
 				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, następuje zwiększenie szerokości tej kolumny o 1&#x00a0;em. Ta operacja jest powtarzana, jeśli klawisz pozostaje naciśnięty.</p>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, następuje zaznaczenie komórki z fokusem oraz komórki po prawej stronie. Fokus jest przesuwany do komórki po prawej stronie od komórki z fokusem.</p>
 				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, fokus jest przesuwany do komórki po prawej stronie, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
 				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, następuje zmniejszenie szerokości tej kolumny o 1&#x00a0;em. Ta operacja jest powtarzana, jeśli klawisz pozostaje naciśnięty.</p>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, następuje zaznaczenie komórki z fokusem oraz komórki po lewej stronie. Fokus jest przesuwany do komórki po lewej stronie od komórki z fokusem.</p>
 				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, fokus jest przesuwany do komórki po lewej stronie, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
 			</description>
@@ -57,7 +57,7 @@
 		<interaction>
 			<description> <kbd>Shift + ArrowUp</kbd> <p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza i następuje zaznaczenie odpowiedniego wiersza, fokus jest przesuwany do wiersza powyżej, a zaznaczenie jest rozszerzane do tego wiersza.</p>
 				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz <span class="emphasis">nie</span> jest zaznaczony, fokus jest przesuwany do wiersza powyżej, a zaznaczenie tego wiersza jest usuwane.</p>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, tak samo jak <span class="emphasis">nie</span> jest zaznaczony wiersz, następuje zaznaczenie komórki z fokusem i komórki powyżej. Następuje przesunięcie fokusu do komórki powyżej komórki z fokusem.</p>
 				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, następuje jego przesunięcie na komórkę powyżej, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
 			</description>
@@ -65,7 +65,7 @@
 		<interaction>
 			<description> <kbd>Shift + ArrowDown</kbd> <p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz jest zaznaczony, fokus jest przesuwany do wiersza poniżej, a zaznaczenie jest rozszerzane do tego wiersza.</p>
 				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz <span class="emphasis">nie</span> jest zaznaczony, fokus jest przesuwany do wiersza poniżej, a zaznaczenie tego wiersza jest usuwane.</p>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, tak samo jak <span class="emphasis">nie</span> jest zaznaczony wiersz, następuje zaznaczenie komórki z fokusem i komórki poniżej. Następuje przesunięcie fokusu do komórki poniżej komórki z fokusem. </p>
 				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, następuje jego przesunięcie na komórkę poniżej, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
 			</description>
@@ -79,13 +79,13 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na komórce, następuje zaznaczenie komórki z fokusem.</p>
 				<p>Jeśli fokus jest ustawiony na bloku zaznaczenia komórek, zaznaczenie komórek jest usuwane.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + Spacebar</kbd> <description>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na bloku zaznaczenia komórek, następuje zmiana bloku zaznaczenia komórek w zaznaczenie wiersza. Zaznaczenie komórki jest usuwane.</p>
 				<p>Skutki są następujące (w zależności od trybu zaznaczania wiersza):</p>
 				<ul>
@@ -96,12 +96,12 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony w tabeli, następuje usunięcie zaznaczenia dowolnych wierszy i komórek.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki:</span></p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, a komórki są zaznaczone, zaznaczenie komórek jest usuwane.</p>
 			</description>
 		</interaction>
@@ -114,7 +114,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
-				<p><span class="emphasis">Jeśli aktywne jest zaznaczenie komórki</span>:</p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli komórki są zaznaczone, <kbd>Shift</kbd> + kliknięcie na innej komórce powoduje rozszerzenie zaznaczenia do klikniętej komórki.</p>
 			</description>
 		</interaction>

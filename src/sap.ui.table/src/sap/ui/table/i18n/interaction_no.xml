@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Hvis fokuset er på cellenivå, flyttes fokuset fem kolonner til høyre (standard sidestørrelse). </p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Hvis fokuset er på kolonneoverskriften og det er færre kolonner til høyre enn den aktuelle sidestørrelsen, flyttes fokuset til den siste kolonnen.</p>
 				<p>Hvis fokuset er på radvelgeren, flyttes fokuset til den første kolonnen i den samme raden.</p>
 				<p>Hvis fokuset er på <span class="uicontrol">Velg alle</span>, flyttes fokuset til overskriften i den første kolonnen.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
 				<p>Hvis fokuset er på en celle, velges den fokuserte cellen.</p>
 				<p>Hvis fokuset er på en celleutvalgsblokk, fjernes utvalget av cellene. </p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Hvis fokuset er på en celle og tabellen har en bestemt konfigurasjon for utvalgsmetode (for å velge en rad må du enten velge selve raden eller markeringsfeltet for utvalg, hvis tilgjengelig), velges bare cellen som er i fokus, i stedet for raden.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Hvis fokuset er på en celle eller radvelger, veksler utvalget i den aktuelle raden.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Hvis fokuset er inne i tabellen og celler er valgt, fjernes utvalget av cellene.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Hvis fokuset er på <span class="uicontrol">Velg alle</span> og du trykker på <kbd>Spacebar</kbd>, blir ikke den tilsvarende hendelsen utløst. <kbd>Shift</kbd> hindrer denne aktiviteten.</p>
+				<p>Hvis fokuset er på en kolonneoverskrift og du trykker på <kbd>Spacebar</kbd> eller <kbd>Enter</kbd>, blir ikke den tilsvarende hendelsen utløst.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden ovenfor, og utvalget utvides opp til denne raden.</p>
+				<p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden ovenfor, og utvalget fjernes for denne raden.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, og raden <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen ovenfor. Fokuset flyttes til cellen over den cellen som er i fokus.</p>
 				<p>Hvis fokuset er på en valgt celle, får cellen ovenfor fokus, og celleutvalget utvides opp til denne cellen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden nedenfor, og utvalget utvides opp til denne raden.</p>
+				<p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden nedenfor, og utvalget fjernes for denne raden.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, og raden <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen nedenfor. Fokuset flyttes til cellen under den cellen som er i fokus.</p>
 				<p>Hvis fokuset er på en valgt celle, får cellen nedenfor fokus, og celleutvalget utvides opp til denne cellen.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopierer de valgte radene eller cellene til utklippstavlen, hvis den er tilgjengelig og hvis funksjonen er aktivert.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Limer inn innholdet fra utklippstablen hvis funksjonen er aktivert.</p>
 			</description>
 		</interaction>
 	</control-interactions>

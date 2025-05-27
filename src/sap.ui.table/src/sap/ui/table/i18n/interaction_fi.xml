@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Jos kohdistus on solutasolla, se siirtyy viisi saraketta oikealle (sivun oletuskoko).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Jos kohdistus on sarakeotsikossa ja oikealla on nykyistä sivukokoa vähemmän sarakkeita, kohdistus siirtyy viimeiseen sarakkeeseen.</p>
 				<p>Jos kohdistus on rivivalitsimessa, se siirtyy saman rivin ensimmäiseen sarakkeeseen.</p>
 				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy ensimmäisen sarakkeen otsikkoon.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, valitaan kohdistettu solu.</p>
 				<p>Jos kohdistus on solun valintalohkossa, solujen valinnat poistetaan.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Jos kohdistus on solussa ja taulukossa on tietty valintakäyttäytymisen konfiguraatio (jos haluat valita rivin, voit valita joko itse rivin tai valintaruudun, jos sellainen on käytettävissä), valitaan vain kohdistettu solu eikä riviä.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Jos kohdistus on solussa tai rivivalitsimessa, tämä vaihtelee nykyisen rivin valintaa.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Jos kohdistus on taulukon sisällä ja soluja on valittu, solujen valinta poistetaan.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa ja valitaan <kbd>Spacebar</kbd>, vastaavaa tapahtumaa ei käynnistetä. <kbd>Shift</kbd> estää tämän toiminnon.</p>
+				<p>Jos kohdistus on sarakeotsikossa ja valitaan <kbd>Spacebar</kbd> tai <kbd>Enter</kbd>, vastaavaa tapahtumaa ei käynnistetä.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen yläpuolella oleva solu. Kohdistus siirtyy kohdistetun solun yläpuolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen alapuolella oleva solu. Kohdistus siirtyy kohdistetun solun alapuolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopioi valitut rivit tai solut leikepöydälle, jos toiminto on käytettävissä ja aktivoitu.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Liittää sisällön leikepöydältä, jos toiminto on aktivoitu.</p>
 			</description>
 		</interaction>
 	</control-interactions>

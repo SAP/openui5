@@ -79,7 +79,7 @@
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
 				<p>If focus is on a cell , the focused cell is selected.</p>
 				<p>If focus is on a cell selection block, the selection of the cells is removed.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>If focus is on a cell, and the table has a certain configuration of the selection behaviour (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>If focus is on a cell or row selector, this toggles the selection of the current row.</p>
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
@@ -118,7 +118,7 @@
 				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
 				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>If focus is on a cell that is <span class="emphasis">not</span> selected and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected, the focus moves to the cell below the focused cell.</p>
 				<p>If focus is on a selected cell, the cell below gets the focus, and the cell selection is enhanced up to this cell.</p>
 			</description>
 		</interaction>

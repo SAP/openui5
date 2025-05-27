@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित है, तो फ़ोकस ऊपर की पंक्ति पर ले जाया जाता है और चयन इस पंक्ति तक एन्हांस किया जाता है.</p>
+				<p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस ऊपर की पंक्ति पर ले जाया जाता है और इस पंक्ति के लिए चयन निकाल दिया जाता है.</p>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>यदि फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है और पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और उसके ऊपर का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के ऊपर वाले सेल पर फ़ोकस ले जाया जाता है.</p>
 				<p>यदि फ़ोकस किसी चयनित सेल पर है, तो फ़ोकस ऊपर वाले सेल पर ले जाया जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित है, तो फ़ोकस नीचे की पंक्ति पर ले जाया जाता है और चयन इस पंक्ति तक एन्हांस किया जाता है.</p>
+				<p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस नीचे की पंक्ति पर ले जाया जाता है और इस पंक्ति के लिए चयन निकाल दिया जाता है.</p>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>यदि फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है और पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और उसके नीचे का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के नीचे वाले सेल पर फ़ोकस ले जाया जाता है. </p>
 				<p>यदि फ़ोकस किसी चयनित सेल पर है, तो फ़ोकस नीचे वाले सेल पर ले जाया जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>यदि फ़ोकस तालिका के अंदर है और सेल चयनित हैं, तो सेल का चयन निकाल दिया जाता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>यदि उपलब्ध हो और सुविधा सक्षम हो, तो चयनित पंक्तियों या सेल की क्लिपबोर्ड पर प्रति बनाता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>यदि सुविधा सक्षम है, तो क्लिपबोर्ड से सामग्री चिपकाता है.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद ऊपर ले जाता है.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद नीचे ले जाता है.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को शीर्ष पर ले जाता है.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को अंत तक ले जाता है.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद ऊपर ले जाता है.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>यदि उपलब्ध हो तो आइटम को एक पद नीचे ले जाता है.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद ऊपर ले जाता है.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद नीचे ले जाता है.</p>
 			</description>
 		</interaction>
 	</control-interactions>

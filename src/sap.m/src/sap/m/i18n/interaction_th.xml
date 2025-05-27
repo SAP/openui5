@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>ถ้าโฟกัสอยู่ที่ตัวเลือกเซลล์หรือแถว และมีการเลือกแถวที่เกี่ยวข้อง โฟกัสจะย้ายไปยังแถวด้านบน และการเลือกจะถูกเพิ่มเติมจนถึงแถวนี้</p>
+				<p>ถ้าโฟกัสอยู่ที่ตัวเลือกเซลล์หรือแถว และ<span class="emphasis">ไม่</span>ได้เลือกแถวที่เกี่ยวข้อง โฟกัสจะย้ายไปยังแถวด้านบน และการเลือกจะถูกย้ายออกสำหรับแถวนี้</p>
 				<p><span class="emphasis">ถ้าเปิดใช้งานการเลือกเซลล์:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>ถ้าโฟกัสอยู่ที่เซลล์ที่<span class="emphasis">ไม่</span>ได้เลือก และ<span class="emphasis">ไม่</span>ได้เลือกแถว เซลล์ที่โฟกัสและเซลล์ด้านบนจะถูกเลือก โฟกัสจะย้ายไปยังเซลล์ด้านบนของเซลล์ที่โฟกัส</p>
 				<p>ถ้าโฟกัสอยู่ที่เซลล์ที่เลือก โฟกัสจะย้ายไปยังเซลล์ด้านบน และการเลือกเซลล์จะถูกเพิ่มเติมจนถึงเซลล์นี้</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>ถ้าโฟกัสอยู่ที่ตัวเลือกเซลล์หรือแถว และมีการเลือกแถวที่เกี่ยวข้อง โฟกัสจะย้ายไปยังแถวด้านล่าง และการเลือกจะถูกเพิ่มเติมจนถึงแถวนี้</p>
+				<p>ถ้าโฟกัสอยู่ที่ตัวเลือกเซลล์หรือแถว และ<span class="emphasis">ไม่</span>ได้เลือกแถวที่เกี่ยวข้อง โฟกัสจะย้ายไปยังแถวด้านล่าง และการเลือกจะถูกย้ายออกสำหรับแถวนี้</p>
 				<p><span class="emphasis">ถ้าเปิดใช้งานการเลือกเซลล์:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>ถ้าโฟกัสอยู่ที่เซลล์ที่<span class="emphasis">ไม่</span>ได้เลือก และ<span class="emphasis">ไม่</span>ได้เลือกแถว เซลล์ที่โฟกัสและเซลล์ด้านล่างจะถูกเลือก โฟกัสจะย้ายไปยังเซลล์ด้านล่างของเซลล์ที่โฟกัส </p>
 				<p>ถ้าโฟกัสอยู่ที่เซลล์ที่เลือก โฟกัสจะย้ายไปยังเซลล์ด้านล่าง และการเลือกเซลล์จะถูกเพิ่มเติมจนถึงเซลล์นี้</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">ถ้าเปิดใช้งานการเลือกเซลล์:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>ถ้าโฟกัสอยู่ภายในตาราง และมีการเลือกแถว การเลือกเซลล์จะถูกย้ายออก</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>คัดลอกแถวหรือเซลล์ที่เลือกไปยังคลิปบอร์ด (ถ้ามี) และมีการเปิดใช้งานฟีเจอร์</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>วางเนื้อหาจากคลิปบอร์ด ถ้ามีการเปิดใช้งานฟีเจอร์</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>ย้ายรายการขึ้นหนึ่งตำแหน่ง (ถ้ามี)</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>ย้ายรายการลงหนึ่งตำแหน่ง (ถ้ามี)</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>ย้ายรายการไปด้านบนสุด (ถ้ามี)</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>ย้ายรายการไปด้านล่างสุด (ถ้ามี)</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>ย้ายรายการขึ้นหนึ่งตำแหน่ง (ถ้ามี)</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>ย้ายรายการลงหนึ่งตำแหน่ง (ถ้ามี)</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>ย้ายรายการขึ้นหนึ่งตำแหน่ง (ถ้ามี)</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>ย้ายรายการลงหนึ่งตำแหน่ง (ถ้ามี)</p>
 			</description>
 		</interaction>
 	</control-interactions>

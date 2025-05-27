@@ -2,139 +2,139 @@
 <interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
 	<control-interactions>
 		<control name="sap.m.Page">
-			<defaultLabel>Global Shortcuts</defaultLabel>
+			<defaultLabel>Scorciatoie globali</defaultLabel>
 		</control>
 	</control-interactions>
 	<control-interactions>
 		<control name="sap.m.Table"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
-				<p>Moves the focus to the next cell within the same column or row in the respective directions.</p>
+				<p>Sposta il focus nella cella successiva all'interno della stessa riga o colonna nelle rispettive direzioni.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>If focus is on first row, the focus moves to the column header row.</p>
-				<p>If focus is on a cell of the first row, the focus moves to the related column header.</p>
+				<p>Se il focus è sulla prima riga, passa alla riga di intestazione della colonna.</p>
+				<p>Se il focus è su una cella della prima riga, passa all'intestazione della colonna correlata.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>If focus is on <span class="uicontrol">Select All</span> or <span class="uicontrol">Clear All</span> checkbox, the focus moves to the row selector in the first visible row.</p>
-				<p>If focus is on column header row, the focus moves to the first row.</p>
-				<p>If focus is on row, the focus moves to the row below.</p>
-				<p>If focus is on cell, the focus moves to the cell below.</p>
+				<p>Se il focus è sulle caselle di controllo <span class="uicontrol">Seleziona tutto</span> o <span class="uicontrol">Cancella tutto</span>, il focus passa al selettore riga nella prima riga visibile.</p>
+				<p>Se il focus è sulla riga dell'intestazione di colonna, passa alla prima riga.</p>
+				<p>Se il focus è sulla riga, passa alla riga sottostante.</p>
+				<p>Se il focus è sulla cella, passa alla cella sottostante.</p>
 				<p><kbd>ArrowLeft</kbd></p>
-				<p>If focus is on first cell, the focus moves to the row. This switches from cell-based navigation to row-based navigation.</p>
-				<p>If focus is on cell, the focus moves to the cell to the left.</p>
+				<p>Se il focus è sulla prima cella, si sposta sulla riga. Si passa così da una navigazione basata sulle celle a una navigazione basata sulle righe.</p>
+				<p>Se il focus è sulla cella, si sposta sulla cella a sinistra.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>If focus is on row, the focus moves to the first cell of the currently focused row. This switches from row-based navigation to cell-based navigation.</p>
-				<p>If focus is on cell, the focus moves to the cell to the right.</p>
-				<p><span class="emphasis">Note:</span> If focus is on last column, and the pop-in behavior has been enabled for this column, the pop-in area is treated like an additional column to the right, and the focus moves to this column.</p>
+				<p>Se il focus è sulla riga, si sposta sulla prima cella della riga con il focus attuale. Si passa così da una navigazione basata sulle righe a una navigazione basata sulle celle.</p>
+				<p>Se il focus è sulla cella, si sposta sulla cella a destra.</p>
+				<p><span class="emphasis">Nota:</span> se il focus è sull'ultima colonna e quest'ultima ha il funzionamento popup attivato, l'area di popup viene trattata come una colonna aggiuntiva a destra e il focus passa su questa colonna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>If focus is on row, the focus moves to the column header row.</p>
-				<p>If focus is on column header row, and the <span class="uicontrol">More</span> button is available, the focus moves to the <span class="uicontrol">More</span> button.</p>
-				<p>If focus is on column header row, and the <span class="uicontrol">More</span> button is <span class="emphasis">not</span> available, the focus moves to the last focused row.</p>
-				<p>If focus is on <span class="uicontrol">More</span> button, the focus moves to the last focused row.</p>
+				<p>Se il focus è sulla riga, si sposta sulla riga di intestazione della colonna.</p>
+				<p>Se il focus è sulla riga di intestazione della colonna e il pulsante <span class="uicontrol">Altro</span> è disponibile, si sposta sul pulsante <span class="uicontrol">Altro</span>.</p>
+				<p>Se il focus è sulla riga di intestazione della colonna e il pulsante <span class="uicontrol">Altro</span> <span class="emphasis">è</span> disponibile, si sposta sull'ultima riga con il focus.</p>
+				<p>Se il focus è sul pulsante <span class="uicontrol">Altro</span>, si sposta sull'ultima riga con il focus.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>If focus is on row, and the <span class="uicontrol">More</span> button is available, the focus moves to the <span class="uicontrol">More</span> button.</p>
-				<p>If focus is on row, and the <span class="uicontrol">More</span> button is <span class="emphasis">not</span> available, the focus moves to the column header row.</p>
-				<p>If focus is on <span class="uicontrol">More</span> button, the focus moves to the column header row.</p>
-				<p>If focus is on column header row, the focus moves to the last focused row.</p>
+				<p>Se il focus è su una riga e il pulsante <span class="uicontrol">Altro</span> è disponibile, si sposta sul pulsante <span class="uicontrol">Altro</span>.</p>
+				<p>Se il focus è su una riga e il pulsante <span class="uicontrol">Altro</span> <span class="emphasis">non</span> è disponibile, si sposta sull'ultima riga di intestazione colonna.</p>
+				<p>Se il focus è sul pulsante <span class="uicontrol">Altro</span>, si sposta sulla riga di intestazione della colonna.</p>
+				<p>Se il focus è sulla riga di intestazione della colonna, si sposta sull'ultima riga che aveva il focus.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>If focus is on column header, the width of this column is increased by 1 em. This is repeated if key remains pressed.</p>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, the focused cell and the cell to the right are selected. The focus moves to the cell to the right of the focused cell.</p>
-				<p>If focus is on a selected cell, the cell to the right gets the focus, and the cell selection is enhanced up to this cell.</p>
+				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene aumentata di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a destra. Il focus si sposta sulla cella a destra della cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, passa anche sulla cella a destra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>If focus is on column header, the width of this column is decreased by 1 em. This is repeated if key remains pressed.</p>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, the focused cell and the cell to the left are selected. The focus moves to the cell to the left of the focused cell.</p>
-				<p>If focus is on a selected cell, the cell to the left gets the focus, and the cell selection is enhanced up to this cell.</p>
+				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene diminuita di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a sinistra. Il focus si sposta sulla cella a sinistra della cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, passa anche sulla cella a sinistra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
-				<p>If focus is on a selected cell, the focus moves to the cell above, and the cell selection is enhanced up to this cell.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Se il focus è sulla cella o sul selettore riga e la riga rilevante è selezionata, il focus si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, il focus si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sopra. Il focus si sposta sulla cella sopra la cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, si sposta sulla cella sopra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
-				<p>If focus is on a selected cell, the focus moves to the cell below, and the cell selection is enhanced up to this cell.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Se il focus è sulla cella o sul selettore riga e la riga rilevante è selezionata, il focus si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, il focus si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sotto. Il focus si sposta sulla cella sotto la cella con il focus. </p>
+				<p>Se il focus è su una cella selezionata, si sposta sulla cella sotto e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
-				<p>If focus is on editable cell (for example, an input field), the focus moves to the cell above.</p>
+				<p>Se il focus è su una cella modificabile (ad esempio, un campo di input), il focus si sposta sulla cella sopra.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
-				<p>If focus is on editable cell (for example, an input field), the focus moves to the cell below.</p>
+				<p>Se il focus è su una cella modificabile (ad esempio, un campo di input), il focus si sposta sulla cella sotto.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell, the focused cell is selected.</p>
-				<p>If focus is on a cell selection block, the selection of the cells is removed.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella, viene selezionata la cella con il focus.</p>
+				<p>Se il focus è su un blocco di selezione cella, la selezione delle celle viene rimossa.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + Spacebar</kbd> <description>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is on a cell selection block, the cell selection block is changed into a row selection. The cell selection is removed.</p>
-				<p>Depending on the row selection mode the following happens:</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su un blocco di selezione cella, il blocco viene modificato in una selezione riga. La selezione della cella viene rimossa.</p>
+				<p>A seconda della modalità di selezione della riga può accadere quanto segue:</p>
 				<ul>
-					<li>All rows of the block are selected (multiple selection)</li>
-					<li>Only the row with the currently focused cell is selected (single selection)</li>
-					<li>None of the rows are selected</li>
+					<li>Vengono selezionate tutte le righe del blocco (selezione multipla)</li>
+					<li>Viene selezionata solo la riga con la cella con il focus attuale (selezione singola)</li>
+					<li>Non viene selezionata nessuna riga</li>
 				</ul>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is inside of the table, the selection for any rows and cells is removed.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è all'interno della tabella, la selezione delle righe e delle celle viene rimossa.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
-				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è all'interno della tabella e delle celle sono selezionate, la selezione delle celle viene rimossa.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
-				<p>Toggles the focus between the cell and its content if the cell has interactive elements, such as an input field or button (with the exception of read-only text).</p>
+				<p>Attiva/disattiva il focus tra la cella e il suo contenuto se la cella ha elementi interattivi, quali un campo di inserimento o un pulsante (ad eccezione del testo di sola lettura).</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F7</kbd> <description>
-				<p>If focus is within a cell in edit mode, the focus moves to the row.</p>
+				<p>Se il focus è all'interno di una cella in modalità di modifica, il focus si sposta sulla riga.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
-				<p><span class="emphasis">If cell selection is enabled</span>:</p>
-				<p>If cells are selected, <kbd>Shift</kbd> + click on a different cell enhances the selection up to the clicked cell.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata</span>:</p>
+				<p>Se le celle sono selezionate, <kbd>Shift</kbd> + clic su una cella differente amplia la selezione fino alla cella su cui è stato fatto clic.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copia le righe o le celle selezionate nel clipboard, se disponibile, e la funzionalità viene attivata.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Incolla il contenuto dal clipboard se le funzionalità è attivata.</p>
 			</description>
 		</interaction>
 	</control-interactions>
 	<control-interactions>
 		<control name="sap.m.VariantManagement"/>
 		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>Opens the variant management.</p>
+				<p>Apre la gestione delle varianti.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>PageUp</kbd> <description>
-				<p>Closes the error popover of the variant management</p>
+				<p>Chiude il popover di errore della gestione varianti</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Solleva l'elemento di una posizione, se disponibile.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Abbassa l'elemento di una posizione, se disponibile.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Sposta l'elemento in cima. se disponibile.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Sposta l'elemento in fondo. se disponibile.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,9 +156,9 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Solleva l'elemento di una posizione, se disponibile.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down, if available.</p>
+				<p>Abbassa l'elemento di una posizione, se disponibile.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Solleva l'elemento di una posizione, se disponibile.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Abbassa l'elemento di una posizione, se disponibile.</p>
 			</description>
 		</interaction>
 	</control-interactions>

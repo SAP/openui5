@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Dacă focalizarea este la nivel de celulă, focalizarea de mișcă cinci coloane la dreapta (mărime de pagină implicită).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Dacă focalizarea este pe antetul de coloană și există mai puține coloane la dreapta decât mărimea curentă a paginii, focalizarea se mută pe ultima coloană.</p>
 				<p>Dacă focalizarea este pe selectorul de linie, focalizarea se mută pe prima coloană a aceleiași linii.</p>
 				<p>Dacă focalizarea este pe <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe antetul primei coloane.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
 				<p>Dacă focalizarea este pe o celulă, este selectată celula focalizată.</p>
 				<p>Dacă focalizarea este pe un bloc de selecție celulă, selecția celulelor este eliminată.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Dacă focalizarea este pe o celulă și tabelul are o anumită configurare a comportamentului de selecție (pentru a selecta o linie, puteți să selectați linia în sine sau caseta de marcaj de selecție, dacă este disponibilă), este selectată numai celula focalizată, în loc de linie.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Dacă focalizarea este pe o celulă sau selector de linie, acest lucru comută selecția liniei curente.</p>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Dacă focalizarea este în interiorul tabelului și sunt selectate celule, selecția celulelor este eliminată.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Dacă focalizarea este pe <span class="uicontrol">Selectare tot</span> și <kbd>Spacebar</kbd> este apăsat, evenimentul corespondent nu este declanșat. <kbd>Shift</kbd> previne această activitate.</p>
+				<p>Dacă focalizarea este pe un antet de coloană și <kbd>Spacebar</kbd> sau <kbd>Enter</kbd> este apăsat, evenimentul corespondent nu este declanșat.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă este selectată, focalizarea se mută pe linia de mai sus, iar selecția este extinsă până la această linie.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă <span class="emphasis">nu</span> este selectată, focalizarea se mută pe linia de mai sus, iar selecția este eliminată pentru această linie.</p>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată și linia <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula de mai sus. Focalizarea se mută pe celula de deasupra celulei focalizate.</p>
 				<p>Dacă focalizarea este pe o celulă selectată, celula de mai sus obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă este selectată, focalizarea se mută pe linia de mai jos, iar selecția este extinsă până la această linie.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă <span class="emphasis">nu</span> este selectată, focalizarea se mută pe linia de mai jos, iar selecția este eliminată pentru această linie.</p>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată și linia <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula de mai jos. Focalizarea se mută pe celula de sub celula focalizată.</p>
 				<p>Dacă focalizarea este pe o celulă selectată, celula de mai jos obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copiază liniile selectate sau celulele în clipboard, dacă opțiunea este disponibilă și caracteristica activată.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Lipește conținutul din clipboard, dacă caracteristica este activată.</p>
 			</description>
 		</interaction>
 	</control-interactions>

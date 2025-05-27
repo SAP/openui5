@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Si el focus es troba a nivell de cel·la, es desplaçarà cinc columnes cap a la dreta (mida de pàgina predeterminada).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Si el focus es troba a la capçalera de columna i hi ha menys columnes a la dreta que la mida de pàgina actual, es desplaçarà a l'última columna.</p>
 				<p>Si el focus es troba en el selector de fila, es desplaçarà a la primera columna de la mateixa fila.</p>
 				<p>Si el focus es troba a <span class="uicontrol">Seleccionar-ho tot</span>, es desplaçarà a la capçalera de la primera columna.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
 				<p>Si el focus es troba en una cel·la, se seleccionarà aquesta cel·la.</p>
 				<p>Si el focus es troba en un bloc de selecció de cel·les, se n'eliminarà la selecció.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Si el focus es troba en una cel·la i la taula té una configuració determinada del comportament de selecció (per seleccionar una fila, podeu seleccionar la fila en si o el quadre de verificació, si està disponible), en comptes de la fila, només se seleccionarà la cel·la que té el focus.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Si el focus es troba en un selector de cel·la o de fila, commuta la selecció de la fila actual.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Si el focus es troba dins de la taula i hi ha cel·les seleccionades, se n'eliminarà la selecció.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Si el focus es troba a <span class="uicontrol">Seleccionar-ho tot</span> i es prem <kbd>Spacebar</kbd>, no es desencadenarà l'esdeveniment corresponent. <kbd>Shift</kbd> impedeix aquesta acció.</p>
+				<p>Si el focus es troba en una capçalera de columna i es prem <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, no es desencadenarà l'esdeveniment corresponent.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent està seleccionada, es desplaçarà a la fila superior i la selecció s'ampliarà fins a aquesta fila.</p>
+				<p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent <span class="emphasis">no</span> està seleccionada, es desplaçarà a la fila superior i la selecció s'eliminarà per a aquesta fila.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Si el focus es troba en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionaran la cel·la que té el focus i la cel·la superior. El focus es desplaçarà a la cel·la situada a sobre de la cel·la que té el focus.</p>
 				<p>Si el focus es troba en una cel·la seleccionada, la cel·la superior rebrà el focus i la selecció de cel·les s'ampliarà fins a aquesta cel·la.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent està seleccionada, es desplaçarà a la fila inferior i la selecció s'ampliarà fins a aquesta fila.</p>
+				<p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent <span class="emphasis">no</span> està seleccionada, es desplaçarà a la fila inferior i la selecció s'eliminarà per a aquesta fila.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Si el focus es troba en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionaran la cel·la que té el focus i la cel·la inferior. El focus es desplaçarà a la cel·la situada a sota de la cel·la que té el focus.</p>
 				<p>Si el focus es troba en una cel·la seleccionada, la cel·la inferior rebrà el focus i la selecció de cel·les s'ampliarà fins a aquesta cel·la.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copia les files o cel·les seleccionades al porta-retalls, si està disponible i en cas que la funció estigui activada.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Enganxa el contingut del porta-retalls, si la funció està activada.</p>
 			</description>
 		</interaction>
 	</control-interactions>

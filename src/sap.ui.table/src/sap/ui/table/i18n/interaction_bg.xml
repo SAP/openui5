@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Ако фокусът е на ниво клетка, той се премества пет колони надясно (размерът на страница по подразбиране).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Ако фокусът е върху заглавката на колоната и надясно има по-малко колони от текущия размер на страницата, фокусът се премества върху последната колона.</p>
 				<p>Ако фокусът е върху селектора за редове, той се премества върху първата колона на същия ред.</p>
 				<p>Ако фокусът е върху <span class="uicontrol">Избор на всички</span>, той се премества върху заглавката на първата колона.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
 				<p>Ако фокусът е върху клетка, се избира клетката на фокус.</p>
 				<p>Ако фокусът е върху блок за избор на клетка, изборът на клетките се премахва.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Ако фокусът е върху клетка и таблицата има определена конфигурация за поведението при избиране (за да изберете ред, можете да изберете самия ред или да сложите отметка в полето за избор, ако е налично), се избират само фокусираните клетки вместо реда.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Ако фокусът е върху клетка или селектор за редове, това превключва избора на текущия ред.</p>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Ако фокусът е вътре в таблицата и са избрани клетки, изборът на клетки се премахва.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Ако фокусът е върху <span class="uicontrol">Избор на всички</span> и е натиснато <kbd>Spacebar</kbd>, съответното събитие не се инициира. <kbd>Shift</kbd> предотвратява тази дейност.</p>
+				<p>Ако фокусът е върху заглавка на колона и е натиснато <kbd>Spacebar</kbd> или <kbd>Enter</kbd>, съответното събитие не се инициира.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред е избран, фокусът се премества върху горния ред, а изборът се разширява до него.</p>
+				<p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред <span class="emphasis">не е</span> избран, фокусът се премества върху горния ред, а изборът се премахва за този ред.</p>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Ако фокусът е върху клетка, която <span class="emphasis">не е</span> избрана и редът <span class="emphasis">не е</span> избран, се избират клетката на фокус и тази над нея. Фокусът се премества върху клетката над тази на фокус.</p>
 				<p>Ако фокусът е върху избрана клетка, той се измества върху горната, а изборът се разширява до тази клетка.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред е избран, фокусът се премества върху долния ред, а изборът се разширява до него.</p>
+				<p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред <span class="emphasis">не е</span> избран, фокусът се премества върху долния ред, а изборът за този ред се премахва.</p>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Ако фокусът е върху клетка, която <span class="emphasis">не е</span> избрана и редът <span class="emphasis">не е</span> избран, се избират клетката на фокус и долната клетка. Фокусът се премества върху клетката под тази на фокус.</p>
 				<p>Ако фокусът е върху избрана клетка, той се премества върху долната, а изборът се разширява до тази клетка.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Копира избраните редове или клетки в клипборда, ако това е налично и функцията е активирана.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Поставя съдържанието от клипборда, ако функцията е активирана.</p>
 			</description>
 		</interaction>
 	</control-interactions>

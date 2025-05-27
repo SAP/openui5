@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku nad ní a výběr buňky je rozšířen až po tuto buňku.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou. </p>
 				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku pod ní a výběr buňky je rozšířen až po tuto buňku.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Je-li fokus v tabulce a buňky jsou vybrány, výběr buněk se odebere.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Zkopíruje vybrané řádky nebo buňky do schránky, pokud je dostupná a tato funkce je aktivována.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Vloží obsah ze schránky, pokud je tato funkce aktivována.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Přesune položku o jednu pozici nahoru, je-li dostupná.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Přesune položku o jednu pozici dolů, je-li dostupná.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Přesune položku na začátek, je-li dostupná.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Přesune položku na konec, je-li dostupná.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Přesune položku o jednu pozici nahoru, je-li dostupná.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Přesune položku o jednu pozici dolů, je-li dostupná.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Přesune položku o jednu pozici nahoru, je-li dostupná.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Přesune položku o jednu pozici dolů, je-li dostupná.</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Jika fokus berada pada pemilih sel atau baris, dan baris berkaitan dipilih, fokus beralih ke baris di atas dan pemilihan ditingkatkan sehingga baris ini.</p>
+				<p>Jika fokus berada pada pemilih sel atau baris dan baris berkaitan <span class="emphasis">tidak</span> dipilih, fokus beralih ke baris di atas dan pemilihan dikeluarkan untuk baris ini.</p>
 				<p><span class="emphasis">Jika pemilihan sel didayakan:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih dan baris <span class="emphasis">tidak</span>dipilih, sel yang difokuskan dan sel di atas dipilih. Fokus beralih ke sel di atas sel yang difokuskan.</p>
 				<p>Jika fokus berada pada sel dipilih, fokus beralih ke sel di atas dan pemilihan sel ditingkatkan sehingga sel ini.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Jika fokus berada pada pemilih sel atau baris, dan baris berkaitan dipilih, fokus beralih ke baris di bawah dan pemilihan ditingkatkan sehingga baris ini.</p>
+				<p>Jika fokus berada pada pemilih sel atau baris dan baris berkaitan <span class="emphasis">tidak</span> dipilih, fokus beralih ke baris di bawah dan pemilihan dikeluarkan untuk baris ini.</p>
 				<p><span class="emphasis">Jika pemilihan sel didayakan:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih dan baris <span class="emphasis">tidak</span> dipilih, sel yang difokuskan dan sel di bawah dipilih. Fokus beralih ke sel di bawah sel yang difokuskan. </p>
 				<p>Jika fokus berada pada sel dipilih, fokus beralih ke sel di bawah dan pemilihan sel ditingkatkan sehingga sel ini.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Jika pemilihan sel didayakan:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Jika fokus berada di dalam jadual dan sel dipilih, pemilihan sel dikeluarkan.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Salin baris atau sel dipilih ke papan klip jika tersedia, dan ciri didayakan.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Tampal kandungan daripada papan klip jika ciri didayakan.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Alihkan item ke satu kedudukan atas jika tersedia.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Alihkan item ke satu kedudukan bawah jika tersedia.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Alihkan item ke atas sekali jika tersedia.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Alihkan item ke penghujung jika tersedia.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Alihkan item ke satu kedudukan atas jika tersedia.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Alihkan item ke satu kedudukan bawah, jika tersedia.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Alihkan item ke satu kedudukan atas jika tersedia.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Alihkan item ke satu kedudukan bawah jika tersedia.</p>
 			</description>
 		</interaction>
 	</control-interactions>

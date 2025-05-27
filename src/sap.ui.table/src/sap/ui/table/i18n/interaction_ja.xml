@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>フォーカスがセルレベルにある場合、フォーカスは右側の 5 列 (デフォルトページサイズ) に移動します。</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>フォーカスが列ヘッダにあり、右側の列数が現在のページサイズを下回る場合、フォーカスは最後の列に移動します。</p>
 				<p>フォーカスが行セレクタにある場合、フォーカスは同じ行内の最初の列に移動します。</p>
 				<p>フォーカスが<span class="uicontrol">すべて選択</span>にある場合、フォーカスは最初の列のヘッダに移動します。</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
 				<p>フォーカスがセルにある場合、フォーカスされたセルが選択されます。</p>
 				<p>フォーカスがセル選択ブロックにある場合、セルの選択が解除されます。</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>フォーカスがセルにあり、テーブルに選択動作の特定の設定 (行を選択するために、行自体を選択するか、利用可能な場合は選択チェックボックスを選択可能) がある場合は、行の代わりに、フォーカスされたセルのみが選択されます。</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>フォーカスがセルまたは行セレクタにある場合、これにより現在の行の選択が切り替わります。</p>
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>フォーカスがテーブル内にあり、セルが選択されている場合は、セルの選択が削除されます。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>にあるときに <kbd>Spacebar</kbd> を押すと、対応するイベントはトリガされません。<kbd>Shift</kbd> によってこのアクティビティは抑止されます。</p>
+				<p>フォーカスが列ヘッダにあるときに <kbd>Spacebar</kbd> または <kbd>Enter</kbd> を押すと、対応するイベントはトリガされません。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択されている場合は、フォーカスが 1 つ上の行に移動し、この行を含めるように選択範囲が拡大します。</p>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択されて<span class="emphasis">いない</span>場合は、フォーカスが 1 つ上の行に移動し、この行の選択が削除されます。</p>
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>フォーカスが、選択されて<span class="emphasis">いない</span>セルにあり、行が選択されて<span class="emphasis">いない</span>場合、フォーカスされたセルと上のセルが選択されます。フォーカスは、フォーカスされたセルの上のセルに移動します。</p>
 				<p>フォーカスが選択されたセルにある場合、上のセルがフォーカスされ、セル選択がこのセルまで拡張されます。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択されている場合は、フォーカスが 1 つ下の行に移動し、この行を含めるように選択範囲が拡大されます。</p>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択されて<span class="emphasis">いない</span>場合は、フォーカスが 1 つ下の行移動し、この行の選択が削除されます。</p>
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>フォーカスが、選択されて<span class="emphasis">いない</span>セルにあり、行が選択されて<span class="emphasis">いない</span>場合、フォーカスされたセルと下のセルが選択されます。フォーカスは、フォーカスされたセルの下のセルに移動します。</p>
 				<p>フォーカスが選択されたセルにある場合、下のセルがフォーカスされ、セル選択がこのセルまで拡張されます。</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>クリップボードが利用でき、この機能が有効化されている場合は、選択した行またはセルがそのクリップボードにコピーされます。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>この機能が有効化されている場合は、コンテンツがクリップボードからペーストされます。</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -43,7 +43,7 @@
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
 				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 증가합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있다면 포커스가 있는 셀과 오른쪽 셀이 선택됩니다. 포커스가 있는 셀의 오른쪽 셀로 포커스가 이동합니다.</p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있는 경우, 포커스가 있는 셀과 오른쪽 셀이 선택됩니다. 포커스가 있는 셀의 오른쪽 셀로 포커스가 이동합니다.</p>
 				<p>선택된 셀에 포커스가 있다면 오른쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 위쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 위쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 위쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 위쪽 셀로 이동합니다.</p>
 				<p>선택된 셀에 포커스가 있으면 위쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 아래쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 아래쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 아래쪽 셀이 선택됩니다. 포커스가 있는 셀의 아래쪽 셀로 포커스가 이동합니다. </p>
 				<p>선택된 셀에 포커스가 있으면 아래쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>테이블 내부에 포커스가 있고 셀이 선택되어 있으면 셀에 대한 선택이 제거됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>해당 기능이 활성화되어 사용 가능한 경우 선택한 행 또는 셀을 클립보드로 복사합니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>해당 기능이 활성화된 경우 클립보드에서 내용을 붙여넣습니다.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>가능한 경우 항목 위치를 하나 위로 이동합니다.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>가능한 경우 항목 위치를 하나 아래로 이동합니다.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>가능한 경우 항목을 맨 위로 이동합니다.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>가능한 경우 항목을 맨 끝으로 이동합니다.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,9 +156,9 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>가능한 경우 항목 위치를 하나 위로 이동합니다.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>항목 위치를 하나 아래로 이동합니다(가능한 경우).</p>
+				<p>가능한 경우 항목 위치를 하나 아래로 이동합니다.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>가능한 경우 항목 위치를 하나 위로 이동합니다.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>가능한 경우 항목 위치를 하나 아래로 이동합니다.</p>
 			</description>
 		</interaction>
 	</control-interactions>

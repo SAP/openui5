@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Si la zone activée se trouve au niveau d'une cellule, elle se déplace de cinq colonnes vers la droite (taille de page standard).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Si la zone activée se trouve sur l'intitulé de colonne et si le nombre de colonnes à droite est inférieur à la taille de la page actuelle, la zone activée se déplace vers la dernière colonne.</p>
 				<p>Si la zone activée se trouve sur le sélecteur de ligne, elle se déplace vers la première colonne sur la même ligne.</p>
 				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers l'intitulé de la première colonne.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
 				<p>Si la zone activée se trouve sur une cellule, la cellule activée est sélectionnée.</p>
 				<p>Si la zone activée se trouve sur un bloc de sélection de cellule, la sélection des cellules est supprimée.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Si la zone activée se trouve sur une cellule et si la table a une certaine configuration du comportement de sélection (pour sélectionner une ligne, vous pouvez sélectionner la ligne elle-même ou la case à cocher de sélection si elle est disponible), seule la cellule activée est sélectionnée à la place de la ligne.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, cela active/désactive la sélection de la ligne actuelle.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Si la zone activée se trouve à l'intérieur de la table et si des cellules sont sélectionnées, la sélection des cellules est supprimée.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span> et si la touche <kbd>Spacebar</kbd> est actionnée, l'événement correspondant n'est pas déclenché. La touche <kbd>Shift</kbd> bloque cette activité.</p>
+				<p>Si la zone activée se trouve sur un intitulé de colonne et si la touche <kbd>Spacebar</kbd> ou <kbd>Enter</kbd> est actionnée, l'événement correspondant n'est pas déclenché.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est supprimée pour cette ligne.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située au-dessus sont sélectionnées. La zone activée se déplace vers la cellule située au-dessus de la cellule activée.</p>
 				<p>Si la zone activée se trouve sur une cellule sélectionnée, la cellule située au-dessus est activée et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est supprimée pour cette ligne.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située en dessous sont sélectionnées. La zone activée se déplace vers la cellule située en dessous de la cellule activée.</p>
 				<p>Si la zone activée se trouve sur une cellule sélectionnée, la cellule située en dessous est activée et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copie les lignes ou cellules sélectionnées vers le presse-papiers, si cette option est disponible et si la fonctionnalité est activée.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Colle le contenu à partir du presse-papiers, si la fonctionnalité est activée.</p>
 			</description>
 		</interaction>
 	</control-interactions>

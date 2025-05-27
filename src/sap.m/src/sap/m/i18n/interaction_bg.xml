@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред е избран, фокусът се премества върху горния ред, а изборът се разширява до него.</p>
+				<p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред <span class="emphasis">не е</span> избран, фокусът се премества върху горния ред, а изборът се премахва за този ред.</p>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Ако фокусът е върху клетка, която <span class="emphasis">не е</span> избрана и редът <span class="emphasis">не е</span> избран, се избират клетката на фокус и тази над нея. Фокусът се премества върху клетката над тази на фокус.</p>
 				<p>Ако фокусът е върху избрана клетка, той се премества върху тази над нея, а изборът се разширява до тази клетка.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред е избран, фокусът се премества върху долния ред, а изборът се разширява до него.</p>
+				<p>Ако фокусът е върху клетка или върху селектора за клетки и релевантният ред <span class="emphasis">не е</span> избран, фокусът се премества върху долния ред, а изборът за този ред се премахва.</p>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Ако фокусът е върху клетка, която <span class="emphasis">не е</span> избрана и редът <span class="emphasis">не е</span> избран, се избират клетката на фокус и долната клетка. Фокусът се премества върху клетката под тази на фокус. </p>
 				<p>Ако фокусът е върху избрана клетка, той се премества върху тази по-долу, а изборът се разширява до тази клетка.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ако изборът на клетка е активиран:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Ако фокусът е вътре в таблицата и са избрани клетки, изборът на клетки се премахва.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Копира избраните редове или клетки в клипборда, ако това е налично и функцията е активирана.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Поставя съдържанието от клипборда, ако функцията е активирана.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Премества позицията с едно място нагоре, ако е налично.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Премества позицията с едно място надолу, ако е налично.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Премества позицията най-отгоре, ако е налично.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Премества позицията в края, ако е налично.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Премества позицията с едно място нагоре, ако е налично.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Премества позицията с едно място надолу, ако е налично.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Премества позицията с едно място нагоре, ако е налично.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Премества позицията с едно място надолу, ако е налично.</p>
 			</description>
 		</interaction>
 	</control-interactions>
