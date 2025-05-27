@@ -66,13 +66,10 @@ sap.ui.define([
 				const oItem = oEvent.getParameter("item");
 				const oAction = oItem.data("action");
 				oAction._onActionPress();
-			},
-			closed: async function() {
-				await Promise.resolve();
-				oMenu.destroyItems();
 			}
 		});
 
+		oMenu.destroyItems();
 		aActions.forEach((oAction) => {
 			const oActionInfo = oAction._getActionInfo();
 			const oMenuItem = new MenuItemConstructor({
