@@ -9,7 +9,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/extend"], function(Log, extend) {
 	 * @private
 	 * @experimental
 	 * @since 1.33
-	 * @deprecated Since 1.90. Use a {@link sap.ui.core.routing.async.Route async.Route} instead
+	 * @deprecated Since 1.90
 	 */
 	return {
 

@@ -2,15 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/EventProvider',
-	'./Target',
-	'./async/Targets',
-	'./sync/Targets',
-	"sap/base/future",
 	"sap/base/Log",
-	"sap/base/util/deepExtend"
+	"sap/base/future",
+	"sap/base/util/deepExtend",
+	"sap/ui/base/EventProvider",
+	"sap/ui/core/routing/Target",
+	"sap/ui/core/routing/sync/Targets"
 ],
-	function(EventProvider, Target, asyncTargets, syncTargets, future, Log, deepExtend) {
+	function(
+		Log,
+		future,
+		deepExtend,
+		EventProvider,
+		Target,
+		SyncTargets
+	) {
 		"use strict";
 
 		/**
@@ -79,6 +85,7 @@ sap.ui.define([
 		 * @since 1.28.1
 		 * @public
 		 * @alias sap.ui.core.routing.Targets
+		 * @ui5-transform-hint replace-param oOptions.config._async true
 		 */
 		var Targets = EventProvider.extend("sap.ui.core.routing.Targets", /** @lends sap.ui.core.routing.Targets.prototype */ {
 
@@ -87,14 +94,13 @@ sap.ui.define([
 
 				this._mTargets = {};
 				this._oLastTitleTarget = {};
-				this._oConfig = oOptions.config;
 				this._oCache = oOptions.cache || oOptions.views;
 
-				// If no config is given, set the default value to sync
-				if (!this._oConfig) {
-					this._oConfig = {
-						_async: false
-					};
+				if (!oOptions.config) {
+					oOptions.config = {};
+
+					/** @deprecated */
+					oOptions.config._async = false;
 				}
 
 				// temporarily: for checking the url param
@@ -108,16 +114,18 @@ sap.ui.define([
 
 				// Config object doesn't have _async set which means the Targets is instantiated standalone by given a non-empty config object
 				// Assign the oConfig.async to oConfig._async and set the default value to sync
-				if (this._oConfig._async === undefined) {
+				if (oOptions.config._async === undefined) {
 					// temporarily: set the default value depending on the url parameter "sap-ui-xx-asyncRouting"
-					this._oConfig._async = (this._oConfig.async === undefined) ? checkUrl() : this._oConfig.async;
+					oOptions.config._async = (oOptions.config.async === undefined) ? checkUrl() : oOptions.config.async;
 				}
 
-				// branch by abstraction
-				var TargetsStub = this._oConfig._async ?  asyncTargets : syncTargets;
-				for (var fn in TargetsStub) {
-					this[fn] = TargetsStub[fn];
+				if (!oOptions.config._async) {
+					for (const fn in SyncTargets) {
+						this[fn] = SyncTargets[fn];
+					}
 				}
+
+				this._oConfig = oOptions.config;
 
 				Object.keys(oOptions.targets).forEach(function(sTargetName) {
 					this._createTarget(sTargetName, oOptions.targets[sTargetName]);
@@ -182,18 +190,6 @@ sap.ui.define([
 			 *     {@link sap.ui.core.routing.Router#initialize}, because this is done by the application and not by the UI5 routing.
 			 * @protected
 			 * @since 1.84.0
-			 */
-
-			/**
-			 * Creates a view and puts it in an aggregation of the specified control.
-			 *
-			 * @param {string|string[]|sap.ui.core.routing.TargetInfo|sap.ui.core.routing.TargetInfo[]} vTargets Either the target name or a target info object. To display multiple targets you may also pass an array of target names or target info objects.
-			 * @param {object} [oData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-			 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
-			 * @public
-			 * @returns {this|Promise<Array<{name: string, view: sap.ui.core.mvc.View, control: sap.ui.core.Control, targetInfo: sap.ui.core.routing.TargetInfo}>>} this pointer for chaining or a Promise
-			 * @name sap.ui.core.routing.Targets#display
-			 * @function
 			 */
 
 			/**
@@ -416,24 +412,24 @@ sap.ui.define([
 			 */
 
 			/**
- 			 * Attaches event handler <code>fnFunction</code> to the {@link #event:titleChanged titleChanged} event of
- 			 * this <code>sap.ui.core.routing.Targets</code>.
- 			 *
- 			 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
- 			 * if specified, otherwise it will be bound to this <code>sap.ui.core.routing.Targets</code> itself.
- 			 *
- 			 * @param {object}
- 			 *            [oData] An application-specific payload object that will be passed to the event handler
- 			 *            along with the event object when firing the event
- 			 * @param {function}
- 			 *            fnFunction The function to be called, when the event occurs
- 			 * @param {object}
- 			 *            [oListener] Context object to call the event handler with. Defaults to this
- 			 *            <code>sap.ui.core.routing.Targets</code> itself
- 			 *
- 			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
- 			 * @public
- 			 */
+			 * Attaches event handler <code>fnFunction</code> to the {@link #event:titleChanged titleChanged} event of
+			 * this <code>sap.ui.core.routing.Targets</code>.
+			 *
+			 * When called, the context of the event handler (its <code>this</code>) will be bound to <code>oListener</code>
+			 * if specified, otherwise it will be bound to this <code>sap.ui.core.routing.Targets</code> itself.
+			 *
+			 * @param {object}
+			 *            [oData] An application-specific payload object that will be passed to the event handler
+			 *            along with the event object when firing the event
+			 * @param {function}
+			 *            fnFunction The function to be called, when the event occurs
+			 * @param {object}
+			 *            [oListener] Context object to call the event handler with. Defaults to this
+			 *            <code>sap.ui.core.routing.Targets</code> itself
+			 *
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+			 * @public
+			 */
 			attachTitleChanged : function(oData, fnFunction, oListener) {
 				this.attachEvent(this.M_EVENTS.TITLE_CHANGED, oData, fnFunction, oListener);
 				return this;
@@ -595,26 +591,10 @@ sap.ui.define([
 			 * @param {sap.ui.core.routing.Target} oParent The parent of this target
 			 * @returns {sap.ui.core.routing.Target} the new target
 			 * @private
- 			 */
+			 */
 			_constructTarget : function (oOptions, oParent) {
 				return new Target(oOptions, this._oCache, oParent);
 			},
-
-			/**
-			 * Hook to distinguish between the router and an application calling this.
-			 *
-			 * @private
-			 * @param {any} [vData] an object that will be passed to the display event in the data property.
-			 * @name sap.ui.core.routing.Targets#_display
-			 */
-
-			/**
-			 *
-			 * @param {string} sName name of the single target
-			 * @param {any} [vData] an object that will be passed to the display event in the data property.
-			 * @private
-			 * @name sap.ui.core.routing.Targets.#_displaySingleTarget
-			 */
 
 			/**
 			 * Called by the UIComponent since the rootView id is not known in the constructor
@@ -706,10 +686,125 @@ sap.ui.define([
 				} else if (sTitleTarget) {
 					future.errorThrows(`${this}: The target with the name "${sTitleTarget}" where the titleChanged event should be fired does not exist!`);
 				}
+			},
+
+
+			/**
+			 * Creates a view and puts it in an aggregation of the specified control.
+			 *
+			 * @param {string|string[]|object|object[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys. If the target(s) represents a sap.ui.core.UIComponent, a prefix for its Router is needed. You can set this parameter with an object which has the 'name' property set with the key of the target and the 'prefix' property set with the prefix for the UIComponent's router. To display multiple component targets, you man also pass an array of objects.
+			 * @param {object} [vData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
+			 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
+			 * @public
+			 * @returns {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
+			 */
+			display : function (vTargets, vData, sTitleTarget) {
+				var oSequencePromise = Promise.resolve();
+				return this._display(vTargets, vData, sTitleTarget, oSequencePromise);
+			},
+
+			/**
+			 * Hook to distinguish between the router and an application calling this
+			 *
+			 * @param {string|string[]|object|object[]} vTargets targets or single target to be displayed
+			 * @param {object} vData  an object that will be passed to the display event in the data property. If the
+					target has parents, the data will also be passed to them.
+			 * @param {string} sTitleTarget the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
+			 * @param {Promise} oSequencePromise the promise for chaining
+			 * @return {Promise} resolving with {{name: *, view: *, control: *}|undefined} for every vTargets, object for single, array for multiple
+			 *
+			 * @private
+			 */
+			_display : function (vTargets, vData, sTitleTarget, oSequencePromise) {
+				var that = this,
+					aViewInfos = [];
+
+				if (!Array.isArray(vTargets)) {
+					vTargets = [vTargets];
+				}
+
+				this._attachTitleChanged(vTargets, sTitleTarget);
+
+				return this._alignTargetsInfo(vTargets).reduce(function(oPromise, oTargetInfo) {
+					var oTargetCreateInfo = {
+						prefix: oTargetInfo.prefix,
+						propagateTitle: oTargetInfo.propagateTitle || false,
+						ignoreInitialHash: oTargetInfo.ignoreInitialHash,
+						placeholder: oTargetInfo.placeholder,
+						repeatedRoute: oTargetInfo.repeatedRoute,
+						routeRelevant: oTargetInfo.routeRelevant || false
+					};
+
+					// gather view infos while processing Promise chain
+					return that._displaySingleTarget(oTargetInfo, vData, oPromise, oTargetCreateInfo).then(function(oViewInfo) {
+						oViewInfo = oViewInfo || {};
+						oViewInfo.targetInfo = oTargetInfo;
+						aViewInfos.push(oViewInfo);
+					});
+				}, oSequencePromise).then(function() {
+					return aViewInfos;
+				});
+			},
+
+			/**
+			 * Adds a target to the route's config
+			 * @param {object} oTargetInfo the object containing information about the single target
+			 * @private
+			 */
+			_addDynamicTargetToRoute : function(oTargetInfo) {
+				if (this._oRouter) {
+					var sRouteToConnect = this._oRouter._getLastMatchedRouteName();
+					var oRoute, bSameTargetFound;
+
+					if (sRouteToConnect) {
+						oRoute = this._oRouter.getRoute(sRouteToConnect);
+
+						if (oRoute && oRoute._oConfig && oRoute._oConfig.target) {
+							bSameTargetFound = this._alignTargetsInfo(oRoute._oConfig.target).some(function(oCompareTargetInfo) {
+								return oCompareTargetInfo.name === oTargetInfo.name;
+							});
+
+							if (!bSameTargetFound) {
+								oRoute._oConfig.dynamicTarget = oRoute._oConfig.dynamicTarget || [];
+								oRoute._oConfig.dynamicTarget.push(oTargetInfo);
+							}
+						}
+					}
+				}
+			},
+
+			/**
+			 * Displays a single target
+			 *
+			 * @param {object} oTargetInfo the object containing information (e.g. name) about the single target
+			 * @param {any} vData an object that will be passed to the display event in the data property.
+			 * @param {Promise} oSequencePromise the promise which for chaining
+			 * @param {object} [oTargetCreateInfo] the object which contains extra information for the creation of the target
+			 * @param {function} [oTargetCreateInfo.afterCreate] the function which is called after a target View/Component is instantiated
+			 * @param {string} [oTargetCreateInfo.prefix] the prefix which will be used by the RouterHashChanger of the target
+			 * @returns {Promise} Resolves with {name: *, view: *, control: *} if the target can be successfully displayed otherwise it rejects with error information
+			 * @private
+			 */
+			_displaySingleTarget : function (oTargetInfo, vData, oSequencePromise, oTargetCreateInfo) {
+				var sName = oTargetInfo.name,
+					oTarget = this.getTarget(sName);
+
+				if (oTarget !== undefined) {
+					if (oTargetInfo.routeRelevant) {
+						this._addDynamicTargetToRoute(oTargetInfo);
+					}
+					return oTarget._display(vData, oSequencePromise, oTargetCreateInfo);
+				} else {
+					var sErrorMessage = `${this}: The target with the name "${sName}" does not exist!`;
+					future.errorThrows(sErrorMessage);
+					return Promise.resolve({
+						name: sName,
+						error: sErrorMessage
+					});
+				}
 			}
 
 		});
 
 		return Targets;
-
 	});

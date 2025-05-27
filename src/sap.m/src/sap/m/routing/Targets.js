@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './async/Targets', './sync/Targets', "sap/base/Log"],
-	function(Targets, TargetHandler, Target, asyncTargets, syncTargets, Log) {
+sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './sync/Targets', "sap/base/Log"],
+	function(Targets, TargetHandler, Target, SyncTargets, Log) {
 		"use strict";
 
 		/**
@@ -312,15 +312,19 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 		 * @since 1.28.1
 		 * @public
 		 * @alias sap.m.routing.Targets
+		 * @ui5-transform-hint replace-param oOptions.config._async true
 		 */
 		var MobileTargets = Targets.extend("sap.m.routing.Targets", /** @lends sap.m.routing.Targets.prototype */ {
 			constructor: function(oOptions) {
 
 				// If no config is given, set the default value to sync
 				if (!oOptions.config) {
-					oOptions.config = {
-						_async: false
-					};
+					oOptions.config = {};
+
+					/**
+					 * @deprecated
+					 */
+					oOptions.config._async = false;
 				}
 
 				// temporarily: for checking the url param
@@ -348,12 +352,12 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 
 				Targets.prototype.constructor.apply(this, arguments);
 
-				var TargetsStub = oOptions.config._async ? asyncTargets : syncTargets;
-
-				this._super = {};
-				for (var fn in TargetsStub) {
-					this._super[fn] = this[fn];
-					this[fn] = TargetsStub[fn];
+				if (!oOptions.config._async) {
+					this._super = {};
+					for (const fn in SyncTargets) {
+						this._super[fn] = this[fn];
+						this[fn] = SyncTargets[fn];
+					}
 				}
 			},
 
@@ -402,6 +406,49 @@ sap.ui.define(['sap/ui/core/routing/Targets', './TargetHandler', './Target', './
 				} while (oTarget);
 
 				return iLevel;
+			},
+
+			/**
+			 * @private
+			 */
+			_display: function () {
+				var iLevel,
+					sName;
+
+				// don't remember previous displays
+				this._oLastDisplayedTarget = null;
+
+				var oPromise = Targets.prototype._display.apply(this, arguments);
+
+				return oPromise.then(function(oViewInfo) {
+					// maybe a wrong name was provided then there is no last displayed target
+					if (this._oLastDisplayedTarget) {
+						iLevel = this._getLevel(this._oLastDisplayedTarget);
+						sName = this._oLastDisplayedTarget._oOptions._name;
+					}
+
+					this._oTargetHandler.navigate({
+						level: iLevel,
+						navigationIdentifier: sName,
+						askHistory: true
+					});
+
+					return oViewInfo;
+				}.bind(this));
+			},
+
+			/**
+			 * @private
+			 */
+			_displaySingleTarget: function(oTargetInfo) {
+				var oTarget = this.getTarget(oTargetInfo.name);
+
+				return Targets.prototype._displaySingleTarget.apply(this, arguments).then(function(oViewInfo){
+					if (oTarget) {
+						this._oLastDisplayedTarget = oTarget;
+					}
+					return oViewInfo;
+				}.bind(this));
 			}
 		});
 

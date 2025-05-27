@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target', "sap/base/Log"],
-	function(Target, asyncTarget, syncTarget, Log) {
+sap.ui.define(['sap/ui/core/routing/Target', './sync/Target', "sap/base/Log"],
+	function(Target, SyncTarget, Log) {
 		"use strict";
 
 		/**
@@ -17,6 +17,7 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target', 
 		 * @extends sap.ui.core.routing.Target
 		 * @private
 		 * @alias sap.m.routing.Target
+		 * @ui5-transform-hint replace-param oOptions._async true
 		 */
 		var MobileTarget = Target.extend("sap.m.routing.Target", /** @lends sap.m.routing.Target.prototype */ {
 			constructor : function (oOptions, oViews, oParent, oTargetHandler) {
@@ -38,13 +39,56 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target', 
 
 				Target.prototype.constructor.apply(this, arguments);
 
-				var TargetStub = oOptions._async ? asyncTarget : syncTarget;
-
-				this._super = {};
-				for (var fn in TargetStub) {
-					this._super[fn] = this[fn];
-					this[fn] = TargetStub[fn];
+				if (!oOptions._async) {
+					this._super = {};
+					for (const fn in SyncTarget) {
+						this._super[fn] = this[fn];
+						this[fn] = SyncTarget[fn];
+					}
 				}
+			},
+
+			/**
+			 * @private
+			 */
+			_place : function (vData) {
+				var oPromise = Target.prototype._place.apply(this, arguments),
+					that = this;
+
+				// chain to navigation promise to keep the order of navigations!
+				return this._oTargetHandler._chainNavigation(function() {
+					return oPromise.then(function(oViewInfo) {
+						that._oTargetHandler.addNavigation({
+							navigationIdentifier : that._oOptions._name,
+							transition: that._oOptions.transition,
+							transitionParameters: that._oOptions.transitionParameters,
+							eventData: vData,
+							targetControl: oViewInfo.control,
+							aggregationName: that._oOptions.controlAggregation,
+							view: oViewInfo.view,
+							preservePageInSplitContainer: that._oOptions.preservePageInSplitContainer,
+							placeholderConfig: oViewInfo.placeholderConfig,
+							placeholderShown: oViewInfo.placeholderShown
+						});
+
+						// do not forward the route config to navigation
+						if (vData) {
+							delete vData.routeConfig;
+						}
+
+						return oViewInfo;
+					});
+				}, this._oOptions._name);
+			},
+
+			showPlaceholder : function(mSettings) {
+				return this._oTargetHandler.showPlaceholder(mSettings);
+			},
+			hidePlaceholder : function() {
+				/**
+				 * Overriding the hidePlaceholder to empty function because the placeholder is removed
+				 * after all targets are displayed
+				 */
 			}
 		});
 

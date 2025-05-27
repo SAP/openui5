@@ -34,6 +34,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("Get component with sync should cause an error", function (assert) {
 		var oCache = new TargetCache({
 			async: false
