@@ -29,38 +29,35 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	function isDraftAvailable(oReloadInfo, sReference) {
+	async function isDraftAvailable(oReloadInfo, sReference) {
 		if (FlexInfoSession.getByReference(sReference).version) {
-			return Promise.resolve(false);
+			return false;
 		}
 
-		return FeaturesAPI.isVersioningEnabled(oReloadInfo.layer).then(function(bVersioningAvailable) {
-			return bVersioningAvailable && VersionsAPI.isDraftAvailable({
-				control: oReloadInfo.selector,
-				layer: oReloadInfo.layer
-			});
+		const bVersioningAvailable = await FeaturesAPI.isVersioningEnabled(oReloadInfo.layer);
+		return bVersioningAvailable && VersionsAPI.isDraftAvailable({
+			control: oReloadInfo.selector,
+			layer: oReloadInfo.layer
 		});
 	}
 
-	function areHigherLayerChangesAvailable(oReloadInfo, sReference) {
+	async function areHigherLayerChangesAvailable(oReloadInfo, sReference) {
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		var bUserLayer = oReloadInfo.layer === Layer.USER;
 		if (bUserLayer || (oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oReloadInfo.layer)) {
-			return Promise.resolve(false);
+			return false;
 		}
 
-		return PersistenceWriteAPI.hasHigherLayerChanges({
+		const bHasHigherLayerChanges = await PersistenceWriteAPI.hasHigherLayerChanges({
 			selector: oReloadInfo.selector,
 			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
 			upToLayer: oReloadInfo.layer,
 			includeCtrlVariants: oReloadInfo.includeCtrlVariants,
 			includeDirtyChanges: true
-		})
-		.then(function(bResult) {
-			// not yet saved personalization on SmartVariantManagement controls is not tracked as a FlexObject,
-			// but it should be treated the same as already saved higher layer changes
-			return bResult || checkSVMControlsForDirty(oReloadInfo);
 		});
+		// not yet saved personalization on SmartVariantManagement controls is not tracked as a FlexObject,
+		// but it should be treated the same as already saved higher layer changes
+		return bHasHigherLayerChanges || checkSVMControlsForDirty(oReloadInfo);
 	}
 
 	function checkSVMControlsForDirty(oReloadInfo) {
@@ -139,16 +136,16 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.rta
 		 */
-		getReloadReasonsForStart(oReloadInfo) {
+		async getReloadReasonsForStart(oReloadInfo) {
 			const sReference = ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector);
-			return Promise.all([
+			const aReasons = await Promise.all([
 				areHigherLayerChangesAvailable.call(this, oReloadInfo, sReference),
 				isDraftAvailable(oReloadInfo, sReference),
 				needContextSpecificReload(oReloadInfo, sReference)
-			]).then(function(aReasons) {
-				[oReloadInfo.hasHigherLayerChanges, oReloadInfo.isDraftAvailable, oReloadInfo.allContexts] = aReasons;
-				return oReloadInfo;
-			});
+			]);
+			const oReloadReasons = {};
+			[oReloadReasons.hasHigherLayerChanges, oReloadReasons.isDraftAvailable, oReloadReasons.allContexts] = aReasons;
+			return oReloadReasons;
 		},
 
 		/**
@@ -203,10 +200,8 @@ sap.ui.define([
 		 * Standalone: Adds the version to the session or removes it.
 		 *
 		 * @param {object} oReloadInfo - Contains the information needed to add the correct URL parameters
-		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 		 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 		 * @param {boolean} oReloadInfo.ignoreMaxLayerParameter - Indicates if the max layer parameter should be ignored
-		 * @param {string|object} oReloadInfo.parameters - The URL parameters to be modified
 		 * @param {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
 		 * @param {string} oReloadInfo.version - Version we want to switch to
 		 * @param {string} oReloadInfo.removeVersionParameter - Indicates if the version parameter should be removed

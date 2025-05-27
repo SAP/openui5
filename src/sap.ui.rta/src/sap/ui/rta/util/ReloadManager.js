@@ -105,8 +105,8 @@ sap.ui.define([
 		}
 	}
 
-	async function triggerReloadOnStart(oReloadInfo, bVersioningEnabled, bDeveloperMode) {
-		if (mUShellServices.Navigation && bVersioningEnabled) {
+	async function triggerReloadOnStart(oReloadInfo) {
+		if (mUShellServices.Navigation && oReloadInfo.versioningEnabled) {
 			// clears FlexState and triggers reloading of the flex data without blocking
 			if (oReloadInfo.isDraftAvailable) {
 				await VersionsAPI.loadDraftForApplication({
@@ -126,7 +126,7 @@ sap.ui.define([
 		}
 		const sReason = getReloadMessageOnStart(oReloadInfo);
 		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
-		if (!bDeveloperMode) {
+		if (!oReloadInfo.developerMode) {
 			await Utils.showMessageBox("information", sReason);
 		}
 		ReloadManager.enableAutomaticStart(oReloadInfo.layer, oReloadInfo.selector);
@@ -197,10 +197,8 @@ sap.ui.define([
 	 * Triggers the reload of the page. Can either be a soft reload inside the FLP or a hard reload.
 	 *
 	 * @param {object} oReloadInfo - Information needed for the reload
-	 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 	 * @param {boolean} oReloadInfo.ignoreMaxLayerParameter - Indicates if the max layer parameter should be ignored
-	 * @param {string|object} oReloadInfo.parameters - The URL parameters to be modified
 	 * @param {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
 	 * @param {string} oReloadInfo.version - Version we want to switch to
 	 * @param {string} oReloadInfo.removeVersionParameter - Indicates if version parameter should be removed
@@ -249,20 +247,16 @@ sap.ui.define([
 	 */
 	ReloadManager.handleReloadOnStart = async function(mProperties) {
 		merge(mProperties, {
-			hasHigherLayerChanges: false,
-			isDraftAvailable: false,
 			ignoreMaxLayerParameter: false,
-			includeCtrlVariants: true,
-			URLParsingService: mUShellServices.URLParsing
+			includeCtrlVariants: true
 		});
 		const oReloadInfo = await ReloadInfoAPI.getReloadReasonsForStart(mProperties);
 		if (
 			oReloadInfo.hasHigherLayerChanges
 			|| oReloadInfo.isDraftAvailable
 			|| oReloadInfo.allContexts
-			|| oReloadInfo.switchAdaptation
 		) {
-			return triggerReloadOnStart(oReloadInfo, mProperties.versioningEnabled, mProperties.developerMode);
+			return triggerReloadOnStart(merge(mProperties, oReloadInfo));
 		}
 		return undefined;
 	};
@@ -284,7 +278,6 @@ sap.ui.define([
 	ReloadManager.checkReloadOnExit = async function(mProperties) {
 		const bChangesNeedReload = await mProperties.changesNeedReloadPromise;
 		mProperties.changesNeedReload = bChangesNeedReload;
-		mProperties.URLParsingService = mUShellServices.URLParsing;
 		const oReloadInfo = ReloadInfoAPI.getReloadInfo(mProperties);
 		await handleReloadMessageBoxOnExit(oReloadInfo);
 		return oReloadInfo;
