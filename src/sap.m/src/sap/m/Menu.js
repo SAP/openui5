@@ -306,6 +306,10 @@ sap.ui.define([
 				iX = oEvent.pageX || 0,
 				iY = oEvent.pageY || 0;
 
+			if (oPopover.isOpen()) {
+				oPopover.close();
+			}
+
 			if (Localization.getRTL()) {
 				iX = document.body.clientWidth - iX;
 			}
