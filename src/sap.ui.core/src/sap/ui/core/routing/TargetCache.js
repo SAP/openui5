@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/Component",
+	"sap/ui/core/mvc/_ViewFactory",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/sync/TargetCache"
@@ -15,6 +16,7 @@ sap.ui.define([
 		assert,
 		EventProvider,
 		Component,
+		_ViewFactory,
 		View,
 		HashChanger,
 		SyncCache
@@ -338,7 +340,7 @@ sap.ui.define([
 			 * @param {object} oOptions The options of the desired object
 			 * @param {string} sType The type of the desired object, e.g. 'View', 'Component', etc.
 			 * @param {object} oTargetCreateInfo The object which contains extra information for the creation of the target
-			 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
+			 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>_ViewFactory.create</code> is used for creating
 			 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
 			 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 			 * @private
@@ -366,7 +368,7 @@ sap.ui.define([
 							oOptions.viewName = oOptions.name;
 							delete oOptions.name;
 							if (bLegacyCreate) {
-								return View._create(oOptions);
+								return _ViewFactory.create(oOptions);
 							} else {
 								return View.create(oOptions);
 							}
@@ -463,7 +465,7 @@ sap.ui.define([
 			 * Determines the view with the given <code>oOptions</code>
 			 *
 			 * @param {object} oOptions The options of the desired object
-			 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>View._create</code> is used for creating
+			 * @param {boolean} [bSynchronousCreate] When <code>true</code> the <code>_ViewFactory.create</code> is used for creating
 			 *  the view instance synchronously. In all other cases the asynchronous <code>View.create</code> factory is used.
 			 * @returns {Promise | object} The desired object, if the object already exists in the cache, if not the promise is returned
 			 * @private

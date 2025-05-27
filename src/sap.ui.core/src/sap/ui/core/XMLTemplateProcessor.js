@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/ui/core/ElementRegistry',
 	'./mvc/View',
 	'./mvc/ViewType',
+	'./mvc/_ViewFactory',
 	'./mvc/XMLProcessingMode',
 	'./mvc/EventHandlerResolver',
 	'./ExtensionPoint',
@@ -36,6 +37,7 @@ function(
 	ElementRegistry,
 	View,
 	ViewType,
+	_ViewFactory,
 	XMLProcessingMode,
 	EventHandlerResolver,
 	ExtensionPoint,
@@ -1763,7 +1765,7 @@ function(
 						}
 
 						vNewControlInstance = scopedRunWithOwner(function() {
-							return View._create(mSettings);
+							return _ViewFactory.create(mSettings);
 						});
 					}
 				} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {

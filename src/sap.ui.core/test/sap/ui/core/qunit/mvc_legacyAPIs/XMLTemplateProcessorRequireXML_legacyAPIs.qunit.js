@@ -1,13 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/_ViewFactory",
 	"sap/m/InstanceManager",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(View, InstanceManager, Log, merge, JSONModel, HashChanger, nextUIUpdate) {
+], function(_ViewFactory, InstanceManager, Log, merge, JSONModel, HashChanger, nextUIUpdate) {
 	"use strict";
 
 	var TESTDATA_PREFIX = "testdata.xml-require";
@@ -366,7 +366,7 @@ sap.ui.define([
 			sync: {
 				create: createView,
 				spies: {
-					_create: [View, "_create"],
+					_create: [_ViewFactory, "create"],
 					warning: [Log, "warning"]
 				}
 			}
@@ -374,7 +374,7 @@ sap.ui.define([
 		runAssertions: function (oView, mSpies, assert, bAsync) {
 			var oCreateSpy = mSpies._create;
 			var oWarningSpy = mSpies.warning;
-			assert.ok(oCreateSpy.calledOnce, "generic create is called for the nested view");
+			assert.ok(oCreateSpy.callCount, 2, "_ViewFactory called two times.");
 
 			return oCreateSpy.getCall(0).returnValue.loaded().then(function() {
 				return assert.ok(oWarningSpy.calledWith(sinon.match(/Event handler name 'Box.show\('MessageBox'\)' could not be resolved to an event handler function/)));

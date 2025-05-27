@@ -11,6 +11,7 @@ sap.ui.define([
 	'./CustomData',
 	'./HTML',
 	'./mvc/View',
+	'./mvc/_ViewFactory',
 	'./mvc/EventHandlerResolver',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
@@ -25,6 +26,7 @@ sap.ui.define([
 		CustomData,
 		HTML,
 		View,
+		_ViewFactory,
 		EventHandlerResolver,
 		Log,
 		ObjectPath,
@@ -205,7 +207,7 @@ sap.ui.define([
 			var oControl;
 			if (View.prototype.isPrototypeOf(fnClass.prototype) && typeof fnClass._sType === "string") {
 				// for views having a factory function defined we use the factory function!
-				oControl = View._create(mSettings, undefined, fnClass._sType);
+				oControl = _ViewFactory.create(mSettings, undefined, fnClass._sType);
 			} else {
 				oControl = new fnClass(mSettings);
 			}

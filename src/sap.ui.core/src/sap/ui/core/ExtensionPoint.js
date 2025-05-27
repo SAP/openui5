@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
-	function(future, Log, View, Component) {
+sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/ui/core/mvc/_ViewFactory", "sap/ui/core/Component"],
+	function(future, Log, View, _ViewFactory, Component) {
 
 	"use strict";
 
@@ -156,9 +156,9 @@ sap.ui.define(["sap/base/future", "sap/base/Log", "sap/ui/core/mvc/View", "sap/u
 					const bLegacyCreate = true;
 
 					if (bLegacyCreate) {
-						// Call View._create in order to keep the processingMode (e.g. 'SequentialLegacy')
+						// Call _ViewFactory.create in order to keep the processingMode (e.g. 'SequentialLegacy')
 						// View.create always overrides the processingMode to 'Sequential'
-						const oExtensionView = View._create(oFactoryConfig);
+						const oExtensionView = _ViewFactory.create(oFactoryConfig);
 						if (bAsync) {
 							vResult = oExtensionView.loaded();
 						} else {

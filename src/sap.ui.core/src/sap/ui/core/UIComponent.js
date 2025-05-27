@@ -13,6 +13,7 @@ sap.ui.define([
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
+	'./mvc/_ViewFactory',
 	'sap/base/util/ObjectPath',
 	'sap/base/future',
 	'sap/base/Log'
@@ -27,6 +28,7 @@ sap.ui.define([
 		UIComponentMetadata,
 		Controller,
 		View,
+		_ViewFactory,
 		ObjectPath,
 		future,
 		Log
@@ -783,7 +785,7 @@ sap.ui.define([
 			if (bModernFactory) {
 				return View.create(oRootView);
 			} else {
-				return View._create(oRootView);
+				return _ViewFactory.create(oRootView);
 			}
 		} else if (oRootView) {
 			throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");
