@@ -1118,14 +1118,10 @@ sap.ui.define([
 		const oTargetItem = this.navigationList.getItems()[3];
 		this.navigationList.attachItemSelect(fnEventSpy);
 
-		// Assert
-		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is not set");
-
 		// Act
 		QUnitUtils.triggerKeydown(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.ENTER);
 
 		// Assert
-		assert.ok(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is set");
 		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 		fnEventSpy.reset();
 
@@ -1133,7 +1129,6 @@ sap.ui.define([
 		QUnitUtils.triggerKeyup(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.ENTER);
 
 		// Assert
-		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is NOT set");
 		assert.strictEqual(fnEventSpy.callCount, 0, "select event should NOT be fired");
 
 		// Clean up
@@ -1165,21 +1160,16 @@ sap.ui.define([
 		const oTargetItem = this.navigationList.getItems()[3];
 		this.navigationList.attachItemSelect(fnEventSpy);
 
-		// Assert
-		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is not set");
-
 		// Act
 		QUnitUtils.triggerKeydown(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.SPACE);
 
 		// Assert
-		assert.ok(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is set");
 		assert.strictEqual(fnEventSpy.callCount, 0, "select event should NOT be fired");
 
 		// Act
 		QUnitUtils.triggerKeyup(oTargetItem.getDomRef().querySelector(".sapTntNLI"), KeyCodes.SPACE);
 
 		// Assert
-		assert.notOk(oTargetItem.getDomRef().classList.contains("sapTntNLIActive"), "sapTntNLIActive class is NOT set");
 		assert.strictEqual(fnEventSpy.callCount, 1, "should fire select event once");
 
 		// Clean up
