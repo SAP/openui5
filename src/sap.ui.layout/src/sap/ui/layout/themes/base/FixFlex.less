@@ -7,20 +7,9 @@
    ========================================================================== */
 .sapUiFixFlex {
 	box-sizing: border-box;
-
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
-
-	-webkit-box-direction: normal;
-	-webkit-box-orient: vertical;
-	-webkit-flex-direction: column;
 	flex-direction: column;
-
-	-webkit-box-align: start;
-	-webkit-align-items: flex-start;
 	align-items: flex-start;
-
 	height: 100%;
 }
 
@@ -33,10 +22,7 @@
 	min-height: 0;
 	min-width: 0;
 
-	-webkit-box-flex: 1;
-	-webkit-flex: 1;
 	flex: 1;
-
 	overflow: hidden;
 	position: relative;
 	width: 100%;
@@ -61,7 +47,6 @@
 /* Fixed child */
 .sapUiFixFlexFixed {
 	box-sizing: border-box;
-
 	position: relative;
 	overflow: hidden;
 	width: 100%;
@@ -71,9 +56,6 @@
    ========================================================================== */
 
 .sapUiFixFlexRow {
-	-webkit-box-direction: normal;
-	-webkit-box-orient: horizontal;
-	-webkit-flex-direction: row;
 	flex-direction: row;
 
 	& > .sapUiFixFlexFlexible,
@@ -86,6 +68,7 @@
 /* Styles for scrolling
    ========================================================================== */
 .sapUiFixFlexInnerScrolling {
+
 	& > .sapUiFixFlexFlexible {
 		-webkit-overflow-scrolling: touch;
 		overflow: auto;
@@ -98,6 +81,7 @@
 	}
 
 	&.sapUiFixFlexRow {
+
 		& > .sapUiFixFlexFlexible {
 			overflow-y: hidden;
 		}
@@ -119,6 +103,7 @@
 
 	&.sapUiFixFlexRow {
 		white-space: nowrap;
+
 		& > .sapUiFixFlexFlexible,
 		& > .sapUiFixFlexFixed {
 			display: inline-block;

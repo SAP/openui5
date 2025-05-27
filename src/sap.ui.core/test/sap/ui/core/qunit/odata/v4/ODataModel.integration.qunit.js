@@ -56,6 +56,7 @@ sap.ui.define([
 		fnFireEvent = EventProvider.prototype.fireEvent,
 		sNextSiblingAction
 			= "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcChangeNextSibling",
+		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		sODCB = "sap.ui.model.odata.v4.ODataContextBinding",
 		sODLB = "sap.ui.model.odata.v4.ODataListBinding",
 		sODPrB = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -10064,7 +10065,7 @@ sap.ui.define([
 			assert.throws(function () {
 				// code under test (JIRA: CPOUI5ODATAV4-2768)
 				oContext.getFilter();
-			}, Error("Key1: Unsupported type: undefined"), "no support for key aliases");
+			}, /Key1: Unsupported type: /, "no support for key aliases");
 		});
 	});
 
@@ -10419,6 +10420,180 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: An entity and a complex type, which are both open types, are used for a list report
+	// (with auto-$expand/$select) and an object page (with late properties). See that dynamic
+	// property names are not an issue, not even for editing in connection with complex types and
+	// annotations.
+	// JIRA: CPOUI5ODATAV4-2996
+	QUnit.test("OpenType: 1/2", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : '/EntitiesWithComplexKey', parameters : {$select : 'Alpha'}}">
+	<Text id="beta" text="{path : 'Beta', type : 'sap.ui.model.odata.type.Boolean'}"/>
+	<Text id="gamma" text="{= %{Key/Gamma} }"/>
+</Table>
+<FlexBox id="form">
+	<Input id="delta" value="{= %{Delta} }"/>
+	<Text id="zeta" text="{= %{Key/Epsilon/Zeta} }"/>
+</FlexBox>`;
+
+		this.expectRequest("EntitiesWithComplexKey?$select=Alpha,Beta,Key/Gamma,Key/P1,Key/P2"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Alpha : "n/a", // unused
+					Beta : true,
+					Key : {
+						Gamma : "gamma",
+						P1 : "p1",
+						P2 : "p2"
+					}
+				}]
+			})
+			.expectChange("beta", ["Yes"])
+			.expectChange("gamma", ["gamma"])
+			.expectChange("delta")
+			.expectChange("zeta");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("EntitiesWithComplexKey(Key1='p1',Key2=p2)"
+				+ "?$select=Delta,Key/Epsilon/Zeta", {
+				Delta : "delta",
+				Key : {
+					Epsilon : {
+						Zeta : "zeta"
+					}
+				}
+			})
+			.expectChange("delta", "delta")
+			.expectChange("zeta", "zeta");
+
+		const oListBinding = this.oView.byId("table").getBinding("items");
+		this.oView.byId("form").setBindingContext(oListBinding.getCurrentContexts()[0]);
+
+		await this.waitForChanges(assert, "late properties");
+
+		this.expectChange("delta", "Hello, World!")
+			.expectRequest({
+				method : "PATCH",
+				payload : {
+					Delta : "Hello, World!",
+					"Delta@complexAnnotation" : {
+						Eta : "eta"
+					},
+					Theta : {
+						"Iota@simpleAnnotation" : "iota"
+					}
+				},
+				url : "EntitiesWithComplexKey(Key1='p1',Key2=p2)"
+			}, {
+				Delta : "hello, world", // like Brian Kernighan said
+				Key : {
+					P1 : "p1",
+					P2 : "p2"
+				}
+
+			})
+			.expectChange("delta", "hello, world");
+
+		const oPropertyBinding = this.oView.byId("delta").getBinding("value");
+		// code under test
+		oPropertyBinding.setValue("Hello, World!");
+
+		await Promise.all([
+			// code under test
+			oPropertyBinding.getContext().setProperty("Delta@complexAnnotation/Eta", "eta"),
+			// code under test
+			oPropertyBinding.getContext().setProperty("Theta/Iota@simpleAnnotation", "iota"),
+			this.waitForChanges(assert, "edit")
+		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: An entity and a complex type, which are both open types, are used for a list report
+	// (with auto-$expand/$select) and an object page (with late properties). See that dynamic
+	// property names are not an issue, even when reached via some navigation property, but that
+	// being an open type is not "inherited".
+	// JIRA: CPOUI5ODATAV4-2996
+	QUnit.test("OpenType: 2/2", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/As}">
+	<Text id="beta" text="{= %{AtoEntityWithComplexKey/Beta} }"/>
+	<Text id="gamma" text="{= %{AtoEntityWithComplexKey/Key/Gamma} }"/>
+</Table>
+<FlexBox id="form" binding="{AtoEntityWithComplexKey}">
+	<Text id="delta" text="{= %{Delta} }"/>
+	<Text id="epsilon" text="{= %{Key/Epsilon} }"/>
+</FlexBox>`;
+
+		this.expectRequest("As?$select=AID"
+				+ "&$expand=AtoEntityWithComplexKey($select=Beta,Key/Gamma,Key/P1,Key/P2)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					AID : "aid",
+					AtoEntityWithComplexKey : {
+						Beta : "beta",
+						Key : {
+							Gamma : "gamma",
+							P1 : "p1",
+							P2 : "p2"
+						}
+					}
+				}]
+			})
+			.expectChange("beta", ["beta"])
+			.expectChange("gamma", ["gamma"])
+			.expectChange("delta")
+			.expectChange("epsilon");
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectRequest("As(aid)/AtoEntityWithComplexKey"
+				+ "?$select=Delta,Key/Epsilon,Key/P1,Key/P2", {
+				Delta : "delta",
+				Key : {
+					Epsilon : "epsilon",
+					P1 : "p1",
+					P2 : "p2"
+				}
+			})
+			.expectChange("delta", "delta")
+			.expectChange("epsilon", "epsilon");
+
+		const oListBinding = this.oView.byId("table").getBinding("items");
+		const oContext = oListBinding.getCurrentContexts()[0];
+		this.oView.byId("form").setBindingContext(oContext);
+
+		await this.waitForChanges(assert, "late properties");
+
+		assert.deepEqual(oContext.getObject(), {
+			AID : "aid",
+			AtoEntityWithComplexKey : {
+				Beta : "beta",
+				Delta : "delta",
+				Key : {
+					Epsilon : "epsilon",
+					Gamma : "gamma",
+					P1 : "p1",
+					P2 : "p2"
+				}
+			}
+		});
+
+		this.oLogMock.expects("error").withExactArgs("Failed to enhance query options for "
+			+ "auto-$expand/$select as the path '/As(aid)/Messages/0/Delta'"
+			+ " does not point to a property",
+			undefined, "sap.ui.model.odata.v4.ODataParentBinding"
+		);
+		this.oLogMock.expects("error").withExactArgs("Not a valid property path: Messages/0/Delta",
+			undefined, sContext);
+
+		assert.strictEqual(await oContext.requestProperty("Messages/0/Delta"), undefined,
+			"being an open type is not inherited");
 	});
 
 	//*********************************************************************************************
@@ -49287,8 +49462,7 @@ sap.ui.define([
 
 			assert.strictEqual(oPropertyBinding.getValue(), 42);
 			that.oLogMock.expects("error")
-				.withExactArgs("Read-only path must not be updated", oMatcher,
-					"sap.ui.model.odata.v4.ODataMetaModel");
+				.withExactArgs("Read-only path must not be updated", oMatcher, sODataMetaModel);
 			that.oLogMock.expects("error")
 				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher, sODPrB);
 
@@ -64493,18 +64667,28 @@ sap.ui.define([
 	// Add and modify annotations for the value list model via local annotation files, including one
 	// in a referenced scope and one in a nested value list model.
 	// JIRA: CPOUI5ODATAV4-2732
+	//
+	// By accident, a qualified name of the data service is requested from a value help service's
+	// meta model. This must not include the data service's scheme into the value help service. If
+	// it would be included, requesting the value list info again results in a cryptic error
+	// "Unexpected annotation ... with namespace of data service ...".
+	// SNOW: DINC0506022
 	[false, true].forEach(function (bAutoExpandSelect) {
 		var sTitle = "$$sharedRequest and ODMM#getOrCreateSharedModel, bAutoExpandSelect = "
 				+ bAutoExpandSelect;
 
 		QUnit.test(sTitle, function (assert) {
-			var oModel = this.createSalesOrdersModel({
+			var iOldLogLevel = Log.getLevel(sODataMetaModel),
+				sVH_ProductTypeCode = "/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001"
+					+ ";ps=%27default-zui5_epm_sample-0002%27"
+					+ ";va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27"
+					+ "/$metadata",
+				oModel = this.createSalesOrdersModel({
 					annotationURI : "/sap/opu/odata4/annotations_zui5_epm_sample.xml"
 				}, {
 					"/sap/opu/odata4/annotations_zui5_epm_sample.xml"
 						: {source : "odata/v4/data/annotations_zui5_epm_sample.xml"},
-					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv/0001;ps=%27default-zui5_epm_sample-0002%27;va=%27com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE%27/$metadata"
-						: {source : "odata/v4/data/VH_ProductTypeCode.xml"},
+					[sVH_ProductTypeCode] : {source : "odata/v4/data/VH_ProductTypeCode.xml"},
 					"/sap/opu/odata4/sap/zui5_testv4/f4/sap/d_pr_type-fv-ext/0001/$metadata"
 						: {source : "odata/v4/data/VH_ProductTypeCode_ext.xml"},
 					// fake "nested" value help
@@ -64614,6 +64798,25 @@ sap.ui.define([
 					.requestObject("/com.sap.gateway.f4.FIELD_VALUE.v0001.D_PR_TYPE_FV/DESCRIPTION"
 						+ "@com.sap.vocabularies.Common.v1.Label");
 				assert.strictEqual(sLabel, "Description's NESTED New Label");
+
+				const sSchema = "com.sap.gateway.default.zui5_epm_sample.v0002.";
+				const sTypeCodePath = "/" + sSchema + "Product/TypeCode";
+
+				// do not rely on ERROR vs. DEBUG due to minified sources
+				Log.setLevel(Log.Level.DEBUG, sODataMetaModel);
+				that.oLogMock.expects("warning").withExactArgs("Must not access schema '" + sSchema
+					+ "' from meta model for " + sVH_ProductTypeCode, sTypeCodePath, sODataMetaModel);
+
+				// code under test (SNOW: DINC0506022)
+				await oValueListModel.getMetaModel().requestObject(sTypeCodePath)
+					.then(function (vValue) {
+						assert.strictEqual(vValue, undefined, "MUST not be found!");
+
+						// MUST not fail due to schema inclusion of data service into VH service
+						return oModel.getMetaModel().requestValueListInfo(sTypeCodePath);
+					});
+			}).finally(function () {
+				Log.setLevel(iOldLogLevel, sODataMetaModel);
 			});
 		});
 	});

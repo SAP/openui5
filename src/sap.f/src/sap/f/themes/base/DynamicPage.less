@@ -16,21 +16,22 @@
 
 	.sapFDynamicPageContentWrapperStandard,
 	.sapFDynamicPageContentWrapperSolid {
-		&>.sapFDynamicPageContent {
-			background: @sapUiBaseBG;
+
+		& > .sapFDynamicPageContent {
+			background: var(--sapBackgroundColor);
 		}
 	}
 
 	.sapFDynamicPageHeaderSolid {
-		background: @sapUiBaseBG;
+		background: var(--sapBackgroundColor);
 	}
 
-	.sapFDynamicPageContentWrapperTransparent>.sapFDynamicPageContent {
+	.sapFDynamicPageContentWrapperTransparent > .sapFDynamicPageContent {
 		background: transparent;
 	}
 
-	.sapFDynamicPageContentWrapperList>.sapFDynamicPageContent {
-		background: @sapUiGroupContentBackground;
+	.sapFDynamicPageContentWrapperList > .sapFDynamicPageContent {
+		background: var(--sapGroup_ContentBackground);
 	}
 }
 
@@ -47,8 +48,9 @@
 	z-index: 3;
 }
 
-html[data-sap-ui-browser^="ff"].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll,
-html[data-sap-ui-os^="win"][data-sap-ui-browser^="cr"].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+html[data-sap-ui-browser^='ff'].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll,
+html[data-sap-ui-os^='win'][data-sap-ui-browser^='cr'].sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+
 	 .sapFDynamicPageTitleWrapper {
 		right: 17px;
 	}
@@ -60,19 +62,11 @@ html[data-sap-ui-os^="win"][data-sap-ui-browser^="cr"].sap-desktop .sapFDynamicP
 
 .sapFDynamicPageContent {
 	flex-grow: 1;
-	-webkit-flex-grow: 1;
 	z-index: 0;
 
 	.sapFDynamicPageAlignContent {
 		margin-left: -@sapUiMarginSmall;
 		margin-right: -@sapUiMarginSmall;
-	}
-}
-
-/* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ie"] {
-	.sapFDynamicPageContent {
-		flex-shrink: 0;
 	}
 }
 
@@ -91,29 +85,32 @@ html[data-sap-ui-browser^="ie"] {
 	bottom: 0;
 }
 
-// adds space underneath the footer (when page in scrollable mode)
+/* adds space underneath the footer (when page in scrollable mode) */
 .sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
 	padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) )";
 }
 
 .sapUiSizeCompact {
+
 	.sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
 		padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) )";
 	}
 }
 
-// adds space underneath the footer (when page in non-scrollable mode)
+/* adds space underneath the footer (when page in non-scrollable mode) */
 .sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
 	max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) ))";
 }
 
 .sapUiSizeCompact {
+
 	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer {
 		max-height: ~"calc(100% - (@{_sap_f_DynamicPage_FooterHeight_Compact} + ( @{_sap_f_DynamicPage_FooterMarginBottom} * 2 ) ))";
 	}
 }
 
 .sapFDynamicPage-Std-Tablet {
+
 	.sapFDynamicPageContent,
 	.sapFDynamicPageContentFitContainer {
 		padding: 2rem 2rem 0 2rem;
@@ -121,6 +118,7 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 .sapFDynamicPage-Std-Phone {
+
 	.sapFDynamicPageContent,
 	.sapFDynamicPageContentFitContainer {
 		padding: 2rem 1rem 0 1rem;
@@ -128,18 +126,22 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 .sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContent");
+
 .sapUiContainerContentPadding(~".sapFDynamicPage", ~".sapFDynamicPageContentFitContainer");
 
 .sapFDynamicPage.sapUiContentPadding,
 .sapFDynamicPage.sapUiNoContentPadding,
 .sapFDynamicPage.sapUiResponsiveContentPadding {
+
 	.sapFDynamicPageAlignContent {
 		margin: 0;
 	}
 }
 
 .sapFDynamicPage.sapUiContentPadding {
+
 	.sapFDynamicPage-Std-Phone {
+
 		.sapFDynamicPageAlignContent {
 			margin: 0 -1rem;
 		}
@@ -147,7 +149,9 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 .sapFDynamicPage.sapUiResponsiveContentPadding {
+
 	&.sapFDynamicPage-Std-Phone {
+
 		.sapFDynamicPageContent,
 		.sapFDynamicPageContentFitContainer {
 			padding: 0;
@@ -156,6 +160,7 @@ html[data-sap-ui-browser^="ie"] {
 	}
 
 	&.sapFDynamicPage-Std-Tablet {
+
 		.sapFDynamicPageContent,
 		.sapFDynamicPageContentFitContainer {
 			padding: 1rem;
@@ -163,6 +168,7 @@ html[data-sap-ui-browser^="ie"] {
 	}
 
 	&.sapFDynamicPage-Std-Desktop {
+
 		.sapFDynamicPageContent,
 		.sapFDynamicPageContentFitContainer {
 			padding: 1rem 2rem;
@@ -171,13 +177,14 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 .sapFDynamicPageFooterVisible .sapFDynamicPageContentWrapper,
-.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*="overflow: hidden auto;"] {
+.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*='overflow: hidden auto;'] {
 	scroll-padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight} +  @{_sap_f_DynamicPage_FooterMarginBottom} + 2px)";
 }
 
 .sapUiSizeCompact {
+
 	.sapFDynamicPageFooterVisible .sapFDynamicPageContentWrapper,
-	.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*="overflow: hidden auto;"] {
+	.sapFDynamicPageFooterVisible .sapFDynamicPageContentFitContainer *[style*='overflow: hidden auto;'] {
 		scroll-padding-bottom: ~"calc(@{_sap_f_DynamicPage_FooterHeight_Compact} +  @{_sap_f_DynamicPage_FooterMarginBottom} + 2px)";
 	}
 }
@@ -187,24 +194,19 @@ html[data-sap-ui-browser^="ie"] {
 	height: 100%;
 	position: relative;
 	will-change: scroll-position;
-	-webkit-overflow-scrolling: auto;
-
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
-
-	-webkit-flex-direction: column;
 	flex-direction: column;
 
-	// Scroll anchoring adjusts the scroll position to prevent visible jumps (or "reflows"),
-	// when content changes above the viewport.
-	// See: https://github.com/WICG/ScrollAnchoring/blob/master/explainer.md
+	/* Scroll anchoring adjusts the scroll position to prevent visible jumps (or "reflows"),
+	when content changes above the viewport.
+	See: https://github.com/WICG/ScrollAnchoring/blob/master/explainer.md */
 	overflow-anchor: none;
 
 	overflow-y: auto;
 }
 
 .sapFDynamicPageSupressScroll {
+
 	.sapFDynamicPageContentWrapper {
 		overflow: hidden;
 	}
@@ -212,14 +214,12 @@ html[data-sap-ui-browser^="ie"] {
 
 .sapFDynamicPage .sapFDynamicPageTitleWrapper {
 	display: flex;
-	display: -webkit-flex;
 	flex-direction: column;
-	-webkit-flex-direction: column;
 	flex-shrink: 0;
-	-webkit-flex-shrink: 0;
 }
 
 html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
+
 	.sapFDynamicPageTitleWrapper {
 		right: 12px;
 	}
@@ -230,21 +230,18 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 }
 
 .sapFDynamicPageContentWrapper {
-	-webkit-flex-grow: 1;
 	flex-grow: 1;
 }
 
 .sapFDynamicPage,
 .sapFDynamicPage.sapFNavItem {
-	display: -webkit-box;
-	display: -webkit-flex;
 	display: flex;
-	-webkit-flex-direction: column;
 	flex-direction: column;
 }
 
-// DynamicPageTitle hover
+/* DynamicPageTitle hover */
 .sapFDynamicPage.sapFDynamicPageTitleClickEnabled {
+
 	.sapFDynamicPageTitle:hover,
 	&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
 		cursor: pointer;
@@ -255,8 +252,9 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 	}
 }
 
-// Overstyle for Comparison Pattern
+/* Overstyle for Comparison Pattern */
 .sapFDynamicPage.sapFDynamicPageTitleClickEnabled.sapUiComparisonContainer {
+
 	.sapFDynamicPageTitleMainInner:hover {
 		cursor: pointer;
 	}
@@ -267,15 +265,16 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 	}
 }
 
-// Reflection: Overwritten styles
+/* Reflection: Overwritten styles */
 .sapFDynamicPageTitleMainHeading,
 .sapFDynamicPageTitleMainContent,
 .sapFDynamicPageTitleMainActions {
-	// BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types
+	/* BCP: 1870261908 - CSS cursor reset is needed here to prevent showing pointer for not clickable control types */
 	cursor: default;
 }
 
 .sapFDynamicPage {
+
 	.sapFDynamicPageFooter {
 		position: relative;
 
@@ -298,16 +297,17 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 	height: @_sap_f_DynamicPage_FooterHeight_Compact;
 }
 
-/* ============================== */
-/* Toggle Header Visual Indicator */
-/* ============================== */
+/* =============================== */
+/* Toggle Header Visual Indicator  */
+/* =============================== */
+
 .sapFDynamicPageToggleHeaderIndicator.sapMBtn,
 .sapFDynamicPageHeaderPinButton.sapMBtn {
 	position: absolute;
 	left: 50%;
 	padding: 0;
 
-	// Reflection: Overwritten styles
+	/* Reflection: Overwritten styles */
 	.sapMBtnInner {
 		position: absolute !important;
 		border-radius: 0.1875rem;
@@ -335,11 +335,12 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 
 /* Compact */
 .sapUiSizeCompact {
+
 	.sapFDynamicPageToggleHeaderIndicator,
 	.sapFDynamicPageHeaderPinButton {
 		bottom: -0.875rem;
 
-		// Reflection: Overwritten styles
+		/* Reflection: Overwritten styles */
 		.sapMBtnInner.sapMBtnIconFirst:not(.sapMBtnBack) {
 			padding-left: 0;
 			padding-right: 0;
@@ -347,30 +348,20 @@ html.sap-desktop .sapFDynamicPage.sapFDynamicPageWithScroll {
 	}
 }
 
-/* ============= */
-/* Animations    */
-/* ============= */
+/* =========== */
+/* Animations  */
+/* =========== */
 
 html[data-sap-ui-animation='on'] .sapFDynamicPage {
+
 	.sapFDynamicPageActualFooterControlShow {
-		-webkit-animation: bounceShow 0.35s forwards ease-in-out;
 		animation: bounceShow 0.35s forwards ease-in-out;
 	}
+
 	.sapFDynamicPageActualFooterControlHide {
-		-webkit-animation: bounceHide 0.35s forwards ease-in-out;
 		animation: bounceHide 0.35s forwards ease-in-out;
 	}
 
-	@-webkit-keyframes bounceShow {
-		0% {
-			-webkit-transform: translateY(100%);
-			transform: translateY(100%);
-			opacity: 0;
-		}
-		100% {
-			opacity: 1;
-		}
-	}
 	@keyframes bounceShow {
 		0% {
 			transform: translateY(100%);
@@ -380,18 +371,7 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 			opacity: 1;
 		}
 	}
-	@-webkit-keyframes bounceHide {
-		0% {
-			-webkit-transform: translateY(-5%);
-			transform: translateY(-5%);
-			opacity: 1;
-		}
-		100% {
-			-webkit-transform: translateY(100%);
-			transform: translateY(100%);
-			opacity: 0;
-		}
-	}
+
 	@keyframes bounceHide {
 		0% {
 			transform: translateY(-5%);
@@ -403,7 +383,6 @@ html[data-sap-ui-animation='on'] .sapFDynamicPage {
 		}
 	}
 }
-
 
 /* Vertically align items in the table-like view with the items in the sap.m.Carousel control,
 part of DynamicPageTitle snapped content and DynamicPageHeader content.
@@ -421,7 +400,7 @@ To be used in Comparison pattern scenario. */
 	margin-right: -1rem;
 }
 
-// Avoid visible gap between content and header when title is snapped
+/* Avoid visible gap between content and header when title is snapped */
 .sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped + .sapFDynamicPageContentWrapper > .sapFDynamicPageHeaderWrapper {
-	background: @sapUiObjectHeaderBackground;
+	background: var(--sapObjectHeader_Background);
 }

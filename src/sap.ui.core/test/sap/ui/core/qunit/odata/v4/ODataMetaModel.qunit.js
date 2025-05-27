@@ -38,7 +38,11 @@ sap.ui.define([
 	// tea_busi_product.v0001 := com.sap.gateway.default.iwbep.tea_busi_product.v0001
 	// tea_busi_supplier.v0001 := com.sap.gateway.default.iwbep.tea_busi_supplier.v0001
 	// UI := com.sap.vocabularies.UI.v1
-	var mMostlyEmptyScope = {
+	var oDynamicProperty = Object.freeze({
+			$kind : "Property",
+			$Type : "Edm.Untyped"
+		}),
+		mMostlyEmptyScope = {
 			$Annotations : {}, // simulate ODataMetaModel#_mergeAnnotations
 			$EntityContainer : "empty.DefaultContainer",
 			$Version : "4.0",
@@ -544,6 +548,33 @@ sap.ui.define([
 					$Type : "tea_busi.TEAM"
 				}
 			}],
+			"tea_busi.ComplexType_City" : {
+				$kind : "ComplexType",
+				CITYNAME : {
+					$kind : "Property",
+					$Type : "Edm.String"
+				},
+				POSTALCODE : {
+					$kind : "Property",
+					$Type : "Edm.String"
+				},
+				UNTYPED : {
+					$kind : "Property",
+					$Type : "Edm.Untyped" // unsupported outside OpenType (4.01 only)
+				}
+			},
+			"tea_busi.ComplexType_Location" : {
+				$kind : "ComplexType",
+				$OpenType : true,
+				City : {
+					$kind : "Property",
+					$Type : "tea_busi.ComplexType_City" // $OpenType : false
+				},
+				COUNTRY : {
+					$kind : "Property",
+					$Type : "Edm.String"
+				}
+			},
 			"tea_busi.ComplexType_Salary" : {
 				$kind : "ComplexType",
 				AMOUNT : {
@@ -809,6 +840,7 @@ sap.ui.define([
 			"tea_busi.Worker" : {
 				$kind : "EntityType",
 				$Key : ["ID"],
+				$OpenType : true,
 				ID : {
 					$kind : "Property",
 					$Type : "Edm.String",
@@ -833,12 +865,16 @@ sap.ui.define([
 				},
 				EMPLOYEE_2_TEAM : {
 					$kind : "NavigationProperty",
-					$Type : "tea_busi.TEAM",
+					$Type : "tea_busi.TEAM", // $OpenType : false
 					$Nullable : false
+				},
+				LOCATION : {
+					$kind : "Property",
+					$Type : "tea_busi.ComplexType_Location" // $OpenType : true
 				},
 				SALÃRY : {
 					$kind : "Property",
-					$Type : "tea_busi.ComplexType_Salary"
+					$Type : "tea_busi.ComplexType_Salary" // $OpenType : false
 				}
 			},
 			$$Loop : "$$Loop/", // some endless loop
@@ -1237,6 +1273,8 @@ sap.ui.define([
 		assert.ok(oMetaModel instanceof MetaModel);
 		assert.strictEqual(oMetaModel.aAnnotationUris, undefined);
 		assert.ok(oMetaModel.hasOwnProperty("aAnnotationUris"), "own property aAnnotationUris");
+		assert.strictEqual(oMetaModel.sForbiddenSchema, undefined);
+		assert.ok(oMetaModel.hasOwnProperty("sForbiddenSchema"), "own property sForbiddenSchema");
 		assert.strictEqual(oMetaModel.oMetaModelForAnnotations, null);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
 		assert.strictEqual(oMetaModel.sUrl, sUrl);
@@ -1318,6 +1356,16 @@ sap.ui.define([
 
 		assert.strictEqual(oMetaModel.oMetaModelForAnnotations, undefined);
 		assert.strictEqual(oMetaModel.mSharedModelByUrl, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_setForbiddenSchema", function (assert) {
+		const oMetaModel = new ODataMetaModel(this.oMetaModel.oRequestor, "/~/$metadata");
+
+		// code under test
+		oMetaModel._setForbiddenSchema("~forbidden~");
+
+		assert.strictEqual(oMetaModel.sForbiddenSchema, "~forbidden~");
 	});
 
 	//*********************************************************************************************
@@ -1620,6 +1668,18 @@ sap.ui.define([
 		"/TEAMS/TEAM_2_MANAGER/$ReferentialConstraint/Address%2FCountry" : "WorkAddress/Country",
 		"/TEAMS/TEAM_2_MANAGER/$ReferentialConstraint/Address%2FCountry@Common.Label"
 			: "Common Country",
+		// OpenType - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		"/EMPLOYEES/dynamic" : sinon.match(oDynamicProperty),
+		"/EMPLOYEES/dynamic/$" : sinon.match(oDynamicProperty),
+		"/EMPLOYEES/dynamic/$kind" : "Property",
+		"/EMPLOYEES/dynamic/$Type" : "Edm.Untyped",
+		"/EMPLOYEES/dynamic/structure" : sinon.match(oDynamicProperty),
+		"/EMPLOYEES/dynamic/structure/part" : sinon.match(oDynamicProperty),
+		"/EMPLOYEES/dynamic/structure/part/$" : sinon.match(oDynamicProperty),
+		"/EMPLOYEES/dynamic/structure/part/$Type" : "Edm.Untyped",
+		"/EMPLOYEES/LOCATION/dynamic" : sinon.match(oDynamicProperty),
+		"/TEAMS/TEAM_2_EMPLOYEES/dynamic" : sinon.match(oDynamicProperty),
+		"/EMPLOYEES/dynamic/tea_busi.TEAM/Team_Id" : oTeamData.Team_Id, // type cast works fine
 		// operations -----------------------------------------------------------------------------
 		"/OverloadedAction" : oContainerData["OverloadedAction"],
 		"/OverloadedAction/$Action" : "name.space.OverloadedAction",
@@ -1910,6 +1970,8 @@ sap.ui.define([
 			: "EMPLOYEES",
 		"/TEAMS/$NavigationPropertyBinding/TEAM_2_CONTAINED_S%2FS_2_EMPLOYEE/@sapui.name"
 			: "tea_busi.Worker", // slash makes a difference!
+		"/EMPLOYEES/dynamic@sapui.name" : "dynamic",
+		"/EMPLOYEES/dynamic/structure/part@sapui.name" : "part",
 		// .../$ ----------------------------------------------------------------------------------
 		"/$" : mScope, // @see #fetchData, but no clone
 		// "/$@sapui.name" --> "Unsupported path before @sapui.name"
@@ -1974,7 +2036,11 @@ sap.ui.define([
 		"/tea_busi.DefaultContainer/missing", // "17.2 SimpleIdentifier" treated like any property
 		"/tea_busi.FuGetEmployeeMaxAge/0/tea_busi.FuGetEmployeeMaxAge", // "0" switches to JSON
 		"/tea_busi.TEAM/$Key/this.is.missing",
-		"/tea_busi.Worker/missing", // entity container (see above) treated like any schema child
+		"/tea_busi.TEAM/missing", // entity container (see above) treated like any schema child
+		"/tea_busi.Worker/EMPLOYEE_2_TEAM/missing", // being an open type is not inherited
+		"/tea_busi.Worker/LOCATION/City/missing", // being an open type is not inherited
+		"/tea_busi.Worker/SALÃRY/missing", // being an open type is not inherited
+		"/tea_busi.Worker/dynamic/tea_busi.TEAM/missing", // type cast works fine
 		"/OverloadedAction/@$ui5.overload/0/@Core.OperationAvailable", // no external targeting here
 		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label", // no external targeting here
 		// scope lookup ("17.3 QualifiedName") ----------------------------------------------------
@@ -1991,6 +2057,10 @@ sap.ui.define([
 		"/tea_busi.AcChangeManagerOfTeam/0/$ReturnType/@missing/foo",
 		"/tea_busi.Worker/@Common.Text/$If/2/$Path",
 		"/EMPLOYEES/name.space.OverloadedAction@missing", // no annotations for operation overload
+		"/EMPLOYEES/@missing", // missing annotation is not a dynamic property
+		"/EMPLOYEES/dynamic@missing", // no annotations at dynamic properties
+		"/EMPLOYEES/LOCATION/@missing",
+		"/EMPLOYEES/LOCATION/dynamic/structure/part/@missing",
 		// "@" to access to all annotations, e.g. for iteration
 		"/tea_busi.Worker/@/@missing",
 		// operations -----------------------------------------------------------------------------
@@ -2031,7 +2101,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["/empty.Container/@", "/EMPLOYEES/AGE@"].forEach(function (sPath) {
+	[
+		"/empty.Container/@",
+		"/EMPLOYEES/AGE@",
+		"/EMPLOYEES/dynamic@",
+		"/EMPLOYEES/dynamic/structure/part/@"
+	].forEach(function (sPath) {
 		QUnit.test("fetchObject returns {} (anonymous empty object): " + sPath, function (assert) {
 			var oSyncPromise;
 
@@ -2044,6 +2119,24 @@ sap.ui.define([
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.deepEqual(oSyncPromise.getResult(), {}); // strictEqual would not work!
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject for a dynamic property", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer")
+			.returns(SyncPromise.resolve(mScope));
+
+		// code under test
+		const oSyncPromise = this.oMetaModel.fetchObject("/EMPLOYEES/dynamic");
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.deepEqual(oSyncPromise.getResult(), oDynamicProperty);
+		assert.throws(function () {
+			oSyncPromise.getResult().$isCollection = true;
+		}, /TypeError: /); // Cannot add property $isCollection, object is not extensible"
+		assert.throws(function () {
+			oSyncPromise.getResult().$kind = "n/a";
+		}, /TypeError: /); // Cannot assign to read only property '$kind' of object '#<Object>'
 	});
 
 	//*********************************************************************************************
@@ -2114,6 +2207,9 @@ sap.ui.define([
 			"/name.space.Broken/$Type/" :
 				"Unknown qualified name not.Found at /name.space.Broken/$Type",
 
+			"/tea_busi.ComplexType_City/UNTYPED/" :
+				"Unknown qualified name Edm.Untyped at /tea_busi.ComplexType_City/UNTYPED/$Type",
+
 			"/tea_busi.DefaultContainer/$kind/@sapui.name" : "Unknown child EntityContainer"
 				+ " of tea_busi.DefaultContainer at /tea_busi.DefaultContainer/$kind",
 
@@ -2128,6 +2224,7 @@ sap.ui.define([
 			"/tea_busi.TEAM/$Key/not.Found/@sapui.name" : "Unsupported path before @sapui.name",
 			"/GetEmployeeMaxAge/value@sapui.name" : "Unsupported path before @sapui.name",
 			"/$@sapui.name" : "Unsupported path before @sapui.name",
+			"/EMPLOYEES/dynamic/@sapui.name" : "Unsupported path before @sapui.name",
 
 			// Unsupported path after @sapui.name -------------------------------------------------
 			"/@sapui.name/foo" : "Unsupported path after @sapui.name",
@@ -2738,6 +2835,35 @@ sap.ui.define([
 
 			// code under test
 			oSyncPromise = this.oMetaModel.fetchObject(sPath);
+
+			assert.strictEqual(oSyncPromise.isFulfilled(), true);
+			assert.strictEqual(oSyncPromise.getResult(), undefined);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bWarn) {
+		var sTitle = "fetchObject: forbidden schema, bWarn = " + bWarn;
+
+		QUnit.test(sTitle, function (assert) {
+			this.oMetaModel._setForbiddenSchema("forbidden.schema.");
+			this.expectFetchEntityContainer({
+				$Version : "4.0",
+				$Reference : {
+					"n/a" : {
+						$Include : ["forbidden.schema."]
+					}
+				}
+			});
+			this.mock(this.oMetaModel.oRequestor).expects("read").never();
+			this.oLogMock.expects("isLoggable")
+				.withExactArgs(Log.Level.WARNING, sODataMetaModel).returns(bWarn);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Must not access schema 'forbidden.schema.' from meta model for"
+					+ " /a/b/c/d/e/$metadata", "/forbidden.schema.Object", sODataMetaModel);
+
+			// code under test
+			const oSyncPromise = this.oMetaModel.fetchObject("/forbidden.schema.Object");
 
 			assert.strictEqual(oSyncPromise.isFulfilled(), true);
 			assert.strictEqual(oSyncPromise.getResult(), undefined);
@@ -3776,6 +3902,12 @@ sap.ui.define([
 			}
 		},
 		editUrl : "EMPLOYEES('42')/EMPLOYEE_2_TEAM"
+	}, { // dynamic property
+		path : "/EMPLOYEES('42')|dynamic",
+		editUrl : "EMPLOYEES('42')"
+	}, { // dynamic property
+		path : "/EMPLOYEES('42')|dynamic/structure/part",
+		editUrl : "EMPLOYEES('42')"
 	}].forEach(function (oFixture) {
 		QUnit.test("fetchUpdateData: " + oFixture.path, function (assert) {
 			var i = oFixture.path.indexOf("|"),
@@ -4523,10 +4655,10 @@ sap.ui.define([
 		assertContextPaths(oBinding.getContexts(0, 2), ["ID", "AGE"]);
 		assertContextPaths(oBinding.getContexts(1, 2), ["AGE", "EMPLOYEE_2_CONTAINED_S"]);
 		assertContextPaths(oBinding.getContexts(), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "LOCATION", "SALÃRY"]);
 		assertContextPaths(oBinding.getContexts(0, 10), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "SALÃRY"]);
-		assertContextPaths(oBinding.getContexts(4, 10), ["EMPLOYEE_2_TEAM", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "LOCATION", "SALÃRY"]);
+		assertContextPaths(oBinding.getContexts(4, 10), ["EMPLOYEE_2_TEAM", "LOCATION", "SALÃRY"]);
 
 		oBinding.attachEvent("sort", function () {
 			assert.ok(false, "unexpected sort event");
@@ -4534,14 +4666,14 @@ sap.ui.define([
 
 		oBinding.sort(new Sorter("@sapui.name"));
 		assertContextPaths(oBinding.getContexts(), ["AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID", "LOCATION", "SALÃRY"]);
 
 		oBinding.attachEvent("filter", function () {
 			assert.ok(false, "unexpected filter event");
 		});
 
 		oBinding.filter(new Filter("$kind", "EQ", "Property"));
-		assertContextPaths(oBinding.getContexts(), ["AGE", "ID", "SALÃRY"]);
+		assertContextPaths(oBinding.getContexts(), ["AGE", "ID", "LOCATION", "SALÃRY"]);
 	});
 
 	//*********************************************************************************************
@@ -4562,6 +4694,7 @@ sap.ui.define([
 			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
 			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
 			"/EMPLOYEES/EMPLOYEE_2_TEAM",
+			"/EMPLOYEES/LOCATION",
 			"/EMPLOYEES/SALÃRY"
 		]
 	}, {
@@ -4575,6 +4708,7 @@ sap.ui.define([
 			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
 			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
 			"/EMPLOYEES/EMPLOYEE_2_TEAM",
+			"/EMPLOYEES/LOCATION",
 			"/EMPLOYEES/SALÃRY"
 		]
 	}, {
@@ -5610,14 +5744,15 @@ sap.ui.define([
 		[false, true].forEach(function (bHasMetaModelForAnnotations) {
 			[false, true].forEach(function (bCopyAnnotations) {
 				[false, true].forEach(function (bDestroyed) {
-					const sTitle = "getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect
-						+ ", bHasMetaModelForAnnotations=" + bHasMetaModelForAnnotations
-						+ ", bCopyAnnotations=" + bCopyAnnotations
-						+ ", bDestroyed=" + bDestroyed;
+					[undefined, "name.space.Parent"].forEach(function (sQualifiedParentName) {
+						const sTitle = "getOrCreateSharedModel, bAutoExpandSelect=" + bAutoExpandSelect
+							+ ", bHasMetaModelForAnnotations=" + bHasMetaModelForAnnotations
+							+ ", bCopyAnnotations=" + bCopyAnnotations
+							+ ", bDestroyed=" + bDestroyed;
 
-					if (bCopyAnnotations && bDestroyed) {
-						return;
-					}
+						if (bCopyAnnotations && bDestroyed) {
+							return;
+						}
 
 		QUnit.test(sTitle, function (assert) {
 			var mHeaders = {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"},
@@ -5650,12 +5785,15 @@ sap.ui.define([
 					.withExactArgs(bHasMetaModelForAnnotations
 						? "~oMetaModelForAnnotations~"
 						: sinon.match.same(oMetaModel));
+			const oSetForbiddenSchemaExpectation
+				= this.mock(ODataMetaModel.prototype).expects("_setForbiddenSchema")
+					.exactly(sQualifiedParentName ? 1 : 0).withExactArgs("name.space.");
 			const oExpectation = this.mock(ODataModel.prototype).expects("setRetryAfterHandler")
 				.withExactArgs(sinon.match.func);
 
 			// code under test
 			oSharedModel = oMetaModel.getOrCreateSharedModel("../ValueListService/$metadata",
-				bCopyAnnotations, bAutoExpandSelect);
+				bCopyAnnotations, bAutoExpandSelect, sQualifiedParentName);
 
 			assert.ok(oSharedModel instanceof ODataModel);
 			assert.deepEqual(oSharedModel.mHeaders, mHeaders);
@@ -5666,6 +5804,9 @@ sap.ui.define([
 			assert.strictEqual(oSharedModel.bAutoExpandSelect, !!bAutoExpandSelect);
 			if (bCopyAnnotations) {
 				assert.ok(oCopyAnnotationsExpectation.calledOn(oSharedModel.getMetaModel()));
+			}
+			if (sQualifiedParentName) {
+				assert.ok(oSetForbiddenSchemaExpectation.calledOn(oSharedModel.getMetaModel()));
 			}
 			assert.ok(oExpectation.calledOn(oSharedModel));
 			assert.deepEqual(oMetaModel.mSharedModelByUrl, bDestroyed ? undefined : {
@@ -5680,7 +5821,7 @@ sap.ui.define([
 
 				// code under test
 				assert.strictEqual(oMetaModel.getOrCreateSharedModel("/Foo/ValueListService/$metadata",
-						bCopyAnnotations, bAutoExpandSelect),
+						bCopyAnnotations, bAutoExpandSelect, sQualifiedParentName),
 					oSharedModel);
 			}
 
@@ -5690,6 +5831,7 @@ sap.ui.define([
 			// code under test
 			assert.strictEqual(oExpectation.args[0][0]("~oError~"), "~oPromise~");
 		});
+					});
 				});
 			});
 		});
@@ -6165,7 +6307,7 @@ sap.ui.define([
 				oMetadata = {
 					$EntityContainer : "value_list.Container",
 					"value_list.VH_BusinessPartner" : {
-						$kind : "Entity",
+						$kind : "EntityType",
 						Country : oProperty
 					},
 					$Annotations : {
@@ -6192,7 +6334,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[{
-		sPropertyPath : "/EMPLOYEES/unknown",
+		sPropertyPath : "/TEAMS/unknown",
 		sExpectedError : "No metadata"
 	}, {
 		sPropertyPath : "/EMPLOYEES/AGE",
@@ -6241,7 +6383,7 @@ sap.ui.define([
 					oMetadata = {
 						$EntityContainer : "zui5_epm_sample.Container",
 						"zui5_epm_sample.Product" : {
-							$kind : "Entity",
+							$kind : "EntityType",
 							Category : oProperty
 						},
 						$Annotations : {
@@ -6292,21 +6434,21 @@ sap.ui.define([
 				oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 					.returns(SyncPromise.resolve(oMetadata));
 				oMetaModelMock.expects("getOrCreateSharedModel")
-					.withExactArgs(sMappingUrl1, true, undefined)
+					.withExactArgs(sMappingUrl1, true, undefined, "zui5_epm_sample.Product")
 					.returns(oValueListModel1);
 				oMetaModelMock.expects("fetchValueListMappings")
 					.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
 						sinon.match.same(oProperty), undefined)
 					.resolves(oValueListMappings1);
 				oMetaModelMock.expects("getOrCreateSharedModel")
-					.withExactArgs(sMappingUrl2, true, undefined)
+					.withExactArgs(sMappingUrl2, true, undefined, "zui5_epm_sample.Product")
 					.returns(oValueListModel2);
 				oMetaModelMock.expects("fetchValueListMappings")
 					.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample.Product",
 						sinon.match.same(oProperty), undefined)
 					.resolves(oValueListMappings2);
 				oMetaModelMock.expects("getOrCreateSharedModel")
-					.withExactArgs(sMappingUrlBar, true, undefined)
+					.withExactArgs(sMappingUrlBar, true, undefined, "zui5_epm_sample.Product")
 					.returns(oValueListModelBar);
 				oMetaModelMock.expects("fetchValueListMappings")
 					.withExactArgs(sinon.match.same(oValueListModelBar), "zui5_epm_sample.Product",
@@ -6391,7 +6533,7 @@ sap.ui.define([
 						}
 					}],
 					"zui5_epm_sample.Product" : {
-						$kind : "Entity"
+						$kind : "EntityType"
 					},
 					"zui5_epm_sample.Container" : {
 						ProductList : {
@@ -6407,7 +6549,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrl, true, undefined)
+				.withExactArgs(sMappingUrl, true, undefined, "name.space.Action")
 				.returns(oValueListModel);
 			oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
 					sinon.match.same(oValueListModel), "name.space.Action",
@@ -6467,7 +6609,7 @@ sap.ui.define([
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sMappingUrl, true, undefined)
+			.withExactArgs(sMappingUrl, true, undefined, "name.space.Action")
 			.returns(oValueListModel);
 		oMetaModelMock.expects("fetchValueListMappings").withExactArgs(
 				sinon.match.same(oValueListModel), "name.space.Action",
@@ -6509,7 +6651,7 @@ sap.ui.define([
 						}
 					},
 					"value_list.VH_BusinessPartner" : {
-						$kind : "Entity",
+						$kind : "EntityType",
 						Country : oProperty
 					},
 					$Annotations : {
@@ -6565,7 +6707,7 @@ sap.ui.define([
 							}
 						},
 						"value_list.VH_BusinessPartner" : {
-							$kind : "Entity",
+							$kind : "EntityType",
 							Country : {}
 						},
 						$Annotations : {
@@ -6643,7 +6785,7 @@ sap.ui.define([
 			oMetadataProduct = {
 				$Version : "4.0",
 				"zui5_epm_sample.Product" : {
-					$kind : "Entity",
+					$kind : "EntityType",
 					Category : oProperty
 				},
 				"zui5_epm_sample." : {
@@ -6667,7 +6809,7 @@ sap.ui.define([
 		oRequestorMock.expects("read").withExactArgs("/Foo/EpmSample/$metadata")
 			.resolves(oMetadataProduct);
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sMappingUrl, true, true)
+			.withExactArgs(sMappingUrl, true, true, "zui5_epm_sample.Product")
 			.returns(oValueListModel);
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
@@ -6707,7 +6849,7 @@ sap.ui.define([
 						}
 					},
 					"zui5_epm_sample.Product" : {
-						$kind : "Entity",
+						$kind : "EntityType",
 						Category : oProperty
 					},
 					$Annotations : {
@@ -6723,7 +6865,7 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sMappingUrl, true, undefined)
+				.withExactArgs(sMappingUrl, true, undefined, "zui5_epm_sample.Product")
 				.returns(oValueListModel);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
@@ -6755,7 +6897,7 @@ sap.ui.define([
 			oMetadata = {
 				$EntityContainer : "zui5_epm_sample.Container",
 				"zui5_epm_sample.Product" : {
-					$kind : "Entity",
+					$kind : "EntityType",
 					Category : oProperty
 				},
 				$Annotations : {
@@ -6779,7 +6921,7 @@ sap.ui.define([
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sMappingUrl, true, undefined)
+			.withExactArgs(sMappingUrl, true, undefined, "zui5_epm_sample.Product")
 			.returns(oValueListModel);
 
 		// code under test
@@ -6808,7 +6950,7 @@ sap.ui.define([
 				oMetadata = {
 					$EntityContainer : "zui5_epm_sample.Container",
 					"zui5_epm_sample.Product" : {
-						$kind : "Entity",
+						$kind : "EntityType",
 						Category : oProperty
 					},
 					"zui5_epm_sample.Container" : {
@@ -6844,10 +6986,10 @@ sap.ui.define([
 			oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 				.returns(SyncPromise.resolve(oMetadata));
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sValueListService, true, true)
+				.withExactArgs(sValueListService, true, true, "zui5_epm_sample.Product")
 				.returns(oValueListModel);
 			oMetaModelMock.expects("getOrCreateSharedModel")
-				.withExactArgs(sCollectionRoot, true, true)
+				.withExactArgs(sCollectionRoot, true, true, "zui5_epm_sample.Product")
 				.returns(oValueListModel2);
 			oMetaModelMock.expects("fetchValueListMappings")
 				.withExactArgs(sinon.match.same(oValueListModel), "zui5_epm_sample.Product",
@@ -6886,7 +7028,7 @@ sap.ui.define([
 			oMetadata = {
 				$EntityContainer : "zui5_epm_sample.Container",
 				"zui5_epm_sample.Product" : {
-					$kind : "Entity",
+					$kind : "EntityType",
 					Category : oProperty
 				},
 				"zui5_epm_sample.Container" : {
@@ -6924,10 +7066,10 @@ sap.ui.define([
 		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
 			.returns(SyncPromise.resolve(oMetadata));
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sValueListService1, true, true)
+			.withExactArgs(sValueListService1, true, true, "zui5_epm_sample.Product")
 			.returns(oValueListModel1);
 		oMetaModelMock.expects("getOrCreateSharedModel")
-			.withExactArgs(sValueListService2, true, true)
+			.withExactArgs(sValueListService2, true, true, "zui5_epm_sample.Product")
 			.returns(oValueListModel2);
 		oMetaModelMock.expects("fetchValueListMappings")
 			.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
