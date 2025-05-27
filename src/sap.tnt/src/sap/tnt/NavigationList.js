@@ -248,7 +248,7 @@ sap.ui.define([
 				.first()
 				.stop(true, true)
 				.slideDown("fast", () => {
-					oAnimateExpandItem.$().find(".sapTntNLIItemsContainer").removeClass("sapTntNLIItemsContainerHidden");
+					oAnimateExpandItem.$().find(".sapTntNLIItemsContainer").first().removeClass("sapTntNLIItemsContainerHidden");
 				});
 		}
 
@@ -261,7 +261,7 @@ sap.ui.define([
 				.first()
 				.stop(true, true)
 				.slideUp("fast", () => {
-					oAnimateCollapseItem.$().find(".sapTntNLIItemsContainer").addClass("sapTntNLIItemsContainerHidden");
+					oAnimateCollapseItem.$().find(".sapTntNLIItemsContainer").first().addClass("sapTntNLIItemsContainerHidden");
 				});
 		}
 	};

@@ -42,6 +42,36 @@ sap.ui.define([
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
 
+	const nextJQuerySlideUp = () => {
+		const { promise, resolve } = Promise.withResolvers();
+		const fnOriginalSlideUp = jQuery.fn.slideUp;
+		const stub = sinon.stub(jQuery.fn, "slideUp", function () {
+			fnOriginalSlideUp.apply(this, arguments)
+				.promise()
+				.done(() => {
+					stub.restore();
+					resolve();
+				});
+		});
+
+		return promise;
+	};
+
+	const nextJQuerySlideDown = () => {
+		const { promise, resolve } = Promise.withResolvers();
+		const fnOriginalSlideDown = jQuery.fn.slideDown;
+		const stub = sinon.stub(jQuery.fn, "slideDown", function () {
+			fnOriginalSlideDown.apply(this, arguments)
+				.promise()
+				.done(() => {
+					stub.restore();
+					resolve();
+				});
+		});
+
+		return promise;
+	};
+
 	// create and add app
 	var oApp = new App("myApp", {initialPage: "navigationListPage"});
 	oApp.placeAt("qunit-fixture");
@@ -949,7 +979,6 @@ sap.ui.define([
 	QUnit.test("click group expander", async function (assert) {
 		// arrange
 		this.clock.restore(); // use real timeouts for this test
-		const done = assert.async();
 
 		// assert
 		const oItem = this.navigationList.getItems()[3];
@@ -961,17 +990,10 @@ sap.ui.define([
 
 		// act
 		$expanderIcon.trigger("tap");
+		await Promise.all([nextUIUpdate(), nextJQuerySlideUp()]);
 
-		await nextUIUpdate(); // no fake timer active
-
-		setTimeout(function () {
-			// assert
-			const oItem = this.navigationList.getItems()[3];
-			const oItemChildrenContainer = oItem.getDomRef("subtree");
-			assert.strictEqual(oItemChildrenContainer.classList.contains("sapTntNLIItemsContainerHidden"), true, "sapTntNLIItemsContainerHidden class is set");
-
-			done();
-		}.bind(this), 1000);
+		// assert
+		assert.strictEqual(oItemChildrenContainer.classList.contains("sapTntNLIItemsContainerHidden"), true, "sapTntNLIItemsContainerHidden class is set");
 	});
 
 	QUnit.test("Expand/collapse with keyboard", async function (assert) {
@@ -1665,25 +1687,58 @@ sap.ui.define([
 
 	QUnit.test("Groups can be collapsed and expanded to show/hide children", async function (assert) {
 		// arrange
-		const done = assert.async();
-
 		const oNavigationListGroup = this.navigationList.getItems()[5],
 			oDomRef = oNavigationListGroup.getDomRef();
 
 		assert.strictEqual(oNavigationListGroup.getExpanded(), true, "expanded is set to true");
 		assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), false, "the children are visible");
-		QUnitUtils.triggerEvent("tap", oDomRef.querySelector(".sapTntNLI"));
 
+		QUnitUtils.triggerEvent("tap", oDomRef.querySelector(".sapTntNLI"));
+		await Promise.all([nextUIUpdate(), nextJQuerySlideUp()]);
+
+		assert.strictEqual(oNavigationListGroup.getExpanded(), false, "expanded is set to false");
+		assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), true, "the children are not visible");
+	});
+
+	QUnit.test("Groups expanding/collapsing doesn't reveal items' subitems", async function (assert) {
+		// arrange
+		const oItem = new NavigationListItem({
+			text: "Item 1",
+			expanded: false,
+			items: [
+				new NavigationListItem({ text: "Subitem 1" }),
+				new NavigationListItem({ text: "Subitem 2" })
+			]
+		});
+		const oGroup = new NavigationListGroup({
+			text: "Group 1",
+			expanded: true,
+			items: [oItem]
+		});
+		const oNavigationList = new NavigationList({
+			items: [oGroup]
+		});
+		oNavigationList.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
-		setTimeout(async () => {
-			assert.strictEqual(oNavigationListGroup.getExpanded(), false, "expanded is set to false");
-			assert.strictEqual(oDomRef.querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), true, "the children are not visible");
+		// assert
+		assert.notOk(oGroup.getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "group children are visible");
+		assert.ok(oItem.getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "item children are not visible");
 
-			await nextUIUpdate();
-			done();
-		}, 500);
+		// act
+		QUnitUtils.triggerEvent("tap", oGroup.getDomRef().querySelector(".sapTntNLI"));
+		await Promise.all([nextUIUpdate(), nextJQuerySlideUp()]);
 
+		// assert
+		assert.ok(oGroup.getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "group children are not visible");
+
+		// act
+		QUnitUtils.triggerEvent("tap", oGroup.getDomRef().querySelector(".sapTntNLI"));
+		await Promise.all([nextUIUpdate(), nextJQuerySlideDown()]);
+
+		// assert
+		assert.notOk(oGroup.getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "group children are visible");
+		assert.ok(oItem.getDomRef().querySelector(".sapTntNLIItemsContainer").classList.contains("sapTntNLIItemsContainerHidden"), "item children are not visible");
 	});
 
 	QUnit.test("When a group is in the Overflow, its children are directly placed in the overflow", async function (assert) {
