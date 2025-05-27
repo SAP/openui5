@@ -1206,5 +1206,40 @@
         "text": " We've fixed issue where noDataText and noDataDescription was not getting set correctly"
       }
     ]
+  },
+  "1.120.31": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "fdfb0e9c69b8ad1f322957b19336a5178a51f54f",
+        "type": "FIX",
+        "text": " Input controls: announced text is now following the guidelines"
+      },
+      {
+        "id": "8a2712b59accb9d468326ed14914df5b6b246430",
+        "type": "FIX",
+        "text": " sap.m.NotificationList: Focus correctly restored"
+      },
+      {
+        "id": "9bf22a6f826a5813b708dc51a8010981ebfbeb04",
+        "type": "FIX",
+        "text": " We've now fixed an issue where the illustratedMessage provided by a user was being overridden"
+      },
+      {
+        "id": "4086d8f91625214a1acd9782e88300cdd8af3dde",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
+      },
+      {
+        "id": "07119d9655b3d06ea18f90fcd09eb6a23d7f6555",
+        "type": "FIX",
+        "text": " We've now enabled the screen reader announcement for navigation and action tiles"
+      },
+      {
+        "id": "b2c2d86e8d83a092290f1366b91bd3e5d68ffb01",
+        "type": "FIX",
+        "text": " m.VariantManagement: correct overlap when in text mode"
+      }
+    ]
   }
 }
