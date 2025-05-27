@@ -325,8 +325,8 @@ sap.ui.define([
 				oItem.setSelected(!oItem.getSelected());
 			}
 
-			oItem.firePress({item: oItem});
 			this.fireItemSelected({item: oItem});
+			oItem.firePress({item: oItem});
 			this.fireClosePopover({ bubbleToRoot: true, origin: oItem });
 		}
 	};
