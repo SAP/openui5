@@ -1,0 +1,5 @@
+{
+    "name": "TypeScript Hello World",
+    "external": true,
+    "externalResourceRef": "https://github.com/SAP-samples/ui5-typescript-helloworld/archive/refs/heads/main.zip"
+}

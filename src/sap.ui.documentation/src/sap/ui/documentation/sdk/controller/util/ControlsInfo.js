@@ -214,8 +214,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 
 						oEnt.library = oDoc.library;
 
-						// add entity
-						if (aCategoryAllowList.indexOf(oEnt.category) > -1) {
+						// add entity (exclude hidden entities)
+						if (aCategoryAllowList.indexOf(oEnt.category) > -1 && !oEnt.hidden) {
 							data.entities.push(oEnt);
 						}
 					});
