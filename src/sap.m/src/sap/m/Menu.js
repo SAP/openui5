@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Bar',
 	'sap/m/Title',
+	'sap/m/MenuItem',
 	'sap/m/MenuWrapper',
 	'sap/ui/core/Lib',
 	'sap/ui/Device',
@@ -30,6 +31,7 @@ sap.ui.define([
 		Button,
 		Bar,
 		Title,
+		MenuItem,
 		MenuWrapper,
 		Lib,
 		Device,
@@ -85,7 +87,7 @@ sap.ui.define([
 					/**
 					 * Defines the items contained within this control.
 					 */
-					items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable", forwarding: { idSuffix: "-menuWrapper", aggregation: "items" } },
+					items: { type: "sap.m.IMenuItem", multiple: true, singularName: "item", bindable: "bindable", defaultClass: MenuItem, forwarding: { idSuffix: "-menuWrapper", aggregation: "items" } },
 
 					/**
 					 * Internal Menu Wrapper control
