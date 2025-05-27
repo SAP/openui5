@@ -56,7 +56,6 @@ sap.ui.define([
 		beforeEach() {
 			this.oMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
 			this.oGetReloadInfoInfoStub = sandbox.stub(ReloadInfoAPI, "getReloadInfo");
-			ReloadManager.setUShellServices({URLParsing: "foo"});
 		},
 		afterEach() {
 			sandbox.restore();
@@ -70,7 +69,6 @@ sap.ui.define([
 			return ReloadManager.checkReloadOnExit(mProperties).then(function() {
 				assert.strictEqual(mProperties.changesNeedReload, "false", "the value is taken over to the property bag");
 				assert.strictEqual(this.oMessageBoxStub.callCount, 0, "the message box is not opened");
-				assert.strictEqual(mProperties.URLParsingService, "foo", "the propertyBag was enhanced");
 			}.bind(this));
 		});
 
@@ -235,7 +233,7 @@ sap.ui.define([
 			}.bind(this);
 			this.oLoadDraftStub = sandbox.stub(VersionsAPI, "loadDraftForApplication").callsFake(fnSlowCall);
 			this.oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication").callsFake(fnSlowCall);
-			ReloadManager.setUShellServices({URLParsing: "foo", Navigation: "bar"});
+			ReloadManager.setUShellServices({ Navigation: "bar" });
 		},
 		afterEach() {
 			sandbox.restore();
@@ -245,11 +243,8 @@ sap.ui.define([
 			this.oGetReloadReasonsStub.resolves({});
 			return ReloadManager.handleReloadOnStart({foo: "bar"}).then(function(bResult) {
 				var oExpectedProperties = {
-					hasHigherLayerChanges: false,
-					isDraftAvailable: false,
 					ignoreMaxLayerParameter: false,
 					includeCtrlVariants: true,
-					URLParsingService: "foo",
 					foo: "bar"
 				};
 				assert.deepEqual(this.oGetReloadReasonsStub.lastCall.args[0], oExpectedProperties, "the properties were enhanced");
@@ -328,34 +323,34 @@ sap.ui.define([
 			{
 				oReloadInfo: {
 					hasHigherLayerChanges: true,
-					isDraftAvailable: true,
-					layer: Layer.CUSTOMER
+					isDraftAvailable: true
 				},
+				layer: Layer.CUSTOMER,
 				testName: "higher layer changes and draft in CUSTOMER layer",
 				expectedMessageKey: "MSG_VIEWS_OR_PERSONALIZATION_AND_DRAFT_EXISTS"
 			},
 			{
 				oReloadInfo: {
 					hasHigherLayerChanges: true,
-					isDraftAvailable: true,
-					layer: Layer.USER
+					isDraftAvailable: true
 				},
+				layer: Layer.USER,
 				testName: "higher layer changes and draft in USER layer",
 				expectedMessageKey: "MSG_HIGHER_LAYER_CHANGES_AND_DRAFT_EXISTS"
 			},
 			{
 				oReloadInfo: {
-					hasHigherLayerChanges: true,
-					layer: Layer.CUSTOMER
+					hasHigherLayerChanges: true
 				},
+				layer: Layer.CUSTOMER,
 				testName: "only higher layer changes in CUSTOMER layer",
 				expectedMessageKey: "MSG_PERSONALIZATION_OR_PUBLIC_VIEWS_EXISTS"
 			},
 			{
 				oReloadInfo: {
-					hasHigherLayerChanges: true,
-					layer: Layer.USER
+					hasHigherLayerChanges: true
 				},
+				layer: Layer.USER,
 				testName: "only higher layer changes in USER layer",
 				expectedMessageKey: "MSG_HIGHER_LAYER_CHANGES_EXIST"
 			},
@@ -384,7 +379,7 @@ sap.ui.define([
 		].forEach(function(oTestInfo) {
 			QUnit.test(oTestInfo.testName, function(assert) {
 				this.oGetReloadReasonsStub.resolves(oTestInfo.oReloadInfo);
-				return ReloadManager.handleReloadOnStart({foo: "bar"}).then(function(bResult) {
+				return ReloadManager.handleReloadOnStart({ layer: oTestInfo.layer }).then(function(bResult) {
 					assert.strictEqual(bResult, true, "the function returns true");
 					assert.strictEqual(this.oAutoStartStub.callCount, 1, "auto start was set");
 					assert.strictEqual(this.oReloadStub.callCount, 1, "reload was triggered");
@@ -412,7 +407,6 @@ sap.ui.define([
 			});
 			this.oReloadCurrentAppStub = sandbox.stub();
 			ReloadManager.setUShellServices({
-				URLParsing: "foo",
 				AppLifeCycle: {reloadCurrentApp: this.oReloadCurrentAppStub}
 			});
 		},

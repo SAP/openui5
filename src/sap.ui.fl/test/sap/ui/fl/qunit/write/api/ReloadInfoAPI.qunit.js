@@ -51,7 +51,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("initialAllContexts is not saved in the session storage", function(assert) {
-			var oReloadInfo = {
+			var oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -65,12 +65,12 @@ sap.ui.define([
 			const oUpdateResetAndPublishInfoAPIStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadParameters).then(function(oReloadInfo) {
 				var oExpectedArgs = {
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-					upToLayer: oReloadInfo.layer,
-					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					selector: oReloadParameters.selector,
+					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
+					upToLayer: oReloadParameters.layer,
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -86,7 +86,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("allContexts is saved in the session storage and do not call flex/info request", function(assert) {
-			const oReloadInfo = {
+			const oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -99,12 +99,12 @@ sap.ui.define([
 			const oUpdateResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "updateResetAndPublishInfo").resolves();
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadParameters).then(function(oReloadInfo) {
 				const oExpectedArgs = {
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-					upToLayer: oReloadInfo.layer,
-					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					selector: oReloadParameters.selector,
+					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
+					upToLayer: oReloadParameters.layer,
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -222,7 +222,7 @@ sap.ui.define([
 			const sTestDescription = Object.entries(oSetup.oFlexInfoSession).map(([key, value]) => `${key} ${value}`).join(" and ");
 			QUnit.test(sTestDescription, function(assert) {
 				const oStubs = setFlexInfoSessionAndPrepareMocks({ ...oSetup.oFlexInfoSession}, {...oSetup.oFlexInfoResponse });
-				return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function(oReloadInfo) {
+				return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadParameters).then(function(oReloadInfo) {
 					assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert);
 					window.sessionStorage.removeItem("sap.ui.fl.info.true");
 				});
@@ -230,7 +230,7 @@ sap.ui.define([
 		});
 
 		function setFlexInfoSessionAndPrepareMocks(oFlexInfoSession, oFlexInfoResponse) {
-			const oReloadInfo = {
+			const oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -245,7 +245,7 @@ sap.ui.define([
 			stubRequestsForResetAndPublishAPI(oFlexInfoResponse);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			return {
-				oReloadInfo,
+				oReloadParameters,
 				oSetAllContextsProvided,
 				oHasHigherLayerChangesAPIStub,
 				oUpdateResetAndPublishInfoAPIStub
@@ -254,10 +254,10 @@ sap.ui.define([
 
 		function assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert) {
 			var oExpectedArgs = {
-				selector: oReloadInfo.selector,
-				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-				upToLayer: oReloadInfo.layer,
-				includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+				selector: oStubs.oReloadParameters.selector,
+				ignoreMaxLayerParameter: oStubs.oReloadParameters.ignoreMaxLayerParameter,
+				upToLayer: oStubs.oReloadParameters.layer,
+				includeCtrlVariants: oStubs.oReloadParameters.includeCtrlVariants,
 				includeDirtyChanges: true
 			};
 			assert.deepEqual(oStubs.oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -284,7 +284,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("allContextsProvided is true and a draft is available and the draft is not present in the session", function(assert) {
-			const oReloadInfo = {
+			const oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -301,12 +301,12 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadParameters).then(function(oReloadInfo) {
 				var oExpectedArgs = {
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-					upToLayer: oReloadInfo.layer,
-					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					selector: oReloadParameters.selector,
+					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
+					upToLayer: oReloadParameters.layer,
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
