@@ -598,6 +598,7 @@ sap.ui.define([
 				}
 			}
 			const oReloadInfo = bSkipRestart ? {} : await ReloadManager.checkReloadOnExit({
+				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
 				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
 				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
