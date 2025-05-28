@@ -566,7 +566,7 @@ sap.ui.define([
 					}
 				}
 				if (iIndex != iOldIndex) {
-					this.focusItem(iIndex, oEvent);
+					this.focusItem(iIndex, oEvent, bPreventScroll);
 				}
 			}
 			return;
