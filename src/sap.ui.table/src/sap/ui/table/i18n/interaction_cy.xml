@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Os yw'r ffocws ar lefel cell, bydd y ffocws yn symud pum colofn i'r dde (maint diofyn y dudalen).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Os yw'r ffocws ar bennawd colofn a bod llai o golofnau ar y dde na maint cyfredol y dudalen, bydd y ffocws yn symud i'r golofn olaf.</p>
 				<p>Os yw'r ffocws ar y dewisydd rhesi, bydd y ffocws yn symud i'r golofn gyntaf yn yr un rhes.</p>
 				<p>Os yw'r ffocws ar <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i bennawd y golofn gyntaf.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
 				<p>Os yw'r ffocws ar gell, caiff y gell lle mae'r ffocws ei dewis.</p>
 				<p>Os yw'r ffocws ar floc dewis celloedd, bydd y dewis o gelloedd yn cael ei dynnu.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Os yw'r ffocws ar gell a bod gan y tabl ffurfweddiad penodol yr ymddygiad dan sylw (i ddewis rhes, gallwch naill ai ddewis y rhes ei hun neu flwch ticio'r dewis os yw hyn ar gael), dim ond y gell lle mae'r ffocws gaiff ei dewis yn hytrach na'r rhes. </p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi, mae hyn yn toglo dewis y rhes gyfredol.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Os yw'r ffocws y tu mewn i'r tabl a chelloedd yn cael eu dewis, bydd y dewis o gelloedd yn cael ei dynnu.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Os yw'r ffocws ar <span class="uicontrol">Dewis Pob Un</span> a <kbd>Spacebar</kbd> yn cael ei bwyso, ni fydd y digwyddiad cyfatebol yn cael ei sbarduno. Mae <kbd>Shift</kbd> yn atal y gweithgarwch hwn.</p>
+				<p>Os yw'r ffocws ar bennawd colofn a <kbd>Spacebar</kbd> neu <kbd>Enter</kbd> yn cael ei bwyso, ni fydd y digwyddiad cyfatebol yn cael ei sbarduno.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis ac <span class="emphasis">nad</span> yw'r rhes wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell uwchben yn cael eu dewis. Bydd y ffocws yn symud i'r gell uwchlaw'r gell lle mae'r ffocws.</p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell uwchlaw yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes islaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes islaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis ac <span class="emphasis">nad</span> yw'r rhes wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell islaw yn cael eu dewis. Bydd y ffocws yn symud i'r gell islaw'r gell lle mae'r ffocws.</p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell islaw yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Yn copïo’r rhesi neu'r celloedd a ddewiswyd i'r clipfwrdd, os yw ar gael a bod y nodwedd wedi'i galluogi.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Yn gludo'r cynnwys o'r clipfwrdd, os yw'r nodwedd wedi'i galluogi.</p>
 			</description>
 		</interaction>
 	</control-interactions>

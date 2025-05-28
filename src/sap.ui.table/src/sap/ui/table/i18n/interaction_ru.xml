@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Если фокус находится на уровне ячейки, фокус перемещается на пять столбцов вправо (размер страницы по умолчанию).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Если фокус находится на заголовке столбца и справа меньше столбцов, чем размер текущей страницы, фокус перемещается на последний столбец.</p>
 				<p>Если фокус находится на селекторе строки, фокус перемещается на первый столбец в этой же строке.</p>
 				<p>Если фокус находится на <span class="uicontrol">Выбрать все</span>, фокус перемещается на заголовок первого столбца.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
 				<p>Если фокус находится на ячейке, ячейка фокуса выбрана.</p>
 				<p>Если фокус находится на блоке выбора ячеек, выбор ячеек удаляется.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Если фокус находится на ячейке и для таблицы настроено определенное поведение выбора (чтобы выбрать строку, можно выбрать саму строку или флажок выбора, если он доступен), выбирается только ячейка фокуса вместо строки.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Если фокус находится на ячейке или селекторе строки, переключается выбор текущей строки.</p>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Если фокус находится на таблице и ячейки выбраны, выбор ячеек удаляется.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Если фокус находится на <span class="uicontrol">Выбрать все</span> и нажата клавиша <kbd>Spacebar</kbd>, соответствующее событие не инициируется. <kbd>Shift</kbd> препятствует этому действию.</p>
+				<p>Если фокус находится на заголовке столбца и нажата клавиша <kbd>Spacebar</kbd> или <kbd>Enter</kbd>, соответствующее событие не инициируется.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка выбрана, фокус перемещается на строку выше, и выбор расширяется до этой строки.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка <span class="emphasis">не</span> выбрана, фокус перемещается на строку выше, и выбор удаляется для этой строки.</p>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, и строка <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка выше. Фокус перемещается на ячейку выше от ячейки фокуса.</p>
 				<p>Если фокус находится на выбранной ячейке, ячейка выше получает фокус, и выбор ячеек расширяется до этой ячейки.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка выбрана, фокус перемещается на строку ниже, и выбор расширяется до этой строки.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка <span class="emphasis">не</span> выбрана, фокус перемещается на строку ниже, и выбор удаляется для этой строки.</p>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, и строка <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка ниже. Фокус перемещается на ячейку ниже от ячейки фокуса.</p>
 				<p>Если фокус находится на выбранной ячейке, ячейка ниже получает фокус, и выбор ячеек расширяется до этой ячейки.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Копирует выбранные строки или ячейки в буфер обмена, если он доступен и функция активирована.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Вставляет содержимое из буфера обмена, если функция активирована.</p>
 			</description>
 		</interaction>
 	</control-interactions>

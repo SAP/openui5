@@ -512,6 +512,7 @@ sap.ui.define([
 				sComponentName = this.getComponentName();
 
 			if (oDep) {
+
 				// load the libraries
 				var mLibraries = oDep["libs"];
 				if (mLibraries) {
@@ -525,38 +526,39 @@ sap.ui.define([
 
 				// collect all "non-lazy" components
 				var mComponents = oDep["components"];
-				var aComponentDependencies = [];
 				if (mComponents) {
+					var aComponentDependencies = [];
 					for (var sName in mComponents) {
 						if (!mComponents[sName].lazy) {
 							aComponentDependencies.push(sName);
 						}
 					}
-				}
-
-				// Async loading of Component, so that Component.load is available
-				var pComponentLoad = new Promise(function(fnResolve, fnReject) {
-					sap.ui.require(["sap/ui/core/Component"], function(Component) {
-						fnResolve(Component);
-					}, fnReject);
-				}).then(function(Component) {
-					// trigger Component.load for all "non-lazy" component dependencies (parallel)
-					return Promise.all(aComponentDependencies.map(function(sComponentName) {
-						// Component.load does not load the dependencies of a dependent component in case property manifest: false
-						// because this could have a negative impact on performance and we do not know if there is a necessity
-						// to load the dependencies
-						// If needed we could make this configurable via manifest.json by adding a 'manifestFirst' option
-						return Component.load({
-							name: sComponentName,
-							manifest: false
+					if (aComponentDependencies.length > 0) {
+						// Async loading of Component, so that Component.load is available
+						var pComponentLoad = new Promise(function(fnResolve, fnReject) {
+							sap.ui.require(["sap/ui/core/Component"], function(Component) {
+								fnResolve(Component);
+							}, fnReject);
+						}).then(function(Component) {
+							// trigger Component.load for all "non-lazy" component dependencies (parallel)
+							return Promise.all(aComponentDependencies.map(function(sComponentName) {
+								// Component.load does not load the dependencies of a dependent component in case property manifest: false
+								// because this could have a negative impact on performance and we do not know if there is a necessity
+								// to load the dependencies
+								// If needed we could make this configurable via manifest.json by adding a 'manifestFirst' option
+								return Component.load({
+									name: sComponentName,
+									manifest: false
+								});
+							}));
 						});
-					}));
-				});
 
-				aPromises.push(pComponentLoad);
+						aPromises.push(pComponentLoad);
+					}
+				}
 			}
-			return Promise.all(aPromises);
 
+			return Promise.all(aPromises);
 		},
 
 		/**

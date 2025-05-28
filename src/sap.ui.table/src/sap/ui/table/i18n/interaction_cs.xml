@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Je-li fokus na úrovni buňky, přesune se pět sloupců vpravo (standardní velikost stránky).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Je-li fokus na hlavičce sloupce a vpravo je méně sloupců než aktuální velikost stránky, přesune se fokus na poslední sloupec.</p>
 				<p>Je-li fokus na selektoru řádek, přesune se na první sloupec ve stejné řádce.</p>
 				<p>Je-li fokus na <span class="uicontrol">Vybrat vše</span>, přesune se na hlavičku prvního sloupce.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, je vybrána zaměřená buňka.</p>
 				<p>Je-li fokus na bloku výběru buněk, výběr buněk se odebere.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Je-li fokus na buňce a tabulka má určitou konfiguraci chování výběru (pro výběr řádky můžete buď vybrat řádku samotnou, nebo zaškrtávací pole výběru, pokud je dostupné), je namísto řádky vybrána pouze zaměřená buňka.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Je-li fokus na buňce nebo na selektoru řádek, přepne se tímto výběr aktuální řádky.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Je-li fokus v tabulce a buňky jsou vybrány, výběr buněk se odebere.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Je-li fokus na <span class="uicontrol">Vybrat vše</span> a <kbd>Spacebar</kbd> je stisknuto, odpovídající událost se nespustí. <kbd>Shift</kbd> zabraňuje této činnosti.</p>
+				<p>Je-li fokus na hlavičce sloupce a <kbd>Spacebar</kbd> nebo <kbd>Enter</kbd> je stisknuto, odpovídající událost se nespustí. </p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, buňka nad ní získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, buňka pod ní získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Zkopíruje vybrané řádky nebo buňky do schránky, pokud je dostupná a tato funkce je aktivována.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Vloží obsah ze schránky, pokud je tato funkce aktivována.</p>
 			</description>
 		</interaction>
 	</control-interactions>

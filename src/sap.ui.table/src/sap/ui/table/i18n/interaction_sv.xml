@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Om fokus är på cellnivå flyttar fokus fem kolumner åt höger (standardsidstorlek).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Om fokus är på kolumnrubriken, och det finns färre kolumner åt höger än aktuell sidstorlek, flyttar fokus till sista kolumnen.</p>
 				<p>Om fokus är på radväljaren flyttas fokus till den första kolumnen på samma rad.</p>
 				<p>Om fokus är på <span class="uicontrol">Markera alla</span> flyttas fokus till rubriken i den första kolumnen.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
 				<p>Om fokus är på en cell så markeras den fokuserade cellen.</p>
 				<p>Om fokus är på ett cellurvalsblock så tas cellurvalet bort.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Om fokus är på en cell och tabellen har en viss konfiguration för urvalsbeteende (för att markera en rad kan du antingen markera själva raden eller kryssrutan om sådan är tillgänglig) så markeras endast fokuserad cell i stället för raden.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Om fokus är på en rad eller radväljare så växlas urvalet för aktuell rad.</p>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Om fokus är inuti tabellen, och celler markerats, så tas urvalet av celler bort.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Om fokus är på <span class="uicontrol">Markera alla</span> och du trycker på <kbd>Spacebar</kbd> så initieras inte motsvarande händelse. <kbd>Shift</kbd> förhindrar denna aktivitet.</p>
+				<p>Om fokus är på en kolumnrubrik och du trycker på <kbd>Spacebar</kbd> eller <kbd>Enter</kbd> så initieras inte motsvarande händelse.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Om fokus är på cell- eller radväljare, och relevant rad markerats, flyttas fokus till raden över och urvalet utökas till och med den raden.</p>
+				<p>Om fokus är på cell- eller radväljare, och relevant rad <span class="emphasis">inte</span> markerats, flyttas fokus till raden över och urvalet tas bort för denna rad.</p>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen över. Fokus flyttas till cellen över den fokuserade cellen.</p>
 				<p>Om fokus är på en markerad cell får cellen över fokus och cellurvalet utökas till och med den cellen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Om fokus är på cell- eller radväljare, och relevant rad markerats, flyttas fokus till raden under och urvalet utökas till och med den raden.</p>
+				<p>Om fokus är på cell- eller radväljare, och relevant rad <span class="emphasis">inte</span> markerats, flyttas fokus till raden under och urvalet tas bort den raden.</p>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen under. Fokus flyttas till cellen till under den fokuserade cellen.</p>
 				<p>Om fokus är på en markerad cell får cellen under fokus och cellurvalet utökas till och med den cellen.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopierar markerade rader eller celler till urklipp om det är tillgängligt och funktionen aktiverats.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Klistrar in innehåll från urklipp om funktionen aktiverats.</p>
 			</description>
 		</interaction>
 	</control-interactions>

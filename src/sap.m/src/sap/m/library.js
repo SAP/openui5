@@ -5356,13 +5356,13 @@ sap.ui.define([
 		  * Public mode of the <code>VariantItem</code>.
 		  * @public
 		  */
-		 Public: "public",
+		 Public: "Public",
 
 		 /**
 		  * Private mode of the <code>VariantItem</code>.
 		  * @public
 		  */
-		 Private: "private"
+		 Private: "Private"
 	 };
 
 	 /**

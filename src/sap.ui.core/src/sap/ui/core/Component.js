@@ -984,13 +984,13 @@ sap.ui.define([
 	Component.prototype._initComponentModels = function(mModels, mDataSources, mCacheTokens) {
 		var sComponentName = this.getManifestObject().getComponentName();
 
-		var mAllModelConfigs = Component._findManifestModelClasses({
+		var mAllModelConfigs = _findManifestModelClasses({
 			models: mModels,
 			dataSources: mDataSources,
 			componentName: sComponentName
 		});
 
-		var mAllModelConfigurations = Component._createManifestModelConfigurations({
+		var mAllModelConfigurations = _createManifestModelConfigurations({
 			models: mAllModelConfigs,
 			dataSources: mDataSources,
 			component: this,
@@ -1013,7 +1013,7 @@ sap.ui.define([
 		}
 
 		// create all models which are not created, yet.
-		var mCreatedModels = Component._createManifestModels(mModelConfigurations, this._componentConfig, this.getManifestObject());
+		var mCreatedModels = _createManifestModels(mModelConfigurations, this._componentConfig, this.getManifestObject());
 		for (sModelName in mCreatedModels) {
 			// keep the model instance to be able to destroy the created models on component destroy
 			this._mManifestModels[sModelName] = mCreatedModels[sModelName];
@@ -1265,7 +1265,19 @@ sap.ui.define([
 		}
 
 		// create the component in the owner context of the current component
-		var oComponent = Component._createComponent(mConfig, this);
+		if (!this.isActive()) {
+			throw new Error("Creation of component '" + mConfig.name + "' is not possible due to inactive owner component '" + this.getId() + "'");
+		}
+
+		// create the nested component in the context of this component
+		const oComponent = this.runAsOwner(() => {
+			if (mConfig.async === true) {
+				return Component.create(mConfig);
+			} else {
+				return sap.ui.component(mConfig); // legacy-relevant: use deprecated factory for sync use case only
+			}
+		});
+
 		if (oComponent instanceof Promise) {
 			this.registerForDestroy(oComponent);
 		}
@@ -1374,37 +1386,7 @@ sap.ui.define([
 	 */
 	//onConfigChange : null, // function(sConfigKey)
 
-
-	/**
-		 * Internal API to create a component with Component.create (async) or sap.ui.component (sync).
-		 * In case a <code>oOwnerComponent</code> is given, it will be created within the context
-		 * of it.
-		 *
-		 * @param {object} mConfig Configuration object that creates the component
-		 * @param {sap.ui.core.Component} [oOwnerComponent] Owner component
-		 * @return {sap.ui.core.Component|Promise} Component instance or Promise which will be resolved with the component instance
-		 *
-		 * @private
-		 * @ui5-restricted sap.ui.core.ComponentContainer
-		 */
-	Component._createComponent = function(mConfig, oOwnerComponent) {
-
-		function createComponent() {
-			return Component.create(mConfig);
-		}
-
-		if (oOwnerComponent) {
-			if (!oOwnerComponent.isActive()) {
-				throw new Error("Creation of component '" + mConfig.name + "' is not possible due to inactive owner component '" + oOwnerComponent.getId() + "'");
-			}
-			// create the nested component in the context of this component
-			return oOwnerComponent.runAsOwner(createComponent);
-		} else {
-			return createComponent();
-		}
-	};
-
-	Component._applyCacheToken = function(oUri, oLogInfo, mMetadataUrlParams) {
+	function _applyCacheToken(oUri, oLogInfo, mMetadataUrlParams) {
 		var sSource = mMetadataUrlParams ? "Model" : "DataSource";
 		var sManifestPath = mMetadataUrlParams ? "[\"sap.ui5\"][\"models\"]" : "[\"sap.app\"][\"dataSources\"]";
 		var sLanguage = mMetadataUrlParams && mMetadataUrlParams["sap-language"] || oUri.search(true)["sap-language"];
@@ -1454,9 +1436,9 @@ sap.ui.define([
 			oUri.setQuery("sap-context-token", oLogInfo.cacheToken);
 		}
 
-	};
+	}
 
-	Component._findManifestModelClasses = function(mOptions) {
+	function _findManifestModelClasses(mOptions) {
 		if (!mOptions.models) {
 			// skipping model creation because of missing sap.ui5 models manifest entry
 			return null;
@@ -1549,11 +1531,11 @@ sap.ui.define([
 		}
 
 		return mModelConfigurations;
-	};
+	}
 
 	/**
 	 * Creates model configurations by processing "/sap.app/dataSources" and "/sap.ui5/models" manifest entries.
-	 * Result can be handed over to {@link sap.ui.core.Component._createManifestModels} in order to create instances.
+	 * Result can be handed over to _createManifestModels function in order to create instances.
 	 *
 	 * @param {object} mOptions Configuration object (see below)
 	 * @param {object} mOptions.models Manifest models section (/sap.ui5/models)
@@ -1566,7 +1548,7 @@ sap.ui.define([
 	 * @return {object} key-value map with model name as key and model configuration as value
 	 * @private
 	 */
-	Component._createManifestModelConfigurations = function(mOptions) {
+	function _createManifestModelConfigurations(mOptions) {
 		var oComponent = mOptions.component;
 		var oManifest = mOptions.manifest || oComponent.getManifestObject();
 		var bMergeParent = mOptions.mergeParent;
@@ -1721,7 +1703,7 @@ sap.ui.define([
 
 									var sCacheTokenForAnnotation = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
 									if (sCacheTokenForAnnotation) {
-										Component._applyCacheToken(oAnnotationUri, {
+										_applyCacheToken(oAnnotationUri, {
 											cacheToken: sCacheTokenForAnnotation,
 											componentName: sLogComponentName,
 											dataSource: sAnnotation
@@ -1809,7 +1791,7 @@ sap.ui.define([
 
 						// Handle cacheToken
 						if (sCacheToken) {
-							Component._applyCacheToken(oUri, {
+							_applyCacheToken(oUri, {
 								cacheToken: sCacheToken,
 								componentName: sLogComponentName,
 								dataSource: sModelName
@@ -1939,12 +1921,12 @@ sap.ui.define([
 		}
 
 		return mModelConfigurations;
-	};
+	}
 
 	/**
 		 * @private
 		 */
-	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName) {
+	function _loadManifestModelClasses(mModelConfigurations, sLogComponentName) {
 		const aLoadPromises = [];
 
 		function logLoadingError(sModelClassName, sModelName, oError) {
@@ -1966,18 +1948,18 @@ sap.ui.define([
 		}
 
 		return Promise.all(aLoadPromises);
-	};
+	}
 
 	/**
-	 * Creates model instances using a configuration provided by {@link sap.ui.core.Component._createManifestModelConfigurations}.
+	 * Creates model instances using a configuration provided by {@link _createManifestModelConfigurations}.
 	 *
-	 * @param {object} mModelConfigurations key-value configuration object created via {@link sap.ui.core.Component._createManifestModelConfigurations}
+	 * @param {object} mModelConfigurations key-value configuration object created via {@link _createManifestModelConfigurations}
 	 * @param {object} oConfig see <code>sap.ui.component</code> / <code>sap.ui.component.load</code>
 	 * @param {object} oManifest The manifest object
 	 * @returns {object} key-value map with model name as key and model instance as value
 	 * @private
 	 */
-	Component._createManifestModels = function(mModelConfigurations, oConfig, oManifest) {
+	function _createManifestModels(mModelConfigurations, oConfig, oManifest) {
 		var mModels = {};
 		for (var sModelName in mModelConfigurations) {
 			var oModelConfig = mModelConfigurations[sModelName];
@@ -2023,7 +2005,7 @@ sap.ui.define([
 			mModels[sModelName] = oModel;
 		}
 		return mModels;
-	};
+	}
 
 	/**
 	 * Returns two maps of model configurations to be used for the model "preload" feature.
@@ -2055,7 +2037,7 @@ sap.ui.define([
 		var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
 		var oManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
 		var sComponentName = oManifest.getComponentName();
-		var mAllModelConfigurations = Component._findManifestModelClasses({
+		var mAllModelConfigurations = _findManifestModelClasses({
 			models: oManifestModels,
 			dataSources: oManifestDataSources,
 			componentName: sComponentName
@@ -2475,14 +2457,14 @@ sap.ui.define([
 					const mManifestModels = getManifestEntry(oClassMetadata, oManifest, "/sap.ui5/models", true) || {};
 
 					//     extract classes from manifest
-					const mAllModelConfigs = Component._findManifestModelClasses({
+					const mAllModelConfigs = _findManifestModelClasses({
 						models: mManifestModels,
 						dataSources: mManifestDataSources,
 						componentName: sComponentName
 					});
 
 					//     load model classes async
-					const pModelClassLoading = Component._loadManifestModelClasses(mAllModelConfigs, sComponentName);
+					const pModelClassLoading = _loadManifestModelClasses(mAllModelConfigs, sComponentName);
 
 					// load all classes in parallel
 					await Promise.all([...aModuleLoadingPromises, pModelClassLoading]);
@@ -3027,11 +3009,11 @@ sap.ui.define([
 
 					// Create preloaded models directly after the manifest has been loaded
 					if (Object.keys(mPreloadModelConfigs.afterManifest).length > 0) {
-						await Component._loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
+						await _loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
 
 						// deep clone is needed as manifest only returns a read-only copy (frozen object)
 						var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-						var mAllModelConfigurations = Component._createManifestModelConfigurations({
+						var mAllModelConfigurations = _createManifestModelConfigurations({
 							models: mPreloadModelConfigs.afterManifest,
 							dataSources: oManifestDataSources,
 							manifest: oManifest,
@@ -3040,7 +3022,7 @@ sap.ui.define([
 							activeTerminologies: aActiveTerminologies
 						});
 
-						mModels = Component._createManifestModels(mAllModelConfigurations, oConfig, oManifest);
+						mModels = _createManifestModels(mAllModelConfigurations, oConfig, oManifest);
 					}
 
 					return oManifest;
@@ -3097,7 +3079,7 @@ sap.ui.define([
 
 						// deep clone is needed as manifest only returns a read-only copy (frozen object)
 						var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-						var mAfterPreloadModelConfigurations = Component._createManifestModelConfigurations({
+						var mAfterPreloadModelConfigurations = _createManifestModelConfigurations({
 							models: mPreloadModelConfigs.afterPreload,
 							dataSources: oManifestDataSources,
 							manifest: oManifest,
@@ -3150,7 +3132,7 @@ sap.ui.define([
 						// Load all ResourceBundles for all models in parallel
 						return Promise.all(aResourceModelNames.map(loadResourceBundle)).then(function() {
 							if (Object.keys(mAfterPreloadModelConfigurations).length > 0) {
-								var mResourceModels = Component._createManifestModels(mAfterPreloadModelConfigurations);
+								var mResourceModels = _createManifestModels(mAfterPreloadModelConfigurations);
 								if (!mModels) {
 									mModels = {};
 								}
@@ -3311,7 +3293,7 @@ sap.ui.define([
 			// lookup model classes
 			var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
 			var mManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));
-			var mAllModelConfigurations = Component._findManifestModelClasses({
+			var mAllModelConfigurations = _findManifestModelClasses({
 				models: mManifestModels,
 				dataSources: mManifestDataSources,
 				componentName: oManifest.getComponentName()

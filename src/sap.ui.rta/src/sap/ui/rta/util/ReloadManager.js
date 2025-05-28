@@ -35,11 +35,6 @@ sap.ui.define([
 	const ReloadManager = {};
 
 	let mUShellServices = {};
-	const mReloadMethods = {
-		NOT_NEEDED: "NO_RELOAD",
-		VIA_HASH: "CROSS_APP_NAVIGATION",
-		RELOAD_PAGE: "HARD_RELOAD"
-	};
 
 	function getReloadMessageOnStart(oReloadInfo) {
 		let sReason;
@@ -100,19 +95,18 @@ sap.ui.define([
 		return undefined;
 	}
 
-	function handleReloadMessageBoxOnExit(oReloadReasons) {
+	async function handleReloadMessageBoxOnExit(oReloadReasons) {
 		const sReason = getReloadMessageOnExit(oReloadReasons);
 
 		if (sReason) {
-			return Utils.showMessageBox("information", sReason, {
+			await Utils.showMessageBox("information", sReason, {
 				titleKey: "HEADER_RELOAD_NEEDED"
 			});
 		}
-		return Promise.resolve();
 	}
 
-	async function triggerReloadOnStart(oReloadInfo, bVersioningEnabled, bDeveloperMode) {
-		if (mUShellServices.Navigation && bVersioningEnabled) {
+	async function triggerReloadOnStart(oReloadInfo) {
+		if (mUShellServices.Navigation && oReloadInfo.versioningEnabled) {
 			// clears FlexState and triggers reloading of the flex data without blocking
 			if (oReloadInfo.isDraftAvailable) {
 				await VersionsAPI.loadDraftForApplication({
@@ -132,7 +126,7 @@ sap.ui.define([
 		}
 		const sReason = getReloadMessageOnStart(oReloadInfo);
 		// showing messages in visual editor is leading to blocked screen. In this case we should reload without message
-		if (!bDeveloperMode) {
+		if (!oReloadInfo.developerMode) {
 			await Utils.showMessageBox("information", sReason);
 		}
 		ReloadManager.enableAutomaticStart(oReloadInfo.layer, oReloadInfo.selector);
@@ -203,10 +197,8 @@ sap.ui.define([
 	 * Triggers the reload of the page. Can either be a soft reload inside the FLP or a hard reload.
 	 *
 	 * @param {object} oReloadInfo - Information needed for the reload
-	 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 	 * @param {boolean} oReloadInfo.ignoreMaxLayerParameter - Indicates if the max layer parameter should be ignored
-	 * @param {string|object} oReloadInfo.parameters - The URL parameters to be modified
 	 * @param {string} oReloadInfo.versionSwitch - Indicates if we are in a version switch scenario
 	 * @param {string} oReloadInfo.version - Version we want to switch to
 	 * @param {string} oReloadInfo.removeVersionParameter - Indicates if version parameter should be removed
@@ -220,9 +212,7 @@ sap.ui.define([
 		}
 		if (FlUtils.getUshellContainer()) {
 			mUShellServices.AppLifeCycle.reloadCurrentApp();
-		}
-		// standalone app always trigger hard reload
-		if (!FlUtils.getUshellContainer() || oReloadInfo.triggerHardReload) {
+		} else {
 			ReloadManager.reloadPage();
 		}
 	};
@@ -257,20 +247,16 @@ sap.ui.define([
 	 */
 	ReloadManager.handleReloadOnStart = async function(mProperties) {
 		merge(mProperties, {
-			hasHigherLayerChanges: false,
-			isDraftAvailable: false,
 			ignoreMaxLayerParameter: false,
-			includeCtrlVariants: true,
-			URLParsingService: mUShellServices.URLParsing
+			includeCtrlVariants: true
 		});
 		const oReloadInfo = await ReloadInfoAPI.getReloadReasonsForStart(mProperties);
 		if (
 			oReloadInfo.hasHigherLayerChanges
 			|| oReloadInfo.isDraftAvailable
 			|| oReloadInfo.allContexts
-			|| oReloadInfo.switchAdaptation
 		) {
-			return triggerReloadOnStart(oReloadInfo, mProperties.versioningEnabled, mProperties.developerMode);
+			return triggerReloadOnStart(merge(mProperties, oReloadInfo));
 		}
 		return undefined;
 	};
@@ -284,7 +270,7 @@ sap.ui.define([
 	 * @param {boolean} mProperties.versioningEnabled - Whether versioning is enabled
 	 * @param {boolean} mProperties.isDraftAvailable - Whether a draft is available
 	 * @param {boolean} mProperties.activeVersion - Number of the active version
-	 * @param {Promise} mProperties.changesNeedReloadPromise - Resolves to whether any change needs a hard reload
+	 * @param {Promise} mProperties.changesNeedReloadPromise - Resolves to whether any change needs a reload
 	 * @param {boolean} bSkipRestart - Stop key user adaptation without reloading the app in any way
 	 *
 	 * @return {Promise<object>} Resolving to an object containing information about whether a reload is needed and how to handle it
@@ -292,10 +278,8 @@ sap.ui.define([
 	ReloadManager.checkReloadOnExit = async function(mProperties) {
 		const bChangesNeedReload = await mProperties.changesNeedReloadPromise;
 		mProperties.changesNeedReload = bChangesNeedReload;
-		mProperties.URLParsingService = mUShellServices.URLParsing;
-		const oReloadInfo = ReloadInfoAPI.getReloadMethod(mProperties);
+		const oReloadInfo = ReloadInfoAPI.getReloadInfo(mProperties);
 		await handleReloadMessageBoxOnExit(oReloadInfo);
-		oReloadInfo.triggerHardReload = oReloadInfo.reloadMethod === mReloadMethods.RELOAD_PAGE;
 		return oReloadInfo;
 	};
 
@@ -306,7 +290,7 @@ sap.ui.define([
 	 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 	 */
 	ReloadManager.handleReloadOnExit = function(oReloadInfo) {
-		if (oReloadInfo.reloadMethod !== mReloadMethods.NOT_NEEDED) {
+		if (oReloadInfo.reloadNeeded) {
 			oReloadInfo.removeVersionParameter = true;
 			ReloadManager.triggerReload(oReloadInfo);
 		}

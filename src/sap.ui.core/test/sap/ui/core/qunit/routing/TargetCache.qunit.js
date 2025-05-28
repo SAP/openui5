@@ -34,22 +34,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Get component with sync should cause an error", function (assert) {
-		var oCache = new TargetCache({
-			async: false
-		});
-
-		var oLogErrorSpy = sinon.spy(Log, "error");
-
-		var oPromise = oCache.get({}, "Component");
-		return oPromise.catch(function (err) {
-			assert.ok(err.message.indexOf("synchronous") !== -1, "The promise should be rejected with correct error message");
-			assert.equal(oLogErrorSpy.callCount, 1, "error logged once");
-			assert.ok(oLogErrorSpy.getCall(0).args[0].indexOf("synchronous") !== -1, "error logged with the correct message");
-			oLogErrorSpy.restore();
-		});
-	});
-
 	QUnit.test("Get component without a name property should cause an error", function (assert) {
 		var oLogErrorSpy = sinon.spy(Log, "error");
 

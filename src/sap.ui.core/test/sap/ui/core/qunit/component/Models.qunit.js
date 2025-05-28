@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentHooks",
 	"sap/ui/core/Lib",
-	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponentMetadata"
 ], function(
 	BaseConfig,
@@ -24,7 +23,6 @@ sap.ui.define([
 	Component,
 	ComponentHooks,
 	Library,
-	Manifest,
 	UIComponentMetadata
 ) {
 	"use strict";
@@ -148,36 +146,13 @@ sap.ui.define([
 					'Expected model "' + sName + '" to be destroyed');
 			}
 		},
-		assertModelFromManifest: function(assert, options) {
-			var sComponentName = "sap.ui.core.test.component.models";
-			var oManifest = new Manifest(options.manifest, {
-				componentName: sComponentName,
-				baseUrl: "./path/to/manifest/manifest.json",
-				process: false
+		createComponentWithManifest: function(options) {
+			return Component.create({
+				manifest: options.manifest,
+				asyncHints: {
+					cacheTokens: options.cacheTokens
+				}
 			});
-
-			// deep clone is needed as manifest only returns a read-only copy (frozen object)
-			var oManifestDataSources = deepExtend({}, oManifest.getEntry("/sap.app/dataSources"));
-			var oManifestModels = deepExtend({}, oManifest.getEntry("/sap.ui5/models"));
-
-			// 1. provide all model configs with a 'type'
-			var mAllModelConfigs = Component._findManifestModelClasses({
-				models: oManifestModels,
-				dataSources: oManifestDataSources,
-				componentName: sComponentName
-			});
-			// 2. make sure all model classes are loaded
-			Component._loadManifestModelClasses(mAllModelConfigs, sComponentName);
-
-			var oModelConfigurations = Component._createManifestModelConfigurations({
-				dataSources: oManifestDataSources,
-				models: mAllModelConfigs,
-				manifest: oManifest,
-				cacheTokens: options.cacheTokens
-			});
-
-			assert.deepEqual(oModelConfigurations, options.expected,
-				"Model configuration created from manifest should be as expected.");
 		}
 	};
 	// Binds all the helper functions to the test instance
@@ -2252,14 +2227,19 @@ sap.ui.define([
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 		},
 		afterEach: function(assert) {
+			this.oComponent?.destroy();
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 		}
 	});
 
-	QUnit.test("Basic", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("Basic", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
+				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application"
+				},
 				"sap.ui5": {
 					"models": {
 						"": {
@@ -2268,29 +2248,25 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"settings": [
-						{
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			"serviceUrl": "/foo"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected["serviceUrl"], "Correct service url is provided to the model configuration.");
 	});
 
-	QUnit.test("With settings", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With settings", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
+				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application"
+				},
 				"sap.ui5": {
 					"models": {
 						"": {
@@ -2303,44 +2279,48 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"settings": [
-						{
-							"serviceUrl": "/foo",
-							"useBatch": true,
-							"refreshAfterChange": true
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			"serviceUrl": "/foo",
+			"refreshAfterChange": true,
+			"useBatch": true
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected["serviceUrl"], "Correct service url is provided to the model configuration.");
+		assert.equal(this.oComponent.getModel().getRefreshAfterChange(), mExpected["refreshAfterChange"], "Correct 'refreshAfterChange' option is provided to the model configuration.");
+		assert.equal(this.oComponent.getModel().bUseBatch, mExpected["useBatch"], "Correct 'useBatch' option is provided to the model configuration.");
 	});
 
 	QUnit.module("sap.ui.model.v2.ODataModel (with dataSource)", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			bindHelper.apply(this);
+			await this.spyModels();
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
+
+			this.xhrSpy = sinon.spy(XMLHttpRequest.prototype, "open");
 		},
 		afterEach: function(assert) {
+			this.oComponent?.destroy();
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+
+			this.xhrSpy.restore();
+			this.restoreModels();
 		}
 	});
 
-	QUnit.test("Basic", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("Basic", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo"
@@ -2354,34 +2334,26 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			"serviceUrl": "/foo",
+			"metadataLanguage": "EN"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected["serviceUrl"], "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected["metadataLanguage"]}`), "Correct metadata url parameter is provided to the model configuration.");
 	});
 
-	QUnit.test("With settings (model)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With settings (model)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo"
@@ -2399,36 +2371,29 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"useBatch": true,
-							"refreshAfterChange": true,
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
+		const mExpected = {
+			"serviceUrl": "/foo",
+			"metadataLanguage": "EN",
+			"useBatch": true,
+			"refreshAfterChange": true
+		};
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected["serviceUrl"], "Correct service url is provided to the model configuration.");
+		assert.equal(this.oComponent.getModel().getRefreshAfterChange(), mExpected["refreshAfterChange"], "Correct 'refreshAfterChange' option is provided to the model configuration.");
+		assert.equal(this.oComponent.getModel().bUseBatch, mExpected["useBatch"], "Correct 'useBatch' option is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected["metadataLanguage"]}`), "Correct metadata url parameter is provided to the model configuration.");
 	});
 
-	QUnit.test("With settings (dataSource)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With settings (dataSource)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -2445,37 +2410,30 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"headers": {
-								"Cache-Control": "max-age=500"
-							},
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			"serviceUrl": "/foo",
+			"metadataLanguage": "EN",
+			"headers": {
+				"Cache-Control": "max-age=500"
+			}
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected["serviceUrl"], "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected["metadataLanguage"]}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.equal(this.oComponent.getModel().getHeaders()["Cache-Control"], mExpected["headers"]["Cache-Control"], "Correct cache control header set.");
 	});
 
-	QUnit.test("With annotations", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -2500,38 +2458,34 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			"serviceUrl": "/foo",
+			"metadataLanguage": "EN",
+			"anno1Absolute": "/path/to/odata/annotation/1?sap-language=EN",
+			"anno2Relative": "path/to/local/odata/annotation/2?sap-language=EN"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected["serviceUrl"], "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected["metadataLanguage"]}`), "Correct metadata url parameter is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-language already present)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-language already present)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-language=FOO",
@@ -2556,51 +2510,58 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=BAR",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ"
-							],
-							"serviceUrl": "/foo?sap-language=FOO"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-language=FOO",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			type: "sap.ui.model.odata.v2.ODataModel",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=BAR",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=BAZ"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration (no language parameter).");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes("sap-language=FOO"), "Correct metadata url parameter is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.module("sap.ui.model.v2.ODataModel (with sap-client/sap-server as URI Parameters)", {
-		beforeEach: function() {
+	QUnit.module("With annotations (sap-client/sap-server already present).ui.model.v2.ODataModel (with sap-client/sap-server as URI Parameters)", {
+		beforeEach: async function() {
 			bindHelper.apply(this);
+			await this.spyModels();
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
+
+			this.xhrSpy = sinon.spy(XMLHttpRequest.prototype, "open");
 
 			this.stubGetUriParameters();
 		},
 		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+
+			this.xhrSpy.restore();
+
 			this.restoreGetUriParameters();
+
+			this.restoreModels();
 		}
 	});
 
-	QUnit.test("Basic", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("Basic", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo"
@@ -2614,34 +2575,31 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			type: "sap.ui.model.odata.v2.ODataModel",
+			sapClient: "foo",
+			sapServer: "bar"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration (no language parameter).");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata sap-language parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata sap-server is provided to the model configuration.");
 	});
 
-	QUnit.test("With annotations", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -2666,38 +2624,38 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo",
+			metadataLanguage: "EN",
+			sapClient: "foo",
+			sapServer: "bar"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration (no language parameter).");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata sap-language parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-client/sap-server already present)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-client/sap-server already present)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-client=999&sap-server=XXX",
@@ -2722,38 +2680,38 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-client=888&sap-language=EN",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-client=777&sap-language=EN"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=999&sap-server=XXX"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=999&sap-server=XXX",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			anno1Absolute: "/path/to/odata/annotation/1?sap-client=888&sap-language=EN",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-client=777&sap-language=EN",
+			metadataLanguage: "EN",
+			serviceUrl: "/foo",
+			sapClient: "999",
+			sapServer: "XXX"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration (no language parameter).");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata sap-language parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-language already present)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-language already present)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-language=FOO",
@@ -2778,49 +2736,59 @@ sap.ui.define([
 						}
 					}
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=BAR&sap-client=foo",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ&sap-client=foo"
-							],
-							"serviceUrl": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=BAR&sap-client=foo",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=BAZ&sap-client=foo",
+			metadataLanguage: "FOO",
+			serviceUrl: "/foo",
+			sapClient: "foo",
+			sapServer: "bar"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration (no language parameter).");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata sap-language parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
 	QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens)", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			bindHelper.apply(this);
+			await this.spyModels();
 
 			BaseConfig._.invalidate();
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
+
+			this.xhrSpy = sinon.spy(XMLHttpRequest.prototype, "open");
 		},
 		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+
+			this.xhrSpy.restore();
+
+			this.restoreModels();
 		}
 	});
 
-	QUnit.test("Basic", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("Basic", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo"
@@ -2830,7 +2798,8 @@ sap.ui.define([
 				"sap.ui5": {
 					"models": {
 						"": {
-							"dataSource": "OData"
+							"dataSource": "OData",
+							"preload": true
 						}
 					}
 				}
@@ -2843,46 +2812,39 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"/foo?sap-client=foo&sap-server=bar": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
 
 		// One warning should be logged (serviceUrl)
-		sinon.assert.callCount(this.oLogWarningSpy, 1);
+		sinon.assert.callCount(this.oLogWarningSpy, 2);
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo). " +
 			"Missing \"sap-client\" URI parameter",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 
 	});
 
-	QUnit.test("With annotations", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -2922,81 +2884,76 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN",
+			anno2Relative: "path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
 
 		// Three warnings should be logged (serviceUrl + 2x annotationURIs)
 		sinon.assert.callCount(this.oLogWarningSpy, 3);
 
 		// Annotation1
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for DataSource \"Annotation1\" (/path/to/odata/annotation/1?sap-language=EN). " +
-			"Missing \"sap-client\" URI parameter",
-			"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
-			"sap.ui.core.test.component.models"
+			`Component Manifest: Ignoring provided "sap-context-token=1400000002" for DataSource "Annotation1" (/path/to/odata/annotation/1?sap-language=EN). Missing "sap-client" URI parameter`,
+			`["sap.app"]["dataSources"]["Annotation1"]`,
+			`testdata.modelFromManifest`
 		);
 
 		// Annotation2
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for DataSource \"Annotation2\" (path/to/local/odata/annotation/2?sap-language=EN). " +
-			"Missing \"sap-client\" URI parameter",
-			"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
-			"sap.ui.core.test.component.models"
+			`Component Manifest: Ignoring provided "sap-context-token=1400000003" for DataSource "Annotation2" (path/to/local/odata/annotation/2?sap-language=EN). Missing "sap-client" URI parameter`,
+			`["sap.app"]["dataSources"]["Annotation2"]`,
+			`testdata.modelFromManifest`
 		);
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
-			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo). " +
-			"Missing \"sap-client\" URI parameter",
-			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			`Component Manifest: Ignoring provided "sap-context-token=1400000001" for Model "" (/foo). Missing "sap-client" URI parameter`,
+			`["sap.ui5"]["models"][""]`,
+			`testdata.modelFromManifest`
 		);
 
 	});
 
 	QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens / with sap-client/sap-server as URI Parameters)", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			bindHelper.apply(this);
+			await this.spyModels();
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			this.stubGetUriParameters();
+
+			this.xhrSpy = sinon.spy(XMLHttpRequest.prototype, "open");
 		},
 		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 			this.restoreGetUriParameters();
+
+			this.xhrSpy.restore();
+
+			this.restoreModels();
 		}
 	});
 
-	QUnit.test("Basic", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("Basic", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo"
@@ -3019,35 +2976,32 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"/foo?sap-client=foo&sap-server=bar": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"metadataUrlParams": {
-								"sap-context-token": "1400000001",
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
 	});
 
-	QUnit.test("With annotations", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -3087,39 +3041,41 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-context-token": "1400000001",
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-client/sap-server already present with same value in URI)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-client/sap-server already present with same value in URI)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-client=foo&sap-server=bar",
@@ -3159,39 +3115,40 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2?sap-client=foo": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-client=foo&sap-language=EN&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-client=foo&sap-language=EN&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-context-token": "1400000001",
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			"serviceUrl": "/foo",
+			"metadataLanguage": "EN",
+			"sapContextToken": "1400000001",
+			"sapClient": "foo",
+			"sapServer": "bar",
+			"anno1Absolute": "/path/to/odata/annotation/1?sap-client=foo&sap-language=EN&sap-context-token=1400000002",
+			"anno2Relative": "path/to/local/odata/annotation/2?sap-client=foo&sap-language=EN&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-client/sap-server already present with different value in URI)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-client/sap-server already present with different value in URI)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-client=999&sap-server=XXX",
@@ -3231,31 +3188,31 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2?sap-client=777": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-client=888&sap-language=EN",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-client=777&sap-language=EN"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=999&sap-server=XXX"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=999&sap-server=XXX",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000003",
+			sapClient: "999",
+			sapServer: "XXX",
+			anno1Absolute: '/path/to/odata/annotation/1?sap-client=888&sap-language=EN',
+			anno2Relative: "path/to/local/odata/annotation/2?sap-client=777&sap-language=EN"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 
 		// Three warnings should be logged (serviceUrl + 2x annotationURIs)
 		sinon.assert.callCount(this.oLogWarningSpy, 3);
@@ -3265,7 +3222,7 @@ sap.ui.define([
 			"Component Manifest: Ignoring provided \"sap-context-token=1400000002\" for DataSource \"Annotation1\" (/path/to/odata/annotation/1?sap-client=888&sap-language=EN). " +
 			"URI parameter \"sap-client=888\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 		// Annotation2
@@ -3273,7 +3230,7 @@ sap.ui.define([
 			"Component Manifest: Ignoring provided \"sap-context-token=1400000003\" for DataSource \"Annotation2\" (path/to/local/odata/annotation/2?sap-client=777&sap-language=EN). " +
 			"URI parameter \"sap-client=777\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 		// Model (serviceUrl)
@@ -3281,15 +3238,17 @@ sap.ui.define([
 			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo?sap-client=999&sap-server=XXX). " +
 			"URI parameter \"sap-client=999\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 	});
 
-	QUnit.test("With annotations (sap-client already present with same value in metadataUrlParams)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-client already present with same value in metadataUrlParams)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -3334,40 +3293,39 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-context-token": "1400000001",
-								"sap-client": "foo",
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-client already present with different value in metadataUrlParams)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-client already present with different value in metadataUrlParams)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -3412,32 +3370,31 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-client": "999",
-								"sap-language": "EN"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000001",
+			sapClient: "999",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 
 		// One warning should be logged (serviceUrl)
 		sinon.assert.callCount(this.oLogWarningSpy, 1);
@@ -3447,15 +3404,17 @@ sap.ui.define([
 			"Component Manifest: Ignoring provided \"sap-context-token=1400000001\" for Model \"\" (/foo?sap-client=foo&sap-server=bar). " +
 			"URI parameter \"sap-client=999\" must be identical with configuration \"sap-client=foo\"",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 	});
 
-	QUnit.test("With annotations (sap-language already present in URI)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-language already present in URI)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-language=FOO",
@@ -3495,38 +3454,40 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=BAR&sap-client=foo&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=BAZ&sap-client=foo&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-context-token": "1400000001"
-							},
-							"serviceUrl": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-language=FOO&sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "FOO",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=BAR&sap-client=foo&sap-context-token=1400000002",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=BAZ&sap-client=foo&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-language already present in metadataUrlParams)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-language already present in metadataUrlParams)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -3571,39 +3532,40 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-language": "FOO",
-								"sap-context-token": "1400000001"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "FOO",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-context-token already present with same value in URI)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-context-token already present with same value in URI)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-context-token=1400000001",
@@ -3643,32 +3605,32 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN",
-								"sap-context-token" : "1400000001"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 
 		// One warnings should be logged
 		sinon.assert.callCount(this.oLogWarningSpy, 1);
@@ -3677,15 +3639,17 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Move existing \"sap-context-token=1400000001\" to metadataUrlParams for Model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 	});
 
-	QUnit.test("With annotations (sap-context-token already present with different value in URI)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-context-token already present with different value in URI)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo?sap-context-token=1400000001",
@@ -3725,32 +3689,31 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000003": "1500000111"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-context-token=1400000222&sap-language=EN&sap-client=foo",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-context-token=1400000333&sap-language=EN&sap-client=foo"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN",
-								"sap-context-token":"1400000111"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000111",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-context-token=1400000222&sap-language=EN&sap-client=foo",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-context-token=1400000333&sap-language=EN&sap-client=foo"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 
 		// Four warnings should be logged (2 * serviceUrl + 2x annotationURIs)
 		sinon.assert.callCount(this.oLogWarningSpy, 4);
@@ -3759,36 +3722,38 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Overriding existing \"sap-context-token=1400000002\" with provided value \"1400000222\" for DataSource \"Annotation1\" (/path/to/odata/annotation/1?sap-context-token=1400000002&sap-language=EN&sap-client=foo).",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation1\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 		// Annotation2
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Overriding existing \"sap-context-token=1400000003\" with provided value \"1400000333\" for DataSource \"Annotation2\" (path/to/local/odata/annotation/2?sap-context-token=1400000003&sap-language=EN&sap-client=foo).",
 			"[\"sap.app\"][\"dataSources\"][\"Annotation2\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Overriding existing \"sap-context-token=1400000001\" with provided value \"1400000111\" for Model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 		// Model (serviceUrl)
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Move existing \"sap-context-token=1400000001\" to metadataUrlParams for Model \"\" (/foo?sap-context-token=1400000001&sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 	});
 
-	QUnit.test("With annotations (sap-context-token already present with same value in metadataUrlParams)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-context-token already present with same value in metadataUrlParams)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -3833,39 +3798,39 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000001"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN",
-								"sap-context-token": "1400000001"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors or warnings should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
-		sinon.assert.callCount(this.oLogWarningSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000001",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000002",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000003"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 	});
 
-	QUnit.test("With annotations (sap-context-token already present with different value in metadataUrlParams)", function(assert) {
-		this.assertModelFromManifest(assert, {
+	QUnit.test("With annotations (sap-context-token already present with different value in metadataUrlParams)", async function(assert) {
+		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
 				"sap.app": {
+					"id": "testdata.modelFromManifest",
+					"type": "application",
 					"dataSources": {
 						"OData": {
 							"uri": "/foo",
@@ -3910,32 +3875,31 @@ sap.ui.define([
 					// Invalid (lookup is based on URI from manifest, not the final one)
 					"path/to/manifest/path/to/local/odata/annotation/2": "1500000111"
 				}
-			},
-			expected: {
-				"": {
-					"dataSource": "OData",
-					"settings": [
-						{
-							"annotationURI": [
-								"/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000222",
-								"path/to/manifest/path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000333"
-							],
-							"metadataUrlParams": {
-								"sap-language": "EN",
-								"sap-context-token": "1400000111"
-							},
-							"serviceUrl": "/foo?sap-client=foo&sap-server=bar"
-						}
-					],
-					"type": "sap.ui.model.odata.v2.ODataModel",
-					"uri": "/foo?sap-client=foo&sap-server=bar",
-					"uriSettingName": "serviceUrl"
-				}
 			}
 		});
 
-		// No errors should be logged
-		sinon.assert.callCount(this.oLogErrorSpy, 0);
+		const mExpected = {
+			serviceUrl: "/foo",
+			metadataLanguage: "EN",
+			sapContextToken: "1400000111",
+			sapClient: "foo",
+			sapServer: "bar",
+			anno1Absolute: "/path/to/odata/annotation/1?sap-language=EN&sap-client=foo&sap-context-token=1400000222",
+			anno2Relative: "path/to/local/odata/annotation/2?sap-language=EN&sap-client=foo&sap-context-token=1400000333"
+		};
+
+		assert.ok(this.oComponent, "Component created successfully.");
+		assert.ok(this.oComponent.getModel().isA("sap.ui.model.odata.v2.ODataModel"), "Correct model is created.");
+		assert.equal(this.oComponent.getModel().getServiceUrl(), mExpected.serviceUrl, "Correct service url is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-language=${mExpected.metadataLanguage}`), "Correct metadata url parameter is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-context-token=${mExpected.sapContextToken}`), "Correct metadata url parameter for sap-context-token is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-client=${mExpected.sapClient}`), "Correct metadata url parameter for sap-client is provided to the model configuration.");
+		assert.ok(this.oComponent.getModel().getMetadataUrl().includes(`sap-server=${mExpected.sapServer}`), "Correct metadata url parameter for sap-server is provided to the model configuration.");
+
+		const oODataModelV2Spy = this.modelSpy["odataV2"];
+		assert.ok(oODataModelV2Spy.called, "ODataModel v2 constructor called");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[0], mExpected["anno1Absolute"], "Correct absolute annotation url is used in the request - 1.");
+		assert.equal(oODataModelV2Spy.getCall(0).args[0].annotationURI[1], sap.ui.require.toUrl(`testdata/modelFromManifest/${mExpected["anno2Relative"]}`), "Correct relative annotation url is used in the request - 2.");
 
 		// One warning should be logged (sap-context-token will be overridden with new value)
 		sinon.assert.callCount(this.oLogWarningSpy, 1);
@@ -3944,7 +3908,7 @@ sap.ui.define([
 		sinon.assert.calledWithExactly(this.oLogWarningSpy,
 			"Component Manifest: Overriding existing \"sap-context-token=1400000001\" with provided value \"1400000111\" for Model \"\" (/foo?sap-client=foo&sap-server=bar).",
 			"[\"sap.ui5\"][\"models\"][\"\"]",
-			"sap.ui.core.test.component.models"
+			"testdata.modelFromManifest"
 		);
 
 	});

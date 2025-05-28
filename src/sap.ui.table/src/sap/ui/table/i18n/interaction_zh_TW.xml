@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>若焦點在儲存格層次上，則該焦點會將五欄移至右側 (預設頁面大小)。</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>若焦點在欄表頭上且右側的欄數少於目前頁面大小，則焦點會移至最後一欄。</p>
 				<p>若焦點在列選擇器上，則該焦點會移至相同列中的第一欄。</p>
 				<p>若焦點在 <span class="uicontrol">[全選]</span> 上，則該焦點會移至第一欄的表頭。</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
 				<p>若焦點在儲存格上，則會選擇該聚焦儲存格。</p>
 				<p>若焦點在儲存格選擇區塊上，則會移除該儲存格選擇。</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>若焦點在儲存格上，且表格具有特定的選擇行為組態 (您可選擇列本身，或是若有核取方塊時予以勾選來選擇列)，則僅會選擇聚焦儲存格而不是列。</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>若焦點在儲存格或列選擇器上，則會切換目前列的選擇。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>若焦點在表格內且已選擇儲存格，則會移除儲存格選擇。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>若焦點在 <span class="uicontrol">[全選]</span> 且已按下 <kbd>Spacebar</kbd>，則不會驅動對應事件。<kbd>Shift</kbd> 會避免此作業。</p>
+				<p>若焦點在欄表頭上且已按下 <kbd>Spacebar</kbd> 或 <kbd>Enter</kbd>，則不會驅動對應事件。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移到上方列，且選擇會增強至該列。</p>
+				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移到上方列，且會移除該列選擇。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上，且<span class="emphasis">未</span>選擇列，則會選擇聚焦儲存格和上方儲存格；該焦點會移到聚焦儲存格上方的儲存格。</p>
 				<p>若焦點在所選的儲存格上，則焦點會移至上方儲存格，且儲存格選擇會增強至該儲存格。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移到下方列，且選擇會增強至該列。</p>
+				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移到下方列，且會移除該列選擇。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上且<span class="emphasis">未</span>選擇列，則會選擇聚焦儲存格和下方儲存格；該焦點會移到聚焦儲存格下方的儲存格。</p>
 				<p>若焦點在所選的儲存格上，則焦點會移至下方儲存格，且儲存格選擇會增強至該儲存格。</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>若可用且已啟用該功能，則會將所選的列或儲存格複製到剪貼簿。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>若已啟用該功能，則會貼上剪貼簿中的內容。</p>
 			</description>
 		</interaction>
 	</control-interactions>

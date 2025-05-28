@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Se o foco estiver no nível da célula, o foco é movido cinco colunas para a direita (tamanho da página padrão).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Se o foco estiver no cabeçalho da coluna e existirem menos colunas à direita do que no tamanho da página atual, o foco é movido para a última coluna.</p>
 				<p>Se o foco estiver no seletor de linhas, o foco é movido para a primeira coluna na mesma linha.</p>
 				<p>Se o foco estiver em <span class="uicontrol">Selecionar tudo</span>, o foco é movido para o cabeçalho da primeira coluna.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
 				<p>Se o foco estiver em uma célula, a célula focada é selecionada.</p>
 				<p>Se o foco estiver em um bloco de seleção de células, a seleção das células é removida.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Se o foco estiver em uma célula e a tabela tiver uma determinada configuração do comportamento da seleção (para selecionar uma linha, você pode selecionar a própria linha ou a caixa de seleção, se disponível), somente a célula focada é selecionada, ao invés da linha.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Se o foco estiver em uma célula ou seletor de linhas, isso muda a seleção da linha atual.</p>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Se o foco estiver dentro da tabela e as células estiverem selecionadas, a seleção das células é removida.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Se o foco estiver em <span class="uicontrol">Selecionar tudo</span> e <kbd>Spacebar</kbd> é pressionado, o evento correspondente não é acionado. <kbd>Shift</kbd> evita esta atividade.</p>
+				<p>Se o foco estiver em um cabeçalho da coluna e <kbd>Spacebar</kbd> ou <kbd>Enter</kbd> for pressionado, o evento correspondente não é acionado.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco é movido para a linha acima, e a seleção é expandida até essa linha.</p>
+				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> for selecionada, o foco é movido para a linha acima, e a seleção é removida para essa linha.</p>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Se o foco estiver em uma célula que <span class="emphasis">não</span> é selecionada e a linha <span class="emphasis">não</span> é selecionada, são selecionadas a célula focada e a célula acima. O foco é movido para a célula acima da célula focada.</p>
 				<p>Se o foco estiver em uma célula selecionada, a célula acima recebe o foco e a seleção de células é expandida até essa célula.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco é movido para a linha abaixo, e a seleção é expandida até essa linha.</p>
+				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> for selecionada, o foco é movido para a linha abaixo, e a seleção é removida para essa linha.</p>
 				<p><span class="emphasis">Se a seleção de células for ativada:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Se o foco estiver em uma célula que <span class="emphasis">não</span> é selecionada e a linha <span class="emphasis">não</span> é selecionada, são selecionadas a célula focada e a célula abaixo. O foco é movido para a célula abaixo da célula focada.</p>
 				<p>Se o foco estiver em uma célula selecionada, a célula abaixo recebe o foco e a seleção de células é expandida até essa célula.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copia as linhas ou células selecionadas para o clipboard, se disponível, e o recurso é ativado.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Cola o conteúdo do clipboard, se o recurso estiver ativado.</p>
 			</description>
 		</interaction>
 	</control-interactions>

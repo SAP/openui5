@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/_ViewFactory",
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/Router",
 	"sap/ui/core/routing/Views",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"./AsyncViewModuleHook",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer"
-], function(future, Log, deepExtend, UIComponent, View, HashChanger, Router, Views, App, NavContainer, Panel, ModuleHook, Component, ComponentContainer) {
+], function(future, Log, deepExtend, UIComponent, View, _ViewFactory, HashChanger, Router, Views, App, NavContainer, Panel, ModuleHook, Component, ComponentContainer) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -1224,7 +1225,7 @@ sap.ui.define([
 		]);
 
 		var fnCreateViewSpy = sinon.spy(View, "create");
-		var fnGenericCreateViewSpy = sinon.spy(View, "_create");
+		var fnGenericCreateViewSpy = sinon.spy(_ViewFactory, "create");
 		var oRouteMatchedSpy = sinon.spy(router.getRoute("name"), "_routeMatched");
 
 		router.initialize();
@@ -1238,7 +1239,7 @@ sap.ui.define([
 			//Assert
 			assert.strictEqual(oShell.getContent()[0].getId(), oResult.view.getId(), "View is first content element");
 			assert.strictEqual(fnCreateViewSpy.callCount, 1, "Only one view is created. The 'View.create' factory is called");
-			assert.strictEqual(fnGenericCreateViewSpy.callCount, 0, "The 'View._create' factory is not called");
+			assert.equal(fnGenericCreateViewSpy.getCall(0).args[1].async, true, "The '_ViewFactory.create' factory is called async.");
 
 			//Cleanup
 			fnCreateViewSpy.restore();

@@ -15,8 +15,8 @@
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span> ou <span class="uicontrol">Réinitialiser</span>, elle se déplace vers le sélecteur de ligne dans la première ligne visible.</p>
 				<p>Si la zone activée se trouve sur la ligne d'en-tête d'une colonne, elle se déplace vers la première ligne.</p>
-				<p>Si la zone activée se trouve sur une ligne, elle se déplace vers la ligne en-dessous.</p>
-				<p>Si la zone activée se trouve sur une cellule, elle se déplace vers la cellule en-dessous.</p>
+				<p>Si la zone activée se trouve sur une ligne, elle se déplace vers la ligne en dessous.</p>
+				<p>Si la zone activée se trouve sur une cellule, elle se déplace vers la cellule en dessous.</p>
 				<p><kbd>ArrowLeft</kbd></p>
 				<p>Si la zone activée est dans la première cellule, elle se déplace vers la ligne. La navigation n'est alors plus basée sur les cellules, mais sur les lignes.</p>
 				<p>Si la zone activée se trouve sur une cellule, elle se déplace vers la cellule de gauche.</p>
@@ -55,19 +55,19 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est supprimée pour cette ligne.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située au-dessus sont sélectionnées. La zone activée se déplace vers la cellule située au-dessus de la cellule où se trouve la zone activée.</p>
 				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule située au-dessus et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est supprimée pour cette ligne.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
-				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule située en-dessous et la sélection de cellule est étendue jusqu'à cette cellule.</p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située en dessous sont sélectionnées. La zone activée se déplace vers la cellule située en dessous de la cellule où se trouve la zone activée. </p>
+				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule située en dessous et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
@@ -75,7 +75,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
-				<p>Si la zone activée se trouve sur une cellule modifiable (par exemple un champ de saisie), elle se déplace vers la cellule située en-dessous.</p>
+				<p>Si la zone activée se trouve sur une cellule modifiable (par exemple un champ de saisie), elle se déplace vers la cellule située en dessous.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Si la zone activée se trouve dans le tableau, et si des cellules sont sélectionnées, la sélection des cellules est supprimée.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Copie les lignes ou cellules sélectionnées vers le presse-papiers, si cette option est disponible, et si la fonctionnalité est activée.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Colle le contenu à partir du presse-papiers si la fonctionnalité est activée.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Déplace l'élément d'une position vers le haut, si disponible.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Déplace l'élément d'une position vers le bas, si disponible.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Déplace l'élément tout en haut, si disponible.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Déplace l'élément tout en bas, si disponible.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Déplace l'élément d'une position vers le haut, si disponible.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Déplace l'élément d'une position vers le bas, si disponible.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Déplace l'élément d'une position vers le haut, si disponible.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Déplace l'élément d'une position vers le bas, si disponible.</p>
 			</description>
 		</interaction>
 	</control-interactions>

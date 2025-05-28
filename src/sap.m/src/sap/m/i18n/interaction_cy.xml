@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Os yw'r ffocws ar gell neu ddewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis ac <span class="emphasis">nad</span> yw'r rhes wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell uwchben yn cael eu dewis. Bydd y ffocws yn symud i'r gell uwchlaw'r gell lle mae'r ffocws.</p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y ffocws yn symud i'r gell uwchlaw, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Os yw'r ffocws ar gell neu ddewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes islaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
+				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes islaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis ac <span class="emphasis">nad</span> yw'r rhes wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell islaw yn cael eu dewis. Bydd y ffocws yn symud i'r gell islaw'r gell lle mae'r ffocws. </p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y ffocws yn symud i'r gell islaw, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Os yw'r ffocws y tu mewn i'r tabl a chelloedd yn cael eu dewis, bydd y dewis o gelloedd yn cael ei dynnu.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Yn copïo’r rhesi neu'r celloedd a ddewiswyd i'r clipfwrdd, os yw ar gael a bod y nodwedd wedi'i galluogi.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Yn gludo'r cynnwys o'r clipfwrdd, os yw'r nodwedd wedi'i galluogi.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Yn symud yr eitem un safle i fyny, os yw hyn ar gael.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Yn symud yr eitem un safle i lawr, os yw hyn ar gael.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Yn symud yr eitem i'r brig, os yw hyn ar gael.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Yn symud yr eitem i'r diwedd, os yw hyn ar gael.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Yn symud yr eitem un safle i fyny, os yw hyn ar gael.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Yn symud yr eitem un safle i lawr, os yw hyn ar gael.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Yn symud yr eitem un safle i fyny, os yw hyn ar gael.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Yn symud yr eitem un safle i lawr, os yw hyn ar gael.</p>
 			</description>
 		</interaction>
 	</control-interactions>

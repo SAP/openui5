@@ -51,7 +51,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("initialAllContexts is not saved in the session storage", function(assert) {
-			var oReloadInfo = {
+			var oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -65,12 +65,12 @@ sap.ui.define([
 			const oUpdateResetAndPublishInfoAPIStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadParameters).then(function(oReloadInfo) {
 				var oExpectedArgs = {
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-					upToLayer: oReloadInfo.layer,
-					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					selector: oReloadParameters.selector,
+					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
+					upToLayer: oReloadParameters.layer,
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -86,7 +86,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("allContexts is saved in the session storage and do not call flex/info request", function(assert) {
-			const oReloadInfo = {
+			const oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -99,12 +99,12 @@ sap.ui.define([
 			const oUpdateResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "updateResetAndPublishInfo").resolves();
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadParameters).then(function(oReloadInfo) {
 				const oExpectedArgs = {
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-					upToLayer: oReloadInfo.layer,
-					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					selector: oReloadParameters.selector,
+					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
+					upToLayer: oReloadParameters.layer,
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -222,7 +222,7 @@ sap.ui.define([
 			const sTestDescription = Object.entries(oSetup.oFlexInfoSession).map(([key, value]) => `${key} ${value}`).join(" and ");
 			QUnit.test(sTestDescription, function(assert) {
 				const oStubs = setFlexInfoSessionAndPrepareMocks({ ...oSetup.oFlexInfoSession}, {...oSetup.oFlexInfoResponse });
-				return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadInfo).then(function(oReloadInfo) {
+				return ReloadInfoAPI.getReloadReasonsForStart(oStubs.oReloadParameters).then(function(oReloadInfo) {
 					assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert);
 					window.sessionStorage.removeItem("sap.ui.fl.info.true");
 				});
@@ -230,7 +230,7 @@ sap.ui.define([
 		});
 
 		function setFlexInfoSessionAndPrepareMocks(oFlexInfoSession, oFlexInfoResponse) {
-			const oReloadInfo = {
+			const oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -245,7 +245,7 @@ sap.ui.define([
 			stubRequestsForResetAndPublishAPI(oFlexInfoResponse);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 			return {
-				oReloadInfo,
+				oReloadParameters,
 				oSetAllContextsProvided,
 				oHasHigherLayerChangesAPIStub,
 				oUpdateResetAndPublishInfoAPIStub
@@ -254,10 +254,10 @@ sap.ui.define([
 
 		function assertReloadReasonsAndSession(oReloadInfo, oStubs, oSetup, assert) {
 			var oExpectedArgs = {
-				selector: oReloadInfo.selector,
-				ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-				upToLayer: oReloadInfo.layer,
-				includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+				selector: oStubs.oReloadParameters.selector,
+				ignoreMaxLayerParameter: oStubs.oReloadParameters.ignoreMaxLayerParameter,
+				upToLayer: oStubs.oReloadParameters.layer,
+				includeCtrlVariants: oStubs.oReloadParameters.includeCtrlVariants,
 				includeDirtyChanges: true
 			};
 			assert.deepEqual(oStubs.oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -284,7 +284,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("allContextsProvided is true and a draft is available and the draft is not present in the session", function(assert) {
-			const oReloadInfo = {
+			const oReloadParameters = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
@@ -301,12 +301,12 @@ sap.ui.define([
 			});
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
-			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function(oReloadInfo) {
+			return ReloadInfoAPI.getReloadReasonsForStart(oReloadParameters).then(function(oReloadInfo) {
 				var oExpectedArgs = {
-					selector: oReloadInfo.selector,
-					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-					upToLayer: oReloadInfo.layer,
-					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					selector: oReloadParameters.selector,
+					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
+					upToLayer: oReloadParameters.layer,
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
 					includeDirtyChanges: true
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -436,13 +436,8 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that getReloadMethod is called in FLP", {
+	QUnit.module("Given that getReloadInfo is called in FLP", {
 		beforeEach() {
-			this.oRELOAD = {
-				NOT_NEEDED: "NO_RELOAD",
-				RELOAD_PAGE: "HARD_RELOAD",
-				VIA_HASH: "CROSS_APP_NAVIGATION"
-			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 		},
@@ -452,10 +447,9 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and no reason to reload was found", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
@@ -463,16 +457,15 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then expected reloadMethod was set");
-			assert.equal(oReloadInfo.hasVersionStorage, false, "has version paramert in the url");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, false, "then reloadNeeded was not set");
+			assert.strictEqual(oExpectedReloadInfo.hasVersionStorage, false, "has version parameter in the url");
 		});
 
 		QUnit.test("and dirty draft changes exist", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: true,
 				versioningEnabled: true
 			};
@@ -480,15 +473,14 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
 		});
 
 		QUnit.test("and sap-ui-fl-version parameter exist", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
@@ -496,15 +488,14 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
 		});
 
 		QUnit.test("another version (not the active one) is selected/previewed", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: "2"
@@ -514,15 +505,14 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
 		});
 
 		QUnit.test("active version is not original", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: "2"
@@ -531,15 +521,14 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, false, "then reloadNeeded was not set");
 		});
 
 		QUnit.test("current active version is selected/previewed", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
 				activeVersion: "2"
@@ -549,16 +538,15 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
-			assert.equal(oReloadInfo.hasVersionStorage, true, "has version paramert in the url");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, false, "then reloadNeeded was not set");
+			assert.strictEqual(oExpectedReloadInfo.hasVersionStorage, true, "has version paramert in the url");
 		});
 
 		QUnit.test("and maxLayer parameter exist", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
@@ -566,15 +554,14 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
 		});
 
 		QUnit.test("and an initial draft got activated", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
@@ -582,16 +569,15 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
-			assert.equal(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
+			assert.strictEqual(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
 		});
 
 		QUnit.test("and an initial draft got activated and in the version exists in session", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
@@ -599,68 +585,19 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
-			assert.equal(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
-		});
-
-		QUnit.test("and appDescriptor changes exist", function(assert) {
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				selector: {},
-				changesNeedReload: true,
-				isDraftAvailable: false,
-				versioningEnabled: true
-			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
-			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.RELOAD_PAGE, "then RELOAD_PAGE reloadMethod was set");
-		});
-
-		QUnit.test("and version parameter & appDescriptor changes exist", function(assert) {
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				selector: {},
-				changesNeedReload: true,
-				isDraftAvailable: false,
-				versioningEnabled: true
-			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
-			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.RELOAD_PAGE, "then RELOAD_PAGE reloadMethod was set");
-		});
-
-		QUnit.test("and max-layer parameter & appDescriptor changes exist", function(assert) {
-			var oReloadInfo = {
-				layer: Layer.CUSTOMER,
-				selector: {},
-				changesNeedReload: true,
-				isDraftAvailable: false,
-				versioningEnabled: true
-			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(true);
-			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
-			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.RELOAD_PAGE, "then RELOAD_PAGE reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
+			assert.strictEqual(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
 		});
 
 		QUnit.test("and all context was loaded and there is no other reason to reload", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			var oFlexInfoResponse = {allContextsProvided: false};
+			const oFlexInfoResponse = {allContextsProvided: false};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				getIsContextSharingEnabled: () => {return true;}
@@ -669,54 +606,47 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
 		});
 
 		QUnit.test("and isEndUserAdaptation is true and there are also no other reasons for reload", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			var oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: true};
+			const oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: true};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, false, "then reloadNeeded was not set");
 		});
 
 		QUnit.test("and the only reload reason is that key user and end user adaptation don't match", function(assert) {
-			var oReloadInfo = {
+			const oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
-				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			var oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: false};
+			const oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: false};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
-			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
-			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.VIA_HASH, "then VIA_HASH reloadMethod was set");
+			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, true, "then reloadNeeded was set");
 		});
 	});
 
 	QUnit.module("Given that initialDraftGotActivated is called", {
 		beforeEach() {
-			this.oRELOAD = {
-				NOT_NEEDED: "NO_RELOAD",
-				RELOAD_PAGE: "HARD_RELOAD",
-				VIA_HASH: "CROSS_APP_NAVIGATION"
-			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(false);
 		},
 		afterEach() {

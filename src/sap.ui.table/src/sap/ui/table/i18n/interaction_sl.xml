@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Če je fokus na ravni celice, se fokus premakne pet stolpcev v desno (privzeta velikost strani).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Če je fokus na glavi stolpca in je manj stolpcev na desni od trenutne velikosti strani, se fokus premakne na zadnji stolpec.</p>
 				<p>Če je fokus na izbirniku vrstic, se fokus premakne na prvi stolpec v isti vrstici.</p>
 				<p>Če je fokus na <span class="uicontrol">Izberi vse</span>, se fokus premakne na glavo prvega stolpca.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
 				<p>Če je fokus na celici, je izbrana fokusirana celica.</p>
 				<p>Če je fokus na blokadi izbire celic, se izbira celic odstrani.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Če je fokus na celici in ima tabela določeno konfiguracijo obnašanja izbire (za izbiro vrstice lahko izberete samo vrstico ali potrditveno polje izbire, če je na voljo), samo če je fokusirana celica izbrana namesto vrstice.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Če je fokus na celici ali izbirniku vrstice, to preklopi izbiro trenutne vrstice.</p>
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Če je fokus znotraj tabele in so celice izbrane, se izbira celic odstrani.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Če je fokus na <span class="uicontrol">Izberi vse</span> in je pritisnjena možnost <kbd>Spacebar</kbd>, ustrezni dogodek ni sprožen. <kbd>Shift</kbd> preprečuje to aktivnost.</p>
+				<p>Če je fokus na glavi stolpca in je pritisnjena možnost <kbd>Spacebar</kbd> ali <kbd>Enter</kbd>, ustrezni dogodek ni sprožen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na zgornjo vrstico, izbira pa se razširi do te vrstice.</p>
+				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na zgornjo vrstico, izbira pa se odstrani za to vrstico.</p>
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in zgornja celica. Fokus se premakne na celico nad fokusirano celico.</p>
 				<p>Če je fokus na izbrani celici, celica zgoraj pridobi fokus, izbira celice pa je razširjena do te celice.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na spodnjo vrstico, izbira pa se razširi do te vrstice.</p>
+				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na spodnjo vrstico, izbira pa se odstrani za to vrstico.</p>
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in spodnja celica. Fokus se premakne na celico pod fokusirano celico.</p>
 				<p>Če je fokus na izbrani celici, celica spodaj pridobi fokus, izbira celice pa je razširjena do te celice.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopira izbrane vrstice ali celice v odložišče, če je na voljo in je ta funkcija omogočena.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Prilepi vsebino iz odložišča, če je funkcija omogočena.</p>
 			</description>
 		</interaction>
 	</control-interactions>

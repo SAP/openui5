@@ -417,7 +417,19 @@ sap.ui.define([
 		}
 
 		// Finally, create the component instance
-		return Component._createComponent(mConfig, oOwnerComponent);
+		function createComponent() {
+			return Component.create(mConfig);
+		}
+
+		if (oOwnerComponent) {
+			if (!oOwnerComponent.isActive()) {
+				throw new Error("Creation of component '" + mConfig.name + "' is not possible due to inactive owner component '" + oOwnerComponent.getId() + "'");
+			}
+			// create the nested component in the context of this component
+			return oOwnerComponent.runAsOwner(createComponent);
+		} else {
+			return createComponent();
+		}
 	};
 
 	/*

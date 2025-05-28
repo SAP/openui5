@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>यदि फ़ोकस किसी सेल स्तर पर है, तो फ़ोकस पांच स्तंभ दाईं ओर ले जाया जाता है (डिफ़ॉल्ट पृष्ठ आकार).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>यदि फ़ोकस किसी स्तंभ शीर्षलेख पर है और दाईं ओर वर्तमान पृष्ठ आकार की तुलना में कम स्तंभ हैं, तो अंतिम स्तंभ पर फ़ोकस ले जाया जाता है.</p>
 				<p>यदि फ़ोकस किसी पंक्ति चयनकर्ता पर है, तो समान पंक्ति के पहले स्तंभ पर फ़ोकस ले जाया जाता है.</p>
 				<p>यदि फ़ोकस <span class="uicontrol">सभी का चयन करें</span> पर है, तो पहले स्तंभ के शीर्षलेख पर फ़ोकस ले जाया जाता है.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
 				<p>यदि फ़ोकस किसी सेल पर है, तो फ़ोकस किया गया सेल चयनित होता है.</p>
 				<p>यदि फ़ोकस किसी सेल चयन ब्लॉक पर है, तो सेल का चयन निकाल दिया जाता है.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>यदि फ़ोकस किसी सेल पर है और तालिका में चयन व्यवहार की कोई निश्चित कॉन्फ़िगरेशन है (यदि यह उपलब्ध हो तो पंक्ति का चयन करने के लिए, आप या तो पंक्ति का चयन कर सकते हैं या चयन चेकबॉक्स का चयन कर सकते हैं), तो पंक्ति के बजाय केवल फ़ोकस किया गया सेल ही चयनित होता है.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>यदि फ़ोकस किसी सेल या पंक्ति चयनकर्ता पर है, तो यह वर्तमान पंक्ति के चयन को टॉगल करता है.</p>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>यदि फ़ोकस तालिका के अंदर है और सेल चयनित हैं, तो सेल का चयन निकाल दिया जाता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>यदि फ़ोकस <span class="uicontrol">सभी का चयन करें</span> पर है और <kbd>Spacebar</kbd> दबाया जाता है, तो संबंधित ईवेंट ट्रिगर नहीं होता है. <kbd>Shift</kbd> इस गतिविधि को रोकता है.</p>
+				<p>यदि फ़ोकस किसी स्तंभ शीर्षलेख पर है और <kbd>Spacebar</kbd> या <kbd>Enter</kbd> दबाया जाता है, तो संबंधित ईवेंट ट्रिगर नहीं होता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित है, तो फ़ोकस ऊपर की पंक्ति पर ले जाया जाता है और चयन इस पंक्ति तक एन्हांस किया जाता है.</p>
+				<p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस ऊपर की पंक्ति पर ले जाया जाता है और इस पंक्ति के लिए चयन निकाल दिया जाता है.</p>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>यदि फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है और पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और उसके ऊपर का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के ऊपर वाले सेल पर फ़ोकस ले जाया जाता है.</p>
 				<p>यदि फ़ोकस चयनित सेल पर है, तो ऊपर वाले सेल पर फ़ोकस हो जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित है, तो फ़ोकस नीचे की पंक्ति पर ले जाया जाता है और चयन इस पंक्ति तक एन्हांस किया जाता है.</p>
+				<p>यदि सेल या पंक्ति चयनकर्ता पर फ़ोकस है और संबंधित पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस नीचे की पंक्ति पर ले जाया जाता है और इस पंक्ति के लिए चयन निकाल दिया जाता है.</p>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>यदि फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है और पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और उसके नीचे का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के नीचे वाले सेल पर फ़ोकस ले जाया जाता है.</p>
 				<p>यदि फ़ोकस चयनित सेल पर है, तो नीचे वाले सेल पर फ़ोकस हो जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>यदि उपलब्ध हो और सुविधा सक्षम हो, तो चयनित पंक्तियों या सेल की क्लिपबोर्ड पर प्रति बनाता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>यदि सुविधा सक्षम है, तो क्लिपबोर्ड से सामग्री चिपकाता है.</p>
 			</description>
 		</interaction>
 	</control-interactions>

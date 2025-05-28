@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen yläpuolella oleva solu. Kohdistus siirtyy kohdistetun solun yläpuolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen alapuolella oleva solu. Kohdistus siirtyy kohdistetun solun alapuolella olevaan soluun. </p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy alapuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Jos kohdistus on taulukon sisällä ja soluja on valittu, solujen valinta poistetaan.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopioi valitut rivit tai solut leikepöydälle, jos toiminto on käytettävissä ja aktivoitu.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Liittää sisällön leikepöydältä, jos toiminto on aktivoitu.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Siirtää kohteen yhden sijan ylöspäin, jos on käytettävissä.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Siirtää kohteen yhden sijan alaspäin, jos on käytettävissä.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Siirtää kohteen ylimmäksi, jos on käytettävissä.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Siirtää kohteen loppuun, jos on käytettävissä.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Siirtää kohteen yhden sijan ylöspäin, jos on käytettävissä.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Siirtää kohteen yhden sijan alaspäin, jos on käytettävissä.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Siirtää kohteen yhden sijan ylöspäin, jos on käytettävissä.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Siirtää kohteen yhden sijan alaspäin, jos on käytettävissä.</p>
 			</description>
 		</interaction>
 	</control-interactions>

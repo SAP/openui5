@@ -598,8 +598,8 @@ sap.ui.define([
 	 *   An array of UI5 messages if the request failed; <code>undefined</code> otherwise
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#separateReceived
-	 * @experimental As of version 1.131.0
 	 * @public
+	 * @since 1.137.0
 	 */
 
 	/**

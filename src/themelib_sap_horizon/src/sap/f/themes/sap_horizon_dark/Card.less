@@ -8,16 +8,10 @@
 @_sap_f_Card_FocusBorderLeftOffset: 0;
 @_sap_f_Card_FocusBorderRightOffset: 0;
 @_sap_f_Card_FocusBorderRadius: inherit;
-@_sap_f_Card_BorderRadius: 1rem;
 @_sap_f_Card_HoverBoxShadow: var(--sapContent_Shadow2);
 @_sap_f_Card_Badge_Background: var(--sapHighlightColor);
 
 .sapFCard {
-
-	&.sapFCardNoContent .sapFCardHeader::before,
-	&.sapFCardNoHeader::before {
-		border-radius: @_sap_f_Card_BorderRadius;
-	}
 
 	.sapFCardHeader {
 		border-bottom: none;

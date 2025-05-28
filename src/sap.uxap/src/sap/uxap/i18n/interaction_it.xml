@@ -2,7 +2,7 @@
 <interaction-documentation library="sap.uxap" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
 	<control-interactions>
 		<control name="sap.uxap.ObjectPageLayout">
-            <defaultLabel>Global Shortcuts</defaultLabel>
+            <defaultLabel>Scorciatoie globali</defaultLabel>
         </control>
 	</control-interactions>
 </interaction-documentation>
