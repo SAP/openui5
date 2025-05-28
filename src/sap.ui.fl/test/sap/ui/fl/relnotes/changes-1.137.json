@@ -1,0 +1,12 @@
+{
+  "1.137.0": {
+    "date": "May 2025",
+    "notes": [
+      {
+        "id": "245a36ea552490bffa9ce0efc276e90e9a1c8337",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix bug where ContextBasedAdaptationsAPI.create does not consider manifest and annotation changes"
+      }
+    ]
+  }
+}

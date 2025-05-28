@@ -3,6 +3,16 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "14e29c837a9591449395a2d61bbb98f623ca8298",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Expanding group no longer expands all its children"
+      },
+      {
+        "id": "cb3c391be5f5fafc3a4d50b5aad9510677b11b56",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationListItem: correctly applied sapTntNLIActive class"
+      },
+      {
         "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
         "type": "FEATURE",
         "text": " sap.m.Menu: Implemented now as a standalone control"

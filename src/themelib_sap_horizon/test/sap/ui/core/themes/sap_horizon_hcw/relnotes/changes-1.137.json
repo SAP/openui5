@@ -8,6 +8,11 @@
         "text": " sap.m.Menu: Implemented now as a standalone control"
       },
       {
+        "id": "8cb4c68b0e83599eafb41e87f09680a978f7d999",
+        "type": "FIX",
+        "text": " sap.f.Card: apply sapTile_BorderCornerRadius theming parameter"
+      },
+      {
         "id": "f8180641bb76e0c35dc6c1d498c0ca52a16f1fa4",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: fixed focus on Planning Calendar Row"

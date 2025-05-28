@@ -8,6 +8,11 @@
         "text": " sap.m.Menu: Implemented now as a standalone control"
       },
       {
+        "id": "8cb4c68b0e83599eafb41e87f09680a978f7d999",
+        "type": "FIX",
+        "text": " sap.f.Card: apply sapTile_BorderCornerRadius theming parameter"
+      },
+      {
         "id": "2f1673bfabcee68a3f247120fdf9d4ea951e99a9",
         "type": "FEATURE",
         "text": " Integration Cards: Statuses in Object and Table cards now support actions"

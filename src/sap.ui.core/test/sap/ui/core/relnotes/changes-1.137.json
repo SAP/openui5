@@ -3,6 +3,11 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "b87468fa879e4521da120f5f9f969380c4a922ee",
+        "type": "FIX",
+        "text": " core/Element: use getter from prototype for 'nodeName'"
+      },
+      {
         "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
         "type": "FEATURE",
         "text": " sap.m.Menu: Implemented now as a standalone control"

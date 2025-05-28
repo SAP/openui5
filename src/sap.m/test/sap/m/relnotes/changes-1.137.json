@@ -3,6 +3,31 @@
     "date": "May 2025",
     "notes": [
       {
+        "id": "9d1ecd215fbd57f92f970100ecef0950574dffdf",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed context menu re-opening when it is already open"
+      },
+      {
+        "id": "1d1474da3987152d16d247a25485e7893e81eef3",
+        "type": "FIX",
+        "text": " sap.m.Menu: restored event firing order"
+      },
+      {
+        "id": "97c328f19f0d8be03974b7b98264d108eb680890",
+        "type": "FIX",
+        "text": " sap.m.Menu: restored 'defaultClass' for 'items' aggregation"
+      },
+      {
+        "id": "8146eaa8320d63122223b80f231c9a833c5563a1",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Corrected ARIA state for Overflow Button"
+      },
+      {
+        "id": "3b4471a8e8c16ceb872b80d199d82b68daa1b83d",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed JS error thrown by MenuWrapper"
+      },
+      {
         "id": "68e35fe662cfb58ed2db56e2f10e25fa31ab979d",
         "type": "FEATURE",
         "text": " sap.m.Menu: Implemented now as a standalone control"
