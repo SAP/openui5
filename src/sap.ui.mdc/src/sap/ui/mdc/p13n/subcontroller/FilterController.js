@@ -122,14 +122,14 @@ sap.ui.define([
 		});
 	};
 
-	FilterController.prototype.update = function(oPropertyHelper) {
+	FilterController.prototype.update = async function(oPropertyHelper) {
 		if (this._oPanel) {
 			const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 			this._oPanel.setP13nData(oAdaptationData);
 			const oAdaptationControl = this.getAdaptationControl();
 			const oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
 			if (oInbuiltFilter) {
-				oInbuiltFilter.createFilterFields();
+				await oInbuiltFilter.createFilterFields();
 			}
 		}
 	};
