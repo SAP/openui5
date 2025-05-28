@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -22,9 +22,9 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Element,
+	JsControlTreeModifier,
 	ElementOverlay,
 	OverlayRegistry,
-	JsControlTreeModifier,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	nextUIUpdate,
@@ -37,7 +37,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
 		async before() {
@@ -90,7 +90,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when an 'overlayInfo' event is triggered", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			// To prevent changes in the control's designtime affecting this test, we return
 			// these three plugins and check for the number of plugins in the response
 			sandbox.stub(ElementOverlay.prototype, "getEditableByPlugins").returns({
@@ -135,8 +135,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a 'printChangeHandler' event is triggered", function(assert) {
-			var fnDone = assert.async();
-			var oConsoleStub = sandbox.stub(console, "log");
+			const fnDone = assert.async();
+			const oConsoleStub = sandbox.stub(console, "log");
 
 			ChangesWriteAPI.getChangeHandler({
 				changeType: "rename",
@@ -166,10 +166,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a 'printDesignTimeMetadata' event is triggered", function(assert) {
-			var fnDone = assert.async();
-			var oConsoleStub = sandbox.stub(console, "log");
-			var oButtonOverlay = OverlayRegistry.getOverlay("button1");
-			var oButtonDesigntimeMetadata = oButtonOverlay.getDesignTimeMetadata().getData();
+			const fnDone = assert.async();
+			const oConsoleStub = sandbox.stub(console, "log");
+			const oButtonOverlay = OverlayRegistry.getOverlay("button1");
+			const oButtonDesigntimeMetadata = oButtonOverlay.getDesignTimeMetadata().getData();
 
 			oConsoleStub
 			.callThrough()
@@ -191,7 +191,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an 'changeOverlaySelection' event is triggered on a selectable overlay", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			OverlayRegistry.getOverlay("button1").setSelected(false);
 			OverlayRegistry.getOverlay("button2").setSelected(true);
 			assert.notOk(OverlayRegistry.getOverlay("button1").getSelected(), "Initially, overlay of button1 is not selected");
@@ -220,7 +220,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an 'changeOverlaySelection' event is triggered on a non selectable overlay", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			OverlayRegistry.getOverlay("button1").setSelected(false);
 			OverlayRegistry.getOverlay("button1").setSelectable(false);
 			OverlayRegistry.getOverlay("button2").setSelected(true);
@@ -253,7 +253,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an 'changeOverlaySelection' event is triggered on a non selectable overlay without DomRef", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			OverlayRegistry.getOverlay("button1").setSelected(false);
 			OverlayRegistry.getOverlay("button1").setSelectable(false);
 			OverlayRegistry.getOverlay("button1")._$DomRef = null; // there is no better way to remove DomRef...
@@ -288,7 +288,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an 'changeOverlaySelection' event is triggered when a non selectable overlay is unselected", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			OverlayRegistry.getOverlay("button1").setSelected(false);
 			OverlayRegistry.getOverlay("button1").setSelectable(false);
 			OverlayRegistry.getOverlay("button2").setSelected(true);
@@ -327,7 +327,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an 'changeOverlaySelection' event is triggered on multiple selection", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			// We have to fake a Multiselection of Buttons using Selectionmanager
 			const oSelectionManager = this.oRta._oDesignTime.getSelectionManager();
 			oSelectionManager.add(OverlayRegistry.getOverlay("button1"));
@@ -360,46 +360,57 @@ sap.ui.define([
 			window.addEventListener("message", onMessage.bind(this), { once: true });
 		});
 
-		// QUnit.test("when contextmenu is closed", async function(assert) {
-		// 	var fnDone = assert.async();
-		// 	OverlayRegistry.getOverlay("button1").setSelected(false);
-		// 	OverlayRegistry.getOverlay("button2").setSelected(true);
-		//
-		// 	// open a context menu on button2 overlay
-		// 	var oContexMenu = this.oRta.getPlugins().contextMenu;
-		// 	var oContextMenuEvent = new MouseEvent("contextmenu", {
-		// 		bubbles: true,
-		// 		cancelable: true,
-		// 		view: window,
-		// 		buttons: 2
-		// 	});
-		// 	oContexMenu.oContextMenuControl.openAsContextMenu(oContextMenuEvent, OverlayRegistry.getOverlay("button2"));
-		// 	await nextUIUpdate();
-		// 	assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 1, "ContextMenu is available");
-		//
-		// 	function onMessage(oEvent) {
-		// 		if (
-		// 			oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
-		// 			&& oEvent.data.type === "changeOverlaySelection"
-		// 		) {
-		// 			assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 0, "ContextMenu is not available any more");
-		// 			fnDone();
-		// 		}
-		// 	}
-		//
-		// 	window.postMessage({
-		// 		id: "ui5FlexibilitySupport.submodules.overlayInfo",
-		// 		type: "changeOverlaySelection",
-		// 		content: {
-		// 			overlayId: OverlayRegistry.getOverlay("button1").getId()
-		// 		}
-		// 	});
-		//
-		// 	window.addEventListener("message", onMessage.bind(this), { once: true });
-		// });
+		QUnit.test("when contextmenu is closed", async function(assert) {
+			const fnDone = assert.async();
+			OverlayRegistry.getOverlay("button1").setSelected(false);
+			OverlayRegistry.getOverlay("button2").setSelected(true);
+
+			// open a context menu on button2 overlay
+			const oContextMenu = this.oRta.getPlugins().contextMenu;
+			const oContextMenuEvent = new MouseEvent("contextmenu", {
+				bubbles: true,
+				cancelable: true,
+				view: window,
+				buttons: 2
+			});
+			oContextMenu.oContextMenuControl.openAsContextMenu(oContextMenuEvent, OverlayRegistry.getOverlay("button2"));
+			await nextUIUpdate();
+			assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 1, "ContextMenu is available");
+
+			function onMessage(oEvent) {
+				if (
+					oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
+					&& oEvent.data.type === "changeOverlaySelection"
+				) {
+					// check if contextmanu is available
+					let bHidden = false;
+					const oContextMenu = document.getElementsByClassName("sapUiDtContextMenu")[0];
+					if (!oContextMenu) {
+						bHidden = true;
+					} else {
+						const oComputedStyle = window.getComputedStyle(oContextMenu);
+						if (oComputedStyle.display === "none" || oComputedStyle.visibility === "hidden") {
+							bHidden = true;
+						}
+					}
+					assert.ok(bHidden, "ContextMenu is not available any more");
+					fnDone();
+				}
+			}
+
+			window.postMessage({
+				id: "ui5FlexibilitySupport.submodules.overlayInfo",
+				type: "changeOverlaySelection",
+				content: {
+					overlayId: OverlayRegistry.getOverlay("button1").getId()
+				}
+			});
+
+			window.addEventListener("message", onMessage.bind(this), { once: true });
+		});
 
 		QUnit.test("when RTA is closed", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			function onMessageStop(oEvent) {
 				if (
 					oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
@@ -415,7 +426,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when an 'collectOverlayTableData' event is triggered", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			function mockTableEntity(oOverlay) {
 				return {
@@ -424,7 +435,7 @@ sap.ui.define([
 					visible: oOverlay.getSelectable()
 				};
 			}
-			var aTableMockData = [];
+			const aTableMockData = [];
 			OverlayRegistry.getOverlays().forEach(function(oOverlay) {
 				if (!oOverlay.isA("sap.ui.dt.AggregationOverlay")) {
 					aTableMockData.push(mockTableEntity(oOverlay));
@@ -435,9 +446,9 @@ sap.ui.define([
 					oEvent.data.id === "ui5FlexibilitySupport.submodules.overlayInfo"
 					&& oEvent.data.type === "overlayInfoTableData"
 				) {
-					var aCollectedTableData = oEvent.data.content;
+					const aCollectedTableData = oEvent.data.content;
 					assert.strictEqual(aCollectedTableData.length, aTableMockData.length, "correct number of overlays is collected");
-					for (var iIndex = 0; iIndex < aCollectedTableData.length; iIndex++) {
+					for (let iIndex = 0; iIndex < aCollectedTableData.length; iIndex++) {
 						assert.strictEqual(aCollectedTableData[iIndex].id, aTableMockData[iIndex].id, `the entry number ${iIndex + 1} has the correct id`);
 						assert.strictEqual(aCollectedTableData[iIndex].elementId, aTableMockData[iIndex].elementId, `the entry number ${iIndex + 1} has the correct elementId`);
 						assert.strictEqual(aCollectedTableData[iIndex].visible, aTableMockData[iIndex].visible, `the entry number ${iIndex + 1} has the correct visible status`);
