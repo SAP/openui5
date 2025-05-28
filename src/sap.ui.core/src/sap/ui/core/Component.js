@@ -1429,9 +1429,14 @@ sap.ui.define([
 			throw new Error("Creation of component '" + mConfig.name + "' is not possible due to inactive owner component '" + this.getId() + "'");
 		}
 
+		/**
+		* @ui5-transform-hint replace-local true
+		*/
+		const bAsync = mConfig.async;
+
 		// create the nested component in the context of this component
 		const oComponent = this.runAsOwner(() => {
-			if (mConfig.async === true) {
+			if (bAsync === true) {
 				return Component.create(mConfig);
 			} else {
 				return sap.ui.component(mConfig); // legacy-relevant: use deprecated factory for sync use case only
