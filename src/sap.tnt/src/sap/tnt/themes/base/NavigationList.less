@@ -102,7 +102,7 @@
 	flex-direction: column-reverse;
 }
 
-.sapUiIcon > .sapUiIconTitle {
+.sapTntNLI .sapUiIcon > .sapUiIconTitle {
 	padding-inline-end: @_sap_tnt_NavigationList_PaddingInlineEnd;
 	padding-block: @_sap_tnt_NavigationList_ArrowPadding;
 	top: -@_sap_tnt_NavigationList_ArrowPadding;
@@ -607,7 +607,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 	}
 
 	// parent menu
-	&:not(.sapUiSubmenu) .sapUiMnuLst .sapUiMnuItm  {
+	&:not(.sapMSubmenu) .sapMMenuList .sapMMenuItem  {
 		font-family: @_sap_tnt_NavigationList_ParentItemTextFontFamily;
 
 		.sapMMenuItemIcon {
@@ -692,8 +692,8 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 				margin-right: 0;
 			}
 
-			&.sapUiMnuItmDsbl .sapUiMnuItmIco,
-			&.sapUiMnuItmDsbl .sapTntNLIExpandIcon {
+			&.sapMMenuItemDisabled .sapMMenuItemIco,
+			&.sapMMenuItemDisabled .sapTntNLIExpandIcon {
 				opacity: @sapUiContentDisabledOpacity;
 			}
 		}
@@ -746,7 +746,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 /* Compact size */
 .sapUiSizeCompact {
 
-	.sapUiIcon > .sapUiIconTitle {
+	.sapTntNLI .sapUiIcon > .sapUiIconTitle {
 		padding-block: @_sap_tnt_NavigationList_ArrowPaddingCompact;
 		top: -@_sap_tnt_NavigationList_ArrowPaddingCompact;
 	}

@@ -752,9 +752,6 @@ sap.ui.define([
 	QUnit.module("FlexState with loadFlexData and callPrepareFunction stubbed, filtering active", {
 		beforeEach() {
 			this.oLoadFlexDataStub = sandbox.stub(Loader, "loadFlexData").resolves(mEmptyResponse);
-			this.ogetUShellServiceStub = sandbox.stub(Utils, "getUShellService")
-			.withArgs("URLParsing")
-			.returns(Promise.resolve("DummyURLParsingService"));
 			this.oCallPrepareFunctionStub = sandbox.stub(FlexState, "callPrepareFunction").callsFake(mockPrepareFunctions);
 			this.oAppComponent = new UIComponent(sComponentId);
 			this.oIsLayerFilteringRequiredStub = sandbox.stub(LayerUtils, "isLayerFilteringRequired").returns(true);

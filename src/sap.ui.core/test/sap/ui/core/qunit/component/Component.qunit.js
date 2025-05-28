@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/Messaging',
 	'sap/ui/core/UIComponentMetadata',
 	'sap/ui/core/mvc/View',
+	'sap/ui/core/mvc/_ViewFactory',
 	'testdata/routing/Component',
 	'testdata/routing/RouterExtension',
 	'sap/base/Log',
@@ -27,6 +28,7 @@ sap.ui.define([
 	Messaging,
 	UIComponentMetadata,
 	View,
+	_ViewFactory,
 	SamplesRoutingComponent,
 	SamplesRouterExtension,
 	Log,
@@ -2344,8 +2346,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component0 with Terminologies defined in Component Metadata", function (assert) {
-		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
-
 		return Component.create({
 			name: "testdata.terminologies",
 			manifest: false,
@@ -2354,8 +2354,7 @@ sap.ui.define([
 			this.oComponent = oComponent;
 
 			// Check Resource Model creation
-			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
-			assert.equal(oCreateManifestModelsSpy.callCount, 1, "_createManifestModels should be called for the i18n model");
+			const oSettings = this.oComponent.getOwnModels()?.i18n?.oData;
 			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oSettings.terminologies.oil.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.oil.i18n.properties", "The bundleUrl should be resolved correctly");
 			assert.equal(oSettings.terminologies.retail.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/i18n/terminologies.retail.i18n.properties", "The bundleUrl should be resolved correctly");
@@ -2379,8 +2378,6 @@ sap.ui.define([
 			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
-
-			oCreateManifestModelsSpy.restore();
 		}.bind(this));
 	});
 
@@ -2468,7 +2465,6 @@ sap.ui.define([
 
 	QUnit.test("Component1 with Terminologies defined in manifest.json file", function (assert) {
 		var oResourceBundleCreateSpy = sinon.spy(ResourceBundle, "create");
-		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
 
 		return Component.create({
 			name: "testdata.terminologies.component1",
@@ -2499,7 +2495,7 @@ sap.ui.define([
 			assert.ok(oEnhanceWith1.hasOwnProperty("fallbackLocale"), "The property 'fallbackLocale' should be available");
 
 			// check if already processed properties have been removed when the ResourceModel constructor is called
-			var oSettingsAfterLoad = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
+			var oSettingsAfterLoad = oComponent.getOwnModels()?.i18n?.oData;
 			assert.notOk(oSettingsAfterLoad.enhanceWith, "enhanceWith was removed");
 			assert.notOk(oSettingsAfterLoad.terminologies, "terminologies was removed");
 			assert.notOk(oSettingsAfterLoad.activeTerminologies, "terminologies was removed");
@@ -2507,7 +2503,6 @@ sap.ui.define([
 			assert.deepEqual(this.oComponent.getActiveTerminologies(), ["oil", "retail"], "The list of terminologies should be correct");
 
 			oResourceBundleCreateSpy.restore();
-			oCreateManifestModelsSpy.restore();
 		}.bind(this));
 	});
 
@@ -2740,8 +2735,6 @@ sap.ui.define([
 		//		"uri": "i18n/i18n.properties",
 		//			"settings": {
 		// 				[...]
-		var oCreateManifestModelsSpy = sinon.spy(Component, "_createManifestModels");
-
 		return Component.create({
 			name: "testdata.terminologies.component5",
 			manifest: true,
@@ -2749,11 +2742,9 @@ sap.ui.define([
 		}).then(function (oComponent) {
 			this.oComponent = oComponent;
 
-			var oSettings = oCreateManifestModelsSpy.getCall(0).args[0].i18n.settings[0];
-			assert.ok(oSettings.hasOwnProperty("bundleUrl"), "Property 'bundleUrl' should be avaialble");
+			var oSettings = this.oComponent.getOwnModels()?.i18n?.oData;
+			assert.ok(oSettings.hasOwnProperty("bundleUrl"), "Property 'bundleUrl' should be available");
 			assert.equal(oSettings.bundleUrl, "test-resources/sap/ui/core/qunit/component/testdata/terminologies/component5/i18n/i18n.properties", "The bundleUrl should be resolved correctly");
-
-			oCreateManifestModelsSpy.restore();
 		}.bind(this));
 	});
 
@@ -2776,7 +2767,7 @@ sap.ui.define([
 	QUnit.module("Manifest 2.0");
 
 	QUnit.test("Manifest 2.0 is supported (typed view)", async function(assert) {
-		const oViewCreateSpy = sinon.spy(View, "_create");
+		const oViewCreateSpy = sinon.spy(_ViewFactory, "create");
 		const oComponent = await Component.create({
 			manifest: sap.ui.require.toUrl("testdata/manifest2/basic/manifest_variant.json")
 		}).catch((error) => {
@@ -2792,7 +2783,7 @@ sap.ui.define([
 		const TypedMain = sap.ui.require("testdata/manifest2/basic/views/TypedMain");
 		assert.ok(oComponent.getRootControl() instanceof TypedMain, "Root control is TypedMain");
 
-		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "module:testdata/manifest2/basic/views/TypedMain", async: true}), "View._create called with correct parameters");
+		assert.ok(oViewCreateSpy.calledWithExactly({viewName: "module:testdata/manifest2/basic/views/TypedMain", async: true}), "_ViewFactory.create called with correct parameters");
 
 		oComponent.destroy();
 		oViewCreateSpy.restore();

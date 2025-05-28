@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Jei suaktyvinta langelio lygmenyje, suaktyvinami penki dešinėje esantys stulpeliai (numatytasis puslapio dydis).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Jei suaktyvinta stulpelio antraštė ir dešinėje yra mažiau stulpelių nei dabartinis puslapio dydis, suaktyvinamas paskutinis stulpelis.</p>
 				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinamas pirmas stulpelis toje pačioje eilutėje.</p>
 				<p>Jei suaktyvinta <span class="uicontrol">Žymėti viską</span>, suaktyvinama pirmo stulpelio antraštė.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
 				<p>Jei suaktyvintas langelis, pasirenkamas suaktyvintas langelis.</p>
 				<p>Jei suaktyvintas langelių pasirinkimo blokas, pašalinamas langelių pasirinkimas.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Jei suaktyvintas langelis ir lentelėje yra tam tikra pasirinkimo veikimo konfigūracija (norėdami pasirinkti eilutę, galite pasirinkti pačią eilutę arba, esant galimybei, pasirinkimo žymės langelį), vietoje eilutės pasirenkamas tik suaktyvintas langelis.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Jei suaktyvintas langelis arba eilučių parinkiklis, pasirinkimas perjungiamas į esamą eilutę.</p>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Jei suaktyvinta lentelėje ir pasirinkti langeliai, pašalinamas visų langelių pasirinkimas.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Jei suaktyvinta <span class="uicontrol">Žymėti viską</span> ir paspaudžiama <kbd>Spacebar</kbd>, atitinkamas įvykis neinicijuojamas. <kbd>Shift</kbd> neleidžia atlikti šio veiksmo.</p>
+				<p>Jei suaktyvinta stulpelio antraštė ir paspaudžiama <kbd>Spacebar</kbd> arba <kbd>Enter</kbd>, atitinkamas įvykis neinicijuojamas.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama aukščiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir atitinkama eilutė <span class="emphasis">nėra</span> pasirinkta, suaktyvinama aukščiau esanti eilutė ir šios eilutės pasirinkimas pašalinamas.</p>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, ir eilutė <span class="emphasis">nėra</span> pasirinkta, pasirenkamas suaktyvintas ir aukščiau esantis langelis. Suaktyvinamas aukščiau suaktyvinto langelio esantis langelis.</p>
 				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas aukščiau esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama žemiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir atitinkama eilutė <span class="emphasis">nėra</span> pasirinkta, suaktyvinama žemiau esanti eilutė ir šios eilutės pasirinkimas pašalinamas.</p>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, ir eilutė <span class="emphasis">nėra</span> pasirinkta, pasirenkami suaktyvintas ir žemiau esantis langeliai. Suaktyvinamas žemiau suaktyvinto langelio esantis langelis.</p>
 				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas žemiau esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Esant galimybei ir įjungus funkciją pasirinktos eilutės ir langeliai nukopijuojami į mainų sritį.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Įklijuojamas turinys iš mainų srities, jei funkcija įgalinta.</p>
 			</description>
 		</interaction>
 	</control-interactions>

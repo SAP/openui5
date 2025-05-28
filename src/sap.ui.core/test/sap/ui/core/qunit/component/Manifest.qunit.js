@@ -1,9 +1,10 @@
 sap.ui.define([
 	"sap/base/future",
 	"sap/base/i18n/Localization",
+	'sap/ui/core/Lib',
 	'sap/ui/core/Manifest',
 	'sap/ui/core/_CommandPool'
-], function(future, Localization, Manifest, _CommandPool) {
+], function(future, Localization, Library, Manifest, _CommandPool) {
 	"use strict";
 	/*global QUnit */
 
@@ -259,14 +260,15 @@ sap.ui.define([
 			url: "test-resources/sap/ui/core/qunit/component/testdata/commands/manifest.json"
 		});
 
+		const oRB = Library.getResourceBundleFor("sap.ui.core");
 		const mExpected = {
 			"Save": {
 				"shortcut": "Ctrl+S",
-				"description": "Save"
+				"description": oRB.getText("SAP_SAVE")
 			},
 			"Create": {
 				"shortcut": "Ctrl+Enter",
-				"description": "Create"
+				"description": oRB.getText("SAP_CREATE")
 			}
 		};
 

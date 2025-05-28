@@ -186,7 +186,6 @@ sap.ui.define([
 			.expectNoLibLoad()
 			.expectCompPreload("sap.test.mycomp")
 			.expectRequire(["sap/test/mycomp/Component"], [Component])
-			.expectRequire(["sap/ui/core/Component"], [Component])
 			;
 
 		// act
@@ -241,7 +240,6 @@ sap.ui.define([
 			.expectNoLibLoad()
 			.expectCompPreload("sap.test.mycomp")
 			.expectRequire(["sap/test/mycomp/Component"], [Component])
-			.expectRequire(["sap/ui/core/Component"], [Component])
 			;
 
 		const oComponent = await Component.create({name: "sap.test.mycomp"}).catch((err) => {
@@ -296,7 +294,6 @@ sap.ui.define([
 			.expectNoLibLoad()
 			.expectCompPreload("sap.test.mycomp")
 			.expectRequire(["sap/test/mycomp/Component"], [Component])
-			.expectRequire(["sap/ui/core/Component"], [Component])
 			;
 
 		// act
@@ -402,7 +399,6 @@ sap.ui.define([
 		this.helper
 			.expectCompPreload("sap.test.mycomp")
 			.expectRequire(["sap/test/mycomp/Component"], [Component])
-			.expectRequire(["sap/ui/core/Component"], [Component])
 			;
 
 		// act
@@ -434,7 +430,6 @@ sap.ui.define([
 			.expectNoLibLoad()
 			.expectCompPreload("sap.test.mycomp")
 			.expectRequire(["sap/test/mycomp/Component"], [Component])
-			.expectRequire(["sap/ui/core/Component"], [Component])
 			;
 
 		const oComponent = await Component.create({
@@ -456,7 +451,6 @@ sap.ui.define([
 		this.helper
 			.expectCompPreload("sap.test.mycomp")
 			.expectRequire(["sap/test/mycomp/Component"], [Component])
-			.expectRequire(["sap/ui/core/Component"], [Component])
 			;
 
 		const oComponent = await Component.create({
@@ -473,11 +467,11 @@ sap.ui.define([
 	QUnit.test("Manifest from component instance", async function(assert) {
 
 		//setup fake server and data
-		var oManifest = {
-			"sap.app" : {
-				"id" : "samples.components.button"
-			}
-		};
+		const oManifest = await LoaderExtensions.loadResource({
+			dataType: "json",
+			url: sap.ui.require.toUrl("testdata/instanceManifest/manifest.json"),
+			async: true
+		});
 
 		var oServer = this._oSandbox.useFakeServer();
 		oServer.autoRespond = true;

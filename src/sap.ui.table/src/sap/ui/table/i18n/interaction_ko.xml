@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>셀 레벨에 포커스가 있다면 오른쪽으로 5개 열만큼(기본 페이지 크기) 포커스가 이동합니다.</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>열 헤더에 포커스가 있고 오른쪽에 있는 열이 현재 페이지 크기보다 적은 경우에는 마지막 열로 포커스가 이동합니다. </p>
 				<p>행 선택에 포커스가 있다면 같은 행의 첫 번째 열로 포커스가 이동합니다.</p>
 				<p><span class="uicontrol">모두 선택</span>에 포커스가 있다면 첫 번째 열의 헤더로 포커스가 이동합니다.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
 				<p>셀에 포커스가 있다면 포커스가 있는 셀이 선택됩니다.</p>
 				<p>셀 선택 블록에 포커스가 있다면 셀 선택이 제거됩니다.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>셀에 포커스가 있고 테이블에 선택 동작의 특정 구성이 있는 경우(행을 선택하기 위해 행을 직접 선택하거나 선택 체크박스가 있으면 이를 선택), 행이 아닌 포커스가 있는 셀만 선택됩니다.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>셀 또는 행 선택에 포커스가 있다면 이를 통해 현재 행 선택을 토글합니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>테이블 내부에 포커스가 있고 셀이 선택되어 있으면 셀에 대한 선택이 제거됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p><span class="uicontrol">모두 선택</span>에 포커스가 있고 <kbd>Spacebar</kbd>을(를) 누른 상태에서는 해당 이벤트가 트리거되지 않습니다. <kbd>Shift</kbd>에서 이 액티비티를 차단합니다.</p>
+				<p>열 헤더에 포커스가 있고 <kbd>Spacebar</kbd> 또는 <kbd>Enter</kbd>을(를) 누른 상태에서는 해당 이벤트가 트리거되지 않습니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 위쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 위쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 위쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 위쪽 셀로 이동합니다.</p>
 				<p>선택된 셀에 포커스가 있으면 위쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 아래쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 아래쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 아래쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 아래쪽 셀로 이동합니다.</p>
 				<p>선택된 셀에 포커스가 있으면 아래쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>해당 기능이 활성화되어 사용 가능한 경우 선택한 행 또는 셀을 클립보드로 복사합니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>해당 기능이 활성화된 경우 클립보드에서 내용을 붙여넣습니다.</p>
 			</description>
 		</interaction>
 	</control-interactions>

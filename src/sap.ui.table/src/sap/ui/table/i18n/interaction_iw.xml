@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>אם מיקוד הוא ברמת תא, המיקוד עובר חמש עמודות ימינה (גודל עמוד בברירת מחדל).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>אם מיקוד הוא בכותרת העמודה ויש פחות עמודות מימין מאשר בגודל העמוד הנוכחי, המיקוד עובר לעמודה האחרונה.</p>
 				<p>אם מיקוד הוא בבורר השורות, המיקוד עובר לעמודה הראשונה באותה שורה.</p>
 				<p>אם מיקוד הוא ב<span class="uicontrol">'בחר הכול'</span>, המיקוד עובר לכותרת של העמודה הראשונה.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
 				<p>אם מיקוד הוא בתא, התא הממוקד נבחר.</p>
 				<p>אם מיקוד הוא בבלוק של בחירת תא, בחירת התאים מוסרת.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>אם מיקוד הוא בתא ולטבלה יש תצורה מסוימת של התנהגות הבחירה (כדי לבחור שורה, ניתן לבחור את השורה עצמה או את תיבת התיוג של הבחירה, אם היא זמינה), רק התא הממוקד נבחר במקום השורה.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>אם מיקוד הוא בתא או בבורר שורות, זה מחליף את הבחירה של השורה הנוכחית.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>אם מיקוד הוא בתוך הטבלה ונבחרו תאים, בחירת התאים מוסרת.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>אם מיקוד הוא ב<span class="uicontrol">'בחר הכול'</span> ו-<kbd>Spacebar</kbd> לחוץ, האירוע המתאים אינו מופעל.<kbd>Shift</kbd> מונע פעילות זו.</p>
+				<p>אם מיקוד הוא בכותרת עמודה ו-<kbd>Spacebar</kbd> או <kbd>Enter</kbd> לחוצים, האירוע המתאים אינו מופעל.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>אם מיקוד הוא בתא או בבורר שורות והשורה הרלוונטית נבחרה, המיקוד עובר לשורה שמעל והבחירה מורחבת עד לשורה זו.</p>
+				<p>אם מיקוד הוא בתא או בבורר שורות והשורה הרלוונטית <span class="emphasis">לא</span> נבחרה, המיקוד עובר לשורה שמעל, והבחירה מוסרת עבור שורה זו.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>אם מיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר והשורה <span class="emphasis">לא</span> נבחרה, התא הממוקד והתא שמעל נבחרים. המיקוד עובר לתא שמעל התא הממוקד.</p>
 				<p>אם מיקוד הוא בתא שנבחר, התא שמעל מקבל את המיקוד, ותא הבחירה מורחב עד לתא זה.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>אם מיקוד הוא בתא או בבורר שורות והשורה הרלוונטית נבחרה, המיקוד עובר לשורה שמתחת והבחירה מורחבת עד לשורה זו.</p>
+				<p>אם מיקוד הוא בתא או בבורר שורות והשורה הרלוונטית <span class="emphasis">לא</span> נבחרה, המיקוד עובר לשורה שמתחת, והבחירה מוסרת עבור שורה זו.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>אם מיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר והשורה <span class="emphasis">לא</span> נבחרה, התא הממוקד והתא שמתחת נבחרים. המיקוד עובר לתא שמתחת לתא הממוקד.</p>
 				<p>אם מיקוד הוא בתא שנבחר, התא שמתחת מקבל את המיקוד, ותא הבחירה מורחב עד לתא זה.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>מעתיק את השורות או התאים שנבחרו ללוח העריכה, אם זמין, והמאפיין הופעל.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>מדביק את התוכן מלוח העריכה, אם המאפיין הופעל.</p>
 			</description>
 		</interaction>
 	</control-interactions>

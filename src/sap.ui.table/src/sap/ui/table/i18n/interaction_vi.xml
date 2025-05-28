@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Nếu tiêu điểm đang ở cấp độ ô, tiêu điểm sẽ di chuyển sang phải năm cột (kích thước trang mặc định).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Nếu tiêu điểm đang ở tiêu đề cột và số cột bên phải ít hơn kích thước trang hiện tại, tiêu điểm sẽ chuyển đến cột cuối cùng. </p>
 				<p>Nếu tiêu điểm đang ở bộ chọn hàng, tiêu điểm sẽ chuyển đến cột đầu tiên trong cùng hàng.</p>
 				<p>Nếu tiêu điểm đang ở <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ chuyển đến tiêu đề của cột đầu tiên.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
 				<p>Nếu tiêu điểm đang ở một ô, ô được tiêu điểm sẽ được chọn. </p>
 				<p>Nếu tiêu điểm đang ở khối chọn ô, lựa chọn ô sẽ bị loại bỏ.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Nếu tiêu điểm đang ở một ô và bảng có cấu hình hành vi lựa chọn nhất định (để chọn một hàng, bạn có thể chọn hàng đó hoặc ô kiểm tra nếu có), chỉ ô được lấy tiêu điểm sẽ được chọn thay vì cả hàng.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Nếu tiêu điểm đang ở một ô hoặc bộ chọn hàng, thao tác này sẽ đảo trạng thái lựa chọn của hàng hiện tại.</p>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Nếu tiêu điểm nằm bên trong bảng và các ô được chọn, lựa chọn ô sẽ bị loại bỏ.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Nếu tiêu điểm đang ở <span class="uicontrol">Chọn tất cả</span>, và <kbd>Spacebar</kbd> được nhấn, sự kiện tương ứng không được kích hoạt. <kbd>Shift</kbd> ngăn chặn hoạt động này.</p>
+				<p>Nếu tiêu điểm đang ở tiêu đề cột và <kbd>Spacebar</kbd> hoặc <kbd>Enter</kbd> được nhấn, sự kiện tương ứng sẽ không được kích hoạt.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc ô và hàng liên quan được chọn, tiêu điểm sẽ di chuyển đến hàng phía trên và lựa chọn sẽ được mở rộng đến hàng này.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc ô và hàng liên quan <span class="emphasis">chưa</span> được chọn, tiêu điểm sẽ di chuyển đến hàng phía trên và lựa chọn sẽ bị loại bỏ cho hàng này.</p>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Nếu tiêu điểm đang ở trên ô <span class="emphasis">chưa</span> được chọn và hàng cũng <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô phía trên sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô phía trên của ô được lấy tiêu điểm.</p>
 				<p>Nếu tiêu điểm đang ở một ô đã được chọn, ô phía trên sẽ nhận tiêu điểm và phạm vi chọn ô sẽ được mở rộng đến ô đó.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc ô và hàng liên quan được chọn, tiêu điểm sẽ chuyển đến hàng bên dưới, và lựa chọn sẽ được mở rộng đến hàng này. </p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc ô và hàng liên quan <span class="emphasis">chưa</span> được chọn, tiêu điểm sẽ chuyển đến hàng bên dưới và lựa chọn sẽ bị loại bỏ cho hàng này.</p>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Nếu tiêu điểm đang ở trên ô <span class="emphasis">chưa</span> được chọn và hàng cũng <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên dưới sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên dưới của ô được lấy tiêu điểm.</p>
 				<p>Nếu tiêu điểm đang ở một ô đã được chọn, ô phía dưới sẽ nhận tiêu điểm và phạm vi chọn ô sẽ được mở rộng đến ô đó.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Sao chép các hàng hoặc ô đã chọn vào clipboard nếu có sẵn, và tính năng này được bật. </p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Dán nội dung từ clipboard nếu tính năng này được bật.</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -181,7 +181,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Вставляє вміст з буфера обміну, якщо цю функцію увімкнено.</p>
+				<p>Вставляє вміст із буфера обміну, якщо ця функція активована.</p>
 			</description>
 		</interaction>
 	</control-interactions>

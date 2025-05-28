@@ -2371,7 +2371,7 @@ sap.ui.define([
 						path: "sharing",
 						model: sModelName,
 						formatter: function(sValue) {
-							return this._oRb.getText(sValue === "private" ? "VARIANT_MANAGEMENT_PRIVATE" : "VARIANT_MANAGEMENT_PUBLIC");
+							return this._oRb.getText(sValue === "Private" ? "VARIANT_MANAGEMENT_PRIVATE" : "VARIANT_MANAGEMENT_PUBLIC");
 						}.bind(this)
 					},
 					textAlign: "Center"

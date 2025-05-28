@@ -1174,7 +1174,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component with async rootView creation", function(assert) {
-		assert.expect(8);
+		assert.expect(7);
 
 		var oManifest = {
 			"sap.app" : {
@@ -1235,7 +1235,6 @@ sap.ui.define([
 			assert.equal(this.oViewCreateSpy.callCount, 2, "async view factory called twice");
 			// check if router is async
 			assert.ok(oComponent.getRouter(), "Router created");
-			assert.ok(oComponent.getRouter()._isAsync(), "Router is async");
 		}.bind(this)).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});

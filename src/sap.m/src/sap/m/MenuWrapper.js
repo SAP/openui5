@@ -165,7 +165,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (oEvent.target.closest(`#${oItem.getId()}-endContent`)) {
+		if (oEvent.target.closest(CSS.escape(`#${oItem.getId()}-endContent`))) {
 			this.fireClosePopover({ bubbleToRoot: true });
 			return;
 		}
@@ -327,8 +327,8 @@ sap.ui.define([
 				oItem.setSelected(!oItem.getSelected());
 			}
 
-			oItem.firePress({item: oItem});
 			this.fireItemSelected({item: oItem});
+			oItem.firePress({item: oItem});
 			this.fireClosePopover({ bubbleToRoot: true, origin: oItem });
 		}
 	};

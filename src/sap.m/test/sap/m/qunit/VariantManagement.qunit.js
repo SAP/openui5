@@ -913,10 +913,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("check opens check items", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "private", author: "B"}));
-		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "Public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "Private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "Private", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "Public", author: "B"}));
 
 		this.oVM.setDefaultKey("3");
 
@@ -1039,10 +1039,10 @@ sap.ui.define([
 	QUnit.test("check opens check event 'cancel'", async function(assert) {
 		var done = assert.async();
 
-		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "private", author: "B"}));
-		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "Public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "Private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "Private", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "Public", author: "B"}));
 		this.oVM.setDefaultKey("3");
 
 		await nextUIUpdate();
@@ -1196,10 +1196,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("check opens check event 'manage'", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "private", author: "B"}));
-		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "Public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "Private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "Private", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "Public", author: "B"}));
 
 		this.oVM.setDefaultKey("3");
 
@@ -1310,10 +1310,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("check manage dialog with dublicate entries", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "private", author: "B"}));
-		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "Public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "Private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "Private", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "Public", author: "B"}));
 
 		this.oVM.setDefaultKey("3");
 
@@ -1386,10 +1386,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("check manage dialog Save behavour", function(assert) {
-		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "private", author: "B"}));
-		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "public", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "Public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", remove: true, sharing: "Private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "Private", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", favorite: false, rename: false, sharing: "Public", author: "B"}));
 
 		this.oVM.setDefaultKey("3");
 
@@ -1434,10 +1434,10 @@ sap.ui.define([
 	QUnit.test("check roles inside managed views", async function (assert) {
 		var done = assert.async();
 
-		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "public", executeOnSelect: true, author: "A"}));
-		this.oVM.addItem(new VariantItem({key: "2", title:"Two", contexts: {role: ["test"]}, remove: true, sharing: "private", author: "B"}));
-		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "private", executeOnSelect: true, oauthor: "A"}));
-		this.oVM.addItem(new VariantItem({key: "4", title:"Four", contexts: {role: []}, favorite: false, rename: false, sharing: "public", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "1", title:"One", rename: false, sharing: "Public", executeOnSelect: true, author: "A"}));
+		this.oVM.addItem(new VariantItem({key: "2", title:"Two", contexts: {role: ["test"]}, remove: true, sharing: "Private", author: "B"}));
+		this.oVM.addItem(new VariantItem({key: "3", title:"Three", favorite: true, remove: true, sharing: "Private", executeOnSelect: true, oauthor: "A"}));
+		this.oVM.addItem(new VariantItem({key: "4", title:"Four", contexts: {role: []}, favorite: false, rename: false, sharing: "Public", author: "B"}));
 
 		this.oVM.setDefaultKey("3");
 

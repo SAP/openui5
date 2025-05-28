@@ -2582,6 +2582,22 @@ sap.ui.define([
 		oIconTabHeader.$().trigger("focusin");
 	});
 
+	QUnit.test("Overlow button aria-expanded/collapsed", function (assert) {
+		var oOverflowButton = this.oIconTabBar.getAggregation("_header")._getOverflow();
+
+		assert.strictEqual(oOverflowButton.$().attr("aria-expanded"), "false", "aria-expanded=false");
+
+		oOverflowButton._expandButtonPress();
+		this.clock.tick(500);
+
+		assert.strictEqual(oOverflowButton.$().attr("aria-expanded"), "true", "aria-expanded=true");
+
+		oOverflowButton._closePopover();
+		this.clock.tick(500);
+
+		assert.strictEqual(oOverflowButton.$().attr("aria-expanded"), "false", "aria-expanded=false");
+	});
+
 	QUnit.module("ARIA", {
 		beforeEach: function () {
 			this.oIconTabBar = getIconTabBar();

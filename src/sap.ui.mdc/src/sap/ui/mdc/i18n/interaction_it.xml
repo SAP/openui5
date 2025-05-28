@@ -3,29 +3,29 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Table"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Opens the <span class="uicontrol">Table Settings</span> dialog, if available.</p>
+				<p>Apre la finestra di dialogo <span class="uicontrol">Impostazioni tabella</span>, se disponibile.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
-				<p>Opens the <span class="uicontrol">Export As</span> dialog of the table, if available.</p>
+				<p>Apre la finestra di dialogo <span class="uicontrol">Esporta come</span>, se disponibile.</p>
 			</description>
 		</interaction>
 	</control-interactions>
 	<control-interactions>
 		<control name="sap.ui.mdc.FilterBar"/>
 		<interaction> <kbd>Enter</kbd> <description>
-				<p>Triggers search for filter bar.</p>
+				<p>Attiva la ricerca della barra dei filtri.</p>
 			</description>
 		</interaction>
 	</control-interactions>
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Opens the <span class="uicontrol">View Settings</span> dialog</p>
+				<p>Apre la finestra di dialogo <span class="uicontrol">Impostazioni view</span></p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Deletes an item in the <span class="uicontrol">View Settings</span> dialog</p>
+				<p>Elimina una posizione nella finestra di dialogo <span class="uicontrol">Impostazioni view</span></p>
 			</description>
 		</interaction>
 	</control-interactions>

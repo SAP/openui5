@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Если фокус находится на ячейке или селекторе строки и соответствующая строка выбрана, фокус перемещается на строку выше, и выбор расширяется до этой строки.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка <span class="emphasis">не</span> выбрана, фокус перемещается на строку выше, и выбор удаляется для этой строки.</p>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, и строка <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка выше. Фокус перемещается на ячейку выше от ячейки фокуса.</p>
 				<p>Если фокус находится на выбранной ячейке, фокус перемещается на ячейку выше, и выбор ячеек расширяется до этой ячейки.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Если фокус находится на ячейке или селекторе строки и соответствующая строка выбрана, фокус перемещается на строку ниже, и выбор расширяется до этой строки.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка <span class="emphasis">не</span> выбрана, фокус перемещается на строку ниже, и выбор удаляется для этой строки.</p>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, и строка <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка ниже. Фокус перемещается на ячейку ниже от ячейки фокуса. </p>
 				<p>Если фокус находится на выбранной ячейке, фокус перемещается на ячейку ниже, и выбор ячеек расширяется до этой ячейки.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Если фокус находится на таблице и ячейки выбраны, выбор ячеек удаляется.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Копирует выбранные строки или ячейки в буфер обмена, если он доступен и функция активирована.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Вставляет содержимое из буфера обмена, если функция активирована.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Перемещает позицию на одну позицию вверх, если доступно.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Перемещает позицию на одну позицию вниз, если доступно.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Перемещает позицию в самый верх, если доступно.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Перемещает позицию в самый низ, если доступно.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Перемещает позицию на одну позицию вверх, если доступно.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Перемещает позицию на одну позицию вниз, если доступно.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Перемещает позицию на одну позицию вверх, если доступно.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Перемещает позицию на одну позицию вниз, если доступно.</p>
 			</description>
 		</interaction>
 	</control-interactions>

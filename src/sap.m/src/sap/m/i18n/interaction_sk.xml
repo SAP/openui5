@@ -55,18 +55,18 @@
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowUp</kbd> <p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa odstráni pre tento riadok.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span>selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nad ňou. Zameranie sa presunie na bunku nad zameranou bunkou.</p>
 				<p>Ak je zameranie na vybratú bunku, zameranie sa presunie na bunku vyššie a výber bunky sa rozšíri až po túto bunku.</p>
 			</description>
 		</interaction>
 		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+			<description> <kbd>Shift + ArrowDown</kbd> <p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa odstráni pre tento riadok.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. The focus moves to the cell below the focused cell. </p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nižšie. Zameranie sa presunie na bunku pod zameranou bunkou. </p>
 				<p>Ak je zameranie na vybratú bunku, zameranie sa presunie na bunku nižšie a výber bunky sa rozšíri až po túto bunku.</p>
 			</description>
 		</interaction>
@@ -102,7 +102,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Ak je zameranie vnútri tabuľky a sú vybraté bunky, výber buniek sa odstráni.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -119,11 +119,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Skopíruje vybraté riadky alebo bunky do schránky, ak je k dispozícii a funkcia je povolená.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Prilepí obsah zo schránky, ak je funkcia povolená.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -142,13 +142,13 @@
 		<control name="sap.m.p13n.SelectionPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Posunie položku o jednu pozíciu nahor, ak je k dispozícii.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Posunie položku o jednu pozíciu nadol, ak je k dispozícii.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Moves the item to the top if available.</p>
+				<p>Presunie položku na začiatok, ak je k dispozícii.</p>
 				<p><kbd>End</kbd></p>
-				<p>Moves the item to the end if available.</p>
+				<p>Presunie položku na koniec, ak je k dispozícii.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -156,7 +156,7 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Posunie položku o jednu pozíciu nahor, ak je k dispozícii.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Posunie položku o jednu pozíciu nadol, ak je k dispozícii.</p>
 			</description>
@@ -166,9 +166,9 @@
 		<control name="sap.m.p13n.GroupPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Moves the item one position up if available.</p>
+				<p>Posunie položku o jednu pozíciu nahor, ak je k dispozícii.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Moves the item one position down if available.</p>
+				<p>Posunie položku o jednu pozíciu nadol, ak je k dispozícii.</p>
 			</description>
 		</interaction>
 	</control-interactions>

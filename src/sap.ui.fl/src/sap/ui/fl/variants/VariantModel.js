@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/BindingMode"
+	"sap/ui/model/BindingMode",
+	"sap/m/library"
 ], function(
 	_difference,
 	_isEqual,
@@ -55,12 +56,13 @@ sap.ui.define([
 	LayerUtils,
 	Utils,
 	JSONModel,
-	BindingMode
+	BindingMode,
+	mobileLibrary
 ) {
 	"use strict";
 
 	var _mUShellServices = {};
-
+	const { SharingMode } = mobileLibrary;
 	/**
 	 * Adds the passed function to the variant switch promise and returns the whole promise chain.
 	 *
@@ -216,8 +218,8 @@ sap.ui.define([
 			JSONModel.apply(this, [oData]);
 
 			this.sharing = {
-				PRIVATE: "private",
-				PUBLIC: "public"
+				PRIVATE: SharingMode.Private,
+				PUBLIC: SharingMode.Public
 			};
 
 			// FlexControllerFactory creates a FlexController instance for an application component,

@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Αν η εστίαση βρίσκεται στο επίπεδο κελιού, η εστίαση μετακινείται πέντε στήλες δεξιά (προεπιλεγμένο μέγεθος σελίδας).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Αν η εστίαση βρίσκεται στην κεφαλίδα στήλης και υπάρχουν λιγότερες στήλες δεξιά από το τρέχον μέγεθος σελίδας, η εστίαση μετακινείται στην τελευταία στήλη.</p>
 				<p>Αν η εστίαση βρίσκεται στον επιλογέα σειράς, η εστίαση μετακινείται στην πρώτη στήλη μέσα στην ίδια σειρά.</p>
 				<p>Αν η εστίαση βρίσκεται στο <span class="uicontrol">Επιλογή Όλων</span>, η εστίαση μετακινείται στην κεφαλίδα της πρώτης στήλης.</p>
 			</description>
@@ -79,10 +79,10 @@
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
 				<p>Αν η εστίαση βρίσκεται στο κελί, το εστιασμένο κελί επιλέγεται.</p>
 				<p>Αν η εστίαση βρίσκεται στη δέσμευση επιλογής κελιού, η επιλογή των κελιών καταργείται.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί και ο πίνακας έχει συγκεκριμένη διαμόρφωση για την συμπεριφορά επιλογής (για να επιλέξετε σειρά, μπορείτε είτε να επιλέξετε την ίδια τη σειρά ή το πλαίσιο ελέγχου επιλογής αν υπάρχει), μόνο το εστιασμένο κελί επιλέγεται αντί της σειράς.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Αν η εστίαση βρίσκεται στο κελί ή στον επιλογέα σειράς, αυτό εναλλάσσει την επιλογή της τρέχουσας σειράς.</p>
-				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιου:</span></p>
+				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
 				<p>Αν η εστίαση βρίσκεται στη δέσμευση επιλογής κελιού, η δέσμευση επιλογής κελιού αλλάζει στην επιλογή σειράς. Η επιλογή σειράς καταργείται.</p>
 				<p>Ανάλογα με τη λειτουργία επιλογής σειράς συμβαίνουν τα εξής:</p>
 				<ul>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Αν η εστίαση βρίσκεται μέσα στον πίνακα και τα κελιά επιλεγούν, η επιλογή των κελιών καταργείται.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Αν η εστίαση βρίσκεται στο <span class="uicontrol">Επιλογή Όλων</span> και πατηθεί το <kbd>Spacebar</kbd>, το αντίστοιχο συμβάν δεν ξεκινάει. Το <kbd>Shift</kbd> εμποδίζει αυτήν τη δραστηριότητα.</p>
+				<p>Αν η εστίαση βρίσκεται στην κεφαλίδα στήλης και πατηθεί το <kbd>Spacebar</kbd> ή το <kbd>Enter</kbd>, το αντίστοιχο συμβάν δεν ξεκινάει.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί ή στον επιλογέα σειράς και επιλεγεί η σχετική σειρά, η εστίαση μετακινείται στην από πάνω σειρά και η επιλογή βελτιώνεται μέχρι αυτήν τη σειρά.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί ή στον επιλογέα σειράς και η σχετική σειρά <span class="emphasis">δεν</span> έχει επιλεγεί, η εστίαση μετακινείται στην από πάνω σειρά και η επιλογή καταργείται για αυτή τη σειρά.</p>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί και αυτό <span class="emphasis">δεν</span> επιλέχτηκε και η σειρά <span class="emphasis">δεν</span> επιλέχτηκε, το εστιασμένο κελί και το κελί από πάνω επιλέγονται. Η εστίαση μετακινείται στο κελί πάνω από το εστιασμένο κελί.</p>
 				<p>Αν η εστίαση βρίσκεται στο επιλεγμένο κελί, το κελί από πάνω λαμβάνει την εστίαση και η επιλογή κελιού βελτιώνεται μέχρι αυτό το κελί.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί ή στον επιλογέα σειράς και επιλεχτεί η σχετική σειρά, η εστίαση μετακινείται στην από κάτω σειρά και η επιλογή βελτιώνεται μέχρι αυτήν τη σειρά.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί ή στον επιλογέα σειράς και η σχετική σειρά <span class="emphasis">δεν</span> επιλέχτηκε, η εστίαση μετακινείται στην από κάτω σειρά και η επιλογή καταργείται για αυτή τη σειρά.</p>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Αν η εστίαση βρίσκεται στο κελί που <span class="emphasis">δεν</span> επιλέχτηκε και η σειρά <span class="emphasis">δεν</span> επιλέχτηκε, το εστιασμένο κελί και το κελί από κάτω επιλέγονται. Η εστίαση μετακινείται στο κελί κάτω από το εστιασμένο κελί.</p>
 				<p>Αν η εστίαση βρίσκεται στο επιλεγμένο κελί, το κελί από κάτω λαμβάνει την εστίαση και η επιλογή κελιού βελτιώνεται μέχρι αυτό το κελί.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Αντιγράφει τις επιλεγμένες σειρές και τα επιλεγμένα κελιά στο πρόχειρο, αν υπάρχει και το χαρακτηριστικό ενεργοποιείται.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Επικολλάει το περιεχόμενο από το πρόχειρο, αν το χαρακτηριστικό ενεργοποιηθεί.</p>
 			</description>
 		</interaction>
 	</control-interactions>

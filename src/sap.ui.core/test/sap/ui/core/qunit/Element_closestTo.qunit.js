@@ -141,4 +141,25 @@ sap.ui.define([
 		oContainer.remove();
 		future.active = undefined;
 	});
+
+	QUnit.test("Should return the container correctly even when there's a named element under 'nodeName' within a <form>", function(assert) {
+		const sId = "el1";
+		const oContainer = createAndAppendDiv(sId);
+		oContainer.setAttribute("data-sap-ui", sId);
+
+		const oUI5Element = new Element(sId);
+
+		oContainer.innerHTML = `
+			<form id="form1">
+				<input name="nodeName" />
+			</form>
+		`;
+		const oForm = document.getElementById("form1");
+
+		var oUI5ElementFound = Element.closestTo(oForm);
+		assert.strictEqual(oUI5ElementFound, oUI5Element);
+
+		oContainer.remove();
+		oUI5Element.destroy();
+	});
 });

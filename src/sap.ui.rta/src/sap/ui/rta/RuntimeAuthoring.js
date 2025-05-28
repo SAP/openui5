@@ -252,7 +252,7 @@ sap.ui.define([
 			}
 			this.pServices = this.pServices.then(this.getService.bind(this, "supportTools"));
 
-			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["URLParsing", "AppLifeCycle", "Navigation"])
+			this._loadUShellServicesPromise = FlexUtils.getUShellServices(["AppLifeCycle", "Navigation"])
 			.then(function(mUShellServices) {
 				this._mUShellServices = mUShellServices;
 				ReloadManager.setUShellServices(mUShellServices);
@@ -598,7 +598,6 @@ sap.ui.define([
 				}
 			}
 			const oReloadInfo = bSkipRestart ? {} : await ReloadManager.checkReloadOnExit({
-				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
 				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),
 				versioningEnabled: this._oVersionsModel.getProperty("/versioningEnabled"),
@@ -1193,7 +1192,7 @@ sap.ui.define([
 		}
 		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
 		await this.stop(true, true, true);
-		ReloadManager.reloadPage();
+		ReloadManager.triggerReload({});
 	}
 
 	function saveOnly(oEvent) {
@@ -1308,7 +1307,6 @@ sap.ui.define([
 	function handleDiscard() {
 		const sLayer = this.getLayer();
 		const oReloadInfo = {
-			layer: sLayer,
 			removeDraft: true,
 			selector: this.getRootControlInstance()
 		};
@@ -1658,9 +1656,6 @@ sap.ui.define([
 
 	/**
 	 * Delete all changes for current layer and root control's component.
-	 * In case of Base Applications (no App Variants) the manifest Changes and UI Changes are saved
-	 * in different Flex Persistence instances, the changes for both places will be deleted. For App Variants
-	 * all the changes are saved in one place.
 	 *
 	 * @returns {Promise} Resolves when change persistence is reset
 	 */
@@ -1675,9 +1670,7 @@ sap.ui.define([
 			this.getCommandStack().removeAllCommands(true);
 			ReloadInfoAPI.removeInfoSessionStorage(oSelector);
 			const oReloadInfo = {
-				layer: sLayer,
-				ignoreMaxLayerParameter: true,
-				triggerHardReload: true
+				ignoreMaxLayerParameter: true
 			};
 			return ReloadManager.triggerReload(oReloadInfo);
 		}.bind(this))

@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Ak je zameranie na úrovni bunky, zameranie sa presunie o päť stĺpcov doprava (predvolená veľkosť strany).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Ak je zameranie na hlavičku stĺpca a napravo je menej stĺpcov, než je aktuálna veľkosť strany, zameranie sa presunie na posledný stĺpec.</p>
 				<p>Ak je zameranie na selekore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
 				<p>Ak je zameranie na položku <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku prvého stĺpca.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
 				<p>Ak je zameranie na bunku, vyberie sa zameraná bunka.</p>
 				<p>Ak je zameranie na blok výberu buniek, výber buniek sa odstráni.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Ak je zameranie na bunku a tabuľka má určitú konfiguráciu správania pri výbere (na výber riadka môžete vybrať buď samotný riadok alebo začiarkavacie pole, ak je k dispozícii), namiesto riadka sa vyberie iba aktívna bunka.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Ak je zameranie na výber bunky alebo riadka, prepne sa výber aktuálneho riadka.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Ak je zameranie vnútri tabuľky a sú vybraté bunky, výber buniek sa odstráni.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Ak je zameranie na <span class="uicontrol">Vybrať všetko</span> a stlačíte <kbd>Spacebar</kbd>, príslušná udalosť sa nespustí. <kbd>Shift</kbd> bráni tejto aktivite.</p>
+				<p>Ak je zameranie na hlavičku stĺpca a stlačíte <kbd>Spacebar</kbd> alebo <kbd>Enter</kbd>, príslušná udalosť sa nespustí.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa odstráni pre tento riadok.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nad ňou. Zameranie sa presunie na bunku nad zameranou bunkou.</p>
 				<p>Ak je zameranie na vybratú bunku, bude zameraná bunka nad a výber bunky sa rozšíri až po túto bunku.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa odstráni pre tento riadok.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nižšie. Zameranie sa presunie na bunku pod zameranou bunkou.</p>
 				<p>Ak je zameranie na vybratú bunku, bude zameraná bunka pod a výber bunky sa rozšíri až po túto bunku.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Skopíruje vybraté riadky alebo bunky do schránky, ak je k dispozícii a funkcia je povolená.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Prilepí obsah zo schránky, ak je funkcia povolená.</p>
 			</description>
 		</interaction>
 	</control-interactions>

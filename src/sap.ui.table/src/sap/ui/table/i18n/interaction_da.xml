@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Hvis fokus er på celleniveauet, flyttes fokus fem kolonner til højre (standardsidestørrelse).</p>
-				<p>If focus is on the column header, and there are fewer columns on the right than the current page size, the focus moves to the last column.</p>
+				<p>Hvis fokus er på kolonneoverskriften, og der er færre kolonner til højre end den aktuelle sidestørrelse, flyttes fokus til den sidste kolonne.</p>
 				<p>Hvis fokus er på rækkevælgeren, flyttes fokus til den første kolonne i den samme række.</p>
 				<p>Hvis fokus er på <span class="uicontrol">Vælg alt</span>, flyttes fokus til overskriften i den første kolonne.</p>
 			</description>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
 				<p>Hvis fokus er på en celle, vælges den fokuserede celle.</p>
 				<p>Hvis fokus er på en cellevalgblok, fjernes valget af cellerne.</p>
-				<p>If focus is on a cell, and the table has a certain configuration of the selection behavior (to select a row, you can either select the row itself or the selection checkbox if it is available), only the focused cell is selected instead of the row.</p>
+				<p>Hvis fokus er på en celle, og tabellen har en bestemt konfiguration af valgadfærden (hvis du vil vælge en række, kan du enten vælge selve rækken, eller afkrydsningsfeltet til valg, hvis det er tilgængeligt), vælges kun den fokuserede celle i stedet for rækken.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>Hvis fokus er på en celle eller rækkevælgeren, skifter dette valget af den aktuelle række.</p>
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
-				<p>If focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>Hvis fokus er inde i tabellen, og celler er valgt, fjernes valget af cellerne.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,23 +102,23 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>If focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
-				<p>If focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
+				<p>Hvis fokus er på <span class="uicontrol">Vælg alt</span>, og <kbd>Spacebar</kbd> trykkes, udløses den tilsvarende handling ikke. <kbd>Shift</kbd> forhindrer denne aktivitet.</p>
+				<p>Hvis fokus er på en kolonneoverskrift, og <kbd>Spacebar</kbd> eller <kbd>Enter</kbd> trykkes, udløses den tilsvarende handling ikke.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row above, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row above, and the selection is removed for this row.</p>
+				<p>Hvis fokus er på en celle eller en rækkevælger, og den relevante række er valgt, flyttes fokus til rækken ovenover, og valget udvides op til denne række.</p>
+				<p>Hvis fokus er på cellen eller rækkevælgeren, og den relevante række <span class="emphasis">ikke</span> er valgt, flyttes fokus til rækken ovenover, og valget fjernes for denne række.</p>
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell above are selected. The focus moves to the cell above the focused cell.</p>
+				<p>Hvis fokus er på en celle, der <span class="emphasis">ikke</span> er valgt, og rækken <span class="emphasis">ikke</span> er valgt, vælges den fokuserede celle og cellen ovenover. Fokus flyttes til cellen over den fokuserede celle.</p>
 				<p>Hvis fokus er på en valgt celle, får cellen ovenover fokus, og cellevalget udvides op til denne celle.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>If focus is on cell or row selector, and the relevant row is selected, the focus moves to the row below, and the selection is enhanced up to this row.</p>
-				<p>If focus is on cell or row selector, and the relevant row is <span class="emphasis">not</span> selected, the focus moves to the row below, and the selection is removed for this row.</p>
+				<p>Hvis fokus er på cellen eller rækkevælgeren, og den relevante række er valgt, flyttes fokus til rækken nedenunder, og valget udvides op til denne række.</p>
+				<p>Hvis fokus er på cellen eller rækkevælgeren, og den relevante række <span class="emphasis">ikke</span> er valgt, flyttes fokus til rækken nedenunder, og valget fjernes for denne række.</p>
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
-				<p>If focus is on a cell that is <span class="emphasis">not</span> selected, and the row is <span class="emphasis">not</span> selected, the focused cell and the cell below are selected. the focus moves to the cell below the focused cell.</p>
+				<p>Hvis fokus er på en celle, der <span class="emphasis">ikke</span> er valgt, og rækken <span class="emphasis">ikke</span> er valgt, vælges den fokuserede celle og cellen nedenunder. Fokus flyttes til cellen under den fokuserede celle.</p>
 				<p>Hvis fokus er på en valgt celle, får cellen nedenunder fokus, og cellevalget udvides op til denne celle.</p>
 			</description>
 		</interaction>
@@ -177,11 +177,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>Kopierer de valgte rækker eller celler til udklipsholderen, hvis den er tilgængelig, og hvis funktionen er aktiveret.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
-				<p>Pastes the content from the clipboard if the feature is enabled.</p>
+				<p>Indsætter indholdet fra udklipsholderen, hvis funktionen er aktiveret.</p>
 			</description>
 		</interaction>
 	</control-interactions>

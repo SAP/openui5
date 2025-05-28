@@ -11,7 +11,8 @@ sap.ui.define([
 	'sap/ui/core/mvc/ViewType',
 	'./UIComponentMetadata',
 	'./mvc/Controller',
-	'./mvc/View'
+	'./mvc/View',
+	'./mvc/_ViewFactory'
 ],
 	function(
 		ManagedObject,
@@ -21,7 +22,8 @@ sap.ui.define([
 		ViewType,
 		UIComponentMetadata,
 		Controller,
-		View
+		View,
+		_ViewFactory
 	) {
 		"use strict";
 
@@ -236,46 +238,6 @@ sap.ui.define([
 		 */
 
 		/**
-		 * Callback handler which will be executed once a new Component instance is initialized.
-		 *
-		 * Example usage:
-		 * <pre>
-		 * sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
-		 *   UIComponent._fnOnInstanceInitialized = function(oComponent) {
-		 *     // do some logic with the Component
-		 *   }
-		 * });
-		 * </pre>
-		 *
-		 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
-		 *
-		 * @private
-		 * @ui5-restricted sap.ushell
-		 * @since 1.37.0
-		 */
-		UIComponent._fnOnInstanceInitialized = null;
-
-		/**
-		 * Callback handler which will be executed when a Component instance is destroyed.
-		 *
-		 * Example usage:
-		 * <pre>
-		 * sap.ui.require(['sap/ui/core/UIComponent'], function(UIComponent) {
-		 *   UIComponent._fnOnInstanceDestroy = function(oComponent) {
-		 *     // do some logic with the Component
-		 *   }
-		 * });
-		 * </pre>
-		 *
-		 * <b>ATTENTION:</b> This hook must only be used by Fiori 2.0 adapter.
-		 *
-		 * @private
-		 * @ui5-restricted sap.ushell
-		 * @since 1.40
-		 */
-		UIComponent._fnOnInstanceDestroy = null;
-
-		/**
 		 * Initializes the component instance after creation.
 		 *
 		 * Applications must not call this hook method directly, it is called by the
@@ -303,9 +265,6 @@ sap.ui.define([
 			function setRootControl(vRootControl) {
 				var fnFireInstanceInitialized = function() {
 					ComponentHooks.onUIComponentInstanceInitialized.execute(that);
-					if (typeof UIComponent._fnOnInstanceInitialized === "function") {
-						UIComponent._fnOnInstanceInitialized(that);
-					}
 				};
 				var fnAggregateRootControl = function(oRootControl) {
 					that.setAggregation("rootControl", oRootControl);
@@ -464,9 +423,6 @@ sap.ui.define([
 
 			// notify Component destruction callback handler
 			ComponentHooks.onUIComponentInstanceDestroy.execute(this);
-			if (typeof UIComponent._fnOnInstanceDestroy === "function") {
-				UIComponent._fnOnInstanceDestroy(this);
-			}
 			// destroy the router
 			this._destroyCreatedInstances();
 			// make sure that the component is destroyed properly
@@ -743,7 +699,7 @@ sap.ui.define([
 				if (bModernFactory) {
 					return View.create(oRootView);
 				} else {
-					return View._create(oRootView);
+					return _ViewFactory.create(oRootView);
 				}
 			} else if (oRootView) {
 				throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");
