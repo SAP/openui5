@@ -3,7 +3,7 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'], function(ComponentMetadata, ViewType) {
+sap.ui.define(['./ComponentMetadata'], function(ComponentMetadata) {
 	"use strict";
 
 	/**
@@ -54,17 +54,6 @@ sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'], function(Comp
 		if (oRouting) {
 			oUI5Manifest["routing"] = oRouting;
 		}
-
-		// if the root view is a string we convert it into a view
-		// configuration object and assume that it is an XML view
-		// !This should be kept in sync with the UIComponent#createContent functionality!
-		if (oUI5Manifest["rootView"] && typeof oUI5Manifest["rootView"] === "string") {
-			oUI5Manifest["rootView"] = {
-				viewName: oUI5Manifest["rootView"],
-				type: ViewType.XML
-			};
-		}
-
 	};
 
 	return UIComponentMetadata;

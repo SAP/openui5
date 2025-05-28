@@ -19,6 +19,7 @@ sap.ui.define([
 	'sap/base/config',
 	'sap/ui/core/Supportability',
 	'sap/ui/core/Lib',
+	'sap/ui/core/mvc/ViewType',
 	'./_UrlResolver'
 ], function(
 	Localization,
@@ -36,6 +37,7 @@ sap.ui.define([
 	BaseConfig,
 	Supportability,
 	Library,
+	ViewType,
 	_UrlResolver
 ) {
 	"use strict";
@@ -215,6 +217,21 @@ sap.ui.define([
 			// i18n placeholders in the manifest later
 			// remark: clone the frozen raw manifest to enable changes
 			this._oManifest = merge({}, this._oRawManifest);
+
+			const ui5Section = this._oManifest['sap.ui5'];
+			// configuration object and assume that it is an XML view
+			// !This should be kept in sync with the UIComponent#createContent functionality!
+			if (typeof ui5Section?.["rootView"] === "string") {
+				ui5Section["rootView"] = {
+					viewName: ui5Section["rootView"]
+				};
+				// default ViewType to XML, except for typed views
+				if (!ui5Section["rootView"].type && !ui5Section["rootView"].viewName.startsWith("module:")) {
+					ui5Section["rootView"].type = ViewType.XML;
+				}
+			}
+
+			// if the root view is a string we convert it into a view
 
 			// resolve the i18n texts immediately when manifest should be processed
 			if (this._bProcess) {

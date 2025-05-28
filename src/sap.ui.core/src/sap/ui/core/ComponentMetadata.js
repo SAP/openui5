@@ -84,7 +84,9 @@ sap.ui.define([
 			// set the version of the metadata
 			// no manifest => metadata version 1
 			oStaticInfo.__metadataVersion = 1;
-			oManifest = {};
+			oManifest = {
+				"_version": "2.0.0"
+			};
 
 		}
 
@@ -137,6 +139,9 @@ sap.ui.define([
 			baseUrl: sap.ui.require.toUrl(this.getComponentName().replace(/\./g, "/")) + "/",
 			process: !bSkipProcess && this._oStaticInfo.__metadataVersion === 2
 		});
+		if (this._oManifest._getSchemaVersion() < 2) {
+			throw new TypeError(`This UI5 version requires a manifest with a schema version 2.0.0 or higher`);
+		}
 
 	};
 

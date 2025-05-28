@@ -2,5 +2,5 @@
 /*eslint-disable*/
 sap.ui.predefine("sap/test/manifestcomp/Component",['sap/ui/core/Component'],function(Component){"use strict";var ManifestComponent=Component.extend("sap.test.manifestcomp.Component",{metadata:{manifest:"json"}});return ManifestComponent;});
 sap.ui.require.preload({
-	"sap/test/manifestcomp/manifest.json": "{\"sap.app\":{\"id\":\"sap.test.manifestcomp\"},\"sap.ui5\":{\"dependencies\":{\"libs\":{\"sap.test.lib2\":{},\"sap.test.lib3\":{\"lazy\":true},\"sap.test.lib4\":{\"lazy\":false}},\"components\":{\"sap.test.mycomp\":{},\"sap.test.mysubcomp\":{\"lazy\":true}}}}}"
+    "sap/test/manifestcomp/manifest.json": "{\"_version\": \"2.0.0\",\"sap.app\":{\"applicationVersion\":{\"version\":\"1.0.0\"},\"id\":\"sap.test.manifestcomp\",\"title\":\"Application 'manifestcomp'\",\"type\":\"application\"},\"sap.ui\":{\"deviceTypes\":{\"desktop\":true,\"phone\":true,\"tablet\":true},\"technology\":\"UI5\"},\"sap.ui5\":{\"dependencies\":{\"components\":{\"sap.test.mycomp\":{},\"sap.test.mysubcomp\":{\"lazy\":true}},\"libs\":{\"sap.test.lib2\":{},\"sap.test.lib3\":{\"lazy\":true},\"sap.test.lib4\":{\"lazy\":false}}}}}"
 });

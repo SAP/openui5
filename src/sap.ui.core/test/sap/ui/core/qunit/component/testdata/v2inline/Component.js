@@ -17,7 +17,16 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						"version": "1.0.0"
 					},
 					"title": "{{title}}",
-					"description": "{{description}}"
+					"description": "{{description}}",
+					"type": "application"
+				},
+				"sap.ui": {
+					"deviceTypes": {
+						"desktop": true,
+						"phone": true,
+						"tablet": true
+					},
+					"technology": "UI5"
 				},
 
 				"sap.ui5": {
@@ -63,10 +72,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						}
 					},
 
-					"rootView": {
-						"viewName": "testdata.view.Main",
-						"type": "XML"
-					},
+					"rootView": "testdata.view.Main",
 
 					"config": {
 						"any1": {

@@ -2121,7 +2121,9 @@ sap.ui.define([
 					);
 
 					// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
-					return {};
+					return {
+						"_version": "2.0.0"
+					};
 				}).then(async function(oManifestJson) {
 					if (oManifestJson) {
 						oMetadata._applyManifest(oManifestJson, true /* skip processing */);

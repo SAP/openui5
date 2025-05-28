@@ -1,0 +1,4 @@
+builder:
+  componentPreload:
+    paths:
+        - "testdata/async/manifestcomp/Component.js"

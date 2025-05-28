@@ -80,10 +80,7 @@ sap.ui.define([
 						"uri": "./some/odata/service/"
 					}
 				},
-				"rootView": {
-					"type": "XML",
-					"viewName": "testdata.view.Main"
-				},
+				"rootView": "testdata.view.Main",
 				"customizing": {
 					"sap.ui.viewReplacements": {
 						"testdata.view.Main": {
@@ -149,7 +146,16 @@ sap.ui.define([
 						"version": "1.0.0"
 					},
 					"title": "App Title",
-					"description": "App Description"
+					"description": "App Description",
+					"type": "application"
+				},
+				"sap.ui": {
+					"deviceTypes": {
+						"desktop": true,
+						"phone": true,
+						"tablet": true
+					},
+					"technology": "UI5"
 				},
 
 				"sap.ui5": {
@@ -630,7 +636,6 @@ sap.ui.define([
 		var oManifest = {
 			"_version": "2.0.0",
 			"name": "testdata.inheritAsync.Component",
-
 			"sap.app": {
 				"id": "testdata.inheritAsync",
 				"applicationVersion": {

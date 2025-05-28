@@ -2691,6 +2691,7 @@ sap.ui.define([
 				"_version": "2.0.0",
 
 				"sap.app": {
+					"_version": "2.0.0",
 					"id": "testdata.modelFromManifest",
 					"type": "application",
 					"dataSources": {

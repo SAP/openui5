@@ -381,10 +381,7 @@ sap.ui.define([
 				},
 
 				"sap.ui5" : {
-					"rootView" : {
-						"viewName" : "my.own.View",
-						"type" : "XML"
-					}
+					"rootView" : "my.own.View"
 				}
 			};
 			var oManifestPrefixId = {
@@ -397,7 +394,6 @@ sap.ui.define([
 				"sap.ui5" : {
 					"rootView" : {
 						"viewName" : "my.own.View",
-						"type" : "XML",
 						"id" : "theView"
 					}
 				}
@@ -961,7 +957,6 @@ sap.ui.define([
 			"sap.ui5": {
 				"rootView": {
 					"viewName": "someRootView",
-					"type": "XML",
 					"id": "app"
 				},
 				"models": {
@@ -1216,10 +1211,7 @@ sap.ui.define([
 			},
 
 			"sap.ui5": {
-				"rootView" : {
-					"viewName" : "testdata.view.MainAsync",
-					"type" : "XML"
-				},
+				"rootView" : "testdata.view.MainAsync",
 				"routing" : {
 					"config": {
 						"routerClass": "sap.m.routing.Router",

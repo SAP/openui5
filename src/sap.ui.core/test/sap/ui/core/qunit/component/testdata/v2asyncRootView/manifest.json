@@ -1,13 +1,5 @@
 {
 	"_version": "2.0.0",
-	"sap.ui": {
-		"technology": "UI5",
-		"deviceTypes": {
-			"desktop": true,
-			"tablet": true,
-			"phone": true
-		}
-	},
 	"name": "testdata.v2asyncRootView.Component",
 	"sap.app": {
 		"id": "testdata.v2asyncRootView",
@@ -17,6 +9,14 @@
 		"title": "{{title}}",
 		"description": "{{description}}",
 		"type": "application"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"resourceRoots": {
