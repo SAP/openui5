@@ -15,8 +15,12 @@ sap.ui.define([
 			this.getView().setModel(oModel);
 		},
 		formatter: function(text) {
-			sinon.assert.pass("btn_4: Correct formatter ($controller) called.");
-			return `${text} formatted by $controller`;
+			if (this.getId().endsWith("btn_5")) {
+				sinon.assert.pass("btn_5: formatter called with the correct 'this' context.");
+			} else {
+				sinon.assert.pass(`btn_5: formatter called with the wrong 'this' context: ${this.toString()}`);
+			}
+			return `${text} formatted by $controller but with control as this context`;
 		}
 	});
 });
