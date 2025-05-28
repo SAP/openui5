@@ -12,6 +12,7 @@
 			<Button id="btn_2" text="$controller"/>
 			<Button id="btn_3" text="{path: '/buttonText', formatter: 'Helper.formatter2.bind(OutputText)'}"/>
 			<Button id="btn_4" text="{path: '/buttonText', formatter: '$controller.formatter'}"/>
+			<Button id="btn_5" text="{path: '/buttonText', formatter: '.formatter.bind($control)'}"/>
 		</Page>
 	</App>
 </mvc:View>

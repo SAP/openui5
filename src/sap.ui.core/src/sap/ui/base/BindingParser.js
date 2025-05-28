@@ -175,7 +175,7 @@ sap.ui.define([
 	// A qualified name, followed by a .bind(id) call
 	// 1st capturing group matches the qualified name w/o .bind() call
 	// 2nd capturing group matches the .bind() argument
-	const rFormatterBind = /(^(?:[$_\p{ID_Start}][$_\p{ID_Continue}]*\.)*[\p{ID_Start}][$_\p{ID_Continue}]*)\.bind\(([$_\p{ID_Start}][$_\p{ID_Continue}]*)\)$/u;
+	const rFormatterBind = /(^(?:\.)?(?:[$_\p{ID_Start}][$_\p{ID_Continue}]*\.)*[\p{ID_Start}][$_\p{ID_Continue}]*)\.bind\(([$_\p{ID_Start}][$_\p{ID_Continue}]*)\)$/u;
 
 	function resolveBindingInfo(oEnv, oBindingInfo) {
 		var mVariables = Object.assign({".": oEnv.oContext}, oEnv.mLocals);
