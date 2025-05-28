@@ -136,7 +136,6 @@ sap.ui.define(function () {
 				realOData : false // requires stable test data
 			},
 			"OPA.Tutorial.11" : {
-				autostart : false,
 				module : ["sap/ui/core/tutorial/odatav4/test/integration/opaTests.qunit"],
 				realOData : false, // cannot run w/o its mock server!
 				loader : {
