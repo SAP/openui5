@@ -596,8 +596,7 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 }
 
 .sapTntNLMenu.sapMMenu {
-
-	&:not(.sapMSubmenu) {
+	&:not(.sapMSubmenu) .sapMMenuList {
 		padding: @_sap_tnt_NavigationList_PopupPadding;
 	}
 
@@ -692,9 +691,25 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 				margin-right: 0;
 			}
 
-			&.sapMMenuItemDisabled .sapMMenuItemIco,
-			&.sapMMenuItemDisabled .sapTntNLIExpandIcon {
-				opacity: @sapUiContentDisabledOpacity;
+			.sapMMenuItemIcon {
+				color: @_sap_tnt_NavigationList_IconColor;
+			}
+
+			.sapTntNLIExpandIcon {
+				color: @_sap_tnt_NavigationList_ExpandIconColor;
+			}
+
+			.sapMMenuItemText {
+				color: @sapUiListTextColor;
+			}
+
+			&.sapMMenuItemDisabled {
+				.sapMMenuItemIcon,
+				.sapMMenuItemText,
+				.sapTntNLIExpandIcon,
+				.sapTntNLIExternalLinkIcon {
+					opacity: @sapUiContentDisabledOpacity;
+				}
 			}
 		}
 	}
