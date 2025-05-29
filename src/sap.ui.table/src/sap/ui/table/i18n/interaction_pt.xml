@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Se o foco estiver em um cabeçalho do grupo, o menu do cabeçalho do grupo é aberto.</p>
-				<p>Se o foco estiver em um cabeçalho da coluna, o menu do cabeçalho da coluna é aberto.</p>
+				<p>Se o foco estiver no cabeçalho do grupo, o menu do cabeçalho do grupo é aberto.</p>
+				<p>Se o foco estiver no cabeçalho da coluna, o menu do cabeçalho da coluna é aberto.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

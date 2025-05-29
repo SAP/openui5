@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Dacă focalizarea este pe un antet de grup, este deschis meniul antetului de grup.</p>
-				<p>Dacă focalizarea este pe un antet de coloană, este deschis meniul antetului de coloană.</p>
+				<p>Dacă focalizarea este pe antetul de grup, este deschis meniul antetului de grup.</p>
+				<p>Dacă focalizarea este pe antetul de coloană, este deschis meniul antetului de coloană.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

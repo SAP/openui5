@@ -42,7 +42,7 @@
 				<p>Wenn der Fokus auf Zellenebene liegt, verschiebt sich der Fokus um fünf Spalten nach rechts (Standardseitengröße).</p>
 				<p>Wenn der Fokus auf dem Spaltenkopf liegt und sich rechts weniger Spalten befinden als die aktuelle Seitengröße, verschiebt sich der Fokus auf die letzte Spalte.</p>
 				<p>Wenn der Fokus auf dem Zeilenauswahlfeld liegt, verschiebt sich der Fokus auf die erste Spalte in derselben Zeile.</p>
-				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf ersten Spaltenkopf.</p>
+				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf den ersten Spaltenkopf.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
@@ -55,7 +55,7 @@
 		<interaction> <kbd>End</kbd> <description>
 				<p>Wenn der Fokus auf der Zelle oder dem Spaltenkopf liegt, verschiebt sich der Fokus auf die letzte Spalte.</p>
 				<p>Wenn der Fokus auf dem Zeilenauswahlfeld liegt, verschiebt sich der Fokus auf die erste Spalte in derselben Zeile.</p>
-				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf ersten Spaltenkopf.</p>
+				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf den ersten Spaltenkopf.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Wenn der Fokus auf einem Gruppenkopf liegt, wird das Gruppenkopfmenü geöffnet.</p>
-				<p>Wenn der Fokus auf einem Spaltenkopf liegt, wird das Spaltenkopfmenü geöffnet.</p>
+				<p>Wenn der Fokus auf dem Gruppenkopf liegt, wird das Gruppenkopfmenü geöffnet.</p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt, wird das Spaltenkopfmenü geöffnet.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

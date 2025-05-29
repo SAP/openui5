@@ -54,16 +54,16 @@
 				<p>Odak seçili bir hücredeyse soldaki hücre odağı alır ve hücre seçimi bu hücreye kadar genişletilir.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Odak hücre veya satır seçicideyse ve ilgili satır seçilirse odak bir üst satıra taşınır ve seçim bu satıra kadar genişletilir.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Odak hücre veya satır seçicideyse ve ilgili satır seçilirse odak bir üst satıra taşınır ve seçim bu satıra kadar genişletilir.</p>
 				<p>Odak hücre veya satır seçicideyse ve ilgili satır <span class="emphasis">seçilmediyse</span> odak bir üst satıra taşınır ve bu satırın seçimi kaldırılır.</p>
 				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
 				<p>Odak seçili <span class="emphasis">olmayan</span> hücredeyse ve satır <span class="emphasis">seçilmediyse</span> odaklanılan hücre ve üstündeki hücre seçilir. Odak, odaklanılan hücrenin üstündeki hücreye taşınır.</p>
 				<p>Odak seçili bir hücredeyse yukarıdaki hücre odağı alır ve hücre seçimi bu hücreye kadar genişletilir.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Odak hücre veya satır seçicideyse ve ilgili satır seçilirse odak bir alt satıra taşınır ve seçim bu satıra kadar genişletilir.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Odak hücre veya satır seçicideyse ve ilgili satır seçilirse odak bir alt satıra taşınır ve seçim bu satıra kadar genişletilir.</p>
 				<p>Odak hücre veya satır seçicideyse ve ilgili satır <span class="emphasis">seçilmediyse</span> odak bir alt satıra taşınır ve bu satırın seçimi kaldırılır.</p>
 				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
 				<p>Odak seçili <span class="emphasis">olmayan</span> hücredeyse ve satır <span class="emphasis">seçilmediyse</span> odaklanılan hücre ve altındaki hücre seçilir. Odak, odaklanılan hücrenin altındaki hücreye taşınır. </p>

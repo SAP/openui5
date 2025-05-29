@@ -13,29 +13,29 @@
 				<p>Om fokus är på första raden flyttas fokus till kolumnrubrikraden.</p>
 				<p>Om fokus är på en cell på första raden flyttas fokus till relaterad kolumnrubrik.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Om fokus är på kryssrutan <span class="uicontrol">Markera alla</span> eller <span class="uicontrol">Rensa alla</span> flyttar fokus till radväljaren i första synliga raden.</p>
+				<p>Om fokus är på kryssrutan <span class="uicontrol">Markera alla</span> eller <span class="uicontrol">Rensa alla</span> flyttas fokus till radväljaren i första synliga raden.</p>
 				<p>Om fokus är på kolumnrubrikraden flyttas fokus till första raden.</p>
-				<p>Om fokus är på raden flyttas fokus till raden under.</p>
-				<p>Om fokus är på cellen flyttas fokus till cellen under.</p>
+				<p>Om fokus är på en rad flyttas fokus till raden under.</p>
+				<p>Om fokus är på en cell flyttas fokus till cellen under.</p>
 				<p><kbd>ArrowLeft</kbd></p>
 				<p>Om fokus är på första cellen flyttas fokus till raden. Detta växlar från cellbaserad navigering till radbaserad navigering.</p>
-				<p>Om fokus är på cellen flyttas fokus till cellen till vänster.</p>
+				<p>Om fokus är på en cell flyttas fokus till cellen till vänster.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>Om fokus är på raden flyttas fokus till första cellen för den rad som för närvarande fokuseras. Detta växlar från radbaserad navigering till cellbaserad navigering.</p>
-				<p>Om fokus är på cellen flyttas fokus till cellen till höger.</p>
+				<p>Om fokus är på en rad flyttas fokus till första cellen för den rad som för närvarande fokuseras. Detta växlar från radbaserad navigering till cellbaserad navigering.</p>
+				<p>Om fokus är på en cell flyttas fokus till cellen till höger.</p>
 				<p><span class="emphasis">Obs!</span> Om fokus är på sista kolumnen och popin-beteende har aktiverats för den kolumnen behandlas popin-området som en ytterligare kolumn till höger och fokus flyttas till den kolumnen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>Om fokus är på raden flyttas fokus till kolumnrubrikraden.</p>
+				<p>Om fokus är på en rad flyttas fokus till kolumnrubrikraden.</p>
 				<p>Om fokus är på kolumnrubrikraden och knappen <span class="uicontrol">Mer</span> är tillgänglig flyttas fokus till knappen <span class="uicontrol">Mer</span>.</p>
 				<p>Om fokus är på kolumnrubrikraden och knappen <span class="uicontrol">Mer</span> <span class="emphasis">inte</span> är tillgänglig flyttas fokus till den sista fokuserade raden. </p>
 				<p>Om fokus är på knappen <span class="uicontrol">Mer</span> flyttas fokus till den sista fokuserade raden.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>Om fokus är på raden och knappen <span class="uicontrol">Mer</span> är tillgänglig flyttas fokus till knappen <span class="uicontrol">Mer</span>.</p>
-				<p>Om fokus är på raden och knappen <span class="uicontrol">Mer</span> <span class="emphasis">inte</span> är tillgänglig flyttas fokus till kolumnrubrikraden. </p>
+				<p>Om fokus är på en rad och knappen <span class="uicontrol">Mer</span> är tillgänglig flyttas fokus till knappen <span class="uicontrol">Mer</span>.</p>
+				<p>Om fokus är på en rad och knappen <span class="uicontrol">Mer</span> <span class="emphasis">inte</span> är tillgänglig flyttas fokus till kolumnrubrikraden.</p>
 				<p>Om fokus är på knappen <span class="uicontrol">Mer</span> flyttas fokus till kolumnrubrikraden.</p>
 				<p>Om fokus är på kolumnrubrikraden flyttas fokus till den sista fokuserade raden.</p>
 			</description>
@@ -54,19 +54,19 @@
 				<p>Om fokus är på en markerad cell får cellen till vänster fokus och cellurvalet utökas till och med den cellen.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Om fokus är på cell- eller radväljare, och relevant rad markerats, flyttas fokus till raden över och urvalet utökas till och med den raden.</p>
-				<p>Om fokus är på cell- eller radväljare, och relevant rad <span class="emphasis">inte</span> markerats, flyttas fokus till raden över och urvalet tas bort för denna rad.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad markerats flyttas fokus till raden över och urvalet utökas till och med den raden.</p>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad <span class="emphasis">inte</span> markerats flyttas fokus till raden över och urvalet tas bort för denna rad.</p>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
 				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen över. Fokus flyttas till cellen över den fokuserade cellen.</p>
 				<p>Om fokus är på en markerad cell flyttas fokus till cellen över och cellurvalet utökas till och med den cellen.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Om fokus är på cell- eller radväljare, och relevant rad markerats, flyttas fokus till raden under och urvalet utökas till och med den raden.</p>
-				<p>Om fokus är på cell- eller radväljare, och relevant rad <span class="emphasis">inte</span> markerats, flyttas fokus till raden under och urvalet tas bort den raden.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad markerats flyttas fokus till raden under och urvalet utökas till och med den raden.</p>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad <span class="emphasis">inte</span> markerats flyttas fokus till raden under och urvalet tas bort för denna rad.</p>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
-				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen under. Fokus flyttas till cellen till under den fokuserade cellen. </p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen under. Fokus flyttas till cellen under den fokuserade cellen. </p>
 				<p>Om fokus är på en markerad cell flyttas fokus till cellen under och cellurvalet utökas till och med den cellen.</p>
 			</description>
 		</interaction>
@@ -97,7 +97,7 @@
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
-				<p>Om fokus är inuti tabellen tas urval för alla rader och celler bort.</p>
+				<p>Om fokus är inuti tabellen tas urvalet för alla rader och celler bort.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>

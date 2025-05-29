@@ -10,11 +10,11 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Suaktyvinamas paskesnis langelis tame pačiame stulpelyje arba eilutėje atitinkama kryptimi.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Jei suaktyvinta pirma eilutė, suaktyvinama stulpelio antraštės eilutė.</p>
+				<p>Jei suaktyvinta pirma eilutė, suaktyvinama stulpelio antraštė.</p>
 				<p>Jei suaktyvintas pirmos eilutės langelis, suaktyvinama susijusi stulpelio antraštė.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Jei suaktyvintas žymės langelis <span class="uicontrol">Žymėti viską</span> arba <span class="uicontrol">Atžymėti viską</span>, suaktyvinamas eilučių parinkiklis pirmoje matomoje eilutėje.</p>
-				<p>Jei suaktyvinta stulpelio antraštės eilutė, suaktyvinama pirma eilutė.</p>
+				<p>Jei suaktyvinta stulpelio antraštė, suaktyvinama pirma eilutė.</p>
 				<p>Jei suaktyvinta eilutė, suaktyvinama žemiau esanti eilutė.</p>
 				<p>Jei suaktyvintas langelis, suaktyvinamas žemiau esantis langelis.</p>
 				<p><kbd>ArrowLeft</kbd></p>
@@ -54,16 +54,16 @@
 				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas kairėje esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama aukščiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama aukščiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
 				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir atitinkama eilutė <span class="emphasis">nėra</span> pasirinkta, suaktyvinama aukščiau esanti eilutė ir šios eilutės pasirinkimas pašalinamas.</p>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
 				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, ir eilutė <span class="emphasis">nėra</span> pasirinkta, pasirenkamas suaktyvintas ir aukščiau esantis langelis. Suaktyvinamas aukščiau suaktyvinto langelio esantis langelis.</p>
 				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas aukščiau esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama žemiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama žemiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
 				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir atitinkama eilutė <span class="emphasis">nėra</span> pasirinkta, suaktyvinama žemiau esanti eilutė ir šios eilutės pasirinkimas pašalinamas.</p>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
 				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, ir eilutė <span class="emphasis">nėra</span> pasirinkta, pasirenkami suaktyvintas ir žemiau esantis langeliai. Suaktyvinamas žemiau suaktyvinto langelio esantis langelis. </p>

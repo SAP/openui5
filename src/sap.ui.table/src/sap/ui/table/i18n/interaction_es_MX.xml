@@ -7,83 +7,83 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Mueve el enfoque a la siguiente celda dentro de la misma columna o fila en las respectivas direcciones.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Si el enfoque está en la primera fila, el enfoque se mueve al encabezado de columna.</p>
+				<p>Si el foco está en la primera fila, el foco se desplaza a la cabecera de la columna.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Si el enfoque está en el encabezado de una columna, el enfoque se mueve a la celda de la primera fila visible de esta columna, que depende de la actual posición de desplazamiento.</p>
-				<p>Si el enfoque está en la casilla <span class="uicontrol">Seleccionar todo</span>, el enfoque se mueve al selector de fila de la primera fila visible, que depende de la actual posición de desplazamiento.</p>
+				<p>Si el foco está en la cabecera de una columna, el foco se desplaza a la celda de la primera fila visible de esta columna, que depende de la posición de desplazamiento actual.</p>
+				<p>Si el foco está en la casilla <span class="uicontrol">Seleccionar todo</span>, el foco se desplaza al selector de fila de la primera fila visible, que depende de la posición de desplazamiento actual.</p>
 				<p><kbd>ArrowLeft</kbd></p>
-				<p>Si el enfoque está en una celda de la primera columna, el enfoque se mueve al selector de fila.</p>
-				<p>Si el enfoque está en un encabezado de columna, el enfoque se mueve al encabezado de columna de la izquierda.</p>
-				<p>Si el enfoque está en el encabezado de columna de la primera columna, el enfoque se mueve a la casilla <span class="uicontrol">Seleccionar todo</span>.</p>
-				<p>Si el enfoque está en un encabezado de grupo de un grupo expandido, el grupo se contrae.</p>
+				<p>Si el foco está en una celda de la primera columna, el foco se desplaza al selector de fila.</p>
+				<p>Si el foco está en la cabecera de una columna, el foco se desplaza a la cabecera de la columna de la izquierda.</p>
+				<p>Si el foco está en la cabecera de la primera columna, el foco se desplaza a la casilla <span class="uicontrol">Seleccionar todo</span>.</p>
+				<p>Si el foco está en la cabecera de un grupo mostrado, el grupo se oculta.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>Si el enfoque está en el encabezado de columna, el enfoque se mueve al encabezado de columna de la derecha.</p>
-				<p>Si el enfoque está en el selector de fila, el enfoque se mueve a la celda de la primera columna en la misma fila.</p>
-				<p>Si el enfoque está en la casilla <span class="uicontrol">Seleccionar todo</span>, el enfoque se mueve al encabezado de columna de la primera columna.</p>
+				<p>Si el foco está en la cabecera de la columna, el foco se desplaza a la cabecera de la columna de la derecha.</p>
+				<p>Si el foco está en el selector de fila, el foco se desplaza a la celda de la primera columna dentro de la misma fila.</p>
+				<p>Si el foco está en la casilla <span class="uicontrol">Seleccionar todo</span>, el foco se desplaza a la cabecera de la primera columna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>PageUp</kbd> <description>
-				<p>Si el enfoque está en el nivel de celda, el enfoque se mueve a la celda inicial de la misma columna. Si el enfoque ya se encuentra en ese nivel, el enfoque se mueve una página arriba y se mantiene en la misma columna con el desplazamiento requerido.</p>
-				<p>Si el enfoque está en la primera fila, el enfoque se mueve al encabezado de columna.</p>
+				<p>Si el foco está en el nivel de celda, el foco se desplaza a la celda situada en la parte superior de la misma columna. Si el foco ya está en ese nivel, el foco se desplaza una página hacia arriba y permanece en la misma columna con el desplazamiento necesario.</p>
+				<p>Si el foco está en la primera fila, el foco se desplaza a la cabecera de la columna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>PageDown</kbd> <description>
-				<p>Si el enfoque está en el nivel de celda, el enfoque se mueve a la última celda visible de la misma columna. Si el enfoque ya se encuentra en ese nivel, el enfoque se mueve una página abajo y se mantiene en la misma columna con el desplazamiento requerido.</p>
-				<p>Si el enfoque está en el encabezado de columna, el enfoque se mueve a la primera fila.</p>
+				<p>Si el foco está en el nivel de celda, el foco se desplaza a la última celda visible de la misma columna. Si el foco ya está en ese nivel, se desplaza una página hacia abajo y permanece en la misma columna con el desplazamiento necesario.</p>
+				<p>Si el foco está en la cabecera de la columna, el foco se desplaza a la primera fila.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + PageUp</kbd> <description>
-				<p>Si el enfoque está en el nivel de celda o en un encabezado de columna, el enfoque se mueve cinco columnas a la izquierda (tamaño de página predeterminado). Si hay un menor número de columnas a la izquierda que el tamaño de página actual, el enfoque se mueve a la primera columna.</p>
-				<p>Si el enfoque está en la primera columna en el nivel de celda, el enfoque se mueve al selector de fila.</p>
-				<p>Si el enfoque está en el encabezado de columna de la primera columna, el enfoque se mueve a <span class="uicontrol">Seleccionar todo</span>.</p>
+				<p>Si el foco está a nivel de celda o en la cabecera de una columna, el foco se desplaza cinco columnas a la izquierda (tamaño de página por defecto). Si hay menos columnas a la izquierda que el tamaño de página actual, el foco se desplaza a la primera columna.</p>
+				<p>Si el foco está en la primera columna a nivel de celda, el foco se desplaza al selector de fila.</p>
+				<p>Si el foco está en la cabecera de la primera columna, el foco se desplaza a <span class="uicontrol">Seleccionar todo</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
-				<p>Si el enfoque está en el nivel de celda, el enfoque se mueve cinco columnas a la derecha (tamaño de página predeterminado).</p>
-				<p>Si el enfoque está en el encabezado de columna y hay un menor número de columnas a la derecha que el tamaño de página actual, el enfoque se mueve a la última columna.</p>
-				<p>Si el enfoque está en el selector de fila, el enfoque se mueve a la primera columna de la misma fila.</p>
-				<p>Si el enfoque está en <span class="uicontrol">Seleccionar todo</span>, el enfoque se mueve al encabezado de la primera columna.</p>
+				<p>Si el foco está a nivel de celda, el foco se desplaza cinco columnas a la derecha (tamaño de página por defecto).</p>
+				<p>Si el foco está en la cabecera de la columna y hay menos columnas a la derecha que el tamaño actual de la página, el foco se desplaza a la última columna.</p>
+				<p>Si el foco está en el selector de fila, el foco se desplaza a la primera columna de la misma fila.</p>
+				<p>Si el foco está en <span class="uicontrol">Seleccionar todo</span>, el foco se desplaza a la cabecera de la primera columna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
-				<p>Si el enfoque está en la celda, el enfoque se mueve a la primera columna de la misma fila.</p>
-				<p>Si el enfoque está en la celda de la primera columna, el enfoque se mueve al selector de fila.</p>
-				<p>Si el enfoque está en el encabezado de columna, el enfoque se mueve al encabezado de la primera columna.</p>
-				<p>Si el enfoque está en el encabezado de la primera columna, el enfoque se mueve a <span class="uicontrol">Seleccionar todo</span>.</p>
+				<p>Si el foco está en la celda, el foco se desplaza a la primera columna de la misma fila.</p>
+				<p>Si el foco está en la celda de la primera columna, el foco se desplaza al selector de fila.</p>
+				<p>Si el foco está en la cabecera de la columna, el foco se desplaza a la cabecera de la primera columna.</p>
+				<p>Si el foco está en la cabecera de la primera columna, el foco se desplaza a <span class="uicontrol">Seleccionar todo</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>End</kbd> <description>
-				<p>Si el enfoque está en la celda o el encabezado de columna, el enfoque se mueve a la última columna.</p>
-				<p>Si el enfoque está en el selector de fila, el enfoque se mueve a la primera columna de la misma fila.</p>
-				<p>Si el enfoque está en <span class="uicontrol">Seleccionar todo</span>, el enfoque se mueve al encabezado de la primera columna.</p>
+				<p>Si el foco está en la celda o en la cabecera de la columna, el foco se desplaza a la última columna.</p>
+				<p>Si el foco está en el selector de fila, el foco se desplaza a la primera columna de la misma fila.</p>
+				<p>Si el foco está en <span class="uicontrol">Seleccionar todo</span>, el foco se desplaza a la cabecera de la primera columna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
-				<p>Si el enfoque está en la celda, el enfoque se mueve al encabezado de columna.</p>
-				<p>Si el enfoque está en el selector de fila, el enfoque se mueve a <span class="uicontrol">Seleccionar todo</span>.</p>
+				<p>Si el foco está en la celda, el foco se desplaza a la cabecera de la columna.</p>
+				<p>Si el foco está en el selector de fila, el foco se desplaza a <span class="uicontrol">Seleccionar todo</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + End</kbd> <description>
-				<p>Si el enfoque está en la celda o el encabezado de columna, el enfoque se mueve a la última fila de la misma columna.</p>
-				<p>Si el enfoque está en el selector de fila o en <span class="uicontrol">Seleccionar todo</span>, el enfoque se mueve al selector de última fila.</p>
+				<p>Si el foco está en la cabecera de la celda o columna, el foco se desplaza a la última fila de la misma columna.</p>
+				<p>Si el foco está en el selector de filas o en <span class="uicontrol">Seleccionar todo</span>, el foco se desplaza al último selector de filas.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
-				<p>Si el enfoque está en la celda, el enfoque se mueve al primer control enfocable de la celda.</p>
-				<p>Si el enfoque está en la casilla <span class="uicontrol">Seleccionar todo</span> o el selector de fila, alterna el estado de la casilla.</p>
-				<p>Si el enfoque está en el encabezado de columna, se abre el menú del encabezado de columna.</p>
-				<p>Si el enfoque está en el encabezado de grupo, el grupo relacionado se contrae o se expande.</p>
+				<p>Si el foco está en la celda, el foco se desplaza al primer control enfocable de la celda.</p>
+				<p>Si el foco está en la casilla de verificación <span class="uicontrol">Seleccionar todo</span> o en un selector de fila, alterna el estado de la casilla de verificación.</p>
+				<p>Si el foco está en la cabecera de columna, se abre el menú de cabecera de columna.</p>
+				<p>Si el foco está en la cabecera del grupo, el grupo relacionado se oculta o muestra.</p>
 				<p><kbd>Enter</kbd></p>
-				<p>Si el enfoque está en el encabezado de grupo, se abre el menú del encabezado de grupo.</p>
+				<p>Si el foco está en la cabecera de grupo, se abre el menú de cabecera de grupo.</p>
 				<p><kbd>Spacebar</kbd></p>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está en una celda, la celda enfocada está seleccionada.</p>
-				<p>Si el enfoque está en un bloque de selección de celdas, se quita la selección de las celdas.</p>
-				<p>Si el enfoque está en una celda y la tabla tiene una cierta configuración del comportamiento de selección (para seleccionar una fila, puede seleccionar esa misma fila o la casilla de selección, si está disponible), solo la celda enfocada se selecciona, en lugar de la fila.</p>
+				<p>Si el foco está en una celda, se selecciona la celda enfocada.</p>
+				<p>Si el foco está en un bloque de selección de celdas, se elimina la selección de las celdas.</p>
+				<p>Si el foco está en una celda y la tabla tiene una determinada configuración del comportamiento de selección (para seleccionar una fila, puede seleccionar la propia fila o la casilla de selección si está disponible), sólo se selecciona la celda enfocada en lugar de la fila.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
-				<p>Si el enfoque está en una celda o selector de fila, alterna la selección de la fila actual.</p>
+				<p>Si el foco está en una celda o en el selector de fila, esto conmuta la selección de la fila actual.</p>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está en un bloque de selección de celdas, el bloque de selección de celdas cambia a una selección de fila. Se quita la selección de celda.</p>
+				<p>Si el foco está en un bloque de selección de celdas, el bloque de selección de celdas se convierte en una selección de filas. La selección de celdas se elimina.</p>
 				<p>En función del modo de selección de fila, sucede lo siguiente:</p>
 				<ul>
 					<li>Se seleccionan todas las filas del bloque (selección múltiple)</li>
@@ -94,7 +94,7 @@
 		</interaction>
 		<interaction> <kbd>ESC</kbd> <description>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está dentro de la tabla y las celdas están seleccionadas, se quita la selección de las celdas.</p>
+				<p>Si el foco está dentro de la tabla y hay celdas seleccionadas, se elimina la selección de las celdas.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -102,46 +102,46 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>Si el enfoque está en <span class="uicontrol">Seleccionar todo</span> y se presiona <kbd>Spacebar</kbd>, el evento correspondiente no se activa. <kbd>Shift</kbd> evita esta actividad.</p>
-				<p>Si el enfoque está en un encabezado de columna y se presiona <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, el evento correspondiente no se activa.</p>
+				<p>Si el foco está en <span class="uicontrol">Seleccionar todo</span>, y se pulsa <kbd>Spacebar</kbd>, no se dispara el evento correspondiente. <kbd>Shift</kbd> evita esta actividad.</p>
+				<p>Si el foco está en la cabecera de una columna y se pulsa <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, no se desencadena el evento correspondiente.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Si el enfoque está en la celda o el selector de fila y la fila relevante está seleccionada, el enfoque se mueve a la fila de arriba, y la selección se actualiza hasta esta fila.</p>
-				<p>Si el enfoque está en la celda o el selector de fila y la fila relevante <span class="emphasis">no</span> está seleccionada, el enfoque se mueve a la fila de arriba, y se quita la selección para esta fila.</p>
+				<p>Si el foco está en una celda o en el selector de fila, y se selecciona la fila correspondiente, el foco se desplaza a la fila superior y la selección se amplía hasta esta fila.</p>
+				<p>Si el foco está en una celda o en el selector de fila, y la fila correspondiente <span class="emphasis">no</span> está seleccionada, el foco se desplaza a la fila superior y se elimina la selección para esta fila.</p>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está en una celda que <span class="emphasis">no</span> está seleccionada y la fila <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de arriba. El enfoque se mueve a la celda de arriba de la celda enfocada.</p>
-				<p>Si el enfoque está en una celda seleccionada, la celda de arriba se enfoca, y la selección de celda se actualiza hasta esta celda.</p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, y la fila <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de arriba. El foco se desplaza a la celda situada encima de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, la celda de arriba obtiene el foco, y la selección de celdas se amplía hasta esta celda.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>Si el enfoque está en la celda o el selector de fila y la fila relevante está seleccionada, el enfoque se mueve a la fila de abajo, y la selección se actualiza hasta esta fila.</p>
-				<p>Si el enfoque está en la celda o el selector de fila y la fila relevante <span class="emphasis">no</span> está seleccionada, el enfoque se mueve a la fila de abajo, y se quita la selección para esta fila.</p>
+				<p>Si el foco está en una celda o en el selector de fila, y se selecciona la fila correspondiente, el foco se desplaza a la fila inferior y la selección se amplía hasta esta fila.</p>
+				<p>Si el foco está en una celda o en el selector de fila, y la fila correspondiente <span class="emphasis">no</span> está seleccionada, el foco se desplaza a la fila inferior y se elimina la selección para esta fila.</p>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está en una celda que <span class="emphasis">no</span> está seleccionada y la fila <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de abajo. El enfoque se mueve a la celda de abajo de la celda enfocada.</p>
-				<p>Si el enfoque está en una celda seleccionada, la celda de abajo se enfoca, y la selección de celda se actualiza hasta esta celda.</p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, y la fila <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de abajo. El foco se desplaza a la celda situada debajo de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, la celda de abajo obtiene el foco, y la selección de celdas se amplía hasta esta celda.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>Si el enfoque está en un encabezado de columna, el ancho de esta columna se incrementa en 1 em. Esto se repite si se mantiene la tecla presionada.</p>
+				<p>Si el foco está en la cabecera de una columna, el ancho de esta columna se incrementa en 1 em. Esto se repite si la tecla permanece pulsada.</p>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de la derecha. El enfoque se mueve a la celda de la derecha de la celda enfocada.</p>
-				<p>Si el enfoque está en una celda seleccionada, la celda de la derecha se enfoca, y la selección de celda se actualiza hasta esta celda.</p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de la derecha. El foco se desplaza a la celda situada a la derecha de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, la celda de la derecha obtiene el foco, y la selección de celdas se amplía hasta esta celda.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>Si el enfoque está en un encabezado de columna, el ancho de esta columna disminuye en 1 em. Esto se repite si se mantiene la tecla presionada.</p>
+				<p>Si el foco está en la cabecera de una columna, el ancho de esta columna se reduce en 1 em. Esto se repite si la tecla permanece pulsada.</p>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de la izquierda. El enfoque se mueve a la celda de la izquierda de la celda enfocada.</p>
-				<p>Si el enfoque está en una celda seleccionada, la celda de la izquierda se enfoca, y la selección de celda se actualiza hasta esta celda.</p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de la izquierda. El foco se desplaza a la celda situada a la izquierda de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, la celda de la izquierda obtiene el foco, y la selección de celdas se amplía hasta esta celda.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
-				<p>Si el enfoque está en un encabezado de columna, la columna relevante se mueve una posición a la derecha.</p>
+				<p>Si el foco está en la cabecera de una columna, la columna correspondiente se desplaza una posición a la derecha.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
-				<p>Si el enfoque está en un encabezado de columna, la columna relevante se mueve una posición a la izquierda.</p>
+				<p>Si el foco está en la cabecera de una columna, la columna correspondiente se desplaza una posición a la izquierda.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
@@ -153,22 +153,22 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Si el enfoque está en la celda, el selector de fila o <span class="uicontrol">Seleccionar todo</span>, alterna la casilla <span class="uicontrol">Seleccionar todo</span>: todas las filas están seleccionadas o ninguna fila está seleccionada, respectivamente.</p>
+				<p>Si el foco está en una celda, en el selector de filas o en <span class="uicontrol">Seleccionar todo</span>, esto activa la casilla <span class="uicontrol">Seleccionar todo</span>: Todas las filas se seleccionan o deseleccionan respectivamente.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
-				<p>Si el enfoque está dentro de la tabla, se quita la selección de cualquier celda y fila.</p>
+				<p>Si el foco está dentro de la tabla, se elimina la selección de las filas y celdas.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
-				<p>Si el enfoque está en una celda, el enfoque se mueve a su contenido (con la excepción del texto de solo lectura).</p>
-				<p>Si el enfoque está en el encabezado de grupo o un miembro que no sea de hoja de un árbol, alterna la expansión del grupo: el grupo se expande o se contrae respectivamente.</p>
+				<p>Si el foco está en una celda, el foco se desplaza a su contenido (con la excepción de un texto de sólo lectura).</p>
+				<p>Si el foco está en la cabecera del grupo o en un nodo no hoja de un árbol, esto activa la expansión del grupo: El grupo se muestra o se oculta respectivamente.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Si el enfoque está en un encabezado de grupo, se abre el menú del encabezado de grupo.</p>
-				<p>Si el enfoque está en un encabezado de columna, se abre el menú del encabezado de columna.</p>
+				<p>Si el foco está en la cabecera de grupo, se abre el menú de cabecera de grupo.</p>
+				<p>Si el foco está en la cabecera de columna, se abre el menú de cabecera de columna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

@@ -5,7 +5,7 @@
 		<control name="sap.ui.table.AnalyticalTable"/>
 		<control name="sap.ui.table.TreeTable"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
-				<p>같은 열 또는 행 안에서 해당 방향의 다음 셀로 포커스를 옮깁니다.</p>
+				<p>포커스를 해당 방향으로 같은 열 또는 행 내의 다음 셀로 이동합니다.</p>
 				<p><kbd>ArrowUp</kbd></p>
 				<p>첫 번째 행에 포커스가 있다면 열 헤더로 포커스가 이동합니다.</p>
 				<p><kbd>ArrowDown</kbd></p>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
 				<p>셀에 포커스가 있다면 포커스가 있는 셀이 선택됩니다.</p>
 				<p>셀 선택 블록에 포커스가 있다면 셀 선택이 제거됩니다.</p>
-				<p>셀에 포커스가 있고 테이블에 선택 동작의 특정 구성이 있는 경우(행을 선택하기 위해 행을 직접 선택하거나 선택 체크박스가 있으면 이를 선택), 행이 아닌 포커스가 있는 셀만 선택됩니다.</p>
+				<p>셀에 포커스가 있고 테이블에 선택 동작이 특정 방식으로 구성된 경우(행을 선택하려면 행 자체를 선택하거나 선택 체크박스가 있으면 이를 선택할 수 있음), 행이 아닌 포커스가 있는 셀만 선택됩니다.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>셀 또는 행 선택에 포커스가 있다면 이를 통해 현재 행 선택을 토글합니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
@@ -102,8 +102,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p><span class="uicontrol">모두 선택</span>에 포커스가 있고 <kbd>Spacebar</kbd>을(를) 누른 상태에서는 해당 이벤트가 트리거되지 않습니다. <kbd>Shift</kbd>에서 이 액티비티를 차단합니다.</p>
-				<p>열 헤더에 포커스가 있고 <kbd>Spacebar</kbd> 또는 <kbd>Enter</kbd>을(를) 누른 상태에서는 해당 이벤트가 트리거되지 않습니다.</p>
+				<p><span class="uicontrol">모두 선택</span>에 포커스가 있을 때, <kbd>Spacebar</kbd>를 눌러도 해당 이벤트가 트리거되지 않습니다. <kbd>Shift</kbd>가 이 동작을 막습니다.</p>
+				<p>열 헤더에 포커스가 있을 때, <kbd>Spacebar</kbd> 또는 <kbd>Enter</kbd>를 눌러도 해당 이벤트가 트리거되지 않습니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
@@ -123,25 +123,25 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 증가합니다. 키를 계속 누르고 있으면 이 결과가 반복됩니다.</p>
+				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 증가합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있다면 포커스가 있는 셀과 오른쪽 셀이 선택됩니다. 포커스가 있는 셀의 오른쪽 셀로 포커스가 이동합니다.</p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있는 경우, 포커스가 있는 셀과 오른쪽 셀이 선택됩니다. 포커스가 있는 셀의 오른쪽 셀로 포커스가 이동합니다.</p>
 				<p>선택된 셀에 포커스가 있다면 오른쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 감소합니다. 키를 계속 누르고 있으면 이 결과가 반복됩니다.</p>
+				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 감소합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
 				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있다면 포커스가 있는 셀과 왼쪽 셀이 선택됩니다. 포커스가 있는 셀의 왼쪽 셀로 포커스가 이동합니다.</p>
 				<p>선택된 셀에 포커스가 있다면 왼쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
-				<p>열 헤더에 포커스가 있다면 관련 열 위치가 오른쪽으로 하나 이동합니다.</p>
+				<p>열 헤더에 포커스가 있다면 해당 열이 오른쪽으로 한 칸 이동합니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
-				<p>열 헤더에 포커스가 있다면 관련 열 위치가 왼쪽으로 하나 이동합니다.</p>
+				<p>열 헤더에 포커스가 있다면 해당 열이 왼쪽으로 한 칸 이동합니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
@@ -153,17 +153,17 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>셀, 행 선택 또는 <span class="uicontrol">모두 선택</span>에 포커스가 있는 경우, <span class="uicontrol">모두 선택</span> 체크박스 선택을 토글합니다. 즉, 모든 행이 선택되거나 선택이 취소됩니다.</p>
+				<p>셀, 행 선택, 또는 <span class="uicontrol">모두 선택</span>에 포커스가 있는 경우, <span class="uicontrol">모두 선택</span> 체크박스 선택을 토글합니다. 즉, 모든 행이 선택되거나 선택이 해제됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>테이블 내부에 포커스가 있다면 행과 셀에 대한 모든 선택이 제거됩니다.</p>
+				<p>테이블 내부에 포커스가 있다면 모든 행과 셀의 선택이 제거됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
 				<p>셀에 포커스가 있다면 이 셀의 내용으로 포커스가 이동합니다(읽기 전용 텍스트는 제외).</p>
-				<p>그룹 헤더 또는 트리의 비리프 노드에 포커스가 있는 경우, 그룹 확장을 토글합니다. 즉, 그룹을 펼치거나 접습니다.</p>
+				<p>그룹 헤더 또는 트리의 리프가 아닌 노드에 포커스가 있는 경우, 그룹 확장을 토글합니다. 즉, 그룹을 펼치거나 접습니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>

@@ -70,7 +70,7 @@
 		</interaction>
 		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
 				<p>Se il focus è sulla cella, si sposta sull'ultimo controllo su cui è possibile spostare il focus nella cella.</p>
-				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span> o sul selettore riga, attiva/disattiva lo stato della casella di controllo.</p>
+				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span> o su un selettore riga, attiva/disattiva lo stato della casella di controllo.</p>
 				<p>Se il focus è sull'intestazione della colonna, viene aperto il menu dell'intestazione colonna.</p>
 				<p>Se il focus è sulla testata del gruppo, il gruppo correlato viene compresso o esploso.</p>
 				<p><kbd>Enter</kbd></p>
@@ -81,7 +81,7 @@
 				<p>Se il focus è su un blocco di selezione cella, la selezione delle celle viene rimossa.</p>
 				<p>Se il focus è su una cella e la tabella ha una determinata configurazione del funzionamento di selezione (per selezionare una riga, è possibile selezionare la riga stessa o la casella di controllo se disponibile), invece della riga viene selezionata solo la cella con il focus.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
-				<p>Se il focus è su una cella o su un selettore di riga, attiva/disattiva la selezione della riga corrente.</p>
+				<p>Se il focus è su una cella o sul selettore di riga, attiva/disattiva la selezione della riga corrente.</p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su un blocco di selezione cella, il blocco viene modificato in una selezione riga. La selezione della cella viene rimossa.</p>
 				<p>A seconda della modalità di selezione della riga può accadere quanto segue:</p>
@@ -107,16 +107,16 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante è selezionata, il focus si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
-				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, il focus si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sopra. Il focus si sposta sulla cella sopra la cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella sopra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante è selezionata, il focus si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
-				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, il focus si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sotto. Il focus si sposta sulla cella sotto la cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella sotto e la selezione delle celle viene ampliata fino a questa cella.</p>
@@ -153,7 +153,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Se il focus è su una celle, un selettore riga o su <span class="uicontrol">Seleziona tutto</span>, la casella di controllo <span class="uicontrol">Seleziona tutto</span> viene attivata o disattivata e tutte le righe vengono, rispettivamente, selezionate o deselezionate.</p>
+				<p>Se il focus è su una cella, sul selettore riga o su <span class="uicontrol">Seleziona tutto</span>, la casella di controllo <span class="uicontrol">Seleziona tutto</span> viene attivata o disattivata e tutte le righe vengono, rispettivamente, selezionate o deselezionate.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Se il focus è su una testata del gruppo, viene aperto il menu della testata del gruppo.</p>
-				<p>Se il focus è su un'intestazione della colonna, viene aperto il menu dell'intestazione colonna.</p>
+				<p>Se il focus è sulla testata del gruppo, viene aperto il menu della testata del gruppo.</p>
+				<p>Se il focus è sull'intestazione della colonna, viene aperto il menu dell'intestazione colonna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

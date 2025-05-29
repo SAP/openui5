@@ -107,16 +107,16 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco move-se para a linha acima e a seleção é ampliada até esta linha.</p>
-				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> estiver selecionada, o foco move-se para a linha acima e a seleção é removida para esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante estiverem selecionados, o foco move-se para a linha acima e a seleção é ampliada até esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante <span class="emphasis">não</span> estiverem selecionados, o foco move-se para a linha acima e a seleção é removida para esta linha.</p>
 				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
 				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada e a linha <span class="emphasis">não</span> estiver selecionada, a célula focada e a célula acima são selecionadas. O foco move-se para a célula acima da célula focada.</p>
 				<p>Se o foco estiver numa célula selecionada, a célula acima recebe o foco e a seleção de células é ampliada até esta célula.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco move-se para a linha abaixo e a seleção é ampliada até esta linha.</p>
-				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> estiver selecionada, o foco move-se para a linha abaixo e a seleção é removida para esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante estiverem selecionados, o foco move-se para a linha abaixo e a seleção é ampliada até esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante <span class="emphasis">não</span> estiverem selecionados, o foco move-se para a linha abaixo e a seleção é removida para esta linha.</p>
 				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
 				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada e a linha <span class="emphasis">não</span> estiver selecionada, a célula focada e a célula abaixo são selecionadas. O foco move-se para a célula abaixo da célula focada.</p>
 				<p>Se o foco estiver numa célula selecionada, a célula abaixo recebe o foco e a seleção de células é ampliada até esta célula.</p>
@@ -153,7 +153,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Se o foco estiver na célula, no seletor de linhas ou em <span class="uicontrol">Selecionar tudo</span>, isso ativa/desativa a caixa de verificação <span class="uicontrol">Selecionar tudo</span>: todas as linhas são marcadas ou desmarcadas respetivamente.</p>
+				<p>Se o foco estiver numa célula, no seletor de linhas ou em <span class="uicontrol">Selecionar tudo</span>, isso ativa/desativa a caixa de verificação <span class="uicontrol">Selecionar tudo</span>: todas as linhas são marcadas ou desmarcadas respetivamente.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Se o foco estiver no cabeçalho de um grupo, o menu do cabeçalho do grupo é aberto.</p>
-				<p>Se o foco estiver no cabeçalho de uma coluna, o menu do cabeçalho da coluna é aberto.</p>
+				<p>Se o foco estiver no cabeçalho do grupo, o menu do cabeçalho do grupo é aberto.</p>
+				<p>Se o foco estiver no cabeçalho da coluna, o menu do cabeçalho da coluna é aberto.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
