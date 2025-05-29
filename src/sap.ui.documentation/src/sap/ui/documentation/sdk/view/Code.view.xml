@@ -89,7 +89,7 @@
 						<OverflowToolbar>
 							<Button
 								class="sapUiSmallMarginBegin"
-								text="Run"
+								text="{i18n>SAMPLE_BTN_RUN}"
 								type="Emphasized"
 								icon="sap-icon://media-play"
 								press="onRunPressed"
@@ -99,7 +99,7 @@
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</Button>
-							<CheckBox text="Auto Run" selected="{settings>/autoRun}" enabled="{settings>/editable}">
+							<CheckBox text="{i18n>SAMPLE_AUTO_RUN}" selected="{settings>/autoRun}" enabled="{settings>/editable}">
 								<layoutData>
 									<OverflowToolbarLayoutData priority="Low" />
 								</layoutData>
@@ -110,10 +110,10 @@
 								type="Emphasized"
 								press="onClearButtonPressed" />
 							<ToolbarSpacer />
-							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="Download" text="Download" type="Transparent">
+							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="{i18n>SAMPLE_DOWNLOAD_BTN_TOOLTIP}" text="{i18n>SAMPLE_BTN_DOWNLOAD}" type="Transparent">
 								<menu>
 									<Menu>
-										<MenuItem text="All files as .zip" icon="sap-icon://attachment-zip-file" press="onDownload" />
+										<MenuItem text="{i18n>SAMPLE_BTN_ALL_FILES_ZIP}" icon="sap-icon://attachment-zip-file" press="onDownload" />
 										<!-- <MenuItem text="All files as .zip" icon="sap-icon://attachment-zip-file" press="onDownloadZip" /> -->
 									</Menu>
 								</menu>
@@ -121,9 +121,15 @@
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</MenuButton>
-							<Button class="orientationBtn" press="onChangeSplitterOrientation" tooltip="Change position" icon="sap-icon://header" type="Transparent">
+							<OverflowToolbarButton text="{i18n>SAMPLE_CHANGE_POSITION_BTN}" id="splitButton" class="orientationBtn" 
+								press="onChangeSplitterOrientation" tooltip="{i18n>SAMPLE_CHANGE_POSITION_BTN_TOOLTIP}" icon="sap-icon://header" type="Transparent">
 								<layoutData>
 									<OverflowToolbarLayoutData priority="Low" />
+								</layoutData>
+							</OverflowToolbarButton>
+							<Button press="onNavBack" tooltip="{i18n>SAMPLE_CLOSE_BTN_TOOLTIP}" icon="sap-icon://decline" type="Transparent">
+								<layoutData>
+									<OverflowToolbarLayoutData priority="NeverOverflow" />
 								</layoutData>
 							</Button>
 						</OverflowToolbar>
