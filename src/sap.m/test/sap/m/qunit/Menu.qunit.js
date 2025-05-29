@@ -1000,4 +1000,41 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Menu style classes are propagated to inner submenus", async function (assert) {
+		// Arrange
+		var sCustomClass = "customClass";
+
+		// Act - add custom class to the main menu when it is closed
+		this.oMenu.addStyleClass(sCustomClass);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(this.oMenu._getPopover().hasStyleClass(sCustomClass), "The class is propagated to the main menu's popover");
+
+		// Act - open the menu and click on the second item to open its submenu
+		this.oMenu.openBy(document.body);
+		await nextUIUpdate(this.clock);
+		this.oMenu.getItems()[1].$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert - check if the class is propagated to the submenu's popover
+		assert.ok(this.oMenu.getItems()[1]._getPopover().hasStyleClass(sCustomClass), "The class is propagated to the submenu's popover");
+
+		// Act - remove the class to the main menu when it is open
+		this.oMenu.removeStyleClass(sCustomClass);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(this.oMenu._getPopover().hasStyleClass(sCustomClass), "The class is removed from the main menu's popover");
+		assert.notOk(this.oMenu.getItems()[1]._getPopover().hasStyleClass(sCustomClass), "The class is removed from the submenu's popover");
+
+		// Act - add custom class to the main menu when it is opened and the submenu is opened
+		this.oMenu.addStyleClass(sCustomClass);
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(this.oMenu._getPopover().hasStyleClass(sCustomClass), "The class is propagated to the main menu's popover");
+		assert.ok(this.oMenu.getItems()[1]._getPopover().hasStyleClass(sCustomClass), "The class is propagated to the submenu's popover");
+	});
+
 });
