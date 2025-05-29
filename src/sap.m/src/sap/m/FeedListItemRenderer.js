@@ -45,6 +45,20 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/base/i18n/Localization", "sap/ui/c
 			this._writeAvatarControl(oRm, oControl, sMyId);
 		}
 
+		// action button
+		if (oControl.getActions().length > 0) {
+			var isAllActionsNotVisible = oControl.getActions().every(function (oAction) {
+				return oAction.getVisible() === false ;
+			});
+			if (!isAllActionsNotVisible) {
+				oRm.openStart("div", sMyId + "-action-button");
+				oRm.class('sapMFeedListItemActionButton');
+				oRm.openEnd();
+				oRm.renderControl(oControl.getAggregation("_actionButton"));
+				oRm.close("div");
+			}
+		}
+
 		// text (starting with sender)
 		if (bIsPhone) {
 			oRm.openStart('div').class("sapMFeedListItemHeader").class("sapUiSelectable");
@@ -142,21 +156,6 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/base/i18n/Localization", "sap/ui/c
 			}
 			oRm.close('div');
 		}
-		// action button
-		if (oControl.getActions().length > 0) {
-			var isAllActionsNotVisible = oControl.getActions().every(function (oAction) {
-				return oAction.getVisible() === false ;
-			});
-			if (!isAllActionsNotVisible) {
-				oRm.openStart("div", sMyId + "-action-button");
-				oRm.class('sapMFeedListItemActionButton');
-				oRm.openEnd();
-				oRm.renderControl(oControl.getAggregation("_actionButton"));
-				oRm.close("div");
-			}
-		}
-
-
 		oRm.close('div');
 	};
 
