@@ -100,7 +100,7 @@ sap.ui.define([
 		});
 
 		oPopover._oControl.addDelegate({"onAfterRendering": this._minWidthDelegate}, oPopover._oControl);
-		this.setAggregation("_popover", oPopover);
+		this.setAggregation("_popover", oPopover, true);
 		var oToolbar = new Toolbar(this.getId() + "-tb");
 		this._spacer = new ToolbarSpacer();
 		this._closeBtn = new Button(oToolbar.getId() + "-closeBtn", {
