@@ -105,12 +105,14 @@ QUnit.test("Overview rendered", function(assert){
 		text : "open columnHeaderPopover",
 		press: function(){
 			oPopover.openBy(this);
-		}
+		},
+		dependents: [oPopover]
 	});
 
 	oButton.placeAt("content");
 	Core.applyChanges();
 
+	sinon.spy(oButton, "invalidate");
 	oPopover.openBy(oButton);
 	this.clock.tick(500);
 
@@ -118,6 +120,7 @@ QUnit.test("Overview rendered", function(assert){
 
 	assert.ok(oRBPopover.getDomRef(), "columnHeaderPopover is rendered");
 	assert.equal(oPopover.getItems().length, 4, "ColumnHeaderPopover has four items as aggregations");
+	assert.ok(oButton.invalidate.notCalled, "Parent of the popover is not invalidated");
 
 	oButton.destroy();
 	oPopover.destroy();
