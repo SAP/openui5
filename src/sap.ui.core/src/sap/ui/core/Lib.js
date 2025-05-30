@@ -1170,10 +1170,11 @@ sap.ui.define([
 		return mInitLibraries;
 	};
 
-	/*
+	/**
 	 * A symbol used to mark a Proxy as such
 	 * Proxys are indistinguishable from the outside, but we need a way
 	 * to prevent duplicate Proxy wrapping for library namespaces.
+	 * @deprecated
 	 */
 	const symIsProxy = Symbol("isProxy");
 
@@ -1183,6 +1184,7 @@ sap.ui.define([
 	 * @param {string} sLibName the library name in dot-notation
 	 * @param {object} oLibNamespace the top-level library namespace object
 	 * @returns {object} an object containing the proxy-handler and the sub-namespace map
+	 * @deprecated
 	 */
 	function createProxyForLibraryNamespace(sLibName, oLibNamespace) {
 		// weakmap to track sub-namespaces for a library
@@ -1373,14 +1375,29 @@ sap.ui.define([
 		 */
 		oLibNamespace = ObjectPath.create(mSettings.name);
 
-		// If a library states that it is using apiVersion 2, we expect types to be fully declared.
-		// In this case we don't need to create Proxies for the library namespace.
-		const apiVersion = mSettings.apiVersion ?? 1;
-
-		if (![1, 2].includes(apiVersion)) {
-			throw new TypeError(`The library '${mSettings.name}' has defined 'apiVersion: ${apiVersion}', which is an unsupported value. The supported values are: 1, 2 and undefined (defaults to 1).`);
+		let apiVersion = mSettings.apiVersion;
+		/**
+		 * If a library states that it is using apiVersion 2, we expect types to be fully declared.
+		 * In this case we don't need to create Proxies for the library namespace.
+		 * @deprecated
+		 */
+		if (!apiVersion) {
+			apiVersion = 1;
 		}
 
+		const aSupportedVersions = [/** @deprecated */1, 2];
+		if (!aSupportedVersions.includes(apiVersion)) {
+			let sError = `The library '${mSettings.name}' has defined 'apiVersion: ${apiVersion}', which is an unsupported value. The supported values are: ${aSupportedVersions.join(", ")}`;
+			/**
+			 * @deprecated
+			 */
+			sError += " and undefined (defaults to 1).";
+			throw new TypeError(sError);
+		}
+
+		/**
+		 * @deprecated
+		 */
 		if (apiVersion < 2) {
 			const oLibProxyHandler = createProxyForLibraryNamespace(mSettings.name, oLibNamespace);
 
