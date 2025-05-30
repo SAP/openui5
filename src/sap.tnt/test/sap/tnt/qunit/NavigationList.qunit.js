@@ -1330,6 +1330,35 @@ sap.ui.define([
 		oStub.restore();
 	});
 
+	QUnit.test("open and close popover with Enter pressed twice quickly", async function (assert) {
+		assert.notOk(jQuery(".sapTntNLPopup").length, "popup list is not shown");
+		assert.ok(!this.navigationList._oPopover, "should have no popover reference");
+
+		this.navigationList.setExpanded(false);
+
+		await nextUIUpdate(this.clock);
+
+		var $item = jQuery(".sapTntNL .sapTntNLIFirstLevel a").first();
+		$item.trigger("tap");
+
+		await nextUIUpdate(this.clock);
+
+		this.clock.tick(500);
+
+		assert.strictEqual(jQuery(".sapTntNLPopup").length, 1, "popup list is shown");
+		assert.ok(this.navigationList._oPopover, "should save popover reference");
+
+		// Simulate pressing Enter twice quickly
+		QUnitUtils.triggerKeydown($item, KeyCodes.ENTER);
+		QUnitUtils.triggerKeydown($item, KeyCodes.ENTER);
+
+		await nextUIUpdate(this.clock);
+
+		// Validate if the popover was opened after pressing the Enter key twice.
+		assert.strictEqual(jQuery(".sapTntNLPopup").length, 1, "popup list is shown");
+		assert.ok(this.navigationList._oPopover, "popover should be open");
+	});
+
 	QUnit.test("Press event on items in popover", async function (assert) {
 		const unselectableParentItem = new NavigationListItem({
 			text: 'Unselectable Parent',
