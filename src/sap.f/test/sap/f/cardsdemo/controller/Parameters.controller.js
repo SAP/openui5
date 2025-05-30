@@ -7,7 +7,7 @@ sap.ui.define([
 	return Controller.extend("sap.f.cardsdemo.controller.ParametersController", {
 
 		onInit: function () {
-			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/listContent/manifest.json"));
+			var oCardManifests = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/listContent/manifests.json"));
 			this.getView().setModel(oCardManifests, "manifests");
 
 			this._createParamsModel();

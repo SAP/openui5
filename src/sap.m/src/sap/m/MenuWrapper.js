@@ -532,10 +532,15 @@ sap.ui.define([
 	MenuWrapper.prototype._closeOpenedSubmenu = function(bDelayed) {
 		if (this.oOpenedSubmenuParent) {
 			const oSubmenuPopover = this.oOpenedSubmenuParent._getPopover(),
-				oMenuWrapper = this.oOpenedSubmenuParent._getMenuWrapper();
+				oMenuWrapper = this.getItems().includes(this.oOpenedSubmenuParent) ? this.oOpenedSubmenuParent._getMenuWrapper() : null;
 
 			if (oSubmenuPopover && oSubmenuPopover._oControl) {
 				oSubmenuPopover._oControl._oPreviousFocus = undefined;
+			}
+
+			this.oOpenedSubmenuParent = null;
+			if (!oMenuWrapper) {
+				return;
 			}
 
 			if (bDelayed) {
@@ -545,7 +550,6 @@ sap.ui.define([
 			} else {
 				oMenuWrapper.fireClosePopover();
 			}
-			this.oOpenedSubmenuParent = null;
 		}
 	};
 
