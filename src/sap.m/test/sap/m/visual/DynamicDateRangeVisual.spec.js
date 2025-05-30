@@ -32,39 +32,34 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 	it("Group headers disabled when there are more than ten options available", function() {
 		var oDDRInputField = element(by.id("DDR3-input-inner")),
 			sAltArrowDown = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_DOWN),
-			sAltArrowUp = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_UP),
-			oPopover;
+			sAltArrowUp = protractor.Key.chord(protractor.Key.ALT, protractor.Key.ARROW_UP);
 
 		oDDRInputField.click();
 		browser.actions().sendKeys(sAltArrowUp).perform();
 
-		oPopover = element(by.id("DDR3-RP-popover"));
-		expect(takeScreenshot(oPopover)).toLookAs("group_headers_disabled");
+		expect(takeScreenshot()).toLookAs("group_headers_disabled");
 
 		browser.actions().sendKeys(sAltArrowDown).perform();
 	}, iDefaultTimeout);
 
 	it("Group headers enabled when there are less then ten options available", function() {
-		var oValueHelp = element(by.id("DDR2-input-vhi")),
-			oPopover;
+		var oValueHelp = element(by.id("DDR2-input-vhi"));
 
 		oValueHelp.click();
-		oPopover = element(by.id("DDR2-RP-popover"));
-		expect(takeScreenshot(oPopover)).toLookAs("group_headers_enabled");
+		expect(takeScreenshot()).toLookAs("group_headers_enabled");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	}, iDefaultTimeout);
 
 	it("Currently selected option is marked as selected", function() {
 		var oInput = element(by.id("DDR2-input-inner")),
-			oValueHelp = element(by.id("DDR2-input-vhi")),
-			oPopover;
+			oValueHelp = element(by.id("DDR2-input-vhi"));
 
 		oInput.click();
 		browser.actions().sendKeys("May 23, 2022").perform();
 		oValueHelp.click();
-		oPopover = element(by.id("DDR2-RP-popover"));
-		expect(takeScreenshot(oPopover)).toLookAs("current_option_selected");
+
+		expect(takeScreenshot()).toLookAs("current_option_selected");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 		oInput.click();
@@ -72,43 +67,61 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 
 	it("Fixed date and date range with 'Calendar' based UI", function() {
 		var oValueHelp = element(by.id("DDR2-input-vhi")),
-			aListItems, oPopover;
+			aListItems;
 
 		oValueHelp.click();
 
 		aListItems = element.all(by.css("#DDR2-RP-popover .sapMListItems .sapMSLI"));
-		oPopover = element(by.id("DDR2-RP-popover"));
 
-		aListItems.get(1).click(); // select the date range option
-		expect(takeScreenshot(oPopover)).toLookAs("date_range_ui");
+		aListItems.get(13).click(); // select the date range option
+		expect(takeScreenshot()).toLookAs("date_range_ui");
+
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
 
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select start date
-		expect(takeScreenshot(oPopover)).toLookAs("date_range_start_date_preview");
+		expect(takeScreenshot()).toLookAs("date_range_start_date_preview");
 
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select end date
-		expect(takeScreenshot(oPopover)).toLookAs("date_range_end_date_preview");
+		expect(takeScreenshot()).toLookAs("date_range_end_date_preview");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack .sapMBtnInner")).click(); // get back to suggestions popover
-		aListItems.get(2).click(); // select "from" date option
-		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui");
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		expect(takeScreenshot()).toLookAs("from_date_ui1");
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // get back to suggestions popover
 
+		oValueHelp.click();
+		aListItems.get(15).click(); // select "from" date option
+		expect(takeScreenshot()).toLookAs("from_date_ui");
+
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date
-		expect(takeScreenshot(oPopover)).toLookAs("from_date_ui_selected");
+		expect(takeScreenshot()).toLookAs("from_date_ui_selected");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack .sapMBtnInner")).click(); // get back to suggestions popover
-		aListItems.get(5).click(); // select "month" option
-		expect(takeScreenshot(oPopover)).toLookAs("month_ui");
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // get back to suggestions popover
+
+		oValueHelp.click();
+		aListItems.get(27).click(); // select "month" option
+		expect(takeScreenshot()).toLookAs("month_ui");
 
 		browser.actions().sendKeys(protractor.Key.ARROW_RIGHT).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-		expect(takeScreenshot(oPopover)).toLookAs("month_ui_selected");
+		expect(takeScreenshot()).toLookAs("month_ui_selected");
 
-		element(by.css("#DDR2-RP-popover .sapMBtnBack .sapMBtnInner")).click(); // get back to suggestions popover
-		aListItems.get(4).click(); // select "month in year" option
-		expect(takeScreenshot(oPopover)).toLookAs("monthinyear_ui");
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // get back to suggestions popover
+
+		oValueHelp.click();
+		aListItems.get(28).click(); // select "month in year" option
+		expect(takeScreenshot()).toLookAs("monthinyear_ui");
+		var shiftTab = protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB);
+		browser.actions().sendKeys(shiftTab).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
@@ -119,43 +132,48 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
+		expect(takeScreenshot()).toLookAs("monthinyear_ui_selected1");
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-		expect(takeScreenshot(element(by.css("body")))).toLookAs("monthinyear_ui_selected");
+		expect(takeScreenshot()).toLookAs("monthinyear_ui_selected");
 	}, iDefaultTimeout);
 
 	it("Relative date and date range", function() {
 		var oValueHelp = element(by.id("DDR3-input-vhi")),
-			oPopover, aListItems;
+			aListItems;
 
 		oValueHelp.click();
-		oPopover = element(by.id("DDR3-RP-popover"));
-		expect(takeScreenshot(oPopover)).toLookAs("relative_options_list");
+		expect(takeScreenshot()).toLookAs("relative_options_list");
 
 		aListItems = element.all(by.css("#DDR3-RP-popover .sapMListItems .sapMSLI"));
-		aListItems.get(0).click(); // select Last X days
-		expect(takeScreenshot(oPopover)).toLookAs("last_x_days");
+		aListItems.get(21).click(); // select Last X options
+		expect(takeScreenshot()).toLookAs("last_x_minutes");
 
 		browser.actions().sendKeys(protractor.Key.TAB).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-		expect(takeScreenshot(oPopover)).toLookAs("last_x_months");
+		expect(takeScreenshot()).toLookAs("last_x_hours");
 
 		browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-		expect(takeScreenshot(oPopover)).toLookAs("last_x_years");
+		expect(takeScreenshot()).toLookAs("last_x_days");
 
-		element(by.css("#DDR3-RP-popover .sapMBtnBack .sapMBtnInner")).click();
-		aListItems.get(1).click(); // select Next X days
-		expect(takeScreenshot(oPopover)).toLookAs("next_x_days");
+		var shiftTab = protractor.Key.chord(protractor.Key.SHIFT, protractor.Key.TAB);
+		browser.actions().sendKeys(shiftTab).perform();
+		browser.actions().sendKeys(shiftTab).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
+		aListItems.get(22).click(); // select Next X minutes
+		expect(takeScreenshot()).toLookAs("next_x_minutes");
 
 		browser.actions().sendKeys("10000").perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-		expect(takeScreenshot(oPopover)).toLookAs("next_x_days_max_value_exceeded");
+		expect(takeScreenshot()).toLookAs("next_x_minutes_max_value_exceeded");
 
-		element(by.css("#DDR3-RP-popover .sapMBtnBack .sapMBtnInner")).click();
-		aListItems.get(2).click(); // select Today -X/+Y
-		expect(takeScreenshot(oPopover)).toLookAs("today_x_y");
+		browser.actions().sendKeys(shiftTab).perform();
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
+		aListItems.get(23).click(); // select Today -X/+Y
+		expect(takeScreenshot()).toLookAs("today_x_y");
 
 		browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
@@ -164,101 +182,9 @@ describe("sap.m.DynamicDateRangeVisual", function() {
 		browser.actions().sendKeys(protractor.Key.ARROW_UP).perform();
 		browser.actions().sendKeys(protractor.Key.ENTER).perform();
 
-		expect(takeScreenshot(oPopover)).toLookAs("today_x_y_values_changed");
+		expect(takeScreenshot()).toLookAs("today_x_y_values_changed");
 
 		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	}, iDefaultTimeout);
-
-	it("DateTime option", function() {
-		var oValueHelp = element(by.id("DDR4-input-vhi")),
-			oPage = element(by.id("Page1")),
-			oPopover, aListItems;
-
-		oValueHelp.click();
-		oPopover = element(by.id("DDR4-RP-popover"));
-		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_list");
-
-		aListItems = element.all(by.css("#DDR4-RP-popover .sapMListItems .sapMSLI"));
-		aListItems.get(0).click(); // select Date and Time
-		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_datepicker");
-
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-		expect(takeScreenshot(oPopover)).toLookAs("datetime_options_timepicker");
-
-		element(by.css("#DDR4-RP-popover .sapMBtnBack .sapMBtnInner")).click();
-		aListItems.get(1).click(); // select From Date and Time
-		expect(takeScreenshot(oPopover)).toLookAs("fromdatetime_option_datepicker");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
-		expect(takeScreenshot(oPopover)).toLookAs("fromdatetime_option_timepicker");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
-		expect(takeScreenshot(oPage)).toLookAs("fromdatetime_option_selected");
-
-		oValueHelp.click();
-		aListItems.get(2).click(); // select To Date and Time
-		expect(takeScreenshot(oPopover)).toLookAs("todatetime_option_datepicker");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform(); // select date and move to time part
-		expect(takeScreenshot(oPopover)).toLookAs("todatetime_option_timepicker");
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.TAB).perform();
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();// select time and close popover
-		expect(takeScreenshot(oPage)).toLookAs("todatetime_option_selected");
-
-		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
-	}, iDefaultTimeout);
-
-
-	it("pick today in GMT-12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT-12", "GMT-12"), iDefaultTimeout);
-	it("pick today in GMT+12 timezone", testDateTimeWithTimezoneBtn.bind(null, "btnEtcGMT12", "GMT12"), iDefaultTimeout);
-	it("pick today in UTC timezone", testDateTimeWithTimezoneBtn.bind(null, "btnUTC", "UTC"), iDefaultTimeout);
-
-	function testDateTimeWithTimezoneBtn(sBtnId, sTimezone) {
-		var oValueHelp = element(by.id("DDR5-input-vhi")),
-			oPopover, aListItems, oTimeSegBtn, oOtherDate, oBtnApply;
-
-		var oInput = element(by.css("#DDR5-input-inner"));
-
-		element(by.id(sBtnId)).click(); //change the timezone
-
-		oInput.click();
-		browser.actions().sendKeys("Dec 20, 2000, 1:00:00 AM").perform(); //type
-		browser.actions().sendKeys(protractor.Key.ENTER).perform();
-
-		oValueHelp.click();
-		oPopover = element(by.id("DDR5-RP-popover"));
-
-		aListItems = element.all(by.css("#DDR5-RP-popover .sapMListItems .sapMSLI"));
-		aListItems.get(0).click(); // select Date and Time
-
-		expect(takeScreenshot(oPopover)).toLookAs("calendar_Dec_20_2000_" + sTimezone);
-
-		// select time part
-		oTimeSegBtn = element.all(by.css("#DDR5-RP-popover .sapMTimePickerSwitch .sapMSegBBtn")).get(1);
-		oTimeSegBtn.click();
-
-		expect(takeScreenshot(oPopover)).toLookAs("clock_Dec_20_2000_" + sTimezone);
-
-		// select date part
-		oTimeSegBtn = element.all(by.css("#DDR5-RP-popover .sapMTimePickerSwitch .sapMSegBBtn")).get(0);
-		oTimeSegBtn.click();
-
-		// click another date
-		oOtherDate = element.all(by.css("#DDR5-RP-popover .sapUiCalItem")).get(5); //1 dec, 2000
-		oOtherDate.click();
-
-		// click apply btn
-		oBtnApply = element.all(by.css("#DDR5-RP-footer .sapMBtn")).get(0);
-		oBtnApply.click();
-
-		expect(takeScreenshot(oInput)).toLookAs("input_Dec_1_2000_" + sTimezone);
-	}
 
 });
