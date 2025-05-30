@@ -48,7 +48,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 	Extension1.prototype.loadData = function () {
 		return Promise.resolve(
 			{
-				IMType: "SimpleError",
+				IMType: "UnableToLoad",
 				IMTntType: "tnt-Tools",
 				IMTitle: "No Data",
 				IMDescription: "Test",
