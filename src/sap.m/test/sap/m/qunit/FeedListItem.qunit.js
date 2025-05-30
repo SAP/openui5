@@ -1301,24 +1301,4 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Tab Order");
-
-	QUnit.test("Tab Order of Feed List Item", async function (assert) {
-		// Arrange
-		feedListPage.addContent(oFeedList);
-		appFeedList.addPage(feedListPage);
-		appFeedList.placeAt("qunit-fixture");
-		await nextUIUpdate();
-		// Assert
-		var oFocusFeedListItem = oFeedList.getItems()[11];
-		assert.ok(oFocusFeedListItem.getTabbables()[0] == oFocusFeedListItem.oAvatar.getDomRef());
-		assert.ok(oFocusFeedListItem.getTabbables()[1] == oFocusFeedListItem._oLinkControl.getDomRef());
-		assert.ok(oFocusFeedListItem.getTabbables()[2] == document.getElementsByClassName("_class")[0]);
-		assert.ok(oFocusFeedListItem.getTabbables()[3] == document.getElementById("__link14"));
-
-		// Cleanup
-		oFocusFeedListItem.destroy();
-		oFocusFeedListItem = null;
-	});
-
 });

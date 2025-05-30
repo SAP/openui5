@@ -8,7 +8,7 @@ sap.ui.define([
 	return Controller.extend("sap.f.cardsdemo.controller.ManifestReady", {
 
 		onInit: function () {
-			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/listContent/manifest.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/listContent/manifests.json"));
 			this.getView().setModel(oModel, "manifests");
 			this._iEventsCounter = 0;
 		},

@@ -937,6 +937,14 @@ sap.ui.define([
 				items: [
 					new MenuItem("Item1::some-addon::some-more-addon", {
 						text: "Item 1"
+					}),
+					new MenuItem("Item2", {
+						text: "Item 2",
+						items: [
+							new MenuItem("Item21", {
+								text: "Item 2.1"
+							})
+						]
 					})
 				]
 			}).placeAt("qunit-fixture");
@@ -967,6 +975,25 @@ sap.ui.define([
 		try {
 			oMenuWrapper.onclick(oEvent);
 			assert.ok(true, "No error thrown in onclick");
+		} catch (e) {
+			assert.ok(false, "Error thrown: " + e.message);
+		}
+
+	});
+
+	QUnit.test("MenuWrapper's _closeOpenedSubmenu does not throw JS error when item set to oOpenedSubmenuParent does not exist anymore", function (assert) {
+		// Arrange
+		var oMenuWrapper = this.oMenu._getMenuWrapper();
+
+		// set opened submenu parent to an existing item
+		oMenuWrapper.oOpenedSubmenuParent = this.oMenu.getItems()[1].getItems()[0];
+
+		// destroy this item
+		oMenuWrapper.oOpenedSubmenu = this.oMenu.getItems()[1].destroyAggregation("items");
+
+		try {
+			oMenuWrapper._closeOpenedSubmenu();
+			assert.ok(true, "No error thrown in _closeOpenedSubmenu");
 		} catch (e) {
 			assert.ok(false, "Error thrown: " + e.message);
 		}
