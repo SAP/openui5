@@ -252,6 +252,20 @@ sap.ui.define([
 						errorMessage: "Did not find the rename dialog"
 					});
 				},
+				iEnterANewAnnotationLabel(sNewLabel) {
+					return this.waitFor({
+						controlType: "sap.m.Dialog",
+						id: "sapUiRtaChangeAnnotationDialog",
+						actions(oDialog) {
+							const oInput = oDialog.getContent()[0].getItems()[3].getFormContainers()[0].getFormElements()[0].getFields()[0];
+							new EnterText({
+								text: sNewLabel
+							}).executeOn(oInput);
+							new Press().executeOn(oDialog.getBeginButton());
+						},
+						errorMessage: "Did not find the change annotation dialog"
+					});
+				},
 				iSelectAFieldByBindingPathInTheAddDialog(sBindingPath) {
 					return this.waitFor({
 						searchOpenDialogs: true,
@@ -679,6 +693,16 @@ sap.ui.define([
 							Opa5.assert.ok(true, "The correct MessageStrip exists.");
 						},
 						errorMessage: "Did not find the MessageStrip, the text was wrong or the type was wrong."
+					});
+				},
+				iShouldSeeTheReloadButtonInTheToolbar() {
+					return this.waitFor({
+						id: "sapUIRta_toolbar_fragment--sapUiRta_hardReloadButton",
+						controlType: "sap.m.Button",
+						success() {
+							Opa5.assert.ok(true, "Found the Reload Button in the Toolbar");
+						},
+						errorMessage: "Did not find the Reload Button in the Toolbar"
 					});
 				}
 			}
