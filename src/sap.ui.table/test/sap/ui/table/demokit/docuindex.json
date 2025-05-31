@@ -50,75 +50,93 @@
 				"id": "sap.ui.table.sample.Basic",
 				"name": "Basic",
 				"description": "Basic example showing most controls which are intended to be used inside a table."
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.Selection",
 				"name": "Selection",
 				"description": "Selection example showing selection modes and selection behaviors of table."
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.MultiSelectionPlugin",
 				"name": "MultiSelectionPlugin",
 				"description": "Example showing the behavior of MultiSelectionPlugin"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.Sorting",
 				"name": "Sorting",
 				"description": "Example showing the different kinds of sorting capabilities"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.Filtering",
 				"name": "Filtering",
 				"description": "Example showing the different facets of filtering within a table"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.Aggregations",
 				"name": "Aggregations",
 				"description": "Example which shows the different aggregations of the table"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.Menus",
 				"name": "Table related Menus",
 				"description": "Example which focuses the handling of the table related Menus"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.TableFreeze",
 				"name": "Table Freeze",
 				"description": "Example which shows table freeze with fixed columns"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.ColumnResizing",
 				"name": "Column Resizing",
 				"description": "Example for column resizing"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.RowModes",
 				"name": "Row Modes",
 				"description": "Example for the different row modes"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.MultiHeader",
 				"name": "Multi Header",
 				"description": "Example for multi-header of table"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.OData",
 				"name": "OData",
 				"description": "OData related example"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.OData2",
 				"name": "OData Metadata",
 				"description": "Shows an example how an OData metadata driven table creation can look like."
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.RowAction",
 				"name": "Row Actions",
 				"description": "Shows how row actions can be used."
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.TreeTable.JSONTreeBinding",
 				"name": "JSONTreeBinding",
 				"description": "Basic example showing how a TreeTable can be built using a JSONModel"
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.RowHighlights",
 				"name": "Row Highlights",
 				"description": "Shows how row highlights and alternating row colors can be used."
-			},{
+			},
+			{
 				"id": "sap.ui.table.sample.TreeTable.HierarchyMaintenanceJSONTreeBinding",
 				"name": "Hierarchy Maintenance with a JSONModel",
 				"description": "Shows how hierarchy maintenance can be done using drag and drop."
-			}, {
+			},
+			{
 				"id": "sap.ui.table.sample.DnD",
 				"name": "Drag and Drop",
 				"description": "Shows the different kinds of drag-and-drop capabilities."
-			}, {
+			},
+			{
 				"id": "sap.ui.table.sample.SelectCopyPaste",
 				"name": "Cell Selection, Copy & Paste",
 				"description": "Shows cell selection, copy and paste interaction in the table."
