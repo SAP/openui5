@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/util/openWindow",
 	"sap/ui/util/defaultLinkTypes",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Renderer,
 	IconPool,
 	coreLibrary,
+	Lib,
 	KeyCodes,
 	openWindow,
 	defaultLinkTypes,
@@ -155,9 +157,11 @@ sap.ui.define([
 	NavigationListItem._getInvisibleText = function () {
 		if (!this._invisibleText) {
 			this._invisibleText = new InvisibleText().toStatic();
+			this._invisibleText.setText(Lib.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_EXTERNAL_LINK_DESCRIPTION"));
 		}
 		return this._invisibleText;
 	};
+
 
 	/**
 	 * Creates a popup list.
@@ -376,6 +380,7 @@ sap.ui.define([
 
 		oRM.openStart("li", this)
 			.attr("role", "none");
+
 
 		if (!bListExpanded) {
 			if (aItems.length && bEnabled) {
@@ -641,6 +646,11 @@ sap.ui.define([
 		if (sTarget) {
 			oRM.attr("target", sTarget)
 				.attr("rel", defaultLinkTypes("", sTarget));
+		}
+
+		if (sHref && sTarget === "_blank") {
+			const oInvisibleText = NavigationListItem._getInvisibleText();
+			oRM.attr("aria-describedby", oInvisibleText.getId());
 		}
 
 		oRM.openEnd();

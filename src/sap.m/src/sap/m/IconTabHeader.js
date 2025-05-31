@@ -574,7 +574,7 @@ sap.ui.define([
 				if (!bAPIChange && bIsParentIconTabBar && oParent.getExpandable()) {
 					oParent._toggleExpandCollapse();
 				}
-			//click on other item leads to showing the right content of this item
+				//click on other item leads to showing the right content of this item
 			} else {
 				//change the content aria-labelled by the newly selected tab;
 				if (bIsParentIconTabBar) {
@@ -593,7 +593,7 @@ sap.ui.define([
 					var oSelectedItemContent = this.oSelectedItem.getContent();
 					if (oSelectedItemContent.length > 0) {
 						oParent._rerenderContent(oSelectedItemContent);
-					//if item has not own content, general content of the icontabbar is shown
+						//if item has not own content, general content of the icontabbar is shown
 					} else {
 						//if the general content was already shown there is no need to rerender
 						if (!bIsContentTheSame) {
@@ -1025,8 +1025,8 @@ sap.ui.define([
 		});
 
 		var iTotalWidthItems = aItems.reduce(function (iSum, oDomRef) {
-				return iSum + jQuery(oDomRef).outerWidth(true);
-			}, 0),
+			return iSum + jQuery(oDomRef).outerWidth(true);
+		}, 0),
 			bHasOverflow = iTotalWidthItems > oTabStrip.offsetWidth;
 
 		if (!bHasOverflow) {
@@ -1314,57 +1314,22 @@ sap.ui.define([
 			return;
 		}
 
-		var $sTargetId = jQuery(document.getElementById(sTargetId));
-		/*eslint-disable no-empty */
-		// TODO check better implementation
+		var $sTargetId = sTargetId ? jQuery(document.getElementById(sTargetId)) : jQuery();
+
 		if ($sTargetId.parents() && Array.prototype.indexOf.call($sTargetId.parents(), this.$("content")[0]) > -1) {
-		/*eslint-enable no-empty */
 			//do nothing because element is inside content
-		} else {
-			if (sTargetId) {
-				// For items: do not navigate away! Stay on the page and handle the click in-place. Right-click + "Open in new Tab" still works.
-				oEvent.preventDefault();
+			return;
+		}
 
-				// should be one of the items - select it
-				if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
-					// click on icon: fetch filter instead
-					sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
-					oControl = Element.getElementById(sControlId);
-					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
+		if (sTargetId) {
+			// For items: do not navigate away! Stay on the page and handle the click in-place. Right-click + "Open in new Tab" still works.
+			oEvent.preventDefault();
 
-						if (!this._isSelectable(oControl)) {
-							if (oControl.getItems().length || oControl._isOverflow()) {
-								oControl._expandButtonPress();
-							}
-							return;
-						}
-
-						if ((oControl === this._getOverflow()) || (oControl === this._getStartOverflow())) {
-							oControl._expandButtonPress();
-							return;
-						}
-
-						this.setSelectedItem(oControl);
-					}
-				} else if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
-					// select item if it is an iconTab but not a separator
-
-					if (!this._isSelectable(oControl)) {
-						if (oControl.getItems().length || oControl._isOverflow()) {
-							oControl._expandButtonPress();
-						}
-						return;
-					}
-
-					if ((oControl === this._getOverflow()) || (oControl === this._getStartOverflow())) {
-						oControl._expandButtonPress();
-						return;
-					}
-
-					this.setSelectedItem(oControl);
-				}
-			} else {
-				//no target id, so we have to check if showAll is set or it's a text only item, because clicking on the number then also leads to selecting the item
+			// should be one of the items - select it
+			if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
+				// click on icon: fetch filter instead
+				sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
+				oControl = Element.getElementById(sControlId);
 				if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 					if (!this._isSelectable(oControl)) {
@@ -1381,8 +1346,47 @@ sap.ui.define([
 
 					this.setSelectedItem(oControl);
 				}
+				return;
 			}
+
+			if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
+				// select item if it is an iconTab but not a separator
+
+				if (!this._isSelectable(oControl)) {
+					if (oControl.getItems().length || oControl._isOverflow()) {
+						oControl._expandButtonPress();
+					}
+					return;
+				}
+
+				if ((oControl === this._getOverflow()) || (oControl === this._getStartOverflow())) {
+					oControl._expandButtonPress();
+					return;
+				}
+
+				this.setSelectedItem(oControl);
+			}
+			return;
 		}
+
+		//no target id, so we have to check if showAll is set or it's a text only item, because clicking on the number then also leads to selecting the item
+		if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
+
+			if (!this._isSelectable(oControl)) {
+				if (oControl.getItems().length || oControl._isOverflow()) {
+					oControl._expandButtonPress();
+				}
+				return;
+			}
+
+			if ((oControl === this._getOverflow()) || (oControl === this._getStartOverflow())) {
+				oControl._expandButtonPress();
+				return;
+			}
+
+			this.setSelectedItem(oControl);
+		}
+
 	};
 
 	/**
@@ -1413,7 +1417,7 @@ sap.ui.define([
 	 */
 	IconTabHeader.prototype._isSelectable = function (oIconTabFilter) {
 		var oFilter = oIconTabFilter._getRealTab(),
-		sFilterInteractionMode = oFilter.getInteractionMode();
+			sFilterInteractionMode = oFilter.getInteractionMode();
 
 		if (!oFilter.getEnabled()) {
 			return false;
@@ -1574,8 +1578,8 @@ sap.ui.define([
 		}
 
 		this.oSelectedItem.$()
-				.addClass("sapMITBSelected")
-				.attr({ 'aria-selected': true });
+			.addClass("sapMITBSelected")
+			.attr({ 'aria-selected': true });
 
 		if (this.oSelectedItem._getNestedLevel() !== 1) {
 			var oSelectedRootItem = this.oSelectedItem._getRootTab();
@@ -1592,8 +1596,8 @@ sap.ui.define([
 	 */
 	IconTabHeader.prototype._removeSelectionFromFilters = function () {
 		this.oSelectedItem.$()
-				.removeClass("sapMITBSelected")
-				.attr({ 'aria-selected': false });
+			.removeClass("sapMITBSelected")
+			.attr({ 'aria-selected': false });
 
 		if (this.oSelectedItem._getNestedLevel() !== 1) {
 			var oSelectedRootItem = this.oSelectedItem._getRootTab();

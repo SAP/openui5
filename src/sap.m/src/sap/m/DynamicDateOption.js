@@ -462,6 +462,8 @@ sap.ui.define([
 					}.bind(this));
 				}
 
+				oPopupContent.getClocks()._showFirstClock();
+
 				oPopupContent.getCalendar().attachSelect(function() {
 					fnControlsUpdated(this);
 				}, this);

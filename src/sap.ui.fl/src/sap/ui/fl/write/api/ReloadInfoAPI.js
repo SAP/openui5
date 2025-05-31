@@ -318,9 +318,6 @@ sap.ui.define([
 				oPropertyBag.selector
 			);
 
-			oReloadInfo.isDraftAvailable = oPropertyBag.isDraftAvailable || ReloadInfoAPI.hasVersionStorage(
-				{ value: Version.Number.Draft }, oPropertyBag.selector
-			);
 			oReloadInfo.hasVersionStorage = !!FlexInfoSession.getByReference(sReference).version;
 
 			if (
@@ -333,8 +330,8 @@ sap.ui.define([
 				);
 			}
 
-			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerStorage({ value: oReloadInfo.layer }, oReloadInfo.selector);
-			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
+			oReloadInfo.hasHigherLayerChanges = ReloadInfoAPI.hasMaxLayerStorage({ value: oPropertyBag.layer }, oPropertyBag.selector);
+			oReloadInfo.initialDraftGotActivated = ReloadInfoAPI.initialDraftGotActivated(oPropertyBag);
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}

@@ -458,6 +458,9 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			const oExpectedReloadInfo = ReloadInfoAPI.getReloadInfo(oReloadInfo);
+			const aArgs = ReloadInfoAPI.hasMaxLayerStorage.getCall(0).args;
+			assert.deepEqual(aArgs[0], {value: oReloadInfo.layer}, "the hasMaxLayerStorage was called properly");
+			assert.deepEqual(aArgs[1], oReloadInfo.selector, "the hasMaxLayerStorage was called properly");
 			assert.strictEqual(oExpectedReloadInfo.reloadNeeded, false, "then reloadNeeded was not set");
 			assert.strictEqual(oExpectedReloadInfo.hasVersionStorage, false, "has version parameter in the url");
 		});

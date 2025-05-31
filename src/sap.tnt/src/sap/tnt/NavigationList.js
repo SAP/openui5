@@ -571,6 +571,10 @@ sap.ui.define([
 			oSelectedItem = null;
 		}
 
+		if (this._oPopover) {
+			this._oPopover.destroy();
+		}
+
 		this._oPopover = new Popover({
 			showHeader: false,
 			horizontalScrolling: false,
