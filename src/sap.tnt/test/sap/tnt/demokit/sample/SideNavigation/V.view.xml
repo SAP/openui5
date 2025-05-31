@@ -43,6 +43,7 @@
 				<tnt:NavigationList>
 					<tnt:NavigationListItem text="Bar Chart" icon="sap-icon://bar-chart" />
 					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" />
+					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_top" text="External Link _top" icon="sap-icon://attachment" />
 					<tnt:NavigationListItem text="Compare" icon="sap-icon://compare" />
 				</tnt:NavigationList>
 			</tnt:fixedItem>
