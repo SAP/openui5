@@ -15,27 +15,27 @@
 				<p><kbd>ArrowDown</kbd></p>
 				<p>如果焦点位于<span class="uicontrol">全选</span>或<span class="uicontrol">全部清除</span>复选框，则焦点会移动到可见的第一行中的行选择器。</p>
 				<p>如果焦点位于列标题行，则焦点会移动到第一行。</p>
-				<p>如果焦点位于行，则焦点会移动到下面的行。</p>
-				<p>如果焦点位于单元格，则焦点会移动到下面的单元格。</p>
+				<p>如果焦点位于某行，则焦点会移动到下面的行。</p>
+				<p>如果焦点位于某个单元格，则焦点会移动到下面的单元格。</p>
 				<p><kbd>ArrowLeft</kbd></p>
 				<p>如果焦点位于第一个单元格，则焦点会移动到行。这会从基于单元格的导航切换到基于行的导航。</p>
-				<p>如果焦点位于单元格，则焦点会移动到左侧的单元格。</p>
+				<p>如果焦点位于某个单元格，则焦点会移动到左侧的单元格。</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>如果焦点位于行，则焦点会移动到当前聚焦行的第一个单元格。这会从基于行的导航切换到基于单元格的导航。</p>
-				<p>如果焦点位于单元格，则焦点会移动到右侧的单元格。</p>
+				<p>如果焦点位于某行，则焦点会移动到当前聚焦行的第一个单元格。这会从基于行的导航切换到基于单元格的导航。</p>
+				<p>如果焦点位于某个单元格，则焦点会移动到右侧的单元格。</p>
 				<p><span class="emphasis">注意：</span>如果焦点位于最后一列并且已为此列启用弹入行为，则会将弹入区域视为右侧的附加列，并且焦点会移动到此列。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>如果焦点位于行，则焦点会移动到列标题行。</p>
+				<p>如果焦点位于某行，则焦点会移动到列标题行。</p>
 				<p>如果焦点位于列标题行并且<span class="uicontrol">更多</span>按钮可用，则焦点会移动到<span class="uicontrol">更多</span>按钮。</p>
 				<p>如果焦点位于列标题行而<span class="uicontrol">更多</span>按钮<span class="emphasis">不</span>可用，则焦点会移动到聚焦的最后一行。</p>
 				<p>如果焦点位于<span class="uicontrol">更多</span>按钮，则焦点会移动到聚焦的最后一行。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>如果焦点位于行并且<span class="uicontrol">更多</span>按钮可用，则焦点会移动到<span class="uicontrol">更多</span>按钮。</p>
-				<p>如果焦点位于行而<span class="uicontrol">更多</span>按钮<span class="emphasis">不</span>可用，则焦点会移动到列标题行。</p>
+				<p>如果焦点位于某行并且<span class="uicontrol">更多</span>按钮可用，则焦点会移动到<span class="uicontrol">更多</span>按钮。</p>
+				<p>如果焦点位于某行而<span class="uicontrol">更多</span>按钮<span class="emphasis">不</span>可用，则焦点会移动到列标题行。</p>
 				<p>如果焦点位于<span class="uicontrol">更多</span>按钮，则焦点会移动到列标题行。</p>
 				<p>如果焦点位于列标题行，则焦点会移动到聚焦的最后一行。</p>
 			</description>
@@ -54,17 +54,17 @@
 				<p>如果焦点位于已选择的单元格，则左侧的单元格会获得焦点，并且会将单元格选择上升到此单元格。</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>如果焦点位于单元格或行选择器并且已选择相关行，则焦点会移动到上面的行，并且会将选择上升到此行。</p>
-				<p>如果焦点位于单元格或行选择器而<span class="emphasis">未</span>选择相关行，则焦点会移动到上面的行，并且会移除此行的选择。</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>如果焦点位于某个单元格或行选择器并且已选择相关行，则焦点会移动到上面的行，并且会将选择上升到此行。</p>
+				<p>如果焦点位于某个单元格或行选择器而<span class="emphasis">未</span>选择相关行，则焦点会移动到上面的行，并且会移除此行的选择。</p>
 				<p><span class="emphasis">如果启用单元格选择：</span></p>
 				<p>如果焦点位于<span class="emphasis">未</span>选择的单元格并且<span class="emphasis">未</span>选择行，则会选择聚焦的单元格和上面的单元格。焦点会移动到聚焦的单元格上面的单元格。</p>
 				<p>如果焦点位于已选择的单元格，则焦点会移动到上面的单元格，并且会将单元格选择上升到此单元格。</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>如果焦点位于单元格或行选择器并且已选择相关行，则焦点会移动到下面的行，并且会将选择上升到此行。</p>
-				<p>如果焦点位于单元格或行选择器而<span class="emphasis">未</span>选择相关行，则焦点会移动到下面的行，并且会移除此行的选择。</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>如果焦点位于某个单元格或行选择器并且已选择相关行，则焦点会移动到下面的行，并且会将选择上升到此行。</p>
+				<p>如果焦点位于某个单元格或行选择器而<span class="emphasis">未</span>选择相关行，则焦点会移动到下面的行，并且会移除此行的选择。</p>
 				<p><span class="emphasis">如果启用单元格选择：</span></p>
 				<p>如果焦点位于<span class="emphasis">未</span>选择的单元格并且<span class="emphasis">未</span>选择行，则会选择聚焦的单元格和下面的单元格。焦点会移动到聚焦的单元格下面的单元格。 </p>
 				<p>如果焦点位于已选择的单元格，则焦点会移动到下面的单元格，并且会将单元格选择上升到此单元格。</p>

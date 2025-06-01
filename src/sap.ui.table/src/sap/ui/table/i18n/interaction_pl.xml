@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Jeśli fokus jest ustawiony na poziomie komórki, następuje jego przesunięcie o pięć kolumn w prawo (domyślny rozmiar strony).</p>
-				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, a liczba kolumn po prawej jest mniejsza niż bieżący rozmiar strony, następuje przesunięcie fokusu do ostatniej kolumny.</p>
+				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, a liczba kolumn po prawej jest mniejsza niż bieżący rozmiar strony, następuje przeniesienie fokusu do ostatniej kolumny.</p>
 				<p>Jeśli fokus jest ustawiony na selektorze wiersza, następuje jego przesunięcie do pierwszej kolumny w tym samym wierszu.</p>
 				<p>Jeśli fokus jest ustawiony na opcji <span class="uicontrol">Wybierz wszystkie</span>, następuje jego przesunięcie do nagłówka pierwszej kolumny.</p>
 			</description>
@@ -115,7 +115,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz jest zaznaczony, fokus jest przesuwany do wiersza poniżej, a zaznaczenie jest rozszerzane do tego wiersza.</p>
+				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza i następuje zaznaczenie odpowiedniego wiersza, fokus jest przesuwany do wiersza poniżej, a zaznaczenie jest rozszerzane do tego wiersza.</p>
 				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz <span class="emphasis">nie</span> jest zaznaczony, fokus jest przesuwany do wiersza poniżej, a zaznaczenie tego wiersza jest usuwane.</p>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, tak samo jak <span class="emphasis">nie</span> jest zaznaczony wiersz, następuje zaznaczenie komórki z fokusem i komórki poniżej. Następuje przesunięcie fokusu do komórki poniżej komórki z fokusem.</p>
@@ -158,7 +158,7 @@
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
-				<p>Jeśli fokus jest ustawiony w tabeli, następuje usunięcie zaznaczenia dowolnych wierszy i komórek.</p>
+				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, następuje usunięcie zaznaczenia dowolnych wierszy i komórek.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Jeśli fokus jest ustawiony na nagłówku grupy, następuje otwarcie menu tego nagłówka grupy.</p>
-				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, następuje otwarcie menu tego nagłówka kolumny.</p>
+				<p>Jeśli fokus jest ustawiony na nagłówku konkretnej grupy, następuje otwarcie menu tego nagłówka grupy.</p>
+				<p>Jeśli fokus jest ustawiony na nagłówku konkretnej kolumny, następuje otwarcie menu tego nagłówka kolumny.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

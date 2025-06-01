@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Odak hücre düzeyindeyse odak beş sütun sağa taşınır (varsayılan sayfa boyutu).</p>
-				<p>Odak sütun başlığındaysa ve sağ tarafta geçerli sayfa boyutundan daha az sütun varsa odak son sütuna gider.</p>
+				<p>Odak sütun başlığındaysa ve sağ tarafta geçerli sayfa boyutundan daha az sütun varsa, odak son sütuna gider.</p>
 				<p>Odak satır seçicideyse aynı satırdaki ilk sütuna taşınır.</p>
 				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa ilk sütunun başlığına taşınır.</p>
 			</description>

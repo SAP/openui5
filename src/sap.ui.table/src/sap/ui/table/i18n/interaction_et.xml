@@ -35,37 +35,37 @@
 		<interaction> <kbd>Alt + PageUp</kbd> <description>
 				<p>Kui fookus on lahtritasemel või veerupäisel, viiakse fookus viie lahtri (lehe vaikesuuruse) võrra vasakule. Kui vasakul on praegusest lehesuurusest vähem veerge, viiakse fookus esimesele veerule.</p>
 				<p>Kui fookus on esimeses veerus lahtritasemel, viiakse fookus reaselektorile.</p>
-				<p>Kui fookus on esimese veeru veerupäisel, viiakse fookus suvandile <span class="uicontrol">Vali kõik</span>.</p>
+				<p>Kui fookus on esimese veeru veerupäisel, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Kui fookus on lahtritasemel, viiakse fookus viie veeru (lehe vaikesuuruse) võrra paremale.</p>
 				<p>Kui fookus on veerupäisel ja paremal on praegusest lehesuurusest vähem veerge, viiakse fookus viimasele veerule.</p>
 				<p>Kui fookus on reaselektoril, viiakse fookus sama rea esimesele veerule.</p>
-				<p>Kui fookus on suvandil <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
 				<p>Kui fookus on lahtril, viiakse fookus sama rea esimesele veerule.</p>
 				<p>Kui fookus on esimeses veerus oleval lahtril, viiakse fookus reaselektorile.</p>
 				<p>Kui fookus on veerupäisel, viiakse fookus esimese veeru päisele.</p>
-				<p>Kui fookus on esimesel veerupäisel, viiakse fookus suvandile <span class="uicontrol">Vali kõik</span>.</p>
+				<p>Kui fookus on esimese veeru päisel, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>End</kbd> <description>
 				<p>Kui fookus on lahtril või veerupäisel, viiakse fookus viimasele veerule.</p>
 				<p>Kui fookus on reaselektoril, viiakse fookus sama rea esimesele veerule.</p>
-				<p>Kui fookus on suvandil <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
 				<p>Kui fookus on lahtril, viiakse fookus veerupäisele.</p>
-				<p>Kui fookus on reaselektoril, viiakse fookus suvandile <span class="uicontrol">Vali kõik</span>.</p>
+				<p>Kui fookus on reaselektoril, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + End</kbd> <description>
 				<p>Kui fookus on lahtril või veerupäisel, viiakse fookus sama veeru viimasele reale.</p>
-				<p>Kui fookus on reaselektoril või suvandil <span class="uicontrol">Vali kõik</span>, viiakse fookus viimasele reaselektorile.</p>
+				<p>Kui fookus on reaselektoril või märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus viimasele reaselektorile.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
@@ -81,7 +81,7 @@
 				<p>Kui fookus on lahtrivaliku plokil, eemaldatakse lahtrite valik.</p>
 				<p>Kui fookus on lahtril ja tabelil on konkreetne valikukäitumise konfiguratsioon (rea valimiseks saate valida soovitud rea enda või märkida valiku märkeruudu, kui see on saadaval), valitakse rea asemel ainult fookuses olev lahter.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
-				<p>Kui fookus on lahtril või reaselektoril, lülitab see ümber praeguse rea valikut.</p>
+				<p>Kui fookus on lahtril või reaselektoril, lülitab see praeguse rea valiku ümber.</p>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
 				<p>Kui fookus on lahtrivaliku plokil, aktiveeritakse lahtrivaliku ploki asemel reavalik. Lahtrivalik eemaldatakse.</p>
 				<p>Reavaliku režiimist sõltuvalt juhtub üks järgmistest.</p>
@@ -102,8 +102,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift</kbd> <description>
-				<p>Kui fookus on nupul <span class="uicontrol">Vali kõik</span> ja vajutatakse otseteed <kbd>Spacebar</kbd>, siis vastavat sündmust ei käivitata. <kbd>Shift</kbd> takistab seda tegevust.</p>
-				<p>Kui fookus on veerupäisel ja vajutatakse otseteed <kbd>Spacebar</kbd> või <kbd>Enter</kbd>, siis vastavat sündmust ei käivitata.</p>
+				<p>Kui fookus on nupul <span class="uicontrol">Vali kõik</span> ja vajutatakse kiirklahvi <kbd>Spacebar</kbd>, siis vastavat sündmust ei käivitata. <kbd>Shift</kbd> takistab seda tegevust.</p>
+				<p>Kui fookus on veerupäisel ja vajutatakse kiirklahvi <kbd>Spacebar</kbd> või <kbd>Enter</kbd>, siis vastavat sündmust ei käivitata.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
@@ -153,7 +153,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Kui fookus on lahtril, reaselektoril või suvandil <span class="uicontrol">Vali kõik</span>, lülitab see ümber märkeruudu <span class="uicontrol">Vali kõik</span> oleku: vastavalt valitakse kõik read või tühistatakse nende valik.</p>
+				<p>Kui fookus on lahtril, reaselektoril või märkeruudul <span class="uicontrol">Vali kõik</span>, lülitab see ümber märkeruudu <span class="uicontrol">Vali kõik</span> oleku: vastavalt valitakse kõik read või tühistatakse nende valik.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
@@ -163,7 +163,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
 				<p>Kui fookus on lahtril, viiakse fookus selle sisule (erandiks on kirjutuskaitsega tekst).</p>
-				<p>Kui fookus on grupipäisel või puu mittelõppsõlmel, lülitab see ümber grupi laiendamise: grupp laiendatakse või ahendatakse vastavalt.</p>
+				<p>Kui fookus on grupipäisel või puu mittelõppsõlmel, lülitab see ümber grupi laiendamise: grupp vastavalt kas laiendatakse või ahendatakse.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>

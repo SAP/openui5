@@ -15,56 +15,56 @@
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Hvis fokuset er på markeringsfeltet <span class="uicontrol">Velg alle</span> eller <span class="uicontrol">Fjern alle</span>, flyttes fokuset til radvelgeren i den første synlige raden.</p>
 				<p>Hvis fokuset er på kolonneoverskriftsraden, flyttes fokuset til den første raden.</p>
-				<p>Hvis fokuset er på raden, flyttes fokuset til raden nedenfor.</p>
-				<p>Hvis fokuset er på cellen, flyttes fokuset til cellen nedenfor.</p>
+				<p>Hvis fokuset er på en rad, flyttes fokuset til raden nedenfor.</p>
+				<p>Hvis fokuset er på en celle, flyttes fokuset til cellen nedenfor.</p>
 				<p><kbd>ArrowLeft</kbd></p>
-				<p>Hvis fokuset er på den første cellen, flyttes fokuset til raden. Dette skifter fra cellebasert navigering til radbasert navigering.</p>
-				<p>Hvis fokuset er på cellen, flyttes fokuset til cellen til venstre.</p>
+				<p>Hvis fokuset er på den første cellen, flyttes fokuset til raden. Dette bytter fra cellebasert navigering til radbasert navigering.</p>
+				<p>Hvis fokuset er på en celle, flyttes fokuset til cellen til venstre.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>Hvis fokuset er på raden, flyttes fokuset til den første cellen i raden som for øyeblikket er i fokus. Dette skifter fra radbasert navigering til cellebasert navigering.</p>
-				<p>Hvis fokuset er på cellen, flyttes fokuset til cellen til høyre.</p>
+				<p>Hvis fokuset er på en rad, flyttes fokuset til den første cellen i raden som er i fokus for øyeblikket. Dette bytter fra radbasert navigering til cellebasert navigering.</p>
+				<p>Hvis fokuset er på en celle, flyttes fokuset til cellen til høyre.</p>
 				<p><span class="emphasis">Merk:</span> Hvis fokuset er på den siste kolonnen, og popin-atferd er aktivert for denne kolonnen, behandles popin-området som en ekstra kolonne til høyre, og fokuset flyttes til denne kolonnen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>Hvis fokuset er på raden, flyttes fokuset til kolonneoverskriftsraden.</p>
+				<p>Hvis fokuset er på en rad, flyttes fokuset til kolonneoverskriftsraden.</p>
 				<p>Hvis fokuset er på kolonneoverskriftsraden og <span class="uicontrol">Mer</span>-knappen er tilgjengelig, flyttes fokuset til <span class="uicontrol">Mer</span>-knappen.</p>
-				<p>Hvis fokuset er på kolonneoverskriftsraden og <span class="uicontrol">Mer</span>-knappen <span class="emphasis">ikke</span> er tilgjengelig, flyttes fokuset til den siste fokuserte raden.</p>
-				<p>Hvis fokuset er på <span class="uicontrol">Mer</span>-knappen, flyttes fokuset til den siste fokuserte raden.</p>
+				<p>Hvis fokuset er på kolonneoverskriftsraden og <span class="uicontrol">Mer</span>-knappen <span class="emphasis">ikke</span> er tilgjengelig, flyttes fokuset til den siste raden som er i fokus.</p>
+				<p>Hvis fokuset er på <span class="uicontrol">Mer</span>-knappen, flyttes fokuset til den siste raden som er i fokus.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>Hvis fokuset er på raden og <span class="uicontrol">Mer</span>-knappen er tilgjengelig, flyttes fokuset til <span class="uicontrol">Mer</span>-knappen.</p>
-				<p>Hvis fokuset er på raden og <span class="uicontrol">Mer</span>-knappen <span class="emphasis">ikke</span> er tilgjengelig, flyttes fokuset til kolonneoverskriftsraden.</p>
+				<p>Hvis fokuset er på en rad og <span class="uicontrol">Mer</span>-knappen er tilgjengelig, flyttes fokuset til <span class="uicontrol">Mer</span>-knappen.</p>
+				<p>Hvis fokuset er på en rad og <span class="uicontrol">Mer</span>-knappen <span class="emphasis">ikke</span> er tilgjengelig, flyttes fokuset til kolonneoverskriftsraden.</p>
 				<p>Hvis fokuset er på <span class="uicontrol">Mer</span>-knappen, flyttes fokuset til kolonneoverskriftsraden.</p>
-				<p>Hvis fokuset er på kolonneoverskriftsraden, flyttes fokuset til den siste fokuserte raden.</p>
+				<p>Hvis fokuset er på kolonneoverskriftsraden, flyttes fokuset til den siste raden som er i fokus.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
 				<p>Hvis fokuset er på kolonneoverskriften, økes bredden på denne kolonnen med 1 em. Dette gjentas så lenge tasten holdes nede.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, velges den fokuserte cellen og cellen til høyre. Fokuset flyttes til cellen til høyre for den fokuserte cellen.</p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen til høyre. Fokuset flyttes til cellen til høyre for den  cellen som er i fokus.</p>
 				<p>Hvis fokuset er på en valgt celle, får cellen til høyre fokus, og celleutvalget utvides opp til denne cellen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
 				<p>Hvis fokuset er på kolonneoverskriften, reduseres bredden på denne kolonnen med 1 em. Dette gjentas så lenge tasten holdes nede.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, velges den fokuserte cellen og cellen til venstre. Fokuset flyttes til cellen til venstre for den fokuserte cellen.</p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen til venstre. Fokuset flyttes til cellen til venstre for den cellen som er i fokus.</p>
 				<p>Hvis fokuset er på en valgt celle, får cellen til venstre fokus, og celleutvalget utvides opp til denne cellen.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden ovenfor, og utvalget utvides opp til denne raden.</p>
-				<p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden ovenfor, og utvalget fjernes for denne raden.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden ovenfor, og utvalget utvides opp til denne raden.</p>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden ovenfor, og utvalget fjernes for denne raden.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
 				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, og raden <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen ovenfor. Fokuset flyttes til cellen over den cellen som er i fokus.</p>
 				<p>Hvis fokuset er på en valgt celle, flyttes fokuset til cellen ovenfor, og celleutvalget utvides opp til denne cellen.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden nedenfor, og utvalget utvides opp til denne raden.</p>
-				<p>Hvis fokuset er på cellen eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden nedenfor, og utvalget fjernes for denne raden.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden nedenfor, og utvalget utvides opp til denne raden.</p>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden nedenfor, og utvalget fjernes for denne raden.</p>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
 				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, og raden <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen nedenfor. Fokuset flyttes til cellen under den cellen som er i fokus. </p>
 				<p>Hvis fokuset er på en valgt celle, flyttes fokuset til cellen nedenfor, og celleutvalget utvides opp til denne cellen.</p>
@@ -80,8 +80,8 @@
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>Hvis fokuset er på en celleutvalgsblokk, velges den fokuserte cellen.</p>
-				<p>Hvis fokuset er på en celleutvalgsblokk, fjernes utvalget av cellene. </p>
+				<p>Hvis fokuset er på en celle, velges cellen som er i fokus.</p>
+				<p>Hvis fokuset er på en celleutvalgsblokk, fjernes merkingen av cellene. </p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + Spacebar</kbd> <description>
@@ -97,7 +97,7 @@
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
-				<p>Hvis fokuset er innne i tabellen, fjernes utvalget for alle rader og celler.</p>
+				<p>Hvis fokuset er inne i tabellen, fjernes utvalget for alle rader og celler.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>

@@ -18,7 +18,7 @@
 				<p>Ak je zameranie na hlavičku skupiny rozbalenej skupiny, skupina sa zbalí.</p>
 				<p><kbd>ArrowRight</kbd></p>
 				<p>Ak je zameranie na hlavičku stĺpca, zameranie sa presunie na hlavičku stĺpca doprava.</p>
-				<p>Ak je zameranie na selektro riadkov, zameranie sa presunie na bunku prvého stĺpca v tom istom riadku.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na bunku prvého stĺpca v tom istom riadku.</p>
 				<p>Ak je zameranie na začiarkavacom poli <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku stĺpca prvého stĺpca.</p>
 			</description>
 		</interaction>
@@ -41,7 +41,7 @@
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Ak je zameranie na úrovni bunky, zameranie sa presunie o päť stĺpcov doprava (predvolená veľkosť strany).</p>
 				<p>Ak je zameranie na hlavičku stĺpca a napravo je menej stĺpcov, než je aktuálna veľkosť strany, zameranie sa presunie na posledný stĺpec.</p>
-				<p>Ak je zameranie na selekore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
 				<p>Ak je zameranie na položku <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku prvého stĺpca.</p>
 			</description>
 		</interaction>
@@ -54,7 +54,7 @@
 		</interaction>
 		<interaction> <kbd>End</kbd> <description>
 				<p>Ak je zameranie na hlavičku bunky alebo stĺpca, zameranie sa presunie na posledný stĺpec.</p>
-				<p>Ak je zameranie na selekore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
 				<p>Ak je zameranie na položku <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku prvého stĺpca.</p>
 			</description>
 		</interaction>
