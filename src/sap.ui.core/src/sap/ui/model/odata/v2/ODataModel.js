@@ -8304,34 +8304,38 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes model internal metadata information from the given entity. This information is not
+	 * Removes model internal metadata information from the given entity data if needed. This information is not
 	 * known and sometimes not accepted by the back-end.
 	 *
-	 * @param {object} [oEntityData] The entity data
+	 * @param {any} [vEntityData] The entity data
 	 * @returns {map} Map containing the removed information for the "root" entity; the internal
 	 *   information is however also removed from entities contained in navigation properties
 	 * @private
 	 */
-	ODataModel.prototype.removeInternalMetadata = function (oEntityData) {
+	ODataModel.prototype.removeInternalMetadata = function (vEntityData) {
 		var sCreated, sDeepPath, bInvalid, sKey, vValue;
 
-		if (oEntityData && oEntityData.__metadata) {
-			sCreated = oEntityData.__metadata.created;
-			sDeepPath = oEntityData.__metadata.deepPath;
-			bInvalid = oEntityData.__metadata.invalid;
-			delete oEntityData.__metadata.created;
-			delete oEntityData.__metadata.deepPath;
-			delete oEntityData.__metadata.invalid;
+		if (typeof vEntityData !== "object") {
+			return {created: undefined, deepPath: undefined, invalid: undefined};
 		}
-		for (sKey in oEntityData) {
-			vValue = oEntityData[sKey];
+
+		if (vEntityData && vEntityData.__metadata) {
+			sCreated = vEntityData.__metadata.created;
+			sDeepPath = vEntityData.__metadata.deepPath;
+			bInvalid = vEntityData.__metadata.invalid;
+			delete vEntityData.__metadata.created;
+			delete vEntityData.__metadata.deepPath;
+			delete vEntityData.__metadata.invalid;
+		}
+		for (sKey in vEntityData) {
+			vValue = vEntityData[sKey];
 			if (Array.isArray(vValue)) { // ..n navigation property value
 				vValue.forEach(ODataModel.prototype.removeInternalMetadata);
 			} else if (typeof vValue === "object") { // ..1 navigation property
 				ODataModel.prototype.removeInternalMetadata(vValue);
 			}
 		}
-		return {created: sCreated, deepPath: sDeepPath, invalid : bInvalid};
+		return {created: sCreated, deepPath: sDeepPath, invalid: bInvalid};
 	};
 
 	/**
