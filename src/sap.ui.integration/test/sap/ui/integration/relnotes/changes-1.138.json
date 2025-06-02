@@ -1,0 +1,12 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "001513dd836c610d22d5bc3f334d87dc75c8d0a8",
+        "type": "FIX",
+        "text": " Integration Cards: Changing a filter value now fires stateChanged event"
+      }
+    ]
+  }
+}

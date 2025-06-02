@@ -1,0 +1,22 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "d77d4dd77e54afafafcc225cd4ad74a6ceceb902",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: shows correctly the time part now"
+      },
+      {
+        "id": "dff21c053ff1bfb57de5c7ac994a25f4353c9648",
+        "type": "FIX",
+        "text": " sap.m.Menu: MenuWrapper does not throw JS error when trying to close submenu"
+      },
+      {
+        "id": "cfe23d977b3961d610628d3264573ef074899e3e",
+        "type": "FIX",
+        "text": " sap.m.IconTabHeader: prevent Firefox warning by avoiding getElementById with empty ID"
+      }
+    ]
+  }
+}

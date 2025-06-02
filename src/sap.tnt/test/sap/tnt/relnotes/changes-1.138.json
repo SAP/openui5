@@ -1,0 +1,12 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "d4fc6b25a8ee4fbe48e571a8db597ba7bfe62f62",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: prevent focus loss on popover close and reopen"
+      }
+    ]
+  }
+}
