@@ -62,6 +62,19 @@
 				</li>
 			</ul>
 
+			<h2 id="translation">Translation</h2>
+			<ul>
+				<li>
+					Use the standard procedure for translating texts in components. See the <a data-demokit-href="#/topic/9790d9aa686e4f818f2ad99057adb7ee" target="_blank">tutorial</a> and <a href="../../../index.html#/explore/component/translation" target="_parent">sample</a>.
+				</li>
+				<li>
+					In rare occasions, it may be necessary to access the card translations directly. This is usually not required and is not recommended. However, if you must do so, use <code>card.getTranslatedText</code>; <b>do not</b> use <code>card.getModel("i18n").getResourceBundle()</code>.
+				</li>
+			</ul>
+			<p>
+				<b>Note:</b> Do not attempt to use the card's i18n model directly. Although it may contain the same texts, it should not be accessed directly. Instead, use your standard component translation models.
+			</p>
+
 			<h2 id="properties">Properties</h2>
 			<p>The Component Card allows configuration of the content.</p>
 			<div class="tableWrapper">
