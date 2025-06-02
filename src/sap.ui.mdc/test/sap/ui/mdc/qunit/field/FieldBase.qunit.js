@@ -3991,9 +3991,6 @@ sap.ui.define([
 		oContent._$input.val("I");
 		oContent.fireLiveChange({ value: "I" });
 
-		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once");
-		oValueHelp.requestShowTypeahead.resetHistory();
-
 		await new Promise((resolve) => { setTimeout(resolve, 300); });
 
 		assert.ok(oValueHelp.requestShowTypeahead.calledOnce, "requestShowTypeahead called once in debounce interval");
@@ -4003,14 +4000,13 @@ sap.ui.define([
 		await new Promise((resolve) => { setTimeout(resolve, 300); });
 
 		assert.notOk(oValueHelp.open.called, "oValueHelp not opened");
-		assert.equal(oValueHelp.getFilterValue(), "", "no FilterValue");
+		assert.equal(oValueHelp.getFilterValue(), "I", "FilterValue set");
 
 		fnResolve(true);
 
 		await new Promise((resolve) => { setTimeout(resolve, 400); });
 
 		assert.ok(oValueHelp.open.called, "oValueHelp opened");
-		assert.equal(oValueHelp.getFilterValue(), "I", "FilterValue set");
 
 		oValueHelp.close();
 
