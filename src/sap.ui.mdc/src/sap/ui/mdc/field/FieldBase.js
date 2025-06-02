@@ -620,7 +620,9 @@ sap.ui.define([
 				"multipleLines",
 				"maxConditions",
 				"conditions",
-				"delegate"
+				"delegate",
+				"valueState",
+				"valueStateText"
 			],
 			aggregations: ["fieldInfo",
 				"content",
@@ -1446,6 +1448,15 @@ sap.ui.define([
 				this.triggerCheckCreateInternalContent();
 			}
 		}
+
+		if (oChanges.name === "valueState") {
+			_updateValueState.call(this, oChanges.current, null);
+		}
+
+		if (oChanges.name === "valueStateText") {
+			_updateValueState.call(this, null, oChanges.current);
+		}
+
 	};
 
 	/**
@@ -1954,59 +1965,86 @@ sap.ui.define([
 
 	function _attachContentHandlers(oContent) {
 
-		if (oContent.getMetadata().getAllEvents().change) {
+		const oEvents = oContent.getMetadata().getAllEvents();
+
+		if (oEvents.change) {
 			// content has change event -> attach handler
 			oContent.attachEvent("change", _handleContentChange, this);
 		}
-		if (oContent.getMetadata().getAllEvents().liveChange) {
+		if (oEvents.liveChange) {
 			// content has liveChange event -> attach handler
 			oContent.attachEvent("liveChange", _handleContentLiveChange, this);
 		}
-		if (oContent.getMetadata().getAllEvents().press) {
+		if (oEvents.press) {
 			// content has press event -> attach handler
 			oContent.attachEvent("press", _handleContentPress, this);
 		}
-		if (oContent.getMetadata().getAllEvents().valueHelpRequest) {
+		if (oEvents.valueHelpRequest) {
 			// content has valueHelpRequest event -> attach handler
 			oContent.attachEvent("valueHelpRequest", _handleContentValueHelpRequest, this);
 		}
-		if (oContent.getMetadata().getAllEvents().tokenUpdate) {
+		if (oEvents.tokenUpdate) {
 			// content has tokenUpdate event -> attach handler
 			oContent.attachEvent("tokenUpdate", _handleTokenUpdate, this);
 		}
-		if (oContent.getMetadata().getAllEvents().validateFieldGroup) {
+		if (oEvents.validateFieldGroup) {
 			// content has tokenUpdate event -> attach handler
 			oContent.attachEvent("validateFieldGroup", _validateFieldGroup, this);
 		}
-
+		if (oEvents.parseError) {
+			oContent.attachEvent("parseError", _handleParseError, this);
+		}
+		if (oEvents.formatError) {
+			oContent.attachEvent("formatError", _handleFormatError, this);
+		}
+		if (oEvents.validationError) {
+			oContent.attachEvent("validationError", _handleValidationError, this);
+		}
+		if (oEvents.validationSuccess) {
+			oContent.attachEvent("validationSuccess", _handleValidationSuccess, this);
+		}
 	}
 
 
 	function _detachContentHandlers(oContent) {
 
-		if (oContent.getMetadata().getAllEvents().change) {
+		const oEvents = oContent.getMetadata().getAllEvents();
+
+		if (oEvents.change) {
 			// oldContent has change event -> detach handler
 			oContent.detachEvent("change", _handleContentChange, this);
 		}
-		if (oContent.getMetadata().getAllEvents().liveChange) {
+		if (oEvents.liveChange) {
 			// oldContent has liveChange event -> detach handler
 			oContent.detachEvent("liveChange", _handleContentLiveChange, this);
 		}
-		if (oContent.getMetadata().getAllEvents().press) {
+		if (oEvents.press) {
 			// oldContent has press event -> detach handler
 			oContent.detachEvent("press", _handleContentPress, this);
 		}
-		if (oContent.getMetadata().getAllEvents().valueHelpRequest) {
+		if (oEvents.valueHelpRequest) {
 			// oldContent has valueHelpRequest event -> detach handler
 			oContent.detachEvent("valueHelpRequest", _handleContentValueHelpRequest, this);
 		}
-		if (oContent.getMetadata().getAllEvents().tokenUpdate) {
+		if (oEvents.tokenUpdate) {
 			// content has tokenUpdate event -> deattach handler
 			oContent.detachEvent("tokenUpdate", _handleTokenUpdate, this);
 		}
-		if (oContent.getMetadata().getAllEvents().validateFieldGroup) {
+		if (oEvents.validateFieldGroup) {
 			// content has tokenUpdate event -> attach handler
 			oContent.detachEvent("validateFieldGroup", _validateFieldGroup, this);
+		}
+		if (oEvents.parseError) {
+			oContent.detachEvent("parseError", _handleParseError, this);
+		}
+		if (oEvents.formatError) {
+			oContent.detachEvent("formatError", _handleFormatError, this);
+		}
+		if (oEvents.validationError) {
+			oContent.detachEvent("validationError", _handleValidationError, this);
+		}
+		if (oEvents.validationSuccess) {
+			oContent.detachEvent("validationSuccess", _handleValidationSuccess, this);
 		}
 
 	}
@@ -2154,6 +2192,7 @@ sap.ui.define([
 					}
 
 					oControl.attachEvent("parseError", _handleParseError, this);
+					oControl.attachEvent("formatError", _handleFormatError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
 					oControl.attachEvent("validationSuccess", _handleValidationSuccess, this);
 					oControl.attachEvent("validateFieldGroup", _validateFieldGroup, this);
@@ -2407,11 +2446,17 @@ sap.ui.define([
 		this._setInvalidInput(oException, vValue, "ParseError", oSource);
 		this._sFilterValue = "";
 
-		const oBinding = oSource.getBinding("valueState");
-		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
-			// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
-			_setUIMessage.call(this, oEvent.getParameter("message"));
-		}
+		this.setValueStateForContent(oSource.getId(), ValueState.Error, oEvent.getParameter("message"));
+		_fireOuterEvent.call(this, oEvent);
+
+	}
+
+	function _handleFormatError(oEvent) {
+
+		const oSource = oEvent.getSource();
+
+		this.setValueStateForContent(oSource.getId(), ValueState.Error, oEvent.getParameter("message"));
+		_fireOuterEvent.call(this, oEvent);
 
 	}
 
@@ -2448,11 +2493,8 @@ sap.ui.define([
 			this._aAsyncChanges.splice(i, 1);
 		}
 
-		const oBinding = oSource.getBinding("valueState");
-		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
-			// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
-			_setUIMessage.call(this, oEvent.getParameter("message"));
-		}
+		this.setValueStateForContent(oSource.getId(), ValueState.Error, oEvent.getParameter("message"));
+		_fireOuterEvent.call(this, oEvent);
 
 	}
 
@@ -2461,15 +2503,46 @@ sap.ui.define([
 		const oSource = oEvent.getSource();
 
 		if (this._isInvalidInputForContent(oSource)) {
-			const oBinding = oSource.getBinding("valueState");
-			let bRemoveUIMessage = false; // for TwoWay-binding let the binding remove the valueState
-			if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
-				// for unit fields the valueState binding is OneWay, so we need to remove the valueState manually
-				bRemoveUIMessage = true;
-			}
-			this.resetInvalidInput(bRemoveUIMessage); // if last valid value is entered again no condition is updated
+			this.resetInvalidInput(false); // if last valid value is entered again no condition is updated
+			this.resetValueStateForAllContent();
 		}
 
+		_fireOuterEvent.call(this, oEvent);
+
+	}
+
+	function _fireOuterEvent(oEvent) {
+
+		const oType = oEvent.getParameter("type");
+
+		if (!oType?.isA("sap.ui.mdc.field.ConditionType") && !oType?.isA("sap.ui.mdc.field.ConditionsType")) {
+			// only handle data-property. If event triggered from other internal binding, what should not happen, don't propagate on Field
+			oEvent.cancelBubble();
+			oEvent.preventDefault();
+		} else {
+			// fire event on corresponding outer property
+			const oParameter = this.getBindingEventParameter(oEvent);
+			if (oParameter?.property) { // fire event on Field only if there is a property defined, otherwise the message cannot be associated to the control
+				const sId = oEvent.getId();
+				oEvent.cancelBubble();
+				oEvent.preventDefault();
+				if (sId !== "validationSuccess" || !oParameter.type) { // for bound properties the ValidationSuccess is alredy triggered if the Fields outer property is updated. No second event needed
+					this.fireEvent(sId, oParameter, false, true);
+				}
+			} else {
+				// For compatibility reasons set valueState on Field if changed internal too, even if no binding is there on Field itself
+				const oBinding = oEvent.getSource().getBinding("valueState");
+				if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
+					// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
+					const sId = oEvent.getId();
+					if (sId === "parseError" || sId === "validationError" || sId === "formatError") {
+						_setUIMessage.call(this, oEvent.getParameter("message"));
+					} else {
+						this._removeUIMessage();
+					}
+				}
+			}
+		}
 
 	}
 
@@ -3970,6 +4043,129 @@ sap.ui.define([
 
 		oContent.removeStyleClass("sapMFocus");
 		oValueHelp?.setVisualFocus();
+
+	}
+
+	/**
+	 * Creates parameter for a <code>ParseError</code>, <code>ValidationError</code> or <code>ValidationSuccess</code>
+	 * event based on the corresponding event fired on the inner control.
+	 *
+	 * The basic implementation just adds the element and error information. The <code>property</code> and
+	 * <code>type</code> information must be added by the inheriting control. If no binding for the corresponding
+	 * property exists <code>null</code> must be returned, as the event must only be fired if there is a binding.
+	 *
+	 * @param {sap.ui.base.Event} oEvent original event fired on inner control
+	 * @returns {object} parameters for the new event
+	 * @protected
+	 * @since 1.136.0
+	 */
+	FieldBase.prototype.getBindingEventParameter = function (oEvent) {
+
+		const sId = oEvent.getId();
+		const oParameter = {
+			element: this,
+			newValue: oEvent.getParameter("newValue"),
+			oldValue: oEvent.getParameter("oldValue")
+		};
+
+		if (sId === "parseError" || sId === "validationError" || sId === "formatError") { // validationSuccess don't has message
+			oParameter.exception = oEvent.getParameter("exception");
+			oParameter.message = oEvent.getParameter("message");
+		}
+
+		return oParameter;
+
+	};
+
+	/**
+	 * Sets the ValueState for content controls
+	 *
+	 * @param {string} sContentId Id of the content control
+	 * @param {sap.ui.core.ValueState} sValueState value state
+	 * @param {string} sValueStateText value state text
+	 * @protected
+	 * @since 1.136.0
+	 */
+	FieldBase.prototype.setValueStateForContent = function (sContentId, sValueState, sValueStateText) {
+
+		if (!this._oValueState) {
+			this._oValueState = {};
+		}
+
+		this._oValueState[sContentId] = {valueState: sValueState, valueStateText: sValueStateText};
+
+	};
+
+	/**
+	 * Gets the ValueState for content controls
+	 *
+	 * @param {string} sContentId Id of the content control or Id of the field itself
+	 * @returns {object} value state information for content control
+	 * @protected
+	 * @since 1.136.0
+	 */
+	FieldBase.prototype.getValueStateForContent = function (sContentId) {
+
+		let oValueState;
+
+		if (this._oValueState) {
+			if (this._oValueState[sContentId]) {
+				oValueState = this._oValueState[sContentId];
+			}
+		}
+
+		return oValueState;
+
+	};
+
+	/**
+	 * Return <code>true</code> if at least one content control has a own value state
+	 *
+	 * @returns {boolean} <code>true</code> if at least one content control has a own value state
+	 * @protected
+	 * @since 1.136.0
+	 */
+	FieldBase.prototype.hasValueStateForContent = function () {
+
+		return !!this._oValueState;
+
+	};
+
+	/**
+	 * Resets the ValueState for content controls
+	 *
+	 * @protected
+	 * @since 1.136.0
+	 */
+	FieldBase.prototype.resetValueStateForAllContent = function () {
+
+		this._oValueState = null;
+
+	};
+
+	function _updateValueState(sValueState, sValueStateText) {
+		// If ValueState is set for a content control it is also set on the Field itself. As the Field can only have one ValueState
+		// different content controls can have a different one.
+		// If a content control has no own ValueState it inherits the one of the Field.
+		// So if the ValueState is set it must be checked if it is just the one from a content control.
+		// If it is different the old ValueState from the content-control must be removed to show the explicit set one.
+		// As ValueState and ValueState Text are set one after the other, only check the currently set one.
+
+		if (sValueState === ValueState.None) {
+			this.resetValueStateForAllContent();
+		} else {
+			let bFound = false;
+			for (const sId in this._oValueState) {
+				const oValueState = this._oValueState[sId];
+				if ((oValueState.valueState === sValueState || sValueState === null) && (oValueState.valueStateText === sValueStateText || sValueStateText === null)) {
+					bFound = true;
+					break;
+				}
+			}
+			if (!bFound) { // new ValueState is none of the content ones
+				this.resetValueStateForAllContent();
+			}
+		}
 
 	}
 

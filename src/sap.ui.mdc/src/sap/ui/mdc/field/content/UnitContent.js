@@ -225,13 +225,13 @@ sap.ui.define([
 	function _setValueStateForControl(sValueState) {
 
 		const oField = this.getParent();
-
-		if (!oField || !oField.isInvalidInput() || oField._isInvalidInputForContent(this)) {
-			// if there is no invalid input at all valueState seems to be set from outside -> just take it
-			// if there is invalid input on current control -> take ValueState
-			return sValueState;
+		const oValueState = oField?.getValueStateForContent(this.getId());
+		if (oValueState) {
+			return oValueState.valueState;
+		} else if (oField?.hasValueStateForContent()) {
+			return ValueState.None; // there is a valueState on another control, show none.
 		} else {
-			return ValueState.None;
+			return sValueState;
 		}
 
 	}
@@ -239,16 +239,13 @@ sap.ui.define([
 	function _setValueStateTextForControl(sValueStateText) {
 
 		const oField = this.getParent();
-
-		if (!oField || !oField.isInvalidInput()) {
-			// if there is no invalid input at all valueState seems to be set from outside -> just take it
-			return sValueStateText;
-		} else if (oField._isInvalidInputForContent(this)) {
-			// if there is invalid input on current control -> take error of this exception (as we can only have one ValueStateText)
-			const oException = oField._getInvalidInputException(this);
-			return oException.message;
+		const oValueState = oField?.getValueStateForContent(this.getId());
+		if (oValueState) {
+			return oValueState.valueStateText;
+		} else if (oField?.hasValueStateForContent()) {
+			return ""; // there is a valueState on another control, show none.
 		} else {
-			return "";
+			return sValueStateText;
 		}
 
 	}
