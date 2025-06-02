@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/model/message/MessageModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
+	"sap/ui/model/odata/UpdateMethod",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/v2/Context",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -39,8 +40,8 @@ sap.ui.define([
 	// "sap/ui/table/Table"
 ], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
 		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
-		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Decimal, Context,
-		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
+		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, UpdateMethod,
+		Decimal, Context, ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
@@ -22501,5 +22502,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			["1", "Foo"],
 			["", ""]
 		]);
+	});
+
+	//*********************************************************************************************
+	// Scenario: It has to be possible to update a property with Edm.Binary type with a large value
+	// SNOW: CS20250009904175
+	QUnit.test("Updating Edm.Binary properties", async function (assert) {
+		const oModel = createSpecialCasesModel({
+			defaultBindingMode: BindingMode.TwoWay, defaultUpdateMethod: UpdateMethod.Put, tokenHandling: false});
+
+		await this.createView(assert, "", oModel);
+
+		const sData = "A".repeat(10000000); // 10 MB of data
+		this.expectRequest({
+			data: sData,
+			deepPath: "/Employees('Foo')/Photo/$value",
+			headers: {},
+			method: "PUT",
+			requestUri: "Employees('Foo')/Photo/$value"
+		});
+
+		// code under test
+		oModel.update("/Employees('Foo')/Photo/$value", sData);
+
+		await this.waitForChanges(assert);
 	});
 });
