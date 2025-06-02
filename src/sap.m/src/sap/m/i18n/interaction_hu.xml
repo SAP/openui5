@@ -41,30 +41,30 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>Ha a fókusz egy oszlopfejlécen van, akkor az oszlop 1 kvirttel szélesebb lesz. A billentyű nyomva tartása esetén ez folyamatosan ismétlődik.</p>
+				<p>Ha a fókusz az oszlopfejlécen van, akkor az oszlop 1 kvirttel szélesebb lesz. A billentyű nyomva tartása esetén ez folyamatosan ismétlődik.</p>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
 				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, akkor kijelöli a fókuszban lévő és a tőle jobbra álló cellát. A fókusz átkerül a fókuszban lévő cella jobb oldalán lévő cellára.</p>
-				<p>Ha a fókusz egy kijelölt cellán van, a tőle jobbra álló cellára helyezi át, és a cellakijelölés kibővül ezzel a cellával.</p>
+				<p>Ha a fókusz egy kijelölt cellán van, a tőle jobbra álló cellára kerül át, és a cellakijelölés kibővül eddig a celláig.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>Ha a fókusz egy oszlopfejlécen van, akkor az oszlop 1 kvirttel keskenyebb lesz. A billentyű nyomva tartása esetén ez folyamatosan ismétlődik.</p>
+				<p>Ha a fókusz az oszlopfejlécen van, akkor az oszlop 1 kvirttel keskenyebb lesz. A billentyű nyomva tartása esetén ez folyamatosan ismétlődik.</p>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
 				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, akkor kijelöli a fókuszban lévő és a tőle balra álló cellát. A fókusz átkerül a fókuszban lévő cella bal oldalán lévő cellára.</p>
-				<p>Ha a fókusz egy kijelölt cellán van, a tőle balra álló cellára kerül át, és a cellakijelölés kibővül ezzel a cellával.</p>
+				<p>Ha a fókusz egy kijelölt cellán van, a tőle balra álló cellára kerül át, és a cellakijelölés kibővül eddig a celláig.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Ha a fókusz egy cellán vagy sorkijelölőn van, és ki van jelölve a vonatkozó sor, akkor a fókuszt egy sorral feljebb helyezi, és a kijelölés is kibővül eddig a sorig.</p>
-				<p>Ha a fókusz egy cellán vagy sorkijelölőn van, és <span class="emphasis">nincs</span> kijelölve a vonatkozó sor, a fókuszt egy sorral feljebb helyezi, és ennek a sornak megszűnik a kijelölése.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és ki van jelölve a vonatkozó sor, akkor a fókuszt egy sorral feljebb helyezi, és a kijelölés is kibővül eddig a sorig.</p>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és <span class="emphasis">nincs</span> kijelölve a vonatkozó sor, a fókuszt egy sorral feljebb helyezi, és ennek a sornak megszűnik a kijelölése.</p>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
 				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, és a sor <span class="emphasis">sincs</span> kijelölve, akkor kijelöli a fókuszban lévő cellát és a fölötte lévő cellát. A fókuszt a jelenleg fókuszban lévő cella fölötti cellára helyezi át.</p>
 				<p>Ha a fókusz egy kijelölt cellán van, a fölötte lévő cellára helyezi át, és a cellakijelölés kibővül eddig a celláig.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Ha a fókusz egy cellán vagy sorkijelölőn van, és ki van jelölve a vonatkozó sor, akkor a fókuszt egy sorral lejjebb helyezi, és a kijelölés is kibővül eddig a sorig.</p>
-				<p>Ha a fókusz egy cellán vagy sorkijelölőn van, és <span class="emphasis">nincs</span> kijelölve a vonatkozó sor, a fókuszt egy sorral lejjebb helyezi, és ennek a sornak megszűnik a kijelölése.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és ki van jelölve a vonatkozó sor, akkor a fókuszt egy sorral lejjebb helyezi, és a kijelölés is kibővül eddig a sorig.</p>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és <span class="emphasis">nincs</span> kijelölve a vonatkozó sor, a fókuszt egy sorral lejjebb helyezi, és ennek a sornak megszűnik a kijelölése.</p>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
 				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, és a sor <span class="emphasis">sincs</span> kijelölve, akkor kijelöli a fókuszban lévő cellát és az alatta lévő cellát. A fókusz a jelenleg fókuszban lévő cella alatti cellára kerül át. </p>
 				<p>Ha a fókusz egy kijelölt cellán van, az alatta lévő cellára helyezi át, és a cellakijelölés kibővül eddig a celláig.</p>
@@ -81,12 +81,12 @@
 		<interaction> <kbd>Spacebar</kbd> <description>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
 				<p>Ha a fókusz egy cellán van, kijelöli azt a cellát.</p>
-				<p>Ha a fókusz egy cellakijelölési blokkon van, eltávolítja a kijelölt cellákat.</p>
+				<p>Ha a fókusz egy cellakijelölési blokkon van, megszünteti a cellák kijelölését.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
-				<p>Ha a fókusz egy cellakijelölési blokkon van, akkor a cellakijelölési blokk sorkijelölésre változik. A cellakijelölés megszűnik.</p>
+				<p>Ha a fókusz egy cellakijelölési blokkon van, akkor a cellakijelölési blokkot sorkijelölésre változtatja. A cellakijelölés megszűnik.</p>
 				<p>A sorkijelölési módtól függően az alábbi történik:</p>
 				<ul>
 					<li>A blokk összes celláját kijelöli (többszörös kijelölés)</li>

@@ -10,7 +10,7 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Déplace la zone activée vers la cellule suivante de la même colonne ou ligne dans les sens correspondants.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Si la zone activée se trouve sur la première ligne, elle se déplace vers la ligne d'en-tête de la colonne.</p>
+				<p>Si la zone activée se trouve sur la première ligne, elle se déplace vers la ligne d'en-tête d'une colonne.</p>
 				<p>Si la zone activée se trouve sur une cellule de la première ligne, elle se déplace vers l'en-tête de colonne lié.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span> ou <span class="uicontrol">Réinitialiser</span>, elle se déplace vers le sélecteur de ligne dans la première ligne visible.</p>
@@ -54,19 +54,19 @@
 				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule de gauche et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est étendue jusqu'à cette ligne.</p>
-				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est supprimée pour cette ligne.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est supprimée pour cette ligne.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située au-dessus sont sélectionnées. La zone activée se déplace vers la cellule située au-dessus de la cellule où se trouve la zone activée.</p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située au-dessus sont sélectionnées. La zone activée se déplace vers la cellule située au-dessus de la cellule activée.</p>
 				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule située au-dessus et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est étendue jusqu'à cette ligne.</p>
-				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne, et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est supprimée pour cette ligne.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou un sélecteur de ligne et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est supprimée pour cette ligne.</p>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située en dessous sont sélectionnées. La zone activée se déplace vers la cellule située en dessous de la cellule où se trouve la zone activée. </p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située en dessous sont sélectionnées. La zone activée se déplace vers la cellule située en dessous de la cellule activée. </p>
 				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule située en dessous et la sélection de cellule est étendue jusqu'à cette cellule.</p>
 			</description>
 		</interaction>

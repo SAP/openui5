@@ -11,7 +11,7 @@
 				<p>Siirtää kohdistuksen saman sarakkeen tai rivin seuraavaan soluun vastaavassa suunnassa.</p>
 				<p><kbd>ArrowUp</kbd></p>
 				<p>Jos kohdistus on ensimmäisellä rivillä, se siirtyy sarakkeen otsikkoriville.</p>
-				<p>Jos kohdistus on jossakin solussa ensimmäisellä rivillä, se siirtyy liittyvään sarakeotsikkoon.</p>
+				<p>Jos kohdistus on jossakin ensimmäisen rivin soluista, se siirtyy liittyvään sarakeotsikkoon.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span>- tai <span class="uicontrol">Tyhjennä kaikki</span> -valintaruudussa, se siirtyy ensimmäisen näkyvissä olevan rivin rivivalitsimeen.</p>
 				<p>Jos kohdistus on sarakkeen otsikkorivillä, se siirtyy ensimmäiselle riville.</p>
@@ -41,29 +41,29 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>Jos kohdistus on sarakeotsikossa, kyseisen sarakkeen leveyttä lisätään yhden em-yksikön verran. Jos näppäintä painetaan pitkään, toiminto toistetaan.</p>
+				<p>Jos kohdistus on sarakeotsikossa, kyseistä saraketta levennetään yhden em-yksikön verran. Jos näppäintä painetaan pitkään, toiminto toistetaan.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, valitaan kohdistettu solu ja sen oikealla puolella oleva solu. Kohdistus siirtyy kohdistetun solun oikealla puolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy oikealla puolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>Jos kohdistus on sarakeotsikossa, kyseisen sarakkeen leveyttä vähennetään yhden em-yksikön verran. Jos näppäintä painetaan pitkään, toiminto toistetaan.</p>
+				<p>Jos kohdistus on sarakeotsikossa, kyseistä saraketta kavennetaan yhden em-yksikön verran. Jos näppäintä painetaan pitkään, toiminto toistetaan.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, valitaan kohdistettu solu sekä sen vasemmalla puolella oleva solu. Kohdistus siirtyy kohdistetun solun vasemmalla puolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy vasemmalla puolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
-				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Jos kohdistus on solussa tai rivivalitsimassa ja asianomainen rivi on valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen solu <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen yläpuolella oleva solu. Kohdistus siirtyy kohdistetun solun yläpuolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
 				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen alapuolella oleva solu. Kohdistus siirtyy kohdistetun solun alapuolella olevaan soluun. </p>
@@ -71,11 +71,11 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
-				<p>Jos kohdistus on muokattavissa olevassa solussa (kuten syöttökentässä), se siirtyy alapuolella olevaan soluun.</p>
+				<p>Jos kohdistus on muokattavissa olevassa solussa (kuten syöttökentässä), se siirtyy yläpuolella olevaan soluun.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
-				<p>Jos kohdistus on muokattavissa olevassa solussa (kuten syöttökentässä), se siirtyy yläpuolella olevaan soluun.</p>
+				<p>Jos kohdistus on muokattavissa olevassa solussa (kuten syöttökentässä), se siirtyy alapuolella olevaan soluun.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>

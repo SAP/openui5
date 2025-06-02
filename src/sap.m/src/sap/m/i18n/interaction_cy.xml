@@ -13,12 +13,12 @@
 				<p>Os yw'r ffocws ar y rhes gyntaf, bydd y ffocws yn symud i'r rhes pennawd colofn.</p>
 				<p>Os yw'r ffocws ar gell y rhes gyntaf, bydd y ffocws yn symud i bennawd colofn berthnasol.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Os yw'r ffocws ar flwch ticio <span class="uicontrol">Dewis Pob Un</span> neu <span class="uicontrol">Clirio Pob Un</span>, bydd y ffocws yn symud i'r dewisydd rhesi yn y rhes weladwy gyntaf.</p>
-				<p>Os yw'r ffocws ar res pennawd colofn, bydd y ffocws yn symud i'r rhes gyntaf.</p>
+				<p>Os yw'r ffocws ar y blwch ticio <span class="uicontrol">Dewis Pob Un</span> neu <span class="uicontrol">Clirio Pob Un</span>, bydd y ffocws yn symud i'r dewisydd rhesi yn y rhes weladwy gyntaf.</p>
+				<p>Os yw'r ffocws ar y rhes pennawd colofn, bydd y ffocws yn symud i'r rhes gyntaf.</p>
 				<p>Os yw'r ffocws ar res, bydd y ffocws yn symud i'r rhes islaw.</p>
 				<p>Os yw'r ffocws ar gell, bydd y ffocws yn symud i'r gell islaw.</p>
 				<p><kbd>ArrowLeft</kbd></p>
-				<p>Os yw'r ffocws ar gell gyntaf, bydd y ffocws yn symud i'r rhes. Mae hyn yn newid o lywio ar sail celloedd i lywio ar sail rhesi.</p>
+				<p>Os yw'r ffocws ar y gell gyntaf, bydd y ffocws yn symud i'r rhes. Mae hyn yn newid o lywio ar sail celloedd i lywio ar sail rhesi.</p>
 				<p>Os yw'r ffocws ar gell, bydd y ffocws yn symud i'r gell ar y chwith.</p>
 				<p><kbd>ArrowRight</kbd></p>
 				<p>Os yw'r ffocws ar res, bydd y ffocws yn symud i gell gyntaf rhes lle mae'r ffocws ar hyn o bryd. Mae hyn yn newid o lywio ar sail rhesi i lywio ar sail celloedd.</p>
@@ -28,9 +28,9 @@
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
 				<p>Os yw'r ffocws ar res, bydd y ffocws yn symud i'r rhes pennawd colofn.</p>
-				<p>Os yw'r ffocws ar res pennawd colofn, ac mae'r botwm <span class="uicontrol">Mwy</span> ar gael, mae'r ffocws yn symud i'r botwm <span class="uicontrol">Mwy</span>.</p>
-				<p>Os yw'r ffocws ar res pennawd colofn, a bod botwm <span class="uicontrol">Mwy</span> <span class="emphasis">ddim</span> ar gael, mae'r ffocws yn symud i'r rhes lle roedd y ffocws ddiwethaf..</p>
-				<p>Os yw'r ffocws ar y botwm <span class="uicontrol">Mwy</span>, mae'r ffocws yn symud i'r rhes lle roedd y ffocws ddiwethaf..</p>
+				<p>Os yw'r ffocws ar y rhes pennawd colofn, ac mae'r botwm <span class="uicontrol">Mwy</span> ar gael, mae'r ffocws yn symud i'r botwm <span class="uicontrol">Mwy</span>.</p>
+				<p>Os yw'r ffocws ar y rhes pennawd colofn, a bod botwm <span class="uicontrol">Mwy</span> <span class="emphasis">ddim</span> ar gael, mae'r ffocws yn symud i'r rhes lle roedd y ffocws ddiwethaf..</p>
+				<p>Os yw'r ffocws ar y botwm <span class="uicontrol">Mwy</span>, mae'r ffocws yn symud i'r rhes lle roedd y ffocws ddiwethaf.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
@@ -41,30 +41,30 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>Os yw'r ffocws ar bennawd colofn, bydd lled y golofn yn cynyddu 1 em. Mae hyn yn cael ei ailadrodd os byddwch yn dal yn pwyso ar y fysell.</p>
+				<p>Os yw'r ffocws ar y pennawd colofn, bydd lled y golofn yn cynyddu 1 em. Mae hyn yn cael ei ailadrodd os byddwch yn dal yn pwyso ar y fysell.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell i'r dde yn cael ei dewis. Bydd y ffocws yn symud i'r gell ar y dde i'r gell lle mae'r ffocws.</p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell i'r dde yn cael eu dewis. Bydd y ffocws yn symud i'r gell ar y dde i'r gell lle mae'r ffocws.</p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell ar y dde yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>Os yw'r ffocws ar bennawd colofn, bydd lled y golofn yn gostwng 1 em. Mae hyn yn cael ei ailadrodd os byddwch yn dal yn pwyso ar y fysell.</p>
+				<p>Os yw'r ffocws ar y pennawd colofn, bydd lled y golofn yn gostwng 1 em. Mae hyn yn cael ei ailadrodd os byddwch yn dal yn pwyso ar y fysell.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell i'r chwith yn cael ei dewis. Bydd y ffocws yn symud i'r gell ar y chwith i'r gell lle mae'r ffocws.</p>
+				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell i'r chwith yn cael eu dewis. Bydd y ffocws yn symud i'r gell ar y chwith i'r gell lle mae'r ffocws.</p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y gell ar y chwith yn cael y ffocws, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Os yw'r ffocws ar gell neu ddewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
-				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Os yw'r ffocws ar gell neu'r dewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
+				<p>Os yw'r ffocws ar gell neu'r dewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes uwchlaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
 				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis ac <span class="emphasis">nad</span> yw'r rhes wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell uwchben yn cael eu dewis. Bydd y ffocws yn symud i'r gell uwchlaw'r gell lle mae'r ffocws.</p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y ffocws yn symud i'r gell uwchlaw, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Os yw'r ffocws ar gell neu ddewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes islaw, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
-				<p>Os yw'r ffocws ar gell neu ddewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes islaw, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Os yw'r ffocws ar gell neu'r dewisydd rhesi a bod y rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes isod, a bydd y broses dewis yn ymestyn at y rhes hon.</p>
+				<p>Os yw'r ffocws ar gell neu'r dewisydd rhesi ac <span class="emphasis">nad</span> yw'r rhes berthnasol wedi'i dewis, bydd y ffocws yn symud i'r rhes isod, a bydd y dewis yn cael ei dynnu ar gyfer y rhes hon.</p>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
 				<p>Os yw'r ffocws ar gell <span class="emphasis">nad</span> yw wedi'i dewis ac <span class="emphasis">nad</span> yw'r rhes wedi'i dewis, bydd y gell lle mae'r ffocws a'r gell islaw yn cael eu dewis. Bydd y ffocws yn symud i'r gell islaw'r gell lle mae'r ffocws. </p>
 				<p>Os yw'r ffocws ar gell sydd wedi'i dewis, bydd y ffocws yn symud i'r gell islaw, ac mae’r broses dewis celloedd yn ymestyn at y gell hon.</p>

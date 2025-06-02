@@ -13,7 +13,7 @@
 				<p>Ak je zameranie na prvom riadku, zameranie sa presunie na riadok hlavičky stĺpca.</p>
 				<p>Ak je zameranie na bunku v prvom riadku, zameranie sa presunie na hlavičku súvisiaceho stĺpca.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Ak je začiarknuté pole <span class="uicontrol">Vybrať všetko</span> alebo <span class="uicontrol">Vymazať všetko</span>, zameranie sa presunie na selektor riadkov v prvom viditeľnom riadku.</p>
+				<p>Ak je zameranie na začiarkavacom poli <span class="uicontrol">Vybrať všetko</span> alebo <span class="uicontrol">Vymazať všetko</span>, zameranie sa presunie na selektor riadkov v prvom viditeľnom riadku.</p>
 				<p>Ak je zameranie na riadok hlavičky stĺpca, zameranie sa presunie na prvý riadok.</p>
 				<p>Ak je zameranie na riadok, zameranie sa presunie na riadok nižšie.</p>
 				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku nižšie.</p>
@@ -22,7 +22,7 @@
 				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku naľavo.</p>
 				<p><kbd>ArrowRight</kbd></p>
 				<p>Ak je zameranie na riadok, zameranie sa presunie na prvú bunku aktuálne aktívneho riadku. Tým sa prepne z navigácie podľa riadkov na navigáciu podľa buniek.</p>
-				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku napravo.</p>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku vpravo.</p>
 				<p><span class="emphasis">Poznámka:</span> Ak je zameranie na posledný stĺpec a pre tento stĺpec bolo povolené správanie otvárania okien, s kontextovou oblasťou sa zaobchádza ako s ďalším stĺpcom napravo a zameranie sa presunie do tohto stĺpca.</p>
 			</description>
 		</interaction>
@@ -54,16 +54,16 @@
 				<p>Ak je zameranie na vybratú bunku, zamerá sa bunka naľavo a výber bunky sa rozšíri až po túto bunku.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa rozšíri až po tento riadok.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa rozšíri až po tento riadok.</p>
 				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa odstráni pre tento riadok.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
 				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nad ňou. Zameranie sa presunie na bunku nad zameranou bunkou.</p>
 				<p>Ak je zameranie na vybratú bunku, zameranie sa presunie na bunku vyššie a výber bunky sa rozšíri až po túto bunku.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa rozšíri až po tento riadok.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa rozšíri až po tento riadok.</p>
 				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa odstráni pre tento riadok.</p>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
 				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nižšie. Zameranie sa presunie na bunku pod zameranou bunkou. </p>

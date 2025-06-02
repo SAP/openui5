@@ -41,7 +41,7 @@
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Jei suaktyvinta langelio lygmenyje, suaktyvinami penki dešinėje esantys stulpeliai (numatytasis puslapio dydis).</p>
 				<p>Jei suaktyvinta stulpelio antraštė ir dešinėje yra mažiau stulpelių nei dabartinis puslapio dydis, suaktyvinamas paskutinis stulpelis.</p>
-				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinamas pirmas stulpelis toje pačioje eilutėje.</p>
+				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinamas pirmas tos pačios eilutės stulpelis.</p>
 				<p>Jei suaktyvinta <span class="uicontrol">Žymėti viską</span>, suaktyvinama pirmo stulpelio antraštė.</p>
 			</description>
 		</interaction>

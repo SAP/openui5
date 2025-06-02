@@ -54,16 +54,16 @@
 				<p>Wenn der Fokus auf einer markierten Zelle liegt, erhält die Zelle links davon den Fokus, und die Zellenmarkierung wird bis zu dieser Zelle erweitert.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile markiert ist, verschiebt sich der Fokus auf die Zeile darüber, und die Markierung wird bis zu dieser Zeile erweitert.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile markiert ist, verschiebt sich der Fokus auf die Zeile darüber, und die Markierung wird bis zu dieser Zeile erweitert.</p>
 				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile <span class="emphasis">nicht</span> markiert ist, verschiebt sich der Fokus auf die Zeile darüber, und die Markierung wird für diese Zeile entfernt.</p>
 				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
 				<p>Wenn der Fokus auf einer Zelle liegt, die <span class="emphasis">nicht</span> markiert ist, und die Zeile <span class="emphasis">nicht</span> markiert ist, werden die fokussierte Zelle und die Zelle darüber markiert. Der Fokus verschiebt sich auf die Zelle über der fokussierten Zelle.</p>
 				<p>Wenn der Fokus auf einer markierten Zelle liegt, verschiebt sich der Fokus auf die Zelle darüber, und die Zellenmarkierung wird bis zu dieser Zelle erweitert.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile markiert ist, verschiebt sich der Fokus auf die Zeile darunter, und die Markierung wird bis zu dieser Zeile erweitert.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile markiert ist, verschiebt sich der Fokus auf die Zeile darunter, und die Markierung wird bis zu dieser Zeile erweitert.</p>
 				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile <span class="emphasis">nicht</span> markiert ist, verschiebt sich der Fokus auf die Zeile darunter, und die Markierung wird für diese Zeile entfernt.</p>
 				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
 				<p>Wenn der Fokus auf einer Zelle liegt, die <span class="emphasis">nicht</span> markiert ist, und die Zeile <span class="emphasis">nicht</span> markiert ist, werden die fokussierte Zelle und die Zelle darunter markiert. Der Fokus verschiebt sich auf die Zelle unter der fokussierten Zelle. </p>

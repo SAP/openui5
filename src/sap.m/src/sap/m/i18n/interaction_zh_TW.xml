@@ -54,17 +54,17 @@
 				<p>若焦點在所選的儲存格上，則焦點會移至左側的儲存格，且儲存格選擇會增強至該儲存格。</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移到上方列，且選擇會增強至該列。</p>
-				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移到上方列，且會移除該列選擇。</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移至上方列，且選擇會增強至該列。</p>
+				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移至上方列，且會移除該列選擇。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
 				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上且<span class="emphasis">未</span>選擇列，則會選擇聚焦儲存格和上方儲存格；該焦點會移到聚焦儲存格上方的儲存格。</p>
 				<p>若焦點在所選的儲存格上，則焦點會移至上方儲存格，且儲存格選擇會增強至該儲存格。</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移到下方列且選擇會增強至該列。</p>
-				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移到下方列且會移除該列選擇。</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移到下方列，且選擇會增強至該列。</p>
+				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移到下方列，且會移除該列選擇。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
 				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上且<span class="emphasis">未</span>選擇列，則會選擇聚焦儲存格和下方儲存格；該焦點會移到聚焦儲存格下方的儲存格。 </p>
 				<p>若焦點在所選的儲存格上，則焦點會移至下方儲存格，且儲存格選擇會增強至該儲存格。</p>

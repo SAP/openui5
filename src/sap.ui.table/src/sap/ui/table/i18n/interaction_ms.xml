@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Jika fokus berada pada tahap sel, fokus beralih lima lajur ke kanan (saiz halaman lalai).</p>
-				<p>Jika fokus berada pada pengepala lajur, dan terdapat kurang lajur di sebelah kanan daripada saiz halaman semasa, fokus beralih ke lajur terakhir.</p>
+				<p>Jika fokus berada pada pengepala lajur dan terdapat kurang lajur di sebelah kanan daripada saiz halaman semasa, fokus beralih ke lajur terakhir.</p>
 				<p>Jika fokus berada pada pemilih baris, fokus beralih ke lajur pertama dalam baris yang sama.</p>
 				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span>, fokus beralih ke pengepala lajur pertama.</p>
 			</description>
@@ -77,7 +77,7 @@
 				<p>Jika fokus berada pada pengepala kumpulan, menu pengepala kumpulan dibuka.</p>
 				<p><kbd>Spacebar</kbd></p>
 				<p><span class="emphasis">Jika pemilihan sel didayakan:</span></p>
-				<p>Jika fokus berada pada sel , sel yang difokuskan dipilih.</p>
+				<p>Jika fokus berada pada sel, sel yang difokuskan dipilih.</p>
 				<p>Jika fokus berada pada blok pemilihan sel, pemilihan sel dikeluarkan.</p>
 				<p>Jika fokus berada pada sel, dan jadual mempunyai konfigurasi tertentu bagi tingkah laku pemilihan (untuk memilih baris, anda boleh memilih baris itu sendiri atau kotak semak pemilihan jika tersedia), hanya sel yang difokuskan dipilih dan bukannya baris.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
@@ -107,7 +107,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Jika fokus berada pada pemilih sel atau baris, dan baris berkaitan dipilih, fokus beralih ke baris di atas dan pemilihan ditingkatkan sehingga baris ini.</p>
+				<p>Jika fokus berada pada pemilih sel atau baris dan baris berkaitan dipilih, fokus beralih ke baris di atas dan pemilihan ditingkatkan sehingga baris ini.</p>
 				<p>Jika fokus berada pada pemilih sel atau baris dan baris berkaitan <span class="emphasis">tidak</span> dipilih, fokus beralih ke baris di atas dan pemilihan dikeluarkan untuk baris ini.</p>
 				<p><span class="emphasis">Jika pemilihan sel didayakan:</span></p>
 				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih dan baris <span class="emphasis">tidak</span> dipilih, sel yang difokuskan dan sel di atas dipilih. Fokus beralih ke sel di atas sel yang difokuskan.</p>
@@ -162,7 +162,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
-				<p>Jika fokus berada pada sel, fokus beralih ke kandungannya (dengan pengecualikan teks baca sahaja).</p>
+				<p>Jika fokus berada pada sel, fokus beralih ke kandungannya (dengan pengecualian teks baca sahaja).</p>
 				<p>Jika fokus berada pada pengepala kumpulan atau bukan nod akhir pepohon, tindakan ini menogol pengembangan kumpulan: Kumpulan dikembangkan atau diruntuhkan masing-masing.</p>
 			</description>
 		</interaction>

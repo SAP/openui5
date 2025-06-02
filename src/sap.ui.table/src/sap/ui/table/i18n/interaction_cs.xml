@@ -108,7 +108,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
 				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
-				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr pro tuto řádku se odebere.</p>
+				<p>Je-li fokus na selektoru buněk nebo řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, buňka nad ní získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
@@ -116,7 +116,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
 				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
-				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr pro tuto řádku se odebere.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, buňka pod ní získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>

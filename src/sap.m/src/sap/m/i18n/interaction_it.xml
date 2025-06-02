@@ -10,24 +10,24 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Sposta il focus nella cella successiva all'interno della stessa riga o colonna nelle rispettive direzioni.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Se il focus è sulla prima riga, passa alla riga di intestazione della colonna.</p>
+				<p>Se il focus è sulla prima riga, passa alla riga dell'intestazione di colonna.</p>
 				<p>Se il focus è su una cella della prima riga, passa all'intestazione della colonna correlata.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Se il focus è sulle caselle di controllo <span class="uicontrol">Seleziona tutto</span> o <span class="uicontrol">Cancella tutto</span>, il focus passa al selettore riga nella prima riga visibile.</p>
-				<p>Se il focus è sulla riga dell'intestazione di colonna, passa alla prima riga.</p>
-				<p>Se il focus è sulla riga, passa alla riga sottostante.</p>
-				<p>Se il focus è sulla cella, passa alla cella sottostante.</p>
+				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span> o <span class="uicontrol">Cancella tutto</span>, passa al selettore riga nella prima riga visibile.</p>
+				<p>Se il focus è sull'intestazione di colonna, passa alla prima riga.</p>
+				<p>Se il focus è su una riga, passa alla riga sottostante.</p>
+				<p>Se il focus è su una cella, passa alla cella sottostante.</p>
 				<p><kbd>ArrowLeft</kbd></p>
 				<p>Se il focus è sulla prima cella, si sposta sulla riga. Si passa così da una navigazione basata sulle celle a una navigazione basata sulle righe.</p>
-				<p>Se il focus è sulla cella, si sposta sulla cella a sinistra.</p>
+				<p>Se il focus è su una cella, si sposta sulla cella a sinistra.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>Se il focus è sulla riga, si sposta sulla prima cella della riga con il focus attuale. Si passa così da una navigazione basata sulle righe a una navigazione basata sulle celle.</p>
-				<p>Se il focus è sulla cella, si sposta sulla cella a destra.</p>
+				<p>Se il focus è su una riga, si sposta sulla prima cella della riga con il focus attuale. Si passa così da una navigazione basata sulle righe a una navigazione basata sulle celle.</p>
+				<p>Se il focus è su una cella, si sposta sulla cella a destra.</p>
 				<p><span class="emphasis">Nota:</span> se il focus è sull'ultima colonna e quest'ultima ha il funzionamento popup attivato, l'area di popup viene trattata come una colonna aggiuntiva a destra e il focus passa su questa colonna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>Se il focus è sulla riga, si sposta sulla riga di intestazione della colonna.</p>
+				<p>Se il focus è su una riga, si sposta sulla riga di intestazione della colonna.</p>
 				<p>Se il focus è sulla riga di intestazione della colonna e il pulsante <span class="uicontrol">Altro</span> è disponibile, si sposta sul pulsante <span class="uicontrol">Altro</span>.</p>
 				<p>Se il focus è sulla riga di intestazione della colonna e il pulsante <span class="uicontrol">Altro</span> <span class="emphasis">è</span> disponibile, si sposta sull'ultima riga con il focus.</p>
 				<p>Se il focus è sul pulsante <span class="uicontrol">Altro</span>, si sposta sull'ultima riga con il focus.</p>
@@ -41,41 +41,41 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene aumentata di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
+				<p>Se il focus è sull'intestazione della colonna, la larghezza della colonna viene aumentata di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a destra. Il focus si sposta sulla cella a destra della cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella a destra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene diminuita di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
+				<p>Se il focus è sull'intestazione della colonna, la larghezza della colonna viene diminuita di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a sinistra. Il focus si sposta sulla cella a sinistra della cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, passa anche sulla cella a sinistra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Se il focus è sulla cella o sul selettore riga e la riga rilevante è selezionata, il focus si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
-				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, il focus si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sopra. Il focus si sposta sulla cella sopra la cella con il focus.</p>
 				<p>Se il focus è su una cella selezionata, si sposta sulla cella sopra e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Se il focus è sulla cella o sul selettore riga e la riga rilevante è selezionata, il focus si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
-				<p>Se il focus è sulla cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, il focus si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
 				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
 				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sotto. Il focus si sposta sulla cella sotto la cella con il focus. </p>
 				<p>Se il focus è su una cella selezionata, si sposta sulla cella sotto e la selezione delle celle viene ampliata fino a questa cella.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
-				<p>Se il focus è su una cella modificabile (ad esempio, un campo di input), il focus si sposta sulla cella sopra.</p>
+				<p>Se il focus è su una cella modificabile (ad esempio, un campo di input), si sposta sulla cella sopra.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
-				<p>Se il focus è su una cella modificabile (ad esempio, un campo di input), il focus si sposta sulla cella sotto.</p>
+				<p>Se il focus è su una cella modificabile (ad esempio, un campo di input), si sposta sulla cella sotto.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>
@@ -110,7 +110,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>F7</kbd> <description>
-				<p>Se il focus è all'interno di una cella in modalità di modifica, il focus si sposta sulla riga.</p>
+				<p>Se il focus è all'interno di una cella in modalità di modifica, si sposta sulla riga.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
