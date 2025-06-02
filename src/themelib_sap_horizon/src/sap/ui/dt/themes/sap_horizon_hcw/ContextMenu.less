@@ -4,19 +4,28 @@
 @_sap_ui_dt_ContextMenu_BorderRadius: @sapUiButtonBorderCornerRadius; // .375rem
 @_sap_ui_dt_ContextMenu_OpenSubMenuBackgroundColor: @sapUiButtonSelectedBackground; //#5c93ff
 
-.sapUiDtContextMenu {
-	.sapUiMnuLst {
-		.sapUiMnuItm {
+.sapUiDtContextMenu.sapMMenu {
+	.sapMMenuList {
+		.sapMMenuItem {
+
+			.sapMMenuEndContent{
+				.sapMBtn {
+					&:focus-visible > .sapMFocusable,
+					&:focus > .sapMFocusable{
+						outline: none;
+					}
+				}
+			}
 
 			&:focus {
 				border-radius: @_sap_ui_dt_ContextMenu_BorderRadius;
 			}
 
-			&.sapUiMnuItmSubMnuOpen {
+			&.sapMMenuItemSubMenuOpen {
 				border-bottom: 0.0625rem solid transparent !important; //1px
 				border-radius: @_sap_ui_dt_ContextMenu_BorderRadius;
 
-				&:not(.sapUiMnuItmHov) {
+				&:not(:hover) {
 					background-color: @_sap_ui_dt_ContextMenu_OpenSubMenuBackgroundColor;
 				}
 			}
