@@ -255,5 +255,15 @@
         "text": " CellSelector: Ignore \"hidden grouped\" columns when selecting"
       }
     ]
+  },
+  "1.130.8": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "a62f5a4de26ef9528c5bc9ca3c0145d89a98e77c",
+        "type": "FIX",
+        "text": " We've now enabled the screen reader announcement for navigation and action tiles"
+      }
+    ]
   }
 }

@@ -49,5 +49,15 @@
         "text": " RangeOperator: runtime error if longText contains special characters"
       }
     ]
+  },
+  "1.130.8": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "678f6301d07e12511124a484d0e160af7916e8cb",
+        "type": "FIX",
+        "text": " Empty Filter for navigation properties"
+      }
+    ]
   }
 }
