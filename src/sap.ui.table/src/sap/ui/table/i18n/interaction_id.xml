@@ -40,7 +40,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>Jika fokus berada pada tingkat sel, fokus akan berpindah lima kolom ke kanan (ukuran halaman default).</p>
-				<p>Jika fokus berada pada header kolom, dan jumlah kolom di sebelah kanan lebih sedikit daripada ukuran halaman saat ini, fokus akan berpindah ke kolom terakhir.</p>
+				<p>Jika fokus berada pada header kolom dan jumlah kolom di sebelah kanan lebih sedikit daripada ukuran halaman saat ini, fokus akan berpindah ke kolom terakhir.</p>
 				<p>Jika fokus berada pada pemilih baris, fokus akan berpindah ke kolom pertama dalam baris yang sama.</p>
 				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke header dari kolom pertama.</p>
 			</description>
@@ -107,16 +107,16 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait dipilih, fokus akan berpindah ke baris di atasnya, dan pemilihan akan diperluas hingga ke baris tersebut.</p>
+				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait dipilih, fokus akan berpindah ke baris di atasnya, dan area pemilihan akan diperluas hingga ke baris tersebut.</p>
 				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di atasnya, dan pemilihan pada baris tersebut akan dihapus.</p>
 				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
-				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, dan barisnya juga <span class="emphasis">tidak</span> dipilih, sel yang difokuskan serta sel di atasnya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di atas sel yang sedang difokuskan.</p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, dan barisnya juga <span class="emphasis">tidak</span>dipilih, sel yang difokuskan serta sel di atasnya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di atas sel yang sedang difokuskan.</p>
 				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di atasnya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
 				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait dipilih, fokus akan berpindah ke baris di bawahnya, dan area pemilihan akan diperluas hingga ke baris tersebut.</p>
-				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di bawahnya, dan pemilihan pada baris tersebut akan dihapus.</p>
+				<p>Jika fokus berada pada sel atau pemilih baris dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di bawahnya, dan pemilihan pada baris tersebut akan dihapus.</p>
 				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
 				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, dan barisnya juga <span class="emphasis">tidak</span> dipilih, sel yang difokuskan serta sel di bawahnya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di bawah sel yang sedang difokuskan.</p>
 				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di bawahnya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>

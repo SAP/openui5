@@ -10,7 +10,7 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Přesouvá fokus na další buňku ve stejném sloupci nebo řádku v příslušném směru.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Je-li fokus na první řádce, přesune se fokus na řádku hlavičky sloupce.</p>
+				<p>Je-li fokus na první řádce, přesune se na řádku hlavičky soupce.</p>
 				<p>Je-li fokus na buňce v první řádce, přesune se fokus na příslušnou hlavičku sloupce.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Je-li fokus na poli <span class="uicontrol">Vybrat vše</span> nebo <span class="uicontrol">Vymazat vše</span>, přesune se na selektor řádek v první viditelné řádce.</p>
@@ -54,17 +54,17 @@
 				<p>Je-li fokus na vybrané buňce, buňka vlevo získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
-				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku odebere.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na selektoru buněk nebo řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku nad ní a výběr buňky je rozšířen až po tuto buňku.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
-				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr pro tuto řádku se odebere.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se pro tuto řádku se odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou. </p>
 				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku pod ní a výběr buňky je rozšířen až po tuto buňku.</p>

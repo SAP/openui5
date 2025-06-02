@@ -10,83 +10,83 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Desplaça el focus a la cel·la següent que hi ha dins de la mateixa columna o fila en les direccions respectives.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Si el focus es troba a la primera fila, es desplaçarà a la fila de capçalera de columna.</p>
-				<p>Si el focus es troba en una cel·la de la primera fila, es desplaçarà a la capçalera de columna relacionada.</p>
+				<p>Si el focus és a la primera fila, el focus es mou a la fila de la capçalera de la columna.</p>
+				<p>Si el focus és en una cel·la de la primera fila, el focus es mou a la capçalera de columna relacionada.</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>Si el focus es troba en el quadre de verificació <span class="uicontrol">Seleccionar-ho tot</span> o <span class="uicontrol">Esborrar-ho tot</span>, es desplaçarà al selector de fila de la primera fila visible.</p>
-				<p>Si el focus es troba en una fila de capçalera de columna, es desplaçarà a la primera fila.</p>
-				<p>Si el focus es troba en una fila, es desplaçarà a la fila inferior.</p>
-				<p>Si el focus es troba en una cel·la, es desplaçarà a la cel·la inferior.</p>
+				<p>Si el focus és a la casella de selecció <span class="uicontrol">Selecciona-ho tot</span> o <span class="uicontrol">Esborra-ho tot</span>, el focus es mou al selector de files de la primera fila visible.</p>
+				<p>Si el focus és a la fila de la capçalera de la columna, el focus es mou a la primera fila.</p>
+				<p>Si el focus és en una fila, el focus es mou a la fila inferior.</p>
+				<p>Si el focus és en una cel·la, el focus es mou a la cel·la inferior.</p>
 				<p><kbd>ArrowLeft</kbd></p>
-				<p>Si el focus es troba a la primera cel·la, es desplaçarà a la fila. Això canvia de la navegació basada en cel·les a la navegació basada en files.</p>
-				<p>Si el focus es troba en una cel·la, es desplaçarà a la cel·la situada a l'esquerra.</p>
+				<p>Si el focus és a la primera cel·la, el focus es mou a la fila. Això canvia de la navegació basada en cel·les a la navegació basada en files.</p>
+				<p>Si el focus és en una cel·la, el focus es mou a la cel·la de l'esquerra.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>Si el focus es troba en una fila, es desplaçarà a la primera cel·la de la fila que té el focus. Això canvia de la navegació basada en files a la navegació basada en cel·les.</p>
-				<p>Si el focus es troba en una cel·la, es desplaçarà a la cel·la situada a la dreta.</p>
-				<p><span class="emphasis">Nota:</span> Si el focus es troba a l'última columna i el comportament emergent s'ha activat per a aquesta columna, l'àrea emergent es tractarà com una columna addicional a la dreta i el focus es desplaçarà a aquesta columna.</p>
+				<p>Si el focus és en una fila, el focus es mou a la primera cel·la de la fila actualment centrada. Això canvia de la navegació basada en files a la navegació basada en cel·les.</p>
+				<p>Si el focus és en una cel·la, el focus es mou a la cel·la de la dreta.</p>
+				<p><span class="emphasis">Nota:</span> Si el focus és a l'última columna i s'ha habilitat el comportament emergent per a aquesta columna, l'àrea emergent es tracta com una columna addicional a la dreta i el focus es mou a aquesta columna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>Si el focus es troba en una fila, es desplaçarà a la fila de capçalera de columna.</p>
-				<p>Si el focus es troba en una fila de capçalera de columna i el botó <span class="uicontrol">Més</span> està disponible, es desplaçarà al botó <span class="uicontrol">Més</span>.</p>
-				<p>Si el focus es troba en una fila de capçalera de columna i el botó <span class="uicontrol">Més</span> <span class="emphasis">no</span> està disponible, es desplaçarà a l'última fila que hagi tingut el focus.</p>
-				<p>Si el focus es troba en el botó <span class="uicontrol">Més</span>, es desplaçarà a l'última fila que hagi tingut el focus.</p>
+				<p>Si el focus és en una fila, el focus es mou a la fila de la capçalera de la columna.</p>
+				<p>Si el focus és a la fila de la capçalera de la columna i el botó <span class="uicontrol">Més</span> està disponible, el focus es mou al botó <span class="uicontrol">Més</span>.</p>
+				<p>Si el focus és a la fila de la capçalera de la columna i el botó <span class="uicontrol">Més</span> <span class="emphasis">no</span> està disponible, el focus es mou a l'última fila amb el focus.</p>
+				<p>Si el focus és al botó <span class="uicontrol">Més</span>, el focus es mou a l'última fila amb el focus destacat.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>Si el focus es troba en una fila i el botó <span class="uicontrol">Més</span> està disponible, es desplaçarà al botó <span class="uicontrol">Més</span>.</p>
-				<p>Si el focus es troba en una fila i el botó <span class="uicontrol">Més</span> <span class="emphasis">no</span> està disponible, es desplaçarà a la fila de capçalera de columna.</p>
-				<p>Si el focus es troba en el botó <span class="uicontrol">Més</span>, es desplaçarà a la fila de capçalera de columna.</p>
-				<p>Si el focus es troba en una fila de capçalera de columna, es desplaçarà a l'última fila que hagi tingut el focus.</p>
+				<p>Si el focus és en una fila i el botó <span class="uicontrol">Més</span> està disponible, el focus es mou al botó <span class="uicontrol">Més</span>.</p>
+				<p>Si el focus és en una fila i el botó <span class="uicontrol">Més</span> <span class="emphasis">no</span> està disponible, el focus es mou a la fila de la capçalera de la columna.</p>
+				<p>Si el focus és al botó <span class="uicontrol">Més</span>, el focus es mou a la fila de la capçalera de la columna.</p>
+				<p>Si el focus és a la fila de la capçalera de la columna, el focus es mou a l'última fila amb el focus.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
-				<p>Si el focus es troba en una capçalera de columna, l'amplada d'aquesta columna augmentarà en 1 em. Aquest comportament es repeteix si es manté premuda la tecla.</p>
+				<p>Si el focus és a la capçalera de la columna, l'amplada d'aquesta columna augmenta en 1 em. Això es repeteix si la tecla roman premuda.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba en una cel·la que <span class="emphasis">no</span> està seleccionada, se seleccionaran la cel·la que té el focus i la cel·la situada a la dreta. El focus es desplaçarà a la cel·la situada a la dreta de la cel·la que té el focus.</p>
-				<p>Si el focus es troba en una cel·la seleccionada, la cel·la situada a la dreta rebrà el focus i la selecció de cel·les s'ampliarà fins a aquesta cel·la.</p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la de la dreta. El focus es mou a la cel·la de la dreta de la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, la cel·la de la dreta rep el focus i la selecció de cel·les es millora fins a aquesta cel·la.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
-				<p>Si el focus es troba en una capçalera de columna, l'amplada d'aquesta columna es reduirà en 1 em. Aquest comportament es repeteix si es manté premuda la tecla.</p>
+				<p>Si el focus és a la capçalera de la columna, l'amplada d'aquesta columna es redueix en 1 em. Això es repeteix si la tecla roman premuda.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba en una cel·la que <span class="emphasis">no</span> està seleccionada, se seleccionaran la cel·la que té el focus i la cel·la situada a l'esquerra. El focus es desplaçarà a la cel·la situada a l'esquerra de la cel·la que té el focus.</p>
-				<p>Si el focus es troba en una cel·la seleccionada, la cel·la situada a l'esquerra rebrà el focus i la selecció de cel·les s'ampliarà fins a aquesta cel·la.</p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la de l'esquerra. El focus es mou a la cel·la situada a l'esquerra de la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, la cel·la de l'esquerra rep el focus i la selecció de cel·les es millora fins a aquesta cel·la.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent està seleccionada, es desplaçarà a la fila superior i la selecció s'ampliarà fins a aquesta fila.</p>
-				<p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent <span class="emphasis">no</span> està seleccionada, es desplaçarà a la fila superior i la selecció s'eliminarà per a aquesta fila.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Si el focus és en una cel·la o en el selector de files i la fila pertinent està seleccionada, el focus es mou a la fila superior i la selecció es realça fins a aquesta fila.</p>
+				<p>Si el focus és en una cel·la o en el selector de files i la fila pertinent <span class="emphasis">no</span> està seleccionada, el focus es mou a la fila superior i la selecció es treu per a aquesta fila.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionaran la cel·la que té el focus i la cel·la superior. El focus es desplaçarà a la cel·la situada a sobre de la cel·la que té el focus.</p>
-				<p>Si el focus es troba en una cel·la seleccionada, es desplaçarà a la cel·la superior i la selecció de cel·les s'ampliarà fins a aquesta cel·la.</p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la superior. El focus es mou a la cel·la superior a la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, el focus es mou a la cel·la superior i la selecció de cel·les es millora fins a aquesta cel·la.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent està seleccionada, es desplaçarà a la fila inferior i la selecció s'ampliarà fins a aquesta fila.</p>
-				<p>Si el focus es troba en un selector de cel·la o de fila i la fila corresponent <span class="emphasis">no</span> està seleccionada, es desplaçarà a la fila inferior i la selecció s'eliminarà per a aquesta fila.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Si el focus és en una cel·la o en el selector de files, i la fila pertinent està seleccionada, el focus es mou a la fila inferior i la selecció es realça fins a aquesta fila.</p>
+				<p>Si el focus és en una cel·la o en el selector de files, i la fila pertinent <span class="emphasis">no</span> està seleccionada, el focus es mou a la fila inferior i la selecció es treu per a aquesta fila.</p>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionaran la cel·la que té el focus i la cel·la inferior. El focus es desplaçarà a la cel·la situada a sota de la cel·la que té el focus. </p>
-				<p>Si el focus es troba en una cel·la seleccionada, es desplaçarà a la cel·la inferior i la selecció de cel·les s'ampliarà fins a aquesta cel·la.</p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la inferior. El focus es mou a la cel·la inferior a la cel·la enfocada. </p>
+				<p>Si el focus és en una cel·la seleccionada, el focus es mou a la cel·la inferior i la selecció de cel·les es millora fins a aquesta cel·la.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
-				<p>Si el focus es troba en una cel·la editable (per exemple, en un camp d'entrada), es desplaçarà a la cel·la superior.</p>
+				<p>Si el focus és en una cel·la editable (per exemple, un camp d'entrada), el focus es mou a la cel·la superior.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
-				<p>Si el focus es troba en una cel·la editable (per exemple, en un camp d'entrada), es desplaçarà a la cel·la inferior.</p>
+				<p>Si el focus és en una cel·la editable (per exemple, un camp d'entrada), el focus es mou a la cel·la inferior.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Spacebar</kbd> <description>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba en una cel·la, se seleccionarà aquesta cel·la.</p>
-				<p>Si el focus es troba en un bloc de selecció de cel·les, se n'eliminarà la selecció.</p>
+				<p>Si el focus és en una cel·la, la cel·la centrada es selecciona.</p>
+				<p>Si el focus és en un bloc de selecció de cel·les, la selecció de les cel·les s'elimina.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba en un bloc de selecció de cel·les, el bloc es convertirà en una selecció de files i s'eliminarà la selecció de cel·les.</p>
+				<p>Si el focus és en un bloc de selecció de cel·les, el bloc de selecció de cel·les es converteix en una selecció de fila. La selecció de cel·les s'elimina.</p>
 				<p>En funció del mode de selecció de files, passarà això:</p>
 				<ul>
 					<li>Se seleccionaran totes les files del bloc (selecció múltiple)</li>
@@ -97,12 +97,12 @@
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba dins de la taula, s'eliminarà la selecció de totes les files i cel·les.</p>
+				<p>Si el focus és dins de la taula, es treu la selecció de totes les files i cel·les.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
-				<p>Si el focus es troba dins de la taula i hi ha cel·les seleccionades, se n'eliminarà la selecció.</p>
+				<p>Si el focus és dins de la taula i hi ha cel·les seleccionades, la selecció de les cel·les es treu.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -110,7 +110,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>F7</kbd> <description>
-				<p>Si el focus es troba dins d'una cel·la en mode d'edició, es desplaçarà a la fila.</p>
+				<p>Si el focus es troba dins d'una cel·la en mode d'edició, el focus es mou a la fila.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>

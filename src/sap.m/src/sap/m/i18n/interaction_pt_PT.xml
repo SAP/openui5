@@ -15,27 +15,27 @@
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Se o foco estiver na caixa de verificação <span class="uicontrol">Selecionar tudo</span> ou <span class="uicontrol">Limpar tudo</span>, o foco move-se para o seletor de linhas na primeira linha visível.</p>
 				<p>Se o foco estiver na linha do cabeçalho da coluna, o foco move-se para a primeira linha.</p>
-				<p>Se o foco estiver na linha, o foco move-se para a linha abaixo.</p>
-				<p>Se o foco estiver na célula, o foco move-se para a célula abaixo.</p>
+				<p>Se o foco estiver numa linha, o foco move-se para a linha abaixo.</p>
+				<p>Se o foco estiver numa célula, o foco move-se para a célula abaixo.</p>
 				<p><kbd>ArrowLeft</kbd></p>
 				<p>Se o foco estiver na primeira célula, o foco move-se para a linha. Isso muda da navegação com base nas células para a navegação com base nas linhas.</p>
-				<p>Se o foco estiver na célula, o foco move-se para a célula à esquerda.</p>
+				<p>Se o foco estiver numa célula, o foco move-se para a célula à esquerda.</p>
 				<p><kbd>ArrowRight</kbd></p>
-				<p>Se o foco estiver na linha, o foco move-se para a primeira célula da linha focada atualmente. Isso muda da navegação com base nas linhas para a navegação com base nas células.</p>
-				<p>Se o foco estiver na célula, o foco move-se para a célula à direita.</p>
+				<p>Se o foco estiver numa linha, o foco move-se para a primeira célula da linha focada atualmente. Isso muda da navegação com base nas linhas para a navegação com base nas células.</p>
+				<p>Se o foco estiver numa célula, o foco move-se para a célula à direita.</p>
 				<p><span class="emphasis">Nota:</span> se o foco estiver na última coluna e o comportamento pop-in tiver sido ativado para esta coluna, a área pop-in é tratada como uma coluna adicional à direita e o foco move-se para esta coluna.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
-				<p>Se o foco estiver na linha, o foco move-se para a linha do cabeçalho da coluna.</p>
+				<p>Se o foco estiver numa linha, o foco move-se para a linha do cabeçalho da coluna.</p>
 				<p>Se o foco estiver na linha do cabeçalho da coluna e o botão <span class="uicontrol">Mais</span> estiver disponível, o foco move-se para o botão <span class="uicontrol">Mais</span>.</p>
 				<p>Se o foco estiver na linha do cabeçalho da coluna e o botão <span class="uicontrol">Mais</span> <span class="emphasis">não</span>estiver disponível, o foco move-se para a última linha focada.</p>
 				<p>Se o foco estiver no botão <span class="uicontrol">Mais</span>, o foco move-se para a última linha focada.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
-				<p>Se o foco estiver na linha e o botão <span class="uicontrol">Mais</span> estiver disponível, o foco move-se para o botão <span class="uicontrol">Mais</span>.</p>
-				<p>Se o foco estiver na linha e o botão <span class="uicontrol">Mais</span> <span class="emphasis">não</span>estiver disponível, o foco move-se para a linha do cabeçalho da coluna.</p>
+				<p>Se o foco estiver numa linha e o botão <span class="uicontrol">Mais</span> estiver disponível, o foco move-se para o botão <span class="uicontrol">Mais</span>.</p>
+				<p>Se o foco estiver numa linha e o botão <span class="uicontrol">Mais</span> <span class="emphasis">não</span>estiver disponível, o foco move-se para a linha do cabeçalho da coluna.</p>
 				<p>Se o foco estiver no botão <span class="uicontrol">Mais</span>, o foco move-se para a linha do cabeçalho da coluna.</p>
 				<p>Se o foco estiver na linha do cabeçalho da coluna, o foco move-se para a última linha focada.</p>
 			</description>
@@ -54,17 +54,17 @@
 				<p>Se o foco estiver numa célula selecionada, a célula à esquerda recebe o foco e a seleção de células é ampliada até esta célula.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco move-se para a linha acima e a seleção é ampliada até esta linha.</p>
-				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> estiver selecionada, o foco move-se para a linha acima e a seleção é removida para esta linha.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante estiverem selecionados, o foco move-se para a linha acima e a seleção é ampliada até esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante <span class="emphasis">não</span> estiverem selecionados, o foco move-se para a linha acima e a seleção é removida para esta linha.</p>
 				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
 				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada e a linha <span class="emphasis">não</span> estiver selecionada, a célula focada e a célula acima são selecionadas. O foco move-se para a célula acima da célula focada.</p>
 				<p>Se o foco estiver numa célula selecionada, o foco move-se para a célula acima e a seleção de células é ampliada até esta célula.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante for selecionada, o foco move-se para a linha abaixo e a seleção é ampliada até esta linha.</p>
-				<p>Se o foco estiver na célula ou no seletor de linhas e a linha relevante <span class="emphasis">não</span> estiver selecionada, o foco move-se para a linha abaixo e a seleção é removida para esta linha.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante estiverem selecionados, o foco move-se para a linha abaixo e a seleção é ampliada até esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante <span class="emphasis">não</span> estiverem selecionados, o foco move-se para a linha abaixo e a seleção é removida para esta linha.</p>
 				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
 				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada e a linha <span class="emphasis">não</span> estiver selecionada, a célula focada e a célula abaixo são selecionadas. O foco move-se para a célula abaixo da célula focada. </p>
 				<p>Se o foco estiver numa célula selecionada, o foco move-se para a célula abaixo e a seleção de células é ampliada até esta célula.</p>

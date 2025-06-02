@@ -107,16 +107,16 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Hvis fokus er på en celle eller en rækkevælger, og den relevante række er valgt, flyttes fokus til rækken ovenover, og valget udvides op til denne række.</p>
-				<p>Hvis fokus er på cellen eller rækkevælgeren, og den relevante række <span class="emphasis">ikke</span> er valgt, flyttes fokus til rækken ovenover, og valget fjernes for denne række.</p>
+				<p>Hvis fokus er på en celle eller på rækkevælgeren, og den relevante række er valgt, flyttes fokus til rækken ovenover, og valget udvides op til denne række.</p>
+				<p>Hvis fokus er på en celle eller rækkevælgeren, og den relevante række <span class="emphasis">ikke</span> er valgt, flyttes fokus til rækken ovenover, og valget fjernes for denne række.</p>
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
-				<p>Hvis fokus er på en celle, der <span class="emphasis">ikke</span> er valgt, og rækken <span class="emphasis">ikke</span> er valgt, vælges den fokuserede celle og cellen ovenover. Fokus flyttes til cellen over den fokuserede celle.</p>
+				<p>Hvis fokus er på en celle, der <span class="emphasis">ikke</span> er valgt, og rækken <span class="emphasis">ikke</span>er valgt, vælges den fokuserede celle og cellen ovenover. Fokus flyttes til cellen over den fokuserede celle.</p>
 				<p>Hvis fokus er på en valgt celle, får cellen ovenover fokus, og cellevalget udvides op til denne celle.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>Hvis fokus er på cellen eller rækkevælgeren, og den relevante række er valgt, flyttes fokus til rækken nedenunder, og valget udvides op til denne række.</p>
-				<p>Hvis fokus er på cellen eller rækkevælgeren, og den relevante række <span class="emphasis">ikke</span> er valgt, flyttes fokus til rækken nedenunder, og valget fjernes for denne række.</p>
+				<p>Hvis fokus er på en celle eller på rækkevælgeren, og den relevante række er valgt, flyttes fokus til rækken nedenunder, og valget udvides op til denne række.</p>
+				<p>Hvis fokus er på en celle eller rækkevælgeren, og den relevante række <span class="emphasis">ikke</span> er valgt, flyttes fokus til rækken nedenunder, og valget fjernes for denne række.</p>
 				<p><span class="emphasis">Hvis cellevalg er aktiveret:</span></p>
 				<p>Hvis fokus er på en celle, der <span class="emphasis">ikke</span> er valgt, og rækken <span class="emphasis">ikke</span> er valgt, vælges den fokuserede celle og cellen nedenunder. Fokus flyttes til cellen under den fokuserede celle.</p>
 				<p>Hvis fokus er på en valgt celle, får cellen nedenunder fokus, og cellevalget udvides op til denne celle.</p>
@@ -153,7 +153,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Hvis fokus er på en celle, rækkevælger eller <span class="uicontrol">Vælg alt</span>, skifter dette afkrydsningsfeltet <span class="uicontrol">Vælg alt</span>: Alle rækker vælges eller fravælges.</p>
+				<p>Hvis fokus er på en celle, rækkevælgeren eller <span class="uicontrol">Vælg alt</span>, skifter dette afkrydsningsfeltet <span class="uicontrol">Vælg alt</span>: Alle rækker vælges eller fravælges.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
@@ -167,8 +167,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>
-				<p>Hvis fokus er på en gruppeoverskrift, åbnes gruppeoverskriftsmenuen.</p>
-				<p>Hvis fokus er på en kolonneoverskrift, åbnes kolonneoverskriftsmenuen.</p>
+				<p>Hvis fokus er på gruppeoverskriften, åbnes gruppeoverskriftsmenuen.</p>
+				<p>Hvis fokus er på kolonneoverskriften, åbnes kolonneoverskriftsmenuen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>

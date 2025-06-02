@@ -77,7 +77,7 @@
 				<p>Ja fokuss ir uz grupas galveni, tiek atvērta grupas galvenes izvēlne.</p>
 				<p><kbd>Spacebar</kbd></p>
 				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
-				<p>Ja fokuss ir uz šūnu, fokusētā šūna tiek atlasīta.</p>
+				<p>Ja fokuss ir uz šūnu, tad fokusētā šūna tiek atlasīta.</p>
 				<p>Ja fokuss ir uz šūnu atlases bloku, tad šūnu atlase tiek noņemta.</p>
 				<p>Ja fokuss ir uz šūnu un ja tabulai ir noteikta atlases uzvedības konfigurācija (lai atlasītu rindu, varat vai nu atlasīt pašu rindu, vai atlases izvēles rūtiņu, ja tāda ir pieejama), tiek atlasīta tikai fokusētā šūna, nevis rinda.</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
@@ -153,7 +153,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Ja fokuss ir uz šūnu, rindas atlasītāju vai <span class="uicontrol">Atlasīt visus</span>, šis pārslēdz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span>: visas rindas tiek attiecīgi atlasītas vai atlase tām tiek noņemta.</p>
+				<p>Ja fokuss ir uz šūnu, rindas atlasītāju vai <span class="uicontrol">Atlasīt visus</span>, tas pārslēdz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span>: visas rindas tiek attiecīgi atlasītas vai atlase tām tiek noņemta.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
@@ -163,7 +163,7 @@
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
 				<p>Ja fokuss ir uz šūnu, tad fokuss pārvietojas uz tās saturu (izņemot tikai lasāmu tekstu).</p>
-				<p>Ja fokuss ir uz grupas galveni vai koka ne-galamezglu, šis pārslēdz grupas izvēršanu: grupa attiecīgi tiek izvērsta vai sakļauta.</p>
+				<p>Ja fokuss ir uz grupas galveni vai koka mezglu, kas nav lapas mezgls, tas pārslēdz grupas izvēršanu: grupa attiecīgi tiek izvērsta vai sakļauta.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F10</kbd> <description>

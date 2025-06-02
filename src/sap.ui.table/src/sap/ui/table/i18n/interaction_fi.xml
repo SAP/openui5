@@ -107,8 +107,8 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
-				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi on valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
-				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimassa ja asianomainen rivi on valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
+				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen solu <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy yläpuolella olevalle riville, ja valintaa laajennetaan kyseiselle riville asti.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen yläpuolella oleva solu. Kohdistus siirtyy kohdistetun solun yläpuolella olevaan soluun.</p>
 				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
@@ -119,7 +119,7 @@
 				<p>Jos kohdistus on solussa tai rivivalitsimessa ja asianomainen rivi <span class="emphasis">ei</span> ole valittuna, kohdistus siirtyy alapuolella olevalle riville, ja valinta poistetaan kyseiseltä riviltä.</p>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on solussa, jota <span class="emphasis">ei</span> ole valittu, <span class="emphasis">eikä</span> riviä ole valittu, valitaan kohdistettu solu sekä sen alapuolella oleva solu. Kohdistus siirtyy kohdistetun solun alapuolella olevaan soluun.</p>
-				<p>Jos kohdistus on valitussa solussa, se siirtyy yläpuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
+				<p>Jos kohdistus on valitussa solussa, se siirtyy alapuolella olevaan soluun, ja solun valintaa laajennetaan kyseiseen soluun asti.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>

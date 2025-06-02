@@ -108,7 +108,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
 				<p>Ako je fokus na selektoru ćelije ili reda i odabran je relevantni red, fokus se pomjera na red iznad, a odabir se proširuje do ovog reda.</p>
-				<p>Ako je fokus na selektoru ćelije ili reda, a relevantni red <span class="emphasis">nije</span> odabran, fokus se pomjera na red iznad, a odabir se uklanja za ovaj red.</p>
+				<p>Ako je fokus na selektoru ćelije ili reda, a relevantni red <span class="emphasis">nije</span> odabran, fokus se pomjera na red iznad, a odabir se uklanja iz ovog reda.</p>
 				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
 				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana i redu koji <span class="emphasis">nije</span> odabran, biraju se ćelija u fokusu i ćelija iznad. Fokus se pomjera na ćeliju iznad ćelije koja je u fokusu.</p>
 				<p>Ako je fokus na odabranoj ćeliji, ćelija iznad se stavlja u fokus, a odabir ćelija se proširuje do ove ćelije.</p>
@@ -116,7 +116,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
 				<p>Ako je fokus na selektoru ćelije ili reda i odabran je relevantni red, fokus se pomjera na red ispod, a odabir se proširuje do ovog reda.</p>
-				<p>Ako je fokus na selektoru ćelije ili reda, a relevantni red <span class="emphasis">nije</span> odabran, fokus se pomjera na red ispod, a odabir se uklanja za ovaj red.</p>
+				<p>Ako je fokus na selektoru ćelije ili reda, a relevantni red <span class="emphasis">nije</span> odabran, fokus se pomjera na red ispod, a odabir se uklanja iz ovog reda.</p>
 				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
 				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana i redu koji <span class="emphasis">nije</span> odabran, biraju se ćelija u fokusu i ćelija ispod. Fokus se pomjera na ćeliju ispod ćelije koja je u fokusu.</p>
 				<p>Ako je fokus na odabranoj ćeliji, ćelija ispod se stavlja u fokus, a odabir ćelija se proširuje do ove ćelije.</p>

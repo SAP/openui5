@@ -10,11 +10,11 @@
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
 				<p>Pārvieto fokusu uz nākamo šūnu tajā pašā kolonnā vai rindā attiecīgajos virzienos.</p>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>Ja fokuss ir uz pirmo rindu, tad fokuss pārvietojas uz galvenes rindu.</p>
+				<p>Ja fokuss ir uz pirmo rindu, tad fokuss pārvietojas uz kolonnas galvenes rindu.</p>
 				<p>Ja fokuss ir uz pirmās rindas šūnu, tad fokuss pārvietojas uz saistīto kolonnas galveni.</p>
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Ja fokuss ir uz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span> vai <span class="uicontrol">Notīrīt visus</span>, tad fokuss pārvietojas uz rindas atlasītāju pirmajā redzamajā rindā.</p>
-				<p>Ja fokuss ir uz kolonnas galvens rindu, tad fokuss pārvietojas uz pirmo rindu.</p>
+				<p>Ja fokuss ir uz kolonnas galvenes rindu, tad fokuss pārvietojas uz pirmo rindu.</p>
 				<p>Ja fokuss ir uz rindu, tad fokuss pārvietojas uz zemāk esošo rindu.</p>
 				<p>Ja fokuss ir uz šūnu, tad fokuss pārvietojas uz zemāk esošo šūnu.</p>
 				<p><kbd>ArrowLeft</kbd></p>
@@ -54,16 +54,16 @@
 				<p>Ja fokuss ir uz atlasītu šūnu, tad fokusu saņem pa kreisi esošā šūna un šūnu atlase tiek palielināta līdz šai šūnai.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowUp</kbd> <p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda ir atlasīta, tad fokuss pārvietojas uz augstāk esošo rindu un atlase tiek palielināta līdz šai rindai.</p>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda ir atlasīta, tad fokuss pārvietojas uz augstāk esošo rindu un atlase tiek palielināta līdz šai rindai.</p>
 				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda <span class="emphasis">nav</span> atlasīta, tad fokuss pārvietojas uz augstāk esošo rindu un atlase šai rindai tiek noņemta.</p>
 				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
 				<p>Ja fokuss ir uz šūnu, kas <span class="emphasis">nav</span> atlasīta, un rinda <span class="emphasis">nav</span> atlasīta, tiek atlasīta fokusētā šūna un augstāk esošā šūna. Fokuss pārvietojas uz šūnu, kas atrodas virs fokusētās šūnas.</p>
 				<p>Ja fokuss ir uz atlasītu šūnu, tad fokuss pārvietojas uz augstāk esošo šūnu un šūnu atlase tiek palielināta līdz šai šūnai.</p>
 			</description>
 		</interaction>
-		<interaction>
-			<description> <kbd>Shift + ArrowDown</kbd> <p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda ir atlasīta, tad fokuss pārvietojas uz zemāk esošo rindu un atlase tiek palielināta līdz šai rindai.</p>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda ir atlasīta, tad fokuss pārvietojas uz zemāk esošo rindu un atlase tiek palielināta līdz šai rindai.</p>
 				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda <span class="emphasis">nav</span> atlasīta, tad fokuss pārvietojas uz zemāk esošo rindu un atlase šai rindai tiek noņemta.</p>
 				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
 				<p>Ja fokuss ir uz šūnu, kas <span class="emphasis">nav</span> atlasīta, un rinda <span class="emphasis">nav</span> atlasīta, tiek atlasīta fokusētā šūna un zemāk esošā šūna. Fokuss pārvietojas uz šūnu, kas atrodas zem fokusētās šūnas. </p>
