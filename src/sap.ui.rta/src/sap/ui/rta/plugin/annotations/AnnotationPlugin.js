@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/DesignTime",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
@@ -17,7 +16,6 @@ sap.ui.define([
 	BaseLog,
 	DesignTime,
 	JsControlTreeModifier,
-	OverlayRegistry,
 	DtUtil,
 	PersistenceWriteAPI,
 	Utils,
@@ -30,8 +28,11 @@ sap.ui.define([
 	async function handleCompositeCommand(oElement, oAction, aAnnotationChanges, aLegacyRenameChanges) {
 		const oCompositeCommand = await this.getCommandFactory().getCommandFor(oElement, "composite");
 		for (const oChange of aAnnotationChanges) {
-			// aLegacyRenameChanges is only passed for singleRename scenarios, where there is only one annotation change to be saved
-			// so we can simply add it in the loop
+			// the annotation could have different text types, depending on where the annotation is used
+			// but the backend needs to know the type, so we just set it to "XFLD" if it is not defined
+			if (oChange.content.text && !oChange.content.textType) {
+				oChange.content.textType = "XFLD";
+			}
 			const oAnnotationCommand = await this.getCommandFactory().getCommandFor(
 				oElement,
 				"annotation",
@@ -39,6 +40,8 @@ sap.ui.define([
 					changeType: oAction.changeType,
 					serviceUrl: oChange.serviceUrl,
 					content: {...oChange.content, objectTemplateInfo: oAction.objectTemplateInfo},
+					// aLegacyRenameChanges is only passed for singleRename scenarios, where there is only one annotation change to be saved
+					// so we can simply add it in the loop
 					changesToDelete: aLegacyRenameChanges
 				}
 			);

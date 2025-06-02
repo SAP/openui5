@@ -59,6 +59,7 @@ sap.ui.define([
 	 * @param {string} oSpecificChangeInfo.content.annotationPath - Path of the annotation to be changed
 	 * @param {string} oSpecificChangeInfo.content.value - Value of the annotation to be changed
 	 * @param {string} oSpecificChangeInfo.content.text - Translatable value of the annotation. If given, the value is ignored
+	 * @param {string} oSpecificChangeInfo.content.textType - Translation text type
 	 * @param {object} [oSpecificChangeInfo.content.objectTemplateInfo] - Object template to construct a return object
 	 * @param {string} [oSpecificChangeInfo.content.objectTemplateInfo.templateAsString] - Stringified template to be used for constructing the return object
 	 * @param {string} [oSpecificChangeInfo.content.objectTemplateInfo.placeholder] - Placeholder in the template string
@@ -73,7 +74,7 @@ sap.ui.define([
 		}
 
 		if (oSpecificChangeInfo.content.text) {
-			oChange.setText("annotationText", oSpecificChangeInfo.content.text);
+			oChange.setText("annotationText", oSpecificChangeInfo.content.text, oSpecificChangeInfo.content.textType);
 		} else {
 			oNewContent.value = oSpecificChangeInfo.content.value;
 		}
