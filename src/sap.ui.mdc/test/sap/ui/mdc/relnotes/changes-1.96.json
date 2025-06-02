@@ -143,5 +143,15 @@
         ]
       }
     ]
+  },
+  "1.96.39": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "9481ea56e2fad5c8705e918fef49c7399e5c8f48",
+        "type": "FIX",
+        "text": " odata.v4.TableDelegate: Clear selection when updating the binding"
+      }
+    ]
   }
 }

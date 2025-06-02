@@ -133,5 +133,20 @@
         ]
       }
     ]
+  },
+  "1.96.39": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "a013a18ba1acdd8a963408ae2e59a5f51abd9357",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Lazy loading issue corrected"
+      },
+      {
+        "id": "605aee54a93eb281a7baba7a1729c93b38c6f418",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
+      }
+    ]
   }
 }

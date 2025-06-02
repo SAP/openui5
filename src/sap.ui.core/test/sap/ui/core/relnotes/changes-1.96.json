@@ -859,5 +859,35 @@
         "text": " sap/base/util/now: Migrate performance.timing"
       }
     ]
+  },
+  "1.96.39": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "64028926980f94661d1596609c0ab505c128507e",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._CollectionCache#read: avoid endless busy indicator sometimes when scrolling up"
+      },
+      {
+        "id": "1681d28a24a6d94ba3873269951c4d4d4cf2e512",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.UniversalDateUtils.qunit.js: Improve test stability for different time zones"
+      },
+      {
+        "id": "1b1010393bd72a79220f1cffbf778fa6e89de44e",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.UniversalDateUtils.qunit.js: Fix failing tests"
+      },
+      {
+        "id": "844d5c2acabb8db34a03408a2cdd8a31d5cdb378",
+        "type": "FIX",
+        "text": " core/IconPool: make mime type match case insensitive"
+      },
+      {
+        "id": "236f2ed6b25f2bbf7d479a39f83f796d427f2ba7",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
+      }
+    ]
   }
 }
