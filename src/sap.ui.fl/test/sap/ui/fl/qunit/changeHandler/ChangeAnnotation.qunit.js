@@ -71,13 +71,15 @@ sap.ui.define([
 				content: {
 					annotationPath: "somePath",
 					value: "someValue",
-					text: "someTextValue"
+					text: "someTextValue",
+					textType: "XFLD"
 				}
 			});
 			assert.deepEqual(this.oAnnotationChange.getContent(), {
 				annotationPath: "somePath"
 			}, "content was set correctly");
 			assert.strictEqual(this.oAnnotationChange.getText("annotationText"), "someTextValue", "text was set correctly");
+			assert.strictEqual(this.oAnnotationChange.convertToFileContent().texts.annotationText.type, "XFLD", "text type was set");
 
 			const oApplyChangeResult = ChangeAnnotation.applyChange(this.oAnnotationChange);
 			assert.deepEqual(oApplyChangeResult, {
