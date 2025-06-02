@@ -38,6 +38,46 @@ sap.ui.define([
 	};
 
 	/**
+	* Translates a keyboard shortcut string by localizing each key segment.
+	* The shortcut string is expected to use '+' as a delimiter (e.g., "Ctrl+Shift+S").
+	* If a translation is not found, the original key is used.
+	*
+	* @param {string} shortcut The shortcut string
+	* @return {string} The translated shortcut string
+	*/
+	const translateShortcut = (shortcut) => {
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
+		return shortcut
+			.split("+")
+			.map((key) => {
+				const sPropertiesKey = `Keyboard.Shortcut.${key.trim()}`;
+				const sText = oResourceBundle.getText(sPropertiesKey);
+				return sText === sPropertiesKey ? key.trim() : sText;
+			}).join("+");
+	};
+
+	/**
+	* Translates and annotates all <kbd> elements within given <description> node.
+	* Sets the `data-sap-ui-kbd-raw` attribute on the <kbd> element.
+	*
+	* @param {Element} descriptionNode The DOM node containing the <kbd> elements
+	* @return {Element} The same `descriptionNode`, modified with translated and annotated <kbd> elements.
+	*/
+	const annotateAndTranslateKbdTags = (descriptionNode) => {
+		const kbds = descriptionNode.querySelectorAll("kbd");
+
+		kbds.forEach((kbd) => {
+			const sNormalized = getNormalizedShortcutString(kbd.textContent.trim());
+			const sTranslated = translateShortcut(sNormalized);
+
+			kbd.setAttribute("data-sap-ui-kbd-raw", sNormalized);
+			kbd.textContent = sTranslated;
+		});
+
+		return descriptionNode;
+	};
+
+	/**
 	 * Retrieves the command information for a given control.
 	 * @param  {sap.ui.core.Control} oControl The control to analyze.
 	 * @return {Array} List of command information objects.
@@ -49,10 +89,14 @@ sap.ui.define([
 		for (const oDependent of aDependents) {
 			if (oDependent.isA("sap.ui.core.CommandExecution") && oDependent.getVisible()) {
 				const oCommandInfo = oDependent._getCommandInfo();
+				const sKbd = getNormalizedShortcutString(oCommandInfo.shortcut);
 
 				aCommandInfos.push({
 					name: oDependent.getCommand(),
-					kbd: [getNormalizedShortcutString(oCommandInfo.shortcut)],
+					kbd: [{
+						raw: sKbd,
+						translated: translateShortcut(sKbd)
+					}],
 					description: oCommandInfo.description
 				});
 			}
@@ -224,11 +268,23 @@ sap.ui.define([
 			return [];
 		}
 
-		return [...oMatchingControl.querySelectorAll("interaction")].map((oInteractionNode) => ({
-			kbd: Array.from(oInteractionNode.children).filter((child) => child.tagName === "kbd").map((kbd) => getNormalizedShortcutString(kbd.textContent)),
-			description: oInteractionNode.querySelector("description")?.innerHTML || ""
-		}));
+		return [...oMatchingControl.querySelectorAll("interaction")].map((oInteractionNode) => {
+			const kbdElements = Array.from(oInteractionNode.children).filter((child) => child.tagName === "kbd");
+			const kbd = kbdElements.map((kbd) => {
+				const raw = getNormalizedShortcutString(kbd.textContent);
+				return {
+					raw,
+					translated: translateShortcut(raw)
+				};
+			});
+
+			return {
+				kbd,
+				description: annotateAndTranslateKbdTags(oInteractionNode.querySelector("description"))?.innerHTML || ""
+			};
+		});
 	};
+
 
 	let oCurrentPort;
 	let bThrottled = false;
@@ -249,16 +305,15 @@ sap.ui.define([
 
 		const aControlTree = [];
 		const docs = {};
-		let oTargetElement;
+		const oLabelMap = new Map();
 
+		let oTargetElement;
 		if (event) {
 			oTargetElement = event.type === "focusin" ? event.target : event.relatedTarget;
 		}
 		oTargetElement ??= document.activeElement;
 
 		const oTargetControl = Element.closestTo(oTargetElement);
-
-		const oLabelMap = new Map();
 
 		// get generic key interactions from sap.ui.core
 		const oCoreXML = await loadInteractionXMLFor(null, "sap.ui.core");
@@ -284,7 +339,6 @@ sap.ui.define([
 			oCurrent = oCurrent.getParent();
 		}
 
-
 		for (let i = 0; i < aControlTree.length; i++) {
 			const oControl = aControlTree[i];
 			const sControlName = oControl.getMetadata().getName();
@@ -302,7 +356,6 @@ sap.ui.define([
 			}
 
 			const sClassName = oControl.getMetadata().getName();
-
 			if (aDocs.length > 0) {
 				docs[sClassName] = {
 					"interactions": aDocs
@@ -313,7 +366,6 @@ sap.ui.define([
 			}
 
 			const sLabel = getLabelFor(oControl, oInteractionXML);
-
 			if (!oLabelMap.has(sLabel)) {
 				oLabelMap.set(sLabel, { interactions: [], label: sLabel });
 			}
@@ -337,7 +389,7 @@ sap.ui.define([
 
 		oProtocol.docs = docs;
 
-			// Send protocol
+		// Send protocol
 		oCurrentPort?.postMessage(JSON.parse(JSON.stringify({
 			service: POST_MESSAGE_ENDPOINT_UPDATE,
 			type: "request",
@@ -393,6 +445,18 @@ sap.ui.define([
 			this._isActive = false;
 			document.removeEventListener("focusin", init);
 			document.removeEventListener("focusout", init);
+		},
+
+		/**
+		 * Expose for testing.
+		 * @private
+		 */
+		_: {
+			getNormalizedShortcutString,
+			translateShortcut,
+			annotateAndTranslateKbdTags,
+			getInteractions,
+			getCommandInfosFor
 		}
 	};
 });
