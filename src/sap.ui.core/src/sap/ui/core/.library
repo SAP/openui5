@@ -30,8 +30,6 @@
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
-        <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
-        <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/jquery.js" depends="sap/ui/thirdparty/jquery-compat.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -75,9 +73,6 @@
         <raw-module name="sap/ui/thirdparty/jszip.js" />
         <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
         <raw-module name="sap/ui/thirdparty/punycode.js" />
         <raw-module name="sap/ui/thirdparty/qunit-2.js" />
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
@@ -92,7 +87,6 @@
         <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-4.js" />
-        <raw-module name="sap/ui/thirdparty/swipe-view.js" requiresTopLevelScope="false" />
         <raw-module name="sap/ui/thirdparty/URI.js" />
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
@@ -223,22 +217,6 @@
             <pattern>sap/ui/thirdparty/qunit-reporter-junit.js</pattern>
             <pattern partial="true" otherContent="SAP" explanation="qunit-junit.js is overall written by SAP, but contains a modified copy of JUnit Reporter for QUnit (qunit-reporter-junit)">sap/ui/qunit/qunit-junit.js</pattern>
         </lib>
-        <lib name="iscroll" displayName="cubiq.org - iScroll" npmName="n/a" version="4.2.5" hash="d65adf04b7325742c53082ee3e87d034" homepage="https://github.com/cubiq/iscroll" id="73554900106100001862">
-            <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
-            <copyright>2012 Matteo Spinelli</copyright>
-            <pattern>sap/ui/thirdparty/iscroll.js</pattern>
-        </lib>
-        <lib name="iscroll-lite" displayName="cubiq.org - iScroll Lite" npmName="n/a" version="4.1.6" hash="c430198bf1e445e8717b911756f92dcd" homepage="https://github.com/cubiq/iscroll">
-            <license url="https://github.com/cubiq/iscroll/blob/master/LICENSE" type="MIT" />
-            <copyright>2011 Matteo Spinelli</copyright>
-            <pattern>sap/ui/thirdparty/iscroll-lite.js</pattern>
-            <!-- not in PPMS because it is a sub-module of iScroll -->
-        </lib>
-        <lib name="swipeview" displayName="cubiq.org - swipeview" npmName="n/a" version="1.0" hash="1fd389111f3853ad478b8c8d8b733ee5" homepage="https://github.com/cubiq/SwipeView/" id="73554900106100001918">
-            <license url="https://github.com/cubiq/SwipeView/blob/master/license.txt" type="MIT" />
-            <copyright>2012 Matteo Spinelli</copyright>
-            <pattern>sap/ui/thirdparty/swipe-view.js</pattern>
-        </lib>
         <lib name="zynga" displayName="Zynga Scroller" npmName="n/a" version="1.2.1-0-g5d43806" hash="ed56a75783e6f24f8eefc6e625bc496f" homepage="http://zynga.github.com/scroller/" id="73554900106100001940">
             <license url="https://github.com/pbakaus/scroller/blob/master/LICENSE.txt" type="MIT" />
             <copyright>2011 Zynga Inc.</copyright>
@@ -276,11 +254,6 @@
             <license url="http://www.unicode.org/copyright.html" type="LicenseRef-Unicode-3.0" />
             <copyright>1991-2024 Unicode, Inc.</copyright>
             <pattern>sap/ui/core/cldr/**</pattern>
-        </lib>
-        <lib name="mobiscroll" displayName="MobiScroll" npmName="n/a" version="2.9.0" hash="2a76d1439bbc5afaf10324b2108e4d9c" homepage="http://mobiscroll.com" id="73554900106100005562">
-            <license url="http://opensource.org/licenses/mit-license.php" type="MIT" />
-            <copyright>2010-2013, Acid Media</copyright>
-            <pattern>sap/ui/thirdparty/mobiscroll/**</pattern>
         </lib>
         <lib name="sinonjs" displayName="SinonJS" npmName="sinon" version="1.14.1" hash="5bbc65549709e5c7adc2df0c38ba966a" homepage="http://sinonjs.org" id="73554900106100005532">
             <license url="https://raw.github.com/cjohansen/Sinon.JS/master/LICENSE" type="BSD-3-Clause" />
