@@ -448,7 +448,9 @@ sap.ui.define([
 
 	/**
 	 * Throws an error if the new request uses strict handling and there is a change set containing
-	 * a strict handling request except the one at index <code>iChangeSetNo</code>.
+	 * a strict handling request except the one at index <code>iChangeSetNo</code>. On the other
+	 * hand, in case of the "odata.continue-on-error" preference, every request using strict
+	 * handling must belong to its own change set.
 	 *
 	 * @param {object} oRequest
 	 *   The new request
@@ -462,13 +464,23 @@ sap.ui.define([
 	 * @private
 	 */
 	_Requestor.prototype.checkConflictingStrictRequest = function (oRequest, aRequests,
-		iChangeSetNo) {
+			iChangeSetNo) {
 		function isOtherChangeSetWithStrictHandling(aChangeSet, i) {
 			return iChangeSetNo !== i && aChangeSet.some(isUsingStrictHandling);
 		}
 
 		function isUsingStrictHandling(oRequest0) {
-			return oRequest0.headers.Prefer === "handling=strict";
+			return oRequest0.headers.Prefer?.includes("handling=strict");
+		}
+
+		if (aRequests.bContinueOnError) {
+			if (aRequests[iChangeSetNo].length
+					&& (isUsingStrictHandling(oRequest)
+						|| isUsingStrictHandling(aRequests[iChangeSetNo][0]))) {
+				throw new Error("Each request with strict handling must belong to its own change"
+					+ ' set due to the "odata.continue-on-error" preference');
+			}
+			return;
 		}
 
 		// do not look past aRequests.iChangeSet because these cannot be change sets
@@ -1791,7 +1803,8 @@ sap.ui.define([
 	 *   other group ID values, the request is added to the given group and you can use
 	 *   {@link #submitBatch} to send all requests in that group. This group lock will be unlocked
 	 *   immediately, even if the request itself is queued. The request is rejected if the lock is
-	 *   already canceled.
+	 *   already canceled. For a group lock w/o a serial number, a non-GET is put into a change set
+	 *   of its own (unless <code>bAtFront</code> is used).
 	 * @param {object} [mHeaders]
 	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
@@ -1841,8 +1854,10 @@ sap.ui.define([
 	 *   <code>oGroupLock</code> is already canceled.
 	 * @throws {Error} If
 	 *   <ul>
-	 *     <li>group ID is '$cached'. The error has a property <code>$cached = true</code>
-	 *     <li>group ID is '$single' and there is already an existing batch queue for this group
+	 *     <li>group ID is '$cached'; the error has a property <code>$cached = true</code>,
+	 *     <li>group ID is '$single' and there is already an existing batch queue for this group,
+	 *     <li>the {@link #checkConflictingStrictRequest rules} for strict handling w.r.t. change
+	 *       sets are violated
 	 *   </ul>
 	 * @public
 	 */
@@ -1909,13 +1924,18 @@ sap.ui.define([
 				} else if (bAtFront) { // add at front of first change set
 					aRequests[0].unshift(oRequest);
 				} else { // push into change set which was current when the request was initiated
+					if (!iRequestSerialNumber && aRequests[aRequests.iChangeSet].length) {
+						that.addChangeSet(sGroupId);
+					}
 					iChangeSetNo = aRequests.iChangeSet;
 					while (aRequests[iChangeSetNo].iSerialNumber > iRequestSerialNumber) {
 						iChangeSetNo -= 1;
 					}
 					that.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
-
 					aRequests[iChangeSetNo].push(oRequest);
+					if (!iRequestSerialNumber) {
+						that.addChangeSet(sGroupId);
+					}
 				}
 				if (sGroupId === "$single") {
 					that.submitBatch("$single").catch(that.oModelInterface.getReporter());

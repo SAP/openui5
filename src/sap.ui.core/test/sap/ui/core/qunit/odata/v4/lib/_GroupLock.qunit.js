@@ -94,6 +94,10 @@ sap.ui.define([
 		assert.strictEqual(oGroupLock2.isLocked(), false);
 		assert.strictEqual(oGroupLock2.isModifying(), false);
 		assert.strictEqual(oGroupLock2.getSerialNumber(), oGroupLock1.getSerialNumber());
+
+		// code under test
+		assert.ok(isNaN(oGroupLock1.getUnlockedCopy(/*bNoSerialNumber*/true).getSerialNumber()),
+			"NaN if none should be used");
 	});
 
 	//*********************************************************************************************
@@ -147,6 +151,9 @@ sap.ui.define([
 		assert.strictEqual(new _GroupLock("group", oOwner, true, true, 42).getSerialNumber(), 42);
 		assert.strictEqual(new _GroupLock("group", oOwner, true).getSerialNumber(), Infinity);
 		assert.strictEqual(new _GroupLock("group", oOwner, true, false, 0).getSerialNumber(), 0);
+		assert.ok(
+			isNaN(new _GroupLock("group", oOwner, true, false, NaN).getSerialNumber()),
+			"NaN is preserved");
 	});
 
 	//*********************************************************************************************
