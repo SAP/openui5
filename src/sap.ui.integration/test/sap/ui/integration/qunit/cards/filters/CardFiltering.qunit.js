@@ -279,7 +279,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oHost = new Host();
 
-		assert.expect(2);
+		assert.expect(8);
 
 		this.oCard.setHost(oHost);
 
@@ -290,24 +290,44 @@ sap.ui.define([
 		await nextCardReadyEvent(this.oCard);
 
 		var oFilterBar = this.oCard.getAggregation("_filterBar"),
-			oSelect = oFilterBar._getFilters()[0]._getSelect();
+			oSelect = oFilterBar._getFilters()[0]._getSelect(),
+			oList = this.oCard.getCardContent().getAggregation("_content");
 
-		this.oCard.attachEventOnce("stateChanged", function () {
-			assert.ok(true, "stateChanged is called after select filter change");
+		this.oCard.attachEventOnce("stateChanged", () => {
+			assert.ok(true, "stateChanged is initially fired");
 		});
 
-		oHost.attachEventOnce("cardStateChanged", function () {
-			assert.ok(true, "cardStateChanged for host is called after select filter change");
+		oHost.attachEventOnce("cardStateChanged", () => {
+			assert.ok(true, "cardStateChanged for host is initially fired");
 
-			oHost.destroy();
-			done();
-		});
+			let iHostEventCount = 0;
 
-		// Act - select filter
-		oSelect.onSelectionChange({
-			getParameter: function () {
-				return oSelect.getItems()[0];
-			}
+			this.oCard.attachEvent("stateChanged", () => {
+				assert.ok(true, "stateChanged is called after select filter change");
+			});
+
+			oHost.attachEvent("cardStateChanged", () => {
+				assert.ok(true, "cardStateChanged for host is called after select filter change");
+				iHostEventCount++;
+
+				switch (iHostEventCount) {
+					case 1:
+						assert.strictEqual(oList.getItems()[0].getTitle(), "Notebook Basic 15", "content data is not yet filtered");
+						break;
+					default:
+						assert.strictEqual(oList.getItems()[0].getTitle(), "Flat XXL", "content data is filtered");
+						oHost.destroy();
+						done();
+						break;
+				}
+			});
+
+			// Act - select filter
+			oSelect.onSelectionChange({
+				getParameter: function () {
+					return oSelect.getItems()[0];
+				}
+			});
 		});
 	});
 
@@ -316,7 +336,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oHost = new Host();
 
-		assert.expect(2);
+		assert.expect(4);
 
 		// Act
 		this.oCard.setHost(oHost);
@@ -327,20 +347,28 @@ sap.ui.define([
 		var oFilterBar = this.oCard.getAggregation("_filterBar"),
 			oSearchField = oFilterBar._getFilters()[2]._getSearchField();
 
-		this.oCard.attachEventOnce("stateChanged", function () {
-			assert.ok(true, "stateChanged is called after search filter change");
+		this.oCard.attachEventOnce("stateChanged", () => {
+			assert.ok(true, "stateChanged is initially fired");
 		});
 
-		oHost.attachEventOnce("cardStateChanged", function () {
-			assert.ok(true, "cardStateChanged for host is called after search filter change");
+		oHost.attachEventOnce("cardStateChanged", () => {
+			assert.ok(true, "cardStateChanged for host is initially fired");
 
-			oHost.destroy();
-			done();
+			this.oCard.attachEventOnce("stateChanged", () => {
+				assert.ok(true, "stateChanged is called after search filter change");
+			});
+
+			oHost.attachEventOnce("cardStateChanged", () => {
+				assert.ok(true, "cardStateChanged for host is called after search filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - search filter
+			oSearchField.getInputElement().value = "A";
+			oSearchField.onSearch();
 		});
-
-		// Act - search filter
-		oSearchField.getInputElement().value = "A";
-		oSearchField.onSearch();
 	});
 
 	QUnit.test("stateChange event is fired for date range filter", async function (assert) {
@@ -348,7 +376,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oHost = new Host();
 
-		assert.expect(2);
+		assert.expect(4);
 
 		// Act
 		this.oCard.setHost(oHost);
@@ -360,22 +388,30 @@ sap.ui.define([
 		var oFilterBar = this.oCard.getAggregation("_filterBar"),
 			oDdr = oFilterBar._getFilters()[3]._getDdr();
 
-		this.oCard.attachEventOnce("stateChanged", function () {
-			assert.ok(true, "stateChanged is called after date range filter change");
+		this.oCard.attachEventOnce("stateChanged", () => {
+			assert.ok(true, "stateChanged is initially fired");
 		});
 
-		oHost.attachEventOnce("cardStateChanged", function () {
-			assert.ok(true, "cardStateChanged for host is called after date range filter change");
+		oHost.attachEventOnce("cardStateChanged", () => {
+			assert.ok(true, "cardStateChanged for host is initially fired");
 
-			oHost.destroy();
-			done();
-		});
+			this.oCard.attachEventOnce("stateChanged", () => {
+				assert.ok(true, "stateChanged is called after date range filter change");
+			});
 
-		// Act - Dynamic Date Range filter
-		oDdr._handleInputChange({
-			getParameter: function () {
-				return "Oct 4, 2021 - Oct 5, 2021";
-			}
+			oHost.attachEventOnce("cardStateChanged", () => {
+				assert.ok(true, "cardStateChanged for host is called after date range filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - Dynamic Date Range filter
+			oDdr._handleInputChange({
+				getParameter: function () {
+					return "Oct 4, 2021 - Oct 5, 2021";
+				}
+			});
 		});
 	});
 
@@ -384,7 +420,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oHost = new Host();
 
-		assert.expect(2);
+		assert.expect(4);
 
 		// Act
 		this.oCard.setHost(oHost);
@@ -396,22 +432,31 @@ sap.ui.define([
 		var oFilterBar = this.oCard.getAggregation("_filterBar"),
 			oComboBox = oFilterBar._getFilters()[0]._getComboBox();
 
-		this.oCard.attachEventOnce("stateChanged", function () {
-			assert.ok(true, "stateChanged is called after ComboBox filter change");
+		this.oCard.attachEventOnce("stateChanged", () => {
+			assert.ok(true, "stateChanged is initially fired");
 		});
 
-		oHost.attachEventOnce("cardStateChanged", function () {
-			assert.ok(true, "cardStateChanged for host is called after ComboBox filter change");
+		oHost.attachEventOnce("cardStateChanged", () => {
+			assert.ok(true, "cardStateChanged for host is initially fired");
 
-			oHost.destroy();
-			done();
-		});
+			this.oCard.attachEventOnce("stateChanged", () => {
+				assert.ok(true, "stateChanged is called after ComboBox filter change");
+			});
 
-		// Act - select filter
-		oComboBox.onSelectionChange({
-			getParameter: function () {
-				return oComboBox.getItems()[0];
-			}
+			oHost.attachEventOnce("cardStateChanged", () => {
+				assert.ok(true, "cardStateChanged for host is called after ComboBox filter change");
+
+				oHost.destroy();
+				done();
+			});
+
+			// Act - select filter
+			oComboBox.updateDomValue("Graphic Cards");
+			oComboBox.onSelectionChange({
+				getParameter: function () {
+					return oComboBox.getItems()[1];
+				}
+			});
 		});
 	});
 
