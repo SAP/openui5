@@ -125,10 +125,10 @@
 						press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandAll"
-						id="expandAll" tooltip="Expand all"/>
+						id="expandAll" tooltip="Expand All"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true}"
 						icon="sap-icon://collapse-group" press=".onCollapseAll"
-						id="collapseAll" tooltip="Collapse all"/>
+						id="collapseAll" tooltip="Collapse All"/>
 				</m:FlexBox>
 			</template>
 		</Column>
@@ -244,7 +244,7 @@
 						id="expandAllTreeTable" tooltip="Expand All"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true }"
 						icon="sap-icon://collapse-group" press=".onCollapseAll"
-						id="collapseAllTreeTable" tooltip="Collapse all"/>
+						id="collapseAllTreeTable" tooltip="Collapse All"/>
 				</m:FlexBox>
 			</template>
 		</Column>

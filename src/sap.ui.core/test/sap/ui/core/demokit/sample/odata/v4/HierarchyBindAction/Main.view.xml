@@ -105,10 +105,10 @@
 					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandAll"
-						tooltip="Expand all"/>
+						tooltip="Expand All"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true }"
 						icon="sap-icon://collapse-group" press=".onCollapseAll"
-						tooltip="Collapse all"/>
+						tooltip="Collapse All"/>
 				</m:FlexBox>
 			</template>
 		</Column>
