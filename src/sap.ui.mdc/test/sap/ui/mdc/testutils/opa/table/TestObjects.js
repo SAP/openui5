@@ -127,11 +127,12 @@ sap.ui.define([
 				 * @memberof onTheMDCTable
 				 * @method iPressShowSelected
 				 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+				 * @param {boolean} bActivated Determines whether the ShowSelected toggle is activated or not
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
-				iPressShowSelected: function(oControl) {
-					return p13nActions.iPressShowSelected.call(this, oControl, TableActions.iOpenThePersonalizationDialog);
+				iPressShowSelected: function(oControl, bActivated) {
+					return p13nActions.iPressShowSelected.call(this, oControl, bActivated, TableActions.iOpenThePersonalizationDialog);
 				},
 				/**
 				 * Opa5 test action

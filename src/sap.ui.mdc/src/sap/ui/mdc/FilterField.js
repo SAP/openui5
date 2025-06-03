@@ -508,5 +508,25 @@ sap.ui.define([
 		};
 	};
 
+	// fire on "conditions" property as here is the value-binding
+	FilterField.prototype.getBindingEventParameter = function (oEvent) {
+
+		const oBinding = this.getBinding("conditions");
+
+		if (!oBinding) {
+			return null; // only fire event if there is a Binding
+		}
+
+		const oParameter = FieldBase.prototype.getBindingEventParameter.apply(this, arguments);
+
+		if (oParameter) {
+			oParameter.property = "conditions";
+			// oParameter.type = oBinding.getType();
+		}
+
+		return oParameter;
+
+	};
+
 	return FilterField;
 });

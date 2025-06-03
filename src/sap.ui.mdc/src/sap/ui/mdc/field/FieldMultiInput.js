@@ -288,6 +288,10 @@ sap.ui.define([
 
 	}
 
+	FieldMultiInput.prototype._onValueHelpRequested = function () {
+		this._bValueHelpOpen = false; // otherwise in non-modal Valuehelp focusout will not show the more-indicator. In Field case, onSapFocusLeave is prevented on opening ValueHelp-Dialog, so the original use-case will not occur
+	};
+
 	return FieldMultiInput;
 
 });

@@ -951,6 +951,11 @@ sap.ui.define([
 
 	QUnit.test("no existing elements", function(assert) {
 
+		// determine how browser encodes <> in outerHTML
+		const div = document.createElement("div");
+		div.setAttribute("data-x", "<>");
+		const expectedLtGtValue = /"([^"]*)"/.exec(div.outerHTML)[1];
+
 		this.render(function() {
 			oPatcher.
 			openStart("div", "d").attr("title", "t").openEnd().
@@ -968,7 +973,7 @@ sap.ui.define([
 			assert.equal(oElement.outerHTML,
 				'<div id="d" title="t">' +
 					'<div class="x"></div>' +
-					'<p data-x="~!@#$%^&amp;*()_+{}:<>?\'&quot;"></p>' +
+					'<p data-x="~!@#$%^&amp;*()_+{}:' + expectedLtGtValue + '?\'&quot;"></p>' +
 					'<div style="width: 10px;"><div style="width: 20px;"></div></div>' +
 					'0' +
 					'<span>1<img id="s">2</span>' +

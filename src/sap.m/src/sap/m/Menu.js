@@ -365,8 +365,10 @@ sap.ui.define([
 			Menu.prototype[sMethodName] = function (sClass, bSuppressInvalidate) {
 				const oPopover = this._getPopover();
 
+				this._getMenuWrapper()._processStyleClasses(sClass, sMethodName);
+
 				Control.prototype[sMethodName].apply(this, arguments);
-				if (oPopover) {
+				if (sMethodName !== "toggleStyleClass" && oPopover) {
 					oPopover[sMethodName].apply(oPopover, arguments);
 				}
 

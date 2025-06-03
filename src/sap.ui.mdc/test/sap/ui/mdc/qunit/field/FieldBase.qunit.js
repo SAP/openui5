@@ -3631,8 +3631,9 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("focus of value help", (assert) => {
+	QUnit.test("focus of value help", async(assert) => {
 
+		const oIcon = new Icon("I1", { src: "sap-icon://sap-ui5", decorative: false, press: (oEvent) => {} }).placeAt("content");
 		const oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: (oEvent) => {} }); // just dummy handler to make Icon focusable
 		const oVHContent = new Content("C1");
 		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
@@ -3640,12 +3641,14 @@ sap.ui.define([
 		const oVHPopover = new Popover("P1", {content: oVHContent});
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		oValueHelp.setDialog(oVHPopover);
+		await nextUIUpdate();
 
 		oField.focus(); // as ValueHelp is connected with focus
 
 		const aContent = oField.getAggregation("_content");
 		const oContent = aContent?.length > 0 && aContent[0];
 		const oVHIcon = oContent?.getAggregation("_endIcon")[1];
+		const oTokenizer = oContent?.getAggregation("tokenizer");
 
 		// cannot check for bValueHelpRequested as it is reset in onsapfocusleave
 		sinon.spy(oContent, "onsapfocusleave");
@@ -3672,9 +3675,13 @@ sap.ui.define([
 					assert.notOk(oContent.bValueHelpRequested, "bValueHelpRequested not set on Input");
 					assert.ok(oPopover.isOpen(), "Popover isOpen");
 					assert.ok(containsOrEquals(oField.getDomRef(), document.activeElement), "Focus is on Field");
+					assert.equal(oTokenizer.getRenderMode(), "Loose", "Tokenizer renderMode");
 
-					oValueHelp.close();
+					oIcon.focus();
 					setTimeout(() => { // to wait for promises in ValueHelp and close Popover
+						assert.notOk(oPopover.isOpen(), "Popover isOpen");
+						assert.equal(oTokenizer.getRenderMode(), "Narrow", "Tokenizer renderMode");
+						oIcon.destroy();
 						oIconContent.destroy();
 						fnDone();
 					}, 400);

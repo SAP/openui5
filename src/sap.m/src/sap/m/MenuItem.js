@@ -371,6 +371,7 @@ sap.ui.define([
 				}
 			});
 			if (oPopover) {
+				oPopover.removeStyleClass(this._getMenuWrapper()._aStyleClasses.join(" "));
 				oPopover._getPopup().setDurations(this._openDuration, 0);
 				oPopover.close();
 			}
@@ -394,6 +395,8 @@ sap.ui.define([
 			if (oSubmenuPopover.isOpen()) {
 				return;
 			}
+
+			oSubmenuPopover.addStyleClass(oMenuWrapper._aStyleClasses.join(" "));
 
 			if (Device.system.phone) {
 				oMenuWrapper.setTitle(this.getText()); // Set the title of the menu wrapper according to the item's text

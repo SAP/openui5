@@ -2950,6 +2950,10 @@ sap.ui.define([
 		 * Helps to prevent temporary appearance of a scrollbar in documentElement during Popover calculations.
 		 */
 		Popover.prototype._preventDocumentElementScrolling = function () {
+			if (this._sDocumentElementOverflow !== undefined) {
+				return;
+			}
+
 			const bDocumentElementHasVerticalScrollbar = document.documentElement.scrollHeight > document.documentElement.clientHeight;
 
 			if (!bDocumentElementHasVerticalScrollbar) {

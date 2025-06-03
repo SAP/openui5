@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.mdc.sample.field.MessageHandling.Controller"
 	xmlns="sap.m"
+	xmlns:c="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:layout="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
@@ -19,27 +20,38 @@
 					editable="true"
 					layout="ColumnLayout" >
 					<form:content>
-						<Label text="First Name" />
+						<c:Title id="Title1" text="Employee - Model"></c:Title>
+						<Label id="FirstName-Label" text="First Name" />
 						<mdc:Field id="FirstName"
 							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 							value="{path: 'FirstName', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 10, nullable: false}}" />
-						<Button id="FirstName-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+						<Button id="FirstName-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="FirstName-AddError" icon="sap-icon://error" type="Reject" press="addError">
 							<layoutData>
 								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
 							</layoutData>
 						</Button>
 
-						<Label text="Last Name" />
+						<Label id="LastName-Label" text="Last Name" />
 						<mdc:Field id="LastName"
 							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 							value="{path: 'LastName', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 20, nullable: false}}" />
-						<Button id="LastName-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+						<Button id="LastName-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="LastName-AddError" icon="sap-icon://error" type="Reject" press="addError">
 							<layoutData>
 								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
 							</layoutData>
 						</Button>
 
-						<Label text="ZIP Code/City" />
+						<Label id="PostalCode_City-Label" text="ZIP Code/City" />
 						<mdc:Field id="PostalCode"
 							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 							value="{path: 'PostalCode', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 10, nullable: true}}">
@@ -48,40 +60,176 @@
 							</mdc:layoutData>
 						</mdc:Field>
 						<mdc:Field id="City" value="{path: 'City', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 15, nullable: true}}" />
-						<Button id="City-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+						<Button id="City-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="City-AddError" icon="sap-icon://error" type="Reject" press="addError">
 							<layoutData>
 								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
 							</layoutData>
 						</Button>
 
-						<Label text="Date of hire" />
+						<Label id="HomePhone-Label" text="Phone" />
+						<mdc:Field id="HomePhone"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							value="{path: 'HomePhone', type: 'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 24, nullable: false}}" >
+							<mdc:contentEdit>
+								<MaskInput id="HomePhone-input" mask="(999) 999-9999" placeholderSymbol="_" showClearIcon="true" width="100%"
+								value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}"/>
+							</mdc:contentEdit>
+						</mdc:Field>
+						<Button id="HomePhone-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="HomePhone-AddError" icon="sap-icon://error" type="Reject" press="addError">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label id="DateOfHire-Label" text="Date of hire" />
 						<mdc:Field id="DateOfHire"
 							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
-							value="{path: 'DateOfHire', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'medium'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}" />
-						<Button id="DateOfHire-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+							value="{path: 'DateOfHire', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'medium'}, constraints: {displayFormat: 'Date', nullable: false}, targetType: 'string'}" />
+						<Button id="DateOfHire-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="DateOfHire-AddError" icon="sap-icon://error" type="Reject" press="addError">
 							<layoutData>
 								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
 							</layoutData>
 						</Button>
 
-						<Label text="Vacation" />
+						<Label id="Vacation-Label" text="Vacation" />
 						<mdc:Field id="Vacation"
 							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
 							value="{parts: [{path: 'Vacation', type:'sap.ui.model.odata.type.Decimal', formatOptions: {}, constraints: {minimum: '0', precision: 14, scale: 2}}, {path: 'VacationUnit', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, 'view>/ODataUnitCodeList'], type: 'sap.ui.model.odata.type.Unit', formatOptions: { emptyString: 0 }}" />
-						<Button id="Vacation-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+						<Button id="Vacation-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="Vacation-AddError" icon="sap-icon://error" type="Reject" press="addError">
 							<layoutData>
 								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
 							</layoutData>
 						</Button>
 
-						<Label text="Tags" />
+						<Label id="Tags-Label" text="Tags" />
 						<mdc:MultiValueField id="Tags"
 							delegate='\{"name": "sap/ui/mdc/sample/field/multiValueField/MultiValueFieldODataV2.delegate"\}'
 							items="{path: 'Tags'}"
 							display="Description">
-							<mdcField:MultiValueFieldItem key="{path: 'ID', type:'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 10, nullable: false}}" description="{path: 'Text', type:'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 20, nullable: false}}" />
+							<mdcField:MultiValueFieldItem key="{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {}, constraints: {nullable: false}}" description="{path: 'Text', type:'sap.ui.model.odata.type.String', formatOptions: {}, constraints: {maxLength: 20, nullable: false}}" />
 						</mdc:MultiValueField>
-						<Button id="Tags-AddMessage" icon="sap-icon://status-error" type="Reject" press="addMessage">
+						<Button id="Tags-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="Tags-AddError" icon="sap-icon://error" type="Reject" press="addError">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<c:Title id="Title2" text="ConditionModel"></c:Title>
+						<Label id="FF-FirstName-Label" text="First Name" />
+						<mdc:FilterField id="FF-FirstName"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							conditions="{path: 'cm>/conditions/FirstName'}"
+							propertyKey="FirstName"
+							dataType="sap.ui.model.odata.type.String"
+							dataTypeFormatOptions='\{\}'
+							dataTypeConstraints='\{"maxLength": 10, "nullable": false\}' />
+						<Button id="FF-FirstName-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="FF-FirstName-AddError" icon="sap-icon://error" type="Reject" press="addError">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label id="FF-LastName-Label" text="Last Name" />
+						<mdc:FilterField id="FF-LastName"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							conditions="{path: 'cm>/conditions/LastName'}"
+							propertyKey="LastName"
+							dataType="sap.ui.model.odata.type.String"
+							dataTypeFormatOptions='\{\}'
+							dataTypeConstraints='\{"maxLength": 20, "nullable": false\}' />
+						<Button id="FF-LastName-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="FF-LastName-AddError" icon="sap-icon://error" type="Reject" press="addError">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label id="FF-PostalCode-Label" text="Zip Code" />
+						<mdc:FilterField id="FF-PostalCode"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							conditions="{path: 'cm>/conditions/PostalCode'}"
+							propertyKey="PostalCode"
+							dataType="sap.ui.model.odata.type.String"
+							dataTypeFormatOptions='\{\}'
+							dataTypeConstraints='\{"maxLength": 10, "nullable": true\}' />
+						<Button id="FF-PostalCode-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="FF-PostalCode-AddError" icon="sap-icon://error" type="Reject" press="addError">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label id="FF-City-Label" text="City" />
+						<mdc:FilterField id="FF-City"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							conditions="{path: 'cm>/conditions/City'}"
+							propertyKey="City"
+							dataType="sap.ui.model.odata.type.String"
+							dataTypeFormatOptions='\{\}'
+							dataTypeConstraints='\{"maxLength": 15, "nullable": true\}' />
+						<Button id="FF-City-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="FF-City-AddError" icon="sap-icon://error" type="Reject" press="addError">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+
+						<Label id="FF-DateOfHire-Label" text="Date of Hire" />
+						<mdc:FilterField id="FF-DateOfHire"
+							delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'
+							conditions="{path: 'cm>/conditions/DateOfHire'}"
+							propertyKey="DateOfHire"
+							dataType="sap.ui.model.odata.type.DateTime"
+							dataTypeFormatOptions='\{"style": "medium"\}'
+							dataTypeConstraints='\{"displayFormat": "Date", "nullable": false\}' />
+						<Button id="FF-DateOfHire-AddWarning" icon="sap-icon://warning" type="Attention" press="addWarning">
+							<layoutData>
+								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
+							</layoutData>
+						</Button>
+						<Button id="FF-DateOfHire-AddError" icon="sap-icon://error" type="Reject" press="addError">
 							<layoutData>
 								<form:ColumnElementData cellsLarge="1" cellsSmall="1" />
 							</layoutData>

@@ -9,9 +9,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	'sap/m/Text',
-	'sap/m/App',
 	'sap/m/Dialog',
-	'sap/m/Page',
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/tnt/NavigationListGroup',
@@ -27,9 +25,7 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	Text,
-	App,
 	Dialog,
-	Page,
 	NavigationList,
 	NavigationListItem,
 	NavigationListGroup,
@@ -71,15 +67,6 @@ sap.ui.define([
 
 		return promise;
 	};
-
-	// create and add app
-	var oApp = new App("myApp", {initialPage: "navigationListPage"});
-	oApp.placeAt("qunit-fixture");
-
-	var oPage = new Page("navigationListPage", {
-		title: "Navigation List"
-	});
-	oApp.addPage(oPage);
 
 	/**
 	 * In some tests that are using fake timers, it might happen that a rendering task is queued by
@@ -358,7 +345,7 @@ sap.ui.define([
 	QUnit.module("API and Rendering", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList();
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 			await nextUIUpdate();
 		},
 		afterEach: function () {
@@ -549,7 +536,7 @@ sap.ui.define([
 	QUnit.module("Tab navigation and ARIA settings", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList('rootChild1');
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 
@@ -710,7 +697,7 @@ sap.ui.define([
 	QUnit.module("ARIA", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList();
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 		},
@@ -905,7 +892,7 @@ sap.ui.define([
 
 	QUnit.test('api', async function (assert) {
 		this.navigationList = getNavigationList('child1');
-		oPage.addContent(this.navigationList);
+		this.navigationList.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
 		assert.strictEqual(this.navigationList._selectedItem.getText(), 'Child 1', 'initial selection is correct');
@@ -926,7 +913,7 @@ sap.ui.define([
 
 		var oStub = sinon.stub(NavigationListItem.prototype, "_openUrl", function () { });
 
-		oPage.addContent(this.navigationList);
+		this.navigationList.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
 		assert.notOk(this.navigationList._selectedItem, 'no initial selection');
@@ -943,7 +930,7 @@ sap.ui.define([
 	QUnit.module("Interaction", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList();
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 
@@ -1065,8 +1052,6 @@ sap.ui.define([
 			$item = oItem.$(),
 			$icon = $item.find(".sapTntNLIFirstLevel .sapTntNLIExpandIcon"),
 			$iconTitle = $item.find(".sapTntNLIFirstLevel .sapTntNLIExpandIcon .sapUiIconTitle");
-			// oGroup = Core.byId("navGroup1"),
-			// $groupTitle = oGroup.$().find(".sapTntNLGroupText");
 
 		// Act collapse
 		QUnitUtils.triggerEvent("tap", $icon);
@@ -1100,16 +1085,6 @@ sap.ui.define([
 
 		// Assert expanded
 		assert.ok(oItem.getExpanded(), "The item expands");
-
-		// // Assert expanded
-		// assert.ok(oItem.getExpanded(), "The group is expanded");
-
-		// QUnitUtils.triggerEvent("tap", $groupTitle);
-		// await nextUIUpdate(this.clock);
-		// this.clock.tick(500);
-
-		// // Assert expanded
-		// assert.notOk(oItem.getExpanded(), "The group is now collapsed");
 	});
 
 
@@ -1390,7 +1365,7 @@ sap.ui.define([
 				unselectableParentItem
 			]
 		});
-		oPage.addContent(navigationList);
+		navigationList.placeAt("qunit-fixture");
 		await nextUIUpdate(this.clock);
 
 		// Act
@@ -1406,6 +1381,9 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oAttachPressSpy.called, "press event is fired on the popover item");
+
+		navigationList._oPopover.close();
+		await nextUIUpdate(this.clock);
 	});
 
 	QUnit.test("Click on item with 'href' set", function (assert) {
@@ -1433,7 +1411,7 @@ sap.ui.define([
 	QUnit.module("Overflow behavior", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList(undefined, true);
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 			this.clock = sinon.useFakeTimers();
@@ -1617,28 +1595,31 @@ sap.ui.define([
 
 		assert.strictEqual(oAttachItemPressedSpy.callCount, 1, "itemPress event is fired if the parent item in the overflow is clicked");
 
-		// QUnitUtils.triggerEvent("tap", overflowItemDomRef);
-		// await nextUIUpdate(this.clock);
-		//
-		// const oMenuSubNavigationItem = menu.getItems()[3].getItems()[2]._navItem;
-		// const oAttachSubItemPressSpy = this.spy(oMenuSubNavigationItem, "_firePress");
-		//
-		// const initiallySelectedImId = this.navigationList.getSelectedItem().sId;
-		// menu = Element.closestTo(document.querySelector(".sapMMenu"));
-		//
-		// assert.ok(menu.getItems()[2].getDomRef().querySelector(".sapMMenuItmSbMnu").classList.contains("sapTntNLIExpandIcon"), "correct class is added to the expand icon in the menu item");
-		// assert.notOk(menu.getItems()[7].getDomRef().querySelector(".sapMMenuItmSbMnu").classList.contains("sapTntNLIExpandIcon"), "correct class is added to the expand icon in the menu item");
-		//
-		// menu.openSubmenu(menu.getItems()[2]);
-		//
-		// assert.strictEqual(document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2].title, "Child 3", "The correct default tooltip is set");
-		// assert.strictEqual(document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[1].title, "Child 2 - custom tooltip", "The correct default tooltip is set");
-		// QUnitUtils.triggerEvent("click",  document.querySelector(".sapUiSubmenu").getElementsByTagName("li")[2]);
-		// assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
-		//
-		// assert.ok(oAttachSubItemPressSpy.called, "press event is fired on the sub item in the overflow menu");
-		// assert.strictEqual(oAttachItemPressedSpy.callCount, 2, "itemPress event is fired if the sub item in the overflow is clicked");
+		this.navigationList.getDomRef().style.height = `${iInitialHeight}px`;
+		this.navigationList._updateOverflowItems();
+		await nextUIUpdate(this.clock);
 
+		QUnitUtils.triggerEvent("tap", overflowItemDomRef);
+		await nextUIUpdate(this.clock);
+
+		const oMenuSubNavigationItem = menu.getItems()[3].getItems()[2]._navItem;
+		const oAttachSubItemPressSpy = this.spy(oMenuSubNavigationItem, "_firePress");
+
+		const initiallySelectedImId = this.navigationList.getSelectedItem().sId;
+		menu = Element.closestTo(document.querySelector(".sapMMenu")).getParent().getParent();
+
+		assert.ok(menu.getItems()[2].getDomRef().querySelector(".sapMMenuItemSubMenu"), "correct class is added to the expand icon in the menu item");
+		assert.notOk(menu.getItems()[7].getDomRef().querySelector(".sapMMenuItemSubMenu"), "correct class is added to the expand icon in the menu item");
+
+		menu.getItems()[2]._openSubmenu();
+
+		assert.strictEqual(document.querySelector(".sapMSubmenu").getElementsByTagName("li")[2].title, "Child 3", "The correct default tooltip is set");
+		assert.strictEqual(document.querySelector(".sapMSubmenu").getElementsByTagName("li")[1].title, "Child 2 - custom tooltip", "The correct default tooltip is set");
+		QUnitUtils.triggerEvent("click",  document.querySelector(".sapMSubmenu").getElementsByTagName("li")[2]);
+		assert.notEqual(this.navigationList.getSelectedItem().sId, initiallySelectedImId, "The sub item is selected");
+
+		assert.ok(oAttachSubItemPressSpy.called, "press event is fired on the sub item in the overflow menu");
+		assert.strictEqual(oAttachItemPressedSpy.callCount, 2, "itemPress event is fired if the sub item in the overflow is clicked");
 	});
 
 	QUnit.test("Click on external link item in the overflow", async function (assert) {
@@ -1680,7 +1661,7 @@ sap.ui.define([
 	QUnit.module("Navigation List Group", {
 		beforeEach: async function () {
 			this.navigationList = getNavigationList();
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 		},
@@ -1796,7 +1777,7 @@ sap.ui.define([
 	QUnit.module("Item Designs", {
 		beforeEach: async function () {
 			this.navigationList = getSecondNavigationList();
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 		},
@@ -1905,6 +1886,9 @@ sap.ui.define([
 		assert.ok(eventParams.shiftKey, "shiftKey parameter is true");
 		assert.ok(eventParams.altKey, "altKey parameter is true");
 		assert.notOk(eventParams.metaKey, "metaKey parameter is false");
+
+		this.navigationList._oPopover.close();
+		await nextUIUpdate();
 	});
 
 	QUnit.module("Unselectable parent items in collapsed Side Navigation", {
@@ -1928,7 +1912,7 @@ sap.ui.define([
 					this.unselectableParentItem
 				]
 			});
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("content");
 
 			await nextUIUpdate();
 		},
@@ -1937,7 +1921,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Unselectable parent interaction", function (assert) {
+	QUnit.test("Unselectable parent interaction", async function (assert) {
 		// Act
 		QUnitUtils.triggerEvent("tap", this.unselectableParentItem.getFocusDomRef());
 
@@ -1958,32 +1942,38 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(this.navigationList._oPopover.isOpen(), "Popover is still opened");
+
+		this.navigationList._oPopover.close();
+		await nextUIUpdate();
 	});
 
-	// QUnit.test("Unselectable parent interaction in overflow", function (assert) {
-	// 	// Arrange
-	// 	this.navigationList.getDomRef().style.height = "10px";
-	// 	this.navigationList._updateOverflowItems();
-	//
-	// 	QUnitUtils.triggerEvent("tap", this.navigationList._getOverflowItem().getDomRef());
-	//
-	// 	const overflowMenu = this.navigationList.getDependents()[0];
-	// 	const itemInOverflowMenu = document.querySelector(".sapMMenu").querySelector(".sapMMenuItem");
-	//
-	// 	// Assert
-	// 	assert.ok(overflowMenu.isOpen(), "Overflow menu should be open");
-	//
-	// 	// Act
-	// 	QUnitUtils.triggerEvent("click", itemInOverflowMenu);
-	//
-	// 	// Assert
-	// 	assert.ok(overflowMenu.isOpen(), "Overflow menu should still be open");
-	// });
+	QUnit.test("Unselectable parent interaction in overflow", async function (assert) {
+		// Arrange
+		this.navigationList.getDomRef().style.height = "10px";
+		this.navigationList._updateOverflowItems();
+
+		QUnitUtils.triggerEvent("tap", this.navigationList._getOverflowItem().getDomRef());
+
+		const overflowMenu = this.navigationList.getDependents()[0];
+		const itemInOverflowMenu = document.querySelector(".sapMMenu").querySelector(".sapMMenuItem");
+
+		// Assert
+		assert.ok(overflowMenu.isOpen(), "Overflow menu should be open");
+
+		// Act
+		QUnitUtils.triggerEvent("click", itemInOverflowMenu);
+
+		// Assert
+		assert.ok(overflowMenu.isOpen(), "Overflow menu should still be open");
+
+		overflowMenu.close();
+		await nextUIUpdate();
+	});
 
 	QUnit.module("Collapsed parent items in expanded Side Navigation", {
 		beforeEach: async function () {
 			this.navigationList = getSecondNavigationList();
-			oPage.addContent(this.navigationList);
+			this.navigationList.placeAt("qunit-fixture");
 
 			await nextUIUpdate();
 		},
