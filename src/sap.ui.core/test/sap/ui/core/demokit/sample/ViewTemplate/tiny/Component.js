@@ -30,8 +30,7 @@ sap.ui.define([
 		createContent : function () {
 			var oModel = new ODataModel(
 					"/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/", {
-					annotationURI : "/test-resources/sap/ui/core/demokit/sample/ViewTemplate/tiny"
-						+ "/annotations.xml",
+					annotationURI : "annotations.xml",
 					json : true,
 					loadMetadataAsync : true
 				}),
