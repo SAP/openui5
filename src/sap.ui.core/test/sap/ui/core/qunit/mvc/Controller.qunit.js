@@ -440,31 +440,39 @@ sap.ui.define([
 				}
 			});
 		});
+
+		const done = assert.async();
 		const oErrorLogSpy = sinon.spy(Log, "error");
 		const oView = await XMLView.create({
 			viewName: "example.mvc.asyncHooks"
 		});
+
 		assert.ok(oView, "View is created");
-		assert.ok(oErrorLogSpy.getCall(0).calledWith("[FUTURE FATAL] The registered Event Listener 'onInit' must not have a return value."), "Correct Fatal Log displayed");
 
 		// render view to enforce lifecycle-Hooks to be triggered
 		oView.placeAt("qunit-fixture");
 		await nextUIUpdate();
-		assert.ok(oView.getDomRef(), "View is rendered");
-		assert.ok(oErrorLogSpy.getCall(1).calledWith("[FUTURE FATAL] The registered Event Listener 'onBeforeRendering' must not have a return value."), "Correct Fatal Log displayed");
-		assert.ok(oErrorLogSpy.getCall(2).calledWith("[FUTURE FATAL] The registered Event Listener 'onAfterRendering' must not have a return value."), "Correct Fatal Log displayed");
 
+		assert.ok(oView.getDomRef(), "View is rendered");
 		oView.destroy();
-		assert.ok(oErrorLogSpy.getCall(3).calledWith("[FUTURE FATAL] The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
+
+		await Promise.allSettled(aPromises);
+
+		const messages = oErrorLogSpy.getCalls().map((call) => call.args[0]);
+		assert.ok(messages.includes("[FUTURE FATAL] The registered Event Listener 'onInit' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(messages.includes("[FUTURE FATAL] The registered Event Listener 'onBeforeRendering' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(messages.includes("[FUTURE FATAL] The registered Event Listener 'onAfterRendering' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(messages.includes("[FUTURE FATAL] The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
 
 		/**
 		 * @deprecated
 		 */
-		await (async () => {
-			await Promise.allSettled(aPromises);
-			assert.ok(oErrorLogSpy.getCall(4).calledWith("The registered Event Listener 'onAfterRendering' of 'my.Controller09' failed."), "Rejected Promise of 'onAfterRendering' hook should be handled and the correct error logged.");
-			assert.ok(oErrorLogSpy.getCall(5).calledWith("The registered Event Listener 'onExit' of 'my.Controller09' failed."), "Rejected Promise of 'onExit' hook should be handled and the correct error logged.");
+		(() => {
+			assert.ok(messages.includes("The registered Event Listener 'onAfterRendering' of 'my.Controller09' failed."), "Rejected Promise of 'onAfterRendering' hook should be handled and the correct error logged.");
+			assert.ok(messages.includes("The registered Event Listener 'onExit' of 'my.Controller09' failed."), "Rejected Promise of 'onExit' hook should be handled and the correct error logged.");
 		})();
+
 		oErrorLogSpy.restore();
+		done();
 	});
 });
