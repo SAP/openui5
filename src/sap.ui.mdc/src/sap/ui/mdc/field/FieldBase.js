@@ -4057,7 +4057,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent original event fired on inner control
 	 * @returns {object} parameters for the new event
 	 * @protected
-	 * @since 1.136.0
+	 * @since 1.138.0
 	 */
 	FieldBase.prototype.getBindingEventParameter = function (oEvent) {
 
@@ -4084,7 +4084,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.ValueState} sValueState value state
 	 * @param {string} sValueStateText value state text
 	 * @protected
-	 * @since 1.136.0
+	 * @since 1.138.0
 	 */
 	FieldBase.prototype.setValueStateForContent = function (sContentId, sValueState, sValueStateText) {
 
@@ -4102,7 +4102,7 @@ sap.ui.define([
 	 * @param {string} sContentId Id of the content control or Id of the field itself
 	 * @returns {object} value state information for content control
 	 * @protected
-	 * @since 1.136.0
+	 * @since 1.138.0
 	 */
 	FieldBase.prototype.getValueStateForContent = function (sContentId) {
 
@@ -4123,7 +4123,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} <code>true</code> if at least one content control has a own value state
 	 * @protected
-	 * @since 1.136.0
+	 * @since 1.138.0
 	 */
 	FieldBase.prototype.hasValueStateForContent = function () {
 
@@ -4135,7 +4135,7 @@ sap.ui.define([
 	 * Resets the ValueState for content controls
 	 *
 	 * @protected
-	 * @since 1.136.0
+	 * @since 1.138.0
 	 */
 	FieldBase.prototype.resetValueStateForAllContent = function () {
 
