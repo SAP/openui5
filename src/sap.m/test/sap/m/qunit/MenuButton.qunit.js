@@ -221,30 +221,31 @@ sap.ui.define([
 	});
 
 	QUnit.test("MenuButton (Regular) aria-controls placement", function (assert) {
-		var $buttonReference = this.sut._getButtonControl().$(),
-			sId = this.sut.getMenu().getId() + "-rp";
+		var oButtonDomRef = this.sut._getButtonControl().getDomRef(),
+			sId = `${this.sut.getMenu().getId()}-rp-popover`;
 
-		this.sut._writeAriaAttributes();
-		assert.strictEqual($buttonReference.attr("aria-controls"), sId,
+		this.sut.getAggregation('_button').firePress();
+		assert.strictEqual(oButtonDomRef.getAttribute("aria-controls"), sId,
 			"aria-controls is placed on the internal button and it holds the menu's id");
 
 		this.sut._menuClosed();
-		assert.notOk($buttonReference.attr("aria-controls"), "aria-controls is removed from the internal button");
+		assert.notOk(oButtonDomRef.hasAttribute("aria-controls"), "aria-controls is removed from the internal button");
 	});
 
 	QUnit.test("MenuButton in Split aria-controls placement", function (assert) {
 		this.sut.setButtonMode(MenuButtonMode.Split);
 		oCore.applyChanges();
 
-		var $arrowButton = this.sut._getButtonControl()._getArrowButton().$(),
-			sId = this.sut.getMenu().getId() + "-rp";
+		var oArrowButton = this.sut._getButtonControl()._getArrowButton(),
+			oArrowButtonDomRef = oArrowButton.getDomRef(),
+			sId = `${this.sut.getMenu().getId()}-rp-popover`;
 
-		this.sut._writeAriaAttributes();
-		assert.strictEqual($arrowButton.attr("aria-controls"), sId,
-			"aria-controls is placed on the internal arrow button and it holds the menu's id");
+		oArrowButton.firePress();
+		assert.strictEqual(oArrowButtonDomRef.getAttribute("aria-controls"), sId,
+		"aria-controls is placed on the internal arrow button and it holds the menu's id");
 
 		this.sut._menuClosed();
-		assert.notOk($arrowButton.attr("aria-controls"), "aria-controls is removed from the internal arrow button");
+		assert.notOk(oArrowButtonDomRef.hasAttribute("aria-controls"), "aria-controls is removed from the internal arrow button");
 	});
 
 	QUnit.test("MenuButton in Split root aria attributes", function(assert) {
