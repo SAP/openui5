@@ -1,4 +1,5 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.mdc.table.OpaTests.appODataV4Hierarchy",
 		"type": "application",
@@ -13,14 +14,21 @@
 					"odataVersion": "4.0"
 				}
 			}
+		},
+		"title": "Application 'appODataV4Hierarchy'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"id": "MyView",
-			"viewName": "sap.ui.mdc.table.OpaTests.appODataV4Hierarchy.View",
-			"type": "XML",
-			"async": true
+			"viewName": "sap.ui.mdc.table.OpaTests.appODataV4Hierarchy.View"
 		},
 		"dependencies": {
 			"libs": {

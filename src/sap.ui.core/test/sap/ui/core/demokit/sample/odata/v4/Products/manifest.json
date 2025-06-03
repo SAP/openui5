@@ -1,36 +1,43 @@
 {
-	"_version" : "1.14.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Example for OData V4 EPM Products",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
-				"type" : "OData",
-				"settings" : {
-					"annotations" : ["localAnnotations"],
-					"odataVersion" : "4.0"
+		"description": "Example for OData V4 EPM Products",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
+				"type": "OData",
+				"settings": {
+					"annotations": [
+						"localAnnotations"
+					],
+					"odataVersion": "4.0"
 				}
 			},
-			"localAnnotations" : {
-				"uri" : "data/localAnnotations.xml",
-				"type" : "ODataAnnotation"
+			"localAnnotations": {
+				"uri": "data/localAnnotations.xml",
+				"type": "ODataAnnotation"
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.Products",
-		"title" : "EPM Products",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.Products",
+		"title": "EPM Products",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
@@ -41,26 +48,26 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.63",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+		"dependencies": {
+			"minUI5Version": "1.63",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.Products.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.Products.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		}
 	}

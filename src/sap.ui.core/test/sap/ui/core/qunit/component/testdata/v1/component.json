@@ -1,24 +1,33 @@
 {
-
+	"_version": "2.0.0",
+	"sap.app": {
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.v1.Component",
-
 	"version": "1.0.0",
-
-	"includes" : [
+	"includes": [
 		"style.css",
 		"script.js"
 	],
-
-	"dependencies" : {
-		"libs" : [
+	"dependencies": {
+		"libs": [
 			"sap.ui.layout"
 		],
-		"components" : [
+		"components": [
 			"testdata.other"
 		],
-		"ui5version" : "1.22.5"
+		"ui5version": "1.22.5"
 	},
-
 	"config": {
 		"any1": {
 			"entry": "configuration"
@@ -29,11 +38,14 @@
 			}
 		},
 		"any3": {
-			"anyarray": [1, 2, 3]
+			"anyarray": [
+				1,
+				2,
+				3
+			]
 		},
 		"zero": 0
 	},
-
 	"models": {
 		"i18n": {
 			"type": "sap.ui.model.resource.ResourceModel",
@@ -44,13 +56,11 @@
 			"uri": "./some/odata/service/"
 		}
 	},
-
 	"rootView": {
 		"viewName": "testdata.view.Main",
 		"type": "XML",
 		"async": true
 	},
-
 	"customizing": {
 		"sap.ui.viewReplacements": {
 			"testdata.view.Main": {
@@ -78,11 +88,10 @@
 			}
 		}
 	},
-
 	"routing": {
 		"config": {
 			"type": "View",
-			"viewType" : "XML",
+			"viewType": "XML",
 			"path": "NavigationWithoutMasterDetailPattern.view",
 			"targetParent": "myViewId",
 			"targetControl": "app",
@@ -91,13 +100,12 @@
 		},
 		"routes": [
 			{
-				"name" : "myRouteName1",
-				"pattern" : "FirstView/{from}",
-				"view" : "myViewId"
+				"name": "myRouteName1",
+				"pattern": "FirstView/{from}",
+				"view": "myViewId"
 			}
 		]
 	},
-
 	"sap.fiori": {
 		"key1": "value1",
 		"key2": "value2",
@@ -105,9 +113,11 @@
 			"subkey1": "subvalue1",
 			"subkey2": "subvalue2"
 		},
-		"key4": ["value1", "value2"]
+		"key4": [
+			"value1",
+			"value2"
+		]
 	},
-
 	"custom.entry": {
 		"key1": "value1",
 		"key2": "value2",
@@ -115,7 +125,9 @@
 			"subkey1": "subvalue1",
 			"subkey2": "subvalue2"
 		},
-		"key4": ["value1", "value2"]
+		"key4": [
+			"value1",
+			"value2"
+		]
 	}
-
 }

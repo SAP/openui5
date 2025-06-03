@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.sample.ShellBarWithSearch",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ShellBarWithSearch'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.f.sample.ShellBarWithSearch.view.ShellBarWithSearch",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.f.sample.ShellBarWithSearch.view.ShellBarWithSearch",
 		"dependencies": {
 			"libs": {
 				"sap.f": {},
@@ -19,9 +26,9 @@
 			}
 		},
 		"config": {
-			"sample" : {
-				"stretch" : true,
-				"files" : [
+			"sample": {
+				"stretch": true,
+				"files": [
 					"view/ShellBarWithSearch.view.xml",
 					"controller/ShellBarWithSearch.controller.js",
 					"manifest.json"

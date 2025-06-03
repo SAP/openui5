@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.SinglePlanningCalendarWithLegend",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'SinglePlanningCalendarWithLegend'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.SinglePlanningCalendarWithLegend.Page",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.SinglePlanningCalendarWithLegend.Page",
 		"libs": {
 			"sap.ui.unified": {},
 			"sap.ui.layout": {},

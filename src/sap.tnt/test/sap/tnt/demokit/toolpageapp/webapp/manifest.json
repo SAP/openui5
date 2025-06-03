@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.toolpageapp",
 		"type": "application",
@@ -46,7 +46,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.toolpageapp.view.App",
-			"type": "XML",
 			"id": "app"
 		},
 		"dependencies": {
@@ -159,7 +158,7 @@
 				"controlId": "mainContents",
 				"viewType": "XML",
 				"controlAggregation": "pages",
-				"viewPath": "sap.ui.demo.toolpageapp.view"
+				"path": "sap.ui.demo.toolpageapp.view"
 			},
 			"routes": [
 				{
@@ -211,46 +210,55 @@
 			],
 			"targets": {
 				"home": {
-					"viewId": "home",
-					"viewName": "Home"
+					"type": "View",
+					"id": "home",
+					"name": "Home"
 				},
 				"appSettings": {
-					"viewId": "appSettings",
-					"viewName": "settings.AppSettings"
+					"type": "View",
+					"id": "appSettings",
+					"name": "settings.AppSettings"
 				},
 				"masterSettings": {
-					"viewId": "masterSettings",
-					"viewName": "settings.MasterSettings",
 					"controlId": "appSettings",
 					"controlAggregation": "masterPages",
-					"parent": "appSettings"
+					"parent": "appSettings",
+					"type": "View",
+					"id": "masterSettings",
+					"name": "settings.MasterSettings"
 				},
 				"detailSettings": {
-					"viewId": "detailSettings",
-					"viewName": "settings.DetailSettings",
 					"controlId": "appSettings",
 					"controlAggregation": "detailPages",
-					"parent": "appSettings"
+					"parent": "appSettings",
+					"type": "View",
+					"id": "detailSettings",
+					"name": "settings.DetailSettings"
 				},
 				"statistics": {
-					"viewId": "statistics",
-					"viewName": "Statistics"
+					"type": "View",
+					"id": "statistics",
+					"name": "Statistics"
 				},
 				"usageStatistics": {
-					"viewId": "usageStatistics",
-					"viewName": "UsageStatistics"
+					"type": "View",
+					"id": "usageStatistics",
+					"name": "UsageStatistics"
 				},
 				"orderStatistics": {
-					"viewId": "orderStatistics",
-					"viewName": "OrderStatistics"
+					"type": "View",
+					"id": "orderStatistics",
+					"name": "OrderStatistics"
 				},
 				"importantLinks": {
-					"viewId": "importantLinks",
-					"viewName": "ImportantLinks"
+					"type": "View",
+					"id": "importantLinks",
+					"name": "ImportantLinks"
 				},
 				"legal": {
-					"viewId": "legal",
-					"viewName": "Legal"
+					"type": "View",
+					"id": "legal",
+					"name": "Legal"
 				}
 			}
 		}

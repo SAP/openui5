@@ -1,5 +1,5 @@
 {
-	"_version": "1.72.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.cardExplorer",
 		"type": "application",
@@ -35,8 +35,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.cardExplorer.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -89,10 +87,9 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.ui.demo.cardExplorer.view",
 				"controlId": "navContainer",
 				"controlAggregation": "pages",
-				"async": true
+				"path": "sap.ui.demo.cardExplorer.view"
 			},
 			"routes": [
 				{
@@ -138,38 +135,45 @@
 			],
 			"targets": {
 				"overview": {
-					"viewName": "Overview",
-					"viewId": "overview",
-					"viewLevel": 2
+					"type": "View",
+					"id": "overview",
+					"level": 2,
+					"name": "Overview"
 				},
 				"learnDetail": {
-					"viewName": "LearnDetail",
-					"viewId": "learnDetail",
-					"viewLevel": 2
+					"type": "View",
+					"id": "learnDetail",
+					"level": 2,
+					"name": "LearnDetail"
 				},
 				"exploreSamples": {
-					"viewName": "ExploreSamples",
-					"viewId": "exploreSamples",
-					"viewLevel": 2
+					"type": "View",
+					"id": "exploreSamples",
+					"level": 2,
+					"name": "ExploreSamples"
 				},
 				"exploreOverview": {
-					"viewName": "ExploreOverview",
-					"viewId": "exploreOverview",
-					"viewLevel": 2
+					"type": "View",
+					"id": "exploreOverview",
+					"level": 2,
+					"name": "ExploreOverview"
 				},
 				"integrate": {
-					"viewName": "Integrate",
-					"viewId": "Integrate",
-					"viewLevel": 2
+					"type": "View",
+					"id": "Integrate",
+					"level": 2,
+					"name": "Integrate"
 				},
 				"designtime": {
-					"viewName": "Designtime",
-					"viewId": "Designtime",
-					"viewLevel": 2
+					"type": "View",
+					"id": "Designtime",
+					"level": 2,
+					"name": "Designtime"
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound"
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound"
 				}
 			}
 		}

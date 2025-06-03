@@ -1,27 +1,33 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "routing.scenario1"
+		"id": "routing.scenario1",
+		"type": "application",
+		"title": "Application 'scenario1'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "routing.scenario1.RootView",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "routing.scenario1.RootView",
 		"componentUsages": {
 			"child": {
 				"name": "routing.scenario1.nested",
-				"settings": {
-				},
-				"componentData": {
-				},
+				"settings": {},
+				"componentData": {},
 				"lazy": true
 			}
 		},
 		"routing": {
-			"config": {
-				"async": true
-			},
+			"config": {},
 			"routes": [
 				{
 					"pattern": "",

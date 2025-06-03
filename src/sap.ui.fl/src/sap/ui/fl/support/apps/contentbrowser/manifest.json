@@ -1,14 +1,14 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.fl.support.apps.contentbrowser.app",
 		"type": "application",
 		"i18n": {
-		  "bundleUrl": "i18n/i18n.properties",
-		  "supportedLocales": [
-		    ""
-		  ],
-		  "fallbackLocale": ""
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
 		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
@@ -29,9 +29,7 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
-			"type": "XML",
-			"id": "rootView",
-			"async": true
+			"id": "rootView"
 		},
 		"dependencies": {
 			"minUI5Version": "1.45",
@@ -46,7 +44,7 @@
 				"settings": {
 					"bundleName": "sap.ui.fl.support.apps.contentbrowser.i18n.i18n",
 					"supportedLocales": [
-					  ""
+						""
 					],
 					"fallbackLocale": ""
 				}
@@ -62,10 +60,9 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.ui.fl.support.apps.contentbrowser.view",
 				"controlId": "container-contentbrowser---rootView--splitApp",
 				"controlAggregation": "masterPages",
-				"async": true
+				"path": "sap.ui.fl.support.apps.contentbrowser.view"
 			},
 			"routes": [
 				{
@@ -76,7 +73,10 @@
 				{
 					"pattern": "{layer}/:namespace:",
 					"name": "LayerContentMaster",
-					"target": ["LayerContentMaster", "EmptyDetails"],
+					"target": [
+						"LayerContentMaster",
+						"EmptyDetails"
+					],
 					"subroutes": [
 						{
 							"pattern": "{layer}/{namespace}/{fileName}.{fileType}",
@@ -98,33 +98,40 @@
 			],
 			"targets": {
 				"overview": {
-					"viewName": "Overview"
+					"type": "View",
+					"name": "Overview"
 				},
 				"Layers": {
-					"viewName": "Layers",
-					"viewLevel": 1
+					"type": "View",
+					"level": 1,
+					"name": "Layers"
 				},
 				"LayerContentMaster": {
-					"viewName": "LayerContentMaster",
-					"viewLevel": 2
+					"type": "View",
+					"level": 2,
+					"name": "LayerContentMaster"
 				},
 				"EmptyDetails": {
-					"viewName": "EmptyDetails",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"type": "View",
+					"name": "EmptyDetails"
 				},
 				"ContentDetails": {
-					"viewName": "ContentDetails",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"type": "View",
+					"name": "ContentDetails"
 				},
 				"ContentDetailsFlip": {
-					"viewName": "ContentDetails",
 					"transition": "flip",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"type": "View",
+					"name": "ContentDetails"
 				},
 				"ContentDetailsEdit": {
-					"viewName": "ContentDetailsEdit",
 					"transition": "flip",
-					"controlAggregation": "detailPages"
+					"controlAggregation": "detailPages",
+					"type": "View",
+					"name": "ContentDetailsEdit"
 				}
 			}
 		},

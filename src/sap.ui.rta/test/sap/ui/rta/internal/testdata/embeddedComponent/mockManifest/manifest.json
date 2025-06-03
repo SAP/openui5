@@ -1,6 +1,5 @@
 {
-	"_version": "1.12.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.rta.test.embeddedComponent.mockManifest",
 		"type": "component",
@@ -12,7 +11,6 @@
 		},
 		"ach": "CA-UI5-FL-RTA"
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -21,12 +19,9 @@
 			"phone": false
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.rta.test.variantManagement.view.Root",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"handleValidation": true,
@@ -51,15 +46,14 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"async": true,
-				"viewPath": "sap.ui.rta.test.variantManagement.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
 					"target": [
 						"main"
 					]
-				}
+				},
+				"path": "sap.ui.rta.test.variantManagement.view"
 			},
 			"routes": [
 				{
@@ -72,9 +66,10 @@
 			],
 			"targets": {
 				"main": {
-					"viewName": "Main",
-					"viewId": "idMain1",
-					"viewLevel": 1
+					"type": "View",
+					"id": "idMain1",
+					"level": 1,
+					"name": "Main"
 				}
 			},
 			"contentDensities": {

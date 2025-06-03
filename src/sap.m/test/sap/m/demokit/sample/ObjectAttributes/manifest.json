@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.ObjectAttributes",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectAttributes'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.ObjectAttributes.V",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.ObjectAttributes.V",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

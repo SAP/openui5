@@ -1,57 +1,61 @@
 {
-	"_version" : "1.37.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Example for OData V2 Tree Table (ZRH_ERHAORDERMANAGE)",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata/sap/ZRH_ERHAORDERMANAGE",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "2.0"
+		"description": "Example for OData V2 Tree Table (ZRH_ERHAORDERMANAGE)",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata/sap/ZRH_ERHAORDERMANAGE",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
 				}
 			}
 		},
-		"id" : "sap.ui.core.internal.samples.odata.v2.TreeTable",
-		"title" : "V2 Tree Table (ZRH_ERHAORDERMANAGE)",
-		"type" : "application"
+		"id": "sap.ui.core.internal.samples.odata.v2.TreeTable",
+		"title": "V2 Tree Table (ZRH_ERHAORDERMANAGE)",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"dependencies" : {
-			"minUI5Version" : "1.99",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {},
-				"sap.ui.table" : {}
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.99",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.ui.table": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"canonicalRequests" : true,
-					"defaultBindingMode" : "TwoWay",
-					"defaultCountMode" : "Inline",
-					"earlyTokenRequest" : true,
-					"persistTechnicalMessages" : true
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"canonicalRequests": true,
+					"defaultBindingMode": "TwoWay",
+					"defaultCountMode": "Inline",
+					"earlyTokenRequest": true,
+					"persistTechnicalMessages": true
 				},
-				"type" : "sap.ui.model.odata.v2.ODataModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"id" : "TreeTableMain",
-			"type" : "XML",
-			"viewName" : "sap.ui.core.internal.samples.odata.v2.TreeTable.Main"
+		"rootView": {
+			"id": "TreeTableMain",
+			"viewName": "sap.ui.core.internal.samples.odata.v2.TreeTable.Main"
 		}
 	}
 }

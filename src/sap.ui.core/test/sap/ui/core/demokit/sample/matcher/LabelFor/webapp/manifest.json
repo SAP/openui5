@@ -1,20 +1,23 @@
 {
-	"_version": "1.21.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "appUnderTest",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'appUnderTest'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
-
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "appUnderTest.view.Main",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "appUnderTest.view.Main",
 		"dependencies": {
 			"minUI5Version": "1.77.0",
 			"libs": {

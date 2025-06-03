@@ -1,9 +1,19 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"type": "application",
 		"id": "sap.uxap.ObjectPageChild",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'ObjectPageChild'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
@@ -16,8 +26,6 @@
 		},
 		"rootView": {
 			"viewName": "sap.uxap.ObjectPageChild.view.Main",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		}
 	}

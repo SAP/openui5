@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.MPModelMapping",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'MPModelMapping'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.MPModelMapping.view.ModelMapping",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.MPModelMapping.view.ModelMapping",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
@@ -26,8 +33,8 @@
 					"view/ModelMapping.view.xml",
 					"controller/ModelMapping.controller.js",
 					"view/blocks/ModelMappingBlock.view.xml",
-                    "controller/blocks/ModelMappingBlock.js",
-                    "manifest.json"
+					"controller/blocks/ModelMappingBlock.js",
+					"manifest.json"
 				]
 			}
 		}

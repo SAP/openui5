@@ -1,17 +1,24 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.cardsdemo.cardcontent.componentCard.allInOne",
 		"type": "card",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Card 'allInOne'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.f.cardsdemo.cardcontent.componentCard.allInOne.View",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

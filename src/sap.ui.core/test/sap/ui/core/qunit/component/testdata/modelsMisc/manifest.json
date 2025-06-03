@@ -1,8 +1,8 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "testdata.modelsMisc",
 		"type": "application",
-
 		"dataSources": {
 			"V2_mainService": {
 				"uri": "/sap/odata/v2/service/",
@@ -12,7 +12,6 @@
 					"ignoreAnnotationsFromMetadata": true
 				}
 			},
-
 			"V4_mainService": {
 				"uri": "/sap/odata/v4/service/",
 				"type": "OData",
@@ -21,6 +20,18 @@
 					"ignoreAnnotationsFromMetadata": true
 				}
 			}
+		},
+		"title": "Application 'modelsMisc'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
@@ -31,7 +42,7 @@
 		},
 		"models": {
 			"V2_withoutDataSource": {
-				"type" : "sap.ui.model.odata.v2.ODataModel",
+				"type": "sap.ui.model.odata.v2.ODataModel",
 				"preload": true,
 				"settings": {
 					"serviceUrl": "/sap/odata/v2/service/",
@@ -39,14 +50,13 @@
 				}
 			},
 			"V4_withoutDataSource": {
-				"type" : "sap.ui.model.odata.v4.ODataModel",
+				"type": "sap.ui.model.odata.v4.ODataModel",
 				"preload": true,
 				"settings": {
 					"serviceUrl": "/sap/odata/v4/service/",
 					"ignoreAnnotationsFromMetadata": true
 				}
 			},
-
 			"V2_withDataSource": {
 				"dataSource": "V2_mainService",
 				"preload": true,

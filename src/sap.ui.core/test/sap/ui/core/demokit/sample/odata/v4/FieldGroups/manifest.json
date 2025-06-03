@@ -1,53 +1,55 @@
 {
-	"_version" : "1.21.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "4.0"
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
 				}
 			}
 		},
-		"description" : "Test Application for Field Groups with OData V4",
-		"id" : "sap.ui.core.sample.odata.v4.FieldGroups",
-		"title" : "OData V4 Field Groups",
-		"type" : "application"
+		"description": "Test Application for Field Groups with OData V4",
+		"id": "sap.ui.core.sample.odata.v4.FieldGroups",
+		"title": "OData V4 Field Groups",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"dependencies" : {
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			},
-			"minUI5Version" : "1.55"
+			"minUI5Version": "1.55"
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.FieldGroups.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.FieldGroups.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups"
-		}
+		"rootView": "sap.ui.core.sample.odata.v4.FieldGroups.FieldGroups"
 	}
 }

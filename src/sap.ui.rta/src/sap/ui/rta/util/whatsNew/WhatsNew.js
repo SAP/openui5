@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/util/whatsNew/WhatsNewUtils"
 ], function(
 	mLibrary,
@@ -20,7 +19,6 @@ sap.ui.define([
 	FeaturesAPI,
 	JSONModel,
 	ResourceModel,
-	ReloadManager,
 	WhatsNewUtils
 ) {
 	"use strict";
@@ -69,7 +67,6 @@ sap.ui.define([
 		if (!this.oWhatsNewDialog)	{
 			await this.createWhatsNewDialog(oWhatsNewDialogModel);
 		}
-		ReloadManager.setDontShowWhatsNewAfterReload();
 		this.oWhatsNewDialog.open();
 	};
 

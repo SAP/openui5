@@ -99,7 +99,7 @@ sap.ui.define([
 	QUnit.test("Reordering is disabled for the last row", function(assert){
 
 		var oMovedItem = this.oQueryPanel._oListControl.getItems()[2];
-		this.oQueryPanel._moveTableItem(oMovedItem, 0); //Move from 0 to 1
+		this.oQueryPanel._moveTableItem(oMovedItem, 0); // Move from 2 to 0
 
 		var aP13nState = this.oQueryPanel.getP13nData(true);
 
@@ -124,6 +124,42 @@ sap.ui.define([
 			{
 				name: "key4",
 				visible: false
+			}
+		], "The state has been updated correctly");
+	});
+
+	QUnit.test("Reordering works when item count = queryLimit count = 2", function(assert){
+
+		this.oQueryPanel.setP13nData([
+			{
+				name: "key1",
+				visible: true
+			},
+			{
+				name: "key2",
+				visible: true
+			}
+		]);
+
+		this.oQueryPanel.setQueryLimit(2);
+		var oMovedItem = this.oQueryPanel._oListControl.getItems()[1];
+		this.oQueryPanel._moveTableItem(oMovedItem, 0); //Move from 1 to 1
+
+		const aP13nState = this.oQueryPanel.getP13nData(true);
+
+		//the order has not changed as the last row has been tried to move
+		assert.equal(aP13nState[0].name, "key2", "correct key in correct position provided");
+		assert.equal(aP13nState[1].name, "key1", "correct key in correct position provided");
+
+		//check full state (also non present)
+		assert.deepEqual(this.oQueryPanel.getP13nData(), [
+			{
+				name: "key2",
+				visible: true
+			},
+			{
+				name: "key1",
+				visible: true
 			}
 		], "The state has been updated correctly");
 	});

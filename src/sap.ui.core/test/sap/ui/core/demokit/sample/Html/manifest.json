@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.core.sample.Html",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'sap.ui.core.sample.Html'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.core.sample.Html.Html",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.core.sample.Html.Html",
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},

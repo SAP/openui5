@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.codeeditor.sample.CodeEditor",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'CodeEditor'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.codeeditor.sample.CodeEditor.CodeEditor",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.codeeditor.sample.CodeEditor.CodeEditor",
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},

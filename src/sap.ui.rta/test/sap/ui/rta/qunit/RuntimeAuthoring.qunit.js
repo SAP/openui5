@@ -89,6 +89,7 @@ sap.ui.define([
 			var fnDone = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			sandbox.stub(FlexRuntimeInfoAPI, "getUserId").returns("testUser");
 
 			// Prepare elements an designtime
 			var oElement1 = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.Name");
@@ -138,8 +139,30 @@ sap.ui.define([
 			this.oCommandStack.destroy();
 			this.oRta.destroy();
 			return RtaQunitUtils.clear();
+		},
+		after() {
+			window.sessionStorage.clear();
 		}
 	}, function() {
+		QUnit.test("when UI Adaptation is started and the UI Adaptation Tour is started automatically", function(assert) {
+			const oGuidedTourPopup = Element.getElementById("autoStartGuidedTour");
+			assert.ok(oGuidedTourPopup, "then the tour popup is shown");
+			assert.ok(
+				sessionStorage.getItem("sap.ui.rta.dontShowUIAdaptationTourAfterReload"),
+				"then the session storage tour flag is set"
+			);
+			oGuidedTourPopup.destroy();
+		});
+
+		QUnit.test("when UI Adaptation is started and the UI Adaptation Tour flag is available", function(assert) {
+			assert.ok(
+				sessionStorage.getItem("sap.ui.rta.dontShowUIAdaptationTourAfterReload"),
+				"then the session storage tour flag is set"
+			);
+			const oGuidedTourPopup = Element.getElementById("autoStartGuidedTour");
+			assert.notOk(oGuidedTourPopup, "then the tour popup does not appear");
+		});
+
 		QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with macintosh device and metaKey is pushed", function(assert) {
 			var done = assert.async();
 			var bMacintoshOriginal;

@@ -153,10 +153,14 @@ sap.ui.define([
 		const iQueryLimit = this.getQueryLimit();
 
 		// Rules for the movement:
-		// 1) The row is not the template row
-		// 2) in case all entries are used, allow reordering for all rows
-		// 3) in case a query limit is provided, limit the movement to the allowed limit
-		if ((iCurrentIndex !== iMaxListLength || this._allEntriesUsed()) && (iQueryLimit === -1 || iNewIndex < iQueryLimit)) {
+		// 1) The row is not the template row (dropdown for adding new items)
+		// 2) queryLimit reached
+		// 3) in case all entries are used, allow reordering for all rows
+		// 4) in case a query limit is provided, limit the movement to the allowed limit
+
+		const bIsNotTemplateRow = iCurrentIndex !== iMaxListLength;
+		const bQueryLimitReached = iCurrentIndex === iMaxListLength && this._oListControl.getItems().length === iQueryLimit;
+		if ((bIsNotTemplateRow || bQueryLimitReached || this._allEntriesUsed()) && (iQueryLimit === -1 || iNewIndex < iQueryLimit)) {
 			this._oListControl.removeItem(oItem);
 			this._oListControl.insertItem(oItem, iNewIndex);
 

@@ -1,5 +1,5 @@
 {
-	"_version": "1.52.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "my.component.sample.requestData",
 		"type": "card",
@@ -34,8 +34,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "my.component.sample.requestData.View",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

@@ -1,5 +1,5 @@
 {
-	"_version": "1.38.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.nav",
 		"type": "application",
@@ -21,7 +21,7 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri" : "localService/metadata.xml"
+					"localUri": "localService/metadata.xml"
 				}
 			}
 		}
@@ -33,12 +33,10 @@
 			"tablet": true,
 			"phone": true
 		}
-  	},
+	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.nav.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -74,31 +72,35 @@
 				"transition": "slide",
 				"bypassed": {
 					"target": "notFound"
-				},
-				"async": true
+				}
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "appHome",
-				"target": "home"
-			}, {
-				"pattern": "employees",
-				"name": "employeeList",
-				"target": "employees"
-			}, {
-				"pattern": "employees/{employeeId}",
-				"name": "employee",
-				"target": "employee"
-			}, {
-				"pattern": "employees/{employeeId}/resume:?query:",
-				"name": "employeeResume",
-				"target": "employeeResume"
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "appHome",
+					"target": "home"
+				},
+				{
+					"pattern": "employees",
+					"name": "employeeList",
+					"target": "employees"
+				},
+				{
+					"pattern": "employees/{employeeId}",
+					"name": "employee",
+					"target": "employee"
+				},
+				{
+					"pattern": "employees/{employeeId}/resume:?query:",
+					"name": "employeeResume",
+					"target": "employeeResume"
+				}
+			],
 			"targets": {
 				"home": {
 					"id": "home",
 					"name": "Home",
-					"level" : 1
+					"level": 1
 				},
 				"notFound": {
 					"id": "notFound",
@@ -109,17 +111,17 @@
 					"id": "employeeList",
 					"path": "sap.ui.demo.nav.view.employee",
 					"name": "EmployeeList",
-					"level" : 2
+					"level": 2
 				},
 				"employee": {
 					"id": "employee",
 					"name": "employee.Employee",
-					"level" : 3
+					"level": 3
 				},
 				"employeeResume": {
 					"id": "resume",
 					"name": "employee.Resume",
-					"level" : 4,
+					"level": 4,
 					"transition": "flip"
 				},
 				"resumeTabHobbies": {

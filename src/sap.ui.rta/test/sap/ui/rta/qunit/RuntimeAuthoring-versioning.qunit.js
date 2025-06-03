@@ -472,7 +472,6 @@ sap.ui.define([
 			sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(true);
 			sandbox.stub(this.oRta, "canSave").returns(true);
 			sandbox.stub(ReloadManager, "handleReloadOnExit");
-			sandbox.stub(ReloadManager, "removeDontShowWhatsNewAfterReload");
 			sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
 			const oMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves();
 			const oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();

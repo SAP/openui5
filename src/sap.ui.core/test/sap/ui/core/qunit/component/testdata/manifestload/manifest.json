@@ -1,12 +1,24 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "testdata.manifestload"
+		"id": "testdata.manifestload",
+		"title": "'manifestload'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"someValue": "someValue456",
 		"dependencies": {
-			"libs": {
-			},
+			"libs": {},
 			"components": {
 				"testdata.manifestload": {}
 			}

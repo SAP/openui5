@@ -1,6 +1,20 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "testdata.keepAlive.noKeepAliveImplicit"
+		"id": "testdata.keepAlive.noKeepAliveImplicit",
+		"type": "application",
+		"title": "Application 'noKeepAliveImplicit'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -8,8 +22,6 @@
 		},
 		"rootView": {
 			"viewName": "testdata.keepAlive.noKeepAliveImplicit.App",
-			"type": "XML",
-			"async": true,
 			"id": "appView"
 		},
 		"routing": {
@@ -19,8 +31,7 @@
 				"path": "testdata.keepAlive.noKeepAliveImplicit",
 				"controlId": "app",
 				"controlAggregation": "pages",
-				"transition": "slide",
-				"async": true
+				"transition": "slide"
 			},
 			"routes": [
 				{

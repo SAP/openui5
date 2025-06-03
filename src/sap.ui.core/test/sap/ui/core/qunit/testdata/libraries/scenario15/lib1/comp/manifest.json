@@ -1,11 +1,19 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "testlibs.scenario15.lib1.comp",
 		"type": "application",
 		"title": "comp",
 		"applicationVersion": {
 			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	}
 }

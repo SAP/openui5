@@ -1,50 +1,55 @@
 {
-	"_version" : "1.14.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Test OData V4 late properties",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "4.0"
+		"description": "Test OData V4 late properties",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
 				}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.LateProperties",
-		"title" : "EPM Business Partners",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.LateProperties",
+		"title": "EPM Business Partners",
+		"type": "application"
 	},
-	"sap.ui5" : {
-		"dependencies" : {
-			"minUI5Version" : "1.73",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {}
-			}
-		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server",
-					"updateGroupId" : "UpdateGroup"
-				},
-				"type" : "sap.ui.core.sample.odata.v4.LateProperties.SandboxModel",
-				"uriSettingName" : "serviceUrl"
-			}
-		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.LateProperties.Main"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.73",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server",
+					"updateGroupId": "UpdateGroup"
+				},
+				"type": "sap.ui.core.sample.odata.v4.LateProperties.SandboxModel",
+				"uriSettingName": "serviceUrl"
+			}
+		},
+		"rootView": "sap.ui.core.sample.odata.v4.LateProperties.Main"
 	}
 }

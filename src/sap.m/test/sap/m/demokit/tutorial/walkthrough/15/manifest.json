@@ -1,6 +1,20 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "sap.m.tutorial.walkthrough.15"
+		"id": "sap.m.tutorial.walkthrough.15",
+		"type": "application",
+		"title": "Application 'sap.m.tutorial.walkthrough.15'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"config": {

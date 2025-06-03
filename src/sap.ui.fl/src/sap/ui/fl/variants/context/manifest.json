@@ -1,5 +1,5 @@
 {
-	"_version": "1.28.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.fl.variants.context",
 		"type": "component",
@@ -23,8 +23,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.fl.variants.context.view.ContextVisibility",
-			"type": "XML",
-			"async": true,
 			"id": "ContextVisibility"
 		},
 		"dependencies": {

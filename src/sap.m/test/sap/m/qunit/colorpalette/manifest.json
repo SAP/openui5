@@ -1,6 +1,6 @@
 {
 	"start_url": "index.html",
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "cp.opa.test.app",
 		"type": "application",
@@ -97,14 +97,11 @@
 			}
 		},
 		"rootView": {
-			"async": true,
 			"id": "main",
-			"type": "XML",
 			"viewName": "cp.opa.test.app.views.App"
 		},
 		"routing": {
 			"config": {
-				"async": true,
 				"routerClass": "sap.m.routing.Router",
 				"homeRoute": "main",
 				"type": "View",

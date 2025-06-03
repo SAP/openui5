@@ -1,5 +1,5 @@
 {
-	"_version": "1.38.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.nav",
 		"type": "application",
@@ -21,7 +21,7 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri" : "localService/metadata.xml"
+					"localUri": "localService/metadata.xml"
 				}
 			}
 		}
@@ -33,12 +33,10 @@
 			"tablet": true,
 			"phone": true
 		}
-  	},
+	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.nav.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -71,19 +69,20 @@
 				"path": "sap.ui.demo.nav.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
-				"transition": "slide",
-				"async": true
+				"transition": "slide"
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "appHome",
-				"target": "home"
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "appHome",
+					"target": "home"
+				}
+			],
 			"targets": {
 				"home": {
 					"id": "home",
 					"name": "Home",
-					"level" : 1
+					"level": 1
 				}
 			}
 		}

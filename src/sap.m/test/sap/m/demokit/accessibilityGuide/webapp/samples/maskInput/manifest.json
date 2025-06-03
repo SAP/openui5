@@ -1,20 +1,23 @@
 {
-	"_version": "1.9.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.maskInput",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'maskInput'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
-
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.maskInput.View",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.maskInput.View",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

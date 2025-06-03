@@ -43,13 +43,6 @@ sap.ui.define([
 			assert.strictEqual(this.oReloadStub.callCount, 1, "the reload method was called");
 			assert.deepEqual(this.oReloadStub.lastCall.args[0].removeVersionParameter, true, "the parameter was added");
 		});
-
-		QUnit.test("When the DontShowWhatsNewAfterReload flag is set", function(assert) {
-			ReloadManager.setDontShowWhatsNewAfterReload();
-			assert.ok(ReloadManager.getDontShowWhatsNewAfterReload(), "the flag is set");
-			ReloadManager.removeDontShowWhatsNewAfterReload();
-			assert.notOk(ReloadManager.getDontShowWhatsNewAfterReload(), "the flag is removed");
-		});
 	});
 
 	QUnit.module("checkReloadOnExit", {

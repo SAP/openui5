@@ -1,20 +1,23 @@
 {
-	"_version": "1.9.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.panel",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'sap.m.sample.panel'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
-
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.panel.View",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.panel.View",
 		"dependencies": {
 			"minUI5Version": "1.60.0",
 			"libs": {

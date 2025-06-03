@@ -1,36 +1,43 @@
 {
-	"_version" : "1.8.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Example for OData V4 EPM Sales Orders using XML Templating",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-				"type" : "OData",
-				"settings" : {
-					"annotations" : ["testanno"],
-					"odataVersion" : "4.0"
+		"description": "Example for OData V4 EPM Sales Orders using XML Templating",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+				"type": "OData",
+				"settings": {
+					"annotations": [
+						"testanno"
+					],
+					"odataVersion": "4.0"
 				}
 			},
-			"testanno" : {
-				"uri" : "data/annotations.xml",
-				"type" : "ODataAnnotation"
+			"testanno": {
+				"uri": "data/annotations.xml",
+				"type": "ODataAnnotation"
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
-		"title" : "EPM Sales Orders Template",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
+		"title": "EPM Sales Orders Template",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"Facets.fragment.xml",
 					"FormattedText.fragment.xml",
@@ -51,23 +58,23 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.37",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {}
+		"dependencies": {
+			"minUI5Version": "1.37",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
-		"handleValidation" : false,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"earlyRequests" : true
+		"handleValidation": false,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"earlyRequests": true
 				},
-				"type" : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		}
 	}

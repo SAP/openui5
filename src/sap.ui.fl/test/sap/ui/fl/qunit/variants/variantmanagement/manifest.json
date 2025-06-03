@@ -1,39 +1,43 @@
 {
-  "_version": "1.12.0",
-  "sap.app": {
-	"id": "sap.ui.fl.sample.variantmanagement",
-	"type": "application",
-	"applicationVersion": {
-	  "version": "1.0.0"
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "sap.ui.fl.sample.variantmanagement",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-FL",
+		"title": "Application 'variantmanagement'"
 	},
-	"ach": "CA-UI5-FL"	
-  },
-  "sap.ui": {
-	"technology": "UI5"
-  },
-  "sap.ui5": {
-	"rootView": {
-	  "id": "IDView",
-	  "viewName": "sap.ui.fl.sample.variantmanagement.VariantManagement",
-	  "type": "XML",
-	  "height": "100%",
-	  "async": true  
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"handleValidation": true,	
-	"dependencies": {
-	   "minUI5Version": "${project.version}",
-				"libs": {
-					"sap.m": {
-						"lazy": true
-					},
-					"sap.ui.layout": {
-						"lazy": true
-					},"sap.ui.fl": {
-						"lazy": true
-					}		
+	"sap.ui5": {
+		"rootView": {
+			"id": "IDView",
+			"viewName": "sap.ui.fl.sample.variantmanagement.VariantManagement",
+			"height": "100%"
+		},
+		"handleValidation": true,
+		"dependencies": {
+			"minUI5Version": "${project.version}",
+			"libs": {
+				"sap.m": {
+					"lazy": true
+				},
+				"sap.ui.layout": {
+					"lazy": true
+				},
+				"sap.ui.fl": {
+					"lazy": true
 				}
-	   },       
-	  "models": {          
-      }
-   }
+			}
+		},
+		"models": {}
+	}
 }

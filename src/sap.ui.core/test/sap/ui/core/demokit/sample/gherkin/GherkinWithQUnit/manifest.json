@@ -1,8 +1,19 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.core.sample.gherkin.GherkinWithQUnit",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'GherkinWithQUnit'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {

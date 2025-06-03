@@ -1,29 +1,34 @@
 {
-  "sap.app": {
-	"id": "appUnderTest",
-	"_version": "1.0",
-	"type": "application",
-	"applicationVersion": {
-	  "version": "1.0.0"
-	}
-  },
-  "sap.ui" : {
-	"technology" : "UI5"
-  },
-  "sap.ui5" : {
-	"rootView": {
-	  "id": "IDView",
-	  "type": "XML",
-	  "viewName": "appUnderTest.Test",
-	  "async": true
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "appUnderTest",
+		"_version": "1.0",
+		"type": "application",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "Application 'appUnderTest'"
 	},
-	"dependencies" : {
-	  "minUI5Version" : "1.61.0",
-	  "libs" : {
-		"sap.ui.core" : {},
-		"sap.m" : {},
-		"sap.ui.mdc" : {}
-	  }
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"id": "IDView",
+			"viewName": "appUnderTest.Test"
+		},
+		"dependencies": {
+			"minUI5Version": "1.61.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.mdc": {}
+			}
+		}
 	}
-  }
 }

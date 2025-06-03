@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.SegmentedButton",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'SegmentedButton'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.SegmentedButton.Page",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.SegmentedButton.Page",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

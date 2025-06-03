@@ -1,6 +1,20 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "testdata.keepAlive.child3"
+		"id": "testdata.keepAlive.child3",
+		"type": "application",
+		"title": "Application 'child3'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"keepAlive": {
@@ -11,8 +25,6 @@
 		},
 		"rootView": {
 			"viewName": "testdata.keepAlive.child3.App",
-			"type": "XML",
-			"async": true,
 			"id": "appView"
 		},
 		"routing": {
@@ -22,8 +34,7 @@
 				"path": "testdata.keepAlive.child3",
 				"controlId": "app",
 				"controlAggregation": "pages",
-				"transition": "slide",
-				"async": true
+				"transition": "slide"
 			},
 			"routes": [
 				{

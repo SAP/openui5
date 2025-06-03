@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.tnt.sample.ToolHeader",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ToolHeader'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.tnt.sample.ToolHeader.V",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.tnt.sample.ToolHeader.V",
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},

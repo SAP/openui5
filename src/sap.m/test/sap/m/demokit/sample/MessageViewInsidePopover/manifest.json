@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.MessageViewInsidePopover",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'MessageViewInsidePopover'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.MessageViewInsidePopover.view.MessageViewInsidePopover",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.MessageViewInsidePopover.view.MessageViewInsidePopover",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

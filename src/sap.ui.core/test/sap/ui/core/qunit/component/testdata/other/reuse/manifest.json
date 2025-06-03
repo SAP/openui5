@@ -1,9 +1,19 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "testdata.other.reuse",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'testdata.other.reuse'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
@@ -26,7 +36,6 @@
 				"type": "sap.ui.model.odata.v4.ODataModel",
 				"uri": "./some/odata/service/"
 			}
-
 		}
 	}
 }

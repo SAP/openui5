@@ -1,15 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageBlockViewTypes",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageBlockViewTypes'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageBlockViewTypes.view.ObjectPageOnJSON",
-			"type": "XML"
-		},
+		"rootView": "sap.uxap.sample.ObjectPageBlockViewTypes.view.ObjectPageOnJSON",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks"
 		},

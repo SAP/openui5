@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.HeapOfShards",
 		"type": "application",
@@ -22,7 +22,6 @@
 			"version": "1.60.0"
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -39,12 +38,9 @@
 			"phone": true
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.HeapOfShards.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -73,9 +69,11 @@
 			}
 		},
 		"resources": {
-			"css": [{
-				"uri": "css/style.css"
-			}]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		}
 	}
 }

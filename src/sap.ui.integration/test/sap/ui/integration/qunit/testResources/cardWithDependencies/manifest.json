@@ -1,6 +1,19 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "test.manifest.someid"
+		"id": "test.manifest.someid",
+		"title": "'someid'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -20,13 +33,15 @@
 		},
 		"content": {
 			"content": {
-				"groups": [{
-					"items": [
-						{
-							"id": "item1"
-						}
-					]
-				}]
+				"groups": [
+					{
+						"items": [
+							{
+								"id": "item1"
+							}
+						]
+					}
+				]
 			}
 		}
 	}

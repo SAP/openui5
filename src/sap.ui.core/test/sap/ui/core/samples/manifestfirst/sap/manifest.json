@@ -1,23 +1,26 @@
 {
-
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "samples.manifestfirst.sap.Component",
-
 	"sap.app": {
 		"id": "samples.manifestfirst.sap",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"type": "application",
+		"title": "Application 'samples.manifestfirst.sap'"
 	},
-
 	"sap.ui5": {
-
 		"rootView": {
 			"viewName": "samples.manifestfirst.sap.view.Main",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		}
-
 	}
-
 }

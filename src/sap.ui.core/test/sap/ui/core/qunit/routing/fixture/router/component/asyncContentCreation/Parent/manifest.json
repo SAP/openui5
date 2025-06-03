@@ -1,24 +1,35 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "qunit.router.component.asyncContentCreation.Parent",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'Parent'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "qunit.router.component.asyncContentCreation.Parent.view.RootView",
-			"type": "XML"
-		},
+		"rootView": "qunit.router.component.asyncContentCreation.Parent.view.RootView",
 		"routing": {
 			"routes": [
 				{
 					"pattern": "",
 					"name": "home",
-					"target": [{
-						"name": "home",
-						"prefix": "child"
-					}, "footer"]
+					"target": [
+						{
+							"name": "home",
+							"prefix": "child"
+						},
+						"footer"
+					]
 				},
 				{
 					"pattern": "category",

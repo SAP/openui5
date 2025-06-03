@@ -1,19 +1,24 @@
 {
-	"_version" : "1.60.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "XML Templating sample with UI5 core primitive OData types",
-		"id" : "sap.ui.core.sample.ViewTemplate.types",
-		"title" : "XML Templating: UI5 OData types",
-		"type" : "application"
+		"description": "XML Templating sample with UI5 core primitive OData types",
+		"id": "sap.ui.core.sample.ViewTemplate.types",
+		"title": "XML Templating: UI5 OData types",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
+	"sap.ui5": {
 		"config": {
 			"sample": {
 				"files": [
@@ -28,15 +33,15 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.120",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.codeeditor" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+		"dependencies": {
+			"minUI5Version": "1.120",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.codeeditor": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
-		"handleValidation" : true
+		"handleValidation": true
 	}
 }

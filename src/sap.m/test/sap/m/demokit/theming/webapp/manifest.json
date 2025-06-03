@@ -1,8 +1,7 @@
 {
-	"_version": "1.21.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
-	"id": "sap.ui.demo.theming",
+		"id": "sap.ui.demo.theming",
 		"type": "application",
 		"i18n": {
 			"bundleUrl": "i18n/i18n.properties",
@@ -17,9 +16,8 @@
 			"version": "1.0.0"
 		}
 	},
-
 	"sap.ui": {
-	"technology": "UI5",
+		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://image-viewer",
 			"favIcon": "",
@@ -34,15 +32,11 @@
 			"phone": true
 		}
 	},
-
 	"sap.ui5": {
-	"rootView": {
+		"rootView": {
 			"viewName": "sap.ui.demo.theming.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.98.0",
 			"libs": {
@@ -52,12 +46,11 @@
 				"sap.m": {
 					"minVersion": "1.36.0"
 				},
-				"sap.ui.layout" : {
+				"sap.ui.layout": {
 					"minVersion": "1.36.0"
 				}
 			}
 		},
-
 		"resources": {
 			"css": [
 				{
@@ -65,12 +58,10 @@
 				}
 			]
 		},
-
 		"contentDensities": {
 			"compact": true,
 			"cozy": true
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -82,11 +73,11 @@
 					"fallbackLocale": ""
 				}
 			},
-			"class":{
+			"class": {
 				"type": "sap.ui.model.json.JSONModel",
-				"uri": "model/Class.json"}
+				"uri": "model/Class.json"
+			}
 		},
-
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
@@ -96,19 +87,20 @@
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": ["notFound"]
-				},
-				"async": true
+					"target": [
+						"notFound"
+					]
+				}
 			},
-
 			"routes": [
 				{
 					"pattern": ":?query:",
 					"name": "overview",
-					"target": ["overview"]
+					"target": [
+						"overview"
+					]
 				}
 			],
-
 			"targets": {
 				"overview": {
 					"name": "Overview",

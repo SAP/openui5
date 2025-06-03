@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.integration.sample.ConfigurationChanges",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ConfigurationChanges'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.integration.sample.ConfigurationChanges.ConfigurationChanges",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.integration.sample.ConfigurationChanges.ConfigurationChanges",
 		"dependencies": {
 			"libs": {
 				"sap.f": {},
@@ -18,7 +25,6 @@
 				"sap.ui.integration": {}
 			}
 		},
-		"config": {
-		}
+		"config": {}
 	}
 }

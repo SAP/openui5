@@ -1,5 +1,19 @@
 {
-		"sap.card": {
+	"_version": "2.0.0",
+	"sap.app": {
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.card": {
 		"header": {
 			"title": "Adaptive Card with Forms",
 			"subTitle": "Card with forms and actions"
@@ -120,4 +134,4 @@
 			]
 		}
 	}
-	}
+}

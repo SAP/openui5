@@ -1,5 +1,5 @@
 {
-	"_version": "1.58.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "ui5.walkthrough",
 		"i18n": {
@@ -46,7 +46,6 @@
 		},
 		"rootView": {
 			"viewName": "ui5.walkthrough.view.App",
-			"type": "XML",
 			"id": "app"
 		}
 	}

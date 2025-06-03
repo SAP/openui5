@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "qunit.router.component.titleChanged.homeRoute",
 		"title": "App Title in homeRoute Component",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "qunit.router.component.titleChanged.homeRoute.view.RootView",
-			"type": "XML"
-		},
+		"rootView": "qunit.router.component.titleChanged.homeRoute.view.RootView",
 		"routing": {
 			"config": {
 				"controlAggregation": "content",

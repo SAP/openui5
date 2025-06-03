@@ -668,7 +668,12 @@ sap.ui.define([
 	QUnit.test("Prevent navigation on mobile devices", async function(assert) {
 		// Prepare
 		var oLink = new Link({ text: "text", href: "#" }),
-			oTouchStartEvent = new TouchEvent("touchstart", { bubbles: true, cancelable: true }),
+			TouchEventPolyfill = window.TouchEvent || function(type, params) {
+				var event = new Event(type, params);
+				event.touches = params && params.touches || [];
+				return event;
+			},
+			oTouchStartEvent = new TouchEventPolyfill("touchstart", { bubbles: true, cancelable: true }),
 			oTouchStartEventStub = this.stub(oTouchStartEvent, "touches").value([{
 				identifier: 0,
 				target: oLink.getDomRef(),

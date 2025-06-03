@@ -1,19 +1,32 @@
 {
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "test.routing.target.routingConfig",
+		"type": "application",
+		"title": "Application 'routingConfig'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"sap.ui5": {
-		"rootView" : {
-			"viewName": "test.routing.target.Async2",
-			"type": "XML",
-			"async": true
-		},
-		"routing" : {
-			"config": {
-				"async": true
-			},
-			"routes": [{
-				"name": "home",
-				"pattern": "",
-				"target": "home"
-			}],
+		"rootView": "test.routing.target.Async2",
+		"routing": {
+			"config": {},
+			"routes": [
+				{
+					"name": "home",
+					"pattern": "",
+					"target": "home"
+				}
+			],
 			"targets": {
 				"home": {
 					"type": "View",

@@ -1,6 +1,19 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "my.card.qunit.test.ListCard"
+		"id": "my.card.qunit.test.ListCard",
+		"title": "'ListCard'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.card": {
 		"type": "List",
@@ -36,7 +49,6 @@
 						"state": "Success",
 						"info": "27.45 EUR",
 						"infoState": "Success"
-
 					}
 				]
 			},

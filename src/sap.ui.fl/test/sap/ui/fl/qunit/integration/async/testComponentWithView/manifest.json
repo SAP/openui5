@@ -1,24 +1,24 @@
-	{
-		"_version": "1.12.0",
-		"sap.app": {
-			"id": "sap.ui.fl.qunit.integration.async.testComponentWithView",
-			"type": "application",
-			"title": "fl lib test component",
-			"description": "",
-			"applicationVersion": {
-				"version": "1.0.0"
-			},
-			"ach": "",
-			"crossNavigation": {
-				"inbounds": {}
-			}
+{
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "sap.ui.fl.qunit.integration.async.testComponentWithView",
+		"type": "application",
+		"title": "fl lib test component",
+		"description": "",
+		"applicationVersion": {
+			"version": "1.0.0"
 		},
-		"sap.ui": {
-			"technology": "UI5",
-			"deviceTypes": {
-				"desktop": true,
-				"tablet": true,
-				"phone": true
+		"ach": "",
+		"crossNavigation": {
+			"inbounds": {}
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {

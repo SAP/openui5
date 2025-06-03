@@ -1,5 +1,5 @@
 {
-	"_version": "1.9.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.sample",
 		"type": "application",
@@ -11,6 +11,14 @@
 		"sourceTemplate": {
 			"id": "ui5template.smarttemplate",
 			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui.generic.app": {
@@ -63,7 +71,7 @@
 	"$sap.ui.fl.changes": {
 		"descriptor": [
 			{
-				"changeType":"appdescr_app_setTitle",
+				"changeType": "appdescr_app_setTitle",
 				"content": {},
 				"selector": {},
 				"layer": "CUSTOMER",

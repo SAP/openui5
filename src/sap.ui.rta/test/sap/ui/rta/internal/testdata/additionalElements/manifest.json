@@ -1,6 +1,5 @@
 {
-	"_version": "1.21.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.rta.test.additionalElements",
 		"type": "application",
@@ -18,7 +17,6 @@
 		},
 		"ach": "CA-UI5-FL-RTA"
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -27,12 +25,9 @@
 			"phone": false
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.rta.test.additionalElements.ComplexTest",
-			"type": "XML",
-			"async": true,
 			"id": "app",
 			"cache": {
 				"keys": [

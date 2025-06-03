@@ -1,11 +1,12 @@
 {
-	"_version": "1.60.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "ui5.databinding",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"title": "Application 'databinding'"
 	},
 	"sap.ui": {
 		"technology": "UI5",
@@ -30,7 +31,7 @@
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "./model/data.json"
 			},
-			"products" : {
+			"products": {
 				"type": "sap.ui.model.json.JSONModel",
 				"uri": "./model/Products.json"
 			},
@@ -48,7 +49,6 @@
 		},
 		"rootView": {
 			"viewName": "ui5.databinding.view.App",
-			"type": "XML",
 			"id": "app"
 		}
 	}

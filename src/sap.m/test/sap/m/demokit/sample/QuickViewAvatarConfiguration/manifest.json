@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.QuickView",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'QuickView'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.QuickViewAvatarConfiguration.V",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.QuickViewAvatarConfiguration.V",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

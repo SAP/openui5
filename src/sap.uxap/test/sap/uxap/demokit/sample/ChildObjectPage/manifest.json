@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ChildObjectPage",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ChildObjectPage'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ChildObjectPage.view.ChildObjectPage",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ChildObjectPage.view.ChildObjectPage",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks",
 			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
@@ -43,8 +50,8 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-                    "../SharedJSONData/employee.json",
-                    "../SharedJSONData/products.json",
+					"../SharedJSONData/employee.json",
+					"../SharedJSONData/products.json",
 					"manifest.json"
 				]
 			}

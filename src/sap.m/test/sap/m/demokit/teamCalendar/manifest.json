@@ -1,8 +1,18 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.demokit.teamCalendar.webapp",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "'webapp'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {

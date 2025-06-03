@@ -1,10 +1,19 @@
 {
-	"_version": "1.38.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.fcl",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'sap.ui.demo.fcl'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {

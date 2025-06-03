@@ -1,47 +1,52 @@
 {
-	"_version" : "1.14.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Test OData V4 server-driven paging",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "4.0"
+		"description": "Test OData V4 server-driven paging",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
 				}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.ServerDrivenPaging",
-		"title" : "EPM Business Partners",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.ServerDrivenPaging",
+		"title": "EPM Business Partners",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"dependencies" : {
-			"minUI5Version" : "1.71",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.table" : {}
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.71",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
 			}
 		},
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server"
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.ServerDrivenPaging.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.ServerDrivenPaging.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		}
 	}

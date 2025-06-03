@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ProfileObjectPageHeader",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ProfileObjectPageHeader'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ProfileObjectPageHeader.view.ProfileObjectPageHeader",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ProfileObjectPageHeader.view.ProfileObjectPageHeader",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks",
 			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
@@ -43,7 +50,7 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-                    "../SharedJSONData/employee.json",
+					"../SharedJSONData/employee.json",
 					"manifest.json"
 				]
 			}

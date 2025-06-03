@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.cart",
 		"type": "application",
@@ -32,12 +32,16 @@
 		"icons": {
 			"icon": "sap-icon://cart",
 			"favIcon": "img/favicon.ico"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.cart.view.App",
-			"type": "XML",
 			"id": "app"
 		},
 		"dependencies": {
@@ -72,7 +76,11 @@
 		},
 		"handleValidation": true,
 		"resources": {
-			"css": [{"uri": "css/style.css"}]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		},
 		"routing": {
 			"config": {
@@ -125,23 +133,23 @@
 					"titleTarget": "product"
 				},
 				{
-				  "pattern": "category/{id}/compare/:item1Id:/:item2Id:",
-				  "name": "comparison",
-				  "target": [
-					"category",
-					"comparison"
-				  ],
-				  "titleTarget": "comparison"
+					"pattern": "category/{id}/compare/:item1Id:/:item2Id:",
+					"name": "comparison",
+					"target": [
+						"category",
+						"comparison"
+					],
+					"titleTarget": "comparison"
 				},
 				{
-				  "pattern": "category/{id}/compare/:item1Id:/:item2Id:/cart",
-				  "name": "comparisonCart",
-				  "target": [
-					"category",
-					"comparison",
-					"cart"
-				  ],
-				  "titleTarget": "comparison"
+					"pattern": "category/{id}/compare/:item1Id:/:item2Id:/cart",
+					"name": "comparisonCart",
+					"target": [
+						"category",
+						"comparison",
+						"cart"
+					],
+					"titleTarget": "comparison"
 				},
 				{
 					"pattern": "category/{id}/product/{productId}/cart",
@@ -156,7 +164,11 @@
 				{
 					"pattern": "cart",
 					"name": "cart",
-					"target": ["home", "welcome", "cart"]
+					"target": [
+						"home",
+						"welcome",
+						"cart"
+					]
 				},
 				{
 					"pattern": "checkout",
@@ -175,14 +187,14 @@
 					"level": 3,
 					"id": "product",
 					"controlAggregation": "midColumnPages",
-					"title":"{Name}"
+					"title": "{Name}"
 				},
 				"comparison": {
-				  "name": "Comparison",
-				  "level": 3,
-				  "id": "comparison",
-				  "controlAggregation": "midColumnPages",
-				  "title":"{Name}"
+					"name": "Comparison",
+					"level": 3,
+					"id": "comparison",
+					"controlAggregation": "midColumnPages",
+					"title": "{Name}"
 				},
 				"category": {
 					"name": "Category",

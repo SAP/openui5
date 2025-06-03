@@ -1548,7 +1548,6 @@
 					"sap.m.sample.TreeSelection",
 					"sap.m.sample.TreeExpandTo",
 					"sap.m.sample.TreeExpandMulti",
-					"sap.m.sample.TreeOData",
 					"sap.m.sample.TreeJSONLazyLoading",
 					"sap.m.sample.TreeDnD"
 				]
@@ -2863,11 +2862,6 @@
 				"id": "sap.m.sample.TreeJSONLazyLoading",
 				"name": "Tree - Lazy loading with a JSON model",
 				"description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
-			},
-			{
-				"id": "sap.m.sample.TreeOData",
-				"name": "Tree - OData",
-				"description": "This example shows Tree with OData service."
 			},
 			{
 				"id": "sap.m.sample.TreeSelection",

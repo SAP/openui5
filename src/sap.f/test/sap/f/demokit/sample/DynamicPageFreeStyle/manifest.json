@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.sample.DynamicPageFreeStyle",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'DynamicPageFreeStyle'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.f.sample.DynamicPageFreeStyle.view.DynamicPageFreeStyle",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.f.sample.DynamicPageFreeStyle.view.DynamicPageFreeStyle",
 		"dependencies": {
 			"libs": {
 				"sap.f": {},

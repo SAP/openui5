@@ -1,4 +1,5 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "mdc.sample",
 		"type": "application",
@@ -32,8 +33,8 @@
 		},
 		"flexEnabled": false,
 		"resourceRoots": {
-            "mdc.sample": "./"
-        },
+			"mdc.sample": "./"
+		},
 		"dependencies": {
 			"minUI5Version": "1.120.0",
 			"libs": {
@@ -53,8 +54,6 @@
 		"models": {},
 		"rootView": {
 			"viewName": "mdc.sample.view.FilterbarCustomOperators",
-			"type": "XML",
-			"async": true,
 			"id": "sample"
 		}
 	}

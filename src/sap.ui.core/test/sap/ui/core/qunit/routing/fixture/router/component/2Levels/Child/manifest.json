@@ -1,15 +1,24 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "qunit.router.component.2Levels.Child",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'qunit.router.component.2Levels.Child'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"routing": {
-			"config": {
-				"async": true
-			},
+			"config": {},
 			"routes": [
 				{
 					"pattern": "product/{id}",

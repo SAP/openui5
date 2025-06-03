@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.Avatar",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'Avatar'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.Avatar.view.Avatar",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.Avatar.view.Avatar",
 		"resourceRoots": {
 			"sap.m.images": "../../../images"
 		},

@@ -1,6 +1,20 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "testdata.targetsPreloading"
+		"id": "testdata.targetsPreloading",
+		"type": "application",
+		"title": "Application 'targetsPreloading'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -9,10 +23,7 @@
 				"sap.m": {}
 			}
 		},
-		"rootView": {
-			"viewName": "testdata.targetsPreloading.Main",
-			"type": "XML"
-		},
+		"rootView": "testdata.targetsPreloading.Main",
 		"routing": {
 			"config": {
 				"targetsClass": "sap.m.routing.Targets"

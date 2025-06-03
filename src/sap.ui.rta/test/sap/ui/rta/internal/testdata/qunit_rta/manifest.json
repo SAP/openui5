@@ -1,5 +1,5 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.rta.qunitrta",
 		"type": "application",

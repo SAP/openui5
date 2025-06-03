@@ -1,20 +1,28 @@
 {
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.inheritAsyncError.Component",
-
 	"sap.app": {
 		"id": "testdata.inheritAsyncError",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"type": "application",
+		"title": "Application 'inheritAsyncError'"
 	},
-
 	"sap.ui5": {
 		"config": {
 			"any1": {
 				"entry": "test"
 			}
 		},
-
 		"extends": {
 			"component": "testdata.inheritAsyncError.parentB"
 		}

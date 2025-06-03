@@ -1,5 +1,5 @@
 {
-	"_version": "1.38.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.bulletinboard",
 		"type": "application",
@@ -41,8 +41,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.bulletinboard.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -80,8 +78,7 @@
 				"viewType": "XML",
 				"path": "sap.ui.demo.bulletinboard.view",
 				"controlId": "app",
-				"controlAggregation": "pages",
-				"async": true
+				"controlAggregation": "pages"
 			},
 			"routes": [
 				{
@@ -94,7 +91,6 @@
 					"name": "post",
 					"target": "post"
 				}
-
 			],
 			"targets": {
 				"worklist": {
@@ -108,7 +104,6 @@
 					"level": 2
 				}
 			}
-
 		}
 	}
 }
