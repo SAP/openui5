@@ -67,6 +67,14 @@ sap.ui.define([
 					image: "/resources/sap/ui/rta/util/whatsNew/whatsNewContent/whatsNewImages/WhatsNewFeatureImg.png"
 				}
 			]
+		},
+		{
+			featureId: "excludedFeature",
+			title: "Excluded Feature",
+			information: [{
+				text: "this feature should not be displayed",
+				image: null
+			}]
 		}
 	];
 
@@ -89,7 +97,7 @@ sap.ui.define([
 		},
 		async beforeEach() {
 			this.oFeaturesStub = sandbox.stub(WhatsNewUtils, "getFilteredFeatures").returns(aFeatureCollection);
-			await this.oWhatsNew.initializeWhatsNewDialog();
+			await this.oWhatsNew.initializeWhatsNewDialog(["excludedFeature"]);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
 			[this.oCarousel] = this.oWhatsNewDialog.getContent();
@@ -109,7 +117,7 @@ sap.ui.define([
 			const aFeatures = oModel.getProperty("/featureCollection");
 			const oDontShowAgainCheckbox = Element.getElementById("whatsNewDialog_DontShowAgain");
 			assert.notOk(oDontShowAgainCheckbox.getSelected(), "the checkbox is not selected");
-			assert.strictEqual(aFeatures.length, 4, "all features with the overview are loaded");
+			assert.strictEqual(aFeatures.length, 4, "all non-excluded features with the overview are loaded");
 			assert.strictEqual(this.oCarousel.getPages().length, 4, "all pages are created in the carousel");
 		});
 
