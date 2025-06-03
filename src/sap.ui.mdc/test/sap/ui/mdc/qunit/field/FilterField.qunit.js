@@ -5,8 +5,11 @@
 /*eslint max-nested-callbacks: [2, 6]*/
 
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/Element",
 	"sap/ui/core/Messaging",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/FilterField",
@@ -17,6 +20,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldInput",
 	// async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/OperatorName",
@@ -29,12 +33,16 @@ sap.ui.define([
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/ParseException",
+	"sap/ui/model/FormatException",
 	"sap/m/SearchField",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated"
 ], (
+	coreLibrary,
 	Element,
 	Messaging,
+	Message,
+	MessageType,
 	jQuery,
 	qutils,
 	FilterField,
@@ -43,6 +51,7 @@ sap.ui.define([
 	Conditions,
 	FieldInput,
 	FieldMultiInput,
+	ConditionModel,
 	FilterOperatorUtil,
 	BaseType,
 	OperatorName,
@@ -53,11 +62,14 @@ sap.ui.define([
 	IntegerType,
 	DateType,
 	ParseException,
+	FormatException,
 	SearchField,
 	Condition,
 	ConditionValidated
 ) => {
 	"use strict";
+
+	const { ValueState } = coreLibrary;
 
 	let oFilterField;
 	let sId;
@@ -224,14 +236,14 @@ sap.ui.define([
 			}).catch((oException) => {
 				assert.ok(true, "Promise rejected");
 				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
-				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
+				assert.equal(oFilterField.getValueState(), ValueState.Error, "ValueState");
 
 				// cleanup should remove valueState
 				oFilterField.setConditions([]);
 				setTimeout(() => { // to wait for ManagedObjectModel update
 					setTimeout(() => { // to wait for Message update
 						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
-						assert.equal(oFilterField.getValueState(), "None", "ValueState removed");
+						assert.equal(oFilterField.getValueState(), ValueState.None, "ValueState removed");
 
 						fnDone();
 					}, 0);
@@ -267,14 +279,14 @@ sap.ui.define([
 			}).catch((oException) => {
 				assert.ok(true, "Promise rejected");
 				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
-				assert.equal(oFilterField.getValueState(), "Error", "ValueState");
+				assert.equal(oFilterField.getValueState(), ValueState.Error, "ValueState");
 
 				// cleanup should remove valueState
 				oFilterField.setConditions([]);
 				setTimeout(() => { // to wait for ManagedObjectModel update
 					setTimeout(() => { // to wait for Message update
 						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
-						assert.equal(oFilterField.getValueState(), "None", "ValueState removed");
+						assert.equal(oFilterField.getValueState(), ValueState.None, "ValueState removed");
 
 						fnDone();
 					}, 0);
@@ -530,6 +542,221 @@ sap.ui.define([
 		oFormatOptions.awaitFormatCondition.restore();
 		oFilterField.getFormatOptions.restore();
 		oFilterField.getControlDelegate().getDescription.restore();
+	});
+
+	let iParseError = 0;
+	let oParseErrorParameters = null;
+	const _myParseErrorHandler = (oEvent) => {
+		iParseError++;
+		oParseErrorParameters = oEvent.getParameters();
+	};
+
+	let iFormatError = 0;
+	let oFormatErrorParameters = null;
+	const _myFormatErrorHandler = (oEvent) => {
+		iFormatError++;
+		oFormatErrorParameters = oEvent.getParameters();
+	};
+
+	let iValidationError = 0;
+	let oValidationErrorParameters = null;
+	const _myValidationErrorHandler = (oEvent) => {
+		iValidationError++;
+		oValidationErrorParameters = oEvent.getParameters();
+	};
+
+	let iValidationSuccess = 0;
+	let oValidationSuccessParameters = null;
+	const _myValidationSuccessHandler = (oEvent) => {
+		iValidationSuccess++;
+		oValidationSuccessParameters = oEvent.getParameters();
+	};
+
+	let oCM;
+	QUnit.module("ConditionModel binding", {
+		beforeEach: async () => {
+			oCM = new ConditionModel();
+			oFilterField = new FilterField("FF1", {
+				conditions: "{cm>/conditions/Name}",
+				dataType: "sap.ui.model.type.Integer",
+				dataTypeConstraints: {maximum: 10},
+				change: _myChangeHandler,
+				liveChange: _myLiveChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler,
+				models: {cm: oCM}
+			}).placeAt("content");
+			Messaging.registerObject(oFilterField, true); // to test valueState
+			await nextUIUpdate();
+		},
+		afterEach() {
+			oFilterField.destroy();
+			oFilterField = undefined;
+			oCM.destroy();
+			oCM = undefined;
+			iParseError = 0;
+			oParseErrorParameters = null;
+			iFormatError = 0;
+			oFormatErrorParameters = null;
+			iValidationError = 0;
+			oValidationErrorParameters = null;
+			iValidationSuccess = 0;
+			oValidationSuccessParameters = null;
+		}
+	});
+
+	QUnit.test("ParseError handling", (assert) => {
+
+		const aContent = oFilterField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("X");
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.equal(iParseError, 1, "ParseError fired");
+		assert.equal(oParseErrorParameters?.element, oFilterField, "ParseError fired for FilterField");
+		assert.equal(oParseErrorParameters?.property, "conditions", "ParseError 'property'");
+		assert.notOk(oParseErrorParameters?.type, "ParseError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oFilterField.getValueState(), ValueState.Error, "FilterField: ValueState");
+			assert.equal(oFilterField.getValueStateText(), oParseErrorParameters?.message, "FilterField: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.Error, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), oParseErrorParameters?.message, "Content: ValueStateText");
+
+			const aMessages = Messaging.getMessageModel().getObject("/");
+			const oMessage = aMessages?.[0];
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.equal(oMessage.getType(), MessageType.Error, "Message 'type'");
+			assert.equal(oMessage.getMessage(), oParseErrorParameters?.message, "Message 'message'");
+			assert.deepEqual(oMessage.getTargets(), [oFilterField.getId() + "/conditions"], "Message 'targets'");
+			assert.deepEqual(oMessage.getControlIds(), [oFilterField.getId()], "Message 'controlIds'");
+
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("FormatError handling", (assert) => {
+
+		Messaging.registerObject(oFilterField, true); // to test valueState
+		const aContent = oFilterField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		const oType = oFilterField.getContentFactory().retrieveDataType();
+		sinon.stub(oType, "formatValue").withArgs("XXXX", "string").throws(new FormatException("My FormatExeption")); // as Integer-type don't throw FormatException
+		oCM.addCondition("Name", Condition.createCondition(OperatorName.EQ, ["XXXX"], undefined, undefined, ConditionValidated.notValidated));
+		oCM.checkUpdate(true, false);
+		assert.equal(iFormatError, 1, "FormatError fired");
+		assert.equal(oFormatErrorParameters?.element, oFilterField, "FormatError fired for FilterField");
+		assert.equal(oFormatErrorParameters?.property, "conditions", "FormatError 'property'");
+		assert.notOk(oFormatErrorParameters?.type, "FormatError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oFilterField.getValueState(), ValueState.None, "FilterField: ValueState"); // as message seems not to be forwarded to MessageModel
+			assert.equal(oFilterField.getValueStateText(), "", "FilterField: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.None, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), "", "Content: ValueStateText");
+
+			const aMessages = Messaging.getMessageModel().getObject("/");
+			assert.equal(aMessages?.length, 0, "No Message in MessageModel");
+
+			oType.formatValue.restore();
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("ValidationError & ValidationSuccess handling", (assert) => {
+
+		const aContent = oFilterField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("100");
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.equal(iValidationError, 1, "ValidationError fired");
+		assert.equal(oValidationErrorParameters?.element, oFilterField, "ValidationError fired for FilterField");
+		assert.equal(oValidationErrorParameters?.property, "conditions", "ValidationError 'property'");
+		assert.notOk(oValidationErrorParameters?.type, "ValidationError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oFilterField.getValueState(), ValueState.Error, "FilterField: ValueState");
+			assert.equal(oFilterField.getValueStateText(), oValidationErrorParameters?.message, "FilterField: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.Error, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), oValidationErrorParameters?.message, "Content: ValueStateText");
+
+			let aMessages = Messaging.getMessageModel().getObject("/");
+			const oMessage = aMessages?.[0];
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.equal(oMessage.getType(), MessageType.Error, "Message 'type'");
+			assert.equal(oMessage.getMessage(), oValidationErrorParameters?.message, "Message 'message'");
+			assert.deepEqual(oMessage.getTargets(), [oFilterField.getId() + "/conditions"], "Message 'targets'");
+			assert.deepEqual(oMessage.getControlIds(), [oFilterField.getId()], "Message 'controlIds'");
+
+			jQuery(oContent.getFocusDomRef()).val("1");
+			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+			assert.equal(iValidationSuccess, 1, "ValidationSuccess fired");
+			assert.equal(oValidationSuccessParameters?.element, oFilterField, "ValidationSuccess fired for FilterField");
+			assert.equal(oValidationSuccessParameters?.property, "conditions", "ValidationSuccess 'property'");
+			assert.notOk(oValidationSuccessParameters?.type, "ValidationSuccess 'type'");
+
+			setTimeout(() => { // to wait for valueStateMessage
+				assert.equal(oFilterField.getValueState(), ValueState.None, "FilterField: ValueState");
+				assert.equal(oFilterField.getValueStateText(), "", "FilterField: ValueStateText");
+				assert.equal(oContent.getValueState(), ValueState.None, "Content: ValueState");
+				assert.equal(oContent.getValueStateText(), "", "Content: ValueStateText");
+
+				aMessages = Messaging.getMessageModel().getObject("/");
+				assert.equal(aMessages?.length, 0, "No Message in MessageModel");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("Model-Message handling", (assert) => {
+
+		const aContent = oFilterField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+
+		const oMessage = new Message({
+			message: "My warning message",
+			type: MessageType.Warning,
+			target: '/conditions/Name',
+			fullTarget: '/conditions/Name',
+			processor: oCM
+		});
+		Messaging.addMessages(oMessage);
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oFilterField.getValueState(), ValueState.Warning, "FilterField: ValueState");
+			assert.equal(oFilterField.getValueStateText(), oMessage.getMessage(), "FilterField: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.Warning, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), oMessage.getMessage(), "Content: ValueStateText");
+
+			let aMessages = Messaging.getMessageModel().getObject("/");
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.deepEqual(oMessage.getControlIds(), [oFilterField.getId()], "Message 'controlIds'");
+
+			Messaging.removeAllMessages();
+
+			setTimeout(() => { // to wait for valueStateMessage
+				assert.equal(oFilterField.getValueState(), ValueState.None, "FilterField: ValueState");
+				assert.equal(oFilterField.getValueStateText(), "", "FilterField: ValueStateText");
+				assert.equal(oContent.getValueState(), ValueState.None, "Content: ValueState");
+				assert.equal(oContent.getValueStateText(), "", "Content: ValueStateText");
+
+				aMessages = Messaging.getMessageModel().getObject("/");
+				assert.equal(aMessages?.length, 0, "No Messages in MessageModel");
+
+				fnDone();
+			}, 0);
+		}, 0);
+
 	});
 
 });

@@ -572,38 +572,6 @@ sap.ui.define([
 		});
 	};
 
-	const iPressShowSelected = function(oDialog, oSettings) {
-		const sShowSelected = oMBundle.getText("p13n.SHOW_SELECTED");
-		const sShowAll = oMBundle.getText("p13n.SHOW_ALL");
-
-		this.waitFor({
-			controlType: "sap.m.p13n.SelectionPanel",
-			matchers: new Ancestor(oDialog, false),
-			success: function(aListViews) {
-				const oListView = aListViews[0];
-
-				this.waitFor({
-					controlType: "sap.m.Button",
-					matchers:  [
-						new PropertyStrictEquals({
-							name: "text",
-							value: sShowSelected
-						}),
-						new Ancestor(oListView, false)
-					],
-					actions: new Press(),
-					success: function(aButton) {
-						Opa5.assert.ok(aButton.length === 1, `Button with text ${sShowSelected} found`);
-						Opa5.assert.ok(aButton[0].getText() === sShowAll, `Button text is ${sShowAll}`);
-						if (oSettings && typeof oSettings.success === "function") {
-							oSettings.success.call(this);
-						}
-					}
-				});
-			}
-		});
-	};
-
 	const iActivateFilterPopoverFilter = function(oDialog, bActivated, sLabel, oSettings) {
 		const sPopoverTitle = oMBundle.getText("p13n.FILTERS_POPOVER_TITLE");
 
@@ -665,6 +633,49 @@ sap.ui.define([
 										});
 									}
 								});
+							}
+						});
+					}
+				});
+			}
+		});
+	};
+
+	const iActivateShowSelectedToggle = function(oDialog, bActivated, oSettings) {
+		const sLabel = oMBundle.getText("p13n.SHOW_SELECTED");
+
+		this.waitFor({
+			controlType: "sap.m.p13n.SelectionPanel",
+			matchers: new Ancestor(oDialog, false),
+			success: function(aPopover) {
+				Opa5.assert.equal(aPopover.length, 1, `should open sap.m.Popover`);
+				this.waitFor({
+					controlType: "sap.m.Label",
+					matchers:  [
+						new PropertyStrictEquals({
+							name: "text",
+							value: sLabel
+						})
+					],
+					success: function(aLabel) {
+						Opa5.assert.equal(aLabel.length, 1, `Label with text ${sLabel} found`);
+						this.waitFor({
+							controlType: "sap.m.Switch",
+							matchers:  [
+								new Sibling(aLabel[0], {
+									level: 1,
+									next: true,
+									prev: false
+								})
+							],
+							success: function(aSwitch) {
+								Opa5.assert.equal(aSwitch.length, 1, `Switch found`);
+								const oSwitch = aSwitch[0];
+								oSwitch.setState(bActivated);
+								// aPopover[0].close();
+								if (oSettings && typeof oSettings.success === "function") {
+									oSettings.success.call(this);
+								}
 							}
 						});
 					}
@@ -1193,17 +1204,18 @@ sap.ui.define([
 		/**
 		 * Opa5 test action
 		 * 1. Opens the personalization dialog of a given chart.
-		 * 2. Presses the ShowSelected button.
+		 * 2. Presses the ShowSelected toggle (exists when no redundant columns exist).
 		 * 3. Closes the personalization dialog.
 		 * @param {sap.ui.core.Control | string} oControl Instance / ID of the <code>Control</code> that is reset
+		 * @param {boolean} bActivated Determines whether the ShowSelected toggle is activated or not
 		 * @param {function} fnOpenThePersonalizationDialog a function which opens the personalization dialog of the <code>mdc.Link</code>
 		 * @returns {Promise} OPA waitFor
 		 */
-		iPressShowSelected: function (oControl, fnOpenThePersonalizationDialog) {
+		iPressShowSelected: function (oControl, bActivated, fnOpenThePersonalizationDialog) {
 			fnOpenThePersonalizationDialog = fnOpenThePersonalizationDialog ? fnOpenThePersonalizationDialog : iOpenThePersonalizationDialog;
 			return fnOpenThePersonalizationDialog.call(this, oControl, {
 				success: function(oP13nDialog) {
-					iPressShowSelected.call(this, oP13nDialog, {
+					iActivateShowSelectedToggle.call(this, oP13nDialog, bActivated, {
 						success: function() {
 							iPressTheOKButtonOnTheDialog.call(this, oP13nDialog);
 						}

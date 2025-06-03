@@ -256,10 +256,9 @@ sap.ui.define([
 	const fnCheckValueState = (assert, aControls, oValue) => {
 		const oFakeField = this.oContentFactory.getField();
 		sinon.stub(oFakeField, "isInvalidInput").returns(true);
-		sinon.stub(oFakeField, "_isInvalidInputForContent").withArgs(aControls[0]).returns(false);
-		oFakeField._isInvalidInputForContent.withArgs(aControls[1]).returns(true);
-		sinon.stub(oFakeField, "_getInvalidInputException").withArgs(aControls[0]).returns(null);
-		oFakeField._getInvalidInputException.withArgs(aControls[1]).returns(new Error("My Exception"));
+		sinon.stub(oFakeField, "hasValueStateForContent").returns(true);
+		sinon.stub(oFakeField, "getValueStateForContent").withArgs(aControls[0].getId()).returns(null);
+		oFakeField.getValueStateForContent.withArgs(aControls[1].getId()).returns({valueState: "Error", valueStateText: "My Exception"});
 		const oData = ContentBasicTest.model.getData();
 		const oBindingValueState0 = aControls[0].getBinding("valueState");
 		const oBindingValueState1 = aControls[1].getBinding("valueState");
@@ -277,8 +276,8 @@ sap.ui.define([
 		assert.equal(aControls[0].getValueStateText(), "", "ValueStateText on first control");
 		assert.equal(aControls[1].getValueStateText(), "My Exception", "ValueStateText on second control");
 		oFakeField.isInvalidInput.restore();
-		oFakeField._isInvalidInputForContent.restore();
-		oFakeField._getInvalidInputException.restore();
+		oFakeField.hasValueStateForContent.restore();
+		oFakeField.getValueStateForContent.restore();
 		oData.valueState = "Warning";
 		oData.valueStateText = "My Warning";
 	};

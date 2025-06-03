@@ -2372,6 +2372,7 @@ sap.ui.define([
 			this._fireConfigurationChange({
 				[`/sap.card/configuration/filters/${oEvent.getParameter("key")}/value`]: oEvent.getParameter("value")
 			});
+			this.scheduleFireStateChanged();
 			this.resetPaginator();
 		});
 	};
@@ -2720,6 +2721,8 @@ sap.ui.define([
 		}
 
 		this._setLoadingProviderState(false);
+
+		this._fireDataChange();
 	};
 
 	/**

@@ -8,10 +8,14 @@ sap.ui.define([
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/condition/Condition',
+	'sap/base/Log',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/model/BindingMode',
-	'sap/ui/model/Context'
+	'sap/ui/model/Context',
+	'sap/ui/core/library',
+	'sap/ui/core/Element',
+	'sap/ui/core/LabelEnablement'
 ], (
 	FieldBase,
 	FieldBaseRenderer,
@@ -19,12 +23,18 @@ sap.ui.define([
 	BaseType,
 	OperatorName,
 	Condition,
+	Log,
 	deepEqual,
 	merge,
 	BindingMode,
-	Context
+	Context,
+	coreLibrary,
+	Element,
+	LabelEnablement
 ) => {
 	"use strict";
+
+	const { ValueState } = coreLibrary;
 
 	/**
 	 * Constructor for a new <code>Field</code>.
@@ -692,6 +702,147 @@ sap.ui.define([
 			}
 		}
 
+	};
+
+	// fire events on "value" property as this is the main-propery
+	Field.prototype.getBindingEventParameter = function (oEvent) {
+
+		const oBinding = this.getBinding("value");
+
+		if (!oBinding) {
+			return null; // only fire event if there is a Binding
+		}
+
+		const oParameter = FieldBase.prototype.getBindingEventParameter.apply(this, arguments);
+
+		if (oParameter) {
+			oParameter.property = "value";
+			oParameter.type = oBinding.getType();
+		}
+
+		return oParameter;
+
+	};
+
+	const HANDLEDBYMIXIN = Symbol("sap.ui.core.message.MessageMixin");
+	Field.prototype.refreshDataState = function (sName, oDataState) {
+
+		if (sName !== "value") {
+			return FieldBase.prototype.refreshDataState.apply(this, arguments);
+		}
+
+		// TODO: make logic of MessageMixIn reusable
+
+		if (oDataState.getChanges().messages && this.getBinding(sName)) {
+			const aMessages = oDataState.getMessages();
+			const aLabels = LabelEnablement.getReferencingLabels(this);
+			const sLabelId = aLabels[0];
+			let bForceUpdate = false;
+
+			aMessages.forEach((oMessage) => {
+				if (aLabels && aLabels.length > 0) {
+					// we simply take the first label text and ignore all others
+					const oLabel = Element.getElementById(sLabelId);
+					if (oLabel.getMetadata().isInstanceOf("sap.ui.core.Label") && oLabel.getText) {
+						let sAdditionalText = oMessage.getAdditionalText() || '';
+						const sLabel = oLabel.getText();
+						if (!sAdditionalText.split(',').includes(sLabel)) {
+							if (oMessage[HANDLEDBYMIXIN]) {
+								sAdditionalText = sAdditionalText ? `${sAdditionalText}, ${sLabel}` : sLabel;
+							} else {
+								sAdditionalText = sLabel;
+								oMessage[HANDLEDBYMIXIN] = true;
+							}
+							oMessage.setAdditionalText(sAdditionalText);
+							bForceUpdate = true;
+						}
+					} else {
+						Log.warning(
+							"sap.ui.core.message.Message: Can't create labelText." +
+							"Label with id " + sLabelId + " is no valid sap.ui.core.Label.",
+							this
+						);
+					}
+				}
+
+				// map message to inner control, if needed
+				const oBinding = this.getBinding(sName);
+				let sControlId = this.getId();
+				if (oBinding.isA("sap.ui.model.CompositeBinding") && this.getContentFactory().isMeasure()) {
+					const aContent = this.getCurrentContent();
+					if (oMessage.getMessageProcessor().isA("sap.ui.model.Model")) {
+						// use control the binding-part belongs to
+						const aBindings = oBinding.getBindings();
+						const aTargets = oMessage.getTargets();
+						for (let j = 0; j < aTargets.length; j++) {
+							for (let i = 0; i < aBindings.length; i++) {
+								if (aTargets[j] === aBindings[i].getResolvedPath()) {
+									sControlId = aContent[i].getId();
+									break;
+								}
+							}
+						}
+					} else if (oMessage.getMessageProcessor().isA("sap.ui.core.message.ControlMessageProcessor")){
+						// check if message exists on one content-control
+						for (let i = 0; i < aContent.length; i++) {
+							const sId = aContent[i].getId();
+							const oValueState = this.getValueStateForContent(sId);
+							if (oValueState?.valueState === oMessage.getType() && oValueState?.valueStateText === oMessage.getMessage()) {
+								sControlId = sId;
+								break;
+							}
+						}
+					}
+				}
+
+				if (!oMessage.getControlIds().includes(sControlId)){
+					oMessage.addControlId(sControlId);
+					bForceUpdate = true;
+				}
+			});
+
+			const Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
+				// Update the model to apply the changes
+				const oMessageModel = Messaging.getMessageModel();
+				oMessageModel.checkUpdate(bForceUpdate, true);
+			}
+			// propagate messages
+			const aContent = this.getCurrentContent();
+			if (aMessages && aMessages.length > 0) {
+				// set message to inner control, if needed
+				for (let i = 0; i < aMessages.length; i++) {
+					const oMessage = aMessages[i];
+					// check if the message type is a valid sap.ui.core.ValueState
+					if (ValueState[oMessage.getType()]) {
+						const aControlIds = oMessage.getControlIds();
+						const aContentSet = [];
+
+						for (let j = 0; j < aControlIds.length; j++) {
+							const sControlId = aControlIds[j];
+							if (aContentSet.indexOf(sControlId) < 0 && aContent.find((oContent) => oContent.getId() === sControlId)) {
+								// message for content -> store
+								this.setValueStateForContent(sControlId, oMessage.getType(), oMessage.getMessage());
+								aContentSet.push(sControlId); // to only set the first valid message
+							}
+						}
+						if (i == 0) { // set first message on Field itself
+							this.setValueState(oMessage.getType());
+							this.setValueStateText(oMessage.getMessage());
+						}
+					}
+				}
+			} else {
+				this.setValueState(ValueState.None);
+				this.setValueStateText('');
+				this.resetInvalidInput(false); // remove errors if valueState removed
+			}
+
+			this._oManagedObjectModel?.checkUpdate(true, true, (oBinding) => { // as ValueState or ValueStateText might be unchanged trigger binding update for inner controls (needed in unit case)
+				const sPath = oBinding.getPath();
+				return ["/valueState", "/valueStateText"].indexOf(sPath) >= 0;
+			}); // async. to reduce updates
+		}
 	};
 
 	/**

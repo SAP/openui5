@@ -392,6 +392,10 @@ sap.ui.define([
 
 	};
 
+	Field.prototype.getBindingEventParameter = function (oEvent) {
+		return null; // fire event on inner control until messaging on aggregations has been clarified
+	};
+
 	/**
 	 * Sets a new value for property {@link #getConditions conditions}.
 	 *

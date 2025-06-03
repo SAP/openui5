@@ -156,7 +156,7 @@ sap.ui.define([
 		When.onTheMDCTable.iPersonalizeSort(sTableID, [{key: "Price", descending: false}]); //ERROR failed because of custom stock slider (when at the end I call teardown....)
 		// When.onTheMDCTable.iResetThePersonalization(sTableID);
 
-		When.onTheMDCTable.iPressShowSelected(sTableID);
+		When.onTheMDCTable.iPressShowSelected(sTableID, true);
 
 		Then.iTeardownMyAppFrame();
 	});

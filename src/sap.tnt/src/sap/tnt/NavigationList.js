@@ -591,6 +591,7 @@ sap.ui.define([
 			ariaLabelledBy: InvisibleText.getStaticId("sap.tnt", "NAVIGATION_LIST_DIALOG_TITLE")
 		}).addStyleClass("sapContrast sapContrastPlus sapTntNLPopover");
 
+		this.addDependent(this._oPopover);
 		this._oPopover._adaptPositionParams = this._adaptPopoverPositionParams;
 		this._oPopover.openBy(oOpener.getDomRef("a"));
 	};

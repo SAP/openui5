@@ -3,7 +3,10 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
+	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
@@ -45,7 +48,10 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate",
 	"./FieldBaseDelegateODataDefaultTypes"
 ], (
+	coreLibrary,
 	Messaging,
+	Message,
+	MessageType,
 	jQuery,
 	qutils,
 	library,
@@ -87,6 +93,8 @@ sap.ui.define([
 ) => {
 	"use strict";
 
+	const { ValueState } = coreLibrary;
+
 	let oField;
 	let sId;
 	let sValue;
@@ -113,8 +121,31 @@ sap.ui.define([
 	};
 
 	let iParseError = 0;
+	let oParseErrorParameters = null;
 	const _myParseErrorHandler = (oEvent) => {
 		iParseError++;
+		oParseErrorParameters = oEvent.getParameters();
+	};
+
+	let iFormatError = 0;
+	let oFormatErrorParameters = null;
+	const _myFormatErrorHandler = (oEvent) => {
+		iFormatError++;
+		oFormatErrorParameters = oEvent.getParameters();
+	};
+
+	let iValidationError = 0;
+	let oValidationErrorParameters = null;
+	const _myValidationErrorHandler = (oEvent) => {
+		iValidationError++;
+		oValidationErrorParameters = oEvent.getParameters();
+	};
+
+	let iValidationSuccess = 0;
+	let oValidationSuccessParameters = null;
+	const _myValidationSuccessHandler = (oEvent) => {
+		iValidationSuccess++;
+		oValidationSuccessParameters = oEvent.getParameters();
 	};
 
 	let sPressId;
@@ -137,6 +168,13 @@ sap.ui.define([
 		iPressCount = 0;
 		sPressId = "";
 		iParseError = 0;
+		oFormatErrorParameters = null;
+		iFormatError = 0;
+		oParseErrorParameters = null;
+		iValidationError = 0;
+		oValidationErrorParameters = null;
+		iValidationSuccess = 0;
+		oValidationSuccessParameters = null;
 	};
 
 	QUnit.module("Field API", {
@@ -586,13 +624,13 @@ sap.ui.define([
 
 	QUnit.test("valueState", async (assert) => {
 
-		oFieldEdit.setValueState("Error");
+		oFieldEdit.setValueState(ValueState.Error);
 		oFieldEdit.setValueStateText("Test");
 		await nextUIUpdate();
 
 		const aContent = oFieldEdit.getAggregation("_content");
 		const oContent = aContent?.length > 0 && aContent[0];
-		assert.equal(oContent.getValueState(), "Error", "ValueState set on Input control");
+		assert.equal(oContent.getValueState(), ValueState.Error, "ValueState set on Input control");
 		assert.equal(oContent.getValueStateText(), "Test", "ValueStateText set on Input control");
 
 	});
@@ -606,7 +644,7 @@ sap.ui.define([
 
 		oFieldEdit.setValue("Test");
 		oFieldEdit.setAdditionalValue("Hello");
-		oFieldEdit.setValueState("Error");
+		oFieldEdit.setValueState(ValueState.Error);
 
 		const fnDone = assert.async();
 		setTimeout(() => { // async set of condition
@@ -615,11 +653,11 @@ sap.ui.define([
 				const aConditions = oFieldEdit.getConditions();
 				assert.deepEqual(aConditions[0].values[0], "Test", "Condition key");
 				assert.deepEqual(aConditions[0].values[1], "Hello", "Conditions description");
-				assert.equal(oFieldEdit.getValueState(), "Error", "ValueState set");
+				assert.equal(oFieldEdit.getValueState(), ValueState.Error, "ValueState set");
 				const aContent = oFieldEdit.getAggregation("_content");
 				const oContent = aContent?.length > 0 && aContent[0];
 				assert.equal(oContent.getValue(), "Hello (Test)", "Value set on Input control");
-				assert.equal(oContent.getValueState(), "Error", "ValueState set on Input control");
+				assert.equal(oContent.getValueState(), ValueState.Error, "ValueState set on Input control");
 				fnDone();
 			}, 0);
 		}, 0);
@@ -668,6 +706,9 @@ sap.ui.define([
 			oField.attachLiveChange(_myLiveChangeHandler);
 			oField.attachPress(_myPressHandler);
 			oField.attachParseError(_myParseErrorHandler);
+			oField.attachFormatError(_myFormatErrorHandler);
+			oField.attachValidationError(_myValidationErrorHandler);
+			oField.attachValidationSuccess(_myValidationSuccessHandler);
 			oField.placeAt("content");
 			await nextUIUpdate();
 		},
@@ -782,6 +823,7 @@ sap.ui.define([
 		jQuery(oContent.getFocusDomRef()).val("XXXX");
 		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iParseError, 1, "ParseError fired");
+		assert.equal(oParseErrorParameters?.element, oContent, "ParseError fired for content");
 		assert.equal(iCount, 1, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "XXXX", "Value of change event");
@@ -794,15 +836,15 @@ sap.ui.define([
 			}).catch((oException) => {
 				assert.ok(true, "Promise rejected");
 				assert.ok(oException instanceof ParseException, "ParseExpetion returned");
-				assert.equal(oField.getValueState(), "Error", "ValueState");
+				assert.equal(oField.getValueState(), ValueState.Error, "ValueState");
 				oContent.getFocusDomRef().blur();
 				// cleanup should remove valueState
 				oField.setValue();
 				setTimeout(() => { // to wait for ManagedObjectModel update
 					setTimeout(() => { // to wait for Message update
 						assert.equal(jQuery(oContent.getFocusDomRef()).val(), "", "no value shown");
-						assert.equal(oField.getValueState(), "None", "ValueState on Field  removed");
-						assert.equal(oContent.getValueState(), "None", "ValueState on Content  removed");
+						assert.equal(oField.getValueState(), ValueState.None, "ValueState on Field  removed");
+						assert.equal(oContent.getValueState(), ValueState.None, "ValueState on Content  removed");
 
 						fnDone();
 					}, 0);
@@ -972,8 +1014,12 @@ sap.ui.define([
 
 			oField = new Field("F1", {
 				value: { path: "/value", type: oType },
-				change: _myChangeHandler
-			}).placeAt("content");
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
+				}).placeAt("content");
 			oField.setModel(oModel);
 
 			oType2 = new DateTimeType({ style: "long" }, { displayFormat: "Date" });
@@ -981,7 +1027,11 @@ sap.ui.define([
 
 			oField2 = new Field("F2", {
 				value: { path: "/date", type: oType2 },
-				change: _myChangeHandler
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
 			}).placeAt("content");
 			oField2.setModel(oModel);
 
@@ -994,7 +1044,11 @@ sap.ui.define([
 				value: { path: "key", type: oType3 },
 				additionalValue: { path: "description", type: oAdditionalType, mode: "OneWay" },
 				display: FieldDisplay.DescriptionValue,
-				change: _myChangeHandler
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
 			}).placeAt("content");
 			oField3.setModel(oModel);
 			oField3.setBindingContext(oBindingContext);
@@ -1009,7 +1063,11 @@ sap.ui.define([
 			oField4 = new Field("F4", {
 				delegate: { name: "delegates/odata/v4/FieldBaseDelegate", payload: { x: 1 } }, // to test V4 delegate
 				value: { parts: [{ path: '/price', type: oType4a }, { path: '/currencyCode', type: oType4b }, { path: '/units' }], type: oType4 },
-				change: _myChangeHandler
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
 			}).placeAt("content");
 			oField4.setModel(oModel);
 
@@ -1020,7 +1078,11 @@ sap.ui.define([
 			oField5 = new Field("F5", {
 				delegate: { name: "delegates/odata/v4/FieldBaseDelegate", payload: { x: 2 } }, // to test V4 delegate
 				value: { parts: [{ path: '/price2' }, { path: '/currencyCode2' }, { path: '/units2' }], type: oType5 },
-				change: _myChangeHandler
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
 			}).placeAt("content");
 			oField5.setModel(oModel);
 
@@ -1028,16 +1090,24 @@ sap.ui.define([
 				delegate: { name: "delegates/odata/v4/FieldBaseDelegate", payload: { x: 2 } }, // to test V4 delegate
 				value: { path: "key", type: oType3 },
 				additionalValue: { parts: [{ path: '/price2', type: oType4a }, { path: '/currencyCode2', type: oType4b }, { path: '/units2' }], type: oType4 },
-				change: _myChangeHandler
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
 			}).placeAt("content");
-			oField5.setModel(oModel);
+			oField6.setModel(oModel);
 
 			oBindingContext = oModel.getContext("/items/1/");
 			oField7 = new Field("F7", {
 				value: { path: "key", type: "sap.ui.model.type.String", constraints: { maxLength: 1 } },
 				additionalValue: { path: "description", type: "sap.ui.model.type.String", formatOptions: {parseKeepsEmptyString: true}, constraints: { maxLength: 20 }, mode: "OneWay" },
 				display: FieldDisplay.DescriptionValue,
-				change: _myChangeHandler
+				change: _myChangeHandler,
+				parseError: _myParseErrorHandler,
+				formatError: _myFormatErrorHandler,
+				validationError: _myValidationErrorHandler,
+				validationSuccess: _myValidationSuccessHandler
 			}).placeAt("content");
 			oField7.setBindingContext(oBindingContext);
 			await nextUIUpdate();
@@ -1274,6 +1344,247 @@ sap.ui.define([
 		assert.equal(oMyAdditionalType, oAdditionalType, "Given AdditionalType is used in Binding for Input");
 	});
 
+	QUnit.test("ParseError handling", (assert) => {
+
+		Messaging.registerObject(oField2, true); // to test valueState
+		const aContent = oField2.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("XXXX");
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.equal(iParseError, 1, "ParseError fired");
+		assert.equal(oParseErrorParameters?.element, oField2, "ParseError fired for Field");
+		assert.equal(oParseErrorParameters?.property, "value", "ParseError 'property'");
+		assert.equal(oParseErrorParameters?.type, oType2, "ParseError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oField2.getValueState(), ValueState.Error, "Field: ValueState");
+			assert.equal(oField2.getValueStateText(), oParseErrorParameters?.message, "Field: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.Error, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), oParseErrorParameters?.message, "Content: ValueStateText");
+
+			const aMessages = Messaging.getMessageModel().getObject("/");
+			const oMessage = aMessages?.[0];
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.equal(oMessage.getType(), MessageType.Error, "Message 'type'");
+			assert.equal(oMessage.getMessage(), oParseErrorParameters?.message, "Message 'message'");
+			assert.deepEqual(oMessage.getTargets(), [oField2.getId() + "/value"], "Message 'targets'");
+			assert.deepEqual(oMessage.getControlIds(), [oField2.getId()], "Message 'controlIds'");
+
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("FormatError handling", (assert) => {
+
+		Messaging.registerObject(oField2, true); // to test valueState
+		const aContent = oField2.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		const oData = oModel.getData();
+		oData.date = "XXXX";
+		oModel.setData(oData);
+		oModel.checkUpdate(true, false);
+		assert.equal(iFormatError, 1, "FormatError fired");
+		assert.equal(oFormatErrorParameters?.element, oField2, "FormatError fired for Field");
+		assert.equal(oFormatErrorParameters?.property, "value", "FormatError 'property'");
+		assert.equal(oFormatErrorParameters?.type, oType2, "FormatError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oField2.getValueState(), ValueState.None, "Field: ValueState"); // as message seems not to be forwarded to MessageModel
+			assert.equal(oField2.getValueStateText(), "", "Field: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.None, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), "", "Content: ValueStateText");
+
+			const aMessages = Messaging.getMessageModel().getObject("/");
+			assert.equal(aMessages?.length, 0, "No Message in MessageModel");
+
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("ValidationError & ValidationSuccess handling", (assert) => {
+
+		Messaging.registerObject(oField3, true); // to test valueState
+		const aContent = oField3.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("A1");
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.equal(iValidationError, 1, "ValidationError fired");
+		assert.equal(oValidationErrorParameters?.element, oField3, "ValidationError fired for Field");
+		assert.equal(oValidationErrorParameters?.property, "value", "ValidationError 'property'");
+		assert.equal(oValidationErrorParameters?.type, oType3, "ValidationError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oField3.getValueState(), ValueState.Error, "Field: ValueState");
+			assert.equal(oField3.getValueStateText(), oValidationErrorParameters?.message, "Field: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.Error, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), oValidationErrorParameters?.message, "Content: ValueStateText");
+
+			let aMessages = Messaging.getMessageModel().getObject("/");
+			const oMessage = aMessages?.[0];
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.equal(oMessage.getType(), MessageType.Error, "Message 'type'");
+			assert.equal(oMessage.getMessage(), oValidationErrorParameters?.message, "Message 'message'");
+			assert.deepEqual(oMessage.getTargets(), [oField3.getId() + "/value"], "Message 'targets'");
+			assert.deepEqual(oMessage.getControlIds(), [oField3.getId()], "Message 'controlIds'");
+
+			jQuery(oContent.getFocusDomRef()).val("B");
+			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+			assert.equal(iValidationSuccess, 1, "ValidationSuccess fired");
+			assert.equal(oValidationSuccessParameters?.element, oField3, "ValidationSuccess fired for Field");
+			assert.equal(oValidationSuccessParameters?.property, "value", "ValidationSuccess 'property'");
+			assert.equal(oValidationSuccessParameters?.type, oType3, "ValidationSuccess 'type'");
+
+			setTimeout(() => { // to wait for valueStateMessage
+				assert.equal(oField3.getValueState(), ValueState.None, "Field: ValueState");
+				assert.equal(oField3.getValueStateText(), "", "Field: ValueStateText");
+				assert.equal(oContent.getValueState(), ValueState.None, "Content: ValueState");
+				assert.equal(oContent.getValueStateText(), "", "Content: ValueStateText");
+
+				aMessages = Messaging.getMessageModel().getObject("/");
+				assert.equal(aMessages?.length, 0, "No Message in MessageModel");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("ParseError handling for Currency", (assert) => {
+
+		Messaging.registerObject(oField4, true); // to test valueState
+		const aContent = oField4.getAggregation("_content");
+		let oContent = aContent?.length > 0 && aContent[0];
+		oContent.focus();
+		jQuery(oContent.getFocusDomRef()).val("X");
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		assert.equal(iParseError, 1, "ParseError fired");
+		assert.equal(oParseErrorParameters?.element, oField4, "ParseError fired for Field");
+		assert.equal(oParseErrorParameters?.property, "value", "ParseError 'property'");
+		assert.equal(oParseErrorParameters?.type, oType4, "ParseError 'type'");
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oField4.getValueState(), ValueState.Error, "Field: ValueState");
+			assert.equal(oField4.getValueStateText(), oParseErrorParameters?.message, "Field: ValueStateText");
+			assert.equal(oContent.getValueState(), ValueState.Error, "Content: ValueState");
+			assert.equal(oContent.getValueStateText(), oParseErrorParameters?.message, "Content: ValueStateText");
+
+			let aMessages = Messaging.getMessageModel().getObject("/");
+			let oMessage = aMessages?.[0];
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.equal(oMessage.getType(), MessageType.Error, "Message 'type'");
+			assert.equal(oMessage.getMessage(), oParseErrorParameters?.message, "Message 'message'");
+			assert.deepEqual(oMessage.getTargets(), [oField4.getId() + "/value"], "Message 'targets'");
+			assert.deepEqual(oMessage.getControlIds(), [oContent.getId()], "Message 'controlIds'");
+
+			oContent = aContent?.length > 0 && aContent[1];
+			oContent.focus();
+			jQuery(oContent.getFocusDomRef()).val("XXXX");
+			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+			assert.equal(iParseError, 2, "ParseError fired");
+			assert.equal(oParseErrorParameters?.element, oField4, "ParseError fired for Field");
+			assert.equal(oParseErrorParameters?.property, "value", "ParseError 'property'");
+			assert.equal(oParseErrorParameters?.type, oType4, "ParseError 'type'");
+
+			setTimeout(() => { // to wait for valueStateMessage
+				assert.equal(oField4.getValueState(), ValueState.Error, "Field: ValueState");
+				assert.equal(oField4.getValueStateText(), oParseErrorParameters?.message, "Field: ValueStateText");
+				assert.equal(oContent.getValueState(), ValueState.Error, "Content: ValueState");
+				assert.equal(oContent.getValueStateText(), oParseErrorParameters?.message, "Content: ValueStateText");
+
+				aMessages = Messaging.getMessageModel().getObject("/");
+				oMessage = aMessages?.[0];
+				assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+				assert.equal(oMessage.getType(), MessageType.Error, "Message 'type'");
+				assert.equal(oMessage.getMessage(), oParseErrorParameters?.message, "Message 'message'");
+				assert.deepEqual(oMessage.getTargets(), [oField4.getId() + "/value"], "Message 'targets'");
+				assert.deepEqual(oMessage.getControlIds(), [oContent.getId()], "Message 'controlIds'");
+
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	// ValidationExcetion hard to test on both Content controls, as wrong Currencies are handled as ParseExpetion by Currency type
+
+	QUnit.test("Model-Message handling for Currency", (assert) => {
+
+		Messaging.registerObject(oField4, true); // to test valueState
+		const aContent = oField4.getAggregation("_content");
+		const oContent0 = aContent?.length > 0 && aContent[0];
+		const oContent1 = aContent?.length > 0 && aContent[1];
+
+		const oMessage0 = new Message({
+			message: "My warning message",
+			type: MessageType.Warning,
+			target: '/price',
+			fullTarget: '/price',
+			processor: oModel
+		});
+		Messaging.addMessages(oMessage0);
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for valueStateMessage
+			assert.equal(oField4.getValueState(), ValueState.Warning, "Field: ValueState");
+			assert.equal(oField4.getValueStateText(), oMessage0.getMessage(), "Field: ValueStateText");
+			assert.equal(oContent0.getValueState(), ValueState.Warning, "Content0: ValueState");
+			assert.equal(oContent0.getValueStateText(), oMessage0.getMessage(), "Content0: ValueStateText");
+			assert.equal(oContent1.getValueState(), ValueState.None, "Content1: ValueState");
+			assert.equal(oContent1.getValueStateText(), "", "Content1: ValueStateText");
+
+			let aMessages = Messaging.getMessageModel().getObject("/");
+			assert.equal(aMessages?.length, 1, "One Message in MessageModel");
+			assert.deepEqual(oMessage0.getControlIds(), [oContent0.getId()], "Message0 'controlIds'");
+
+			const oMessage1 = new Message({
+				message: "My warning message",
+				type: MessageType.Warning,
+				target: '/currencyCode',
+				fullTarget: '/currencyCode',
+				processor: oModel
+			});
+			Messaging.addMessages(oMessage1);
+
+			setTimeout(() => { // to wait for valueStateMessage
+				assert.equal(oField4.getValueState(), ValueState.Warning, "Field: ValueState");
+				assert.equal(oField4.getValueStateText(), oMessage0.getMessage(), "Field: ValueStateText");
+				assert.equal(oContent0.getValueState(), ValueState.Warning, "Content0: ValueState");
+				assert.equal(oContent0.getValueStateText(), oMessage0.getMessage(), "Content0: ValueStateText");
+				assert.equal(oContent1.getValueState(), ValueState.Warning, "Content1: ValueState");
+				assert.equal(oContent1.getValueStateText(), oMessage1.getMessage(), "Content1: ValueStateText");
+
+				aMessages = Messaging.getMessageModel().getObject("/");
+				assert.equal(aMessages?.length, 2, "Two Messages in MessageModel");
+				assert.deepEqual(oMessage0.getControlIds(), [oContent0.getId()], "Message0 'controlIds'");
+				assert.deepEqual(oMessage1.getControlIds(), [oContent1.getId()], "Message1 'controlIds'");
+
+				Messaging.removeAllMessages();
+
+				setTimeout(() => { // to wait for valueStateMessage
+					assert.equal(oField4.getValueState(), ValueState.None, "Field: ValueState");
+					assert.equal(oField4.getValueStateText(), "", "Field: ValueStateText");
+					assert.equal(oContent0.getValueState(), ValueState.None, "Content0: ValueState");
+					assert.equal(oContent0.getValueStateText(), "", "Content0: ValueStateText");
+					assert.equal(oContent1.getValueState(), ValueState.None, "Content1: ValueState");
+					assert.equal(oContent1.getValueStateText(), "", "Content1: ValueStateText");
+
+					aMessages = Messaging.getMessageModel().getObject("/");
+					assert.equal(aMessages?.length, 0, "No Messages in MessageModel");
+
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
 	QUnit.test("BindingContext change to same value on wrong input", (assert) => {
 
 		Messaging.registerObject(oField3, true); // to activate message manager
@@ -1288,13 +1599,13 @@ sap.ui.define([
 			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 			setTimeout(() => { // as valueState is updates async
-				assert.equal(oField3.getValueState(), "Error", "ValueState set");
+				assert.equal(oField3.getValueState(), ValueState.Error, "ValueState set");
 
 				const oBindingContext = oModel.getContext("/items/1/");
 				oField3.setBindingContext(oBindingContext);
 
 				setTimeout(() => { // as propertys are updated async
-					assert.equal(oField3.getValueState(), "None", "ValueState not set");
+					assert.equal(oField3.getValueState(), ValueState.None, "ValueState not set");
 					assert.equal(oContent.getDOMValue(), "Text A (A)", "new value set on Input");
 					fnDone();
 				}, 50); // as different Timeout-0 are involved
@@ -1317,13 +1628,13 @@ sap.ui.define([
 			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 			setTimeout(() => { // as valueState is updates async
-				assert.equal(oField3.getValueState(), "Error", "ValueState set");
+				assert.equal(oField3.getValueState(), ValueState.Error, "ValueState set");
 
 				const oBindingContext = oModel.getContext("/items/2/");
 				oField3.setBindingContext(oBindingContext);
 
 				setTimeout(() => { // as propertys are updated async
-					assert.equal(oField3.getValueState(), "None", "ValueState not set");
+					assert.equal(oField3.getValueState(), ValueState.None, "ValueState not set");
 					assert.equal(oContent.getDOMValue(), "Text B (B)", "new value set on Input");
 					fnDone();
 				}, 50); // as different Timeout-0 are involved

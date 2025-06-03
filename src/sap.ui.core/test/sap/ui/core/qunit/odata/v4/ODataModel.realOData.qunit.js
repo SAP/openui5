@@ -500,6 +500,92 @@ sap.ui.define([
 	});
 
 	//*****************************************************************************************
+	QUnit.test("ODM#setContinueOnError w/ fnOnStrictHandlingFailed", async function (assert) {
+		const oModel = new ODataModel({serviceUrl : sSampleServiceUrl});
+		const oListBinding = oModel.bindList("/SalesOrderList");
+		const oSalesOrder1 = oListBinding.create({
+			BuyerID : "0100000000",
+			SO_2_SOITEM : [{
+				DeliveryDate : "2026-12-31T23:59:59+00:00",
+				ProductID : "HT-1000",
+				Quantity : "2.000",
+				QuantityUnit : "EA"
+			}]
+		}, /*bSkipRefresh*/true);
+		const oSalesOrder2 = oListBinding.create({
+			BuyerID : "0100000000",
+			SO_2_SOITEM : [{
+				DeliveryDate : "2026-12-31T23:59:59+00:00",
+				ProductID : "HT-1000",
+				Quantity : "2.000",
+				QuantityUnit : "EA"
+			}]
+		}, /*bSkipRefresh*/true);
+
+		await Promise.all([
+			oSalesOrder1.created(),
+			oSalesOrder2.created()
+		]);
+
+		try {
+			const sConfirm
+				= "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Confirm(...)";
+			const oConfirm1 = oModel.bindContext(sConfirm, oSalesOrder1);
+			const oConfirm2 = oModel.bindContext(sConfirm, oSalesOrder2);
+			const fnOnStrictHandlingFailed = (sId, aMessages) => {
+				assert.strictEqual(aMessages.length, 1);
+				assert.strictEqual(aMessages[0].getCode(), "ZUI5_EPM_SAMPLE/000");
+				assert.strictEqual(aMessages[0].getMessage(), "Enter a note");
+				assert.deepEqual(aMessages[0].getTargets(), [
+					`/SalesOrderList('${sId}')`
+					+ `/SO_2_SOITEM(SalesOrderID='${sId}',ItemPosition='0000000010')/Note`
+				]);
+				oModel.setContinueOnError("$auto");
+				return Promise.resolve(true);
+			};
+			oModel.setContinueOnError("$auto");
+			const oSpy = this.spy(_Batch, "serializeBatchRequest");
+			const sErrorMessage = "Each request with strict handling must belong to its own change"
+				+ ' set due to the "odata.continue-on-error" preference';
+			this.oLogMock.expects("error")
+				.withExactArgs("Failed to invoke " + oSalesOrder2.getPath() + "/" + sConfirm,
+					sinon.match(sErrorMessage), "sap.ui.model.odata.v4.ODataContextBinding");
+
+			await Promise.all([
+				oConfirm1.invoke("$auto", false,
+					fnOnStrictHandlingFailed.bind(null, oSalesOrder1.getProperty("SalesOrderID"))),
+				oModel.submitBatch("$auto"), // use separate change set
+				oConfirm2.invoke("$auto", false,
+					fnOnStrictHandlingFailed.bind(null, oSalesOrder2.getProperty("SalesOrderID"))),
+				oConfirm2.invoke("$auto", false, function () {
+					assert.ok(false, "must not be called");
+				}).then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError) {
+					assert.strictEqual(oError.message, sErrorMessage);
+				})
+			]);
+
+			assert.strictEqual(oSpy.args.length, 2, "2x $batch");
+			oSpy.args.forEach(([aRequests]) => {
+				assert.strictEqual(aRequests.length, 2, "2x POST");
+				assert.strictEqual(aRequests.bContinueOnError, true);
+				aRequests.forEach((oRequest) => {
+					assert.notOk(Array.isArray(oRequest), "not a change set");
+				});
+			});
+		} finally {
+			//TODO State of the resource (entity) was changed (If-Match)
+			oSalesOrder1.setProperty("@odata.etag", "*", null);
+			oSalesOrder2.setProperty("@odata.etag", "*", null);
+			await Promise.all([
+				oSalesOrder1.delete("$single"), // MUST not become part of another $batch!
+				oSalesOrder2.delete("$single")
+			]);
+		}
+	});
+
+	//*****************************************************************************************
 	// integration tests serialization/deserialization
 	// --------------------------------------------
 	[{

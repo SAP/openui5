@@ -128,6 +128,10 @@ sap.ui.define([
 		renderer: MenuWraperRenderer
 	});
 
+	MenuWrapper.prototype.init = function() {
+		this._aStyleClasses = [];
+	};
+
 	MenuWrapper.prototype.onBeforeRendering = function() {
 		const aGroups = this.getItems().filter(function(oItem) {
 			return oItem.isA("sap.m.MenuItemGroup");
@@ -299,6 +303,49 @@ sap.ui.define([
 			}
 		}
 		return null;
+	};
+
+	/**
+	 * Adds, removes, toggles, or sets class name(s) in the internal _aStyleClasses array.
+	 * <b>Note: </b> Later these classes should be applied when menu item open its submenu popover.
+	 * @param {string} sClassNames - Class name(s) as a string (space-separated for multiple)
+	 * @param {"addStyleClass"|"removeStyleClass"|"toggleStyleClass"|"setStyleClass"} sMethod - Operation mode: add, remove, toggle, or set a class name(s)
+	 * @private
+	 */
+	MenuWrapper.prototype._processStyleClasses = function(sClassNames, sMethod) {
+		if (sMethod === "setStyleClass") {
+			this._aStyleClasses = [];
+			sMethod = "addStyleClass";
+		}
+
+		if (sClassNames === "") {
+			return;
+		}
+
+		const aClassNames = sClassNames.split(/\s+/).filter(Boolean);
+		const sCurrentStyleClasses = this._aStyleClasses.join(" ");
+
+		aClassNames.forEach((sClass) => {
+			const iIdx = this._aStyleClasses.indexOf(sClass);
+			const bAddOperation = (sMethod === "addStyleClass" || sMethod === "toggleStyleClass")  && iIdx === -1;
+			const bRemoveOperation = (sMethod === "removeStyleClass" || sMethod === "toggleStyleClass")  && iIdx !== -1;
+			if (bAddOperation) {
+				this._aStyleClasses.push(sClass);
+			} else if (bRemoveOperation) {
+				this._aStyleClasses.splice(iIdx, 1);
+			}
+		});
+
+		if (this.oOpenedSubmenuParent) {
+			const sNewStyleClasses = this._aStyleClasses.join(" ");
+			const oPopover = this.oOpenedSubmenuParent._getPopover();
+			this.oOpenedSubmenuParent._getMenuWrapper()._processStyleClasses(sCurrentStyleClasses, "removeStyleClass");
+			this.oOpenedSubmenuParent._getMenuWrapper()._processStyleClasses(this._aStyleClasses.join(" "), "addStyleClass");
+			if (oPopover) {
+				oPopover.removeStyleClass(sCurrentStyleClasses);
+				oPopover.addStyleClass(sNewStyleClasses);
+			}
+		}
 	};
 
 	/**
@@ -565,7 +612,12 @@ sap.ui.define([
 		if (!oItem) {
 			return;
 		}
-		oItem._getPopover().setInitialFocus(bWithKeyboard ? null : oItem);
+
+		const oPopover = oItem._getPopover();
+
+		oItem._getMenuWrapper()._processStyleClasses(this._aStyleClasses.join(" "), "setStyleClass");
+
+		oPopover.setInitialFocus(bWithKeyboard ? null : oItem);
 		oItem._openSubmenu();
 		oItem._setExtraContent(this.getDomRef());
 		this.oOpenedSubmenuParent = oItem;
