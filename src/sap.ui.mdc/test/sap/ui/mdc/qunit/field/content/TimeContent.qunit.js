@@ -67,6 +67,11 @@ sap.ui.define([
 				valueFormat: "HH:mm:ss"
 			}
 		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			}
+		],
 		events:[
 			{
 				change: {value: "X"},

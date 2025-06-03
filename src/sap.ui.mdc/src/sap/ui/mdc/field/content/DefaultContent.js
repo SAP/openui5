@@ -336,6 +336,7 @@ sap.ui.define([
 				dependents: [oToken] // to destroy it if Control is destroyed
 			});
 
+			oContentFactory.setAriaLabelledBy(oTokenizer); // as more-indicator can be focussed
 			return [oTokenizer];
 		},
 		/**

@@ -60,6 +60,11 @@ sap.ui.define([
 				width: "100%"
 			}
 		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			}
+		],
 		events: [
 			{
 				change: {value: "X"}
@@ -116,6 +121,11 @@ sap.ui.define([
 				valueFormat: "yyyy-MM-dd"
 			}
 		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			}
+		],
 		events: [
 			{
 				change: {value: "X"},
@@ -161,6 +171,11 @@ sap.ui.define([
 				displayFormat: "yyyy+MM+dd",
 				valueFormat: "yyyy-MM-dd",
 				delimiter: "..."
+			}
+		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
 			}
 		],
 		events: [
