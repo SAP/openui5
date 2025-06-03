@@ -116,7 +116,6 @@ sap.ui.define([
 			this.oAppComponent = new Component("AppComponent");
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("myReference");
 			this.oModel = new VariantModel(this.oData, {
-				flexController: {},
 				appComponent: this.oAppComponent
 			});
 			return this.oModel.initialize()

@@ -1,23 +1,23 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory",
 	"sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory",
-	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
-	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/transport/TransportSelection",
 	"sap/ui/fl/initial/_internal/Settings",
+	"sap/ui/fl/transport/TransportSelection",
+	"sap/ui/fl/write/_internal/connectors/Utils",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	DescriptorChangeFactory,
 	DescriptorInlineChangeFactory,
 	DescriptorVariantFactory,
-	DescriptorChangeFactory,
-	WriteUtils,
-	Storage,
-	TransportSelection,
 	Settings,
+	TransportSelection,
+	WriteUtils,
+	FlexObjectManager,
 	Layer,
 	sinon
 ) {
@@ -1745,7 +1745,6 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("createNew", function(assert) {
-			// assert.strictEqual(typeof FlexControllerFactory.create, 'function');
 			return DescriptorVariantFactory.createNew({
 				id: "a.id",
 				reference: "a.reference"
@@ -1931,17 +1930,6 @@ sap.ui.define([
 
 	QUnit.module("DescriptorChange", {
 		beforeEach() {
-			this.sCreateResponse = JSON.stringify({
-				reference: "a.reference"
-			});
-			sandbox.stub(Storage, "write").resolves(this.sCreateResponse);
-			sandbox.stub(Settings, "getInstance").resolves(
-				new Settings({
-					isKeyUser: false,
-					isAtoEnabled: true,
-					isProductiveSystem: false
-				})
-			);
 		},
 		afterEach() {
 			sandbox.restore();
@@ -1956,14 +1944,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("submit", function(assert) {
+			const sResponse = "response";
+			sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(sResponse);
 			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"})
 			.then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
 				return oDescriptorChange.submit();
 			}).then(function(oResponse) {
-				assert.equal(oResponse, this.sCreateResponse);
-			}.bind(this));
+				assert.equal(oResponse, sResponse);
+			});
 		});
 
 		QUnit.test("createNew - w/o layer, check default", function(assert) {

@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/changeHandler/ChangeAnnotation",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -30,7 +29,6 @@ sap.ui.define([
 	ControlVariantApplyAPI,
 	ChangeAnnotation,
 	ChangeHandlerRegistration,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	sinon
@@ -330,7 +328,6 @@ sap.ui.define([
 		afterEach() {
 			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 			this.oAppComponent.destroy();
-			FlexControllerFactory._instanceCache = {};
 			sandbox.restore();
 		}
 	}, function() {

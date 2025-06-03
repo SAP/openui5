@@ -361,7 +361,6 @@ sap.ui.define([
 						]
 					}
 				}, {
-					flexController: {},
 					appComponent: this.oAppComponent
 				}
 			);
@@ -828,7 +827,6 @@ sap.ui.define([
 				}
 			},
 			{
-				flexController: {},
 				appComponent: { getId() { return "testid"; } }
 			});
 

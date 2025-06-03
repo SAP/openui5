@@ -5,9 +5,6 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -15,9 +12,6 @@ sap.ui.define([
 ], function(
 	JsControlTreeModifier,
 	Reverter,
-	States,
-	FlexObjectState,
-	FlexState,
 	FlexObjectManager,
 	Versions,
 	ChangePersistenceFactory,
@@ -140,32 +134,6 @@ sap.ui.define([
 			}
 			return oResult;
 		}.bind(this));
-	};
-
-	/**
-	 * Saves changes sequentially on the associated change persistence instance;
-	 * This API must be only used in scenarios without draft (like personalization).
-	 *
-	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} [aDirtyChanges] - Dirty changes to be saved
-	 * @param {sap.ui.core.UIComponent} [oAppComponent] - AppComponent instance
-	 * @returns {Promise<object>} Resolves with the backend response when all changes have been saved
-	 * @public
-	 */
-	FlexController.prototype.saveSequenceOfDirtyChanges = async function(aDirtyChanges, oAppComponent) {
-		// the same fallback is used in the ChangePersistence, but to update the state we need the changes also here
-		const aChanges = aDirtyChanges || FlexObjectState.getDirtyFlexObjects(this._sComponentName);
-		const oResponse = await this._oChangePersistence.saveDirtyChanges(oAppComponent, false, aChanges);
-
-		if (oResponse?.response?.length) {
-			var aFilenames = oResponse.response.map((oChangeJson) => oChangeJson.fileName);
-			aChanges.forEach(function(oDirtyChange) {
-				if (aFilenames.includes(oDirtyChange.getId())) {
-					oDirtyChange.setState(States.LifecycleState.PERSISTED);
-				}
-			});
-			FlexState.getFlexObjectsDataSelector().checkUpdate({reference: this._sComponentName});
-		}
-		return oResponse;
 	};
 
 	return FlexController;

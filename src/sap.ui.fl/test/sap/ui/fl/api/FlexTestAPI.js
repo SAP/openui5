@@ -11,8 +11,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer"
 ], function(
 	FlexObjectState,
@@ -23,8 +21,6 @@ sap.ui.define([
 	SessionStorageConnector,
 	Versions,
 	VariantModel,
-	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Layer
 ) {
 	"use strict";
@@ -41,11 +37,9 @@ sap.ui.define([
 	var FL_PREFIX = "sap.ui.fl";
 
 	/**
-	 * Clears the instance cache of FlexController, ChangePersistence and Versions as well as the FlexState
+	 * Clears the instance cache of Versions and FlexState
 	 */
 	FlexTestAPI.reset = function() {
-		ChangePersistenceFactory._instanceCache = {};
-		FlexControllerFactory._instanceCache = {};
 		Versions.clearInstances();
 		FlexState.clearState();
 	};
@@ -81,9 +75,7 @@ sap.ui.define([
 			});
 		}
 		return oInitPromise.then(function() {
-			var oFlexController = FlexControllerFactory.createForControl(mPropertyBag.appComponent);
 			var oModel = new VariantModel(mPropertyBag.data, {
-				flexController: oFlexController,
 				appComponent: mPropertyBag.appComponent
 			});
 			return oModel.initialize()
