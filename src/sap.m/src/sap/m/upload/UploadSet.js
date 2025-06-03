@@ -2296,5 +2296,12 @@ sap.ui.define([
 		return null;
 	};
 
+	/**
+	 * private property to indicate that the UploadSet is delegating item handling (insertion / removal into the list) to the developer if items aggregation is bound to a model.
+	 * This property should not be modified by the developer. It is a read-only property.
+	 * @private
+	 */
+	UploadSet.prototype._bUploadSetDelegatesItemHandling = true;
+
 	return UploadSet;
 });
