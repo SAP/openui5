@@ -1774,6 +1774,7 @@
 				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableFilePreview",
 				"sap.m.sample.UploadSetwithTablePlugin.FilePreviewCustomPageContent",
 				"sap.m.sample.UploadSetwithTablePlugin.GridTableSimple",
+				"sap.m.sample.UploadSetwithTablePlugin.TreeTableSimple",
 				"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator",
 				"sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances",
 				"sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample"
@@ -4079,6 +4080,11 @@
 			"externalAppRef": "https://sap-samples.github.io/ui5-typescript-helloworld/",
 			"externalSourceRef": "https://github.com/SAP-samples/ui5-typescript-helloworld",
 			"externalResourceRef": "https://github.com/SAP-samples/ui5-typescript-helloworld/archive/refs/heads/main.zip"
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTablePlugin.TreeTableSimple",
+			"name": "Plugin for Tree Table (sap.ui.table.TreeTable)",
+			"description": "This example demonstrates the usage of UploadSetwithTable plugin for tree table with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table."
 		}
 	]
 	}
