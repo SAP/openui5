@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.layout.sample.GridGap",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'GridGap'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.layout.sample.GridGap.GridGap",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.layout.sample.GridGap.GridGap",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

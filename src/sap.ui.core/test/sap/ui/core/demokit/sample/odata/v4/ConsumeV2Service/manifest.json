@@ -1,31 +1,36 @@
 {
-	"_version" : "1.8.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Example for OData V2 service consumption with an OData V4 model",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "2.0"
+		"description": "Example for OData V2 service consumption with an OData V4 model",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
 				}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.ConsumeV2Service",
-		"title" : "Consume OData V2 Service",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.ConsumeV2Service",
+		"title": "Consume OData V2 Service",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
@@ -38,30 +43,27 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.49",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {}
+		"dependencies": {
+			"minUI5Version": "1.49",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"odataVersion" : "2.0",
-					"operationMode" : "Server"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"odataVersion": "2.0",
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.ConsumeV2Service.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.ConsumeV2Service.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.ConsumeV2Service.Main"
-		}
+		"rootView": "sap.ui.core.sample.odata.v4.ConsumeV2Service.Main"
 	}
 }

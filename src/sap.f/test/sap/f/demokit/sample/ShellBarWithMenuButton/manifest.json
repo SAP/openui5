@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.sample.ShellBarWithMenuButton",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ShellBarWithMenuButton'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.f.sample.ShellBarWithMenuButton.ShellBarWithMenuButton",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.f.sample.ShellBarWithMenuButton.ShellBarWithMenuButton",
 		"dependencies": {
 			"libs": {
 				"sap.f": {},

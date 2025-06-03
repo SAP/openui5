@@ -1,5 +1,5 @@
 {
-	"_version": "1.11.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"_version": "1.11.0",
 		"id": "sap.ui.mdc.LinkIntegrationTesting.appUnderTestPageObject",
@@ -24,8 +24,6 @@
 		"flexEnabled": true,
 		"rootView": {
 			"viewName": "sap.ui.mdc.LinkIntegrationTesting.appUnderTestPageObject.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

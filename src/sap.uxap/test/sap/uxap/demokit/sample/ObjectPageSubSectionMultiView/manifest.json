@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageSubSectionMultiView",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageSubSectionMultiView'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageSubSectionMultiView.view.ObjectPageSubSectionMultiView",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ObjectPageSubSectionMultiView.view.ObjectPageSubSectionMultiView",
 		"resourceRoots": {
 			"sap.uxap.sample.ObjectPageSubSection": "../ObjectPageSubSection"
 		},
@@ -28,9 +35,9 @@
 				"files": [
 					"controller/blocks/BlockEmpty.js",
 					"view/blocks/BlockEmpty.view.xml",
-                    "controller/ObjectPageSubSectionMultiView.controller.js",
-                    "view/ObjectPageSubSectionMultiView.view.xml",
-                    "../ObjectPageSubSection/controller/MultiViewBlockCommon.controller.js",
+					"controller/ObjectPageSubSectionMultiView.controller.js",
+					"view/ObjectPageSubSectionMultiView.view.xml",
+					"../ObjectPageSubSection/controller/MultiViewBlockCommon.controller.js",
 					"manifest.json"
 				]
 			}

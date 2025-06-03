@@ -1,17 +1,28 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "mvc.testdata.stashed",
 		"applicationVersion": {
 			"version": "1.0.0"
-        },
-        "dataSources" : {
-			"OData" : {
-                "uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "2.0"
+		},
+		"dataSources": {
+			"OData": {
+				"uri": "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
 				}
 			}
+		},
+		"type": "application",
+		"title": "Application 'stashed'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
@@ -20,13 +31,13 @@
 				"sap.m": {},
 				"sap.ui.core": {}
 			}
-        },
-        "models" : {
-			"" : {
-                "dataSource" : "OData",
-                "settings" : {
-                    "warmupUrl" : "metadata.xml"
-                }
+		},
+		"models": {
+			"": {
+				"dataSource": "OData",
+				"settings": {
+					"warmupUrl": "metadata.xml"
+				}
 			}
 		}
 	}

@@ -1,4 +1,21 @@
 {
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "testlibs.scenario14.lib6",
+		"type": "library",
+		"title": "Library 'testlibs.scenario14.lib6'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"sap.ui5": {
 		"dependencies": {
 			"libs": {

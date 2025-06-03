@@ -1,34 +1,34 @@
 {
-	"_version" : "1.21.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Demo Application for Flexible Column Layout Support",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-				"type" : "OData",
-				"settings" : {}
+		"description": "Demo Application for Flexible Column Layout Support",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+				"type": "OData",
+				"settings": {}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout",
-		"title" : "Flexible Column Layout SalesOrders application",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.FlexibleColumnLayout",
+		"title": "Flexible Column Layout SalesOrders application",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : false,
-			"tablet" : false
+	"sap.ui": {
+		"deviceTypes": {
+			"desktop": true,
+			"phone": false,
+			"tablet": false
 		},
-		"technology" : "UI5"
+		"technology": "UI5"
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
@@ -39,33 +39,30 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.81",
-			"libs" : {
-				"sap.f" : {},
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+		"dependencies": {
+			"minUI5Version": "1.81",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server",
-					"updateGroupId" : "UpdateGroup"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server",
+					"updateGroupId": "UpdateGroup"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main"
-		}
+		"rootView": "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main"
 	}
 }

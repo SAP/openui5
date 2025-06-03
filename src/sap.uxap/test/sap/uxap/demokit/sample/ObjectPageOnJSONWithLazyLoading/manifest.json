@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageOnJSONWithLazyLoading'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading.view.ObjectPageOnJSONWithLazyLoading",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ObjectPageOnJSONWithLazyLoading.view.ObjectPageOnJSONWithLazyLoading",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks",
 			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
@@ -31,7 +38,7 @@
 					"../SharedBlocks/employment/EmploymentBlockJob.js",
 					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
-                    "../SharedJSONData/HRData.json",
+					"../SharedJSONData/HRData.json",
 					"manifest.json"
 				]
 			}

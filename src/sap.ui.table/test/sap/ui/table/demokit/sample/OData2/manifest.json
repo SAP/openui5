@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.table.sample.OData2",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'OData2'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.table.sample.OData2.View",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.table.sample.OData2.View",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

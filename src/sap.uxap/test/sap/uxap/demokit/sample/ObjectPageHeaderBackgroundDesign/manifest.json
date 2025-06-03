@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageHeaderBackgroundDesign'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.view.ObjectPageHeaderBackgroundDesign",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ObjectPageHeaderBackgroundDesign.view.ObjectPageHeaderBackgroundDesign",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
@@ -24,8 +31,8 @@
 				"stretch": true,
 				"files": [
 					"view/ObjectPageHeaderBackgroundDesign.view.xml",
-                    "../AnchorBar/controller/blocks/mySimpleBlock.js",
-                    "../AnchorBar/view/blocks/mySimpleBlock.view.xml",
+					"../AnchorBar/controller/blocks/mySimpleBlock.js",
+					"../AnchorBar/view/blocks/mySimpleBlock.view.xml",
 					"manifest.json"
 				]
 			}

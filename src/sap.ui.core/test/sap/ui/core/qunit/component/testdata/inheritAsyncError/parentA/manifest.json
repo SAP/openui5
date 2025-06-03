@@ -1,13 +1,22 @@
 {
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.inheritAsyncError.parentA.Component",
-
 	"sap.app": {
 		"id": "testdata.inheritAsyncError.parentA",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"type": "application",
+		"title": "Application 'parentA'"
 	},
-
 	"sap.ui5": {
 		"config": {
 			"any1": {

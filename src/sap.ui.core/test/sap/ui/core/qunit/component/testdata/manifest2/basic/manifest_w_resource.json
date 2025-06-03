@@ -8,6 +8,13 @@
 		"rootView": {
 			"viewName": "testdata.manifest2.basic.views.Main"
 		},
+		"resources": {
+			"js": [
+				{
+					"uri": "my/resource.js"
+				}
+			]
+		},
 		"extends": {
 			"extensions": {
 				"sap.ui.viewExtensions": {}

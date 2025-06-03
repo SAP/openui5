@@ -1,6 +1,5 @@
 {
-	"_version": "1.38.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.worklist",
 		"type": "application",
@@ -28,7 +27,6 @@
 			}
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -45,15 +43,11 @@
 			"phone": true
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.worklist.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.98.0",
 			"libs": {
@@ -62,12 +56,10 @@
 				"sap.ui.core": {}
 			}
 		},
-
 		"contentDensities": {
 			"compact": true,
 			"cozy": true
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -84,7 +76,6 @@
 				"preload": true
 			}
 		},
-
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
@@ -94,24 +85,27 @@
 				"controlId": "app",
 				"controlAggregation": "pages",
 				"bypassed": {
-					"target": ["notFound"]
-				},
-				"async": true
+					"target": [
+						"notFound"
+					]
+				}
 			},
-
 			"routes": [
 				{
 					"pattern": "",
 					"name": "worklist",
-					"target": ["worklist"]
+					"target": [
+						"worklist"
+					]
 				},
 				{
 					"pattern": "Objects/{objectId}",
 					"name": "object",
-					"target": ["object"]
+					"target": [
+						"object"
+					]
 				}
 			],
-
 			"targets": {
 				"worklist": {
 					"name": "Worklist",

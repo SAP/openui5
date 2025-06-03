@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.tnt.sample.SideNavigationPressEvent",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'SideNavigationPressEvent'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.tnt.sample.SideNavigationPressEvent.V",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.tnt.sample.SideNavigationPressEvent.V",
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},

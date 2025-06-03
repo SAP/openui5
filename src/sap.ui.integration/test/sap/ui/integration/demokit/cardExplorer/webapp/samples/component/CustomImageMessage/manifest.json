@@ -1,5 +1,5 @@
 {
-	"_version": "1.24.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "my.component.sample.CustomImageMessage",
 		"type": "card",
@@ -23,13 +23,16 @@
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://technical-object"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "my.component.sample.CustomImageMessage.View",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

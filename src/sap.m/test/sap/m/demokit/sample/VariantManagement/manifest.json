@@ -1,17 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.VariantManagement",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'VariantManagement'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.VariantManagement.VariantManagement",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.VariantManagement.VariantManagement",
 		"dependencies": {
 			"libs": {
 				"sap.ui.layout": {}

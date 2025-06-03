@@ -1,5 +1,5 @@
 {
-	"_version": "1.17.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.app.descriptor.test",
 		"type": "application",
@@ -45,7 +45,12 @@
 		}
 	},
 	"sap.ui": {
-		"technology": "UI5"
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -67,17 +72,13 @@
 		"componentUsages": {
 			"myusage": {
 				"name": "sap.app.test.usage",
-				"settings": {
-				},
-				"componentData": {
-				}
+				"settings": {},
+				"componentData": {}
 			},
 			"myusage.other": {
 				"name": "sap.app.test.usage.other",
-				"settings": {
-				},
-				"componentData": {
-				}
+				"settings": {},
+				"componentData": {}
 			}
 		},
 		"models": {
@@ -87,8 +88,7 @@
 			},
 			"salesOrder": {
 				"dataSource": "salesOrder",
-				"settings": {
-				}
+				"settings": {}
 			},
 			"ppm": {
 				"dataSource": "ppm"

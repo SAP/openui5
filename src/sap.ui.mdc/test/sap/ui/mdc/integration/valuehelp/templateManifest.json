@@ -1,5 +1,5 @@
 {
-	"_version": "0.1.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"_version": "0.1.0",
 		"id": "sap.ui.v4demo",
@@ -33,7 +33,6 @@
 		"rootView": {
 			"viewName": "module:sap/ui/v4demo/view/App",
 			"height": "100%",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

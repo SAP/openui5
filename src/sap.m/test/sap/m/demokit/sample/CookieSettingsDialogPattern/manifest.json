@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.CookieSettingsDialogPattern",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'CookieSettingsDialogPattern'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.CookieSettingsDialogPattern.view.App",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.CookieSettingsDialogPattern.view.App",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
@@ -18,11 +25,11 @@
 			}
 		},
 		"resources": {
-		  "css": [
-			{
-			  "uri": "css/style.css"
-			}
-		  ]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		},
 		"config": {
 			"sample": {

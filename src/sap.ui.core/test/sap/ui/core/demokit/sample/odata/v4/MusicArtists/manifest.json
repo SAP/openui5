@@ -1,31 +1,36 @@
 {
-	"_version" : "1.8.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Example for OData V4 music artists service with draft handling",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/sadl_gw_appmusic_draft/srvd/sap/sadl_gw_appmusicdr_definition/0001/",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "4.0"
+		"description": "Example for OData V4 music artists service with draft handling",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/sadl_gw_appmusic_draft/srvd/sap/sadl_gw_appmusicdr_definition/0001/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
 				}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.MusicArtists",
-		"title" : "Music Artists",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.MusicArtists",
+		"title": "Music Artists",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"MasterList.controller.js",
 					"MasterList.view.xml",
@@ -39,71 +44,70 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.98.0",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+		"dependencies": {
+			"minUI5Version": "1.98.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.MusicArtists.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.MusicArtists.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"id" : "app",
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.MusicArtists.App"
+		"rootView": {
+			"id": "app",
+			"viewName": "sap.ui.core.sample.odata.v4.MusicArtists.App"
 		},
-		"routing" : {
-			"config" : {
-				"controlAggregation" : "pages",
-				"controlId" : "app",
-				"routerClass" : "sap.m.routing.Router",
-				"type" : "View",
-				"path" : "sap.ui.core.sample.odata.v4.MusicArtists",
-				"viewType" : "XML"
+		"routing": {
+			"config": {
+				"controlAggregation": "pages",
+				"controlId": "app",
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"path": "sap.ui.core.sample.odata.v4.MusicArtists",
+				"viewType": "XML"
 			},
-			"routes" : [
+			"routes": [
 				{
-					"pattern" : "",
-					"name" : "masterList",
-					"target" : "masterList"
+					"pattern": "",
+					"name": "masterList",
+					"target": "masterList"
 				},
 				{
-					"pattern" : "objectPage/{artistPath}",
-					"name" : "objectPage",
-					"target" : "objectPage"
+					"pattern": "objectPage/{artistPath}",
+					"name": "objectPage",
+					"target": "objectPage"
 				},
 				{
-					"pattern" : "publicationObjectPage/{artistPath}/{publicationPath}",
-					"name" : "publicationObjectPage",
-					"target" : "publicationObjectPage"
+					"pattern": "publicationObjectPage/{artistPath}/{publicationPath}",
+					"name": "publicationObjectPage",
+					"target": "publicationObjectPage"
 				}
 			],
-			"targets" : {
-				"masterList" : {
-					"name" : "MasterList",
-					"level" : 0
+			"targets": {
+				"masterList": {
+					"name": "MasterList",
+					"level": 0
 				},
-				"objectPage" : {
-					"name" : "ObjectPage",
-					"level" : 1
+				"objectPage": {
+					"name": "ObjectPage",
+					"level": 1
 				},
-				"publicationObjectPage" : {
-					"name" : "PublicationObjectPage",
-					"level" : 2
+				"publicationObjectPage": {
+					"name": "PublicationObjectPage",
+					"level": 2
 				}
 			}
 		}

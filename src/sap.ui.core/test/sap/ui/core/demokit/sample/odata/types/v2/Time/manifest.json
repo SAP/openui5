@@ -1,5 +1,5 @@
 {
-	"_version": "1.49.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"applicationVersion": {
 			"version": "${version}"
@@ -15,7 +15,16 @@
 			}
 		},
 		"id": "sap.ui.core.sample.odata.types.v2.Time",
-		"type": "application"
+		"type": "application",
+		"title": "Application 'sap.ui.core.sample.odata.types.v2.Time'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"config": {
@@ -53,9 +62,6 @@
 				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView": {
-			"viewName": "sap.ui.core.sample.odata.types.v2.Time.Time",
-			"type": "XML"
-		}
+		"rootView": "sap.ui.core.sample.odata.types.v2.Time.Time"
 	}
 }

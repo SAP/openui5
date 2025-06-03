@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.MultiInputDatabinding",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'MultiInputDatabinding'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.MultiInputDatabinding.view.MultiInputDatabinding",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.MultiInputDatabinding.view.MultiInputDatabinding",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

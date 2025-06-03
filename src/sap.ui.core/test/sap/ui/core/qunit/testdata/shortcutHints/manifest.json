@@ -1,6 +1,20 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "my.hints"
+		"id": "my.hints",
+		"type": "application",
+		"title": "Application 'my.hints'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"dependencies": {
@@ -17,10 +31,6 @@
 				"shortcut": "Ctrl+D"
 			}
 		},
-		"rootView": {
-			"viewName": "my.hints.RootView",
-			"type": "XML",
-			"async": true
-		}
+		"rootView": "my.hints.RootView"
 	}
 }

@@ -1,4 +1,5 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "mdc.sample",
 		"type": "application",
@@ -8,7 +9,7 @@
 		"title": "MDC Sample",
 		"description": "MDC Sample Application",
 		"dataSources": {
-			"mountains" : {
+			"mountains": {
 				"uri": "../mockdata/mountains.json",
 				"type": "JSON"
 			}
@@ -37,10 +38,10 @@
 		},
 		"flexEnabled": false,
 		"resourceRoots": {
-            "mdc.sample": "./",
+			"mdc.sample": "./",
 			"mdc.sample.model": "../mockdata/",
 			"mdc.sample.delegate": "../delegates/"
-        },
+		},
 		"dependencies": {
 			"minUI5Version": "1.120.0",
 			"libs": {
@@ -65,8 +66,6 @@
 		},
 		"rootView": {
 			"viewName": "mdc.sample.view.TableJson",
-			"type": "XML",
-			"async": true,
 			"id": "sample"
 		}
 	}

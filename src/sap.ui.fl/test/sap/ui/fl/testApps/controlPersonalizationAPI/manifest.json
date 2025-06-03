@@ -1,14 +1,14 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges",
 		"type": "application",
 		"i18n": {
-		  "bundleUrl": "i18n/i18n.properties",
-		  "supportedLocales": [
-		    ""
-		  ],
-		  "fallbackLocale": ""
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
 		},
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -22,7 +22,6 @@
 			"version": "1.40.12"
 		}
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"icons": {
@@ -39,12 +38,9 @@
 			"phone": true
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.view.MainView",
-			"type": "XML",
-			"async": true,
 			"id": "MainView"
 		},
 		"dependencies": {
@@ -61,15 +57,15 @@
 			"cozy": true
 		},
 		"models": {
-            "": {
-              "type": "sap.ui.model.json.JSONModel"
-            },
+			"": {
+				"type": "sap.ui.model.json.JSONModel"
+			},
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
 					"bundleName": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.i18n.i18n",
 					"supportedLocales": [
-					  ""
+						""
 					],
 					"fallbackLocale": ""
 				}
@@ -79,24 +75,28 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"async": true,
-				"viewPath": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.view",
 				"controlAggregation": "pages",
 				"controlId": "app",
-				"clearControlAggregation": false
+				"clearControlAggregation": false,
+				"path": "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.view"
 			},
-			"routes": [{
-				"name": "RouteMainView",
-				"pattern": "RouteMainView",
-				"target": ["TargetMainView"]
-			}],
+			"routes": [
+				{
+					"name": "RouteMainView",
+					"pattern": "RouteMainView",
+					"target": [
+						"TargetMainView"
+					]
+				}
+			],
 			"targets": {
 				"TargetMainView": {
 					"viewType": "XML",
 					"transition": "slide",
 					"clearControlAggregation": false,
-					"viewId": "MainView",
-					"viewName": "MainView"
+					"type": "View",
+					"id": "MainView",
+					"name": "MainView"
 				}
 			}
 		}

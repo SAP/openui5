@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageTabNavigationMode",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageTabNavigationMode'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageTabNavigationMode.view.ObjectPageTabNavigationMode",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ObjectPageTabNavigationMode.view.ObjectPageTabNavigationMode",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks",
 			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
@@ -60,7 +67,7 @@
 					"../SharedBlocks/personal/PersonalBlockPart1.view.xml",
 					"../SharedBlocks/personal/PersonalBlockPart2.js",
 					"../SharedBlocks/personal/PersonalBlockPart2.view.xml",
-                    "../SharedJSONData/HRData.json",
+					"../SharedJSONData/HRData.json",
 					"manifest.json"
 				]
 			}

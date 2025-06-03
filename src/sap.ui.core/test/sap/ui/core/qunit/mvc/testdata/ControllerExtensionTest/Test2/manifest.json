@@ -1,17 +1,25 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "test",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'test'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "mvc.testdata.ControllerExtensionTest.Test2.Test",
-			"type": "XML",
-			"id": "app",
-			"async": true
+			"id": "app"
 		},
 		"extends": {
 			"extensions": {

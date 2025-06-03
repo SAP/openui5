@@ -1,13 +1,24 @@
 {
-	"_version": "0.0.1",
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent"
+		"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent",
+		"type": "application",
+		"title": "Application 'Parent'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		}
 	}

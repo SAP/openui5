@@ -1,5 +1,5 @@
 {
-	"_version": "1.60.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "mdc.sample.FieldValueHelpTypes",
 		"type": "application",
@@ -9,12 +9,12 @@
 		},
 		"dataSources": {
 			"DataSource": {
-			  "type": "JSON",
-			  "uri": "./model/data.json"
+				"type": "JSON",
+				"uri": "./model/data.json"
 			}
 		}
-  	},
-	  "sap.ui": {
+	},
+	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
@@ -23,23 +23,21 @@
 		}
 	},
 	"sap.ui5": {
-        "config": {
-            "sample": {
-                "files": [
-                    "View.view.xml",
-                    "Controller.controller.js",
+		"config": {
+			"sample": {
+				"files": [
+					"View.view.xml",
+					"Controller.controller.js",
 					"ValueHelpDelegate.js",
 					"model/data.json"
-                ]
-            }
-        },
+				]
+			}
+		},
 		"resourceRoots": {
-            "mdc.sample": "./"
-        },
+			"mdc.sample": "./"
+		},
 		"rootView": {
 			"viewName": "mdc.sample.View",
-			"type": "XML",
-			"async": true,
 			"id": "sample"
 		},
 		"dependencies": {
@@ -60,7 +58,7 @@
 			"data": {
 				"type": "sap.ui.model.json.JSONModel",
 				"dataSource": "DataSource"
-			  }
+			}
 		}
 	}
 }

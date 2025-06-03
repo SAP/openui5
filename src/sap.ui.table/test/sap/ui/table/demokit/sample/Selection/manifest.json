@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.table.sample.Selection",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'Selection'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.table.sample.Selection.View",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.table.sample.Selection.View",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

@@ -1,12 +1,22 @@
 {
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.embedded.Component",
 	"sap.app": {
 		"id": "testdata.embedded",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"embeddedBy": "../../../"
+		"embeddedBy": "../../../",
+		"type": "application",
+		"title": "Application 'embedded'"
 	},
-	"sap.ui5": {
-	}
+	"sap.ui5": {}
 }

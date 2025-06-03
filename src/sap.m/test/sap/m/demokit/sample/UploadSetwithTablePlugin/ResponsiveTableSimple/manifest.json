@@ -1,4 +1,5 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "responsive.table.sample",
 		"type": "application",
@@ -8,7 +9,7 @@
 		"title": "Responsive Table",
 		"description": "Responsive Table application",
 		"dataSources": {
-			"documentDataSource" : {
+			"documentDataSource": {
 				"uri": "model/documents.json",
 				"type": "JSON"
 			}
@@ -37,8 +38,8 @@
 		},
 		"flexEnabled": false,
 		"resourceRoots": {
-            "responsive.table.sample": "./"
-        },
+			"responsive.table.sample": "./"
+		},
 		"dependencies": {
 			"minUI5Version": "1.120.0",
 			"libs": {
@@ -63,8 +64,6 @@
 		},
 		"rootView": {
 			"viewName": "responsive.table.sample.view.UploadSetwithTable",
-			"type": "XML",
-			"async": true,
 			"id": "sample"
 		}
 	}

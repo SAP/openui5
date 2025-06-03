@@ -1,5 +1,5 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "samples.components.sample",
 		"type": "application",
@@ -10,11 +10,17 @@
 			"version": "1.0.0"
 		}
 	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "samples.components.sample.views.Products",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

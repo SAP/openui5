@@ -1,8 +1,20 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "testlibs.resourcebundle.lib1",
-		"type": "library"
+		"type": "library",
+		"title": "Library 'testlibs.resourcebundle.lib1'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"library": {

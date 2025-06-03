@@ -1,6 +1,19 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "test.sample"
+		"id": "test.sample",
+		"title": "'sample'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.card": {
 		"designtime": "designtime/MultiSubTabs",

@@ -1,5 +1,18 @@
 {
-	"sap.app" : {
-		"id" : "samples.components.button"
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "samples.components.button",
+		"title": "'button'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	}
 }

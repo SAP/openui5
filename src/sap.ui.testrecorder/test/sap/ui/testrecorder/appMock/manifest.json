@@ -1,19 +1,24 @@
 {
-	"_version": "1.12.0",
-
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.testrecorder.appMock",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"title": "Application 'appMock'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
-
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.testrecorder.appMock.view.Main",
-			"async": true,
-			"type": "XML",
 			"id": "main"
 		},
 		"dependencies": {
@@ -27,21 +32,23 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "sap.ui.testrecorder.appMock.view",
 				"controlId": "app",
 				"controlAggregation": "pages",
-				"async": true
+				"path": "sap.ui.testrecorder.appMock.view"
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "home",
-				"target": "home"
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				}
+			],
 			"targets": {
 				"home": {
-					"viewId": "main",
-					"viewName": "Main",
-					"viewLevel" : 1
+					"type": "View",
+					"id": "main",
+					"level": 1,
+					"name": "Main"
 				}
 			}
 		}

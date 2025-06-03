@@ -1,4 +1,5 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.mdc.table.OpaTests.appODataV4DataAggregation",
 		"type": "application",
@@ -13,14 +14,21 @@
 					"odataVersion": "4.0"
 				}
 			}
+		},
+		"title": "Application 'appODataV4DataAggregation'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"id": "MyView",
-			"viewName": "sap.ui.mdc.table.OpaTests.appODataV4DataAggregation.View",
-			"type": "XML",
-			"async": true
+			"viewName": "sap.ui.mdc.table.OpaTests.appODataV4DataAggregation.View"
 		},
 		"dependencies": {
 			"libs": {

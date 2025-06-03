@@ -1,4 +1,13 @@
 {
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.v2asyncRootView.Component",
 	"sap.app": {
 		"id": "testdata.v2asyncRootView",
@@ -6,7 +15,8 @@
 			"version": "1.0.0"
 		},
 		"title": "{{title}}",
-		"description": "{{description}}"
+		"description": "{{description}}",
+		"type": "application"
 	},
 	"sap.ui5": {
 		"resourceRoots": {
@@ -46,10 +56,7 @@
 				"uri": "./some/odata/service/"
 			}
 		},
-		"rootView": {
-			"viewName": "testdata.view.Main",
-			"type": "XML"
-		},
+		"rootView": "testdata.view.Main",
 		"config": {
 			"any1": {
 				"entry": "configuration"

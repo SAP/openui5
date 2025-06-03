@@ -1,19 +1,24 @@
 {
-	"_version" : "1.60.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Minimal sample for XML Templating. Requires a properly configured proxy.",
-		"id" : "sap.ui.core.demokit.sample.ViewTemplate.tiny",
-		"title" : "XML Templating: minimal sample",
-		"type" : "application"
+		"description": "Minimal sample for XML Templating. Requires a properly configured proxy.",
+		"id": "sap.ui.core.demokit.sample.ViewTemplate.tiny",
+		"title": "XML Templating: minimal sample",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
+	"sap.ui5": {
 		"config": {
 			"sample": {
 				"files": [
@@ -25,12 +30,12 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.120",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+		"dependencies": {
+			"minUI5Version": "1.120",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		}
 	}

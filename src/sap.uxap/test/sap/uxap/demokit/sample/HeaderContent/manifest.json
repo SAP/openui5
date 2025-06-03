@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.HeaderContent",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'HeaderContent'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.HeaderContent.view.HeaderContent",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.HeaderContent.view.HeaderContent",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
 		},
@@ -28,7 +35,7 @@
 				"files": [
 					"view/HeaderContent.view.xml",
 					"controller/HeaderContent.controller.js",
-                    "../SharedJSONData/employee.json",
+					"../SharedJSONData/employee.json",
 					"manifest.json"
 				]
 			}

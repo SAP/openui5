@@ -1,23 +1,28 @@
 {
-
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.mixed.Component",
-
 	"sap.app": {
 		"id": "testdata.mixed",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
 		"title": "{{title}}",
-		"description": "{{description}}"
+		"description": "{{description}}",
+		"type": "application"
 	},
-
 	"sap.ui5": {
-
 		"resourceRoots": {
 			"x.y.z": "anypath",
 			"foo.bar": "../../foo/bar"
 		},
-
 		"resources": {
 			"css": [
 				{
@@ -27,7 +32,6 @@
 				{}
 			]
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
@@ -42,7 +46,6 @@
 				}
 			}
 		},
-
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -53,12 +56,7 @@
 				"uri": "./some/odata/service/"
 			}
 		},
-
-		"rootView":{
-			"viewName": "testdata.view.Main",
-			"type": "XML"
-		},
-
+		"rootView": "testdata.view.Main",
 		"config": {
 			"any1": {
 				"entry": "configuration"
@@ -69,15 +67,18 @@
 				}
 			},
 			"any3": {
-				"anyarray": [1, 2, 3]
+				"anyarray": [
+					1,
+					2,
+					3
+				]
 			},
 			"zero": 0
 		},
-
 		"routing": {
 			"config": {
 				"type": "View",
-				"viewType" : "XML",
+				"viewType": "XML",
 				"path": "NavigationWithoutMasterDetailPattern.view",
 				"targetParent": "myViewId",
 				"targetControl": "app",
@@ -86,13 +87,12 @@
 			},
 			"routes": [
 				{
-					"name" : "myRouteName1",
-					"pattern" : "FirstView/{from}",
-					"view" : "myViewId"
+					"name": "myRouteName1",
+					"pattern": "FirstView/{from}",
+					"view": "myViewId"
 				}
 			]
 		},
-
 		"extends": {
 			"extensions": {
 				"sap.ui.viewReplacements": {
@@ -121,10 +121,7 @@
 				}
 			}
 		}
-
 	},
-
 	"foo": {},
 	"foo.bar": "string as entry value is not valid!"
-
 }

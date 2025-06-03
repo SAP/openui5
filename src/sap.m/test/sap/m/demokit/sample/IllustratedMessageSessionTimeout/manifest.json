@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.IllustratedMessageSessionTimeout",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'IllustratedMessageSessionTimeout'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.IllustratedMessageSessionTimeout.view.Main",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.IllustratedMessageSessionTimeout.view.Main",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

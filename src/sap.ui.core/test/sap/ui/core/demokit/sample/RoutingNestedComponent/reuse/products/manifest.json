@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.core.sample.RoutingNestedComponent.reuse.products",
 		"type": "application",
@@ -41,7 +41,6 @@
 		},
 		"rootView": {
 			"viewName": "sap.ui.core.sample.RoutingNestedComponent.reuse.products.view.App",
-			"type": "XML",
 			"id": "app"
 		},
 		"dependencies": {

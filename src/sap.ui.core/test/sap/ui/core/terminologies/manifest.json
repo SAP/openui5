@@ -1,48 +1,61 @@
 {
-  "_version": "1.21.0",
-  "sap.app": {
-    "id": "Verticalization",
-    "type": "application"
-  },
-  "sap.ui5": {
-    "rootView": {
-      "viewName": "sap.ui.demo.terminologies.App",
-      "type": "XML",
-      "async": true,
-      "id": "app"
-    },
-    "models": {
-      "i18n": {
-        "type": "sap.ui.model.resource.ResourceModel",
-        "settings": {
-          "bundleName": "sap.ui.demo.terminologies.i18n.i18n",
-          "supportedLocales": [
-            "de", "en"
-          ],
-          "fallbackLocale": "de",
-          "terminologies": {
-            "terminology1": {
-              "bundleName": "sap.ui.demo.terminologies.i18n.terminologies.terminology1.i18n.i18n",
-              "supportedLocales": [
-                "de", "en"
-              ]
-            },
-            "terminology2": {
-              "bundleName": "sap.ui.demo.terminologies.i18n.terminologies.terminology2.i18n.i18n",
-              "supportedLocales": [
-                "de", "en"
-              ]
-            }
-          }
-        }
-      }
-    },
-    "resources": {
-      "css": [
-        {
-          "uri": "css/style.css"
-        }
-      ]
-    }
-  }
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "Verticalization",
+		"type": "application",
+		"title": "Application 'Verticalization'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.terminologies.App",
+			"id": "app"
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.terminologies.i18n.i18n",
+					"supportedLocales": [
+						"de",
+						"en"
+					],
+					"fallbackLocale": "de",
+					"terminologies": {
+						"terminology1": {
+							"bundleName": "sap.ui.demo.terminologies.i18n.terminologies.terminology1.i18n.i18n",
+							"supportedLocales": [
+								"de",
+								"en"
+							]
+						},
+						"terminology2": {
+							"bundleName": "sap.ui.demo.terminologies.i18n.terminologies.terminology2.i18n.i18n",
+							"supportedLocales": [
+								"de",
+								"en"
+							]
+						}
+					}
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		}
+	}
 }

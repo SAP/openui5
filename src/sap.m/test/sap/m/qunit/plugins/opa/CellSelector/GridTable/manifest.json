@@ -1,16 +1,25 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.test.plugins.CellSelector.GridTableOPA",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'GridTableOPA'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"id": "MyView",
-			"viewName": "sap.m.test.plugins.CellSelector.GridTableOPA.View",
-			"type": "XML",
-			"async": true
+			"viewName": "sap.m.test.plugins.CellSelector.GridTableOPA.View"
 		},
 		"dependencies": {
 			"libs": {

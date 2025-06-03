@@ -1,15 +1,27 @@
 {
-  "_version": "0.1.0",
-  "sap.app": {
-    "_version": "1.2.0",
-    "id": "samples.manifestfirst.sap",
-    "text": "Taken from Manifest 4"
-  },
-  "sap.ui5": {
-    "dependencies": {
-      "libs": {
-        "sap.m": {}
-      }
-    }
-  }
+	"_version": "2.0.0",
+	"sap.app": {
+		"_version": "1.2.0",
+		"id": "samples.manifestfirst.sap",
+		"text": "Taken from Manifest 4",
+		"title": "'samples.manifestfirst.sap'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		}
+	}
 }

@@ -1,5 +1,5 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.cardsdemo",
 		"type": "application",
@@ -22,6 +22,14 @@
 			}
 		}
 	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"sap.ui5": {
 		"services": {
 			"UserRecent": {
@@ -33,8 +41,6 @@
 		},
 		"rootView": {
 			"viewName": "sap.f.cardsdemo.view.Main",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -80,8 +86,7 @@
 				"transition": "slide",
 				"bypassed": {
 					"target": "notFound"
-				},
-				"async": true
+				}
 			},
 			"routes": [
 				{

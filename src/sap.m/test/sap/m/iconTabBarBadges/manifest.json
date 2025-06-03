@@ -1,5 +1,5 @@
 {
-	"_version": "1.28.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.iconTabBarBadges",
 		"type": "application",
@@ -26,8 +26,6 @@
 		},
 		"rootView": {
 			"viewName": "sap.m.iconTabBarBadges.view.V",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {

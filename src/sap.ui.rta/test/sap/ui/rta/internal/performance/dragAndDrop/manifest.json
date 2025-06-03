@@ -1,8 +1,7 @@
 {
-	"_version": "1.12.0",
-
-	"sap.app" : {
-		"id" : "rta.performance.dragAndDrop",
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "rta.performance.dragAndDrop",
 		"type": "application",
 		"title": "Key user adaptation - Drag & Drop",
 		"description": "drag & drop test",
@@ -11,7 +10,6 @@
 		},
 		"ach": "CA-UI5-FL-RTA"
 	},
-
 	"sap.ui": {
 		"technology": "UI5",
 		"deviceTypes": {
@@ -20,7 +18,6 @@
 			"phone": false
 		}
 	},
-
 	"sap.ui5": {
 		"flexEnabled": true,
 		"rootView": "idMain1",

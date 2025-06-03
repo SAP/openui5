@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.ComparisonPattern.app",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'sap.m.sample.ComparisonPattern.app'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.ComparisonPattern.app.view.App",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.ComparisonPattern.app.view.App",
 		"routing": {
 			"config": {
 				"routerClass": "sap.m.routing.Router",
@@ -18,8 +25,7 @@
 				"path": "sap.m.sample.ComparisonPattern.app.view",
 				"controlId": "rootControl",
 				"controlAggregation": "pages",
-				"viewType": "XML",
-				"async": true
+				"viewType": "XML"
 			},
 			"routes": [
 				{

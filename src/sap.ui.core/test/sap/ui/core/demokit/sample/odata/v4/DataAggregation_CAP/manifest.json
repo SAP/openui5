@@ -1,31 +1,36 @@
 {
-	"_version" : "1.65.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"dataSources" : {
-			"default" : {
-				"uri" : "/analytics/",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "4.0"
+		"dataSources": {
+			"default": {
+				"uri": "/analytics/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
 				}
 			}
 		},
-		"description" : "Example for OData V4 Data Aggregation w/ CAP",
-		"id" : "sap.ui.core.sample.odata.v4.DataAggregation_CAP",
-		"title" : "OData V4 Data Aggregation",
-		"type" : "application"
+		"description": "Example for OData V4 Data Aggregation w/ CAP",
+		"id": "sap.ui.core.sample.odata.v4.DataAggregation_CAP",
+		"title": "OData V4 Data Aggregation",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"CAP.controller.js",
 					"CAP.view.xml",
@@ -34,29 +39,26 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.table" : {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
 			},
-			"minUI5Version" : "1.129.0"
+			"minUI5Version": "1.129.0"
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
 				}
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP"
-		}
+		"rootView": "sap.ui.core.sample.odata.v4.DataAggregation_CAP.CAP"
 	}
 }

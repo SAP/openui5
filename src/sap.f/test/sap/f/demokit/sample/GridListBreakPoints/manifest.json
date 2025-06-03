@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.sample.GridListBreakPoints",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'GridListBreakPoints'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.f.sample.GridListBreakPoints.V",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.f.sample.GridListBreakPoints.V",
 		"dependencies": {
 			"libs": {
 				"sap.f": {},

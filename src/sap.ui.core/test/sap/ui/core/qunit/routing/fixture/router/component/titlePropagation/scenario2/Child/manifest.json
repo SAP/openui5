@@ -1,22 +1,28 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "qunit.router.component.titlePropagation.scenario2.Child",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'qunit.router.component.titlePropagation.scenario2.Child'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "qunit.router.component.titlePropagation.scenario2.Child.view.RootView",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "qunit.router.component.titlePropagation.scenario2.Child.view.RootView",
 		"routing": {
 			"config": {
-				"async": true,
 				"controlAggregation": "content",
 				"controlId": "nestedShell1",
-				"viewType" : "XML",
+				"viewType": "XML",
 				"type": "View"
 			},
 			"routes": [
@@ -42,7 +48,7 @@
 					}
 				}
 			],
-			"targets" : {
+			"targets": {
 				"nestedView1": {
 					"name": "View1",
 					"path": "qunit.router.component.titlePropagation.scenario2.Child.view",
@@ -57,7 +63,7 @@
 					"name": "qunit.router.component.titlePropagation.scenario2.GrandChild",
 					"type": "Component",
 					"id": "componentNested",
-				   	"title": "TitleComponentNested"
+					"title": "TitleComponentNested"
 				}
 			}
 		}

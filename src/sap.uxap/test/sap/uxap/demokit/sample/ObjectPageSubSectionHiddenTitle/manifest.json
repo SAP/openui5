@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageSubSectionHiddenTitle",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageSubSectionHiddenTitle'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageSubSectionHiddenTitle.view.ObjectPageSubSectionHiddenTitle",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ObjectPageSubSectionHiddenTitle.view.ObjectPageSubSectionHiddenTitle",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
@@ -23,7 +30,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-                    "controller/ObjectPageSubSectionHiddenTitle.controller.js",
+					"controller/ObjectPageSubSectionHiddenTitle.controller.js",
 					"view/ObjectPageSubSectionHiddenTitle.view.xml",
 					"manifest.json"
 				]

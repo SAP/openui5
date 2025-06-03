@@ -1,34 +1,49 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "qunit.placeholder.component.FlexibleColumnLayout",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'FlexibleColumnLayout'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "qunit.placeholder.component.FlexibleColumnLayout.view.RootView",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "qunit.placeholder.component.FlexibleColumnLayout.view.RootView",
 		"routing": {
 			"config": {
-				"async": true,
 				"controlId": "flexibleColumnLayout",
 				"routerClass": "sap.f.routing.Router",
 				"viewType": "XML",
 				"path": "qunit.placeholder.component.FlexibleColumnLayout.view"
 			},
-			"routes": [{
-				"pattern": "",
-				"name": "home",
-				"target": ["target1", "target2", "target3"]
-			},
-			{
-				"pattern": "route1",
-				"name": "route1",
-				"target": ["target4", "targetAutoCloseFalse"]
-			}],
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": [
+						"target1",
+						"target2",
+						"target3"
+					]
+				},
+				{
+					"pattern": "route1",
+					"name": "route1",
+					"target": [
+						"target4",
+						"targetAutoCloseFalse"
+					]
+				}
+			],
 			"targets": {
 				"target1": {
 					"controlAggregation": "beginColumnPages",
@@ -82,6 +97,5 @@
 				}
 			}
 		}
-
 	}
 }

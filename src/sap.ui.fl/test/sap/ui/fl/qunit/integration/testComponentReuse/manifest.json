@@ -1,7 +1,7 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
-	"id": "sap.ui.fl.qunit.integration.testComponentReuse",
+		"id": "sap.ui.fl.qunit.integration.testComponentReuse",
 		"type": "component",
 		"title": "fl lib test component",
 		"description": "",

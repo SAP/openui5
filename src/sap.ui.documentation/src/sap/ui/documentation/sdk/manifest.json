@@ -1,5 +1,5 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.documentation.sdk",
 		"type": "application",
@@ -28,16 +28,14 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.documentation.sdk.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"resources": {
-		  "css": [
-			{
-			  "uri": "css/style.css"
-			}
-		  ]
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
 		},
 		"dependencies": {
 			"minUI5Version": "1.46.0",
@@ -84,7 +82,10 @@
 			"preservedContent": [
 				{
 					"className": "shortdesc",
-					"preservedTags": ["code", "span"]
+					"preservedTags": [
+						"code",
+						"span"
+					]
 				}
 			]
 		},
@@ -92,7 +93,6 @@
 			"config": {
 				"routerClass": "sap.ui.documentation.sdk.util.DocumentationRouter",
 				"viewType": "XML",
-				"viewPath": "sap.ui.documentation.sdk.view",
 				"controlId": "splitApp",
 				"controlAggregation": "detailPages",
 				"bypassed": {
@@ -100,8 +100,8 @@
 						"welcome"
 					]
 				},
-				"async": true,
-				"clearTarget": false
+				"clearTarget": false,
+				"path": "sap.ui.documentation.sdk.view"
 			},
 			"routes": [
 				{
@@ -346,7 +346,6 @@
 						"CookieStatement"
 					]
 				},
-
 				{
 					"pattern": "search/{searchParam}:?options:",
 					"name": "search",
@@ -409,210 +408,244 @@
 			],
 			"targets": {
 				"empty": {
-					"viewName": "Empty",
-					"viewLevel": 1,
-					"viewId": "empty",
-					"controlAggregation": "masterPages"
+					"controlAggregation": "masterPages",
+					"type": "View",
+					"id": "empty",
+					"level": 1,
+					"name": "Empty"
 				},
 				"welcome": {
-					"viewName": "Welcome",
-					"viewLevel": 2,
-					"viewId": "welcome",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "welcome",
+					"level": 2,
+					"name": "Welcome"
 				},
 				"controls": {
-					"viewName": "Controls",
-					"viewLevel": 2,
-					"viewId": "controls",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "controls",
+					"level": 2,
+					"name": "Controls"
 				},
 				"controlsMaster": {
-					"viewName": "ControlsMaster",
-					"viewLevel": 1,
-					"viewId": "controlsMaster",
 					"controlAggregation": "masterPages",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "controlsMaster",
+					"level": 1,
+					"name": "ControlsMaster"
 				},
 				"group": {
-					"viewName": "Group",
-					"viewLevel": 2,
-					"viewId": "group",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "group",
+					"level": 2,
+					"name": "Group"
 				},
 				"entity": {
-					"viewName": "Entity",
-					"viewLevel": 2,
-					"viewId": "entity",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "entity",
+					"level": 2,
+					"name": "Entity"
 				},
 				"sample": {
-					"viewName": "Sample",
-					"viewLevel": 2,
-					"viewId": "sample",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "sample",
+					"level": 2,
+					"name": "Sample"
 				},
 				"code": {
-					"viewName": "Code",
-					"viewLevel": 2,
-					"viewId": "code",
 					"transition": "slide",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "code",
+					"level": 2,
+					"name": "Code"
 				},
 				"downloads": {
-					"viewName": "Downloads",
-					"viewLevel": 2,
-					"viewId": "downloads",
-					"title": "demoApps"
+					"title": "demoApps",
+					"type": "View",
+					"id": "downloads",
+					"level": 2,
+					"name": "Downloads"
 				},
 				"apiMaster": {
-					"viewName": "ApiMaster",
-					"viewLevel": 1,
-					"viewId": "apiMaster",
-					"controlAggregation": "masterPages"
+					"controlAggregation": "masterPages",
+					"type": "View",
+					"id": "apiMaster",
+					"level": 1,
+					"name": "ApiMaster"
 				},
 				"demoApps": {
-					"viewName": "DemoApps",
-					"viewLevel": 2,
-					"viewId": "demoApps",
-					"title": "demoApps"
+					"title": "demoApps",
+					"type": "View",
+					"id": "demoApps",
+					"level": 2,
+					"name": "DemoApps"
 				},
 				"resources": {
-					"viewName": "Resources",
-					"viewLevel": 2,
-					"viewId": "resources",
-					"title": "resources"
+					"title": "resources",
+					"type": "View",
+					"id": "resources",
+					"level": 2,
+					"name": "Resources"
 				},
 				"news": {
-					"viewName": "News",
-					"viewLevel": 2,
-					"viewId": "news",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "news",
+					"level": 2,
+					"name": "News"
 				},
 				"BPSupport": {
-					"viewName": "BPSupport",
-					"viewLevel": 2,
-					"viewId": "BPSupport",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "BPSupport",
+					"level": 2,
+					"name": "BPSupport"
 				},
 				"CookieStatement": {
-					"viewName": "CookieStatement",
-					"viewLevel": 2,
-					"viewId": "CookieStatement",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "CookieStatement",
+					"level": 2,
+					"name": "CookieStatement"
 				},
 				"PrivacyStatement": {
-					"viewName": "PrivacyStatement",
-					"viewLevel": 2,
-					"viewId": "PrivacyStatement",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "PrivacyStatement",
+					"level": 2,
+					"name": "PrivacyStatement"
 				},
 				"apiDetailInitial": {
-					"viewName": "ApiDetailInitial",
-					"viewId": "apiDetailInitial",
-					"viewLevel": 2,
-					"title": "apiReference"
+					"title": "apiReference",
+					"type": "View",
+					"id": "apiDetailInitial",
+					"level": 2,
+					"name": "ApiDetailInitial"
 				},
 				"apiDetail": {
-					"viewName": "ApiDetail",
-					"viewId": "apiDetail",
-					"viewLevel": 2,
-					"title": "apiReference"
+					"title": "apiReference",
+					"type": "View",
+					"id": "apiDetail",
+					"level": 2,
+					"name": "ApiDetail"
 				},
 				"apiDetailDeprecated": {
-					"viewName": "ApiDetailDeprecated",
-					"viewId": "apiDetailDeprecated",
-					"viewLevel": 2,
-					"title": "apiReference"
+					"title": "apiReference",
+					"type": "View",
+					"id": "apiDetailDeprecated",
+					"level": 2,
+					"name": "ApiDetailDeprecated"
 				},
 				"apiDetailExperimental": {
-					"viewName": "ApiDetailExperimental",
-					"viewId": "apiDetailExperimental",
-					"viewLevel": 2,
-					"title": "apiReference"
+					"title": "apiReference",
+					"type": "View",
+					"id": "apiDetailExperimental",
+					"level": 2,
+					"name": "ApiDetailExperimental"
 				},
 				"apiDetailSince": {
-					"viewName": "ApiDetailSince",
-					"viewId": "apiDetailSince",
-					"viewLevel": 2,
-					"title": "apiReference"
+					"title": "apiReference",
+					"type": "View",
+					"id": "apiDetailSince",
+					"level": 2,
+					"name": "ApiDetailSince"
 				},
 				"topicMaster": {
-					"viewName": "TopicMaster",
-					"viewLevel": 1,
-					"viewId": "topicMaster",
-					"controlAggregation": "masterPages"
+					"controlAggregation": "masterPages",
+					"type": "View",
+					"id": "topicMaster",
+					"level": 1,
+					"name": "TopicMaster"
 				},
 				"topicDetailInitial": {
-					"viewName": "TopicDetailInitial",
-					"viewId": "topicDetailInitial",
-					"viewLevel": 2,
-					"title": "documentation"
+					"title": "documentation",
+					"type": "View",
+					"id": "topicDetailInitial",
+					"level": 2,
+					"name": "TopicDetailInitial"
 				},
 				"topicDetail": {
-					"viewName": "TopicDetail",
-					"viewId": "topicDetail",
-					"viewLevel": 2,
-					"title": "documentation"
+					"title": "documentation",
+					"type": "View",
+					"id": "topicDetail",
+					"level": 2,
+					"name": "TopicDetail"
 				},
 				"searchPage": {
-					"viewName": "SearchPage",
-					"viewId": "searchPage",
-					"viewLevel": 2,
 					"controlAggregation": "detailPages",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "searchPage",
+					"level": 2,
+					"name": "SearchPage"
 				},
 				"sampleNotFound": {
-					"viewName": "SampleNotFound",
-					"viewId": "sampleNotFound",
-					"title": "samples"
+					"title": "samples",
+					"type": "View",
+					"id": "sampleNotFound",
+					"name": "SampleNotFound"
 				},
 				"notFound": {
-					"viewName": "NotFound",
-					"viewId": "notFound",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound"
 				},
 				"versionNotFound": {
-					"viewName": "VersionNotFound",
-					"viewId": "versionNotFound",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "versionNotFound",
+					"name": "VersionNotFound"
 				},
 				"sitemap": {
-					"viewName": "Sitemap",
-					"viewId": "sitemap",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "sitemap",
+					"name": "Sitemap"
 				},
 				"liveEditor": {
-					"viewName": "LiveEditor",
-					"viewId": "liveEditor",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "liveEditor",
+					"name": "LiveEditor"
 				},
 				"releaseNotes": {
-					"viewName": "ReleaseNotes",
-					"viewLevel": 2,
-					"viewId": "releaseNotes",
 					"controlAggregation": "detailPages",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "releaseNotes",
+					"level": 2,
+					"name": "ReleaseNotes"
 				},
 				"license": {
-					"viewName": "License",
-					"viewLevel": 2,
-					"viewId": "releaseNotes",
 					"controlAggregation": "detailPages",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "releaseNotes",
+					"level": 2,
+					"name": "License"
 				},
 				"termsOfUse": {
-					"viewName": "TermsOfUse",
-					"viewLevel": 2,
-					"viewId": "termsOfUse",
 					"controlAggregation": "detailPages",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "termsOfUse",
+					"level": 2,
+					"name": "TermsOfUse"
 				},
 				"versionInfo": {
-					"viewName": "VersionInfo",
-					"viewLevel": 2,
-					"viewId": "versionInfo",
 					"controlAggregation": "detailPages",
-					"title": "home"
+					"title": "home",
+					"type": "View",
+					"id": "versionInfo",
+					"level": 2,
+					"name": "VersionInfo"
 				}
 			}
 		},

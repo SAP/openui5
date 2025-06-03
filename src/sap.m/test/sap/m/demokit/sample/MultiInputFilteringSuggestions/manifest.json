@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.MultiInputFilteringSuggestions",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'MultiInputFilteringSuggestions'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.MultiInputFilteringSuggestions.view.MultiInputFilteringSuggestions",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.MultiInputFilteringSuggestions.view.MultiInputFilteringSuggestions",
 		"dependencies": {
 			"libs": {
 				"sap.m": {},

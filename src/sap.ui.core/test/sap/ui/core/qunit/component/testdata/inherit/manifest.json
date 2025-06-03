@@ -1,4 +1,13 @@
 {
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.inherit.Component",
 	"sap.app": {
 		"id": "testdata.inherit",
@@ -6,7 +15,8 @@
 			"version": "1.0.0"
 		},
 		"title": "{{title}}",
-		"description": "{{description}}"
+		"description": "{{description}}",
+		"type": "application"
 	},
 	"sap.ui5": {
 		"resourceRoots": {

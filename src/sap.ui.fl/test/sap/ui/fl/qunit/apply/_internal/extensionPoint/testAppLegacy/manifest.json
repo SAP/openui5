@@ -1,5 +1,5 @@
 {
-	"_version": "1.12.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.fl.qunit.extensionPoint.testAppLegacy",
 		"type": "application",
@@ -24,7 +24,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.fl.qunit.extensionPoint.testAppLegacy.view.Main",
-			"type": "XML",
 			"id": "mainView"
 		},
 		"dependencies": {

@@ -1,34 +1,35 @@
 {
-	"_version" : "1.0.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Demo Application for Multiple Inline Creation Rows with Grid Table",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/MyProducts/",
-				"type" : "OData",
-				"settings" : {}
+		"description": "Demo Application for Multiple Inline Creation Rows with Grid Table",
+		"dataSources": {
+			"default": {
+				"uri": "/MyProducts/",
+				"type": "OData",
+				"settings": {}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid",
-		"title" : "Multiple Inline Creation Rows Grid",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid",
+		"title": "Multiple Inline Creation Rows Grid",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"deviceTypes" : {
-			"desktop" : true,
-			"phone" : false,
-			"table" : false
+	"sap.ui": {
+		"deviceTypes": {
+			"desktop": true,
+			"phone": false,
+			"table": false,
+			"tablet": true
 		},
-		"technology" : "UI5"
+		"technology": "UI5"
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"Main.controller.js",
 					"Main.view.xml",
@@ -37,32 +38,29 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.97",
-			"libs" : {
-				"sap.f" : {},
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.table" : {}
+		"dependencies": {
+			"minUI5Version": "1.97",
+			"libs": {
+				"sap.f": {},
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"operationMode" : "Server"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
-		}
+		"rootView": "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid.Main"
 	}
 }

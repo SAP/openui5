@@ -258,9 +258,12 @@ sap.ui.define([
 				ReloadManager.setUShellServices(mUShellServices);
 				return FeaturesAPI.isSeenFeaturesAvailable();
 			}.bind(this))
-			.then(function(isAvailable) {
-				if (isAvailable && !ReloadManager.getDontShowWhatsNewAfterReload()) {
+			.then(function(bIsAvailable) {
+				// The What's new should only be shown once per session
+				const sWhatsNewReloadFlag = "sap.ui.rta.dontShowWhatsNewAfterReload";
+				if (bIsAvailable && !window.sessionStorage.getItem(sWhatsNewReloadFlag)) {
 					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
+					window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 				}
 				this.addDependent(new GuidedTour(), "guidedTour");
 				return Promise.resolve();
@@ -482,7 +485,6 @@ sap.ui.define([
 						this.getWhatsNew().initializeWhatsNewDialog(aExcludeGuidedTourFeature);
 					}
 				});
-				 GeneralTour.getTourContent();
 				oGuidedTour.autoStart(GeneralTour.getTourContent());
 			} else if (this.getWhatsNew) {
 				this.getWhatsNew().initializeWhatsNewDialog();
@@ -616,7 +618,6 @@ sap.ui.define([
 			if (!bSkipRestart) {
 				ReloadInfoAPI.removeInfoSessionStorage(this.getRootControlInstance());
 				ReloadManager.handleReloadOnExit(oReloadInfo);
-				ReloadManager.removeDontShowWhatsNewAfterReload();
 			}
 			VersionsAPI.clearInstances();
 		} catch (vError) {
@@ -1039,8 +1040,13 @@ sap.ui.define([
 		const bHasConnectors = aConnectors.length > 0;
 		const bHasOnlyAllowedConnectors = bHasConnectors
 		&& aConnectors.every((sConnector) => !aProhibitedConnectors.includes(sConnector));
+		const sUIAdaptationTourReloadFlag = "sap.ui.rta.dontShowUIAdaptationTourAfterReload";
 
-		if (!bHasOnlyAllowedConnectors || LayerUtils.isDeveloperLayer(sLayer)) {
+		if (
+			!bHasOnlyAllowedConnectors
+			|| LayerUtils.isDeveloperLayer(sLayer)
+			|| window.sessionStorage.getItem(sUIAdaptationTourReloadFlag)
+		) {
 			return false;
 		}
 
@@ -1060,6 +1066,11 @@ sap.ui.define([
 		}
 
 		const bHasSeenWNFeatures = (await FeaturesAPI.getSeenFeatureIds({ layer: sLayer })).length > 0;
+
+		// UI Adaptation Tour should only be shown once per session
+		if (!bHasSeenWNFeatures) {
+			window.sessionStorage.setItem(sUIAdaptationTourReloadFlag, true);
+		}
 		return !bHasSeenWNFeatures;
 	}
 

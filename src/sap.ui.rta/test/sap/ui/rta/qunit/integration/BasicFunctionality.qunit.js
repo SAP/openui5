@@ -1,39 +1,37 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/command/CommandFactory",
 	"qunit/RtaQunitUtils",
+	"sap/ui/core/Element",
+	"sap/ui/Device",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/Device",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/test/utils/nextUIUpdate",
-	"sap/ui/core/Element"
-	// "sap/ui/core/EventBus"
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/Stack",
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	RuntimeAuthoring,
-	Stack,
-	CommandFactory,
 	RtaQunitUtils,
+	Element,
+	Device,
+	OverlayRegistry,
+	KeyCodes,
 	Layer,
 	LayerUtils,
-	OverlayRegistry,
-	Device,
 	QUnitUtils,
-	KeyCodes,
-	sinon,
 	nextUIUpdate,
-	Element
-	// EventBus
+	CommandFactory,
+	Stack,
+	RuntimeAuthoring,
+	sinon
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.done(function() {
 		QUnit.config.fixture = "";
@@ -42,9 +40,9 @@ sap.ui.define([
 
 	QUnit.config.fixture = null;
 
-	var oCompCont;
+	let oCompCont;
 
-	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+	const oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
 	.then(function(oCompContainer) {
 		oCompCont = oCompContainer;
 	});
@@ -79,7 +77,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when removing a group using a command stack API", function(assert) {
-			var iFiredCounter = 0;
+			let iFiredCounter = 0;
 			this.oRta.attachUndoRedoStackModified(function() {
 				iFiredCounter++;
 			});
@@ -128,7 +126,7 @@ sap.ui.define([
 		QUnit.test("when renaming a form title using a property change command", function(assert) {
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 
-			var oInitialTitle = this.oForm.getTitle();
+			const oInitialTitle = this.oForm.getTitle();
 
 			return new CommandFactory({
 				flexSettings: {
@@ -160,7 +158,7 @@ sap.ui.define([
 	});
 
 	function triggerKeyDownEvent(oDomRef, iKeyCode) {
-		var oParams = {};
+		const oParams = {};
 		oParams.keyCode = iKeyCode;
 		oParams.which = oParams.keyCode;
 		oParams.ctrlKey = true;
@@ -179,7 +177,7 @@ sap.ui.define([
 			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "redo");
 
 			// Start RTA
-			var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			const oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
 				flexSettings: {
@@ -223,32 +221,32 @@ sap.ui.define([
 			assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
 		});
 
-		// QUnit.test("with focus on an open dialog", function(assert) {
-		// 	var done = assert.async();
-		// 	this.oElementOverlay.focus();
-		// 	this.oElementOverlay.setSelected(true);
-		//
-		// 	return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(async function() {
-		// 		var clock = sinon.useFakeTimers();
-		// 		var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
-		// 		oMenu.getItems().find((oItem) => oItem.getKey() === "CTX_ADD_ELEMENTS_AS_SIBLING").setEnabled(true);
-		// 		QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems().find((oItem) => oItem.getIcon() === "sap-icon://add").getDomRef());
-		// 		clock.tick(1000);
-		// 		await nextUIUpdate();
-		// 		clock.restore();
-		//
-		// 		var oDialog = this.oRta.getPlugins().additionalElements.getDialog();
-		// 		oDialog.attachOpened(async function() {
-		// 			triggerKeyDownEvent(document, KeyCodes.Z);
-		// 			assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
-		// 			triggerKeyDownEvent(document, KeyCodes.Y);
-		// 			assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
-		// 			const oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
-		// 			QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-		// 			await nextUIUpdate();
-		// 			done();
-		// 		}.bind(this));
-		// 	}.bind(this));
-		// });
+		QUnit.test("with focus on an open dialog", function(assert) {
+			const done = assert.async();
+			this.oElementOverlay.focus();
+			this.oElementOverlay.setSelected(true);
+
+			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oElementOverlay, sinon).then(async function() {
+				const clock = sinon.useFakeTimers();
+				const oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				oMenu.getItems().find((oItem) => oItem.getKey() === "CTX_ADD_ELEMENTS_AS_SIBLING").setEnabled(true);
+				QUnitUtils.triggerEvent("click", oMenu.getItems().find((oItem) => oItem.getIcon() === "sap-icon://add").getDomRef());
+				clock.tick(1000);
+				await nextUIUpdate();
+				clock.restore();
+
+				const oDialog = this.oRta.getPlugins().additionalElements.getDialog();
+				oDialog.attachOpened(async function() {
+					triggerKeyDownEvent(document, KeyCodes.Z);
+					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
+					triggerKeyDownEvent(document, KeyCodes.Y);
+					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
+					const oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
+					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
+					await nextUIUpdate();
+					done();
+				}.bind(this));
+			}.bind(this));
+		});
 	});
 });

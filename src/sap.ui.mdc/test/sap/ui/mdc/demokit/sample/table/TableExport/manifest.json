@@ -1,4 +1,5 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "mdc.sample",
 		"type": "application",
@@ -66,8 +67,6 @@
 		},
 		"rootView": {
 			"viewName": "mdc.sample.view.TableExport",
-			"type": "XML",
-			"async": true,
 			"id": "sample"
 		}
 	}

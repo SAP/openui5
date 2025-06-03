@@ -1,22 +1,27 @@
 {
-
+	"_version": "2.0.0",
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
 	"name": "testdata.inherit.parent.Component",
-
 	"sap.app": {
 		"id": "testdata.inherit.parent",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
 		"title": "{{title}}",
-		"description": "{{description}}"
+		"description": "{{description}}",
+		"type": "application"
 	},
-
 	"sap.ui5": {
-
 		"resourceRoots": {
 			"x.y.z": "anypath"
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.22.5",
 			"libs": {
@@ -31,7 +36,6 @@
 				}
 			}
 		},
-
 		"models": {
 			"i18n_1": {
 				"type": "sap.ui.model.resource.ResourceModel",
@@ -42,19 +46,16 @@
 				"uri": "./some/odata/service/"
 			}
 		},
-
 		"config": {
 			"any9": {
-				"anyarray": [1, 2, 3]
+				"anyarray": [
+					1,
+					2,
+					3
+				]
 			}
 		},
-
-		"rootView": {
-			"viewName": "testdata.view.Main",
-			"type": "XML",
-			"async": true
-		},
-
+		"rootView": "testdata.view.Main",
 		"extends": {
 			"extensions": {
 				"sap.ui.viewReplacements": {
@@ -83,7 +84,6 @@
 				}
 			}
 		},
-
 		"routing": {
 			"config": {
 				"type": "View",
@@ -95,7 +95,5 @@
 				"clearTarget": false
 			}
 		}
-
 	}
-
 }

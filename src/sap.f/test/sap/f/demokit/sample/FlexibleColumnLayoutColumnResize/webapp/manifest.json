@@ -1,16 +1,24 @@
 {
-	"_version": "1.38.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.f.sample.FlexibleColumnLayoutColumnResize",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'FlexibleColumnLayoutColumnResize'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.f.FlexibleColumnLayoutColumnResize.view.FlexibleColumnLayout",
-			"type": "XML",
-			"async": true,
 			"id": "fcl"
 		},
 		"dependencies": {
@@ -33,9 +41,7 @@
 				"path": "sap.f.FlexibleColumnLayoutColumnResize.view",
 				"controlId": "fcl",
 				"transition": "slide",
-				"bypassed": {
-				},
-				"async": true
+				"bypassed": {}
 			},
 			"routes": [
 				{

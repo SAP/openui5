@@ -1,10 +1,13 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.core.sample.View.navigationTypedView",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
-		"dataSources": {}
+		"dataSources": {},
+		"type": "application",
+		"title": "Application 'navigationTypedView'"
 	},
 	"sap.ui": {
 		"technology": "UI5",

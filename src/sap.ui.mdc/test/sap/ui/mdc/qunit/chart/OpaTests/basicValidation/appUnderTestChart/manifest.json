@@ -1,5 +1,5 @@
 {
-	"_version": "1.8.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"ach": "CA-UI5-CMP",
 		"applicationVersion": {
@@ -54,10 +54,8 @@
 			}
 		},
 		"rootView": {
-			"type": "XML",
 			"viewName": "view.Main",
-			"id": "IDViewOfAppUnderTestChart",
-			"async": true
+			"id": "IDViewOfAppUnderTestChart"
 		}
 	}
 }

@@ -1,44 +1,48 @@
 {
-	"_version" : "1.45.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Example of a ClientTreeBinding",
-		"dataSources" : {
-			"default" : {
-				"uri" : "MusicCollection.json",
-				"type" : "JSON"
+		"description": "Example of a ClientTreeBinding",
+		"dataSources": {
+			"default": {
+				"uri": "MusicCollection.json",
+				"type": "JSON"
 			}
 		},
-		"id" : "sap.ui.core.internal.samples.client.MusicCollection",
-		"title" : "Example of a ClientTreeBinding",
-		"type" : "application"
+		"id": "sap.ui.core.internal.samples.client.MusicCollection",
+		"title": "Example of a ClientTreeBinding",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"dependencies" : {
-			"minUI5Version" : "1.107",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.table" : {}
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "1.107",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
 			}
 		},
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"type" : "sap.ui.model.json.JSONModel"
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"type": "sap.ui.model.json.JSONModel"
 			}
 		},
-		"rootView" : {
-			"id" : "MusicCollectionMain",
-			"type" : "XML",
-			"viewName" : "sap.ui.core.internal.samples.client.MusicCollection.Main"
+		"rootView": {
+			"id": "MusicCollectionMain",
+			"viewName": "sap.ui.core.internal.samples.client.MusicCollection.Main"
 		}
 	}
 }

@@ -1,5 +1,5 @@
 {
-	"_version": "1.15.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "my.component.sample.cardContentControls",
 		"type": "card",
@@ -23,13 +23,16 @@
 		"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://bus-public-transport"
+		},
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "my.component.sample.cardContentControls.View",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -52,8 +55,7 @@
 		"type": "Component",
 		"configuration": {
 			"editor": "dt/configuration",
-			"parameters": {
-			}
+			"parameters": {}
 		},
 		"header": {
 			"icon": {

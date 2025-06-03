@@ -1,31 +1,36 @@
 {
-	"_version" : "1.42.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
-				"type" : "OData",
-				"settings" : {
-					"odataVersion" : "4.0"
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "4.0"
 				}
 			}
 		},
-		"description" : "Example for OData V4 Grid Table",
-		"id" : "sap.ui.core.sample.odata.v4.GridTable",
-		"title" : "OData V4 Grid Table",
-		"type" : "application"
+		"description": "Example for OData V4 Grid Table",
+		"id": "sap.ui.core.sample.odata.v4.GridTable",
+		"title": "OData V4 Grid Table",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"GridTable.controller.js",
 					"GridTable.view.xml",
@@ -35,31 +40,28 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.table" : {}
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.table": {}
 			},
-			"minUI5Version" : "1.105"
+			"minUI5Version": "1.105"
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
 					"earlyRequests": true,
-					"operationMode" : "Server"
+					"operationMode": "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.GridTable.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.GridTable.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.GridTable.GridTable"
-		}
+		"rootView": "sap.ui.core.sample.odata.v4.GridTable.GridTable"
 	}
 }

@@ -1,15 +1,22 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "qunit.target.component.componentContainer.Child",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'qunit.target.component.componentContainer.Child'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "qunit.target.component.componentContainer.Child.view.RootView",
-			"type": "XML",
-			"async": true
-		}
+		"rootView": "qunit.target.component.componentContainer.Child.view.RootView"
 	}
 }

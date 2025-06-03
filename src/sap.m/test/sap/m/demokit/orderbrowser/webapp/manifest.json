@@ -1,5 +1,5 @@
 {
-	"_version": "1.21.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.demo.orderbrowser",
 		"type": "application",
@@ -46,8 +46,6 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.orderbrowser.view.App",
-			"type": "XML",
-			"async": true,
 			"id": "app"
 		},
 		"dependencies": {
@@ -88,8 +86,7 @@
 				"controlAggregation": "beginColumnPages",
 				"bypassed": {
 					"target": "notFound"
-				},
-				"async": true
+				}
 			},
 			"routes": [
 				{

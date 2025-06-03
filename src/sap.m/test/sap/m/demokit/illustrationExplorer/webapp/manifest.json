@@ -1,113 +1,111 @@
 {
-    "_version": "1.68.0",
-    "sap.app": {
-        "id": "sap.ui.demo.illustrationExplorer",
-        "type": "application",
-        "title": "{{appTitle}}",
-        "description": "{{appDescription}}",
-        "applicationVersion": {
-            "version": "1.0.0"
-        },
-        "i18n": {
-            "bundleUrl": "i18n/i18n.properties",
-            "supportedLocales": [
-                ""
-            ],
-            "fallbackLocale": ""
-        }
-    },
-    "sap.ui": {
-        "technology": "UI5",
-        "deviceTypes": {
-            "desktop": true,
-            "tablet": true,
-            "phone": true
-        }
-    },
-    "sap.ui5": {
-        "rootView": {
-            "viewName": "sap.ui.demo.illustrationExplorer.view.App",
-            "type": "XML",
-            "async": true
-        },
-        "dependencies": {
-            "minUI5Version": "1.120.0",
-            "libs": {
-                "sap.m": {},
-                "sap.f": {},
-                "sap.ui.core": {},
-                "sap.ui.layout": {},
-                "sap.ui.documentation": {}
-            }
-        },
-        "componentUsages": {
-            "cookieSettingsDialog": {
-                "name": "sap.ui.documentation.sdk.cookieSettingsDialog"
-            }
-        },
-        "contentDensities": {
-            "compact": true,
-            "cozy": true
-        },
-        "models": {
-            "i18n": {
-                "type": "sap.ui.model.resource.ResourceModel",
-                "settings": {
-                    "bundleName": "sap.ui.demo.illustrationExplorer.i18n.i18n",
-                    "supportedLocales": [
-                        ""
-                    ],
-                    "fallbackLocale": ""
-                }
-            }
-        },
-        "resources": {
-            "css": [
-                {
-                    "uri": "css/style.css"
-                }
-            ]
-        },
-        "routing": {
-            "config": {
-                "routerClass": "sap.m.routing.Router",
-                "viewType": "XML",
-                "viewPath": "sap.ui.demo.illustrationExplorer.view",
-                "controlId": "app",
-                "controlAggregation": "pages",
-                "bypassed": {
-                    "target": "notFound"
-                },
-                "async": true
-            },
-            "routes": [
-                {
-                    "pattern": "",
-                    "name": "home",
-                    "target": "home"
-                },
-                {
-                    "pattern": "illustration/{category}/{set}/{type}",
-                    "name": "illustrationDetails",
-                    "target": "illustrationDetails"
-                }
-            ],
-            "targets": {
-                "home": {
-                    "viewName": "App",
-                    "viewId": "main",
-                    "viewLevel": 1
-                },
-                "illustrationDetails": {
-                    "viewName": "IllustrationDetails",
-                    "viewId": "illustrationDetails",
-                    "viewLevel": 2
-                },
-                "notFound": {
-                    "viewName": "NotFound",
-                    "viewId": "notFound"
-                }
-            }
-        }
-    }
+	"_version": "2.0.0",
+	"sap.app": {
+		"id": "sap.ui.demo.illustrationExplorer",
+		"type": "application",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"i18n": {
+			"bundleUrl": "i18n/i18n.properties",
+			"supportedLocales": [
+				""
+			],
+			"fallbackLocale": ""
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.ui.demo.illustrationExplorer.view.App",
+		"dependencies": {
+			"minUI5Version": "1.120.0",
+			"libs": {
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.ui.documentation": {}
+			}
+		},
+		"componentUsages": {
+			"cookieSettingsDialog": {
+				"name": "sap.ui.documentation.sdk.cookieSettingsDialog"
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.illustrationExplorer.i18n.i18n",
+					"supportedLocales": [
+						""
+					],
+					"fallbackLocale": ""
+				}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"bypassed": {
+					"target": "notFound"
+				},
+				"path": "sap.ui.demo.illustrationExplorer.view"
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				},
+				{
+					"pattern": "illustration/{category}/{set}/{type}",
+					"name": "illustrationDetails",
+					"target": "illustrationDetails"
+				}
+			],
+			"targets": {
+				"home": {
+					"type": "View",
+					"id": "main",
+					"level": 1,
+					"name": "App"
+				},
+				"illustrationDetails": {
+					"type": "View",
+					"id": "illustrationDetails",
+					"level": 2,
+					"name": "IllustrationDetails"
+				},
+				"notFound": {
+					"type": "View",
+					"id": "notFound",
+					"name": "NotFound"
+				}
+			}
+		}
+	}
 }

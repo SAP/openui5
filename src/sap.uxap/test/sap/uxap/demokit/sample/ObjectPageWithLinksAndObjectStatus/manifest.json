@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.uxap.sample.ObjectPageWithLinksAndObjectStatus",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'ObjectPageWithLinksAndObjectStatus'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.uxap.sample.ObjectPageWithLinksAndObjectStatus.view.ObjectPageWithLinksAndObjectStatus",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.uxap.sample.ObjectPageWithLinksAndObjectStatus.view.ObjectPageWithLinksAndObjectStatus",
 		"resourceRoots": {
 			"sap.uxap.sample.SharedBlocks": "../SharedBlocks"
 		},
@@ -60,7 +67,7 @@
 					"../SharedBlocks/employment/BlockJobInfoPart3.js",
 					"../SharedBlocks/employment/BlockJobInfoPart3.view.xml",
 					"view/QuickView.fragment.xml",
-				  	"model/CompanyData.json",
+					"model/CompanyData.json",
 					"manifest.json"
 				]
 			}

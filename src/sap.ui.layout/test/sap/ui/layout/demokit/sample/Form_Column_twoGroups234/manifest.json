@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.layout.sample.Form_Column_twoGroups234",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'Form_Column_twoGroups234'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.layout.sample.Form_Column_twoGroups234.Page",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.layout.sample.Form_Column_twoGroups234.Page",
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {},

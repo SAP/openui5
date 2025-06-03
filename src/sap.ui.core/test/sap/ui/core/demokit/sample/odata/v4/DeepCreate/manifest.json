@@ -1,28 +1,33 @@
 {
-	"_version" : "1.115.0",
-	"sap.app" : {
-		"ach" : "CA-UI5-COR",
-		"applicationVersion" : {
-			"version" : "${version}"
+	"_version": "2.0.0",
+	"sap.app": {
+		"ach": "CA-UI5-COR",
+		"applicationVersion": {
+			"version": "${version}"
 		},
-		"description" : "Demo Application for Deep Create",
-		"dataSources" : {
-			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
-				"type" : "OData"
+		"description": "Demo Application for Deep Create",
+		"dataSources": {
+			"default": {
+				"uri": "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/",
+				"type": "OData"
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.DeepCreate",
-		"title" : "Deep Create Application",
-		"type" : "application"
+		"id": "sap.ui.core.sample.odata.v4.DeepCreate",
+		"title": "Deep Create Application",
+		"type": "application"
 	},
-	"sap.ui" : {
-		"technology" : "UI5"
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
-	"sap.ui5" : {
-		"config" : {
-			"sample" : {
-				"files" : [
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"files": [
 					"Component.js",
 					"ListReport.controller.js",
 					"ListReport.view.xml",
@@ -51,72 +56,79 @@
 				]
 			}
 		},
-		"dependencies" : {
-			"minUI5Version" : "1.115.0",
-			"libs" : {
-				"sap.m" : {},
-				"sap.ui.core" : {},
-				"sap.ui.layout" : {}
+		"dependencies": {
+			"minUI5Version": "1.115.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
 			}
 		},
-		"handleValidation" : true,
-		"models" : {
-			"" : {
-				"dataSource" : "default",
-				"preload" : true,
-				"settings" : {
-					"autoExpandSelect" : true,
-					"earlyRequests" : true,
-					"updateGroupId" : "UpdateGroup"
+		"handleValidation": true,
+		"models": {
+			"": {
+				"dataSource": "default",
+				"preload": true,
+				"settings": {
+					"autoExpandSelect": true,
+					"earlyRequests": true,
+					"updateGroupId": "UpdateGroup"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.DeepCreate.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.DeepCreate.SandboxModel",
+				"uriSettingName": "serviceUrl"
 			}
 		},
-		"rootView" : {
-			"type" : "XML",
-			"viewName" : "sap.ui.core.sample.odata.v4.DeepCreate.Main"
-		},
-		"routing" : {
-			"config" : {
-				"bypassed" : {
-					"target" : "notFound"
+		"rootView": "sap.ui.core.sample.odata.v4.DeepCreate.Main",
+		"routing": {
+			"config": {
+				"bypassed": {
+					"target": "notFound"
 				},
-				"controlAggregation" : "pages",
-				"controlId" : "app",
-				"path" : "sap.ui.core.sample.odata.v4.DeepCreate",
-				"routerClass" : "sap.m.routing.Router",
-				"type" : "View",
-				"viewType" : "XML"
+				"controlAggregation": "pages",
+				"controlId": "app",
+				"path": "sap.ui.core.sample.odata.v4.DeepCreate",
+				"routerClass": "sap.m.routing.Router",
+				"type": "View",
+				"viewType": "XML"
 			},
-			"routes" : [{
-				"name" : "listReport",
-				"pattern" : "",
-				"target" : ["listReport"]
-			}, {
-				"name" : "objectPage",
-				"pattern" : "id={id}",
-				"target" : ["objectPage"]
-			}, {
-				"name" : "create",
-				"pattern" : "create",
-				"target" : ["objectPage"]
-			}],
-			"targets" : {
-				"listReport" : {
-					"id" : "listReport",
-					"level" : 1,
-					"name" : "ListReport"
+			"routes": [
+				{
+					"name": "listReport",
+					"pattern": "",
+					"target": [
+						"listReport"
+					]
 				},
-				"objectPage" : {
-					"id" : "objectPage",
-					"level" : 1,
-					"name" : "ObjectPage"
+				{
+					"name": "objectPage",
+					"pattern": "id={id}",
+					"target": [
+						"objectPage"
+					]
 				},
-				"notFound" : {
-					"id" : "notFound",
-					"name" : "NotFound",
-					"transition" : "show"
+				{
+					"name": "create",
+					"pattern": "create",
+					"target": [
+						"objectPage"
+					]
+				}
+			],
+			"targets": {
+				"listReport": {
+					"id": "listReport",
+					"level": 1,
+					"name": "ListReport"
+				},
+				"objectPage": {
+					"id": "objectPage",
+					"level": 1,
+					"name": "ObjectPage"
+				},
+				"notFound": {
+					"id": "notFound",
+					"name": "NotFound",
+					"transition": "show"
 				}
 			}
 		}

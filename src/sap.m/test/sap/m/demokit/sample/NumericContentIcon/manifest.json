@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.NumericContentIcon",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'NumericContentIcon'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.m.sample.NumericContentIcon.Page",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.m.sample.NumericContentIcon.Page",
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {}

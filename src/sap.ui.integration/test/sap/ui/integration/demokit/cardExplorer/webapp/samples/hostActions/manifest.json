@@ -1,16 +1,23 @@
 {
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.ui.integration.sample.HostActions",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'HostActions'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.integration.sample.HostActions.HostActions",
-			"type": "XML",
-			"async": true
-		},
+		"rootView": "sap.ui.integration.sample.HostActions.HostActions",
 		"dependencies": {
 			"libs": {
 				"sap.f": {},
@@ -18,7 +25,6 @@
 				"sap.ui.integration": {}
 			}
 		},
-		"config": {
-		}
+		"config": {}
 	}
 }

@@ -1,16 +1,24 @@
 {
-	"_version": "1.38.0",
+	"_version": "2.0.0",
 	"sap.app": {
 		"id": "sap.m.sample.TableScrollToIndex",
 		"applicationVersion": {
 			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'TableScrollToIndex'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.m.TableScrollToIndex.view.FlexibleColumnLayout",
-			"type": "XML",
-			"async": true,
 			"id": "fcl"
 		},
 		"dependencies": {
@@ -32,9 +40,7 @@
 				"path": "sap.m.TableScrollToIndex.view",
 				"controlId": "fcl",
 				"transition": "slide",
-				"bypassed": {
-				},
-				"async": true
+				"bypassed": {}
 			},
 			"routes": [
 				{

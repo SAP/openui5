@@ -1,11 +1,24 @@
 {
-	"_version": "0.0.1",
+	"_version": "2.0.0",
 	"sap.app": {
-		"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child"
+		"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child",
+		"type": "application",
+		"title": "Application 'sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Child'",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
 	},
 	"sap.ui5": {
 		"extends": {
-			"component" : "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent",
+			"component": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent",
 			"extensions": {
 				"sap.ui.viewExtensions": {
 					"sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main": {
@@ -25,7 +38,7 @@
 							"type": "XML"
 						}
 					}
-				 }
+				}
 			}
 		}
 	}
