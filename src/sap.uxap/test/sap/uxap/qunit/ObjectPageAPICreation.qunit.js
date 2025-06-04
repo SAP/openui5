@@ -3868,7 +3868,15 @@ function (
 
 		oLandmarkInfo = new ObjectPageAccessibleLandmarkInfo({
 			rootRole: "None",
-			rootLabel: "Root"
+			rootLabel: "Root",
+			contentRole: "None",
+			contentLabel: "Content",
+			headerRole: "None",
+			headerLabel: "Header",
+			footerRole: "None",
+			footerLabel: "Footer",
+			navigationRole: "None",
+			navigationLabel: "Navigation"
 		});
 
 		oObjectPage.setLandmarkInfo(oLandmarkInfo);
@@ -3876,6 +3884,19 @@ function (
 
 		assert.strictEqual(oObjectPage.$().attr("role"), undefined, "Root role is not set");
 		assert.strictEqual(oObjectPage.$().attr("aria-label"), undefined, "Root label is not");
+		assert.strictEqual(oObjectPage.$().attr("aria-roledescription"), undefined, "Root roledescription is not set");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("role"), undefined, "Content role  is not set");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("aria-label"), undefined, "Content label is not set");
+		assert.strictEqual(oObjectPage.$("sectionsContainer").attr("aria-roledescription"), undefined, "Content roledescription is not set");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("role"), undefined, "Header role is not set");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("aria-label"), undefined, "Header label is set correctly.");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("aria-roledescription"), undefined, "Header roledescription is not set");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("role"), undefined, "Footer role is not set");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("aria-label"), undefined, "Footer label is not set");
+		assert.strictEqual(oObjectPage.$("footerWrapper").attr("aria-roledescription"), undefined, "Footer roledescription is not set");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("role"), undefined, "Navigation role is not set");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-label"), undefined, "Navigation label  is not set");
+		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-roledescription"), undefined, "Navigation roledescription is not set");
 
 		oObjectPage.destroy();
 	});
