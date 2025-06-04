@@ -129,6 +129,8 @@ sap.ui.define([
 
 	const DEFAULT_MODEL_SIZE_LIMIT = 1000;
 
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
@@ -2278,8 +2280,8 @@ sap.ui.define([
 		} catch (e) {
 			this._handleError({
 				illustrationType: IllustratedMessageType.UnableToLoad,
-				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
-				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
+				title: oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
+				description: oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 				details: e.message,
 				originalError: e
 			});
