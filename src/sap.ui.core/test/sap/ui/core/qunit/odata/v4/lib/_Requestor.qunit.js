@@ -4888,11 +4888,32 @@ sap.ui.define([
 		const aRequests = [];
 		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("groupId")
 			.returns(aRequests);
+		this.mock(oRequestor).expects("checkConflictingStrictRequest")
+			.withExactArgs(null, sinon.match.same(aRequests));
 
 		// code under test
 		oRequestor.setContinueOnError("groupId");
 
 		assert.strictEqual(aRequests.bContinueOnError, true);
+	});
+
+	//*****************************************************************************************
+	QUnit.test("setContinueOnError: check fails", function (assert) {
+		const oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+		const aRequests = [];
+		this.mock(oRequestor).expects("getOrCreateBatchQueue").withExactArgs("groupId")
+			.returns(aRequests);
+		const oError = new Error("This call intentionally failed");
+		this.mock(oRequestor).expects("checkConflictingStrictRequest")
+			.withExactArgs(null, sinon.match.same(aRequests))
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			oRequestor.setContinueOnError("groupId");
+		}, oError);
+
+		assert.notOk("bContinueOnError" in aRequests, "check first, set later!");
 	});
 
 	//*****************************************************************************************
@@ -5653,7 +5674,7 @@ sap.ui.define([
 			oRequestor.checkConflictingStrictRequest(oStrictRequest, aRequests, iChangeSetNo);
 		}
 
-		function fail(aRequests, iChangeSetNo) {
+		function failure(aRequests, iChangeSetNo) {
 			aRequests.iChangeSet = aRequests.length - 1;
 			aRequests.push({});
 			oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
@@ -5671,18 +5692,56 @@ sap.ui.define([
 		success([[oRequest], [oRequest, oStrictRequest]], 1);
 		success([[oRequest], [oRequest, oStrictRequest], [oRequest]], 1);
 
-		fail([[oStrictRequest], [oRequest]], 1);
-		fail([[oRequest], [oStrictRequest], []], 2);
-		fail([[oRequest], [oRequest, oStrictRequest], []], 2);
-		fail([[oRequest], [oRequest, oStrictRequest], [oRequest]], 2);
-		fail([[oRequest], [], [oStrictRequest]], 1);
+		failure([[oStrictRequest], [oRequest]], 1);
+		failure([[oRequest], [oStrictRequest], []], 2);
+		failure([[oRequest], [oRequest, oStrictRequest], []], 2);
+		failure([[oRequest], [oRequest, oStrictRequest], [oRequest]], 2);
+		failure([[oRequest], [], [oStrictRequest]], 1);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkConflictingStrictRequest: null", function (assert) {
+		const oRequestor = _Requestor.create("/~/");
+
+		function failure(aRequests) {
+			aRequests.iChangeSet = aRequests.length - 1;
+			aRequests.bContinueOnError = true; // must be ignored
+
+			assert.throws(function () {
+				// code under test
+				oRequestor.checkConflictingStrictRequest(null, aRequests);
+			}, new Error("Each request with strict handling must belong to its own change set due"
+					+ ' to the "odata.continue-on-error" preference'));
+		}
+
+		function success(aRequests, iChangeSet = aRequests.length - 1) {
+			aRequests.iChangeSet = iChangeSet;
+			aRequests.bContinueOnError = true; // must be ignored
+
+			// code under test
+			oRequestor.checkConflictingStrictRequest(null, aRequests);
+		}
+
+		const oStrictRequest = {
+			headers : {Prefer : "foo,handling=strict,bar"}
+		};
+		const oAlmostStrictRequest = {headers : {Prefer : "handling,strict"}}; // almost ;-)
+		const oNonStrictRequest = {headers : {}}; // no header needed, but map itself
+
+		success([]);
+		success([[]]);
+		success([[oNonStrictRequest], [oStrictRequest, oAlmostStrictRequest], [], {}], 2);
+
+		failure([[oStrictRequest, oStrictRequest]]);
+		failure([[oStrictRequest, oNonStrictRequest, oStrictRequest]]);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("checkConflictingStrictRequest: odata.continue-on-error", function (assert) {
 		const oRequestor = _Requestor.create("/~/");
 
-		function fail(oRequest, aRequests, iChangeSetNo) {
+		function failure(oRequest, aRequests, iChangeSetNo) {
+			aRequests.iChangeSet = aRequests.length - 1;
 			aRequests.bContinueOnError = true;
 
 			assert.throws(function () {
@@ -5693,8 +5752,8 @@ sap.ui.define([
 		}
 
 		function success(oRequest, aRequests, iChangeSetNo) {
-			aRequests.bContinueOnError = true;
 			aRequests.iChangeSet = aRequests.length - 1;
+			aRequests.bContinueOnError = true;
 
 			// code under test
 			oRequestor.checkConflictingStrictRequest(oRequest, aRequests, iChangeSetNo);
@@ -5706,9 +5765,9 @@ sap.ui.define([
 		const oAlmostStrictRequest = {headers : {Prefer : "handling,strict"}}; // almost ;-)
 		const oNonStrictRequest = {headers : {}}; // no header needed, but map itself
 
-		fail(oStrictRequest, [[oNonStrictRequest]], 0); // change set not empty
-		fail(oStrictRequest, [[], [oNonStrictRequest], []], 1); // iChangeSetNo matters
-		fail(oNonStrictRequest, [[oStrictRequest]], 0); // cannot add non-strict later
+		failure(oStrictRequest, [[oNonStrictRequest]], 0); // change set not empty
+		failure(oStrictRequest, [[], [oNonStrictRequest], []], 1); // iChangeSetNo matters
+		failure(oNonStrictRequest, [[oStrictRequest]], 0); // cannot add non-strict later
 
 		success(oStrictRequest, [[oNonStrictRequest], []], 1); // empty change set
 		success(oAlmostStrictRequest, [[oNonStrictRequest]], 0); // non-strict

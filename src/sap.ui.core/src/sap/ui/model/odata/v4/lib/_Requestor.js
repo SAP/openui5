@@ -453,11 +453,12 @@ sap.ui.define([
 	 * handling must belong to its own change set.
 	 *
 	 * @param {object} oRequest
-	 *   The new request
+	 *   The new request or <code>null</code> to re-check all change sets as a preparation for the
+	 *   "odata.continue-on-error" preference
 	 * @param {object[]} aRequests
 	 *   The batch queue
-	 * @param {number} iChangeSetNo
-	 *   The index of the irrelevant change set
+	 * @param {number} [iChangeSetNo]
+	 *   The index of the irrelevant change set; ignored for a <code>null</code> request
 	 * @throws {Error}
 	 *   If there is a conflicting change set
 	 *
@@ -465,6 +466,10 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.checkConflictingStrictRequest = function (oRequest, aRequests,
 			iChangeSetNo) {
+		function hasManyWithStrictHandling(aChangeSet) {
+			return aChangeSet.filter(isUsingStrictHandling).length > 1;
+		}
+
 		function isOtherChangeSetWithStrictHandling(aChangeSet, i) {
 			return iChangeSetNo !== i && aChangeSet.some(isUsingStrictHandling);
 		}
@@ -473,21 +478,23 @@ sap.ui.define([
 			return oRequest0.headers.Prefer?.includes("handling=strict");
 		}
 
-		if (aRequests.bContinueOnError) {
-			if (aRequests[iChangeSetNo].length
-					&& (isUsingStrictHandling(oRequest)
-						|| isUsingStrictHandling(aRequests[iChangeSetNo][0]))) {
-				throw new Error("Each request with strict handling must belong to its own change"
-					+ ' set due to the "odata.continue-on-error" preference');
+		const sMessage = "Each request with strict handling must belong to its own change set due"
+			+ ' to the "odata.continue-on-error" preference';
+		const aChangeSets = aRequests.slice(0, aRequests.iChangeSet + 1);
+		if (oRequest === null) {
+			if (aChangeSets.some(hasManyWithStrictHandling)) {
+				throw new Error(sMessage);
 			}
-			return;
-		}
-
-		// do not look past aRequests.iChangeSet because these cannot be change sets
-		if (isUsingStrictHandling(oRequest)
-				&& aRequests.slice(0, aRequests.iChangeSet + 1)
-					.some(isOtherChangeSetWithStrictHandling)) {
-			throw new Error("All requests with strict handling must belong to the same change set");
+		} else if (aRequests.bContinueOnError) {
+			if (aChangeSets[iChangeSetNo].length
+					&& (isUsingStrictHandling(oRequest)
+						|| isUsingStrictHandling(aChangeSets[iChangeSetNo][0]))) {
+				throw new Error(sMessage);
+			}
+		} else if (isUsingStrictHandling(oRequest)
+				&& aChangeSets.some(isOtherChangeSetWithStrictHandling)) {
+			throw new Error(
+				"All requests with strict handling must belong to the same change set");
 		}
 	};
 
@@ -1856,7 +1863,7 @@ sap.ui.define([
 	 *   <ul>
 	 *     <li>group ID is '$cached'; the error has a property <code>$cached = true</code>,
 	 *     <li>group ID is '$single' and there is already an existing batch queue for this group,
-	 *     <li>the {@link #checkConflictingStrictRequest rules} for strict handling w.r.t. change
+	 *     <li>the {@link #checkConflictingStrictRequest rules for strict handling} w.r.t. change
 	 *       sets are violated
 	 *   </ul>
 	 * @public
@@ -2164,11 +2171,15 @@ sap.ui.define([
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
+	 * @throws {Error} If the {@link #checkConflictingStrictRequest rules for strict handling}
+	 *   w.r.t. change sets are violated
 	 *
 	 * @public
 	 */
 	_Requestor.prototype.setContinueOnError = function (sGroupId) {
-		this.getOrCreateBatchQueue(sGroupId).bContinueOnError = true;
+		const aRequests = this.getOrCreateBatchQueue(sGroupId);
+		this.checkConflictingStrictRequest(null, aRequests);
+		aRequests.bContinueOnError = true;
 	};
 
 	/**
