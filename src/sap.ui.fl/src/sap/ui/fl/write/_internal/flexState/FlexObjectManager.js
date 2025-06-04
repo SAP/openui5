@@ -298,6 +298,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * TODO: Harmonize with saveFlexObjects and remove this method
+	 *
+	 * Saves changes sequentially on the associated change persistence instance;
+	 * This API must be only used in scenarios without draft (like personalization).
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the associated flex persistence
+	 * @param {boolean} [mPropertyBag.skipUpdateCache] - Flag if the cache should be skipped
+	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} [mPropertyBag.dirtyChanges] - Dirty changes to be saved
+	 * @returns {Promise<object>} Resolves with the backend response when all changes have been saved
+	 */
+	FlexObjectManager.saveFlexObjectsWithoutVersioning = async function(mPropertyBag) {
+		// the same fallback is used in the ChangePersistence, but to update the state we need the changes also here
+		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
+		const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+		const aChanges = mPropertyBag.dirtyChanges || FlexObjectState.getDirtyFlexObjects(sReference);
+
+		const ChangePersistenceFactory = await requireAsync("sap/ui/fl/ChangePersistenceFactory");
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+		const oResponse = await oChangePersistence.saveDirtyChanges(oAppComponent, false, aChanges);
+
+		if (oResponse?.response?.length) {
+			var aFilenames = oResponse.response.map((oChangeJson) => oChangeJson.fileName);
+			aChanges.forEach(function(oDirtyChange) {
+				if (aFilenames.includes(oDirtyChange.getId())) {
+					oDirtyChange.setState(States.LifecycleState.PERSISTED);
+				}
+			});
+			FlexState.getFlexObjectsDataSelector().checkUpdate({reference: sReference});
+		}
+		return oResponse;
+	};
+
+	/**
 	 * Removes the provided flex objects from the FlexState and dependency handler and sets them to be deleted.
 	 * If a flex object is dirty it will only be removed from the FlexState.
 	 * Otherwise the next call to save dirty flex objects will remove them from the persistence.

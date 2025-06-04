@@ -46,7 +46,6 @@ sap.ui.define([
 				vmReference: "variantManagementReference",
 				currentVReference: "currentVariantReference",
 				newVReference: "newVariantReference",
-				flexController: this.oFlexController,
 				appComponent: this.oAppComponent,
 				modifier: JsControlTreeModifier
 			};

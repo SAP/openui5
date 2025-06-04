@@ -10,13 +10,14 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/Settings",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -34,13 +35,14 @@ sap.ui.define([
 	FlexObjectState,
 	FlexState,
 	ManifestUtils,
-	Version,
 	Settings,
+	Version,
 	SessionStorageConnector,
 	CompVariantState,
 	FlexObjectManager,
 	Storage,
 	Versions,
+	ChangePersistence,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -579,6 +581,76 @@ sap.ui.define([
 				};
 				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
 			});
+		});
+	});
+
+	QUnit.module("saveFlexObjectsWithoutVersioning", {
+		beforeEach() {
+			sandbox.stub(Utils, "getAppComponentForSelector").returns("component");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns(sReference);
+			this.oChange1 = createChange("a1");
+			this.oChange2 = createChange("a2");
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when saveFlexObjectsWithoutVersioning is called with an array of changes", async function(assert) {
+			const oRes = { dummy: "response" };
+			const fnChangePersistenceSaveStub = sandbox.stub(ChangePersistence.prototype, "saveDirtyChanges").resolves(oRes);
+			const aChanges = [this.oChange1, this.oChange2];
+			const oResponse = await FlexObjectManager.saveFlexObjectsWithoutVersioning({
+				dirtyChanges: aChanges,
+				selector: {}
+			});
+			assert.ok(
+				fnChangePersistenceSaveStub.calledWith("component", false, aChanges),
+				"then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters"
+			);
+			assert.strictEqual(oRes, oResponse, "then the method returns the proper result");
+		});
+
+		QUnit.test("when saveFlexObjectsWithoutVersioning is called with an array of changes that are only partially saved", async function(assert) {
+			const oExpectedResponse = {response: [{fileName: "a2"}]};
+			sandbox.stub(ChangePersistence.prototype, "saveDirtyChanges").resolves(oExpectedResponse);
+			const oCheckUpdateStub = sandbox.stub();
+			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
+				checkUpdate: oCheckUpdateStub
+			});
+			const sInitialState = this.oChange1.getState();
+			const oResponse = await FlexObjectManager.saveFlexObjectsWithoutVersioning({
+				dirtyChanges: [this.oChange1, this.oChange2]
+			});
+			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
+			assert.strictEqual(oCheckUpdateStub.callCount, 1, "the checkUpdate was called once");
+			assert.strictEqual(this.oChange1.getState(), sInitialState, "the first change's state was not changed");
+			assert.strictEqual(this.oChange2.getState(), States.LifecycleState.PERSISTED, "the second change was set to persisted");
+		});
+
+		QUnit.test("when saveFlexObjectsWithoutVersioning is called without changes and the persistence returning an empty array", async function(assert) {
+			const oExpectedResponse = {response: []};
+			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([{fileName: "foo"}]);
+			const oSaveStub = sandbox.stub(ChangePersistence.prototype, "saveDirtyChanges").resolves(oExpectedResponse);
+			const oCheckUpdateStub = sandbox.stub();
+			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
+				checkUpdate: oCheckUpdateStub
+			});
+			const oResponse = await FlexObjectManager.saveFlexObjectsWithoutVersioning({});
+			assert.ok(oSaveStub.calledWith("component", false, [{fileName: "foo"}]), "the correct changes were passed");
+			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
+			assert.strictEqual(oCheckUpdateStub.callCount, 0, "the checkUpdate was not called");
+		});
+
+		QUnit.test("when saveFlexObjectsWithoutVersioning is called and the persistence returning nothing", async function(assert) {
+			const oExpectedResponse = {};
+			sandbox.stub(ChangePersistence.prototype, "saveDirtyChanges").resolves(oExpectedResponse);
+			const oCheckUpdateStub = sandbox.stub();
+			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
+				checkUpdate: oCheckUpdateStub
+			});
+			const oResponse = await FlexObjectManager.saveFlexObjectsWithoutVersioning({});
+			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
+			assert.strictEqual(oCheckUpdateStub.callCount, 0, "the checkUpdate was not called");
 		});
 	});
 

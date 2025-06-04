@@ -106,9 +106,9 @@ sap.ui.define([
 		return oModel._oVariantSwitchPromise;
 	}
 
-	async function handleDirtyChanges(oFlexController, aDirtyChanges, sVariantManagementReference, oAppComponent, oVariantModel) {
+	async function handleDirtyChanges(aDirtyChanges, sVariantManagementReference, oAppComponent, oVariantModel) {
 		if (!oVariantModel._bDesignTimeMode) {
-			const oResponse = await oFlexController.saveSequenceOfDirtyChanges(aDirtyChanges, oAppComponent);
+			const oResponse = await FlexObjectManager.saveFlexObjectsWithoutVersioning({ dirtyChanges: aDirtyChanges, selector: oAppComponent });
 			if (oResponse) {
 				const oVariantFlexObject = oResponse.response.find((oFlexObject) => oFlexObject.fileType === "ctrl_variant");
 				const oAffectedVariant = oVariantModel.oData[sVariantManagementReference].variants
@@ -192,7 +192,7 @@ sap.ui.define([
 
 	VariantManager.handleManageEvent = async function(oEvent, oData, oVariantModel) {
 		const sVMReference = oData.variantManagementReference;
-		if (!oVariantModel.oFlexController || !oVariantModel.getData()) {
+		if (!oVariantModel.getData()) {
 			return;
 		}
 		const {
@@ -245,7 +245,10 @@ sap.ui.define([
 			if (aChangesOnLayer.length > 0) {
 				// Always pass the pre-defined changes here to avoid that UI changes that are part of the FlexState
 				// are also persisted during variant manage save
-				await oVariantModel.oChangePersistence.saveDirtyChanges(oVariantModel.oAppComponent, false, aChangesOnLayer);
+				await FlexObjectManager.saveFlexObjectsWithoutVersioning({
+					dirtyChanges: aChangesOnLayer,
+					selector: oVariantModel.oAppComponent
+				});
 			}
 		}
 	};
@@ -270,10 +273,10 @@ sap.ui.define([
 				if (oVariantModel.getVariant(sSourceVariantReference, sVariantManagementReference).layer === Layer.PUBLIC) {
 					aNewVariantDirtyChanges.forEach((oChange) => oChange.setLayer(Layer.PUBLIC));
 				}
-				const oResponse = oVariantModel.oFlexController.saveSequenceOfDirtyChanges(
-					aNewVariantDirtyChanges,
-					oAppComponent
-				);
+				const oResponse = await FlexObjectManager.saveFlexObjectsWithoutVersioning({
+					dirtyChanges: aNewVariantDirtyChanges,
+					selector: oAppComponent
+				});
 				// TODO: as soon as the invalidation is done automatically this can be removed
 				oVariantModel.invalidateMap();
 				return oResponse;
@@ -328,7 +331,6 @@ sap.ui.define([
 				model: oVariantModel
 			});
 			return handleDirtyChanges(
-				oVariantModel.oFlexController,
 				aNewVariantDirtyChanges,
 				sVariantManagementReference,
 				oAppComponent,

@@ -1,21 +1,15 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/Control",
-	"sap/ui/core/Manifest",
-	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Component"
 ], function(
-	FlexState,
 	ManifestUtils,
 	ChangePersistenceFactory,
 	Control,
-	Manifest,
-	Applier,
 	sinon,
 	Component
 ) {

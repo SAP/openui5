@@ -5,9 +5,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
-	"sap/ui/fl/apply/_internal/flexObjects/States",
-	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Versions",
@@ -21,9 +18,6 @@ sap.ui.define([
 	Control,
 	Reverter,
 	FlexObjectFactory,
-	States,
-	FlexObjectState,
-	FlexState,
 	Version,
 	FlexObjectManager,
 	Versions,
@@ -59,7 +53,6 @@ sap.ui.define([
 	}
 
 	var labelChangeContent = getLabelChangeContent("a");
-	var labelChangeContent2 = getLabelChangeContent("a2");
 
 	QUnit.module("sap.ui.fl.FlexController", {
 		beforeEach() {
@@ -238,63 +231,6 @@ sap.ui.define([
 
 		QUnit.test("when saveAll is called with draft and multiple changes were saved", function(assert) {
 			return _runSaveAllAndAssumeVersionsCall.call(this, assert, [{reference: "my.app.Component", fileName: "draftname"}, {fileName: "secDraftname"}], Version.Number.Draft, 1, 0);
-		});
-
-		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes", async function(assert) {
-			const oRes = { dummy: "response" };
-			const fnChangePersistenceSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oRes);
-			const oChange1 = FlexObjectFactory.createFromFileContent(labelChangeContent);
-			const oChange2 = FlexObjectFactory.createFromFileContent(labelChangeContent2);
-			const aChanges = [oChange1, oChange2];
-			const oResponse = await this.oFlexController.saveSequenceOfDirtyChanges(aChanges, oComponent);
-			assert.ok(
-				fnChangePersistenceSaveStub.calledWith(oComponent, false, aChanges),
-				"then sap.ui.fl.ChangePersistence.saveSequenceOfDirtyChanges() was called with correct parameters"
-			);
-			assert.strictEqual(oRes, oResponse, "then the method returns the proper result");
-		});
-
-		QUnit.test("when saveSequenceOfDirtyChanges is called with an array of changes that are only partially saved", async function(assert) {
-			const oExpectedResponse = {response: [{fileName: "a2"}]};
-			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oExpectedResponse);
-			const oCheckUpdateStub = sandbox.stub();
-			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
-				checkUpdate: oCheckUpdateStub
-			});
-			const oChange1 = FlexObjectFactory.createFromFileContent(labelChangeContent);
-			const oChange2 = FlexObjectFactory.createFromFileContent(labelChangeContent2);
-			const sInitialState = oChange1.getState();
-			const oResponse = await this.oFlexController.saveSequenceOfDirtyChanges([oChange1, oChange2]);
-			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
-			assert.strictEqual(oCheckUpdateStub.callCount, 1, "the checkUpdate was called once");
-			assert.strictEqual(oChange1.getState(), sInitialState, "the first change's state was not changed");
-			assert.strictEqual(oChange2.getState(), States.LifecycleState.PERSISTED, "the second change was set to persisted");
-		});
-
-		QUnit.test("when saveSequenceOfDirtyChanges is called without changes and the persistence returning an empty array", async function(assert) {
-			const oExpectedResponse = {response: []};
-			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([{fileName: "foo"}]);
-			const oSaveStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oExpectedResponse);
-			const oCheckUpdateStub = sandbox.stub();
-			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
-				checkUpdate: oCheckUpdateStub
-			});
-			const oResponse = await this.oFlexController.saveSequenceOfDirtyChanges();
-			assert.ok(oSaveStub.calledWith(undefined, false, [{fileName: "foo"}]), "the correct changes were passed");
-			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
-			assert.strictEqual(oCheckUpdateStub.callCount, 0, "the checkUpdate was not called");
-		});
-
-		QUnit.test("when saveSequenceOfDirtyChanges is called and the persistence returning nothing", async function(assert) {
-			const oExpectedResponse = {};
-			sandbox.stub(this.oFlexController._oChangePersistence, "saveDirtyChanges").resolves(oExpectedResponse);
-			const oCheckUpdateStub = sandbox.stub();
-			sandbox.stub(FlexState, "getFlexObjectsDataSelector").returns({
-				checkUpdate: oCheckUpdateStub
-			});
-			const oResponse = await this.oFlexController.saveSequenceOfDirtyChanges();
-			assert.deepEqual(oResponse, oExpectedResponse, "the response is correctly returned");
-			assert.strictEqual(oCheckUpdateStub.callCount, 0, "the checkUpdate was not called");
 		});
 	});
 

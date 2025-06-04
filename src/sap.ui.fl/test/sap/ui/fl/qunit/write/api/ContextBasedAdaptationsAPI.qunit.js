@@ -17,8 +17,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
@@ -43,8 +41,6 @@ sap.ui.define([
 	Storage,
 	Versions,
 	ContextBasedAdaptationsAPI,
-	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Layer,
 	LayerUtils,
 	Utils,
@@ -1884,9 +1880,7 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReference").returns("com.sap.app");
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
 			sandbox.stub(URLHandler, "attachHandlers");
-			this.oFlexController = FlexControllerFactory.createForControl(this.oAppComponent, this.oManifest);
 			this.oModel = new VariantModel({}, {
-				flexController: this.oFlexController,
 				appComponent: this.oAppComponent
 			});
 			this.oAppComponent.getModel = function(sName) {
@@ -1916,7 +1910,6 @@ sap.ui.define([
 		},
 		afterEach() {
 			FlexState.clearState();
-			ChangePersistenceFactory._instanceCache = {};
 			ContextBasedAdaptationsAPI.clearInstances(this.mPropertyBag);
 			sandbox.restore();
 		}
