@@ -543,8 +543,10 @@ sap.ui.define([
 		const oFeedbackUrlParams = await FlexRuntimeInfoAPI.getFeedbackInformation(mPropertyBag);
 		oUrlParams.set("version", oFeedbackUrlParams.version);
 		oUrlParams.set("feature", (oFeedbackUrlParams.connector === "KeyUserConnector" ? "BTP" : "ABAP"));
-		oUrlParams.set("appId", oFeedbackUrlParams.appId);
-		oUrlParams.set("appVersion", oFeedbackUrlParams.appVersion);
+		oUrlParams.set("AppId", oFeedbackUrlParams.appId);
+		oUrlParams.set("AppVersion", oFeedbackUrlParams.appVersion);
+		// Add product filter for qualtrics colleagues
+		oUrlParams.set("product_filter", "Key%20User%20Adaptation");
 
 		var oFeedbackDialogModel = new JSONModel({
 			url: `${sURL}?${oUrlParams.toString()}`
