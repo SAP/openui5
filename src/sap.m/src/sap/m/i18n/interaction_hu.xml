@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
-				<p>Ha vannak kijelölve cellák, és egy másik cellánál lenyomja a(z) <kbd>Shift</kbd> + kattintás billentyűkombinációt, akkor a kijelölés kibővül a kattintott celláig.</p>
+				<p>Ha vannak kijelölve cellák, és lenyomja a(z) <kbd>Shift</kbd> + kattintás billentyűkombinációt egy másik cellán, akkor a kijelölés kibővül a kattintott celláig.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

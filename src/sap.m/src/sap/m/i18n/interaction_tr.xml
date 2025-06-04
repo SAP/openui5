@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
-				<p>Hücreler seçiliyse farklı bir hücre üzerinde <kbd>Shift</kbd> +'ya tıklamak seçimi tıklanan hücreye kadar genişletir.</p>
+				<p>Hücreler seçiliyse <kbd>Shift</kbd> tuşuna basılması ve farklı bir hücreye tıklanması seçimi tıklanan hücreye kadar genişletir.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

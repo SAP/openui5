@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ako je odabir ćelije aktiviran</span>:</p>
-				<p>Ako su ćelije odabrane, <kbd>Shift</kbd> + klik na drugu ćeliju proširuje odabir do ćelije na koju je kliknuto.</p>
+				<p>Ako su ćelije odabrane, pritiskom na <kbd>Shift</kbd> i klikom na neku drugu ćeliju proširuje se odabir do ćelije na koju se klikne.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

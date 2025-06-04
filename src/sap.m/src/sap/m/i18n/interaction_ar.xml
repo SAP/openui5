@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">إذا تم تمكين تحديد الخلية</span>:</p>
-				<p>في حالة تحديد الخلايا، يؤدي <kbd>Shift</kbd> + النقر فوق خلية مختلفة إلى تحسين التحديد حتى الخلية التي تم النقر فوقها.</p>
+				<p>إذا تم تحديد الخلايا، فإن الضغط على <kbd>Shift</kbd> والنقر فوق خلية مختلفة سيؤدي إلى تحسين التحديد ليشمل حتى الخلية التي تم النقر فوق.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

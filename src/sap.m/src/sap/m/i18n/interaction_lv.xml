@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ja šūnu atlase ir iespējota</span>:</p>
-				<p>Ja šūnas ir atlasītas, <kbd>Shift</kbd> + noklikšķināšana uz citas šūnas palielina atlasi līdz šūnai, uz kuras noklikšķināt.</p>
+				<p>Ja šūnas ir atlasītas, <kbd>Shift</kbd> nospiešana un noklikšķināšana un citas šūnas palielina atlasi līdz šūnai, uz kuras noklikšķinājāt.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

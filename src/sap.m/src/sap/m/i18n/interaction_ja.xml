@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">セル選択が有効化されている場合</span>:</p>
-				<p>セルが選択されている場合、別のセルを <kbd>Shift</kbd> + クリックすると、クリックしたセルまで選択が拡張されます。</p>
+				<p>セルが選択されている場合、<kbd>Shift</kbd> を押して別のセルをクリックすると、クリックしたセルまで選択が拡張されます。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

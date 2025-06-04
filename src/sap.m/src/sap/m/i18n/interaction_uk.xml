@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Якщо вибір комірки активовано</span>:</p>
-				<p>Якщо вибрано комірки, то <kbd>Shift</kbd> + клац на іншій комірці розширює вибір аж до клацнутої комірки.</p>
+				<p>Якщо комірки вибрано, то натискання <kbd>Shift</kbd> і клацання на іншій комірці розширює вибір уверх до комірки, на якій виконано клацання</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

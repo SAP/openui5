@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật</span>:</p>
-				<p>Nếu các ô được chọn, <kbd>Shift</kbd> + nhấp vào một ô khác sẽ mở rộng lựa chọn đến ô được nhấp.</p>
+				<p>Nếu các ô được chọn, hãy nhấn <kbd>Shift</kbd> và nhấp vào một ô khác sẽ mở rộng lựa chọn đến ô được nhấp.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

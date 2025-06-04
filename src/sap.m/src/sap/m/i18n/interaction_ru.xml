@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Если активирован выбор ячейки</span>:</p>
-				<p>Если ячейки выбраны, <kbd>Shift</kbd> + щелчок другой ячейки расширяют выбор до ячейки щелчка.</p>
+				<p>Если ячейки выбраны, при нажатии <kbd>Shift</kbd> и щелчке в другой ячейке выбор расширяется до ячейки щелчка.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

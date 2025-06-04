@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
-				<p>Jei pasirinkti langeliai, <kbd>Shift</kbd> + spustelėjus kitą langelį pasirinkimas išplečiamas iki paspausto langelio.</p>
+				<p>Jei pasirinkti langeliai, paspaudus <kbd>Shift</kbd> ir spustelėjus kitame langelyje, pasirinkimas išplečiamas iki spustelėto langelio.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

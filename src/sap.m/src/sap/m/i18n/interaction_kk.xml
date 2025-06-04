@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ұяшық таңдауы қосулы болса</span>:</p>
-				<p>Ұяшықтар таңдалса, <kbd>Shift</kbd> + басқа ұяшықты бассаңыз, таңдау басылған ұяшыққа дейін кеңейтіледі.</p>
+				<p>Ұяшықтар таңдалса, <kbd>Shift</kbd> түймесін басу және басқа ұяшықты басу таңдауды басылған ұяшыққа дейін кеңейтеді.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
