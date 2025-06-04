@@ -2117,7 +2117,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("removeInternalMetadata", function (assert) {
-		var oEntityData,
+		var vEntityData,
 			oModel = {},
 			oModelPrototypeMock = this.mock(ODataModel.prototype),
 			oResult;
@@ -2127,15 +2127,24 @@ sap.ui.define([
 
 		assert.deepEqual(oResult, {created : undefined, deepPath : undefined, invalid : undefined});
 
-		oEntityData = {};
+		const sData = "A".repeat(10000000);
+		vEntityData = sData;
 
 		// code under test
-		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, vEntityData);
 
-		assert.deepEqual(oEntityData, {});
+		assert.deepEqual(vEntityData, sData);
 		assert.deepEqual(oResult, {created : undefined, deepPath : undefined, invalid : undefined});
 
-		oEntityData = {
+		vEntityData = {};
+
+		// code under test
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, vEntityData);
+
+		assert.deepEqual(vEntityData, {});
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined, invalid : undefined});
+
+		vEntityData = {
 			p : "p",
 			__metadata : {
 				uri : "uri",
@@ -2146,16 +2155,16 @@ sap.ui.define([
 		};
 
 		// code under test
-		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, vEntityData);
 
-		assert.deepEqual(oEntityData, {p : "p", __metadata : {uri : "uri"}});
+		assert.deepEqual(vEntityData, {p : "p", __metadata : {uri : "uri"}});
 		assert.deepEqual(oResult, {
 			created : "created",
 			deepPath : "deepPath",
 			invalid : "invalid"
 		});
 
-		oEntityData = {
+		vEntityData = {
 			p : "p",
 			__metadata : {
 				uri : "uri",
@@ -2175,24 +2184,24 @@ sap.ui.define([
 		};
 
 		oModelPrototypeMock.expects("removeInternalMetadata") // the "code under test" call
-			.withExactArgs(sinon.match.same(oEntityData))
+			.withExactArgs(sinon.match.same(vEntityData))
 			.callThrough();
 		// recursive calls to removeInternalMetadata are only expected for non-scalar properties
 		oModelPrototypeMock.expects("removeInternalMetadata")
 			// do not use withExactArgs as this is called with index and array from forEach
-			.withArgs(sinon.match.same(oEntityData.__metadata))
+			.withArgs(sinon.match.same(vEntityData.__metadata))
 			.callThrough();
 		oModelPrototypeMock.expects("removeInternalMetadata")
-			.withArgs(sinon.match.same(oEntityData.n))
+			.withArgs(sinon.match.same(vEntityData.n))
 			.callThrough();
 		oModelPrototypeMock.expects("removeInternalMetadata")
-			.withArgs(sinon.match.same(oEntityData.n.__metadata))
+			.withArgs(sinon.match.same(vEntityData.n.__metadata))
 			.callThrough();
 
 		// code under test
-		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, vEntityData);
 
-		assert.deepEqual(oEntityData, {
+		assert.deepEqual(vEntityData, {
 			p : "p",
 			__metadata : {uri : "uri"},
 			n : {
@@ -2206,7 +2215,7 @@ sap.ui.define([
 			invalid : "invalid"
 		});
 
-		oEntityData = {
+		vEntityData = {
 			p : "p",
 			__metadata : {
 				uri : "uri",
@@ -2226,24 +2235,24 @@ sap.ui.define([
 		};
 
 		oModelPrototypeMock.expects("removeInternalMetadata") // the "code under test" call
-			.withExactArgs(sinon.match.same(oEntityData))
+			.withExactArgs(sinon.match.same(vEntityData))
 			.callThrough();
 		// recursive calls to removeInternalMetadata are only expected for non-scalar properties
 		oModelPrototypeMock.expects("removeInternalMetadata")
 			// do not use withExactArgs as this is called with index and array from forEach
-			.withArgs(sinon.match.same(oEntityData.__metadata))
+			.withArgs(sinon.match.same(vEntityData.__metadata))
 			.callThrough();
 		oModelPrototypeMock.expects("removeInternalMetadata")
-			.withArgs(sinon.match.same(oEntityData.n[0]))
+			.withArgs(sinon.match.same(vEntityData.n[0]))
 			.callThrough();
 		oModelPrototypeMock.expects("removeInternalMetadata")
-			.withArgs(sinon.match.same(oEntityData.n[0].__metadata))
+			.withArgs(sinon.match.same(vEntityData.n[0].__metadata))
 			.callThrough();
 
 		// code under test
-		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
+		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, vEntityData);
 
-		assert.deepEqual(oEntityData, {
+		assert.deepEqual(vEntityData, {
 			p : "p",
 			__metadata : {uri : "uri"},
 			n : [{
@@ -2260,7 +2269,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("removeInternalMetadata, recursively", function (assert) {
-		var oEntityData = {
+		var vEntityData = {
 				p : "p",
 				n1 : { // 0..1 navigation property
 					p1 : "p1",
@@ -2296,9 +2305,9 @@ sap.ui.define([
 			oResult;
 
 		// code under test
-		oResult = ODataModel.prototype.removeInternalMetadata(oEntityData);
+		oResult = ODataModel.prototype.removeInternalMetadata(vEntityData);
 
-		assert.deepEqual(oEntityData, {
+		assert.deepEqual(vEntityData, {
 			p : "p",
 			n1 : { // 0..1 navigation property
 				p1 : "p1",
