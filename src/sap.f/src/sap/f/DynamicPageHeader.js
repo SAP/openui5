@@ -140,6 +140,7 @@ sap.ui.define([
 			this._bShowCollapseButton = true;
 			this._oInvisibleMessage = null;
 			this._oLandmarkInfo = null;
+			this._bExpanded = true; // Default state is expanded
 		};
 
 		DynamicPageHeader.prototype.onAfterRendering = function () {
@@ -219,11 +220,15 @@ sap.ui.define([
 			var $header = this.$(),
 				bHasHeaderContentLabel = this._oLandmarkInfo && this._oLandmarkInfo.getHeaderContentLabel();
 
-			if (bHasHeaderContentLabel) {
-				var sHeaderContentLabel = this._oLandmarkInfo.getHeaderContentLabel();
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, sHeaderContentLabel);
+			if (this._bExpanded) {
+				if (bHasHeaderContentLabel) {
+					var sHeaderContentLabel = this._oLandmarkInfo.getHeaderContentLabel();
+					$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, sHeaderContentLabel);
+				} else {
+					$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
+				}
 			} else {
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
+				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_COLLAPSED);
 			}
 		};
 
@@ -252,13 +257,8 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._updateARIAState = function (bExpanded) {
-			var $header = this.$();
-
-			if (bExpanded) {
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
-			} else {
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_COLLAPSED);
-			}
+			this._bExpanded = bExpanded;
+			this._applyAriaAttributes();
 		};
 
 		/**
