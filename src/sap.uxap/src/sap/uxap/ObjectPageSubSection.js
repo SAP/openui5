@@ -270,8 +270,8 @@ sap.ui.define([
 		this._getTitleControl().addStyleClass("sapUxAPObjectPageSubSectionTitle");
 
 		var oActionsToolbar = this._getHeaderToolbar();
-		oActionsToolbar.insertContent(this._getTitleControl(), 0);
-		oActionsToolbar.insertContent(new ToolbarSpacer(), 1);
+		oActionsToolbar?.insertContent(this._getTitleControl(), 0);
+		oActionsToolbar?.insertContent(new ToolbarSpacer(), 1);
 	};
 
 	/**
@@ -335,7 +335,7 @@ sap.ui.define([
 	/* ========== ObjectPageSubSection actions aggregation methods ========== */
 
 	ObjectPageSubSection.prototype.addAction = function (oAction) {
-		this._getHeaderToolbar().insertContent(oAction, ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS + this.getActions().length);
+		this._getHeaderToolbar()?.insertContent(oAction, ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS + this.getActions().length);
 		this._preProcessAction(oAction, "actions");
 
 		return this;
@@ -343,14 +343,14 @@ sap.ui.define([
 
 	ObjectPageSubSection.prototype.insertAction = function (oAction, iIndex) {
 		var iIndexToInsertAt = iIndex + ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS;
-		this._getHeaderToolbar().insertContent(oAction, iIndexToInsertAt);
+		this._getHeaderToolbar()?.insertContent(oAction, iIndexToInsertAt);
 		this._preProcessAction(oAction, "actions");
 
 		return this;
 	};
 
 	ObjectPageSubSection.prototype.removeAction = function (oAction) {
-		this._getHeaderToolbar().removeContent(oAction);
+		this._getHeaderToolbar()?.removeContent(oAction);
 		this._postProcessAction(oAction);
 
 		return this.removeAggregation("actions", oAction);
@@ -361,7 +361,7 @@ sap.ui.define([
 			oActionsToRemove = this.getActions();
 
 		oActionsToRemove.forEach(function (oAction) {
-			oActionsToolbar.removeContent(oAction);
+			oActionsToolbar?.removeContent(oAction);
 			this._postProcessAction(oAction);
 		}, this);
 
@@ -369,7 +369,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.destroyActions = function () {
-		this._getHeaderToolbar().destroyContent();
+		this._getHeaderToolbar()?.destroyContent();
 		this.getActions().forEach(function (oAction) {
 			this._postProcessAction(oAction);
 		}, this);
@@ -378,7 +378,7 @@ sap.ui.define([
 	};
 
 	ObjectPageSubSection.prototype.getActions = function () {
-		return this._getHeaderToolbar().getContent().slice(ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS);
+		return this._getHeaderToolbar()?.getContent().slice(ObjectPageSubSection.NUMBER_OF_ADDITIONAL_ACTIONS) || [];
 	};
 
 	ObjectPageSubSection.prototype.indexOfAction = function (oAction) {
@@ -408,7 +408,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._getHeaderToolbar = function () {
 		var sId = this.getId() + "-_headerToolbar";
 
-		if (!this.getAggregation("_headerToolbar")) {
+		if (!this.getAggregation("_headerToolbar") && !this.isDestroyed()) {
 			this.setAggregation("_headerToolbar", new OverflowToolbar({
 				id: sId,
 				style: ToolbarStyle.Clear,
