@@ -81,6 +81,7 @@
 					<PropertyRef Name="ID" />
 				</Key>
 				<Property Name="ID" Type="Edm.String" Nullable="false" MaxLength="12" />
+				<Property Name="Photo" Type="Edm.Binary" Nullable="true" MaxLength="Max" FixedLength="false" />
 				<Property Name="Time" Type="Edm.Time" Precision="0" />
 			</EntityType>
 			<Association Name="assoc_C_RSHMaintSchedSmltdOrdAndOps">
