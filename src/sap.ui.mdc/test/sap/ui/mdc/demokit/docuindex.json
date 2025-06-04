@@ -110,7 +110,8 @@
 				"samples": [
 					"sap.ui.mdc.demokit.sample.FilterbarTypes",
 					"sap.ui.mdc.demokit.sample.FilterbarCustomContent",
-					"sap.ui.mdc.demokit.sample.FilterbarCustomOperators"
+					"sap.ui.mdc.demokit.sample.FilterbarCustomOperators",
+					"sap.ui.mdc.demokit.sample.FilterbarVisualizeValidationState"
 				]
 			},
 			{
@@ -260,6 +261,11 @@
 				"id": "sap.ui.mdc.demokit.sample.FilterbarCustomOperators",
 				"name": "FilterBar - with custom operators",
 				"description": "A filter bar with custom operators of type integer and date"
+			},
+			{
+				"id": "sap.ui.mdc.demokit.sample.FilterbarVisualizeValidationState",
+				"name": "FilterBar - with custom validation state visualization",
+				"description": "A filter bar with custom implementation of FilterBarDelegate.visualizeValidationState."
 			},
 			{
 				"id": "sap.ui.mdc.demokit.sample.table.TableJson",
