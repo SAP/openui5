@@ -1183,7 +1183,7 @@ function(
 			if (aSelecteds.length > 1) {
 				// remove selection if there are more than one item is selected
 				this.removeSelections(true);
-			} else if (sOldMode === ListMode.MultiSelect) {
+			} else if (sOldMode === ListMode.MultiSelect || sOldMode === ListMode.MultiSelectRight) {
 				// if old mode is multi select then we need to remember selected item
 				// in case of new item selection right after setMode call
 				this._oSelectedItem = aSelecteds[0];
@@ -1249,7 +1249,7 @@ function(
 	 * @protected
 	 */
 	ListBase.prototype.isAllSelectableSelected = function() {
-		if (this.getMode() != ListMode.MultiSelect) {
+		if (this.getMode() != ListMode.MultiSelect && this.getMode() != ListMode.MultiSelectRight) {
 			return false;
 		}
 
@@ -1324,7 +1324,7 @@ function(
 	// this gets called when selected property of the ListItem is changed
 	ListBase.prototype.onItemSelectedChange = function(oListItem, bSelected) {
 
-		if (this.getMode() == ListMode.MultiSelect) {
+		if (this.getMode() == ListMode.MultiSelect || this.getMode() === ListMode.MultiSelectRight) {
 			this._updateSelectedPaths(oListItem, bSelected);
 			return;
 		}
@@ -1682,7 +1682,7 @@ function(
 			return;
 		}
 
-		if (sMode === ListMode.MultiSelect || (this._bSelectionMode && bSelected)) {
+		if (sMode === ListMode.MultiSelect || sMode === ListMode.MultiSelectRight || (this._bSelectionMode && bSelected)) {
 			this._fireSelectionChangeEvent([oListItem]);
 
 			// announce the selection state changes
@@ -1751,7 +1751,7 @@ function(
 			oEvent.altKey ||
 			oEvent.metaKey ||
 			oEvent.code == "Tab" ||
-			this.getMode() !== ListMode.MultiSelect ||
+			(this.getMode() !== ListMode.MultiSelect && this.getMode() !== ListMode.MultiSelectRight) ||
 			!oItem.isSelectable() ||
 			oEvent.key === "F6") {
 			if (this._mRangeSelection) {
@@ -2585,7 +2585,7 @@ function(
 		};
 
 		// Ctrl + (Shift) + A: select/deselect all
-		if (oEvent.code == "KeyA" && (oEvent.metaKey || oEvent.ctrlKey) && bItemEvent && this.getMode() == ListMode.MultiSelect) {
+		if (oEvent.code == "KeyA" && (oEvent.metaKey || oEvent.ctrlKey) && bItemEvent && (this.getMode() == ListMode.MultiSelect || this.getMode() == ListMode.MultiSelectRight)) {
 			var bClearAll = (this.getMultiSelectMode() == MultiSelectMode.ClearAll);
 			if (oEvent.shiftKey) {
 				if (bClearAll) {

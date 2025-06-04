@@ -3172,6 +3172,12 @@ sap.ui.define([
 		MultiSelect : "MultiSelect",
 
 		/**
+		 * Right-positioned multi selection mode (more than one list item can be selected).
+		 * @public
+		 */
+		MultiSelectRight : "MultiSelectRight",
+
+		/**
 		 * Delete mode (only one list item can be deleted via provided delete button)
 		 * @public
 		 */

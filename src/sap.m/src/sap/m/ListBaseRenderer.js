@@ -35,6 +35,7 @@ sap.ui.define(["sap/m/library", "sap/ui/core/library", "sap/ui/Device", "sap/ui/
 		None : 0,
 		Delete : 1,
 		MultiSelect : -1,
+		MultiSelectRight: 1,
 		SingleSelect : 1,
 		SingleSelectLeft : -1,
 		SingleSelectMaster : 0
