@@ -48,7 +48,7 @@ sap.ui.define([
 			properties: {
 				client: { type: "string" },
 				hasPersoConnector: { type: "boolean", defaultValue: false },
-				isAnnotationChangeEnabled: { type: "boolean", defaultValue: true },
+				isAnnotationChangeEnabled: { type: "boolean", defaultValue: false },
 				isAppVariantSaveAsEnabled: { type: "boolean", defaultValue: false },
 				isAtoEnabled: { type: "boolean", defaultValue: false },
 				isCondensingEnabled: { type: "boolean", defaultValue: false },

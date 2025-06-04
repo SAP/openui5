@@ -1255,11 +1255,7 @@ sap.ui.define([
 
 		// create the nested component in the context of this component
 		const oComponent = this.runAsOwner(() => {
-			if (mConfig.async === true) {
-				return Component.create(mConfig);
-			} else {
-				return sap.ui.component(mConfig); // legacy-relevant: use deprecated factory for sync use case only
-			}
+			return Component.create(mConfig);
 		});
 
 		if (oComponent instanceof Promise) {

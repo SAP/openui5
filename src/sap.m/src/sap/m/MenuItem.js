@@ -16,8 +16,8 @@ sap.ui.define([
 	'sap/ui/core/Lib',
 	'sap/m/MenuItemRenderer',
 	'sap/ui/Device',
+	"sap/ui/core/InvisibleText",
 	'sap/base/i18n/Localization',
-	'sap/ui/base/ManagedObject',
 	'sap/ui/core/IconPool',
 	'sap/m/Image'
 ], function(
@@ -33,8 +33,8 @@ sap.ui.define([
 	Lib,
 	MenuItemRenderer,
 	Device,
+	InvisibleText,
 	Localization,
-	ManagedObject,
 	IconPool,
 	Image
 ) {
@@ -530,6 +530,10 @@ sap.ui.define([
 				return oPopover;
 			}
 
+			const sDialogAccessibleNameId = Device.system.phone
+				? `${this.getId()}-title`
+				: InvisibleText.getStaticId("sap.m", "MENU_POPOVER_ACCESSIBLE_NAME");
+
 			const oMenuWrapper = this._getMenuWrapper(),
 				bRTL = Localization.getRTL(),
 				bIsSubmenu = oMenuWrapper.getIsSubmenu(),
@@ -544,7 +548,8 @@ sap.ui.define([
 				horizontalScrolling: false,
 				offsetX: bIsSubmenu ? iOffsetXCorrection : 0,
 				offsetY: bIsSubmenu ? 4 : 0,
-				content: oMenuWrapper
+				content: oMenuWrapper,
+				ariaLabelledBy: [sDialogAccessibleNameId]
 			});
 			oPopover.addStyleClass("sapMMenu");
 
