@@ -6,7 +6,6 @@
 sap.ui.define([
 	'sap/m/library',
 	'sap/ui/core/library',
-	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'sap/m/ResponsivePopover',
 	'sap/m/Button',
@@ -16,15 +15,14 @@ sap.ui.define([
 	'sap/m/MenuWrapper',
 	'sap/ui/core/Lib',
 	'sap/ui/Device',
+	"sap/ui/core/InvisibleText",
 	'sap/ui/core/EnabledPropagator',
 	'sap/base/i18n/Localization',
-	'sap/ui/dom/containsOrEquals',
 	'sap/base/Log'
 ],
 	function(
 		library,
 		coreLibrary,
-		Element,
 		Control,
 		ResponsivePopover,
 		Button,
@@ -34,9 +32,9 @@ sap.ui.define([
 		MenuWrapper,
 		Lib,
 		Device,
+		InvisibleText,
 		EnabledPropagator,
 		Localization,
-		containsOrEquals,
 		Log
 	) {
 		"use strict";
@@ -287,7 +285,8 @@ sap.ui.define([
 		 * @returns {string} The DOM reference ID for the menu container
 		 */
 		Menu.prototype.getDomRefId = function() {
-			return this._getPopover().getId();
+			const oPopoverDomRef = this._getPopover().getDomRef();
+			return oPopoverDomRef ? oPopoverDomRef.id : "";
 		};
 
 		/**
@@ -496,6 +495,10 @@ sap.ui.define([
 				return oPopover;
 			}
 
+			const sDialogAccessibleNameId = Device.system.phone
+				? `${this.getId()}-title`
+				: InvisibleText.getStaticId("sap.m", "MENU_POPOVER_ACCESSIBLE_NAME");
+
 			const oMenuWrapper = this._getMenuWrapper(),
 				bRTL = Localization.getRTL(),
 				bIsSubmenu = oMenuWrapper.getIsSubmenu(),
@@ -510,7 +513,8 @@ sap.ui.define([
 				horizontalScrolling: false,
 				offsetX: bIsSubmenu ? iOffsetXCorrection : 1,
 				offsetY: bIsSubmenu ? 4 : 1,
-				content: oMenuWrapper
+				content: oMenuWrapper,
+				ariaLabelledBy: [sDialogAccessibleNameId]
 			});
 			oPopover.addStyleClass("sapMMenu");
 
