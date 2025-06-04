@@ -82,22 +82,22 @@ sap.ui.define([
 				"the items are set correctly"
 			);
 			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1].getTitle(),
+				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0].getTitle(),
 				aFeatureCollection[0].title,
-				"the text is correct and the first feature that is visible in the dialog is the last feature from the features"
+				"the text is correct and the first feature that is visible in the dialog is the first feature from the feature array"
 			);
 			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1].getDescription(),
+				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0].getDescription(),
 				aFeatureCollection[0].description,
 				"the description is correct"
 			);
 			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0].getTitle(),
+				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1].getTitle(),
 				aFeatureCollection[1].title,
 				"the text is correct"
 			);
 			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0].getDescription(),
+				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1].getDescription(),
 				"",
 				"no description is set"
 			);
