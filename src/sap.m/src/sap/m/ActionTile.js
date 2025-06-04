@@ -169,7 +169,8 @@ sap.ui.define([
 				displaySize: AvatarSize.Custom,
 				customDisplaySize: "3.25rem",
 				displayShape: AvatarShape.Square,
-				backgroundColor: AvatarColor.Placeholder
+				backgroundColor: AvatarColor.Placeholder,
+				decorative: true
 			}).addStyleClass("sapMATIconFrame");
 			this.addDependent(this._oAvatar);
 
