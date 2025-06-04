@@ -1215,7 +1215,7 @@ function(
 		const oTokenizer = this.getAggregation("tokenizer");
 		const bNMoreLabelClick = oEvent.target?.className && oEvent.target.className.indexOf("sapMTokenizerIndicator") > -1;
 
-		if (bNMoreLabelClick) {
+		if (bNMoreLabelClick && this.getEditable()) {
 			this._handleNMoreIndicatorPress();
 		}
 
