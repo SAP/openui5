@@ -628,6 +628,54 @@ sap.ui.define([
 			};
 			await openDialog(sandbox, oActionConfig, fnAfterOpen);
 		});
+
+		QUnit.test("when the dialog is opened with no properties", async function(assert) {
+			const oTestDelegate = {
+				getAnnotationsChangeInfo: () => {
+					return Promise.resolve({
+						serviceUrl: "testServiceUrl",
+						properties: [],
+						possibleValues: []
+					});
+				}
+			};
+			const oActionConfig = {
+				title: "Change Text Arrangement",
+				description: "No properties available.",
+				type: AnnotationTypes.ValueListType,
+				control: { id: "testControl" },
+				annotation: "testAnnotation",
+				delegate: oTestDelegate
+			};
+			const fnAfterOpen = () => {
+				const oDialog = Element.getElementById("sapUiRtaChangeAnnotationDialog");
+				const oIllustratedMessage = oDialog.getContent()[0].getItems().filter(function(oItem) {
+					return oItem.isA("sap.m.IllustratedMessage");
+				})[0];
+				assert.ok(oIllustratedMessage, "then the IllustratedMessage is displayed");
+				assert.strictEqual(
+					oIllustratedMessage.getTitle(),
+					oResourceBundle.getText("ANNOTATION_CHANGE_DIALOG_NO_PROPERTIES_TITLE"),
+					"then the Illustrated Message title is correct"
+				);
+				assert.strictEqual(
+					oIllustratedMessage.getDescription(),
+					oResourceBundle.getText("ANNOTATION_CHANGE_DIALOG_NO_PROPERTIES_DESCRIPTION"),
+					"then the Illustrated Message description is correct"
+				);
+				const oForm = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertyListForm");
+				assert.notOk(oForm.getVisible(), "then the property list form is hidden");
+				const oSaveButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_saveButton");
+				assert.notOk(oSaveButton.getVisible(), "then the save button is hidden");
+				const oSearchField = Element.getElementById("sapUiRtaChangeAnnotationDialog_propertiesFilter");
+				assert.notOk(oSearchField.getEnabled(), "then the search field is disabled");
+				const oSwitch = Element.getElementById("sapUiRtaChangeAnnotationDialog_toggleShowAllPropertiesSwitch");
+				assert.notOk(oSwitch.getEnabled(), "then the switch is disabled");
+				const oCancelButton = Element.getElementById("sapUiRtaChangeAnnotationDialog_cancelButton");
+				oCancelButton.firePress();
+			};
+			await openDialog(sandbox, oActionConfig, fnAfterOpen);
+		});
 	});
 
 	QUnit.done(function() {

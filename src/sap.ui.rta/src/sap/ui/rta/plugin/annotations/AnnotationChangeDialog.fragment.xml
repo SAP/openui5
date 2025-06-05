@@ -40,7 +40,8 @@
 						id="sapUiRtaChangeAnnotationDialog_propertiesFilter"
 						placeholder="{i18n>ANNOTATION_CHANGE_DIALOG_PROPERTY_SEARCH}"
 						value="{/filterText}"
-						liveChange="onFilterProperties">
+						liveChange="onFilterProperties"
+						enabled="{= ${/properties}.length > 0}">
 						<layoutData>
 							<FlexItemData growFactor="1" styleClass="sapUiSmallMarginEnd"/>
 						</layoutData>
@@ -53,10 +54,14 @@
 							state="{/showChangedPropertiesOnly}"
 							change="switchDisplayMode"
 							customTextOn=" "
-							customTextOff=" "/>
+							customTextOff=" "
+							enabled="{= ${/properties}.length > 0}"/>
 					</HBox>
 				</HBox>
-				<f:Form editable="true">
+				<f:Form
+					id="sapUiRtaChangeAnnotationDialog_propertyListForm"
+					editable="true"
+					visible="{= ${/properties}.length > 0}">
 					<f:layout>
 						<f:ResponsiveGridLayout
 							labelSpanXL="4"
@@ -77,6 +82,13 @@
 						id="sapUiRtaChangeAnnotationDialog_propertyList"
 						formElements="{path: '/propertiesToDisplay', factory: '.editorFactory'}" />
 				</f:Form>
+				<IllustratedMessage
+					illustrationType="sapIllus-NoData"
+					enableVerticalResponsiveness="true"
+					title="{i18n>ANNOTATION_CHANGE_DIALOG_NO_PROPERTIES_TITLE}"
+					description="{i18n>ANNOTATION_CHANGE_DIALOG_NO_PROPERTIES_DESCRIPTION}"
+					visible="{= ${/properties}.length === 0}">
+				</IllustratedMessage>
 			</VBox>
 		</content>
 		<beginButton>
@@ -85,6 +97,7 @@
 				type="Emphasized"
 				text="{i18n>ANNOTATION_CHANGE_DIALOG_CONFIRM}"
 				press="onSave"
+				visible="{= ${/properties}.length > 0}"
 			/>
 		</beginButton>
 		<endButton>
