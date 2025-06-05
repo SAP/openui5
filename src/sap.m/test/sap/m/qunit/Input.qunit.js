@@ -1556,10 +1556,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Desktop with change event handler", async function(assert){
-		var fnCallback = this.spy(),
+		const fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
-			aItemAdded = [],
-			i;
+			aItemAdded = [];
+		let i;
 
 		var oInput = new Input({
 			showSuggestion: true,
@@ -1606,17 +1606,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Suggestion on Desktop with change event handler (focus on next input)", async function(assert){
-		var fnCallback = this.spy(),
+		const fnCallback = this.spy(),
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
-			aItemAdded = [],
-			i;
+			aItemAdded = [];
+		let i;
 
-		var oInput = new Input({
+		const oInput = new Input({
 			showSuggestion: true,
 			change: fnCallback
 		});
 
-		var oNextInput = new Input();
+		const oNextInput = new Input();
 
 		// stub the returnObject function from ObjectPool.prototype in order to trace the event parameter
 		this.stub(ObjectPool.prototype, "returnObject");
@@ -7808,7 +7808,6 @@ sap.ui.define([
 				href: "#"
 			})
 		});
-		var	oSuggPopoverHeaderValueState;
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
@@ -7826,10 +7825,11 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
-			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
+			const oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
 
 			// Assert
 			assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header");
+			this.clock.tick(300);
 		}, this);
 
 		this.oInput._openSuggestionsPopover();
@@ -8839,7 +8839,7 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		this.oInput._$input.trigger("blur");
-		this.clock.tick(200);
+		this.clock.tick(500);
 
 		// assert
 		assert.ok(bChangeFired, "Change event is fired");
