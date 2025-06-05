@@ -14,11 +14,10 @@
     "url": "https://github.com/SAP/openui5.git"
   },
   "dependencies": {
-    "@openui5/sap.ui.core": "1.138.0-SNAPSHOT",
     "@openui5/sap.f": "1.138.0-SNAPSHOT",
     "@openui5/sap.m": "1.138.0-SNAPSHOT",
-    "@openui5/sap.ui.unified": "1.138.0-SNAPSHOT",
+    "@openui5/sap.ui.core": "1.138.0-SNAPSHOT",
     "@openui5/sap.ui.layout": "1.138.0-SNAPSHOT",
-    "@openui5/sap.ui.table": "1.138.0-SNAPSHOT"
+    "@openui5/sap.ui.unified": "1.138.0-SNAPSHOT"
   }
 }
