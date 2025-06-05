@@ -92,6 +92,14 @@ sap.ui.define([
 				valueStateText: "My Warning"
 			}
 		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			},
+			{
+				ariaLabelledBy: ["MyLabel"]
+			}
+		],
 		events: [
 			{
 				change: {value: "1"},
@@ -139,6 +147,14 @@ sap.ui.define([
 				showSuggestion: false,
 				valueState: "Warning",
 				valueStateText: "My Warning"
+			}
+		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			},
+			{
+				ariaLabelledBy: ["MyLabel"]
 			}
 		],
 		events: [
@@ -212,6 +228,14 @@ sap.ui.define([
 				showSuggestion: false,
 				valueState: "Warning",
 				valueStateText: "My Warning"
+			}
+		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			},
+			{
+				ariaLabelledBy: ["MyLabel"]
 			}
 		],
 		events: [
