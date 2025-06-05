@@ -22,6 +22,13 @@
 		}
 	  }],
 	  "type": "Object",
+	  "actions": [{
+		  "type": "Navigation",
+		  "parameters": {
+			"url": "https://sap.com",
+			"target": "_blank"
+		  }
+		}],
 	  "data": {
 		"json": {
 		  "firstName": "Donna",
@@ -69,13 +76,6 @@
 		"subTitle": "{position}"
 	  },
 	  "content": {
-		"actions": [{
-		  "type": "Navigation",
-		  "parameters": {
-			"url": "https://sap.com",
-			"target": "_blank"
-		  }
-		}],
 		"groups": [
 		  {
 			"title": "Contact Details",
