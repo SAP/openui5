@@ -28,6 +28,8 @@ sap.ui.define([
 			const oParentComponent = new (UIComponent.extend("component", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.ui5": {
 							componentUsages: {
 								reuseComponent: {
@@ -46,6 +48,8 @@ sap.ui.define([
 
 			sandbox.stub(this.oComponent, "getManifest")
 			.returns({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "testComponent"
 				}
@@ -57,6 +61,7 @@ sap.ui.define([
 			const oParentComponent = new (UIComponent.extend("component", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
 						"sap.ui5": {}
 					}
 				}
@@ -69,6 +74,8 @@ sap.ui.define([
 
 			sandbox.stub(this.oComponent, "getManifest")
 			.returns({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "testComponent"
 				}
@@ -80,6 +87,8 @@ sap.ui.define([
 			const oParentComponent = new (UIComponent.extend("component", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.ui5": {
 							componentUsages: {
 								reuseComponent1: {
@@ -101,6 +110,8 @@ sap.ui.define([
 
 			sandbox.stub(this.oComponent, "getManifest")
 			.returns({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "testComponent"
 				}

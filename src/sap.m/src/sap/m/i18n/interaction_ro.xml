@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
-				<p>Dacă sunt selectate celule, <kbd>Shift</kbd> + click pe o celulă diferită extinde selecția până la celula selectată.</p>
+				<p>Dacă sunt selectate celule, apăsând pe <kbd>Shift</kbd> și efectuând click pe o celulă diferită extinde selecția până la celula selectată.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

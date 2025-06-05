@@ -38,6 +38,8 @@ sap.ui.define([
 		const FixtureComponent = UIComponent.extend("sap.ui.rta.service.controllerExtension", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						id: "sap.ui.rta.service.controllerExtension"
 					}

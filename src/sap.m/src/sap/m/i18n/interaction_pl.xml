@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
-				<p>Jeśli komórki są zaznaczone, <kbd>Shift</kbd> + kliknięcie na innej komórce powoduje rozszerzenie zaznaczenia do klikniętej komórki.</p>
+				<p>Jeśli komórki są zaznaczone, naciśnięcie <kbd>Shift</kbd> i kliknięcie innej komórki spowoduje rozszerzenie zaznaczenia do klikniętej komórki.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

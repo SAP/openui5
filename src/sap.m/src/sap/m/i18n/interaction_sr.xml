@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ако је одабир ћелије активиран</span>:</p>
-				<p>Ако су ћелије одабране, <kbd>Shift</kbd> + клик на другу ћелију проширује одабир до ћелије на коју је кликнуто.</p>
+				<p>Ако су ћелије одабране, притиском на <kbd>Shift</kbd> и кликом на неку другу ћелију проширује се одабир до ћелије на коју се кликне.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

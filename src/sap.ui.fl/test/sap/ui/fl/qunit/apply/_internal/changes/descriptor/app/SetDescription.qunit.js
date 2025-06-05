@@ -10,15 +10,21 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "custom.app.variant",
 					description: "{{description}}"
-				}};
+				}
+			};
 
 			this.oManifestWithoutDescription = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "custom.app.variant"
-				}};
+				}
+			};
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with description", function(assert) {

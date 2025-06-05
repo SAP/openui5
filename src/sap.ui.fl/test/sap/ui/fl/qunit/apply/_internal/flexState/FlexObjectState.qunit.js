@@ -457,8 +457,7 @@ sap.ui.define([
 			});
 			Reverter.revertMultipleChanges(aChanges, {
 				appCOmponent: oAppComponent,
-				modifier: JsControlTreeModifier,
-				flexController: this.oFlexController
+				modifier: JsControlTreeModifier
 			});
 			await FlexObjectState.waitForFlexObjectsToBeApplied([{selector: this.oControl1}]);
 			assert.strictEqual(this.oDestroyAppliedCustomDataSpy.callCount, 3, "all three changes got reverted");

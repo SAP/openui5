@@ -221,6 +221,8 @@ sap.ui.define([
 		QUnit.test("getAppComponentForControl can determine that the passed control is already the app component", function(assert) {
 			const oComponent = new UIComponent({
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						type: "application"
 					}
@@ -369,14 +371,29 @@ sap.ui.define([
 		});
 
 		QUnit.test("can handle corrupt manifest", function(assert) {
-			assert.equal(false, Utils.isApplication({"sap.app": {id: "id"}}, true), "false if no type node in sap.app");
-			assert.equal(false, Utils.isApplication({"sap.ui5": {dependencies: {libs: 1}}}, true), "false if no sap.app node");
+			assert.equal(false, Utils.isApplication({
+				"_version": "2.0.0",
+				"sap.app": {id: "id"}
+			}, true), "false if no type node in sap.app");
+			assert.equal(false, Utils.isApplication({
+				"_version": "2.0.0",
+				"sap.ui5": {dependencies: {libs: 1}}
+			}, true), "false if no sap.app node");
 		});
 
 		QUnit.test("can determine if manifest is of type application", function(assert) {
-			assert.equal(true, Utils.isApplication({"sap.app": {type: "application"}}, true));
-			assert.equal(true, Utils.isApplication({"sap.app": {type: "application"}}, true));
-			assert.equal(false, Utils.isApplication({"sap.app": {type: "component"}}, true));
+			assert.equal(true, Utils.isApplication({
+				"_version": "2.0.0",
+				"sap.app": {type: "application"}
+			}, true));
+			assert.equal(true, Utils.isApplication({
+				"_version": "2.0.0",
+				"sap.app": {type: "application"}
+			}, true));
+			assert.equal(false, Utils.isApplication({
+				"_version": "2.0.0",
+				"sap.app": {type: "component"}
+			}, true));
 		});
 	});
 
@@ -445,6 +462,8 @@ sap.ui.define([
 			const oParentComponent = new (UIComponent.extend("component", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							type: "application"
 						}

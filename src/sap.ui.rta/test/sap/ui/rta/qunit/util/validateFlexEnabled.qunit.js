@@ -40,9 +40,12 @@ sap.ui.define([
 
 	function getMockedComponent(bFlexEnabled, bWithUnstableElement) {
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				id: "fixture.application"
 			},
+
 			"sap.ui5": { ...(bFlexEnabled && {flexEnabled: true}) }
 		};
 		var oContent = new VerticalLayout({

@@ -59,11 +59,11 @@ sap.ui.define([
 			return;
 		}
 		const oWhatsNewDialogModel = new JSONModel();
-		const aVisibleFeatures = this.aUnseenFeatures.filter((oFeature) => !aExcludeFeatureIds.includes(oFeature.featureId));
-		if (aVisibleFeatures.length === 0) {
+		this.aUnseenFeatures = this.aUnseenFeatures.filter((oFeature) => !aExcludeFeatureIds.includes(oFeature.featureId));
+		if (this.aUnseenFeatures.length === 0) {
 			return;
 		}
-		oWhatsNewDialogModel.setData({ featureCollection: aVisibleFeatures });
+		oWhatsNewDialogModel.setData({ featureCollection: this.aUnseenFeatures });
 		if (!this.oWhatsNewDialog)	{
 			await this.createWhatsNewDialog(oWhatsNewDialogModel);
 		}

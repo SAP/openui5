@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span>:</p>
-				<p>Als de cellen zijn geselecteerd, <kbd>Shift</kbd> + op een andere cel klikken verbetert de selectie tot de maximaal cel waarop is geklikt.</p>
+				<p>Als de cellen zijn geselecteerd, wordt door te drukken op <kbd>Shift</kbd> en te klikken op een andere cel de selectie uitgebreid tot de cel waarop is geklikt.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

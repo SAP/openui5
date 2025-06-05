@@ -302,11 +302,13 @@ function(
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
-						"sap.app": {
+                        "_version": "2.0.0",
+
+                        "sap.app": {
 							"id": "",
 							"type": "application"
 						}
-					}
+                    }
 				},
 				createContent: function() {
 					return new Chart("IDChart", {delegate: {
@@ -383,11 +385,13 @@ function(
 			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
-						"sap.app": {
+                        "_version": "2.0.0",
+
+                        "sap.app": {
 							"id": "",
 							"type": "application"
 						}
-					}
+                    }
 				},
 				createContent: function() {
 					return new Chart("IDChart", {delegate: {

@@ -63474,6 +63474,8 @@ sap.ui.define([
 	// second request or only for the first. No error message for the third request. See that each
 	// handler is called with the correct (or none) errors.
 	// SNOW: DINC0032238
+	//
+	// ODM#setContinueOnError must not violate constraints w.r.t. change sets (SNOW: DINC0512589)
 	[true, false].forEach(function (bConfirm) {
 		[true, false].forEach(function (bDifferentContentIDs) {
 			const sTitle = "CPOUI5ODATAV4-943: handling=strict, confirm=" + bConfirm
@@ -63626,6 +63628,11 @@ sap.ui.define([
 					.invoke("$auto", false, onStrictHandlingFailed0);
 				oAction1Promise = that.oModel.bindContext(sAction + "(...)", aContexts[1])
 					.invoke("$auto", false, onStrictHandlingFailed1);
+				assert.throws(function () {
+					// code under test (SNOW: DINC0512589; no effect on 3rd action!)
+					that.oModel.setContinueOnError("$auto");
+				}, new Error("Each request with strict handling must belong to its own change set due"
+					+ ' to the "odata.continue-on-error" preference'));
 				oAction2Promise = that.oModel.bindContext(sAction + "(...)", aContexts[2])
 					.invoke("$auto", false, onStrictHandlingFailed2);
 

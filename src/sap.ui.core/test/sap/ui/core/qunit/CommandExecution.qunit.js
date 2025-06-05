@@ -39,6 +39,8 @@ sap.ui.define([
 		return UIComponent.extend("my.command.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.command.constructor",
 						"dataSources": {
@@ -48,6 +50,7 @@ sap.ui.define([
 							}
 						}
 					},
+
 					"sap.ui5": {
 						"extends": {
 							"extensions": {
@@ -112,8 +115,7 @@ sap.ui.define([
 						},
 						"rootView": {
 							"viewName": "my.command.Command",
-							"type": "XML",
-							"async": true
+							"type": "XML"
 						}
 					}
 				}
@@ -125,6 +127,8 @@ sap.ui.define([
 		return UIComponent.extend("my.command2.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.command2.constructor",
 						"dataSources": {
@@ -134,6 +138,7 @@ sap.ui.define([
 							}
 						}
 					},
+
 					"sap.ui5": {
 						"models": {
 							"odata":{
@@ -176,8 +181,7 @@ sap.ui.define([
 						},
 						"rootView": {
 							"viewName": "my.command.Command2",
-							"type": "XML",
-							"async": true
+							"type": "XML"
 						}
 					}
 				}

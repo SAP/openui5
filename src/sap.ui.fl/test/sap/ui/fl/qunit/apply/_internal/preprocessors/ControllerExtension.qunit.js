@@ -26,11 +26,14 @@ sap.ui.define([
 	const oAppComponent = {
 		getManifest() {
 			return {
+				_version: "2.0.0",
+
 				"sap.app": {
 					applicationVersion: {
 						version: "1.2.3"
 					}
 				},
+
 				getEntry() {
 					return {
 						type: "application"
@@ -40,11 +43,14 @@ sap.ui.define([
 		},
 		getManifestObject() {
 			return {
+				_version: "2.0.0",
+
 				"sap.app": {
 					applicationVersion: {
 						version: "1.2.3"
 					}
 				},
+
 				getEntry() {
 					return {
 						type: "application"
@@ -151,6 +157,8 @@ sap.ui.define([
 			var oComponent = {
 				getManifestObject() {
 					return {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
@@ -161,6 +169,8 @@ sap.ui.define([
 				},
 				getManifest() {
 					return {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"

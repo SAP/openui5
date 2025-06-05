@@ -69,7 +69,9 @@ sap.ui.define([
 			return UIComponent.extend("my.Component", {
 
 				metadata: {
-					manifest: {}
+					manifest: {
+						"_version": "2.0.0"
+					}
 				},
 
 				createContent: function() {
@@ -130,7 +132,9 @@ sap.ui.define([
 					return UIComponent.extend("my2.Component", {
 
 						metadata: {
-							manifest: {}
+							manifest: {
+								"_version": "2.0.0"
+							}
 						},
 
 						createContent: function() {

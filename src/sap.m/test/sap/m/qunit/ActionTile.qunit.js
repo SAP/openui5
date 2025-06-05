@@ -452,6 +452,7 @@ sap.ui.define([
 
 		assert.ok(document.getElementById("action-tile-icon-frame"), "icon frame is rendered");
 		assert.ok(Element.getElementById("action-tile-icon-frame").isA("sap.m.Avatar"), "icon frame is an avatar control");
+		assert.ok(Element.getElementById("action-tile-icon-frame").getDomRef().getAttribute("role") == "presentation", "icon frame has role presentation");
 		assert.ok(document.getElementsByClassName("sapMGTIconFrameBadge").length === 0, "badge icon not rendered");
 
 		//should render badge icon if badgeIcon and badgeValueState are specified

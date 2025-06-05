@@ -257,6 +257,8 @@ sap.ui.define([
 				return UIComponent.extend("sap.test.handleValidation.Component", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.ui5": {
 								"dependencies": {
 									"libs": {
@@ -265,10 +267,7 @@ sap.ui.define([
 									}
 								},
 								"handleValidation": false,
-								"rootView": {
-									"viewName": "module:sap/test/HandleValidationRootView",
-									"async": true
-								}
+								"rootView": "module:sap/test/HandleValidationRootView"
 							}
 						}
 					}
@@ -316,10 +315,13 @@ sap.ui.define([
 		return Component.create({
 			id: "componentSpecific",
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "sap.test.handleValidation",
 					type: "application"
 				},
+
 				"sap.ui5": {
 					"dependencies": {
 						"libs": {
@@ -328,10 +330,7 @@ sap.ui.define([
 						}
 					},
 					"handleValidation": true,
-					"rootView": {
-						"viewName": "module:sap/test/HandleValidationRootView",
-						"async": true
-					}
+					"rootView": "module:sap/test/HandleValidationRootView"
 				}
 			}
 		}).then(function(oComp) {
@@ -364,6 +363,8 @@ sap.ui.define([
 		// Register manifest.json
 		sap.ui.require.preload({
 			"test/inline/errorHandling1/manifest.json": JSON.stringify({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.inline.errorHandling1"
 				}
@@ -582,12 +583,16 @@ sap.ui.define([
 
 			//setup fake server
 			var oManifest = this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.button",
 					"title": "{{title}}"
 				}
 			};
 			var oAltManifest1 = this.oAltManifest1 = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.config",
 					"title": "{{title}}"
@@ -595,6 +600,8 @@ sap.ui.define([
 			};
 
 			var oAltManifest2 = this.oAltManifest2 = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.oneview",
 					"i18n": "someFolder/messagebundle.properties",
@@ -602,10 +609,13 @@ sap.ui.define([
 				}
 			};
 			var oAppVariantManifest = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "app.variant.id",
 					"title": "{{title}}"
 				},
+
 				"sap.ui5": {
 					"componentName": "samples.components.button"
 				}
@@ -760,6 +770,8 @@ sap.ui.define([
 
 		return Component.create({
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.oneview"
 				}
@@ -776,6 +788,8 @@ sap.ui.define([
 
 		var oServer = this.oServer;
 		var oExpectedManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "samples.components.button",
 				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
@@ -807,6 +821,8 @@ sap.ui.define([
 
 		var oServer = this.oServer;
 		var oExpectedManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "samples.components.button",
 				// Note: Placeholders (e.g. {{title}}) are only replaced in "manifest first" + async mode (not sync!)
@@ -845,6 +861,8 @@ sap.ui.define([
 
 		var oServer = this.oServer;
 		var oExpectedManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "samples.components.oneview",
 				"i18n": "someFolder/messagebundle.properties",
@@ -1000,17 +1018,17 @@ sap.ui.define([
 			return UIComponent.extend("sap.test.myComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"dependencies": {
 							"libs": {
 								"sap.ui.core": {},
 								"sap.m": {}
 							}
 						},
+
 						"sap.ui5": {
-							"rootView": {
-								"viewName": "module:sap/test/myView",
-								"async": true
-							}
+							"rootView": "module:sap/test/myView"
 						}
 					}
 				}
@@ -1046,6 +1064,8 @@ sap.ui.define([
 
 		return Component.create({
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.oneview"
 				}
@@ -1064,6 +1084,8 @@ sap.ui.define([
 			return UIComponent.extend("samples.components.oneview2.Component", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app" : {
 							"id" : "samples.components.oneview2"
 						}
@@ -1076,6 +1098,8 @@ sap.ui.define([
 			name: "samples.components.oneview2",
 			url: "/someUrl/oneview2",
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.oneview2"
 				}
@@ -1094,37 +1118,40 @@ sap.ui.define([
 
 			// setup fake server
 			var oManifest = this.oManifest = {
-					"sap.app" : {
-						"id" : "my.preloadusage"
+				"_version": "2.0.0",
+
+				"sap.app" : {
+					"id" : "my.preloadusage"
+				},
+
+				"sap.ui5" : {
+					"dependencies": {
+						"components": {
+							"my.used": {}
+						}
 					},
-					"sap.ui5" : {
-						"dependencies": {
-							"components": {
-								"my.used": {}
-							}
+					"componentUsages": {
+						"defaultUsage": {
+							"name": "defaultUsage"
 						},
-						"componentUsages": {
-							"defaultUsage": {
-								"name": "defaultUsage"
-							},
-							"lazyUsage": {
-								"name": "lazyUsage",
-								"lazy": true
-							},
-							"nonLazyUsage": {
-								"name": "nonLazyUsage",
-								"lazy": false
-							},
-							"nonLazyUsageNowLazy": {
-								"name": "nonLazyUsage",
-								"lazy": true
-							},
-							"nonLazyUsageAgain": {
-								"name": "nonLazyUsage",
-								"lazy": false
-							}
+						"lazyUsage": {
+							"name": "lazyUsage",
+							"lazy": true
+						},
+						"nonLazyUsage": {
+							"name": "nonLazyUsage",
+							"lazy": false
+						},
+						"nonLazyUsageNowLazy": {
+							"name": "nonLazyUsage",
+							"lazy": true
+						},
+						"nonLazyUsageAgain": {
+							"name": "nonLazyUsage",
+							"lazy": false
 						}
 					}
+				}
 			};
 
 			// workaround sinon gh #1534
@@ -1154,9 +1181,12 @@ sap.ui.define([
 		return UIComponent.extend("my.used.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.used"
 					},
+
 					"sap.ui5" : {
 						"componentUsages": {
 							"mySubSubUsage": {
@@ -1181,9 +1211,12 @@ sap.ui.define([
 		return UIComponent.extend("my.used.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.changed.constructor"
 					},
+
 					"sap.ui5" : {
 
 					}
@@ -1200,9 +1233,12 @@ sap.ui.define([
 		return UIComponent.extend("my.usage.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.usage"
 					},
+
 					"sap.ui5" : {
 						"dependencies": {
 							"components": {
@@ -1241,9 +1277,12 @@ sap.ui.define([
 		return UIComponent.extend("my.command.base.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.command.base.constructor"
 					},
+
 					"sap.ui5" : {
 						"commands": {
 							"Save": {
@@ -1263,9 +1302,12 @@ sap.ui.define([
 		return oBaseComponent.extend("my.command.Component", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id" : "my.command.constructor"
 					},
+
 					"sap.ui5" : {
 					}
 				}
@@ -1590,9 +1632,12 @@ sap.ui.define([
 
 			//setup fake server
 			var oManifest = this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.button"
 				},
+
 				"sap.ui5": {
 					"models": {
 						"": {
@@ -1688,6 +1733,8 @@ sap.ui.define([
 
 	QUnit.test("Hook 'onModelCreated'", function(assert) {
 		const oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.other",
 				"type": "application",
@@ -1695,6 +1742,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {
 				"resources": {
 					"css": [
@@ -1747,6 +1795,8 @@ sap.ui.define([
 
 	QUnit.test("Hook 'onModelCreated' with Reuse Component", function(assert) {
 		const oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.other",
 				"type": "application",
@@ -1754,6 +1804,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {
 				"componentUsages": {
 					"myReuse": {
@@ -1875,6 +1926,8 @@ sap.ui.define([
 		// Prepare
 		sap.ui.require.preload({
 			"test/resourceRoots/component1/manifest.json": JSON.stringify({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.resourceRoots.component1"
 				}
@@ -1911,6 +1964,8 @@ sap.ui.define([
 		// Prepare
 		sap.ui.require.preload({
 			"test/resourceRoots/component2/manifest.json": JSON.stringify({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.resourceRoots.component2"
 				}
@@ -1946,6 +2001,8 @@ sap.ui.define([
 
 		sap.ui.require.preload({
 			"test/resourceRoots/parentcomponent1/manifest.json": JSON.stringify({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.resourceRoots.parentcomponent1"
 				}
@@ -1961,6 +2018,8 @@ sap.ui.define([
 
 		sap.ui.require.preload({
 			"test/resourceRoots/component3/manifest.json": JSON.stringify({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.resourceRoots.component3"
 				}
@@ -2039,6 +2098,8 @@ sap.ui.define([
 
 	QUnit.test("Hook is called when manifest is given in config object (Hook modifies the manifest)", function(assert) {
 		var oManifestJSON = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.other",
 				"type": "application",
@@ -2046,6 +2107,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {
 				"resources": {
 					"css": [
@@ -2083,6 +2145,8 @@ sap.ui.define([
 
 	QUnit.test("Hook is called when manifest is given in config object and there is one new library dependency (Hook modifies the manifest)", function(assert) {
 		var oManifestJSON = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.other",
 				"type": "application",
@@ -2090,6 +2154,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {
 				"dependencies": {
 					"minUI5Version": "1.71.0",

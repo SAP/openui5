@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">若已啟用儲存格選擇</span>：</p>
-				<p>若已選擇儲存格，則 <kbd>Shift</kbd> + 按一下其他儲存格可增強至所點擊儲存格的選擇。</p>
+				<p>若已選擇儲存格，按下 <kbd>Shift</kbd> 並點選其他儲存格時可增強對所點選儲存格的選擇。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

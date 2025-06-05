@@ -15,7 +15,10 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach() {
-			this.oManifest = { "sap.app": { tags: { technicalAttributes: ["T1", "T2"] } } };
+			this.oManifest = {
+				"_version": "2.0.0",
+				"sap.app": { tags: { technicalAttributes: ["T1", "T2"] } }
+			};
 			this.oManifestEmpty = {};
 
 			this.oChange1 = new AppDescriptorChange({ content: { technicalAttributes: ["T3", "T4"] } });

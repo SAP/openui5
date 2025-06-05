@@ -74,7 +74,8 @@ sap.ui.define([
 						selectable: false,
 						icon: 'sap-icon://building',
 						href: 'https://www.sap.com',
-						target: '_blank'
+						target: '_blank',
+						enabled: false
 					}, {
 					title: 'Child Item 2 (Disabled)',
 					enabled: false

@@ -79,6 +79,8 @@ sap.ui.define([
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	const sReference = "someId";
 	const oComp = RtaQunitUtils.createAndStubAppComponent(sinon, sReference, {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			id: sReference
 		}
@@ -633,7 +635,10 @@ sap.ui.define([
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
-			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "1"}
+			});
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 
 			await this.oRta.start();
@@ -686,7 +691,10 @@ sap.ui.define([
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app is a home page", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
-			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "1"}
+			});
 			sandbox.stub(FlexUtils, "getUShellService")
 			.callThrough()
 			.withArgs("AppLifeCycle")
@@ -713,7 +721,10 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, false);
 			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
 			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [{id: "12345"}, DEFAULT_ADAPTATION]});
-			this.oFlexUtilsGetManifest = sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			this.oFlexUtilsGetManifest = sandbox.stub(FlexUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "1"}
+			});
 			sandbox.stub(FlexUtils, "getUShellService").callThrough().withArgs("AppLifeCycle").resolves({
 				getCurrentApplication() {
 					return {
@@ -732,7 +743,11 @@ sap.ui.define([
 
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", async function(assert) {
 			stubCBA.call(this);
-			this.oFlexUtilsGetManifest.returns({"sap.app": {id: "1"}, "sap.ovp": {}});
+			this.oFlexUtilsGetManifest.returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "1"},
+				"sap.ovp": {}
+			});
 
 			await this.oRta.start();
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), true, "then the 'Context Based Adaptation' Menu Button is enabled");
@@ -769,7 +784,10 @@ sap.ui.define([
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app cannot be detected for home page check", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
-			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
+			sandbox.stub(FlexUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "1"}
+			});
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 			sandbox.stub(FlexUtils, "getUShellService")
 			.callThrough()

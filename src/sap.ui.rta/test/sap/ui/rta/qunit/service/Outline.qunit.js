@@ -66,6 +66,8 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
@@ -333,6 +335,8 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
@@ -643,12 +647,15 @@ sap.ui.define([
 		var MockComponent = UIComponent.extend("MockController", {
 			metadata: {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						id: "myApp",
 						applicationVersion: {
 							version: "1.2.3"
 						}
 					},
+
 					"sap.ui5": {
 						flexExtensionPointEnabled: true
 					}

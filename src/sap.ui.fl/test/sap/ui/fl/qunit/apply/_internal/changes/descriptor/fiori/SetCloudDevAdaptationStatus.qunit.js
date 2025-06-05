@@ -15,7 +15,10 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach() {
-			this.oManifest = { "sap.fiori": { cloudDevAdaptationStatus: "released" }};
+			this.oManifest = {
+				"_version": "2.0.0",
+				"sap.fiori": { cloudDevAdaptationStatus: "released" }
+			};
 			this.oManifestEmpty = {};
 
 			this.oChangeReleased = new AppDescriptorChange({ content: { cloudDevAdaptationStatus: "released"} });

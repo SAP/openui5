@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Jos solun valinta on käytössä</span>:</p>
-				<p>Jos solut on valittu, <kbd>Shift</kbd> + napsautus eri solun kohdalla laajentaa valinnan napsautettuun soluun asti.</p>
+				<p>Jos solut on valittu, painamalla <kbd>Shift</kbd> ja napsauttamalla eri solua valinta voidaan laajentaa napsautettuun soluun asti.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

@@ -84,6 +84,8 @@ sap.ui.define([
 		QUnit.test("with an appvar id (raw manifest)", function(assert) {
 			var mPropertyBag = {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.ui5": {
 						appVariantId: "appVarId"
 					}
@@ -95,6 +97,8 @@ sap.ui.define([
 		QUnit.test("with sap.ui5 component name (raw manifest)", function(assert) {
 			var mPropertyBag = {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.ui5": {
 						componentName: "componentName"
 					}
@@ -106,9 +110,12 @@ sap.ui.define([
 		QUnit.test("without old or new appvar id or componentName (raw manifest)", function(assert) {
 			var mPropertyBag = {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						id: "appId"
 					},
+
 					"sap-ui6": {
 						appVariantId: "appVarId"
 					}
@@ -120,6 +127,8 @@ sap.ui.define([
 		QUnit.test("with an appvar id (manifest object)", function(assert) {
 			var mPropertyBag = {
 				manifest: new Manifest({
+					"_version": "2.0.0",
+
 					"sap.ui5": {
 						appVariantId: "appVarId"
 					}
@@ -131,6 +140,8 @@ sap.ui.define([
 		QUnit.test("with sap.ui5 component name (manifest object)", function(assert) {
 			var mPropertyBag = {
 				manifest: new Manifest({
+					"_version": "2.0.0",
+
 					"sap.ui5": {
 						componentName: "componentName"
 					}
@@ -142,9 +153,12 @@ sap.ui.define([
 		QUnit.test("without old or new appvar id or componentName (manifest object)", function(assert) {
 			var mPropertyBag = {
 				manifest: new Manifest({
+					"_version": "2.0.0",
+
 					"sap.app": {
 						id: "appId"
 					},
+
 					"sap-ui6": {
 						appVariantId: "appVarId"
 					}
@@ -185,12 +199,16 @@ sap.ui.define([
 		QUnit.test("with manifest raw at design time and name property available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
+					_version: "2.0.0",
+
 					"sap-ui6": {
 						appVariantId: "appVarId"
 					},
+
 					"sap.app": {
 						id: APP_ID_AT_DESIGN_TIME
 					},
+
 					name: "appId"
 				}
 			};
@@ -200,9 +218,12 @@ sap.ui.define([
 		QUnit.test("with manifest raw at design time and name property is not available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap-ui6": {
 						appVariantId: "appVarId"
 					},
+
 					"sap.app": {
 						id: APP_ID_AT_DESIGN_TIME
 					}
@@ -233,6 +254,8 @@ sap.ui.define([
 		QUnit.test("without a getEntry function (manifest JSON)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: sId
 				}
@@ -244,9 +267,12 @@ sap.ui.define([
 		QUnit.test("with a design time placeholder (manifest instance)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
+				_version: "2.0.0",
+
 				"sap.app": {
 					id: APP_ID_AT_DESIGN_TIME
 				},
+
 				getComponentName() {
 					return sId;
 				}
@@ -258,9 +284,12 @@ sap.ui.define([
 		QUnit.test("with a design time placeholder (manifest JSON)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
+				_version: "2.0.0",
+
 				"sap.app": {
 					id: APP_ID_AT_DESIGN_TIME
 				},
+
 				name: sId
 			};
 
@@ -277,6 +306,8 @@ sap.ui.define([
 			var sId = "appId";
 			var sVersion = "appVersion";
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					applicationVersion: {
 						version: sVersion
@@ -412,6 +443,8 @@ sap.ui.define([
 	QUnit.module("ManifestUtils.getBaseComponentNameFromManifest", {}, function() {
 		QUnit.test("without sap.ui5 entry", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "appId"
 				}
@@ -421,6 +454,8 @@ sap.ui.define([
 
 		QUnit.test("with sap.ui5 entry and componentName", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					componentName: "componentName"
 				}
@@ -430,7 +465,9 @@ sap.ui.define([
 
 		QUnit.test("with sap.ui5 entry but without componentName", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
 				"sap.ui5": {},
+
 				"sap.app": {
 					id: "appId"
 				}
@@ -442,7 +479,10 @@ sap.ui.define([
 	QUnit.module("ManifestUtils.getOvpEntity", {}, function() {
 		QUnit.test("with a manifest JSON", function(assert) {
 			var oOvpEntry = {};
-			assert.equal(ManifestUtils.getOvpEntry({"sap.ovp": oOvpEntry}), oOvpEntry, "the sap.ovp object is returned");
+			assert.equal(ManifestUtils.getOvpEntry({
+				"_version": "2.0.0",
+				"sap.ovp": oOvpEntry
+			}), oOvpEntry, "the sap.ovp object is returned");
 		});
 
 		QUnit.test("with a manifest object", function(assert) {
@@ -450,6 +490,7 @@ sap.ui.define([
 				property: "value"
 			};
 			var oManifest = new Manifest({
+				"_version": "2.0.0",
 				"sap.ovp": oOvpEntry
 			});
 			assert.deepEqual(ManifestUtils.getOvpEntry(oManifest), oOvpEntry, "the sap.ovp object is returned");

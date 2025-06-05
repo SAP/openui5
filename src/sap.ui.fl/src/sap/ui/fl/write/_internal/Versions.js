@@ -248,7 +248,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates dirty changes and the backendDraft property of the model after a saveAll was called.
+	 * Updates dirty changes and the backendDraft property of the model after a save was performed.
 	 *
 	 * @param {object} mPropertyBag - Property Bag
 	 * @param {string} mPropertyBag.reference - ID of the application for which the versions are requested (this reference must not contain the ".Component" suffix)

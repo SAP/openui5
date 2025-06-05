@@ -14,7 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
@@ -32,7 +31,6 @@ sap.ui.define([
 	ControlVariantApplyAPI,
 	ChangeHandlerRegistration,
 	VariantModel,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	JSONModel,
@@ -124,7 +122,6 @@ sap.ui.define([
 
 	async function propagateChangesForAppComponent(oAppComponent) {
 		// only manifest with type = "application" will fetch changes
-		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		var oVariantModel;
 		var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(
@@ -134,7 +131,7 @@ sap.ui.define([
 		);
 		fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 		oAppComponent.addPropagationListener(fnPropagationListener);
-		oVariantModel = ComponentLifecycleHooks._createVariantModel(oFlexController, oAppComponent);
+		oVariantModel = ComponentLifecycleHooks._createVariantModel(oAppComponent);
 		await oVariantModel.initialize();
 		Measurement.end("flexProcessing");
 		oAppComponent.setModel(oVariantModel, ControlVariantApplyAPI.getVariantModelName());
@@ -202,9 +199,8 @@ sap.ui.define([
 	}
 
 	// the current sinon version used in UI5 does not support stubbing the constructor
-	ComponentLifecycleHooks._createVariantModel = function(oFlexController, oAppComponent) {
+	ComponentLifecycleHooks._createVariantModel = function(oAppComponent) {
 		return new VariantModel({}, {
-			flexController: oFlexController,
 			appComponent: oAppComponent
 		});
 	};

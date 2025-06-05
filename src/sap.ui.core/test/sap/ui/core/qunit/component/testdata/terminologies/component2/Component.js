@@ -14,6 +14,8 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 				customizing: {
 				},
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app" : {
 						"id": "testdata.terminologies.component2",
 						"type": "application",
@@ -68,6 +70,7 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 							]
 						}
 					},
+
 					"sap.ui5": {
 						"models": {
 						}

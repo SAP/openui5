@@ -91,6 +91,8 @@ sap.ui.define([
 
 		QUnit.test("When processSaveAsDialog() method is called and key user provides the dialog input", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {

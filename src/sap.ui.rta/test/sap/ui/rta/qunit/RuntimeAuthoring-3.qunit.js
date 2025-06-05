@@ -61,6 +61,8 @@ sap.ui.define([
 	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "fixture.application", {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			id: "fixture.application"
 		}

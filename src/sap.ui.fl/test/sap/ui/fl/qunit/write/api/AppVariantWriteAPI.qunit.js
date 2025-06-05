@@ -55,6 +55,8 @@ sap.ui.define([
 
 	function createAppComponent() {
 		var oDescriptor = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				id: "customer.reference.app.id",
 				applicationVersion: {
@@ -1196,6 +1198,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("(Save As scenario - onPrem system) when saveAs is called with 4 descriptor and 1 UI changes already added into their own persistencies", function(assert) {
 			var oDescriptor = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "customer.reference.app.variant.id_123456",
 					applicationVersion: {

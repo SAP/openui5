@@ -595,9 +595,12 @@ sap.ui.define([
 				return Component.extend("test.viewFactory.component", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app" : {
 								"id" : "test.viewFactory"
 							},
+
 							"sap.ui5" : {}
 						}
 					}

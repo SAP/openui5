@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ak je povolený výber buniek</span>:</p>
-				<p>Ak sú bunky vybraté, <kbd>Shift</kbd> + kliknutie na inú bunku rozšíri výber až po bunku, na ktorú ste klikli.</p>
+				<p>Ak sú vybraté bunky, stlačením <kbd>Shift</kbd>a kliknutím na inú bunku sa výber rozšíri až po bunku, na ktorú sa kliknete.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

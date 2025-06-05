@@ -130,7 +130,7 @@ sap.ui.define([
 			},
 			expectedResult: false
 		}, {
-			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
+			testName: "when hasHigherLayerChanges is called and the FlexState "
 				+ "AND CompVariantState have changes present, but none in a higher layer",
 			persistencyChanges: [{
 				getLayer() {
@@ -180,7 +180,7 @@ sap.ui.define([
 			},
 			expectedResult: true
 		}, {
-			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
+			testName: "when hasHigherLayerChanges is called and the FlexState "
 				+ "AND CompVariantState have changes present, one in higher layer",
 			persistencyChanges: [{
 				layer: Layer.CUSTOMER
@@ -198,7 +198,7 @@ sap.ui.define([
 			},
 			expectedResult: true
 		}, {
-			testName: "when hasHigherLayerChanges is called and the ChangePersistence "
+			testName: "when hasHigherLayerChanges is called and the FlexState "
 				+ "AND CompVariantState have changes present, all in higher layer",
 			persistencyChanges: [{
 				layer: Layer.USER

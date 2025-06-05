@@ -35,6 +35,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' with a change containing one library update", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -56,6 +58,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a change containing one library and no manifest libs", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -71,6 +75,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'applyChange' with a change containing one library update and lazy false", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -93,6 +99,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'applyChange' with a change containing one library update and lazy missing", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -114,6 +122,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'applyChange' with a change containing one library update and minVersion and lazy missing", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -134,6 +144,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'applyChange' with a change containing one library downgrade", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -156,6 +168,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'applyChange' with a change containing one new library", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -180,6 +194,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'applyChange' on a more complicated change", function(assert) {
 			var oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {
@@ -223,6 +239,8 @@ sap.ui.define([
 			});
 
 			var oExpectedManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					_version: "1.1.0",
 					dependencies: {

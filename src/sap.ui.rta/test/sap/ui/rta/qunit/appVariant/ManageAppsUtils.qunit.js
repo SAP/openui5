@@ -748,6 +748,8 @@ sap.ui.define([
 		QUnit.test("When getManifest() method is called", function(assert) {
 			const oResult = {
 				response: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						id: "testId"
 					}

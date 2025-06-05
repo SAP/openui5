@@ -9,7 +9,6 @@ sap.ui.define([
 	return Controller.extend("test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.controller.FirstSubView", {
 
 		oView: null,
-		oFlexController: null,
 		oLabel: null,
 		oVariantLabel: null,
 		oAppComponent: null,

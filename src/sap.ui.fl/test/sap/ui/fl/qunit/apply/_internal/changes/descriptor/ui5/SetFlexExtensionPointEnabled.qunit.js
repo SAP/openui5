@@ -35,7 +35,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when calling '_applyChange' with flexExtensionPointEnabled set to false", function(assert) {
-			var oManifest = { "sap.ui5": { flexExtensionPointEnabled: "false" }};
+			var oManifest = {
+				"_version": "2.0.0",
+				"sap.ui5": { flexExtensionPointEnabled: "false" }
+			};
 			var oNewManifest = SetFlexExtensionPointEnabled.applyChange(oManifest, this.oChange);
 			assert.equal(oNewManifest["sap.ui5"].flexExtensionPointEnabled, "true", "flexExtensionPointEnabled is updated correctly.");
 
@@ -44,7 +47,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with flexExtensionPointEnabled set to true", function(assert) {
-			var oManifest = { "sap.ui5": { flexExtensionPointEnabled: "true" }};
+			var oManifest = {
+				"_version": "2.0.0",
+				"sap.ui5": { flexExtensionPointEnabled: "true" }
+			};
 			var oNewManifest = SetFlexExtensionPointEnabled.applyChange(oManifest, this.oChange);
 			assert.equal(oNewManifest["sap.ui5"].flexExtensionPointEnabled, "true", "flexExtensionPointEnabled is updated correctly.");
 
@@ -53,13 +59,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_applyChange' with a change without sap.ui5/flexExtensionPointEnabled", function(assert) {
-			var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.77"} }};
+			var oManifest = {
+				"_version": "2.0.0",
+				"sap.ui5": { dependencies: { minUI5Version: "1.77"} }
+			};
 			var oNewManifest = SetFlexExtensionPointEnabled.applyChange(oManifest, this.oChange);
 			assert.equal(oNewManifest["sap.ui5"].flexExtensionPointEnabled, "true", "flexExtensionPointEnabled is updated correctly.");
 		});
 
 		QUnit.test("when calling '_applyChange' with incorrect change content", function(assert) {
-			var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.77"} }};
+			var oManifest = {
+				"_version": "2.0.0",
+				"sap.ui5": { dependencies: { minUI5Version: "1.77"} }
+			};
 			assert.throws(function() {
 				SetFlexExtensionPointEnabled.applyChange(oManifest, this.oChangeError);
 			}, Error("No flexExtensionPointEnabled in change content provided"),

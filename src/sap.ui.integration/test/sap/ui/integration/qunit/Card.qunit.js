@@ -1050,10 +1050,12 @@ sap.ui.define([
 		QUnit.test("getRuntimeUrl when baseUrl is not set", async function (assert) {
 			// Arrange
 			var oManifest = {
-					"sap.app": {
-						"id": "sample.card"
-					}
-				},
+				"_version": "2.0.0",
+
+				"sap.app": {
+					"id": "sample.card"
+				}
+			},
 				mSamples = new Map([
 					["", "/"],
 					["some.json", "/some.json"],
@@ -1091,6 +1093,8 @@ sap.ui.define([
 			// Arrange
 			var sBaseUrl = "https://sdk.openui5.org",
 				oManifest = {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "sample.card"
 					}

@@ -236,7 +236,7 @@ sap.ui.define([
 	};
 
 	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {
-		// Monkey patching of FlexController.processXmlView function
+		// Monkey patching of XmlPreprocessor.process function
 		var fnOriginalProcessXmlView = XmlPreprocessor.process;
 		XmlPreprocessor.process = function(...aArgs) {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);

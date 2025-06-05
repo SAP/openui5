@@ -1100,40 +1100,6 @@ sap.ui.define([
 			},
 
 			// Team 42 tests:
-			ChangePersistence: {
-				coverage: {
-					only: ["sap/ui/fl/ChangePersistence"]
-				},
-				ui5: {
-					resourceroots: {
-						"sap/ui/fl/qunit/integration": "test-resources/sap/ui/fl/qunit/integration"
-					}
-				}
-			},
-
-			ChangePersistenceFactory: {
-				coverage: {
-					only: ["sap/ui/fl/ChangePersistenceFactory"]
-				}
-			},
-
-			FlexController: {
-				coverage: {
-					only: ["sap/ui/fl/FlexController"]
-				},
-				ui5: {
-					resourceroots: {
-						testComponent: "test-resources/sap/ui/fl/qunit/testComponent"
-					}
-				}
-			},
-
-			FlexControllerFactory: {
-				coverage: {
-					only: ["sap/ui/fl/FlexControllerFactory"]
-				}
-			},
-
 			"util/ManagedObjectModel": {
 				coverage: {
 					only: ["sap/ui/fl/util/ManagedObjectModel"]

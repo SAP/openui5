@@ -453,12 +453,16 @@ sap.ui.define([
 			this.oCard,
 			{
 				manifest: {
+					_version: "2.0.0",
+
 					"sap.app": {
 						id: "test.card"
 					},
+
 					header: {
 						title: "Test Card"
 					},
+
 					"sap.card": {
 						type: "Component"
 					}

@@ -140,7 +140,9 @@ sap.ui.define([
 			};
 
 			this.oExpectedManifest = {
+				"_version": "2.0.0",
 				"name": "testdata." + sComponentName + ".Component",
+
 				"sap.app": {
 					"id": "testdata." + sComponentName,
 					"applicationVersion": {
@@ -149,6 +151,7 @@ sap.ui.define([
 					"title": "App Title",
 					"description": "App Description"
 				},
+
 				"sap.ui5": {
 					"resourceRoots": {
 						"x.y.z": "anypath",
@@ -252,7 +255,10 @@ sap.ui.define([
 						]
 					}
 				},
-				"foo": {}, // getEntry is not allowed for keys without a dot
+
+				// getEntry is not allowed for keys without a dot
+				"foo": {},
+
 				"foo.bar": "string as entry value is not valid!"
 			};
 			this.oExpectedRawManifest = deepClone(this.oExpectedManifest);
@@ -622,6 +628,7 @@ sap.ui.define([
 
 	QUnit.test("Async loading of manifests", function(assert) {
 		var oManifest = {
+			"_version": "2.0.0",
 			"name": "testdata.inheritAsync.Component",
 
 			"sap.app": {
@@ -697,6 +704,8 @@ sap.ui.define([
 		await Component.create({
 			name: "my.failing",
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					resourceRoots: {
 						absolute: "http://absolute/uri"
@@ -715,6 +724,8 @@ sap.ui.define([
 		await Component.create({
 			name: "my.failing",
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					resourceRoots: {
 						"server.absolute": "/server/absolute/uri"

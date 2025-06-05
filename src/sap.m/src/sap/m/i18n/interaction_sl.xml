@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
-				<p>Če so izbrane celice, z možnostjo <kbd>Shift</kbd> + klik na drugo celico razširite izbiro do celice, na katero ste kliknili.</p>
+				<p>Če so celice označene, pritisnite <kbd>Shift</kbd> in kliknite različno celico, da povečate izbor do povezane celice.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

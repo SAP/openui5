@@ -766,6 +766,8 @@ sap.ui.define([
 			return UIComponent.extend("myComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							"id": "myComponent"
 						}
@@ -802,6 +804,8 @@ sap.ui.define([
 			return UIComponent.extend("myComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							"id": "myComponent"
 						}

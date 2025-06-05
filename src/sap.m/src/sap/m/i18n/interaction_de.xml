@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
-				<p>Wenn Zellen markiert sind, erweitert <kbd>Shift</kbd> + Klick auf eine andere Zelle die Markierung bis zur angeklickten Zelle.</p>
+				<p>Wenn Zellen markiert sind, erweitert <kbd>Shift</kbd> und Klick auf eine andere Zelle die Markierung bis zur angeklickten Zelle.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

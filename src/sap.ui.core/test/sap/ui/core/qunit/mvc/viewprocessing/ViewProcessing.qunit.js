@@ -380,7 +380,6 @@ sap.ui.define([
 				"rootView": {
 					"viewName": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent.Main",
 					"type": "XML",
-					"async": true,
 					"id": "app"
 				}
 			}
@@ -466,7 +465,6 @@ sap.ui.define([
 				"rootView": {
 					"viewName": "sap.ui.core.qunit.mvc.viewprocessing.StashedControl.Main",
 					"type": "XML",
-					"async": true,
 					"id": "app"
 				}
 			}

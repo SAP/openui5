@@ -15,7 +15,10 @@ sap.ui.define([
 
 	QUnit.module("applyChange", {
 		beforeEach() {
-			this.oManifest = { "sap.app": { ach: "CA-UI5-ABA" }};
+			this.oManifest = {
+				"_version": "2.0.0",
+				"sap.app": { ach: "CA-UI5-ABA" }
+			};
 			this.oManifestEmpty = {};
 
 			this.oChange = new AppDescriptorChange({ content: { ach: "CA-UI5-ABA-AIDX"} });

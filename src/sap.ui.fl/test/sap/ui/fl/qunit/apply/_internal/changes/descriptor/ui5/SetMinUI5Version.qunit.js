@@ -11,7 +11,10 @@ sap.ui.define([
 	"use strict";
 
 	function applyChange(oldValue, newValue) {
-		var oManifest = { "sap.ui5": { dependencies: { minUI5Version: oldValue } } };
+		var oManifest = {
+			"_version": "2.0.0",
+			"sap.ui5": { dependencies: { minUI5Version: oldValue } }
+		};
 		var oNewManifest = SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
 			content: {
 				minUI5Version: newValue
@@ -24,7 +27,10 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("minUI5Version missing in change content", function(assert) {
 			assert.throws(function() {
-				var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.75.2" } } };
+				var oManifest = {
+					"_version": "2.0.0",
+					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
+				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
 					content: {
 						property: "1.120.0"
@@ -36,7 +42,10 @@ sap.ui.define([
 
 		QUnit.test("minUI5Version array in change content contains a major version more than once", function(assert) {
 			assert.throws(function() {
-				var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.75.2" } } };
+				var oManifest = {
+					"_version": "2.0.0",
+					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
+				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
 					content: {
 						minUI5Version: ["1.120.0", "1.128.0", "2.0.0"]
@@ -45,7 +54,10 @@ sap.ui.define([
 			}, Error("Each major version can only be provided once in minUI5Version of change content"),
 			"throws error that no minUI5Version in change content provided");
 			assert.throws(function() {
-				var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.75.2" } } };
+				var oManifest = {
+					"_version": "2.0.0",
+					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
+				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
 					content: {
 						minUI5Version: ["1.120.0", "2.0.0", "2.1.0"]
@@ -54,7 +66,10 @@ sap.ui.define([
 			}, Error("Each major version can only be provided once in minUI5Version of change content"),
 			"throws error that no minUI5Version in change content provided");
 			assert.throws(function() {
-				var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.75.2" } } };
+				var oManifest = {
+					"_version": "2.0.0",
+					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
+				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
 					content: {
 						minUI5Version: ["1.120.0", "2.0.0", "1.120.0"]
@@ -63,7 +78,10 @@ sap.ui.define([
 			}, Error("Each major version can only be provided once in minUI5Version of change content"),
 			"throws error that no minUI5Version in change content provided");
 			assert.throws(function() {
-				var oManifest = { "sap.ui5": { dependencies: { minUI5Version: "1.75.2" } } };
+				var oManifest = {
+					"_version": "2.0.0",
+					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
+				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
 					content: {
 						minUI5Version: ["2.0.0", "1.120.0", "2.0.0"]
