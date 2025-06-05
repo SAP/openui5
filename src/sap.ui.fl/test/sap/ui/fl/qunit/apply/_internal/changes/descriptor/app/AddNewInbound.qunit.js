@@ -14,6 +14,8 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					crossNavigation: {
 						inbounds: {
@@ -57,6 +59,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' adding a new inbound in an empty inbounds manifest", function(assert) {
 			this.oManifestNoInbounds = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					crossNavigation: {
 						inbounds: {
@@ -71,6 +75,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' adding a new inbound in a manifest which has path sap.app/crossNavigation but no inbounds", function(assert) {
 			this.oManifestNoPathToInbounds2 = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					crossNavigation: {}
 				}
@@ -82,6 +88,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' adding a new inbound in a manifest which has path sap.app/ but no crossNavigation", function(assert) {
 			this.oManifestNoPathToInbounds1 = {
+				"_version": "2.0.0",
 				"sap.app": {}
 			};
 			var oNewManifest = AddNewInbound.applyChange(this.oManifestNoPathToInbounds1, this.oChangeLayerCustomer);

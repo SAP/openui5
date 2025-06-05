@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है</span>:</p>
-				<p>यदि सेल चयनित हैं, तो किसी भिन्न सेल पर <kbd>Shift</kbd> + क्लिक करने से चयन क्लिक किए गए सेल तक एन्हांस हो जाता है.</p>
+				<p>यदि सेल चयनित हैं, तो <kbd>Shift</kbd> को दबाने और किसी भिन्न सेल पर क्लिक करने से, चयन को क्लिक किए गए सेल तक एन्हांस करता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

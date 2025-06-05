@@ -449,9 +449,12 @@ sap.ui.define([
 
 			// define the manifest for the Component test
 			var oManifest = this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "samples.components.button"
 				},
+
 				"sap.ui5" : {
 					"services": {
 						"MyServiceAlias": {
@@ -784,6 +787,8 @@ sap.ui.define([
 			return Component.extend("test.services.base.Component", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.ui5": {
 							"services": {
 								"ParentEagerService": {
@@ -808,6 +813,8 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					"componentName": "test.services.child",
 					"services": {
@@ -841,9 +848,12 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "samples.components.button"
 				},
+
 				"sap.ui5": {
 					"services": {
 						"EagerService": {
@@ -878,9 +888,12 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "samples.components.button"
 				},
+
 				"sap.ui5": {
 					"services": {
 						"WaitForService": {
@@ -913,9 +926,12 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "samples.components.button"
 				},
+
 				"sap.ui5": {}
 			}
 		}).then(function () {

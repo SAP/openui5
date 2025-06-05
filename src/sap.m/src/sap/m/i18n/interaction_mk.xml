@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Ако е овозможен избор на ќелија</span>:</p>
-				<p>Ако се избрани ќелии, <kbd>Shift</kbd> + клик на различна ќелија, се проширува изборот до кликнатата ќелија.</p>
+				<p>Ако се избрани ќелии, со притискање <kbd>Shift</kbd> и кликнување на различна ќелија, се проширува изборот до кликнатата ќелија.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

@@ -202,7 +202,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @param {object} oData - Either the URL where to load the JSON from or a JS object
 	 * @param {object} mPropertyBag - Map of properties required for the constructor
-	 * @param {sap.ui.fl.FlexController} mPropertyBag.flexController - <code>FlexController</code> instance for the component which uses the variant model
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component instance that is currently loading
 	 * @constructor
 	 * @private
@@ -222,12 +221,6 @@ sap.ui.define([
 				PUBLIC: SharingMode.Public
 			};
 
-			// FlexControllerFactory creates a FlexController instance for an application component,
-			// which creates a ChangePersistence instance.
-			// After retrieving changes for the created ChangePersistence instance,
-			// FlexControllerFactory creates a VariantModel instance for this application component.
-			this.oFlexController = mPropertyBag.flexController;
-			this.oChangePersistence = this.oFlexController._oChangePersistence;
 			this.sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
 			this.oAppComponent = mPropertyBag.appComponent;
 			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");

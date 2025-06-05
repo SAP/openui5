@@ -49,6 +49,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"
@@ -126,6 +128,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"
@@ -953,6 +957,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"
@@ -1007,6 +1013,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"
@@ -1061,6 +1069,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"
@@ -1115,6 +1125,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"
@@ -1245,6 +1257,8 @@ sap.ui.define([
 				const TestComponent = UIComponent.extend("test", {
 					metadata: {
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "",
 								"type": "application"

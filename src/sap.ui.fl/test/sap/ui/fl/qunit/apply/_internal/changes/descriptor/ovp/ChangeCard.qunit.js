@@ -16,6 +16,8 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ovp": {
 					cards: {
 						card1: {},

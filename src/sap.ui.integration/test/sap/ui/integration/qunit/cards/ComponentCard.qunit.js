@@ -35,10 +35,13 @@ sap.ui.define([
 	QUnit.test("ComponentContainer shouldn't be created when preview mode is 'Abstract'", async function (assert) {
 		this.oCard.setPreviewMode(CardPreviewMode.Abstract);
 		this.oCard.setManifest({
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "test.cards.component.card1",
 				"type": "card"
 			},
+
 			"sap.card": {
 				"type": "Component"
 			}
@@ -66,15 +69,17 @@ sap.ui.define([
 	QUnit.test("resourceRoots described in the manifest are applied when the manifest is provided as object", async function (assert) {
 		// Act
 		this.oCard.setManifest({
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "test.componentCard",
 				"type": "card"
 			},
+
 			"sap.ui5": {
 				"rootView": {
 					"viewName": "test.componentCard.V",
 					"type": "XML",
-					"async": true,
 					"id": "app"
 				},
 				"resourceRoots": {
@@ -87,6 +92,7 @@ sap.ui.define([
 					}
 				}
 			},
+
 			"sap.card": {
 				"type": "Component",
 				"header": {

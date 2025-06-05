@@ -14,6 +14,8 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 				customizing: {
 				},
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.ui5": {
 						"models": {
 							"i18n": {

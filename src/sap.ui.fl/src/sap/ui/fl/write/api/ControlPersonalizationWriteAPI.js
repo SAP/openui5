@@ -17,7 +17,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
@@ -35,7 +34,6 @@ sap.ui.define([
 	UIChangeManager,
 	FlexObjectManager,
 	ChangesWriteAPI,
-	FlexControllerFactory,
 	Layer,
 	Utils
 ) {
@@ -381,10 +379,9 @@ sap.ui.define([
 			if (!oAppComponent) {
 				return logAndReject("App Component could not be determined");
 			}
-			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 
 			if (FlexState.isInitialized({control: oAppComponent})) {
-				return oFlexController.saveSequenceOfDirtyChanges(mPropertyBag.changes, oAppComponent);
+				return FlexObjectManager.saveFlexObjectsWithoutVersioning({ dirtyChanges: mPropertyBag.changes, selector: oAppComponent });
 			}
 			return Promise.resolve();
 		},

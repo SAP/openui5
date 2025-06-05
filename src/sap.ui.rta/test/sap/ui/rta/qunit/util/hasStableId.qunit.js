@@ -43,6 +43,8 @@ function(
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							id: "fixture.application"
 						}
@@ -91,6 +93,8 @@ function(
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							id: "fixture.application"
 						}
@@ -158,6 +162,8 @@ function(
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							id: "fixture.application"
 						}
@@ -224,6 +230,8 @@ function(
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							id: "fixture.application"
 						}
@@ -290,6 +298,8 @@ function(
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							id: "fixture.application"
 						}

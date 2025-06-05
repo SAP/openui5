@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">如果启用单元格选择</span>：</p>
-				<p>如果已选择单元格，则 <kbd>Shift</kbd> + 单击另一不同单元格会将选择上升到单击的单元格。</p>
+				<p>如果已选择单元格，则按 <kbd>Shift</kbd> 并单击另一不同单元格会将选择上升到单击的单元格。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

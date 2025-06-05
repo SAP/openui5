@@ -309,8 +309,8 @@ sap.ui.define([
 			const aFilters = sFilterValue
 				? [new Filter({
 					filters : [
-						new Filter("ID", FilterOperator.Contains, oEvent.getParameter("value")),
-						new Filter("Name", FilterOperator.Contains, oEvent.getParameter("value"))
+						new Filter("ID", FilterOperator.Contains, sFilterValue),
+						new Filter("Name", FilterOperator.Contains, sFilterValue)
 					]
 				})]
 				: [];

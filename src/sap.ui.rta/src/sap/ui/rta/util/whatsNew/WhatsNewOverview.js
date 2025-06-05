@@ -21,14 +21,10 @@ sap.ui.define([
 	let oWhatsNewOverviewDialog;
 	let aWhatsNewOverviewContent;
 
-	async function getWhatsNewOverviewContent() {
-		const aFeatures = await WhatsNewUtils.getFilteredFeatures([]);
-		return [...aFeatures].reverse();
-	}
-
 	WhatsNewOverview.openWhatsNewOverviewDialog = async function() {
 		const oWhatsNewDialogModel = new JSONModel();
-		aWhatsNewOverviewContent = await getWhatsNewOverviewContent();
+		// Get the unseen features from WhatsNewUtils; newest features are the first in the array
+		aWhatsNewOverviewContent = await WhatsNewUtils.getFilteredFeatures([]);
 		oWhatsNewDialogModel.setData({ featureCollection: aWhatsNewOverviewContent });
 		oWhatsNewDialogModel.setProperty("overviewActive", true);
 		if (!oWhatsNewOverviewDialog) {

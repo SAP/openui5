@@ -18,6 +18,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' with title", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "custom.app.variant",
 					title: "{{title}}"

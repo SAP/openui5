@@ -26,6 +26,8 @@ sap.ui.define([
 
 	// Exclude libraries - we need this to exclude libraries that will not be tested at this point in time
 	var mLibraryConstraints = {
+		"_version": "2.0.0",
+
 		/*
 		 * openui5
 		 */
@@ -50,6 +52,7 @@ sap.ui.define([
 				"sap.ui.core._StashedControl": NOT_A_MODULE
 			}
 		},
+
 		"sap.m": {
 			elements: {
 				"sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover": NOT_A_MODULE, // not a module of its own
@@ -63,16 +66,19 @@ sap.ui.define([
 				"sap.m.SinglePlanningCalendar": NO_DESTROY
 			}
 		},
+
 		"sap.uxap": {
 			elements: {
 				"sap.uxap.BlockBase": NO_CREATE // needs constructor arguments (maybe should be abstract?)
 			}
 		},
+
 		"sap.ui.fl": {
 			elements: {
 				"sap.ui.fl.util.ManagedObjectModel": { exclude: ["data", "name", "object"] } // setters throw when called after initialization
 			}
 		},
+
 		"sap.ui.unified": {
 			elements: {
 				"sap.ui.unified._ColorPickerBox": NOT_A_MODULE,
@@ -80,11 +86,13 @@ sap.ui.define([
 				"sap.ui.unified.internal.CustomYearPicker": NOT_A_MODULE
 			}
 		},
+
 		"sap.ui.layout": {
 			elements: {
 				"sap.ui.layout.form.ResponsiveGridLayoutPanel": NOT_A_MODULE
 			}
 		},
+
 		"sap.ui.mdc": {
 			elements:{
 				"sap.ui.mdc.Chart": { exclude: ["delegate"] }, // delegate cannot be changed once initialized
@@ -103,42 +111,53 @@ sap.ui.define([
 		"sap.chart": {
 			"sap.chart.Chart": { exclude: ["data"] }  // generically logs deprecation warning, no return
 		},
+
 		"sap.me": {
 			elements:{
 				"sap.me.OverlapCalendar": { exclude: ["startDate"] } // setter for setStartDate fails on default value
 			}
 		},
+
 		"sap.suite.ui.microchart": {
 			elements: {
 				"sap.suite.ui.microchart.StackedBarMicroChartBar": { exclude: ["value"] }// setter for value fails on default value
 			}
 		},
+
 		"sap.ui.comp": {
 			elements:{
 				"sap.ui.comp.smartmicrochart.SmartMicroChart": { exclude: ["chartType"] }, // getter for getChartType fails for empty constructor
 				"sap.ui.comp.smartvariants.SmartVariantManagementAdapter": { exclude: ["selectionPresentationVariants"] } // setter for property selectionPresentationVariants fails for default value "false"
 			}
 		},
+
 		"sap.ui.export": {
 			elements: {}
 		},
+
 		"sap.viz": {
 			elements:{
 				"sap.viz.ui5.data.FlattenedDataset": {exclude: ["data"] }, // generically logs deprecation warning, no return
 				"sap.viz.ui5.controls.VizFrame": {exclude: ["legendVisible"] } // getLegendVisible fails for empty ctor
 			}
 		},
+
 		// deprecated or internal libs - fully excluded
 		"sap.uiext.inbox": {
 		},
+
 		"sap.service.visualization": {
 		},
+
 		"sap.makit": {
 		},
+
 		"sap.ui.composite": {
 		},
+
 		"sap.ui.dev": {
 		},
+
 		"sap.ui.dev2": {
 		},
 
@@ -148,48 +167,70 @@ sap.ui.define([
 		"sap.suite.ui.commons": {
 			elements: {}
 		},
+
 		"sap.apf": {
 		},
+
 		"sap.ca.scfld.md": {
 		},
+
 		"sap.ca.ui": {
 		},
+
 		"sap.collaboration": {
 		},
+
 		"sap.gantt": {
 		},
+
 		"sap.gantt.config": {
 		},
+
 		"sap.landvisz": {
 		},
+
 		"sap.ovp": {
 		},
+
 		"sap.portal.ui5": {
 		},
+
 		"sap.rules.ui": {
 		},
+
 		"sap.suite.ui.generic.template": {
 		},
+
 		"sap.ui.vbm": {
 		},
+
 		"sap.ui.vtm": {
 		},
+
 		"sap.ui.vk": {
 		},
+
 		"sap.fiori": {
 		},
+
 		"sap.ushell": {
 		},
+
 		"sap.diagram": {
 		},
+
 		"sap.zen.crosstab": {
 		},
+
 		"sap.zen.dsh": {
 		},
+
 		"sap.zen.commons": {
 		},
+
 		"sap.fe": {
 		},
+
 		"sap.fileviewer": {
 		}
 	};

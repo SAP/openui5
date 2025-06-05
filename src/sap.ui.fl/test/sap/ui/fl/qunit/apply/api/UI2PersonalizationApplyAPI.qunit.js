@@ -24,6 +24,8 @@ sap.ui.define([
 
 	function createAppComponent() {
 		var oDescriptor = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				id: "reference.app",
 				applicationVersion: {

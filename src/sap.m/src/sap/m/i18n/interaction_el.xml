@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
-				<p>Αν τα κελιά επιλεχτούν, το <kbd>Shift</kbd> + κλικ σε διαφορετικό κελί βελτιώνει την επιλογή μέχρι το κελί που έχει επιλεχτεί.</p>
+				<p>Αν επιλεχθούν κελιά, πατώντας το <kbd>Shift</kbd> και κάνοντας κλικ σε διαφορετικό κελί βελτιώνεται η επιλογή μέχρι το επιλεγμένο κελί.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

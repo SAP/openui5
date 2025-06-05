@@ -27,7 +27,8 @@ sap.ui.define([
 
 	/**
 	 * The `aWhatsNewFeaturesContent` array defines the features that will be displayed inside the "What's New" dialog.
-	 * To add a new feature, add a new object to this array. Each feature object should have the following structure:
+	 * The features are displayed in the order they are defined in this array.
+	 * To add a new feature, add a new object to the BEGINNING of this array. Each feature object should have the following structure:
 	 *
 	 *	{
 	 *		featureId: <Unique identifier for the feature, saved in the backend>,

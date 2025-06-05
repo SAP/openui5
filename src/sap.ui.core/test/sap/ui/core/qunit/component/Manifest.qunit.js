@@ -37,6 +37,8 @@ sap.ui.define([
 	QUnit.test("Component Name in manifest", function(assert) {
 		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": this.sComponentName
 			}
@@ -49,6 +51,7 @@ sap.ui.define([
 	QUnit.test("Component Name as config option", function(assert) {
 		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
+			"_version": "2.0.0",
 			"sap.app": {}
 		};
 		this.oManifest = new Manifest(this.oManifestJson, {
@@ -62,10 +65,13 @@ sap.ui.define([
 		future.active = true;
 		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": this.sComponentName,
 				"title": "Foo"
 			},
+
 			"unit.test1": {
 				"boolean": false,
 				"string": "buz",
@@ -74,6 +80,7 @@ sap.ui.define([
 					"value": true
 				}
 			},
+
 			"unit.test2": "invalid"
 		};
 		this.oManifest = new Manifest(this.oManifestJson);
@@ -108,6 +115,7 @@ sap.ui.define([
 	QUnit.test("URL resolving", function(assert) {
 
 		this.oManifest = new Manifest({
+			"_version": "2.0.0",
 			"sap.app": {}
 		}, {
 			componentName: "testdata.foo.bar",
@@ -141,9 +149,12 @@ sap.ui.define([
 
 	QUnit.test("Manifest from Object", function(assert) {
 		this.oManifest = new Manifest({
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.manifestload"
 			},
+
 			"sap.ui5": {
 				"someValue": "someValue456",
 				"dependencies": {
@@ -169,6 +180,8 @@ sap.ui.define([
 
 	QUnit.test("Replace text placeholders in Manifest", function (assert) {
 		this.oManifest = new Manifest({
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.terminologies",
 				"type": "application",
@@ -179,6 +192,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {}
 		}, {
 			url: "test-resources/sap/ui/core/qunit/component/testdata/terminologies/textReplacement/manifest.json"
@@ -194,6 +208,8 @@ sap.ui.define([
 		Localization.setLanguage("en");
 
 		this.oManifest = new Manifest({
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.terminologies",
 				"type": "application",
@@ -220,6 +236,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {}
 		}, {
 			activeTerminologies: ["oil", "retail"],
@@ -236,6 +253,8 @@ sap.ui.define([
 
 	QUnit.test("Resolve command descriptions in manifest", function(assert) {
 		const oManifest = new Manifest({
+			"_version": "2.0.0",
+
 			"sap.app": {
 				"id": "testdata.commands",
 				"type": "application",
@@ -246,6 +265,7 @@ sap.ui.define([
 					"version": "1.0.0"
 				}
 			},
+
 			"sap.ui5": {
 				"commands": {
 					"Save": {

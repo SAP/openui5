@@ -5,9 +5,8 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	var Component = UIComponent.extend("testdata.v1inline.Component", {
 
 		metadata : {
-
+			"_version": "2.0.0",
 			"name": "testdata.v1inline.Component",
-
 			"version": "1.0.0",
 
 			"includes" : [
@@ -122,7 +121,6 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 				},
 				"key4": ["value1", "value2"]
 			}
-
 		}
 
 	});

@@ -28,6 +28,7 @@ builder:
               - sap/ui/core/Core.js
               - sap/ui/core/CustomData.js
               - sap/ui/core/UIComponent.js
+              - sap/ui/core/boot/FieldHelpEndpoint.js
               - sap/ui/core/mvc/XMLView.js
               - sap/ui/integration/
               - sap/f/cards/
@@ -94,6 +95,7 @@ builder:
               - sap/ui/core/Core.js
               - sap/ui/core/CustomData.js
               - sap/ui/core/UIComponent.js
+              - sap/ui/core/boot/FieldHelpEndpoint.js
               - sap/ui/core/mvc/XMLView.js
               - sap/ui/integration/
               - sap/f/cards/

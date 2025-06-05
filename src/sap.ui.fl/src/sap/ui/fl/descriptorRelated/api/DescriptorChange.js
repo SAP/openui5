@@ -5,16 +5,17 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
-	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/Utils"
 ], function(
 	fnBaseMerge,
 	FlexObjectFactory,
 	UIChangeManager,
-	ChangePersistenceFactory,
+	FlexObjectManager,
 	Utils
 ) {
 	"use strict";
+
 	/**
 	 * Descriptor Related
 	 * @namespace
@@ -65,9 +66,10 @@ sap.ui.define([
 	DescriptorChange.prototype.submit = function() {
 		this.store();
 
-		// submit
-		const oChangePersistence = this._getChangePersistence(this._mChangeFile.reference);
-		return oChangePersistence.saveDirtyChanges();
+		return FlexObjectManager.saveFlexObjects({
+			reference: this._mChangeFile.reference,
+			selector: this._mChangeFile.selector
+		});
 	};
 
 	/**
@@ -85,10 +87,6 @@ sap.ui.define([
 		UIChangeManager.addDirtyChanges(sReference, [oChange], oComponent);
 
 		return oChange;
-	};
-
-	DescriptorChange.prototype._getChangePersistence = function(sComponentName) {
-		return ChangePersistenceFactory.getChangePersistenceForComponent(sComponentName);
 	};
 
 	DescriptorChange.prototype._getChangeToSubmit = function() {

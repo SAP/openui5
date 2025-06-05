@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/changeHandler/ChangeAnnotation",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -30,7 +29,6 @@ sap.ui.define([
 	ControlVariantApplyAPI,
 	ChangeAnnotation,
 	ChangeHandlerRegistration,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	sinon
@@ -60,9 +58,12 @@ sap.ui.define([
 				}
 			};
 			this.oManifest = {
+				_version: "2.0.0",
+
 				"sap.app": {
 					type: "application"
 				},
+
 				getEntry(key) {
 					return this[key];
 				}
@@ -83,7 +84,9 @@ sap.ui.define([
 			text: "the passed manifest does not contain a type",
 			config: this.oConfig,
 			manifest: {
+				_version: "2.0.0",
 				"sap.app": {},
+
 				getEntry(key) {
 					return this[key];
 				}
@@ -93,9 +96,12 @@ sap.ui.define([
 			text: "the passed manifest is not of the type 'application'",
 			config: this.oConfig,
 			manifest: {
+				_version: "2.0.0",
+
 				"sap.app": {
 					type: "notAnApplication"
 				},
+
 				getEntry(key) {
 					return this[key];
 				}
@@ -330,7 +336,6 @@ sap.ui.define([
 		afterEach() {
 			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 			this.oAppComponent.destroy();
-			FlexControllerFactory._instanceCache = {};
 			sandbox.restore();
 		}
 	}, function() {

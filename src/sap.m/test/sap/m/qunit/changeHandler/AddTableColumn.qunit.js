@@ -79,6 +79,8 @@ sap.ui.define([
 				return UIComponent.extend("test.Component", {
 					metadata: {
 						manifest : {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "test",
 								"type": "application"

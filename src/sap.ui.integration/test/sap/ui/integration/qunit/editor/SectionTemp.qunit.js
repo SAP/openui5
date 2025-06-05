@@ -106,10 +106,13 @@ sap.ui.define([
 		]
 	};
 	var oManifestBasic = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"designtime": "designtime/linkedDropdownList",
 			"type": "List",
@@ -144,10 +147,13 @@ sap.ui.define([
 		}
 	};
 	var oManifestForExtension = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"extension": "DataExtensionImpl",
 			"designtime": "designtime/extension",
@@ -190,10 +196,13 @@ sap.ui.define([
 		}
 	};
 	var oManifestForEditableDependence = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"designtime": "designtime/filterBackendWithEditableDependence",
 			"type": "List",
@@ -225,10 +234,13 @@ sap.ui.define([
 		}
 	};
 	var oManifestForVisibleDependence = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"designtime": "designtime/filterBackendWithVisibleDependence",
 			"type": "List",
@@ -319,10 +331,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"type": "List",
 						"configuration": {
@@ -364,7 +379,11 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("Empty Host Context", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oEditor.setJson({ host: "host", manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					var oModel = this.oEditor.getModel("context");
@@ -378,7 +397,11 @@ sap.ui.define([
 
 		QUnit.test("Context Host checks to access context data async", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ host: "contexthost", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oEditor.setJson({ host: "contexthost", manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					var oModel = this.oEditor.getModel("context");
@@ -397,7 +420,11 @@ sap.ui.define([
 
 		QUnit.test("No configuration section (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/noconfig", "type": "List", "header": {} }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -409,7 +436,11 @@ sap.ui.define([
 
 		QUnit.test("Empty configuration section (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -421,7 +452,11 @@ sap.ui.define([
 
 		QUnit.test("Empty parameters section (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -433,7 +468,11 @@ sap.ui.define([
 
 		QUnit.test("Empty destination section (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -445,7 +484,11 @@ sap.ui.define([
 
 		QUnit.test("Empty destination and parameters section (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -460,10 +503,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1string",
 						"type": "List",
@@ -494,10 +540,13 @@ sap.ui.define([
 		QUnit.test("1 hint below a group (as json)", function (assert) {
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.sample",
 					"i18n": "../i18n/i18n.properties"
 				},
+
 				"temp": {
 					"designtime": "designtime/1hintbelowgroup",
 					"type": "List",
@@ -525,10 +574,13 @@ sap.ui.define([
 		QUnit.test("1 hint below an item (as json)", function (assert) {
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					"id": "test.sample",
 					"i18n": "../i18n/i18n.properties"
 				},
+
 				"temp": {
 					"designtime": "designtime/1hintbelowgroup",
 					"type": "List",
@@ -555,7 +607,11 @@ sap.ui.define([
 
 		QUnit.test("1 string parameter with values and no label (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -586,10 +642,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1stringWithRequestValues",
 						"type": "List",
@@ -635,10 +694,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1stringarray",
 						"type": "List",
@@ -675,10 +737,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1stringarraynovalues",
 						"type": "List",
@@ -719,10 +784,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1stringArrayWithRequestValues",
 						"type": "List",
@@ -759,10 +827,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1stringlabel",
 						"type": "List",
@@ -792,7 +863,11 @@ sap.ui.define([
 
 		QUnit.test("1 icon parameter (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -813,7 +888,11 @@ sap.ui.define([
 
 		QUnit.test("1 icon parameter with Not Allow File (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -835,7 +914,11 @@ sap.ui.define([
 
 		QUnit.test("1 icon parameter with Not Allow None (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -860,10 +943,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1string",
 						"type": "List",
@@ -896,10 +982,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1string",
 						"type": "List",
@@ -932,10 +1021,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/1stringtrans",
 						"type": "List",
@@ -965,7 +1057,11 @@ sap.ui.define([
 
 		QUnit.test("1 integer parameter and no label no value (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -982,7 +1078,11 @@ sap.ui.define([
 
 		QUnit.test("1 integer parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -999,7 +1099,11 @@ sap.ui.define([
 
 		QUnit.test("1 number parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1016,7 +1120,11 @@ sap.ui.define([
 
 		QUnit.test("1 date parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(async function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1041,7 +1149,11 @@ sap.ui.define([
 
 		QUnit.test("1 datetime parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(async function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1066,7 +1178,11 @@ sap.ui.define([
 
 		QUnit.test("1 boolean parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1083,7 +1199,11 @@ sap.ui.define([
 
 		QUnit.test("1 destination (as json)", function (assert) {
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oEditor.setJson({ host: "host", manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1102,7 +1222,11 @@ sap.ui.define([
 		QUnit.test("Start the editor in admin mode", function (assert) {
 			this.oEditor.setMode("admin");
 			this.oEditor.setSection("temp");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1126,7 +1250,11 @@ sap.ui.define([
 		QUnit.test("Start the editor in content mode", function (assert) {
 			this.oEditor.setSection("temp");
 			this.oEditor.setMode("content");
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1149,7 +1277,11 @@ sap.ui.define([
 
 			this.oEditor.setLanguage("fr");
 
-			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
+			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } }
+			} });
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
@@ -1184,10 +1316,13 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
+					"_version": "2.0.0",
+
 					"sap.app": {
 						"id": "test.sample",
 						"i18n": "../i18n/i18n.properties"
 					},
+
 					"temp": {
 						"designtime": "designtime/stringsTransWithNotEditableOrNotVisible",
 						"type": "List",
@@ -1230,7 +1365,11 @@ sap.ui.define([
 
 		QUnit.test("Check Description", function (assert) {
 			this.oEditor.setSection("temp");
-			var oJson = { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } };
+			var oJson = { baseUrl: sBaseUrl, manifest: {
+				"_version": "2.0.0",
+				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
+				"temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } }
+			} };
 			this.oEditor.setJson(oJson);
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isFieldReady(this.oEditor).then(function () {

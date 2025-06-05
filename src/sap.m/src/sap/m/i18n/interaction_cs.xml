@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>Jsou-li buňky vybrány, <kbd>Shift</kbd> + kliknutí na jinou buňku rozšíří výběr až po buňku, na niž se klikne.</p>
+				<p>Jsou-li buňky vybrány, stisknutí <kbd>Shift</kbd> a kliknutí na jinou buňku rozšíří výběr až po buňku, na niž se klikne.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

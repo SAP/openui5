@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Jika pemilihan sel didayakan</span>:</p>
-				<p>Jika sel dipilih, <kbd>Shift</kbd> + klik pada sel berbeza akan meningkatkan pemilihan sehingga sel yang diklik.</p>
+				<p>Jika sel dipilih, tindakan menekan <kbd>Shift</kbd> dan mengklik sel berbeza akan meningkatkan pemilihan sehingga sel yang diklik.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

@@ -11,6 +11,8 @@ sap.ui.define([
 
 	function getBaseJson(sNamespace) {
 		var oJson = {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				id: "sap-app-id"
 			}

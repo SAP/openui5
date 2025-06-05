@@ -48,9 +48,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' with already given setting.enhanceWith array with texts properties", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						random: {
@@ -79,9 +82,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with already given setting.enhanceWith array with bundleUrl in change content", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						random: {
@@ -112,9 +118,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a bundleName and bundleUrl", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						i18n: {
@@ -140,9 +149,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a wrong model type", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						i18n: {
@@ -158,9 +170,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a wrong model name", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						test: {
@@ -176,9 +191,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with invalid absolute path", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						test: {
@@ -197,9 +215,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' without settings.enhanceWith property", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						random: {
@@ -220,9 +241,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with two terminologies objects containing bundleName or bundleUrl", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						random: {
@@ -274,9 +298,12 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with terminologies containing bundleName and bundleUrl", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "consumer.base.app"
 				},
+
 				"sap.ui5": {
 					models: {
 						random: {

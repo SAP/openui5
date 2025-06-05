@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			"interfaces": ["sap.ui.core.IAsyncContentCreation"],
 
 			"manifest": {
-
+				"_version": "2.0.0",
 				"name": "testdata.v2inline.Component",
 
 				"sap.app": {
@@ -133,9 +133,10 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 				},
 
-				"foo": {}, // getEntry is not allowed for keys without a dot
-				"foo.bar": "string as entry value is not valid!"
+				// getEntry is not allowed for keys without a dot
+				"foo": {},
 
+				"foo.bar": "string as entry value is not valid!"
 			},
 
 			"custom.entry": {

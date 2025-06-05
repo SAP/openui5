@@ -140,19 +140,24 @@ sap.ui.define([
 
 			sandbox.stub(this.oComponent, "getManifest").returns(
 				{
+					"_version": "2.0.0",
+
 					"sap.app": {
 						id: "fixture.application"
 					},
+
 					"sap.ui5": {
 						"extends": {
 							extensions: {
 								"sap.ui.viewExtensions": {
 									"sap.suite.ui.generic.template.ObjectPage.view.Details": {
 										"ReplaceFacet|SEPMRA_C_PD_Product|ProductReviewFacetID": {
+											_version: "2.0.0",
 											className: "sap.ui.core.mvc.View",
 											viewName: "fixture.application.ext.view.ProductDetailReview",
 											type: "XML",
 											id: "reviewView",
+
 											"sap.ui.generic.app": {
 												title: "Reviews"
 											}
@@ -162,6 +167,7 @@ sap.ui.define([
 							}
 						}
 					},
+
 					"sap.ui.generic.app": {}
 				}
 			);
@@ -211,6 +217,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("V2", function(assert) {
 			mManifest = {
+				"_version": "2.0.0",
 				"sap.ui.generic.app": {}
 			};
 
@@ -223,6 +230,8 @@ sap.ui.define([
 
 		QUnit.test("V4", function(assert) {
 			mManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					dependencies: {
 						libs: {
@@ -243,6 +252,7 @@ sap.ui.define([
 
 		QUnit.test("OVP", function(assert) {
 			mManifest = {
+				"_version": "2.0.0",
 				"sap.ovp": {}
 			};
 

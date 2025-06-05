@@ -83,6 +83,8 @@ sap.ui.define([
 						"sap.ui.core.IAsyncContentCreation"
 					],
 					manifest : {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							"id": "",
 							"type": "application"
@@ -264,6 +266,8 @@ sap.ui.define([
 						"sap.ui.core.IAsyncContentCreation"
 					],
 					manifest : {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							"id": "test",
 							"type": "application"

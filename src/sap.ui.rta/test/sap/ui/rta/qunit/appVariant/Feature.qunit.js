@@ -142,6 +142,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when isManifestSupported() is called,", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "BaseAppId"
 				}
@@ -158,6 +160,8 @@ sap.ui.define([
 
 		QUnit.test("when isManifestSupported() is called and failed", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "BaseAppId"
 				}
@@ -176,6 +180,8 @@ sap.ui.define([
 
 		QUnit.test("when getAppVariantManifest() is called and promise resolved with an app variant manifest", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "customer.app.const.id"
 				}
@@ -216,6 +222,8 @@ sap.ui.define([
 
 		QUnit.test("when onGetOverview() is called,", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "id1"
 				}
@@ -251,6 +259,8 @@ sap.ui.define([
 
 		QUnit.test("when isSaveAsAvailable() is called and FeaturesAPI says no", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "BaseAppId"
 				}
@@ -274,6 +284,8 @@ sap.ui.define([
 
 		QUnit.test("when isSaveAsAvailable() is called for FLP apps", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "BaseAppId"
 				}
@@ -298,15 +310,19 @@ sap.ui.define([
 
 		QUnit.test("when isSaveAsAvailable() is called for an FLP app which has no crossNavigation in 'sap.app' property of a manifest", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					componentName: "BaseAppId"
 				},
+
 				"sap.app": {
 					title: "BaseAppTitle",
 					subTitle: "BaseAppSubtitle",
 					description: "BaseAppDescription",
 					id: "BaseAppId"
 				},
+
 				"sap.ui": {
 					icons: {
 						icon: "sap-icon://history"
@@ -331,9 +347,12 @@ sap.ui.define([
 
 		QUnit.test("when isSaveAsAvailable() is called for FLP app which has no 'sap.app' property of a manifest", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					componentName: "BaseAppId"
 				},
+
 				"sap.ui": {
 					icons: {
 						icon: "sap-icon://history"
@@ -355,6 +374,8 @@ sap.ui.define([
 
 		QUnit.test("when isSaveAsAvailable() is called and it is an flp app, not a standalone app and no cross navigation property", function(assert) {
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "BaseAppId"
 				}
@@ -392,12 +413,15 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when onSaveAs() is bound with null and is triggered from RTA toolbar", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
 				},
+
 				"sap.ui5": {
 					componentName: "TestIdBaseApp"
 				}
@@ -414,6 +438,8 @@ sap.ui.define([
 			simulateSystemConfig(true);
 
 			const oMockedManifestData = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "id1"
 				}
@@ -470,7 +496,10 @@ sap.ui.define([
 					inProgress: true
 				}
 			};
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "testId"}
+			});
 			sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 			const oShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
 			const oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
@@ -507,7 +536,10 @@ sap.ui.define([
 					inProgress: true
 				}
 			};
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "testId"}
+			});
 			const oShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
 			const oShowSuccessMessageStub = sandbox.stub(AppVariantManager.prototype, "showSuccessMessage").resolves();
 			const oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves(oPublishingResponse);
@@ -657,6 +689,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when onSaveAs() method is called and saving an app variant failed", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -676,7 +710,10 @@ sap.ui.define([
 
 			simulateSystemConfig(true);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			const oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
 			const oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
@@ -703,6 +740,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA on Premise from Overview dialog", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -722,7 +761,10 @@ sap.ui.define([
 
 			simulateSystemConfig(false);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			const oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
@@ -754,6 +796,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog and no catalogIds in iam response", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -773,7 +817,10 @@ sap.ui.define([
 
 			simulateSystemConfig(true);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			const oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
 
@@ -810,6 +857,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -829,7 +878,10 @@ sap.ui.define([
 
 			simulateSystemConfig(true);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			const oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
@@ -865,6 +917,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog and customer closes Overview during Polling no catalogIds in iam response", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -884,7 +938,10 @@ sap.ui.define([
 
 			simulateSystemConfig(true);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			const oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
 
@@ -919,6 +976,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog and customer closes Overview during Polling", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -938,7 +997,10 @@ sap.ui.define([
 
 			simulateSystemConfig(true);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			const oCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
@@ -972,12 +1034,15 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA on Premise", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
 				},
+
 				"sap.ui5": {
 					componentName: "TestIdBaseApp"
 				}
@@ -992,7 +1057,10 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			simulateSystemConfig(false);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").resolves();
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
@@ -1032,6 +1100,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA Cloud and no catalogIds in iam response", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -1049,7 +1119,10 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			simulateSystemConfig(true);
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
 
@@ -1089,6 +1162,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA Cloud", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -1106,7 +1181,10 @@ sap.ui.define([
 				inbounds: {}
 			};
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			simulateSystemConfig(true);
 			sandbox.stub(AppVariantUtils, "showRelevantDialog").returns(Promise.resolve());
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "IAM App Id: IAMId").returns();
@@ -1144,6 +1222,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA Cloud with an backend status error: 500 during app variant creation", function(assert) {
 			const oSelectedAppVariant = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					id: "TestId",
 					crossNavigation: {
@@ -1169,7 +1249,10 @@ sap.ui.define([
 
 			simulateSystemConfig(true);
 
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "TestId"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({
+				"_version": "2.0.0",
+				"sap.app": {id: "TestId"}
+			});
 			sandbox.stub(RtaAppVariantFeature, "_determineSelector").returns(this.oAppComponent);
 			const oProcessSaveAsDialog = sandbox.stub(AppVariantManager.prototype, "processSaveAsDialog").resolves(oAppVariantData);
 

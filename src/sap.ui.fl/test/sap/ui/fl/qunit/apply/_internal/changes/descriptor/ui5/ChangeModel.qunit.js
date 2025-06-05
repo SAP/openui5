@@ -12,6 +12,8 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest1 = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {
@@ -33,6 +35,8 @@ sap.ui.define([
 			};
 
 			this.oManifest2 = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {
@@ -50,6 +54,8 @@ sap.ui.define([
 			};
 
 			this.oManifestWithThreeComplexPath = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {
@@ -332,6 +338,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with no models exists", function(assert) {
 			const oManifestNoModelExist = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: { }
 				}
@@ -409,6 +417,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with wrong manifest", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
 				"sap.ui5": {}
 			};
 			assert.throws(function() {
@@ -479,6 +488,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with UPDATE and no value in manifest", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {
@@ -515,6 +526,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with single complex propertyPath", function(assert) {
 			const oManifestComplexPropertyPath = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {
@@ -556,6 +569,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with two complex propertyPaths", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {
@@ -751,6 +766,8 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' trying to modify a model with type sap.ui.model.resource.ResourceModel", function(assert) {
 			const oManifest = {
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					models: {
 						model1: {

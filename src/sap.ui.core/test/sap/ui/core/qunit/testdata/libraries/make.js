@@ -75,6 +75,8 @@ function makeLib(lib, dependencies) {
 
 function makeManifest(lib, dependencies) {
 	const manifest = {
+		"_version": "2.0.0",
+
 		"sap.ui5": {
 			"dependencies" : {
 				"libs": {

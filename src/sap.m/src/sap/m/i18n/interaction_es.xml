@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
-				<p>Si hay celdas seleccionadas, al presionar <kbd>Shift</kbd> + clic en otra celda se amplía la selección hasta la celda en la que se hizo clic.</p>
+				<p>Si se seleccionan las celdas, pulsar <kbd>Shift</kbd> y hacer clic en una celda diferente amplía la selección hasta la celda en la que se ha hecho clic.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

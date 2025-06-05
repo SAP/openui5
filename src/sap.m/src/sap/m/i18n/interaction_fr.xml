@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;</span>:</p>
-				<p>Si des cellules sont sélectionnées, <kbd>Shift</kbd> + clic sur une autre cellule étend la sélection jusqu'à la cellule sur laquelle vous avez cliqué.</p>
+				<p>Si des cellules sont sélectionnées, l'activation de la touche <kbd>Shift</kbd> et un clic sur une autre cellule étend la sélection jusqu'à la cellule sur laquelle vous avez cliqué.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

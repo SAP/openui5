@@ -26,8 +26,6 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/test/utils/nextUIUpdate",
@@ -58,8 +56,6 @@ sap.ui.define([
 	FlexObjectManager,
 	ChangesWriteAPI,
 	ControlPersonalizationWriteAPI,
-	ChangePersistenceFactory,
-	FlexControllerFactory,
 	Layer,
 	Utils,
 	nextUIUpdate,
@@ -75,6 +71,8 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
@@ -111,13 +109,11 @@ sap.ui.define([
 			}));
 
 			return oViewPromise.then(function() {
-				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
 				this.oVariantModel = new VariantModel({
 					variantManagement: {
 						variants: []
 					}
 				}, {
-					flexController: this.oFlexController,
 					appComponent: this.oComp
 				});
 				return this.oVariantModel.initialize();
@@ -178,7 +174,6 @@ sap.ui.define([
 					}
 				};
 
-				this.oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oComp);
 				this.fnLogErrorStub = sandbox.stub(Log, "error");
 				this.fnAddChangesSpy = sandbox.spy(UIChangeManager, "addDirtyChanges");
 				this.fnApplyChangeSpy = sandbox.spy(ChangesWriteAPI, "apply");
@@ -198,8 +193,6 @@ sap.ui.define([
 		afterEach() {
 			sandbox.restore();
 			ControlPersonalizationWriteAPI.detachAllChangeCreationListeners();
-			ChangePersistenceFactory._instanceCache = {};
-			FlexControllerFactory._instanceCache = {};
 		},
 		after() {
 			this.oComp.destroy();
@@ -481,33 +474,33 @@ sap.ui.define([
 		QUnit.test("When save() is called with an array of changes and a valid component", function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(sChangesSaved);
 
 			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
 
 			.then(function(vResponse) {
 				assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
-				assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
+				assert.strictEqual(oSaveStub.lastCall.args[0].dirtyChanges, aSuccessfulChanges, "the two changes were passed to the FlexObjectManager");
 			});
 		});
 
 		QUnit.test("When save() is called but flex state is not initialized", function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(sChangesSaved);
 			sandbox.stub(FlexState, "isInitialized").returns(false);
 
 			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
 
 			.then(function() {
-				assert.notOk(oSaveStub.calledOnce, "then FlexController.saveSequenceOfDirtyChanges is not called");
+				assert.notOk(oSaveStub.calledOnce, "then saveFlexObjectsWithoutVersioning is not called");
 			});
 		});
 
 		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", async function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(sChangesSaved);
 			var aVMControl = new VariantManagement({
 				modelName: ControlVariantApplyAPI.getVariantModelName()
 			}).placeAt(StaticArea.getDomRef());
@@ -519,7 +512,7 @@ sap.ui.define([
 			);
 
 			assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
-			assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
+			assert.strictEqual(oSaveStub.lastCall.args[0].dirtyChanges, aSuccessfulChanges, "the two changes were passed to the FlexObjectManager");
 
 			aVMControl.destroy();
 		});
@@ -598,6 +591,8 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
+						"_version": "2.0.0",
+
 						"sap.app": {
 							applicationVersion: {
 								version: "1.2.3"
@@ -647,13 +642,11 @@ sap.ui.define([
 			}));
 
 			oViewPromise.then(function() {
-				this.oFlexController = FlexControllerFactory.createForControl(this.oComp);
 				this.oVariantModel = new VariantModel({
 					variantManagement: {
 						variants: []
 					}
 				}, {
-					flexController: this.oFlexController,
 					appComponent: this.oComp
 				});
 				return this.oVariantModel.initialize();
@@ -714,8 +707,6 @@ sap.ui.define([
 		},
 		after() {
 			this.oComp.destroy();
-			ChangePersistenceFactory._instanceCache = {};
-			FlexControllerFactory._instanceCache = {};
 			this.oCompContainer.destroy();
 		}
 	}, function() {

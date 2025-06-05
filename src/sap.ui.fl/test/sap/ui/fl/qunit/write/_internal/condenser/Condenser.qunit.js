@@ -109,12 +109,6 @@ sap.ui.define([
 
 	function revertMultipleChanges(aChanges) {
 		const mPropertyBag = {
-			flexController: {
-				_oChangePersistence: {
-					_deleteChangeInMap() {
-					}
-				}
-			},
 			modifier: JsControlTreeModifier,
 			appComponent: oAppComponent,
 			reference: sReference

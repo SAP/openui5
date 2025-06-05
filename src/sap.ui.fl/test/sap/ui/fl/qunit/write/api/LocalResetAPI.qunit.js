@@ -14,8 +14,6 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/LocalResetAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/ChangePersistence",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -32,8 +30,6 @@ sap.ui.define([
 	ChangesWriteAPI,
 	LocalResetAPI,
 	PersistenceWriteAPI,
-	ChangePersistence,
-	ChangePersistenceFactory,
 	Layer,
 	sinon
 ) {
@@ -66,13 +62,11 @@ sap.ui.define([
 			this.oComponent = {
 				name: "MyComponent"
 			};
-			this.oChangePersistence = new ChangePersistence(this.oComponent);
 			var aChanges = [
 				createChange("foo", "fooElement"),
 				createChange("foo2", "fooElement")
 			];
 			aChanges[0].setState(States.LifecycleState.PERSISTED);
-			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").withArgs(this.oComponent).returns(this.oComponent.name);
 			sandbox.stub(UIChangesState, "getAllUIChanges").returns(aChanges);
 		},
@@ -232,7 +226,6 @@ sap.ui.define([
 			var oComponent = {
 				name: "MyComponent"
 			};
-			this.oChangePersistence = new ChangePersistence(oComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").withArgs(oComponent).returns(oComponent.name);
 		},
 		afterEach() {

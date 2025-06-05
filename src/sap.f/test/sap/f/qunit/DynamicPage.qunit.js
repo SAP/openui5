@@ -138,9 +138,49 @@ function(
 		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
 		await nextUIUpdate();
 
-		assert.strictEqual(this.oDynamicPage.$("headerWrapper").find("section").attr("aria-label"), "Header content label", "Custom header content label is set correctly.");
+		assert.strictEqual(this.oDynamicPage.$("headerWrapper").find("section").attr("aria-label"), "Header content label",
+			"Custom header content label is set correctly.");
+	});
 
+	QUnit.test("headerContentLabel of DynamicPageLandMarkInfo is preserved upon snapping/expanding the header", async function (assert) {
+		var sCustomHeaderContentLabel = "Header content label",
+			oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+				headerContentLabel: sCustomHeaderContentLabel
+			});
 
+		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oDynamicPage.getHeader().$().attr("aria-label"),
+			sCustomHeaderContentLabel, "Custom header content label is set correctly initially.");
+
+		// Act - Snap the header
+		this.oDynamicPage._snapHeader();
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage.getHeader().$().attr("aria-label"),
+			DynamicPageHeader.ARIA.LABEL_COLLAPSED, "Collapsed header label is set correctly.");
+
+		// Act - Expand the header
+		this.oDynamicPage._expandHeader();
+
+		// Assert
+		assert.strictEqual(this.oDynamicPage.getHeader().$().attr("aria-label"),
+			sCustomHeaderContentLabel, "Custom header content label is preserved after expanding the header.");
+	});
+
+	QUnit.test("headerContentLabel of DynamicPageLandMarkInfo is not applied if DynamicPage is rendered initially with snapped header", async function (assert) {
+		var sCustomHeaderContentLabel = "Header content label",
+			oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
+			headerContentLabel: sCustomHeaderContentLabel
+		});
+
+		this.oDynamicPage.setLandmarkInfo(oLandmarkInfo);
+		this.oDynamicPage.setHeaderExpanded(false);
+		await nextUIUpdate();
+
+		assert.strictEqual(this.oDynamicPage.getHeader().$().attr("aria-label"),
+			DynamicPageHeader.ARIA.LABEL_COLLAPSED, "Collapsed header label is set correctly.");
 	});
 
 	QUnit.test("DynamicPage - backgroundDesign property", function(assert) {
@@ -3303,6 +3343,8 @@ function(
 				Comp = UIComponent.extend("test", {
 					metadata: {
 						manifest : {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "test",
 								"type": "application"
@@ -3401,6 +3443,8 @@ function(
 				Comp = UIComponent.extend("test", {
 					metadata: {
 						manifest : {
+							"_version": "2.0.0",
+
 							"sap.app": {
 								"id": "test",
 								"type": "application"

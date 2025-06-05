@@ -9,6 +9,8 @@ sap.ui.define([
 
 	// Configs for manifest and appdescriptor
 	var oManifest = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test3",
 			"type": "application",
@@ -16,6 +18,7 @@ sap.ui.define([
 				"version": "1.0.0"
 			}
 		},
+
 		"sap.ui5": {
 			"resources": {
 				"css": [
@@ -28,6 +31,8 @@ sap.ui.define([
 	};
 
 	var oManifestAppdescr = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test3-variant",
 			"type": "application",
@@ -35,6 +40,7 @@ sap.ui.define([
 				"version": "1.0.0"
 			}
 		},
+
 		"sap.ui5": {
 			"componentName": "test3",
 			"resources": {
@@ -56,6 +62,8 @@ sap.ui.define([
 	};
 
 	var oManifestAppdescr1 = merge({}, oManifestAppdescr, {
+		"_version": "2.0.0",
+
 		"sap.ui5": {
 			"componentName": "test3",
 			"resources": {

@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
-				<p>אם נבחרים תאים, <kbd>Shift</kbd> + לחיצה על תא אחר מרחיבה את הבחירה עד לתא שנלחץ.</p>
+				<p>אם נבחרים תאים, לחיצה על <kbd>Shift</kbd> ולחיצה על תא אחר מרחיבה את הבחירה עד לתא שנלחץ.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

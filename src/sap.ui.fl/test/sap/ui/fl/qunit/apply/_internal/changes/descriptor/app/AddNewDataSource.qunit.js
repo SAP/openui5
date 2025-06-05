@@ -15,6 +15,8 @@ function(
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifestDataSourcesEmpty = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					dataSources: {
 					}
@@ -22,6 +24,8 @@ function(
 			};
 
 			this.oManifestWithExistingDataSources = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					dataSources: {
 						"customer.equipment": {
@@ -46,6 +50,8 @@ function(
 			};
 
 			this.oManifestWithExistingDataSourcesAndAnnotations = {
+				"_version": "2.0.0",
+
 				"sap.app": {
 					dataSources: {
 						"customer.equipment": {

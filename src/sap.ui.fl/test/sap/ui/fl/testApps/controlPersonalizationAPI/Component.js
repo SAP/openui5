@@ -2,14 +2,12 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/FlexControllerFactory"
+	"sap/ui/fl/write/api/PersistenceWriteAPI"
 ], function(
 	UIComponent,
 	FlexObjectManager,
 	ControlPersonalizationWriteAPI,
-	ChangePersistenceFactory,
-	FlexControllerFactory
+	PersistenceWriteAPI
 ) {
 	"use strict";
 
@@ -30,9 +28,6 @@ sap.ui.define([
 			// app specific setup
 			this._createFakeLrep();
 
-			this.oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this);
-			this.oFlexController = FlexControllerFactory.createForControl(this);
-
 			this.updateChangesModel();
 		},
 
@@ -44,8 +39,8 @@ sap.ui.define([
 			this.getModel().setProperty("/changes", aFlexObjects);
 		},
 
-		createChangesAndSave(mChangeData, oControl) {
-			ControlPersonalizationWriteAPI.add(
+		async createChangesAndSave(mChangeData, oControl) {
+			await ControlPersonalizationWriteAPI.add(
 				{
 					changes: [
 						{
@@ -54,9 +49,9 @@ sap.ui.define([
 						}
 					]
 				}
-			)
-			.then(this.oFlexController.saveAll.bind(this.oFlexController, false))
-			.then(this.updateChangesModel.bind(this));
+			);
+			await PersistenceWriteAPI.save({ selector: this });
+			await this.updateChangesModel.bind(this);
 		},
 
 		resetPersonalization(aControls) {

@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">ถ้าเปิดใช้งานการเลือกเซลล์</span>:</p>
-				<p>ถ้ามีการเลือกเซลล์ <kbd>Shift</kbd> + คลิกที่เซลล์อื่นจะเพิ่มเติมการเลือกจนถึงเซลล์ที่คลิก</p>
+				<p>ถ้ามีการเลือกเซลล์ การกด <kbd>Shift</kbd> และคลิกที่เซลล์อื่นจะเพิ่มเติมการเลือกจนถึงเซลล์ที่คลิก</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

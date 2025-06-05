@@ -2836,7 +2836,8 @@ sap.ui.define([
 	 *   but take care to replace dashes with underscores.
 	 * @throws {Error}
 	 *   If the given group ID is not a valid group ID or has
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct} or if multiple requests that apply the
+	 *   preference "handling=strict" already exist in the same change set of the batch request
 	 *
 	 * @private
 	 * @since 1.134.0

@@ -134,7 +134,6 @@ sap.ui.define([
 					]
 				}
 			}, {
-				flexController: {},
 				appComponent: {
 					getId: () => {}
 				}

@@ -84,12 +84,15 @@ sap.ui.define([
 	const SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
 
 	const DEFAULT_MANIFEST = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			id: "applicationId",
 			applicationVersion: {
 				version: "1.2.3"
 			}
 		},
+
 		"sap.ui5": {
 			dependencies: {
 				minUI5Version: "2.6.4",

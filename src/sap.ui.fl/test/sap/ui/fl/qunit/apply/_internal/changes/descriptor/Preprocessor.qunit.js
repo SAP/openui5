@@ -160,7 +160,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'preprocessManifest' with manifest of type 'component'", function(assert) {
-			const oManifest = { "sap.app": { type: "component" } };
+			const oManifest = {
+				"_version": "2.0.0",
+				"sap.app": { type: "component" }
+			};
 			return Preprocessor.preprocessManifest(oManifest, this.oConfig).then(function(oNewManifest) {
 				assert.equal(this.fnFlexStateSpy.callCount, 0, "FlexState was initialized once");
 				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 0, "FlexState.getAppDescriptorChanges is not called");
@@ -191,7 +194,11 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling 'preprocessManifest' with one change and load changes-bundle only after second FlexState.initialize call", function(assert) {
 			const sReference = "applier.test.reference";
-			const oManifest = { "sap.app": { id: sReference, type: "application" }, "sap.ui5": { appVariantId: sReference } };
+			const oManifest = {
+				"_version": "2.0.0",
+				"sap.app": { id: sReference, type: "application" },
+				"sap.ui5": { appVariantId: sReference }
+			};
 
 			const oStorageLoadFlexData = sandbox.spy(Storage, "loadFlexData");
 			const oStorageCompleteFlexData = sandbox.spy(Storage, "completeFlexData");

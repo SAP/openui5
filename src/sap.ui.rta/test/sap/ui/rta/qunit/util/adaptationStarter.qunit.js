@@ -206,6 +206,8 @@ sap.ui.define([
 
 		QUnit.test("with flexEnabled=false and fiori tools parameter=true", function(assert) {
 			sandbox.stub(oAppComponent, "getManifest").returns({
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					flexEnabled: false
 				}
@@ -272,6 +274,8 @@ sap.ui.define([
 		QUnit.test("When the flexEnabled flag is set to false", function(assert) {
 			setIsKeyUser(true);
 			sandbox.stub(oAppComponent, "getManifest").returns({
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					flexEnabled: false
 				}
@@ -302,6 +306,8 @@ sap.ui.define([
 			setIsKeyUser(true);
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
 			sandbox.stub(oAppComponent, "getManifest").returns({
+				"_version": "2.0.0",
+
 				"sap.ui5": {
 					flexEnabled: false
 				}
@@ -385,6 +391,8 @@ sap.ui.define([
 			const sDummyComponent = "DummyComponent";
 			const sExpectedError = `This application emulates app variants by using the navigation parameter sap-app-id, which is no longer supported. Please open a ticket for the application component ${sDummyComponent}.`;
 			sandbox.stub(oAppComponent, "getManifest").returns({
+				"_version": "2.0.0",
+
 				"sap.app": {
 					ach: sDummyComponent
 				}

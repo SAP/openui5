@@ -96,10 +96,13 @@ sap.ui.define([
 		]
 	};
 	var oManifestForFilterBackendInComboBox = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"designtime": "designtime/filterBackendForString",
 			"type": "List",
@@ -131,10 +134,13 @@ sap.ui.define([
 		}
 	};
 	var oManifestForFilterBackendInMultiComboBox = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"designtime": "designtime/filterBackendForStringArrayInMultiComboBox",
 			"type": "List",
@@ -166,10 +172,13 @@ sap.ui.define([
 		}
 	};
 	var oManifestForFilterBackendInMultiInput = {
+		"_version": "2.0.0",
+
 		"sap.app": {
 			"id": "test.sample",
 			"i18n": "../i18n/i18n.properties"
 		},
+
 		"temp": {
 			"designtime": "designtime/filterBackendForStringArrayInMultiInput",
 			"type": "List",

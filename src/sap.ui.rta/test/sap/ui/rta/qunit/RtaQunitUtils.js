@@ -226,6 +226,8 @@ sap.ui.define([
 	RtaQunitUtils.createAndStubAppComponent = function(sandbox, sId, oManifest, oContent, oAsyncHints) {
 		sId ||= "someName";
 		oManifest ||= {
+			"_version": "2.0.0",
+
 			"sap.app": {
 				id: sId,
 				type: "application"

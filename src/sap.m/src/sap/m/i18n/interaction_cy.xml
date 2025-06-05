@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>Os caiff celloedd eu dewis, bydd <kbd>Shift</kbd> + chlicio ar gell wahanol yn ymestyn y dewis hyd at y gell y cliciwyd arni.</p>
+				<p>Os caiff celloedd eu dewis, bydd pwyso <kbd>Shift</kbd> a chlicio ar gell wahanol yn ymestyn y dewis hyd at y gell y cliciwyd arni.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

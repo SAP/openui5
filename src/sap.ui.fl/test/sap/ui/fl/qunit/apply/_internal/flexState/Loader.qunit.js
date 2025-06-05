@@ -176,10 +176,16 @@ sap.ui.define([
 
 		[{
 			details: "with a manifest object",
-			manifest: new Manifest({"sap.ovp": {}})
+			manifest: new Manifest({
+				"_version": "2.0.0",
+				"sap.ovp": {}
+			})
 		}, {
 			details: "with a manifest JSON",
-			manifest: {"sap.ovp": {}}
+			manifest: {
+				"_version": "2.0.0",
+				"sap.ovp": {}
+			}
 		}].forEach(function(oTestData) {
 			QUnit.test(`when loadFlexData is called with a ovp app and ${oTestData.details}`, function(assert) {
 				var mPropertyBag = {

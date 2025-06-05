@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
-				<p>Om celler har markerats utökar <kbd>Shift</kbd> + klick på en annan cell urvalet till och med den klickade cellen.</p>
+				<p>Om celler markerats och du trycker på <kbd>Shift</kbd> och klickar på en annan cell utökas urvalet till och med den klickade cellen.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

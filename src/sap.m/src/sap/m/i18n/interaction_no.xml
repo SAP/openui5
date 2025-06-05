@@ -115,7 +115,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + MouseClick</kbd> <description>
 				<p><span class="emphasis">Hvis celleutvalg er aktivert</span>:</p>
-				<p>Hvis celler er valgt: <kbd>Shift</kbd> + klikk på en annen celle utvider utvalget opp til cellen det ble klikket på.</p>
+				<p>Hvis celler er valgt, kan du trykke <kbd>Shift</kbd> og klikke på en annen celle for å utvide utvalget opp til cellen det ble klikket på.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
