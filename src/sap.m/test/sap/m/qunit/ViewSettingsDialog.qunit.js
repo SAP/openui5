@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/core/StaticArea"
+	"sap/ui/core/StaticArea",
+	"sap/ui/core/InvisibleMessage"
 ], function(
 	Element,
 	Library,
@@ -48,7 +49,8 @@ sap.ui.define([
 	Log,
 	KeyCodes,
 	oCore,
-	StaticArea
+	StaticArea,
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -4161,7 +4163,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Reset functionality", function (assert) {
-
+		var oAnnounceSpy = this.spy(InvisibleMessage.prototype, "announce"),
+			oResourceBundle = Library.getResourceBundleFor("sap.m");
 		// open the VSD
 		this.oVSD.open();
 		var spy = this.spy(this.oVSD, "_globalReset");
@@ -4186,6 +4189,7 @@ sap.ui.define([
 
 		this.oVSD._getResetButton().firePress();
 		assert.equal(spy.callCount, 1, "Reset button Press handler is called");
+		assert.ok(oAnnounceSpy.calledWith(oResourceBundle.getText("VIEWSETTINGS_RESET_BUTTON_ACTION")), "Reset should be announced.");
 
 		// get Sort, Group and Filters after the reset
 		var sSortAfter = this.oVSD.getSelectedSortItem();
@@ -4194,6 +4198,9 @@ sap.ui.define([
 
 		// Check if the values are reset to their initial values
 		assert.strictEqual(sSortInitial === sSortAfter && sGroupInitial === sGroupAfter && sFiltersInitial.length === sFiltersAfter.length, true, "After the Reset, Sort, Group and Filter items are restored to initial values successfully");
+
+		//cleanup
+		oAnnounceSpy.restore();
 
 	});
 
