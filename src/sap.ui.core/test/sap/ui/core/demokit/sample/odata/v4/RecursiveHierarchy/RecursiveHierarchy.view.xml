@@ -98,7 +98,7 @@
 				<m:CheckBox selected="{@$ui5.context.isSelected}" tooltip="Select"/>
 			</template>
 		</Column>
-		<Column width="27em">
+		<Column width="31em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
 					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.isExpanded} !== false }"
@@ -112,15 +112,19 @@
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://down"
 						press=".onMoveDown" tooltip="Move Down"/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://move"
-						press=".onMove" tooltip="Move To Parent..."/>
+						press=".onMove($event, false, '')" tooltip="Move To Parent..."/>
+					<m:Button icon="sap-icon://copy" press=".onMove($event, false, '', true)"
+						tooltip="Copy To Parent..."/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://map"
 						press=".onMove($event, false, '?')" tooltip="Move Just Before Sibling..."/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://arrow-bottom"
 						press=".onMove($event, false, null)" tooltip="Move As Last Child Of..."/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.level} > 1 }"
 						icon="sap-icon://back-to-top" press=".onMakeRoot" tooltip="Make Root"/>
+					<m:Button icon="sap-icon://slim-arrow-up"
+						press=".onMakeRoot($event, false, true)" tooltip="Copy To Root"/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://pull-down"
-						press=".onMakeRoot($event, null)" tooltip="Make Last Root"/>
+						press=".onMakeRoot($event, true)" tooltip="Make Last Root"/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://delete"
 						press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
@@ -214,7 +218,7 @@
 				<m:CheckBox selected="{@$ui5.context.isSelected}" tooltip="Select"/>
 			</template>
 		</Column>
-		<Column width="27em">
+		<Column width="31em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
 					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.isExpanded} !== false }"
@@ -229,14 +233,18 @@
 						press=".onMoveDown" tooltip="Move Down"/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://move"
 						press=".onMove($event, true)" tooltip="Move To Parent..."/>
+					<m:Button icon="sap-icon://copy" press=".onMove($event, true, '', true)"
+						tooltip="Copy To Parent..."/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://map"
 						press=".onMove($event, true, '?')" tooltip="Move Just Before Sibling..."/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://arrow-bottom"
 						press=".onMove($event, true, null)" tooltip="Move As Last Child Of..."/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' &amp;&amp; %{@$ui5.node.level} > 1 }"
 						icon="sap-icon://back-to-top" press=".onMakeRoot" tooltip="Make Root"/>
+					<m:Button icon="sap-icon://slim-arrow-up"
+						press=".onMakeRoot($event, false, true)" tooltip="Copy To Root"/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://pull-down"
-						press=".onMakeRoot($event, null)" tooltip="Make Last Root"/>
+						press=".onMakeRoot($event, true)" tooltip="Make Last Root"/>
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://delete"
 						press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
