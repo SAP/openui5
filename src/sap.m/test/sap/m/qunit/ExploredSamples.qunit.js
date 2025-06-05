@@ -10,7 +10,10 @@ sap.ui.define([
 		'sap.m',
 		[
 			"sap.m.sample.PageListReportIconTabBar",
-			"sap.m.sample.PageListReportToolbar"
+			"sap.m.sample.PageListReportToolbar",
+			"sap.m.sample.PDFViewerEmbedded",
+			"sap.m.sample.PDFViewerPopup",
+			"sap.m.sample.PDFViewerMultiple"
 		]
 	).placeAt('content');
 
