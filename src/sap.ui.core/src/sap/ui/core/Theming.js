@@ -123,7 +123,7 @@ sap.ui.define([
 		 * @param {string} [sLib] An optional library name
 		 * @returns {string} The themeRoot if configured
 		 * @private
-		 * @ui5-restricted sap.ui.core.theming.ThemeManager
+		 * @ui5-restricted sap.ui.core.theming.ThemeManager, sap.ushell
 		 * @since 1.118
 		 */
 		getThemeRoot: (sTheme, sLib) => {
@@ -189,7 +189,7 @@ sap.ui.define([
 		 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
 		 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
 		 * @private
-		 * @ui5-restricted sap.ui.core.Core
+		 * @ui5-restricted sap.ui.core.Core, sap.ushell
 		 * @since 1.118
 		 */
 		setThemeRoot: (sThemeName, sThemeBaseUrl, aLibraryNames, bForceUpdate) => {
