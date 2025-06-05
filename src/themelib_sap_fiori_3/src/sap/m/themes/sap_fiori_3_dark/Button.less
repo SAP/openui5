@@ -189,6 +189,24 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable :not(.sapMBad
 /* (add separators, remove top/bottom border)       */
 /* ------------------------------------------------ */
 
+.sapMIBar.sapMTB-Info-CTX {
+	.sapMBtn .sapMBtnInner.sapMBtnTransparent {
+		& > .sapMBtnContent,
+		& > .sapMBtnIcon {
+			color: var(--sapButton_Active_TextColor);
+		}
+	}
+}
+
+.sapMIBar.sapMTB-Info-CTX.sapMTBInactive {
+	.sapMBtn .sapMBtnInner.sapMBtnTransparent {
+		& > .sapMBtnContent,
+		& > .sapMBtnIcon {
+			color: var(--sapButton_Lite_Hover_TextColor);
+		}
+	}
+}
+
 .sapMIBar-CTX .sapMBtnInner,
 .sapMBar .sapMBtnInner,
 .sapMHeader-CTX .sapMBtnInner,
