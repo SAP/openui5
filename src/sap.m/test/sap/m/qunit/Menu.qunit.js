@@ -1037,4 +1037,20 @@ sap.ui.define([
 		assert.ok(this.oMenu.getItems()[1]._getPopover().hasStyleClass(sCustomClass), "The class is propagated to the submenu's popover");
 	});
 
+	QUnit.test("'openAsContextMenu' positions menu properly when only offsetX/offsetY are provided", async function (assert) {
+		// Arrange
+		var oCoordinates = { offsetX: 100, offsetY: 200 },
+			oOpener;
+
+		// Act
+		this.oMenu.openAsContextMenu(oCoordinates);
+		await nextUIUpdate(this.clock);
+		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
+
+		// Assert
+		assert.strictEqual(oOpener.style.insetInlineStart, oCoordinates.offsetX + "px", "X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, oCoordinates.offsetY + "px", "Y coordinate is set correctly");
+	});
+
+
 });

@@ -320,6 +320,13 @@ sap.ui.define([
 				return;
 			}
 
+			if (oEvent.offsetX !== undefined && oEvent.offsetY !== undefined && !oOpenerRef) {
+				// for explicit position coordinates
+				iX = oEvent.offsetX || 0;
+				iY = oEvent.offsetY || 0;
+				bWithPointer = true;
+			}
+
 			if (oOpenerData && !bWithPointer) {
 				// If the opener is a DOM element, we need to calculate the position
 				const iScrollX = window.scrollX || window.pageXOffset;
