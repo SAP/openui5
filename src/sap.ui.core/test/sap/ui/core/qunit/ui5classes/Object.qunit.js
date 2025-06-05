@@ -151,4 +151,22 @@ sap.ui.define([
 		assert.strictEqual(BaseObject.isObjectA(NaN, "sap.ui.base.Object"), false, "NaN is not BaseObject");
 		assert.strictEqual(BaseObject.isObjectA("", "sap.ui.base.Object"), false, "Empty string is not BaseObject");
 	});
+
+
+	QUnit.test("static inheritance", function(assert) {
+		// static inheritance (one level)
+		assert.strictEqual(BestPracticeClass.isObjectA, BaseObject.isObjectA, "static method BaseObject.isObjectA is inherited by subclasses");
+		assert.ok(!Object.hasOwn(BestPracticeClass, "isObjectA"), "isObjectA method is really inherited, not re-implemented");
+
+		// static inheritance (multiple levels)
+		assert.strictEqual(BestPracticeSubClass.isObjectA, BaseObject.isObjectA, "static method BaseObject.isObjectA is inherited by subsubclasses");
+		assert.ok(!Object.hasOwn(BestPracticeSubClass, "isObjectA"), "isObjectA method is really inherited, not re-implemented");
+
+		const FinalClass = BaseObject.extend("FinalClass", {
+			metadata: {
+				final: true
+			}
+		});
+		assert.ok(FinalClass.extend == null, "Final class does not inherit the static `extend` method");
+	});
 });
