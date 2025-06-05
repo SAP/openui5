@@ -152,6 +152,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
 				module: "testdata/core/Theming_default_and_fallback.qunit"
+			},
+			ThemeManagerPreloadCss: {
+				page: "test-resources/sap/ui/core/qunit/Theming_preloadedCss.qunit.html"
 			}
 		}
 	};

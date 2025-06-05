@@ -5,9 +5,9 @@
 // Provides class sap.ui.core.theming.ThemeManager
 sap.ui.define([
 	"sap/base/assert",
+	"sap/base/config",
 	"sap/base/Eventing",
 	"sap/base/Log",
-	"sap/base/config",
 	"sap/base/i18n/Localization",
 	"sap/base/util/each",
 	"sap/base/util/LoaderExtensions",
@@ -19,9 +19,9 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet"
 ], function(
 	assert,
+	BaseConfig,
 	Eventing,
 	Log,
-	BaseConfig,
 	Localization,
 	each,
 	LoaderExtensions,
@@ -35,17 +35,55 @@ sap.ui.define([
 	"use strict";
 
 	const oEventing = new Eventing();
-	var maxThemeCheckCycles = 150;
-	var mAllLoadedLibraries = {};
-	var CUSTOMCSSCHECK = /\.sapUiThemeDesignerCustomCss/i;
+	const maxThemeCheckCycles = 150;
+	const mAllLoadedLibraries = {};
+	const CUSTOMCSSCHECK = /\.sapUiThemeDesignerCustomCss/i;
+	const _CUSTOMID = "sap-ui-core-customcss";
+	const _THEME_PREFIX = "sap-ui-theme-";
+	let bAllPreloadedCssReady = true;
 
-	var _iCount = 0; // Prevent endless loop
-	var _CUSTOMID = "sap-ui-core-customcss";
-	var _customCSSAdded = false;
-	var _themeCheckedForCustom = null;
-	var _sFallbackTheme = null;
-	var _mThemeFallback = {};
-	var _sThemeCheckId;
+	// Collect all UI5 relevant CSS files which have been added upfront
+	// and add them to UI5 theming lifecycle
+	document.querySelectorAll(`link[id^=${_THEME_PREFIX}]`).forEach(function(linkNode) {
+		let bPreloadedCssReady = true;
+		const sLibId = linkNode.getAttribute("id").replace(_THEME_PREFIX, "");
+
+		mAllLoadedLibraries[sLibId] = {};
+		linkNode.removeAttribute("data-sap-ui-ready");
+
+		Log.info(`ThemeManager: Preloaded CSS for library ${sLibId} detected: ${linkNode.href}`, undefined, "sap.ui.core.theming.ThemeManager");
+
+		try {
+			bPreloadedCssReady = !!(linkNode.sheet?.href === linkNode.href && linkNode.sheet?.cssRules);
+
+			if (!bPreloadedCssReady) {
+				bAllPreloadedCssReady = bPreloadedCssReady;
+				linkNode.addEventListener("load", (oEvent) => {
+					const bError = oEvent.type === "error";
+					linkNode.setAttribute("data-sap-ui-ready", !bError);
+				});
+			} else {
+				linkNode.setAttribute("data-sap-ui-ready", linkNode.sheet.cssRules.length > 0);
+			}
+		} catch (e) {
+			// If the stylesheet is cross-origin and throws a security error, we can't verify directly
+			Log.info("Could not detect ready state of preloaded CSS. Request stylesheet again to verify the response status", undefined, "sap.ui.core.theming.ThemeManager");
+
+			bAllPreloadedCssReady = false;
+
+			includeStylesheet({
+				url: linkNode.href,
+				id: linkNode.getAttribute("id")
+			});
+		}
+	});
+
+	let _iCount = 0; // Prevent endless loop
+	let _customCSSAdded = false;
+	let _themeCheckedForCustom = null;
+	let _sFallbackTheme = null;
+	let _mThemeFallback = {};
+	let _sThemeCheckId;
 
 	/**
 	 * Helper class used by the UI5 Core to check whether the themes are applied correctly.
@@ -65,7 +103,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 */
-		themeLoaded: true,
+		themeLoaded: bAllPreloadedCssReady,
 
 		/**
 		 * Trigger ThemeManager
@@ -115,7 +153,10 @@ sap.ui.define([
 			// (e.g. IconPool which includes font files from sap.ui.core base theme)
 			_ensureThemeRoot(sLibName, "base");
 
-			mAllLoadedLibraries[sLibName] = oLibThemingInfo;
+			// Assume CSS is preloaded in case we detect a link tag with corresponding ID
+			const sLinkId = `${sLibName}${oLibThemingInfo.variant ? "-[" + oLibThemingInfo.variant + "]" : ""}`;
+			oLibThemingInfo.preloadedCss = oLibThemingInfo.preloadedCss || !!mAllLoadedLibraries[sLinkId];
+			mAllLoadedLibraries[sLinkId] = oLibThemingInfo;
 			if (!oLibThemingInfo.preloadedCss) {
 				ThemeManager.includeLibraryTheme(sLibName, oLibThemingInfo.variant, oLibThemingInfo);
 			}
@@ -171,7 +212,7 @@ sap.ui.define([
 					sLibName = sLibName.substring(0, sLibName.indexOf(":"));
 				}
 
-				var sLinkId = "sap-ui-theme-" + sLibId;
+				var sLinkId = `${_THEME_PREFIX}${sLibId}`;
 				var sSkeletonLinkId = "sap-ui-themeskeleton-" + sLibId;
 				var bCssVariables = /^(true|x|additional)$/i.test(sCssVariablesParam);
 				if (!document.querySelector("LINK[id='" + sLinkId + "']") || (bCssVariables && !document.querySelector("LINK[id='" + sSkeletonLinkId + "']"))) {
@@ -243,7 +284,7 @@ sap.ui.define([
 		 */
 		_updateThemeUrls: function(sThemeName, bSuppressFOUC) {
 			// select "our" stylesheets
-			var oQueryResult = document.querySelectorAll("link[id^=sap-ui-theme-],link[id^=sap-ui-themeskeleton-]");
+			var oQueryResult = document.querySelectorAll(`link[id^=${_THEME_PREFIX}],link[id^=sap-ui-themeskeleton-]`);
 
 			Array.prototype.forEach.call(oQueryResult, function(oHTMLElement) {
 				updateThemeUrl(oHTMLElement, sThemeName, bSuppressFOUC);
@@ -306,8 +347,7 @@ sap.ui.define([
 		}
 
 		function checkLib(lib) {
-			var sStyleId = "sap-ui-theme-" + lib;
-			var currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: "sap-ui-theme-", id: lib });
+			var currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: _THEME_PREFIX, id: lib });
 			if (currentRes && document.getElementById("sap-ui-themeskeleton-" + lib)) {
 				// remove also the skeleton if present in the DOM
 				currentRes = ThemeHelper.checkAndRemoveStyle({ prefix: "sap-ui-themeskeleton-", id: lib });
@@ -355,7 +395,7 @@ sap.ui.define([
 			// Collect all libs that failed to load and no fallback has been applied, yet.
 			// The fallback relies on custom theme metadata, so it is not done for standard themes
 			if (!bIsStandardTheme && currentRes && !_mThemeFallback[lib]) {
-				var oStyle = document.getElementById(sStyleId);
+				var oStyle = document.getElementById(`${_THEME_PREFIX}${lib}`);
 				// Check for error marker (data-sap-ui-ready=false) and that there are no rules
 				// to be sure the stylesheet couldn't be loaded at all.
 				// E.g. in case an @import within the stylesheet fails, the error marker will
@@ -387,8 +427,7 @@ sap.ui.define([
 
 			if (_sFallbackTheme) {
 				aFailedLibs.forEach(function(lib) {
-					var sStyleId = "sap-ui-theme-" + lib;
-					var oStyle = document.getElementById(sStyleId);
+					const oStyle = document.getElementById(`${_THEME_PREFIX}${lib}`);
 
 					Log.warning(
 						"ThemeManager: Custom theme '" + sThemeName + "' could not be loaded for library '" + lib + "'. " +
@@ -424,7 +463,7 @@ sap.ui.define([
 	 */
 	function checkCustom(lib) {
 
-		var cssFile = window.document.getElementById("sap-ui-theme-" + lib);
+		var cssFile = window.document.getElementById(`${_THEME_PREFIX}${lib}`);
 
 		if (!cssFile) {
 			return false;
@@ -591,13 +630,13 @@ sap.ui.define([
 	// this function is also used by "sap.ui.core.theming.ThemeManager" to load a fallback theme for a single library
 	function updateThemeUrl(oLink, sThemeName, bSuppressFOUC) {
 		var sLibName,
-		    iQueryIndex = oLink.href.search(/[?#]/),
-		    sLibFileName,
-		    sQuery,
-		    sStandardLibFilePrefix = "library",
-		    sRTL = Localization.getRTL() ? "-RTL" : "",
-		    sHref,
-		    pos;
+			iQueryIndex = oLink.href.search(/[?#]/),
+			sLibFileName,
+			sQuery,
+			sStandardLibFilePrefix = "library",
+			sRTL = Localization.getRTL() ? "-RTL" : "",
+			sHref,
+			pos;
 
 		// derive lib name from id via regex
 		var mLinkId = /^sap-ui-theme(?:skeleton)?-(.*)$/i.exec(oLink.id);
@@ -605,7 +644,7 @@ sap.ui.define([
 			sLibName = mLinkId[1];
 		} else {
 			// fallback to legacy logic
-			sLibName = oLink.id.slice(13); // length of "sap-ui-theme-"
+			sLibName = oLink.id.slice(_THEME_PREFIX.length);
 		}
 
 		mAllLoadedLibraries[sLibName] = mAllLoadedLibraries[sLibName] || {};
@@ -689,6 +728,11 @@ sap.ui.define([
 	});
 
 	Theming.registerThemeManager(ThemeManager);
+
+	// Start polling in case preloaded CSS have been detected
+	if (!ThemeManager.themeLoaded) {
+		ThemeManager.checkThemeApplied();
+	}
 
 	return ThemeManager;
 });
