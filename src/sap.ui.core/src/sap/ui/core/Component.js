@@ -3018,6 +3018,11 @@ sap.ui.define([
 			mPreloadModelConfigs,
 			fnCallLoadComponentCallback;
 
+		// The loading Promise of the FL library, need to orchestrate the execution of the manifest
+		// preprocessing hook in case the FL library is part of the async hints
+		const { promise: pFlLibLoading, resolve: flLibResolve, reject: flLibReject } = Promise.withResolvers();
+		const sFlLibId = "sap.ui.fl";
+
 		function createSanitizedManifest( oRawManifestJSON, mOptions ) {
 			var oManifestCopy = JSON.parse(JSON.stringify(oRawManifestJSON));
 
@@ -3031,7 +3036,10 @@ sap.ui.define([
 			}
 		}
 
-		function preprocessManifestJSON(oRawJson) {
+		async function preprocessManifestJSON(oRawJson) {
+
+			await pFlLibLoading; // flex lib can be part of the async hints!
+
 			// the preprocessing flex-hook is only called if a manifest.json was loaded or an object was given via config
 			if (ComponentHooks.onPreprocessManifest.isRegistered() && oRawJson != null) {
 				try {
@@ -3400,9 +3408,18 @@ sap.ui.define([
 			// preload any libraries
 			if ( Array.isArray(hints.libs) ) {
 				libs = hints.libs.map(processOptions).filter(identity);
+
+				// try if FL lib is part of async hints and needs separate preloading
+				// we do this in order to orchestrate the manifest preprocessing hook to the loading of the lib
+				if (!libs.includes(sFlLibId) || mOptions.preloadOnly) {
+					flLibResolve();
+				}
+
 				phase1Preloads.push(
 					Library._load( libs, { preloadOnly: true } )
 				);
+			} else {
+				flLibResolve();
 			}
 
 			// sync preloadBundles and preloads of libraries first before requiring the libs
@@ -3411,7 +3428,13 @@ sap.ui.define([
 			phase1Preloads = Promise.all( phase1Preloads );
 			if ( libs && !mOptions.preloadOnly ) {
 				phase1Preloads = phase1Preloads.then( function() {
-					return Library._load( libs );
+					let pFlLib = Promise.resolve();
+					if (libs.includes(sFlLibId)) {
+						libs = libs.filter((libId) => libId !== sFlLibId);
+						pFlLib = Library._load([sFlLibId]).then(flLibResolve).catch(flLibReject);
+					}
+
+					return Promise.all([pFlLib, Library._load( libs )]);
 				});
 			}
 			collect( phase1Preloads );
