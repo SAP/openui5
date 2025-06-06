@@ -1610,6 +1610,17 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, ResizeHandler,
 		assert.strictEqual(oSubSectionWithTitle.$().attr("role"), 'region', "Subsections with titles should have role='region");
 	});
 
+	QUnit.test("Test role attribute of promoted subsection", function(assert) {
+		// Arrange
+		var oSingleSubsection = this.ObjectPageSectionView.byId("subsection3");
+
+		assert.expect(1);
+
+		// Assert
+		assert.strictEqual(oSingleSubsection.$().attr("role"), undefined, "Subsections without titles should not have role attribute");
+
+	});
+
 	QUnit.test("sapUxAPObjectPageSubSectionFocusable class is added only to focusable subsections", async function(assert) {
 		// Arrange
 		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
