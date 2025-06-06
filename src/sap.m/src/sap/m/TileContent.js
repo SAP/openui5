@@ -2,14 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer', 'sap/ui/core/Lib', 'sap/m/Button'],
-	function(library, Localization, Core, Control, TileContentRenderer, CoreLib, Button) {
+sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library', 'sap/ui/core/Control', './TileContentRenderer', 'sap/ui/core/Lib', 'sap/m/ObjectStatus'],
+	function(library, Localization, Core, Control, TileContentRenderer, CoreLib, ObjectStatus) {
 	"use strict";
 
 	var Priority = library.Priority;
+	var ValueState = Core.ValueState;
 	var LoadState = library.LoadState;
 	var GenericTileMode = library.GenericTileMode;
-	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new sap.m.TileContent control.
@@ -352,8 +352,8 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 	 */
 	TileContent.prototype.setPriority = function(sPriority) {
 		var oPriorityBadge = this._getPriorityBadge();
-		oPriorityBadge?.setType(this._getPriorityButtonType(sPriority));
-		oPriorityBadge?.setIcon(this._getPriorityBadgeIcon(sPriority));
+		oPriorityBadge?.setState(this._getPriorityState(sPriority));
+		oPriorityBadge?.setIcon(this._getPriorityIcon(sPriority));
 
 		this.setProperty("priority", sPriority);
 		return this;
@@ -382,15 +382,15 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 	 * @param {sap.m.Priority} sPriority - The priority level.
 	 * @returns {sap.m.ButtonType} The button type corresponding to the priority.
 	 */
-	TileContent.prototype._getPriorityButtonType = function(sPriority) {
+	TileContent.prototype._getPriorityState = function(sPriority) {
 		switch (sPriority) {
 			case Priority.VeryHigh:
 			case Priority.High:
-				return ButtonType.Reject;
+				return ValueState.Error;
 			case Priority.Medium:
-				return ButtonType.Attention;
+				return ValueState.Warning;
 			default:
-				return ButtonType.Default;
+				return ValueState.Information;
 		}
 	};
 
@@ -401,7 +401,7 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 	 * @param {sap.m.Priority} sPriority - The priority level.
 	 * @returns {string} The icon URI corresponding to the priority.
 	 */
-	TileContent.prototype._getPriorityBadgeIcon = function(sPriority) {
+	TileContent.prototype._getPriorityIcon = function(sPriority) {
 		switch (sPriority) {
 			case Priority.VeryHigh:
 			case Priority.High:
@@ -425,14 +425,13 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 
 		if (sPriority && sPriority !== Priority.None && sPriorityText) {
 			if (!this._priorityBadge) {
-				this._priorityBadge = new Button(this.getId() + "-priority", {
-					type: this._getPriorityButtonType(sPriority),
-					icon: this._getPriorityBadgeIcon(sPriority),
+				this._priorityBadge = new ObjectStatus(this.getId() + "-priority", {
+					state: this._getPriorityState(sPriority),
+					icon: this._getPriorityIcon(sPriority),
 					text: sPriorityText,
 					tooltip: sPriorityText,
-					width: "auto"
+					inverted: true
 				}).addStyleClass("sapUiSizeCompact sapMGTPriorityBadge");
-				this._priorityBadge._bExcludeFromTabChain = true;
 				this.addDependent(this._priorityBadge);
 			}
 
