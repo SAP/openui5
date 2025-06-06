@@ -1170,7 +1170,7 @@ sap.ui.define([
 		return mInitLibraries;
 	};
 
-	/*
+	/**
 	 * A symbol used to mark a Proxy as such
 	 * Proxys are indistinguishable from the outside, but we need a way
 	 * to prevent duplicate Proxy wrapping for library namespaces.
