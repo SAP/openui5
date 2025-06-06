@@ -4,37 +4,31 @@ sap.ui.define([
 	"sap/ui/test/matchers/I18NText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/EnterText"
-], function (
-	Opa5,
-	PropertyStrictEquals,
-	I18NText,
-	Press,
-	EnterText) {
+], (Opa5, PropertyStrictEquals, I18NText, Press, EnterText) => {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onCheckout: {
 			viewName: "Checkout",
 			actions: {
-
-				iPressOnTheReturnToShopButton: function () {
+				iPressOnTheReturnToShopButton() {
 					return this.waitFor({
 						id: "returnToShopButton",
 						actions: new Press()
 					});
 				},
 
-				iPressOnTheNextStepButton: function () {
+				iPressOnTheNextStepButton() {
 					return this.waitFor({
 						id: "shoppingCartWizard",
-						actions: function (oWizard) {
+						actions(oWizard) {
 							oWizard.nextStep();
 						},
 						errorMessage: "Could not proceed to Next Step"
 					});
 				},
 
-				iPressOnDifferentAddressCheckbox: function () {
+				iPressOnDifferentAddressCheckbox() {
 					return this.waitFor({
 						id: "differentDeliveryAddress",
 						actions: new Press(),
@@ -42,7 +36,7 @@ sap.ui.define([
 					});
 				},
 
-				iPressOnTheButtonInTheFooter: function () {
+				iPressOnTheButtonInTheFooter() {
 					return this.waitFor({
 						id: "showPopoverButton",
 						actions: new Press(),
@@ -50,19 +44,19 @@ sap.ui.define([
 					});
 				},
 
-				iEnterCreditCardInformation: function (sHolderName, sNumber, sCode, sDate) {
+				iEnterCreditCardInformation(sHolderName, sNumber, sCode, sDate) {
 					return this.waitFor({
 						id: "creditCardHolderName",
 						actions: new EnterText({text: sHolderName}),
-						success: function () {
+						success() {
 							this.waitFor({
 								id: "creditCardNumber",
 								actions: new EnterText({text: sNumber}),
-								success: function () {
+								success() {
 									this.waitFor({
 										id: "creditCardSecurityNumber",
 										actions: new EnterText({text: sCode}),
-										success: function () {
+										success() {
 											this.waitFor({
 												id: "creditCardExpirationDate",
 												actions: new EnterText({text: sDate}),
@@ -79,27 +73,27 @@ sap.ui.define([
 					});
 				},
 
-				iEnterWrongCreditCardInformation: function () {
+				iEnterWrongCreditCardInformation() {
 					this.iEnterCreditCardInformation("My name", "1234567891234567", "13", "01/2020");
 				},
 
-				iEnterCorrectCreditCardInformation: function () {
+				iEnterCorrectCreditCardInformation() {
 					this.iEnterCreditCardInformation("My name", "1234567891234567", "123", "01/2020");
 				},
 
-				iEnterCashOnDeliveryText: function (sFirstName, sLastName, sPhone, sEmail) {
+				iEnterCashOnDeliveryText(sFirstName, sLastName, sPhone, sEmail) {
 					return this.waitFor({
 						id: "cashOnDeliveryName",
 						actions: new EnterText({text: sFirstName}),
-						success: function () {
+						success() {
 							this.waitFor({
 								id: "cashOnDeliveryLastName",
 								actions: new EnterText({text: sLastName}),
-								success: function () {
+								success() {
 									this.waitFor({
 										id: "cashOnDeliveryPhoneNumber",
 										actions: new EnterText({text: sPhone}),
-										success: function () {
+										success() {
 											this.waitFor({
 												id: "cashOnDeliveryEmail",
 												actions: new EnterText({text: sEmail}),
@@ -116,23 +110,23 @@ sap.ui.define([
 					});
 				},
 
-				iEnterCorrectCashOnDeliveryInfo: function () {
+				iEnterCorrectCashOnDeliveryInfo() {
 					this.iEnterCashOnDeliveryText("FirstName", "LastName", "+4911111111", "inf@shop.com");
 				},
 
-				iEnterInvoiceAddressText: function (sStreet, sCity, sZipCode, sCountry) {
+				iEnterInvoiceAddressText(sStreet, sCity, sZipCode, sCountry) {
 					return this.waitFor({
 						id: "invoiceAddressAddress",
 						actions: new EnterText({text: sStreet}),
-						success: function () {
+						success() {
 							this.waitFor({
 								id: "invoiceAddressCity",
 								actions: new EnterText({text: sCity}),
-								success: function () {
+								success() {
 									this.waitFor({
 										id: "invoiceAddressZip",
 										actions: new EnterText({text: sZipCode}),
-										success: function () {
+										success() {
 											this.waitFor({
 												id: "invoiceAddressCountry",
 												actions: new EnterText({text: sCountry}),
@@ -149,19 +143,19 @@ sap.ui.define([
 					});
 				},
 
-				iEnterDeliveryAddressText: function () {
+				iEnterDeliveryAddressText() {
 					return this.waitFor({
 						id: "deliveryAddressAddress",
 						actions: new EnterText({text: "MyStreet.2"}),
-						success: function () {
+						success() {
 							this.waitFor({
 								id: "deliveryAddressCity",
 								actions: new EnterText({text: "MyCity"}),
-								success: function () {
+								success() {
 									this.waitFor({
 										id: "deliveryAddressZip",
 										actions: new EnterText({text: "1234"}),
-										success: function () {
+										success() {
 											this.waitFor({
 												id: "deliveryAddressCountry",
 												actions: new EnterText({text: "MyCountry"}),
@@ -177,11 +171,11 @@ sap.ui.define([
 						errorMessage: "Could not enter Text DeliveryAddressAddress"
 					});
 				},
-				iEnterInvoiceAddress: function () {
+				iEnterInvoiceAddress() {
 					this.iEnterInvoiceAddressText("MyStreet.2", "MyCity", "1234", "DE");
 				},
 
-				iPressOnTheSubmitButton: function () {
+				iPressOnTheSubmitButton() {
 					return this.waitFor({
 						id: "submitOrder",
 						actions: new Press(),
@@ -189,19 +183,17 @@ sap.ui.define([
 					});
 				},
 
-				iPressOnTheYesButton: function () {
+				iPressOnTheYesButton() {
 					this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
-						matchers :{
+						matchers: {
 							properties: {
 								text: "Yes"
 							}
 						},
-						success: function (aButtons) {
-							return aButtons.filter(function () {
-								return true;
-							});
+						success(aButtons) {
+							return aButtons.filter(() => true);
 						},
 						actions: new Press(),
 						errorMessage: "Did not find the Yes button"
@@ -209,69 +201,69 @@ sap.ui.define([
 					return this;
 				},
 
-				iPressOnTheEditButtonBacktoList : function () {
+				iPressOnTheEditButtonBacktoList() {
 					return this.waitFor({
 						id: "backtoList",
-						actions : new Press(),
-						errorMessage : "The BacktoList button could not be pressed"
+						actions: new Press(),
+						errorMessage: "The BacktoList button could not be pressed"
 					});
 				},
 
-				iPressOnTheEditButtonBackToPaymentType : function () {
+				iPressOnTheEditButtonBackToPaymentType() {
 					return this.waitFor({
 						id: "backToInvoiceAddress",
-						actions : new Press(),
-						errorMessage : "The BackToInvoiceAddress button could not be pressed"
+						actions: new Press(),
+						errorMessage: "The BackToInvoiceAddress button could not be pressed"
 					});
 				},
 
-				iPressOnTheEditButtonBackToInvoiceAddress : function () {
+				iPressOnTheEditButtonBackToInvoiceAddress() {
 					return this.waitFor({
 						id: "backToPaymentType",
-						actions : new Press(),
-						errorMessage : "The BackToPaymentType button could not be pressed"
+						actions: new Press(),
+						errorMessage: "The BackToPaymentType button could not be pressed"
 					});
 				},
 
-				iPressOnTheEditButtonBackToDeliveryType: function () {
+				iPressOnTheEditButtonBackToDeliveryType() {
 					return this.waitFor({
 						id: "backToDeliveryType",
-						actions : new Press(),
-						errorMessage : "The BackToDeliveryType button could not be pressed"
+						actions: new Press(),
+						errorMessage: "The BackToDeliveryType button could not be pressed"
 					});
 				},
 
 
-				iPressOnTheBankTransferButton : function () {
+				iPressOnTheBankTransferButton() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers: new I18NText({ propertyName: "text", key: "checkoutPaymentBankTransfer"}),
+						controlType: "sap.m.Button",
+						matchers: new I18NText({propertyName: "text", key: "checkoutPaymentBankTransfer"}),
 						actions: new Press(),
 						errorMessage: "Cannot select Bank Transfer from Payment Methods"
 					});
 				},
 
-				iPressOnTheCashOnDeliveryButton : function () {
+				iPressOnTheCashOnDeliveryButton() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers: new I18NText({ propertyName: "text", key: "checkoutPaymentCod"}),
+						controlType: "sap.m.Button",
+						matchers: new I18NText({propertyName: "text", key: "checkoutPaymentCod"}),
 						actions: new Press(),
 						errorMessage: "Cannot select Cash On Delivery from Payment Methods"
 					});
 				},
 
-				iPressOnTheExpressDeliveryButton : function () {
+				iPressOnTheExpressDeliveryButton() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers: new I18NText({ propertyName: "text", key: "checkoutDeliveryTypeExpress"}),
+						controlType: "sap.m.Button",
+						matchers: new I18NText({propertyName: "text", key: "checkoutDeliveryTypeExpress"}),
 						actions: new Press(),
 						errorMessage: "Cannot select express delivery"
 					});
 				},
 
-				iPressTheCloseButton: function () {
+				iPressTheCloseButton() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
+						controlType: "sap.m.Button",
 						viewName: "",
 						matchers: new PropertyStrictEquals({
 							name: "icon",
@@ -283,158 +275,158 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				iShouldSeeTheWizardStepContentsStep: function () {
+				iShouldSeeTheWizardStepContentsStep() {
 					return this.waitFor({
 						id: "contentsStep",
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep, "Found the WizardStep 'contentsStep'");
 						}
 					});
 				},
-				iShouldSeeTheWizardStepPaymentTypeStep: function () {
+				iShouldSeeTheWizardStepPaymentTypeStep() {
 					return this.waitFor({
 						id: "paymentTypeStep",
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep, "Found the WizardStep 'PaymentTypeStep'");
 						}
 					});
 				},
 
-				iShouldSeeTheStep3Button: function () {
+				iShouldSeeTheStep3Button() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
+						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 3"
 						}),
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep[0].getProperty("visible"), "Found the Step3 Button enabled");
 						}
 					});
 				},
-				iShouldSeeTheStep4Button: function () {
+				iShouldSeeTheStep4Button() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
+						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 4"
 						}),
-						success: function () {
+						success() {
 							Opa5.assert.ok(true, "Found the Step4 Button enabled");
 						}
 					});
 				},
 
-				iShouldSeeTheStep5Button: function () {
+				iShouldSeeTheStep5Button() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
+						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 5"
 						}),
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep[0].getProperty("visible"), "Found the Step5 Button enabled");
 						}
 					});
 				},
 
-				iShouldSeeTheStep6Button: function () {
+				iShouldSeeTheStep6Button() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
+						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({
 							name: "text",
 							value: "Step 6"
 						}),
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep[0].getProperty("visible"), "Found the Step6 Button enabled");
 						},
 						errorMessage: "Step6 buttom was not found"
 					});
 				},
 
-				iShouldGetErrorMessageTextDoesNotMatchTypeForEmailField: function (sEmailFieldValue) {
+				iShouldGetErrorMessageTextDoesNotMatchTypeForEmailField(sEmailFieldValue) {
 					return this.waitFor({
 						id: "cashOnDeliveryEmail",
 						matchers: {
 							i18NText: {
 								propertyName: "valueStateText",
-								key : "checkoutCodEmailValueTypeMismatch",
-								parameters : [sEmailFieldValue]
+								key: "checkoutCodEmailValueTypeMismatch",
+								parameters: [sEmailFieldValue]
 							}
 						},
 						errorMessage: "The Email field error message text does not match to the type of error (value has wrong format)."
 					});
 				},
 
-				iShouldNotSeeTheStep4Button: function (sStepId) {
+				iShouldNotSeeTheStep4Button(sStepId) {
 					return this.waitFor({
 						id: sStepId,
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.strictEqual(oStep.getValidated(), false, "The" + sStepId + " button was not found");
 						},
 						errorMessage: "The" + sStepId + " button was found"
 					});
 				},
 
-				iShouldSeeTheDeliveryAddressStep: function () {
+				iShouldSeeTheDeliveryAddressStep() {
 					return this.waitFor({
 						id: "deliveryAddressStep",
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep, "Found the WizardStep 'DeliveryStep'");
 						}
 					});
 				},
-				iShouldSeeTheDeliveryStepButton: function () {
+				iShouldSeeTheDeliveryStepButton() {
 					return this.waitFor({
 						id: "deliveryAddressStep",
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep.getValidated(), "The delivery step button was found");
 						},
 						errorMessage: "The delivery step button was not found"
 					});
 				},
 
-				iShouldSeeTheDeliveryTypeStep: function () {
+				iShouldSeeTheDeliveryTypeStep() {
 					return this.waitFor({
 						id: "deliveryTypeStep",
-						success: function (oStep) {
+						success(oStep) {
 							Opa5.assert.ok(oStep, "Found the WizardStep 'DeliveryTypeStep'");
 						}
 					});
 				},
 
-				iShouldSeeTheOrderSummary: function () {
+				iShouldSeeTheOrderSummary() {
 					return this.waitFor({
 						id: "summaryPage",
-						success: function (oPage) {
+						success(oPage) {
 							Opa5.assert.ok(oPage, "Found the order summary page");
 						}
 					});
 				},
 
-				iShouldSeeExpressDelivery: function () {
+				iShouldSeeExpressDelivery() {
 					return this.waitFor({
 						id: "selectedDeliveryMethod",
-						success: function () {
+						success() {
 							Opa5.assert.ok("Express Delivery", "Found the Express Delivery Method");
 						}
 					});
 				},
 
-				iShouldSeeTheFooterWithTheErrorButton: function() {
+				iShouldSeeTheFooterWithTheErrorButton() {
 					return this.waitFor({
-						id : "wizardFooterBar",
-						success: function (oFooter) {
+						id: "wizardFooterBar",
+						success(oFooter) {
 							Opa5.assert.ok(oFooter.getAggregation("contentLeft")[0].getProperty("text") === "1", "Found the Footer containing the error button");
 						},
 						errorMessage: "Footer is not visible"
 					});
 				},
 
-				iShouldSeeTheMessagePopover: function() {
+				iShouldSeeTheMessagePopover() {
 					return this.waitFor({
-						id : "messagePopover",
-						success : function () {
+						id: "messagePopover",
+						success() {
 							Opa5.assert.ok("errorMessagePopover", "The MessagePopover is visible");
 						},
 						errorMessage: "The MessagePopover was not displayed"
