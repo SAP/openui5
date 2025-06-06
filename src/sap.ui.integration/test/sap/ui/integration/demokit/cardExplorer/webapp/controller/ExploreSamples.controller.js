@@ -493,6 +493,13 @@ sap.ui.define([
 					}
 
 					this._bCardEditorInitialized = false;
+					var oMessageStrip = new MessageStrip({
+						id: "msgstrip_EoM_BASEditor",
+						showIcon: true,
+						type: "Warning",
+						text: "BAS Editor is end of maintenance since version 1.138"
+					});
+					this.byId("editPage").addContent(oMessageStrip);
 					this._oVisualEditor = new BASEditor({
 						visible: "{= ${settings>/editorType} === 'VISUAL' }",
 						configurationChange: this.onCardEditorConfigurationChange.bind(this),
