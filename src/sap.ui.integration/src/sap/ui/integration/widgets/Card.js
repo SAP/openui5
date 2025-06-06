@@ -735,13 +735,17 @@ sap.ui.define([
 			i18n: {
 				init: () => {
 					this.setModel(new ResourceModel({
-						bundle: this._oIntegrationRb,
+						bundleName: "sap.ui.integration.i18n.public.messagebundle",
 						async: true
 					}), "i18n");
-					this._oActiveRb = this._oIntegrationRb;
 				},
 				reset: () => {
-					this._oActiveRb = this._oIntegrationRb;
+					this._oActiveRb = null;
+					this.getModel("i18n").destroy();
+					this.setModel(new ResourceModel({
+						bundleName: "sap.ui.integration.i18n.public.messagebundle",
+						async: true
+					}), "i18n");
 				}
 			},
 			size: {
@@ -1126,10 +1130,11 @@ sap.ui.define([
 			this._logSevereError("There must be a 'sap.card' section in the manifest.");
 		}
 
-		if (oCardManifest && oCardManifest.getResourceBundle()) {
-			this._oActiveRb = await this._enhanceI18nModel(oCardManifest.getResourceBundle());
+		if (oCardManifest.getResourceBundle()) {
+			this._enhanceI18nModel(oCardManifest.getResourceBundle());
 		}
 
+		this._oActiveRb = await this.getModel("i18n").getResourceBundle();
 		this.getModel("context").resetHostProperties();
 
 		if (this._hasContextParams()) {
@@ -1143,30 +1148,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enhances or creates the i18n model for the card.
+	 * Enhances the public resource bundle with the one of the card.
 	 *
-	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be enhanced.
-	 * @returns {Promise<module:sap/base/i18n/ResourceBundle>} The enhanced resource bundle.
+	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle of the card.
 	 * @private
 	 */
 	Card.prototype._enhanceI18nModel = function (oResourceBundle) {
-		var oResourceModel = this.getModel("i18n"),
-			oNewResourceModel;
-
-		// the library resource bundle must not be enhanced
-		// so the card resource bundle should be first
-		oNewResourceModel = new ResourceModel({
-			async: true,
-			bundle: oResourceBundle,
-			enhanceWith: [
-				this._oIntegrationRb
-			]
-		});
-
-		this.setModel(oNewResourceModel, "i18n");
-		oResourceModel.destroy();
-
-		return oNewResourceModel.getResourceBundle();
+		this.getModel("i18n").enhance(oResourceBundle);
 	};
 
 	/**
@@ -1769,11 +1757,9 @@ sap.ui.define([
 	 * @returns {string|undefined} The value belonging to the key, if found; otherwise, it returns the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
 	 */
 	Card.prototype.getTranslatedText = function (sKey, aArgs, bIgnoreKeyFallback) {
-		var oModel = this.getModel("i18n");
-
-		if (!oModel || !this._oActiveRb) {
-			Log.warning("There are no translations available. Either the i18n configuration is missing or the method is called too early.");
-			return null;
+		if (!this._oActiveRb) {
+			Log.error("'getTranslatedText' cannot be used before the card instance is ready. Consider using the event 'manifestApplied'.", "sap.ui.integration.widgets.Card");
+			return bIgnoreKeyFallback ? undefined : sKey;
 		}
 
 		return this._oActiveRb.getText(sKey, aArgs, bIgnoreKeyFallback);

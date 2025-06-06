@@ -228,4 +228,20 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("i18n model", async function (assert) {
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
+
+		await nextCardReadyEvent(this.oCard);
+
+		const oRb = await this.oCard.getModel("i18n").getResourceBundle();
+
+		// Assert
+		assert.ok(oRb.hasText("CARD.COUNT_X_OF_Y"), "The i18n model should be available and populated with default texts");
+
+		// Act
+		this.oCard.setManifest(null);
+
+		// Assert
+		assert.ok(oRb.hasText("CARD.COUNT_X_OF_Y"), "The i18n model should still be available and populated with default texts");
+	});
 });
