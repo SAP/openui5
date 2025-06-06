@@ -992,8 +992,6 @@ sap.ui.define([
 		return mInitLibraries;
 	};
 
-	Symbol("isProxy");
-
 	/**
 	 * Provides information about a library.
 	 *
