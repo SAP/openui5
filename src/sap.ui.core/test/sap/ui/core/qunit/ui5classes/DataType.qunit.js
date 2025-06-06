@@ -408,6 +408,9 @@ sap.ui.define([
 		assert.ok(DataType.getType("sap.test.RegisteredColor") === type, "multiple calls should return same type object");
 	});
 
+	/**
+	 * @deprecated As of version 1.136, together with the proxy solution
+	 */
 	QUnit.test("Auto-registered (top-level) Enum via Lib Proxy", async function (assert) {
 		sap.ui.define("sap/test/enumlib/library", [
 			"sap/ui/core/Lib"
@@ -445,6 +448,9 @@ sap.ui.define([
 		assert.ok(DataType.getType("sap.test.enumlib.LibColor") === type, "multiple calls should return same type object");
 	});
 
+	/**
+	 * @deprecated As of version 1.136, together with the proxy solution
+	 */
 	QUnit.test("Auto-registered (deeply nested) Enum via Lib Proxy", async function (assert) {
 		sap.ui.define("sap/test/otherlib/library", [
 			"sap/ui/core/Lib"
