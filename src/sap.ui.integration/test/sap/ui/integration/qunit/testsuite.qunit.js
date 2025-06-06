@@ -446,24 +446,19 @@ sap.ui.define([
 			},
 
 			"util/DataProvider": {
+				module: [
+					"./util/DataProvider.qunit",
+					"./util/RequestDataProvider.qunit",
+					"./util/CacheAndRequestDataProvider.qunit"
+				],
 				coverage: {
 					only: [
 						"sap/ui/integration/util/DataProviderFactory",
 						"sap/ui/integration/util/DataProvider",
 						"sap/ui/integration/util/RequestDataProvider",
+						"sap/ui/integration/util/CacheAndRequestDataProvider",
 						"sap/ui/integration/util/ServiceDataProvider"
 					]
-				}
-			},
-
-			"util/CacheAndRequestDataProvider": {
-				coverage: {
-					only: [
-						"sap/ui/integration/util/CacheAndRequestDataProvider"
-					]
-				},
-				sinon: {
-					useFakeTimers: true
 				}
 			},
 

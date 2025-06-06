@@ -2425,13 +2425,6 @@ html[data-sap-ui-browser*='ff'] {
 	margin-bottom: 0.5rem;
 }
 
-.sapMGTPriorityBadge,
-.sapMGTBackgroundBadge .sapMGTPriorityBadge {
-	height: 1.625rem;
-	cursor: not-allowed;
-	pointer-events: none;
-}
-
 .sapMGTArticleMode {
 	display: flex;
 	flex-direction: column;
@@ -2441,6 +2434,7 @@ html[data-sap-ui-browser*='ff'] {
 
 		.sapMGTPriorityBadge {
 			display: flex;
+			flex-shrink: 0;
 			padding-top: 0;
 			padding-bottom: 0.5rem;
 		}

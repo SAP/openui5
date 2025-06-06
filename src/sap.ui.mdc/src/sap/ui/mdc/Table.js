@@ -129,32 +129,7 @@ sap.ui.define([
 	/**
 	 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.table.PropertyInfo
 	 *
-	 * An object literal describing a data property in the context of an {@link sap.ui.mdc.Table}.
-	 *
-	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the
-	 * following attributes need to be specified:
-	 * <ul>
-	 *   <li><code>key</code></li>
-	 *   <li><code>path</code></li>
-	 *   <li><code>dataType</code></li>
-	 *   <li><code>formatOptions</code></li>
-	 *   <li><code>constraints</code></li>
-	 *   <li><code>maxConditions</code></li>
-	 *   <li><code>caseSensitive</code></li>
-	 *   <li><code>visualSettings.widthCalculation</code></li>
-	 *   <li><code>propertyInfos</code></li>
-	 *   <li><code>groupable</code></li>
-	 *   <li><code>isKey</code></li>
-	 *   <li><code>unit</code></li>
-	 *   <li><code>text</code></li>
-	 * </ul>
-	 *
-	 * If the property is complex, the following attributes need to be specified:
-	 * <ul>
-	 *   <li><code>key</code></li>
-	 *   <li><code>visualSettings.widthCalculation</code></li>
-	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
-	 * </ul>
+	 * An object literal that describes attributes of a data property in the context of an {@link sap.ui.mdc.Table}.
 	 *
 	 * @property {boolean} [filterable=true]
 	 *   Defines whether a property is filterable.
@@ -173,8 +148,7 @@ sap.ui.define([
 	 * @property {object|null} [clipboardSettings]
 	 *   The clipboard settings. Set to <code>null</code> prevent this property from being copied to clipboard.
 	 * @property {string} [clipboardSettings.template]
-	 *   Defines the formatting template that supports indexed placeholders of <code>propertyInfos</code> within curly brackets,
-	 *   for example, "{0} ({1})".
+	 *   Defines the formatting template that supports indexed placeholders, for example, "{0}".
 	 * @property {object} [visualSettings]
 	 *   This object contains all relevant properties for visual adjustments.
 	 * @property {object|null} [visualSettings.widthCalculation]
@@ -188,16 +162,57 @@ sap.ui.define([
 	 * @property {float} [visualSettings.widthCalculation.gap=0]
 	 *   The additional content width in rem
 	 * @property {boolean} [visualSettings.widthCalculation.includeLabel=true]
-	 *   Whether the label should be taken into account
+	 *   Whether the label is taken into account
 	 * @property {boolean} [visualSettings.widthCalculation.truncateLabel=true]
-	 *   Whether the label should be trucated or not
+	 *   Whether the label is truncated
 	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement=false]
 	 *   Whether the referenced properties are arranged vertically
 	 * @property {string[]} [visualSettings.widthCalculation.excludeProperties]
 	 *   A list of invisible referenced property keys
-	 * @property {string[]} [propertyInfos]
-	 *   The availability of this property makes the <code>PropertyInfo</code> a complex <code>PropertyInfo</code>. Provides a list of related
-	 *   properties (by key). These related properties must not themselves be complex.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.mdc.util.ComplexPropertyInfo} sap.ui.mdc.table.ComplexPropertyInfo
+	 *
+	 * An object literal that describes attributes of a complex data property in the context of an {@link sap.ui.mdc.Table}. A complex property
+	 * references other properties in the <code>propertyInfos</code> attribute.
+	 *
+	 * If a <code>sap.ui.mdc.table.Column</code> points to a complex property via its <code>propertyKey</code> property, the table considers all the
+	 * referenced properties as visible in the column. All referenced properties are taken into account for certain features, for example, for the
+	 * column width calculation.
+	 *
+	 * Some attributes of the referenced properties can be overridden. If, for example, <code>exportSettings</code> are specified for the complex
+	 * property, the export settings of the referenced properties are ignored. This can be used to provide a different formatting template, for
+	 * example.
+	 *
+	 * @property {sap.ui.export.Column|null} [exportSettings]
+	 *   The export settings. Set to <code>null</code> to prevent this property from being exported.
+	 * @property {object|null} [clipboardSettings]
+	 *   The clipboard settings. Set to <code>null</code> to prevent this property from being copied to clipboard.
+	 * @property {string} [clipboardSettings.template]
+	 *   Defines the formatting template that supports indexed placeholders for referenced properties within curly brackets, for example, "{0} ({1})".
+	 * @property {object} [visualSettings]
+	 *   This object contains all relevant attributes for visual adjustments.
+	 * @property {object|null} [visualSettings.widthCalculation]
+	 *   Settings for column width calculation. Set to <code>null</code> to disable the automatic column width calculation for this property.
+	 * @property {int} [visualSettings.widthCalculation.minWidth=2]
+	 *   The minimum content width in rem
+	 * @property {int} [visualSettings.widthCalculation.maxWidth=19]
+	 *   The maximum content width in rem
+	 * @property {int} [visualSettings.widthCalculation.defaultWidth=8]
+	 *   The default column content width when type check fails
+	 * @property {float} [visualSettings.widthCalculation.gap=0]
+	 *   The additional content width in rem
+	 * @property {boolean} [visualSettings.widthCalculation.includeLabel=true]
+	 *   Whether the label is taken into account
+	 * @property {boolean} [visualSettings.widthCalculation.truncateLabel=true]
+	 *   Whether the label is truncated
+	 * @property {boolean} [visualSettings.widthCalculation.verticalArrangement=false]
+	 *   Whether the referenced properties are arranged vertically
+	 * @property {string[]} [visualSettings.widthCalculation.excludeProperties]
+	 *   A list of invisible referenced property keys
 	 *
 	 * @public
 	 */
@@ -211,7 +226,7 @@ sap.ui.define([
 	 * @class
 	 * A metadata-driven table to simplify the usage of existing tables, such as the <code>ResponsiveTable</code> and <code>GridTable</code>
 	 * controls. The metadata needs to be provided via the {@link module:sap/ui/mdc/TableDelegate TableDelegate} implementation as
-	 * {@link sap.ui.mdc.table.PropertyInfo}.
+	 * {@link sap.ui.mdc.table.PropertyInfo} and {@link sap.ui.mdc.table.ComplexPropertyInfo}.
 	 *
 	 * <b>Note:</b> Read and write access to internal elements is not permitted. Such elements are, for example, the inner table including its
 	 * children. This is independent of how access was gained. Internal elements and their types are subject to change without notice.
@@ -545,8 +560,9 @@ sap.ui.define([
 				 * Specifies the table metadata.
 				 *
 				 * Whenever the <code>TableDelegate</code> needs to wait for, for example, server-side information to provide the
-				 * <code>PropertyInfo</code> objects, specifying an array of {@link sap.ui.mdc.table.PropertyInfo PropertyInfo} objects here
-				 * enables the table to speed up the initial setup.
+				 * <code>PropertyInfo</code> objects, specifying an array of {@link sap.ui.mdc.table.PropertyInfo PropertyInfo} and
+				 * {@link sap.ui.mdc.table.ComplexPropertyInfo ComplexPropertyInfo} objects in this property enables the table to speed up the
+				 * initial setup.
 				 *
 				 * Instead of requesting the <code>PropertyInfo</code> objects from the <code>TableDelegate</code> and waiting for them, the table
 				 * will use the <code>PropertyInfo</code> objects specified here for rendering-specific tasks, e.g. automatic column width

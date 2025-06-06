@@ -4,11 +4,11 @@
 @_sap_ui_rta_ContextMenu_BorderDarkColor:@sapUiShellBackground; //#000000
 @_sap_ui_rta_ContextMenu_BoxShadowDarkColor: fade(@sapUiContentShadowColor, 60%); //rgba(255, 255, 255, 0.6)
 
-.sapUiDtContextMenu {
-	.sapUiMnuLst {
-		.sapUiMnuItm {
+.sapUiDtContextMenu.sapMMenu {
+	.sapMMenuList {
+		.sapMMenuItem {
 			&:focus {
-				&.sapUiMnuItmDsbl{
+				&.sapMMenuItemDisabled{
 					outline: none;
 				}
 			}

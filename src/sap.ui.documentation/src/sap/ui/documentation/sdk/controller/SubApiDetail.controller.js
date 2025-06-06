@@ -532,12 +532,15 @@ sap.ui.define([
 							const versionData = this.getModel("versionData").getData();
 							const isModuleAvailable = oControlData.module !== this.NOT_AVAILABLE;
 							const library = versionData?.libraries?.find((lib) => lib.name === oEntityData.lib);
+							const version = library?.version?.includes("-SNAPSHOT") ? "" : library?.version;
+							const bIsOpenUI5 = this.getModel("versionData").getProperty("/isOpenUI5");
 
-							if (!isModuleAvailable || !library?.version) {
+
+							if (!isModuleAvailable || !version || !bIsOpenUI5) {
 								return _getObjectAttributeBlock("Module", oControlData.module);
 							}
 
-							const sGitHubUrl = `https://github.com/SAP/openui5/blob/${library.version}/src/${oEntityData.lib}/src/${oControlData.module}.js`;
+							const sGitHubUrl = `https://github.com/SAP/openui5/blob/${version}/src/${oEntityData.lib}/src/${oControlData.module}.js`;
 
 							return _getHBox({
 								items: [

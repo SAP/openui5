@@ -16,7 +16,8 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
 		var aActions, bHasTitle, bHasTitleLine, bUseTitleOnTheLeft, bHasActions, bHasVisibleActions,
 			bAccessibilityOn = ControlBehavior.isAccessibilityEnabled(),
-			oLabelledByTitleID = oControl._getAriaLabelledById();
+			oLabelledByTitleID = oControl._getAriaLabelledById(),
+			bIsPromoted = oControl._isPromoted();
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -31,7 +32,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 		oRm.openStart("div", oControl)
 		.style("height", oControl._getHeight());
 
-		if (bHasTitle) {
+		if (bHasTitle && !bIsPromoted) {
 			oRm.attr("role", "region");
 		}
 

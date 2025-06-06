@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/ui/base/DataType",
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject",
-	"sap/base/Log",
-	"sap/ui/core/Lib",
 	"sap/base/util/deepEqual",
 	"sap/ui/mdc/util/PropertyHelperUtil"
 ], (
@@ -16,31 +14,44 @@ sap.ui.define([
 	DataType,
 	merge,
 	isPlainObject,
-	Log,
-	Lib,
 	deepEqual,
 	PropertyHelperUtil
 ) => {
 	"use strict";
 
-	/*global Set, WeakMap */
-
 	/**
-	 * @typedef {object} sap.ui.mdc.util.PropertyInfo
-	 *
-	 * An object literal describing a data property.
+	 * @typedef {object} sap.ui.mdc.util.PropertyInfoBase
 	 *
 	 * @property {string} key
 	 *   Unique, stable key for the property. It must only contain characters allowed for IDs, see {@link sap.ui.core.ID}. Does not have to be an
 	 *   existing attribute in the data model or the technical name of an attribute in the data model.
-	 * @property {string} [path]
-	 *   The technical path for a data source property.
 	 * @property {string} label
-	 *   Translatable text that labels the property.
+	 *   Translatable text that labels the property
 	 * @property {string} [tooltip]
-	 *   Translatable text that can optionally be offered as tooltip (For example in a personalization dialog).
+	 *   Translatable text that can optionally be offered as tooltip, for example, in a personalization dialog
 	 * @property {boolean} [visible=true]
-	 *   Whether the property is or can be visible to a user.
+	 *   Whether the property is or can be visible to a user
+	 * @property {string} [group]
+	 *   Key of the group in which the property is located. Used to visually group properties in personalization dialogs.
+	 * @property {string} [groupLabel]
+	 *   Translatable text of the group.
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.mdc.util.PropertyInfoBase} sap.ui.mdc.util.PropertyInfo
+	 *
+	 * An object literal that describes attributes of a data property.
+	 *
+	 * @property {string} dataType
+	 *   The name of the data type
+	 * @property {object} [formatOptions]
+	 *   Defines the formatting options for the data type
+	 * @property {object} [constraints]
+	 *   Defines the constraints for the data type
+	 * @property {string} [path]
+	 *   The technical path for a data source property
 	 * @property {int} [maxConditions]
 	 *   Defines the maximum number of filter conditions for the property. Possible values that can be used:
 	 *   <ul>
@@ -49,18 +60,20 @@ sap.ui.define([
 	 *   </ul>
 	 *   This information is, for example, used in the <code>addItem</code> method of the <code>FilterBar</code> control to forward this information to
 	 *   the created <code>FilterField</code> instance.
-	 * @property {string} dataType
-	 *   The name of the data type
-	 * @property {object} [formatOptions]
-	 *   Defines the format options for the data type
-	 * @property {object} [constraints]
-	 * Defines the constraints for the data type
-	 * @property {string} [group]
-	 *   Key of the group the property is inside. Used to visually group properties in personalization dialogs.
-	 * @property {string} [groupLabel]
-	 *   Translatable text of the group.
 	 * @property {boolean} [caseSensitive=true]
-	 *   Whether filtering by this property is case-sensitive.
+	 *   Whether filtering by this property is case-sensitive
+	 *
+	 * @public
+	 */
+
+	/**
+	 * @typedef {sap.ui.mdc.util.PropertyInfoBase} sap.ui.mdc.util.ComplexPropertyInfo
+	 *
+	 * An object literal that describes attributes of a complex data property. A complex property references other properties in the
+	 * <code>propertyInfos</code> attribute.
+	 *
+	 * @property {string[]} propertyInfos
+	 *   A list of related properties (by key). These related properties must not themselves be complex.
 	 *
 	 * @public
 	 */

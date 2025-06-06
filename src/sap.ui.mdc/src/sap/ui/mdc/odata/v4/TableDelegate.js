@@ -32,36 +32,8 @@ sap.ui.define([
 	/**
 	 * @typedef {sap.ui.mdc.table.PropertyInfo} sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo
 	 *
-	 * An object literal describing a data property in the context of a {@link sap.ui.mdc.Table} with
+	 * An object literal describing a data property in the context of an {@link sap.ui.mdc.Table} with
 	 * {@link module:sap/ui/mdc/odata/v4/TableDelegate sap/ui/mdc/odata/v4/TableDelegate}.
-	 *
-	 * When specifying the <code>PropertyInfo</code> objects in the {@link sap.ui.mdc.Table#getPropertyInfo propertyInfo} property, the following
-	 * attributes need to be specified:
-	 * <ul>
-	 *   <li><code>key</code></li>
-	 *   <li><code>path</code></li>
-	 *   <li><code>dataType</code></li>
-	 *   <li><code>formatOptions</code></li>
-	 *   <li><code>constraints</code></li>
-	 *   <li><code>maxConditions</code></li>
-	 *   <li><code>caseSensitive</code></li>
-	 *   <li><code>visualSettings.widthCalculation</code></li>
-	 *   <li><code>propertyInfos</code></li>
-	 *   <li><code>groupable</code></li>
-	 *   <li><code>isKey</code></li>
-	 *   <li><code>unit</code></li>
-	 *   <li><code>text</code></li>
-	 *   <li><code>aggregatable</code></li>
-	 *   <li><code>extension.technicallyGroupable</code></li>
-	 *   <li><code>extension.technicallyAggregatable</code></li>
-	 * </ul>
-	 *
-	 * If the property is complex, the following attributes need to be specified:
-	 * <ul>
-	 *   <li><code>key</code></li>
-	 *   <li><code>visualSettings.widthCalculation</code></li>
-	 *   <li><code>propertyInfos</code> (all referenced properties must be specified)</li>
-	 * </ul>
 	 *
 	 * @property {boolean} [isKey=false]
 	 *   Defines whether a property is a key or part of a key in the data. A key property must be technically groupable.
@@ -174,7 +146,8 @@ sap.ui.define([
 	 * @name module:sap/ui/mdc/odata/v4/TableDelegate.fetchProperties
 	 * @function
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {Promise<sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo[]>} A <code>Promise</code> that resolves with the property information
+	 * @returns {Promise<Array<sap.ui.mdc.odata.v4.TableDelegate.PropertyInfo|sap.ui.mdc.table.ComplexPropertyInfo>>}
+	 *     A <code>Promise</code> that resolves with the property information
 	 * @protected
 	 */
 

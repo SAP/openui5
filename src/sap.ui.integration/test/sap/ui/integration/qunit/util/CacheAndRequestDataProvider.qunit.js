@@ -53,6 +53,7 @@ sap.ui.define([
 
 	QUnit.module("Caching data provider", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.oHost = new Host();
 			this.oHost.useExperimentalCaching();
 
@@ -68,6 +69,7 @@ sap.ui.define([
 			this.oServer.respondImmediately = true;
 		},
 		afterEach: function () {
+			this.clock.restore();
 			this.oDataProviderFactory.destroy();
 			this.oCard.destroy();
 			this.oHost.destroy();
@@ -315,12 +317,14 @@ sap.ui.define([
 
 	QUnit.module("Card specific features", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.oHost = new Host();
 			this.oHost.useExperimentalCaching();
 
 			this.oCard = new Card({ host: this.oHost });
 		},
 		afterEach: function () {
+			this.clock.restore();
 			this.oCard.destroy();
 			this.oHost.destroy();
 		}
@@ -357,6 +361,7 @@ sap.ui.define([
 
 	QUnit.module("Usage without a card or editor", {
 		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
 			this.oHost = new Host();
 			this.oHost.useExperimentalCaching();
 
@@ -371,6 +376,7 @@ sap.ui.define([
 			this.oServer.respondImmediately = true;
 		},
 		afterEach: function () {
+			this.clock.restore();
 			this.oDataProviderFactory.destroy();
 			this.oHost.destroy();
 			this.oServer.restore();

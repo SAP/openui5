@@ -503,6 +503,7 @@ sap.ui.define([
 	 */
 	Util.isExportable = function(oBinding) {
 		return !Util.isEmpty(oBinding)
+			&& oBinding?.getCount?.() !== 0
 			&& (!oBinding?.getDownloadUrl
 				|| (oBinding.isResolved() && oBinding.getDownloadUrl() !== null));
 	};

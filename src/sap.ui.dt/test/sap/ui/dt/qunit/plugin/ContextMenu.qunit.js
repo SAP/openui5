@@ -176,6 +176,7 @@ sap.ui.define([
 				]
 			});
 			this.oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			this.oMenuSpy = sinon.spy(this.oContextMenuControl, "openAsContextMenu");
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
 				this.oButton1Overlay.setSelectable(true);
@@ -207,9 +208,13 @@ sap.ui.define([
 
 			const onOpenedContextMenuAgain = function(oEvent) {
 				const {oContextMenuControl} = oEvent.getSource();
-				// Works only with events on unified menu
-				const aItems = oContextMenuControl.getItems();
+				// check if the Menu is called with correct parameters (Keyboard event)
+				const oEventParameter = this.oMenuSpy.getCall(1).args[0];
+				const oOpenerRefParameter = this.oMenuSpy.getCall(1).args[1];
+				assert.equal(oEventParameter.type, "keyup", "then the sap.m.Menu is called with correct event parameter (Keyboard event)");
+				assert.equal(oOpenerRefParameter, this.oButton2Overlay, "then the sap.m.Menu is called with correct openerRef parameter (Keyboard event)");
 
+				const aItems = oContextMenuControl.getItems();
 				// triggers menu item handler() on propagated item
 				const oPropagatedMenuItem = aItems.find((oItem) => {
 					return oItem.getText() === "propagated for button 1";
@@ -225,7 +230,12 @@ sap.ui.define([
 
 			const onOpenedContextMenu = function(oEvent) {
 				const {oContextMenuControl} = oEvent.getSource();
-				// Works only with events on unified menu
+				// check if the Menu is called with correct parameters (Mouse event)
+				const oEventParameter = this.oMenuSpy.getCall(0).args[0];
+				const oOpenerRefParameter = this.oMenuSpy.getCall(0).args[1];
+				assert.equal(oEventParameter.type, "click", "then the sap.m.Menu is called with correct event parameter (Mouse event)");
+				assert.equal(oOpenerRefParameter, undefined, "then the sap.m.Menu is called without openerRef parameter (Mouse event)");
+
 				const aItems = oContextMenuControl.getItems();
 				const oRenameMenuItem = aItems.find((oItem) => {
 					return oItem.getText() === "Rename for button 2";
@@ -265,7 +275,11 @@ sap.ui.define([
 				this.oContextMenuPlugin.attachEventOnce("openedContextMenu", onOpenedContextMenuAgain.bind(this));
 
 				this.oButton2Overlay.setSelected(true);
-				this.oButton2Overlay.getDomRef().dispatchEvent(new MouseEvent("contextmenu"));
+				const oKeyUpEvent = new KeyboardEvent("keyup", {
+					keyCode: KeyCodes.ENTER,
+					which: KeyCodes.ENTER
+				});
+				this.oButton2Overlay.getDomRef().dispatchEvent(oKeyUpEvent);
 				this.clock.tick(50);
 			};
 			this.oContextMenuPlugin.attachEventOnce("openedContextMenu", onOpenedContextMenu.bind(this));
@@ -288,9 +302,12 @@ sap.ui.define([
 				}
 			]);
 
+			// open the context menu with mouse click
 			this.oButton2Overlay.setSelected(true);
-			var oTargetDomRef = this.oButton2Overlay.getDomRef();
-			oTargetDomRef.dispatchEvent(new MouseEvent("contextmenu"));
+			this.oButton2Overlay.getDomRef().dispatchEvent(new MouseEvent("click", {
+				clientX: 100,
+				clientY: 100
+			}));
 			this.clock.tick(50);
 		});
 
@@ -608,6 +625,16 @@ sap.ui.define([
 			});
 			oTargetDomRef.dispatchEvent(oKeyUpEvent);
 		});
+
+		// QUnit.test("Testing opening the Menu with Keyboard (ENTER)", function(assert) {
+		// 	const oTargetDomRef = this.oButton2Overlay.getDomRef();
+		// 	const oKeyUpEvent = new KeyboardEvent("keyup", {
+		// 		keyCode: KeyCodes.ENTER,
+		// 		which: KeyCodes.ENTER
+		// 	});
+		// 	oTargetDomRef.dispatchEvent(oKeyUpEvent);
+		// });
+
 		QUnit.test("Deregistering an Overlay", function(assert) {
 			this.oContextMenuPlugin.deregisterElementOverlay(this.oButton1Overlay);
 			assert.ok(true, "should throw no error");

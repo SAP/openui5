@@ -8,51 +8,51 @@
 @_sap_ui_dt_ContextMenu_FocusColor: @sapUiListSelectionBorderColor; //#91c8f6
 @_sap_ui_dt_ContextMenu_DisabledMnuItemHoverTextColor: @sapUiListSelectionBorderColor; //#91c8f6
 
-.sapUiDtContextMenu {
-	.sapUiMnuLst {
-		.sapUiMnuItm {
+.sapUiDtContextMenu.sapMMenu {
+	.sapMMenuList {
+		.sapMMenuItem {
 			color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
-			background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+			background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 			border: 0.0625rem dotted transparent;
 
-			.sapUiMnuItmIco {
+			.sapMMenuItemIcon {
 				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
 			}
 
-			.sapUiMnuItmSbMnu > div:after,
-			.sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
+			.sapMMenuItemSubMenu > div:after,
+			.sapMMenuItem:hover .sapMMenuItemSubMenu > div:after {
 				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
-				background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+				background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 			}
 
-			&.sapUiMnuItmHov {
+			&:hover {
 				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
 				background-color: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
 
-				.sapUiMnuItmIco {
+				.sapMMenuItemIcon {
 					color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
-					background: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
+					background-color: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
 				}
-				&.sapUiMnuItmDsbl {
-					background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
-					.sapUiMnuItmIco {
-						background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+				&.sapMMenuItemDisabled {
+					background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+					.sapMMenuItemIcon {
+						background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 					}
 				}
 			}
 
-			&:focus:not(.sapUiMnuItmDsbl) {
+			&:focus:not(.sapMMenuItemDisabled) {
 				outline: 0.0625rem dotted @_sap_ui_dt_ContextMenu_FocusColor;
-				outline-offset: -0.0625rem;
+				outline-offset: -0.125rem;
 				border-radius: @_sap_ui_dt_ContextMenu_BorderRadius;
 			}
 
-			&.sapUiMnuItmSubMnuOpen {
+			&.sapMMenuItemSubMenuOpen {
 				border-bottom: none !important;
 			}
 
-			&.sapUiMnuItmDsbl {
-				&.sapUiMnuItmHov {
+			&.sapMMenuItemDisabled {
+				&:hover {
 					color: @_sap_ui_dt_ContextMenu_DisabledMnuItemHoverTextColor;
 				}
 				&:focus {
