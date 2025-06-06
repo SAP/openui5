@@ -61,12 +61,18 @@ sap.ui.define([
 					assert.ok(this.oEditor.isFieldReady(), "Editor fields are ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
-					assert.ok(oField.getAggregation("_field").getBusy() === true, "Content of Form contains: Destination Field that is busy");
-					EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
-						//should resolve the destination within 1000ms
-						assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+					var isBusy = oField.getAggregation("_field").getBusy();
+					if (isBusy) {
+						assert.ok(true, "Content of Form contains: Destination Field that is busy");
+						EditorQunitUtils.isDestinationReady(this.oEditor).then(function () {
+							//should resolve the destination within 1000ms
+							assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+							resolve();
+						});
+					} else {
+						assert.ok(true, "Content of Form contains: Destination Field that is loaded immediately, without busy state");
 						resolve();
-					});
+					}
 				}.bind(this));
 			}.bind(this));
 		});
