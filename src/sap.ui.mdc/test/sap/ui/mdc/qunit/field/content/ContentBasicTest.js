@@ -64,6 +64,9 @@ sap.ui.define([
 					emptyIndicatorMode: EmptyIndicatorMode.Auto
 				}
 			],
+			associations: [
+				{}
+			],
 			events: [
 				{}
 			]
@@ -95,6 +98,11 @@ sap.ui.define([
 					emptyIndicatorMode: EmptyIndicatorMode.Auto
 				}
 			],
+			associations: [
+				{
+					ariaLabelledBy: ["MyLabel"]
+				}
+			],
 			events: [
 				{}
 			]
@@ -119,6 +127,9 @@ sap.ui.define([
 				{
 					emptyIndicatorMode: EmptyIndicatorMode.Auto
 				}
+			],
+			associations: [
+				{}
 			],
 			events: [
 				{}
@@ -155,6 +166,11 @@ sap.ui.define([
 					showSuggestion: false,
 					valueState: "Warning",
 					valueStateText: "My Warning"
+				}
+			],
+			associations: [
+				{
+					ariaLabelledBy: ["MyLabel"]
 				}
 			],
 			events: [
@@ -206,6 +222,11 @@ sap.ui.define([
 					valueStateText: "My Warning"
 				}
 			],
+			associations: [
+				{
+					ariaLabelledBy: ["MyLabel"]
+				}
+			],
 			events: [
 				{
 					change: {value: "X"},
@@ -243,6 +264,11 @@ sap.ui.define([
 					rows: 4,
 					valueState: "Warning",
 					valueStateText: "My Warning"
+				}
+			],
+			associations: [
+				{
+					ariaLabelledBy: ["MyLabel"]
 				}
 			],
 			events: [
@@ -283,6 +309,11 @@ sap.ui.define([
 					showSuggestion: false,
 					valueState: "Warning",
 					valueStateText: "My Warning"
+				}
+			],
+			associations: [
+				{
+					ariaLabelledBy: ["MyLabel"]
 				}
 			],
 			events: [
@@ -344,7 +375,7 @@ sap.ui.define([
 			getFormatOptions: () => {return {test: true};},
 			getUnitFormatOptions: () => {return {test: true};},
 			_getValueHelpIcon: () => {return "sap-icon://slim-arrow-down";},
-			getAriaLabelledBy: () => {return [];},
+			getAriaLabelledBy: () => {return ["MyLabel"];},
 			getDataType: () => {return sType;},
 			getDataTypeConstraints: () => {return null;},
 			getDataTypeFormatOptions: () => {return oFormatOptions;},
@@ -512,6 +543,9 @@ sap.ui.define([
 								}
 								for (const sProperty in oValue.properties[iIndex]) {
 									assert.equal(oCreatedControl.getProperty(sProperty), oValue.properties[iIndex][sProperty], "Value for " + sProperty);
+								}
+								for (const sAssociation in oValue.associations[iIndex]) {
+									assert.deepEqual(oCreatedControl.getAssociation(sAssociation), oValue.associations[iIndex][sAssociation], "Value for " + sAssociation);
 								}
 								// check events
 								fnInitEventCount();

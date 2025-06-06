@@ -1336,6 +1336,9 @@ sap.ui.define([
 
 	// TODO: consolidate / refactor
 	QUnit.module("old ChangePersistence tests", {
+		before() {
+			Settings.clearInstance();
+		},
 		async beforeEach() {
 			this.oCondenserStub = sandbox.stub(Condenser, "condense").callsFake(function(oAppComponent, aChanges) {
 				return Promise.resolve(aChanges);

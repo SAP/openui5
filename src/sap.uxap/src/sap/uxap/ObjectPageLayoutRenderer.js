@@ -38,7 +38,10 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 			bHeaderRoleSet = oLandmarkInfo && oLandmarkInfo.getHeaderRole(),
 			bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 			bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
+			bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole(),
 			sRootRole = bRootRoleSet ? oLandmarkInfo.getRootRole() : undefined,
+			sHeaderRole = bHeaderRoleSet ? oLandmarkInfo.getHeaderRole() : undefined,
+			sNavigationRole = bNavigationRoleSet ? oLandmarkInfo.getNavigationRole() : undefined,
 			bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
 			bShowFooter = oControl.getShowFooter();
 
@@ -81,7 +84,11 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		if (!bHeaderRoleSet) {
 			oRm.attr("role", "banner");
 		}
-		oRm.attr("aria-roledescription", oRb.getText("HEADER_ROLE_DESCRIPTION"));
+
+		if (sHeaderRole !== "None") {
+			oRm.attr("aria-roledescription", oRb.getText("HEADER_ROLE_DESCRIPTION"));
+		}
+
 		if (!bHeaderLabelSet) {
 			oRm.attr("aria-label", sHeaderAriaLabelText);
 		}
@@ -102,7 +109,9 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		oRm.openStart("div", oControl.getId() + "-stickyAnchorBar");
 		oRm.attr("data-sap-ui-customfastnavgroup", true);
 
-		oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
+		if (sNavigationRole !== "None") {
+			oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
+		}
 
 		if (!oControl._bHeaderInTitleArea) {
 			oRm.attr("aria-hidden", "true");
@@ -147,7 +156,9 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		oRm.openStart("section", oControl.getId() + "-anchorBar");
 		oRm.attr("data-sap-ui-customfastnavgroup", true);
 
-		oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
+		if (sNavigationRole !== "None") {
+			oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
+		}
 
 		oRm.class("sapUxAPObjectPageNavigation")
 			.class("ui-helper-clearfix")
@@ -283,7 +294,8 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 	 */
 	ObjectPageLayoutRenderer._renderFooterContentInternal = function (oRm, oObjectPageLayout, sFooterTag, oLandmarkInfo, oRb) {
 		var oFooter = oObjectPageLayout.getFooter(),
-			bFooterRoleSet = oLandmarkInfo && oLandmarkInfo.getFooterRole();
+			bFooterRoleSet = oLandmarkInfo && oLandmarkInfo.getFooterRole(),
+			sFooterRole = bFooterRoleSet ? oLandmarkInfo.getFooterRole() : undefined;
 
 		if (!oFooter) {
 			return;
@@ -301,7 +313,11 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 		if (!bFooterRoleSet) {
 			oRm.attr("role", "region");
 		}
-		oRm.attr("aria-roledescription", oRb.getText("FOOTER_ROLE_DESCRIPTION"));
+
+		if (sFooterRole !== "None") {
+			oRm.attr("aria-roledescription", oRb.getText("FOOTER_ROLE_DESCRIPTION"));
+		}
+
 		oRm.accessibilityState(oObjectPageLayout, oObjectPageLayout._formatLandmarkInfo(oLandmarkInfo, "Footer"));
 		oRm.openEnd();
 		oFooter.addStyleClass("sapUxAPObjectPageFloatingFooter");

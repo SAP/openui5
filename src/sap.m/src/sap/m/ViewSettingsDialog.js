@@ -36,7 +36,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "firstFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable"
+	"sap/ui/dom/jquery/Focusable",
+	"sap/ui/core/InvisibleMessage"
 ],
 function(
 	library,
@@ -69,7 +70,9 @@ function(
 	StaticArea,
 	Log,
 	coreLibrary,
-	jQuery
+	jQuery,
+	jQueryFocusable,
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -92,6 +95,8 @@ function(
 	var TitleLevel = coreLibrary.TitleLevel;
 
 	var LIST_ITEM_SUFFIX = "-list-item";
+
+	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
 
 	/**
 	 * Constructor for a new <code>ViewSettingsDialog</code>.
@@ -371,6 +376,7 @@ function(
 		this._sFilterDetailTitleLabelId     = sId + "-detailtitle";
 		this._oFiltersSelectedOnly			= {};
 		this._oKeylessFilters				= {};
+		this._oInvisibleMessage				= null;
 
 		/* setup a name map between the sortItems
 		 aggregation and an sap.m.List with items
@@ -428,6 +434,7 @@ function(
 		this._sCustomTabsButtonsIdPrefix    = null;
 		this._fnFilterSearchCallback        = null;
 		this._oKeylessFilters               = null;
+		this._oInvisibleMessage				= null;
 
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
@@ -1377,6 +1384,10 @@ function(
 		// open dialog
 		this._getDialog().open();
 
+		if (!this._oInvisibleMessage) {
+			this._oInvisibleMessage = InvisibleMessage.getInstance();
+		}
+
 		return this;
 	};
 
@@ -1736,6 +1747,9 @@ function(
 
 		// fire the reset event. It can be used to set the state of custom tabs.
 		this.fireReset();
+
+		//Announce to the screen reader that filters are reset
+		this._oInvisibleMessage.announce(this._rb.getText("VIEWSETTINGS_RESET_BUTTON_ACTION"), InvisibleMessageMode.Assertive);
 	};
 
 	/**

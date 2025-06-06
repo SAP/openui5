@@ -51,6 +51,11 @@ sap.ui.define([
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			}
 		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			}
+		],
 		events: [
 			{
 				press: {ctrlKey: false, metaKey: false}
@@ -90,6 +95,11 @@ sap.ui.define([
 		properties: [
 			{
 				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			}
+		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
 			}
 		],
 		events: [

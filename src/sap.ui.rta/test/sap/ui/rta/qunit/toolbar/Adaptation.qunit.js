@@ -895,14 +895,19 @@ sap.ui.define([
 					"then the proper platform is passed"
 				);
 				assert.strictEqual(
-					oIframeURL.searchParams.get("appId"),
+					oIframeURL.searchParams.get("AppId"),
 					"someAppId",
 					"then the proper app id is passed"
 				);
 				assert.strictEqual(
-					oIframeURL.searchParams.get("appVersion"),
+					oIframeURL.searchParams.get("AppVersion"),
 					"someAppVersion",
 					"then the proper app version is passed"
+				);
+				assert.strictEqual(
+					oIframeURL.searchParams.get("product_filter"),
+					"Key%20User%20Adaptation",
+					"then the proper product filter is passed"
 				);
 			}.bind(this));
 		});

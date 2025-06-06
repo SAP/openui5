@@ -813,4 +813,128 @@ sap.ui.define([
 		  })
 	  ]
   }).placeAt('barBtn');
+
+  new HTML({content: "</br></br>Info Bar</br>"}).placeAt("barBtn");
+
+  new OverflowToolbar({
+	  design: "Info",
+	  active: true,
+	  content: [
+		  new Button({
+			  type: ButtonType.Default,
+			  icon: "sap-icon://home",
+			  text: "Btn Default",
+			  enabled: true
+		  }),
+		  new Button({
+			  type: ButtonType.Default,
+			  icon: "sap-icon://home",
+			  text: "Btn Default Dis",
+			  enabled: false
+		  }),
+		  new Button({
+			  type: ButtonType.Transparent,
+			  icon: "sap-icon://home",
+			  text: "Btn Transparent"
+		  }),
+		  new Button({
+			  type: ButtonType.Emphasized,
+			  icon: "sap-icon://home",
+			  text: "Btn Emphasized"
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Default,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Default",
+			  enabled: true
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Transparent,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Trans Dis",
+			  enabled: false
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Transparent,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn pressed Trans",
+			  enabled: true,
+			  pressed: true
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Reject,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Reject",
+			  enabled: true,
+			  pressed: true
+		  }),
+		  new Button({
+			  type: ButtonType.Reject,
+			  icon: "sap-icon://home",
+			  text: "Btn reject",
+			  enabled: true
+		  })
+	  ]
+  }).placeAt('barBtn');
+
+  new OverflowToolbar({
+	  design: "Info",
+	  active: false,
+	  content: [
+		  new Button({
+			  type: ButtonType.Default,
+			  icon: "sap-icon://home",
+			  text: "Btn Default",
+			  enabled: true
+		  }),
+		  new Button({
+			  type: ButtonType.Default,
+			  icon: "sap-icon://home",
+			  text: "Btn Default Dis",
+			  enabled: false
+		  }),
+		  new Button({
+			  type: ButtonType.Emphasized,
+			  icon: "sap-icon://home",
+			  text: "Btn Emphasized"
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Transparent,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Trans",
+			  enabled: true
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Transparent,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Trans Dis",
+			  enabled: false
+		  }),
+		  new Button({
+			  type: ButtonType.Transparent,
+			  icon: "sap-icon://home",
+			  text: "Btn Trans"
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Default,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Default Dis",
+			  enabled: false,
+			  pressed: true
+		  }),
+		  new ToggleButton({
+			  type: ButtonType.Reject,
+			  icon: "sap-icon://home",
+			  text: "ToggleBtn Reject",
+			  enabled: true,
+			  pressed: true
+		  }),
+		  new Button({
+			  type: ButtonType.Reject,
+			  icon: "sap-icon://home",
+			  text: "Btn reject",
+			  enabled: true
+		  })
+	  ]
+  }).placeAt('barBtn');
 });

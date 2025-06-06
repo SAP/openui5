@@ -64,6 +64,11 @@ sap.ui.define([
 				width: "100%"
 			}
 		],
+		associations: [
+			{
+				ariaLabelledBy: ["MyLabel"]
+			}
+		],
 		events: [
 			{
 				change: {value: "X"},

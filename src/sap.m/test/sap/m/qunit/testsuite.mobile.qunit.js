@@ -1060,6 +1060,16 @@ sap.ui.define([
 				}
 			},
 
+			"p13n.util.diff": {
+				title: "Test Page for sap.m.p13n.util.diff",
+				module: "test-resources/sap/m/qunit/p13n/util/diff.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n/util"
+					}
+				}
+			},
+
 			"p13n.modules.PersistenceProvider": {
 				title: "Test Page for sap.m.p13n.modules.PersistenceProvider",
 				module: "test-resources/sap/m/qunit/p13n/PersistenceProvider.qunit",

@@ -5,23 +5,25 @@
 sap.ui.define([
 	"sap/ui/integration/editor/fields/ObjectField",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/table/Table",
 	"sap/m/CheckBox",
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/integration/util/Utils",
-	"sap/m/table/columnmenu/Menu"
+	"sap/m/table/columnmenu/Menu",
+	"sap/ui/core/Lib"
 ], function (
 	ObjectField,
 	JSONModel,
-	Table,
 	CheckBox,
 	deepEqual,
 	deepClone,
 	Utils,
-	Menu
+	Menu,
+	Library
 ) {
 	"use strict";
+
+	let Table;
 
 	/**
 	 * @class Object List Field with object list value, such as [{"key": "key1"}, {"key": "key2"}]
@@ -40,6 +42,20 @@ sap.ui.define([
 		},
 		renderer: ObjectField.getMetadata().getRenderer()
 	});
+
+	ObjectListField.loadDependencies = function () {
+		return Library.load("sap.ui.table")
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					sap.ui.require([
+						"sap/ui/table/Table"
+					], (_Table) => {
+						Table = _Table;
+						resolve();
+					}, reject);
+				});
+			});
+	};
 
 	ObjectListField.prototype.initVisualization = function (oConfig) {
 		var that = this;
