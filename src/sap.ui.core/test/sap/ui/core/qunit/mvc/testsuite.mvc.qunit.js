@@ -160,6 +160,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				module: "test-resources/sap/ui/core/qunit/ShortcutHints.qunit"
 			},
 
+			KeyboardInteractionDisplay: {
+				title: "sap.ui.core.interaction.KeyboardInteractionDisplay",
+				module: "test-resources/sap/ui/core/qunit/interaction/KeyboardInteractionDisplay.qunit"
+			},
+
 			XMLHelper: {
 				title: "sap.ui.core.util.XMLHelper",
 				module: "test-resources/sap/ui/core/qunit/util/XMLHelper.qunit"
