@@ -202,27 +202,6 @@ SPDX-License-Identifier = "Apache-2.0 and MIT"
 SPDX-FileComment = "these files contain content from SAP and JUnit Reporter for QUnit: qunit-junit.js is overall written by SAP, but contains a modified copy of JUnit Reporter for QUnit (qunit-reporter-junit)"
 
 [[annotations]]
-path = "src/sap.ui.core/src/sap/ui/thirdparty/iscroll.js"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2012 Matteo Spinelli"
-SPDX-License-Identifier = "MIT"
-SPDX-FileComment = "these files belong to: cubiq.org - iScroll"
-
-[[annotations]]
-path = "src/sap.ui.core/src/sap/ui/thirdparty/iscroll-lite.js"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2011 Matteo Spinelli"
-SPDX-License-Identifier = "MIT"
-SPDX-FileComment = "these files belong to: cubiq.org - iScroll Lite"
-
-[[annotations]]
-path = "src/sap.ui.core/src/sap/ui/thirdparty/swipe-view.js"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2012 Matteo Spinelli"
-SPDX-License-Identifier = "MIT"
-SPDX-FileComment = "these files belong to: cubiq.org - swipeview"
-
-[[annotations]]
 path = "src/sap.ui.core/src/sap/ui/thirdparty/zyngascroll.js"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2011 Zynga Inc."
@@ -270,13 +249,6 @@ precedence = "aggregate"
 SPDX-FileCopyrightText = "1991-2024 Unicode, Inc."
 SPDX-License-Identifier = "LicenseRef-Unicode-3.0"
 SPDX-FileComment = "these files belong to: Unicode Common Locale Data Repository"
-
-[[annotations]]
-path = "src/sap.ui.core/src/sap/ui/thirdparty/mobiscroll/**"
-precedence = "aggregate"
-SPDX-FileCopyrightText = "2010-2013, Acid Media"
-SPDX-License-Identifier = "MIT"
-SPDX-FileComment = "these files belong to: MobiScroll"
 
 [[annotations]]
 path = [

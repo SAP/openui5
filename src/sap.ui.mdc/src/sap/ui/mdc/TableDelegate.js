@@ -80,7 +80,8 @@ sap.ui.define([
 	 * @name module:sap/ui/mdc/TableDelegate.fetchProperties
 	 * @function
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {Promise<sap.ui.mdc.table.PropertyInfo[]>} A <code>Promise</code> that resolves with the property information
+	 * @returns {Promise<Array<sap.ui.mdc.table.PropertyInfo|sap.ui.mdc.table.ComplexPropertyInfo>>}
+	 *     A <code>Promise</code> that resolves with the property information
 	 * @protected
 	 */
 

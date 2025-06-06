@@ -274,8 +274,7 @@ sap.ui.define([
 
 		//Assert
 		assert.ok(document.getElementById("customTileContent-priority"), "Priority badge is displayed for NewsContent");
-		assert.equal(document.getElementById("customTileContent-priority").innerText, sPriorityText, "Priority badge text is correct");
-		assert.equal(document.getElementById('customTileContent-priority-tooltip').innerText, sPriorityText, "Priority badge tooltip is correct");
+		assert.equal(document.getElementById("customTileContent-priority-text").innerText, sPriorityText, "Priority badge text is correct");
 		assert.equal(document.querySelectorAll('.sapMGTBackgroundBadge .sapMGTPriorityBadge').length, 0, "Priority badge is only rendered for NewsContent and not for GenericTile");
 	});
 

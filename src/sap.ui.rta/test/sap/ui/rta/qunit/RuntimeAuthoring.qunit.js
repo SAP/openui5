@@ -90,6 +90,7 @@ sap.ui.define([
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			sandbox.stub(FlexRuntimeInfoAPI, "getUserId").returns("testUser");
+			this.oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
 
 			// Prepare elements an designtime
 			var oElement1 = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.Name");
@@ -145,13 +146,11 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when UI Adaptation is started and the UI Adaptation Tour is started automatically", function(assert) {
-			const oGuidedTourPopup = Element.getElementById("autoStartGuidedTour");
-			assert.ok(oGuidedTourPopup, "then the tour popup is shown");
+			assert.ok(this.oMessageBoxStub.calledOnce, "then the tour message box is shown");
 			assert.ok(
 				sessionStorage.getItem("sap.ui.rta.dontShowUIAdaptationTourAfterReload"),
 				"then the session storage tour flag is set"
 			);
-			oGuidedTourPopup.destroy();
 		});
 
 		QUnit.test("when UI Adaptation is started and the UI Adaptation Tour flag is available", function(assert) {
@@ -159,8 +158,7 @@ sap.ui.define([
 				sessionStorage.getItem("sap.ui.rta.dontShowUIAdaptationTourAfterReload"),
 				"then the session storage tour flag is set"
 			);
-			const oGuidedTourPopup = Element.getElementById("autoStartGuidedTour");
-			assert.notOk(oGuidedTourPopup, "then the tour popup does not appear");
+			assert.ok(this.oMessageBoxStub.notCalled, "then the tour message box does not appear");
 		});
 
 		QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with macintosh device and metaKey is pushed", function(assert) {
@@ -335,9 +333,8 @@ sap.ui.define([
 
 		QUnit.test("when handleElementModified is called and the command fails because of dependencies", function(assert) {
 			assert.expect(2);
-			var oLogStub = sandbox.stub(Log, "error");
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
-			var oCommandStack = {
+			const oLogStub = sandbox.stub(Log, "error");
+			const oCommandStack = {
 				pushAndExecute() {
 					return Promise.reject(Error(
 						"Some stuff.... The following Change cannot be applied because of a dependency .... some other stuff"
@@ -350,15 +347,14 @@ sap.ui.define([
 			});
 			return this.oRta._pElementModified.then(function() {
 				assert.equal(oLogStub.callCount, 1, "one error got logged");
-				assert.equal(oMessageBoxStub.callCount, 1, "one MessageBox got shown");
-			});
+				assert.equal(this.oMessageBoxStub.callCount, 1, "one MessageBox got shown");
+			}.bind(this));
 		});
 
 		QUnit.test("when handleElementModified is called and the command fails, but not because of dependencies", function(assert) {
 			assert.expect(2);
-			var oLogStub = sandbox.stub(Log, "error");
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
-			var oCommandStack = {
+			const oLogStub = sandbox.stub(Log, "error");
+			const oCommandStack = {
 				pushAndExecute() {
 					return Promise.reject(Error("Some stuff........ some other stuff"));
 				}
@@ -369,8 +365,8 @@ sap.ui.define([
 			});
 			return this.oRta._pElementModified.then(function() {
 				assert.equal(oLogStub.callCount, 1, "one error got logged");
-				assert.equal(oMessageBoxStub.callCount, 0, "no MessageBox got shown");
-			});
+				assert.equal(this.oMessageBoxStub.callCount, 0, "no MessageBox got shown");
+			}.bind(this));
 		});
 
 		QUnit.test("when saving RTA without exiting,", function(assert) {
@@ -423,18 +419,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when saving RTA without exiting with error in saving changes,", function(assert) {
-			var fnDone = assert.async();
-			var oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
+			const fnDone = assert.async();
+			const oMessageToastShowSpy = sandbox.spy(MessageToast, "show");
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.reject("Test Exception"));
-			var oMessageBoxStub = sandbox.stub(MessageBox, "error")
+			const oMessageBoxErrorStub = sandbox.stub(MessageBox, "error")
 			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
-			var sExpectedErrorMessage = this.oRta._getTextResources().getText("MSG_LREP_TRANSFER_ERROR");
+			const sExpectedErrorMessage = this.oRta._getTextResources().getText("MSG_LREP_TRANSFER_ERROR");
 
 			function fnChecks() {
 				assert.ok(this.oRta, "RTA is still up and running");
 				assert.strictEqual(oMessageToastShowSpy.callCount, 0, "then message toast with confirmation message is not called");
-				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox with the error message is called once");
-				assert.ok(oMessageBoxStub.getCall(0).args[0].includes(sExpectedErrorMessage), "then the expected messagebox is called");
+				assert.strictEqual(oMessageBoxErrorStub.callCount, 1, "then the messagebox with the error message is called once");
+				assert.ok(
+					oMessageBoxErrorStub.getCall(0).args[0].includes(sExpectedErrorMessage),
+					"then the expected messagebox is called"
+				);
 				assert.ok(this.oCommandStack.getAllExecutedCommands().length > 0, "command stack is not cleared");
 				assert.ok(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), "and the Toolbar is visible");
 				fnDone();
@@ -448,17 +447,16 @@ sap.ui.define([
 
 		QUnit.test("when trying to stop rta with error in saving changes,", function(assert) {
 			sandbox.stub(this.oRta, "_serializeToLrep").returns(Promise.reject());
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
-			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
+			this.oMessageBoxStub.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop(false).catch(function() {
 				assert.ok(true, "then the promise got rejected");
 				assert.ok(this.oRta, "RTA is still up and running");
 				assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "1 command is still in the stack");
 				assert.equal(DOMUtil.isVisible(document.querySelector(".sapUiRtaToolbar")), true, "and the Toolbar is visible.");
-				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox is called once");
+				assert.strictEqual(this.oMessageBoxStub.callCount, 1, "then the messagebox is called once");
 				assert.strictEqual(
-					oMessageBoxStub.getCall(0).args[1],
+					this.oMessageBoxStub.getCall(0).args[1],
 					"MSG_UNSAVED_CHANGES_ON_CLOSE",
 					"then the expected messagebox is called"
 				);
@@ -496,21 +494,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("when stopping rta with changes and choosing not to save them on the dialog,", function(assert) {
-			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
-			var oCheckReloadOnExitSpy = sandbox.spy(ReloadManager, "checkReloadOnExit");
-			var oHasDirtyChangesSpy = sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(true);
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
-			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"));
+			const oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oCheckReloadOnExitSpy = sandbox.spy(ReloadManager, "checkReloadOnExit");
+			const oHasDirtyChangesSpy = sandbox.stub(PersistenceWriteAPI, "hasDirtyChanges").returns(true);
+			this.oMessageBoxStub.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"));
 
 			return this.oRta.stop(false)
 			.then(function() {
 				assert.equal(oHasDirtyChangesSpy.called, true, "hasDirtyChanges was called");
 				assert.strictEqual(
-					oMessageBoxStub.getCall(0).args[1],
+					this.oMessageBoxStub.getCall(0).args[1],
 					"MSG_UNSAVED_CHANGES_ON_CLOSE",
 					"then the expected messagebox is called"
 				);
-				assert.deepEqual(oMessageBoxStub.getCall(0).args[2], {
+				assert.deepEqual(this.oMessageBoxStub.getCall(0).args[2], {
 					titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
 					actionKeys: ["BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
 					emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
@@ -538,19 +535,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when stopping rta with versioning enabled, existing changes and pressing cancel on the dialog,", function(assert) {
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
+			this.oMessageBoxStub.resolves(MessageBox.Action.CANCEL);
 			this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
-			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
+			const oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
 
 			return this.oRta.stop(false)
 			.then(function() {
-				assert.deepEqual(oMessageBoxStub.getCall(0).args[2], {
+				assert.deepEqual(this.oMessageBoxStub.getCall(0).args[2], {
 					titleKey: "TIT_UNSAVED_CHANGES_ON_CLOSE",
 					actionKeys: ["BTN_UNSAVED_DRAFT_CHANGES_ON_CLOSE_SAVE", "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"],
 					emphasizedActionKey: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE",
 					showCancel: true
 				}, "and the message box is called with the right parameters (save draft button)");
-				assert.deepEqual(oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_DRAFT_CHANGES_ON_CLOSE",
+				assert.deepEqual(this.oMessageBoxStub.getCall(0).args[1], "MSG_UNSAVED_DRAFT_CHANGES_ON_CLOSE",
 					"then message box message text is selected accordingly");
 				assert.ok(true, "then the promise gets resolved");
 				assert.ok(this.oRta, "RTA is still up and running");
@@ -565,12 +562,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when stopping rta with saving changes", function(assert) {
-			var oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
-			var oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
-			var oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
-			var oRemoveInfoSessionStub = sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
-			var oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox")
-			.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
+			const oSaveSpy = sandbox.spy(PersistenceWriteAPI, "save");
+			const oVersionsClearInstances = sandbox.spy(VersionsAPI, "clearInstances");
+			const oSerializeToLrepSpy = sandbox.spy(this.oRta, "_serializeToLrep");
+			const oRemoveInfoSessionStub = sandbox.stub(ReloadInfoAPI, "removeInfoSessionStorage");
+			this.oMessageBoxStub.resolves(this.oRta._getTextResources().getText("BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE"));
 
 			return this.oRta.stop()
 			.then(function() {
@@ -578,9 +574,9 @@ sap.ui.define([
 				var oSavePropertyBag = oSaveSpy.getCall(0).args[0];
 				assert.ok(oSavePropertyBag.removeOtherLayerChanges, "then removeOtherLayerChanges is set to true");
 				assert.strictEqual(oSavePropertyBag.layer, this.oRta.getLayer(), "then the layer is properly passed along");
-				assert.strictEqual(oMessageBoxStub.callCount, 1, "then the messagebox is called once");
+				assert.strictEqual(this.oMessageBoxStub.callCount, 1, "then the messagebox is called once");
 				assert.strictEqual(
-					oMessageBoxStub.getCall(0).args[1],
+					this.oMessageBoxStub.getCall(0).args[1],
 					"MSG_UNSAVED_CHANGES_ON_CLOSE",
 					"then the expected messagebox is called"
 				);
@@ -745,6 +741,71 @@ sap.ui.define([
 			this.oRta.setMetadataScope("some other scope");
 			assert.equal(this.oRta.getMetadataScope(), "someScope", "then the scope in RTA didn't change");
 			assert.equal(oErrorStub.callCount, 1, "and an error was logged");
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is started and the UI Adaptation Tour autostarts", {
+		before() {
+			return oComponentPromise;
+		},
+		beforeEach() {
+			 this.oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
+		},
+		afterEach() {
+			cleanInfoSessionStorage();
+			window.sessionStorage.clear();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when RTA is started with no created versions from the user", async function(assert) {
+			sandbox.stub(FlexRuntimeInfoAPI, "getUserId").returns("testUser");
+			sandbox.stub(VersionsAPI, "getCreatedVersionsByUser").returns([]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+			assert.ok(this.oMessageBoxStub.calledOnce, "then the tour message box is shown");
+		});
+
+		QUnit.test("when RTA is started with crested versions from the user", async function(assert) {
+			sandbox.stub(FlexRuntimeInfoAPI, "getUserId").returns("testUser");
+			sandbox.stub(VersionsAPI, "getCreatedVersionsByUser").returns([{versionId: "testVersion"}]);
+			sandbox.stub(PersistenceWriteAPI, "_getFlexObjectsForUser").returns([]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+			assert.ok(this.oMessageBoxStub.notCalled, "then the tour message box is not shown");
+		});
+
+		QUnit.test("when RTA is started with no changes from the user", async function(assert) {
+			sandbox.stub(FlexRuntimeInfoAPI, "getUserId").returns("testUser");
+			sandbox.stub(PersistenceWriteAPI, "_getFlexObjectsForUser").returns([]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+			assert.ok(this.oMessageBoxStub.calledOnce, "then the tour tour message box is shown");
+		});
+
+		QUnit.test("when RTA is started with changes from the user", async function(assert) {
+			sandbox.stub(FlexRuntimeInfoAPI, "getUserId").returns("testUser");
+			sandbox.stub(PersistenceWriteAPI, "_getFlexObjectsForUser").returns([{changeId: "testChange"}]);
+			sandbox.stub(VersionsAPI, "getCreatedVersionsByUser").returns([]);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+			assert.ok(this.oMessageBoxStub.notCalled, "then the tour message box is not shown");
 		});
 	});
 

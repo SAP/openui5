@@ -357,6 +357,16 @@ sap.ui.define([
 		assert.ok(Util.isExportable(oJSONListBinding), "Non-empty JSONListBinding results in true");
 		assert.ok(Util.isExportable(oODataListBinding), "Non-empty ODataListBinding with download Url results in true");
 
+		/* Check count */
+		oODataListBinding.getCount.returns(undefined);
+		assert.ok(Util.isExportable(oODataListBinding), "Non-empty binding with undefined count results in true");
+		oODataListBinding.getCount.returns(0);
+		assert.notOk(Util.isExportable(oODataListBinding), "Non-empty binding with count = 0 results in false");
+		oODataListBinding.getCount.returns(1);
+		assert.ok(Util.isExportable(oODataListBinding), "Non-empty binding with count > 0 results in true");
+		delete ODataListBinding.getCount;
+		assert.ok(Util.isExportable(oODataListBinding), "Non-empty binding without getCount function results in true");
+
 		/* Check for unresolved binding */
 		oODataListBinding.isResolved.returns(false);
 		oODataListBinding.getDownloadUrl.reset();

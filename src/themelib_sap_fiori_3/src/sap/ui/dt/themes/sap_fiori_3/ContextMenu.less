@@ -6,47 +6,47 @@
 @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor: @sapUiListSelectionBackgroundColor; // #e5f0fa
 @_sap_ui_dt_ContextMenu_BorderRadius: @sapUiButtonBorderCornerRadius; // 0.25rem
 
-.sapUiDtContextMenu {
-	.sapUiMnuLst {
-		.sapUiMnuItm {
+.sapUiDtContextMenu.sapMMenu {
+	.sapMMenuList {
+		.sapMMenuItem {
 			color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
-			background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+			background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 			margin: 0.0625rem;
 
-			.sapUiMnuItmIco {
+			.sapMMenuItemIcon {
 				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
-				background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+				background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 			}
 
-			.sapUiMnuItmSbMnu > div:after,
-			.sapUiMnuItm.sapUiMnuItmHov .sapUiMnuItmSbMnu > div:after {
+			.sapMMenuItemSubMenu > div:after,
+			.sapMMenuItem:hover .sapMMenuItemSubMenu > div:after {
 				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
 			}
-			&.sapUiMnuItmHov {
+			&:hover {
 				color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
 				background-color: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
 
-				.sapUiMnuItmIco {
+				.sapMMenuItemIcon {
 					color: @_sap_ui_dt_ContextMenu_MnuItemTextColor;
-					background: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
+					background-color: @_sap_ui_dt_ContextMenu_MnuItemHoverBackgroundColor;
 				}
-				&.sapUiMnuItmDsbl {
-					background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
-					.sapUiMnuItmIco {
-						background: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+				&.sapMMenuItemDisabled {
+					background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
+					.sapMMenuItemIcon {
+						background-color: @_sap_ui_dt_ContextMenu_MnuItemBackgroundColor;
 					}
 				}
 			}
 
 			&:focus {
 				border-radius: @_sap_ui_dt_ContextMenu_BorderRadius;
-				outline-offset: 0;
-				&.sapUiMnuItmDsbl{
+				outline-offset: -0.125rem;
+				&.sapMMenuItemDisabled{
 					outline: none;
 				}
 			}
 
-			&.sapUiMnuItmSubMnuOpen {
+			&.sapMMenuItemSubMenuOpen {
 				border-bottom: none !important; //1px
 			}
 		}

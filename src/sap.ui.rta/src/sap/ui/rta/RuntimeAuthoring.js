@@ -1058,10 +1058,20 @@ sap.ui.define([
 
 		const aHasOwnChanges = await PersistenceWriteAPI._getFlexObjectsForUser({
 			selector: oRootControl,
-			layer: sLayer
+			layer: sLayer,
+			includeManifestChanges: true,
+			includeAnnotationChanges: true
 		});
 
-		if (!aHasOwnChanges || aHasOwnChanges.length > 0) {
+		const aVersionsFromUser = VersionsAPI.getCreatedVersionsByUser(
+			{
+				layer: sLayer,
+				control: oRootControl
+			},
+			sUserId
+		);
+
+		if (!aHasOwnChanges || aHasOwnChanges.length > 0 || aVersionsFromUser.length > 0) {
 			return false;
 		}
 
