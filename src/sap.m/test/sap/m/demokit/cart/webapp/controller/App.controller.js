@@ -1,25 +1,21 @@
 sap.ui.define([
 	"./BaseController",
 	"sap/ui/model/json/JSONModel"
-], function (BaseController, JSONModel) {
+], (BaseController, JSONModel) => {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.App", {
-
-		onInit : function () {
-			var oViewModel,
-				fnSetAppNotBusy,
-				iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
-
-			oViewModel = new JSONModel({
-				busy : true,
-				delay : 0,
-				layout : "TwoColumnsMidExpanded",
-				smallScreenMode : true
+		onInit() {
+			const oViewModel = new JSONModel({
+				busy: true,
+				delay: 0,
+				layout: "TwoColumnsMidExpanded",
+				smallScreenMode: true
 			});
 			this.setModel(oViewModel, "appView");
 
-			fnSetAppNotBusy = function() {
+			const iOriginalBusyDelay = this.getView().getBusyIndicatorDelay();
+			const fnSetAppNotBusy = () => {
 				oViewModel.setProperty("/busy", false);
 				oViewModel.setProperty("/delay", iOriginalBusyDelay);
 			};
@@ -31,6 +27,5 @@ sap.ui.define([
 			// apply content density mode to root view
 			this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
 		}
-
 	});
 });
