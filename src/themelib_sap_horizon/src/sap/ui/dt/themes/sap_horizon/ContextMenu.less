@@ -3,19 +3,19 @@
 *******************************************************************/
 @_sap_ui_dt_ContextMenu_BorderRadius: @sapUiFieldBorderCornerRadius; // 0.25rem
 
-.sapUiDtContextMenu {
-	.sapUiMnuLst {
-		.sapUiMnuItm {
+.sapUiDtContextMenu.sapMMenu {
+	.sapMMenuList {
+		.sapMMenuItem {
 			margin: 0.0625rem;
 			border-radius: @_sap_ui_dt_ContextMenu_BorderRadius;
 
 			&:focus {
 				outline-offset: -0.125rem;
-				&.sapUiMnuItmDsbl{
+				&.sapMMenuItemDisabled{
 					outline: none;
 				}
 			}
-			&.sapUiMnuItmSubMnuOpen {
+			&.sapMMenuItemSubMenuOpen {
 				border-bottom: none !important; //1px
 			}
 		}

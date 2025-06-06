@@ -141,7 +141,7 @@ sap.ui.define([
 	function createAdditionalInfo(oMenuItem) {
 		const oAdditionalInfoButton = new Button({
 			id: `${this.sId}-${oMenuItem.id}-additionalInfo-button`,
-			icon: "sap-icon://hint",
+			icon: "sap-icon://message-information",
 			visible: !oMenuItem.submenu,
 			type: "Transparent",
 			ariaLabelledBy: this.getId()
@@ -321,7 +321,9 @@ sap.ui.define([
 				const aPropagatedMenuItems = this._sortMenuItems(aAllMenuItems.filter((mMenuItem) => mMenuItem.propagatingControl));
 				addMenuItems.call(this, this.oContextMenuControl, aMenuItems);
 				addMenuItems.call(this, this.oContextMenuControl, aPropagatedMenuItems, true);
-				this.oContextMenuControl.openAsContextMenu(oEvent, oOverlay);
+				// we have to distinguish between the mouse and the keyboard event
+				const oOpenerRef = (oEvent.type === "keyup") ? oOverlay : undefined;
+				this.oContextMenuControl.openAsContextMenu(oEvent, oOpenerRef);
 			}
 
 			this.fireOpenedContextMenu();
