@@ -24,7 +24,7 @@ sap.ui.define([
 
 	function getChangeDependencies(oCurrentAppContainerObject) {
 		var oAppComponent = oCurrentAppContainerObject.oContainer.getComponentInstance();
-		return extractChangeDependencies(oAppComponent);
+		return extractChangeDependencies.extract(oAppComponent);
 	}
 
 	return async function(oAppComponent) {
