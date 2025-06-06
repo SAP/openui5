@@ -1,15 +1,14 @@
 sap.ui.define([
 	"./BaseController"
-], function (BaseController) {
+], (BaseController) => {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.OrderCompleted", {
-
-		onInit: function () {
+		onInit() {
 			this._oRouter = this.getRouter();
 		},
 
-		onReturnToShopButtonPress: function () {
+		onReturnToShopButtonPress() {
 			//navigates back to home screen
 			this._setLayout("Two");
 			this._oRouter.navTo("home");

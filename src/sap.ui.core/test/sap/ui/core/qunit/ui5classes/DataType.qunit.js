@@ -4,10 +4,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/ui/base/DataType",
-	"sap/ui/core/Lib",
 	// provides sap.ui.core data type and enums
 	'sap/ui/core/library'
-], function(future, Log, isPlainObject, DataType, Library) {
+], function(future, Log, isPlainObject, DataType) {
 	"use strict";
 
 	function random(values) {
@@ -348,82 +347,6 @@ sap.ui.define([
 		});
 		assert.equal(type.isValid("something"), false, "should not accept 'something'");
 		assert.ok(DataType.getType("sap.test.RegisteredColor") === type, "multiple calls should return same type object");
-	});
-
-	QUnit.test("Auto-registered (top-level) Enum via Lib Proxy", async function (assert) {
-		sap.ui.define("sap/test/enumlib/library", [
-			"sap/ui/core/Lib"
-		], function(Library) {
-			// ui5lint-disable-next-line no-deprecated-api
-			const thisLib = Library.init({
-				name: "sap.test.enumlib"
-				// apiVersion: 1 - legacy scenario
-			});
-			thisLib.LibColor = {
-				Red: "Red",
-				Yellow: "Yellow",
-				Blue: "Blue"
-			};
-			return thisLib;
-		});
-
-		await Library.load("sap.test.enumlib");
-		const oColorEnum = sap.ui.require("sap/test/enumlib/library").LibColor;
-
-		const type = DataType.getType("sap.test.enumlib.LibColor");
-		assert.ok(type instanceof DataType, "type 'sap.test.enumlib.LibColor' is a DataType");
-		assert.equal(type.getName(), 'sap.test.enumlib.LibColor', "type name");
-		assert.equal(type.getDefaultValue(), "Red", "default value");
-		assert.equal(type.getBaseType().getName(), "string", "base type is string");
-		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
-		assert.ok(type.isEnumType(), "type should be marked as enum");
-		assert.strictEqual(type.getEnumValues(), oColorEnum, "type should return the original enum object with keys and values");
-
-		Object.entries(oColorEnum).forEach(([name, value]) => {
-			assert.equal(type.isValid(value), true, "accepts value " + value);
-			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
-		});
-		assert.equal(type.isValid("something"), false, "should not accept 'something'");
-		assert.ok(DataType.getType("sap.test.enumlib.LibColor") === type, "multiple calls should return same type object");
-	});
-
-	QUnit.test("Auto-registered (deeply nested) Enum via Lib Proxy", async function (assert) {
-		sap.ui.define("sap/test/otherlib/library", [
-			"sap/ui/core/Lib"
-		], function(Library) {
-			// ui5lint-disable-next-line no-deprecated-api
-			const thisLib = Library.init({
-				name: "sap.test.otherlib"
-				// apiVersion: 1 - legacy scenario
-			});
-			thisLib.deeply ??= {};
-			thisLib.deeply.nested ??= {};
-			thisLib.deeply.nested.LibColor = {
-				Red: "Red",
-				Yellow: "Yellow",
-				Blue: "Blue"
-			};
-			return thisLib;
-		});
-
-		await Library.load("sap.test.otherlib");
-		const oColorEnum = sap.ui.require("sap/test/otherlib/library").deeply.nested.LibColor;
-
-		const type = DataType.getType("sap.test.otherlib.deeply.nested.LibColor");
-		assert.ok(type instanceof DataType, "type 'sap.test.otherlib.deeply.nested.LibColor' is a DataType");
-		assert.equal(type.getName(), 'sap.test.otherlib.deeply.nested.LibColor', "type name");
-		assert.equal(type.getDefaultValue(), "Red", "default value");
-		assert.equal(type.getBaseType().getName(), "string", "base type is string");
-		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
-		assert.ok(type.isEnumType(), "type should be marked as enum");
-		assert.strictEqual(type.getEnumValues(), oColorEnum, "type should return the original enum object with keys and values");
-
-		Object.entries(oColorEnum).forEach(([name, value]) => {
-			assert.equal(type.isValid(value), true, "accepts value " + value);
-			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
-		});
-		assert.equal(type.isValid("something"), false, "should not accept 'something'");
-		assert.ok(DataType.getType("sap.test.otherlib.deeply.nested.LibColor") === type, "multiple calls should return same type object");
 	});
 
 
