@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/test/utils/nextUIUpdate"
 ], function(future, Log, Button, ManagedObject, Component, ComponentHooks, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
-
 	"use strict";
 	/*global sinon, QUnit*/
 
@@ -40,9 +39,12 @@ sap.ui.define([
 
 			// define the Manifest
 			this.oManifest = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "my.test"
 				},
+
 				"sap.ui5" : {}
 			};
 
@@ -372,24 +374,28 @@ sap.ui.define([
 
 			// define the Manifests
 			var oManifestAutoId = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "my.own.autoid"
 				},
+
 				"sap.ui5" : {
 					"rootView" : {
-						"async": true,
 						"viewName" : "my.own.View",
 						"type" : "XML"
 					}
 				}
 			};
 			var oManifestPrefixId = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "my.own.prefixId"
 				},
+
 				"sap.ui5" : {
 					"rootView" : {
-						"async": true,
 						"viewName" : "my.own.View",
 						"type" : "XML",
 						"id" : "theView"
@@ -398,29 +404,36 @@ sap.ui.define([
 			};
 
 			var oManifestTypedView = {
+				"_version": "2.0.0",
+
 				"sap.ui5" : {
-					"rootView" : {
-						"viewName" : "module:error/test/JSView.view"
-					}
+					"rootView" : "module:error/test/JSView.view"
 				}
 			};
 
 			const oManifestTypedViewAsString = {
+				"_version": "2.0.0",
+
 				"sap.ui5" : {
 					"rootView" : "module:my/own/TypedView"
 				}
 			};
 
 			const oManifestViewAsString = {
+				"_version": "2.0.0",
+
 				"sap.ui5" : {
 					"rootView" : "my.own.View"
 				}
 			};
 
 			var oManifestMissingViewType = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "my.own.missingViewType"
 				},
+
 				"sap.ui5" : {
 					"rootView" : {
 						"viewName" : "my.own.View",
@@ -431,9 +444,12 @@ sap.ui.define([
 			};
 
 			var oManifestMissingViewTypeForTypedView = {
+				"_version": "2.0.0",
+
 				"sap.app" : {
 					"id" : "my.own.missingViewType"
 				},
+
 				"sap.ui5" : {
 					"rootView" : {
 						"viewName" : "module:my/own/TypedView",
@@ -934,95 +950,14 @@ sap.ui.define([
 		}
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Check if all resources were loaded - JSONView", function(assert) {
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			},
-			"sap.ui5": {
-				"rootView": {
-					"viewName": "someRootView",
-					"type": "JSON",
-					"id": "app"
-				},
-				"models": {
-					"i18n": {
-						"type": "sap.ui.model.resource.ResourceModel",
-						"uri": "i18n/i18n.properties"
-					},
-					/**
-					 * @deprecated as of version 1.48
-					 */
-					"odm1": {
-						"type": "sap.ui.model.odata.ODataModel",
-						"uri": "./some/odata/service"
-					},
-					"odm2": {
-						"type": "sap.ui.model.odata.v2.ODataModel",
-						"uri": "./some/odata/service"
-					},
-					"odm4": {
-						"type": "sap.ui.model.odata.v4.ODataModel",
-						"uri": "./some/odata/service/"
-					}
-				},
-				"routing": {
-					"config": {
-						"viewType": "XML",
-						"controlId": "app"
-					},
-					"routes": [
-						{
-							"pattern": "",
-							"name": "overview",
-							"target": "overview"
-						}
-					]
-				}
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario1json");
-
-		var requireSpy = this.requireSpy;
-		sap.ui.define("manifestModules/scenario1json/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.scenario1json.Component", {
-				metadata: {
-					manifest: "json"
-				},
-				constructor: function() {
-					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/JSONView"]), "JSONView type required");
-					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
-					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
-					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/ODataModel"]), "ODataModel required");
-					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
-					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v4/ODataModel"]), "ODataModel v4 required");
-
-					assert.ok(sap.ui.require("sap/ui/core/mvc/JSONView"), "JSONView type loaded");
-					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
-					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");
-					assert.ok(sap.ui.require("sap/ui/model/odata/ODataModel"), "ODataModel loaded");
-					assert.ok(sap.ui.require("sap/ui/model/odata/v2/ODataModel"), "ODataModel v2 loaded");
-					assert.ok(sap.ui.require("sap/ui/model/odata/v4/ODataModel"), "ODataModel v4 loaded");
-
-					UIComponent.apply(this, arguments);
-				}
-			});
-		});
-
-		return Component.create({
-			name: "manifestModules.scenario1json",
-			manifest: true
-		});
-	});
-
 	QUnit.test("Check if all resources were loaded - XMLView", function(assert) {
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"rootView": {
 					"viewName": "someRootView",
@@ -1094,9 +1029,12 @@ sap.ui.define([
 
 	QUnit.test("Check if custom router class was loaded", function(assert) {
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"routing": {
 					"config": {
@@ -1141,9 +1079,12 @@ sap.ui.define([
 
 	QUnit.test("Check if ViewType of root view (provided as string) was loaded", function(assert) {
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"rootView": "someRootView"
 			}
@@ -1170,71 +1111,16 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Check if modules could not be loaded and a warning was logged (future=false)", function(assert) {
-		future.active = false;
-		assert.expect(3);
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			},
-			"sap.ui5": {
-				"models": {
-					"odm1": {
-						"type": "sap.ui.model.odata.ODataModelNotExists",
-						"uri": "./some/odata/service"
-					}
-				},
-				"routing": {
-					"config": {
-						"routerClass": "someRouterNotExists",
-						"viewType": "XML",
-						"controlId": "app"
-					},
-					"routes": [
-						{
-							"pattern": "",
-							"name": "overview",
-							"target": "overview"
-						}
-					]
-				}
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario4");
-
-		var logWarningSpy = this.logWarningSpy;
-		sap.ui.define("manifestModules/scenario4/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.scenario4.Component", {
-				metadata: {
-					manifest: "json"
-				},
-				constructor: function() {
-					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'sap\/ui\/model\/odata\/ODataModelNotExists'/)), "Model not found");
-					assert.ok(logWarningSpy.calledWith(sinon.match(/Cannot load module 'someRouterNotExists'/)), "Router not found");
-					UIComponent.apply(this, arguments);
-				}
-			});
-		});
-
-		return Component.create({
-			name: "manifestModules.scenario4",
-			manifest: true
-		}).catch(function() {
-			assert.ok(true, "Modules could not be loaded and an error occured.");
-			future.active = undefined;
-		});
-	});
-
 	QUnit.test("Check if modelclass could not be loaded and a warning was logged (future=true)", function(assert) {
 		future.active = true;
 		assert.expect(1);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"models": {
 					"odm1": {
@@ -1272,9 +1158,12 @@ sap.ui.define([
 		future.active = true;
 		assert.expect(1);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"routing": {
 					"config": {
@@ -1319,15 +1208,13 @@ sap.ui.define([
 	QUnit.test("Component with async rootView creation", function(assert) {
 		assert.expect(7);
 
-		/**
-		 * @deprecated
-		 */
-		assert.expect(8);
-
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"rootView" : {
 					"viewName" : "testdata.view.MainAsync",
@@ -1348,8 +1235,9 @@ sap.ui.define([
 					],
 					"targets": {
 						"home": {
-							"viewName": "testdata.view.MainAsync",
-							"controlAggregation": "content"
+							"name": "testdata.view.MainAsync",
+							"controlAggregation": "content",
+							"type": "View"
 						}
 					}
 				}
@@ -1383,10 +1271,6 @@ sap.ui.define([
 			assert.equal(this.oViewCreateSpy.callCount, 2, "async view factory called twice");
 			// check if router is async
 			assert.ok(oComponent.getRouter(), "Router created");
-			/**
-			 * @deprecated
-			 */
-			assert.ok(oComponent.getRouter()._isAsync(), "Router is async");
 		}.bind(this)).catch(function() {
 			assert.ok(false, "Modules could not be loaded and an error occured.");
 		});
@@ -1395,6 +1279,8 @@ sap.ui.define([
 	QUnit.test("Component with async createContent", function(assert) {
 		assert.expect(6);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			}
@@ -1436,77 +1322,15 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated Since 1.56
-	 */
-	QUnit.test("Component with async rootView creation - legacy factory", function(assert) {
-		assert.expect(1);
-
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			},
-			"sap.ui5": {
-				"rootView" : {
-					"async": true,
-					"viewName" : "testdata.view.MainAsync",
-					"type" : "XML"
-				},
-				"routing" : {
-					"config": {
-						"routerClass": "sap.ui.core.routing.Router",
-						"viewType": "XML",
-						"controlId": "app"
-					},
-					"routes": [
-						{
-							"pattern": "",
-							"name": "home",
-							"target": "home"
-						}
-					],
-					"targets": {
-						"home": {
-							"viewName": "testdata.view.MainAsync",
-							"controlAggregation": "content"
-						}
-					}
-				}
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario7");
-
-		sap.ui.define("manifestModules/scenario7/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.scenario7.Component", {
-				metadata: {
-					manifest: "json",
-					interfaces: [
-						"sap.ui.core.IAsyncContentCreation"
-					]
-				},
-				constructor: function() {
-					UIComponent.apply(this, arguments);
-				}
-			});
-		});
-
-		return sap.ui.component({
-			name: "manifestModules.scenario7",
-			manifest: true,
-			async: true
-		}).then(function(oComponent){
-			assert.ok(false, "Don't use legacy factory in combination with async content creation");
-		}).catch(function(err) {
-			assert.equal(err.message, "Do not use deprecated factory function 'sap.ui.component' in combination with IAsyncContentCreation (manifestModules.scenario7). Use 'Component.create' instead");
-		});
-	});
-
 	QUnit.test("Component with async createContent and wrong nesting", function(assert) {
 		assert.expect(1);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"componentName": "manifestModules.Other.Name"
 			}
@@ -1550,6 +1374,8 @@ sap.ui.define([
 	QUnit.test("Component with createContent returning view created with asynchronous view processing", function(assert) {
 		assert.expect(6);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			}
@@ -1591,60 +1417,16 @@ sap.ui.define([
 		});
 	});
 
-	/**
-	 * @deprecated
-	 */
-	QUnit.test("Component with missing super.init(...) call (future=false)", function(assert) {
-		future.active = false;
-		assert.expect(3);
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			},
-			"sap.ui5": {
-				"rootView" : {
-					"viewName" : "testdata.view.MainAsync",
-					"type" : "XML"
-				}
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario11");
-
-		sap.ui.define("manifestModules/scenario11/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
-			return UIComponent.extend("manifestModules.scenario11.Component", {
-				metadata: {
-					manifest: "json"
-				},
-				constructor: function() {
-					UIComponent.apply(this, arguments);
-				},
-				init: function() {
-					assert.ok(true, "own init impl called");
-				}
-			});
-		});
-
-		var oErrorLogSpy = sinon.spy(Log, "error");
-		return Component.create({
-			name: "manifestModules.scenario11",
-			manifest: true
-		}).then(function(oComponent){
-			assert.equal(oErrorLogSpy.callCount, 1, "error logged");
-			assert.ok(oErrorLogSpy.calledWith(sinon.match(/Mandatory init\(\) not called for UIComponent: 'manifestModules.scenario11'. A sub-class of sap.ui.core.UIComponent which overrides the init\(\) function must apply the super init\(\) function as well./)), "missing init super error logged");
-			oComponent.destroy();
-			future.active = undefined;
-		}).catch(function() {
-			assert.ok(false, "Modules could not be loaded and an error occured.");
-		});
-	});
-
 	QUnit.test("Component with missing super.init(...) call (future=true)", function(assert) {
 		future.active = true;
 		assert.expect(2);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 				"rootView" : {
 					"viewName" : "testdata.view.MainAsync",
@@ -1680,6 +1462,8 @@ sap.ui.define([
 	QUnit.test("Component with async content creation and missing Interface", function(assert) {
 		assert.expect(1);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			}
@@ -1713,9 +1497,12 @@ sap.ui.define([
 	QUnit.skip("Nested component - duplicate ID issue expected", function(assert) {
 		assert.expect(1);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 
 			}
@@ -1764,9 +1551,12 @@ sap.ui.define([
 	QUnit.test("Nested component - no duplicate ID issue expected", function(assert) {
 		assert.expect(4);
 		var oManifest = {
+			"_version": "2.0.0",
+
 			"sap.app" : {
 				"id" : "app"
 			},
+
 			"sap.ui5": {
 
 			}
@@ -1822,11 +1612,10 @@ sap.ui.define([
 					metadata: {
 						interfaces: ["sap.ui.core.IAsyncContentCreation"], // Needed to load JSView async
 						manifest: {
+							"_version": "2.0.0",
+
 							"sap.ui5": {
-								"rootView": {
-									async: true, // async flag has no effect on JSView
-									viewName: "module:my/AsyncJSView"
-								}
+								"rootView": "module:my/AsyncJSView"
 							}
 						}
 					}

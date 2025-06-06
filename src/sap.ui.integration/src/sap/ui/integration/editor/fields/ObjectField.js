@@ -14,9 +14,6 @@ sap.ui.define([
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/table/Table",
-	"sap/ui/table/Column",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Label",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -40,7 +37,8 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/CustomData",
 	"sap/ui/integration/editor/fields/viz/IconSelect",
-	"sap/m/Image"
+	"sap/m/Image",
+	"sap/ui/core/Lib"
 ], function (
 	BaseField,
 	Text,
@@ -53,9 +51,6 @@ sap.ui.define([
 	ToolbarSpacer,
 	Button,
 	JSONModel,
-	Table,
-	Column,
-	FixedRowMode,
 	Label,
 	Filter,
 	FilterOperator,
@@ -79,9 +74,13 @@ sap.ui.define([
 	HBox,
 	CustomData,
 	IconSelect,
-	Image
+	Image,
+	Library
 ) {
 	"use strict";
+
+	let Table, Column, FixedRowMode;
+
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g;
 
 	/**
@@ -114,6 +113,24 @@ sap.ui.define([
 		},
 		renderer: BaseField.getMetadata().getRenderer()
 	});
+
+	ObjectField.loadDependencies = function () {
+		return Library.load("sap.ui.table")
+			.then(() => {
+				return new Promise((resolve, reject) => {
+					sap.ui.require([
+						"sap/ui/table/Table",
+						"sap/ui/table/Column",
+						"sap/ui/table/rowmodes/Fixed"
+					], (_Table, _Column, _FixedRowMode) => {
+						Table = _Table;
+						Column = _Column;
+						FixedRowMode = _FixedRowMode;
+						resolve();
+					}, reject);
+				});
+			});
+	};
 
 	ObjectField.prototype.initVisualization = function (oConfig) {
 		var that = this;

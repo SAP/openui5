@@ -4,62 +4,61 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/Device"
-], function (
-	BaseController,
-	formatter,
-	Filter,
-	FilterOperator,
-	Device) {
+], (BaseController, formatter, Filter, FilterOperator, Device) => {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Home", {
-		formatter : formatter,
+		formatter,
 
-		onInit: function () {
-			var oComponent = this.getOwnerComponent();
+		onInit() {
+			const oComponent = this.getOwnerComponent();
 			this._router = oComponent.getRouter();
 			this._router.getRoute("categories").attachMatched(this._onRouteMatched, this);
 		},
 
-		_onRouteMatched: function() {
-			var bSmallScreen = this.getModel("appView").getProperty("/smallScreenMode");
+		_onRouteMatched() {
+			const bSmallScreen = this.getModel("appView").getProperty("/smallScreenMode");
 			if (bSmallScreen) {
 				this._setLayout("One");
 			}
 		},
 
-		onSearch: function () {
+		onSearch() {
 			this._search();
 		},
 
-		onRefresh: function () {
+		onRefresh() {
 			// trigger search again and hide pullToRefresh when data ready
-			var oProductList = this.byId("productList");
-			var oBinding = oProductList.getBinding("items");
-			var fnHandler = function () {
+			const oProductList = this.byId("productList");
+			const oBinding = oProductList.getBinding("items");
+			const fnHandler = () => {
 				this.byId("pullToRefresh").hide();
 				oBinding.detachDataReceived(fnHandler);
-			}.bind(this);
+			};
 			oBinding.attachDataReceived(fnHandler);
 			this._search();
 		},
 
-		_search: function () {
-			var oView = this.getView();
-			var oProductList = oView.byId("productList");
-			var oCategoryList = oView.byId("categoryList");
-			var oSearchField = oView.byId("searchField");
+		_search() {
+			const oView = this.getView();
+			const oCategoryList = oView.byId("categoryList");
+			const oProductList = oView.byId("productList");
+			const oSearchField = oView.byId("searchField");
 
 			// switch visibility of lists
-			var bShowSearchResults = oSearchField.getValue().length !== 0;
+			const bShowSearchResults = oSearchField.getValue().length !== 0;
 			oProductList.setVisible(bShowSearchResults);
 			oCategoryList.setVisible(!bShowSearchResults);
 
 			// filter product list
-			var oBinding = oProductList.getBinding("items");
+			const oBinding = oProductList.getBinding("items");
 			if (oBinding) {
 				if (bShowSearchResults) {
-					var oFilter = new Filter("Name", FilterOperator.Contains, oSearchField.getValue());
+					const oFilter = new Filter({
+						path: "Name",
+						operator: FilterOperator.Contains,
+						value1: oSearchField.getValue()
+					});
 					oBinding.filter([oFilter]);
 				} else {
 					oBinding.filter([]);
@@ -67,26 +66,26 @@ sap.ui.define([
 			}
 		},
 
-		onCategoryListItemPress: function (oEvent) {
-			var oBindContext = oEvent.getSource().getBindingContext();
-			var oModel = oBindContext.getModel();
-			var sCategoryId = oModel.getProperty(oBindContext.getPath()).Category;
+		onCategoryListItemPress(oEvent) {
+			const oBindContext = oEvent.getSource().getBindingContext();
+			const oModel = oBindContext.getModel();
+			const sCategoryId = oModel.getProperty(oBindContext.getPath()).Category;
 
 			this._router.navTo("category", {id: sCategoryId});
 		},
 
-		onProductListSelect: function (oEvent) {
-			var oItem = oEvent.getParameter("listItem");
+		onProductListSelect(oEvent) {
+			const oItem = oEvent.getParameter("listItem");
 			this._showProduct(oItem);
 		},
 
-		onProductListItemPress: function (oEvent) {
-			var oItem = oEvent.getSource();
+		onProductListItemPress(oEvent) {
+			const oItem = oEvent.getSource();
 			this._showProduct(oItem);
 		},
 
-		_showProduct: function (oItem) {
-			var oEntry = oItem.getBindingContext().getObject();
+		_showProduct(oItem) {
+			const oEntry = oItem.getBindingContext().getObject();
 
 			this._router.navTo("product", {
 				id: oEntry.Category,
@@ -98,7 +97,7 @@ sap.ui.define([
 		 * Always navigates back to home
 		 * @override
 		 */
-		onBack: function () {
+		onBack() {
 			this.getRouter().navTo("home");
 		}
 	});

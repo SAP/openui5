@@ -799,6 +799,31 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Hook 'onPreprocessManifest' and 'onModelCreated'", function(assert) {
+		assert.expect(8);
+		const oPreprocessManifestExecutedSpy = sinon.spy(ComponentHooks.onPreprocessManifest, "execute");
+		const oModelCreatedExecutedSpy = sinon.spy(ComponentHooks.onModelCreated, "execute");
+
+		assert.notOk(Library._get("sap.ui.fl"), "sap.ui.fl library must not be loaded at the begining of this test.");
+		assert.notOk(ComponentHooks.onPreprocessManifest.isRegistered(), "No hook for 'preprocessManifest' is registered yet.");
+		assert.notOk(ComponentHooks.onModelCreated.isRegistered(), "No hook for 'modelCreated' is registered yet.");
+
+		return Component.create({
+			manifest: "test-resources/sap/ui/core/qunit/component/testdata/async/mysimplecomp/manifest.json",
+			asyncHints: {
+				libs: ['sap.ui.fl']
+			}
+		}).then(() => {
+			assert.ok(Library._get("sap.ui.fl"), "sap.ui.fl library should be loaded at the end of this test.");
+			assert.ok(ComponentHooks.onPreprocessManifest.isRegistered(), "Hook for 'preprocessManifest' is registered.");
+			assert.ok(ComponentHooks.onModelCreated.isRegistered(), "Hook for 'modelCreated' is registered.");
+			assert.strictEqual(oPreprocessManifestExecutedSpy.getCalls().length, 1, "'preprocessManifest' hook was executed exactly once");
+			assert.strictEqual(oModelCreatedExecutedSpy.getCalls().length, 1, "'modelCreated' hook was executed exactly once");
+			oPreprocessManifestExecutedSpy.restore();
+			oModelCreatedExecutedSpy.restore();
+		});
+	});
+
 	QUnit.module("Consume Transitive dependency information", {
 		beforeEach: function() {
 			sap.ui.loader.config({
