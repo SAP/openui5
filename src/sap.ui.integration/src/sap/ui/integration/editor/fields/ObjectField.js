@@ -263,7 +263,7 @@ sap.ui.define([
 			oValue = deepClone(oValue, 500);
 			this.setValue(oValue);
 		}.bind(that);
-		var aObjectPropertyFormContents = that.createFormContents(fnChange, "/value/", false, that.openTranslationPopup);
+		var aObjectPropertyFormContents = that.createFormContents(fnChange, "/value/", false, that.openTranslationListPopup);
 		var oEditModeButton = new Button(sParameterId + "_control_form_editmode_btn", {
 			icon: {
 				path: '/editMode',
@@ -1699,9 +1699,9 @@ sap.ui.define([
 			};
 			var fnChange = function() {};
 			if (oItem._dt && oItem._dt._editable === false) {
-				aObjectPropertyFormContents = that.createFormContents(fnChange, "/value/", true, that.navToTranslationPage);
+				aObjectPropertyFormContents = that.createFormContents(fnChange, "/value/", true, that.navToTranslationListPage);
 			} else {
-				aObjectPropertyFormContents = that.createFormContents(fnChangeWithDataSave, "/value/", true, that.navToTranslationPage);
+				aObjectPropertyFormContents = that.createFormContents(fnChangeWithDataSave, "/value/", true, that.navToTranslationListPage);
 			}
 			var oForm = new SimpleForm({
 				layout: "ResponsiveGridLayout",
@@ -1924,13 +1924,13 @@ sap.ui.define([
 		});
 	};
 
-	ObjectField.prototype.openTranslationPopup = function (sProperty, oEvent) {
+	ObjectField.prototype.openTranslationListPopup = function (sProperty, oEvent) {
 		var that = this;
 		if (!that._oEditorResourceBundles.isReady()) {
 			// waiting for loading resource bundles
-			setTimeout(function() {
-				that.openTranslationPopup(sProperty, oEvent);
-			}, 100);
+			that._oEditorResourceBundles.attachEventOnce("ready", function() {
+				that.openTranslationListPopup(sProperty, oEvent);
+			});
 			return;
 		}
 		var oControl = oEvent.getSource();
@@ -1981,13 +1981,13 @@ sap.ui.define([
 		that._oTranslationPopover.openBy(oControl._oValueHelpIcon);
 	};
 
-	ObjectField.prototype.navToTranslationPage = function (sProperty, oEvent) {
+	ObjectField.prototype.navToTranslationListPage = function (sProperty, oEvent) {
 		var that = this;
 		if (!that._oEditorResourceBundles.isReady()) {
 			// waiting for loading resource bundles
-			setTimeout(function() {
-				that.navToTranslationPage(sProperty, oEvent);
-			}, 100);
+			that._oEditorResourceBundles.attachEventOnce("ready", function() {
+				that.navToTranslationListPage(oEvent);
+			});
 			return;
 		}
 		var oNewObject = that._oObjectDetailsPopover.getModel().getProperty("/value");

@@ -1243,9 +1243,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon.getId(), sEditorId + "_string1_control-vhi", "Field 1: value help icon id");
 						assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-						oValueHelpIcon.firePress();
-						oValueHelpIcon.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("translationPopoverOpened", function() {
 							var oTranslationPopover = oField._oTranslationPopover;
 							assert.equal(oTranslationPopover.getId(), sEditorId + "_string1_translation_popover", "Field 1: translation popover id");
 							var aCurrentLanguageControls = oTranslationPopover.getCustomHeader().getItems()[2].getItems();
@@ -1258,6 +1256,8 @@ sap.ui.define([
 							assert.equal(aActions[2].getId(), sEditorId + "_string1_translation_popover_cancel_btn", "Translation popover: cancel button id");
 							resolve();
 						});
+						oValueHelpIcon.firePress();
+						oValueHelpIcon.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));
@@ -1315,9 +1315,7 @@ sap.ui.define([
 						assert.ok(oFormField._oValueHelpIcon.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 						assert.equal(oFormField._oValueHelpIcon.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 						assert.equal(oFormField._oValueHelpIcon.getId(), sEditorId + "_objectWithPropertiesDefined_control_form_property_text_control-vhi", "SimpleForm field 3: value help icon id");
-						oFormField._oValueHelpIcon.firePress();
-						oFormField._oValueHelpIcon.focus();
-						EditorQunitUtils.wait().then(function () {
+						oField.attachEventOnce("translationPopoverOpened", function() {
 							var oTranslationPopover = oField._oTranslationPopover;
 							assert.equal(oTranslationPopover.getId(), sEditorId + "_objectWithPropertiesDefined_control_translation_popover", "Field 1: translation popover id");
 							var oValueList = oTranslationPopover.getContent()[0];
@@ -1328,6 +1326,8 @@ sap.ui.define([
 							assert.equal(aActions[3].getId(), sEditorId + "_objectWithPropertiesDefined_control_translation_popover_cancel_btn", "Translation popover: cancel button id");
 							resolve();
 						});
+						oFormField._oValueHelpIcon.firePress();
+						oFormField._oValueHelpIcon.focus();
 					}.bind(this));
 				}.bind(this));
 			}.bind(this));

@@ -33,6 +33,9 @@ sap.ui.define([
 				supportedLocales: {
 					type: "array"
 				}
+			},
+			events: {
+				ready: {}
 			}
 		}
 	});
@@ -103,10 +106,12 @@ sap.ui.define([
 				});
 				Log.info("sap.ui.integration.editor.EditorResourceBundles: resource bundles loaded.");
 				that._ready = true;
+				that.fireReady();
 			});
 		} else {
 			Log.info("sap.ui.integration.editor.EditorResourceBundles: no resource bundles.");
 			that._ready = true;
+			that.fireReady();
 		}
 	};
 
