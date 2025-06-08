@@ -183,9 +183,7 @@ sap.ui.define([
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 							assert.equal(oValueHelpIcon.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-							oValueHelpIcon.firePress();
-							oValueHelpIcon.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField.attachEventOnce("translationPopoverOpened", function() {
 								var oTranslationPopover = oField._oTranslationPopover;
 								var aHeaderItems1 = oTranslationPopover.getCustomHeader().getItems();
 								assert.equal(aHeaderItems1[0].getText(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover Header: Title");
@@ -216,6 +214,8 @@ sap.ui.define([
 								oCancelButton1.firePress();
 								resolve();
 							}.bind(this));
+							oValueHelpIcon.firePress();
+							oValueHelpIcon.focus();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this));
@@ -262,9 +262,7 @@ sap.ui.define([
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 							assert.equal(oValueHelpIcon.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-							oValueHelpIcon.firePress();
-							oValueHelpIcon.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField.attachEventOnce("translationPopoverOpened", function() {
 								var oTranslationPopover = oField._oTranslationPopover;
 								var aHeaderItems1 = oTranslationPopover.getCustomHeader().getItems();
 								assert.equal(aHeaderItems1[0].getText(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover Header: Title");
@@ -295,6 +293,8 @@ sap.ui.define([
 								oCancelButton1.firePress();
 								resolve();
 							}.bind(this));
+							oValueHelpIcon.firePress();
+							oValueHelpIcon.focus();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this));
@@ -341,9 +341,7 @@ sap.ui.define([
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 							assert.equal(oValueHelpIcon.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-							oValueHelpIcon.firePress();
-							oValueHelpIcon.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField.attachEventOnce("translationPopoverOpened", function() {
 								var oTranslationPopover = oField._oTranslationPopover;
 								var aHeaderItems1 = oTranslationPopover.getCustomHeader().getItems();
 								assert.equal(aHeaderItems1[0].getText(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover Header: Title");
@@ -374,6 +372,8 @@ sap.ui.define([
 								oCancelButton1.firePress();
 								resolve();
 							}.bind(this));
+							oValueHelpIcon.firePress();
+							oValueHelpIcon.focus();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this));
@@ -422,9 +422,7 @@ sap.ui.define([
 							var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 							assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 							assert.equal(oValueHelpIcon.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
-							oValueHelpIcon.firePress();
-							oValueHelpIcon.focus();
-							EditorQunitUtils.wait().then(function () {
+							oField.attachEventOnce("translationPopoverOpened", function() {
 								var oTranslationPopover = oField._oTranslationPopover;
 								var aHeaderItems1 = oTranslationPopover.getCustomHeader().getItems();
 								assert.equal(aHeaderItems1[0].getText(), this.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover Header: Title");
@@ -455,6 +453,8 @@ sap.ui.define([
 								oCancelButton1.firePress();
 								resolve();
 							}.bind(this));
+							oValueHelpIcon.firePress();
+							oValueHelpIcon.focus();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this));
