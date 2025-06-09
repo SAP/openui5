@@ -1047,6 +1047,7 @@ sap.ui.define([
 
 		//with API
 		this._oPC.setMultipleAppointmentsSelection(true);
+		oCore.applyChanges();
 		qutils.triggerEvent("tap", "_oPC-R1A1");
 		qutils.triggerEvent("tap", "_oPC-R1A2");
 		assert.equal(this._oPC.getSelectedAppointments().length, 2, "Two appointments are selected");
@@ -1055,12 +1056,114 @@ sap.ui.define([
 			"When deselecting an appointment while multipleAppointmentsSelection is enabled, only this particular appointment is deselected");
 		qutils.triggerEvent("tap", "_oPC-R1A1");
 		this._oPC.setMultipleAppointmentsSelection(false);
+		oCore.applyChanges();
 		qutils.triggerEvent("tap", "_oPC-R1A2");
 		assert.equal(this._oPC.getSelectedAppointments().length, 0,
 			"When deselecting an appointment while multipleAppointmentsSelection is enabled, all selections are gone");
 
 		// clean
 		oSelectedAppointment = undefined;
+	});
+
+	QUnit.test("Should set correct value to property 'multipleAppointmentsSelection' to inner rows", function (assert) {
+		//arrange
+		this._createCalendar(UI5Date.getInstance(2015, 0, 1));
+		this._oPC.placeAt("smallUiArea");
+
+		//act
+		this._oPC.setMultipleAppointmentsSelection(true);
+		oCore.applyChanges();
+
+		//assert
+		this._oPC.getRows().forEach((oRow) => {
+			assert.equal(_getRowTimeline(oRow).getMultipleAppointmentsSelection(), true, "Inner row should be with correct value set in 'onBeforeRendering'");
+		});
+	});
+
+	QUnit.test("Should set correct value to property 'multipleAppointmentsSelection' to inner rows when property is set in xml view", (assert) => {
+		var oPC,
+			oModel = new JSONModel(),
+			sXMLText =
+				'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:unified="sap.ui.unified">' +
+				'	<PlanningCalendar id="PC1" multipleAppointmentsSelection="true" rows="{/people}">' +
+				'		<rows id="idRow">' +
+				'			<PlanningCalendarRow title="{name}" text="{role}" appointments="{path : \'appointments\', templateShareable: false}">' +
+				'				<appointments>' +
+				'					<unified:CalendarAppointment startDate="{start}" endDate="{end}" title="{title}" />' +
+				'				</appointments>' +
+				'			</PlanningCalendarRow>' +
+				'		</rows>' +
+				'	</PlanningCalendar>' +
+				'</mvc:View>';
+
+		return XMLView.create({
+			definition: sXMLText
+		}).then(function (oView) {
+			oModel.setData({
+				startDate: new Date("2017", "0", "15", "8", "0"),
+				people: [{
+					name: "John Miller",
+					role: "team member",
+					appointments: [
+						{
+							start: new Date("2017", "0", "15", "08", "30"),
+							end: new Date("2017", "0", "15", "09", "30"),
+							title: "Meet Max Mustermann"
+						},
+						{
+							start: new Date("2017", "0", "15", "10", "30"),
+							end: new Date("2017", "0", "15", "11", "30"),
+							title: "Somethig"
+						},
+						{
+							start: new Date("2017", "0", "15", "08", "30"),
+							end: new Date("2017", "0", "15", "09", "30"),
+							title: "something else"
+						},
+						{
+							start: new Date("2017", "0", "15", "10", "30"),
+							end: new Date("2017", "0", "15", "11", "30"),
+							title: "last thing"
+						}
+					]
+				},
+				{
+					name: "John Miller2",
+					role: "team member",
+					appointments: [
+						{
+							start: new Date("2017", "0", "15", "08", "30"),
+							end: new Date("2017", "0", "15", "09", "30"),
+							title: "Meet Max Mustermann"
+						},
+						{
+							start: new Date("2017", "0", "15", "10", "30"),
+							end: new Date("2017", "0", "15", "11", "30"),
+							title: "Somethig"
+						},
+						{
+							start: new Date("2017", "0", "15", "08", "30"),
+							end: new Date("2017", "0", "15", "09", "30"),
+							title: "something else"
+						},
+						{
+							start: new Date("2017", "0", "15", "10", "30"),
+							end: new Date("2017", "0", "15", "11", "30"),
+							title: "last thing"
+						}
+					]
+				}]
+			});
+			oView.setModel(oModel);
+			oView.placeAt("bigUiArea");
+			oCore.applyChanges();
+			oPC = oView.byId("PC1");
+			oPC.getRows().forEach((oRow) => {
+				assert.equal( _getRowTimeline(oRow).getMultipleAppointmentsSelection(), true, "Inner row should be with correct value for property 'multipleAppointmentsSelection' set in 'onBeforeRendering'");
+			});
+
+			oView.destroy();
+		});
 	});
 
 	QUnit.test("No sticky header on phone size", function (assert) {

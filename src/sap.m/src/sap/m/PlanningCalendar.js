@@ -980,6 +980,11 @@ sap.ui.define([
 		this._toggleStickyClasses();
 
 		updateSelectedRows.call(this);
+
+		var bMultiSelect = this.getMultipleAppointmentsSelection();
+		this.getRows().forEach(function (oRow) {
+			getRowTimeline(oRow).setMultipleAppointmentsSelection(bMultiSelect);
+		});
 	};
 
 	PlanningCalendar.prototype._bindAggregation = function(sName, oBindingInfo) {
