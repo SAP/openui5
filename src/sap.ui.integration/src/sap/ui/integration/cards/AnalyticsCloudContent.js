@@ -269,7 +269,7 @@ sap.ui.define([
 		Log.error(sError, this);
 
 		this.handleError({
-			illustrationType: IllustratedMessageType.ErrorScreen,
+			illustrationType: IllustratedMessageType.UnableToLoad,
 			title: oCard.getTranslatedText("CARD_ERROR_ANALYTICS_CLOUD_TITLE"),
 			description: oCard.getTranslatedText("CARD_ERROR_ANALYTICS_CLOUD_DESCRIPTION")
 		});

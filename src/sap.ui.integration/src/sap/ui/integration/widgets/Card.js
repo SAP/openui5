@@ -2277,7 +2277,7 @@ sap.ui.define([
 			});
 		} catch (e) {
 			this._handleError({
-				illustrationType: IllustratedMessageType.ErrorScreen,
+				illustrationType: IllustratedMessageType.UnableToLoad,
 				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
 				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 				details: e.message,

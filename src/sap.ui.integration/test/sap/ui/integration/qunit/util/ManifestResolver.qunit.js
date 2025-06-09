@@ -387,8 +387,8 @@ sap.ui.define([
 						"title": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
 						"description": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 						"details": "Card sap.app/id entry in the manifest is mandatory There must be a 'sap.card' section in the manifest.",
-						"illustrationType": "sapIllus-SimpleError",
-						"illustrationSize": "Spot"
+						"illustrationType": "sapIllus-UnableToLoad",
+						"illustrationSize": "Small"
 					}
 				};
 
@@ -521,7 +521,7 @@ sap.ui.define([
 						"message": {
 							"type": "error",
 							"title": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
-							"illustrationType": "sapIllus-ErrorScreen",
+							"illustrationType": "sapIllus-UnableToLoad",
 							"illustrationSize": "Auto",
 							"description": oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION")
 						}
