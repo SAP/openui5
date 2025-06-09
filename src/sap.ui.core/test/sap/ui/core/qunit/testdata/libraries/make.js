@@ -163,7 +163,7 @@ function makeComponent(options) {
 });`;
 
 	const manifest = {
-		"_version": "1.12.0",
+		"_version": "2.0.0",
 		"sap.app": {
 			"id": makeName(path),
 			"type": "application",

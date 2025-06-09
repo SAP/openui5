@@ -99,7 +99,7 @@ sap.ui.define([
 				if (sError) {
 					Log.error(sError, "sap.ui.integration.util.ContentFactory");
 					oCard._handleError({
-						type: IllustratedMessageType.ErrorScreen,
+						type: IllustratedMessageType.UnableToLoad,
 						title: oCard.getTranslatedText("CARD_DATA_LOAD_DEPENDENCIES_ERROR"),
 						description: oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION"),
 						details: sError

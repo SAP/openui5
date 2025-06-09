@@ -1,7 +1,6 @@
 {
 	"_version": "2.0.0",
 	"sap.app": {
-		"_version": "1.2.0",
 		"id": "samples.manifestfirst.sap",
 		"text": "Taken from Manifest 4",
 		"title": "'samples.manifestfirst.sap'",

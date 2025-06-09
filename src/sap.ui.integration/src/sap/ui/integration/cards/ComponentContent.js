@@ -114,7 +114,7 @@ sap.ui.define([
 			componentFailed: () => {
 				this.fireEvent("_actionContentReady");
 				this.handleError({
-					illustrationType: IllustratedMessageType.ErrorScreen,
+					illustrationType: IllustratedMessageType.UnableToLoad,
 					title: oCard.getTranslatedText("CARD_DATA_LOAD_ERROR"),
 					description: "Card content failed to create component"
 				});

@@ -95,7 +95,7 @@ sap.ui.define([
 		const oUrl = new URL(oHeader.consent.url, window.location.href);
 		return {
 			type: CardBlockingMessageType.Information,
-			illustrationType: IllustratedMessageType.Connection,
+			illustrationType: IllustratedMessageType.UnableToLoad,
 			imageSrc: oHeader.imageSrc,
 			title: oHeader.title || oCard.getTranslatedText("CARD_OAUTH3LO_FALLBACK_TITLE"),
 			description: oHeader.description || oCard.getTranslatedText("CARD_OAUTH3LO_FALLBACK_DESCRIPTION", [oUrl.origin]),
@@ -126,7 +126,7 @@ sap.ui.define([
 
 		return {
 			type: CardBlockingMessageType.Error,
-			illustrationType: IllustratedMessageType.ErrorScreen,
+			illustrationType: IllustratedMessageType.UnableToLoad,
 			title: oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
 			description: oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION")
 		};

@@ -164,7 +164,7 @@ sap.ui.define([
 			sDetails = mSettings.details;
 
 		if (mSettings.type === CardBlockingMessageType.Error) {
-			sIllustratedMessageType = sIllustratedMessageType || IllustratedMessageType.ErrorScreen;
+			sIllustratedMessageType = sIllustratedMessageType || IllustratedMessageType.UnableToLoad;
 		} else if (mSettings.type === CardBlockingMessageType.NoData) {
 			sIllustratedMessageType = sIllustratedMessageType || IllustratedMessageType.NoData;
 		}

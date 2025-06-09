@@ -1,0 +1,12 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	width="100%"
+	displayBlock="true">
+	<IllustratedMessage
+		title="{i18n>welcomeMessage}"
+		description="{i18n>text}"
+		illustrationSize="Small"
+		illustrationType="tnt-Avatar">
+	</IllustratedMessage>
+</mvc:View>

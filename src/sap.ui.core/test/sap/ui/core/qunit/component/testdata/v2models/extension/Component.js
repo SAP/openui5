@@ -12,18 +12,20 @@ sap.ui.define(["testdata/v2models/empty/Component"], function(EmptyExtensionComp
 
 			manifest: {
 
-				"_version": "1.0.0",
+				"_version": "2.0.0",
 
 				"sap.app": {
-					"_version": "1.0.0",
 					"id": "testdata.v2models.extension",
 					"type": "application",
+
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
+
 					"i18n": "i18n.properties",
 					"title": "{{title}}",
 					"description": "{{description}}",
+
 					"dataSources": {
 
 						// override URI
@@ -56,14 +58,10 @@ sap.ui.define(["testdata/v2models/empty/Component"], function(EmptyExtensionComp
 				},
 
 				"sap.ui": {
-					"_version": "1.0.0",
 					"technology": "UI5"
 				},
 
 				"sap.ui5": {
-
-					"_version": "1.0.0",
-
 					"dependencies": {
 						"minUI5Version": "1.28.0",
 						"libs": {
@@ -96,7 +94,6 @@ sap.ui.define(["testdata/v2models/empty/Component"], function(EmptyExtensionComp
 						}
 
 					}
-
 				}
 
 			}

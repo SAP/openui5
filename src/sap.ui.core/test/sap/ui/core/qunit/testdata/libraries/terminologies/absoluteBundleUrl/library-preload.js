@@ -13,7 +13,7 @@ sap.ui.predefine('testlibs/terminologies/absoluteBundleUrl/library',['sap/ui/cor
 
 sap.ui.require.preload({
 	"testlibs/terminologies/absoluteBundleUrl/manifest.json": JSON.stringify({
-		"_version": "1.45.0",
+		"_version": "2.0.0",
 		"name": "testlibs.terminologies.absoluteBundleUrl",
 		"sap.ui5": {
 			"library": {

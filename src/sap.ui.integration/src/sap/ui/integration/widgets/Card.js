@@ -1711,9 +1711,8 @@ sap.ui.define([
 	/**
 	 * Gets translated text from the i18n properties files configured for this card.
 	 *
-	 * For more details see {@link module:sap/base/i18n/ResourceBundle#getText}.
+	 * This method uses <code>ResourceBundle.getText()</code>. For more details see {@link module:sap/base/i18n/ResourceBundle#getText}.
 	 *
-	 * @experimental Since 1.83. The API might change.
 	 * @public
 	 * @param {string} sKey Key to retrieve the text for
 	 * @param {string[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
@@ -1721,7 +1720,7 @@ sap.ui.define([
 	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
 	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
 	 * @param {boolean} [bIgnoreKeyFallback=false] If set, <code>undefined</code> is returned instead of the key string, when the key is not found in any bundle or fallback bundle.
-	 * @returns {string} The value belonging to the key, if found; otherwise the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
+	 * @returns {string|undefined} The value belonging to the key, if found; otherwise, it returns the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
 	 */
 	Card.prototype.getTranslatedText = function (sKey, aArgs, bIgnoreKeyFallback) {
 		var oModel = this.getModel("i18n");
@@ -2234,7 +2233,7 @@ sap.ui.define([
 			});
 		} catch (e) {
 			this._handleError({
-				illustrationType: IllustratedMessageType.ErrorScreen,
+				illustrationType: IllustratedMessageType.UnableToLoad,
 				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
 				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 				details: e.message,

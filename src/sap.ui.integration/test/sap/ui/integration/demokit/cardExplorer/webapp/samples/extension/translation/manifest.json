@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"id": "card.explorer.extension.translation"
+	},
+	"sap.card": {
+		"extension": "./TranslationExtension",
+		"requires": {
+			"extension": {}
+		},
+		"data": {
+			"json": [
+				{ "training": "Scrum", "isOnline": true },
+				{ "training": "Quality Management", "isOnline": false },
+				{ "training": "Test Driven Development", "isOnline": false },
+				{ "training": "Integration Cards Training", "isOnline": true }
+			]
+		},
+		"type": "List",
+		"header": {
+			"title": "{i18n>TITLE}",
+			"icon": {
+				"src": "sap-icon://activities"
+			}
+		},
+		"content": {
+			"item": {
+				"title": "{training}",
+				"description": "{location}",
+				"info": {
+					"value": "{= extension.formatters.getStateText(${isOnline}) }",
+					"state": "{= extension.formatters.getState(${isOnline}) }"
+				}
+			}
+		}
+	}
+}

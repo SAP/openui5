@@ -69,31 +69,6 @@
         </Select>
 
         <Label
-            text="{i18n>illustrationCategoryLabel}"
-            labelFor="categorySelect"
-            showColon="true">
-            <layoutData>
-                <OverflowToolbarLayoutData group="3" />
-            </layoutData>
-        </Label>
-        <Select
-            id="categorySelect"
-            class="sapUiDemoIllustrationExplorerCategorySelect"
-            width="100%"
-            items="{categories>/categories}"
-            selectedKey="{app>/selectedCategory}"
-            change=".onCategoryChange">
-            <core:Item key="{categories>category}" text="{categories>category}" />
-            <layoutData>
-                <OverflowToolbarLayoutData
-                    group="3"
-                    minWidth="12rem"
-                    maxWidth="14rem"
-                    shrinkable="true" />
-            </layoutData>
-        </Select>
-
-        <Label
             text="{i18n>themeLabel}"
             labelFor="themeSelect"
             showColon="true">
@@ -117,5 +92,12 @@
                     shrinkable="true" />
             </layoutData>
         </Select>
+
+        <CheckBox
+            id="hideDeprecatedCheckbox"
+            text="{i18n>DeprecatedIllustrationTypeFilter}"
+            selected="{app>/hideDeprecated}"
+            select=".onHideDeprecatedChange">
+        </CheckBox>
     </OverflowToolbar>
 </core:FragmentDefinition>

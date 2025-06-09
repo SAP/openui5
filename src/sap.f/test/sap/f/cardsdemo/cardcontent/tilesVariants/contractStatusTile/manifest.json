@@ -6,7 +6,6 @@
 	},
 	"sap.app": {
 		"id": "sap.ushell.demotiles.cdm.contractStatusTile",
-		"_version": "1.0.0",
 		"type": "card",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -30,7 +29,6 @@
 		}
 	},
 	"sap.ui": {
-		"_version": "1.1.0",
 		"icons": {
 			"icon": "sap-icon://favorite"
 		},
@@ -42,7 +40,6 @@
 		"technology": "UI5"
 	},
 	"sap.ui5": {
-		"_version": "1.1.0",
 		"componentName": "sap.ushell.demotiles.cdm.contractStatusTile",
 		"dependencies": {
 			"minUI5Version": "1.38",

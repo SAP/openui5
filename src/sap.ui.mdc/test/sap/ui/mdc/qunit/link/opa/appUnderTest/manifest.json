@@ -2,7 +2,6 @@
 	"_version": "2.0.0",
 	"sap.app": {
 		"id": "appUnderTest",
-		"_version": "1.0",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"

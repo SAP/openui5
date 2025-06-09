@@ -197,7 +197,7 @@ sap.ui.define([
 		oIllustratedMessage = oMessage.getAggregation("_illustratedMessage");
 		oButton = oIllustratedMessage.getAdditionalContent()[0];
 
-		assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.ErrorScreen, "Error message type is correct");
+		assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.UnableToLoad, "Error message type is correct");
 		assert.strictEqual(oIllustratedMessage.getTitle(), mErrorInfo.requestErrorParams.response.status + " " + mErrorInfo.requestErrorParams.response.statusText, "Error message title is correct");
 		assert.strictEqual(oIllustratedMessage.getDescription(), this.oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION"), "Error message description is correct");
 		assert.strictEqual(oButton.getText(), this.oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
@@ -222,7 +222,7 @@ sap.ui.define([
 		// Act
 		const oMessage = BlockingMessage.create({
 				title: "Test title",
-				illustrationType: IllustratedMessageType.SimpleBalloon,
+				illustrationType: IllustratedMessageType.UserHasSignedUp,
 				additionalContent: [
 					{
 						text: "Button 1",
@@ -250,7 +250,7 @@ sap.ui.define([
 		const oIllustratedMessage = oMessage.getAggregation("_illustratedMessage");
 		const aButtons = oIllustratedMessage.getAdditionalContent();
 
-		assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.SimpleBalloon, "Illustration is correct");
+		assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.UserHasSignedUp, "Illustration is correct");
 		assert.strictEqual(oIllustratedMessage.getTitle(), "Test title", "Title is correct");
 		assert.strictEqual(aButtons.length, 2, "Buttons are correctly created");
 		assert.strictEqual(aButtons[0].getText(), "Button 1", "Button 1 text is correct");
