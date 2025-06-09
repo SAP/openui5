@@ -732,5 +732,15 @@
         "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
       }
     ]
+  },
+  "1.108.42": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "82708ca32f4bced778fdb3eff2a44161dc6980e8",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel: updating properties of type Edm.Binary"
+      }
+    ]
   }
 }

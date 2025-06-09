@@ -1882,5 +1882,20 @@
         ]
       }
     ]
+  },
+  "1.108.42": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "1914d530b5d4bceb9b01fa103b150f124ebc849e",
+        "type": "FIX",
+        "text": " Table: Prevent error when opening menu"
+      },
+      {
+        "id": "e6d4689bd46b2f1ab6e14a1cca1bcb557a1687bf",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
+      }
+    ]
   }
 }

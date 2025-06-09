@@ -165,5 +165,15 @@
         "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
       }
     ]
+  },
+  "1.108.42": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "2f0630539b3ec7a09b2589f0ad239b596f276c63",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
+      }
+    ]
   }
 }

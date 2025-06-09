@@ -334,5 +334,15 @@
         "text": " sap.ui.unified.Calendar: Prevent navigation when selecting a week"
       }
     ]
+  },
+  "1.108.42": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "e6d4689bd46b2f1ab6e14a1cca1bcb557a1687bf",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
+      }
+    ]
   }
 }
