@@ -1305,6 +1305,37 @@ sap.ui.define([
 								]
 							},
 							{
+								title: 'Translation',
+								key: 'translation',
+								files: [
+									{
+										url: '/samples/component/Translation/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/component/Translation/Component.js',
+										name: 'Component.js',
+										key: 'Component.js'
+									},
+									{
+										url: '/samples/component/Translation/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
+									},
+									{
+										url: '/samples/component/Translation/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									},
+									{
+										url: '/samples/component/Translation/i18n/i18n_en.properties',
+										name: 'i18n/i18n_en.properties',
+										key: 'i18n/i18n_en.properties'
+									}
+								]
+							},
+							{
 								title: 'Request Data',
 								key: 'requestData',
 								mockServer: true,
@@ -2410,6 +2441,32 @@ sap.ui.define([
 										url: '/samples/extension/shared/lib/SharedFetchExtension.js',
 										name: 'shared/lib/SharedFetchExtension.js',
 										key: 'shared/lib/SharedFetchExtension.js'
+									}
+								]
+							},
+							{
+								title: 'Translation',
+								key: 'translation',
+								files: [
+									{
+										url: '/samples/extension/translation/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/extension/translation/TranslationExtension.js',
+										name: 'TranslationExtension.js',
+										key: 'TranslationExtension.js'
+									},
+									{
+										url: '/samples/extension/translation/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n/i18n.properties'
+									},
+									{
+										url: '/samples/extension/translation/i18n/i18n_en.properties',
+										name: 'i18n/i18n_en.properties',
+										key: 'i18n/i18n_en.properties'
 									}
 								]
 							}

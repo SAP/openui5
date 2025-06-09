@@ -2836,6 +2836,41 @@ sap.ui.define([
 			// Assert
 			assert.strictEqual(this.oCard.getTranslatedText("SUBTITLE"), "Some subtitle", "The translation for SUBTITLE is correct.");
 			assert.strictEqual(this.oCard.getTranslatedText("COUNT_X_OF_Y", [3, 5]), "3 of custom 5", "The translation for COUNT_X_OF_Y is correct.");
+			assert.strictEqual(this.oCard.getTranslatedText("NOT_EXISTING_KEY"), "NOT_EXISTING_KEY", "Returns string value when key is not found.");
+			assert.strictEqual(this.oCard.getTranslatedText("NOT_EXISTING_KEY", [], true), undefined, "Returns undefined when key is not found and bIgnoreKeyFallback is set.");
+			assert.strictEqual(this.oCard.getTranslatedText(null), null, "Returns null when key is null.");
+			assert.strictEqual(this.oCard.getTranslatedText(null, [], true), undefined, "Returns undefined when key is null and bIgnoreKeyFallback is set.");
+		});
+
+		QUnit.test("Use getTranslatedText with no translations in manifest", async function (assert) {
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.strictEqual(this.oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "Returns correct value for COUNT_X_OF_Y if no i18n for the card is set.");
+			assert.strictEqual(this.oCard.getTranslatedText("CARD_MANIFEST"), "Card Manifest", "Gets correct system translation if no i18n for the card is set.");
+			assert.strictEqual(this.oCard.getTranslatedText("NOT_EXISTING_KEY"), "NOT_EXISTING_KEY", "Returns string value when key is not found and no i18n for the card is set.");
+		});
+
+		QUnit.test("Use getTranslatedText directly after card creation", function (assert) {
+			const oCard = new Card();
+
+			// Assert
+			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST"), "Card Manifest", "Returns correct system translation text.");
+			assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
+		});
+
+		QUnit.test("Use getTranslatedText without waiting for card ready event", function (assert) {
+			const oCard = new Card();
+
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
+			oCard.placeAt(DOM_RENDER_LOCATION);
+
+			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST"), "Card Manifest", "Returns correct system translation text.");
+			assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
 		});
 
 		QUnit.test("Refresh reloads translations correctly", async function (assert) {

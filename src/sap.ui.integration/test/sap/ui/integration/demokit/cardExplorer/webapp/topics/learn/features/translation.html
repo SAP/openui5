@@ -31,6 +31,26 @@
 				<b>Note:</b> If a key from the resource bundle is used, but "i18n" property is not set, the default value "i18n/i18n.properties" will be used, to request a resource bundle.
 			</p>
 
+			<h2 id="usage">Usage</h2>
+			<p> There are several options for translating content in the cards:</p>
+			<ul>
+				<li>
+					Using the binding syntax to translate texts directly in the manifest. This is the recommended option.
+					Check out the <a href="../../../index.html#/explore/translation" target="_parent">example</a>.
+				</li>
+				<li>
+					<code>card.getTranslatedText()</code> - if you need to access translated texts programmatically (for example, in an Extension or Component).
+					See the <a data-demokit-href="#/api/sap.ui.integration.widgets.Card#methods/getTranslatedText" target="_blank">API reference</a>. Check out the <a href="../../../index.html#/explore/extension/translation" target="_parent">Extension</a> and <a href="../../../index.html#/explore/component/translation" target="_parent">Component</a> examples.
+				</li>
+				<li>
+					<code>getModel("i18n").getResourceBundle().getText()</code> - <b>Deprecated</b>. Do not use <code>getModel("i18n").getResourceBundle()</code> directly on the card; instead, use the <code>card.getTranslatedText()</code> method.
+
+					<br>
+
+					Note: Synchronous loading of ResourceBundle is <a data-demokit-href="#/api/sap.base.i18n.ResourceBundle" target="_blank">deprecated</a> as of UI5 version 1.135, therefore <code>getModel("i18n").getResourceBundle()</code> is asynchronous and returns a <code>Promise</code> rather than a <code>ResourceBundle</code>. It is safer to use <code>card.getTranslatedText()</code>.
+				</li>
+			</ul>
+
 			<h2 id="predefinedTranslationKeys">
 				Predefined Translation Keys
 			</h2>
