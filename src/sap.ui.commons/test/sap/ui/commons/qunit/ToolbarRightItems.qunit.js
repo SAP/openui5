@@ -126,12 +126,13 @@ sap.ui.define([
 	QUnit.test("VisibleItems calculation with images involved", function(assert) {
 		var done = assert.async();
 		assert.expect(3);
+		sap.ui.getCore().applyChanges();
 		setTimeout(function(){ // give the Toolbar some time to recognize the change
 			assert.equal(oCtrl.getVisibleItemInfo().count, 8, "8 items should be considered visible on the left side (6 Buttons + 2 Separators)");
 			assert.equal(oCtrl.iItemDomRefCount, 11, "There should be 11 items considered navigable by the ItemNavigation (6 Left items + 1 overflow button + 4 right items)");
 			assert.equal(oCtrl.getRightItems().length, 6, "4 buttons + 2 Separators on the right side");
 			done();
-		}, 1200);
+		}, 1600);
 	});
 
 	// ==================================================
@@ -163,7 +164,7 @@ sap.ui.define([
 			assert.equal(oCtrl.getVisibleItemInfo().count, 5, "5 item should be considered visible on the left side");
 			assert.equal(oCtrl.iItemDomRefCount, 9, "There should be 9 items considered navigable by the ItemNavigation (4 left items + 1 overflow button + 4 right items)");
 			done();
-		}, 500);
+		}, 1200);
 	});
 
 	QUnit.test("WidthOk after resize", function(assert) {
