@@ -447,9 +447,9 @@ sap.ui.define([
 		var that = this;
 		if (!that._oEditorResourceBundles.isReady()) {
 			// waiting for loading resource bundles
-			setTimeout(function() {
+			that._oEditorResourceBundles.attachEventOnce("ready", function() {
 				that.openTranslationListPopup(oEvent);
-			}, 100);
+			});
 			return;
 		}
 		var oControl = oEvent.getSource();
