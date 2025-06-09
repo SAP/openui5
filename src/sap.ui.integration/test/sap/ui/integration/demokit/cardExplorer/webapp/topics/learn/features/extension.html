@@ -133,6 +133,22 @@
 				For detailed information about all the available methods, read the <a data-demokit-href="#/api/sap.ui.integration.Extension" target="_blank">sap.ui.integration.Extension API.</a>
 			</p>
 
+			<h2 id="translation">Translation</h2>
+			<ul>
+				<li>
+					Preferably, use the binding syntax to translate texts. This is the recommended option for both manifests and in methods like <code>showMessage("{i18n>/MY_TEXT}")</code>.
+					Check out the <a href="../../../index.html#/explore/translation" target="_parent">example</a>.
+				</li>
+				<li>
+					You can use the method <code>card.getTranslatedText()</code> if access to translated texts programmatically is absolutely needed.
+					See the <a data-demokit-href="#/api/sap.ui.integration.widgets.Card#methods/getTranslatedText" target="_blank">API reference</a>. Check out the <a href="../../../index.html#/explore/extension/translation" target="_parent">example</a>.
+				</li>
+			</ul>
+			<p>
+				<b>Note:</b> As of UI5 version 1.135, synchronous loading of ResourceBundle is <a data-demokit-href="#/api/sap.base.i18n.ResourceBundle" target="_blank">deprecated</a>. Do not use <code>getModel("i18n").getResourceBundle()</code> directly on the card; instead use the <code>card.getTranslatedText()</code> method.
+					Check out the <a href="../../../index.html#/explore/extension/translation" target="_parent">example</a>.
+			</p>
+
 			<h2 id="extensionRequirements">
 				Extension Requirements
 			</h2>

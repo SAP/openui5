@@ -12,18 +12,20 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 			manifest: {
 
-				"_version": "1.0.0",
+				"_version": "2.0.0",
 
 				"sap.app": {
-					"_version": "1.0.0",
 					"id": "testdata.v2models.parent",
 					"type": "application",
+
 					"applicationVersion": {
 						"version": "1.0.0"
 					},
+
 					"i18n": "i18n.properties",
 					"title": "{{title}}",
 					"description": "{{description}}",
+
 					"dataSources": {
 
 						"default": {
@@ -181,14 +183,10 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 				},
 
 				"sap.ui": {
-					"_version": "1.0.0",
 					"technology": "UI5"
 				},
 
 				"sap.ui5": {
-
-					"_version": "1.0.0",
-
 					"dependencies": {
 						"minUI5Version": "1.28.0",
 						"libs": {
@@ -334,7 +332,6 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 							"dataSource": "invalid"
 						}
 					}
-
 				}
 
 			}

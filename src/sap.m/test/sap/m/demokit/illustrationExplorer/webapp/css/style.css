@@ -84,7 +84,6 @@ html:not(.sap-desktop) {
 
     .sapUiDemoIllustrationExplorerIllustrationSizeSelect,
     .sapUiDemoIllustrationExplorerIllustrationSetSelect,
-    .sapUiDemoIllustrationExplorerCategorySelect,
     .sapUiDemoIllustrationExplorerThemeSelect {
         max-width: none !important;
     }

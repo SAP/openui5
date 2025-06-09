@@ -236,7 +236,7 @@ sap.ui.define([
 
 	EditorQunitUtils.performance = {
 		action: 150,
-		interaction: 1000,
+		interaction: 1500,
 		complexInteraction: 3000
 	};
 

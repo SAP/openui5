@@ -108,15 +108,21 @@ sap.ui.define([
         Then.iTeardownMyApp();
     });
 
-    opaTest("Should filter illustrations by category", function (Given, When, Then) {
+    opaTest("Should show and then hide deprecated illustrations", function (Given, When, Then) {
         // Arrangements
         Given.iStartMyApp();
 
         // Actions
-        When.onTheAppPage.iSelectCategory("Simple");
+        When.onTheAppPage.iShowDeprecatedIllustrations();
 
         // Assertions
-        Then.onTheAppPage.iShouldSeeIllustrationsInCategory("Simple");
+        Then.onTheAppPage.iShouldSeeDeprecatedIllustrations();
+
+        // Actions
+        When.onTheAppPage.iHideDeprecatedIllustrations();
+
+        // Assertions
+        Then.onTheAppPage.iShouldNotSeeDeprecatedIllustrations();
 
         // Cleanup
         Then.iTeardownMyApp();

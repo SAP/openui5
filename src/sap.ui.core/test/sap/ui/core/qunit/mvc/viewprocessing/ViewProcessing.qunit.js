@@ -372,7 +372,7 @@ sap.ui.define([
 		// responds changed parent manifest
 		// async switch on root-view is switched based on test-execution
 		var oManifest = {
-			"_version": "0.0.1",
+			"_version": "2.0.0",
 			"sap.app": {
 				"id": "sap.ui.core.qunit.mvc.viewprocessing.ExtensionPoints.Parent"
 			},
@@ -457,7 +457,7 @@ sap.ui.define([
 		// responds changed parent manifest
 		// async switch on root-view is switched based on test-execution
 		var oManifest = {
-			"_version": "0.0.1",
+			"_version": "2.0.0",
 			"sap.app": {
 				"id": sComponentName
 			},

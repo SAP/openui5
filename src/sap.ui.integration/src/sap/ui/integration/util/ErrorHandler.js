@@ -55,7 +55,7 @@ sap.ui.define([
 	ErrorHandler.configureDataRequestErrorInfo = function (mErrorInfo, oCard) {
 		var oResponse = mErrorInfo.requestErrorParams.response,
 			sResponseText = mErrorInfo.requestErrorParams.responseText,
-			sIllustrationType = IllustratedMessageType.ErrorScreen,
+			sIllustrationType = IllustratedMessageType.UnableToLoad,
 			sTitle = oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
 			sDescription = oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 			requestSettings = mErrorInfo.requestSettings,
@@ -70,7 +70,7 @@ sap.ui.define([
 				case 0:
 					switch (oResponse.statusText) {
 						case "timeout":
-							sIllustrationType = IllustratedMessageType.ReloadScreen;
+							sIllustrationType = IllustratedMessageType.UnableToLoad;
 							sTitle = "408 " + oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_TITLE");
 							sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_DETAILS", [sUrl]);
 							break;
@@ -87,7 +87,7 @@ sap.ui.define([
 					}
 					break;
 				case 408:
-					sIllustrationType = IllustratedMessageType.ReloadScreen;
+					sIllustrationType = IllustratedMessageType.UnableToLoad;
 					sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_DETAILS", [sUrl]);
 					break;
 				case 401: // Unauthorized

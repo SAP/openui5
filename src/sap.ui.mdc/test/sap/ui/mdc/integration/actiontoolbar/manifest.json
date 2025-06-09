@@ -1,7 +1,6 @@
 {
 	"_version": "2.0.0",
 	"sap.app": {
-		"_version": "1.11.0",
 		"id": "sap.ui.mdc.ActionToolbarTesting",
 		"type": "application",
 		"title": "sap.ui.mdc.ActionToolbar testing",
@@ -11,7 +10,6 @@
 		}
 	},
 	"sap.ui": {
-		"_version": "1.11.0",
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
@@ -20,7 +18,6 @@
 		}
 	},
 	"sap.ui5": {
-		"_version": "1.11.0",
 		"flexEnabled": true,
 		"rootView": {
 			"viewName": "sap.ui.mdc.ActionToolbarTesting.view.App",

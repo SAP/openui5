@@ -19,7 +19,7 @@ sap.ui.define([
 			this.getCard().showBlockingMessage({
 				type: CardBlockingMessageType.Information,
 				title: "Custom blocking message",
-				illustrationType: IllustratedMessageType.SimpleBalloon,
+				illustrationType: IllustratedMessageType.UserHasSignedUp,
 				additionalContent: [
 					{
 						text: "Do something",

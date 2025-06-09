@@ -82,7 +82,7 @@
 					"target": "home"
 				},
 				{
-					"pattern": "illustration/{category}/{set}/{type}",
+					"pattern": "illustration/{set}/{type}",
 					"name": "illustrationDetails",
 					"target": "illustrationDetails"
 				}
