@@ -121,8 +121,8 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	 * @param {sap.m.Tokenizer} oControl an object representation of the control that should be rendered
 	 */
 	TokenizerRenderer._renderIndicator = function(oRm, oControl){
-		var bExpanded = !!oControl._oPopup && oControl._oPopup.isOpen();
-		var sPopoverId = oControl._oPopup && oControl._oPopup.getId();
+		var bExpanded = oControl._oPopup?.isOpen();
+		var sPopoverId = oControl._oPopup?.getDomRef() && oControl._oPopup?._oControl.getId();
 
 		oRm.openStart("span");
 		oRm.class("sapMTokenizerIndicator");
