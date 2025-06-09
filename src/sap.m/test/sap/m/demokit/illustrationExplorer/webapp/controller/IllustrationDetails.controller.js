@@ -12,7 +12,7 @@ sap.ui.define([
         _onPatternMatched(oEvent) {
             // Get route parameters
             const oArgs = oEvent.getParameter("arguments");
-            const { category, set, type } = oArgs;
+            const { set, type } = oArgs;
 
             // Get the existing "illustration" model
             const oModel = this.getModel("illustration");
@@ -22,9 +22,10 @@ sap.ui.define([
 
             // Check if the model properties need to be updated
             if (oData.set !== set || oData.type !== sIllustrationType) {
-                oModel.setProperty("/category", category);
                 oModel.setProperty("/set", set);
                 oModel.setProperty("/type", sIllustrationType);
+                const isDeprecated = this._aDeprecatedIllustrations.includes(type);
+                oModel.setProperty("/deprecated", isDeprecated);
             }
         }
     });

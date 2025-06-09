@@ -114,46 +114,80 @@ sap.ui.define([
                         errorMessage: "Could not find the illustration set Select"
                     });
                 },
-                iSelectCategory(sCategory) {
+                iShowDeprecatedIllustrations() {
                     return this.waitFor({
-                        id: /.*categorySelect$/,
-                        controlType: "sap.m.Select",
-                        visible: false, // Include controls not currently visible (e.g., in overflow)
-                        success(aSelects) {
-                            const oSelect = aSelects[1];
-                            const bIsVisible = oSelect.$().is(":visible");
+                        id: /.*hideDeprecatedCheckbox$/,
+                        visible: false,
+                        success: (aCheckboxes) => {
+                            const oCheckbox = aCheckboxes[1];
+                            const bIsVisible = oCheckbox.$().is(":visible");
 
                             if (!bIsVisible) {
-                                // Open the overflow menu
                                 this.waitFor({
                                     id: /.*overflowButton$/,
                                     actions: new Press(),
                                     success: () => {
                                         Opa5.assert.ok(true, "Opened overflow menu");
 
-                                        // Perform the selection in overflow
                                         this.waitFor({
-                                            id: /.*categorySelect$/,
-                                            actions(oOverflowSelect) {
-                                                oOverflowSelect.setSelectedKey(sCategory);
-                                                oOverflowSelect.fireChange({ selectedItem: oOverflowSelect.getSelectedItem() });
+                                            id: oCheckbox.getId(),
+                                            actions: (oOverflowCheckbox) => {
+                                                oOverflowCheckbox.setSelected(false);
+                                                oOverflowCheckbox.fireSelect({ selected: false });
                                             },
                                             success: () => {
-                                                Opa5.assert.ok(true, "Selected category from overflow: " + sCategory);
+                                                Opa5.assert.ok(true, "Unchecked 'Hide Deprecated' checkbox in overflow to show deprecated illustrations");
                                             },
-                                            errorMessage: "Could not find the category Select in overflow"
+                                            errorMessage: "Could not find the 'Hide Deprecated' checkbox in overflow"
                                         });
                                     },
                                     errorMessage: "Could not open the overflow menu"
                                 });
                             } else {
-                                // Control is visible, perform action directly
-                                oSelect.setSelectedKey(sCategory);
-                                oSelect.fireChange({ selectedItem: oSelect.getSelectedItem() });
-                                Opa5.assert.ok(true, "Selected category: " + sCategory);
+                                oCheckbox.setSelected(false);
+                                oCheckbox.fireSelect({ selected: false });
+                                Opa5.assert.ok(true, "Unchecked 'Hide Deprecated' checkbox to show deprecated illustrations");
                             }
                         },
-                        errorMessage: "Could not find the category Select"
+                        errorMessage: "Could not find the 'Hide Deprecated' checkbox"
+                    });
+                },
+                iHideDeprecatedIllustrations() {
+                    return this.waitFor({
+                        id: /.*hideDeprecatedCheckbox$/,
+                        visible: false,
+                        success: (aCheckboxes) => {
+                            const oCheckbox = aCheckboxes[1];
+                            const bIsVisible = oCheckbox.$().is(":visible");
+
+                            if (!bIsVisible) {
+                                this.waitFor({
+                                    id: /.*overflowButton$/,
+                                    actions: new Press(),
+                                    success: () => {
+                                        Opa5.assert.ok(true, "Opened overflow menu");
+
+                                        this.waitFor({
+                                            id: oCheckbox.getId(),
+                                            actions: (oOverflowCheckbox) => {
+                                                oOverflowCheckbox.setSelected(true);
+                                                oOverflowCheckbox.fireSelect({ selected: true });
+                                            },
+                                            success: () => {
+                                                Opa5.assert.ok(true, "Checked 'Hide Deprecated' checkbox in overflow to hide deprecated illustrations");
+                                            },
+                                            errorMessage: "Could not find the 'Hide Deprecated' checkbox in overflow"
+                                        });
+                                    },
+                                    errorMessage: "Could not open the overflow menu"
+                                });
+                            } else {
+                                oCheckbox.setSelected(true);
+                                oCheckbox.fireSelect({ selected: true });
+                                Opa5.assert.ok(true, "Checked 'Hide Deprecated' checkbox to hide deprecated illustrations");
+                            }
+                        },
+                        errorMessage: "Could not find the 'Hide Deprecated' checkbox"
                     });
                 }
             },
@@ -226,20 +260,6 @@ sap.ui.define([
                         errorMessage: "No illustrations from set " + sSet + " found"
                     });
                 },
-                iShouldSeeIllustrationsInCategory(sCategory) {
-                    return this.waitFor({
-                        controlType: "sap.f.GridList",
-                        success(oGridList) {
-                            const aItems = oGridList[0].getItems();
-                            const bAllInCategory = aItems.every((oItem) => {
-                                const sItemCategory = oItem.getBindingContext("app").getProperty("category");
-                                return sItemCategory === sCategory;
-                            });
-                            Opa5.assert.ok(bAllInCategory, "All displayed illustrations are in category: " + sCategory);
-                        },
-                        errorMessage: "Illustrations in category " + sCategory + " are not displayed correctly"
-                    });
-                },
                 iShouldSeeObjectStatusPopulated() {
                     return this.waitFor({
                         controlType: "sap.m.ObjectStatus",
@@ -275,6 +295,32 @@ sap.ui.define([
                             });
                         },
                         errorMessage: "Could not find IllustratedMessage in side content"
+                    });
+                },
+                iShouldSeeDeprecatedIllustrations() {
+                    return this.waitFor({
+                        controlType: "sap.f.GridList",
+                        success(oGridList) {
+                            const aItems = oGridList[0].getItems();
+                            const aBindingContexts = aItems.map((item) => item.getBindingContext("app"));
+                            const bHasDeprecated = aBindingContexts.some((context) => context.getProperty("deprecated") === true);
+
+                            Opa5.assert.ok(bHasDeprecated, "Deprecated illustrations are visible");
+                        },
+                        errorMessage: "Could not verify visibility of deprecated illustrations"
+                    });
+                },
+                iShouldNotSeeDeprecatedIllustrations() {
+                    return this.waitFor({
+                        controlType: "sap.f.GridList",
+                        success(oGridList) {
+                            const aItems = oGridList[0].getItems();
+                            const aBindingContexts = aItems.map((item) => item.getBindingContext("app"));
+                            const bHasDeprecated = aBindingContexts.some((context) => context.getProperty("deprecated") === true);
+
+                            Opa5.assert.ok(!bHasDeprecated, "Deprecated illustrations are hidden");
+                        },
+                        errorMessage: "Could not verify that deprecated illustrations are hidden"
                     });
                 }
             }
