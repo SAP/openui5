@@ -1,0 +1,17 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "91e51a219b5372065953a37405d859eabcdbd612",
+        "type": "FIX",
+        "text": " MultiValueField: aria-label not assigned to Tokenizer"
+      },
+      {
+        "id": "79a53df459abff52d269d32a4236254f4389392b",
+        "type": "FIX",
+        "text": " FilterField: show more-indicator on focus to other field"
+      }
+    ]
+  }
+}

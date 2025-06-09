@@ -1,0 +1,22 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "af66701623633ff1da145f786cafc0ec582a4e40",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix initial title rendering in FCL"
+      },
+      {
+        "id": "c20da356405bb47d930a711d82f005166f69f6f3",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubsection: No role for promoted subsection"
+      },
+      {
+        "id": "041f027892e6d618d6ecf24bc04759c26586c4e4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improve accessibility behavior"
+      }
+    ]
+  }
+}

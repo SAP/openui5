@@ -1,0 +1,17 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "a9a682d0bb9689d7d6bb46332341f3f761b533db",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Shell background override is removed"
+      },
+      {
+        "id": "652d3e2a00a58041fffc259e2d9522c0f55c3d67",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Increase spacing between header buttons and tabs"
+      }
+    ]
+  }
+}

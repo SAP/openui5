@@ -1,0 +1,12 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "4673bbe72b9a6e089de1c54a80b64e2a5cdc0e26",
+        "type": "FIX",
+        "text": " Demo Kit: APIREF Module link fixed"
+      }
+    ]
+  }
+}

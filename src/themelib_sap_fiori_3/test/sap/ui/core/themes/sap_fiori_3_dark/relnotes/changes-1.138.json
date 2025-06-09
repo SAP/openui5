@@ -1,0 +1,12 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "f1c2c7809507bbeb774ce08290ac70b8c0026eba",
+        "type": "FIX",
+        "text": " sap.m.Button: has correct color in info toolbar"
+      }
+    ]
+  }
+}

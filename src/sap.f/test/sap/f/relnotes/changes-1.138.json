@@ -1,0 +1,12 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "ac97d48d8940ed4bbf71e9aedb84d718ae077bf0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageHeader: fix headerContentLabel upon snap/unsnap"
+      }
+    ]
+  }
+}

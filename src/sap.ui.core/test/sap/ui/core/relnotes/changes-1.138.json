@@ -1,0 +1,17 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "6ae8f6a3693f49753dffe021958ff4a95ab22210",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel: updating properties of type Edm.Binary"
+      },
+      {
+        "id": "b1fa584ea947f33ee574ffa3dc4e5ca5a001c25c",
+        "type": "FEATURE",
+        "text": " Remove 3rdparty that is no longer used in SAPUI5 code"
+      }
+    ]
+  }
+}

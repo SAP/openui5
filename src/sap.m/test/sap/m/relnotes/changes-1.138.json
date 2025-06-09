@@ -3,6 +3,41 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "b2378d1a92d2488f19aab1d00c266f31501736ce",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Font rendering issue in Safari is fixed"
+      },
+      {
+        "id": "e62812e8c744b249cceca90defa78c8c2c3b178c",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Typo fixed jsdoc"
+      },
+      {
+        "id": "2f80e9ad6b4b484d9790205775d5ee8fe32362e2",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Reset action announcement added"
+      },
+      {
+        "id": "250db5ae5e0d0c67cd6cf2507147342a11974138",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: tokens list stays opened for readonly MultiInput"
+      },
+      {
+        "id": "5d3263bcda245ce70115f2b98da924d7dcb0e531",
+        "type": "FIX",
+        "text": " We've now set the decorative property of avatar to true for action tile"
+      },
+      {
+        "id": "f1c2c7809507bbeb774ce08290ac70b8c0026eba",
+        "type": "FIX",
+        "text": " sap.m.Button: has correct color in info toolbar"
+      },
+      {
+        "id": "8ceccc27e2d4929fa312b5eac556d0be12c3f17d",
+        "type": "FIX",
+        "text": " sap.m.Menu: CSS classes are propagated to the submenus"
+      },
+      {
         "id": "d77d4dd77e54afafafcc225cd4ad74a6ceceb902",
         "type": "FIX",
         "text": " sap.m.DynamicDateRange: shows correctly the time part now"
@@ -16,6 +51,11 @@
         "id": "cfe23d977b3961d610628d3264573ef074899e3e",
         "type": "FIX",
         "text": " sap.m.IconTabHeader: prevent Firefox warning by avoiding getElementById with empty ID"
+      },
+      {
+        "id": "c595a8fa5bcf05ed0342d9b347c0fe14aaaa4a3f",
+        "type": "FIX",
+        "text": " We've now introduced a private read only flag to help the developers determine item sync delegation for the upload complete and item deletion actions"
       }
     ]
   }
