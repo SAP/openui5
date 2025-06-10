@@ -27,6 +27,18 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"actions": [
+			{
+				"type": "ShowCard",
+				"parameters": {
+					"manifest": "./detailsManifest.json",
+					"parameters": {
+						"orderId": "{parameters>/orderId/value}"
+					},
+					"resizable": true
+				}
+			}
+		],
 		"data": {
 			"request": {
 				"url": "{{destinations.myDestination}}/Orders",
@@ -60,19 +72,7 @@
 				"src": "sap-icon://sap-ui5"
 			},
 			"title": "Order for {ShipName}",
-			"subTitle": "ID {parameters>/orderId/value}",
-			"actions": [
-				{
-					"type": "ShowCard",
-					"parameters": {
-						"manifest": "./detailsManifest.json",
-						"parameters": {
-							"orderId": "{parameters>/orderId/value}"
-						},
-						"resizable": true
-					}
-				}
-			]
+			"subTitle": "ID {parameters>/orderId/value}"
 		},
 		"content": {
 			"groups": [
@@ -91,18 +91,6 @@
 							"value": "{ShipAddress}"
 						}
 					]
-				}
-			],
-			"actions": [
-				{
-					"type": "ShowCard",
-					"parameters": {
-						"manifest": "./detailsManifest.json",
-						"parameters": {
-							"orderId": "{parameters>/orderId/value}"
-						},
-						"resizable": true
-					}
 				}
 			]
 		},

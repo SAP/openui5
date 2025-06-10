@@ -3419,20 +3419,20 @@
 			},
 			"sap.card": {
 				"type": "Object",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "#"
+						}
+					}
+				],
 				"header": {
 					"icon": {
 						"text": "DM"
 					},
 					"title": "Donna Moore",
-					"subTitle": "Complete your time recording",
-					"actions": [
-						{
-							"type": "Navigation",
-							"parameters": {
-								"url": "#"
-							}
-						}
-					]
+					"subTitle": "Complete your time recording"
 				},
 				"configuration": {
 					"filters": {
@@ -3473,14 +3473,6 @@
 									"details": "Project Nanga Prabat (Ingo) 0 hours recorded. Please, record your time by the end of the month."
 								}
 							]
-						}
-					],
-					"actions": [
-						{
-							"type": "Navigation",
-							"parameters": {
-								"url": "#"
-							}
 						}
 					]
 				},

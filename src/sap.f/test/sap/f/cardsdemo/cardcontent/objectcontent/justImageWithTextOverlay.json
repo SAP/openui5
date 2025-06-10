@@ -5,6 +5,14 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"actions": [
+			{
+				"type": "Navigation",
+				"parameters": {
+					"url": "https://www.sap.com"
+				}
+			}
+		],
 		"configuration": {
 			"parameters": {
 				"firstName": {
@@ -37,14 +45,6 @@
 							}
 						}
 					]
-				}
-			],
-			"actions": [
-				{
-					"type": "Navigation",
-					"parameters": {
-						"url": "https://www.sap.com"
-					}
 				}
 			]
 		}
