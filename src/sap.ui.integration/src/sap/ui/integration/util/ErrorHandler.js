@@ -4,17 +4,20 @@
 sap.ui.define([
 	"./Utils",
 	"../library",
+	"sap/ui/core/Lib",
 	"sap/m/IllustratedMessageType",
 	"sap/ui/base/BindingParser"
 ], function (
 	Utils,
 	library,
+	Library,
 	IllustratedMessageType,
 	BindingParser
 ) {
 	"use strict";
 
 	var CardBlockingMessageType = library.CardBlockingMessageType;
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 	function formatJson(oJson) {
 		return BindingParser.complexParser.escape(JSON.stringify(oJson, null, 4));
@@ -56,44 +59,44 @@ sap.ui.define([
 		var oResponse = mErrorInfo.requestErrorParams.response,
 			sResponseText = mErrorInfo.requestErrorParams.responseText,
 			sIllustrationType = IllustratedMessageType.UnableToLoad,
-			sTitle = oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
-			sDescription = oCard.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
+			sTitle = oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
+			sDescription = oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 			requestSettings = mErrorInfo.requestSettings,
 			sUrl = requestSettings.request ? requestSettings.request.url : "",
-			sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_DETAILS", [sUrl]);
+			sDetails = oResourceBundle.getText("CARD_ERROR_REQUEST_DETAILS", [sUrl]);
 
 		if (oResponse) {
 			sTitle = oResponse.status + " " + oResponse.statusText;
-			sDescription = oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION");
+			sDescription = oResourceBundle.getText("CARD_ERROR_REQUEST_DESCRIPTION");
 
 			switch (oResponse.status) {
 				case 0:
 					switch (oResponse.statusText) {
 						case "timeout":
 							sIllustrationType = IllustratedMessageType.UnableToLoad;
-							sTitle = "408 " + oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_TITLE");
-							sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_DETAILS", [sUrl]);
+							sTitle = "408 " + oResourceBundle.getText("CARD_ERROR_REQUEST_TIMEOUT_TITLE");
+							sDetails = oResourceBundle.getText("CARD_ERROR_REQUEST_TIMEOUT_DETAILS", [sUrl]);
 							break;
 						default:
 							sIllustrationType = IllustratedMessageType.PageNotFound;
-							sTitle = "404 " + oCard.getTranslatedText("CARD_ERROR_REQUEST_NOTFOUND_TITLE");
+							sTitle = "404 " + oResourceBundle.getText("CARD_ERROR_REQUEST_NOTFOUND_TITLE");
 							break;
 					}
 					break;
 				case 404:
 					sIllustrationType = IllustratedMessageType.PageNotFound;
 					if (!oResponse.statusText) {
-						sTitle = "404 " + oCard.getTranslatedText("CARD_ERROR_REQUEST_NOTFOUND_TITLE");
+						sTitle = "404 " + oResourceBundle.getText("CARD_ERROR_REQUEST_NOTFOUND_TITLE");
 					}
 					break;
 				case 408:
 					sIllustrationType = IllustratedMessageType.UnableToLoad;
-					sDetails = oCard.getTranslatedText("CARD_ERROR_REQUEST_TIMEOUT_DETAILS", [sUrl]);
+					sDetails = oResourceBundle.getText("CARD_ERROR_REQUEST_TIMEOUT_DETAILS", [sUrl]);
 					break;
 				case 401: // Unauthorized
 				case 403: // Forbidden
 				case 511: // Network Authentication Required
-					sDescription = oCard.getTranslatedText("CARD_ERROR_REQUEST_ACCESS_DENIED_DESCRIPTION");
+					sDescription = oResourceBundle.getText("CARD_ERROR_REQUEST_ACCESS_DENIED_DESCRIPTION");
 					break;
 				default:
 					break;
@@ -104,21 +107,21 @@ sap.ui.define([
 			sDescription + "\n" +
 			sDetails + "\n\n";
 
-		sDetails += oCard.getTranslatedText("CARD_LOG_MSG") + "\n" +
+		sDetails += oResourceBundle.getText("CARD_LOG_MSG") + "\n" +
 			(oResponse ? oResponse.statusText : mErrorInfo.requestErrorParams.message) + "\n\n";
 
-		sDetails += oCard.getTranslatedText("CARD_REQUEST_SETTINGS") + "\n" +
+		sDetails += oResourceBundle.getText("CARD_REQUEST_SETTINGS") + "\n" +
 			formatJson(requestSettings) + "\n\n";
 
 		if (oResponse) {
-			sDetails += oCard.getTranslatedText("CARD_REQUEST") + "\n" +
+			sDetails += oResourceBundle.getText("CARD_REQUEST") + "\n" +
 				formatRequest(mErrorInfo.requestErrorParams.settings) + "\n\n" +
-				oCard.getTranslatedText("CARD_RESPONSE_HEADERS") + "\n" +
+				oResourceBundle.getText("CARD_RESPONSE_HEADERS") + "\n" +
 				formatJson(Object.fromEntries(oResponse.headers)) + "\n\n";
 		}
 
 		if (oResponse && sResponseText) {
-			sDetails += oCard.getTranslatedText("CARD_RESPONSE") + "\n";
+			sDetails += oResourceBundle.getText("CARD_RESPONSE") + "\n";
 
 			if (Utils.isJson(sResponseText)) {
 				sDetails += formatJson(JSON.parse(sResponseText));
@@ -129,9 +132,9 @@ sap.ui.define([
 			sDetails += "\n\n";
 		}
 
-		sDetails += oCard.getTranslatedText("CARD_MANIFEST") + "\n" + formatJson(oCard._oCardManifest.getJson()) + "\n\n";
+		sDetails += oResourceBundle.getText("CARD_MANIFEST") + "\n" + formatJson(oCard._oCardManifest.getJson()) + "\n\n";
 
-		sDetails += oCard.getTranslatedText("CARD_STACK_TRACE") + "\n" + new Error().stack;
+		sDetails += oResourceBundle.getText("CARD_STACK_TRACE") + "\n" + new Error().stack;
 
 		return {
 			type: CardBlockingMessageType.Error,
@@ -144,8 +147,8 @@ sap.ui.define([
 	};
 
 	ErrorHandler.configureErrorInfo = function (mErrorInfo, oCard) {
-		var sDetails = oCard.getTranslatedText("CARD_MANIFEST") + "\n" + formatJson(oCard._oCardManifest.getJson()) + "\n\n" +
-				oCard.getTranslatedText("CARD_STACK_TRACE") + "\n" +
+		var sDetails = oResourceBundle.getText("CARD_MANIFEST") + "\n" + formatJson(oCard._oCardManifest.getJson()) + "\n\n" +
+				oResourceBundle.getText("CARD_STACK_TRACE") + "\n" +
 				(mErrorInfo.originalError ? mErrorInfo.originalError.stack : new Error().stack);
 
 		return {

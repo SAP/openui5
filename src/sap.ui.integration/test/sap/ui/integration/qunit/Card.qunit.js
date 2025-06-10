@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/base/Event",
 	"sap/ui/core/UIComponent",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/m/BadgeCustomData",
 	"sap/m/MessageStrip",
 	"sap/ui/integration/util/DataProviderFactory",
@@ -48,6 +49,7 @@ sap.ui.define([
 		ComponentContainer,
 		Event,
 		UIComponent,
+		ResourceModel,
 		BadgeCustomData,
 		MessageStrip,
 		DataProviderFactory,
@@ -2772,7 +2774,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("I18n module is initialized with integration library resource bundle", async function (assert) {
+		QUnit.test("I18n model is initialized with the public bundle files", async function (assert) {
 			// Arrange
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -2780,10 +2782,11 @@ sap.ui.define([
 			// Assert
 			const oModel = this.oCard.getModel("i18n");
 			const oResourceBundle = await oModel.getResourceBundle();
-			assert.strictEqual(oResourceBundle, Library.getResourceBundleFor("sap.ui.integration"), "The i18n model of the card is correctly initialized.");
+
+			assert.ok(oResourceBundle.hasText("CARD.COUNT_X_OF_Y"), "'CARD.COUNT_X_OF_Y' exists in i18n model.");
 		});
 
-		QUnit.test("Integration library resource bundle is not enhanced", async function (assert) {
+		QUnit.test("I18n model is enhanced with the bundle files of the card", async function (assert) {
 			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 
@@ -2791,8 +2794,12 @@ sap.ui.define([
 			await nextUIUpdate();
 
 			// Assert
-			var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
-			assert.ok(oResourceBundle.aCustomBundles.length === 0, "The resource bundle for integration library is not enhanced.");
+			const oModel = this.oCard.getModel("i18n");
+			const oResourceBundle = await oModel.getResourceBundle();
+
+			assert.strictEqual(oResourceBundle.getText("title"), "Card Translation Bundle", "card-defined key exists in i18n model.");
+			assert.strictEqual(oResourceBundle.getText("translatedText"), "Some translated text", "card-defined key exists in i18n model.");
+			assert.ok(oResourceBundle.hasText("CARD.COUNT_X_OF_Y"), "'CARD.COUNT_X_OF_Y' still exists in the i18n model.");
 		});
 
 		QUnit.test("I18n module is isolated", function (assert) {
@@ -2851,26 +2858,38 @@ sap.ui.define([
 
 			// Assert
 			assert.strictEqual(this.oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "Returns correct value for COUNT_X_OF_Y if no i18n for the card is set.");
-			assert.strictEqual(this.oCard.getTranslatedText("CARD_MANIFEST"), "Card Manifest", "Gets correct system translation if no i18n for the card is set.");
 			assert.strictEqual(this.oCard.getTranslatedText("NOT_EXISTING_KEY"), "NOT_EXISTING_KEY", "Returns string value when key is not found and no i18n for the card is set.");
 		});
 
 		QUnit.test("Use getTranslatedText directly after card creation", function (assert) {
 			const oCard = new Card();
+			const oSpy = this.spy(Log, "error");
 
 			// Assert
-			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST"), "Card Manifest", "Returns correct system translation text.");
-			assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
+			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST"), "CARD_MANIFEST", "The key is returned.");
+			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST", null, true), undefined, "ignoreKeyFallback is set, so undefined should be returned.");
+			assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "CARD.COUNT_X_OF_Y", "The key is returned.");
+			assert.strictEqual(oSpy.callCount, 3, "Error is logged when getTranslatedText is used before card is ready.");
+			assert.ok(oSpy.alwaysCalledWith("'getTranslatedText' cannot be used before the card instance is ready. Consider using the event 'manifestApplied'."), "Error message is correct.");
+
+			oCard.destroy();
 		});
 
 		QUnit.test("Use getTranslatedText without waiting for card ready event", function (assert) {
 			const oCard = new Card();
+			const oSpy = this.spy(Log, "error");
 
 			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
 			oCard.placeAt(DOM_RENDER_LOCATION);
 
-			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST"), "Card Manifest", "Returns correct system translation text.");
-			assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "3 of 5", "The translation for COUNT_X_OF_Y is correct.");
+			// Assert
+			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST"), "CARD_MANIFEST", "The key is returned.");
+			assert.strictEqual(oCard.getTranslatedText("CARD_MANIFEST", null, true), undefined, "ignoreKeyFallback is set, so undefined should be returned.");
+			assert.strictEqual(oCard.getTranslatedText("CARD.COUNT_X_OF_Y", [3, 5]), "CARD.COUNT_X_OF_Y", "The key is returned.");
+			assert.strictEqual(oSpy.callCount, 3, "Error is logged when getTranslatedText is used before card is ready.");
+			assert.ok(oSpy.alwaysCalledWith("'getTranslatedText' cannot be used before the card instance is ready. Consider using the event 'manifestApplied'."), "Error message is correct.");
+
+			oCard.destroy();
 		});
 
 		QUnit.test("Refresh reloads translations correctly", async function (assert) {

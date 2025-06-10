@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/m/IllustratedMessageType",
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/base/util/deepClone",
 	"sap/ui/integration/util/AnalyticsCloudHelper"
 ], function (
@@ -18,10 +19,13 @@ sap.ui.define([
 	BindingResolver,
 	IllustratedMessageType,
 	Log,
+	Library,
 	deepClone,
 	AnalyticsCloudHelper
 ) {
 	"use strict";
+
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 	/**
 	 * Constructor for a new <code>AnalyticsCloudContent</code>.
@@ -264,14 +268,12 @@ sap.ui.define([
 	 * @param {string} sError The error message to log.
 	 */
 	AnalyticsCloudContent.prototype._showError = function (sError) {
-		const oCard = this.getCardInstance();
-
 		Log.error(sError, this);
 
 		this.handleError({
 			illustrationType: IllustratedMessageType.UnableToLoad,
-			title: oCard.getTranslatedText("CARD_ERROR_ANALYTICS_CLOUD_TITLE"),
-			description: oCard.getTranslatedText("CARD_ERROR_ANALYTICS_CLOUD_DESCRIPTION")
+			title: oResourceBundle.getText("CARD_ERROR_ANALYTICS_CLOUD_TITLE"),
+			description: oResourceBundle.getText("CARD_ERROR_ANALYTICS_CLOUD_DESCRIPTION")
 		});
 	};
 
