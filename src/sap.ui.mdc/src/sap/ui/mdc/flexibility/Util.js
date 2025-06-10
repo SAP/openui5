@@ -35,8 +35,10 @@ sap.ui.define([
 		if (oControl && oControl.isInvalidateSuppressed && !oControl.isInvalidateSuppressed()) {
 			oControl.iSuppressInvalidate = 1;
 			Engine.getInstance().waitForChanges(oControl).then(function() {
-				oControl.iSuppressInvalidate = 0;
-				oControl.invalidate("InvalidationSuppressedByMDCFlex");
+				setTimeout(function () { // This workaround helps to ensure event handlers for AdaptationFilterBar.triggerSearch() are done before invalidation.
+					oControl.iSuppressInvalidate = 0;
+					oControl.invalidate("InvalidationSuppressedByMDCFlex");
+				},50);
 			});
 		}
 	}

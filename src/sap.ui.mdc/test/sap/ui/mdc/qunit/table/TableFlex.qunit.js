@@ -186,6 +186,10 @@ sap.ui.define([
 
 	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert){
 
+		var oAdaptationFilterBar;
+
+		sinon.spy(this.oTable, "invalidate");
+
 		var mNewConditions = {
 			column0: [
 				{
@@ -210,7 +214,8 @@ sap.ui.define([
 		//1) Initialize inbuilt filter
 		return this.oTable.retrieveInbuiltFilter()
 		.then(function(oP13nFilter){
-
+			oAdaptationFilterBar = oP13nFilter;
+			sinon.spy(oAdaptationFilterBar, "triggerSearch");
 			return oP13nFilter.initialized();
 
 		})
@@ -238,9 +243,13 @@ sap.ui.define([
 		}.bind(this))
 		//3) Check flex processed changes
 		.then(function(){
-			//check updates via changehandler
-			assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
-			assert.deepEqual(this.oTable.getInbuiltFilter().getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+			return new Promise(function (resolve) { setTimeout(resolve, 50); }).then(function() {
+				assert.ok(oAdaptationFilterBar.triggerSearch.lastCall.calledBefore(this.oTable.invalidate.lastCall), "triggerSearch called before Table is invalidated");
+				oAdaptationFilterBar.triggerSearch.restore();
+				this.oTable.invalidate.restore();
+				assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
+				assert.deepEqual(this.oTable.getInbuiltFilter().getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+			}.bind(this));
 		}.bind(this));
 	});
 
@@ -270,23 +279,32 @@ sap.ui.define([
 				{name: "column2", visible: false}
 			]
 		}).then(function(aChanges){
-			assert.equal(oTableInvalidate.callCount, 1, "Table is invalidated once after all columns are removed");
-			assert.equal(oInnerTableInvalidate.callCount, 1, "Inner table is invalidated once after all columns are removed");
-			assert.ok(aRemovedInnerColumns.every(function(oInnerColumn) {
-				return oInnerColumn.isDestroyed();
-			}), "Inner columns are destroyed");
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					assert.equal(oTableInvalidate.callCount, 1, "Table is invalidated once after all columns are removed");
+					assert.equal(oInnerTableInvalidate.callCount, 1, "Inner table is invalidated once after all columns are removed");
+					assert.ok(aRemovedInnerColumns.every(function(oInnerColumn) {
+						return oInnerColumn.isDestroyed();
+					}), "Inner columns are destroyed");
 
-			oTableInvalidate.reset();
-			oInnerTableInvalidate.reset();
-			return StateUtil.applyExternalState(this.oTable, {
-				items: [
-					{name: "column1", visible: true},
-					{name: "column2", visible: true}
-				]
-			});
+					oTableInvalidate.reset();
+					oInnerTableInvalidate.reset();
+					resolve(StateUtil.applyExternalState(this.oTable, {
+						items: [
+							{name: "column1", visible: true},
+							{name: "column2", visible: true}
+						]
+					}));
+				}.bind(this), 50);
+			}.bind(this));
 		}.bind(this)).then(function() {
-			assert.equal(oTableInvalidate.callCount, 1, "Table is invalidated once after all columns are removed");
-			assert.equal(oInnerTableInvalidate.callCount, 1, "Inner table is invalidated once after all columns are removed");
+			return new Promise(function (resolve) {
+				setTimeout(function () {
+					assert.equal(oTableInvalidate.callCount, 1, "Table is invalidated once after all columns are removed");
+					assert.equal(oInnerTableInvalidate.callCount, 1, "Inner table is invalidated once after all columns are removed");
+					resolve();
+				}, 50);
+			});
 		});
 	});
 });
