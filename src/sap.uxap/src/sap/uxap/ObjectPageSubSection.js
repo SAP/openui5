@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/IntervalTrigger",
 	"./ObjectPageSectionBase",
 	"./ObjectPageLazyLoader",
 	"./BlockBase",
@@ -26,6 +27,7 @@ sap.ui.define([
 	jQuery,
 	Core,
 	ResizeHandler,
+	IntervalTrigger,
 	ObjectPageSectionBase,
 	ObjectPageLazyLoader,
 	BlockBase,
@@ -315,8 +317,18 @@ sap.ui.define([
 		oDom = this.getDomRef();
 		if (oDom) {
 			oDom.style.height = this._height;
-			this._adaptDomHeight();
+			this._executeAfterNextResizeHandlerChecks(this._adaptDomHeight.bind(this));
 		}
+	};
+
+	ObjectPageSubSection.prototype._executeAfterNextResizeHandlerChecks = function(fnFunction) {
+		function execute() {
+			window.requestAnimationFrame(fnFunction); // requestAnimationFrame required for performance, but mainly to be in sync with the table, because the table also calls requestAnimationFrame before resizing itself in its listener to the ResizeHandler
+			IntervalTrigger.removeListener(execute);
+		}
+		// listen for the same interval that triggers the ResizeHandler
+		// (ResizeHandler will be first, our callback will be second)
+		IntervalTrigger.addListener(execute);
 	};
 
 	ObjectPageSubSection.prototype._toggleContentResizeListener = function(bEnable) {
