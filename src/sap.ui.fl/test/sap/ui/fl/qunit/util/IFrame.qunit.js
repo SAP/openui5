@@ -311,6 +311,7 @@ sap.ui.define([
 					`<IFrame id="iframe3" url="${sOpenUI5Url}?domain={$user>/domain}&amp;{anyModel>/anyProperty}" />` +
 					`<IFrame id="iframe4" url="{= '${sOpenUI5Url}?domain=' + \${$user>/domain} }" />` +
 					`<IFrame id="iframe5" url="{= '${sOpenUI5Url}?domain=' + (\${$user>/domain}.indexOf('sap.com') !== -1 ? 'SAP' : 'EXTERNAL') }" />` +
+					"<IFrame id='iframe6' url='' />" +
 				"</mvc:View>"
 			});
 			var iFrame = this.myView.byId("iframe1");
@@ -346,7 +347,7 @@ sap.ui.define([
 		});
 		QUnit.test("Simple binding URL (with unexpected reference) should be reverted back to binding in settings", function(assert) {
 			var iFrame = this.myView.byId("iframe3");
-			assert.strictEqual(iFrame.getUrl(), "", "Displayed URL is empty since the binding can't be resolved");
+			assert.strictEqual(iFrame.getUrl(), "about:blank", "Displayed URL is default since the binding can't be resolved");
 			assert.strictEqual(iFrame.get_settings().url, `${sOpenUI5Url}?domain={$user>/domain}&{anyModel>/anyProperty}`, "Settings' URL is correct");
 		});
 		QUnit.test("Complex binding URL is 'converted' to simple binding ('simple' use case)", function(assert) {
@@ -358,6 +359,10 @@ sap.ui.define([
 			var iFrame = this.myView.byId("iframe5");
 			assert.strictEqual(iFrame.getUrl(), `${sOpenUI5Url}?domain=SAP`, "Displayed URL is correct");
 			assert.strictEqual(iFrame.get_settings().url, `${sOpenUI5Url}?domain=EXTERNAL`, "Settings' URL looks corrupted");
+		});
+		QUnit.test("Binding resolving to empty string (when the entire URL is a parameter resolving to falsy value)", function(assert) {
+			const iFrame = this.myView.byId("iframe6");
+			assert.strictEqual(iFrame.getUrl(), "about:blank", "URL remains default (about:blank)");
 		});
 	});
 
