@@ -368,15 +368,10 @@ builder:
             filters: *filters-core
             resolve: true
           - mode: preload
-            filters: *filters-boot
-            resolve: true
-            resolveConditional: true
-          - mode: preload
             name: runTest-preload
             filters:
+              - sap/ui/test/starter/_runQUnit.js
               - sap/ui/test/starter/_setupAndStart.js
-              - sap/ui/test/starter/QUnitConfigurationProvider.js
-              - sap/ui/test/starter/startQUnit.js
               - sap/ui/test/starter/qunitBoot.json
               - sap/ui/thirdparty/qunit*
               - sap/ui/thirdparty/sinon*
@@ -388,6 +383,16 @@ builder:
         optimize: true
         decorateBootstrapModule: true
         addTryCatchRestartWrapper: true
+    - bundleDefinition:
+        name: sap/ui/test/starter/QUnitBoot.js
+        sections:
+          - mode: preload
+            filters:
+              - sap/ui/test/starter/QUnitConfigurationProvider.js
+              - sap/ui/test/starter/startQUnit.js
+            resolve: true
+      bundleOptions:
+        optimize: true
     - bundleDefinition:
         name: sap/ui/test/starter/runTest-dbg.js
         sections:

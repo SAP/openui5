@@ -121,9 +121,18 @@ sap.ui.define([
 		return Lib._load({ name: "sap.ui.core" }, { preloadOnly: true });
 	}
 
+	function loadBundles(oManifest) {
+		return Promise.all(oManifest.bundles.map((sBundle) => {
+			return sap.ui.loader._.loadJSResourceAsync(`${sBundle}.js`, true);
+		}));
+	}
+
 	// load manifest & bootstrap sequence
 	loadBootManifest().then((oManifest) => {
 		oBootManifest = oManifest;
+		// load configured bundles containing the boot tasks
+		return oBootManifest.bundles ? loadBundles(oBootManifest) : Promise.resolve();
+	}).then(() => {
 		// load config providers
 		return loadTasks(oBootManifest.config);
 	}).then((aProvider) => {
