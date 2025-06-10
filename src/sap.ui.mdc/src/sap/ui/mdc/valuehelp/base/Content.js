@@ -370,6 +370,19 @@ sap.ui.define([
 	};
 
 	/**
+	 * Getter for the initial focusable <code>control</code> on the content after all tokens are removed.
+	 *
+	 * @returns {sap.ui.core.Control} Control instance which could receive the focus.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.138
+	 */
+	Content.prototype.getFocusControlAfterTokenRemoval = function() {
+		return null;
+	};
+
+	/**
 	 * Called if the content will be hidden.
 	 *
 	 * @private

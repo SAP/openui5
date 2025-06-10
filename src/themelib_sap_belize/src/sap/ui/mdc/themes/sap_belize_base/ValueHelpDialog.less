@@ -32,6 +32,26 @@
 	border: none;
 }
 
+/* add border to Tokenizer */
+.sapMdcTokenizerPanel .sapMTokenizer {
+    border-width: 1px;
+    border-color: @sapUiFieldBorderColor;
+    border-style: solid;
+    border-radius: @sapUiFieldBorderCornerRadius;
+    padding-top: 1px;
+    padding-left: 5px;
+    padding-right: 2px;
+    display: block;
+    box-sizing: border-box;
+    min-height: 2.25rem;
+    overflow: hidden;
+    background: @sapUiFieldBackground;
+}
+
+.sapUiSizeCompact .sapMdcTokenizerPanel .sapMTokenizer {
+    padding-top: 4px;
+    min-height: 32px;
+}
 
 // make the ITB header height 3rem
 .sapMdcValueHelpPanel .sapMITBHead {

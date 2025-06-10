@@ -254,6 +254,7 @@ sap.ui.define([
 			assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 			assert.equal(oDefineConditionPanel.getInitialFocusedControl(), aContent[0], "First Operator-Field is initial focus control");
+			assert.equal(oDefineConditionPanel.getFocusControlAfterTokenRemoval(), aContent[2], "First Field is initial focus control for TokenDelete");
 
 			const oAddBtn = Element.getElementById("DCP1--addBtn");
 			const oGridData = oAddBtn.getLayoutData();

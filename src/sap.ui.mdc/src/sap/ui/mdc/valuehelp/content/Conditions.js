@@ -192,6 +192,10 @@ sap.ui.define([
 		return this._oDefineConditionPanel.getInitialFocusedControl();
 	};
 
+	Conditions.prototype.getFocusControlAfterTokenRemoval = function() {
+		return this._oDefineConditionPanel.getFocusControlAfterTokenRemoval();
+	};
+
 	Conditions.prototype.getRequiresTokenizer = function() {
 		// when only the conditions content is on the dialog the tokenizer should be shown.
 		return true;
