@@ -62,7 +62,7 @@ sap.ui.define([
 				/**
 				 * Determines the URL of the content.
 				 */
-				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: "" },
+				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: "about:blank" },
 
 				/**
 				 * Defines the <code>IFrame</code> width.
@@ -140,10 +140,15 @@ sap.ui.define([
 			// Make sure that it was not encoded before
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
 
+			// Falsy values coming from bindings can lead to unexpected relative navigation
+			if (!sEncodedUrl) {
+				return this;
+			}
+
 			if (IFrame.isValidUrl(sEncodedUrl).result) {
 				// Set by replacing the last entry
 				const oNewUrl = IFrame._toUrl(sEncodedUrl);
-				const oOldUrl = IFrame._toUrl(this.getUrl() || "about:blank");
+				const oOldUrl = IFrame._toUrl(this.getUrl());
 				if (oOldUrl.searchParams.has("sap-ui-xx-fl-forceEmbeddedContentRefresh")) {
 					// Always keep the refresh parameter and update it to avoid false negatives
 					// when the URL doesn't change except for the refresh parameter itself + hash
