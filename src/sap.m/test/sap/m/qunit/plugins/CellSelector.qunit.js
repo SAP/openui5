@@ -226,6 +226,18 @@ sap.ui.define([
 		assert.equal(oSelectCellsSpy.callCount, 0, "No cells are selected");
 		assert.deepEqual(this.oCellSelector.getSelectionRange(), null);
 
+		qutils.triggerEvent("mousedown", oCell, { button: 0 }); // select first cell of first row with left-click/primary button
+		const oEvent = {target: getCell(oTable, 1, 1), preventDefault: () => {}, stopImmediatePropagation: () => {}};
+		assert.notOk(this.oCellSelector._bMouseDown, "Flag has not been set");
+
+		const fnConfigSpy = sinon.spy(this.oCellSelector, "getConfig");
+
+		this.oCellSelector._onmousemove(oEvent);
+		qutils.triggerEvent("mouseup", getCell(oTable, 1, 1), { button: 0 });
+
+		assert.notOk(fnConfigSpy.calledWith("focusCell"), "focusCell config is not called");
+		assert.equal(oSelectCellsSpy.callCount, 0, "Cells have been selected");
+
 		oConfig.setEnabled(false);
 		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 		qutils.triggerKeyup(oCell, KeyCodes.SPACE); // select first cell of first row
@@ -246,6 +258,9 @@ sap.ui.define([
 		qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
 		assert.equal(oSelectCellsSpy.callCount, 1, "Cells have been selected");
 		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+		fnConfigSpy.restore();
+		oSelectCellsSpy.restore();
 	});
 
 	QUnit.test("removeSelection with invalid session object", function (assert) {
