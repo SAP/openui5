@@ -11,10 +11,9 @@ sap.ui.define([
 
 	function getBaseJson(sNamespace) {
 		var oJson = {
-			"_version": "2.0.0",
-
 			"sap.app": {
-				id: "sap-app-id"
+				id: "sap-app-id",
+				type: "card"
 			}
 		};
 		oJson[sNamespace] = {
@@ -98,7 +97,8 @@ sap.ui.define([
 		QUnit.test("with two changes", function (assert) {
 			var oExpectedManifest = {
 				"sap.app": {
-					id: "sap-app-id"
+					id: "sap-app-id",
+					type: "card"
 				},
 				"sap.card": {
 					configuration: {
@@ -142,7 +142,8 @@ sap.ui.define([
 		QUnit.test("with the same changes in a different order", function (assert) {
 			var oExpectedManifest = {
 				"sap.app": {
-					id: "sap-app-id"
+					id: "sap-app-id",
+					type: "card"
 				},
 				"sap.card": {
 					configuration: {
