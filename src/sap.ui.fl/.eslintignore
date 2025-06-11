@@ -1,6 +1,0 @@
-# Note: Changes to this file also must be applied to the top level .eslintignore file.
-dist
-target
-
-test/sap/ui/fl/qunit/testResources/TestChangeHandlersBROKEN.flexibility.js
-test/sap/ui/fl/testApps/controlPersonalizationAPI/test/testsuite.qunit.js

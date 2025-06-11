@@ -1,8 +1,0 @@
-# Note: Changes to this file also must be applied to the top level .eslintignore file.
-dist
-target
-
-ui5lint.config.js
-src/sap/ui/thirdparty
-src/sap/base/util/restricted/_
-test/sap/ui/core/qunit/thirdparty
