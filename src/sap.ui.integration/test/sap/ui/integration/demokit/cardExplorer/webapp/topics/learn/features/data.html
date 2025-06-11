@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -124,31 +123,23 @@
 				</table>
 			</div>
 
-			<div id="requestProperties" class="boldBlock">Request Properties</div>
+			<h3 id="requestProperties">Request Properties</h3>
 			<div class="tableWrapper">
 				<table>
 					<tr>
 						<th>Property</th>
 						<th>Type</th>
 						<th>Required</th>
+						<th>Default Value</th>
 						<th>Description</th>
 						<th>Schema Version</th>
 						<th>Since</th>
 					</tr>
 					<tr>
-						<td>mode</td>
-						<td>string</td>
-						<td>No</td>
-						<td>The mode of the request. Possible values are "cors", "no-cors", "same-origin". Default value
-							is "cors".
-						</td>
-						<td>1.14.0</td>
-						<td>1.65</td>
-					</tr>
-					<tr>
 						<td>url</td>
 						<td>string</td>
 						<td>Yes</td>
+						<td></td>
 						<td>The URL of the request. Relative paths like
 							"data.json", "./data.json" and "../data.json"
 							are going to be resolved relatively to the manifest base path.
@@ -157,26 +148,53 @@
 						<td>1.65</td>
 					</tr>
 					<tr>
+						<td>mode</td>
+						<td>string</td>
+						<td>No</td>
+						<td>"cors"</td>
+						<td>The mode of the request. Possible values are "cors", "no-cors", "same-origin".
+						</td>
+						<td>1.14.0</td>
+						<td>1.65</td>
+					</tr>
+					<tr>
 						<td>method</td>
 						<td>string</td>
 						<td>No</td>
-						<td>The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD". Default value is "GET".</td>
+						<td>"GET"</td>
+						<td>The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD".</td>
 						<td>1.14.0</td>
 						<td>1.65</td>
 					</tr>
 					<tr>
 						<td>parameters</td>
-						<td>Object</td>
+						<td>Object|string</td>
 						<td>No</td>
+						<td></td>
 						<td>
-							The request parameters to be sent to the server.
-							If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put as key/value pairs into the body of
-							the request.
-							If the method doesn't have an entity body, such as the "GET" or "HEAD" methods, the data is appended to
-							the URL.<br><br>
-							Default encoding is <code>application/x-www-form-urlencoded</code>.
-							Also JSON is supported for the body encoding (see <a target="_parent" href="../../../index.html#/explore/data/graphql">sample with GraphQL</a>). If you need
-							it add a header <code>Content-Type: application/json</code>"
+							The request parameters to be sent to the server. They are sent as follows:
+							<ul>
+								<li>
+									When the HTTP method is "GET" or "HEAD", and parameters are set as:
+									<ul>
+										<li>Object - Sent as part of the URL, appended as key/value pairs in the query string</li>
+										<li>string - Not sent</li>
+									</ul>
+								</li>
+								<li>
+									When the HTTP method is "POST", "PUT", "PATCH", or "DELETE", the parameters will be sent in the request body, encoded based on the <code>Content-Type</code> header and parameters type:
+									<ul>
+										<li>
+											Object - Supports the following encodings, decided based on the Content-Type header of the request:
+											<ul>
+												<li><code>application/x-www-form-urlencoded</code> - Default</li>
+												<li><code>application/json</code> - See <a target="_parent" href="../../../index.html#/explore/data/graphql">sample with GraphQL</a> </li>
+											</ul>
+										</li>
+										<li>string - Must be used in combination with <code>Content-Type: text/plain</code>. Will be sent as is. Added since version 1.138</li>
+									</ul>
+								</li>
+							</ul>
 						</td>
 						<td>1.14.0</td>
 						<td>1.65</td>
@@ -185,6 +203,7 @@
 						<td>headers</td>
 						<td>Object</td>
 						<td>No</td>
+						<td></td>
 						<td>The HTTP headers of the request.</td>
 						<td>1.14.0</td>
 						<td>1.65</td>
@@ -193,6 +212,7 @@
 						<td>retryAfter</td>
 						<td>integer</td>
 						<td>No</td>
+						<td></td>
 						<td>
 							Number of seconds before the request is retried if it failed the previous time.<br>
 							Request will be retried only if it failed with status code 429 or 503.<br>
@@ -206,6 +226,7 @@
 						<td>timeout</td>
 						<td>integer</td>
 						<td>No</td>
+						<td></td>
 						<td>
 							A timeout (in milliseconds) for the request.
 							A value of 0 means there will be no timeout.
@@ -218,6 +239,7 @@
 						<td>withCredentials</td>
 						<td>boolean</td>
 						<td>No</td>
+						<td>false</td>
 						<td>Indicates whether cross-site requests should be made using credentials.</td>
 						<td>1.17.0</td>
 						<td>1.71</td>
@@ -226,6 +248,7 @@
 						<td>batch</td>
 						<td>Object&lt;string,<a href="#batchProperties">Batch</a>&gt;</td>
 						<td>No</td>
+						<td></td>
 						<td>
 							A map of requests, which should be batched together.<br>
 							If used the main request will be sent with content type multipart/mixed and its body will contain all requests specified in the map.<br>
@@ -240,6 +263,7 @@
 						<td>cache</td>
 						<td><a href="#cacheProperties">Cache</a></td>
 						<td>No</td>
+						<td></td>
 						<td>
 							An object defining the cache behaviour for the requested data.
 							<br>
@@ -363,7 +387,7 @@
 				</table>
 			</div>
 
-			<div id="extensionProperties" class="boldBlock">Extension Properties</div>
+			<h3 id="extensionProperties">Extension Properties</h3>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -394,7 +418,7 @@
 				</table>
 			</div>
 
-			<div id="mockDataProperties" class="boldBlock">MockData Properties (Experimental)</div>
+			<h3 id="mockDataProperties">MockData Properties (Experimental)</h3>
 
 			<div class="tableWrapper">
 				<table>

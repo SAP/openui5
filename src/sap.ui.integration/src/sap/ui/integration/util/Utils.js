@@ -321,6 +321,10 @@ sap.ui.define([
 					mFormat.parts[1].toString()
 				],
 				formatter: function (sText, vParam1, vParam2) {
+					if (!sText) {
+						return "";
+					}
+
 					var sParam1 = vParam1 || mFormat.parts[0];
 					var sParam2 = vParam2 || mFormat.parts[1];
 

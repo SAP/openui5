@@ -875,7 +875,7 @@ sap.ui.define([
 			  enabled: true
 		  })
 	  ]
-  }).placeAt('barBtn');
+  }).placeAt('infoBarBtn');
 
   new OverflowToolbar({
 	  design: "Info",
@@ -936,5 +936,5 @@ sap.ui.define([
 			  enabled: true
 		  })
 	  ]
-  }).placeAt('barBtn');
+  }).placeAt('infoBarBtn');
 });

@@ -81,18 +81,21 @@
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation service. - Object Content" />
 				</VBox>
-				<HBox wrap="Wrap">
+				<f:GridContainer>
 					<w:Card
-						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json"
-						height="500px"
-						width="500px"
-						class="sapUiSmallMargin" />
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json" >
+						<w:layoutData>
+							<f:GridContainerItemLayoutData minRows"6" columns="5" />
+						</w:layoutData>
+					</w:Card>
 					<w:Card
 						class="sapUiMediumMargin"
-						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_object_service.json"
-						width="auto"
-						height="500px" />
-				</HBox>
+						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json" >
+						<w:layoutData>
+							<f:GridContainerItemLayoutData minRows"6" columns="7" />
+						</w:layoutData>
+					</w:Card>
+				</f:GridContainer>
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation action event." />
 				</VBox>

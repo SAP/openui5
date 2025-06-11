@@ -125,6 +125,8 @@ sap.ui.define([
 
 	const DEFAULT_MODEL_SIZE_LIMIT = 1000;
 
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
+
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
@@ -706,13 +708,17 @@ sap.ui.define([
 			i18n: {
 				init: () => {
 					this.setModel(new ResourceModel({
-						bundle: this._oIntegrationRb,
+						bundleName: "sap.ui.integration.i18n.public.messagebundle",
 						async: true
 					}), "i18n");
-					this._oActiveRb = this._oIntegrationRb;
 				},
 				reset: () => {
-					this._oActiveRb = this._oIntegrationRb;
+					this._oActiveRb = null;
+					this.getModel("i18n").destroy();
+					this.setModel(new ResourceModel({
+						bundleName: "sap.ui.integration.i18n.public.messagebundle",
+						async: true
+					}), "i18n");
 				}
 			},
 			size: {
@@ -1086,10 +1092,11 @@ sap.ui.define([
 			this._logSevereError("There must be a 'sap.card' section in the manifest.");
 		}
 
-		if (oCardManifest && oCardManifest.getResourceBundle()) {
-			this._oActiveRb = await this._enhanceI18nModel(oCardManifest.getResourceBundle());
+		if (oCardManifest.getResourceBundle()) {
+			this._enhanceI18nModel(oCardManifest.getResourceBundle());
 		}
 
+		this._oActiveRb = await this.getModel("i18n").getResourceBundle();
 		this.getModel("context").resetHostProperties();
 
 		if (this._hasContextParams()) {
@@ -1103,30 +1110,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Enhances or creates the i18n model for the card.
+	 * Enhances the public resource bundle with the one of the card.
 	 *
-	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle which will be enhanced.
-	 * @returns {Promise<module:sap/base/i18n/ResourceBundle>} The enhanced resource bundle.
+	 * @param {module:sap/base/i18n/ResourceBundle} oResourceBundle The resource bundle of the card.
 	 * @private
 	 */
 	Card.prototype._enhanceI18nModel = function (oResourceBundle) {
-		var oResourceModel = this.getModel("i18n"),
-			oNewResourceModel;
-
-		// the library resource bundle must not be enhanced
-		// so the card resource bundle should be first
-		oNewResourceModel = new ResourceModel({
-			async: true,
-			bundle: oResourceBundle,
-			enhanceWith: [
-				this._oIntegrationRb
-			]
-		});
-
-		this.setModel(oNewResourceModel, "i18n");
-		oResourceModel.destroy();
-
-		return oNewResourceModel.getResourceBundle();
+		this.getModel("i18n").enhance(oResourceBundle);
 	};
 
 	/**
@@ -1723,11 +1713,9 @@ sap.ui.define([
 	 * @returns {string|undefined} The value belonging to the key, if found; otherwise, it returns the key itself or <code>undefined</code> depending on <code>bIgnoreKeyFallback</code>.
 	 */
 	Card.prototype.getTranslatedText = function (sKey, aArgs, bIgnoreKeyFallback) {
-		var oModel = this.getModel("i18n");
-
-		if (!oModel || !this._oActiveRb) {
-			Log.warning("There are no translations available. Either the i18n configuration is missing or the method is called too early.");
-			return null;
+		if (!this._oActiveRb) {
+			Log.error("'getTranslatedText' cannot be used before the card instance is ready. Consider using the event 'manifestApplied'.", "sap.ui.integration.widgets.Card");
+			return bIgnoreKeyFallback ? undefined : sKey;
 		}
 
 		return this._oActiveRb.getText(sKey, aArgs, bIgnoreKeyFallback);
@@ -2234,8 +2222,8 @@ sap.ui.define([
 		} catch (e) {
 			this._handleError({
 				illustrationType: IllustratedMessageType.UnableToLoad,
-				title: this.getTranslatedText("CARD_ERROR_CONFIGURATION_TITLE"),
-				description: this.getTranslatedText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
+				title: oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
+				description: oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
 				details: e.message,
 				originalError: e
 			});
@@ -2733,10 +2721,36 @@ sap.ui.define([
 	 * @param {string} oConfiguration.url The URL of the resource.
 	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
 	 * @param {string} [oConfiguration.method="GET"] The HTTP method. Possible values are "GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", and "HEAD".
-	 * @param {object|FormData} [oConfiguration.parameters] The request parameters. If the HTTP method is "POST", "PUT", "PATCH", or "DELETE" the parameters will be put into the body of the request.
-	 *
-	 *                                                      <b>Note:</b> If parameters are of type "FormData", the "FormData" will not be resolved for bindings, destinations and others. It will be sent as it is.
-	 * @param {string} [oConfiguration.dataType="json"] Deprecated. Use the correct Accept headers and correct Content-Type header in the response.
+	 * @param {object|FormData|string} [oConfiguration.parameters] The request parameters to be sent to the server. They are sent as follows:
+	 *<ul>
+	 *	<li>
+	 *		When the HTTP method is "GET" or "HEAD", and parameters are set as:
+	 *		<ul>
+	 *			<li>object - Sent as part of the URL, appended as key/value pairs in the query string</li>
+	 *			<li>FormData - Not sent</li>
+	 *			<li>string - Not sent</li>
+	 *		</ul>
+	 *	</li>
+	 *	<li>
+	 *		When the HTTP method is "POST", "PUT", "PATCH", or "DELETE", the parameters will be sent in the request body, encoded based on the <code>Content-Type</code> header and parameters type:
+	 *		<ul>
+	 *			<li>
+	 *				object - Supports the following encodings, decided based on the Content-Type header of the request:
+	 *				<ul>
+	 *					<li><code>application/x-www-form-urlencoded</code> - Default</li>
+	 *					<li><code>application/json</code></li>
+	 *				</ul>
+	 *			</li>
+	 *			<li>
+	 *				FormData - Encoded as <code>multipart/form-data</code>. The <code>Content-Type</code> header on the request must not be set explicitly.
+	 *				<b>Note:</b> FormData will not be resolved for bindings, destinations and others. It will be sent as it is.
+	 *				Added since version 1.130
+	 *			</li>
+	 *			<li>string - Must be used in combination with <code>Content-Type: text/plain</code>. Will be sent as is. Added since version 1.138</li>
+	 *		</ul>
+	 *	</li>
+	 *</ul>
+	 * @param {string} [oConfiguration.dataType="json"] Deprecated. Use the correct <code>Accept</code> headers and set correct <code>Content-Type</code> header in the response.
 	 * @param {object} [oConfiguration.headers] The HTTP headers of the request.
 	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether cross-site requests should be made using credentials.
 	 * @returns {Promise<any>} Resolves when the request is successful, rejects otherwise.

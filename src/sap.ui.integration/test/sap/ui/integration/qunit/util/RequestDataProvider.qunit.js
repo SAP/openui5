@@ -173,6 +173,7 @@ sap.ui.define([
 			});
 		},
 		afterEach: function () {
+			this.oDataProviderFactory.destroy();
 			this.oServer.restore();
 		}
 	});
@@ -219,43 +220,7 @@ sap.ui.define([
 		fnTest();
 	});
 
-	// @todo
-	// QUnit.test("Test 'timeout' setting", function (assert) {
-	// 	// Arrange
-	// 	var done = assert.async();
-
-	// 	this.oServer.respondWith(function (oXhr) {
-	// 		oXhr.respond(200, {"Content-Type": "application/json"}, "{}");
-	// 	});
-
-	// 	var oDataProvider = this.oDataProviderFactory.create({
-	// 		request: {
-	// 			url: "/data/provider/test/url",
-	// 			timeout: 200
-	// 		}
-	// 	});
-
-	// 	// Act
-	// 	oDataProvider.getData().then(function () {
-	// 		assert.ok(true, "request is successful");
-
-	// 		oDataProvider = this.oDataProviderFactory.create({
-	// 			request: {
-	// 				url: "/data/provider/test/url",
-	// 				timeout: 50
-	// 			}
-	// 		});
-
-	// 		// Act
-	// 		oDataProvider.getData().then(function () {
-	// 		}, function () {
-	// 			assert.ok(true, "request is not successful");
-	// 			done();
-	// 		});
-	// 	}.bind(this));
-	// });
-
-	QUnit.module("RequestDataProvider - Content encoding", {
+	QUnit.module("RequestDataProvider - retry after", {
 		beforeEach: function () {
 			this.oDataProvider = new RequestDataProvider();
 			this.oServer = sinon.createFakeServer({
@@ -263,66 +228,9 @@ sap.ui.define([
 			});
 		},
 		afterEach: function () {
+			this.oDataProvider.destroy();
 			this.oServer.restore();
 		}
-	});
-
-	QUnit.test("Content-Type: application/json", function (assert) {
-		// Arrange
-		var done = assert.async();
-		this.oDataProvider.setConfiguration({
-			request: {
-				url: "/data/provider/test/url",
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				parameters: {
-					someKey: "someValue",
-					someKey2: "someValue2"
-				}
-			}
-		});
-
-		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
-			// Assert
-			try {
-				JSON.parse(oXhr.requestBody);
-				assert.ok(true, "Request body is correctly encoded as JSON");
-			} catch (e) {
-				assert.ok(false, "Request body is NOT correctly encoded as JSON");
-			}
-
-			done();
-		});
-
-		// Act
-		this.oDataProvider.triggerDataUpdate();
-	});
-
-	QUnit.test("Content-Type: application/x-www-form-urlencoded (default)", function (assert) {
-		// Arrange
-		var done = assert.async();
-		this.oDataProvider.setConfiguration({
-			request: {
-				url: "/data/provider/test/url",
-				method: "POST",
-				parameters: {
-					someKey: "someValue",
-					someKey2: "someValue2"
-				}
-			}
-		});
-
-		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
-			// Assert
-			assert.strictEqual(oXhr.requestBody.toString(), "someKey=someValue&someKey2=someValue2");
-
-			done();
-		});
-
-		// Act
-		this.oDataProvider.triggerDataUpdate();
 	});
 
 	QUnit.test("Retry after - with configuration", function (assert) {
@@ -459,6 +367,253 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
+	// @todo
+	// QUnit.test("Test 'timeout' setting", function (assert) {
+	// 	// Arrange
+	// 	var done = assert.async();
+
+	// 	this.oServer.respondWith(function (oXhr) {
+	// 		oXhr.respond(200, {"Content-Type": "application/json"}, "{}");
+	// 	});
+
+	// 	var oDataProvider = this.oDataProviderFactory.create({
+	// 		request: {
+	// 			url: "/data/provider/test/url",
+	// 			timeout: 200
+	// 		}
+	// 	});
+
+	// 	// Act
+	// 	oDataProvider.getData().then(function () {
+	// 		assert.ok(true, "request is successful");
+
+	// 		oDataProvider = this.oDataProviderFactory.create({
+	// 			request: {
+	// 				url: "/data/provider/test/url",
+	// 				timeout: 50
+	// 			}
+	// 		});
+
+	// 		// Act
+	// 		oDataProvider.getData().then(function () {
+	// 		}, function () {
+	// 			assert.ok(true, "request is not successful");
+	// 			done();
+	// 		});
+	// 	}.bind(this));
+	// });
+
+	QUnit.module("RequestDataProvider - Sending parameters in requests without body", {
+		beforeEach: function () {
+			this.oDataProvider = new RequestDataProvider();
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+		},
+		afterEach: function () {
+			this.oDataProvider.destroy();
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("JSON parameters without 'Content-Type' specified", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "GET",
+				parameters: {
+					someKey: "someValue",
+					someKey2: "someValue2"
+				}
+			}
+		});
+
+		this.oServer.respondWith("GET", /\/data\/provider\/test\/url/, function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.url, "/data/provider/test/url?someKey=someValue&someKey2=someValue2", "Request url is correctly constructed");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("JSON parameters with 'Content-Type: application/json'", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				parameters: {
+					someKey: "someValue",
+					someKey2: "someValue2"
+				}
+			}
+		});
+
+		this.oServer.respondWith("GET", /\/data\/provider\/test\/url/, function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.url, "/data/provider/test/url?someKey=someValue&someKey2=someValue2", "Request url is correctly constructed");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("String parameter without 'Content-Type'", function (assert) {
+		// Arrange
+		const done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "GET",
+				parameters: "My plain text"
+			}
+		});
+
+		this.oServer.respondWith("GET", /\/data\/provider\/test\/url/, function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.url, "/data/provider/test/url", "Request url is correctly constructed");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.module("RequestDataProvider - Sending parameters in requests with body", {
+		beforeEach: function () {
+			this.oDataProvider = new RequestDataProvider();
+			this.oServer = sinon.createFakeServer({
+				autoRespond: true
+			});
+		},
+		afterEach: function () {
+			this.oDataProvider.destroy();
+			this.oServer.restore();
+		}
+	});
+
+	QUnit.test("JSON parameters without 'Content-Type' (default)", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "POST",
+				parameters: {
+					someKey: "someValue",
+					someKey2: "someValue2"
+				}
+			}
+		});
+
+		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.requestBody.toString(), "someKey=someValue&someKey2=someValue2", "Request body is correctly encoded");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("JSON parameters with 'Content-Type: application/json'", function (assert) {
+		// Arrange
+		var done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json"
+				},
+				parameters: {
+					someKey: "someValue",
+					someKey2: "someValue2"
+				}
+			}
+		});
+
+		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.deepEqual(
+				JSON.parse(oXhr.requestBody),
+				{
+					someKey: "someValue",
+					someKey2: "someValue2"
+				},
+				"Request body is correctly encoded"
+			);
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("String parameter with 'Content-Type: text/plain'", function (assert) {
+		// Arrange
+		const done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "POST",
+				headers: {
+					"Content-Type": "text/plain"
+				},
+				parameters: "My plain text"
+			}
+		});
+
+		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.requestBody, "My plain text", "Request body is correctly encoded");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
+	QUnit.test("String parameter with 'Content-Type: text/plain; charset'", function (assert) {
+		// Arrange
+		const done = assert.async();
+		this.oDataProvider.setConfiguration({
+			request: {
+				url: "/data/provider/test/url",
+				method: "POST",
+				headers: {
+					"Content-Type": "text/plain; charset=UTF-8"
+				},
+				parameters: "My plain text"
+			}
+		});
+
+		this.oServer.respondWith("POST", "/data/provider/test/url", function (oXhr) {
+			// Assert
+			assert.strictEqual(oXhr.requestBody, "My plain text", "Request body is correctly encoded");
+
+			done();
+		});
+
+		// Act
+		this.oDataProvider.triggerDataUpdate();
+	});
+
 	QUnit.module("RequestDataProvider - Resolve Relative Url", {
 		beforeEach: function () {
 			this.oCard = new Card({
@@ -503,8 +658,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, 8, "the data is resolved correctly");
 	});
 
-
-	QUnit.module("No data requests", {
+	QUnit.module("RequestDataProvider - Invalid Responses", {
 		beforeEach: function () {
 			this.oServer = sinon.createFakeServer({
 				autoRespond: true
@@ -518,40 +672,16 @@ sap.ui.define([
 	});
 
 	QUnit.test("Error is thrown when the response body is invalid JSON (empty string)", function (assert) {
-		var done = assert.async(),
-
-		oDataProviderFactory = new DataProviderFactory({});
-
-		var oManifest = {
-			"_version": "1.36.0",
-			"sap.app": {
-				"id": "test.card.data.request.card"
-			},
-			"sap.card": {
-				"type": "List",
-				"data": {
-					"request": {
-						"url": "/fakeService/Products",
-						"method": "GET",
-						"headers": {
-							"Content-Type": "application/json"
-						}
-					},
-					"path": "/results"
-				},
-				"header": {
-					"title": "Products"
-				},
-				"content": {
-					"item": {
-						"title": "{Name}"
-					}
+		const done = assert.async();
+		const oDataProviderFactory = new DataProviderFactory({});
+		const oDataProvider = oDataProviderFactory.create({
+			request: {
+				url: "/fakeService/Products",
+				headers: {
+					"Content-Type": "application/json"
 				}
 			}
-		};
-
-		var oDataConfig = oManifest["sap.card"]["data"];
-		var oDataProvider = oDataProviderFactory.create(oDataConfig);
+		});
 
 		this.oServer.respondWith("/fakeService/Products", function (oXhr) {
 			oXhr.respond(200, {
@@ -560,9 +690,16 @@ sap.ui.define([
 
 		});
 		oDataProvider.attachError(function () {
+			// Assert
 			assert.ok(true, "Should throw an error if the response is invalid JSON.");
+
+			// Clean up
+			oDataProviderFactory.destroy();
+
 			done();
 		});
+
+		// Act
 		oDataProvider.triggerDataUpdate();
 	});
 });

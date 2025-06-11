@@ -321,7 +321,7 @@ sap.ui.define([
 			if (!bValid) {
 				this._addMessageToControl(oControl, bShowValueState, {
 					type: mValidationConfig.type || ValueState.Error,
-					message: mValidationConfig.message || this._oCard.getTranslatedText(oValidator[sKey + "Txt"], [oValidationValue]),
+					message: mValidationConfig.message || Library.getResourceBundleFor("sap.ui.integration").getText(oValidator[sKey + "Txt"], [oValidationValue]),
 					bindingPath: "/" + oItem.id
 				});
 

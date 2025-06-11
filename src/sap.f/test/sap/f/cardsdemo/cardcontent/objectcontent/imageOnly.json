@@ -5,6 +5,14 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"actions": [
+			{
+				"type": "Navigation",
+				"parameters": {
+					"url": "https://www.sap.com"
+				}
+			}
+		],
 		"header": {
 			"icon": {
 				"src": "sap-icon://business-objects-experience"
@@ -23,14 +31,6 @@
 							"fullWidth": true
 						}
 					]
-				}
-			],
-			"actions": [
-				{
-					"type": "Navigation",
-					"parameters": {
-						"url": "https://www.sap.com"
-					}
 				}
 			]
 		}

@@ -7,14 +7,16 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/base/util/fetch",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"sap/base/util/isPlainObject"
 ], function (
 	Element,
 	DataProvider,
 	Log,
 	ODataUtils,
 	fetch,
-	deepClone
+	deepClone,
+	isPlainObject
 ) {
 	"use strict";
 
@@ -209,38 +211,26 @@ sap.ui.define([
 			sDataType = (this.getAllowCustomDataType() && oRequestConfig.dataType) || "json",
 			mHeaders = oRequestConfig.headers || {},
 			mBatchRequests = oRequestConfig.batch,
-			oBatchSerialized,
-			oRequest,
 			vBody,
-			sMethod = oRequestConfig.method && oRequestConfig.method.toUpperCase() || "GET",
-			bJsonRequest = this._hasHeader(oRequestConfig, "Content-Type", "application/json"),
-			bGetMethod = ["GET", "HEAD"].includes(sMethod);
+			sMethod = oRequestConfig.method && oRequestConfig.method.toUpperCase() || "GET";
 
 		if ( !sUrl.startsWith("/")) {
 			sUrl = this._getRuntimeUrl(oRequestConfig.url);
 		}
 
-		if (oParameters) {
-			if (bJsonRequest) {
-				// application/json
-				vBody = JSON.stringify(oParameters);
-			} else if (bGetMethod) {
-				sUrl = combineUrlAndParams(sUrl, oParameters);
-			} else if (oParameters instanceof FormData) {
-				vBody = oParameters;
-			} else {
-				// application/x-www-form-urlencoded
-				vBody = new URLSearchParams(oParameters);
-			}
+		if (oParameters && isPlainObject(oParameters) && ["GET", "HEAD"].includes(sMethod)) {
+			sUrl = combineUrlAndParams(sUrl, oParameters);
+		} else if (oParameters) {
+			vBody = this._encodeParameters(oParameters, oRequestConfig);
 		}
 
 		if (mBatchRequests) {
-			oBatchSerialized = ODataUtils.serializeBatchRequest(Object.values(mBatchRequests));
+			const oBatchSerialized = ODataUtils.serializeBatchRequest(Object.values(mBatchRequests));
 			vBody = oBatchSerialized.body;
 			mHeaders = Object.assign({}, mHeaders, oBatchSerialized.headers);
 		}
 
-		oRequest = {
+		let oRequest = {
 			url: sUrl,
 			options: {
 				mode: oRequestConfig.mode || "cors",
@@ -319,6 +309,23 @@ sap.ui.define([
 			}.bind(this), function (oError) {
 				return Promise.reject([oError.toString(), null, null, oRequest]);
 			});
+	};
+
+	RequestDataProvider.prototype._encodeParameters = function (oParameters, oRequestConfiguration) {
+		if (this._hasHeader(oRequestConfiguration, "Content-Type", /^application\/json$/)) {
+			return JSON.stringify(oParameters);
+		}
+
+		if (this._hasHeader(oRequestConfiguration, "Content-Type", /^text\/plain/)) {
+			return oParameters;
+		}
+
+		if (oParameters instanceof FormData) {
+			return oParameters;
+		}
+
+		// application/x-www-form-urlencoded
+		return new URLSearchParams(oParameters);
 	};
 
 	/**
@@ -429,21 +436,21 @@ sap.ui.define([
 
 	/**
 	 * Checks if header with given value is part of the request.
-	 * Header name is case-insensitive, but the value is case-sensitive (RFC7230 https://tools.ietf.org/html/rfc7230#section-3.2).
+	 * Header name is case-insensitive RFC7230 https://tools.ietf.org/html/rfc7230#section-3.2.
 	 *
 	 * @private
 	 * @param {*} oRequestConfig The request config.
 	 * @param {*} sHeader Searched header. For example "Content-Type"
-	 * @param {*} sValue Checked value. For example "application/json"
+	 * @param {*} rValue Regex to match the value. For example /application\/json/
 	 * @returns {boolean} Whether a header with given value is present.
 	 */
-	RequestDataProvider.prototype._hasHeader = function (oRequestConfig, sHeader, sValue) {
+	RequestDataProvider.prototype._hasHeader = function (oRequestConfig, sHeader, rValue) {
 		if (!oRequestConfig.headers) {
 			return false;
 		}
 
 		for (var sKey in oRequestConfig.headers) {
-			if (sKey.toLowerCase() === sHeader.toLowerCase() && oRequestConfig.headers[sKey] === sValue) {
+			if (sKey.toLowerCase() === sHeader.toLowerCase() && rValue.test(oRequestConfig.headers[sKey])) {
 				return true;
 			}
 		}
