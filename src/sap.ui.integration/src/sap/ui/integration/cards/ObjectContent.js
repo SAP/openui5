@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/AvatarColor",
 	"sap/m/AvatarImageFitType",
 	"sap/m/AvatarSize",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"sap/m/library",
 	"sap/m/IllustratedMessageType",
@@ -53,6 +54,7 @@ sap.ui.define([
 	AvatarColor,
 	AvatarImageFitType,
 	AvatarSize,
+	Library,
 	library,
 	mLibrary,
 	IllustratedMessageType,
@@ -165,7 +167,7 @@ sap.ui.define([
 		} else {
 			this.showNoDataMessage({
 				illustrationType: IllustratedMessageType.NoData,
-				title: this.getCardInstance().getTranslatedText("CARD_NO_ITEMS_ERROR_CHART")
+				title: Library.getResourceBundleFor("sap.ui.integration").getText("CARD_NO_ITEMS_ERROR_CHART")
 			});
 		}
 

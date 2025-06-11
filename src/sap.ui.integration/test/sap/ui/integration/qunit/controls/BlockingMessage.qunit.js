@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/controls/BlockingMessage",
 	"sap/ui/integration/library",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/util/ErrorHandler",
 	"sap/m/InstanceManager",
 	"sap/m/IllustratedMessageType",
@@ -14,6 +15,7 @@ sap.ui.define([
 	Card,
 	BlockingMessage,
 	library,
+	Library,
 	ErrorHandler,
 	InstanceManager,
 	IllustratedMessageType,
@@ -23,6 +25,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 	var CardBlockingMessageType = library.CardBlockingMessageType;
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 	QUnit.module("create method", {
 		beforeEach: function () {
@@ -99,13 +102,13 @@ sap.ui.define([
 		assert.strictEqual(oIllustratedMessage.getIllustrationType(), mErrorInfo.illustrationType, "Error message type is correct");
 		assert.strictEqual(oIllustratedMessage.getTitle(), mErrorInfo.title, "Error message title is correct");
 		assert.strictEqual(oIllustratedMessage.getDescription(), mErrorInfo.description, "Error message description is correct");
-		assert.strictEqual(oButton.getText(), this.oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
+		assert.strictEqual(oButton.getText(), oResourceBundle.getText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
 
 		oButton.firePress();
 
 		oDialog = InstanceManager.getOpenDialogs()[0];
 
-		assert.strictEqual(oDialog.getCustomHeader().getContentMiddle()[0].getText(), this.oCard.getTranslatedText("CARD_ERROR_DIALOG_TITLE"), "Dialog title is correct");
+		assert.strictEqual(oDialog.getCustomHeader().getContentMiddle()[0].getText(), oResourceBundle.getText("CARD_ERROR_DIALOG_TITLE"), "Dialog title is correct");
 		assert.strictEqual(oDialog.getContent()[0].getText(), mErrorInfo.details, "Dialog content is correct");
 
 		InstanceManager.closeAllDialogs(function () {
@@ -142,15 +145,15 @@ sap.ui.define([
 		assert.strictEqual(oIllustratedMessage.getIllustrationType(), mErrorInfo.illustrationType, "Error message type is correct");
 		assert.strictEqual(oIllustratedMessage.getTitle(), mErrorInfo.title, "Error message title is correct");
 		assert.strictEqual(oIllustratedMessage.getDescription(), mErrorInfo.description, "Error message description is correct");
-		assert.strictEqual(oButton.getText(), this.oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
+		assert.strictEqual(oButton.getText(), oResourceBundle.getText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
 
 		oButton.firePress();
 
 		oDialog = InstanceManager.getOpenDialogs()[0];
 
-		assert.strictEqual(oDialog.getCustomHeader().getContentMiddle()[0].getText(), this.oCard.getTranslatedText("CARD_ERROR_DIALOG_TITLE"), "Dialog title is correct");
-		assert.ok(oDialog.getContent()[0].getText().includes(this.oCard.getTranslatedText("CARD_MANIFEST")), "There should be default details provided for error messages");
-		assert.ok(oDialog.getContent()[0].getText().includes(this.oCard.getTranslatedText("CARD_STACK_TRACE")), "There should be default details provided for error messages");
+		assert.strictEqual(oDialog.getCustomHeader().getContentMiddle()[0].getText(), oResourceBundle.getText("CARD_ERROR_DIALOG_TITLE"), "Dialog title is correct");
+		assert.ok(oDialog.getContent()[0].getText().includes(oResourceBundle.getText("CARD_MANIFEST")), "There should be default details provided for error messages");
+		assert.ok(oDialog.getContent()[0].getText().includes(oResourceBundle.getText("CARD_STACK_TRACE")), "There should be default details provided for error messages");
 		assert.notOk(oMessage.getHttpResponse(), "There shouldn't be an HTTP response");
 
 		InstanceManager.closeAllDialogs(function () {
@@ -199,15 +202,15 @@ sap.ui.define([
 
 		assert.strictEqual(oIllustratedMessage.getIllustrationType(), IllustratedMessageType.UnableToLoad, "Error message type is correct");
 		assert.strictEqual(oIllustratedMessage.getTitle(), mErrorInfo.requestErrorParams.response.status + " " + mErrorInfo.requestErrorParams.response.statusText, "Error message title is correct");
-		assert.strictEqual(oIllustratedMessage.getDescription(), this.oCard.getTranslatedText("CARD_ERROR_REQUEST_DESCRIPTION"), "Error message description is correct");
-		assert.strictEqual(oButton.getText(), this.oCard.getTranslatedText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
+		assert.strictEqual(oIllustratedMessage.getDescription(), oResourceBundle.getText("CARD_ERROR_REQUEST_DESCRIPTION"), "Error message description is correct");
+		assert.strictEqual(oButton.getText(), oResourceBundle.getText("CARD_BUTTON_SHOW_MORE"), "Details button is correctly created");
 		assert.ok(oMessage.getHttpResponse(), "There should be an HTTP response");
 
 		oButton.firePress();
 
 		oDialog = InstanceManager.getOpenDialogs()[0];
 
-		assert.strictEqual(oDialog.getCustomHeader().getContentMiddle()[0].getText(), this.oCard.getTranslatedText("CARD_ERROR_DIALOG_TITLE"), "Dialog title is correct");
+		assert.strictEqual(oDialog.getCustomHeader().getContentMiddle()[0].getText(), oResourceBundle.getText("CARD_ERROR_DIALOG_TITLE"), "Dialog title is correct");
 		assert.ok(oDialog.getContent()[0], "Dialog content is created");
 
 		InstanceManager.closeAllDialogs(function () {

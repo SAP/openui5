@@ -5,6 +5,14 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"actions": [
+			{
+				"type": "Navigation",
+				"parameters": {
+					"url": "https://www.sap.com"
+				}
+			}
+		],
 		"data": {
 			"request": {
 				"url": "../objectcontent/employee.json"
@@ -15,15 +23,7 @@
 				"src": "{photo}"
 			},
 			"title": "{firstName} {lastName}",
-			"subTitle": "{position}",
-			"actions": [
-				{
-					"type": "Navigation",
-					"parameters": {
-						"url": "https://www.sap.com"
-					}
-				}
-			]
+			"subTitle": "{position}"
 		},
 		"content": {
 			"groups": [
@@ -80,14 +80,6 @@
 							]
 						}
 					]
-				}
-			],
-			"actions": [
-				{
-					"type": "Navigation",
-					"parameters": {
-						"url": "https://www.sap.com"
-					}
 				}
 			]
 		}
