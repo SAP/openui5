@@ -3506,11 +3506,18 @@ sap.ui.define([
 		//   - no handling of parse/validate exceptions
 		//   - observers won't be called
 		if (bIsStaticOnly) {
-			var aValues = [];
+			const aValues = [];
+			let vValue;
 			oBindingInfo.parts.forEach(function(oPart) {
 				aValues.push(oPart.formatter ? oPart.formatter(oPart.value) : oPart.value);
 			});
-			var vValue = oBindingInfo.formatter ? oBindingInfo.formatter(aValues) : aValues.join(" ");
+			if (oBindingInfo.formatter) {
+				vValue = oBindingInfo.formatter(aValues);
+			} else if (aValues.length > 1) {
+				vValue = aValues.join(" ");
+			} else {
+				vValue = aValues[0];
+			}
 			var oPropertyInfo = this.getMetadata().getPropertyLikeSetting(sName);
 			this[oPropertyInfo._sMutator](vValue);
 		} else {
