@@ -2171,8 +2171,11 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 
 			vPropertySetting = AnnotationHelper.createPropertySetting([sBinding]);
 
-			strictEqualOrNaN(vPropertySetting, "" + vConstant);
-			//TODO properly handle non-string constants in expression binding!
+			if (Array.isArray(vConstant)) {
+				assert.deepEqual(vPropertySetting.value, vConstant);
+			} else {
+				strictEqualOrNaN(vPropertySetting.value, vConstant);
+			}
 		});
 	});
 

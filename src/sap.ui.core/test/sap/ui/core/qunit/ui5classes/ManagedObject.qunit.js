@@ -60,6 +60,7 @@ sap.ui.define([
 				intArray : {type: "int[]", group: "Appearance", defaultValue: []},
 				booleanArray : {type: "boolean[]", group: "Appearance", defaultValue: []},
 				objectValue : {type: "object", group: "Misc", defaultValue: null},
+				anyValue : {type: "any", group: "Misc", defaultValue: null},
 				_hiddenValue: { type: "string", defaultValue: "", visibility: "hidden"},
 				byValueArray: { type: "object[]", defaultValue: [], byValue: true}
 			},
@@ -1047,6 +1048,24 @@ sap.ui.define([
 
 		assert.ok(oMyObject.getBinding("value"), "CompositeBinding created");
 		assert.equal(oMyObject.getValue(), "test value", "value set properly");
+	});
+
+	QUnit.test("Binding creation: static binding object with object marker=false yields binding", function(assert) {
+		var oMyObject = new TestManagedObject({
+			anyValue: {value: 42, [BindingParser.UI5ObjectMarker]: false}
+		});
+
+		assert.ok(oMyObject.getBinding("anyValue"), "anyValue: static binding created");
+		assert.strictEqual(oMyObject.getAnyValue(), 42, "anyValue set properly with correct type");
+	});
+
+	QUnit.test("Binding creation: static binding object with object marker=undefined yields object", function(assert) {
+		var oMyObject = new TestManagedObject({
+			anyValue: {value: 42}
+		});
+
+		assert.strictEqual(oMyObject.getBinding("anyValue"), undefined, "anyValue: no binding created");
+		assert.deepEqual(oMyObject.getAnyValue(), {value: 42}, "anyValue set properly as object");
 	});
 
 	QUnit.module("Aggregations", {
