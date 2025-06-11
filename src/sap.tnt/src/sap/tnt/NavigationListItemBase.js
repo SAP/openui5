@@ -409,6 +409,67 @@ sap.ui.define([
 	};
 
 	/**
+	* Handle the mouseover event
+	* @param {jQuery.Event} oEvent The event object for the mouseover event in the callout.
+	* @private
+	*/
+	NavigationListItemBase.prototype.onmouseover = function (oEvent) {
+		const oTarget = oEvent.target,
+			oSrcControl = oEvent.srcControl;
+
+		if (!oTarget || (oSrcControl && !oSrcControl.isA("sap.tnt.NavigationListItemBase"))) {
+			return;
+		}
+
+		oEvent.stopPropagation();
+
+		const oTooltipElement = this._getTooltipElement();
+		const oTextElement = oTooltipElement.querySelector(".sapMText") || oTooltipElement.querySelector(".sapTntNLGroupText");
+
+		if (oTextElement.offsetWidth >= oTextElement.scrollWidth) {
+			return;
+		}
+
+		let sText = oSrcControl?.getText();
+		const sTooltip = oSrcControl.getTooltip_AsString();
+
+		if (sTooltip) {
+			sText += " - " + sTooltip;
+		}
+
+		oTooltipElement.setAttribute("title", sText);
+	};
+
+	NavigationListItemBase.prototype._getTooltipElement = function () {
+		return this.getDomRef().querySelector("[role='treeitem']");
+	};
+
+	/**
+    * Handle the onmouseout event
+    * @param {jQuery.Event} oEvent The event object for the onmouseout event in the callout.
+    * @private
+    */
+	NavigationListItemBase.prototype.onmouseout = function (oEvent) {
+		const oTarget = oEvent.target,
+			oSrcControl = oEvent.srcControl;
+
+		if (!oTarget || oSrcControl && !oSrcControl.isA("sap.tnt.NavigationListItemBase")) {
+			return;
+		}
+
+		oEvent.stopPropagation();
+
+		const oTooltipElement = this._getTooltipElement();
+		const sTooltip = oSrcControl?.getTooltip_AsString();
+
+		if (sTooltip) {
+			oTooltipElement.setAttribute("title", sTooltip);
+		} else {
+			oTooltipElement.removeAttribute("title");
+		}
+	};
+
+	/**
 	 * Fires a press event on an item.
 	 * @param {sap.ui.base.Event} oEvent press event
 	 * @param {sap.tnt.NavigationListMenuItem|sap.tnt.NavigationListItem} oItem The item that triggered the event

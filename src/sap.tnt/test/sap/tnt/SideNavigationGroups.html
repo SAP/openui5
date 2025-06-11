@@ -39,7 +39,7 @@
 						new NavigationListItem({ text: "Home", icon: "sap-icon://home" }),
 						new NavigationListGroup({
 							text: "New",
-							tooltip: "New - custom tooltip",
+							tooltip: "Custom tooltip",
 							items: [
 								new NavigationListItem({ text: "Cards", icon: "sap-icon://card" }),
 								new NavigationListItem({ text: "Building", icon: "sap-icon://building" })
@@ -49,19 +49,19 @@
 							text: "Recently used with a long overflowing title",
 							items: [
 								new NavigationListItem({ text: "Example", icon: "sap-icon://example" }),
-								new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart", tooltip: "Heatmap Chart - custom tooltip", }),
+								new NavigationListItem({ text: "Heatmap Chart", icon: "sap-icon://heatmap-chart", tooltip: "Custom tooltip", }),
 								new NavigationListItem({
 									text: "Machine some more text to truncate",
 									icon: "sap-icon://machine",
 									items: [
-										new NavigationListItem({ text: "Supply Chain", tooltip: "Supply Chain - custom tooltip" }),
+										new NavigationListItem({ text: "Supply Chain", tooltip: "Custom tooltip" }),
 										new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
 										new NavigationListItem({ text: "Schematics" })
 									]
 								})
 							]
 						}),
-						new NavigationListItem({ 
+						new NavigationListItem({
 							text: "People",
 							icon: "sap-icon://people-connected",
 							selectable: false,

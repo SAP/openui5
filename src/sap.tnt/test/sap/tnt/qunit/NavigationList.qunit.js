@@ -1999,5 +1999,66 @@ sap.ui.define([
 		assert.ok(this.navigationList.getItems()[1].getDomRef().querySelector(".sapTntNLIFirstLevel").classList.contains("sapTntNLISelected"), "sapTntNLISelected class is set on parent item");
 	});
 
+	QUnit.module("Tooltips for truncated text", {
+		beforeEach: async function () {
+			this.oItem = new NavigationListItem({
+				id: "parentItem",
+				selectable: false,
+				text: 'Parent lorem ipsum dolor sit amet',
+				items: [
+					new NavigationListItem({
+						id: "nativeTooltip",
+						text: 'Child 1 lorem ipsum dolor sit amet',
+						tooltip: "Test"
+					}),
+					new NavigationListItem({
+						text: 'Child 2'
+					})
+				]
+			});
+
+			this.navigationList = new NavigationList({
+				width: "100px",
+				items: [
+					this.oItem
+				]
+			});
+			this.navigationList.placeAt("content");
+
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.navigationList.destroy();
+		}
+	});
+
+	QUnit.test("Tooltip should be available for long text on mouseover", function (assert) {
+		const oTarget = this.oItem.getDomRef().querySelector("#parentItem-a .sapMText"),
+			oTooltipElement = this.oItem._getTooltipElement();
+
+		QUnitUtils.triggerEvent("mouseover", oTarget);
+		assert.strictEqual(oTooltipElement.getAttribute("title"), "Parent lorem ipsum dolor sit amet", "The tooltip is present");
+
+		QUnitUtils.triggerEvent("mouseout", oTarget);
+		assert.notOk(oTooltipElement.getAttribute("title"), "The tooltip removed");
+	});
+
+	QUnit.test("Extended tooltip should be available for long text on mouseover", async function (assert) {
+		this.oItem.setTooltip("Test");
+
+		await nextUIUpdate();
+
+		const oTarget = this.oItem.getDomRef().querySelector("#nativeTooltip-a .sapMText"),
+			oTooltipElement = this.oItem._getTooltipElement();
+
+		assert.strictEqual(oTooltipElement.getAttribute("title"), "Test", "The tooltip should be set initially");
+
+		QUnitUtils.triggerEvent("mouseover", oTarget);
+		assert.ok(oTooltipElement.getAttribute("title"), "Child 1 lorem ipsum dolor sit amet - Test", "The extended tooltip should be present");
+
+		QUnitUtils.triggerEvent("mouseout", oTarget);
+		assert.ok(oTooltipElement.getAttribute("title"), "Test", "The user provided tooltip is available");
+	});
+
 	return waitForThemeApplied();
 });
