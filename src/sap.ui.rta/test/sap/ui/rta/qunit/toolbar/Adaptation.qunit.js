@@ -895,12 +895,12 @@ sap.ui.define([
 					"then the proper platform is passed"
 				);
 				assert.strictEqual(
-					oIframeURL.searchParams.get("AppId"),
+					oIframeURL.searchParams.get("appId"),
 					"someAppId",
 					"then the proper app id is passed"
 				);
 				assert.strictEqual(
-					oIframeURL.searchParams.get("AppVersion"),
+					oIframeURL.searchParams.get("appVersion"),
 					"someAppVersion",
 					"then the proper app version is passed"
 				);
