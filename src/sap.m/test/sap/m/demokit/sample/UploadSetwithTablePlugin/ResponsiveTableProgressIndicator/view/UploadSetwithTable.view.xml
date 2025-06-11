@@ -24,6 +24,7 @@
 				inset="true"
 				autoPopinMode="true"
 				hiddenInPopin="None"
+				growing="true"
 				items="{path: 'documents>/items', templateShareable: false}"
 				selectionChange="onSelectionChange">
 
