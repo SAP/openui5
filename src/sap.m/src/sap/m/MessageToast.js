@@ -69,7 +69,9 @@ sap.ui.define([
 		 * <li>You want users to be able to copy some part of the message text. (In this case, show a success {@link sap.m.Dialog Message Dialog}.)</li>
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>
-		 * The message toast has the same behavior on all devices. However, you can adjust the width of the control, for example, for use on a desktop device.
+		 * The message toast has the same behavior on all devices.
+		 * However, you can adjust the width of the control depending on the device you're using, for example desktop.
+		 * Note that the width can be customized up to a maximum of 15rem.
 		 *
 		 * @author SAP SE
 		 * @version ${version}
