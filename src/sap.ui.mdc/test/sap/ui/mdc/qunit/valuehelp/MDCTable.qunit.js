@@ -1,7 +1,7 @@
 // Use this test page to test the API and features of the ValueHelp.
 // The interaction with the Field is tested on the field test page.
 /* global QUnit, sinon */
-/*eslint max-nested-callbacks: [2, 5]*/
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",

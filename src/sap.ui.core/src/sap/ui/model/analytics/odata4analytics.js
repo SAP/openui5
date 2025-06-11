@@ -5,7 +5,7 @@
 // Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in
 // math)), valid-jsdoc (not completed yet), no-warning-comments (some TODOs are left)
 // All other warnings, errors should be resolved
-/*eslint-disable camelcase, valid-jsdoc, no-warning-comments, max-len */
+/*eslint-disable camelcase, no-warning-comments, max-len */
 
 // Provides API for analytical extensions in OData service metadata
 sap.ui.define([

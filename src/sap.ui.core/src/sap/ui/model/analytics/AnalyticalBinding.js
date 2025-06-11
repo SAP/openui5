@@ -4,7 +4,7 @@
 
 // Disable some ESLint rules. camelcase (some "_" in names to indicate indexed variables (like in math)),
 // valid-jsdoc (not completed yet)
-/*eslint camelcase:0, valid-jsdoc:0, max-len:0 */
+/*eslint camelcase:0, max-len:0 */
 
 // Provides class sap.ui.model.odata.ODataListBinding
 sap.ui.define([

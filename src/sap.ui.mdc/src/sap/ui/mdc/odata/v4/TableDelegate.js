@@ -248,6 +248,7 @@ sap.ui.define([
 	 * @override
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
+		/* eslint complexity: ["error", 13] */
 		// Custom $$aggregation is not supported if analytical features are enabled.
 		if (isAnalyticsEnabled(oTable)) {
 			updateAggregation(oTable, oBindingInfo);

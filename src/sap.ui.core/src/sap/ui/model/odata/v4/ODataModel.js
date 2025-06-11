@@ -1511,7 +1511,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	// eslint-disable-next-line valid-jsdoc -- .@$ui5. is not understood properly
+
 	ODataModel.prototype.createUI5Message = function (oRawMessage, sResourcePath, sCachePath,
 			oOriginalMessage = oRawMessage) {
 		var bIsBound = typeof oRawMessage.target === "string",

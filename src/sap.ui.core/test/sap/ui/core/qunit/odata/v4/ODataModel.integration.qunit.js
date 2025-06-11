@@ -448,7 +448,7 @@ sap.ui.define([
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
 	 * @throws {Error} If <code>iExpectedLength</code> is given but not <code>aExpectedPaths</code>
 	 */
-	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
+
 	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength) {
 		var oListBinding = oTable.getBinding("items") || oTable.getBinding("rows"),
 			aRows = oTable.getItems ? oTable.getItems() : oTable.getRows();
@@ -1093,7 +1093,7 @@ sap.ui.define([
 		 * @param {any[][]} aExpectedValues - "Table" of expected property values
 		 * @returns {Promise} A promise that resolves after the check is done
 		 */
-		// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
+
 		checkAllContexts : async function (sTitle, assert, oListBinding, aProperties,
 				aExpectedValues) {
 			function strictEqual(vActual, vExpected, sMyTitle) {

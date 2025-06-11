@@ -34,7 +34,7 @@ sap.ui.define([
 		return (iValue < 0 ? "-" : "") + Math.abs(iValue).toString().padStart(iLength, "0");
 	}
 
-	// eslint-disable-next-line valid-jsdoc
+
 	/**
 	 * DO NOT call the constructor for UI5Date directly; use <code>UI5Date.getInstance</code>.
 	 *

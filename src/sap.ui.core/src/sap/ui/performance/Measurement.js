@@ -141,7 +141,7 @@ sap.ui.define(['sap/base/Log', 'sap/base/util/now'
 				fnStart = this.start;
 
 				// wrap and instrument XHR
-				/* eslint-disable-next-line no-global-assign */
+				/* eslint-disable-next-line no-global-assign, no-implicit-globals */
 				XMLHttpRequest = function() {
 					var oXHR = new fnXHR(),
 						fnOpen = oXHR.open,
@@ -158,7 +158,7 @@ sap.ui.define(['sap/base/Log', 'sap/base/util/now'
 					return oXHR;
 				};
 			} else {
-				/* eslint-disable-next-line no-global-assign */
+				/* eslint-disable-next-line no-global-assign, no-implicit-globals */
 				XMLHttpRequest = fnXHR;
 			}
 

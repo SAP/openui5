@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/* eslint-disable valid-jsdoc */
+
 
 sap.ui.define([
 	"../ValueHelp.delegate",
