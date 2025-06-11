@@ -50,6 +50,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},*/
+			"FilterController": {
+				group: "SubController (generic)",
+				module: "./controllers/FilterController.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"TableIntegration": {
 				group: "Control Integration",
 				module: "./integration/TableP13n.qunit",
