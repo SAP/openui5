@@ -1583,7 +1583,6 @@ sap.ui.define([
 
 		await oToolbar.onFragmentLoaded();
 		const bTranslationAvailable = await FeaturesAPI.isKeyUserTranslationEnabled(this.getLayer());
-		const bWhatsNewFeaturesAvailable = await FeaturesAPI.isSeenFeaturesAvailable();
 		const bAppVariantsAvailable = mButtonsAvailability.saveAsAvailable;
 		const bExtendedOverview = bAppVariantsAvailable && RtaAppVariantFeature.isOverviewExtended();
 		const oUriParameters = new URLSearchParams(window.location.search);
@@ -1611,10 +1610,6 @@ sap.ui.define([
 			translation: {
 				visible: bTranslationAvailable,
 				enabled: this.bPersistedDataTranslatable
-			},
-			newFeaturesOverview: {
-				visible: bWhatsNewFeaturesAvailable,
-				enabled: bWhatsNewFeaturesAvailable
 			},
 			appVariantMenu: {
 				visible: bAppVariantsAvailable,
