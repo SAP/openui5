@@ -97,9 +97,11 @@ sap.ui.define([
 			if (!this.oI18n) {
 				this.oI18n = this.getView().getModel("i18n").getResourceBundle();
 			}
-			return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
+			if (sDescription) {
+				return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
+			}
+			return this.oI18n.getText("NO_DESCRIPTION");
 		},
-
 
 		/**
 		 * Checks if all data is loaded from back end.

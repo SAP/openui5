@@ -168,7 +168,65 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when searching for new contexts", function (assert) {
+		QUnit.test("when the controller is initialized and role description exists, is empty or undefined", function(assert) {
+			var oContextsResponse = {
+				values: [
+					{
+						id: "ROLE_WITH_DESCRIPTION",
+						description: "This role has a description"
+					},
+					{
+						id: "ROLE_WITH_EMPTY_DESCRIPTION",
+						description: ""
+					},
+					{
+						id: "ROLE_WITHOUT_DESCRIPTION"
+					}
+				],
+				lastHitReached: true
+			};
+			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(oContextsResponse);
+			var oFormatTooltipSpy = sandbox.spy(ContextVisibility.prototype, "formatTooltip");
+
+			oController.oContextsModel = new JSONModel(oContextsResponse);
+			oController.oSelectedContextsModel = new JSONModel({selected: []});
+
+			sandbox.stub(oController, "getView").returns({
+				addDependent: function() {},
+				getId: function() {return "dialog2";},
+				getIdfunction: function() {return "dialog2";},
+				getModel: function(sId) {
+					if (sId === "i18n") {
+						return {
+							getResourceBundle: function() {
+								return {
+									getText: function() {
+										return "No role description.";
+									}
+								};
+							}
+						};
+					}
+					return new JSONModel();
+				}
+			});
+
+			// Open the 'Add Context' Dialog for the first time
+			return oController.onAddContextsHandler().then(function() {
+				var oSelectedRoles = oCore.byId("dialog2--selectContexts");
+				oSelectedRoles.setModel(oController.oContextsModel, "contexts");
+
+				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
+				assert.strictEqual(oFormatTooltipSpy.callCount, 3, "then formatTooltip was called for each item");
+				assert.strictEqual(oFormatTooltipSpy.getCall(0).returnValue, "This role has a description", "then formatTooltip returned correct text");
+				assert.strictEqual(oFormatTooltipSpy.getCall(1).returnValue, "No role description.", "then formatTooltip returned correct text");
+				assert.strictEqual(oFormatTooltipSpy.getCall(2).returnValue, "No role description.", "then formatTooltip returned correct text");
+				var oSelectedRolesDialog = oCore.byId("dialog2--selectContexts-dialog");
+				return oSelectedRolesDialog.destroy();
+			});
+		});
+
+		QUnit.test("when searching for new contexts", function(assert) {
 			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({});
 
