@@ -1,0 +1,101 @@
+<mvc:View
+	height="100%"
+	displayBlock="true"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:ce="sap.ui.codeeditor"
+	controllerName="mdc.sample.controller.FilterbarVisualizeValidationState"
+	>
+
+	<f:DynamicPage id="page" headerExpanded="{/headerExpanded}">
+	<f:title>
+			<f:DynamicPageTitle stateChange="onStateChanged">
+				<f:actions>
+				</f:actions>
+				<f:snappedContent>
+					<HBox justifyContent="End" width="100%">
+						<Button type="Emphasized" text="Validate collapsed filterbar" press=".handleValidateCollapsedFilterBarPress"/>
+					</HBox>
+				</f:snappedContent>
+				<f:expandedContent>
+					<HBox>
+					</HBox>
+				</f:expandedContent>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:header>
+			<f:DynamicPageHeader pinnable="true">
+				<mdc:FilterBar
+					id="mountainsFilterbar"
+					delegate="{ name: 'mdc/sample/delegate/JSONFilterBarDelegate', payload: {}}"
+					p13nMode = "Item,Value"
+					filtersChanged="handleFiltersChanged"
+					showAdaptFiltersButton="false">
+					<mdc:filterItems>
+						<!-- Rank - Custom operator -->
+						<mdc:FilterField
+							id="field-rank"
+							label="Rank"
+							required="true"
+							propertyKey="rank"
+							dataType="sap.ui.model.type.Integer"
+							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+						/>
+						<mdc:FilterField
+							id="field-first-ascent"
+							label="First ascent"
+							required="true"
+							propertyKey="first_ascent"
+							dataType="sap.ui.model.type.Date"
+							delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+						/>
+					</mdc:filterItems>
+				</mdc:FilterBar>
+			</f:DynamicPageHeader>
+		</f:header>
+		<f:content>
+			<VBox width="100%">
+				<VBox>
+					<Title text="Conditions"/>
+					<Label text="Editor height (px)" labelFor="inputText" />
+					<Slider
+						id="inputText"
+						value="{/editorHeight}"
+						min="100"
+						enableTickmarks="true"
+						max="800"
+						step="50"
+						class="sapUiMediumMarginBottom"/>
+				</VBox>
+				<HBox width="100%">
+					<VBox width="50%">
+						<Text text="The following JSON is the output of the conditions of the FilterBar." class="sapUiSmallMarginBottom" />
+						<ce:CodeEditor
+							type="json"
+							value="{/conditionsText}"
+							editable="false"
+							width="100%"
+							height="{
+								path: '/editorHeight',
+								formatter: '.formatter.formatHeight'
+							}" />
+					</VBox>
+					<VBox width="50%">
+						<Text text="The following text is the output of the model filter of the FilterBar." class="sapUiSmallMarginBottom" />
+						<ce:CodeEditor
+							type="text"
+							value="{/modelFilterText}"
+							editable="false"
+							width="100%"
+							height="{
+								path: '/editorHeight',
+								formatter: '.formatter.formatHeight'
+							}" />
+					</VBox>
+				</HBox>
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
+</mvc:View>

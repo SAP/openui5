@@ -1,0 +1,5 @@
+{
+    "name": "UXC Integration",
+    "external": true,
+    "externalResourceRef": "https://github.com/SAP-samples/uxc-integration/archive/refs/heads/main.zip"
+}
