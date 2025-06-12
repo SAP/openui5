@@ -18,6 +18,11 @@
 				"sap.ui.layout": {}
 			}
 		},
+		"commands": {
+			"FocusMessagePopover": {
+				"shortcut": "Ctrl+Shift+M"
+			}
+		},
 		"config": {
 			"sample": {
 				"stretch": true,
