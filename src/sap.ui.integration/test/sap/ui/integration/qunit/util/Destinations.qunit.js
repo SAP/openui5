@@ -1,16 +1,18 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
 	"sap/base/Log",
 	"sap/ui/integration/Host",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 	function(
 		Card,
 		Log,
 		Host,
-		nextCardReadyEvent
+		nextCardReadyEvent,
+		nextUIUpdate
 	) {
 		"use strict";
 
@@ -274,11 +276,10 @@ sap.ui.define([
 				});
 
 				this.oCard = new Card({
-					"manifest": oManifest_Valid,
-					"host": this.oHost,
-					"baseUrl": sBaseUrl
+					manifest: oManifest_Valid,
+					host: this.oHost,
+					baseUrl: sBaseUrl
 				});
-				this.oCard.setHost(this.oHost);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -340,11 +341,10 @@ sap.ui.define([
 				});
 
 				this.oCard = new Card({
-					"manifest": oManifest_Valid,
-					"host": this.oHost,
-					"baseUrl": sBaseUrl
+					manifest: oManifest_Valid,
+					host: this.oHost,
+					baseUrl: sBaseUrl
 				});
-				this.oCard.setHost(this.oHost);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -375,11 +375,10 @@ sap.ui.define([
 				});
 
 				this.oCard = new Card({
-					"manifest": oManifest_Invalid_Destinations,
-					"host": this.oHost,
-					"baseUrl": sBaseUrl
+					manifest: oManifest_Invalid_Destinations,
+					host: this.oHost,
+					baseUrl: sBaseUrl
 				});
-				this.oCard.setHost(this.oHost);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -413,11 +412,10 @@ sap.ui.define([
 				});
 
 				this.oCard = new Card({
-					"manifest": oManifest_Mixed_Valid_Invalid_Destinations,
-					"host": this.oHost,
-					"baseUrl": sBaseUrl
+					manifest: oManifest_Mixed_Valid_Invalid_Destinations,
+					host: this.oHost,
+					baseUrl: sBaseUrl
 				});
-				this.oCard.setHost(this.oHost);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -448,10 +446,9 @@ sap.ui.define([
 		QUnit.module("No Host", {
 			beforeEach: function () {
 				this.oCard = new Card({
-					"manifest": oManifest_Valid,
-					"baseUrl": sBaseUrl
+					manifest: oManifest_Valid,
+					baseUrl: sBaseUrl
 				});
-				this.oCard.setHost(this.oHost);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -470,9 +467,8 @@ sap.ui.define([
 		QUnit.module("Default Url", {
 			beforeEach: function () {
 				this.oCard = new Card({
-					"manifest": oManifest_DefaultUrl,
-					"host": this.oHost,
-					"baseUrl": sBaseUrl
+					manifest: oManifest_DefaultUrl,
+					baseUrl: sBaseUrl
 				});
 			},
 			afterEach: function () {
@@ -527,5 +523,385 @@ sap.ui.define([
 				assert.ok(true, "Fails to resolve destination without name or defaultUrl.");
 			}
 		});
+
+		QUnit.module("Destinations in child cards defined in external manifest", {
+			beforeEach: function () {
+				const oMainCardManifest = {
+					"sap.app": {
+						"id": sCardId
+					},
+					"sap.card": {
+						"type": "Object",
+						"configuration": {
+							"destinations": {
+								"contentDestination": {
+									"name": "contentDestination"
+								}
+							}
+						},
+						"header": {
+							"title": "Main Card"
+						},
+						"content": {
+							"groups": [{
+								"items": [{
+									"label": "Open Child Card",
+									"value": "Open Child Card",
+									"actions": [{
+										"type": "ShowCard",
+										"parameters": {
+											"manifest": "childCardManifest.json"
+										}
+									}]
+								}]
+							}]
+						}
+					}
+				};
+
+				this.resolveDestinationSpy = sinon.spy(function(sDestinationName) {
+						switch (sDestinationName) {
+							case "contentDestination":
+								return sResourcePath;
+							case "headerDestination":
+								return sResourcePath;
+							default:
+								throw new Error("Unknown destination: " + sDestinationName);
+						}
+					});
+
+				this.oHost = new Host({
+					resolveDestination: this.resolveDestinationSpy
+				});
+
+				this.oCard = new Card({
+					manifest: oMainCardManifest,
+					baseUrl: sBaseUrl,
+					height: "500px",
+					host: this.oHost
+				});
+
+				// Create a fake server to respond to GET requests for the child card manifest
+				this.oServer = sinon.createFakeServer({
+					respondImmediately: true,
+					autoRespond: true
+				});
+				this.oServer.respondWith("GET", new RegExp(sBaseUrl + "childCardManifest.json"), (xhr) => {
+					xhr.respond(200, { "Content-Type": "application/json" }, JSON.stringify(this.oChildCardManifest));
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oHost.destroy();
+				this.oServer.restore();
+			}
+		});
+
+		QUnit.test("Child card without destinations set", async function (assert) {
+			// Arrange
+			this.oChildCardManifest = {
+				"sap.app": {
+					"id": "childCard"
+				},
+				"sap.card": {
+					"type": "Object",
+					"configuration": {
+					},
+					"data": {
+						"request": {
+							"url": "{{destinations.contentDestination}}/items.json"
+						}
+					},
+					"header": {
+						"title": "Child Card Title"
+					},
+					"content": {
+						"groups": [{
+							"title": "Child Card Content",
+							"items": [{
+								"title": "{Name}"
+							}]
+						}]
+					}
+				}
+			};
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.resolveDestinationSpy.notCalled, "resolveDestination is not called yet.");
+
+			// Act
+			const oOpenChildCard = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+			oOpenChildCard.firePress();
+
+			const oChildCard = this.oCard.getDependents()[0].getContent()[0];
+			await nextCardReadyEvent(oChildCard);
+
+			// Assert
+			assert.deepEqual(oChildCard._oDestinations._oConfiguration, this.oCard._oDestinations._oConfiguration, "Child card destinations configuration is inherited from the main card.");
+			assert.ok(this.resolveDestinationSpy.calledOnceWith("contentDestination"), "resolveDestination was called once for content destination of the child card.");
+		});
+
+		QUnit.test("Child card with own destinations set", async function (assert) {
+			// Arrange
+			this.oChildCardManifest = {
+				"sap.app": {
+					"id": "childCard"
+				},
+				"sap.card": {
+					"type": "Object",
+					"configuration": {
+						"destinations": {
+							"contentDestination": {
+								"name": "contentDestination"
+							},
+							"headerDestination": {
+								"name": "headerDestination"
+							}
+						}
+					},
+					"header": {
+						"title": "Child Card Title",
+						"data": {
+							"request": {
+								"url": "{{destinations.headerDestination}}/items.json"
+							}
+						}
+					},
+					"content": {
+						"data": {
+							"request": {
+								"url": "{{destinations.contentDestination}}/items.json"
+							}
+						},
+						"groups": [{
+							"title": "Child Card Content",
+							"items": [{
+								"title": "{Name}"
+							}]
+						}]
+					}
+				}
+			};
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.resolveDestinationSpy.notCalled, "resolveDestination is not called yet.");
+
+			// Act
+			const oOpenChildCard = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+			oOpenChildCard.firePress();
+
+			const oChildCard = this.oCard.getDependents()[0].getContent()[0];
+			await nextCardReadyEvent(oChildCard);
+
+			// Assert
+			assert.notDeepEqual(oChildCard._oDestinations._oConfiguration, this.oCard._oDestinations._oConfiguration, "Child card destinations configuration is NOT inherited from the main card.");
+			assert.deepEqual(
+				oChildCard._oDestinations._oConfiguration,
+				{
+					"contentDestination": {
+						"name": "contentDestination"
+					},
+					"headerDestination": {
+						"name": "headerDestination"
+					}
+				},
+				"Child card destinations configuration is taken from its own manifest."
+			);
+			assert.ok(this.resolveDestinationSpy.calledWith("contentDestination", oChildCard), "resolveDestination was called for content destination of the child card.");
+			assert.ok(this.resolveDestinationSpy.calledWith("headerDestination", oChildCard), "resolveDestination was called for the header destination of the child card.");
+		});
+
+		QUnit.module("Destinations in child cards defined in embedded manifest", {
+			beforeEach: function () {
+				this.resolveDestinationSpy = sinon.spy(function(sDestinationName) {
+						switch (sDestinationName) {
+							case "contentDestination":
+								return sResourcePath;
+							case "headerDestination":
+								return sResourcePath;
+							default:
+								throw new Error("Unknown destination: " + sDestinationName);
+						}
+					});
+
+				this.oHost = new Host({
+					resolveDestination: this.resolveDestinationSpy
+				});
+
+				this.oCard = new Card({
+					baseUrl: sBaseUrl,
+					host: this.oHost,
+					height: "500px"
+				});
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oHost.destroy();
+			},
+			setChildCardManifest: function (oChildManifest) {
+				const oMainCardManifest = {
+					"sap.app": {
+						"id": sCardId
+					},
+					"sap.card": {
+						"type": "Object",
+						"configuration": {
+							"destinations": {
+								"contentDestination": {
+									"name": "contentDestination"
+								}
+							}
+						},
+						"header": {
+							"title": "Main Card"
+						},
+						"content": {
+							"groups": [{
+								"items": [{
+									"label": "Open Child Card",
+									"value": "Open Child Card",
+									"actions": [{
+										"type": "ShowCard",
+										"parameters": {
+											"manifest": oChildManifest
+										}
+									}]
+								}]
+							}]
+						}
+					}
+				};
+
+				this.oCard.setManifest(oMainCardManifest);
+			}
+		});
+
+		QUnit.test("Child card without destinations set", async function (assert) {
+			// Arrange
+			this.setChildCardManifest({
+				"sap.app": {
+					"id": "childCard"
+				},
+				"sap.card": {
+					"type": "Object",
+					"configuration": { },
+					"data": {
+						"request": {
+							"url": "{{destinations.contentDestination}}/items.json"
+						}
+					},
+					"header": {
+						"title": "Child Card Title"
+					},
+					"content": {
+						"groups": [{
+							"title": "Child Card Content",
+							"items": [{
+								"title": "{Name}"
+							}]
+						}]
+					}
+				}
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.resolveDestinationSpy.calledOnceWith("contentDestination"), "resolveDestination was called once for content destination of the child card, even without opening it.");
+
+			// Act
+			const oOpenChildCard = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+			oOpenChildCard.firePress();
+
+			const oChildCard = this.oCard.getDependents()[0].getContent()[0];
+			await nextCardReadyEvent(oChildCard);
+
+			// Assert
+			assert.deepEqual(oChildCard._oDestinations._oConfiguration, this.oCard._oDestinations._oConfiguration, "Child card destinations configuration is inherited from the main card.");
+		});
+
+		QUnit.test("Child card with own destinations set (not supported)", async function (assert) {
+			// Arrange
+			this.setChildCardManifest({
+				"sap.app": {
+					"id": "childCard"
+				},
+				"sap.card": {
+					"type": "Object",
+					"configuration": {
+						"destinations": {
+							"contentDestination": {
+								"name": "contentDestination"
+							},
+							"headerDestination": {
+								"name": "headerDestination"
+							}
+						}
+					},
+					"header": {
+						"title": "Child Card Title",
+						"data": {
+							"request": {
+								"url": "{{destinations.headerDestination}}/items.json"
+							}
+						}
+					},
+					"content": {
+						"data": {
+							"request": {
+								"url": "{{destinations.contentDestination}}/items.json"
+							}
+						},
+						"groups": [{
+							"title": "Child Card Content",
+							"items": [{
+								"title": "{Name}"
+							}]
+						}]
+					}
+				}
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+
+			// Assert
+			assert.ok(this.resolveDestinationSpy.calledWith("contentDestination", this.oCard), "resolveDestination was called for content destination of the child card, even without opening it.");
+			assert.notOk(this.resolveDestinationSpy.calledWith("headerDestination", this.oCard), "resolveDestination was NOT called for the header destination of the child card.");
+
+			// Act
+			const oOpenChildCard = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getContent()[0].getItems()[1].getItems()[0];
+			oOpenChildCard.firePress();
+
+			const oChildCard = this.oCard.getDependents()[0].getContent()[0];
+			await nextCardReadyEvent(oChildCard);
+
+			// Assert
+			assert.notDeepEqual(oChildCard._oDestinations._oConfiguration, this.oCard._oDestinations._oConfiguration, "Child card destinations configuration is NOT inherited from the main card.");
+			assert.deepEqual(
+				oChildCard._oDestinations._oConfiguration,
+				{
+					"contentDestination": {
+						"name": "contentDestination"
+					},
+					"headerDestination": {
+						"name": "headerDestination"
+					}
+				},
+				"Child card destinations configuration is taken from its own manifest."
+			);
+		});
+
 	}
 );

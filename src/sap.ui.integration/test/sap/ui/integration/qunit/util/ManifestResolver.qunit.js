@@ -1,15 +1,17 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/util/ManifestResolver",
-	"sap/ui/integration/util/SkeletonCard"
+	"sap/ui/integration/util/SkeletonCard",
+	"qunit/testResources/nextCardReadyEvent"
 ], function (
 	Library,
 	Host,
 	ManifestResolver,
-	SkeletonCard
+	SkeletonCard,
+	nextCardReadyEvent
 ) {
 	"use strict";
 
@@ -3173,5 +3175,147 @@ sap.ui.define([
 		});
 
 		oCard.startManifestProcessing();
+	});
+
+	QUnit.module("Resolve child cards", {
+		beforeEach: function () {
+			this.oServer = sinon.createFakeServer({
+				respondImmediately: true
+			});
+
+			const sDestinationUrl = "some/fake/url";
+			this.oServer.respondWith("GET", new RegExp(sDestinationUrl), [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify({
+					"title": "Title from destination",
+					"description": "Description from destination"
+				})
+			]);
+
+			this.oHost = new Host({
+				resolveDestination: (sName) => {
+					if (sName === "destination1") {
+						return sDestinationUrl;
+					}
+
+					return null;
+				}
+			});
+		},
+		afterEach: function () {
+			this.oServer.restore();
+			this.oHost.destroy();
+		}
+	});
+
+	QUnit.test("Card opens child card using ShowCard action with manifest url", function (assert) {
+		const done = assert.async();
+		const sChildCardManifestUrl = "/fake/child/manifest.json";
+		const oChildCardManifest = {
+			"sap.app": {
+				"id": "child.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"request": {
+						"url": "{{destinations.destination1}}/data.json"
+					}
+				},
+				"header": {
+					"title": "{title}"
+				},
+				"content": {
+					"groups": [
+						{
+							"title": "Child Group",
+							"items": [
+								{
+									"label": "Child Item",
+									"value": "{description}"
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+
+		this.oServer.respondWith("GET", new RegExp(sChildCardManifestUrl), [
+			200,
+			{
+				"Content-Type": "application/json"
+			},
+			JSON.stringify(oChildCardManifest)
+		]);
+
+		const oMainCardManifest = {
+			"sap.app": {
+				"id": "main.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"destinations": {
+						"destination1": {
+							"name": "destination1"
+						}
+					}
+				},
+				"header": {
+					"title": "Main Card"
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Open Child"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}",
+						"actions": [
+							{
+								"type": "ShowCard",
+								"parameters": {
+									"manifest": sChildCardManifestUrl
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
+		const oCard = new SkeletonCard({
+			manifest: oMainCardManifest,
+			baseUrl: "/"
+		});
+
+		this.oHost.onShowCard = function (oChildCard) {
+			ManifestResolver.resolveCard(oChildCard)
+				.then(function (oRes) {
+					// Assert
+					assert.strictEqual(oRes["sap.card"].header.title, "Title from destination", "Destination is resolved in child card manifest.");
+					assert.strictEqual(oRes["sap.card"].content.groups[0].items[0].value, "Description from destination", "Destination is resolved in child card manifest.");
+
+					// Clean up
+					oCard.destroy();
+					done();
+				});
+		};
+
+		oCard.setHost(this.oHost);
+		oCard.startManifestProcessing();
+
+		nextCardReadyEvent(oCard).then(() => {
+			oCard.triggerAction(oMainCardManifest["sap.card"].content.item.actions[0]);
+		});
 	});
 });

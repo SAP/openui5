@@ -31,6 +31,8 @@ sap.ui.define([
 					switch (sDestinationName) {
 						case "Northwind":
 							return "https://services.odata.org/V3/Northwind/Northwind.svc";
+						case "Northwind_V4":
+							return "https://services.odata.org/V4/Northwind/Northwind.svc";
 						case "Navigation":
 							return new Promise(function (resolve) {
 								setTimeout(function () {

@@ -13,10 +13,7 @@
 	<div class="topic">
 		<div class="content">
 
-			<h1 id="overview">
-				Destinations
-			</h1>
-
+			<h1 id="overview">Destinations</h1>
 			<p>
 				Destinations are used for outbound communication to a remote resource and contain the required
 				connection information.
@@ -35,18 +32,13 @@
 					target="_blank">Create a Northwind Destination</a> example.
 			</p>
 
-			<h2 id="inTheManifest">
-				In the manifest
-			</h2>
-
+			<h2 id="definingDestinations">Defining Destinations</h2>
 			<p>
-				In section <code>configuration</code>, sub section <code>destinations</code> of the card, the card
-				developer can describe the destinations on which the card depends. Those described destinations can be
-				referred inside a data request description with a placeholder like this:
-				<code>{{destinations.myDestinationKey}}</code>. See the example below.
+				In the <code>configuration</code> section of the card, under the <code>destinations</code> subsection, the card developer defines destinations.
+				Each destination is identified by a unique key and its properties are configured in this part of the card settings.
 			</p>
 
-			<h3 id="properties">Destination properties</h3>
+			<h3 id="properties">Properties</h3>
 
 			<div class="tableWrapper">
 				<table>
@@ -82,49 +74,53 @@
 				</table>
 			</div>
 
+			<h2 id="usingDestinations">Using Destinations</h2>
 			<p>
-				<b>Note</b>: If you are developing a Component Card please check the <a
-					href="../../../index.html#/explore/destinations/component" target="_parent">Component Card
-					sample</a>.
+				Described destinations can be referenced by their key using the following specific syntax: <code>{{destinations.myDestinationKey}}</code>.
+			</p>
+			<p>
+				<b>Note</b>: For Component cards a dedicated API is provided. For more information, see the
+				<a href="../../../index.html#/explore/destinations/component" target="_parent">Component Card sample</a>.
 			</p>
 
-			<h2 id="inTheHostEnvironment">
-				In the host environment
-			</h2>
-
+			<h2>Destinations in Child Cards</h2>
 			<p>
-				For detailed information about the contribution from host environment, see <a
-					href="../../../index.html#/integrate/destinations" target="_parent">Integrate Destinations</a>.
+				Cards opened by a <code>ShowCard</code> action (child cards) must not define the "configuration/destinations" section in their manifest.
+				They automatically inherit the destinations from the main card.
 			</p>
 
-			<h2 id="examples">
-				Example
-			</h2>
+			<h2 id="inTheHostEnvironment">Resolving Destination Names</h2>
+			<p>
+				Each destination name should be resolved to an absolute URL by the host environment.
+				For detailed information see <a href="../../../index.html#/integrate/destinations" target="_parent">Integrate Destinations</a>.
+			</p>
 
-			<p>An example with a card which fetches data from Northwind service:</p>
+			<h2 id="examples">Example</h2>
+
+			<p>An example of a card that fetches data from Northwind destination:</p>
 			<pre class="lang-json">
 "sap.card": {
 	"type": "Table",
-	"data": {
-		"request": {
-			"url": "{{destinations.myDestination}}/Orders",
-			"parameters": {
-				"$format": "json",
-				"$top": "{parameters>/maxItems/value}",
-				"$orderby": "Freight desc"
-			}
-		}
-	},
 	"configuration": {
-		"destinations": {
+		<mark>"destinations": {
 			"myDestination": {
 				"name": "Northwind"
 			}
-		},
+		},</mark>
 		"parameters": {
 			"maxItems": {
 				"value": 7,
 				"type": "integer"
+			}
+		}
+	},
+	"data": {
+		"request": {
+			<mark>"url": "{{destinations.myDestination}}/Orders",</mark>
+			"parameters": {
+				"$format": "json",
+				"$top": "{parameters>/maxItems/value}",
+				"$orderby": "Freight desc"
 			}
 		}
 	},
