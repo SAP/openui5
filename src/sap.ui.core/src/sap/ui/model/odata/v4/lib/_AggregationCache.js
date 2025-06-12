@@ -1261,6 +1261,24 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#getQueryOptions4Single
+	 */
+	_AggregationCache.prototype.getQueryOptions4Single = function (sPath) {
+		if (sPath !== "") {
+			throw new Error("Unsupported path: " + sPath);
+		}
+
+		const mQueryOptions = _Helper.clone(this.mLateQueryOptions ?? this.mQueryOptions);
+		const iIndex = mQueryOptions.$select.indexOf(this.oAggregation.$NodeProperty);
+		if (iIndex >= 0) {
+			mQueryOptions.$select.splice(iIndex, 1);
+		}
+
+		return mQueryOptions;
+	};
+
+	/**
+	 * @override
 	 * @see sap.ui.model.odata.v4.lib._Cache#getValue
 	 */
 	_AggregationCache.prototype.getValue = function (sPath) {
@@ -2094,6 +2112,20 @@ sap.ui.define([
 		const fnSuper = this.oFirstLevel.refreshKeptElements;
 		return fnSuper.call(this, oGroupLock, fnOnRemove, bIgnorePendingChanges,
 			/*bDropApply*/true);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#replaceElement
+	 */
+	_AggregationCache.prototype.replaceElement = function (aElements, _iIndex, sPredicate,
+			oElement, mTypeForMetaPath, sPath, bKeepReportedMessagesPath) {
+		// Note: iStart is not needed here because we know we have a key predicate
+		this.visitResponse(oElement, mTypeForMetaPath,
+			_Helper.getMetaPath(_Helper.buildPath(this.sMetaPath, sPath)), sPath + sPredicate,
+			undefined, bKeepReportedMessagesPath);
+
+		_Helper.updateAll({/*mChangeListeners*/}, "", aElements.$byPredicate[sPredicate], oElement);
 	};
 
 	/**

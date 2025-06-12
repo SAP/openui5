@@ -78,7 +78,7 @@
 				<m:Text text="{Hierarchy}" wrapping="false"/>
 			</template>
 		</Column>
-		<Column width="31em">
+		<Column width="33em">
 			<template>
 				<m:FlexBox justifyContent="SpaceBetween">
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false }"
@@ -102,6 +102,7 @@
 						press=".onMakeRoot($event, false, true)" tooltip="Copy To Root"/>
 					<m:Button icon="sap-icon://pull-down" press=".onMakeRoot($event, true)"
 						tooltip="Make Last Root"/>
+					<m:Button icon="sap-icon://refresh" press=".onRefreshRow" tooltip="Refresh"/>
 					<m:Button icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
 						icon="sap-icon://expand-group" press=".onExpandAll"
