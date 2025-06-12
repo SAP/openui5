@@ -28847,7 +28847,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1643
 	//
 	// Request various side effects that do not affect the hierarchy (JIRA: CPOUI5ODATAV4-1785).
-	// Check that refresh is not supported (JIRA: CPOUI5ODATAV4-1851).
+	// Check that refresh is not supported (JIRA: CPOUI5ODATAV4-1851)
+	// ...but a side-effects refresh of a single node is supported (SNOW: DINC0538031)
 	// Additionally, ODLB#getDownloadUrl is tested (JIRA: CPOUI5ODATAV4-1920, BCP: 2370011296).
 	// Retrieve "DistanceFromRoot" property path via ODLB#getAggregation (JIRA: CPOUI5ODATAV4-1961).
 	// See that Filter.NONE is not allowed (JIRA: CPOUI5ODATAV4-2321).
@@ -29122,7 +29123,7 @@ sap.ui.define([
 						BestFriend : {
 							ArtistID : "01",
 							IsActiveEntity : true,
-							Name : "Friend #01 (updated)"
+							Name : "Friend #01 (still)"
 						},
 						IsActiveEntity : true,
 						_ : {
@@ -29137,13 +29138,10 @@ sap.ui.define([
 				that.waitForChanges(assert, "side effect: BestFriend/Name for all rows")
 			]);
 		}).then(function () {
-			var sErrorMessage
-				= 'Unexpected structural change: _/NodeID from "0,true" to "-0,true-"';
-
 			checkTable("side effect: BestFriend/Name for all rows", assert, oTable, [
 				"/Artists(ArtistID='0',IsActiveEntity=true)"
 			], [
-				[true, undefined, 1, "Friend #01 (updated)"]
+				[true, undefined, 1, "Friend #01 (still)"]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
 
@@ -29153,15 +29151,57 @@ sap.ui.define([
 			}, new Error("Cannot refresh " + oRoot + " when using data aggregation"));
 
 			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)"
-					+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel", {
+					+ "?$select=ArtistID,IsActiveEntity,Messages,defaultChannel"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					"@odata.etag" : "etag0.3",
+					ArtistID : "0",
+					BestFriend : {
+						ArtistID : "01",
+						IsActiveEntity : true,
+						Name : "Friend #01 (updated)"
+					},
+					IsActiveEntity : true,
+					Messages : [],
+					defaultChannel : "360"
+				});
+
+			return Promise.all([
+				// code under test (SNOW: DINC0538031)
+				oRoot.requestSideEffects([""]),
+				that.waitForChanges(assert, "side-effects refresh of single node")
+			]);
+		}).then(function () {
+			var sErrorMessage
+				= 'Unexpected structural change: _/NodeID from "0,true" to "-0,true-"';
+
+			assert.deepEqual(oRoot.getObject(), {
+					"@$ui5.context.isSelected" : true,
+					"@$ui5.node.level" : 1,
+					"@odata.etag" : "etag0.3",
+					ArtistID : "0",
+					BestFriend : {
+						ArtistID : "01",
+						IsActiveEntity : true,
+						Name : "Friend #01 (updated)"
+					},
+					IsActiveEntity : true,
+					Messages : [],
+					_ : {
+						NodeID : "0,true"
+					},
+					defaultChannel : "360"
+				}, "NodeID kept");
+
+			that.expectRequest("Artists(ArtistID='0',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,_/NodeID,defaultChannel", {
+					"@odata.etag" : "etag0.4",
 					ArtistID : "0",
 					IsActiveEntity : true,
 					Messages : [],
 					_ : { // in case we get a value, we will happily check it :-)
 						NodeID : "-0,true-"
 					},
-					defaultChannel : "360"
+					defaultChannel : "460"
 				})
 				.expectMessages([{
 					message : sErrorMessage,
@@ -29188,7 +29228,7 @@ sap.ui.define([
 				[true, undefined, 1, "Friend #01 (updated)"]
 			]);
 			assert.strictEqual(oListBinding.getCount(), 1, "count of nodes"); // code under test
-			assert.strictEqual(oRoot.getProperty("defaultChannel"), "260", "360 has been ignored");
+			assert.strictEqual(oRoot.getProperty("defaultChannel"), "360", "460 has been ignored");
 
 			that.expectMessages([]);
 			Messaging.removeAllMessages(); // clean up
@@ -29206,7 +29246,7 @@ sap.ui.define([
 			return that.waitForChanges(assert, "keep alive");
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 7,
+					batchNo : 8,
 					url : "Artists?$select=ArtistID,IsActiveEntity"
 							+ (bKeepAlive ? ",Messages" : "") + ",defaultChannel"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
@@ -29226,11 +29266,11 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({
-					batchNo : 7,
+					batchNo : 8,
 					url : "Artists/$count"
 				}, 3)
 				.expectRequest({
-					batchNo : 7,
+					batchNo : 8,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
 						+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
@@ -29397,11 +29437,11 @@ sap.ui.define([
 				}, "after expand");
 
 			that.expectRequest({
-					batchNo : 12,
+					batchNo : 13,
 					url : "Artists/$count"
 				}, 3)
 				.expectRequest({
-					batchNo : 12,
+					batchNo : 13,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
 						+ "',NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
@@ -31365,8 +31405,10 @@ sap.ui.define([
 	//
 	// Use a filter with spaces (BCP: 2380032202).
 	// Check prefetch for expand (JIRA: CPOUI5ODATAV4-2432)
+	// Side-effects refresh of single root node early on (SNOW: DINC0538031)
 	QUnit.test("Recursive Hierarchy: expand root, w/ filter, search & orderby", function (assert) {
 		var oModel = this.createTeaBusiModel123({autoExpandSelect : true, groupId : "$direct"}),
+			oRoot,
 			oTable,
 			sView = '\
 <Text id="count" text="{$count}"/>\
@@ -31426,7 +31468,53 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "$count");
 		}).then(function () {
-			var oRoot = oTable.getRows()[0].getBindingContext();
+			oRoot = oTable.getRows()[0].getBindingContext();
+			assert.deepEqual(oRoot.getObject(), {
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 1,
+				ID : "0"
+			});
+
+			that.expectRequest("EMPLOYEES('0')?sap-client=123"
+					+ "&$select=__CT__FAKE__Message/__FAKE__Messages", {
+					// special handling due to side-effect
+					__CT__FAKE__Message : {
+						__FAKE__Messages : [{
+							code : "1",
+							message : "Text after refresh",
+							numericSeverity : 3,
+							target : "ID",
+							transition : false
+						}]
+					}
+				})
+				.expectMessages([{
+					code : "1",
+					message : "Text after refresh",
+					target : "/EMPLOYEES('0')/ID",
+					type : "Warning"
+				}]);
+
+			return Promise.all([
+				// code under test (SNOW: DINC0538031)
+				oRoot.requestSideEffects([""]),
+				that.waitForChanges(assert, "side-effects refresh of single node")
+			]);
+		}).then(function () {
+			assert.deepEqual(oRoot.getObject(), {
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 1,
+				ID : "0",
+				__CT__FAKE__Message : {
+					__FAKE__Messages : [{
+						code : "1",
+						message : "Text after refresh",
+						numericSeverity : 3,
+						target : "ID",
+						transition : false
+					}]
+				}
+			}, "unchanged, except for messages");
 
 			that.expectRequest("EMPLOYEES?sap-client=123"
 					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID"
@@ -34338,6 +34426,7 @@ sap.ui.define([
 	// "Select all", deselect a node, collapse its parent. The (effectively kept-alive) node now is
 	// not part of the hierarchy. It still holds its data and is affected by side-effects requests.
 	// JIRA: CPOUI5ODATAV4-2624
+	// Side-effects refresh of single root node (SNOW: DINC0538031)
 [false, true].forEach(function (bResetViaModel) {
 	const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
 	QUnit.test(sTitle, function (assert) {
@@ -34380,10 +34469,10 @@ sap.ui.define([
 				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
-					"@odata.etag" : "etag0.0",
+					"@odata.etag" : "etag0.old",
 					ArtistID : "0",
 					IsActiveEntity : false,
-					Name : "Alpha",
+					Name : "Alpha (old)",
 					_ : {
 						DescendantCount : "0",
 						DistanceFromRoot : "0",
@@ -34392,8 +34481,8 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectChange("etag", ["etag0.0"])
-			.expectChange("name", ["Alpha"]);
+			.expectChange("etag", ["etag0.old"])
+			.expectChange("name", ["Alpha (old)"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
@@ -34415,9 +34504,28 @@ sap.ui.define([
 			checkTable("root is leaf", assert, oTable, [
 				sFriend + "(ArtistID='0',IsActiveEntity=false)"
 			], [
-				[undefined, undefined, 1, "etag0.0", "Alpha", "0,false"]
+				[undefined, undefined, 1, "etag0.old", "Alpha (old)", "0,false"]
 			]);
 			assert.strictEqual(oRoot.getIndex(), 0);
+			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
+
+			that.expectRequest(sFriend.slice(1) + "(ArtistID='0',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					"@odata.etag" : "etag0.0",
+					ArtistID : "0",
+					IsActiveEntity : false,
+					Messages : [],
+					Name : "Alpha"
+				})
+				.expectChange("etag", ["etag0.0"])
+				.expectChange("name", ["Alpha"]);
+
+			return Promise.all([
+				// code under test (SNOW: DINC0538031)
+				oRoot.requestSideEffects([""]),
+				that.waitForChanges(assert, "side-effects refresh of single node")
+			]);
+		}).then(function () {
 			assert.deepEqual(oRoot.getObject("_"), {NodeID : "0,false"});
 
 			// code under test (JIRA: CPOUI5ODATAV4-2272)
@@ -34489,7 +34597,7 @@ sap.ui.define([
 			assert.strictEqual(oBeta.getIndex(), 1);
 
 			that.expectRequest({
-					batchNo : 3,
+					batchNo : 4,
 					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -34501,7 +34609,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-					batchNo : 3,
+					batchNo : 4,
 					url : sBaseUrlNoFilter + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 						+ "&$select=_/NodeID"
 				}, {
@@ -34553,7 +34661,7 @@ sap.ui.define([
 			that.expectChange("etag", [, undefined, "etag1.0"])
 				.expectChange("name", [, "Gamma", "Beta: β"])
 				.expectRequest({
-					batchNo : 4,
+					batchNo : 5,
 					method : "POST",
 					url : sFriend.slice(1),
 					payload : {
@@ -34568,7 +34676,7 @@ sap.ui.define([
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
 				.expectRequest({
-					batchNo : 5,
+					batchNo : 6,
 					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -34580,7 +34688,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-					batchNo : 5,
+					batchNo : 6,
 					url : sBaseUrlNoFilter + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=_/NodeID"
 				}, {
@@ -34622,7 +34730,7 @@ sap.ui.define([
 			checkCreatedPersisted(assert, oGamma, oGammaCreated);
 
 			that.expectRequest({
-					batchNo : 6,
+					batchNo : 7,
 					headers : {
 						"If-Match" : "etag2.0",
 						Prefer : "return=minimal"
@@ -34634,7 +34742,7 @@ sap.ui.define([
 					}
 				}, null, {ETag : "n/a"}) // 204 No Content
 				.expectRequest({ // side-effects refresh
-					batchNo : 6,
+					batchNo : 7,
 					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -34646,7 +34754,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({ // implicitly kept alive by selection
-					batchNo : 6,
+					batchNo : 7,
 					url : sFriend.slice(1) + "?$filter=ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
 				}, {
@@ -34661,7 +34769,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({ // side-effects refresh
-					batchNo : 6,
+					batchNo : 7,
 					url : sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
 						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
 						+ "&$count=true&$skip=0&$top=3"
@@ -34758,7 +34866,7 @@ sap.ui.define([
 			}, new Error("Unsupported parent context: " + oGamma));
 
 			that.expectRequest({
-					batchNo : 7,
+					batchNo : 8,
 					headers : {
 						"If-Match" : "etag2.1",
 						Prefer : "return=minimal"
@@ -34770,7 +34878,7 @@ sap.ui.define([
 					}
 				}, null, {ETag : "etag2.2"}) // 204 No Content
 				.expectRequest({
-					batchNo : 7,
+					batchNo : 8,
 					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -35098,7 +35206,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest({
-					batchNo : 13,
+					batchNo : 14,
 					headers : {
 						"If-Match" : "etag1.4",
 						Prefer : "return=minimal"
@@ -35110,7 +35218,7 @@ sap.ui.define([
 					}
 				}, null, {ETag : "etag1.5"}) // 204 No Content
 				.expectRequest({
-					batchNo : 13,
+					batchNo : 14,
 					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -35177,7 +35285,7 @@ sap.ui.define([
 			that.expectChange("etag", [undefined, "etag0.3", "etag2.4"])
 				.expectChange("name", ["Aleph", "Alpha #2", "Gamma #2"])
 				.expectRequest({
-					batchNo : 14,
+					batchNo : 15,
 					method : "POST",
 					url : sFriend.slice(1),
 					payload : {
@@ -35194,7 +35302,7 @@ sap.ui.define([
 				.expectChange("etag", ["etag9.0"])
 				.expectChange("name", ["Aleph: ℵ"])
 				.expectRequest({
-					batchNo : 15,
+					batchNo : 16,
 					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -35206,7 +35314,7 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-					batchNo : 15,
+					batchNo : 16,
 					url : sBaseUrlNoFilter + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 						+ "&$select=_/NodeID"
 				}, {
@@ -35327,7 +35435,7 @@ sap.ui.define([
 			oBeta = oListBinding.getCurrentContexts()[2];
 
 			that.expectRequest({
-					batchNo : 18,
+					batchNo : 19,
 					headers : {
 						"If-Match" : "etag1.6",
 						Prefer : "return=minimal"
@@ -35339,7 +35447,7 @@ sap.ui.define([
 					}
 				}, null, {ETag : "etag1.7"}) // 204 No Content
 				.expectRequest({
-					batchNo : 18,
+					batchNo : 19,
 					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 						+ "&$select=_/Limited_Rank"
 				}, {
@@ -38322,6 +38430,8 @@ sap.ui.define([
 	// various nodes and request side effects.
 	// (1) Expand Alpha (1 child Beta)
 	// (2) Request side effects -> Alpha gets a bonus item Delta
+	// (2.8) Request a late property for Beta
+	// (2.9) Side-effects refresh of single node Beta (SNOW: DINC0538031)
 	// (3) Expand Beta (1 child Gamma)
 	// (4) Check getDownloadUrl
 	// (5) Collapse Alpha
@@ -38482,6 +38592,58 @@ sap.ui.define([
 			[false, 2, "2", "Beta"],
 			[undefined, 2, "4", "Delta"]
 		], 4);
+
+		this.expectRequest(sFriend.slice(1) + "(ArtistID='2',IsActiveEntity=false)"
+				+ "?$select=sendsAutographs", {
+					sendsAutographs : true
+			});
+
+		await Promise.all([
+			oBeta.requestProperty("sendsAutographs").then((bSendsAutographs) => {
+				assert.strictEqual(bSendsAutographs, true);
+			}),
+			this.waitForChanges(assert, "(2.8) Request a late property for Beta")
+		]);
+
+		assert.deepEqual(oBeta.getObject(), {
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 2,
+				ArtistID : "2",
+				IsActiveEntity : false,
+				Name : "Beta",
+				sendsAutographs : true,
+				_ : {
+					NodeID : "2,false"
+				}
+			});
+
+		this.expectRequest(sFriend.slice(1) + "(ArtistID='2',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name,sendsAutographs", {
+					ArtistID : "2",
+					IsActiveEntity : false,
+					Messages : [],
+					Name : "Beta",
+					sendsAutographs : false
+			});
+
+		await Promise.all([
+			oBeta.requestSideEffects([""]),
+			this.waitForChanges(assert,
+				"(2.9) Side-effects refresh of single node Beta (SNOW: DINC0538031)")
+		]);
+
+		assert.deepEqual(oBeta.getObject(), {
+				"@$ui5.node.isExpanded" : false,
+				"@$ui5.node.level" : 2,
+				ArtistID : "2",
+				IsActiveEntity : false,
+				Messages : [],
+				Name : "Beta",
+				sendsAutographs : false, // side effect
+				_ : {
+					NodeID : "2,false"
+				}
+			});
 
 		// 1 Alpha
 		//   2 Beta

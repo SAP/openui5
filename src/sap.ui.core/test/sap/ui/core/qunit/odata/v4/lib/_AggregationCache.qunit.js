@@ -1416,6 +1416,53 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("getQueryOptions4Single: non-empty path", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		this.mock(_Cache.prototype).expects("getQueryOptions4Single").never();
+		this.mock(_Helper).expects("clone").never();
+
+		assert.throws(function () {
+			// code under test
+			oCache.getQueryOptions4Single("some/path");
+		}, new Error("Unsupported path: some/path"));
+	});
+
+	//*********************************************************************************************
+[false, true].forEach((bLate) => {
+	[false, true].forEach((bFound) => {
+		const sTitle = "getQueryOptions4Single: late query options = " + bLate
+			+ ", node property found in $select = " + bFound;
+
+	QUnit.test(sTitle, function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X",
+			$NodeProperty : "Some/NodeID"
+		});
+		if (bLate) {
+			oCache.mLateQueryOptions = "~mLateQueryOptions~";
+		}
+		this.mock(_Cache.prototype).expects("getQueryOptions4Single").never();
+		const mClone = {
+			$select : bFound ? ["alpha", "Some/NodeID", "omega"] : ["alpha", "omega"]
+		};
+		this.mock(_Helper).expects("clone")
+			.withExactArgs(bLate ? "~mLateQueryOptions~" : sinon.match.same(oCache.mQueryOptions))
+			.returns(mClone);
+
+		// code under test
+		const mQueryOptions = oCache.getQueryOptions4Single("");
+
+		assert.strictEqual(mQueryOptions, mClone);
+		assert.deepEqual(mQueryOptions, {
+			$select : ["alpha", "omega"]
+		});
+	});
+	});
+});
+
+	//*********************************************************************************************
 [{
 	iIndex : 0,
 	iLength : 3,
@@ -4295,6 +4342,30 @@ sap.ui.define([
 			oCache.refreshKeptElements("~oGroupLock~", "~fnOnRemove~"),
 			undefined,
 			"nothing happens");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("replaceElement", function () {
+		const oCache
+			= _AggregationCache.create(this.oRequestor, "~", "", {}, {hierarchyQualifier : "X"});
+		this.mock(_Cache.prototype).expects("replaceElement").never();
+		this.mock(_Helper).expects("buildPath").withExactArgs("/~", "some(42)/path")
+			.returns("~buildPath~");
+		this.mock(_Helper).expects("getMetaPath").withExactArgs("~buildPath~")
+			.returns("~metaPath~");
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs("~oElement~", "~mTypeForMetaPath~", "~metaPath~", "some(42)/path(1)",
+				undefined, "~bKeepReportedMessagesPath~");
+		this.mock(_Helper).expects("updateAll")
+			.withExactArgs({}, "", "~oOldElement~", "~oElement~");
+		const aElements = [];
+		aElements.$byPredicate = {
+			"(1)" : "~oOldElement~"
+		};
+
+		// code under test
+		oCache.replaceElement(aElements, NaN, "(1)", "~oElement~", "~mTypeForMetaPath~",
+			"some(42)/path", "~bKeepReportedMessagesPath~");
 	});
 
 	//*********************************************************************************************
