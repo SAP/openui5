@@ -226,8 +226,8 @@ sap.ui.define([
 			return this;
 		}
 
-		if (this._oPopover.getEndButton() && !bShowTableSettingsButton) {
-			this._oPopover.getEndButton().destroy();
+		if (!bShowTableSettingsButton) {
+			this._oPopover.getEndButton()?.destroy();
 			this._oPopover.setEndButton(null);
 		} else {
 			this._oPopover.setEndButton(createTableSettingsButton(this));
