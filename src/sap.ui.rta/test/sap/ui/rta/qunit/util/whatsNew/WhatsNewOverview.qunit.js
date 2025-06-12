@@ -40,11 +40,7 @@ sap.ui.define([
 		{
 			featureId: "multipleElements",
 			title: "Multiple Elements",
-			documentationUrls: {
-				btpUrl: "btpUrlTestString",
-				s4HanaCloudUrl: "s4HanaCloudUrlTestString",
-				s4HanaOnPremUrl: "s4HanaOnPremUrlTestString"
-			},
+			documentationUrls: null,
 			information: [
 				{
 					text: "This is only the text",
@@ -71,36 +67,34 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When the overview dialog is opened", function(assert) {
-			assert.ok(this.oWhatsNewOverviewDialog.isOpen());
+			assert.ok(this.oWhatsNewOverviewDialog.isOpen(), "then the dialog is opened");
 			const oModel = this.oWhatsNewOverviewDialog.getModel("whatsNewModel");
 			const aFeatures = oModel.getProperty("/featureCollection");
 			assert.strictEqual(aFeatures.length, 2, "all features are loaded");
 			assert.ok(this.oWhatsNewOverviewDialog.getContent()[0].isActive(), "the first page is active");
-			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems().length,
-				2,
-				"the items are set correctly"
-			);
-			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0].getTitle(),
-				aFeatureCollection[0].title,
-				"the text is correct and the first feature that is visible in the dialog is the first feature from the feature array"
-			);
-			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0].getDescription(),
-				aFeatureCollection[0].description,
-				"the description is correct"
-			);
-			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1].getTitle(),
-				aFeatureCollection[1].title,
-				"the text is correct"
-			);
-			assert.strictEqual(
-				this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1].getDescription(),
-				"",
-				"no description is set"
-			);
+			assert.strictEqual(this.oWhatsNewOverviewDialog.getContent()[0].getItems().length, 2, "the items are set correctly");
+		});
+
+		QUnit.test("When the first entry is opened", async function(assert) {
+			const aOverviewListItems = Element.getElementById("whatsNewOverview").getItems();
+			aOverviewListItems[0].firePress();
+			await nextUIUpdate();
+			const oLearnMoreButton = Element.getElementById("sapUiRtaWhatsNewOverviewDialog_LearnMore");
+			const oFirstItem = this.oWhatsNewOverviewDialog.getContent()[0].getItems()[0];
+			assert.strictEqual(oFirstItem.getTitle(), aFeatureCollection[0].title, "then the text is correct");
+			assert.strictEqual(oFirstItem.getDescription(), aFeatureCollection[0].description, "then the description is correct");
+			assert.ok(oLearnMoreButton.getEnabled(), "then the Learn More button is enabled");
+		});
+
+		QUnit.test("When the second entry is opened", async function(assert) {
+			const aOverviewListItems = Element.getElementById("whatsNewOverview").getItems();
+			aOverviewListItems[1].firePress();
+			await nextUIUpdate();
+			const oLearnMoreButton = Element.getElementById("sapUiRtaWhatsNewOverviewDialog_LearnMore");
+			const oSecondItem = this.oWhatsNewOverviewDialog.getContent()[0].getItems()[1];
+			assert.strictEqual(oSecondItem.getTitle(), aFeatureCollection[1].title, "then the text is correct");
+			assert.strictEqual(oSecondItem.getDescription(), "", "then no description is set");
+			assert.notOk(oLearnMoreButton.getEnabled(), "then the Learn More button is disabled");
 		});
 
 		QUnit.test("Open S4Hana Learn more Link", async function(assert) {

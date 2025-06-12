@@ -47,6 +47,25 @@ sap.ui.define([
 		}
 	});
 
+	function updateLearnMoreButton(oCarousel) {
+		const sActivePageId = oCarousel.getActivePage();
+		const aPages = oCarousel.getPages();
+		const oLearnMoreBtn = Element.getElementById("sapUiRtaWhatsNewDialog_LearnMore");
+
+		// During initialization of the carousel the ActivePageId is not set yet, so we default to the index of the first page
+		const iCurrentIndex = sActivePageId
+			? aPages.findIndex(function(oPage) {
+				return oPage.getId() === sActivePageId;
+			})
+			: 0;
+
+		if (this.aUnseenFeatures[iCurrentIndex] && this.aUnseenFeatures[iCurrentIndex].documentationUrls) {
+			oLearnMoreBtn.setEnabled(true);
+		} else {
+			oLearnMoreBtn.setEnabled(false);
+		}
+	}
+
 	WhatsNew.prototype.setDontShowAgainFeatureIds = async function(aDontShowAgainFeatureIds) {
 		this.setProperty("dontShowAgainFeatureIds", aDontShowAgainFeatureIds);
 		this.aUnseenFeatures = await WhatsNewUtils.getFilteredFeatures(aDontShowAgainFeatureIds, this.getLayer());
@@ -78,6 +97,16 @@ sap.ui.define([
 		});
 		this.oWhatsNewDialog.setModel(oRTAResourceModel, "i18n");
 		this.oWhatsNewDialog.setModel(oWhatsNewDialogModel, "whatsNewModel");
+
+		// Dynamically enable/disable the Learn More button based on the current carousel page
+		const oCarousel = Element.getElementById("sapWhatsNewDialogCarousel");
+		if (oCarousel) {
+			oCarousel.attachEvent("pageChanged", () => {
+				updateLearnMoreButton.call(this, oCarousel);
+			});
+			// Initial state
+			updateLearnMoreButton.call(this, oCarousel);
+		}
 	};
 
 	WhatsNew.prototype.closeWhatsNewDialog = function() {
