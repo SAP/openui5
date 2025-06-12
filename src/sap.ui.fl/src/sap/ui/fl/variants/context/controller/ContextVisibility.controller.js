@@ -98,7 +98,7 @@ sap.ui.define([
 
 		formatTooltip(sDescription) {
 			this.oI18n ||= this.getView().getModel("i18n").getResourceBundle();
-			return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
+			return sDescription?.trim() ? sDescription : this.oI18n.getText("NO_DESCRIPTION");
 		},
 
 		/**
