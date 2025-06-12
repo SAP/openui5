@@ -1037,19 +1037,59 @@ sap.ui.define([
 		assert.ok(this.oMenu.getItems()[1]._getPopover().hasStyleClass(sCustomClass), "The class is propagated to the submenu's popover");
 	});
 
-	QUnit.test("'openAsContextMenu' positions menu properly when only offsetX/offsetY are provided", async function (assert) {
+	QUnit.test("'openAsContextMenu' positions menu properly when different type of objects are provided", async function (assert) {
 		// Arrange
-		var oCoordinates = { offsetX: 100, offsetY: 200 },
+		var oOffsetCoordinates = { offsetX: 100, offsetY: 200 },
+			oPageCoordinates = { pageX: 20, pageY: 40 },
+			oWrongCoordinates1 = { offsetX: 100, offsetY: 200, pageY: 40 },
+			oWrongCoordinates2 = { offsetY: 200, pageX: 20, pageY: 40 },
+			oWrongCoordinates3 = { offsetY: 200, pageX: 20 },
 			oOpener;
 
 		// Act
-		this.oMenu.openAsContextMenu(oCoordinates);
+		this.oMenu.openAsContextMenu(oOffsetCoordinates);
 		await nextUIUpdate(this.clock);
 		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
 
 		// Assert
-		assert.strictEqual(oOpener.style.insetInlineStart, oCoordinates.offsetX + "px", "X coordinate is set correctly");
-		assert.strictEqual(oOpener.style.insetBlockStart, oCoordinates.offsetY + "px", "Y coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetInlineStart, oOffsetCoordinates.offsetX + "px", "[offsetX/offsetY only] X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, oOffsetCoordinates.offsetY + "px", "[offsetX/offsetY only] Y coordinate is set correctly");
+
+		// Act
+		this.oMenu.openAsContextMenu(oPageCoordinates);
+		await nextUIUpdate(this.clock);
+		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
+
+		// Assert
+		assert.strictEqual(oOpener.style.insetInlineStart, oPageCoordinates.pageX + "px", "[pageX/pageY only] X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, oPageCoordinates.pageY + "px", "[pageX/pageY only ] Y coordinate is set correctly");
+
+		// Act
+		this.oMenu.openAsContextMenu(oWrongCoordinates1);
+		await nextUIUpdate(this.clock);
+		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
+
+		// Assert
+		assert.strictEqual(oOpener.style.insetInlineStart, oWrongCoordinates1.offsetX + "px", "[object containing offsetX/offsetY pair] X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, oWrongCoordinates1.offsetY + "px", "[object containing offsetX/offsetY pair] Y coordinate is set correctly");
+
+		// Act
+		this.oMenu.openAsContextMenu(oWrongCoordinates2);
+		await nextUIUpdate(this.clock);
+		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
+
+		// Assert
+		assert.strictEqual(oOpener.style.insetInlineStart, oWrongCoordinates2.pageX + "px", "[object containing pageX/pageY pair] X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, oWrongCoordinates2.pageY + "px", "[object containing pageX/pageY pair] Y coordinate is set correctly");
+
+		// Act
+		this.oMenu.openAsContextMenu(oWrongCoordinates3);
+		await nextUIUpdate(this.clock);
+		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
+
+		// Assert
+		assert.strictEqual(oOpener.style.insetInlineStart, "0px", "X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, "0px", "Y coordinate is set correctly");
 	});
 
 

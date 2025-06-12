@@ -300,30 +300,35 @@ sap.ui.define([
 		Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
 			const oPopover = this._getPopover(),
 				oOpenerDomRef = oOpenerRef && oOpenerRef.getDomRef ? oOpenerRef.getDomRef() : oOpenerRef,
-				oOpenerData = oOpenerRef && oOpenerDomRef ? oOpenerDomRef.getBoundingClientRect() : null;
-			let bWithPointer = oEvent.originalEvent && oEvent.originalEvent.button !== -1,
-				iX = oEvent.pageX || 0,
-				iY = oEvent.pageY || 0;
+				oOpenerData = oOpenerRef && oOpenerDomRef ? oOpenerDomRef.getBoundingClientRect() : null,
+				bPageCoordinates = oEvent && oEvent.pageX !== undefined && oEvent.pageY !== undefined,
+				bOffsetCoordinates = !bPageCoordinates && !oOpenerRef && oEvent.offsetX !== undefined && oEvent.offsetY !== undefined;
+			let bWithPointer = oEvent && oEvent.originalEvent && oEvent.originalEvent.button !== -1,
+				iX = 0,
+				iY = 0;
 
 			if (oPopover.isOpen()) {
 				oPopover.close();
 			}
-
-			if (Localization.getRTL()) {
-				iX = document.body.clientWidth - iX;
-			}
-
-			oPopover._getPopup().setDurations(this._openDuration, 0);
 
 			if (Device.system.phone) {
 				oPopover.openBy();
 				return;
 			}
 
-			if (oEvent.offsetX !== undefined && oEvent.offsetY !== undefined && !oOpenerRef) {
-				// for explicit position coordinates
-				iX = oEvent.offsetX || 0;
-				iY = oEvent.offsetY || 0;
+			oPopover._getPopup().setDurations(this._openDuration, 0);
+
+			if (bPageCoordinates) {
+				// event page coordinates
+				iX = oEvent.pageX;
+				iY = oEvent.pageY;
+				if (Localization.getRTL()) {
+					iX = document.body.clientWidth - iX;
+				}
+			} else if (bOffsetCoordinates) {
+				// explicit position coordinates
+				iX = oEvent.offsetX;
+				iY = oEvent.offsetY;
 				bWithPointer = true;
 			}
 

@@ -58,8 +58,8 @@
 				"ref": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/mockServer.html",
 				"links": {
 					"View Tutorial": "topic/3da5f4be63264db99f2e5b04c5e853db",
-					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/Test.qunit.html?testsuite=test-resources/ui5/walkthrough/testsuite.qunit&test=integration/opaTests",
-					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/Test.qunit.html?testsuite=test-resources/ui5/walkthrough/testsuite.qunit&test=unit/unitTests"
+					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/Test.qunit.html?testsuite=test-resources/ui5/walkthrough/testsuite.qunit&test=unit/unitTests",
+					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/Test.qunit.html?testsuite=test-resources/ui5/walkthrough/testsuite.qunit&test=integration/opaTests"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/m/demokit/tutorial/walkthrough/demoapp.json"
@@ -108,16 +108,28 @@
 				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
 			},
 			{
-				"icon": "activities",
-				"text": "TypeScript To-Do List",
-				"ref": "test-resources/sap/m/demokit/sample/TsTodos/webapp/index.html",
-				"desc": "This to-do app demonstrates a TypeScript setup for developing UI5 applications.",
+				"icon": "sap-ui5",
+				"text": "UXC Integration",
+				"ref": "https://sap-samples.github.io/uxc-integration/",
+				"desc": "This example illustrates the integration of UI5 Web Components into SAPUI5 applications.",
 				"links": {
-					"View TypeScript Code": "entity/sap.m.sample.TsTodos/sample/sap.m.sample.TsTodos.webapp",
-					"Run Unit Tests": "test-resources/sap/m/demokit/sample/TsTodos/test/unit/unitTests.qunit.html"
+					"View Source Code": "https://github.com/SAP-samples/uxc-integration"
 				},
 				"category": "Showcase",
-				"config": "test-resources/sap/m/demokit/sample/TsTodos/demoapp.json"
+				"config": "test-resources/sap/m/demokit/sample/UXCIntegration/demoapp.json"
+			},
+			{
+				"icon": "source-code",
+				"text": "TypeScript Hello World",
+				"ref": "https://sap-samples.github.io/ui5-typescript-helloworld/",
+				"desc": "This sample demonstrates a TypeScript setup for developing UI5 applications.",
+				"links": {
+					"View Source Code": "https://github.com/SAP-samples/ui5-typescript-helloworld",
+					"Run Unit Tests": "https://sap-samples.github.io/ui5-typescript-helloworld/test/Test.qunit.html?testsuite=test-resources/ui5/typescript/helloworld/testsuite.qunit&test=unit/unitTests",
+					"Run Integration Tests": "https://sap-samples.github.io/ui5-typescript-helloworld/test/Test.qunit.html?testsuite=test-resources/ui5/typescript/helloworld/testsuite.qunit&test=integration/opaTests"
+				},
+				"category": "Showcase",
+				"config": "test-resources/sap/m/demokit/sample/TsHelloWorld/demoapp.json"
 			}
 		]
 	},
@@ -1754,17 +1766,6 @@
 				]
 			},
 			{
-				"id": "sap.m.sample.TsTodos",
-				"name": "TypeScript To-Do List",
-				"category": "Showcase",
-				"since": "1.108",
-				"formFactors": "-",
-				"description": "This to-do app demonstrates a TypeScript setup for developing UI5 applications.",
-				"samples": [
-					"sap.m.sample.TsTodos.webapp"
-				]
-			},
-			{
 				"id": "sap.m.VariantManagement",
 				"name": "Variant Management",
 				"category": "Action",
@@ -1789,6 +1790,29 @@
 					"sap.m.sample.UploadSetwithTablePlugin.ResponsiveTableProgressIndicator",
 					"sap.m.sample.UploadSetwithTablePlugin.MultiplePluginInstances",
 					"sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample"
+				]
+			},
+			{
+				"id": "sap.m.sample.UXCIntegration",
+				"name": "UXC Integration",
+				"category": "Showcase",
+				"since": "1.138",
+				"formFactors": "-",
+				"description": "This example illustrates the integration of UI5 Web Components into SAPUI5 applications.",
+				"samples": [
+					"sap.m.sample.UXCIntegration"
+				],
+				"hidden": true
+			},
+			{
+				"id": "sap.m.sample.TsHelloWorld",
+				"name": "TypeScript Hello World",
+				"category": "Showcase",
+				"since": "1.138",
+				"formFactors": "-",
+				"description": "This sample demonstrates a TypeScript setup for developing UI5 applications.",
+				"samples": [
+					"sap.m.sample.TsHelloWorld"
 				]
 			}
 		],
@@ -3929,11 +3953,6 @@
 				"description": "The standalone ColorPalette in a container (<code>sap.ui.layout.SimpleForm</code>)."
 			},
 			{
-				"id": "sap.m.sample.TsTodos.webapp",
-				"name": "TypeScript To-Do List",
-				"description": "This to-do app demonstrates a TypeScript setup for developing UI5 applications."
-			},
-			{
 				"id": "sap.m.sample.VariantManagement",
 				"name": "VariantManagement using dedicated items",
 				"description": "VariantManagement with dedicated items"
@@ -3977,6 +3996,24 @@
 				"id": "sap.m.sample.UploadSetwithTablePlugin.FileNameValidationSample",
 				"name": "Plugin for Responsive Table (sap.m.Table) - File Name validation configuration",
 				"description": "This example demonstrates the usage of fileNameValidationConfig property to configure file name validation for renaming a file."
+			},
+			{
+				"id": "sap.m.sample.UXCIntegration",
+				"name": "UXC Integration",
+				"description": "This example illustrates the integration of UI5 Web Components into SAPUI5 applications.",
+				"external": true,
+				"externalAppRef": "https://sap-samples.github.io/uxc-integration/",
+				"externalSourceRef": "https://github.com/SAP-samples/uxc-integration",
+				"externalResourceRef": "https://github.com/SAP-samples/uxc-integration/archive/refs/heads/main.zip"
+			},
+			{
+				"id": "sap.m.sample.TsHelloWorld",
+				"name": "TypeScript Hello World",
+				"description": "This sample demonstrates a TypeScript setup for developing UI5 applications.",
+				"external": true,
+				"externalAppRef": "https://sap-samples.github.io/ui5-typescript-helloworld/",
+				"externalSourceRef": "https://github.com/SAP-samples/ui5-typescript-helloworld",
+				"externalResourceRef": "https://github.com/SAP-samples/ui5-typescript-helloworld/archive/refs/heads/main.zip"
 			}
 		]
 	}

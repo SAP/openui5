@@ -68,7 +68,7 @@
 							class="sapUiHideOnPhone"
 							tooltip="{i18n>SAMPLE_ADAPT_BTN_TOOLTIP}"
 							press="onToggleAdaptationMode"
-							visible="{= ${/rtaLoaded} &amp;&amp; !${/iframe} }" />
+							visible="{= ${/rtaLoaded} &amp;&amp; !${/iframe} &amp;&amp; !${/external} }" />
 					<Button
 							id="code"
 							icon="sap-icon://source-code"
@@ -81,7 +81,8 @@
 							press="onNewTab" />
 					<Button id="sampleSettings"
 							icon="sap-icon://action-settings"
-							press="handleSettings" />
+							press="handleSettings"
+							visible="{= !${/external} }" />
 					<Button
 							class="sapUiHideOnPhone"
 							text="{i18n>SAMPLE_DOWNLOAD_BTN_TOOLTIP}"

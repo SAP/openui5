@@ -617,6 +617,27 @@ sap.ui.define([
 		}, {message : sMsg, name : "SyntaxError"});
 	});
 
+	[
+		// constant values parsed to static binding
+		{expression : "77 - 42", result : {value : 35}},
+		{expression : "77 > 42", result : {value : true}},
+		{expression : "{p : 'foo'}", result : {value : {p : 'foo'}}},
+		// constant values parsed to a string
+		{expression : "Math.foo", result : "undefined"}, // undefined cannot be value of static binding
+		{expression : "'some string'", result : "some string"} // no static binding required for string
+	].forEach(({expression, result}) => {
+		QUnit.test(`Expression binding with constant expression: ${expression}`, function (assert) {
+			const oResult = parse(`{=${expression}}`, {}, /*bUnescape*/ true);
+			assert.deepEqual(oResult, result);
+			assert.strictEqual(oResult[BindingParser.UI5ObjectMarker],
+				typeof result === "object" ? false : undefined);
+		});
+	});
+
+	QUnit.test("Expression binding w/ constant expression and string fragment", function (assert) {
+		assert.deepEqual(parse("foo{=42}", {}, /*bUnescape*/ true), "foo42");
+	});
+
 	QUnit.test("mergeParts w/o root formatter", function (assert) {
 		var oBindingInfo = {
 				parts : [

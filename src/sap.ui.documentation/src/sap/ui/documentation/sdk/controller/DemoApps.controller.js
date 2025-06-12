@@ -119,11 +119,32 @@ sap.ui.define([
 				.then(function (response) {
 					return response.json();
 				})
-				.then(this.processFiles.bind(this, oItem))
+				.then(function (oConfig) {
+					if (oConfig.external) {
+						this._handleExternalDownload(oConfig);
+						return;
+					}
+
+					this.processFiles(oItem, oConfig);
+				}.bind(this))
 				.catch(function (error) {
 					Log.error('Error: ', error);
 					this.handleError('An error occurred: ' + error.message);
 				}.bind(this));
+		},
+
+		/**
+		 * Handles the external download logic for demo apps marked as external.
+		 * @param {object} oConfig - The app configuration.
+		 */
+		_handleExternalDownload: function(oConfig) {
+			var sExternalUrl = oConfig.externalResourceRef;
+			if (sExternalUrl) {
+				MessageToast.show("Downloading for app \"" + oConfig.name + "\" has been started");
+				openWindow(sExternalUrl, "_blank");
+			} else {
+				this.handleError("No external resource URL provided.");
+			}
 		},
 
 		/**

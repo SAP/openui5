@@ -1,0 +1,7 @@
+<mvc:XMLView xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core">
+    <App>
+        <Page showHeader="false">
+            <Text text="Placeholder for TypeScript Hello World Sample" />
+        </Page>
+    </App>
+</mvc:XMLView>

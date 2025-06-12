@@ -56,6 +56,15 @@ sap.ui.define([
 			"sap-ui-language"
 		];
 
+		// Constants for better maintainability
+		var CONSTANTS = {
+			LEGACY_THEME_VERSION_THRESHOLD: 68,
+			LEGACY_DEFAULT_THEME: "sap_belize",
+			SETTINGS_TIMEOUT: 3000,
+			BUSY_DIALOG_TIMEOUT: 1000,
+			EXTERNAL_SAMPLE_RENDERING_DELAY: 100
+		};
+
 		return SampleBaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 			/* =========================================================== */
 			/* lifecycle methods										   */
@@ -145,9 +154,8 @@ sap.ui.define([
 
 				// check whether to open sample standalone
 				if (bShouldRedirect) {
-					this._handleRedirect();
+					this._handleRedirect(oSample);
 				}
-
 
 				// If we are in a scenario without contexts - this is the case for tutorials
 				if (oSample.previousSampleId || oSample.nextSampleId) {
@@ -178,7 +186,11 @@ sap.ui.define([
 				oModelData.name = oSample.name;
 				oModelData.details = oSample.details;
 				oModelData.description = oSample.description;
-				oModelData.showSettings = true;
+				oModelData.showSettings = !oSample.external; // Disable settings for external samples
+				oModelData.external = oSample.external;
+				oModelData.externalAppRef = oSample.externalAppRef;
+				oModelData.externalSourceRef = oSample.externalSourceRef;
+				oModelData.externalResourceRef = oSample.externalResourceRef;
 
 				var sLocalStorageDKSamples = this._getChangedSamplesLocalStorage();
 				if (sLocalStorageDKSamples && JSON.parse(sLocalStorageDKSamples).indexOf(oSample.id) > -1) {
@@ -236,9 +248,15 @@ sap.ui.define([
 			/**
 			 * Handles redirection from DemoKit to the sample page, rather than loading it as an iFrame.
 			 * The 'dk-sample-standalone' query parameter must be in the URI to take effect.
+			 * @param {object} oSample - The sample object containing metadata
 			 * @private
 			 */
-			_handleRedirect : function () {
+			_handleRedirect : function (oSample) {
+				if (this._isExternalSample(oSample)) {
+					URLHelper.redirect(oSample.externalAppRef, false);
+					return;
+				}
+
 				this._initIframeURL();
 				this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
 				this.sIFrameUrl += "&dk-sample-standalone";
@@ -246,10 +264,51 @@ sap.ui.define([
 			},
 
 			/**
+			 * Checks if the given sample is external
+			 * @param {object} oSample - The sample object
+			 * @returns {boolean} True if the sample is external
+			 * @private
+			 */
+			_isExternalSample: function(oSample) {
+				return oSample && oSample.external;
+			},
+
+			/**
+			 * Gets the iframe content window safely
+			 * @returns {Window|null} The iframe content window or null if not available
+			 * @private
+			 */
+			_getIframeContentWindow: function() {
+				var oIframeDomRef = this._oHtmlControl && this._oHtmlControl.getDomRef();
+				return oIframeDomRef ? oIframeDomRef.contentWindow : null;
+			},
+
+			/**
+			 * Posts a message to the iframe content window safely
+			 * @param {object} oMessage - The message to post
+			 * @private
+			 */
+			_postMessageToIframe: function(oMessage) {
+				var oContentWindow = this._getIframeContentWindow();
+				if (oContentWindow) {
+					oContentWindow.postMessage(oMessage, this.getOwnerComponent()._sSampleIframeOrigin);
+				}
+			},
+
+			/**
 			 * Initializes the URL of the sample itself, loaded either in an iFrame or standalone.
 			 * @private
 			 */
 			_initIframeURL : function () {
+				var oModelData = this.oModel && this.oModel.getData();
+
+				// Check if this is an external sample
+				if (oModelData && this._isExternalSample(oModelData) && oModelData.externalAppRef) {
+					this.sIFrameUrl = oModelData.externalAppRef;
+					// No need to proceed further for external samples
+					return;
+				}
+
 				var sSampleOrigin = ResourcesUtil.getConfig(),
 					sSampleVersion = ResourcesUtil.getResourcesVersion(),
 					sSampleSearchParams = "";
@@ -339,22 +398,23 @@ sap.ui.define([
 
 			loadSampleSettings: function(fnCallback) {
 				return new Promise(function (resolve, reject) {
-					var oIframe = this._oHtmlControl.getDomRef();
-					oIframe.contentWindow.postMessage({
+					this._postMessageToIframe({
 						type: "SETTINGS",
 						reason: "get"
-					}, this.getOwnerComponent()._sSampleIframeOrigin);
+					});
 
-					window.addEventListener("message", loadSettings);
-
-					function loadSettings(eMessage) {
+					var fnLoadSettings = function(eMessage) {
 						fnCallback(eMessage);
-						window.removeEventListener("message", loadSettings);
+						window.removeEventListener("message", fnLoadSettings);
 						resolve();
-					}
+					};
+
+					window.addEventListener("message", fnLoadSettings);
+
 					setTimeout(function() {
+						window.removeEventListener("message", fnLoadSettings);
 						reject("The sample iframe is not loading settings");
-					},3000);
+					}, CONSTANTS.SETTINGS_TIMEOUT);
 				}.bind(this));
 			},
 
@@ -409,29 +469,37 @@ sap.ui.define([
 			 * @private
 			 */
 			_applyAppConfiguration: function(sThemeActive, sDensityMode, bRTL){
-				var oIframe = this._oHtmlControl.getDomRef();
+				var oModelData = this.oModel.getData();
+
+				// Skip settings application for external samples
+				if (this._isExternalSample(oModelData)) {
+					return;
+				}
 
 				if (this.getModel().getProperty('/iframe')) {
 					this._setStandAloneIndexIframeSetting(sThemeActive, sDensityMode, bRTL);
 				} else {
-					sDensityMode = this._presetDensity(sDensityMode);
-					oIframe.contentWindow.postMessage({
+					this._postMessageToIframe({
 						type: "SETTINGS",
 						reason: "set",
 						data: {
-							"density": sDensityMode,
+							"density": this._presetDensity(sDensityMode),
 							"RTL": bRTL,
 							"theme": sThemeActive
 						}
-					}, this.getOwnerComponent()._sSampleIframeOrigin);
+					});
 				}
 			},
 
-			_setStandAloneIndexIframeSetting(sThemeActive, sDensityMode, bRTL) {
+			_setStandAloneIndexIframeSetting: function(sThemeActive, sDensityMode, bRTL) {
 				this._applySearchParamValueToIframeURL('sap-ui-theme', sThemeActive);
 				this._applySearchParamValueToIframeURL('sap-ui-density', sDensityMode);
 				this._applySearchParamValueToIframeURL('sap-ui-rtl', bRTL);
-				this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
+
+				var oIframeDomRef = this._oHtmlControl && this._oHtmlControl.getDomRef();
+				if (oIframeDomRef) {
+					oIframeDomRef.src = this.sIFrameUrl;
+				}
 			},
 
 			/**
@@ -442,7 +510,7 @@ sap.ui.define([
 				this._oBusyDialog.open();
 				setTimeout(function () {
 					this._oBusyDialog.close();
-				}.bind(this), 1000);
+				}.bind(this), CONSTANTS.BUSY_DIALOG_TIMEOUT);
 			},
 
 			_updateFileContent: function(sRef, sFile, bForceFetch) {
@@ -463,19 +531,37 @@ sap.ui.define([
 			},
 
 			onNewTab: function () {
+				var oModelData = this.oModel.getData();
+
+				// For external samples, open the external URL directly
+				if (this._isExternalSample(oModelData) && oModelData.externalAppRef) {
+					URLHelper.redirect(oModelData.externalAppRef, true);
+					return;
+				}
+
 				if (this.oModel.getProperty("/iframe")) {
 					URLHelper.redirect(this.sIFrameUrl, true);
 					return;
 				}
 
+				this._openNewTabWithSettings();
+			},
+
+			/**
+			 * Opens a new tab with current sample settings applied
+			 * @private
+			 */
+			_openNewTabWithSettings: function() {
 				this.loadSampleSettings(function(eMessage){
 					this._applySearchParamValueToIframeURL('sap-ui-theme', eMessage.data.data.theme);
 					this._applySearchParamValueToIframeURL('sap-ui-rtl', eMessage.data.data.RTL);
 					this._applySearchParamValueToIframeURL('sap-ui-density', eMessage.data.data.density);
-				}.bind(this)).then(function(){
+				}.bind(this))
+				.then(function(){
 					URLHelper.redirect(this.sIFrameUrl, true);
-				}.bind(this)).catch(function(err){
-					Log.error(err);
+				}.bind(this))
+				.catch(function(err){
+					Log.error("Failed to load sample settings for new tab", err);
 				});
 			},
 
@@ -541,20 +627,41 @@ sap.ui.define([
 
 					this._oHtmlControl = this._createHTMLControl()
 						.addEventDelegate({
-							onBeforeRendering: function () {
-								window.removeEventListener("message", this.onMessage.bind(this));
-							}.bind(this)
+							onBeforeRendering: this._onBeforeIframeRendering.bind(this)
 						})
 						.addEventDelegate({
-							onAfterRendering: function () {
-								window.addEventListener("message",this.onMessage.bind(this));
-							}.bind(this)
+							onAfterRendering: this._onAfterIframeRendering.bind(this)
 						});
 
 					this._getPage().removeAllContent();
 					this._getPage().addContent(this._oHtmlControl);
 
 				}.bind(this));
+			},
+
+			/**
+			 * Handler executed before the iframe rendering
+			 * @private
+			 */
+			_onBeforeIframeRendering: function() {
+				window.removeEventListener("message", this.onMessage.bind(this));
+			},
+
+			/**
+			 * Handler executed after the iframe rendering
+			 * @private
+			 */
+			_onAfterIframeRendering: function() {
+				var oModelData = this.oModel.getData();
+
+				// For external samples, resolve immediately after rendering since they don't use our messaging protocol
+				if (this._isExternalSample(oModelData)) {
+					setTimeout(function() {
+						this.fResolve({});
+					}.bind(this), CONSTANTS.EXTERNAL_SAMPLE_RENDERING_DELAY);
+				} else {
+					window.addEventListener("message", this.onMessage.bind(this));
+				}
 			},
 
 			_createHTMLControl: function () {
@@ -569,6 +676,12 @@ sap.ui.define([
 			},
 
 			onMessage: function(eMessage) {
+				var oModelData = this.oModel.getData();
+
+				if (this._isExternalSample(oModelData)) {
+					return;
+				}
+
 				if (eMessage.origin !== this.getOwnerComponent()._sSampleIframeOrigin) {
 					return;
 				}
@@ -594,16 +707,21 @@ sap.ui.define([
 					this.sIFrameUrl = sap.ui.require.toUrl(this._sId.replace(/\./g, "/")) + "/" + eMessage.data.config.sample.iframe;
 					this._setStandAloneIndexIframeSetting(oSettingsData.theme, oSettingsData.density, oSettingsData.rtl);
 				}
-				this._oHtmlControl.getDomRef().contentWindow.postMessage({
-					type: "SETTINGS",
-					reason: "set",
-					data: {
-						"density": oSettingsData.density,
-						"RTL": oSettingsData.rtl,
-						"theme": oSettingsData.theme
-					}
-				}, this.getOwnerComponent()._sSampleIframeOrigin);
-				this.fResolve(eMessage.data.config.sample);
+
+				// Skip settings initialization for external samples
+				if (!this._isExternalSample(oSettingsData)) {
+					this._postMessageToIframe({
+						type: "SETTINGS",
+						reason: "set",
+						data: {
+							"density": oSettingsData.density,
+							"RTL": oSettingsData.rtl,
+							"theme": oSettingsData.theme
+						}
+					});
+				}
+
+				this.fResolve(eMessage.data.config?.sample || {});
 			},
 			fnMessageLoad: function() {
 				Log.info("Sample Iframe for sample " + this._sId + " is loaded");
@@ -638,15 +756,28 @@ sap.ui.define([
 
 			setDefaultSampleTheme: function() {
 				var sSampleVersion = ResourcesUtil.getResourcesVersion();
-				this._sDefaultSampleTheme = sSampleVersion && parseInt(sSampleVersion.slice(3,5)) < 68 ?
-					"sap_belize" : Theming.getTheme();
+				this._sDefaultSampleTheme = sSampleVersion && parseInt(sSampleVersion.slice(3,5)) < CONSTANTS.LEGACY_THEME_VERSION_THRESHOLD ?
+					CONSTANTS.LEGACY_DEFAULT_THEME : Theming.getTheme();
 			},
 
 			onNavBack : function (oEvt) {
 				this.oRouter.navTo("entity", { id : this.entityId });
 			},
 
-			onNavToCode : function (evt) {
+			/**
+			 * Handles the navigation to the code view or to the external source code
+			 * @override
+			 */
+			onNavToCode: function () {
+				var oModelData = this.oModel.getData();
+
+				// For external samples, redirect to the external source code repository
+				if (this._isExternalSample(oModelData) && oModelData.externalSourceRef) {
+					URLHelper.redirect(oModelData.externalSourceRef, true);
+					return;
+				}
+
+				// For internal samples, navigate to the code view as usual
 				this.oRouter.navTo("code", {
 					entityId: this.entityId,
 					sampleId: this._sId
@@ -655,6 +786,26 @@ sap.ui.define([
 
 			onToggleFullScreen : function (oEvt) {
 				ToggleFullScreenHandler.updateMode(oEvt, this.getView(), this);
+			},
+
+			/**
+			 * Handles the download of the sample source code.
+			 * If the sample is external, it redirects to the external URL instead.
+			 * @override
+			 */
+			onDownload: function () {
+				var oModelData = this.oModel.getData();
+
+				// For external samples, open the external URL directly since they don't have downloadable source files
+				if (this._isExternalSample(oModelData) && oModelData.externalResourceRef) {
+					URLHelper.redirect(oModelData.externalResourceRef, true);
+					return;
+				}
+
+				// Call the parent's download method for internal samples
+				if (SampleBaseController.prototype.onDownload) {
+					SampleBaseController.prototype.onDownload.call(this);
+				}
 			},
 
 			_oRTA : null,
@@ -693,17 +844,17 @@ sap.ui.define([
 			},
 
 			onToggleAdaptationMode : function (oEvt) {
-				if (!this._oHtmlControl || !this._oHtmlControl.getDomRef()) {
+				var oContentWindow = this._getIframeContentWindow();
+				if (!oContentWindow) {
 					return false;
 				}
 
-				var oIframe = this._oHtmlControl.getDomRef();
-				oIframe.contentWindow.postMessage({
+				this._postMessageToIframe({
 					type: "RTA",
 					data: {
 						"msg": "Start the RTA"
 					}
-				}, this.getOwnerComponent()._sSampleIframeOrigin);
+				});
 			},
 
 			onRouteNotFound: function() {
@@ -711,7 +862,6 @@ sap.ui.define([
 
 				this.oRouter.myNavToWithoutHash("sap.ui.documentation.sdk.view.SampleNotFound", "XML", false);
 				setTimeout(this.appendPageTitle.bind(this, sNotFoundTitle));
-				return;
 			}
 		});
 	}
