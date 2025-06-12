@@ -1235,7 +1235,7 @@ var FrameType = library.FrameType;
 		}
 		for (var i = 0; i < aTileContainerContentArea.length; i++ ) {
 			var oTileContentAreaProperties = getComputedStyle(aTileContainerContentArea[i]);
-			assert.equal(oTileContentAreaProperties.marginTop, "16px", "Property set Correctly");
+			assert.equal(oTileContentAreaProperties.marginTop, "0px", "Property set Correctly");
 		}
 		for (var i = 0; i < aGenericTile.length; i++ ) {
 			if (aGenericTile[i] && aGenericTile[i].arialabel){
@@ -1371,6 +1371,14 @@ var FrameType = library.FrameType;
 			assert.ok(Number.isInteger(oInnerDiv.style.webkitLineClamp * 1),"Line clamp has been added successfully to subheader");
 			fnDone();
 		},0);
+	});
+
+	QUnit.test("_setHeaderContentBackgroundImage method to be called when the slideTile is longer than 800px", async function(assert){
+		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
+		this.oSlideTile.setWidth("900px");
+		var oSpy = this.spy(this.oSlideTile.getTiles()[0], "_setHeaderContentBackgroundImage");
+		await nextUIUpdate();
+		assert.strictEqual(oSpy.callCount, 1, "_setHeaderContentBackgroundImage has been called");
 	});
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container

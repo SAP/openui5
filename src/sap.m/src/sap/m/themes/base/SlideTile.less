@@ -102,22 +102,110 @@
 	}
 }
 
+.sapMST.sapMSTPhone.Stretch {
+	.sapMSTIconClickTapArea{
+		top: 0.5rem;
+		left: 0.5rem;
+	}
+	.sapMSTIconDisplayArea {
+		top: 0.5rem;
+		right: 0.5rem;
+	}
+	.sapMSTIconNestedArea {
+		top: 0.5rem;
+		right: 0.5rem;
+	}
+	.sapMGT.sapMGT.Stretch.sapMGTArticleMode.sapMGTBackgroundImage{
+		.sapMGTHdrContent {
+			height: 4rem;
+			.sapMGTBackgroundBadge {
+				margin-bottom: 0.3125rem;
+			}
+		}
+		.sapMTileCnt.News {
+			.sapMTileCntContent {
+				margin-top: 0.25rem;
+			}
+		}
+	}
+}
 
 .sapMST.Stretch.sapMSTLargeScreen {
 	.sapMGT.Stretch.sapMGTArticleMode.sapMGTBackgroundImage {
-		background-repeat: no-repeat;
-		background-position: right center;
-		background-size: 50% 100%;
 		.sapMGTHdrContent {
-			display: none;
+			position: absolute;
+			top: 0;
+			right: 0;
+			width: 50%;
+			height: 100%;
+			background-size: cover;
+			background-position: center center;
+			background-repeat: no-repeat;
+			z-index: 0;
+			padding: 0;
 		}
 		.sapMGTContent {
 			width: 50%;
+			margin: 0;
+			.sapMTileCnt.News {
+				margin: 0;
+				.sapMObjStatus {
+					top: 1.5rem;
+					left: 1.5rem;
+				}
+				.sapMTileCntContent {
+					margin: 0;
+    				padding: 3.375rem 1.5rem 0 1.5rem;
+				}
+			}
 		}
 	}
 	.sapMSTBulleted {
-		justify-content: flex-start;
-		margin-left: 20%;
+		left: 25%;
+		transform: translateX(-50%);
+	}
+	.sapMSTIconClickTapArea {
+		top: 1.5rem;
+		right: 1.5rem;
+	}
+	.sapMSTIconDisplayArea {
+		top: 1.5rem;
+		right: 1.5rem;
+	}
+	.sapMSTIconNestedArea {
+		top: 1.5rem;
+		right: 1.5rem;
+	}
+}
+
+.sapMST.Stretch {
+	.sapMGT.Stretch.sapMGTArticleMode.sapMGTBackgroundImage {
+		.sapMGTContent {
+			overflow: initial;
+			.sapMTileCnt.News {
+				.sapMObjStatus {
+					position: absolute;
+					top: -2rem;
+					left: 0.5rem;
+					padding-bottom: 0;
+				}
+				.sapMTileCntContent {
+					margin-top: 0.5rem;
+				}
+			}
+		}
+	}
+	.sapMSTIconClickTapArea {
+		top: 1rem;
+		right: 1rem;
+	}
+	.sapMSTIconDisplayArea {
+		top: 1rem;
+		right: 1rem;
+	}
+	.sapMSTIconNestedArea {
+		top: 1rem;
+		right: 1rem;
 	}
 }
 
