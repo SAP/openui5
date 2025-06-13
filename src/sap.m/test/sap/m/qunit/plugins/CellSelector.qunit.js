@@ -27,8 +27,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/m/Input",
 	"sap/m/ComboBox",
-	"sap/ui/core/InvisibleRenderer"
-], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin, Sorter, Input, ComboBox, InvisibleRenderer) {
+	"sap/ui/core/InvisibleRenderer",
+	"sap/m/Link"
+], function (Dialog, Text, MTable, MColumn, ColumnListItem, CellSelector, CustomData, MockServer, DragDropInfo, DropInfo, KeyCodes, MDCTable, MDCColumn, JSONModel, ODataModel, qutils, nextUIUpdate, GridColumn, GridTable, GridFixedRowMode, MultiSelectionPlugin, Sorter, Input, ComboBox, InvisibleRenderer, Link) {
 	"use strict";
 
 	const sServiceURI = "/service/";
@@ -52,7 +53,7 @@ sap.ui.define([
 			}),
 			columns: [
 				new GridColumn({ template: new Text({text: "{ProductId}"}) }),
-				new GridColumn({ template: new Text({text: "{Name}"}) }),
+				new GridColumn({ template: new Link({text: "{Name}"}) }),
 				new GridColumn({ template: new Text({text: "{Category}", visible: false}) }),
 				new GridColumn({ template: new Input()}),
 				new GridColumn({ template: new ComboBox()})
@@ -815,7 +816,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Interaction - Shift + Click", {
+	QUnit.module("Interaction - Modifier + Click", {
 		beforeEach: async function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
 			this.oMockServer.simulate("test-resources/sap/m/qunit/data/metadata.xml", "test-resources/sap/m/qunit/data");
@@ -853,5 +854,25 @@ sap.ui.define([
 		qutils.triggerEvent("mouseup", oComboBox.getDomRef());
 		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 0}, to: {rowIndex: 1, colIndex: 4}}, "Cells has been selected");
 		assert.notEqual(oComboBox.getId(), document.activeElement.id, "ComboBox is not focused");
+	});
+
+	QUnit.test("Ctrl + Click on Link", async function(assert) {
+		const oLink = this.oTable.getRows()[0].getCells()[1];
+
+		let bCalled = false;
+		const oPromise = new Promise((resolve) => {
+			oLink.attachPress(() => {
+				bCalled = true;
+				resolve();
+			});
+		});
+
+		qutils.triggerEvent("mousedown", oLink.getDomRef(), { button: 0, ctrlKey: true });
+		assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+		qutils.triggerEvent("click", oLink.getDomRef(),  { button: 0, ctrlKey: true });
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 0, colIndex: 1}, to: {rowIndex: 0, colIndex: 1}});
+
+		await oPromise;
+		assert.ok(bCalled, "Link has been pressed");
 	});
 });
