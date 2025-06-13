@@ -3,7 +3,6 @@ sap.ui.define([
 	"sap/ui/test/gherkin/opa5TestHarness",
 	"./arrangements/iframe/Startup",
 	"sap/ui/test/gherkin/StepDefinitions",
-
 	// QUnit additions
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/qunit/qunit-junit",
@@ -17,18 +16,17 @@ sap.ui.define([
 	"./pages/Dialog",
 	"./pages/Checkout",
 	"./pages/OrderCompleted"
-], function (Opa5, testHarness, Startup, StepDefinitions) {
+], (Opa5, testHarness, Startup, StepDefinitions) => {
 	"use strict";
 
-	var startupInstance = new Startup();
-	var Steps = StepDefinitions.extend("GherkinWithOPA5.Steps", {
-		init: function() {
+	const startupInstance = new Startup();
+	const Steps = StepDefinitions.extend("GherkinWithOPA5.Steps", {
+		init() {
 			this.register(
 				/^I start my App with the hash "(.*)" (.*)/i,
-				function(sHash, sStorage) {
-					var bKeepStorage = sStorage.indexOf("keeping") >= 0;
+				(sHash, sStorage) => {
 					startupInstance.iStartMyApp({
-						keepStorage: bKeepStorage,
+						keepStorage: sStorage.includes("keeping"),
 						hash: sHash
 					});
 				}
@@ -36,14 +34,14 @@ sap.ui.define([
 		}
 	});
 
-	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/DeleteProduct", generateMissingSteps : true});
-	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/BuyProduct", generateMissingSteps : true, steps: Steps});
-	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/SaveForLater", generateMissingSteps : true});
-	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/ProductsFilter", generateMissingSteps : true});
+	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/DeleteProduct", generateMissingSteps: true});
+	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/BuyProduct", generateMissingSteps: true, steps: Steps});
+	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/SaveForLater", generateMissingSteps: true});
+	testHarness.test({featurePath: "sap/ui/demo/cart/test/integration/ProductsFilter", generateMissingSteps: true});
 
 	Opa5.extendConfig({
-		arrangements : startupInstance,
-		viewNamespace : "sap.ui.demo.cart.view.",
+		arrangements: startupInstance,
+		viewNamespace: "sap.ui.demo.cart.view.",
 		autoWait: true
 	});
 });

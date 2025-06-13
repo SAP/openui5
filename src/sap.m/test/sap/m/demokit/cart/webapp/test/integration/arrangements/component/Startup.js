@@ -3,15 +3,10 @@ sap.ui.define([
 	"sap/ui/util/Storage",
 	"sap/ui/demo/cart/localService/mockserver",
 	"sap/ui/model/odata/v2/ODataModel"
-], function(
-	Opa5,
-	Storage,
-	mockserver,
-	ODataModel) {
+], (Opa5, Storage, mockserver, ODataModel) => {
 	"use strict";
 
 	return Opa5.extend("sap.ui.demo.cart.test.integration.arrangements.component.Startup", {
-
 		/**
 		 * Initializes mock server, then start the app component
 		 * @param {object} oOptionsParameter An object that contains the configuration for starting up the app.
@@ -20,14 +15,14 @@ sap.ui.define([
 		 * @param {string} [oOptionsParameter.hash] The in app hash can also be passed separately for better readability in tests
 		 * @param {boolean} [oOptionsParameter.autoWait=true] Automatically wait for pending requests while the application is starting up.
 		 */
-		iStartMyApp : function (oOptionsParameter) {
-			var oOptions = oOptionsParameter || {};
+		iStartMyApp(oOptionsParameter) {
+			const oOptions = oOptionsParameter || {};
 
 			this._clearSharedData();
 
 			// The cart local storage should be deleted when the app starts except when testing it.
 			if (!oOptions.keepStorage) {
-				var oLocalStorage = new Storage(Storage.Type.local);
+				const oLocalStorage = new Storage(Storage.Type.local);
 				oLocalStorage.remove("SHOPPING_CART");
 			}
 
@@ -35,7 +30,7 @@ sap.ui.define([
 			oOptions.delay = oOptions.delay || 1;
 
 			// configure mock server with the current options
-			var oMockserverInitialized = mockserver.init(oOptions);
+			const oMockserverInitialized = mockserver.init(oOptions);
 			this.iWaitForPromise(oMockserverInitialized);
 
 			// start the app UI component
@@ -49,9 +44,9 @@ sap.ui.define([
 			});
 		},
 
-		_clearSharedData: function () {
+		_clearSharedData() {
 			// clear shared metadata in ODataModel to allow tests for loading the metadata
-			ODataModel.mSharedData = { server: {}, service: {}, meta: {} };
+			ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 		}
 	});
 });

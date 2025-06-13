@@ -5,45 +5,40 @@ sap.ui.define([
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/I18NText"
-], function (
-	Opa5,
-	PropertyStrictEquals,
-	Press,
-	Properties,
-	BindingPath,
-	I18NText) {
+], (Opa5, PropertyStrictEquals, Press, Properties, BindingPath, I18NText) => {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheComparison: {
 			viewName: "Comparison",
-
 			actions: {
-				iDeleteAProduct: function (ProductId) {
+				iDeleteAProduct(ProductId) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: [
-							new BindingPath({path: "/Products('" + ProductId + "')"}),
+							new BindingPath({path: `/Products('${ProductId}')`}),
 							new Properties({icon: "sap-icon://sys-cancel"})
 						],
-						actions : new Press(),
+						actions: new Press(),
 						errorMessage: "The press action could not be executed"
 					});
 				},
-				iAddTheDisplayedProductToTheCart: function () {
+
+				iAddTheDisplayedProductToTheCart() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: {
 							i18NText: {
 								propertyName: "text",
-								key : "addToCartShort"
+								key: "addToCartShort"
 							}
 						},
-						actions : new Press(),
+						actions: new Press(),
 						errorMessage: "The press action could not be executed"
 					});
 				},
-				iToggleTheCart: function () {
+
+				iToggleTheCart() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new PropertyStrictEquals({name: "icon", value: "sap-icon://cart"}),
@@ -54,39 +49,39 @@ sap.ui.define([
 			},
 
 			assertions: {
-				iShouldSeeAProduct: function (ProductId) {
+				iShouldSeeAProduct(ProductId) {
 					return this.waitFor({
 						controlType: "sap.m.Panel",
-						matchers: new BindingPath({path: "/Products('" + ProductId + "')"}),
-						success: function () {
+						matchers: new BindingPath({path: `/Products('${ProductId}')`}),
+						success() {
 							Opa5.assert.ok(true, "Product is visible");
 						},
 						errorMessage: "There is no product displayed"
 					});
 				},
 
-				iShouldSeeAPlaceholder: function () {
+				iShouldSeeAPlaceholder() {
 					return this.waitFor({
 						controlType: "sap.m.Label",
 						matchers: new I18NText({
 							propertyName: "text",
 							key: "HowTo1Label"
 						}),
-						success: function () {
+						success() {
 							this.waitFor({
 								controlType: "sap.m.Label",
 								matchers: new I18NText({
 									propertyName: "text",
 									key: "HowTo2Label"
 								}),
-								success: function () {
+								success() {
 									this.waitFor({
 										controlType: "sap.m.Label",
 										matchers: new I18NText({
 											propertyName: "text",
 											key: "HowTo3Label"
 										}),
-										success: function () {
+										success() {
 											Opa5.assert.ok(true, "Placeholder is visible");
 										},
 										errorMessage: "Placeholder is displayed incorrectly"
@@ -99,12 +94,12 @@ sap.ui.define([
 					});
 				},
 
-				iShouldSeeTwoProducts: function (productA, productB) {
+				iShouldSeeTwoProducts(productA, productB) {
 					this.iShouldSeeAProduct(productA);
 					this.iShouldSeeAProduct(productB);
 				},
 
-				iShouldSeeAProductAndAPlaceholder: function (product) {
+				iShouldSeeAProductAndAPlaceholder(product) {
 					this.iShouldSeeAProduct(product);
 					this.iShouldSeeAPlaceholder();
 				}

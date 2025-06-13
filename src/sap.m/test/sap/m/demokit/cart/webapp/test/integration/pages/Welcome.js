@@ -4,27 +4,22 @@ sap.ui.define([
 	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/Properties"
-], function (
-	Opa5,
-	Press,
-	BindingPath,
-	AggregationLengthEquals,
-	Properties) {
+], (Opa5, Press, BindingPath, AggregationLengthEquals, Properties) => {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheWelcomePage: {
 			viewName: "Welcome",
 			actions: {
-				iPressTheMenuButton : function () {
+				iPressTheMenuButton() {
 					return this.waitFor({
-						matchers: new Properties({ icon : "sap-icon://menu2" }),
+						matchers: new Properties({icon: "sap-icon://menu2"}),
 						actions: new Press(),
 						errorMessage: "No Menu button found"
 					});
 				},
 
-				iPressTheProductLink: function () {
+				iPressTheProductLink() {
 					return this.waitFor({
 						controlType: "sap.m.ObjectIdentifier",
 						matchers: new BindingPath({
@@ -36,7 +31,7 @@ sap.ui.define([
 					});
 				},
 
-				iPressOnTheCartButton: function () {
+				iPressOnTheCartButton() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new BindingPath({
@@ -48,16 +43,16 @@ sap.ui.define([
 					});
 				},
 
-				iPressOnTheProductSmartphoneAlphaTitle: function () {
+				iPressOnTheProductSmartphoneAlphaTitle() {
 					this.waitFor({
 						controlType: "sap.m.ObjectIdentifier",
-						matchers: new Properties({title : "Smartphone Alpha"}),
+						matchers: new Properties({title: "Smartphone Alpha"}),
 						actions: new Press(),
 						errorMessage: "The product Smartphone Alpha was not found and could not be pressed"
 					});
 				},
 
-				iPressTheProductImage: function () {
+				iPressTheProductImage() {
 					return this.waitFor({
 						controlType: "sap.m.Image",
 						matchers: new BindingPath({
@@ -69,47 +64,47 @@ sap.ui.define([
 					});
 				},
 
-				iToggleTheCart: function () {
+				iToggleTheCart() {
 					return this.waitFor({
-						controlType : "sap.m.Button",
-						matchers : new Properties({icon : "sap-icon://cart"}),
-						actions : new Press(),
-						errorMessage : "The cart button was not found and could not be pressed"
+						controlType: "sap.m.Button",
+						matchers: new Properties({icon: "sap-icon://cart"}),
+						actions: new Press(),
+						errorMessage: "The cart button was not found and could not be pressed"
 					});
 				}
 			},
 
 			assertions: {
 
-				iShouldSeeTheWelcomePage: function () {
+				iShouldSeeTheWelcomePage() {
 					return this.waitFor({
 						timeout: 30,
-						success: function () {
+						success() {
 							Opa5.assert.ok(true, "The welcome page was successfully displayed");
 						},
 						errorMessage: "The welcome page was not displayed"
 					});
 				},
 
-				iShouldSeeAnAvatarButton: function () {
+				iShouldSeeAnAvatarButton() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers: new Properties({icon: "sap-icon://customer"}),
-						success: function () {
+						success() {
 							Opa5.assert.ok(true, "Avatar button is visible");
 						},
 						errorMessage: "There is no avatar button"
 					});
 				},
 
-				iShouldSeeTheRightAmountOfProducts: function() {
+				iShouldSeeTheRightAmountOfProducts() {
 					this.waitFor({
 						id: "promotedRow",
 						matchers: new AggregationLengthEquals({
 							name: "content",
 							length: 2
 						}),
-						success: function () {
+						success() {
 							Opa5.assert.ok(true, "The welcome page has two promoted items");
 						},
 						errorMessage: "The welcome page did not show two promoted items"
@@ -121,7 +116,7 @@ sap.ui.define([
 							name: "content",
 							length: 4
 						}),
-						success: function () {
+						success() {
 							Opa5.assert.ok(true, "The welcome page has four viewed items");
 						},
 						errorMessage: "The welcome page did not show four viewed items"
@@ -133,7 +128,7 @@ sap.ui.define([
 							name: "content",
 							length: 4
 						}),
-						success: function () {
+						success() {
 							Opa5.assert.ok(true, "The welcome page has four favorite items");
 						},
 						errorMessage: "The welcome page did not show four favorite items"

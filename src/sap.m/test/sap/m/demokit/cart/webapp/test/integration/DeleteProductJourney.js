@@ -12,21 +12,21 @@ sap.ui.define([
 	"./pages/Product",
 	"./pages/Cart",
 	"./pages/Dialog"
-], function (Localization, opaTest) {
+], (Localization, opaTest) => {
 	"use strict";
 
-	var sDefaultLanguage = Localization.getLanguage();
+	const sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("Delete Product Journey", {
-		before : function () {
+		before() {
 			Localization.setLanguage("en-US");
 		},
-		after : function () {
+		after() {
 			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
-	opaTest("Should see the product list", function (Given, When, Then) {
+	opaTest("Should see the product list", (Given, When, Then) => {
 		// Arrangements
 		Given.iStartMyApp();
 
@@ -39,7 +39,7 @@ sap.ui.define([
 			and.iShouldSeeSomeEntriesInTheProductList();
 	});
 
-	opaTest("Should add a product to the cart and enable the edit button", function (Given, When, Then) {
+	opaTest("Should add a product to the cart and enable the edit button", (Given, When, Then) => {
 		// Actions
 		When.onTheCategory.iPressOnTheFirstProduct();
 		When.onTheProduct.iAddTheDisplayedProductToTheCart();
@@ -51,7 +51,7 @@ sap.ui.define([
 			and.iShouldSeeTheProceedButtonEnabled();
 	});
 
-	opaTest("Should see the delete button after pressing the edit button", function (Given, When, Then) {
+	opaTest("Should see the delete button after pressing the edit button", (Given, When, Then) => {
 		// Actions
 		When.onTheCart.iPressOnTheEditButton();
 
@@ -59,7 +59,7 @@ sap.ui.define([
 		Then.onTheCart.iShouldSeeTheDeleteButton();
 	});
 
-	opaTest("Should see the confirmation dialog", function (Given, When, Then) {
+	opaTest("Should see the confirmation dialog", (Given, When, Then) => {
 		// Actions
 		When.onTheCart.iPressOnTheDeleteButton();
 
@@ -67,7 +67,7 @@ sap.ui.define([
 		Then.onTheDialog.iShouldBeTakenToTheConfirmationDialog();
 	});
 
-	opaTest("Should cancel the delete process", function (Given, When, Then) {
+	opaTest("Should cancel the delete process", (Given, When, Then) => {
 		// Actions
 		When.onTheDialog.iPressCancelOnTheConfirmationDialog();
 
@@ -75,7 +75,7 @@ sap.ui.define([
 		Then.onTheCart.iShouldBeTakenToTheCart();
 	});
 
-	opaTest("Should see the edit button", function (Given, When, Then) {
+	opaTest("Should see the edit button", (Given, When, Then) => {
 		// Actions
 		When.onTheCart.iPressOnTheSaveChangesButton();
 
@@ -83,7 +83,7 @@ sap.ui.define([
 		Then.onTheCart.iShouldSeeTheEditButtonEnabled();
 	});
 
-	opaTest("Should delete the product from the cart", function (Given, When, Then) {
+	opaTest("Should delete the product from the cart", (Given, When, Then) => {
 		// Actions
 		When.onTheCart.iPressOnTheEditButton().and.iPressOnTheDeleteButton();
 		When.onTheDialog.iPressDeleteButtonOnTheConfirmationDialog();
@@ -93,7 +93,7 @@ sap.ui.define([
 			and.iShouldSeeTheTotalPriceEqualToZero();
 	});
 
-	opaTest("Edit button should be disabled", function (Given, When, Then) {
+	opaTest("Edit button should be disabled", (Given, When, Then) => {
 		// Actions
 		When.onTheCart.iPressOnTheSaveChangesButton();
 		// Assertions

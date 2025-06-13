@@ -7,21 +7,21 @@ sap.ui.define([
 	"./pages/Product",
 	"./pages/Home",
 	"./pages/Category"
-], function (Localization, opaTest) {
+], (Localization, opaTest) => {
 	"use strict";
 
-	var sDefaultLanguage = Localization.getLanguage();
+	const sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("Phone navigation", {
-		before : function () {
+		before() {
 			Localization.setLanguage("en-US");
 		},
-		after : function () {
+		after() {
 			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
-	opaTest("Should navigate to a product detail page by pressing the product link of the first product tile", function (Given, When, Then) {
+	opaTest("Should navigate to a product detail page by pressing the product link of the first product tile", (Given, When, Then) => {
 		// Arrangements
 		Given.iStartMyApp();
 		//Actions
@@ -30,21 +30,21 @@ sap.ui.define([
 		Then.onTheProduct.iShouldSeeTheProductPage();
 	});
 
-	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
+	opaTest("Should press back button and navigate to welcome view", (Given, When, Then) => {
 		// Actions
 		When.onTheProduct.iPressTheBackButtonInProduct();
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});
 
-	opaTest("The category view should open by pressing the menu button", function (Given, When, Then) {
+	opaTest("The category view should open by pressing the menu button", (Given, When, Then) => {
 		//Actions
 		When.onTheWelcomePage.iPressTheMenuButton();
 		// Assertions
 		Then.onHome.iShouldSeeTheCategoryList();
 	});
 
-	opaTest("Should see the product list", function (Given, When, Then) {
+	opaTest("Should see the product list", (Given, When, Then) => {
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
 		// Assertions
