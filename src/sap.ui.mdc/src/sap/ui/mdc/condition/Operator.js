@@ -67,6 +67,8 @@ sap.ui.define([
 	 * @param {object} oConfiguration Properties of the operator
 	 * @param {string} oConfiguration.name Name of the operator used in the condition
 	 * @param {object} [oConfiguration.alias] Alias names based on {@link sap.ui.mdc.enums.BaseType BaseType}, used to map to {@link sap.m.DynamicDateOption DynamicDateOption} if {@link sap.m.DynamicDateRange DynamicDateRange} is used to visualize the filter
+	 * 					<br> For example, if an operator must use the <code>DATE</code> option if used for a date type and the <code>DATETIME</code> option if used for a date/time type, the <code>alias</code>
+	 * 					needs to be configured as <code>{Date: "DATE", DateTime: "DATETIME"}</code>.
 	 * @param {string} oConfiguration.filterOperator The operator's default filter operator that is created as defined in {@link sap.ui.model.FilterOperator FilterOperator}
 	 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 	 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the

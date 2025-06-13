@@ -179,7 +179,7 @@ sap.ui.define([
 
 				const oType = this._getValueType();
 				const sOption = oValue.operator; // sOperator is the Option name
-				const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, this._getBaseType(oType)); // search via name and alias
+				const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, this._getBaseType(oType), aOperators); // search via name and alias
 
 				if (oOperator) {
 					const sBaseType = this._getBaseType(oType);
@@ -206,8 +206,10 @@ sap.ui.define([
 
 					const oCondition = Condition.createCondition(oOperator.name, aValues, undefined, undefined, ConditionValidated.NotValidated);
 					FilterOperatorUtil.updateConditionValues(oCondition);
-					FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
+					FilterOperatorUtil.checkConditionsEmpty(oCondition);
 					aConditions.push(oCondition);
+				} else {
+					throw new ParseException("No Operator found for " + sOption);
 				}
 			}
 
