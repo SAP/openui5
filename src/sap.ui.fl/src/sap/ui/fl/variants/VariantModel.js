@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Settings",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
@@ -51,7 +50,6 @@ sap.ui.define([
 	FlexObjectState,
 	ManifestUtils,
 	Settings,
-	FlexObjectManager,
 	Layer,
 	LayerUtils,
 	Utils,
@@ -1080,7 +1078,9 @@ sap.ui.define([
 				DependencyHandler.removeChangeFromDependencies(oLiveDependencyMap, oChange.getId());
 			}
 		});
-		FlexObjectManager.deleteFlexObjects({reference: this.sFlexReference, flexObjects: aDirtyChanges});
+		sap.ui.require(["sap/ui/fl/write/_internal/flexState/FlexObjectManager"], (FlexObjectManager) => {
+			FlexObjectManager.deleteFlexObjects({reference: this.sFlexReference, flexObjects: aDirtyChanges});
+		});
 
 		this.oDataSelector.removeUpdateListener(this.fnUpdateListener);
 
