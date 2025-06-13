@@ -243,7 +243,7 @@ sap.ui.define([
 			}
 		},
 		onmousedown: function(oEvent) {
-			if (oEvent.isMarked?.() || oEvent.button != 0) {
+			if (oEvent.isMarked?.() || oEvent.button != 0 || !this.getConfig("isSupported", this.getControl(), this)) {
 				return;
 			}
 
