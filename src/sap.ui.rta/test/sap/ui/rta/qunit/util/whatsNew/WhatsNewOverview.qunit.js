@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Element",
+	"sap/ui/core/Fragment",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/util/whatsNew/whatsNewContent/WhatsNewFeatures",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	mLibrary,
 	Element,
+	Fragment,
 	FlexRuntimeInfoAPI,
 	nextUIUpdate,
 	WhatsNewFeatures,
@@ -150,6 +152,28 @@ sap.ui.define([
 				this.oRedirectStub.lastCall.args[0], sLearnMoreUrl,
 				"Then the correct URL was passed to the URL Helper"
 			);
+		});
+	});
+
+	QUnit.module("ActionsMenu Fragment Whats New Overview Availability", {
+		beforeEach() {
+			this.sandbox = sinon.createSandbox();
+		},
+		afterEach() {
+			this.sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("When the ActionsMenu fragment is created", async function(assert) {
+			const oFragment = await Fragment.load({
+				name: "sap.ui.rta.toolbar.ActionsMenu",
+				controller: {}
+			});
+			assert.ok(oFragment, "ActionsMenu fragment is loaded successfully");
+			const oFeaturesOverview = oFragment.getItems().find(function(oItem) {
+				return oItem.getId() === "sapUiRta_newFeaturesOverview";
+			});
+			assert.ok(oFeaturesOverview.getEnabled(), "then the What's New Overview is available in the ActionsMenu");
+			assert.ok(oFeaturesOverview.getVisible(), "then the What's New Overview is visible in the ActionsMenu");
 		});
 	});
 
