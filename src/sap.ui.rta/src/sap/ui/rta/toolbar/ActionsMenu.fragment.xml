@@ -28,7 +28,8 @@
 				icon="sap-icon://BusinessSuiteInAppSymbols/icon-variant-configuration"
 				enabled="{controls>/appVariantMenu/enabled}"
 				visible="{= (${controls>/appVariantMenu/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
-				text="{i18n>BTN_MANAGE_APPS_TXT}" >
+				text="{i18n>BTN_MANAGE_APPS_TXT}"
+				tooltip="{path: 'controls>/appVariantMenu/enabled', formatter: '.formatManageAppVariants'}" >
 			<items>
 				<MenuItem
 						id="sapUiRta_appVariantOverview"
@@ -53,8 +54,8 @@
 						id="sapUiRta_manageApps"
 						icon="sap-icon://action-settings"
 						press=".manageApps"
-						enabled="{controls>/appVariantMenu/manageApps/enabled}"
 						visible="{= (${controls>/appVariantMenu/manageApps/visible} &amp;&amp; ${controls>/modeSwitcher} === 'adaptation')}"
+						enabled="{controls>/appVariantMenu/manageApps/enabled}"
 						text="{i18n>BTN_MANAGE_APPS_ITEM}" />
 				<MenuItem
 						id="sapUiRta_saveAs"

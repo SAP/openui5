@@ -1665,6 +1665,7 @@ sap.ui.define([
 		if (bAppVariantsAvailable) {
 			const bIsAppVariantSupported = FlexUtils.isVariantByStartupParameter(this.getRootControlInstance()) ?
 				false : await RtaAppVariantFeature.isManifestSupported();
+			this._oToolbarControlsModel.setProperty("/appVariantMenu/enabled", bIsAppVariantSupported);
 			this._oToolbarControlsModel.setProperty("/appVariantMenu/saveAs/enabled", bIsAppVariantSupported);
 			this._oToolbarControlsModel.setProperty("/appVariantMenu/overview/enabled", bIsAppVariantSupported);
 			this._oToolbarControlsModel.setProperty("/appVariantMenu/manageApps/enabled", bIsAppVariantSupported);
