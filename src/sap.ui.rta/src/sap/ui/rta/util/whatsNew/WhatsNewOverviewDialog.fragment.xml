@@ -61,6 +61,7 @@
 					<ToolbarSpacer />
 					<Button
 						id="sapUiRtaWhatsNewOverviewDialog_LearnMore"
+						enabled="{= ${whatsNewModel>documentationUrls} !== null}"
 						visible="{= ${whatsNewModel>overviewActive} === false}"
 						text="{i18n>BTN_LEARN_MORE_WHATS_NEW_DIALOG}"
 						press=".onLearnMorePress"/>

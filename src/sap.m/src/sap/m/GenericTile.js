@@ -782,6 +782,15 @@ sap.ui.define([
 		return this._isIconMode() && this.getFrameType() === FrameType.TwoByHalf;
 	};
 
+	GenericTile.prototype._setHeaderContentBackgroundImage = function() {
+		if (this.getBackgroundImage() && this.getMode() === GenericTileMode.ArticleMode && this.getFrameType() === FrameType.Stretch) {
+			const oGenericTile = this.getDomRef();
+			const sBackgroundImage = oGenericTile.style.backgroundImage;
+			oGenericTile.style.backgroundImage = '';
+			this.getDomRef("hdrContent").style.backgroundImage = sBackgroundImage;
+		}
+	};
+
 	/**
 	 * Attaching focus handlers to the more button to adhere to the ACC guidelines
 	 * @param {HTMLElement} [oButton] The DOM reference of the more button

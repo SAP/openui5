@@ -306,7 +306,7 @@ GenericTileRenderer.render = function(oRm, oControl) {
 			oRm.openStart("div", oControl.getId() + "-wrapper-content").class("sapMGTWrapperCnt").openEnd();
 		}
 
-		oRm.openStart("div");
+		oRm.openStart("div",oControl.getId() + "-hdrContent");
 		oRm.class("sapMGTHdrContent");
 		if (oControl._isIconMode() ){
 			if (frameType === frameTypes.OneByOne) {

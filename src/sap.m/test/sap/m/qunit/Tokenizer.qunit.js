@@ -843,7 +843,11 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		var nMoreLink = oTokenizer.getDomRef().querySelector(".sapMTokenizerIndicator");
-		var oPopover = oTokenizer.getTokensPopup();
+
+		assert.notOk(nMoreLink.hasAttribute("aria-controls"), "The aria-controls attribute should not be set initially");
+
+		var oResponsivePopover = oTokenizer.getTokensPopup();
+		var oResponsivePopoverContent = oResponsivePopover._oControl;
 
 		assert.strictEqual(nMoreLink.getAttribute("role"), "button", "The role of the nMore indicator should be button");
 		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "false", "The aria-expanded attribute should be false");
@@ -853,7 +857,7 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		assert.strictEqual(nMoreLink.getAttribute("aria-haspopup"), "dialog", "The aria-haspopup attribute should be dialog");
-		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oPopover.getId(), "The aria-haspopup attribute should be dialog");
+		assert.strictEqual(nMoreLink.getAttribute("aria-controls"), oResponsivePopoverContent.getId(), "The aria-controls attribute should be set to the id of the responsive popover content");
 
 		assert.strictEqual(nMoreLink.getAttribute("aria-expanded"), "true", "The aria-expanded attribute should be true");
 		oTokenizer.destroy();

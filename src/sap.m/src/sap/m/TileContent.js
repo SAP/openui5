@@ -59,14 +59,14 @@ sap.ui.define(['./library', "sap/base/i18n/Localization", 'sap/ui/core/library',
 
 				/**
 				 * Adds a priority badge before the content. Works only in Generic Tiles in
-				 * ActionMode or Article Mode containing NewsContent.
+				 * ActionMode or Article Mode containing FrameType Stretch.
 				 * @since 1.96
 				 */
 				"priority" : {type: "sap.m.Priority", group: "Misc", defaultValue: Priority.None},
 
 				/**
 				 * Sets the Text inside the Priority badge in Generic Tile. Works only in Generic Tiles in
-				 * ActionMode or Article Mode containing NewsContent.
+				 * ActionMode or Article Mode containing FrameType Stretch.
 				 * @since 1.103
 				 */
 				"priorityText" : {type: "string", group: "Misc", defaultValue: null},

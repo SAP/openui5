@@ -75,8 +75,6 @@
 		<MenuItem
 				id="sapUiRta_newFeaturesOverview"
 				icon="sap-icon://newspaper"
-				enabled="{controls>/newFeaturesOverview/enabled}"
-				visible="{controls>/newFeaturesOverview/visible}"
 				text="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW}"
 				tooltip="{i18n>BTN_WHATS_NEW_DIALOG_OVERVIEW_TOOLTIP}"
 				press=".openWhatsNewOverviewDialog"/>

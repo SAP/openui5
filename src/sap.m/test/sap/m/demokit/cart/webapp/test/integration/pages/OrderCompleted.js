@@ -1,15 +1,14 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press"
-], function (Opa5, Press) {
+], (Opa5, Press) => {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onOrderCompleted: {
 			viewName: "OrderCompleted",
 			actions: {
-
-				iPressOnTheReturnToShopButton: function () {
+				iPressOnTheReturnToShopButton() {
 					return this.waitFor({
 						id: "returnToShopButton",
 						actions: new Press()
@@ -17,11 +16,10 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-
-				iShouldSeeTheOrderCompletedPage: function () {
+				iShouldSeeTheOrderCompletedPage() {
 					return this.waitFor({
 						id: "returnToShopButton",
-						success: function (oButton) {
+						success(oButton) {
 							Opa5.assert.ok(oButton, "Found the order completed page");
 						}
 					});
