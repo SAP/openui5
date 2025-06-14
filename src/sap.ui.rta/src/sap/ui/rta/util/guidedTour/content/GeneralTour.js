@@ -18,7 +18,7 @@ sap.ui.define([
 	function filterAvailableBurgerMenuActions(oGeneralTour) {
 		const oControlsModelData = Element.getElementById("sapUIRta_toolbar").getModel("controls").getData();
 		const aAvailableBurgerMenuActions = {
-			newFeaturesOverview: oControlsModelData.newFeaturesOverview.visible,
+			newFeaturesOverview: true,
 			translation: oControlsModelData.translation.visible,
 			generalTour: true,
 			appVariantMenu: oControlsModelData.appVariantMenu.visible,

@@ -7,7 +7,7 @@ sap.ui.define([
 	"./BuyProductJourney",
 	"./FilterJourney",
 	"./ComparisonJourney"
-], function (Opa5, Startup) {
+], (Opa5, Startup) => {
 	"use strict";
 
 	Opa5.extendConfig({

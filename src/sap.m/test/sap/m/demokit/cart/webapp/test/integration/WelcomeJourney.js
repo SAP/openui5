@@ -9,21 +9,21 @@ sap.ui.define([
 	"./pages/Product",
 	"./pages/Category",
 	"./pages/Cart"
-], function (Localization, opaTest) {
+], (Localization, opaTest) => {
 	"use strict";
 
-	var sDefaultLanguage = Localization.getLanguage();
+	const sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("Welcome Journey", {
-		before : function () {
+		before() {
 			Localization.setLanguage("en-US");
 		},
-		after : function () {
+		after() {
 			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
-	opaTest("Should start the app and see the right number of featured products and an avatar button", function (Given, When, Then) {
+	opaTest("Should start the app and see the right number of featured products and an avatar button", (Given, When, Then) => {
 		// Arrangements
 		Given.iStartMyApp();
 		// Assertions
@@ -31,7 +31,7 @@ sap.ui.define([
 			and.iShouldSeeAnAvatarButton();
 	});
 
-	opaTest("Should press the product link and navigate to product view", function (Given, When, Then) {
+	opaTest("Should press the product link and navigate to product view", (Given, When, Then) => {
 		// Actions
 		When.onTheWelcomePage.iPressTheProductLink();
 		// Assertions
@@ -39,28 +39,28 @@ sap.ui.define([
 		Then.onTheCategory.iShouldSeeSomeEntriesInTheProductList();
 	});
 
-	opaTest("Should press the image and see the LightBox item", function (Given, When, Then) {
+	opaTest("Should press the image and see the LightBox item", (Given, When, Then) => {
 		//Actions
 		When.onTheProduct.iPressOnTheProductPicture();
 		//Assertions
 		Then.onTheProduct.iShouldSeeALightBox();
 	});
 
-	opaTest("Should press the close button and see the product view", function (Given, When, Then) {
+	opaTest("Should press the close button and see the product view", (Given, When, Then) => {
 		//Actions
 		When.onTheProduct.iPressTheCloseButtonOfTheLightBox();
 		//Assertions
 		Then.onTheProduct.iShouldSeeTheProductPage();
 	});
 
-	opaTest("Should press back button and navigate to welcome view", function (Given, When, Then) {
+	opaTest("Should press back button and navigate to welcome view", (Given, When, Then) => {
 		// Actions
 		When.onTheCategory.iPressTheBackButtonInCategory();
 		// Assertions
 		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
 	});
 
-	opaTest("Should press cart button and see the product in the cart", function (Given, When, Then) {
+	opaTest("Should press cart button and see the product in the cart", (Given, When, Then) => {
 		// Actions
 		When.onHome.iPressOnTheFlatScreensCategory();
 		When.onTheWelcomePage.iPressOnTheCartButton();

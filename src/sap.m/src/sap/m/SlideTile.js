@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Lib",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/Device"
 ],
 	function(
 		library,
@@ -28,7 +29,8 @@ sap.ui.define([
 		jQuery,
 		InvisibleText,
 		CoreLib,
-		Button
+		Button,
+		Device
 	) {
 	"use strict";
 
@@ -265,8 +267,11 @@ sap.ui.define([
 			this.getDomRef().setAttribute("aria-describedby",this.getAggregation("_invisibleText").getId());
 		}
 
-		if (this.getDomRef()?.offsetWidth > 799) {
-			this.addStyleClass("sapMSTLargeScreen");
+		var bIsScreenLarge = this.getDomRef()?.offsetWidth >= 800;
+		this.toggleStyleClass("sapMSTLargeScreen",bIsScreenLarge);
+		this.toggleStyleClass("sapMSTPhone",Device.system.phone);
+		if (bIsScreenLarge) {
+			this.getTiles().forEach((oTile) => oTile._setHeaderContentBackgroundImage());
 		}
 	};
 

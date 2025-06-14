@@ -3802,13 +3802,6 @@ sap.ui.define([
 		return this.setProperty("width", sWidth);
 	};
 
-	PlanningCalendar.prototype.setMultipleAppointmentsSelection = function (bMultiSelect) {
-		this.getRows().forEach(function (oRow) {
-			getRowTimeline(oRow).setMultipleAppointmentsSelection(bMultiSelect);
-		});
-		return this.setProperty("multipleAppointmentsSelection", bMultiSelect);
-	};
-
 	/**
 	 * Getter for custom appointments sorter (if any).
 	 * @since 1.54
