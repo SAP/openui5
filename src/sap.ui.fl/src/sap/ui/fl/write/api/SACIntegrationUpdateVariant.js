@@ -3,16 +3,16 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/ManifestUtils",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/Layer"
 ], function(
+	CompVariantManager,
 	CompVariantUtils,
 	FlexState,
 	ManifestUtils,
-	CompVariantState,
 	Layer
 ) {
 	"use strict";
@@ -70,7 +70,7 @@ sap.ui.define([
 			return Promise.reject("the user is not authorized to edit the PUBLIC variant (no author nor key user)");
 		}
 
-		CompVariantState.updateVariant(mPropertyBag);
-		return CompVariantState.persist(mPropertyBag);
+		CompVariantManager.updateVariant(mPropertyBag);
+		return CompVariantManager.persist(mPropertyBag);
 	};
 });

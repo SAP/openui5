@@ -184,8 +184,8 @@ sap.ui.define([
 				adaptationId: mPropertyBag.adaptationId,
 				skipLoadBundle: mPropertyBag.skipLoadBundle
 			})
-			.then(applyDeactivateChanges.bind())
-			.then(filterInvalidFileNames.bind())
+			.then(applyDeactivateChanges)
+			.then(filterInvalidFileNames)
 			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))
 			.then(formatFlexData);
 		},

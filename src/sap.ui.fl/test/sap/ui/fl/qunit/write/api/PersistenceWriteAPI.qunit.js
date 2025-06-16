@@ -106,7 +106,6 @@ sap.ui.define([
 		[{
 			testName: "when hasHigherLayerChanges is called and no changes are present",
 			persistencyChanges: [],
-			compEntities: {},
 			expectedResult: false
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present, but not in a higher layer",
@@ -115,109 +114,20 @@ sap.ui.define([
 					return Layer.CUSTOMER;
 				}
 			}],
-			compEntities: {},
-			expectedResult: false
-		}, {
-			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present, but not in a higher layer",
-			persistencyChanges: [],
-			compEntities: {
-				persistencyKey: {
-					byId: {
-						changeId: {
-							getLayer() {
-								return Layer.CUSTOMER;
-							}
-						}
-					}
-				}
-			},
-			expectedResult: false
-		}, {
-			testName: "when hasHigherLayerChanges is called and the FlexState "
-				+ "AND CompVariantState have changes present, but none in a higher layer",
-			persistencyChanges: [{
-				getLayer() {
-					return Layer.CUSTOMER;
-				}
-			}],
-			compEntities: {
-				persistencyKey: {
-					byId: {
-						changeId: {
-							getLayer() {
-								return Layer.CUSTOMER_BASE;
-							}
-						}
-					}
-				}
-			},
 			expectedResult: false
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present in a higher layer",
 			persistencyChanges: [{
 				layer: Layer.USER
 			}],
-			compEntities: {},
 			expectedResult: true
 		}, {
 			testName: "when the ChangePersistency has changes present in a higher layer, and VMS filters them",
 			persistencyChanges: [{
 				layer: Layer.USER
 			}],
-			compEntities: {},
 			expectedResult: false,
 			filterVariants: true
-		}, {
-			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present in a higher layer",
-			persistencyChanges: [],
-			compEntities: {
-				persistencyKey: {
-					byId: {
-						changeId: {
-							getLayer() {
-								return Layer.USER;
-							}
-						}
-					}
-				}
-			},
-			expectedResult: true
-		}, {
-			testName: "when hasHigherLayerChanges is called and the FlexState "
-				+ "AND CompVariantState have changes present, one in higher layer",
-			persistencyChanges: [{
-				layer: Layer.CUSTOMER
-			}],
-			compEntities: {
-				persistencyKey: {
-					byId: {
-						changeId: {
-							getLayer() {
-								return Layer.USER;
-							}
-						}
-					}
-				}
-			},
-			expectedResult: true
-		}, {
-			testName: "when hasHigherLayerChanges is called and the FlexState "
-				+ "AND CompVariantState have changes present, all in higher layer",
-			persistencyChanges: [{
-				layer: Layer.USER
-			}],
-			compEntities: {
-				persistencyKey: {
-					byId: {
-						changeId: {
-							getLayer() {
-								return Layer.USER;
-							}
-						}
-					}
-				}
-			},
-			expectedResult: true
 		}].forEach(function(testSetup) {
 			QUnit.test(testSetup.testName, async function(assert) {
 				var mPropertyBag = {
@@ -228,7 +138,6 @@ sap.ui.define([
 				sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 
 				await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {changes: testSetup.persistencyChanges});
-				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				const oVMSFilterStub = sandbox.stub(FlexObjectManager, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
 					return testSetup.filterVariants ? [] : aFlexObjects;
 				});

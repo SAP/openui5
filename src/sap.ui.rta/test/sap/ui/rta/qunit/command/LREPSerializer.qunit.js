@@ -58,15 +58,12 @@ sap.ui.define([
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		async before() {
-			await RtaQunitUtils.clear(oMockedAppComponent);
 			this.oModel = await FlexTestAPI.createVariantModel({
 				data: oData,
 				appComponent: oMockedAppComponent
 			});
 		},
-		async beforeEach() {
-			await RtaQunitUtils.clear(oMockedAppComponent);
-
+		beforeEach() {
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oCommandStack = new CommandStack();
 			this.oInput1 = new Input("input1");

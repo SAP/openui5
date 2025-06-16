@@ -4,46 +4,18 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
-	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/ManifestUtils",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	CompVariantManagementState,
-	CompVariantMerger,
 	CompVariantUtils,
 	FlexState,
 	ManifestUtils,
-	LayerUtils,
 	Utils
 ) {
 	"use strict";
-
-	function getCompEntities(mPropertyBag) {
-		var oControl = mPropertyBag.control;
-		var oVMControl = oControl.getVariantManagement?.() || oControl;
-		var sSVMControlId = oVMControl.getId();
-
-		return FlexState.initialize({
-			reference: mPropertyBag.reference,
-			componentData: {},
-			manifest: Utils.getAppDescriptor(oControl),
-			componentId: Utils.getAppComponentForControl(oControl).getId()
-		}).then(function() {
-			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
-			// Store external input data to FlexState so they can be restored after invalidating cache
-			FlexState.setInitialNonFlCompVariantData(
-				mPropertyBag.reference,
-				mPropertyBag.persistencyKey,
-				mPropertyBag.standardVariant,
-				mPropertyBag.variants,
-				sSVMControlId
-			);
-			return mCompVariantsMap._initialize(mPropertyBag.persistencyKey, mPropertyBag.variants, sSVMControlId);
-		});
-	}
 
 	/**
 	 * Object containing data for a SmartVariantManagement control.
@@ -99,7 +71,7 @@ sap.ui.define([
 		 * 	sap.ui.comp.smarttable.SmartTable|
 		 * 	sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control to load variants for
 		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput} mPropertyBag.standardVariant - The standard variant of the control;
-		 * a standard variant is created into the response but may be replaced later if data is loaded afterwards
+		 * a standard variant is created into the response but may be replaced later if data is loaded afterward
 		 * instructing the SVM to do so
 		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput[]} mPropertyBag.variants - Variant data from other data providers like an OData service
 		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse>} Object with the standard variant and the variants
@@ -108,24 +80,51 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.comp
 		 */
 		async loadVariants(mPropertyBag) {
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
-			mPropertyBag.persistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
+			const oControl = mPropertyBag.control;
+			const sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+			const sPersistencyKey = CompVariantUtils.getPersistencyKey(oControl);
 
-			const mCompMaps = await getCompEntities(mPropertyBag);
+			const mProperties = Object.assign({
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				componentId: Utils.getAppComponentForControl(oControl).getId()
+			}, mPropertyBag);
 
-			const mMergedCompVariants = CompVariantMerger.merge(
-				mPropertyBag.persistencyKey,
-				mCompMaps,
-				mPropertyBag.standardVariant,
-				mPropertyBag.control
-			);
-
-			mMergedCompVariants.defaultVariantId = CompVariantManagementState.getDefaultVariantId({
-				persistencyKey: mPropertyBag.persistencyKey,
-				reference: mPropertyBag.reference,
-				variants: mMergedCompVariants.variants
+			await FlexState.initialize({
+				componentId: mProperties.componentId
 			});
-			return mMergedCompVariants;
+			FlexState.addSVMControl(sReference, oControl);
+			CompVariantManagementState.addExternalVariants(mProperties);
+
+			const aVariants = CompVariantManagementState.assembleVariantList(mProperties);
+
+			const sDefaultVariantId = CompVariantManagementState.getDefaultVariantId({
+				persistencyKey: sPersistencyKey,
+				reference: sReference,
+				variants: aVariants
+			});
+
+			const aVariantsWithoutStandard = [];
+			let oStandardVariant;
+
+			aVariants.forEach((oVariant) => {
+				if (oVariant.getStandardVariant()) {
+					oStandardVariant = oVariant;
+				} else {
+					aVariantsWithoutStandard.push(oVariant);
+				}
+
+				// the default is always visible and thus a favorite
+				if (oVariant.getVariantId() === sDefaultVariantId) {
+					oVariant.setFavorite(true);
+				}
+			});
+
+			return {
+				defaultVariantId: sDefaultVariantId,
+				variants: aVariantsWithoutStandard,
+				standardVariant: oStandardVariant
+			};
 		}
 	};
 

@@ -1094,7 +1094,7 @@ sap.ui.define([
 				layer: Layer.BASE
 			};
 
-			var oAddRuntimeSteadyObjectStub = sandbox.stub(VariantManagementState, "addRuntimeSteadyObject");
+			var oAddRuntimeSteadyObjectStub = sandbox.stub(FlexState, "addRuntimeSteadyObject");
 			var oCreateVariantStub = sandbox.stub(FlexObjectFactory, "createFlVariant").returns("variant");
 			this.oModel.setData({});
 			this.oModel._ensureStandardVariantExists("mockVariantManagement");
@@ -1821,7 +1821,8 @@ sap.ui.define([
 				variantReference: this.sVMReference
 			});
 			const oPromise = new Deferred();
-			const oRequireStub = sandbox.stub(sap.ui, "require").withArgs(["sap/ui/fl/write/_internal/flexState/FlexObjectManager"]).callsFake((...aArgs) => {
+			const oRequireStub = sandbox.stub(sap.ui, "require").withArgs(["sap/ui/fl/write/_internal/flexState/FlexObjectManager"])
+			.callsFake((...aArgs) => {
 				aArgs[1](FlexObjectManager);
 				oPromise.resolve();
 			});

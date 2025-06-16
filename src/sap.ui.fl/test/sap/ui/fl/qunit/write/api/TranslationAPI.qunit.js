@@ -132,8 +132,6 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(FlexState, "getCompVariantsMap").returns({});
-
 			var aReturnedLanguages = {
 				sourceLanguages: [
 					"en-US",

@@ -58,14 +58,8 @@ sap.ui.define([
 				revertData: {
 					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData"
 					multiple: true,
-					singularName: "revertData"
-				},
-				/**
-				 * Changes belonging to the variant
-				 */
-				changes: {
-					type: "sap.ui.base.ManagedObject", // "sap.ui.fl.apply._internal.flexObjects.FlexObject"
-					multiple: true
+					singularName: "revertData",
+					defaultValue: []
 				}
 			}
 		},
@@ -77,7 +71,16 @@ sap.ui.define([
 			// fileType "variant" is only for compVariant
 			this.setFileType("variant");
 
-			if (mPropertyBag.favorite !== undefined) {
+			// set executeOnSelection
+			if (!mPropertyBag.executeOnSelection) {
+				this.setExecuteOnSelection(!!(mPropertyBag.content?.executeOnSelect || mPropertyBag.content?.executeOnSelection));
+			}
+			const bIsStandardVariant = this.getVariantId() === CompVariant.STANDARD_VARIANT_ID || !!this.getContent()?.standardvariant;
+
+			if (bIsStandardVariant) {
+				this.setFavorite(true);
+				this.setStandardVariant(true);
+			} else if (mPropertyBag.favorite !== undefined) {
 				this.setFavorite(!!mPropertyBag.favorite);
 			} else if (mPropertyBag.layer === Layer.VENDOR || mPropertyBag.layer === Layer.CUSTOMER_BASE) {
 				this.setFavorite(true);

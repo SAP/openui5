@@ -109,23 +109,19 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	PersistenceWriteAPI.hasHigherLayerChanges = function(mPropertyBag) {
+	PersistenceWriteAPI.hasHigherLayerChanges = async function(mPropertyBag) {
 		mPropertyBag.upToLayer ||= LayerUtils.getCurrentLayer();
 
-		return FlexObjectManager.getFlexObjects(mPropertyBag)
-		.then(function(aFlexObjects) {
-			return aFlexObjects.filter(function(oFlexObject) {
-				return LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer);
-			});
-		})
-		.then(function(aFilteredFlexObjects) {
-			if (aFilteredFlexObjects.length === 0) {
-				return false;
-			}
-			// Hidden control variants and their related changes might be necessary for referenced variants, but are not relevant for this check
-			// Same apply for changes of deleted comp variants
-			return FlexObjectManager.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
-		});
+		const aFlexObjects = await FlexObjectManager.getFlexObjects(mPropertyBag);
+		const aFilteredFlexObjects = aFlexObjects.filter(
+			(oFlexObject) => LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer)
+		);
+		if (aFilteredFlexObjects.length === 0) {
+			return false;
+		}
+		// Hidden control variants and their related changes might be necessary for referenced variants, but are not relevant for this check
+		// Same apply for changes of deleted comp variants
+		return FlexObjectManager.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
 	};
 
 	/**

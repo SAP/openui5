@@ -250,19 +250,19 @@ sap.ui.define([
 			return vResult;
 		}
 		var oParentDataSelector = this.getParentDataSelector();
-		var oParentData = oParentDataSelector && oParentDataSelector.get(mParameters);
+		var aParentData = oParentDataSelector?.get(mParameters);
 
 		var vParameterValue = (mParameters || {})[sParameterKey];
 		if (!this._mInitialized[vParameterValue] && this.getInitFunction()) {
 			this.getInitFunction()(
-				oParentData,
+				aParentData,
 				vParameterValue
 			);
 			this._mInitialized[vParameterValue] = true;
 		}
 
 		var vNewResult = this.getExecuteFunction()(
-			oParentData,
+			aParentData,
 			mParameters
 		);
 		this._setParameterizedCachedResult(mParameters, vNewResult);

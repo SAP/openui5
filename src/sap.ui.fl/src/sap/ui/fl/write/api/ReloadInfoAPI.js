@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/Version",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
@@ -20,7 +20,7 @@ sap.ui.define([
 	ManifestUtils,
 	Settings,
 	Version,
-	CompVariantState,
+	CompVariantManager,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	VersionsAPI,
@@ -62,7 +62,7 @@ sap.ui.define([
 
 	function checkSVMControlsForDirty(oReloadInfo) {
 		if (LayerUtils.isOverLayer(Layer.USER, oReloadInfo.layer)) {
-			return CompVariantState.checkSVMControlsForDirty((ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector)));
+			return CompVariantManager.checkSVMControlsForDirty((ManifestUtils.getFlexReferenceForControl(oReloadInfo.selector)));
 		}
 		return false;
 	}

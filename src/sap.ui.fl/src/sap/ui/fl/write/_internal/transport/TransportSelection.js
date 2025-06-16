@@ -366,7 +366,7 @@ sap.ui.define([
 	 * @param {Array} aAllLocalChanges - Array that includes all local changes
 	 * @param {Array} [aAppVariantDescriptors] - Array that includes all app variant descriptors
 	 * @param {object} oContentParameters - Object containing parameters added into the publish request
-	 * @param {string} oContentParameters.reference - Application ID of the changes which should be transported
+	 * @param {string} oContentParameters.reference - Flexibility reference of the app
 	 * @param {string} oContentParameters.layer - Layer in which the changes are stored
 	 * @returns {Promise} Promise which resolves without parameters
 	 */

@@ -306,7 +306,10 @@ sap.ui.define([
 			"apply/_internal/changes/descriptor/app/AddTechnicalAttributes": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddTechnicalAttributes", "sap/ui/fl/util/DescriptorChangeCheck"]
+					only: [
+						"sap/ui/fl/apply/_internal/changes/descriptor/app/AddTechnicalAttributes",
+						"sap/ui/fl/util/DescriptorChangeCheck"
+					]
 				}
 			},
 			"apply/_internal/changes/descriptor/ui5/SetMinUI5Version": {
@@ -600,12 +603,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/DataSelector"]
 				}
 			},
-			"apply/_internal/flexState/compVariants/prepareCompVariantsMap": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap"]
-				}
-			},
 			"apply/_internal/flexState/compVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -827,10 +824,10 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 				}
 			},
-			"write/_internal/flexState/compVariants/CompVariantState": {
+			"write/_internal/flexState/compVariants/CompVariantManager": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState"]
+					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager"]
 				}
 			},
 			"write/_internal/flexState/UI2PersonalizationState/UI2PersonalizationState": {
