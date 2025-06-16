@@ -531,8 +531,10 @@
 				{ "name" : "projector" },
 				{ "name" : "responsive" },
 				{ "name" : "simulate" },
+				{ "name" : "smart-watch" },
 				{ "name" : "sys-monitor" },
 				{ "name" : "video" },
+				{ "name" : "vr-glasses" },
 				{ "name" : "washing-machine" },
 				{ "name" : "web-cam" }
 			]
@@ -1269,6 +1271,7 @@
 				{ "name" : "past" },
 				{ "name" : "pending" },
 				{ "name" : "present" },
+				{ "name" : "smart-watch" },
 				{ "name" : "time-account" },
 				{ "name" : "time-entry-request" },
 				{ "name" : "time-overtime" },
