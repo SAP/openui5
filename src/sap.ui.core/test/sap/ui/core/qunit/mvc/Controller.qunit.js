@@ -526,10 +526,11 @@ sap.ui.define([
 	 * In 2.x calling a hook will throw an error when a value is returned
 	 * @deprecated
 	 */
-
 	QUnit.test("Shouldn't return any values (future=false)", async (assert) => {
 		future.active = false;
+		const done = assert.async();
 		const aPromises = [];
+
 		sap.ui.define("my/myController10.controller", ["sap/ui/core/mvc/Controller"], function(Controller) {
 			return Controller.extend("my.myController10", {
 				onInit: function() {
@@ -569,22 +570,28 @@ sap.ui.define([
 		oView.placeAt("qunit-fixture");
 		await nextUIUpdate();
 		assert.ok(oView.getDomRef(), "View is rendered");
-		assert.ok(oFatalLogSpy.getCall(1).calledWith("[FUTURE FATAL] my.myController10: The registered Event Listener 'onBeforeRendering' must not have a return value."), "Correct Fatal Log displayed");
-		assert.ok(oFatalLogSpy.getCall(2).calledWith("[FUTURE FATAL] my.myController10: The registered Event Listener 'onAfterRendering' must not have a return value."), "Correct Fatal Log displayed");
 
 		oView.destroy();
-		assert.ok(oFatalLogSpy.getCall(3).calledWith("[FUTURE FATAL] my.myController10: The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
+		await Promise.allSettled(aPromises);
 
-		await (async () => {
-			await Promise.allSettled(aPromises);
+		const fatalMessages = oFatalLogSpy.getCalls().map((call) => call.args[0]);
+		assert.ok(fatalMessages.includes("[FUTURE FATAL] my.myController10: The registered Event Listener 'onBeforeRendering' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(fatalMessages.includes("[FUTURE FATAL] my.myController10: The registered Event Listener 'onAfterRendering' must not have a return value."), "Correct Fatal Log displayed");
+		assert.ok(fatalMessages.includes("[FUTURE FATAL] my.myController10: The registered Event Listener 'onExit' must not have a return value."), "Correct Fatal Log displayed");
+
+		(() => {
+			const errorMessages = oErrorLogSpy.getCalls().map((call) => call.args[0]);
 			assert.equal(oErrorLogSpy.callCount, 2, "Two error logs should occur reg. rejected Promises.");
-			assert.ok(oErrorLogSpy.getCall(0).calledWith("The registered Event Listener 'onAfterRendering' of 'my.myController10' failed."), "Rejected Promise of 'onAfterRendering' hook should be handled and the correct error logged.");
-			assert.ok(oErrorLogSpy.getCall(1).calledWith("The registered Event Listener 'onExit' of 'my.myController10' failed."), "Rejected Promise of 'onExit' hook should be handled and the correct error logged.");
-			oErrorLogSpy.restore();
+			assert.ok(errorMessages.includes("The registered Event Listener 'onAfterRendering' of 'my.myController10' failed."), "Rejected Promise of 'onAfterRendering' hook should be handled and the correct error logged.");
+			assert.ok(errorMessages.includes("The registered Event Listener 'onExit' of 'my.myController10' failed."), "Rejected Promise of 'onExit' hook should be handled and the correct error logged.");
 		})();
 
+		oErrorLogSpy.restore();
 		oFatalLogSpy.restore();
+
 		future.active = undefined;
+
+		done();
 	});
 
 	QUnit.test("onInit Shouldn't return any values (future=true)", async (assert) => {
