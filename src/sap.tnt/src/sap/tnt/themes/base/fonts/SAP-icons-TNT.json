@@ -267,6 +267,14 @@
 	"build-code": "0xe10F",
 	"business-application-studio": "0xe110",
 	"clone-from-git": "0xe111",
-	"business-accelerator": "0xe112"
+	"business-accelerator": "0xe112",
+	"add-project": "0xe115",
+	"add-issue": "0xe116",
+	"service-estimator": "0xe114",
+	"ai-feature-estimator": "0xe113",
+	"refine-test-data": "0xe11A",
+	"navigate-source-code": "0xe119",
+	"clean-up": "0xe118",
+	"sap-fiori-tools": "0xe117"
  }
 }
