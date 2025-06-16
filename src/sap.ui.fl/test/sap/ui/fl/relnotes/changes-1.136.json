@@ -13,5 +13,15 @@
         "text": " sap.ui.fl: Improve FlexInfoSession cleanup"
       }
     ]
+  },
+  "1.136.1": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "8058ffb85b6ff3a9f172c495fcb0fa872a50bded",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix bug where ContextBasedAdaptationsAPI.create does not consider manifest and annotation changes"
+      }
+    ]
   }
 }

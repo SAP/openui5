@@ -48,5 +48,35 @@
         "text": " sap.uxap.ObjectPageSection: Fix fast navigation"
       }
     ]
+  },
+  "1.136.1": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "2a13497c075cfab533bc335d51d7965515466358",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix table flickering"
+      },
+      {
+        "id": "389ee72dfbb966d8af4107af9c755429f8297f6c",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: prevent duplicate ID error"
+      },
+      {
+        "id": "16f2a7aac5e98089c644b227b206e80bbd30f009",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
+      },
+      {
+        "id": "140e7a2e7bd1bea5a30dba09241a02804c2de4eb",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix visibility of title IconTabBar mode"
+      },
+      {
+        "id": "74ceee78d87d831718ed692369a9849760a4a11f",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: ensure consistent async unstashing"
+      }
+    ]
   }
 }

@@ -38,5 +38,30 @@
         "text": " sap/base/Log: Update documentation regarding support info logging"
       }
     ]
+  },
+  "1.136.1": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "78da0e55efade7692565baf3499db9ab29e7a452",
+        "type": "FIX",
+        "text": " core/interaction: Enhance Interaction Protocol for translation"
+      },
+      {
+        "id": "04d8d0bad0f87192784d3ba5b79c3e90292a856d",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel: updating properties of type Edm.Binary"
+      },
+      {
+        "id": "d3cb1219efcbafa88326e166af30ef6c0e33a718",
+        "type": "FIX",
+        "text": " core/Element: use getter from prototype for 'nodeName'"
+      },
+      {
+        "id": "c229da5d6e167a730b3c65d0316138b601d5ab51",
+        "type": "FIX",
+        "text": " ControllerMetadata.qunit: registerExtensionProvider deprecation"
+      }
+    ]
   }
 }

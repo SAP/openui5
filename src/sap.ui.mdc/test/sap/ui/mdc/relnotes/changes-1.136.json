@@ -28,5 +28,15 @@
         "text": " Field: Label mapping for inner control missing"
       }
     ]
+  },
+  "1.136.1": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "f1f20365ccffef66ee3cd236fa4a28d4a1a91fd2",
+        "type": "FIX",
+        "text": " FilterField: show more-indicator on focus to other field"
+      }
+    ]
   }
 }

@@ -173,5 +173,45 @@
         "text": " sap.m.Tokenizer: Prevent Scrolling upon Token delete"
       }
     ]
+  },
+  "1.136.1": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "c2c10069d7829d11bd9587b775c4cef4096474c2",
+        "type": "FIX",
+        "text": " CellSelector: Prevent selection if drag & drop enabled"
+      },
+      {
+        "id": "b2eff9a7d9dae2b256f740235f5ff9c125cdb58a",
+        "type": "FIX",
+        "text": " We've now introduced a private read only flag to help the developers determine item sync delegation for the upload complete and item deletion actions"
+      },
+      {
+        "id": "2b17def9ae19b8090a6916bf3152ae5d97a60d08",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: shows correctly the time part now"
+      },
+      {
+        "id": "1984c3f2e2537905cea4249abf492a3a551af215",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendarRow: custom header row background on hover is correct now"
+      },
+      {
+        "id": "da6148c5c2425f8a4b7b68f11b1879886659c96d",
+        "type": "FIX",
+        "text": " Input controls: announced text is now following the guidelines"
+      },
+      {
+        "id": "ebc196d94e1251e790e40e03dce8d08d87635abe",
+        "type": "FIX",
+        "text": " We now ensure that the correct download parameter is set while downloading uploaded items using the table's download functionality"
+      },
+      {
+        "id": "d72b0641858348185b7560600d83201a5128a743",
+        "type": "FIX",
+        "text": " We now ensure that the image inside a slide tile is adjusted based on the width of the tile"
+      }
+    ]
   }
 }
