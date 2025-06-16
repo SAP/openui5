@@ -3,6 +3,11 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "22de8a508f03f4e7e538c8076cb2c74dd662b2b4",
+        "type": "FEATURE",
+        "text": " Integration Cards: The `actions` property for the content of an Object Card is now deprecated"
+      },
+      {
         "id": "ac97d48d8940ed4bbf71e9aedb84d718ae077bf0",
         "type": "FIX",
         "text": " sap.f.DynamicPageHeader: fix headerContentLabel upon snap/unsnap"

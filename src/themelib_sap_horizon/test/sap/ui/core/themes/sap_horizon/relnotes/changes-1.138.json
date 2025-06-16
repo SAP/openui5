@@ -3,6 +3,11 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "a2b7aa86d129f918743ad91a09142f456d104b75",
+        "type": "FIX",
+        "text": " sap.m.Button: Default button has correct hover color"
+      },
+      {
         "id": "a9a682d0bb9689d7d6bb46332341f3f761b533db",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Shell background override is removed"

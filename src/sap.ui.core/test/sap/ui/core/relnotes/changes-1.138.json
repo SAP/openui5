@@ -3,6 +3,11 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "ac7b560ee3a47d9532f7218ed2a5f72146a226b9",
+        "type": "FIX",
+        "text": " src/sap.ui.core/src/sap/ui/core/.library: Update URL of datajs to correct one"
+      },
+      {
         "id": "6ae8f6a3693f49753dffe021958ff4a95ab22210",
         "type": "FIX",
         "text": " sap/ui/model/odata/v2/ODataModel: updating properties of type Edm.Binary"

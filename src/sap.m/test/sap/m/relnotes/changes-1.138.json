@@ -3,6 +3,41 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "3fe47eb1d4fc327687fd3b58a00bf970c7178d25",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: Update reset announce message for the screen reader"
+      },
+      {
+        "id": "55cd2084a821fcf0609651a4c869e6a2f7c14194",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: remove overriden setter for property multipleAppointmentsSelection since the functionality was moved in onBeforeRendering"
+      },
+      {
+        "id": "80a48ae8372f05b2972916a8639d59190d9f0844",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed context menu positioning"
+      },
+      {
+        "id": "a2b7aa86d129f918743ad91a09142f456d104b75",
+        "type": "FIX",
+        "text": " sap.m.Button: Default button has correct hover color"
+      },
+      {
+        "id": "00e62d95855331f7a002baecd0d20b72e16273b5",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-controls attribute is now set correctly"
+      },
+      {
+        "id": "adcaf67556c369e834af2ad5dd717d3b73f23499",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: property multipleAppointmentsSelection is not working when set in XML view"
+      },
+      {
+        "id": "0ab6f6577da9231b110b2fcd348537abe7129714",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed context menu positioning when only oordinates are provided"
+      },
+      {
         "id": "b2378d1a92d2488f19aab1d00c266f31501736ce",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Font rendering issue in Safari is fixed"
@@ -26,6 +61,11 @@
         "id": "5d3263bcda245ce70115f2b98da924d7dcb0e531",
         "type": "FIX",
         "text": " We've now set the decorative property of avatar to true for action tile"
+      },
+      {
+        "id": "7b8643d6aa359f163676a94af35bd567b5d1a3b3",
+        "type": "FIX",
+        "text": " CellSelector: Prevent selection if drag & drop enabled"
       },
       {
         "id": "f1c2c7809507bbeb774ce08290ac70b8c0026eba",
