@@ -10,6 +10,7 @@ sap.ui.define([
 	'./EventHandlerResolver',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/OwnStatics',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions'
@@ -21,11 +22,14 @@ sap.ui.define([
 		EventHandlerResolver,
 		merge,
 		ManagedObject,
+		OwnStatics,
 		ResourceModel,
 		Log,
 		LoaderExtensions
 	) {
 	"use strict";
+
+	const { runWithPreprocessors } = OwnStatics.get(ManagedObject);
 
 	/**
 	 * Constructor for a new mvc/JSONView.
@@ -206,7 +210,7 @@ sap.ui.define([
 		var that = this;
 
 		// use preprocessors to fix IDs, associations and event handler references
-		ManagedObject.runWithPreprocessors(function() {
+		runWithPreprocessors(function() {
 				// parse
 				that.applySettings({ content : that._oJSONView.content}, oController);
 			},

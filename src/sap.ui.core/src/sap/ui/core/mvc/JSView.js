@@ -10,10 +10,13 @@ sap.ui.define([
 	'sap/base/util/extend',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/OwnStatics',
 	'sap/base/Log'
 ],
-	function(View, JSViewRenderer, ViewType, merge, extend, ManagedObject, Log) {
+	function(View, JSViewRenderer, ViewType, merge, extend, ManagedObject, OwnStatics, Log) {
 	"use strict";
+
+	const { runWithPreprocessors } = OwnStatics.get(ManagedObject);
 
 
 	/**
@@ -241,7 +244,7 @@ sap.ui.define([
 
 	JSView.prototype.onControllerConnected = function(oController) {
 		// temporarily replace any preprocessors, e.g. from an enclosing JSON view
-		ManagedObject.runWithPreprocessors(function() {
+		runWithPreprocessors(function() {
 			this.applySettings({
 				content : this.createContent(oController)
 			});
