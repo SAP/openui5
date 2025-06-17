@@ -16953,6 +16953,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Usage of Any/All filter values on the list binding
+	// JIRA: CPOUI5UISERVICESV3-597
+	//
+	// Usage of NotAny/NotAll filter (JIRA: CPOUI5MODELS-1938)
 	[{
 		filter : new Filter({
 			condition : new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
@@ -17017,8 +17020,80 @@ sap.ui.define([
 		request : "SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 or"
 			+ " soitem/SOITEM_2_SCHDL/all(schedule:schedule/DeliveryDate lt 2017-01-01T05:50Z"
 			+ " and soitem/GrossAmount lt 2000))"
+	}, {
+		filter : new Filter({
+			condition : new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+			operator : FilterOperator.NotAll,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "not SO_2_SOITEM/all(soitem:soitem/GrossAmount gt 1000)"
+	}, {
+		filter : new Filter({
+			condition : new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+			operator : FilterOperator.NotAny,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "not SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000)"
+	}, {
+		filter : new Filter({
+			condition : new Filter({
+				and : true,
+				filters : [
+					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+					new Filter("soitem/NetAmount", FilterOperator.LE, "3000")
+				]
+			}),
+			operator : FilterOperator.NotAny,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "not SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 and"
+			+ " soitem/NetAmount le 3000)"
+	}, {
+		filter : new Filter({
+			condition : new Filter({
+				filters : [
+					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+					new Filter({operator : FilterOperator.NotAny, path : "soitem/SOITEM_2_SCHDL"})
+				]
+			}),
+			operator : FilterOperator.NotAny,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "not SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 or"
+			+ " not soitem/SOITEM_2_SCHDL/any())"
+	}, {
+		filter : new Filter({
+			condition : new Filter({
+				filters : [
+					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
+					new Filter({
+						condition : new Filter({
+							and : true,
+							filters : [
+								new Filter("schedule/DeliveryDate", FilterOperator.LT,
+									"2017-01-01T05:50Z"),
+								new Filter("soitem/GrossAmount", FilterOperator.LT, "2000")
+							]
+						}),
+						operator : FilterOperator.NotAll,
+						path : "soitem/SOITEM_2_SCHDL",
+						variable : "schedule"
+					})
+				]
+			}),
+			operator : FilterOperator.NotAny,
+			path : "SO_2_SOITEM",
+			variable : "soitem"
+		}),
+		request : "not SO_2_SOITEM/any(soitem:soitem/GrossAmount gt 1000 or"
+			+ " not soitem/SOITEM_2_SCHDL/all(schedule:schedule/DeliveryDate lt 2017-01-01T05:50Z"
+			+ " and soitem/GrossAmount lt 2000))"
 	}].forEach(function (oFixture) {
-		QUnit.test("filter all/any on list binding " + oFixture.request, function (assert) {
+		QUnit.test("filter (not) all/any on list binding " + oFixture.request, function (assert) {
 			var sView = '\
 <Table id="table" items="{/SalesOrderList}">\
 	<Text id="text" text="{SalesOrderID}"/>\

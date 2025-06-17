@@ -6701,10 +6701,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[FilterOperator.All, FilterOperator.Any].forEach(function (sFilterOperator) {
+	[FilterOperator.All, FilterOperator.Any, FilterOperator.NotAll, FilterOperator.NotAny]
+			.forEach(function (sFilterOperator) {
+		function getFilterString(sBasePath, sCondition) {
+			return sFilterOperator.startsWith("Not")
+				? "not " + sBasePath + "/" + sFilterOperator.toLowerCase().substring(3) + sCondition
+				: sBasePath + "/" + sFilterOperator.toLowerCase() + sCondition;
+		}
 		[{
 			description : "no nesting",
-			expectedResult : "p0/" + sFilterOperator.toLowerCase() + "(v0:v0/p1 eq 'value1')",
+			expectedResult : getFilterString("p0", "(v0:v0/p1 eq 'value1')"),
 			fetchObjects : {
 				p0 : "Type0",
 				"p0/p1" : "Edm.String"
@@ -6717,8 +6723,8 @@ sap.ui.define([
 			})
 		}, {
 			description : "nested any/all filters",
-			expectedResult : "p0/" + sFilterOperator.toLowerCase() + "(v0:"
-				+ "v0/p1/" + sFilterOperator.toLowerCase() + "(v1:v1/p2 eq 'value2'))",
+			expectedResult : getFilterString("p0",
+				"(v0:" + getFilterString("v0/p1", "(v1:v1/p2 eq 'value2')") + ")"),
 			fetchObjects : {
 				p0 : "Type0",
 				"p0/p1" : "Type1",
@@ -6737,8 +6743,7 @@ sap.ui.define([
 			})
 		}, {
 			description : "nested multi-filter",
-			expectedResult : "p0/" + sFilterOperator.toLowerCase()
-				+ "(v0:v0/p1 eq 'value1' and v0/p2 eq 'value2')",
+			expectedResult : getFilterString("p0", "(v0:v0/p1 eq 'value1' and v0/p2 eq 'value2')"),
 			fetchObjects : {
 				p0 : "Type0",
 				"p0/p1" : "Edm.String",
@@ -6758,8 +6763,8 @@ sap.ui.define([
 			})
 		}, {
 			description : "nested multi-filter containing an 'any' filter",
-			expectedResult : "p0/" + sFilterOperator.toLowerCase()
-			+ "(v0:v0/p1/any(v1:v1/p2 lt 'value1') or v0/p3 eq 'value2')",
+			expectedResult : getFilterString("p0",
+				"(v0:v0/p1/any(v1:v1/p2 lt 'value1') or v0/p3 eq 'value2')"),
 			fetchObjects : {
 				p0 : "Type0",
 				"p0/p1" : "Type1",
@@ -6784,8 +6789,8 @@ sap.ui.define([
 			})
 		}, {
 			description : "multi filters using same lambda variable",
-			expectedResult : "p0/" + sFilterOperator.toLowerCase()
-				+ "(v0:v0/p1/any(v1:v1/p3 lt 'value1') or v0/p2/any(v1:v1/p4 gt \'value2\'))",
+			expectedResult : getFilterString("p0",
+				"(v0:v0/p1/any(v1:v1/p3 lt 'value1') or v0/p2/any(v1:v1/p4 gt \'value2\'))"),
 			fetchObjects : {
 				p0 : "Type0",
 				"p0/p1" : "Type1",
@@ -6816,8 +6821,8 @@ sap.ui.define([
 			})
 		}, {
 			description : "nested filter overwrites outer lambda variable",
-			expectedResult : "p0/" + sFilterOperator.toLowerCase()
-				+ "(v0:v0/p1/" + sFilterOperator.toLowerCase() + "(v0:v0/p2 lt 'value1'))",
+			expectedResult : getFilterString("p0",
+				"(v0:" + getFilterString("v0/p1", "(v0:v0/p2 lt 'value1')") + ")"),
 			fetchObjects : {
 				p0 : "Type0",
 				"p0/p1" : "Type1",
@@ -6835,8 +6840,8 @@ sap.ui.define([
 				variable : "v0"
 			})
 		}].forEach(function (oFixture) {
-			QUnit.test("fetchFilter: " + sFilterOperator + " - " + oFixture.description,
-					function (assert) {
+			const sTitle = "fetchFilter: " + sFilterOperator + " - " + oFixture.description;
+			QUnit.test(sTitle, function (assert) {
 				var oBinding = this.bindList("/Set"),
 					aFetchObjectKeys = Object.keys(oFixture.fetchObjects);
 
@@ -6866,12 +6871,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchFilter: any - without predicate", function (assert) {
-		var oBinding = this.bindList("/Set"),
-			oFilter = new Filter({
-				operator : FilterOperator.Any,
-				path : "p0"
-			});
+[FilterOperator.Any, FilterOperator.NotAny].forEach(function (sOperator) {
+	QUnit.test("fetchFilter: " + sOperator + " - without predicate", function (assert) {
+		const oBinding = this.bindList("/Set");
+		const oFilter = new Filter({
+			operator : sOperator,
+			path : "p0"
+		});
 
 		oBinding.aApplicationFilters = [oFilter];
 		this.oMetaModelMock.expects("getMetaContext").withExactArgs(oBinding.sPath).returns("~");
@@ -6883,9 +6889,11 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.fetchFilter().then(function (aFilterValues) {
-			assert.deepEqual(aFilterValues, ["p0/any()", undefined, undefined]);
+			const sFilter = (sOperator === FilterOperator.NotAny ? "not " : "") + "p0/any()";
+			assert.deepEqual(aFilterValues, [sFilter, undefined, undefined]);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("fetchFilter: application and control filter", function (assert) {

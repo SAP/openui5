@@ -33,10 +33,12 @@ sap.ui.define([
 	 * OData models which filter case sensitive by default. See particular model documentation for
 	 * details.
 	 *
-	 * The filter operators {@link sap.ui.model.FilterOperator.Any "Any"} and
-	 * {@link sap.ui.model.FilterOperator.All "All"} are only supported in V4 OData models. When
-	 * creating a filter instance with these filter operators, the argument <code>variable</code>
-	 * only accepts a string identifier and <code>condition</code> needs to be another filter
+	 * The filter operators {@link sap.ui.model.FilterOperator.Any "Any"},
+	 * {@link sap.ui.model.FilterOperator.All "All"},
+	 * {@link sap.ui.model.FilterOperator.NotAny "NotAny"}, and
+	 * {@link sap.ui.model.FilterOperator.NotAll "NotAll"} are only supported in V4 OData models.
+	 * When creating a filter instance with these filter operators, the <code>variable</code> argument
+	 * only accepts a string identifier, and the <code>condition</code> argument must be another filter
 	 * instance.
 	 *
 	 * @example <caption>Using an object with a path, an operator and one or two values</caption>
@@ -97,7 +99,7 @@ sap.ui.define([
 	 *     })
 	 *   });
 	 *
-	 * @example <caption>For the filter operator <code>Any</code> either both a lambda
+	 * @example <caption>For the filter operators <code>Any</code> and <code>NotAny</code> either both a lambda
 	 *   <code>variable</code> and a <code>condition</code> have to be given or neither.</caption>
 	 *   new Filter({
 	 *     path: 'Items',
@@ -145,12 +147,16 @@ sap.ui.define([
 	 *   {@link sap.ui.model.FilterOperator.BT "BT" between} and
 	 *   {@link sap.ui.model.FilterOperator.NB "NB" not between} filter operators
 	 * @param {string} [vFilterInfo.variable]
-	 *   The variable name used in lambda operators ({@link sap.ui.model.FilterOperator.Any "Any"}
-	 *   and {@link sap.ui.model.FilterOperator.All "All"})
+	 *   The variable name used in the lambda operators ({@link sap.ui.model.FilterOperator.Any "Any"},
+	 *   {@link sap.ui.model.FilterOperator.All "All"},
+	 *   {@link sap.ui.model.FilterOperator.NotAny "NotAny"},
+	 *   and {@link sap.ui.model.FilterOperator.NotAll "NotAll"})
 	 * @param {sap.ui.model.Filter} [vFilterInfo.condition]
 	 *   A filter instance which will be used as the condition for lambda
-	 *   operators ({@link sap.ui.model.FilterOperator.Any "Any"} and
-	 *   {@link sap.ui.model.FilterOperator.All "All"})
+	 *   operators ({@link sap.ui.model.FilterOperator.Any "Any"},
+	 *   {@link sap.ui.model.FilterOperator.All "All"},
+	 *   {@link sap.ui.model.FilterOperator.NotAny "NotAny"},
+	 *   and {@link sap.ui.model.FilterOperator.NotAll "NotAll"})
 	 * @param {sap.ui.model.Filter[]} [vFilterInfo.filters]
 	 *   An array of filters on which the logical conjunction is applied
 	 * @param {boolean} [vFilterInfo.and=false]
@@ -174,8 +180,8 @@ sap.ui.define([
 	 *   if <code>vFilterInfo.condition</code> is {@link sap.ui.model.Filter.NONE}, or
 	 *   for the following incorrect combinations of filter operators and conditions:
 	 *   <ul>
-	 *     <li>"Any", if only a lambda variable or only a condition is given
-	 *     <li>"Any" or "All": If
+	 *     <li>"Any" or "NotAny": if only a lambda variable or only a condition is given
+	 *     <li>"Any", "All", "NotAny", or "NotAll": If
 	 *       <ul>
 	 *         <li>the <code>vFilterInfo</code> parameter is not in object notation,
 	 *         <li><code>vFilterInfo.variable</code> is not a string,
@@ -222,8 +228,10 @@ sap.ui.define([
 				this.oValue1 = vValue1;
 				this.oValue2 = vValue2;
 
-				if (this.sOperator === FilterOperator.Any || this.sOperator === FilterOperator.All) {
-					throw new Error("The filter operators 'Any' and 'All' are only supported with the parameter object notation.");
+				if (this.sOperator === FilterOperator.Any || this.sOperator === FilterOperator.All
+					|| this.sOperator === FilterOperator.NotAny || this.sOperator === FilterOperator.NotAll) {
+					throw new Error("The filter operators 'Any', 'All', 'NotAny', and 'NotAll' are only supported with "
+						+ "the parameter object notation.");
 				}
 			}
 			if (this.aFilters?.includes(Filter.NONE)) {
@@ -231,7 +239,7 @@ sap.ui.define([
 			} else if (this.oCondition && this.oCondition === Filter.NONE) {
 				throw new Error("Filter.NONE not allowed as condition");
 			}
-			if (this.sOperator === FilterOperator.Any) {
+			if (this.sOperator === FilterOperator.Any || this.sOperator === FilterOperator.NotAny) {
 				// for the Any operator we only have to further check the arguments if both are given
 				if (this.sVariable && this.oCondition) {
 					this._checkLambdaArgumentTypes();
@@ -239,9 +247,10 @@ sap.ui.define([
 					// 'Any' accepts no arguments
 				} else {
 					// one argument is missing
-					throw new Error("When using the filter operator 'Any', a lambda variable and a condition have to be given or neither.");
+					throw new Error("When using the filter operator 'Any' or 'NotAny', you need to provide "
+						+ "both a lambda variable and a condition, or neither.");
 				}
-			} else if (this.sOperator === FilterOperator.All) {
+			} else if (this.sOperator === FilterOperator.All  || this.sOperator === FilterOperator.NotAll) {
 				this._checkLambdaArgumentTypes();
 			} else if (Array.isArray(this.aFilters) && !this.sPath && !this.sOperator
 					&& !this.oValue1 && !this.oValue2) {
@@ -295,10 +304,12 @@ sap.ui.define([
 	 */
 	Filter.prototype._checkLambdaArgumentTypes = function () {
 		if (!this.sVariable || typeof this.sVariable !== "string") {
-			throw new Error("When using the filter operators 'Any' or 'All', a string has to be given as argument 'variable'.");
+			throw new Error("When using the filter operators 'Any', 'All', 'NotAny', or 'NotAll', a string has to be "
+				+ "given as the 'variable' argument.");
 		}
 		if (!isFilter(this.oCondition)) {
-			throw new Error("When using the filter operator 'Any' or 'All', a valid instance of sap.ui.model.Filter has to be given as argument 'condition'.");
+			throw new Error("When using the filter operator 'Any', 'All', 'NotAny', or 'NotAll', a valid instance of "
+				+ "sap.ui.model.Filter has to be given as the 'condition' argument.");
 		}
 	};
 
@@ -375,7 +386,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Filter.prototype.getAST = function (bIncludeOrigin) {
-		var oResult, sOp, sOrigOp, oRef, oValue, oFromValue, oToValue, oVariable, oCondition;
+		var oResult, sOp, sOrigOp, oRef, oValue, oFromValue, oToValue;
 		function logical(sOp, oLeft, oRight) {
 			return {
 				type: Type.Logical,
@@ -500,10 +511,21 @@ sap.ui.define([
 					break;
 				case FilterOperator.Any:
 				case FilterOperator.All:
-					oVariable = variable(this.sVariable);
-					oCondition = this.oCondition.getAST(bIncludeOrigin);
-					oResult = lambda(sOp, oRef, oVariable, oCondition);
+				case FilterOperator.NotAny:
+				case FilterOperator.NotAll: {
+					let sOpLambda = sOp;
+					if (sOp === FilterOperator.NotAny) {
+						sOpLambda = FilterOperator.Any;
+					} else if (sOp === FilterOperator.NotAll) {
+						sOpLambda = FilterOperator.All;
+					}
+					const oLambda = lambda(sOpLambda, oRef, variable(this.sVariable),
+						this.oCondition.getAST(bIncludeOrigin));
+					oResult = sOp === FilterOperator.NotAny || sOp === FilterOperator.NotAll
+						? unary(Op.Not, oLambda)
+						: oLambda;
 					break;
+				}
 				default:
 					throw new Error("Unknown operator: " + sOp);
 			}
