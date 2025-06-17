@@ -74,8 +74,7 @@
 					"earlyRequests" : true,
 					"operationMode" : "Server"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.Draft.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type" : "sap.ui.core.sample.odata.v4.Draft.SandboxModel"
 			}
 		},
 		"rootView" : {

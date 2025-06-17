@@ -69,8 +69,7 @@
 					"earlyRequests" : true,
 					"updateGroupId" : "UpdateGroup"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.DeepCreate.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type" : "sap.ui.core.sample.odata.v4.DeepCreate.SandboxModel"
 			}
 		},
 		"rootView" : {
