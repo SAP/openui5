@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
 	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
-	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/Layer"
 ], function(
 	ObjectStorageConnector,
 	ObjectStorageUtils,
 	JsObjectConnector,
 	SessionStorageConnector,
-	StorageUtils,
 	Layer
 ) {
 	"use strict";

@@ -981,20 +981,6 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("and the method is not implemented in the NeoLrepConnector", function(assert) {
-			var mPropertyBag = {
-				reference: "reference",
-				layer: Layer.CUSTOMER
-			};
-
-			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
-				{connector: "NeoLrepConnector"}]);
-
-			return Storage.contextBasedAdaptation.create(mPropertyBag).catch(function(sRejectionMessage) {
-				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.create is not implemented", "then the rejection message is passed");
-			});
-		});
-
 		QUnit.test("and the method is not implemented in the KeyUserConnector", function(assert) {
 			var mPropertyBag = {
 				reference: "reference",
@@ -1058,19 +1044,6 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "JsObjectConnector"}]);
-
-			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function(sRejectionMessage) {
-				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
-			});
-		});
-
-		QUnit.test("and the method is not implemented in the NeoLrepConnector", function(assert) {
-			var mPropertyBag = {
-				reference: "reference",
-				layer: Layer.CUSTOMER
-			};
-
-			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
 
 			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function(sRejectionMessage) {
 				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
@@ -1159,19 +1132,6 @@ sap.ui.define([
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
-
-			return Storage.contextBasedAdaptation.load(mPropertyBag).catch(function(sRejectionMessage) {
-				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.load is not implemented", "then the rejection message is passed");
-			});
-		});
-
-		QUnit.test("and the method is not implemented in the NeoLrepConnector", function(assert) {
-			var mPropertyBag = {
-				reference: "reference",
-				layer: Layer.CUSTOMER
-			};
-
-			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
 
 			return Storage.contextBasedAdaptation.load(mPropertyBag).catch(function(sRejectionMessage) {
 				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.load is not implemented", "then the rejection message is passed");
@@ -1634,20 +1594,6 @@ sap.ui.define([
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.loadContextDescriptions(mPropertyBag).catch(function() {
-				assert.strictEqual(oSpySendRequest.callCount, 0, "no request was send");
-			});
-		});
-
-		QUnit.test("and a response is rejected for getContexts when using not LrepConnector", function(assert) {
-			var mPropertyBag = {
-				flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]},
-				layer: Layer.CUSTOMER
-			};
-
-			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
-			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
-
-			return Storage.getContexts(mPropertyBag).catch(function() {
 				assert.strictEqual(oSpySendRequest.callCount, 0, "no request was send");
 			});
 		});
