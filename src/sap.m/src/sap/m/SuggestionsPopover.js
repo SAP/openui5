@@ -173,7 +173,6 @@ sap.ui.define([
 
 		if (!oList) {
 			oList = new List(sParentId + "-popup-list", {
-				showNoData : false,
 				mode : ListMode.SingleSelectMaster,
 				rememberSelections : false,
 				width: "100%",
