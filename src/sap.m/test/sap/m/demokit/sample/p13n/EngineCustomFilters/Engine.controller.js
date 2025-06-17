@@ -221,7 +221,7 @@ sap.ui.define([
 		},
 
 		_getKey: function(oControl) {
-			return this.getView().getLocalId(oControl.getId());
+			return oControl.data("p13nKey");
 		},
 
 		handleStateChange: function(oEvt) {

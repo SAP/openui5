@@ -113,7 +113,7 @@ sap.ui.define([
 		},
 
 		_getKey: function (oControl) {
-			return this.getView().getLocalId(oControl.getId());
+			return oControl.data("p13nKey");
 		},
 
 		handleStateChange: function (oEvt) {
@@ -131,7 +131,7 @@ sap.ui.define([
 			});
 
 			oState.Columns.forEach(function (oProp, iIndex) {
-				const oCol = this.byId(oProp.key);
+				const oCol = this.byId("persoTable").getColumns().find((oColumn) => oColumn.data("p13nKey") === oProp.key);
 				if (oCol) {
 					oCol.setVisible(true);
 
@@ -176,7 +176,7 @@ sap.ui.define([
 			Engine.getInstance().retrieveState(oTable).then(function (oState) {
 
 				const oCol = oState.Columns.find(function (oColumn) {
-					return oColumn.key === sKey;
+					return oColumn.data("p13nKey") === sKey;
 				}) || {
 					key: sKey
 				};
