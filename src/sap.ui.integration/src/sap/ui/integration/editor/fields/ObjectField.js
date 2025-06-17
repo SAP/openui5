@@ -845,6 +845,14 @@ sap.ui.define([
 		var oRowContexts = oTable.getBinding("rows").getContexts();
 		var oItem = oRowContexts[iSelectIndex].getObject();
 		var iFirstIndex = oTable.getFirstVisibleRow();
+		// if the 1st selected row is hidden, scroll to it
+		if (iSelectIndex < iFirstIndex) {
+			oTable.setFirstVisibleRow(iSelectIndex);
+			iFirstIndex = iSelectIndex;
+		} else if (iSelectIndex >= iFirstIndex + 5) {
+			oTable.setFirstVisibleRow(iSelectIndex - 5 + 1);
+			iFirstIndex = iSelectIndex - 5 + 1;
+		}
 		var oRow = oTable.getRows()[iSelectIndex - iFirstIndex];
 		var oCell1 = oRow.getCells()[0];
 		that.openObjectDetailsPopover(oItem, oCell1, !oItem._dt || oItem._dt._editable !== false ? "update" : "view");
