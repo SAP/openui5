@@ -56,18 +56,18 @@
             </noData>
 
             <columns>
-                <Column id="firstName_col" headerMenu="menu">
+                <Column app:p13nKey="firstName_col" headerMenu="menu">
                     <header>
                         <Text text="First Name"/>
                     </header>
                 </Column>
-                <Column id="lastName_col" headerMenu="menu">
+                <Column app:p13nKey="lastName_col" headerMenu="menu">
                     <Text text="Last Name"/>
                 </Column>
-                <Column id="city_col" headerMenu="menu">
+                <Column app:p13nKey="city_col" headerMenu="menu">
                     <Text text="City"/>
                 </Column>
-                <Column id="size_col" hAlign="End" visible="false" headerMenu="menu">
+                <Column app:p13nKey="size_col" hAlign="End" visible="false" headerMenu="menu">
                     <Text text="Size"/>
                 </Column>
             </columns>
