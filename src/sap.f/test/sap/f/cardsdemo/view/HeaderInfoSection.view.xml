@@ -24,5 +24,23 @@
 					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/headerInfoSection/rowsAndColumns.json">
 			</w:Card>
 		</Panel>
+
+		<Panel>
+			<w:Card id="card3"
+					width="300px"
+					class="sapUiTinyMargin"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/headerInfoSection/mainWithInfoSection.json">
+			</w:Card>
+			<w:Card id="card4"
+					width="300px"
+					class="sapUiTinyMargin"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/headerInfoSection/mainWithNumericPart.json">
+			</w:Card>
+			<w:Card id="card5"
+					width="300px"
+					class="sapUiTinyMargin"
+					manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/headerInfoSection/onlyMainPart.json">
+			</w:Card>
+		</Panel>
 	</Page>
 </mvc:View>

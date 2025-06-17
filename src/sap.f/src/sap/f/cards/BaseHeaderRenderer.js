@@ -32,7 +32,7 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardHeaderHasToolbar");
 		}
 
-		if (!bHasNumericPart) {
+		if (!bHasNumericPart && !oHeader.getInfoSection().length) {
 			oRm.class("sapFCardHeaderMainPartOnly");
 		}
 
@@ -82,7 +82,7 @@ sap.ui.define([], function () {
 			oRm.class("sapFCardSectionClickable");
 		}
 
-		if (!this.hasNumericPart(oHeader)) {
+		if (!this.hasNumericPart(oHeader) && !oHeader.getInfoSection().length || oError) {
 			oRm.class("sapFCardHeaderLastPart");
 		}
 

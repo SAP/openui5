@@ -16,68 +16,14 @@
 	"sap.card": {
 		"type": "Analytical",
 		"header": {
-			"type": "Numeric",
 			"actions": [
 				{
 					"type": "Navigation"
 				}
 			],
-			"data": {
-				"json": {
-					"number": "65.34",
-					"unit": "K",
-					"trend": "Down",
-					"state": "Error",
-					"target": {
-						"number": 100,
-						"unit": "K"
-					},
-					"deviation": {
-						"number": 34.7,
-						"state": "Critical"
-					},
-					"details": "Q1, 2018"
-				}
-			},
 			"title": "Project Cloud Transformation",
 			"subTitle": "Revenue",
 			"unitOfMeasurement": "EUR",
-			"infoSection": {
-				"rows": [
-					{
-						"items": [
-							{
-								"type": "Status",
-								"value": "On Track",
-								"state": "Success",
-								"inverted": true,
-								"showStateIcon": true
-							},
-							{
-								"type": "Status",
-								"value": "OKR Relevant",
-								"state": "None",
-								"inverted": true,
-								"showStateIcon": true
-							},
-							{
-								"type": "Status",
-								"value": "Interactive Status",
-								"state": "Information",
-								"inverted": true,
-								"showStateIcon": true,
-								"actions": [{
-										"type": "Navigation",
-										"parameters": {
-											"url": "https://www.sap.com",
-											"target": "_blank"
-										}
-								}]
-							}
-						]
-					}
-				]
-			},
 			"mainIndicator": {
 				"number": "{number}",
 				"unit": "{unit}",

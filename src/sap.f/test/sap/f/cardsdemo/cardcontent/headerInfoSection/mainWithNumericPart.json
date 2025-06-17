@@ -42,42 +42,6 @@
 			"title": "Project Cloud Transformation",
 			"subTitle": "Revenue",
 			"unitOfMeasurement": "EUR",
-			"infoSection": {
-				"rows": [
-					{
-						"items": [
-							{
-								"type": "Status",
-								"value": "On Track",
-								"state": "Success",
-								"inverted": true,
-								"showStateIcon": true
-							},
-							{
-								"type": "Status",
-								"value": "OKR Relevant",
-								"state": "None",
-								"inverted": true,
-								"showStateIcon": true
-							},
-							{
-								"type": "Status",
-								"value": "Interactive Status",
-								"state": "Information",
-								"inverted": true,
-								"showStateIcon": true,
-								"actions": [{
-										"type": "Navigation",
-										"parameters": {
-											"url": "https://www.sap.com",
-											"target": "_blank"
-										}
-								}]
-							}
-						]
-					}
-				]
-			},
 			"mainIndicator": {
 				"number": "{number}",
 				"unit": "{unit}",
