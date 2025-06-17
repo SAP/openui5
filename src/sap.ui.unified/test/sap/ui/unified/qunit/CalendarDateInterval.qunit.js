@@ -1,4 +1,4 @@
-/*global QUnit, sinon, window */
+/*global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -11,9 +11,10 @@ sap.ui.define([
 	"sap/ui/unified/calendar/DatesRow",
 	"sap/ui/unified/library",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/waitForThemeApplied"
+	"sap/ui/qunit/utils/waitForThemeApplied",
+	"sap/ui/Device"
 ], function(qutils, CalendarDateInterval, LocaleData, DateRange, DateTypeRange,
-	CalendarDate, CalendarWeekInterval, DatesRow, unifiedLibrary, Log, waitForThemeApplied) {
+	CalendarDate, CalendarWeekInterval, DatesRow, unifiedLibrary, Log, waitForThemeApplied, Device) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -93,8 +94,13 @@ sap.ui.define([
 		var aDays = $DatesRow.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(aWeekHeaders.length, 14, "14 week headers are rendered.");
-		assert.equal(aDays.length, 14, "14 days are rendered.");
+		if (Device.system.phone) {
+			assert.equal(aWeekHeaders.length, 8, "8 week headers are rendered on phone.");
+			assert.equal(aDays.length, 8, "8 days are rendered on phone.");
+		} else {
+			assert.equal(aWeekHeaders.length, 14, "14 week headers are rendered.");
+			assert.equal(aDays.length, 14, "14 days are rendered.");
+		}
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Correct first day is set.");
 		assert.equal(jQuery(aWeekHeaders[0]).text(), "Mon", "Weekday of first day is correct.");
 		assert.equal(iStartDateChanged, 0, "no startDateChangeEvent fired by rendering");
@@ -123,7 +129,11 @@ sap.ui.define([
 
 		// assert
 		assert.equal(aWeekHeaders.length, 0, "Calendar: no weekheaders rendered");
-		assert.equal(aDays.length, 14, "Calendar: 14 days rendered");
+		if (Device.system.phone) {
+			assert.equal(aDays.length, 8, "Calendar: 8 days rendered on phone");
+		} else {
+			assert.equal(aDays.length, 14, "Calendar: 14 days rendered");
+		}
 		assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20150202", "Calendar: first day");
 		assert.equal(jQuery(aDays[0]).children(".sapUiCalDayName").length, 1, "Calendar: day name rendered");
 		assert.equal(jQuery(aDays[0]).children(".sapUiCalDayName").text(), "Mon", "Weekday of first day");
@@ -511,7 +521,11 @@ sap.ui.define([
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(aMonths.length, 5, "5 Months are rendered");
+		if (Device.system.phone) {
+			assert.equal(aMonths.length, 3, "3 Months are rendered on phone");
+		} else {
+			assert.equal(aMonths.length, 5, "5 Months are rendered");
+		}
 		assert.equal(jQuery(aMonths[0]).text(), "January", "First displayed month is correct");
 		assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Second displayed month is focused");
 		assert.ok(jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button is disabled");
@@ -564,7 +578,11 @@ sap.ui.define([
 		var aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(jQuery(aMonths[0]).text(), "June", "Calendar: first displayed month");
+		if (Device.system.phone) {
+			assert.equal(jQuery(aMonths[0]).text(), "April", "Calendar: April is the first displayed month on phone");
+		} else {
+			assert.equal(jQuery(aMonths[0]).text(), "June", "Calendar: June is the first displayed month");
+		}
 		assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar: second displayed month is focused");
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
 		assert.ok(!jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button enabled");
@@ -574,7 +592,9 @@ sap.ui.define([
 
 		// assert
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
-		assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
+		if (!Device.system.phone) {
+			assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
+		}
 		qutils.triggerEvent("click", "myCal--Head-B1");
 
 		// clean up
@@ -626,9 +646,15 @@ sap.ui.define([
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(aYears.length, 7, "Calendar: 7 years rendered");
-		assert.equal(jQuery(aYears[0]).text(), "2012", "Calendar: first displayed year");
-		assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar: 4. displayed year is focused");
+		if (Device.system.phone) {
+			assert.equal(aYears.length, 4, "Calendar: 4 years rendered on phone");
+			assert.equal(jQuery(aYears[0]).text(), "2013", "Calendar: first displayed year on phone");
+			assert.equal(jQuery(aYears[2]).attr("tabindex"), "0", "Calendar: 3rd displayed year is focused on phone");
+		} else {
+			assert.equal(aYears.length, 7, "Calendar: 7 years rendered");
+			assert.equal(jQuery(aYears[0]).text(), "2012", "Calendar: first displayed year");
+			assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar: 4th displayed year is focused");
+		}
 
 		// clean up
 		oCal.destroy();
@@ -677,8 +703,13 @@ sap.ui.define([
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(jQuery(aYears[0]).text(), "2019", "Calendar: first displayed year");
-		assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar: 4. displayed year is focused");
+		if (Device.system.phone) {
+			assert.equal(jQuery(aYears[0]).text(), "2017", "2017 - Calendar: first displayed year on phone");
+			assert.equal(jQuery(aYears[2]).attr("tabindex"), "0", "Calendar: 3rd displayed year is focused on phone");
+		} else {
+			assert.equal(jQuery(aYears[0]).text(), "2019", "2029 - Calendar: first displayed year");
+			assert.equal(jQuery(aYears[3]).attr("tabindex"), "0", "Calendar: 4th displayed year is focused");
+		}
 		qutils.triggerEvent("click", "myCal--Head-B2");
 
 		// clean up
@@ -744,8 +775,13 @@ sap.ui.define([
 		aMonths = $MonthPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.ok(!jQuery(aMonths[2]).hasClass("sapUiCalItemDsbl"), "Calendar: August is enabled");
-		assert.ok(jQuery(aMonths[3]).hasClass("sapUiCalItemDsbl"), "Calendar: September is disabled");
+		if (Device.system.phone) {
+			assert.ok(!jQuery(aMonths[1]).hasClass("sapUiCalItemDsbl"), "Calendar: July is enabled on phone");
+			assert.ok(jQuery(aMonths[2]).hasClass("sapUiCalItemDsbl"), "Calendar: August is disabled on phone");
+		} else {
+			assert.ok(!jQuery(aMonths[2]).hasClass("sapUiCalItemDsbl"), "Calendar: August is enabled");
+			assert.ok(jQuery(aMonths[3]).hasClass("sapUiCalItemDsbl"), "Calendar: September is disabled");
+		}
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
 		assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
 
@@ -755,7 +791,9 @@ sap.ui.define([
 		aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(jQuery(aYears[6]).text(), "2050", "Calendar: last displayed year");
+		if (!Device.system.phone) {
+			assert.equal(jQuery(aYears[6]).text(), "2050", "Calendar: last displayed year");
+		}
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
 		assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
 
