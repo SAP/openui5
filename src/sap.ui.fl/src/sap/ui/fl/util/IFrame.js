@@ -72,7 +72,7 @@ sap.ui.define([
 				/**
 				 * Defines the <code>IFrame</code> height.
 				 */
-				height: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: "50vh"},
+				height: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: "35vh"},
 
 				/**
 				 * Defines the title of the item.
