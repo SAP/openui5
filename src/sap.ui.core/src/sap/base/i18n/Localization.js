@@ -21,8 +21,13 @@ sap.ui.define([
 	const oWritableConfig = BaseConfig.getWritableInstance();
 	let sLanguageSetByApi;
 	const oEventing = new Eventing();
+	let mCache = Object.create(null);
 	let mChanges;
 	let bLanguageWarningLogged = false;
+
+	BaseConfig._.attachInvalidated(() => {
+		mCache = Object.create(null);
+	});
 
 	/**
 	 * A map of preferred Calendar types according to the language.
@@ -322,6 +327,10 @@ sap.ui.define([
 			let oLanguageTag,
 				sDerivedLanguage;
 
+			if (mCache.language) {
+				return mCache.language;
+			}
+
 			if (sLanguageSetByApi) {
 				return sLanguageSetByApi;
 			}
@@ -356,14 +365,17 @@ sap.ui.define([
 			}
 			if (!oLanguageTag) {
 				if (sLanguage) {
-					oLanguageTag = createLanguageTag(sLanguage);
+					// validation for valid BCP47 language tag
+					createLanguageTag(sLanguage);
 					sDerivedLanguage = sLanguage;
 				} else {
 					sDerivedLanguage = detectLanguage();
-					oLanguageTag = createLanguageTag(sLanguage);
+					// validation for valid BCP47 language tag
+					createLanguageTag(sLanguage);
 				}
 			}
-			return sDerivedLanguage;
+			mCache.language = sDerivedLanguage;
+			return mCache.language;
 		},
 
 		/**
@@ -475,6 +487,9 @@ sap.ui.define([
 		 * @since 1.120.0
 		 */
 		getTimezone : function () {
+			if (mCache.timezone) {
+				return mCache.timezone;
+			}
 			let sTimezone = oWritableConfig.get({
 				name: "sapTimezone",
 				type: BaseConfig.Type.String,
@@ -488,7 +503,8 @@ sap.ui.define([
 			if (!sTimezone || !checkTimezone(sTimezone)) {
 				sTimezone = TimezoneUtils.getLocalTimezone();
 			}
-			return sTimezone;
+			mCache.timezone = sTimezone;
+			return mCache.timezone;
 		},
 
 		/**
@@ -534,6 +550,10 @@ sap.ui.define([
 		 * @since 1.120.0
 		 */
 		getLanguageTag : function () {
+			if (mCache.languageTag) {
+				return mCache.languageTag;
+			}
+
 			const oLanguageTag = new LanguageTag(Localization.getLanguage());
 			const sLanguage = Localization.getModernLanguage(oLanguageTag.language);
 			const sScript = oLanguageTag.script;
@@ -547,7 +567,8 @@ sap.ui.define([
 			} else {
 				sLanguageTag = sLanguageTag.replace(oLanguageTag.language, sLanguage);
 			}
-			return new LanguageTag(sLanguageTag);
+			mCache.languageTag = new LanguageTag(sLanguageTag);
+			return mCache.languageTag;
 		},
 
 		/**
@@ -561,8 +582,11 @@ sap.ui.define([
 		 * @since 1.120.0
 		 */
 		getRTL : function () {
+			if (mCache.rtl) {
+				return mCache.rtl;
+			}
 			// if rtl has not been set (still null), return the rtl mode derived from the language
-			return  oWritableConfig.get({
+			mCache.rtl = oWritableConfig.get({
 				name: "sapRtl",
 				type: BaseConfig.Type.Boolean,
 				external:true,
@@ -573,6 +597,7 @@ sap.ui.define([
 					external:true
 				})
 			});
+			return mCache.rtl;
 		},
 
 		/**
