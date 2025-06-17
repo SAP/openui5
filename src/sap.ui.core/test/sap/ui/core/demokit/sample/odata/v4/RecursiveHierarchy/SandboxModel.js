@@ -302,7 +302,7 @@ sap.ui.define([
 						const iLimitedRank = parseInt(aFilterMatches[2]);
 						const iDistanceFromRoot = parseInt(aFilterMatches[3]);
 						aRows = aRows.filter((oNode, i) => {
-							oNode.LimitedRank = "" + i; // Edm.Int64
+							oNode.LimitedRank = String(i); // Edm.Int64
 							return (bGreater ? i > iLimitedRank : i < iLimitedRank)
 								&& oNode.DistanceFromRoot < iDistanceFromRoot;
 						});
@@ -313,7 +313,7 @@ sap.ui.define([
 						const aIDs = mQueryOptions.$filter.split("%20or%20").map(
 							(sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
 						aRows = aRows.filter((oNode, i) => {
-							oNode.LimitedRank = "" + i; // Edm.Int64
+							oNode.LimitedRank = String(i); // Edm.Int64
 							return aIDs.includes(oNode.ID);
 						});
 					}
@@ -591,7 +591,7 @@ sap.ui.define([
 			if (sLastChildID === undefined) {
 				oNewChild.ID = sParentId + ".1";
 			} else if (sParentId === "0") {
-				oNewChild.ID = "" + (parseLastSegment(sLastChildID) + 1);
+				oNewChild.ID = String(parseLastSegment(sLastChildID) + 1);
 			} else {
 				oNewChild.ID = sParentId + "." + (parseLastSegment(sLastChildID) + 1);
 			}
@@ -703,7 +703,7 @@ sap.ui.define([
 			const oResult = {};
 			for (const sSelect of aSelect) {
 				oResult[sSelect] = sSelect === "DescendantCount" || sSelect === "DistanceFromRoot"
-					? "" + oNode[sSelect] // Edm.Int64
+					? String(oNode[sSelect]) // Edm.Int64
 					: oNode[sSelect];
 			}
 			return oResult;
@@ -711,7 +711,7 @@ sap.ui.define([
 
 		const oMessage = {};
 		if ("$count" in mQueryOptions) {
-			oMessage["@odata.count"] = "" + aRows.length;
+			oMessage["@odata.count"] = String(aRows.length);
 		}
 		const iSkip = "$skip" in mQueryOptions ? parseInt(mQueryOptions.$skip) : 0;
 		const iTop = "$top" in mQueryOptions ? parseInt(mQueryOptions.$top) : Infinity;
