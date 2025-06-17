@@ -1113,7 +1113,7 @@ sap.ui.define([
 					this._bAnnounceSelected = false;
 					if (!this._isSingleItem()) {
 						// set proper focus
-						if (this.getDomRef().querySelector("#" + oSelectedItem.getId()).style.display === "none") {
+						if (document.getElementById(oSelectedItem.getId()).style.display === "none") {
 							oOverflowItem && oOverflowItem.focus();
 						} else {
 							oSelectedItem && oSelectedItem.focus();
