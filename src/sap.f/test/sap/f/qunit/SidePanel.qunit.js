@@ -1,5 +1,7 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -9,6 +11,8 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Element,
+	XMLView,
 	Library,
 	qutils,
 	createAndAppendDiv,
@@ -876,6 +880,45 @@ sap.ui.define([
 		// assert
 		assert.notOk(this.oSP._getSideContentExpanded(), "Collapsed: side content is expanded");
 		assert.notOk(this.oSP.getSelectedItem(), "Collapsed: there is selected item");
+	});
+
+	QUnit.module("Misc2");
+		var sMyxml =
+		"<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns:f=\"sap.f\" xmlns:core=\"sap.ui.core\" xmlns=\"sap.m\" displayBlock=\"true\">" +
+		"		<App>" +
+		"			<Page title=\"Hello\">" +
+		"				<f:SidePanel id=\"sidePanel\" sidePanelPosition=\"Left\" sidePanelWidth=\"25rem\" actionBarExpanded=\"true\" sidePanelResizable=\"true\" selectedItem=\"sidePanelItemCalendar\">" +
+		"				<f:items>" +
+		"					<f:SidePanelItem id=\"sidePanelItemCalendar\" icon=\"sap-icon://appointment\" text=\"1\">" +
+		"						<Text text=\"Hello World!\"/>" +
+		"					</f:SidePanelItem>" +
+		"					<f:SidePanelItem id=\"sidePanelItemFavorites\" icon=\"sap-icon://copy\" text=\"2\">" +
+		"						<Text text=\"Hello World!\"/>" +
+		"					</f:SidePanelItem>" +
+		"				</f:items>" +
+		"				<f:mainContent></f:mainContent>" +
+		"				</f:SidePanel>" +
+		"			</Page>" +
+		"		</App>" +
+		"</mvc:View>";
+	QUnit.test("Side Panel doesn't throw error on closing", function (assert) {
+		var oCloseButton;
+		return XMLView.create({
+			id: "dtt.one.two.three.four---",
+			definition: sMyxml
+		}).then(async function(view) {
+			view.placeAt("test-parent");
+			await nextUIUpdate();
+			oCloseButton = view.byId("sidePanel").getAggregation("_closeButton");
+			try {
+				Element.getElementById(oCloseButton.getId()).firePress();
+				await nextUIUpdate();
+				assert.equal(view.byId("sidePanel")._getSideContentExpanded(), false, "side content is not expanded");
+				assert.equal(1, 1, "The control doesn't throw error when trying to close the panel");
+			} catch (e) {
+				assert.equal(1, 0, "Throws an error " + e.stack);
+			}
+		});
 	});
 
 });
