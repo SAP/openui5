@@ -3222,6 +3222,8 @@ sap.ui.define([
 						if (sNewPredicate) {
 							sPredicate = sNewPredicate;
 							oKeptElement = oElement; // leads to no-op for _Helper.updateNonExisting
+						} else if (iIndex < iStart || iIndex >= iStart + iResultLength) {
+							oKeptElement = oElement; // leads to no-op for _Helper.updateNonExisting
 						} else {
 							throw new Error("Duplicate key predicate: " + sPredicate);
 						}

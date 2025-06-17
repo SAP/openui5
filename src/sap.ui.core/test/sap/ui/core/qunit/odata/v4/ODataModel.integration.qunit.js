@@ -445,15 +445,17 @@ sap.ui.define([
 	 *   <code>undefined</code> means to ignore the list binding
 	 * @param {any[][]} [aExpectedContent] - "Table" of expected cell contents
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
+	 * @param {boolean} [bLengthFinal=true] - Whether the length is expected to be "final"
 	 * @throws {Error} If <code>iExpectedLength</code> is given but not <code>aExpectedPaths</code>
 	 */
 	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
-	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength) {
+	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength,
+			bLengthFinal = true) {
 		var oListBinding = oTable.getBinding("items") || oTable.getBinding("rows"),
 			aRows = oTable.getItems ? oTable.getItems() : oTable.getRows();
 
 		if (aExpectedPaths) {
-			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.isLengthFinal(), bLengthFinal, "length is final");
 			assert.strictEqual(oListBinding.getLength(), iExpectedLength || aExpectedPaths.length,
 				sTitle);
 			const aAllExistingContexts = oListBinding._getAllExistingContexts();
@@ -61733,6 +61735,61 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Using the "More" button in a table, a duplicate row is encountered due to parallel
+	// activity by some other users.
+	// JIRA: CPOUI5ODATAV4-2869
+	// SNOW:  DINC0541281
+	QUnit.test("DINC0541281", async function (assert) {
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}" growing="true" growingThreshold="2">
+	<Text id="text" text="{Name}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=2", {
+				value : [
+					{ID : "1", Name : "Peter Burke"},
+					{ID : "2", Name : "Frederic Fall"}
+				]
+			})
+			.expectChange("text", ["Peter Burke", "Frederic Fall"]);
+
+		await this.createView(assert, sView);
+
+		this.expectRequest("EMPLOYEES?$skip=2&$top=2", {
+				value : [
+					{ID : "2", Name : "Frederic Fall (NEW)"},
+					{ID : "3", Name : "John Field"}
+				]
+			})
+			.expectChange("text", [,, "Frederic Fall (NEW)", "John Field"]);
+
+		const oTable = this.oView.byId("table");
+
+		// code under test
+		oTable.requestItems();
+
+		await this.waitForChanges(assert);
+
+		checkTable("with duplicate row", assert, oTable, [
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('3')"
+		], [
+			["Peter Burke"],
+			["Frederic Fall"], // UI not yet updated!
+			["Frederic Fall (NEW)"],
+			["John Field"]
+		], 14, /*bLengthFinal*/false);
+		const oListBinding = oTable.getBinding("items");
+		const aAllCurrentContexts = oListBinding.getAllCurrentContexts();
+		assert.notStrictEqual(aAllCurrentContexts[1], aAllCurrentContexts[2],
+			"two instances for same path :-(");
+		assert.notStrictEqual(oListBinding.oCache.aElements[1], oListBinding.oCache.aElements[2],
+			"not a public API - don't try this at home, kids!");
 	});
 
 	//*********************************************************************************************
