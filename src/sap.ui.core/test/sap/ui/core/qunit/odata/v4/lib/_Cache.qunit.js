@@ -4482,7 +4482,6 @@ sap.ui.define([
 				foo : "bar",
 				"sap-client" : "123"
 			},
-			mQueryOptionsForPath = {},
 			oResponse = {},
 			mTypeForMetaPath = {},
 			bWithMessages = oFixture.lateQueryOptions,
@@ -4524,10 +4523,7 @@ sap.ui.define([
 			.exactly(bWithMessages && sPath === "" ? 1 : 0)
 			.withExactArgs("/Employees/@com.sap.vocabularies.Common.v1.Messages/$Path")
 			.returns(SyncPromise.resolve(bMessagesAnnotated ? "SAP_Messages" : undefined));
-		this.mock(_Helper).expects("getQueryOptionsForPath")
-			.withExactArgs(sinon.match.same(mCacheQueryOptions), sPath)
-			.returns(mQueryOptionsForPath);
-		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mQueryOptionsForPath))
+		oCacheMock.expects("getQueryOptions4Single").withExactArgs(sPath)
 			.returns(mQueryOptionsClone);
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs("Employees('31')", sPath, sKeyPredicate)
@@ -4572,6 +4568,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "EMPLOYEE_2_EQUIPMENTS")
 			// Note: CollectionCache#fetchValue may be async, $cached just sends no new request!
 			.returns(SyncPromise.resolve(Promise.resolve([{/* "No key predicate known" here */}])));
+		this.mock(oCache).expects("getQueryOptions4Single").withExactArgs("EMPLOYEE_2_EQUIPMENTS")
+			.returns("n/a");
 		this.mock(this.oRequestor.getModelInterface()).expects("fetchMetadata").never();
 		this.mock(_Helper).expects("aggregateExpandSelect").never();
 		this.mock(oCache).expects("fetchTypes").never();
@@ -4586,6 +4584,21 @@ sap.ui.define([
 			}, function (oError) {
 				assert.strictEqual(oError.message, "No key predicate known");
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_Cache#getQueryOptions4Single", function (assert) {
+		const oCache = new _Cache(this.oRequestor, "Employees('31')");
+		this.mock(_Helper).expects("getQueryOptionsForPath")
+			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "EMPLOYEE_2_EQUIPMENTS")
+			.returns("~mQueryOptionsForPath~");
+		this.mock(_Helper).expects("clone").withExactArgs("~mQueryOptionsForPath~")
+			.returns("~mQueryOptionsClone~");
+
+		assert.strictEqual(
+			// code under test
+			oCache.getQueryOptions4Single("EMPLOYEE_2_EQUIPMENTS"),
+			"~mQueryOptionsClone~");
 	});
 
 	//*********************************************************************************************
