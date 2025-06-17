@@ -574,8 +574,8 @@ sap.ui.define([
 					iPersonIdStartIndex = oBindingContext.getPath().indexOf("/people/") + "/people/".length,
 					iPersonId = oBindingContext.getPath()[iPersonIdStartIndex];
 
-				this._removeAppointment(oAppointment, iPersonId);
 				oDetailsPopover.close();
+				this._removeAppointment(oAppointment, iPersonId);
 			},
 
 			handleEditButton: function(){
