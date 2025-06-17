@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/Deferred",
 	"sap/base/Log",
 	"sap/m/App",
 	"sap/m/Button",
@@ -40,6 +41,7 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	_omit,
+	Deferred,
 	Log,
 	App,
 	Button,
@@ -1810,8 +1812,15 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				variantReference: this.sVMReference
 			});
+			const oPromise = new Deferred();
+			const oRequireStub = sandbox.stub(sap.ui, "require").withArgs(["sap/ui/fl/write/_internal/flexState/FlexObjectManager"]).callsFake((...aArgs) => {
+				aArgs[1](FlexObjectManager);
+				oPromise.resolve();
+			});
+			oRequireStub.callThrough();
 			FlexObjectManager.addDirtyFlexObjects(this.oModel.sFlexReference, [oUIChange]);
 			this.oModel.destroy();
+			await oPromise.promise;
 			assert.strictEqual(oDeleteChangeSpy.callCount, 1, "then the change was removed from the FlexObjectManager");
 			assert.strictEqual(oAddRuntimeOnlySpy.callCount, 1, "then the fake Standard variant is added to the runtimeOnlyData");
 

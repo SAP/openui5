@@ -5665,6 +5665,15 @@
 			"up"
 		]
 	},
+	"smart-watch": {
+		"tags": [
+			"clock",
+			"device",
+			"smart watch",
+			"time",
+			"watch"
+		]
+	},
 	"soccer": {
 		"tags": [
 			"ball",
@@ -6909,6 +6918,14 @@
 			"login",
 			"user",
 			"visit"
+		]
+	},
+	"vr-glasses": {
+		"tags": [
+			"device",
+			"glasses",
+			"virtual",
+			"vr"
 		]
 	},
 	"waiver": {
