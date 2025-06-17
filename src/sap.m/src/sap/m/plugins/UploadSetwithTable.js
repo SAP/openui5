@@ -1069,23 +1069,29 @@ sap.ui.define([
 				};
 
 				var oPromise = this.getItemValidationHandler()(oItemInfo);
-				if (oPromise && oPromise instanceof Promise) {
-					oPromise
-					.then((item) => {
-						if (item instanceof UploadItem) {
-							this._initateItemUpload(item);
-						}
-					})
-					.catch((item) => {
-						// Reset variable to avoid update if upload rejected.
-						if (item && this._oItemToUpdate && item instanceof UploadItem && item.getId() === this._oItemToUpdate.getId()) {
-							this._oItemToUpdate = null;
-						}
-					});
-				} else {
+				try {
+					if (oPromise && typeof oPromise?.then === "function") {
+						oPromise
+						.then((item) => {
+							if (item instanceof UploadItem) {
+								this._initateItemUpload(item);
+							}
+						})
+						.catch((item) => {
+							// Reset variable to avoid update if upload rejected.
+							if (item && this._oItemToUpdate && item instanceof UploadItem && item.getId() === this._oItemToUpdate.getId()) {
+								this._oItemToUpdate = null;
+							}
+						});
+					} else {
+						oItem.destroy();
+						// if promise is not returned to the ItemValidation hook log error and destroy the item
+						Log.error("Invalid usage, missing Promise: ItemValidationHandler callback expects Promise to be returned.");
+					}
+				} catch (error) {
 					oItem.destroy();
-					// if promise is not returned to the ItemValidation hook log error and destroy the item
-					Log.error("Invalid usage, missing Promise: ItemValidationHandler callback expects Promise to be returned.");
+					// If the ItemValidationHandler throws an error, log it and destroy the item
+					Log.error("Invalid usage, missing Promise: ItemValidationHandler callback expects Promise to be returned.", error);
 				}
 			} else {
 				/* if no validation handler is provided control continues with normal upload else waits for the application to manually

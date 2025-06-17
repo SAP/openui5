@@ -2183,6 +2183,73 @@ sap.ui.define([
 	    done();
 	});
 
+	QUnit.test("Should throw error if itemValidationHandler is not a promise", async function (assert) {
+	    const done = assert.async();
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			fileTypes: ["jpg", "png"]
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		const oFile = new File([""], "test.txt", { type: "text/plain" });
+
+		const oEvent = new EventBase("change", oUploadSetwithTablePlugin, {
+			files: [oFile]
+		});
+
+		// act
+		const fnErrorSpy = this.spy(Log, "error");
+		oUploadSetwithTablePlugin.setItemValidationHandler(function test () {
+			return {
+				// This is not a valid promise, should throw an error
+			then: "not-a-function"
+			};
+		});
+
+		try {
+			oUploadSetwithTablePlugin._onFileUploaderChange(oEvent);
+			assert.ok(fnErrorSpy.called, "Log.error() method was called");
+			done();
+		} catch (error) {
+			assert.ok(fnErrorSpy.called, "Log.error() method was called");
+		}
+	});
+
+	QUnit.test("Should not throw error when itemValidationHandler is a valid promise", async function (assert) {
+	    const done = assert.async();
+		const fnErrorSpy = this.spy(Log, "error");
+
+		// arrange
+		const oTable = await createMDCTable();
+		const oUploadSetwithTablePlugin = new UploadSetwithTable({
+			fileTypes: ["jpg", "png"]
+		});
+
+		oTable.addDependent(oUploadSetwithTablePlugin);
+		await oTable.initialized();
+
+		const oFile = new File([""], "test.txt", { type: "text/plain" });
+
+		const oEvent = new EventBase("change", oUploadSetwithTablePlugin, {
+			files: [oFile]
+		});
+
+		oUploadSetwithTablePlugin.setItemValidationHandler(
+			function test() {
+				return  new Promise((resolve) => {
+					resolve();
+				});
+			}
+		);
+
+		oUploadSetwithTablePlugin._onFileUploaderChange(oEvent);
+		assert.ok(fnErrorSpy.notCalled, "Log.error() method was not called");
+		done();
+	});
+
 	QUnit.test("Should allow upload when itemValidationHandler is not set", function (assert) {
 	    const handlerFunction = this.oUploadPlugin.getItemValidationHandler();
 	    assert.ok(handlerFunction === undefined || handlerFunction === null, "No validation handler should be set.");
