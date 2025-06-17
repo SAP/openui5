@@ -65,7 +65,9 @@ sap.ui.define([
 	QUnit.test("Check 'getP13nData' after reordering items (order should change)", function(assert){
 
 		var oMovedItem = this.oQueryPanel._oListControl.getItems()[0];
+		sinon.spy(this.oQueryPanel._oListControl, "invalidate");
 		this.oQueryPanel._moveTableItem(oMovedItem, 1); //Move from 0 to 1
+		assert.ok(this.oQueryPanel._oListControl.invalidate.calledOnce, "List only once invalidated");
 
 		var aP13nState = this.oQueryPanel.getP13nData(true);
 
