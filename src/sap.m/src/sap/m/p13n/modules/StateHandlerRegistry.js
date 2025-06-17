@@ -44,10 +44,11 @@ sap.ui.define([
 	 * The event handler may be fired every time a user triggers a personalization change for a control instance during runtime.
 	 *
 	 * @param {function} fnStateEventHandler The handler function to call when the event occurs
+	 * @param {object} [oListener] The context object to call the event handler with (value of <code>this</code> in the event handler function). Defaults to the StateHandlerRegistry instance itself.
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */
-	StateHandlerRegistry.prototype.attachChange = function(fnStateEventHandler) {
-		return EventProvider.prototype.attachEvent.call(this, "stateChange", fnStateEventHandler);
+	StateHandlerRegistry.prototype.attachChange = function(fnStateEventHandler, oListener) {
+		return EventProvider.prototype.attachEvent.call(this, "stateChange", fnStateEventHandler, oListener);
 	};
 
 	/**
@@ -58,10 +59,11 @@ sap.ui.define([
 	 * The passed parameters must match those used for registration with {@link StateHandlerRegistry#attachChange} beforehand.
 	 *
 	 * @param {function} fnStateEventHandler The handler function to detach from the event
+	 * @param {object} [oListener] The context object to call the event handler with (value of <code>this</code> in the event handler function). Defaults to the StateHandlerRegistry instance itself.
 	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */
-	StateHandlerRegistry.prototype.detachChange = function(fnStateEventHandler) {
-		return EventProvider.prototype.detachEvent.call(this, "stateChange", fnStateEventHandler);
+	StateHandlerRegistry.prototype.detachChange = function(fnStateEventHandler, oListener) {
+		return EventProvider.prototype.detachEvent.call(this, "stateChange", fnStateEventHandler, oListener);
 	};
 
 	/**

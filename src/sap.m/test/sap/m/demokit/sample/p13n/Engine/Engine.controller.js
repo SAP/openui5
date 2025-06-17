@@ -113,7 +113,7 @@ sap.ui.define([
 				}
 			});
 
-			Engine.getInstance().attachStateChange(this.handleStateChange.bind(this));
+			Engine.getInstance().attachStateChange(this.handleStateChange, this);
 		},
 
 		openPersoDialog: function(oEvt) {
