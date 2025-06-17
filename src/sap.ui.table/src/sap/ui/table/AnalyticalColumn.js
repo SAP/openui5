@@ -49,6 +49,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
+	 * @deprecated As of version 2.0, replaced by the {@link topic:3801656db27b4b7a9099b6ed5fa1d769 Table Building Block (OData V4)}.
 	 * @alias sap.ui.table.AnalyticalColumn
 	 */
 	const AnalyticalColumn = Column.extend("sap.ui.table.AnalyticalColumn", /** @lends sap.ui.table.AnalyticalColumn.prototype */ {metadata: {
