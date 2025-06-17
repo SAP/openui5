@@ -148,11 +148,12 @@ sap.ui.define([
 			}, this);
 		},
 
-		async onMakeRoot(oEvent, vNextSibling) {
+		async onMakeRoot(oEvent, bLastSibling, bCopy) {
 			try {
 				this.getView().setBusy(true);
 				await oEvent.getSource().getBindingContext().move({
-					nextSibling : vNextSibling,
+					copy : bCopy,
+					nextSibling : bLastSibling ? null : undefined,
 					parent : null
 				});
 			} catch (oError) {
@@ -162,9 +163,10 @@ sap.ui.define([
 			}
 		},
 
-		onMove(oEvent, bInTreeTable, vNextSibling) {
+		onMove(oEvent, bInTreeTable, vNextSibling, bCopy) {
 			this._bInTreeTable = bInTreeTable;
-			this._vNextSibling = vNextSibling;
+			this._vNextSibling = vNextSibling === "" ? undefined : vNextSibling;
+			this._bCopy = bCopy;
 			this._oNode = oEvent.getSource().getBindingContext();
 			const oSelectDialog = this.byId("moveDialog");
 			oSelectDialog.setBindingContext(this._oNode);
@@ -188,16 +190,23 @@ sap.ui.define([
 					throw new Error(`Parent ${sParentId} not yet loaded`);
 				}
 
+				let iCopyIndex;
 				if (this._vNextSibling === "?") {
 					await this._oNode.move({
 						nextSibling : oParent,
 						parent : oParent.getParent()
 					});
 				} else {
-					await this._oNode.move({
+					iCopyIndex = await this._oNode.move({
+						copy : this._bCopy,
 						nextSibling : this._vNextSibling,
 						parent : oParent
 					});
+
+					if (this._bCopy) {
+						MessageBox.information("Index: " + iCopyIndex,
+							{title : "New Node Created"});
+					}
 				}
 
 				const oTable = this.byId(this._bInTreeTable ? "treeTable" : "table");

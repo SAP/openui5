@@ -739,6 +739,8 @@ sap.ui.define([
 				'unsynchronize': 0x1e2a7,
 				'verified': 0x1e2a8,
 				'walk-me': 0x1e2a9,
+				'smart-watch': 0x1e2aa,
+				'vr-glasses': 0x1e2ab,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,
