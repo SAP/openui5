@@ -1,6 +1,6 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" id="sapIllus-Spot-UserHasSignedUp">
 <rect y="42" width="128" height="55" rx="8" fill="var(--sapContent_Illustrative_Color20)"/>
-<mask id="mask0_6869_476425" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="42" width="128" height="56">
+<mask id="mask0_6869_476425" class="sapIllus_MaskTypeAlpha" maskUnits="userSpaceOnUse" x="0" y="42" width="128" height="56">
 <rect x="0.0566406" y="42" width="127.943" height="55.1756" rx="24" fill="var(--sapContent_Illustrative_Color20)"/>
 </mask>
 <g mask="url(#mask0_6869_476425)">
