@@ -364,6 +364,9 @@ sap.ui.define([
 		if (this._oTable) {
 			_detachTableEvents.call(this, this._oTable);
 		}
+
+		delete this._bIgnoreNextConditionChange;
+
 	};
 
 	MDCTable.prototype.getScrollDelegate = function() {
