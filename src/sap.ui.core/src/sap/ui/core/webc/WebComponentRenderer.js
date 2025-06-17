@@ -16,8 +16,8 @@ function(Element, Control, hyphenate) {
 	 *
 	 * @namespace
 	 * @alias sap.ui.core.webc.WebComponentRenderer
+	 * @since 1.138.0
 	 * @static
-	 * @experimental Since 1.118.0 The API might change. It is not intended for productive usage yet!
 	 */
 	var WebComponentRenderer = {
 		apiVersion: 2
