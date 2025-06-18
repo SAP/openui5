@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.app": { tags: { technicalAttributes: ["T1", "T2"] } }
 			};
 			this.oManifestEmpty = {};

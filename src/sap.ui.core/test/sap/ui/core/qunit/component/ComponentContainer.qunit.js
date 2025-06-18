@@ -379,7 +379,7 @@ sap.ui.define([
 		return UIComponent.extend("my.usage.Component", {
 			metadata: {
 				manifest: {
-					"_version": "2.0.0",
+					"_version": "2.0.1",
 
 					"sap.app" : {
 						"id" : "my.usage"
@@ -526,7 +526,7 @@ sap.ui.define([
 
 			// setup fake server
 			var oManifest = this.oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app" : {
 					"id" : "testdata.v2empty"

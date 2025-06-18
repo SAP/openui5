@@ -8,7 +8,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			"interfaces": ["sap.ui.core.IAsyncContentCreation"],
 
 			"manifest": {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"name": "testdata.v2inline.Component",
 
 				"sap.app": {

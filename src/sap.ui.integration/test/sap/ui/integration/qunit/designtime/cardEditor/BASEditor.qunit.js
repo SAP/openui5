@@ -16,7 +16,7 @@ sap.ui.define([
 
 	function getBaseJson(designtime) {
 		var oJson = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app": {
 				id: "sap-app-id"

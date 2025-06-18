@@ -221,6 +221,7 @@ sap.ui.define([
 		oData.push(oNewObject);
 		oModel.setProperty("/_hasTableAllSelected", false);
 		oModel.setProperty("/_hasTableSelected", false);
+		oModel.setProperty("/_hasNotEditableItemSelected", false);
 		oModel.checkUpdate();
 		that.refreshValue();
 		that._oObjectDetailsPopover.close();

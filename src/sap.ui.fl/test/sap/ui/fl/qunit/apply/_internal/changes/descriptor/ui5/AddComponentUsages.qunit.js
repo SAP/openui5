@@ -43,7 +43,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' with a change containing two component usages", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5": {
 					dependencies: {
@@ -74,7 +74,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a change containing same component usage", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5": {
 					dependencies: {
@@ -104,7 +104,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a change containing one component usage and no manifest component usages", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5": {
 					dependencies: {

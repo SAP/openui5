@@ -96,7 +96,7 @@ sap.ui.define([
 		]
 	};
 	var oManifestForFilterBackendInComboBox = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.app": {
 			"id": "test.sample",
@@ -134,7 +134,7 @@ sap.ui.define([
 		}
 	};
 	var oManifestForFilterBackendInMultiComboBox = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.app": {
 			"id": "test.sample",
@@ -172,7 +172,7 @@ sap.ui.define([
 		}
 	};
 	var oManifestForFilterBackendInMultiInput = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.app": {
 			"id": "test.sample",

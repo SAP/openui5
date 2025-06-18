@@ -13,7 +13,7 @@ sap.ui.predefine('testlibs/terminologies/simple/library',['sap/ui/core/Lib'], fu
 
 sap.ui.require.preload({
 	"testlibs/terminologies/simple/manifest.json": JSON.stringify({
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 		"name": "testlibs.terminologies.simple",
 		"sap.ui5": {
 			"library": {

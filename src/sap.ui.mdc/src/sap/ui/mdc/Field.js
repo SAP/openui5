@@ -727,13 +727,11 @@ sap.ui.define([
 	const HANDLEDBYMIXIN = Symbol("sap.ui.core.message.MessageMixin");
 	Field.prototype.refreshDataState = function (sName, oDataState) {
 
-		if (sName !== "value") {
-			return FieldBase.prototype.refreshDataState.apply(this, arguments);
-		}
-
 		// TODO: make logic of MessageMixIn reusable
 
-		if (oDataState.getChanges().messages && this.getBinding(sName)) {
+		// as bindings vor other properties (e.g. valueState) can exist that uses CompositeBindings or Formatters with same binding path as value-binding
+		// do it for all properties
+		if (oDataState.getChanges().messages && this.getBinding(sName) && this.getBinding(sName).isA("sap.ui.model.PropertyBinding")) {
 			const aMessages = oDataState.getMessages();
 			const aLabels = LabelEnablement.getReferencingLabels(this);
 			const sLabelId = aLabels[0];
@@ -766,30 +764,32 @@ sap.ui.define([
 				}
 
 				// map message to inner control, if needed
-				const oBinding = this.getBinding(sName);
+				const oBinding = this.getBinding("value"); // only check value binding
 				let sControlId = this.getId();
 				if (oBinding.isA("sap.ui.model.CompositeBinding") && this.getContentFactory().isMeasure()) {
 					const aContent = this.getCurrentContent();
-					if (oMessage.getMessageProcessor().isA("sap.ui.model.Model")) {
-						// use control the binding-part belongs to
-						const aBindings = oBinding.getBindings();
-						const aTargets = oMessage.getTargets();
-						for (let j = 0; j < aTargets.length; j++) {
-							for (let i = 0; i < aBindings.length; i++) {
-								if (aTargets[j] === aBindings[i].getResolvedPath()) {
-									sControlId = aContent[i].getId();
-									break;
+					if (aContent.length > 0) {
+						if (oMessage.getMessageProcessor().isA("sap.ui.model.Model")) {
+							// use control the binding-part belongs to
+							const aBindings = oBinding.getBindings();
+							const aTargets = oMessage.getTargets();
+							for (let j = 0; j < aTargets.length; j++) {
+								for (let i = 0; i < aBindings.length; i++) {
+									if (aTargets[j] === aBindings[i].getResolvedPath()) {
+										sControlId = aContent[i].getId();
+										break;
+									}
 								}
 							}
-						}
-					} else if (oMessage.getMessageProcessor().isA("sap.ui.core.message.ControlMessageProcessor")){
-						// check if message exists on one content-control
-						for (let i = 0; i < aContent.length; i++) {
-							const sId = aContent[i].getId();
-							const oValueState = this.getValueStateForContent(sId);
-							if (oValueState?.valueState === oMessage.getType() && oValueState?.valueStateText === oMessage.getMessage()) {
-								sControlId = sId;
-								break;
+						} else if (oMessage.getMessageProcessor().isA("sap.ui.core.message.ControlMessageProcessor")){
+							// check if message exists on one content-control
+							for (let i = 0; i < aContent.length; i++) {
+								const sId = aContent[i].getId();
+								const oValueState = this.getValueStateForContent(sId);
+								if (oValueState?.valueState === oMessage.getType() && oValueState?.valueStateText === oMessage.getMessage()) {
+									sControlId = sId;
+									break;
+								}
 							}
 						}
 					}
@@ -809,6 +809,7 @@ sap.ui.define([
 			}
 			// propagate messages
 			const aContent = this.getCurrentContent();
+			const aContentSet = [];
 			if (aMessages && aMessages.length > 0) {
 				// set message to inner control, if needed
 				for (let i = 0; i < aMessages.length; i++) {
@@ -816,7 +817,6 @@ sap.ui.define([
 					// check if the message type is a valid sap.ui.core.ValueState
 					if (ValueState[oMessage.getType()]) {
 						const aControlIds = oMessage.getControlIds();
-						const aContentSet = [];
 
 						for (let j = 0; j < aControlIds.length; j++) {
 							const sControlId = aControlIds[j];

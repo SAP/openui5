@@ -1,0 +1,142 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.MultiLevelExpand.Main"
+	xmlns="sap.ui.table"
+	xmlns:core="sap.ui.core"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:plugins="sap.ui.table.plugins"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<!-- Note: for $$aggregation, see controller's onInit! -->
+	<!-- Note: status must be either 'B' or 'N' (or maybe 'X') -->
+	<TreeTable id="table" ariaLabelledBy="title"
+		rows="{path : '/Bookings',
+			filters : {path : 'status', operator : 'NE', value1 : ''},
+			parameters : {$count : true},
+			sorter : [{path : 'status'}, {path : 'FlightPrice', descending : true}],
+			suspended : true}"
+		selectionMode="None" threshold="100">
+		<dependents>
+			<!-- plugins:ODataV4Selection enableNotification="true"/ -->
+		</dependents>
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1"
+					text="{header>$count} Flight Bookings ({header>$selectionCount} selected)"/>
+				<m:ToolbarSpacer/>
+				<m:SearchField id="search" placeholder="Search for anything..." search=".onSearch"
+					value="{ui>/sSearch}" width="40%"/>
+				<m:Button icon="sap-icon://download" press=".onDownload" tooltip="Download"/>
+				<m:Button icon="sap-icon://response" press=".onRefresh" tooltip="Refresh"/>
+				<m:Button icon="sap-icon://refresh" press=".onRefresh($event, true)"
+					tooltip="Refresh (keeping tree state)"/>
+				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
+					press=".onToggleMessagePopover" text="{ui>/iMessages}"
+					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>
+				<m:Button icon="sap-icon://multi-select" press=".onShowSelection"
+					tooltip="Show Selection"/>
+				<m:CheckBox id="toggleCount" select=".onToggleCount" selected="true" text="$count"/>
+				<m:Select change=".onChangeGrandTotal" id="grandTotalAtBottomOnly">
+					<core:Item key="" text="Grand Total At Top"/>
+					<core:Item key="false" text="Grand Total At Top &amp; Bottom"/>
+					<core:Item key="true" text="Grand Total At Bottom"/>
+					<core:Item key="off" text="No Grand Total"/>
+				</m:Select>
+				<m:Select change=".onChangeSubtotals" id="subtotalsAtBottomOnly">
+					<core:Item key="" text="Subtotals At Top"/>
+					<core:Item key="false" text="Subtotals At Top &amp; Bottom"/>
+					<core:Item key="true" text="Subtotals At Bottom"/>
+					<core:Item key="off" text="No Subtotals"/>
+				</m:Select>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1" minRowCount="2"/>
+		</rowMode>
+		<Column sortProperty="airline" width="20em">
+			<m:Label text="Airline"/>
+			<template>
+				<m:Text text="{airline} - {airlineName}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="ConnectionID" width="7em">
+			<m:Label text="Connection ID"/>
+			<template>
+				<m:Text text="{ConnectionID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="FlightDate" width="7em">
+			<m:Label text="Flight Date"/>
+			<template>
+				<m:Text text="{FlightDate}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="status" width="4em">
+			<m:Label text="Status"/>
+			<template>
+				<m:Text text="{status}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="BookingDate" width="7em">
+			<m:Label text="Booking Date"/>
+			<template>
+				<m:Text text="{BookingDate}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="FlightPrice" hAlign="End" width="8em">
+			<m:Label text="Flight Price"/>
+			<template>
+				<m:Text text="{
+					parts : ['FlightPrice', 'CurrencyCode_code', {
+						mode : 'OneTime',
+						path : '/##@@requestCurrencyCodes',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Currency',
+					formatOptions : { showMeasure : false }
+				}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="CurrencyCode_code" width="5em">
+			<m:Label text="Currency"/>
+			<template>
+				<m:Text text="{CurrencyCode_code}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="8em">
+			<m:CheckBox selected="{header>@$ui5.context.isSelected}" tooltip="Select All"/>
+			<template>
+				<m:FlexBox justifyContent="SpaceBetween">
+					<m:CheckBox selected="{@$ui5.context.isSelected}"/>
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
+						icon="sap-icon://expand-group" press=".onExpandAll"
+						tooltip="Expand All"/>
+					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true }"
+						icon="sap-icon://collapse-group" press=".onCollapseAll"
+						tooltip="Collapse All"/>
+				</m:FlexBox>
+			</template>
+		</Column>
+	</TreeTable>
+
+	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+		&lt;ul>
+			&lt;li> &lt;code>expandTo&lt;/code> Either * for &lt;em>expand all&lt;/em> or a number
+			&lt;li> &lt;code>filter&lt;/code> - Comma separated list of UI5-like filter conditions,
+				for example &lt;code>status EQ B,Distance BT 1000 5000,CurrencyCode_code EQ
+				USD,FlightPrice GT 1234&lt;/code>, or &lt;code>off&lt;/code> to turn off filtering
+				- &lt;em>Only with realOData!&lt;/em>
+			&lt;li> &lt;code>firstVisibleRow&lt;/code> - A number; default 0
+			&lt;li> &lt;code>grandTotalAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
+				true) or &lt;code>off&lt;/code> to turn off grand totals
+			&lt;li> &lt;code>leafCount&lt;/code> - Optional boolean to turn off leaf count
+			&lt;li> &lt;code>sort&lt;/code> - Comma separated list of UI5-like sorter conditions,
+				for example &lt;code>status,FlightPrice desc&lt;/code>, or &lt;code>off&lt;/code> to
+				turn off sorting
+				- &lt;em>Only with realOData!&lt;/em>
+			&lt;li> &lt;code>subtotalsAtBottomOnly&lt;/code> - Optional boolean (empty, false, or
+				true) or &lt;code>off&lt;/code> to turn off subtotals
+			&lt;li> &lt;code>threshold&lt;/code> - A number; default 100
+			&lt;li> &lt;code>visibleRowCount&lt;/code> - A number; default 20"/>
+</mvc:View>

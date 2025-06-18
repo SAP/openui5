@@ -95,6 +95,7 @@ sap.ui.define([
 		"FlatDataAggregation" : false,
 		"GridTable" : true,
 		"HierarchyBindAction" : false,
+		"MultiLevelExpand" : true,
 		"MusicArtists" : true
 	};
 	for (const sName in mName2Sandbox) {

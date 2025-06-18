@@ -19,7 +19,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -96,7 +96,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding an already existing model => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -139,7 +139,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding an already existing dataSource => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -188,7 +188,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding a new model which refers to a not existing dataSource in the change or manifest => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -236,7 +236,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model which refers to an existing dataSource with no type is defined (default 'OData') => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -292,7 +292,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' check that either 'type' or 'dataSource' is defined in a property in sap.ui5.models => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -338,7 +338,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest without having models and dataSources => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -392,7 +392,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type INA => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -436,7 +436,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type XML => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -480,7 +480,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type JSON => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -524,7 +524,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type FHIR => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -568,7 +568,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with not supported dataSource => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -610,7 +610,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' checks that there is a dataSource with type 'ODataAnnotation' definded which has no dataSources with type 'OData' for that => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -665,7 +665,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and 3 dataSources which has dataSource type 'ODataAnnotation' and one dataSource with type 'OData' => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -746,7 +746,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and 3 dataSources which has dataSource type 'ODataAnnotation' and one dataSource with type 'OData' but not including one of the typed 'ODataAnnotation' dataSources => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -802,7 +802,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding only a new dataSource => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -833,7 +833,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding unsed dataSource => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -870,7 +870,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding a new model which refers to an existing dataSource in the manifest (without type check) => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -914,7 +914,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding a new model which refers to an existing dataSource in the manifest which is type of 'ODataAnnotation' => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -952,7 +952,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding '2' new models => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -999,7 +999,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type http => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},
@@ -1043,7 +1043,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type WebSocket => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 				},

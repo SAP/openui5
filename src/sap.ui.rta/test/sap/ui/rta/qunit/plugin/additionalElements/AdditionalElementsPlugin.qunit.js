@@ -84,7 +84,7 @@ sap.ui.define([
 	const SomeModel = JSONModel.extend("sap.ui.rta.qunit.test.Model");
 
 	const DEFAULT_MANIFEST = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.app": {
 			id: "applicationId",

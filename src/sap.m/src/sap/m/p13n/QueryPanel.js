@@ -161,7 +161,7 @@ sap.ui.define([
 		const bIsNotTemplateRow = iCurrentIndex !== iMaxListLength;
 		const bQueryLimitReached = iCurrentIndex === iMaxListLength && this._oListControl.getItems().length === iQueryLimit;
 		if ((bIsNotTemplateRow || bQueryLimitReached || this._allEntriesUsed()) && (iQueryLimit === -1 || iNewIndex < iQueryLimit)) {
-			this._oListControl.removeItem(oItem);
+			this._oListControl.removeAggregation("items", oItem, true); // supress invalidation as inserted again (to not remove focus)
 			this._oListControl.insertItem(oItem, iNewIndex);
 
 			this._updateEnableOfMoveButtons(oItem, false);

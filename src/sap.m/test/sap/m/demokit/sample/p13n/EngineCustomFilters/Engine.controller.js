@@ -206,7 +206,7 @@ sap.ui.define([
 				}
 			});
 
-			Engine.getInstance().attachStateChange(this.handleStateChange.bind(this));
+			Engine.getInstance().attachStateChange(this.handleStateChange, this);
 		},
 
 		openPersoDialog: function(oEvt) {
@@ -221,7 +221,7 @@ sap.ui.define([
 		},
 
 		_getKey: function(oControl) {
-			return this.getView().getLocalId(oControl.getId());
+			return oControl.data("p13nKey");
 		},
 
 		handleStateChange: function(oEvt) {

@@ -140,7 +140,7 @@ sap.ui.define([
 			};
 
 			this.oExpectedManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"name": "testdata." + sComponentName + ".Component",
 
 				"sap.app": {
@@ -628,7 +628,7 @@ sap.ui.define([
 
 	QUnit.test("Async loading of manifests", function(assert) {
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"name": "testdata.inheritAsync.Component",
 
 			"sap.app": {
@@ -704,7 +704,7 @@ sap.ui.define([
 		await Component.create({
 			name: "my.failing",
 			manifest: {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5": {
 					resourceRoots: {
@@ -724,7 +724,7 @@ sap.ui.define([
 		await Component.create({
 			name: "my.failing",
 			manifest: {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5": {
 					resourceRoots: {

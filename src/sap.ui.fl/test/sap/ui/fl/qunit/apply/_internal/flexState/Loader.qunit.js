@@ -177,13 +177,13 @@ sap.ui.define([
 		[{
 			details: "with a manifest object",
 			manifest: new Manifest({
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.ovp": {}
 			})
 		}, {
 			details: "with a manifest JSON",
 			manifest: {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.ovp": {}
 			}
 		}].forEach(function(oTestData) {
