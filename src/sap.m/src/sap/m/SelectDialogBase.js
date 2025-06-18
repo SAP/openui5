@@ -183,5 +183,26 @@ function(
 		}
 	};
 
+	/**
+	 * @override
+	 */
+	SelectDialogBase.prototype.addCustomData = function (aCustomData) {
+		Control.prototype.addCustomData.apply(this, arguments);
+
+		const mSettings = this.data("sap-ui-custom-settings");
+		const oDt = mSettings && mSettings["sap.ui.dt"];
+		const sDesigntime = oDt && oDt.designtime;
+
+		if (sDesigntime && this._oDialog) {
+			this._oDialog.data("sap-ui-custom-settings", {
+				"sap.ui.dt": {
+					designtime: sDesigntime
+				}
+			});
+		}
+
+		return this;
+	};
+
 	return SelectDialogBase;
 });
