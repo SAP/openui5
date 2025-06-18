@@ -20,7 +20,7 @@
 				{ "name": "code2" },
 				{ "name": "api" },
 				{ "name": "o-data" },
-				{ "name": "javascript" },
+				{ "name": "java" },
 				{ "name": "application" },
 				{ "name": "intranet" },
 				{ "name": "mobile-network" },
@@ -144,7 +144,9 @@
 				{ "name": "solution" },
 				{ "name": "build-work-zone" },
 				{ "name": "build-apps" },
-				{ "name": "build-process-automation" }
+				{ "name": "build-process-automation" },
+				{ "name": "ai-feature-estimator" },
+				{ "name": "service-estimator" }
 			]
 		},
 		{
@@ -216,7 +218,13 @@
 				{ "name": "build-code" },
 				{ "name": "business-application-studio" },
 				{ "name": "clone-from-git" },
-				{ "name": "business-accelerator" }
+				{ "name": "business-accelerator" },
+				{ "name": "add-project" },
+				{ "name": "add-issue" },
+				{ "name": "refine-test-data" },
+				{ "name": "navigate-source-code" },
+				{ "name": "clean-up" },
+				{ "name" : "sap-fiori-tools" }
 			]
 		},
 		{
