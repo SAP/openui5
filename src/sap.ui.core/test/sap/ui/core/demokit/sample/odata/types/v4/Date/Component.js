@@ -11,8 +11,12 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 			manifest: "json"
 		},
 
-		exit: function () {
-			this.getModel().restoreSandbox();
+		init() {
+			UIComponent.prototype.init.apply(this, arguments);
+			this.getModel().setData({
+				Date: "2022-12-31",
+				EndDate: "2023-03-31"
+			});
 		}
 	});
 });
