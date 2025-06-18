@@ -946,6 +946,16 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isRestrictedToFixedValues", (assert) => {
+
+		sinon.stub(oContainer, "isRestrictedToFixedValues").returns(false);
+		assert.notOk(oValueHelp.isRestrictedToFixedValues(), "Result");
+
+		oContainer.isRestrictedToFixedValues.returns(true);
+		assert.ok(oValueHelp.isRestrictedToFixedValues(), "Result");
+
+	});
+
 	QUnit.module("with Dialog", {
 		beforeEach: async () => {
 			oContainer = new Container("C1", {

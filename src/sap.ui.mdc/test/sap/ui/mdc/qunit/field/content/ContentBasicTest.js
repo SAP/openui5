@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
 	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/field/FieldSelect",
 	"sap/ui/mdc/field/TokenizerDisplay",
 	"sap/ui/mdc/field/TokenDisplay",
+	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/DefaultTypeMap",
@@ -23,8 +25,10 @@ sap.ui.define([
 	ConditionsType,
 	FieldInput,
 	FieldMultiInput,
+	FieldSelect,
 	TokenizerDisplay,
 	TokenDisplay,
+	FieldDisplay,
 	FieldEditMode,
 	OperatorName,
 	DefaultTypeMap,
@@ -332,6 +336,52 @@ sap.ui.define([
 			createFunction: undefined,
 			noFormatting: false,
 			editMode: FieldEditMode.Edititable
+		},
+		"EditSelect": {
+			getPathsFunction: "getEditSelect",
+			paths: ["sap/ui/mdc/field/FieldSelect"],
+			modules: [FieldSelect],
+			instances: [FieldSelect],
+			createFunction: "createEditSelect",
+			noFormatting: false,
+			editMode: FieldEditMode.Edititable,
+			bindings: [
+				{
+					selectedKey: {path: "$field>/conditions", type: ConditionsType},
+					// placeholder: {path: "$field>/placeholder"},
+					textAlign: {path: "$field>/textAlign"},
+					textDirection: {path: "$field>/textDirection"},
+					required: {path: "$field>/required"},
+					editable: {path: "$field>/editMode"},
+					enabled: {path: "$field>/editMode"},
+					valueState: {path: "$field>/valueState"},
+					valueStateText: {path: "$field>/valueStateText"},
+					// showValueHelp: {path: "$field>/_valueHelpEnabled"},
+					ariaAttributes: {path: "$field>/_ariaAttributes"},
+					tooltip: {path: "$field>/tooltip"}
+				}
+			],
+			properties: [
+				{
+					width: "100%",
+					// autocomplete: false,
+					// showSuggestion: false,
+					valueState: "Warning",
+					valueStateText: "My Warning"
+				}
+			],
+			associations: [
+				{
+					ariaLabelledBy: ["MyLabel"]
+				}
+			],
+			events: [
+				{
+					change: {value: "X"},
+					liveChange: {value: "X", previousValue: "", escPressed: false},
+					valueHelpRequest: {fromKeyboard: true}
+				}
+			]
 		}
 	};
 
@@ -386,7 +436,11 @@ sap.ui.define([
 			_getInvalidInputException: (oContent) => {return null;},
 			hasValueStateForContent: () => {return false;},
 			getValueStateForContent: (sContentId) => {return null;},
-			isInvalidateSuppressed: () => {return true;}
+			isInvalidateSuppressed: () => {return true;},
+			getDisplay: () => {return FieldDisplay.Description;},
+			_getValueHelp: () => {return "VH1";},
+			isA: (sName) => {return sName === "sap.ui.mdc.field.FieldBase";},
+			getParent: () => {return null;}
 		};
 		fnEnhanceField?.(oFakeField);
 		fnInitEventCount();

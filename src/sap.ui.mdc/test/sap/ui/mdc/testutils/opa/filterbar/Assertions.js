@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
     "./waitForFilterBar",
     "./waitForAdaptFiltersButton",
+	"../filterfield/waitForFilterField",
     "../Utils"
 ], function(
 	Opa5,
@@ -19,6 +20,7 @@ sap.ui.define([
 	PropertyStrictEquals,
     waitForFilterBar,
     waitForAdaptFiltersButton,
+    waitForFilterField,
     Utils
 ) {
 	"use strict";
@@ -61,11 +63,10 @@ sap.ui.define([
         }
 
 
-        this.waitFor({
-            controlType: "sap.ui.mdc.FilterField",
+		waitForFilterField.call(this, {
             matchers: vMatchers,
-            success: function(aFilterFields) {
-                Opa5.assert.ok(aFilterFields.length === 1, "The FilterField labeled as '" + sLabel + "' found");
+            success: function(oFilterField) {
+                Opa5.assert.ok(!!oFilterField, "The FilterField labeled as '" + sLabel + "' found");
             }
         });
     };

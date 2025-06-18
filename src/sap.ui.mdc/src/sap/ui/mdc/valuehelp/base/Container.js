@@ -1046,6 +1046,20 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be prevented.
+	 *
+	 * @returns {boolean} If set, only fixed values are allowed
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.Valuehelp
+	 * @since 1.138
+	 */
+	Container.prototype.isRestrictedToFixedValues = function() {
+		const oContent = this.getContent();
+		return oContent?.[0].isRestrictedToFixedValues();
+	};
+
+
 	Container.prototype.clone = function(sIdSuffix, aLocalIds) {
 
 		// detach event handler before cloning to not have it twice on the clone

@@ -899,6 +899,18 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be prevented.
+	 *
+	 * @returns {boolean} If set, only fixed values are allowed
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
+	 * @since 1.138
+	 */
+	Content.prototype.isRestrictedToFixedValues = function() {
+		return false;
+	};
+
 	PromiseMixin.call(Content.prototype);
 
 

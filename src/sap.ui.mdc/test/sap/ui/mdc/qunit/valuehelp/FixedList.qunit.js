@@ -76,6 +76,9 @@ sap.ui.define([
 			return {
 				getDisplay() {
 					return "DescriptionValue";
+				},
+				_requestShowContainer() {
+					return Promise.resolve(true);
 				}
 			};
 		},
@@ -846,9 +849,9 @@ sap.ui.define([
 	 */
 	QUnit.test("shouldOpenOnClick", (assert) => {
 
-		assert.notOk(oFixedList.shouldOpenOnClick(), "should not open if filterList set");
-		oFixedList.setFilterList(false);
-		assert.ok(oFixedList.shouldOpenOnClick(), "should open if filterList not set");
+		assert.notOk(oFixedList.shouldOpenOnClick(), "should not open if restrictedToFixedValues not set");
+		oFixedList.setRestrictedToFixedValues(true);
+		assert.ok(oFixedList.shouldOpenOnClick(), "should open if restrictedToFixedValues set");
 
 	});
 
@@ -927,6 +930,15 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isRestrictedToFixedValues", (assert) => {
+
+		assert.notOk(oFixedList.isRestrictedToFixedValues(), "Result");
+
+		oFixedList.setRestrictedToFixedValues(true);
+		assert.ok(oFixedList.isRestrictedToFixedValues(), "Result");
+
+	});
+
 	let oModel;
 	QUnit.module("Using Binding", {
 		beforeEach() {
@@ -939,7 +951,8 @@ sap.ui.define([
 				],
 				config: {
 					maxConditions: -1,
-					operators: [OperatorName.EQ]
+					operators: [OperatorName.EQ],
+					emptyAllowed: false
 				}
 			});
 
@@ -1023,6 +1036,84 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getContent null-item", (assert) => {
+
+		oFixedList.bindProperty("emptyText", {path: "/emptyText", type: new DateType({pattern: "yyyy-MM-dd"})});
+		const oData = oModel.getData();
+		oData.conditions = [];
+		oData.emptyText = UI5Date.getInstance(1900, 0, 1);
+		oData.config.emptyAllowed = true;
+		oModel.setData(oData);
+		oModel.checkUpdate(true);
+
+		let iSelect = 0;
+		let aConditions;
+		let sType;
+		oFixedList.attachEvent("select", (oEvent) => {
+			iSelect++;
+			aConditions = oEvent.getParameter("conditions");
+			sType = oEvent.getParameter("type");
+		});
+
+		const oContent = oFixedList.getContent();
+
+		return oContent?.then(async (oContent) => {
+			const oShowResult = await oFixedList.onShow(); // to update selection and scroll
+			assert.ok(oContent, "Content returned");
+			assert.ok(oContent.isA("sap.m.List"), "Content is sap.m.List");
+			assert.equal(oContent.getItems().length, 4, "Number of items");
+			assert.equal(oShowResult?.items, 4, "OnShow returns number of items");
+			let oItem = oContent.getItems()[0];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item0 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item0 type");
+			assert.equal(oItem.getLabel(), "1900-01-01", "Item0 label");
+			assert.equal(oItem.getValue(), "", "Item0 value");
+			assert.ok(oItem.getSelected(), "Item0 selected");
+			assert.equal(oShowResult?.itemId, oItem.getId(), "OnShow returns selected itemId");
+			oItem = oContent.getItems()[1];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item1 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item1 type");
+			assert.equal(oItem.getLabel(), "2023-12-13", "Item1 label");
+			assert.equal(oItem.getValue(), "last year", "Item1 value");
+			assert.notOk(oItem.getSelected(), "Item1 not selected");
+			oItem = oContent.getItems()[2];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item2 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item2 type");
+			assert.equal(oItem.getLabel(), "2024-12-13", "Item2 label");
+			assert.equal(oItem.getValue(), "today", "Item2 value");
+			assert.notOk(oItem.getSelected(), "Item2 not selected");
+			assert.notOk(oItem.hasStyleClass("sapMLIBFocused"), "Item2 is not focused");
+			oItem = oContent.getItems()[3];
+			assert.ok(oItem.isA("sap.m.DisplayListItem"), "Item3 is DisplayListItem");
+			assert.equal(oItem.getType(), mLibrary.ListType.Active, "Item3 type");
+			assert.equal(oItem.getLabel(), "2025-12-13", "Item3 label");
+			assert.equal(oItem.getValue(), "next year", "Item3 value");
+			assert.notOk(oItem.getSelected(), "Item3 not selected");
+
+			const aNewConditions = [
+				Condition.createItemCondition(3, UI5Date.getInstance(2025, 11, 13))
+			];
+			oItem = oContent.getItems()[3];
+			oItem.setSelected(true);
+			oContent.fireItemPress({listItem: oItem});
+			assert.equal(iSelect, 1, "select event fired");
+			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+			assert.deepEqual(oFixedList.getConditions(), aNewConditions, "FixedList conditions");
+
+			oItem = oContent.getItems()[0];
+			oItem.setSelected(true);
+			oContent.fireItemPress({listItem: oItem});
+			assert.equal(iSelect, 2, "select event fired");
+			assert.deepEqual(aConditions, [], "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+			assert.deepEqual(oFixedList.getConditions(), [], "FixedList conditions");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
+	});
+
 	QUnit.test("Filtering", (assert) => {
 
 		oFixedList.setFilterValue("2024");
@@ -1061,6 +1152,51 @@ sap.ui.define([
 		return oPromise?.then((oItem) => {
 			assert.ok(true, "Promise Then must be called");
 			assert.deepEqual(oItem, {key: 2, description: UI5Date.getInstance(2024, 11, 13)}, "Item returned");
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError);
+		});
+
+	});
+
+	QUnit.test("getItemForValue - null-item", (assert) => {
+
+		const oConfig = {
+			parsedValue: null,
+			parsedDescription: undefined,
+			value: null,
+			inParameters: undefined,
+			outParameters: undefined,
+			bindingContext: undefined,
+			checkKey: true,
+			checkDescription: false,
+			exception: FormatException,
+			emptyAllowed: true
+		};
+		oFixedList.setUseFirstMatch(false);
+		oFixedList.bindProperty("emptyText", {path: "/emptyText", type: new DateType({pattern: "yyyy-MM-dd"})});
+		const oData = oModel.getData();
+		oData.emptyText = UI5Date.getInstance(1900, 0, 1);
+		oModel.setData(oData);
+		oModel.checkUpdate(true);
+
+		const oPromise = oFixedList.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+		return oPromise?.then((oItem) => {
+			assert.ok(true, "Promise Then must be called");
+			assert.deepEqual(oItem, {key: null, description: UI5Date.getInstance(1900, 0, 1)}, "Item returned");
+
+			oConfig.emptyAllowed = false;
+
+			const oPromise = oFixedList.getItemForValue(oConfig);
+			assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+
+			return oPromise?.then((oItem) => {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, null, "no Item returned");
+			}).catch((oError) => {
+				assert.notOk(true, "Promise Catch called: " + oError);
+			});
 		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch called: " + oError);
 		});
