@@ -78261,6 +78261,47 @@ make root = ${bMakeRoot}`;
 	});
 
 	//*********************************************************************************************
+	// Scenario: Create an operation binding for a collection-bound action relative to the header
+	// context of a new list binding that has not yet finished its auto-$expand/$select. See that
+	// $$inheritExpandSelect does not causes issues, but can inherit some hardcoded $select.
+	// SNOW: CS20250010102074
+	//
+	// @see "Fiori Elements Safeguard: Test 2 (Create)" for a similar scenario "but w/o
+	//   $$inheritExpandSelect because nothing can be inherited" :-(
+	// @see "DINC0333115: bound action w/o entity data" for a similar scenario w/ ODCB
+	QUnit.test("CS20250010102074: $$inheritExpandSelect on new ODLB", async function (assert) {
+		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
+
+		await this.createView(assert, "", oModel);
+
+		const oListBinding = oModel.bindList("/Artists", null, [], [], {$select : "Messages"});
+		const oOperationBinding = oModel.bindContext("special.cases.Create(...)",
+			oListBinding.getHeaderContext(), {$$inheritExpandSelect : true});
+
+		this.expectRequest({
+				method : "POST",
+				payload : {
+					Name : "Jane Doe"
+				},
+				url : "Artists/special.cases.Create?$select=Messages"
+			}, {
+				ArtistID : "23",
+				IsActiveEntity : false,
+				Messages : []
+			});
+
+		const [oReturnValueContext] = await Promise.all([
+			oOperationBinding.setParameter("Name", "Jane Doe")
+				// code under test
+				.invoke(),
+			this.waitForChanges(assert)
+		]);
+
+		assert.strictEqual(oReturnValueContext.getPath(),
+			"/Artists(ArtistID='23',IsActiveEntity=false)", "some quick check");
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create an operation binding for a bound action relative to a new context where no
 	// data has been loaded. Use $$inheritExpandSelect to inherit some hardcoded $select from the
 	// context's binding while auto-$expand/$select is turned on (but there's no UI). Use
