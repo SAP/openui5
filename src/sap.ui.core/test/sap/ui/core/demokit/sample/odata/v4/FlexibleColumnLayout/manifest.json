@@ -59,8 +59,7 @@
 					"operationMode" : "Server",
 					"updateGroupId" : "UpdateGroup"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type" : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.SandboxModel"
 			}
 		},
 		"rootView" : {

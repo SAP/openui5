@@ -65,8 +65,7 @@
 					"operationMode" : "Server",
 					"updateGroupId" : "update"
 				},
-				"type" : "sap.ui.core.sample.odata.v4.ListBinding.SandboxModel",
-				"uriSettingName" : "serviceUrl"
+				"type" : "sap.ui.core.sample.odata.v4.ListBinding.SandboxModel"
 			}
 		},
 		"rootView" : {

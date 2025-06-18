@@ -52,8 +52,7 @@
 					"operationMode": "Server",
 					"updateGroupId": "UpdateGroup"
 				},
-				"type": "sap.ui.core.sample.odata.types.v4.TimeOfDay.SandboxModel",
-				"uriSettingName": "serviceUrl"
+				"type": "sap.ui.core.sample.odata.types.v4.TimeOfDay.SandboxModel"
 			}
 		},
 		"rootView": {
