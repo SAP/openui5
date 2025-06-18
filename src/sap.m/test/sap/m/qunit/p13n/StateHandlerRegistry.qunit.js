@@ -64,6 +64,52 @@ sap.ui.define([
 		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange[0].fFunction, testHandler2, "The first handler has been removed, the second remains");
 	});
 
+	QUnit.test("Check 'attachChange' with oListener", function(assert) {
+
+		const oTestContext = {
+			testProperty: "testValue"
+		};
+
+		const fnTestHandler = function(oEvt) {
+			assert.equal(this.testProperty, "testValue", "The oListener context is correct");
+		};
+
+		this.stateHandlerRegistry.attachChange(fnTestHandler, oTestContext);
+
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 1, "The event handler has been registered");
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange[0].oListener, oTestContext, "The event handler has the correct context");
+	});
+
+	QUnit.test("Check 'detachChange' with oListener", function(assert) {
+		// arrange
+		const oTestContext = {
+			testProperty: "testValue"
+		};
+
+		const fnTestHandler1 = function(oEvt) {
+			assert.equal(this.testProperty, "testValue", "The oListener context is correct");
+		};
+		const fnTestHandler2 = function(oEvt) {};
+
+		this.stateHandlerRegistry.attachChange(fnTestHandler1, oTestContext);
+		this.stateHandlerRegistry.attachChange(fnTestHandler2);
+
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 2, "The event handler has been registered");
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange[0].oListener, oTestContext, "The event handler has the correct context");
+
+		// act
+		this.stateHandlerRegistry.detachChange(fnTestHandler1);
+
+		// assert
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 2, "The event handler cannot be detached without context");
+
+		// act
+		this.stateHandlerRegistry.detachChange(fnTestHandler1, oTestContext);
+
+		// assert
+		assert.equal(this.stateHandlerRegistry.mEventRegistry.stateChange.length, 1, "The event handler gets detached with correct context");
+	});
+
 	QUnit.test("Check 'fireChange' with multiple listeners", function(assert) {
 
 		var done = assert.async(2);

@@ -2678,11 +2678,6 @@ sap.ui.define([
 							const _handleTypeahead = function() {
 								if (_isFocused.call(this)) { // only if still connected and focussed
 									const bIsFHOpen = oValueHelp.isOpen();
-									if (this.getMaxConditionsForHelp() === 1 && oValueHelp.getConditions().length > 0) {
-										// While single-suggestion no item is selected
-										oValueHelp.setConditions([]);
-									}
-									oValueHelp.setFilterValue(this._sFilterValue);
 									if (!bIsFHOpen) {
 										/*
 											sap.ui.mdc.ValueHelp can only be "asked" to open a typeahead by a connected control.
@@ -2699,6 +2694,11 @@ sap.ui.define([
 							}.bind(this);
 
 							if (this._bConnected && this.getCurrentContent()[0]) {
+								if (this.getMaxConditionsForHelp() === 1 && oValueHelp.getConditions().length > 0) {
+									// While single-suggestion no item is selected
+									oValueHelp.setConditions([]);
+								}
+								oValueHelp.setFilterValue(this._sFilterValue);
 								oValueHelp.requestShowTypeahead(RequestShowContainerReason.Typing).then((bTypeahead) => {
 									return !!bTypeahead && _handleTypeahead();
 								});
@@ -2706,11 +2706,6 @@ sap.ui.define([
 							}
 						}, 300, { leading: false, trailing: true });
 					}
-					oValueHelp.requestShowTypeahead(RequestShowContainerReason.Typing).then((bOpenByTyping) => { // keeping this for compatibility, as it allows service handling before the debounce interval
-						if (_isFocused.call(this) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
-							this._fnLiveChangeTimer(); // if resolved while initial debounce-time frame, it will not triggered twice
-						}
-					});
 					this._fnLiveChangeTimer();
 				}
 			}

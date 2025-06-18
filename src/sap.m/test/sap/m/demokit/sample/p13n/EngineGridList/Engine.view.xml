@@ -36,19 +36,19 @@
 						<VBox
 							justifyContent="SpaceBetween"
 							class="sapUiSmallMarginTop sapUiSmallMarginBegin">
-							<VBox id="firstName">
+							<VBox app:p13nKey="firstName">
 								<Title text="First Name"/>
 								<Label text="{firstName}"/>
 							</VBox>
-							<VBox id="lastName">
+							<VBox app:p13nKey="lastName">
 								<Title text="Last Name"/>
 								<Label text="{lastName}"/>
 							</VBox>
-							<VBox id="city">
+							<VBox app:p13nKey="city">
 								<Title text="City"/>
 								<Label text="{city}"/>
 							</VBox>
-							<VBox id="size">
+							<VBox app:p13nKey="size">
 								<Title text="Size"/>
 								<Label text="{size}"/>
 							</VBox>

@@ -12,7 +12,7 @@ sap.ui.define(["testdata/v2models/empty/Component"], function(EmptyExtensionComp
 
 			manifest: {
 
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					"id": "testdata.v2models.extension",

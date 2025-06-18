@@ -2122,7 +2122,7 @@ sap.ui.define([
 
 					// If the request fails, ignoring the error would end up in a sync call, which would fail, too.
 					return {
-						"_version": "2.0.0"
+						"_version": "2.0.1"
 					};
 				}).then(async function(oManifestJson) {
 					if (oManifestJson) {

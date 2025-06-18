@@ -49,7 +49,7 @@ sap.ui.define([
 			var DataCollectorTestComponent = UIComponent.extend("DataCollectorTestComponent", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.0",
+						"_version": "2.0.1",
 
 						"sap.app": {
 							type: "application"
@@ -84,7 +84,7 @@ sap.ui.define([
 			var DataCollectorTestComponent1 = UIComponent.extend("DataCollectorTestComponentWithSapFiori", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.0",
+						"_version": "2.0.1",
 
 						"sap.app": {
 							type: "application"
@@ -97,7 +97,7 @@ sap.ui.define([
 			var DataCollectorTestComponent2 = UIComponent.extend("DataCollectorTestComponentWithoutSapFiori", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.0",
+						"_version": "2.0.1",
 
 						"sap.app": {
 							type: "application"

@@ -1,0 +1,507 @@
+<?xml
+version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HIERARCHY',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="SAP__hierarchy"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HTML5',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.HTML5.v1" Alias="SAP__HTML5"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ODM',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.ODM.v1" Alias="SAP__ODM"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PDF',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.PDF.v1" Alias="SAP__PDF"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="SAP__session"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SUPPORT',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Support.v1" Alias="SAP__support"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.iwbep.common.v0001" Alias="SAP__self">
+			<Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+			<EntityType Name="Currency">
+				<Key>
+					<PropertyRef Name="CurrencyCode"/>
+				</Key>
+				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="15"/>
+				<Property Name="DecimalPlaces" Type="Edm.Byte" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="DocumentDescription">
+				<Key>
+					<PropertyRef Name="Id"/>
+				</Key>
+				<Property Name="Id" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false"/>
+				<Property Name="CreatedBy" Type="Edm.String" Nullable="false" MaxLength="12"/>
+				<Property Name="FileName" Type="Edm.String" Nullable="false"/>
+				<Property Name="Title" Type="Edm.String" Nullable="false"/>
+				<Property Name="CoverPage" Type="Collection(com.sap.gateway.default.iwbep.common.v0001.Section)" Nullable="false"/>
+				<Property Name="Format" Type="com.sap.gateway.default.iwbep.common.v0001.Format" Nullable="false"/>
+				<Property Name="PDFStandard" Type="com.sap.gateway.default.iwbep.common.v0001.PDFStandard" Nullable="false"/>
+				<Property Name="Signature" Type="com.sap.gateway.default.iwbep.common.v0001.Signature" Nullable="false"/>
+				<Property Name="TableColumns" Type="Collection(com.sap.gateway.default.iwbep.common.v0001.TableColumn)" Nullable="false"/>
+				<Property Name="Header" Type="com.sap.gateway.default.iwbep.common.v0001.HeaderFooter" Nullable="false"/>
+				<Property Name="Footer" Type="com.sap.gateway.default.iwbep.common.v0001.HeaderFooter" Nullable="false"/>
+				<Property Name="FileShare" Type="com.sap.gateway.default.iwbep.common.v0001.FileShare" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="T100Longtext">
+				<Key>
+					<PropertyRef Name="MessageClass"/>
+					<PropertyRef Name="MessageNumber"/>
+					<PropertyRef Name="Variable1"/>
+					<PropertyRef Name="Variable2"/>
+					<PropertyRef Name="Variable3"/>
+					<PropertyRef Name="Variable4"/>
+				</Key>
+				<Property Name="MessageClass" Type="Edm.String" Nullable="false" MaxLength="20"/>
+				<Property Name="MessageNumber" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Variable1" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Variable2" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Variable3" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Variable4" Type="Edm.String" Nullable="false" MaxLength="50"/>
+				<Property Name="Documentation" Type="Edm.Stream" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="TechnicalInfo">
+				<Key>
+					<PropertyRef Name="ServiceRoot"/>
+					<PropertyRef Name="EdmPath"/>
+				</Key>
+				<Property Name="ServiceRoot" Type="Edm.String" Nullable="false"/>
+				<Property Name="EdmPath" Type="Edm.String" Nullable="false"/>
+				<Property Name="HTML" Type="Edm.Stream" Nullable="false"/>
+				<Property Name="Attributes" Type="Collection(com.sap.gateway.default.iwbep.common.v0001.Attribute)" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="UnitOfMeasure">
+				<Key>
+					<PropertyRef Name="UnitCode"/>
+				</Key>
+				<Property Name="UnitCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="ISOCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="ExternalCode" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Text" Type="Edm.String" Nullable="false" MaxLength="30"/>
+				<Property Name="DecimalPlaces" Type="Edm.Int16"/>
+			</EntityType>
+			<ComplexType Name="Attribute">
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="Value" Type="Edm.String" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="ColumnFormat">
+				<Property Name="DisplayFormat" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="IANATimezoneProperty" Type="Edm.String" Nullable="false"/>
+				<Property Name="IANATimezone" Type="Edm.String" Nullable="false" MaxLength="64"/>
+			</ComplexType>
+			<ComplexType Name="FileShare">
+				<Property Name="Repository" Type="Edm.String" Nullable="false" MaxLength="100"/>
+				<Property Name="Folder" Type="Edm.String" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="FitToPage">
+				<Property Name="IsEnabled" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="ErrorRecoveryBehavior" Type="Edm.String" Nullable="false" MaxLength="8"/>
+				<Property Name="MinimumFontSize" Type="Edm.Int32" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="Format">
+				<Property Name="BorderSize" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="FontName" Type="Edm.String" Nullable="false" MaxLength="60"/>
+				<Property Name="FontSize" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="MarginSize" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="Orientation" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="Padding" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="PaperSize" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="TableFormat" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="TextDirectionLayout" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="FitToPage" Type="com.sap.gateway.default.iwbep.common.v0001.FitToPage" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="HeaderFooter">
+				<Property Name="Left" Type="com.sap.gateway.default.iwbep.common.v0001.HeaderFooterField" Nullable="false"/>
+				<Property Name="Center" Type="com.sap.gateway.default.iwbep.common.v0001.HeaderFooterField" Nullable="false"/>
+				<Property Name="Right" Type="com.sap.gateway.default.iwbep.common.v0001.HeaderFooterField" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="HeaderFooterField">
+				<Property Name="Type" Type="Edm.String" Nullable="false" MaxLength="10"/>
+			</ComplexType>
+			<ComplexType Name="Link">
+				<Property Name="Text" Type="Edm.String" Nullable="false"/>
+				<Property Name="Url" Type="Edm.String" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="NameValuePair">
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="Value" Type="Edm.String" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="PDFStandard">
+				<Property Name="DoEnableAccessibility" Type="Edm.Boolean"/>
+				<Property Name="UsePDFAConformance" Type="Edm.Boolean" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="Section">
+				<Property Name="Title" Type="Edm.String" Nullable="false"/>
+				<Property Name="Content" Type="Collection(com.sap.gateway.default.iwbep.common.v0001.NameValuePair)" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="Signature">
+				<Property Name="DoSign" Type="Edm.Boolean" Nullable="false"/>
+				<Property Name="Reason" Type="Edm.String" Nullable="false"/>
+			</ComplexType>
+			<ComplexType Name="TableColumn">
+				<Property Name="Name" Type="Edm.String" Nullable="false"/>
+				<Property Name="Header" Type="Edm.String" Nullable="false"/>
+				<Property Name="HorizontalAlignment" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="Format" Type="com.sap.gateway.default.iwbep.common.v0001.ColumnFormat" Nullable="false"/>
+			</ComplexType>
+			<Function Name="GetTechnicalInfoLinks">
+				<Parameter Name="ServiceRoot" Type="Edm.String" Nullable="false"/>
+				<Parameter Name="EdmPath" Type="Edm.String"/>
+				<ReturnType Type="Collection(com.sap.gateway.default.iwbep.common.v0001.Link)" Nullable="false"/>
+			</Function>
+			<EntityContainer Name="Container">
+				<EntitySet Name="Currencies" EntityType="com.sap.gateway.default.iwbep.common.v0001.Currency"/>
+				<EntitySet Name="DocumentDescriptions" EntityType="com.sap.gateway.default.iwbep.common.v0001.DocumentDescription"/>
+				<EntitySet Name="MyDocumentDescriptions" EntityType="com.sap.gateway.default.iwbep.common.v0001.DocumentDescription"/>
+				<EntitySet Name="T100Longtexts" EntityType="com.sap.gateway.default.iwbep.common.v0001.T100Longtext"/>
+				<EntitySet Name="TechnicalInfo" EntityType="com.sap.gateway.default.iwbep.common.v0001.TechnicalInfo"/>
+				<EntitySet Name="UnitsOfMeasure" EntityType="com.sap.gateway.default.iwbep.common.v0001.UnitOfMeasure"/>
+				<FunctionImport Name="GetTechnicalInfoLinks" Function="com.sap.gateway.default.iwbep.common.v0001.GetTechnicalInfoLinks" IncludeInServiceDocument="true"/>
+			</EntityContainer>
+			<Annotations Target="SAP__self.Currency/CurrencyCode">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Currencies">
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.DocumentDescription/CreatedBy">
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.DocumentDescription/CreatedAt">
+				<Annotation Term="SAP__core.Computed"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/MyDocumentDescriptions">
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Format/FontName"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="TableColumns/Format/DisplayFormat"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/T100Longtexts">
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.UnitOfMeasure/UnitCode">
+				<Annotation Term="SAP__common.Text" Path="Text"/>
+				<Annotation Term="SAP__common.UnitSpecificScale" Path="DecimalPlaces"/>
+				<Annotation Term="SAP__CodeList.StandardCode" Path="ISOCode"/>
+				<Annotation Term="SAP__CodeList.ExternalCode" Path="ExternalCode"/>
+			</Annotations>
+			<Annotations Target="SAP__self.UnitOfMeasure">
+				<Annotation Term="SAP__core.AlternateKeys">
+					<Collection>
+						<Record>
+							<PropertyValue Property="Key">
+								<Collection>
+									<Record>
+										<PropertyValue Property="Name" PropertyPath="ExternalCode"/>
+										<PropertyValue Property="Alias" String="ExternalCode"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/UnitsOfMeasure">
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ColumnFormat/DisplayFormat">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_display_format-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-COLUMN_FORMAT.DISPLAY_FORMAT'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ColumnFormat/IANATimezone">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/sap/vtziana-sh/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-COLUMN_FORMAT.IANA_TIMEZONE'/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.FileShare/Repository">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/sh_file_share_repo-sh/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FILE_SHARE.REPOSITORY'/$metadata</String>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.FitToPage/ErrorRecoveryBehavior">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_fp_error_bhvr-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FIT_TO_PAGE.ERROR_RECOVERY_BEHAVIOR'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Format/FontName">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_font_name-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FORMAT.FONT_NAME'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Format/Orientation">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_orientation-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FORMAT.ORIENTATION'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Format/PaperSize">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_paper_size-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FORMAT.PAPER_SIZE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Format/TableFormat">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_table_format-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FORMAT.TABLE_FORMAT'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Format/TextDirectionLayout">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_txt_dir_layout-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-FORMAT.TEXT_DIRECTION_LAYOUT'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.HeaderFooterField/Type">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_hf_field_type-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-HEADER_FOOTER_FIELD.TYPE'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.TableColumn/HorizontalAlignment">
+				<Annotation Term="SAP__common.ValueListReferences">
+					<Collection>
+						<String>../../../../f4/iwbep/doc_desc_horiz_align-fv/0001;ps='default-*iwbep*common-0001';va='com.sap.gateway.default.iwbep.common.v0001.CT-TABLE_COLUMN.HORIZONTAL_ALIGNMENT'/$metadata</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.ValueListWithFixedValues"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container">
+				<Annotation Term="SAP__capabilities.FilterFunctions">
+					<Collection>
+						<String>eq</String>
+						<String>ne</String>
+						<String>gt</String>
+						<String>ge</String>
+						<String>lt</String>
+						<String>le</String>
+						<String>and</String>
+						<String>or</String>
+						<String>contains</String>
+						<String>startswith</String>
+						<String>endswith</String>
+						<String>any</String>
+						<String>all</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.SupportedFormats">
+					<Collection>
+						<String>application/json</String>
+						<String>application/pdf</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__PDF.Features">
+					<Record>
+						<PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+						<PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+						<PropertyValue Property="ArchiveFormat" Bool="true"/>
+						<PropertyValue Property="Border" Bool="true"/>
+						<PropertyValue Property="CoverPage" Bool="true"/>
+						<PropertyValue Property="FitToPage" Bool="true"/>
+						<PropertyValue Property="FontName" Bool="true"/>
+						<PropertyValue Property="FontSize" Bool="true"/>
+						<PropertyValue Property="HeaderFooter" Bool="true"/>
+						<PropertyValue Property="IANATimezoneFormat" Bool="true"/>
+						<PropertyValue Property="Margin" Bool="true"/>
+						<PropertyValue Property="Padding" Bool="true"/>
+						<PropertyValue Property="ResultSizeDefault">
+							<Null/>
+						</PropertyValue>
+						<PropertyValue Property="ResultSizeMaximum">
+							<Null/>
+						</PropertyValue>
+						<PropertyValue Property="Signature" Bool="true"/>
+						<PropertyValue Property="TextDirectionLayout" Bool="true"/>
+						<PropertyValue Property="Treeview" Bool="true"/>
+						<PropertyValue Property="UploadToFileShare" Bool="true"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
+				<Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/DocumentDescriptions">
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="Format/FontName"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="TableColumns/Format/DisplayFormat"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/TechnicalInfo">
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

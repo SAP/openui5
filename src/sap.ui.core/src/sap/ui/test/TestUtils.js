@@ -737,13 +737,17 @@ sap.ui.define([
 					}
 				}
 				if (oResponse) {
-					Log.info(oRequest.method + " " + TestUtils.makeUrlReadable(oRequest.url)
-						+ (iAlternative !== undefined
+					const sRequestLine = oRequest.method
+						+ " " + TestUtils.makeUrlReadable(oRequest.url);
+					Log.info(sRequestLine + (iAlternative !== undefined
 							? ", alternative (ifMatch) #" + iAlternative
 							: ""),
 						// Note: JSON.stringify(oRequest.requestHeaders) outputs too much for now
 						'{"If-Match":' + JSON.stringify(oRequest.requestHeaders["If-Match"]) + "}",
 						"sap.ui.test.TestUtils");
+					if (oResponse.message) {
+						Log.debug(sRequestLine, oResponse.message, "sap.ui.test.TestUtils");
+					}
 				} else if (bTry) {
 					return undefined;
 				} else {

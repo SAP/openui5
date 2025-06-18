@@ -453,7 +453,7 @@ sap.ui.define([
 			this.oCard,
 			{
 				manifest: {
-					_version: "2.0.0",
+					_version: "2.0.1",
 
 					"sap.app": {
 						id: "test.card"

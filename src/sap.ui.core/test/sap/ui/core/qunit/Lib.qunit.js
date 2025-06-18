@@ -123,7 +123,7 @@ sap.ui.define([
 		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
 		// no i18n property in manifest
 		this.stub(oLib1, 'getManifest').returns({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"name": "sap.test.i18ntrue",
 			"sap.ui5": {
 			}
@@ -144,7 +144,7 @@ sap.ui.define([
 		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
 
 		this.stub(oLib1, 'getManifest').returns({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"name": "sap.test1",
 			"sap.ui5": {
 				"library": {
@@ -163,7 +163,7 @@ sap.ui.define([
 	QUnit.test("Instance method '_getI18nSettings': i18n set to true in manifest.json", function(assert) {
 		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
 		this.stub(oLib1, 'getManifest').returns({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"name": "sap.test.i18ntrue",
 			"sap.ui5": {
 				"library": {
@@ -187,7 +187,7 @@ sap.ui.define([
 		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
 		// no i18n property in manifest
 		this.stub(oLib1, 'getManifest').returns({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"name": "sap.test.i18nstring",
 			"sap.ui5": {
 				"library": {
@@ -211,7 +211,7 @@ sap.ui.define([
 		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
 		// no i18n property in manifest
 		this.stub(oLib1, 'getManifest').returns({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"name": "sap.test.i18nobject",
 			"sap.ui5": {
 				"library": {

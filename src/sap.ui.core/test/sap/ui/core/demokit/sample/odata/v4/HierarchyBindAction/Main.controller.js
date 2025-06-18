@@ -261,6 +261,10 @@ sap.ui.define([
 			}
 		},
 
+		onRefreshRow(oEvent) {
+			oEvent.getSource().getBindingContext().requestSideEffects([""]);
+		},
+
 		/**
 		 * Filters the list of potential new parents.
 		 *

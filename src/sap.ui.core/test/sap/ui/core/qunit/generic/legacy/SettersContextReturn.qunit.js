@@ -26,7 +26,7 @@ sap.ui.define([
 
 	// Exclude libraries - we need this to exclude libraries that will not be tested at this point in time
 	var mLibraryConstraints = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		/*
 		 * openui5

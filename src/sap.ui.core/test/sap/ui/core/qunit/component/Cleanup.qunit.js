@@ -9,7 +9,7 @@ sap.ui.define([
 
 	// Configs for manifest and appdescriptor
 	var oManifest = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.app": {
 			"id": "test3",
@@ -31,7 +31,7 @@ sap.ui.define([
 	};
 
 	var oManifestAppdescr = {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.app": {
 			"id": "test3-variant",
@@ -62,7 +62,7 @@ sap.ui.define([
 	};
 
 	var oManifestAppdescr1 = merge({}, oManifestAppdescr, {
-		"_version": "2.0.0",
+		"_version": "2.0.1",
 
 		"sap.ui5": {
 			"componentName": "test3",

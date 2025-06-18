@@ -15,8 +15,8 @@ sap.ui.define(['sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/mode
  *
  * @alias sap.ui.model.odata.ODataTreeBindingAdapter
  * @function
- * @deprecated As of version 2.0, will be replaced by OData V4 hierarchy functionality, see
- *   {@link topic:7d914317c0b64c23824bf932cc8a4ae1/section_RCH Recursive Hierarchy}
+ * @deprecated As of version 1.138.0, will be replaced by OData V4 hierarchy functionality, see
+ *    {@link topic:7d914317c0b64c23824bf932cc8a4ae1/section_RCH Recursive Hierarchy}
  *
  * @public
  */

@@ -1,0 +1,331 @@
+<?xml
+version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HTML5',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.HTML5.v1" Alias="SAP__HTML5"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PDF',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.PDF.v1" Alias="SAP__PDF"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_SESSION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Session.v1" Alias="SAP__session"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ODM',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.ODM.v1" Alias="SAP__ODM"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_HIERARCHY',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Hierarchy.v1" Alias="SAP__hierarchy"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.srvd.zsadl_anly_flight.v0001" Alias="SAP__self">
+			<Annotation Term="SAP__core.SchemaVersion" String="1.0.0"/>
+			<EntityType Name="BookingsType">
+				<Key>
+					<PropertyRef Name="TravelID"/>
+					<PropertyRef Name="BookingID"/>
+				</Key>
+				<Property Name="TravelID" Type="Edm.String" Nullable="false" MaxLength="8"/>
+				<Property Name="BookingID" Type="Edm.String" Nullable="false" MaxLength="4"/>
+				<Property Name="ConnectionID" Type="Edm.String" Nullable="false" MaxLength="4"/>
+				<Property Name="FlightDate" Type="Edm.Date"/>
+				<Property Name="CurrencyCode_code" Type="Edm.String" MaxLength="5"/>
+				<Property Name="FlightPrice" Type="Edm.Decimal" Precision="16" Scale="variable"/>
+				<Property Name="status" Type="Edm.String" Nullable="false" MaxLength="1"/>
+				<Property Name="airline" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="airlineName" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="BookingDate" Type="Edm.Date"/>
+				<Property Name="DistanceUnit" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="Distance" Type="Edm.Int32" Nullable="false"/>
+				<Property Name="DepAirport" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="DepCity" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="DestAirport" Type="Edm.String" Nullable="false" MaxLength="3"/>
+				<Property Name="DestCity" Type="Edm.String" Nullable="false" MaxLength="40"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="Bookings" EntityType="com.sap.gateway.srvd.zsadl_anly_flight.v0001.BookingsType"/>
+			</EntityContainer>
+			<Annotations Target="SAP__self.BookingsType/TravelID">
+				<Annotation Term="SAP__common.Label" String="Travel ID"/>
+				<Annotation Term="SAP__common.IsDigitSequence"/>
+				<Annotation Term="SAP__common.Heading" String="Travel ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Travel ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/BookingID">
+				<Annotation Term="SAP__common.Label" String="Booking ID"/>
+				<Annotation Term="SAP__common.IsDigitSequence"/>
+				<Annotation Term="SAP__common.Heading" String="Booking Number"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Booking ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/ConnectionID">
+				<Annotation Term="SAP__common.Label" String="Connection"/>
+				<Annotation Term="SAP__common.IsDigitSequence"/>
+				<Annotation Term="SAP__common.Heading" String="Flight No."/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Connection ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/FlightDate">
+				<Annotation Term="SAP__common.Label" String="Flight Date"/>
+				<Annotation Term="SAP__common.Heading" String="Date"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Flight Date"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/CurrencyCode_code">
+				<Annotation Term="SAP__common.IsCurrency"/>
+				<Annotation Term="SAP__common.Label" String="Currency"/>
+				<Annotation Term="SAP__common.Heading" String="Currency Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Currency Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/FlightPrice">
+				<Annotation Term="SAP__common.Label" String="Price"/>
+				<Annotation Term="SAP__measures.ISOCurrency" Path="CurrencyCode_code"/>
+				<Annotation Term="SAP__aggregation.ContextDefiningProperties">
+					<Collection>
+						<PropertyPath>CurrencyCode_code</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__common.Heading" String="Airfare"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Flight Price"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/status">
+				<Annotation Term="SAP__common.Label" String="Booking Status"/>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Heading" String="Booking Status"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Travel Status"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/airline">
+				<Annotation Term="SAP__common.Label" String="Airline"/>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Heading" String="Airline ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Carrier ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/airlineName">
+				<Annotation Term="SAP__common.Label" String="Airline Name"/>
+				<Annotation Term="SAP__common.Heading" String="Airline"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Carrier Name"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/BookingDate">
+				<Annotation Term="SAP__common.Label" String="Booking Date"/>
+				<Annotation Term="SAP__common.Heading" String="Booking Date"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Booking Date"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/DistanceUnit">
+				<Annotation Term="SAP__common.IsUnit"/>
+				<Annotation Term="SAP__common.Label" String="Distance Unit"/>
+				<Annotation Term="SAP__common.Heading" String="MU"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Unit of Measurement"/>
+				<Annotation Term="SAP__common.DocumentationRef" String="urn:sap-com:documentation:key?=type=DE&amp;id=MSEHI"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/Distance">
+				<Annotation Term="SAP__common.Label" String="Distance"/>
+				<Annotation Term="SAP__common.Heading" String="Flight Distance"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: Flight Distance"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/DepAirport">
+				<Annotation Term="SAP__common.Label" String="Departure Airport"/>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Heading" String="Departure"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: From Airport"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/DepCity">
+				<Annotation Term="SAP__common.Label" String="Departure City"/>
+				<Annotation Term="SAP__common.Heading" String="City"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: City"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/DestAirport">
+				<Annotation Term="SAP__common.Label" String="Destination Airport"/>
+				<Annotation Term="SAP__common.IsUpperCase"/>
+				<Annotation Term="SAP__common.Heading" String="Destination"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: To Airport"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType/DestCity">
+				<Annotation Term="SAP__common.Label" String="Destination City"/>
+				<Annotation Term="SAP__common.Heading" String="City"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Flight Reference Scenario: City"/>
+			</Annotations>
+			<Annotations Target="SAP__self.BookingsType">
+				<Annotation Term="SAP__common.Label" String="Bookings in Flight Model"/>
+				<Annotation Term="SAP__aggregation.CustomAggregate" Qualifier="CurrencyCode_code" String="Edm.String"/>
+				<Annotation Term="SAP__aggregation.CustomAggregate" Qualifier="FlightPrice" String="Edm.Decimal"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/Bookings">
+				<Annotation Term="SAP__capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.InsertRestrictions">
+					<Record>
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.DeleteRestrictions">
+					<Record>
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.UpdateRestrictions">
+					<Record>
+						<PropertyValue Property="Updatable" Bool="false"/>
+						<PropertyValue Property="QueryOptions">
+							<Record>
+								<PropertyValue Property="SelectSupported" Bool="true"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__aggregation.ApplySupported">
+					<Record>
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>filter</String>
+								<String>identity</String>
+								<String>orderby</String>
+								<String>skip</String>
+								<String>top</String>
+								<String>groupby</String>
+								<String>aggregate</String>
+								<String>concat</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="GroupableProperties">
+							<Collection>
+								<PropertyPath>airline</PropertyPath>
+								<PropertyPath>airlineName</PropertyPath>
+								<PropertyPath>BookingDate</PropertyPath>
+								<PropertyPath>BookingID</PropertyPath>
+								<PropertyPath>ConnectionID</PropertyPath>
+								<PropertyPath>CurrencyCode_code</PropertyPath>
+								<PropertyPath>DepAirport</PropertyPath>
+								<PropertyPath>DepCity</PropertyPath>
+								<PropertyPath>DestAirport</PropertyPath>
+								<PropertyPath>DestCity</PropertyPath>
+								<PropertyPath>Distance</PropertyPath>
+								<PropertyPath>DistanceUnit</PropertyPath>
+								<PropertyPath>FlightDate</PropertyPath>
+								<PropertyPath>status</PropertyPath>
+								<PropertyPath>TravelID</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="AggregatableProperties">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="CurrencyCode_code"/>
+								</Record>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FlightPrice"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__aggregation.CustomAggregate" Qualifier="CurrencyCode_code" String="Edm.String"/>
+				<Annotation Term="SAP__aggregation.CustomAggregate" Qualifier="FlightPrice" String="Edm.Decimal"/>
+				<Annotation Term="SAP__capabilities.FilterRestrictions">
+					<Record>
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record>
+									<PropertyValue Property="Property" PropertyPath="FlightPrice"/>
+									<PropertyValue Property="AllowedExpressions" String="MultiValue"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.Container">
+				<Annotation Term="SAP__CodeList.CurrencyCodes">
+					<Record>
+						<PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+						<PropertyValue Property="CollectionPath" String="Currencies"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__CodeList.UnitsOfMeasure">
+					<Record>
+						<PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+						<PropertyValue Property="CollectionPath" String="UnitsOfMeasure"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+				<Annotation Term="SAP__capabilities.FilterFunctions">
+					<Collection>
+						<String>eq</String>
+						<String>ne</String>
+						<String>gt</String>
+						<String>ge</String>
+						<String>lt</String>
+						<String>le</String>
+						<String>and</String>
+						<String>or</String>
+						<String>contains</String>
+						<String>startswith</String>
+						<String>endswith</String>
+						<String>any</String>
+						<String>all</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.SupportedFormats">
+					<Collection>
+						<String>application/json</String>
+						<String>application/pdf</String>
+					</Collection>
+				</Annotation>
+				<Annotation Term="SAP__PDF.Features">
+					<Record>
+						<PropertyValue Property="DocumentDescriptionReference" String="../../../../default/iwbep/common/0001/$metadata"/>
+						<PropertyValue Property="DocumentDescriptionCollection" String="MyDocumentDescriptions"/>
+						<PropertyValue Property="ArchiveFormat" Bool="true"/>
+						<PropertyValue Property="Border" Bool="true"/>
+						<PropertyValue Property="CoverPage" Bool="true"/>
+						<PropertyValue Property="FitToPage" Bool="true"/>
+						<PropertyValue Property="FontName" Bool="true"/>
+						<PropertyValue Property="FontSize" Bool="true"/>
+						<PropertyValue Property="HeaderFooter" Bool="true"/>
+						<PropertyValue Property="IANATimezoneFormat" Bool="true"/>
+						<PropertyValue Property="Margin" Bool="true"/>
+						<PropertyValue Property="Padding" Bool="true"/>
+						<PropertyValue Property="ResultSizeDefault" Int="20000"/>
+						<PropertyValue Property="ResultSizeMaximum" Int="20000"/>
+						<PropertyValue Property="Signature" Bool="true"/>
+						<PropertyValue Property="TextDirectionLayout" Bool="true"/>
+						<PropertyValue Property="Treeview" Bool="true"/>
+						<PropertyValue Property="UploadToFileShare" Bool="true"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="SAP__capabilities.KeyAsSegmentSupported"/>
+				<Annotation Term="SAP__capabilities.AsynchronousRequestsSupported"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

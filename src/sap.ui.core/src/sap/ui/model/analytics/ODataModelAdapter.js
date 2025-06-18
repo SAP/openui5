@@ -19,8 +19,8 @@ sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata
  *
  * @alias sap.ui.model.analytics.ODataModelAdapter
  * @function
- * @deprecated As of version 2.0, will be replaced by OData V4 data aggregation, see
- *   {@link topic:7d914317c0b64c23824bf932cc8a4ae1 Extension for Data Aggregation}
+ * @deprecated As of version 1.138.0, will be replaced by OData V4 data aggregation, see
+ *    {@link topic:7d914317c0b64c23824bf932cc8a4ae1 Extension for Data Aggregation}
  * @protected
  */
 var ODataModelAdapter = function() {

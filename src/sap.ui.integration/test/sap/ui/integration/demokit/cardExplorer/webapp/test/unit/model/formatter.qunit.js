@@ -9,11 +9,11 @@ sap.ui.define([
 
 	QUnit.test("formatExampleName", function (assert) {
 		assert.strictEqual(formatter.formatExampleName({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"sap.app": {"id": "card.explorer.list.sample"}
 		}), "card-explorer-list-sample", "Dots should be replace with hyphens");
 		assert.strictEqual(formatter.formatExampleName({
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 			"sap.app": {"id": "nodots"}
 		}), "nodots", "String should NOT be changed");
 	});

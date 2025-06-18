@@ -138,7 +138,7 @@ sap.ui.define([
 			metadata: {
 				interfaces: ["sap.ui.core.IAsyncContentCreation"],
 				manifest: {
-					"_version": "2.0.0",
+					"_version": "2.0.1",
 
 					"sap.app": {
 						id: UI_COMPONENT_NAME,

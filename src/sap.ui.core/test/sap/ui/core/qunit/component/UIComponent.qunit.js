@@ -39,7 +39,7 @@ sap.ui.define([
 
 			// define the Manifest
 			this.oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app" : {
 					"id" : "my.test"
@@ -374,7 +374,7 @@ sap.ui.define([
 
 			// define the Manifests
 			var oManifestAutoId = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app" : {
 					"id" : "my.own.autoid"
@@ -385,7 +385,7 @@ sap.ui.define([
 				}
 			};
 			var oManifestPrefixId = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app" : {
 					"id" : "my.own.prefixId"
@@ -400,7 +400,7 @@ sap.ui.define([
 			};
 
 			var oManifestTypedView = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5" : {
 					"rootView" : "module:error/test/JSView.view"
@@ -408,7 +408,7 @@ sap.ui.define([
 			};
 
 			const oManifestTypedViewAsString = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5" : {
 					"rootView" : "module:my/own/TypedView"
@@ -416,7 +416,7 @@ sap.ui.define([
 			};
 
 			const oManifestViewAsString = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.ui5" : {
 					"rootView" : "my.own.View"
@@ -424,7 +424,7 @@ sap.ui.define([
 			};
 
 			var oManifestMissingViewType = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app" : {
 					"id" : "my.own.missingViewType"
@@ -440,7 +440,7 @@ sap.ui.define([
 			};
 
 			var oManifestMissingViewTypeForTypedView = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app" : {
 					"id" : "my.own.missingViewType"
@@ -948,7 +948,7 @@ sap.ui.define([
 
 	QUnit.test("Check if all resources were loaded - XMLView", function(assert) {
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1024,7 +1024,7 @@ sap.ui.define([
 
 	QUnit.test("Check if custom router class was loaded", function(assert) {
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1074,7 +1074,7 @@ sap.ui.define([
 
 	QUnit.test("Check if ViewType of root view (provided as string) was loaded", function(assert) {
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1110,7 +1110,7 @@ sap.ui.define([
 		future.active = true;
 		assert.expect(1);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1153,7 +1153,7 @@ sap.ui.define([
 		future.active = true;
 		assert.expect(1);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1204,7 +1204,7 @@ sap.ui.define([
 		assert.expect(7);
 
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1271,7 +1271,7 @@ sap.ui.define([
 	QUnit.test("Component with async createContent", function(assert) {
 		assert.expect(6);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1317,7 +1317,7 @@ sap.ui.define([
 	QUnit.test("Component with async createContent and wrong nesting", function(assert) {
 		assert.expect(1);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1366,7 +1366,7 @@ sap.ui.define([
 	QUnit.test("Component with createContent returning view created with asynchronous view processing", function(assert) {
 		assert.expect(6);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1413,7 +1413,7 @@ sap.ui.define([
 		future.active = true;
 		assert.expect(2);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1454,7 +1454,7 @@ sap.ui.define([
 	QUnit.test("Component with async content creation and missing Interface", function(assert) {
 		assert.expect(1);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1489,7 +1489,7 @@ sap.ui.define([
 	QUnit.skip("Nested component - duplicate ID issue expected", function(assert) {
 		assert.expect(1);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1543,7 +1543,7 @@ sap.ui.define([
 	QUnit.test("Nested component - no duplicate ID issue expected", function(assert) {
 		assert.expect(4);
 		var oManifest = {
-			"_version": "2.0.0",
+			"_version": "2.0.1",
 
 			"sap.app" : {
 				"id" : "app"
@@ -1604,7 +1604,7 @@ sap.ui.define([
 					metadata: {
 						interfaces: ["sap.ui.core.IAsyncContentCreation"], // Needed to load JSView async
 						manifest: {
-							"_version": "2.0.0",
+							"_version": "2.0.1",
 
 							"sap.ui5": {
 								"rootView": "module:my/AsyncJSView"

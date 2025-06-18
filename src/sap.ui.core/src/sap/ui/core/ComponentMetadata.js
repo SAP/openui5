@@ -85,7 +85,7 @@ sap.ui.define([
 			// no manifest => metadata version 1
 			oStaticInfo.__metadataVersion = 1;
 			oManifest = {
-				"_version": "2.0.0"
+				"_version": "2.0.1"
 			};
 
 		}

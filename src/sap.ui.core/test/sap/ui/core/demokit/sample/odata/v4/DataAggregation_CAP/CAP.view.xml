@@ -44,7 +44,7 @@
 			</m:Toolbar>
 		</extension>
 		<rowMode>
-			<rm:Interactive rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1"/>
+			<rm:Interactive rowCount="{ui>/iVisibleRowCount}" fixedTopRowCount="1" minRowCount="2"/>
 		</rowMode>
 		<Column sortProperty="airline" width="20em">
 			<m:Label text="Airline"/>

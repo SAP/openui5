@@ -78,7 +78,7 @@ function(
 	}, function() {
 		QUnit.test("when calling '_applyChange' with a updateable dataSource", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -103,7 +103,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with no updateable dataSource", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -125,7 +125,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with supported change array", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -142,7 +142,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with unsupported operation type", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {
@@ -161,7 +161,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with wrong manifest", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.app": {}
 			};
 			assert.throws(function() {
@@ -172,7 +172,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' with no value to update", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					dataSources: {

@@ -1076,6 +1076,42 @@ sap.ui.define([
 
 		assert.ok(oStateChangeSpy.calledOnce, "The state change has been triggered");
 	});
+
+	QUnit.test("Check event attachment with oListener", function(assert) {
+
+		const oStateHandlerRegistryAttachSpy = sinon.spy(Engine.getInstance().stateHandlerRegistry, "attachChange");
+		const oStateHandlerRegistrDetachSpy = sinon.spy(Engine.getInstance().stateHandlerRegistry, "detachChange");
+		const oControl = new Control();
+
+		Engine.getInstance().register(oControl, {
+			controller: {
+				test: new Controller({
+					control: oControl,
+					targetAggregation: "test"
+				})
+			}
+		});
+
+		const fnHandler = function() {};
+		const oTestContext = {
+			testVar: "testValue"
+		};
+
+		Engine.getInstance().attachStateChange(fnHandler, oTestContext);
+		assert.ok(oStateHandlerRegistryAttachSpy.calledOnce, "The state change has been triggered");
+		assert.ok(oStateHandlerRegistryAttachSpy.firstCall.args[0] === fnHandler, "The correct handler has been registered");
+		assert.ok(oStateHandlerRegistryAttachSpy.firstCall.args[1] === oTestContext, "The correct context has been registered");
+		Engine.getInstance().stateHandlerRegistry.attachChange.restore();
+
+		Engine.getInstance().detachStateChange(fnHandler, oTestContext);
+		assert.ok(oStateHandlerRegistrDetachSpy.calledOnce, "The state change has been detached");
+		assert.ok(oStateHandlerRegistrDetachSpy.firstCall.args[0] === fnHandler, "The correct handler has been detached");
+		assert.ok(oStateHandlerRegistrDetachSpy.firstCall.args[1] === oTestContext, "The correct context has been detached");
+		Engine.getInstance().stateHandlerRegistry.detachChange.restore();
+		assert.ok(oStateHandlerRegistryAttachSpy.calledOnce, "The state change has been triggered only once");
+		assert.ok(oStateHandlerRegistrDetachSpy.calledOnce, "The state change has been detached only once");
+	});
+
 /*
 	QUnit.test("Check event firing on Engine change propagation", function(assert){
 

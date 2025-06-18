@@ -12,7 +12,7 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					crossNavigation: {
@@ -44,7 +44,7 @@ sap.ui.define([
 			};
 
 			this.oManifestSingleInbound = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					crossNavigation: {
@@ -62,7 +62,7 @@ sap.ui.define([
 			};
 
 			this.oManifestNoInbounds = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					crossNavigation: {
@@ -73,12 +73,12 @@ sap.ui.define([
 			};
 
 			this.oManifestNoPathToInbounds1 = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.app": {}
 			};
 
 			this.oManifestNoPathToInbounds2 = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 
 				"sap.app": {
 					crossNavigation: {}

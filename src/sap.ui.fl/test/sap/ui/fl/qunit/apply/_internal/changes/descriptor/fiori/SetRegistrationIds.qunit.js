@@ -32,7 +32,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' without sap.fiori/registraionIds node in manifest", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.app": { id: "test.app"}
 			};
 			var oNewManifest = SetRegistrationIds.applyChange(oManifest, this.oChange1);
@@ -41,7 +41,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with sap.fiori/registraionIds node in manifest", function(assert) {
 			var oManifest = {
-				"_version": "2.0.0",
+				"_version": "2.0.1",
 				"sap.app": { id: "test.app"},
 				"sap.fiori": {registraionIds: ["random"]}
 			};

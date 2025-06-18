@@ -767,8 +767,8 @@ sap.ui.define([
 				press: that.addNewObject.bind(that)
 			}),
 			new Button(sParameterId + "_control_table_edit_btn", {
-				icon: "sap-icon://edit",
-				tooltip: oResourceBundle.getText("EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP"),
+				icon: "{= ${/_hasNotEditableItemSelected} ===  true ? 'sap-icon://display' : 'sap-icon://edit' }",
+				tooltip: "{= ${/_hasNotEditableItemSelected} ===  true ? oResourceBundle.getText('EDITOR_FIELD_OBJECT_TABLE_BUTTON_VIEW_TOOLTIP') : oResourceBundle.getText('EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP')}",
 				enabled: "{= !!${/_hasTableSelected}}",
 				visible: that.getAllowPopover(),
 				press: that.onEditOrViewDetail.bind(that)
@@ -845,6 +845,14 @@ sap.ui.define([
 		var oRowContexts = oTable.getBinding("rows").getContexts();
 		var oItem = oRowContexts[iSelectIndex].getObject();
 		var iFirstIndex = oTable.getFirstVisibleRow();
+		// if the 1st selected row is hidden, scroll to it
+		if (iSelectIndex < iFirstIndex) {
+			oTable.setFirstVisibleRow(iSelectIndex);
+			iFirstIndex = iSelectIndex;
+		} else if (iSelectIndex >= iFirstIndex + 5) {
+			oTable.setFirstVisibleRow(iSelectIndex - 5 + 1);
+			iFirstIndex = iSelectIndex - 5 + 1;
+		}
 		var oRow = oTable.getRows()[iSelectIndex - iFirstIndex];
 		var oCell1 = oRow.getCells()[0];
 		that.openObjectDetailsPopover(oItem, oCell1, !oItem._dt || oItem._dt._editable !== false ? "update" : "view");
@@ -924,6 +932,7 @@ sap.ui.define([
 		var oTable = that.getAggregation("_field");
 		var oModel = oTable.getModel();
 		var aSelectedIndices = oTable.getSelectedIndices();
+		var aRowContexts = oTable.getBinding("rows").getContexts();
 		if (aSelectedIndices.length > 0) {
 			oModel.setProperty("/_hasTableSelected", true);
 			if (aSelectedIndices.length === 1) {
@@ -931,8 +940,15 @@ sap.ui.define([
 			} else {
 				oModel.setProperty("/_hasOnlyOneRowSelected", false);
 			}
+			var oFirstSelectedItem = aRowContexts[aSelectedIndices[0]].getObject();
+			if (oFirstSelectedItem._dt && oFirstSelectedItem._dt._editable === false) {
+				oModel.setProperty("/_hasNotEditableItemSelected", true);
+			} else {
+				oModel.setProperty("/_hasNotEditableItemSelected", false);
+			}
 		} else {
 			oModel.setProperty("/_hasTableSelected", false);
+			oModel.setProperty("/_hasNotEditableItemSelected", false);
 			oModel.setProperty("/_hasOnlyOneRowSelected", false);
 			oModel.setProperty("/_canDelete", false);
 			return;
@@ -943,7 +959,6 @@ sap.ui.define([
 			oModel.setProperty("/_hasTableAllSelected", false);
 		}
 		var aSelectedPaths = [];
-		var aRowContexts = oTable.getBinding("rows").getContexts();
 		aSelectedIndices.forEach(function (iSelectIndex) {
 			var oObject = aRowContexts[iSelectIndex].getObject();
 			if (oObject._dt && oObject._dt._editable !== false) {
@@ -971,6 +986,7 @@ sap.ui.define([
 		var oModel = oTable.getModel();
 		oTable.clearSelection();
 		oModel.setProperty("/_hasTableSelected", false);
+		oModel.setProperty("/_hasNotEditableItemSelected", false);
 		oModel.setProperty("/_hasOnlyOneRowSelected", false);
 		oModel.setProperty("/_canDelete", false);
 		oModel.setProperty("/_hasTableAllSelected", false);
@@ -2028,6 +2044,7 @@ sap.ui.define([
 		oModel.setProperty("/_hasSelected", true);
 		oModel.setProperty("/_hasTableAllSelected", false);
 		oModel.setProperty("/_hasTableSelected", false);
+		oModel.setProperty("/_hasNotEditableItemSelected", false);
 		oModel.setProperty("/_hasOnlyOneRowSelected", false);
 		oModel.checkUpdate();
 		that.refreshValue();
