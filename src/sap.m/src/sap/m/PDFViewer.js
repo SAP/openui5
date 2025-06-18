@@ -330,30 +330,26 @@ sap.ui.define([
 		 * @description - this method fetches response headers from server to validate content-type.
 		 * @private
 		 */
-		PDFViewer.prototype._getHeaderInfo = function(src, method) {
-			return new Promise((resolve, reject) => {
-				const oXMLHttpRequest = new XMLHttpRequest();
-				oXMLHttpRequest.open(method, src, false);
-				oXMLHttpRequest.onload = () => {
-					const sStatus = oXMLHttpRequest.status;
-					if (sStatus === 200) {
-						const response = oXMLHttpRequest.getAllResponseHeaders().toLowerCase().trim();
-						const items = response.split("\n");
-						const responseHeader = [];
-						for (let i = 0; i < items.length; i++) {
-							const parts = items[i].split(': ');
-							responseHeader[parts[0].trim()] = parts[1].trim();
-						}
-						resolve(responseHeader['content-type']);
+
+		PDFViewer.prototype._getHeaderInfo = function (src, sMethod) {
+			// Trigger fetch call to retrieve the content-type header for the given PDF
+			return fetch(src, { method: sMethod })
+				.then(function(response) {
+					if (response.status === 200) {
+						// If the HEAD request is successful, return the content-type header
+						return response.headers.get("content-type");
+					} else if (response.status === 404) {
+						// If the HEAD request fails to fetch the content defined in source, an error event is triggered and LoadingError IllustratedMessage is displayed.
+						var error = new Error("Error fetching header: " + response.statusText);
+						error.status = response.status;
+						throw error;
 					} else {
-						reject(new Error(`Error in fetching header with method ${method}, status ${oXMLHttpRequest.status} and statusText ${oXMLHttpRequest.statusText}`));
+						// If the HEAD request fails for any other reason, throw an error
+						var error = new Error("Error in fetching header with method " + sMethod + ", status " + response.status + ", statusText " + response.statusText);
+						error.status = response.status;
+						throw error;
 					}
-				};
-				oXMLHttpRequest.onerror = (error) => {
-					reject(new Error(`Error in fetching header with method ${method}, status ${oXMLHttpRequest.status}, statusText ${oXMLHttpRequest.statusText} and error ${error}`));
-				};
-				oXMLHttpRequest.send(null);
-			});
+				});
 		};
 
 		/**
@@ -409,26 +405,36 @@ sap.ui.define([
 						this._fireErrorEvent(oEvent.target);
 					}
 				} else {
+					// Check if PDF plugin is enabled before proceeding
+					if (!PDFViewerRenderer._isPdfPluginEnabled()) {
+						this._fireErrorEvent(oEvent.target);
+						return;
+					}
 					//If chrome://flags/#pdf-oopif = enabled trigger the HEAD Request
 					const sMethod = 'HEAD';
 					this._getHeaderInfo(this._sParametrizedSource, sMethod)
-					.then((sCurrentContentType) => {
+					.then(function(sCurrentContentType) {
 						/*	LoadedEvent will be triggered if all the below criteria matches
 								1. If ContentType = "application/pdf" / "application/x-google-chrome-pdf".
 								2. If Browser PDFPlugin is enabled.
 							else the ErrorEvent will be triggered and LoadingError IllustratedMessage is displayed.
 						*/
-						if (PDFViewerRenderer._isSupportedMimeType(sCurrentContentType) && PDFViewerRenderer._isPdfPluginEnabled()) {
+						if (PDFViewerRenderer._isSupportedMimeType(sCurrentContentType)) {
 							this._fireLoadedEvent();
 						} else {
 							this._fireErrorEvent(oEvent.target);
 						}
-					}).catch((e) => {
-						//If Head Request fails ErrorEvent will be triggered and LoadingError IllustratedMessage is displayed.
-						this._fireErrorEvent(oEvent.target);
-						Log.fatal(e);
-						this.fireEvent("sourceValidationFailed", {}, true);
-					});
+					}.bind(this)).catch(function(error) {
+						if (error.status === 404) {
+							//If the HEAD Request fails to get the content defined in source, the ErrorEvent is triggered and LoadingError IllustratedMessage is displayed.
+							this._fireErrorEvent(oEvent.target);
+						} else {
+							// If the HEAD Requets fails for any other scenario, the default behaviour is to continue the display of PDF based on isTrustedSource.
+							Log.warning("PDF is displayed based on isTrustedSource property skipping the content type validation.");
+							this._fireLoadedEvent();
+							this.fireEvent("sourceValidationFailed", {}, true);
+						}
+					}.bind(this));
 				}
 			} catch (error) {
 				//Generic Error Handling
