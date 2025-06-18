@@ -241,14 +241,16 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when save is called", function(assert) {
+		QUnit.test("when save is called", async function(assert) {
 			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
+			var oFlexObjectManagerGetStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves();
 			var mPropertyBag = { foo: "bar", removeOtherLayerChanges: true };
-			PersistenceWriteAPI.save(mPropertyBag);
+			await PersistenceWriteAPI.save(mPropertyBag);
 
 			assert.equal(oFlexObjectManagerSaveStub.callCount, 1, "the FlexObjectManager save method was called");
 			assert.deepEqual(oFlexObjectManagerSaveStub.firstCall.args[0], mPropertyBag,
 				"the FlexObjectManager was called with the same arguments");
+			assert.equal(oFlexObjectManagerGetStub.callCount, 1, "the FlexObjectManager save method was called");
 		});
 
 		QUnit.test("when save dirty change and update flex info session", function(assert) {
@@ -266,7 +268,8 @@ sap.ui.define([
 				initialAllContexts: true,
 				saveChangeKeepSession: true
 			});
-			const oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves([{change: "test"}]);
+			const oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
+			const oFlexObjectManagerGetStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves([{change: "test"}]);
 			const oFlexInfo = {
 				isResetEnabled: true
 			};
@@ -278,8 +281,8 @@ sap.ui.define([
 					}, 0);
 				});
 			});
-			const mPropertyBag = { foo: "bar" };
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			const mPropertyBag = { foo: "bar", layer: Layer.CUSTOMER };
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
@@ -296,7 +299,21 @@ sap.ui.define([
 				assert.deepEqual(
 					oFlexObjectManagerSaveStub.firstCall.args[0],
 					mPropertyBag,
-					"the FlexObjectManager was called with the same arguments"
+					"the FlexObjectManager save was called with the same arguments"
+				);
+				assert.equal(
+					oFlexObjectManagerGetStub.callCount,
+					1,
+					"the FlexObjectManager get method was called"
+				);
+				assert.deepEqual(
+					oFlexObjectManagerGetStub.firstCall.args[0],
+					{
+						currentLayer: Layer.CUSTOMER,
+						foo: "bar",
+						invalidateCache: true
+					},
+					"the FlexObjectManager get was called with the correct arguments"
 				);
 				assert.equal(
 					oPersistenceWriteGetFlexInfoStub.callCount,
@@ -756,7 +773,7 @@ sap.ui.define([
 			]);
 
 			const oKeyUserConnectorStub = sandbox.stub(KeyUserConnector, "getFlexInfo");
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oKeyUserConnectorStub.callCount, 1, "KeyUserConnector getFlexInfo should be called");
@@ -770,7 +787,7 @@ sap.ui.define([
 			};
 
 			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo");
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
@@ -789,7 +806,7 @@ sap.ui.define([
 			const oBaseLogStub = sandbox.stub(Log, "error");
 
 			sandbox.stub(Storage, "getFlexInfo").rejects({status: 404, text: ""});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
@@ -808,7 +825,7 @@ sap.ui.define([
 			};
 
 			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: false});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
@@ -826,7 +843,7 @@ sap.ui.define([
 			};
 
 			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
@@ -845,7 +862,7 @@ sap.ui.define([
 			};
 
 			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
@@ -863,7 +880,7 @@ sap.ui.define([
 			};
 
 			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo").resolves({isResetEnabled: false, isPublishEnabled: true});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
@@ -883,7 +900,7 @@ sap.ui.define([
 
 			const oGetInfoStub = sandbox.stub(Storage, "getFlexInfo")
 			.resolves({isResetEnabled: true, isPublishEnabled: true, allContextsProvided: false});
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([{}]);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
