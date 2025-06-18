@@ -240,13 +240,38 @@ sap.ui.define([
 
 	QUnit.test("getOperatorForDynamicDateOption", function(assert) {
 
-		let oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("FROM", BaseType.Date);
+		const oMyOperator = new Operator({
+			name: "MyDate",
+			alias: { Date: "DATE", DateTime: "DATETIME" },
+			filterOperator: FilterOperator.EQ,
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [OperatorValueType.Self],
+			validateInput: true
+		});
+
+		FilterOperatorUtil.addOperator(oMyOperator);
+
+		let oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("FROM", BaseType.Date, []);
 		assert.ok(oOperator, "Operator returned");
 		assert.equal(oOperator.name, OperatorName.GE, "GE operator returned");
 
-		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("Date-EQ", BaseType.Date);
+		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("Date-EQ", BaseType.Date, []);
 		assert.ok(oOperator, "Operator returned");
 		assert.equal(oOperator.name, OperatorName.EQ, "EQ operator returned");
+
+		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("DATE", BaseType.Date, ["From"]);
+		assert.notOk(oOperator, "No Operator returned");
+
+		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("DATE", BaseType.Date, ["From", "EQ"]);
+		assert.ok(oOperator, "Operator returned");
+		assert.equal(oOperator.name, OperatorName.EQ, "EQ operator returned");
+
+		oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption("DATE", BaseType.Date, ["From", "MyDate"]);
+		assert.ok(oOperator, "Operator returned");
+		assert.equal(oOperator.name, "MyDate", "MyDate operator returned");
+
+		FilterOperatorUtil.removeOperator(oMyOperator);
 
 	});
 
