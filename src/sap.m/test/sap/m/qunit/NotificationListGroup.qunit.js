@@ -37,6 +37,12 @@ sap.ui.define([
 
 	var  oResourceBundleM = Library.getResourceBundleFor("sap.m");
 
+	async function timeout(iDuration) {
+		await new Promise(function(resolve) {
+			window.setTimeout(resolve, iDuration);
+		});
+	}
+
 	function createNotificationListGroup() {
 		return new NotificationListGroup({
 			unread : true,
@@ -311,6 +317,7 @@ sap.ui.define([
 
 	QUnit.module('Keyboard Navigation', {
 		beforeEach: function() {
+			this.fnPressHandler = this.spy();
 			this.notificationList = new NotificationList({
 				items: [
 					new NotificationListGroup({
@@ -318,7 +325,8 @@ sap.ui.define([
 						items: [
 							new NotificationListItem({
 								title: 'Item 1',
-								description: 'Item 1 Description'
+								description: 'Item 1 Description',
+								press: this.fnPressHandler
 							}),
 							new NotificationListItem({
 								title: 'Item 2',
@@ -445,4 +453,17 @@ sap.ui.define([
 		});
 		assert.strictEqual(groupItems[2].getItems()[0].getDomRef(), document.activeElement, 'inner navigation item is focused');
 	});
+
+	QUnit.test('press should be fired on enter', async function(assert) {
+		var groupItems = this.notificationList.getItems();
+
+
+		const oItem = groupItems[0].getItems()[0];
+		const oSpy = this.spy(oItem, "firePress");
+		QUnitUtils.triggerKeydown(oItem.getFocusDomRef(), KeyCodes.ENTER);
+
+		await timeout();
+		assert.strictEqual(oSpy.callCount, 1, 'press event should be fired on enter key');
+	});
+
 });
