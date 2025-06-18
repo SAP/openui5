@@ -226,23 +226,26 @@ sap.ui.define([
 
 	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
 		sMeasure ||= sMassiveLabel;
-		performance.measure(sMeasure, `${sMeasure}.start`);
-		window.wpp.customMetrics[sMeasure] = performance.getEntriesByName(sMeasure)[0].duration;
+		performance.measure(sMeasure, `${sMeasure}`);
+		window.wpp.customMetrics[sMeasure] = performance.getEntriesByName(sMeasure, "measure")[0].duration;
 	};
 
 	FlexPerformanceTestUtil.startMeasurement = function(sMeasure) {
 		sMeasure ||= sMassiveLabel;
-		performance.mark(`${sMeasure}.start`);
+		performance.mark(`${sMeasure}`);
 	};
 
-	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {
+	FlexPerformanceTestUtil.injectMeasurementForXmlPreprocessing = function(sCustomLabel, bWithoutStartMeasurement) {
+		const sLabel = sCustomLabel || sMassiveLabel;
 		// Monkey patching of XmlPreprocessor.process function
-		var fnOriginalProcessXmlView = XmlPreprocessor.process;
+		const fnOriginalProcessXmlView = XmlPreprocessor.process;
 		XmlPreprocessor.process = function(...aArgs) {
-			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
+			if (!bWithoutStartMeasurement) {
+				FlexPerformanceTestUtil.startMeasurement(sLabel);
+			}
 			return fnOriginalProcessXmlView.apply(this, aArgs)
 			.then(function(vReturn) {
-				FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
+				FlexPerformanceTestUtil.stopMeasurement(sLabel);
 				return vReturn;
 			});
 		};
