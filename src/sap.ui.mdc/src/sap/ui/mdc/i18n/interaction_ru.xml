@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Открывает диалог <span class="uicontrol">Настройки ракурса</span></p>
+				<p>Открывает диалог <span class="uicontrol">Настройки ракурса</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Удаляет позицию в диалоге <span class="uicontrol">Настройки ракурса</span></p>
+				<p>Удаляет позицию в диалоге <span class="uicontrol">Настройки ракурса</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

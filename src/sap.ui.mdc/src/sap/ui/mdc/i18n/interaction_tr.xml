@@ -25,7 +25,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p><span class="uicontrol">Ayarları görüntüle</span> diyaloğunda bir öğeyi siler</p>
+				<p><span class="uicontrol">Ayarları görüntüle</span> diyaloğunda bir öğeyi siler.</p>
 			</description>
 		</interaction>
 	</control-interactions>

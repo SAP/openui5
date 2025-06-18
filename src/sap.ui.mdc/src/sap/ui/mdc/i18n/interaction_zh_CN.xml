@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>打开<span class="uicontrol">视图设置</span>对话框</p>
+				<p>打开<span class="uicontrol">视图设置</span>对话框。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>在<span class="uicontrol">视图设置</span>对话框中删除某个项目</p>
+				<p>在<span class="uicontrol">视图设置</span>对话框中删除某个项目。</p>
 			</description>
 		</interaction>
 	</control-interactions>
