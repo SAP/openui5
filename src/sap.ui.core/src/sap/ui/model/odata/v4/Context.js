@@ -2127,7 +2127,8 @@ sap.ui.define([
 			oBinding = oCandidate.oBinding;
 			sPath = oBinding.getPath();
 			oParentContext = oBinding.getContext();
-			if (oBinding.oCache && (!oContext || oBinding.oCache.hasChangeListeners())) {
+			if (oBinding.oCache?.hasChangeListeners() || !oContext && oBinding.oCache !== null) {
+				// Note: undefined cache looks like a refresh in progress
 				oContext = oCandidate; // active binding with own cache is a good target
 			}
 			if (oContext && sPath) {
@@ -2135,9 +2136,6 @@ sap.ui.define([
 				break;
 			}
 			if (!oBinding.getBoundContext) {
-				if (oBinding.oCache === undefined) {
-					return undefined; // nothing to do - looks like a refresh in progress
-				}
 				throw new Error("Not a context binding: " + oBinding);
 			}
 			oCandidate = oParentContext;

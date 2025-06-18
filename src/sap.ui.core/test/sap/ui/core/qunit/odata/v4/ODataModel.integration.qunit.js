@@ -74988,6 +74988,9 @@ make root = ${bMakeRoot}`;
 	//*********************************************************************************************
 	// Scenario: An object page with an items table. Request a side effect for a single row and one
 	// for the root object which refreshes the items table. This must not fail due to call order.
+	// SNOW: DINC0012327
+	//
+	// Items table refresh must not prevent side effects for header data (SNOW: DINC0539551)
 	QUnit.test("DINC0012327", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -75051,6 +75054,28 @@ make root = ${bMakeRoot}`;
 			oTeamContext.requestSideEffects(["TEAM_2_EMPLOYEES"]),
 			oEmployeeContext.requestSideEffects(["Name"]),
 			this.waitForChanges(assert)
+		]);
+
+		this.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=ID,Name&$skip=0&$top=100", {
+				value : [{
+					ID : "2",
+					Name : "Frederic Summer"
+				}]
+			})
+			.expectChange("employeeName", ["Frederic Summer"])
+			.expectRequest("TEAMS('TEAM_01')?$select=Name", {
+				Name : "Team #1 (updated)"
+			})
+			.expectChange("teamName", "Team #1 (updated)");
+
+		const oHeaderContext = oEmployeeContext.getBinding().getHeaderContext();
+
+		await Promise.all([
+			oHeaderContext.requestSideEffects([""]), // recomputes the ODLB's cache
+			// code under test (SNOW: DINC0539551)
+			oHeaderContext.requestSideEffects(["EMPLOYEE_2_TEAM/Name"]), // must not be stifled
+			this.waitForChanges(assert, "side-effects refresh for items table must not prevent side"
+				+ " effects for header data")
 		]);
 	});
 
