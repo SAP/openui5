@@ -136,9 +136,8 @@ function(
 	 * @author SAP SE
 	 * @version ${version}
 	 * @public
-	 * @since 1.118.0
+	 * @since 1.138.0
 	 * @alias sap.ui.core.webc.WebComponent
-	 * @experimental Since 1.118.0 The API might change. It is not intended for productive usage yet!
 	 */
 	var WebComponent = Control.extend("sap.ui.core.webc.WebComponent", {
 
