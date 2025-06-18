@@ -77,7 +77,13 @@ sap.ui.define([
 			 * There is no built-in functionality that selects the item when the corresponding shortcut is pressed.
 			 * This should be implemented by the application developer.
 			 */
-			shortcutText : {type : "string", group : "Appearance", defaultValue : ''}
+			shortcutText : {type : "string", group : "Appearance", defaultValue : ''},
+
+			/**
+			 * Determines whether the <code>MenuItem</code> is open or closed when it has a submenu.
+			 * @private
+			 */
+			_expanded: {type: "boolean", group: "Misc", visibility: "hidden", defaultValue: undefined}
 
 		},
 		aggregations: {
@@ -116,10 +122,6 @@ sap.ui.define([
 			oIcon;
 
 		rm.openStart("li", oItem);
-
-		if (!oSubMenu && sShortcutText) {
-			rm.attr("aria-keyshortcuts", sShortcutText);
-		}
 
 		if (oItem.getVisible()) {
 			rm.attr("tabindex", "0");
@@ -163,12 +165,12 @@ sap.ui.define([
 				setsize: oInfo.iTotalItems,
 				selected: null,
 				checked: bIsSelected ? true : undefined,
-				labelledby: { value: this.getId() + "-txt", append: true }
+				labelledby: { value: this.getId() + "-txt", append: true },
+				keyshortcuts : !oSubMenu && sShortcutText ? sShortcutText : null,
+				haspopup: oSubMenu && coreLibrary.aria.HasPopup.Menu.toLowerCase(),
+				owns : oSubMenu && oSubMenu.getId(),
+				expanded: oSubMenu && oItem.getProperty("_expanded")
 			});
-			if (oSubMenu) {
-				rm.attr("aria-haspopup", coreLibrary.aria.HasPopup.Menu.toLowerCase());
-				rm.attr("aria-owns", oSubMenu.getId());
-			}
 		}
 
 		rm.openEnd();
@@ -287,6 +289,11 @@ sap.ui.define([
 		}
 
 		this.oHoveredItem = oItem;
+	};
+
+	MenuItem.prototype.onSubmenuToggle = function(bOpened) {
+		this.setProperty("_expanded", bOpened);
+		MenuItemBase.prototype.onSubmenuToggle.call(this, bOpened);
 	};
 
 	MenuItem.prototype._getItemSelectionMode = function() {

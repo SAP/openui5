@@ -128,7 +128,13 @@ sap.ui.define([
 				/**
 				 * Can be used as input for subsequent actions.
 				 */
-				key: {type: "string", group: "Data", defaultValue: null}
+				key: {type: "string", group: "Data", defaultValue: null},
+
+				/**
+				 * Determines whether the <code>MenuItem</code> is open or closed when it has a submenu.
+				 * @private
+				 */
+				_expanded: {type: "boolean", group: "Misc", visibility: "hidden", defaultValue: undefined}
 
 			},
 			defaultAggregation: "items",
@@ -217,6 +223,7 @@ sap.ui.define([
 			if (this._hasSubmenu() && !oPopover) {
 				oPopover = this._createPopover();
 				oPopover.attachAfterClose(this._afterPopoverClose, this);
+				this._hasSubmenu() && this.setProperty("_expanded", false);
 			}
 		};
 
@@ -307,7 +314,8 @@ sap.ui.define([
 				keyshortcuts: sShortcutText || null,
 				labelledby: { value: `${this.getId()}-txt`, append: true },
 				haspopup: bHasSubmenu ? coreLibrary.aria.HasPopup.Menu.toLowerCase() : null,
-				owns: bHasSubmenu ? oSubmenu.getId() : null
+				owns: bHasSubmenu ? oSubmenu.getId() : null,
+				expanded: this.getProperty("_expanded")
 			};
 
 		};
@@ -371,6 +379,7 @@ sap.ui.define([
 				oPopover._getPopup().setDurations(this._openDuration, 0);
 				oPopover.close();
 			}
+			this.setProperty("_expanded", false);
 			this.removeStyleClass("sapMMenuItemSubMenuOpen");
 			this._getMenuWrapper().oOpenedSubmenuParent = null;
 		};
@@ -393,6 +402,7 @@ sap.ui.define([
 			}
 
 			oSubmenuPopover.addStyleClass(oMenuWrapper._aStyleClasses.join(" "));
+			this.setProperty("_expanded", true);
 
 			if (Device.system.phone) {
 				oMenuWrapper.setTitle(this.getText()); // Set the title of the menu wrapper according to the item's text
