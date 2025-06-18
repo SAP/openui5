@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Atalhos globais</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Move o foco para a célula seguinte na mesma coluna ou linha nas respetivas direções.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Se o foco estiver na primeira linha, o foco move-se para a linha do cabeçalho da coluna.</p>
+				<p>Se o foco estiver numa célula da primeira linha, o foco move-se para o cabeçalho da coluna relacionada.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Se o foco estiver na caixa de verificação <span class="uicontrol">Selecionar tudo</span> ou <span class="uicontrol">Limpar tudo</span>, o foco move-se para o seletor de linhas na primeira linha visível.</p>
+				<p>Se o foco estiver na linha do cabeçalho da coluna, o foco move-se para a primeira linha.</p>
+				<p>Se o foco estiver numa linha, o foco move-se para a linha abaixo.</p>
+				<p>Se o foco estiver numa célula, o foco move-se para a célula abaixo.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Se o foco estiver na primeira célula, o foco move-se para a linha. Isso muda da navegação com base nas células para a navegação com base nas linhas.</p>
+				<p>Se o foco estiver numa célula, o foco move-se para a célula à esquerda.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Se o foco estiver numa linha, o foco move-se para a primeira célula da linha focada atualmente. Isso muda da navegação com base nas linhas para a navegação com base nas células.</p>
+				<p>Se o foco estiver numa célula, o foco move-se para a célula à direita.</p>
+				<p><span class="emphasis">Nota:</span> se o foco estiver na última coluna e o comportamento pop-in tiver sido ativado para esta coluna, a área pop-in é tratada como uma coluna adicional à direita e o foco move-se para esta coluna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Se o foco estiver numa linha, o foco move-se para a linha do cabeçalho da coluna.</p>
+				<p>Se o foco estiver na linha do cabeçalho da coluna e o botão <span class="uicontrol">Mais</span> estiver disponível, o foco move-se para o botão <span class="uicontrol">Mais</span>.</p>
+				<p>Se o foco estiver na linha do cabeçalho da coluna e o botão <span class="uicontrol">Mais</span> <span class="emphasis">não</span>estiver disponível, o foco move-se para a última linha focada.</p>
+				<p>Se o foco estiver no botão <span class="uicontrol">Mais</span>, o foco move-se para a última linha focada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Se o foco estiver numa linha e o botão <span class="uicontrol">Mais</span> estiver disponível, o foco move-se para o botão <span class="uicontrol">Mais</span>.</p>
+				<p>Se o foco estiver numa linha e o botão <span class="uicontrol">Mais</span> <span class="emphasis">não</span>estiver disponível, o foco move-se para a linha do cabeçalho da coluna.</p>
+				<p>Se o foco estiver no botão <span class="uicontrol">Mais</span>, o foco move-se para a linha do cabeçalho da coluna.</p>
+				<p>Se o foco estiver na linha do cabeçalho da coluna, o foco move-se para a última linha focada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Se o foco estiver no cabeçalho da coluna, a largura desta coluna é aumentada em 1 em. Isto é repetido se a tecla continuar premida.</p>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada, a célula focada e a célula à direita são selecionadas. O foco move-se para a célula à direita da célula focada.</p>
+				<p>Se o foco estiver numa célula selecionada, a célula à direita recebe o foco e a seleção de células é ampliada até esta célula.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Se o foco estiver no cabeçalho da coluna, a largura desta coluna é reduzida em 1 em. Isto é repetido se a tecla continuar premida.</p>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada, a célula focada e a célula à esquerda são selecionadas. O foco move-se para a célula à esquerda da célula focada.</p>
+				<p>Se o foco estiver numa célula selecionada, a célula à esquerda recebe o foco e a seleção de células é ampliada até esta célula.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante estiverem selecionados, o foco move-se para a linha acima e a seleção é ampliada até esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante <span class="emphasis">não</span> estiverem selecionados, o foco move-se para a linha acima e a seleção é removida para esta linha.</p>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada e a linha <span class="emphasis">não</span> estiver selecionada, a célula focada e a célula acima são selecionadas. O foco move-se para a célula acima da célula focada.</p>
+				<p>Se o foco estiver numa célula selecionada, o foco move-se para a célula acima e a seleção de células é ampliada até esta célula.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante estiverem selecionados, o foco move-se para a linha abaixo e a seleção é ampliada até esta linha.</p>
+				<p>Se o foco estiver numa célula ou o seletor de linhas e a linha relevante <span class="emphasis">não</span> estiverem selecionados, o foco move-se para a linha abaixo e a seleção é removida para esta linha.</p>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver numa célula que <span class="emphasis">não</span> está selecionada e a linha <span class="emphasis">não</span> estiver selecionada, a célula focada e a célula abaixo são selecionadas. O foco move-se para a célula abaixo da célula focada. </p>
+				<p>Se o foco estiver numa célula selecionada, o foco move-se para a célula abaixo e a seleção de células é ampliada até esta célula.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Se o foco estiver na célula editável (por exemplo, um campo de entrada), o foco move-se para a célula acima.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Se o foco estiver na célula editável (por exemplo, um campo de entrada), o foco move-se para a célula abaixo.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver numa célula, a célula focada é selecionada.</p>
+				<p>Se o foco estiver num bloco de seleção de células, a seleção das células é removida.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver num bloco de seleção de células, o bloco de seleção de células é alterado para uma seleção de linhas. A seleção de células é removida.</p>
+				<p>Dependendo do modo de seleção de linhas, o seguinte acontece:</p>
+				<ul>
+					<li>Todas as linhas do bloco são selecionadas (seleção múltipla)</li>
+					<li>Só a linha com a célula atualmente focada é selecionada (seleção única)</li>
+					<li>Nenhuma das linhas é selecionada</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver dentro da tabela, a seleção para qualquer linha e célula é removida.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
+				<p>Se o foco estiver dentro da tabela e as células estiverem selecionadas, a seleção das células é removida.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Ativa/desativa o foco entre a célula e o seu conteúdo, se a célula tiver elementos interativos, como um campo de entrada ou botão (com exceção do texto só de leitura).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Se o foco estiver dentro de uma célula no modo de edição, o foco move-se para a linha.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Se a seleção de células estiver ativada</span>:</p>
+				<p>Se forem selecionadas células, se premir <kbd>Shift</kbd> e clicar numa célula diferente amplia a seleção até à célula clicada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copia as linhas ou células selecionadas para a área de transferência, se disponível, e a funcionalidade é ativada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Cola o conteúdo da área de transferência, se a funcionalidade estiver ativada.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Abre a gestão de variantes.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Fecha o pop-over de erro da gestão de variantes</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Move o item uma posição para cima, se disponível.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Move o item uma posição para baixo, se disponível.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Move o item para o topo, se disponível.</p>
+				<p><kbd>End</kbd></p>
+				<p>Move o item para o fim, se disponível.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Move o item uma posição para cima, se disponível.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Move o item uma posição para baixo, se disponível.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Move o item uma posição para cima, se disponível.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Move o item uma posição para baixo, se disponível.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

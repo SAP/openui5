@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Verplaatst de focus naar de volgende cel binnen dezelfde kolom of rij in de bijhorende richtingen.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Als de focus op de eerste rij ligt, wordt de focus naar de kolomkop verplaatst.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Als de focus op een kolomkop ligt, zal de focus naar de cel in de eerste zichtbare rij van deze kolom worden verplaatst die afhankelijk is van de huidige bladerpositie.</p>
+				<p>Als de focus ligt op het aankruisvakje <span class="uicontrol">Alles selecteren</span>, zal de focus naar de rijselector in de eerste zichtbare rij worden verplaatst, die afhankelijk is van de huidige bladerpositie.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Als de focus op een cel in de eerste kolom ligt, wordt de focus naar de rijselector verplaatst.</p>
+				<p>Als de focus op een kolomkop ligt, wordt de focus naar de kolomkop links verplaatst.</p>
+				<p>Als de focus op de kolomkop van de eerste kolom ligt, wordt de focus naar het aankruisvakje <span class="uicontrol">Alles selecteren</span> verplaatst.</p>
+				<p>Als de focus op de groepskop van een weergegeven groep ligt, wordt de groep verborgen.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Als de focus op een kolomkop ligt, wordt de focus naar de kolomkop rechts verplaatst.</p>
+				<p>Als de focus op een rijselector ligt, wordt de focus naar de cel van de eerste kolom binnen dezelfde rij verplaatst.</p>
+				<p>Als de focus op het aankruisvakje <span class="uicontrol">Alles selecteren</span> ligt, wordt de focus naar de kolomkop van de eerste kolom verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Als de focus op celniveau ligt, wordt de focus naar de cel bovenaan dezelfde kolom verplaatst. Als de focus zich al op dat niveau bevindt, wordt de focus een pagina omhoog verplaatst en blijft deze in dezelfde kolom met het vereiste bladeren.</p>
+				<p>Als de focus op de eerste rij ligt, wordt de focus naar de kolomkop verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Als de focus op celniveau ligt, wordt de focus naar de laatste zichtbare cel in dezelfde kolom verplaatst. Als de focus zich al op dat niveau bevindt, wordt de focus een pagina omlaag verplaatst en blijft deze in dezelfde kolom met het vereiste bladeren.</p>
+				<p>Als de focus op de kolomkop ligt, wordt de focus naar de eerste rij verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Als de focus op celniveau of op een kolomkop ligt, wordt de focus vijf kolommen naar links verplaatst (standaardpaginagrootte). Als er minder kolommen links zijn dan de huidige paginagrootte, wordt de focus naar de eerste kolom verplaatst.</p>
+				<p>Als de focus op de eerste kolom op celniveau ligt, wordt de focus naar de rijselector verplaatst.</p>
+				<p>Als de focus op de kolomkop van de eerste kolom ligt, wordt de focus naar <span class="uicontrol">Alles selecteren</span> verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Als de focus op celniveau ligt, wordt de focus vijf kolommen naar rechts verplaatst (standaardpaginagrootte).</p>
+				<p>Als de focus op de kolomkop ligt en er minder kolommen rechts zijn dan de huidige paginagrootte, wordt de focus naar de laatste kolom verplaatst.</p>
+				<p>Als de focus op een rijselector ligt, wordt de focus naar de cel van de eerste kolom samen met dezelfde rij verplaatst.</p>
+				<p>Als de focus op <span class="uicontrol">Alles selecteren</span> ligt, wordt de focus naar de kop van de eerste kolom verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Als de focus op de cel ligt, wordt de focus naar de eerste kolom van dezelfde rij verplaatst.</p>
+				<p>Als de focus op een cel in de eerste kolom ligt, wordt de focus naar de rijselector verplaatst.</p>
+				<p>Als de focus op de kolomkop ligt, wordt de focus naar de kop van de eerste kolom verplaatst.</p>
+				<p>Als de focus op de eerste kolomkop ligt, wordt de focus naar <span class="uicontrol">Alles selecteren</span> verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Als de focus op de cel of kolomkop ligt, wordt de focus naar de laatste kolom verplaatst.</p>
+				<p>Als de focus op een rijselector ligt, wordt de focus naar de cel van de eerste kolom binnen dezelfde rij verplaatst.</p>
+				<p>Als de focus op <span class="uicontrol">Alles selecteren</span> ligt, wordt de focus naar de kop van de eerste kolom verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Als de focus op de cel ligt, wordt de focus naar de kolomkop verplaatst.</p>
+				<p>Als de focus op de rijselector ligt, wordt de focus naar <span class="uicontrol">Alles selecteren</span> verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Als de focus op de cel of kolomkop ligt, wordt de focus naar de laatste rij van dezelfde kolom verplaatst.</p>
+				<p>Als de focus op de rijselector of <span class="uicontrol">Alles selecteren</span> ligt, wordt de focus naar de laatste rijselector verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Als de focus op de cel ligt, wordt de focus naar de eerste focusseerbare besturing in de cel verplaatst.</p>
+				<p>Als de focus op het aankruisvakje <span class="uicontrol">Alles selecteren</span> of de rijselector ligt, wordt de status van het aankruisvakje omgeschakeld.</p>
+				<p>Als de focus op de kolomkop ligt, wordt het kolomkopmenu geopend.</p>
+				<p>Als de focus op de groepskop ligt, wordt de groep verborgen of weergegeven.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Als de focus op de groepskop ligt, wordt het groepskopmenu geopend.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus op een cel ligt, wordt de gefocusseerde cel geselecteerd.</p>
+				<p>Als de focus op een celselectieblok ligt, wordt de selectie van de cellen verwijderd.</p>
+				<p>Als de focus op een cel ligt en de tabel een bepaalde configuratie heeft van het selectiegedrag (om een rij te selecteren, kunt u de rij zelf of het aankruisvakje selecteren, indien beschikbaar) wordt alleen de gefocusseerde cel geselecteerd, in plaats van de rij.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Als de focus op een cel of rijselector ligt, wordt hierdoor de selectie van de huidige rij omgeschakeld.</p>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus op een celselectieblok ligt, wordt het celselectieblok gewijzigd in een rijselectie. De celselectie wordt verwijderd.</p>
+				<p>Afhankelijk van de rijselectiemodus zal het volgende gebeuren:</p>
+				<ul>
+					<li>Alle rijen van het blok worden geselecteerd (meervoudige selectie)</li>
+					<li>Alleen de rij met de momenteel gefocusseerde cel wordt geselecteerd (enkelvoudige selectie)</li>
+					<li>Geen van de rijen is geselecteerd</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus binnen de tabel ligt en cellen zijn geselecteerd, wordt de selectie van cellen verwijderd.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Schakelt de focus om tussen de cel en bijhorende inhoud (met uitzondering van alleen-lezen tekst).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Als de focus op <span class="uicontrol">Alles selecteren</span> ligt en op <kbd>Spacebar</kbd> wordt gedrukt, wordt de bijhorende event niet gestart. <kbd>Shift</kbd> voorkomt deze activiteit.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Als de focus op een kolomkop ligt en op <kbd>Spacebar</kbd> of <kbd>Enter</kbd> wordt gedrukt, wordt de bijhorende event niet gestart.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Als de focus op de cel- of rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op een cel of op de rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie voor deze rij verwijderd.</p>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel bovenaan geselecteerd. De focus wordt naar de cel boven de gefocusseerde cel verplaatst.</p>
+				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel bovenaan gelegd en de celselectie uitgebreid tot deze cel.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Als de focus op de cel of op de rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op een cel of op de rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij eronder verplaatst en wordt de selectie voor deze rij verwijderd.</p>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel eronder geselecteerd. De focus wordt naar de cel onder de gefocusseerde cel verplaatst.</p>
+				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel onderaan gelegd en de celselectie uitgebreid tot deze cel.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Als de focus op de kolomkop ligt, wordt de breedte van deze kolom met 1 em vergroot. Dit wordt herhaald zolang de toets ingedrukt blijft.</p>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel rechts ervan geselecteerd. De focus wordt naar de cel rechts van de gefocusseerde cel verplaatst.</p>
+				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel rechts gelegd en wordt de celselectie uitgebreid tot deze cel.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Als de focus op de kolomkop ligt, wordt de breedte van deze kolom met 1 em verkleind. Dit wordt herhaald als de toets ingedrukt blijft.</p>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel links ervan geselecteerd. De focus wordt naar de cel links van de gefocusseerde cel verplaatst.</p>
+				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel links gelegd en de celselectie uitgebreid tot deze cel.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Als de focus op een kolomkop ligt, wordt de relevante kolom een positie naar rechts verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Als de focus op een kolomkop ligt, wordt de relevante kolom een positie naar links verplaatst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Verplaatst de focus naar het volgende focuseerbare element in de bovenstaande rij.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Verplaatst de focus naar het volgende focuseerbare element in de onderstaande rij.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Als de focus op een cel, de rijselector of <span class="uicontrol">Alles selecteren</span> ligt, schakelt dit het aankruisvakje <span class="uicontrol">Alles selecteren</span> om. Alle rijen worden geselecteerd of gedeselecteerd, afhankelijk van de situatie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de focus binnen de tabel ligt, wordt de selectie van rijen en cellen verwijderd.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Als de focus op een cel ligt, wordt de focus naar de bijhorende content verplaatst (met uitzondering van alleen-lezen tekst).</p>
+				<p>Als de focus op een groepskop of een niet-elementknooppunt van een structuur ligt, schakelt dit de uitbreiding van de groep om: de groep wordt weergegeven of verborgen, afhankelijk van de situatie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Als de focus op de groepskop ligt, wordt het groepskopmenu geopend.</p>
+				<p>Als de focus op de kolomkop ligt, wordt het kolomkopmenu geopend.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
+				<p>Als de cellen zijn geselecteerd, wordt door <kbd>Shift + click</kbd> op een andere cel de selectie tot de geklikte cel uitgebreid.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopieert de geselecteerde rijen of cellen naar het klembord (indien beschikbaar) en de functie wordt ingeschakeld.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Plakt de inhoud uit het klembord (indien de functie is ingeschakeld).</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

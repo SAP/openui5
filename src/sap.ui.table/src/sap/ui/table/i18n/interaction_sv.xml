@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Flyttar fokus till nästa cell i samma kolumn eller rad i respektive riktning.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Om fokus är på första raden flyttas fokus till kolumnrubriken.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Om fokus är på en kolumnrubrik flyttas fokus till cellen i första synliga raden i denna kolumn, beroende på aktuell rullningsposition.</p>
+				<p>Om fokus är på kryssrutan <span class="uicontrol">Markera alla</span> flyttas fokus till radväljaren i första synliga raden, beroende på aktuell rullningsposition.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Om fokus är på en cell i första kolumnen flyttas fokus till radväljaren.</p>
+				<p>Om fokus är på en kolumnrubrik flyttas fokus till kolumnrubriken till vänster.</p>
+				<p>Om fokus är på kolumnrubriken i första kolumnen flyttas fokus till kryssrutan <span class="uicontrol">Markera alla</span>.</p>
+				<p>Om fokus är på grupprubriken för en expanderad grupp så komprimeras gruppen.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Om fokus är på kolumnrubriken flyttas fokus till kolumnrubriken till höger.</p>
+				<p>Om fokus är på radväljaren flyttas fokus till cellen i första kolumnen på samma rad.</p>
+				<p>Om fokus är på kryssrutan <span class="uicontrol">Markera alla</span> flyttas fokus till kolumnrubriken i första kolumnen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Om fokus är på cellnivå så flyttas fokus till cellen överst i samma kolumn. Om fokus redan är på denna nivå så flyttas fokus en sida upp och är kvar i samma kolumn med nödvändig rullning.</p>
+				<p>Om fokus är på första raden flyttas fokus till kolumnrubriken.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Om fokus är på cellnivå så flyttas fokus till sista synliga cellen i samma kolumn. Om fokus redan är på denna nivå så flyttas fokus en sida ner och är kvar i samma kolumn med nödvändig rullning.</p>
+				<p>Om fokus är på kolumnrubriken flyttas fokus till första raden.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Om fokus är på cellnivå eller på en kolumnrubrik flyttas fokus fem kolumner åt vänster (standardsidstorlek). Om det finns färre kolumner till vänster än aktuell sidstorlek flyttas fokus till första kolumnen.</p>
+				<p>Om fokus är på den första kolumnen på cellnivå flyttas fokus till radväljaren.</p>
+				<p>Om fokus är på kolumnrubriken i första kolumnen flyttas fokus till <span class="uicontrol">Markera alla</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Om fokus är på cellnivå flyttas fokus fem kolumner åt höger (standardsidstorlek).</p>
+				<p>Om fokus är på kolumnrubriken och det finns färre kolumner åt höger än aktuell sidstorlek flyttas fokus till sista kolumnen.</p>
+				<p>Om fokus är på radväljaren flyttas fokus till den första kolumnen på samma rad.</p>
+				<p>Om fokus är på <span class="uicontrol">Markera alla</span> flyttas fokus till rubriken i den första kolumnen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Om fokus är på cellen flyttas fokus till den första kolumnen på samma rad.</p>
+				<p>Om fokus är på cellen i första kolumnen flyttas fokus till radväljaren.</p>
+				<p>Om fokus är på kolumnrubriken flyttas fokus till rubriken i första kolumnen.</p>
+				<p>Om fokus är på den första kolumnrubriken flyttas fokus till <span class="uicontrol">Markera alla</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Om fokus är på cellen eller kolumnrubriken flyttas fokus till den sista kolumnen.</p>
+				<p>Om fokus är på radväljaren flyttas fokus till den första kolumnen på samma rad.</p>
+				<p>Om fokus är på <span class="uicontrol">Markera alla</span> flyttas fokus till rubriken i den första kolumnen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Om fokus är på cellen flyttas fokus till kolumnrubriken.</p>
+				<p>Om fokus är på radväljaren flyttas fokus till <span class="uicontrol">Markera alla</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Om fokus är på cellen eller kolumnrubriken flyttas fokus till den sista raden i samma kolumn.</p>
+				<p>Om fokus är på radväljaren eller <span class="uicontrol">Markera alla</span> flyttas fokus till den sista radväljaren.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Om fokus är på cellen flyttas fokus till den första fokuserbara kontrollen i cellen.</p>
+				<p>Om fokus är på kryssrutan <span class="uicontrol">Markera alla</span> eller en radväljare växlas status för kryssrutan.</p>
+				<p>Om fokus är på kolumnrubriken öppnas menyn för kolumnrubriken.</p>
+				<p>Om fokus är på grupprubriken så komprimeras eller expanderas relaterad grupp.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Om fokus är på grupprubriken öppnas menyn för grupprubriken.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är på en cell så markeras den fokuserade cellen.</p>
+				<p>Om fokus är på ett cellurvalsblock så tas cellurvalet bort.</p>
+				<p>Om fokus är på en cell och tabellen har en viss konfiguration för urvalsbeteende (för att markera en rad kan du antingen markera själva raden eller kryssrutan om sådan är tillgänglig) så markeras endast fokuserad cell i stället för raden.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Om fokus är på en rad eller radväljaren så växlas urvalet för aktuell rad.</p>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är på ett cellurvalsblock så ändras cellurvalsblocket till ett radurval. Cellurvalet tas bort.</p>
+				<p>Beroende på radurvalsläge händer följande:</p>
+				<ul>
+					<li>Alla rader i blocket väljs (flerval)</li>
+					<li>Endast raden med aktuellt fokuserad cell markeras (enskilt urval)</li>
+					<li>Ingen av raderna väljs</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är inuti tabellen, och celler markerats, så tas urvalet av celler bort.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Växlar fokus mellan cell och dess innehåll (med undantag för skrivskyddad text).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Om fokus är på <span class="uicontrol">Markera alla</span> och du trycker på <kbd>Spacebar</kbd> så initieras inte motsvarande händelse. <kbd>Shift</kbd> förhindrar denna aktivitet.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Om fokus är på en kolumnrubrik och du trycker på <kbd>Spacebar</kbd> eller <kbd>Enter</kbd> så initieras inte motsvarande händelse.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad markerats flyttas fokus till raden över och urvalet utökas till och med den raden.</p>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad <span class="emphasis">inte</span> markerats flyttas fokus till raden över och urvalet tas bort för denna rad.</p>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen över. Fokus flyttas till cellen över den fokuserade cellen.</p>
+				<p>Om fokus är på en markerad cell får cellen över fokus och cellurvalet utökas till och med den cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad markerats flyttas fokus till raden under och urvalet utökas till och med den raden.</p>
+				<p>Om fokus är på en cell eller radväljaren och relevant rad <span class="emphasis">inte</span> markerats flyttas fokus till raden under och urvalet tas bort för denna rad.</p>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats, och raden <span class="emphasis">inte</span> markerats, så markeras den fokuserade cellen och cellen under. Fokus flyttas till cellen under den fokuserade cellen.</p>
+				<p>Om fokus är på en markerad cell får cellen under fokus och cellurvalet utökas till och med den cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Om fokus är på en kolumnrubrik ökas bredden för kolumnen med 1 em. Detta upprepas om tangenten fortsätter vara nedtryckt.</p>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats markeras den fokuserade cellen och cellen till höger. Fokus flyttas till cellen till höger om den fokuserade cellen.</p>
+				<p>Om fokus är på en markerad cell får cellen till höger fokus och cellurvalet utökas till och med den cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Om fokus är på en kolumnrubrik minskas bredden för kolumnen med 1 em. Detta upprepas om tangenten fortsätter vara nedtryckt.</p>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är på en cell som <span class="emphasis">inte</span> markerats markeras den fokuserade cellen och cellen till vänster. Fokus flyttas till cellen till vänster om den fokuserade cellen.</p>
+				<p>Om fokus är på en markerad cell får cellen till vänster fokus och cellurvalet utökas till och med den cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Om fokus är på en kolumnrubrik flyttas relevant kolumn en position åt höger.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Om fokus är på en kolumnrubrik flyttas relevant kolumn en position åt vänster.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Flyttar fokus till nästa fokuserbara element på raden över.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Flyttar fokus till nästa fokuserbara element på raden under.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Om fokus är på en cell, radväljaren eller <span class="uicontrol">Markera alla</span>, växlas kryssrutan <span class="uicontrol">Markera alla</span>: Alla rader markeras respektive avmarkeras.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om fokus är inuti tabellen tas urvalet för alla rader och celler bort.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Om fokus är på en cell flyttas fokus till dess innehåll (med undantag för skrivskyddad text).</p>
+				<p>Om fokus är på grupprubriken eller en icke-slutnod i ett träd så växlas expandering av gruppen: Gruppen expanderas respektive komprimeras.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Om fokus är på grupprubriken öppnas menyn för grupprubriken.</p>
+				<p>Om fokus är på kolumnrubriken öppnas menyn för kolumnrubriken.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Om cellurval har aktiverats:</span></p>
+				<p>Om celler markerats utökar <kbd>Shift + click</kbd> för en annan cell urvalet till och med den klickade cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopierar markerade rader eller celler till urklipp om det är tillgängligt och funktionen aktiverats.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Klistrar in innehåll från urklipp om funktionen aktiverats.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

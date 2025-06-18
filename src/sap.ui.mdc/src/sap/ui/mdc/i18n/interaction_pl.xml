@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Otwiera okno dialogowe <span class="uicontrol">Ustawienia tabeli</span>, jeśli jest dostępne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>Otwiera okno dialogowe <span class="uicontrol">Eksportuj jako</span> tabeli, jeśli jest dostępne.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>Wywołuje wyszukiwanie paska filtrów.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>Powoduje otwarcie okna dialogowego <span class="uicontrol">Ustawienia widoku</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>Powoduje usunięcie elementu w oknie dialogowym <span class="uicontrol">Ustawienia widoku</span></p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

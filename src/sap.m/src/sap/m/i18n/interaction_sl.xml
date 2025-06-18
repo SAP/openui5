@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globalne bližnjice</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Premakne fokus na naslednjo celico znotraj istega stolpca ali vrstice v ustreznih smereh.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Če je fokus na prvi vrstici, se fokus premakne na vrstico glave stolpca.</p>
+				<p>Če je fokus na celici prve vrstice, se fokus premakne na povezano glavo stolpca.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Če je fokus na potrditvenem polju <span class="uicontrol">Izberi vse</span> ali <span class="uicontrol">Počisti vse</span>, se fokus premakne na izbirnik vrstic v prvi vidni vrstici.</p>
+				<p>Če je fokus na vrstici glave stolpca, se fokus premakne na prvo vrstico.</p>
+				<p>Če je fokus na vrstici, se fokus premakne na spodnjo vrstico.</p>
+				<p>Če je fokus na celici, se fokus premakne na spodnjo vrstico.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Če je fokus na prvi celici, se fokus premakne na vrstico. To preklopi s pomikanja glede na celico na pomikanje glede na vrstico.</p>
+				<p>Če je fokus na celici, se fokus premakne na celico na levi.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Če je fokus na vrstici, se fokus premakne na prvo celico trenutno fokusirane vrstice. To preklopi s pomikanja glede na vrstico na pomikanje glede na celico.</p>
+				<p>Če je fokus na celici, se fokus premakne na celico na desni.</p>
+				<p><span class="emphasis">Opomba:</span> Če je fokus na zadnjem stolpcu in je za ta stolpec omogočeno pojavno okno, se področje pojavnega okna upošteva kot dodatni stolpec na desni in fokus se premakne na ta stolpec. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Če je fokus na vrstici, se fokus premakne na vrstico glave stolpca.</p>
+				<p>Če je fokus na vrstici glave stolpca in je na voljo gumb <span class="uicontrol">Več</span>, se fokus premakne na gumb <span class="uicontrol">Več</span>.</p>
+				<p>Če je fokus na vrstici glave stolpca in gumb <span class="uicontrol">Več</span> <span class="emphasis">ni</span> na voljo, se fokus premakne na zadnjo fokusirano vrstico.</p>
+				<p>Če je fokus na gumbu <span class="uicontrol">Več</span>, se fokus premakne na zadnjo fokusirano vrstico.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Če je fokus na vrstici in je na voljo gumb <span class="uicontrol">Več</span>, se fokus premakne na gumb <span class="uicontrol">Več</span>.</p>
+				<p>Če je fokus na vrstici in gumb <span class="uicontrol">Več</span> <span class="emphasis">ni</span> na voljo, se fokus premakne na vrstico glave stolpca.</p>
+				<p>Če je fokus na gumbu <span class="uicontrol">Več</span>, se fokus premakne na vrstico glave stolpca.</p>
+				<p>Če je fokus na vrstici glave stolpca, se fokus premakne na zadnjo fokusirano vrstico.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Če je fokus na glavi stolpca, se širina tega stolpca poveča za 1 em. To se ponovi, če tipka ostane pritisnjena.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in celica na desni. Fokus se premakne na celico desno od fokusirane celice.</p>
+				<p>Če je fokus na izbrani celici, celica na desni pridobi fokus, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Če je fokus na glavi stolpca, se širina tega stolpca zmanjša za 1 em. To se ponovi, če tipka ostane pritisnjena.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in celica na levi. Fokus se premakne na celico levo od fokusirane celice.</p>
+				<p>Če je fokus na izbrani celici, celica na levi pridobi fokus, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na zgornjo vrstico, izbira pa se razširi do te vrstice.</p>
+				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na zgornjo vrstico, izbira pa se odstrani za to vrstico.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in zgornja celica. Fokus se premakne na celico nad fokusirano celico.</p>
+				<p>Če je fokus na izbrani celici, se fokus premakne na zgornjo celico, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na spodnjo vrstico, izbira pa se razširi do te vrstice.</p>
+				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na spodnjo vrstico, izbira pa se odstrani za to vrstico.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in spodnja celica. Fokus se premakne na celico pod fokusirano celico. </p>
+				<p>Če je fokus na izbrani celici, se fokus premakne na spodnjo celico, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Če je fokus na celici, ki omogoča urejanje (na primer vnosno polje), se fokus premakne na zgornjo celico.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Če je fokus na celici, ki omogoča urejanje (na primer vnosno polje), se fokus premakne na spodnjo celico.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, je izbrana fokusirana celica.</p>
+				<p>Če je fokus na blokadi izbire celic, se izbira celic odstrani.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na blokadi izbire celic, se blokada izbire celic spremeni v izbiro vrstic. Izbira celic je odstranjena.</p>
+				<p>Glede na način izbire vrstic se zgodi naslednje:</p>
+				<ul>
+					<li>Izbrane so vse vrstice blokade (več izbir)</li>
+					<li>Izbrana je le vrstica s trenutno fokusirano celico (ena izbira)</li>
+					<li>Nobena vrstica ni izbrana</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus znotraj tabele, se izbira za katerokoli vrstico in celico odstrani.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus znotraj tabele in so celice izbrane, se izbira celic odstrani.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Preklopi fokus med celico in njeno vsebino, če ima celica interaktivne elemente, kot je polje vnosa ali gumb (z izjemo besedila samo za branje).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Če je fokus znotraj celice v načinu urejanja, se fokus premakne na vrstico.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če so celice označene, pritisnite <kbd>Shift</kbd> in kliknite različno celico, da povečate izbor do povezane celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopira izbrane vrstice ali celice v odložišče, če je na voljo in je ta funkcija omogočena.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Prilepi vsebino iz odložišča, če je funkcija omogočena.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Odre upravljanje različic.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Zapre pogovorno okno o napaki upravljanja različic</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Premakne element za en položaj navzgor, če je na voljo.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Premakne element za en položaj navzdol, če je na voljo.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Premakne element na vrh, če je na voljo.</p>
+				<p><kbd>End</kbd></p>
+				<p>Premakne element na konec, če je na voljo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Premakne element za en položaj navzgor, če je na voljo.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Premakne element za en položaj navzdol, če je na voljo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Premakne element za en položaj navzgor, če je na voljo.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Premakne element za en položaj navzdol, če je na voljo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

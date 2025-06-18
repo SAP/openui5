@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Déplace la zone activée vers la cellule suivante de la même colonne ou ligne dans les sens correspondants.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Si la zone activée se trouve sur la première ligne, elle se déplace vers l'en-tête de colonne.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Si la zone activée se trouve sur un en-tête de colonne, elle se déplace vers la cellule de la première ligne visible de cette colonne, en fonction de la position de défilement actuelle.</p>
+				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers le sélecteur de ligne de la première ligne visible, en fonction de la position de défilement actuelle.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Si la zone activée se trouve sur une cellule de la première colonne, elle se déplace vers le sélecteur de ligne.</p>
+				<p>Si la zone activée se trouve sur un en-tête de colonne, elle se déplace vers l'en-tête de colonne sur la gauche.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de la première colonne, elle se déplace vers la case à cocher <span class="uicontrol">Sélectionner tout</span>.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de groupe d'un groupe développé, le groupe est réduit.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Si la zone activée se trouve sur l'en-tête de colonne, elle se déplace vers l'en-tête de colonne sur la droite.</p>
+				<p>Si la zone activée se trouve sur le sélecteur de ligne, elle se déplace vers la cellule de la première colonne sur la même ligne.</p>
+				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers l'en-tête de la première colonne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Si la zone activée se trouve au niveau d'une cellule, elle se déplace vers la cellule située tout en haut de la même colonne. Si la zone activée se trouve déjà à ce niveau, elle se déplace d'une page vers le haut et reste sur la même colonne avec le défilement requis.</p>
+				<p>Si la zone activée se trouve sur la première ligne, elle se déplace vers l'en-tête de colonne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Si la zone activée se trouve au niveau d'une cellule, elle se déplace vers la dernière cellule visible de la même colonne. Si la zone activée se trouve déjà à ce niveau, elle se déplace d'une page vers le bas et reste sur la même colonne avec le défilement requis.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de colonne, elle se déplace vers la première ligne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Si la zone activée se trouve au niveau d'une cellule ou de l'en-tête d'une colonne, elle se déplace de cinq colonnes vers la gauche (taille de page standard). Si le nombre de colonnes à gauche est inférieur à la taille de la page actuelle, la zone activée se déplace vers la première colonne.</p>
+				<p>Si la zone activée se trouve sur la première colonne au niveau d'une cellule, elle se déplace vers le sélecteur de ligne.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de la première colonne, elle se déplace vers <span class="uicontrol">Sélectionner tout</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Si la zone activée se trouve au niveau d'une cellule, elle se déplace de cinq colonnes vers la droite (taille de page standard).</p>
+				<p>Si la zone activée se trouve sur l'en-tête de colonne et si le nombre de colonnes à droite est inférieur à la taille de la page actuelle, la zone activée se déplace vers la dernière colonne.</p>
+				<p>Si la zone activée se trouve sur le sélecteur de ligne, elle se déplace vers la première colonne sur la même ligne.</p>
+				<p>Si la zone activée se trouve sur <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers l'en-tête de la première colonne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Si la zone activée se trouve sur la cellule, elle se déplace vers la première colonne sur la même ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule de la première colonne, elle se déplace vers le sélecteur de ligne.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de colonne, elle se déplace vers l'en-tête de la première colonne.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de la première colonne, elle se déplace vers <span class="uicontrol">Sélectionner tout</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Si la zone activée se trouve sur la cellule ou l'en-tête de colonne, elle se déplace vers la dernière colonne.</p>
+				<p>Si la zone activée se trouve sur le sélecteur de ligne, elle se déplace vers la première colonne sur la même ligne.</p>
+				<p>Si la zone activée se trouve sur <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers l'en-tête de la première colonne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Si la zone activée se trouve sur la cellule, elle se déplace vers l'en-tête de colonne.</p>
+				<p>Si la zone activée se trouve sur le sélecteur de ligne, elle se déplace vers <span class="uicontrol">Sélectionner tout</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Si la zone activée se trouve sur la cellule ou l'en-tête de colonne, elle se déplace vers la dernière ligne dans la même colonne.</p>
+				<p>Si la zone activée se trouve sur le sélecteur de ligne ou <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers le dernier sélecteur de ligne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Si la zone activée se trouve sur la cellule, elle se déplace vers la première commande activable dans la cellule.</p>
+				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span> ou un sélecteur de ligne, cela active/désactive le statut de la case à cocher.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de colonne, le menu de l'en-tête de colonne s'ouvre.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de groupe, le groupe associé est réduit ou développé.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Si la zone activée se trouve sur l'en-tête de groupe, le menu de l'en-tête de groupe s'ouvre.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur une cellule, la cellule activée est sélectionnée.</p>
+				<p>Si la zone activée se trouve sur un bloc de sélection de cellule, la sélection des cellules est supprimée.</p>
+				<p>Si la zone activée se trouve sur une cellule, et si le comportement de sélection du tableau est configuré d'une certaine manière (pour sélectionner une ligne, vous pouvez sélectionner la ligne elle-même ou la case à cocher si elle est disponible), seule la cellule activée est sélectionnée à la place de la ligne.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Si la zone activée se trouve sur une cellule ou le sélecteur de ligne, cela active/désactive la sélection de la ligne actuelle.</p>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur un bloc de sélection de cellule, le bloc de sélection de cellule est modifié en sélection de ligne. La sélection de cellule est supprimée.</p>
+				<p>Selon le mode de sélection de ligne, les situations suivantes se produisent&#x00a0;:</p>
+				<ul>
+					<li>Toutes les lignes du bloc sont sélectionnées (sélection multiple).</li>
+					<li>Seule la ligne contenant la cellule actuellement activée est sélectionnée (sélection simple).</li>
+					<li>Aucune ligne n'est sélectionnée.</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve dans le tableau, et si des cellules sont sélectionnées, la sélection des cellules est supprimée.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Bascule la zone activée entre la cellule et son contenu (sauf les textes en lecture seule).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Si la zone activée se trouve sur <span class="uicontrol">Sélectionner tout</span>, et si la touche <kbd>Spacebar</kbd> est actionnée, l'événement correspondant n'est pas déclenché. La touche <kbd>Shift</kbd> bloque cette activité.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Si la zone activée se trouve sur un en-tête de colonne, et si la touche <kbd>Spacebar</kbd> ou <kbd>Enter</kbd> est actionnée, l'événement correspondant n'est pas déclenché.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Si la zone activée se trouve sur une cellule ou le sélecteur de ligne, et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou le sélecteur de ligne, et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située au-dessus et la sélection est supprimée pour cette ligne.</p>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située au-dessus sont sélectionnées. La zone activée se déplace vers la cellule située au-dessus de la cellule activée.</p>
+				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule au-dessus et la sélection de cellule est étendue jusqu'à cette cellule.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Si la zone activée se trouve sur une cellule ou le sélecteur de ligne et si la ligne correspondante est sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est étendue jusqu'à cette ligne.</p>
+				<p>Si la zone activée se trouve sur une cellule ou le sélecteur de ligne et si la ligne correspondante n'est <span class="emphasis">pas</span> sélectionnée, la zone activée se déplace vers la ligne située en dessous et la sélection est supprimée pour cette ligne.</p>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, et si la ligne n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et la cellule située en dessous sont sélectionnées. La zone activée se déplace vers la cellule située en dessous de la cellule activée.</p>
+				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule en dessous et la sélection de cellule est étendue jusqu'à cette cellule.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Si la zone activée se trouve sur un en-tête d'une colonne, la largeur de cette colonne augmente de 1&#x00a0;em. Cette action est répétée si vous maintenez la touche enfoncée.</p>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et celle de droite sont sélectionnées. La zone activée se déplace vers la cellule à droite de la cellule activée.</p>
+				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule de droite et la sélection de cellule est étendue jusqu'à cette cellule.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Si la zone activée se trouve sur un en-tête d'une colonne, la largeur de cette colonne diminue de 1&#x00a0;em. Cette action est répétée si vous maintenez la touche enfoncée.</p>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur une cellule qui n'est <span class="emphasis">pas</span> sélectionnée, la cellule activée et celle de gauche sont sélectionnées. La zone activée se déplace vers la cellule à gauche de la cellule activée.</p>
+				<p>Si la zone activée se trouve sur une cellule sélectionnée, elle se déplace vers la cellule de gauche et la sélection de cellule est étendue jusqu'à cette cellule.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Si la zone activée se trouve sur un en-tête de colonne, la colonne en question se déplace d'une position vers la droite.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Si la zone activée se trouve sur un en-tête de colonne, la colonne en question se déplace d'une position vers la gauche.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Déplace la zone activée vers le prochain élément activable dans la ligne située au-dessus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Déplace la zone activée vers le prochain élément activable dans la ligne située en dessous.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Si la zone activée se trouve sur une cellule, le sélecteur de cellule ou sur <span class="uicontrol">Sélectionner tout</span>, cela active/désactive la case à cocher <span class="uicontrol">Sélectionner tout</span>&#x00a0;: toutes les lignes sont respectivement sélectionnées ou désélectionnées.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si la zone activée se trouve sur le tableau, la sélection de toutes les lignes et cellules est supprimée.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Si la zone activée se trouve sur une cellule, elle se déplace vers son contenu (sauf les textes en lecture seule).</p>
+				<p>Si la zone activée se trouve sur l'en-tête de groupe ou sur un nœud qui n'est pas le nœud final d'une arborescence, cela active/désactive le développement du groupe&#x00a0;: le groupe est respectivement développé ou réduit.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Si la zone activée se trouve sur l'en-tête de groupe, le menu de l'en-tête de groupe s'ouvre.</p>
+				<p>Si la zone activée se trouve sur l'en-tête de colonne, le menu de l'en-tête de colonne s'ouvre.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
+				<p>Si des cellules sont sélectionnées, <kbd>Shift + click</kbd> sur une autre cellule étend la sélection jusqu'à la cellule sur laquelle vous avez cliqué.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copie les lignes ou cellules sélectionnées vers le presse-papiers, si cette option est disponible, et si la fonctionnalité est activée.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Colle le contenu à partir du presse-papiers si la fonctionnalité est activée.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>탭 체인의 다음 요소로 포커스를 옮깁니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>탭 체인의 이전 요소로 포커스를 옮깁니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>탭 체인 안에서 다음 UI 그룹(F6 그룹)의 첫 번째 요소로 포커스를 옮깁니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>탭 체인 안에서 이전 UI 그룹(F6 그룹)의 첫 번째 요소로 포커스를 옮깁니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>전역 바로가기</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

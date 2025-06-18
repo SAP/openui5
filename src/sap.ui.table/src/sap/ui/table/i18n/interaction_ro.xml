@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Mută focalizarea la următoarea celulă din aceeași coloană sau linie în direcțiile respective.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Dacă focalizarea este pe prima linie, focalizarea se mută pe antetul coloanei.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Dacă focalizarea este pe un antet de coloană, focalizarea se mută pe celula din prima linie vizibilă a acestei coloane, care depinde de poziția de defilare curentă.</p>
+				<p>Dacă focalizarea este pe caseta de marcaj <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe selectorul liniei din prima linie vizibilă, care depinde de poziția de defilare curentă.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Dacă focalizarea este pe o celulă din prima coloană, focalizarea se mută pe selectorul de linie.</p>
+				<p>Dacă focalizarea este pe un antet de coloană, focalizarea se mută pe antetul coloanei din stânga.</p>
+				<p>Dacă focalizarea este pe antetul de coloană al primei coloane, focalizarea se mută pe caseta de marcaj <span class="uicontrol">Selectare tot</span>.</p>
+				<p>Dacă focalizarea este pe antetul de grup al unui grup extins, grupul este comprimat.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Dacă focalizarea este pe antetul de coloană, focalizarea se mută pe antetul coloanei din dreapta.</p>
+				<p>Dacă focalizarea este pe selectorul de linie, focalizarea se mută pe celula din prima coloană a aceleiași linii.</p>
+				<p>Dacă focalizarea este pe caseta de marcaj <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe antetul de coloană al primei coloane.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Dacă focalizarea este la nivel de celulă, focalizarea se mută pe celula din partea de sus a aceleiași coloane. Dacă focalizarea este deja la acel nivel, focalizarea se mută o pagină în sus și rămâne pe aceeași coloană cu defilarea necesară.</p>
+				<p>Dacă focalizarea este pe prima linie, focalizarea se mută pe antetul coloanei.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Dacă focalizarea este la nivel de celulă, focalizarea se mută pe ultima celulă vizibilă din aceeași coloană. Dacă focalizarea este deja la acel nivel, se mută o pagină în jos și rămâne pe aceeași coloană cu defilarea necesară.</p>
+				<p>Dacă focalizarea este pe antetul de coloană, focalizarea se mută pe prima linie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Dacă focalizarea este la nivel de celulă sau pe un antet de coloană, focalizarea se mută cinci coloane la stânga (mărime de pagină implicită). Dacă există mai puține coloane la stânga decât mărimea curentă a paginii, focalizarea se mută pe prima coloană.</p>
+				<p>Dacă focalizarea este pe prima coloană la nivel de celulă, focalizarea se mută pe selectorul de linie.</p>
+				<p>Dacă focalizarea este pe antetul de coloană al primei coloane, focalizarea se mută pe <span class="uicontrol">Selectare tot</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Dacă focalizarea este la nivel de celulă, focalizarea de mișcă cinci coloane la dreapta (mărime de pagină implicită).</p>
+				<p>Dacă focalizarea este pe antetul de coloană și există mai puține coloane la dreapta decât mărimea curentă a paginii, focalizarea se mută pe ultima coloană.</p>
+				<p>Dacă focalizarea este pe selectorul de linie, focalizarea se mută pe prima coloană a aceleiași linii.</p>
+				<p>Dacă focalizarea este pe <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe antetul primei coloane.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Dacă focalizarea este pe celulă, focalizarea se mută pe prima coloană a aceleiași linii.</p>
+				<p>Dacă focalizarea este pe celula din prima coloană, focalizarea se mută pe selectorul de linie.</p>
+				<p>Dacă focalizarea este pe antetul de coloană, focalizarea se mută pe antetul primei coloane.</p>
+				<p>Dacă focalizarea este pe primul antet de coloană, focalizarea se mută pe <span class="uicontrol">Selectare tot</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Dacă focalizarea este pe celulă sau antetul de coloană, focalizarea se mută pe ultima coloană.</p>
+				<p>Dacă focalizarea este pe selectorul de linie, focalizarea se mută pe prima coloană a aceleiași linii.</p>
+				<p>Dacă focalizarea este pe <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe antetul primei coloane.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Dacă focalizarea este pe celulă, focalizarea se mută pe antetul coloanei.</p>
+				<p>Dacă focalizarea este pe selectorul de linie, focalizarea se mută pe <span class="uicontrol">Selectare tot</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Dacă focalizarea este pe celulă sau antetul de coloană, focalizarea se mută pe ultima linie din aceeași coloană.</p>
+				<p>Dacă focalizarea este pe selectorul de linie sau <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe ultimul selector de linie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Dacă focalizarea este pe celulă, focalizarea se mută pe primul control focalizabil din celulă.</p>
+				<p>Dacă focalizarea este pe caseta de marcaj <span class="uicontrol">Selectare tot</span> sau selectorul de linie, comută starea casetei de marcaj.</p>
+				<p>Dacă focalizarea este pe antetul de coloană, este deschis meniul antetului de coloană.</p>
+				<p>Dacă focalizarea este pe antetul de grup, grupul corelat este comprimat sau expandat.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Dacă focalizarea este pe antetul de grup, este deschis meniul antetului de grup.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă, este selectată celula focalizată.</p>
+				<p>Dacă focalizarea este pe un bloc de selecție celulă, selecția celulelor este eliminată.</p>
+				<p>Dacă focalizarea este pe o celulă și tabelul are o anumită configurare a comportamentului de selecție (pentru a selecta o linie, puteți să selectați linia în sine sau caseta de marcaj de selecție, dacă este disponibilă), este selectată numai celula focalizată, în loc de linie.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Dacă focalizarea este pe o celulă sau selector de linie, acest lucru comută selecția liniei curente.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe un bloc de selecție celulă, blocul de selecție celulă este modificat într-o selecție de linie. Selecția celulei este eliminată.</p>
+				<p>În funcție de modul de selecție linie, au loc următoarele:</p>
+				<ul>
+					<li>Sunt selectate toate liniile blocului (selecție multiplă)</li>
+					<li>Este selectată numai linia cu celula focalizată în prezent (selecție individuală)</li>
+					<li>Nu este selectată nicio linie</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este în interiorul tabelului și sunt selectate celule, selecția celulelor este eliminată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Comută focalizarea între celulă și conținutul său (cu excepția textului numai pentru citire).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Dacă focalizarea este pe <span class="uicontrol">Selectare tot</span> și <kbd>Spacebar</kbd> este apăsat, evenimentul corespondent nu este declanșat. <kbd>Shift</kbd> previne această activitate.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Dacă focalizarea este pe un antet de coloană și <kbd>Spacebar</kbd> sau <kbd>Enter</kbd> este apăsat, evenimentul corespondent nu este declanșat.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă este selectată, focalizarea se mută pe linia de mai sus, iar selecția este extinsă până la această linie.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă <span class="emphasis">nu</span> este selectată, focalizarea se mută pe linia de mai sus, iar selecția este eliminată pentru această linie.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată și linia <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula de mai sus. Focalizarea se mută pe celula de deasupra celulei focalizate.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, celula de mai sus obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă este selectată, focalizarea se mută pe linia de mai jos, iar selecția este extinsă până la această linie.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă <span class="emphasis">nu</span> este selectată, focalizarea se mută pe linia de mai jos, iar selecția este eliminată pentru această linie.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată și linia <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula de mai jos. Focalizarea se mută pe celula de sub celula focalizată.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, celula de mai jos obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Dacă focalizarea este pe un antet de coloană, lățimea acestei coloane este majorată cu 1 em. Acest lucru se repetă dacă tasta rămâne apăsată.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula din dreapta. Focalizarea se mută la celula din dreapta celulei focalizate.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, celula din dreapta obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Dacă focalizarea este pe un antet de coloană, lățimea acestei coloane este micșorată cu 1 em. Acest lucru se repetă dacă tasta rămâne apăsată.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula din stânga. Focalizarea se mută la celula din stânga celulei focalizate.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, celula din stânga obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Dacă focalizarea este pe un antet de coloană, coloana relevantă se mișcă o poziție la dreapta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Dacă focalizarea este pe un antet de coloană, coloana relevantă se mișcă o poziție la stânga.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Mută focalizarea la următorul element focalizabil din linia de mai sus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Mută focalizarea la următorul element focalizabil din linia de mai jos.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Dacă focalizarea este pe celulă, selector de linie sau <span class="uicontrol">Selectare tot</span>, acest lucru comută caseta de marcaj <span class="uicontrol">Selectare tot</span>: toate liniile sunt selectate sau, respectiv, deselectate.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă selecția este în interiorul tabelului, este eliminată selecția pentru orice linie sau celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Dacă focalizarea este pe o celulă, focalizarea se mută pe conținutul său (cu excepția textului numai pentru citire).</p>
+				<p>Dacă focalizarea este pe antetul de grup sau un nod non-terminal al unui arbore, acest lucru comută extinderea grupului: grupul este expandat sau, respectiv, comprimat.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Dacă focalizarea este pe antetul de grup, este deschis meniul antetului de grup.</p>
+				<p>Dacă focalizarea este pe antetul de coloană, este deschis meniul antetului de coloană.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă sunt selectate celule, <kbd>Shift + click</kbd> pe o celulă diferită extinde selecția până la celula pe care s-a efectuat click.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copiază liniile selectate sau celulele în clipboard, dacă opțiunea este disponibilă și caracteristica activată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Lipește conținutul din clipboard, dacă caracteristica este activată.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Pārvieto fokusu uz nākamo šūnu tajā pašā kolonnā vai rindā attiecīgajos virzienos.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ja fokuss ir uz pirmo rindu, tad fokuss pārvietojas uz kolonnas galveni.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ja fokuss ir uz kolonnas galveni, tad fokuss pārvietojas uz šūnu, kura atrodas šīs kolonnas pirmajā redzamajā rindā, kas ir atkarīga no pašreizējās ritināšanas pozīcijas.</p>
+				<p>Ja fokuss ir uz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span>, tad fokuss pārvietojas uz rindu atlasītāju pirmajā redzamajā rindā, kura ir atkarīga no pašreizējās ritināšanas pozīcijas.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ja fokuss ir uz šūnu pirmajā kolonnā, tad fokuss pārvietojas uz rindas atlasītāju.</p>
+				<p>Ja fokuss ir uz kolonnas galveni, tad fokuss pārvietojas uz kolonnas galveni pa kreisi.</p>
+				<p>Ja fokuss ir uz pirmās kolonnas galveni, tad fokuss pārvietojas uz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span>.</p>
+				<p>Ja fokuss ir uz izvērstas grupas galveni, tad grupa tiek sakļauta.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ja fokuss ir uz kolonnas galveni, tad fokuss pārvietojas uz kolonnas galveni pa labi.</p>
+				<p>Ja fokuss ir uz rindas atlasītāju, tad fokuss pārvietojas uz pirmās kolonnas šūnu tajā pašā rindā.</p>
+				<p>Ja fokuss ir uz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span>, tad fokuss pārvietojas uz pirmās kolonnas galveni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Ja fokuss ir uz šūnas līmeni, tad fokuss pārvietojas uz šūnu tās pašas kolonnas pašā augšā. Ja fokuss jau atrodas šajā līmenī, tad fokuss pārvietojas par vienu lapu uz augšu un paliek tajā pašā kolonnā ar nepieciešamo ritināšanu.</p>
+				<p>Ja fokuss ir uz pirmo rindu, tad fokuss pārvietojas uz kolonnas galveni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Ja fokuss ir uz šūnas līmeni, tad fokuss pārvietojas uz pēdējo redzamo šūnu tajā pašā kolonnā. Ja fokuss jau atrodas šajā līmenī, tas pārvietojas par vienu lapu uz leju un paliek tajā pašā kolonnā ar nepieciešamo ritināšanu.</p>
+				<p>Ja fokuss ir uz kolonnas galveni, tad fokuss pārvietojas uz pirmo rindu.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Ja fokuss ir uz šūnas līmeni vai kolonnas galveni, tad fokuss pārvietojas par piecām kolonnām pa kreisi (noklusējuma lapas lielums). Ja pa kreisi esošo kolonnu skaits ir mazāks par lapas lielumu, tad fokuss pārvietojas uz pirmo kolonnu.</p>
+				<p>Ja fokuss ir uz pirmo kolonnu šūnas līmenī, tad fokuss pārvietojas uz rindu atlasītāju.</p>
+				<p>Ja fokuss ir uz pirmās kolonnas galveni, tad fokuss pārvietojas uz <span class="uicontrol">Atlasīt visus</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Ja fokuss ir uz šūnas līmeni, tad fokuss pārvietojas par piecām kolonnām pa labi (noklusējuma lapas lielums).</p>
+				<p>Ja fokuss ir uz kolonnas galveni un pa labi esošo kolonnu skaits ir mazāks par lapas lielumu, tad fokuss pārvietojas uz pēdējo kolonnu.</p>
+				<p>Ja fokuss ir uz rindas atlasītāju, tad fokuss pārvietojas uz pirmo kolonnu tajā pašā rindā.</p>
+				<p>Ja fokuss ir uz <span class="uicontrol">Atlasīt visus</span>, tad fokuss pārvietojas uz pirmās kolonnas galveni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Ja fokuss ir uz šūnu, tad fokuss pārvietojas uz pirmo kolonnu tajā pašā rindā.</p>
+				<p>Ja fokuss ir uz šūnu pirmajā kolonnā, tad fokuss pārvietojas uz rindu atlasītāju.</p>
+				<p>Ja fokuss ir uz kolonnas galveni, tad fokuss pārvietojas uz pirmās kolonnas galveni.</p>
+				<p>Ja fokuss ir uz pirmās kolonnas galveni, tad fokuss pārvietojas uz <span class="uicontrol">Atlasīt visus</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Ja fokuss ir uz šūnu vai kolonnas galveni, tad fokuss pārvietojas uz pēdējo kolonnu.</p>
+				<p>Ja fokuss ir uz rindas atlasītāju, tad fokuss pārvietojas uz pirmo kolonnu tajā pašā rindā.</p>
+				<p>Ja fokuss ir uz <span class="uicontrol">Atlasīt visus</span>, tad fokuss pārvietojas uz pirmās kolonnas galveni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Ja fokuss ir uz šūnu, tad fokuss pārvietojas uz kolonnas galveni.</p>
+				<p>Ja fokuss ir uz rindas atlasītāju, tad fokuss pārvietojas uz <span class="uicontrol">Atlasīt visus</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Ja fokuss ir uz šūnu vai kolonnas galveni, tad fokuss pārvietojas uz pēdējo rindu tajā pašā kolonnā.</p>
+				<p>Ja fokuss ir uz rindas atlasītāju vai <span class="uicontrol">Atlasīt visus</span>, tad fokuss pārvietojas uz pēdējo rindas atlasītāju.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Ja fokuss ir uz šūnu, tad fokuss pārvietojas uz pirmo fokusējamo vadīklu šūnā.</p>
+				<p>Ja fokuss ir uz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span> vai rindas atlasītāju, pārslēdz izvēles rūtiņas stāvokli.</p>
+				<p>Ja fokuss ir uz kolonnas galveni, tiek atvērta kolonnas galvenes izvēlne.</p>
+				<p>Ja fokuss ir uz grupas galveni, tad saistītā grupa tiek sakļauta vai izvērsta.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Ja fokuss ir uz grupas galveni, tiek atvērta grupas galvenes izvēlne.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir uz šūnu, tad fokusētā šūna tiek atlasīta.</p>
+				<p>Ja fokuss ir uz šūnu atlases bloku, tad šūnu atlase tiek noņemta.</p>
+				<p>Ja fokuss ir uz šūnu un ja tabulai ir noteikta atlases uzvedības konfigurācija (lai atlasītu rindu, varat vai nu atlasīt pašu rindu, vai atlases izvēles rūtiņu, ja tāda ir pieejama), tiek atlasīta tikai fokusētā šūna, nevis rinda.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju, tiek pārslēgta pašreizējās rindas atlase.</p>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir uz šūnu atlases bloku, tad šūnu atlases bloks tiek mainīts uz rindas atlasi. Šūnu atlase tiek noņemta.</p>
+				<p>Atkarībā no rindas atlases režīma:</p>
+				<ul>
+					<li>Tiek atlasītas visas bloka rindas (vairākatlase)</li>
+					<li>Tiek atlasīta tikai rinda ar pašlaik fokusēto šūnu (viena atlase)</li>
+					<li>Netiek atlasīta neviena no rindām</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir tabulā un šūnas ir atlasītas, tad šūnu atlase tiek noņemta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Pārslēdz fokusu starp šūnu un tās saturu (izņemot tikai lasāmu tekstu).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Ja fokuss ir uz <span class="uicontrol">Atlasīt visus</span> un tiek nospiests <kbd>Spacebar</kbd>, atbilstošais notikums netiek izraisīts. <kbd>Shift</kbd> nepieļauj šo aktivitāti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Ja fokuss ir uz šūnas galveni un tiek nospiests <kbd>Spacebar</kbd> vai <kbd>Enter</kbd>, atbilstošais notikums netiek izraisīts.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda ir atlasīta, tad fokuss pārvietojas uz augstāk esošo rindu un atlase tiek palielināta līdz šai rindai.</p>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda <span class="emphasis">nav</span> atlasīta, tad fokuss pārvietojas uz augstāk esošo rindu un atlase šai rindai tiek noņemta.</p>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir uz šūnu, kas <span class="emphasis">nav</span> atlasīta, un rinda <span class="emphasis">nav</span> atlasīta, tiek atlasīta fokusētā šūna un augstāk esošā šūna. Fokuss pārvietojas uz šūnu, kas atrodas virs fokusētās šūnas.</p>
+				<p>Ja fokuss ir uz atlasītu šūnu, tad fokusu saņem augstāk esošā šūna un šūnu atlase tiek palielināta līdz šai šūnai.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda ir atlasīta, tad fokuss pārvietojas uz zemāk esošo rindu un atlase tiek palielināta līdz šai rindai.</p>
+				<p>Ja fokuss ir uz šūnu vai rindas atlasītāju un attiecīgā rinda <span class="emphasis">nav</span> atlasīta, tad fokuss pārvietojas uz zemāk esošo rindu un atlase šai rindai tiek noņemta.</p>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir uz šūnu, kas <span class="emphasis">nav</span> atlasīta, un rinda <span class="emphasis">nav</span> atlasīta, tiek atlasīta fokusētā šūna un zemāk esošā šūna. Fokuss pārvietojas uz šūnu, kas atrodas zem fokusētās šūnas.</p>
+				<p>Ja fokuss ir uz atlasītu šūnu, tad fokusu saņem zemāk esošā šūna un šūnu atlase tiek palielināta līdz šai šūnai.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ja fokuss ir uz kolonnas galveni, šīs kolonnas platums tiek palielināts par 1 em. Ja taustiņš joprojām ir nospiests, tas tiek atkārtots.</p>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir uz šūnu, kas <span class="emphasis">nav</span> atlasīta, tiek atlasīta fokusētā šūna un pa labi esošā šūna. Fokuss pārvietojas uz šūnu, kas atrodas pa labi no fokusētās šūnas.</p>
+				<p>Ja fokuss ir uz atlasītu šūnu, tad fokusu saņem pa labi esošā šūna un šūnu atlase tiek palielināta līdz šai šūnai.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ja fokuss ir uz kolonnas galveni, šīs kolonnas platums tiek samazināts par 1 em. Ja taustiņš joprojām ir nospiests, tas tiek atkārtots.</p>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir uz šūnu, kas <span class="emphasis">nav</span> atlasīta, tiek atlasīta fokusētā šūna un pa kreisi esošā šūna. Fokuss pārvietojas uz šūnu, kas atrodas pa kreisi no fokusētās šūnas.</p>
+				<p>Ja fokuss ir uz atlasītu šūnu, tad fokusu saņem pa kreisi esošā šūna un šūnu atlase tiek palielināta līdz šai šūnai.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Ja fokuss ir uz kolonnas galveni, tad attiecīgā kolonna pārvietojas par vienu pozīciju pa labi.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Ja fokuss ir uz kolonnas galveni, tad attiecīgā kolonna pārvietojas par vienu pozīciju pa kreisi.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Pārvieto fokusu uz nākamo fokusējamo elementu augstāk esošajā rindā.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Pārvieto fokusu uz nākamo fokusējamo elementu zemāk esošajā rindā.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Ja fokuss ir uz šūnu, rindas atlasītāju vai <span class="uicontrol">Atlasīt visus</span>, tas pārslēdz izvēles rūtiņu <span class="uicontrol">Atlasīt visus</span>: visas rindas tiek attiecīgi atlasītas vai atlase tām tiek noņemta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja fokuss ir tabulā, tad jebkādu rindu un šūnu atlase tiek noņemta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Ja fokuss ir uz šūnu, tad fokuss pārvietojas uz tās saturu (izņemot tikai lasāmu tekstu).</p>
+				<p>Ja fokuss ir uz grupas galveni vai koka mezglu, kas nav lapas mezgls, tas pārslēdz grupas izvēršanu: grupa attiecīgi tiek izvērsta vai sakļauta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Ja fokuss ir uz grupas galveni, tiek atvērta grupas galvenes izvēlne.</p>
+				<p>Ja fokuss ir uz kolonnas galveni, tiek atvērta kolonnas galvenes izvēlne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Ja šūnu atlase ir iespējota:</span></p>
+				<p>Ja šūnas ir atlasītas, <kbd>Shift + click</kbd> uz citas šūnas palielina atlasi līdz šūnai, uz kuras noklikšķināt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Atlasītās rindas vai šūnas kopē starpliktuvē, ja pieejams un ja šī funkcija ir iespējota.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Ielīmē saturu no starpliktuves, ja šī funkcija ir iespējota.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

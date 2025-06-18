@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Ғаламдық жылдам пәрмендер</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Фокусты тиісті бағыттардағы бір бағандағы немесе жолдағы келесі ұяшыққа жылжытады.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Фокус бірінші жолда болса, фокус баған тақырыбының жолына жылжиды.</p>
+				<p>Фокус бірінші жолдың ұяшығында болса, фокус қатысты баған тақырыбына жылжиды.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Фокус <span class="uicontrol">Барлығын таңдау</span> немесе <span class="uicontrol">Барлығын тазарту</span> құсбелгі ұяшығында болса, фокус көрінетін бірінші жолдағы жол селекторына жылжиды.</p>
+				<p>Фокус баған тақырыбының жолында болса, фокус бірінші жолға жылжиды.</p>
+				<p>Фокус жолда болса, фокус төмендегі жолға жылжиды.</p>
+				<p>Фокус ұяшықта болса, фокус төмендегі ұяшыққа жылжиды.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Фокус бірінші ұяшықта болса, фокус жолға жылжиды. Бұл ұяшыққа негізделген навигациядан жолға негізделген навигацияға ауыстырады.</p>
+				<p>Фокус ұяшықта болса, фокус сол жақтағы ұяшыққа жылжиды.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Фокус жолда болса, фокус ағымдағы фокусталған жолдың бірінші ұяшығына жылжиды. Бұл жолға негізделген навигациядан ұяшыққа негізделген навигацияға ауыстырады.</p>
+				<p>Фокус ұяшықта болса, фокус оң жақтағы ұяшыққа жылжиды.</p>
+				<p><span class="emphasis">Ескертпе:</span> фокус соңғы бағанда болса және қалқымалы терезе әрекеті осы баған үшін қосылған болса, қалқымалы терезе оң жақтағы қосымша баған ретінде қарастырылады және фокус осы бағанға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Фокус жолда болса, фокус баған тақырыбының жолына жылжиды.</p>
+				<p>Фокус баған тақырыбының жолында болса және <span class="uicontrol">Қосымша</span> түймесі қолжетімді болса, фокус <span class="uicontrol">Қосымша</span> түймесіне жылжиды.</p>
+				<p>Фокус баған тақырыбының жолында болса және <span class="uicontrol">Қосымша</span> түймесі қолжетімді <span class="emphasis">емес</span> болса, фокус соңғы фокусталған жолға жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Қосымша</span> түймесінде болса, фокус соңғы фокусталған жолға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Фокус жолда болса және <span class="uicontrol">Қосымша</span> түймесі қолжетімді болса, фокус <span class="uicontrol">Қосымша</span> түймесіне жылжиды.</p>
+				<p>Фокус жолда болса және <span class="uicontrol">Қосымша</span> түймесі қолжетімді <span class="emphasis">емес</span> болса, фокус баған тақырыбының жолына жылжиды.</p>
+				<p>Фокус <span class="uicontrol">Қосымша</span> түймесінде болса, фокус баған тақырыбының жолына жылжиды.</p>
+				<p>Фокус баған тақырыбының жолында болса, фокус соңғы фокусталған жолға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Фокус баған тақырыбында болса, бұл бағанның ені 1 см-ге артады. Пернені басып тұрсаңыз, бұл әрекет қайталанады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус <span class="emphasis">таңдалмаған</span> ұяшықта болса, фокусталған ұяшық пен оң жақтағы ұяшық таңдалады. Фокус фокусталған ұяшықтың оң жағындағы ұяшыққа жылжиды.</p>
+				<p>Фокус таңдалған ұяшықта болса, оң жақтағы ұяшық фокусталады және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Фокус баған тақырыбында болса, бұл бағанның ені 1 см-ге азаяды. Пернені басып тұрсаңыз, бұл әрекет қайталанады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус <span class="emphasis">таңдалмаған</span> ұяшықта болса, фокусталған ұяшық пен сол жақтағы ұяшық таңдалады. Фокус фокусталған ұяшықтың сол жағындағы ұяшыққа жылжиды.</p>
+				<p>Фокус таңдалған ұяшықта болса, сол жақтағы ұяшық фокусталады және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Фокус ұяшықта немесе жол селекторында болса және сәйкес жол таңдалса, фокус жоғарыдағы жолға жылжиды және таңдау осы жолға дейін кеңейтіледі.</p>
+				<p>Фокус ұяшықта немесе жол селекторында болса және сәйкес жол <span class="emphasis">таңдалмаса</span>, фокус жоғарыдағы жолға жылжиды және таңдау осы жол үшін алып тасталады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус <span class="emphasis">таңдалмаған</span> ұяшықта болса және жол <span class="emphasis">таңдалмаса</span>, фокусталған ұяшық пен жоғарыдағы ұяшық таңдалады. Фокус фокусталған ұяшықтың үстіндегі ұяшыққа жылжиды.</p>
+				<p>Фокус таңдалған ұяшықта болса, фокус жоғарыдағы ұяшыққа жылжиды және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Фокус ұяшықта немесе жол селекторында болса және сәйкес жол таңдалса, фокус төмендегі жолға жылжиды және таңдау осы жолға дейін кеңейтіледі.</p>
+				<p>Фокус ұяшықта немесе жол селекторында болса және сәйкес жол <span class="emphasis">таңдалмаса</span>, фокус төмендегі жолға жылжиды және таңдау осы жол үшін алып тасталады.</p>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус <span class="emphasis">таңдалмаған</span> ұяшықта болса және жол <span class="emphasis">таңдалмаса</span>, фокусталған ұяшық пен төмендегі ұяшық таңдалады. Фокус фокусталған ұяшықтың астындағы ұяшыққа жылжиды. </p>
+				<p>Фокус таңдалған ұяшықта болса, фокус төмендегі ұяшыққа жылжиды және ұяшық таңдауы осы ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Фокус өңделмелі ұяшықта болса (мысалы, енгізу өрісі), фокус жоғарыдағы ұяшыққа жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Фокус өңделмелі ұяшықта болса (мысалы, енгізу өрісі), фокус төмендегі ұяшыққа жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус ұяшықта болса, фокусталған ұяшық таңдалады.</p>
+				<p>Фокус ұяшықты таңдау блогында болса, ұяшықтар таңдауы алып тасталады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус ұяшықты таңдау блогында болса, ұяшықты таңдау блогы жол таңдауына өзгертіледі. Ұяшық таңдауы алып тасталады. </p>
+				<p>Жолды таңдау режиміне байланысты мыналар орын алады:</p>
+				<ul>
+					<li>Блоктың барлық жолдары таңдалады (бірнеше таңдау)</li>
+					<li>Ағымдағы фокусталған ұяшық бар жол ғана таңдалады (жеке таңдау)</li>
+					<li>Ешбір жол таңдалмайды</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус кесте ішінде болса, кез келген жолдар мен ұяшықтардың таңдауы алып тасталады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
+				<p>Фокус кесте ішінде болса және ұяшықтар таңдалса, ұяшықтардың таңдауы алып тасталады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Ұяшықта енгізу өрісі немесе түйме сияқты интерактивті элементтер (тек оқуға арналған мәтінді қоспағанда) болса, ұяшық пен оның мазмұны арасында фокусты ауыстырып қосады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Фокус өңдеу режимінде ұяшықтың ішінде болса, фокус жолға жылжиды.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Ұяшық таңдауы қосулы болса</span>:</p>
+				<p>Ұяшықтар таңдалса, <kbd>Shift</kbd> түймесін басу және басқа ұяшықты басу арқылы таңдау басылған ұяшыққа дейін кеңейтіледі.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Қолжетімді болса және функция қосулы болса, таңдалған жолдарды немесе ұяшықтарды аралық сақтағышқа көшіреді.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Функция қосулы болса, аралық сақтағыштан мазмұнды қояды.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Нұсқаларды басқару функциясын ашады.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Нұсқаларды басқару функциясының қате туралы қалқымалы терезесін жабады</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Қолжетімді болса, тармақты бір позицияға жоғары жылжытады.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Қолжетімді болса, тармақты бір позицияға төмен жылжытады.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Қолжетімді болса, тармақты жоғарыға жылжытады.</p>
+				<p><kbd>End</kbd></p>
+				<p>Қолжетімді болса, тармақты төменге жылжытады.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Қолжетімді болса, тармақты бір позицияға жоғары жылжытады.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Қолжетімді болса, тармақты бір позицияға төмен жылжытады.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Қолжетімді болса, тармақты бір позицияға жоғары жылжытады.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Қолжетімді болса, тармақты бір позицияға төмен жылжытады.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

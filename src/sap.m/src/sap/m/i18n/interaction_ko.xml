@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>전역 바로가기</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>같은 열 또는 행 안에서 해당 방향의 다음 셀로 포커스를 옮깁니다.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>첫 번째 행에 포커스가 있다면 열 헤더 행으로 포커스가 이동합니다.</p>
+				<p>첫 번째 행의 셀에 포커스가 있다면 관련 열 헤더로 포커스가 이동합니다.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p><span class="uicontrol">모두 선택</span> 또는 <span class="uicontrol">모두 지우기</span> 체크박스에 포커스가 있다면 첫 번째로 표시되는 행의 행 선택으로 포커스가 이동합니다.</p>
+				<p>열 헤더 행에 포커스가 있다면 첫 번째 행으로 포커스가 이동합니다.</p>
+				<p>행에 포커스가 있다면 아래 행으로 포커스가 이동합니다.</p>
+				<p>셀에 포커스가 있다면 아래 셀로 포커스가 이동합니다.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>첫 번째 셀에 포커스가 있다면 행으로 포커스가 이동합니다. 이를 통해 셀 기준 탐색에서 행 기준 탐색으로 전환됩니다.</p>
+				<p>셀에 포커스가 있다면 왼쪽 셀로 포커스가 이동합니다.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>행에 포커스가 있다면 현재 포커스가 있는 행의 첫 번째 셀로 포커스가 이동합니다. 이를 통해 행 기준 탐색에서 셀 기준 탐색으로 전환됩니다.</p>
+				<p>셀에 포커스가 있다면 오른쪽 셀로 포커스가 이동합니다.</p>
+				<p><span class="emphasis">참고:</span> 마지막 열에 포커스가 있고 이 열에 팝인 동작이 활성화되어 있을 경우, 팝인 영역이 오른쪽에 추가되는 열처럼 취급되어 이 열로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>행에 포커스가 있다면 열 헤더 행으로 포커스가 이동합니다.</p>
+				<p>열 헤더 행에 포커스가 있고 <span class="uicontrol">더 보기</span> 버튼이 있을 경우, <span class="uicontrol">더 보기</span> 버튼으로 포커스가 이동합니다.</p>
+				<p>열 헤더 행에 포커스가 있고 <span class="uicontrol">더 보기</span> 버튼이 <span class="emphasis">없을</span> 경우, 마지막으로 포커스가 있던 행으로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">더 보기</span> 버튼에 포커스가 있다면 마지막으로 포커스가 있던 행으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>행에 포커스가 있고 <span class="uicontrol">더 보기</span> 버튼이 있을 경우, <span class="uicontrol">더 보기</span> 버튼으로 포커스가 이동합니다.</p>
+				<p>행에 포커스가 있고 <span class="uicontrol">더 보기</span> 버튼이 <span class="emphasis">없을</span> 경우, 열 헤더 행으로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">더 보기</span> 버튼에 포커스가 있다면 열 헤더 행으로 포커스가 이동합니다.</p>
+				<p>열 헤더 행에 포커스가 있다면 마지막으로 포커스가 있던 행으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 증가합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있는 경우, 포커스가 있는 셀과 오른쪽 셀이 선택됩니다. 포커스가 있는 셀의 오른쪽 셀로 포커스가 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있다면 오른쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 감소합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있다면 포커스가 있는 셀과 왼쪽 셀이 선택됩니다. 포커스가 있는 셀의 왼쪽 셀로 포커스가 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있다면 왼쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 위쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 위쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 위쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 위쪽 셀로 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있으면 위쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 아래쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 아래쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 아래쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 아래쪽 셀로 이동합니다. </p>
+				<p>선택된 셀에 포커스가 있으면 아래쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>편집 가능한 셀(예: 입력 필드)에 포커스가 있으면 위쪽 셀로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>편집 가능한 셀(예: 입력 필드)에 포커스가 있으면 아래쪽 셀로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>셀에 포커스가 있다면 포커스가 있는 셀이 선택됩니다.</p>
+				<p>셀 선택 블록에 포커스가 있다면 셀 선택이 제거됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>셀 선택 블록에 포커스가 있다면 셀 선택 블록이 행 선택으로 바뀝니다. 셀 선택은 제거됩니다.</p>
+				<p>행 선택 모드에 따라, 다음과 같이 동작하게 됩니다.</p>
+				<ul>
+					<li>블록의 모든 행이 선택됨(복수 선택)</li>
+					<li>현재 포커스가 있는 셀을 포함하는 행만 선택됨(단일 선택)</li>
+					<li>행이 선택되지 않음</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>테이블 내부에 포커스가 있다면 모든 행과 셀의 선택이 제거됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>테이블 내부에 포커스가 있고 셀이 선택되어 있으면 셀에 대한 선택이 제거됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>셀에 입력 필드 또는 버튼 같은 대화형 요소가 포함되어 있을 경우(읽기 전용 텍스트는 제외), 셀과 해당 셀 내용 간 포커스 이동을 토글합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>편집 모드에서 셀 내부에 포커스가 있다면 행으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우</span>:</p>
+				<p>셀이 선택된 경우, <kbd>Shift</kbd>을(를) 누르고 다른 셀을 클릭하면 클릭한 셀까지 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>해당 기능이 활성화되어 사용 가능한 경우 선택한 행 또는 셀을 클립보드로 복사합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>해당 기능이 활성화된 경우 클립보드에서 내용을 붙여넣습니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>변형 관리를 엽니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>변형 관리의 오류 팝오버를 닫습니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>가능한 경우 항목 위치를 하나 위로 이동합니다.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>가능한 경우 항목 위치를 하나 아래로 이동합니다.</p>
+				<p><kbd>Home</kbd></p>
+				<p>가능한 경우 항목을 맨 위로 이동합니다.</p>
+				<p><kbd>End</kbd></p>
+				<p>가능한 경우 항목을 맨 끝으로 이동합니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>가능한 경우 항목 위치를 하나 위로 이동합니다.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>가능한 경우 항목 위치를 하나 아래로 이동합니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>가능한 경우 항목 위치를 하나 위로 이동합니다.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>가능한 경우 항목 위치를 하나 아래로 이동합니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

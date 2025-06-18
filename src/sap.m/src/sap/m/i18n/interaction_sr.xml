@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Глобалне пречице</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Помера фокус на следећу ћелију у истој колони или реду у одговарајућим смеровима.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ако је фокус на првом реду, фокус се помера на ред заглавља колоне.</p>
+				<p>Ако је фокус на ћелији првог реда, фокус се помера на повезано заглавље колоне.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ако је фокус на квадратићу за потврду <span class="uicontrol">Одабери све</span> или <span class="uicontrol">Поништи све</span>, фокус се помера на селектор реда у првом видљивом реду.</p>
+				<p>Ако је фокус на реду заглавља колоне, фокус се помера на први ред.</p>
+				<p>Ако је фокус на реду, фокус се помера на ред испод.</p>
+				<p>Ако је фокус на ћелији, фокус се помера на ћелију испод.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ако је фокус на првој ћелији, фокус се помера на ред. Овим се усмеравање засновано на ћелијама пребацује на усмеравање засновано на редовима. </p>
+				<p>Ако је фокус на ћелији, фокус се помера на ћелију лево.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ако је фокус на реду, фокус се помера на прву ћелију реда који је тренутно у фокусу. Овим се усмеравање засновано на редовима пребацује на усмеравање засновано на ћелијама. </p>
+				<p>Ако је фокус на ћелији, фокус се помера на ћелију десно.</p>
+				<p><span class="emphasis">Белешка:</span> Ако је фокус на последњој колони, и ако је понашање искакања активирано за ову колону, област искакања се третира као додатна колона с десне стране, и фокус се помера на ову колону.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Ако је фокус на реду, фокус се помера на ред заглавља колоне.</p>
+				<p>Ако је фокус на реду заглавља колоне, а дугме <span class="uicontrol">Још</span> је доступно, фокус се помера на дугме <span class="uicontrol">Још</span>.</p>
+				<p>Ако је фокус на реду заглавља колоне, а дугме <span class="uicontrol">Још</span> <span class="emphasis">није</span> доступно, фокус се помера на последњи ред у фокусу.</p>
+				<p>Ако је фокус на дугмету <span class="uicontrol">Још</span>, фокус се помера на последњи ред у фокусу.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Ако је фокус на реду, а дугме <span class="uicontrol">Још</span> је доступно, фокус се помера на дугме <span class="uicontrol">Још</span>.</p>
+				<p>Ако је фокус на реду, а дугме <span class="uicontrol">Још</span> <span class="emphasis">није</span> доступно, фокус се помера на ред заглавља колоне.</p>
+				<p>Ако је фокус на дугмету <span class="uicontrol">Још</span>, фокус се помера на ред заглавља колоне.</p>
+				<p>Ако је фокус на реду заглавља колоне, фокус се помера на последњи ред у фокусу.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ако је фокус на заглављу колоне, ширина ове колоне се повећава за 1 ем. То се понавља ако тастер остане притиснут.</p>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус на ћелији која <span class="emphasis">није</span> одабрана, бирају се ћелија у фокусу и ћелија с десне стране. Фокус се помера на ћелију с десне стране ћелије која је у фокусу.</p>
+				<p>Ако је фокус на одабраној ћелији, ћелија с десне стране се ставља у фокус, а одабир ћелија се проширује до ове ћелије.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ако је фокус на заглављу колоне, ширина ове колоне се смањује за 1 ем. То се понавља ако тастер остане притиснут.</p>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус на ћелији која <span class="emphasis">није</span> одабрана, бирају се ћелија у фокусу и ћелија с леве стране. Фокус се помера на ћелију с леве стране ћелије која је у фокусу.</p>
+				<p>Ако је фокус на одабраној ћелији, ћелија с леве стране се ставља у фокус, а одабир ћелија се проширује до ове ћелије.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ако је фокус на селектору ћелије или реда и одабран је релевантни ред, фокус се помера на ред изнад, а одабир се проширује до овог реда.</p>
+				<p>Ако је фокус на селектору ћелије или реда, а релевантни ред <span class="emphasis">није</span> одабран, фокус се помера на ред изнад, а одабир се уклања из овог реда.</p>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус на ћелији која <span class="emphasis">није</span> одабрана и реду који <span class="emphasis">није</span> одабран, бирају се ћелија у фокусу и ћелија изнад. Фокус се помера на ћелију изнад ћелије која је у фокусу.</p>
+				<p>Ако је фокус на одабраној ћелији, фокус се помера на ћелију изнад, а одабир ћелија се проширује до ове ћелије.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ако је фокус на селектору ћелије или реда и одабран је релевантни ред, фокус се помера на ред испод, а одабир се проширује до овог реда.</p>
+				<p>Ако је фокус на селектору ћелије или реда, а релевантни ред <span class="emphasis">није</span> одабран, фокус се помера на ред испод, а одабир се уклања из овог реда.</p>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус на ћелији која <span class="emphasis">није</span> одабрана и реду који <span class="emphasis">није</span> одабран, бирају се ћелија у фокусу и ћелија испод. Фокус се помера на ћелију испод ћелије која је у фокусу. </p>
+				<p>Ако је фокус на одабраној ћелији, фокус се помера на ћелију испод, а одабир ћелија се проширује до ове ћелије.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Ако је фокус на ћелији која се може изменити (на пример, поље уноса), фокус се помера на ћелију изнад.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Ако је фокус на ћелији која се може изменити (на пример, поље уноса), фокус се помера на ћелију испод.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус на ћелији, бира се ћелија у фокусу.</p>
+				<p>Ако је фокус на блоку одабира ћелија, одабир ћелија се уклања.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус на блоку одабира ћелија, блок одабира ћелија се мења у одабир реда. Одабир ћелија се уклања.</p>
+				<p>У зависности од начина одабира реда дешава се следеће:</p>
+				<ul>
+					<li>Одабрани су сви редови блока (вишеструки одабир)</li>
+					<li>Одабран је само ред с ћелијом која је тренутно у фокусу (појединачни одабир)</li>
+					<li>Није одабран ниједан ред</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус унутар табеле, одабир било којих редова и колона се уклања.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Ако је одабир ћелије активиран:</span></p>
+				<p>Ако је фокус унутар табеле и ћелије су одабране, одабир ћелија се уклања.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Пребацује фокус између ћелије и њеног садржаја ако ћелија има интерактивне елементе, као што су поље уноса или дугме (уз изузетак текста који је само за читање).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Ако је фокус унутар ћелије у начину уређивања, фокус се помера на ред.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Ако је одабир ћелије активиран</span>:</p>
+				<p>Ако су ћелије одабране, притиском на <kbd>Shift</kbd> и кликом на неку другу ћелију проширује се одабир до ћелије на коју се кликне.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Копира одабране редове или ћелије у прелазну меморију, ако је доступно и ако је функција активирана.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Лепи садржај из прелазне меморије, ако је функција активирана.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Отвара управљање варијантом.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Затвара искачући прозор грешке управљања варијантом</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Помера ставку за једну позицију нагоре, ако је доступно.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Помера ставку за једну позицију надоле, ако је доступно.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Помера ставку на врх, ако је доступно.</p>
+				<p><kbd>End</kbd></p>
+				<p>Помера ставку на крај, ако је доступно.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Помера ставку за једну позицију нагоре, ако је доступно.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Помера ставку за једну позицију надоле, ако је доступно.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Помера ставку за једну позицију нагоре, ако је доступно.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Помера ставку за једну позицију надоле, ако је доступно.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

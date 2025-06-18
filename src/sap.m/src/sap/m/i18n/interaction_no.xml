@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globale snarveier</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Flytter fokuset til den neste cellen i den samme kolonnen eller raden i de respektive retningene.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Hvis fokuset er på den første raden, flyttes fokuset til kolonneoverskriftsraden.</p>
+				<p>Hvis fokuset er på en celle i den første raden, flyttes fokuset til den relaterte kolonneoverskriften.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Hvis fokuset er på markeringsfeltet <span class="uicontrol">Velg alle</span> eller <span class="uicontrol">Fjern alle</span>, flyttes fokuset til radvelgeren i den første synlige raden.</p>
+				<p>Hvis fokuset er på kolonneoverskriftsraden, flyttes fokuset til den første raden.</p>
+				<p>Hvis fokuset er på en rad, flyttes fokuset til raden nedenfor.</p>
+				<p>Hvis fokuset er på en celle, flyttes fokuset til cellen nedenfor.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Hvis fokuset er på den første cellen, flyttes fokuset til raden. Dette bytter fra cellebasert navigering til radbasert navigering.</p>
+				<p>Hvis fokuset er på en celle, flyttes fokuset til cellen til venstre.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Hvis fokuset er på en rad, flyttes fokuset til den første cellen i raden som er i fokus for øyeblikket. Dette bytter fra radbasert navigering til cellebasert navigering.</p>
+				<p>Hvis fokuset er på en celle, flyttes fokuset til cellen til høyre.</p>
+				<p><span class="emphasis">Merk:</span> Hvis fokuset er på den siste kolonnen, og popin-atferd er aktivert for denne kolonnen, behandles popin-området som en ekstra kolonne til høyre, og fokuset flyttes til denne kolonnen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Hvis fokuset er på en rad, flyttes fokuset til kolonneoverskriftsraden.</p>
+				<p>Hvis fokuset er på kolonneoverskriftsraden og <span class="uicontrol">Mer</span>-knappen er tilgjengelig, flyttes fokuset til <span class="uicontrol">Mer</span>-knappen.</p>
+				<p>Hvis fokuset er på kolonneoverskriftsraden og <span class="uicontrol">Mer</span>-knappen <span class="emphasis">ikke</span> er tilgjengelig, flyttes fokuset til den siste raden som er i fokus.</p>
+				<p>Hvis fokuset er på <span class="uicontrol">Mer</span>-knappen, flyttes fokuset til den siste raden som er i fokus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Hvis fokuset er på en rad og <span class="uicontrol">Mer</span>-knappen er tilgjengelig, flyttes fokuset til <span class="uicontrol">Mer</span>-knappen.</p>
+				<p>Hvis fokuset er på en rad og <span class="uicontrol">Mer</span>-knappen <span class="emphasis">ikke</span> er tilgjengelig, flyttes fokuset til kolonneoverskriftsraden.</p>
+				<p>Hvis fokuset er på <span class="uicontrol">Mer</span>-knappen, flyttes fokuset til kolonneoverskriftsraden.</p>
+				<p>Hvis fokuset er på kolonneoverskriftsraden, flyttes fokuset til den siste raden som er i fokus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Hvis fokuset er på kolonneoverskriften, økes bredden på denne kolonnen med 1 em. Dette gjentas så lenge tasten holdes nede.</p>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen til høyre. Fokuset flyttes til cellen til høyre for den  cellen som er i fokus.</p>
+				<p>Hvis fokuset er på en valgt celle, får cellen til høyre fokus, og celleutvalget utvides opp til denne cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Hvis fokuset er på kolonneoverskriften, reduseres bredden på denne kolonnen med 1 em. Dette gjentas så lenge tasten holdes nede.</p>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen til venstre. Fokuset flyttes til cellen til venstre for den cellen som er i fokus.</p>
+				<p>Hvis fokuset er på en valgt celle, får cellen til venstre fokus, og celleutvalget utvides opp til denne cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden ovenfor, og utvalget utvides opp til denne raden.</p>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden ovenfor, og utvalget fjernes for denne raden.</p>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, og raden <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen ovenfor. Fokuset flyttes til cellen over den cellen som er i fokus.</p>
+				<p>Hvis fokuset er på en valgt celle, flyttes fokuset til cellen ovenfor, og celleutvalget utvides opp til denne cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden er valgt, flyttes fokuset til raden nedenfor, og utvalget utvides opp til denne raden.</p>
+				<p>Hvis fokuset er på en celle eller radvelgeren og den relevante raden <span class="emphasis">ikke</span> er valgt, flyttes fokuset til raden nedenfor, og utvalget fjernes for denne raden.</p>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er på en celle som <span class="emphasis">ikke</span> er valgt, og raden <span class="emphasis">ikke</span> er valgt, velges cellen som er i fokus, og cellen nedenfor. Fokuset flyttes til cellen under den cellen som er i fokus. </p>
+				<p>Hvis fokuset er på en valgt celle, flyttes fokuset til cellen nedenfor, og celleutvalget utvides opp til denne cellen.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Hvis fokuset er på en redigerbar celle (for eksempel et inndatafelt), flyttes fokuset til cellen ovenfor.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Hvis fokuset er på en redigerbar celle (for eksempel et inndatafelt), flyttes fokuset til cellen nedenfor.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er på en celle, velges cellen som er i fokus.</p>
+				<p>Hvis fokuset er på en celleutvalgsblokk, fjernes merkingen av cellene. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er på en celleutvalgsblokk, endres celleutvalgsblokken til et radutvalg. Celleutvalget fjernes.</p>
+				<p>Avhengig av radutvalgsmodusen skjer følgende:</p>
+				<ul>
+					<li>Alle rader i blokken velges (flervalg).</li>
+					<li>Bare raden som har fokus for øyeblikket, velges (enkeltutvalg).</li>
+					<li>Ingen av radene velges</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er inne i tabellen, fjernes utvalget for alle rader og celler.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert:</span></p>
+				<p>Hvis fokuset er inne i tabellen og celler er valgt, fjernes utvalget av cellene.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Skifter fokuset mellom cellen og celleinnholdet hvis cellen har interaktive elementer, for eksempel et inndatafelt eller en knapp (med unntak av skrivebeskyttet tekst).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Hvis fokuset er inne i en celle i redigeringsmodus, flyttes fokuset til raden.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Hvis celleutvalg er aktivert</span>:</p>
+				<p>Hvis celler er valgt, kan du trykke <kbd>Shift</kbd> og klikke på en annen celle for å utvide utvalget opp til cellen det ble klikket på.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopierer de valgte radene eller cellene til utklippstavlen, hvis den er tilgjengelig og hvis funksjonen er aktivert.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Limer inn innholdet fra utklippstablen hvis funksjonen er aktivert.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Åpner variantadministrasjon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Lukker feil-popoveren i variantadministrasjon.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Flytter elementet én posisjon opp hvis tilgjengelig.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Flytter elementet én posisjon ned hvis tilgjengelig.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Flytter elementet til toppen hvis tilgjengelig.</p>
+				<p><kbd>End</kbd></p>
+				<p>Flytter elementet til bunnen hvis tilgjengelig.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Flytter elementet én posisjon opp hvis tilgjengelig.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Flytter elementet én posisjon ned, hvis tilgjengelig.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Flytter elementet én posisjon opp hvis tilgjengelig.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Flytter elementet én posisjon ned hvis tilgjengelig.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

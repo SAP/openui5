@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Verschiebt den Fokus in die nächste Zelle innerhalb derselben Spalte oder Zeile in die entsprechende Richtung.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Wenn der Fokus auf der ersten Zeile liegt, verschiebt sich der Fokus auf den Spaltenkopf.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt, verschiebt sich der Fokus auf die Zelle in der ersten sichtbaren Zeile dieser Spalte; diese hängt von der aktuellen Scroll-Position ab.</p>
+				<p>Wenn der Fokus auf dem Ankreuzfeld <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf das Zeilenauswahlfeld in der ersten sichtbaren Zeile; diese hängt von der aktuellen Scroll-Position ab.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Wenn der Fokus auf einer Zelle in der ersten Spalte liegt, verschiebt sich der Fokus auf das Zeilenauswahlfeld.</p>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt, verschiebt sich der Fokus auf den Spaltenkopf links davon.</p>
+				<p>Wenn der Fokus auf dem ersten Spaltenkopf liegt, verschiebt sich der Fokus auf das Ankreuzfeld <span class="uicontrol">Alle markieren</span>.</p>
+				<p>Wenn der Fokus auf dem Gruppenkopf einer expandierten Gruppe liegt, wird die Gruppe komprimiert.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt, verschiebt sich der Fokus auf den Spaltenkopf rechts davon.</p>
+				<p>Wenn der Fokus auf dem Zeilenauswahlfeld liegt, verschiebt sich der Fokus auf die Zelle der ersten Spalte innerhalb derselben Zeile.</p>
+				<p>Wenn der Fokus auf dem Ankreuzfeld <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf den ersten Spaltenkopf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Wenn der Fokus auf Zellenebene liegt, verschiebt sich der Fokus auf die Zelle ganz oben in derselben Spalte. Wenn der Fokus bereits auf dieser Ebene liegt, verschiebt sich der Fokus um eine Seite nach oben und bleibt mit dem erforderlichen Scrollen in derselben Spalte.</p>
+				<p>Wenn der Fokus auf der ersten Zeile liegt, verschiebt sich der Fokus auf den Spaltenkopf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Wenn der Fokus auf Zellenebene liegt, verschiebt sich der Fokus auf die letzte sichtbare Zelle in derselben Spalte. Wenn der Fokus bereits auf dieser Ebene liegt, verschiebt er sich um eine Seite nach unten und bleibt mit dem erforderlichen Scrollen in derselben Spalte.</p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt, verschiebt sich der Fokus auf die erste Zeile.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Wenn der Fokus auf Zellenebene oder auf einem Spaltenkopf liegt, verschiebt sich der Fokus um fünf Spalten nach links (Standardseitengröße). Wenn sich links weniger Spalten befinden als die aktuelle Seitengröße, verschiebt sich der Fokus auf die erste Spalte.</p>
+				<p>Wenn der Fokus auf der ersten Spalte auf Zellenebene liegt, verschiebt sich der Fokus auf das Zeilenauswahlfeld.</p>
+				<p>Wenn der Fokus auf dem ersten Spaltenkopf liegt, verschiebt sich der Fokus auf <span class="uicontrol">Alle markieren</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Wenn der Fokus auf Zellenebene liegt, verschiebt sich der Fokus um fünf Spalten nach rechts (Standardseitengröße).</p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt und sich rechts weniger Spalten befinden als die aktuelle Seitengröße, verschiebt sich der Fokus auf die letzte Spalte.</p>
+				<p>Wenn der Fokus auf dem Zeilenauswahlfeld liegt, verschiebt sich der Fokus auf die erste Spalte in derselben Zeile.</p>
+				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf den ersten Spaltenkopf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Wenn der Fokus auf der Zelle liegt, verschiebt sich der Fokus auf die erste Spalte in derselben Zeile.</p>
+				<p>Wenn der Fokus auf der Zelle in der ersten Spalte liegt, verschiebt sich der Fokus auf das Zeilenauswahlfeld.</p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt, verschiebt sich der Fokus auf den ersten Spaltenkopf.</p>
+				<p>Wenn der Fokus auf dem ersten Spaltenkopf liegt, verschiebt sich der Fokus auf <span class="uicontrol">Alle markieren</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Wenn der Fokus auf der Zelle oder dem Spaltenkopf liegt, verschiebt sich der Fokus auf die letzte Spalte.</p>
+				<p>Wenn der Fokus auf dem Zeilenauswahlfeld liegt, verschiebt sich der Fokus auf die erste Spalte in derselben Zeile.</p>
+				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf den ersten Spaltenkopf.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Wenn der Fokus auf der Zelle liegt, verschiebt sich der Fokus auf den Spaltenkopf.</p>
+				<p>Wenn der Fokus auf dem Zeilenauswahlfeld liegt, verschiebt sich der Fokus auf <span class="uicontrol">Alle markieren</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Wenn der Fokus auf der Zelle oder dem Spaltenkopf liegt, verschiebt sich der Fokus auf die letzte Zeile in derselben Spalte.</p>
+				<p>Wenn der Fokus auf dem Zeilenauswahlfeld oder <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf das letzte Zeilenauswahlfeld.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Wenn der Fokus auf der Zelle liegt, verschiebt sich der Fokus auf das erste fokussierbare Control in der Zelle.</p>
+				<p>Wenn der Fokus auf dem Ankreuzfeld <span class="uicontrol">Alle markieren</span> oder dem Zeilenauswahlfeld liegt, wird der Status des Ankreuzfelds umgeschaltet.</p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt, wird das Spaltenkopfmenü geöffnet.</p>
+				<p>Wenn der Fokus auf dem Gruppenkopf liegt, wird die zugehörige Gruppe komprimiert bzw. expandiert.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Wenn der Fokus auf dem Gruppenkopf liegt, wird das Gruppenkopfmenü geöffnet.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus auf einer Zelle liegt, wird die fokussierte Zelle markiert.</p>
+				<p>Wenn der Fokus auf einem Zellenmarkierungsblock liegt, wird die Markierung der Zellen entfernt.</p>
+				<p>Wenn der Fokus auf einer Zelle liegt und die Tabelle eine bestimmte Konfiguration des Markierungsverhaltens hat (um eine Zeile zu markieren, können Sie entweder die Zeile selbst oder das Markierungsankreuzfeld markieren, wenn dieses verfügbar ist), wird nur die fokussierte Zelle anstelle der Zeile markiert.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt, wird die Markierung der aktuellen Zeile umgeschaltet.</p>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus auf einem Zellenmarkierungsblock liegt, wird der Zellenmarkierungsblock in eine Zeilenmarkierung geändert. Die Zellenmarkierung wird entfernt.</p>
+				<p>Abhängig vom Zeilenmarkiermodus passiert Folgendes:</p>
+				<ul>
+					<li>Alle Zeilen des Blocks werden markiert (Mehrfachauswahl)</li>
+					<li>Nur die Zeile mit der aktuell fokussierten Zelle wird markiert (Einfachauswahl)</li>
+					<li>Keine der Zeilen wird markiert</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus innerhalb der Tabelle liegt und Zellen markiert sind, wird die Markierung der Zellen entfernt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Schaltet den Fokus zwischen der Zelle und ihrem Inhalt um (mit Ausnahme von schreibgeschütztem Text).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt und die <kbd>Spacebar</kbd> gedrückt wird, wird das entsprechende Ereignis nicht ausgelöst. Die <kbd>Shift</kbd> verhindert diese Aktivität.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt und die <kbd>Spacebar</kbd> oder <kbd>Enter</kbd> gedrückt wird, wird das entsprechende Ereignis nicht ausgelöst.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile markiert ist, verschiebt sich der Fokus auf die Zeile darüber, und die Markierung wird bis zu dieser Zeile erweitert.</p>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile <span class="emphasis">nicht</span> markiert ist, verschiebt sich der Fokus auf die Zeile darüber, und die Markierung wird für diese Zeile entfernt.</p>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus auf einer Zelle liegt, die <span class="emphasis">nicht</span> markiert ist, und die Zeile <span class="emphasis">nicht</span> markiert ist, werden die fokussierte Zelle und die Zelle darüber markiert. Der Fokus verschiebt sich auf die Zelle über der fokussierten Zelle.</p>
+				<p>Wenn der Fokus auf einer markierten Zelle liegt, erhält die Zelle darüber den Fokus, und die Zellenmarkierung wird bis zu dieser Zelle erweitert.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile markiert ist, verschiebt sich der Fokus auf die Zeile darunter, und die Markierung wird bis zu dieser Zeile erweitert.</p>
+				<p>Wenn der Fokus auf einer Zelle oder dem Zeilenauswahlfeld liegt und die entsprechende Zeile <span class="emphasis">nicht</span> markiert ist, verschiebt sich der Fokus auf die Zeile darunter, und die Markierung wird für diese Zeile entfernt.</p>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus auf einer Zelle liegt, die <span class="emphasis">nicht</span> markiert ist, und die Zeile <span class="emphasis">nicht</span> markiert ist, werden die fokussierte Zelle und die Zelle darunter markiert. Der Fokus verschiebt sich auf die Zelle unter der fokussierten Zelle.</p>
+				<p>Wenn der Fokus auf einer markierten Zelle liegt, erhält die Zelle darunter den Fokus, und die Zellenmarkierung wird bis zu dieser Zelle erweitert.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt, wird die Breite dieser Spalte um 1 em vergrößert. Dies wird wiederholt, wenn die Taste gedrückt bleibt.</p>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus auf einer Zelle liegt, die <span class="emphasis">nicht</span> markiert ist, werden die fokussierte Zelle und die Zelle rechts davon markiert. Der Fokus verschiebt sich auf die Zelle rechts neben der fokussierten Zelle.</p>
+				<p>Wenn der Fokus auf einer markierten Zelle liegt, erhält die Zelle rechts davon den Fokus, und die Zellenmarkierung wird bis zu dieser Zelle erweitert.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt, wird die Breite dieser Spalte um 1 em verkleinert. Dies wird wiederholt, wenn die Taste gedrückt bleibt.</p>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus auf einer Zelle liegt, die <span class="emphasis">nicht</span> markiert ist, werden die fokussierte Zelle und die Zelle links davon markiert. Der Fokus verschiebt sich auf die Zelle links neben der fokussierten Zelle.</p>
+				<p>Wenn der Fokus auf einer markierten Zelle liegt, erhält die Zelle links davon den Fokus, und die Zellenmarkierung wird bis zu dieser Zelle erweitert.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt, verschiebt sich die entsprechende Spalte um eine Position nach rechts.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Wenn der Fokus auf einem Spaltenkopf liegt, verschiebt sich die entsprechende Spalte um eine Position nach links.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Verschiebt den Fokus auf das nächste fokussierbare Element in der Zeile darüber.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Verschiebt den Fokus auf das nächste fokussierbare Element in der Zeile darunter.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Wenn der Fokus auf einer Zelle, dem Zeilenauswahlfeld oder <span class="uicontrol">Alle markieren</span> liegt, wird das Ankreuzfeld <span class="uicontrol">Alle markieren</span> umgeschaltet: Alle Zeilen werden markiert bzw. die Markierung aller Zeilen gelöscht.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn der Fokus innerhalb der Tabelle liegt, wird die Markierung für alle Zeilen und Zellen entfernt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Wenn der Fokus auf einer Zelle liegt, verschiebt sich der Fokus auf ihren Inhalt (mit Ausnahme eines schreibgeschützten Texts).</p>
+				<p>Wenn der Fokus auf dem Gruppenkopf oder einem Nichtblattknoten eines Baums liegt, wird damit das Erweitern der Gruppe umgeschaltet: Die Gruppe wird entsprechend expandiert bzw. komprimiert.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Wenn der Fokus auf dem Gruppenkopf liegt, wird das Gruppenkopfmenü geöffnet.</p>
+				<p>Wenn der Fokus auf dem Spaltenkopf liegt, wird das Spaltenkopfmenü geöffnet.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
+				<p>Wenn Zellen markiert sind, erweitert <kbd>Shift + click</kbd> auf eine andere Zelle die Markierung bis zur angeklickten Zelle.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopiert die markierten Zeilen oder Zellen in die Zwischenablage, falls verfügbar und die Funktion aktiviert ist.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Fügt den Inhalt aus der Zwischenablage ein, wenn die Funktion aktiviert ist.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

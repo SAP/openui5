@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>वैश्विक शॉर्टकट</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>इस फ़ोकस को उसी स्तंभ या पंक्ति में संबंधित दिशाओं में अगले सेल में स्थानांतरित करता है.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>यदि यह फ़ोकस पहली पंक्ति पर है, तो फ़ोकस स्तंभ शीर्षलेख पंक्ति पर स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस पहली पंक्ति के किसी सेल में है, तो फ़ोकस संबंधित स्तंभ शीर्षलेख पर स्थानांतरित हो जाता है.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>यदि यह फ़ोकस <span class="uicontrol">सभी का चयन करें</span> या <span class="uicontrol">सभी साफ़ करें</span> चेकबॉक्स पर है, तो फ़ोकस पहली दृश्यमान पंक्ति में पंक्ति चयनकर्ता पर स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस स्तंभ शीर्षलेख पंक्ति पर है, तो फ़ोकस पहली पंक्ति पर स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस पंक्ति पर है, तो नीचे वाली पंक्ति पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस सेल पर है, तो नीचे वाले सेल पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>यदि यह फ़ोकस इस पहले सेल पर है, तो पंक्ति पर फ़ोकस ले जाया जाता है. यह सेल-आधारित नेविगेशन से पंक्ति-आधारित नेविगेशन पर स्विच करता है.</p>
+				<p>यदि यह फ़ोकस किसी सेल पर है, तो बाईं ओर के सेल पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>यदि यह फ़ोकस किसी पंक्ति पर है, तो वर्तमान में फ़ोकस की गई पंक्ति के पहले सेल पर फ़ोकस ले जाया जाता है. यह सेल-आधारित नेविगेशन से पंक्ति-आधारित नेविगेशन पर स्विच करता है.</p>
+				<p>यदि यह फ़ोकस किसी सेल पर है, तो दाईं ओर के सेल पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p><span class="emphasis">नोट:</span> यदि यह फ़ोकस इस अंतिम स्तंभ पर है और इस स्तंभ के लिए पॉप-इन व्यवहार सक्षम किया गया है, तो पॉप-इन क्षेत्र को दाईं ओर किसी अतिरिक्त स्तंभ की तरह माना जाता है. साथ ही, इस स्तंभ पर फ़ोकस ले जाया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>यदि यह फ़ोकस किसी पंक्ति पर है, तो स्तंभ शीर्षलेख पंक्ति पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस इस स्तंभ शीर्षलेख पंक्ति पर है और <span class="uicontrol">अतिरिक्त</span> बटन उपलब्ध है, तो <span class="uicontrol">अतिरिक्त</span> बटन पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस इस स्तंभ शीर्षलेख पंक्ति पर है और <span class="uicontrol">अतिरिक्त</span> बटन उपलब्ध <span class="emphasis">नहीं</span> है, तो अंतिम फ़ोकस की गई पंक्ति पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p>यदि फ़ोकस <span class="uicontrol">अतिरिक्त</span> बटन पर है, तो अंतिम फ़ोकस की गई पंक्ति पर फ़ोकस स्थानांतरित हो जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>यदि यह फ़ोकस किसी पंक्ति पर है और <span class="uicontrol">अतिरिक्त</span> बटन उपलब्ध है, तो <span class="uicontrol">अधिक</span> बटन पर फ़ोकस स्थानांतरित हो जाता है.</p>
+				<p>यदि यह फ़ोकस किसी पंक्ति पर है और <span class="uicontrol">अतिरिक्त</span> बटन उपलब्ध <span class="emphasis">नहीं</span> है, तो स्तंभ शीर्षलेख पंक्ति पर फ़ोकस ले जाया जाता है.</p>
+				<p>यदि यह फ़ोकस इस <span class="uicontrol">अतिरिक्त</span> बटन पर है, तो स्तंभ शीर्षलेख पंक्ति पर फ़ोकस ले जाया जाता है.</p>
+				<p>यदि यह फ़ोकस इस स्तंभ शीर्षलेख पंक्ति पर है, तो अंतिम फ़ोकस की गई पंक्ति पर फ़ोकस ले जाया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>यदि यह फ़ोकस इस स्तंभ शीर्षलेख पर है, तो इस स्तंभ की चौड़ाई 1 सेमी बढ़ जाती है. यदि कुंजी दबी हुई रहती है तो यह प्रक्रिया दोहराई जाती है.</p>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और दाईं ओर का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के दाईं ओर मौजूद सेल पर फ़ोकस ले जाया जाता है.</p>
+				<p>यदि यह फ़ोकस चयनित सेल पर है, तो दाईं ओर के सेल पर फ़ोकस हो जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>यदि यह फ़ोकस इस स्तंभ शीर्षलेख पर है, तो इस स्तंभ की चौड़ाई 1 सेमी घट जाती है. यदि कुंजी दबी हुई रहती है तो यह प्रक्रिया दोहराई जाती है.</p>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और बाईं ओर का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के बाईं ओर मौजूद सेल पर फ़ोकस ले जाया जाता है.</p>
+				<p>यदि यह फ़ोकस चयनित सेल पर है, तो बाईं ओर के सेल पर फ़ोकस हो जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>यदि यह फ़ोकस किसी सेल या पंक्ति चयनकर्ता पर है, और संबंधित पंक्ति चयनित है, तो फ़ोकस ऊपर की पंक्ति पर चला जाता है, और चयन इस पंक्ति तक एन्हांस हो जाता है.</p>
+				<p>यदि यह फ़ोकस सेल या पंक्ति चयनकर्ता पर है और संबंधित पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो यह फ़ोकस ऊपर की पंक्ति पर ले जाया जाता है और इस पंक्ति के लिए चयन को निकाल दिया जाता है.</p>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है और पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और उसके ऊपर का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के ऊपर वाले सेल पर फ़ोकस ले जाया जाता है.</p>
+				<p>यदि यह फ़ोकस किसी चयनित सेल पर है, तो फ़ोकस ऊपर वाले सेल पर ले जाया जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>यदि यह फ़ोकस किसी सेल या पंक्ति चयनकर्ता पर है, और संबंधित पंक्ति चयनित है, तो फ़ोकस नीचे की पंक्ति पर चला जाता है, और चयन इस पंक्ति तक एन्हांस हो जाता है.</p>
+				<p>यदि यह फ़ोकस सेल या पंक्ति चयनकर्ता पर है और संबंधित पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो यह फ़ोकस नीचे की पंक्ति पर ले जाया जाता है और इस पंक्ति के लिए चयन को निकाल दिया जाता है.</p>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस किसी ऐसे सेल पर है जो चयनित <span class="emphasis">नहीं</span> है और पंक्ति चयनित <span class="emphasis">नहीं</span> है, तो फ़ोकस किया गया सेल और उसके नीचे का सेल चयनित हो जाता है. फ़ोकस किए गए सेल के नीचे वाले सेल पर फ़ोकस ले जाया जाता है. </p>
+				<p>यदि यह फ़ोकस किसी चयनित सेल पर है, तो फ़ोकस नीचे वाले सेल पर ले जाया जाता है और इस सेल तक सेल चयन एन्हांस किया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>यदि यह फ़ोकस किसी संपादन योग्य सेल (उदाहरण के लिए, इनपुट फ़ील्ड) पर है, तो ऊपर वाले सेल पर फ़ोकस ले जाया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>यदि यह फ़ोकस किसी संपादन योग्य सेल (उदाहरण के लिए, इनपुट फ़ील्ड) पर है, तो नीचे वाले सेल पर फ़ोकस ले जाया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस किसी सेल पर है, तो फ़ोकस किया गया सेल चयनित होता है.</p>
+				<p>यदि यह फ़ोकस किसी सेल चयन ब्लॉक पर है, तो सेल का चयन निकाल दिया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस किसी सेल चयन ब्लॉक पर है, तो पंक्ति चयन में सेल चयन ब्लॉक बदल जाता है. सेल चयन निकाल दिया गया है.</p>
+				<p>पंक्ति चयन मोड के आधार पर, निम्न होता है:</p>
+				<ul>
+					<li>ब्लॉक की सभी पंक्तियां चयनित हैं (एकाधिक चयन)</li>
+					<li>वर्तमान में केवल फ़ोकस किए गए सेल वाली पंक्ति का चयन किया जाता है (एकल चयन)</li>
+					<li>कोई भी पंक्ति चयनित नहीं है</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस तालिका के अंदर है, तो किसी भी पंक्ति और सेल के लिए चयन को निकाल दिया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
+				<p>यदि यह फ़ोकस तालिका के अंदर है और सेल चयनित हैं, तो सेल का चयन निकाल दिया जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>यदि सेल में इंटरैक्टिव तत्व हैं, जैसे इनपुट फ़ील्ड या बटन (केवल-पठन योग्य टेक्स्ट के अपवाद के साथ), तो सेल और इसकी सामग्री के बीच फ़ोकस को टॉगल करता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>यदि यह फ़ोकस संपादन मोड में किसी सेल में है, तो पंक्ति पर फ़ोकस स्थानांतरित हो जाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">यदि सेल चयन सक्षम है</span>:</p>
+				<p>यदि सेल चयनित हैं, तो <kbd>Shift</kbd> को दबाने और किसी भिन्न सेल पर क्लिक करने से, चयन को क्लिक किए गए सेल तक एन्हांस करता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>यदि उपलब्ध हो और सुविधा सक्षम हो, तो चयनित पंक्तियों या सेल की क्लिपबोर्ड पर प्रति बनाता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>यदि सुविधा सक्षम है, तो क्लिपबोर्ड से सामग्री चिपकाता है.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>भिन्नरूप प्रबंधन खोलता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>भिन्नरूप प्रबंधन के त्रुटि पॉपओवर को बंद करता है</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद ऊपर ले जाता है.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद नीचे ले जाता है.</p>
+				<p><kbd>Home</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को शीर्ष पर ले जाता है.</p>
+				<p><kbd>End</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को अंत तक ले जाता है.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद ऊपर ले जाता है.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद नीचे ले जाता है.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद ऊपर ले जाता है.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>यदि उपलब्ध हो तो आइटम को एक पद नीचे ले जाता है.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

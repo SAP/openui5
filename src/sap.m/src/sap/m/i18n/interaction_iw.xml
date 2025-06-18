@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>קיצורי דרך גלובליים</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>מעביר את המיקוד לתא הבא באותה עמודה או באותה שורה בכיוונים המתאימים.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>אם המיקוד הוא בשורה הראשונה, המיקוד עובר לשורת כותרת העמודה.</p>
+				<p>אם המיקוד הוא בתא בשורה הראשונה, המיקוד עובר לכותרת העמודה הקשורה.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>אם המיקוד הוא בתיבת התיוג <span class="uicontrol">'בחר הכול'</span> או <span class="uicontrol">'נקה הכול'</span>, המיקוד עובר לבורר השורות בשורה הגלויה הראשונה.</p>
+				<p>אם המיקוד הוא בשורת כותרת העמודה, המיקוד עובר לשורה הראשונה.</p>
+				<p>אם המיקוד הוא בשורה, המיקוד עובר לשורה שמתחת.</p>
+				<p>אם המיקוד הוא בתא, המיקוד עובר לתא שמתחת.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>אם המיקוד הוא בתא הראשון, המיקוד עובר לשורה. זה מחליף מניווט מבוסס-תא לניווט מבוסס-שורה.</p>
+				<p>אם המיקוד הוא בתא, המיקוד עובר לתא ששמאל.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>אם המיקוד הוא בשורה, המיקוד עובר לתא הראשון של השורה הממוקדת כרגע. זה מחליף מניווט מבוסס-שורה לניווט מבוסס-תא.</p>
+				<p>אם המיקוד הוא בתא, המיקוד עובר לתא שמימין.</p>
+				<p><span class="emphasis">הערה:</span> אם המיקוד הוא בעמודה האחרונה, והתנהגות ה-pop-in הופעלה עבור עמודה זו, יש ההתייחסות לאזור ה-pop-in היא כמו לעמודה נוספת מימין, והמיקוד עובר לעמודה זו.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>אם המיקוד הוא בשורה, המיקוד עובר לשורת כותרת העמודה.</p>
+				<p>אם המיקוד הוא בשורת כותרת עמודה, ולחצן ה-<span class="uicontrol">'עוד'</span> זמין, המיקוד עובר ללחצן ה-<span class="uicontrol">'עוד'</span>.</p>
+				<p>אם המיקוד הוא בשורת כותרת עמודה, ולחצן ה-<span class="uicontrol">'עוד'</span> <span class="emphasis">לא</span> זמין, המיקוד עובר לשורה הממוקדת האחרונה.</p>
+				<p>אם המיקוד הוא בלחצן <span class="uicontrol">'עוד'</span> המיקוד עובר לשורה הממוקדת האחרונה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>אם המיקוד הוא בשורה, ולחצן ה-<span class="uicontrol">'עוד'</span> זמין, המיקוד עובר ללחצן ה-<span class="uicontrol">'עוד'</span>.</p>
+				<p>אם המיקוד הוא בשורה, ולחצן ה-<span class="uicontrol">'עוד'</span> <span class="emphasis">לא</span> זמין, המיקוד עובר לשורה של כותרת העמודה האחרונה.</p>
+				<p>אם המיקוד הוא בלחצן <span class="uicontrol">'עוד'</span> המיקוד עובר לשורת כותרת העמודה.</p>
+				<p>אם המיקוד הוא בשורת כותרת העמודה, המיקוד עובר לשורה הממוקדת האחרונה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>אם המיקוד הוא בכותרת העמודה, רוחב עמודה זו יוגדל ב-1 em. פעולה זו תחזור על עצמה כל עוד המקש לחוץ.</p>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span>, התא הממוקד והתא שמימין נבחרים. המיקוד עובר לתא שמימין לתא הממוקד.</p>
+				<p>אם המיקוד הוא בתא שנבחר, התא שמימין מקבל את המיקוד, ובחירת התאים מורחבת עד לתא זה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>אם המיקוד הוא בכותרת העמודה, רוחב עמודה זו יוקטן ב-1 em. פעולה זו תחזור על עצמה כל עוד המקש לחוץ.</p>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span>, התא הממוקד והתא שמשמאל נבחרים. המיקוד עובר לתא שמשמאל לתא הממוקד.</p>
+				<p>אם המיקוד הוא בתא שנבחר, התא שמשמאל מקבל את המיקוד, ובחירת התאים מורחבת עד לתא זה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>אם המיקוד הוא בתא או בבורר השורות והשורה הרלוונטית נבחרה, המיקוד עובר לשורה שמעל והבחירה מורחבת עד לשורה זו.</p>
+				<p>אם המיקוד הוא בתא או בבורר השורות והשורה הרלוונטית <span class="emphasis">לא</span> נבחרה, המיקוד עובר לשורה שמעל, והבחירה מוסרת עבור שורה זו.</p>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר והשורה <span class="emphasis">לא</span> נבחרה, התא הממוקד והתא שמעל נבחרים. המיקוד עובר לתא שמעל התא הממוקד.</p>
+				<p>אם המיקוד הוא בתא שנבחר, המיקוד עובר לתא שמעל ובחירת התאים מורחבת עד לתא זה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>אם המיקוד הוא בתא או בבורר השורות והשורה הרלוונטית נבחרה, המיקוד עובר לשורה שמתחת והבחירה מורחבת עד לשורה זו.</p>
+				<p>אם המיקוד הוא בתא או בבורר השורות, והשורה הרלוונטית <span class="emphasis">לא</span> נבחרה, המיקוד עובר לשורה שמתחת, והבחירה מוסרת עבור שורה זו.</p>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר והשורה <span class="emphasis">לא</span> נבחרה, התא הממוקד והתא שמתחת נבחרים. המיקוד עובר לתא שמתחת לתא הממוקד. </p>
+				<p>אם המיקוד הוא בתא שנבחר, המיקוד עובר לתא שמתחת ובחירת התאים מורחבת עד לתא זה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>אם המיקוד הוא בתא שניתן לעריכה (לדוגמה, שדה קלט), המיקוד עובר לתא שמעל.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>אם המיקוד הוא בתא שניתן לעריכה (לדוגמה, שדה קלט), המיקוד עובר לתא שמתחת.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתא, התא הממוקד נבחר.</p>
+				<p>אם המיקוד הוא בבלוק של בחירת תא, בחירת התאים מוסרת.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בבלוק של בחירת תא, בלוק בחירת התא משתנה לבחירת שורה. בחירת התא מוסרת.</p>
+				<p>בהתאם למצב בחירת השורה, הדברים הבאים מתרחשים:</p>
+				<ul>
+					<li>כל השורות של הבלוק נבחרות (בחירה מרובה)</li>
+					<li>רק השורות עם התא שממוקד כרגע נבחרו (בחירה יחידה)</li>
+					<li>לא נבחרה אף שורה</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתוך הטבלה, הבחירה עבור כל שורה ותא מוסרת.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם המיקוד הוא בתוך הטבלה ונבחרו תאים, בחירת התאים מוסרת.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>מחליף את המיקוד בין התא והתוכן שלו אם התא כולל אלמנטים אינטראקטיביים, כגון שדה קלט או לחצן (מלבד טקסט לקריאה בלבד).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>אם המיקוד הוא בתא במצב עריכה, המיקוד עובר לשורה.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
+				<p>אם נבחרים תאים, לחיצה על <kbd>Shift</kbd> ולחיצה על תא אחר מרחיבה את הבחירה עד לתא שנלחץ.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>מעתיק את השורות או התאים שנבחרו ללוח העריכה, אם זמין, והמאפיין הופעל.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>מדביק את התוכן מלוח העריכה, אם המאפיין הופעל.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>פותח את ניהול הווריאנטים.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>סוגר את popover השגיאה של ניהול הווריאנטים.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>מעביר את הפריט מיקום אחד למעלה אם זמין.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>מעביר את הפריט מיקום אחד למטה אם זמין.</p>
+				<p><kbd>Home</kbd></p>
+				<p>מעביר את הפריט לחלק העליון אם זמין.</p>
+				<p><kbd>End</kbd></p>
+				<p>מעביר את הפריט לסוף אם זמין.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>מעביר את הפריט מיקום אחד למעלה אם זמין.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>מעביר את הפריט מיקום אחד למטה, אם זמין.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>מעביר את הפריט מיקום אחד למעלה אם זמין.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>מעביר את הפריט מיקום אחד למטה אם זמין.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

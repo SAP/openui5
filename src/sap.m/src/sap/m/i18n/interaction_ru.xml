@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Глобальные ярлыки</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Перемещает фокус на следующую ячейку в том же столбце или строке в соответствующем направлении.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Если фокус находится на первой строке, фокус перемещается на строку заголовка столбца.</p>
+				<p>Если фокус находится на ячейке первой строки, фокус перемещается на заголовок соответствующего столбца.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Если фокус находится на флажке <span class="uicontrol">Выбрать все</span> или <span class="uicontrol">Очистить все</span>, фокус перемещается на селектор строки в первой видимой строке.</p>
+				<p>Если фокус находится на строке заголовка столбца, фокус перемещается на первую строку.</p>
+				<p>Если фокус находится на строке, фокус перемещается на строку ниже.</p>
+				<p>Если фокус находится на ячейке, фокус перемещается на ячейку ниже.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Если фокус находится на первой ячейке, фокус перемещается на строку. При этом переход переключается с ячеек на строки.</p>
+				<p>Если фокус находится на ячейке, фокус перемещается на ячейку слева.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Если фокус находится на строке, фокус перемещается на первую ячейку текущей строки фокуса. При этом переход переключается со строк на ячейки.</p>
+				<p>Если фокус находится на ячейке, фокус перемещается на ячейку справа.</p>
+				<p><span class="emphasis">Примечание:</span> если фокус находится на последнем столбце, и для этого столбца активировано всплывающее поведение, то всплывающая область рассматривается как дополнительный столбец справа, и фокус перемещается на этот столбец.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Если фокус находится на строке, фокус перемещается на строку заголовка столбца.</p>
+				<p>Если фокус находится на строке заголовка столбца и кнопка <span class="uicontrol">Больше</span> доступна, фокус перемещается на кнопку <span class="uicontrol">Больше</span>.</p>
+				<p>Если фокус находится на строке заголовка столбца и кнопка <span class="uicontrol">Больше</span> <span class="emphasis">недоступна</span>, фокус перемещается на строку последнего фокуса.</p>
+				<p>Если фокус находится на кнопке <span class="uicontrol">Больше</span>, фокус перемещается на строку последнего фокуса.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Если фокус находится на строке и кнопка <span class="uicontrol">Больше</span> доступна, фокус перемещается на кнопку <span class="uicontrol">Больше</span>.</p>
+				<p>Если фокус находится на строке и кнопка <span class="uicontrol">Больше</span> <span class="emphasis">недоступна</span>, фокус перемещается на строку заголовка столбца.</p>
+				<p>Если фокус находится на кнопке <span class="uicontrol">Больше</span>, фокус перемещается на строку заголовка столбца.</p>
+				<p>Если фокус находится на строке заголовка столбца, фокус перемещается на строку последнего фокуса.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Если фокус находится на заголовке столбца, ширина столбца увеличивается на 1 единицу. При нажатой клавише увеличение растет.</p>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка справа. Фокус перемещается на ячейку справа от ячейки фокуса.</p>
+				<p>Если фокус находится на выбранной ячейке, ячейка справа получает фокус, и выбор ячеек расширяется до этой ячейки.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Если фокус находится на заголовке столбца, ширина столбца уменьшается на 1 единицу. При нажатой клавише уменьшение растет.</p>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка слева. Фокус перемещается на ячейку слева от ячейки фокуса.</p>
+				<p>Если фокус находится на выбранной ячейке, ячейка слева получает фокус, и выбор ячеек расширяется до этой ячейки.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка выбрана, фокус перемещается на строку выше, и выбор расширяется до этой строки.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка <span class="emphasis">не</span> выбрана, фокус перемещается на строку выше, и выбор удаляется для этой строки.</p>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, и строка <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка выше. Фокус перемещается на ячейку выше от ячейки фокуса.</p>
+				<p>Если фокус находится на выбранной ячейке, фокус перемещается на ячейку выше, и выбор ячеек расширяется до этой ячейки.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка выбрана, фокус перемещается на строку ниже, и выбор расширяется до этой строки.</p>
+				<p>Если фокус находится на ячейке или селекторе строки и соответствующая строка <span class="emphasis">не</span> выбрана, фокус перемещается на строку ниже, и выбор удаляется для этой строки.</p>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на ячейке, которая <span class="emphasis">не</span> выбрана, и строка <span class="emphasis">не</span> выбрана, выбираются ячейка фокуса и ячейка ниже. Фокус перемещается на ячейку ниже от ячейки фокуса. </p>
+				<p>Если фокус находится на выбранной ячейке, фокус перемещается на ячейку ниже, и выбор ячеек расширяется до этой ячейки.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Если фокус находится на редактируемой ячейке (например, поле ввода), фокус перемещается на ячейку выше.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Если фокус находится на редактируемой ячейке (например, поле ввода), фокус перемещается на ячейку ниже.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на ячейке, ячейка фокуса выбрана.</p>
+				<p>Если фокус находится на блоке выбора ячеек, выбор ячеек удаляется.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на блоке выбора ячеек, блок выбора ячеек меняется на выбор строк. Выбор ячеек удаляется.</p>
+				<p>В зависимости от режима выбора строк происходит следующее:</p>
+				<ul>
+					<li>Выбираются все строки блока (множественный выбор)</li>
+					<li>Выбирается только строка с текущей ячейкой фокуса (одиночный выбор)</li>
+					<li>Ни одна из строк не выбирается</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится в таблице, выбор строк и ячеек удаляется.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
+				<p>Если фокус находится на таблице и ячейки выбраны, выбор ячеек удаляется.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Переключает фокус между ячейкой и ее содержимым, если ячейка имеет интерактивные элементы, такие как поле ввода или кнопку (кроме текста только для чтения).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Если фокус находится на ячейке в режиме редактирования, фокус перемещается на строку.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Если активирован выбор ячейки</span>:</p>
+				<p>Если ячейки выбраны, при нажатии <kbd>Shift</kbd> и щелчке в другой ячейке выбор расширяется до ячейки щелчка.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Копирует выбранные строки или ячейки в буфер обмена, если он доступен и функция активирована.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Вставляет содержимое из буфера обмена, если функция активирована.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Открывает управление вариантами.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Закрывает всплывающее окно ошибки управления вариантами</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Перемещает позицию на одну позицию вверх, если доступно.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Перемещает позицию на одну позицию вниз, если доступно.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Перемещает позицию в самый верх, если доступно.</p>
+				<p><kbd>End</kbd></p>
+				<p>Перемещает позицию в самый низ, если доступно.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Перемещает позицию на одну позицию вверх, если доступно.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Перемещает позицию на одну позицию вниз, если доступно.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Перемещает позицию на одну позицию вверх, если доступно.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Перемещает позицию на одну позицию вниз, если доступно.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Phím tắt toàn cục</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Di chuyển tiêu điểm đến ô tiếp theo trong cùng cột hoặc hàng theo hướng tương ứng.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên hàng đầu tiên, tiêu điểm sẽ di chuyển đến hàng tiêu đề cột.</p>
+				<p>Nếu tiêu điểm đang ở trên ô của hàng đầu tiên, tiêu điểm sẽ di chuyển đến tiêu đề cột có liên quan.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên ô đánh dấu <span class="uicontrol">Chọn tất cả</span> hoặc <span class="uicontrol">Xóa tất cả</span>, tiêu điểm sẽ di chuyển đến bộ chọn hàng trong hàng hiển thị đầu tiên.</p>
+				<p>Nếu tiêu điểm đang ở trên hàng tiêu đề cột, tiêu điểm sẽ di chuyển đến hàng đầu tiên.</p>
+				<p>Nếu tiêu điểm đang ở trên một hàng, tiêu điểm sẽ di chuyển đến hàng bên dưới.</p>
+				<p>Nếu tiêu điểm đang ở trên một ô, tiêu điểm sẽ di chuyển đến ô bên dưới.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên ô đầu tiên, tiêu điểm sẽ di chuyển đến hàng. Thao tác này chuyển từ điều hướng theo ô sang điều hướng theo hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên một ô, tiêu điểm sẽ di chuyển đến ô bên trái.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên một hàng, tiêu điểm sẽ di chuyển đến ô đầu tiên của hàng hiện đang được lấy tiêu điểm. Thao tác này chuyển từ điều hướng theo hàng sang điều hướng theo ô.</p>
+				<p>Nếu tiêu điểm đang ở trên một ô, tiêu điểm sẽ di chuyển đến ô bên phải.</p>
+				<p><span class="emphasis">Lưu ý:</span> Nếu tiêu điểm đang ở trên cột cuối cùng và hành vi bật lên đã được kích hoạt cho cột này, thì phạm vi bật lên được coi như một cột bổ sung ở bên phải và tiêu điểm sẽ di chuyển đến cột này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một hàng, tiêu điểm sẽ di chuyển đến hàng tiêu đề cột.</p>
+				<p>Nếu tiêu điểm đang ở trên hàng tiêu đề cột, và nút <span class="uicontrol">Thêm</span> khả dụng, tiêu điểm sẽ di chuyển đến nút <span class="uicontrol">Thêm</span>.</p>
+				<p>Nếu tiêu điểm đang ở trên hàng tiêu đề cột, và nút <span class="uicontrol">Thêm</span> <span class="emphasis">không</span> khả dụng, tiêu điểm sẽ di chuyển đến hàng được lấy tiêu điểm cuối cùng.</p>
+				<p>Nếu tiêu điểm đang ở trên nút <span class="uicontrol">Thêm</span>, tiêu điểm sẽ di chuyển đến hàng được lấy tiêu điểm cuối cùng.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một hàng, và nút <span class="uicontrol">Thêm</span> khả dụng, tiêu điểm sẽ di chuyển đến nút <span class="uicontrol">Thêm</span>.</p>
+				<p>Nếu tiêu điểm đang ở trên một hàng, và nút <span class="uicontrol">Thêm</span> <span class="emphasis">không</span> khả dụng, tiêu điểm sẽ di chuyển đến hàng tiêu đề cột.</p>
+				<p>Nếu tiêu điểm đang ở trên nút <span class="uicontrol">Thêm</span>, tiêu điểm sẽ di chuyển đến hàng tiêu đề cột.</p>
+				<p>Nếu tiêu điểm đang ở trên hàng tiêu đề cột, tiêu điểm sẽ di chuyển đến hàng được lấy tiêu điểm cuối cùng.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, chiều rộng của cột này sẽ tăng thêm 1 em. Điều này được lặp lại nếu phím vẫn được nhấn.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên một ô <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên phải sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên phải của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô được chọn, ô bên phải sẽ nhận tiêu điểm và lựa chọn ô sẽ được mở rộng đến ô này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, chiều rộng của cột này sẽ giảm 1 em. Điều này được lặp lại nếu phím vẫn được nhấn.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên một ô <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên trái sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên trái của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô được chọn, ô bên trái sẽ nhận tiêu điểm và lựa chọn ô sẽ được mở rộng đến ô này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một bộ chọn hàng hoặc ô và hàng liên quan được chọn, tiêu điểm sẽ di chuyển đến hàng phía trên và lựa chọn sẽ được mở rộng đến hàng này.</p>
+				<p>Nếu tiêu điểm đang ở một bộ chọn hàng hoặc ô và hàng liên quan <span class="emphasis">chưa</span> được chọn, tiêu điểm sẽ di chuyển đến hàng phía trên và lựa chọn sẽ bị loại bỏ cho hàng này.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên ô <span class="emphasis">chưa</span> được chọn và hàng cũng <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô phía trên sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô phía trên của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô đã chọn, tiêu điểm sẽ di chuyển đến ô phía trên và lựa chọn ô sẽ được mở rộng đến ô này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một bộ chọn hàng hoặc ô và hàng liên quan được chọn, tiêu điểm sẽ di chuyển đến hàng bên dưới và lựa chọn sẽ được mở rộng đến hàng này.</p>
+				<p>Nếu tiêu điểm đang ở một bộ chọn hàng hoặc ô và hàng liên quan <span class="emphasis">chưa</span> được chọn, tiêu điểm sẽ di chuyển đến hàng bên dưới và lựa chọn sẽ bị loại bỏ cho hàng này.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên ô <span class="emphasis">chưa</span> được chọn và hàng cũng <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên dưới sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên dưới của ô được lấy tiêu điểm. </p>
+				<p>Nếu tiêu điểm đang ở trên ô đã chọn, tiêu điểm sẽ di chuyển đến ô bên dưới và lựa chọn ô sẽ được mở rộng đến ô này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên ô có thể hiệu chỉnh (ví dụ: trường đầu vào), tiêu điểm sẽ di chuyển đến ô phía trên.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên ô có thể hiệu chỉnh (ví dụ: trường đầu vào), tiêu điểm sẽ di chuyển đến ô bên dưới.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên ô, ô được lấy tiêu điểm sẽ được chọn. </p>
+				<p>Nếu tiêu điểm đang ở trên khối lựa chọn ô, lựa chọn ô sẽ bị loại bỏ.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên khối lựa chọn ô, khối lựa chọn ô sẽ được chuyển thành lựa chọn hàng. Lựa chọn ô bị loại bỏ.</p>
+				<p>Tùy thuộc vào chế độ lựa chọn hàng, những điều sau sẽ xảy ra:</p>
+				<ul>
+					<li>Tất cả các hàng trong khối sẽ được chọn (đa lựa chọn)</li>
+					<li>Chỉ hàng có ô hiện đang được lấy tiêu điểm sẽ được chọn (lựa chọn đơn)</li>
+					<li>Không có hàng nào được chọn</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm nằm bên trong bảng, lựa chọn bất kỳ hàng hoặc ô nào sẽ bị loại bỏ.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm nằm bên trong bảng và các ô được chọn, lựa chọn ô sẽ bị loại bỏ.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Chuyển đổi tiêu điểm giữa ô và nội dung của ô nếu ô có các yếu tố tương tác, chẳng hạn như nút hoặc trường đầu vào (ngoại trừ văn bản chỉ đọc).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Nếu tiêu điểm nằm trong một ô ở chế độ hiệu chỉnh, tiêu điểm sẽ di chuyển đến hàng đó.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật</span>:</p>
+				<p>Nếu các ô được chọn, hãy nhấn <kbd>Shift</kbd> và nhấp vào một ô khác sẽ mở rộng lựa chọn đến ô được nhấp.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Sao chép các hàng hoặc ô đã chọn vào clipboard nếu có sẵn, và tính năng này được bật. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Dán nội dung từ clipboard nếu tính năng này được bật.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Mở quản lý biến thể.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Đóng cửa sổ thông báo lỗi của quản lý biến thể</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Di chuyển mục lên một vị trí nếu có sẵn.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Di chuyển mục xuống một vị trí nếu có sẵn.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Di chuyển mục lên đầu nếu có sẵn.</p>
+				<p><kbd>End</kbd></p>
+				<p>Di chuyển mục đến cuối nếu có sẵn.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Di chuyển mục lên một vị trí nếu có sẵn.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Di chuyển mục xuống một vị trí, nếu có sẵn.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Di chuyển mục lên một vị trí nếu có sẵn.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Di chuyển mục xuống một vị trí nếu có sẵn.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

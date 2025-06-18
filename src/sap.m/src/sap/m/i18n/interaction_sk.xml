@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globálne skratky</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Presunie zameranie na nasledujúcu bunku v rovnakom stĺpci alebo riadku v príslušných smeroch.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ak je zameranie na prvom riadku, zameranie sa presunie na riadok hlavičky stĺpca.</p>
+				<p>Ak je zameranie na bunku v prvom riadku, zameranie sa presunie na hlavičku súvisiaceho stĺpca.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ak je zameranie na začiarkavacom poli <span class="uicontrol">Vybrať všetko</span> alebo <span class="uicontrol">Vymazať všetko</span>, zameranie sa presunie na selektor riadkov v prvom viditeľnom riadku.</p>
+				<p>Ak je zameranie na riadok hlavičky stĺpca, zameranie sa presunie na prvý riadok.</p>
+				<p>Ak je zameranie na riadok, zameranie sa presunie na riadok nižšie.</p>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku nižšie.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ak je zameranie na prvú bunku, zameranie sa presunie na riadok. Tým sa prepne z navigácie podľa buniek na navigáciu podľa riadkov.</p>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku naľavo.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ak je zameranie na riadok, zameranie sa presunie na prvú bunku aktuálne aktívneho riadku. Tým sa prepne z navigácie podľa riadkov na navigáciu podľa buniek.</p>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na bunku vpravo.</p>
+				<p><span class="emphasis">Poznámka:</span> Ak je zameranie na posledný stĺpec a pre tento stĺpec bolo povolené správanie otvárania okien, s kontextovou oblasťou sa zaobchádza ako s ďalším stĺpcom napravo a zameranie sa presunie do tohto stĺpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Ak je zameranie na riadku, zameranie sa presunie na riadok hlavičky stĺpca.</p>
+				<p>Ak je zameranie na riadok hlavičky stĺpca a je k dispozícii tlačidlo <span class="uicontrol">Viac</span>, zameranie sa presunie na tlačidlo <span class="uicontrol">Viac</span>.</p>
+				<p>Ak je zameranie na riadok hlavičky stĺpca a tlačidlo <span class="uicontrol">Viac</span> <span class="emphasis">nie je</span> dostupné, zameranie sa presunie na posledný aktívny riadok.</p>
+				<p>Ak je zameranie na tlačidlo <span class="uicontrol">Viac</span>, zameranie sa presunie na posledný zameraný riadok.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Ak je zameranie na riadok a je k dispozícii tlačidlo <span class="uicontrol">Viac</span>, zameranie sa presunie na tlačidlo <span class="uicontrol">Viac</span>.</p>
+				<p>Ak je zameranie na riadok a tlačidlo <span class="uicontrol">Viac</span> <span class="emphasis">nie je</span> dostupné, zameranie sa presunie na riadok hlavičky stĺpca.</p>
+				<p>Ak je zameranie na tlačidlo <span class="uicontrol">Viac</span>, zameranie sa presunie na riadok hlavičky stĺpca.</p>
+				<p>Ak je zameranie na riadok hlavičky stĺpca, zameranie sa presunie na posledný aktívny riadok.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca, šírka tohto stĺpca sa zväčší o 1 em. Toto sa opakuje, ak zostane tlačidlo stlačené.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na bunku, ktorá <span class="emphasis">nie je</span> vybratá, vyberie sa aktívna bunka a bunka napravo. Zameranie sa presunie na bunku napravo od zameranej bunky.</p>
+				<p>Ak je zameranie na vybratú bunku, zamerá sa bunka napravo a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca, šírka tohto stĺpca sa zmenší o 1 em. Toto sa opakuje, ak zostane tlačidlo stlačené.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na bunku, ktorá <span class="emphasis">nie je</span> vybratá, vyberie sa aktívna bunka a bunka naľavo. Zameranie sa presunie na bunku naľavo od zameranej bunky.</p>
+				<p>Ak je zameranie na vybratú bunku, zamerá sa bunka naľavo a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa odstráni pre tento riadok.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nad ňou. Zameranie sa presunie na bunku nad zameranou bunkou.</p>
+				<p>Ak je zameranie na vybratú bunku, zameranie sa presunie na bunku vyššie a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa odstráni pre tento riadok.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nižšie. Zameranie sa presunie na bunku pod zameranou bunkou. </p>
+				<p>Ak je zameranie na vybratú bunku, zameranie sa presunie na bunku nižšie a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Ak je zameranie na upraviteľnú bunku (napríklad vstupné pole), zameranie sa presunie na bunku vyššie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Ak je zameranie na upraviteľnú bunku (napríklad vstupné pole), zameranie sa presunie na bunku nižšie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na bunku, vyberie sa zameraná bunka.</p>
+				<p>Ak je zameranie na blok výberu buniek, výber buniek sa odstráni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na blok výberu buniek, blok výberu buniek sa zmení na výber riadkov. Výber buniek sa odstráni.</p>
+				<p>V závislosti od režimu výberu riadkov sa stane toto:</p>
+				<ul>
+					<li>Všetky riadky bloku sú vybraté (viacnásobný výber)</li>
+					<li>Vyberie sa iba riadok s aktuálne zameranou bunkou (jeden výber)</li>
+					<li>Nie je vybratý žiadny z riadkov</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie vnútri tabuľky, výber pre všetky riadky a bunky sa odstráni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie vnútri tabuľky a sú vybraté bunky, výber buniek sa odstráni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Prepína zameranie medzi bunkou a jej obsahom, ak má bunka interaktívne prvky, ako je vstupné pole alebo tlačidlo (s výnimkou textu určeného len na čítanie).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Ak je zameranie v rámci bunky v režime úprav, zameranie sa presunie na riadok.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek</span>:</p>
+				<p>Ak sú vybraté bunky, stlačením <kbd>Shift</kbd>a kliknutím na inú bunku sa výber rozšíri až po bunku, na ktorú sa kliknete.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Skopíruje vybraté riadky alebo bunky do schránky, ak je k dispozícii a funkcia je povolená.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Prilepí obsah zo schránky, ak je funkcia povolená.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Otvorí správu variantov.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Zatvorí kontextové okno s chybou správy variantov</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Posunie položku o jednu pozíciu nahor, ak je k dispozícii.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Posunie položku o jednu pozíciu nadol, ak je k dispozícii.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Presunie položku na začiatok, ak je k dispozícii.</p>
+				<p><kbd>End</kbd></p>
+				<p>Presunie položku na koniec, ak je k dispozícii.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Posunie položku o jednu pozíciu nahor, ak je k dispozícii.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Posunie položku o jednu pozíciu nadol, ak je k dispozícii.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Posunie položku o jednu pozíciu nahor, ak je k dispozícii.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Posunie položku o jednu pozíciu nadol, ak je k dispozícii.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

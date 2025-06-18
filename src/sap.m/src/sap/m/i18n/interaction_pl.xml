@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Skróty globalne</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Powoduje przesunięcie fokusu na następną komórkę w tej samej kolumnie lub tym samym wierszu, w odpowiednich kierunkach.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Jeśli fokus jest ustawiony na pierwszym wierszu, następuje jego przesunięcie do wiersza nagłówka kolumny.</p>
+				<p>Jeśli fokus jest ustawiony na komórce pierwszego wiersza, następuje jego przesunięcie do nagłówka powiązanej kolumny.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Jeśli fokus jest ustawiony na polu wyboru <span class="uicontrol">Wybierz wszystkie</span> lub <span class="uicontrol">Wyczyść wszystko</span>, następuje jego przesunięcie do selektora wiersza w pierwszym widocznym wierszu.</p>
+				<p>Jeśli fokus jest ustawiony na wierszu nagłówka kolumny, następuje jego przesunięcie do pierwszego wiersza.</p>
+				<p>Jeśli fokus jest ustawiony na wierszu, następuje jego przesunięcie do wiersza poniżej.</p>
+				<p>Jeśli fokus jest ustawiony na komórce, następuje jego przesunięcie do komórki poniżej.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Jeśli fokus jest ustawiony na pierwszej komórce, następuje jego przesunięcie do wiersza. To powoduje przełączenie z nawigacji opartej na komórce na nawigację opartą na wierszu.</p>
+				<p>Jeśli fokus jest ustawiony na komórce, następuje jego przesunięcie do komórki po lewej.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Jeśli fokus jest ustawiony na wierszu, następuje jego przesunięcie do pierwszej komórki wiersza, na którym aktualnie ustawiony jest fokus. To powoduje przełączenie z nawigacji opartej na wierszu na nawigację opartą na komórce.</p>
+				<p>Jeśli fokus jest ustawiony na komórce, następuje jego przesunięcie do komórki po prawej.</p>
+				<p><span class="emphasis">Uwaga:</span> jeśli fokus jest ustawiony na ostatniej kolumnie, a dla tej kolumny włączono zachowanie osadzonego okna dialogowego, obszar tego osadzonego okna dialogowego jest traktowany jako dodatkowa kolumna po prawej stronie, a fokus przesuwa się do tej kolumny.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na wierszu, następuje jego przesunięcie do wiersza nagłówka kolumny.</p>
+				<p>Jeśli fokus jest ustawiony na wierszu nagłówka kolumny i dostępny jest przycisk <span class="uicontrol">Więcej</span>, fokus przesuwa się do przycisku <span class="uicontrol">Więcej</span>.</p>
+				<p>Jeśli fokus jest ustawiony na wierszu nagłówka kolumny, a przycisk <span class="uicontrol">Więcej</span> jest <span class="emphasis">niedostępny</span>, fokus przesuwa się do ostatniego wiersza z fokusem.</p>
+				<p>Jeśli fokus jest ustawiony na przycisku <span class="uicontrol">Więcej</span>, fokus przesuwa się do ostatniego wiersza z fokusem.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na wierszu i dostępny jest przycisk <span class="uicontrol">Więcej</span>, fokus przesuwa się do przycisku <span class="uicontrol">Więcej</span>.</p>
+				<p>Jeśli fokus jest ustawiony na wierszu, a przycisk <span class="uicontrol">Więcej</span> jest <span class="emphasis">niedostępny</span>, fokus przesuwa się do wiersza nagłówka kolumny.</p>
+				<p>Jeśli fokus jest ustawiony na przycisku <span class="uicontrol">Więcej</span>, następuje jego przesunięcie do wiersza nagłówka kolumny.</p>
+				<p>Jeśli fokus jest ustawiony na wierszu nagłówka kolumny, następuje jego przesunięcie do ostatniego wiersza z fokusem.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, następuje zwiększenie szerokości tej kolumny o 1&#x00a0;em. Ta operacja jest powtarzana, jeśli klawisz pozostaje naciśnięty.</p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, następuje zaznaczenie komórki z fokusem oraz komórki po prawej stronie. Fokus jest przesuwany do komórki po prawej stronie od komórki z fokusem.</p>
+				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, fokus jest przesuwany do komórki po prawej stronie, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na nagłówku kolumny, następuje zmniejszenie szerokości tej kolumny o 1&#x00a0;em. Ta operacja jest powtarzana, jeśli klawisz pozostaje naciśnięty.</p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, następuje zaznaczenie komórki z fokusem oraz komórki po lewej stronie. Fokus jest przesuwany do komórki po lewej stronie od komórki z fokusem.</p>
+				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, fokus jest przesuwany do komórki po lewej stronie, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza i następuje zaznaczenie odpowiedniego wiersza, fokus jest przesuwany do wiersza powyżej, a zaznaczenie jest rozszerzane do tego wiersza.</p>
+				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz <span class="emphasis">nie</span> jest zaznaczony, fokus jest przesuwany do wiersza powyżej, a zaznaczenie tego wiersza jest usuwane.</p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, tak samo jak <span class="emphasis">nie</span> jest zaznaczony wiersz, następuje zaznaczenie komórki z fokusem i komórki powyżej. Następuje przesunięcie fokusu do komórki powyżej komórki z fokusem.</p>
+				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, następuje jego przesunięcie na komórkę powyżej, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza i następuje zaznaczenie odpowiedniego wiersza, fokus jest przesuwany do wiersza poniżej, a zaznaczenie jest rozszerzane do tego wiersza.</p>
+				<p>Jeśli fokus jest ustawiony na komórce lub selektorze wiersza, a odpowiedni wiersz <span class="emphasis">nie</span> jest zaznaczony, fokus jest przesuwany do wiersza poniżej, a zaznaczenie tego wiersza jest usuwane.</p>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony na komórce, która <span class="emphasis">nie</span> jest zaznaczona, tak samo jak <span class="emphasis">nie</span> jest zaznaczony wiersz, następuje zaznaczenie komórki z fokusem i komórki poniżej. Następuje przesunięcie fokusu do komórki poniżej komórki z fokusem. </p>
+				<p>Jeśli fokus jest ustawiony na zaznaczonej komórce, następuje jego przesunięcie na komórkę poniżej, a zaznaczenie komórki jest rozszerzane do tej komórki.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na komórce dostępnej do edycji (na przykład na polu wprowadzania danych), następuje jego przesunięcie do komórki powyżej.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Jeśli fokus jest ustawiony na komórce dostępnej do edycji (na przykład na polu wprowadzania danych), następuje jego przesunięcie do komórki poniżej.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony na komórce, następuje zaznaczenie komórki z fokusem.</p>
+				<p>Jeśli fokus jest ustawiony na bloku zaznaczenia komórek, zaznaczenie komórek jest usuwane.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony na bloku zaznaczenia komórek, następuje zmiana bloku zaznaczenia komórek w zaznaczenie wiersza. Zaznaczenie komórki jest usuwane.</p>
+				<p>Skutki są następujące (w zależności od trybu zaznaczania wiersza):</p>
+				<ul>
+					<li>Następuje zaznaczenie wszystkich wierszy bloku (wiele zaznaczeń)</li>
+					<li>Następuje zaznaczenie tylko wiersza z komórką, na której aktualnie ustawiony jest fokus (pojedyncze zaznaczenie)</li>
+					<li>Nie następuje zaznaczenie żadnego wiersza</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, następuje usunięcie zaznaczenia dowolnych wierszy i komórek.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, a komórki są zaznaczone, zaznaczenie komórek jest usuwane.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Powoduje przełączanie fokusu między komórką a jej zawartością, jeśli komórka zawiera elementy interaktywne, takie jak pole wprowadzania danych lub przycisk (z wyjątkiem tekstu tylko do odczytu).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Jeśli fokus jest ustawiony w komórce w trybie edycji, fokus jest przesuwany do wiersza.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
+				<p>Jeśli komórki są zaznaczone, naciśnięcie <kbd>Shift</kbd> i kliknięcie innej komórki spowoduje rozszerzenie zaznaczenia do klikniętej komórki.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopiuje zaznaczone wiersze lub komórki do schowka, jeśli są dostępne, a ta funkcja jest włączona.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Wkleja zawartość ze schowka, o ile ta funkcja jest włączona.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Otwiera zarządzanie wariantami.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Zamyka okno podręczne błędu zarządzania wariantami</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Powoduje przesunięcie elementu o jedną pozycję w górę, jeśli jest dostępna.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Powoduje przesunięcie elementu o jedną pozycję w dół, jeśli jest dostępna.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Powoduje przesunięcie elementu do szczytu, jeśli jest dostępny.</p>
+				<p><kbd>End</kbd></p>
+				<p>Powoduje przesunięcie elementu do końca, jeśli jest dostępny.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Powoduje przesunięcie elementu o jedną pozycję w górę, jeśli jest dostępna.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Powoduje przesunięcie elementu o jedną pozycję w dół, jeśli jest dostępna.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Powoduje przesunięcie elementu o jedną pozycję w górę, jeśli jest dostępna.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Powoduje przesunięcie elementu o jedną pozycję w dół, jeśli jest dostępna.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

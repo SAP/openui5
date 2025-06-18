@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globális billentyűparancsok</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Az oszlop vagy sor következő cellájára helyezi át a fókuszt az adott irányban.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ha a fókusz az első soron van, akkor az oszlopfejlécsorra helyezi át.</p>
+				<p>Ha a fókusz az első sor egyik celláján van, akkor a vonatkozó oszlopfejlécre helyezi át.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ha a fókusz az <span class="uicontrol">Összes kiválasztása</span> vagy az <span class="uicontrol">Összes törlése</span> jelölőmezőn van, akkor az első látható sor sorkijelölőjére helyezi át.</p>
+				<p>Ha a fókusz az oszlopfejlécsoron van, akkor az első sorra helyezi át.</p>
+				<p>Ha a fókusz egy soron van, akkor az eggyel lentebbi sorra helyezi át.</p>
+				<p>Ha a fókusz egy cellán van, akkor az eggyel lentebbi cellára helyezi át.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ha a fókusz az első cellán van, akkor a sorra helyezi át. Ezzel átvált cellaalapú navigációról soralapúra.</p>
+				<p>Ha a fókusz egy cellán van, akkor az attól balra lévő cellára helyezi át.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ha a fókusz egy soron van, akkor jelenleg fókuszban lévő sor első cellájára helyezi át. Ezzel átvált soralapú navigációról cellaalapúra.</p>
+				<p>Ha a fókusz egy cellán van, akkor az attól jobbra lévő cellára helyezi át.</p>
+				<p><span class="emphasis">Megjegyzés:</span> ha a fókusz az utolsó oszlopon van, és engedélyezett a belső előugró ablak ennél az oszlopnál, akkor a belső előugró ablak területe egy újabb oszlopnak számít a jobb oldalon, és erre az oszlopra kerül át a fókusz.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Ha a fókusz egy soron van, akkor az oszlopfejlécsorra helyezi át.</p>
+				<p>Ha a fókusz az oszlopfejlécsoron van, és elérhető a <span class="uicontrol">Továbbiak</span> gomb, akkor a <span class="uicontrol">Továbbiak</span> gombra helyezi át a fókuszt.</p>
+				<p>Ha a fókusz az oszlopfejlécsoron van, és <span class="uicontrol">nem</span> érhető el a <span class="emphasis">Továbbiak</span> gomb, akkor a legutóbb fókuszba helyezett sorra helyezi át a fókuszt.</p>
+				<p>Ha a fókusz a <span class="uicontrol">Továbbiak</span> gombon van, akkor a legutóbb fókuszba helyezett sorra helyezi át a fókuszt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Ha a fókusz egy soron van, és elérhető a <span class="uicontrol">Továbbiak</span> gomb, akkor a <span class="uicontrol">Továbbiak</span> gombra helyezi át a fókuszt.</p>
+				<p>Ha a fókusz egy soron van, és <span class="uicontrol">nem</span> érhető el a <span class="emphasis">Továbbiak</span> gomb, akkor az oszlopfejlécsorra helyezi át a fókuszt.</p>
+				<p>Ha a fókusz a <span class="uicontrol">Továbbiak</span> gombon van, akkor az oszlopfejlécsorra helyezi át.</p>
+				<p>Ha a fókusz az oszlopfejlécsoron van, akkor a legutóbb fókuszba helyezett sorra helyezi át.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ha a fókusz az oszlopfejlécen van, akkor az oszlop 1 kvirttel szélesebb lesz. A billentyű nyomva tartása esetén ez folyamatosan ismétlődik.</p>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, akkor kijelöli a fókuszban lévő és a tőle jobbra álló cellát. A fókusz átkerül a fókuszban lévő cella jobb oldalán lévő cellára.</p>
+				<p>Ha a fókusz egy kijelölt cellán van, a tőle jobbra álló cellára kerül át, és a cellakijelölés kibővül eddig a celláig.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ha a fókusz az oszlopfejlécen van, akkor az oszlop 1 kvirttel keskenyebb lesz. A billentyű nyomva tartása esetén ez folyamatosan ismétlődik.</p>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, akkor kijelöli a fókuszban lévő és a tőle balra álló cellát. A fókusz átkerül a fókuszban lévő cella bal oldalán lévő cellára.</p>
+				<p>Ha a fókusz egy kijelölt cellán van, a tőle balra álló cellára kerül át, és a cellakijelölés kibővül eddig a celláig.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és ki van jelölve a vonatkozó sor, akkor a fókuszt egy sorral feljebb helyezi, és a kijelölés is kibővül eddig a sorig.</p>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és <span class="emphasis">nincs</span> kijelölve a vonatkozó sor, a fókuszt egy sorral feljebb helyezi, és ennek a sornak megszűnik a kijelölése.</p>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, és a sor <span class="emphasis">sincs</span> kijelölve, akkor kijelöli a fókuszban lévő cellát és a fölötte lévő cellát. A fókuszt a jelenleg fókuszban lévő cella fölötti cellára helyezi át.</p>
+				<p>Ha a fókusz egy kijelölt cellán van, a fölötte lévő cellára helyezi át, és a cellakijelölés kibővül eddig a celláig.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és ki van jelölve a vonatkozó sor, akkor a fókuszt egy sorral lejjebb helyezi, és a kijelölés is kibővül eddig a sorig.</p>
+				<p>Ha a fókusz egy cellán vagy a sorkijelölőn van, és <span class="emphasis">nincs</span> kijelölve a vonatkozó sor, a fókuszt egy sorral lejjebb helyezi, és ennek a sornak megszűnik a kijelölése.</p>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz olyan cellán van, ami <span class="emphasis">nincs</span> kijelölve, és a sor <span class="emphasis">sincs</span> kijelölve, akkor kijelöli a fókuszban lévő cellát és az alatta lévő cellát. A fókusz a jelenleg fókuszban lévő cella alatti cellára kerül át. </p>
+				<p>Ha a fókusz egy kijelölt cellán van, az alatta lévő cellára helyezi át, és a cellakijelölés kibővül eddig a celláig.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Ha a fókusz egy szerkeszthető cellán (például beviteli mezőn) van, akkor a fölötte lévő cellára helyezi át.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Ha a fókusz egy szerkeszthető cellán (például beviteli mezőn) van, akkor az alatta lévő cellára helyezi át.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz egy cellán van, kijelöli azt a cellát.</p>
+				<p>Ha a fókusz egy cellakijelölési blokkon van, megszünteti a cellák kijelölését.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz egy cellakijelölési blokkon van, akkor a cellakijelölési blokkot sorkijelölésre változtatja. A cellakijelölés megszűnik.</p>
+				<p>A sorkijelölési módtól függően az alábbi történik:</p>
+				<ul>
+					<li>A blokk összes celláját kijelöli (többszörös kijelölés)</li>
+					<li>Csak a jelenleg fókuszban lévő cella sorát jelöli ki (egyszeres kijelölés)</li>
+					<li>Egyik sort sem jelöli ki</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz a táblán belül van, akkor megszünteti a sorok és cellák kijelölését.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha a fókusz a táblán belül van, és cellák vannak kijelölve, akkor megszünteti a cellák kijelölését.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Fókusz átváltása a cella és a tartalma között, ha a cellának vannak interaktív elemei, például egy beviteli mező vagy egy gomb (kivéve írásvédett szövegnél).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Ha a fókusz egy cellán belül van szerkesztési módban, akkor áthelyezi a sorra.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
+				<p>Ha vannak kijelölve cellák, és lenyomja a(z) <kbd>Shift</kbd> + kattintás billentyűkombinációt egy másik cellán, akkor a kijelölés kibővül a kattintott celláig.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>A vágólapra másolja a kijelölt sorokat vagy cellákat (ha van, és engedélyezett ez a funkció).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Beilleszti a vágólap tartalmát, ha engedélyezett ez a funkció.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Megnyitja a változatkezelést.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Bezárja a változatkezelés előugró ablakát.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Egy pozícióval feljebb helyezi az elemet, ha lehetséges.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Egy pozícióval lejjebb helyezi az elemet, ha lehetséges.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Legfelülre helyezi az elemet, ha lehetséges.</p>
+				<p><kbd>End</kbd></p>
+				<p>A végére helyezi az elemet, ha lehetséges.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Egy pozícióval feljebb helyezi az elemet, ha lehetséges.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Egy pozícióval lejjebb helyezi az elemet, ha lehetséges.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Egy pozícióval feljebb helyezi az elemet, ha lehetséges.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Egy pozícióval lejjebb helyezi az elemet, ha lehetséges.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

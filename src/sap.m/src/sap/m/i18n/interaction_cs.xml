@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globální zkratky</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Přesouvá fokus na další buňku ve stejném sloupci nebo řádku v příslušném směru.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Je-li fokus na první řádce, přesune se na řádku hlavičky soupce.</p>
+				<p>Je-li fokus na buňce v první řádce, přesune se fokus na příslušnou hlavičku sloupce.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Je-li fokus na poli <span class="uicontrol">Vybrat vše</span> nebo <span class="uicontrol">Vymazat vše</span>, přesune se na selektor řádek v první viditelné řádce.</p>
+				<p>Je-li fokus na řádce hlavičky sloupce, přesune se na první řádku.</p>
+				<p>Je-li fokus na řádce, přesune se o řádku níže.</p>
+				<p>Je-li fokus na buňce, přesune se o buňku níže.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Je-li fokus na první buňce, přesune se na řádku. Tím se přepne navigace na bázi buňky na navigaci na bázi řádky.</p>
+				<p>Je-li fokus na buňce, přesune se o buňku vlevo. </p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Je-li fokus na řádce, přesune se na první buňku příslušné řádky. Tím se přepne navigace na bázi řádky na navigaci na bázi buňky.</p>
+				<p>Je-li fokus na buňce, přesune se o buňku vpravo. </p>
+				<p><span class="emphasis">Poznámka:</span> Je-li fokus na posledním sloupci a pop-in chování bylo povoleno pro tento sloupec, pop-in oblast je považována za další sloupec vpravo a fokus se přesune na tento sloupec.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Je-li fokus na řádce, přesune se fokus na řádku hlavičky sloupce.</p>
+				<p>Je-li fokus na řádce hlavičky sloupce a tlačítko <span class="uicontrol">Více</span> je dostupné, přesune se fokus na tlačítko <span class="uicontrol">Více</span>.</p>
+				<p>Je-li fokus na řádce hlavičky sloupce a tlačítko <span class="uicontrol">Více</span> <span class="emphasis">není</span> dostupné, přesune se fokus na poslední zaměřenou řádku.</p>
+				<p>Je-li fokus na tlačítku <span class="uicontrol">Více</span>, přesune se fokus na poslední zaměřenou řádku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Je-li fokus na řádce a tlačítko <span class="uicontrol">Více</span> je dostupné, přesune se fokus na tlačítko <span class="uicontrol">Více</span>.</p>
+				<p>Je-li fokus na řádce a tlačítko <span class="uicontrol">Více</span> <span class="emphasis">není</span> dostupné, přesune se fokus na řádku hlavičky sloupce.</p>
+				<p>Je-li fokus na tlačítku <span class="uicontrol">Více</span>, přesune se na řádku hlavičky sloupce.</p>
+				<p>Je-li fokus na řádce hlavičky sloupce, přesune se fokus na poslední zaměřenou řádku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce, zvětší se šířka tohoto sloupce o 1 em. To se opakuje, když klávesa zůstane stisknutá.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka vpravo. Fokus se přemístí na buňku vpravo od zaměřené buňky.</p>
+				<p>Je-li fokus na vybrané buňce, buňka vpravo získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce, zmenší se šířka tohoto sloupce o 1 em. To se opakuje, když klávesa zůstane stisknutá.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka vlevo. Fokus se přemístí na buňku vlevo od zaměřené buňky.</p>
+				<p>Je-li fokus na vybrané buňce, buňka vlevo získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na selektoru buněk nebo řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku odebere.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
+				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku nad ní a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se pro tuto řádku odebere.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou. </p>
+				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku pod ní a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Je-li fokus na editovatelné buňce (například na vstupním poli), přesune se fokus na buňku nad ní.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Je-li fokus na editovatelné buňce (například na vstupním poli), přesune se fokus na buňku pod ní.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, je vybrána zaměřená buňka.</p>
+				<p>Je-li fokus na bloku výběru buněk, výběr buněk se odebere.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na bloku výběru buněk, výběr buněk se změní na výběr řádek. Výběr buněk se odebere.</p>
+				<p>V závislosti na režimu výběru řádek se stane toto:</p>
+				<ul>
+					<li>Vyberou se všechny řádky bloku (vícenásobný výběr)</li>
+					<li>Vybere se jen řádka s aktuálně zaměřenou buňkou (jednotlivý výběr)</li>
+					<li>Nevybere se žádná řádka</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus v tabulce, výběr se pro všechny řádky a buňky odebere.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus v tabulce a buňky jsou vybrány, výběr buněk se odebere.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Přepíná fokus mezi buňkou a jejím obsahem, když má buňka interaktivní prvky, jako jsou vstupní pole nebo tlačítko (s výjimkou textu pouze ke čtení).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Je-li fokus v buňce v režimu úprav, přesune se na řádku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Jsou-li buňky vybrány, stisknutí <kbd>Shift</kbd> a kliknutí na jinou buňku rozšíří výběr až po buňku, na niž se klikne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Zkopíruje vybrané řádky nebo buňky do schránky, pokud je dostupná a tato funkce je aktivována.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Vloží obsah ze schránky, pokud je tato funkce aktivována.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Otevře správu variant.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Zavře překryvné okno chyb správy variant</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Přesune položku o jednu pozici nahoru, je-li dostupná.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Přesune položku o jednu pozici dolů, je-li dostupná.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Přesune položku na začátek, je-li dostupná.</p>
+				<p><kbd>End</kbd></p>
+				<p>Přesune položku na konec, je-li dostupná.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Přesune položku o jednu pozici nahoru, je-li dostupná.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Přesune položku o jednu pozici dolů, je-li dostupná.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Přesune položku o jednu pozici nahoru, je-li dostupná.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Přesune položku o jednu pozici dolů, je-li dostupná.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

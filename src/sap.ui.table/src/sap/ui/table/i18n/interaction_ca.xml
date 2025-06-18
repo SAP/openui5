@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Desplaça el focus a la cel·la següent que hi ha dins de la mateixa columna o fila en les direccions respectives.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Si el focus és a la primera fila, el focus es mou a la capçalera de la columna.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Si el focus és en una capçalera de columna, el focus es mou a la cel·la de la primera fila visible d'aquesta columna, cosa que depèn de la posició de desplaçament actual.</p>
+				<p>Si el focus és a la casella de selecció <span class="uicontrol">Selecciona-ho tot</span>, el focus es mou al selector de files de la primera fila visible, que depèn de la posició de desplaçament actual.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Si el focus és en una cel·la de la primera columna, el focus es mou al selector de files.</p>
+				<p>Si el focus és en una capçalera de columna, el focus es mou a la capçalera de columna de l'esquerra.</p>
+				<p>Si el focus és a la capçalera de la primera columna, el focus es mou a la casella de selecció <span class="uicontrol">Selecciona-ho tot</span>.</p>
+				<p>Si el focus és a la capçalera del grup d'un grup mostrat, el grup s'amaga.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Si el focus és a la capçalera de columna, el focus es mou a la capçalera de columna de la dreta.</p>
+				<p>Si el focus és al selector de fila, el focus es mou a la cel·la de la primera columna dins de la mateixa fila.</p>
+				<p>Si el focus és a la casella de selecció <span class="uicontrol">Selecciona-ho tot</span>, el focus es mou a la capçalera de la primera columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Si el focus és a nivell de cel·la, el focus es mou a la cel·la que es troba a la part superior de la mateixa columna. Si el focus ja és a aquest nivell, el focus es mou una pàgina cap amunt i es manté a la mateixa columna amb el desplaçament necessari.</p>
+				<p>Si el focus és a la primera fila, el focus es mou a la capçalera de la columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Si el focus és a nivell de cel·la, el focus es mou a l'última cel·la visible de la mateixa columna. Si el focus ja és en aquest nivell, es mou una pàgina cap avall i es manté a la mateixa columna amb el desplaçament necessari.</p>
+				<p>Si el focus és a la capçalera de columna, el focus es mou a la primera fila.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Si el focus és a nivell de cel·la o a la capçalera d'una columna, el focus es mou cinc columnes cap a l'esquerra (mida de pàgina per defecte). Si hi ha menys columnes a l'esquerra que la mida de pàgina actual, el focus es mou a la primera columna.</p>
+				<p>Si el focus és a la primera columna a nivell de cel·la, el focus es mou al selector de fila.</p>
+				<p>Si el focus és a la capçalera de la primera columna, el focus es mou a <span class="uicontrol">Selecciona-ho tot</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Si el focus és a nivell de cel·la, el focus es mou cinc columnes cap a la dreta (mida de pàgina per defecte).</p>
+				<p>Si el focus és a la capçalera de la columna i hi ha menys columnes a la dreta que la mida de la pàgina actual, el focus es mou a l'última columna.</p>
+				<p>Si el focus és al selector de files, el focus es mou a la primera columna de la mateixa fila.</p>
+				<p>Si el focus és a <span class="uicontrol">Selecciona-ho tot</span>, el focus es mou a la capçalera de la primera columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Si el focus és a la cel·la, el focus es mou a la primera columna de la mateixa fila.</p>
+				<p>Si el focus és a la cel·la de la primera columna, el focus es mou al selector de files.</p>
+				<p>Si el focus és a la capçalera de la columna, el focus es mou a la capçalera de la primera columna.</p>
+				<p>Si el focus és a la primera capçalera de columna, el focus es mou a <span class="uicontrol">Selecciona-ho tot</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Si el focus és a la capçalera de cel·la o columna, el focus es mou a l'última columna.</p>
+				<p>Si el focus és al selector de files, el focus es mou a la primera columna de la mateixa fila.</p>
+				<p>Si el focus és a <span class="uicontrol">Selecciona-ho tot</span>, el focus es mou a la capçalera de la primera columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Si el focus és a la cel·la, el focus es mou a la capçalera de la columna.</p>
+				<p>Si el focus és al selector de files, el focus es mou a <span class="uicontrol">Selecciona-ho tot</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Si el focus és a la capçalera de cel·la o columna, el focus es mou a l'última fila de la mateixa columna.</p>
+				<p>Si el focus és al selector de fila o a <span class="uicontrol">Selecciona-ho tot</span>, el focus es mou al darrer selector de fila.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Si el focus és a la cel·la, el focus es mou al primer control enfocable de la cel·la.</p>
+				<p>Si el focus és a la casella de selecció <span class="uicontrol">Selecciona-ho tot</span> o a un selector de fila, alterna l'estat de la casella de selecció.</p>
+				<p>Si el focus és a la capçalera de columna, s'obre el menú de la capçalera de columna.</p>
+				<p>Si el focus és a la capçalera del grup, el grup relacionat s'amaga o es mostra.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Si el focus és a la capçalera del grup, s'obre el menú de la capçalera del grup.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és en una cel·la, la cel·la centrada es selecciona.</p>
+				<p>Si el focus és en un bloc de selecció de cel·les, la selecció de les cel·les s'elimina.</p>
+				<p>Si el focus és en una cel·la i la taula té una configuració determinada del comportament de selecció (per seleccionar una fila, podeu seleccionar la fila en si o la casella de selecció si està disponible), només se selecciona la cel·la amb focus en comptes de la fila.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Si el focus és en una cel·la o en el selector de files, això alterna la selecció de la fila actual.</p>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és en un bloc de selecció de cel·les, el bloc de selecció de cel·les es converteix en una selecció de fila. La selecció de cel·les s'elimina.</p>
+				<p>En funció del mode de selecció de files, passarà això:</p>
+				<ul>
+					<li>Se seleccionaran totes les files del bloc (selecció múltiple)</li>
+					<li>Només se seleccionarà la fila que conté la cel·la que té el focus (selecció única)</li>
+					<li>No se seleccionarà cap de les files</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és dins de la taula i hi ha cel·les seleccionades, la selecció de les cel·les es treu.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Canvia el focus entre la cel·la i el seu contingut (tret dels textos de només lectura).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Si el focus és a <span class="uicontrol">Selecciona-ho tot</span> i es prem <kbd>Spacebar</kbd>, l'esdeveniment corresponent no s'activa. <kbd>Shift</kbd> impedeix aquesta activitat.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Si el focus és en una capçalera de columna i es prem <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, l'esdeveniment corresponent no s'activa.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Si el focus és en una cel·la o en el selector de files, i la fila pertinent està seleccionada, el focus es mou a la fila superior i la selecció es realça fins a aquesta fila.</p>
+				<p>Si el focus és en una cel·la o en el selector de files, i la fila pertinent <span class="emphasis">no</span> està seleccionada, el focus es mou a la fila superior i la selecció es treu per a aquesta fila.</p>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la superior. El focus es mou a la cel·la superior a la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, la cel·la superior rep el focus i la selecció de cel·les es millora fins a aquesta cel·la.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Si el focus és en una cel·la o en el selector de files, i la fila pertinent està seleccionada, el focus es mou a la fila inferior i la selecció es realça fins a aquesta fila.</p>
+				<p>Si el focus és en una cel·la o en el selector de files, i la fila pertinent <span class="emphasis">no</span> està seleccionada, el focus es mou a la fila inferior i la selecció es treu per a aquesta fila.</p>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada i la fila <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la inferior. El focus es mou a la cel·la inferior a la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, la cel·la inferior obté el focus i la selecció de cel·les es millora fins a aquesta cel·la.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Si el focus és en una capçalera de columna, l'amplada d'aquesta columna augmenta en 1 em. Això es repeteix si la tecla roman premuda.</p>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la de la dreta. El focus es mou a la cel·la de la dreta de la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, la cel·la de la dreta rep el focus i la selecció de cel·les es millora fins a aquesta cel·la.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Si el focus és en una capçalera de columna, l'amplada d'aquesta columna es redueix en 1 em. Això es repeteix si la tecla es manté premuda.</p>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és en una cel·la que <span class="emphasis">no</span> està seleccionada, se seleccionen la cel·la enfocada i la cel·la de l'esquerra. El focus es mou a la cel·la situada a l'esquerra de la cel·la enfocada.</p>
+				<p>Si el focus és en una cel·la seleccionada, la cel·la de l'esquerra rep el focus i la selecció de cel·les es millora fins a aquesta cel·la.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Si el focus és en una capçalera de columna, la columna pertinent es mou una posició cap a la dreta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Si el focus és en una capçalera de columna, la columna pertinent es mou una posició cap a l'esquerra.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Desplaça el focus a l'element enfocable següent de la fila superior.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Desplaça el focus a l'element enfocable següent de la fila inferior.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Si el focus és en una cel·la, el selector de files o <span class="uicontrol">Selecciona-ho tot</span>, això activa o desactiva la casella de selecció <span class="uicontrol">Selecciona-ho tot</span>: Totes les files es seleccionen o es desseleccionen respectivament.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si el focus és dins de la taula, es treu la selecció de totes les files i cel·les.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Si el focus és en una cel·la, el focus es mou al seu contingut (amb l'excepció d'un text de només lectura).</p>
+				<p>Si el focus és a la capçalera del grup o a un node que no és una fulla d'un arbre, això alterna la mostra del grup: el grup es mostra o s'amaga respectivament.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Si el focus és a la capçalera del grup, s'obre el menú de la capçalera del grup.</p>
+				<p>Si el focus és a la capçalera de columna, s'obre el menú de la capçalera de columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Si la selecció de cel·les està activada:</span></p>
+				<p>Si hi ha cel·les seleccionades, en prémer <kbd>Shift + click</kbd> en una altra cel·la, s'amplia la selecció fins a la cel·la en què s'ha fet clic.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copia les files o cel·les seleccionades al porta-retalls, si està disponible i en cas que la funció estigui activada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Enganxa el contingut del porta-retalls, si la funció està activada.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>اختصارات عامة</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>نقل التركيز إلى الخلية التالية داخل العمود أو الصف نفسه في الاتجاهات المعنية.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>إذا كان التركيز على الصف الأول، ينتقل التركيز إلى صف مقدمة العمود.</p>
+				<p>إذا كان التركيز على خلية من الصف الأول، ينتقل التركيز إلى مقدمة العمود ذي الصلة.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>إذا كان التركيز على خانة الاختيار <span class="uicontrol">تحديد الكل</span> أو <span class="uicontrol">مسح الكل</span>، ينتقل التركيز إلى محدد الصف في الصف المرئي الأول.</p>
+				<p>إذا كان التركيز على صف مقدمة العمود، ينتقل التركيز إلى الصف الأول.</p>
+				<p>إذا كان التركيز على الصف، ينتقل التركيز إلى الصف أدناه.</p>
+				<p>إذا كان التركيز على الخلية، ينتقل التركيز إلى الخلية أدناه.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>إذا كان التركيز على الخلية الأولى، ينتقل التركيز إلى الصف. يتم تبديل هذا من التنقل على أساس الخلية إلى التنقل على أساس الصف.</p>
+				<p>إذا كان التركيز على الخلية، ينتقل التركيز إلى الخلية إلى اليمين.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>إذا كان التركيز على الصف، ينتقل التركيز إلى الخلية الأولى للصف المركَّز حاليًا. يتم تبديل هذا من التنقل على أساس الصف إلى التنقل على أساس الخلية.</p>
+				<p>إذا كان التركيز على الخلية، ينتقل التركيز إلى الخلية إلى اليسار.</p>
+				<p><span class="emphasis">ملاحظة</span>: إذا كان التركيز على العمود الأخير، وتم تمكين سلوك النافذة المنبثقة لهذا العمود، فسيتم التعامل مع منطقة النافذة المنبثقة كعمود إضافي على اليسار، وينتقل التركيز إلى هذا العمود.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>إذا كان التركيز على الصف، ينتقل التركيز إلى صف مقدمة العمود.</p>
+				<p>إذا كان التركيز على صف مقدمة العمود، وكان زر <span class="uicontrol">المزيد</span> متوفرًا، ينتقل التركيز إلى زر <span class="uicontrol">المزيد</span>.</p>
+				<p>إذا كان التركيز على صف مقدمة العمود، و<span class="emphasis">لم</span> يتوفر زر <span class="uicontrol">المزيد</span>، ينتقل التركيز إلى آخر صف تم التركيز عليه. </p>
+				<p>إذا كان التركيز على زر <span class="uicontrol">المزيد</span>، ينتقل التركيز إلى آخر صف تم التركيز عليه.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>إذا كان التركيز على الصف، وكان زر <span class="uicontrol">المزيد</span> متوفرًا، ينتقل التركيز إلى زر <span class="uicontrol">المزيد</span>.</p>
+				<p>إذا كان التركيز على الصف، و<span class="emphasis">لم</span> يكن زر <span class="uicontrol">المزيد</span> متوفرًا، ينتقل التركيز إلى صف مقدمة العمود.</p>
+				<p>إذا كان التركيز على زر <span class="uicontrol">المزيد</span>، ينتقل التركيز إلى صف مقدمة العمود.</p>
+				<p>إذا كان التركيز على صف مقدمة العمود، ينتقل التركيز إلى آخر صف تم التركيز عليه.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>إذا كان التركيز على مقدمة العمود، فسيزيد عرض هذا العمود بمقدار 1‏ em. ويتكرر هذا إذا بقي المفتاح مضغوطًا.</p>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز على خلية <span class="emphasis">غير</span> محددة، فسيتم تحديد الخلية المركَّز عليها والخلية الموجودة على اليسار. ينتقل التركيز إلى الخلية على يسار الخلية المركَّز عليها.</p>
+				<p>إذا كان التركيز على خلية محددة، فسيتم التركيز على الخلية الموجودة على اليسار، ويتم تحسين تحديد الخلية حتى هذه الخلية.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>إذا كان التركيز على مقدمة العمود، فسيقل عرض هذا العمود بمقدار 1‏ em. ويتكرر هذا إذا بقي المفتاح مضغوطًا.</p>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز على خلية <span class="emphasis">غير</span> محددة، فسيتم تحديد الخلية المركَّز عليها والخلية الموجودة على اليمين. ينتقل التركيز إلى الخلية إلى يمين الخلية المركَّز عليها.</p>
+				<p>إذا كان التركيز على خلية محددة، فسيتم التركيز على الخلية الموجودة على اليمين، ويتم تحسين تحديد الخلية حتى هذه الخلية.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>إذا كان التركيز على محدِّد الخلية أو الصف، وتم تحديد الصف ذي الصلة، ينتقل التركيز إلى الصف أعلاه ويتم تحسين التحديد حتى هذا الصف.</p>
+				<p>إذا كان التركيز على محدِد الخلية أو الصف، و<span class="emphasis">لم</span> يتم تحديد الصف ذي الصلة، ينتقل التركيز إلى الصف أعلاه ويتم إزالة التحديد لهذا الصف.</p>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز على خلية <span class="emphasis">غير</span> محددة و<span class="emphasis">لم</span> يتم تحديد الصف، فسيتم تحديد الخلية المركَّز عليها والخلية أعلاه. ينتقل التركيز إلى الخلية أعلى الخلية المركَّز عليها.</p>
+				<p>إذا كان التركيز على خلية محددة، ينتقل التركيز إلى الخلية أعلاه، ويتم تحسين تحديد الخلية حتى هذه الخلية.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>إذا كان التركيز على محدِّد الخلية أو الصف، وتم تحديد الصف ذي الصلة، ينتقل التركيز إلى الصف أدناه ويتم تحسين التحديد حتى هذا الصف.</p>
+				<p>إذا كان التركيز على محدِد الخلية أو الصف، و<span class="emphasis">لم</span> يتم تحديد الصف ذي الصلة، ينتقل التركيز إلى الصف أدناه ويتم إزالة التحديد لهذا الصف.</p>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز على خلية <span class="emphasis">غير</span> محددة و<span class="emphasis">لم يتم</span> تحديد الصف، فسيتم تحديد الخلية المركَّز عليها والخلية أدناه. ينتقل التركيز إلى الخلية أسفل الخلية المركَّز عليها. </p>
+				<p>إذا كان التركيز على خلية محددة، ينتقل التركيز إلى الخلية أدناه، ويتم تحسين تحديد الخلية حتى هذه الخلية.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>إذا كان التركيز على خلية قابلة للتحرير (على سبيل المثال، حقل إدخال)، ينتقل التركيز إلى الخلية أعلاه.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>إذا كان التركيز على خلية قابلة للتحرير (على سبيل المثال، حقل إدخال)، ينتقل التركيز إلى الخلية أدناه.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز على خلية، فسيتم تحديد الخلية المركَّز عليها.</p>
+				<p>إذا كان التركيز على مجموعة تحديد الخلايا، تتم إزالة تحديد الخلايا.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز على مجموعة تحديد خلايا، يتم تغيير مجموعة تحديد الخلية إلى تحديد صف. وتتم إزالة تحديد الخلية.</p>
+				<p>بناءً على نمط تحديد الصف، يحدث ما يلي:</p>
+				<ul>
+					<li>تم تحديد كل صفوف المجموعة (تحديد متعدد)</li>
+					<li>يتم تحديد الصف بالخلية المركَّز عليها حاليًا فقط (تحديد فردي)</li>
+					<li>لم يتم تحديد أي صف من الصفوف</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز داخل الجدول، تتم إزالة التحديد لأي صفوف وخلايا.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية:</span></p>
+				<p>إذا كان التركيز داخل الجدول وتم تحديد الخلايا، فسيتم إزالة تحديد الخلايا.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>تبديل التركيز بين الخلية ومحتواها إذا كانت الخلية تحتوي على عناصر تفاعلية، مثل حقل إدخال أو زر (باستثناء النص للقراءة فقط).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>إذا كان التركيز داخل خلية في نمط التحرير، ينتقل التركيز إلى الصف.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">إذا تم تمكين تحديد الخلية</span>:</p>
+				<p>إذا تم تحديد الخلايا، فإن الضغط على <kbd>Shift</kbd> والنقر فوق خلية مختلفة سيؤدي إلى تحسين التحديد ليشمل حتى الخلية التي تم النقر فوق.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>نسخ الصفوف أو الخلايا المحددة إلى الحافظة، إذا كانت متوفرة وتم تمكين الميزة.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>لصق المحتوى من الحافظة، إذا تم تمكين الميزة.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>فتح إدارة المتغيرات.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>إغلاق الإطار المنبثق للخطأ لإدارة المتغيرات</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>نقل العنصر موضعًا واحدًا لأعلى، إذا كان متوفرًا.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>نقل العنصر موضعًا واحدًا لأسفل، إذا كان متوفرًا.</p>
+				<p><kbd>Home</kbd></p>
+				<p>نقل العنصر إلى الأعلى، إذا كان متوفرًا.</p>
+				<p><kbd>End</kbd></p>
+				<p>نقل العنصر إلى النهاية، إذا كان متوفرًا.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>نقل العنصر موضعًا واحدًا لأعلى، إذا كان متوفرًا.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>نقل العنصر موضعًا واحدًا لأسفل، إذا كان متوفرًا.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>نقل العنصر موضعًا واحدًا لأعلى، إذا كان متوفرًا.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>نقل العنصر موضعًا واحدًا لأسفل، إذا كان متوفرًا.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

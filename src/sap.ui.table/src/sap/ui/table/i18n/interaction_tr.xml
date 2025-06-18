@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Odağı, ilgili yönlerde aynı sütun veya satır içindeki bir sonraki hücreye taşır.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Odak ilk satırdaysa sütun başlığına taşınır.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Odak sütun başlığındaysa geçerli kaydırma konumuna bağlı olarak bu sütunun ilk görünür satırındaki hücreye taşınır.</p>
+				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa geçerli kaydırma konumuna bağlı olarak ilk görünür satırın satır seçicisine taşınır.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Odak ilk sütundaki hücredeyse satır seçiciye taşınır.</p>
+				<p>Odak sütun başlığındaysa soldaki sütun başlığına taşınır.</p>
+				<p>Odak ilk sütunun sütun başlığındaysa <span class="uicontrol">Tümünü seç</span> onay kutusuna taşınır. </p>
+				<p>Odak genişletilmiş grubun grup başlığındaysa grup daraltılır.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Odak sütun başlığındaysa sağdaki sütun başlığına taşınır.</p>
+				<p>Odak satır seçicideyse aynı satırdaki ilk sütunun hücresine taşınır.</p>
+				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa ilk sütunun sütun başlığına taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Odak hücre düzeyindeyse aynı sütunun en üst hücresine taşınır. Odak zaten o düzeydeyse bir sayfa yukarı taşınır ve gerekli kaydırma ile aynı sütunda kalır.</p>
+				<p>Odak ilk satırdaysa sütun başlığına taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Odak hücre düzeyindeyse aynı sütunun en son görünür hücresine taşınır. Odak zaten o düzeydeyse bir sayfa yukarı aşağı ve gerekli kaydırma ile aynı sütunda kalır.</p>
+				<p>Odak sütun başlığındaysa ilk satıra taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Odak hücre düzeyindeyse veya sütun başlığındaysa sola doğru beş sütun taşınır (varsayılan sayfa boyutu). Solda geçerli sayfa boyutundan daha az sütun varsa, odak ilk sütuna gider.</p>
+				<p>Odak hücre düzeyinde ilk sütundaysa satır seçiciye taşınır.</p>
+				<p>Odak ilk sütunun sütun başlığındaysa <span class="uicontrol">Tümünü seç</span>'e taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Odak hücre düzeyindeyse odak beş sütun sağa taşınır (varsayılan sayfa boyutu).</p>
+				<p>Odak sütun başlığındaysa ve sağ tarafta geçerli sayfa boyutundan daha az sütun varsa, odak son sütuna gider.</p>
+				<p>Odak satır seçicideyse aynı satırdaki ilk sütuna taşınır.</p>
+				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa ilk sütunun başlığına taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Odak hücredeyse aynı satırdaki ilk sütuna taşınır.</p>
+				<p>Odak ilk sütundaki hücredeyse satır seçiciye taşınır.</p>
+				<p>Odak sütun başlığındaysa ilk sütunun başlığına taşınır.</p>
+				<p>Odak ilk sütunun sütun başlığındaysa <span class="uicontrol">Tümünü seç</span>'e taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Odak hücredeyse veya sütun başlığındaysa son sütuna taşınır.</p>
+				<p>Odak satır seçicideyse aynı satırdaki ilk sütuna taşınır.</p>
+				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa ilk sütunun başlığına taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Odak hücredeyse sütun başlığına taşınır.</p>
+				<p>Odak satır seçicideyse <span class="uicontrol">Tümünü seç</span>'e taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Odak hücredeyse veya sütun başlığındaysa aynı sütundaki son satıra taşınır.</p>
+				<p>Odak satır seçicideyse <span class="uicontrol">Tümünü seç</span> onay kutusundaysa son satır seçiciye taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Odak hücredeyse hücredeki ilk odaklanılabilir kontrole taşınır.</p>
+				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa veya satır seçicideyse onay kutusu durumu değişir. </p>
+				<p>Odak sütun başlığındaysa sütun başlığı menüsü açılır.</p>
+				<p>Odak grup başlığındaysa grup daraltılır veya genişletilir.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Odak grup başlığındaysa grup başlığı menüsü açılır.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak hücredeyse odaklanılan hücre seçilir.</p>
+				<p>Odak hücre seçim bloğundaysa hücrelerin seçimi kaldırılır.</p>
+				<p>Odak bir hücre üzerindeyse ve tablo seçim davranışının belirli bir yapılandırmasına sahipse (bir satırı seçmek için ya satırın kendisini ya da varsa seçim onay kutusunu seçebilirsiniz) satır yerine yalnızca odaklanılan hücre seçilir.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Odak hücre veya satır seçicideyse bu, mevcut satırın seçimini değiştir.</p>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak hücre seçim bloğundaysa hücre seçim bloğu satır seçimi olarak değiştirilir. Hücre seçimi kaldırılır.</p>
+				<p>Satır seçim moduna bağlı olarak aşağıdakiler gerçekleşir:</p>
+				<ul>
+					<li>Bloğun tüm satırları seçilir (çoklu seçim)</li>
+					<li>Yalnızca o anda odaklanılan hücrenin bulunduğu satır seçilir (tek seçim)</li>
+					<li>Satırların hiçbiri seçilmez</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak tablonun içindeyse ve hücreler seçiliyse hücrelerin seçimi kaldırılır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Odağı hücre ile içeriği arasında değiştirir (salt okunur metin hariç).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Odak <span class="uicontrol">Tümünü seç</span> üzerindeyse ve <kbd>Spacebar</kbd> öğesine basılırsa ilgili olay tetiklenmez. <kbd>Shift</kbd> bu aktiviteyi engeller.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Odak sütun başlığındaysa ve <kbd>Spacebar</kbd> veya <kbd>Enter</kbd> öğesine basılmışsa ilgili olay tetiklenmez.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Odak hücre veya satır seçicideyse ve ilgili satır seçilirse odak bir üst satıra taşınır ve seçim bu satıra kadar genişletilir.</p>
+				<p>Odak hücre veya satır seçicideyse ve ilgili satır <span class="emphasis">seçilmediyse</span> odak bir üst satıra taşınır ve bu satırın seçimi kaldırılır.</p>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak seçili <span class="emphasis">olmayan</span> hücredeyse ve satır <span class="emphasis">seçilmediyse</span> odaklanılan hücre ve üstündeki hücre seçilir. Odak, odaklanılan hücrenin üstündeki hücreye taşınır.</p>
+				<p>Odak seçili bir hücredeyse yukarıdaki hücre odağı alır ve hücre seçimi bu hücreye kadar genişletilir.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Odak hücre veya satır seçicideyse ve ilgili satır seçilirse odak bir alt satıra taşınır ve seçim bu satıra kadar genişletilir.</p>
+				<p>Odak hücre veya satır seçicideyse ve ilgili satır <span class="emphasis">seçilmediyse</span> odak bir alt satıra taşınır ve bu satırın seçimi kaldırılır.</p>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak seçili <span class="emphasis">olmayan</span> hücredeyse ve satır <span class="emphasis">seçilmediyse</span> odaklanılan hücre ve altındaki hücre seçilir. Odak, odaklanılan hücrenin altındaki hücreye taşınır.</p>
+				<p>Odak seçili bir hücredeyse alttaki hücre odağı alır ve hücre seçimi bu hücreye kadar genişletilir.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Odak sütun başlığındaysa bu sütunun genişliği 1 em artırılır. Tuş basılı tutulduğunda bu işlem tekrarlanır.</p>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak seçili <span class="emphasis">olmayan</span> hücredeyse odaklanılan hücre ve sağındaki hücre seçilir. Odak, odaklanılan hücrenin sağındaki hücreye taşınır.</p>
+				<p>Odak seçili bir hücredeyse sağdaki hücre odağı alır ve hücre seçimi bu hücreye kadar genişletilir.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Odak sütun başlığındaysa bu sütunun genişliği 1 em azaltılır. Tuş basılı tutulduğunda bu işlem tekrarlanır.</p>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak seçili <span class="emphasis">olmayan</span> hücredeyse odaklanılan hücre ve solundaki hücre seçilir. Odak, odaklanılan hücrenin solundaki hücreye taşınır.</p>
+				<p>Odak seçili bir hücredeyse soldaki hücre odağı alır ve hücre seçimi bu hücreye kadar genişletilir.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Odak sütun başlığındaysa ilgili sütun bir konum sağa taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Odak sütun başlığındaysa ilgili sütun bir konum sola taşınır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Odağı yukarıdaki satırda bir sonraki odaklanılabilir öğeye taşır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Odağı aşağıdaki satırda bir sonraki odaklanılabilir öğeye taşır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Odak hücredeyse, satır seçicideyse veya <span class="uicontrol">Tümünü seç</span> üzerindeyse bu, <span class="uicontrol">Tümünü seç</span> onay kutusunu şu şekilde değiştirir: Tüm satırlar sırasıyla seçilir veya seçimleri kaldırılır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Odak tablonun içindeyse tüm satır ve hücreler için seçim kaldırılır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Odak hücredeyse içeriğine taşınır (salt okunur metin hariç).</p>
+				<p>Odak grup başlığında veya bir ağacın yaprak olmayan bir düğümündeyse bu, grubun genişletilmesini değiştirir: Grup sırasıyla genişletilir veya daraltılır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Odak grup başlığındaysa grup başlığı menüsü açılır.</p>
+				<p>Odak sütun başlığındaysa sütun başlığı menüsü açılır.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Hücre seçimi etkinleştirildiyse:</span></p>
+				<p>Hücreler seçiliyse, farklı bir hücre üzerinde <kbd>Shift + click</kbd>, seçimi tıklanan hücreye kadar genişletir.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Varsa ve özellik etkinleştirilmişse seçilen satırları veya hücreleri panoya kopyalar.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Özellik etkinleştirilmişse içeriği panodan yapıştırır.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

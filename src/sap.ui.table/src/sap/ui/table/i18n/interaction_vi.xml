@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Di chuyển tiêu điểm đến ô tiếp theo trong cùng cột hoặc hàng theo hướng tương ứng.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên hàng đầu tiên, tiêu điểm sẽ di chuyển đến tiêu đề cột.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, tiêu điểm sẽ di chuyển đến ô trong hàng hiển thị đầu tiên của cột này, phụ thuộc vào vị trí cuộn hiện tại.</p>
+				<p>Nếu tiêu điểm đang ở trên ô đánh dấu <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ di chuyển đến bộ chọn hàng trong hàng hiển thị đầu tiên, phụ thuộc vào vị trí cuộn hiện tại.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên một ô trong cột đầu tiên, tiêu điểm sẽ di chuyển đến bộ chọn hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, tiêu điểm sẽ di chuyển đến tiêu đề cột bên trái.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột của cột đầu tiên, tiêu điểm sẽ di chuyển đến ô đánh dấu <span class="uicontrol">Chọn tất cả</span>.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề nhóm của một nhóm được mở rộng thì nhóm sẽ được thu gọn.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, tiêu điểm sẽ di chuyển đến tiêu đề cột bên phải.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng, tiêu điểm sẽ di chuyển đến ô của cột đầu tiên trong cùng hàng. </p>
+				<p>Nếu tiêu điểm đang ở trên ô đánh dấu <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ di chuyển đến tiêu đề cột của cột đầu tiên.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Nếu tiêu điểm đang ở cấp độ ô, tiêu điểm sẽ di chuyển đến ô ở trên cùng của cùng cột. Nếu tiêu điểm đã ở cấp đó, tiêu điểm sẽ di chuyển lên một trang và giữ nguyên ở cùng một cột với thao tác cuộn cần thiết.</p>
+				<p>Nếu tiêu điểm đang ở trên hàng đầu tiên, tiêu điểm sẽ di chuyển đến tiêu đề cột.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên cấp độ ô, tiêu điểm sẽ di chuyển đến ô hiển thị cuối cùng trong cùng cột. Nếu tiêu điểm đã ở cấp đó, nó sẽ di chuyển xuống một trang và giữ nguyên ở cùng một cột với thao tác cuộn cần thiết.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, tiêu điểm sẽ di chuyển đến hàng đầu tiên.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên cấp độ ô hoặc ở trên tiêu đề cột, tiêu điểm sẽ di chuyển sang trái năm cột (kích thước trang mặc định). Nếu số cột bên trái ít hơn kích thước trang hiện tại thì tiêu điểm sẽ di chuyển đến cột đầu tiên.</p>
+				<p>Nếu tiêu điểm đang ở trên cột đầu tiên tại cấp độ ô, tiêu điểm sẽ di chuyển đến bộ chọn hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột của cột đầu tiên, tiêu điểm sẽ di chuyển đến <span class="uicontrol">Chọn tất cả</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên cấp độ ô, tiêu điểm sẽ di chuyển sang phải năm cột (kích thước trang mặc định).</p>
+				<p>Nếu tiêu điểm đang ở tiêu đề cột và số cột bên phải ít hơn kích thước trang hiện tại, tiêu điểm sẽ di chuyển đến cột cuối cùng. </p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng, tiêu điểm sẽ di chuyển đến cột đầu tiên trong cùng hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ di chuyển đến tiêu đề của cột đầu tiên.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên ô, tiêu điểm sẽ di chuyển đến cột đầu tiên trong cùng hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên ô trong cột đầu tiên, tiêu điểm sẽ di chuyển đến bộ chọn hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, tiêu điểm sẽ di chuyển đến tiêu đề của cột đầu tiên.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề của cột đầu tiên, tiêu điểm sẽ di chuyển đến <span class="uicontrol">Chọn tất cả</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột hoặc ô, tiêu điểm sẽ di chuyển đến cột cuối cùng.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng, tiêu điểm sẽ di chuyển đến cột đầu tiên trong cùng hàng.</p>
+				<p>Nếu tiêu điểm đang ở trên <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ di chuyển đến tiêu đề của cột đầu tiên.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên ô, tiêu điểm sẽ di chuyển đến tiêu đề cột.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng, tiêu điểm sẽ di chuyển đến <span class="uicontrol">Chọn tất cả</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột hoặc ô, tiêu điểm sẽ di chuyển đến hàng cuối cùng trong cùng cột.</p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ di chuyển đến bộ chọn hàng cuối cùng.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên ô, tiêu điểm sẽ di chuyển đến kiểm soát ô có thể lấy tiêu điểm đầu tiên trong ô.</p>
+				<p>Nếu tiêu điểm đang ở trên ô đánh dấu <span class="uicontrol">Chọn tất cả</span> hoặc bộ chọn hàng, hệ thống sẽ đảo trạng thái của ô đánh dấu.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, trình đơn tiêu đề cột sẽ được mở.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề nhóm, nhóm liên quan sẽ được thu gọn hoặc mở rộng.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề nhóm, trình đơn tiêu đề nhóm sẽ được mở.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên ô, ô được lấy tiêu điểm sẽ được chọn. </p>
+				<p>Nếu tiêu điểm đang ở trên khối lựa chọn ô, lựa chọn ô sẽ bị loại bỏ.</p>
+				<p>Nếu tiêu điểm đang ở trên một ô và bảng có cấu hình hành vi lựa chọn nhất định (để chọn một hàng, bạn có thể chọn hàng đó hoặc ô đánh dấu nếu có), chỉ ô được lấy tiêu điểm sẽ được chọn thay vì cả hàng.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc ô, thao tác này sẽ đảo trạng thái lựa chọn của hàng hiện tại.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên khối lựa chọn ô, khối lựa chọn ô sẽ được chuyển thành lựa chọn hàng. Lựa chọn ô bị loại bỏ.</p>
+				<p>Tùy thuộc vào chế độ lựa chọn hàng, những điều sau sẽ xảy ra:</p>
+				<ul>
+					<li>Tất cả các hàng trong khối sẽ được chọn (đa lựa chọn)</li>
+					<li>Chỉ hàng có ô hiện đang được lấy tiêu điểm sẽ được chọn (lựa chọn đơn)</li>
+					<li>Không có hàng nào được chọn</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm nằm bên trong bảng và các ô được chọn, lựa chọn ô sẽ bị loại bỏ.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Đảo trạng thái tiêu điểm giữa ô và nội dung của nó (ngoại trừ văn bản chỉ đọc).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Nếu tiêu điểm đang ở <span class="uicontrol">Chọn tất cả</span>, và <kbd>Spacebar</kbd> được nhấn, sự kiện tương ứng không được kích hoạt. <kbd>Shift</kbd> ngăn chặn hoạt động này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột và <kbd>Spacebar</kbd> hoặc <kbd>Enter</kbd> được nhấn, sự kiện tương ứng sẽ không được kích hoạt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một bộ chọn hàng hoặc ô và hàng liên quan được chọn, tiêu điểm sẽ di chuyển đến hàng phía trên và lựa chọn sẽ được mở rộng đến hàng này.</p>
+				<p>Nếu tiêu điểm đang ở một bộ chọn hàng hoặc ô và hàng liên quan <span class="emphasis">chưa</span> được chọn, tiêu điểm sẽ di chuyển đến hàng phía trên và lựa chọn sẽ bị loại bỏ cho hàng này.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên ô <span class="emphasis">chưa</span> được chọn và hàng cũng <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô phía trên sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô phía trên của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô được chọn, ô phía trên sẽ nhận tiêu điểm và lựa chọn ô sẽ được mở rộng đến ô đó.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một bộ chọn hàng hoặc ô và hàng liên quan được chọn, tiêu điểm sẽ di chuyển đến hàng bên dưới và lựa chọn sẽ được mở rộng đến hàng này.</p>
+				<p>Nếu tiêu điểm đang ở một bộ chọn hàng hoặc ô và hàng liên quan <span class="emphasis">chưa</span> được chọn, tiêu điểm sẽ di chuyển đến hàng bên dưới và lựa chọn sẽ bị loại bỏ cho hàng này.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên ô <span class="emphasis">chưa</span> được chọn và hàng cũng <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên dưới sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên dưới của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô được chọn, ô bên dưới sẽ nhận tiêu điểm và lựa chọn ô sẽ được mở rộng đến ô đó.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một tiêu đề cột, chiều rộng của cột này sẽ tăng thêm 1 em. Điều này được lặp lại nếu phím vẫn được nhấn.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên một ô <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên phải sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên phải của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô được chọn, ô bên phải sẽ nhận tiêu điểm và lựa chọn ô sẽ được mở rộng đến ô này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một tiêu đề cột, chiều rộng của cột này sẽ giảm 1 em. Điều này được lặp lại nếu phím vẫn được nhấn.</p>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm đang ở trên một ô <span class="emphasis">chưa</span> được chọn, ô được lấy tiêu điểm và ô bên trái sẽ được chọn. Tiêu điểm sẽ di chuyển đến ô bên trái của ô được lấy tiêu điểm.</p>
+				<p>Nếu tiêu điểm đang ở trên ô được chọn, ô bên trái sẽ nhận tiêu điểm và lựa chọn ô sẽ được mở rộng đến ô này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, cột liên quan sẽ di chuyển sang phải một vị trí.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, cột liên quan sẽ di chuyển sang trái một vị trí.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Di chuyển tiêu điểm đến yếu tố có thể lấy tiêu điểm tiếp theo trong hàng phía trên.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Di chuyển tiêu điểm đến yếu tố có thể lấy tiêu điểm tiếp theo trong hàng phía dưới.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một ô, bộ chọn hàng hoặc <span class="uicontrol">Chọn tất cả</span>, thao tác này sẽ đảo trạng thái của ô đánh dấu <span class="uicontrol">Chọn tất cả</span>: Tất cả các hàng sẽ được chọn hoặc bỏ chọn tương ứng.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu tiêu điểm nằm bên trong bảng, lựa chọn bất kỳ hàng hoặc ô nào sẽ bị loại bỏ.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên một ô, tiêu điểm sẽ di chuyển đến nội dung của ô đó (ngoại trừ văn bản chỉ đọc). </p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề nhóm hoặc nút không phải nút cuối của cây, thao tác này sẽ đảo trạng thái mở rộng của nhóm: Nhóm sẽ được mở rộng hoặc thu gọn tương ứng.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề nhóm, trình đơn tiêu đề nhóm sẽ được mở.</p>
+				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, trình đơn tiêu đề cột sẽ được mở.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
+				<p>Nếu các ô đang được chọn, <kbd>Shift + click</kbd> trên một ô khác sẽ mở rộng phạm vi chọn đến ô được nhấp.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Sao chép các hàng hoặc ô đã chọn vào clipboard nếu có sẵn, và tính năng này được bật. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Dán nội dung từ clipboard nếu tính năng này được bật.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

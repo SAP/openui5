@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Pomjera fokus na sljedeću ćeliju u istoj koloni ili redu u odgovarajućim smjerovima.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ako je fokus na prvom redu, fokus se pomjera na zaglavlje kolone.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ako je fokus na zaglavlju kolone, fokus se pomjera na ćeliju u prvom vidljivom redu ove kolone, što zavisi od trenutne pozicije pomjeranja.</p>
+				<p>Ako je fokus na kvadratiću za potvrdu <span class="uicontrol">Odaberi sve</span>, fokus se pomjera na selektor reda u prvom vidljivom redu, što zavisi od trenutne pozicije pomjeranja.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ako je fokus na ćeliji u prvoj koloni, fokus se pomjera na selektor reda.</p>
+				<p>Ako je fokus na zaglavlju kolone, fokus se pomjera na zaglavlje kolone s lijeve strane.</p>
+				<p>Ako je fokus na zaglavlju kolone prve kolone, fokus se pomjera na kvadratić za potvrdu <span class="uicontrol">Odaberi sve</span>.</p>
+				<p>Ako je fokus na zaglavlju grupe proširene grupe, grupa se sažima.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ako je fokus na zaglavlju kolone, fokus se pomjera na zaglavlje kolone s desne strane.</p>
+				<p>Ako je fokus na selektoru reda, fokus se pomjera na ćeliju prve kolone u istom redu.</p>
+				<p>Ako je fokus na kvadratiću za potvrdu <span class="uicontrol">Odaberi sve</span>, fokus se pomjera na zaglavlje kolone prve kolone.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Ako je fokus na nivou ćelije, fokus se pomjera na ćeliju na samom vrhu iste kolone. Ako je fokus već na tom nivou, fokus se pomjera jednu stranicu naviše i ostaje na istoj koloni uz obavezno pomjeranje.</p>
+				<p>Ako je fokus na prvom redu, fokus se pomjera na zaglavlje kolone.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Ako je fokus na nivou ćelije, fokus se pomjera na posljednju vidljivu ćeliju u istoj koloni. Ako je fokus već na tom nivou, on se pomjera jednu stranicu naniže i ostaje na istoj koloni uz obavezno pomjeranje.</p>
+				<p>Ako je fokus na zaglavlju kolone, fokus se pomjera na prvi red.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Ako je fokus na nivou ćelije ili na zaglavlju kolone, fokus se pomjera pet kolona ulijevo (standardna veličina stranice). Ako je s lijeve strane manje kolona u odnosu na trenutnu veličinu stranice, fokus se pomjera na prvu kolonu.</p>
+				<p>Ako je fokus na prvoj koloni na nivou ćelije, fokus se pomjera na selektor reda.</p>
+				<p>Ako je fokus na zaglavlju kolone prve kolone, fokus se pomjera na <span class="uicontrol">Odaberi sve</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Ako je fokus na nivou ćelije, fokus se pomjera pet kolona nadesno (standardna veličina stranice).</p>
+				<p>Ako je fokus na zaglavlju kolone i s desne strane je manje kolona u odnosu na trenutnu veličinu stranice, fokus se pomjera na posljednju kolonu.</p>
+				<p>Ako je fokus na selektoru reda, fokus se pomjera na prvu kolonu u istom redu.</p>
+				<p>Ako je fokus na <span class="uicontrol">Odaberi sve</span>, fokus se pomjera na zaglavlje prve kolone.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Ako je fokus na ćeliji, fokus se pomjera na prvu kolonu u istom redu.</p>
+				<p>Ako je fokus na ćeliji u prvoj koloni, fokus se pomjera na selektor reda.</p>
+				<p>Ako je fokus na zaglavlju kolone, fokus se pomjera na zaglavlje prve kolone.</p>
+				<p>Ako je fokus na zaglavlju prve kolone, fokus se pomjera na <span class="uicontrol">Odaberi sve</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Ako je fokus na zaglavlju reda ili kolone, fokus se pomjera na posljednju kolonu.</p>
+				<p>Ako je fokus na selektoru reda, fokus se pomjera na prvu kolonu u istom redu.</p>
+				<p>Ako je fokus na <span class="uicontrol">Odaberi sve</span>, fokus se pomjera na zaglavlje prve kolone.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Ako je fokus na ćeliji, fokus se pomjera na zaglavlje kolone.</p>
+				<p>Ako je fokus na selektoru reda, fokus se pomjera na <span class="uicontrol">Odaberi sve</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Ako je fokus na zaglavlju reda ili kolone, fokus se pomjera na posljednji red u istoj koloni.</p>
+				<p>Ako je fokus na selektoru reda ili na <span class="uicontrol">Odaberi sve</span>, fokus se pomjera na posljednji selektor reda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Ako je fokus na ćeliji, fokus se pomjera na prvu kontrolu na koju se može fokusirati u ćeliji.</p>
+				<p>Ako je fokus na kvadratiću za potvrdu <span class="uicontrol">Odaberi sve</span> ili selektoru reda, ovo prebacuje status kvadratića za potvrdu.</p>
+				<p>Ako je fokus na zaglavlju kolone, otvara se meni zaglavlja kolone.</p>
+				<p>Ako je fokus na zaglavlju grupe, povezana grupa se sažima ili proširuje.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Ako je fokus na zaglavlju grupe, otvara se meni zaglavlja grupe.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus na ćeliji, bira se ćelija u fokusu.</p>
+				<p>Ako je fokus na bloku odabira ćelija, odabir ćelija se uklanja.</p>
+				<p>Ako je fokus na ćeliji i tabela ima određenu konfiguraciju ponašanja odabira (da biste odabrali red, možete odabrati sam red ili kvadratić za potvrdu odabira ako je dostupan), umjesto reda bira se samo ćelija u fokusu.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Ako je fokus na selektoru ćelije ili reda, ovo prebacuje odabir trenutnog reda.</p>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus na bloku odabira ćelija, blok odabira ćelija se mijenja u odabir reda. Odabir ćelija se uklanja.</p>
+				<p>U zavisnosti od načina odabira reda dešava se sljedeće:</p>
+				<ul>
+					<li>Odabrani su svi redovi bloka (višestruki odabir)</li>
+					<li>Odabran je samo red s ćelijom koja je trenutno u fokusu (pojedinačni odabir)</li>
+					<li>Nije odabran nijedan red</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus unutar tabele i ćelije su odabrane, odabir ćelija se uklanja.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Prebacuje fokus između ćelije i njenog sadržaja (sa izuzetkom teksta koji je samo za čitanje).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Ako je fokus na <span class="uicontrol">Odaberi sve</span> i pritisne se <kbd>Spacebar</kbd>, odgovarajući događaj se ne pokreće. <kbd>Shift</kbd> spriječava ovu aktivnost.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Ako je fokus na zaglavlju kolone i <kbd>Spacebar</kbd> ili se pritisne <kbd>Enter</kbd>, odgovarajući događaj se ne pokreće.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ako je fokus na selektoru ćelije ili reda i odabran je relevantni red, fokus se pomjera na red iznad, a odabir se proširuje do ovog reda.</p>
+				<p>Ako je fokus na selektoru ćelije ili reda, a relevantni red <span class="emphasis">nije</span> odabran, fokus se pomjera na red iznad, a odabir se uklanja iz ovog reda.</p>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana i redu koji <span class="emphasis">nije</span> odabran, biraju se ćelija u fokusu i ćelija iznad. Fokus se pomjera na ćeliju iznad ćelije koja je u fokusu.</p>
+				<p>Ako je fokus na odabranoj ćeliji, ćelija iznad se stavlja u fokus, a odabir ćelija se proširuje do ove ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ako je fokus na selektoru ćelije ili reda i odabran je relevantni red, fokus se pomjera na red ispod, a odabir se proširuje do ovog reda.</p>
+				<p>Ako je fokus na selektoru ćelije ili reda, a relevantni red <span class="emphasis">nije</span> odabran, fokus se pomjera na red ispod, a odabir se uklanja iz ovog reda.</p>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana i redu koji <span class="emphasis">nije</span> odabran, biraju se ćelija u fokusu i ćelija ispod. Fokus se pomjera na ćeliju ispod ćelije koja je u fokusu.</p>
+				<p>Ako je fokus na odabranoj ćeliji, ćelija ispod se stavlja u fokus, a odabir ćelija se proširuje do ove ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ako je fokus na zaglavlju kolone, širina ove kolone se povećava za 1 em. To se ponavlja ako taster ostane pritisnut.</p>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana, biraju se ćelija u fokusu i ćelija s desne strane. Fokus se pomjera na ćeliju s desne strane ćelije koja je u fokusu.</p>
+				<p>Ako je fokus na odabranoj ćeliji, ćelija s desne strane se stavlja u fokus, a odabir ćelija se proširuje do ove ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ako je fokus na zaglavlju kolone, širina ove kolone se smanjuje za 1 em. To se ponavlja ako taster ostane pritisnut.</p>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana, biraju se ćelija u fokusu i ćelija s lijeve strane. Fokus se pomjera na ćeliju s lijeve strane ćelije koja je u fokusu.</p>
+				<p>Ako je fokus na odabranoj ćeliji, ćelija s lijeve strane se stavlja u fokus, a odabir ćelija se proširuje do ove ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Ako je fokus na zaglavlju kolone, relevantna kolona se pomjera za jednu poziciju nadesno.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Ako je fokus na zaglavlju kolone, relevantna kolona se pomjera za jednu poziciju nalijevo.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Pomjera fokus na sljedeći element na koji se može fokusirati u redu iznad.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Pomjera fokus na sljedeći element na koji se može fokusirati u redu ispod.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Ako je fokus na ćeliji, selektoru reda ili na <span class="uicontrol">Odaberi sve</span>, ovo prebacuje kvadratić za potvrdu <span class="uicontrol">Odaberi sve</span>: Biraju se svi redovi, odnosno poništava odabir svih redova.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako je fokus unutar tabele, odabir bilo kojih redova i kolona se uklanja.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Ako je fokus na ćeliji, fokus se pomjera na njen sadržaj ( uz izuzetak teksta samo za čitanje).</p>
+				<p>Ako je fokus na zaglavlju grupe ili čvoru koji nije krajnji čvor stabla, ovo prebacuje proširenje grupe: Grupa se proširuje ili sažima shodno tome.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Ako je fokus na zaglavlju grupe, otvara se meni zaglavlja grupe.</p>
+				<p>Ako je fokus na zaglavlju kolone, otvara se meni zaglavlja kolone.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
+				<p>Ako su ćelije odabrane, <kbd>Shift + click</kbd> na drugoj ćeliji proširuje odabir do ćelije na koju je kliknuto.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopira odabrane redove ili ćelije u prelaznu memoriju, ako je dostupno i ako je funkcija aktivirana.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Lijepi sadržaj iz prijelazne memorije, ako je funkcija aktivirana.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

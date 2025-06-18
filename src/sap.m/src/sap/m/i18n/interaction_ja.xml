@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>グローバルショートカット</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>フォーカスを同じ列または行内の次のセルにそれぞれの方向で移動します。</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>フォーカスが最初の行にある場合、そのフォーカスは列ヘッダ行に移動します。</p>
+				<p>フォーカスが最初の行のセルにある場合、フォーカスは関連する列ヘッダに移動します。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>フォーカスが<span class="uicontrol">すべて選択</span>または<span class="uicontrol">すべてクリア</span>チェックボックスにある場合、フォーカスは最初の表示行の行セレクタに移動します。</p>
+				<p>フォーカスが列ヘッダ行にある場合、そのフォーカスは最初の行に移動します。</p>
+				<p>フォーカスが行にある場合、フォーカスは下の行に移動します。</p>
+				<p>フォーカスがセルにある場合、フォーカスは下のセルに移動します。</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>フォーカスが最初のセルにある場合、フォーカスは行に移動します。これにより、セルベースのナビゲーションが行ベースのナビゲーションに切り替わります。</p>
+				<p>フォーカスがセルにある場合、フォーカスは左のセルに移動します。</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>フォーカスが行にある場合、フォーカスは現在フォーカスされている行の最初のセルに移動します。これにより、行ベースのナビゲーションがセルベースのナビゲーションに切り替わります。</p>
+				<p>フォーカスがセルにある場合、フォーカスは右のセルに移動します。</p>
+				<p><span class="emphasis">注記:</span> フォーカスが最後の列にあり、この列に対してポップイン動作が有効化されている場合、ポップイン領域は右側の追加列のように扱われ、フォーカスはこの列に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>フォーカスが行にある場合、フォーカスは列ヘッダ行に移動します。</p>
+				<p>フォーカスが列ヘッダ行にあり、<span class="uicontrol">追加</span>ボタンが利用可能である場合、フォーカスは<span class="uicontrol">追加</span>ボタンに移動します。</p>
+				<p>フォーカスが列ヘッダ行にあり、<span class="uicontrol">追加</span>ボタンが利用可能では<span class="emphasis">ない</span>場合、フォーカスは最後のフォーカスされた行に移動します。</p>
+				<p>フォーカスが<span class="uicontrol">追加</span>ボタンにある場合、フォーカスは最後のフォーカスされた行に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>フォーカスが行にあり、<span class="uicontrol">追加</span>ボタンが利用可能である場合、フォーカスは<span class="uicontrol">追加</span>ボタンに移動します。</p>
+				<p>フォーカスが行にあり、<span class="uicontrol">追加</span>ボタンが利用可能では<span class="emphasis">ない</span>場合、フォーカスは列ヘッダ行に移動します。</p>
+				<p>フォーカスが<span class="uicontrol">追加</span>ボタンにある場合、フォーカスは列ヘッダ行に移動します。</p>
+				<p>フォーカスが列ヘッダ行にある場合、フォーカスは最後のフォーカスされた行に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>フォーカスが列ヘッダにある場合、この列の幅は 1 em 増加します。これは、キーを押したままにすると繰り返されます。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>選択<span class="emphasis">されていない</span>セルにフォーカスがある場合、フォーカスがあるセルとその右のセルが選択されます。フォーカスは、フォーカスがあるセルの右のセルに移ります。</p>
+				<p>選択したセルにフォーカスがあり、そのセルの右のセルにフォーカスが移る場合、セル選択がこのセルまで拡大されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>フォーカスが列ヘッダにある場合、この列の幅は 1 em 減らされます。これは、キーを押したままにすると繰り返されます。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>選択<span class="emphasis">されていない</span>セルにフォーカスがある場合、フォーカスがあるセルとその左のセルが選択されます。フォーカスは、フォーカスがあるセルの左のセルに移ります。</p>
+				<p>選択したセルにフォーカスがあり、左のセルにフォーカスが移る場合、セル選択はこのセルまで拡大されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択されている場合、そのフォーカスは上の行に移動し、選択範囲がこの行まで拡大されます。</p>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択<span class="emphasis">されていない</span>場合、フォーカスは上の行に移り、この行の選択は削除されます。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>選択<span class="emphasis">されていない</span>セルにフォーカスがあり、行が選択<span class="emphasis">されていない</span>場合、フォーカスのあるセルとその上のセルが選択されます。フォーカスは、フォーカスがあるセルの上のセルに移動します。</p>
+				<p>選択されたセルにフォーカスがある場合、そのフォーカスは上のセルに移り、セル選択がこのセルまで拡大されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択されている場合、そのフォーカスは下の行に移り、選択がこの行まで拡大されます。</p>
+				<p>フォーカスがセルまたは行セレクタにあり、関連する行が選択<span class="emphasis">されていない</span>場合、フォーカスは下の行に移り、この行の選択が解除されます。</p>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>選択<span class="emphasis">されていない</span>セルにフォーカスがあり、行が選択<span class="emphasis">されていない</span>場合、フォーカスがあるセルとその下のセルが選択されます。フォーカスは、フォーカスがあるセルの下のセルに移ります。 </p>
+				<p>選択されたセルにフォーカスがある場合、そのフォーカスは下のセルに移り、セル選択がこのセルまで拡大されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>フォーカスが編集可能なセル (入力フィールドなど) にある場合、フォーカスは上のセルに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>フォーカスが編集可能なセル (入力フィールドなど) にある場合、フォーカスは下のセルに移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがセルにある場合、フォーカス状態のセルが選択されます。</p>
+				<p>フォーカスがセル選択ブロックにある場合、そのセルの選択が解除されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがセル選択ブロックにある場合は、セル選択ブロックが行選択に切り替わります。セル選択は削除されます。</p>
+				<p>行選択モードに応じて、以下の処理が行われます。</p>
+				<ul>
+					<li>ブロックの全行が選択される (複数選択)</li>
+					<li>現在フォーカスされているセルの行のみが選択される (個別選択)</li>
+					<li>行が一切選択されない</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがテーブル内部にある場合、行またはセルの選択が解除されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
+				<p>フォーカスがテーブル内部にあり、セルが選択されている場合は、そのセルの選択が解除されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>セルに入力フィールドやボタンなどのインタラクティブエレメントがある場合、フォーカスをセルとその内容の間で切り替えます (読み込み専用テキストは除く)。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>フォーカスが編集モードのセル内にある場合、フォーカスは行に移動します。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">セル選択が有効化されている場合</span>:</p>
+				<p>セルが選択されている場合、<kbd>Shift</kbd> を押して別のセルをクリックすると、クリックしたセルまで選択が拡張されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>クリップボードが利用でき、この機能が有効化されている場合は、選択した行またはセルがそのクリップボードにコピーされます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>この機能が有効化されている場合は、コンテンツがクリップボードからペーストされます。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>バリアント管理を開きます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>バリアント管理のエラーポップオーバーを閉じます。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>アイテムを 1 つ上の位置に移動します (利用可能な場合)。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>アイテムを 1 つ下の位置に移動します (利用可能な場合)。</p>
+				<p><kbd>Home</kbd></p>
+				<p>アイテムを先頭へ移動します (利用可能な場合)。</p>
+				<p><kbd>End</kbd></p>
+				<p>アイテムを最後へ移動します (利用可能な場合)。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>アイテムを 1 つ上の位置に移動します (利用可能な場合)。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>アイテムを 1 つ下の位置に移動します (利用可能な場合)。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>アイテムを 1 つ上の位置に移動します (利用可能な場合)。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>アイテムを 1 つ下の位置に移動します (利用可能な場合)。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

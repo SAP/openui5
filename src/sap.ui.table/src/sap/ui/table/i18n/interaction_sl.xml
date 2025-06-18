@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Premakne fokus na naslednjo celico znotraj istega stolpca ali vrstice v ustreznih smereh.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Če je fokus na prvi vrstici, se fokus premakne na glavo stolpca.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Če je fokus na glavi stolpca, se fokus premakne na celico v prvi vidni vrstici tega stolpca, kar je odvisno od trenutnega položaja drsnika.</p>
+				<p>Če je fokus na potrditvenem polju <span class="uicontrol">Izberi vse</span>, se fokus premakne na izbirnik vrstic v prvi vidni vrstici tega stolpca, kar je odvisno od trenutnega položaja drsnika.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Če je fokus na celici v prvem stolpcu, se fokus premakne na izbirnik vrstic.</p>
+				<p>Če je fokus na glavi stolpca, se fokus premakne na glavo stolpca na levi.</p>
+				<p>Če je fokus na glavi stolpca prvega stolpca, se fokus premakne na potrditveno polje <span class="uicontrol">Izberi vse</span>.</p>
+				<p>Če je fokus na glavi skupine razširjene skupine, se skupina skrči.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Če je fokus na glavi stolpca, se fokus premakne na glavo stolpca na desni.</p>
+				<p>Če je fokus na izbirniku vrstic, se fokus premakne na celico v prvem stolpcu znotraj iste vrstice.</p>
+				<p>Če je fokus na potrditvenem polju <span class="uicontrol">Izberi vse</span>, se fokus premakne na glavo stolpca prvega stolpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Če je fokus na ravni vrstice, se fokus premakne na celico na vrhu istega stolpca. Če je fokus že na tej ravni, se fokus premakne eno stran navzgor in ostane na istem stolpcu z zahtevanim drsenjem.</p>
+				<p>Če je fokus na prvi vrstici, se fokus premakne na glavo stolpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Če je fokus na ravni celice, se fokus premakne na zadnjo vidno celico v istem stolpcu. Če je fokus že na tej ravni, se fokus premakne eno stran navzdol in ostane na istem stolpcu z zahtevanim drsenjem.</p>
+				<p>Če je fokus na glavi stolpca, se fokus premakne na prvo vrstico.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Če je fokus na ravni celice ali na glavi stolpca, se premakne pet stolpcev v levo (privzeta velikost strani). Če je manj stolpcev na levi od trenutne velikosti strani, se fokus premakne na prvi stolpec.</p>
+				<p>Če je fokus na prvem stolpcu na ravni celice, se fokus premakne na izbirnik vrstic.</p>
+				<p>Če je fokus na glavi stolpca prvega stolpca, se fokus premakne na <span class="uicontrol">Izberi vse</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Če je fokus na ravni celice, se fokus premakne pet stolpcev v desno (privzeta velikost strani).</p>
+				<p>Če je fokus na glavi stolpca in je manj stolpcev na desni od trenutne velikosti strani, se fokus premakne na zadnji stolpec.</p>
+				<p>Če je fokus na izbirniku vrstic, se fokus premakne na prvi stolpec v isti vrstici.</p>
+				<p>Če je fokus na <span class="uicontrol">Izberi vse</span>, se fokus premakne na glavo prvega stolpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Če je fokus na celici, se fokus premakne na prvi stolpec v isti vrstici.</p>
+				<p>Če je fokus na celici v prvem stolpcu, se fokus premakne na izbirnik vrstic.</p>
+				<p>Če je fokus na glavi stolpca, se fokus premakne na glavo prvega stolpca.</p>
+				<p>Če je fokus na glavi prvega stolpca, se fokus premakne na <span class="uicontrol">Izberi vse</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Če je fokus na celici ali glavi stolpca, se fokus premakne na zadnji stolpec.</p>
+				<p>Če je fokus na izbirniku vrstic, se fokus premakne na prvi stolpec v isti vrstici.</p>
+				<p>Če je fokus na <span class="uicontrol">Izberi vse</span>, se fokus premakne na glavo prvega stolpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Če je fokus na celici, se fokus premakne na glavo stolpca.</p>
+				<p>Če je fokus na izbirniku celice, se fokus premakne na <span class="uicontrol">Izberi vse</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Če je fokus na celici ali glavi stolpca, se fokus premakne na zadnjo vrstico v istem stolpcu.</p>
+				<p>Če je fokus na izbirniku celice ali <span class="uicontrol">Izberi vse</span>, se fokus premakne na izbirnik zadnje vrstice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Če je fokus na celici, se fokus premakne na prvi kontrolnik za fokusiranje v celici.</p>
+				<p>Če je fokus na potrditvenem polju <span class="uicontrol">Izberi vse</span> ali izbirniku celic, preklopi stanje potrditvenega polja.</p>
+				<p>Če je fokus na glavi stolpca, se odpre meni glave stolpca.</p>
+				<p>Če je fokus na glavi skupine, se povezana skupina skrči ali razširi.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Če je fokus na glavi skupine, se odpre meni glave stolpca.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, je izbrana fokusirana celica.</p>
+				<p>Če je fokus na blokadi izbire celic, se izbira celic odstrani.</p>
+				<p>Če je fokus na celici in ima tabela določeno konfiguracijo obnašanja izbire (za izbiro vrstice lahko izberete samo vrstico ali potrditveno polje izbire, če je na voljo), le če je fokusirana celica izbrana namesto vrstice.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Če je fokus na celici ali izbirniku vrstice, to preklopi izbiro trenutne vrstice.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na blokadi izbire celic, se blokada izbire celic spremeni v izbiro vrstic. Izbira celic je odstranjena.</p>
+				<p>Glede na način izbire vrstic se zgodi naslednje:</p>
+				<ul>
+					<li>Izbrane so vse vrstice blokade (več izbir)</li>
+					<li>Izbrana je le vrstica s trenutno fokusirano celico (ena izbira)</li>
+					<li>Nobena vrstica ni izbrana</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus znotraj tabele in so celice izbrane, se izbira celic odstrani.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Preklopi fokus med celico in njeno vsebino (z izjemo besedila samo za branje).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Če je fokus na <span class="uicontrol">Izberi vse</span> in je pritisnjena možnost <kbd>Spacebar</kbd>, se ustrezni dogodek ne sproži. <kbd>Shift</kbd> prepreči to aktivnost.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Če je fokus na glavi stolpca in je pritisnjena možnost <kbd>Spacebar</kbd> ali <kbd>Enter</kbd>, se ustrezni dogodek ne sproži.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na zgornjo vrstico, izbira pa se razširi do te vrstice.</p>
+				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na zgornjo vrstico, izbira pa se odstrani za to vrstico.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in zgornja celica. Fokus se premakne na celico nad fokusirano celico.</p>
+				<p>Če je fokus na izbrani celici, celica zgoraj pridobi fokus, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na spodnjo vrstico, izbira pa se razširi do te vrstice.</p>
+				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na spodnjo vrstico, izbira pa se odstrani za to vrstico.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in spodnja celica. Fokus se premakne na celico pod fokusirano celico.</p>
+				<p>Če je fokus na izbrani celici, celica spodaj pridobi fokus, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Če je fokus na glavi stolpca, se širina tega stolpca poveča za 1 em. To se ponovi, če tipka ostane pritisnjena.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in celica na desni. Fokus se premakne na celico desno od fokusirane celice.</p>
+				<p>Če je fokus na izbrani celici, celica na desni pridobi fokus, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Če je fokus na glavi stolpca, se širina tega stolpca zmanjša za 1 em. To se ponovi, če tipka ostane pritisnjena.</p>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in celica na levi. Fokus se premakne na celico levo od fokusirane celice.</p>
+				<p>Če je fokus na izbrani celici, celica na levi pridobi fokus, izbira celice pa je razširjena do te celice.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Če je fokus na glavi stolpca, se relevantni stolpec premakne za eno mesto v desno.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Če je fokus na glavi stolpca, se relevantni stolpec premakne za eno mesto v levo.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Premakne fokus na naslednji element za fokusiranje v zgornji vrstici.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Premakne fokus na naslednji element za fokusiranje v spodnji vrstici.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Če je fokus na celici, izbirniku vrstice ali <span class="uicontrol">Izberi vse</span>, to preklopi na potrditveno polje <span class="uicontrol">Izberi vse</span>: Vse vrstice so ustrezno izbrane ali pa je njihova izbira preklicana.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če je fokus znotraj tabele, se izbira za katerokoli vrstico in celico odstrani.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Če je fokus na celici, se fokus premakne na njeno vsebino (z izjemo besedila samo za branje).</p>
+				<p>Če je fokus na glavi skupine ali vozlišču drevesa brez listov, to preklopi razširitev skupine: Skupina se ustrezno razširi ali skrči.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Če je fokus na glavi skupine, se odpre meni glave stolpca.</p>
+				<p>Če je fokus na glavi stolpca, se odpre meni glave stolpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
+				<p>Če so izbrane celice, z možnostjo <kbd>Shift + click</kbd> na drugo celico razširite izbiro do celice, na katero ste kliknili.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopira izbrane vrstice ali celice v odložišče, če je na voljo in je ta funkcija omogočena.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Prilepi vsebino iz odložišča, če je funkcija omogočena.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

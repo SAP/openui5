@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Sposta il focus sulla cella successiva all'interno della stessa riga o colonna nelle rispettive direzioni.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Se il focus è sulla prima riga, si sposta sull'intestazione della colonna.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Se il focus è su un'intestazione colonna, si sposta sulla cella della prima riga visibile di tale colonna, che dipende dalla posizione di scorrimento attuale.</p>
+				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span>, si sposta sul selettore riga della prima riga visibile, che dipende dalla posizione di scorrimento attuale.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Se il focus è su una cella della prima colonna, si sposta sul selettore riga.</p>
+				<p>Se il focus è su un'intestazione di colonna, si sposta sull'intestazione colonna a sinistra.</p>
+				<p>Se il focus è sull'intestazione colonna della prima colonna, si sposta sulla casella di controllo <span class="uicontrol">Seleziona tutto</span>.</p>
+				<p>Se il focus è sulla testata gruppo di un gruppo esploso, il gruppo viene compresso.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Se il focus è sull'intestazione della colonna, si sposta sull'intestazione colonna a destra.</p>
+				<p>Se il focus è sul selettore riga, si sposta sulla cella della prima colonna della stessa riga.</p>
+				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span>, passa all'intestazione di colonna della prima colonna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Se il focus è a livello di cella, si sposta sulla cella in cima alla stessa colonna. Se il focus è già a tale livello, sale di una pagina e sta nella stessa colonna con lo scorrimento richiesto.</p>
+				<p>Se il focus è sulla prima riga, si sposta sull'intestazione della colonna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Se il focus è a livello di cella, si sposta sull'ultima cella visibile nella stessa colonna. Se il focus è già a tale livello, scende di una pagina e sta nella stessa colonna con lo scorrimento richiesto.</p>
+				<p>Se il focus è sull'intestazione colonna, si sposta sulla prima riga.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Se il focus è a livello di cella o di intestazione colonna, si sposta a sinistra di cinque colonne (dimensione pagina predefinita). Se si sono meno colonne a sinistra rispetto alla dimensione pagina attuale, il focus si sposta sulla prima colonna.</p>
+				<p>Se il focus è sulla prima colonna a livello di cella, si sposta sul selettore riga.</p>
+				<p>Se il focus è sull'intestazione colonna della prima colonna, si sposta su <span class="uicontrol">Seleziona tutto</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Se il focus è a livello di cella, si sposta a destra di cinque colonne (dimensione pagina predefinita).</p>
+				<p>Se il focus è sull'intestazione colonna e a destra ci sono meno colonne della dimensione pagina attuale, si sposta sull'ultima colonna.</p>
+				<p>Se il focus è sul selettore riga, si sposta sulla prima colonna della stessa riga.</p>
+				<p>Se il focus è su <span class="uicontrol">Seleziona tutto</span>, si sposta sull'intestazione della prima colonna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Se il focus è sulla cella, si sposta sulla prima colonna della stessa riga.</p>
+				<p>Se il focus è sulla cella della prima colonna, si sposta sul selettore riga.</p>
+				<p>Se il focus è sull'intestazione colonna, si sposta sull'intestazione della prima colonna.</p>
+				<p>Se il focus è sull'intestazione della prima colonna, si sposta su <span class="uicontrol">Seleziona tutto</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Se il focus è sulla cella o sull'intestazione colonna, si sposta sull'ultima colonna.</p>
+				<p>Se il focus è sul selettore riga, si sposta sulla prima colonna della stessa riga.</p>
+				<p>Se il focus è su <span class="uicontrol">Seleziona tutto</span>, si sposta sull'intestazione della prima colonna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Se il focus è sulla cella, si sposta sull'intestazione della colonna.</p>
+				<p>Se il focus è sul selettore riga, si sposta su <span class="uicontrol">Seleziona tutto</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Se il focus è sulla cella o sull'intestazione colonna, si sposta sull'ultima riga della stessa colonna.</p>
+				<p>Se il focus è sul selettore riga o su <span class="uicontrol">Seleziona tutto</span>, si sposta sull'ultimo selettore riga.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Se il focus è sulla cella, si sposta sull'ultimo controllo su cui è possibile spostare il focus nella cella.</p>
+				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span> o su un selettore riga, attiva/disattiva lo stato della casella di controllo.</p>
+				<p>Se il focus è sull'intestazione della colonna, viene aperto il menu dell'intestazione colonna.</p>
+				<p>Se il focus è sulla testata del gruppo, il gruppo correlato viene compresso o esploso.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Se il focus è sulla testata del gruppo, viene aperto il menu della testata del gruppo.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella, viene selezionata la cella con il focus.</p>
+				<p>Se il focus è su un blocco di selezione cella, la selezione delle celle viene rimossa.</p>
+				<p>Se il focus è su una cella e la tabella ha una determinata configurazione del funzionamento di selezione (per selezionare una riga, è possibile selezionare la riga stessa o la casella di controllo se disponibile), invece della riga viene selezionata solo la cella con il focus.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Se il focus è su una cella o sul selettore di riga, attiva/disattiva la selezione della riga corrente.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su un blocco di selezione cella, il blocco viene modificato in una selezione riga. La selezione della cella viene rimossa.</p>
+				<p>A seconda della modalità di selezione della riga può accadere quanto segue:</p>
+				<ul>
+					<li>Vengono selezionate tutte le righe del blocco (selezione multipla)</li>
+					<li>Viene selezionata solo la riga con la cella con il focus attuale (selezione singola)</li>
+					<li>Non viene selezionata nessuna riga</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è all'interno della tabella e delle celle sono selezionate, la selezione delle celle viene rimossa.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Attiva/disattiva il focus tra la cella e il suo contenuto (ad eccezione del testo di sola lettura).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Se il focus è su <span class="uicontrol">Seleziona tutto</span> e si preme <kbd>Spacebar</kbd>, l'evento corrispondente non viene attivato. <kbd>Shift</kbd> impedisce questa attività.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Se il focus è sull'intestazione della colonna e si preme <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, l'evento corrispondente non viene attivato.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sopra e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sopra e la selezione viene rimossa per questa riga. </p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sopra. Il focus si sposta sulla cella sopra la cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, passa anche sulla cella sopra e la selezione delle celle viene ampliata fino a questa cella.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante è selezionata, si sposta sulla riga sotto e la selezione viene ampliata fino a questa riga.</p>
+				<p>Se il focus è su una cella o sul selettore riga e la riga rilevante <span class="emphasis">non</span> è selezionata, si sposta sulla riga sotto e la selezione viene rimossa per questa riga. </p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata e la riga <span class="emphasis">non</span> è selezionata, vengono selezionate la cella con il focus e la cella sotto. Il focus si sposta sulla cella sotto la cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, passa anche sulla cella sotto e la selezione delle celle viene ampliata fino a questa cella.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene aumentata di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a destra. Il focus si sposta sulla cella a destra della cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, passa anche sulla cella a destra e la selezione delle celle viene ampliata fino a questa cella.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Se il focus è su un'intestazione colonna, la larghezza della colonna viene diminuita di 1 em. Ciò viene ripetuto se il tasto resta premuto.</p>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è su una cella <span class="emphasis">non</span> selezionata, vengono selezionate la cella con il focus e la cella a sinistra. Il focus si sposta sulla cella a sinistra della cella con il focus.</p>
+				<p>Se il focus è su una cella selezionata, passa anche sulla cella a sinistra e la selezione delle celle viene ampliata fino a questa cella.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Se il focus è su un'intestazione di colonna, la colonna rilevante si sposta di una posizione a destra.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Se il focus è su un'intestazione di colonna, la colonna rilevante si sposta di una posizione a sinistra.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Sposta il focus sul successivo elemento su cui è possibile spostare il focus nella riga sopra.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Sposta il focus sul successivo elemento su cui è possibile spostare il focus nella riga sotto.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Se il focus è su una cella, sul selettore riga o su <span class="uicontrol">Seleziona tutto</span>, la casella di controllo <span class="uicontrol">Seleziona tutto</span> viene attivata o disattivata e tutte le righe vengono, rispettivamente, selezionate o deselezionate.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se il focus è all'interno della tabella, la selezione delle righe e delle celle viene rimossa.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Se il focus è su una cella, si sposta sul suo contenuto (ad eccezione di un testo di sola lettura).</p>
+				<p>Se il focus è sulla testata del gruppo o su un nodo non foglia di un albero, l'espansione del gruppo viene attivata o disattivata. Il gruppo viene rispettivamente esploso o compresso.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Se il focus è sulla testata del gruppo, viene aperto il menu della testata del gruppo.</p>
+				<p>Se il focus è sull'intestazione della colonna, viene aperto il menu dell'intestazione colonna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Se la selezione della cella è attivata:</span></p>
+				<p>Se le celle sono selezionate, <kbd>Shift + click</kbd> su una cella differente amplia la selezione fino alla cella su cui è stato fatto clic.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copia le righe o le celle selezionate nel clipboard, se disponibile, e attiva la funzionalità.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Incolla il contenuto dal clipboard se le funzionalità è attivata.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

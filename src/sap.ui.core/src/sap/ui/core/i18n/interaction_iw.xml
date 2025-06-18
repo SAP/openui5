@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>מעביר את המיקוד לאלמנט הבא בשרשרת הלשוניות.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>מעביר את המיקוד לאלמנט הקודם בשרשרת הלשוניות.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>מעביר את המיקוד לאלמנט הראשון של קבוצת ממשק המשתמש הבאה (קבוצה F6) בשרשרת הלשוניות.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>מעביר את המיקוד לאלמנט הראשון של קבוצת ממשק המשתמש הקודמת (קבוצה F6) בשרשרת הלשוניות.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>קיצורי דרך גלובליים</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

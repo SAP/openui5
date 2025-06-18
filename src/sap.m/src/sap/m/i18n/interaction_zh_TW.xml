@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>全域捷徑</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>將焦點沿著相應方向移至相同欄或列內的下一個儲存格。</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>若焦點在第一列上，則該焦點會移至欄表頭列。</p>
+				<p>若焦點在第一列的儲存格上，則該焦點會移至相關欄表頭。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>若焦點在 <span class="uicontrol">[全選]</span> 或 <span class="uicontrol">[全部清除]</span> 核取方塊上，則該焦點會移至第一個可顯示列中的列選擇器。</p>
+				<p>若焦點在欄表頭列上，則該焦點會移至第一列。</p>
+				<p>若焦點在列上，則該焦點會移至下方列。</p>
+				<p>若焦點在儲存格上，則該焦點會移至下方儲存格。</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>若焦點在第一個儲存格上，則該焦點會移至列；這將從以儲存格為基礎的瀏覽切換至以列為基礎的瀏覽。</p>
+				<p>若焦點在儲存格上，則該焦點會移至左側的儲存格。</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>若焦點在列上，則該焦點會移至目前聚焦列的第一個儲存格。這將從以列為基礎的瀏覽切換至以儲存格為基礎的瀏覽。</p>
+				<p>若焦點在儲存格上，則該焦點會移至右側的儲存格。</p>
+				<p><span class="emphasis">請注意：</span>若焦點在最後一欄上，且此欄已啟用蹦現行為，則蹦現區域將視為右側的附加欄，而該焦點會移至此欄。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>若焦點在列上，則該焦點會移至欄表頭列。</p>
+				<p>若焦點在欄表頭列上，而 <span class="uicontrol">[更多]</span> 按鈕可用，則該焦點會移至 <span class="uicontrol">[更多]</span> 按鈕。</p>
+				<p>若焦點在欄表頭列上，而 <span class="uicontrol">[更多]</span> 按鈕<span class="emphasis">不</span>可用，則該焦點會移至最後的聚焦列。</p>
+				<p>若焦點在 <span class="uicontrol">[更多]</span> 按鈕上，則該焦點會移至最後的聚焦列。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>若焦點在列上，且 <span class="uicontrol">[更多]</span> 按鈕可用，則該焦點會移至 <span class="uicontrol">[更多]</span> 按鈕。</p>
+				<p>若焦點在列上，且 <span class="uicontrol">[更多]</span> 按鈕<span class="emphasis">不</span>可用，則該焦點會移至欄表頭列。</p>
+				<p>若焦點在 <span class="uicontrol">[更多]</span> 按鈕上，則該焦點會移至欄表頭列。</p>
+				<p>若焦點在欄表頭列上，則該焦點會移至最後的聚焦列。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>若焦點在欄表頭上，則該欄的寬度將增加 1 em。若繼續按下該鍵，則會重複此操作。</p>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上，則會選擇聚焦儲存格和右側儲存格；該焦點會移至聚焦儲存格右側的儲存格。</p>
+				<p>若焦點在所選的儲存格上，則焦點會移至右側的儲存格，且儲存格選擇將增強至該儲存格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>若焦點在欄表頭上，則該欄的寬度將減少 1 em。若繼續按下該鍵，則會重複此操作。</p>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上，則會選擇聚焦儲存格和左側儲存格；該焦點會移至聚焦儲存格左側的儲存格。</p>
+				<p>若焦點在所選的儲存格上，則焦點會移至左側的儲存格，且儲存格選擇會增強至該儲存格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移至上方列，且選擇會增強至該列。</p>
+				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移至上方列，且會移除該列選擇。</p>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上且<span class="emphasis">未</span>選擇列，則會選擇聚焦儲存格和上方儲存格；該焦點會移到聚焦儲存格上方的儲存格。</p>
+				<p>若焦點在所選的儲存格上，則焦點會移至上方儲存格，且儲存格選擇會增強至該儲存格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>若焦點在儲存格或列選擇器上且已選擇相關列，則該焦點會移到下方列，且選擇會增強至該列。</p>
+				<p>若焦點在儲存格或列選擇器上且<span class="emphasis">未</span>選擇相關列，則該焦點會移到下方列，且會移除該列選擇。</p>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上且<span class="emphasis">未</span>選擇列，則會選擇聚焦儲存格和下方儲存格；該焦點會移到聚焦儲存格下方的儲存格。 </p>
+				<p>若焦點在所選的儲存格上，則焦點會移至下方儲存格，且儲存格選擇會增強至該儲存格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>若焦點在可編輯儲存格 (例如，輸入欄位) 上，則該焦點會移至上方儲存格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>若焦點在可編輯儲存格 (例如，輸入欄位) 上，則該焦點會移至下方儲存格。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在儲存格上，則會選擇該聚焦儲存格。</p>
+				<p>若焦點在儲存格選擇區塊上，則會移除該儲存格選擇。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在儲存格選擇區塊上，則該儲存格選擇區塊會更改為列選擇；儲存格選擇已移除。</p>
+				<p>根據列選擇模式不同，會發生下列情況：</p>
+				<ul>
+					<li>已選擇區塊的所有列 (多選)</li>
+					<li>僅選擇目前聚焦儲存格的所在列 (單選)</li>
+					<li>未選擇任何列</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在表格內，則會移除任何列和儲存格選擇。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
+				<p>若焦點在表格內且已選擇儲存格，則會移除儲存格選擇。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>若儲存格具有互動元素，例如輸入欄位或按鈕 (唯讀內文除外)，則在儲存格和其內容之間切換焦點。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>若焦點在編輯模式中的儲存格內，則該焦點會移至列。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">若已啟用儲存格選擇</span>：</p>
+				<p>若已選擇儲存格，按下 <kbd>Shift</kbd> 並點選其他儲存格時可增強對所點選儲存格的選擇。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>若可用且已啟用該功能，則會將所選的列或儲存格複製到剪貼簿。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>若已啟用該功能，則會貼上剪貼簿中的內容。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>開啟變式管理。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>關閉變式管理的錯誤蹦縣視窗</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>將項目向上移動一個位置 (若有)。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>將項目向下移動一個位置 (若有)。</p>
+				<p><kbd>Home</kbd></p>
+				<p>將項目移到頂端 (若有)。</p>
+				<p><kbd>End</kbd></p>
+				<p>將項目移到底部 (若有)。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>將項目向上移動一個位置 (若有)。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>將項目向下移動一個位置 (若有)。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>將項目向上移動一個位置 (若有)。</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>將項目向下移動一個位置 (若有)。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

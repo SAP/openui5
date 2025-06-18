@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Accesos directos globales</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Mueve el enfoque a la siguiente celda dentro de la misma columna o fila en las respectivas direcciones.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Si el foco está en la primera fila, el foco se desplaza a la fila de cabecera de la columna.</p>
+				<p>Si el foco está en una celda de la primera fila, el foco se desplaza a la cabecera de columna relacionada.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Si el foco está en la casilla <span class="uicontrol">Seleccionar todo</span> o <span class="uicontrol">Borrar todo</span>, el foco se desplaza al selector de filas de la primera fila visible.</p>
+				<p>Si el foco está en la fila de cabecera de la columna, el foco se desplaza a la primera fila.</p>
+				<p>Si el foco está en una fila, el foco se desplaza a la fila inferior.</p>
+				<p>Si el foco está en una celda, el foco se desplaza a la celda inferior.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Si el foco está en la primera celda, el foco se desplaza a la fila. De este modo, se pasa de la navegación por celdas a la navegación por filas.</p>
+				<p>Si el foco está en una celda, el foco se desplaza a la celda de la izquierda.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Si el foco está en una fila, el foco se mueve a la primera celda de la fila actualmente enfocada. De este modo, se pasa de la navegación por filas a la navegación por celdas.</p>
+				<p>Si el foco está en una celda, el foco se desplaza a la celda de la derecha.</p>
+				<p><span class="emphasis">Nota:</span> Si el foco está en la última columna, y el comportamiento de ventana emergente se ha activado para esta columna, su área se trata como una columna adicional a la derecha, y el foco se mueve a esta columna.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Si el foco está en una fila, el foco se desplaza a la fila de cabecera de la columna.</p>
+				<p>Si el foco está en la fila de la cabecera de la columna y el botón <span class="uicontrol">Más</span> está disponible, el foco se desplaza al botón <span class="uicontrol">Más</span>.</p>
+				<p>Si el foco está en la fila de la cabecera de la columna y el botón <span class="uicontrol">Más</span> <span class="emphasis">no</span> está disponible, el foco se desplaza a la última fila enfocada.</p>
+				<p>Si el foco está en el botón <span class="uicontrol">Más</span>, el foco se desplaza a la última fila enfocada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Si el foco está en una fila y el botón <span class="uicontrol">Más</span> está disponible, el foco se desplaza al botón <span class="uicontrol">Más</span>.</p>
+				<p>Si el foco está en una fila y el botón <span class="uicontrol">Más</span> <span class="emphasis">no</span> está disponible, el foco se desplaza a la fila de cabecera de la columna.</p>
+				<p>Si el foco está en el botón <span class="uicontrol">Más</span>, el foco se desplaza a la fila de cabecera de la columna.</p>
+				<p>Si el foco está en la fila de cabecera de la columna, el foco se desplaza a la última fila enfocada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Si el foco está en la cabecera de la columna, el ancho de esta columna se incrementa en 1 em. Esto se repite si la tecla permanece pulsada.</p>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de la derecha. El foco se desplaza a la celda situada a la derecha de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, la celda de la derecha obtiene el foco, y la selección de celdas se amplía hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Si el foco está en la cabecera de la columna, el ancho de esta columna se reduce en 1 em. Esto se repite si la tecla permanece pulsada.</p>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de la izquierda. El foco se desplaza a la celda situada a la izquierda de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, la celda de la izquierda obtiene el foco, y la selección de celdas se amplía hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Si el foco está en una celda o en el selector de filas y se selecciona la fila correspondiente, el foco se desplaza a la fila superior y la selección se amplía hasta esta fila.</p>
+				<p>Si el foco está en una celda o en el selector de fila y la fila correspondiente <span class="emphasis">no</span> está seleccionada, el foco se desplaza a la fila superior y se elimina la selección para esta fila.</p>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, y la fila <span class="emphasis">no</span> está seleccionada, la celda enfocada y la celda de arriba se seleccionan. El foco se desplaza a la celda situada encima de la celda enfocada.</p>
+				<p>Si el foco está en una celda seleccionada, el foco se desplaza a la celda superior y la selección de celdas se amplía hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Si el foco está en una celda o en el selector de fila, y se selecciona la fila correspondiente, el foco se desplaza a la fila inferior y la selección se amplía hasta esta fila.</p>
+				<p>Si el foco está en una celda o en el selector de fila, y la fila correspondiente <span class="emphasis">no</span> está seleccionada, el foco se desplaza a la fila inferior y se elimina la selección para esta fila.</p>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está en una celda que <span class="emphasis">no</span> está seleccionada, y la fila <span class="emphasis">no</span> está seleccionada, se seleccionan la celda enfocada y la celda de abajo. El foco se desplaza a la celda situada debajo de la celda enfocada. </p>
+				<p>Si el foco está en una celda seleccionada, el foco se desplaza a la celda inferior y la selección de celdas se amplía hasta esta celda.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Si el foco está en una celda editable (por ejemplo, un campo de entrada), el foco se desplaza a la celda superior.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Si el foco está en una celda editable (por ejemplo, un campo de entrada), el foco se desplaza a la celda inferior.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está en una celda, se selecciona la celda enfocada.</p>
+				<p>Si el foco está en un bloque de selección de celdas, se elimina la selección de las celdas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está en un bloque de selección de celdas, el bloque de selección de celdas se convierte en una selección de filas. La selección de celdas se elimina.</p>
+				<p>En función del modo de selección de fila, sucede lo siguiente:</p>
+				<ul>
+					<li>Se seleccionan todas las filas del bloque (selección múltiple)</li>
+					<li>Se selecciona solo la fila con la celda actualmente enfocada (selección única)</li>
+					<li>No se selecciona ninguna fila</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está dentro de la tabla, se elimina la selección de las filas y celdas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Si la selección de celda está activada:</span></p>
+				<p>Si el foco está dentro de la tabla y hay celdas seleccionadas, se elimina la selección de las celdas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Alterna el enfoque entre la celda y su contenido si la celda tiene elementos interactivos como un campo de entrada o botón (con la excepción del texto de solo lectura).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Si el foco está dentro de una celda en modo edición, el foco se desplaza a la fila.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Si la selección de celda está activada</span>:</p>
+				<p>Si las celdas están seleccionadas, presione <kbd>Shift</kbd> y haga clic en una celda diferente actualiza la selección hasta la celda en la que se hizo clic.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copia las filas o celdas seleccionadas al portapapeles, si la función está disponible y activada.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Pega el contenido desde el portapapeles, si la función está activada.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Abre la administración de variantes.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Cierra el error emergente de la administración de variantes</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Mueve el elemento una posición arriba, si está disponible.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Mueve el elemento una posición abajo, si está disponible.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Mueve el elemento al inicio, si está disponible.</p>
+				<p><kbd>End</kbd></p>
+				<p>Mueve el elemento al final, si está disponible.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Mueve el elemento una posición arriba, si está disponible.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Mueve el elemento una posición abajo, si está disponible.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Mueve el elemento una posición arriba, si está disponible.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Mueve el elemento una posición abajo, si está disponible.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

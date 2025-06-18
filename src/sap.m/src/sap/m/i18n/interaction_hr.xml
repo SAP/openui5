@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globalni prečaci</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Premješta fokus na sljedeću ćeliju unutar istog stupca ili reda u odgovarajućim smjerovima.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ako je fokus na prvom redu, premješta se na red zaglavlja stupca.</p>
+				<p>Ako je fokus na ćeliji prvog reda, premješta se na zaglavlje povezanog stupca.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ako je fokus na kvadratiću za potvrdu <span class="uicontrol">Odaberi sve</span> ili <span class="uicontrol">Očisti sve</span>, fokus se premješta na selektor reda u prvom vidljivom redu.</p>
+				<p>Ako je fokus na redu zaglavlja stupca, premješta se na prvi red.</p>
+				<p>Ako je fokus na redu, premješta se na red ispod.</p>
+				<p>Ako je fokus na ćeliji, premješta se na ćeliju ispod.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ako je fokus na prvoj ćeliji, premješta se na red. Time se usmjeravanje zasnovano na ćeliji prebacuje na usmjeravanje zasnovano na redu.</p>
+				<p>Ako je fokus na ćeliji, premješta se na ćeliju slijeva.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ako je fokus na redu, premješta se na prvu ćeliju reda na kojem je trenutačno fokus. Time se usmjeravanje zasnovano na redu prebacuje u usmjeravanje zasnovano na ćeliji.</p>
+				<p>Ako je fokus na ćeliji, premješta se na ćeliju zdesna.</p>
+				<p><span class="emphasis">Napomena:</span>ako je fokus na zadnjem stupcu, a ponašanje popina aktivirano je za taj stupac, područje popina tretira se kao dodatni stupac zdesna, a fokus se premješta na taj stupac.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Ako je fokus na redu, premješta se na red zaglavlja stupca.</p>
+				<p>Ako je fokus na redu zaglavlja stupca, a gumb <span class="uicontrol">Više</span> je raspoloživ, fokus se premješta na gumb <span class="uicontrol">Više</span>.</p>
+				<p>Ako je fokus na redu zaglavlja stupca, a gumb <span class="uicontrol">Više</span> <span class="emphasis">nije</span> raspoloživ, fokus se premješta na zadnji fokusirani red.</p>
+				<p>Ako je fokus na gumbu <span class="uicontrol">Više</span>, premješta se na zadnji fokusirani red.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Ako je fokus na redu, a gumb <span class="uicontrol">Više</span> je raspoloživ, fokus se premješta na gumb <span class="uicontrol">Više</span>.</p>
+				<p>Ako je fokus na redu, a gumb <span class="uicontrol">Više</span> <span class="emphasis">nije</span> raspoloživ, fokus se premješta na red zaglavlja stupca.</p>
+				<p>Ako je fokus na gumbu <span class="uicontrol">Više</span>, premješta se na red zaglavlja stupca.</p>
+				<p>Ako je fokus na redu zaglavlja stupca, premješta se na zadnji fokusirani red.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ako je fokus na zaglavlju stupca, širina tog stupca povećava se za 1 em. To se ponavlja ako tipka ostane pritisnuta.</p>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana, odabiru se fokusirana ćelija i ćelija nadesno. Fokus se premješta na ćeliju desno od fokusirane ćelije.</p>
+				<p>Ako je fokus na odabranoj ćeliji, fokus se premješta na ćeliju zdesna, a odabir ćelije proširuje se do te ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ako je fokus na zaglavlju stupca, širina tog stupca smanjuje se za 1 em. To se ponavlja ako tipka ostane pritisnuta.</p>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana, odabiru se fokusirana ćelija i ćelija nalijevo. Fokus se premješta na ćeliju lijevo od fokusirane ćelije.</p>
+				<p>Ako je fokus na odabranoj ćeliji, fokus se premješta na ćeliju slijeva, a odabir ćelije proširuje se do te ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ako je fokus na ćeliji ili selektoru reda i odabran je relevantni red, fokus se premješta na red iznad, a odabir se proširuje do tog reda. </p>
+				<p>Ako je fokus na ćeliji ili selektoru reda, a relevantan red <span class="emphasis">nije</span> odabran, fokus se premješta na red iznad, a odabir se uklanja za taj red. </p>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana, a red <span class="emphasis">nije</span> odabran, odabiru se fokusirana ćelija i ćelija iznad. Fokus se premješta na ćeliju iznad fokusirane ćelije.</p>
+				<p>Ako je fokus na odabranoj ćeliji, premješta se na ćeliju iznad, a odabir ćelije povećava se do te ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ako je fokus na ćeliji ili selektoru reda, a odabran je relevantan red, fokus se premješta na red ispod, a odabir se proširuje do tog reda.</p>
+				<p>Ako je fokus na ćeliji ili selektoru reda, a relevantan red <span class="emphasis">nije</span> odabran, fokus se premješta na red ispod, a odabir se uklanja za taj red.</p>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus na ćeliji koja <span class="emphasis">nije</span> odabrana, a red <span class="emphasis">nije</span> odabran, odabiru se fokusirana ćelija i ćelija ispod. Fokus se premješta na ćeliju ispod fokusirane ćelije. </p>
+				<p>Ako je fokus na odabranoj ćeliji, premješta se na ćeliju ispod, a odabir ćelije povećava se do te ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Ako je fokus na uredivoj ćeliji (na primjer, polje unosa), premješta se na ćeliju iznad.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Ako je fokus na uredivoj ćeliji (na primjer, polje unosa), premješta se na ćeliju ispod.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus na ćeliji, odabire se fokusirana ćelija.</p>
+				<p>Ako je fokus na bloku za odabir ćelije, uklanja se odabir ćelija.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus na bloku za odabir ćelije, blok za odabir ćelija mijenja se u odabir reda. Odabir ćelije uklanja se.</p>
+				<p>Ovisno o modu odabira reda, događa se sljedeće:</p>
+				<ul>
+					<li>odabiru se svi redovi bloka (višestruki odabir)</li>
+					<li>odabire se samo red s trenutno fokusiranom ćelijom (pojedinačni odabir)</li>
+					<li>ne odabire se nijedan red</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus unutar tabele, uklanja se odabir za sve redove i ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije:</span></p>
+				<p>Ako je fokus unutar tabele, a ćelije su odabrane, odabir ćelija se uklanja.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Prebacuje fokus između ćelije i njezinog sadržaja ako ćelija sadrži interaktivne elemente, kao što su polje unosa ili gumb (uz iznimku teksta samo za čitanje).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Ako je fokus unutar ćelije u modu uređivanja, premješta se na red.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Ako je aktiviran odabir ćelije</span>:</p>
+				<p>Ako su ćelije odabrane, pritisak na <kbd>Shift</kbd> i klik na različitu ćeliju povećava odabir do kliknute ćelije.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopira odabrane redove ili ćelije u međuspremnik, ako je dostupan, a obilježje se aktivira.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Lijepi sadržaj iz međuspremnika ako je obilježje aktivirano.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Otvara upravljanje varijantom</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Zatvara popover greške upravljanja varijantom</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Pomiče stavku za jedan položaj prema gore, ako je raspoloživo.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Pomiče stavku za jedan položaj prema dolje, ako je raspoloživo.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Pomiče stavku na vrh ako je raspoloživo.</p>
+				<p><kbd>End</kbd></p>
+				<p>Pomiče stavku na kraj ako je raspoloživo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Pomiče stavku za jedan položaj prema gore, ako je raspoloživo.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Pomiče stavku za jedan položaj prema dolje, ako je raspoloživo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Pomiče stavku za jedan položaj prema gore, ako je raspoloživo.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Pomiče stavku za jedan položaj prema dolje, ako je raspoloživo.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

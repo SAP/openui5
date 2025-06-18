@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.comp" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.mdc.Table"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>فتح مربع الحوار <span class="uicontrol">إعدادات الجدول</span>، إذا كان متوفرًا.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
+				<p>فتح مربع الحوار <span class="uicontrol">تصدير باسم</span> للجدول، إذا كان متوفرًا.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.FilterBar"/>
+		<interaction> <kbd>Enter</kbd> <description>
+				<p>بدء تشغيل البحث عن شريط عوامل التصفية.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.mdc.Chart"/>
+		<interaction> <kbd>Ctrl + ,</kbd> <description>
+				<p>فتح مربع الحوار <span class="uicontrol">إعدادات العرض</span></p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + D</kbd> <description>
+				<p>حذف بند في مربع حوار <span class="uicontrol">إعدادات العرض</span></p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

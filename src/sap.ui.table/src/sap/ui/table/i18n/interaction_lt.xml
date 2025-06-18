@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Suaktyvinamas paskesnis langelis tame pačiame stulpelyje arba eilutėje atitinkama kryptimi.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Jei suaktyvinta pirma eilutė, suaktyvinama stulpelio antraštė.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Jei suaktyvinta stulpelio antraštė, suaktyvinamas langelis pirmoje matomoje šio stulpelio eilutėje pagal dabartinę slinkimo padėtį.</p>
+				<p>Jei suaktyvintas žymės langelis <span class="uicontrol">Žymėti viską</span>, suaktyvinamas eilučių parinkiklis pirmoje matomoje eilutėje pagal dabartinę slinkimo padėtį.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Jei suaktyvintas pirmo stulpelio langelis, suaktyvinamas eilučių parinkiklis.</p>
+				<p>Jei suaktyvinta stulpelio antraštė, suaktyvinama kairėje esanti stulpelio antraštė.</p>
+				<p>Jei suaktyvinta pirmo stulpelio antraštė, suaktyvinamas žymės langelis <span class="uicontrol">Žymėti viską</span>.</p>
+				<p>Jei suaktyvinta išplėstos grupės antraštė, grupė sutraukiama.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Jei suaktyvinta stulpelio antraštė, suaktyvinama dešinėje esanti stulpelio antraštė.</p>
+				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinamas toje pačioje eilutėje esančio pirmo stulpelio langelis.</p>
+				<p>Jei suaktyvintas žymės langelis <span class="uicontrol">Žymėti viską</span>, suaktyvinama pirmo stulpelio antraštė.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Jei suaktyvinta langelio lygmenyje, suaktyvinamas to paties stulpelio viršuje esantis langelis. Jei jau suaktyvinta tame lygmenyje, suaktyvinama vienu puslapiu aukščiau ir išliekama tame pačiame stulpelyje paslenkant, kiek reikia.</p>
+				<p>Jei suaktyvinta pirma eilutė, suaktyvinama stulpelio antraštė.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Jei suaktyvinta langelio lygmenyje, suaktyvinamas paskutinis matomas to paties stulpelio langelis. Jei jau suaktyvinta tame lygmenyje, suaktyvinama vienu puslapiu žemiau ir išliekama tame pačiame stulpelyje paslenkant, kiek reikia.</p>
+				<p>Jei suaktyvinta stulpelio antraštė, suaktyvinama pirma eilutė.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Jei suaktyvinta langelio lygmenyje arba stulpelio antraštėje, suaktyvinami penki kairėje esantys stulpeliai (numatytasis puslapio dydis). Jei kairėje yra mažiau stulpelių nei dabartinis puslapio dydis, suaktyvinamas pirmas stulpelis.</p>
+				<p>Jei suaktyvintas pirmas stulpelis langelio lygmenyje, suaktyvinamas eilučių parinkiklis.</p>
+				<p>Jei suaktyvinta pirmo stulpelio antraštė, suaktyvinama <span class="uicontrol">Žymėti viską</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Jei suaktyvinta langelio lygmenyje, suaktyvinami penki dešinėje esantys stulpeliai (numatytasis puslapio dydis).</p>
+				<p>Jei suaktyvinta stulpelio antraštė ir dešinėje yra mažiau stulpelių nei dabartinis puslapio dydis, suaktyvinamas paskutinis stulpelis.</p>
+				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinamas pirmas tos pačios eilutės stulpelis.</p>
+				<p>Jei suaktyvinta <span class="uicontrol">Žymėti viską</span>, suaktyvinama pirmo stulpelio antraštė.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Jei suaktyvintas langelis, suaktyvinamas pirmas stulpelis toje pačioje eilutėje.</p>
+				<p>Jei suaktyvintas pirmo stulpelio langelis, suaktyvinamas eilučių parinkiklis.</p>
+				<p>Jei suaktyvinta stulpelio antraštė, suaktyvinama pirmo stulpelio antraštė.</p>
+				<p>Jei suaktyvinta pirmo stulpelio antraštė, suaktyvinama <span class="uicontrol">Žymėti viską</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Jei suaktyvintas langelis arba stulpelio antraštė, suaktyvinamas paskutinis stulpelis.</p>
+				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinamas pirmas tos pačios eilutės stulpelis.</p>
+				<p>Jei suaktyvinta <span class="uicontrol">Žymėti viską</span>, suaktyvinama pirmo stulpelio antraštė.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Jei suaktyvintas langelis, suaktyvinama stulpelio antraštė.</p>
+				<p>Jei suaktyvintas eilučių parinkiklis, suaktyvinama <span class="uicontrol">Žymėti viską</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Jei suaktyvintas langelis arba stulpelio antraštė, suaktyvinama paskutinė to paties stulpelio eilutė.</p>
+				<p>Jei suaktyvintas eilučių parinkiklis arba <span class="uicontrol">Žymėti viską</span>, suaktyvinamas paskutinis eilučių parinkiklis.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Jei suaktyvintas langelis, suaktyvinamas pirmas langelyje esantis valdiklis, kurį galima suaktyvinti.</p>
+				<p>Jei suaktyvintas žymės langelis <span class="uicontrol">Žymėti viską</span> arba eilučių parinkiklis, perjungiama žymės langelio būsena.</p>
+				<p>Jei suaktyvinta stulpelio antraštė, atidaromas stulpelio antraštės meniu.</p>
+				<p>Jei suaktyvinta grupės antraštė, susijusi grupė sutraukiama arba išplečiama.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Jei suaktyvinta grupės antraštė, atidaromas grupės antraštės meniu.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvintas langelis, pasirenkamas suaktyvintas langelis.</p>
+				<p>Jei suaktyvintas langelių pasirinkimo blokas, pašalinamas langelių pasirinkimas.</p>
+				<p>Jei suaktyvintas langelis ir lentelėje yra tam tikra pasirinkimo veikimo konfigūracija (norėdami pasirinkti eilutę, galite pasirinkti pačią eilutę arba, esant galimybei, pasirinkimo žymės langelį), vietoje eilutės pasirenkamas tik suaktyvintas langelis.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Jei suaktyvintas langelis arba eilučių parinkiklis, pasirinkimas perjungiamas į esamą eilutę.</p>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvintas langelių pasirinkimo blokas, langelių pasirinkimo blokas pakeičiamas į eilučių pasirinkimą. Langelių pasirinkimas pašalinamas.</p>
+				<p>Atsižvelgiant į eilučių pasirinkimo režimą, atliekami šie veiksmai:</p>
+				<ul>
+					<li>Pasirenkamos visos bloko eilutės (kelių pasirinkimas)</li>
+					<li>Pasirenkama tik eilutė, kurioje yra tuo metu suaktyvintas langelis (vieno pasirinkimas)</li>
+					<li>Nepasirenkama jokių eilučių</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvinta lentelėje ir pasirinkti langeliai, pašalinamas visų langelių pasirinkimas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Keičia suaktyvinimą tarp langelio ir jo turinio (išskyrus tik skaitomą tekstą).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Jei suaktyvinta <span class="uicontrol">Žymėti viską</span> ir paspaudžiama <kbd>Spacebar</kbd>, atitinkamas įvykis neinicijuojamas. <kbd>Shift</kbd> neleidžia atlikti šio veiksmo.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Jei suaktyvinta stulpelio antraštė ir paspaudžiama <kbd>Spacebar</kbd> arba <kbd>Enter</kbd>, atitinkamas įvykis neinicijuojamas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama aukščiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir atitinkama eilutė <span class="emphasis">nėra</span> pasirinkta, suaktyvinama aukščiau esanti eilutė ir šios eilutės pasirinkimas pašalinamas.</p>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, ir eilutė <span class="emphasis">nėra</span> pasirinkta, pasirenkamas suaktyvintas ir aukščiau esantis langelis. Suaktyvinamas aukščiau suaktyvinto langelio esantis langelis.</p>
+				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas aukščiau esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir pasirinkta atitinkama eilutė, suaktyvinama žemiau esanti eilutė ir pasirinkimas išplečiamas iki šios eilutės.</p>
+				<p>Jei suaktyvintas langelių arba eilučių parinkiklis ir atitinkama eilutė <span class="emphasis">nėra</span> pasirinkta, suaktyvinama žemiau esanti eilutė ir šios eilutės pasirinkimas pašalinamas.</p>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, ir eilutė <span class="emphasis">nėra</span> pasirinkta, pasirenkami suaktyvintas ir žemiau esantis langeliai. Suaktyvinamas žemiau suaktyvinto langelio esantis langelis.</p>
+				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas žemiau esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Jei suaktyvinta stulpelio antraštė, šio stulpelio plotis padidinamas 1 em. Tai kartojama, jei klavišas laikomas nuspaustas.</p>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, pasirenkami suaktyvintas ir dešinėje esantis langeliai. Suaktyvinamas suaktyvinto langelio dešinėje esantis langelis.</p>
+				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas dešinėje esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Jei suaktyvinta stulpelio antraštė, šio stulpelio plotis sumažinamas 1 em. Tai kartojama, jei klavišas laikomas nuspaustas.</p>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvintas langelis, kuris <span class="emphasis">nėra</span> pasirinktas, pasirenkami suaktyvintas ir kairėje esantis langeliai. Suaktyvinamas suaktyvinto langelio kairėje esantis langelis.</p>
+				<p>Jei suaktyvintas pasirinktas langelis, suaktyvinamas kairėje esantis langelis ir langelių pasirinkimas išplečiamas iki šio langelio.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Jei suaktyvinta stulpelio antraštė, atitinkamas stulpelis perkeliamas viena pozicija į dešinę.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Jei suaktyvinta stulpelio antraštė, atitinkamas stulpelis perkeliamas viena pozicija į kairę.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Suaktyvinamas paskesnis aukščiau esančios eilutės elementas, kurį galima suaktyvinti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Suaktyvinamas paskesnis žemiau esančios eilutės elementas, kurį galima suaktyvinti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Jei suaktyvintas langelis, eilučių parinkiklis arba <span class="uicontrol">Žymėti viską</span>, perjungiamas žymės langelis <span class="uicontrol">Žymėti viską</span>: visos eilutės atitinkamai pažymimos arba atžymimos.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei suaktyvinta lentelėje, pašalinamas visų eilučių ir langelių pasirinkimas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Jei suaktyvintas langelis, suaktyvinamas jo turinys (išskyrus tik skaitomą tekstą).</p>
+				<p>Jei suaktyvinta grupės antraštė arba ne medžio lapo mazgas, perjungiamas grupės išplėtimas: grupė atitinkamai išplečiama arba sutraukiama.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Jei suaktyvinta grupės antraštė, atidaromas grupės antraštės meniu.</p>
+				<p>Jei suaktyvinta stulpelio antraštė, atidaromas stulpelio antraštės meniu.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Jei įgalintas langelių pasirinkimas:</span></p>
+				<p>Jei pasirinkti langeliai, spustelėjus <kbd>Shift + click</kbd> kitame langelyje pasirinkimas išplečiamas iki paspausto langelio.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Esant galimybei ir įjungus funkciją pasirinktos eilutės ir langeliai nukopijuojami į mainų sritį.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Įklijuojamas turinys iš mainų srities, jei funkcija įgalinta.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Di chuyển tiêu điểm đến yếu tố tiếp theo trong thứ tự tab.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Di chuyển tiêu điểm đến yếu tố trước đó trong thứ tự tab.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Di chuyển tiêu điểm đến yếu tố đầu tiên của nhóm giao diện người dùng kế tiếp (nhóm F6) trong thứ tự tab.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Di chuyển tiêu điểm đến yếu tố đầu tiên của nhóm giao diện người dùng trước đó (nhóm F6) trong thứ tự tab.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Phím tắt toàn cục</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

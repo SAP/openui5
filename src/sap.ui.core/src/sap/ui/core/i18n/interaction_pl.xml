@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Powoduje przesunięcie fokusu do następnego elementu w łańcuchu zakładek.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Powoduje przesunięcie fokusu do poprzedniego elementu w łańcuchu zakładek.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Powoduje przesunięcie fokusu do pierwszego elementu następnej grupy interfejsu użytkownika (grupa F6) w łańcuchu zakładek.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Powoduje przesunięcie fokusu do pierwszego elementu poprzedniej grupy interfejsu użytkownika (grupa F6) w łańcuchu zakładek.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Skróty globalne</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

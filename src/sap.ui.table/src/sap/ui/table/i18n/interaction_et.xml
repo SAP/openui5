@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Viib fookuse vastavates suundades sama veeru või rea järgmisele lahtrile.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Kui fookus on esimesel real, viiakse fookus veerupäisele.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Kui fookus on veerupäisel, viiakse fookus selle veeru esimeses nähtavas reas olevale lahtrile, mis sõltub praegusest kerimisasendist.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus esimeses nähtavas reas olevale reaselektorile, mis sõltub praegusest kerimisasendist.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Kui fookus on esimeses veerus oleval lahtril, viiakse fookus reaselektorile.</p>
+				<p>Kui fookus on veerupäisel, viiakse fookus vasakul olevale veerupäisele.</p>
+				<p>Kui fookus on esimese veeru veerupäisel, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
+				<p>Kui fookus on laiendatud grupi grupipäisel, siis grupp ahendatakse.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Kui fookus on veerupäisel, viiakse fookus paremal olevale veerupäisele.</p>
+				<p>Kui fookus on reaselektoril, viiakse fookus sama rea esimese veeru lahtrile.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru veerupäisele.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Kui fookus on lahtritasemel, viiakse fookus sama veeru ülaservas olevale lahtrile. Kui fookus on juba sellel tasemel, viiakse fookus vajaliku kerimisega ühe lehe võrra üles ja see jääb samasse veergu.</p>
+				<p>Kui fookus on esimesel real, viiakse fookus veerupäisele.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Kui fookus on lahtritasemel, viiakse fookus sama veeru viimasele nähtavale lahtrile. Kui fookus on juba sellel tasemel, viiakse fookus vajaliku kerimisega ühe lehe võrra alla ja see jääb samasse veergu.</p>
+				<p>Kui fookus on veerupäisel, viiakse fookus esimesele reale.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Kui fookus on lahtritasemel või veerupäisel, viiakse fookus viie lahtri (lehe vaikesuuruse) võrra vasakule. Kui vasakul on praegusest lehesuurusest vähem veerge, viiakse fookus esimesele veerule.</p>
+				<p>Kui fookus on esimeses veerus lahtritasemel, viiakse fookus reaselektorile.</p>
+				<p>Kui fookus on esimese veeru veerupäisel, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Kui fookus on lahtritasemel, viiakse fookus viie veeru (lehe vaikesuuruse) võrra paremale.</p>
+				<p>Kui fookus on veerupäisel ja paremal on praegusest lehesuurusest vähem veerge, viiakse fookus viimasele veerule.</p>
+				<p>Kui fookus on reaselektoril, viiakse fookus sama rea esimesele veerule.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Kui fookus on lahtril, viiakse fookus sama rea esimesele veerule.</p>
+				<p>Kui fookus on esimeses veerus oleval lahtril, viiakse fookus reaselektorile.</p>
+				<p>Kui fookus on veerupäisel, viiakse fookus esimese veeru päisele.</p>
+				<p>Kui fookus on esimese veeru päisel, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Kui fookus on lahtril või veerupäisel, viiakse fookus viimasele veerule.</p>
+				<p>Kui fookus on reaselektoril, viiakse fookus sama rea esimesele veerule.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus esimese veeru päisele.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Kui fookus on lahtril, viiakse fookus veerupäisele.</p>
+				<p>Kui fookus on reaselektoril, viiakse fookus märkeruudule <span class="uicontrol">Vali kõik</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Kui fookus on lahtril või veerupäisel, viiakse fookus sama veeru viimasele reale.</p>
+				<p>Kui fookus on reaselektoril või märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus viimasele reaselektorile.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Kui fookus on lahtril, viiakse fookus esimesele lahtris olevale juhtelemendile, mille saab fookusesse võtta.</p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span> või reaselektoril, lülitatakse märkeruudu olek ümber.</p>
+				<p>Kui fookus on veerupäisel, avatakse veerupäise menüü.</p>
+				<p>Kui fookus on grupipäisel, siis asjakohane grupp ahendatakse või laiendatakse.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Kui fookus on grupipäisel, avatakse grupipäise menüü.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, valitakse fookuses olev lahter.</p>
+				<p>Kui fookus on lahtrivaliku plokil, eemaldatakse lahtrite valik.</p>
+				<p>Kui fookus on lahtril ja tabelil on konkreetne valikukäitumise konfiguratsioon (rea valimiseks saate valida soovitud rea enda või märkida valiku märkeruudu, kui see on saadaval), valitakse rea asemel ainult fookuses olev lahter.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Kui fookus on lahtril või reaselektoril, lülitab see praeguse rea valiku ümber.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtrivaliku plokil, aktiveeritakse lahtrivaliku ploki asemel reavalik. Lahtrivalik eemaldatakse.</p>
+				<p>Reavaliku režiimist sõltuvalt juhtub üks järgmistest.</p>
+				<ul>
+					<li>Valitakse kõik plokis olevad read (mitmikvalik)</li>
+					<li>Valitakse ainult praegu fookuses oleva lahtriga rida (üksikvalik)</li>
+					<li>Ei valita ühtki rida</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on tabelis ja valitud on lahtreid, eemaldatakse lahtrite valik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Vahetab fookust lahtri ja selle sisu vahel (erandiks on kirjutuskaitsega tekst).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Kui fookus on nupul <span class="uicontrol">Vali kõik</span> ja vajutatakse kiirklahvi <kbd>Spacebar</kbd>, siis vastavat sündmust ei käivitata. <kbd>Shift</kbd> takistab seda tegevust.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Kui fookus on veerupäisel ja vajutatakse kiirklahvi <kbd>Spacebar</kbd> või <kbd>Enter</kbd>, siis vastavat sündmust ei käivitata.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida on valitud, viiakse fookus ülalolevale reale ja valikut laiendatakse kuni selle reani.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida <span class="emphasis">ei</span> ole valitud, viiakse fookus ülalolevale reale ja valik eemaldatakse sellelt realt.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, ja rida <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja selle kohal olev lahter. Fookus viiakse fookuses oleva lahtri kohal olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus ülalolevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida on valitud, viiakse fookus allolevale reale ja valikut laiendatakse kuni selle reani.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida <span class="emphasis">ei</span> ole valitud, viiakse fookus allolevale reale ja valik eemaldatakse sellelt realt.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, ja rida <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja selle all olev lahter. Fookus viiakse fookuses oleva lahtri all olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus allolevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Kui fookus on veerupäisel, suurendatakse selle veeru laiust 1 em võrra. Seda korratakse, kui nuppu ei vabastata.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja sellest paremale jääv lahter. Fookus viiakse fookuses olevast lahtrist paremal olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus paremal olevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Kui fookus on veerupäisel, vähendatakse selle veeru laiust 1 em võrra. Seda korratakse, kui nuppu ei vabastata.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja sellest vasakule jääv lahter. Fookus viiakse fookuses olevast lahtrist vasakul olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus vasakul olevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Kui fookus on veerupäisel, nihutatakse asjakohane veerg ühe koha võrra paremale.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Kui fookus on veerupäisel, nihutatakse asjakohane veerg ühe koha võrra vasakule.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Viib fookuse järgmisele elemendile, mille saab ülalolevas reas fookusesse võtta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Viib fookuse järgmisele elemendile, mille saab allolevas reas fookusesse võtta.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Kui fookus on lahtril, reaselektoril või märkeruudul <span class="uicontrol">Vali kõik</span>, lülitab see ümber märkeruudu <span class="uicontrol">Vali kõik</span> oleku: vastavalt valitakse kõik read või tühistatakse nende valik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on tabelis, eemaldatakse mis tahes ridade ja lahtrite valik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Kui fookus on lahtril, viiakse fookus selle sisule (erandiks on kirjutuskaitsega tekst).</p>
+				<p>Kui fookus on grupipäisel või puu mittelõppsõlmel, lülitab see ümber grupi laiendamise: grupp vastavalt kas laiendatakse või ahendatakse.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Kui fookus on grupipäisel, avatakse grupipäise menüü.</p>
+				<p>Kui fookus on veerupäisel, avatakse veerupäise menüü.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui valitud on lahtreid, siis otsetee <kbd>Shift + click</kbd> kasutamine muul lahtril laiendab valiku kuni klõpsatud lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopeerib valitud read või lahtrid lõikelauale, kui see on saadaval ja funktsioon on lubatud.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Kleebib lõikelaualt sisu, kui funktsioon on lubatud.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>Sposta il focus all'elemento successivo nella sequenza di tabulatori.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>Sposta il focus all'elemento precedente nella sequenza di tabulatori.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>Sposta il focus al primo elemento del gruppo di UI successivo (gruppo F6) nella sequenza di tabulatori.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>Sposta il focus al primo elemento del gruppo di UI precedente (gruppo F6) nella sequenza di tabulatori.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>Scorciatoie globali</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Přesouvá fokus na další buňku ve stejném sloupci nebo řádku v příslušném směru.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Je-li fokus na první řádce, přesune se na hlavičku sloupce.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Je-li fokus na hlavičce sloupce, přesune se na buňku v první viditelné řádce tohoto sloupce, která závisí na aktuální pozici posunu.</p>
+				<p>Je-li fokus na poli <span class="uicontrol">Vybrat vše</span>, přesune se na selektor řádek v první viditelné řádce tohoto sloupce, která závisí na aktuální pozici posunu.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Je-li fokus na buňce v prvním sloupci, přesune se na selektor řádek.</p>
+				<p>Je-li fokus na hlavičce sloupce, přesune se na hlavičku sloupce vlevo.</p>
+				<p>Je-li fokus na hlavičce prvního sloupce, přesune se na pole <span class="uicontrol">Vybrat vše</span>.</p>
+				<p>Je-li fokus na hlavičce skupiny nebo na rozbalené skupině, skupina se sbalí.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Je-li fokus na hlavičce sloupce, přesune se na hlavičku sloupce vpravo.</p>
+				<p>Je-li fokus na selektoru řádek, přesune se na buňku prvního sloupce na stejné řádce.</p>
+				<p>Je-li fokus na poli <span class="uicontrol">Vybrat vše</span>, přesune se na hlavičku prvního sloupce.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Je-li fokus na úrovni buňky, přesune se na první buňku v tomto sloupci. Je-li fokus již na této úrovni, přesune se o stránku nahoru a zůstane ve stejném sloupci s požadovaným posunem.</p>
+				<p>Je-li fokus na první řádce, přesune se na hlavičku sloupce.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Je-li fokus na úrovni buňky, přesune se na poslední viditelnou buňku ve stejném sloupci. Je-li fokus již na této úrovni, přesune se o stránku dolů a zůstane ve stejném sloupci s požadovaným posunem.</p>
+				<p>Je-li fokus na hlavičce sloupce, přesune se na první řádku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Je-li fokus na úrovni buňky nebo na hlavičce sloupce, přesune se pět sloupců vlevo (standardní velikost stránky). Pokud je vlevo méně sloupců než aktuální velikost stránky, fokus se přesune do prvního sloupce.</p>
+				<p>Je-li fokus na prvním sloupci na úrovni buňky, přesune se na selektor řádek.</p>
+				<p>Je-li fokus na hlavičce prvního sloupce, přesune se na <span class="uicontrol">Vybrat vše</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Je-li fokus na úrovni buňky, přesune se pět sloupců vpravo (standardní velikost stránky).</p>
+				<p>Je-li fokus na hlavičce sloupce a vpravo je méně sloupců než aktuální velikost stránky, přesune se fokus na poslední sloupec.</p>
+				<p>Je-li fokus na selektoru řádek, přesune se na první sloupec ve stejné řádce.</p>
+				<p>Je-li fokus na <span class="uicontrol">Vybrat vše</span>, přesune se na hlavičku prvního sloupce.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Je-li fokus na buňce, přesune se na první sloupec ve stejné řádce.</p>
+				<p>Je-li fokus na buňce v prvním sloupci, přesune se na selektor řádek.</p>
+				<p>Je-li fokus na hlavičce sloupce, přesune se na hlavičku prvního sloupce.</p>
+				<p>Je-li fokus na hlavičce prvního sloupce, přesune se na <span class="uicontrol">Vybrat vše</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Je-li fokus na buňce nebo hlavičce sloupce, přesune se na poslední sloupec.</p>
+				<p>Je-li fokus na selektoru řádek, přesune se na první sloupec ve stejné řádce.</p>
+				<p>Je-li fokus na <span class="uicontrol">Vybrat vše</span>, přesune se na hlavičku prvního sloupce.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Je-li fokus na buňce, přesune se na hlavičku sloupce.</p>
+				<p>Je-li fokus na selektoru řádek, přesune se na <span class="uicontrol">Vybrat vše</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Je-li fokus na buňce nebo hlavičce sloupce, přesune se na poslední řádku ve stejném sloupci.</p>
+				<p>Je-li fokus na selektoru řádek nebo na <span class="uicontrol">Vybrat vše</span>, přesune se na selektor poslední řádky.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Je-li fokus na buňce v prvním sloupci, přesune se na první zaměřitelný ovladač v buňce.</p>
+				<p>Je-li fokus na poli <span class="uicontrol">Vybrat vše</span> nebo na selektoru řádek, přepne stav zaškrtávacího pole.</p>
+				<p>Je-li fokus na hlavičce sloupce, otevře se menu hlavičky sloupce.</p>
+				<p>Je-li fokus na hlavičce skupiny, příslušná skupina se sbalí nebo rozbalí.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Je-li fokus na hlavičce skupiny, otevře se menu hlavičky skupiny.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, je vybrána zaměřená buňka.</p>
+				<p>Je-li fokus na bloku výběru buněk, výběr buněk se odebere.</p>
+				<p>Je-li fokus na buňce a tabulka má určitou konfiguraci chování výběru (pro výběr řádky můžete buď vybrat řádku samotnou, nebo zaškrtávací pole výběru, pokud je dostupné), je namísto řádky vybrána pouze zaměřená buňka.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek, přepne se tímto výběr aktuální řádky.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na bloku výběru buněk, výběr buněk se změní na výběr řádek. Výběr buněk se odebere.</p>
+				<p>V závislosti na režimu výběru řádek se stane toto:</p>
+				<ul>
+					<li>Vyberou se všechny řádky bloku (vícenásobný výběr)</li>
+					<li>Vybere se jen řádka s aktuálně zaměřenou buňkou (jednotlivý výběr)</li>
+					<li>Nevybere se žádná řádka</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus v tabulce a buňky jsou vybrány, výběr buněk se odebere.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Přepíná fokus mezi buňkou a jejím obsahem (s výjimkou textu pouze ke čtení).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Je-li fokus na <span class="uicontrol">Vybrat vše</span> a <kbd>Spacebar</kbd> je stisknuto, odpovídající událost se nespustí. <kbd>Shift</kbd> zabraňuje této činnosti.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce a <kbd>Spacebar</kbd> nebo <kbd>Enter</kbd> je stisknuto, odpovídající událost se nespustí. </p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na selektoru buněk nebo řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku odebere.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
+				<p>Je-li fokus na vybrané buňce, buňka nad ní získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se pro tuto řádku odebere.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou.</p>
+				<p>Je-li fokus na vybrané buňce, buňka pod ní získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce, zvětší se šířka tohoto sloupce o 1 em. To se opakuje, když klávesa zůstane stisknutá.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka vpravo. Fokus se přemístí na buňku vpravo od zaměřené buňky.</p>
+				<p>Je-li fokus na vybrané buňce, buňka vpravo získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce, zmenší se šířka tohoto sloupce o 1 em. To se opakuje, když klávesa zůstane stisknutá.</p>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka vlevo. Fokus se přemístí na buňku vlevo od zaměřené buňky.</p>
+				<p>Je-li fokus na vybrané buňce, buňka vlevo získá fokus a výběr buňky je rozšířen až po tuto buňku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce, relevantní sloupec se přesune o jednu pozici vpravo.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Je-li fokus na hlavičce sloupce, relevantní sloupec se přesune o jednu pozici vlevo.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Přesune fokus na další zaměřitelný prvek v řádce výše.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Přesune fokus na další zaměřitelný prvek v řádce níže.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Je-li fokus na buňce, selektoru řádek nebo na <span class="uicontrol">Vybrat vše</span>, přepíná se tímto zaškrtávací pole <span class="uicontrol">Vybrat vše</span>: Vyberou se všechny řádky nebo se výběr všech řádek zruší..</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Je-li fokus v tabulce, výběr se pro všechny řádky a buňky odebere.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Je-li fokus na buňce, přesune se na její obsah (s výjimkou textu pouze ke čtení).</p>
+				<p>Je-li fokus na hlavičce skupiny nebo na nelistovém uzlu stromu, přepne se tímto rozbalení skupiny: skupina se rozbalí nebo sbalí.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Je-li fokus na hlavičce skupiny, otevře se menu hlavičky skupiny.</p>
+				<p>Je-li fokus na hlavičce sloupce, otevře se menu hlavičky sloupce.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
+				<p>Jsou-li buňky vybrány, <kbd>Shift + click</kbd> na jinou buňku rozšíří výběr až po buňku, na niž se klikne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Zkopíruje vybrané řádky nebo buňky do schránky, pokud je dostupná a tato funkce je aktivována.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Vloží obsah ze schránky, pokud je tato funkce aktivována.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Memindahkan fokus ke sel selanjutnya dalam kolom atau baris yang sama sesuai arah navigasi.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Jika fokus berada pada baris pertama, fokus akan berpindah ke header kolom.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Jika fokus berada pada header kolom, fokus akan berpindah ke sel pada baris pertama yang terlihat di kolom tersebut. Posisi baris ini bergantung pada posisi gulir saat ini.</p>
+				<p>Jika fokus berada pada kotak centang <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke pemilih baris pada baris pertama yang terlihat. Posisi baris ini bergantung pada posisi gulir saat ini.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Jika fokus berada pada sel di kolom pertama, fokus akan berpindah ke pemilih baris.</p>
+				<p>Jika fokus berada pada header kolom, fokus akan berpindah ke header kolom di sebelah kiri.</p>
+				<p>Jika fokus berada pada header kolom dari kolom pertama, fokus akan berpindah ke kotak centang <span class="uicontrol">Pilih Semua</span>.</p>
+				<p>Jika fokus berada pada header grup dari grup yang diperluas, grup tersebut akan diciutkan.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Jika fokus berada pada header kolom, fokus akan berpindah ke header kolom di sebelah kanan.</p>
+				<p>Jika fokus berada pada pemilih baris, fokus akan berpindah ke sel di kolom pertama dalam baris yang sama.</p>
+				<p>Jika fokus berada pada kotak centang <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke header kolom pada kolom pertama.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Jika fokus berada pada tingkat sel, fokus akan berpindah ke sel paling atas di kolom yang sama. Jika fokus sudah berada pada tingkat tersebut, fokus akan berpindah satu halaman ke atas, dan jika perlu, tampilan akan digulir otomatis agar sel yang difokuskan tetap terlihat, dengan fokus tetap berada di kolom yang sama.</p>
+				<p>Jika fokus berada pada baris pertama, fokus akan berpindah ke header kolom.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Jika fokus berada pada tingkat sel, fokus akan berpindah ke sel terakhir yang terlihat di kolom yang sama. Jika fokus sudah berada pada tingkat tersebut, fokus akan berpindah satu halaman ke bawah, dan jika perlu, tampilan akan digulir otomatis agar sel tetap terlihat, dengan fokus tetap berada di kolom yang sama.</p>
+				<p>Jika fokus berada pada header kolom, fokus akan berpindah ke baris pertama.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Jika fokus berada pada tingkat sel atau pada header kolom, fokus akan berpindah lima kolom ke kiri (ukuran halaman default). Jika jumlah kolom di sebelah kiri lebih sedikit daripada ukuran halaman saat ini, fokus akan berpindah ke kolom pertama.</p>
+				<p>Jika fokus berada pada kolom pertama di tingkat sel, fokus akan berpindah ke pemilih baris.</p>
+				<p>Jika fokus berada pada header kolom dari kolom pertama, fokus akan berpindah ke <span class="uicontrol">Pilih Semua</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Jika fokus berada pada tingkat sel, fokus akan berpindah lima kolom ke kanan (ukuran halaman default).</p>
+				<p>Jika fokus berada pada header kolom dan jumlah kolom di sebelah kanan lebih sedikit daripada ukuran halaman saat ini, fokus akan berpindah ke kolom terakhir.</p>
+				<p>Jika fokus berada pada pemilih baris, fokus akan berpindah ke kolom pertama dalam baris yang sama.</p>
+				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke header dari kolom pertama.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Jika fokus berada pada sel, fokus akan berpindah ke kolom pertama dalam baris yang sama.</p>
+				<p>Jika fokus berada pada sel di kolom pertama, fokus akan berpindah ke pemilih baris.</p>
+				<p>Jika fokus berada pada header kolom, fokus akan berpindah ke header dari kolom pertama.</p>
+				<p>Jika fokus berada pada header kolom pertama, fokus akan berpindah ke <span class="uicontrol">Pilih Semua</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Jika fokus berada pada sel atau header kolom, fokus akan berpindah ke kolom terakhir.</p>
+				<p>Jika fokus berada pada pemilih baris, fokus akan berpindah ke kolom pertama dalam baris yang sama.</p>
+				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke header dari kolom pertama.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Jika fokus berada pada sel, fokus akan berpindah ke header kolom.</p>
+				<p>Jika fokus berada pada pemilih baris, fokus akan berpindah ke <span class="uicontrol">Pilih Semua</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Jika fokus berada pada sel atau header kolom, fokus akan berpindah ke baris terakhir dalam kolom yang sama.</p>
+				<p>Jika fokus berada pada pemilih baris atau <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke pemilih baris terakhir.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Jika fokus berada pada sel, fokus akan berpindah ke kontrol pertama yang dapat difokuskan di dalam sel tersebut.</p>
+				<p>Jika fokus berada pada kotak centang <span class="uicontrol">Pilih Semua</span> atau pemilih baris, status kotak centang akan dialihkan.</p>
+				<p>Jika fokus berada pada header kolom, menu header kolom akan dibuka.</p>
+				<p>Jika fokus berada pada header grup, grup terkait akan diciutkan atau diperluas.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Jika fokus berada pada header grup, menu header grup akan dibuka.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada pada sel, sel yang difokuskan akan dipilih.</p>
+				<p>Jika fokus berada pada blok pemilihan sel, pemilihan sel akan dihapus.</p>
+				<p>Jika fokus berada pada sebuah sel, dan tabel memiliki konfigurasi tertentu untuk perilaku pemilihan (untuk memilih baris, Anda dapat memilih baris itu sendiri atau kotak centang pemilihan jika tersedia), hanya sel yang difokuskan yang akan dipilih, bukan seluruh barisnya.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Jika fokus berada pada sel atau pemilih baris, tindakan ini akan mengubah status pemilihan baris saat ini.</p>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada pada blok pemilihan sel, blok tersebut akan diubah menjadi pemilihan baris. Pemilihan sel akan dihapus.</p>
+				<p>Bergantung pada mode pemilihan baris, hal-hal berikut akan terjadi:</p>
+				<ul>
+					<li>Semua baris dalam blok dipilih (pemilihan ganda)</li>
+					<li>Hanya baris tempat sel yang sedang difokuskan yang dipilih (pemilihan tunggal)</li>
+					<li>Tidak ada baris yang dipilih</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada di dalam tabel, dan sel-sel dipilih, pemilihan sel akan dihapus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Mengalihkan fokus antara sel dan isinya (kecuali teks yang hanya untuk dibaca).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span>, dan tombol <kbd>Spacebar</kbd> ditekan, peristiwa terkait tidak akan dipicu. <kbd>Shift</kbd> mencegah aktivitas ini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Jika fokus berada pada header kolom, dan tombol <kbd>Spacebar</kbd> atau <kbd>Enter</kbd> ditekan, peristiwa terkait tidak akan dipicu.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait dipilih, fokus akan berpindah ke baris di atasnya, dan area pemilihan akan diperluas hingga ke baris tersebut.</p>
+				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di atasnya, dan pemilihan pada baris tersebut akan dihapus.</p>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, dan barisnya juga <span class="emphasis">tidak</span>dipilih, sel yang difokuskan serta sel di atasnya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di atas sel yang sedang difokuskan.</p>
+				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di atasnya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait dipilih, fokus akan berpindah ke baris di bawahnya, dan area pemilihan akan diperluas hingga ke baris tersebut.</p>
+				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di bawahnya, dan pemilihan pada baris tersebut akan dihapus.</p>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, dan barisnya juga <span class="emphasis">tidak</span> dipilih, sel yang difokuskan serta sel di bawahnya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di bawah sel yang sedang difokuskan.</p>
+				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di bawahnya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Jika fokus berada pada header kolom, lebar kolom tersebut akan bertambah sebesar 1 em. Proses ini akan diulang selama tombol tetap ditekan.</p>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, sel yang difokuskan serta sel di sebelah kanannya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di sebelah kanan sel yang sedang difokuskan.</p>
+				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di sebelah kanannya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Jika fokus berada pada header kolom, lebar kolom tersebut akan berkurang sebesar 1 em. Proses ini akan diulang selama tombol tetap ditekan.</p>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, sel yang difokuskan serta sel di sebelah kirinya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di sebelah kiri sel yang sedang difokuskan.</p>
+				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di sebelah kirinya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Jika fokus berada pada header kolom, kolom terkait akan bergeser satu posisi ke kanan.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Jika fokus berada pada header kolom, kolom terkait akan bergeser satu posisi ke kiri.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Memindahkan fokus ke elemen yang dapat difokuskan selanjutnya di baris atas.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Memindahkan fokus ke elemen yang dapat difokuskan selanjutnya di baris bawah.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Jika fokus berada pada sel, pemilih baris, atau <span class="uicontrol">Pilih Semua</span>, tindakan ini akan mengubah status kotak centang <span class="uicontrol">Pilih Semua</span>: Semua baris akan dipilih atau dibatalkan pilihannya secara bersamaan.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika fokus berada di dalam tabel, pemilihan pada baris dan sel mana pun akan dihapus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Jika fokus berada pada sel, fokus akan berpindah ke isinya (kecuali teks yang hanya untuk dibaca).</p>
+				<p>Jika fokus berada pada header grup atau node bukan level akhir dari sebuah pohon, tindakan ini akan mengubah status perluasan grup: Grup tersebut akan diperluas atau diciutkan secara bersamaan.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Jika fokus berada pada header grup, menu header grup akan dibuka.</p>
+				<p>Jika fokus berada pada header kolom, menu header kolom akan dibuka.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
+				<p>Jika sel-sel dipilih, <kbd>Shift + click</kbd> pada sel yang berbeda akan memperluas pemilihan hingga ke sel yang diklik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Menyalin baris atau sel yang dipilih ke clipboard, jika fitur ini diaktifkan dan tersedia.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Menempelkan konten dari clipboard jika fitur ini diaktifkan.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

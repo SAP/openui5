@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Shortcuturi globale</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Mută focalizarea la următoarea celulă din aceeași coloană sau linie în direcțiile respective.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Dacă focalizarea este pe prima linie, focalizarea se mută pe linia de antet a coloanei.</p>
+				<p>Dacă focalizarea este pe o celulă din prima linie, focalizarea se mută pe antetul de coloană aferent.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Dacă focalizarea este pe caseta de marcaj <span class="uicontrol">Selectare tot</span> sau <span class="uicontrol">Resetare tot</span>, focalizarea se mută pe selectorul de linie din prima linie vizibilă.</p>
+				<p>Dacă focalizarea este pe linia de antet a coloanei, focalizarea se mută pe prima linie.</p>
+				<p>Dacă focalizarea este pe o linie, focalizarea se mută pe linia de mai jos.</p>
+				<p>Dacă focalizarea este pe o celulă, focalizarea se mută pe celula de mai jos.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Dacă focalizarea este pe prima celulă, focalizarea se mută pe linie. Acest lucru trece de la navigarea bazată pe celulă la navigarea bazată pe linie.</p>
+				<p>Dacă focalizarea este pe o celulă, focalizarea se mută pe celula din stânga.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Dacă focalizarea este pe o linie, focalizarea se mută pe prima celulă a liniei focalizate în prezent. Acest lucru trece de la navigarea bazată pe linie la navigarea bazată pe celulă.</p>
+				<p>Dacă focalizarea este pe o celulă, focalizarea se mută pe celula din dreapta.</p>
+				<p><span class="emphasis">Notă:</span> Dacă focalizarea este pe ultima coloană, iar comportamentul pop-in a fost activat pentru această coloană, zona pop-in este tratată ca o coloană suplimentară la dreapta, iar focalizarea se mută pe această coloană.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Dacă focalizarea este pe o linie, focalizarea se mută pe linia de antet a coloanei.</p>
+				<p>Dacă focalizarea este pe linie de antet coloană, iar butonul <span class="uicontrol">Mai mult</span> este disponibil, focalizarea se mută pe butonul <span class="uicontrol">Mai mult</span>.</p>
+				<p>Dacă focalizarea este pe linie de antet coloană, iar butonul <span class="uicontrol">Mai mult</span> <span class="emphasis">nu</span> este disponibil, focalizarea se mută pe ultima linie focalizată.</p>
+				<p>Dacă focalizarea este pe butonul <span class="uicontrol">Mai mult</span>, focalizarea se mută pe ultima linie focalizată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Dacă focalizarea este pe o linie, iar butonul <span class="uicontrol">Mai mult</span> este disponibil, focalizarea se mută pe butonul <span class="uicontrol">Mai mult</span>.</p>
+				<p>Dacă focalizarea este pe o linie, iar butonul <span class="uicontrol">Mai mult</span> <span class="emphasis">nu</span> este disponibil, focalizarea se mută pe linia de antet a coloanei.</p>
+				<p>Dacă focalizarea este pe butonul <span class="uicontrol">Mai mult</span>, focalizarea se mută pe linia de antet a coloanei.</p>
+				<p>Dacă focalizarea este pe linie de antet coloană, focalizarea se mută pe ultima linie focalizată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Dacă focalizarea este pe antetul de coloană, lățimea acestei coloane este majorată cu 1 em. Acest lucru se repetă dacă tasta rămâne apăsată.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula din dreapta. Focalizarea se mută la celula din dreapta celulei focalizate.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, celula din dreapta obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Dacă focalizarea este pe antetul de coloană, lățimea acestei coloane este micșorată cu 1 em. Acest lucru se repetă dacă tasta rămâne apăsată.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula din stânga. Focalizarea se mută la celula din stânga celulei focalizate.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, celula din stânga obține focalizarea și selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă este selectată, focalizarea se mută pe linia de mai sus, iar selecția este extinsă până la această linie.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă <span class="emphasis">nu</span> este selectată, focalizarea se mută pe linia de mai sus, iar selecția este eliminată pentru această linie.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată și linia <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula de mai sus. Focalizarea se mută pe celula de deasupra celulei focalizate.</p>
+				<p>Dacă focalizarea este pe o celulă selectată, focalizarea se mută la celula de mai sus, iar selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă este selectată, focalizarea se mută pe linia de mai jos, iar selecția este extinsă până la această linie.</p>
+				<p>Dacă focalizarea este pe selectorul de celulă sau linie și linia relevantă <span class="emphasis">nu</span> este selectată, focalizarea se mută pe linia de mai jos, iar selecția este eliminată pentru această linie.</p>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă care <span class="emphasis">nu</span> este selectată și linia <span class="emphasis">nu</span> este selectată, sunt selectate celula focalizată și celula de mai jos. Focalizarea se mută pe celula de sub celula focalizată. </p>
+				<p>Dacă focalizarea este pe o celulă selectată, focalizarea se mută la celula de mai jos, iar selecția celulei este extinsă până la această celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Dacă focalizarea este pe o celulă editabilă (de exemplu, un câmp de intrare), focalizarea se mută pe celula de mai sus.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Dacă focalizarea este pe o celulă editabilă (de exemplu, un câmp de intrare), focalizarea se mută pe celula de mai jos.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe o celulă, este selectată celula focalizată.</p>
+				<p>Dacă focalizarea este pe un bloc de selecție celulă, selecția celulelor este eliminată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este pe un bloc de selecție celulă, blocul de selecție celulă este modificat într-o selecție de linie. Selecția celulei este eliminată.</p>
+				<p>În funcție de modul de selecție linie, au loc următoarele:</p>
+				<ul>
+					<li>Sunt selectate toate liniile blocului (selecție multiplă)</li>
+					<li>Este selectată numai linia cu celula focalizată în prezent (selecție individuală)</li>
+					<li>Nu este selectată nicio linie</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă selecția este în interiorul tabelului, este eliminată selecția pentru orice linie sau celulă.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă focalizarea este în interiorul tabelului și sunt selectate celule, selecția celulelor este eliminată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Comută focalizarea între celulă și conținutul său dacă celula are elemente interactive, precum un câmp de intrare sau buton (cu excepția textului numai pentru citire).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Dacă focalizarea este într-o celulă în mod de editare, focalizarea se mută pe linie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
+				<p>Dacă sunt selectate celule, apăsând pe <kbd>Shift</kbd> și efectuând click pe o celulă diferită extinde selecția până la celula selectată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Copiază liniile selectate sau celulele în clipboard, dacă opțiunea este disponibilă și caracteristica activată.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Lipește conținutul din clipboard, dacă caracteristica este activată.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Deschide gestiunea de variante.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Închide fereastra popover de eroare a gestiunii de variante.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Mută elementul o poziție în sus, dacă este disponibilă.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Mută elementul o poziție în jos, dacă este disponibilă.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Mută elementul în partea de sus, dacă este disponibilă.</p>
+				<p><kbd>End</kbd></p>
+				<p>Mută elementul în partea de jos, dacă este disponibilă.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Mută elementul o poziție în sus, dacă este disponibilă.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Mută elementul o poziție în jos, dacă este disponibilă.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Mută elementul o poziție în sus, dacă este disponibilă.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Mută elementul o poziție în jos, dacă este disponibilă.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.ui.core" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.core.Control"/>
+		<interaction> <kbd>Tab</kbd> <description>
+				<p>將焦點移到索引標籤鏈中的下一個元素。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Tab</kbd> <description>
+				<p>將焦點移到索引標籤鏈中的上一個元素。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F6</kbd> <description>
+				<p>將焦點移到索引標籤鏈中的下一個使用者介面群組 (F6 群組) 的第一個元素。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F6</kbd> <description>
+				<p>將焦點移到索引標籤鏈中的上一個使用者介面群組 (F6 群組) 的第一個元素。</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.ui.core.mvc.XMLView">
+			<defaultLabel>全域捷徑</defaultLabel>
+		</control>
+	</control-interactions>
+</interaction-documentation>

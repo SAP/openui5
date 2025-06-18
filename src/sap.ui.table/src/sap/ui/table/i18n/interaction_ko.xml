@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>포커스를 해당 방향으로 같은 열 또는 행 내의 다음 셀로 이동합니다.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>첫 번째 행에 포커스가 있다면 열 헤더로 포커스가 이동합니다.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>열 헤더에 포커스가 있다면 현재 스크롤 위치에 따라 이 열에서 첫 번째로 표시되는 행 안의 셀로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">모두 선택</span> 체크박스에 포커스가 있다면 현재 스크롤 위치에 따라 첫 번째로 표시되는 행 안의 행 선택으로 포커스가 이동합니다.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>첫 번째 열에 포커스가 있다면 행 선택으로 포커스가 이동합니다.</p>
+				<p>열 헤더에 포커스가 있다면 왼쪽 열 헤더로 포커스가 이동합니다.</p>
+				<p>첫 번째 열의 열 헤더에 포커스가 있다면 <span class="uicontrol">모두 선택</span> 체크박스로 포커스가 이동합니다.</p>
+				<p>펼쳐진 그룹의 그룹 헤더에 포커스가 있다면 그룹이 접힙니다.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>열 헤더에 포커스가 있다면 오른쪽 열 헤더로 포커스가 이동합니다.</p>
+				<p>행 선택에 포커스가 있다면 같은 행에서 첫 번째 열의 셀로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">모두 선택</span> 체크박스에 포커스가 있다면 첫 번째 열의 열 헤더로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>셀 레벨에 포커스가 있다면 같은 열의 맨 위 셀로 포커스가 이동합니다. 해당 레벨에 포커스가 이미 있는 경우에는 한 페이지 위로 포커스가 이동하여 같은 열에 유지됩니다(스크롤 필요).</p>
+				<p>첫 번째 행에 포커스가 있다면 열 헤더로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>셀 레벨에 포커스가 있다면 같은 열에서 마지막으로 표시되는 셀로 포커스가 이동합니다. 해당 레벨에 포커스가 이미 있는 경우에는 한 페이지 아래로 포커스가 이동하여 같은 열에 유지됩니다(스크롤 필요).</p>
+				<p>열 헤더에 포커스가 있다면 첫 번째 행으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>셀 레벨 또는 열 헤더에 포커스가 있다면 왼쪽으로 5개 열만큼(기본 페이지 크기) 포커스가 이동합니다. 왼쪽에 있는 열이 현재 페이지 크기보다 적은 경우에는 첫 번째 열로 포커스가 이동합니다. </p>
+				<p>셀 레벨의 첫 번째 열에 포커스가 있다면 행 선택으로 포커스가 이동합니다.</p>
+				<p>첫 번째 열의 열 헤더에 포커스가 있다면 <span class="uicontrol">모두 선택</span>으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>셀 레벨에 포커스가 있다면 오른쪽으로 5개 열만큼(기본 페이지 크기) 포커스가 이동합니다.</p>
+				<p>열 헤더에 포커스가 있고 오른쪽에 있는 열이 현재 페이지 크기보다 적은 경우에는 마지막 열로 포커스가 이동합니다. </p>
+				<p>행 선택에 포커스가 있다면 같은 행의 첫 번째 열로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">모두 선택</span>에 포커스가 있다면 첫 번째 열의 헤더로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>셀에 포커스가 있다면 같은 행의 첫 번째 열로 포커스가 이동합니다.</p>
+				<p>첫 번째 열의 셀에 포커스가 있다면 행 선택으로 포커스가 이동합니다.</p>
+				<p>열 헤더에 포커스가 있다면 첫 번째 열의 헤더로 포커스가 이동합니다.</p>
+				<p>첫 번째 열 헤더에 포커스가 있다면 <span class="uicontrol">모두 선택</span>으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>셀 또는 열 헤더에 포커스가 있다면 마지막 열로 포커스가 이동합니다.</p>
+				<p>행 선택에 포커스가 있다면 같은 행의 첫 번째 열로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">모두 선택</span>에 포커스가 있다면 첫 번째 열의 헤더로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>셀에 포커스가 있다면 열 헤더로 포커스가 이동합니다.</p>
+				<p>행 선택에 포커스가 있다면 <span class="uicontrol">모두 선택</span>으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>셀 또는 열 헤더에 포커스가 있다면 같은 열의 마지막 행으로 포커스가 이동합니다.</p>
+				<p>행 선택 또는 <span class="uicontrol">모두 선택</span>에 포커스가 있다면 마지막 행 선택으로 포커스가 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>셀에 포커스가 있다면 셀에서 첫 번째로 포커스 가능한 컨트롤로 포커스가 이동합니다.</p>
+				<p><span class="uicontrol">모두 선택</span> 체크박스 또는 행 선택에 포커스가 있다면 체크박스 상태를 토글합니다.</p>
+				<p>열 헤더에 포커스가 있다면 열 헤더 메뉴가 열립니다.</p>
+				<p>그룹 헤더에 포커스가 있다면 관련 그룹이 접히거나 펼쳐집니다.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>그룹 헤더에 포커스가 있다면 그룹 헤더 메뉴가 열립니다.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>셀에 포커스가 있다면 포커스가 있는 셀이 선택됩니다.</p>
+				<p>셀 선택 블록에 포커스가 있다면 셀 선택이 제거됩니다.</p>
+				<p>셀에 포커스가 있고 테이블에 선택 동작이 특정 방식으로 구성된 경우(행을 선택하려면 행 자체를 선택하거나 선택 체크박스가 있으면 이를 선택할 수 있음), 행이 아닌 포커스가 있는 셀만 선택됩니다.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>셀 또는 행 선택에 포커스가 있다면 이를 통해 현재 행 선택을 토글합니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>셀 선택 블록에 포커스가 있다면 셀 선택 블록이 행 선택으로 바뀝니다. 셀 선택은 제거됩니다.</p>
+				<p>행 선택 모드에 따라, 다음과 같이 동작하게 됩니다.</p>
+				<ul>
+					<li>블록의 모든 행이 선택됨(복수 선택)</li>
+					<li>현재 포커스가 있는 셀을 포함하는 행만 선택됨(단일 선택)</li>
+					<li>행이 선택되지 않음</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>테이블 내부에 포커스가 있고 셀이 선택되어 있으면 셀에 대한 선택이 제거됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>셀과 해당 셀 내용 간 포커스 이동을 토글합니다(읽기 전용 텍스트는 제외).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="uicontrol">모두 선택</span>에 포커스가 있을 때, <kbd>Spacebar</kbd>를 눌러도 해당 이벤트가 트리거되지 않습니다. <kbd>Shift</kbd>가 이 동작을 막습니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>열 헤더에 포커스가 있을 때, <kbd>Spacebar</kbd> 또는 <kbd>Enter</kbd>를 눌러도 해당 이벤트가 트리거되지 않습니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 위쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 위쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 위쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 위쪽 셀로 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있으면 위쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되어 있으면 아래쪽 행으로 포커스가 이동하고 이 행까지 선택이 확장됩니다.</p>
+				<p>셀 또는 행 선택에 포커스가 있고 해당 행이 선택되지 <span class="emphasis">않은</span> 경우, 아래쪽 행으로 포커스가 이동하고 이 행에 대한 선택이 제거됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있고 행이 선택되지 <span class="emphasis">않은</span> 경우, 포커스가 있는 셀과 아래쪽 셀이 선택됩니다. 포커스는 포커스가 있는 셀의 아래쪽 셀로 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있으면 아래쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 증가합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있는 경우, 포커스가 있는 셀과 오른쪽 셀이 선택됩니다. 포커스가 있는 셀의 오른쪽 셀로 포커스가 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있다면 오른쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>열 헤더에 포커스가 있다면 이 열의 너비가 1em 감소합니다. 키를 계속 누르고 있으면 이 동작이 반복됩니다.</p>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>선택되지 <span class="emphasis">않은</span> 셀에 포커스가 있다면 포커스가 있는 셀과 왼쪽 셀이 선택됩니다. 포커스가 있는 셀의 왼쪽 셀로 포커스가 이동합니다.</p>
+				<p>선택된 셀에 포커스가 있다면 왼쪽 셀로 포커스가 이동하고 이 셀까지 셀 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>열 헤더에 포커스가 있다면 해당 열이 오른쪽으로 한 칸 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>열 헤더에 포커스가 있다면 해당 열이 왼쪽으로 한 칸 이동합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>위쪽 행에서 다음으로 포커스 가능한 요소로 포커스를 옮깁니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>아래쪽 행에서 다음으로 포커스 가능한 요소로 포커스를 옮깁니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>셀, 행 선택, 또는 <span class="uicontrol">모두 선택</span>에 포커스가 있는 경우, <span class="uicontrol">모두 선택</span> 체크박스 선택을 토글합니다. 즉, 모든 행이 선택되거나 선택이 해제됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>테이블 내부에 포커스가 있다면 모든 행과 셀의 선택이 제거됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>셀에 포커스가 있다면 이 셀의 내용으로 포커스가 이동합니다(읽기 전용 텍스트는 제외).</p>
+				<p>그룹 헤더 또는 트리의 리프가 아닌 노드에 포커스가 있는 경우, 그룹 확장을 토글합니다. 즉, 그룹을 펼치거나 접습니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>그룹 헤더에 포커스가 있다면 그룹 헤더 메뉴가 열립니다.</p>
+				<p>열 헤더에 포커스가 있다면 열 헤더 메뉴가 열립니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
+				<p>셀이 선택된 경우, 다른 셀에서 <kbd>Shift + click</kbd> 클릭 시 클릭한 셀까지 선택이 확장됩니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>해당 기능이 활성화되어 사용 가능한 경우 선택한 행 또는 셀을 클립보드로 복사합니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>해당 기능이 활성화된 경우 클립보드에서 내용을 붙여넣습니다.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.m.Page">
+			<defaultLabel>Globaalsed otseteed</defaultLabel>
+		</control>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.Table"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Viib fookuse vastavates suundades sama veeru või rea järgmisele lahtrile.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Kui fookus on esimesel real, viiakse fookus veerupäise reale.</p>
+				<p>Kui fookus on esimese rea lahtril, viiakse fookus vastavale veerupäisele.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span> või <span class="uicontrol">Tühjenda kõik</span>, viiakse fookus esimeses nähtavas reas kuvatavale reaselektorile.</p>
+				<p>Kui fookus on veerupäise real, viiakse fookus esimesele reale.</p>
+				<p>Kui fookus on real, viiakse fookus selle all olevale reale.</p>
+				<p>Kui fookus on lahtril, viiakse fookus selle all olevale lahtrile.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Kui fookus on esimesel lahtril, viiakse fookus reale. See aktiveerib lahtripõhise navigeerimise asemel reapõhise navigeerimise.</p>
+				<p>Kui fookus on lahtril, viiakse fookus vasakul olevale lahtrile.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Kui fookus on real, viiakse fookus praegu fookuses oleva rea esimesele lahtrile. See aktiveerib reapõhise navigeerimise asemel lahtripõhise navigeerimise.</p>
+				<p>Kui fookus on lahtril, viiakse fookus vasakul olevale lahtrile.</p>
+				<p><span class="emphasis">Märkus.</span> Kui fookus on viimasel veerul ja selle veeru jaoks on lubatud hüpikalakäitumine, koheldakse hüpikala nagu paremal asuvat veergu ja fookus viiakse sellele veerule.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
+				<p>Kui fookus on real, viiakse fookus veerupäise reale.</p>
+				<p>Kui fookus on veerupäise real ja saadaval on nupp <span class="uicontrol">Rohkem</span>, viiakse fookus nupule <span class="uicontrol">Rohkem</span>.</p>
+				<p>Kui fookus on veerupäise real ja saadaval <span class="emphasis">ei</span> ole nuppu <span class="uicontrol">Rohkem</span>, viiakse fookus viimati fookuses olnud reale.</p>
+				<p>Kui fookus on nupul <span class="uicontrol">Rohkem</span>, viiakse fookus viimati fookuses olnud reale.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Kui fookus on real ja saadaval on nupp <span class="uicontrol">Rohkem</span>, viiakse fookus nupule <span class="uicontrol">Rohkem</span>.</p>
+				<p>Kui fookus on real ja saadaval <span class="emphasis">ei</span> ole nuppu <span class="uicontrol">Rohkem</span>, viiakse fookus veerupäise reale.</p>
+				<p>Kui fookus on nupul <span class="uicontrol">Rohkem</span>, viiakse fookus veerupäise reale.</p>
+				<p>Kui fookus on veerupäise real, viiakse fookus viimati fookuses olnud reale.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Kui fookus on veerupäisel, suurendatakse selle veeru laiust 1 em võrra. Seda korratakse, kui klahvi ei vabastata.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja sellest paremale jääv lahter. Fookus viiakse fookuses olevast lahtrist paremal olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus paremal olevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Kui fookus on veerupäisel, vähendatakse selle veeru laiust 1 em võrra. Seda korratakse, kui klahvi ei vabastata.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja sellest vasakule jääv lahter. Fookus viiakse fookuses olevast lahtrist vasakul olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus vasakul olevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida on valitud, viiakse fookus ülalolevale reale ja valikut laiendatakse kuni selle reani.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida <span class="emphasis">ei</span> ole valitud, viiakse fookus ülalolevale reale ja valik eemaldatakse sellelt realt.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, ja rida <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja selle kohal olev lahter. Fookus viiakse fookuses oleva lahtri kohal olevale lahtrile.</p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus selle kohal olevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida on valitud, viiakse fookus allolevale reale ja valikut laiendatakse kuni selle reani.</p>
+				<p>Kui fookus on lahtril või reaselektoril ja asjakohane rida <span class="emphasis">ei</span> ole valitud, viiakse fookus allolevale reale ja valik eemaldatakse sellelt realt.</p>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, mis <span class="emphasis">ei</span> ole valitud, ja rida <span class="emphasis">ei</span> ole valitud, valitakse fookuses olev lahter ja selle all olev lahter. Fookus viiakse fookuses oleva lahtri all olevale lahtrile. </p>
+				<p>Kui fookus on valitud lahtril, viiakse fookus selle all olevale lahtrile ja lahtrivalikut laiendatakse kuni selle lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Kui fookus on redigeeritaval lahtril (nt sisendiväljal), viiakse fookus selle kohal lahtrile.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Kui fookus on redigeeritaval lahtril (nt sisendiväljal), viiakse fookus selle all olevale lahtrile.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Spacebar</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtril, valitakse fookuses olev lahter.</p>
+				<p>Kui fookus on lahtrivaliku plokil, eemaldatakse lahtrite valik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on lahtrivaliku plokil, aktiveeritakse lahtrivaliku ploki asemel reavalik. Lahtrivalik eemaldatakse.</p>
+				<p>Reavaliku režiimist sõltuvalt juhtub üks järgmistest.</p>
+				<ul>
+					<li>Valitakse kõik plokis olevad read (mitmikvalik)</li>
+					<li>Valitakse ainult praegu fookuses oleva lahtriga rida (üksikvalik)</li>
+					<li>Ei valita ühtki rida</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on tabelis, eemaldatakse mis tahes ridade ja lahtrite valik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Escape</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui fookus on tabelis ja valitud on lahtreid, eemaldatakse lahtrite valik.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Vahetab fookust lahtri ja selle sisu vahel, kui lahtril on interaktiivseid elemente, nagu sisendiväli või nupp (erandiks on kirjutuskaitsega tekst).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F7</kbd> <description>
+				<p>Kui fookus on redigeerimisrežiimis lahtri sees, viiakse fookus reale.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + MouseClick</kbd> <description>
+				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
+				<p>Kui valitud on lahtreid, siis otsetee <kbd>Shift</kbd> vajutamine ja mõnel muul lahtril klõpsamine laiendab valiku kuni klõpsatud lahtrini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Kopeerib valitud read või lahtrid lõikelauale, kui see on saadaval ja funktsioon on lubatud.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Kleebib lõikelaualt sisu, kui funktsioon on lubatud.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.VariantManagement"/>
+		<interaction> <kbd>F4</kbd> <kbd>Spacebar</kbd> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <description>
+				<p>Avab variandihalduse.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Sulgeb variandihalduse tõrkehüpiku</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SelectionPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>Home</kbd> <kbd>End</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Nihutab üksuse ühe koha võrra üles, kui see on saadaval.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Nihutab üksuse ühe koha võrra alla, kui see on saadaval.</p>
+				<p><kbd>Home</kbd></p>
+				<p>Nihutab üksuse ülaserva, kui see on saadaval.</p>
+				<p><kbd>End</kbd></p>
+				<p>Nihutab üksuse lõppu, kui see on saadaval.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.SortPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Nihutab üksuse ühe koha võrra üles, kui see on saadaval.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Nihutab üksuse ühe koha võrra alla, kui see on saadaval.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+	<control-interactions>
+		<control name="sap.m.p13n.GroupPanel"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Nihutab üksuse ühe koha võrra üles, kui see on saadaval.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Nihutab üksuse ühe koha võrra alla, kui see on saadaval.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>

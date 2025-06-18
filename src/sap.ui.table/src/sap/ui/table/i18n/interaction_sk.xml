@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF8"?>
+<interaction-documentation library="sap.m" xmlns="http://schemas.sap.com/sapui5/extension/sap.ui.core.InteractionDocumentation/1">
+	<control-interactions>
+		<control name="sap.ui.table.Table"/>
+		<control name="sap.ui.table.AnalyticalTable"/>
+		<control name="sap.ui.table.TreeTable"/>
+		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
+				<p>Presunie zameranie na nasledujúcu bunku v rovnakom stĺpci alebo riadku v príslušných smeroch.</p>
+				<p><kbd>ArrowUp</kbd></p>
+				<p>Ak je zameranie na prvom riadku, zameranie sa presunie na hlavičku stĺpca.</p>
+				<p><kbd>ArrowDown</kbd></p>
+				<p>Ak je zameranie na hlavičku stĺpca, zameranie sa presunie na bunku v prvom viditeľnom riadku tohto stĺpca, čo závisí od aktuálnej pozície posúvania.</p>
+				<p>Ak je zameranie na začiarkavacom poli <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na selektor riadkov v prvom viditeľnom riadku, ktorý závisí od aktuálnej pozície posúvania.</p>
+				<p><kbd>ArrowLeft</kbd></p>
+				<p>Ak je zameranie na bunku v prvom stĺpci, zameranie sa presunie na selektor riadkov.</p>
+				<p>Ak je zameranie na hlavičku stĺpca, zameranie sa presunie na hlavičku stĺpca doľava.</p>
+				<p>Ak je zameranie na hlavičku stĺpca prvého stĺpca, zameranie sa presunie na začiarkavacie pole <span class="uicontrol">Vybrať všetko</span>.</p>
+				<p>Ak je zameranie na hlavičku skupiny rozbalenej skupiny, skupina sa zbalí.</p>
+				<p><kbd>ArrowRight</kbd></p>
+				<p>Ak je zameranie na hlavičku stĺpca, zameranie sa presunie na hlavičku stĺpca doprava.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na bunku prvého stĺpca v tom istom riadku.</p>
+				<p>Ak je zameranie na začiarkavacom poli <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku stĺpca prvého stĺpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageUp</kbd> <description>
+				<p>Ak je zameranie na úrovni bunky, zameranie sa presunie na bunku úplne hore v tom istom stĺpci. Ak je zameranie už na tejto úrovni, zameranie sa posunie o jednu stránku nahor a zostane v rovnakom stĺpci s požadovaným posúvaním.</p>
+				<p>Ak je zameranie na prvom riadku, zameranie sa presunie na hlavičku stĺpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>PageDown</kbd> <description>
+				<p>Ak je zameranie na úrovni bunky, zameranie sa presunie na poslednú viditeľnú bunku v tom istom stĺpci. Ak je už zameranie na tejto úrovni, posunie sa o jednu stránku nadol a zostane v rovnakom stĺpci s požadovaným posúvaním.</p>
+				<p>Ak je zameranie na hlavičku stĺpca, zameranie sa presunie na prvý riadok.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageUp</kbd> <description>
+				<p>Ak je zameranie na úrovni bunky alebo na hlavičku stĺpca, zameranie sa presunie o päť stĺpcov doľava (predvolená veľkosť strany). Ak je naľavo menej stĺpcov, než je aktuálna veľkosť strany, zameranie sa presunie na prvý stĺpec.</p>
+				<p>Ak je zameranie na prvom stĺpci na úrovni bunky, zameranie sa presunie na selektor riadkov.</p>
+				<p>Ak je zameranie na hlavičku stĺpca prvého stĺpca, zameranie sa presunie na <span class="uicontrol">Vybrať všetko</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + PageDown</kbd> <description>
+				<p>Ak je zameranie na úrovni bunky, zameranie sa presunie o päť stĺpcov doprava (predvolená veľkosť strany).</p>
+				<p>Ak je zameranie na hlavičku stĺpca a napravo je menej stĺpcov, než je aktuálna veľkosť strany, zameranie sa presunie na posledný stĺpec.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
+				<p>Ak je zameranie na položku <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku prvého stĺpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
+				<p>Ak je zameranie na bunku v prvom stĺpci, zameranie sa presunie na selektor riadkov.</p>
+				<p>Ak je zameranie na hlavičku stĺpca, zameranie sa presunie na hlavičku prvého stĺpca.</p>
+				<p>Ak je zameranie na hlavičku prvého stĺpca, zameranie sa presunie na <span class="uicontrol">Vybrať všetko</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>End</kbd> <description>
+				<p>Ak je zameranie na hlavičku bunky alebo stĺpca, zameranie sa presunie na posledný stĺpec.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na prvý stĺpec v tom istom riadku.</p>
+				<p>Ak je zameranie na položku <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na hlavičku prvého stĺpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Home</kbd> <kbd>Pos1</kbd> <description>
+				<p>Ak je zameranie na bunke, zameranie sa presunie na hlavičku stĺpca.</p>
+				<p>Ak je zameranie na selektore riadkov, zameranie sa presunie na možnosť <span class="uicontrol">Vybrať všetko</span>.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + End</kbd> <description>
+				<p>Ak je zameranie na hlavičku bunky alebo stĺpca, zameranie sa presunie na posledný riadok v tom istom stĺpci.</p>
+				<p>Ak je zameranie na volič riadkov alebo na <span class="uicontrol">Vybrať všetko</span>, zameranie sa presunie na selektor posledného riadka.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na prvý zaostriteľný ovládací prvok v bunke.</p>
+				<p>Ak je zameranie na začiarkavacie pole <span class="uicontrol">Vybrať všetko</span> alebo selektor riadkov, prepína stav začiarkavacieho poľa.</p>
+				<p>Ak je zameranie na hlavičku stĺpca, otvorí sa ponuka hlavičky stĺpca.</p>
+				<p>Ak je zameranie na hlavičku skupiny, súvisiaca skupina sa zbalí alebo rozbalí.</p>
+				<p><kbd>Enter</kbd></p>
+				<p>Ak je zameranie na hlavičku skupiny, otvorí sa ponuka hlavičky skupiny.</p>
+				<p><kbd>Spacebar</kbd></p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na bunku, vyberie sa zameraná bunka.</p>
+				<p>Ak je zameranie na blok výberu buniek, výber buniek sa odstráni.</p>
+				<p>Ak je zameranie na bunku a tabuľka má určitú konfiguráciu správania pri výbere (na výber riadka môžete vybrať buď samotný riadok alebo začiarkavacie pole, ak je k dispozícii), namiesto riadka sa vyberie iba aktívna bunka.</p>
+				<p><kbd>Shift + Spacebar</kbd></p>
+				<p>Ak je zameranie na výber bunky alebo riadka, prepne sa výber aktuálneho riadka.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na blok výberu buniek, blok výberu buniek sa zmení na výber riadkov. Výber buniek sa odstráni.</p>
+				<p>V závislosti od režimu výberu riadkov sa stane toto:</p>
+				<ul>
+					<li>Všetky riadky bloku sú vybraté (viacnásobný výber)</li>
+					<li>Vyberie sa iba riadok s aktuálne zameranou bunkou (jeden výber)</li>
+					<li>Nie je vybratý žiadny z riadkov</li>
+				</ul>
+			</description>
+		</interaction>
+		<interaction> <kbd>ESC</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie vnútri tabuľky a sú vybraté bunky, výber buniek sa odstráni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>F2</kbd> <description>
+				<p>Prepína zameranie medzi bunkou a jej obsahom (s výnimkou textu určeného len na čítanie).</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
+				<p>Ak je zameranie na <span class="uicontrol">Vybrať všetko</span> a stlačíte <kbd>Spacebar</kbd>, príslušná udalosť sa nespustí. <kbd>Shift</kbd> bráni tejto aktivite.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca a stlačíte <kbd>Spacebar</kbd> alebo <kbd>Enter</kbd>, príslušná udalosť sa nespustí.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok vyššie a výber sa odstráni pre tento riadok.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nad ňou. Zameranie sa presunie na bunku nad zameranou bunkou.</p>
+				<p>Ak je zameranie na vybratú bunku, bude zameraná bunka nad a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
+				<p>Ak je zameranie na výber bunky alebo riadka a je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa rozšíri až po tento riadok.</p>
+				<p>Ak je zameranie na výber bunky alebo riadka a <span class="emphasis">nie</span> je vybratý príslušný riadok, zameranie sa presunie na riadok nižšie a výber sa odstráni pre tento riadok.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameraná bunka, ktorá <span class="emphasis">nie je</span> vybratá, a riadok <span class="emphasis">nie je</span> vybratý, vyberie sa aktívna bunka a bunka nižšie. Zameranie sa presunie na bunku pod zameranou bunkou.</p>
+				<p>Ak je zameranie na vybratú bunku, bude zameraná bunka pod a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca, šírka tohto stĺpca sa zväčší o 1 em. Toto sa opakuje, ak zostane tlačidlo stlačené.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na bunku, ktorá <span class="emphasis">nie je</span> vybratá, vyberie sa aktívna bunka a bunka napravo. Zameranie sa presunie na bunku napravo od zameranej bunky.</p>
+				<p>Ak je zameranie na vybratú bunku, zamerá sa bunka napravo a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca, šírka tohto stĺpca sa zmenší o 1 em. Toto sa opakuje, ak zostane tlačidlo stlačené.</p>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie na bunku, ktorá <span class="emphasis">nie je</span> vybratá, vyberie sa aktívna bunka a bunka naľavo. Zameranie sa presunie na bunku naľavo od zameranej bunky.</p>
+				<p>Ak je zameranie na vybratú bunku, zamerá sa bunka naľavo a výber bunky sa rozšíri až po túto bunku.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca, príslušný stĺpec sa posunie o jednu pozíciu doprava.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowLeft</kbd> <description>
+				<p>Ak je zameranie na hlavičku stĺpca, príslušný stĺpec sa posunie o jednu pozíciu doľava.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowUp</kbd> <description>
+				<p>Presunie zameranie na ďalší zaostriteľný prvok v riadku vyššie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + ArrowDown</kbd> <description>
+				<p>Presunie zameranie na ďalší zaostriteľný prvok v riadku nižšie.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + A</kbd> <description>
+				<p>Ak je zameranie na bunku, selektor riadkov alebo <span class="uicontrol">Vybrať všetko</span>, prepne sa začiarkavacie pole <span class="uicontrol">Vybrať všetko</span>: Všetky riadky budú vybraté alebo zrušené.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak je zameranie vnútri tabuľky, výber pre všetky riadky a bunky sa odstráni.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
+				<p>Ak je zameranie na bunku, zameranie sa presunie na jej obsah (s výnimkou textu určeného len na čítanie).</p>
+				<p>Ak je zameranie na hlavičku skupiny alebo nelistový uzol stromu, prepína sa tým rozšírenie skupiny: Skupina sa rozbalí alebo zbalí.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + F10</kbd> <description>
+				<p>Ak je zameranie na hlavičku skupiny, otvorí sa ponuka hlavičky skupiny.</p>
+				<p>Ak je zameranie na hlavičku stĺpca, otvorí sa ponuka hlavičky stĺpca.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + mouse click</kbd> <description>
+				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
+				<p>Ak sú vybraté bunky, <kbd>Shift + click</kbd> v inej bunke sa výber rozšíri až po bunku, na ktorú sa klikne.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + C</kbd> <description>
+				<p>Skopíruje vybraté riadky alebo bunky do schránky, ak je k dispozícii a funkcia je povolená.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Ctrl + V</kbd> <description>
+				<p>Prilepí obsah zo schránky, ak je funkcia povolená.</p>
+			</description>
+		</interaction>
+	</control-interactions>
+</interaction-documentation>
