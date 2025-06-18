@@ -122,7 +122,7 @@ sap.ui.define([
 					contentLeft: [oBackButton],
 					contentMiddle: [
 						new Title({
-							text: "Error",
+							text: "Messages",
 							level: TitleLevel.H1
 						})
 					]
