@@ -40,9 +40,9 @@ function (
 		var done = assert.async(),
 			sExpectedOutputHTML =
 			'<span>' +
-				'<span>before </span>' +
+				'before ' +
 				'<span class="defaultHighlightedText">test</span>' +
-				'<span> after</span>' +
+				' after' +
 			'</span>';
 
 		// Setup
@@ -61,11 +61,11 @@ function (
 		var done = assert.async(),
 			sExpectedOutputHTML =
 			'<span>' +
-				'<span>before </span>' +
+				'before ' +
 				'<span class="defaultHighlightedText">test</span>' +
-				'<span> again </span>' +
+				' again ' +
 				'<span class="defaultHighlightedText">test</span>' +
-				'<span> after</span>' +
+				' after' +
 			'</span>';
 
 		// Setup
@@ -84,11 +84,11 @@ function (
 		var done = assert.async(),
 			sExpectedOutputHTML =
 			'<span>' +
-				'<span>before </span>' +
+				'before ' +
 				'<span class="defaultHighlightedText">token1</span>' +
-				'<span> and </span>' +
+				' and ' +
 				'<span class="defaultHighlightedText">token2</span>' +
-				'<span> after</span>' +
+				' after' +
 			'</span>';
 
 		// Setup
@@ -97,6 +97,26 @@ function (
 		setTimeout(function() {
 			// Act
 			oHighlighter.highlight("token1 token2");
+
+			assert.equal(oRootElement.innerHTML, sExpectedOutputHTML, "correct output");
+			done();
+		}, 0);
+	});
+
+	QUnit.test("highlight text with line breaks", function (assert) {
+		var done = assert.async(),
+			sInputText = "test before line-break \nafter line-break",
+			sExpectedOutputHTML =
+			'<span>' +
+				sInputText.replace("test", "<span class=\"defaultHighlightedText\">test</span>") +
+			'</span>';
+
+		// Setup
+		oRootElement.appendChild(document.createTextNode(sInputText));
+
+		setTimeout(function() {
+			// Act
+			oHighlighter.highlight("test");
 
 			assert.equal(oRootElement.innerHTML, sExpectedOutputHTML, "correct output");
 			done();
