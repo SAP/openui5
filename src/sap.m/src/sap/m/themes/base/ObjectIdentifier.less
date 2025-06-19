@@ -18,7 +18,7 @@
 	padding-left: 0.5rem;
 }
 
-.sapMObjectIdentifierTitle .sapMLnk,
+.sapMObjectIdentifierTitle .sapMLnk .sapMLnkText,
 .sapMObjectIdentifierTitle .sapMText {
 	overflow: visible;
 	font-weight: bold;
@@ -30,7 +30,7 @@
 }
 
 html[data-sap-ui-browser^="ff"] {
-	.sapMObjectIdentifierTitle .sapMLnk,
+	.sapMObjectIdentifierTitle .sapMLnk .sapMLnkText,
 	.sapMObjectIdentifierTitle .sapMText {
 		display: inline-block;
 	}
@@ -40,8 +40,9 @@ html[data-sap-ui-browser^="ff"] {
 	color: @sapUiGroupTitleTextColor;
 }
 
-.sapMObjectIdentifierTitle .sapMLnk,
-.sapMOITitleActive .sapMLnk {
+
+.sapMObjectIdentifierTitle .sapMLnk .sapMLnkText,
+.sapMOITitleActive .sapMLnk .sapMLnkText {
 	color: @sapUiLink;
 }
 
@@ -65,7 +66,7 @@ html[data-sap-ui-browser^="ff"] {
 }
 
 /* ObjectIdentifier inside a table */
-.sapMListTbl .sapMObjectIdentifierTitle .sapMLnk,
+.sapMListTbl .sapMObjectIdentifierTitle .sapMLnk .sapMLnkText,
 .sapMListTbl .sapMObjectIdentifierTitle .sapMText {
 	font-size: @sapMFontMediumSize;
 	padding-top: 0;

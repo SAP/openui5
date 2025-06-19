@@ -64,6 +64,7 @@ module.exports = [
 	"ObjectHeaderVisualTest.spec.js",
 	"ObjectNumberVisualTest.spec.js",
 	"ObjectListItem.spec.js",
+	"ObjectIdentifier.spec.js",
 	"ObjectMarker.spec.js",
 	"ObjectStatus.spec.js",
 	"ObjectStatusInvertedVisual.spec.js",
