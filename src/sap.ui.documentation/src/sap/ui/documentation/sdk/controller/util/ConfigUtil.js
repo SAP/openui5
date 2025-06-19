@@ -23,7 +23,8 @@ sap.ui.define([
 		"COOKIE_NAMES": {
 			"APPROVAL_REQUESTED": "dk_approval_requested",
 			"ALLOW_FUNCTIONAL_COOKIES": "dk_allow_functional_cookies",
-			"CONFIGURATION_APPEARANCE": "appearance"
+			"CONFIGURATION_APPEARANCE": "appearance",
+			"DEMOKIT_IMPORTANT_MESSAGES_READ": "dk_important_messages_read"
 		},
 
 		"LOCAL_STORAGE_NAMES": {
