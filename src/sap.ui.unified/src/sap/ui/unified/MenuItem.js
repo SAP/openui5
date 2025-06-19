@@ -83,6 +83,10 @@ sap.ui.define([
 		aggregations: {
 			/**
 			 * Defines the content that is displayed at the end of a menu item. This aggregation allows for the addition of custom elements, such as icons and buttons.
+			 *
+			 * <b>Note:</b> Application developers are responsible for ensuring that interactive <code>endContent</code>
+			 * controls have the correct accessibility behaviour, including their enabled or disabled states.
+			 * The <code>Menu<code> does not manage these aspects when the menu item state changes.
 	 		 * @since 1.131
 			 */
 			endContent: {type: "sap.ui.core.Control", multiple : true, singularName : "endContent"}
