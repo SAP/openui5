@@ -45,7 +45,7 @@ sap.ui.define(["sap/ui/core/Configuration"], function (Configuration) {
 			oRm.attr("aria-labelledby", oLabelledBy.getId());
 		}
 
-		oRm.attr("data-sap-ui-customfastnavgroup", true);
+		oRm.attr("data-sap-ui-fastnavgroup", true);
 
 		oRm.openEnd();
 
