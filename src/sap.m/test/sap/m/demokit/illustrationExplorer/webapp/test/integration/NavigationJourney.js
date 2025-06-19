@@ -71,10 +71,10 @@ sap.ui.define([
         Given.iStartMyApp();
 
         // Actions
-        When.onTheAppPage.iSearchForIllustration("BalloonSky");
+        When.onTheAppPage.iSearchForIllustration("NoData");
 
         // Assertions
-        Then.onTheAppPage.iShouldSeeFilteredIllustrations("BalloonSky");
+        Then.onTheAppPage.iShouldSeeFilteredIllustrations("NoData");
 
         // Cleanup
         Then.iTeardownMyApp();
