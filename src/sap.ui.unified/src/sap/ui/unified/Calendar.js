@@ -2700,7 +2700,7 @@ sap.ui.define([
 
 				this._setHeaderText(oDate);
 				this._setPrimaryHeaderMonthButtonText();
-				this._toggleTwoMonthsInTwoColumnsCSS();
+				this._toggleTwoMonthsInColumnsCSS();
 			}
 		}
 
