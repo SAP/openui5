@@ -29,11 +29,17 @@ sap.ui.define([
 				regExp : /^PATCH \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
 				response : {buildResponse : buildPatchResponse, code : 204}
 			}, {
+				regExp : /^PATCH \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/(\$0\.0)$/,
+				response : {buildResponse : buildPatchResponse, code : 204}
+			}, {
 				regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES$/,
 				response : {buildResponse : buildPostResponse}
 			}, {
 				regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\/com\.sap\.gateway\.default\.iwbep\.tea_busi\.v0001\.__FAKE__AcChangeNextSibling$/,
 				response : {buildResponse : buildChangeNextSiblingResponse}
+			}, {
+				regExp : /^POST \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)\/com\.sap\.gateway\.default\.iwbep\.tea_busi\.v0001\.__FAKE___AcCopy\?\$select=ID$$/,
+				response : {buildResponse : buildCopyResponse}
 			}],
 			sSourceBase : "sap/ui/core/sample/odata/v4/RecursiveHierarchy/data"
 		});
@@ -166,7 +172,10 @@ sap.ui.define([
 	}];
 
 	let aAllNodes; // in preorder, does not contain nodes that are filtered out
+	let sCopyID; // the ID of the copy, needed for patching the parent with Content-ID referencing
 	let mChildrenByParentId; // no entry for leaves! Does not contain nodes that are filtered out
+	const aNewRootIDs // the IDs for a newly created root node or a copied node
+		= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
 	let mNodeById; // contains all nodes incl. those filtered out
 	let iRevision;
 	let mRevisionOfAgeById;
@@ -184,6 +193,19 @@ sap.ui.define([
 		if (sId) {
 			adjustDescendantCount(sId, iDiff);
 		}
+	}
+
+	/**
+	 * Adjust the DistanceFromRoot of the given node (and all of its descendants) by the given
+	 * difference.
+	 *
+	 * @param {object} oNode - A node
+	 * @param {number} iDiff - Some difference
+	 */
+	function adjustDistanceFromRoot(oNode, iDiff) {
+		oNode.DistanceFromRoot += iDiff;
+		mChildrenByParentId[oNode.ID]?.forEach(
+			(oChild) => { adjustDistanceFromRoot(oChild, iDiff); });
 	}
 
 	/**
@@ -229,6 +251,25 @@ sap.ui.define([
 			aAllNodes.splice(aAllNodes.indexOf(oNextSibling), 0, ...aSpliced);
 		}
 		// no response required
+	}
+
+	/**
+	 * Builds a response for any POST request on the "Copy" action.
+	 *
+	 * @param {string[]} aMatches - The matches against the RegExp
+	 * @param {object} oResponse - Response object to fill
+	 */
+	function buildCopyResponse(aMatches, oResponse) {
+		const oCopy = copy(mNodeById[aMatches[1]], aNewRootIDs.shift(), /*sNewManagerID*/null);
+		adjustDistanceFromRoot(oCopy, -oCopy.DistanceFromRoot);
+		sCopyID = oCopy.ID;
+
+		// RAP would not respond w/ DescendantCount,DistanceFromRoot,DrillState!
+		const oResultNode = {...oCopy};
+		delete oResultNode.DescendantCount;
+		delete oResultNode.DistanceFromRoot;
+		delete oResultNode.DrillState;
+		oResponse.message = JSON.stringify(oResultNode);
 	}
 
 	/**
@@ -423,19 +464,6 @@ sap.ui.define([
 	 * @param {object} oRequest - Request object to get PATCH body from
 	 */
 	function buildPatchResponse(aMatches, _oResponse, oRequest) {
-		/**
-		 * Adjust the DistanceFromRoot of the given node (and all of its descendants) by the given
-		 * difference.
-		 *
-		 * @param {object} oNode - A node
-		 * @param {number} iDiff - Some difference
-		 */
-		function adjustDistanceFromRoot(oNode, iDiff) {
-			oNode.DistanceFromRoot += iDiff;
-			(mChildrenByParentId[oNode.ID] || [])
-				.forEach((oChild) => { adjustDistanceFromRoot(oChild, iDiff); });
-		}
-
 		function findLastIndex(aArray, fnPredicate) {
 			return aArray.reduce((iLast, oItem, i) => (fnPredicate(oItem) ? i : iLast), -1);
 		}
@@ -448,7 +476,9 @@ sap.ui.define([
 		const oBody = JSON.parse(oRequest.requestBody);
 		switch (Object.keys(oBody).length === 1 && Object.keys(oBody)[0]) {
 			case "EMPLOYEE_2_MANAGER@odata.bind": {
-				const oChild = mNodeById[aMatches[1]];
+				const oChild = aMatches[1] === "$0.0"
+					? mNodeById[sCopyID]
+					: mNodeById[aMatches[1]];
 				if (oChild.Name.includes("ERROR")) {
 					throw new Error("This request intentionally failed!");
 				}
@@ -600,7 +630,7 @@ sap.ui.define([
 				.filter((oNode) => oNode.MANAGER_ID === null)
 				.length;
 			oNewChild.AGE = 60 + iRootCount;
-			oNewChild.ID = "0ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[iRootCount];
+			oNewChild.ID = aNewRootIDs.shift();
 		}
 
 		if (oNewChild.ID in mNodeById) {
@@ -627,6 +657,33 @@ sap.ui.define([
 		delete oCopy.DistanceFromRoot;
 		delete oCopy.DrillState;
 		oResponse.message = JSON.stringify(oCopy);
+	}
+
+	/**
+	 * Copies the given node and all its descendants recursively and sets the ID and the MANAGER_ID.
+	 *
+	 * @param {object} oNode - A node
+	 * @param {string} sNewID - The new ID for the given node
+	 * @param {string|null} sNewManagerID - The new MANAGER_ID for the given node
+	 * @returns {object} - The copy of the given node
+	 */
+	function copy(oNode, sNewID, sNewManagerID) {
+		const sOldID = oNode.ID;
+		oNode = {...oNode};
+		oNode.ID = sNewID;
+		oNode.MANAGER_ID = sNewManagerID;
+		oNode.Name = "Copy of " + (oNode.Name || sNewID);
+
+		aAllNodes.push(oNode); // Note: preorder (parent before child)
+		mNodeById[sNewID] = oNode;
+		mRevisionOfAgeById[sNewID] = 0;
+
+		mChildrenByParentId[sOldID]?.forEach((oChild, i) => {
+			(mChildrenByParentId[sNewID] ??= []).push(
+				copy(oChild, sNewID + "." + (i + 1), sNewID));
+		});
+
+		return oNode;
 	}
 
 	/**

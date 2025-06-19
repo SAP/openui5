@@ -381,7 +381,7 @@ sap.ui.define([
 			}
 
 			if (FlexState.isInitialized({control: oAppComponent})) {
-				return FlexObjectManager.saveFlexObjectsWithoutVersioning({ dirtyChanges: mPropertyBag.changes, selector: oAppComponent });
+				return FlexObjectManager.saveFlexObjects({ flexObjects: mPropertyBag.changes, selector: oAppComponent });
 			}
 			return Promise.resolve();
 		},

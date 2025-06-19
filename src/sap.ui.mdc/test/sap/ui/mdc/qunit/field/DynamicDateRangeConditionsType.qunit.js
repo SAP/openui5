@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
+	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorValueType",
 	"sap/ui/mdc/enums/OperatorName",
@@ -27,6 +28,7 @@ sap.ui.define([
 	FilterOperatorUtil,
 	Operator,
 	OperatorDynamicDateOption,
+	BaseType,
 	ConditionValidated,
 	OperatorValueType,
 	OperatorName,
@@ -53,6 +55,7 @@ sap.ui.define([
 		valueTypes: [OperatorValueType.Self]
 	});
 	FilterOperatorUtil.addOperator(oOperator);
+	FilterOperatorUtil.addOperatorForType(BaseType.Date, oOperator);
 	const oOperatorDynamicDateOption = new OperatorDynamicDateOption({
 		key: "Date-MyDate",
 		operator: oOperator,
@@ -71,6 +74,8 @@ sap.ui.define([
 		valueTypes: [{name: "sap.ui.model.odata.type.Date"}] // use date type to have no time part
 	});
 	FilterOperatorUtil.addOperator(oMyDateOperator);
+	FilterOperatorUtil.addOperatorForType(BaseType.Date, oMyDateOperator);
+	FilterOperatorUtil.addOperatorForType(BaseType.DateTime, oMyDateOperator);
 
 	const fnTeardown = () => {
 		oDynamicDateRangeConditionsType.destroy();
@@ -406,6 +411,22 @@ sap.ui.define([
 		const oCondition = _createCondition("MyDate", ["2021-10-04"]);
 		const aConditions = oDynamicDateRangeConditionsType.parseValue({operator: "Date-MyDate", values: ["2021-10-04"]});
 		assert.deepEqual(aConditions, [oCondition], "Result of parsing: " + oCondition.operator); // original value is used as type is used formatting and parsing
+
+	});
+
+	QUnit.test("invalid Operator", (assert) => {
+
+		let oException;
+
+		try {
+			oDynamicDateRangeConditionsType.parseValue({operator: "XXX", values: ["2021-10-04"]});
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.ok(oException, "exception fired");
+		assert.ok(oException instanceof ParseException, "ParseException fired");
+		assert.equal(oException.message, "No Operator found for XXX", "Error message");
 
 	});
 

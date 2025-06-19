@@ -20,8 +20,15 @@ sap.ui.define([
 	};
 
 	Utils.enhanceWaitFor = function (vIdent, oConfig) {
-        var bStringIdent = typeof vIdent === "string";
-        return Object.assign({}, oConfig, bStringIdent ? {properties: {id: vIdent}} : {properties: vIdent});
+        const bStringIdent = typeof vIdent === "string";
+
+		if (vIdent.matchers) {
+			oConfig = Object.assign({matchers: vIdent.matchers}, oConfig);
+			vIdent = Object.assign({}, vIdent);
+			delete vIdent.matchers;
+		}
+
+		return Object.assign({}, oConfig, bStringIdent ? {properties: {id: vIdent}} : {properties: vIdent});
     };
 
 

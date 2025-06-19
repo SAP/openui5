@@ -806,7 +806,8 @@ sap.ui.define([
 			control: "Control",
 			caseSensitive: true,
 			exactMatch: true,
-			exception: FormatException
+			exception: FormatException,
+			emptyAllowed: false
 		};
 		let sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "SyncCall", "Result of formatting");
@@ -1007,6 +1008,7 @@ sap.ui.define([
 	QUnit.test("Parsing: key and description -> key and Description", (assert) => {
 
 		oConditionType.oFormatOptions.display = FieldDisplay.ValueDescription; // fake setting directly
+		oConditionType.oFormatOptions.emptyAllowed = true; // fake setting directly
 
 		let oPromise = oConditionType.parseValue("I2 (X)");
 		assert.ok(oPromise instanceof Promise, "Promise returned");
@@ -1033,7 +1035,8 @@ sap.ui.define([
 				control: "Control",
 				exactMatch: false,
 				caseSensitive: undefined,
-				exception: ParseException
+				exception: ParseException,
+				emptyAllowed: true
 			};
 			assert.ok(oValueHelp.getItemForValue.calledWith(oConfig), "getItemForValue called");
 
@@ -1393,7 +1396,8 @@ sap.ui.define([
 			control: "Control",
 			caseSensitive: true,
 			exactMatch: true,
-			exception: ParseException
+			exception: ParseException,
+			emptyAllowed: false
 		};
 
 		const oCondition = oConditionType.parseValue("=X");
@@ -1483,7 +1487,8 @@ sap.ui.define([
 			control: "Control",
 			caseSensitive: undefined,
 			exactMatch: false,
-			exception: ParseException
+			exception: ParseException,
+			emptyAllowed: false
 		};
 
 		let oException;
@@ -3016,6 +3021,7 @@ sap.ui.define([
 	QUnit.test("Formatting: key -> description (from help)", (assert) => {
 
 		oConditionType.oFormatOptions.valueHelpID = "VH1"; // fake setting directly
+		oConditionType.oFormatOptions.emptyAllowed = true; // fake setting directly
 		const oCondition = Condition.createCondition(OperatorName.EQ, [1], undefined, undefined, ConditionValidated.Validated);
 		const oConfig = { // to compare
 			value: 1,
@@ -3029,7 +3035,8 @@ sap.ui.define([
 			control: "Control",
 			caseSensitive: true,
 			exactMatch: true,
-			exception: FormatException
+			exception: FormatException,
+			emptyAllowed: true
 		};
 
 		const oPromise = oConditionType.formatValue(oCondition);
@@ -3057,7 +3064,8 @@ sap.ui.define([
 			control: "Control",
 			exactMatch: false,
 			caseSensitive: undefined,
-			exception: ParseException
+			exception: ParseException,
+			emptyAllowed: false
 		};
 
 		const oPromise =  oConditionType.parseValue("2023-07-31");
@@ -3093,7 +3101,8 @@ sap.ui.define([
 			control: "Control",
 			exactMatch: false,
 			caseSensitive: undefined,
-			exception: ParseException
+			exception: ParseException,
+			emptyAllowed: false
 		};
 
 		const oPromise =  oConditionType.parseValue("1");
@@ -3129,7 +3138,8 @@ sap.ui.define([
 			control: "Control",
 			exactMatch: false,
 			caseSensitive: undefined,
-			exception: ParseException
+			exception: ParseException,
+			emptyAllowed: false
 		};
 
 		const oPromise =  oConditionType.parseValue("1 (2023-07-31)");

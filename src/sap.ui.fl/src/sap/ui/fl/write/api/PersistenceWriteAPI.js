@@ -77,8 +77,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist
 	 */
 	function hasChanges(mPropertyBag) {
-		mPropertyBag.includeCtrlVariants = true;
-		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
+		return PersistenceWriteAPI._getUIChanges({...mPropertyBag, includeCtrlVariants: true})
 		.then(function(aChanges) {
 			return aChanges.length > 0;
 		});
@@ -139,8 +138,7 @@ sap.ui.define([
 	 * @param {string} [mPropertyBag.layer=CUSTOMER] - Proposed layer (might be overwritten by the backend) when creating a new app variant - Smart Business must pass the layer
 	 * @param {boolean} [mPropertyBag.draft=false] - Indicates if changes should be written as a draft
 	 * @param {boolean} [mPropertyBag.removeOtherLayerChanges=false] - Whether to remove changes on other layers before saving
-	 *
-	 * @returns {Promise} Promise that resolves with an array of responses or is rejected with the first error
+	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Resolves with all loaded flex objects after saving
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
@@ -152,7 +150,13 @@ sap.ui.define([
 		let oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		oFlexInfoSession.saveChangeKeepSession = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
-		const aFlexObjects = await FlexObjectManager.saveFlexObjects(mPropertyBag);
+		await FlexObjectManager.saveFlexObjects(mPropertyBag);
+
+		// This is needed as long the save requests does not return the necessary information to update the FlexState without a new request
+		const aFlexObjects = await FlexObjectManager.getFlexObjects(
+			{..._omit(mPropertyBag, ["skipUpdateCache", "layer"]), invalidateCache: true, currentLayer: mPropertyBag.layer}
+		);
+
 		if (aFlexObjects?.length > 0) {
 			await PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag);
 		}

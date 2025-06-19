@@ -1592,12 +1592,16 @@ sap.ui.define([
 		/**
 		 * Adds an operator to the list of known operators.
 		 *
+		 * <b>Note:</b> For application-specific operators, use an application-specific name to prevent conflicts with different applications.
 		 * @param {sap.ui.mdc.condition.Operator} oOperator Operator
 		 *
 		 * @public
 		 */
 		addOperator: function(oOperator) {
 
+			if (FilterOperatorUtil._mOperators[oOperator.name]) {
+				Log.warning("FilterOperatorUtil.addOperator", "Operator " + oOperator.name + " already exist. It will be overwritten.");
+			}
 			FilterOperatorUtil._mOperators[oOperator.name] = oOperator; // TODO: use semantic name?
 
 		},
@@ -1605,6 +1609,7 @@ sap.ui.define([
 		/**
 		 * Adds an array of operators to the list of known operators.
 		 *
+		 * <b>Note:</b> For application-specific operators, use an application-specific name to prevent conflicts with different applications.
 		 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 		 *
 		 * @since: 1.88.0
@@ -2104,34 +2109,29 @@ sap.ui.define([
 		 * Returns the operator object for the given <code>DynamicDateOption</code> name.
 		 * @param {string} sOption Name of the operator
 		 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
+		 * @param {string[]} aSupportedOperators List of all supported operator names
 		 * @returns {sap.ui.mdc.condition.Operator|undefined} the operator object, or <code>undefined</code> if the operator with the requested name does not exist
 		 *
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 * @since: 1.100.0
 		 */
-		getOperatorForDynamicDateOption: function(sOption, sBaseType) {
+		getOperatorForDynamicDateOption: function(sOption, sBaseType, aSupportedOperators) {
 
-			let oOperator;
+			const sName = sBaseType && sOption.startsWith(sBaseType) ? sOption.slice(sBaseType.length + 1) : sOption; // determine operator name if used as custom DynamicDateOption created in DateContent using getCustomDynamicDateOptionForOperator
+			let oFoundOperator;
 
-			// determine operator name if used as custom DynamicDateOption created in DateContent using getCustomDynamicDateOptionForOperator
-			if (sBaseType && sOption.startsWith(sBaseType)) {
-				oOperator = this.getOperator(sOption.slice(sBaseType.length + 1));
-			} else {
-				oOperator = this.getOperator(sOption);
-			}
-
-			if (!oOperator && sBaseType) {
-				for (const sName in FilterOperatorUtil._mOperators) {
-					const oCheckOperator = FilterOperatorUtil._mOperators[sName];
-					if (oCheckOperator.alias && oCheckOperator.alias[sBaseType] === sOption) {
-						oOperator = oCheckOperator;
-						break;
-					}
+			for (const sOperatorName in FilterOperatorUtil._mOperators) {
+				const oOperator = FilterOperatorUtil._mOperators[sOperatorName];
+				if (aSupportedOperators.length > 0 && aSupportedOperators.indexOf(oOperator.name) < 0) {
+					continue; // Operator not supported
+				} else if (oOperator.name === sName || oOperator.alias?.[sBaseType] === sOption) {
+					oFoundOperator = oOperator;
+					break;
 				}
 			}
 
-			return oOperator;
+			return oFoundOperator;
 
 		},
 

@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p><span class="uicontrol">Көрініс параметрлері</span> диалогін ашады</p>
+				<p><span class="uicontrol">Көрініс параметрлері</span> диалогін ашады.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p><span class="uicontrol">Көрініс параметрлері</span> диалогіндегі тармақты жояды</p>
+				<p><span class="uicontrol">Көрініс параметрлері</span> диалогіндегі тармақты жояды.</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -35,9 +35,9 @@ sap.ui.define([
 			isDialog: () => false,
 			getContent: () => ([{
 				isA: (sClass) => sClass === 'sap.ui.mdc.valuehelp.content.FixedList',
-				getFilterList: () => false
+				isRestrictedToFixedValues: () => true
 			}])
-		}), "A FixedList which isn't a Bool or FilterList should be shown.");
+		}), "A FixedList which only allows fixed values should be shown.");
 
 
 		assert.notOk(await RequestShowContainerDefault[RequestShowContainerReason.Tap](oFakeValueHelp, {
@@ -45,18 +45,18 @@ sap.ui.define([
 			isDialog: () => false,
 			getContent: () => ([{
 				isA: (sClass) => sClass === 'sap.ui.mdc.valuehelp.content.FixedList',
-				getFilterList: () => true
+				isRestrictedToFixedValues: () => false
 			}])
-		}), "A FixedList which is a FilterList should be hidden.");
+		}), "A FixedList which allows more than fixed values should be hidden.");
 
-		assert.notOk(await RequestShowContainerDefault[RequestShowContainerReason.Tap](oFakeValueHelp, {
+		assert.ok(await RequestShowContainerDefault[RequestShowContainerReason.Tap](oFakeValueHelp, {
 			isSingleSelect: () => false,
 			isDialog: () => false,
 			getContent: () => ([{
 				isA: (sClass) => ['sap.ui.mdc.valuehelp.content.FixedList', 'sap.ui.mdc.valuehelp.content.Bool'].includes(sClass),
-				getFilterList: () => false
+				isRestrictedToFixedValues: () => true
 			}])
-		}), "A FixedList which is a Bool should be hidden.");
+		}), "A FixedList which is a Bool should be shown.");
 	});
 
 	QUnit.test(RequestShowContainerReason.Typing, async (assert) => {

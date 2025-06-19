@@ -224,6 +224,22 @@ sap.ui.define([
 		_mInstances = {};
 	};
 
+	Versions.updateAfterSave = async function(mPropertyBag) {
+		const oVersionsProperties = {
+			reference: mPropertyBag.reference,
+			layer: mPropertyBag.layer
+		};
+		if (mPropertyBag.backendResponse?.response?.length > 0) {
+			const aDraftFilenames = mPropertyBag.backendResponse.response.map((oChange) => oChange.fileName);
+			oVersionsProperties.draftFilenames = aDraftFilenames;
+			Versions.onAllChangesSaved(oVersionsProperties);
+		} else {
+			// need to update version model when condensing send post request with a delete change and
+			// afterwards call flex/data request with right version parameter
+			await Versions.updateModelFromBackend(oVersionsProperties);
+		}
+	};
+
 	/**
 	 * Update version model with backend information.
 	 *

@@ -39,7 +39,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery"],f
 		}, true);
 
 		var oManifest = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "test3",
@@ -61,7 +61,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery"],f
 		};
 
 		var oManifestAppdescr = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "test3-variant",
@@ -92,7 +92,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Core", "sap/ui/thirdparty/jquery"],f
 		};
 
 		var oManifestAppdescr1 = jQuery.extend(true, {}, oManifestAppdescr, {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.ui5": {
 				"componentName": "test3",

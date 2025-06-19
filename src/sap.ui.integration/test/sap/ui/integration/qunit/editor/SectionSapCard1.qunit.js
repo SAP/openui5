@@ -106,7 +106,7 @@ sap.ui.define([
 		]
 	};
 	var oManifestBasic = {
-		"_version": "2.0.1",
+		"_version": "2.0.2",
 
 		"sap.app": {
 			"id": "test.sample",
@@ -147,7 +147,7 @@ sap.ui.define([
 		}
 	};
 	var oManifestForExtension = {
-		"_version": "2.0.1",
+		"_version": "2.0.2",
 
 		"sap.app": {
 			"id": "test.sample",
@@ -196,7 +196,7 @@ sap.ui.define([
 		}
 	};
 	var oManifestForEditableDependence = {
-		"_version": "2.0.1",
+		"_version": "2.0.2",
 
 		"sap.app": {
 			"id": "test.sample",
@@ -234,7 +234,7 @@ sap.ui.define([
 		}
 	};
 	var oManifestForVisibleDependence = {
-		"_version": "2.0.1",
+		"_version": "2.0.2",
 
 		"sap.app": {
 			"id": "test.sample",
@@ -331,7 +331,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -380,7 +380,7 @@ sap.ui.define([
 		QUnit.test("Empty Host Context", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ host: "host", manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } }
 			} });
@@ -398,7 +398,7 @@ sap.ui.define([
 		QUnit.test("Context Host checks to access context data async", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ host: "contexthost", manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } }
 			} });
@@ -421,7 +421,7 @@ sap.ui.define([
 		QUnit.test("No configuration section (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/noconfig", "type": "List", "header": {} }
 			} });
@@ -437,7 +437,7 @@ sap.ui.define([
 		QUnit.test("Empty configuration section (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} }
 			} });
@@ -453,7 +453,7 @@ sap.ui.define([
 		QUnit.test("Empty parameters section (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } }
 			} });
@@ -469,7 +469,7 @@ sap.ui.define([
 		QUnit.test("Empty destination section (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } }
 			} });
@@ -485,7 +485,7 @@ sap.ui.define([
 		QUnit.test("Empty destination and parameters section (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } }
 			} });
@@ -503,7 +503,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -540,7 +540,7 @@ sap.ui.define([
 		QUnit.test("1 hint below a group (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "test.sample",
@@ -574,7 +574,7 @@ sap.ui.define([
 		QUnit.test("1 hint below an item (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "test.sample",
@@ -608,7 +608,7 @@ sap.ui.define([
 		QUnit.test("1 string parameter with values and no label (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } }
 			} });
@@ -642,7 +642,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -694,7 +694,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -737,7 +737,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -784,7 +784,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -827,7 +827,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -864,7 +864,7 @@ sap.ui.define([
 		QUnit.test("1 icon parameter (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } }
 			} });
@@ -891,7 +891,7 @@ sap.ui.define([
 		QUnit.test("1 icon parameter with Not Allow File (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } }
 			} });
@@ -917,7 +917,7 @@ sap.ui.define([
 		QUnit.test("1 icon parameter with Not Allow None (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } }
 			} });
@@ -945,7 +945,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -984,7 +984,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -1023,7 +1023,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -1060,7 +1060,7 @@ sap.ui.define([
 		QUnit.test("1 integer parameter and no label no value (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } }
 			} });
@@ -1081,7 +1081,7 @@ sap.ui.define([
 		QUnit.test("1 integer parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } }
 			} });
@@ -1102,7 +1102,7 @@ sap.ui.define([
 		QUnit.test("1 number parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } }
 			} });
@@ -1123,7 +1123,7 @@ sap.ui.define([
 		QUnit.test("1 date parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } }
 			} });
@@ -1152,7 +1152,7 @@ sap.ui.define([
 		QUnit.test("1 datetime parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } }
 			} });
@@ -1181,7 +1181,7 @@ sap.ui.define([
 		QUnit.test("1 boolean parameter and label with no value (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } }
 			} });
@@ -1202,7 +1202,7 @@ sap.ui.define([
 		QUnit.test("1 destination (as json)", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ host: "host", manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } }
 			} });
@@ -1225,7 +1225,7 @@ sap.ui.define([
 			this.oEditor.setMode("admin");
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } }
 			} });
@@ -1253,7 +1253,7 @@ sap.ui.define([
 			this.oEditor.setSection("sap.card1");
 			this.oEditor.setMode("content");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } }
 			} });
@@ -1280,7 +1280,7 @@ sap.ui.define([
 			this.oEditor.setLanguage("fr");
 
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } }
 			} });
@@ -1318,7 +1318,7 @@ sap.ui.define([
 			this.oEditor.setJson({
 				baseUrl: sBaseUrl,
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "test.sample",
@@ -1368,7 +1368,7 @@ sap.ui.define([
 		QUnit.test("Check Description", function (assert) {
 			this.oEditor.setSection("sap.card1");
 			var oJson = { baseUrl: sBaseUrl, manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" },
 				"sap.card1": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } }
 			} };

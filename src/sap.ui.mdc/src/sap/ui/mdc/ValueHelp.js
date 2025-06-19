@@ -404,6 +404,8 @@ sap.ui.define([
 	 * @param {object} [delegate] Field delegate to handle model-specific logic (required for condition panel)
 	 * @param {object} [delegateName] Field delegate name to handle model-specific logic (required for condition panel)
 	 * @param {object} [payload] Payload of the field delegate (required for condition panel)
+	 * @param {string} [defaultOperatorName] Name of the default <code>Operator</code>
+	 * @param {boolean} [emptyAllowed] If <code>true</code> the connected control could be made empty (no Conditions)
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
@@ -974,6 +976,7 @@ sap.ui.define([
 	 * @property {boolean} [caseSensitive] If set, the check is done case-sensitively
 	 * @property {boolean} [exactMatch] If set, only exact matches and no suggestions are requested
 	 * @property {sap.ui.core.Control} control Instance of the calling control
+	 * @param {boolean} [emptyAllowed] If <code>true</code> the connected control could be made empty (no Conditions)
 	 * @public
 	 */
 
@@ -1331,6 +1334,19 @@ sap.ui.define([
 
 		return oClone;
 
+	};
+
+	/**
+	 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be prevented.
+	 *
+	 * @returns {boolean} If set, only fixed values are allowed
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.138
+	 */
+	ValueHelp.prototype.isRestrictedToFixedValues = function() {
+		const oTypeahead = this.getTypeahead();
+		return oTypeahead?.isRestrictedToFixedValues();
 	};
 
 	PromiseMixin.call(ValueHelp.prototype);

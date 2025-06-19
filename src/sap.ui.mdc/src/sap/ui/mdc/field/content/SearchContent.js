@@ -39,6 +39,9 @@ sap.ui.define([
 		getEditForHelp: function() {
 			return [null];
 		},
+		getEditSelect: function() {
+			return [null];
+		},
 		getUseDefaultEnterHandler: function() {
 			return false;
 		},
@@ -125,6 +128,9 @@ sap.ui.define([
 		},
 		createEditForHelp: function() {
 			throw new Error("sap.ui.mdc.field.content.SearchContent - createEditForHelp not defined!");
+		},
+		createEditSelect: function() {
+			throw new Error("sap.ui.mdc.field.content.SearchContent - createEditSelect not defined!");
 		}
 	});
 

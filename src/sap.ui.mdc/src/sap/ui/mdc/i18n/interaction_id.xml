@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Membuka dialog <span class="uicontrol">Pengaturan Tampilan</span></p>
+				<p>Membuka dialog <span class="uicontrol">Pengaturan Tampilan</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Menghapus item dalam dialog <span class="uicontrol">Pengaturan Tampilan</span></p>
+				<p>Menghapus item dalam dialog <span class="uicontrol">Pengaturan Tampilan</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

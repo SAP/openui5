@@ -69,7 +69,7 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							applicationVersion: {

@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Otevírá dialog <span class="uicontrol">Nastavení pohledu</span></p>
+				<p>Otevře dialog <span class="uicontrol">Nastavení pohledu</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Odstraní položku v dialogu <span class="uicontrol">Nastavení pohledu</span></p>
+				<p>Odstraní položku v dialogu <span class="uicontrol">Nastavení pohledu</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

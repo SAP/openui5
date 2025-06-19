@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>開啟 <span class="uicontrol">[檢視設定]</span> 對話</p>
+				<p>開啟 <span class="uicontrol">[檢視設定]</span> 對話。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>在 <span class="uicontrol">[檢視設定]</span> 對話中刪除項目</p>
+				<p>在 <span class="uicontrol">[檢視設定]</span> 對話中刪除項目。</p>
 			</description>
 		</interaction>
 	</control-interactions>

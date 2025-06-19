@@ -110,6 +110,17 @@ sap.ui.define([
 		detailTests: _checkLink
 	};
 
+	ContentBasicTest.controlMap.EditSelect = {
+		getPathsFunction: "getEditSelect",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditSelect",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
+	};
+
 	const fnEnhanceField = (oFakeField) => {
 		oFakeField.getFieldInfo = () => {
 			return {

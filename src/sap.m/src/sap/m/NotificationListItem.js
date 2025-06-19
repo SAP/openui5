@@ -255,5 +255,16 @@ function(
 		return this._footerIvisibleText.setText(ariaTexts.join(' '));
 	};
 
+	NotificationListItem.prototype.getList = function () {
+		let oParent = this.getParent();
+
+		while (oParent && !oParent.isA("sap.m.ListBase")) {
+			oParent = oParent.getParent();
+		}
+
+		return oParent;
+	};
+
 	return NotificationListItem;
 });
+

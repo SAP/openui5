@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p><span class="uicontrol">दृश्य सेटिंग</span> डायलॉग खोलता है</p>
+				<p><span class="uicontrol">दृश्य सेटिंग</span> डायलॉग खोलता है.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p><span class="uicontrol">दृश्य सेटिंग</span> डायलॉग में कोई आइटम हटाता है</p>
+				<p><span class="uicontrol">दृश्य सेटिंग</span> डायलॉग में कोई आइटम हटाता है.</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -82,6 +82,7 @@ sap.ui.define([
 		 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
 		 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
 		 * @param {boolean} [oFormatOptions.multipleLines] If set, the input and output might contain multiple lines
+		 * @param {boolean} [oFormatOptions.emptyAllowed] If <code>true</code> the connected control could be made empty (no Conditions)
 		 * @param {object} [oConstraints] Value constraints
 		 * @alias sap.ui.mdc.field.ConditionsType
 		 */
@@ -196,7 +197,26 @@ sap.ui.define([
 			};
 
 			if (aConditions.length === 0) { // call ConditionType with no condition to let it initialize types and so on (To have same behavior as ConditionType would be used in binding)
-				aSyncPromises.push(fnCreateSyncPromise.call(this, null, sTargetType));
+				let oSyncPromise = fnCreateSyncPromise.call(this, null, sTargetType);
+				const oValueHelp = this._getValueHelp();
+				const bEmptyAllowed = this.oFormatOptions.emptyAllowed;
+
+				if (bEmptyAllowed && oValueHelp?.isRestrictedToFixedValues()) { //TODO: call Delegate always or only in this special case to prevent wrong results with existing implementations (that are not done for "empty")
+					// call check for "empty" only for conditions-Array and not for single null-condtions as ConditionType might be called somewhere else with null
+					oSyncPromise = oSyncPromise.then((vResult) => { // result of ConditionType.formatValue
+						const oDelegate = this._getDelegate();
+						const oControl = this.oFormatOptions.control;
+						const oBindingContext = this.oFormatOptions.bindingContext;
+						const oType = this._getValueType();
+
+						return SyncPromise.resolve().then(() => {
+							return oDelegate.getDescription(oControl, oValueHelp, null, undefined, undefined, oBindingContext, undefined, undefined, undefined, oControl, oType, bEmptyAllowed);
+						}).then((vDescription) => { // if description needs to be requested -> return if it is resolved
+							return typeof vDescription === "object" ? vDescription.description : vDescription;
+						});
+					});
+				}
+				aSyncPromises.push(oSyncPromise);
 			} else {
 				for (let i = 0; i < aConditions.length; i++) {
 					aSyncPromises.push(fnCreateSyncPromise.call(this, aConditions[i], sTargetType));

@@ -78,6 +78,7 @@ sap.ui.define([
 		 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
 		 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
 		 * @param {boolean} [oFormatOptions.multipleLines] If set, the input and output might contain multiple lines
+		 * @param {boolean} [oFormatOptions.emptyAllowed] If <code>true</code> the connected control could be made empty (no Conditions)
 		 * @param {object} [oConstraints] Value constraints
 		 * @alias sap.ui.mdc.field.DynamicDateRangeConditionsType
 		 */
@@ -179,7 +180,7 @@ sap.ui.define([
 
 				const oType = this._getValueType();
 				const sOption = oValue.operator; // sOperator is the Option name
-				const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, this._getBaseType(oType)); // search via name and alias
+				const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, this._getBaseType(oType), aOperators); // search via name and alias
 
 				if (oOperator) {
 					const sBaseType = this._getBaseType(oType);
@@ -206,8 +207,10 @@ sap.ui.define([
 
 					const oCondition = Condition.createCondition(oOperator.name, aValues, undefined, undefined, ConditionValidated.NotValidated);
 					FilterOperatorUtil.updateConditionValues(oCondition);
-					FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
+					FilterOperatorUtil.checkConditionsEmpty(oCondition);
 					aConditions.push(oCondition);
+				} else {
+					throw new ParseException("No Operator found for " + sOption);
 				}
 			}
 

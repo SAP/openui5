@@ -21,7 +21,7 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Abre el diálogo <span class="uicontrol">Opciones de vista</span></p>
+				<p>Abre el diálogo <span class="uicontrol">Opciones de vista</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>

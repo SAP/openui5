@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Atidaromas dialogo langas <span class="uicontrol">Peržiūrėti parametrus</span></p>
+				<p>Atidaromas dialogo langas <span class="uicontrol">Peržiūrėti parametrus</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Panaikinamas elementas dialogo lange <span class="uicontrol">Peržiūrėti parametrus</span></p>
+				<p>Panaikinamas elementas dialogo lange <span class="uicontrol">Peržiūrėti parametrus</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

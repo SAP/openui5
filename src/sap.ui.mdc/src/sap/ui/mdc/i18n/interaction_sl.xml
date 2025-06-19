@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Odpre pogovorno okno <span class="uicontrol">Nastavitve pogleda</span></p>
+				<p>Odpre se pogovorno okno <span class="uicontrol">Nastavitve pogleda</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Izbriše element v pogovornem oknu <span class="uicontrol">Nastavitve pogleda</span></p>
+				<p>Izbriše element v pogovornem oknu <span class="uicontrol">Nastavitve pogleda</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -1,5 +1,5 @@
 {
-	"_version": "2.0.1",
+	"_version": "2.0.2",
 	"sap.app": {
 		"ach": "CA-UI5-COR",
 		"applicationVersion": {
@@ -58,8 +58,7 @@
 					"earlyRequests": true,
 					"operationMode": "Server"
 				},
-				"type": "sap.ui.core.sample.odata.v4.GridTable.SandboxModel",
-				"uriSettingName": "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.GridTable.SandboxModel"
 			}
 		},
 		"rootView": "sap.ui.core.sample.odata.v4.GridTable.GridTable"

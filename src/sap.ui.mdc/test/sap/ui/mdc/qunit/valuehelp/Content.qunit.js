@@ -505,4 +505,10 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isRestrictedToFixedValues", (assert) => {
+
+		assert.notOk(oContent.isRestrictedToFixedValues(), "Result");
+
+	});
+
 });

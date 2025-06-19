@@ -191,7 +191,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -733,7 +733,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -950,7 +950,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1075,7 +1075,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1232,7 +1232,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1392,7 +1392,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1504,7 +1504,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1629,7 +1629,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1766,7 +1766,7 @@ sap.ui.define([
 				},
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "com.sap.test.app"
@@ -1870,7 +1870,7 @@ sap.ui.define([
 		before() {
 			this.oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 			var oManifestObj = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "com.sap.test.app"

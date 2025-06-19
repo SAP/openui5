@@ -161,7 +161,7 @@ sap.ui.define([
 
 		QUnit.test("when calling 'preprocessManifest' with manifest of type 'component'", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { type: "component" }
 			};
 			return Preprocessor.preprocessManifest(oManifest, this.oConfig).then(function(oNewManifest) {
@@ -195,7 +195,7 @@ sap.ui.define([
 		QUnit.test("when calling 'preprocessManifest' with one change and load changes-bundle only after second FlexState.initialize call", function(assert) {
 			const sReference = "applier.test.reference";
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": { id: sReference, type: "application" },
 				"sap.ui5": { appVariantId: sReference }
 			};

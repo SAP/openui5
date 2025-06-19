@@ -44,7 +44,7 @@ sap.ui.define([
 		}
 
 		const [oContent] = oContainer?.getContent() || [];
-		return !!oContent && oContent.isA("sap.ui.mdc.valuehelp.content.FixedList") && !oContent.isA("sap.ui.mdc.valuehelp.content.Bool") && !oContent.getFilterList();
+		return !!oContent && oContent.isA("sap.ui.mdc.valuehelp.content.FixedList") && oContent.isRestrictedToFixedValues();
 	};
 
 	/**

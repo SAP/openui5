@@ -56,11 +56,17 @@ sap.ui.define([
 		getEditForHelp: function() {
 			return DefaultContent.getEdit.apply(this, arguments);
 		},
+		getEditSelect: function() {
+			return [null];
+		},
 		getUseDefaultValueHelp: function() {
 			return { name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true, single: false, multi: true };
 		},
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.DateContent - createEditMultiLine not defined!");
+		},
+		createEditSelect: function() {
+			throw new Error("sap.ui.mdc.field.content.DateContent - createEditSelect not defined!");
 		},
 		_createDatePickerControl: function(oContentFactory, aControlClasses, sId) {
 			const DatePicker = aControlClasses[0];

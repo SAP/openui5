@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
-	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
@@ -24,7 +23,6 @@ sap.ui.define([
 	Version,
 	FlexConfiguration,
 	FlexInfoSession,
-	Settings,
 	Storage,
 	Versions,
 	KeyUserConnector,
@@ -1209,6 +1207,50 @@ sap.ui.define([
 			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 			Versions.updateModelFromBackend({});
 			assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 0, "the update is not called");
+		});
+	});
+
+	QUnit.module("Versions.updateAfterSave", {
+		beforeEach() {
+			this.oOnAllChangesSavedStub = sandbox.stub(Versions, "onAllChangesSaved");
+			this.oUpdateModelFromBackendStub = sandbox.stub(Versions, "updateModelFromBackend");
+		},
+		afterEach() {
+			Versions.clearInstances();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with a response passed from the backend", function(assert) {
+			Versions.updateAfterSave({
+				reference: "com.sap.app",
+				layer: Layer.CUSTOMER,
+				backendResponse: {
+					response: [
+						{fileName: "filename1"},
+						{fileName: "filename2"}
+					]
+				}
+			});
+			assert.strictEqual(this.oOnAllChangesSavedStub.callCount, 1, "onAllChangesSaved was called once");
+			assert.ok(this.oOnAllChangesSavedStub.firstCall.calledWith({
+				reference: "com.sap.app",
+				layer: Layer.CUSTOMER,
+				draftFilenames: ["filename1", "filename2"]
+			}), "onAllChangesSaved was called with the correct parameters");
+			assert.strictEqual(this.oUpdateModelFromBackendStub.callCount, 0, "updateModelFromBackend was not called");
+		});
+
+		QUnit.test("without response passed from the backend", function(assert) {
+			Versions.updateAfterSave({
+				reference: "com.sap.app",
+				layer: Layer.CUSTOMER
+			});
+			assert.strictEqual(this.oOnAllChangesSavedStub.callCount, 0, "onAllChangesSaved was not called");
+			assert.strictEqual(this.oUpdateModelFromBackendStub.callCount, 1, "updateModelFromBackend was called once");
+			assert.ok(this.oUpdateModelFromBackendStub.firstCall.calledWith({
+				reference: "com.sap.app",
+				layer: Layer.CUSTOMER
+			}), "updateModelFromBackend was called with the correct parameters");
 		});
 	});
 
