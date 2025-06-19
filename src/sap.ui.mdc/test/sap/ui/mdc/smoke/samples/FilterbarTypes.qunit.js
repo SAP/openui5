@@ -60,7 +60,7 @@ sap.ui.define([
 			{
 				"operator": "EQ",
 				"values": [
-					false
+					true
 				],
 				"validated": "Validated"
 			}
@@ -103,6 +103,8 @@ sap.ui.define([
 			});
 			if (sKey === "first_ascent") {
 				When.onTheMDCFilterField.iEnterTextOnTheFilterField(oCurrentFilterField, "Last 4 Days");
+			} else if (sKey === "parent_mountain") {
+				When.onTheMDCFilterField.iNavigateOnTheFilterField(oCurrentFilterField, KeyCodes.ARROW_DOWN);
 			} else {
 				When.onTheMDCFilterField.iEnterTextOnTheFilterField(oCurrentFilterField, oConditions[sKey][0].values[0]);
 			}

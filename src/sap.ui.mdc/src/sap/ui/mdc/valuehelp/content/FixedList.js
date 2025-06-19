@@ -23,6 +23,8 @@ sap.ui.define([
 ) => {
 	"use strict";
 
+	let FixedListItem;
+
 	/**
 	 * Constructor for a new <code>FixedList</code> content.
 	 *
@@ -64,6 +66,28 @@ sap.ui.define([
 					type: "boolean",
 					group: "Appearance",
 					defaultValue: true
+				},
+				/**
+				 * If set, and item to clear the selection is added.
+				 *
+				 * This item is only available if the connected field supports to be cleared.
+				 *
+				 * @since 1.138
+				 */
+				emptyText: { // TODO: should this work together with FilterList? (In Select normally there is no filtering)
+					type: "string",
+					group: "Data",
+					defaultValue: ""
+				},
+				/**
+				 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be prevented.
+				 *
+				 * @since 1.138
+				 */
+				restrictedToFixedValues: {
+					type: "boolean",
+					group: "Data",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -81,6 +105,16 @@ sap.ui.define([
 					type: "sap.ui.mdc.valuehelp.content.FixedListItem",
 					multiple: true,
 					singularName: "item"
+				},
+				/**
+				 * Item for empty value (no Conditions)
+				 *
+				 * @since 1.138
+				 */
+				_emptyItem: {
+					type: "sap.ui.mdc.valuehelp.content.FixedListItem",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			defaultAggregation: "items",
@@ -97,6 +131,10 @@ sap.ui.define([
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
+
+		this._oObserver.observe(this, {
+			properties: ["emptyText"]
+		});
 
 	};
 
@@ -119,22 +157,58 @@ sap.ui.define([
 				"sap/ui/model/Filter",
 				"sap/ui/model/Sorter",
 				"sap/ui/model/base/ManagedObjectModel",
-				"sap/base/strings/whitespaceReplacer"
+				"sap/base/strings/whitespaceReplacer",
+				"sap/ui/mdc/valuehelp/content/FixedListItem"
 			]).then((aModules) => {
 
 				if (this.isDestroyStarted()) {
 					return null;
 				}
 
-				const List = aModules[0];
-				const DisplayListItem = aModules[1];
-				const mLibrary = aModules[2];
-				const Filter = aModules[3];
-				const Sorter = aModules[4];
-				const ManagedObjectModel = aModules[5];
-				const whitespaceReplacer = aModules[6];
+				const [List, DisplayListItem, mLibrary, Filter, Sorter, ManagedObjectModel, whitespaceReplacer, fFixedListItem] = aModules;
+				FixedListItem = fFixedListItem; // make global
 
 				this._oManagedObjectModel = new ManagedObjectModel(this);
+				this._oManagedObjectModel._getObject = function (sPath, oContext, aNodeStack) {
+					const oFixedList = this.getRootObject();
+					const oConfig = oFixedList.getConfig();
+					const bEmptyAllowed = oConfig.emptyAllowed;
+
+					if (bEmptyAllowed && oFixedList.getEmptyText()) {
+						if (oContext?.isA("sap.ui.model.Context")) {
+							sPath = this.resolve(sPath, oContext);
+						}
+
+						if (sPath?.startsWith("/items")) { // Item list
+							const aParts = sPath.split("/");
+							const oEmptyItem = oFixedList.getAggregation("_emptyItem");
+							const aItems = oFixedList.getItems();
+							let oNode = aItems;
+							oNode.unshift(oEmptyItem);
+							aNodeStack?.push({path: "/", node: this._oObject}); // remember first node
+							aNodeStack?.push({path: "items", node: oNode});
+
+							if (aParts.length > 2) { // Item
+								const iIndex = Number(aParts[2]);
+								oNode = aItems[iIndex];
+								aNodeStack?.push({path: aParts[2], node: oNode});
+
+								if (aParts.length > 3) { // Property on Item
+									const oProperty = oNode.getMetadata().getManagedProperty(aParts[3]);
+									if (oProperty) {
+										oNode = oProperty.get(oNode);
+										aNodeStack?.push({path: aParts[3], node: oNode});
+									}
+								}
+							}
+							return oNode;
+						}
+					}
+
+					return ManagedObjectModel.prototype._getObject.apply(this, arguments);
+				};
+
+				_setEmptyItem.call(this, this.getEmptyText());
 
 				const oItemTemplate = new DisplayListItem(this.getId() + "-item", {
 					type: mLibrary.ListType.Active,
@@ -226,13 +300,14 @@ sap.ui.define([
 
 	function _setConditions(vKey, sValue) {
 
-		const oCondition = this.createCondition(vKey, sValue);
+		const oCondition = vKey === null ? null : this.createCondition(vKey, sValue);
+		const aConditions = oCondition ? [oCondition] : [];
 		const aOldConditions = this.getConditions();
 
-		if (deepEqual([oCondition], aOldConditions)) {
+		if (deepEqual(aConditions, aOldConditions)) {
 			_updateSelection.call(this); // as selection might be changed
 		} else {
-			this.setProperty("conditions", [oCondition], true);
+			this.setProperty("conditions", aConditions, true);
 		}
 
 		return oCondition;
@@ -302,13 +377,15 @@ sap.ui.define([
 			aListItems.forEach((oListItem, iIndex) => {
 				if (oListItem.isA("sap.m.DisplayListItem")) { // check if it's not a group header
 					const oOriginalItem = _getOriginalItem.call(this, oListItem);
-					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
+					if ((aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) ||
+						(aConditions.length === 0 && _getKey.call(this, oOriginalItem) === null)) {
 						// conditions given -> use them to show selected items
+						// no codition given -> use "not selected" - item
 						oListItem.setSelected(true);
 						if (bIsOpen && !oListItem.hasStyleClass("sapMLIBFocused")) { // to also update acc-descriptions
 							oList.setFakeFocus(oListItem);
 						}
-				} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && this._sHighlightId === oListItem.getId()) {
+					} else if (aConditions.length === 0 && this._iNavigateIndex < 0 && !bFirstFilterItemSelected && this._sHighlightId === oListItem.getId()) {
 						oListItem.setSelected(true);
 						bFirstFilterItemSelected = true;
 					} else {
@@ -340,6 +417,8 @@ sap.ui.define([
 		const oBinding = oItem.getBinding("key");
 		if (oBinding) {
 			return oBinding.getInternalValue();
+		} else if (oItem === this.getAggregation("_emptyItem")) {
+			return null; // as key is converted to String in key-property
 		} else {
 			return oItem.getKey();
 		}
@@ -349,9 +428,10 @@ sap.ui.define([
 	function _getText(oItem) {
 
 		// as text could have internally another type - use initial value of binding
+		// if Formatter used take formatted text (Bool case)
 		// TODO: better logic?
 		const oBinding = oItem.getBinding("text");
-		if (oBinding) {
+		if (oBinding && !oBinding.getFormatter()) {
 			return oBinding.getInternalValue();
 		} else {
 			return oItem.getText();
@@ -362,8 +442,19 @@ sap.ui.define([
 	FixedList.prototype.getItemForValue = function(oConfig) {
 
 		return this.getContent().then(() => {
-			if (oConfig.value === null || oConfig.value === undefined) {
+			if ((oConfig.value == null || oConfig.value === undefined) && oConfig.parsedValue !== null) {
 				return null;
+			} else if (oConfig.parsedValue === null) {
+				let vEmptyText = this.getEmptyText();
+				if (vEmptyText && oConfig.emptyAllowed) {
+					const oBinding = this.getBinding("emptyText");
+					if (oBinding) {
+						vEmptyText = oBinding.getInternalValue(); // internalValue if emptyText if bound. (because of different data type)
+					}
+					return { key: null, description: vEmptyText };
+				} else {
+					return null;
+				}
 			} else if (!oConfig.value && oConfig.checkDescription) {
 				return null; // no check for empty description
 			}
@@ -645,7 +736,7 @@ sap.ui.define([
 	 */
 	FixedList.prototype.shouldOpenOnClick = function() {
 
-		return !this.getFilterList(); // TODO: own property, maybe general at content?
+		return this.getRestrictedToFixedValues();
 
 	};
 
@@ -698,6 +789,42 @@ sap.ui.define([
 		oList?.destroyItems(); // directly destroy all internal items and it's bindings to prevent step-by-step removement from ManagedObjectModel
 		return this.destroyAggregation("items");
 	};
+
+	FixedList.prototype.observeChanges = function(oChanges) {
+
+		if (oChanges.name === "emptyText") {
+			_setEmptyItem.call(this, oChanges.current);
+			this._oManagedObjectModel?.checkUpdate(true, true);
+			_updateSelection.call(this); // as items might be changed
+		} else if (oChanges.name === "config" && (oChanges.current?.emptyAllowed !== oChanges.old?.emptyAllowed)) {
+			this._oManagedObjectModel?.checkUpdate(true, true);
+			_updateSelection.call(this); // as items might be changed
+		}
+
+		ListContent.prototype.observeChanges.apply(this, arguments);
+
+	};
+
+	FixedList.prototype.isRestrictedToFixedValues = function() {
+		return this.getRestrictedToFixedValues();
+	};
+
+	function _setEmptyItem(sEmptyText) {
+
+		if (sEmptyText && FixedListItem && this._oManagedObjectModel) {
+			if (!this.getAggregation("_emptyItem")) {
+				const oEmptyItem = new FixedListItem(this.getId() + "-emptyItem", {
+					key: null,
+					text: { path: "$help>/emptyText" }
+				});
+				this.setAggregation("_emptyItem", oEmptyItem, true); // to have in control tree
+				oEmptyItem.setModel(this._oManagedObjectModel, "$help");
+			}
+		} else {
+			this.destroyAggregation("_emptyItem", true);
+		}
+
+	}
 
 	return FixedList;
 });

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
+	'sap/ui/core/Element',
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
@@ -29,6 +30,7 @@ sap.ui.define([
 		ConditionValidated,
 		OperatorName,
 		ValueHelpSelectionType,
+		Element,
 		Icon,
 		JSONModel,
 		mLibrary,
@@ -1048,6 +1050,65 @@ sap.ui.define([
 					assert.notOk(oValueStateHeader?.getVisible(), "ValueStateHeader not visible");
 					const oScrollContainer = aDialogContent?.[1];
 					assert.ok(oScrollContainer?.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+
+					fnDone();
+				}, 0);
+			}).catch((oError) => {
+				assert.notOk(true, "Promise Catch called");
+				fnDone();
+			});
+		}
+
+	});
+
+	QUnit.test("getContainerControl (restrictedToFixedValues)", (assert) => {
+
+		sinon.stub(oPopover, "isRestrictedToFixedValues").returns(true);
+		oValueHelpConfig.maxConditions = 1;
+		oPopover.setTitle("Test");
+
+		sinon.stub(oPopover, "hasDialog").returns(true); // to enable valueHelp icon
+
+		const oContainer = oPopover.getContainerControl();
+
+		if (oContainer) {
+			const fnDone = assert.async();
+			oContainer.then((oContainer) => {
+				setTimeout(() => { // as setting value on input might be async
+					assert.ok(oContainer, "Container returned");
+					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
+					assert.equal(oContainer.getStretch(), true, "stretch");
+					assert.equal(oContainer.getHorizontalScrolling(), false, "horizontalScrolling");
+
+					const oCloseButton = oContainer.getBeginButton();
+					assert.notOk(oCloseButton, "No close-button created");
+
+					const oCustomHeaderBar = oContainer.getCustomHeader();
+					assert.ok(oCustomHeaderBar?.isA("sap.m.Bar"), "header-bar is Bar");
+					const aContentMiddle = oCustomHeaderBar?.getContentMiddle();
+					assert.equal(aContentMiddle?.length, 1, "ContentMiddle returned");
+					const oTitle = aContentMiddle?.[0];
+					assert.ok(oTitle?.isA("sap.m.Title"), "title is Title");
+					assert.equal(oTitle?.getText(), "Test", "Title text");
+					assert.equal(oTitle?.getLevel(), "H1", "Title level");
+					const aContentRight = oCustomHeaderBar?.getContentRight();
+					assert.equal(aContentRight?.length, 1, "ContentRight returned");
+					const oCancelButton = aContentRight?.[0];
+					assert.ok(oCancelButton?.isA("sap.m.Button"), "cancel-button is Button");
+					assert.equal(oCancelButton?.getIcon(), IconPool.getIconURI("decline"), "cancel-button is Icon");
+
+					const oSubHeaderBar = oContainer.getSubHeader();
+					assert.notOk(oSubHeaderBar, "no subHeader-bar created");
+					assert.notOk(Element.getElementById(oPopover.getId() + "-pop-input"), "No Input created");
+
+					const aDialogContent = oContainer.getContent();
+					assert.equal(aDialogContent?.length, 2, "Dialog content");
+					const oValueStateHeader = aDialogContent?.[0];
+					assert.ok(oValueStateHeader?.isA("sap.m.ValueStateHeader"), "ValueStateHeader is first content");
+					assert.notOk(oValueStateHeader?.getVisible(), "ValueStateHeader not visible");
+					const oScrollContainer = aDialogContent?.[1];
+					assert.ok(oScrollContainer?.isA("sap.m.ScrollContainer"), "ScrollContainer is second content");
+					assert.equal(oContainer.getInitialFocus(), oScrollContainer?.getId(), "initial focus");
 
 					fnDone();
 				}, 0);

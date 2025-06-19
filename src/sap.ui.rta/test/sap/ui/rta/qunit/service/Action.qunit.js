@@ -32,7 +32,7 @@ function(
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							id: "fixture.application"

@@ -1,0 +1,168 @@
+{
+    "changes": [{
+        "changeType": "rename",
+        "reference": "fl.performance.flexBundleLoad",
+        "namespace": "apps/fl.performance.flexBundleLoad/changes/",
+        "creation": "2025-06-12T08:22:48.960Z",
+        "projectId": "fl.performance.flexBundleLoad",
+        "packageName": "$TMP",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "user": "DEFAULT_USER",
+            "sapui5Version": "1.137.0-SNAPSHOT",
+            "command": "rename"
+        },
+        "originalLanguage": "DE",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "id_1749716522407_44_rename",
+        "content": {
+            "originalControlType": "sap.m.Text"
+        },
+        "texts": {
+            "newText": {
+                "value": "Element text HAS BEEN CHANGED",
+                "type": "XTXT"
+            }
+        },
+        "selector": {
+            "id": "idMain1--TargetElement",
+            "idIsLocal": false
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "version": "id_1749716568962_45_version"
+    }, {
+        "changeType": "rename",
+        "reference": "fl.performance.flexBundleLoad",
+        "namespace": "apps/fl.performance.flexBundleLoad/changes/",
+        "creation": "2025-06-12T08:22:48.960Z",
+        "projectId": "fl.performance.flexBundleLoad",
+        "packageName": "$TMP",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "user": "DEFAULT_USER",
+            "sapui5Version": "1.137.0-SNAPSHOT",
+            "command": "rename"
+        },
+        "originalLanguage": "DE",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "id_1749716522408_44_rename",
+        "content": {
+            "originalControlType": "sap.m.Text"
+        },
+        "texts": {
+            "newText": {
+                "value": "Element text HAS BEEN CHANGED-1",
+                "type": "XTXT"
+            }
+        },
+        "selector": {
+            "id": "idMain1--TargetElement",
+            "idIsLocal": false
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "version": "id_1749716568962_45_version"
+    }, {
+        "changeType": "rename",
+        "reference": "fl.performance.flexBundleLoad",
+        "namespace": "apps/fl.performance.flexBundleLoad/changes/",
+        "creation": "2025-06-12T08:22:48.960Z",
+        "projectId": "fl.performance.flexBundleLoad",
+        "packageName": "$TMP",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "user": "DEFAULT_USER",
+            "sapui5Version": "1.137.0-SNAPSHOT",
+            "command": "rename"
+        },
+        "originalLanguage": "DE",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "id_1749716522409_44_rename",
+        "content": {
+            "originalControlType": "sap.m.Text"
+        },
+        "texts": {
+            "newText": {
+                "value": "Element text HAS BEEN CHANGED-2",
+                "type": "XTXT"
+            }
+        },
+        "selector": {
+            "id": "idMain1--TargetElement",
+            "idIsLocal": false
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "version": "id_1749716568962_45_version"
+    }, {
+        "changeType": "rename",
+        "reference": "fl.performance.flexBundleLoad",
+        "namespace": "apps/fl.performance.flexBundleLoad/changes/",
+        "creation": "2025-06-12T08:22:48.960Z",
+        "projectId": "fl.performance.flexBundleLoad",
+        "packageName": "$TMP",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "user": "DEFAULT_USER",
+            "sapui5Version": "1.137.0-SNAPSHOT",
+            "command": "rename"
+        },
+        "originalLanguage": "DE",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "id_1749716522410_44_rename",
+        "content": {
+            "originalControlType": "sap.m.Text"
+        },
+        "texts": {
+            "newText": {
+                "value": "Element text HAS BEEN CHANGED-3",
+                "type": "XTXT"
+            }
+        },
+        "selector": {
+            "id": "idMain1--TargetElement",
+            "idIsLocal": false
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "version": "id_1749716568962_45_version"
+    }, {
+        "changeType": "rename",
+        "reference": "fl.performance.flexBundleLoad",
+        "namespace": "apps/fl.performance.flexBundleLoad/changes/",
+        "creation": "2025-06-12T08:22:48.960Z",
+        "projectId": "fl.performance.flexBundleLoad",
+        "packageName": "$TMP",
+        "support": {
+            "generator": "sap.ui.rta.command",
+            "user": "DEFAULT_USER",
+            "sapui5Version": "1.137.0-SNAPSHOT",
+            "command": "rename"
+        },
+        "originalLanguage": "DE",
+        "layer": "CUSTOMER",
+        "fileType": "change",
+        "fileName": "id_1749716522411_44_rename",
+        "content": {
+            "originalControlType": "sap.m.Text"
+        },
+        "texts": {
+            "newText": {
+                "value": "Element text HAS BEEN CHANGED-4",
+                "type": "XTXT"
+            }
+        },
+        "selector": {
+            "id": "idMain1--TargetElement",
+            "idIsLocal": false
+        },
+        "dependentSelector": {},
+        "jsOnly": false,
+        "version": "id_1749716568962_45_version"
+    }]
+}

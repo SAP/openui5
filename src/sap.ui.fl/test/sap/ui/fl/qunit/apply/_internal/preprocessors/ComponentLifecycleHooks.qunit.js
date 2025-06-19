@@ -58,7 +58,7 @@ sap.ui.define([
 				}
 			};
 			this.oManifest = {
-				_version: "2.0.1",
+				_version: "2.0.2",
 
 				"sap.app": {
 					type: "application"
@@ -84,7 +84,7 @@ sap.ui.define([
 			text: "the passed manifest does not contain a type",
 			config: this.oConfig,
 			manifest: {
-				_version: "2.0.1",
+				_version: "2.0.2",
 				"sap.app": {},
 
 				getEntry(key) {
@@ -96,7 +96,7 @@ sap.ui.define([
 			text: "the passed manifest is not of the type 'application'",
 			config: this.oConfig,
 			manifest: {
-				_version: "2.0.1",
+				_version: "2.0.2",
 
 				"sap.app": {
 					type: "notAnApplication"

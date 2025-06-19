@@ -19,6 +19,9 @@ sap.ui.define([
 		getDisplayMultiLine: function() {
 			return ["sap/m/Link"]; // render Link too, it wraps in Multiline
 		},
+		getEditSelect: function() {
+			return [null];
+		},
 		getUseDefaultValueHelp: function() {
 			return false;
 		},
@@ -51,6 +54,9 @@ sap.ui.define([
 		},
 		createDisplayMultiLine: function(oContentFactory, aControlClasses, sId) {
 			return this.createDisplay(oContentFactory, aControlClasses, sId);
+		},
+		createEditSelect: function() {
+			throw new Error("sap.ui.mdc.field.content.LinkContent - createEditSelect not defined!");
 		}
 	};
 

@@ -1,0 +1,10 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	controllerName="fl.performance.flexBundleLoad.view.appView">
+	<VBox id="VerticalBox">
+		<Label id="ContainerLabel" text="UI Flexibility Performance Test - Bundle Loading" />
+		<Text id="TargetElement" text="Element to be changed" />
+		<Text id="ResultText" text="Error! No measurement result!" />
+	</VBox>
+</mvc:View>

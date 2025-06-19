@@ -581,7 +581,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' with several changes in array", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -603,7 +603,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with single change", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -623,7 +623,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with single change for parameters/", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -648,7 +648,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with more than one change for parameters/", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -677,7 +677,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with deletion for parameters/", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -711,7 +711,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with insert properties in parameters/", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -755,7 +755,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with insert properties as array in parameters/", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -792,7 +792,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' insert property parameters", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -813,7 +813,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' insert property in not supported path", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -835,7 +835,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' insert property which already exist", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -857,7 +857,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with deletion array for parameters/", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -882,7 +882,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with not existing parameter to delete", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -907,7 +907,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with deletion of mandatory property'", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -933,7 +933,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with invalid DELETE property 'propertyValue'", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -959,7 +959,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with no outbound exists", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -974,7 +974,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with unsupported change", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -995,7 +995,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with unsupported change for gernic path", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1023,7 +1023,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with an unsupported operation", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1044,7 +1044,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with wrong manifest", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": {}
 			};
 			assert.throws(function() {
@@ -1054,7 +1054,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with no ID", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1075,7 +1075,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with no changes", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1097,7 +1097,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with invalid change format", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1118,7 +1118,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with UPDATE and no value in manifest", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1138,7 +1138,7 @@ sap.ui.define([
 		});
 		QUnit.test("when calling '_applyChange' with an unsupported pattern", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1158,7 +1158,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with single complex propertyPath", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1187,7 +1187,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with two complex propertyPaths", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1216,7 +1216,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with three complex propertyPaths", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1245,7 +1245,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' DELETE with three complex propertyPaths", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1285,7 +1285,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with unsupported vaules of parameter semanticObject", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1306,7 +1306,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with unsupported vaules of parameter action", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1327,7 +1327,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with unsupported vaules of parameter additionalParameters", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {
@@ -1348,7 +1348,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' INSERT with complex propertyPath", function(assert) {
 			const oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					crossNavigation: {

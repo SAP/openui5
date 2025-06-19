@@ -39,7 +39,7 @@ sap.ui.define([
 		return UIComponent.extend("my.command.Component", {
 			metadata: {
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app" : {
 						"id" : "my.command.constructor",
@@ -127,7 +127,7 @@ sap.ui.define([
 		return UIComponent.extend("my.command2.Component", {
 			metadata: {
 				manifest: {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app" : {
 						"id" : "my.command2.constructor",

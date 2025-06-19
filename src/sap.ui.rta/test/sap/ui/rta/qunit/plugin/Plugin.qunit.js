@@ -999,7 +999,7 @@ sap.ui.define([
 			const oParentComponent = new (UIComponent.extend("component", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.ui5": {
 							componentUsages: {
@@ -1019,7 +1019,7 @@ sap.ui.define([
 
 			sandbox.stub(this.oComponent, "getManifest")
 			.returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "testComponent"
@@ -1036,7 +1036,7 @@ sap.ui.define([
 			const oParentComponent = new (UIComponent.extend("component", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.ui5": {
 							componentUsages: {
@@ -1056,7 +1056,7 @@ sap.ui.define([
 
 			sandbox.stub(this.oComponent, "getManifest")
 			.returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "testComponent"

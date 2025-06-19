@@ -178,6 +178,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isRestrictedToFixedValues", (assert) => {
+
+		const oContent = new Content("Content1");
+		sinon.stub(oContent, "isRestrictedToFixedValues").returns(false);
+		oContainer.addContent(oContent);
+
+		assert.notOk(oContent.isRestrictedToFixedValues(), "Result");
+
+		oContent.isRestrictedToFixedValues.returns(true);
+		assert.ok(oContent.isRestrictedToFixedValues(), "Result");
+
+	});
+
 	QUnit.module("assigned to ValueHelp", {
 		beforeEach() {
 			oValueHelpConfig = {maxConditions: 1};

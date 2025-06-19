@@ -1276,7 +1276,7 @@ sap.ui.define([
 			};
 
 			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning");
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects");
 			const oAddVariantChangesSpy = sandbox.stub(VariantManager, "handleManageEvent").callsFake(async (...aArgs) => {
 				await oAddVariantChangesSpy.wrappedMethod.apply(this, aArgs);
 
@@ -1285,7 +1285,7 @@ sap.ui.define([
 				assert.strictEqual(oPassedPropertyBag.selector, oComponent, "the app component was passed");
 				// Changes must be passed in this case to avoid that UI changes are read from the FlexState and persisted as well
 				assert.deepEqual(
-					oPassedPropertyBag.dirtyChanges.length,
+					oPassedPropertyBag.flexObjects.length,
 					4,
 					"an array with 4 changes was passed instead of taking the changes directly from the FlexState"
 				);
@@ -1311,15 +1311,15 @@ sap.ui.define([
 
 			const oUpdateVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant");
 			const oAddVariantChangesSpy = sandbox.spy(VariantManager, "addVariantChanges");
-			sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").callsFake((oPropertyBag) => {
+			sandbox.stub(FlexObjectManager, "saveFlexObjects").callsFake((oPropertyBag) => {
 				assert.strictEqual(oUpdateVariantStub.callCount, 1, "the variant was switched");
 				assert.deepEqual(oUpdateVariantStub.lastCall.args[0], {
 					variantManagementReference: sVMReference,
 					newVariantReference: sVMReference
 				}, "the correct variant was switched to");
 				assert.strictEqual(oPropertyBag.selector, oComponent, "the app component was passed");
-				assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 1, "1 changes were added");
-				assert.deepEqual(oPropertyBag.dirtyChanges.length, 1, "an array with 1 change was passed");
+				assert.strictEqual(oAddVariantChangesSpy.lastCall.args[1].length, 1, "1 change was added");
+				assert.strictEqual(oPropertyBag.flexObjects.length, 1, "an array with 1 change was passed");
 				oVariantManagement.destroy();
 				done();
 			});
@@ -1339,7 +1339,7 @@ sap.ui.define([
 				deleted: ["variant2", "variant3"]
 			};
 
-			sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").callsFake((oPropertyBag) => {
+			sandbox.stub(FlexObjectManager, "saveFlexObjects").callsFake((oPropertyBag) => {
 				assert.ok(
 					oDeleteVariantSpy.calledWith(sReference, sVMReference, "variant3"),
 					"then the variant and related objects were deleted"
@@ -1350,12 +1350,12 @@ sap.ui.define([
 				);
 
 				assert.strictEqual(
-					oPropertyBag.dirtyChanges.length,
+					oPropertyBag.flexObjects.length,
 					1,
 					"then only one change is saved since the rest is dirty and directly removed from FlexState"
 				);
 				assert.strictEqual(
-					oPropertyBag.dirtyChanges[0].getVariantId(),
+					oPropertyBag.flexObjects[0].getVariantId(),
 					"variant2",
 					"then only the PUBLIC variant is hidden via setVisible"
 				);
@@ -1701,7 +1701,7 @@ sap.ui.define([
 			this.oVariantManagement = new VariantManagement(this.sVMReference);
 
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-			sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves();
+			sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
 			this.oRegisterControlStub = sandbox.stub(URLHandler, "registerControl");
 			sandbox.stub(VariantManagementState, "getInitialUIChanges").returns([FlexObjectFactory.createUIChange({
 				changeType: "foo",
@@ -2084,7 +2084,7 @@ sap.ui.define([
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
 						manifest: {
-							"_version": "2.0.1",
+							"_version": "2.0.2",
 
 							"sap.app": {
 								applicationVersion: {

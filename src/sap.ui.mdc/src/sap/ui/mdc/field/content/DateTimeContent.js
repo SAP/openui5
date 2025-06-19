@@ -30,6 +30,9 @@ sap.ui.define([
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.DateTimeContent - createEditMultiLine not defined!");
 		},
+		createEditSelect: function() {
+			throw new Error("sap.ui.mdc.field.content.DateTimeContent - createEditSelect not defined!");
+		},
 		_createDatePickerControl: function(oContentFactory, aControlClasses, sId) {
 			const aControls = DateContent._createDatePickerControl.apply(this, arguments);
 			const oType = oContentFactory.getDateOriginalType() || oContentFactory.getDataType(); // if no clone-type created use original type

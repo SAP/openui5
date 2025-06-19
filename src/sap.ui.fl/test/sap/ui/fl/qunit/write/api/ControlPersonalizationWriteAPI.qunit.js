@@ -71,7 +71,7 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							applicationVersion: {
@@ -474,33 +474,33 @@ sap.ui.define([
 		QUnit.test("When save() is called with an array of changes and a valid component", function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(sChangesSaved);
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(sChangesSaved);
 
 			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
 
 			.then(function(vResponse) {
 				assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
-				assert.strictEqual(oSaveStub.lastCall.args[0].dirtyChanges, aSuccessfulChanges, "the two changes were passed to the FlexObjectManager");
+				assert.strictEqual(oSaveStub.lastCall.args[0].flexObjects, aSuccessfulChanges, "the two changes were passed to the FlexObjectManager");
 			});
 		});
 
 		QUnit.test("When save() is called but flex state is not initialized", function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(sChangesSaved);
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(sChangesSaved);
 			sandbox.stub(FlexState, "isInitialized").returns(false);
 
 			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
 
 			.then(function() {
-				assert.notOk(oSaveStub.calledOnce, "then saveFlexObjectsWithoutVersioning is not called");
+				assert.notOk(oSaveStub.calledOnce, "then saveFlexObjects is not called");
 			});
 		});
 
 		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", async function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
-			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(sChangesSaved);
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(sChangesSaved);
 			var aVMControl = new VariantManagement({
 				modelName: ControlVariantApplyAPI.getVariantModelName()
 			}).placeAt(StaticArea.getDomRef());
@@ -512,7 +512,7 @@ sap.ui.define([
 			);
 
 			assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
-			assert.strictEqual(oSaveStub.lastCall.args[0].dirtyChanges, aSuccessfulChanges, "the two changes were passed to the FlexObjectManager");
+			assert.strictEqual(oSaveStub.lastCall.args[0].flexObjects, aSuccessfulChanges, "the two changes were passed to the FlexObjectManager");
 
 			aVMControl.destroy();
 		});
@@ -591,7 +591,7 @@ sap.ui.define([
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							applicationVersion: {

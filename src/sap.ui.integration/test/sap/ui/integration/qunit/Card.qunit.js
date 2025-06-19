@@ -407,7 +407,7 @@ sap.ui.define([
 		};
 
 		var oManifest_ComponentCardAllInOne = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 			"sap.app": {
 				"id": "sap.f.cardsdemo.cardcontent.componentContent.allInOne",
 				"type": "card",
@@ -1052,7 +1052,7 @@ sap.ui.define([
 		QUnit.test("getRuntimeUrl when baseUrl is not set", async function (assert) {
 			// Arrange
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "sample.card"
@@ -1095,7 +1095,7 @@ sap.ui.define([
 			// Arrange
 			var sBaseUrl = "https://sdk.openui5.org",
 				oManifest = {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 
 					"sap.app": {
 						"id": "sample.card"

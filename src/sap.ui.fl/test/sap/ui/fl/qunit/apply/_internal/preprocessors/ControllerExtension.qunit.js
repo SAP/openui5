@@ -26,7 +26,7 @@ sap.ui.define([
 	const oAppComponent = {
 		getManifest() {
 			return {
-				_version: "2.0.1",
+				_version: "2.0.2",
 
 				"sap.app": {
 					applicationVersion: {
@@ -43,7 +43,7 @@ sap.ui.define([
 		},
 		getManifestObject() {
 			return {
-				_version: "2.0.1",
+				_version: "2.0.2",
 
 				"sap.app": {
 					applicationVersion: {
@@ -157,7 +157,7 @@ sap.ui.define([
 			var oComponent = {
 				getManifestObject() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							applicationVersion: {
@@ -169,7 +169,7 @@ sap.ui.define([
 				},
 				getManifest() {
 					return {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							applicationVersion: {

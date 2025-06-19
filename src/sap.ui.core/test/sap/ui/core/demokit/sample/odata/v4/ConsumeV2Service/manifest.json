@@ -1,5 +1,5 @@
 {
-	"_version": "2.0.1",
+	"_version": "2.0.2",
 	"sap.app": {
 		"ach": "CA-UI5-COR",
 		"applicationVersion": {
@@ -60,8 +60,7 @@
 					"odataVersion": "2.0",
 					"operationMode": "Server"
 				},
-				"type": "sap.ui.core.sample.odata.v4.ConsumeV2Service.SandboxModel",
-				"uriSettingName": "serviceUrl"
+				"type": "sap.ui.core.sample.odata.v4.ConsumeV2Service.SandboxModel"
 			}
 		},
 		"rootView": "sap.ui.core.sample.odata.v4.ConsumeV2Service.Main"

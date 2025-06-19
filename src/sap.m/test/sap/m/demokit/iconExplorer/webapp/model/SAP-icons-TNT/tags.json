@@ -646,5 +646,76 @@
 	},
 	"business-accelerator": {
 		"tags": ["accelerator", "business-content", "business-accelerator"]
+	},
+	"add-project": {
+		"tags": [
+			"project", 
+			"plan", 
+			"project-plan", 
+			"manage", 
+			"add"
+		]
+	},
+	"add-issue": {
+		"tags": [
+			"issue", 
+			"alert", 
+			"critical", 
+			"warning", 
+			"add"
+		]
+	},
+	"service-estimator": {
+		"tags": [
+			"calculate",  
+			"estimate", 
+			"service", 
+			"cost", 
+			"rough-estimate", 
+			"commercial-model"
+		]
+	},
+	"ai-feature-estimator": {
+		"tags": [
+			"calculate-ai", 
+			"calculate", 
+			"estimate-ai", 
+			"ai-cost", 
+			"ai-savings", 
+			"savings"
+		]
+	},
+	"refine-test-data": {
+		"tags": [
+			"refine", 
+			"data", 
+			"ai",
+			"cylinder",
+			"sparkle"	
+		]
+	},
+	"navigate-source-code": {
+		"tags": [
+			"code", 
+			"source-code", 
+			"edit",
+			"navigate"
+		]
+	},
+	"clean-up": {
+		"tags": [
+			"clean", 
+			"clean-up", 
+			"broom"
+		]
+	},
+	"sap-fiori-tools": {
+		"tags": [
+			"fiori", 
+			"tools", 
+			"tool", 
+			"wrench", 
+			"pencil"
+		]
 	}
 }

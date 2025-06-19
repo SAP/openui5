@@ -369,7 +369,7 @@ sap.ui.define([
 				changes: [],
 				variantsToBeDeleted: []
 			});
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning");
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects");
 			await VariantManager.handleManageEvent({}, {}, this.oModel);
 			assert.strictEqual(oSaveStub.callCount, 0, "then no changes were saved");
 		});
@@ -389,7 +389,7 @@ sap.ui.define([
 				}],
 				variantsToBeDeleted: ["variant1", "variant3"]
 			});
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning");
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects");
 			await VariantManager.handleManageEvent({}, {variantManagementReference: sVMReference}, this.oModel);
 			assert.strictEqual(oSaveStub.callCount, 2, "then saveDirtyChanges is called twice, once for each layer");
 		});
@@ -410,7 +410,7 @@ sap.ui.define([
 			const oResponse = {response: [{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(oResponse);
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(oResponse);
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
 			const oCreateVManagementChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantManagementChange");
@@ -444,7 +444,7 @@ sap.ui.define([
 
 			assert.strictEqual(oSaveStub.callCount, 1, "then dirty changes were saved");
 			assert.strictEqual(
-				oSaveStub.getCall(0).args[0].dirtyChanges.length, 5,
+				oSaveStub.getCall(0).args[0].flexObjects.length, 5,
 				"then five dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change"
 			);
 			assert.ok(
@@ -486,7 +486,7 @@ sap.ui.define([
 			const oResponse = {response: [{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(oResponse);
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(oResponse);
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
 			const oCreateDefaultFileNameSpy = sandbox.spy(Utils, "createDefaultFileName");
@@ -525,15 +525,15 @@ sap.ui.define([
 				"then dirty changes were saved"
 			);
 			assert.strictEqual(
-				oSaveStub.getCall(0).args[0].dirtyChanges.length, 6,
+				oSaveStub.getCall(0).args[0].flexObjects.length, 6,
 				"then a new variant, 3 copied ctrl changes, setDefault change, setFavorite change were saved"
 			);
 			assert.strictEqual(
-				oSaveStub.getCall(0).args[0].dirtyChanges[0].getChangeType(), "setFavorite",
+				oSaveStub.getCall(0).args[0].flexObjects[0].getChangeType(), "setFavorite",
 				"then a setFavorite change was added"
 			);
 			assert.strictEqual(
-				oSaveStub.getCall(0).args[0].dirtyChanges[5].getChangeType(), "setDefault",
+				oSaveStub.getCall(0).args[0].flexObjects[5].getChangeType(), "setDefault",
 				"the last change was 'setDefault'"
 			);
 			assert.ok(
@@ -564,7 +564,7 @@ sap.ui.define([
 				name: "Test"
 			};
 
-			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves({
+			var oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves({
 				response: [{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]
 			});
 			var oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
@@ -574,7 +574,7 @@ sap.ui.define([
 			assert.ok(oCopyVariantSpy.notCalled, "copyVariant is not called");
 			assert.ok(oSetVariantPropertiesSpy.notCalled, "SetVariantProperties is not called");
 			assert.ok(oSaveStub.calledOnce, "SaveAll is called");
-			oSaveStub.getCall(0).args[0].dirtyChanges.forEach((oChange) => {
+			oSaveStub.getCall(0).args[0].flexObjects.forEach((oChange) => {
 				assert.equal(oChange.getLayer(), Layer.PUBLIC, "layer of dirty change is PUBLIC layer when source variant is PUBLIC");
 			});
 		});
@@ -596,7 +596,7 @@ sap.ui.define([
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
 			var oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
-			sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(oResponse);
+			sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(oResponse);
 
 			await VariantManager.handleSaveEvent(this.oVMControl, oParameters, this.oModel);
 			assert.ok(
@@ -623,7 +623,7 @@ sap.ui.define([
 			const oResponse = {response: [{fileName: sCopyVariantName, fileType: "ctrl_variant", support: {user: sUserName}}]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(oResponse);
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(oResponse);
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
 			const oAddVariantChangeSpy = sandbox.spy(VariantManager, "addVariantChange");
@@ -657,7 +657,7 @@ sap.ui.define([
 			assert.ok(oAddVariantChangeSpy.notCalled, "then no new changes were created");
 			assert.strictEqual(oSaveStub.callCount, 1, "then dirty changes were saved");
 			assert.strictEqual(
-				oSaveStub.getCall(0).args[0].dirtyChanges.length,
+				oSaveStub.getCall(0).args[0].flexObjects.length,
 				4,
 				"then six dirty changes were saved (new variant, 3 copied ctrl changes"
 			);
@@ -705,7 +705,7 @@ sap.ui.define([
 			]};
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
-			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjectsWithoutVersioning").resolves(oResponse);
+			const oSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves(oResponse);
 			const oDeleteFlexObjectsSpy = sandbox.spy(FlexObjectManager, "deleteFlexObjects");
 			const oCopyVariantSpy = sandbox.spy(VariantManager, "copyVariant");
 			const oCreateVManagementChangeSpy = sandbox.spy(FlexObjectFactory, "createVariantManagementChange");

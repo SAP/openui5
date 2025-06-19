@@ -111,6 +111,17 @@ sap.ui.define([
 		throwsError: true
 	};
 
+	ContentBasicTest.controlMap.EditSelect = {
+		getPathsFunction: "getEditSelect",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditSelect",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
+	};
+
 	ContentBasicTest.test(QUnit, SearchContent, "SearchContent", "sap.ui.model.type.String", {}, undefined, BaseType.String, undefined, false);
 
 	function _checkSearchField(assert, aControls, oValue) {

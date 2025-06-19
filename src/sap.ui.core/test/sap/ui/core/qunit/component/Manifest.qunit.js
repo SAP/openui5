@@ -37,7 +37,7 @@ sap.ui.define([
 	QUnit.test("Component Name in manifest", function(assert) {
 		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": this.sComponentName
@@ -51,7 +51,7 @@ sap.ui.define([
 	QUnit.test("Component Name as config option", function(assert) {
 		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 			"sap.app": {}
 		};
 		this.oManifest = new Manifest(this.oManifestJson, {
@@ -65,7 +65,7 @@ sap.ui.define([
 		future.active = true;
 		this.sComponentName = "testdata.foo.bar";
 		this.oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": this.sComponentName,
@@ -115,7 +115,7 @@ sap.ui.define([
 	QUnit.test("URL resolving", function(assert) {
 
 		this.oManifest = new Manifest({
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 			"sap.app": {}
 		}, {
 			componentName: "testdata.foo.bar",
@@ -149,7 +149,7 @@ sap.ui.define([
 
 	QUnit.test("Manifest from Object", function(assert) {
 		this.oManifest = new Manifest({
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.manifestload"
@@ -180,7 +180,7 @@ sap.ui.define([
 
 	QUnit.test("Replace text placeholders in Manifest", function (assert) {
 		this.oManifest = new Manifest({
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.terminologies",
@@ -208,7 +208,7 @@ sap.ui.define([
 		Localization.setLanguage("en");
 
 		this.oManifest = new Manifest({
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.terminologies",
@@ -253,7 +253,7 @@ sap.ui.define([
 
 	QUnit.test("Resolve command descriptions in manifest", function(assert) {
 		const oManifest = new Manifest({
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.commands",

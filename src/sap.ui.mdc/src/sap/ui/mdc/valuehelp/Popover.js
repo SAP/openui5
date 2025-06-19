@@ -101,8 +101,9 @@ sap.ui.define([
 		let oValueHelpHeader;
 		let oInput;
 		if (Device.system.phone) {
+			const oSubHeader = oPopover.getSubHeader();
 			[oValueHelpHeader] = oPopover.getContent();
-			[oInput] = oPopover.getSubHeader().getContent();
+			[oInput] = oSubHeader ? oSubHeader.getContent() : [];
 			const oFormatOptions = _getConditionFormatOptions.call(this);
 			this._oInputConditionType.setFormatOptions(oFormatOptions); // as config might be changed
 			_updateValueHelpHeaderPhone.call(this, this.getControl(), oValueHelpHeader, undefined, undefined, oInput);
@@ -131,6 +132,10 @@ sap.ui.define([
 
 	function _updateValueHelpHeaderPhone(oControl, oValueStateHeader, sValueState, sValueStateText, oInput) {
 		_updateValueHelpHeader.call(this, oControl, oValueStateHeader, sValueState, sValueStateText);
+
+		if (!oInput) {
+			return; // only values from list allowed
+		}
 
 		if (oValueStateHeader.getVisible()) {
 			oInput.setValueState(oValueStateHeader.getValueState());
@@ -273,62 +278,79 @@ sap.ui.define([
 			const {TitleAlignment, ListMode, ListType} = MLibrary;
 			const oResourceBundleM = Library.getResourceBundleFor("sap.m");
 			const bSingleSelect = this.isSingleSelect();
+			const bRestrictedToFixedValues = this.isRestrictedToFixedValues();
 			const oValueStateHeader = new ValueStateHeader(this.getId() + "-pop-ValueState");
-
 			const oFormatOptions = _getConditionFormatOptions.call(this);
 			this._oInputConditionType = new ConditionType(oFormatOptions);
 			this._oInputConditionType._bVHInput = true; // just help for debugging
 
-			const oInput = new Input(this.getId() + "-pop-input", {
-				value: { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay }, // to get initial typed value
-				width: "100%",
-				showValueStateMessage: false,
-				showValueHelp: this.hasDialog(),
-				liveChange: (oEvent) => {
-					const sValue = oEvent.getParameter("value");
-					const oValueHelp = this.getValueHelp();
-					if (oValueHelp) {
-						oValueHelp.setFilterValue(sValue);
-						// TODO: remove conditions while filtering? (in single-value case)
-					}
-					if (!bSingleSelect) { // if on conditions list, switch back to typeahead list
-						this._toggleShowConditions(false);
-					}
-				},
-				submit: async (oEvent) => {
-					const sValue = oEvent.getParameter("value");
-					if (sValue) { // TODO: support empty key?
-						const oFormatOptions = _getConditionFormatOptions.call(this);
-						this._oInputConditionType.setFormatOptions(oFormatOptions); // as config might be changed
+			let oInput;
+			let oSubHeaderToolbar;
+			let oShowConditionsButton;
+			let oCloseButton;
+			if (!bRestrictedToFixedValues) {
+				oInput = new Input(this.getId() + "-pop-input", {
+					value: { path: "/filterValue", model: "$valueHelp", mode: BindingMode.OneWay }, // to get initial typed value
+					width: "100%",
+					showValueStateMessage: false,
+					showValueHelp: this.hasDialog(),
+					liveChange: (oEvent) => {
+						const sValue = oEvent.getParameter("value");
+						const oValueHelp = this.getValueHelp();
+						if (oValueHelp) {
+							oValueHelp.setFilterValue(sValue);
+							// TODO: remove conditions while filtering? (in single-value case)
+						}
+						if (!bSingleSelect) { // if on conditions list, switch back to typeahead list
+							this._toggleShowConditions(false);
+						}
+					},
+					submit: async (oEvent) => {
+						const sValue = oEvent.getParameter("value");
+						if (sValue) { // TODO: support empty key?
+							const oFormatOptions = _getConditionFormatOptions.call(this);
+							this._oInputConditionType.setFormatOptions(oFormatOptions); // as config might be changed
 
-						try {
-							const oCondition = await this._oInputConditionType.parseValue(sValue, "string");
-							// TODO: validate condition (if not found in ValueHelp)?
-							_updateValueHelpHeaderPhone.call(this, this.getControl(), oValueStateHeader, undefined, undefined, oInput);
-							this.fireSelect({type: bSingleSelect ? ValueHelpSelectionType.Set : ValueHelpSelectionType.Add, conditions: [oCondition]});
-							this.fireConfirm({close: true});
-						} catch (oException) {
-							if ((oException instanceof ParseException)) {
-								_updateValueHelpHeaderPhone.call(this, this.getControl(), oValueStateHeader, ValueState.Error, oException.message, oInput);
-							} else {
-								throw oException;
+							try {
+								const oCondition = await this._oInputConditionType.parseValue(sValue, "string");
+								// TODO: validate condition (if not found in ValueHelp)?
+								_updateValueHelpHeaderPhone.call(this, this.getControl(), oValueStateHeader, undefined, undefined, oInput);
+								this.fireSelect({type: bSingleSelect ? ValueHelpSelectionType.Set : ValueHelpSelectionType.Add, conditions: [oCondition]});
+								this.fireConfirm({close: true});
+							} catch (oException) {
+								if ((oException instanceof ParseException)) {
+									_updateValueHelpHeaderPhone.call(this, this.getControl(), oValueStateHeader, ValueState.Error, oException.message, oInput);
+								} else {
+									throw oException;
+								}
 							}
+					} else {
+							if (bSingleSelect) { // clear value
+								this.fireSelect({type: ValueHelpSelectionType.Set, conditions: []});
+							}
+							this.fireConfirm({close: true});
 						}
-				} else {
-						if (bSingleSelect) { // clear value
-							this.fireSelect({type: ValueHelpSelectionType.Set, conditions: []});
-						}
-						this.fireConfirm({close: true});
+					},
+					valueHelpRequest: (oEvent) => {
+						this.handleRequestSwitchToDialog();
 					}
-				},
-				valueHelpRequest: (oEvent) => {
-					this.handleRequestSwitchToDialog();
-				}
-			});
+				});
 
-			const oSubHeaderTollbar = new Toolbar(this.getId() + "-pop-subheader", {
-				content: [oInput]
-			});
+				oSubHeaderToolbar = new Toolbar(this.getId() + "-pop-subheader", {
+					content: [oInput]
+				});
+
+				oCloseButton = new Button(this.getId() + "-pop-closeButton", {
+					text: oResourceBundleM.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
+					press: (oEvent) => {
+						oInput.fireSubmit({value: oInput.getValue()}); // to select first matching item
+						// switch to typeahead
+						if (!bSingleSelect) { // if on conditions list, switch back to typeahead list
+							this._toggleShowConditions(false);
+						}
+					}
+				});
+			}
 
 			const oScrollContainer = new ScrollContainer(this.getId() + "-pop--SC", {
 				height: "100%",
@@ -349,18 +371,6 @@ sap.ui.define([
 
 				return aContent;
 			};
-
-			let oShowConditionsButton;
-			const oCloseButton = new Button(this.getId() + "-pop-closeButton", {
-				text: oResourceBundleM.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
-				press: (oEvent) => {
-					oInput.fireSubmit({value: oInput.getValue()}); // to select first matching item
-					// switch to typeahead
-					if (!bSingleSelect) { // if on conditions list, switch back to typeahead list
-						this._toggleShowConditions(false);
-					}
-				}
-			});
 
 			if (!bSingleSelect) { // for multiValue add button to switch to conditions
 				const oTokenList = new List(this.getId() + "-pop-tokenList", {
@@ -412,7 +422,7 @@ sap.ui.define([
 						this._toggleShowConditions(oEvent.getParameter("pressed"));
 					}
 				});
-				oSubHeaderTollbar.addContent(oShowConditionsButton);
+				oSubHeaderToolbar.addContent(oShowConditionsButton);
 			}
 
 			const oCustomHeaderBar = new Bar(this.getId() + "-pop-header", {
@@ -438,10 +448,10 @@ sap.ui.define([
 				stretch: true,
 				titleAlignment: TitleAlignment.Auto,
 				customHeader: oCustomHeaderBar,
-				subHeader: oSubHeaderTollbar,
+				subHeader: oSubHeaderToolbar,
 				content: [oValueStateHeader, oScrollContainer],
 				horizontalScrolling: false,
-				initialFocus: oInput,
+				initialFocus: bRestrictedToFixedValues ? oScrollContainer : oInput,
 				afterOpen: this.handleOpened.bind(this),
 				beforeClose: this.handleClose.bind(this),
 				afterClose: this.handleClosed.bind(this)

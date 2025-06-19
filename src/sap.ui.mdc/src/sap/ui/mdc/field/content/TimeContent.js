@@ -29,6 +29,9 @@ sap.ui.define([
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.TimeContent - createEditMultiLine not defined!");
 		},
+		createEditSelect: function() {
+			throw new Error("sap.ui.mdc.field.content.TimeContent - createEditSelect not defined!");
+		},
 		createEdit: function(oContentFactory, aControlClasses, sId) {
 			return DefaultContent.createEdit.apply(this, arguments);
 		}

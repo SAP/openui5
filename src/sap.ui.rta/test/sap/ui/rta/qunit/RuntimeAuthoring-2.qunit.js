@@ -79,7 +79,7 @@ sap.ui.define([
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	const sReference = "someId";
 	const oComp = RtaQunitUtils.createAndStubAppComponent(sinon, sReference, {
-		"_version": "2.0.1",
+		"_version": "2.0.2",
 
 		"sap.app": {
 			id: sReference
@@ -636,7 +636,7 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": {id: "1"}
 			});
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
@@ -692,7 +692,7 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": {id: "1"}
 			});
 			sandbox.stub(FlexUtils, "getUShellService")
@@ -722,7 +722,7 @@ sap.ui.define([
 			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
 			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [{id: "12345"}, DEFAULT_ADAPTATION]});
 			this.oFlexUtilsGetManifest = sandbox.stub(FlexUtils, "getAppDescriptor").returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": {id: "1"}
 			});
 			sandbox.stub(FlexUtils, "getUShellService").callThrough().withArgs("AppLifeCycle").resolves({
@@ -744,7 +744,7 @@ sap.ui.define([
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", async function(assert) {
 			stubCBA.call(this);
 			this.oFlexUtilsGetManifest.returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": {id: "1"},
 				"sap.ovp": {}
 			});
@@ -785,7 +785,7 @@ sap.ui.define([
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.app": {id: "1"}
 			});
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);

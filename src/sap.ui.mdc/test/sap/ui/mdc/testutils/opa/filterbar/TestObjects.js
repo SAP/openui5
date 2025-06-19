@@ -109,6 +109,33 @@ sap.ui.define([
 				},
 				/**
 				 * OPA5 test action
+				 * <ol>
+				 * 	<li>
+				 * 		Opens the personalization dialog of the given <code>sap.ui.mdc.FilterBar</code>.
+				 * 	</li>
+				 *	<li>
+				 * 		Navigates to the Group tab.
+				 *	</li>
+				 * 	<li>
+				 * 		Opens the given groups and presses a key on the <code>FilterFields</code> depending on <code>mSettings</code>.
+				 * 	</li>
+				 * 	<li>
+				 * 		Closes the personalization dialog.
+				 * 	</li>
+				 * </ol>
+				 * @memberof onTheMDCFilterBar
+				 * @method iNavigateOnTheFilter
+				 * @param {sap.ui.core.Control | string} oFilterBar Instance / ID of the <code>sap.ui.mdc.FilterBar</code>
+				 * @param {Object} mSettings Map containing the settings for the filter values. Key is the label of the given group in the <code>sap.ui.mdc.FilterBar</code> personalization dialog, and value is an object containing the label of the <code>FilterField</code> and the keyCode that is pressed.
+				 * The allowed key codes are {@link sap.ui.mdc.field.NavigationKeys}.
+				 * @returns {Promise} OPA waitFor
+				 * @since 1.138
+				 */
+				iNavigateOnTheFilter: function(oFilterBar, mSettings) {
+					return filterBarActions.iNavigateOnTheFilter.call(this, oFilterBar, mSettings);
+				},
+				/**
+				 * OPA5 test action
 				 * Clears all values of a <code>FilterField</code> with a given label on the <code>sap.ui.mdc.FilterBar</code>.
 				 * @memberof onTheMDCFilterBar
 				 * @method iClearFilterValue

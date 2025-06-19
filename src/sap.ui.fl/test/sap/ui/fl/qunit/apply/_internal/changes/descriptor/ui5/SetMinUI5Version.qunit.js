@@ -12,7 +12,7 @@ sap.ui.define([
 
 	function applyChange(oldValue, newValue) {
 		var oManifest = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 			"sap.ui5": { dependencies: { minUI5Version: oldValue } }
 		};
 		var oNewManifest = SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
@@ -28,7 +28,7 @@ sap.ui.define([
 		QUnit.test("minUI5Version missing in change content", function(assert) {
 			assert.throws(function() {
 				var oManifest = {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
 				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
@@ -43,7 +43,7 @@ sap.ui.define([
 		QUnit.test("minUI5Version array in change content contains a major version more than once", function(assert) {
 			assert.throws(function() {
 				var oManifest = {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
 				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
@@ -55,7 +55,7 @@ sap.ui.define([
 			"throws error that no minUI5Version in change content provided");
 			assert.throws(function() {
 				var oManifest = {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
 				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
@@ -67,7 +67,7 @@ sap.ui.define([
 			"throws error that no minUI5Version in change content provided");
 			assert.throws(function() {
 				var oManifest = {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
 				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({
@@ -79,7 +79,7 @@ sap.ui.define([
 			"throws error that no minUI5Version in change content provided");
 			assert.throws(function() {
 				var oManifest = {
-					"_version": "2.0.1",
+					"_version": "2.0.2",
 					"sap.ui5": { dependencies: { minUI5Version: "1.75.2" } }
 				};
 				SetMinUI5Version.applyChange(oManifest, new AppDescriptorChange({

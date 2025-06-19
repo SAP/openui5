@@ -379,7 +379,7 @@ sap.ui.define([
 		future.active = true;
 
 		const oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.v2models.parent",
@@ -443,7 +443,7 @@ sap.ui.define([
 		future.active = true;
 
 		const oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.v2models.parent",
@@ -502,7 +502,7 @@ sap.ui.define([
 		future.active = true;
 
 		const oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.v2models.parent",
@@ -560,7 +560,7 @@ sap.ui.define([
 		future.active = true;
 
 		const oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.v2models.parent",
@@ -617,7 +617,7 @@ sap.ui.define([
 		future.active = true;
 
 		const oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.v2models.parent",
@@ -675,7 +675,7 @@ sap.ui.define([
 		future.active = true;
 
 		const oManifestJson = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				"id": "testdata.v2models.parent1",
@@ -1340,7 +1340,7 @@ sap.ui.define([
 			var LocalComponent = UIComponent.extend("testdata.v2local.Component", {
 				metadata : {
 					manifest : {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.app": {
 							"id": "testdata.v2local"
@@ -1714,7 +1714,7 @@ sap.ui.define([
 
 			//setup fake server
 			var oManifest = this.oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app" : {
 					"id" : "samples.components.button",
@@ -2247,7 +2247,7 @@ sap.ui.define([
 	QUnit.test("Basic", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2277,7 +2277,7 @@ sap.ui.define([
 	QUnit.test("With settings", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2335,7 +2335,7 @@ sap.ui.define([
 	QUnit.test("Basic", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2371,7 +2371,7 @@ sap.ui.define([
 	QUnit.test("With settings (model)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2414,7 +2414,7 @@ sap.ui.define([
 	QUnit.test("With settings (dataSource)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2457,7 +2457,7 @@ sap.ui.define([
 	QUnit.test("With annotations", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2512,7 +2512,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-language already present)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2591,7 +2591,7 @@ sap.ui.define([
 	QUnit.test("Basic", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2632,7 +2632,7 @@ sap.ui.define([
 	QUnit.test("With annotations", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2691,7 +2691,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-client/sap-server already present)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2750,7 +2750,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-language already present)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2830,7 +2830,7 @@ sap.ui.define([
 	QUnit.test("Basic", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -2889,7 +2889,7 @@ sap.ui.define([
 	QUnit.test("With annotations", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3001,7 +3001,7 @@ sap.ui.define([
 	QUnit.test("Basic", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3052,7 +3052,7 @@ sap.ui.define([
 	QUnit.test("With annotations", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3129,7 +3129,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-client/sap-server already present with same value in URI)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3205,7 +3205,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-client/sap-server already present with different value in URI)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3308,7 +3308,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-client already present with same value in metadataUrlParams)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3388,7 +3388,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-client already present with different value in metadataUrlParams)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3480,7 +3480,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-language already present in URI)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3556,7 +3556,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-language already present in metadataUrlParams)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3637,7 +3637,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-context-token already present with same value in URI)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3724,7 +3724,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-context-token already present with different value in URI)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3831,7 +3831,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-context-token already present with same value in metadataUrlParams)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",
@@ -3911,7 +3911,7 @@ sap.ui.define([
 	QUnit.test("With annotations (sap-context-token already present with different value in metadataUrlParams)", async function(assert) {
 		this.oComponent = await this.createComponentWithManifest({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.modelFromManifest",

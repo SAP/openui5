@@ -1820,6 +1820,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("isEmptyAllowed", (assert) => {
+
+		assert.ok(oField.isEmptyAllowed(), "Empty is allowed for nullable Type");
+
+		oField.setRequired(true);
+		assert.notOk(oField.isEmptyAllowed(), "Empty is not allowed for required Field");
+
+		oField.setRequired(false);
+		oField.setDataTypeConstraints({ nullable: false });
+		assert.notOk(oField.isEmptyAllowed(), "Empty is not allowed for not-nullable type");
+
+	});
+
 	const oCurrencyCodeList = {
 		"EUR": { Text: "Euro", UnitSpecificScale: 2 },
 		"USD": { Text: "US-Dollar", UnitSpecificScale: 2 }

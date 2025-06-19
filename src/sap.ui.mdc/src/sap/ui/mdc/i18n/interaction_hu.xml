@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>A <span class="uicontrol">Nézetbeállítások</span> dialógus megnyitása</p>
+				<p>A <span class="uicontrol">Nézetbeállítások</span> dialógusablak megnyitása.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Elem törlése a <span class="uicontrol">Nézetbeállítások</span> dialógusban</p>
+				<p>Elem törlése a <span class="uicontrol">Nézetbeállítások</span> dialógusban.</p>
 			</description>
 		</interaction>
 	</control-interactions>

@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Yn agor y ddeialog <span class="uicontrol">Gweld Gosodiadau</span></p>
+				<p>Yn agor y ddeialog <span class="uicontrol">Gosodiadau Gwedd</span></p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Yn dileu eitem yn y ddeialog <span class="uicontrol">Gweld Gosodiadau</span></p>
+				<p>Yn dileu eitem yn y ddeialog <span class="uicontrol">Gosodiadau Gwedd</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

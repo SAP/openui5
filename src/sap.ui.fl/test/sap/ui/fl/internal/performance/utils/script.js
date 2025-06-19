@@ -4,7 +4,7 @@ const path = require("path");
 const lodash = require("lodash");
 
 /*
- * usage: script.js <scenario> [<nuber-of-changes>]
+ * usage: script.js <scope> <scenario> [<nuber-of-changes>]
  * call example:
  * node script.js rename 1000 500 100 1
  * in this example the first 1000 changes will have the initialLabel as selector id
@@ -12,18 +12,19 @@ const lodash = require("lodash");
  */
 
 const aChangeAmounts = [];
-const sTestScenario = process.argv[2] || "rename";
+const sTestScope = process.argv[2] || "FakeLrep";
+const sTestScenario = process.argv[3] || "rename";
 
-for (let i = 3, n = process.argv.length; i < n; i++) {
+for (let i = 4, n = process.argv.length; i < n; i++) {
 	aChangeAmounts.push(process.argv[i]);
 }
 if (!aChangeAmounts.length) {
 	aChangeAmounts.push(10);
 }
 
-const sInitialChangeFileName = "../flexData/template." + sTestScenario + ".scenario.json";
+const sInitialChangeFileName = "../flexData/template." + sTestScope + "." + sTestScenario + ".scenario.json";
 
-const sOutputChangesFileName = "../flexData/FakeLrep." + sTestScenario + "." + aChangeAmounts[0] + ".json";
+const sOutputChangesFileName = "../flexData/" + sTestScope + "." + sTestScenario + "." + aChangeAmounts[0] + ".json";
 
 function addNumberToSelector(sId, sSelectorIndex) {
 	if (sId === "Layout") {
@@ -121,7 +122,7 @@ fs.readFile(path.resolve(__dirname, sInitialChangeFileName), 'utf8', function (e
 		}
 	} else {
 		oOutput = { ...oInput };
-		const iLastChangeIndexIdentifier = 0;
+		let iLastChangeIndexIdentifier = 0;
 		aChangeAmounts.forEach(function (iChangeAmount, iIndex) {
 			iChangeAmount = parseInt(iChangeAmount);
 			const sSelectorIndex = iIndex === 0 ? "" : iIndex;

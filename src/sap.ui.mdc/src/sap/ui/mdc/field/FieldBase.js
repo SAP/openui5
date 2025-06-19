@@ -2,14 +2,15 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
+	'sap/ui/core/Element',
+	'sap/ui/core/Lib',
 	'sap/ui/mdc/Control',
 	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/FieldEditMode',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/enums/RequestShowContainerReason',
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
@@ -33,8 +34,7 @@ sap.ui.define([
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/events/KeyCodes',
-	'sap/ui/Device',
-	'sap/ui/mdc/enums/RequestShowContainerReason'
+	'sap/ui/Device'
 ], (
 	Element,
 	Library,
@@ -44,6 +44,7 @@ sap.ui.define([
 	FieldDisplay,
 	ConditionValidated,
 	OperatorName,
+	RequestShowContainerReason,
 	FieldBaseRenderer,
 	ConditionType,
 	ConditionsType,
@@ -67,8 +68,7 @@ sap.ui.define([
 	ManagedObjectModel,
 	ManagedObjectObserver,
 	KeyCodes,
-	Device,
-	RequestShowContainerReason
+	Device
 ) => {
 	"use strict";
 
@@ -885,7 +885,7 @@ sap.ui.define([
 					(!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) { // for Currenncy/Unit field navigate only in part with valueHelp
 					// if only type-ahead but no real value help, only navigate if open
 					const oContent = this.getControlForSuggestion();
-					const bFocusInField = oContent.hasStyleClass("sapMFocus");
+					const bFocusInField = oContent.hasStyleClass(this.getContentFactory().getFocusClass());
 					const bOpen = oValueHelp.isOpen();
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
@@ -912,7 +912,7 @@ sap.ui.define([
 			oValueHelp.close();
 		}
 		this._sFilterValue = "";
-		if (this._oNavigateCondition) {
+		if (this._oNavigateCondition || this._oNavigateCondition === null) {
 			const oSource = oEvent.srcControl;
 			this._oNavigateCondition = undefined; // navigation now finished
 			this.getContentFactory().updateConditionType();
@@ -933,7 +933,7 @@ sap.ui.define([
 	FieldBase.prototype._redirectFocus = function(oEvent, oValueHelp) {
 		const oSource = oEvent.srcControl;
 		if (!Device.system.phone && oValueHelp.isOpen() && (!this.getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
-			_setVisualFocusToField(oSource, oValueHelp); // to show focus outline again after navigation
+			_setVisualFocusToField.call(this, oSource, oValueHelp); // to show focus outline again after navigation
 		}
 	};
 
@@ -1075,7 +1075,7 @@ sap.ui.define([
 	function _handleEnterBefore(oEvent) {
 
 		// if input comes from navigation ENTER must just confirm it but not fire a submit event (like if entry would be choosen via click in suggestion)
-		if (this._oNavigateCondition) {
+		if (this._oNavigateCondition || this._oNavigateCondition === null) {
 			oEvent.setMarked("MDCNavigated");
 		}
 
@@ -2099,9 +2099,13 @@ sap.ui.define([
 		const bMultipleLines = this.getMultipleLines();
 		const bIsTriggerable = this._bTriggerable;
 		const oContentType = this.getContentFactory().getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
+		const sValueHelp = this._getValueHelp();
+		const oValueHelp = sValueHelp && Element.getElementById(sValueHelp);
+		const bRestrictedToFixedValues = oValueHelp?.isRestrictedToFixedValues(); // check if valueHelp only supports fixed values (to render a Select control). DefaultHelp needs to be checked in ContentFactory as only known there
+		const bProvideDefaultValueHelp = !sValueHelp && this.getContentFactory().getProvideDefaultValueHelp(oContentType, aOperators, sEditMode, iMaxConditions, _isOnlyOneSingleValue.call(this, aOperators));
 		const [oContentOld] = aContentOld;
 		const sControlNameOld = oContentOld?.getMetadata().getName().replace(/\./g, "/");
-		const sContentMode = this.getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
+		const sContentMode = this.getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators, bProvideDefaultValueHelp, bRestrictedToFixedValues);
 		const aControlNames = this._aCustomControlNames || oContentType.getControlNames(sContentMode, aOperators[0]);
 		const [sControlName] = aControlNames;
 		if (sControlName !== sControlNameOld) {
@@ -2118,7 +2122,6 @@ sap.ui.define([
 				this.getContentFactory().updateConditionType();
 			}
 
-			const bProvideDefaultValueHelp = !this._getValueHelp() && this.getContentFactory().getProvideDefaultValueHelp(oContentType, aOperators, sEditMode, iMaxConditions, _isOnlyOneSingleValue.call(this, aOperators));
 			if (!bProvideDefaultValueHelp && this._sDefaultValueHelp) {
 				delete this._sDefaultValueHelp; // do not destroy as might used on other Fields too
 			}
@@ -2204,6 +2207,10 @@ sap.ui.define([
 
 		if (this.getContentFactory().isMeasure()) {
 			this.getContentFactory().setIsMeasure(false);
+		}
+
+		if (this.getContentFactory().useValue()) {
+			this.getContentFactory().setUseValue(false);
 		}
 
 		delete this._aCustomControlNames;
@@ -2561,7 +2568,7 @@ sap.ui.define([
 			_clearLiveChangeTimer.call(this);
 		}
 
-		if (this._oNavigateCondition) {
+		if (this._oNavigateCondition || this._oNavigateCondition === null) {
 			this._oNavigateCondition = undefined; // navigation now finished
 			this.getContentFactory().updateConditionType();
 			const sDomValue = oSource.getDOMValue?.();
@@ -2599,7 +2606,7 @@ sap.ui.define([
 
 		const oValueHelp = _getValueHelp.call(this);
 
-		if (this._oNavigateCondition) {
+		if (this._oNavigateCondition || this._oNavigateCondition === null) {
 			oValueHelp.setHighlightId();
 			this._oNavigateCondition = undefined; // navigation item is not longer valid
 			this.getContentFactory().updateConditionType();
@@ -2841,7 +2848,7 @@ sap.ui.define([
 		}
 	}
 
-	// TODO: remove this function and replace by getValueHelp once ValueHelp association is completetly removed.
+	// TODO: remove this function and replace by getValueHelp once FieldHelp association is completetly removed.
 	FieldBase.prototype._getValueHelp = function() {
 
 		return this.getValueHelp() || (undefined); // as getFieldHelp not exist in legacy-free UI5
@@ -2919,7 +2926,7 @@ sap.ui.define([
 			await this._oValueHelpRequestPromise;
 			if (!this.isFieldDestroyed()) {
 				if (!oValueHelp.isOpen()) { // when closing clean up after close
-					const bFromKeyboard = oEvent.getParameter?.("fromKeyboard");
+					const bFromKeyboard = oEvent.getParameter?.("fromKeyboard") || oValueHelp.isRestrictedToFixedValues(); // In SelectCase behave always the same
 					const bIsFocusInHelp = oValueHelp.isFocusInHelp();
 					const iMaxConditions = this.getMaxConditionsForHelp();
 					const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
@@ -3137,7 +3144,7 @@ sap.ui.define([
 
 		if (bLeaveFocus) {
 			// nothing to navigate, just set focus visualization back to field
-			_setVisualFocusToField(oContent, oValueHelp);
+			_setVisualFocusToField.call(this, oContent, oValueHelp);
 			oContent.focus(); // in multi-select case real focus might be on value help
 
 			if (sCurrentValue && this._oNavigateCondition && oContent.getDOMValue && oContent.getDOMValue() !== this._oNavigateCondition.output) {
@@ -3153,9 +3160,14 @@ sap.ui.define([
 		}
 
 		this._oNavigateCondition = _createNavigateCondition.call(this, oCondition, sItemId);
-		if (this._oNavigateCondition && this.getMaxConditionsForHelp() === 1) {
-			[vKey, sValue] = this._oNavigateCondition.values;
-			oValueHelp.setConditions([oCondition]); // in single selection, the navigated condition should be selected one (use condition returned from valuehelp to prevent unneccessry update if not changed)
+		if (this.getMaxConditionsForHelp() === 1) {
+			if (this._oNavigateCondition) {
+				[vKey, sValue] = this._oNavigateCondition.values;
+				oValueHelp.setConditions([oCondition]); // in single selection, the navigated condition should be selected one (use condition returned from valuehelp to prevent unneccessry update if not changed)
+			} else if (this._oNavigateCondition === null) {
+				vKey = null;
+				oValueHelp.setConditions([]);
+			}
 		}
 
 		this._bPreventGetDescription = true; // if no description in navigated condition, no description exist. Don't try to read one
@@ -3184,11 +3196,11 @@ sap.ui.define([
 			}
 
 			if (!sDOMValue) { // no typeahead or text don't match filterValue
-				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true) && this._oNavigateCondition) {
+				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true) && this._oNavigateCondition !== undefined) {
 					sDOMValue = this.getContentFactory().getUnitConditionsType().formatValue([this._oNavigateCondition]);
-				} else if (this.getContentFactory().getConditionType(true) && this._oNavigateCondition) {
+				} else if (this.getContentFactory().getConditionType(true) && this._oNavigateCondition !== undefined) {
 					sDOMValue = this.getContentFactory().getConditionType().formatValue(this._oNavigateCondition);
-				} else if (this.getContentFactory().getConditionsType(true) && this._oNavigateCondition) {
+				} else if (this.getContentFactory().getConditionsType(true) && this._oNavigateCondition !== undefined) {
 					sDOMValue = this.getContentFactory().getConditionsType().formatValue([this._oNavigateCondition]);
 				} else {
 					sDOMValue = sValue || vKey;
@@ -3200,8 +3212,8 @@ sap.ui.define([
 				}
 			}
 
-			if (oValueHelp.isOpen() && oContent.hasStyleClass("sapMFocus")) { // happens if navigated back from "show All items"-button
-				_setVisualFocusToValueHelp(oContent, oValueHelp);
+			if (oValueHelp.isOpen() && oContent.hasStyleClass(this.getContentFactory().getFocusClass())) { // happens if navigated back from "show All items"-button
+				_setVisualFocusToValueHelp.call(this, oContent, oValueHelp);
 			}
 		}
 
@@ -3229,14 +3241,14 @@ sap.ui.define([
 
 
 		if (_isFocused.call(this) && !this._bPreventAutocomplete && oCondition && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
-			oContent && oContent.setDOMValue && oContent.selectText && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
+			oContent && oContent.setDOMValue && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
 			const oContentFactory = this.getContentFactory();
 
 			const sOutput = _doAutocomplete.call(this, oCondition, sFilterValue, oContent, bCaseSensitive);
 			if (sOutput) { // only if something returned
 				const oValueHelp = _getValueHelp.call(this);
 				if (oValueHelp?.isOpen()) {
-					_setVisualFocusToField(oContent, oValueHelp); // remove focus from dropdown
+					_setVisualFocusToField.call(this, oContent, oValueHelp); // remove focus from dropdown
 					oValueHelp.setHighlightId(!this._bPreventAutocomplete && sItemId);
 				}
 
@@ -3283,6 +3295,8 @@ sap.ui.define([
 				}
 			}
 			oNavigateCondition.itemId = sItemId;
+		} else {
+			oNavigateCondition = oCondition; // null if empty-value from FixedList
 		}
 
 		return oNavigateCondition;
@@ -3331,12 +3345,14 @@ sap.ui.define([
 		let sOutput = oDelegate.getAutocompleteOutput(this, oCondition, sKey, sDescription, bKeyMatch, bDescriptionMatch);
 
 		if (sOutput) { // only if something returned
-			// while typing the types user input should not be changed. As the output might have a diffrent upper/lower case, replace the beginning with the user input.
-			sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substr(sFilterValue.length) : sFilterValue;
+			if (oContent.selectText) {
+				// while typing the types user input should not be changed. As the output might have a different upper/lower case, replace the beginning with the user input.
+				sOutput = typeof sOutput === 'string' ? sFilterValue + sOutput.substr(sFilterValue.length) : sFilterValue;
+			}
 
 			oContent.setDOMValue(sOutput);
 			oContent.focus(); // otherwise focus stays in table in some cases
-			oContent.selectText(sFilterValue.length, sOutput.length);
+			oContent.selectText?.(sFilterValue.length, sOutput.length);
 		}
 
 		return sOutput;
@@ -3369,7 +3385,7 @@ sap.ui.define([
 		}
 
 		if (_isFocused.call(this)) { // restore focus visualization
-			_setVisualFocusToField(oContent, oValueHelp);
+			_setVisualFocusToField.call(this, oContent, oValueHelp);
 		} else if (this._oFocusInHelp) {
 			// focus was in ValueHelp but focus is not back in Field - validate user input
 			oContent.onsapfocusleave(this._oFocusInHelp); // TODO: do we need a new Event with current focused control?
@@ -3385,7 +3401,7 @@ sap.ui.define([
 
 		if (this._bFocusOnValueHelp) {
 			const oValueHelp = oEvent.getSource();
-			_setVisualFocusToValueHelp(oContent, oValueHelp);
+			_setVisualFocusToValueHelp.call(this, oContent, oValueHelp);
 
 			if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead and visual focus in value help
 				sItemId = oEvent.getParameter("itemId");
@@ -3411,7 +3427,7 @@ sap.ui.define([
 	function _handleValueHelpVisualFocusSet(oEvent) {
 
 		const oContent = this.getControlForSuggestion();
-		_setVisualFocusToValueHelp(oContent); // not needed to set it on ValueHelp as triggers from there
+		_setVisualFocusToValueHelp.call(this, oContent); // not needed to set it on ValueHelp as triggers from there
 
 	}
 
@@ -3476,7 +3492,8 @@ sap.ui.define([
 				delegate: this.getControlDelegate(),
 				delegateName: this.getDelegate() && this.getDelegate().name,
 				payload: this.getPayload(),
-				defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null
+				defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null,
+				emptyAllowed: this.isEmptyAllowed()
 			};
 			oValueHelp.connect(this, oConfig);
 
@@ -3610,8 +3627,8 @@ sap.ui.define([
 			compositeTypes: this.getContentFactory().getCompositeTypes(), // only set if CompositeType used
 			additionalValueType: this.getContentFactory().retrieveAdditionalDataType(),
 			additionalCompositeTypes: this.getContentFactory().getAdditionalCompositeTypes(), // only set if CompositeType used
-			display: this.getContentFactory().isMeasure() ? FieldDisplay.Value : this.getDisplay(),
-			valueHelpID: this.getContentFactory().isMeasure() ? undefined : this._getValueHelp() || this._sDefaultValueHelp,
+			display: this.getContentFactory().useValue() ? FieldDisplay.Value : this.getDisplay(),
+			valueHelpID: this.getContentFactory().useValue() ? undefined : this._getValueHelp() || this._sDefaultValueHelp,
 			operators: this.getSupportedOperators(),
 			hideOperator: this.getContentFactory().getHideOperator(),
 			maxConditions: this.getMaxConditions(),
@@ -3628,7 +3645,8 @@ sap.ui.define([
 			getConditions: this.getConditions.bind(this), // to add condition in multi-value case
 			noFormatting: this.getContentFactory().getNoFormatting(),
 			keepValue: this._bIgnoreInputValue ? this._sFilterValue : null,
-			multipleLines: this.getMultipleLines()
+			multipleLines: this.getMultipleLines(),
+			emptyAllowed: this.isEmptyAllowed()
 		};
 
 	};
@@ -3711,7 +3729,8 @@ sap.ui.define([
 			control: this,
 			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
 			noFormatting: false,
-			multipleLines: false
+			multipleLines: false,
+			emptyAllowed: this.isEmptyAllowed()
 		};
 
 	};
@@ -3974,7 +3993,7 @@ sap.ui.define([
 	// set visual focus on field ad remove it from ValueHelp
 	function _setVisualFocusToField(oContent, oValueHelp) {
 
-		oContent.addStyleClass("sapMFocus"); // to show focus outline again after navigation
+		oContent.addStyleClass(this.getContentFactory().getFocusClass()); // to show focus outline again after navigation
 		oValueHelp?.removeVisualFocus();
 
 	}
@@ -3982,7 +4001,7 @@ sap.ui.define([
 	// set visual focus on value help ad remove it from field
 	function _setVisualFocusToValueHelp(oContent, oValueHelp) {
 
-		oContent.removeStyleClass("sapMFocus");
+		oContent.removeStyleClass(this.getContentFactory().getFocusClass());
 		oValueHelp?.setVisualFocus();
 
 	}
@@ -4109,6 +4128,17 @@ sap.ui.define([
 		}
 
 	}
+
+	/*
+	 * Check if the Field can be cleared. (<code>FilterFields</code> can be made empty, for <code>Field</code> it depends on the data type)
+	 *
+	 * @returns {boolean} returns <code>true</code> if the field can be cleared by value help
+	 * @protected
+	 * @since 1.138.0
+	 */
+	FieldBase.prototype.isEmptyAllowed = function () {
+		return !this.getRequired();
+	};
 
 	return FieldBase;
 });

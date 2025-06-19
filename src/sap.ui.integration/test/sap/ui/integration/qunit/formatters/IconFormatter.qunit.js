@@ -18,7 +18,7 @@ function (
 		beforeEach: function () {
 			this.oCard = new Card();
 			this.oCard._oCardManifest = new Manifest("sap.card", {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": APP_ID

@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Åpne dialogen <span class="uicontrol">Visningsinnstillinger</span></p>
+				<p>Åpner dialogen <span class="uicontrol">Visningsinnstillinger</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Sletter et element i dialogen <span class="uicontrol">Visningsinnstillinger</span></p>
+				<p>Sletter et element i dialogen <span class="uicontrol">Visningsinnstillinger</span>.</p>
 			</description>
 		</interaction>
 	</control-interactions>

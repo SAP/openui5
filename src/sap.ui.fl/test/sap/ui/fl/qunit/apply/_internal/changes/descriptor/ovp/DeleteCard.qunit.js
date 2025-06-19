@@ -30,7 +30,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when calling '_applyChange' with a change to delete card that is defined in manifest", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.ovp": {
 					cards: {
@@ -45,7 +45,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_applyChange' with a change to delete card that is not defined in manifest", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.ovp": {
 					cards: {

@@ -12,7 +12,7 @@ sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
 
 			manifest: {
 
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "testdata.v2models.parent",

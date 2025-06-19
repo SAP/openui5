@@ -62,7 +62,7 @@ function(
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest1 = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -88,7 +88,7 @@ function(
 			};
 
 			this.oManifest2 = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -121,7 +121,7 @@ function(
 			};
 
 			this.oManifestDataSourcesEmpty = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -260,7 +260,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding new annotation to existing dataSourceId in manifest but type is not correct => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -497,7 +497,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding an existing annotation which is not of type 'ODataAnnotation' to an existing OData => ERROR", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -699,7 +699,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData without having an 'annotations' property => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -726,7 +726,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding several annotations to an existing OData with empty 'annotations' property => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -754,7 +754,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding an annotations to an existing OData. The existing OData in the manifest does not have 'type' property (default: OData) => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {
@@ -788,7 +788,7 @@ function(
 
 		QUnit.test("when calling '_applyChange' by adding new annotations to an existing OData without having 'settings' object and 'annotations' property => SUCCESS", function(assert) {
 			var oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					dataSources: {

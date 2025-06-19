@@ -21,11 +21,11 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>Avab dialoogi <span class="uicontrol">Kuva sätted</span></p>
+				<p>Avab dialoogi <span class="uicontrol">Kuva sätted</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>
-				<p>Kustutab dialoogis <span class="uicontrol">Kuva sätted</span> üksuse</p>
+				<p>Kustutab dialoogis <span class="uicontrol">Kuva sätted</span> üksuse.</p>
 			</description>
 		</interaction>
 	</control-interactions>

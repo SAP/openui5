@@ -845,6 +845,25 @@ sap.ui.define([
 		}
 	};
 
+	Field.prototype.isEmptyAllowed = function () {
+
+		let bAllowed = FieldBase.prototype.isEmptyAllowed.call(this, arguments);
+
+		if (bAllowed) {
+			const oType = this.getContentFactory().retrieveDataType();
+			try {
+				const vResult = oType.parseValue("", "string");
+				oType.validateValue(vResult);
+			} catch (oError) {
+				// if type is not nullable, empty is invalid
+				bAllowed = false;
+			}
+		}
+
+		return bAllowed;
+
+	};
+
 	/**
 	 * Sets a new value for property {@link #getConditions conditions}.
 	 *

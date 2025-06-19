@@ -449,7 +449,7 @@ sap.ui.define([
 
 			// define the manifest for the Component test
 			var oManifest = this.oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app" : {
 					"id" : "samples.components.button"
@@ -787,7 +787,7 @@ sap.ui.define([
 			return Component.extend("test.services.base.Component", {
 				metadata: {
 					manifest: {
-						"_version": "2.0.1",
+						"_version": "2.0.2",
 
 						"sap.ui5": {
 							"services": {
@@ -813,7 +813,7 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.ui5": {
 					"componentName": "test.services.child",
@@ -848,7 +848,7 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "samples.components.button"
@@ -888,7 +888,7 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "samples.components.button"
@@ -926,7 +926,7 @@ sap.ui.define([
 		// load the test component
 		return Component.create({
 			manifest: {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					"id": "samples.components.button"

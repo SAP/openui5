@@ -188,6 +188,17 @@ sap.ui.define([
 	};
 	ContentBasicTest.controlMapKeys.push("EditOperatorBT");
 
+	ContentBasicTest.controlMap.EditSelect = {
+		getPathsFunction: "getEditSelect",
+		paths: [null],
+		modules: [],
+		instances: [],
+		createFunction: "createEditSelect",
+		noFormatting: false,
+		editMode: FieldEditMode.Editable,
+		throwsError: true
+	};
+
 	const oDefaultValueHelp = {name: "defineConditions", oneOperatorSingle: false, oneOperatorMulti: true, single: false, multi: true};
 	ContentBasicTest.test(QUnit, DateContent, "DateContent", "sap.ui.model.type.Date", {style: "long", calendarType: "Gregorian", secondaryCalendarType: "Islamic", UTC: true}, undefined, BaseType.Date, oDefaultValueHelp, true);
 

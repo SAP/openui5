@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.module("applyChange", {
 		beforeEach() {
 			this.oManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 				"sap.fiori": { cloudDevAdaptationStatus: "released" }
 			};
 			this.oManifestEmpty = {};

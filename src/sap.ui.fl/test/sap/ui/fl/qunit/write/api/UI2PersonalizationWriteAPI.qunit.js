@@ -22,7 +22,7 @@ sap.ui.define([
 
 	function createAppComponent() {
 		const oDescriptor = {
-			"_version": "2.0.1",
+			"_version": "2.0.2",
 
 			"sap.app": {
 				id: "reference.app",

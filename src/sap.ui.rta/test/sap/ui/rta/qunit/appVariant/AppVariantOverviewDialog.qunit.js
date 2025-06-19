@@ -109,7 +109,7 @@ sap.ui.define([
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app with two app variants and all app variants have no target mapping assigned,", function(assert) {
 			const done = assert.async();
 			const oReferenceAppMockedManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "id1"
@@ -148,7 +148,7 @@ sap.ui.define([
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app with two app variants and all app variants have one target mapping assigned,", function(assert) {
 			const done = assert.async();
 			const oReferenceAppMockedManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "id1"
@@ -199,7 +199,7 @@ sap.ui.define([
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app and a key user has already created app variants based on an original app,", function(assert) {
 			const done = assert.async();
 			const oReferenceAppMockedManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "id1"
@@ -259,7 +259,7 @@ sap.ui.define([
 		QUnit.test("when AppVariant Overview Dialog gets opened from an original app and there are no app variants based on an original app,", function(assert) {
 			const done = assert.async();
 			const oReferenceAppMockedManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "id1"
@@ -298,7 +298,7 @@ sap.ui.define([
 		QUnit.test("when AppVariant Overview Dialog gets opened from an app variant,", function(assert) {
 			const done = assert.async();
 			const oReferenceAppMockedManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "id3"
@@ -356,7 +356,7 @@ sap.ui.define([
 		QUnit.test("when AppVariantOverviewDialog gets opened from an original app, original app has one new created app variant,", function(assert) {
 			const done = assert.async();
 			const oReferenceAppMockedManifest = {
-				"_version": "2.0.1",
+				"_version": "2.0.2",
 
 				"sap.app": {
 					id: "id1"

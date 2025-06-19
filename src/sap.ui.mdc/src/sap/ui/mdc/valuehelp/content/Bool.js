@@ -47,6 +47,9 @@ sap.ui.define([
 			properties: ["config"]
 		});
 
+		this.setEmptyText(this._oResourceBundle.getText("valuehelp.NOT_SELECTED"));
+		this.setRestrictedToFixedValues(true);
+
 	};
 
 	Bool.prototype.exit = function() {
@@ -69,23 +72,25 @@ sap.ui.define([
 					return null;
 				}
 
-				const FixedListItem = aModules[0];
-				const JSONModel = aModules[1];
+				const [FixedListItem, JSONModel] = aModules;
 				this._oModel = new JSONModel({
 					"type": "",
 					"items": [{
-						"key": true,
-						"text": "true"
-					}, {
-						"key": false,
-						"text": "false"
+						"key": true
+					},
+					{
+						"key": false
 					}]
 				});
-				_updateModel.call(this, this.getConfig());
+
+				const fFormatKey = (vKey) => { // use formatter function as type isset late an can change
+					const oConfig = this.getConfig();
+					return oConfig?.dataType?.formatValue(vKey, "string");
+				};
 
 				const oItem = new FixedListItem(this.getId() + "-Item", {
-					key: { path: "$Bool>key" },
-					text: { path: "$Bool>text" }
+					key: { path: "$Bool>key", formatter: fFormatKey }, // as Item has Data-Type String, key needs to be formatted using Type, in FixedList the internalValue is used for Condition
+					text: { path: "$Bool>key", formatter: fFormatKey } // text is the same
 				});
 
 				this.bindAggregation("items", { path: "$Bool>/items", template: oItem });
@@ -108,6 +113,11 @@ sap.ui.define([
 				if (oConfig.checkKey) {
 					if (oConfig.parsedValue === true || oConfig.parsedValue === false) {
 						return { key: oConfig.parsedValue, description: oType.formatValue(oConfig.parsedValue, "string") };
+					} else if (oConfig.parsedValue === null) {
+						// check if there is an empty-description
+						if (oConfig.emptyAllowed) {
+							return { key: null, description: this._oResourceBundle.getText("valuehelp.NOT_SELECTED") };
+						}
 					} else {
 						// as in bool case the description is comming from the type, search for description (first match) if parsing fails
 						oConfig.checkDescription = true;
@@ -133,18 +143,6 @@ sap.ui.define([
 
 	};
 
-	/**
-	 * Determines if the value help should be opened when the user clicks into the connected control.
-	 *
-	 * @returns {boolean} If <code>true</code>, the value help should open when user clicks into the connected field control
-	 * @deprecated As of version 1.137 with no replacement.
-	 */
-	Bool.prototype.shouldOpenOnClick = function() {
-
-		return false;
-
-	};
-
 	Bool.prototype.isNavigationEnabled = function(iStep) {
 
 		return true; // always enable, even if items are created lately on opening or navigation
@@ -153,7 +151,7 @@ sap.ui.define([
 
 	Bool.prototype.observeChanges = function(oChanges) {
 
-		if (oChanges.type === "property" && oChanges.name === "config") {
+		if (oChanges.name === "config" && (oChanges.current?.dataType !== oChanges.old?.dataType)) {
 			_updateModel.call(this, oChanges.current);
 		}
 
@@ -161,21 +159,9 @@ sap.ui.define([
 	};
 
 	function _updateModel(oConfig) {
-		if (this._oModel && oConfig) {
-			// use texts of used type
-			const oType = oConfig.dataType;
-			const oData = this._oModel.getData();
-			if (oType && oData["type"] !== oType.getMetadata().getName()) {
-				oData["type"] = oType.getMetadata().getName();
-				const aItems = oData["items"];
 
-				for (const oItem of aItems) {
-					oItem["text"] = oType.formatValue(oItem["key"], "string");
-				}
+		this._oModel?.checkUpdate(true);
 
-				this._oModel.checkUpdate(true);
-			}
-		}
 	}
 
 	/**
@@ -309,6 +295,36 @@ sap.ui.define([
 	 * @deprecated Not supported, the property is automatically set.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.valuehelp.content.Bool#setCaseSensitive
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>emptyText</code>.
+	 *
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 *
+	 * @param {string} [sText] New value for property <code>emptyText</code>
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
+	 * @since 1.138
+	 * @deprecated As of version 1.138, setting of this property is not supported, the property is automatically set.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.valuehelp.content.Bool#setEmptyText
+	 * @function
+	 */
+
+	/**
+	 * Sets a new value for property <code>cestrictedToFixedValues</code>.
+	 *
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 *
+	 * @param {boolean} [bnlyFixedValuesAllowed=false] New value for property <code>restrictedToFixedValues</code>
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
+	 * @public
+	 * @since 1.138
+	 * @deprecated As of version 1.138, setting of this property is not supported, the property is automatically set.
+	 * @ui5-not-supported
+	 * @name sap.ui.mdc.valuehelp.content.Bool#setRestrictedToFixedValues
 	 * @function
 	 */
 
