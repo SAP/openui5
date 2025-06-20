@@ -43,7 +43,7 @@
 		</f:header>
 		<f:content>
 			<VBox renderType="Bare" justifyContent="Center" height="100%">
-				<f:SidePanel id="mySidePanel" toggle="onToggle">
+				<f:SidePanel id="mySidePanel">
 					<f:mainContent>
 						<core:Fragment fragmentName="sap.ui.demo.iconexplorer.view.browse.OverviewMainContent" type="XML" />
 					</f:mainContent>
