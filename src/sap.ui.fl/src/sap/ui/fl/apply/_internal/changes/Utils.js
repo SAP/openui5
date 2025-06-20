@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/VariantChange",
 	"sap/ui/fl/apply/_internal/flexObjects/VariantManagementChange",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
-	"sap/ui/fl/requireAsync",
 	"sap/ui/fl/Utils"
 ], function(
 	ApplyStrategyFactory,
@@ -21,8 +21,8 @@ sap.ui.define([
 	VariantChange,
 	VariantManagementChange,
 	VariantManagementState,
+	ChangeHandlerRegistration,
 	ChangeHandlerStorage,
-	requireAsync,
 	FlUtils
 ) {
 	"use strict";
@@ -116,11 +116,6 @@ sap.ui.define([
 				return VariantManagementState.getChangeInformationProvider(mPropertyBag.flexObject);
 			} else if (mPropertyBag.control) {
 				const sLibraryName = await mPropertyBag.modifier.getLibraryName(mPropertyBag.control);
-				// the ChangeHandlerRegistration includes all the predefined ChangeHandlers.
-				// With this as a standard import the ChangeHandlers would not be able to access API classes due to circular dependencies.
-				// TODO should be removed as soon as the ChangePersistence / FlexController are gone
-				const ChangeHandlerRegistration =
-					await requireAsync("sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration");
 				await ChangeHandlerRegistration.waitForChangeHandlerRegistration(sLibraryName);
 				const sLayer = mPropertyBag.layer || mPropertyBag.flexObject?.getLayer();
 				return ChangeHandlerStorage.getChangeHandler(

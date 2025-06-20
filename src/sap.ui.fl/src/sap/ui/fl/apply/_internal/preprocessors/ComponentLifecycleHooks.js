@@ -129,7 +129,7 @@ sap.ui.define([
 			oAppComponent,
 			sReference
 		);
-		fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+		fnPropagationListener._bIsFlexApplyChangesFunction = true;
 		oAppComponent.addPropagationListener(fnPropagationListener);
 		oVariantModel = ComponentLifecycleHooks._createVariantModel(oAppComponent);
 		await oVariantModel.initialize();
