@@ -31,14 +31,14 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var oDTMetadata = {};
+	const sandbox = sinon.createSandbox();
+	let oDTMetadata = {};
 
 	QUnit.module("Given DesignTime Metadata structures with valid and invalid actions...", {
 		beforeEach() {
 			this.fnLogErrorStub = sandbox.stub(Log, "error");
-			sandbox.stub(ActionExtractor, "_getRevealActions").returns(Promise.resolve());
-			sandbox.stub(ActionExtractor, "_getAddViaDelegateActions").returns(Promise.resolve());
+			sandbox.stub(ActionExtractor, "_getRevealActions").resolves();
+			sandbox.stub(ActionExtractor, "_getAddViaDelegateActions").resolves();
 			sandbox.stub(AdditionalElementsUtils, "getParents").returns({
 				parentOverlay: {
 					getDesignTimeMetadata() {
@@ -48,10 +48,11 @@ sap.ui.define([
 			});
 		},
 		afterEach() {
+			ActionExtractor.clearCache();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when getActions is called with DT Metadata containing valid actions", function(assert) {
+		QUnit.test("when getActions is called with DT Metadata containing valid actions", async function(assert) {
 			oDTMetadata = new ElementDesignTimeMetadata({
 				data: {
 					aggregations: {
@@ -67,7 +68,7 @@ sap.ui.define([
 				}
 			});
 
-			ActionExtractor.getActions(true, {});
+			await ActionExtractor.getActions(true, {});
 			assert.notOk(this.fnLogErrorStub.called, "then no error is raised on the log");
 		});
 	});
@@ -96,7 +97,7 @@ sap.ui.define([
 	QUnit.module("Given a bar with a visible and invisible buttons", {
 		async before(assert) {
 			await givenBarWithButtons.call(this);
-			var done = assert.async();
+			const done = assert.async();
 
 			this.oPlugin = new AdditionalElementsPlugin({
 				commandFactory: new CommandFactory()
@@ -113,36 +114,28 @@ sap.ui.define([
 			}.bind(this));
 		},
 		afterEach() {
+			ActionExtractor.clearCache();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the control does not have a change handler for reveal", function(assert) {
+		QUnit.test("when the control does not have a change handler for reveal", async function(assert) {
 			sandbox.stub(this.oPlugin, "hasChangeHandler").resolves(false);
 
-			return this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true)
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
-			});
+			const bIsEditable = await this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true);
+			assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
 		});
 
-		QUnit.test("when the invisible button becomes invalid (destroyed) during the reveal check", function(assert) {
-			var oGetRevealActionsStub = sandbox.stub(ActionExtractor, "_getRevealActions");
+		QUnit.test("when the invisible button becomes invalid (destroyed) during the reveal check", async function(assert) {
+			const oGetRevealActionsStub = sandbox.stub(ActionExtractor, "_getRevealActions");
 			oGetRevealActionsStub.callThrough();
 
-			oGetRevealActionsStub.onFirstCall().callsFake(function(...aArgs) {
-				var oHasChangeHandlerStub = sandbox.stub(this.oPlugin, "hasChangeHandler");
-				oHasChangeHandlerStub.callThrough();
-				oHasChangeHandlerStub.onFirstCall().callsFake(function(...aArgs) {
-					this.oInvisibleLeftButton.destroy();
-					return oHasChangeHandlerStub.wrappedMethod.apply(this.oPlugin, aArgs);
-				}.bind(this));
+			oGetRevealActionsStub.onFirstCall().callsFake((...aArgs) => {
+				this.oInvisibleLeftButton.destroy();
 				return oGetRevealActionsStub.wrappedMethod.apply(this, aArgs);
-			}.bind(this));
-
-			return this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true)
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
 			});
+
+			const bIsEditable = await this.oPlugin._isEditableCheck(this.oVisibleLeftButtonOverlay, true);
+			assert.notOk(bIsEditable, "the overlay should not be editable as no actions are available for it");
 		});
 	});
 
