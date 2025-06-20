@@ -1,5 +1,6 @@
 sap.ui.define([
     "sap/ui/demo/illustrationExplorer/controller/BaseController",
+    "sap/ui/demo/illustrationExplorer/utils/DeprecatedIllustrations",
     "sap/ui/model/json/JSONModel",
     "sap/ui/documentation/sdk/controller/util/ThemePicker",
     "sap/m/IllustrationPool",
@@ -7,6 +8,7 @@ sap.ui.define([
     "sap/m/IllustratedMessageType",
     "sap/ui/core/Fragment"
 ], (BaseController,
+    DeprecatedIllustrations,
     JSONModel,
     ThemePicker,
     IllustrationPool,
@@ -14,18 +16,6 @@ sap.ui.define([
     IllustratedMessageType,
     Fragment) => {
     "use strict";
-
-    /**
-    * Constant containing deprecated illustration types
-    */
-    const DEPRECATED_ILLUSTRATIONS = [
-        "NoMailV1", "NoSavedItemsV1", "NoTasksV1", "NoDimensionsSet", "AddColumn", "AddPeople", "EmptyCalendar",
-        "EmptyList", "ErrorScreen", "FilterTable", "GroupTable", "ReloadScreen", "ResizeColumn", "SearchEarth",
-        "SearchFolder", "SimpleBalloon", "SimpleBell", "SimpleCalendar", "SimpleCheckMark", "SimpleEmptyDoc",
-        "SimpleEmptyList", "SimpleError", "SimpleMagnifier", "SimpleMail", "SimpleNoSavedItems",
-        "SimpleNotFoundMagnifier", "SimpleReload", "SimpleTask", "SleepingBell", "SortColumn", "SuccessBalloon",
-        "SuccessCheckMark", "SuccessHighFive", "SuccessScreen", "Tent", "UploadCollection"
-    ];
 
     return BaseController.extend("sap.ui.demo.illustrationExplorer.controller.App", {
         /**
@@ -121,7 +111,7 @@ sap.ui.define([
                     set: sSelectedSet,
                     size: sSelectedSize,
                     type: convertedType,
-                    deprecated: DEPRECATED_ILLUSTRATIONS.includes(convertedType)
+                    deprecated: DeprecatedIllustrations.isDeprecated(convertedType)
                 };
             }).sort((a, b) => a.type.localeCompare(b.type)); // Sort illustrations alphabetically
 

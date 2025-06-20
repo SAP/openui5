@@ -123,6 +123,11 @@ sap.ui.define([
 				return "";
 			},
 
+			formatImportantMessage: function (sMsg, sParam) {
+				var sParam = this._getFullVersion();
+				return formatMessage(sMsg, sParam);
+			},
+
 			formatIndexByVersionEntry: function (sControlName, sEntityName, sEntityType, bStatic, sText) {
 				var sTitle = this.formatSenderLink(sControlName, sEntityName, sEntityType),
 					sHref = this.formatApiHref(sControlName, sEntityName, sEntityType, bStatic),

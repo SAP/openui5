@@ -183,6 +183,13 @@ sap.ui.define([
 
 			}.bind(this));
 
+			this.getOwnerComponent().loadMessagesInfo().then(function (data) {
+				if (data) {
+					this._updateMessagesModel(data);
+				}
+
+			}.bind(this));
+
 			// Config routes
 			this.oRouter = this.getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
@@ -329,6 +336,20 @@ sap.ui.define([
 			this._cacheRouteEventDetails(oEvent);
 		},
 
+		onCloseImportantMessage: function (oEvent) {
+			var aMessageCookie = this._oConfigUtil.getCookieValue(this._oCookieNames.DEMOKIT_IMPORTANT_MESSAGES_READ)
+					.split(",").filter(function(id) { return id !== ''; }),
+				oCustomData = oEvent.getSource().getCustomData().find(function(oCustomData) {
+					return oCustomData.getKey() === "messageID";
+				}),
+				sId = oCustomData.getValue();
+
+			aMessageCookie.push(sId);
+			this._oConfigUtil.setCookie(this._oCookieNames.DEMOKIT_IMPORTANT_MESSAGES_READ, aMessageCookie.join(","));
+
+			this._updateMessagesModel(this.getModel("messagesData").getData());
+		},
+
 		toggleMaster: function (oEvent) {
 			var oViewModel = this.getModel("appView"),
 				sMasterViewId = oViewModel.getProperty("/sMasterViewId"),
@@ -426,6 +447,30 @@ sap.ui.define([
 				sItemLink = oItem.getCustomData()[0].getValue();
 
 			URLHelper.redirect(sItemLink, true);
+		},
+
+		_updateMessagesModel: function(oMessagesData) {
+			var oMessageCookie = this._oConfigUtil.getCookieValue(this._oCookieNames.DEMOKIT_IMPORTANT_MESSAGES_READ),
+				iVisibleMessagesCount = 0,
+				sFullVersion = this._getFullVersion(),
+				sRegExpValidator;
+
+			oMessagesData.messages.length && oMessagesData.messages.forEach(function(message) {
+				message.isMessageVisible = (new Date(message.expire).getTime() - new Date()) > 0 &&
+					!oMessageCookie.includes(message.id);
+
+					if (message.isMessageVisible && message.versionValidator) {
+						sRegExpValidator = new RegExp(message.versionValidator);
+						message.isMessageVisible = sRegExpValidator.test(sFullVersion);
+					}
+
+				message.isMessageVisible && iVisibleMessagesCount++;
+			});
+
+			oMessagesData.iVisibleMessagesCount = iVisibleMessagesCount;
+
+			this.getModel("messagesData").setData(oMessagesData);
+
 		},
 
 		_syncNewsModelWithNewsInfo: function () {
