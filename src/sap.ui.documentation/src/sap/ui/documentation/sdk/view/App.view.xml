@@ -294,6 +294,27 @@
 		</tnt:sideContent>
 
 		<tnt:mainContents>
+			<VBox items="{messagesData>/messages}" width="100%" class="sapUiTinyMarginTop" visible="{=!!${messagesData>/iVisibleMessagesCount}}">
+				<items>
+					<MessageStrip close="onCloseImportantMessage" text="{
+						parts: [
+							'messagesData>text'
+						],
+						formatter: '.formatter.formatImportantMessage'
+					}" class="sapUiTinyMarginBottom sapUiTinyMarginBeginEnd" showIcon="true" showCloseButton="true" visible="{messagesData>isMessageVisible}" type="{messagesData>type}">
+						<customData>
+							<core:CustomData key="messageID" value="{messagesData>id}" />
+						</customData>
+						<link>
+							<Link
+								visible="{= (!!${messagesData>linkText} &amp;&amp; !!${messagesData>linkHref}) }"
+								text="{messagesData>linkText}"
+								target="_blank"
+								href="{messagesData>linkHref}" />
+						</link>
+					</MessageStrip>
+				</items>
+			</VBox>
 			<OverflowToolbar
 				visible="{= (${appView>/bHasMaster} &amp;&amp; !${appView>/bLandscape}) &#124;&#124; ${appView>/bHasMaster} &amp;&amp; ${appView>/device/system/phone} }">
 				<ToggleButton

@@ -1,6 +1,7 @@
 sap.ui.define([
-    "sap/ui/demo/illustrationExplorer/controller/BaseController"
-], (BaseController) => {
+    "sap/ui/demo/illustrationExplorer/controller/BaseController",
+    "sap/ui/demo/illustrationExplorer/utils/DeprecatedIllustrations"
+], (BaseController, DeprecatedIllustrations) => {
     "use strict";
 
     return BaseController.extend("sap.ui.demo.illustrationExplorer.controller.IllustrationDetails", {
@@ -22,9 +23,10 @@ sap.ui.define([
 
             // Check if the model properties need to be updated
             if (oData.set !== set || oData.type !== sIllustrationType) {
+                const isDeprecated = DeprecatedIllustrations.isDeprecated(type);
+                // Update the model properties
                 oModel.setProperty("/set", set);
                 oModel.setProperty("/type", sIllustrationType);
-                const isDeprecated = this._aDeprecatedIllustrations.includes(type);
                 oModel.setProperty("/deprecated", isDeprecated);
             }
         }
