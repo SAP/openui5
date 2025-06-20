@@ -89,16 +89,6 @@ sap.ui.define([
 			});
 		},
 
-		/**
-		 * Check if context sharing is enabled in the backend.
-		 *
-		 * @returns {Promise<boolean>} Promise resolves with true
-		 * @deprecated
-		 */
-		isContextSharingEnabled() {
-			return Promise.resolve(true);
-		},
-
 		getFlexInfo(mPropertyBag) {
 			return FlexInfoSession.getByReference(mPropertyBag.reference);
 		}

@@ -366,16 +366,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Check if context sharing is enabled in the backend.
-		 *
-		 * @returns {Promise<boolean>} Promise resolves with true
-		 * @deprecated
-		 */
-		isContextSharingEnabled() {
-			return Promise.resolve(true);
-		},
-
-		/**
 		 * Gets the seen feature ids from the LRep backend.
 		 *
 		 * @param {object} mPropertyBag Property bag
