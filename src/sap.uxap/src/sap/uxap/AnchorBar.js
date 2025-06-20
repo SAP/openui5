@@ -110,8 +110,6 @@ sap.ui.define([
 
 			// set ARIA has-popup if button opens submenu
 			if (this.data("bHasSubMenu")) {
-				oButton.$().attr("aria-haspopup", "menu");
-
 				// although the inner (arrow like) buttons are not focusable
 				// set role 'none' since it is not allowed nesting
 				// them in elements with role 'option'
