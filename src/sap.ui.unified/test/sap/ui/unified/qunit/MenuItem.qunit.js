@@ -71,6 +71,28 @@ sap.ui.define([
 		oMenu.destroy();
 	});
 
+	QUnit.test("aria-expanded", async function (assert) {
+		var oMenuItem = new MenuItem({ text: "Plain" }),
+			oMenuItemWithSubmenu = new MenuItem({ text: "With submenu", submenu: new Menu({items: [new MenuItem({text: "sub menu"})]}) }),
+			oMenu = new Menu({ items: [oMenuItem, oMenuItemWithSubmenu] }),
+			done = assert.async();
+
+		oMenu.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oMenu.open();
+		await nextUIUpdate();
+
+		assert.notOk(oMenuItem.$().attr("aria-expanded"), "Menu items don't have aria-expanded when there's no submenu");
+		assert.strictEqual(oMenuItemWithSubmenu.$().attr("aria-expanded"), "false", "Submenu presence is indicated in aria-expanded");
+		oMenuItemWithSubmenu.$().trigger("click");
+		setTimeout(() => {
+			assert.strictEqual(oMenuItemWithSubmenu.$().attr("aria-expanded"), "true", "Submenu presence is indicated in aria-expanded");
+			done();
+			oMenu.destroy();
+		}, Menu._DELAY_SUBMENU_TIMER + 100);
+	});
+
 	var Tooltip = TooltipBase.extend("Tooltip", {
 		metadata: {
 			properties: {

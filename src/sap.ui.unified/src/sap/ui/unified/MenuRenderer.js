@@ -94,6 +94,9 @@ sap.ui.define(["sap/ui/core/ControlBehavior"],
 			}
 			if (oSubmenu && oSubmenu._getItems().length) {
 				bHasSubMenus = true;
+				if (typeof aItems[i].getProperty("_expanded") !== "boolean") {
+					aItems[i].setProperty("_expanded", false);
+				}
 			}
 		}
 
