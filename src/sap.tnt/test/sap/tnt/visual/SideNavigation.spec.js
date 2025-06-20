@@ -11,13 +11,10 @@ describe("sap.tnt.SideNavigation", function() {
 	});
 
 	it("should visualize Side Navigation without icons", function () {
-		var sideNav = element(by.id("sideNavigationNoIcons"));
-		expect(takeScreenshot(sideNav)).toLookAs("1_side_nav_no_icons");
-	});
-
-	it("should visualize Side Navigation without icons selection", function () {
-		var sideNav = element(by.id("sideNavigationNoIcons"));
-		element(by.css("#NL .sapTntNLI")).click();
-		expect(takeScreenshot(sideNav)).toLookAs("2_side_nav_no_icons_selection");
+		browser.executeScript('document.getElementById("sideNavigationNoIcons").scrollIntoView()').then(function () {
+			expect(takeScreenshot()).toLookAs("1_side_nav_no_icons");
+			element(by.css("#sideNavigationNoIcons .sapTntNLI")).click();
+			expect(takeScreenshot()).toLookAs("2_side_nav_no_icons_selection");
+		});
 	});
 });
