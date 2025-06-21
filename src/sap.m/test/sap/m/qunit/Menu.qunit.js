@@ -677,15 +677,29 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Accessibility", function(assert) {
+	QUnit.test("Accessibility", async function(assert) {
 		var oMenu = this.sut,
 			aItems = oMenu.getItems();
 
 		//Assert
 		assert.strictEqual(aItems[0].getDomRef().getAttribute("aria-keyshortcuts"), aItems[0].getShortcutText(), "Shortcut Text of the first MenuItem is added as aria-keyshortcuts attribute");
 		assert.notOk(aItems[1].getDomRef().getAttribute("aria-keyshortcuts"), "aria-keyshortcuts attribute of the second MenuItem is not rendered, because it has submenu");
+		assert.strictEqual(aItems[1].getDomRef().getAttribute("aria-expanded"), "false", "aria-expanded attribute of the second MenuItem is rendered, because it has submenu");
 		assert.notOk(aItems[2].getDomRef().getAttribute("aria-keyshortcuts"), "aria-keyshortcuts attribute of the third MenuItem is not rendered because it has no value");
 
+		// Act
+		aItems[1].$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		//Assert
+		assert.strictEqual(aItems[1].getDomRef().getAttribute("aria-expanded"), "true", "aria-expanded attribute of the second MenuItem is rendered with value true, because it has open submenu");
+
+		// Act
+		aItems[1]._closeSubmenu();
+		await nextUIUpdate(this.clock);
+
+		//Assert
+		assert.strictEqual(aItems[1].getDomRef().getAttribute("aria-expanded"), "false", "aria-expanded attribute of the second MenuItem is rendered with value false, because it has close submenu");
 	});
 
 	QUnit.module("Item Selection", {

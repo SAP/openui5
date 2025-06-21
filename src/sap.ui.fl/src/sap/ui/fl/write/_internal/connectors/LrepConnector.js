@@ -173,7 +173,6 @@ sap.ui.define([
 	return merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.LrepConnector */ {
 		initialConnector: InitialConnector,
 		layers: InitialConnector.layers,
-
 		/**
 		 * Resets flexibility files for a given application and layer.
 		 *
@@ -547,7 +546,6 @@ sap.ui.define([
 			);
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		},
-
 		appVariant: {
 			getManifirstSupport(mPropertyBag) {
 				var sManifirstUrl = `${ROUTES.MANI_FIRST_SUPPORTED}/?id=${mPropertyBag.appId}`;
@@ -667,7 +665,6 @@ sap.ui.define([
 				return WriteUtils.sendRequest(sAppVarOverviewUrl, "GET", oRequestOption);
 			}
 		},
-
 		contextBasedAdaptation: {
 			create(mPropertyBag) {
 				mPropertyBag.isContextBasedAdaptationEnabled = true;
@@ -702,7 +699,6 @@ sap.ui.define([
 				return _doWrite(mPropertyBag);
 			}
 		},
-
 		ui2Personalization: {
 			create(mPropertyBag) {
 				mPropertyBag.initialConnector = this.initialConnector;
@@ -728,7 +724,6 @@ sap.ui.define([
 				return WriteUtils.sendRequest(sUrl, "DELETE");
 			}
 		},
-
 		versions: {
 			load(mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
