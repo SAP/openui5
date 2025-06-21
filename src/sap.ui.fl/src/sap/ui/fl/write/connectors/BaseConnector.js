@@ -184,15 +184,6 @@ sap.ui.define([
 			return Promise.reject("loadContextDescriptions is not implemented");
 		},
 
-		/**
-		 * Interface called to check if variant management context sharing is enabled.
-		 *
-		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
-		 */
-		isContextSharingEnabled() {
-			return Promise.resolve(false);
-		},
-
 		contextBasedAdaptation: {
 			create() {
 				return Promise.reject("contextBasedAdaptation.create is not implemented");

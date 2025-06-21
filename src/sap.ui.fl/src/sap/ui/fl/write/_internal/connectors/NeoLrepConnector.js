@@ -24,43 +24,6 @@ sap.ui.define([
 	 */
 	return merge({}, LrepConnector, /** @lends sap.ui.fl.write._internal.connectors.NeoLrepConnector */ {
 		initialConnector: InitialConnector,
-		layers: InitialConnector.layers,
-
-		/**
-		 * Check if context sharing is enabled in the backend.
-		 *
-		 * @returns {Promise<boolean>} Promise resolves with false
-		 */
-		isContextSharingEnabled() {
-			return Promise.resolve(false);
-		},
-		/**
-		 * Loads the variant management context description in the correct language based on the browser configuration.
-		 *
-		 * @returns {Promise<object>} Promise rejects
-		 */
-		loadContextDescriptions(/* mPropertyBag */) {
-			return Promise.reject("loadContextsDescriptions is not implemented");
-		},
-
-		/**
-		 * Gets the variant management context information.
-		 *
-		 * @returns {Promise<object>} Promise rejects
-		 */
-		getContexts(/* mPropertyBag */) {
-			return Promise.reject("getContexts is not implemented");
-		},
-		contextBasedAdaptation: {
-			create() {
-				return Promise.reject("contextBasedAdaptation.create is not implemented");
-			},
-			reorder() {
-				return Promise.reject("contextBasedAdaptation.reorder is not implemented");
-			},
-			load() {
-				return Promise.reject("contextBasedAdaptation.load is not implemented");
-			}
-		}
+		layers: InitialConnector.layers
 	});
 });

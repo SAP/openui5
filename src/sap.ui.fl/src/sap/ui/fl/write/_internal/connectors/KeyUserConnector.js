@@ -47,7 +47,6 @@ sap.ui.define([
 			Layer.CUSTOMER,
 			Layer.PUBLIC
 		],
-
 		ROUTES: {
 			CHANGES: `${PREFIX + InitialConnector.API_VERSION}/changes/`,
 			SETTINGS: `${PREFIX + InitialConnector.API_VERSION}/settings`,
@@ -65,7 +64,6 @@ sap.ui.define([
 			},
 			CONTEXTS: `${PREFIX + InitialConnector.API_VERSION}/contexts/`
 		},
-
 		isLanguageInfoRequired: true,
 
 		getContexts(mPropertyBag) {

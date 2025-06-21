@@ -93,6 +93,9 @@ MenuRenderer.renderItems = function(oRm, oMenu) {
 		}
 		if (oSubmenu && oSubmenu._getItems().length) {
 			bHasSubMenus = true;
+			if (typeof aItems[i].getProperty("_expanded") !== "boolean") {
+				aItems[i].setProperty("_expanded", false);
+			}
 		}
 	}
 

@@ -372,17 +372,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant management context sharing is enabled.
-	 *
-	 * @param {object} mPropertyBag - Property bag
-	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer
-	 * @returns {Promise<boolean>} Promise resolves true if context sharing is enabled
-	 */
-	Storage.isContextSharingEnabled = function(mPropertyBag) {
-		return _executeActionByName("isContextSharingEnabled", mPropertyBag);
-	};
-
-	/**
 	 * Transports all the UI changes and app variant descriptor (if exists) to the target system.
 	 *
 	 * @param {object} mPropertyBag - Property bag
