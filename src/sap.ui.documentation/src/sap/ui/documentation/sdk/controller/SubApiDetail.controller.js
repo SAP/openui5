@@ -533,10 +533,10 @@ sap.ui.define([
 							const isModuleAvailable = oControlData.module !== this.NOT_AVAILABLE;
 							const library = versionData?.libraries?.find((lib) => lib.name === oEntityData.lib);
 							const version = library?.version?.includes("-SNAPSHOT") ? "" : library?.version;
-							const bIsOpenUI5 = this.getModel("versionData").getProperty("/isOpenUI5");
+							const bIsOpenUI5Lib = library.npmPackageName?.startsWith("@openui5");
 
 
-							if (!isModuleAvailable || !version || !bIsOpenUI5) {
+							if (!isModuleAvailable || !version || !bIsOpenUI5Lib) {
 								return _getObjectAttributeBlock("Module", oControlData.module);
 							}
 
