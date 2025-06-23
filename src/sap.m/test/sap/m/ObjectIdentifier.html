@@ -179,22 +179,22 @@
 	});
 
 	var aColumns = [
-   		new sap.m.Column({
-   			header : new sap.m.Label({
-   				text : "Product"
-   			})
-   		}),
-   		new sap.m.Column({
-   			header : new sap.m.Label({
-   				text : "Category"
-   			})
-   		}),
-   		new sap.m.Column({
-   			header : new sap.m.Label({
-   				text : "Price"
-   			})
-   		})
-   	];
+		new sap.m.Column({
+			header : new sap.m.Label({
+				text : "Product"
+			})
+		}),
+		new sap.m.Column({
+			header : new sap.m.Label({
+				text : "Category"
+			})
+		}),
+		new sap.m.Column({
+			header : new sap.m.Label({
+				text : "Price"
+			})
+		})
+	];
 
 	var oTemplate = new sap.m.ColumnListItem({
 		cells : [
@@ -223,6 +223,31 @@
 	oTable.setModel(oProductModel);
 	oTable.bindItems("/ProductCollection", oTemplate);
 
+	var wrapOI = new sap.m.ObjectIdentifier("wrapOI", {
+		title : "Some active long title that should wrap. Some active long title that should wrap.",
+		titleActive : true,
+		text : "Tiny Text",
+		badgeNotes : true,
+		badgePeople : true,
+		badgeAttachments : true,
+		visible : true
+	});
+	var wrapOI2 = new sap.m.ObjectIdentifier("wrapOI2", {
+		title : "Some long title that should wrap. Some long title that should wrap.",
+		text : "Tiny Text",
+		visible : true
+	});
+	var fBox = new sap.m.FlexBox({
+		width: "400px",
+		alignItems: "Center",
+		items: wrapOI
+	});
+	var fBox2 = new sap.m.FlexBox({
+		width: "400px",
+		alignItems: "Center",
+		items: wrapOI2
+	});
+
 	var app = new sap.m.App();
 	var page = new sap.m.Page({
 		showHeader : false,
@@ -232,6 +257,8 @@
 	app.addPage(page);
 
 	page.setModel(oModel);
+	page.addContent(fBox);
+	page.addContent(fBox2);
 	page.addContent(oi1);
 	page.addContent(cb1);
 	page.addContent(oi2);
