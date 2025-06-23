@@ -3224,7 +3224,7 @@ sap.ui.define([
 		if (oContent && oContent.setDOMValue) {
 			let sDOMValue;
 
-			if (sCurrentValue && this._oNavigateCondition) { // navigation while typeahead - use autocomplete
+			if (sCurrentValue && this._oNavigateCondition && !this.getContentFactory().useValue()) { // navigation while typeahead - use autocomplete; in Select case no real autocomplete
 				sDOMValue = _doAutocomplete.call(this, this._oNavigateCondition, sCurrentValue, oContent, bCaseSensitive);
 				if (sDOMValue) {
 					this._oNavigateCondition.output = sDOMValue; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
@@ -3289,7 +3289,9 @@ sap.ui.define([
 				}
 
 				this._oNavigateCondition = _createNavigateCondition.call(this, oCondition, sItemId);
-				this._oNavigateCondition.output = sOutput; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
+				if (!this.getContentFactory().useValue()) { // inSelect case no real Autocomplete
+					this._oNavigateCondition.output = sOutput; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
+				}
 
 				oContentFactory.updateConditionType();
 				_setAriaAttributes.call(this, true, null); // as visual focus stays in Field - no connection to item
