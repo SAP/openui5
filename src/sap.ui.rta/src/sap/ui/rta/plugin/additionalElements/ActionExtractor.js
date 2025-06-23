@@ -302,6 +302,16 @@ sap.ui.define([
 	let bIsSyncRegistered = true;
 
 	/**
+	 * Clears the cache of the Reveal actions data.
+	 * It also registers a sync event to clear the cache after the DesignTime is synced.
+	 * This should only be used in tests.
+	 */
+	ActionExtractor.clearCache = function() {
+		mRevealCache = {};
+		bIsSyncRegistered = true;
+	};
+
+	/**
 	 * Returns the Reveal actions data (parameters + elements) for an Overlay
 	 * @param {boolean} bSibling - If source element overlay should be sibling or parent to the newly added fields
 	 * @param {sap.ui.dt.ElementOverlay} oSourceElementOverlay - Overlay where the action is triggered
