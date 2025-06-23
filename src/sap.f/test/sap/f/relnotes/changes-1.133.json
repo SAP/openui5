@@ -33,5 +33,15 @@
         "text": " sap.f.DynamicPageTitle: Fix overlapping of busy indicator"
       }
     ]
+  },
+  "1.133.3": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "62876ddb0e2792ec25948a510dc620f765310472",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: side panel can be closed now"
+      }
+    ]
   }
 }

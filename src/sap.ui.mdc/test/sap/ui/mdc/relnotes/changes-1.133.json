@@ -28,5 +28,15 @@
         "text": " ColumnMenu: Update to latest design spec"
       }
     ]
+  },
+  "1.133.3": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "939eaba898da33aa45793b4ef5afd773709210dd",
+        "type": "FIX",
+        "text": " Empty Filter for navigation properties"
+      }
+    ]
   }
 }

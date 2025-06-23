@@ -213,5 +213,20 @@
         "text": " sap.m.Tokenizer:popover width adjusted to spec"
       }
     ]
+  },
+  "1.133.3": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "1ac1bd7c2913724f16e5fdcda20d70b1d87fc621",
+        "type": "FIX",
+        "text": " We've now introduced a private read only flag to help the developers determine item sync delegation for the upload complete and item deletion actions"
+      },
+      {
+        "id": "d7f2f973dd5bed4c4d2047371d12a787cc347b44",
+        "type": "FIX",
+        "text": " We've now enabled the screen reader announcement for navigation and action tiles"
+      }
+    ]
   }
 }
