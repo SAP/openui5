@@ -454,26 +454,28 @@ sap.ui.define([
 		oTogglePrevNexYearPicker.restore();
 	});
 
-	QUnit.test("There is no focus on mobile", function (assert) {
-		// Prepare
-		var oCal = new CalendarDateInterval("myCal", {
-				startDate: new Date("2015", "3", "10")
-			}).placeAt("qunit-fixture"),
-			oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
-			oFocusSpy = this.spy(oCal, "focus");
+	if (!sap.ui.Device.browser.internet_explorer) { // skip the test on IE
+		QUnit.test("There is no focus on mobile", function (assert) {
+			// Prepare
+			var oCal = new CalendarDateInterval("myCal", {
+					startDate: new Date("2015", "3", "10")
+				}).placeAt("qunit-fixture"),
+				oDeviceStub = this.stub(sap.ui.Device.system, "phone", true),
+				oFocusSpy = this.spy(oCal, "focus");
 
-		// Act
-		oCal._handleNext();
-		sap.ui.getCore().applyChanges();
+			// Act
+			oCal._handleNext();
+			sap.ui.getCore().applyChanges();
 
-		// Assert
-		assert.strictEqual(oFocusSpy.callCount, 0, "focus is not called");
+			// Assert
+			assert.strictEqual(oFocusSpy.callCount, 0, "focus is not called");
 
-		// Clean
-		oCal.destroy();
-		oDeviceStub.restore();
-		oFocusSpy.restore();
-	});
+			// Clean
+			oCal.destroy();
+			oDeviceStub.restore();
+			oFocusSpy.restore();
+		});
+	}
 
 	QUnit.module("MonthPicker");
 
