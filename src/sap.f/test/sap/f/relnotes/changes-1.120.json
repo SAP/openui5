@@ -275,5 +275,15 @@
         "text": " sap.f.FlexibleColumnLayout: Fix failing QUnit test"
       }
     ]
+  },
+  "1.120.32": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "37ebb43e63a337c8f0c2e660ca5f926cfad8b676",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: side panel can be closed now"
+      }
+    ]
   }
 }

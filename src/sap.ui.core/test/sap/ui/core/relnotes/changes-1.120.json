@@ -993,5 +993,20 @@
         "text": " core/IconPool: make mime type match case insensitive"
       }
     ]
+  },
+  "1.120.32": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "733fd37883ba4a9cfd928e9e98dce01a6bd7f43b",
+        "type": "FIX",
+        "text": " ThemeManager: Add detection for CSS preloads"
+      },
+      {
+        "id": "38ed9112beccf77c3462bebf3e968cce67c1d4f6",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/v2/ODataModel: updating properties of type Edm.Binary"
+      }
+    ]
   }
 }

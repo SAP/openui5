@@ -40,5 +40,15 @@
         ]
       }
     ]
+  },
+  "1.120.32": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "3ef1c3ef617dfc7ff88984f27561acafef4a71eb",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix bug where select roles dialog could not be opened when no business role description is present"
+      }
+    ]
   }
 }

@@ -117,5 +117,30 @@
         "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
       }
     ]
+  },
+  "1.120.32": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "b91d3042c4f9614fc5a1553cba9492d827c41d93",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improve accessibility behavior"
+      },
+      {
+        "id": "2dfbf49e0230614d63ea36fb0faf9aaadf6f58a7",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix table flickering"
+      },
+      {
+        "id": "8d925a01438b92d6eca15cf36451d1080b8822de",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improve accessibility behavior"
+      },
+      {
+        "id": "a1a3ff4a9e35d44f417e8b49992641437b37b133",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
+      }
+    ]
   }
 }

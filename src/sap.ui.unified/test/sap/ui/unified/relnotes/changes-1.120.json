@@ -179,5 +179,15 @@
         "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
       }
     ]
+  },
+  "1.120.32": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "26098bf3185e1e4212e5370ea16bc6862bfdc305",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: works correctly now"
+      }
+    ]
   }
 }

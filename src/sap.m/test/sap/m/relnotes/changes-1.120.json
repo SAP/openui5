@@ -1241,5 +1241,15 @@
         "text": " m.VariantManagement: correct overlap when in text mode"
       }
     ]
+  },
+  "1.120.32": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "84102e95d7047a0de6f54fb6a85d6409a7af73ea",
+        "type": "FIX",
+        "text": " We've now introduced a private read only flag to help the developers determine item sync delegation for the upload complete and item deletion actions"
+      }
+    ]
   }
 }
