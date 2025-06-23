@@ -37,8 +37,8 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			}
 		}).then(function () {
 			oCard.showMessage("{i18n>SUCCESSFUL_SUBMIT}", "Success");
-		}).catch(function (sErrorMessage) {
-			oCard.showMessage(sErrorMessage, "Error");
+		}).catch(function (oErrorInfo) {
+			oCard.showMessage(oErrorInfo.message, "Error");
 		});
 	};
 

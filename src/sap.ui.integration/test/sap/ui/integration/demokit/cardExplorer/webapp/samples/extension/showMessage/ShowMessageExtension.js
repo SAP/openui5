@@ -46,10 +46,8 @@ sap.ui.define([
 					oCard.refreshData();
 				}
 			})
-			.catch(function (aResponse) {
-				const oResponse = aResponse[1];
-
-				oResponse.text().then(function (sText) {
+			.catch(function (oErrorInfo) {
+				oErrorInfo.response.text().then(function (sText) {
 					oCard.showMessage(sText,  CardMessageType.Error);
 				});
 
