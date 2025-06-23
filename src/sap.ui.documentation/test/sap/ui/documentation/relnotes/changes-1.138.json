@@ -3,6 +3,11 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "fb91c6ef955a5a2998bfb458e7873995b3538757",
+        "type": "FIX",
+        "text": " Demo Kit: Allow module github links to OpenUI5 modules"
+      },
+      {
         "id": "4673bbe72b9a6e089de1c54a80b64e2a5cdc0e26",
         "type": "FIX",
         "text": " Demo Kit: APIREF Module link fixed"

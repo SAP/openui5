@@ -1,0 +1,12 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "21598f3426ed6cc1564a92a583e706dde9ccc682",
+        "type": "FIX",
+        "text": " sap.ui.fl: Fix bug where select roles dialog could not be opened when no role description is present"
+      }
+    ]
+  }
+}

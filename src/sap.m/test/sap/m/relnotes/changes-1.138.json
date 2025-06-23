@@ -3,9 +3,70 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "e2e37205b37f0ed3ea551a325de5b8fd1d532e18",
+        "type": "FIX",
+        "text": " sap.m.StepInput: make binding higher prio",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370145779"
+          }
+        ]
+      },
+      {
+        "id": "0799407a45a0607c6931569fb3dba96f4d16d53e",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: endContent documentation is now updated"
+      },
+      {
+        "id": "87aded1b4bc8504141ddf169a04208c664ed56d4",
+        "type": "FEATURE",
+        "text": " MenuItem: Add aria-expanded attribute"
+      },
+      {
+        "id": "a97c8b3c418d81f64f14c8eaf828d6c994cb081a",
+        "type": "FIX",
+        "text": " We've now replaced the instanceof check for promises sent to itemValidationHandler with thenable check to handle the pollyfilled promises in UploadSetwithTable"
+      },
+      {
+        "id": "684b7fb220bd17bd436a1e4f30d45bd64edd63cd",
+        "type": "FIX",
+        "text": " sap.m.IllustratedMessage: Aligned English translation texts"
+      },
+      {
+        "id": "ce0b02ee9d068754283d217cec76e498aa4f449e",
+        "type": "FIX",
+        "text": " QueryPanel: move item looses focus"
+      },
+      {
+        "id": "e1e57e05e8b6f3890e4d37c4b89e21c01e96d291",
+        "type": "FEATURE",
+        "text": " sap-icons-tnt: Updated icon fonts to v3.8 and v3.7 for Horizon, and to v2.13 and v2.12 respectively for older themes"
+      },
+      {
+        "id": "d7acb8a952003b594e4f96240df419b28ab8499b",
+        "type": "FIX",
+        "text": " Illustration Explorer: Fix deprecated illustrations handling and integration tests"
+      },
+      {
+        "id": "fa03eb99d606f5e244cfc8bc6f953883a2acdfe6",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fixed rowHeaderPress event firing"
+      },
+      {
+        "id": "3a643fc4006ada394cba3e15ea8e03956234e1f3",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.12 and v4.24"
+      },
+      {
         "id": "3fe47eb1d4fc327687fd3b58a00bf970c7178d25",
         "type": "FIX",
         "text": " sap.m.ViewSettingsDialog: Update reset announce message for the screen reader"
+      },
+      {
+        "id": "d7d435f33c054f1646ae795cb21f04ca26fa5850",
+        "type": "FIX",
+        "text": " p13n.Engine: provide a way to pass event handler context to stateHandlerRegistry"
       },
       {
         "id": "55cd2084a821fcf0609651a4c869e6a2f7c14194",
@@ -16,6 +77,11 @@
         "id": "80a48ae8372f05b2972916a8639d59190d9f0844",
         "type": "FIX",
         "text": " sap.m.Menu: fixed context menu positioning"
+      },
+      {
+        "id": "6d78aabbff2e583bd4191b2f82fe39b71345f060",
+        "type": "FIX",
+        "text": " sap.m.NotofictionListGroup: Press is fired on enter"
       },
       {
         "id": "a2b7aa86d129f918743ad91a09142f456d104b75",

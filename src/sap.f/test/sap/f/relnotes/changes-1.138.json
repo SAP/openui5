@@ -3,6 +3,11 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "2b12ec5d940432e0f1dad02d844d3e2a067acd3d",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: side panel can be closed now"
+      },
+      {
         "id": "22de8a508f03f4e7e538c8076cb2c74dd662b2b4",
         "type": "FEATURE",
         "text": " Integration Cards: The `actions` property for the content of an Object Card is now deprecated"

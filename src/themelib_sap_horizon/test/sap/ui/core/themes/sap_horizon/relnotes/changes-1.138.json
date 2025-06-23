@@ -3,6 +3,16 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "74d8c71769e8a35fb3f2ed2008953f18b2a17435",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Increase spacing between header buttons and tabs"
+      },
+      {
+        "id": "3a643fc4006ada394cba3e15ea8e03956234e1f3",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.12 and v4.24"
+      },
+      {
         "id": "a2b7aa86d129f918743ad91a09142f456d104b75",
         "type": "FIX",
         "text": " sap.m.Button: Default button has correct hover color"

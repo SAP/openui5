@@ -3,6 +3,21 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "8ba40ba6010c5c361cbf4eefc50d23294bdd4804",
+        "type": "FIX",
+        "text": " FilterField: DynamicDateRange wrong Operator used"
+      },
+      {
+        "id": "7266c210c2893afaea5a06c1e3c94f2fd20fd5fa",
+        "type": "FEATURE",
+        "text": " Field, FilterField: render Select for fixed value lists"
+      },
+      {
+        "id": "1b4e5ab0618a042bff321bb937043bdddc4fe3f3",
+        "type": "FIX",
+        "text": " MDCTable update selection on opening if conditions not changed"
+      },
+      {
         "id": "91e51a219b5372065953a37405d859eabcdbd612",
         "type": "FIX",
         "text": " MultiValueField: aria-label not assigned to Tokenizer"

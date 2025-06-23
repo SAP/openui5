@@ -1,0 +1,17 @@
+{
+  "1.138.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "0799407a45a0607c6931569fb3dba96f4d16d53e",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: endContent documentation is now updated"
+      },
+      {
+        "id": "87aded1b4bc8504141ddf169a04208c664ed56d4",
+        "type": "FEATURE",
+        "text": " MenuItem: Add aria-expanded attribute"
+      }
+    ]
+  }
+}
