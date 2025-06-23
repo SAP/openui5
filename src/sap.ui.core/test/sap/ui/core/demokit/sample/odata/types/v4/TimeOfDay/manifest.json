@@ -7,11 +7,7 @@
 		"description": "Example how to use OData V4 Edm.TimeOfDay in SAPUI5 applications",
 		"dataSources": {
 			"default": {
-				"uri": "/sap/demo/zui5_edm_types_v4/",
-				"type": "OData",
-				"settings": {
-					"odataVersion": "4.0"
-				}
+				"type": "JSON"
 			}
 		},
 		"id": "sap.ui.core.sample.odata.types.v4.TimeOfDay",
@@ -23,11 +19,8 @@
 				"files": [
 					"TimeOfDay.view.xml",
 					"TimeOfDay.controller.js",
-					"data/metadataV4.xml",
-					"data/EdmTypesV4.json",
 					"manifest.json",
-					"Component.js",
-					"SandboxModel.js"
+					"Component.js"
 				]
 			}
 		},
@@ -42,17 +35,7 @@
 		"models": {
 			"": {
 				"dataSource": "default",
-				"preload": true,
-				"settings": {
-					"autoExpandSelect": true,
-					"earlyRequests": true,
-					"groupProperties": {
-						"UpdateGroup": {"submit": "API"}
-					},
-					"operationMode": "Server",
-					"updateGroupId": "UpdateGroup"
-				},
-				"type": "sap.ui.core.sample.odata.types.v4.TimeOfDay.SandboxModel"
+				"type": "sap.ui.model.json.JSONModel"
 			}
 		},
 		"rootView": {
