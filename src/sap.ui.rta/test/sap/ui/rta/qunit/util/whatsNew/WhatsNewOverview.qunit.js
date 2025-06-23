@@ -166,7 +166,18 @@ sap.ui.define([
 		QUnit.test("When the ActionsMenu fragment is created", async function(assert) {
 			const oFragment = await Fragment.load({
 				name: "sap.ui.rta.toolbar.ActionsMenu",
-				controller: {}
+				controller: {
+					openDownloadTranslationDialog: sinon.stub(),
+					openUploadTranslationDialog: sinon.stub(),
+					manageApps: sinon.stub(),
+					overviewForKeyUser: sinon.stub(),
+					overviewForDeveloper: sinon.stub(),
+					restore: sinon.stub(),
+					formatSaveAsEnabled: sinon.stub(),
+					saveAs: sinon.stub(),
+					openWhatsNewOverviewDialog: sinon.stub(),
+					openGuidedTour: sinon.stub()
+				}
 			});
 			assert.ok(oFragment, "ActionsMenu fragment is loaded successfully");
 			const oFeaturesOverview = oFragment.getItems().find(function(oItem) {
