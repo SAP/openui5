@@ -6,10 +6,9 @@ sap.ui.define([
 	"sap/ui/core/Messaging",
 	'sap/ui/core/message/Message',
 	'sap/ui/core/message/MessageType',
-	"sap/ui/dom/isBehindOtherElement",
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, MessageType, isBehindOtherElement, Controller, JSONModel) {
+], function(MessagePopover, MessageItem, MessageToast, ElementRegistry, Messaging, Message, MessageType, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.MessagePopoverMessageHandling.controller.MessagePopoverMessageHandling", {
@@ -27,6 +26,20 @@ sap.ui.define([
 
 			MessageToast.show('Press "Save" to trigger validation.');
 			this.createMessagePopover();
+		},
+
+		onFocusMessagePopover: function () {
+			MessageToast.show("Ctrl+Shift+M Pressed: Message Popover is focused");
+
+			if (!this.getView().getModel("message").getData().length) {
+				return;
+			}
+
+			if (this.oMP && this.oMP.isOpen()) {
+				this.oMP.focus();
+			} else {
+				this.oMP.toggle(this.getView().byId("messagePopoverBtn"));
+			}
 		},
 
 		handleMessagePopoverPress: function (oEvent) {
@@ -49,10 +62,7 @@ sap.ui.define([
 					if (oControl) {
 						oPage.scrollToElement(oControl.getDomRef(), 200, [0, -100]);
 						setTimeout(function(){
-							var bIsBehindOtherElement = isBehindOtherElement(oControl.getDomRef());
-							if (bIsBehindOtherElement) {
-								this.close();
-							}
+							this.close();
 							if (oControl.isFocusable()) {
 								oControl.focus();
 							}

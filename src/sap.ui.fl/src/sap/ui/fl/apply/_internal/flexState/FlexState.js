@@ -829,11 +829,7 @@ sap.ui.define([
 
 	FlexState.removeDirtyFlexObjects = function(sReference, aFlexObjects) {
 		const aRemovedFlexObjects = [];
-		// FIXME: Currently called from the ChangePersistence which might be
-		// independent of FlexState in some test cases
-		// Once the ChangePersistence is no longer used
-		// make sure to remove the safeguard
-		if (_mInstances[sReference] && aFlexObjects.length > 0) {
+		if (aFlexObjects.length > 0) {
 			const aCurrentFlexObjects = _mInstances[sReference].runtimePersistence.flexObjects;
 			aFlexObjects.forEach(function(oFlexObject) {
 				const iIndex = aCurrentFlexObjects.indexOf(oFlexObject);
@@ -882,8 +878,7 @@ sap.ui.define([
 		return _mFlexObjectInfo[sMapName].prepareFunction(mPropertyBag);
 	};
 
-	// temporary function until ChangePersistence.getChangesForComponent is gone
-	// TODO: also used by the CompVariantState to mutate the storage response, this has to be changed
+	// TODO: used by the CompVariantState to mutate the storage response, this has to be changed
 	FlexState.getStorageResponse = function(sReference) {
 		if (_mInitPromises[sReference]) {
 			return _mInitPromises[sReference].promise.then(function() {

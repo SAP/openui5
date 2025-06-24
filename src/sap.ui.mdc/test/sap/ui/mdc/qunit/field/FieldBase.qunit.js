@@ -1726,6 +1726,8 @@ sap.ui.define([
 					assert.equal(oContent.getDOMValue(), "No", "shown value");
 					assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 					assert.deepEqual(sLiveValue, false, "liveChange event value");
+					assert.deepEqual(oFieldEditSingle._oNavigateCondition.values, [false, "No"], "NavigateCondition values");
+					assert.notOk(oFieldEditSingle._oNavigateCondition.output, "NavigateCondition - not autocomplete output set");
 					oValueHelp.navigate.reset();
 					qutils.triggerKeydown(oContent.getFocusDomRef(), KeyCodes.ARROW_UP, false, false, false);
 					await new Promise((resolve) => {setTimeout(resolve, 0);});
@@ -1802,6 +1804,8 @@ sap.ui.define([
 					assert.equal(oValueHelp.getFilterValue(), "y", "FilterValue set on ValueHelp");
 					assert.equal(iLiveCount, 1, "LiveChange Event fired once");
 					assert.equal(sLiveValue, "y", "liveChange event value");
+					assert.deepEqual(oFieldEditSingle._oNavigateCondition.values, [true, "Yes"], "NavigateCondition values");
+					assert.notOk(oFieldEditSingle._oNavigateCondition.output, "NavigateCondition - not autocomplete output set");
 					// revert via esc
 					oContent.setDOMValue.reset();
 					iLiveCount = 0;

@@ -38,7 +38,7 @@ sap.ui.define([], function () {
 		{
 			"id": "linter",
 			"text": "UI5 linter",
-			"href": "https://github.com/SAP/ui5-linter"
+			"href": "https://github.com/UI5/linter"
 		},
 		{
 			"id": "fpmExplorer",

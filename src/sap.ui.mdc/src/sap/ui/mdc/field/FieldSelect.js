@@ -78,7 +78,7 @@ sap.ui.define([
 
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 		this._oObserver.observe(this, {
-			properties: ["ariaAttributes"]
+			properties: ["ariaAttributes", "selectedKey"]
 		});
 
 	};
@@ -102,7 +102,7 @@ sap.ui.define([
 	FieldSelect.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
 
 		// do not invalidate on ariaAttributes to prevent re-remdering. It needs to be changed directly in any case
-		if (sPropertyName === "ariaAttributes") { // TODO: also on selectedKey as changed by ValueHelpSelection and so on
+		if (sPropertyName === "ariaAttributes") {
 			bSuppressInvalidate = true;
 		}
 
@@ -129,6 +129,8 @@ sap.ui.define([
 				fUpdate(oChanges, oDomRef, "expanded");
 				fUpdate(oChanges, oDomRef, "controls");
 			}
+		} else if (oChanges.name === "selectedKey" && oChanges.current !== "") { // empty key handled by Select itself
+			this._bSetValuePending = true; // as value is set latest after rendering (don't set it before to prevent trigger async formatting multiple times)
 		}
 
 	}
@@ -206,11 +208,13 @@ sap.ui.define([
 
 	FieldSelect.prototype.setValue = function(sValue) {
 
+		this._bSetValuePending = true;
 		Promise.all([sValue]).then((aResult) => { // as ConditionType.formatValue might return a Promise
 			const [sValue] = aResult;
 			this._sValue = sValue; // to also forward to _setHiddenSelectValue
 			Select.prototype.setValue.call(this, sValue);
 			delete this._sValue;
+			delete this._bSetValuePending;
 		});
 
 	};
@@ -268,7 +272,7 @@ sap.ui.define([
 
 		// as text might be set via Navigation - just remember it
 		const sKey = this.getSelectedKey();
-		if (this._sSelectedKeyOnFocus === sKey && this.getDomRef()) {
+		if (this._sSelectedKeyOnFocus === sKey && this.getDomRef() && !this._bSetValuePending) {
 			this._sValue = this.getDOMValue();
 		}
 
@@ -278,7 +282,7 @@ sap.ui.define([
 
 		Select.prototype.onAfterRendering.apply(this, arguments);
 
-		// as text might be formatted async, set after rendering
+		// as text might be formatted async, set after rendering (as rendering clears value if there is a Promise)
 		const sText = this._getSelectedItemText();
 		this.setValue(sText);
 		delete this._sValue;

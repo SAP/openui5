@@ -11,8 +11,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 			manifest: "json"
 		},
 
-		exit: function () {
-			this.getModel().restoreSandbox();
+		init() {
+			UIComponent.prototype.init.apply(this, arguments);
+			this.getModel().setData({
+				TimeOfDay: "11:33:55"
+			});
 		}
 	});
 });
