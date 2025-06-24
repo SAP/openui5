@@ -27,7 +27,6 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/appVariant/AppVariantUtils",
 	"sap/ui/rta/appVariant/Feature",
-	"sap/ui/rta/appVariant/Utils",
 	"sap/ui/rta/command/AnnotationCommand",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/Stack",
@@ -63,7 +62,6 @@ sap.ui.define([
 	FlexUtils,
 	AppVariantUtils,
 	AppVariantFeature,
-	Utils,
 	AnnotationCommand,
 	BaseCommand,
 	Stack,
@@ -77,7 +75,7 @@ sap.ui.define([
 
 	const sandbox = sinon.createSandbox();
 	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
-	const sReference = "someId";
+	const sReference = "FlexReferenceForRuntimeAuthoring2";
 	const oComp = RtaQunitUtils.createAndStubAppComponent(sinon, sReference, {
 		"_version": "2.0.2",
 
@@ -156,6 +154,7 @@ sap.ui.define([
 			VersionsAPI.clearInstances();
 			RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
 			RuntimeAuthoring.disableRestart(Layer.VENDOR);
+			cleanInfoSessionStorage();
 			sandbox.restore();
 		}
 	}, function() {
@@ -197,6 +196,7 @@ sap.ui.define([
 			});
 		},
 		afterEach() {
+			cleanInfoSessionStorage();
 			this.oRta.destroy();
 			sandbox.restore();
 		}

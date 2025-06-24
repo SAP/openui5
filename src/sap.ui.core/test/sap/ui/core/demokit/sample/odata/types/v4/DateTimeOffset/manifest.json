@@ -7,11 +7,7 @@
 		"description": "Example how to use OData V4 Edm.DateTimeOffset in SAPUI5 applications",
 		"dataSources": {
 			"default": {
-				"uri": "/sap/demo/zui5_edm_types_v4/",
-				"type": "OData",
-				"settings": {
-					"odataVersion": "4.0"
-				}
+				"type": "JSON"
 			}
 		},
 		"id": "sap.ui.core.sample.odata.types.v4.DateTimeOffset",
@@ -32,17 +28,15 @@
 				"files": [
 					"DateTimeOffset.view.xml",
 					"DateTimeOffset.controller.js",
-					"data/metadataV4.xml",
-					"data/EdmTypesV4.json",
 					"manifest.json",
-					"Component.js",
-					"SandboxModel.js"
+					"Component.js"
 				]
 			}
 		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {},
+				"sap.ui.core": {},
 				"sap.ui.layout": {}
 			}
 		},
@@ -50,19 +44,7 @@
 		"models": {
 			"": {
 				"dataSource": "default",
-				"preload": true,
-				"settings": {
-					"autoExpandSelect": true,
-					"earlyRequests": true,
-					"groupProperties": {
-						"UpdateGroup": {
-							"submit": "API"
-						}
-					},
-					"operationMode": "Server",
-					"updateGroupId": "UpdateGroup"
-				},
-				"type": "sap.ui.core.sample.odata.types.v4.DateTimeOffset.SandboxModel"
+				"type": "sap.ui.model.json.JSONModel"
 			}
 		},
 		"rootView": "sap.ui.core.sample.odata.types.v4.DateTimeOffset.DateTimeOffset"

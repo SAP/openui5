@@ -56,7 +56,9 @@
 	}
 	else {
 		// Browser
-		window.DataTable = factory(jQuery, window, document);
+		// ##### BEGIN: MODIFIED BY SAP
+		window.DataTable = factory(globalThis?.sap?.ui?.require?.("sap/ui/thirdparty/jquery") ?? jQuery, window, document);
+		// ##### END: MODIFIED BY SAP
 	}
 }(function ($, window, document) {
 	"use strict";

@@ -729,6 +729,7 @@ function(
 				value = this._parseNumber(this._getInput().getValue()),
 				oCoreMessageBundle = Library.getResourceBundleFor("sap.ui.core"),
 				oBinding = this.getBinding("value"),
+				oBindingValueState = this.getBinding("valueState"),
 				oBindingType = oBinding && oBinding.getType && oBinding.getType(),
 				sBindingConstraintMax = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.maximum,
 				sBindingConstraintMin = oBindingType && oBindingType.oConstraints && oBindingType.oConstraints.minimum,
@@ -736,6 +737,10 @@ function(
 				aViolatedConstraints = [],
 				bHasValidationErrorListeners = false,
 				oEventProvider;
+
+			if (oBindingValueState) {
+				return;
+			}
 
 			if (!this._isNumericLike(value)) {
 				return;

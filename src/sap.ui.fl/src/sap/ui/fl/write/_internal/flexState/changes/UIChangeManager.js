@@ -48,11 +48,11 @@ sap.ui.define([
 		// might not yet be attached to the application component and must be added then
 		if (oAppComponent instanceof Component) {
 			const bNoFlPropagationListenerAttached = oAppComponent.getPropagationListeners()
-			.every((fnPropagationListener) => (!fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl));
+			.every((fnPropagationListener) => (!fnPropagationListener._bIsFlexApplyChangesFunction));
 
 			if (bNoFlPropagationListenerAttached) {
 				const fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, oAppComponent, sReference);
-				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
+				fnPropagationListener._bIsFlexApplyChangesFunction = true;
 				oAppComponent.addPropagationListener(fnPropagationListener);
 			}
 		}

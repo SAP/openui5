@@ -45,7 +45,9 @@
 	}
 	else {
 		// Browser
-		factory( jQuery, window, document );
+		// ##### BEGIN: MODIFIED BY SAP
+		factory( globalThis?.sap?.ui?.require?.("sap/ui/thirdparty/jquery") ?? jQuery, window, document );
+		// ##### END: MODIFIED BY SAP
 	}
 }(function( $, window, document ) {
 'use strict';

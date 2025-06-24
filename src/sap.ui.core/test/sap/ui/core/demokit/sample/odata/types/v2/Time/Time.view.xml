@@ -7,27 +7,25 @@
 	xmlns:core="sap.ui.core"
 	core:require="{TimeType: 'sap/ui/model/odata/type/Time'}">
 	<App>
-	<Page id="page" floatingFooter="true" showHeader="false"
-		title="Example how to use OData V2 Edm.Time in SAPUI5 applications">
+	<Page id="page" floatingFooter="true" showHeader="false">
 	<VBox width="100%">
 		<form:SimpleForm class="sapUiResponsiveMargin" columnsL="1" columnsM="1" editable="true"
-				labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout"
-				title="How to use OData V2 Edm.Time type with SAPUI5 Controls" width="auto">
+				labelSpanL="3" labelSpanM="3" layout="ResponsiveGridLayout" width="auto">
+			<form:toolbar>
+				<Toolbar>
+					<Title text="How to use OData V2 Edm.Time type with SAPUI5 Controls" />
+					<ToolbarSpacer />
+					<Link href="https://ui5.sap.com/#/topic/6c9e61dc157a40c19460660ece8368bc"
+						text="Details on OData date and time related types" target="_blank" />
+				</Toolbar>
+			</form:toolbar>
 			<form:content>
-				<FormattedText htmlText="{json>/Description}" width="100%" />
 				<Label text="sap.m.Text" />
-				<Text text="{path: 'Time', type: 'TimeType'}" />
+				<Text text="{path: '/Time', type: 'TimeType'}" />
 				<Label text="sap.m.Input" />
-				<Input value="{path: 'Time', type: 'TimeType'}" />
+				<Input value="{path: '/Time', type: 'TimeType'}" />
 				<Label text="sap.m.TimePicker" />
-				<TimePicker value="{path: 'Time', type: 'TimeType'}" />
-				<Button text="Use JSON Model with sap.ui.model.odata.type.Time Type"
-					press="onDialogOpen">
-					<layoutData>
-						<layout:GridData indent="XL3 L3 M3 S0" linebreak="true"
-							span="XL6 L6 M6 S12"/>
-					</layoutData>
-				</Button>
+				<TimePicker value="{path: '/Time', type: 'TimeType'}" />
 			</form:content>
 		</form:SimpleForm>
 		<form:SimpleForm class="sapUiResponsiveMargin" columnsL="1" columnsM="1" editable="false"
@@ -35,34 +33,11 @@
 				width="auto">
 			<form:content>
 				<Label text="OData Model Value 'Time'" />
-				<Text text="{path: 'Time', formatter: '.formatTime'}" />
+				<Text text="{path: '/Time', formatter: '.formatTime'}" />
 				<Label text="'Time' Value as URI Parameter Value" />
-				<Text text="{path: 'Time', formatter: '.formatTimeAsURIParameter'}" />
-				<Label text="JSON Model Value '/Time'" />
-				<Text text="{path: 'json>/Time', formatter: '.formatTime'}" />
-				<Label text="Current Time Zone" />
-				<Text text="{path: 'json>/Timezone', formatter: '.formatTimezone'}" />
+				<Text text="{path: '/Time', formatter: '.formatTimeAsURIParameter'}" />
 			</form:content>
 		</form:SimpleForm>
-		<dependents>
-			<Dialog contentWidth="50em" id="dialog"
-				title="Use JSON Model with sap.ui.model.odata.type.Time Type">
-				<buttons>
-					<Button press="onDialogTakeValues" text="OK"
-						tooltip="Transfer the values to the OData Model" />
-					<Button press="onDialogClose" text="Close" />
-				</buttons>
-				<form:SimpleForm columnsL="1" columnsM="1" editable="true"
-					labelSpanL="4" labelSpanM="4" layout="ResponsiveGridLayout">
-					<Label text="sap.m.Text" />
-					<Text text="{path: 'json>Time', type: 'TimeType'}" />
-					<Label text="sap.m.Input" />
-					<Input value="{path: 'json>Time', type: 'TimeType'}" />
-					<Label text="sap.m.TimePicker" />
-					<TimePicker value="{path: 'json>Time', type: 'TimeType'}" />
-				</form:SimpleForm>
-			</Dialog>
-		</dependents>
 	</VBox>
 	</Page>
 	</App>

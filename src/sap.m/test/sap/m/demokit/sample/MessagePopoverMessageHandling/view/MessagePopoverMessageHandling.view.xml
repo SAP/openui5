@@ -6,6 +6,9 @@
 		xmlns:core="sap.ui.core"
 		xmlns="sap.m">
 	<Page id="messageHandlingPage" showHeader="false">
+		<dependents>
+			<core:CommandExecution id="CE_FOCUS_MESSAGE_POPOVER" command="FocusMessagePopover" enabled="true" execute=".onFocusMessagePopover" />
+		</dependents>
 		<content>
 			<VBox class="sapUiSmallMargin" id="formContainer" items="{
 					path: '/forms'
