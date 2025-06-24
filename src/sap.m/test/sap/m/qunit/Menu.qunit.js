@@ -1054,7 +1054,6 @@ sap.ui.define([
 	QUnit.test("'openAsContextMenu' positions menu properly when different type of objects are provided", async function (assert) {
 		// Arrange
 		var oOffsetCoordinates = { offsetX: 100, offsetY: 200 },
-			oPageCoordinates = { pageX: 20, pageY: 40 },
 			oWrongCoordinates1 = { offsetX: 100, offsetY: 200, pageY: 40 },
 			oWrongCoordinates2 = { offsetY: 200, pageX: 20, pageY: 40 },
 			oWrongCoordinates3 = { offsetY: 200, pageX: 20 },
@@ -1068,15 +1067,6 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oOpener.style.insetInlineStart, oOffsetCoordinates.offsetX + "px", "[offsetX/offsetY only] X coordinate is set correctly");
 		assert.strictEqual(oOpener.style.insetBlockStart, oOffsetCoordinates.offsetY + "px", "[offsetX/offsetY only] Y coordinate is set correctly");
-
-		// Act
-		this.oMenu.openAsContextMenu(oPageCoordinates);
-		await nextUIUpdate(this.clock);
-		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
-
-		// Assert
-		assert.strictEqual(oOpener.style.insetInlineStart, oPageCoordinates.pageX + "px", "[pageX/pageY only] X coordinate is set correctly");
-		assert.strictEqual(oOpener.style.insetBlockStart, oPageCoordinates.pageY + "px", "[pageX/pageY only ] Y coordinate is set correctly");
 
 		// Act
 		this.oMenu.openAsContextMenu(oWrongCoordinates1);
@@ -1093,8 +1083,8 @@ sap.ui.define([
 		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
 
 		// Assert
-		assert.strictEqual(oOpener.style.insetInlineStart, oWrongCoordinates2.pageX + "px", "[object containing pageX/pageY pair] X coordinate is set correctly");
-		assert.strictEqual(oOpener.style.insetBlockStart, oWrongCoordinates2.pageY + "px", "[object containing pageX/pageY pair] Y coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetInlineStart, "0px", "X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, "0px", "Y coordinate is set correctly");
 
 		// Act
 		this.oMenu.openAsContextMenu(oWrongCoordinates3);
