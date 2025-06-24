@@ -762,6 +762,22 @@ sap.ui.define([
 		assert.equal(this.oCellSelector.getSelectionRange(), null, "Selection is cleared");
 	});
 
+	QUnit.test("Avoid selection clicking on column header", function(assert) {
+		this.oTable.addDragDropConfig(new DragDropInfo({
+			sourceAggregation: "columns",
+			targetAggregation: "columns",
+			dropPosition: "Between"
+		}));
+
+		assert.ok(this.oCellSelector.getEnabled(), "CellSelector is enabled");
+		assert.ok(this.oCellSelector.isActive(), "CellSelector is active");
+
+		const oColumn = this.oTable.getColumns()[0];
+		qutils.triggerEvent("mousedown", oColumn.getDomRef(), { button: 0 }); // select first column with left-click/primary button
+
+		assert.notOk(this.oCellSelector._bMouseDown, "Flag has not been set");
+	});
+
 	QUnit.module("Dialog Behavior", {
 		beforeEach: async function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });
