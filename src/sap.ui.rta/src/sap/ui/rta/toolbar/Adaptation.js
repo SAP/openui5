@@ -283,6 +283,7 @@ sap.ui.define([
 					restore: this.eventHandler.bind(this, "Restore"),
 					formatSaveAsEnabled,
 					formatManageAppVariants: formatAppVariantsEnabled.bind(this),
+					formatSaveAsAppVariants: formatSaveAsAppVariantsEnabled.bind(this),
 					saveAs: onSaveAsPressed.bind(this),
 					openWhatsNewOverviewDialog,
 					openGuidedTour
@@ -379,6 +380,10 @@ sap.ui.define([
 
 	function formatAppVariantsEnabled(bAppVariantsMenuEnabled) {
 		return bAppVariantsMenuEnabled ? null : this.getTextResources().getText("TOOLTIP_MANAGE_APPS_TXT_DISABLED");
+	}
+
+	function formatSaveAsAppVariantsEnabled(bAppVariantSaveAsEnabled) {
+		return bAppVariantSaveAsEnabled ? null : this.getTextResources().getText("TOOLTIP_SAVE_AS_APP_VARIANT_DISABLED");
 	}
 
 	function onSaveAsPressed() {

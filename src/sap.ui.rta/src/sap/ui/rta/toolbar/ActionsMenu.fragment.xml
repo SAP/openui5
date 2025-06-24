@@ -63,6 +63,7 @@
 						enabled="{parts: ['controls>/appVariantMenu/saveAs/enabled', 'versions>/displayedVersion'], formatter: '.formatSaveAsEnabled'}"
 						press=".saveAs"
 						icon="sap-icon://copy"
+						tooltip="{path: 'controls>/appVariantMenu/saveAs/enabled', formatter: '.formatSaveAsAppVariants'}"
 						text="{i18n>BTN_SAVE_AS}" />
 				</items>
 		</MenuItem>
