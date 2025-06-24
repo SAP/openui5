@@ -220,7 +220,9 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 }
 
 /* sticky headerToolbar, infoToolbar and column headers */
-.sapMSticky .sapMListTblHeader {
+/* sapMTableTHead --> Workaround for Safari: sticky positioning on <tr> elements is not applied to children */
+.sapMSticky .sapMListTblHeader,
+.sapMSticky .sapMTableTHead {
 	position: sticky;
 }
 
@@ -237,6 +239,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 /* .sapMSticky4 denotes that only the column headers are sticky */
 /* top: 0 sticky conditions : 1st sticky elements */
 .sapMSticky4 .sapMListTblHeader,
+.sapMSticky4 .sapMTableTHead,
 .sapMSticky5 > .sapMListHdr,
 .sapMSticky6 > .sapMListInfoTBarContainer,
 .sapMSticky7 > .sapMListHdr,
@@ -245,6 +248,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 .sapMSticky10 > .sapMListInfoTBarContainer,
 .sapMSticky11 > .sapMListHdr,
 .sapMSticky12 .sapMListTblHeader,
+.sapMSticky12 .sapMTableTHead,
 .sapMSticky13 > .sapMListHdr,
 .sapMSticky14 > .sapMListInfoTBarContainer,
 .sapMSticky15 > .sapMListHdr {
@@ -255,6 +259,8 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 /* top: 2rem sticky conditions : 2nd sticky elements */
 .sapMSticky6 .sapMListTblHeader,
 .sapMSticky14 .sapMListTblHeader,
+.sapMSticky6 .sapMTableTHead,
+.sapMSticky14 .sapMTableTHead,
 .sapMSticky10 .sapMGHLI {
 	z-index: 3;
 	top: 2rem;
@@ -262,11 +268,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 /* top: 3rem sticky conditions : 2nd sticky elements */
 .sapMSticky5 .sapMListTblHeader,
+.sapMSticky5 .sapMTableTHead,
 .sapMSticky7 > .sapMListInfoTBarContainer,
 .sapMSticky9 .sapMGHLI,
 .sapMSticky11 > .sapMListInfoTBarContainer,
 .sapMSticky12 .sapMGHLI,
 .sapMSticky13 .sapMListTblHeader,
+.sapMSticky13 .sapMTableTHead,
 .sapMSticky15 > .sapMListInfoTBarContainer {
 	z-index: 3;
 	top: var(--sapElement_LineHeight);
@@ -274,6 +282,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 /* top: 5rem conditions : 3rd sticky elements */
 .sapMSticky7 .sapMListTblHeader,
+.sapMSticky7 .sapMTableTHead,
 .sapMSticky11 .sapMGHLI,
 .sapMSticky14 .sapMGHLI,
 .sapMSticky15 .sapMListTblHeader {
