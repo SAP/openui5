@@ -796,7 +796,7 @@ sap.ui.define([
 	QUnit.module("Not nullable type", {
 		beforeEach() {
 			oValueType = new StringType({}, {nullable: false});
-			oConditionsType = new ConditionsType({valueType: oValueType, operators: [OperatorName.EQ], maxConditions: 1});
+			oConditionsType = new ConditionsType({valueType: oValueType, operators: [OperatorName.EQ], maxConditions: 1, emptyAllowed: false});
 		},
 		afterEach() {
 			oConditionsType.destroy();
@@ -819,6 +819,17 @@ sap.ui.define([
 		assert.ok(oException, "exception fired if maxConditions=1 and only EQ operators");
 		assert.deepEqual(oException?.getCondition(), null, "exception condition");
 		assert.deepEqual(oException?.getConditions(), [], "exception conditions");
+
+		oConditionsType.setFormatOptions({valueType: oValueType, operators: [OperatorName.EQ], maxConditions: 1, emptyAllowed: true});
+		oException = undefined;
+
+		try {
+			oConditionsType.validateValue([]);
+		} catch (e) {
+			oException = e;
+		}
+
+		assert.notOk(oException, "No exception fired if maxConditions=1, only EQ operators but emptyAllowed=true (single-value FilterField case)");
 
 		oConditionsType.setFormatOptions({valueType: oValueType, operators: [], maxConditions: 1});
 		oException = undefined;
