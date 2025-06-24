@@ -27,7 +27,7 @@
         },
         "selector": {
             "id": "idMain1--TargetElement",
-            "idIsLocal": false
+            "idIsLocal": true
         },
         "dependentSelector": {},
         "jsOnly": false,
@@ -60,7 +60,7 @@
         },
         "selector": {
             "id": "idMain1--TargetElement",
-            "idIsLocal": false
+            "idIsLocal": true
         },
         "dependentSelector": {},
         "jsOnly": false,
@@ -93,7 +93,7 @@
         },
         "selector": {
             "id": "idMain1--TargetElement",
-            "idIsLocal": false
+            "idIsLocal": true
         },
         "dependentSelector": {},
         "jsOnly": false,
@@ -126,7 +126,7 @@
         },
         "selector": {
             "id": "idMain1--TargetElement",
-            "idIsLocal": false
+            "idIsLocal": true
         },
         "dependentSelector": {},
         "jsOnly": false,
@@ -159,7 +159,7 @@
         },
         "selector": {
             "id": "idMain1--TargetElement",
-            "idIsLocal": false
+            "idIsLocal": true
         },
         "dependentSelector": {},
         "jsOnly": false,
