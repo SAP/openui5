@@ -177,8 +177,7 @@ sap.ui.define([
 	let aAllNodes; // in preorder, does not contain nodes that are filtered out
 	let sCopyID; // the ID of the copy, needed for patching the parent with Content-ID referencing
 	let mChildrenByParentId; // no entry for leaves! Does not contain nodes that are filtered out
-	const aNewRootIDs // the IDs for a newly created root node or a copied node
-		= "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
+	let aNewRootIDs; // the IDs for a newly created root node or a copied node
 	let mNodeById; // contains all nodes incl. those filtered out
 	let iRevision;
 	let mRevisionOfAgeById;
@@ -719,6 +718,7 @@ sap.ui.define([
 	function reset() {
 		aAllNodes = aOriginalData.map((oNode) => ({...oNode}));
 		mChildrenByParentId = {};
+		aNewRootIDs = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split("");
 		mNodeById = {};
 		iRevision = 0;
 		mRevisionOfAgeById = {};
