@@ -120,10 +120,9 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	padding-left: 1rem;
 }
 
-/* 0.0625rem -> border-right width for highlight */
 .sapMListHighlight .sapMListTblHighlightCol {
-	width: 0.375rem + 0.0625rem;
-	min-width: 0.375rem + 0.0625rem;
+	width: 0.375rem;
+	min-width: 0.375rem;
 }
 
 .sapMListNavigated .sapMListTblNavigatedCol {
@@ -134,7 +133,7 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 .sapMListTblNavigatedCell {
 	padding: 0;
 	position: relative;
-	overflow: hidden;
+	overflow: visible;
 }
 
 /* mixin call for creating container content padding classes (arguments: rootContainer, contentSelector) */
@@ -526,14 +525,14 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 		right: 0;
 		z-index: 1;
 		pointer-events: none;
-		top: 1px; /* mimics outline-offset: -1px */
+		top: 0px;
 		bottom: 1px; /* mimics outline-offset: -1px */
 		border-top: @_sap_m_ListItemBase_Focus_Outline;
 		border-bottom: @_sap_m_ListItemBase_Focus_Outline;
 		margin-right: 1px; /* make the focus border clearly visible on all sides */
 	}
 
-	.sapMListTblHasPopin > &:not(.sapMGHLI) > :not(.sapMListTblCellNoData, .sapMListTblDummyCell:last-child, .sapMListTblNavigatedCell)::before {
+	.sapMListTblHasPopin > &:not(.sapMGHLI,.sapMListTblRowNoData) > ::before {
 		border-bottom: 0;
 		bottom: 0;
 	}
@@ -546,13 +545,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	& > .sapMTblFirstVisibleCell::before,
 	& + .sapMListTblSubRow > .sapMTblFirstVisibleCell::before {
 		border-left: @_sap_m_ListItemBase_Focus_Outline;
-		margin-left: 1px; /* mimics outline-offset */
+		margin-left: 1px !important; /* mimics outline-offset */
 	}
 
 	& > .sapMTblLastVisibleCell::before,
 	& + .sapMListTblSubRow > .sapMTblLastVisibleCell::before {
 		border-right: @_sap_m_ListItemBase_Focus_Outline;
-		margin-right: 1px; /* mimics outline-offset */
+		margin-right: 1px !important; /* mimics outline-offset */
 	}
 }
 
