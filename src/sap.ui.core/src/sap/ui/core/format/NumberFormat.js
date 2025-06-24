@@ -339,10 +339,14 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -371,6 +375,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.FLOAT);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultFloatFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -400,10 +406,14 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled (show the grouping separators)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled
+	 *   (show the grouping separators).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -432,6 +442,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.INTEGER);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultIntegerFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -503,10 +515,14 @@ sap.ui.define([
 	 *  with <code>undefined</code> which means the scale factor is selected automatically for each number being formatted.
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -576,6 +592,7 @@ sap.ui.define([
 		// oFormatOptions.trailingCurrencyCode = false
 		oFormat.oFormatOptions.trailingCurrencyCode = bShowTrailingCurrencyCode;
 		oFormat._defineCustomCurrencySymbols();
+		oFormat.checkGroupingFormatOptions();
 
 		return oFormat;
 	};
@@ -606,10 +623,14 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -658,6 +679,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.UNIT);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultUnitFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -687,10 +710,14 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.showScale=true] @since 1.40 specifies whether the scale factor is shown in the formatted number. This option takes effect only when the 'style' options is set to either 'short' or 'long'.
 	 * @param {int} [oFormatOptions.precision] defines the number precision, number of decimals is calculated dependent on the integer digits
 	 * @param {string} [oFormatOptions.pattern] CLDR number pattern which is used to format the number
-	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled (show the grouping separators)
+	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
+	 *   (show the grouping separators).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
-	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three
+	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits, the default is three.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits, in case it is different from the grouping size (e.g. indian grouping)
 	 * @param {string} [oFormatOptions.decimalSeparator] defines the character used as decimal separator.
 	 *   Note: <code>decimalSeparator</code> must always be different from <code>groupingSeparator</code>.
@@ -720,6 +747,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -2413,6 +2442,19 @@ sap.ui.define([
 		}
 
 		return true;
+	};
+
+	/**
+	 * Checks whether grouping will be enabled for this instance.
+	 *
+	 * @private
+	 */
+	NumberFormat.prototype.checkGroupingFormatOptions = function () {
+		if (this.oFormatOptions.groupingEnabled && this.oFormatOptions.groupingSize <= 0) {
+			Log.warning("Grouping is disabled due to non-positive groupingSize set to '"
+				+ this.oFormatOptions.groupingSize  + "'.");
+			this.oFormatOptions.groupingEnabled = false;
+		}
 	};
 
 	/**
