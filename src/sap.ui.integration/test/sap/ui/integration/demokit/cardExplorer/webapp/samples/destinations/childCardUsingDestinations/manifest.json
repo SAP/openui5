@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.ui.integration.sample.scp",
+		"id": "sap.ui.integration.sample.childCardUsingDestinations",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.integration.sample.scp.View",
+			"viewName": "sap.ui.integration.sample.childCardUsingDestinations.View",
 			"type": "XML",
 			"async": true
 		},
@@ -17,8 +17,6 @@
 				"sap.ui.core": {},
 				"sap.ui.integration": {}
 			}
-		},
-		"config": {
 		}
 	}
 }

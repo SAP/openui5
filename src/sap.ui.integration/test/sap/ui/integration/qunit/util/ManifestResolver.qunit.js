@@ -3312,10 +3312,12 @@ sap.ui.define([
 		};
 
 		oCard.setHost(this.oHost);
-		oCard.startManifestProcessing();
 
 		nextCardReadyEvent(oCard).then(() => {
 			oCard.triggerAction(oMainCardManifest["sap.card"].content.item.actions[0]);
 		});
+
+		// Act
+		oCard.startManifestProcessing();
 	});
 });

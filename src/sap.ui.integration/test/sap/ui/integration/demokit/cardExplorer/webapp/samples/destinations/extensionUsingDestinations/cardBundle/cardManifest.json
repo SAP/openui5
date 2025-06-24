@@ -46,7 +46,7 @@
 			}
 		},
 		"header": {
-			"title": "Destinations sample",
+			"title": "Destinations Sample",
 			"subTitle": "First {parameters>/maxItems/value} products from destination 'Northwind'",
 			"status": {
 				"text": "top {parameters>/maxItems/value}"

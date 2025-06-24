@@ -6,20 +6,28 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Destinations</title>
 	<link rel="icon" href="../images/favicon.ico" type="image/x-icon" />
-
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_horizon"
 			data-sap-ui-resourceroots='{
-				"sap.ui.integration.sample.scp": "./"
+				"sap.ui.integration.sample.childCardUsingDestinations": "./"
 			}'
-			data-sap-ui-oninit="module:sap/ui/integration/sample/scp/script"
+			data-sap-ui-oninit="module:sap/ui/core/ComponentSupport"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-async="true">
 	</script>
+	<script src="./editorOutput.js"></script>
+	<style>
+		.sapFGridContainer {
+			padding: 3rem;
+		}
+	</style>
 </head>
 
 <body class="sapUiBody">
-	<div id="content"></div>
-</body>
+	<div data-sap-ui-component
+		data-name="sap.ui.integration.sample.childCardUsingDestinations"
+		data-id="container"
+		data-settings='{"id" : "destinations"}'></div>
+	</body>
 </html>

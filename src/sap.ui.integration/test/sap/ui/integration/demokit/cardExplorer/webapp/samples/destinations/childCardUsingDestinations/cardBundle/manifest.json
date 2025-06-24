@@ -1,10 +1,10 @@
 {
-	"_version": "1.20.0",
+	"_version": "1.73.1",
 	"sap.app": {
-		"id": "card.explorer.sample.scp.destinations",
+		"id": "card.explorer.sample.childCardUsingDestinations.mainCard",
 		"type": "card",
-		"title": "Sample of Destinations",
-		"subTitle": "Sample of Destinations",
+		"title": "Sample of destinations",
+		"subTitle": "Sample of destinations",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -23,7 +23,7 @@
 		"type": "List",
 		"data": {
 			"request": {
-				"url": "{{destinations.Northwind}}/Products",
+				"url": "{{destinations.myDestination}}/Products",
 				"parameters": {
 					"$format": "json",
 					"$top": "{parameters>/maxItems/value}",
@@ -33,9 +33,11 @@
 		},
 		"configuration": {
 			"destinations": {
-				"Northwind": {
-					"name": "Northwind",
-					"defaultUrl": "/destinations/northwind/V3/Northwind/Northwind.svc"
+				"myDestination": {
+					"name": "Northwind"
+				},
+				"myDestinationForImages": {
+					"name": "NorthwindImages"
 				}
 			},
 			"parameters": {
@@ -48,8 +50,8 @@
 			}
 		},
 		"header": {
-			"title": "SAP Cloud Platform Destination",
-			"subTitle": "First {parameters>/maxItems/value} products from destination Northwind",
+			"title": "Destinations Sample",
+			"subTitle": "First {parameters>/maxItems/value} products from destination 'Northwind'",
 			"status": {
 				"text": "top {parameters>/maxItems/value}"
 			}
@@ -61,7 +63,24 @@
 			"maxItems": "{parameters>/maxItems/value}",
 			"item": {
 				"title": "{ProductName}",
-				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}"
+				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
+				"actionsStrip": [
+					{
+						"type": "Button",
+						"text": "Details",
+						"actions": [
+							{
+								"type": "ShowCard",
+								"parameters": {
+									"manifest": "./childCardManifest.json",
+									"parameters": {
+										"ProductID": "{ProductID}"
+									}
+								}
+							}
+						]
+					}
+				]
 			}
 		}
 	}
