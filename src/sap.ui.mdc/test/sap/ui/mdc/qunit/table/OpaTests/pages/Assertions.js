@@ -828,6 +828,20 @@ sap.ui.define([
 			});
 		},
 
+		iShouldNotSeeColumnMenuSettings: function() {
+			return Util.waitForColumnMenu.call(this, {
+				success: function(oColumnMenu) {
+					this.waitFor({
+						controlType: "sap.m.Popover",
+						success: function(aPopovers) {
+							const oPopover = aPopovers[0];
+							Opa5.assert.notOk(oPopover.getEndButton(), "Column menu settings does not have settings button");
+						}
+					});
+				}
+			});
+		},
+
 		/**
 		 * Checks if sorting configuration of the column matches the specified sorting settings.
 		 *
