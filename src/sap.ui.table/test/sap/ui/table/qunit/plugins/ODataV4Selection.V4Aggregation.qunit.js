@@ -3,14 +3,12 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/ODataV4Selection",
 	"sap/ui/table/plugins/V4Aggregation",
 	"sap/ui/core/IconPool"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
-	FixedRowMode,
 	ODataV4Selection,
 	V4Aggregation,
 	IconPool
@@ -18,59 +16,21 @@ sap.ui.define([
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
+		...TableQUnitUtils.createSettingsForDataAggregation(),
 		dependents: [
 			new ODataV4Selection(),
 			new V4Aggregation()
-		],
-		rows: {
-			path: "/BusinessPartners",
-			parameters: {
-				$count: false,
-				$orderby: "Country desc,Region desc,Segment,AccountResponsible",
-				$$aggregation: {
-					aggregate: {
-						SalesAmountLocalCurrency: {
-							grandTotal: true,
-							subtotals: true,
-							unit: "LocalCurrency"
-						},
-						SalesNumber: {}
-					},
-					grandTotalAtBottomOnly: true,
-					subtotalsAtBottomOnly: true,
-					group: {
-						AccountResponsible: {},
-						Country_Code: {additionally: ["Country"]},
-						Region: {},
-						Segment: {}
-					},
-					groupLevels: ["Country_Code", "Region", "Segment"]
-				}
-			},
-			suspended: true
-		},
-		columns: [
-			TableQUnitUtils.createTextColumn({label: "Country", text: "Country", bind: true}),
-			TableQUnitUtils.createTextColumn({label: "Region", text: "Region", bind: true}),
-			TableQUnitUtils.createTextColumn({label: "Local Currency", text: "LocalCurrency", bind: true})
-		],
-		models: TableQUnitUtils.createModelForDataAggregationService(),
-		rowMode: new FixedRowMode({
-			rowCount: 5,
-			fixedBottomRowCount: 1
-		}),
-		threshold: 0
+		]
 	});
 
 	QUnit.module("Selection API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
+			this.oTable = TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
-			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -83,18 +43,18 @@ sap.ui.define([
 
 		assert.deepEqual(this.oSelectionPlugin.getSelectedContexts(), [], "No contexts selected");
 
-		aRows[2].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(6);
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(9);
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
-		this.oTable.setFirstVisibleRow(11);
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
+		this.oTable.setFirstVisibleRow(12);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		aRows[2].getBindingContext().setSelected(true);
@@ -114,18 +74,18 @@ sap.ui.define([
 		assert.strictEqual(this.oSelectionPlugin.isSelected(aRows[4]), false, "Row 5 is not selected (empty row)");
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 0, "Selected contexts");
 
-		aRows[2].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(6);
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(9);
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
-		this.oTable.setFirstVisibleRow(11);
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
+		this.oTable.setFirstVisibleRow(12);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		this.oSelectionPlugin.setSelected(aRows[2], true);
@@ -140,18 +100,18 @@ sap.ui.define([
 	QUnit.test("#clearSelection", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		aRows[2].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(6);
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(9);
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
-		this.oTable.setFirstVisibleRow(11);
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
+		this.oTable.setFirstVisibleRow(12);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		this.oSelectionPlugin.setSelected(aRows[2], true);
@@ -166,18 +126,18 @@ sap.ui.define([
 	QUnit.test("#onHeaderSelectorPress", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		aRows[2].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(6);
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(9);
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
-		this.oTable.setFirstVisibleRow(12);
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
+		this.oTable.setFirstVisibleRow(13);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		this.oSelectionPlugin.onHeaderSelectorPress();
@@ -188,13 +148,13 @@ sap.ui.define([
 		assert.ok(aRows[2].getBindingContext() === this.oSelectionPlugin.getSelectedContexts()[1], "2nd selected context is related to correct row");
 
 		this.oSelectionChangeHandler.resetHistory();
-		aRows[0].collapse();
+		aRows[0].getBindingContext().collapse();
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Node collapsed: selectionChange event");
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 2, "Node collapse: Selected contexts");
 
 		this.oSelectionChangeHandler.resetHistory();
-		aRows[0].expand();
+		await aRows[1].getBindingContext().expand();
 		await this.oTable.qunit.whenRenderingFinished();
 		assert.equal(this.oSelectionChangeHandler.callCount, 0, "Node expanded: selectionChange event");
 		assert.equal(this.oSelectionPlugin.getSelectedContexts().length, 2, "Node expanded: Selected contexts");
@@ -202,28 +162,26 @@ sap.ui.define([
 
 	QUnit.module("Binding selection API", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
+			this.oTable = TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
 			this.oSelectionChangeHandler = this.spy();
 			this.oSelectionPlugin.attachSelectionChange(this.oSelectionChangeHandler);
 
-			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
-
-			this.oTable.getRows()[2].expand();
-			await this.oTable.qunit.whenNextRenderingFinished();
+			await this.oTable.getRows()[3].getBindingContext().expand();
+			await this.oTable.qunit.whenRenderingFinished();
 			this.oTable.setFirstVisibleRow(6);
 			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
-			this.oTable.getRows()[3].expand();
-			await this.oTable.qunit.whenNextRenderingFinished();
+			await this.oTable.getRows()[4].getBindingContext().expand();
+			await this.oTable.qunit.whenRenderingFinished();
 			this.oTable.setFirstVisibleRow(9);
 			await this.oTable.qunit.whenRenderingFinished();
-			this.oTable.getRows()[3].expand();
-			await this.oTable.qunit.whenNextRenderingFinished();
-			this.oTable.setFirstVisibleRow(11);
+			await this.oTable.getRows()[4].getBindingContext().expand();
+			await this.oTable.qunit.whenRenderingFinished();
+			this.oTable.setFirstVisibleRow(12);
 			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -285,11 +243,10 @@ sap.ui.define([
 
 	QUnit.module("Header selector icon", {
 		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable(function(oTable) {
+			this.oTable = TableQUnitUtils.createTable(function(oTable) {
 				oTable.getBinding().resume();
 			});
 			this.oSelectionPlugin = this.oTable.getDependents()[0];
-			await this.oTable.qunit.whenBindingChange();
 			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -320,18 +277,18 @@ sap.ui.define([
 	QUnit.test("All contexts selected", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		aRows[2].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(6);
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(9);
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
-		this.oTable.setFirstVisibleRow(11);
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
+		this.oTable.setFirstVisibleRow(12);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		(await TableUtils.loadContexts(this.oTable.getBinding(), 0, this.oTable.getBinding().getLength())).filter((oContext) => {
@@ -357,13 +314,13 @@ sap.ui.define([
 			title: TableUtils.getResourceText("TBL_SELECT_ALL")
 		});
 
-		aRows[2].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[3].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(6);
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(9);
 		await this.oTable.qunit.whenRenderingFinished();
 
@@ -372,22 +329,14 @@ sap.ui.define([
 			title: TableUtils.getResourceText("TBL_SELECT_ALL")
 		});
 
-		aRows[3].expand();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		await aRows[4].getBindingContext().expand();
+		await this.oTable.qunit.whenRenderingFinished();
 		this.oTable.setFirstVisibleRow(12);
 		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.checkboxIcon),
 			title: TableUtils.getResourceText("TBL_SELECT_ALL")
-		});
-
-		this.oSelectionPlugin.setSelected(aRows[1], true);
-		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
-
-		this.assertHeaderSelector({
-			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
-			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
 		});
 
 		this.oSelectionPlugin.setSelected(aRows[2], true);
@@ -398,8 +347,16 @@ sap.ui.define([
 			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
 		});
 
-		aRows[0].collapse();
-		await this.oTable.qunit.whenNextRenderingFinished();
+		this.oSelectionPlugin.setSelected(aRows[3], true);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+
+		this.assertHeaderSelector({
+			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),
+			title: TableUtils.getResourceText("TBL_DESELECT_ALL")
+		});
+
+		aRows[1].getBindingContext().collapse();
+		await this.oTable.qunit.whenRenderingFinished();
 
 		this.assertHeaderSelector({
 			src: IconPool.getIconURI(TableUtils.ThemeParameters.clearSelectionIcon),

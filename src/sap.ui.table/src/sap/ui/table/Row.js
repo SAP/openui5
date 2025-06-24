@@ -366,10 +366,6 @@ sap.ui.define([
 		this._updateTableCells(oTable);
 	};
 
-	Row.prototype.getRowBindingContext = function() {
-		return state(this).context;
-	};
-
 	Row.prototype.setBindingContext = function(oContext, sModelName) {
 		return Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
 	};
@@ -380,7 +376,7 @@ sap.ui.define([
 		const iAbsoluteRowIndex = this.getIndex();
 		const bHasTableCellUpdate = !!oTable._updateTableCell;
 		let oCell; let $Td; let bHasCellUpdate;
-		const oBindingContext = this.getRowBindingContext();
+		const oBindingContext = TableUtils.getBindingContextOfRow(this);
 
 		for (let i = 0; i < aCells.length; i++) {
 			oCell = aCells[i];
@@ -403,7 +399,14 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype.getType = function() {
-		return state(this).type;
+		const sType = state(this).type;
+
+		if (sType === RowType.GroupHeader && TableUtils.Grouping.isInTreeMode(this.getTable())) {
+			// In tree mode, the row type GroupHeader is ignored and treated like row type Standard.
+			return RowType.Standard;
+		}
+
+		return sType;
 	};
 
 	/**

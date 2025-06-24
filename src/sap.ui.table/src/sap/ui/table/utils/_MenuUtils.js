@@ -51,7 +51,7 @@ sap.ui.define([], function() {
 						columnIndex: oCellInfo.columnIndex,
 						columnId: oRowColCell.column.getId(),
 						cellControl: oRowColCell.cell,
-						rowBindingContext: oRowColCell.row.getRowBindingContext(),
+						rowBindingContext: MenuUtils.TableUtils.getBindingContextOfRow(oRowColCell.row),
 						cellDomRef: oCellInfo.cell
 					});
 
@@ -100,7 +100,7 @@ sap.ui.define([], function() {
 		_openCustomContentCellContextMenu: function(oTable, oContextMenu, oCellInfo, oEvent) {
 			const oRow = oTable.getRows()[oCellInfo.rowIndex];
 
-			oContextMenu.setBindingContext(oRow.getRowBindingContext(), oTable.getBindingInfo("rows").model);
+			oContextMenu.setBindingContext(MenuUtils.TableUtils.getBindingContextOfRow(oRow), oTable.getBindingInfo("rows").model);
 
 			const bExecuteDefault = oTable.fireBeforeOpenContextMenu({
 				rowIndex: oRow.getIndex(),

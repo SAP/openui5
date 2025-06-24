@@ -15,8 +15,6 @@ sap.ui.define([
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/base/Object",
-	"sap/base/i18n/ResourceBundle",
-	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/jquery",
 	// provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
 	"sap/ui/dom/jquery/Selectors"
@@ -35,8 +33,6 @@ sap.ui.define([
 	InvisibleMessage,
 	MessageType,
 	BaseObject,
-	ResourceBundle,
-	Localization,
 	jQuery
 ) {
 	"use strict";
@@ -1394,6 +1390,43 @@ sap.ui.define([
 		oPos = TableUtils.getEventPosition(oEvent, oTable);
 		assert.equal(oPos.x, x, "TouchEvent (wrapped) - X");
 		assert.equal(oPos.y, y, "TouchEvent (wrapped) - Y");
+	});
+
+	QUnit.test("getBindingContextOfRow", async function(assert) {
+		const oTable = TableQUnitUtils.createTable({
+			columns: TableQUnitUtils.createTextColumn(),
+			rows: "{/}",
+			models: {
+				undefined: TableQUnitUtils.createJSONModelWithEmptyRows(3),
+				myModel: TableQUnitUtils.createJSONModelWithEmptyRows(3)
+			},
+			rowMode: new FixedRowMode({rowCount: 3})
+		});
+		await oTable.qunit.whenRenderingFinished();
+
+		const aRows = oTable.getRows();
+
+		assert.strictEqual(TableUtils.getBindingContextOfRow(aRows[0]), aRows[0].getBindingContext(), "Unnamed model");
+
+		oTable.bindRows({path: "/", model: "myModel"});
+		await oTable.qunit.whenRenderingFinished();
+		assert.strictEqual(TableUtils.getBindingContextOfRow(aRows[0]), aRows[0].getBindingContext("myModel"), "Named model");
+
+		// Returns the binding context of the unnamed model if the row is not a child of the table.
+		oTable.getRowMode().setRowCount(2);
+		await oTable.qunit.whenRenderingFinished();
+		assert.strictEqual(TableUtils.getBindingContextOfRow(aRows[2]), aRows[2].getBindingContext(), "Row was removed from the aggregation");
+
+		// Returns the binding context of the unnamed model if the rows aggregation is not bound.
+		oTable.setShowNoData(false);
+		oTable.unbindRows();
+		await oTable.qunit.whenRenderingFinished();
+		assert.strictEqual(TableUtils.getBindingContextOfRow(aRows[0]), aRows[0].getBindingContext(), "Table is not bound");
+
+		assert.throws(() => { TableUtils.getBindingContextOfRow({}); }, "Invalid row passed");
+		assert.throws(() => { TableUtils.getBindingContextOfRow(); }, "No row passed");
+
+		oTable.destroy();
 	});
 
 	QUnit.module("Resize Handler", {

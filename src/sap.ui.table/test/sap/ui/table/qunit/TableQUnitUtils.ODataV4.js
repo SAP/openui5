@@ -2,20 +2,25 @@
 
 sap.ui.define([
 	"./TableQUnitUtils",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
-	"sap/ui/core/sample/odata/v4/DataAggregation/SandboxModel"
+	"sap/ui/core/sample/odata/v4/DataAggregation/SandboxModel",
+	"sap/base/util/merge"
 ], function(
 	TableQUnitUtils,
+	FixedRowMode,
 	ODataModel,
 	TestUtils,
 	HierarchySandboxModel,
-	DataAggregationSandboxModel
+	DataAggregationSandboxModel,
+	merge
 ) {
 	"use strict";
 
 	let iCount;
+	let oCurrentModel;
 
 	function createData(iStartIndex, iLength) {
 		const aData = [];
@@ -96,6 +101,8 @@ sap.ui.define([
 				}
 			}
 		}]);
+
+		return oSandbox;
 	}
 
 	const TableQUnitUtilsODataV4 = Object.assign({}, TableQUnitUtils);
@@ -114,101 +121,154 @@ sap.ui.define([
 	 * @param {object} [mOptions.modelParameters] Parameters that are passed to the model constructor
 	 * @returns {sap.ui.model.odata.v4.ODataModel} The created ODataModel
 	 */
-	TableQUnitUtilsODataV4.createModelForListDataService = function(mOptions) {
+	TableQUnitUtilsODataV4.createModelForList = function(mOptions) {
 		mOptions = {
 			paging: false,
 			count: 400,
 			...mOptions
 		};
 		iCount = mOptions.count;
+		oCurrentModel?.destroy();
 
 		const oSandbox = setupODataV4Server();
-		const oModel = new ODataModel({
+
+		oCurrentModel = new ODataModel({
 			serviceUrl: mOptions.paging ? "/MyServiceWithPaging/" : "/MyService/",
 			...mOptions.modelParameters
 		});
 
-		oModel.destroy = function() {
+		oCurrentModel.destroy = function() {
 			oSandbox.restore();
+			oCurrentModel = null;
 			return ODataModel.prototype.destroy.apply(this, arguments);
 		};
 
-		return oModel;
+		return oCurrentModel;
 	};
 
 	/**
-	 * Creates an ODataModel for a service that provides hierarchical data.
+	 * Creates the default settings for a table with list data. The settings include the rows binding info, column instances, the ODataV4 model
+	 * instance, and further settings that are required to generate requests for which mock data is available.
 	 *
-	 * The BindingInfo should be as follows:
-	 * <pre><code>
-	 * {
-	 *   path: '/EMPLOYEES',
-	 *	 parameters: {$count: false, $orderby: 'AGE', $$aggregation: {hierarchyQualifier: "OrgChart", expandTo: 3}},
-	 *	 suspended: true
-	 * }
-	 * </code></pre>
+	 * The binding is initially suspended and should be resumed after the table is created.
 	 *
-	 * The Binding is initially suspended and should be resumed after the table is created.
-	 *
-	 * @returns {sap.ui.model.odata.v4.ODataModel} The created ODataModel
+	 * @param {object} [mOptions] Configuration options
+	 * @param {boolean} [mOptions.paging=false] Whether to enable service-side paging
+	 * @param {int} [mOptions.count=400] The number of entries the service returns
+	 * @param {object} [mOptions.modelParameters] Parameters that are passed to the model constructor
+	 * @param {boolean} [mOptions.suspended=false] Whether the binding should be suspended initially
+	 * @param {object} [mOptions.tableSettings] Table settings to be merged with the default settings
+	 * @returns {object} The default settings for the table
 	 */
-	TableQUnitUtilsODataV4.createModelForHierarchyDataService = function() {
-		return new HierarchySandboxModel({
+	TableQUnitUtilsODataV4.createSettingsForList = function(mOptions = {}) {
+		return merge({
+			rows: {
+				path: "/Products",
+				parameters: {
+					$count: true
+				},
+				suspended: mOptions.suspended === true
+			},
+			columns: [
+				TableQUnitUtils.createTextColumn({label: "Name", text: "Name", bind: true})
+			],
+			models: this.createModelForList(mOptions)
+		}, mOptions.tableSettings);
+	};
+
+	/**
+	 * Creates the default settings for a table with hierarchical data. The settings include the rows binding info, column instances, the ODataV4
+	 * model instance, and further settings that are required to generate requests for which mock data is available.
+	 *
+	 * The binding is initially suspended and should be resumed after the table is created.
+	 *
+	 * @param {object} [mTableSettings] Table settings to be merged with the default settings
+	 * @returns {object} The default settings for the table
+	 */
+	TableQUnitUtilsODataV4.createSettingsForHierarchy = function(mTableSettings) {
+		oCurrentModel?.restoreSandbox?.();
+		oCurrentModel?.destroy();
+		oCurrentModel = new HierarchySandboxModel({
 			serviceUrl: "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 			autoExpandSelect: true
 		});
+
+		return merge({
+			rows: {
+				path: "/EMPLOYEES",
+				parameters: {
+					$count: false,
+					$orderby: "AGE",
+					$$aggregation: {
+						hierarchyQualifier: "OrgChart",
+						expandTo: 3
+					}
+				},
+				suspended: true
+			},
+			columns: [
+				TableQUnitUtils.createTextColumn({label: "ID", text: "ID", bind: true}),
+				TableQUnitUtils.createTextColumn({label: "Name", text: "Name", bind: true}),
+				TableQUnitUtils.createTextColumn({label: "Age", text: "AGE", bind: true}),
+				TableQUnitUtils.createTextColumn({label: "Manager's ID", text: "MANAGER_ID", bind: true})
+			],
+			models: oCurrentModel
+		}, mTableSettings);
 	};
 
 	/**
-	 * Creates an ODataModel for a service that provides data aggregation.
+	 * Creates the default settings for a table with aggregated data. The settings include the rows binding info, column instances, the ODataV4 model
+	 * instance, and further settings that are required to generate requests for which mock data is available.
 	 *
-	 * If the V4Aggregation plugin is applied, the BindingInfo should be as follows:
-	 * <pre><code>
-	 * {
-	 *   path: '/BusinessPartners',
-	 *   parameters: {
-	 *     $count: false,
-	 *     $orderby: 'Country desc,Region desc,Segment,AccountResponsible'
-	 *   },
-	 *   suspended: true
-	 * }
-	 * </code></pre>
+	 * The binding is initially suspended and should be resumed after the table is created.
 	 *
-	 * Otherwise:
-	 * <pre><code>
-	 * {
-	 *   path: '/BusinessPartners',
-	 *   parameters: {
-	 *     $count: false,
-	 *     $orderby: 'Country desc,Region desc,Segment,AccountResponsible',
-	 *     $$aggregation: {
-	 *       aggregate: {
-	 *         SalesAmountLocalCurrency: {
-	 *           grandTotal: true,
-	 *           subtotals: true,
-	 *           unit: "LocalCurrency"
-	 *         },
-	 *         SalesNumber: {}
-	 *       },
-	 *       group: {
-	 *         AccountResponsible: {},
-	 *         Country_Code: {additionally: ["Country"]}
-	 *       },
-	 *       groupLevels: ["Country_Code", "Region", "Segment"]
-	 *     }
-	 *   },
-	 *   suspended: true
-	 * }
-	 * </code></pre>
-	 *
-	 * The Binding is initially suspended and should be resumed after the table is created.
-	 *
-	 * @returns {sap.ui.model.odata.v4.ODataModel} The created ODataModel
+	 * @param {object} [mTableSettings] Table settings to be merged with the default settings
+	 * @returns {object} The default settings for the table
 	 */
-	TableQUnitUtilsODataV4.createModelForDataAggregationService = function() {
-		return new DataAggregationSandboxModel({
+	TableQUnitUtilsODataV4.createSettingsForDataAggregation = function(mTableSettings) {
+		oCurrentModel?.restoreSandbox?.();
+		oCurrentModel?.destroy();
+		oCurrentModel = new DataAggregationSandboxModel({
 			serviceUrl: "/odata/v4/sap.fe.managepartners.ManagePartnersService/"
 		});
+
+		return merge({
+			rows: {
+				path: "/BusinessPartners",
+				parameters: {
+					$count: false,
+					$orderby: "Country desc,Region desc,Segment,AccountResponsible",
+					$$aggregation: {
+						aggregate: {
+							SalesAmountLocalCurrency: {
+								grandTotal: true,
+								subtotals: true,
+								unit: "LocalCurrency"
+							},
+							SalesNumber: {}
+						},
+						group: {
+							AccountResponsible: {},
+							Country_Code: {additionally: ["Country"]}
+						},
+						groupLevels: ["Country_Code", "Region", "Segment"],
+						grandTotalAtBottomOnly: false,
+						subtotalsAtBottomOnly: false
+					}
+				},
+				suspended: true
+			},
+			columns: [
+				TableQUnitUtils.createTextColumn({label: "Country", text: "Country", bind: true}),
+				TableQUnitUtils.createTextColumn({label: "Region", text: "Region", bind: true}),
+				TableQUnitUtils.createTextColumn({label: "Local Currency", text: "LocalCurrency", bind: true})
+			],
+			rowMode: new FixedRowMode({
+				rowCount: 5
+			}),
+			threshold: 0,
+			models: oCurrentModel
+		}, mTableSettings);
 	};
 
 	return TableQUnitUtilsODataV4;

@@ -37,29 +37,35 @@
 <script>
 	sap.ui.require([
 		"sap/ui/table/Table",
+		"sap/ui/table/TreeTable",
 		"sap/ui/table/Column",
+		"sap/ui/table/plugins/V4Aggregation",
 		"sap/ui/table/plugins/ODataV4Selection",
 		"sap/m/OverflowToolbar",
 		"sap/m/Title",
 		"sap/m/ToggleButton",
 		"sap/m/Text",
+		"sap/m/HBox",
 		"sap/ui/table/qunit/TableQUnitUtils.ODataV4"
 	], function(
 		Table,
+		TreeTable,
 		Column,
+		V4Aggregation,
 		ODataV4Selection,
 		OverflowToolbar,
 		Title,
 		ToggleButton,
 		Text,
+		HBox,
 		TableQUnitUtils
 	) {
 		const oTable = new Table({
-			...TableQUnitUtils.createSettingsForList(),
+			...TableQUnitUtils.createSettingsForHierarchy(),
 			extension: [
 				new OverflowToolbar({
 					content: [
-						new Title({text: "Products (count: {headerContext>$count})"})
+						new Title({text: "Products"})
 					]
 				})
 			],
@@ -67,13 +73,11 @@
 			enableBusyIndicator: true,
 			busyIndicatorDelay: 0,
 			dependents: [
+				new V4Aggregation(),
 				new ODataV4Selection({enableNotification: true})
 			]
 		});
 		window.oTable = oTable;
-
-		oTable.setModel(oTable.getModel(), "headerContext");
-		oTable.setBindingContext(oTable.getBinding().getHeaderContext(), "headerContext");
 
 		TABLESETTINGS.init(oTable, function(oButton) {
 			let oToolbar = oTable.getExtension()[0];
@@ -86,12 +90,43 @@
 			oToolbar.addContent(oButton);
 		});
 
-		oTable.placeAt("content");
+		oTable.getBinding().resume();
+		//oTable.placeAt("content");
+
+		const oTreeTable = new TreeTable({
+			...TableQUnitUtils.createSettingsForHierarchy(),
+			extension: [
+				new OverflowToolbar({
+					content: [
+						new Title({text: "Products (TreeTable)"})
+					]
+				})
+			],
+			rowMode: "Auto",
+			enableBusyIndicator: true,
+			busyIndicatorDelay: 0,
+			dependents: [
+				new ODataV4Selection({enableNotification: true})
+			]
+		});
+		window.oTreeTable = oTreeTable;
+
+		oTreeTable._oProxy._bEnableV4 = true;
+		oTreeTable.getBinding().resume();
+
+		new HBox({
+			items: [
+				oTable,
+				oTreeTable
+			],
+			height: "100%",
+			gap: "1rem"
+		}).placeAt("content");
 	});
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCozy">
-<h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.ui.model.odata.v4.ODataModel</code></h1>
+<h1 id="header">Test Page for <code>sap.ui.table.Table</code> with <code>sap.ui.model.odata.v4.ODataModel (Hierarchy)</code></h1>
 <div id="content"></div>
 </body>
 </html>
