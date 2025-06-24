@@ -381,11 +381,14 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (grouping separators are shown)
+	 *   (grouping separators are shown).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
+	 *   is <code>3</code>.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
 	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -434,6 +437,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.FLOAT);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultFloatFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -474,11 +479,14 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=false] defines whether grouping is enabled
-	 *   (grouping separators are shown)
+	 *   (grouping separators are shown).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
+	 *   is <code>3</code>.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.maxFractionDigits=0] defines the maximum number of decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
 	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -527,6 +535,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.INTEGER);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultIntegerFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -610,11 +620,14 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (grouping separators are shown)
+	 *   (grouping separators are shown).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
+	 *   is <code>3</code>.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
 	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -698,6 +711,7 @@ sap.ui.define([
 		// oFormatOptions.trailingCurrencyCode = false
 		oFormat.oFormatOptions.trailingCurrencyCode = bShowTrailingCurrencyCode;
 		oFormat._defineCustomCurrencySymbols();
+		oFormat.checkGroupingFormatOptions();
 
 		return oFormat;
 	};
@@ -738,11 +752,14 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (grouping separators are shown)
+	 *   (grouping separators are shown).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
 	 *   is <code>3</code>. It must be a positive number.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
 	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -806,6 +823,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.UNIT);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultUnitFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -835,11 +854,14 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.groupingBaseSize=3] defines the grouping base size in digits if
 	 *   it is different from the grouping size (e.g. Indian grouping)
 	 * @param {boolean} [oFormatOptions.groupingEnabled=true] defines whether grouping is enabled
-	 *   (grouping separators are shown)
+	 *   (grouping separators are shown).
+	 *   <b>Note:</b> Grouping is disabled if the <code>groupingSize</code> format option is set to
+	 *   a non-positive value.
 	 * @param {string} [oFormatOptions.groupingSeparator] defines the character used as grouping separator.
 	 *   Note: <code>groupingSeparator</code> must always be different from <code>decimalSeparator</code>.
 	 * @param {int} [oFormatOptions.groupingSize=3] defines the grouping size in digits; the default
-	 *   is <code>3</code>. It must be a positive number.
+	 *   is <code>3</code>.
+	 *   <b>Note:</b> If this format option is set to a non-positive value, grouping will be disabled entirely.
 	 * @param {int} [oFormatOptions.maxFractionDigits=99] defines the maximum number of decimal digits
 	 * @param {int} [oFormatOptions.maxIntegerDigits=99] defines the maximum number of non-decimal digits.
 	 *   If the number exceeds this maximum, e.g. 1e+120, "?" characters are shown instead of digits.
@@ -889,6 +911,8 @@ sap.ui.define([
 			oLocaleFormatOptions = this.getLocaleFormatOptions(oFormat.oLocaleData, mNumberType.PERCENT);
 
 		oFormat.oFormatOptions = extend({}, this.oDefaultPercentFormat, oLocaleFormatOptions, oFormat.oOriginalFormatOptions);
+		oFormat.checkGroupingFormatOptions();
+
 		return oFormat;
 	};
 
@@ -1255,12 +1279,6 @@ sap.ui.define([
 			mUnitPatterns,
 			sLookupMeasure,
 			bValueIsNullOrUndefined = vValue === undefined || vValue === null;
-
-		if (oOptions.groupingEnabled && oOptions.groupingSize <= 0) {
-			// invalid grouping size specified
-			Log.error("Grouping requires the 'groupingSize' format option to be a positive number, but it is '" + oOptions.groupingSize + "' instead.");
-			return "";
-		}
 
 		// emptyString is only relevant for the number part (vValue)
 		if (oOptions.showNumber && (vValue === oOptions.emptyString || (isNaN(vValue) && isNaN(oOptions.emptyString)))) {
@@ -2560,6 +2578,19 @@ sap.ui.define([
 		}
 
 		return true;
+	};
+
+	/**
+	 * Checks whether grouping will be enabled for this instance.
+	 *
+	 * @private
+	 */
+	NumberFormat.prototype.checkGroupingFormatOptions = function () {
+		if (this.oFormatOptions.groupingEnabled && this.oFormatOptions.groupingSize <= 0) {
+			Log.warning("Grouping is disabled due to non-positive groupingSize set to '"
+				+ this.oFormatOptions.groupingSize  + "'.");
+			this.oFormatOptions.groupingEnabled = false;
+		}
 	};
 
 	/**
