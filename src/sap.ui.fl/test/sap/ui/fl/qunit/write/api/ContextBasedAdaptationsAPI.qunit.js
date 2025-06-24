@@ -1883,6 +1883,9 @@ sap.ui.define([
 			this.oModel = new VariantModel({}, {
 				appComponent: this.oAppComponent
 			});
+			// The VariantModel initializes an empty FlexState if not already initialized
+			// Since the tests want to have a clean FlexState, we clear it here
+			FlexState.clearState();
 			this.oAppComponent.getModel = function(sName) {
 				return (sName === "$FlexVariants") ? this.oModel : undefined;
 			}.bind(this);
