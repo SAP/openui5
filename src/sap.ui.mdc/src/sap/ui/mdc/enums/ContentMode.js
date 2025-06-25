@@ -57,11 +57,11 @@ sap.ui.define(["sap/ui/base/DataType"], (DataType) => {
 		 */
 		EditForHelp: "EditForHelp",
 		/**
-		 * Edit mode for single value field that should be rendered as Select-control
+		 * Edit mode for single value field that is rendered as <code>Select</code> control
 		 * @since 1.138
 		 * @public
 		 */
-		EditSelect: "EditSelect" // TODO: name
+		EditSelect: "EditSelect"
 	};
 
 	DataType.registerEnum("sap.ui.mdc.enums.ContentMode", ContentMode);

@@ -237,8 +237,8 @@ sap.ui.define([
 	 * @param {int} iMaxConditions Maximum number of conditions of the {@link sap.ui.mdc.field.FieldBase}
 	 * @param {boolean} bMultipleLines Determines if the content type has a multiple line input
 	 * @param {string[]} aOperators Names of the operators if the <code>EditOperator</code> content mode is used
-	 * @param {boolean} bProvideDefaultValueHelp If set, a default value help should be provided.
-	 * @param {boolean} bRestrictedToFixedValues If set, the ValueHelp only allows fixed values
+	 * @param {boolean} bProvideDefaultValueHelp If set, a default value help is provided.
+	 * @param {boolean} bRestrictedToFixedValues If set, the value help only allows fixed values
 	 * @returns {sap.ui.mdc.enums.ContentMode} sContentMode A given content mode
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase

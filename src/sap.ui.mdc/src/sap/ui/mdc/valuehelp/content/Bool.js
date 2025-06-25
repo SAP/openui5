@@ -167,7 +167,7 @@ sap.ui.define([
 	/**
 	 * Adds some item to the aggregation <code>items</code>.
 	 *
-	 * <b>Note:</b> Do not add items to the <code>Bool</code> content. The items will be filled by itself
+	 * <b>Note:</b> Do not add items to the <code>Bool</code> content. The items will be filled by <code>Bool</code> itself.
 	 *
 	 * @param {sap.ui.mdc.valuehelp.content.FixedListItem} oItem The item to add; if empty, nothing is inserted
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -182,7 +182,7 @@ sap.ui.define([
 	/**
 	 * Inserts a item to the aggregation <code>items</code>.
 	 *
-	 * <b>Note:</b> Do not add items to the <code>Bool</code> content. The items will be filled by itself
+	 * <b>Note:</b> Do not add items to the <code>Bool</code> content. The items will be filled by <code>Bool</code> itself.
 	 *
 	 * @param {sap.ui.mdc.valuehelp.content.FixedListItem} oItem The item to add; if empty, nothing is inserted
 	 * @param {int} iIndex The 0-based index the item should be inserted at; for a negative value of iIndex, the item is inserted at position 0; for a value greater than the current size of the aggregation, the item is inserted at the last position
@@ -198,7 +198,7 @@ sap.ui.define([
 	/**
 	 * Destroys all the items in the aggregation <code>items</code>.
 	 *
-	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by itself
+	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by <code>Bool</code> itself.
 	 *
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
@@ -212,7 +212,7 @@ sap.ui.define([
 	/**
 	 * Removes all the controls from the aggregation <code>items</code>.
 	 *
-	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by itself
+	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by <code>Bool</code> itself.
 	 *
 	 * @returns {sap.ui.mdc.valuehelp.content.FixedListItem[]} An array of the removed elements (might be empty)
 	 * @private
@@ -226,7 +226,7 @@ sap.ui.define([
 	/**
 	 * Removes a item from the aggregation <code>items</code>.
 	 *
-	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by itself
+	 * <b>Note:</b> Do not change items to the <code>Bool</code> content. The items will be filled by <code>Bool</code> itself.
 	 *
 	 * @param {int|string|sap.ui.mdc.valuehelp.content.FixedListItem} vItem The item to remove or its index or ID
 	 * @returns {sap.ui.mdc.valuehelp.content.FixedListItem|null} The removed item or <code>null</code>
@@ -241,7 +241,7 @@ sap.ui.define([
 	/**
 	 * Sets a new value for property <code>useFirstMatch</code>.
 	 *
-	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by <code>Bool</code> itself.
 	 *
 	 * @param {boolean} [bUseFirstMatch=true] New value for property <code>useFirstMatch</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -256,7 +256,7 @@ sap.ui.define([
 	/**
 	 * Sets a new value for property <code>useAsValueHelp</code>.
 	 *
-	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by <code>Bool</code> itself.
 	 *
 	 * @param {boolean} [bUseAsValueHelp=true] New value for property <code>useAsValueHelp</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -271,7 +271,7 @@ sap.ui.define([
 	/**
 	 * Sets a new value for property <code>filterList</code>.
 	 *
-	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by <code>Bool</code> itself.
 	 *
 	 * @param {boolean} [bFilterList=false] New value for property <code>filterList</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -286,7 +286,7 @@ sap.ui.define([
 	/**
 	 * Sets a new value for property <code>caseSensitive</code>.
 	 *
-	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by <code>Bool</code> itself.
 	 *
 	 * @param {boolean} [bCaseSensitive=false] New value for property <code>caseSensitive</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -301,7 +301,7 @@ sap.ui.define([
 	/**
 	 * Sets a new value for property <code>emptyText</code>.
 	 *
-	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by <code>Bool</code> itself.
 	 *
 	 * @param {string} [sText] New value for property <code>emptyText</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -316,7 +316,7 @@ sap.ui.define([
 	/**
 	 * Sets a new value for property <code>cestrictedToFixedValues</code>.
 	 *
-	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by itself
+	 * <b>Note:</b> Do not set this property for the <code>Bool</code> content. It will be set by <code>Bool</code> itself.
 	 *
 	 * @param {boolean} [bnlyFixedValuesAllowed=false] New value for property <code>restrictedToFixedValues</code>
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
