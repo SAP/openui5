@@ -524,8 +524,18 @@ sap.ui.define([
 	 */
 	ComponentContainer.prototype.propagateProperties = function (vName) {
 		var oComponent = this.getComponentInstance();
-		if (oComponent && this.getPropagateModel()) {
-			this._propagateProperties(vName, oComponent);
+		if (oComponent) {
+			if (this.getPropagateModel()) {
+				this._propagateProperties(vName, oComponent);
+			} else {
+				const { aPropagationListeners } = this._getPropertiesToPropagate();
+				const oProperties = {
+					oModels: {},
+					oBindingContexts: {},
+					aPropagationListeners
+				};
+				this._propagateProperties(false, oComponent, oProperties, false, vName, true);
+			}
 		}
 		Control.prototype.propagateProperties.apply(this, arguments);
 	};
