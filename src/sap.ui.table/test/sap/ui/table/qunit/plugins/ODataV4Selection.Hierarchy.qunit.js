@@ -3,44 +3,21 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
 	"sap/ui/table/TreeTable",
-	"sap/ui/table/Column",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/plugins/ODataV4Selection",
-	"sap/m/Text",
 	"sap/ui/core/IconPool"
 ], function(
 	TableQUnitUtils,
 	TreeTable,
-	Column,
 	TableUtils,
 	ODataV4Selection,
-	Text,
 	IconPool
 ) {
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
 		dependents: [new ODataV4Selection()],
-		rows: {
-			path: "/EMPLOYEES",
-			parameters: {$count: false, $orderby: "AGE", $$aggregation: {hierarchyQualifier: "OrgChart", expandTo: 3}},
-			suspended: true
-		},
-		columns: [
-			new Column({
-				label: "ID",
-				template: new Text({text: "{ID}"})
-			}),
-			new Column({
-				label: "ManagerId",
-				template: new Text({text: "{MANAGER_ID}"})
-			}),
-			new Column({
-				label: "Name",
-				template: new Text({text: "{Name}"})
-			})
-		],
-		models: TableQUnitUtils.createModelForHierarchyDataService()
+		...TableQUnitUtils.createSettingsForHierarchy()
 	});
 
 	QUnit.module("Selection API", {

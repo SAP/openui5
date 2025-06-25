@@ -124,7 +124,7 @@ sap.ui.define([
 
 	function onCellFilterSelect(oEvent, {row: oRow, column: oColumn}) {
 		const oTable = this.getTable();
-		const oRowContext = oRow.getRowBindingContext();
+		const oRowContext = TableUtils.getBindingContextOfRow(oRow);
 		const sFilterProperty = oColumn.getFilterProperty();
 		let sFilterValue = oRowContext.getProperty(sFilterProperty);
 

@@ -332,13 +332,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @inheritDoc
-	 */
-	AnalyticalTable.prototype.getContextByIndex = function(iIndex) {
-		return this._oProxy.getContextByIndex(iIndex);
-	};
-
-	/**
 	 * Gets a node object by an index.
 	 *
 	 * @param {int} iIndex Index of the node
@@ -831,7 +824,7 @@ sap.ui.define([
 	 */
 	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
 		const oBinding = this.getBinding();
-		const oContext = oRow ? oRow.getRowBindingContext() : null;
+		const oContext = oRow ? TableUtils.getBindingContextOfRow(oRow) : null;
 
 		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this || !oBinding || !oContext) {
 			return null;

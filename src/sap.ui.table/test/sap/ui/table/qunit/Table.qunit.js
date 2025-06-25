@@ -4931,6 +4931,17 @@ sap.ui.define([
 			"Default context menu is a sap.ui.table.menus.ContextMenu");
 	});
 
+	QUnit.test("Create new default context menu", function(assert) {
+		const oOldDefaultContextMenu = this.oTable._getDefaultContextMenu();
+
+		this.oTable.destroyAggregation("_hiddenDependents");
+		assert.ok(oOldDefaultContextMenu.isDestroyed(), "Old default context menu is destroyed");
+
+		const oNewDefaultContextMenu = this.oTable._getDefaultContextMenu();
+		assert.ok(oNewDefaultContextMenu !== oOldDefaultContextMenu, "New default context menu is created");
+		assert.ok(oNewDefaultContextMenu.isA("sap.ui.table.menus.ContextMenu"), "Default context menu is a sap.ui.table.menus.ContextMenu");
+	});
+
 	QUnit.module("Row Modes", {
 		afterEach: function() {
 			this.oTable?.destroy();

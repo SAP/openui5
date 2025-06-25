@@ -179,6 +179,12 @@
 	}
 }
 
+.sapMListTblRow.sapMLIBFocusable:focus .sapMLIBHighlight, 
+.sapMListTblRow.sapMLIBFocusable:focus .sapMLIBNavigated {
+	top: 3px;
+	bottom: 4px;
+}
+
 .sapMListTblHasPopin > .sapMTableRowCustomFocus:focus .sapMLIBHighlight,
 .sapMListTblHasPopin > .sapMTableRowCustomFocus:focus .sapMLIBNavigated {
 	bottom: 0;
@@ -187,6 +193,7 @@
 .sapMListTblHasPopin > .sapMTableRowCustomFocus:focus + .sapMListTblSubRow .sapMLIBHighlight,
 .sapMListTblHasPopin > .sapMTableRowCustomFocus:focus + .sapMListTblSubRow .sapMLIBNavigated {
 	top: 0;
+	bottom: 4px;
 }
 
 /********** COMPACT DESIGN ************/

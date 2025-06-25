@@ -384,7 +384,7 @@ TableRenderer.renderPopinColumnHeaders = function(rm, oControl) {
  */
 TableRenderer.renderNoData = function(rm, oControl) {
 	rm.openStart("tr", oControl.getId("nodata"));
-	rm.class("sapMLIB").class("sapMListTblRow").class("sapMLIBTypeInactive");
+	rm.class("sapMLIB").class("sapMListTblRow").class("sapMLIBTypeInactive").class("sapMListTblRowNoData");
 	if (Device.system.desktop) {
 		rm.attr("tabindex", "-1");
 		rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");

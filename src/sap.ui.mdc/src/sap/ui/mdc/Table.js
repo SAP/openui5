@@ -2763,6 +2763,7 @@ sap.ui.define([
 			this._oQuickActionContainer.initializeQuickActions();
 			this._oColumnHeaderMenu.detachTableSettingsPressed(this._showTableP13nDialog, this);
 			this._oColumnHeaderMenu.attachTableSettingsPressed(oColumn, this._showTableP13nDialog, this);
+			this._oColumnHeaderMenu.setShowTableSettingsButton(this._isP13nSettingVisible());
 			this._oColumnHeaderMenu.openBy(oInnerColumn, true);
 			PersonalizationUtils.detectUserPersonalizationCompletion(this, this._oColumnHeaderMenu);
 		});
@@ -2770,6 +2771,14 @@ sap.ui.define([
 
 	Table.prototype._showTableP13nDialog = function(oEvent, oColumn) {
 		PersonalizationUtils.openSettingsDialog(this, oColumn);
+	};
+
+	Table.prototype._isP13nSettingVisible = function() {
+		const aP13nMode = this.getActiveP13nModes();
+
+		// Note: 'Aggregate' does not have a p13n UI, if only 'Aggregate' is enabled no settings icon is necessary
+		const bAggregateP13nOnly = aP13nMode.length === 1 && aP13nMode[0] === "Aggregate";
+		return aP13nMode.length > 0 && !bAggregateP13nOnly && !this._bHideP13nButton;
 	};
 
 	/**

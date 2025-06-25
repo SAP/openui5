@@ -339,7 +339,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Scroll to available contexts", async function(assert) {
-		const oTable = await TableQUnitUtils.createTable({
+		const oTable = TableQUnitUtils.createTable({
 			enableBusyIndicator: true,
 			columns: [TableQUnitUtils.createTextColumn()],
 			threshold: 5,

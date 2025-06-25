@@ -9,13 +9,9 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Busy Indicator", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
-				models: TableQUnitUtils.createModelForListDataService(),
-				columns: [TableQUnitUtils.createTextColumn()],
-				rows: {
-					path: "/Products"
-				},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				...TableQUnitUtils.createSettingsForList(),
 				threshold: 5,
 				scrollThreshold: 10,
 				enableBusyIndicator: true
@@ -59,11 +55,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hide/Show table and suspend/resume binding", {
-		beforeEach: async function() {
-			this.oTable = await TableQUnitUtils.createTable({
-				models: TableQUnitUtils.createModelForListDataService(),
-				columns: [TableQUnitUtils.createTextColumn()],
-				rows: {path: "/Products", suspended: true},
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				...TableQUnitUtils.createSettingsForList({
+					tableSettings: {
+						rows: {suspended: true}
+					}
+				}),
 				visible: false
 			});
 			this.fnBindingContextSpy = sinon.spy(this.oTable.getBinding(), "getContexts");

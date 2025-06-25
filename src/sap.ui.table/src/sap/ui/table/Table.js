@@ -2635,7 +2635,7 @@ sap.ui.define([
 			const oCell = oRow && oRow.getCells()[iCol];
 			const iRealRowIndex = oRow && oRow.getIndex();
 			const sColId = Column.ofCell(oCell).getId();
-			const oRowBindingContext = oRow.getRowBindingContext();
+			const oRowBindingContext = TableUtils.getBindingContextOfRow(oRow);
 			const mParams = {
 				rowIndex: iRealRowIndex,
 				columnIndex: iCol,
@@ -3448,7 +3448,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._getDefaultContextMenu = function() {
-		let oDefaultContextMenu = this.getAggregation("_hiddenDependents").find((oElement) => oElement.isA("sap.ui.table.menus.ContextMenu"));
+		let oDefaultContextMenu = this.getAggregation("_hiddenDependents")?.find((oElement) => oElement.isA("sap.ui.table.menus.ContextMenu"));
 
 		if (!oDefaultContextMenu) {
 			oDefaultContextMenu = new ContextMenu();

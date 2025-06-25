@@ -81,7 +81,7 @@ sap.ui.define([], function() {
 		_openCustomContentCellContextMenu: function(oTable, oContextMenu, oCellInfo, oEvent) {
 			const oRow = oTable.getRows()[oCellInfo.rowIndex];
 
-			oContextMenu.setBindingContext(oRow.getRowBindingContext(), oTable.getBindingInfo("rows").model);
+			oContextMenu.setBindingContext(MenuUtils.TableUtils.getBindingContextOfRow(oRow), oTable.getBindingInfo("rows").model);
 
 			const bExecuteDefault = oTable.fireBeforeOpenContextMenu({
 				rowIndex: oRow.getIndex(),
