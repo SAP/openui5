@@ -68,9 +68,9 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * If set, and item to clear the selection is added.
+				 * If set, an item to clear the selection is added.
 				 *
-				 * This item is only available if the connected field supports to be cleared.
+				 * This item is only available if the connected field can be cleared.
 				 *
 				 * @since 1.138
 				 */
@@ -80,7 +80,7 @@ sap.ui.define([
 					defaultValue: ""
 				},
 				/**
-				 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be prevented.
+				 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be avoided.
 				 *
 				 * @since 1.138
 				 */
