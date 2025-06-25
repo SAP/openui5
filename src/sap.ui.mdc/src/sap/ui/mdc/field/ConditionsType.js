@@ -508,9 +508,11 @@ sap.ui.define([
 				}
 
 				const iMaxConditions = this._getMaxConditions();
+				const bEmptyAllowed = this.oFormatOptions.emptyAllowed || !this.oFormatOptions.hasOwnProperty("emptyAllowed") && iMaxConditions !== 1; // to be backward compatiple where emptyAllwed not exist
 
-				if (aConditions.length === 0 && iMaxConditions === 1) {
-					// test if type is nullable. Only for single-value Fields. For MultiValue only real conditions should be checked for type
+				if (aConditions.length === 0 && !bEmptyAllowed) {
+					// test if type is nullable. Only for single-value Fields. For MultiValueField or FilterFields only real conditions should be checked for type
+					// if emptyAllowed is set Field already checked if type is nullable. For singleValue-FilterFields it is allowed to be empty
 					this._oConditionType.validateValue(null);
 				}
 			} catch (oException) {
