@@ -10,15 +10,8 @@ sap.ui.define([
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
-		dependents: [new MultiSelectionPlugin()],
-		rows: {
-			path: "/Products",
-			parameters: {
-				$count: true
-			}
-		},
-		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true}),
-		models: TableQUnitUtils.createModelForListDataService()
+		...TableQUnitUtils.createSettingsForList(),
+		dependents: [new MultiSelectionPlugin()]
 	});
 
 	function assertAllContextsAvailable(assert, oTable) {
@@ -38,7 +31,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable();
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
-			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -52,19 +45,16 @@ sap.ui.define([
 		assertAllContextsAvailable(assert, this.oTable);
 	});
 
-	QUnit.test("Select range", function(assert) {
-		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			assertContextsAvailable(assert, this.oTable, 190);
-		}.bind(this));
+	QUnit.test("Select range", async function(assert) {
+		await this.oMultiSelectionPlugin.setSelectionInterval(0, 189);
+		assertContextsAvailable(assert, this.oTable, 190);
 	});
 
 	QUnit.module("Load data with server-driven paging", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				models: TableQUnitUtils.createModelForListDataService({paging: true})
-			});
+			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({paging: true}));
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
-			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -78,21 +68,24 @@ sap.ui.define([
 		assertAllContextsAvailable(assert, this.oTable);
 	});
 
-	QUnit.test("Select range", function(assert) {
-		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			assertContextsAvailable(assert, this.oTable, 190);
-		}.bind(this));
+	QUnit.test("Select range", async function(assert) {
+		await this.oMultiSelectionPlugin.setSelectionInterval(0, 189);
+		assertContextsAvailable(assert, this.oTable, 190);
 	});
 
 	QUnit.module("Load data without count", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				rows: {
-					path: "/Products"
+			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({
+				tableSettings: {
+					rows: {
+						parameters: {
+							$count: false
+						}
+					}
 				}
-			});
+			}));
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
-			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
@@ -107,33 +100,35 @@ sap.ui.define([
 			"Not all binding contexts are available, but at least the Promise resolved");
 	});
 
-	QUnit.test("Select range", function(assert) {
-		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 190,
-				"Not all binding contexts are available, but at least the Promise resolved");
-		}.bind(this));
+	QUnit.test("Select range", async function(assert) {
+		await this.oMultiSelectionPlugin.setSelectionInterval(0, 189);
+		assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 190,
+			"Not all binding contexts are available, but at least the Promise resolved");
 	});
 
 	QUnit.module("Load data without count and short read", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable({
-				rows: {
-					path: "/Products"
-				},
-				models: TableQUnitUtils.createModelForListDataService({count: 180})
-			});
+			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({
+				count: 180,
+				tableSettings: {
+					rows: {
+						parameters: {
+							$count: false
+						}
+					}
+				}
+			}));
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
-			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
+			return this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("Select range", function(assert) {
-		return this.oMultiSelectionPlugin.setSelectionInterval(0, 189).then(function() {
-			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 180,
-				"Not all binding contexts are available, but at least the Promise resolved");
-		}.bind(this));
+	QUnit.test("Select range", async function(assert) {
+		await this.oMultiSelectionPlugin.setSelectionInterval(0, 189);
+		assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 180,
+			"Not all binding contexts are available, but at least the Promise resolved");
 	});
 });

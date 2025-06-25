@@ -631,6 +631,55 @@ sap.ui.define([
 		assert.notOk(this.stepInput._shouldDisableIncrementButton(1, undefined), "Should NOT disable increment button if max value is 'undefined'");
 	});
 
+	QUnit.module("Negative numbers", {
+		beforeEach: function () {
+			this.stepInput = new StepInput();
+			this.stepInput.placeAt('qunit-fixture');
+			nextUIUpdate.runSync()/*fake timer is used in module*/;
+		},
+		afterEach: function () {
+			if (!bSkipDestroy) {
+				this.stepInput.destroy();
+			}
+		}
+	});
+
+	QUnit.test("accepts negative numbers", function (assert) {
+		//act
+		this.stepInput.setValue(-5);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		//assert
+		assert.strictEqual(this.stepInput.getValue(), -5, "Value is accepted");
+	});
+
+	QUnit.test("working with negative numbers", function (assert) {
+		//arrange
+		this.stepInput.setValue(-5);
+		var oIncrementButton = this.stepInput._getIncrementButton(),
+			oDecrementButton = this.stepInput._getDecrementButton();
+
+		//act
+		oIncrementButton.firePress();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		assert.strictEqual(this.stepInput.getValue(), -4, "The value is successfuly incremented");
+
+		//act
+		oDecrementButton.firePress();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		assert.strictEqual(this.stepInput.getValue(), -5, "The value is successfuly decremented");
+
+		//act
+		this.stepInput.setValue(-1);
+		oIncrementButton.firePress();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		assert.strictEqual(this.stepInput.getValue(), 0, "The value is successfuly incremented");
+
+		//act
+		oDecrementButton.firePress();
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		assert.strictEqual(this.stepInput.getValue(), -1, "The value is successfuly decremented");
+	});
+
 
 	QUnit.module("Floating point", {
 		beforeEach: function () {

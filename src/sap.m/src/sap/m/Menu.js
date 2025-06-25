@@ -299,70 +299,95 @@ sap.ui.define([
 		 */
 		Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
 			const oPopover = this._getPopover(),
-				oOpenerDomRef = oOpenerRef && oOpenerRef.getDomRef ? oOpenerRef.getDomRef() : oOpenerRef,
-				oOpenerData = oOpenerRef && oOpenerDomRef ? oOpenerDomRef.getBoundingClientRect() : null,
 				bPageCoordinates = oEvent && oEvent.pageX !== undefined && oEvent.pageY !== undefined,
-				bOffsetCoordinates = !bPageCoordinates && !oOpenerRef && oEvent.offsetX !== undefined && oEvent.offsetY !== undefined;
-			let bWithPointer = oEvent && oEvent.originalEvent && oEvent.originalEvent.button !== -1,
+				bOffsetCoordinates = !bPageCoordinates && !oOpenerRef && oEvent.offsetX !== undefined && oEvent.offsetY !== undefined,
+				oOriginalEvent = oEvent && oEvent.originalEvent;
+			let oOpenerDomRef = oOpenerRef && oOpenerRef.getDomRef ? oOpenerRef.getDomRef() : oOpenerRef,
+				oPointerElement = document.getElementById("sapMMenuContextMenuPointer"),
+				oPointerParent = document.body,
+				oPointerSibling = null,
 				iX = 0,
 				iY = 0;
 
+			oPopover._getPopup().setDurations(this._openDuration, 0);
+
+			// explicitly close the popover if it is already open
 			if (oPopover.isOpen()) {
 				oPopover.close();
 			}
 
+			// on mobile devices, the popover is opened by the ResponsivePopover control on fullscreen,
+			// there's no need to use opener or do some positioning
 			if (Device.system.phone) {
 				oPopover.openBy();
 				return;
 			}
 
-			oPopover._getPopup().setDurations(this._openDuration, 0);
+			// if the opener reference is not provided, we try to get it from the event
+			if (!oOpenerRef && !bOffsetCoordinates) {
+				oOpenerDomRef = oEvent.srcControl ? oEvent.srcControl.getDomRef() : null;
 
-			if (bPageCoordinates) {
-				// event page coordinates
-				iX = oEvent.pageX;
-				iY = oEvent.pageY;
+				if (!oOpenerDomRef) {
+					oOpenerDomRef = oOriginalEvent && oOriginalEvent.currentTarget ? oOriginalEvent.currentTarget : null;
+				}
+			}
+
+			// remove previously existing pointer element
+			if (oPointerElement) {
+				oPointerElement.remove();
+			}
+
+			// create a new pointer element
+			oPointerElement = document.createElement("div");
+			oPointerElement.id = "sapMMenuContextMenuPointer";
+			oPointerElement.className = "sapMMenuContextMenuPointer";
+
+			const oOpenerData = oOpenerDomRef ? oOpenerDomRef.getBoundingClientRect() : null;
+
+			if (oOriginalEvent && bPageCoordinates) {
+				const iPageX = oOriginalEvent.pageX || oOriginalEvent.clientX + (document.documentElement.scrollLeft || document.body.scrollLeft);
+				const iPageY = oOriginalEvent.pageY || oOriginalEvent.clientY + (document.documentElement.scrollTop || document.body.scrollTop);
+
+				if (oOpenerDomRef.tagName.toLowerCase() === "tr") {
+					oPointerParent = oOpenerDomRef.firstChild ? oOpenerDomRef.firstChild : oOpenerDomRef;
+					oPointerSibling = oPointerParent.firstChild ? oPointerParent.firstChild : null;
+				} else {
+					oPointerParent = oOpenerDomRef;
+					oPointerSibling = oOpenerDomRef.firstChild ? oOpenerDomRef.firstChild : null;
+				}
+
+				iX = (iPageX - oOpenerData.left - window.scrollX);
+				iY = (iPageY - oOpenerData.top - window.scrollY);
+
 				if (Localization.getRTL()) {
 					iX = document.body.clientWidth - iX;
 				}
+
 			} else if (bOffsetCoordinates) {
-				// explicit position coordinates
+				// if the coordinates are provided, we create a pointer element at the specified position
 				iX = oEvent.offsetX;
 				iY = oEvent.offsetY;
-				bWithPointer = true;
 			}
 
-			if (oOpenerData && !bWithPointer) {
-				// If the opener is a DOM element, we need to calculate the position
-				const iScrollX = window.scrollX || window.pageXOffset;
-				const iScrollY = window.scrollY || window.pageYOffset;
+			oPointerParent.insertBefore(oPointerElement, oPointerSibling);
+			oPointerElement.style.insetInlineStart = `${iX}px`;
+			oPointerElement.style.insetBlockStart = `${iY}px`;
+		    oPointerElement.setAttribute("aria-hidden", "true");
 
-				const iCenterX = oOpenerData.left + iScrollX + (oOpenerData.width / 2);
-				const iCenterY = oOpenerData.top + iScrollY + (oOpenerData.height / 2);
+			oPopover.openBy(oPointerElement);
+			oPopover.attachAfterClose(this._onContextMenuClose, this);
+		};
 
-				iX = iCenterX;
-				iY = iCenterY;
+		/**
+		 * Removes the pointer element from the DOM when the context menu is closed.
+		 * @private
+		 */
+		Menu.prototype._onContextMenuClose = function() {
+			const oPointerElement = document.getElementById("sapMMenuContextMenuPointer"),
+				oPopover = this._getPopover();
 
-				bWithPointer = true;
-				oPopover.setPlacement(PlacementType.VerticalPreferredBottom);
-			}
-
-			if (bWithPointer || !oOpenerRef) {
-				// Create artificial context menu opener (if it doesn't exist yet) to the body
-				// because of missing positioning functionality in the ResponsivePopover.
-				// This container should be used as an opener reference for the Menu.
-				if (!document.body.querySelector(".sapMMenuContextMenuPointer")) {
-					document.body.insertAdjacentHTML("beforeend", "<div class='sapMMenuContextMenuPointer'></div>");
-				}
-
-				const oContextPointer = document.body.querySelector(".sapMMenuContextMenuPointer");
-
-				oContextPointer.style.insetInlineStart = iX + "px";
-				oContextPointer.style.insetBlockStart = iY + "px";
-				oOpenerRef = oContextPointer;
-			}
-
-			oPopover.openBy(oOpenerRef);
+			oPointerElement && oPointerElement.remove();
+			oPopover.detachAfterClose(this._onContextMenuClose, this);
 		};
 
 		/**

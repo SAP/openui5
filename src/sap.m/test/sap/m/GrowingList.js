@@ -70,6 +70,31 @@ sap.ui.define([
 	  description : "{product>Description}",
 	  info : "{product>Price} {product>CurrencyCode}",
 	  type : "Navigation",
+	  navigated: {
+		  path: "product>Price",
+		  formatter: function(value) {
+			  return (value === "956.0");
+		  }
+	  },
+	  highlight: {
+		  path: "product>Price",
+		  formatter: function(value) {
+			  value = parseFloat(value);
+			  if (value < 50) {
+				  return "Error";
+			  }
+			  if (value < 1000) {
+				  return "Warning";
+			  }
+			  if (value <= 10000) {
+				  return "Indication04";
+			  }
+			  if (value > 10000 && value < 50000) {
+				  return "Success";
+			  }
+			  return "None";
+		  }
+	  },
 	  counter: {
 		  path : "product>Price",
 		  formatter : function(value) {

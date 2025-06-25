@@ -1,0 +1,14 @@
+{
+  "name": "sap.ui.core.sample.viewtemplate.tiny",
+  "version": "1.0.0",
+  "private": true,
+  "author": "SAP SE",
+  "description": "UI5 Demo App - Minimal sample for XML Templating",
+  "scripts": {
+    "start": "ui5 serve -o index.html"
+  },
+  "devDependencies": {
+    "@ui5/cli": "^4",
+    "ui5-middleware-simpleproxy": "^3"
+  }
+}

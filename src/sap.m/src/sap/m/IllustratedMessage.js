@@ -204,7 +204,7 @@ sap.ui.define([
 				 *
 				 * When set to true, the attributes <code>role="presentation"</code> and <code>aria-hidden="true"</code> are applied to the SVG element.
 				 * @public
-				 * @since 1.137
+				 * @experimental since 1.138
 				 */
 				decorative: {type: "boolean", group: "Appearance", defaultValue: false}
 			},

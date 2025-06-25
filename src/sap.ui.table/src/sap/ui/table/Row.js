@@ -364,10 +364,6 @@ sap.ui.define([
 		this.getDomRefs(true).row.toggleClass("sapUiTableRowHidden", this.isContentHidden());
 	};
 
-	Row.prototype.getRowBindingContext = function() {
-		return state(this).context;
-	};
-
 	Row.prototype.setBindingContext = function(oContext, sModelName) {
 		return Element.prototype.setBindingContext.call(this, oContext || null, sModelName);
 	};
@@ -379,7 +375,14 @@ sap.ui.define([
 	 * @private
 	 */
 	Row.prototype.getType = function() {
-		return state(this).type;
+		const sType = state(this).type;
+
+		if (sType === RowType.GroupHeader && TableUtils.Grouping.isInTreeMode(this.getTable())) {
+			// In tree mode, the row type GroupHeader is ignored and treated like row type Standard.
+			return RowType.Standard;
+		}
+
+		return sType;
 	};
 
 	/**

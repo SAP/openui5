@@ -486,6 +486,12 @@ sap.ui.define([
 				MessageToast.show("detail is pressed");
 			}, 10);
 		},
+		navigated: {
+			path: "money",
+			formatter: function(fSalary) {
+				return (fSalary === 10.45);
+			}
+		},
 		highlight: {
 			path: "money",
 			formatter: function(fSalary) {
@@ -584,6 +590,7 @@ sap.ui.define([
 		headerToolbar : oTableHeader,
 		infoToolbar : oTableInfo,
 		swipeContent : oSwipe,
+		inset: true,
 		columns : aColumns,
 		dependents: [new CopyProvider({
 			extractData: function(oContext, oColumn) {

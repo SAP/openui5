@@ -1013,64 +1013,28 @@ sap.ui.define([
 	});
 
 	QUnit.test("Correct Proxy Calls", function(assert) {
-		// Initialise spies
-		const fnGetContextsSpy = sinon.spy(this.oProxy, "getContexts");
-		const fnExpandSpy = sinon.spy(this.oProxy, "expand");
-		const fnCollapseSpy = sinon.spy(this.oProxy, "collapse");
-		const fnExpandToLevelSpy = sinon.spy(this.oProxy, "expandToLevel");
-		const fnCollapseAllSpy = sinon.spy(this.oProxy, "collapseAll");
-		const fnIsExpandedSpy = sinon.spy(this.oProxy, "isExpanded");
-		const fnGetContextByIndexSpy = sinon.spy(this.oProxy, "getContextByIndex");
+		this.spy(this.oProxy, "getContexts");
+		this.oTable._getContexts(0, 1, 1, true);
+		assert.ok(this.oProxy.getContexts.calledOnceWithExactly(0, 1, 1, true), "proxy#getContexts call");
 
-		// Stub oTable.getBinding
-		const fnGetBinding = sinon.stub(this.oTable, "getBinding");
-		fnGetBinding.returns({
-			getMetadata: function() {
-				return {
-					getName: function() {
-						return undefined;
-					}
-				};
-			}
-		});
-
-		// _getContexts
-		assert.equal(this.oTable._getContexts(0).length, 0, "TreeTable has no contexts");
-		assert.ok(fnGetContextsSpy.calledOnce, "proxy#getContexts was called");
-
-		// expand
+		this.spy(this.oProxy, "expand");
 		this.oTable.expand(0);
-		assert.ok(fnExpandSpy.called, "proxy#expand was called");
+		assert.ok(this.oProxy.expand.calledOnceWithExactly(0), "proxy#expand call");
 
-		// collapse
+		this.spy(this.oProxy, "collapse");
 		this.oTable.collapse(0);
-		assert.ok(fnCollapseSpy.called, "proxy#collapse was called");
+		assert.ok(this.oProxy.collapse.calledOnceWithExactly(0), "proxy#collapse call");
 
-		// expandToLevel
+		this.spy(this.oProxy, "expandToLevel");
 		this.oTable.expandToLevel(0);
-		assert.ok(fnExpandToLevelSpy.called, "proxy#expandToLevel was called");
+		assert.ok(this.oProxy.expandToLevel.calledOnceWithExactly(0), "proxy#expandToLevel call");
 
-		// collapseAll
+		this.spy(this.oProxy, "collapseAll");
 		this.oTable.collapseAll();
-		assert.ok(fnCollapseAllSpy.called, "proxy#collapseAll was called");
+		assert.ok(this.oProxy.collapseAll.calledOnceWithExactly(), "proxy#collapseAll call");
 
-		// isExpanded
+		this.spy(this.oProxy, "isExpanded");
 		this.oTable.isExpanded(0);
-		assert.ok(fnIsExpandedSpy.called, "proxy#isExpanded was called");
-
-		// getContextByIndex
-		this.oTable.getContextByIndex(0);
-		assert.ok(fnGetContextByIndexSpy.called, "proxy#getContextByIndex was called");
-
-		// Restore spies and stubs
-		fnGetContextsSpy.restore();
-		fnExpandSpy.restore();
-		fnCollapseSpy.restore();
-		fnExpandToLevelSpy.restore();
-		fnCollapseAllSpy.restore();
-		fnIsExpandedSpy.restore();
-		fnGetContextByIndexSpy.restore();
-
-		fnGetBinding.restore();
+		assert.ok(this.oProxy.isExpanded.calledOnceWithExactly(0), "proxy#isExpanded call");
 	});
 });

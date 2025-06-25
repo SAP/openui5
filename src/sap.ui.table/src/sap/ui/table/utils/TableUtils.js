@@ -1522,6 +1522,16 @@ sap.ui.define([
 			}
 
 			return {x: oPosition.pageX, y: oPosition.pageY};
+		},
+
+		/**
+		 * Returns the binding context of the given row for the table's "rows" binding.
+		 *
+		 * @param {sap.ui.table.Row} oRow The row instance.
+		 * @returns {sap.ui.model.Context | null} The binding context of the row.
+		 */
+		getBindingContextOfRow: function(oRow) {
+			return oRow.getBindingContext(oRow.getTable()?.getBindingInfo("rows")?.model);
 		}
 	};
 
