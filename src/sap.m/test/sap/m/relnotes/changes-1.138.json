@@ -3,6 +3,26 @@
     "date": "June 2025",
     "notes": [
       {
+        "id": "5c68391e0f3938431f7651f27db939d373c02b7b",
+        "type": "FIX",
+        "text": " sap.m.StepInput: does not work with negative numbers"
+      },
+      {
+        "id": "a182e57a3532de53f63b8f07206979c46d6fb2ec",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: text is displayed with small letter"
+      },
+      {
+        "id": "077b80ed840e74c8e9b6dd91e55f3ce1cb2d7856",
+        "type": "FIX",
+        "text": " MDCTable: Hide settings icon in ColumnMenu"
+      },
+      {
+        "id": "002bebdad9f90227e439bcfab06c15e874a70ba9",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed context menu auto-closing in some cases"
+      },
+      {
         "id": "e2e37205b37f0ed3ea551a325de5b8fd1d532e18",
         "type": "FIX",
         "text": " sap.m.StepInput: make binding higher prio",
