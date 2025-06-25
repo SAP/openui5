@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company. All rights reserved.
-// * Theming Engine 15.0.6
-// * data:{"sModified":"2025-04-10T09:27:38Z"}
+// * Theming Engine 16.0.7
+// * data:{"sModified":"2025-06-12T08:20:10Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_fiori_3_hcb/base.less (Version 11.29.1) *******************/
+/******************* FILE /Base/baseLib/sap_fiori_3_hcb/base.less (Version 11.31.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -708,10 +708,14 @@
 @sapContent_Space_Small: 1rem;
 @sapContent_Space_Medium: 2rem;
 @sapContent_Space_Large: 3rem;
-@sapContent_Margin_Tiny: 0 0 1rem;
-@sapContent_Margin_Small: 1rem;
-@sapContent_Margin_Medium: 1rem 2rem;
-@sapContent_Margin_Large: 1rem 3rem;
+@sapContent_Margin_Tiny: @sapContent_Margin_S;
+@sapContent_Margin_Small: @sapContent_Margin_M;
+@sapContent_Margin_Medium: @sapContent_Margin_L;
+@sapContent_Margin_Large: @sapContent_Margin_XL;
+@sapContent_Margin_S: 0 0 1rem;
+@sapContent_Margin_M: 1rem;
+@sapContent_Margin_L: 1rem 2rem;
+@sapContent_Margin_XL: 1rem 3rem;
 @sapContent_Padding_S: 0rem;
 @sapContent_Padding_M: 2rem;
 @sapContent_Padding_L: 2rem;
@@ -943,7 +947,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapShell_SubBrand_TextColor: contrast(@sapShellColor, @sapTextColor,@sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
+@sapShell_SubBrand_TextColor: contrast(@sapShellColor, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapShell_Category_1_Background: @sapHC_StandardBackground;
 
 // [Tags "!Protected"]
@@ -2578,6 +2582,10 @@
 // [Tags "!Protected"]
 // [Protected "!true"]
 @sapSlider_Selected_BorderColor: @sapField_BorderColor;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
+@sapSlider_Selected_Dimension: 0.25 * @sapContent_GridSize;
 
 // [Tags "!Protected"]
 // [Protected "!true"]

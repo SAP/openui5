@@ -1,11 +1,11 @@
 // /**
 // * Copyright (c) 2012-2025 SAP SE or an SAP affiliate company. All rights reserved.
-// * Theming Engine 15.0.6
-// * data:{"sModified":"2025-04-10T09:27:38Z"}
+// * Theming Engine 16.0.7
+// * data:{"sModified":"2025-06-12T08:20:10Z"}
 // */
 
 
-/******************* FILE /Base/baseLib/sap_fiori_3/base.less (Version 11.29.1) *******************/
+/******************* FILE /Base/baseLib/sap_fiori_3/base.less (Version 11.31.0) *******************/
 
 
 // [Tags "SapInternal", "Base", "Dimension", "Protected"]
@@ -519,7 +519,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapContent_Lite_Shadow: None;
+@sapContent_Lite_Shadow: none;
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -652,10 +652,14 @@
 @sapContent_Space_Small: 1rem;
 @sapContent_Space_Medium: 2rem;
 @sapContent_Space_Large: 3rem;
-@sapContent_Margin_Tiny: 0 0 1rem;
-@sapContent_Margin_Small: 1rem;
-@sapContent_Margin_Medium: 1rem 2rem;
-@sapContent_Margin_Large: 1rem 3rem;
+@sapContent_Margin_Tiny: @sapContent_Margin_S;
+@sapContent_Margin_Small: @sapContent_Margin_M;
+@sapContent_Margin_Medium: @sapContent_Margin_L;
+@sapContent_Margin_Large: @sapContent_Margin_XL;
+@sapContent_Margin_S: 0 0 1rem;
+@sapContent_Margin_M: 1rem;
+@sapContent_Margin_L: 1rem 2rem;
+@sapContent_Margin_XL: 1rem 3rem;
 @sapContent_Padding_S: 0rem;
 @sapContent_Padding_M: 2rem;
 @sapContent_Padding_L: 2rem;
@@ -2525,6 +2529,10 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
+@sapSlider_Selected_Dimension: 0.125 * @sapContent_GridSize;
+
+// [Tags "!Protected"]
+// [Protected "!true"]
 @sapSlider_HandleBackground: @sapButton_Background;
 
 // [Tags "!Protected"]
@@ -3471,7 +3479,7 @@
 
 // [Tags "!Protected"]
 // [Protected "!true"]
-@sapChart_LineColor_2: lighten(@sapChart_LineColor_1, 35);
+@sapChart_LineColor_2: darken(@sapChart_LineColor_1, 32);
 
 // [Tags "!Protected"]
 // [Protected "!true"]
@@ -3729,7 +3737,7 @@
 @sapChart_Sequence_6_Plus2: lighten(desaturate(@sapChart_Sequence_6, 27), 19);
 @sapChart_Sequence_6_Plus2_TextColor: contrast(@sapChart_Sequence_6_Plus2, @sapChart_Data_TextColor, @sapChart_Data_ContrastTextColor, .45);
 @sapChart_Sequence_6_Plus2_TextShadow: 0 0 .125rem contrast(@sapChart_Sequence_6_Plus2_TextColor, @sapContent_ShadowColor, @sapChart_ContrastShadowColor, @sapContent_ContrastTextThreshold);
-@sapChart_Sequence_6_Plus1: lighten(desaturate(@sapChart_Sequence_6, 26), 1);
+@sapChart_Sequence_6_Plus1: lighten(desaturate(@sapChart_Sequence_6, 26), 10);
 @sapChart_Sequence_6_Plus1_TextColor: contrast(@sapChart_Sequence_6_Plus1, @sapChart_Data_TextColor, @sapChart_Data_ContrastTextColor, .45);
 @sapChart_Sequence_6_Plus1_TextShadow: 0 0 .125rem contrast(@sapChart_Sequence_6_Plus1_TextColor, @sapContent_ShadowColor, @sapChart_ContrastShadowColor, @sapContent_ContrastTextThreshold);
 
