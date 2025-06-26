@@ -19,6 +19,8 @@ sap.ui.define([
 						this._oMenuFragment = oMenu;
 						return this._oMenuFragment;
 					}.bind(this));
+				} else if (this._oMenuFragment.isOpen()) {
+					this._oMenuFragment.close();
 				} else {
 					this._oMenuFragment.openBy(oButton);
 				}
