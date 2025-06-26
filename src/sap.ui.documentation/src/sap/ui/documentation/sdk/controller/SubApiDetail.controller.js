@@ -532,7 +532,7 @@ sap.ui.define([
 							const versionData = this.getModel("versionData").getData();
 							const isModuleAvailable = oControlData.module !== this.NOT_AVAILABLE;
 							const library = versionData?.libraries?.find((lib) => lib.name === oEntityData.lib);
-							const version = library?.version?.includes("-SNAPSHOT") ? "" : library?.version;
+							const version = library?.version?.includes("-SNAPSHOT") ? "HEAD" : library?.version;
 							const bIsOpenUI5Lib = library.npmPackageName?.startsWith("@openui5");
 
 
