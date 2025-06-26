@@ -2513,4 +2513,34 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, ResizeHandler,
 		});
 	});
 
+	QUnit.test("ObjectPageSubSection cloned returns correct actions", async function (assert) {
+		// Arrange
+		var oSubSection = new ObjectPageSubSectionClass("subsection1", {
+				title: "Title",
+				blocks: [new Text({text: "Test"})],
+				actions: [new Button({text: "Action1"}), new Button({text: "Action2"})]
+			}),
+			oClone,
+			oCloneAction1,
+			oCloneAction2;
+
+		// Act
+		oClone = oSubSection.clone();
+		oClone.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		oCloneAction1 = oClone.getActions()[0];
+		oCloneAction2 = oClone.getActions()[1];
+
+		// Assert
+		assert.strictEqual(oClone.getActions().length, 2, "Cloned ObjectPageSubSection has correct number of actions");
+		assert.strictEqual(oCloneAction1.getText(), "Action1", "Cloned ObjectPageSubSection has correct first action");
+		assert.strictEqual(oCloneAction2.getText(), "Action2", "Cloned ObjectPageSubSection has correct second action");
+		assert.ok(oCloneAction1.getDomRef() !== null, "Cloned ObjectPageSubSection first action is rendered");
+		assert.ok(oCloneAction2.getDomRef() !== null, "Cloned ObjectPageSubSection second action is rendered");
+
+		// Cleanup
+		oSubSection.destroy();
+	});
+
 });
