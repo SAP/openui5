@@ -1435,7 +1435,7 @@ sap.ui.define([
 			}
 		},
 		"sap.m.Table": {
-			selectableCells: ".sapMLIBFocusable, .sapMListTblCell, .sapMListTblSubRowCell, .sapMListTblSubCnt",
+			selectableCells: ".sapMLIBFocusable > :not(.sapMListTblHeaderCell), .sapMListTblCell:not(.sapMListTblHeaderCell), .sapMListTblSubRowCell, .sapMListTblSubCnt",
 			scrollArea: "listUl",
 			eventClearedAll: "sapMTableClearAll",
 			onActivate: function(oTable, oPlugin) {
