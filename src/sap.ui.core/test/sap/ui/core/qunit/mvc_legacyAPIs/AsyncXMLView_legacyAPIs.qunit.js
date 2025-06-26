@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
 	"sap/ui/core/Element",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions"
 ], function(
 	Localization,
+	OwnStatics,
 	Cache,
 	Component,
 	Element,
@@ -27,6 +29,8 @@ sap.ui.define([
 	LoaderExtensions
 ) {
 	"use strict";
+
+	const { _removePreprocessor } = OwnStatics.get(View);
 
 	// setup test config with generic factory
 	var oConfig = {
@@ -411,10 +415,10 @@ sap.ui.define([
 				};
 			assert.expect(4);
 			assert.ok(TestPreprocessor);
-			// inject the preprocessor, ugly, but has to be done to place the spy
-			View._mPreprocessors["XML"] = View._mPreprocessors["XML"] || {};
-			View._mPreprocessors["XML"]["xml"] = View._mPreprocessors["XML"]["xml"] || [];
-			View._mPreprocessors["XML"]["xml"].push({preprocessor: TestPreprocessor, _settings: {assert: function(){}}});
+
+			// register the preprocessor
+			View.registerPreprocessor("xml", TestPreprocessor, "XML", false, false,	{assert: function(){}});
+
 			var oGetCacheKeySpy = sinon.spy(TestPreprocessor, "getCacheKey");
 			return viewFactory({keys: [sKey]}).loaded().then(function(oView) {
 				sinon.assert.calledOnce(oGetCacheKeySpy);
@@ -424,7 +428,7 @@ sap.ui.define([
 				oSpy.restore();
 				oView.destroy();
 				// remove the preprocessor
-				View._mPreprocessors["XML"]["xml"].splice(1,1);
+				_removePreprocessor("XML", "xml", TestPreprocessor);
 			});
 		});
 
