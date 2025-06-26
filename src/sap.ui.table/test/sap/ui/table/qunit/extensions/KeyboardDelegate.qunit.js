@@ -1040,6 +1040,49 @@ sap.ui.define([
 		oElem = checkFocus(document.getElementById("Focus2"), assert);
 	});
 
+	QUnit.test("No Column Headers", async function(assert) {
+		let oElem;
+
+		oTable.setColumnHeaderVisible(false);
+		await nextUIUpdate();
+
+		oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
+		simulateTabEvent(oElem);
+		oElem = checkFocus(getCell(0, 0), assert);
+		simulateTabEvent(oElem);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
+		simulateTabEvent(oElem, true);
+		oElem = checkFocus(getCell(0, 0), assert);
+		simulateTabEvent(oElem, true);
+		checkFocus(document.getElementById("Focus1"), assert);
+	});
+
+	QUnit.test("No Column Headers, No Data", async function(assert) {
+		const done = assert.async();
+		let oElem;
+
+		function doAfterNoDataDisplayed() {
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
+
+			oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
+			simulateTabEvent(oElem);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem);
+			oElem = checkFocus(document.getElementById("Focus2"), assert);
+			simulateTabEvent(oElem, true);
+			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
+			simulateTabEvent(oElem, true);
+			checkFocus(document.getElementById("Focus1"), assert);
+
+			done();
+		}
+
+		oTable.setColumnHeaderVisible(false);
+		await nextUIUpdate();
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
+		oTable.setModel(new JSONModel());
+	});
+
 	QUnit.test("CreationRow when hideEmptyRows is set to true", async function(assert) {
 		let oElem;
 		const oCreationRow = new CreationRow();
