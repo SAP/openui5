@@ -60,7 +60,26 @@ sap.ui.define([
 
 				oSearchDataModel.setProperty("/topicQuery", sQuery);
 
+				if (!sQuery && this._lastQuery) {
+					this._clearTopicDetailHighlighting();
+				}
+
+				this._lastQuery = sQuery;
+
 				this.onTreeFilter({ getParameter: function() { return sQuery; } });
+			},
+
+			_clearTopicDetailHighlighting: function() {
+				try {
+					var oSplitApp = this.getView().getParent().getParent();
+					var oDetailPage = oSplitApp.getCurrentDetailPage();
+					var oController = oDetailPage && oDetailPage.getController();
+					if (oController && oController.highlighter) {
+						oController.highlighter.highlight("");
+					}
+				} catch (e) {
+					// Fail silently
+				}
 			},
 
 			_onTopicMatched: function (event) {
