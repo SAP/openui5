@@ -174,6 +174,8 @@ sap.ui.define([
 					overviewForDeveloper: sinon.stub(),
 					restore: sinon.stub(),
 					formatSaveAsEnabled: sinon.stub(),
+					formatManageAppVariants: sinon.stub(),
+					formatSaveAsAppVariants: sinon.stub(),
 					saveAs: sinon.stub(),
 					openWhatsNewOverviewDialog: sinon.stub(),
 					openGuidedTour: sinon.stub()
