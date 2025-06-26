@@ -5,9 +5,8 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/m/p13n/PersistenceProvider",
-	"sap/ui/core/Element",
-	"sap/ui/fl/apply/api/ControlVariantApplyAPI"
-], (BaseObject, PersistenceProvider, Element, ControlVariantApplyAPI) => {
+	"sap/ui/core/Element"
+], (BaseObject, PersistenceProvider, Element) => {
 	"use strict";
 
 	const ERROR_INSTANCING = "DefaultProviderRegistry: This class is a singleton and should not be used without an AdaptationProvider. Please use 'Engine.getInstance().defaultProviderRegistry' instead";

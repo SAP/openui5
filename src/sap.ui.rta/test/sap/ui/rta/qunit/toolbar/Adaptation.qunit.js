@@ -677,6 +677,10 @@ sap.ui.define([
 				var oOverviewButton = this.oToolbar.getControl("appVariantOverview");
 
 				assert.notOk(oSaveAsButton.getVisible(), "saveAs is not visible");
+				assert.deepEqual(
+					oSaveAsButton.getTooltip(),
+					"Only active versions can be saved as app variants. Please activate your draft.",
+					"then the correct tooltip is set for saveAs");
 				assert.notOk(oOverviewButton.getVisible(), "appVariantOverview is not visible");
 				assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
 
@@ -687,6 +691,10 @@ sap.ui.define([
 				this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", false);
 				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
 				assert.notOk(oSaveAsButton.getEnabled(), "saveAs is not enabled");
+				assert.deepEqual(
+					oSaveAsButton.getTooltip(),
+					"Only active versions can be saved as app variants. Please activate your draft.",
+					"then the correct tooltip is set for saveAs");
 				assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
 				assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
 				assert.notOk(oManageAppsButton.getEnabled(), "manageApps is not enabled");
@@ -698,6 +706,10 @@ sap.ui.define([
 				this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", true);
 				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
 				assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
+				assert.deepEqual(
+					oSaveAsButton.getTooltip(),
+					null,
+					"then no tooltip is set for saveAs");
 				assert.notOk(oOverviewButton.getVisible(), "AppVariantOverview is not visible");
 				assert.ok(oManageAppsButton.getVisible(), "manageApps is visible");
 				assert.ok(oManageAppsButton.getEnabled(), "manageApps is enabled");
@@ -719,6 +731,10 @@ sap.ui.define([
 				this.oControlsModel.setProperty("/appVariantMenu/manageApps/enabled", false);
 				assert.ok(oSaveAsButton.getVisible(), "saveAs is visible");
 				assert.ok(oSaveAsButton.getEnabled(), "saveAs is enabled");
+				assert.deepEqual(
+					oSaveAsButton.getTooltip(),
+					null,
+					"then no tooltip is set for saveAs");
 				assert.ok(oOverviewButton.getVisible(), "AppVariantOverview is visible");
 				assert.ok(oOverviewButton.getEnabled(), "AppVariantOverview is enabled");
 				assert.notOk(oManageAppsButton.getVisible(), "manageApps is not visible");
