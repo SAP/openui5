@@ -68,7 +68,7 @@
 				<p>Nếu tiêu điểm đang ở trên bộ chọn hàng hoặc <span class="uicontrol">Chọn tất cả</span>, tiêu điểm sẽ di chuyển đến bộ chọn hàng cuối cùng.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Nếu tiêu điểm đang ở trên ô, tiêu điểm sẽ di chuyển đến kiểm soát ô có thể lấy tiêu điểm đầu tiên trong ô.</p>
 				<p>Nếu tiêu điểm đang ở trên ô đánh dấu <span class="uicontrol">Chọn tất cả</span> hoặc bộ chọn hàng, hệ thống sẽ đảo trạng thái của ô đánh dấu.</p>
 				<p>Nếu tiêu điểm đang ở trên tiêu đề cột, trình đơn tiêu đề cột sẽ được mở.</p>
@@ -101,8 +101,11 @@
 				<p>Đảo trạng thái tiêu điểm giữa ô và nội dung của nó (ngoại trừ văn bản chỉ đọc).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Nếu tiêu điểm đang ở <span class="uicontrol">Chọn tất cả</span>, và <kbd>Spacebar</kbd> được nhấn, sự kiện tương ứng không được kích hoạt. <kbd>Shift</kbd> ngăn chặn hoạt động này.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Nếu tiêu điểm đang ở trên tiêu đề cột và <kbd>Spacebar</kbd> hoặc <kbd>Enter</kbd> được nhấn, sự kiện tương ứng sẽ không được kích hoạt.</p>
 			</description>
 		</interaction>

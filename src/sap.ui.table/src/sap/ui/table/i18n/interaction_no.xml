@@ -68,7 +68,7 @@
 				<p>Hvis fokuset er på radvelgeren eller <span class="uicontrol">Velg alle</span>, flyttes fokuset til den siste radvelgeren.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Hvis fokuset er på cellen, flyttes fokuset til den første fokuserbare kontrollen i cellen.</p>
 				<p>Hvis fokuset er på markeringsfeltet <span class="uicontrol">Velg alle</span> eller en radvelger, veksler statusen for markeringsfeltet.</p>
 				<p>Hvis fokuset er på kolonneoverskriften, åpnes kolonneoverskriftsmenyen.</p>
@@ -101,8 +101,11 @@
 				<p>Veksler fokuset mellom cellen og celleinnholdet (med unntak av skrivebeskyttet tekst).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Hvis fokuset er på <span class="uicontrol">Velg alle</span> og du trykker på <kbd>Spacebar</kbd>, blir ikke den tilsvarende hendelsen utløst. <kbd>Shift</kbd> hindrer denne aktiviteten.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Hvis fokuset er på en kolonneoverskrift og du trykker på <kbd>Spacebar</kbd> eller <kbd>Enter</kbd>, blir ikke den tilsvarende hendelsen utløst.</p>
 			</description>
 		</interaction>

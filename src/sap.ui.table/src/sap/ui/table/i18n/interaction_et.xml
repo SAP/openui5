@@ -68,7 +68,7 @@
 				<p>Kui fookus on reaselektoril või märkeruudul <span class="uicontrol">Vali kõik</span>, viiakse fookus viimasele reaselektorile.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Kui fookus on lahtril, viiakse fookus esimesele lahtris olevale juhtelemendile, mille saab fookusesse võtta.</p>
 				<p>Kui fookus on märkeruudul <span class="uicontrol">Vali kõik</span> või reaselektoril, lülitatakse märkeruudu olek ümber.</p>
 				<p>Kui fookus on veerupäisel, avatakse veerupäise menüü.</p>
@@ -101,8 +101,11 @@
 				<p>Vahetab fookust lahtri ja selle sisu vahel (erandiks on kirjutuskaitsega tekst).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Kui fookus on nupul <span class="uicontrol">Vali kõik</span> ja vajutatakse kiirklahvi <kbd>Spacebar</kbd>, siis vastavat sündmust ei käivitata. <kbd>Shift</kbd> takistab seda tegevust.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Kui fookus on veerupäisel ja vajutatakse kiirklahvi <kbd>Spacebar</kbd> või <kbd>Enter</kbd>, siis vastavat sündmust ei käivitata.</p>
 			</description>
 		</interaction>

@@ -68,7 +68,7 @@
 				<p>Если фокус находится на селекторе строки или на <span class="uicontrol">Выбрать все</span>, фокус перемещается на селектор последней строки.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Если фокус находится на ячейке, фокус перемещается на первый фокусируемый элемент управления в ячейке.</p>
 				<p>Если фокус находится на флажке <span class="uicontrol">Выбрать все</span> или на селекторе строки, состояние флажка переключается.</p>
 				<p>Если фокус находится на заголовке столбца, открывается меню заголовка столбца.</p>
@@ -101,8 +101,11 @@
 				<p>Переключает фокус между ячейкой и ее содержимым (кроме текста только для чтения).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Если фокус находится на <span class="uicontrol">Выбрать все</span> и нажата клавиша <kbd>Spacebar</kbd>, соответствующее событие не инициируется. <kbd>Shift</kbd> препятствует этому действию.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Если фокус находится на заголовке столбца и нажата клавиша <kbd>Spacebar</kbd> или <kbd>Enter</kbd>, соответствующее событие не инициируется.</p>
 			</description>
 		</interaction>

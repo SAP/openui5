@@ -68,7 +68,7 @@
 				<p>Os yw'r ffocws ar y dewisydd rhesi neu ar <span class="uicontrol">Dewis Pob Un</span>, bydd y ffocws yn symud i ddewisydd y rhes olaf.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Os yw'r ffocws ar y gell, bydd y ffocws yn symud i'r rheolydd cyntaf y gellir rhoi ffocws arno yn y gell.</p>
 				<p>Os yw'r ffocws ar y blwch ticio <span class="uicontrol">Dewis Pob Un</span> neu ddewisydd rhesi, bydd yn toglo'r cyflwr blwch ticio.</p>
 				<p>Os yw'r ffocws ar bennawd colofn, bydd dewislen pennawd y golofn yn agor.</p>
@@ -101,8 +101,11 @@
 				<p>Yn toglo'r ffocws rhwng y gell a'i chynnwys (ac eithrio testun darllen-yn-unig).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Os yw'r ffocws ar <span class="uicontrol">Dewis Pob Un</span> a <kbd>Spacebar</kbd> yn cael ei bwyso, ni fydd y digwyddiad cyfatebol yn cael ei sbarduno. Mae <kbd>Shift</kbd> yn atal y gweithgarwch hwn.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Os yw'r ffocws ar bennawd colofn a <kbd>Spacebar</kbd> neu <kbd>Enter</kbd> yn cael ei bwyso, ni fydd y digwyddiad cyfatebol yn cael ei sbarduno.</p>
 			</description>
 		</interaction>

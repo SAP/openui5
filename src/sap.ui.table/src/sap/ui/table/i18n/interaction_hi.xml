@@ -68,7 +68,7 @@
 				<p>यदि यह फ़ोकस किसी पंक्ति चयनकर्ता या <span class="uicontrol">सभी का चयन करें</span> पर है, तो अंतिम पंक्ति चयनकर्ता पर फ़ोकस ले जाया जाता है.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>यदि यह फ़ोकस किसी सेल पर है, तो सेल में पहले फ़ोकस करने योग्य नियंत्रण पर फ़ोकस ले जाया जाता है.</p>
 				<p>यदि यह फ़ोकस <span class="uicontrol">सभी का चयन करें</span> चेकबॉक्स या पंक्ति चयनकर्ता पर है, तो चेकबॉक्स स्थिति को टॉगल करता है.</p>
 				<p>यदि यह फ़ोकस किसी स्तंभ शीर्षलेख पर है, तो स्तंभ शीर्षलेख मेनू खुल जाता है.</p>
@@ -101,8 +101,11 @@
 				<p>सेल और इसकी सामग्री (केवल-पठन योग्य टेक्स्ट के अपवाद के साथ) के बीच फ़ोकस को टॉगल करता है.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>यदि यह फ़ोकस <span class="uicontrol">सभी का चयन करें</span> पर है और <kbd>Spacebar</kbd> को दबाया जाता है, तो संबंधित ईवेंट ट्रिगर नहीं होता है. <kbd>Shift</kbd> इस गतिविधि को रोकता है.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>यदि यह फ़ोकस किसी स्तंभ शीर्षलेख पर है और <kbd>Spacebar</kbd> या <kbd>Enter</kbd> को दबाया जाता है, तो संबंधित ईवेंट ट्रिगर नहीं होता है.</p>
 			</description>
 		</interaction>

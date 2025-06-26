@@ -68,7 +68,7 @@
 				<p>Odak satır seçicideyse <span class="uicontrol">Tümünü seç</span> onay kutusundaysa son satır seçiciye taşınır.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Odak hücredeyse hücredeki ilk odaklanılabilir kontrole taşınır.</p>
 				<p>Odak <span class="uicontrol">Tümünü seç</span> onay kutusundaysa veya satır seçicideyse onay kutusu durumu değişir. </p>
 				<p>Odak sütun başlığındaysa sütun başlığı menüsü açılır.</p>
@@ -101,8 +101,11 @@
 				<p>Odağı hücre ile içeriği arasında değiştirir (salt okunur metin hariç).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Odak <span class="uicontrol">Tümünü seç</span> üzerindeyse ve <kbd>Spacebar</kbd> öğesine basılırsa ilgili olay tetiklenmez. <kbd>Shift</kbd> bu aktiviteyi engeller.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Odak sütun başlığındaysa ve <kbd>Spacebar</kbd> veya <kbd>Enter</kbd> öğesine basılmışsa ilgili olay tetiklenmez.</p>
 			</description>
 		</interaction>

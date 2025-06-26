@@ -68,7 +68,7 @@
 				<p>Dacă focalizarea este pe selectorul de linie sau <span class="uicontrol">Selectare tot</span>, focalizarea se mută pe ultimul selector de linie.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Dacă focalizarea este pe celulă, focalizarea se mută pe primul control focalizabil din celulă.</p>
 				<p>Dacă focalizarea este pe caseta de marcaj <span class="uicontrol">Selectare tot</span> sau selectorul de linie, comută starea casetei de marcaj.</p>
 				<p>Dacă focalizarea este pe antetul de coloană, este deschis meniul antetului de coloană.</p>
@@ -101,8 +101,11 @@
 				<p>Comută focalizarea între celulă și conținutul său (cu excepția textului numai pentru citire).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Dacă focalizarea este pe <span class="uicontrol">Selectare tot</span> și <kbd>Spacebar</kbd> este apăsat, evenimentul corespondent nu este declanșat. <kbd>Shift</kbd> previne această activitate.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Dacă focalizarea este pe un antet de coloană și <kbd>Spacebar</kbd> sau <kbd>Enter</kbd> este apăsat, evenimentul corespondent nu este declanșat.</p>
 			</description>
 		</interaction>

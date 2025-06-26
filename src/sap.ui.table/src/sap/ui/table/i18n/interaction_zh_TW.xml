@@ -33,14 +33,14 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + PageUp</kbd> <description>
-				<p>若焦點在儲存格層次或欄表頭上，則該焦點會將五欄移至左側 (預設頁面大小)。若左側的欄數少於目前頁面大小，則焦點會移至第一欄。</p>
+				<p>若焦點在儲存格層次或欄表頭上，則該焦點會將五欄移至左側 (預設頁面大小)；若左側的欄數少於目前頁面大小，則該焦點會移至第一欄。</p>
 				<p>若焦點在儲存格層次的第一欄上，則該焦點會移至列選擇器。</p>
 				<p>若焦點在第一欄的欄表頭上，則該焦點會移至 <span class="uicontrol">[全選]</span>。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + PageDown</kbd> <description>
 				<p>若焦點在儲存格層次上，則該焦點會將五欄移至右側 (預設頁面大小)。</p>
-				<p>若焦點在欄表頭上且右側的欄數少於目前頁面大小，則焦點會移至最後一欄。</p>
+				<p>若焦點在欄表頭上且右側的欄數少於目前頁面大小，則該焦點會移至最後一欄。</p>
 				<p>若焦點在列選擇器上，則該焦點會移至相同列中的第一欄。</p>
 				<p>若焦點在 <span class="uicontrol">[全選]</span> 上，則該焦點會移至第一欄的表頭。</p>
 			</description>
@@ -68,7 +68,7 @@
 				<p>若焦點在列選擇器或 <span class="uicontrol">[全選]</span> 上，則該焦點會移至最後一個列選擇器。</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>若焦點在儲存格上，則該焦點會移至儲存格中的第一個可聚焦控制項。</p>
 				<p>若焦點在 <span class="uicontrol">[全選]</span> 核取方塊或列選擇器上，則切換核取方塊狀態。</p>
 				<p>若焦點在欄表頭上，則會開啟欄表頭功能表。</p>
@@ -84,7 +84,7 @@
 				<p>若焦點在儲存格或列選擇器上，則會切換目前列的選擇。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
 				<p>若焦點在儲存格選擇區塊上，則該儲存格選擇區塊會更改為列選擇；儲存格選擇已移除。</p>
-				<p>依列選擇模式不同而發生下列情況：</p>
+				<p>根據列選擇模式不同，會發生下列情況：</p>
 				<ul>
 					<li>已選擇區塊的所有列 (多選)</li>
 					<li>僅選擇目前聚焦儲存格的所在列 (單選)</li>
@@ -101,8 +101,11 @@
 				<p>在儲存格和其內容之間切換焦點 (唯讀內文除外)。</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>若焦點在 <span class="uicontrol">[全選]</span> 且已按下 <kbd>Spacebar</kbd>，則不會驅動對應事件。<kbd>Shift</kbd> 會避免此作業。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>若焦點在欄表頭上且已按下 <kbd>Spacebar</kbd> 或 <kbd>Enter</kbd>，則不會驅動對應事件。</p>
 			</description>
 		</interaction>
@@ -126,7 +129,7 @@
 				<p>若焦點在欄表頭上，則該欄的寬度將增加 1 em。若繼續按下該鍵，則會重複此操作。</p>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
 				<p>若焦點在<span class="emphasis">未</span>選擇的儲存格上，則會選擇聚焦儲存格和右側儲存格；該焦點會移至聚焦儲存格右側的儲存格。</p>
-				<p>若焦點在所選的儲存格上，則焦點會移至右側的儲存格，且儲存格選擇將增強至該儲存格。</p>
+				<p>若焦點在所選的儲存格上，則焦點會移至右側的儲存格，且儲存格選擇會增強至該儲存格。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>

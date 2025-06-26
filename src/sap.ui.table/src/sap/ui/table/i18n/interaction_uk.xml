@@ -68,7 +68,7 @@
 				<p>Якщо курсор знаходиться на селекторі рядка або на <span class="uicontrol">Вибрати все</span>, то курсор переміщується до останнього селектора рядка.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Якщо курсор знаходиться у комірці, то курсор переміщується до першого елемента керування в комірці, на якому можна встановити курсор.</p>
 				<p>Якщо курсор знаходиться на прапорці <span class="uicontrol">Вибрати все</span> або на селекторі рядка, то він перемикає стан прапорця.</p>
 				<p>Якщо курсор знаходиться у заголовку стовпчика, то відкривається меню заголовка стовпчика.</p>
@@ -101,8 +101,11 @@
 				<p>Перемикає курсор між коміркою та її вмістом (окрім тексту лише для читання).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Якщо курсор знаходиться на <span class="uicontrol">Вибрати все</span> і натиснуто <kbd>Spacebar</kbd>, то відповідна подія не ініціюється. <kbd>Shift</kbd> заважає цій операції.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Якщо курсор знаходиться у заголовку стовпчика і натиснуто <kbd>Spacebar</kbd> або <kbd>Enter</kbd>, то відповідна подія не ініціюється.</p>
 			</description>
 		</interaction>

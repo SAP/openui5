@@ -23,7 +23,7 @@
 				<p><kbd>ArrowRight</kbd></p>
 				<p>Je-li fokus na řádce, přesune se na první buňku příslušné řádky. Tím se přepne navigace na bázi řádky na navigaci na bázi buňky.</p>
 				<p>Je-li fokus na buňce, přesune se o buňku vpravo. </p>
-				<p><span class="emphasis">Poznámka:</span> Je-li fokus na posledním sloupci a pop-in chování bylo povoleno pro tento sloupce, pop-in oblast je považována za další sloupec vpravo a fokus se přesune na tento sloupec.</p>
+				<p><span class="emphasis">Poznámka:</span> Je-li fokus na posledním sloupci a pop-in chování bylo povoleno pro tento sloupec, pop-in oblast je považována za další sloupec vpravo a fokus se přesune na tento sloupec.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <description>
@@ -56,7 +56,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
 				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se rozšíří až po tuto řádku.</p>
-				<p>Je-li fokus na selektoru buněk nebo řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku se odebere.</p>
+				<p>Je-li fokus na selektoru buněk nebo řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku výše a výběr se pro tuto řádku odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka nad ní. Fokus se přemístí na buňku nad zaměřenou buňkou.</p>
 				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku nad ní a výběr buňky je rozšířen až po tuto buňku.</p>
@@ -64,7 +64,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
 				<p>Je-li fokus na buňce nebo na selektoru řádek a je vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se rozšíří až po tuto řádku.</p>
-				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se pro tuto řádku se odebere.</p>
+				<p>Je-li fokus na buňce nebo na selektoru řádek a <span class="emphasis">není</span> vybrána relevantní řádka, fokus se přemístí o řádku níže a výběr se pro tuto řádku odebere.</p>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus na buňce, která <span class="emphasis">není</span> vybrána, a řádka <span class="emphasis">není</span> vybrána, vybere se zaměřená buňka a buňka pod ní. Fokus se přemístí na buňku pod zaměřenou buňkou. </p>
 				<p>Je-li fokus na vybrané buňce, přesune se fokus na buňku pod ní a výběr buňky je rozšířen až po tuto buňku.</p>

@@ -68,7 +68,7 @@
 				<p>Als de focus op de rijselector of <span class="uicontrol">Alles selecteren</span> ligt, wordt de focus naar de laatste rijselector verplaatst.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Als de focus op de cel ligt, wordt de focus naar de eerste focusseerbare besturing in de cel verplaatst.</p>
 				<p>Als de focus op het aankruisvakje <span class="uicontrol">Alles selecteren</span> of de rijselector ligt, wordt de status van het aankruisvakje omgeschakeld.</p>
 				<p>Als de focus op de kolomkop ligt, wordt het kolomkopmenu geopend.</p>
@@ -101,8 +101,11 @@
 				<p>Schakelt de focus om tussen de cel en bijhorende inhoud (met uitzondering van alleen-lezen tekst).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Als de focus op <span class="uicontrol">Alles selecteren</span> ligt en op <kbd>Spacebar</kbd> wordt gedrukt, wordt de bijhorende event niet gestart. <kbd>Shift</kbd> voorkomt deze activiteit.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Als de focus op een kolomkop ligt en op <kbd>Spacebar</kbd> of <kbd>Enter</kbd> wordt gedrukt, wordt de bijhorende event niet gestart.</p>
 			</description>
 		</interaction>
@@ -115,7 +118,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
-				<p>Als de focus op de cel- of rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
+				<p>Als de focus op de cel of op de rijselector ligt en de relevante rij is geselecteerd, wordt de focus naar de rij erboven verplaatst en wordt de selectie tot deze rij uitgebreid.</p>
 				<p>Als de focus op een cel of op de rijselector ligt en de relevante rij <span class="emphasis">niet</span> is geselecteerd, wordt de focus naar de rij eronder verplaatst en wordt de selectie voor deze rij verwijderd.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
 				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd en de rij <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel eronder geselecteerd. De focus wordt naar de cel onder de gefocusseerde cel verplaatst.</p>
@@ -126,7 +129,7 @@
 				<p>Als de focus op de kolomkop ligt, wordt de breedte van deze kolom met 1 em vergroot. Dit wordt herhaald zolang de toets ingedrukt blijft.</p>
 				<p><span class="emphasis">Als celselectie is ingeschakeld:</span></p>
 				<p>Als de focus op een cel ligt die <span class="emphasis">niet</span> is geselecteerd, worden de gefocusseerde cel en de cel rechts ervan geselecteerd. De focus wordt naar de cel rechts van de gefocusseerde cel verplaatst.</p>
-				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel rechts gelegd en de celselectie uitgebreid tot deze cel.</p>
+				<p>Als de focus op een geselecteerde cel ligt, wordt de focus op de cel rechts gelegd en wordt de celselectie uitgebreid tot deze cel.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>

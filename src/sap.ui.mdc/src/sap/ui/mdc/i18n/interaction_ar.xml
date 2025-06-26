@@ -7,7 +7,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + E</kbd> <description>
-				<p>فتح مربع الحوار <span class="uicontrol">تصدير كـ</span> للجدول، إذا كان متوفرًا.</p>
+				<p>فتح مربع الحوار <span class="uicontrol">تصدير باسم</span> للجدول، إذا كان متوفرًا.</p>
 			</description>
 		</interaction>
 	</control-interactions>
@@ -21,7 +21,7 @@
 	<control-interactions>
 		<control name="sap.ui.mdc.Chart"/>
 		<interaction> <kbd>Ctrl + ,</kbd> <description>
-				<p>يفتح مربع الحوار <span class="uicontrol">إعدادات العرض</span>.</p>
+				<p>فتح مربع الحوار <span class="uicontrol">إعدادات العرض</span>.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + D</kbd> <description>

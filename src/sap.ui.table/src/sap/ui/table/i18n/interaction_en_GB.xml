@@ -68,7 +68,7 @@
 				<p>If the focus is on the row selector or <span class="uicontrol">Select All</span>, the focus moves to the last row selector.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>If the focus is on the cell, the focus moves to the first focusable control in the cell.</p>
 				<p>If the focus is on the <span class="uicontrol">Select All</span> checkbox or a row selector, toggles the checkbox state.</p>
 				<p>If the focus is on the column header, the column header menu is opened.</p>
@@ -101,8 +101,11 @@
 				<p>Toggles the focus between the cell and its content (with the exception of read-only text).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>If the focus is on <span class="uicontrol">Select All</span>, and <kbd>Spacebar</kbd> is pressed, the corresponding event is not triggered. <kbd>Shift</kbd> prevents this activity.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>If the focus is on a column header, and <kbd>Spacebar</kbd> or <kbd>Enter</kbd> is pressed, the corresponding event is not triggered.</p>
 			</description>
 		</interaction>

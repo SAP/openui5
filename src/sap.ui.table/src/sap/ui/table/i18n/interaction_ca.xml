@@ -68,7 +68,7 @@
 				<p>Si el focus és al selector de fila o a <span class="uicontrol">Selecciona-ho tot</span>, el focus es mou al darrer selector de fila.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Si el focus és a la cel·la, el focus es mou al primer control enfocable de la cel·la.</p>
 				<p>Si el focus és a la casella de selecció <span class="uicontrol">Selecciona-ho tot</span> o a un selector de fila, alterna l'estat de la casella de selecció.</p>
 				<p>Si el focus és a la capçalera de columna, s'obre el menú de la capçalera de columna.</p>
@@ -101,8 +101,11 @@
 				<p>Canvia el focus entre la cel·la i el seu contingut (tret dels textos de només lectura).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Si el focus és a <span class="uicontrol">Selecciona-ho tot</span> i es prem <kbd>Spacebar</kbd>, l'esdeveniment corresponent no s'activa. <kbd>Shift</kbd> impedeix aquesta activitat.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Si el focus és en una capçalera de columna i es prem <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, l'esdeveniment corresponent no s'activa.</p>
 			</description>
 		</interaction>

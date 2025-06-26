@@ -68,7 +68,7 @@
 				<p>Ако фокусът е върху селектора за редове или <span class="uicontrol">Избор на всички</span>, той се премества върху селектора за последния ред.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Ако фокусът е върху клетката, той се премества върху първата контрола с възможност за фокусиране в клетката.</p>
 				<p>Ако фокусът е върху полето за отметка <span class="uicontrol">Избор на всички</span> или селектора за редове, превключва статуса на полето.</p>
 				<p>Ако фокусът е върху заглавката на колоната, менюто в заглавката се отваря.</p>
@@ -101,8 +101,11 @@
 				<p>Превключва фокуса между клетката и съдържанието ѝ (с изключение на текстове само за четене).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Ако фокусът е върху <span class="uicontrol">Избор на всички</span> и е натиснато <kbd>Spacebar</kbd>, съответното събитие не се инициира. <kbd>Shift</kbd> предотвратява тази дейност.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Ако фокусът е върху заглавка на колона и е натиснато <kbd>Spacebar</kbd> или <kbd>Enter</kbd>, съответното събитие не се инициира.</p>
 			</description>
 		</interaction>

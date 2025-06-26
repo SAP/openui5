@@ -68,7 +68,7 @@
 				<p>Se il focus è sul selettore riga o su <span class="uicontrol">Seleziona tutto</span>, si sposta sull'ultimo selettore riga.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Se il focus è sulla cella, si sposta sull'ultimo controllo su cui è possibile spostare il focus nella cella.</p>
 				<p>Se il focus è sulla casella di controllo <span class="uicontrol">Seleziona tutto</span> o su un selettore riga, attiva/disattiva lo stato della casella di controllo.</p>
 				<p>Se il focus è sull'intestazione della colonna, viene aperto il menu dell'intestazione colonna.</p>
@@ -101,8 +101,11 @@
 				<p>Attiva/disattiva il focus tra la cella e il suo contenuto (ad eccezione del testo di sola lettura).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Se il focus è su <span class="uicontrol">Seleziona tutto</span> e si preme <kbd>Spacebar</kbd>, l'evento corrispondente non viene attivato. <kbd>Shift</kbd> impedisce questa attività.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Se il focus è sull'intestazione della colonna e si preme <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, l'evento corrispondente non viene attivato.</p>
 			</description>
 		</interaction>
@@ -177,7 +180,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copia le righe o le celle selezionate nel clipboard, se disponibile, e la funzionalità viene attivata.</p>
+				<p>Copia le righe o le celle selezionate nel clipboard, se disponibile, e attiva la funzionalità.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
