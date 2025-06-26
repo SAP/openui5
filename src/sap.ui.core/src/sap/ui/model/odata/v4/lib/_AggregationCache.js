@@ -245,7 +245,8 @@ sap.ui.define([
 	/**
 	 * Adjusts the (limited) descendant count at all ancestors of the given element which must be
 	 * part of <code>this.oFirstLevel</code>, handles placeholders. Makes the parent a leaf if its
-	 * descendant count becomes 0.
+	 * descendant count becomes 0 and reverts that if its descendant count was 0 before (the latter
+	 * can only happen when a parent's single child is moved to the same parent).
 	 *
 	 * @param {object} oElement - The element
 	 * @param {number} iIndex - Its index
@@ -271,6 +272,10 @@ sap.ui.define([
 					_Helper.setPrivateAnnotation(oCandidate, "descendants", iCount);
 					if (iCount === 0) {
 						this.makeLeaf(oCandidate);
+					} else if (iCount === iOffset) { // not a leaf anymore
+						_Helper.updateAll(this.mChangeListeners,
+							_Helper.getPrivateAnnotation(oCandidate, "predicate"), oCandidate,
+							{"@$ui5.node.isExpanded" : true});
 					}
 					// the next candidate must be an ancestor of this node
 					iIndex = iCandidateIndex;

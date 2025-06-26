@@ -34463,6 +34463,8 @@ sap.ui.define([
 	// not part of the hierarchy. It still holds its data and is affected by side-effects requests.
 	// JIRA: CPOUI5ODATAV4-2624
 	// Side-effects refresh of single root node (SNOW: DINC0538031)
+	//
+	// Move a parent's single leaf child to the same parent (SNOW: DINC0548859)
 [false, true].forEach(function (bResetViaModel) {
 	const sTitle = `Recursive Hierarchy: create new children, move 'em, model=${bResetViaModel}`;
 	QUnit.test(sTitle, function (assert) {
@@ -35517,6 +35519,38 @@ sap.ui.define([
 					[undefined, undefined, 2, "etag2.5", "Gamma #3", "2,false"]
 				]);
 		}).then(function () {
+			that.expectRequest({
+					batchNo : 20,
+					headers : {
+						"If-Match" : "etag2.5",
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					url : "Artists(ArtistID='2',IsActiveEntity=false)",
+					payload : {
+						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)"
+					}
+				}, null, {ETag : "etag2.6"}) // 204 No Content
+				.expectRequest({
+					batchNo : 20,
+					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
+						+ "&$select=_/Limited_Rank"
+				}, {
+					value : [{
+						"@odata.etag" : "n/a",
+						_ : {
+							Limited_Rank : "2" // no change
+						}
+					}]
+				})
+				.expectChange("etag", [,,, "etag2.6"]);
+
+			return Promise.all([
+				// code under test (SNOW: DINC0548859)
+				oGamma.move({parent : oRoot}),
+				that.waitForChanges(assert, "no real move - 2 (Gamma) to 0 (Alpha)")
+			]);
+		}).then(function () {
 			that.expectChange("etag", ["etag9.1", "etag1.7", "etag0.4"])
 				.expectChange("name", ["Aleph #2", "Beta #3", "Alpha #3"]);
 
@@ -35528,7 +35562,7 @@ sap.ui.define([
 
 			that.expectRequest(sFriend.slice(1) + "(ArtistID='2',IsActiveEntity=false)"
 					+ "?$select=Name,_/NodeID", {
-					"@odata.etag" : "etag2.6",
+					"@odata.etag" : "etag2.7",
 					Name : "Gamma: #4", // "side effect"
 					_ : null // not available w/ RAP for a non-hierarchical request
 				});
@@ -35544,7 +35578,7 @@ sap.ui.define([
 			assert.deepEqual(oGamma.getObject(), {
 				"@$ui5.context.isSelected" : true,
 				"@$ui5.node.level" : 2,
-				"@odata.etag" : "etag2.6",
+				"@odata.etag" : "etag2.7",
 				ArtistID : "2",
 				IsActiveEntity : false,
 				Name : "Gamma: #4",
@@ -36454,6 +36488,8 @@ sap.ui.define([
 	//
 	// Determine the parent nodes of "Alpha", "Beta", "Kappa", and "Omega".
 	// JIRA: CPOUI5ODATAV4-2323
+	//
+	// Move a parent's single child to the same parent (SNOW: DINC0548859)
 [false, true].forEach((bMoveCollapsed) => {
 	const sTitle = `Recursive Hierarchy: move node w/ children, collapsed=${bMoveCollapsed}`;
 
@@ -36785,6 +36821,60 @@ sap.ui.define([
 		assert.strictEqual(oBeta.getParent(), oAlpha, "JIRA: CPOUI5ODATAV4-2323");
 		assert.strictEqual(oAlpha.getParent(), oOmega, "JIRA: CPOUI5ODATAV4-2323");
 		assert.strictEqual(oOmega.getParent(), null, "JIRA: CPOUI5ODATAV4-2323");
+
+		// 9 Omega
+		//   0 Alpha (moved here - where it was before)
+		//     1 Beta
+		//       1.1 Gamma
+		//       2 Kappa
+		//       1.2 Zeta
+		//     3 Lambda
+		this.expectEvents(assert, "sap.ui.model.odata.v4.ODataListBinding: /EMPLOYEES", [
+				[, "change", {reason : "change"}]
+			])
+			.expectRequest({
+				batchNo : bMoveCollapsed ? 4 : 5,
+				headers : {
+					Prefer : "return=minimal"
+				},
+				method : "PATCH",
+				url : "EMPLOYEES('0')",
+				payload : {
+					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
+				}
+			}) // 204 No Content
+			.expectRequest({
+				batchNo : bMoveCollapsed ? 4 : 5,
+				url : sBaseUrl + "&$filter=ID eq '0'&$select=LimitedRank"
+			}, {
+				value : [{
+					LimitedRank : "1" // Edm.Int64
+				}]
+			});
+
+		await Promise.all([
+			// code under test (SNOW: DINC0548859)
+			oAlpha.move({parent : oOmega}),
+			this.waitForChanges(assert, "no real move - 0 (Alpha) to 9 (Omega)")
+		]);
+
+		checkTable("after no real move - 0 (Alpha) to 9 (Omega)", assert, oTable, [
+			"/EMPLOYEES('9')",
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('1.1')",
+			"/EMPLOYEES('2')",
+			"/EMPLOYEES('1.2')",
+			"/EMPLOYEES('3')"
+		], [
+			[true, 1, "9", "", "Omega", 69],
+			[true, 2, "0", ""/*TODO "9"*/, "Alpha", 60],
+			[true, 3, "1", "0", "Beta", 55],
+			[undefined, 4, "1.1", "1", "Gamma", 41],
+			[undefined, 4, "2", "0"/*TODO "1"*/, "Kappa", 56],
+			[undefined, 4, "1.2", "1", "Zeta", 42],
+			[undefined, 3, "3", "0", "Lambda", 57]
+		]);
 	});
 });
 

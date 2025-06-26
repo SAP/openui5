@@ -6437,6 +6437,7 @@ sap.ui.define([
 	// in: array of arrays with level, descendants
 	// isAncestorOf gives the expected calls of the function and its results
 	// leaf: index of a node becoming a leaf
+	// nonLeaf: index of a node becoming not a leaf anymore
 	// out: array of descendants values
 [{
 	// Placeholder at 3 must be ignored, 2 and 1 are ancestors, 0 must never be looked at
@@ -6459,8 +6460,9 @@ sap.ui.define([
 	in : [[1, 24], [2, 23], [3, 0]],
 	leaf : 1,
 	out : [1, 0, 0]
-}, { // parent not a leaf anymore
-	in : [[1, undefined], [2, /*unrealistic*/17]],
+}, { // parent not a leaf anymore (in real life, iOffset would be positive here!)
+	in : [[1, undefined], [2, 17]],
+	nonLeaf : 0,
 	out : [-23, 17]
 }].forEach(function (oFixture, i) {
 	QUnit.test("adjustDescendantCount #" + i, function (assert) {
@@ -6468,7 +6470,7 @@ sap.ui.define([
 			hierarchyQualifier : "X"
 		});
 		oCache.aElements = oFixture.in.map(([iLevel, iDescendants]) => ({
-			"@$ui5._" : {descendants : iDescendants},
+			"@$ui5._" : {descendants : iDescendants, predicate : iLevel + "," + iDescendants},
 			"@$ui5.node.level" : iLevel
 		}));
 
@@ -6482,6 +6484,11 @@ sap.ui.define([
 		}
 		oCacheMock.expects("makeLeaf").exactly("leaf" in oFixture ? 1 : 0)
 			.withExactArgs(sinon.match.same(oCache.aElements[oFixture.leaf]));
+		this.mock(_Helper).expects("updateAll").exactly("nonLeaf" in oFixture ? 1 : 0)
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners),
+				oCache.aElements[oFixture.nonLeaf]?.["@$ui5._"].predicate,
+				sinon.match.same(oCache.aElements[oFixture.nonLeaf]),
+				{"@$ui5.node.isExpanded" : true});
 
 		const iIndex = oFixture.in.length - 1;
 		// code under test
