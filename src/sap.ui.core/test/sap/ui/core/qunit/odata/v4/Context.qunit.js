@@ -5125,11 +5125,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach((bDoNotUpdateAnnotation) => {
+[false, true].forEach((bSilent) => {
 	[false, true].forEach((bDestroyed) => {
 		[false, true].forEach((bDeleted) => {
 			[false, true].forEach((bIsHeaderContext) => {
-				const sTitle = "doSetSelected, update annotation = " + !bDoNotUpdateAnnotation
+				const sTitle = "doSetSelected, silent = " + bSilent
 					+ ", context destroyed while waiting for cache = " + bDestroyed
 					+ ", deleted context = " + bDeleted
 					+ ", context is header context = " + bIsHeaderContext;
@@ -5138,7 +5138,7 @@ sap.ui.define([
 				}
 
 	QUnit.test(sTitle, function (assert) {
-		const fnDone = bDestroyed && !bDoNotUpdateAnnotation ? assert.async(2) : null;
+		const fnDone = bDestroyed && !bSilent ? assert.async(2) : null;
 		const oBinding = {
 			getHeaderContext : mustBeMocked,
 			onKeepAliveChanged : mustBeMocked
@@ -5161,10 +5161,11 @@ sap.ui.define([
 		assert.strictEqual(oContext.isSelected(), false);
 
 		// code under test (nothing happens)
-		assert.strictEqual(oContext.doSetSelected(false, bDoNotUpdateAnnotation), false);
+		assert.strictEqual(oContext.doSetSelected(false, bSilent), false);
 
 		let iKeepAliveChanged = 0;
-		oBindingMock.expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext))
+		oBindingMock.expects("onKeepAliveChanged").exactly(bSilent ? 0 : 1)
+			.withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
 				assert.strictEqual(oContext.bSelected, true);
 				iKeepAliveChanged += 1;
@@ -5201,17 +5202,17 @@ sap.ui.define([
 				fnProcessor(oCache, "/some/path");
 			}
 		};
-		oContextMock.expects("withCache").exactly(bDoNotUpdateAnnotation ? 0 : 1)
+		oContextMock.expects("withCache").exactly(bSilent ? 0 : 1)
 			.withExactArgs(sinon.match.func, "")
 			.callsFake(withCache.bind(this, true));
 
 		// code under test (false -> true)
-		assert.strictEqual(oContext.doSetSelected(true, bDoNotUpdateAnnotation), true);
+		assert.strictEqual(oContext.doSetSelected(true, bSilent), true);
 
 		assert.strictEqual(oContext.isSelected(), true);
 
 		// code under test (nothing happens)
-		assert.strictEqual(oContext.doSetSelected(true, bDoNotUpdateAnnotation), false);
+		assert.strictEqual(oContext.doSetSelected(true, bSilent), false);
 
 		// code under test
 		assert.strictEqual(oContext.toString(),
@@ -5219,7 +5220,8 @@ sap.ui.define([
 
 		assert.strictEqual(oContext.iSelectionCount, "~iSelectionCount~", "unchanged");
 
-		oBindingMock.expects("onKeepAliveChanged").withExactArgs(sinon.match.same(oContext))
+		oBindingMock.expects("onKeepAliveChanged").exactly(bSilent ? 0 : 1)
+			.withExactArgs(sinon.match.same(oContext))
 			.callsFake(function () {
 				assert.strictEqual(oContext.bSelected, false);
 				iKeepAliveChanged += 1;
@@ -5231,18 +5233,18 @@ sap.ui.define([
 				assert.strictEqual(oContext.bSelected, false);
 				iSelectionChanged += 1;
 			});
-		oContextMock.expects("withCache").exactly(bDoNotUpdateAnnotation ? 0 : 1)
+		oContextMock.expects("withCache").exactly(bSilent ? 0 : 1)
 			.withExactArgs(sinon.match.func, "")
 			.callsFake(withCache.bind(this, false));
 
 		// code under test (true -> false)
-		assert.strictEqual(oContext.doSetSelected(false, bDoNotUpdateAnnotation), true);
+		assert.strictEqual(oContext.doSetSelected(false, bSilent), true);
 
 		assert.strictEqual(oContext.isSelected(), false);
 		assert.strictEqual(oContext.iSelectionCount, bIsHeaderContext ? 0 : "~iSelectionCount~");
 
 		// code under test (nothing happens)
-		assert.strictEqual(oContext.doSetSelected(false, bDoNotUpdateAnnotation), false);
+		assert.strictEqual(oContext.doSetSelected(false, bSilent), false);
 
 		// code under test
 		assert.strictEqual(oContext.toString(),

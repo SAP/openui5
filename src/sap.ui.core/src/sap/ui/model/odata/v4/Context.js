@@ -639,20 +639,24 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSelected
 	 *   Whether this context is to be selected
-	 * @param {boolean} [bDoNotUpdateAnnotation]
-	 *   Whether the client-side annotation "@$ui5.context.isSelected" should not be updated
+	 * @param {boolean} [bSilent]
+	 *   Whether the client-side annotation "@$ui5.context.isSelected" should not be updated and
+	 *   the binding should not be informed via
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#onKeepAliveChanged}
 	 * @returns {boolean}
 	 *   Whether the selection state of this context has changed
 	 *
 	 * @private
 	 * @see #setSelected
 	 */
-	Context.prototype.doSetSelected = function (bSelected, bDoNotUpdateAnnotation) {
+	Context.prototype.doSetSelected = function (bSelected, bSilent) {
 		if (this.bSelected === bSelected) {
 			return false;
 		}
 		this.bSelected = bSelected;
-		this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+		if (!bSilent) {
+			this.oBinding.onKeepAliveChanged(this); // selected contexts are effectively kept alive
+		}
 		const oHeaderContext = this.oBinding.getHeaderContext();
 		if (oHeaderContext === this) {
 			if (!bSelected) {
@@ -664,7 +668,7 @@ sap.ui.define([
 		}
 
 		// Note: data binding may cause #setSelected to be called redundantly!
-		if (!bDoNotUpdateAnnotation) {
+		if (!bSilent) {
 			this.withCache((oCache, sPath) => {
 				if (this.oBinding) {
 					oCache.setProperty("@$ui5.context.isSelected", bSelected, sPath);
