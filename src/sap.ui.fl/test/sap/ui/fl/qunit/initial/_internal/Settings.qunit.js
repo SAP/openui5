@@ -103,6 +103,24 @@ sap.ui.define([
 			assert.strictEqual(oConstructorSettings.isAtoAvailable, undefined, "then the legacy settings are not set");
 			assert.strictEqual(oConstructorSettings.isZeroDowntimeUpgradeRunning, undefined, "then the legacy settings are not set");
 		});
+
+		QUnit.test("unknown settings", async function(assert) {
+			this.oLoadFeaturesStub.restore();
+			this.oLoadFeaturesStub = sandbox.stub(Storage, "loadFeatures").resolves({
+				thisDoesNotExist: true,
+				anotherUnknownSetting: "test"
+			});
+			const oAssertSpy = sandbox.spy(console, "assert");
+			sandbox.stub(Log, "warning");
+			await Settings.getInstance();
+			assert.strictEqual(oAssertSpy.callCount, 0, "then no error is logged");
+			assert.strictEqual(Log.warning.callCount, 1, "then a warning is logged for the unknown settings");
+			assert.strictEqual(
+				Log.warning.getCall(0).args[0],
+				"Unknown settings received from the backend: thisDoesNotExist, anotherUnknownSetting",
+				"then the warning message is correct"
+			);
+		});
 	});
 
 	QUnit.done(function() {
