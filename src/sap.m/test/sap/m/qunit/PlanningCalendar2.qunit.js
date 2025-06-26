@@ -2337,6 +2337,7 @@ sap.ui.define([
 		oOneMonthsRow = Element.getElementById("OPC-OneMonthsRow");
 
 		this.oPC.setShowDayNamesLine(true);
+		oCore.applyChanges();
 		assert.equal(oDatesRow.getShowDayNamesLine(), true, "the property is passed to the DatesRow in the days view after setting the property to the Hour view");
 
 		assert.equal(oWeeksRow.getShowDayNamesLine(), true, "the property is passed to the WeeksRow in the week view after setting the property to the Hour view");
@@ -2344,8 +2345,8 @@ sap.ui.define([
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), true, "the property is passed to the OneMonthsRow in the one month view after setting the property to the Hour view");
 
 		this.oPC.setViewKey(CalendarIntervalType.Day);
-		oCore.applyChanges();
 		this.oPC.setShowDayNamesLine(false);
+		oCore.applyChanges();
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the property is passed to the DatesRow in the days view after setting the property to the Day view");
 
 		assert.equal(oWeeksRow.getShowDayNamesLine(), false, "the property is passed to the WeeksRow in the week view after setting the property to the Day view");
@@ -2353,8 +2354,8 @@ sap.ui.define([
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), false, "the property is passed to the OneMonthsRow in the one month view after setting the property to the Day view");
 
 		this.oPC.setViewKey(CalendarIntervalType.Week);
-		oCore.applyChanges();
 		this.oPC.setShowDayNamesLine(true);
+		oCore.applyChanges();
 		assert.equal(oDatesRow.getShowDayNamesLine(), true, "the property is passed to the DatesRow in the days view after setting the property to the Week view");
 
 		assert.equal(oWeeksRow.getShowDayNamesLine(), true, "the property is passed to the WeeksRow in the week view after setting the property to the Week view");
@@ -2362,14 +2363,13 @@ sap.ui.define([
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), true, "the property is passed to the OneMonthsRow in the one month view after setting the property to the Week view");
 
 		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
-		oCore.applyChanges();
 		this.oPC.setShowDayNamesLine(false);
+		oCore.applyChanges();
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the property is passed to the DatesRow in the days view after setting the property to the OneMonth view");
 
 		assert.equal(oWeeksRow.getShowDayNamesLine(), false, "the property is passed to the WeeksRow in the week view after setting the property to the OneMonth view");
 
 		assert.equal(oOneMonthsRow.getShowDayNamesLine(), false, "the property is passed to the OneMonthsRow in the one month view after setting the property to the OneMonth view");
-
 	});
 
 	QUnit.module('Destroy');

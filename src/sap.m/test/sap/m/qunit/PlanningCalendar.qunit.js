@@ -37,7 +37,8 @@ sap.ui.define([
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/UI5Date",
 	// load all required calendars in advance
-	"sap/ui/core/date/Islamic"
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/Core"
 ], function(
 	Formatting,
 	LanguageTag,
@@ -74,7 +75,9 @@ sap.ui.define([
 	deepEqual,
 	KeyCodes,
 	Locale,
-	UI5Date
+	UI5Date,
+	Islamic,
+	oCore
 ) {
 	"use strict";
 
@@ -1704,6 +1707,7 @@ sap.ui.define([
 
 		//Act
 		oPC1.setShowRowHeaders(false);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		//Assert
@@ -1714,6 +1718,7 @@ sap.ui.define([
 
 		//Act
 		oPC1.setShowRowHeaders(true);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		//Assert
@@ -2636,6 +2641,7 @@ sap.ui.define([
 		// argument: true - desktop; false - tablet or phone
 		this.oPC.setSingleSelection(false);
 		this.oPC.setShowRowHeaders(false);
+		oCore.applyChanges();
 
 		// Assert
 		this.checkItemPlacementAfterHidingRowHeaders(true);
@@ -2649,6 +2655,7 @@ sap.ui.define([
 		// Act
 		this.oPC.setSingleSelection(false);
 		this.oPC.setShowRowHeaders(false);
+		oCore.applyChanges();
 
 		// Assert
 		// argument: true - desktop; false - tablet or phone
@@ -2669,6 +2676,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC.setFirstDayOfWeek(3);
+		oCore.applyChanges();
 
 		// Assert
 		assert.strictEqual(oPicker.getFirstDayOfWeek(), 3, "firstDayOfWeek in Hours view propagated to picker");
@@ -2713,6 +2721,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC.setFirstDayOfWeek(2);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		oStartDate.setDate(30);
@@ -2756,6 +2765,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC.setFirstDayOfWeek(5);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		sCurrentPickerId = this.oPC._getHeader().getAssociation("currentPicker");
@@ -2768,7 +2778,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC.setFirstDayOfWeek(-1);
-		await nextUIUpdate();
+		oCore.applyChanges();
 
 		aDays = oRow.getDomRef().querySelectorAll(".sapUiCalItem");
 		$Date = aDays[0];
@@ -2783,10 +2793,12 @@ sap.ui.define([
 
 		// Act
 		this.oPC.setFirstDayOfWeek(10);
+		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oErrorSpy.callCount, 1, "There is an error in the console when invalid value is passed.");
-		assert.strictEqual(this.oPC.getFirstDayOfWeek(), -1, "The value is not set.");
+		//assert.strictEqual(this.oPC.getFirstDayOfWeek(), -1, "The value is not set."); Since overridden setter is removed this assert is not relevant anymore.
 
 	});
 
@@ -3268,6 +3280,7 @@ sap.ui.define([
 
 		$02Mar.focus();
 		await nextUIUpdate();
+		oCore.applyChanges();
 		assert.ok(bStartDateChange, "selected day from next month must fire startDateChange");
 	});
 
@@ -3789,6 +3802,7 @@ sap.ui.define([
 		this.oPC2.setStartDate(UI5Date.getInstance(2023, 1, 5));
 		this.oPC2.setBuiltInViews(["Week"]);
 		this.oPC2.setFirstDayOfWeek(0);
+		oCore.applyChanges();
 
 		iSelectedDate = this.oPC2._getHeader().getStartDate().getDate();
 
@@ -3825,6 +3839,7 @@ sap.ui.define([
 
 		// Act - Set FirstDayOfWeek to wednesday
 		this.oPC2.setFirstDayOfWeek(3);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		// Assert - First day of week is changed to wednesday
@@ -3861,6 +3876,7 @@ sap.ui.define([
 
 		// Act - Change FirstDayOfWeek
 		this.oPC2.setFirstDayOfWeek(4);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		// Assert - Changing first day of week updates Planning Calendar start date
@@ -3879,6 +3895,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC2.setFirstDayOfWeek(3);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		// Assert - First day of week is changed to wednesday
@@ -3892,6 +3909,7 @@ sap.ui.define([
 
 		// Act
 		this.oPC2.setFirstDayOfWeek(4);
+		oCore.applyChanges();
 		await nextUIUpdate();
 
 		// Assert
