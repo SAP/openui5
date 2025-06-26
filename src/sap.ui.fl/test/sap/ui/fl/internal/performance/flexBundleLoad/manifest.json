@@ -19,7 +19,10 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": "fl.performance.flexBundleLoad.view.appView",
+		"rootView": {
+			"viewName": "fl.performance.flexBundleLoad.view.appView",
+			"id": "idMain1"
+		},
 		"handleValidation": true,
 		"dependencies": {
 			"minUI5Version": "${project.version}",

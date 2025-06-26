@@ -7,8 +7,10 @@ sap.ui.define(
 		"sap/ui/documentation/sdk/controller/Sample.controller",
 		"../model/ExploreSettingsModel",
 		"sap/ui/core/Component",
+		"sap/ui/core/Fragment",
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
+		"sap/base/Log",
 		"sap/base/util/restricted/_debounce",
 		"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
@@ -18,8 +20,10 @@ sap.ui.define(
 		SampleController,
 		ExploreSettingsModel,
 		Component,
+		Fragment,
 		HTML,
 		Device,
+		Log,
 		_debounce,
 		_MetadataRequestor,
 		ControlsInfo,
@@ -171,6 +175,10 @@ sap.ui.define(
 				this._sFileName = formatter.routeParamsToFilePath(oArguments);
 				this.byId("splitView").setBusy(true);
 
+				this._loadCodeAndSample();
+			},
+
+			_loadCodeAndSample: function (bRetrying) {
 				ControlsInfo.loadData()
 					.then(function(oData) {
 						return Promise.all([
@@ -179,8 +187,48 @@ sap.ui.define(
 						]);
 					}.bind(this))
 					.then(function(aResults) {
+						if (bRetrying) {
+							this._showCacheCleanupDialog();
+						}
 						this._showCode(aResults[0]);
+					}.bind(this))
+					.catch(function(error) {
+						if (!('serviceWorker' in navigator) || !navigator.serviceWorker.controller || bRetrying) {
+							this._showCacheCleanupDialog(true);
+							// If service worker is not supported or already retried, log error // prevent infinite retry loop
+							Log.error("Error loading code or sample: " + error.message);
+							return;
+						}
+
+						 var serviceWorkerResponsePromise = new Promise(function(resolve) {
+						// Set up a one-time listener for the service worker response
+						var messageHandler = function(event) {
+							if (event.data === "CACHE_CLEANED") {
+								navigator.serviceWorker.removeEventListener('message', messageHandler);
+								resolve();
+							}
+						};
+
+						navigator.serviceWorker.addEventListener('message', messageHandler);
+
+						// Send message to clean the cache
+						this._sendMessageToServiceWorker({
+							type: "CLEAN_CACHE"
+						});
+
+						// Set a timeout in case the service worker doesn't respond
+						setTimeout(function() {
+							navigator.serviceWorker.removeEventListener('message', messageHandler);
+							resolve();
+						}, 5000);
 					}.bind(this));
+
+					// Wait for the service worker to respond before retrying
+					return serviceWorkerResponsePromise.then(function() {
+						this._setChangedSamplesLocalStorage([]);
+						this._loadCodeAndSample(true);
+					}.bind(this));
+				}.bind(this));
 			},
 
 			_loadCode: function (oData) {
@@ -248,6 +296,24 @@ sap.ui.define(
 				}.bind(this));
 			},
 
+			_showCacheCleanupDialog: function (bForceReload) {
+				ExploreSettingsModel.setProperty("/showWarning", bForceReload ? false : true);
+
+				if (!this._oWarningDialog) {
+					Fragment.load({
+						name: "sap.ui.documentation.sdk.view.warningSampleDialog",
+						controller: this
+					}).then(function (oDialog) {
+						this.getView().addDependent(oDialog);
+						oDialog.setModel(ExploreSettingsModel, "settings");
+						this._oWarningDialog = oDialog;
+						this._oWarningDialog.open();
+					}.bind(this));
+				} else {
+					this._oWarningDialog.open();
+				}
+			},
+
 			_createHTMLControl: function () {
 				return new HTML({
 					id : "sampleFrameEdit",
@@ -257,6 +323,12 @@ sap.ui.define(
 
 			_getPage: function () {
 				return this.byId("samplePageEdit");
+			},
+
+			_sendMessageToServiceWorker: function (message) {
+				if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+					navigator.serviceWorker.controller.postMessage(message);
+				}
 			},
 
 			onMessage: function(eMessage) {
@@ -273,6 +345,16 @@ sap.ui.define(
 					this.fnMessageError(eMessage);
 				} else if (eMessage.data.type === "LOAD") {
 					this.fnMessageLoad(eMessage);
+				}
+			},
+
+			handleDialogClose: function () {
+				 var bShowWarning = ExploreSettingsModel.getProperty("/showWarning");
+
+				if (this._oWarningDialog && bShowWarning) {
+					this._oWarningDialog.close();
+				} else {
+					window.location.reload(); // reload the page to try again
 				}
 			},
 

@@ -2767,6 +2767,7 @@ sap.ui.define([
 	QUnit.test("empty input on single value with not nullable type", async (assert) => {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake only equals allowed
+		sinon.stub(oField, "isEmptyAllowed").returns(false); // fake Field
 		oField.setDataTypeConstraints({nullable: false});
 		oField.setDataType("sap.ui.model.odata.type.String");
 		oField.setMaxConditions(1);
@@ -5447,6 +5448,7 @@ sap.ui.define([
 	QUnit.test("invalid input with async parsing on singleValue Field", async (assert) => {
 
 		sinon.stub(oField, "getSupportedOperators").callsFake(fnOnlyEQ); // fake Field
+		sinon.stub(oField, "isEmptyAllowed").returns(false); // fake Field
 		oField.setMaxConditions(1);
 		await nextUIUpdate();
 		const oValueHelp = Element.getElementById(oField.getValueHelp());

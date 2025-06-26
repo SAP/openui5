@@ -1,0 +1,27 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Dialog
+			title="{i18n>CACHE_CLEANUP_DIALOG_TITLE}"
+			class="sapUiContentPadding"
+			contentWidth="400px"
+			id="cacheCleanupDialog"
+			type="Message"
+			state="{= ${settings>/showWarning} ? 'Warning' : 'Error'}" >
+		<content>
+			<VBox class="sapUiTinyMarginTop">
+				<MessageStrip
+					class="sapUiTinyMarginBottom"
+					showIcon="true"
+					type="{= ${settings>/showWarning} ? 'Warning' : 'Error'}"
+    				text="{= ${settings>/showWarning} ? ${i18n>CACHE_CLEANUP_DIALOG_WARNING_MESSAGE} : ${i18n>CACHE_CLEANUP_DIALOG_ERROR_MESSAGE}}" />
+				<Text
+					class="sapUiSmallMarginTop"
+					text="{i18n>CACHE_CLEANUP_DIALOG_DESCRIPTION}" />
+			</VBox>
+		</content>
+		<beginButton>
+			<Button text="{i18n>CACHE_CLEANUP_DIALOG_OK_BTN}" press="handleDialogClose" type="Emphasized" />
+		</beginButton>
+	</Dialog>
+</core:FragmentDefinition>
