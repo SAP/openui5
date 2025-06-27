@@ -838,10 +838,10 @@ sap.ui.define([
 				this.resetInvalidInput(false); // remove errors if valueState removed
 			}
 
-			this._oManagedObjectModel?.checkUpdate(true, true, (oBinding) => { // as ValueState or ValueStateText might be unchanged trigger binding update for inner controls (needed in unit case)
+			this._oManagedObjectModel?.checkUpdate(true, false, (oBinding) => { // as ValueState or ValueStateText might be unchanged trigger binding update for inner controls (needed in unit case)
 				const sPath = oBinding.getPath();
 				return ["/valueState", "/valueStateText"].indexOf(sPath) >= 0;
-			}); // async. to reduce updates
+			}); // must be sync, as if other async call with different filter-function all bindings would be updatet what might lead to unwanted updates
 		}
 	};
 

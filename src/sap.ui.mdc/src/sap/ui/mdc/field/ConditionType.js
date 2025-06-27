@@ -409,6 +409,7 @@ sap.ui.define([
 				return null;
 			}
 
+			const oType = this._getValueType();
 			let oCondition;
 			const oNavigateCondition = this.oFormatOptions.navigateCondition;
 			if (oNavigateCondition) {
@@ -416,8 +417,9 @@ sap.ui.define([
 				let vOutput;
 				if (oNavigateCondition.hasOwnProperty("output")) {
 					vOutput = oNavigateCondition.output;
+					_attachCurrentValueAtType.call(this, oNavigateCondition, oType);
 				} else {
-					vOutput = this.formatValue(oNavigateCondition, sSourceType);
+					vOutput = this.formatValue(oNavigateCondition, sSourceType); // _attachCurrentValueAtType called inside
 				}
 				if (vOutput === vValue) {
 					oCondition = merge({}, oNavigateCondition); // use copy
@@ -428,7 +430,6 @@ sap.ui.define([
 			}
 
 			const sDisplay = sForceDisplay ? sForceDisplay : this._getDisplay();
-			const oType = this._getValueType();
 			const oOriginalType = this._getOriginalType();
 			const aOperators = this._getOperators();
 			const bIsUnit = this._isUnit(oType);

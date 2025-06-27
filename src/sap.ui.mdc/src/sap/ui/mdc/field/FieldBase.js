@@ -3027,6 +3027,7 @@ sap.ui.define([
 		let sDOMValue;
 		let i = 0;
 		const oDelegate = this.getControlDelegate();
+		let bError;
 
 		if (this.getContentFactory().isMeasure()) {
 			if (aNewConditions.length > 1) {
@@ -3065,6 +3066,27 @@ sap.ui.define([
 					sDOMValue = oConditionType.formatValue(oCondition);
 				} else if (oConditionsType) {
 					sDOMValue = oConditionsType.formatValue(aConditions);
+				}
+			}
+
+			// check if new currency/unit maps to number
+			try {
+				// oType._aCurrentValue is updated later on formatValue to set DOMValue
+				this.getContentFactory().getUnitConditionsType().validateValue(aConditions);
+			} catch (oException) {
+				if (oException instanceof ValidateException) {
+					oContent.fireValidationError({ // to have message in MessageModel and use ValueState-logic like for user input
+							element: oContent,
+							property: "value",
+							type: this.getContentFactory().getUnitConditionsType(),
+							newValue: aNewConditions[0].values[0],
+							oldValue: "", // TODO
+							exception: oException,
+							message: oException.message
+						}, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
+					bError = true;
+				} else {
+					throw oException;
 				}
 			}
 		} else {
@@ -3147,7 +3169,9 @@ sap.ui.define([
 			this._oNavigateCondition = undefined;
 			this.getContentFactory().updateConditionType();
 
-			this.setProperty("conditions", aConditions, true); // do not invalidate whole field
+			if (!bError) {
+				this.setProperty("conditions", aConditions, true); // do not invalidate whole field
+			}
 
 			if (!FilterOperatorUtil.compareConditionsArray(aConditions, aConditionsOld)) { // update only if real change
 				// handle out-parameters

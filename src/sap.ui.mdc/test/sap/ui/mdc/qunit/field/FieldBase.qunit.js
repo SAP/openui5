@@ -6118,6 +6118,65 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Select currency leading to number-error", (assert) => {
+
+		oField.attachValidationError(_myValidationErrorHandler);
+		oField.attachValidationSuccess(_myValidationSuccessHandler);
+		Messaging.registerObject(oField, true); // to test valueState
+		const fnDone = assert.async();
+		const oValueHelp = Element.getElementById(oField.getValueHelp());
+		const oUnitType = oField.getContentFactory().getUnitConditionsType().oFormatOptions.valueType;
+		const aContent = oField.getAggregation("_content");
+		const oContent1 = aContent?.length > 0 && aContent[0];
+		const oContent2 = aContent?.length > 1 && aContent[1];
+
+		sinon.stub(oUnitType, "validateValue").callsFake((aValue) => {
+			if (aValue?.[0] === 123.45 && aValue?.[1] === "JPY") {
+				throw new ValidateException("No Decimals allowed"); // Fake as Currency-type don't validate here
+			}
+		});
+
+		oContent2.focus(); // as ValueHelp is connected with focus
+		// simulate select event to see if field is updated
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["JPY", "JPY"], undefined, undefined, ConditionValidated.Validated, undefined);
+		oValueHelp.fireSelect({ conditions: [oCondition] });
+		assert.equal(iCount, 0, "Change Event not fired");
+		let aConditions = oCM.getConditions("Price");
+		assert.equal(aConditions.length, 1, "one condition in Codition model");
+		assert.equal(aConditions[0].values[0][0], 123.45, "condition value0");
+		assert.equal(aConditions[0].values[0][1], "USD", "condition value1");
+		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
+		assert.equal(oContent2.getDOMValue(), "JPY", "value in inner control");
+		assert.equal(iValidationError, 1, "ValidationError event fired once");
+
+		setTimeout(() => { // wait for Model update
+			oContent1.focus();
+			setTimeout(() => { // for fieldGroup delay
+				assert.equal(iCount, 0, "Change Event not fired");
+				assert.equal(oContent1.getValueState(), "None", "ValueState not set on number Content");
+				assert.equal(oContent2.getValueState(), "Error", "ValueState set on unit Content");
+				// don't check ValueState on Field here, as this is handled in Field.js and tested there. Here only validation of Currency selected form ValueHelp needs to be tested
+
+				jQuery(oContent1.getFocusDomRef()).val("10");
+				qutils.triggerKeydown(oContent1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+				assert.equal(iCount, 1, "change event fired once");
+				setTimeout(() => { // wait for Model update
+					aConditions = oCM.getConditions("Price");
+					assert.equal(aConditions.length, 1, "one condition in Codition model");
+					assert.equal(aConditions[0].values[0][0], 10, "condition value0");
+					assert.equal(aConditions[0].values[0][1], "JPY", "condition value1");
+					assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
+					assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+					assert.equal(oContent1.getValueState(), "None", "ValueState not set on number Content");
+					assert.equal(oContent2.getValueState(), "None", "ValueState not set on unit Content");
+
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
 	QUnit.test("Select in currency stand-alone", async (assert) => {
 
 		oField.setDataTypeFormatOptions({showNumber: false, showMeasure: true});
