@@ -68,7 +68,7 @@
 				<p>如果焦点位于行选择器或<span class="uicontrol">全选</span>，则焦点会移动到最后一个行选择器。</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>如果焦点位于单元格，则焦点会移动到单元格中的第一个可聚焦控件。</p>
 				<p>如果焦点位于<span class="uicontrol">全选</span>复选框或行选择器，则会切换复选框状态。</p>
 				<p>如果焦点位于列标题，则会打开列标题菜单。</p>
@@ -101,8 +101,11 @@
 				<p>在单元格及其内容之间切换焦点（只读文本除外）。</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>如果焦点位于<span class="uicontrol">全选</span>并按下 <kbd>Spacebar</kbd>，则不会触发相应的事件。<kbd>Shift</kbd> 会阻止此活动。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>如果焦点位于列标题并按下 <kbd>Spacebar</kbd> 或 <kbd>Enter</kbd>，则不会触发相应的事件。</p>
 			</description>
 		</interaction>

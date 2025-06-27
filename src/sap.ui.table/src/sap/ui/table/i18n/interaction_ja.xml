@@ -68,7 +68,7 @@
 				<p>フォーカスが行セレクタまたは<span class="uicontrol">すべて選択</span>にある場合、フォーカスは最後の行セレクタに移動します。</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>フォーカスがセルにある場合、フォーカスはセルの最初にフォーカス可能なコントロールに移動します。</p>
 				<p>フォーカスが<span class="uicontrol">すべて選択</span>チェックボックスまたは行セレクタにある場合、チェックボックスの状態が切り替わります。</p>
 				<p>フォーカスが列ヘッダにある場合、列ヘッダメニューが開きます。</p>
@@ -79,7 +79,7 @@
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
 				<p>フォーカスがセルにある場合、フォーカス状態のセルが選択されます。</p>
 				<p>フォーカスがセル選択ブロックにある場合、そのセルの選択が解除されます。</p>
-				<p>フォーカスがセルにあり、テーブルに選択動作の特定の設定 (行を選択するには、行自体を選択するか、利用可能な場合は選択チェックボックスを選択可能) がある場合は、行の代わりに、フォーカスされたセルのみが選択されます。</p>
+				<p>フォーカスがセルにあり、テーブルに選択動作の特定の設定 (行を選択するには、行自体を選択するか、利用可能な場合は選択チェックボックスを使用) がある場合は、行の代わりに、フォーカスされたセルのみが選択されます。</p>
 				<p><kbd>Shift + Spacebar</kbd></p>
 				<p>フォーカスがセルまたは行セレクタにある場合、これにより現在の行の選択が切り替わります。</p>
 				<p><span class="emphasis">セル選択が有効化されている場合:</span></p>
@@ -101,8 +101,11 @@
 				<p>フォーカスをセルとその内容の間で切り替えます (読み込み専用テキストは除く) 。</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>フォーカスが<span class="uicontrol">すべて選択</span>にあるときに <kbd>Spacebar</kbd> を押すと、対応するイベントはトリガされません。<kbd>Shift</kbd> によってこのアクティビティは抑止されます。</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>フォーカスが列ヘッダにあるときに <kbd>Spacebar</kbd> または <kbd>Enter</kbd> を押すと、対応するイベントはトリガされません。</p>
 			</description>
 		</interaction>

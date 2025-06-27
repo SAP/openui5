@@ -5,7 +5,7 @@
 		<control name="sap.ui.table.AnalyticalTable"/>
 		<control name="sap.ui.table.TreeTable"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <kbd>ArrowRight</kbd> <kbd>ArrowLeft</kbd> <description>
-				<p>מעביר את המיקוד לתא הבא באותן עמודה או שורה בכיוונים המתאימים.</p>
+				<p>מעביר את המיקוד לתא הבא באותה עמודה או באותה שורה בכיוונים המתאימים.</p>
 				<p><kbd>ArrowUp</kbd></p>
 				<p>אם המיקוד הוא בשורה הראשונה, המיקוד עובר לכותרת העמודה.</p>
 				<p><kbd>ArrowDown</kbd></p>
@@ -68,7 +68,7 @@
 				<p>אם המיקוד הוא בבורר השורות, או ב<span class="uicontrol">'בחר הכול'</span>, המיקוד עובר לבורר השורות האחרון.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>אם המיקוד הוא בתא, המיקוד עובר לבקרה הראשונה שניתנת למיקוד בתא.</p>
 				<p>אם המיקוד בתיבת התיוג <span class="uicontrol">'בחר הכול'</span> או בבורר שורות, זה מחליף את מצב תיבת התיוג.</p>
 				<p>אם המיקוד הוא בכותרת העמודה, תפריט כותרת העמודה נפתח.</p>
@@ -86,7 +86,7 @@
 				<p>אם המיקוד הוא בבלוק של בחירת תא, בלוק בחירת התא משתנה לבחירת שורה. בחירת התא מוסרת.</p>
 				<p>בהתאם למצב בחירת השורה, הדברים הבאים מתרחשים:</p>
 				<ul>
-					<li>כל השורות של הבלוק נבחרו (בחירה מרובה)</li>
+					<li>כל השורות של הבלוק נבחרות (בחירה מרובה)</li>
 					<li>רק השורות עם התא שממוקד כרגע נבחרו (בחירה יחידה)</li>
 					<li>לא נבחרה אף שורה</li>
 				</ul>
@@ -98,11 +98,14 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
-				<p>מחליף את המיקוד בין התא והתוכן שלו (מלבד טקסט לקריאה בלבד).</p>
+				<p>מחליף את המיקוד בין התא לתוכן שלו (פרט למקרה של טקסט לקריאה בלבד).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>אם המיקוד הוא ב<span class="uicontrol">'בחר הכול'</span> ו-<kbd>Spacebar</kbd> לחוץ, האירוע המתאים אינו מופעל.<kbd>Shift</kbd> מונע פעילות זו.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>אם המיקוד הוא בכותרת עמודה ו-<kbd>Spacebar</kbd> או <kbd>Enter</kbd> לחוצים, האירוע המתאים אינו מופעל.</p>
 			</description>
 		</interaction>
@@ -111,7 +114,7 @@
 				<p>אם המיקוד הוא בתא או בבורר השורות והשורה הרלוונטית <span class="emphasis">לא</span> נבחרה, המיקוד עובר לשורה שמעל, והבחירה מוסרת עבור שורה זו.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
 				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר והשורה <span class="emphasis">לא</span> נבחרה, התא הממוקד והתא שמעל נבחרים. המיקוד עובר לתא שמעל התא הממוקד.</p>
-				<p>אם המיקוד הוא בתא שנבחר, התא שמעל מקבל את המיקוד, ותא הבחירה מורחב עד לתא זה.</p>
+				<p>אם המיקוד הוא בתא שנבחר, התא שמעל מקבל את המיקוד, ובחירת התאים מורחבת עד לתא זה.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
@@ -119,21 +122,21 @@
 				<p>אם המיקוד הוא בתא או בבורר השורות, והשורה הרלוונטית <span class="emphasis">לא</span> נבחרה, המיקוד עובר לשורה שמתחת, והבחירה מוסרת עבור שורה זו.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
 				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר והשורה <span class="emphasis">לא</span> נבחרה, התא הממוקד והתא שמתחת נבחרים. המיקוד עובר לתא שמתחת לתא הממוקד.</p>
-				<p>אם המיקוד הוא בתא שנבחר, התא שמתחת מקבל את המיקוד, ותא הבחירה מורחב עד לתא זה.</p>
+				<p>אם המיקוד הוא בתא שנבחר, התא שמתחת מקבל את המיקוד, ובחירת התאים מורחבת עד לתא זה.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowRight</kbd> <description>
 				<p>אם המיקוד הוא בכותרת עמודה, רוחב עמודה זו מוגדל ב-1 em. זה חוזר על עצמו אם המקש נשאר לחוץ.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
 				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר, התא הממוקד והתא שמימין נבחרים. המיקוד עובר לתא שמימין לתא הממוקד.</p>
-				<p>אם המיקוד הוא בתא שנבחר, התא שמימין מקבל את המיקוד, ותא הבחירה מורחב עד לתא זה.</p>
+				<p>אם המיקוד הוא בתא שנבחר, התא שמימין מקבל את המיקוד, ובחירת התאים מורחבת עד לתא זה.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowLeft</kbd> <description>
 				<p>אם המיקוד הוא בכותרת עמודה, רוחב עמודה זו מוגדל ב-1 em. זה חוזר על עצמו אם המקש נשאר לחוץ.</p>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
 				<p>אם המיקוד הוא בתא ש<span class="emphasis">לא</span> נבחר, התא הממוקד והתא שמשמאל נבחרים. המיקוד עובר לתא שמשמאל לתא הממוקד.</p>
-				<p>אם המיקוד הוא בתא שנבחר, התא שמשמאל מקבל את המיקוד, ותא הבחירה מורחב עד לתא זה.</p>
+				<p>אם המיקוד הוא בתא שנבחר, התא שמשמאל מקבל את המיקוד, ובחירת התאים מורחבת עד לתא זה.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + ArrowRight</kbd> <description>

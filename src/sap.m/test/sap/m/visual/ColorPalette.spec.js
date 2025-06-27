@@ -1,10 +1,11 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor,process*/
 
 describe("sap.m.ColorPalette", function() {
 	"use strict";
 
 	var sOpenButtonId = "__button2",
-		sColorPaletteId = "oCPPop-palette";
+		sColorPaletteId = "oCPPop-palette",
+		CTRL_KEY = process.platform === "darwin" ? protractor.Key.META : protractor.Key.CONTROL;
 
 	browser.testrunner.currentSuite.meta.controlName = 'sap.m.ColorPalette';
 
@@ -47,12 +48,28 @@ describe("sap.m.ColorPalette", function() {
 	 */
 	it('Select color from more colors and show in recent colors palette', function() {
 		var sMoreColorsButtonId = "oCPPop-palette-btnMoreColors",
-			sMoreColorsOkButtonId = "__button24";
+			sMoreColorsOkButtonId = "__button24",
+			sHexInputSelector = "#oCPPop-palette-moreColorsDialog-scrollCont .sapUiColorPicker-ColorPickerHexField .sapMInputBaseInner",
+			vSelectAll = protractor.Key.chord(CTRL_KEY, "a");
 
 		element(by.id(sOpenButtonId)).click();
 
 		// Open More Colors color picker and confirm color selection
 		element(by.id(sMoreColorsButtonId)).click();
+
+		// Get hex input
+		var oHexInput = element(by.css(sHexInputSelector));
+
+		// Clear hex input
+		oHexInput.click();
+		oHexInput.sendKeys(vSelectAll);
+		oHexInput.sendKeys(protractor.Key.BACK_SPACE);
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
+		// Select green color
+		oHexInput.sendKeys("00ff04");
+		browser.actions().sendKeys(protractor.Key.ENTER).perform();
+
 		element(by.id(sMoreColorsOkButtonId)).click();
 
 		element(by.id(sOpenButtonId)).click();
@@ -96,5 +113,6 @@ describe("sap.m.ColorPalette", function() {
 			sSelector = `#oCPPop-palette-swatchCont-${sPaletteRegion} .sapMColorPaletteSquare:nth-of-type(${iSwatch})`;
 
 		return element(by.css(sSelector));
+		//#oCPPop-palette-swatchCont-recentColors .sapMColorPaletteSquare:nth-of-type(1)
 	}
 });

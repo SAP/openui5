@@ -2238,12 +2238,15 @@ sap.ui.define([
 		 * this.expectChange("foo", "bar").expectChange("foo", "baz"); // expect 2 changes for "foo"
 		 * this.expectChange("foo", null); // initialization due to #setContext
 		 *
-		 * @param {string} sControlId The control ID
-		 * @param {string|string[]|number|number[]} [vValue] The expected value or a list of
-		 *   expected values
-		 * @param {string} [sRow] (Only for meta model tests) The path of the binding's parent
-		 *   context, in case that a change is expected for a single row of a list; in this case
-		 *   <code>vValue</code> must be a string
+		 * @param {string} sControlId
+		 *   The control ID, possibly with suffix "__AS_COMPOSITE", "__IN_LIST", or "__VERBOSE" (see
+		 *   code for more details)
+		 * @param {string|string[]|number|number[]} [vValue]
+		 *   The expected value or a list of expected values
+		 * @param {string} [sRow]
+		 *   (Only for meta model tests) The path of the binding's parent context, in case that a
+		 *   change is expected for a single row of a list; in this case <code>vValue</code> must be
+		 *   a string
 		 * @returns {object} The test instance for chaining
 		 * @throws {Error} For unsupported or inconsistently used control IDs
 		 */
@@ -2263,7 +2266,8 @@ sap.ui.define([
 			 */
 			function isList(bInList) {
 				if (sControlId in that.mIsListByControlId) {
-					if (bInList !== that.mIsListByControlId[sControlId]) {
+					if (bInList !== that.mIsListByControlId[sControlId]
+							 && !sControlId.endsWith("__VERBOSE")) {
 						throw new Error("Inconsistent usage of array values for " + sControlId);
 					}
 				} else {
@@ -2673,13 +2677,15 @@ sap.ui.define([
 								oBinding = oContext.getBinding();
 							}
 							vRow = oContext.getIndex();
-							if (oContext.isDeleted() || vRow === undefined) {
+							if ((oContext.isDeleted() || vRow === undefined)
+									&& !sControlId.endsWith("__VERBOSE")) {
 								return sValue; // a deleted context w/o row
 							}
 						} else { // e.g. meta model
 							vRow = oContext.getPath();
 						}
-					} else if (bInList) { // a list property that lost its row context
+					} else if (bInList && !sControlId.endsWith("__VERBOSE")) {
+						// a list property that lost its row context
 						return sValue; // do not report the change event
 					}
 					that.checkValue(assert, sValue, sControlId, vRow);
@@ -8438,17 +8444,23 @@ sap.ui.define([
 	// BCP: 2080123400
 	//
 	// "Select all" is reset by #setContext (JIRA: CPOUI5ODATAV4-1943).
+	// Selected rows must not show up empty due to #setContext (SNOW: DINC0514119)
 	QUnit.test("BCP: 2080123400", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
+			oObjectPage,
 			oTable,
 			sView = '\
 <Table id="list" items="{/SalesOrderList}">\
 	<Text id="id" text="{SalesOrderID}"/>\
 </Table>\
-<Table id="detail" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}" \
-		growing="true"> <!-- ensures that the rows and child bindings are kept alive -->\
-	<Text id="note" text="{Note}"/>\
-</Table>',
+<FlexBox id="objectPage">\
+	<!-- is updated by #setContext and triggers re-rendering, thus destroying the old context -->\
+	<Text id="objectPageID" text="{SalesOrderID}"/>\
+	<Table id="detail" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}}" \
+			growing="true"> <!-- ensures that the rows and child bindings are kept alive -->\
+		<Text id="note__VERBOSE" text="{Note}"/>\
+	</Table>\
+</FlexBox>',
 			that = this;
 
 		this.expectRequest("SalesOrderList?$select=SalesOrderID&$skip=0&$top=100", {
@@ -8458,20 +8470,25 @@ sap.ui.define([
 				]
 			})
 			.expectChange("id", ["1", "2"])
-			.expectChange("note", []);
+			.expectChange("objectPageID")
+			// "__VERBOSE" confirms that we want "change" events also when a row context is lost
+			.expectChange("note__VERBOSE", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			oObjectPage = that.oView.byId("objectPage");
 			oTable = that.oView.byId("detail");
 
-			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+			that.expectChange("objectPageID", "1")
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
 					value : [
 						{ItemPosition : "10", Note : "Note 1", SalesOrderID : "1"}
 					]
 				})
-				.expectChange("note", ["Note 1"]);
+				.expectChange("note__VERBOSE", ["Note 1"]);
 
-			oTable.setBindingContext(that.oView.byId("list").getItems()[0].getBindingContext());
+			oObjectPage.setBindingContext(
+					that.oView.byId("list").getItems()[0].getBindingContext());
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -8481,7 +8498,8 @@ sap.ui.define([
 			const oHeaderContext = oTable.getBinding("items").getHeaderContext();
 			oHeaderContext.setSelected(true);
 
-			that.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
+			that.expectChange("objectPageID", "2")
+				.expectRequest("SalesOrderList('2')/SO_2_SOITEM"
 					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20",
 					new Promise(function (resolve) {
 						fnResolve = resolve.bind(null, {
@@ -8502,16 +8520,34 @@ sap.ui.define([
 							{ItemPosition : "10", Note : "Note 2", SalesOrderID : "2"}
 						]
 					})
-				.expectChange("note", ["Note 2"]);
+				.expectChange("note__VERBOSE", ["Note 2"]);
 
 			return Promise.all([
-				oTable.setBindingContext(oRowContext),
+				oObjectPage.setBindingContext(oRowContext),
 				resolveLater(function () {
 					checkSelected(assert, oHeaderContext, false);
 
 					resolveLater(fnResolve); // must not respond before requestSideEffects
 					return oRowContext.requestSideEffects(["SO_2_SOITEM"]);
 				}),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			oTable.getBinding("items").getCurrentContexts()[0].setSelected(true);
+
+			that.expectChange("objectPageID", "1")
+				.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=20", {
+					value : [
+						{ItemPosition : "10", Note : "Note 1 (updated)", SalesOrderID : "1"}
+					]
+				})
+				// .expectChange("note__VERBOSE", null) // NO! (SNOW: DINC0514119)
+				.expectChange("note__VERBOSE", ["Note 1 (updated)"]);
+
+			return Promise.all([
+				oObjectPage.setBindingContext(
+					that.oView.byId("list").getItems()[0].getBindingContext()),
 				that.waitForChanges(assert)
 			]);
 		});

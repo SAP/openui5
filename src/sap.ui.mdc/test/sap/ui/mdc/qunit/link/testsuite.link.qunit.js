@@ -41,6 +41,9 @@ sap.ui.define(function() {
 			"link/Panel": {
 				title: "Panel"
 			},
+			"link/Factory": {
+				title: "Factory"
+			},
 
 			"field/FieldInfoBase": {
 				title: "FieldInfoBase"

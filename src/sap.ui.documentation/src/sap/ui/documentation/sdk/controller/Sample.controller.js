@@ -80,6 +80,7 @@ sap.ui.define([
 					showNavButton : true,
 					showNewTab: false,
 					rtaLoaded: false,
+					rtaStarted: false,
 					density: this.getOwnerComponent().getContentDensityClass(),
 					rtl: Localization.getRTL(),
 					theme: Theming.getTheme(),
@@ -697,6 +698,10 @@ sap.ui.define([
 					this.fnMessageLoad(eMessage);
 				} else if (eMessage.data.type === "RTA") {
 					this._loadRTA.call(this);
+				} else if (eMessage.data.type === "RTA_START") {
+					this._onRTAStarted.call(this);
+				} else if (eMessage.data.type === "RTA_STOP") {
+					this._onRTAStopped.call(this);
 				}
 			},
 
@@ -729,29 +734,6 @@ sap.ui.define([
 
 			fnMessageError: function(eMessage) {
 				this.fReject(eMessage.data.data.msg);
-			},
-
-			_createComponent : function () {
-
-				// create component only once
-				var sCompId = 'sampleComp-' + this._sId;
-				var sCompName = this._sId;
-				var oMainComponent = this.getOwnerComponent();
-
-				var oComp = Component.getComponentById(sCompId);
-
-				if (oComp) {
-					oComp.destroy();
-				}
-
-				return oMainComponent.runAsOwner(function(){
-					return Component.create({
-						id: sCompId,
-						name: sCompName
-					}).then(function (oComponent) {
-						return new ComponentContainer({component : oComponent});
-					});
-				});
 			},
 
 			setDefaultSampleTheme: function() {
@@ -841,6 +823,14 @@ sap.ui.define([
 							this._oRTA = null;
 						}
 					}, this);
+			},
+
+			_onRTAStarted: function () {
+				this.oModel.setProperty("/rtaStarted", true);
+			},
+
+			_onRTAStopped: function () {
+				this.oModel.setProperty("/rtaStarted", false);
 			},
 
 			onToggleAdaptationMode : function (oEvt) {

@@ -68,7 +68,7 @@
 				<p>Jeśli fokus jest ustawiony na selektorze wiersza lub opcji <span class="uicontrol">Wybierz wszystkie</span>, następuje jego przesunięcie do selektora ostatniego wiersza.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Jeśli fokus jest ustawiony na konkretnej komórce, następuje jego przesunięcie do pierwszego obiektu sterowania tej komórki, na którym może zostać ustawiony fokus.</p>
 				<p>Jeśli fokus jest ustawiony na polu wyboru <span class="uicontrol">Wybierz wszystkie</span> lub selektorze wiersza, następuje przełączenie stanu tego pola wyboru.</p>
 				<p>Jeśli fokus jest ustawiony na nagłówku konkretnej kolumny, następuje otwarcie menu tego nagłówka kolumny.</p>
@@ -101,8 +101,11 @@
 				<p>Powoduje przełączanie fokusu między komórką a jej zawartością (z wyjątkiem tekstu tylko do odczytu).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Jeśli fokus jest ustawiony na opcji <span class="uicontrol">Wybierz wszystkie</span> i następuje naciśnięcie klawisza <kbd>Spacebar</kbd>, odpowiadające zdarzenie nie jest wywoływane. <kbd>Shift</kbd> uniemożliwia wykonanie tego działania.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Jeśli fokus jest ustawiony na nagłówku kolumny i następuje naciśnięcie klawisza <kbd>Spacebar</kbd> lub <kbd>Enter</kbd>, odpowiadające zdarzenie nie jest wywoływane.</p>
 			</description>
 		</interaction>

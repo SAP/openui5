@@ -20,9 +20,9 @@
         if (!bIsStandAlone) {
             window.parent.postMessage(data, getUrlParam('sap-ui-xx-dk-origin'));
         }
-    };
+    },
 
-    const loadComponentModule = function(sCompName) {
+    loadComponentModule = function(sCompName) {
         return new Promise((resolve) => {
             const componentModule =
                 `${sCompName.replace(/\./g, "/")}/Component`;
@@ -94,8 +94,10 @@
                 ]).then(async function(){
 
                     Log.info("Samples paths added successfully");
-                    var sCompId = 'sampleComp-' + sSampleId;
-                    var sCompName = sSampleId;
+                    var sInnerCompId = 'sampleComp-' + sSampleId,
+                        sInnerCompName = sSampleId,
+                        oOuterComponent,
+                        oOuterContainer;
 
                     sap.ui.require([
                         "sap/ui/fl/Utils",
@@ -120,16 +122,28 @@
                     });
 
                     // preprocessing: load Component.js before the factory call to prevent 404s to the "Component-preload.js" (does not exist in demokit samples)
-                    await loadComponentModule(sCompName);
+                    await loadComponentModule(sInnerCompName);
 
                     Component.create({
-                        id: sCompId,
-                        name: sCompName
-                    }).then(function (oComponent) {
-                        var oConfig = oComponent.getManifestEntry("/sap.ui5/config");
+                        id: "wrapperComp",
+                        name: "sap.ui.documentation.sdk.samples",
+                        settings: {
+                            innerComponentName: sInnerCompName,
+                            innerComponentId: sInnerCompId
+                        }
+                    }).then(function (oWrapperComponent) {
 
-                        var oContainer = new ComponentContainer({component : oComponent, height: "100%"})
+                        oOuterComponent = oWrapperComponent;
+
+                        oOuterContainer = new ComponentContainer({component : oOuterComponent, height: "100%"})
                                 .placeAt("content");
+
+                        return oOuterComponent.createInnerComponent();
+                    }).then(function(oInnerComponent) {
+
+                        oOuterContainer.invalidate(); // required to ensure that the inner component is rendered
+
+                        var oConfig = oInnerComponent.getManifestEntry("/sap.ui5/config");
 
                         var bOpenStandalone = window.location.search.includes("dk-sample-standalone");
                         // if dk-sample-standalone is used,
@@ -139,7 +153,7 @@
                                 "sap/m/IllustratedMessage",
                                 "sap/m/IllustratedMessageType"
                             ], function (IllustratedMessage, IllustratedMessageType) {
-                                oContainer.destroy();
+                                oOuterContainer.destroy();
                                 new IllustratedMessage({
                                     title: "Sample unsupported",
                                     description: "Samples with own index.html are currently unsupported by dk-sample-standalone.",
@@ -148,7 +162,6 @@
                             });
                         }
                         var oMessage = {};
-                        var objRta = null;
                         oMessage.type = "INIT";
                         oMessage.data = {
                             "msg": "fired after component container is placed in DOM"
@@ -158,7 +171,7 @@
                         postMessageToOrigin(oMessage);
                         window.addEventListener("message", function(eMessage){
                             if (eMessage.data.type === "EXIT") {
-                                oComponent.destroy();
+                                oOuterComponent.destroy();
                             } else if (eMessage.data.type === "RTA") {
                                 enableRta();
                             } else if (eMessage.data.type === "SETTINGS") {
@@ -180,32 +193,13 @@
                         });
 
                         function enableRta() {
-                            if (objRta) {
-                                objRta.stop();
-                                objRta = null;
-                                return;
-                            }
                             sap.ui.require([
                                 "sap/ui/rta/api/startKeyUserAdaptation"
                             ], function (
                                 startKeyUserAdaptation
                             ) {
                                 startKeyUserAdaptation({
-                                    rootControl: oContainer.getComponentInstance()
-                                }).then(function (oRta) {
-                                    objRta = oRta;
-                                    oContainer.$().css({
-                                        "padding-top": "2.5rem",
-                                        "box-sizing": "border-box"
-                                    });
-                                    oRta.attachStop(function () {
-                                        oContainer.$().css({
-                                            "padding-top": "0",
-                                            "box-sizing": "content-box"
-                                        });
-                                        oRta.destroy();
-                                        objRta = null;
-                                    });
+                                    rootControl: oOuterContainer.getComponentInstance()
                                 });
                             });
                         }

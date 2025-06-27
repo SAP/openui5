@@ -97,6 +97,12 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 				sinon: {
 					qunitBridge: true
 				}
+			},
+			"Util": {
+				module: "./Util.qunit",
+				sinon: {
+					qunitBridge: true
+				}
 			}
 		}
 	};

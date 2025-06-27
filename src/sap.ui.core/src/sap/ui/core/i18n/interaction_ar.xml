@@ -15,7 +15,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + F6</kbd> <description>
-				<p>ينقل التركيز إلى العنصر الأول من مجموعة واجهات المستخدم السابقة (مجموعة F6) في سلسلة علامات التبويب.</p>
+				<p>نقل التركيز إلى العنصر الأول من مجموعة واجهات المستخدم السابقة (مجموعة F6) في سلسلة علامات التبويب.</p>
 			</description>
 		</interaction>
 	</control-interactions>

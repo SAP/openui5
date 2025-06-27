@@ -68,7 +68,7 @@
 				<p>Ha a fókusz a sorkijelölőn vagy az <span class="uicontrol">Összes kiválasztása</span> jelölőmezőn van, akkor az utolsó sorkijelölőre helyezi át.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Ha a fókusz a cellán van, akkor a cella első fókuszba helyezhető vezérlőelemére helyezi át.</p>
 				<p>Ha a fókusz az <span class="uicontrol">Összes kiválasztása</span> jelölőmezőn vagy sorkijelölőn van, akkor átváltja a jelölőmező állapotát.</p>
 				<p>Ha a fókusz az oszlopfejlécen van, megnyitja az oszlopfejlécmenüt.</p>
@@ -101,8 +101,11 @@
 				<p>Fókusz átváltása a cella és a tartalma között (kivéve írásvédett szövegnél).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Ha a fókusz az <span class="uicontrol">Összes kijelölése</span> jelölőmezőn van, és lenyomja a(z) <kbd>Spacebar</kbd> billentyűt, nem lesz kiváltva a vonatkozó esemény. A(z) <kbd>Shift</kbd> lenyomása érvényteleníti ezt.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Ha a fókusz az oszlopfejlécen van, és lenyomja a(z) <kbd>Spacebar</kbd> vagy a(z) <kbd>Enter</kbd> billentyűt, nem lesz kiváltva a vonatkozó esemény.</p>
 			</description>
 		</interaction>

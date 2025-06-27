@@ -80,9 +80,9 @@ sap.ui.define([
 		// Arrange
 		this.clock = sinon.useFakeTimers();
 		const oHeader = new CardNumericHeader({
-				subtitle: "Lorem",
-				unitOfMeasurement: "EUR EUR EUR"
-			}),
+			subtitle: "Lorem",
+			unitOfMeasurement: "EUR EUR EUR"
+		}),
 			oCard = new Card({
 				width: "300px",
 				header: oHeader
@@ -110,9 +110,9 @@ sap.ui.define([
 	QUnit.test("Default header tooltips", async function (assert) {
 		// Arrange
 		const oHeader = new CardHeader({
-				title: sLongText,
-				subtitle: sLongText
-			}),
+			title: sLongText,
+			subtitle: sLongText
+		}),
 			oCard = new Card({
 				width: "300px",
 				header: oHeader
@@ -138,10 +138,10 @@ sap.ui.define([
 	QUnit.test("Numeric header tooltips", async function (assert) {
 		// Arrange
 		const oHeader = new CardNumericHeader({
-				title: sLongText,
-				subtitle: sLongText,
-				details: sLongText
-			}),
+			title: sLongText,
+			subtitle: sLongText,
+			details: sLongText
+		}),
 			oCard = new Card({
 				width: "300px",
 				header: oHeader
@@ -169,8 +169,8 @@ sap.ui.define([
 	QUnit.test("Default Header avatar default color", async function (assert) {
 		// Arrange
 		const oHeader = new CardHeader({
-				iconSrc: "sap-icon://accept"
-			});
+			iconSrc: "sap-icon://accept"
+		});
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
@@ -293,10 +293,10 @@ sap.ui.define([
 	QUnit.test("Header Hyphenation", async function (assert) {
 		// Arrange
 		const oHeader = new CardHeader({
-				title: "pneumonoultramicroscopicsilicovolcanoconiosis",
-				subtitle: "pneumonoultramicroscopicsilicovolcanoconiosis",
-				wrappingType: WrappingType.Hyphenated
-			});
+			title: "pneumonoultramicroscopicsilicovolcanoconiosis",
+			subtitle: "pneumonoultramicroscopicsilicovolcanoconiosis",
+			wrappingType: WrappingType.Hyphenated
+		});
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
@@ -313,12 +313,12 @@ sap.ui.define([
 	QUnit.test("Numeric Header Hyphenation", async function (assert) {
 		// Arrange
 		const oHeader = new CardNumericHeader({
-				title: "pneumonoultramicroscopicsilicovolcanoconiosis",
-				subtitle: "pneumonoultramicroscopicsilicovolcanoconiosis",
-				details: "pneumonoultramicroscopicsilicovolcanoconiosis",
-				detailsMaxLines: 2,
-				wrappingType: WrappingType.Hyphenated
-			});
+			title: "pneumonoultramicroscopicsilicovolcanoconiosis",
+			subtitle: "pneumonoultramicroscopicsilicovolcanoconiosis",
+			details: "pneumonoultramicroscopicsilicovolcanoconiosis",
+			detailsMaxLines: 2,
+			wrappingType: WrappingType.Hyphenated
+		});
 
 		// Act
 		oHeader.placeAt(DOM_RENDER_LOCATION);
@@ -336,8 +336,8 @@ sap.ui.define([
 	QUnit.test("Header with main part only", async function (assert) {
 		// Arrange
 		const oHeader = new CardHeader({
-				title: "Title"
-			}),
+			title: "Title"
+		}),
 			oCard = new Card({
 				header: oHeader
 			});
@@ -355,9 +355,9 @@ sap.ui.define([
 	QUnit.test("Header with numeric part", async function (assert) {
 		// Arrange
 		const oHeader = new CardNumericHeader({
-				title: "Title",
-				number: "5"
-			}),
+			title: "Title",
+			number: "5"
+		}),
 			oCard = new Card({
 				header: oHeader
 			});
@@ -450,8 +450,8 @@ sap.ui.define([
 	QUnit.test("Press is fired when the header is tapped", async function (assert) {
 		// Arrange
 		const oHeader = new CardNumericHeader({
-				title: "Title"
-			}),
+			title: "Title"
+		}),
 			oCard = new Card({
 				header: oHeader
 			}),
@@ -480,9 +480,9 @@ sap.ui.define([
 	QUnit.test("Press is NOT fired when the header with href is tapped", async function (assert) {
 		// Arrange
 		const oHeader = new CardNumericHeader({
-				title: "Title",
-				href: "https://www.sap.com"
-			}),
+			title: "Title",
+			href: "https://www.sap.com"
+		}),
 			oCard = new Card({
 				header: oHeader
 			}),
@@ -674,6 +674,8 @@ sap.ui.define([
 		assert.notOk(oHeader.getDomRef("status"), "Status shouldn't be rendered.");
 		assert.notOk(oHeader.getAggregation("_avatar").getDomRef(), "Icon shouldn't be rendered.");
 		assert.notOk(oHeader.getToolbar().getDomRef(), "Toolbar shouldn't be rendered.");
+		assert.notOk(oHeader.$().hasClass("sapFCardHeaderLastPart"), "sapFCardHeaderLastPart class is not set");
+		assert.ok(oHeader.$().hasClass("sapFCardHeaderMainPartOnly"), "sapFCardHeaderMainPartOnly class is set");
 
 		// Clean up
 		oHeader.destroy();
@@ -710,6 +712,8 @@ sap.ui.define([
 		assert.notOk(oHeader.getToolbar().getDomRef(), "Toolbar shouldn't be rendered.");
 		assert.notOk(oHeader.getAggregation("_numericIndicators").getDomRef(), "Numeric indicators shouldn't be rendered.");
 		assert.notOk(oHeader.getAggregation("_details").getDomRef(), "Details shouldn't be rendered.");
+		assert.notOk(oHeader.$().hasClass("sapFCardHeaderLastPart"), "sapFCardHeaderLastPart class is not set");
+		assert.notOk(oHeader.$().hasClass("sapFCardHeaderMainPartOnly"), "sapFCardHeaderMainPartOnly class is not set");
 
 		// Clean up
 		oHeader.destroy();

@@ -97,6 +97,18 @@ sap.ui.define([
 			delete oSettingsProperties.isZeroDowntimeUpgradeRunning;
 			delete oSettingsProperties.isAtoAvailable;
 
+			// to avoid failing assertions, remove any unknown properties
+			const aUnknownPropertyNames = Object.keys(oSettingsProperties)
+			.map((sProperty) => {
+				if (!Settings.getMetadata().getAllProperties()[sProperty]) {
+					delete oSettingsProperties[sProperty];
+					return sProperty;
+				}
+				return null;
+			})
+			.filter(Boolean);
+			Log.warning(`Unknown settings received from the backend: ${aUnknownPropertyNames.join(", ")}`);
+
 			// The following line is used by the Flex Support Tool to set breakpoints - please adjust the tool if you change it!
 			oSettingsInstance = new Settings(oSettingsProperties);
 			return oSettingsInstance;

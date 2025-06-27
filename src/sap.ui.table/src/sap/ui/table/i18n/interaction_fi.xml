@@ -68,7 +68,7 @@
 				<p>Jos kohdistus on rivivalitsimessa tai <span class="uicontrol">Valitse kaikki</span> -valintaruudussa, se siirtyy viimeiseen rivivalitsimeen.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Jos kohdistus on solussa, se siirtyy solun ensimmäiseen kohdistettavissa olevaan ohjausobjektiin.</p>
 				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa tai rivivalitsimessa, vaihtelee valintaruudun tilaa.</p>
 				<p>Jos kohdistus on sarakeotsikossa, sarakeotsikkovalikko avautuu.</p>
@@ -101,8 +101,11 @@
 				<p>Vaihtelee kohdistusta solun ja sen sisällön välillä (kirjoitussuojattua tekstiä lukuun ottamatta).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Jos kohdistus on <span class="uicontrol">Valitse kaikki</span> -valintaruudussa ja valitaan <kbd>Spacebar</kbd>, vastaavaa tapahtumaa ei käynnistetä. <kbd>Shift</kbd> estää tämän toiminnon.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Jos kohdistus on sarakeotsikossa ja valitaan <kbd>Spacebar</kbd> tai <kbd>Enter</kbd>, vastaavaa tapahtumaa ei käynnistetä.</p>
 			</description>
 		</interaction>

@@ -941,10 +941,48 @@ sap.ui.define([
 
 		updateSelectedRows.call(this);
 
-		var bMultiSelect = this.getMultipleAppointmentsSelection();
+		this._setProperties();
+	};
+
+	PlanningCalendar.prototype._setProperties = function() {
+		//overriden setters
+		const bMultiSelect = this.getMultipleAppointmentsSelection(),
+			  sIconShape = this.getIconShape(),
+			  oStartDate = this.getStartDate(),
+			  sAppointmentHeight = this.getAppointmentHeight(),
+			  sAppointmentRoundWidth = this.getAppointmentRoundWidth(),
+			  bShowIntervalHeaders = this.getShowIntervalHeaders(),
+			  bShowEmptyIntervalHeaders = this.getShowEmptyIntervalHeaders(),
+			  sAppointmentsVisualization = this.getAppointmentsVisualization(),
+			  oGroupAppointmentsMode = this.getGroupAppointmentsMode(),
+			  vLegend = this.getLegend();
 		this.getRows().forEach(function (oRow) {
-			getRowTimeline(oRow).setMultipleAppointmentsSelection(bMultiSelect);
+			const oCurrentRowHeader = getRowHeader(oRow),
+				oRowTimeline = getRowTimeline(oRow);
+			if (oCurrentRowHeader.getAvatar) {
+				oCurrentRowHeader.getAvatar().setDisplayShape(sIconShape);
+			}
+			oRowTimeline.setMultipleAppointmentsSelection(bMultiSelect);
+			oRowTimeline.setStartDate(oStartDate);
+			oRowTimeline.setAppointmentHeight(sAppointmentHeight);
+			oRowTimeline.setAppointmentRoundWidth(sAppointmentRoundWidth);
+			oRowTimeline.setShowIntervalHeaders(bShowIntervalHeaders);
+			oRowTimeline.setShowEmptyIntervalHeaders(bShowEmptyIntervalHeaders);
+			oRowTimeline.setAppointmentsVisualization(sAppointmentsVisualization);
+			oRowTimeline.setGroupAppointmentsMode(oGroupAppointmentsMode);
+			oRowTimeline.setLegend(vLegend);
 		});
+
+		this._setPrimaryCalendarType();
+		this._setSecondaryCalendarType();
+		this._setFirstDayOfWeek();
+		this._setCalendarWeekNumbering();
+		this._setShowWeekNumbers();
+		this._setShowRowHeaders();
+		this._setShowDayNamesLine();
+		this._setStickyHeader();
+		this._setNoDataText();
+		this._setLegend(vLegend);
 	};
 
 	PlanningCalendar.prototype._bindAggregation = function(sName, oBindingInfo) {
@@ -984,19 +1022,6 @@ sap.ui.define([
 		} else if (this.hasListeners("rowHeaderPress") && this.getDomRef()) {
 			this._addRowHeaderDescription();
 		}
-
-		return this;
-	};
-
-	PlanningCalendar.prototype.setIconShape = function (sIconShape) {
-		this.setProperty("iconShape", sIconShape);
-
-		this.getRows().forEach(function (oRow) {
-			var oCurrentRowHeader = getRowHeader(oRow);
-			if (oCurrentRowHeader.getAvatar) {
-				oCurrentRowHeader.getAvatar().setDisplayShape(sIconShape);
-			}
-		});
 
 		return this;
 	};
@@ -1642,12 +1667,11 @@ sap.ui.define([
 
 	/**
 	 * Sets the primaryCalendarType. If not set, the calendar type of the global configuration is used.
-	 * @param {module:sap/base/i18n/date/CalendarType} sPrimaryCalendarType the <code>CalendarType</code> to set as <code>sap.m.PlanningCalendar</code> <code>primaryCalendarType</code>.
-	 * @returns {this} <code>this</code> to allow method chaining
-	 * @public
+	 * @returns {void}
+	 * @private
 	 */
-	PlanningCalendar.prototype.setPrimaryCalendarType = function(sPrimaryCalendarType) {
-	   this.setProperty("primaryCalendarType", sPrimaryCalendarType);
+	PlanningCalendar.prototype._setPrimaryCalendarType = function() {
+	   var sPrimaryCalendarType = this._getPrimaryCalendarType();
 
 	   if (this._getHeader()) {
 		   this._getHeader().setProperty("_primaryCalendarType", sPrimaryCalendarType);
@@ -1667,8 +1691,6 @@ sap.ui.define([
 	   if (this._oOneMonthsRow) {
 		   this._oOneMonthsRow.setPrimaryCalendarType(sPrimaryCalendarType);
 	   }
-
-	   return this;
    };
 
 	PlanningCalendar.prototype._getSecondaryCalendarType = function() {
@@ -1683,12 +1705,11 @@ sap.ui.define([
 
 	/**
 	 * Sets the secondaryCalendarType.
-	 * @param {module:sap/base/i18n/date/CalendarType} sSecondaryCalendarType the <code>CalendarType</code> to set as <code>sap.m.PlanningCalendar</code> <code>secondaryCalendarType</code>.
-	 * @returns {this} <code>this</code> to allow method chaining
-	 * @public
+	 * @returns {void}
+	 * @private
 	 */
-	PlanningCalendar.prototype.setSecondaryCalendarType = function (sSecondaryCalendarType) {
-		this.setProperty("secondaryCalendarType", sSecondaryCalendarType);
+	PlanningCalendar.prototype._setSecondaryCalendarType = function () {
+		var sSecondaryCalendarType = this._getSecondaryCalendarType();
 
 		if (this._getHeader()) {
 			this._getHeader().setProperty("_secondaryCalendarType", sSecondaryCalendarType);
@@ -1708,8 +1729,6 @@ sap.ui.define([
 		if (this._oOneMonthsRow) {
 			this._oOneMonthsRow.setSecondaryCalendarType(sSecondaryCalendarType);
 		}
-
-		return this;
 	};
 
 	/**
@@ -1894,12 +1913,11 @@ sap.ui.define([
 
 	};
 
-	PlanningCalendar.prototype.setCalendarWeekNumbering = function(sCalendarWeekNumbering) {
-		var oHeader = this._getHeader(),
+	PlanningCalendar.prototype._setCalendarWeekNumbering = function() {
+		var sCalendarWeekNumbering = this.getCalendarWeekNumbering(),
+			oHeader = this._getHeader(),
 			oCalendarPicker = oHeader._oPopup && oHeader._oPopup.getContent()[0],
 			key;
-
-		this.setProperty("calendarWeekNumbering", sCalendarWeekNumbering);
 
 		this._updateWeekConfiguration();
 		oHeader.setCalendarWeekNumbering(sCalendarWeekNumbering);
@@ -1907,9 +1925,6 @@ sap.ui.define([
 		for (key in INTERVAL_METADATA) {
 			this[INTERVAL_METADATA[key].sInstanceName] && this[INTERVAL_METADATA[key].sInstanceName].setCalendarWeekNumbering(sCalendarWeekNumbering);
 		}
-		this.setStartDate(this.getStartDate());
-
-		return this;
 	};
 
 	PlanningCalendar.prototype.removeIntervalInstanceFromInfoToolbar = function () {
@@ -2207,22 +2222,25 @@ sap.ui.define([
 
 	};
 
-	PlanningCalendar.prototype.setFirstDayOfWeek = function (iFirstDayOfWeek) {
+	PlanningCalendar.prototype._setFirstDayOfWeek = function () {
+		const iFirstDayOfWeek = this.getFirstDayOfWeek();
 		if (iFirstDayOfWeek < -1 || iFirstDayOfWeek > 6) {
 			Log.error("" + iFirstDayOfWeek + " is not a valid value to the property firstDayOfWeek. Valid values are from -1 to 6.");
 			return;
 		}
-		var sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
+		const sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
 			oPicker = Element.getElementById(sCurrentPickerId),
 			sViewKey = this.getViewKey(),
 			oDateNav = this._dateNav,
 			oPCStart = oDateNav.getStart(),
 			iOldFirstDayOfWeek = this.getStartDate().getDay(),
-			bOneMonthViewOnSmallScreen = sViewKey === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2,
-			iResultFirstDayOfWeek = iFirstDayOfWeek,
+			bOneMonthViewOnSmallScreen = sViewKey === PlanningCalendarBuiltInView.OneMonth && this._iSize < 2;
+		let	iResultFirstDayOfWeek = iFirstDayOfWeek,
 			oRow, oFirstUTCDateOfWeek, oFirstLocalDateOfWeek;
 
-		oPicker.setFirstDayOfWeek(iFirstDayOfWeek);
+		if (oPicker.setFirstDayOfWeek) {
+			oPicker.setFirstDayOfWeek(iFirstDayOfWeek);
+		}
 
 		if (sViewKey === PlanningCalendarBuiltInView.Week || bOneMonthViewOnSmallScreen) {
 			oRow = this.getAggregation("table").getInfoToolbar().getContent()[1];
@@ -2243,10 +2261,7 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		this.setProperty("firstDayOfWeek", iFirstDayOfWeek);
 		this._updateWeekConfiguration();
-
-		return this;
 	};
 
 	PlanningCalendar.prototype._updateWeekConfiguration = function() {
@@ -2484,8 +2499,8 @@ sap.ui.define([
 		return oInterval;
 	};
 
-	PlanningCalendar.prototype.setShowWeekNumbers = function (bValue) {
-		this.setProperty("showWeekNumbers", bValue, true);
+	PlanningCalendar.prototype._setShowWeekNumbers = function () {
+		const bShowWeekNumbers = this.getShowWeekNumbers();
 
 		this._getViews().forEach(function(oView) {
 			var sViewKey = oView.getKey(),
@@ -2493,109 +2508,21 @@ sap.ui.define([
 				oInterval = this._getRowInstanceByViewKey(sViewKey);
 
 			if (oInterval && bViewAllowsWeekNumbers) {
-				oInterval.setShowWeekNumbers(bValue);
+				oInterval.setShowWeekNumbers(bShowWeekNumbers);
 			}
 
 			//update the pc header classes if needed
 			if (this.getDomRef() && this.getViewKey() === sViewKey) {
-				adaptCalHeaderForWeekNumbers.call(this, bValue, bViewAllowsWeekNumbers);
+				adaptCalHeaderForWeekNumbers.call(this, bShowWeekNumbers, bViewAllowsWeekNumbers);
 			}
 		}, this);
-
-		return this;
 	};
 
-	PlanningCalendar.prototype.setShowIntervalHeaders = function(bShowIntervalHeaders){
-
-		this.setProperty("showIntervalHeaders", bShowIntervalHeaders, true);
-
-		var aRows = this.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setShowIntervalHeaders(bShowIntervalHeaders);
-		}
-
-		return this;
-
-	};
-
-	PlanningCalendar.prototype.setShowEmptyIntervalHeaders = function(bShowEmptyIntervalHeaders){
-
-		this.setProperty("showEmptyIntervalHeaders", bShowEmptyIntervalHeaders, true);
-
-		var aRows = this.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setShowEmptyIntervalHeaders(bShowEmptyIntervalHeaders);
-		}
-
-		return this;
-
-	};
-
-	PlanningCalendar.prototype.setGroupAppointmentsMode = function (bGroupAppointmentsMode) {
-
-		this.setProperty("groupAppointmentsMode", bGroupAppointmentsMode, true);
-
-		var aRows = this.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setGroupAppointmentsMode(bGroupAppointmentsMode);
-		}
-
-		return this;
-	};
-
-
-	PlanningCalendar.prototype.setAppointmentHeight = function(sAppointmentHeight) {
-		var aRows = this.getRows(),
-			i;
-
-		this.setProperty("appointmentHeight", sAppointmentHeight);
-		for (i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setAppointmentHeight(sAppointmentHeight);
-		}
-
-		return this;
-	};
-
-	PlanningCalendar.prototype.setAppointmentRoundWidth = function(sAppointmentRoundWidth) {
-		var aRows = this.getRows(),
-			i;
-		this.setProperty("appointmentRoundWidth", sAppointmentRoundWidth);
-		for (i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setAppointmentRoundWidth(sAppointmentRoundWidth);
-		}
-
-		return this;
-	};
-
-	PlanningCalendar.prototype.setAppointmentsVisualization = function(sAppointmentsVisualization){
-
-		this.setProperty("appointmentsVisualization", sAppointmentsVisualization, true);
-
-		var aRows = this.getRows();
-		for (var i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setAppointmentsVisualization(sAppointmentsVisualization);
-		}
-
-		return this;
-
-	};
-
-	PlanningCalendar.prototype.setShowRowHeaders = function(bShowRowHeaders){
-
-		if (this.getShowRowHeaders() === bShowRowHeaders) {
-			return this;
-		}
+	PlanningCalendar.prototype._setShowRowHeaders = function(){
+		const bShowRowHeaders = this.getShowRowHeaders();
 
 		// set header column to invisible as each row is a ColumnListItem with two columns
 		// removing the column would need to change every row
-
-		this.setProperty("showRowHeaders", bShowRowHeaders, true);
 
 		var oTable = this.getAggregation("table"),
 			oRowHeader, oRowTimeline;
@@ -2622,13 +2549,14 @@ sap.ui.define([
 
 	};
 
-	PlanningCalendar.prototype.setShowDayNamesLine = function(bShowDayNamesLine){
+	PlanningCalendar.prototype._setShowDayNamesLine = function(){
 
 		var intervalMetadata,
 			sInstanceName,
 			oCalDateInterval,
 			bRendered = !!this.getDomRef(),
-			sCurrentViewKey = this.getViewKey();
+			sCurrentViewKey = this.getViewKey(),
+			bShowDayNamesLine = this.getShowDayNamesLine();
 
 		for (intervalMetadata in  INTERVAL_METADATA) {
 			sInstanceName = INTERVAL_METADATA[intervalMetadata].sInstanceName;
@@ -2641,24 +2569,16 @@ sap.ui.define([
 				}
 			}
 		}
-
-		return this.setProperty("showDayNamesLine", bShowDayNamesLine, false);
-
 	};
 
 	/**
 	 * Sets the stickyHeader property.
-	 * @override
-	 * @public
-	 * @param {boolean} bStick Whether the header area will remain visible (fixed on top)
+	 * @private
 	 * @returns {this} this pointer for chaining
 	 */
-	PlanningCalendar.prototype.setStickyHeader = function(bStick) {
-		if (this.getStickyHeader() === bStick) {
-			return this;
-		}
+	PlanningCalendar.prototype._setStickyHeader = function() {
+		const bStick = this.getStickyHeader();
 
-		this.setProperty("stickyHeader", bStick, true);
 		if (Device.system.phone) {
 			if (bStick) {
 				Device.orientation.attachHandler(this._updateStickyHeader, this);
@@ -2667,8 +2587,6 @@ sap.ui.define([
 			}
 		}
 		this._updateStickyHeader();
-
-		return this;
 	};
 
 	PlanningCalendar.prototype._updateStickyHeader = function() {
@@ -2787,7 +2705,6 @@ sap.ui.define([
 
 	};
 
-
 	PlanningCalendar.prototype.setSingleSelection = function(bSingleSelection) {
 
 		this.setProperty("singleSelection", bSingleSelection, true);
@@ -2807,29 +2724,15 @@ sap.ui.define([
 
 	};
 
-	PlanningCalendar.prototype.setNoDataText = function(sNoDataText) {
-
-		this.setProperty("noDataText", sNoDataText, true);
-
-		var oTable = this.getAggregation("table");
+	PlanningCalendar.prototype._setNoDataText = function() {
+		const sNoDataText = this.getNoDataText(),
+			oTable = this.getAggregation("table");
 		oTable.setNoDataText(sNoDataText);
-
-		return this;
-
 	};
 
-	PlanningCalendar.prototype.setLegend = function(vLegend){
-
-		this.setAssociation("legend", vLegend, true);
-
-		var aRows = this.getRows(),
-			oLegend = this.getLegend() && Element.getElementById(this.getLegend()),
-			oLegendDestroyObserver;
-
-		for (var i = 0; i < aRows.length; i++) {
-			var oRow = aRows[i];
-			getRowTimeline(oRow).setLegend(vLegend);
-		}
+	PlanningCalendar.prototype._setLegend = function(vLegend){
+		const oLegendAssociation = vLegend && Element.getElementById(vLegend);
+		let oLegendDestroyObserver;
 
 		INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
 			if (this[sControlRef]) {
@@ -2837,16 +2740,14 @@ sap.ui.define([
 			}
 		}, this);
 
-		if (oLegend) { //destroy of the associated legend should rerender the PlanningCalendar
+		if (oLegendAssociation) { //destroy of the associated legend should rerender the PlanningCalendar
 			oLegendDestroyObserver = new ManagedObjectObserver(function(oChanges) {
 				this.invalidate();
 			}.bind(this));
-			oLegendDestroyObserver.observe(oLegend, {
+			oLegendDestroyObserver.observe(oLegendAssociation, {
 				destroy: true
 			});
 		}
-
-		return this;
 	};
 
 	PlanningCalendar.prototype.addAriaLabelledBy = function(sId) {
@@ -3783,23 +3684,6 @@ sap.ui.define([
 			Log.warning("Your custom sort function won't be used, but the old one will be preserved.", this);
 		}
 		return this;
-	};
-
-	/**
-	 * Sets the width property and ensures that the start date is in sync with each row timeline.
-	 *
-	 * @param {sap.ui.core.CSSSize} sWidth the width to be set to the PlanningCalendar
-	 * @returns {this} this for method chaining
-	 * @public
-	 */
-	PlanningCalendar.prototype.setWidth = function (sWidth) {
-		var oStartDate = this.getStartDate();
-
-		this.getRows().forEach(function (oRow) {
-			getRowTimeline(oRow).setStartDate(oStartDate);
-		});
-
-		return this.setProperty("width", sWidth);
 	};
 
 	/**

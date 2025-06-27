@@ -230,7 +230,7 @@ sap.ui.define([
 	 * @param {object} oConditionPayload Additional context information for this key
 	 * @param {sap.ui.core.Control} oControl Instance of the calling control if it is not the field itself
 	 * @param {sap.ui.model.Type} oType Type of the value
-	 * @param {boolean} bEmptyAllowed If <code>true</code> the connected control could be made empty (no Conditions)
+	 * @param {boolean} bEmptyAllowed If <code>true</code>, the connected control could be left empty (without conditions)
 	 * @returns {string|sap.ui.mdc.valuehelp.base.ValueHelpItem|Promise<string|sap.ui.mdc.valuehelp.base.ValueHelpItem>} Description for key or object containing description, key, and payload. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if the description cannot be determined
 	 * @since: 1.78.0
