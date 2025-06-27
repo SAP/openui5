@@ -68,7 +68,7 @@
 				<p>Si el enfoque está en el selector de filas o en <span class="uicontrol">Seleccionar todo</span>, el enfoque se mueve al último selector de filas.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Si el enfoque está en la celda, este se mueve al primer control enfocable de la celda.</p>
 				<p>Si el enfoque está en la casilla <span class="uicontrol">Seleccionar todo</span> o en un selector de filas, se alterna el estado de la casilla.</p>
 				<p>Si el enfoque está en el encabezado de columna, se abre el menú del encabezado de columna.</p>
@@ -101,8 +101,11 @@
 				<p>Cambia el foco entre la celda y su contenido (excepto los textos de solo lectura).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Si el enfoque está en <span class="uicontrol">Seleccionar todo</span> y se presiona <kbd>Spacebar</kbd>, no se desencadena el evento correspondiente. <kbd>Shift</kbd> impide esta acción.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Si el enfoque está en un encabezado de columna y se presiona <kbd>Spacebar</kbd> o <kbd>Enter</kbd>, no se desencadena el evento correspondiente.</p>
 			</description>
 		</interaction>

@@ -651,6 +651,49 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when initialize is called with different component Ids but same reference", async function(assert) {
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: "firstComponentId"
+			});
+
+			await FlexState.initialize({
+				reference: sReference,
+				componentId: "secondComponentId"
+			});
+
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 1, "then the flex data is loaded once");
+		});
+
+		QUnit.test("when initialize is called with different component Ids and different reference", async function(assert) {
+			await FlexState.initialize({
+				reference: "firstReference",
+				componentId: "firstComponentId"
+			});
+
+			await FlexState.initialize({
+				reference: "secondReference",
+				componentId: "secondComponentId"
+			});
+
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 2, "then the flex data is loaded twice");
+		});
+
+		QUnit.test("when initialize is called with same component Ids and different versions", async function(assert) {
+			await FlexState.initialize({
+				reference: "firstReference",
+				componentId: "firstComponentId"
+			});
+
+			await FlexState.initialize({
+				reference: "firstReference",
+				componentId: "firstComponentId",
+				version: 1
+			});
+
+			assert.strictEqual(this.oLoadFlexDataStub.callCount, 2, "then the flex data is loaded twice");
+		});
+
 		QUnit.test("when getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
 			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
@@ -1050,30 +1093,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when initialize is called with an emptyState already available", async function(assert) {
-			var mResponse = merge(
-				{},
-				mEmptyResponse,
-				{
-					changes: {
-						changes: [{
-							fileType: "change",
-							changeType: "propertyChange",
-							layer: LayerUtils.getCurrentLayer()
-						}]
-					}
-				}
-			);
-			this.oApplyStorageLoadFlexDataStub.resolves(mResponse.changes);
 			// this will create an emptyState
 			FlexState.getRuntimeOnlyData(sReference);
 			await FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId
 			});
-			assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
-			assert.equal(this.oApplyStorageLoadFlexDataStub.callCount, 1, "storage loadFlexData is called once");
-			const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({reference: sReference});
-			assert.equal(aFlexObjects.length, 1, "there is one change");
+			assert.strictEqual(this.oLoaderSpy.callCount, 0, "loader is not called");
 		});
 	});
 

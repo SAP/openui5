@@ -68,7 +68,7 @@
 				<p>Če je fokus na izbirniku celice ali <span class="uicontrol">Izberi vse</span>, se fokus premakne na izbirnik zadnje vrstice.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Če je fokus na celici, se fokus premakne na prvi kontrolnik za fokusiranje v celici.</p>
 				<p>Če je fokus na potrditvenem polju <span class="uicontrol">Izberi vse</span> ali izbirniku celic, preklopi stanje potrditvenega polja.</p>
 				<p>Če je fokus na glavi stolpca, se odpre meni glave stolpca.</p>
@@ -101,8 +101,11 @@
 				<p>Preklopi fokus med celico in njeno vsebino (z izjemo besedila samo za branje).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Če je fokus na <span class="uicontrol">Izberi vse</span> in je pritisnjena možnost <kbd>Spacebar</kbd>, se ustrezni dogodek ne sproži. <kbd>Shift</kbd> prepreči to aktivnost.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Če je fokus na glavi stolpca in je pritisnjena možnost <kbd>Spacebar</kbd> ali <kbd>Enter</kbd>, se ustrezni dogodek ne sproži.</p>
 			</description>
 		</interaction>
@@ -118,7 +121,7 @@
 				<p>Če je fokus na celici ali izbirniku celice in je izbrana relevantna vrstica, se fokus premakne na spodnjo vrstico, izbira pa se razširi do te vrstice.</p>
 				<p>Če je fokus na celici ali izbirniku celice in relevantna vrstica <span class="emphasis">ni</span> izbrana, se fokus premakne na spodnjo vrstico, izbira pa se odstrani za to vrstico.</p>
 				<p><span class="emphasis">Če je omogočena izbira celic:</span></p>
-				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in spodnja celica. Fokus se premakne na celico pod fokusirano celico.</p>
+				<p>Če je fokus na celici, ki <span class="emphasis">ni</span> izbrana, in vrstica <span class="emphasis">ni</span> izbrana, sta izbrani fokusirana celica in spodnja celica. Fokus se premakne na celico pod fokusirano celico.</p>
 				<p>Če je fokus na izbrani celici, celica spodaj pridobi fokus, izbira celice pa je razširjena do te celice.</p>
 			</description>
 		</interaction>

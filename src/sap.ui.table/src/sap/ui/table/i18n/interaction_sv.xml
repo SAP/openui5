@@ -68,7 +68,7 @@
 				<p>Om fokus är på radväljaren eller <span class="uicontrol">Markera alla</span> flyttas fokus till den sista radväljaren.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Om fokus är på cellen flyttas fokus till den första fokuserbara kontrollen i cellen.</p>
 				<p>Om fokus är på kryssrutan <span class="uicontrol">Markera alla</span> eller en radväljare växlas status för kryssrutan.</p>
 				<p>Om fokus är på kolumnrubriken öppnas menyn för kolumnrubriken.</p>
@@ -101,8 +101,11 @@
 				<p>Växlar fokus mellan cell och dess innehåll (med undantag för skrivskyddad text).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Om fokus är på <span class="uicontrol">Markera alla</span> och du trycker på <kbd>Spacebar</kbd> så initieras inte motsvarande händelse. <kbd>Shift</kbd> förhindrar denna aktivitet.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Om fokus är på en kolumnrubrik och du trycker på <kbd>Spacebar</kbd> eller <kbd>Enter</kbd> så initieras inte motsvarande händelse.</p>
 			</description>
 		</interaction>

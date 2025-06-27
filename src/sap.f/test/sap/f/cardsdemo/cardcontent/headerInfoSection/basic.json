@@ -17,6 +17,11 @@
 		"type": "Analytical",
 		"header": {
 			"type": "Numeric",
+			"actions": [
+				{
+					"type": "Navigation"
+				}
+			],
 			"data": {
 				"json": {
 					"number": "65.34",
@@ -62,11 +67,11 @@
 								"inverted": true,
 								"showStateIcon": true,
 								"actions": [{
-									"type": "Navigation",
-									"parameters": {
-										"url": "https://www.sap.com",
-										"target": "_blank"
-									}
+										"type": "Navigation",
+										"parameters": {
+											"url": "https://www.sap.com",
+											"target": "_blank"
+										}
 								}]
 							}
 						]

@@ -68,7 +68,7 @@
 				<p>행 선택 또는 <span class="uicontrol">모두 선택</span>에 포커스가 있다면 마지막 행 선택으로 포커스가 이동합니다.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>셀에 포커스가 있다면 셀에서 첫 번째로 포커스 가능한 컨트롤로 포커스가 이동합니다.</p>
 				<p><span class="uicontrol">모두 선택</span> 체크박스 또는 행 선택에 포커스가 있다면 체크박스 상태를 토글합니다.</p>
 				<p>열 헤더에 포커스가 있다면 열 헤더 메뉴가 열립니다.</p>
@@ -101,8 +101,11 @@
 				<p>셀과 해당 셀 내용 간 포커스 이동을 토글합니다(읽기 전용 텍스트는 제외).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p><span class="uicontrol">모두 선택</span>에 포커스가 있을 때, <kbd>Spacebar</kbd>를 눌러도 해당 이벤트가 트리거되지 않습니다. <kbd>Shift</kbd>가 이 동작을 막습니다.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>열 헤더에 포커스가 있을 때, <kbd>Spacebar</kbd> 또는 <kbd>Enter</kbd>를 눌러도 해당 이벤트가 트리거되지 않습니다.</p>
 			</description>
 		</interaction>

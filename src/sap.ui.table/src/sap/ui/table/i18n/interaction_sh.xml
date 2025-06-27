@@ -68,7 +68,7 @@
 				<p>Ako je fokus na selektoru reda ili na <span class="uicontrol">Odaberi sve</span>, fokus se pomera na poslednji selektor reda.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Ako je fokus na ćeliji, fokus se pomera na prvu kontrolu na koju se može fokusirati u ćeliji.</p>
 				<p>Ako je fokus na kvadratiću za potvrdu <span class="uicontrol">Odaberi sve</span> ili selektoru reda, ovo prebacuje status kvadratića za potvrdu.</p>
 				<p>Ako je fokus na zaglavlju kolone, otvara se meni zaglavlja kolone.</p>
@@ -101,8 +101,11 @@
 				<p>Prebacuje fokus između ćelije i njenog sadržaja (sa izuzetkom teksta koji je samo za čitanje).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Ako je fokus na <span class="uicontrol">Odaberi sve</span> i pritisne se <kbd>Spacebar</kbd>, odgovarajući događaj se ne pokreće. <kbd>Shift</kbd> sprečava ovu aktivnost.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Ako je fokus na zaglavlju kolone i <kbd>Spacebar</kbd> ili se pritisne <kbd>Enter</kbd>, odgovarajući događaj se ne pokreće.</p>
 			</description>
 		</interaction>

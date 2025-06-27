@@ -68,7 +68,7 @@
 				<p>Jika fokus berada pada pemilih baris atau <span class="uicontrol">Pilih Semua</span>, fokus akan berpindah ke pemilih baris terakhir.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Jika fokus berada pada sel, fokus akan berpindah ke kontrol pertama yang dapat difokuskan di dalam sel tersebut.</p>
 				<p>Jika fokus berada pada kotak centang <span class="uicontrol">Pilih Semua</span> atau pemilih baris, status kotak centang akan dialihkan.</p>
 				<p>Jika fokus berada pada header kolom, menu header kolom akan dibuka.</p>
@@ -101,8 +101,11 @@
 				<p>Mengalihkan fokus antara sel dan isinya (kecuali teks yang hanya untuk dibaca).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span>, dan tombol <kbd>Spacebar</kbd> ditekan, peristiwa terkait tidak akan dipicu. <kbd>Shift</kbd> mencegah aktivitas ini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Jika fokus berada pada header kolom, dan tombol <kbd>Spacebar</kbd> atau <kbd>Enter</kbd> ditekan, peristiwa terkait tidak akan dipicu.</p>
 			</description>
 		</interaction>
@@ -116,7 +119,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + ArrowDown</kbd> <description>
 				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait dipilih, fokus akan berpindah ke baris di bawahnya, dan area pemilihan akan diperluas hingga ke baris tersebut.</p>
-				<p>Jika fokus berada pada sel atau pemilih baris dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di bawahnya, dan pemilihan pada baris tersebut akan dihapus.</p>
+				<p>Jika fokus berada pada sel atau pemilih baris, dan baris terkait <span class="emphasis">tidak</span> dipilih, fokus akan berpindah ke baris di bawahnya, dan pemilihan pada baris tersebut akan dihapus.</p>
 				<p><span class="emphasis">Jika pemilihan sel diaktifkan:</span></p>
 				<p>Jika fokus berada pada sel yang <span class="emphasis">tidak</span> dipilih, dan barisnya juga <span class="emphasis">tidak</span> dipilih, sel yang difokuskan serta sel di bawahnya akan dipilih. Fokus kemudian akan berpindah ke sel yang berada tepat di bawah sel yang sedang difokuskan.</p>
 				<p>Jika fokus berada pada sel yang dipilih, fokus akan berpindah ke sel di bawahnya, dan area pemilihan sel akan diperluas hingga ke sel tersebut.</p>

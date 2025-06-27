@@ -16,6 +16,11 @@
 	"sap.card": {
 		"type": "List",
 		"header": {
+			"actions": [
+				{
+					"type": "Navigation"
+				}
+			],
 			"title": "Header Info Section with Flex Layout",
 			"subTitle": "Revenue",
 			"unitOfMeasurement": "EUR",

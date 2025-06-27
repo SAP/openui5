@@ -684,5 +684,6 @@ sap.ui.define([
 		assert.equal(oClonedHeader.getAggregation("_avatar").getSrc(), oManifest["sap.card"].header.icon.src, "Cloned header icon src should be correct.");
 		assert.equal(oClonedHeader.getStatusText(), oManifest["sap.card"].header.status.text, "Cloned header status should be correct.");
 		assert.equal(oClonedHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Cloned header dataTimestamp should be correct.");
+		assert.ok(oClonedHeader.$().hasClass("sapFCardHeaderMainPartOnly"), "sapFCardHeaderMainPartOnly class is set");
 	});
 });

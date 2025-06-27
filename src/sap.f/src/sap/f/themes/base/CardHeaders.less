@@ -22,9 +22,13 @@
 		display: flex;
 		min-width: 0;
 		height: fit-content;
-		padding: @_sap_f_CardHeaders_Padding @_sap_f_CardHeaders_Padding 0.75rem @_sap_f_CardHeaders_Padding;
+		padding: @_sap_f_CardHeaders_Padding @_sap_f_CardHeaders_Padding 0.25rem @_sap_f_CardHeaders_Padding;
 		position: relative;
 		border-radius: 0;
+
+		&.sapFCardHeaderLastPart{
+			padding: @_sap_f_CardHeaders_Padding;
+		}
 	}
 
 	.sapFCardHeaderImage {
@@ -189,7 +193,7 @@
 }
 
 .sapFCardHeaderInfoSection {
-	padding: 0.5rem 1rem 0.25rem 1rem;
+	padding: 0.25rem @_sap_f_CardHeaders_Padding 0.25rem @_sap_f_CardHeaders_Padding;
 	display: flex;
 	flex-direction: column;
 	gap: 0.5rem;
@@ -202,7 +206,7 @@
 .sapFCardHeader.sapFCardNumericHeader {
 
 	.sapFCardNumericHeaderNumericPart {
-		padding: 0.25rem 1rem 0.5rem 1rem;
+		padding: 0rem @_sap_f_CardHeaders_Padding @_sap_f_CardHeaders_Padding @_sap_f_CardHeaders_Padding;
 
 		.sapFCardHeaderNumericPartFirstLine {
 			display: flex;
@@ -251,7 +255,7 @@
 		}
 
 		.sapFCardNumericIndicatorsSide {
-			padding: 0.5rem 0;
+			padding: 0.25rem 0;
 		}
 	}
 

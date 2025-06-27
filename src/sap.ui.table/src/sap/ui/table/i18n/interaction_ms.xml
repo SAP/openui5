@@ -68,7 +68,7 @@
 				<p>Jika fokus berada pada pemilih baris atau <span class="uicontrol">Pilih Semua</span>, fokus beralih ke pemilih baris terakhir.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Jika fokus berada pada sel, fokus beralih ke kawalan boleh difokuskan pertama dalam sel.</p>
 				<p>Jika fokus berada pada kotak semak <span class="uicontrol">Pilih Semua</span> atau pemilih baris, togol status kotak semak.</p>
 				<p>Jika fokus berada pada pengepala lajur, menu pengepala lajur dibuka.</p>
@@ -101,8 +101,11 @@
 				<p>Togol fokus antara sel dan kandungannya (dengan pengecualian teks baca sahaja).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Jika fokus berada pada <span class="uicontrol">Pilih Semua</span> dan <kbd>Spacebar</kbd> ditekan, acara yang sepadan tidak dipicu. <kbd>Shift</kbd> menghalang aktiviti ini.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Jika fokus berada pada pengepala lajur dan <kbd>Spacebar</kbd> atau <kbd>Enter</kbd> ditekan, acara yang sepadan tidak dipicu.</p>
 			</description>
 		</interaction>

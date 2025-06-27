@@ -68,7 +68,7 @@
 				<p>Se o foco estiver no seletor de linhas ou <span class="uicontrol">Selecionar tudo</span>, o foco é movido para o último seletor de linhas.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Se o foco estiver na célula, o foco é movido para o primeiro controle focável na célula.</p>
 				<p>Se o foco estiver na caixa de seleção <span class="uicontrol">Selecionar tudo</span> ou no seletor de linhas, muda o estado da caixa de seleção.</p>
 				<p>Se o foco estiver no cabeçalho da coluna, o menu do cabeçalho da coluna é aberto.</p>
@@ -101,8 +101,11 @@
 				<p>Troca o foco entre a célula e o respectivo conteúdo (com a exceção do texto somente leitura).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Se o foco estiver em <span class="uicontrol">Selecionar tudo</span> e <kbd>Spacebar</kbd> é pressionado, o evento correspondente não é acionado. <kbd>Shift</kbd> evita esta atividade.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Se o foco estiver em um cabeçalho da coluna e <kbd>Spacebar</kbd> ou <kbd>Enter</kbd> for pressionado, o evento correspondente não é acionado.</p>
 			</description>
 		</interaction>

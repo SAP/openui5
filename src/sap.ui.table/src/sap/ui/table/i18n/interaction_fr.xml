@@ -68,7 +68,7 @@
 				<p>Si la zone activée se trouve sur le sélecteur de ligne ou la case à cocher <span class="uicontrol">Sélectionner tout</span>, elle se déplace vers le dernier sélecteur de ligne.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Si la zone activée se trouve sur la cellule, elle se déplace vers la première commande activable dans la cellule.</p>
 				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span> ou un sélecteur de ligne, cela active/désactive le statut de la case à cocher.</p>
 				<p>Si la zone activée se trouve sur l'intitulé de colonne, le menu de l'intitulé de colonne est ouvert.</p>
@@ -101,8 +101,11 @@
 				<p>Bascule la zone activée entre la cellule et son contenu (sauf s'il s'agit d'un texte en lecture seule).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Si la zone activée se trouve sur la case à cocher <span class="uicontrol">Sélectionner tout</span> et si la touche <kbd>Spacebar</kbd> est actionnée, l'événement correspondant n'est pas déclenché. La touche <kbd>Shift</kbd> bloque cette activité.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Si la zone activée se trouve sur un intitulé de colonne et si la touche <kbd>Spacebar</kbd> ou <kbd>Enter</kbd> est actionnée, l'événement correspondant n'est pas déclenché.</p>
 			</description>
 		</interaction>

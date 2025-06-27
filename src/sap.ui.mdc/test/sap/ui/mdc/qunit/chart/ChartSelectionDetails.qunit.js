@@ -22,6 +22,45 @@ sap.ui.define([
 		assert.ok(oChartSelectionDetails._oItemFactory, "'_oItemFactory' is set");
 	});
 
+	QUnit.test("'_selectionDetailsItemFactory' should return new SelectionDetailsItem with correctly formatted lines", function(assert) {
+		const oBindingContext = {
+			"testKey": "testValue"
+		};
+		const aDisplayData = [
+		{
+			"id": "title",
+			"label": "Title",
+			"value": "A Dictionary of Cebuano Visayan",
+			"type": "Dimension",
+			"unbound": false
+		},
+		{
+			"id": "maxmetricsWords",
+			"label": "Words (max)",
+			"value": "",
+			"type": "Measure",
+			"unbound": false
+		}];
+		const mData = [{
+			"maxmetricsWords" : 964198,
+			"title": "A Dictionary of Cebuano Visayan",
+			"title.d": "A Dictionary of Cebuano Visayan",
+			"_context_row_number": 17
+		}];
+
+		const oChartSelectionDetails = new ChartSelectionDetails({});
+		assert.ok(oChartSelectionDetails._oItemFactory, "'_oItemFactory' is set");
+		const selectionDetailsItem = oChartSelectionDetails._selectionDetailsItemFactory(aDisplayData, mData, oBindingContext);
+		assert.ok(selectionDetailsItem.isA("sap.m.SelectionDetailsItem"),"'_selectionDetailsItemFactory' returns correct type");
+		assert.equal(selectionDetailsItem.getLines().length, 2, "SelectionDetailsItem has two lines");
+		assert.equal(selectionDetailsItem.getLines()[0].getLabel(), "Title", "SelectionDetailsItem first line has correct label");
+		assert.equal(selectionDetailsItem.getLines()[0].getValue(), "A Dictionary of Cebuano Visayan", "SelectionDetailsItem first line has correct value");
+		assert.equal(selectionDetailsItem.getLines()[1].getLabel(), "Words (max)", "SelectionDetailsItem second line has correct label");
+		assert.equal(selectionDetailsItem.getLines()[1].getValue(), "", "SelectionDetailsItem second line has correct empty value");
+		assert.equal(selectionDetailsItem.getBindingContext(), oBindingContext, "SelectionDetailsItem has correct binding context");
+		assert.ok(selectionDetailsItem.getLines()[0].isA("sap.m.SelectionDetailsItemLine"), "SelectionDetailsItem first line is of type SelectionDetailsItemLine");
+	});
+
 	QUnit.module("sap.ui.mdc.chart.ChartSelectionDetails: _navigate", {});
 
 	QUnit.test("should have a default 'navigate' handler", function(assert) {

@@ -160,6 +160,8 @@ sap.ui.define([
 		// Assert
 		const oHeader = this.oCard.getAggregation("_header");
 		assert.ok(oHeader.getDomRef(), "Card Numeric header should be rendered.");
+		assert.notOk(oHeader.$().hasClass("sapFCardHeaderMainPartOnly"), "sapFCardHeaderMainPartOnly class is not set");
+		assert.notOk(oHeader.$().hasClass("sapFCardHeaderLastPart"), "sapFCardHeaderLastPart class is not set");
 
 		// Assert properties
 		assert.equal(oHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Card header title should be correct.");

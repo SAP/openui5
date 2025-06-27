@@ -68,7 +68,7 @@
 				<p>Wenn der Fokus auf dem Zeilenauswahlfeld oder <span class="uicontrol">Alle markieren</span> liegt, verschiebt sich der Fokus auf das letzte Zeilenauswahlfeld.</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Enter</kbd> <kbd>Return</kbd> <kbd>Spacebar</kbd> <kbd>screen tap gesture</kbd> <description>
+		<interaction> <kbd>Enter</kbd> <kbd>Spacebar</kbd> <description>
 				<p>Wenn der Fokus auf der Zelle liegt, verschiebt sich der Fokus auf das erste fokussierbare Control in der Zelle.</p>
 				<p>Wenn der Fokus auf dem Ankreuzfeld <span class="uicontrol">Alle markieren</span> oder dem Zeilenauswahlfeld liegt, wird der Status des Ankreuzfelds umgeschaltet.</p>
 				<p>Wenn der Fokus auf dem Spaltenkopf liegt, wird das Spaltenkopfmenü geöffnet.</p>
@@ -101,8 +101,11 @@
 				<p>Schaltet den Fokus zwischen der Zelle und ihrem Inhalt um (mit Ausnahme von schreibgeschütztem Text).</p>
 			</description>
 		</interaction>
-		<interaction> <kbd>Shift</kbd> <description>
+		<interaction> <kbd>Shift + Spacebar</kbd> <description>
 				<p>Wenn der Fokus auf <span class="uicontrol">Alle markieren</span> liegt und die <kbd>Spacebar</kbd> gedrückt wird, wird das entsprechende Ereignis nicht ausgelöst. Die <kbd>Shift</kbd> verhindert diese Aktivität.</p>
+			</description>
+		</interaction>
+		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
 				<p>Wenn der Fokus auf einem Spaltenkopf liegt und die <kbd>Spacebar</kbd> oder <kbd>Enter</kbd> gedrückt wird, wird das entsprechende Ereignis nicht ausgelöst.</p>
 			</description>
 		</interaction>
