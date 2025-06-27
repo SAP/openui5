@@ -69,13 +69,9 @@ function(
 			const sLogoPath = this.getUshellApi().getLogo();
 
 			if (sLogoPath) {
-				// get all images from the Fiori Header
-				const aHeaderImages = this._oFioriHeader.getDomRef().querySelectorAll("img");
-				// check if one of the images is the logo
-				const oLogo = Array.from(aHeaderImages).find((oImage) => oImage.src.includes(sLogoPath));
+				const oLogo = this.getUshellApi().getLogoDomRef();
 				let iWidth;
 				let iHeight;
-
 				if (oLogo) {
 					iWidth = oLogo.getBoundingClientRect().width;
 					iHeight = oLogo.getBoundingClientRect().height;
@@ -85,7 +81,6 @@ function(
 				this.getControl("iconSpacer").setWidth("8px");
 				this._iLogoWidth = iWidth + 8;
 
-				// first control is the left HBox
 				this.getControl("iconBox").addItem(
 					new Image(`${this.getId()}_fragment--sapUiRta_icon`, {
 						src: sLogoPath,
