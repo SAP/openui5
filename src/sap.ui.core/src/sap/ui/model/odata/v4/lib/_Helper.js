@@ -708,6 +708,10 @@ sap.ui.define([
 		 *   <code>null</code> value
 		 *
 		 * @public
+		 * @see .deleteProperty
+		 * @see .drillDown
+		 * @see .inheritPathValue
+		 * @see .makeUpdateData
 		 */
 		createMissing : function (oObject, aSegments) {
 			aSegments.reduce(function (oCurrent, sSegment, i) {
@@ -893,6 +897,10 @@ sap.ui.define([
 		 * @param {string} sPath - Some relative path
 		 *
 		 * @public
+		 * @see .createMissing
+		 * @see .drillDown
+		 * @see .inheritPathValue
+		 * @see .makeUpdateData
 		 */
 		deleteProperty : function (oObject, sPath) {
 			var aSegments;
@@ -948,6 +956,10 @@ sap.ui.define([
 		 *   into void
 		 *
 		 * @public
+		 * @see .createMissing
+		 * @see .deleteProperty
+		 * @see .inheritPathValue
+		 * @see .makeUpdateData
 		 */
 		drillDown : function (oObject, vSegments) {
 			if (typeof vSegments === "string") {
@@ -1944,6 +1956,10 @@ sap.ui.define([
 		 *   untolerated <code>null</code> value
 		 *
 		 * @public
+		 * @see .createMissing
+		 * @see .deleteProperty
+		 * @see .drillDown
+		 * @see .makeUpdateData
 		 */
 		inheritPathValue : function (aSegments, oSource, oTarget, bTolerateNull) {
 			aSegments.forEach(function (sSegment, i) {
@@ -2305,6 +2321,10 @@ sap.ui.define([
 		 *   The resulting object
 		 *
 		 * @public
+		 * @see .createMissing
+		 * @see .deleteProperty
+		 * @see .drillDown
+		 * @see .inheritPathValue
 		 */
 		makeUpdateData : function (aPropertyPath, vValue, bUpdating) {
 			return aPropertyPath.reduceRight(function (vValue0, sSegment) {
