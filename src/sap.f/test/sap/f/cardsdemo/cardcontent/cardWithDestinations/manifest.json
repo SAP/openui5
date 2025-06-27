@@ -34,7 +34,7 @@
 		"configuration": {
 			"destinations": {
 				"myDestination": {
-					"name": "Northwind"
+					"name": "Northwind_V4"
 				},
 				"myNavigation": {
 					"name": "Navigation"

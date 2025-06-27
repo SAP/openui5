@@ -37,7 +37,12 @@
 						<td>string|object</td>
 						<td></td>
 						<td>Yes</td>
-						<td>URL to the manifest of the card to show. Or the manifest itself passed as an object.</td>
+						<td>
+							URL to the manifest of the card to display, or the manifest itself passed as an object.
+							<br>
+							The card that is opened is referred to as a <b>child card</b>.
+							Multiple child cards can be opened in a sequence. The card that opens the first child card is referred to as the <b>main card</b> for all child cards.
+						</td>
 						<td>1.51.0</td>
 						<td>1.112</td>
 					</tr>
@@ -92,6 +97,12 @@
 					</tr>
 				</table>
 			</div>
+
+			<h2 id="destionations">Destinations</h2>
+			<p>
+				Child cards reuse the destinations of the main card. Child cards must not define their own destinations.
+				For more information about destinations, see the <a href="../../../index.html#/learn/configuration/destinations" target="_parent">Destinations</a> topic.
+			</p>
 
 			<h2 id="examples">Examples</h2>
 			<p>Example how to show a card with manifest "detailsManifest.json":</p>
