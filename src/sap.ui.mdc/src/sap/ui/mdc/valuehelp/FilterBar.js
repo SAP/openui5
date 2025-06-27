@@ -264,8 +264,8 @@ sap.ui.define(
 
 			if (oBasicSearchField) {
 				if (!this._oBasicSearchField.getLayoutData()) {
-					// set LayouData to have better overflow behaviour in toolbar
-					const oLD = new OverflowToolbarLayoutData(this._oBasicSearchField.getId() + "--LD", {shrinkable: true, minWidth: "6rem", maxWidth: this._oBasicSearchField.getWidth()});
+					// set LayouData to have better overflow behaviour in toolbar; TODO: If collectiveSearch is active min-with of 8rem would be better, but this might not known here
+					const oLD = new OverflowToolbarLayoutData(this._oBasicSearchField.getId() + "--LD", {shrinkable: true, minWidth: "10rem", maxWidth: this._oBasicSearchField.getWidth()});
 					oLD._bSetByFilterBar = true;
 					this._oBasicSearchField.setLayoutData(oLD);
 				}
