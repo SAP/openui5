@@ -830,7 +830,13 @@ sap.ui.define([
 			const oBusyIndicator = this.getDomRef("busyIndicator");
 			if (oBusyIndicator) {
 				oKeyboardExtension.setSilentFocus(oBusyIndicator);
-			} else if (this.getColumnHeaderVisible() && (TableUtils.getVisibleColumnCount(this) || TableUtils.hasRowHeader(this))) {
+			} else if (!this.getColumnHeaderVisible()) {
+				if (this.getRows().length && !TableUtils.isNoDataVisible(this)) {
+					restoreFocusOnLastFocusedDataCell(this, oEvent);
+				} else if (bNoData) {
+					oKeyboardExtension.setSilentFocus(this.$("noDataCnt"));
+				}
+			} else if (TableUtils.getVisibleColumnCount(this) || TableUtils.hasRowHeader(this)) {
 				setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
 			} else if (bNoData) {
 				oKeyboardExtension.setSilentFocus(this.$("noDataCnt"));
