@@ -36,13 +36,25 @@ sap.ui.define(["sap/ui/core/Lib"], function(Lib) {
 					domRef: ":sap-domref > .sapMPageHeader .sapMBarRight",
 					actions: {
 						move: "moveControls"
+					},
+					ignore(oControl) {
+						if (oControl.getCustomHeader()) {
+							return true;
+						}
+						return false;
 					}
 				},
 				subHeader: {
 					domRef: ":sap-domref > .sapMPageSubHeader"
 				},
 				customHeader: {
-					domRef: ":sap-domref > .sapMPageHeader"
+					domRef: ":sap-domref > .sapMPageHeader",
+					ignore(oControl) {
+						if (!oControl.getCustomHeader()) {
+							return true;
+						}
+						return false;
+					}
 				},
 				content: {
 					domRef: ":sap-domref > section",
