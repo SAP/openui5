@@ -1,7 +1,7 @@
 {
-	"_version": "1.20.0",
+	"_version": "1.74.0",
 	"sap.app": {
-		"id": "card.explorer.features.destinations",
+		"id": "card.destinations.child.own.destinations.child",
 		"type": "card",
 		"title": "Sample of Destinations",
 		"subTitle": "Sample of Destinations",
@@ -34,7 +34,7 @@
 		"configuration": {
 			"destinations": {
 				"myDestination": {
-					"name": "Northwind"
+					"name": "Northwind_V3"
 				},
 				"myNavigation": {
 					"name": "Navigation"
@@ -63,7 +63,7 @@
 				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
 				"actions": [
 					{
-						"type": "Navigation",
+						"type": "Custom",
 						"parameters": {
 							"city": "{{destinations.myNavigation}}/{ProductName}"
 						}

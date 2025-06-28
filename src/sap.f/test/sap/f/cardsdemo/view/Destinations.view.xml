@@ -1,0 +1,19 @@
+<mvc:View 
+	controllerName="sap.f.cardsdemo.controller.Destinations"
+	displayBlock="true"
+	xmlns:widgets="sap.ui.integration.widgets"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+>
+	<Page title="Destinations" class="sapUiContentPadding">
+		<VBox>
+			<Title level="H2" text="Card" class="sapUiLargeMarginTop sapUiSmallMarginBottom"></Title>
+			<widgets:Card id="card1" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/cardWithDestinations/manifest.json"></widgets:Card>
+			<Title level="H2" text="Card with Child without &quot;sap.card/configuration/destinations&quot;" class="sapUiLargeMarginTop sapUiSmallMarginBottom"></Title>
+			<widgets:Card id="card2" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/cardWithDestinationsAndChild/manifest.json"></widgets:Card>
+			<Title level="H2" text="Card with Child with own &quot;sap.card/configuration/destinations&quot;" class="sapUiLargeMarginTop sapUiSmallMarginBottom"></Title>
+			<widgets:Card id="card3" manifest="{cardsPlayground>/playgroundBaseUrl}cardcontent/cardWithDestinationsChildOwnDestinations/manifest.json"></widgets:Card>
+		</VBox>
+	</Page>
+</mvc:View>

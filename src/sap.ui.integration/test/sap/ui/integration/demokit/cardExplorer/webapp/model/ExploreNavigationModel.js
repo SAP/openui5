@@ -3088,7 +3088,7 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Component Card',
+								title: 'Component Card Using Destinations',
 								key: 'component',
 								useIFrame: true,
 								isApplication: true,
@@ -3181,40 +3181,44 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'SAP Cloud Platform',
-								key: 'scp',
+								title: 'Child Card Using Destinations',
+								key: 'childCardUsingDestinations',
 								useIFrame: true,
 								isApplication: true,
-								mockServer: true,
 								files: [
 									{
-										url: '/samples/destinations/scp/indexTemplate.html',
+										url: '/samples/destinations/childCardUsingDestinations/indexTemplate.html',
 										name: 'index.html',
 										key: 'index.html'
 									},
 									{
-										url: '/samples/destinations/scp/cardBundle/cardManifest.json',
-										name: 'cardBundle/cardManifest.json',
-										key: 'cardBundle/cardManifest.json'
+										url: '/samples/destinations/childCardUsingDestinations/cardBundle/manifest.json',
+										name: 'cardBundle/manifest.json',
+										key: 'cardBundle/manifest.json'
 									},
 									{
-										url: '/samples/destinations/scp/neo-app.json',
-										name: 'neo-app.json',
-										key: 'neo-app.json'
+										url: '/samples/destinations/childCardUsingDestinations/cardBundle/childCardManifest.json',
+										name: 'cardBundle/childCardManifest.json',
+										key: 'cardBundle/childCardManifest.json'
 									},
 									{
-										url: '/samples/destinations/scp/View.view.xml',
-										name: 'Destinations.view.xml',
-										key: 'Destinations.view.xml'
+										url: '/samples/destinations/childCardUsingDestinations/View.view.xml',
+										name: 'View.view.xml',
+										key: 'View.view.xml'
 									},
 									{
-										url: '/samples/destinations/scp/manifest.json',
+										url: '/samples/destinations/childCardUsingDestinations/Controller.controller.js',
+										name: 'Controller.controller.js',
+										key: 'Controller.controller.js'
+									},
+									{
+										url: '/samples/destinations/childCardUsingDestinations/manifest.json',
 										name: 'manifest.json',
 										key: 'manifest.json',
 										isApplicationManifest: true
 									},
 									{
-										url: '/samples/destinations/scp/Component.js',
+										url: '/samples/destinations/childCardUsingDestinations/Component.js',
 										name: 'Component.js',
 										key: 'Component.js'
 									}

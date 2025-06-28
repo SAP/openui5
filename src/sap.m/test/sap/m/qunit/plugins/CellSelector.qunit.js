@@ -872,6 +872,22 @@ sap.ui.define([
 		assert.notEqual(oComboBox.getId(), document.activeElement.id, "ComboBox is not focused");
 	});
 
+	QUnit.test("Mousemove with click origin on Input", function(assert) {
+		const oSelectCellsSpy = sinon.spy(this.oCellSelector, "_selectCells");
+
+		const oInput = this.oTable.getRows()[0].getCells()[3];
+		qutils.triggerEvent("mousedown", oInput.getDomRef(), { button: 0, shiftKey: true });
+		assert.ok(this.oCellSelector._bMouseDown, "Flag has been set");
+
+		const oEvent = {target: getCell(this.oTable, 1, 1), preventDefault: () => {}, stopImmediatePropagation: () => {}};
+		this.oCellSelector._onmousemove(oEvent);
+
+		qutils.triggerEvent("mouseup", oInput.getDomRef());
+
+		assert.equal(oSelectCellsSpy.callCount, 0, "selectCells has not been called");
+		assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "No cells have been selected");
+	});
+
 	QUnit.test("Ctrl + Click on Link", async function(assert) {
 		const oLink = this.oTable.getRows()[0].getCells()[1];
 

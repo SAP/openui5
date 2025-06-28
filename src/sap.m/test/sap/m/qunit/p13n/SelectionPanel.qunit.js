@@ -655,7 +655,7 @@ sap.ui.define([
 		oPanel.setShowHeader(true);
 		// Arrange
 		let oBundle;
-		const sOriginalLanguage = "en_US";
+		const sOriginalLanguage = Localization.getLanguage();
 		const sChangedLanguage = "de";
 
 		const oSpy = sinon.spy(oPanel, "_updateLocalizationTexts");
@@ -663,22 +663,26 @@ sap.ui.define([
 		oBundle = oPanel.oResourceBundle;
 
 		// Assert
+
+		const oOriginalLanguageBundle = Library.getResourceBundleFor("sap.m", sOriginalLanguage);
 		const oModel = oPanel.getModel(oPanel.LOCALIZATION_MODEL);
 		const sShowSelected = oModel.getProperty("/showSelectedText");
-		assert.strictEqual(oBundle.sLocale, sOriginalLanguage, "Returned the already loaded bundle");
-		assert.strictEqual(oPanel.getFieldColumn(), "Field", "fieldColumn value is correctly initialized");
-		assert.strictEqual(sShowSelected, "Hide Unselected", "showSelected text is correctly initialized");
+		assert.strictEqual(oBundle, oOriginalLanguageBundle, "Returned the already loaded bundle");
+		assert.strictEqual(oPanel.getFieldColumn(), oOriginalLanguageBundle.getText("p13n.DEFAULT_DESCRIPTION"), "fieldColumn value is correctly initialized");
+		assert.strictEqual(sShowSelected, oOriginalLanguageBundle.getText("p13n.SHOW_SELECTED"), "showSelected text is correctly initialized");
 
 		// Act
 		Localization.setLanguage(sChangedLanguage);
 		oBundle = oPanel.oResourceBundle;
 
+		const oChangedLanguageBundle = Library.getResourceBundleFor("sap.m", sChangedLanguage);
+
 		// Assert
 		const sShowSelectedTranslated = oModel.getProperty("/showSelectedText");
 		assert.equal(oSpy.called, true, "_updateLocalizationTexts called after Localization.setLanguage");
-		assert.strictEqual(oBundle.sLocale, sChangedLanguage, "Returned the newly loaded bundle");
-		assert.strictEqual(oPanel.getFieldColumn(), "Feld", "fieldColumn value is correctly translated");
-		assert.strictEqual(sShowSelectedTranslated, "Nicht markierte ausblenden", "showSelected text is correctly initialized");
+		assert.strictEqual(oBundle, oChangedLanguageBundle, "Returned the newly loaded bundle");
+		assert.strictEqual(oPanel.getFieldColumn(), oChangedLanguageBundle.getText("p13n.DEFAULT_DESCRIPTION"), "fieldColumn value is correctly translated");
+		assert.strictEqual(sShowSelectedTranslated, oChangedLanguageBundle.getText("p13n.SHOW_SELECTED"), "showSelected text is correctly initialized");
 	});
 
 	const aTestFilter = [

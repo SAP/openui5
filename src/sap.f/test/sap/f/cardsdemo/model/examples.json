@@ -197,7 +197,7 @@
 	},
 	{
 		"title": "Manifest initialization",
-		"description": "Three types of manifest initializations are possible",
+		"description": "Two types of manifest initializations are possible",
 		"route": "manifest",
 		"group": "Initialization and Data"
 	},
@@ -331,5 +331,11 @@
 		"description": "The focus goes on the full card, instead of the header.",
 		"route": "focusFullCard",
 		"group": "Card Variants"
+	},
+	{
+		"title": "Destinations",
+		"description": "Cards with Destinations",
+		"route": "destinations",
+		"group": "Initialization and Data"
 	}
 ]

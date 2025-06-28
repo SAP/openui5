@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
+	"sap/m/Button",
 	"dt/Page",
 	"sap/ui/core/Element",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
@@ -9,6 +10,7 @@ sap.ui.define([
 ], function(
 	sapMPage,
 	Bar,
+	Button,
 	Page,
 	Element,
 	elementDesigntimeTest,
@@ -69,6 +71,48 @@ sap.ui.define([
 
 				var fnRename = oDesignTime.actions.rename;
 				assert.strictEqual(fnRename(oPage), undefined, "The rename action is not available");
+
+				oPage.destroy();
+				oPage = null;
+				done();
+			});
+		});
+
+		QUnit.test("Page with headerContent without a customHeader", function (assert) {
+			var done = assert.async(),
+				oPage = new sapMPage("myPage", {
+					title: "Test",
+					headerContent: [new Button("button1", { text: "Button 1" })]
+				});
+
+			return oPage.getMetadata().loadDesignTime().then(function (oDesignTime) {
+				assert.ok(oDesignTime, "DesignTime was passed");
+				const bIgnoreCustomHeader = oDesignTime.aggregations.customHeader.ignore(oPage);
+				const bIgnoreHeaderContent = oDesignTime.aggregations.headerContent.ignore(oPage);
+
+				assert.ok(bIgnoreCustomHeader, "The customHeader aggregation is ignored when it is not defined");
+				assert.notOk(bIgnoreHeaderContent, "The headerContent aggregation is not ignored");
+
+				oPage.destroy();
+				oPage = null;
+				done();
+			});
+		});
+
+		QUnit.test("Page with customHeader", function (assert) {
+			var done = assert.async(),
+				oPage = new sapMPage("myPage", {
+					title: "Test",
+					customHeader: new Bar()
+				});
+
+			return oPage.getMetadata().loadDesignTime().then(function (oDesignTime) {
+				assert.ok(oDesignTime, "DesignTime was passed");
+				const bIgnoreCustomHeader = oDesignTime.aggregations.customHeader.ignore(oPage);
+				const bIgnoreHeaderContent = oDesignTime.aggregations.headerContent.ignore(oPage);
+
+				assert.notOk(bIgnoreCustomHeader, "The customHeader aggregation is not ignored when it is defined");
+				assert.ok(bIgnoreHeaderContent, "The headerContent aggregation is ignored when there is a customHeader");
 
 				oPage.destroy();
 				oPage = null;
