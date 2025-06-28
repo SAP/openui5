@@ -1,10 +1,10 @@
 {
 	"_version": "1.20.0",
 	"sap.app": {
-		"id": "card.explorer.features.dateRange",
+		"id": "card.destinations.child",
 		"type": "card",
-		"title": "Sample of destinations",
-		"subTitle": "Sample of destinations",
+		"title": "Sample of Destinations",
+		"subTitle": "Sample of Destinations",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -34,10 +34,10 @@
 		"configuration": {
 			"destinations": {
 				"myDestination": {
-					"name": "Northwind"
+					"name": "Northwind_V4"
 				},
-				"myDestinationForImages": {
-					"name": "NorthwindImages"
+				"myNavigation": {
+					"name": "Navigation"
 				}
 			},
 			"parameters": {
@@ -50,11 +50,8 @@
 			}
 		},
 		"header": {
-			"title": "Destinations Sample",
-			"subTitle": "First {parameters>/maxItems/value} products from destination 'Northwind'",
-			"status": {
-				"text": "top {parameters>/maxItems/value}"
-			}
+			"title": "Resolve Destinations",
+			"subTitle": "First {parameters>/maxItems/value} products from 'Northwind'"
 		},
 		"content": {
 			"data": {
@@ -64,10 +61,29 @@
 			"item": {
 				"title": "{ProductName}",
 				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
-				"icon": {
-					"src": "{{destinations.myDestinationForImages}}/Product_{ProductID}.png"
-				}
+				"actions": [
+					{
+						"type": "Custom",
+						"parameters": {
+							"city": "{{destinations.myNavigation}}/{ProductName}"
+						}
+					}
+				]
 			}
+		},
+		"footer": {
+			"actionsStrip": [
+				{
+					"type": "Button",
+					"text": "Open Child Card",
+					"actions": [{
+						"type": "ShowCard",
+						"parameters": {
+							"manifest": "./childCardManifest.json"
+						}
+					}]
+				}
+			]
 		}
 	}
 }

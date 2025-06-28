@@ -1,10 +1,10 @@
 {
 	"_version": "1.20.0",
 	"sap.app": {
-		"id": "card.explorer.features.dateRange",
+		"id": "card.destinations.child",
 		"type": "card",
-		"title": "Sample of destinations",
-		"subTitle": "Sample of destinations",
+		"title": "Sample of Destinations",
+		"subTitle": "Sample of Destinations",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -32,14 +32,6 @@
 			}
 		},
 		"configuration": {
-			"destinations": {
-				"myDestination": {
-					"name": "Northwind"
-				},
-				"myDestinationForImages": {
-					"name": "NorthwindImages"
-				}
-			},
 			"parameters": {
 				"maxItems": {
 					"value": 3,
@@ -50,11 +42,8 @@
 			}
 		},
 		"header": {
-			"title": "Destinations Sample",
-			"subTitle": "First {parameters>/maxItems/value} products from destination 'Northwind'",
-			"status": {
-				"text": "top {parameters>/maxItems/value}"
-			}
+			"title": "Resolve Destinations",
+			"subTitle": "First {parameters>/maxItems/value} products from 'Northwind'"
 		},
 		"content": {
 			"data": {
@@ -64,9 +53,14 @@
 			"item": {
 				"title": "{ProductName}",
 				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
-				"icon": {
-					"src": "{{destinations.myDestinationForImages}}/Product_{ProductID}.png"
-				}
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"city": "{{destinations.myNavigation}}/{ProductName}"
+						}
+					}
+				]
 			}
 		}
 	}

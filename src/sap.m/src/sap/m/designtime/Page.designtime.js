@@ -34,13 +34,25 @@ sap.ui.define([],
 					domRef: ":sap-domref > .sapMPageHeader .sapMBarRight",
 					actions: {
 						move: "moveControls"
+					},
+					ignore: function (oControl) {
+						if (oControl.getCustomHeader()) {
+							return true;
+						}
+						return false;
 					}
 				},
 				subHeader: {
 					domRef: ":sap-domref > .sapMPageSubHeader"
 				},
 				customHeader: {
-					domRef: ":sap-domref > .sapMPageHeader"
+					domRef: ":sap-domref > .sapMPageHeader",
+					ignore: function (oControl) {
+						if (!oControl.getCustomHeader()) {
+							return true;
+						}
+						return false;
+					}
 				},
 				content: {
 					domRef: ":sap-domref > section",

@@ -1,7 +1,7 @@
 {
-	"_version": "1.20.0",
+	"_version": "1.73.1",
 	"sap.app": {
-		"id": "card.explorer.features.dateRange",
+		"id": "card.explorer.sample.childCardUsingDestinations.mainCard",
 		"type": "card",
 		"title": "Sample of destinations",
 		"subTitle": "Sample of destinations",
@@ -64,9 +64,23 @@
 			"item": {
 				"title": "{ProductName}",
 				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
-				"icon": {
-					"src": "{{destinations.myDestinationForImages}}/Product_{ProductID}.png"
-				}
+				"actionsStrip": [
+					{
+						"type": "Button",
+						"text": "Details",
+						"actions": [
+							{
+								"type": "ShowCard",
+								"parameters": {
+									"manifest": "./childCardManifest.json",
+									"parameters": {
+										"ProductID": "{ProductID}"
+									}
+								}
+							}
+						]
+					}
+				]
 			}
 		}
 	}

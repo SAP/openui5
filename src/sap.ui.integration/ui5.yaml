@@ -44,8 +44,6 @@ builder:
               - "!sap/ui/integration/*-preload.js"
               - "!sap/ui/integration/designtime/"
               - "!sap/ui/integration/editor/"
-              - "!sap/viz/"
-              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
               - "!sap/ui/integration/thirdparty/"
               - "!sap/ui/integration/designtime/thirdparty/"
@@ -110,8 +108,6 @@ builder:
               - "!sap/ui/integration/*-preload.js"
               - "!sap/ui/integration/designtime/"
               - "!sap/ui/integration/editor/"
-              - "!sap/viz/"
-              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
               - "!sap/ui/integration/thirdparty/"
               - "!sap/ui/integration/designtime/thirdparty/"
@@ -183,8 +179,6 @@ builder:
               - "!sap/ui/integration/*-preload.js"
               - "!sap/ui/integration/designtime/"
               - "!sap/ui/integration/editor/"
-              - "!sap/viz/"
-              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
               - "!sap/ui/integration/thirdparty/"
               - "!sap/ui/integration/designtime/thirdparty/"
@@ -359,8 +353,6 @@ builder:
               - "!sap/ui/integration/*-preload.js"
               - "!sap/ui/integration/designtime/"
               - "!sap/ui/integration/editor/"
-              - "!sap/viz/"
-              - "!sap/suite/ui/commons/"
               - sap/ui/core/support/Hotkeys.js
               - "!sap/ui/integration/thirdparty/"
               - "!sap/ui/integration/designtime/thirdparty/"
