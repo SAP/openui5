@@ -7586,7 +7586,7 @@ sap.ui.define([
 		oCache.aElements = [];
 		oCache.aElements.$byPredicate = {};
 		this.mock(oCache).expects("visitResponse")
-			.withExactArgs(sinon.match.same(oResult), "~oFetchTypesResult~", undefined,
+			.withExactArgs(sinon.match.same(oResult), "~mTypeForMetaPath~", undefined,
 				undefined, 2)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
@@ -7594,7 +7594,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.handleResponse(oResult, 2, "~oFetchTypesResult~"),
+			oCache.handleResponse(oResult, 2, "~mTypeForMetaPath~"),
 			0);
 
 		assert.strictEqual(oCache.sContext, "~context~");
@@ -7800,6 +7800,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("CollectionCache#handleResponse: duplicates at end of same GET", function (assert) {
+		const oCache = this.createCache("Employees");
+		const oElement0 = { // OK
+			"@my.name" : "oElement0"
+		};
+		const oElement1 = { // OK
+			"@my.name" : "oElement1"
+		};
+		const oElement2 = { // duplicate
+			"@my.name" : "oElement2"
+		};
+		const oElement3 = { // duplicate
+			"@my.name" : "oElement3"
+		};
+		const oResult = {
+			value : [oElement0, oElement1, oElement2, oElement3]
+		};
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResult), "~mTypeForMetaPath~", undefined, undefined, 3)
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
+				_Helper.setPrivateAnnotation(oElement1, "predicate", "bar");
+				_Helper.setPrivateAnnotation(oElement2, "predicate", "same");
+				_Helper.setPrivateAnnotation(oElement3, "predicate", "same");
+			});
+		this.mock(oCache).expects("fixDuplicatePredicate")
+			.withExactArgs(sinon.match.same(oElement3), "same").returns(undefined);
+		this.mock(_Helper).expects("updateNonExisting").never();
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+
+		assert.throws(function () {
+			// code under test
+			oCache.handleResponse(oResult, 3, "~mTypeForMetaPath~");
+		}, new Error("Duplicate key predicate: same"));
+	});
+
+	//*********************************************************************************************
 [undefined, "same", "other"].forEach(function (sKeptETag) {
 	[false, true].forEach((bDuplicate) => {
 		var sTitle = "CollectionCache#handleResponse: kept-alive element, kept eTag=" + sKeptETag
@@ -7823,7 +7860,6 @@ sap.ui.define([
 				"@odata.etag" : "same"
 			},
 			aElements = [oElement1, oElement2, 3, 4, 5, 6, 7, 8], // could be promises...
-			oFetchTypesResult = {},
 			oKeptElement = {
 				"@odata.etag" : sKeptETag
 			},
@@ -7836,17 +7872,16 @@ sap.ui.define([
 			new1 : oElement1,
 			new2 : oElement2
 		};
+		if (bDuplicate) { // kept-alive element does not matter
+			delete aElements.$byPredicate.bar;
+		}
 		aElements.$created = 2;
 		oCache.aElements = aElements;
-		if (bDuplicate) {
-			// already inside the collection, somewhere... (interesting edge case)
-			aElements[aElements.$created] = oKeptElement;
-		}
 		this.mock(oCache).expects("visitResponse")
-			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
+			.withExactArgs(sinon.match.same(oResult), "~mTypeForMetaPath~",
 				undefined, undefined, 3)
 			.callsFake(function () {
-				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
+				_Helper.setPrivateAnnotation(oElement0, "predicate", bDuplicate ? "bar" : "foo");
 				_Helper.setPrivateAnnotation(oElement1, "predicate", "new1");
 				_Helper.setPrivateAnnotation(oElement2, "predicate", "new2");
 				_Helper.setPrivateAnnotation(oElement3, "predicate", "bar");
@@ -7860,17 +7895,17 @@ sap.ui.define([
 			.exactly(bDuplicate || sKeptETag !== "other" ? 0 : 1)
 			.withExactArgs("bar").returns(false);
 
-		if (bDuplicate) {
+		if (bDuplicate) { // duplicate within same GET
 			assert.throws(function () {
 				// code under test
-				oCache.handleResponse(oResult, 3, oFetchTypesResult);
+				oCache.handleResponse(oResult, 3, "~mTypeForMetaPath~");
 			}, new Error("Duplicate key predicate: bar"));
 			return;
 		}
 
 		assert.strictEqual(
 			// code under test
-			oCache.handleResponse(oResult, 3, oFetchTypesResult),
+			oCache.handleResponse(oResult, 3, "~mTypeForMetaPath~"),
 			2);
 
 		// Note: for each newly created, one undefined is written at the end of oResult, so to say
@@ -7883,6 +7918,89 @@ sap.ui.define([
 		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate),
 			["bar", "new1", "new2", "foo"]);
 	});
+	});
+});
+
+	//*********************************************************************************************
+[false, true].forEach((bBefore) => {
+	const sTitle = "CollectionCache#handleResponse: duplicate before=" + bBefore;
+
+	QUnit.test(sTitle, function (assert) {
+		var oCache = this.createCache("Employees"),
+			oDuplicate = {
+				"@my.name" : "duplicate"
+			},
+			oElement0 = { // persisted
+				"@my.name" : "oElement0" // to facilitate deepEqual below!
+			},
+			oElement1 = { // newly created
+				"@my.name" : "oElement1"
+			},
+			oElement2 = { // newly created
+				"@my.name" : "oElement2"
+			},
+			oElement3 = { // duplicate
+				"@my.name" : "oElement3"
+			},
+			// Note: 2 ($created and iStart - 1) is an interesting edge case,
+			//   as well as 7 === iStart + oResult.value.length
+			aElements = [
+				oElement1,
+				oElement2,
+				bBefore ? oDuplicate : 2,
+				3, 4, 5, 6, // could be promises...
+				bBefore ? 7 : oDuplicate,
+				8
+			],
+			oResult = {
+				value : [oElement0, oElement1, oElement2, oElement3]
+			};
+
+		aElements.$byPredicate = {
+			bar : oDuplicate,
+			new1 : oElement1,
+			new2 : oElement2
+		};
+		aElements.$created = 2;
+		oCache.aElements = aElements;
+		this.mock(oCache).expects("visitResponse")
+			.withExactArgs(sinon.match.same(oResult), "~mTypeForMetaPath~",
+				undefined, undefined, 3)
+			.callsFake(function () {
+				_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
+				_Helper.setPrivateAnnotation(oElement1, "predicate", "new1");
+				_Helper.setPrivateAnnotation(oElement2, "predicate", "new2");
+				_Helper.setPrivateAnnotation(oElement3, "predicate", "bar");
+			});
+		this.mock(oCache).expects("fixDuplicatePredicate")
+			.withExactArgs(sinon.match.same(oElement3), "bar").returns(undefined);
+		this.mock(_Helper).expects("updateNonExisting")
+			.withExactArgs(sinon.match.same(oElement3), sinon.match.same(oElement3));
+		this.mock(oCache).expects("hasPendingChangesForPath").never();
+
+		assert.strictEqual(
+			// code under test
+			oCache.handleResponse(oResult, 3, "~mTypeForMetaPath~"),
+			2);
+
+		// Note: for each newly created, one undefined is written at the end of oResult, so to say
+		assert.deepEqual(oCache.aElements, [
+			oElement1,
+			oElement2,
+			bBefore ? oDuplicate : 2, // NOT overwritten
+			oElement0,
+			oElement3,
+			undefined,
+			undefined,
+			bBefore ? 7 : oDuplicate, // NOT overwritten
+			8
+		]);
+		assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
+		assert.strictEqual(oCache.aElements.$byPredicate["new1"], oElement1);
+		assert.strictEqual(oCache.aElements.$byPredicate["new2"], oElement2);
+		assert.strictEqual(oCache.aElements.$byPredicate["bar"], oCache.aElements[4]);
+		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate),
+			["bar", "new1", "new2", "foo"]);
 	});
 });
 
@@ -7931,7 +8049,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oCache.handleResponse({value : [oElement]}, 2, {/*oFetchTypesResult*/}),
+			oCache.handleResponse({value : [oElement]}, 2, {/*mTypeForMetaPath*/}),
 			0);
 
 		assert.deepEqual(oCache.aElements, [undefined, undefined, oElement]);
@@ -8037,7 +8155,6 @@ sap.ui.define([
 				"@odata.etag" : "new"
 			},
 			aElements = [],
-			oFetchTypesResult = {},
 			oKeptElement = {
 				"@odata.etag" : "old"
 			},
@@ -8051,7 +8168,7 @@ sap.ui.define([
 		oCache.aElements = aElements;
 
 		this.mock(oCache).expects("visitResponse")
-			.withExactArgs(sinon.match.same(oResult), sinon.match.same(oFetchTypesResult),
+			.withExactArgs(sinon.match.same(oResult), "~mTypeForMetaPath~",
 				undefined, undefined, 2)
 			.callsFake(function () {
 				_Helper.setPrivateAnnotation(oElement, "predicate", "('foo')");
@@ -8061,7 +8178,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oCache.handleResponse(oResult, 2, oFetchTypesResult);
+			oCache.handleResponse(oResult, 2, "~mTypeForMetaPath~");
 		}, new Error("Modified on client and on server: Employees('foo')"));
 	});
 
