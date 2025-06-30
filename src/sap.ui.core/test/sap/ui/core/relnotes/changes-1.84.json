@@ -860,5 +860,25 @@
         "text": " sap/base/util/now: Migrate performance.timing"
       }
     ]
+  },
+  "1.84.51": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "f5d2eaed73f87372dc227af2bc10c81e726e9b4e",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.UniversalDateUtils.qunit.js: Improve test stability for different time zones"
+      },
+      {
+        "id": "7017c942f40a176d91f30cb203938431b6ab1ee8",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.UniversalDateUtils.qunit.js: Fix failing tests"
+      },
+      {
+        "id": "bf8e79ab39a074fad050d8b39aca90ff8a909ce4",
+        "type": "FIX",
+        "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
+      }
+    ]
   }
 }

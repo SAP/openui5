@@ -645,5 +645,15 @@
         "text": " sap.ui.unified.Calendar: add tooltips for calendar legend types"
       }
     ]
+  },
+  "1.84.51": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "5e00d6a6589d26d112a740758b9ca8c83c9b25d9",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
+      }
+    ]
   }
 }

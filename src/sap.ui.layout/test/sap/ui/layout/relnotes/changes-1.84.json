@@ -99,5 +99,15 @@
         ]
       }
     ]
+  },
+  "1.84.51": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "7e2eb05ea1021645045f523859eb795cc5162407",
+        "type": "FIX",
+        "text": " sap.ui.layout.PaneContainer: fix invalidation of nested panes"
+      }
+    ]
   }
 }
