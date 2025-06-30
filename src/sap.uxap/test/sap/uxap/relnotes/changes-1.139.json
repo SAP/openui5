@@ -1,0 +1,12 @@
+{
+  "1.139.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "fa7a494525acd1086ce8506ddaaf1916e45b12d4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix cloning of \"actions\""
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "1.139.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "cafdb5a832008391eff0ce38dcff0fc25d6f0795",
+        "type": "FIX",
+        "text": " ValueHelp: min width of SearchField."
+      },
+      {
+        "id": "e4f6626641154940e3770a405e3058f8478e6b27",
+        "type": "FIX",
+        "text": " Field: error handling if Currency/Unit chosen that don't meet number"
+      }
+    ]
+  }
+}

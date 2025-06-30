@@ -1,0 +1,12 @@
+{
+  "1.139.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "f7b73687a35eeef457f3f8925a8b60cf0024b2b6",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Invalid groupingSize configuration disables grouping"
+      }
+    ]
+  }
+}

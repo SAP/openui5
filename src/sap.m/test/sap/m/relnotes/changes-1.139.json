@@ -1,0 +1,22 @@
+{
+  "1.139.0": {
+    "date": "June 2025",
+    "notes": [
+      {
+        "id": "f3d98d3752535ffbdd63697e94014443586baa60",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: adapt visual tests"
+      },
+      {
+        "id": "81b3cb0f4ed09815e01c77bc43ec88c117d03ab0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar move overriden setters in onBeforeRendering"
+      },
+      {
+        "id": "e47628e508f2fbb4bd4745f287b6eee93ece6b6d",
+        "type": "FIX",
+        "text": " sap.m.Page: headerContent controls are now selectable in UI Adapt mode"
+      }
+    ]
+  }
+}
