@@ -153,7 +153,7 @@ sap.ui.define([
 		aAggregationItems = this.getAdaptationControl().getAggregation(this.getTargetAggregation()) || [];
 		const oView = getViewForControl(this.getAdaptationControl());
 		aAggregationItems.forEach((oItem, iIndex) => {
-			const sKey = oItem.data("p13nKey");
+			const sKey = oItem.getVisible() ? oItem.data("p13nKey") : null;
 			const sId = oView ? oView.getLocalId(oItem.getId()) : oItem.getId();
 			const vRelevant = sKey || (this._fSelector ? this._fSelector(oItem) : oItem.getVisible());
 			if (vRelevant) {
