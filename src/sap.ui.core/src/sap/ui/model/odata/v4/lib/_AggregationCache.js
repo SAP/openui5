@@ -61,7 +61,7 @@ sap.ui.define([
 		this.bUnifiedCache = oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
 			|| !!oAggregation.createInPlace;
 
-		this.doReset(oAggregation, mQueryOptions, bHasGrandTotal);
+		this.doReset(oAggregation, bHasGrandTotal);
 		this.addKeptElement = this.oFirstLevel.addKeptElement; // @borrows ...
 		this.removeKeptElement = this.oFirstLevel.removeKeptElement; // @borrows ...
 		this.requestSideEffects = this.oFirstLevel.requestSideEffects; // @borrows ...
@@ -676,21 +676,19 @@ sap.ui.define([
 	 *   An object holding the information needed for data aggregation; see also "OData Extension
 	 *   for Data Aggregation Version 4.0"; must already be normalized by
 	 *   {@link _AggregationHelper.buildApply} - it's MODIFIED here!
-	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string (requires "copy on write"!)
 	 * @param {boolean} bHasGrandTotal
 	 *   Whether a grand total is needed
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.doReset = function (oAggregation, mQueryOptions, bHasGrandTotal) {
+	_AggregationCache.prototype.doReset = function (oAggregation, bHasGrandTotal) {
 		this.oAggregation = oAggregation;
 		// early call of _AggregationHelper.buildApply to determine $NodeProperty etc.
 		this.sToString = this.getDownloadUrl("");
 
 		const aAdditionalRowHandlers = [];
 		this.oCountPromise = undefined;
-		if (mQueryOptions.$count) {
+		if (this.mQueryOptions.$count) {
 			if (oAggregation.hierarchyQualifier) {
 				let fnResolve;
 				this.oCountPromise = new SyncPromise(function (resolve) {
@@ -698,7 +696,7 @@ sap.ui.define([
 				});
 				this.oCountPromise.$resolve = fnResolve;
 			} else if (oAggregation.groupLevels.length) {
-				this.setQueryOptions({...mQueryOptions, $$leaves : true});
+				this.setQueryOptions({...this.mQueryOptions, $$leaves : true});
 				this.oCountPromise = new SyncPromise(function (resolve) {
 					aAdditionalRowHandlers.push((oLeaves) => {
 						// Note: count has type Edm.Int64, represented as string in OData responses;
@@ -2434,8 +2432,7 @@ sap.ui.define([
 		}
 		oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 
-		this.doReset(oAggregation, mQueryOptions,
-			_AggregationHelper.hasGrandTotal(oAggregation.aggregate));
+		this.doReset(oAggregation, _AggregationHelper.hasGrandTotal(oAggregation.aggregate));
 	};
 
 	/**
