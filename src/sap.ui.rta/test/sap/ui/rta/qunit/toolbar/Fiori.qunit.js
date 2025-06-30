@@ -49,19 +49,23 @@ sap.ui.define([
 			src: sLogoSource
 		});
 
-		this.oImage.attachEventOnce("load", function() {
-			done();
-		}, this);
+		this.oImage.attachEventOnce("load", done);
 
 		this.oImage.placeAt("qunit-fixture");
+
+		const oGetLogoStub = sandbox.stub().returns(this.oImage.getSrc());
+		const oGetLogoDomRefStub = sandbox.stub().returns(this.oImage.getDomRef());
+		this.oUshellApi = {
+			getLogo: oGetLogoStub,
+			getLogoDomRef: oGetLogoDomRefStub
+		};
 
 		sandbox.stub(Utils, "getUshellContainer").returns({
 			async getServiceAsync() {}
 		});
-		const oApiStub = sandbox.stub().returns(sLogoSource);
 		RtaQunitUtils.stubSapUiRequire(sandbox, [{
 			name: "sap/ushell/api/RTA",
-			stub: { getLogo: oApiStub }
+			stub: this.oUshellApi
 		}]);
 		sandbox.stub(RtaUtils, "getFiori2Renderer").returns({
 			getRootControl: function() {
@@ -73,9 +77,6 @@ sap.ui.define([
 							}.bind(this),
 							removeStyleClass: function(sText) {
 								this.sRemove = sText;
-							}.bind(this),
-							getDomRef: function() {
-								return this.oImage.getDomRef();
 							}.bind(this)
 						};
 					}.bind(this)
@@ -87,9 +88,7 @@ sap.ui.define([
 	QUnit.module("Basic functionality", {
 		async beforeEach(assert) {
 			await nextUIUpdate();
-
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
-
 			stubFioriRenderer.call(this, assert);
 		},
 		afterEach() {
@@ -101,11 +100,7 @@ sap.ui.define([
 			const done = assert.async();
 
 			this.oToolbar = new Fiori({
-				ushellApi: {
-					getLogo() {
-						return sLogoSource;
-					}
-				},
+				ushellApi: this.oUshellApi,
 				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
@@ -142,11 +137,7 @@ sap.ui.define([
 			const done = assert.async();
 
 			this.oToolbar = new Fiori({
-				ushellApi: {
-					getLogo() {
-						return sLogoSource;
-					}
-				},
+				ushellApi: this.oUshellApi,
 				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
@@ -170,69 +161,6 @@ sap.ui.define([
 				});
 				this.oToolbar.destroy();
 			}.bind(this));
-		});
-		QUnit.test("when buildControls is called and image dimensions are 0", async function(assert) {
-			this.oToolbar = new Fiori({
-				ushellApi: {
-					getLogo() {
-						return sLogoSource;
-					}
-				},
-				textResources: Lib.getResourceBundleFor("sap.ui.rta")
-			});
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-			const oImage = document.createElement("img");
-			oImage.src = sLogoSource;
-			sinon.stub(this.oToolbar._oFioriHeader.getDomRef(), "querySelectorAll")
-			.callThrough()
-			.withArgs("img")
-			.returns([oImage]);
-
-			await this.oToolbar.onFragmentLoaded();
-			this.oToolbar.show();
-			assert.strictEqual(
-				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getWidth(),
-				"0px",
-				"Image should have a width of 0px"
-			);
-			assert.strictEqual(
-				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getHeight(),
-				"0px",
-				"Image should have a height of 0px"
-			);
-			this.oToolbar.destroy();
-		});
-
-		QUnit.test("when there is more than one image in the header", async function(assert) {
-			this.oToolbar = new Fiori({
-				ushellApi: {
-					getLogo() {
-						return sLogoSource;
-					}
-				},
-				textResources: Lib.getResourceBundleFor("sap.ui.rta")
-			});
-			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
-			const oImage = document.createElement("img");
-			oImage.src = "fakeLogoSource.png";
-			sinon.stub(this.oToolbar._oFioriHeader.getDomRef(), "querySelectorAll")
-			.callThrough()
-			.withArgs("img")
-			.returns([this.oImage.getDomRef(), oImage]);
-
-			await this.oToolbar.onFragmentLoaded();
-			this.oToolbar.show();
-			assert.strictEqual(
-				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getWidth(),
-				"55px",
-				"Correct Image with a width of 55px is found"
-			);
-			assert.strictEqual(
-				Core.byId(`${this.oToolbar.getId()}_fragment--sapUiRta_icon`).getHeight(),
-				"27px",
-				"Correct Image with a height of 27px is found"
-			);
-			this.oToolbar.destroy();
 		});
 	});
 
