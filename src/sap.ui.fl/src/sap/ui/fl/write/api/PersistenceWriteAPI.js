@@ -146,16 +146,19 @@ sap.ui.define([
 		// when save or activate a version in rta no reload is triggered but flex/data request is send
 		// and will delete version and maxLayer without saveChangeKeepSession
 		// after the request saveChangeKeepSession needs to be delete again
-		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		let oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		oFlexInfoSession.saveChangeKeepSession = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 		await FlexObjectManager.saveFlexObjects(mPropertyBag);
 
 		// This is needed as long the save requests does not return the necessary information to update the FlexState without a new request
-		const aFlexObjects = await FlexObjectManager.getFlexObjects(
-			{..._omit(mPropertyBag, ["skipUpdateCache", "layer"]), invalidateCache: true, currentLayer: mPropertyBag.layer}
-		);
+		const aFlexObjects = await FlexObjectManager.getFlexObjects({
+			..._omit(mPropertyBag, ["skipUpdateCache", "layer"]),
+			invalidateCache: true,
+			currentLayer: mPropertyBag.layer,
+			includeCtrlVariants: true
+		});
 
 		if (aFlexObjects?.length > 0) {
 			await PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag);
@@ -178,6 +181,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
 	PersistenceWriteAPI.updateResetAndPublishInfo = async function(mPropertyBag) {
+		const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		const [bHasChanges, bIsPublishAvailable] = await Promise.all([
 			hasChanges(mPropertyBag),
 			FeaturesAPI.isPublishAvailable()
@@ -194,7 +198,10 @@ sap.ui.define([
 		// If the layer is transportable, fetch additional information from the backend
 		if (bIsLayerTransportable) {
 			try {
-				const oResponse = await Storage.getFlexInfo(mPropertyBag);
+				const oResponse = await Storage.getFlexInfo({
+					...mPropertyBag,
+					reference: sReference
+				});
 				// default is true, so only set to false if explicitly set to false
 				oFlexInfo.allContextsProvided = oResponse.allContextsProvided !== false;
 				oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
@@ -205,7 +212,6 @@ sap.ui.define([
 		}
 
 		// Update the Flex Info Session
-		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 		const oOldFlexInfoSession = FlexInfoSession.getByReference(sReference);
 		const oNewFlexInfoSession = {
 			...oOldFlexInfoSession,
