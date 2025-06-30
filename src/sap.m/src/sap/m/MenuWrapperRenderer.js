@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
+	'sap/ui/core/library',
 	'sap/ui/core/ControlBehavior'
 ], function(
+	coreLibrary,
 	ControlBehavior
 ) {
 	"use strict";
@@ -16,6 +18,9 @@ sap.ui.define([
 	const MenuWrapperRenderer = {
 		apiVersion: 2
 	};
+
+	// shortcut for sap.ui.core.ItemSelectionMode
+	const ItemSelectionMode = coreLibrary.ItemSelectionMode;
 
 	/**
 	 * Renders the HTML output for the specified control, using the provided
@@ -59,7 +64,8 @@ sap.ui.define([
 		let sCurrentGroup = null,
 			sItemGroup = null,
 			bGroupOpened = false,
-			bGroupEndSeparatorRendered = false;
+			bGroupEndSeparatorRendered = false,
+			sAriaLabel;
 
 		aItems.forEach((oItem, iIndex) => {
 			sItemGroup = oItem.getAssociation("_group");
@@ -78,8 +84,22 @@ sap.ui.define([
 			}
 
 			if (sItemGroup && !bGroupOpened) {
+				switch (oItem._itemSelectionMode) {
+					case ItemSelectionMode.None:
+						sAriaLabel = oMenuWrapper._oRb.getText("MENU_ITEM_GROUP_NONE_ACCESSIBLE_NAME");
+						break;
+					case ItemSelectionMode.SingleSelect:
+						sAriaLabel = oMenuWrapper._oRb.getText("MENU_ITEM_GROUP_SINGLE_ACCESSIBLE_NAME");
+						break;
+					case ItemSelectionMode.MultiSelect:
+						sAriaLabel = oMenuWrapper._oRb.getText("MENU_ITEM_GROUP_MULTI_ACCESSIBLE_NAME");
+						break;
+					default:
+						sAriaLabel = "";
+				}
 				oRm.openStart("div");
 				oRm.attr("role", "group");
+				sAriaLabel && oRm.attr("aria-label", sAriaLabel);
 				oRm.openEnd();
 				bGroupOpened = true;
 			}
