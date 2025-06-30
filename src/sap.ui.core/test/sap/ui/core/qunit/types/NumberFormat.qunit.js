@@ -159,20 +159,56 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[-1, 0].forEach(function (iGroupingSize) {
-	QUnit.test("invalid groupingSize: " + iGroupingSize, function(assert) {
-		this.oLogMock.expects("error")
-			.withExactArgs("Grouping requires the 'groupingSize' format option to be a positive number, but it is '"
-				+ iGroupingSize + "' instead.");
-		const oIntegerInstance = NumberFormat.getIntegerInstance({groupingEnabled: true, groupingSize: iGroupingSize});
-		assert.strictEqual(oIntegerInstance.format(12345), "", "integer with groupingSize: '" + iGroupingSize + "'");
+[
+	{sFactoryMethod: "getFloatInstance", sResult: "12345"},
+	{sFactoryMethod: "getIntegerInstance", sResult: "12345"},
+	{sFactoryMethod: "getCurrencyInstance", sResult: "12345.00"},
+	{sFactoryMethod: "getUnitInstance", sResult: "12345"},
+	{sFactoryMethod: "getPercentInstance", sResult: "1234500%"}
+].forEach(({sFactoryMethod, sResult}) => {
+	QUnit.test(`checkGroupingFormatOptions for ${sFactoryMethod} leads to warning`, function(assert) {
+		this.oLogMock.expects("warning")
+			.withExactArgs("Grouping is disabled due to non-positive groupingSize set to '0'.");
 
-		this.oLogMock.expects("error")
-			.withExactArgs("Grouping requires the 'groupingSize' format option to be a positive number, but it is '"
-				+ iGroupingSize + "' instead.");
-		// float instance has groupingEnabled: true by default
-		const oFloatInstance = NumberFormat.getFloatInstance({groupingSize: iGroupingSize});
-		assert.strictEqual(oFloatInstance.format(12345), "", "float with groupingSize: '" + iGroupingSize + "'");
+		// code under test
+		const oFormat = NumberFormat[sFactoryMethod]({
+			groupingEnabled: true,
+			groupingSize: 0
+		});
+
+		assert.strictEqual(oFormat.format(12345), sResult);
+		assert.strictEqual(oFormat.oFormatOptions.groupingEnabled, false);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sFactoryMethod: "getFloatInstance", sType: "float"},
+	{sFactoryMethod: "getIntegerInstance", sType: "integer"},
+	{sFactoryMethod: "getCurrencyInstance", sType: "currency"},
+	{sFactoryMethod: "getUnitInstance", sType: "unit"},
+	{sFactoryMethod: "getPercentInstance", sType: "percent"}
+].forEach(({sFactoryMethod, sType}) => {
+	QUnit.test(`${sFactoryMethod} calls checkGroupingFormatOptions`, function (assert) {
+		const oFormat = {
+			getLocaleFormatOptions() {},
+			checkGroupingFormatOptions() {},
+			...(sType === "currency" && {
+				_defineCustomCurrencySymbols() {},
+				showTrailingCurrencyCode() {}
+			})
+		};
+		this.mock(NumberFormat).expects("createInstance").withExactArgs({}, "~oLocale").returns(oFormat);
+		const oFormatMock = this.mock(oFormat);
+		oFormatMock.expects("getLocaleFormatOptions").withExactArgs(sType).returns({});
+		oFormatMock.expects("checkGroupingFormatOptions").withExactArgs();
+		if (sType === "currency") {
+			oFormatMock.expects("showTrailingCurrencyCode").withExactArgs();
+			oFormatMock.expects("_defineCustomCurrencySymbols").withExactArgs();
+		}
+
+		// code under test
+		NumberFormat[sFactoryMethod]({}, "~oLocale");
 	});
 });
 
@@ -5060,6 +5096,7 @@ sap.ui.define([
 				})
 			},
 			getLocaleFormatOptions() {},
+			checkGroupingFormatOptions() {},
 			...(sGetter === "getCurrencyInstance" && {
 				_defineCustomCurrencySymbols() {},
 				showTrailingCurrencyCode() {}
@@ -5071,6 +5108,7 @@ sap.ui.define([
 			maxFractionDigits: "~maxFractionDigits~fromLocaleFormatOptions"
 		};
 		this.mock(oNumberFormat).expects("getLocaleFormatOptions").withExactArgs(sType).returns(oLocaleFormatOptions);
+		this.mock(oNumberFormat).expects("checkGroupingFormatOptions").withExactArgs();
 		if (oNumberFormat._defineCustomCurrencySymbols) {
 			this.mock(oNumberFormat).expects("_defineCustomCurrencySymbols").withExactArgs();
 			this.mock(oNumberFormat).expects("showTrailingCurrencyCode").withExactArgs().returns("~trailingCurrency");
