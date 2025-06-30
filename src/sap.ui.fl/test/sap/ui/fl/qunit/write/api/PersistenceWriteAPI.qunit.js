@@ -58,6 +58,9 @@ sap.ui.define([
 			this.oAppComponent = {
 				getId() {return sReference;}
 			};
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
+			.withArgs(sinon.match((vValue) => [this.oAppComponent, this.oAppComponent.getId(), this.vSelector].includes(vValue)))
+			.returns(sReference);
 			this.vSelector = {
 				elementId: "selector",
 				elementType: "sap.ui.core.Control",
@@ -226,7 +229,6 @@ sap.ui.define([
 
 				await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {changes: testSetup.persistencyChanges});
 				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
-				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
 				const oVMSFilterStub = sandbox.stub(FlexObjectManager, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
 					return testSetup.filterVariants ? [] : aFlexObjects;
 				});
@@ -244,7 +246,7 @@ sap.ui.define([
 		QUnit.test("when save is called", async function(assert) {
 			var oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
 			var oFlexObjectManagerGetStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves();
-			var mPropertyBag = { foo: "bar", removeOtherLayerChanges: true };
+			var mPropertyBag = { selector: this.oAppComponent, removeOtherLayerChanges: true };
 			await PersistenceWriteAPI.save(mPropertyBag);
 
 			assert.equal(oFlexObjectManagerSaveStub.callCount, 1, "the FlexObjectManager save method was called");
@@ -267,25 +269,28 @@ sap.ui.define([
 				isEndUserAdaptation: true,
 				initialAllContexts: true,
 				saveChangeKeepSession: true
-			});
+			}, sReference);
 			const oFlexObjectManagerSaveStub = sandbox.stub(FlexObjectManager, "saveFlexObjects").resolves();
 			const oFlexObjectManagerGetStub = sandbox.stub(FlexObjectManager, "getFlexObjects").resolves([{change: "test"}]);
 			const oFlexInfo = {
 				isResetEnabled: true
 			};
 			const oPersistenceWriteGetFlexInfoStub = sandbox.spy(PersistenceWriteAPI, "updateResetAndPublishInfo");
-			sandbox.stub(Storage, "getFlexInfo").callsFake(function() {
+			const sLayer = Layer.CUSTOMER;
+			sandbox.stub(Storage, "getFlexInfo").callsFake(function(mPropertyBag) {
+				assert.strictEqual(mPropertyBag.layer, sLayer, "the layer is passed to getFlexInfo");
+				assert.strictEqual(mPropertyBag.reference, sReference, "the reference is passed to getFlexInfo");
 				return new Promise((resolve) => {
 					setTimeout(function() {
 						resolve(oFlexInfo);
 					}, 0);
 				});
 			});
-			const mPropertyBag = { foo: "bar", layer: Layer.CUSTOMER };
+			const mPropertyBag = { selector: this.oAppComponent.getId(), layer: sLayer };
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([{}]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
-			return PersistenceWriteAPI.save(mPropertyBag).then(function(oFlexObject) {
+			return PersistenceWriteAPI.save(mPropertyBag).then((oFlexObject) => {
 				assert.equal(
 					oFlexObjectManagerSaveStub.callCount,
 					1,
@@ -310,7 +315,8 @@ sap.ui.define([
 					oFlexObjectManagerGetStub.firstCall.args[0],
 					{
 						currentLayer: Layer.CUSTOMER,
-						foo: "bar",
+						selector: this.oAppComponent.getId(),
+						includeCtrlVariants: true,
 						invalidateCache: true
 					},
 					"the FlexObjectManager get was called with the correct arguments"
@@ -327,12 +333,12 @@ sap.ui.define([
 				);
 				assert.deepEqual(
 					oExpectedFlexInfo,
-					FlexInfoSession.getByReference(),
+					FlexInfoSession.getByReference(sReference),
 					"session flex info is updated with isResetEnabled but adaptationId "
 						+ "and isEndUserAdaptation and initialAllContexts are kept"
 				);
 				assert.equal(
-					FlexInfoSession.getByReference().saveChangeKeepSession,
+					FlexInfoSession.getByReference(sReference).saveChangeKeepSession,
 					undefined,
 					"saveChangeKeepSession is delete in flex info session"
 				);
@@ -394,9 +400,6 @@ sap.ui.define([
 					}
 				]
 			});
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl")
-			.withArgs(this.oAppComponent)
-			.returns(sReference);
 			const aAnnotationChanges = PersistenceWriteAPI._getAnnotationChanges({control: this.oAppComponent});
 			assert.strictEqual(aAnnotationChanges.length, 1, "one annotation change was returned");
 			assert.strictEqual(aAnnotationChanges[0].getId(), "someAnnotationChange", "the correct change was returned");
@@ -409,7 +412,6 @@ sap.ui.define([
 				},
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
 			assert.strictEqual(
@@ -427,7 +429,6 @@ sap.ui.define([
 				],
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
@@ -441,7 +442,6 @@ sap.ui.define([
 		QUnit.test("when add is called with a descriptor change", function(assert) {
 			var done = assert.async();
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oChange = {
 				_getMap() {
@@ -458,7 +458,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when add is called with an annotation change", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
 			PersistenceWriteAPI.add({
@@ -474,7 +473,6 @@ sap.ui.define([
 		QUnit.test("when add is called with multiple descriptor changes", function(assert) {
 			var i = 0;
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oChange = {
 				_getMap() {
@@ -510,7 +508,6 @@ sap.ui.define([
 				],
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 
 			var aAddResult = PersistenceWriteAPI.add(mPropertyBag);
@@ -519,7 +516,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when add is called with change and flexObjects parameters", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var mPropertyBag = {
 				change: {},
 				flexObjects: [],
@@ -551,7 +547,6 @@ sap.ui.define([
 				],
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
@@ -586,7 +581,6 @@ sap.ui.define([
 				],
 				selector: this.vSelector
 			};
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(UIChangeManager, "addDirtyChanges").returnsArg(1);
 			sandbox.stub(FlexObjectManager, "addDirtyFlexObjects").returnsArg(1);
 
@@ -613,7 +607,6 @@ sap.ui.define([
 			const oElement = { type: "element" };
 			const oAppComponent = {id: sReference};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
@@ -714,7 +707,6 @@ sap.ui.define([
 			const oElement = { type: "element" };
 			const oAppComponent = {id: sReference};
 
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			sandbox.stub(Utils, "getAppComponentForSelector")
 			.withArgs(mPropertyBag.selector)
 			.returns(oAppComponent);
@@ -742,7 +734,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when remove is called with change and flexObjects parameters", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var mPropertyBag = {
 				change: {},
 				flexObjects: [],
@@ -791,7 +782,7 @@ sap.ui.define([
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.equal(oGetInfoStub.callCount, 0, "flex/info never called");
 				assert.equal(oFlexInfoSession.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
@@ -810,7 +801,7 @@ sap.ui.define([
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(false);
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.ok(oBaseLogStub.calledOnce, "an error was logged");
 				assert.equal(oFlexInfoSession.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
@@ -830,7 +821,7 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.callCount, 1, "flex/info is called once");
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
 			});
@@ -848,7 +839,7 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
 				assert.equal(oFlexInfoSession.allContextsProvided, true, "allContextProvided is true by default");
@@ -867,7 +858,7 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.callCount, 1, "flex/info is called once");
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oFlexInfoSession.isPublishEnabled, true, "isPublishEnabled is true");
 			});
@@ -885,7 +876,7 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.equal(oFlexInfoSession.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oFlexInfoSession.isPublishEnabled, false, "isPublishEnabled is false");
 				assert.equal(oFlexInfoSession.allContextsProvided, true, "allContextProvided is true by default");
@@ -905,7 +896,7 @@ sap.ui.define([
 
 			return PersistenceWriteAPI.updateResetAndPublishInfo(mPropertyBag).then(function() {
 				assert.equal(oGetInfoStub.calledOnce, true, "flex/info called once");
-				const oFlexInfoSession = FlexInfoSession.getByReference();
+				const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
 				assert.equal(oFlexInfoSession.isResetEnabled, true, "isResetEnabled is true");
 				assert.equal(oFlexInfoSession.isPublishEnabled, true, "isPublishEnabled is true");
 				assert.equal(oFlexInfoSession.allContextsProvided, false, "allContextProvided is false");
@@ -913,7 +904,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("getResetAndPublishInfoFromSession is null", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
 			var oFlexInfo = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.vSelector);
 			assert.equal(oFlexInfo, null, "oFlexInfo is null");
 		});
@@ -925,7 +915,6 @@ sap.ui.define([
 				isPublishEnabled: false
 			};
 			window.sessionStorage.setItem(`sap.ui.fl.info.${sReference}`, JSON.stringify(oFlexInfoResponse));
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oFlexInfo = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.vSelector);
 			assert.equal(oFlexInfo.isResetEnabled, true, "oFlexInfo.isResetEnabled is true");
@@ -1068,9 +1057,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("When setAdaptationLayer is called", function(assert) {
-			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 			var oSpySetInfoSession = sandbox.spy(FlexInfoSession, "setByReference");
-			PersistenceWriteAPI.setAdaptationLayer("CUSTOMER", {id: "someControl"});
+			PersistenceWriteAPI.setAdaptationLayer("CUSTOMER", this.vSelector);
 			assert.deepEqual(
 				oSpySetInfoSession.args[0],
 				[{adaptationLayer: "CUSTOMER"}, sReference],
