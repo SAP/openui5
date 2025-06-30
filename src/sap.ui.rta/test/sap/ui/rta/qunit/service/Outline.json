@@ -194,12 +194,6 @@
 							},
 							{
 								"id": "mainPage",
-								"technicalName": "customHeader",
-								"editable": false,
-								"type": "aggregation"
-							},
-							{
-								"id": "mainPage",
 								"technicalName": "footer",
 								"editable": false,
 								"type": "aggregation"
