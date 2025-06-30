@@ -160,4 +160,17 @@ describe('sap.m.MultiInput', function() {
 			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 		});
 	});
+
+	it("should keep tokens list open on clicking on n-more link in readonly MultiInput", function () {
+		browser.executeScript("document.getElementById('multiInputReadOnlyInitial').scrollIntoView()").then(function() {
+			// Click on n-more link
+			browser.executeScript("document.querySelector('#multiInputReadOnlyInitial .sapMTokenizerIndicator').click()");
+			// Wait enough time for the popover to open and stay that way.
+			// The wait time should be at least several seconds because there
+			// was a bug that the popover closes immediately after opening
+			// when the n-more link is clicked.
+			browser.sleep(3000);
+			expect(takeScreenshot()).toLookAs("mi_readonly_nMore_clicked");
+		});
+	});
 });
