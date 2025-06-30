@@ -2620,7 +2620,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   The resource path for the cache
 	 * @param {object} mQueryOptions
-	 *   The query options for the cache
+	 *   The query options for the cache (requires "copy on write"!)
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache|undefined}
 	 *   The cache or <code>undefined</code> if the model has no matching temporary binding
 	 *
@@ -3421,7 +3421,7 @@ sap.ui.define([
 	 * because the binding may have acquired them via autoExpandSelect.
 	 *
 	 * @param {object} mQueryOptions
-	 *   The query options
+	 *   A map of key-value pairs representing the query string (requires "copy on write"!)
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
 	 * @returns {object} The merged query options
