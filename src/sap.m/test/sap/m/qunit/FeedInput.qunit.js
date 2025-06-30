@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Library, qutils, FeedInput, TooltipBase, KeyCodes, nextUIUpdate) {
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/Button",
+	"sap/m/MenuButton"
+], function(Library, qutils, FeedInput, TooltipBase, KeyCodes, nextUIUpdate, Button, MenuButton) {
 	"use strict";
 
 	var oRb = Library.getResourceBundleFor("sap.m");
@@ -408,5 +410,147 @@ sap.ui.define([
 		qutils.triggerKeydown("input-button", KeyCodes.A);
 		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.A);
 		qutils.triggerKeyup("input-button", KeyCodes.A);
+	});
+
+	QUnit.module("Custom Methods", {
+		beforeEach: async function () {
+			this.oFeedInput = new FeedInput("input");
+			this.oFeedInput.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oFeedInput.destroy();
+		}
+	});
+
+	QUnit.test("enablePostButton method", async function(assert) {
+		// Default: should be disabled when value is empty
+		this.oFeedInput.setValue("");
+		this.oFeedInput.enablePostButton();
+		await nextUIUpdate();
+		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "Post button is disabled when value is empty");
+
+		// Should be enabled when value is set
+		this.oFeedInput.setValue("test");
+		this.oFeedInput.enablePostButton();
+		await nextUIUpdate();
+		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "Post button is enabled when value is set");
+
+		// Explicitly enable
+		this.oFeedInput.setValue("");
+		this.oFeedInput.enablePostButton(true);
+		await nextUIUpdate();
+		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "Post button is enabled when enablePostButton(true) is called");
+
+		// Explicitly disable
+		this.oFeedInput.setValue("");
+		this.oFeedInput.enablePostButton(false);
+		await nextUIUpdate();
+		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), false, "Post button is disabled when enablePostButton(false) is called");
+
+		// Explicitly enable
+		this.oFeedInput.setValue("test");
+		this.oFeedInput.enablePostButton(true);
+		await nextUIUpdate();
+		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "Post button is enabled");
+
+		// Explicitly disable
+		this.oFeedInput.setValue("test");
+		this.oFeedInput.enablePostButton(false);
+		await nextUIUpdate();
+		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "Post button is enabled");
+	});
+
+	QUnit.test("_isControlEnabled method", function(assert) {
+		// Should be false when value is empty
+		this.oFeedInput.setValue("");
+		this.oFeedInput._bEnablePostButton = false;
+		assert.strictEqual(this.oFeedInput._isControlEnabled(), false, "_isControlEnabled returns false when value is empty and _bEnablePostButton is false");
+
+		// Should be true when value is set
+		this.oFeedInput.setValue("test");
+		this.oFeedInput._bEnablePostButton = false;
+		assert.strictEqual(this.oFeedInput._isControlEnabled(), true, "_isControlEnabled returns true when value is set and _bEnablePostButton is false");
+
+		// Should be true when _bEnablePostButton is true, regardless of value
+		this.oFeedInput.setValue("");
+		this.oFeedInput._bEnablePostButton = true;
+		assert.strictEqual(this.oFeedInput._isControlEnabled(), true, "_isControlEnabled returns true when _bEnablePostButton is true and value is empty");
+		this.oFeedInput.setValue("test");
+		assert.strictEqual(this.oFeedInput._isControlEnabled(), true, "_isControlEnabled returns true when _bEnablePostButton is true and value is set");
+	});
+
+	QUnit.test("ActionButton aggregation is rendered", async function(assert) {
+		var oFeedInput = new FeedInput();
+		// Only a sap.m.Button with icon and no text should be rendered
+		oFeedInput.removeAllActions();
+		var oButtonValid = new Button({icon: "sap-icon://add"});
+		oFeedInput.addAggregation("actions", oButtonValid);
+		oFeedInput.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		var oActionButton = oFeedInput.getDomRef().querySelector(".sapMFeedInActionButton");
+		assert.ok(oActionButton !== null, "ActionButton is rendered in the DOM when valid");
+
+		// Button with text (should not be rendered)
+		oFeedInput.removeAllActions();
+		var oButtonWithText = new Button({icon: "sap-icon://add", text: "Not allowed"});
+		oFeedInput.addAggregation("actions", oButtonWithText);
+		await nextUIUpdate();
+		oActionButton = oFeedInput.getDomRef().querySelector(".sapMFeedInActionButton");
+		assert.ok(oActionButton === null, "ActionButton is not rendered when it has both icon and text");
+
+		// Button with only text (should not be rendered)
+		oFeedInput.removeAllActions();
+		var oButtonTextOnly = new Button({text: "Not allowed"});
+		oFeedInput.addAggregation("actions", oButtonTextOnly);
+		await nextUIUpdate();
+		oActionButton = oFeedInput.getDomRef().querySelector(".sapMFeedInActionButton");
+		assert.ok(oActionButton === null, "ActionButton is not rendered when it has only text and no icon");
+
+		// Button with neither icon nor text (should not be rendered)
+		oFeedInput.removeAllActions();
+		var oButtonEmpty = new Button();
+		oFeedInput.addAggregation("actions", oButtonEmpty);
+		await nextUIUpdate();
+		oActionButton = oFeedInput.getDomRef().querySelector(".sapMFeedInActionButton");
+		assert.ok(oActionButton === null, "ActionButton is not rendered when it has neither icon nor text");
+
+		oFeedInput.destroy();
+	});
+
+	QUnit.test("_getActionButtonIfValid method", function(assert) {
+		var oFeedInput = new FeedInput();
+
+		// Valid: sap.m.Button with icon and no text
+		oFeedInput.removeAllActions();
+		var oButtonIconOnly = new Button({icon: "sap-icon://add"});
+		oFeedInput.addAggregation("actions", oButtonIconOnly);
+		assert.strictEqual(oFeedInput._getActionButtonIfValid(), oButtonIconOnly, "Returns the action button when it is a sap.m.Button with only icon and no text");
+
+		// Invalid: sap.m.Button with icon and text
+		oFeedInput.removeAllActions();
+		var oButtonWithText = new Button({icon: "sap-icon://add", text: "Not allowed"});
+		oFeedInput.addAggregation("actions", oButtonWithText);
+		assert.strictEqual(oFeedInput._getActionButtonIfValid(), undefined, "Returns undefined when action button has both icon and text");
+
+		// Invalid: sap.m.Button with text only
+		oFeedInput.removeAllActions();
+		var oButtonTextOnly = new Button({text: "Not allowed"});
+		oFeedInput.addAggregation("actions", oButtonTextOnly);
+		assert.strictEqual(oFeedInput._getActionButtonIfValid(), undefined, "Returns undefined when action button has only text and no icon");
+
+		// Invalid: sap.m.Button with neither icon nor text
+		oFeedInput.removeAllActions();
+		var oButtonEmpty = new Button();
+		oFeedInput.addAggregation("actions", oButtonEmpty);
+		assert.strictEqual(oFeedInput._getActionButtonIfValid(), undefined, "Returns undefined when action button has neither icon nor text");
+
+		// Invalid: not a sap.m.Button
+		oFeedInput.removeAllActions();
+		var oMenuButton = new MenuButton({icon: "sap-icon://add"});
+		oFeedInput.addAggregation("actions", oMenuButton);
+		assert.strictEqual(oFeedInput._getActionButtonIfValid(), undefined, "Returns undefined when action button is not a sap.m.Button");
+
+		oFeedInput.destroy();
 	});
 });
