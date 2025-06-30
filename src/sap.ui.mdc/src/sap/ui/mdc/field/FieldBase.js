@@ -925,6 +925,7 @@ sap.ui.define([
 		const oValueHelp = _getValueHelp.call(this);
 		if (oValueHelp && oValueHelp.isOpen()) {
 			oValueHelp.close();
+			oEvent.setMarked();
 		}
 		this._sFilterValue = "";
 		if (this._oNavigateCondition || this._oNavigateCondition === null) {
