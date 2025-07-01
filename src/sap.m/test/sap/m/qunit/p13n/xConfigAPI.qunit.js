@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/p13n/modules/xConfigAPI",
 	"sap/ui/core/Item",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
-
-], function (MDCControl, xConfigAPI, Item, JsControlTreeModifier) {
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/CustomData"
+], function (MDCControl, xConfigAPI, Item, JsControlTreeModifier, CustomData) {
 	"use strict";
 
 	QUnit.module("API Tests", {
@@ -63,6 +63,55 @@ sap.ui.define([
 				}
 			}, "The correct value has been created");
 		}.bind(this));
+	});
+
+	[{isA: undefined, called: false}, {isA: () => {}, called: true}].forEach(function(oTestCase) {
+		QUnit.test("Check #enhanceConfig destroying controls", function(assert){
+			// arrange
+			const oModificationPayload = {
+				key: "test_property",
+				property: "key",
+				operation: "add",
+				controlMeta: {
+					aggregation: "items"
+				},
+				value: {
+					value: "my_unique_test_key"
+				}
+			};
+
+			const oCustomDataValue = {
+					"aggregations": {
+						"items": {
+							"test_property": {
+								"key": "my_unique_test_key",
+								"persistenceIdentifier": "custom-identifier"
+							}
+						}
+					}
+				};
+			const oCustomData = new CustomData({
+				key: "xConfig",
+				value: JSON.stringify(oCustomDataValue)
+			});
+			oCustomData.setProperty("value", JSON.stringify(oCustomDataValue));
+
+			const oDestroySpy = sinon.spy(JsControlTreeModifier, "destroy");
+			this.oControl.addCustomData(oCustomData);
+			this.oControl.isA = oTestCase.isA;
+
+			// act
+			return xConfigAPI.enhanceConfig(this.oControl, oModificationPayload)
+			.then(function(){
+				// assert
+				if (oTestCase.called) {
+					assert.ok(oDestroySpy.called, "Destroy spy has been called");
+				} else {
+					assert.ok(oDestroySpy.notCalled, "Destroy spy has not been called");
+				}
+				oDestroySpy.restore();
+			});
+		});
 	});
 
 	QUnit.test("Check #enhanceConfig with 'persistenceIdentifier'", function(assert){
