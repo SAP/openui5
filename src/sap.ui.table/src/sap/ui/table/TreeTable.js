@@ -263,7 +263,7 @@ sap.ui.define([
 	};
 
 	TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
-		if (!this.getVisible()) {
+		if (!this.getVisible() && this.getBinding()?.isSuspended()) {
 			return [];
 		}
 
