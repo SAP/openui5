@@ -4066,6 +4066,45 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Mark keydown event on escape-induced ValueHelp close", (assert) => {
+
+		const oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: (oEvent) => {} }); // just dummy handler to make Icon focusable
+		const oVHContent = new Content("C1");
+		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
+		const oVHPopover = new Popover("P1", {content: oVHContent});
+		const oValueHelp = Element.getElementById(oField.getValueHelp());
+		oValueHelp.setDialog(oVHPopover);
+
+		oField.focus(); // as ValueHelp is connected with focus
+
+		const aContent = oField.getAggregation("_content");
+		const oContent = aContent?.length > 0 && aContent[0];
+
+		// simulate value help request to see if ValueHelp opens
+		oContent.fireValueHelpRequest();
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for promises in ValueHelp and open Popover
+			assert.ok(oValueHelp.isOpen(), "ValueHelp open");
+
+			sinon.spy(oField, "onsapenter");
+			sinon.spy(oField, "onsapescape");
+
+			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ESCAPE, false, false, false);
+			setTimeout(() => { // to wait for promises in ValueHelp and close Popover
+				assert.notOk(oValueHelp.isOpen(), "ValueHelp closed");
+				assert.ok(oField.onsapescape.calledOnce, "onsapescape called once on Field");
+				const oKeyDownEvent = oField.onsapescape.lastCall.args[0];
+				assert.ok(oKeyDownEvent.type === 'keydown' && oKeyDownEvent.isMarked(), "keydown event is marked");
+				assert.ok(oField.onsapenter.calledOnce, "onsapenter called once on Field");
+				oIconContent.destroy();
+				oField.onsapescape.restore();
+				oField.onsapenter.restore();
+				fnDone();
+			}, 400);
+		}, 400);
+
+	});
+
 	QUnit.test("showValueStateMessage - should adjust according to ValueHelp opening state", (assert) => {
 		const oContent = oField.getCurrentContent()[0];
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
