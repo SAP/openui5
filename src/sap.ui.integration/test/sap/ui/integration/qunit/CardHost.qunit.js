@@ -29,7 +29,7 @@ sap.ui.define([
 			},
 			"header": {
 				"title": "{context>/sap.sample/user/name/value}",
-				"subTitle": "{{parameters.userId}}"
+				"subtitle": "{{parameters.userId}}"
 			}
 		}
 	};
@@ -114,7 +114,7 @@ sap.ui.define([
 						},
 						"header": {
 							"title": "{context>/sap.sample/user/name/value}",
-							"subTitle": "{{parameters.userId}}"
+							"subtitle": "{{parameters.userId}}"
 						},
 						"content": {
 							"data": {

@@ -15,7 +15,7 @@
 		},
 		"header": {
 			"title": "Adaptive Card - Error Handling",
-				"subTitle": "sap.ui.integration",
+				"subtitle": "sap.ui.integration",
 				"icon": {
 					"src": "sap-icon://sap-ui5"
 				},

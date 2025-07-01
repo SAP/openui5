@@ -210,7 +210,7 @@ sap.ui.define([
 				"type": "Object",
 				"header": {
 					"title": "Orders by Shipper {filters>/shipper/selectedItem/title}",
-					"subTitle": "Orders by Shipper {filters>/shipper/selectedItem/key}"
+					"subtitle": "Orders by Shipper {filters>/shipper/selectedItem/key}"
 				},
 				"content": {
 					"groups": []

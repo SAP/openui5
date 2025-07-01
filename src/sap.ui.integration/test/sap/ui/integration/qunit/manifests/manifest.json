@@ -8,7 +8,7 @@
 		"type": "List",
 		"header": {
 			"title": "List Card",
-			"subTitle": "With static list items",
+			"subtitle": "With static list items",
 			"icon": {
 				"src": "sap-icon://business-objects-experience"
 			},

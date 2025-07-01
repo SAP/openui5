@@ -159,7 +159,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -271,7 +271,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -388,7 +388,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -471,7 +471,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -546,7 +546,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -603,7 +603,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -673,7 +673,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -788,7 +788,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -932,7 +932,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My Calendar",
-					"subTitle": "For Today",
+					"subtitle": "For Today",
 					"status": {
 						"text":  {
 							"format": {
@@ -1031,7 +1031,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "My calendar",
-					"subTitle": "Team Balkan",
+					"subtitle": "Team Balkan",
 					"status": {
 						"text":  {
 							"format": {
@@ -1248,7 +1248,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "Calendar overview",
-					"subTitle": "See activities",
+					"subtitle": "See activities",
 					"icon": {
 						"src": "sap-icon://calendar"
 					}

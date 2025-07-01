@@ -34,7 +34,7 @@
 				}
 			}],
 			"title": "Action on header level",
-			"subTitle": "sematicRole - listitem"
+			"subtitle": "sematicRole - listitem"
 		},
 		"content": {
 			"data": {

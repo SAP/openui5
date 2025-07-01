@@ -23,7 +23,7 @@
 	"sap.card": {
 		"header": {
 			"title": "Form Card",
-			"subTitle": "Adaptive Card with sap.f.cards.Header",
+			"subtitle": "Adaptive Card with sap.f.cards.Header",
 			"icon": {
 				"src": "sap-icon://form"
 			}

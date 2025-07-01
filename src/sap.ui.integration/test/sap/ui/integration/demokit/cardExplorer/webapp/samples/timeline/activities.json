@@ -29,7 +29,7 @@
 		"type": "Timeline",
 		"header": {
 			"title": "Past Activities",
-			"subTitle": "For October"
+			"subtitle": "For October"
 		},
 		"content": {
 			"maxItems": 3,

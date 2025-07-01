@@ -8,7 +8,7 @@
 		"type": "List",
 		"header": {
 			"title": "List Card - Data from Extension",
-			"subTitle": "City"
+			"subtitle": "City"
 		},
 		"content": {
 			"data": {

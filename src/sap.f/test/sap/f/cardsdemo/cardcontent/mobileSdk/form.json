@@ -16,7 +16,7 @@
 		},
 		"header": {
 			"title": "Record activity",
-			"subTitle": "Summarize today's work",
+			"subtitle": "Summarize today's work",
 			"icon": {
 				"src": "sap-icon://calendar"
 			}

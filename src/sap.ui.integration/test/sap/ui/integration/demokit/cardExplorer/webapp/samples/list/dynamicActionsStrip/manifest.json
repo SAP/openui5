@@ -12,7 +12,7 @@
 		},
 		"header": {
 			"title": "My Team",
-			"subTitle": "Nolan, Employee Manager",
+			"subtitle": "Nolan, Employee Manager",
 			"icon": {
 				"src": "sap-icon://org-chart"
 			}

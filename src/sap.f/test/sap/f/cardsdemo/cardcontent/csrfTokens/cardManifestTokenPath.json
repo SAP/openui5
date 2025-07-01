@@ -50,7 +50,7 @@
 		},
 		"header": {
 			"title": "Token with Path",
-			"subTitle": "(token /csrfTokens/tokenInBody)"
+			"subtitle": "(token /csrfTokens/tokenInBody)"
 		},
 		"content": {
 			"data": {

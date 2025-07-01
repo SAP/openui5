@@ -10,7 +10,7 @@
 				"src": "sap-icon://business-objects-experience"
 			},
 			"title": "Object Card",
-			"subTitle": "With Static content and without Group titles"
+			"subtitle": "With Static content and without Group titles"
 		},
 		"content": {
 			"groups": [

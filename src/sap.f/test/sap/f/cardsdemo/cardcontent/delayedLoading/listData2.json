@@ -1,7 +1,7 @@
 {
 	"header": {
 		"title": "Title",
-		"subTitle": "Subtitle",
+		"subtitle": "Subtitle",
         "count": 15,
 		"src": "sap-icon://newspaper"
 	},

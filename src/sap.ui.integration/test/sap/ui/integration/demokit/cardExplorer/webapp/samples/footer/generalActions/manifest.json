@@ -50,7 +50,7 @@
 				"src": "sap-icon://user"
 			},
 			"title": "Request from {firstName} {lastName}",
-			"subTitle": "{position}"
+			"subtitle": "{position}"
 		},
 		"content": {
 			"groups": [

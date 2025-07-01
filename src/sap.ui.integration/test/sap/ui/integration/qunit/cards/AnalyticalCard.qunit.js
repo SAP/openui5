@@ -408,7 +408,7 @@ sap.ui.define([
 			"type": "Analytical",
 			"header": {
 				"title": "Project Cloud Transformation",
-				"subTitle": "Revenue"
+				"subtitle": "Revenue"
 			},
 			"content": {
 				"chartType": "Line",

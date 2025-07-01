@@ -40,7 +40,7 @@
 		},
 		"header": {
 			"title": "WebPage Card with Extension",
-			"subTitle": "src: '\\\\\\{/url}/events'",
+			"subtitle": "src: '\\\\\\{/url}/events'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}

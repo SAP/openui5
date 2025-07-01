@@ -64,7 +64,7 @@
 				"fitType": "{fit}"
 			},
 			"title": "{title}",
-			"subTitle": "{subtitle}"
+			"subtitle": "{subtitle}"
 		},
 		"content": {
 			"groups": [

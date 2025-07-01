@@ -14,7 +14,7 @@
 		"header": {
 			"type": "Numeric",
 			"title": "Project Cloud Transformation",
-			"subTitle": "Revenue",
+			"subtitle": "Revenue",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"number": "65.34",

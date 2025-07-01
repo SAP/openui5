@@ -25,7 +25,7 @@
 		"type": "WebPage",
 		"header": {
 			"title": "OpenUI5 Events",
-			"subTitle": "src: '/events', baseUrl: 'http://openui5.org'",
+			"subtitle": "src: '/events', baseUrl: 'http://openui5.org'",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}

@@ -2,7 +2,7 @@
 		"sap.card": {
 		"header": {
 			"title": "Adaptive Card with Forms",
-			"subTitle": "Card with forms and actions"
+			"subtitle": "Card with forms and actions"
 		},
 		"type": "AdaptiveCard",
 		"content": {

@@ -52,7 +52,7 @@
 		},
 		"header": {
 			"title": "Title",
-			"subTitle": "(token /csrfTokens/token)"
+			"subtitle": "(token /csrfTokens/token)"
 		},
 		"content": {
 			"data": {

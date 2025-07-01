@@ -5,7 +5,7 @@
 		},
 		"header": {
 			"title": "Rich Text Adaptive Card",
-			"subTitle": "Various text formatting and markdown"
+			"subtitle": "Various text formatting and markdown"
 		},
 		"type": "AdaptiveCard",
 		"content": {

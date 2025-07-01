@@ -9,7 +9,7 @@
 		"i18n": "i18n/i18n.properties",
 		"icon": "sap-icon://accept",
 		"title": "{{PACKAGE_TITLE}}",
-		"subTitle": "{{PACKAGE_SUBTITLE}}",
+		"subtitle": "{{PACKAGE_SUBTITLE}}",
 		"shortTitle": "{{PACKAGE_SHORTTITLE}}",
 		"info": "{{PACKAGE_INFO}}",
 		"description": "{{PACKAGE_DESCRIPTION}}",

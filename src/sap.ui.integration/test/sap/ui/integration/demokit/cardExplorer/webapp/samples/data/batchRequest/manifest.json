@@ -49,7 +49,7 @@
 				"src": "sap-icon://cargo-train"
 			},
 			"title": "Supplied by {CompanyName}",
-			"subTitle": "Contact {EmailAddress}"
+			"subtitle": "Contact {EmailAddress}"
 		},
 		"content": {
 			"data": {

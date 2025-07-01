@@ -15,7 +15,7 @@
 					"valueColor": "Critical"
 				}
 			},
-			"subTitle": "Success Rate",
+			"subtitle": "Success Rate",
 			"mainIndicator": {
 				"number": "{n}",
 				"unit": "{u}",

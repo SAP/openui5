@@ -317,7 +317,7 @@
 		},
 		"header": {
 			"title": "{{parameters.cardTitle}}",
-			"subTitle": "{{parameters.objectsWithPropertiesDefinedAndValueFromJsonList.0.text}}",
+			"subtitle": "{{parameters.objectsWithPropertiesDefinedAndValueFromJsonList.0.text}}",
 			"icon": {
 				"src": "sap-icon://add-document",
 				"shape": "Circle",

@@ -59,7 +59,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation",
-					"subTitle": "Revenue",
+					"subtitle": "Revenue",
 					"unitOfMeasurement": "EUR",
 					"infoSection": {
 						"rows": [
@@ -164,7 +164,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation",
-					"subTitle": "Revenue",
+					"subtitle": "Revenue",
 					"unitOfMeasurement": "EUR",
 					"infoSection": {
 						"rows": [
@@ -287,7 +287,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation",
-					"subTitle": "Revenue",
+					"subtitle": "Revenue",
 					"unitOfMeasurement": "EUR",
 					"infoSection": {
 						"rows": [

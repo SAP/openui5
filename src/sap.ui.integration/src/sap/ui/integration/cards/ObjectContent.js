@@ -944,7 +944,7 @@ sap.ui.define([
 				tooltip: oItem.tooltip,
 				supertitle:  oItem.overlay.supertitle,
 				title: oItem.overlay.title,
-				subTitle: oItem.overlay.subTitle,
+				subtitle: oItem.overlay.subtitle || oItem.overlay.subTitle,
 				verticalPosition: oItem.overlay.verticalPosition,
 				horizontalPosition: oItem.overlay.horizontalPosition,
 				textColor: oItem.overlay.textColor,

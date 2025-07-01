@@ -102,7 +102,7 @@ function(
 					"path": "/data/generalInfo"
 				},
 				"title": "{title}",
-				"subTitle": "{subtitle}"
+				"subtitle": "{subtitle}"
 			},
 			"content": {
 				"data": {
@@ -154,7 +154,7 @@ function(
 					"path": "/information"
 				},
 				"title": "{title}",
-				"subTitle": "{subtitle}"
+				"subtitle": "{subtitle}"
 			},
 			"content": {
 				"data": {
@@ -202,7 +202,7 @@ function(
 			"type": "List",
 			"header": {
 				"title": "Some title",
-				"subTitle": "Some subtitle"
+				"subtitle": "Some subtitle"
 			}
 		}
 	};
@@ -354,7 +354,7 @@ function(
 					"name": "testHeader"
 				},
 				"title": "{testHeader>/title}",
-				"subTitle": "{testCard>/subtitle}"
+				"subtitle": "{testCard>/subtitle}"
 			},
 			"content": {
 				"data": {

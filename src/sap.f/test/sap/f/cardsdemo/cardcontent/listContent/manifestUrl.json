@@ -17,7 +17,7 @@
 		"type": "List",
 		"header": {
 			"title": "Default Manifest Parameters",
-			"subTitle": "Default parameter from manifest"
+			"subtitle": "Default parameter from manifest"
 		},
 		"content": {
 			"data": {

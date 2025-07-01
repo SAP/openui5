@@ -39,7 +39,7 @@
 		},
 		"header": {
 			"title": "Show cache for 1day, if older - revalidate",
-			"subTitle": "{firstName} {lastName} {position}"
+			"subtitle": "{firstName} {lastName} {position}"
 		},
 		"content": {
 			"groups": [

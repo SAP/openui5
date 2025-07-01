@@ -54,7 +54,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "Default manifest parameters",
-				"subTitle": "Default parameter from manifest"
+				"subtitle": "Default parameter from manifest"
 			},
 			"content": {
 				"data": {
@@ -103,7 +103,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "Default manifest parameters",
-				"subTitle": "Default parameter from manifest"
+				"subtitle": "Default parameter from manifest"
 			},
 			"content": {
 				"data": {
@@ -434,7 +434,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Default manifest parameters",
-					"subTitle": "{{parameters.TODAY_ISO}}"
+					"subtitle": "{{parameters.TODAY_ISO}}"
 				}
 			}
 		});
@@ -458,7 +458,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Default manifest parameters",
-					"subTitle": "{parameters>/TODAY_ISO}"
+					"subtitle": "{parameters>/TODAY_ISO}"
 				}
 			}
 		});
@@ -481,7 +481,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Default manifest parameters",
-					"subTitle": "{{parameters.TODAY_ISO}} and {{parameters.LOCALE}}"
+					"subtitle": "{{parameters.TODAY_ISO}} and {{parameters.LOCALE}}"
 				}
 			}
 		});

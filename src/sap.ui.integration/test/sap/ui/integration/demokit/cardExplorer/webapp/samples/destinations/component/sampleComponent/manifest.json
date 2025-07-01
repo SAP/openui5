@@ -51,7 +51,7 @@
 		},
 		"header": {
 			"title": "Component Card Based on Destinations",
-			"subTitle": "Top 5 products from Northwind"
+			"subtitle": "Top 5 products from Northwind"
 		}
 	}
 }

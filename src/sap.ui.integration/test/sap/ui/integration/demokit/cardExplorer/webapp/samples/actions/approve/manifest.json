@@ -32,7 +32,7 @@
 				"src": "./../../images/DonnaMoore.png"
 			},
 			"title": "Donna Moore",
-			"subTitle": "Purchase Requisition"
+			"subtitle": "Purchase Requisition"
 		},
 		"content": {
 			"groups": [

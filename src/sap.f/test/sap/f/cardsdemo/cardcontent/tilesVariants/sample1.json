@@ -7,7 +7,7 @@
 		"type": "List",
 		"header": {
 			"title": "{parameters>/title/value}",
-			"subTitle": "{parameters>/subTitle/value}",
+			"subtitle": "{parameters>/subtitle/value}",
 			"icon": {
 				"src": "{parameters>/iconSrc/value}"
 			},
@@ -40,7 +40,7 @@
 				"title" : {
 					"value": "List Card with Top {{parameters.maxItems}} Products and a Long Title which Truncates when on Several Lines"
 				},
-				"subTitle": {
+				"subtitle": {
 					"value": "These are the top sellers this month and long subtitle which truncates when on several lines"
 				},
 				"iconSrc": {

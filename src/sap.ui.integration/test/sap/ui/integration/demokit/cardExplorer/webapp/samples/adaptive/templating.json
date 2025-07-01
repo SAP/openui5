@@ -7,7 +7,7 @@
 	"sap.card": {
 		"header": {
 			"title": "Inline Templating",
-			"subTitle": "This is a sample of the inline templating feature of MS Adaptive Cards."
+			"subtitle": "This is a sample of the inline templating feature of MS Adaptive Cards."
 		},
 		"type": "AdaptiveCard",
 		"content": {

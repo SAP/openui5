@@ -10,7 +10,7 @@
 		},
 		"header": {
 			"title": "Adaptive Card - Inputs",
-				"subTitle": "sap.ui.integration",
+				"subtitle": "sap.ui.integration",
 				"icon": {
 					"src": "sap-icon://sap-ui5"
 				},

@@ -22,7 +22,7 @@ sap.ui.define([
 					}
 				],
 				"title": "Top 5 Products",
-				"subTitle": "These are the top sellers this month",
+				"subtitle": "These are the top sellers this month",
 				"icon": {
 					"src": "sap-icon://desktop-mobile"
 				},
@@ -77,7 +77,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "5 Products - no actions",
-				"subTitle": "These are the top sellers this month",
+				"subtitle": "These are the top sellers this month",
 				"icon": {
 					"src": "sap-icon://desktop-mobile"
 				},
@@ -157,7 +157,7 @@ sap.ui.define([
 					}
 				},
 				"title": "Project Cloud Transformation",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{number}",
@@ -339,7 +339,7 @@ sap.ui.define([
 					}
 				},
 				"title": "Project Cloud Transformation - no actions",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{number}",

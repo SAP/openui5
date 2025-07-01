@@ -5,7 +5,7 @@
 		"type": "card",
 		"i18n": "i18n.properties",
 		"title": "{{title}}",
-		"subTitle": "{{subTitle}}",
+		"subTitle": "{{subtitle}}",
 		"info": "{{info}}",
 		"description": "{{description}}",
 		"applicationVersion": {

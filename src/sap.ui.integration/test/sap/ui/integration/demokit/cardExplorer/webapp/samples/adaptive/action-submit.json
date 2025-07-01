@@ -34,7 +34,7 @@
 	"type": "AdaptiveCard",
 	"header": {
 		"title": "Submit Details",
-		"subTitle": "Provide more details",
+		"subtitle": "Provide more details",
 		"icon": {
 			"src": "sap-icon://account"
 		}

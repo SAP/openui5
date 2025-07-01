@@ -44,7 +44,7 @@
 		},
 		"header": {
 			"title": "Products by Supplier {parameters>/supplierId/value}",
-			"subTitle": "Query in Request Body",
+			"subtitle": "Query in Request Body",
 			"icon": {
 				"src": "sap-icon://product"
 			}

@@ -47,7 +47,7 @@
 				"path": "orderData>/"
 			},
 			"title": "{orderData>ShipName}",
-			"subTitle": "ID {parameters>/orderId/value}"
+			"subtitle": "ID {parameters>/orderId/value}"
 		},
 		"content": {
 			"data": {

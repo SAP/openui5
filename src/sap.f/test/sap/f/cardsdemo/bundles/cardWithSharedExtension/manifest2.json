@@ -33,7 +33,7 @@
 		"type": "List",
 		"header": {
 			"title": "List Card Shared Extension 2",
-			"subTitle": "City {parameters>/city/value}"
+			"subtitle": "City {parameters>/city/value}"
 		},
 		"content": {
 			"item": {

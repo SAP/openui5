@@ -7,7 +7,7 @@
 		"type": "Object",
 		"header": {
 			"title": "Object Card",
-			"subTitle": "With Full Width Image"
+			"subtitle": "With Full Width Image"
 		},
 		"content": {
 			"groups": [

@@ -12,7 +12,7 @@
 				"path": "/header"
 			},
 			"title": "{title}",
-			"subTitle": "Subtitle",
+			"subtitle": "Subtitle",
 			"status": {
 			  "text": "2 of {count}"
 			},

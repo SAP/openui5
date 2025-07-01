@@ -41,7 +41,7 @@
 		"type": "List",
 		"header": {
 			"title": "Products by availability",
-			"subTitle": "{filters>/availability/selectedItem/title}",
+			"subtitle": "{filters>/availability/selectedItem/title}",
 			"icon": {
 				"src": "sap-icon://product"
 			},

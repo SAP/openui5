@@ -59,7 +59,7 @@
 					}
 				}
 			},
-			"subTitle": "By Average Price",
+			"subtitle": "By Average Price",
 			"closeButton": {
 				"visible": false
 			},

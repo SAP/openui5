@@ -7,7 +7,7 @@
 	"sap.card": {
 		"header": {
 			"title": "Adaptive Card - Templating with external JSON file",
-			"subTitle": "Templating using 'data' on 'content' level",
+			"subtitle": "Templating using 'data' on 'content' level",
 			"icon": {
 				"src": "sap-icon://sap-ui5"
 			}

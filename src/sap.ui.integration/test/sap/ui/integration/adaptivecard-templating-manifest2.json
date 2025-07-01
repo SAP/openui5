@@ -7,7 +7,7 @@
 	"sap.card": {
 		"header": {
 			"title": "Adaptive Card - Inline Templating",
-			"subTitle": "Templating using $data",
+			"subtitle": "Templating using $data",
 			"icon": {
 				"src": "sap-icon://sap-ui5"
 			}

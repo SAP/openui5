@@ -45,7 +45,7 @@
 		},
 		"header": {
 			"title": "Title",
-			"subTitle": "(token /csrfTokens/generateToken)"
+			"subtitle": "(token /csrfTokens/generateToken)"
 		},
 		"content": {
 			"data": {

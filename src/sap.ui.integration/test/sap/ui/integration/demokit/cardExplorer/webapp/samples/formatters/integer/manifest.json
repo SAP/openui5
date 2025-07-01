@@ -24,7 +24,7 @@
 		"type": "List",
 		"header": {
 			"title": "Number of devices",
-			"subTitle": "Devices exceeding {= format.integer(50)} items are highlighted as important",
+			"subtitle": "Devices exceeding {= format.integer(50)} items are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},

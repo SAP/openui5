@@ -29,7 +29,7 @@
 		"type": "List",
 		"header": {
 			"title": "Notebooks Distribution",
-			"subTitle": "by years",
+			"subtitle": "by years",
 			"status": {
 				"text": "3 of 11"
 			}

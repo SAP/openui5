@@ -79,8 +79,8 @@ sap.ui.define([
 		var mSettings = {
 			title: mConfiguration.title,
 			titleMaxLines: mConfiguration.titleMaxLines,
-			subtitle: mConfiguration.subTitle,
-			subtitleMaxLines: mConfiguration.subTitleMaxLines,
+			subtitle: mConfiguration.subtitle || mConfiguration.subTitle,
+			subtitleMaxLines: mConfiguration.subtitleMaxLines || mConfiguration.subTitleMaxLines,
 			dataTimestamp: mConfiguration.dataTimestamp,
 			visible: mConfiguration.visible,
 			wrappingType: mConfiguration.wrappingType

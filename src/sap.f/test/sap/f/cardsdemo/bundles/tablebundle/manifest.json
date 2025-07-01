@@ -8,7 +8,7 @@
 		"type": "Table",
 		"header": {
 			"title": "{{title}}",
-			"subTitle": "{{subtitle}}"
+			"subtitle": "{{subtitle}}"
 		},
 		"content": {
 			"data": {
