@@ -81,6 +81,9 @@ sap.ui.define(function() {
 			 */
 			Object_legacyAPIs: {
 				title: "sap.ui.base.Object (legacy APIs)"
+			},
+			OwnStatics: {
+				title: "sap.ui.base.OwnStatics"
 			}
 		}
 	};

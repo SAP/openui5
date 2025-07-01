@@ -7,7 +7,7 @@ sap.ui.define([
 	'sap/base/util/ObjectPath',
 	'sap/base/util/extend',
 	'sap/ui/base/EventProvider',
-	'sap/ui/base/_runWithOwner',
+	'sap/ui/base/OwnStatics',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/mvc/ControllerMetadata',
 	'sap/ui/core/mvc/ControllerExtension',
@@ -20,7 +20,7 @@ sap.ui.define([
 	ObjectPath,
 	extend,
 	EventProvider,
-	_runWithOwner,
+	OwnStatics,
 	ManagedObject,
 	ControllerMetadata,
 	ControllerExtension,
@@ -31,6 +31,8 @@ sap.ui.define([
 	Log
 ) {
 	"use strict";
+
+		const { getCurrentOwnerId } = OwnStatics.get(ManagedObject);
 
 		var mRegistry = {};
 
@@ -579,7 +581,7 @@ sap.ui.define([
 		function controllerFactory(sName, oControllerImpl, sViewId, bAsync) {
 			var oController,
 				ControllerClass,
-				sOwnerId = _runWithOwner.getCurrentOwnerId();
+				sOwnerId = getCurrentOwnerId();
 
 			if (typeof oControllerImpl === "boolean") {
 				oControllerImpl = undefined;

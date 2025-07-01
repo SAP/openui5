@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/ui/base/_runWithOwner",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/Control",
 	"sap/ui/base/DesignTime",
 	"sap/ui/core/Element",
@@ -27,8 +27,8 @@ sap.ui.define([
 		extend,
 		isEmptyObject,
 		merge,
-		_runWithOwner,
 		ManagedObject,
+		OwnStatics,
 		Control,
 		DesignTime,
 		Element,
@@ -40,6 +40,7 @@ sap.ui.define([
 	) {
 	"use strict";
 
+	const { getCurrentOwnerId, runWithPreprocessors } = OwnStatics.get(ManagedObject);
 
 	/**
 	 * @namespace
@@ -484,7 +485,7 @@ sap.ui.define([
 			} else {
 				oThis.bControllerIsViewManaged = false;
 				// if passed controller is not extended yet we need to do it.
-				var sOwnerId = _runWithOwner.getCurrentOwnerId();
+				var sOwnerId = getCurrentOwnerId();
 				if (!oController._isExtended()) {
 					oController = Controller.applyExtensions(oController, sName, sOwnerId, oThis.sId, bAsync);
 				} else if (bAsync) {
@@ -1108,8 +1109,8 @@ sap.ui.define([
 		// This is required as the viewFactory is called async
 		var Component = sap.ui.require("sap/ui/core/Component");
 		var oOwnerComponent;
-		if (Component && _runWithOwner.getCurrentOwnerId()) {
-			oOwnerComponent = Component.getComponentById(_runWithOwner.getCurrentOwnerId());
+		if (Component && getCurrentOwnerId()) {
+			oOwnerComponent = Component.getComponentById(getCurrentOwnerId());
 		}
 
 		function createView() {
@@ -1334,7 +1335,7 @@ sap.ui.define([
 			settings: this._fnSettingsPreprocessor
 		};
 
-		return ManagedObject.runWithPreprocessors(function() {
+		return runWithPreprocessors(function() {
 			var vContent = this.createContent(oController);
 			if (mSettings.async) {
 				vContent = Promise.resolve(vContent);
