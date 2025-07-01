@@ -1,0 +1,58 @@
+
+[
+	{
+		"key": "Productid",
+		"path": "ProductId",
+		"dataType": "sap.ui.model.type.String",
+		"label": "ID",
+	 	"sortable": true,
+		"filterable": true,
+		"aggregatable": false,
+		"groupable": true,
+		"role": "category"
+	},
+	{
+		"key": "Name",
+		"path": "Name",
+		"dataType": "sap.ui.model.type.String",
+		"label": "Name",
+	 	"sortable": true,
+		"filterable": true,
+		"aggregatable": false,
+		"groupable": true,
+		"role": "category"
+	},
+	{
+		"key": "Price",
+		"path": "Price",
+		"dataType": "sap.ui.model.type.Float",
+		"label": "Price",
+	 	"sortable": false,
+		"filterable": true,
+		"aggregatable": true,
+		"groupable": false,
+		"role": "axis1"
+	},
+	{
+		"key": "Quantity",
+		"path": "Quantity",
+		"dataType": "sap.ui.model.type.Float",
+		"label": "Quantity",
+	 	"sortable": false,
+		"filterable": true,
+		"aggregatable": true,
+		"groupable": false,
+		"role": "axis1"
+	},
+	{
+		"key": "weight",
+		"path": "WeightMeasure",
+		"dataType": "sap.ui.model.type.Float",
+		"label": "Weight",
+	 	"sortable": false,
+		"filterable": true,
+		"aggregatable": true,
+		"groupable": false,
+		"role": "axis1"
+	}
+]

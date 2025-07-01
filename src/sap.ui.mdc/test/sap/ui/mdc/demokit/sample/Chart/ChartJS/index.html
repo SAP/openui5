@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Chart with chart.js</title>
+	<!-- src="https://openui5nightly.hana.ondemand.com/resources/sap-ui-core.js" -->
+	<!-- src="http://localhost:8080/resources/sap-ui-core.js" -->
+	<script id="sap-ui-bootstrap"
+		src="http://localhost:8080/resources/sap-ui-core.js"
+		data-sap-ui-theme="sap_horizon"
+		data-sap-ui-resourceroots='{
+			"sap.ui.mdc.demokit.sample.Chart.ChartJS": "./"
+		}'
+		data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
+		data-sap-ui-compatVersion="edge"
+		data-sap-ui-async="false"
+		data-sap-ui-frameOptions="trusted"
+		data-sap-ui-oninit="module:sap/ui/core/ComponentSupport">
+	</script>
+	<style>
+		html, body { height: 100%; }
+	</style>
+</head>
+<body class="sapUiBody sapUiSizeCozy" id="content">
+	<div data-sap-ui-component
+		data-name="sap.ui.mdc.demokit.sample.Chart.ChartJS"
+		data-height="100%"
+		style="height: 100%; top: 0rem">
+	</div>
+</body>
+</html>
