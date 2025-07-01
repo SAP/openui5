@@ -2,7 +2,8 @@
 sap.ui.define([
 	'sap/base/Log',
 	'sap/base/i18n/Localization',
-	"sap/ui/core/Element",
+	'sap/ui/base/OwnStatics',
+	'sap/ui/core/Element',
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
@@ -14,9 +15,11 @@ sap.ui.define([
 	'sap/m/Panel',
 	'./AnyView_legacyAPIs.qunit',
 	'sap/ui/thirdparty/jquery',
-	"sap/ui/test/utils/nextUIUpdate"
-], function(Log, Localization, Element, coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, nextUIUpdate) {
+	'sap/ui/test/utils/nextUIUpdate'
+], function(Log, Localization, OwnStatics, Element, coreLibrary, View, XMLView, RenderManager, JSONModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, nextUIUpdate) {
 	"use strict";
+
+	const { _getPreprocessors, _removePreprocessor } = OwnStatics.get(View);
 
 	// shortcut for sap.ui.core.mvc.ViewType
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -1055,8 +1058,6 @@ sap.ui.define([
 			}.bind(this);
 		},
 		afterEach: function() {
-			// reset global preprocessors
-			View._mPreprocessors = {};
 			this.runPreprocessorSpy.restore();
 			delete this.xml;
 		}
@@ -1069,29 +1070,34 @@ sap.ui.define([
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.VIEWXML, jQuery.noop, false);
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, jQuery.noop, false);
 
-		assert.strictEqual(View._mPreprocessors["XML"]["xml"][1].preprocessor, jQuery.noop, "Registration for xml successful");
-		assert.strictEqual(View._mPreprocessors["XML"]["viewxml"][0].preprocessor, jQuery.noop, "Registration for viewxml successful");
-		assert.strictEqual(View._mPreprocessors["XML"]["controls"][0].preprocessor, jQuery.noop, "Registration for content successful");
+		const aXMLPreprocessors = _getPreprocessors("XML", XMLView.PreprocessorType.XML);
+		const aViewXMLPreprocessors = _getPreprocessors("XML", XMLView.PreprocessorType.VIEWXML);
+		const aControlsPreprocessors = _getPreprocessors("XML", XMLView.PreprocessorType.CONTROLS);
+
+		assert.strictEqual(aXMLPreprocessors[aXMLPreprocessors.length - 1].preprocessor, jQuery.noop, "Registration for xml successful");
+		assert.strictEqual(aViewXMLPreprocessors[aViewXMLPreprocessors.length - 1].preprocessor, jQuery.noop, "Registration for viewxml successful");
+		assert.strictEqual(aControlsPreprocessors[aControlsPreprocessors.length - 1].preprocessor, jQuery.noop, "Registration for content successful");
 
 		logSpyError.resetHistory();
 		XMLView.registerPreprocessor("unknown", jQuery.noop, false, {type: "unknown"});
 		assert.ok(
 			logSpyError.calledWith(sinon.match(/could not be registered due to unknown/)),
 			"Error logged when registering invalid type");
-		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
+
+		const aUnknownPreprocessors = _getPreprocessors("XML", "unknown");
+		assert.equal(aUnknownPreprocessors.length, 0, "Registration for invalid type refused");
 
 		logSpyError.resetHistory();
-		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, jQuery.noop, false, true);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, jQuery.noop, false, true);
+		XMLView.registerPreprocessor(XMLView.PreprocessorType.CONTROLS, jQuery.noop, false, true);
 		assert.ok(
 			logSpyError.calledWith(sinon.match(/only one on-demand-preprocessor allowed/)),
 			"Error logged when registering more than one ondemand pp");
-		assert.strictEqual(View._mPreprocessors["XML"]["unknown"], undefined, "Registration for invalid type refused");
 
 		// explicitly providing view type "XML" does not fail
 		var fnUniquePP = function() {};
 		XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, fnUniquePP, "XML", false);
-		assert.ok(Array.isArray(View._mPreprocessors["XML"]["xml"]) &&
-			View._mPreprocessors["XML"]["xml"].some(function(entry) {
+		assert.ok(aXMLPreprocessors.some(function(entry) {
 				return entry.preprocessor === fnUniquePP;
 			}), "Preprocessor call passed through to View");
 
@@ -1099,6 +1105,12 @@ sap.ui.define([
 		assert.throws(function() {
 			XMLView.registerPreprocessor(XMLView.PreprocessorType.XML, fnUniquePP, "YAML", false);
 		}, TypeError, "TypeError thrown when registering for a view type other than XML");
+
+		_removePreprocessor("XML", XMLView.PreprocessorType.XML, jQuery.noop);
+		_removePreprocessor("XML", XMLView.PreprocessorType.VIEWXML, jQuery.noop);
+		_removePreprocessor("XML", XMLView.PreprocessorType.CONTROLS, jQuery.noop);
+		_removePreprocessor("XML", XMLView.PreprocessorType.XML, fnUniquePP);
+		_removePreprocessor("XML", XMLView.PreprocessorType.CONTROLS, jQuery.noop, /* onDemand */true);
 	});
 
 	QUnit.test("sync / no execution", function(assert) {
