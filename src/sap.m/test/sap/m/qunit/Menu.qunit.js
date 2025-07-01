@@ -1054,9 +1054,8 @@ sap.ui.define([
 	QUnit.test("'openAsContextMenu' positions menu properly when different type of objects are provided", async function (assert) {
 		// Arrange
 		var oOffsetCoordinates = { offsetX: 100, offsetY: 200 },
-			oWrongCoordinates1 = { offsetX: 100, offsetY: 200, pageY: 40 },
-			oWrongCoordinates2 = { offsetY: 200, pageX: 20, pageY: 40 },
-			oWrongCoordinates3 = { offsetY: 200, pageX: 20 },
+			oWrongCoordinates1 = { offsetX: 100, pageY: 40 },
+			oWrongCoordinates2 = { offsetY: 200, pageX: 20 },
 			oOpener;
 
 		// Act
@@ -1074,8 +1073,8 @@ sap.ui.define([
 		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
 
 		// Assert
-		assert.strictEqual(oOpener.style.insetInlineStart, oWrongCoordinates1.offsetX + "px", "[object containing offsetX/offsetY pair] X coordinate is set correctly");
-		assert.strictEqual(oOpener.style.insetBlockStart, oWrongCoordinates1.offsetY + "px", "[object containing offsetX/offsetY pair] Y coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetInlineStart, "0px", "object containing just offsetX  - X coordinate is set to 0px");
+		assert.strictEqual(oOpener.style.insetBlockStart, "0px", "object containing just offsetX  - Y coordinate is set to 0px");
 
 		// Act
 		this.oMenu.openAsContextMenu(oWrongCoordinates2);
@@ -1083,18 +1082,51 @@ sap.ui.define([
 		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
 
 		// Assert
-		assert.strictEqual(oOpener.style.insetInlineStart, "0px", "X coordinate is set correctly");
-		assert.strictEqual(oOpener.style.insetBlockStart, "0px", "Y coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetInlineStart, "0px", "object containing just offsetY  - X coordinate is set to 0px");
+		assert.strictEqual(oOpener.style.insetBlockStart, "0px", "object containing just offsetY  - Y coordinate is set to 0px");
+	});
+
+	QUnit.test("'openAsContextMenu' positions menu properly when PointerEvent object is provided", async function (assert) {
+		var oButton = new Button({
+				text: "Button"
+			}),
+			oPointerEvent = {
+				type: "contextmenu",
+				button: 2 // right click
+			},
+			oButtonDomRef,
+			oOpener,
+			oQunitFixture = document.getElementById("qunit-fixture");
+
+		// Arrange
+
+		oQunitFixture.style.top = "0px"; // first move qunit-fixture to "known" position
+		oQunitFixture.style.left = "0px";
+
+		oButton.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+		oButtonDomRef = oButton.getDomRef();
+
+		// Simulate a right-click at specific coordinates relative to the button
+		oPointerEvent.target = oButtonDomRef;
+		oPointerEvent.pageX = 10; // 10px from the left edge of the button
+		oPointerEvent.pageY = 10; // 10px from the top edge of the button
+		oPointerEvent.clientX = 10; // 10px from the left edge of the button
+		oPointerEvent.clientY = 10; // 10px from the top edge of the button
 
 		// Act
-		this.oMenu.openAsContextMenu(oWrongCoordinates3);
+		this.oMenu.openAsContextMenu(oPointerEvent);
 		await nextUIUpdate(this.clock);
+
+		// Get the internal opener element of the popover
 		oOpener = this.oMenu._getPopover()._oControl._getOpenByDomRef();
 
 		// Assert
-		assert.strictEqual(oOpener.style.insetInlineStart, "0px", "X coordinate is set correctly");
-		assert.strictEqual(oOpener.style.insetBlockStart, "0px", "Y coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetInlineStart, oPointerEvent.pageX + "px", "X coordinate is set correctly");
+		assert.strictEqual(oOpener.style.insetBlockStart, oPointerEvent.pageY + "px", "Y coordinate is set correctly");
+
+		// Cleanup
+		oButton.destroy();
+		oButton = null;
 	});
-
-
 });

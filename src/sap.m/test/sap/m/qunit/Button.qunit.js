@@ -501,10 +501,18 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oButton = new Button({tooltip: "Tooltip"});
+	QUnit.test("getAccessibilityInfo", async function(assert) {
+		// Arrange
+		var oButton = new Button({tooltip: "Tooltip"}).placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// Assert
 		assert.ok(!!oButton.getAccessibilityInfo, "Button has a getAccessibilityInfo function");
+
+		// Act
 		var oInfo = oButton.getAccessibilityInfo();
+
+		// Assert
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
 		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
@@ -512,20 +520,45 @@ sap.ui.define([
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
+
+		// Act
 		oButton.setText("Text");
 		oButton.setEnabled(false);
+		await nextUIUpdate(this.clock);
 		oInfo = oButton.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.description, "Text", "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
+
+		// Act
 		oButton.setText(null);
 		oButton.setTooltip(null);
 		oButton.setIcon("sap-icon://search");
+		await nextUIUpdate(this.clock);
 		oInfo = oButton.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.description, "Search", "Description");
+
+		// Act
 		oButton.setAccessibleRole(ButtonAccessibleRole.Link);
+		await nextUIUpdate(this.clock);
 		oInfo = oButton.getAccessibilityInfo();
+
+		// Assert
 		assert.strictEqual(oInfo.role, "link", "role");
+
+		// Act
+		oButton.getDomRef().setAttribute("aria-keyshortcuts", "Ctrl+S");
+		await nextUIUpdate(this.clock);
+		oInfo = oButton.getAccessibilityInfo();
+
+		// Assert
+		assert.strictEqual(oInfo.description, "Search Ctrl+S", "Aria Key Shortcuts are added to the description");
+
+		// Cleanup
 		oButton.destroy();
 	});
 

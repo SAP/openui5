@@ -141,7 +141,7 @@ function() {
 			this._highlightSubTree(oNode);
 
 		} else if (oNode.nodeType === document.TEXT_NODE) {
-			sText = oNode.data.replace(/[\n\t]+/g, " ");
+			sText = oNode.data;
 			oMatches = Object.create(null); // Object containing matched queries and their indices.
 			aBlockedIndices = []; // Array which serves for preservation of the already matched indices.
 
@@ -231,7 +231,10 @@ function() {
 			fnSort = function(a, b) {return parseInt(a) > parseInt(b);},
 			aIndices = Object.keys(oTokensToHighlight).sort(fnSort),
 			iIndex,
-			iStartIndex = 0;
+			iStartIndex = 0,
+			fnShouldHighlightToken = function(sToken, oTokensToHighlight) {
+				return Object.values(oTokensToHighlight).indexOf(sToken) > -1;
+			};
 
 		// split the <code>sText</code> into tokens,
 		// including both the tokens to highlight
@@ -259,10 +262,13 @@ function() {
 		// wrap each token in a span
 		// and append to the root span
 		for (iIndex in aAllTokens) {
-			var oNextNode = document.createElement("span");
-			oNextNode.innerText = aAllTokens[iIndex];
-			if (Object.values(oTokensToHighlight).indexOf(aAllTokens[iIndex]) > -1) {
+			var sNextToken = aAllTokens[iIndex], oNextNode;
+			if (fnShouldHighlightToken(sNextToken, oTokensToHighlight)) {
+				oNextNode = document.createElement("span");
+				oNextNode.innerText = sNextToken;
 				oNextNode.classList.add("defaultHighlightedText");
+			} else {
+				oNextNode = document.createTextNode(sNextToken);
 			}
 
 			oRootNode.appendChild(oNextNode);
