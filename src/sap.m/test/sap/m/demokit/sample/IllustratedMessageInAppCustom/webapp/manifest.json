@@ -1,0 +1,25 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.IllustratedMessageInAppCustom",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.IllustratedMessageInAppCustom.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"resourceRoots": {
+			"illustrations": "resources/illustrations"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		}
+	}
+}

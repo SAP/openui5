@@ -1,0 +1,17 @@
+{
+	"name": "ui5-custom-illustrations-app",
+	"version": "1.0.0",
+	"author": "SAP SE",
+	"private": true,
+	"description": "Demo UI5 App with a Custom Illustrations Set",
+	"scripts": {
+	  "start": "ui5 serve --open index.html",
+	  "build": "ui5 build --clean-dest"
+	},
+	"dependencies": {
+	  "@external/ui5-illustrations-library": "file:./mock-external-package/ui5-illustrations-library"
+	},
+	"devDependencies": {
+	  "@ui5/cli": "^4"
+	}
+  }
