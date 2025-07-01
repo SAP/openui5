@@ -108,6 +108,7 @@ sap.ui.define([
 	const STARTED = "STARTED";
 	const STOPPED = "STOPPED";
 	const FAILED = "FAILED";
+	const sParametersAfterRestartKey = "sap.ui.rta.RuntimeAuthoring.parametersAfterRestart";
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -136,19 +137,15 @@ sap.ui.define([
 				/** Whether the create custom field button should be shown */
 				showToolbars: {
 					type: "boolean",
-					defaultValue: true
-				},
-
-				/** Whether rta is triggered from a dialog button */
-				triggeredFromDialog: {
-					type: "boolean",
-					defaultValue: false
+					defaultValue: true,
+					group: "restoreAfterReload"
 				},
 
 				/** Whether the window unload dialog should be shown */
 				showWindowUnloadDialog: {
 					type: "boolean",
-					defaultValue: true
+					defaultValue: true,
+					group: "restoreAfterReload"
 				},
 
 				/** sap.ui.rta.command.Stack */
@@ -164,7 +161,8 @@ sap.ui.define([
 					defaultValue: {
 						layer: Layer.CUSTOMER,
 						developerMode: true
-					}
+					},
+					group: "restoreAfterReload"
 				},
 
 				/** Defines view state of key user adaptation. Possible values: adaptation, navigation, visualization */
@@ -178,11 +176,18 @@ sap.ui.define([
 				 */
 				metadataScope: {
 					type: "string",
-					defaultValue: "default"
+					defaultValue: "default",
+					group: "restoreAfterReload"
+				},
+
+				hideReset: {
+					type: "boolean",
+					defaultValue: false,
+					group: "restoreAfterReload"
 				}
 			},
 			events: {
-				/** Fired when the runtime authoring is started */
+				/** Fired when runtime authoring is started */
 				start: {
 					parameters: {
 						editablePluginsCount: {
@@ -191,10 +196,10 @@ sap.ui.define([
 					}
 				},
 
-				/** Fired when the runtime authoring is stopped */
+				/** Fired when runtime authoring is stopped */
 				stop: {},
 
-				/** Fired when the runtime authoring failed to start */
+				/** Fired when runtime authoring failed to start */
 				failed: {
 					parameters: {
 						error: {
@@ -228,7 +233,6 @@ sap.ui.define([
 		_bNavigationModeWarningShown: false,
 		// eslint-disable-next-line object-shorthand
 		constructor: function(...aArgs) {
-			// call parent constructor
 			ManagedObject.apply(this, aArgs);
 
 			this._dependents = {};
@@ -270,6 +274,25 @@ sap.ui.define([
 			}.bind(this));
 		}
 	});
+
+	RuntimeAuthoring.prototype.applySettings = function(...aArgs) {
+		const oSettings = { ...aArgs[0] };
+
+		const mParametersAfterRestart = window.sessionStorage.getItem(sParametersAfterRestartKey);
+		const aSupportedProperties = Object.values(this.getMetadata().getProperties())
+		.filter((oProperty) => oProperty.group === "restoreAfterReload");
+
+		if (mParametersAfterRestart) {
+			const aProperties = JSON.parse(mParametersAfterRestart);
+			aProperties.forEach(function(oProperty) {
+				if (aSupportedProperties.find((oSupportedProperty) => oSupportedProperty.name === oProperty.name)) {
+					oSettings[oProperty.name] = oProperty.value;
+				}
+			});
+			window.sessionStorage.removeItem(sParametersAfterRestartKey);
+		}
+		ManagedObject.prototype.applySettings.apply(this, [oSettings, aArgs[1]]);
+	};
 
 	RuntimeAuthoring.prototype.addDependent = function(oObject, sName, bCreateGetter) {
 		bCreateGetter = typeof bCreateGetter === "undefined" ? true : !!bCreateGetter;
@@ -427,6 +450,16 @@ sap.ui.define([
 				adaptationId: this._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id")
 			});
 			if (bReloadTriggered) {
+				// After a reload RuntimeAuthoring should be initialized with the same parameters as before the reload
+				const aProperties = Object.values(this.getMetadata().getProperties())
+				.filter((oProperty) => oProperty.group === "restoreAfterReload")
+				.map((oProperty) => {
+					return {
+						name: oProperty.name,
+						value: oProperty.get(this)
+					};
+				});
+				window.sessionStorage.setItem(sParametersAfterRestartKey, JSON.stringify(aProperties));
 				// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 				throw Error("Reload triggered");
 			}
@@ -1628,7 +1661,7 @@ sap.ui.define([
 				}
 			},
 			restore: {
-				visible: !this._oVersionsModel.getProperty("/versioningEnabled"),
+				visible: !this._oVersionsModel.getProperty("/versioningEnabled") && this.getHideReset() === false,
 				enabled: this.bInitialResetEnabled
 			},
 			contextBasedAdaptation: {
