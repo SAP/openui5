@@ -267,6 +267,13 @@ sap.ui.define([
 		return aOutput.filter(Boolean).join(" . ").trim();
 	};
 
+	ColumnListItem.prototype.getContentAnnouncementOfRowAction = function() {
+		// Only if the item is inactive, to announce empty row action cell
+		if (this.getType() === ListItemType.Inactive) {
+			return ListItemBase.getAccessibilityText(null, true);
+		}
+	};
+
 	ColumnListItem.prototype.getContentAnnouncement = function() {
 		const oTable = this.getTable();
 		if (!oTable) {
@@ -306,12 +313,20 @@ sap.ui.define([
 
 		const oTable = this.getTable();
 		const oTarget = oEvent.target;
+		let sInvisibleText;
+
 		if (oTarget.classList.contains("sapMListTblCell")) {
 			const oColumn = Element.getElementById(oTarget.getAttribute("data-sap-ui-column"));
-			oTable.updateInvisibleText(this.getContentAnnouncementOfCell(oColumn));
-			oEvent.setMarked("contentAnnouncementGenerated");
+
+			sInvisibleText = this.getContentAnnouncementOfCell(oColumn);
 		} else if (oTarget.classList.contains("sapMListTblSubCnt")) {
-			oTable.updateInvisibleText(this.getContentAnnouncementOfPopin());
+			sInvisibleText = this.getContentAnnouncementOfPopin();
+		} else if (oTarget.classList.contains("sapMListTblNavCol")) {
+			sInvisibleText = this.getContentAnnouncementOfRowAction();
+		}
+
+		if (sInvisibleText) {
+			oTable.updateInvisibleText(sInvisibleText);
 			oEvent.setMarked("contentAnnouncementGenerated");
 		}
 
