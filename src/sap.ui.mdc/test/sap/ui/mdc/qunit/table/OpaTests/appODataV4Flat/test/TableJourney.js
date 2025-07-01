@@ -128,6 +128,7 @@ sap.ui.define([
 		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Category");
 		Then.onTheAppMDCTable.iShouldSeeTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldNotSeeColumnMenuItems();
+		Then.onTheAppMDCTable.iShouldNotSeeColumnMenuSettings();
 		When.onTheAppMDCTable.iCloseTheColumnMenu();
 		Then.onTheAppMDCTable.iShouldNotSeeTheColumnMenu();
 		When.onTheApp.iGetTheTableInstance(sTableId, function(oTable) {
