@@ -602,7 +602,7 @@ sap.ui.define([
 		 *       status code 412 and response header "Preference-Applied:handling=strict"
 		 *   </ul>
 		 * @see <a href=
-		 * "http://docs.oasis-open.org/odata/odata-json-format/v4.0/os/odata-json-format-v4.0-os.html#_Representing_Errors_in"
+		 * "https://docs.oasis-open.org/odata/odata-json-format/v4.0/odata-json-format-v4.0.html#_Representing_Errors_in"
 		 * >"19 Error Response"</a>
 		 *
 		 * @public
