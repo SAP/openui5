@@ -451,6 +451,25 @@ sap.ui.define([
 		assert.notOk(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWorkingWeekend)), "14.06.2018 is a non working weekend day");
 	});
 
+	QUnit.test("Non working days helper method - ranges (start and end date)", function(assert) {
+		// Prepare
+		var oNonWorkingStartDate = UI5Date.getInstance(2018, 6, 2),
+			oNonWorkingEndDate = UI5Date.getInstance(2018, 6, 6),
+			oWorkingWeekend = UI5Date.getInstance(2018, 6, 14),
+			oGrid = new SinglePlanningCalendarGrid({
+			specialDates: [
+				new DateTypeRange({ type: "NonWorking", startDate: oNonWorkingStartDate, endDate: oNonWorkingEndDate }),
+				new DateTypeRange({ type: "Working", startDate: oWorkingWeekend })
+			]
+		});
+
+		// assert
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(UI5Date.getInstance(2018, 6, 3))), "03.06.2018 is a non working day");
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oNonWorkingEndDate)), "06.06.2018 is a non working day");
+		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oNonWorkingStartDate)), "02.06.2018 is a non working day");
+		assert.notOk(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oWorkingWeekend)), "14.06.2018 is a non working weekend day");
+	});
+
 	QUnit.test("Non working days helper method - get first special date", function(assert) {
 		// Prepare
 		var oNonWorking = UI5Date.getInstance(2018, 6, 2),
