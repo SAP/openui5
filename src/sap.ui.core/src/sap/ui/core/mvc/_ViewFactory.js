@@ -5,16 +5,20 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/ui/base/_runWithOwner",
+	"sap/ui/base/OwnStatics",
+	"sap/ui/base/ManagedObject",
 	"./ViewType"
 ], function(
 	assert,
 	Log,
 	extend,
-	_runWithOwner,
+	OwnStatics,
+	ManagedObject,
 	ViewType
 ) {
 	"use strict";
+
+	const { getCurrentOwnerId } = OwnStatics.get(ManagedObject);
 
 	/**
 	 * Extract module name from viewName property.
@@ -123,8 +127,8 @@ sap.ui.define([
 		// get current owner component
 		var Component = sap.ui.require("sap/ui/core/Component");
 
-		if (Component && _runWithOwner.getCurrentOwnerId()) {
-			var customViewConfig = Component.getCustomizing(_runWithOwner.getCurrentOwnerId(), {
+		if (Component && getCurrentOwnerId()) {
+			var customViewConfig = Component.getCustomizing(getCurrentOwnerId(), {
 				type: "sap.ui.viewReplacements",
 				name: oView.viewName
 			});

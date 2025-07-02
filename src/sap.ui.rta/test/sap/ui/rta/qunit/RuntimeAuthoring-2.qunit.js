@@ -131,6 +131,14 @@ sap.ui.define([
 		stubManifestChanges(oRta, false);
 	}
 
+	function disableVersioning() {
+		sandbox.stub(VersionsAPI, "initialize").callsFake(async function(...aArgs) {
+			const oModel = await VersionsAPI.initialize.wrappedMethod.apply(this, aArgs);
+			oModel.setProperty("/versioningEnabled", false);
+			return oModel;
+		});
+	}
+
 	function cleanInfoSessionStorage() {
 		const sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
 		window.sessionStorage.removeItem(`sap.ui.fl.info.${sFlexReference}`);
@@ -202,11 +210,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("and started without ATO in prod system", async function(assert) {
-			sandbox.stub(VersionsAPI, "initialize").callsFake(async function(...aArgs) {
-				const oModel = await VersionsAPI.initialize.wrappedMethod.apply(this, aArgs);
-				oModel.setProperty("/versioningEnabled", false);
-				return oModel;
-			});
+			disableVersioning();
 			await this.oRta.start();
 			await RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
 			assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is still visible");
@@ -537,7 +541,8 @@ sap.ui.define([
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the restore is disabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the reset button is disabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/visible"), false, "then the reset button is hidden");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
@@ -683,9 +688,21 @@ sap.ui.define([
 
 		QUnit.test("when RTA is started without versioning", async function(assert) {
 			stubToolbarButtonsVisibility(false, true);
+			disableVersioning();
 			await this.oRta.start();
 			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
 			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/visible"), true, "then the reset button is visible");
+		});
+
+		QUnit.test("when RTA is started without versioning and hideReset set to true", async function(assert) {
+			stubToolbarButtonsVisibility(false, true);
+			disableVersioning();
+			this.oRta.setHideReset(true);
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
+			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/visible"), false, "then the reset button is hidden");
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app is a home page", async function(assert) {

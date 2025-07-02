@@ -1035,7 +1035,7 @@ function(
 		showSelectAll: true
 	});
 
-	var oEmptyMultiComboBox = new MultiComboBox({
+	var oEmptyMultiComboBox = new MultiComboBox("mcbNoItems", {
 		placeholder: "MultiComboBox with no items"
 	});
 

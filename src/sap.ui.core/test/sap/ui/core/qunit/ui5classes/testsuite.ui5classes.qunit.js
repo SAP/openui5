@@ -75,6 +75,10 @@ sap.ui.define(function() {
 
 			Object: {
 				title: "sap.ui.base.Object"
+			},
+
+			OwnStatics: {
+				title: "sap.ui.base.OwnStatics"
 			}
 		}
 	};

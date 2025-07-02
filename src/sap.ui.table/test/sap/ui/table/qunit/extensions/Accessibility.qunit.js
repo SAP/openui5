@@ -220,7 +220,7 @@ sap.ui.define([
 			aLabels.push(sTableId + "-ariagrandtotallabel");
 		}
 
-		if (!bGroup && !bSum) {
+		if (!bGroup && !bSum && (bFirstTime || bRowChange)) {
 			aLabels.push(sRowId + "-highlighttext");
 		}
 

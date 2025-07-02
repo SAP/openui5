@@ -85,14 +85,14 @@
 					<w:Card
 						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json" >
 						<w:layoutData>
-							<f:GridContainerItemLayoutData minRows"6" columns="5" />
+							<f:GridContainerItemLayoutData minRows="6" columns="5" />
 						</w:layoutData>
 					</w:Card>
 					<w:Card
 						class="sapUiMediumMargin"
 						manifest="{cardsPlayground>/playgroundBaseUrl}/cardcontent/navigationService/manifest_navigation_objectContent.json" >
 						<w:layoutData>
-							<f:GridContainerItemLayoutData minRows"6" columns="7" />
+							<f:GridContainerItemLayoutData minRows="6" columns="7" />
 						</w:layoutData>
 					</w:Card>
 				</f:GridContainer>

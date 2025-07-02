@@ -28,13 +28,49 @@ sap.ui.define([
 	// Cache to store loaded XML documents
 	const oInteractionXMLCache = new Map();
 
-	const getNormalizedShortcutString = (sShortcut) => {
-		const sCtrlKey = Device.os.macintosh ? "Cmd+" : "Ctrl+";
-		let sNormalizedShortcut = /\bctrl\b/i.test(sShortcut) ? sCtrlKey : "";
-		sNormalizedShortcut += /\balt\b/i.test(sShortcut) ? "Alt+" : "";
-		sNormalizedShortcut += /\bshift\b/i.test(sShortcut) ? "Shift+" : "";
-		sNormalizedShortcut += /^(?:.*\+)?(.*)$/.exec(sShortcut.trim())[1] || "";
-		return sNormalizedShortcut;
+	const getNormalizedShortcutString = (input) => {
+		const allParts = input.split('+').map((p) => p.trim());
+
+		const modifiers = {
+			ctrl: false,
+			alt: false,
+			shift: false
+		};
+
+		let key = null;
+
+		for (const part of allParts) {
+			const lower = part.toLowerCase();
+			if (lower === 'ctrl') {
+				modifiers.ctrl = true;
+			} else if (lower === 'alt') {
+				modifiers.alt = true;
+			} else if (lower === 'shift') {
+				modifiers.shift = true;
+			} else if (!key) {
+				if (part.length === 1) {
+					key = part.toUpperCase(); // Single character keys are transformed to uppercase
+				} else {
+					key = part;
+				}
+			}
+		}
+
+		const result = [];
+		if (modifiers.ctrl) {
+			result.push(Device.os.macintosh ? 'Cmd' : 'Ctrl');
+		}
+		if (modifiers.alt) {
+			result.push('Alt');
+		}
+		if (modifiers.shift) {
+			result.push('Shift');
+		}
+		if (key) {
+			result.push(key);
+		}
+
+		return result.join('+');
 	};
 
 	/**

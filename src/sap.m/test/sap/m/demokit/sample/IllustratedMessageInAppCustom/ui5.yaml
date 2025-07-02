@@ -1,0 +1,27 @@
+specVersion: '4.0'
+metadata:
+  name: ui5-custom-illustrations-app
+type: application
+framework:
+  name: OpenUI5
+  version: "2.0.0-SNAPSHOT" #MainVersion#
+  libraries:
+    - name: sap.m
+    - name: sap.ui.core
+    - name: themelib_sap_horizon
+builder:
+  customTasks:
+    - name: add-illustrations-task
+      beforeTask: generateComponentPreload
+      configuration:
+        illustrationsPackage: "@external/ui5-illustrations-library"  # Name of the illustrations npm package
+        sourcePath: node_modules/@external/ui5-illustrations-library/illustrations  # Optional: custom source path
+        targetPath: webapp/resources/illustrations  # Optional: custom target path
+---
+specVersion: '3.0'
+kind: extension
+type: task
+metadata:
+  name: add-illustrations-task
+task:
+  path: add-illustrations-task.js

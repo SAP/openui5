@@ -443,8 +443,26 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("setAggregation: unchanged aggregation (undefined -> undefined)", function () {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(oBinding).expects("hasFilterNone").never();
+		this.mock(oBinding).expects("hasPendingChanges").never();
+		this.mock(oBinding).expects("getKeepAlivePredicates").never();
+		this.mock(oBinding).expects("applyParameters").never();
+
+		// code under test
+		oBinding.setAggregation();
+	});
+
+	//*********************************************************************************************
 [0, 1, 2].forEach(function (i) {
 	[0, 1, 2].forEach(function (j) {
+		if (!i && !j) {
+			return; // tested separately, see "unchanged aggregation"
+		}
+
 	QUnit.test("setAggregation: " + i + " <-> " + j, function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			mExpectedNewParameters = {

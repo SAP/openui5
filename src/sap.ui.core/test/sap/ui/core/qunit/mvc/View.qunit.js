@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/base/util/deepExtend",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/mvc/XMLView",
@@ -8,8 +9,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"./testdata/TestPreprocessor",
 	"sap/base/Log"
-], function(deepExtend, View, ViewType, XMLView, XMLPreprocessor, JSONModel, TestPreprocessor, Log) {
+], function(deepExtend, OwnStatics, View, ViewType, XMLView, XMLPreprocessor, JSONModel, TestPreprocessor, Log) {
 	"use strict";
+
+	const { _getPreprocessors, _removePreprocessor } = OwnStatics.get(View);
 
 	QUnit.module("sap.ui.core.mvc.View");
 
@@ -32,7 +35,6 @@ sap.ui.define([
 		beforeEach: function() {
 			this.mock = sinon.mock(XMLPreprocessor);
 			this.expectProcess = this.mock.expects("process");
-			this._mPreprocessors = deepExtend({}, View._mPreprocessors);
 			View.PreprocessorType = { "Foo": "foo" };
 		},
 		afterEach: function() {
@@ -40,7 +42,6 @@ sap.ui.define([
 			this.mock.restore();
 			delete this.expectProcess;
 			// remove existing global preprocessors
-			View._mPreprocessors = this._mPreprocessors;
 			delete View.PreprocessorType;
 		}
 	});
@@ -240,7 +241,6 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.mvc.View#registerPreprocessor", {
 		beforeEach: function(assert) {
-			this._mPreprocessors = deepExtend({}, View._mPreprocessors);
 			this.sViewContent = [
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc"/>'
 			].join('');
@@ -258,8 +258,6 @@ sap.ui.define([
 		afterEach: function() {
 			// restore the sinon spy to original state
 			View.prototype.runPreprocessor.restore();
-			// remove existing global preprocessors
-			View._mPreprocessors = this._mPreprocessors;
 			this.spy.restore();
 		}
 	});
@@ -269,27 +267,25 @@ sap.ui.define([
 
 		// templating preprocessor set by default
 		assert.deepEqual(
-			View._mPreprocessors,
-			{
-				"XML": {
-					"xml": [
-						{
-							"_onDemand": true,
-							"_syncSupport": true,
-							"preprocessor": "sap.ui.core.util.XMLPreprocessor"
-						}
-					]
-				}
-			},
-			"default templating preprocessor stored at view");
+			_getPreprocessors("XML", "xml"),
+			[{
+				"_onDemand": true,
+				"_syncSupport": true,
+				"preprocessor": "sap.ui.core.util.XMLPreprocessor",
+				"_settings": undefined
+			}],
+			"default templating preprocessor stored at view"
+		);
 
 		View.registerPreprocessor("controls", this.oPreprocessor, "test", true, this.mSettings);
 		// now a preprocessor is set
 		assert.deepEqual(
-			View._mPreprocessors["test"]["controls"],
+			_getPreprocessors("test", "controls"),
 			[{ _onDemand: false, preprocessor: this.oPreprocessor, _syncSupport: true, _settings: this.mSettings }],
 			"preprocessor stored at view"
 		);
+
+		_removePreprocessor("test", "controls", this.oPreprocessor, false, true);
 	});
 
 	QUnit.test("call method via init", function (assert) {
@@ -300,6 +296,7 @@ sap.ui.define([
 			definition: this.sViewContent
 		}).then(function(oView) {
 			sinon.assert.calledTwice(this.spy);
+			_removePreprocessor("XML", "controls", this.oPreprocessor);
 		}.bind(this));
 	});
 
@@ -317,8 +314,9 @@ sap.ui.define([
 			oView.runPreprocessor("controls").then(function (vSource) {
 				assert.ok(true, "Method called");
 				sinon.assert.calledThrice(oSpy);
-			});
-		});
+				_removePreprocessor("XML", "controls", this.oPreprocessor);
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("run together with local preprocessor", function (assert) {
@@ -351,7 +349,8 @@ sap.ui.define([
 			sinon.assert.calledTwice(oSpy);
 			assert.ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
 			assert.ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
-		});
+			_removePreprocessor("XML", "controls", this.oPreprocessor);
+		}.bind(this));
 	});
 
 	QUnit.test("global preprocessor and local preprocessor on one hook", function(assert) {
@@ -383,7 +382,8 @@ sap.ui.define([
 			sinon.assert.calledTwice(oSpy);
 			assert.ok(!oView.hasPreprocessor("xml"), "no active xml preprocessor");
 			assert.ok(oView.hasPreprocessor("controls"), "active controls preprocessor");
-		});
+			_removePreprocessor("XML", "controls", this.oPreprocessor);
+		}.bind(this));
 	});
 
 	QUnit.test("on demand preprocessor provided", function (assert) {
@@ -408,7 +408,8 @@ sap.ui.define([
 			sinon.assert.calledTwice(oSpy);
 			assert.ok(oView.hasPreprocessor("xml"), "active xml preprocessor");
 			assert.ok(!oView.hasPreprocessor("controls"), "no active controls preprocessor");
-		});
+			_removePreprocessor("XML", "xml", this.oPreprocessor, false, true);
+		}.bind(this));
 	});
 
 	QUnit.test("on demand preprocessor not provided", function (assert) {
@@ -465,6 +466,7 @@ sap.ui.define([
 			definition: this.sViewContent
 		}).then(function(oView) {
 			sinon.assert.calledTwice(oSpy);
+			_removePreprocessor("XML", "controls", "test-resources.sap.ui.core.qunit.mvc.testdata.TestPreprocessor", false, true);
 		});
 	});
 

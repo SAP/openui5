@@ -14,7 +14,7 @@ sap.ui.define([
 ], function (Basics, Log, BindingInfo, BindingParser, SyncPromise, Measurement) {
 	"use strict";
 
-	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt
+	// see https://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/abnf/
 	var sAnnotationHelper = "sap.ui.model.odata.v4.AnnotationHelper",
 		aPerformanceCategories = [sAnnotationHelper],
 		sPerformanceGetExpression = sAnnotationHelper + "/getExpression",

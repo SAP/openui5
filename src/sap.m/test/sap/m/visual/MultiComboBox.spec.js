@@ -226,6 +226,20 @@ describe('sap.m.MultiComboBox', function() {
 		});
 	});
 
+	// MultiComboBox - no items
+	it("should visualize a MultiComboBox dropdown with no items", function() {
+		browser.executeScript('document.getElementById("mcbNoItems").scrollIntoView()').then(function() {
+			var oMultiComboBoxArrow = element(by.id("mcbNoItems-arrow"));
+
+			// simulate dropdown icon click
+			oMultiComboBoxArrow.click();
+			expect(takeScreenshot()).toLookAs("multiComboBox_no_items");
+
+			// clean up
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+		});
+	});
+
 	//MultiComboBox Compact Mode
 	it("should select Compact mode", function(){
 		element(by.id("compactMode")).click();
