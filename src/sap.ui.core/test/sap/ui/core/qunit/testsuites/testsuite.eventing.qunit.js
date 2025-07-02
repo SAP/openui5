@@ -31,11 +31,21 @@ sap.ui.define(function() {
 				autostart: false,
 				loader: {
 					paths: {
-						"sap/ui/fastnav": "test-resources/sap/ui/core/qunit/testdata/fastnavigation/"
+						"sap/ui/fastnav": "test-resources/sap/ui/core/qunit/testdata/fastnavigation_legacyAPIs/"
 					}
 				},
 				ui5: {
 					libs: "sap.ui.webc.main"
+				}
+			},
+			FastNavigationWithSeamlessWebComponents: {
+				title: "QUnit page for Fast Keyboard Navigation (F6) using Web Components",
+				autostart: false,
+				loader: {
+					paths: {
+						"sap/ui/fastnav": "test-resources/sap/ui/core/qunit/testdata/fastnavigation/",
+						"testdata/fastnavigation": "test-resources/sap/ui/core/qunit/testdata/fastnavigation/"
+					}
 				}
 			},
 			FocusHandler: {
