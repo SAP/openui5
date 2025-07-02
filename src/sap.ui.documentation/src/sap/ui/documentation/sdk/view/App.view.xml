@@ -71,7 +71,7 @@
 					<OverflowToolbar class="sapUiDemoKitHeaderOTB" style="Clear">
 						<ObjectStatus
 							text="{ parts:
-								['appView>/bShowVersionSwitchButton', 'versionData>/isDevVersion', 'versionData>/version'],
+								['appView>/bShowVersionSwitchButton', 'versionData>/isDevVersion', 'versionData>/fullVersion'],
 								formatter: '.formatter.formatVersionStatus'
 							}"
 							state="Information"
@@ -301,7 +301,7 @@
 							'messagesData>text'
 						],
 						formatter: '.formatter.formatImportantMessage'
-					}" class="sapUiTinyMarginBottom sapUiTinyMarginBeginEnd" showIcon="true" showCloseButton="true" visible="{messagesData>isMessageVisible}" type="{messagesData>type}">
+					}" class="sapUiTinyMarginBottom sapUiTinyMarginBeginEnd" showIcon="true" showCloseButton="{= !${messagesData>mandatory} }" visible="{messagesData>isMessageVisible}" type="{messagesData>type}">
 						<customData>
 							<core:CustomData key="messageID" value="{messagesData>id}" />
 						</customData>
