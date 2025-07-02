@@ -966,6 +966,37 @@ function(Element, nextUIUpdate, $, Control, coreLibrary, XMLView, ResizeHandler,
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("Show action after subSection rendering", async function(assert) {
+		var oActionButton = new Button({text: "Button1", visible: false}),
+			oSubSection = new ObjectPageSubSectionClass({
+				title: "SubSection Title",
+				showTitle: false,
+				actions: [oActionButton],
+				blocks: new Label({text: "Block1" })
+			}),
+			oSection = new ObjectPageSection({
+				title:"Personal",
+				subSections: [ oSubSection ]
+			}),
+			oObjectPageLayout = new ObjectPageLayout({
+				sections: [ oSection ]
+			}),
+			fnIsSubSectionHeaderHidden = function() {
+				return oSubSection.$().find(".sapUxAPObjectPageSubSectionHeader").hasClass("sapUiHidden");
+			},
+			fnDone = assert.async();
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		await nextUIUpdate();
+
+		assert.ok(fnIsSubSectionHeaderHidden(), "SubSection header is hidden");
+		oActionButton.setVisible(true);
+		assert.ok(!fnIsSubSectionHeaderHidden(), "SubSection header is visible");
+		fnDone();
+
+		oObjectPageLayout.destroy();
+	});
+
 	QUnit.module("Object Page SubSection - blocks aggregation");
 
 	QUnit.test("Generates correct layout Configuration", function (assert) {

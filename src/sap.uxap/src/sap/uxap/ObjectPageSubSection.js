@@ -673,7 +673,7 @@ sap.ui.define([
 			bHasTitle;
 
 		if (sChangeName === "visible") { // change of the actions elements` visibility
-			bHasTitle = this._getInternalTitleVisible() && this.getTitle().trim() !== "";
+			bHasTitle = this._isTitleVisible();
 			if (!bHasTitle) {
 				this.$("header").toggleClass("sapUiHidden", !this._hasVisibleActions());
 			}
