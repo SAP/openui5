@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'../base/_runWithOwner',
 	'../base/ManagedObject',
+	'../base/OwnStatics',
 	'./Element',
 	'./XMLTemplateProcessor',
 	'sap/base/Log',
@@ -13,8 +13,8 @@ sap.ui.define([
 	'sap/ui/core/Component'
 ],
 function(
-	_runWithOwner,
 	ManagedObject,
+	OwnStatics,
 	Element,
 	XMLTemplateProcessor,
 	Log,
@@ -27,6 +27,8 @@ function(
 
 	var mRegistry = {}, // the Fragment registry
 	mTypes = {}; // the Fragment types registry, holding their implementations
+
+	const { getCurrentOwnerId, runWithPreprocessors } = OwnStatics.get(ManagedObject);
 
 	/**
 	 * @classdesc Fragments support the definition of light-weight stand-alone UI control trees.
@@ -199,7 +201,7 @@ function(
 		// remember the name of this Fragment
 		this._sFragmentName = mSettings.fragmentName;
 
-		// if the containing view (or fragment) has a scoped runWithOnwer function we need to propagate this to the nested Fragment (only for async case)
+		// if the containing view (or fragment) has a scoped runWithOwner function we need to propagate this to the nested Fragment (only for async case)
 		this.fnScopedRunWithOwner = mSettings.containingView && mSettings.containingView.fnScopedRunWithOwner;
 
 		if (!this.fnScopedRunWithOwner && this._sOwnerId) {
@@ -482,7 +484,7 @@ function(
 		mParameters.fragmentName = mParameters.fragmentName || mParameters.name;
 		mParameters.fragmentContent = mParameters.fragmentContent || mParameters.definition;
 		mParameters.oController = mParameters.controller;
-		mParameters.sOwnerId = _runWithOwner.getCurrentOwnerId();
+		mParameters.sOwnerId = getCurrentOwnerId();
 		delete mParameters.name;
 		delete mParameters.definition;
 		delete mParameters.controller;
@@ -552,7 +554,7 @@ function(
 			// similar to the XMLView we need to have a scoped runWithPreprocessors function
 			var oParseConfig = {
 				fnRunWithPreprocessor: function(fn) {
-					return ManagedObject.runWithPreprocessors(fn, {
+					return runWithPreprocessors(fn, {
 						settings: fnSettingsPreprocessor
 					});
 				}
@@ -632,7 +634,7 @@ function(
 			this._oContainingView = mSettings.containingView || this;
 
 			// unset any preprocessors (e.g. from an enclosing JSON view)
-			return ManagedObject.runWithPreprocessors(function() {
+			return runWithPreprocessors(function() {
 				var vContent;
 				if (this.fnScopedRunWithOwner) {
 					this.fnScopedRunWithOwner(function () {

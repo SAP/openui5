@@ -4758,7 +4758,7 @@ sap.ui.define([
 
 	/**
 		 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
-		 * implicitly from it.
+		 * implicitly from it. If the aggregation is unchanged, nothing happens.
 		 *
 		 * @param {object} [oAggregation]
 		 *   An object holding the information needed for data aggregation; see also
@@ -4871,12 +4871,13 @@ sap.ui.define([
 		 *     <li> the binding has a {@link sap.ui.model.odata.v4.Context#isKeepAlive kept-alive}
 		 *       context when switching the use case of data aggregation (recursive hierarchy, pure data
 		 *       aggregation, or none at all),
-		 *     <li> there are pending changes,
+		 *     <li> there are pending changes (unless the aggregation is unchanged),
 		 *     <li> a recursive hierarchy is requested, but the model does not use the
 		 *       <code>autoExpandSelect</code> parameter,
 		 *     <li> the binding is part of a {@link #create deep create} because it is relative to a
 		 *       {@link sap.ui.model.odata.v4.Context#isTransient transient} context,
-		 *     <li> the binding has {@link sap.ui.model.Filter.NONE}
+		 *     <li> the binding has {@link sap.ui.model.Filter.NONE} (unless the aggregation is
+		 *       unchanged)
 		 *   </ul>
 		 *
 		 * @example <caption>First group level is product category including subtotals for the net
@@ -4919,6 +4920,9 @@ sap.ui.define([
 		}
 
 		this.checkTransient();
+		if (oAggregation === undefined && this.mParameters.$$aggregation === undefined) {
+			return;
+		}
 		if (this.hasFilterNone()) {
 			throw new Error("Cannot combine Filter.NONE with $$aggregation");
 		}

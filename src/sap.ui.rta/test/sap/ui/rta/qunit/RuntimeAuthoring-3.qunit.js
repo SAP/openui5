@@ -57,8 +57,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+	const sandbox = sinon.createSandbox();
+	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+	const sParametersAfterRestartKey = "sap.ui.rta.RuntimeAuthoring.parametersAfterRestart";
 
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "fixture.application", {
 		"_version": "2.0.2",
@@ -816,6 +817,27 @@ sap.ui.define([
 					scenario: "scenario"
 				}
 			);
+		});
+
+		QUnit.test("when starting RTA with additional properties in the sessionStorage", function(assert) {
+			window.sessionStorage.setItem(sParametersAfterRestartKey, JSON.stringify([
+				{ name: "hideReset", value: true },
+				{ name: "showToolbars", value: false },
+				{ name: "commandStack", value: "anything" },
+				{ name: "thisDoesNotExist", value: true }
+			]));
+			const oAssertSpy = sandbox.spy(console, "assert");
+
+			const oRuntimeAuthoring = new RuntimeAuthoring({
+				rootControl: oComp,
+				showToolbars: true
+			});
+
+			assert.strictEqual(oRuntimeAuthoring.getShowToolbars(), false, "then the showToolbars property is set to false");
+			assert.strictEqual(oRuntimeAuthoring.getHideReset(), true, "then the hideReset property is set to true");
+			// the getter will create the commandStack if it does not exist, so we have to use getProperty instead
+			assert.strictEqual(oRuntimeAuthoring.getProperty("commandStack"), undefined, "then the commandStack property is not set");
+			assert.strictEqual(oAssertSpy.callCount, 0, "then no assertion error is logged");
 		});
 	});
 

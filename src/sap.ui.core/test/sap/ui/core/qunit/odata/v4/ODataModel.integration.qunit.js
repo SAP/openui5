@@ -65854,6 +65854,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2321
 	//
 	// Test v4.Context#getFilter (JIRA: CPOUI5ODATAV4-2768)
+	//
+	// If a list binding has no $$aggregation set, calling ODLB#setAggregation with undefined has no
+	// effects, even if Filter.NONE was set.
+	// SNOW: DINC0512612
 	[
 		{desc : "grid table", table : "t:Table", parameters : "", rows : "rows", top : 110},
 		{desc : "responsive table", table : "Table", parameters : "", rows : "items", top : 100},
@@ -66001,6 +66005,9 @@ sap.ui.define([
 				// code under test
 				oBinding.setAggregation({hierarchyQualifier : "X"});
 			}, new Error("Cannot combine Filter.NONE with $$aggregation"));
+
+			// code under test (SNOW: DINC0512612) - unchanged aggregation (undefined -> undefined)
+			oBinding.setAggregation();
 
 			this.expectRequest("SalesOrderList?$filter=SalesOrderID eq '42'"
 				+ "&$select=Note,SalesOrderID",
@@ -69880,6 +69887,10 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-1566
 	//
 	// Selection must not make a difference here (JIRA: CPOUI5ODATAV4-2053).
+	//
+	// If a list binding has no $$aggregation set, calling ODLB#setAggregation with undefined has no
+	// effects, even if pending changes exist.
+	// SNOW: DINC0512612
 	QUnit.test("JIRA: CPOUI5ODATAV4-1104 - do not ignore indirect kept-alive", function (assert) {
 		var oInactiveCreationRow,
 			oItemsTableBinding,
@@ -69954,6 +69965,9 @@ sap.ui.define([
 				// code under test
 				oKeptAliveItem.refresh();
 			}, new Error("Cannot refresh entity due to pending changes: " + oKeptAliveItem));
+
+			// code under test (SNOW: DINC0512612) - unchanged aggregation (undefined -> undefined)
+			oListReportBinding.setAggregation();
 
 			return that.waitForChanges(assert);
 		}).then(function () {

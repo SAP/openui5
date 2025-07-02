@@ -369,9 +369,9 @@ sap.ui.define([
 		 * @see ExtensionHelper.getRowColChange
 		 * @see ExtensionHelper.storeDefaultsBeforeCellModifications
 		 */
-		performCellModifications: function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, fAdapt) {
+		performCellModifications: function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, oChangeInfo, fAdapt) {
 			ExtensionHelper.storeDefaultsBeforeCellModifications(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions);
-			const oChangeInfo = ExtensionHelper.getRowColChange(oExtension);
+
 			const oTable = oExtension.getTable();
 			const sTableId = oTable.getId();
 			oTable.$("cellacc").text(sText || "."); //set the custom text to the prepared hidden element
@@ -404,7 +404,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a data cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfDataCell: function(oCellInfo) {
+		modifyAccOfDataCell: function(oCellInfo, oChangeInfo) {
 			const oTable = this.getTable();
 			const sTableId = oTable.getId();
 			const oIN = oTable._getItemNavigation();
@@ -440,7 +440,7 @@ sap.ui.define([
 				aLabels.push(sTableId + "-ariagrouptotallabel");
 			}
 
-			if (TableUtils.hasRowHighlights(oTable) && !bIsGroupHeader && !bIsSummary) {
+			if (TableUtils.hasRowHighlights(oTable) && !bIsGroupHeader && !bIsSummary && oChangeInfo.rowChange) {
 				aLabels.push(sRowId + "-highlighttext");
 			}
 
@@ -466,7 +466,7 @@ sap.ui.define([
 				}
 			}
 
-			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText,
+			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText, oChangeInfo,
 				function(aLabels, aDescriptions, bRowChange, bColChange) {
 					if (bIsGroupHeader && bRowChange) {
 						aLabels.splice(1, 0, sRowId + "-groupHeader");
@@ -486,7 +486,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a row header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfRowHeader: function(oCellInfo) {
+		modifyAccOfRowHeader: function(oCellInfo, oChangeInfo) {
 			const oTable = this.getTable();
 			const sTableId = oTable.getId();
 			const $Cell = jQuery(oCellInfo.cell);
@@ -498,7 +498,7 @@ sap.ui.define([
 			if (!oRow.isSummary() && !oRow.isGroupHeader() && !oRow.isContentHidden()) {
 				aLabels.push(sRowId + "-rowselecttext");
 
-				if (TableUtils.hasRowHighlights(oTable)) {
+				if (TableUtils.hasRowHighlights(oTable) && oChangeInfo.rowChange) {
 					aLabels.push(sRowId + "-highlighttext");
 				}
 			}
@@ -515,14 +515,14 @@ sap.ui.define([
 				aLabels.push(sTableId + "-ariagrouptotallabel");
 			}
 
-			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, null, null);
+			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, null, null, oChangeInfo);
 		},
 
 		/*
 		 * Modifies the labels and descriptions of a column header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfColumnHeader: function(oCellInfo) {
+		modifyAccOfColumnHeader: function(oCellInfo, oChangeInfo) {
 			const oTable = this.getTable();
 			const $Cell = jQuery(oCellInfo.cell);
 			const oColumn = Element.getElementById($Cell.attr("data-sap-ui-colid"));
@@ -559,7 +559,7 @@ sap.ui.define([
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
-				aLabels, mAttributes["aria-describedby"], sText
+				aLabels, mAttributes["aria-describedby"], sText, oChangeInfo
 			);
 		},
 
@@ -567,7 +567,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of the column row header.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfColumnRowHeader: function(oCellInfo) {
+		modifyAccOfColumnRowHeader: function(oCellInfo, oChangeInfo) {
 			const oTable = this.getTable();
 			const $Cell = jQuery(oCellInfo.cell);
 			const bEnabled = $Cell.hasClass("sapUiTableSelAllVisible");
@@ -578,7 +578,7 @@ sap.ui.define([
 			);
 			const aLabels = mAttributes["aria-labelledby"] || [];
 			ExtensionHelper.performCellModifications(this, $Cell, [], mAttributes["aria-describedby"],
-				aLabels, mAttributes["aria-describedby"], null
+				aLabels, mAttributes["aria-describedby"], null, oChangeInfo
 			);
 		},
 
@@ -586,7 +586,7 @@ sap.ui.define([
 		 * Modifies the labels and descriptions of a row action cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfRowAction: function(oCellInfo) {
+		modifyAccOfRowAction: function(oCellInfo, oChangeInfo) {
 			const oTable = this.getTable();
 			const sTableId = oTable.getId();
 			const $Cell = jQuery(oCellInfo.cell);
@@ -609,7 +609,7 @@ sap.ui.define([
 				aLabels.push(sTableId + "-ariagrouptotallabel");
 			}
 
-			if (TableUtils.hasRowHighlights(oTable) && !oRow.isGroupHeader() && !oRow.isSummary()) {
+			if (TableUtils.hasRowHighlights(oTable) && !oRow.isGroupHeader() && !oRow.isSummary() && oChangeInfo.rowChange) {
 				aLabels.push(sRowId + "-highlighttext");
 			}
 
@@ -625,7 +625,7 @@ sap.ui.define([
 				}
 			}
 
-			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, [], aLabels, aDescriptions, sText,
+			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, [], aLabels, aDescriptions, sText, oChangeInfo,
 				function(aLabels, aDescriptions, bRowChange) {
 					if (bIsGroupHeader && bRowChange) {
 						const iIndex = aLabels.indexOf(sTableId + "-ariarowgrouplabel") + 1;
@@ -1361,7 +1361,8 @@ sap.ui.define([
 			}
 		}
 
-		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo]);
+		const oChangeInfo = ExtensionHelper.getRowColChange(this);
+		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo, oChangeInfo]);
 	};
 
 	/**

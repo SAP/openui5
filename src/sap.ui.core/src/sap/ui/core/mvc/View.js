@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
-	"sap/ui/base/_runWithOwner",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/Control",
 	"sap/ui/base/DesignTime",
 	"sap/ui/core/Element",
@@ -24,8 +24,8 @@ sap.ui.define([
 	extend,
 	isEmptyObject,
 	merge,
-	_runWithOwner,
 	ManagedObject,
+	OwnStatics,
 	Control,
 	DesignTime,
 	Element,
@@ -36,6 +36,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	const { getCurrentOwnerId, runWithPreprocessors } = OwnStatics.get(ManagedObject);
 
 	/**
 	 * @namespace
@@ -291,11 +292,9 @@ sap.ui.define([
 
 	/**
 	 * Global map of preprocessors with view types and source types as keys,
-	 * e.g. _mPreprocessors[sViewType][sSourceType]
-	 *
-	 * @private
+	 * e.g. mPreprocessors[sViewType][sSourceType]
 	 */
-	View._mPreprocessors = {};
+	const mPreprocessors = {};
 
 	/**
 	 * align object structure to internal preprocessor format to be able to store internal settings without conflicts
@@ -358,8 +357,8 @@ sap.ui.define([
 			i, l, oOnDemandPreprocessor, aPreprocessors = [];
 
 		//clone static preprocessor settings
-		if (View._mPreprocessors[sViewType] && View._mPreprocessors[sViewType][sType]) {
-			aGlobalPreprocessors = View._mPreprocessors[sViewType][sType].map(function(oProcessor) {
+		if (mPreprocessors[sViewType] && mPreprocessors[sViewType][sType]) {
+			aGlobalPreprocessors = mPreprocessors[sViewType][sType].map(function(oProcessor) {
 				return Object.assign({}, oProcessor);
 			});
 		}
@@ -462,7 +461,7 @@ sap.ui.define([
 			} else {
 				oThis.bControllerIsViewManaged = false;
 				// if passed controller is not extended yet we need to do it.
-				var sOwnerId = _runWithOwner.getCurrentOwnerId();
+				var sOwnerId = getCurrentOwnerId();
 				if (!oController._isExtended()) {
 					oController = Controller.applyExtensions(oController, sName, sOwnerId, oThis.sId, true);
 				} else {
@@ -836,16 +835,16 @@ sap.ui.define([
 	};
 
 	function initGlobalPreprocessorsRegistry(sType, sViewType) {
-		if (!View._mPreprocessors[sViewType]) {
-			View._mPreprocessors[sViewType] = {};
+		if (!mPreprocessors[sViewType]) {
+			mPreprocessors[sViewType] = {};
 		}
-		if (!View._mPreprocessors[sViewType][sType]) {
-			View._mPreprocessors[sViewType][sType] = [];
+		if (!mPreprocessors[sViewType][sType]) {
+			mPreprocessors[sViewType][sType] = [];
 		}
 	}
 
 	function onDemandPreprocessorExists(sViewType, sType) {
-		return View._mPreprocessors[sViewType][sType].some(function(oPreprocessor) {
+		return mPreprocessors[sViewType][sType].some(function(oPreprocessor) {
 			return !!oPreprocessor._onDemand;
 		});
 	}
@@ -897,7 +896,7 @@ sap.ui.define([
 			if (bOnDemand && onDemandPreprocessorExists(sViewType, sType)) {
 				throw new Error(`${this.getMetadata().getName()}: Registration for "${sType}" failed, only one on-demand-preprocessor allowed`);
 			}
-			View._mPreprocessors[sViewType][sType].push({
+			mPreprocessors[sViewType][sType].push({
 				preprocessor: vPreprocessor,
 				_onDemand: bOnDemand,
 				_syncSupport: bSyncSupport,
@@ -1022,8 +1021,8 @@ sap.ui.define([
 		// This is required as the viewFactory is called async
 		var Component = sap.ui.require("sap/ui/core/Component");
 		var oOwnerComponent;
-		if (Component && _runWithOwner.getCurrentOwnerId()) {
-			oOwnerComponent = Component.getComponentById(_runWithOwner.getCurrentOwnerId());
+		if (Component && getCurrentOwnerId()) {
+			oOwnerComponent = Component.getComponentById(getCurrentOwnerId());
 		}
 
 		function createView() {
@@ -1176,7 +1175,7 @@ sap.ui.define([
 			settings: this._fnSettingsPreprocessor
 		};
 
-		return ManagedObject.runWithPreprocessors(function() {
+		return runWithPreprocessors(function() {
 			var vContent = this.createContent(oController);
 			if (mSettings.async) {
 				vContent = Promise.resolve(vContent);
@@ -1210,6 +1209,51 @@ sap.ui.define([
 		}
 		return Promise.resolve();
 	};
+
+	OwnStatics.set(View, {
+		/**
+		 * Retrieves all registered preprocessors for a given view and preprocessor type.
+		 *
+		 * @param {string} sViewType - The view type
+		 * @param {string} sType - The preprocessor type
+		 * @returns {Array<object>} An array of matching preprocessor entries. Returns an empty array if none are registered.
+		 * @private
+		 */
+		_getPreprocessors: function(sViewType, sType) {
+			if (!mPreprocessors[sViewType]) {
+				return [];
+			}
+			return mPreprocessors[sViewType][sType] || [];
+		},
+		/**
+		 * Removes a specific preprocessor from the registry based on its characteristics.
+		 *
+		 * The preprocessor is matched by reference and optional flags (`_onDemand` and `_syncSupport`).
+		 *
+		 * @param {string} sViewType - The view type from which to remove the preprocessor.
+		 * @param {string} sType - The preprocessor type.
+		 * @param {object} oPreprocessor - The preprocessor function or object to remove.
+		 * @param {boolean} [bOnDemand] - Whether the preprocessor was registered as on-demand.
+		 * @param {boolean} [bSyncSupport] - Whether the preprocessor supports synchronous execution.
+		 * @returns {object|null} The removed preprocessor entry if found and removed, otherwise `null`.
+		 * @private
+		 */
+		_removePreprocessor: function(sViewType, sType, oPreprocessor, bOnDemand, bSyncSupport) {
+			if (mPreprocessors[sViewType] && mPreprocessors[sViewType][sType]) {
+				const aPreprocessors = mPreprocessors[sViewType][sType];
+				const iIndex = aPreprocessors.findIndex((oEntry) => {
+					return !!oEntry._onDemand === !!bOnDemand
+						&& !!oEntry._syncSupport === !!bSyncSupport
+						&& oEntry.preprocessor === oPreprocessor;
+				});
+				if (iIndex >= 0) {
+					return aPreprocessors.splice(iIndex, 1)[0];
+				}
+			}
+
+			return null;
+		}
+	});
 
 	return View;
 });

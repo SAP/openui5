@@ -1,10 +1,10 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/base/_runWithOwner",
 	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/DataType",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Context",
@@ -18,8 +18,12 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/future"
-], function(_runWithOwner, BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, UnitType, Control, Component, Sorter, ManagedObjectMetadata, isEmptyObject, ObjectPath, future) {
+], function(BindingInfo, BindingParser, DataType, ManagedObject, OwnStatics, Element, JSONModel, Context, ManagedObjectModel, StringType, UnitType, Control, Component, Sorter, ManagedObjectMetadata, isEmptyObject, ObjectPath, future) {
 	"use strict";
+
+	const { runWithOwner } = OwnStatics.get(ManagedObject);
+
+
 	var mObjects = {};
 
 	var MyEnum = {
@@ -1312,7 +1316,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind aggregation with Owner", function(assert) {
-		var oObjWithOwner = _runWithOwner(function() {
+		var oObjWithOwner = runWithOwner(function() {
 			return new TestManagedObject();
 		}, "myOwnerComponent");
 
@@ -1363,7 +1367,7 @@ sap.ui.define([
 		oClone.destroy();
 
 		// new MO with different owner ID
-		var oObjWithDifferentOwner = _runWithOwner(function() {
+		var oObjWithDifferentOwner = runWithOwner(function() {
 			return new TestManagedObject();
 		}, "myOwnerComponent2");
 
@@ -1385,7 +1389,7 @@ sap.ui.define([
 		oObjWithOwner.bindAggregation("subObjects", {
 			path: "/list",
 			factory: function(id) {
-				return _runWithOwner(function() {
+				return runWithOwner(function() {
 					return new TestManagedObject(id);
 				}, "myAppOwnerComponent");
 			}

@@ -13,8 +13,8 @@ sap.ui.define([
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
 	'sap/base/util/merge',
-	'sap/ui/base/_runWithOwner',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/base/OwnStatics',
 	'sap/ui/core/Lib',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/thirdparty/URI',
@@ -41,8 +41,8 @@ sap.ui.define([
 	extend,
 	deepExtend,
 	merge,
-	_runWithOwner,
 	ManagedObject,
+	OwnStatics,
 	Library,
 	ResizeHandler,
 	URI,
@@ -63,6 +63,8 @@ sap.ui.define([
 	"use strict";
 
 	/* global Promise */
+
+	const { runWithOwner, getCurrentOwnerId } = OwnStatics.get(ManagedObject);
 
 	var ServiceStartupOptions = {
 		lazy: "lazy",
@@ -745,7 +747,7 @@ sap.ui.define([
 			throw new Error("Execute 'runAsOwner' on an inactive owner component is not supported. Component: '" +
 				this.getMetadata().getName() + "' with id '" + this.getId() + "'.");
 		}
-		return _runWithOwner(fn, this.getId());
+		return runWithOwner(fn, this.getId());
 	};
 
 	// ---- ----
@@ -1971,10 +1973,10 @@ sap.ui.define([
 					model: oModel,
 					modelId: sModelName
 				};
-				const oOwnerComponent = Component.getComponentById(_runWithOwner.getCurrentOwnerId());
+				const oOwnerComponent = Component.getComponentById(getCurrentOwnerId());
 				if (oOwnerComponent) {
 					oInfo.owner = {
-						id: _runWithOwner.getCurrentOwnerId(),
+						id: getCurrentOwnerId(),
 						config: oOwnerComponent._componentConfig
 					};
 				}
@@ -2286,7 +2288,7 @@ sap.ui.define([
 	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
 	function componentFactory(vConfig, bLegacy) {
-		var oOwnerComponent = Component.getComponentById(_runWithOwner.getCurrentOwnerId());
+		var oOwnerComponent = Component.getComponentById(getCurrentOwnerId());
 
 		if (Array.isArray(vConfig.activeTerminologies) && vConfig.activeTerminologies.length &&
 			Array.isArray(Localization.getActiveTerminologies()) && Localization.getActiveTerminologies().length) {
@@ -2394,7 +2396,7 @@ sap.ui.define([
 		if ( vConfig.async ) {
 			// async: instantiate component after Promise has been fulfilled with component
 			//        constructor and delegate the current owner id for the instance creation
-			var sCurrentOwnerId = _runWithOwner.getCurrentOwnerId();
+			var sCurrentOwnerId = getCurrentOwnerId();
 			return vClassOrPromise.then(function(oClass) {
 				// [Compatibility]: We sequentialize the dependency loading for the inheritance chain of the component.
 				// This keeps the order of the dependency execution stable (e.g. thirdparty script includes).
@@ -2451,7 +2453,7 @@ sap.ui.define([
 					// load all classes in parallel
 					await Promise.all([...aModuleLoadingPromises, pModelClassLoading]);
 
-					return _runWithOwner(function() {
+					return runWithOwner(function() {
 						return createInstance(oClass);
 					}, sCurrentOwnerId);
 				});

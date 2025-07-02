@@ -17,19 +17,99 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getNormalizedShortcutString - handles Win and Mac modifier keys", function (assert) {
+	QUnit.test("getNormalizedShortcutString (Win devices)", function (assert) {
 		Device.os.macintosh = false;
 		assert.strictEqual(
 			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Alt+S"),
 			"Ctrl+Alt+S",
-			"Correctly normalized for non-Mac"
+			"'Ctrl+Alt+S' correctly normalized to 'Ctrl+Alt+S'"
 		);
 
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("ctrl+Alt+ s"),
+			"Ctrl+Alt+S",
+			"'ctrl+Alt+ s' correctly normalized to 'Ctrl+Alt+S'"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Alt+ ctrl+ s"),
+			"Ctrl+Alt+S",
+			"'Alt+ ctrl+ s' correctly normalized to 'Ctrl+Alt+S'"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Shift+K"),
+			"Ctrl+Shift+K",
+			"Correctly normalized"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Shift"),
+			"Shift",
+			"Single 'Shift' key is correctly normalized"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("shift"),
+			"Shift",
+			"'shift' key is correctly normalized to 'Shift'"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl"),
+			"Ctrl",
+			"Single 'Ctrl' key is correctly normalized"
+		);
+	});
+
+	QUnit.test("getNormalizedShortcutString (Mac devices)", function (assert) {
 		Device.os.macintosh = true;
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Alt+S"),
+			"Cmd+Alt+S",
+			"'Ctrl+Alt+S' correctly normalized to 'Cmd+Alt+S' for Mac"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("ctrl+Alt+ s"),
+			"Cmd+Alt+S",
+			"'ctrl+Alt+ s' correctly normalized to 'Cmd+Alt+S' for Mac"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Alt+ ctrl+ s"),
+			"Cmd+Alt+S",
+			"'Alt+ ctrl+ s' correctly normalized to 'Cmd+Alt+S' for Mac"
+		);
+
 		assert.strictEqual(
 			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Shift+K"),
 			"Cmd+Shift+K",
-			"Correctly normalized for Mac"
+			"'Ctrl+Shift+K' correctly normalized to 'Cmd+Shift+K' for Mac"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Shift"),
+			"Shift",
+			"Single 'Shift' key is correctly normalized for Mac"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("shift"),
+			"Shift",
+			"'shift' key is correctly normalized to 'Shift' for Mac"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl"),
+			"Cmd",
+			"Single 'Ctrl' key is correctly normalized to 'Cmd' for Mac"
+		);
+
+		assert.strictEqual(
+			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+ArrowUp"),
+			"Cmd+ArrowUp",
+			"Single 'Ctrl+ArrowUp' key is correctly normalized to 'Cmd+ArrowUp' for Mac"
 		);
 	});
 

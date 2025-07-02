@@ -636,7 +636,7 @@ sap.ui.define([
 				...oAriaProps
 			});
 
-		const sTooltip = this.getTooltip_AsString() || this.getText();
+		const sTooltip = this.getTooltip_AsString();
 		if (sTooltip) {
 			oRM.attr("title", sTooltip);
 		}
@@ -853,20 +853,31 @@ sap.ui.define([
 		}
 	};
 
+
 	/**
-	 * Handles focusout event.
 	 * Removes the temporary class set which disabled the showing of the text during hover and focus.
 	 *
 	 * @private
 	 */
-	NavigationListItem.prototype.onfocusout = function () {
+	NavigationListItem.prototype._removeHoverEffect = function () {
 		var oMainRef = this.getDomRef()?.querySelector(".sapTntNLIFirstLevel");
 		if (oMainRef) {
 			oMainRef.classList.remove("sapTntNLINoHoverEffect");
 		}
 	};
 
-	NavigationListItem.prototype.onmouseout = function () {
+	/**
+	 * Handles focusout event.
+	 *
+	 * @private
+	 */
+	NavigationListItem.prototype.onfocusout = function () {
+		this._removeHoverEffect();
+	};
+
+	NavigationListItem.prototype.onmouseout = function (oEvent) {
+		NavigationListItemBase.prototype.onmouseout.call(this, oEvent);
+
 		const oMainRef = this.getDomRef()?.querySelector(".sapTntNLIFirstLevel");
 		const oNavList = this.getNavigationList();
 		const oSubItemSelected = this.getItems().find((oItem) => oItem === oNavList.getSelectedItem());
@@ -876,7 +887,17 @@ sap.ui.define([
 		}
 	};
 
-	NavigationListItem.prototype.onmouseover = NavigationListItem.prototype.onfocusout;
+	/**
+	 * Handles onmouseover event.
+	 *
+	 * @param {jQuery.Event} oEvent The event object triggered by the mouseover event.
+	 * @private
+	 */
+	NavigationListItem.prototype.onmouseover = function (oEvent) {
+		NavigationListItemBase.prototype.onmouseover.call(this, oEvent);
+
+		this._removeHoverEffect();
+	};
 
 	return NavigationListItem;
 });

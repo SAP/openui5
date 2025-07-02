@@ -1,0 +1,32 @@
+{
+	"_version": "2.0.2",
+	"sap.app": {
+		"id": "sap.m.sample.IllustratedMessageInAppCustom",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'IllustratedMessageInAppCustom'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.m.sample.IllustratedMessageInAppCustom.view.Main",
+		"resourceRoots": {
+			"illustrations": "resources/illustrations"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		}
+	}
+}

@@ -1,0 +1,20 @@
+{
+	"name": "ui5-illustrations-library",
+	"version": "1.0.5",
+	"description": "Illustrations library for UI5 applications with validation and sanitization",
+	"main": "index.js",
+	"scripts": {
+	  "validate": "node index.js ./illustrations"
+	},
+	"keywords": [
+	  "svg",
+	  "illustrations",
+	  "ui5"
+	],
+	"author": "SAP SE",
+	"dependencies": {
+	  "dompurify": "^2.4.0",
+	  "jsdom": "^19.0.0",
+	  "xmldom": "^0.6.0"
+	}
+  }
