@@ -25,6 +25,71 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 	QUnit.module("NumberFormat");
 
+	//*********************************************************************************************
+[
+	{sFactoryMethod: "getFloatInstance", sResult: "12345"},
+	{sFactoryMethod: "getIntegerInstance", sResult: "12345"},
+	{sFactoryMethod: "getCurrencyInstance", sResult: "12345.00"},
+	{sFactoryMethod: "getUnitInstance", sResult: "12345"},
+	{sFactoryMethod: "getPercentInstance", sResult: "1234500%"}
+].forEach(function (oFixture) {
+	QUnit.test("checkGroupingFormatOptions for " + oFixture.sFactoryMethod + " leads to warning", function (assert) {
+		var oFormat;
+
+		this.mock(Log).expects("warning")
+			.withExactArgs("Grouping is disabled due to non-positive groupingSize set to '0'.");
+
+		// code under test
+		oFormat = NumberFormat[oFixture.sFactoryMethod]({
+			groupingEnabled: true,
+			groupingSize: 0
+		});
+
+		assert.strictEqual(oFormat.format(12345).toString(), oFixture.sResult);
+		assert.strictEqual(oFormat.oFormatOptions.groupingEnabled, false);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{sFactoryMethod: "getFloatInstance", sType: "float"},
+	{sFactoryMethod: "getIntegerInstance", sType: "integer"},
+	{sFactoryMethod: "getCurrencyInstance", sType: "currency"},
+	{sFactoryMethod: "getUnitInstance", sType: "unit"},
+	{sFactoryMethod: "getPercentInstance", sType: "percent"}
+].forEach(function (oFixture) {
+	QUnit.test(oFixture.sFactoryMethod + " calls checkGroupingFormatOptions", function (assert) {
+		var oFormatMock, oFormat = {
+				oLocaleData: "~oLocaleData",
+				checkGroupingFormatOptions: function () {},
+				createInstance: function () {},
+				getLocaleFormatOptions: function () {},
+				_defineCustomCurrencySymbols: function () {}
+			},
+			oNumberFormatMock = this.mock(NumberFormat);
+
+		oNumberFormatMock.expects("createInstance")
+			.withExactArgs({}, "~oLocale")
+			.returns(oFormat);
+		oFormatMock = this.mock(oFormat);
+		if (oFixture.sType === "currency") {
+			oNumberFormatMock.expects("getLocaleFormatOptions")
+				.withExactArgs("~oLocaleData", oFixture.sType, "sap-standard")
+				.returns({});
+			oFormatMock.expects("_defineCustomCurrencySymbols").withExactArgs();
+		} else {
+			oNumberFormatMock.expects("getLocaleFormatOptions")
+				.withExactArgs("~oLocaleData", oFixture.sType)
+				.returns({});
+		}
+		oFormatMock.expects("checkGroupingFormatOptions").withExactArgs();
+
+		// code under test
+		NumberFormat[oFixture.sFactoryMethod]({}, "~oLocale");
+	});
+});
+
+	//*********************************************************************************************
 	QUnit.test("Constructor call leads to error", function(assert) {
 		assert.throws(function() {
 			new NumberFormat();
