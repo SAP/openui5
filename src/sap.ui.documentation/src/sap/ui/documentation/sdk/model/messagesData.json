@@ -8,10 +8,11 @@
 	{
 	  	"id": "IM2",
 		"type": "Warning",
-		"versionValidator": ".*.legacy-free$",
+		"versionValidator": ".*.legacy-free(-SNAPSHOT)?$",
 		"text": "This version ({0}) is intended for experimentation only and should not be used for productive purposes. For more information, see",
 		"expire": "2027-04-30",
 		"linkText": "the SAP Community blog post",
+		"mandatory": true,
 		"linkHref": "https://community.sap.com/t5/technology-blog-posts-by-sap/explore-sapui5-openui5-1-136-x-legacy-free/ba-p/14103271"
 	}
 ]}
