@@ -95,7 +95,7 @@ sap.ui.define([
 
 	function _handleSearch(oEvent) {
 		var sValue = oEvent.getParameter("value");
-		var oFilter = new Filter("name", FilterOperator.Contains, sValue);
+		var oFilter = new Filter("text", FilterOperator.Contains, sValue);
 		var oBinding = oEvent.getSource().getBinding("items");
 		oBinding.filter([oFilter]);
 	}
@@ -134,7 +134,7 @@ sap.ui.define([
 		oSelectDialog.bindAggregation("items", {
 			path: "/icons",
 			template: new StandardListItem({
-				title: "{name}",
+				title: "{text}",
 				description: "",
 				icon: "{icon}",
 				iconDensityAware: false,
@@ -147,10 +147,11 @@ sap.ui.define([
 		var aIcons = [];
 
 		aUI5Icons.forEach(function(sName) {
-			var iconInfo = IconPool.getIconInfo(sName);
+			const iconInfo = IconPool.getIconInfo(sName);
 			aIcons.push({
 				icon: iconInfo.uri,
-				name: (iconInfo.text === "") ? sName.toLowerCase() : iconInfo.text
+				name: iconInfo.name,
+				text: iconInfo.text || sName.toLowerCase()
 			});
 		});
 
