@@ -78,10 +78,13 @@ sap.ui.define([
 				const oAppComponent = mPropertyBag ? mPropertyBag.appComponent : undefined;
 
 				let pDelete = Promise.resolve();
-				if (oXConfig && oControl.isA) {
+				if (oXConfig) {
 					pDelete = oModifier.removeAggregation(oControl, "customData", oXConfig)
 						.then(() => {
-							return oModifier.destroy(oXConfig);
+							if (oControl.isA) {
+								return oModifier.destroy(oXConfig);
+							}
+							return Promise.resolve();
 						});
 				}
 
