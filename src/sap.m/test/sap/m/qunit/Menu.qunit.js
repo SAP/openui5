@@ -893,6 +893,16 @@ sap.ui.define([
 		// Assert
 		assert.notOk(aItems[0].getSelected(), "First item is not selected");
 		assert.ok(aItems[1].getSelected(), "Second item is selected");
+
+		// Act - deselect selected item
+		this.oMenu.openBy();
+		aItems[0].$().trigger({type: "click", shiftKey: true});
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(aItems[0].getSelected(), "First item is selected");
+		assert.notOk(aItems[1].getSelected(), "Second item is not selected");
+		assert.ok(this.oMenu.isOpen(), "Menu remains open after item selection in single-selection group");
 	});
 
 	QUnit.test("Items selection with click in multi-selection group", async function(assert) {
@@ -916,6 +926,16 @@ sap.ui.define([
 		// Assert
 		assert.ok(aItems[0].getSelected(), "First item is selected");
 		assert.ok(aItems[1].getSelected(), "Second item is selected");
+
+		// Act - deselect selected item
+		this.oMenu.openBy();
+		aItems[1].$().trigger({type: "click", shiftKey: true});
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.ok(aItems[0].getSelected(), "First item is selected");
+		assert.notOk(aItems[1].getSelected(), "Second item is not selected");
+		assert.ok(this.oMenu.isOpen(), "Menu remains open after item selection in multi-selection group");
 	});
 
 	QUnit.test("Items selection with click in group with no selection", async function(assert) {
@@ -930,6 +950,15 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(oItem0.getSelected(), "First item is not selected");
+
+		// Act - deselect selected item
+		this.oMenu.openBy();
+		oItem0.$().trigger({type: "click", shiftKey: true});
+		await nextUIUpdate(this.clock);
+
+		// Assert
+		assert.notOk(oItem0.getSelected(), "First item is selected");
+		assert.notOk(this.oMenu.isOpen(), "Menu is closed after click on item in group with no selection");
 	});
 
 	QUnit.test("Items selection with click for item outside a group", async function(assert) {
@@ -943,6 +972,25 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(oItem0.getSelected(), "First item is not selected");
+	});
+
+	QUnit.test("Group role and aria-label for different itemSelectionMode", async function(assert) {
+		this.oMenu.openBy();
+		await nextUIUpdate(this.clock);
+
+		var oSingleSelectionGroupDomRef = this.oMenu.getItems()[3].getItems()[0].getDomRef().parentNode,
+			oMultiSelectionGroupDomRef = this.oMenu.getItems()[4].getItems()[0].getDomRef().parentNode,
+			oNoneSelectionGroupDomRef = this.oMenu.getItems()[5].getItems()[0].getDomRef().parentNode,
+			oRb = this.oMenu._getMenuWrapper()._oRb;
+
+		assert.strictEqual(oSingleSelectionGroupDomRef.getAttribute("role"), "group", "Group with itemSelectionMode = SingleSelect has role=group");
+		assert.strictEqual(oSingleSelectionGroupDomRef.getAttribute("aria-label"), oRb.getText("MENU_ITEM_GROUP_SINGLE_ACCESSIBLE_NAME"), "Group with itemSelectionMode = SingleSelect has proper aria-label");
+
+		assert.strictEqual(oMultiSelectionGroupDomRef.getAttribute("role"), "group", "Group with itemSelectionMode = MultiSelect has role=group");
+		assert.strictEqual(oMultiSelectionGroupDomRef.getAttribute("aria-label"), oRb.getText("MENU_ITEM_GROUP_MULTI_ACCESSIBLE_NAME"), "Group with itemSelectionMode = MultiSelect has proper aria-label");
+
+		assert.strictEqual(oNoneSelectionGroupDomRef.getAttribute("role"), "group", "Group with itemSelectionMode = None has role=group");
+		assert.strictEqual(oNoneSelectionGroupDomRef.getAttribute("aria-label"), oRb.getText("MENU_ITEM_GROUP_NONE_ACCESSIBLE_NAME"), "Group with itemSelectionMode = None has proper aria-label");
 	});
 
 	QUnit.module("Miscellaneous", {
