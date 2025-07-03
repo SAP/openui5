@@ -17,7 +17,9 @@ sap.ui.define([
 
 	QUnit.module('Embedded mode', {
 		afterEach: function (assert) {
-			oPdfViewer.destroy();
+			if ( oPdfViewer ) {
+				oPdfViewer.destroy();
+			}
 		}
 	});
 
@@ -28,7 +30,7 @@ sap.ui.define([
 
 	QUnit.test("Toolbar is shown with download button", function (assert) {
 		assert.expect(5);
-		var done = assert.async();
+		var fnDone = assert.async();
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
@@ -55,11 +57,11 @@ sap.ui.define([
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
 				fnCheckControlStructure();
-				done();
+				fnDone();
 			},
 			error: function () {
 				assert.ok(false, "'error' event should not be fired");
-				done();
+				fnDone();
 			}
 		};
 
@@ -71,7 +73,7 @@ sap.ui.define([
 
 	QUnit.test("Toolbar is shown even when title is filled and download button hidden", function (assert) {
 		assert.expect(5);
-		var done = assert.async();
+		var fnDone = assert.async();
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
@@ -99,11 +101,11 @@ sap.ui.define([
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
 				fnCheckControlStructure();
-				done();
+				fnDone();
 			},
 			error: function () {
 				assert.ok(false, "'error' event should not be fired");
-				done();
+				fnDone();
 			}
 		};
 
@@ -115,7 +117,7 @@ sap.ui.define([
 
 	QUnit.test("Toolbar is hidden when title is empty and download button is hidden", function (assert) {
 		assert.expect(4);
-		var done = assert.async();
+		var fnDone = assert.async();
 
 		var oModel = new JSONModel({
 			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf"
@@ -139,11 +141,11 @@ sap.ui.define([
 			loaded: function () {
 				assert.ok(true, "'loaded' event fired");
 				fnCheckControlStructure();
-				done();
+				fnDone();
 			},
 			error: function () {
 				assert.ok(false, "'error' event should not be fired");
-				done();
+				fnDone();
 			}
 		};
 
@@ -155,7 +157,7 @@ sap.ui.define([
 
 	QUnit.test("Rendering with toolbar related changes", function (assert) {
 		assert.expect(9);
-		var done = assert.async();
+		var fnDone = assert.async();
 
 		var oModel = new JSONModel({
 			source: "test-resources/sap/m/qunit/pdfviewer/sample-file.pdf",
@@ -209,13 +211,13 @@ sap.ui.define([
 
 				var oDownloadButton = oPdfViewer.$('toolbarDownloadButton');
 				assert.ok(oDownloadButton.length === 0, 'Download button should be hidden');
-				done();
+				fnDone();
 			});
 	});
 
 	QUnit.test("DisplayTypes tests", function (assert) {
 		assert.expect(11);
-		var done = assert.async();
+		var fnDone = assert.async();
 		var sTitle = "My Title";
 
 		var oModel = new JSONModel({
@@ -262,7 +264,7 @@ sap.ui.define([
 			Device.system.desktop = true;
 			Device.system.phone = false;
 
-			done();
+			fnDone();
 		};
 
 		var oOptions = {
@@ -281,15 +283,15 @@ sap.ui.define([
 
 	QUnit.test("getting header info", function (assert) {
 		var fnDone = assert.async();
-		const sTitle = "My Title";
-		const oOptions = {
+		var sTitle = "My Title";
+		var oOptions = {
 			source: "{/source}",
 			isTrustedSource: true,
 			title: sTitle
 		};
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-		const getHeaderInfoStub = sinon.spy(oPdfViewer, "_getHeaderInfo");
+		var getHeaderInfoStub = sinon.spy(oPdfViewer, "_getHeaderInfo");
 		oPdfViewer._onLoadListener({});
 
 		TestUtils.wait(1000)()
@@ -300,79 +302,131 @@ sap.ui.define([
 			});
 	});
 
-	QUnit.test("Validate Method: _getHeaderInfo return: success", function (assert) {
+	QUnit.test("_getHeaderInfo: fetch success (status 200)", function(assert) {
 		var fnDone = assert.async();
-		const sTitle = "My Title";
-		const oOptions = {
+		var sTitle = "My Title";
+		var oOptions = {
 			source: "{/source}",
 			isTrustedSource: true,
 			title: sTitle
 		};
-
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-
-		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD').then((sCurrentContentType) => {
-			assert.equal(sCurrentContentType, "application/pdf", "content-type should be valid");
+		var oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		var oFetchStub = sinon.stub(window, "fetch").callsFake(function() {
+			return Promise.resolve({
+				status: 200,
+				headers: { get: function(key) { return key === "content-type" ? "application/pdf" : null; } }
+			});
+		});
+		oPdfViewer._getHeaderInfo("dummy.pdf", "HEAD").then(function(contentType) {
+			assert.equal(contentType, "application/pdf", "fetch branch: returns content-type on 200");
+			oFetchStub.restore();
 			fnDone();
 		});
 	});
 
-	QUnit.test("Validate Method: _getHeaderInfo return: error with invalid src", function (assert) {
+	QUnit.test("_getHeaderInfo: fetch error (status 404)", function(assert) {
 		var fnDone = assert.async();
-		const sTitle = "My Title";
-
-		const oOptions = {
-			source: "{/source}",
-			isTrustedSource: true,
-			title: sTitle
-		};
-
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-
-		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file1.pdf", 'HEAD').catch((sError) => {
-			assert.ok(sError, "Error is displayed: " + sError);
+		var oPdfViewer = TestUtils.createPdfViewer({});
+		var oFetchStub = sinon.stub(window, "fetch").callsFake(function() {
+			return Promise.resolve({
+				status: 404,
+				statusText: "Not Found",
+				headers: { get: function() { return null; } }
+			});
+		});
+		oPdfViewer._getHeaderInfo("dummy.pdf", "HEAD").catch(function(error) {
+			assert.ok(error, "fetch branch: rejects on 404");
+			oFetchStub.restore();
 			fnDone();
 		});
 	});
 
-	QUnit.test("Validate Method: _getHeaderInfo return: error with invalid reqType", function (assert) {
+	QUnit.test("_getHeaderInfo: fetch network error", function(assert) {
 		var fnDone = assert.async();
-		const sTitle = "My Title";
-		const oOptions = {
-			source: "{/source}",
-			isTrustedSource: true,
-			title: sTitle
-		};
-
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-
-		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD1').catch((sError) => {
-			assert.ok(sError, "Error is displayed: " + sError);
+		var oPdfViewer = TestUtils.createPdfViewer({});
+		var oFetchStub = sinon.stub(window, "fetch").rejects(new Error("Network error"));
+		oPdfViewer._getHeaderInfo("dummy.pdf", "HEAD").catch(function(error) {
+			assert.ok(error, "fetch branch: rejects on network error");
+			oFetchStub.restore();
 			fnDone();
 		});
 	});
 
-	QUnit.test("Validate Method: _getHeaderInfo return: request error ", function (assert) {
+	QUnit.test("_getHeaderInfo: XHR success (status 200)", function(assert) {
 		var fnDone = assert.async();
-		const sTitle = "My Title";
-		const oOptions = {
-			source: "{/source}",
-			isTrustedSource: true,
-			title: sTitle
+		var oPdfViewer = TestUtils.createPdfViewer({});
+		var origFetch = window.fetch;
+		window.fetch = undefined; // force XHR branch
+		var xhr = {
+			open: sinon.spy(),
+			send: sinon.spy(),
+			status: 200,
+			getAllResponseHeaders: function() { return "content-type: application/pdf\n"; },
+			onload: null,
+			onerror: null
 		};
+		var xhrStub = sinon.stub(window, "XMLHttpRequest").callsFake(function() { return xhr; });
+		setTimeout(function() {
+			xhr.onload();
+		}, 0);
+		oPdfViewer._getHeaderInfo("dummy.pdf", "HEAD").then(function(contentType) {
+			assert.equal(contentType, "application/pdf", "XHR branch: returns content-type on 200");
+			xhrStub.restore();
+			window.fetch = origFetch;
+			fnDone();
+		});
+	});
 
-		oPdfViewer = TestUtils.createPdfViewer(oOptions);
-
-		const oFakeXMLHttpRequestStub = sinon.useFakeXMLHttpRequest();
-		oFakeXMLHttpRequestStub.onCreate = function(req) {
-			req.send = function() {
-				req.error();
-			};
+        QUnit.test("_getHeaderInfo: XHR error (status 404)", function(assert) {
+		var fnDone = assert.async();
+		var oPdfViewer = TestUtils.createPdfViewer({});
+		var origFetch = window.fetch;
+		window.fetch = undefined;
+		var xhr = {
+			open: sinon.spy(),
+			send: sinon.spy(),
+			status: 404,
+			statusText: "Not Found",
+			getAllResponseHeaders: function() { return ""; },
+			onload: null,
+			onerror: null
 		};
+		var xhrStub = sinon.stub(window, "XMLHttpRequest").callsFake(function() { return xhr; });
+		setTimeout(function() {
+			xhr.onload();
+		}, 0);
+		oPdfViewer._getHeaderInfo("dummy.pdf", "HEAD").catch(function(error) {
+			assert.ok(error, "XHR branch: rejects on 404");
+			assert.equal(error.status, 404, "Error status is 404");
+			assert.ok(error.message.indexOf("Error fetching header") !== -1, "Error message contains 'Error fetching header'");
+			xhrStub.restore();
+			window.fetch = origFetch;
+			fnDone();
+		});
+	});
 
-		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD').catch((sError) => {
-			assert.ok(sError, "Error is displayed: " + sError);
-			oFakeXMLHttpRequestStub.restore();
+	QUnit.test("_getHeaderInfo: XHR network error", function(assert) {
+		var fnDone = assert.async();
+		var oPdfViewer = TestUtils.createPdfViewer({});
+		var origFetch = window.fetch;
+		window.fetch = undefined;
+		var xhr = {
+			open: sinon.spy(),
+			send: sinon.spy(),
+			status: 0,
+			statusText: "",
+			getAllResponseHeaders: function() { return ""; },
+			onload: null,
+			onerror: null
+		};
+		var xhrStub = sinon.stub(window, "XMLHttpRequest").callsFake(function() { return xhr; });
+		setTimeout(function() {
+			xhr.onerror(new Error("Network error"));
+		}, 0);
+		oPdfViewer._getHeaderInfo("dummy.pdf", "HEAD").catch(function(error) {
+			assert.ok(error, "XHR branch: rejects on network error");
+			xhrStub.restore();
+			window.fetch = origFetch;
 			fnDone();
 		});
 	});
