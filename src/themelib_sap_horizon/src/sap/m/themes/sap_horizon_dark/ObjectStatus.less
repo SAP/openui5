@@ -118,6 +118,10 @@
 	vertical-align: middle;
 }
 
+.sapMObjStatusLink {
+	line-height: 0.5rem;
+}
+
 html.sap-desktop .sapMObjStatusActive:not(.sapMObjStatusInverted) {
 
 	.sapMObjStatusText {
@@ -133,9 +137,7 @@ html.sap-desktop .sapMObjStatusActive:not(.sapMObjStatusInverted) {
 			position: absolute;
 			box-sizing: border-box;
 			left: 0;
-			top: -0.0625rem;
 			right: 0;
-			bottom: 0.0625rem;
 			pointer-events: none;
 			border: 0.125rem solid var(--sapContent_FocusColor);
 			z-index: -1;
@@ -144,11 +146,11 @@ html.sap-desktop .sapMObjStatusActive:not(.sapMObjStatusInverted) {
 		.sapMObjStatusLink {
 			background: var(--sapContent_FocusColor);
 			border-radius: 0.125rem;
-			line-height: 0.875rem;
 
 			.sapMObjStatusIcon > .sapUiIcon,
 			.sapMObjStatusText {
 				color: var(--sapContent_ContrastTextColor);
+				text-shadow: none;
 			}
 
 			.sapMObjStatusText {
