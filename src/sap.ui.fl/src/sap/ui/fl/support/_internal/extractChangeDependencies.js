@@ -125,7 +125,7 @@ sap.ui.define([
 		}
 	}
 
-	return function(oAppComponent) {
+	function extractChangeDependencies(oAppComponent) {
 		if (!oAppComponent) {
 			return undefined;
 		}
@@ -148,5 +148,9 @@ sap.ui.define([
 		enhanceExportWithControlData(oExport);
 
 		return oExport;
+	}
+
+	return {
+		extract: extractChangeDependencies
 	};
 });
