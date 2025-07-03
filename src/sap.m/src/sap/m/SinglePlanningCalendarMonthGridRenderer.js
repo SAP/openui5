@@ -244,6 +244,7 @@ sap.ui.define([
 				sText = oAppointment.getText(),
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
+				oCustomDatas = oAppointment.getCustomData() ? oAppointment.getCustomData().filter(function (oCustomData) { return oCustomData.getWriteToDom(); }) : [],
 				bDraggable = oAppointment.getParent().getEnableAppointmentsDragAndDrop(),
 				mAccProps = {
 					role: "listitem",
@@ -288,6 +289,12 @@ sap.ui.define([
 			oRm.attr("data-sap-level", iLevel);
 			oRm.attr("data-sap-width", iWidth);
 			oRm.attr("tabindex", 0);
+
+			if (oCustomDatas.length) {
+				oCustomDatas.forEach(function (oCustomData) {
+					oRm.attr("data-" + oCustomData.getKey(), oCustomData.getValue());
+				});
+			}
 
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
