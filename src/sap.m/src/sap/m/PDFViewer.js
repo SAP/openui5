@@ -330,26 +330,60 @@ sap.ui.define([
 		 * @description - this method fetches response headers from server to validate content-type.
 		 * @private
 		 */
-
 		PDFViewer.prototype._getHeaderInfo = function (src, sMethod) {
-			// Trigger fetch call to retrieve the content-type header for the given PDF
-			return fetch(src, { method: sMethod })
-				.then(function(response) {
-					if (response.status === 200) {
-						// If the HEAD request is successful, return the content-type header
-						return response.headers.get("content-type");
-					} else if (response.status === 404) {
-						// If the HEAD request fails to fetch the content defined in source, an error event is triggered and LoadingError IllustratedMessage is displayed.
-						var error = new Error("Error fetching header: " + response.statusText);
-						error.status = response.status;
-						throw error;
-					} else {
-						// If the HEAD request fails for any other reason, throw an error
-						var error = new Error("Error in fetching header with method " + sMethod + ", status " + response.status + ", statusText " + response.statusText);
-						error.status = response.status;
-						throw error;
-					}
+			if (window.fetch) {
+				// Trigger fetch call to retrieve the content-type header for the given PDF
+				return window.fetch(src, { method: sMethod })
+					.then(function(response) {
+						if (response.status === 200) {
+							// If the HEAD request is successful, return the content-type header
+							return response.headers.get("content-type");
+						} else if (response.status === 404) {
+							// If the HEAD request fails to fetch the content defined in source, an error event is triggered and LoadingError IllustratedMessage is displayed.
+							var error = new Error("Error fetching header: " + response.statusText);
+							error.status = response.status;
+							throw error;
+						} else {
+							// If the HEAD request fails for any other reason, throw an error
+							var error = new Error("Error in fetching header with method " + sMethod + ", status " + response.status + ", statusText " + response.statusText);
+							error.status = response.status;
+							throw error;
+						}
+					});
+			} else {
+				return new Promise(function(resolve, reject) {
+					var oXMLHttpRequest = new window.XMLHttpRequest();
+					oXMLHttpRequest.open(sMethod, src, false);
+					oXMLHttpRequest.onload = function() {
+						var sStatus = oXMLHttpRequest.status;
+						if (sStatus === 200) {
+							var response = oXMLHttpRequest.getAllResponseHeaders().toLowerCase().trim();
+							var items = response.split("\n");
+							var responseHeader = [];
+							for (var i = 0; i < items.length; i++) {
+								var parts = items[i].split(': ');
+								responseHeader[parts[0].trim()] = parts[1].trim();
+							}
+							resolve(responseHeader['content-type']);
+						} else if (sStatus === 404) {
+							// If the HEAD request fails to fetch the content defined in source, an error event is triggered and LoadingError IllustratedMessage is displayed.
+							var error = new Error("Error fetching header: " + oXMLHttpRequest.statusText);
+							error.status = oXMLHttpRequest.status;
+							reject(error);
+						} else {
+							var error = new Error("Error in fetching header with method " + sMethod + ", status " + oXMLHttpRequest.status + " and statusText " + oXMLHttpRequest.statusText);
+							error.status = oXMLHttpRequest.status;
+							reject(error);
+						}
+					};
+					oXMLHttpRequest.onerror = function(error) {
+						var error = new Error("Error in fetching header with method " + sMethod + ", status " + oXMLHttpRequest.status + " and statusText " + oXMLHttpRequest.statusText);
+						error.status = oXMLHttpRequest.status;
+						reject(error);
+					};
+					oXMLHttpRequest.send(null);
 				});
+			}
 		};
 
 		/**
@@ -358,8 +392,8 @@ sap.ui.define([
 		 */
 		PDFViewer.prototype._onLoadListener = function (oEvent) {
 			try {
-				const oTarget = jQuery(oEvent.target);
-				let bContinue = true, sCurrentContentType = '';
+				var oTarget = jQuery(oEvent.target);
+				var bContinue = true, sCurrentContentType = '';
 
 				//HTML body.children can be accessed only in scenario when chrome://flags/#pdf-oopif = disabled OR invalid path given to the iframe src
 				try {
@@ -411,7 +445,7 @@ sap.ui.define([
 						return;
 					}
 					//If chrome://flags/#pdf-oopif = enabled trigger the HEAD Request
-					const sMethod = 'HEAD';
+					var sMethod = 'HEAD';
 					this._getHeaderInfo(this._sParametrizedSource, sMethod)
 					.then(function(sCurrentContentType) {
 						/*	LoadedEvent will be triggered if all the below criteria matches
