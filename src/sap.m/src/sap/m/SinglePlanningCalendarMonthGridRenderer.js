@@ -254,6 +254,8 @@ sap.ui.define([
 				sText = oAppointment.getText(),
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
+				oCustomDatas = oAppointment.getCustomData()?.filter((oCustomData) => oCustomData.getWriteToDom()),
+				bHasCustomData = !!oCustomDatas?.length,
 				bDraggable = oAppointment.getParent().getEnableAppointmentsDragAndDrop(),
 				oToday = oDay && oDay.isSame(CalendarDate.fromLocalJSDate(UI5Date.getInstance())),
 				mAccProps = {
@@ -314,6 +316,12 @@ sap.ui.define([
 			oRm.attr("data-sap-level", iLevel);
 			oRm.attr("data-sap-width", iWidth);
 			oRm.attr("tabindex", 0);
+
+			if (bHasCustomData) {
+				oCustomDatas.forEach((oCustomData) => {
+					oRm.attr(`data-${oCustomData.getKey()}`, oCustomData.getValue());
+				});
+			}
 
 			if (sTooltip) {
 				oRm.attr("title", sTooltip);
