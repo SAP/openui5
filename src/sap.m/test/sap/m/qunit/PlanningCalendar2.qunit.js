@@ -1750,19 +1750,27 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
-	QUnit.test("Title referencing", function(assert) {
-		var oPC = new PlanningCalendar({
+	QUnit.test("set correct aria-labelledby attribute to calendar and calendar table", async function(assert) {
+		// prepare
+		var oPlanningCalendar = new PlanningCalendar({
 			toolbarContent: [
-				new Title("Title1", {text: "Title"})
+				new Title({text: "title of planning calendar"})
 			]
 		});
 
-		oPC.placeAt("bigUiArea");
-		nextUIUpdate.runSync()/*fake timer is used in module*/;
+		oPlanningCalendar.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
-		assert.strictEqual(oPC.$().attr("aria-labelledby"), "Title1", "Control's title is added in aria-labelledby");
+		var sExpectedAriaLabelBy = `${oPlanningCalendar._getHeader().getId()}"-Title`,
+			sCalendarAriaLabelBy = oPlanningCalendar.getDomRef().getAttribute("aria-labelledby"),
+			sTableAriaLabelBy = oPlanningCalendar.getAggregation("table").getDomRef().querySelector(`[id="${oPlanningCalendar.getId()}-Table-listUl"]`).getAttribute("aria-labelledby");
 
-		oPC.destroy();
+		// assert
+		assert.ok(sCalendarAriaLabelBy.indexOf(sExpectedAriaLabelBy) !== 1, "calendar aria-labelledBy attribute is correct");
+		assert.ok(sTableAriaLabelBy.indexOf(sExpectedAriaLabelBy) !== 1, "calendar table aria-labelledBy attribute is correct");
+
+		// clean
+		oPlanningCalendar.destroy();
 	});
 
 	QUnit.test("Row header referencing", function(assert) {

@@ -1456,9 +1456,11 @@ sap.ui.define([
 	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
 		if (oContent && oContent.isA("sap.m.Title")) {
 			this._observeHeaderTitleText(oContent);
-			this._getHeader().setTitle(oContent.getText());
+			const oHeader = this._getHeader(),
+				sLabel = `${this._getHeader().getId()}-Title`;
+			oHeader.setTitle(oContent.getText());
 			oContent.setVisible(false);
-			this.addAriaLabelledBy(oContent.getId());
+			this.addAriaLabelledBy(sLabel);
 		}
 		this.addAggregation("toolbarContent", oContent);
 
@@ -1468,9 +1470,11 @@ sap.ui.define([
 	PlanningCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
 		if (oContent && oContent.isA("sap.m.Title")) {
 			this._observeHeaderTitleText(oContent);
-			this._getHeader().setTitle(oContent.getText());
+			const oHeader = this._getHeader(),
+				sLabel = `${this._getHeader().getId()}-Title`;
+			oHeader.setTitle(oContent.getText());
 			oContent.setVisible(false);
-			this.addAriaLabelledBy(oContent.getId());
+			this.addAriaLabelledBy(sLabel);
 		}
 		this.insertAggregation("toolbarContent", oContent, iIndex);
 

@@ -355,7 +355,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Validate Method: _getHeaderInfo return: request error ", function (assert) {
+	QUnit.test("Validate Method: _getHeaderInfo return: request error stub", function (assert) {
 		var fnDone = assert.async();
 		const sTitle = "My Title";
 		const oOptions = {
@@ -366,17 +366,77 @@ sap.ui.define([
 
 		oPdfViewer = TestUtils.createPdfViewer(oOptions);
 
-		const oFakeXMLHttpRequestStub = sinon.useFakeXMLHttpRequest();
-		oFakeXMLHttpRequestStub.onCreate = function(req) {
-			req.send = function() {
-				req.error();
-			};
-		};
+		const oFetchStub = sinon.stub(window, "fetch");
+		// Simulate fetch rejecting (e.g., network error)
+		oFetchStub.rejects(new Error("Network failure"));
 
 		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD').catch((sError) => {
 			assert.ok(sError, "Error is displayed: " + sError);
-			oFakeXMLHttpRequestStub.restore();
+			// Clean up
+			oFetchStub.restore();
 			fnDone();
 		});
+	});
+
+	QUnit.test("Validate Method: _getHeaderInfo return: request error spy", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+		const oOptions = {
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		const oFetchSpy = sinon.spy(window, "fetch");
+
+		oPdfViewer._getHeaderInfo("test-resources/sap/m/qunit/pdfviewer/sample-file.pdf", 'HEAD1').catch((sError) => {
+			sinon.assert.calledOnce(oFetchSpy);
+			assert.ok(sError, "Error is displayed: " + sError);
+			// Clean up
+			oFetchSpy.restore();
+			fnDone();
+		});
+	});
+
+	QUnit.test("onLoadListener with empty event target triggers _getHeaderInfo", function (assert) {
+		var fnDone = assert.async();
+		const sTitle = "My Title";
+		var oOptions = {
+			showDownloadButton: false,
+			source: "{/source}",
+			isTrustedSource: true,
+			title: sTitle,
+			loaded: function () {
+				assert.ok(true, "'loaded' event fired");
+				fnDone();
+			},
+			error: function () {
+				assert.ok(false, "'error' event should not be fired");
+				fnDone();
+			}
+		};
+
+		oPdfViewer = TestUtils.createPdfViewer(oOptions);
+		const getHeaderInfoSpy = sinon.spy(oPdfViewer, "_getHeaderInfo");
+
+		// Stub fetch to simulate a 404 response
+		const oFetchStub = sinon.stub(window, "fetch").callsFake(function() {
+			return Promise.resolve({
+				status: 400,
+				headers: { get: function() { return null; } }
+			});
+		});
+
+		// Simulate onLoadListener with empty event (no target)
+		oPdfViewer._onLoadListener({});
+
+		TestUtils.wait(1000)()
+			.then(function()  {
+				assert.ok(getHeaderInfoSpy.calledOnce, "_getHeaderInfo should be called when oEvent.target is empty");
+				getHeaderInfoSpy.restore();
+				oFetchStub.restore();
+				fnDone();
+			});
 	});
 });
