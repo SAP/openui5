@@ -10,12 +10,12 @@ sap.ui.define([
 			baseUrl: "sap/f/cardsdemo/bundles/objectbundle/"
 		},
 		"objectCardFormInputs": {
-			path: "sap/f/cardsdemo/cardcontent/objectContent/formWithValidations.json",
-			baseUrl: "sap/f/cardsdemo/cardcontent/objectContent/"
+			path: "sap/f/cardsdemo/cardcontent/objectcontent/formWithValidations.json",
+			baseUrl: "sap/f/cardsdemo/cardcontent/objectcontent/"
 		},
 		"calendarCard": {
-			path: "sap/f/cardsdemo/bundles/calendarbundle/manifest.json",
-			baseUrl: "sap/f/cardsdemo/bundles/calendarbundle/"
+			path: "sap/f/cardsdemo/bundles/calendarBundle/manifest.json",
+			baseUrl: "sap/f/cardsdemo/bundles/calendarBundle/"
 		},
 		"listCard": {
 			path: "sap/f/cardsdemo/bundles/listbundle/manifest.json",
