@@ -830,7 +830,14 @@ sap.ui.define([
 		});
 	};
 
-	ObjectPageSubSection.prototype.clone = function () {
+	ObjectPageSubSection.prototype.clone = function (sIdSuffix, aLocalIds, oOptions) {
+		var oClone,
+			bCloneChildren = true;
+
+		if (oOptions) {
+			bCloneChildren = !!oOptions.cloneChildren;
+		}
+
 		Object.keys(this._aAggregationProxy).forEach(function (sAggregationName){
 			var oAggregation = this.mAggregations[sAggregationName];
 
@@ -839,7 +846,17 @@ sap.ui.define([
 			}
 
 		}, this);
-		return ObjectPageSectionBase.prototype.clone.apply(this, arguments);
+
+		oClone = ObjectPageSectionBase.prototype.clone.apply(this, arguments);
+		if (!this.isBound("actions") && bCloneChildren) {
+			var oAggregation = this.getMetadata().getAggregation("actions");
+
+			oAggregation.get(this).forEach(function(oChild) {
+				oAggregation.add(oClone, oChild.clone());
+			}, this);
+		}
+
+		return oClone;
 	};
 
 	ObjectPageSubSection.prototype._cleanProxiedAggregations = function () {
