@@ -49,8 +49,8 @@
 			}
 		},
 		"header": {
-			"title": "Card Title",
-			"subTitle": "Card Sub Title",
+			"title": "{parameters>/title/value}",
+			"subTitle": "{parameters>/subtitle/value}",
 			"icon": {
 				"src": "{parameters>/headericon/value}"
 			},
