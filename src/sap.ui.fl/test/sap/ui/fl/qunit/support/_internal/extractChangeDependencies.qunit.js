@@ -53,7 +53,7 @@ sap.ui.define([
 		await FlQUnitUtils.initializeFlexStateWithData(sandbox, sReference, {
 			changes: [this.oChange1, this.oChange2]
 		});
-		const oResult = extractChangeDependencies(oAppComponent);
+		const oResult = extractChangeDependencies.extract(oAppComponent);
 		assert.deepEqual(oResult.mChangesEntries.fileNameChange1, {
 			aControlsDependencies: [
 				"controlId1"
@@ -145,7 +145,7 @@ sap.ui.define([
 				return "sap.ui.fl.notApplicableChanges.fileNameChange4";
 			}
 		}]);
-		const oResult = extractChangeDependencies(oAppComponent);
+		const oResult = extractChangeDependencies.extract(oAppComponent);
 		assert.strictEqual(oResult.aAppliedChanges.length, 2, "two changes applied");
 		assert.strictEqual(oResult.aFailedChanges.length, 2, "two changes failed");
 		assert.strictEqual(oResult.aNotApplicableChanges.length, 1, "one change not applicable");
@@ -190,7 +190,7 @@ sap.ui.define([
 			changes: [this.oChange1, this.oChange2],
 			variantDependentControlChanges: [this.oChange3, this.oChange4, this.oChange5]
 		});
-		const oResult = extractChangeDependencies(oAppComponent);
+		const oResult = extractChangeDependencies.extract(oAppComponent);
 		assert.strictEqual(Object.keys(oResult.mChangesEntries).length, 5, "all changes are returned");
 	});
 

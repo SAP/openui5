@@ -136,7 +136,6 @@
 					</subHeader>
 					<fileEditor:FileEditor
 						id="fileEditor"
-						fileChange="onFileEditorFileChange"
 						fileSwitch="onFileSwitch"
 						visible="{= ${settings>/editorType} === 'text' }" />
 				</Page>
