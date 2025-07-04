@@ -461,8 +461,8 @@ sap.ui.define([
 				sRegExpValidator;
 
 			oMessagesData.messages.length && oMessagesData.messages.forEach(function(message) {
-				message.isMessageVisible = (new Date(message.expire).getTime() - new Date()) > 0 &&
-					!oMessageCookie.includes(message.id);
+				message.isMessageVisible = message.mandatory || ((new Date(message.expire).getTime() - new Date()) > 0 &&
+					!oMessageCookie.includes(message.id));
 
 					if (message.isMessageVisible && message.versionValidator) {
 						sRegExpValidator = new RegExp(message.versionValidator);
