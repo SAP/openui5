@@ -1,7 +1,12 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "479385d1c92e46d8535d8939d0d5d1a2f2698a8e",
+        "type": "FIX",
+        "text": " Mdc.FieldBase: Mark keydown event on escape-induced valuehelp close"
+      },
       {
         "id": "cafdb5a832008391eff0ce38dcff0fc25d6f0795",
         "type": "FIX",

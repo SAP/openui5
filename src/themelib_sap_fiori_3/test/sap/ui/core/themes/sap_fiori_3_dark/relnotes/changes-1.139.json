@@ -1,7 +1,12 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "8b96328eea2515b6ba515d6bf6a736e7eed6d0d9",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: focus outline is fixed for high contrast themes"
+      },
       {
         "id": "9d292bae8c25a843575b8e2e41a562270413a25e",
         "type": "FIX",

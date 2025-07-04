@@ -1,7 +1,62 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "06bfe31344ff931b04986789c601a644ab45af55",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Fix flexibility change handler"
+      },
+      {
+        "id": "c4a39ada7a0c74d4d0e740f143bf73442d6a688b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments customData aggregation is written in DOM now"
+      },
+      {
+        "id": "d08a85383514b20bcb70001a93e91b024a1626a5",
+        "type": "FIX",
+        "text": " sap.m.Button: focus the button on mobile before firing press event"
+      },
+      {
+        "id": "feeabfdd12f187b2081fc79d51bb8764b7fe7037",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: displayed correctly now"
+      },
+      {
+        "id": "8b96328eea2515b6ba515d6bf6a736e7eed6d0d9",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: focus outline is fixed for high contrast themes"
+      },
+      {
+        "id": "d4b5b5a35476947519c312e8834ec38a714e5c94",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: specialDates doesn't support date ranges"
+      },
+      {
+        "id": "c819168fc066a33ee98072845a5fb0cef27e9d8b",
+        "type": "FEATURE",
+        "text": " sap.m.Menu: Accessibility improvements"
+      },
+      {
+        "id": "c30a8c160fa1d6dc77cf4a90a501f0998d169043",
+        "type": "FIX",
+        "text": " p13n.xConfigAPI: enhanceConfig with conditional destroy"
+      },
+      {
+        "id": "f0d5c6c638fefb6fb5e7c0213c499ec5509c9cdb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: toolbar does not overflow when it contains sap.m.Title"
+      },
+      {
+        "id": "c577b928973b72110a491ab068f2b5a82f75f8d1",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed context menu positioning"
+      },
+      {
+        "id": "18c8f35b1fad5db68cef22a62eb7e9ed2c632ce6",
+        "type": "FIX",
+        "text": " sap.m.Button: Provide information about aria-shortcutkey in the button description"
+      },
       {
         "id": "f3d98d3752535ffbdd63697e94014443586baa60",
         "type": "FIX",
@@ -11,6 +66,11 @@
         "id": "81b3cb0f4ed09815e01c77bc43ec88c117d03ab0",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar move overriden setters in onBeforeRendering"
+      },
+      {
+        "id": "0f85b24fa736a15b5d2a0e9d65c913a61769efb5",
+        "type": "FIX",
+        "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
       },
       {
         "id": "e47628e508f2fbb4bd4745f287b6eee93ece6b6d",

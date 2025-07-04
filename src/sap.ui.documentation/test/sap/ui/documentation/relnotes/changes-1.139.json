@@ -1,7 +1,17 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "bc9ec04a28185bc5b6e869349aef90c90cd36857",
+        "type": "FIX",
+        "text": " Demo Kit: Hide news button if news-config.json is missing"
+      },
+      {
+        "id": "bc4c0859c4ad1270e94a687d97fe25e53dbf584f",
+        "type": "FIX",
+        "text": " Demo Kit: Redundant code in TopicDetail.controller.js removed"
+      },
       {
         "id": "f5b1988732414baaec9bc9b5be7325321ea74b94",
         "type": "FIX",

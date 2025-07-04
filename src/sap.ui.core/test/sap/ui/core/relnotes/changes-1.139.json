@@ -1,11 +1,26 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "2942e517379f24b569278b0d12cd2f57eebae1d7",
+        "type": "FIX",
+        "text": " base/DataType: log error once per class and property combination"
+      },
+      {
+        "id": "0ccb06358a75bf4bb2824f206a329dfd4beefaa1",
+        "type": "FIX",
+        "text": " core/KeyboardInteractionDisplay: Fix Normalization of single keys"
+      },
       {
         "id": "f7b73687a35eeef457f3f8925a8b60cf0024b2b6",
         "type": "FIX",
         "text": " sap.ui.core.format.NumberFormat: Invalid groupingSize configuration disables grouping"
+      },
+      {
+        "id": "39d23a5fecf3c2cb351e0b416eb1c5b6c91c0e02",
+        "type": "FIX",
+        "text": " ComponentContainer: always propagate propagation listeners"
       }
     ]
   }

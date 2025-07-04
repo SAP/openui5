@@ -1,7 +1,17 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "a8ae0d8abbb6cd1321d2b2b8d2cc2602a71a08d0",
+        "type": "FIX",
+        "text": " Integration Cards: Manifest Resolver sample is fixed"
+      },
+      {
+        "id": "44dc6b649797a372b8003ef278e4cea17a8cfb13",
+        "type": "FIX",
+        "text": " Integration cards: CardVariants test page is fixed"
+      },
       {
         "id": "0ca386f982cf14e12d7a9d1a0161f3e68eb3be78",
         "type": "FEATURE",

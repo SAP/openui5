@@ -1,0 +1,12 @@
+{
+  "1.139.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "af8d3f2dc0e3d8982f02af5cf91bf5f35314ac00",
+        "type": "FIX",
+        "text": "sap.tnt.NavigationListItem: Tooltip behavior is now changed"
+      }
+    ]
+  }
+}

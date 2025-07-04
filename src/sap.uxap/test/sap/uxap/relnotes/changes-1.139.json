@@ -1,7 +1,12 @@
 {
   "1.139.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "013a84071e42a0fade49b49a8910a287fb1d4956",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Action visualization issue fixed"
+      },
       {
         "id": "fa7a494525acd1086ce8506ddaaf1916e45b12d4",
         "type": "FIX",
