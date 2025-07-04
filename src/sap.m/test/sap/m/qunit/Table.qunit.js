@@ -1385,6 +1385,36 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.test("ColumnListItem announcement of empty cells", async function(assert) {
+		const sut = createSUT(true, true);
+		sut.placeAt("qunit-fixture");
+
+		sut.getItems().forEach((oItem) => {
+			oItem.setType("Detail");
+		});
+
+		sut.addItem(new ColumnListItem({
+			type: "Inactive",
+			header: "Col1 Header",
+			cells: [
+				new Label({text: "Max"}),
+				new Label({text: ""}),
+				new Label({text: "Pi"})
+			]
+		}));
+
+		await nextUIUpdate();
+
+		let oListItem = sut.getItems()[3];
+		const aColumns = sut.getColumns();
+		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[0]), "Max", "Content announcement");
+		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[1]), "Empty", "Content announcement of empty cell");
+		assert.strictEqual(oListItem.getContentAnnouncementOfRowAction(), "Empty", "Content announcement of empty row action cell");
+
+		oListItem = sut.getItems()[2];
+		assert.strictEqual(oListItem.getContentAnnouncementOfRowAction(), undefined, "Content announcement of non-empty row action cell is undefined");
+	});
+
 	QUnit.test("Internal SelectAll checkbox should not be disabled by the EnabledPropagator", async function(assert) {
 		const sut = createSUT(true, false, "MultiSelect"),
 			oVerticalLayout = new VerticalLayout({
