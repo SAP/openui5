@@ -157,7 +157,8 @@ sap.ui.define([
 	ExtendControllerPlugin.prototype.getMenuItems = function(aElementOverlays) {
 		return this._getMenuItems(aElementOverlays, {
 			pluginId: "CTX_EXTEND_CONTROLLER",
-			icon: "sap-icon://create-form"
+			icon: "sap-icon://create-form",
+			additionalInfoKey: "EXTEND_CONTROLLER_RTA_CONTEXT_MENU_INFO"
 		});
 	};
 
