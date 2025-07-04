@@ -13,7 +13,8 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/CustomData"
 ], function(
 	qutils,
 	Formatting,
@@ -28,7 +29,8 @@ sap.ui.define([
 	CalendarDate,
 	UI5Date,
 	DateTypeRange,
-	nextUIUpdate
+	nextUIUpdate,
+	CustomData
 ) {
 	"use strict";
 
@@ -525,6 +527,45 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(aAppointments[1].getDomRef().getAttribute("id"), "SPC-app-11-0_1", "The returned DOM reference of the appointment with index 1 is correct.");
 		assert.strictEqual(aAppointments[3].getDomRef().getAttribute("id"), "SPC-app-1-0_3", "The returned DOM reference of the appointment with index 3 is correct.");
+
+		// cleanup
+		oSPCGrid.destroy();
+		await nextUIUpdate(this.clock);
+	});
+
+	QUnit.test("CalendarAppointment's getDomRef() returns proper DOM element (customData added)", async function(assert) {
+		// Prepare
+		var aAppointments = [
+				new CalendarAppointment("SPC-app-111", {
+					startDate: UI5Date.getInstance(2023, 9, 16, 9, 0),
+					endDate: UI5Date.getInstance(2023, 9, 16, 9, 30),
+					customData: [
+						new CustomData({
+							key: "appointmentType",
+							value: "appointmentValue",
+							writeToDom: true
+						}),
+						new CustomData({
+							key: "appointmentType1",
+							value: "appointmentValue1",
+							writeToDom: false
+						})
+					]
+				})
+			],
+			oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oSPCGrid = new SinglePlanningCalendarGrid({
+				startDate: oStartDate,
+				appointments: aAppointments
+			});
+
+		// arrange
+		oSPCGrid.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// assert
+		assert.strictEqual(aAppointments[0].getDomRef().getAttribute("data-appointmentType"), "appointmentValue", "The returned DOM reference of the appointment with index 1 is with correct custom data attribute .");
+		assert.notOk(aAppointments[0].getDomRef().getAttribute("data-appointmentType1") === "appointmentValue1", "The returned DOM reference of the appointment with index 1 is does not contain data attribute, because it's property 'writeToDom' is false.");
 
 		// cleanup
 		oSPCGrid.destroy();
