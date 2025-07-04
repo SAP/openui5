@@ -382,8 +382,9 @@ sap.ui.define([
 		return bAppVariantsMenuEnabled ? null : this.getTextResources().getText("TOOLTIP_MANAGE_APPS_TXT_DISABLED");
 	}
 
-	function formatSaveAsAppVariantsEnabled(bAppVariantSaveAsEnabled) {
-		return bAppVariantSaveAsEnabled ? null : this.getTextResources().getText("TOOLTIP_SAVE_AS_APP_VARIANT_DISABLED");
+	function formatSaveAsAppVariantsEnabled(bAppVariantSaveAsEnabled, sDisplayedVersion) {
+		return (bAppVariantSaveAsEnabled && sDisplayedVersion !== Version.Number.Draft)
+			? null : this.getTextResources().getText("TOOLTIP_SAVE_AS_APP_VARIANT_DISABLED");
 	}
 
 	function onSaveAsPressed() {
