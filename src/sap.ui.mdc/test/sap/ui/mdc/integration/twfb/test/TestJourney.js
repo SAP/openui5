@@ -235,7 +235,31 @@ sap.ui.define([
 		Then.iTeardownMyAppFrame();
 	});
 
+	opaTest("twfb - start app and test zoom buttons in overflow behavior", function(Given, When, Then) {
+		// Restrict width to ensure that the zoom buttons are in the overflow area.
+		Given.iStartMyAppInAFrame({source: "test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html", width: "500px", height: "1000px"});
 
+		const sChartId = "container-v4demo---books--bookChart";
+
+		// Change Chart type to stacked bar chart, which has zoom buttons enabled.
+		When.onTheMDCChart.iOpenTheOverflowPopover(sChartId);
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+		When.onTheMDCChart.iSelectAChartType(sChartId, "Stacked Bar Chart");
+		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartId, "stacked_bar");
+		// Selecting chart type closes overflow popover
+
+		// Click zoom in button and check that overflow popover stays open.
+		When.onTheMDCChart.iOpenTheOverflowPopover(sChartId);
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+		When.onTheMDCChart.iClickOnZoomIn(sChartId);
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+
+		// Click zoom out button and check that overflow popover stays open.
+		When.onTheMDCChart.iClickOnZoomOut(sChartId);
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+
+		Then.iTeardownMyAppFrame();
+	});
 
 	opaTest("twfb - start app and test filterbar", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/internal/TableWithFilterBar/index.html");
