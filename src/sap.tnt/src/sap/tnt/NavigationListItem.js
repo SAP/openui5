@@ -433,9 +433,6 @@ sap.ui.define([
 	 *  @param {sap.ui.core.RenderManager} oRM renderer instance
 	 */
 	NavigationListItem.prototype._renderExternalLinkIcon =  function (oRM) {
-		if (!(this.getHref() && this.getTarget() === "_blank")) {
-			return;
-		}
 		const oIcon = this._getExternalIcon();
 		oRM.renderControl(oIcon);
 	};
@@ -455,7 +452,8 @@ sap.ui.define([
 			bExpanded = this.getExpanded(),
 			bSelectable = this.getSelectable(),
 			sDesign = this.getDesign(),
-			bExpanderVisible = !!aItems.length && this.getHasExpander();
+			bExpanderVisible = !!aItems.length && this.getHasExpander(),
+			bExternalLink = this.getHref() && this.getTarget() === "_blank";
 
 		oRM.openStart("div")
 			.class("sapTntNLI")
@@ -463,6 +461,10 @@ sap.ui.define([
 
 		if (bDisabled) {
 			oRM.class("sapTntNLIDisabled");
+		}
+
+		if (bExternalLink) {
+			oRM.class("sapTntNLIExternalLink");
 		}
 
 		let bSelected = false;
@@ -549,7 +551,9 @@ sap.ui.define([
 
 		this._renderText(oRM);
 
-		this._renderExternalLinkIcon(oRM);
+		if (bExternalLink) {
+			this._renderExternalLinkIcon(oRM);
+		}
 
 		if (bListExpanded) {
 			const oIcon = this._getExpandIconControl();
@@ -578,7 +582,8 @@ sap.ui.define([
 	 * @private
 	 */
 	NavigationListItem.prototype.renderSecondLevelNavItem = function (oRM, oNavigationList) {
-		const bDisabled = !this.getEnabled() || !this.getAllParentsEnabled();
+		const bDisabled = !this.getEnabled() || !this.getAllParentsEnabled(),
+		bExternalLink = this.getHref() && this.getTarget() === "_blank";
 
 		oRM.openStart("li", this)
 			.class("sapTntNLI")
@@ -593,6 +598,10 @@ sap.ui.define([
 
 		if (bDisabled) {
 			oRM.class("sapTntNLIDisabled");
+		}
+
+		if (bExternalLink) {
+			oRM.class("sapTntNLIExternalLink");
 		}
 
 		if (this._isInsidePopover()) {
@@ -612,7 +621,9 @@ sap.ui.define([
 
 		this._renderText(oRM);
 
-		this._renderExternalLinkIcon(oRM);
+		if (bExternalLink) {
+			this._renderExternalLinkIcon(oRM);
+		}
 
 		this._renderCloseLink(oRM);
 
