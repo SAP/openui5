@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/events/KeyCodes',
 	'sap/ui/Device',
+	'sap/ui/core/Lib',
 	'sap/base/i18n/Localization',
 	'sap/ui/events/PseudoEvents'
 ], function(
@@ -19,6 +20,7 @@ sap.ui.define([
 	containsOrEquals,
 	KeyCodes,
 	Device,
+	Library,
 	Localization,
 	PseudoEvents
 ) {
@@ -130,6 +132,7 @@ sap.ui.define([
 
 	MenuWrapper.prototype.init = function() {
 		this._aStyleClasses = [];
+		this._oRb = Library.getResourceBundleFor("sap.m");
 	};
 
 	MenuWrapper.prototype.onBeforeRendering = function() {
@@ -174,6 +177,11 @@ sap.ui.define([
 			return;
 		}
 
+
+		// If Shift is pressed, and the item is in Single- or Multi- selectable group,
+		// the menu popover should not be closed.
+		this._bPreventPopoverClose = this._isShiftKeyPressed(oEvent);
+
 		this._selectItem(oItem, true);
 		oEvent.preventDefault();
 		oEvent.stopPropagation();
@@ -185,8 +193,18 @@ sap.ui.define([
 		oEvent.stopPropagation();
 	};
 
-	MenuWrapper.prototype.onkeydown = function(oEvent) {
+	MenuWrapper.prototype.onsapselectmodifiers = function(oEvent) {
+		this._sapSelectOnKeyDown = true;
 
+		// If Shift is pressed, and the item is in Single- or Multi- selectable group,
+		// the menu popover should not be closed.
+		this._bPreventPopoverClose = this._isShiftKeyPressed(oEvent);
+
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+	};
+
+	MenuWrapper.prototype.onkeydown = function(oEvent) {
 		const iIdx = this.oHoveredItem ? this._getVisibleItems().indexOf(this.oHoveredItem) : -1,
 			bRtl = Localization.getRTL(),
 			iLeftArrow = bRtl ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT,
@@ -261,12 +279,12 @@ sap.ui.define([
 		// The attribute _sapSelectOnKeyDown helps prevent issues in the reverse scenario. For example, when the spacebar is pressed
 		// on a Button, opening the menu may cause the space keyup event to select the first item immediately.
 		// Device checks are in place due to new functionality in iOS 13, which introduces desktop view functionality for tablets.
-		if (!this._sapSelectOnKeyDown) {
+		if (!this._sapSelectOnKeyDown && !this._bPreventPopoverClose) {
 			return;
 		} else {
 			this._sapSelectOnKeyDown = false;
 		}
-		if (!PseudoEvents.events.sapselect.fnCheck(oEvent) && oEvent.keyCode !== KeyCodes.ENTER) {
+		if (!PseudoEvents.events.sapselect.fnCheck(oEvent) && oEvent.keyCode !== KeyCodes.ENTER && !this._bPreventPopoverClose) {
 			return;
 		}
 
@@ -303,6 +321,16 @@ sap.ui.define([
 			}
 		}
 		return null;
+	};
+
+	/**
+	 * Determines whether only the Shift key is pressed during the event.
+	 * @param {jQuery.Event} oEvent Keyboard event.
+	 * @private
+	 * @returns {boolean} True if only the Shift key is pressed, false otherwise
+	 */
+	MenuWrapper.prototype._isShiftKeyPressed = function(oEvent) {
+		return oEvent.shiftKey && !oEvent.metaKey && !oEvent.altKey && !oEvent.ctrlKey;
 	};
 
 	/**
@@ -372,11 +400,17 @@ sap.ui.define([
 
 			if (oItem._getItemSelectionMode && oItem._getItemSelectionMode() !== ItemSelectionMode.None) {
 				oItem.setSelected(!oItem.getSelected());
+			} else {
+				this._bPreventPopoverClose = false;
 			}
 
 			this.fireItemSelected({item: oItem});
 			oItem.firePress({item: oItem});
-			this.fireClosePopover({ bubbleToRoot: true, origin: oItem });
+
+			if (!this._bPreventPopoverClose) {
+				this.fireClosePopover({ bubbleToRoot: true, origin: oItem });
+			}
+			this._bPreventPopoverClose = false;
 		}
 	};
 

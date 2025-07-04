@@ -4192,7 +4192,9 @@ sap.ui.define([
 			if (bUpdateListener || bUpdateAll) {
 				oObject._callPropagationListener();
 			}
-			oObject.fireModelContextChange();
+			if (bUpdateListener !== true) {
+				oObject.fireModelContextChange();
+			}
 		}
 	};
 

@@ -94,14 +94,57 @@ sap.ui.define([
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
 
-				oSelectDialog.attachSearch(function() {
+				const fnOnSearch = function() {
+					oSelectDialog.detachSearch(fnOnSearch);
 					assert.equal(this.getItems().length, 1, "then the search works correctly");
 					var sIconName = this.getItems()[0].getIcon();
 					assert.strictEqual(sIconName, "sap-icon://wrench", "then the icon is correct");
 					done();
-				});
+				};
 
+				oSelectDialog.attachSearch(fnOnSearch);
 				oSelectDialog.fireSearch({value: "wrench"});
+			});
+
+			oSelectInput.fireValueHelpRequest();
+		});
+
+		QUnit.test("When valueHelpRequest event is triggered on an Input field and then search event is triggered on SelectDialog with icon text different to icon name", function(assert) {
+			const done = assert.async();
+			oAppVariantDialog.open();
+			const oSelectInput = Element.getElementById("selectInput");
+
+			oSelectInput.attachValueHelpRequest(function() {
+				const oSelectDialog = Element.getElementById("selectDialog");
+				assert.ok("then the select dialog gets opened");
+				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
+				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
+
+				const fnOnSearch = function() {
+					oSelectDialog.detachSearch(fnOnSearch);
+					assert.equal(this.getItems().length, 1, "then the search works correctly");
+					const sIconName = this.getItems()[0].getIcon();
+					assert.strictEqual(sIconName, "sap-icon://add-filter", "then the icon is correct");
+					setTimeout(function() {
+						oSelectDialog.fireConfirm({
+							selectedItem: this.getItems()[0],
+							selectedContexts: [this.getItems()[0].getBindingContext()]
+						});
+					}.bind(this), 100);
+				};
+
+				const fnOnConfirm = function(oEvent) {
+					oSelectDialog.detachConfirm(fnOnConfirm);
+					const aContexts = oEvent.getParameter("selectedContexts");
+					assert.strictEqual(aContexts.length, 1, "then the selected contexts are available");
+					const sIconName = aContexts[0].getObject().name;
+					assert.strictEqual(sIconName, "add-filter", "then the selected icon name is correct");
+					done();
+				};
+
+				oSelectDialog.attachSearch(fnOnSearch);
+				oSelectDialog.attachConfirm(fnOnConfirm);
+				oSelectDialog.fireSearch({value: "add filter"});
 			});
 
 			oSelectInput.fireValueHelpRequest();
