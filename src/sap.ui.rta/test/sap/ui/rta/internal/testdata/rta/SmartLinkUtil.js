@@ -145,4 +145,4 @@ sap.ui.define([
 	};
 
 	return SmartLinkUtil;
-}, /* bExport= */true);
+});

@@ -104,4 +104,4 @@ sap.ui.define([
 	};
 
 	return AddXMLAtExtensionPoint;
-}, /* bExport= */true);
+});

@@ -551,4 +551,4 @@ sap.ui.define([
 	};
 
 	return TransportDialog;
-}, /* bExport= */ true);
+});

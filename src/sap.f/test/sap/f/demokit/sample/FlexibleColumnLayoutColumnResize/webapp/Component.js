@@ -46,4 +46,4 @@ sap.ui.define([
 		}
 	});
 	return Component;
-}, true);
+});
