@@ -593,4 +593,4 @@ sap.ui.define([
 	};
 
 	return CommandFactory;
-}, /* bExport= */true);
+});

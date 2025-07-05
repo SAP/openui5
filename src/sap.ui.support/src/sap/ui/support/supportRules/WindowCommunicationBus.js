@@ -166,4 +166,4 @@ sap.ui.define([
 	};
 
 	return WindowCommunicationBus;
-}, true);
+});

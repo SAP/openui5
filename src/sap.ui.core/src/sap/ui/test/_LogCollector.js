@@ -97,4 +97,4 @@ sap.ui.define([
 
 	return _LogCollector;
 
-}, true);
+});

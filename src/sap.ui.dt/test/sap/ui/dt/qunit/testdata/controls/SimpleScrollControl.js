@@ -168,4 +168,4 @@ sap.ui.define([
 	};
 
 	return SimpleScrollControl;
-}, /* bExport= */ true);
+});

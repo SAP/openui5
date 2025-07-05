@@ -166,4 +166,5 @@ sap.ui.define(
 
 		return ValueStateHeader;
 
-	}, true);
+	}
+);
