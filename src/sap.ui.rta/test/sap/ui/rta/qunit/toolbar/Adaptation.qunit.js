@@ -656,6 +656,72 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		[{
+			description: "Given a toolbar is created, current version is 'Draft' and 'Save As' app variant is enabled",
+			versionNumber: Version.Number.Draft,
+			appVariantMenu: {
+				saveAs: {
+					visible: true,
+					enabled: true
+				}
+			}
+		},
+		{
+			description: "Given a toolbar is created, current version is 'Draft' and 'Save As' app variant is not enabled",
+			versionNumber: Version.Number.Draft,
+			appVariantMenu: {
+				saveAs: {
+					visible: true,
+					enabled: false
+				}
+			}
+		},
+		{
+			description: "Given a toolbar is created, current version is not 'Draft' and 'Save As' app variant is not enabled",
+			versionNumber: Version.Number.Original,
+			appVariantMenu: {
+				saveAs: {
+					visible: true,
+					enabled: false
+				}
+			}
+		},
+		{
+			description: "Given a toolbar is created, current version is not 'Draft' and 'Save As' app variant is enabled",
+			versionNumber: Version.Number.Original,
+			appVariantMenu: {
+				saveAs: {
+					visible: true,
+					enabled: true
+				}
+			}
+		}].forEach(function(oTestSetup) {
+			QUnit.test(oTestSetup.description, async function(assert) {
+				const oVersionsModel = new JSONModel({
+					versioningEnabled: true,
+					backendDraft: true,
+					displayedVersion: oTestSetup.versionNumber
+				});
+				this.oToolbar.setModel(oVersionsModel, "versions");
+
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", oTestSetup.appVariantMenu.saveAs.visible);
+				this.oControlsModel.setProperty("/appVariantMenu/saveAs/enabled", oTestSetup.appVariantMenu.saveAs.enabled);
+				this.oControlsModel.setProperty("/appVariantMenu/overview/visible", true);
+				this.oControlsModel.setProperty("/appVariantMenu/manageApps/visible", true);
+
+				this.oToolbar.animation = false;
+				await this.oToolbar.show();
+				await RtaQunitUtils.showActionsMenu(this.oToolbar);
+				const oSaveAsButton = this.oToolbar.getControl("saveAs");
+				const bIsSaveAsEnabled = Version.Number.Draft !== oTestSetup.versionNumber && oTestSetup.appVariantMenu.saveAs.enabled;
+				assert.strictEqual(oSaveAsButton.getEnabled(), bIsSaveAsEnabled, `saveAs has enabled stauts ${bIsSaveAsEnabled}`);
+				assert.deepEqual(
+					oSaveAsButton.getTooltip(),
+					bIsSaveAsEnabled ? null : "Only active versions can be saved as app variants. Please activate your draft.",
+					`then ${bIsSaveAsEnabled ? "no" : "a"} tooltip is set for saveAs`);
+			});
+		});
+
 		QUnit.test("Given a toolbar is created and app variants parameter in the model are switched back and forth", function(assert) {
 			this.oControlsModel.setProperty("/appVariantMenu/saveAs/visible", false);
 			this.oControlsModel.setProperty("/appVariantMenu/overview/visible", false);

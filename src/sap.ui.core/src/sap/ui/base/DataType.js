@@ -465,6 +465,8 @@ sap.ui.define([
 		return oType;
 	}
 
+	new Set();
+
 	/**
 	 * Looks up the type with the given name and returns it.
 	 *
@@ -504,11 +506,12 @@ sap.ui.define([
 	 * needed by the specific control or class definition.
 	 *
 	 * @param {string} sTypeName Qualified name of the type to retrieve
+	 * @param {sap.ui.base.ManagedObject.MetaOptions.Property} [oProperty] Metadata of the property
 	 * @returns {sap.ui.base.DataType|undefined} Type object or <code>undefined</code> when
 	 *     no such type has been defined yet
 	 * @public
 	 */
-	DataType.getType = function(sTypeName) {
+	DataType.getType = function(sTypeName, oProperty) {
 		assert( sTypeName && typeof sTypeName === 'string', "sTypeName must be a non-empty string");
 
 		var oType = mTypes[sTypeName];
@@ -704,5 +707,4 @@ sap.ui.define([
 	_EnumHelper.inject(DataType.registerEnum);
 
 	return DataType;
-
 });
