@@ -197,7 +197,8 @@
 							icon="sap-icon://bell"
 							press="onNewsButtonPress"
 							text="{i18n>APP_INFORMATION_BTN_NEWS}"
-							tooltip="{i18n>APP_NEWS_BTN_TOOLTIP}">
+							tooltip="{i18n>APP_NEWS_BTN_TOOLTIP}"
+							visible="{= !${versionData>/isURLVersioned} }">
 							<customData>
 								<BadgeCustomData key="badge" value="{news>/newsCount}" />
 							</customData>

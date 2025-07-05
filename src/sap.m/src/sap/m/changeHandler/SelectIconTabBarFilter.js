@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/library"
-], function (flLibrary) {
+	"sap/ui/fl/changeHandler/condenser/Classification"
+], function (Classification) {
 	"use strict";
 
 	/**
@@ -88,8 +88,8 @@ sap.ui.define([
 	SelectIconTabBarFilter.getCondenserInfo = function (oChange) {
 		return {
 			affectedControl: oChange.getSelector(),
-			classification: flLibrary.condenser.Classification.LastOneWins,
-			uniqueKey: oChange.getContent().selectedKey
+			classification: Classification.LastOneWins,
+			uniqueKey: "selectIconTabBarFilter"
 		};
 	};
 

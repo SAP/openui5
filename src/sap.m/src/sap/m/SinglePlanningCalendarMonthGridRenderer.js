@@ -310,6 +310,8 @@ sap.ui.define([
 			sId = oAppointment.getId(),
 			oStartDate = oAppointment.getStartDate(),
 			oEndDate = oAppointment.getEndDate(),
+			oCustomDatas = oAppointment.getCustomData()?.filter((oCustomData) => oCustomData.getWriteToDom()),
+			bHasCustomData = !!oCustomDatas?.length,
 			aCustomContent = oAppointment.getCustomContent(),
 			bHasCustomContent = !!aCustomContent.length,
 			bIsFullDay = !oEndDate || oControl._isAllDayAppointment(oStartDate, oEndDate),
@@ -408,6 +410,12 @@ sap.ui.define([
 		oRm.attr("data-sap-level", iLevel);
 		oRm.attr("data-sap-width", iWidth);
 		oRm.attr("tabindex", 0);
+
+		if (bHasCustomData) {
+			oCustomDatas.forEach((oCustomData) => {
+				oRm.attr(`data-${oCustomData.getKey()}`, oCustomData.getValue());
+			});
+		}
 
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);

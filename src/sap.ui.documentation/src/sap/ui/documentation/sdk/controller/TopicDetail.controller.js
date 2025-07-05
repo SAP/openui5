@@ -51,6 +51,8 @@ sap.ui.define([
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetail", {
+
+
 			/* =========================================================== */
 			/* lifecycle methods										   */
 			/* =========================================================== */
@@ -569,5 +571,6 @@ sap.ui.define([
 				openWindow(this.jsonDefModel.getProperty("/mdEditLink"));
 			}
 		});
+
 	}
 );
