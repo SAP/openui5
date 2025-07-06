@@ -49,8 +49,10 @@
 }
 
 .sapUiForm:not(.sapUiFormEdit-CTX) .sapMCb.sapMCbDisplayOnly {
-	height: 1.125rem;
-	line-height: 1.125rem;
+	&:not(.sapMCbWrapped) {
+		height: 1.125rem;
+		line-height: 1.125rem;
+	}
 
 	&:not(.sapMCbBgDis) {
 		padding-left: 1.625rem;
