@@ -719,6 +719,12 @@ sap.ui.define([
 				assert.ok(oCurrentButton.$().attr("aria-labelledby").indexOf(sInvTextId) === -1,
 					"aria-labelledby of button excludes the id of the 'Split Button' text");
 
+				assert.strictEqual(oCurrentButton.$().attr("aria-describedby"), this.oObjectPage.getId() + "-ariaContentText",
+					"aria-describedby of the button is set correctly");
+
+				assert.strictEqual(oCurrentButton.$().attr("aria-haspopup"), undefined,
+					"aria-haspopup of the button is not set, since ot comes from the aria-describedby attribute");
+
 				assert.strictEqual(oCurrentButton.$().find(".sapMBtn").attr("role"), "none",
 				"inner buttons are hidden from accessibility API");
 			}

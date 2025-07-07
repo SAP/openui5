@@ -1361,6 +1361,7 @@ sap.ui.define([
 		}
 
 		this._destroyInvisibleText();
+		this._oABHelper.destroy();
 
 		this._deregisterScreenSizeListener();
 		this._deregisterTitleSizeListener();

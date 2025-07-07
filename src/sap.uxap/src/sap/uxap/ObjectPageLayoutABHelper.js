@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/CustomData",
 	"sap/ui/base/ManagedObjectObserver",
 	"./AnchorBar",
@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText"
-], function (jQuery, BaseObject, Core, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool, InvisibleText) {
+], function (jQuery, BaseObject, Library, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool, InvisibleText) {
 	"use strict";
 
 	var ABHelper = BaseObject.extend("sap.uxap._helpers.AB", {
@@ -27,11 +27,20 @@ sap.ui.define([
 			this._oObjectPageLayout = oObjectPageLayout;
 			this._oObserver = new ManagedObjectObserver(this._proxyStateChanges.bind(this));
 			this._aMenusWithAttachPressHandler = [];
+			this._sAriaContentText = "-ariaContentText";
+			this._oInvisibleText = new InvisibleText({
+				id: this._oObjectPageLayout.getId() + this._sAriaContentText,
+				text: Library.getResourceBundleFor("sap.uxap").getText("ARIA_DESCRIBEDBY_MENU_BUTTON_HAS_POPUP")
+			}).toStatic();
 		},
 		getInterface: function() {
 			return this; // no facade
 		}
 	});
+
+	ABHelper.prototype.destroy = function () {
+		this._oInvisibleText.destroy();
+	};
 
 	/** STATIC MEMBERS **/
 
@@ -186,8 +195,9 @@ sap.ui.define([
 										return sId !== sSplitButtonDescInvsibleTextId;
 									})
 									.join(" ");
+								mAriaProps.describedBy = this._oObjectPageLayout.getId() + this._sAriaContentText;
 							}
-						};
+						}.bind(this);
 
 						oMenu._setCustomEnhanceAccStateFunction(function (oElement, mAriaProps) {
 							mAriaProps.controls = oElement.data("sectionId");
