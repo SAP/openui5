@@ -8348,6 +8348,28 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Warning, "The value state is reset.");
 	});
 
+		QUnit.test("should the value state to the initial one even if the initial one is an error", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+
+		this.oMultiComboBox.setValueState("Warning");
+		await nextUIUpdate(this.clock);
+
+		this.oMultiComboBox.setValueState("Error");
+		await nextUIUpdate(this.clock);
+
+		qutils.triggerCharacterInput(this.oMultiComboBox.getFocusDomRef(), "j");
+		qutils.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ENTER);
+
+		await nextUIUpdate(this.clock);
+
+		// wait for a bit more than 1 second to ensure the error value state is reset
+		// testing _showWrongValueVisualEffect()
+		this.clock.tick(1200);
+
+		assert.strictEqual(this.oMultiComboBox.getValueState(), ValueState.Error, "The value state error is reset.");
+	});
+
+
 	QUnit.test("value state message should be opened if the input field is on focus", async function(assert) {
 		this.clock = sinon.useFakeTimers();
 		// act
