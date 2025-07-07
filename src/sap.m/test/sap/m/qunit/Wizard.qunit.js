@@ -1017,6 +1017,22 @@ sap.ui.define([
 		assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
 	});
 
+	QUnit.test("Wizard Step invisible text is correctly set in Page Mode", async function (assert) {
+		this.oWizard._activateStep(this.oWizard.getSteps()[1]);
+		await nextUIUpdate();
+
+		this.oWizard.goToStep(this.oWizard.getSteps()[1], true);
+
+		assert.strictEqual(this.oWizard.getSteps()[1]._oNumberInvisibleText.getText(), "Step2 Step 2", "The invisible text of the second step should be set correctly.");
+		this.oWizard._activateStep(this.oWizard.getSteps()[2]);
+		await nextUIUpdate();
+
+		this.oWizard.goToStep(this.oWizard.getSteps()[2], true);
+
+		assert.strictEqual(this.oWizard.getSteps()[2]._oNumberInvisibleText.getText(), "Step3 Step 3", "The invisible text of the third step should be set correctly.");
+		this.oWizard.destroy();
+	});
+
 	QUnit.test("WizardStep labelled-by reference number step and title", async function (assert) {
 		var oSpy = this.spy(WizardStep.prototype, "_setNumberInvisibleText"),
 			oWizard = new Wizard({
