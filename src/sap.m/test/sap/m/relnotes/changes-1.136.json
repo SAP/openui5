@@ -213,5 +213,35 @@
         "text": " We now ensure that the image inside a slide tile is adjusted based on the width of the tile"
       }
     ]
+  },
+  "1.136.2": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "25a59d219d9f92befbebd56f84f3666131354e8e",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Fix flexibility change handler"
+      },
+      {
+        "id": "90436ff3ae219f9d0fe66d7e2de759cdef5df121",
+        "type": "FIX",
+        "text": " sap.m.Button: focus the button on mobile before firing press event"
+      },
+      {
+        "id": "ab0d31714cf9b4332e39e8286069a8077d257a22",
+        "type": "FIX",
+        "text": " p13n.xConfigAPI: enhanceConfig with conditional destroy"
+      },
+      {
+        "id": "2f83196aa09f10de057542ab7601983ce56ec357",
+        "type": "FIX",
+        "text": " MDCTable: Hide settings icon in ColumnMenu"
+      },
+      {
+        "id": "bab4d8cad8ebc7a72786b012bccea866a2171cfb",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: tokens list stays opened for readonly MultiInput"
+      }
+    ]
   }
 }

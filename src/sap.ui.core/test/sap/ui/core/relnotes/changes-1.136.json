@@ -63,5 +63,40 @@
         "text": " ControllerMetadata.qunit: registerExtensionProvider deprecation"
       }
     ]
+  },
+  "1.136.2": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "7f478e9bce6dfd2a8572321eff5dc0998a2edfe3",
+        "type": "FIX",
+        "text": " core/KeyboardInteractionDisplay: Fix Normalization of single keys"
+      },
+      {
+        "id": "0ebbb5dd34b71e9f49aaca55c0c718f7b582cdf6",
+        "type": "FEATURE",
+        "text": " sap.ui.core: make sap/ui/Device a standard AMD module"
+      },
+      {
+        "id": "a756049f13b187676062b9eacada92863ce3a5c9",
+        "type": "FEATURE",
+        "text": " sap/ui/base: enable static inheritance for UI5 classes"
+      },
+      {
+        "id": "4067b4720900a77181422452da34a00b6729bca3",
+        "type": "FIX",
+        "text": " sap.base.config: fix logging for URL parameters"
+      },
+      {
+        "id": "d99d21eea058cef4a9a6bf64a45030aff280f13a",
+        "type": "FIX",
+        "text": " sap/ui/core/AppCAcheBuster.js: Core.ready() does not resolve"
+      },
+      {
+        "id": "a6a4893661033cad8c7b24019d0fa52b6fb93489",
+        "type": "FEATURE",
+        "text": " Make the experimental new bootstrap the productive one"
+      }
+    ]
   }
 }

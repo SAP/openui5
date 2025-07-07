@@ -33,5 +33,15 @@
         "text": " sap.uxap.ObjectPageLayout: Action buttons in OverflowToolbar"
       }
     ]
+  },
+  "1.136.2": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "90436ff3ae219f9d0fe66d7e2de759cdef5df121",
+        "type": "FIX",
+        "text": " sap.m.Button: focus the button on mobile before firing press event"
+      }
+    ]
   }
 }

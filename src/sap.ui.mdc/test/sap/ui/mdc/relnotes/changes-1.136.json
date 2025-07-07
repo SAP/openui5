@@ -38,5 +38,20 @@
         "text": " FilterField: show more-indicator on focus to other field"
       }
     ]
+  },
+  "1.136.2": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "c0db0dad6365aacad9ebc4f2f7e0135b8bad91ae",
+        "type": "FIX",
+        "text": " Mdc.FieldBase: Mark keydown event on escape-induced valuehelp close"
+      },
+      {
+        "id": "2f83196aa09f10de057542ab7601983ce56ec357",
+        "type": "FIX",
+        "text": " MDCTable: Hide settings icon in ColumnMenu"
+      }
+    ]
   }
 }

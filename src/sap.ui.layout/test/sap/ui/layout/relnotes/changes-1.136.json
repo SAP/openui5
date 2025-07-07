@@ -1,0 +1,12 @@
+{
+  "1.136.2": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "aaefcf67f4651ad72b7a74c3cc6a8c0781d95e4f",
+        "type": "FEATURE",
+        "text": " SimpleForm: use ColumnLayout as default"
+      }
+    ]
+  }
+}

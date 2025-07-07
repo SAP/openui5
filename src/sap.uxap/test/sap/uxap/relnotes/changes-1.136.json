@@ -78,5 +78,20 @@
         "text": " sap.uxap.ObjectPageSubSection: ensure consistent async unstashing"
       }
     ]
+  },
+  "1.136.2": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "2a8fdddbd6e26b0db714dcf03358445e14668741",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Action visualization issue fixed"
+      },
+      {
+        "id": "04e5c83a91f203d08f69d63588b42b0afc45733a",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSubSection: Fix cloning of \"actions\""
+      }
+    ]
   }
 }
