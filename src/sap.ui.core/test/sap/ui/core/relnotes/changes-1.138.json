@@ -1,7 +1,12 @@
 {
   "1.138.0": {
-    "date": "June 2025",
+    "date": "July 2025",
     "notes": [
+      {
+        "id": "5a36ff77cd32c85a31385bef364e9414d665d92c",
+        "type": "FIX",
+        "text": " core/KeyboardInteractionDisplay: Fix Normalization of single keys"
+      },
       {
         "id": "f5ae7883aaa9995a2328675bac079c18028f1d8a",
         "type": "FEATURE",
