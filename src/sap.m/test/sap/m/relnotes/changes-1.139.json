@@ -3,6 +3,11 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "6d62e563b8b35fefc54e72c62e0d2a18e4eca934",
+        "type": "FIX",
+        "text": " sap.m.Link: icon is correctly aligned now"
+      },
+      {
         "id": "06bfe31344ff931b04986789c601a644ab45af55",
         "type": "FIX",
         "text": " sap.m.IconTabBar: Fix flexibility change handler"
