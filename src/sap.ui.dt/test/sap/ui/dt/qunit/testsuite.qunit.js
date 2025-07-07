@@ -164,6 +164,11 @@ sap.ui.define(function() {
 					only: ["sap/ui/dt/util/ZIndexManager"]
 				}
 			},
+			"util/_createPromise": {
+				coverage: {
+					only: ["sap/ui/dt/util/_createPromise"]
+				}
+			},
 
 			// -------------------------------------------------------------------------------
 			// Plugin tests:
