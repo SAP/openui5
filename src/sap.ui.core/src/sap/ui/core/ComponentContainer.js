@@ -527,7 +527,7 @@ sap.ui.define([
 		if (oComponent) {
 			if (this.getPropagateModel()) {
 				this._propagateProperties(vName, oComponent);
-			} else {
+			} else if (oComponent.getParent() == null) {
 				const { aPropagationListeners } = this._getPropertiesToPropagate();
 				const oProperties = {
 					oModels: {},
