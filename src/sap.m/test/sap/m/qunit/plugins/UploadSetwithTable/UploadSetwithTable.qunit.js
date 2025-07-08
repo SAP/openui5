@@ -1947,9 +1947,12 @@ sap.ui.define([
 			this.uploadSetInstance = new UploadSetwithTable();
 			this.sandbox.stub(Log, "error");
 			this.sandbox.stub(this.uploadSetInstance, "getConfig");
+			this.server = sinon.createFakeServer();
+            this.server.autoRespond = true;
 		},
 		afterEach: function () {
 			this.sandbox.restore();
+			this.server.restore();
 		}
 	});
 
@@ -1978,6 +1981,63 @@ sap.ui.define([
 			}, this.uploadSetInstance, null),
 			"getConfig was called with correct arguments"
 		);
+	});
+
+	QUnit.test("download API should invoke uploaderTableItem's download API", async function (assert) {
+		const done = assert.async();
+
+		this.uploadSetInstance = new UploadSetwithTable();
+
+		this.uploadSetInstance.getRowConfiguration = () => {
+			return new UploadItemConfiguration({
+			fileNamePath: "fileName",
+			urlPath: "url",
+			mediaTypePath: "mediaType",
+			fileSizePath: "size"
+		});
+		};
+
+		this.oTable = await createResponsiveTable();
+		this.oTable.addDependent(this.uploadSetInstance);
+
+		//  create a binding context
+		const oBindingContext = { dummy: "data" };
+		const bAskForLocation = true;
+		const aHeaderFields = [
+			{ getKey: () => "Authorization", getText: () => "Bearer token" },
+			{ getKey: () => "Custom-Header", getText: () => "CustomValue" }
+		];
+		const oItem = {
+			getUrl: () => "https://example.com/file.txt",
+			getFileName: () => "file.txt",
+			getMediaType: () => "text/plain"
+		};
+
+		// stub for getItemForContext
+		this.uploadSetInstance.getItemForContext = this.sandbox.stub().returns(
+			new UploadItem({
+				fileName: "file.txt",
+				url: "/fakeUrl"
+			})
+		);
+		// stub for getItemForContext
+		this.uploadSetInstance.getItemForContext = this.sandbox.stub().returns(
+			new UploadItem({
+				fileName: "file.txt",
+				url: "/fakeUrl"
+			})
+		);
+
+		const uploader = this.uploadSetInstance._getActiveUploader();
+		const oUploaderSpy = this.sandbox.spy(uploader, "download");
+		this.sandbox.stub(uploader, "_saveAsFile").returns(true);
+
+		this.uploadSetInstance.download(oBindingContext, bAskForLocation, oItem, aHeaderFields);
+
+		setTimeout(() => {
+			assert.ok(oUploaderSpy.calledOnce, "Uploader download method was called once");
+			done();
+		});
 	});
 
     QUnit.module("Plugin Drag and Drop Tests", {
