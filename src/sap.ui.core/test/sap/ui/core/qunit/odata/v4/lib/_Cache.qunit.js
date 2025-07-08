@@ -4340,13 +4340,25 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bTransient) {
-	QUnit.test("_Cache#replaceElement, bTransient= " + bTransient, function (assert) {
+	[false, true].forEach(function (bWasInactive) {
+		const sTitle = "_Cache#replaceElement, bTransient= " + bTransient + " bWasInactive: "
+			+ bWasInactive;
+
+		if (!bTransient && bWasInactive) {
+			return;
+		}
+
+	QUnit.test(sTitle, function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('0')"),
 			oElement = {},
 			aElements = [],
 			oOldElement = {},
 			sTransientPredicate = "($uid=id-1-23)",
 			mTypeForMetaPath = {};
+
+		if (bWasInactive) {
+			oOldElement["@$ui5.context.isInactive"] = false;
+		}
 
 		aElements[3] = oOldElement;
 		aElements.$byPredicate = {"('42')" : oOldElement};
@@ -4389,6 +4401,10 @@ sap.ui.define([
 			bTransient ? oElement : undefined);
 		assert.strictEqual(aElements[3]["@$ui5.context.isTransient"],
 			bTransient ? false : undefined);
+		assert.strictEqual(aElements[3]["@$ui5.context.isInactive"],
+			bWasInactive ? false : undefined);
+		assert.strictEqual("@$ui5.context.isInactive" in aElements[3], bWasInactive);
+	});
 	});
 });
 
