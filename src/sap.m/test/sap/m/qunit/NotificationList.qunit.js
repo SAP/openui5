@@ -4,19 +4,19 @@ sap.ui.define([
 	"sap/m/NotificationList",
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	NotificationList,
 	NotificationListGroup,
 	NotificationListItem,
-	Core
+	nextUIUpdate
 ) {
 	'use strict';
 
 	var RENDER_LOCATION = 'qunit-fixture';
 
 	QUnit.module('Rendering', {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.notificationList = new NotificationList({
 				items: [
 					new NotificationListGroup({
@@ -49,7 +49,7 @@ sap.ui.define([
 			});
 
 			this.notificationList.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.notificationList.destroy();
@@ -63,11 +63,12 @@ sap.ui.define([
 
 
 	QUnit.module('Focus', {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.notificationList = new NotificationList({
 				items: [
 					new NotificationListGroup({
 						title: 'Group 1',
+						collapsed: true,
 						items: [
 							new NotificationListItem({
 								title: 'Item 1',
@@ -82,6 +83,7 @@ sap.ui.define([
 					new NotificationListGroup({
 						showCloseButton: true,
 						title: 'Group 2',
+						collapsed: true,
 						items: [
 							new NotificationListItem({
 								title: 'Item 1',
@@ -97,22 +99,24 @@ sap.ui.define([
 			});
 
 			this.notificationList.placeAt(RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.notificationList.destroy();
 		}
 	});
 
-	QUnit.test('Focus stays inside notification list after close and invalidation ', function(assert) {
-		var oList = this.notificationList,
-			oListGroup = oList.getItems()[0].getDomRef();
+	QUnit.test('Focus stays inside notification list after close and invalidation', async function(assert) {
+		var oList = this.notificationList;
 
+		oList.getItems()[1]._getCloseButton().$().trigger("focus");
 		oList.getItems()[1]._getCloseButton().firePress();
-		Core.applyChanges();
+		await nextUIUpdate();
+		oList.setHeaderText('New Header Text');
+		await nextUIUpdate();
 		oList.removeItem(oList.getItems()[1]);
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		assert.strictEqual(document.activeElement, oListGroup, 'Focus stays on the item');
+		assert.ok(oList.getDomRef().contains(document.activeElement), 'Focus stays inside the list');
 	});
 });
