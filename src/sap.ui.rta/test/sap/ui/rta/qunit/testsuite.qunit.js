@@ -676,6 +676,18 @@ sap.ui.define([
 					}
 				}
 			},
+			"service/Receiver": {
+				group: "Service",
+				coverage: {
+					only: ["sap/ui/rta/service/Receiver"]
+				},
+				ui5: {
+					resourceroots: {
+						testdata: "test-resources/sap/ui/rta/testdata/",
+						testComponent: "test-resources/sap/ui/rta/qunit/testComponent"
+					}
+				}
+			},
 			"service/Selection": {
 				group: "Service",
 				coverage: {

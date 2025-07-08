@@ -290,6 +290,12 @@ License: ISC
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/ISC.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 
+Component: UI5 Web Components, version: 2.11.0
+Copyright: SAP SE (and OpenUI5 contributors)
+License: Apache-2.0
+License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.ui.core/test/sap/ui/core/qunit/testdata/fastnavigation/webc/integration/**
+
 
 Library: sap.ui.documentation:
 

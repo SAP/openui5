@@ -731,6 +731,7 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 		(function () {
 			var step1 = new WizardStep({
 				validated : true,
+				title: "Product Information",
 				icon: "sap-icon://permission",
 				content: [new VBox({
 					items: [
@@ -741,6 +742,7 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 			});
 			var step2 = new WizardStep({
 				validated : true,
+				title: "Product Options",
 				icon: "sap-icon://person-placeholder",
 				content: [new VBox({
 					items: [
@@ -751,6 +753,7 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 			});
 			var step3 = new WizardStep({
 				validated: true,
+				title: "Product Details",
 				icon: "sap-icon://simple-payment",
 				content: [new VBox({
 					items: [
@@ -761,6 +764,7 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 			});
 			var step4 = new WizardStep({
 				validated: true,
+				title: "Product Type",
 				icon: "sap-icon://simple-payment",
 				content: [new VBox({
 					items: [
@@ -781,6 +785,7 @@ sap.ui.require(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 			var oDialog = new Dialog({
 				id: "wiz-page-dialog",
 				contentHeight: "50%",
+				contentWidth: "100%",
 				verticalScrolling: false,
 				beginButton: new Button({
 					id: "dialog-next-step-button",
