@@ -378,6 +378,11 @@
             <copyright>Isaac Z. Schlueter and Contributors</copyright>
             <pattern partial="true" otherContent="SAP" explanation="LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.">sap/ui/core/cache/LRUPersistentCache.js</pattern>
         </lib>
+        <lib name="ui5-webcomponents" displayName="UI5 Web Components" npmName="@ui5/webcomponents" version="2.11.0" homepage="https://github.com/SAP/ui5-webcomponents" id="73554900106100402961">
+          <license url="https://github.com/SAP/ui5-webcomponents/blob/main/LICENSE" type="Apache-2.0" />
+          <copyright>SAP SE (and OpenUI5 contributors)</copyright>
+          <pattern>../test/sap/ui/core/qunit/testdata/fastnavigation/webc/integration/**</pattern>
+        </lib>
         <ignore>
             <file pattern="sap/ui/thirdparty/RequestRecorder.js" />
             <file pattern="sap/ui/thirdparty/sinon-ie.js" />

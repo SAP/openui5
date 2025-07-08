@@ -444,6 +444,13 @@ SPDX-FileCopyrightText = [
 SPDX-License-Identifier = "Apache-2.0 and ISC"
 SPDX-FileComment = "these files contain content from SAP and node-lru-cache: LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified."
 
+[[annotations]]
+path = "src/sap.ui.core/test/sap/ui/core/qunit/testdata/fastnavigation/webc/integration/**"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "SAP SE (and OpenUI5 contributors)"
+SPDX-License-Identifier = "Apache-2.0"
+SPDX-FileComment = "these files belong to: UI5 Web Components"
+
 
 # Library: sap.ui.documentation:
 
