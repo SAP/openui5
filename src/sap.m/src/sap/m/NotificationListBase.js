@@ -748,18 +748,31 @@ sap.ui.define([
 		 * @public
 		 */
 		NotificationListBase.prototype.close = function () {
-			var parent = this.getParent();
 			this.fireClose();
-			var bHasParentAfterClose = !!this.getParent(); // no parent after close means the notification is removed or destroyed - in such case move the focus
 
-			if (!bHasParentAfterClose && parent && parent instanceof Element) {
-				var delegate = {
+			const oParent = this.getParent();
+			const that = this;
+
+			if (oParent?.isA?.("sap.ui.core.Element")) {
+				var oDelegate = {
 					onAfterRendering: function () {
-						parent.focus();
-						parent.removeEventDelegate(delegate);
+						if (oParent.isDestroyed()) {
+							return;
+						}
+
+						if (document.activeElement === document.body) {
+							// SNOW - CS20250009263199
+							// item is deleted after close
+							// keep the focus inside the parent list
+							// to prevent popover close
+							oParent.removeEventDelegate(oDelegate);
+							oParent.focus();
+						} else if (!that.getDomRef()) {
+							oParent.removeEventDelegate(oDelegate);
+						}
 					}
 				};
-				parent.addEventDelegate(delegate);
+				oParent.addEventDelegate(oDelegate);
 			}
 		};
 
