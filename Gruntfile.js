@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 	if (!configExtensionFile) {
 		grunt.log.error([
 			'For more information about the OpenUI5 development setup, check here:',
-			'https://github.com/SAP/openui5/blob/master/docs/developing.md',
+			'https://github.com/UI5/openui5/blob/master/docs/developing.md',
 		].join("\n\t"));
 	}
 

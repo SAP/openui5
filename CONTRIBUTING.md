@@ -16,7 +16,7 @@ You can help OpenUI5 by helping others who use UI5 and need support. You will fi
 ## Analyze Issues
 
 Analyzing issue reports can be a lot of effort. Any help is welcome!
-Go to [the Github issue tracker](https://github.com/SAP/openui5/issues?state=open) and find an open issue which needs additional work or a bugfix.
+Go to [the Github issue tracker](https://github.com/UI5/openui5/issues?state=open) and find an open issue which needs additional work or a bugfix.
 
 Additional work may be further information, or a minimized jsbin example or gist, or it might be a hint that helps understanding the issue. Maybe you can even find and [contribute](#contribute-code) a bugfix?
 
@@ -25,7 +25,7 @@ Additional work may be further information, or a minimized jsbin example or gist
 If you find a bug - behavior of UI5 code contradicting its specification - you are welcome to report it.
 We can only handle well-reported, actual bugs, so please follow the guidelines below and use forums like [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) for support questions or when in doubt whether the issue is an actual bug.
 
-Once you have familiarized with the guidelines, you can go to the [Github issue tracker for OpenUI5](https://github.com/SAP/openui5/issues/new) to report the issue.
+Once you have familiarized with the guidelines, you can go to the [Github issue tracker for OpenUI5](https://github.com/UI5/openui5/issues/new) to report the issue.
 
 ### Quick Checklist for Bug Reports
 
@@ -133,7 +133,7 @@ There are three important things to know:
 
 1.  You must be aware of the Apache License (which describes contributions) and **agree to the Developer Certificate of Origin**. This is common practice in all major Open Source projects. To make this process as simple as possible, we are using *[CLA assistant](https://cla-assistant.io/)*. CLA assistant is an open source tool that integrates with GitHub very well and enables a one-click-experience for accepting the DCO. See the respective section below for details.
 2.  There are **several requirements regarding code style, quality, and product standards** which need to be met (we also have to follow them). The respective section below gives more details on the coding guidelines.
-3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation first need to be discussed with one of the OpenUI5 committers (the top 20 or more of the [Contributors List](https://github.com/SAP/openui5/graphs/contributors)), possibly one who touched the related code recently. The more effort you invest, the better you should clarify in advance whether the contribution fits: the best way would be to just open a feature request in the issue tracker to discuss the feature you plan to implement (make it clear you intend to contribute). We will then forward the proposal to the respective code owner, this avoids disappointment.
+3.  **Not all proposed contributions can be accepted**. Some features may e.g. just fit a third-party add-on better. The code must fit the overall direction of OpenUI5 and really improve it, so there should be some "bang for the byte". For most bug fixes this is a given, but major feature implementation first need to be discussed with one of the OpenUI5 committers (the top 20 or more of the [Contributors List](https://github.com/UI5/openui5/graphs/contributors)), possibly one who touched the related code recently. The more effort you invest, the better you should clarify in advance whether the contribution fits: the best way would be to just open a feature request in the issue tracker to discuss the feature you plan to implement (make it clear you intend to contribute). We will then forward the proposal to the respective code owner, this avoids disappointment.
 
 
 ### Developer Certificate of Origin (DCO)
@@ -190,10 +190,10 @@ If this list sounds lengthy and hard to achieve - well, that's what WE have to c
 
 6.  In the commit message follow the [commit message guidelines](docs/guidelines.md#git-guidelines)
 7.  If your change fixes an issue reported at GitHub, add the following line to the commit message:
-    - ```Fixes https://github.com/SAP/openui5/issues/(issueNumber)```
+    - ```Fixes https://github.com/UI5/openui5/issues/(issueNumber)```
     - Do NOT add a colon after "Fixes" - this prevents automatic closing.
-	- When your pull request number is known (e.g. because you enhance a pull request after a code review), you can also add the line ```Closes https://github.com/SAP/openui5/pull/(pullRequestNumber)```
-8.  Create a Pull Request to github.com/SAP/openui5
+	- When your pull request number is known (e.g. because you enhance a pull request after a code review), you can also add the line ```Closes https://github.com/UI5/openui5/pull/(pullRequestNumber)```
+8.  Create a Pull Request to github.com/UI5/openui5
 9.  Follow the link posted by the CLA assistant to your pull request and accept the Developer Certificate of Origin, as described in detail above.
 10. Wait for our code review and approval, possibly enhancing your change on request
     -   Note that the UI5 developers also have their regular duties, so depending on the required effort for reviewing, testing and clarification this may take a while
