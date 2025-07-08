@@ -163,10 +163,10 @@ sap.ui.define([
 			"class": " ui5-li-root ui5-li--focusable ui5-custom-li-root "
 		},
 		{
-			"id": "xmlView--Div1"
+			"id": "Div1"
 		},
 		{
-			"id": "xmlView--Div2"
+			"id": "Div2"
 		},
 		{
 			"id": "xmlView--Input1",

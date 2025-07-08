@@ -26,11 +26,13 @@
 			</main:ListItemCustom>
 		</main:List>
 	</main:Panel>
-	<html:test-component>
-		<html:div id="Div1" slot="FirstSlot" tabindex="0">Test1</html:div>
-		<html:div id="Div2" slot="SecondSlot" tabindex="0">Test2</html:div>
-		<html:div id="Div3" slot="FirstSlot" tabindex="0">Test3</html:div>
-	</html:test-component>
+	<core:HTML content="
+	&lt;test-component&gt;
+		&lt;div id=&quot;Div1&quot; slot=&quot;FirstSlot&quot; tabindex=&quot;0&quot;&gt;Test1&lt;/div&gt;
+		&lt;div id=&quot;Div2&quot; slot=&quot;SecondSlot&quot; tabindex=&quot;0&quot;&gt;Test2&lt;/div&gt;
+		&lt;div id=&quot;Div3&quot; slot=&quot;FirstSlot&quot; tabindex=&quot;0&quot;&gt;Test3&lt;/div&gt;
+	&lt;/test-component&gt;
+	" preferDOM="false" sanitizeContent="false"/>
 	<form:Form>
 		<form:layout>
 				<form:ResponsiveGridLayout></form:ResponsiveGridLayout>
