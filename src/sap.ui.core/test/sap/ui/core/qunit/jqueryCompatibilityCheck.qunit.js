@@ -57,7 +57,7 @@ sap.ui.define([
 					'HTML element should be closed correctly, such as: <div></div>\n' +
 					'Please check the following note for more information:\n' +
 					'https://launchpad.support.sap.com/#/notes/2944336 or\n' +
-					'https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md',
+					'https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md',
 					"Console Error content should be valid"
 				);
 
@@ -71,8 +71,8 @@ sap.ui.define([
 					'<br>HTML&#x20;element&#x20;used&#x20;as&#x20;self-closing&#x20;tag&#x3a;&#x20;&lt;div&#x2f;&gt;<br>HTML&#x20;element&#x20;should&#x20;be&#x20;' +
 					'closed&#x20;correctly,&#x20;such&#x20;as&#x3a;&#x20;&lt;div&gt;&lt;&#x2f;div&gt;<br>Please&#x20;check&#x20;the&#x20;following&#x20;note&#x20;' +
 					'for&#x20;more&#x20;information&#x3a;<br><a href=\"https://launchpad.support.sap.com/#/notes/2944336\" target=\"_blank\" class=\"sapMLnk\">' +
-					'https://launchpad.support.sap.com/#/notes/2944336</a> or<br><a href=\"https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md\" ' +
-					'target=\"_blank\" class=\"sapMLnk\">https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md</a>';
+					'https://launchpad.support.sap.com/#/notes/2944336</a> or<br><a href=\"https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md\" ' +
+					'target=\"_blank\" class=\"sapMLnk\">https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md</a>';
 				assert.deepEqual(oMessageBoxAlertCallOne.args[0].getHtmlText(), sHtmlTextOne, "First finding - HTML content is valid");
 
 				var oMessageBoxCallTwo = MessageBox.alert.getCall(1);
@@ -82,8 +82,8 @@ sap.ui.define([
 					'<br>HTML&#x20;element&#x20;used&#x20;as&#x20;self-closing&#x20;tag&#x3a;&#x20;&lt;span&#x2f;&gt;<br>HTML&#x20;element&#x20;should&#x20;be&#x20;' +
 					'closed&#x20;correctly,&#x20;such&#x20;as&#x3a;&#x20;&lt;span&gt;&lt;&#x2f;span&gt;<br>Please&#x20;check&#x20;the&#x20;following&#x20;note&#x20;' +
 					'for&#x20;more&#x20;information&#x3a;<br><a href=\"https://launchpad.support.sap.com/#/notes/2944336\" target=\"_blank\" class=\"sapMLnk\">' +
-					'https://launchpad.support.sap.com/#/notes/2944336</a> or<br><a href=\"https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md\" ' +
-					'target=\"_blank\" class=\"sapMLnk\">https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md</a>';
+					'https://launchpad.support.sap.com/#/notes/2944336</a> or<br><a href=\"https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md\" ' +
+					'target=\"_blank\" class=\"sapMLnk\">https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md</a>';
 				assert.deepEqual(oMessageBoxCallTwo.args[0].getHtmlText(), sHtmlTextTwo, "Second finding - HTML content is valid");
 
 				done();
@@ -145,7 +145,7 @@ sap.ui.define([
 					"HTML element should be closed correctly, such as: <div></div>\n" +
 					"Please check the following note for more information:\n" +
 					"https://launchpad.support.sap.com/#/notes/2944336 or\n" +
-					"https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
+					"https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
 					"Console Error content should be valid"
 				);
 				assert.equal(oConsoleErrorStub.getCall(1).args[0], "Exception in error handling: Error: Error. Falling back to alert().");
@@ -156,7 +156,7 @@ sap.ui.define([
 					"HTML element should be closed correctly, such as: <div></div>\n" +
 					"Please check the following note for more information:\n" +
 					"https://launchpad.support.sap.com/#/notes/2944336 or\n" +
-					"https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
+					"https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
 					"Native alert was called."
 				);
 
@@ -194,7 +194,7 @@ sap.ui.define([
 					"HTML element should be closed correctly, such as: <div></div>\n" +
 					"Please check the following note for more information:\n" +
 					"https://launchpad.support.sap.com/#/notes/2944336 or\n" +
-					"https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
+					"https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
 					"Console Error content should be valid"
 				);
 
@@ -206,7 +206,7 @@ sap.ui.define([
 					"HTML element should be closed correctly, such as: <div></div>\n" +
 					"Please check the following note for more information:\n" +
 					"https://launchpad.support.sap.com/#/notes/2944336 or\n" +
-					"https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
+					"https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md",
 					"Native alert was called.");
 				done();
 			}

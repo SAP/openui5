@@ -117,7 +117,7 @@ HTML element used as self-closing tag: <div/>
 HTML element should be closed correctly, such as: <div></div>
 Please check the following note for more information:
 https://launchpad.support.sap.com/#/notes/2944336 or
-https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md
+https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md
 ```
 
 **Please note that the usage of this test mode is only intended for test or development systems! The test mode does not replace the manual code review!**

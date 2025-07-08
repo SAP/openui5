@@ -17,7 +17,7 @@ Note for **Windows users**: You can download and install Git from [git-scm.com](
 1. Install [Node.js](http://nodejs.org/). This also includes npm, the [node package manager](https://docs.npmjs.com/getting-started/what-is-npm).
 2. Clone the OpenUI5 Git repository:
 ```sh
-git clone https://github.com/SAP/openui5.git
+git clone https://github.com/UI5/openui5.git
 ```
 3. Install all npm dependencies:
 ```sh

@@ -970,6 +970,10 @@ sap.ui.define([
 				title: "Test Page for sap.m.OverflowToolbarMenuButton"
 			},
 
+			OverflowToolbarTokenizer: {
+				title: "Test Page for sap.m.OverflowToolbarTokenizer"
+			},
+
 			"p13n.AbstractContainer": {
 				title: "Test Page for sap.m.p13n.AbstractContainer",
 				module: "test-resources/sap/m/qunit/p13n/AbstractContainer.qunit",

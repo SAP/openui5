@@ -36,7 +36,7 @@ sap.ui.define([
 	 *   for Data Aggregation Version 4.0"; must already be normalized by
 	 *   {@link _AggregationHelper.buildApply}
 	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string
+	 *   A map of key-value pairs representing the query string (requires "copy on write"!)
 	 * @param {boolean} bHasGrandTotal
 	 *   Whether a grand total is needed
 	 *
@@ -677,7 +677,7 @@ sap.ui.define([
 	 *   for Data Aggregation Version 4.0"; must already be normalized by
 	 *   {@link _AggregationHelper.buildApply} - it's MODIFIED here!
 	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string - it's MODIFIED here!
+	 *   A map of key-value pairs representing the query string (requires "copy on write"!)
 	 * @param {boolean} bHasGrandTotal
 	 *   Whether a grand total is needed
 	 *
@@ -698,7 +698,7 @@ sap.ui.define([
 				});
 				this.oCountPromise.$resolve = fnResolve;
 			} else if (oAggregation.groupLevels.length) {
-				mQueryOptions.$$leaves = true;
+				this.setQueryOptions({...mQueryOptions, $$leaves : true});
 				this.oCountPromise = new SyncPromise(function (resolve) {
 					aAdditionalRowHandlers.push((oLeaves) => {
 						// Note: count has type Edm.Int64, represented as string in OData responses;
@@ -2059,8 +2059,9 @@ sap.ui.define([
 			return oPromise;
 		}
 
-		const mQueryOptions = oCache.getQueryOptions();
+		let mQueryOptions = oCache.getQueryOptions();
 		if (mQueryOptions.$count) { // $count not needed anymore, 1st read was done by #expand
+			mQueryOptions = {...mQueryOptions};
 			delete mQueryOptions.$count;
 			oCache.setQueryOptions(mQueryOptions, true);
 		}
@@ -2781,9 +2782,9 @@ sap.ui.define([
 	 * @param {string} sDeepResourcePath
 	 *   The deep resource path to be used to build the target path for bound messages
 	 * @param {object} mQueryOptions
-	 *   A map of key-value pairs representing the query string, the value in this pair has to
-	 *   be a string or an array of strings; if it is an array, the resulting query string
-	 *   repeats the key for each array value.
+	 *   A map of key-value pairs representing the query string (requires "copy on write"!), the
+	 *   value in this pair has to be a string or an array of strings; if it is an array, the
+	 *   resulting query string repeats the key for each array value.
 	 *   <br>
 	 *   Examples:
 	 *   {foo : "bar", "bar" : "baz"} results in the query string "foo=bar&bar=baz"
@@ -2879,8 +2880,11 @@ sap.ui.define([
 			throw new Error("Unsupported $$filterOnAggregate");
 		}
 		if (mQueryOptions.$$filterBeforeAggregate) {
-			mQueryOptions.$apply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/"
-				+ mQueryOptions.$apply;
+			mQueryOptions = {
+				...mQueryOptions,
+				$apply : "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/"
+					+ mQueryOptions.$apply
+			};
 			delete mQueryOptions.$$filterBeforeAggregate;
 		}
 

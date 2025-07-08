@@ -25,7 +25,7 @@ npm install grunt-cli -g
 ```
 3. Clone the UI5 git repository (you can download and install Git from  [git-scm.com](http://git-scm.com/download))
 ```
-git clone https://github.com/SAP/openui5.git
+git clone https://github.com/UI5/openui5.git
 ```
 4. Install all npm dependencies locally (execute this inside the "openui5" directory)
 ```

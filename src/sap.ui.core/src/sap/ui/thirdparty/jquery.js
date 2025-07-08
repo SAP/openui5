@@ -6256,7 +6256,7 @@ if (/(?:\?|&)sap-ui-xx-self-closing-check=(?:x|X|true)/.exec(window.location.sea
 			if ( rNonVoidHtml5Tags.test($2) && $0.length < html.length ) {
 				var replacement = "<" + $1 + "></" + $2 + ">";
 				var noteUrl = "https://launchpad.support.sap.com/#/notes/2944336";
-				var gitHubUrl = "https://github.com/SAP/openui5/blob/master/docs/self_closing_tags_fix_instructions.md";
+				var gitHubUrl = "https://github.com/UI5/openui5/blob/master/docs/self_closing_tags_fix_instructions.md";
 				var errorMessage = "jQuery incompatibility: non-void HTML tags must not use self-closing syntax.\n"
 					+ "HTML element used as self-closing tag: <" + $1 + "/>\n"
 					+ "HTML element should be closed correctly, such as: " + replacement + "\n"

@@ -218,7 +218,7 @@ sap.ui.define([
 		*   If present, a recursive hierarchy w/o data aggregation is defined and
 		*   {@link _AggregationHelper.buildApply4Hierarchy} is invoked instead.
 		 * @param {object} [mQueryOptions={}]
-		 *   A map of key-value pairs representing the query string; it is not modified
+		 *   A read-only map of key-value pairs representing the query string
 		 * @param {boolean} [mQueryOptions.$count]
 		 *   The value for a "$count" system query option; it is removed from the returned map for a
 		 *   follow-up request or in case it is turned into an aggregate "$count as UI5__count"
@@ -454,7 +454,7 @@ sap.ui.define([
 		 *   Like the value for a "$search" system query option (remember ODATA-1452); it is turned
 		 *   into the search expression parameter of an "ancestors()" transformation
 		 * @param {object} [mQueryOptions={}]
-		 *   A map of key-value pairs representing the query string; it is not modified
+		 *   A read-only map of key-value pairs representing the query string
 		 * @param {string} [mQueryOptions.$$filterBeforeAggregate]
 		 *   The value for a filter which identifies a parent node; it is removed from the returned
 		 *   map and turned into a "filter()" transformation
@@ -705,7 +705,7 @@ sap.ui.define([
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
 		 * @param {string} [oAggregation.search] - Ignored
 		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string; it is not modified
+		 *   A read-only map of key-value pairs representing the query string
 		 * @param {string} [mQueryOptions.$$filterBeforeAggregate] - Removed from the returned map
 		 * @param {string} [mQueryOptions.$apply] - Replaced in the returned map
 		 * @param {string} [mQueryOptions.$count] - Removed from the returned map
@@ -792,7 +792,7 @@ sap.ui.define([
 		 * Returns a copy of the given query options with a filtered "$orderby".
 		 *
 		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string
+		 *   A read-only map of key-value pairs representing the query string
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation;
 		 *   (see {@link .buildApply})
@@ -1041,7 +1041,7 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see {@link .buildApply}
 		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string; it is not modified
+		 *   A read-only map of key-value pairs representing the query string
 		 * @returns {object}
 		 *   The created query options
 		 *
@@ -1084,7 +1084,7 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation; see {@link .buildApply}
 		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string; it is not modified
+		 *   A read-only map of key-value pairs representing the query string
 		 * @returns {object}
 		 *   The created query options
 		 *

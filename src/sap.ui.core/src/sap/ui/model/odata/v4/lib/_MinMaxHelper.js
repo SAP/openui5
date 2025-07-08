@@ -23,7 +23,7 @@ sap.ui.define([
 		 *   Extension for Data Aggregation Version 4.0"; must already be normalized by
 		 *   {@link _AggregationHelper.buildApply}
 		 * @param {object} mQueryOptions
-		 *   A map of key-value pairs representing the query string
+		 *   A map of key-value pairs representing the query string (requires "copy on write"!)
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}
 		 *   The cache
 		 */

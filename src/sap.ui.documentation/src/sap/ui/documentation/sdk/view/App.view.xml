@@ -85,7 +85,10 @@
 							type="Default"
 							icon="sap-icon://dimension"
 							text="{= ${appView>/bDesktopSize}
-								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}].join(' ')
+								? [${i18n>APP_VERSION_VERSION}, ${versionData>/fullVersion}].join(' ')
+								: '' }"
+							tooltip="{= ${appView>/bDesktopSize}
+								? [${i18n>APP_VERSION_VERSION}, ${versionData>/fullVersion}].join(' ')
 								: '' }"
 							press="onChangeVersionButtonPress"
 							visible="{= ${appView>/bShowVersionSwitchButton} }">

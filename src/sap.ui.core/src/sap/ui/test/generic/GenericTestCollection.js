@@ -155,7 +155,7 @@ sap.ui.define([], function() {
 				 },
 
 				 SettersContextReturn: {
-					 title: "All setters should return correct context (Reason: https://github.com/SAP/openui5/blob/master/docs/guidelines.md#creating-classes)"
+					 title: "All setters should return correct context (Reason: https://github.com/UI5/openui5/blob/master/docs/guidelines.md#creating-classes)"
 				 },
 
 				 EnforceSemanticRendering: {

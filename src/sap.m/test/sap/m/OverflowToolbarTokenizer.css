@@ -1,0 +1,9 @@
+.sapMIBar {
+	margin-bottom: 3.5rem;
+}
+.sapUiBody .sapMPage > .sapMPageHeader + section, .sapMPage > .sapMPageHeader + section {
+	top: 4.5rem;
+}
+.sapMPage > section > .sapMLabel {
+	margin-bottom: 0.45rem;
+}

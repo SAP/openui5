@@ -446,12 +446,14 @@ function(
 			return false;
 		}
 		var sActiveElementName = oActiveElement.getMetadata().getName(),
-			bIsSelectOrCombobox = ["sap.m.Select", "sap.m.ComboBox"].includes(sActiveElementName),
+			bIsSelectOrCombobox = ["sap.m.Select", "sap.m.ComboBox", "sap.m.Tokenizer"].includes(sActiveElementName),
 			bIsUpOrDownArrowKey = [KeyCodes.ARROW_UP, KeyCodes.ARROW_DOWN].includes(oEvent.keyCode),
 			bIsBreadcrumbs = sActiveElementName === "sap.m.Breadcrumbs",
-			bIsSlider = ["sap.m.Slider", "sap.m.RangeSlider"].includes(sActiveElementName);
+			bIsSlider = ["sap.m.Slider", "sap.m.RangeSlider"].includes(sActiveElementName),
+			bIsTokenizer = ["sap.m.OverflowToolbarTokenizer"].includes(sActiveElementName);
 
-		if (bIsUpOrDownArrowKey && bIsSelectOrCombobox || bIsBreadcrumbs || bIsSlider) {
+
+		if (bIsUpOrDownArrowKey && bIsSelectOrCombobox || bIsBreadcrumbs || bIsSlider || bIsTokenizer) {
 			return true;
 		}
 

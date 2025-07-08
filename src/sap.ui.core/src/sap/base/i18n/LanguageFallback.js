@@ -48,6 +48,9 @@ sap.ui.define([
 		"ji" : "yi"
 	};
 
+	// key: <locale>|<preserveLanguage>, value: normalized locale
+	const oNormalizeCache = new Map();
+
 	 /**
 	 * Helper to normalize the given locale (in BCP-47 syntax) to the java.util.Locale format.
 	 *
@@ -58,6 +61,14 @@ sap.ui.define([
 	 * @private
 	 */
 	const normalize = function(sLocale, bPreserveLanguage) {
+		let cacheKey = sLocale;
+		if (bPreserveLanguage) {
+			cacheKey += "|true";
+		}
+		let normalizedLocale = oNormalizeCache.get(cacheKey);
+		if (normalizedLocale) {
+			return normalizedLocale;
+		}
 
 		var m;
 		if ( typeof sLocale === 'string' && (m = rLocale.exec(sLocale.replace(/_/g, '-'))) ) {
@@ -72,7 +83,9 @@ sap.ui.define([
 			// recognize and convert special SAP supportability locales (overwrites m[]!)
 			if ( (sPrivate && (m = rSAPSupportabilityLocales.exec(sPrivate)))
 				|| (sVariants && (m = rSAPSupportabilityLocales.exec(sVariants))) ) {
-				return "en_US_" + m[1].toLowerCase(); // for now enforce en_US (agreed with SAP SLS)
+				normalizedLocale = "en_US_" + m[1].toLowerCase(); // for now enforce en_US (agreed with SAP SLS)
+				oNormalizeCache.set(cacheKey, normalizedLocale);
+				return normalizedLocale;
 			}
 			// Chinese: when no region but a script is specified, use default region for each script
 			if ( sLanguage === "zh" && !sRegion ) {
@@ -89,8 +102,11 @@ sap.ui.define([
 					sLanguage = "sh";
 				}
 			}
-			return sLanguage + (sRegion ? "_" + sRegion + (sVariants ? "_" + sVariants.replace("-","_") : "") : "");
+			normalizedLocale = sLanguage + (sRegion ? "_" + sRegion + (sVariants ? "_" + sVariants.replace("-","_") : "") : "");
 		}
+		// Also cache undefined results to avoid repeated parsing of invalid locales
+		oNormalizeCache.set(cacheKey, normalizedLocale);
+		return normalizedLocale;
 	};
 
 	/**
