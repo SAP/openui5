@@ -42,11 +42,34 @@ sap.ui.define([
 	const oPropertiesCache = {
 
 		/**
-		 * Holds the cache entries
+		 * Holds the Properties cache entries
 		 *
 		 * @private
 		 */
 		_oCache: new Map(),
+
+		/**
+		 * Holds resolved URLs cache entries
+		 *
+		 * @private
+		 */
+		_oUrlResolutionCache: new Map(),
+
+		/**
+		 * Resolves the given URL
+		 *
+		 * @param {string} sUrl The URL to resolve
+		 * @returns {string} The resolved URL
+		 */
+		_getResolvedUrl(sUrl) {
+			const sUrlResolutionCacheKey = document.baseURI + "|" + sUrl;
+			let href = this._oUrlResolutionCache.get(sUrlResolutionCacheKey);
+			if (!href) {
+				href = new URL(sUrl, document.baseURI).href;
+				this._oUrlResolutionCache.set(sUrlResolutionCacheKey, href);
+			}
+			return href;
+		},
 
 		/**
 		 * Removes the given cache entry
@@ -71,42 +94,40 @@ sap.ui.define([
 		},
 
 		/**
-		 * Inserts or updates an entry
-		 *
-		 * @param {string} sKey the cache id
-		 * @param {object} oValue entry to cache
-		 * @private
-		 */
-		_set(sKey, oValue){
-			this._oCache.set(sKey, oValue);
-		},
-
-		/**
 		 * Retrieves an entry from the cache
 		 *
-		 * @param {string} sKey the cache id
+		 * @param {string} sUrl properties file URL
 		 * @param {object} [oLoadOptions] options which are passed to #load
 		 * @param {boolean} [bAsync=false] async requested
 		 * @returns {object} entry which either comes from cache or from #load
 		 * @private
 		 */
-		get(sKey, oLoadOptions, bAsync){
-			if (this._oCache.has(sKey)) {
-				const oExisting = this._oCache.get(sKey);
-				if (bAsync){
-					return Promise.resolve(oExisting);
-				} else if (!(oExisting instanceof Promise)) {
-					return oExisting;
+		get(sUrl, oLoadOptions, bAsync) {
+			let sKey = this._getResolvedUrl(sUrl);
+
+			// headers might contain "accept-language" tag which can lead to a different properties
+			// request, therefore it needs to be integrated into the cache key
+			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
+			if (oLoadOptions.headers) {
+				sKey += "|" + JSON.stringify(oLoadOptions.headers);
+			}
+
+			let oEntry = this._oCache.get(sKey);
+			if (oEntry) {
+				if (bAsync) {
+					return Promise.resolve(oEntry);
+				} else if (!(oEntry instanceof Promise)) {
+					return oEntry;
 				}
 				// can't use cached, non-fulfilled promise in sync mode
 			}
 
-			const oNewEntry = this._load(oLoadOptions);
-			if (oNewEntry instanceof Promise) {
+			oEntry = this._load(oLoadOptions);
+			if (oEntry instanceof Promise) {
 				// update cache entry with actual object instead of fulfilled promise
-				oNewEntry.then((oResult) => {
+				oEntry.then((oResult) => {
 					if (oResult) {
-						this._set(sKey, oResult);
+						this._oCache.set(sKey, oResult);
 					} else {
 						this._delete(sKey);
 					}
@@ -115,10 +136,10 @@ sap.ui.define([
 					throw e;
 				});
 			}
-			if (oNewEntry) {
-				this._set(sKey, oNewEntry);
+			if (oEntry) {
+				this._oCache.set(sKey, oEntry);
 			}
-			return oNewEntry;
+			return oEntry;
 		}
 	};
 
@@ -163,6 +184,9 @@ sap.ui.define([
 	 */
 	var A_VALID_FILE_TYPES = [ ".properties", ".hdbtextbundle" ];
 
+	// key: <url>, value: object with properties for the individual URL parts
+	const oUrlSplitCache = new Map();
+
 	/**
 	 * Helper to split a URL with the above regex.
 	 * Either returns an object with the parts or undefined.
@@ -170,11 +194,16 @@ sap.ui.define([
 	 * @returns {object} an object with properties for the individual URL parts
 	 */
 	function splitUrl(sUrl) {
+		if (oUrlSplitCache.has(sUrl)) {
+			return oUrlSplitCache.get(sUrl);
+		}
 		var m = rUrl.exec(sUrl);
 		if ( !m || A_VALID_FILE_TYPES.indexOf( m[2] ) < 0 ) {
 			throw new Error("resource URL '" + sUrl + "' has unknown type (should be one of " + A_VALID_FILE_TYPES.join(",") + ")");
 		}
-		return { url : sUrl, prefix : m[1], ext : m[2], query: m[4], hash: (m[5] || ""), suffix : m[2] + (m[3] || "") };
+		const result = { url : sUrl, prefix : m[1], ext : m[2], query: m[4], hash: (m[5] || ""), suffix : m[2] + (m[3] || "") };
+		oUrlSplitCache.set(sUrl, result);
+		return result;
 	}
 
 	/**
@@ -550,13 +579,8 @@ sap.ui.define([
 					"Accept-Language": LanguageFallback.convertLocaleToBCP47(sLocale) || "*"
 				};
 			} else {
-				sUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
+				sUrl = sLocale ? oUrl.prefix + "_" + sLocale + oUrl.suffix : oUrl.url;
 			}
-
-			// headers might contain "accept-language" tag which can lead to a different properties
-			// request, therefore it needs to be integrated into the cache key
-			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language
-			var sCacheKey = JSON.stringify({url: new URL(sUrl, document.baseURI).href, headers: mHeaders});
 
 			var oOptions = {
 				url: sUrl,
@@ -565,7 +589,7 @@ sap.ui.define([
 				returnNullIfMissing: true
 			};
 
-			const vProperties = oPropertiesCache.get(sCacheKey, oOptions, oOptions.async);
+			const vProperties = oPropertiesCache.get(sUrl, oOptions, oOptions.async);
 
 			var addProperties = function(oProps) {
 				if ( oProps ) {

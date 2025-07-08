@@ -164,9 +164,11 @@ sap.ui.define([
 	}
 
 	// Helper Functions
-	function detectLanguage() {
-		return globalThis.navigator ? (globalThis.navigator.languages && globalThis.navigator.languages[0]) || globalThis.navigator.language || "en" : new Intl.Collator().resolvedOptions().locale || "en";
-	}
+	const detectLanguage = globalThis.navigator ? function() {
+		return globalThis.navigator.languages?.[0] || globalThis.navigator.language || "en";
+	} : function() {
+		return new Intl.Collator().resolvedOptions().locale || "en";
+	};
 
 	function check(bCondition, sMessage) {
 		if ( !bCondition ) {

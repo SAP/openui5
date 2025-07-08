@@ -514,6 +514,14 @@
 			return oClone;
 		}
 
+		function getCachedValue(sCacheKey, mOptions) {
+			var vCachedValue = mCache[sCacheKey];
+			if (mOptions.type === TypeEnum.StringArray || mOptions.type === TypeEnum.Object || mOptions.type === TypeEnum.MergedObject) {
+				vCachedValue = deepClone(vCachedValue);
+			}
+			return vCachedValue;
+		}
+
 		/** Register a new Configuration provider
 		 *
 		 * @name module:sap/base/config.registerProvider
@@ -661,59 +669,58 @@
 		 * @returns {any} Value of the configuration parameter
 		 * @throws {TypeError} Throws an error if the given parameter name does not match the definition.
 		 * @private
-		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.integration, sap.ui.export
 		 */
 		function get(mOptions) {
+			var sCacheKey = mOptions.name;
+			if (mOptions.provider) {
+				sCacheKey += "-" + mOptions.provider.getId();
+			}
+			if (sCacheKey in mCache) {
+				return getCachedValue(sCacheKey, mOptions);
+			}
+
 			if (typeof mOptions.name !== "string" || !rValidKey.test(mOptions.name)) {
 				throw new TypeError(
 					"Invalid configuration key '" + mOptions.name + "'!"
 				);
 			}
-			var sCacheKey = mOptions.name;
-			if (mOptions.provider) {
-				sCacheKey += "-" + mOptions.provider.getId();
-			}
-			if (!(sCacheKey in mCache)) {
-				mOptions = Object.assign({}, mOptions);
-				var vValue;
 
-				var bIgnoreExternal = bGlobalIgnoreExternal || !mOptions.external;
-				var sName = mOptions.name;
-				var vMatch = sName.match(rXXAlias);
-				var vDefaultValue = mOptions.hasOwnProperty("defaultValue") ? mOptions.defaultValue : mInternalDefaultValues[mOptions.type];
+			mOptions = Object.assign({}, mOptions);
+			var vValue;
 
-				const aAllProvider = [...aProvider, ...(mOptions.provider ? [mOptions.provider] : [])];
+			var bIgnoreExternal = bGlobalIgnoreExternal || !mOptions.external;
+			var sName = mOptions.name;
+			var vMatch = sName.match(rXXAlias);
+			var vDefaultValue = mOptions.hasOwnProperty("defaultValue") ? mOptions.defaultValue : mInternalDefaultValues[mOptions.type];
 
-				for (var i = aAllProvider.length - 1; i >= 0; i--) {
-					if (!aAllProvider[i].external || !bIgnoreExternal) {
-						const vProviderValue = convertToType(aAllProvider[i].get(sName, mOptions.freeze), mOptions.type, mOptions.name);
-						if (vProviderValue !== undefined) {
-							if (mOptions.type === TypeEnum.MergedObject) {
-								vValue = Object.assign({}, vProviderValue, vValue);
-							} else {
-								vValue = vProviderValue;
-								break;
-							}
+			const aAllProvider = [...aProvider, ...(mOptions.provider ? [mOptions.provider] : [])];
+
+			for (var i = aAllProvider.length - 1; i >= 0; i--) {
+				if (!aAllProvider[i].external || !bIgnoreExternal) {
+					const vProviderValue = convertToType(aAllProvider[i].get(sName, mOptions.freeze), mOptions.type, mOptions.name);
+					if (vProviderValue !== undefined) {
+						if (mOptions.type === TypeEnum.MergedObject) {
+							vValue = Object.assign({}, vProviderValue, vValue);
+						} else {
+							vValue = vProviderValue;
+							break;
 						}
 					}
 				}
-				if (vValue === undefined && (vMatch && vMatch[1] === "sapUi")) {
-					mOptions.name = vMatch[1] + "Xx" + vMatch[2];
-					vValue = get(mOptions);
-				}
-				if (vValue === undefined) {
-					if (typeof vDefaultValue === 'function') {
-						vDefaultValue = vDefaultValue();
-					}
-					vValue = vDefaultValue;
-				}
-				mCache[sCacheKey] = vValue;
 			}
-			var vCachedValue = mCache[sCacheKey];
-			if (typeof mOptions.type !== 'function' && (mOptions.type === TypeEnum.StringArray || mOptions.type === TypeEnum.Object || mOptions.type === TypeEnum.MergedObject)) {
-				vCachedValue = deepClone(vCachedValue);
+			if (vValue === undefined && (vMatch && vMatch[1] === "sapUi")) {
+				mOptions.name = vMatch[1] + "Xx" + vMatch[2];
+				vValue = get(mOptions);
 			}
-			return vCachedValue;
+			if (vValue === undefined) {
+				if (typeof vDefaultValue === 'function') {
+					vDefaultValue = vDefaultValue();
+				}
+				vValue = vDefaultValue;
+			}
+			mCache[sCacheKey] = vValue;
+			return getCachedValue(sCacheKey, mOptions);
 		}
 
 		function invalidate() {
