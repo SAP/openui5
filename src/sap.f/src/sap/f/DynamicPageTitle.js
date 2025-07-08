@@ -184,8 +184,9 @@ sap.ui.define([
 
 				/**
 				 * The <code>DynamicPageTitle</code> actions.
-				 * <br><b>Note:</b> The <code>actions</code> aggregation accepts any UI5 control, but it`s recommended to use controls,
-				 * suitable for {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
+				 * <br><b>Note:</b> The <code>actions</code> aggregation accepts any UI5 control.
+				 * However, it is best to use buttons or controls that work well inside toolbars, such
+				 * as those typically used with {@link sap.m.Toolbar} and {@link sap.m.OverflowToolbar}.
 				 *
 				 * <b>Note:</b> If the <code>snappedTitleOnMobile</code> aggregation is set, its
 				 * content overrides this aggregation when the control is viewed on a phone mobile

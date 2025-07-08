@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(BaseController, Device, jQuery) {
 		"use strict";
 
-		var GIT_HUB_URL = "https://github.com/UI5/openui5-docs";
+		var GIT_HUB_URL = "https://github.com/UI5/docs";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.TopicDetailInitial", {
 
