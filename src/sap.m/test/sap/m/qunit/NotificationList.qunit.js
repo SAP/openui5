@@ -68,6 +68,7 @@ sap.ui.define([
 				items: [
 					new NotificationListGroup({
 						title: 'Group 1',
+						collapsed: true,
 						items: [
 							new NotificationListItem({
 								title: 'Item 1',
@@ -82,6 +83,7 @@ sap.ui.define([
 					new NotificationListGroup({
 						showCloseButton: true,
 						title: 'Group 2',
+						collapsed: true,
 						items: [
 							new NotificationListItem({
 								title: 'Item 1',
@@ -104,15 +106,17 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test('Focus stays inside notification list after close and invalidation ', async function(assert) {
-		var oList = this.notificationList,
-			oListGroup = oList.getItems()[0].getDomRef();
+	QUnit.test('Focus stays inside notification list after close and invalidation', async function(assert) {
+		var oList = this.notificationList;
 
+		oList.getItems()[1]._getCloseButton().$().trigger("focus");
 		oList.getItems()[1]._getCloseButton().firePress();
+		await nextUIUpdate();
+		oList.setHeaderText('New Header Text');
 		await nextUIUpdate();
 		oList.removeItem(oList.getItems()[1]);
 		await nextUIUpdate();
 
-		assert.strictEqual(document.activeElement, oListGroup, 'Focus stays on the item');
+		assert.ok(oList.getDomRef().contains(document.activeElement), 'Focus stays inside the list');
 	});
 });

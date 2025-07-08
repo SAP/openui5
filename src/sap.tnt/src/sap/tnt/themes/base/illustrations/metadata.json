@@ -275,7 +275,7 @@
 			"Teams": "Teams-alternate",
 			"Tools": "Tools-alternate",
 			"Tutorials": "Tutorials-alternate",
-			"UnSuccessfulAuth": "UnSuccessfulAuth-alternate",
+			"UnsuccessfulAuth": "UnsuccessfulAuth-alternate",
 			"Unlock": "Unlock-alternate"
 		},
 		"v5/": {
@@ -311,7 +311,7 @@
 			"Systems": "Systems",
 			"Teams": "Teams",
 			"Tools": "Tools",
-			"UnSuccessfulAuth": "UnSuccessfulAuth",
+			"UnsuccessfulAuth": "UnsuccessfulAuth",
 			"Unlock": "Unlock"
 		}
 	}

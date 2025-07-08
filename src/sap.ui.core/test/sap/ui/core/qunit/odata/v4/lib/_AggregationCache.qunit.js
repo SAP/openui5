@@ -396,8 +396,7 @@ sap.ui.define([
 			this.mock(_MinMaxHelper).expects("createCache").never();
 			this.mock(_Cache).expects("create").never();
 			oDoResetExpectation = this.mock(_AggregationCache.prototype).expects("doReset")
-				.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions),
-					bHasGrandTotal)
+				.withExactArgs(sinon.match.same(oAggregation), bHasGrandTotal)
 				.callsFake(function () {
 					this.oFirstLevel = {
 						addKeptElement : "~addKeptElement~",
@@ -744,9 +743,10 @@ sap.ui.define([
 			const mQueryOptions = {
 				$count : bCount
 			};
+			oCache.mQueryOptions = mQueryOptions;
 
 			// code under test
-			oCache.doReset(oNewAggregation, mQueryOptions, bHasGrandTotal);
+			oCache.doReset(oNewAggregation, bHasGrandTotal);
 
 			assert.strictEqual(oCache.oAggregation, oNewAggregation);
 			assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
@@ -4531,7 +4531,7 @@ sap.ui.define([
 			this.mock(_AggregationHelper).expects("hasGrandTotal")
 				.withExactArgs(sinon.match.same(oNewAggregation.aggregate)).returns(bHasGrandTotal);
 			const oDoResetExpectation = this.mock(oCache).expects("doReset")
-				.withExactArgs(sinon.match.same(oNewAggregation), "~mQueryOptions~", bHasGrandTotal);
+				.withExactArgs(sinon.match.same(oNewAggregation), bHasGrandTotal);
 
 			// code under test
 			oCache.reset(aKeptElementPredicates, sGroupId, "~mQueryOptions~", oNewAggregation);
