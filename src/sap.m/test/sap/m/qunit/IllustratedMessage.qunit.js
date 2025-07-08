@@ -1,9 +1,11 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/m/library",
+	"sap/tnt/library",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/IllustratedMessage",
+	"sap/m/IllustratedMessageType",
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	'sap/ui/core/library',
@@ -13,9 +15,11 @@ sap.ui.define([
 ],
 function(
 	library,
+	tntLibrary,
 	Library,
 	jQuery,
 	IllustratedMessage,
+	IllustratedMessageType,
 	Button,
 	Core,
 	coreLibrary,
@@ -30,6 +34,9 @@ function(
 
 	// shortcut for sap.m.IllustratedMessageType
 	var IllustratedMessageType = library.IllustratedMessageType;
+
+	// shortcut for sap.tnt.IllustratedMessageType
+	var IllustratedMessageTypeTNT = tntLibrary.IllustratedMessageType;
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -984,4 +991,84 @@ function(
 		assert.notOk($illustration.attr("aria-labelledby"), "Clears aria-labelledby when decorative");
 	});
 
+	QUnit.module("Assets ", {
+
+	});
+
+	QUnit.test("All SVG assets should not include style tag or attribute (full async coverage)", async function(assert) {
+		const baseConfigs = [
+			{
+				baseUrl: "sap/m/themes/base/illustrations/",
+				symbolTypes: Object.values(IllustratedMessageType),
+				prefix: "sapIllus-"
+			},
+			{
+				baseUrl: "sap/tnt/themes/base/illustrations/",
+				symbolTypes: Object.values(IllustratedMessageTypeTNT),
+				prefix: "tnt-"
+			}
+		];
+		const sizes = ["Dot", "Spot", "Dialog", "Scene"];
+		const requested = new Set();
+		const fetchPromises = [];
+
+		function resolveSymbolName(pathConfig, pathKey, symbol, size) {
+			const symbolKey = symbol.split("-")[1] || symbol;
+			const symbolMap = pathConfig[pathKey] || {};
+			let symbolName = symbolKey;
+			let finalSize = size;
+			if (typeof symbolMap[symbolKey] === "string") {
+				symbolName = symbolMap[symbolKey];
+			} else {
+				finalSize = (symbolMap[symbolKey] && symbolMap[symbolKey].sizeReplacement && symbolMap[symbolKey].sizeReplacement[finalSize]) || finalSize;
+			}
+			return { symbolName, finalSize };
+		}
+
+		for (const config of baseConfigs) {
+			const metadataUrl = sap.ui.require.toUrl(config.baseUrl + "metadata.json");
+			// eslint-disable-next-line no-await-in-loop
+			const metadata = await fetch(metadataUrl).then((r) => r.json());
+			const pathConfig = metadata.pathSymbolsConfig;
+			const pathKeys = Object.keys(pathConfig);
+
+			for (const pathKey of pathKeys) {
+				for (const symbol of config.symbolTypes) {
+					const symbolKey = symbol.split("-")[1] || symbol;
+					const symbolEntry = pathConfig[pathKey] && pathConfig[pathKey][symbolKey];
+					// Only fetch for this pathKey if symbol is present in the mapping (as string or object), or always for root
+					// For each pathKey, if the symbol is present in the mapping for that key, fetch the SVG for that pathKey using the correct mapped value and sizeReplacement logic.
+					if (pathKey === "root" || (symbolEntry !== undefined)) {
+						for (const size of sizes) {
+							const { symbolName, finalSize } = resolveSymbolName(pathConfig, pathKey, symbol, size);
+							const prefix = config.prefix;
+							const pathSegment = pathKey === "root" ? "" : pathKey;
+							const resourcePath = config.baseUrl + pathSegment + prefix + finalSize + "-" + symbolName + ".svg";
+							const url = sap.ui.require.toUrl(resourcePath);
+							if (!requested.has(url)) {
+								requested.add(url);
+								fetchPromises.push(
+									fetch(url)
+										.then((response) => {
+											if (!response.ok) { throw new Error(`Failed: ${url}`); }
+											return response.text();
+										})
+										.then((textResponse) => {
+											assert.strictEqual(textResponse.match(/style/gi), null, url + " does not include style tag or attr");
+										})
+										.catch((error) => {
+											assert.ok(false, url + " fetch failed: " + error.message);
+										})
+								);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		assert.expect(requested.size);
+		const done = assert.async();
+		Promise.all(fetchPromises).then(() => done());
+	});
 });
