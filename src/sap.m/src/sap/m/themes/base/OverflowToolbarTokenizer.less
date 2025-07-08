@@ -1,0 +1,80 @@
+/* ================================ */
+/* CSS for control sap.m/OverflowToolbarTokenizer  */
+/* Base theme                       */
+/* ================================ */
+
+.sapMOverflowToolbarTokenizerButton .sapMTokenizer {
+	padding-left: 0;
+}
+
+.sapMOverflowToolbarTokenizer {
+	align-items: center;
+	display: flex;
+}
+
+.sapMOverflowToolbarTokenizer .sapMLabel {
+	overflow: visible;
+	margin-right: 0.25rem;
+}
+
+.sapMOverflowToolbarTokenizerWrapper.sapMOverflowToolbarTokenizerButton .sapMTokenizerIndicator {
+	color: var(--sapContent_LabelColor);
+	display: inline-block;
+	width: 100%;
+	text-decoration: none;
+	line-height: 1.25rem;
+}
+
+.sapMOverflowToolbarTokenizerWrapper.sapMOverflowToolbarTokenizerButton {
+	width: 100%;
+}
+
+
+.sapMOverflowToolbarTokenizerButton.sapMOverflowToolbarTokenizer .sapMTokenizerIndicator.sapMBtn {
+	background: transparent;
+	text-decoration: none;
+
+	&:hover {
+		background: transparent;
+	}
+
+	.sapMBtnInner {
+		border: none;
+
+		:hover {
+			background: transparent;
+		}
+	}
+}
+
+.sapMOTTokenizerButton .sapMTokenizer .sapMTokenizerIndicator {
+	color: var(--sapContent_LabelColor);
+	display: inline-block;
+	width: 100%;
+	text-decoration: none;
+	line-height: 1.25rem;
+}
+
+.sapMOverflowToolbarTokenizerTokensPopup {
+	.sapMListUl > .sapMLIB.sapMSLIWrapping {
+		border-bottom: none;
+		min-height: 2.5rem;
+	}
+
+	.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+		padding: 0.25rem 0;
+	}
+}
+
+.sapUiSizeCompact {
+	.sapMOverflowToolbarTokenizerTokensPopup,
+	&.sapMOverflowToolbarTokenizerTokensPopup {
+		.sapMListUl > .sapMLIB.sapMSLIWrapping {
+			min-height: 2rem;
+		}
+
+		.sapMSLIWrapping > .sapMLIBContent > .sapMSLIDiv {
+			padding: 0.25rem 0;
+		}
+	}
+}

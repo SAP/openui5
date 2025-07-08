@@ -646,7 +646,7 @@ function(
 
 		//Open popover with items if in readonly mode and has Nmore indicator
 		if (!this.getEditable() && oTokenizer.getHiddenTokensCount() && oEvent.target === this.getFocusDomRef()) {
-			oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
+			oTokenizer._togglePopup();
 		}
 
 	};
@@ -2082,7 +2082,7 @@ function(
 			oPicker = this.getPicker();
 			oPicker.open();
 		} else {
-			oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
+			oTokenizer._togglePopup();
 		}
 
 		if (this.isPickerDialog()) {
@@ -2120,7 +2120,6 @@ function(
 		var oTokenizer = new Tokenizer({
 			renderMode: TokenizerRenderMode.Narrow
 		}).attachTokenDelete(this._handleTokenDelete, this);
-
 		oTokenizer.getTokensPopup()
 			.attachAfterOpen(function () {
 				if (oTokenizer.hasOneTruncatedToken()) {
@@ -2259,6 +2258,7 @@ function(
 	 */
 	MultiComboBox.prototype.onAfterRendering = function() {
 		var oTokenizer = this.getAggregation("tokenizer");
+		var oTokenizerOpener = Element.getElementById(oTokenizer.getProperty("opener"))?.getDomRef();
 		var oTokenToFocus;
 
 		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
@@ -2276,6 +2276,10 @@ function(
 			}
 
 			this.bShouldRestoreTokenizerFocus = false;
+		}
+
+		if (oTokenizerOpener !== this.getDomRef()) {
+			oTokenizer.setProperty("opener", this.getId(), true);
 		}
 	};
 

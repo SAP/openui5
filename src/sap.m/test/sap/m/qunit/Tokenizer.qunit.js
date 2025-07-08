@@ -110,6 +110,11 @@ sap.ui.define([
 		assert.strictEqual(oSpy.firstCall.args[0], false, "setFirstTokenTruncated was called with 'false'.");
 	});
 
+	QUnit.test("Should set the Tokenizer's opener", function(assert) {
+		qutils.triggerKeydown(this.tokenizer.getDomRef(), KeyCodes.I, false, false, true);
+		assert.strictEqual(document.getElementById(this.tokenizer.getProperty("opener")), this.tokenizer.getDomRef(), "The Tokenizer 'open' property is correct");
+	});
+
 	QUnit.test("_handleResize should call _useCollapsedMode and not scrollToEnd so as to show properly the tokens", function(assert) {
 		var oUseCollapsedModeSpy = this.spy(this.tokenizer, "_useCollapsedMode"),
 			oScrollToEndSpy = this.spy(this.tokenizer, "scrollToEnd");

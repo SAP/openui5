@@ -712,6 +712,15 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.OverflowToolbarTokenizer",
+		  "name": "OverflowToolbarTokenizer",
+		  "category": "User Input",
+		  "since": "1.139",
+		  "samples": [
+			"sap.m.sample.OverflowToolbarTokenizer"
+		  ]
+		},
+		{
 		  "id": "sap.m.InputListItem",
 		  "name": "Input List Item",
 		  "category": "List",
@@ -2757,6 +2766,11 @@
 			"id": "sap.m.sample.TokenizerBasic",
 			"name": "Basic Tokenizer",
 			"description": "Basic Tokenizer with tokens"
+		},
+		{
+			"id": "sap.m.sample.OverflowToolbarTokenizer",
+			"name": "Tokenizer in Toolbar and OverflowToolbar",
+			"description": "Tokenizer integration with sap.m.OverflowToolbar"
 		},
 		{
 			"id": "sap.m.sample.MultiComboBoxWrapping",

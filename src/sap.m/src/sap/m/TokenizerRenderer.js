@@ -21,12 +21,20 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.Tokenizer} oControl an object representation of the control that should be rendered
 	 */
-	TokenizerRenderer.render = function(oRm, oControl){
+	TokenizerRenderer.render = function(oRm, oControl) {
+		this.renderOpenTag(oRm, oControl);
+		this.renderInnerContent(oRm, oControl);
+	};
+
+	/**
+	 * Renders the inner content of the Tokenizer control.
+	 *
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Tokenizer} oControl An object representation of the control that should be rendered.
+	 */
+	TokenizerRenderer.renderInnerContent = function(oRm, oControl) {
 		var aTokens = oControl.getTokens();
-
-		//write the HTML into the render manager
-		oRm.openStart("div", oControl);
-
 
 		oRm.class("sapMTokenizer");
 
@@ -44,12 +52,7 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			oRm.attr("aria-hidden", "true");
 		}
 
-		oRm.style("max-width", oControl.getMaxWidth());
-
-		var sPixelWdth = oControl.getWidth();
-		if (sPixelWdth) {
-			oRm.style("width", sPixelWdth);
-		}
+		this.addWidthStyles(oRm, oControl);
 
 		var oAccAttributes = {
 			role: "listbox"
@@ -60,10 +63,9 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 			value: InvisibleText.getStaticId("sap.m", "TOKENIZER_ARIA_LABEL"),
 			append: true
 		};
+
 		// aria-readonly is not valid for the current role of the tokenizer.
-
 		oRm.accessibilityState(oControl, oAccAttributes);
-
 		oRm.openEnd(); // div element
 		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
 
@@ -90,12 +92,24 @@ sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
 		}
 
 		oRm.openEnd();
-
 		this._renderTokens(oRm, oControl);
 
 		oRm.close("div");
 		this._renderIndicator(oRm, oControl);
 		oRm.close("div");
+	};
+
+	TokenizerRenderer.renderOpenTag = function(oRm, oControl) {
+		oRm.openStart("div", oControl);
+	};
+
+	TokenizerRenderer.addWidthStyles = function(oRm, oControl) {
+		oRm.style("max-width", oControl.getMaxWidth());
+
+		var sPixelWdth = oControl.getWidth();
+		if (sPixelWdth) {
+			oRm.style("width", sPixelWdth);
+		}
 	};
 
 	/**
