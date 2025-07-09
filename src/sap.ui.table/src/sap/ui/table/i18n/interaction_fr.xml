@@ -161,7 +161,7 @@
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Si la sélection de cellule est activée&#x00a0;:</span></p>
-				<p>Si la zone activée se trouve sur la table, la sélection de toutes les lignes et cellules est supprimée.</p>
+				<p>Si la zone activée se trouve à l'intérieur de la table, la sélection de toutes les lignes et cellules est supprimée.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
