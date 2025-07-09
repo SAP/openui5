@@ -41,7 +41,6 @@
 @_sap_tnt_NavigationList_GroupIconMarginLeft: 0;
 @_sap_tnt_NavigationList_GroupIconMarginRight: 0;
 @_sap_tnt_NavigationList_GroupTextWeight: unset;
-@_sap_tnt_NavigationList_GroupPadding: 0.5rem;
 @_sap_tnt_NavigationList_ParentItemBottomMarginInPopup: 0;
 @_sap_tnt_NavigationList_Padding: 0;
 @_sap_tnt_NavigationList_PaddingFixed: 0;
@@ -477,6 +476,10 @@
 	}
 }
 
+.sapTntNLI:not(.sapTntNLIWithExpander):not(.sapTntNLGroup):not(.sapTntNLIExternalLink) .sapMText {
+	padding-inline-end: 0.375rem;
+}
+
 .sapTntNLIWithExpander.sapTntNLITwoClickAreas .sapUiIcon:last-of-type {
 	height: @sapUiElementCondensedHeight;
 	line-height: @sapUiElementCondensedHeight;
@@ -518,7 +521,6 @@ html[dir=rtl] .sapTntNLISelected:not(.sapTntNLIDisabled) {
 
 .sapTntNLGroup {
 	padding-inline-start: 1rem;
-	padding-inline-end: @_sap_tnt_NavigationList_GroupPadding;
 	border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
 	transition: @_sap_tnt_NavigationList_ItemTransition;
 	color: @sapUiContentLabelColor;

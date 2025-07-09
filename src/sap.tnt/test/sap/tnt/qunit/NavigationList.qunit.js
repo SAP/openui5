@@ -109,6 +109,12 @@ sap.ui.define([
 							text: 'Child 3',
 							key: 'child3',
 							href: '#/child3'
+						}),
+						new NavigationListItem({
+							text: 'External link',
+							key: 'child4',
+							href: '#/child3',
+							target: '_blank'
 						})
 					]
 				}),
@@ -365,7 +371,7 @@ sap.ui.define([
 	QUnit.test("contains elements and classes", function (assert) {
 		assert.ok(this.navigationList.$().hasClass("sapTntNL"), "sapTntNL class is set");
 		assert.strictEqual(this.navigationList.getDomRef().children.length, 9, "items number is correct");
-		assert.strictEqual(this.navigationList.getDomRef().children[0].querySelector(".sapTntNLIItemsContainer").children.length, 3, "first root item's children are correct number");
+		assert.strictEqual(this.navigationList.getDomRef().children[0].querySelector(".sapTntNLIItemsContainer").children.length, 4, "first root item's children are correct number");
 		assert.strictEqual(this.navigationList.getDomRef().querySelectorAll("#navGroup1 ul li").length, 3, "first group's children are correct number");
 
 		var aLinks = this.navigationList.$().find("a");
@@ -1399,6 +1405,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("External link icon", function (assert) {
+		// on first level item
 		// Arrange
 		var sExternalLinkWithTarget = Element.getElementById("groupItem1").getDomRef().querySelector("a").children[2].classList.contains("sapTntNLIExternalLinkIcon"),
 			sExternalLinkWithoutTarget = Element.getElementById("groupItem3").getDomRef().querySelector("a").children[2].classList.contains("sapTntNLIExternalLinkIcon");
@@ -1406,6 +1413,13 @@ sap.ui.define([
 		// Assert
 		assert.ok(sExternalLinkWithTarget, "External link icon is rendered when href is set and 'target=_blank'");
 		assert.notOk(sExternalLinkWithoutTarget, "External link icon is rendered when href is set but target is not '_blank'.");
+
+		// on second level item
+		// Arrange
+		var sExternalLinkWithTarget2 = Element.getElementById("groupItem1").getItems()[3].getDomRef().querySelector("a").children[2].classList.contains("sapTntNLIExternalLinkIcon");
+
+		// Assert
+		assert.ok(sExternalLinkWithTarget2, "External link icon is rendered when href is set and 'target=_blank'");
 	});
 
 	QUnit.module("Overflow behavior", {

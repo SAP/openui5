@@ -1,7 +1,7 @@
 ![openui5](http://openui5.org/images/OpenUI5_new_big_side.png)
 
 # @openui5/sap.ui.testrecorder
-Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) UI Library **sap.ui.testrecorder**.
+Runtime resources of the [OpenUI5](https://github.com/UI5/openui5) UI Library **sap.ui.testrecorder**.
 
 ## Usage
 Add this library as a dependency to your UI5 project by using [UI5 Tooling](https://sap.github.io/ui5-tooling/):

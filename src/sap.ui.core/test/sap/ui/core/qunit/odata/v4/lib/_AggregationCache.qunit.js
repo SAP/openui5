@@ -106,7 +106,8 @@ sap.ui.define([
 						group : {},
 						groupLevels : []
 					}
-					: null; // improves code coverage
+					: null, // improves code coverage
+				sQueryOptions = JSON.stringify(mQueryOptions);
 
 			this.mock(_AggregationHelper).expects("hasGrandTotal").exactly(i ? 1 : 0)
 				.withExactArgs(sinon.match.same(mAggregate)).returns(false);
@@ -114,12 +115,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(mAggregate)).returns(false);
 			this.mock(_MinMaxHelper).expects("createCache").never();
 			this.mock(_Cache).expects("create")
-				.withExactArgs("~requestor~", "resource/path", sinon.match(function (oParam) {
-						if (i) {
-							assert.deepEqual(mQueryOptions, {$apply : "filter(foo)/bar"});
-						}
-						return oParam === mQueryOptions;
-					}), "~sortExpandSelect~", "deep/resource/path", "~sharedRequest~")
+				.withExactArgs("~requestor~", "resource/path", i ? {$apply : "filter(foo)/bar"} : {},
+					"~sortExpandSelect~", "deep/resource/path", "~sharedRequest~")
 				.returns("~cache~");
 
 			assert.strictEqual(
@@ -128,6 +125,8 @@ sap.ui.define([
 					mQueryOptions, oAggregation, "~sortExpandSelect~", "~sharedRequest~",
 					/*bIsGrouped*/"n/a"),
 				"~cache~");
+
+			assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "unchanged");
 		});
 	});
 
@@ -397,8 +396,7 @@ sap.ui.define([
 			this.mock(_MinMaxHelper).expects("createCache").never();
 			this.mock(_Cache).expects("create").never();
 			oDoResetExpectation = this.mock(_AggregationCache.prototype).expects("doReset")
-				.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions),
-					bHasGrandTotal)
+				.withExactArgs(sinon.match.same(oAggregation), bHasGrandTotal)
 				.callsFake(function () {
 					this.oFirstLevel = {
 						addKeptElement : "~addKeptElement~",
@@ -715,6 +713,8 @@ sap.ui.define([
 				hierarchyQualifier : "n/a" // unrealistic for i !== 1, but never mind
 			});
 			this.mock(oCache).expects("getDownloadUrl").withExactArgs("").returns("~sDownloadUrl~");
+			this.mock(oCache).expects("setQueryOptions").exactly(bCount && i > 1 ? 1 : 0)
+				.withExactArgs({$count : true, $$leaves : true});
 			this.mock(oCache).expects("createGroupLevelCache")
 				.withExactArgs(null, bHasGrandTotal || bCountLeaves)
 				.returns("~oFirstLevelCache~");
@@ -743,9 +743,10 @@ sap.ui.define([
 			const mQueryOptions = {
 				$count : bCount
 			};
+			oCache.mQueryOptions = mQueryOptions;
 
 			// code under test
-			oCache.doReset(oNewAggregation, mQueryOptions, bHasGrandTotal);
+			oCache.doReset(oNewAggregation, bHasGrandTotal);
 
 			assert.strictEqual(oCache.oAggregation, oNewAggregation);
 			assert.strictEqual(oCache.sToString, "~sDownloadUrl~");
@@ -757,12 +758,9 @@ sap.ui.define([
 			if (bCount && i) {
 				assert.ok(oCache.oCountPromise.isPending());
 				if (i === 1) { // recursive hierarchy
-					assert.notOk("$$leaves" in mQueryOptions);
 					// code under test
 					oCache.oCountPromise.$resolve(42);
 				} else { // visual grouping (bCountLeaves)
-					assert.strictEqual(mQueryOptions.$$leaves, true);
-
 					// code under test
 					assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oCountPromise);
 
@@ -773,7 +771,6 @@ sap.ui.define([
 				assert.ok(oCache.oCountPromise.isFulfilled());
 				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
 			} else {
-				assert.notOk("$$leaves" in mQueryOptions);
 				assert.strictEqual(oCache.oCountPromise, undefined);
 			}
 
@@ -791,6 +788,8 @@ sap.ui.define([
 			} else {
 				assert.strictEqual(oCache.oGrandTotalPromise, undefined);
 			}
+
+			assert.deepEqual(mQueryOptions, {$count : bCount}, "unchanged");
 		});
 		});
 	});
@@ -2492,7 +2491,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("readGap: success", function (assert) {
+	QUnit.test("readGap: success", async function (assert) {
 		var oCache
 			= _AggregationCache.create(this.oRequestor, "~", "", {}, {hierarchyQualifier : "X"}),
 			oGroupLevelCache = {
@@ -2501,17 +2500,14 @@ sap.ui.define([
 				setQueryOptions : function () {}
 			},
 			mQueryOptions = {$count : true, foo : "bar"},
+			sQueryOptions = JSON.stringify(mQueryOptions),
 			aReadResult = [{}];
 
 		oCache.aElements = [,, _AggregationHelper.createPlaceholder(1, 1, oGroupLevelCache)];
 
 		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
-		this.mock(oGroupLevelCache).expects("setQueryOptions")
-			.withExactArgs(sinon.match(function (mNewQueryOptions) {
-					assert.deepEqual(mNewQueryOptions, {foo : "bar"});
-					return mNewQueryOptions === mQueryOptions;
-				}), true);
+		this.mock(oGroupLevelCache).expects("setQueryOptions").withExactArgs({foo : "bar"}, true);
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(1, 1, 0, "~oGroupLock~", "~fnDataRequested~", true)
 			.returns(SyncPromise.resolve({value : aReadResult}));
@@ -2519,7 +2515,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(aReadResult), 2, sinon.match.same(oGroupLevelCache), 1);
 
 		// code under test
-		return oCache.readGap(oGroupLevelCache, 2, 3, "~oGroupLock~", "~fnDataRequested~");
+		await oCache.readGap(oGroupLevelCache, 2, 3, "~oGroupLock~", "~fnDataRequested~");
+
+		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "unchanged");
 	});
 
 	//*********************************************************************************************
@@ -4533,7 +4531,7 @@ sap.ui.define([
 			this.mock(_AggregationHelper).expects("hasGrandTotal")
 				.withExactArgs(sinon.match.same(oNewAggregation.aggregate)).returns(bHasGrandTotal);
 			const oDoResetExpectation = this.mock(oCache).expects("doReset")
-				.withExactArgs(sinon.match.same(oNewAggregation), "~mQueryOptions~", bHasGrandTotal);
+				.withExactArgs(sinon.match.same(oNewAggregation), bHasGrandTotal);
 
 			// code under test
 			oCache.reset(aKeptElementPredicates, sGroupId, "~mQueryOptions~", oNewAggregation);

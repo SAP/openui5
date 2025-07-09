@@ -49,16 +49,30 @@ sap.ui.define([
 	/**
 	 * Bookkeeping for the guessing of library names.
 	 *
-	 * Set of bundleUrls from which a library name has been derived or not, see #getLibraryNameForBundle
-	 * If no library name can be derived, the result will also be tracked with 'false' as value.
+	 * Set of bundleUrls from which a library name has been derived, see #_getByBundleUrl
 	 *
 	 * Example:
 	 *   mGuessedLibraries = {
-	 *     "my/simple/library/i18n/i18n.properties": "my.simple.library",
-	 *     "no/library/i18n/i18n.properties": false
+	 *     "my/simple/library/i18n/i18n.properties": "my.simple.library"
 	 *   }
 	 */
 	var mGuessedLibraries = {};
+
+	/**
+	 * Negative result bookkeeping for the guessing of library names.
+	 *
+	 * Set of bundleUrls from which a library name could not be derived, see #_getByBundleUrl
+	 *
+	 * Note: This cache is maintained separately from the positive cache to ease clearing it
+	 * when a new library instance is created (see #_get). This prevents that a negative result
+	 * is cached for a library that has been created/loaded in the meantime.
+	 *
+	 * Example:
+	 *   mGuessedLibrariesNegative = {
+	 *     "no/library/i18n/i18n.properties": undefined
+	 *   }
+	 */
+	var mGuessedLibrariesNegative = {};
 
 	/**
 	 * Set of libraries that provide a bundle info file (library-preload-lazy.js).
@@ -245,6 +259,7 @@ sap.ui.define([
 			}
 
 			this.name = mSettings.name;
+			this.namespace = mSettings.name.replace(/\./g, '/');
 
 			var aPropsWithDefaults = ["dependencies", "types", "interfaces", "controls", "elements"];
 
@@ -414,8 +429,7 @@ sap.ui.define([
 				return this._loadingStatus.promise;
 			}
 
-			var sLibPackage = this.name.replace(/\./g, '/'),
-				bEntryModuleExists = !!sap.ui.loader._.getModuleState(sLibPackage + '/library.js');
+			var bEntryModuleExists = !!sap.ui.loader._.getModuleState(this.namespace + '/library.js');
 
 			if (this._loadingStatus == null && mOptions.url) {
 				registerModulePath(this.name, mOptions.url);
@@ -436,7 +450,7 @@ sap.ui.define([
 
 				this._loadingStatus.cssLoaded.resolve();
 				return sap.ui.loader._.loadJSResourceAsync(
-					sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
+					this.namespace + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 			}
 
 			// otherwise mark as pending
@@ -508,7 +522,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_loadLibraryPreload: function() {
-			var sPreloadModule = `${this.name.replace(/\./g, '/')}/library-preload.js`;
+			var sPreloadModule = `${this.namespace}/library-preload.js`;
 			return sap.ui.loader._.loadJSResourceAsync(sPreloadModule, true);
 		},
 
@@ -524,7 +538,7 @@ sap.ui.define([
 		 * @private
 		 */
 		getManifest: function(bSync) {
-			const manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
+			const manifestModule = this.namespace + '/manifest.json';
 			if (sap.ui.loader._.getModuleState(manifestModule) || (bSync && !this._manifestFailed)) {
 				this.oManifest = this.loadManifestSync();
 				if (this.oManifest) {
@@ -541,7 +555,7 @@ sap.ui.define([
 		 * @private
 		 */
 		loadManifestSync: function() {
-			const manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
+			const manifestModule = this.namespace + '/manifest.json';
 			if (!this.oManifest) {
 				try {
 					this.oManifest = LoaderExtensions.loadResource(manifestModule, {
@@ -563,7 +577,7 @@ sap.ui.define([
 		 * @private
 		 */
 		loadManifest: function() {
-			const manifestModule = this.name.replace(/\./g, '/') + '/manifest.json';
+			const manifestModule = this.namespace + '/manifest.json';
 			if (this.oManifest && !this._loadingStatus.manifest) {
 				this._loadingStatus.manifest = Promise.resolve(this._oManifest);
 			} else if (!this.oManifest && !this._loadingStatus.manifest) {
@@ -843,6 +857,7 @@ sap.ui.define([
 				name: sName,
 				_key: oConstructorKey
 			});
+			mGuessedLibrariesNegative = {}; // Reset negative cache to enforce re-evaluation
 		}
 
 		return oLibrary;
@@ -861,6 +876,9 @@ sap.ui.define([
 			if (mGuessedLibraries[sBundleUrl]) {
 				return mGuessedLibraries[sBundleUrl];
 			}
+			if (sBundleUrl in mGuessedLibrariesNegative) {
+				return undefined;
+			}
 
 			// [1] Guess ResourceName
 			var sBundleName = sap.ui.loader._.guessResourceName(sBundleUrl);
@@ -868,14 +886,13 @@ sap.ui.define([
 
 				// [2] Guess library name
 				for (var sLibrary in mLibraries) {
-					if (!mLibraries[sLibrary].isSettingsEnhanced()) {
+					var oLib = mLibraries[sLibrary];
+					if (!oLib.isSettingsEnhanced()) {
 						// ignore libraries that haven't been initialized
 						continue;
 					}
-					var sLibraryName = sLibrary.replace(/\./g, "/");
-					var oLib = mLibraries[sLibrary];
-					if (sLibraryName !== "" && sBundleName.startsWith(sLibraryName + "/")) {
-						var sBundlePath = sBundleName.replace(sLibraryName + "/", "");
+					if (oLib.namespace !== "" && sBundleName.startsWith(oLib.namespace + "/")) {
+						var sBundlePath = sBundleName.replace(oLib.namespace + "/", "");
 
 						// [3] Retrieve i18n from manifest for looking up the base bundle
 						//     (can be undefined if the lib defines "sap.ui5/library/i18n" with <false>)
@@ -883,8 +900,8 @@ sap.ui.define([
 
 						if (vI18n) {
 							// Resolve bundle paths relative to library before comparing
-							var sManifestBaseBundlePath = getModulePath(sLibraryName, "/" + vI18n.bundleUrl);
-								sBundlePath = getModulePath(sLibraryName, "/" + sBundlePath);
+							var sManifestBaseBundlePath = getModulePath(oLib.namespace, "/" + vI18n.bundleUrl);
+								sBundlePath = getModulePath(oLib.namespace, "/" + sBundlePath);
 
 							// the input bundle-path and the derived library bundle-path must match,
 							// otherwise we would enhance the wrong bundle with terminologies etc.
@@ -894,7 +911,7 @@ sap.ui.define([
 								return oLib;
 							}
 							// [4.2] Cache none-matching result
-							mGuessedLibraries[sBundleUrl] = false;
+							mGuessedLibrariesNegative[sBundleUrl] = undefined;
 						}
 					}
 				}
@@ -1221,7 +1238,7 @@ sap.ui.define([
 		const aLibraryModuleNames = [];
 
 		await Promise.all(aLibs.map(function(oLib) {
-			aLibraryModuleNames.push(oLib.name.replace(/\./g, "/") + "/library");
+			aLibraryModuleNames.push(oLib.namespace + "/library");
 			return oLib._preload(mOptions);
 		}));
 
@@ -1397,9 +1414,7 @@ sap.ui.define([
 				// enrich i18n information
 				if (vI18n) {
 					// resolve bundleUrls relative to library path
-					var sLibraryPath = oLib.name.replace(/\./g, "/");
-					sLibraryPath = sLibraryPath.endsWith("/") ? sLibraryPath : sLibraryPath + "/"; // add trailing slash if missing
-					sLibraryPath = sap.ui.require.toUrl(sLibraryPath);
+					var sLibraryPath = sap.ui.require.toUrl(oLib.namespace + "/");
 
 					_UrlResolver._processResourceConfiguration(vI18n, {
 						alreadyResolvedOnRoot: true,

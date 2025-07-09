@@ -1,0 +1,38 @@
+{
+	"_version": "2.0.2",
+	"sap.app": {
+		"id": "sap.m.sample.OverflowToolbarTokenizer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"type": "application",
+		"title": "Application 'OverflowToolbarTokenizer'"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.m.sample.OverflowToolbarTokenizer.V",
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"V.view.xml",
+					"C.controller.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}

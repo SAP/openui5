@@ -141,7 +141,7 @@
     </jscoverage>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="145fccaf8498af328a478673c2e0de3e" homepage="https://jquery.com" id="73554900106100068050">
+        <lib name="jquery-3" displayName="jQuery 3" npmName="jquery" version="3.6.0" hash="d8e866b6cc69ddf4a28e12895105a490" homepage="https://jquery.com" id="73554900106100068050">
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>OpenJS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery.js</pattern>

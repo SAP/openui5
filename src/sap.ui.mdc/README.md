@@ -1,6 +1,6 @@
 # @openui5/sap.ui.mdc
 
-Runtime resources of the [OpenUI5](https://github.com/SAP/openui5) UI Library **sap.ui.mdc**.
+Runtime resources of the [OpenUI5](https://github.com/UI5/openui5) UI Library **sap.ui.mdc**.
 
 
 

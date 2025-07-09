@@ -27,6 +27,7 @@ sap.ui.define([
 		item: new NavigationList("NL", {
 			items: [
 				new NavigationListItem({ text: "Home", icon: "sap-icon://home" }),
+				new NavigationListItem({ text: "Item with a long overflowing title", icon: "sap-icon://home" }),
 				new NavigationListGroup({
 					text: "New",
 					tooltip: "Custom tooltip",
@@ -45,6 +46,7 @@ sap.ui.define([
 							icon: "sap-icon://machine",
 							items: [
 								new NavigationListItem({ text: "Supply Chain", tooltip: "Custom tooltip" }),
+								new NavigationListItem({ text: "Production with a long overflowing title"}),
 								new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
 								new NavigationListItem({ text: "Schematics" })
 							]

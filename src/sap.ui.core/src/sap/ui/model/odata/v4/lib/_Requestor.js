@@ -295,7 +295,7 @@ sap.ui.define([
 	 * @param {string} sMetaPath
 	 *   The meta path corresponding to the resource path
 	 * @param {object} [mQueryOptions]
-	 *   A map of key-value pairs representing the query string
+	 *   A read-only map of key-value pairs representing the query string
 	 * @param {boolean} [bDropSystemQueryOptions]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 * @param {boolean} [bSortExpandSelect]
@@ -706,7 +706,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sMetaPath
 	 *   The meta path corresponding to the resource path
-	 * @param {object} [mQueryOptions] The query options
+	 * @param {object} [mQueryOptions] The read-only query options
 	 * @param {boolean} [bDropSystemQueryOptions]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 * @param {boolean} [bSortExpandSelect]
@@ -810,7 +810,7 @@ sap.ui.define([
 	 *
 	 * @param {string} _sMetaPath
 	 *   The meta path corresponding to the resource path
-	 * @param {object} mQueryOptions The query options
+	 * @param {object} mQueryOptions The read-only query options
 	 * @param {function (string,any)} fnResultHandler
 	 *   The function to process the converted options getting the name and the value
 	 * @param {boolean} [bDropSystemQueryOptions]

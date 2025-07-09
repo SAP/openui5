@@ -377,9 +377,15 @@ function(
 	 */
 	MultiInput.prototype.onAfterRendering = function () {
 		var oTokenizer = this.getAggregation("tokenizer");
+		var oTokenizerOpener = Element.getElementById(oTokenizer.getProperty("opener"))?.getDomRef();
+
 		this._bTokenIsValidated = false;
 
 		oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
+
+		if (oTokenizerOpener !== this.getDomRef()) {
+			oTokenizer.setProperty("opener", this.getId(), true);
+		}
 
 		this._registerResizeHandler();
 
@@ -841,7 +847,7 @@ function(
 
 		// ctrl/meta + I -> Open suggestions
 		if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which === KeyCodes.I && oTokenizer.getTokens().length) {
-			oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
+			oTokenizer._togglePopup();
 			oEvent.preventDefault();
 		}
 	};
@@ -1028,7 +1034,7 @@ function(
 		if (!this.getEditable()
 			&& oTokenizer.getHiddenTokensCount()
 			&& oEvent.target === this.getFocusDomRef()) {
-			oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
+			oTokenizer._togglePopup();
 		}
 
 		if (!containsOrEquals(oTokenizer.getFocusDomRef(), document.activeElement)) {
@@ -1089,7 +1095,7 @@ function(
 		}
 
 		if (!bFocusIsInSelectedItemPopup && !bNewFocusIsInTokenizer) {
-			oSelectedItemsPopup.isOpen() && !this.isMobileDevice() && oTokenizer._togglePopup(oSelectedItemsPopup, this.getDomRef());
+			oSelectedItemsPopup.isOpen() && !this.isMobileDevice() && oTokenizer._togglePopup();
 			oTokenizer.setRenderMode(TokenizerRenderMode.Narrow);
 		}
 
@@ -1168,7 +1174,7 @@ function(
 		this.selectText(0, 0);
 
 		if (oPopup.isOpen()) {
-			oTokenizer._togglePopup(oPopup, this.getDomRef());
+			oTokenizer._togglePopup();
 		}
 
 		Input.prototype.onsapescape.apply(this, arguments);
@@ -1681,7 +1687,7 @@ function(
 		const oTokenizer = this.getAggregation("tokenizer");
 
 		oTokenizer._bIsOpenedByNMoreIndicator = true;
-		oTokenizer._togglePopup(oTokenizer.getTokensPopup(), this.getDomRef());
+		oTokenizer._togglePopup();
 	};
 
 	/**

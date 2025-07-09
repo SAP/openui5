@@ -142,8 +142,8 @@ sap.ui.define([
 		/**
 		 * Adds the given paths to $select of the given query options.
 		 *
-		 * @param {object} mQueryOptions The query options
-		 * @param {string[]} aSelectPaths The paths to add to $select
+		 * @param {object} mQueryOptions - The query options to be MODIFIED
+		 * @param {string[]} aSelectPaths - The paths to add to $select
 		 *
 		 * @public
 		 */
@@ -235,9 +235,10 @@ sap.ui.define([
 		 * Recursively merges $select and $expand from mQueryOptions into mAggregatedQueryOptions.
 		 * All other query options in mAggregatedQueryOptions remain untouched.
 		 *
-		 * @param {object} mAggregatedQueryOptions The aggregated query options
-		 * @param {object} mQueryOptions The query options to merge into the aggregated query
-		 *   options
+		 * @param {object} mAggregatedQueryOptions
+		 *   The aggregated query options to be MODIFIED
+		 * @param {object} mQueryOptions
+		 *   The read-only query options to merge into the aggregated query options
 		 *
 		 * @public
 		 */
@@ -491,7 +492,7 @@ sap.ui.define([
 		 *
 		 * $expand must not contain collection-valued navigation properties.
 		 *
-		 * @param {object} mQueryOptions - The query options
+		 * @param {object} mQueryOptions - The read-only query options
 		 * @returns {string[]} The paths
 		 *
 		 * @public
@@ -1014,10 +1015,8 @@ sap.ui.define([
 		 * Extracts the mergeable query options "$expand" and "$select" from the given ones, returns
 		 * them as a new map while replacing their value with "~" in the old map.
 		 *
-		 * @param {object} mQueryOptions
-		 *   The original query options, will be modified
-		 * @returns {object}
-		 *   The extracted query options
+		 * @param {object} mQueryOptions - The original query options to be MODIFIED
+		 * @returns {object} The extracted query options
 		 *
 		 * @public
 		 */
@@ -1678,7 +1677,8 @@ sap.ui.define([
 		 * care of the details).
 		 *
 		 * @param {object|object[]} vEntityOrCollection - The entity (collection)
-		 * @param {object} mQueryOptions - The query options (only $select and $expand required)
+		 * @param {object} mQueryOptions
+		 *   The read-only query options (only $select and $expand required)
 		 * @returns {string[]}
 		 *   A list of paths relative to vEntityOrCollection for which the property value is missing
 		 * @throws {Error} If there is a path containing "*"
@@ -1765,7 +1765,7 @@ sap.ui.define([
 		 * Returns the query options corresponding to the given path.
 		 *
 		 * @param {object} [mQueryOptions]
-		 *   A map of query options as returned by
+		 *   A map of read-only query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string} sPath
 		 *   The path of the cache value in the cache
@@ -2011,7 +2011,7 @@ sap.ui.define([
 		 * key predicate.
 		 *
 		 * @param {object} [mCacheQueryOptions]
-		 *   A map of query options as returned by
+		 *   A read-only map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string[]} aPaths
 		 *   The "14.5.11 Expression edm:NavigationPropertyPath" or
@@ -2241,7 +2241,7 @@ sap.ui.define([
 		 * ok, because within all known scenarios such combinations do not happen.
 		 *
 		 * @param {string} sPropertyPath The path to the structural property as meta path
-		 * @param {object} [mQueryOptions] The query options to be analyzed
+		 * @param {object} [mQueryOptions] The read-only query options to be analyzed
 		 * @returns {boolean} Whether the property for the given path was already selected
 		 *
 		 * @public
@@ -2348,7 +2348,7 @@ sap.ui.define([
 		 * Ensures that the original map is left unchanged, but creates a copy only if necessary.
 		 *
 		 * @param {object} [mQueryOptions]
-		 *   The map of query options
+		 *   The read-only map of query options
 		 * @param {string} [sOrderby]
 		 *   The new value for the query option "$orderby"
 		 * @param {string[]} [aFilters]
@@ -2658,10 +2658,8 @@ sap.ui.define([
 		/**
 		 * Adds the key properties of the given entity type to $select of the given query options.
 		 *
-		 * @param {object} mQueryOptions
-		 *   The query options
-		 * @param {object} oType
-		 *   The entity type's metadata "JSON"
+		 * @param {object} mQueryOptions - The query options to be MODIFIED
+		 * @param {object} oType - The entity type's metadata "JSON"
 		 *
 		 * @public
 		 */
@@ -2959,7 +2957,7 @@ sap.ui.define([
 		 * regarding order and count.
 		 *
 		 * @param {object} mChangeListeners - A map of change listeners by path
-		 * @param {object} mQueryOptions - The query options
+		 * @param {object} mQueryOptions - The read-only query options
 		 * @param {string} sPath
 		 *   The path of the target entity relative to mChangeListeners and mQueryOptions
 		 * @param {object} oTargetEntity - The target entity

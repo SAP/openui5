@@ -3,7 +3,7 @@
 
 [OpenUI5. Build Once. Run on any device.](https://openui5.org)
 
-[![REUSE status](https://api.reuse.software/badge/github.com/SAP/openui5)](https://api.reuse.software/info/github.com/SAP/openui5)
+[![REUSE status](https://api.reuse.software/badge/github.com/UI5/openui5)](https://api.reuse.software/info/github.com/UI5/openui5)
 
 
 What is it?

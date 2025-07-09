@@ -18073,7 +18073,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Object binding provides access to some collection and you then want to filter on
-	//   that collection; inspired by https://github.com/SAP/openui5/issues/1763
+	//   that collection; inspired by https://github.com/UI5/openui5/issues/1763
 	QUnit.test("Filter collection provided via object binding", function (assert) {
 		var sView = '\
 <FlexBox id="form" binding="{parameters : {$expand : \'TEAM_2_EMPLOYEES\'},\
@@ -21012,7 +21012,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: ODataContextBinding for non-deferred function call which returns a collection. A
 	// dependent list binding for "value" with auto-$expand/$select displays the result.
-	// github.com/SAP/openui5/issues/1727
+	// github.com/UI5/openui5/issues/1727
 	QUnit.test("Context: function returns collection, auto-$expand/$select", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -77301,7 +77301,7 @@ sap.ui.define([
 	//
 	// Check that v4.Context#hasPendingChanges also works for unbound properties (1) and test a
 	// workaround for the missing v4.Context#resetChanges (2)
-	// (https://github.com/SAP/openui5/issues/3562)
+	// (https://github.com/UI5/openui5/issues/3562)
 	QUnit.test("BCP: 2270093727", function (assert) {
 		var oModel = this.createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\

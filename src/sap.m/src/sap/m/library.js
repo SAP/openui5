@@ -317,6 +317,7 @@ sap.ui.define([
 		  "sap.m.OverflowToolbarButton",
 		  "sap.m.OverflowToolbarToggleButton",
 		  "sap.m.OverflowToolbarMenuButton",
+		  "sap.m.OverflowToolbarTokenizer",
 		  "sap.m.Page",
 		  "sap.m.Panel",
 		  "sap.m.PDFViewer",
@@ -4869,6 +4870,32 @@ sap.ui.define([
 		 Narrow : "Narrow"
 	 };
 
+	 /**
+	  * Types of <code>sap.m.OverflowToolbarTokenizerRenderMode</code> responsive modes
+	  *
+	  * @enum {string}
+	  * @public
+	  * @since 1.139
+	  */
+	 thisLib.OverflowToolbarTokenizerRenderMode = {
+		 /**
+		  * In <code>Loose</code> mode, <code>sap.m.OverflowToolbarTokenizer</code> shows all its tokens, even if it requires scrolling.
+		  * @public
+		  */
+		 Loose : "Loose",
+
+		 /**
+		  * In <code>Narrow</code> mode, <code>sap.m.OverflowToolbarTokenizer</code> shows as many tokens as its width allows and an n-More indicator with the count of the hidden tokens. The rest of the tokens remain hidden.
+		  * @public
+		  */
+		 Narrow : "Narrow",
+
+		 /**
+		  * In <code>Overflow</code> mode, <code>sap.m.OverflowToolbarTokenizer</code> shows only a <code>sap.m.Button</code> as an n-More indicator without visible tokens. This mode is used when <code>sap.m.OverflowToolbarTokenizer</code> is within the <code>sap.m.OverflowToolbar</code> overflow area.
+		  * @public
+		  */
+		 Overflow : "Overflow"
+	 };
 
 	 /**
 	  * Types of the Toolbar Design.

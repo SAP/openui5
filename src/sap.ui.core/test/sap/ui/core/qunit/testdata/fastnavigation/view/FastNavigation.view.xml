@@ -1,0 +1,57 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:main="testdata.fastnavigation.webc.gen.ui5.webcomponents"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns="sap.m">
+	<main:Button text="Button1" id="button1"></main:Button>
+	<main:Panel id="Panel1" headerText="Panel Header">
+		<main:List headerText="Custom Content">
+			<main:ListItemCustom id="ListItem1">
+				<HBox>
+					<core:Icon size="2rem" src="sap-icon://attachment-photo" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+						<main:Button text="ListItem1"/>
+					</VBox>
+				</HBox>
+			</main:ListItemCustom>
+			<main:ListItemCustom id="ListItem2">
+				<HBox>
+					<core:Icon size="2rem" src="sap-icon://attachment-photo" class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginTopBottom" >
+						<main:Button text="ListItem2"/>
+					</VBox>
+				</HBox>
+			</main:ListItemCustom>
+		</main:List>
+	</main:Panel>
+	<core:HTML content="
+	&lt;test-component&gt;
+		&lt;div id=&quot;Div1&quot; slot=&quot;FirstSlot&quot; tabindex=&quot;0&quot;&gt;Test1&lt;/div&gt;
+		&lt;div id=&quot;Div2&quot; slot=&quot;SecondSlot&quot; tabindex=&quot;0&quot;&gt;Test2&lt;/div&gt;
+		&lt;div id=&quot;Div3&quot; slot=&quot;FirstSlot&quot; tabindex=&quot;0&quot;&gt;Test3&lt;/div&gt;
+	&lt;/test-component&gt;
+	" preferDOM="false" sanitizeContent="false"/>
+	<form:Form>
+		<form:layout>
+				<form:ResponsiveGridLayout></form:ResponsiveGridLayout>
+		</form:layout>
+		<form:FormContainer>
+			<form:FormElement>
+				<main:Input id="Input1"></main:Input>
+			</form:FormElement>
+			<form:FormElement>
+				<main:Input id="Input2"></main:Input>
+			</form:FormElement>
+		</form:FormContainer>
+		<form:FormContainer>
+			<form:FormElement>
+				<main:Input id="Input3"></main:Input>
+			</form:FormElement>
+			<form:FormElement>
+				<main:Input id="Input4"></main:Input>
+			</form:FormElement>
+		</form:FormContainer>
+	</form:Form>
+</mvc:View>

@@ -5095,6 +5095,25 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Should set the MultiComboBox as Tokenizer's opener", async function(assert) {
+		this.clock = sinon.useFakeTimers();
+		var oMultiComboBox = new MultiComboBox({
+		items: [
+			new Item({key: "Item1", text: "Item1"}),
+			new Item({key: "Item2", text: "Item2"})
+		]
+		}).placeAt("MultiComboBoxContent");
+		var oTokenizer = oMultiComboBox.getAggregation("tokenizer");
+
+		await nextUIUpdate(this.clock);
+
+		qutils.triggerKeydown(this.oMultiComboBox, KeyCodes.I, false, false, true);
+
+		assert.strictEqual(document.getElementById(oTokenizer.getProperty("opener")), oMultiComboBox.getDomRef(), "The Tokenizer 'open' property is correct");
+
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Focus handling", {
 		afterEach: function () {
 			runAllTimersAndRestore(this.clock);

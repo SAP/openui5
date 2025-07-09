@@ -3310,8 +3310,6 @@ sap.ui.define([
 
 	QUnit.test("n-More popover opener should be the MultiInput", function (assert) {
 		const oTokenizer = this.multiInput.getAggregation("tokenizer");
-		const oTogglePopupSpy = this.spy(oTokenizer, "_togglePopup");
-		const oTokenizerPopover = oTokenizer.getTokensPopup();
 		const oFakeEvent = {
 			isMarked: function(){},
 			target: this.multiInput.$().find(".sapMTokenizerIndicator")[0]
@@ -3328,7 +3326,7 @@ sap.ui.define([
 		this.multiInput.ontap(oFakeEvent);
 		this.clock.tick(nPopoverAnimationTick + 1);
 
-		assert.ok(oTogglePopupSpy.calledWith(oTokenizerPopover, this.multiInput.getDomRef()), "The tokenizer popover has the correct opener");
+		assert.strictEqual(document.getElementById(oTokenizer.getProperty("opener")), this.multiInput.getDomRef(), "The tokenizer popover has the correct opener");
 	});
 
 	QUnit.test("Popover's interaction - try to delete non editable token", async function(assert) {

@@ -9,13 +9,13 @@ Library: sap.m:
 Component: purify.js, version: 3.2.4
 Copyright: Mario Heiderich
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.m/src/sap/m/_thirdparty/purify.js
 
 Component: QUnit Composite 2.0.0, version: 2.0.0
 Copyright: jQuery Foundation and other contributors, https://jquery.org/
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.m/test/sap/m/qunit/_thirdparty/qunit-composite.css
 	src/sap.m/test/sap/m/qunit/_thirdparty/qunit-composite.js
 
@@ -25,7 +25,7 @@ Library: sap.ui.codeeditor:
 Component: Ace (Ajax.org Cloud9 Editor), version: 1.36.5
 Copyright: 2010, Ajax.org B.V.
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.codeeditor/src/sap/ui/codeeditor/js/ace/**
 
 
@@ -34,7 +34,7 @@ Library: sap.ui.core:
 Component: jQuery 3, version: 3.6.0
 Copyright: OpenJS Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jquery.js
 	src/sap.ui.core/src/sap/base/util/isPlainObject.js
 	src/sap.ui.core/src/sap/base/util/_merge.js
@@ -43,139 +43,139 @@ Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jquery.js
 Component: jQuery 1, version: 1.7.1
 Copyright: 2011, John Resig
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/Device.js
 
 Component: jQuery UI 1.8, version: 1.8.17
 Copyright: 2014 jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/dom/jquery/Selectors.js
 
 Component: jQuery UI 1.10, version: 1.10.4
 Copyright: 2014 jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jqueryui/**
 	src/sap.ui.core/src/jquery.sap.dom.js
 
 Component: jQuery UI 1.11, version: 1.11.1
 Copyright: 2014 jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/dom/jquery/zIndex.js
 
 Component: QUnit 2, version: 2.3.2
 Copyright: jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.css
 	src/sap.ui.core/src/sap/ui/thirdparty/qunit-2.js
 
 Component: QUnit 2.18, version: 2.18.0
 Copyright: jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.css
 	src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/qunit-2.18.js
 
 Component: jQuery Mobile, version: 1.3.1
 Copyright: 2010, 2013 jQuery Foundation, Inc. and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jquery-mobile-custom.js
 
 Component: jQuery.rtl-scroll-type, version: 2.0.0
 Copyright: 2012 Wei-Ko Kao
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/util/_FeatureDetection.js
 
 Component: QUnit Composite, version: 1.0.2-pre
 Copyright: jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.css
 	src/sap.ui.core/src/sap/ui/thirdparty/qunit-composite.js
 
 Component: JUnit Reporter for QUnit, version: 1.1.1
 Copyright: jQuery Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/qunit-reporter-junit.js
 	src/sap.ui.core/src/sap/ui/qunit/qunit-junit.js
 
 Component: Zynga Scroller, version: 1.2.1-0-g5d43806
 Copyright: 2011 Zynga Inc.
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/zyngascroll.js
 
 Component: LESS, version: 1.6.3
 Copyright: 2009-2014, Alexis Sellier
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/less.js
 
 Component: DataJS
 Copyright: 2011 Microsoft
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/datajs.js
 
 Component: D3, version: 3.4.12
 Copyright: 2010-2014 Michael Bostock
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/d3.js
 
 Component: JSZip, version: 2.2.0
 Copyright: 2009-2014 Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/jszip.js
 
 Component: Google-Caja JS HTML Sanitizer, version: Build 4884
 Copyright: Google Inc.
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/caja-html-sanitizer.js
 
 Component: Unicode Common Locale Data Repository, version: 46.1.0
 Copyright: 1991-2024 Unicode, Inc.
 License: LicenseRef-Unicode-3.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-Unicode-3.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/LicenseRef-Unicode-3.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cldr/**
 
 Component: SinonJS, version: 1.14.1
 Copyright: 2010-2014, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/sinon.js
 	src/sap.ui.core/src/sap/ui/thirdparty/sinon-server.js
 
 Component: SinonJS, version: 4.4.6
 Copyright: 2010-2017, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/sinon-4.js
 
 Component: SinonJS 14, version: 14.0.0
 Copyright: 2010-2022, Christian Johansen, christian@cjohansen.no
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/test/sap/ui/core/qunit/thirdparty/sinon-14.0.js
 
 Component: Sinon-qunit, version: 2.0.0
 Copyright: 2010-2011, Christian Johansen
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/sinon-qunit.js
 
 Component: URI.js, version: 1.19.11
 Copyright: Rodney Rehm
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/URI.js
 	src/sap.ui.core/src/sap/ui/thirdparty/URITemplate.js
 	src/sap.ui.core/src/sap/ui/thirdparty/SecondLevelDomains.js
@@ -184,116 +184,116 @@ Contained in: src/sap.ui.core/src/sap/ui/thirdparty/URI.js
 Component: punycode.js, version: 1.4.0
 Copyright: Mathias Bynens
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/punycode.js
 
 Component: handlebars, version: 4.7.7
 Copyright: 2011-2019 by Yehuda Katz
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/handlebars.js
 
 Component: requireJS, version: 2.1.8
 Copyright: 2010-2012, The Dojo Foundation
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/require.js
 
 Component: crossroads.js, version: 0.12.0
 Copyright: Miller Medeiros
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/crossroads.js
 
 Component: hasher.js, version: 1.2.0
 Copyright: Miller Medeiros
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/hasher.js
 
 Component: JS-Signals, version: 1.0.0
 Copyright: Miller Medeiros
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/signals.js
 
 Component: blanket.js, version: 1.1.5
 Copyright: 2013 Alex Seville
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/blanket.js
 
 Component: JSON in JS, version: ff55d8d451
 Copyright: Douglas Crockford
 License: LicenseRef-JSONinJSPublicDomain
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-JSONinJSPublicDomain.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/LicenseRef-JSONinJSPublicDomain.txt
 Contained in: src/sap.ui.core/src/sap/base/util/JSTokenizer.js
 
 Component: Top Down Operator Precedence
 Copyright: 2010 Douglas Crockford
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/base/ExpressionParser.js
 Comment: License granted to SAP by Douglas Crockford
 
 Component: KLayJS, version: 0.4.1
 Copyright: Ulf Rueegg
 License: EPL-1.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/EPL-1.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/EPL-1.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/klay.js
 
 Component: bignumber.js, version: 6.0.0
 Copyright: 2018 Michael Mclaughlin
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/bignumber.js
 
 Component: lodash, version: 4.17.21
 Copyright: OpenJS Foundation and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/base/util/restricted/_/lodash.custom.js
 
 Component: Hyphenopoly, version: 3.4.0
 Copyright: 2021 Mathias Nater
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/hyphenopoly/**
 
 Component: p-cancelable, version: 2.0.0
 Copyright: Sindre Sorhus <sindresorhus@gmail.com>
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/base/util/restricted/_CancelablePromise.js
 
 Component: @babel/helpers, version: 7.10.4
 Copyright: 2014-present Sebastian McKenzie and other contributors
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/base/util/restricted/_CancelablePromise.js
 
 Component: Jalaali JS
 Copyright: Behrang Norouzinia
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/date/Persian.js
 
 Component: vkBeautify, version: 0.99.00.beta
 Copyright: 2012 Vadim Kiryukhin
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/vkbeautify.js
 
 Component: node-lru-cache, version: 2.7.3
 Copyright: Isaac Z. Schlueter and Contributors
 License: ISC
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/ISC.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/ISC.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 
 Component: UI5 Web Components, version: 2.11.0
 Copyright: SAP SE (and OpenUI5 contributors)
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/test/sap/ui/core/qunit/testdata/fastnavigation/webc/integration/**
 
 
@@ -302,25 +302,25 @@ Library: sap.ui.documentation:
 Component: highlight.js, version: 11.9.0
 Copyright: 2006-2020, Ivan Sagalaev
 License: BSD-3-Clause
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/BSD-3-Clause.txt
 Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/highlight.js/**
 
 Component: Elasticlunr, version: 0.9.5
 Copyright: 2017 Wei Song and Oliver Nightingale
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/elasticlunr.js
 
 Component: DataTables, version: 2.0.1
 Copyright: SpryMedia Ltd
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-2.0.1/**
 
 Component: Buttons extension for DataTables, version: 3.0.0
 Copyright: SpryMedia Ltd
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/**
 
 
@@ -329,38 +329,38 @@ Library: sap.ui.integration:
 Component: UI5 Web Components, version: 1.7.0
 Copyright: SAP
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/webcomponents/**
 
 Component: Adaptive Cards, version: 2.9.0
 Copyright: 2017 Microsoft
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards.js
 	src/sap.ui.integration/src/sap/ui/integration/schemas/adaptive-card.json
 
 Component: Adaptive Cards Templating, version: 2.2.0
 Copyright: 2017 Microsoft
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptivecards-templating.js
 
 Component: Adaptive Expressions, version: 4.15.0
 Copyright: Microsoft
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptive-expressions.js
 
 Component: Markdown-it, version: 12.3.2
 Copyright: 2014 Vitaly Puzrin, Alex Kocharin
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/markdown-it.js
 
 Component: @cfworker/json-schema, version: 1.6.8
 Copyright: 2020 Jeremy Danyow
 License: MIT
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplorer/webapp/thirdparty/CfWorkerJsonSchemaValidator.js
 
 
@@ -369,13 +369,13 @@ Outside of Libraries:
 Component: JSDoc 3, version: 3.6.7
 Copyright: 2011-present Michael Mathews micmath@gmail.com and the contributors to JSDoc
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: lib/jsdoc/ui5/plugin.js
 
 Component: SAP Theming Base Content, version: 11.30.0
 Copyright: SAP SE or an SAP affiliate company and Theming Base Content contributors
 License: Apache-2.0
-License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/themes/base/base.less
 	src/themelib_sap_belize/src/sap/ui/core/themes/**/base.less
 	src/themelib_sap_fiori_3/src/sap/ui/core/themes/**/base.less
