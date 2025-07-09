@@ -935,6 +935,7 @@ sap.ui.define([
 				"then initially current variant was correct before updating"
 			);
 
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			this.oModel.oData[sVMReference].updateVariantInURL = true;
 			return this.oModel.updateCurrentVariant({
 				variantManagementReference: sVMReference,
@@ -962,6 +963,7 @@ sap.ui.define([
 			sandbox.stub(Switcher, "switchVariant").resolves();
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			this.oModel.oData[sVMReference].updateVariantInURL = true;
 			return this.oModel.updateCurrentVariant({
 				variantManagementReference: sVMReference,
@@ -989,6 +991,7 @@ sap.ui.define([
 				"variant1",
 				"then initially current variant was correct before updating"
 			);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 
@@ -1013,7 +1016,7 @@ sap.ui.define([
 				newVariantReference: "variant0",
 				appComponent: this.oModel.oAppComponent
 			})
-			.then(this.oModel._oVariantSwitchPromise)
+			.then(this.oModel._oVariantSwitchPromises[sVMReference])
 			.then(function() {
 				assert.strictEqual(oSwitchVariantStub.callCount, 2, "then Switcher.switchVariant() was called twice");
 				assert.strictEqual(
@@ -1031,6 +1034,7 @@ sap.ui.define([
 				"variant1",
 				"then initially current variant was correct before updating"
 			);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 
 			var oSetVariantSwitchPromiseStub = sandbox.stub(this.oFlexController, "setVariantSwitchPromise");
 			var SwitchVariantStub = sandbox.stub(Switcher, "switchVariant")
@@ -1511,6 +1515,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
 			assert.expect(10);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			var aChanges = createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
@@ -1604,6 +1609,7 @@ sap.ui.define([
 
 		QUnit.test("when triggering a soft reload after _handleSaveEvent", async function(assert) {
 			const oVariantManagement = new VariantManagement(sVMReference);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			const oEvent = {
 				getParameters() {
 					return {
@@ -1653,6 +1659,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute and public box checked", function(assert) {
 			assert.expect(11);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			var aChanges = createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
@@ -1743,6 +1750,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from Save button", function(assert) {
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
@@ -1776,6 +1784,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling '_handleSaveEvent' on a USER variant with setDefault, executeOnSelect and public boxes checked", function(assert) {
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
@@ -1816,6 +1825,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default box unchecked", function(assert) {
 			assert.expect(9);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			var aChanges = createChanges(this.oModel.oChangePersistence);
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var sCopyVariantName = "variant1";
@@ -1896,6 +1906,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSaveEvent' with bDesignTimeMode set to true", function(assert) {
 			var fnDone = assert.async();
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			var oVariantManagement = new VariantManagement(sVMReference);
 			var oEvent = {
 				getParameters() {
@@ -1923,6 +1934,7 @@ sap.ui.define([
 
 		QUnit.test("when calling '_handleSave' with bDesignTimeMode set to true and parameters from SaveAs button and default/execute box checked", function(assert) {
 			assert.expect(9);
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			var sNewVariantReference = "variant2";
 			var aChanges = createChanges(this.oModel.oChangePersistence, Layer.CUSTOMER, "variant0");
 			var oVariantManagement = new VariantManagement(sVMReference);
@@ -2125,7 +2137,7 @@ sap.ui.define([
 
 			oInitializeDeferred.resolve();
 
-			await this.oModel._oVariantSwitchPromise;
+			await this.oModel._oVariantSwitchPromises[sVMReference];
 			assert.strictEqual(
 				this.oModel.oData[sVMReference].currentVariant,
 				"variant0",
@@ -2443,7 +2455,7 @@ sap.ui.define([
 				false,
 				"showExecuteOnSelection is set to false"
 			);
-			return this.oModel._oVariantSwitchPromise.then(function(sValue) {
+			return this.oModel._oVariantSwitchPromises[this.sVMReference].then(function(sValue) {
 				assert.strictEqual(sValue, "foo", "the initial changes promise was added to the variant switch promise");
 			});
 		});
@@ -2607,7 +2619,7 @@ sap.ui.define([
 
 			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			this.oVariantManagement.attachEventOnce("save", function() {
-				this.oModel._oVariantSwitchPromise.then(function() {
+				this.oModel._oVariantSwitchPromises[this.sVMReference].then(function() {
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
 					assert.ok(
@@ -2620,7 +2632,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// set variant model busy
-			this.oModel._oVariantSwitchPromise = new Promise(function(resolve) {
+			this.oModel._oVariantSwitchPromises[this.sVMReference] = new Promise(function(resolve) {
 				fnSwitchPromiseStub.callsFake(function() {
 					resolve();
 				});
@@ -2648,7 +2660,7 @@ sap.ui.define([
 			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 
 			this.oVariantManagement.attachEventOnce("save", function() {
-				this.oModel._oVariantSwitchPromise.then(function() {
+				this.oModel._oVariantSwitchPromises[this.sVMReference].then(function() {
 					// resolved when variant model is not busy anymore
 					assert.ok(fnSwitchPromiseStub.calledOnce, "then first the previous variant switch was performed completely");
 					assert.deepEqual(
@@ -2661,7 +2673,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// set variant model busy
-			this.oModel._oVariantSwitchPromise = new Promise(function(resolve) {
+			this.oModel._oVariantSwitchPromises[this.sVMReference] = new Promise(function(resolve) {
 				fnSwitchPromiseStub.callsFake(function() {
 					resolve();
 				});
@@ -2754,6 +2766,87 @@ sap.ui.define([
 				);
 				this.oVariantManagement.setModel(oResourceModel, "anotherResourceModel");
 			}.bind(this));
+		});
+
+		QUnit.test("calling updateCurrentVariant in between registerToModel calls", async function(assert) {
+			const oControl = new Control("someControlId");
+			const sVMReference2 = "varMgmtRef2";
+			const sVMReference3 = "varMgmtRef3";
+			const oUIChange1 = FlexObjectFactory.createUIChange({
+				id: "someUIChange",
+				selector: {
+					id: "someControlId"
+				},
+				layer: Layer.CUSTOMER,
+				variantReference: this.sVMReference
+			});
+			oUIChange1.setState(States.LifecycleState.PERSISTED);
+			oUIChange1.markSuccessful("result");
+			const oUIChange2 = FlexObjectFactory.createUIChange({
+				id: "someUIChange2",
+				selector: {
+					id: "someControlId"
+				},
+				layer: Layer.CUSTOMER,
+				variantReference: sVMReference2
+			});
+			oUIChange2.setState(States.LifecycleState.PERSISTED);
+			oUIChange2.markSuccessful("result");
+			const oUIChange3 = FlexObjectFactory.createUIChange({
+				id: "someUIChange3",
+				selector: {
+					id: "someControlId"
+				},
+				layer: Layer.CUSTOMER,
+				variantReference: "variant0"
+			});
+			oUIChange3.setState(States.LifecycleState.PERSISTED);
+			oUIChange3.markSuccessful("result");
+			stubFlexObjectsSelector([
+				createVariant({
+					author: VariantUtil.DEFAULT_AUTHOR,
+					key: this.sVMReference,
+					layer: Layer.VENDOR,
+					title: "Standard",
+					contexts: {},
+					variantManagementReference: this.sVMReference
+				}),
+				createVariant({
+					author: "Me",
+					key: sVMReference2,
+					layer: Layer.CUSTOMER,
+					title: "Standard",
+					variantManagementReference: sVMReference2
+				}),
+				createVariant({
+					author: "Me",
+					key: "variant0",
+					layer: Layer.CUSTOMER,
+					title: "variant A",
+					variantManagementReference: sVMReference2
+				}),
+				oUIChange1, oUIChange2, oUIChange3
+			]);
+
+			this.oVariantManagement.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+
+			const oVariantManagement2 = new VariantManagement(sVMReference2);
+			oVariantManagement2.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+
+			await this.oModel.waitForVMControlInit(sVMReference2).then(this.oModel.updateCurrentVariant.bind(this.oModel, {
+				variantManagementReference: sVMReference2,
+				newVariantReference: "variant0",
+				appComponent: this.oModel.oAppComponent
+			}));
+
+			const oVariantManagement3 = new VariantManagement(sVMReference3);
+			oVariantManagement3.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
+
+			await this.oModel.waitForAllVMSwitchPromises();
+			assert.ok(true, "the variant switch promise was resolved");
+			oControl.destroy();
+			oVariantManagement2.destroy();
+			oVariantManagement3.destroy();
 		});
 	});
 
@@ -2889,7 +2982,7 @@ sap.ui.define([
 				var sSelectedVariantReference = oEvent.getParameters().key;
 				this.oVariantModel.updateCurrentVariant.onFirstCall().callsFake(function(mPropertyBag) {
 					// update call will make variant model busy, which will be resolved after the whole update process has taken place
-					this.oVariantModel._oVariantSwitchPromise.then(function() {
+					this.oVariantModel._oVariantSwitchPromises[sSelectedVariantReference].then(function() {
 						assert.strictEqual(oCallListenerStub.callCount, 0, "the listeners are not notified again");
 						assert.deepEqual(mPropertyBag, {
 							variantManagementReference: sSelectedVariantReference,
@@ -2934,7 +3027,7 @@ sap.ui.define([
 			// when new item is selected from the variants list
 			oVMControl.attachEventOnce("select", function(oEvent) {
 				var sTargetVariantId = oEvent.getParameters().key;
-				this.oVariantModel._oVariantSwitchPromise.then(function() {
+				this.oVariantModel._oVariantSwitchPromises[this.sVMReference].then(function() {
 					assert.strictEqual(oCallListenerStub.callCount, 0, "the listeners are not notified again");
 					assert.deepEqual(this.oVariantModel.updateCurrentVariant.getCall(0).args[0], {
 						variantManagementReference: sTargetVariantId,
@@ -2972,7 +3065,7 @@ sap.ui.define([
 
 			// when new item is selected from the variants list
 			oVMControl.attachEventOnce("select", function() {
-				this.oVariantModel._oVariantSwitchPromise.then(function() {
+				this.oVariantModel._oVariantSwitchPromises[this.sVMReference].then(function() {
 					assert.strictEqual(oCallListenerStub.callCount, 1, "the listeners are notified");
 					assert.strictEqual(
 						oCallListenerStub.lastCall.args[0],
@@ -3014,7 +3107,7 @@ sap.ui.define([
 
 			// when new item is selected from the variants list
 			oVMControl.attachEventOnce("select", function() {
-				this.oVariantModel._oVariantSwitchPromise.then(function() {
+				this.oVariantModel._oVariantSwitchPromises[this.sVMReference].then(function() {
 					assert.strictEqual(oCallListenerStub.callCount, 1, "the listeners are notified");
 					assert.strictEqual(
 						oCallListenerStub.lastCall.args[0],
