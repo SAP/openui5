@@ -96,6 +96,13 @@ sap.ui.define([], function() {
 			ControlMemoryLeaks: "ControlMemoryLeaks",
 
 			/**
+			 * Test ControlInstances
+			 * @private
+			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
+			 */
+			ControlInstances: "ControlInstances",
+
+			/**
 			 * Test ControlRenderer
 			 * @private
 			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
@@ -156,6 +163,9 @@ sap.ui.define([], function() {
 				tests: {
 					ControlMemoryLeaks: {
 						title: "QUnit Page for memory leak detection in UI5 controls"
+					},
+					ControlInstances: {
+						title: "QUnit Page for detecting excessive control instance creation"
 					},
 					/**
 					 * @deprecated As of 1.120
