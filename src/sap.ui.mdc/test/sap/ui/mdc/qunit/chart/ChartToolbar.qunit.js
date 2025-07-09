@@ -201,6 +201,19 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("Zoom buttons don't closeOverflowOnInteraction", function (assert) {
+			const done = assert.async();
+
+			this.oMDCChart.initialized().then(function () {
+				const oZoomInButton = this.oMDCChart._oZoomInBtn;
+				const oZoomOutButton = this.oMDCChart._oZoomOutBtn;
+
+				assert.strictEqual(oZoomInButton.getLayoutData()?.getCloseOverflowOnInteraction(), false, "Property is set to false for Zoom In button");
+				assert.strictEqual(oZoomOutButton.getLayoutData()?.getCloseOverflowOnInteraction(), false, "Property is set to false for Zoom Out button");
+				done();
+			}.bind(this));
+		});
+
 		QUnit.module("sap.ui.mdc.chart.ChartToolbar: IgnoreDetailsActions", {
 
 			beforeEach: async function () {

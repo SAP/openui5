@@ -259,6 +259,19 @@ sap.ui.define([
 				*/
 				iSelectAChartType: function(sId, sChartTypeName) {
 					return chartActions.iSelectAChartType.call(this, sId, sChartTypeName);
+				},
+
+				/**
+				 * OPA5 test action
+				 * Opens the overflow popover of a given <code>sap.ui.mdc.Chart</code>,
+				 * if any actions are moved to the overflow.
+				 * @memberof onTheMDCChart
+				 * @method iOpenTheOverflowPopover
+				 * @param {string} sId The ID of the <code>sap.ui.mdc.Chart</code>
+				 * @returns {Promise} OPA waitFor
+				 */
+				iOpenTheOverflowPopover: function(sId) {
+					return chartActions.iOpenTheOverflowPopover.call(this, sId);
 				}
 
 			},
@@ -342,6 +355,15 @@ sap.ui.define([
 				*/
 			   iShouldSeeADetailsPopover: function() {
 				 return chartAssertions.iShouldSeeADetailsPopover.call(this);
+				},
+				/**
+				 * Assertion to check that there is the overflow popover visible.
+				 * @memberof onTheMDCChart
+				 * @method iShouldSeeTheOverflowPopover
+				 * @returns {Promise} OPA waitFor
+				 */
+				iShouldSeeAnOverflowPopover: function() {
+					return chartAssertions.iShouldSeeAnOverflowPopover.call(this);
 				},
 				/**
 				 * Assertion to check visible dimensions on the <code>sap.ui.mdc.Chart</code>.
