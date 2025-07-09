@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
@@ -16,6 +17,7 @@ sap.ui.define([
 	ControlVariantsUtils,
 	FlexObjectFactory,
 	ManifestUtils,
+	FlexInfoSession,
 	FlexObjectManager,
 	Storage,
 	Layer,
@@ -129,6 +131,28 @@ sap.ui.define([
 			selector: oControl,
 			includeCtrlVariants: true
 		});
+	};
+
+	/**
+	 * Set the max layer to CUSTOMER to disable personalization.
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @throws {Error} If the provided reference is invalid
+	 * @private
+	 * @ui5-restricted SAP Business Network
+	 */
+	BusinessNetworkAPI.disablePersonalization = function(sReference) {
+		const oFlexInfoSession = FlexInfoSession.getByReference(sReference);
+		if (!oFlexInfoSession || Object.keys(oFlexInfoSession).length === 0) {
+			throw new Error(`Invalid reference provided: ${sReference}`);
+		}
+
+		oFlexInfoSession.maxLayer = Layer.CUSTOMER;
+		// The flag can't be cleared here because the app is started in a different flow. But not clearing the flag will only have an effect
+		// if the user would start the app again in that session, which is not a supported scenario.
+		oFlexInfoSession.saveChangeKeepSession = true;
+		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
+		window.sessionStorage.setItem("sap.ui.rta.skipReload", true);
 	};
 
 	return BusinessNetworkAPI;

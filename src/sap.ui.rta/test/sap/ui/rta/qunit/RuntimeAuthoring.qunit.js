@@ -6,52 +6,56 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/Element",
-	"sap/ui/Device",
 	"sap/ui/dt/DesignTimeMetadata",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/BusinessNetworkAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/BaseCommand",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
-	"sap/ui/rta/Utils",
 	"sap/ui/rta/util/ReloadManager",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/rta/RuntimeAuthoring",
+	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/Device"
 ], function(
 	RtaQunitUtils,
 	Log,
 	MessageBox,
 	MessageToast,
 	Element,
-	Device,
 	DesignTimeMetadata,
-	OverlayRegistry,
 	DOMUtil,
+	OverlayRegistry,
 	KeyCodes,
+	Loader,
 	FlexRuntimeInfoAPI,
-	PersistenceWriteAPI,
+	Versions,
+	BusinessNetworkAPI,
 	ChangesWriteAPI,
+	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
-	Versions,
 	nextUIUpdate,
 	RTABaseCommand,
 	CommandFactory,
 	Stack,
-	RuntimeAuthoring,
 	ChangeVisualization,
-	RtaUtils,
 	ReloadManager,
-	sinon
+	RuntimeAuthoring,
+	RtaUtils,
+	sinon,
+	Device
 ) {
 	"use strict";
 
@@ -806,6 +810,39 @@ sap.ui.define([
 			await RtaQunitUtils.clear();
 			await this.oRta.start();
 			assert.ok(this.oMessageBoxStub.notCalled, "then the tour message box is not shown");
+		});
+
+		QUnit.test("when RTA is stopped with no reload skip in session storage", async function(assert) {
+			const oReloadManagerSpy = sandbox.spy(ReloadManager, "handleReloadOnExit");
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+			await this.oRta.stop();
+
+			const oArgs = oReloadManagerSpy.getCall(0).args[0];
+
+			assert.ok(oReloadManagerSpy.calledOnce, "then handleReloadOnExit was called");
+			assert.ok(Object.keys(oArgs).length > 0, "handleReloadOnExit was called with a reload Info object");
+		});
+
+		QUnit.test("when RTA is stopped with a reload skip in session storage", async function(assert) {
+			window.sessionStorage.setItem("sap.ui.rta.skipReload", true);
+			const oReloadManagerSpy = sandbox.spy(ReloadManager, "handleReloadOnExit");
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+			await this.oRta.stop();
+
+			const oArgs = oReloadManagerSpy.getCall(0).args[0];
+
+			assert.ok(oReloadManagerSpy.calledOnce, "then handleReloadOnExit was called");
+			assert.ok(Object.keys(oArgs).length === 0, "handleReloadOnExit was called without a reload Info object");
 		});
 	});
 
