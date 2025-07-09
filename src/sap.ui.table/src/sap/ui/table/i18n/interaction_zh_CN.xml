@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">如果启用单元格选择：</span></p>
 				<p>如果焦点位于表的内部并且已选择单元格，则会移除单元格的选择。</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">如果启用单元格选择：</span></p>
-				<p>如果已选择单元格，则在另一不同单元格上按 <kbd>Shift + click</kbd> 会将选择上升到单击的单元格。</p>
+				<p>如果已选择单元格，则在另一不同单元格上按 <kbd>Shift + MouseClick</kbd> 会将选择上升到单击的单元格。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

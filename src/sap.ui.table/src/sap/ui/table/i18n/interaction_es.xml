@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
 				<p>Si el enfoque está dentro de la tabla y hay celdas seleccionadas, se quita la selección de las celdas.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Si la selección de celdas está activada:</span></p>
-				<p>Si hay celdas seleccionadas, al presionar <kbd>Shift + click</kbd> en otra celda se amplía la selección hasta la celda en la que se hizo clic.</p>
+				<p>Si hay celdas seleccionadas, al presionar <kbd>Shift + MouseClick</kbd> en otra celda se amplía la selección hasta la celda en la que se hizo clic.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

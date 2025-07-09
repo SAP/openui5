@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
 				<p>אם המיקוד הוא בתוך הטבלה ונבחרו תאים, בחירת התאים מוסרת.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">אם בחירת תא מופעלת:</span></p>
-				<p>אם נבחרים תאים, <kbd>Shift + click</kbd> בתא אחר מרחיב את הבחירה עד לתא שנלחץ.</p>
+				<p>אם נבחרים תאים, <kbd>Shift + MouseClick</kbd> בתא אחר מרחיב את הבחירה עד לתא שנלחץ.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

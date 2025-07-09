@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
 				<p>Ako je fokus unutar tabele i ćelije su odabrane, odabir ćelija se uklanja.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Ako je odabir ćelije aktiviran:</span></p>
-				<p>Ako su ćelije odabrane, <kbd>Shift + click</kbd> na drugoj ćeliji proširuje odabir do ćelije na koju je kliknuto.</p>
+				<p>Ako su ćelije odabrane, <kbd>Shift + MouseClick</kbd> na drugoj ćeliji proširuje odabir do ćelije na koju je kliknuto.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
