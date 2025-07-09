@@ -7,7 +7,7 @@
 				"ref": "test-resources/sap/tnt/demokit/toolpageapp/webapp/index.html",
 				"category": "Showcase",
 				"links": {
-					"Run Integration Tests": "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/integration/opaTests.qunit.html"
+					"Run Tests": "test-resources/sap/tnt/demokit/toolpageapp/webapp/test/testsuite.qunit.html"
 				},
 				"icon": "retail-store",
 				"desc": "Backoffice tool, built with the sap.tnt.ToolPage.",
