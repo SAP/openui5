@@ -107,8 +107,11 @@ sap.ui.define([
 	 *
 	 * @param {Promise} oPromise variant switch promise
 	 */
-	FlexController.prototype.setVariantSwitchPromise = function(oPromise) {
-		this._oVariantSwitchPromise = oPromise;
+	FlexController.prototype.setVariantSwitchPromise = function(oPromise, sVMReference) {
+		if (!this._oVariantSwitchPromises) {
+			this._oVariantSwitchPromises = {};
+		}
+		this._oVariantSwitchPromises[sVMReference] = oPromise;
 	};
 
 	/**
@@ -117,10 +120,7 @@ sap.ui.define([
 	 * @returns {Promise} variant switch promise
 	 */
 	FlexController.prototype.waitForVariantSwitch = function() {
-		if (!this._oVariantSwitchPromise) {
-			this._oVariantSwitchPromise = Promise.resolve();
-		}
-		return this._oVariantSwitchPromise;
+		return Promise.all(Object.values(this._oVariantSwitchPromises || {}));
 	};
 
 	/**
