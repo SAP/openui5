@@ -2441,10 +2441,9 @@ sap.ui.define([
 		 * responses).
 		 *
 		 * @param {string|object} vRequest
-		 *   The request with the properties "method", "url" and "headers". A string is interpreted
-		 *   as URL with method "GET" and no headers. Spaces, double quotes, square brackets, and
-		 *   curly brackets inside the URL are percent-encoded automatically. Additionally, the
-		 *   following properties may be given for requests within a $batch:
+		 *   The request with the properties "method", "url" and "headers". Spaces, double quotes,
+		 *   square brackets, and curly brackets inside the URL are percent-encoded automatically.
+		 *   Additionally, the following properties may be given for requests within a $batch:
 		 *   <ul>
 		 *      <li> groupId: the group ID by which the $batch was sent
 		 *      <li> batchNo: the number of the ($direct or $batch) request within the test
@@ -2452,6 +2451,9 @@ sap.ui.define([
 		 *      <li> changeSetNo: The number of the change set within $batch (starting with 1)
 		 *      <li> $ContentID: The content ID of the request within the change set
 		 *   </ul>
+		 *   A simple string is interpreted as URL with default method "GET" and no headers, but you
+		 *   can also prefix the URL with "DELETE " to specify that method. Additionally, you can
+		 *   add a prefix with "#", the "batchNo" value, and a space.
 		 * @param {object|string|number|Error|Promise|function} [vResponse]
 		 *   The response message to be returned from the requestor or a promise on it or a function
 		 *   (invoked "just in time" when the request is actually sent) returning the response
@@ -2475,11 +2477,17 @@ sap.ui.define([
 				vRequest = {
 					url : vRequest
 				};
+				if (vRequest.url.startsWith("#")) { // "#batchNo ..."
+					const iSpace = vRequest.url.indexOf(" ");
+					vRequest.batchNo = parseInt(vRequest.url.slice(1, iSpace));
+					vRequest.url = vRequest.url.slice(iSpace + 1);
+				}
 				if (vRequest.url.startsWith("DELETE ")) {
 					vRequest.method = "DELETE";
 					vRequest.url = vRequest.url.slice(7);
 				}
 			}
+
 			// ensure that these properties are defined (required for deepEqual)
 			vRequest.method ??= "GET";
 			vRequest.payload ??= undefined;
@@ -4461,13 +4469,10 @@ sap.ui.define([
 			assert.strictEqual(oTable.getBinding("items").getCount(), undefined);
 			assert.strictEqual(oTable.getBinding("items").getLength(), 12);
 
-			that.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')"
-						+ "?sap-client=123"
-						+ "&$select=QuantityUnit&$expand=SOITEM_2_PRODUCT($select=ProductID;"
-						+ "$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName))"
-				}, {
+			that.expectRequest("#2 SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')?sap-client=123"
+					+ "&$select=QuantityUnit&$expand=SOITEM_2_PRODUCT($select=ProductID;"
+					+ "$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName))", {
 					"@odata.etag" : "etag0",
 					QuantityUnit : "kg",
 					SOITEM_2_PRODUCT : {
@@ -4481,13 +4486,10 @@ sap.ui.define([
 					}
 				})
 				// the additional late property request
-				.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
-						+ "?sap-client=123"
-						+ "&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($select=ProductID;"
-						+ "$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName))"
-				}, {
+				.expectRequest("#2 SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')?sap-client=123"
+					+ "&$select=SOITEM_2_PRODUCT&$expand=SOITEM_2_PRODUCT($select=ProductID;"
+					+ "$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName))", {
 					"@odata.etag" : "etag0",
 					SOITEM_2_PRODUCT : {
 						"@odata.etag" : "etag1",
@@ -5397,12 +5399,9 @@ sap.ui.define([
 				.withArgs("Failed to read path /SalesOrderList('1')/SO_2_SOITEM('0010')/"
 					+ "SOITEM_2_SCHDL/ItemKey");
 
-			that.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
-						+ "?sap-client=123&$select=ProductID"
-						+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)"
-				}, {
+			that.expectRequest("#2 SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
+					+ "?sap-client=123&$select=ProductID"
+					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
 					"@odata.etag" : oFixture.lateEtag,
 					ProductID : oFixture.lateID,
 					PRODUCT_2_BP : {
@@ -5410,12 +5409,10 @@ sap.ui.define([
 						CompanyName : "TECUM"
 					}
 				})
-				.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
-						+ "&$select=SOITEM_2_SCHDL"
-						+ "&$expand=SOITEM_2_SCHDL($select=ItemKey,ScheduleKey)"
-				}, createErrorInsideBatch())
+				.expectRequest("#2 SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
+					+ "&$select=SOITEM_2_SCHDL"
+					+ "&$expand=SOITEM_2_SCHDL($select=ItemKey,ScheduleKey)",
+					createErrorInsideBatch())
 				.expectChange("businessPartner", null) // initialization due to #setContext
 				.expectMessages([{
 					message : sMessage4CompanyName,
@@ -8224,23 +8221,11 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var aItems = that.oView.byId("table").getItems();
 
-			that.expectRequest({
-					batchNo : 2,
-					method : "DELETE",
-					url : "SalesOrderList('0500000002')"
-				})
-				.expectRequest({
-					batchNo : 2,
-					method : "DELETE",
-					url : "SalesOrderList('0500000003')"
-				})
-				.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList?$select=SalesOrderID"
-						+ "&$filter=not (SalesOrderID eq '0500000002'"
-							+ " or SalesOrderID eq '0500000003')"
-						+ "&$skip=1&$top=2"
-				}, {
+			that.expectRequest("#2 DELETE SalesOrderList('0500000002')")
+				.expectRequest("#2 DELETE SalesOrderList('0500000003')")
+				.expectRequest("#2 SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '0500000002' or SalesOrderID eq '0500000003')"
+					+ "&$skip=1&$top=2", {
 					value : [{SalesOrderID : "0500000004"}]
 				})
 				.expectChange("id", [, "0500000004"]);
@@ -8280,16 +8265,9 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			var oDeletePromise;
 
-			that.expectRequest({
-					batchNo : 2,
-					method : "DELETE",
-					url : "SalesOrderList('0500000002')"
-				})
-				.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList?$select=SalesOrderID"
-						+ "&$filter=not (SalesOrderID eq '0500000002')&$skip=2&$top=4"
-				}, {
+			that.expectRequest("#2 DELETE SalesOrderList('0500000002')")
+				.expectRequest("#2 SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '0500000002')&$skip=2&$top=4", {
 					value : [{SalesOrderID : "0500000004"}]
 				})
 				.expectChange("id", [,, "0500000004"]);
@@ -17902,14 +17880,8 @@ sap.ui.define([
 	parameters : {$$groupId : \'$auto.2\'}}"\
 />';
 
-		this.expectRequest({
-				url : "EMPLOYEES('2')/Name",
-				batchNo : 1
-			}, {value : "Frederic Fall"})
-			.expectRequest({
-				url : "EMPLOYEES('3')/Name",
-				batchNo : 2
-			}, {value : "Jonathan Smith"})
+		this.expectRequest("#1 EMPLOYEES('2')/Name", {value : "Frederic Fall"})
+			.expectRequest("#2 EMPLOYEES('3')/Name", {value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
 
@@ -18540,19 +18512,11 @@ sap.ui.define([
 			this.waitForChanges(assert, "1st GET")
 		]);
 
-		this.expectRequest({
-				batchNo : 2,
-				url : "TEAMS?$count=true&$skip=1&$top=2000",
-				method : "GET"
-			}, {
+		this.expectRequest("#2 TEAMS?$count=true&$skip=1&$top=2000", {
 				"@odata.count" : aValues.length.toString(),
 				value : aValues.slice(1, 2001)
 			})
-			.expectRequest({
-				batchNo : 2,
-				url : "TEAMS?$count=true&$skip=2001&$top=2999",
-				method : "GET"
-			}, {
+			.expectRequest("#2 TEAMS?$count=true&$skip=2001&$top=2999", {
 				"@odata.count" : aValues.length.toString(),
 				value : aValues.slice(2001, 5000)
 			});
@@ -22577,12 +22541,10 @@ sap.ui.define([
 					headers : {"If-Match" : "etag1"},
 					url : "SalesOrderList('1')"
 				}, createErrorInsideBatch())
-				.expectRequest({
-					batchNo : 7, // from the binding's reset due to the failed DELETE
-					url : "SalesOrderList?$count=true"
-						+ "&$filter=(LifecycleStatus eq 'N') and not (SalesOrderID eq '2')"
-						+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=0&$top=4"
-				}, {
+				// from the binding's reset due to the failed DELETE
+				.expectRequest("#7 SalesOrderList?$count=true"
+					+ "&$filter=(LifecycleStatus eq 'N') and not (SalesOrderID eq '2')"
+					+ "&$select=GrossAmount,SalesOrderID&$orderby=GrossAmount&$skip=0&$top=4", {
 					"@odata.count" : "7",
 					value : [
 						{GrossAmount : "2", SalesOrderID : "3"},
@@ -28949,19 +28911,13 @@ sap.ui.define([
 </t:Table>`,
 			that = this;
 
-		this.expectRequest({
-				batchNo : 1,
-				url : "Artists/$count"
-			}, 1)
-			.expectRequest({
-				batchNo : 1,
-				url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
-					+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
-					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ "&$count=true&$skip=0&$top=3"
-			}, {
+		this.expectRequest("#1 Artists/$count", 1)
+			.expectRequest("#1 Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
+				+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
+				+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
 					"@odata.etag" : "etag0.0",
@@ -29283,13 +29239,10 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "keep alive");
 		}).then(function () {
-			that.expectRequest({
-					batchNo : 8,
-					url : "Artists?$select=ArtistID,IsActiveEntity"
-							+ (bKeepAlive ? ",Messages" : "") + ",defaultChannel"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-						+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true"
-				}, {
+			that.expectRequest("#8 Artists?$select=ArtistID,IsActiveEntity"
+						+ (bKeepAlive ? ",Messages" : "") + ",defaultChannel"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", {
 					value : [{
 						"@odata.etag" : "etag0.4",
 						ArtistID : "0",
@@ -29303,19 +29256,13 @@ sap.ui.define([
 						defaultChannel : "460"
 					}]
 				})
-				.expectRequest({
-					batchNo : 8,
-					url : "Artists/$count"
-				}, 3)
-				.expectRequest({
-					batchNo : 8,
-					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
-						+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
-						+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-						+ "&$count=true&$skip=0&$top=3"
-				}, {
+				.expectRequest("#8 Artists/$count", 3)
+				.expectRequest("#8 Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
+					+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
+					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "1",
 					value : [{
 						"@odata.etag" : "etag1.0",
@@ -29474,19 +29421,13 @@ sap.ui.define([
 					defaultChannel : "460"
 				}, "after expand");
 
-			that.expectRequest({
-					batchNo : 13,
-					url : "Artists/$count"
-				}, 3)
-				.expectRequest({
-					batchNo : 13,
-					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
-						+ "',NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
-						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-						+ "&$count=true&$skip=0&$top=3"
-				}, {
+			that.expectRequest("#13 Artists/$count", 3)
+				.expectRequest("#13 Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
+					+ "',NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
+					+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "3",
 					value : [{
 						"@odata.etag" : "etag1.1",
@@ -29765,15 +29706,12 @@ sap.ui.define([
 		checkSelected(assert, oNode0, true);
 		checkSelected(assert, oNode1, true);
 
-		this.expectRequest({ // ODLB#validateSelection
-				batchNo : 3,
-				url : "EMPLOYEES?custom=baz&$apply=" + sAncestors
+		this.expectRequest("#3 EMPLOYEES?custom=baz&$apply=" + sAncestors // ODLB#validateSelection
 				+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels("
 				+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID')"
 				+ "&$filter=" + (sMethod === "requestSideEffects" ? "" : "ID eq 'New' or ")
 				+ "ID eq '0' or ID eq '1'&$select=ID"
-				+ "&$top=" + (sMethod === "requestSideEffects" ? "2" : "3")
-			}, {
+				+ "&$top=" + (sMethod === "requestSideEffects" ? "2" : "3"), {
 				// node "1" has been changed in the meantime and does not match the filter/search
 				// any more -> selection has to be removed
 				value : sMethod === "requestSideEffects"
@@ -29782,12 +29720,10 @@ sap.ui.define([
 			})
 			.expectChange("selected", [,, false]);
 		if (sMethod === "refresh" || sMethod === "requestSideEffects") {
-			this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
-					batchNo : 3,
-					url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&"
+			// ODLB#refreshKeptElements via "refresh"
+			this.expectRequest("#3 EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&"
 					+ "$filter=ID eq '0' or ID eq '1' or ID eq 'New'"
-					+ "&custom=baz&$select=ID&$top=3"
-				}, {
+					+ "&custom=baz&$select=ID&$top=3", {
 					value : [
 						{EMPLOYEE_2_MANAGER : /*not relevant*/null, ID : "New"},
 						{EMPLOYEE_2_MANAGER : null, ID : "0"},
@@ -29801,16 +29737,11 @@ sap.ui.define([
 			case "changeParameters": sOrderby = "/orderby(ID)/"; break;
 			default: sOrderby = "/orderby(Name)/";
 		}
-		this.expectRequest({ // count request
-				batchNo : 3,
-				url : "EMPLOYEES/$count?$filter=ID ge '0'&custom=baz&$search=covfefe"
-			}, 2)
-			.expectRequest({ // request for reloading the binding's content
-				batchNo : 3,
-				url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz&$apply="
-				+ sAncestors + sOrderby + sTopLevels
-				+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3"
-			}, {
+		this.expectRequest("#3 EMPLOYEES/$count?$filter=ID ge '0'&custom=baz&$search=covfefe", 2)
+			// request for reloading the binding's content
+			.expectRequest("#3 EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz"
+				+ "&$apply=" + sAncestors + sOrderby + sTopLevels
+				+ "&$select=DrillState,ID&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "2",
 				value : [
 					{DrillState : "leaf", ID : "New"},
@@ -29818,13 +29749,11 @@ sap.ui.define([
 				]
 			});
 		if (sMethod === "requestSideEffects") {
-			this.expectRequest({ // request for getting the tree state of the new node
-					batchNo : 3,
-					url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz&$apply="
-					+ sAncestors + sOrderby + sTopLevels
+			// request for getting the tree state of the new node
+			this.expectRequest("#3 EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz"
+					+ "&$apply=" + sAncestors + sOrderby + sTopLevels
 					+ "&$select=DistanceFromRoot,DrillState,ID,LimitedRank&$filter=ID eq 'New'"
-					+ "&$top=1"
-				}, {
+					+ "&$top=1", {
 					value : [{
 						DistanceFromRoot : 0,
 						DrillState : "leaf",
@@ -29832,11 +29761,9 @@ sap.ui.define([
 						LimitedRank : 2
 					}]
 				})
-				.expectRequest({ // request for getting current values of the new node
-					batchNo : 3,
-					url : "EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz&"
-					+ "$apply=" + sTopLevels + "&$select=ID&$filter=ID eq 'New'&$top=1"
-				}, {
+				// request for getting current values of the new node
+				.expectRequest("#3 EMPLOYEES?$expand=EMPLOYEE_2_MANAGER($select=TEAM_ID)&custom=baz"
+					+ "&$apply=" + sTopLevels + "&$select=ID&$filter=ID eq 'New'&$top=1", {
 					value : [{ID : "New"}]
 				});
 		}
@@ -30408,14 +30335,8 @@ sap.ui.define([
 		//   4 Mu
 		//   5 Xi
 		// 9 Aleph (created later)
-		this.expectRequest({
-				batchNo : 1,
-				url : "EMPLOYEES/$count"
-			}, 24)
-			.expectRequest({
-				batchNo : 1,
-				url : sTopLevelsSelectUrl + "&$count=true&$skip=1&$top=3"
-			}, {
+		this.expectRequest("#1 EMPLOYEES/$count", 24)
+			.expectRequest("#1 " + sTopLevelsSelectUrl + "&$count=true&$skip=1&$top=3", {
 				"@odata.count" : "6",
 				value : [{
 					AGE : 55,
@@ -30553,10 +30474,7 @@ sap.ui.define([
 					url : "EMPLOYEES('2')",
 					payload : {Name : "κ (Kappa)"}
 				}) // 204 No Content
-				.expectRequest({
-					batchNo : 3,
-					url : "EMPLOYEES('2')?$select=AGE,ID,Name"
-				}, {
+				.expectRequest("#3 EMPLOYEES('2')?$select=AGE,ID,Name", {
 					AGE : 66, // artificial side effect
 					ID : "2",
 					Name : "Kappa: κ"
@@ -30755,19 +30673,13 @@ sap.ui.define([
 					MANAGER_ID : null,
 					Name : "Aleph: ℵ" // side effect
 				})
-				.expectRequest({
-					batchNo : 6,
-					url : "EMPLOYEES?$select=AGE,ID&$filter=ID eq '0'"
-				}, {
+				.expectRequest("#6 EMPLOYEES?$select=AGE,ID&$filter=ID eq '0'", {
 					value : [{
 						AGE : 160,
 						ID : "0"
 					}]
 				})
-				.expectRequest({
-					batchNo : 7,
-					url : sTopLevelsUrl + "&$filter=ID eq '9'&$select=LimitedRank"
-				}, {
+				.expectRequest("#7 " + sTopLevelsUrl + "&$filter=ID eq '9'&$select=LimitedRank", {
 					value : [{
 						LimitedRank : "6" // Edm.Int64
 					}]
@@ -30932,20 +30844,14 @@ sap.ui.define([
 					},
 					url : "EMPLOYEES('9')" + sNextSiblingAction
 				}) // 204 No Content
-				.expectRequest({
-					batchNo : 10,
-					url : sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
-						+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
-						+ ")&$filter=ID eq '9'&$select=LimitedRank"
-				}, {
+				.expectRequest("#10 " + sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
+					+ ")&$filter=ID eq '9'&$select=LimitedRank", {
 					value : [{
 						LimitedRank : "0" // Edm.Int64
 					}]
 				})
-				.expectRequest({
-					batchNo : 10,
-					url : "EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$filter=ID eq '9'"
-				}, {
+				.expectRequest("#10 EMPLOYEES?$select=AGE,ID,MANAGER_ID,Name&$filter=ID eq '9'", {
 					value : [{ // this response has no real effect, the one below wins!
 						AGE : -1, // no effect
 						ID : "9",
@@ -30953,16 +30859,10 @@ sap.ui.define([
 						Name : "copy of Aleph w/ no effect"
 					}]
 				})
-				.expectRequest({
-					batchNo : 10,
-					url : "EMPLOYEES/$count"
-				}, 24 + 1)
-				.expectRequest({
-					batchNo : 10,
-					url : sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
+				.expectRequest("#10 EMPLOYEES/$count", 24 + 1)
+				.expectRequest("#10 " + sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
 						+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
-						+ ")" + sSelect + "&$count=true&$skip=0&$top=3"
-				}, {
+						+ ")" + sSelect + "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "2",
 					value : [{
 						AGE : 299, // side effect
@@ -31021,12 +30921,9 @@ sap.ui.define([
 					MANAGER_ID : null,
 					Name : "Beth, not Beta" // side effect
 				})
-				.expectRequest({
-					batchNo : 12,
-					url : sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
-						+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
-						+ ")&$filter=ID eq '10'&$select=LimitedRank"
-				}, {
+				.expectRequest("#12 " + sTopLevelsUrl.slice(0, -1) + ",ExpandLevels="
+					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "0", Levels : 0}])
+					+ ")&$filter=ID eq '10'&$select=LimitedRank", {
 					value : [{ // in between Aleph and Alpha
 						LimitedRank : "1" // Edm.Int64
 					}]
@@ -31183,18 +31080,13 @@ sap.ui.define([
 					NextSibling : {ID : "1"}
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 5,
-				url : sBaseUrl + "&$filter=ID eq '2'&$select=LimitedRank"
-			}, {
+			.expectRequest("#5 " + sBaseUrl + "&$filter=ID eq '2'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "1" // now in place
 				}]
 			})
-			.expectRequest({ // side-effects refresh
-				batchNo : 5,
-				url : sBaseUrl + sSelect + "&$count=true&$skip=0&$top=1"
-			}, {
+			// side-effects refresh
+			.expectRequest("#5 " + sBaseUrl + sSelect + "&$count=true&$skip=0&$top=1", {
 				"@odata.count" : "3",
 				value : [{
 					DescendantCount : "2",
@@ -31801,10 +31693,7 @@ sap.ui.define([
 					MANAGER_ID : null,
 					Name : "Beth, not Beta" // side effect
 				})
-				.expectRequest({
-					batchNo : 5,
-					url : sTopLevelsUrl + "&$filter=ID eq 'B'&$select=LimitedRank"
-				}, {
+				.expectRequest("#5 " + sTopLevelsUrl + "&$filter=ID eq 'B'&$select=LimitedRank", {
 					value : [{
 						LimitedRank : "0" // Edm.Int64
 					}]
@@ -31861,8 +31750,7 @@ sap.ui.define([
 				[undefined, 1, "9", "", "Aleph", 169]
 			]);
 
-			that.expectRequest({batchNo : 7,
-					url : sTopLevelsSelectUrl + "&$skip=2&$top=1"}, {
+			that.expectRequest("#7 " + sTopLevelsSelectUrl + "&$skip=2&$top=1", {
 					value : [{
 						AGE : 155,
 						DescendantCount : "2",
@@ -31873,8 +31761,7 @@ sap.ui.define([
 						Name : "Beta"
 					}]
 				})
-				.expectRequest({batchNo : 7,
-					url : sTopLevelsSelectUrl + "&$skip=5&$top=2"}, {
+				.expectRequest("#7 " + sTopLevelsSelectUrl + "&$skip=5&$top=2", {
 					value : [{
 						AGE : 156,
 						DescendantCount : "0",
@@ -31929,10 +31816,7 @@ sap.ui.define([
 					MANAGER_ID : "0", // side effect
 					Name : "Gimel" // side effect
 				})
-				.expectRequest({
-					batchNo : 9,
-					url : sTopLevelsUrl + "&$filter=ID eq 'C'&$select=LimitedRank"
-				}, {
+				.expectRequest("#9 " + sTopLevelsUrl + "&$filter=ID eq 'C'&$select=LimitedRank", {
 					value : [{
 						LimitedRank : "5" // Edm.Int64
 					}]
@@ -34636,11 +34520,9 @@ sap.ui.define([
 			]);
 			assert.strictEqual(oBeta.getIndex(), 1);
 
-			that.expectRequest({
-					batchNo : 4,
-					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+			that.expectRequest("#4 " + sBaseUrl
+					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -34648,11 +34530,9 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-					batchNo : 4,
-					url : sBaseUrlNoFilter + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-						+ "&$select=_/NodeID"
-				}, {
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
+				.expectRequest("#4 " + sBaseUrlNoFilter
+					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false&$select=_/NodeID", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -34715,11 +34595,9 @@ sap.ui.define([
 					Name : "Gamma: γ", // side effect
 					_ : null // not available w/ RAP for a non-hierarchical request
 				})
-				.expectRequest({
-					batchNo : 6,
-					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				.expectRequest("#6 " + sBaseUrl
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -34727,11 +34605,9 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-					batchNo : 6,
-					url : sBaseUrlNoFilter + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
-						+ "&$select=_/NodeID"
-				}, {
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
+				.expectRequest("#6 " + sBaseUrlNoFilter
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/NodeID", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -34781,11 +34657,10 @@ sap.ui.define([
 						"BestFriend@odata.bind" : "Artists(ArtistID='1',IsActiveEntity=false)"
 					}
 				}, null, {ETag : "n/a"}) // 204 No Content
-				.expectRequest({ // side-effects refresh
-					batchNo : 7,
-					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				// side-effects refresh
+				.expectRequest("#7 " + sBaseUrl
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -34793,11 +34668,10 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectRequest({ // implicitly kept alive by selection
-					batchNo : 7,
-					url : sFriend.slice(1) + "?$filter=ArtistID eq '2' and IsActiveEntity eq false"
-						+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-				}, {
+				// implicitly kept alive by selection
+				.expectRequest("#7 " + sFriend.slice(1)
+					+ "?$filter=ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID", {
 					value : [{
 						"@odata.etag" : "etag2.1*",
 						ArtistID : "2",
@@ -34808,12 +34682,10 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectRequest({ // side-effects refresh
-					batchNo : 7,
-					url : sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
-						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
-						+ "&$count=true&$skip=0&$top=3"
-				}, {
+				// side-effects refresh
+				.expectRequest("#7 " + sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
+					+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
+					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "3",
 					value : [{
 						"@odata.etag" : "etag0.1",
@@ -34917,11 +34789,9 @@ sap.ui.define([
 						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)"
 					}
 				}, null, {ETag : "etag2.2"}) // 204 No Content
-				.expectRequest({
-					batchNo : 8,
-					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				.expectRequest("#8 " + sBaseUrl
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -35257,11 +35127,9 @@ sap.ui.define([
 						"BestFriend@odata.bind" : "Artists(ArtistID='2',IsActiveEntity=false)"
 					}
 				}, null, {ETag : "etag1.5"}) // 204 No Content
-				.expectRequest({
-					batchNo : 14,
-					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				.expectRequest("#14 " + sBaseUrl
+					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -35341,11 +35209,9 @@ sap.ui.define([
 				})
 				.expectChange("etag", ["etag9.0"])
 				.expectChange("name", ["Aleph: ℵ"])
-				.expectRequest({
-					batchNo : 16,
-					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				.expectRequest("#16 " + sBaseUrl
+					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -35353,11 +35219,10 @@ sap.ui.define([
 						}
 					}]
 				})
-				.expectRequest({ // no "filter(sendsAutographs)" (SNOW: DINC0087713)
-					batchNo : 16,
-					url : sBaseUrlNoFilter + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-						+ "&$select=_/NodeID"
-				}, {
+				// no "filter(sendsAutographs)" (SNOW: DINC0087713)
+				.expectRequest("#16 " + sBaseUrlNoFilter
+					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+					+ "&$select=_/NodeID", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -35486,11 +35351,9 @@ sap.ui.define([
 						"BestFriend@odata.bind" : null
 					}
 				}, null, {ETag : "etag1.7"}) // 204 No Content
-				.expectRequest({
-					batchNo : 19,
-					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				.expectRequest("#19 " + sBaseUrl
+					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -35533,11 +35396,9 @@ sap.ui.define([
 						"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)"
 					}
 				}, null, {ETag : "etag2.6"}) // 204 No Content
-				.expectRequest({
-					batchNo : 20,
-					url : sBaseUrl + "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
-						+ "&$select=_/Limited_Rank"
-				}, {
+				.expectRequest("#20 " + sBaseUrl
+					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false"
+					+ "&$select=_/Limited_Rank", {
 					value : [{
 						"@odata.etag" : "n/a",
 						_ : {
@@ -35719,25 +35580,19 @@ sap.ui.define([
 				Name : "Aleph",
 				_ : null // not available w/ RAP for a non-hierarchical request
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank
-			}, {
+			.expectRequest("#3 " + sBaseUrl + "&$filter=ArtistID eq '8' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
 				value : [{
 					_ : {
 						[sLimitedRank] : "10" // Edm.Int64
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 3,
-				// no "filter(...)/search(...)" (SNOW: DINC0087713)
-				url : sFriend.slice(1) + "?$apply="
+			// no "filter(...)/search(...)" (SNOW: DINC0087713)
+			.expectRequest("#3 " + sFriend.slice(1) + "?$apply="
 					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
 					+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
-					+ "&$filter=ArtistID eq '8' and IsActiveEntity eq false&$select=_/NodeID"
-			}, {
+					+ "&$filter=ArtistID eq '8' and IsActiveEntity eq false&$select=_/NodeID", {
 				value : [{
 					_ : {
 						NodeID : "8,false"
@@ -35880,25 +35735,20 @@ sap.ui.define([
 				Name : "New",
 				_ : null // not available w/ RAP for a non-hierarchical request
 			})
-			.expectRequest({
-				batchNo : 7,
-				url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank
-			}, {
+			.expectRequest("#7 " + sBaseUrl
+				+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
 				value : [{
 					_ : {
 						[sLimitedRank] : "4" // Edm.Int64
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 7,
-				// no "filter(...)/search(...)" (SNOW: DINC0087713)
-				url : sFriend.slice(1) + "?$apply="
-					+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
-					+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
-					+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID"
-			}, {
+			// no "filter(...)/search(...)" (SNOW: DINC0087713)
+			.expectRequest("#7 " + sFriend.slice(1) + "?$apply="
+				+ "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
+				+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')"
+				+ "&$filter=ArtistID eq '9' and IsActiveEntity eq false&$select=_/NodeID", {
 				value : [{
 					_ : {
 						NodeID : "9,false"
@@ -36647,10 +36497,8 @@ sap.ui.define([
 						"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
 					}
 				}, createErrorInsideBatch())
-				.expectRequest({
-					batchNo : 2,
-					url : sBaseUrl + "&$filter=ID eq '0'&$select=LimitedRank"
-				}); // no response required
+				.expectRequest("#2 " + sBaseUrl + "&$filter=ID eq '0'&$select=LimitedRank");
+					// no response required
 
 			await Promise.all([
 				oAlpha.move({parent : oOmega}).then(mustFail(assert), function (oError) {
@@ -37042,23 +36890,17 @@ sap.ui.define([
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('1')"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 3,
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "8", Levels : 0}, {NodeID : "1", Levels : 1}])
-					+ ")&$filter=ID eq '3'&$select=LimitedRank"
-			}, {
+			.expectRequest("#3 " + sBaseUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "8", Levels : 0}, {NodeID : "1", Levels : 1}])
+				+ ")&$filter=ID eq '3'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "3" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "8", Levels : 0}, {NodeID : "1", Levels : 1}])
-					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-					+ "&$count=true&$skip=0&$top=10"
-			}, {
+			.expectRequest("#3 " + sBaseUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "8", Levels : 0}, {NodeID : "1", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "7",
 				value : [{
 					DescendantCount : "5",
@@ -37151,23 +36993,17 @@ sap.ui.define([
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('8')"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 4,
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}])
-					+ ")&$filter=ID eq '1'&$select=LimitedRank"
-			}, {
+			.expectRequest("#4 " + sBaseUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}])
+				+ ")&$filter=ID eq '1'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "4" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 4,
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}])
-					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-					+ "&$count=true&$skip=0&$top=10"
-			}, {
+			.expectRequest("#4 " + sBaseUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "8",
 				value : [{
 					DescendantCount : "1",
@@ -37271,24 +37107,17 @@ sap.ui.define([
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 5,
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
-					+ ")&$filter=ID eq '1'&$select=LimitedRank"
-			}, {
+			.expectRequest("#5 " + sBaseUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
+				+ ")&$filter=ID eq '1'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "4" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 5,
-				// Note: Levels=2
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
-					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-					+ "&$count=true&$skip=0&$top=10"
-			}, {
+			.expectRequest("#5 " + sBaseUrl.slice(0, -1) + ",ExpandLevels=" // Note: Levels=2
+				+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "8",
 				value : [{
 					DescendantCount : "1",
@@ -37405,13 +37234,9 @@ sap.ui.define([
 					"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('9')"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 6,
-				// Note: Levels=2
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
-					+ ")&$filter=ID eq '0'&$select=LimitedRank"
-			}, {
+			.expectRequest("#6 " + sBaseUrl.slice(0, -1) + ",ExpandLevels=" // Note: Levels=2
+				+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
+				+ ")&$filter=ID eq '0'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "6" // Edm.Int64
 				}]
@@ -37445,14 +37270,11 @@ sap.ui.define([
 			[undefined, 4, "2", "Epsilon"]
 		]);
 
-		this.expectRequest({
-				batchNo : 7,
-				// Note: Levels=2; Theta properly expanded (again)
-				url : sBaseUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
-					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-					+ "&$count=true&$skip=0&$top=10"
-			}, {
+		// Note: Levels=2; Theta properly expanded (again)
+		this.expectRequest("#7 " + sBaseUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}, {NodeID : "9", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "0",
 				value : []
 			});
@@ -37611,18 +37433,12 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('1')"
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank", {
 						value : [{
 							LimitedRank : "5" // Edm.Int64
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -37715,18 +37531,12 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3')"
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '3'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '3'&$select=LimitedRank", {
 						value : [{
 							LimitedRank : "2" // Edm.Int64
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -37819,18 +37629,12 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank", {
 						value : [{
 							LimitedRank : "2" // Edm.Int64
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -37876,12 +37680,9 @@ sap.ui.define([
 							Name : "Eta"
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl
-							+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-							+ "&$filter=ID eq '0' or ID eq '3' or ID eq '3.2'&$top=3"
-					}, {
+					.expectRequest("#10 " + sBaseUrl
+						+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+						+ "&$filter=ID eq '0' or ID eq '3' or ID eq '3.2'&$top=3", {
 						value : [{
 							DescendantCount : "6",
 							DistanceFromRoot : "0",
@@ -37902,23 +37703,17 @@ sap.ui.define([
 							LimitedRank : "6"
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : "EMPLOYEES"
-							+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
-							+ "&$select=ID,Name&$filter=ID eq '3'&$top=1"
-					}, {
+					.expectRequest("#10 " + "EMPLOYEES"
+						+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+						+ "&$select=ID,Name&$filter=ID eq '3'&$top=1", {
 						value : [{
 							ID : "3",
 							Name : "Delta"
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : "EMPLOYEES"
-							+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '3'),1)"
-							+ "&$select=ID,Name&$filter=ID eq '3.2'&$top=1"
-					}, {
+					.expectRequest("#10 " + "EMPLOYEES"
+						+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '3'),1)"
+						+ "&$select=ID,Name&$filter=ID eq '3.2'&$top=1", {
 						value : [{
 							ID : "3.2",
 							Name : "Eta"
@@ -37979,18 +37774,12 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank", {
 						value : [{
 							LimitedRank : "5" // Edm.Int64
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "4",
@@ -38036,12 +37825,9 @@ sap.ui.define([
 							Name : "Zeta"
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl
-							+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-							+ "&$filter=ID eq '0' or ID eq '3' or ID eq '3.2'&$top=3"
-					}, {
+					.expectRequest("#10 " + sBaseUrl
+						+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+						+ "&$filter=ID eq '0' or ID eq '3' or ID eq '3.2'&$top=3", {
 						value : [{
 							DescendantCount : "6",
 							DistanceFromRoot : "0",
@@ -38062,23 +37848,17 @@ sap.ui.define([
 							LimitedRank : "4"
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : "EMPLOYEES"
-							+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
-							+ "&$select=ID,Name&$filter=ID eq '3'&$top=1"
-					}, {
+					.expectRequest("#10 EMPLOYEES"
+						+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
+						+ "&$select=ID,Name&$filter=ID eq '3'&$top=1", {
 						value : [{
 							ID : "3",
 							Name : "Delta"
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : "EMPLOYEES"
-							+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '3'),1)"
-							+ "&$select=ID,Name&$filter=ID eq '3.2'&$top=1"
-					}, {
+					.expectRequest("#10 EMPLOYEES"
+						+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '3'),1)"
+						+ "&$select=ID,Name&$filter=ID eq '3.2'&$top=1", {
 						value : [{
 							ID : "3.2",
 							Name : "Eta"
@@ -38133,18 +37913,12 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank", {
 						value : [{
 							LimitedRank : "5" // Edm.Int64
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -38237,16 +38011,10 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('3.1')"
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '3.1'&$select=LimitedRank", {
 						value : [] // filtered out
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "3",
 						value : [{
 							DescendantCount : "2",
@@ -38323,18 +38091,12 @@ sap.ui.define([
 						},
 						url : "EMPLOYEES('1')" + sNextSiblingAction
 					}) // 204 No Content
-					.expectRequest({
-						batchNo : 10,
-						url : sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank"
-					}, {
+					.expectRequest("#10 " + sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank", {
 						value : [{
 							LimitedRank : "2" // Edm.Int64
 						}]
 					})
-					.expectRequest({
-						batchNo : 10,
-						url : sReadUrl + "&$count=true&$skip=0&$top=10"
-					}, {
+					.expectRequest("#10 " + sReadUrl + "&$count=true&$skip=0&$top=10", {
 						"@odata.count" : "7",
 						value : [{
 							DescendantCount : "6",
@@ -38490,10 +38252,7 @@ sap.ui.define([
 				},
 				url : "EMPLOYEES('2')"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 2,
-				url : sUrl + "&$filter=ID eq '2'&$select=LimitedRank"
-			}, {
+			.expectRequest("#2 " + sUrl + "&$filter=ID eq '2'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "3"
 				}]
@@ -38502,10 +38261,7 @@ sap.ui.define([
 			// 3 Gamma
 			// 4 Delta
 			// 2 Beta (moved here)
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl + sSelect + "&$skip=2&$top=1"
-			}, {
+			.expectRequest("#3 " + sUrl + sSelect + "&$skip=2&$top=1", {
 				value : [{
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
@@ -39691,13 +39447,10 @@ sap.ui.define([
 		checkSiblingOrder(assert, /*in place*/[oBeta], /*out of place*/[oNew1, oNew2, oNew3]);
 
 		this.expectRequest(sCountUrl, 10)
-			.expectRequest({
-				batchNo : 15,
-				url : baseUrl(sExpandLevels)
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
-					+ ",_/DrillState,_/NodeID"
-					+ "&$count=true&$skip=0&$top=3"
-			}, {
+			.expectRequest("#15 " + baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/NodeID"
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "10",
 				value : [{
 					ArtistID : "1",
@@ -39731,22 +39484,19 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 15,
-				url : baseUrl(sExpandLevels)
-					+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
-					+ ",_/DrillState,_/Limited_Rank"
-					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-					+ " or ArtistID eq '11' and IsActiveEntity eq false"
-					+ " or ArtistID eq '12' and IsActiveEntity eq false"
-					+ " or ArtistID eq '13' and IsActiveEntity eq false"
-					+ " or ArtistID eq '14' and IsActiveEntity eq false"
-					+ " or ArtistID eq '15' and IsActiveEntity eq false"
-					+ " or ArtistID eq '16' and IsActiveEntity eq false"
-					+ " or ArtistID eq '2' and IsActiveEntity eq false"
-					+ " or ArtistID eq '3' and IsActiveEntity eq false"
-					+ "&$top=9"
-			}, {
+			.expectRequest("#15 " + baseUrl(sExpandLevels)
+				+ "&$select=ArtistID,IsActiveEntity,_/DescendantCount,_/DistanceFromRoot"
+				+ ",_/DrillState,_/Limited_Rank"
+				+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+				+ " or ArtistID eq '11' and IsActiveEntity eq false"
+				+ " or ArtistID eq '12' and IsActiveEntity eq false"
+				+ " or ArtistID eq '13' and IsActiveEntity eq false"
+				+ " or ArtistID eq '14' and IsActiveEntity eq false"
+				+ " or ArtistID eq '15' and IsActiveEntity eq false"
+				+ " or ArtistID eq '16' and IsActiveEntity eq false"
+				+ " or ArtistID eq '2' and IsActiveEntity eq false"
+				+ " or ArtistID eq '3' and IsActiveEntity eq false"
+				+ "&$top=9", {
 				value : [{
 					ArtistID : "1",
 					IsActiveEntity : false,
@@ -39830,16 +39580,13 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 15,
-				url : sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
-					+ ",OrgChart,_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false"
-					+ " or ArtistID eq '12' and IsActiveEntity eq false"
-					+ " or ArtistID eq '13' and IsActiveEntity eq false"
-					+ "&$top=3"
-			}, {
+			.expectRequest("#15 " + sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
+				+ ",OrgChart,_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+				+ "&$filter=ArtistID eq '11' and IsActiveEntity eq false"
+				+ " or ArtistID eq '12' and IsActiveEntity eq false"
+				+ " or ArtistID eq '13' and IsActiveEntity eq false"
+				+ "&$top=3", {
 				value : [{
 					ArtistID : "11",
 					IsActiveEntity : false,
@@ -39863,14 +39610,11 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 15,
-				url : sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
-					+ ",OrgChart,_/NodeID,filter(ArtistID eq '2' and IsActiveEntity eq false),1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '14' and IsActiveEntity eq false"
-					+ "&$top=1"
-			}, {
+			.expectRequest("#15 " + sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
+				+ ",OrgChart,_/NodeID,filter(ArtistID eq '2' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+				+ "&$filter=ArtistID eq '14' and IsActiveEntity eq false"
+				+ "&$top=1", {
 				value : [{
 					ArtistID : "14",
 					IsActiveEntity : false,
@@ -39880,14 +39624,11 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 15,
-				url : sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
-					+ ",OrgChart,_/NodeID,filter(ArtistID eq '3' and IsActiveEntity eq false),1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
-					+ "&$top=1"
-			}, {
+			.expectRequest("#15 " + sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
+				+ ",OrgChart,_/NodeID,filter(ArtistID eq '3' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+				+ "&$filter=ArtistID eq '15' and IsActiveEntity eq false"
+				+ "&$top=1", {
 				value : [{
 					ArtistID : "15",
 					IsActiveEntity : false,
@@ -39897,14 +39638,11 @@ sap.ui.define([
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 15,
-				url : sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
-					+ ",OrgChart,_/NodeID,filter(ArtistID eq '13' and IsActiveEntity eq false),1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
-					+ "&$filter=ArtistID eq '16' and IsActiveEntity eq false"
-					+ "&$top=1"
-			}, {
+			.expectRequest("#15 " + sFriend + "?custom=foo&$apply=descendants($root/" + sFriend
+				+ ",OrgChart,_/NodeID,filter(ArtistID eq '13' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/NodeID"
+				+ "&$filter=ArtistID eq '16' and IsActiveEntity eq false"
+				+ "&$top=1", {
 				value : [{
 					ArtistID : "16",
 					IsActiveEntity : false,
@@ -40784,12 +40522,9 @@ sap.ui.define([
 		checkSiblingOrder(assert, /*in*/[oAlpha, oBeta, oGamma, oEpsilon], /*out*/[oEta, oZeta]);
 
 		this.expectRequest(sCountUrl, 8)
-			.expectRequest({
-				batchNo : 9,
-				url : sUrlWithExpandLevels
-					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-					+ "&$count=true&$skip=0&$top=4"
-			}, {
+			.expectRequest("#9 " + sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "7",
 				value : [{
 					DescendantCount : "1",
@@ -40817,12 +40552,9 @@ sap.ui.define([
 					Name : "Gamma*"
 				}]
 			})
-			.expectRequest({
-				batchNo : 9,
-				url : sUrlWithExpandLevels
-					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-					+ "&$filter=ID eq '1' or ID eq '6' or ID eq '7' or ID eq '8'&$top=4"
-			}, {
+			.expectRequest("#9 " + sUrlWithExpandLevels
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+				+ "&$filter=ID eq '1' or ID eq '6' or ID eq '7' or ID eq '8'&$top=4", {
 				value : [{
 					DescendantCount : "1",
 					DistanceFromRoot : "0",
@@ -40849,29 +40581,24 @@ sap.ui.define([
 					LimitedRank : "6"
 				}]
 			})
-			.expectRequest({
-				batchNo : 9,
-				// Important: this request contains no Levels=2 and no ExpandLevels
-				url : "EMPLOYEES?custom=foo&$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
-					+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='ID',Levels=1)"
-					+ "&$select=ID,Name"
-					+ "&$filter=ID eq '6' or ID eq '7'&$top=2"
-			}, {
+			// Important: this request contains no Levels=2 and no ExpandLevels
+			.expectRequest("#9 EMPLOYEES?custom=foo"
+				+ "&$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='ID',Levels=1)"
+				+ "&$select=ID,Name"
+				+ "&$filter=ID eq '6' or ID eq '7'&$top=2", {
 				value : [
 					{ID : "6", Name : "Zeta*"},
 					{ID : "7", Name : "Eta*"}
 				]
 			})
-			.expectRequest({
-				batchNo : 9,
-				// Important: this request contains no Levels=2 and no ExpandLevels
-				url : "EMPLOYEES?custom=foo&$apply=descendants($root/EMPLOYEES"
-					+ ",OrgChart,ID,filter(ID eq '1'),1)"
-					+ "&$select=ID,Name"
-					+ "&$filter=ID eq '8'"
-					+ "&$top=1"
-			}, {
+			// Important: this request contains no Levels=2 and no ExpandLevels
+			.expectRequest("#9 EMPLOYEES?custom=foo&$apply=descendants($root/EMPLOYEES"
+				+ ",OrgChart,ID,filter(ID eq '1'),1)"
+				+ "&$select=ID,Name"
+				+ "&$filter=ID eq '8'"
+				+ "&$top=1", {
 				value : [{ID : "8", Name : "Theta*"}]
 			});
 
@@ -41597,21 +41324,15 @@ make root = ${bMakeRoot}`;
 					"BestFriend@odata.bind" : "Artists(ArtistID='3',IsActiveEntity=false)"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 3,
-				url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank
-			}, {
+			.expectRequest("#3 " + sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
 				value : [{
 					_ : {
 						[sLimitedRank] : "5" // Edm.Int64
 					}
 				}]
 			})
-			.expectRequest({
-				batchNo : 4,
-				url : sReadUrl + "&$skip=7&$top=2"
-			}, {
+			.expectRequest("#4 " + sReadUrl + "&$skip=7&$top=2", {
 				value : [{
 					ArtistID : "1.1.1",
 					IsActiveEntity : false,
@@ -41810,11 +41531,9 @@ make root = ${bMakeRoot}`;
 					"BestFriend@odata.bind" : "Artists(ArtistID='9',IsActiveEntity=false)"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 6,
-				url : sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank
-			}, {
+			.expectRequest("#6 " + sBaseUrl
+				+ "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
 				value : [{
 					_ : { // Note: rank has not changed due to move
 						[sLimitedRank] : "12" // Edm.Int64
@@ -41848,11 +41567,9 @@ make root = ${bMakeRoot}`;
 					"BestFriend@odata.bind" : "Artists(ArtistID='9',IsActiveEntity=false)"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 7,
-				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank
-			}, {
+			.expectRequest("#7 " + sBaseUrl
+				+ "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
 				value : [{
 					_ : { // Note: rank has not changed due to move
 						[sLimitedRank] : "13" // Edm.Int64
@@ -41900,11 +41617,9 @@ make root = ${bMakeRoot}`;
 					"BestFriend@odata.bind" : "Artists(ArtistID='0',IsActiveEntity=false)"
 				}
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 8,
-				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-					+ "&$select=_/" + sLimitedRank
-			}, {
+			.expectRequest("#8 " + sBaseUrl
+				+ "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
+				+ "&$select=_/" + sLimitedRank, {
 				value : [{
 					_ : {
 						[sLimitedRank] : "10" // Edm.Int64
@@ -41969,11 +41684,9 @@ make root = ${bMakeRoot}`;
 						"BestFriend@odata.bind" : null
 					}
 				}) // 204 No Content
-				.expectRequest({
-					batchNo : 9,
-					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-						+ "&$select=_/" + sLimitedRank
-				}, {
+				.expectRequest("#9 " + sBaseUrl
+					+ "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+					+ "&$select=_/" + sLimitedRank, {
 					value : [{
 						_ : { // Note: 0, 8, or 10
 							[sLimitedRank] : "0" // Edm.Int64
@@ -42152,10 +41865,7 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('4')" + sNextSiblingAction
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 2,
-				url : sUrl + "&$filter=ID eq '4'&$select=LimitedRank"
-			}, {
+			.expectRequest("#2 " + sUrl + "&$filter=ID eq '4'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "2"
 				}]
@@ -42165,10 +41875,7 @@ make root = ${bMakeRoot}`;
 			//   4 Delta
 			//   3 Gamma
 			// 5 Epsilon
-			.expectRequest({
-				batchNo : 2,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=4"
-			}, {
+			.expectRequest("#2 " + sUrl + sSelect + "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "5",
 				value : [{
 					DescendantCount : "3",
@@ -42237,10 +41944,7 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('4')" + sNextSiblingAction
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl + "&$filter=ID eq '4'&$select=LimitedRank"
-			}, {
+			.expectRequest("#3 " + sUrl + "&$filter=ID eq '4'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "4"
 				}]
@@ -42250,10 +41954,7 @@ make root = ${bMakeRoot}`;
 			//   3 Gamma
 			// 5 Epsilon
 			// 4 Delta
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=4"
-			}, {
+			.expectRequest("#3 " + sUrl + sSelect + "&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "5",
 				value : [{
 					DescendantCount : "2",
@@ -42444,12 +42145,9 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('2')" + sNextSiblingAction
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}])
-					+ ")" + "&$filter=ID eq '2'&$select=LimitedRank"
-			}, {
+			.expectRequest("#3 " + sUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}])
+				+ ")" + "&$filter=ID eq '2'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "3"
 				}]
@@ -42458,13 +42156,10 @@ make root = ${bMakeRoot}`;
 			//   3 Gamma
 			// 4 Delta
 			// 2 Beta
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "1", Levels : 1}])
-					+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
-					+ "&$count=true&$skip=0&$top=2"
-			}, {
+			.expectRequest("#3 " + sUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "1", Levels : 1}])
+				+ ")&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=2", {
 				"@odata.count" : "4",
 				value : [{
 					DescendantCount : "1",
@@ -42600,10 +42295,7 @@ make root = ${bMakeRoot}`;
 				ID : "5",
 				Name : "Epsilon"
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
-			}, {
+			.expectRequest("#3 " + sUrl + "&$filter=ID eq '5'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "4"
 				}]
@@ -42652,10 +42344,7 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('2')" + sNextSiblingAction
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 4,
-				url : sUrl + "&$filter=ID eq '2'&$select=LimitedRank"
-			}, {
+			.expectRequest("#4 " + sUrl + "&$filter=ID eq '2'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "3"
 				}]
@@ -42665,10 +42354,7 @@ make root = ${bMakeRoot}`;
 			//   4 Delta (loaded now)
 			//   2 Beta (moved here)
 			// 5 Epsilon (created)
-			.expectRequest({
-				batchNo : 4,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
-			}, {
+			.expectRequest("#4 " + sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "5",
 				value : [{
 					DescendantCount : "3",
@@ -42690,11 +42376,9 @@ make root = ${bMakeRoot}`;
 					Name : "Delta"
 				}]
 			})
-			.expectRequest({
-				batchNo : 4,
-				url : sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-					+ "&$filter=ID eq '5'&$top=1"
-			}, {
+			.expectRequest("#4 " + sUrl
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+				+ "&$filter=ID eq '5'&$top=1", {
 				value : [{
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
@@ -42703,10 +42387,8 @@ make root = ${bMakeRoot}`;
 					LimitedRank : "4"
 				}]
 			})
-			.expectRequest({
-				batchNo : 4,
-				url : sUrl.slice(0, -1) + ",Levels=1)&$select=ID,Name&$filter=ID eq '5'&$top=1"
-			}, {
+			.expectRequest("#4 " + sUrl.slice(0, -1) + ",Levels=1)&$select=ID,Name"
+				+ "&$filter=ID eq '5'&$top=1", {
 				value : [{
 					ID : "5",
 					Name : "Epsilon"
@@ -42770,10 +42452,7 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('2')"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 6,
-				url : sUrl + "&$filter=ID eq '2'&$select=LimitedRank"
-			}, {
+			.expectRequest("#6 " + sUrl + "&$filter=ID eq '2'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "2"
 				}]
@@ -42820,18 +42499,12 @@ make root = ${bMakeRoot}`;
 				},
 				url : "$-1"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 7,
-				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
-			}, {
+			.expectRequest("#7 " + sUrl + "&$filter=ID eq '5'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "5" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 7,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
-			}, {
+			.expectRequest("#7 " + sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "6",
 				value : [{
 					DescendantCount : "4",
@@ -42853,12 +42526,9 @@ make root = ${bMakeRoot}`;
 					Name : "Beta"
 				}]
 			})
-			.expectRequest({
-				batchNo : 7,
-				url : sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-					+ "&$filter=ID eq '5'"
-					+ "&$top=1"
-			}, {
+			.expectRequest("#7 " + sUrl
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+				+ "&$filter=ID eq '5'&$top=1", {
 				value : [{
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
@@ -42867,20 +42537,14 @@ make root = ${bMakeRoot}`;
 					LimitedRank : "5"
 				}]
 			})
-			.expectRequest({
-				batchNo : 7,
-				url : sUrl.slice(0, -1) + ",Levels=1)"
-					+ "&$select=ID,Name&$filter=ID eq '5'&$top=1"
-			}, {
+			.expectRequest("#7 " + sUrl.slice(0, -1) + ",Levels=1)&$select=ID,Name"
+				+ "&$filter=ID eq '5'&$top=1", {
 				value : [{
 					ID : "5",
 					Name : "Epsilon"
 				}]
 			})
-			.expectRequest({
-				batchNo : 8,
-				url : sUrl + "&$filter=ID eq '_6'&$select=LimitedRank"
-			}, {
+			.expectRequest("#8 " + sUrl + "&$filter=ID eq '_6'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "4" // Edm.Int64
 				}]
@@ -42935,18 +42599,12 @@ make root = ${bMakeRoot}`;
 				},
 				url : "$-1"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 9,
-				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
-			}, {
+			.expectRequest("#9 " + sUrl + "&$filter=ID eq '5'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "6" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 9,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
-			}, {
+			.expectRequest("#9 " + sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "7",
 				value : [{
 					DescendantCount : "4",
@@ -42968,12 +42626,9 @@ make root = ${bMakeRoot}`;
 					Name : "Beta"
 				}]
 			})
-			.expectRequest({
-				batchNo : 9,
-				url : sUrl + "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
-					+ "&$filter=ID eq '5'"
-					+ "&$top=1"
-			}, {
+			.expectRequest("#9 " + sUrl
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,LimitedRank"
+				+ "&$filter=ID eq '5'&$top=1", {
 				value : [{
 					DescendantCount : "0",
 					DistanceFromRoot : "0",
@@ -42982,20 +42637,14 @@ make root = ${bMakeRoot}`;
 					LimitedRank : "6"
 				}]
 			})
-			.expectRequest({
-				batchNo : 9,
-				url : sUrl.slice(0, -1) + ",Levels=1)"
-					+ "&$select=ID,Name&$filter=ID eq '5'&$top=1"
-			}, {
+			.expectRequest("#9 " + sUrl.slice(0, -1) + ",Levels=1)&$select=ID,Name"
+				+ "&$filter=ID eq '5'&$top=1", {
 				value : [{
 					ID : "5",
 					Name : "Epsilon"
 				}]
 			})
-			.expectRequest({
-				batchNo : 10,
-				url : sUrl + "&$filter=ID eq '_7'&$select=LimitedRank"
-			}, {
+			.expectRequest("#10 " + sUrl + "&$filter=ID eq '_7'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "5" // Edm.Int64
 				}]
@@ -43044,18 +42693,12 @@ make root = ${bMakeRoot}`;
 				},
 				url : "$-1"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 11,
-				url : sUrl + "&$filter=ID eq '5'&$select=LimitedRank"
-			}, {
+			.expectRequest("#11 " + sUrl + "&$filter=ID eq '5'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "6" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 11,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
-			}, {
+			.expectRequest("#11 " + sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "8",
 				value : [{
 					DescendantCount : "4",
@@ -43077,10 +42720,7 @@ make root = ${bMakeRoot}`;
 					Name : "Beta"
 				}]
 			})
-			.expectRequest({
-				batchNo : 12,
-				url : sUrl + "&$filter=ID eq '_8'&$select=LimitedRank"
-			}, {
+			.expectRequest("#12 " + sUrl + "&$filter=ID eq '_8'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "7" // Edm.Int64
 				}]
@@ -43188,19 +42828,13 @@ make root = ${bMakeRoot}`;
 				url : sFriend.slice(1)
 					+ "(ArtistID='2',IsActiveEntity=false)/special.cases.ChangeNextSibling"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 2,
-				url : sUrl
-					+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/Limited_Rank"
-			}, {
+			.expectRequest("#2 " + sUrl
+				+ "&$filter=ArtistID eq '2' and IsActiveEntity eq false&$select=_/Limited_Rank", {
 				value : [{
 					_ : {Limited_Rank : "0"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 2,
-				url : sUrl + sSelect + "&$count=true&$skip=0&$top=3"
-			}, {
+			.expectRequest("#2 " + sUrl + sSelect + "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "2",
 				value : [{
 					ArtistID : "2",
@@ -43547,16 +43181,10 @@ make root = ${bMakeRoot}`;
 				ID : "6",
 				Name : "Zeta"
 			})
-			.expectRequest({
-				batchNo : 9,
-				url : "EMPLOYEES/$count?$filter=Is_Manager"
-			}, 6)
-			.expectRequest({
-				batchNo : 9,
-				url : sUrl.slice(0, -1)
-					+ ",ExpandLevels=" + JSON.stringify([{NodeID : "5", Levels : 1}]) + ")"
-					+ sSelect + "&$count=true&$skip=3&$top=2"
-			}, {
+			.expectRequest("#9 EMPLOYEES/$count?$filter=Is_Manager", 6)
+			.expectRequest("#9 " + sUrl.slice(0, -1)
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "5", Levels : 1}]) + ")"
+				+ sSelect + "&$count=true&$skip=3&$top=2", {
 				"@odata.count" : "6",
 				value : [{
 					DescendantCount : "1",
@@ -43572,12 +43200,9 @@ make root = ${bMakeRoot}`;
 					Name : "Zeta"
 				}]
 			})
-			.expectRequest({
-				batchNo : 10,
-				url : sUrl.slice(0, -1)
-					+ ",ExpandLevels=" + JSON.stringify([{NodeID : "5", Levels : 1}]) + ")"
-					+ "&$filter=ID eq '6'&$select=LimitedRank"
-			}, {
+			.expectRequest("#10 " + sUrl.slice(0, -1)
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "5", Levels : 1}]) + ")"
+				+ "&$filter=ID eq '6'&$select=LimitedRank", {
 				value : [{LimitedRank : "4"}]
 			});
 
@@ -43618,16 +43243,10 @@ make root = ${bMakeRoot}`;
 				ID : "7",
 				Name : "Eta"
 			})
-			.expectRequest({
-				batchNo : 11,
-				url : "EMPLOYEES/$count?$filter=Is_Manager"
-			}, 7)
-			.expectRequest({
-				batchNo : 11,
-				url : sUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "5", Levels : 1}, {NodeID : "6", Levels : 1}]) + ")"
-					+ sSelect + "&$count=true&$skip=3&$top=2"
-			}, {
+			.expectRequest("#11 EMPLOYEES/$count?$filter=Is_Manager", 7)
+			.expectRequest("#11 " + sUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "5", Levels : 1}, {NodeID : "6", Levels : 1}]) + ")"
+				+ sSelect + "&$count=true&$skip=3&$top=2", {
 				"@odata.count" : "7",
 				value : [{
 					DescendantCount : "2",
@@ -43643,12 +43262,9 @@ make root = ${bMakeRoot}`;
 					Name : "Zeta"
 				}]
 			})
-			.expectRequest({
-				batchNo : 12,
-				url : sUrl.slice(0, -1) + ",ExpandLevels="
-					+ JSON.stringify([{NodeID : "5", Levels : 1}, {NodeID : "6", Levels : 1}]) + ")"
-					+ "&$filter=ID eq '7'&$select=LimitedRank"
-			}, {
+			.expectRequest("#12 " + sUrl.slice(0, -1) + ",ExpandLevels="
+				+ JSON.stringify([{NodeID : "5", Levels : 1}, {NodeID : "6", Levels : 1}]) + ")"
+				+ "&$filter=ID eq '7'&$select=LimitedRank", {
 				value : [{LimitedRank : "5"}]
 			});
 
@@ -43912,18 +43528,12 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('1.1')"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 2,
-				url : sUrl + "&$filter=ID eq '1.1'&$select=LimitedRank"
-			}, {
+			.expectRequest("#2 " + sUrl + "&$filter=ID eq '1.1'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "4" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : sUrl + sSelect + "&$skip=1&$top=1"
-			}, {
+			.expectRequest("#3 " + sUrl + sSelect + "&$skip=1&$top=1", {
 				value : [{
 					DescendantCount : "0",
 					DistanceFromRoot : "1",
@@ -44570,33 +44180,24 @@ make root = ${bMakeRoot}`;
 		const oZeta = oTable.getRows()[0].getBindingContext();
 		const oEta = oTable.getRows()[1].getBindingContext();
 
-		this.expectRequest({
-				batchNo : 3,
-				url : "EMPLOYEES?custom=foo"
-					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '2'),1)"
-					+ "&$select=ID,Name"
-			}, {
+		this.expectRequest("#3 EMPLOYEES?custom=foo"
+				+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '2'),1)"
+				+ "&$select=ID,Name", {
 				value : [{
 					ID : "0",
 					Name : "Alpha"
 				}]
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : "EMPLOYEES?custom=foo"
-					+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
-					+ "&$select=ID,Name"
-			}, {
+			.expectRequest("#3 EMPLOYEES?custom=foo"
+				+ "&$apply=ancestors($root/EMPLOYEES,OrgChart,ID,filter(ID eq '5'),1)"
+				+ "&$select=ID,Name", {
 				value : [{
 					ID : "0",
 					Name : "Alpha"
 				}]
 			})
-			.expectRequest({
-				batchNo : 4,
-				url : sUrl + "&$filter=ID eq '0'"
-					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,LimitedRank"
-			}, {
+			.expectRequest("#4 " + sUrl + "&$filter=ID eq '0'"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,LimitedRank", {
 				value : [{
 					DescendantCount : "6",
 					DistanceFromRoot : "0",
@@ -45307,25 +44908,19 @@ make root = ${bMakeRoot}`;
 		assert.strictEqual(oOmicron.getParent(), undefined);
 		assert.strictEqual(oPi.getParent(), undefined);
 
-		this.expectRequest({
-				batchNo : 11,
-				url : "Artists?$apply=ancestors("
-						+ "$root/Artists,OrgChart,_/NodeID,"
-						+ "filter(ArtistID eq '4.1' and IsActiveEntity eq false),1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name"
-			}, {
+		this.expectRequest("#11 Artists?$apply=ancestors("
+					+ "$root/Artists,OrgChart,_/NodeID,"
+					+ "filter(ArtistID eq '4.1' and IsActiveEntity eq false),1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name", {
 				value : [{
 					ArtistID : "4",
 					IsActiveEntity : false,
 					Name : "Xi"
 				}]
 			})
-			.expectRequest({
-				batchNo : 12,
-				url : sUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
-					+ "&$select=_/DescendantCount,_/DistanceFromRoot,_/DrillState,"
-						+ "_/Limited_Rank,_/NodeID"
-			}, {
+			.expectRequest("#12 " + sUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
+				+ "&$select=_/DescendantCount,_/DistanceFromRoot,_/DrillState,"
+					+ "_/Limited_Rank,_/NodeID", {
 				value : [{
 					_ : {
 						DescendantCount : "2",
@@ -45886,29 +45481,21 @@ make root = ${bMakeRoot}`;
 				url : sFriend.slice(1)
 					+ "(ArtistID='4',IsActiveEntity=false)/special.cases.ChangeNextSibling"
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 8,
-				url : sBaseUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
-					+ "&$select=_/Limited_Rank"
-			}, {
+			.expectRequest("#8 " + sBaseUrl + "&$filter=ArtistID eq '4' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank", {
 				value : [{
 					_ : {Limited_Rank : "3"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 8,
-				url : sBaseUrl + "&$filter=ArtistID eq '3' and IsActiveEntity eq false"
-					+ "&$select=_/Limited_Rank"
-			}, {
+			.expectRequest("#8 " + sBaseUrl + "&$filter=ArtistID eq '3' and IsActiveEntity eq false"
+				+ "&$select=_/Limited_Rank", {
 				value : [{
 					_ : {Limited_Rank : "5"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 8,
-				url : sFriend.slice(1) + "?$filter=ArtistID eq '3' and IsActiveEntity eq false"
-					+ "&custom=foo&$select=ArtistID,IsActiveEntity,Name,_/NodeID" + sExpand
-			}, {
+			.expectRequest("#8 " + sFriend.slice(1)
+				+ "?$filter=ArtistID eq '3' and IsActiveEntity eq false"
+				+ "&custom=foo&$select=ArtistID,IsActiveEntity,Name,_/NodeID" + sExpand, {
 				value : [{
 					"@odata.etag" : "etag3.2",
 					ArtistID : "3",
@@ -45922,10 +45509,7 @@ make root = ${bMakeRoot}`;
 					_ : null // not available w/ RAP for a non-hierarchical request
 				}]
 			})
-			.expectRequest({
-				batchNo : 8,
-				url : sBaseUrl + sSelect + sExpand + "&$count=true&$skip=0&$top=2"
-			}, {
+			.expectRequest("#8 " + sBaseUrl + sSelect + sExpand + "&$count=true&$skip=0&$top=2", {
 				"@odata.count" : "7",
 				value : [{
 					"@odata.etag" : "etag0.2",
@@ -46301,14 +45885,11 @@ make root = ${bMakeRoot}`;
 </t:Table>`;
 		const that = this;
 
-		this.expectRequest({
-				batchNo : 1,
-				url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='_/NodeID',Levels=1)"
-					+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
-					+ "&$count=true&$skip=0&$top=3"
-			}, {
+		this.expectRequest("#1 Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
+				+ ",NodeProperty='_/NodeID',Levels=1)"
+				+ "&$select=ArtistID,IsActiveEntity,Name,_/DrillState,_/NodeID"
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "1",
 				value : [{
 					ArtistID : "0",
@@ -48272,18 +47853,15 @@ make root = ${bMakeRoot}`;
 			[false, 1, "2", "Theta"]
 		]);
 
-		this.expectRequest({
-				batchNo : 3,
-				url : "Artists?custom=foo&$apply=" + sFilterSearch
-					+ "/descendants($root/Artists,OrgChart,_/NodeID"
-					+ ",filter(ArtistID eq '1' and IsActiveEntity eq false))"
-					+ "&$filter=ArtistID eq '1.1' and IsActiveEntity eq false"
-					+ " or ArtistID eq '1.2' and IsActiveEntity eq false"
-					+ " or ArtistID eq '1.3' and IsActiveEntity eq false"
-					+ " or ArtistID eq '2.1' and IsActiveEntity eq false"
-					+ "&$select=ArtistID,IsActiveEntity&$top=4"
+		this.expectRequest("#3 Artists?custom=foo&$apply=" + sFilterSearch
+				+ "/descendants($root/Artists,OrgChart,_/NodeID"
+				+ ",filter(ArtistID eq '1' and IsActiveEntity eq false))"
+				+ "&$filter=ArtistID eq '1.1' and IsActiveEntity eq false"
+				+ " or ArtistID eq '1.2' and IsActiveEntity eq false"
+				+ " or ArtistID eq '1.3' and IsActiveEntity eq false"
+				+ " or ArtistID eq '2.1' and IsActiveEntity eq false"
+				+ "&$select=ArtistID,IsActiveEntity&$top=4", {
 				// sort order changed intentionally, without $orderby response needs not be sorted!
-			}, {
 				value : [{
 					ArtistID : "1.3",
 					IsActiveEntity : false
@@ -48295,20 +47873,14 @@ make root = ${bMakeRoot}`;
 					IsActiveEntity : false
 				}]
 			})
-			.expectRequest({
-				batchNo : 4,
-				url : sCountRequestUrl
-			}, 10)
-			.expectRequest({
-				batchNo : 4,
-				url : sUrl + ",ExpandLevels="
-					+ JSON.stringify([
-						{NodeID : "2.1,false", Levels : 0},
-						{NodeID : "2,false", Levels : 0},
-						{NodeID : "1,false", Levels : null}
-					])
-					+ ")&$count=true&$skip=0&$top=10"
-			}, {
+			.expectRequest("#4 " + sCountRequestUrl, 10)
+			.expectRequest("#4 " + sUrl + ",ExpandLevels="
+				+ JSON.stringify([
+					{NodeID : "2.1,false", Levels : 0},
+					{NodeID : "2,false", Levels : 0},
+					{NodeID : "1,false", Levels : null}
+				])
+				+ ")&$count=true&$skip=0&$top=10", {
 				"@odata.count" : "8",
 				value : [{
 					ArtistID : "1",
@@ -49857,18 +49429,12 @@ make root = ${bMakeRoot}`;
 				},
 				url : "$-1" // Note: "$-1" references the previous request
 			}) // 204 No Content
-			.expectRequest({
-				batchNo : 2,
-				url : sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank"
-			}, {
+			.expectRequest("#2 " + sBaseUrl + "&$filter=ID eq '1'&$select=LimitedRank", {
 				value : [{ // Note: Beta's position did change
 					LimitedRank : "3" // Edm.Int64
 				}]
 			})
-			.expectRequest({
-				batchNo : 2,
-				url : sListUrl
-			}, {
+			.expectRequest("#2 " + sListUrl, {
 				"@odata.count" : "5",
 				value : [{
 					DescendantCount : "1",
@@ -49902,10 +49468,7 @@ make root = ${bMakeRoot}`;
 					Name : "Epsilon"
 				}]
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : sBaseUrl + "&$filter=ID eq '_1'&$select=LimitedRank"
-			}, {
+			.expectRequest("#3 " + sBaseUrl + "&$filter=ID eq '_1'&$select=LimitedRank", {
 				value : [{
 					LimitedRank : "1" // Edm.Int64
 				}]
@@ -54729,10 +54292,8 @@ make root = ${bMakeRoot}`;
 					headers : {"If-Match" : "ETag0", Prefer : "return=minimal"},
 					payload : {NetAmount : "-1"}
 				}, createErrorInsideBatch({message : "Value -1 not allowed"}))
-				.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount"
-				}) // no response required since the PATCH fails
+				.expectRequest("#2 SalesOrderList('42')?sap-client=123&$select=GrossAmount")
+					// no response required since the PATCH fails
 				.expectMessages([{
 					code : "CODE",
 					message : "Value -1 not allowed",
@@ -54816,10 +54377,8 @@ make root = ${bMakeRoot}`;
 					}],
 					SalesOrderID : "42"
 				})
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList('42')?sap-client=123&$select=GrossAmount,NetAmount"
-				}, {
+				.expectRequest("#4 SalesOrderList('42')?sap-client=123"
+					+ "&$select=GrossAmount,NetAmount", {
 					// "@odata.etag" : "ETag2",
 					GrossAmount : "0.00", // side effect
 					NetAmount : "0.00", // "side effect": decimal places added
@@ -54983,12 +54542,9 @@ make root = ${bMakeRoot}`;
 					headers : {"If-Match" : "ETag0"},
 					payload : {Name : "TAFKAP"}
 				}, {/* response does not matter here */})
-				.expectRequest({
-					batchNo : 2,
-					url : "Artists(ArtistID='42',IsActiveEntity=true)"
-						+ "?$select=DraftAdministrativeData"
-						+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)"
-				}, {
+				.expectRequest("#2 Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=DraftAdministrativeData"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					DraftAdministrativeData : {
 						DraftID : "23",
 						InProcessByUser : "bar"
@@ -55307,10 +54863,7 @@ make root = ${bMakeRoot}`;
 				url : "TEAMS('TEAM_01')",
 				payload : {Name : "New Team"}
 			}, null, {ETag : "etag1.1"}) // no response required
-			.expectRequest({
-				batchNo : 2,
-				url : "TEAMS?$select=Budget,Name,Team_Id&$filter=Team_Id eq 'TEAM_01'"
-			}, {
+			.expectRequest("#2 TEAMS?$select=Budget,Name,Team_Id&$filter=Team_Id eq 'TEAM_01'", {
 				value : [{
 					"@odata.etag" : "etag1.1",
 					Budget : "42",
@@ -55318,10 +54871,7 @@ make root = ${bMakeRoot}`;
 					Team_Id : "TEAM_01"
 				}]
 			})
-			.expectRequest({
-				batchNo : 2,
-				url : "TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100"
-			}, {
+			.expectRequest("#2 TEAMS?$select=Budget,Name,Team_Id&$skip=0&$top=100", {
 				value : [{
 					"@odata.etag" : "etag1.1",
 					Budget : "n/a",
@@ -56844,11 +56394,8 @@ make root = ${bMakeRoot}`;
 					headers : {"If-Match" : "ETag"},
 					payload : {}
 				})
-				.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('1')?$select=SO_2_SOITEM"
-						+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)"
-				}, {
+				.expectRequest("#2 SalesOrderList('1')?$select=SO_2_SOITEM"
+					+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
 					"@odata.etag" : "ETag",
 					SO_2_SOITEM : [{ItemPosition : "0010*", SalesOrderID : "1"}]
 				})
@@ -57036,10 +56583,7 @@ make root = ${bMakeRoot}`;
 				},
 				url : "EMPLOYEES('4')"
 			}, {/* don't care */})
-			.expectRequest({
-				batchNo : 4,
-				url : "EMPLOYEES('3')?$select=STATUS"
-			}, {
+			.expectRequest("#4 EMPLOYEES('3')?$select=STATUS", {
 				STATUS : "Busy"
 			})
 			.expectChange("status0", "Busy");
@@ -59188,12 +58732,9 @@ make root = ${bMakeRoot}`;
 </FlexBox>',
 			that = this;
 
-		this.expectRequest({
-				batchNo : 1,
-				url : "SalesOrderList('1')?$select=SalesOrderID"
-					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,Quantity,SalesOrderID;"
-						+ "$expand=SOITEM_2_PRODUCT($select=ProductID))"
-			}, {
+		this.expectRequest("#1 SalesOrderList('1')?$select=SalesOrderID"
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,Quantity,SalesOrderID;"
+					+ "$expand=SOITEM_2_PRODUCT($select=ProductID))", {
 				SalesOrderID : "1",
 				SO_2_SOITEM : [{
 					ItemPosition : "10",
@@ -59229,12 +58770,10 @@ make root = ${bMakeRoot}`;
 					SalesOrderID : "1",
 					ItemPosition : "20"
 				})
-				.expectRequest({
-					batchNo : 3,
-					url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
-						+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
-						+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)"
-				}, {
+				.expectRequest("#3 SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')"
+					+ "?$select=ItemPosition,Messages,Quantity,SalesOrderID"
+					+ "&$expand=SOITEM_2_PRODUCT($select=ProductID)", {
 					ItemPosition : "20",
 					Messages : [{
 						code : "23",
@@ -61026,11 +60565,9 @@ make root = ${bMakeRoot}`;
 				});
 				aItems.length = 2;
 			} // else: "First new row" not part of this read range
-			that.expectRequest({
-					batchNo : 2,
-					url : "SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$count=true&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=2"
-				}, { // ignored if !bSuccess; else bEmpty does not play a role anymore
+			that.expectRequest("#2 SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$count=true&$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=2", {
+					// ignored if !bSuccess; else bEmpty does not play a role anymore
 					"@odata.count" : "4",
 					value : aItems
 				});
@@ -61042,22 +60579,18 @@ make root = ${bMakeRoot}`;
 					}
 				} else {
 					// we cannot tell if "First new row" is affected by our imaginative $filter...
-					that.expectRequest({
-							batchNo : 3,
-							url : "SalesOrderList('1')/SO_2_SOITEM?$count=true"
-								+ "&$filter=not (SalesOrderID eq '1' and ItemPosition eq '0')"
-								+ "&$top=0"
-						}, {
+					that.expectRequest("#3 SalesOrderList('1')/SO_2_SOITEM?$count=true"
+							+ "&$filter=not (SalesOrderID eq '1' and ItemPosition eq '0')"
+							+ "&$top=0", {
 							"@odata.count" : "4", ///... looks like it is
 							value : []
 						})
 						.expectChange("count", "5");
 				}
-				that.expectRequest({ // see /*bSkipRefresh*/false
-						batchNo : 3,
-						url : "SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0')"
-							+ "?$select=ItemPosition,Note,SalesOrderID"
-					}, {
+				// see /*bSkipRefresh*/false
+				that.expectRequest("#3 SalesOrderList('1')"
+						+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0')"
+						+ "?$select=ItemPosition,Note,SalesOrderID", {
 						ItemPosition : "0",
 						Note : "First **new** row",
 						SalesOrderID : "1"
@@ -61365,11 +60898,8 @@ make root = ${bMakeRoot}`;
 				Note : "Created as well",
 				SalesOrderID : "44"
 			})
-			.expectRequest({
-				batchNo : 3,
-				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
-					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
-			}, {
+			.expectRequest("#3 BusinessPartnerList('4711')?$select=BP_2_SO"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
 				BusinessPartnerID : "4711",
 				BP_2_SO : [{
 					Note : "Unrealistic",
@@ -61415,11 +60945,8 @@ make root = ${bMakeRoot}`;
 				payload : {Note : "Created as well"},
 				url : "BusinessPartnerList('4711')/BP_2_SO"
 			}) // no response required
-			.expectRequest({
-				batchNo : 3,
-				url : "BusinessPartnerList('4711')?$select=BP_2_SO"
-					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
-			}) // no response required
+			.expectRequest("#3 BusinessPartnerList('4711')?$select=BP_2_SO"
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)") // no response required
 			.expectMessages([{
 				message : "Communication error: 500 ",
 				persistent : true,
@@ -61615,10 +61142,8 @@ make root = ${bMakeRoot}`;
 					payload : {Note : "Created"},
 					url : "SalesOrderList"
 				}, oError)
-				.expectRequest({
-					batchNo : 3,
-					url : "SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2"
-				}) // no response required
+				.expectRequest("#3 SalesOrderList?$select=Note,SalesOrderID&$skip=1&$top=2")
+					// no response required
 				.expectMessages([{
 					code : "CODE",
 					message : "Request intentionally failed",
@@ -61725,11 +61250,8 @@ make root = ${bMakeRoot}`;
 					Note : "Created",
 					SalesOrderID : "43"
 				})
-				.expectRequest({
-					batchNo : 3,
-					url : "BusinessPartnerList('4711')?$select=BP_2_SO"
-						+ "&$expand=BP_2_SO($select=Note,SalesOrderID)"
-				}, {
+				.expectRequest("#3 BusinessPartnerList('4711')?$select=BP_2_SO"
+					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
 					BusinessPartnerID : "4711",
 					BP_2_SO : [{
 						Note : "Created",
@@ -61814,10 +61336,8 @@ make root = ${bMakeRoot}`;
 					payload : {CompanyName : "SAP SE"},
 					url : "BusinessPartnerList('4711')"
 				}, {/* response does not matter here */})
-				.expectRequest({
-					batchNo : 3,
-					url : "BusinessPartnerList('4711')?$select=BusinessPartnerID,CompanyName"
-				}, {
+				.expectRequest("#3 BusinessPartnerList('4711')"
+					+ "?$select=BusinessPartnerID,CompanyName", {
 					BusinessPartnerID : "4711",
 					CompanyName : "SAP SE"
 				});
@@ -67195,18 +66715,13 @@ make root = ${bMakeRoot}`;
 					method : "DELETE",
 					url : "SalesOrderList('1')"
 				}, createErrorInsideBatch(null, 404))
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList?$count=true"
-						+ "&$filter=(GrossAmount gt 123) and not (SalesOrderID eq '1')&$top=0"
-				}) // response does not matter, fails with DELETE in same $batch
+				.expectRequest("#4 SalesOrderList?$count=true"
+					+ "&$filter=(GrossAmount gt 123) and not (SalesOrderID eq '1')&$top=0"
+				) // response does not matter, fails with DELETE in same $batch
 				.expectChange("objectPageGrossAmount", null)
 				.expectChange("objectPageNote", null)
-				.expectRequest({
-					batchNo : 5,
-					url : "SalesOrderList?$count=true"
-						+ "&$filter=(GrossAmount gt 123) and not (SalesOrderID eq '1')&$top=0"
-				}, {
+				.expectRequest("#5 SalesOrderList?$count=true"
+					+ "&$filter=(GrossAmount gt 123) and not (SalesOrderID eq '1')&$top=0", {
 					"@odata.count" : "38",
 					value : []
 				});
@@ -67568,18 +67083,12 @@ make root = ${bMakeRoot}`;
 		var that = this;
 
 		return this.createKeepAliveScenario(assert, false).then(function (oKeptContext) {
-			that.expectRequest({
-					batchNo : 3,
-					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-						+ "&$select=GrossAmount,Note,SalesOrderID"
-				}, {
+			that.expectRequest("#3 SalesOrderList?$filter=SalesOrderID eq '1'"
+					+ "&$select=GrossAmount,Note,SalesOrderID", {
 					value : [{GrossAmount : "199", Note : "After refresh", SalesOrderID : "1"}]
 				})
-				.expectRequest({
-					batchNo : 3,
-					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
-						+ "&$count=true&$top=0"
-				}, {
+				.expectRequest("#3 SalesOrderList"
+					+ "?$filter=(GrossAmount le 150) and SalesOrderID eq '1'&$count=true&$top=0", {
 					"@odata.count" : "0",
 					value : []
 				})
@@ -67587,21 +67096,15 @@ make root = ${bMakeRoot}`;
 				.expectChange("objectPageNote", "After refresh")
 				.expectChange("grossAmount", ["199.00"]) // FIXME: JIRA: CPOUI5ODATAV4-524
 				// as context is no longer part of the collection the list requests a new context
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
-						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
-				}, {
+				.expectRequest("#4 SalesOrderList?$count=true&$filter=GrossAmount le 150"
+					+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1", {
 					"@odata.count" : "41",
 					value : [{GrossAmount : "120", SalesOrderID : "4"}]
 				})
 				.expectChange("id", [, "4"])
 				.expectChange("grossAmount", [, "120.00"])
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
-				}, {
+				.expectRequest("#4 SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
 					value : [/*does not matter*/]
 				});
 
@@ -67626,29 +67129,20 @@ make root = ${bMakeRoot}`;
 		var that = this;
 
 		return this.createKeepAliveScenario(assert, false).then(function (oKeptContext) {
-			that.expectRequest({
-					batchNo : 3,
-					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-						+ "&$select=GrossAmount,Note,SalesOrderID"
-				}, {
+			that.expectRequest("#3 SalesOrderList?$filter=SalesOrderID eq '1'"
+					+ "&$select=GrossAmount,Note,SalesOrderID", {
 					value : [{GrossAmount : "140", Note : "After refresh", SalesOrderID : "1"}]
 				})
-				.expectRequest({
-					batchNo : 3,
-					url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
-						+ "&$count=true&$top=0"
-				}, {
+				.expectRequest("#3 SalesOrderList"
+					+ "?$filter=(GrossAmount le 150) and SalesOrderID eq '1'&$count=true&$top=0", {
 					"@odata.count" : "1",
 					value : []
 				})
 				.expectChange("objectPageGrossAmount", "140.00")
 				.expectChange("objectPageNote", "After refresh")
 				.expectChange("grossAmount", ["140.00"])
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
-				}, {
+				.expectRequest("#4 SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
 					value : [/*does not matter*/]
 				});
 
@@ -67671,29 +67165,21 @@ make root = ${bMakeRoot}`;
 
 		return this.createKeepAliveScenario(assert, false, fnOnBeforeDestroy)
 			.then(function (oKeptContext) {
-				that.expectRequest({
-						batchNo : 3,
-						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-							+ "&$select=GrossAmount,Note,SalesOrderID"
-					}, {
+				that.expectRequest("#3 SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID", {
 						value : []
 					})
-					.expectRequest({
-						batchNo : 3,
-						url : "SalesOrderList?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
-							+ "&$count=true&$top=0"
-					}, {
+					.expectRequest("#3 SalesOrderList"
+						+ "?$filter=(GrossAmount le 150) and SalesOrderID eq '1'"
+						+ "&$count=true&$top=0", {
 						"@odata.count" : "0",
 						value : []
 					})
 					.expectChange("objectPageGrossAmount", null)
 					.expectChange("objectPageNote", null)
 					// as context is no longer part of aContexts the list requests a new context
-					.expectRequest({
-						batchNo : 4,
-						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
-							+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1"
-					}, {
+					.expectRequest("#4 SalesOrderList?$count=true&$filter=GrossAmount le 150"
+						+ "&$select=GrossAmount,SalesOrderID&$skip=1&$top=1", {
 						"@odata.count" : "41",
 						value : [{GrossAmount : "120", SalesOrderID : "4"}]
 					})
@@ -68147,12 +67633,9 @@ make root = ${bMakeRoot}`;
 				oKeptContext2.setKeepAlive(true);
 			}
 
-			that.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList"
-						+ "?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
-						+ "&$select=GrossAmount,Note,SalesOrderID&$top=2"
-				}, {
+			that.expectRequest("#4 SalesOrderList"
+					+ "?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
+					+ "&$select=GrossAmount,Note,SalesOrderID&$top=2", {
 					value : [{
 						GrossAmount : "50",
 						Note : "After refresh",
@@ -68165,11 +67648,8 @@ make root = ${bMakeRoot}`;
 				})
 				.expectChange("objectPageGrossAmount", "50.00")
 				.expectChange("objectPageNote", "After refresh")
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
-						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
-				}, {
+				.expectRequest("#4 SalesOrderList?$count=true&$filter=GrossAmount gt 123"
+					+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
 					"@odata.count" : "27",
 					value : [{
 						GrossAmount : "149.1",
@@ -68180,11 +67660,8 @@ make root = ${bMakeRoot}`;
 					}]
 				})
 				.expectChange("grossAmount", ["149.10", "789.10"])
-				.expectRequest({
-					batchNo : 4,
-					url : "SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
-				}, {
+				.expectRequest("#4 SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
 					value : [{
 						ItemPosition : "0020",
 						SalesOrderID : "1"
@@ -68207,11 +67684,9 @@ make root = ${bMakeRoot}`;
 				oKeptContext3.setKeepAlive(true, fnOnBeforeDestroy);
 			}
 
-			that.expectRequest({
-					batchNo : 5,
-					url : "SalesOrderList?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
-						+ " or SalesOrderID eq '3'&$select=GrossAmount,Note,SalesOrderID&$top=3"
-				}, {
+			that.expectRequest("#5 SalesOrderList"
+					+ "?$filter=SalesOrderID eq '1' or SalesOrderID eq '2' or SalesOrderID eq '3'"
+					+ "&$select=GrossAmount,Note,SalesOrderID&$top=3", {
 					value : [{
 						GrossAmount : "50.2",
 						Note : "After refresh 2",
@@ -68224,11 +67699,8 @@ make root = ${bMakeRoot}`;
 				})
 				.expectChange("objectPageGrossAmount", "50.20")
 				.expectChange("objectPageNote", "After refresh 2")
-				.expectRequest({
-					batchNo : 5,
-					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
-						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
-				}, {
+				.expectRequest("#5 SalesOrderList?$count=true&$filter=GrossAmount gt 123"
+					+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
 					"@odata.count" : "26",
 					value : [{
 						GrossAmount : "149.2",
@@ -68240,11 +67712,8 @@ make root = ${bMakeRoot}`;
 				})
 				.expectChange("id", [, "4"])
 				.expectChange("grossAmount", ["149.20", "789.20"])
-				.expectRequest({
-					batchNo : 5,
-					url : "SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
-				}, {
+				.expectRequest("#5 SalesOrderList('1')/SO_2_SOITEM"
+					+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", {
 					value : [{
 						ItemPosition : "0030",
 						SalesOrderID : "1"
@@ -68611,20 +68080,14 @@ make root = ${bMakeRoot}`;
 						+ " with start index 0 and length 100",
 						sinon.match("Not found"), sODLB);
 
-				that.expectRequest({
-						batchNo : 3,
-						url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-							+ "&$select=GrossAmount,Note,SalesOrderID"
-					}, {
+				that.expectRequest("#3 SalesOrderList?$filter=SalesOrderID eq '1'"
+						+ "&$select=GrossAmount,Note,SalesOrderID", {
 						value : []
 					})
 					.expectChange("objectPageGrossAmount", null)
 					.expectChange("objectPageNote", null)
-					.expectRequest({
-						batchNo : 3,
-						url : "SalesOrderList?$count=true&$filter=GrossAmount le 150"
-							+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2"
-					}, {
+					.expectRequest("#3 SalesOrderList?$count=true&$filter=GrossAmount le 150"
+						+ "&$select=GrossAmount,SalesOrderID&$skip=0&$top=2", {
 						"@odata.count" : "41",
 						value : [{
 							GrossAmount : 149.1,
@@ -68636,11 +68099,8 @@ make root = ${bMakeRoot}`;
 					})
 					.expectChange("id", [, "3"])
 					.expectChange("grossAmount", ["149.10", "99.00"])
-					.expectRequest({
-						batchNo : 3,
-						url : "SalesOrderList('1')/SO_2_SOITEM"
-							+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
-					}, oError)
+					.expectRequest("#3 SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100", oError)
 					.expectMessages([{
 						code : "CODE",
 						message : "Not found",
@@ -69552,11 +69012,8 @@ make root = ${bMakeRoot}`;
 			.expectChange("friend");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest({
-					batchNo : 1,
-					url : "Artists?$select=ArtistID,IsActiveEntity,Name"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)&$skip=0&$top=1"
-				}, {
+			that.expectRequest("#1 Artists?$select=ArtistID,IsActiveEntity,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)&$skip=0&$top=1", {
 					value : [{
 						ArtistID : "1",
 						IsActiveEntity : true,
@@ -69568,12 +69025,9 @@ make root = ${bMakeRoot}`;
 						}
 					}]
 				})
-				.expectRequest({
-					batchNo : 1,
-					url : "Artists(ArtistID='3',IsActiveEntity=false)"
-						+ "?$select=ArtistID,IsActiveEntity,Name"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-				}, {
+				.expectRequest("#1 Artists(ArtistID='3',IsActiveEntity=false)"
+					+ "?$select=ArtistID,IsActiveEntity,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "3",
 					IsActiveEntity : false,
 					Name : "The Beatles",
@@ -72835,10 +72289,7 @@ make root = ${bMakeRoot}`;
 					payload : {Name : "New Team C", Team_Id : "TEAM_C"}
 				}, {Name : "n/c", Team_Id : "TEAM_C"})
 				// .expectChange("name", "New 'C' Team", -1) // would happen w/ bSkipRefresh
-				.expectRequest({
-					batchNo : 2,
-					url : "TEAMS?$select=Name,Team_Id&$skip=0&$top=5"
-				}, {
+				.expectRequest("#2 TEAMS?$select=Name,Team_Id&$skip=0&$top=5", {
 					value : [
 						{Name : "n/a", Team_Id : "TEAM_A"},
 						{Name : "'#1' Team", Team_Id : "TEAM_01"},
@@ -72850,14 +72301,12 @@ make root = ${bMakeRoot}`;
 				.expectChange("id", ["TEAM_B", "TEAM_A", "TEAM_01", "TEAM_02", "TEAM_C"])
 				.expectChange("name",
 					["New 'B' Team", "New 'A' Team", "'#1' Team", "'#2' Team", "New 'C' Team"])
-				.expectRequest({ //TODO how to avoid this artefact?
-					// _CollectionCache#read computes iCreatedPersisted = 2 because oBackup has not
-					// yet been deleted (because oRefreshPromise not yet resolved); this extends
-					// the prefetch unnecessarily here :-(
-					batchNo : 3,
-					url : "TEAMS?$select=Name,Team_Id"
-						+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=3&$top=2"
-				}, {
+				//TODO how to avoid this artefact?
+				// _CollectionCache#read computes iCreatedPersisted = 2 because oBackup has not
+				// yet been deleted (because oRefreshPromise not yet resolved); this extends
+				// the prefetch unnecessarily here :-(
+				.expectRequest("#3 TEAMS?$select=Name,Team_Id"
+					+ "&$filter=not (Team_Id eq 'TEAM_A' or Team_Id eq 'TEAM_B')&$skip=3&$top=2", {
 					value : [
 						{Name : "'#3' Team", Team_Id : "TEAM_03"},
 						{Name : "'#4' Team", Team_Id : "TEAM_04"}
@@ -74419,13 +73868,10 @@ make root = ${bMakeRoot}`;
 					PublicationID : "2"
 				}
 			}, createErrorInsideBatch({target : "Price"}))
-			.expectRequest({
-				batchNo : 2,
-				method : "GET",
-				url : "Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
-						+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
-			}) // no response required
+			.expectRequest("#2 Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+					+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))")
+				// no response required
 			.expectMessages([{
 				code : "CODE",
 				message : "Request intentionally failed",
@@ -74531,13 +73977,9 @@ make root = ${bMakeRoot}`;
 						PublicationID : "2"
 					}
 				}, null, {ETag : "etag3"}) // 204 No Content
-				.expectRequest({
-					batchNo : 3,
-					method : "GET",
-					url : "Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
-						+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))"
-				}, {
+				.expectRequest("#3 Artists(ArtistID='1',IsActiveEntity=false)?$select=BestFriend"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity"
+					+ ";$expand=BestPublication($select=CurrencyCode,Price,PublicationID))", {
 					BestFriend : {
 						ArtistID : "2",
 						BestPublication : {
@@ -74687,36 +74129,23 @@ make root = ${bMakeRoot}`;
 		};
 		if (bRefresh) {
 			if (bKeepAlive) { // ODLB#refreshKeptElements
-				this.expectRequest({
-						batchNo : 2,
-						method : "GET",
-						url : "SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
-							+ "&$filter=SalesOrderID eq '1'"
-					}, {
+				this.expectRequest("#2 SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
+						+ "&$filter=SalesOrderID eq '1'", {
 						value : [oSalesOrder]
 					});
 			}
-			this.expectRequest({
-					batchNo : 2,
-					method : "GET",
-					url : "SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
-						+ "&$skip=0&$top=100"
-				}, { // w/ keep-alive, simulate that ('1') does not match filter anymore ;-)
+			this.expectRequest("#2 SalesOrderList?$select=BuyerID,SalesOrderID" + sExpand
+					+ "&$skip=0&$top=100", {
+					// w/ keep-alive, simulate that ('1') does not match filter anymore ;-)
 					value : bKeepAlive ? [] : [oSalesOrder]
 				});
 			if (bKeepAlive) { // _Cache#refreshSingleNoCollection
-				this.expectRequest({
-						batchNo : 2,
-						method : "GET",
-						url : "SalesOrderList('1')?$select=SO_2_BP" + sExpand
-					}, oSalesOrder); // Note: no BuyerID,SalesOrderID needed => updateSelected
+				this.expectRequest("#2 SalesOrderList('1')?$select=SO_2_BP" + sExpand,
+						oSalesOrder); // Note: no BuyerID,SalesOrderID needed => updateSelected
 			}
 		} else { // _Cache#refreshSingleNoCollection merged with #requestSideEffects
-			this.expectRequest({
-					batchNo : 2,
-					method : "GET",
-					url : "SalesOrderList('1')?$select=BuyerID" + sExpand
-				}, oSalesOrder); // Note: no SalesOrderID needed, but never mind => updateSelected
+			this.expectRequest("#2 SalesOrderList('1')?$select=BuyerID" + sExpand,
+					oSalesOrder); // Note: no SalesOrderID needed, but never mind => updateSelected
 		}
 		this.expectChange("buyerId", ["2"])
 			.expectChange("postalCode", ["12345"]);
@@ -77927,11 +77356,7 @@ make root = ${bMakeRoot}`;
 				}, new Promise(function (resolve) {
 					fnResolvePatch = resolve;
 				}))
-				.expectRequest({
-					batchNo : 2,
-					method : "DELETE",
-					url : "SalesOrderList('4')"
-				}, new Promise(function (resolve) {
+				.expectRequest("#2 DELETE SalesOrderList('4')", new Promise(function (resolve) {
 					fnResolveDelete = resolve;
 				}));
 
@@ -78437,11 +77862,7 @@ make root = ${bMakeRoot}`;
 				method : "DELETE",
 				url : "SalesOrderList('2')"
 			})
-			.expectRequest({
-				batchNo : -7,
-				method : "DELETE",
-				url : "SalesOrderList('3')"
-			})
+			.expectRequest("#-7 DELETE SalesOrderList('3')")
 			.expectChange("id", ["4", "5", "6"]);
 
 		await Promise.all([
@@ -79287,45 +78708,37 @@ make root = ${bMakeRoot}`;
 		if (sMethod !== "requestSideEffects") {
 			// side-effects refresh keeps position of all created entries regardless of the filter,
 			// therefore no validation for created entries is needed
-			this.expectRequest({ // ODLB#validateSelection
-					batchNo : 4,
-					url : "SalesOrderList?$filter=SalesOrderID eq '4' or SalesOrderID eq '3'"
-						+ "&$search=foo&$select=SalesOrderID&$top=2"
-				}, { // SalesOrderList('3') doesn't match $search
+			// ODLB#validateSelection
+			this.expectRequest("#4 SalesOrderList"
+					+ "?$filter=SalesOrderID eq '4' or SalesOrderID eq '3'"
+					+ "&$search=foo&$select=SalesOrderID&$top=2", {
+					// SalesOrderList('3') doesn't match $search
 					value : [{SalesOrderID : "4"}]
 				});
 		}
 		if (sMethod === "refresh" || sMethod === "requestSideEffects") {
-			this.expectRequest({ // ODLB#refreshKeptElements via "refresh"
-					batchNo : 4,
-					url : "SalesOrderList?$select=Note,SalesOrderID"
-						+ "&$filter=SalesOrderID eq '3' or SalesOrderID eq '4'&$top=2"
-				}, {
+			// ODLB#refreshKeptElements via "refresh"
+			this.expectRequest("#4 SalesOrderList?$select=Note,SalesOrderID"
+					+ "&$filter=SalesOrderID eq '3' or SalesOrderID eq '4'&$top=2", {
 					value : [
 						{Note : "SO 3 (bar) - created persisted", SalesOrderID : "3"},
 						{Note : "SO 4 (foo) - created persisted", SalesOrderID : "4"}
 					]
 				});
 		}
-		if (sMethod === "requestSideEffects") {
-			this.expectRequest({ // "refresh"
-					batchNo : 4,
-					url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
-						+ "&$filter=not (SalesOrderID eq '3' or SalesOrderID eq '4')"
-						+ "&$skip=0&$top=99"
-				}, {
+		if (sMethod === "requestSideEffects") { // "refresh"
+			this.expectRequest("#4 SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+					+ "&$filter=not (SalesOrderID eq '3' or SalesOrderID eq '4')"
+					+ "&$skip=0&$top=99", {
 					value : [
 						{Note : "SO 1 (foo)", SalesOrderID : "1"}
 					]
 				});
-		} else {
-			this.expectRequest({ // "refresh"
-					batchNo : 4,
-					url : "SalesOrderList?$search=foo&$select=Note,SalesOrderID"
-						+ (sMethod === "sort" || sMethod === "changeParameters"
-							? "&$orderby=SalesOrderID" : "")
-						+ "&$skip=0&$top=99"
-				}, {
+		} else { // "refresh"
+			this.expectRequest("#4 SalesOrderList?$search=foo&$select=Note,SalesOrderID"
+					+ (sMethod === "sort" || sMethod === "changeParameters"
+						? "&$orderby=SalesOrderID" : "")
+					+ "&$skip=0&$top=99", {
 					value : [
 						{Note : "SO 1 (foo)", SalesOrderID : "1"},
 						{Note : "SO 4 (foo) - created persisted", SalesOrderID : "4"}
@@ -80496,11 +79909,8 @@ make root = ${bMakeRoot}`;
 		// Success messages are not passed as "messagesOnError" parameter to the event handler
 		checkEvents([{property : "BestFriend", start : 0, length : 2}]);
 
-		this.expectRequest({
-				batchNo : 4,
-				url : "Artists(ArtistID='20',IsActiveEntity=true)/SiblingEntity?custom=foo"
-					+ "&$select=ArtistID,IsActiveEntity,defaultChannel"
-			}, {
+		this.expectRequest("#4 Artists(ArtistID='20',IsActiveEntity=true)/SiblingEntity?custom=foo"
+				+ "&$select=ArtistID,IsActiveEntity,defaultChannel", {
 				ArtistID : "S2",
 				IsActiveEntity : true,
 				defaultChannel : "~defaultChannel~"
@@ -80530,32 +79940,25 @@ make root = ${bMakeRoot}`;
 		checkEvents([{property : "SiblingEntity", start : 0, length : 2}]);
 
 		let fnResolveMain;
-		this.expectRequest({
-				batchNo : 5,
-				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
-			}, {
+		this.expectRequest("#5 " + sUrl
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1", {
 				value : [{
 					ArtistID : "30",
 					BestFriend : {ArtistID : "F3", IsActiveEntity : true, Name : "Friend C"},
 					IsActiveEntity : true
 				}]
 			})
-			.expectRequest({
-				batchNo : 6,
-				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1"
-			}, {
+			.expectRequest("#6 " + sUrl
+				+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=2&$top=1", {
 				value : [{
 					ArtistID : "30",
 					IsActiveEntity : true,
 					SiblingEntity : {ArtistID : "S3", IsActiveEntity : true, Name : "Sibling C"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 7,
-				url : sMainUrl + "&$skip=2&$top=1"
-			}, new Promise(function (resolve) {
+			.expectRequest("#7 " + sMainUrl + "&$skip=2&$top=1", new Promise(function (resolve) {
 				fnResolveMain = resolve.bind(null, {
 					"@odata.count" : "8",
 					value : [{
@@ -80592,11 +79995,9 @@ make root = ${bMakeRoot}`;
 			{property : "SiblingEntity", start : 2, length : 1}
 		]);
 
-		this.expectRequest({
-				batchNo : 8,
-				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
-			}, {
+		this.expectRequest("#8 " + sUrl
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2", {
 				value : [{
 					ArtistID : "99", // unexpected entity
 					BestFriend : {ArtistID : "F99", IsActiveEntity : true, Name : "Friend Z"},
@@ -80607,11 +80008,9 @@ make root = ${bMakeRoot}`;
 					IsActiveEntity : true
 				}]
 			})
-			.expectRequest({
-				batchNo : 9,
-				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2"
-			}, {
+			.expectRequest("#9 " + sUrl
+			+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=3&$top=2", {
 				value : [{
 					ArtistID : "50",
 					IsActiveEntity : true,
@@ -80622,10 +80021,7 @@ make root = ${bMakeRoot}`;
 					SiblingEntity : {ArtistID : "S99", IsActiveEntity : true, Name : "Sibling Z"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 10,
-				url : sMainUrl + "&$skip=3&$top=2"
-			}, {
+			.expectRequest("#10 " + sMainUrl + "&$skip=3&$top=2", {
 				"@odata.count" : "8",
 				value : [{
 					ArtistID : "40",
@@ -80645,18 +80041,13 @@ make root = ${bMakeRoot}`;
 			.expectChange("friendBusy__AS_COMPOSITE", [,,, false, true])
 			.expectChange("friendBusy__AS_COMPOSITE", [,,, false])
 			.expectChange("sibling", [,,,, "Sibling E"])
-			.expectRequest({
-				batchNo : 11,
-				url : "Artists(ArtistID='40',IsActiveEntity=true)?custom=foo&$select=SiblingEntity"
-					+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-			}, {
+			.expectRequest("#11 Artists(ArtistID='40',IsActiveEntity=true)?custom=foo"
+				+ "&$select=SiblingEntity"
+				+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)", {
 				SiblingEntity : {ArtistID : "S4", IsActiveEntity : true, Name : "Sibling D"}
 			})
-			.expectRequest({
-				batchNo : 11,
-				url : "Artists(ArtistID='50',IsActiveEntity=true)?custom=foo&$select=BestFriend"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-			}, {
+			.expectRequest("#11 Artists(ArtistID='50',IsActiveEntity=true)?custom=foo"
+				+ "&$select=BestFriend&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 				BestFriend : {ArtistID : "F5", IsActiveEntity : true, Name : "Friend E"}
 			})
 			.expectChange("friend", [,,,, "Friend E"])
@@ -80674,34 +80065,33 @@ make root = ${bMakeRoot}`;
 		]);
 
 		let fnResolveBestFriend60;
-		this.expectRequest({
-				batchNo : 12,
-				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
-			}, new Promise(function (resolve) {
-				fnResolveBestFriend60 = resolve.bind(null, {
-					value : [{
-						ArtistID : "60",
-						BestFriend : {ArtistID : "F6", IsActiveEntity : true, Name : "Friend F"},
-						IsActiveEntity : true
-					}]
-				});
-			}))
-			.expectRequest({
-				batchNo : 13,
-				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1"
-			}, {
+		this.expectRequest("#12 " + sUrl
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1",
+				new Promise(function (resolve) {
+					fnResolveBestFriend60 = resolve.bind(null, {
+						value : [{
+							ArtistID : "60",
+							BestFriend : {
+								ArtistID : "F6",
+								IsActiveEntity : true,
+								Name : "Friend F"
+							},
+							IsActiveEntity : true
+						}]
+					});
+				})
+			)
+			.expectRequest("#13 " + sUrl
+				+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=5&$top=1", {
 				value : [{
 					ArtistID : "60",
 					IsActiveEntity : true,
 					SiblingEntity : {ArtistID : "S6", IsActiveEntity : true, Name : "Sibling F"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 14,
-				url : sMainUrl + "&$skip=5&$top=1"
-			}, {
+			.expectRequest("#14 " + sMainUrl + "&$skip=5&$top=1", {
 				"@odata.count" : "8",
 				value : [{
 					ArtistID : "60",
@@ -80721,32 +80111,25 @@ make root = ${bMakeRoot}`;
 
 		checkEvents([{property : "SiblingEntity", start : 5, length : 1}]);
 
-		this.expectRequest({
-				batchNo : 15,
-				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
-			}, {
+		this.expectRequest("#15 " + sUrl
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1", {
 				value : [{
 					ArtistID : "70",
 					BestFriend : {ArtistID : "F7", IsActiveEntity : true, Name : "Friend G"},
 					IsActiveEntity : true
 				}]
 			})
-			.expectRequest({
-				batchNo : 16,
-				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-					+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1"
-			}, {
+			.expectRequest("#16 " + sUrl
+				+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				+ sFilterSort + "&$select=ArtistID,IsActiveEntity&$skip=6&$top=1", {
 				value : [{
 					ArtistID : "70",
 					IsActiveEntity : true,
 					SiblingEntity : {ArtistID : "S7", IsActiveEntity : true, Name : "Sibling G"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 17,
-				url : sMainUrl + "&$skip=6&$top=1"
-			}, {
+			.expectRequest("#17 " + sMainUrl + "&$skip=6&$top=1", {
 				"@odata.count" : "8",
 				value : [{
 					ArtistID : "70",
@@ -80805,13 +80188,10 @@ make root = ${bMakeRoot}`;
 				IsActiveEntity : true,
 				Name : "Artist X"
 			})
-			.expectRequest({
-				batchNo : 19,
-				url : "Artists(ArtistID='240',IsActiveEntity=true)?custom=foo&$select=BestFriend"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ ",BestPublication($select=CurrencyCode,PublicationID)"
-					+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-			}, {
+			.expectRequest("#19 Artists(ArtistID='240',IsActiveEntity=true)?custom=foo"
+				+ "&$select=BestFriend&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ ",BestPublication($select=CurrencyCode,PublicationID)"
+				+ ",SiblingEntity($select=ArtistID,IsActiveEntity,Name)", {
 				BestFriend : {ArtistID : "F24", IsActiveEntity : true, Name : "Friend X"},
 				BestPublication : {CurrencyCode : "IDR", PublicationID : "Pub24"},
 				SiblingEntity : {ArtistID : "S24", IsActiveEntity : true, Name : "Sibling X"}
@@ -80826,44 +80206,37 @@ make root = ${bMakeRoot}`;
 
 		await this.waitForChanges(assert, "create new item");
 
-		this.expectRequest({
-				batchNo : 20,
-				url : sUrl + "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-					+ "&$filter=(IsActiveEntity eq true)"
-					+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
-					+ "&$orderby=ArtistID&$search=covfefe"
-					+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1"
-			}, {
+		this.expectRequest("#20 " + sUrl
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+				+ "&$filter=(IsActiveEntity eq true)"
+				+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+				+ "&$orderby=ArtistID&$search=covfefe"
+				+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1", {
 				value : [{
 					ArtistID : "80",
 					BestFriend : {ArtistID : "F8", IsActiveEntity : true, Name : "Friend H"},
 					IsActiveEntity : true
 				}]
 			})
-			.expectRequest({
-				batchNo : 21,
-				url : sUrl + "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
-					+ "&$filter=(IsActiveEntity eq true)"
-					+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
-					+ "&$orderby=ArtistID&$search=covfefe"
-					+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1"
-			}, {
+			.expectRequest("#21 " + sUrl
+				+ "&$expand=SiblingEntity($select=ArtistID,IsActiveEntity,Name)"
+				+ "&$filter=(IsActiveEntity eq true)"
+				+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+				+ "&$orderby=ArtistID&$search=covfefe"
+				+ "&$select=ArtistID,IsActiveEntity&$skip=7&$top=1", {
 				value : [{
 					ArtistID : "80",
 					IsActiveEntity : true,
 					SiblingEntity : {ArtistID : "S8", IsActiveEntity : true, Name : "Sibling H"}
 				}]
 			})
-			.expectRequest({
-				batchNo : 22,
-				url : sUrl + "&$count=true"
-					+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
-					+ "&$filter=(IsActiveEntity eq true)"
-					+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
-					+ "&$orderby=ArtistID&$search=covfefe"
-					+ "&$select=ArtistID,IsActiveEntity,Name"
-					+ "&$skip=7&$top=1"
-			}, {
+			.expectRequest("#22 " + sUrl + "&$count=true"
+				+ "&$expand=BestPublication($select=CurrencyCode,PublicationID)"
+				+ "&$filter=(IsActiveEntity eq true)"
+				+ " and not (ArtistID eq '240' and IsActiveEntity eq true)"
+				+ "&$orderby=ArtistID&$search=covfefe"
+				+ "&$select=ArtistID,IsActiveEntity,Name"
+				+ "&$skip=7&$top=1", {
 				"@odata.count" : "9",
 				value : [{
 					ArtistID : "80",
@@ -81174,11 +80547,8 @@ make root = ${bMakeRoot}`;
 					}]
 				}));
 		});
-		this.expectRequest({
-				batchNo : 1,
-				url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
-					+ "&$skip=0&$top=2"
-			}, bSeparateFailed ? oResponsePromise : {
+		this.expectRequest("#1 EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+				+ "&$skip=0&$top=2", bSeparateFailed ? oResponsePromise : {
 				value : [{
 					EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"},
 					ID : "0"
@@ -81187,10 +80557,7 @@ make root = ${bMakeRoot}`;
 					ID : "1"
 				}]
 			})
-			.expectRequest({
-				batchNo : 2,
-				url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=2"
-			}, bSeparateFailed ? {
+			.expectRequest("#2 EMPLOYEES?$select=ID,Name&$skip=0&$top=2", bSeparateFailed ? {
 				value : [{
 					ID : "0",
 					Name : "Employee 0"
@@ -81521,11 +80888,8 @@ make root = ${bMakeRoot}`;
 			.withExactArgs("ETag changed: EMPLOYEES('0')",
 				"EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID&$skip=0&$top=2",
 				"sap.ui.model.odata.v4.lib._Cache");
-		this.expectRequest({
-				batchNo : 1,
-				url : "EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
-					+ "&$skip=0&$top=2"
-			}, {
+		this.expectRequest("#1 EMPLOYEES?$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)&$select=ID"
+				+ "&$skip=0&$top=2", {
 				value : [{
 					"@odata.etag" : "conflict",
 					EMPLOYEE_2_TEAM : {Name : "n/a", Team_Id : "A"},
@@ -81536,10 +80900,7 @@ make root = ${bMakeRoot}`;
 					ID : "1"
 				}]
 			})
-			.expectRequest({
-				batchNo : 2,
-				url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=2"
-			}, {
+			.expectRequest("#2 EMPLOYEES?$select=ID,Name&$skip=0&$top=2", {
 				value : [{
 					"@odata.etag" : "etag0",
 					ID : "0",
@@ -81552,11 +80913,8 @@ make root = ${bMakeRoot}`;
 			})
 			.expectChange("name", ["Employee 0", "Employee 1"])
 			.expectChange("team", [, "Team B"])
-			.expectRequest({ // late property request
-				batchNo : 3,
-				url : "EMPLOYEES('0')?$select=EMPLOYEE_2_TEAM"
-					+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)"
-			}, {
+			.expectRequest("#3 EMPLOYEES('0')?$select=EMPLOYEE_2_TEAM"// late property request
+				+ "&$expand=EMPLOYEE_2_TEAM($select=Name,Team_Id)", {
 				"@odata.etag" : bLatePropertyEtagConflict ? "conflict" : "etag0",
 				EMPLOYEE_2_TEAM : {Name : "Team A", Team_Id : "A"}
 			})
