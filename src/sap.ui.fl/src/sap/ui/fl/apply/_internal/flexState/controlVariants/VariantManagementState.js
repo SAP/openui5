@@ -793,9 +793,11 @@ sap.ui.define([
 	 *
 	 * @param {string} sReference - Flex reference of the app
 	 * @param {Promise<undefined>} oPromise - Variant Switch Promise
+	 * @param {string} sVMReference - Variant Management reference
 	 */
-	VariantManagementState.setVariantSwitchPromise = function(sReference, oPromise) {
-		mVariantSwitchPromises[sReference] = oPromise;
+	VariantManagementState.setVariantSwitchPromise = function(sReference, oPromise, sVMReference) {
+		mVariantSwitchPromises[sReference] ||= {};
+		mVariantSwitchPromises[sReference][sVMReference] = oPromise;
 	};
 
 	/**
@@ -804,8 +806,8 @@ sap.ui.define([
 	 * @param {string} sReference - Flex reference of the app
 	 * @returns {Promise<undefined>} Variant Switch Promise
 	 */
-	VariantManagementState.getVariantSwitchPromise = function(sReference) {
-		return mVariantSwitchPromises[sReference];
+	VariantManagementState.waitForVariantSwitch = function(sReference) {
+		return Promise.all(Object.values(mVariantSwitchPromises[sReference] || {}));
 	};
 
 	return VariantManagementState;

@@ -70,13 +70,13 @@ sap.ui.define([
 	 * @returns {Promise} Resolves when the variant model is not busy anymore
 	 * @private
 	 */
-	function executeAfterSwitch(fnCallback, oModel) {
+	function executeAfterSwitch(fnCallback, oModel, sVMReference) {
 		// if there are multiple switches triggered very quickly this makes sure that they are being executed one after another
-		oModel._oVariantSwitchPromise = oModel._oVariantSwitchPromise
+		oModel._oVariantSwitchPromises[sVMReference] = oModel._oVariantSwitchPromises[sVMReference]
 		.catch(function() {})
 		.then(fnCallback);
-		VariantManagementState.setVariantSwitchPromise(oModel.sFlexReference, oModel._oVariantSwitchPromise);
-		return oModel._oVariantSwitchPromise;
+		VariantManagementState.setVariantSwitchPromise(oModel.sFlexReference, oModel._oVariantSwitchPromises[sVMReference], sVMReference);
+		return oModel._oVariantSwitchPromises[sVMReference];
 	}
 
 	/**
@@ -229,7 +229,7 @@ sap.ui.define([
 			this.sFlexReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
 			this.oAppComponent = mPropertyBag.appComponent;
 			this._oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
-			this._oVariantSwitchPromise = Promise.resolve();
+			this._oVariantSwitchPromises = {};
 			this._oVariantAppliedListeners = {};
 
 			// set variant model data
@@ -293,6 +293,10 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	VariantModel.prototype.waitForAllVMSwitchPromises = function() {
+		return Promise.all(Object.values(this._oVariantSwitchPromises));
+	};
+
 	/**
 	 * Updates the storage of the current variant for a given variant management control.
 	 * @param {object} mPropertyBag - Object with parameters as properties
@@ -318,7 +322,11 @@ sap.ui.define([
 		if (mPropertyBag.internallyCalled) {
 			return switchVariantAndUpdateModel.call(this, mProperties, mPropertyBag.scenario);
 		}
-		return executeAfterSwitch(switchVariantAndUpdateModel.bind(this, mProperties, mPropertyBag.scenario), this);
+		return executeAfterSwitch(
+			switchVariantAndUpdateModel.bind(this, mProperties, mPropertyBag.scenario),
+			this,
+			mPropertyBag.variantManagementReference
+		);
 	};
 
 	/**
@@ -978,13 +986,6 @@ sap.ui.define([
 			});
 		}
 
-		if (this.oData[sVariantManagementReference].initPromise) {
-			this.oData[sVariantManagementReference].initPromise.resolveFunction();
-			delete this.oData[sVariantManagementReference].initPromise;
-		}
-
-		this.oData[sVariantManagementReference].init = true;
-
 		// the initial changes are not applied via a variant switch
 		// to enable early variant switches to work properly they need to wait for the initial changes
 		// so the initial changes are set as a variant switch
@@ -993,7 +994,14 @@ sap.ui.define([
 			reference: this.sFlexReference,
 			vmReference: sVariantManagementReference
 		};
-		this._oVariantSwitchPromise = this._oVariantSwitchPromise.then(waitForInitialVariantChanges.bind(undefined, mParameters));
+		this._oVariantSwitchPromises[sVariantManagementReference] = waitForInitialVariantChanges(mParameters);
+
+		if (this.oData[sVariantManagementReference].initPromise) {
+			this.oData[sVariantManagementReference].initPromise.resolveFunction();
+			delete this.oData[sVariantManagementReference].initPromise;
+		}
+
+		this.oData[sVariantManagementReference].init = true;
 	};
 
 	VariantModel.prototype.waitForVMControlInit = function(sVMReference) {

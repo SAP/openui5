@@ -1685,12 +1685,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("variantSwitchPromise", async function(assert) {
 			const done = assert.async();
-			await VariantManagementState.getVariantSwitchPromise(sReference);
+			await VariantManagementState.waitForVariantSwitch(sReference);
 			assert.ok(true, "the function resolves");
 
 			const oDeferred = new Deferred();
-			VariantManagementState.setVariantSwitchPromise(sReference, oDeferred.promise);
-			VariantManagementState.getVariantSwitchPromise(sReference).then(() => {
+			VariantManagementState.setVariantSwitchPromise(sReference, oDeferred.promise, "variantManagementReference");
+			VariantManagementState.waitForVariantSwitch(sReference).then(() => {
 				assert.ok(true, "the promise is resolved");
 				done();
 			});
