@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/CustomData",
 	// load all required calendars in advance
 	"sap/ui/core/date/Buddhist",
 	"sap/ui/core/date/Gregorian",
@@ -54,7 +55,8 @@ sap.ui.define([
 	MonthRenderer,
 	jQuery,
 	oCore,
-	UI5Date
+	UI5Date,
+	CustomData
 ) {
 
 	"use strict";
@@ -113,7 +115,7 @@ sap.ui.define([
 				intervalSelection: true,
 				width: "400px",
 				selectedDates: [new DateRange({startDate: UI5Date.getInstance("2011", "0", "10"), endDate: UI5Date.getInstance("2011", "0", "13")})],
-				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2011", "0", "1"), type: CalendarDayType.Type01, tooltip: "Text"}),
+				specialDates: [new DateTypeRange({startDate: UI5Date.getInstance("2011", "0", "1"), type: CalendarDayType.Type01, tooltip: "Text", customData: [new CustomData({key:"key1", value: "value1", writeToDom: true}), new CustomData({key:"key2", value: "value2", writeToDom: false})]}),
 					new DateTypeRange({startDate: UI5Date.getInstance("2011", "0", "2"), endDate: UI5Date.getInstance("2011", "0", "4"), type: CalendarDayType.Type02, tooltip: "Text"}),
 					new DateTypeRange({startDate: UI5Date.getInstance("2011", "0", "5"), type: CalendarDayType.Type04}),
 					new DateTypeRange({startDate: UI5Date.getInstance("2011", "0", "6"),
@@ -499,10 +501,12 @@ sap.ui.define([
 
 	QUnit.test("special days", function(assert) {
 		var sDescribingDomTextId;
-
 		assert.ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
 		assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Non-Working Day Text", "20110101 has special days tooltip");
 		assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; My Type 1", "20110101 aria label");
+		assert.equal(jQuery("#Cal2--Month0-20110101").attr("data-key1"), "value1", "20110101 has correct custom data attribute");
+		assert.ok(!jQuery("#Cal2--Month0-20110101").attr("data-key2"), "20110101 does not contain custom attribute because it's property 'writeToDom' is false");
+
 
 		assert.ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
 		assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Non-Working Day Text", "20110102 has special days tooltip");
