@@ -4589,7 +4589,9 @@ sap.ui.define([
 			}
 		}
 
-		if (oEntity && !("@odata.etag" in oEntity)) {
+		// Note: ODLB#getKeepAliveContext creates an empty initial object w/ private annotations
+		if (bIgnoreETag && oEntity && !("@odata.etag" in oEntity)
+				&& !_Helper.isEmptyObject(_Helper.publicClone(oEntity))) {
 			bIgnoreETag = false;
 		}
 		if (bIgnoreETag || oEntity) {
