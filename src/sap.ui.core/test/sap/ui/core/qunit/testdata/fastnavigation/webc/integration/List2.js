@@ -1402,7 +1402,9 @@ sap.ui.define(['exports', 'testdata/fastnavigation/webc/integration/webcomponent
         */
         _handleTabNext(e) {
             t(e.target);
-            return;
+            {
+                return;
+            }
         }
         _handleHome() {
             if (!this.growsWithButton) {

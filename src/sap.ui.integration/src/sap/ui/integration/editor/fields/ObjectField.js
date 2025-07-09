@@ -768,7 +768,12 @@ sap.ui.define([
 			}),
 			new Button(sParameterId + "_control_table_edit_btn", {
 				icon: "{= ${/_hasNotEditableItemSelected} ===  true ? 'sap-icon://display' : 'sap-icon://edit' }",
-				tooltip: "{= ${/_hasNotEditableItemSelected} ===  true ? oResourceBundle.getText('EDITOR_FIELD_OBJECT_TABLE_BUTTON_VIEW_TOOLTIP') : oResourceBundle.getText('EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP')}",
+				tooltip: {
+					path: "/_hasNotEditableItemSelected",
+					formatter: function(hasNotEditableItemSelected) {
+						return hasNotEditableItemSelected === true ? oResourceBundle.getText('EDITOR_FIELD_OBJECT_TABLE_BUTTON_DISPLAY_TOOLTIP') : oResourceBundle.getText('EDITOR_FIELD_OBJECT_TABLE_BUTTON_EDIT_TOOLTIP');
+					}
+				},
 				enabled: "{= !!${/_hasTableSelected}}",
 				visible: that.getAllowPopover(),
 				press: that.onEditOrViewDetail.bind(that)

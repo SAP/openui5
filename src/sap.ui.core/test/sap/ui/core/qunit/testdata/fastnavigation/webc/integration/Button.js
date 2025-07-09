@@ -172,6 +172,16 @@ sap.ui.define(['testdata/fastnavigation/webc/integration/webcomponents', 'testda
              */
             this.disabled = false;
             /**
+             * When set to `true`, the component will
+             * automatically submit the nearest HTML form element on `press`.
+             *
+             * **Note:** This property is only applicable within the context of an HTML Form element.`
+             * @default false
+             * @public
+             * @deprecated Set the "type" property to "Submit" to achieve the same result. The "submits" property is ignored if "type" is set to any value other than "Button".
+             */
+            this.submits = false;
+            /**
              * Defines the additional accessibility attributes that will be applied to the component.
              * The following fields are supported:
              *
