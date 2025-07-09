@@ -9,7 +9,7 @@
 	  	"id": "IM2",
 		"type": "Warning",
 		"versionValidator": ".*.legacy-free(-SNAPSHOT)?$",
-		"text": "This version ({0}) is intended for experimentation only and should not be used for productive purposes. For more information, see",
+		"text": "This version ({0}) is intended for experimentation only and must not be used for productive purposes. For more information, see",
 		"expire": "2027-04-30",
 		"linkText": "the SAP Community blog post",
 		"mandatory": true,
