@@ -2155,6 +2155,8 @@ sap.ui.define([
 			await this.oModel.waitForAllVMSwitchPromises();
 			assert.ok(true, "the variant switch promise was resolved");
 			oControl.destroy();
+			oVariantManagement2.destroy();
+			oVariantManagement3.destroy();
 		});
 	});
 
