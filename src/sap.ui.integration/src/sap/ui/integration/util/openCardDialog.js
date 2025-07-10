@@ -135,9 +135,13 @@ sap.ui.define([
 		oChildCard.attachEvent("_ready", () => {
 			_setDialogHeader(oDialog, oChildCard);
 			_setAriaAttributes(oDialog, oChildCard);
+
 			if (!oChildCard._isComponentCard()) {
 				oDialog.open();
 			}
+
+			oChildCard.getCardContent()?.onOpenInDialog();
+
 			_setFocus(oChildCard, oDialog);
 		});
 

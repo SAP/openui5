@@ -136,5 +136,99 @@
 			"showStateIcon": false,
 			"customStateIcon": "sap-icon://cancel"
 		}
+	],
+	"tableCard4": [
+		{
+			"A": "1"
+		},
+		{
+			"A": "2"
+		},
+		{
+			"A": "3"
+		},
+		{
+			"A": "4"
+		},
+		{
+			"A": "5"
+		},
+		{
+			"A": "6"
+		}
+	],
+	"tableCard5": [
+		{
+			"ID": 1,
+			"FullName": "Alexandria Schmidt",
+			"Role": "Senior Principal",
+			"Department": "Global Engineering and Product Development",
+			"Location": "Waldorf, Germany",
+			"Status": "Active",
+			"Score": 99.8
+		},
+		{
+			"ID": 2,
+			"FullName": "Benjamin Johnson",
+			"Role": "Operations Specialist",
+			"Department": "Customer Success & Support - EMEA",
+			"Location": "London, United Kingdom",
+			"Status": "Onboarding",
+			"Score": 88.2
+		},
+		{
+			"ID": 3,
+			"FullName": "Charlotte O'Connor",
+			"Role": "UX Researcher",
+			"Department": "User Experience & Accessibility",
+			"Location": "Dublin, Ireland",
+			"Status": "Active",
+			"Score": 95.5
+		},
+		{
+			"ID": 4,
+			"FullName": "Dmitry Smirnov",
+			"Role": "DevOps Automation Engineer",
+			"Department": "Cloud Infrastructure & Automation",
+			"Location": "Moscow, Russia",
+			"Status": "Active",
+			"Score": 91.0
+		},
+		{
+			"ID": 5,
+			"FullName": "Emilia-Rose de la Vega",
+			"Role": "Machine Learning Lead",
+			"Department": "Data Science & AI",
+			"Location": "Barcelona, Spain",
+			"Status": "Active",
+			"Score": 97.3
+		},
+		{
+			"ID": 6,
+			"FullName": "Fiona Gallagher",
+			"Role": "Product Manager",
+			"Department": "Product Management & Strategy",
+			"Location": "Dublin, Ireland",
+			"Status": "Active",
+			"Score": 92.1
+		},
+		{
+			"ID": 7,
+			"FullName": "George Thompson",
+			"Role": "Security Analyst",
+			"Department": "Cybersecurity & Risk Management",
+			"Location": "Berlin, Germany",
+			"Status": "Active",
+			"Score": 89.4
+		},
+		{
+			"ID": 8,
+			"FullName": "Hannah Patel",
+			"Role": "Cloud Solutions Architect",
+			"Department": "Cloud Solutions & Architecture",
+			"Location": "Bangalore, India",
+			"Status": "Active",
+			"Score": 93.6
+		}
 	]
 }

@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent",
-	"qunit/testResources/genericTests/actionEnablementTests"
+	"qunit/testResources/genericTests/actionEnablementTests",
+	"qunit/testResources/nextDialogAfterOpenEvent"
 ], function (
 	Library,
 	mLibrary,
@@ -15,7 +16,8 @@ sap.ui.define([
 	QUnitUtils,
 	nextUIUpdate,
 	nextCardReadyEvent,
-	actionEnablementTests
+	actionEnablementTests,
+	nextDialogAfterOpenEvent
 ) {
 	"use strict";
 
@@ -1271,6 +1273,68 @@ sap.ui.define([
 		assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
 		assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
 		assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
+	});
+
+	QUnit.module("Table Card Dialog Sizing", {
+		beforeEach: async function () {
+			this.oCard = new Card({
+				manifest: {
+					"sap.app": { "id": "test.table.dialog" },
+					"sap.card": {
+						"type": "Table",
+						"header": { "title": "Table Dialog Test" },
+						"content": {
+							"data": {
+								"json": [
+									{ "Product": "A", "Stock": 10 },
+									{ "Product": "B", "Stock": 20 }
+								]
+							},
+							"row": {
+								"columns": [
+									{ "title": "Product", "value": "{Product}" },
+									{ "title": "Stock", "value": "{Stock}" }
+								]
+							}
+						},
+						"footer": {
+							"paginator": { "pageSize": 1 }
+						}
+					}
+				}
+			});
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			await nextCardReadyEvent(this.oCard);
+			await nextUIUpdate();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Table card dialog has sticky header, minimal width and auto layout", async function (assert) {
+		const oShowMoreButton = this.oCard.getCardFooter().getAggregation("_showMore");
+		assert.ok(oShowMoreButton, "'Show More' button exists");
+		QUnitUtils.triggerEvent("tap", oShowMoreButton.getDomRef());
+
+		const oDialog = this.oCard.getDependents().find(function(dep) {
+			return dep.isA && dep.isA("sap.m.Dialog");
+		});
+		assert.ok(oDialog, "Dialog is opened");
+
+		await nextDialogAfterOpenEvent(oDialog);
+		await nextUIUpdate();
+
+		const oPaginatedCard = oDialog.getContent()[0];
+		assert.ok(oPaginatedCard, "Paginated card exists in dialog");
+
+		const oTable = oPaginatedCard.getAggregation("_content").getAggregation("_content");
+
+		assert.ok(oTable, "Table exists in paginated card");
+		assert.ok(oTable.getSticky(), "Table has sticky header");
+		assert.ok(oDialog.getDomRef().offsetWidth <= 320, "Dialog hasn't stretched beyond needed width");
+		assert.strictEqual(oTable.getWidth(), "auto", "Table width is set to 'auto' in dialog");
+		assert.strictEqual(oTable.getFixedLayout(), false, "Table fixedLayout is set to false in dialog");
 	});
 
 });

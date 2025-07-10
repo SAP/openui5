@@ -1,14 +1,15 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/integration/Host",
-	"sap/m/MessageToast"
-], function (Controller, Host, MessageToast) {
+	"sap/m/MessageToast",
+	"sap/ui/model/json/JSONModel"
+], function (Controller, Host, MessageToast, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.f.cardsdemo.controller.ShowCard", {
 
 		onInit: function () {
-			var oHost = new Host({
+			const oHost = new Host({
 				resolveDestination: function (sName) {
 					switch (sName) {
 						case "Northwind_V4":
@@ -19,12 +20,7 @@ sap.ui.define([
 				}
 			});
 
-			this.getView().byId("showCard1").setHost(oHost);
-			this.getView().byId("showCard2").setHost(oHost);
-			this.getView().byId("showCard6").setHost(oHost);
-			this.getView().byId("showCard8").setHost(oHost);
-
-			var oHostWithActions = new Host({
+			const oHostWithActions = new Host({
 				actions: [
 					{
 						type: "Navigation",
@@ -44,6 +40,13 @@ sap.ui.define([
 				]
 			});
 
+			const oModel = new JSONModel(sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/tablecontent/tableManifests.json"));
+
+			this.getView().setModel(oModel, "manifests");
+			this.getView().byId("showCard1").setHost(oHost);
+			this.getView().byId("showCard2").setHost(oHost);
+			this.getView().byId("showCard6").setHost(oHost);
+			this.getView().byId("showCard8").setHost(oHost);
 			this.getView().byId("showCard7").setHost(oHostWithActions);
 		}
 
