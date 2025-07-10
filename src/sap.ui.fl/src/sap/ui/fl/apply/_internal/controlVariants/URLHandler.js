@@ -384,23 +384,22 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.variants.VariantModel
 	 */
 	URLHandler.attachHandlers = function(mPropertyBag) {
-		function observerHandler() {
+		async function observerHandler() {
 			// variant switch promise needs to be checked, since there might be a pending on-going variants switch
 			// which might result in unnecessary data being stored
-			return mPropertyBag.model._oVariantSwitchPromise.then(function() {
-				mPropertyBag.model._oHashData.controlPropertyObservers.forEach(function(oObserver) {
-					oObserver.destroy();
-				});
-				// deregister navigation filter if ushell is available
-				deRegisterNavigationFilter(mPropertyBag.model);
-
-				// this promise is not returned since the component is getting destroyed,
-				// which will also destroy the variant model anyway,
-				// but this is just to ensure the model is in sync with the variants state (which is persisted)
-				mPropertyBag.model.destroy();
-				mPropertyBag.model.oComponentDestroyObserver.unobserve(mPropertyBag.model.oAppComponent, {destroy: true});
-				mPropertyBag.model.oComponentDestroyObserver.destroy();
+			await mPropertyBag.model.waitForAllVMSwitchPromises();
+			mPropertyBag.model._oHashData.controlPropertyObservers.forEach(function(oObserver) {
+				oObserver.destroy();
 			});
+			// deregister navigation filter if ushell is available
+			deRegisterNavigationFilter(mPropertyBag.model);
+
+			// this promise is not returned since the component is getting destroyed,
+			// which will also destroy the variant model anyway,
+			// but this is just to ensure the model is in sync with the variants state (which is persisted)
+			mPropertyBag.model.destroy();
+			mPropertyBag.model.oComponentDestroyObserver.unobserve(mPropertyBag.model.oAppComponent, {destroy: true});
+			mPropertyBag.model.oComponentDestroyObserver.destroy();
 		}
 
 		// register navigation filter for custom navigation
