@@ -121,10 +121,22 @@ sap.ui.define([
 					changeType: "selectIconTabBarFilter",
 					content: {
 						selectedKey: "secondTab",
+						previousSelectedKey: "thirdTab"
+					}
+				}
+			},
+			previousActions: {
+				name: "settings",
+				controlId: "tabbar",
+				parameter: {
+					changeType: "selectIconTabBarFilter",
+					content: {
+						selectedKey: "thirdTab",
 						previousSelectedKey: "firstTab"
 					}
 				}
 			},
+			changesAfterCondensing: 1,
 			afterAction: fnGetConfirmSelectedElementAssert("tabbar", "secondTab"),
 			afterUndo: fnGetConfirmSelectedElementAssert("tabbar", "firstTab"),
 			afterRedo: fnGetConfirmSelectedElementAssert("tabbar", "secondTab")
