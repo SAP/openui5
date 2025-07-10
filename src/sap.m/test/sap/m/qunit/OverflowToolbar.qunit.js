@@ -3799,6 +3799,32 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Interactive controls count", function (assert) {
+		// Arrange
+		var oOverflowTB = createOverflowToolbar({width: '500px'}, [
+				new Button({text: "Button 1", width: "150px"}),
+				new Button({text: "Button 2", width: "150px"})
+			]);
+
+		oOverflowTB.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOverflowTB._getToolbarInteractiveControls().length, 2,
+			"Interactive controls count is correct when overflow button is not visible (two Buttons)");
+
+		// Act
+		oOverflowTB.setWidth("250px");
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oOverflowTB._getToolbarInteractiveControls().length, 2,
+			"Interactive controls count is correct when overflow button is visible (one Button + overflow button)");
+
+		// Clean up
+		oOverflowTB.destroy();
+	});
+
 	QUnit.module("Special cases", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
