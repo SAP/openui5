@@ -345,6 +345,27 @@ sap.ui.define([
 		},
 
 		/**
+		 * Clicks on the overflow button in the toolbar of a mdc chart and opens the overflow popover.
+		 * @param {string} sId The id of the mdc chart
+		 * @returns {Promise} OPA waitFor
+		 */
+		iOpenTheOverflowPopover: function(sId) {
+			return waitForMDCChartWithId.call(this, sId, {
+				success: function(oMDCChart) {
+					iClickOnOverflowToolbarButton.call(this, oMDCChart, {
+						controlType: "sap.m.ToggleButton",
+						matchers: [
+							new PropertyStrictEquals({
+								name: "icon",
+								value: "sap-icon://overflow"
+							})
+						]
+					});
+				}
+			});
+		},
+
+		/**
 		* Selects given datapoints on given chart.
 		* @param {array} aDataPoints Datapoint objects to select
 		* @param {string} sId Id of the mdc chart

@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/IllustratedMessage",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterType",
@@ -68,6 +69,7 @@ sap.ui.define([
 	Toolbar,
 	IllustratedMessage,
 	JSONModel,
+	JSONListBinding,
 	Sorter,
 	Filter,
 	FilterType,
@@ -806,16 +808,51 @@ sap.ui.define([
 		TableUtils.Grouping.isInTreeMode.restore();
 	});
 
-	QUnit.test("#_getContexts behavior with suspended binding/hidden table and resumed binding/visible table", async function(assert) {
-		oTable.setVisible(false);
-		oTable.getBinding().suspend();
-		await TableQUnitUtils.wait(100);
-		assert.notOk(oTable.getRows()[0].getBindingContext(), "Table has no rows with bindingContext");
+	QUnit.test("Initialize invisible table with suspended binding", async function(assert) {
+		oTable.destroy();
+		this.spy(JSONListBinding.prototype, "getContexts");
+		oTable = TableQUnitUtils.createTable({
+			visible: false,
+			rows: {
+				path: "/",
+				suspended: true
+			},
+			models: TableQUnitUtils.createJSONModelWithEmptyRows(1)
+		});
 
-		oTable.setVisible(true);
-		oTable.getBinding().resume();
 		await TableQUnitUtils.wait(100);
-		assert.ok(oTable.getRows()[0].getBindingContext(), "Table has rows with bindingContext");
+		assert.ok(JSONListBinding.prototype.getContexts.notCalled, "Binding contexts not requested");
+
+		oTable.destroy();
+	});
+
+	QUnit.test("Change visibility of table and suspension state of binding", async function(assert) {
+		const oBinding = oTable.getBinding();
+
+		this.spy(oBinding, "getContexts");
+
+		oTable.setVisible(false);
+		oBinding.suspend();
+		await TableQUnitUtils.wait(100);
+		assert.ok(oBinding.getContexts.notCalled, "Table hidden, binding suspended: Contexts not requested");
+
+		oBinding.getContexts.resetHistory();
+		oTable.invalidate();
+		oBinding.resume();
+		await TableQUnitUtils.wait(100);
+		assert.ok(oBinding.getContexts.called, "Table hidden, binding not suspended: Contexts requested");
+
+		oBinding.getContexts.resetHistory();
+		oTable.setVisible(true);
+		oBinding.suspend();
+		await TableQUnitUtils.wait(100);
+		assert.ok(oBinding.getContexts.called, "Table visible, binding suspended: Contexts requested");
+
+		oBinding.getContexts.resetHistory();
+		oTable.invalidate();
+		oBinding.resume();
+		await TableQUnitUtils.wait(100);
+		assert.ok(oBinding.getContexts.called, "Table visible, binding not suspended: Contexts requested");
 	});
 
 	QUnit.module("Column operations", {
@@ -3142,56 +3179,62 @@ sap.ui.define([
 	});
 
 	QUnit.test("#_getContexts", function(assert) {
-		const oGetContexts = sinon.stub(this.oTable.getBinding(), "getContexts");
+		const oBinding = this.oTable.getBinding();
+		const oGetContexts = sinon.stub(oBinding, "getContexts");
 		const sReturnValue = "Binding#getContexts return value";
 
 		oGetContexts.returns(sReturnValue);
 
 		assert.strictEqual(this.oTable._getContexts(), sReturnValue, "Called without arguments: Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called without arguments: Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(undefined, undefined, undefined, undefined),
-			"Called without arguments: Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(undefined, undefined, undefined, undefined),
+			"Called without arguments: Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		assert.strictEqual(this.oTable._getContexts(1), sReturnValue, "Called with (1): Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called with (1): Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(1, undefined, undefined, undefined), "Called with (1): Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, undefined, undefined, undefined), "Called with (1): Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		assert.strictEqual(this.oTable._getContexts(1, 2), sReturnValue, "Called with (1, 2): Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2): Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(1, 2, undefined, undefined), "Called with (1, 2): Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, 2, undefined, undefined), "Called with (1, 2): Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		assert.strictEqual(this.oTable._getContexts(1, 2, 3), sReturnValue, "Called with (1, 2, 3): Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3): Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, undefined), "Called with (1, 2, 3): Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, 2, 3, undefined), "Called with (1, 2, 3): Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		assert.strictEqual(this.oTable._getContexts(1, 2, 3, true), sReturnValue, "Called with (1, 2, 3, true): Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, true): Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, true), "Called with (1, 2, 3, true): Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, 2, 3, true), "Called with (1, 2, 3, true): Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		assert.strictEqual(this.oTable._getContexts(1, 2, 3, false), sReturnValue, "Called with (1, 2, 3, false): Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, false): Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, false), "Called with (1, 2, 3, false): Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, 2, 3, false), "Called with (1, 2, 3, false): Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		assert.strictEqual(this.oTable._getContexts(1, null, undefined, true), sReturnValue, "Called with (1, null, undefined, true): Return value");
-		assert.equal(oGetContexts.callCount, 1, "Called with (1, null, undefined, true): Binding#getContexts called once");
-		assert.ok(oGetContexts.calledWithExactly(1, null, undefined, true),
-			"Called with (1, null, undefined, true): Binding#getContexts call arguments");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, null, undefined, true), "Called with (1, null, undefined, true): Binding#getContexts call");
 
 		oGetContexts.resetHistory();
 		this.oTable.setVisible(false);
-		assert.deepEqual(this.oTable._getContexts(), [], "Called without arguments on invisible and suspended table: Return value");
-		assert.equal(oGetContexts.callCount, 0, "Called without arguments: Binding#getContexts not called");
-		this.oTable.setVisible(true);
-		this.oTable.getBinding().resume();
+		oBinding.suspend();
+		assert.deepEqual(this.oTable._getContexts(), [], "Called on invisible table and suspended binding: Return value");
+		assert.ok(oGetContexts.notCalled, "Called on invisible table and suspended binding: Binding#getContexts not called");
 
+		oGetContexts.resetHistory();
+		oBinding.resume();
+		assert.strictEqual(this.oTable._getContexts(1, 2, 3), sReturnValue, "Called on invisible table and not suspended binding: Return value");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, 2, 3, undefined),
+			"Called on invisible table and not suspended binding: Binding#getContexts call");
+
+		oGetContexts.resetHistory();
+		this.oTable.setVisible(true);
+		oBinding.suspend();
+		assert.deepEqual(this.oTable._getContexts(1, 2, 3), sReturnValue, "Called on visible table and suspended binding: Return value");
+		assert.ok(oGetContexts.calledOnceWithExactly(1, 2, 3, undefined), "Called on visible table and suspended binding: Binding#getContexts call");
+
+		oGetContexts.resetHistory();
 		this.oTable.unbindRows();
 		assert.deepEqual(this.oTable._getContexts(1, 2, 3), [], "Called without binding: Return value");
+		assert.ok(oGetContexts.notCalled, "Called without binding: Binding#getContexts not called");
 	});
 
 	QUnit.test("#_getBaseRowHeight", function(assert) {

@@ -107,6 +107,22 @@ sap.ui.define([
 				errorMessage: "No Dialogs found"
 			});
 		},
+		/**
+		 * Assertion that checks for the existence of an overflow popover.
+		 * @returns {Promise} OPA waitFor
+		 */
+		iShouldSeeAnOverflowPopover: function() {
+			return this.waitFor({
+				controlType: "sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover",
+				success: function(aPopovers) {
+					Opa5.assert.ok(aPopovers.length, "Overflow popovers were found");
+
+					const oPopover = aPopovers.find((o) => o.getId().includes("toolbar-popover"));
+					Opa5.assert.ok(oPopover, "Overflow popover is opened");
+				},
+				errorMessage: "No overflow popovers found"
+			});
+		},
 		iShouldSeeVisibleDimensionsInOrder: function(aOrderedDimensionNames, sId) {
 
 		},

@@ -109,7 +109,6 @@ sap.ui.define([
 	QUnit.test('Focus stays inside notification list after close and invalidation', async function(assert) {
 		var oList = this.notificationList;
 
-		oList.getItems()[1]._getCloseButton().$().trigger("focus");
 		oList.getItems()[1]._getCloseButton().firePress();
 		await nextUIUpdate();
 		oList.setHeaderText('New Header Text');

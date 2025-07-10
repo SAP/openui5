@@ -733,9 +733,8 @@ sap.ui.define([
 
 			const oParent = this.getParent();
 			const that = this;
-			const bPreserveFocus = this.getDomRef().contains(document.activeElement);
 
-			if (bPreserveFocus && oParent?.isA?.("sap.ui.core.Element")) {
+			if (oParent?.isA?.("sap.ui.core.Element")) {
 				var oDelegate = {
 					onAfterRendering: function () {
 						if (oParent.isDestroyed()) {

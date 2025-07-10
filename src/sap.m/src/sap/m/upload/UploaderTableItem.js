@@ -9,9 +9,8 @@ sap.ui.define([
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
 	"sap/m/upload/UploaderHttpRequestMethod",
-	"sap/m/upload/UploadItem",
-	"sap/ui/export/ExportUtils"
-], function (Log, MobileLibrary, Element, FileUtil, Device, UploaderHttpRequestMethod, UploadItem, ExportUtils) {
+	"sap/m/upload/UploadItem"
+], function (Log, MobileLibrary, Element, FileUtil, Device, UploaderHttpRequestMethod, UploadItem) {
 	"use strict";
 
 	/**
@@ -308,11 +307,11 @@ sap.ui.define([
 				oResponse = oXhr.response;
 				if (oResponse instanceof window.Blob) {
 					const sFullFileName =  `${oSplit.name}.${oSplit.extension}`;
-					ExportUtils.saveAsFile(oResponse, sFullFileName);
+					this._saveAsFile(oResponse, sFullFileName);
 				} else if (typeof oResponse === "string") {
 					FileUtil.save(oResponse, oSplit.name, oSplit.extension, oItem.getMediaType(), "utf-8");
 				}
-			};
+			}.bind(this);
 			oXhr.send();
 			return true;
 		} else {
@@ -337,6 +336,63 @@ sap.ui.define([
 		};
 		oHandler.aborted = true;
 		oHandler.xhr.abort();
+	};
+
+	/**
+		 * This function saves the provided Blob to the local file system.
+		 * The parameter name is optional and depending on the browser it
+		 * is not ensured that the filename can be applied. Google Chrome,
+		 * Mozilla Firefox, Internet Explorer and Microsoft Edge will
+		 * apply the filename correctly.
+		 *
+		 * @param {Blob} oBlob - Binary large object of the file that should be saved to the filesystem
+		 * @param {string} [sFilename] - Filename of the file including the file extension
+		 * @private
+		 */
+	Uploader.prototype._saveAsFile = function(oBlob, sFilename) {
+		let fnSave;
+
+		/* Ignore other formats than Blob */
+		if (!(oBlob instanceof Blob)) {
+			return;
+		}
+
+		const oLink = document.createElement("a");
+		const oDownloadSupported = "download" in oLink;
+
+		if (oDownloadSupported) {
+			fnSave = function(data, fileName) {
+				oLink.download = fileName;
+				oLink.href = window.URL.createObjectURL(data);
+				oLink.dispatchEvent(new window.MouseEvent("click"));
+			};
+		}
+
+		function openWindow(sUrl, sWindowName) {
+			const sWindowFeatures = "noopener,noreferrer";
+
+			return window.open(sUrl, sWindowName, sWindowFeatures);
+		}
+
+		/* In case of pre iOS 13 Safari, MacOS Safari (legacy) */
+		if (typeof fnSave === "undefined") {
+			fnSave = function(data) {
+				const oReader = new window.FileReader();
+
+				oReader.onloadend = function() {
+					const sUrl = oReader.result.replace(/^data:[^;]*;/, "data:attachment/file;");
+					const opened = openWindow(sUrl, "_blank");
+
+					if (!opened) {
+						window.location.href = sUrl;
+					}
+				};
+				oReader.readAsDataURL(data);
+			};
+		}
+
+		/* Save file to device */
+		fnSave(oBlob, sFilename);
 	};
 
 	return Uploader;

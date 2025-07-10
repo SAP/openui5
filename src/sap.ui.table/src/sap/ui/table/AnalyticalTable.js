@@ -96,17 +96,13 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
-		if (!this.getVisible()) {
+		const oBinding = this.getBinding();
+
+		if (!oBinding || !this.getVisible() && oBinding.isSuspended()) {
 			return [];
 		}
 
-		const oBinding = this.getBinding();
-		if (oBinding) {
-			// first call getContexts to trigger data load but return nodes instead of contexts
-			return oBinding.getNodes(iStartIndex, iLength, iThreshold);
-		} else {
-			return [];
-		}
+		return oBinding.getNodes(iStartIndex, iLength, iThreshold);
 	};
 
 	AnalyticalTable.prototype._getRowContexts = TreeTable.prototype._getRowContexts;
