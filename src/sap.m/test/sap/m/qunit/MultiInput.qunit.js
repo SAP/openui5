@@ -1706,6 +1706,45 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test("mobile - value help icon visibility in suggestion popover", async function (assert) {
+		// Stub device as phone
+		this.stub(Device, "system").value({
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// Setup MultiInput with suggestion items
+		const oMultiInput = new MultiInput({
+			suggestionItems: [
+				new Item({ text: "Diamond", key: "diamond" }),
+				new Item({ text: "Graphite", key: "graphite" })
+			]
+		});
+		oMultiInput.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		qutils.triggerEvent("tap", oMultiInput.getDomRef());
+
+		await nextUIUpdate();
+
+		const oInnerInput = oMultiInput._getSuggestionsPopover().getInput();
+		const valueHelpIcon = oInnerInput.getDomRef().querySelector("span");
+
+		// Assert: Icon is visible by default (when showValueHelp is not set to false)
+		assert.ok(valueHelpIcon.offsetParent !== null, "Value help icon is visible by default when 'showValueHelp' is not explicitly disabled.");
+		assert.strictEqual(oInnerInput.getValueHelpIconSrc(), "sap-icon://search", "Default value help icon source is 'sap-icon://search'.");
+
+		// Update property and verify hidden icon
+		oMultiInput.setShowValueHelp(false);
+		await nextUIUpdate();
+
+		assert.ok(valueHelpIcon.offsetParent === null, "Value help icon is hidden when 'showValueHelp' is set to false.");
+
+		// Cleanup
+		oMultiInput.destroy();
+	});
+
 	QUnit.test("onBeforeOpen should call _manageListsVisibility with the correct parameter", async function (assert) {
 		this.clock = sinon.useFakeTimers();
 		var oFakeEvent = {
