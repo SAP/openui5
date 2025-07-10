@@ -77567,6 +77567,45 @@ make root = ${bMakeRoot}`;
 
 	//*********************************************************************************************
 	// Scenario: Create an operation binding for a bound action relative to a new context where no
+	// data has been loaded because ODM#getKeepAliveContext has just been called. Use
+	// bIgnoreETag to invoke the action unconditionally without a GET request beforehand.
+	// SNOW: DINC0524072
+	QUnit.test("DINC0524072: bound action on fresh #getKeepAliveContext", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+
+		await this.createView(assert, "", oModel);
+
+		const oContext = oModel.getKeepAliveContext("/EMPLOYEES('0')");
+		assert.deepEqual(oContext.getObject(), undefined, "initially undefined...");
+		assert.deepEqual(await oContext.requestObject(), {}, "...then empty");
+
+		const sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee";
+		const oAction = oModel.bindContext(sAction + "(...)", oContext);
+
+		this.expectRequest({
+				batchNo : 1,
+				headers : {"If-Match" : "*"},
+				method : "POST",
+				payload : {TeamID : "42"},
+				url : "EMPLOYEES('0')/" + sAction
+			}, {/* don't care */})
+			.expectRequest({
+				batchNo : 1,
+				url : "EMPLOYEES('0')?$select=ID"
+			}, {ID : "0"});
+
+		await Promise.all([
+			oAction.setParameter("TeamID", "42")
+				// code under test
+				.invoke(/*sGroupId*/undefined, /*bIgnoreETag*/true),
+			this.waitForChanges(assert)
+		]);
+
+		assert.deepEqual(oContext.getObject(), {ID : "0"});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Create an operation binding for a bound action relative to a new context where no
 	// data has been loaded. Use $$inheritExpandSelect to inherit some hardcoded $select from the
 	// context's binding while auto-$expand/$select is turned on (but there's no UI). Use
 	// bIgnoreETag to invoke the action unconditionally without a GET request beforehand.
