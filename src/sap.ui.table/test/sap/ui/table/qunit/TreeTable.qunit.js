@@ -266,15 +266,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("#_getContexts", function(assert) {
-		const fnBindingContextSpy = sinon.spy(TreeBindingProxy.prototype, "getContexts");
+		const oBinding = this.table.getBinding();
+		const oGetNodes = sinon.spy(oBinding, "getNodes");
 
-		fnBindingContextSpy.resetHistory();
+		oGetNodes.resetHistory();
 		this.table.setVisible(false);
+		oBinding.suspend();
+		assert.deepEqual(this.table._getContexts(), [], "Called on invisible table and suspended binding: Return value");
+		assert.ok(oGetNodes.notCalled, "Called on invisible table and suspended binding: Binding#getNodes not called");
 
-		assert.deepEqual(this.table._getContexts(), [], "Called without arguments on invisible and suspended table: Return value");
-		assert.equal(fnBindingContextSpy.callCount, 0, "Called without arguments: TreeBindingProxy#getContexts not called");
+		oGetNodes.resetHistory();
+		oBinding.resume();
+		this.table._getContexts(1, 2, 3);
+		assert.ok(oGetNodes.calledOnceWithExactly(1, 2, 3), "Called on invisible table and not suspended binding: Binding#getNodes call");
 
-		fnBindingContextSpy.restore();
+		oGetNodes.resetHistory();
+		this.table.setVisible(true);
+		oBinding.suspend();
+		this.table._getContexts(1, 2, 3);
+		assert.ok(oGetNodes.calledOnceWithExactly(1, 2, 3), "Called on visible table and suspended binding: Binding#getNodes call");
+
+		oGetNodes.resetHistory();
+		this.table.unbindRows();
+		assert.deepEqual(this.table._getContexts(1, 2, 3), [], "Called without binding: Return value");
+		assert.ok(oGetNodes.notCalled, "Called without binding: Binding#getNodes not called");
 	});
 
 	QUnit.test("Hierarchy modes", async function(assert) {

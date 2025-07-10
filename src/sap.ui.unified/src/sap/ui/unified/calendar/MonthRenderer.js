@@ -558,6 +558,15 @@ MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWee
 		mAccProps["label"] = mAccProps["label"] + " " + oMonth._oFormatSecondaryLong.format(oSecondaryDay.toUTCJSDate(), true);
 	}
 
+	if (aDayTypes[0] && aDayTypes[0].customData?.length && bShouldBeMarkedAsSpecialDate) {
+		//render customData
+		aDayTypes[0].customData.forEach((customData) => {
+			if (customData.getWriteToDom()) {
+				oRm.attr(`data-${customData.getKey()}`, customData.getValue());
+			}
+		});
+	}
+
 	oRm.accessibilityState(null, mAccProps);
 	oRm.openEnd(); // div element
 

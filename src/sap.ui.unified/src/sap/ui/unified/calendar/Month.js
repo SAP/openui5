@@ -948,7 +948,7 @@ sap.ui.define([
 	 * the first hit is used. The only exception is when one of the types is
 	 * NonWorking, then you can have both NonWorking and the other type.
 	 * @param {sap.ui.unified.calendar.CalendarDate} oDate A CalendarDate
-	 * @returns {object[]} an array that contains maximum 2 objects each with date type and tooltip defined in CalendarDayType
+	 * @returns {object[]} an array that contains maximum 2 objects each with date type, tooltip defined in CalendarDayType and customData defined in array of CustomData
 	 * @private
 	 */
 	Month.prototype._getDateTypes = function(oDate){
@@ -983,10 +983,10 @@ sap.ui.define([
 			// collects non working day with the first occurrence of one of the types01..types20
 			if ((oTimeStamp === oStartTimeStamp && !oEndDate) || (oTimeStamp >= oStartTimeStamp && oTimeStamp <= oEndTimeStamp)) {
 				if (!bNonWorkingType && !oType) {
-					oType = {type: oRange.getType(), secondaryType: oRange.getSecondaryType(), tooltip: oRange.getTooltip_AsString(), color: oRange.getColor()};
+					oType = {type: oRange.getType(), secondaryType: oRange.getSecondaryType(), tooltip: oRange.getTooltip_AsString(), color: oRange.getColor(), customData: oRange.getCustomData()};
 					aTypes.push(oType);
 				} else if (bNonWorkingType && !oTypeNW) {
-						oTypeNW = {type: oRange.getType(), secondaryType: oRange.getSecondaryType(), tooltip: oRange.getTooltip_AsString()};
+						oTypeNW = {type: oRange.getType(), secondaryType: oRange.getSecondaryType(), tooltip: oRange.getTooltip_AsString(), customData: oRange.getCustomData()};
 						aTypes.push(oTypeNW);
 				}
 				if (oType && oTypeNW) {
