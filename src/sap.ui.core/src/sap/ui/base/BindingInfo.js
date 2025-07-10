@@ -186,7 +186,12 @@ sap.ui.define([
 			// property:"{path}" or "\{path\}"
 			if (typeof oValue === "string") {
 				// either returns a binding info or an unescaped string or undefined - depending on binding syntax
-				oBindingInfo = BindingInfo.parse(oValue, oScope, true);
+				const args = [oValue, oScope, true];
+				// provide variable "$control" to be used with ".bind()" in the binding string
+				// see BindingParser.complexParser
+				args[8] = { "$control": null };
+
+				oBindingInfo = BindingInfo.parse(...args);
 			}
 			return oBindingInfo;
 		},
