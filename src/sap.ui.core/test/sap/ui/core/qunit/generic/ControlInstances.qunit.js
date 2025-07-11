@@ -55,13 +55,22 @@ sap.ui.define([
 				};
 			}
 
+			// the first control instance may create some commonly used elements, so ignore it (those instances created for every control hurt more)
+			const oFirstControlOrPromise = Utils.createControlOrElement(oClassInfo.fnClass, this.getObjectCapabilities(sControlName), {id: "control1"});
+			(typeof oFirstControlOrPromise.then === "function")
+				? await oFirstControlOrPromise
+				: oFirstControlOrPromise;
+
+			// record "before" numbers
 			const mPreElements = ElementRegistry.all();
 
-			const oControlOrPromise = Utils.createControlOrElement(oClassInfo.fnClass, this.getObjectCapabilities(sControlName));
+			// create the second instance of the control to test
+			const oControlOrPromise = Utils.createControlOrElement(oClassInfo.fnClass, this.getObjectCapabilities(sControlName), {id: "control2"});
 			const oControl = (typeof oControlOrPromise.then === "function")
 				? await oControlOrPromise
 				: oControlOrPromise;
 
+			// record "after" numbers
 			const mPostElements = ElementRegistry.all();
 
 			// identify all other elements which were created by this tested control
@@ -106,9 +115,9 @@ sap.ui.define([
 			},
 			body: JSON.stringify(payload)
 		}).then(function (response) {
-			if (!response.ok) {
+			if (!response.ok) { //This error case includes the following: when the library does not belong to the current project (OpenUI5 lib while SAPUI5 is being tested), the response is 422
 				Log.warning("[ControlInstances] Could not send control instances:", response.statusText);
-			} else {
+			} else { // only for status 200, the actual delta is sent - but ignored here for now
 				Log.info("[ControlInstances] Control instances sent successfully.");
 			}
 		}).catch(function (error) {
