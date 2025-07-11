@@ -337,37 +337,33 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-			"ODataV4Selection Flat": {
+			"ODataV4Selection": {
 				group: "Plugins",
-				module: "./plugins/ODataV4Selection.Flat.qunit",
+				module: "./plugins/{name}.qunit"
+			},
+			"ODataV4MultiSelection": {
+				group: "Plugins",
+				module: "./plugins/{name}.qunit",
 				ui5: {
-					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
+					// sap.ui.table.plugins.ODataV4MultiSelection requires sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-			"ODataV4Selection Hierarchy": {
+			"ODataV4SingleSelection": {
 				group: "Plugins",
-				module: "./plugins/ODataV4Selection.Hierarchy.qunit",
-				ui5: {
-					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
-					libs: ["sap.ui.table", "sap.m"]
-				}
+				module: "./plugins/{name}.qunit"
 			},
-			"ODataV4Selection DataAggregation": {
+			"ODataV4MultiLevel": {
 				group: "Plugins",
-				module: "./plugins/ODataV4Selection.DataAggregation.qunit",
-				ui5: {
-					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
-					libs: ["sap.ui.table", "sap.m"]
-				}
+				module: "./plugins/{name}.qunit"
 			},
-			"ODataV4Selection with V4Aggregation plugin": {
+			"ODataV4Aggregation": {
 				group: "Plugins",
-				module: "./plugins/ODataV4Selection.V4Aggregation.qunit",
-				ui5: {
-					// sap.ui.table.plugins.ODataV4Selection requires sap.m modules
-					libs: ["sap.ui.table", "sap.m"]
-				}
+				module: "./plugins/{name}.qunit"
+			},
+			"ODataV4Hierarchy": {
+				group: "Plugins",
+				module: "./plugins/{name}.qunit"
 			},
 			"Support of external plugins": {
 				group: "Plugins",
@@ -376,10 +372,6 @@ sap.ui.define([
 					// Test has dependencies to sap.m modules
 					libs: ["sap.ui.table", "sap.m"]
 				}
-			},
-			"V4Aggregation": {
-				group: "Plugins",
-				module: "./plugins/{name}.qunit"
 			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/ui/table/qunit/testsuite.generic.qunit.html"

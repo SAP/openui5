@@ -2,22 +2,25 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
-	"sap/ui/table/plugins/V4Aggregation",
+	"sap/ui/table/plugins/ODataV4Aggregation",
 	"sap/ui/table/utils/TableUtils"
 ], function(
 	TableQUnitUtils,
-	V4Aggregation,
+	ODataV4Aggregation,
 	TableUtils
 ) {
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
-		dependents: new V4Aggregation()
+		...TableQUnitUtils.createSettingsForDataAggregation(),
+		dependents: new ODataV4Aggregation()
 	});
 
 	QUnit.module("API", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
+			this.oTable = TableQUnitUtils.createTable({
+				visible: false // To prevent the table from calling getContexts on a suspended binding, which causes an error
+			});
 			this.oPlugin = this.oTable.getDependents()[0];
 		},
 		afterEach: function() {
@@ -26,77 +29,137 @@ sap.ui.define([
 	});
 
 	QUnit.test(".findOn", function(assert) {
-		assert.ok(V4Aggregation.findOn(this.oTable) === this.oPlugin, "Plugin found in dependents aggregation");
+		assert.ok(ODataV4Aggregation.findOn(this.oTable) === this.oPlugin, "Plugin found");
 	});
 
-	QUnit.module("Hierarchy mode", {
+	QUnit.module("Validation during activation", {
 		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({
-				modelParameters: {
-					autoExpandSelect: true
-				}
-			}));
+			this.oTable = TableQUnitUtils.createTable({
+				visible: false // To prevent the table from calling getContexts on a suspended binding, which causes an error
+			});
+			this.oPlugin = this.oTable.getDependents()[0];
 		},
 		afterEach: function() {
 			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("Initial with list", function(assert) {
-		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Group);
+	QUnit.test("Apply plugin when the table is not bound", function(assert) {
+		this.oTable.removeDependent(this.oPlugin);
+		this.oTable.unbindRows();
+		this.oTable.addDependent(this.oPlugin);
+		assert.ok(true, "No Error thrown");
 	});
 
-	QUnit.test("Initial with data aggregation", function(assert) {
-		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({
-			tableSettings: {
-				rows: {
-					parameters: {
-						$$aggregation: {group: {MyGroup: {}}}
-					}
-				}
-			}
-		}));
-		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Group);
+	QUnit.test("Apply plugin when the table is bound to an unsupported model", function(assert) {
+		this.stub(this.oTable.getModel(), "isA")
+			.withArgs("sap.ui.model.odata.v4.ODataModel")
+			.returns(false);
+
+		this.oTable.removeDependent(this.oPlugin);
+		assert.throws(
+			() => { this.oTable.addDependent(this.oPlugin); },
+			new Error("Model must be sap.ui.model.odata.v4.ODataModel")
+		);
 	});
 
-	QUnit.test("Initial with hierarchy", async function(assert) {
-		this.oTable.destroy();
-		this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({
-			tableSettings: {
-				rows: {
-					parameters: {
-						$$aggregation: {hierarchyQualifier: "MyHierarchy"}
-					}
-				}
-			},
-			modelParameters: {
-				autoExpandSelect: true
-			}
-		}));
-		await this.oTable.qunit.whenBindingRefresh(); // Bindings refresh event is fired asynchronously if autoExpandSelect is enabled
-		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Tree);
+	QUnit.test("Enable plugin when the table is bound to an unsupported model", function(assert) {
+		this.stub(this.oTable.getModel(), "isA")
+			.withArgs("sap.ui.model.odata.v4.ODataModel")
+			.returns(false);
+
+		this.oPlugin.setEnabled(false);
+		assert.throws(
+			() => { this.oPlugin.setEnabled(true); },
+			new Error("Model must be sap.ui.model.odata.v4.ODataModel")
+		);
 	});
 
-	QUnit.test("Change to data aggregation", function(assert) {
-		this.oTable.getBinding().setAggregation({group: {MyGroup: {}}});
-		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Group);
+	QUnit.test("Change to unsupported model", function(assert) {
+		const oModel = this.oTable.getModel();
+
+		this.oTable.setModel();
+		this.stub(oModel, "isA")
+			.withArgs("sap.ui.model.odata.v4.ODataModel")
+			.returns(false);
+		assert.throws(
+			() => { this.oTable.setModel(oModel); },
+			new Error("Model must be sap.ui.model.odata.v4.ODataModel")
+		);
 	});
 
-	QUnit.test("Change to hierarchy", function(assert) {
-		this.oTable.getBinding().setAggregation({hierarchyQualifier: "MyHierarchy"});
-		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Tree);
+	QUnit.test("Apply plugin with a list", function(assert) {
+		this.oTable.removeDependent(this.oPlugin);
+		this.stub(this.oTable.getBinding(), "getAggregation").returns();
+		assert.throws(() => { this.oTable.addDependent(this.oPlugin); }, new Error("Only data aggregation is supported"));
+	});
+
+	QUnit.test("Enable plugin with a list", function(assert) {
+		this.oPlugin.setEnabled(false);
+		this.stub(this.oTable.getBinding(), "getAggregation").returns();
+		assert.throws(() => { this.oPlugin.setEnabled(true); }, new Error("Only data aggregation is supported"));
 	});
 
 	QUnit.test("Change to list", function(assert) {
-		this.oTable.getBinding().setAggregation({hierarchyQualifier: "MyHierarchy"});
-		this.oTable.getBinding().setAggregation();
+		const oBinding = this.oTable.getBinding();
+
+		this.stub(oBinding, "getAggregation").returns();
+
+		assert.throws(() => {
+			oBinding.resume();
+			oBinding.setAggregation();
+		}, new Error("Only data aggregation is supported"));
+	});
+
+	QUnit.test("Apply plugin with a hierarchy", function(assert) {
+		this.oTable.removeDependent(this.oPlugin);
+		this.stub(this.oTable.getBinding(), "getAggregation").returns({hierarchyQualifier: "hierarchy"});
+		assert.throws(() => { this.oTable.addDependent(this.oPlugin); }, new Error("Only data aggregation is supported"));
+	});
+
+	QUnit.test("Enable plugin with a hierarchy", function(assert) {
+		this.oPlugin.setEnabled(false);
+		this.stub(this.oTable.getBinding(), "getAggregation").returns({hierarchyQualifier: "hierarchy"});
+		assert.throws(() => { this.oPlugin.setEnabled(true); }, new Error("Only data aggregation is supported"));
+	});
+
+	QUnit.test("Change to hierarchy", function(assert) {
+		const oBinding = this.oTable.getBinding();
+
+		this.stub(oBinding, "getAggregation").returns({hierarchyQualifier: "hierarchy"});
+
+		assert.throws(() => {
+			oBinding.resume();
+			oBinding.setAggregation();
+		}, new Error("Only data aggregation is supported"));
+	});
+
+	QUnit.module("Table hierarchy mode", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				visible: false // To prevent the table from calling getContexts on a suspended binding, which causes an error
+			});
+			this.oPlugin = this.oTable.getDependents()[0];
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("After activation", function(assert) {
 		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Group);
+	});
+
+	QUnit.test("After deactivation", function(assert) {
+		this.oPlugin.setEnabled(false);
+		assert.strictEqual(TableUtils.Grouping.getHierarchyMode(this.oTable), TableUtils.Grouping.HierarchyMode.Flat);
 	});
 
 	QUnit.module("Integration with table API", {
 		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList());
+			this.oTable = TableQUnitUtils.createTable((oTable) => {
+				oTable.getBinding().resume();
+			});
 			await this.oTable.qunit.whenRenderingFinished();
 		},
 		afterEach: function() {
@@ -129,6 +192,7 @@ sap.ui.define([
 	QUnit.module("Cell content visibility", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
+				visible: false, // To prevent the table from calling getContexts on a suspended binding, which causes an error
 				columns: (() => {
 					const aColumns = [];
 					for (let i = 0; i < 6; i++) {
@@ -213,38 +277,9 @@ sap.ui.define([
 		this.assertColumnCellVisibilitySettings(assert);
 	});
 
-	QUnit.module("Row state with list", {
+	QUnit.module("Row state", {
 		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList());
-			await this.oTable.qunit.whenRenderingFinished();
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		assertRowState: function(oRow, mState) {
-			QUnit.assert.deepEqual({
-				type: oRow.getType(),
-				level: oRow.getLevel(),
-				expandable: oRow.isExpandable(),
-				expanded: oRow.isExpanded()
-			}, mState, `State of row ${oRow.getId()}`);
-		}
-	});
-
-	QUnit.test("After rendering", function(assert) {
-		for (const oRow of this.oTable.getRows()) {
-			this.assertRowState(oRow, {
-				type: "Standard",
-				level: 1,
-				expandable: false,
-				expanded: false
-			});
-		}
-	});
-
-	QUnit.module("Row state with data aggregation", {
-		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForDataAggregation(), (oTable) => {
+			this.oTable = TableQUnitUtils.createTable((oTable) => {
 				oTable.getBinding().resume();
 			});
 			this.oPlugin = this.oTable.getDependents()[0];
@@ -344,17 +379,7 @@ sap.ui.define([
 	QUnit.test("Standard row, subtotals, and grand total at bottom", async function(assert) {
 		const aRows = this.oTable.getRows();
 
-		await aRows[3].getBindingContext().expand();
-		await this.oTable.qunit.whenRenderingFinished();
-		this.oTable.setFirstVisibleRow(6);
-		await this.oTable.qunit.whenBindingChange();
-		await this.oTable.qunit.whenRenderingFinished();
-		await aRows[4].getBindingContext().expand();
-		await this.oTable.qunit.whenRenderingFinished();
-		this.oTable.setFirstVisibleRow(9);
-		await this.oTable.qunit.whenRenderingFinished();
-		await aRows[4].getBindingContext().expand();
-		await this.oTable.qunit.whenRenderingFinished();
+		await TableQUnitUtils.expandAndScrollTableWithDataAggregation(this.oTable);
 		this.oTable.setFirstVisibleRow(20);
 		await this.oTable.qunit.whenRenderingFinished();
 
@@ -442,109 +467,6 @@ sap.ui.define([
 			expandable: true,
 			expanded: false,
 			title: "Formatter changed"
-		});
-	});
-
-	QUnit.module("Row state with hierarchy", {
-		beforeEach: async function() {
-			this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForHierarchy(), (oTable) => {
-				oTable.getBinding().resume();
-			});
-			await this.oTable.qunit.whenRenderingFinished();
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		},
-		assertRowState: function(oRow, mState) {
-			QUnit.assert.deepEqual({
-				type: oRow.getType(),
-				level: oRow.getLevel(),
-				expandable: oRow.isExpandable(),
-				expanded: oRow.isExpanded()
-			}, mState, `State of row ${oRow.getId()}`);
-		}
-	});
-
-	QUnit.test("After rendering", function(assert) {
-		const aRows = this.oTable.getRows();
-
-		this.assertRowState(aRows[0], {
-			type: "Standard",
-			level: 1,
-			expandable: true,
-			expanded: true
-		});
-		this.assertRowState(aRows[1], {
-			type: "Standard",
-			level: 2,
-			expandable: true,
-			expanded: true
-		});
-		this.assertRowState(aRows[2], {
-			type: "Standard",
-			level: 3,
-			expandable: true,
-			expanded: false
-		});
-		this.assertRowState(aRows[4], {
-			type: "Standard",
-			level: 2,
-			expandable: false,
-			expanded: false
-		});
-	});
-
-	QUnit.test("Expand", async function(assert) {
-		const aRows = this.oTable.getRows();
-
-		await aRows[2].getBindingContext().expand();
-		await this.oTable.qunit.whenRenderingFinished();
-
-		this.assertRowState(aRows[2], {
-			type: "Standard",
-			level: 3,
-			expandable: true,
-			expanded: true
-		});
-		this.assertRowState(aRows[3], {
-			type: "Standard",
-			level: 4,
-			expandable: false,
-			expanded: false
-		});
-	});
-
-	QUnit.test("Expand and scroll", async function(assert) {
-		const aRows = this.oTable.getRows();
-
-		await aRows[2].getBindingContext().expand();
-		await this.oTable.qunit.whenRenderingFinished();
-		this.oTable.setFirstVisibleRow(2);
-		await this.oTable.qunit.whenRenderingFinished();
-
-		this.assertRowState(aRows[0], {
-			type: "Standard",
-			level: 3,
-			expandable: true,
-			expanded: true
-		});
-		this.assertRowState(aRows[1], {
-			type: "Standard",
-			level: 4,
-			expandable: false,
-			expanded: false
-		});
-		this.assertRowState(aRows[2], {
-			type: "Standard",
-			level: 4,
-			expandable: false,
-			expanded: false
-		});
-		this.assertRowState(aRows[3], {
-			type: "Standard",
-			level: 3,
-			expandable: true,
-			expanded: false
 		});
 	});
 });
