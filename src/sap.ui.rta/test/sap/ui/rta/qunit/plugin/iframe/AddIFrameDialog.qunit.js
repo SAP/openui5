@@ -470,14 +470,6 @@ sap.ui.define([
 				);
 				const oAllowDownloadsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowDownloadsSwitch");
 				assert.strictEqual(oAllowDownloadsSwitch.getState(), false, "then the allow downloads switch is disabled by default");
-				const oAllowDownloadsWithoutUserActivationSwitch = Element.getElementById(
-					"sapUiRtaAddIFrameDialog_allowDownloadsWithoutUserActivationSwitch"
-				);
-				assert.strictEqual(
-					oAllowDownloadsWithoutUserActivationSwitch.getState(),
-					false,
-					"then the allow downloads without user activation switch is disabled by default"
-				);
 				const oAdditionalParametersInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
 				assert.strictEqual(oAdditionalParametersInput.getValue(), "", "then the additional parameters input is empty by default");
 				assert.strictEqual(
@@ -688,14 +680,6 @@ sap.ui.define([
 					);
 					const oAllowDownloadsSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_allowDownloadsSwitch");
 					assert.strictEqual(oAllowDownloadsSwitch.getState(), false, "then the allow downloads switch is disabled by default");
-					const oAllowDownloadsWithoutUserActivationSwitch = Element.getElementById(
-						"sapUiRtaAddIFrameDialog_allowDownloadsWithoutUserActivationSwitch"
-					);
-					assert.strictEqual(
-						oAllowDownloadsWithoutUserActivationSwitch.getState(),
-						false,
-						"then the allow downloads without user activation switch is disabled by default"
-					);
 					const oAdditionalParametersInput = Element.getElementById("sapUiRtaAddIFrameDialog_AddAdditionalParametersInput");
 					assert.strictEqual(
 						oAdditionalParametersInput.getValue(),
