@@ -208,16 +208,6 @@ sap.ui.define([
 			this.byId("demoCard").refreshData();
 		},
 
-		onPreviousPage: function () {
-			this._oSkeletonCard.getCardFooter().getPaginator().previous();
-			this.byId("demoCard").getCardFooter().getPaginator().previous();
-		},
-
-		onNextPage: function () {
-			this._oSkeletonCard.getCardFooter().getPaginator().next();
-			this.byId("demoCard").getCardFooter().getPaginator().next();
-		},
-
 		onChangeSelectFilter: function () {
 			this._oSkeletonCard.setFilterValue("shipper", "2");
 			this.byId("demoCard").setFilterValue("shipper", "2");
