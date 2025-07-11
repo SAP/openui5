@@ -1851,6 +1851,9 @@ sap.ui.define([
 			aElements[iIndex] = aElements.$byPredicate[sPredicate] = oElement;
 			sTransientPredicate = _Helper.getPrivateAnnotation(oOldElement, "transientPredicate");
 			if (sTransientPredicate) {
+				if ("@$ui5.context.isInactive" in oOldElement) {
+					oElement["@$ui5.context.isInactive"] = false;
+				}
 				oElement["@$ui5.context.isTransient"] = false;
 				aElements.$byPredicate[sTransientPredicate] = oElement;
 				_Helper.setPrivateAnnotation(oElement, "transientPredicate", sTransientPredicate);
