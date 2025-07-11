@@ -45,6 +45,7 @@ sap.ui.define([
 	var oConfiguration;
 	var M_SETTINGS;
 	var VERSION = "${version}";
+	var mCache = Object.create(null);
 
 	// Helper Functions
 	function detectLanguage() {
@@ -759,7 +760,12 @@ sap.ui.define([
 		 * @public
 		 */
 		getLanguageTag : function () {
-			return this.getValue("language").toLanguageTag();
+			var sLanguage = this.getLanguage();
+			if (mCache[sLanguage]) {
+				return mCache[sLanguage];
+			}
+			mCache[sLanguage] = this.getValue("language").toLanguageTag();
+			return mCache[sLanguage];
 		},
 
 		/**
@@ -872,6 +878,8 @@ sap.ui.define([
 				if ( bOldRTL != this.getRTL() ) {
 					mChanges.rtl = this.getRTL();
 				}
+				//invalidate cache
+				mCache = Object.create(null);
 				this._endCollect();
 			}
 			return this;
