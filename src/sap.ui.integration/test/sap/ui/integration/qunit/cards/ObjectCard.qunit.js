@@ -1168,32 +1168,24 @@ sap.ui.define([
 		var oObjectContent = this.oCard.getAggregation("_content");
 		var oRoot = oObjectContent.getAggregation("_content");
 		var oLayout = oRoot.getItems()[0];
-		var oEvent = {
-			size: {
-				width: 400
-			},
-			oldSize: {
-				width: 0
-			},
-			control: oRoot
-		};
 
 		//This is the case when 2 groups are in one column and the last group is on another row
-		oObjectContent._onResize(oEvent);
+		this.oCard.setWidth("450px");
+		await nextUIUpdate();
 		assert.ok(oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The first group should have the separation class");
 		assert.ok(!oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The second group should not have the separation class");
 		assert.ok(oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The last group should have the separation class");
 
 		//This is the case when all groups are in one column
-		oEvent.size.width = 200;
-		oObjectContent._onResize(oEvent);
+		this.oCard.setWidth("250px");
+		await nextUIUpdate();
 		assert.ok(!oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
 		assert.ok(!oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
 		assert.ok(!oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
 
 		//This is the case when all groups are in one row
-		oEvent.size.width = 800;
-		oObjectContent._onResize(oEvent);
+		this.oCard.setWidth("850px");
+		await nextUIUpdate();
 		assert.ok(oLayout.getContent()[0].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
 		assert.ok(oLayout.getContent()[1].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should have the separation class");
 		assert.ok(!oLayout.getContent()[2].$().hasClass("sapFCardObjectSpaceBetweenGroup"), "The group should not have the separation class");
@@ -2390,7 +2382,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resize handler is called for AlignedFlowLayout containers", async function (assert) {
-		var oResizeSpy = this.spy(ObjectContent.prototype, "_onAlignedFlowLayoutResize");
+		var oResizeSpy = this.spy(ObjectContent.prototype, "_resizeAlignedFlowLayout");
 
 		this.oCard.setManifest(oManifest_ComplexLayout);
 
@@ -2406,8 +2398,10 @@ sap.ui.define([
 			}
 		});
 
+		await nextUIUpdate();
+
 		// Assert
-		assert.strictEqual(oResizeSpy.callCount, 2, "First AlignedFlowLayout is destroyed");
+		assert.strictEqual(oResizeSpy.callCount, 2, "Resize handler is called");
 	});
 
 	MemoryLeakCheck.checkControl("ObjectContent with IconGroup", function () {

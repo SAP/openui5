@@ -143,6 +143,23 @@ sap.ui.define([
 		renderer: ObjectContentRenderer
 	});
 
+	ObjectContent.prototype.onAfterRendering = function () {
+		BaseContent.prototype.onAfterRendering.apply(this, arguments);
+
+		const oRootContainer = this._getRootContainer();
+
+		if (oRootContainer.getDomRef()) {
+			const iWidth = oRootContainer.getDomRef().offsetWidth;
+			const aItems = oRootContainer.getItems();
+
+			aItems.forEach((oItem, i) => {
+				if (oItem.isA("sap.ui.layout.AlignedFlowLayout")) {
+					this._resizeAlignedFlowLayout(oItem, iWidth, i === aItems.length - 1);
+				}
+			});
+		}
+	};
+
 	ObjectContent.prototype.exit = function () {
 		BaseContent.prototype.exit.apply(this, arguments);
 
@@ -1018,16 +1035,10 @@ sap.ui.define([
 			return;
 		}
 
-		var aItems = this._getRootContainer().getItems();
-
-		aItems.forEach(function (oItem, i) {
-			if (oItem.isA("sap.ui.layout.AlignedFlowLayout")) {
-				this._onAlignedFlowLayoutResize(oItem, oEvent, i === aItems.length - 1);
-			}
-		}.bind(this));
+		this.invalidate();
 	};
 
-	ObjectContent.prototype._onAlignedFlowLayoutResize = function (oAFLayout, oEvent, bLast) {
+	ObjectContent.prototype._resizeAlignedFlowLayout = function (oAFLayout, iWidth, bLast) {
 		var sMinItemWidth = oAFLayout.getMinItemWidth(),
 			iMinItemWidth,
 			iNumberOfGroups = oAFLayout.getContent().filter(function (oContent) {
@@ -1042,7 +1053,7 @@ sap.ui.define([
 			iMinItemWidth = parseFloat(sMinItemWidth);
 		}
 
-		var iColumns = Math.floor(oEvent.size.width / iMinItemWidth);
+		var iColumns = Math.floor(iWidth / iMinItemWidth);
 
 		// This check is to catch the case when the width of the card is bigger and
 		// can have more columns than groups
