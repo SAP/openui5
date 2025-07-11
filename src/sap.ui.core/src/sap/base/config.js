@@ -2,14 +2,17 @@
 * ${copyright}
 */
 sap.ui.define([
+	"sap/base/Eventing",
 	"sap/base/config/GlobalConfigurationProvider",
 	"sap/base/config/MemoryConfigurationProvider"
 ], (
+	Eventing,
 	GlobalConfigurationProvider,
 	MemoryConfigurationProvider
 ) => {
 	"use strict";
 
+	const oEventing = new Eventing();
 	let bFrozen = false;
 	const rValidKey = /^[a-z][A-Za-z0-9]*$/;
 	const rXXAlias = /^(sapUi(?!Xx))(.*)$/;
@@ -311,6 +314,7 @@ sap.ui.define([
 
 	function invalidate() {
 		mCache = Object.create(null);
+		oEventing.fireEvent("invalidated");
 	}
 
 	function getWritableInstance() {
@@ -342,6 +346,16 @@ sap.ui.define([
 		}
 		delete Configuration._.freeze;
 		bFrozen = true;
+	}
+
+	/**
+	 * Attaches the <code>fnFunction</code> event handler to the {@link #event:invalidated invalidated} event
+	 *
+	 * @param {function} fnFunction The function to be called when the event occurs
+	 * @private
+	 */
+	function attachInvalidated(fnFunction) {
+		oEventing.attachEvent("invalidated", fnFunction);
 	}
 
 	/**
@@ -394,7 +408,8 @@ sap.ui.define([
 		_: {
 			freeze: freeze,
 			checkEnum: checkEnum,
-			invalidate: invalidate
+			invalidate: invalidate,
+			attachInvalidated: attachInvalidated
 		}
 	};
 
