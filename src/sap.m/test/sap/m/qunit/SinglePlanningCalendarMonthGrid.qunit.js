@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/Localization",
-	"sap/ui/qunit/utils/createAndAppendDiv"
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/CustomData"
 ], function(
 	qutils,
 	SinglePlanningCalendar,
@@ -30,7 +31,8 @@ sap.ui.define([
 	CalendarDate,
 	KeyCodes,
 	Localization,
-	createAndAppendDiv
+	createAndAppendDiv,
+	CustomData
 ) {
 		"use strict";
 		createAndAppendDiv("uiArea6");
@@ -250,6 +252,33 @@ sap.ui.define([
 			assert.ok(aAppointmentNodes[0].width, "appointments have width");
 			assert.ok(!isNaN(aAppointmentNodes[0].len), "appointments have len");
 			assert.ok(!isNaN(aAppointmentNodes[0].level), "appointments have level");
+		});
+
+		QUnit.test("Appointment with customData", async function(assert) {
+			// arrange
+			this.oSPC.destroyAppointments();
+			this.oSPC.addAppointment(new CalendarAppointment({
+				startDate: o2Aug2018_00_00,
+				endDate: o2Aug2018_18_00,
+				customData: [
+						new CustomData({
+							key: "appointmentType",
+							value: "appointmentValue",
+							writeToDom: true
+						}),
+						new CustomData({
+							key: "appointmentType1",
+							value: "appointmentValue1",
+							writeToDom: false
+						})
+					]
+			}));
+			await nextUIUpdate(this.clock);
+			var aAppointments = this.oSPC.getAppointments();
+
+			// assert
+			assert.ok(aAppointments[0].getDomRef().getAttribute("data-appointmentType"), "appointmentValue", "The returned DOM reference of the appointment with index 1 is with correct custom data attribute .");
+			assert.notOk(aAppointments[0].getDomRef().getAttribute("data-appointmentType1") === "appointmentValue1", "The returned DOM reference of the appointment with index 1 is does not contain data attribute, because it's property 'writeToDom' is false.");
 		});
 
 		QUnit.test("Appointment sorting", function(assert) {
