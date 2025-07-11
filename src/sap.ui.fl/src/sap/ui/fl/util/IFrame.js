@@ -173,6 +173,16 @@ sap.ui.define([
 		// Used for testing since retrieving or spying on the Iframe location
 		// is not possible due to cross-origin restrictions
 		_replaceIframeLocation(sNewUrl) {
+			// If the embedded content is doing internal same-origin navigation (e.g. hash change),
+			// Safari might ignore the location replacement in favor of the internal navigation
+			// This can e.g. happen when an embedded UI5 app crashes due to missing parameters and redirects to the FLP Home
+			// To prevent this, try to stop all ongoing loading of resources in the iframe and avoid such race conditions
+			try {
+				this.getDomRef().contentWindow.stop();
+			} catch (oError) {
+				// Cross-origin restrictions
+			}
+
 			this.getDomRef().contentWindow.location.replace(sNewUrl);
 		},
 

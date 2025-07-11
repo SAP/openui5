@@ -446,6 +446,34 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
+	QUnit.test("Prevent default event when there is no href and is clicked on link icon which is inside link text span (ObjectMarker) case", async function(assert) {
+	// Prepare
+		var oMarker = new ObjectMarker({
+			type: ObjectMarkerType.Unsaved,
+			press: function(oEvent) {
+				assert.ok(true, "This should be executed when the link is triggered");
+			}
+		}),
+		oClickEvent = new Event("click", {bubbles: true, cancelable: true}),
+		oPressSpy = this.spy(oMarker, "firePress"),
+		oPreventDefaultSpy = this.spy(oClickEvent, "preventDefault");
+
+		oMarker.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Act
+		oMarker.getDomRef().firstChild.children[1].firstChild.dispatchEvent(oClickEvent);
+
+		// Assert
+		assert.ok(oPressSpy.calledOnce, "Press event still fired");
+		assert.ok(oPreventDefaultSpy.calledOnce, "Default action is prevented if clicked on ObjectMarker Icon");
+
+
+		// Clean
+		oPreventDefaultSpy.resetHistory();
+		oMarker.destroy();
+	});
+
 	QUnit.module("Binding");
 
 	QUnit.test("Binding - standalone", async function(assert) {

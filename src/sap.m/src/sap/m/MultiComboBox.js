@@ -1247,11 +1247,8 @@ function(
 		this.setProperty("hasSelection", !!this.getSelectedItems().length);
 
 		if (!this._bAlreadySelected) {
-			this._sInitialValueStateText = this.getValueStateText();
-		}
-
-		if (this.getValueState() !== ValueState.Error) {
 			this._sInitialValueState = this.getValueState();
+			this._sInitialValueStateText = this.getValueStateText();
 		}
 
 		if (this.getShowClearIcon()) {

@@ -1125,7 +1125,10 @@ function(
 			return;
 		}
 
-		Input.prototype.ontap.apply(this, arguments);
+		if (!bNMoreLabelClick) {
+			Input.prototype.ontap.apply(this, arguments);
+			this._getSuggestionsPopover()?.getInput()?.setValueHelpIconSrc("sap-icon://search");
+		}
 	};
 
 	/**
