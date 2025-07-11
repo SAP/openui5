@@ -222,7 +222,7 @@ sap.ui.define([
 		}
 		const sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
-		await VariantManagementState.getVariantSwitchPromise(sFlexReference);
+		await VariantManagementState.waitForVariantSwitch(sFlexReference);
 		await Promise.all(aSelectorInformation.map((oSelector) => {
 			const oControl = oSelector.selector.id && Element.getElementById(oSelector.selector.id) || oSelector.selector;
 

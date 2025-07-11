@@ -471,7 +471,7 @@ sap.ui.define([
 					bCalled = true;
 					resolve();
 				});
-			}));
+			}), "variantManagementReference");
 
 			Applier.applyAllChangesForControl(oAppComponent, sReference, this.oControl1);
 			await FlexObjectState.waitForFlexObjectsToBeApplied([{selector: this.oControl1}]);

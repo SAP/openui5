@@ -12211,6 +12211,9 @@ sap.ui.define([
 			oResult2 = {},
 			that = this;
 
+		this.mock(_Helper).expects("publicClone").never();
+		this.mock(_Helper).expects("isEmptyObject").never();
+
 		assert.throws(function () {
 			// code under test
 			this.createSingle(sResourcePath).post({/*group lock*/});
@@ -12302,6 +12305,9 @@ sap.ui.define([
 			this.oRequestorMock.expects("relocateAll")
 				.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
 			this.oRequestorMock.expects("isActionBodyOptional").withExactArgs().returns(bOptional);
+			this.mock(_Helper).expects("publicClone").never();
+			this.mock(_Helper).expects("isEmptyObject").exactly(bOptional ? 1 : 0)
+				.callThrough();
 			oRequestExpectation = this.oRequestorMock.expects("request")
 				.withExactArgs("PUT", sResourcePath, sinon.match.same(oGroupLock),
 					{"If-Match" : sinon.match.same(oEntity)},
@@ -12341,6 +12347,8 @@ sap.ui.define([
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
+		this.mock(_Helper).expects("publicClone").never();
+		this.mock(_Helper).expects("isEmptyObject").never();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock), {}, undefined,
 				undefined, undefined, undefined, "R#V#C")
@@ -12351,13 +12359,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: bIgnoreETag w/o oEntity", function () {
+	QUnit.test("SingleCache: post, bIgnoreETag w/o oEntity", function () {
 		var oCache = this.createSingle("Foo", undefined, true),
 			oGroupLock = {};
 
 		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
 		this.oRequestorMock.expects("relocateAll").never();
 		this.oRequestorMock.expects("isActionBodyOptional").never();
+		this.mock(_Helper).expects("publicClone").never();
+		this.mock(_Helper).expects("isEmptyObject").never();
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {"If-Match" : "*"},
 				undefined, undefined, undefined, undefined, "R#V#C")
@@ -12365,6 +12375,31 @@ sap.ui.define([
 
 		// code under test
 		return oCache.post(oGroupLock, undefined, /*oEntity*/undefined, /*bIgnoreETag*/true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache: post, bIgnoreETag w/ empty oEntity", function () {
+		var oCache = this.createSingle("Foo", undefined, true),
+			oEntity = {"@$ui5._" : {}}, // see ODLB#getKeepAliveContext
+			oGroupLock = {
+				getGroupId : mustBeMocked
+			};
+
+		this.mock(oCache).expects("checkSharedRequest").withExactArgs();
+		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("group");
+		this.oRequestorMock.expects("relocateAll")
+			.withExactArgs("$parked.group", "group", sinon.match.same(oEntity));
+		this.oRequestorMock.expects("isActionBodyOptional").never();
+		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oEntity))
+			.returns("~publicClone~");
+		this.mock(_Helper).expects("isEmptyObject").withExactArgs("~publicClone~").returns(true);
+		this.oRequestorMock.expects("request")
+			.withExactArgs("POST", "Foo", sinon.match.same(oGroupLock), {"If-Match" : "*"},
+				undefined, sinon.match.func, undefined, undefined, "R#V#C")
+			.resolves({/*@see _Requestor#sendRequest*/});
+
+		// code under test
+		return oCache.post(oGroupLock, undefined, oEntity, /*bIgnoreETag*/true);
 	});
 
 	//*********************************************************************************************
@@ -12395,6 +12430,10 @@ sap.ui.define([
 		this.oRequestorMock.expects("relocateAll")
 			.withExactArgs("$parked." + sGroupId, sGroupId, sinon.match.same(oEntity));
 		this.oRequestorMock.expects("isActionBodyOptional").never();
+		this.mock(_Helper).expects("publicClone").exactly(bHasETag ? 0 : 1)
+			.withExactArgs(sinon.match.same(oEntity)).returns("~publicClone~");
+		this.mock(_Helper).expects("isEmptyObject").exactly(bHasETag ? 0 : 1)
+			.withExactArgs("~publicClone~").returns(false); // oEntity just looks empty ;-)
 		oRequestExpectation = this.oRequestorMock.expects("request")
 			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock),
 				{"If-Match" : bHasETag ? "*" : {}}, null,
