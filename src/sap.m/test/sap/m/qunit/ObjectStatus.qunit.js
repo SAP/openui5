@@ -91,7 +91,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("render a placeholder if _isEmpty", async function(assert) {
+	QUnit.test("render a placeholder if _isEmpty or the emptyIndicatorMode is off", async function(assert) {
 		//arrange
 		var oOS = new ObjectStatus(),
 			$OS;
@@ -104,7 +104,8 @@ sap.ui.define([
 
 		//assert
 		assert.equal($OS.length, 1, "rendered even though it is empty");
-		assert.equal($OS.eq(0).css("display"), "none", "not visible because it is empty");
+		assert.ok(oOS.$().hasClass("sapMObjStatus"), "has the correct class so the placeholder can reatain the minimum height when empty or the emptyIndicatorMode is off");
+		assert.equal(oOS.$().children().length, 0, "no inner content is rendered");
 
 		//clean
 		oOS.destroy();
