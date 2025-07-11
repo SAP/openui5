@@ -321,4 +321,41 @@ sap.ui.define([
 		oCard.destroy();
 		oHost.destroy();
 	});
+
+	QUnit.test("Invalidating", async function (assert) {
+		// Arrange
+		const oCard = new Card({
+			manifest: oExample1,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources"
+		});
+
+		// Act
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		await nextCardReadyEvent(oCard);
+		await nextUIUpdate();
+
+		const oContent = oCard.getCardContent();
+		assert.ok(oContent._oLastConfig, "Last config is set.");
+
+		const fnRenderWidget = sap.sac.api.widget.renderWidget;
+		assert.ok(fnRenderWidget.calledOnce, "sap.sac.api.widget.renderWidget was called only once.");
+
+		oCard.invalidate();
+		await nextUIUpdate();
+
+		assert.ok(fnRenderWidget.calledOnce, "sap.sac.api.widget.renderWidget was called only once.");
+
+		const oOptions = fnRenderWidget.firstCall.args[4];
+		oOptions.renderComplete.onSuccess();
+
+		assert.notOk(oContent._oLastConfig, "Last config is cleared.");
+
+		oCard.invalidate();
+		await nextUIUpdate();
+
+		assert.ok(fnRenderWidget.calledTwice, "sap.sac.api.widget.renderWidget was called twice.");
+
+		// Clean up
+		oCard.destroy();
+	});
 });
