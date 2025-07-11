@@ -908,6 +908,66 @@ sap.ui.define([
 		oPlanningCalendar.destroy();
 	});
 
+	QUnit.test("Title rendered with proper title style", async function(assert) {
+		// prepare
+		var oPlanningCalendar = new PlanningCalendar({
+			toolbarContent: [
+				new Title("idtitle", {text: "title of planning calendar", titleStyle: "H3"})
+			]
+		});
+
+		oPlanningCalendar.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oInnerTitle = oPlanningCalendar._getHeader()._oTitle;
+		// assert
+		assert.ok(oInnerTitle.getDomRef().getAttribute("aria-level"), 3,"The title is renderer with correct aria-label attribute.");
+		assert.ok(oInnerTitle.$().hasClass("sapMTitleStyleH3"), "The title is renderer with correct title style class.");
+
+		// clean
+		oPlanningCalendar.destroy();
+	});
+
+	QUnit.test("Title rendered with proper level", async function(assert) {
+		// prepare
+		var oPlanningCalendar = new PlanningCalendar({
+			toolbarContent: [
+				new Title("idtitle", {text: "title of planning calendar", level: "H3"})
+			]
+		});
+
+		oPlanningCalendar.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oInnerTitle = oPlanningCalendar._getHeader()._oTitle;
+		// assert
+		assert.ok(oInnerTitle.$().has("h3"), "The title is renderer with correct level.");
+
+		// clean
+		oPlanningCalendar.destroy();
+	});
+
+	QUnit.test("Title rendered with proper level and title style", async function(assert) {
+		// prepare
+		var oPlanningCalendar = new PlanningCalendar({
+			toolbarContent: [
+				new Title("idtitle", {text: "title of planning calendar", level: "H3", titleStyle: "H3"})
+			]
+		});
+
+		oPlanningCalendar.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var oInnerTitle = oPlanningCalendar._getHeader()._oTitle;
+		// assert
+		assert.ok(oInnerTitle.$().has("h3"), "The title is renderer with correct level.");
+		assert.ok(!oInnerTitle.getDomRef().getAttribute("aria-level"), "The title is renderer without aria-level attribute.");
+		assert.ok(oInnerTitle.$().hasClass("sapMTitleStyleH3"), "The title is renderer with correct title style class.");
+
+		// clean
+		oPlanningCalendar.destroy();
+	});
+
 	QUnit.module("rendering - Hours View", {
 		beforeEach: function () {
 			this.oPC = createPlanningCalendar("PC3", new SearchField(), new Button());
