@@ -417,14 +417,6 @@
 													customTextOff=" "
 													state="{dialogInfo>/advancedSettings/value/allowDownloads}" />
 											</form:FormElement>
-											<form:FormElement label="allow-downloads-without-user-activation">
-												<Switch
-													change="onSwitchChange"
-													id="sapUiRtaAddIFrameDialog_allowDownloadsWithoutUserActivationSwitch"
-													customTextOn=" "
-													customTextOff=" "
-													state="{dialogInfo>/advancedSettings/value/allowDownloadsWithoutUserActivation}" />
-											</form:FormElement>
 											<form:FormElement>
 												<Label
 													id="sapUiRtaAddIFrameDialog_AddAdditionalParametersLabel"

@@ -104,7 +104,7 @@ sap.ui.define([
 
 		QUnit.test("when iframe is updated with advanced settings", async function(assert) {
 			this.oIFrame.setAdvancedSettings({
-				additionalSandboxParameters: ["allow-downloads-without-user-activation"],
+				additionalSandboxParameters: ["allow-presentation"],
 				"allow-forms": true,
 				"allow-popups": false,
 				"allow-scripts": false,
@@ -114,7 +114,7 @@ sap.ui.define([
 			await nextUIUpdate();
 			assert.strictEqual(
 				this.oIFrame.getDomRef().sandbox.value,
-				"allow-forms allow-downloads-without-user-activation",
+				"allow-forms allow-presentation",
 				"then the custom sandbox attributes are set correctly"
 			);
 		});
