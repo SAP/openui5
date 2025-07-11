@@ -79,6 +79,14 @@ function (
 				isRoot: {
 					type: "boolean",
 					defaultValue: false
+				},
+
+				/**
+				 * Whether overlay is part of an aggregation binding template
+				 */
+				isPartOfTemplate: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			associations: {

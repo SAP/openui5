@@ -166,16 +166,20 @@ function(
 	BasePlugin.prototype._getRelevantOverlays = function(oOverlay, sAggregationName) {
 		var aAlreadyDefinedRelevantOverlays = oOverlay.getRelevantOverlays();
 		if (aAlreadyDefinedRelevantOverlays.length === 0) {
-			var aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
+			var aRelevantOverlays = [];
+			// Overlays in aggregation binding templates are not relevant
+			if (!oOverlay.getIsPartOfTemplate()) {
+				aRelevantOverlays = OverlayUtil.findAllOverlaysInContainer(oOverlay);
 
-			// if an aggregation name is given, those overlays are added without checking the relevant container
-			if (sAggregationName) {
-				var oAggregationOverlay = oOverlay.getAggregationOverlay(sAggregationName);
-				var aAggregationChildren = oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
-				aAggregationChildren = aAggregationChildren.filter(function(oChildOverlay) {
-					return aRelevantOverlays.indexOf(oChildOverlay) === -1;
-				});
-				aRelevantOverlays = aRelevantOverlays.concat(aAggregationChildren);
+				// if an aggregation name is given, those overlays are added without checking the relevant container
+				if (sAggregationName) {
+					var oAggregationOverlay = oOverlay.getAggregationOverlay(sAggregationName);
+					var aAggregationChildren = oAggregationOverlay ? oAggregationOverlay.getChildren() : [];
+					aAggregationChildren = aAggregationChildren.filter(function(oChildOverlay) {
+						return aRelevantOverlays.indexOf(oChildOverlay) === -1;
+					});
+					aRelevantOverlays = aRelevantOverlays.concat(aAggregationChildren);
+				}
 			}
 
 			oOverlay.setRelevantOverlays(aRelevantOverlays);

@@ -418,9 +418,9 @@ function(
 					return aFlattenedArray.concat(oCurrentValue);
 				}, []);
 			} else {
-				aRelevantOverlays = oOverlay.getParentElementOverlay()
-										.getAggregationOverlay(oOverlay.getParentAggregationOverlay().getAggregationName())
-										.getChildren();
+				var sAggregationName = oOverlay.getParentAggregationOverlay().getAggregationName();
+				var oAggregationOverlay = oParentOverlay.getAggregationOverlay(sAggregationName);
+				aRelevantOverlays = (oAggregationOverlay && oAggregationOverlay.getChildren()) || [];
 			}
 		}
 

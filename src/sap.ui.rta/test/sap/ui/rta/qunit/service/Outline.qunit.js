@@ -796,18 +796,154 @@ sap.ui.define([
 					var oListElementInfo = aRootElements[0].elements[0];
 					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
 						"then sap.m.List is available in the view elements");
-					assert.strictEqual(oListElementInfo.elements.length, 3,
-						"then list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oListElementInfo.elements.length, 4,
+						"then list contains 4 entries: the template element + 2 empty aggregations + the items aggregation");
 					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[0].name, "List Item [4]",
-						"then the first list entry contains the template with the number of children on its name (List Item [4])");
+					assert.strictEqual(oListElementInfo.elements[0].name, "List Item",
+						"then the first list entry is named according to the template control type");
 					assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
 						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
-					assert.strictEqual(oListElementInfo.elements[1].icon, "sap-icon://card",
+					assert.strictEqual(oListElementInfo.elements[2].icon, "sap-icon://card",
 						"then the second list entry (empty aggregation) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[1].type, "aggregation",
+					assert.strictEqual(oListElementInfo.elements[2].type, "aggregation",
 						"then the second list entry (empty aggregation) has the correct type (aggregation)");
+					assert.strictEqual(
+						oListElementInfo.elements[1].elements.length,
+						4,
+						"then the items aggregation contains the instances from the binding"
+					);
+					var sExpectedTemplateReference = oListElementInfo.elements[0].id;
+					assert.notOk(
+						oListElementInfo.hasOwnProperty("templateReference"),
+						"then elements outside the aggregation binding have no template reference"
+					);
+					assert.strictEqual(
+						oListElementInfo.elements[1].templateReference,
+						sExpectedTemplateReference,
+						"then the aggregation overlay has a reference on the template item"
+					);
+					assert.ok(
+						oListElementInfo.elements[1].elements.every(function(oItem) {
+							return oItem.templateReference === sExpectedTemplateReference;
+						}),
+						"then each aggregation instance has a reference on the template item"
+					);
+				});
+		});
+
+		QUnit.test("when an aggregation contains a template with a nested aggregation", function (assert) {
+			var oXmlTable =
+			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
+					'<items>' +
+						'<VBox id="vb2">' +
+							'<items>' +
+								'<Button id="myButton" text="Hello" />' +
+							'</items>' +
+						'</VBox>' +
+					'</items>' +
+				'</VBox>' +
+			'</mvc:View>';
+
+			var oData = {
+				ProductCollection: [
+					{ ProductId: "HT-1000", Category: "Laptops" },
+					{ ProductId: "HT-1001", Category: "Laptops" },
+					{ ProductId: "HT-1007", Category: "Accessories" },
+					{ ProductId: "HT-1010", Category: "Memory" }
+				]
+			};
+			var oController = createController("myController", oData);
+			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+				.then(function() {
+					return this.oOutline.get();
+				}.bind(this))
+				.then(function(aReceivedResponse) {
+					var oOuterVBox = aReceivedResponse[0].elements[0].elements[0];
+					var oTemplate = oOuterVBox.elements[0];
+					var oInstance = oOuterVBox.elements[1].elements[0];
+
+					assert.strictEqual(
+						oInstance.templateReference,
+						oTemplate.id,
+						"then instances have a reference on the template"
+					);
+					assert.strictEqual(
+						oInstance.elements[0].elements[0].templateReference,
+						oTemplate.elements[0].elements[0].id,
+						"then nested elements reference the equivalent elements in the template structure"
+					);
+					assert.notOk(
+						oTemplate.elements[0].elements[0].hasOwnProperty("templateReference"),
+						"then elements in the template structure have no template reference"
+					);
+				});
+		});
+
+		QUnit.test("when an aggregation contains a template with a nested template", function (assert) {
+			var oXmlTable =
+			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\', templateShareable: false}">' +
+					'<items>' +
+						'<VBox id="vb2NoTemplate">' +
+							'<Button id="vb2TopButton" text="Prepended element" />' +
+							'<VBox id="vb3WithTemplate" items="{path: \'/ProductCollection\', templateShareable: false}">' +
+								'<items>' +
+									'<Button id="vb3Button" text="{ProductId}" />' +
+								'</items>' +
+							'</VBox>' +
+							'<Button id="vb2BottomButton" text="Appended element" />' +
+						'</VBox>' +
+					'</items>' +
+				'</VBox>' +
+			'</mvc:View>';
+
+			var oData = {
+				ProductCollection: [
+					{ ProductId: "HT-1000", Category: "Laptops" },
+					{ ProductId: "HT-1001", Category: "Laptops" },
+					{ ProductId: "HT-1007", Category: "Accessories" },
+					{ ProductId: "HT-1010", Category: "Memory" }
+				]
+			};
+			var oController = createController("myController", oData);
+			return _beforeEachExtensionPoint.call(this, oXmlTable, oController)
+				.then(function() {
+					return this.oOutline.get();
+				}.bind(this))
+				.then(function(aReceivedResponse) {
+					var oOuterVBox = aReceivedResponse[0].elements[0].elements[0];
+					var oOuterTemplate = oOuterVBox.elements[0];
+					var oInnerTemplate = oOuterTemplate.elements[0].elements[1];
+					var oOuterInstance = oOuterVBox.elements[1].elements[0];
+					var oInnerInstance = oOuterInstance.elements[0].elements[1];
+
+					assert.strictEqual(
+						oOuterInstance.templateReference,
+						oOuterTemplate.id,
+						"then the root template is properly referenced"
+					);
+					assert.strictEqual(
+						oOuterInstance.elements[0].elements[0].templateReference,
+						oOuterTemplate.elements[0].elements[0].id,
+						"then nested elements reference the equivalent elements in the outer template structure - top button"
+					);
+					assert.strictEqual(
+						oOuterInstance.elements[0].elements[2].templateReference,
+						oOuterTemplate.elements[0].elements[2].id,
+						"then nested elements reference the equivalent elements in the outer template structure - bottom button"
+					);
+					assert.strictEqual(
+						oInnerInstance.templateReference,
+						oInnerTemplate.id,
+						"then the nested template is properly referenced"
+					);
+					assert.strictEqual(
+						oInnerInstance.elements[0].templateReference,
+						oInnerTemplate.elements[0].id,
+						"then nested elements reference the equivalent elements in the inner template structure"
+					);
 				});
 		});
 
@@ -836,12 +972,12 @@ sap.ui.define([
 					var oListElementInfo = aRootElements[0].elements[0];
 					assert.strictEqual(oListElementInfo.technicalName, "sap.m.List",
 						"then sap.m.List is available in the view elements");
-					assert.strictEqual(oListElementInfo.elements.length, 3,
-						"then list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oListElementInfo.elements.length, 4,
+						"then list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
 					assert.strictEqual(oListElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oListElementInfo.elements[0].name, "List Item [0]",
-						"then the first list entry contains the template with the number of children on its name (List Item [0])");
+					assert.strictEqual(oListElementInfo.elements[0].name, "List Item",
+						"then the first list entry contains the template");
 					assert.strictEqual(oListElementInfo.elements[0].type, "aggregationBindingTemplate",
 						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 				});
@@ -883,22 +1019,22 @@ sap.ui.define([
 					var oList1ElementInfo = aRootElements[0].elements[0];
 					assert.strictEqual(oList1ElementInfo.technicalName, "sap.m.List",
 						"then sap.m.List is available in the view elements");
-					assert.strictEqual(oList1ElementInfo.elements.length, 3,
-						"then first list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oList1ElementInfo.elements.length, 4,
+						"then first list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
 					assert.strictEqual(oList1ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oList1ElementInfo.elements[0].name, "List Item [2]",
-						"then the first list entry contains the template with the number of children on its name (List Item [2])");
+					assert.strictEqual(oList1ElementInfo.elements[0].name, "List Item",
+						"then the first list entry contains the template");
 					assert.strictEqual(oList1ElementInfo.elements[0].type, "aggregationBindingTemplate",
 						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 
 					var oList2ElementInfo = aRootElements[0].elements[1];
-					assert.strictEqual(oList2ElementInfo.elements.length, 3,
-						"then second list contains 3 entries: the template element + 2 empty aggregations from the control");
+					assert.strictEqual(oList2ElementInfo.elements.length, 4,
+						"then second list contains 4 entries: the template element + 2 empty aggregations from the control + items aggregation");
 					assert.strictEqual(oList2ElementInfo.elements[0].icon, "sap-icon://attachment-text-file",
 						"then the first list entry (aggregation binding template) has the correct icon assigned");
-					assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item [1]",
-						"then the frist list entry contains the template with the number of children on its name (List Item [1])");
+					assert.strictEqual(oList2ElementInfo.elements[0].name, "List Item",
+						"then the frist list entry contains the template");
 					assert.strictEqual(oList2ElementInfo.elements[0].type, "aggregationBindingTemplate",
 						"then the first list entry contains the template with the type 'aggregationBindingTemplate'");
 				});
