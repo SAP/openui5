@@ -2527,4 +2527,14 @@ sap.ui.define([
 			oDialog.attachEventOnce("afterOpen", afterDialogOpen);
 		});
 	});
+
+	QUnit.test("FilePreviewDialog: contentWidth should be 100%", function(assert) {
+		var oFilePreviewDialog = new FilePreviewDialog();
+		oFilePreviewDialog._oCarousel = { getActivePage: function() { return "id"; }, getPages: function() { return [{ sId: "id" }]; } };
+		oFilePreviewDialog._oCarouselItems = [{ getFileName: function() { return "test.txt"; } }];
+
+		var oDialog = oFilePreviewDialog._createDialog();
+		assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
+		oFilePreviewDialog.destroy();
+	});
 });

@@ -500,7 +500,7 @@ sap.ui.define([
 				content: this._oCarousel,
 				horizontalScrolling: false,
 				verticalScrolling: false,
-				contentWidth: "auto",
+				contentWidth: "100%",
 				contentHeight: "80vh",
 				buttons: [
 					this.getAdditionalFooterButtons(),
