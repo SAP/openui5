@@ -1874,14 +1874,31 @@ sap.ui.define([
 		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table has no rows with bindingContext");
 	});
 
-	QUnit.test("#_getContexts", async function(assert) {
+	QUnit.test("#_getContexts", function(assert) {
+		const oBinding = this.oTable.getBinding();
+
+		this.fnBindingNodesSpy.resetHistory();
 		this.oTable.setVisible(false);
-		this.oTable.getBinding().suspend();
-		await TableQUnitUtils.wait(100);
+		oBinding.suspend();
+		assert.deepEqual(this.oTable._getContexts(), [], "Called on invisible table and suspended binding: Return value");
+		assert.ok(this.fnBindingNodesSpy.notCalled, "Called on invisible table and suspended binding: Binding#getNodes not called");
 
-		assert.deepEqual(this.oTable._getContexts(), [], "Called without arguments on invisible and suspended table: []");
-		assert.equal(this.fnBindingNodesSpy.callCount, 0, "Called without arguments: Binding#getNodes not called");
+		this.fnBindingNodesSpy.resetHistory();
+		oBinding.resume();
+		this.oTable._getContexts(1, 2, 3);
+		assert.ok(this.fnBindingNodesSpy.calledOnceWithExactly(1, 2, 3),
+			"Called on invisible table and not suspended binding: Binding#getNodes call");
 
-		this.fnBindingNodesSpy.restore();
+		this.fnBindingNodesSpy.resetHistory();
+		this.oTable.setVisible(true);
+		oBinding.suspend();
+		this.oTable._getContexts(1, 2, 3);
+		assert.ok(this.fnBindingNodesSpy.calledOnceWithExactly(1, 2, 3),
+			"Called on visible table and suspended binding: Binding#getNodes call");
+
+		this.fnBindingNodesSpy.resetHistory();
+		this.oTable.unbindRows();
+		assert.deepEqual(this.oTable._getContexts(1, 2, 3), [], "Called without binding: Return value");
+		assert.ok(this.fnBindingNodesSpy.notCalled, "Called without binding: Binding#getNodes not called");
 	});
 });

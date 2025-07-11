@@ -2,9 +2,10 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
-	"sap/ui/table/Table"
+	"sap/ui/model/odata/v4/ODataListBinding"
 ], function(
-	TableQUnitUtils, Table
+	TableQUnitUtils,
+	ODataListBinding
 ) {
 	"use strict";
 
@@ -34,12 +35,12 @@ sap.ui.define([
 
 		const oSetBusySpy = sinon.spy(oTable, "setBusy");
 		const oScrollExtension = oTable._getScrollExtension();
-		const oDataRequestedSpy = sinon.spy(oTable.getBinding("rows"), "fireDataRequested");
+		const oDataRequestedSpy = sinon.spy(oTable.getBinding(), "fireDataRequested");
 
 		assert.equal(oTable.getBusy(), false, "Table is not busy");
 
 		oScrollExtension.scrollVertically(true, true);
-		await TableQUnitUtils.nextEvent("dataRequested", oTable.getBinding("rows"));
+		await TableQUnitUtils.nextEvent("dataRequested", oTable.getBinding());
 
 		/* Table#setBusy will be called to ensure that it reacts to dynamic
 		 * changes in case of multiple requests. In this case, it is called
@@ -66,49 +67,34 @@ sap.ui.define([
 				rows: {path: "/Products", suspended: true},
 				visible: false
 			});
-			this.fnBindingContextSpy = sinon.spy(this.oTable.getBinding(), "getContexts");
+			this.fnBindingGetContextSpy = sinon.spy(this.oTable.getBinding(), "getContexts");
 		},
 		afterEach: function() {
 			this.oTable?.destroy();
-			this.fnBindingContextSpy.restore();
+			this.fnBindingGetContextSpy.restore();
 		}
 	});
 
 	QUnit.test("Initialized hidden table with suspended binding", async function(assert) {
 		await TableQUnitUtils.wait(100);
-		assert.ok(this.fnBindingContextSpy.notCalled, "Binding.getContexts() was not called");
-		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table doesn't have rows with bindingContext");
-
-		this.fnBindingContextSpy.resetHistory();
-		this.oTable.setVisible(true);
-		this.oTable.getBinding("rows").resume();
-		await this.oTable.qunit.whenBindingChange();
-		await this.oTable.qunit.whenRenderingFinished();
-
-		assert.ok(this.fnBindingContextSpy.called, "Binding.getContexts() was called");
-		assert.ok(this.oTable.getRows()[0].getBindingContext(), "Table has rows with bindingContext");
+		assert.ok(this.fnBindingGetContextSpy.notCalled, "Binding#getContexts not called");
+		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table doesn't have rows with binding context");
 	});
 
-	QUnit.test("Table show/hide at runtime", async function(assert) {
-		await TableQUnitUtils.wait(100);
-		assert.ok(this.fnBindingContextSpy.notCalled, "Binding.getContexts() was not called");
-		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table doesn't have rows with bindingContext");
-
-		this.fnBindingContextSpy.resetHistory();
+	QUnit.test("Change visibility of table and suspension state of binding", async function(assert) {
+		this.fnBindingGetContextSpy.resetHistory();
 		this.oTable.setVisible(true);
-		this.oTable.getBinding("rows").resume();
+		this.oTable.getBinding().resume();
 		await this.oTable.qunit.whenBindingChange();
 		await this.oTable.qunit.whenRenderingFinished();
+		assert.ok(this.fnBindingGetContextSpy.called, "Show table and resume binding: Binding#getContexts called");
+		assert.ok(this.oTable.getRows()[0].getBindingContext(), "Show table and resume binding: Table has rows with bindingContext");
 
-		assert.ok(this.fnBindingContextSpy.called, "Binding.getContexts() was called");
-		assert.ok(this.oTable.getRows()[0].getBindingContext(), "Table has rows with bindingContext");
-
-		this.fnBindingContextSpy.resetHistory();
+		this.fnBindingGetContextSpy.resetHistory();
 		this.oTable.setVisible(false);
-		this.oTable.getBinding("rows").suspend();
+		this.oTable.getBinding().suspend();
 		await TableQUnitUtils.wait(100);
-
-		assert.ok(this.fnBindingContextSpy.notCalled, "Binding.getContexts() was not called");
-		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Table doesn't have rows with bindingContext");
+		assert.ok(this.fnBindingGetContextSpy.notCalled, "Hide table and suspend binding: Binding#getContexts not called");
+		assert.notOk(this.oTable.getRows()[0].getBindingContext(), "Hide table and suspend binding: Table doesn't have rows with bindingcontext");
 	});
 });
