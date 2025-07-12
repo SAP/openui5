@@ -162,7 +162,8 @@ sap.ui.define([
 	AddXML.prototype.getMenuItems = function(aElementOverlays) {
 		return this._getMenuItems(aElementOverlays, {
 			pluginId: "CTX_ADDXML",
-			icon: "sap-icon://attachment-html"
+			icon: "sap-icon://attachment-html",
+			additionalInfoKey: "ADDXML_RTA_CONTEXT_MENU_INFO"
 		});
 	};
 

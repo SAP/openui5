@@ -1218,7 +1218,7 @@ sap.ui.define([
 				&& oControl.isA("sap.m.IToolbarInteractiveControl")
 				&& typeof (oControl._getToolbarInteractive) === "function" && oControl._getToolbarInteractive();
 		}, this);
-		aInteractiveControls.push(this._getOverflowButton());
+		this._getOverflowButtonNeeded() && aInteractiveControls.push(this._getOverflowButton());
 
 		return aInteractiveControls;
 	};

@@ -65419,6 +65419,9 @@ sap.ui.define([
 	// Selection on inactive context which is then deleted and destroyed (JIRA: CPOUI5ODATAV4-1943).
 	// Selection is cleared on successful deletion (JIRA: CPOUI5ODATAV4-2053).
 	// $selectionCount, ODLB#getSelectionCount (JIRA: CPOUI5ODATAV4-1945)
+	//
+	// Show that a persisted creation row does not loose its special handling with refresh single.
+	// SNOW: DINC0562822
 	[false, true].forEach(function (bAPI) {
 		QUnit.test("Multiple creation rows, grid table, SubmitMode.API = " + bAPI, function (assert) {
 			var oBinding,
@@ -65655,6 +65658,55 @@ sap.ui.define([
 				assert.strictEqual(oContext3.isInactive(), false);
 				assert.strictEqual(oContext3.isTransient(), false);
 				assert.strictEqual(iEventCount, 2, "no further createActivate events");
+
+				that.expectRequest("SalesOrderList('42')"
+					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0030')"
+					+ "?$select=ItemPosition,Note,SalesOrderID", {
+						ItemPosition : "0030",
+						Note : "Note 3.0",
+						SalesOrderID : "42"
+					})
+					.expectChange("note", [,, "Note 3.0"]);
+
+				// code under test (SNOW: DINC0562822)
+				oContext3.refresh();
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				that.expectRequest("SalesOrderList('42')/SO_2_SOITEM?"
+						+ "$select=ItemPosition,Note,SalesOrderID"
+						+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0020'"
+						+ " or SalesOrderID eq '42' and ItemPosition eq '0030'&$top=2", {
+						value : [{
+							ItemPosition : "0020", Note : "Note 2.1", SalesOrderID : "42"
+						}, {
+							ItemPosition : "0030", Note : "Note 3.1", SalesOrderID : "42"
+						}]
+					})
+					// #refreshKeptElements updates "on the fly" -> #getIndex returns wrong value
+					.expectChange("note", ["Note 2.1", "Note 3.1"])
+					.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$count=true"
+						+ "&$select=ItemPosition,Note,SalesOrderID"
+						+ "&$filter=not (SalesOrderID eq '42' and ItemPosition eq '0020'"
+						+ " or SalesOrderID eq '42' and ItemPosition eq '0030')"
+						+ "&$skip=0&$top=110", {
+						"@odata.count" : "1",
+						value : [{
+							ItemPosition : "0010", Note : "Note 1.1", SalesOrderID : "42"
+						}]
+					})
+					.expectChange("note", ["Note 1.1"]);
+
+				return Promise.all([
+					oBinding.getHeaderContext().requestSideEffects([""], "$auto"),
+					that.waitForChanges(assert)
+				]);
+			}).then(function () {
+				assert.deepEqual(oBinding.getAllCurrentContexts().map(getPath), [
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0030')",
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0020')",
+					"/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')"
+				]);
 			});
 		});
 	});
@@ -71693,6 +71745,7 @@ sap.ui.define([
 	// and a refresh of a relative binding w/ $$ownRequest (JIRA: CPOUI5ODATAV4-2500)
 	//
 	// Show that a created persisted can stay kept alive during refresh (JIRA: CPOUI5ODATAV4-1386)
+	// Show that a single refresh of a persisted enity does not change anything (SNOW: DINC0562822)
 	[
 		"changeParameters", "filter", "refresh", "resume", "sideEffectsRefresh", "sort"
 	].forEach(function (sMethod) {
@@ -71772,6 +71825,22 @@ sap.ui.define([
 
 				return that.waitForChanges(assert, "2x transient");
 			}).then(function () {
+				assert.strictEqual(oBinding.hasPendingChanges(), true);
+				assert.strictEqual(oBinding.hasPendingChanges(true), false);
+
+				oContextA.setKeepAlive(true); // JIRA: CPOUI5ODATAV4-1386
+
+				that.expectRequest(sTeams + "('TEAM_A')?$select=Name,Team_Id", {
+						Name : "New 'A' Team",
+						Team_Id : "TEAM_A"
+					});
+
+				return Promise.all([
+					// code under test (SNOW: DINC0562822)
+					oContextA.requestRefresh(),
+					that.waitForChanges(assert, "requestRefresh")
+				]);
+			}).then(function () {
 				var oPromise,
 					oResult = {
 						value : [{
@@ -71788,11 +71857,6 @@ sap.ui.define([
 							Team_Id : "TEAM_A"
 						}]
 					};
-
-				assert.strictEqual(oBinding.hasPendingChanges(), true);
-				assert.strictEqual(oBinding.hasPendingChanges(true), false);
-
-				oContextA.setKeepAlive(true); // JIRA: CPOUI5ODATAV4-1386
 
 				switch (sMethod) {
 					case "changeParameters":
