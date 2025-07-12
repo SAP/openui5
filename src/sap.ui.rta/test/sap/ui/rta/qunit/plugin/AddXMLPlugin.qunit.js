@@ -30,9 +30,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
-	var sXmlString =
+	const sXmlString =
 	'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<Panel id="panel">' +
 			"<content>" +
@@ -111,6 +112,17 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Menu Item, positive case", async function(assert) {
+			const aMenuItems = await this.oAddXmlPlugin.getMenuItems([this.oPanelOverlay]);
+			assert.strictEqual(aMenuItems[0].icon, "sap-icon://attachment-html", "then the icon is set correctly");
+			assert.strictEqual(
+				aMenuItems[0].text, oResourceBundle.getText("CTX_ADDXML"), "then the text is set correctly");
+			assert.strictEqual(aMenuItems[0].additionalInfo,
+				oResourceBundle.getText("ADDXML_RTA_CONTEXT_MENU_INFO"),
+				"then the additional info is set correctly"
+			);
+		});
+
 		QUnit.test("When the Action is set to null", function(assert) {
 			sandbox.stub(this.oAddXmlPlugin, "getAction").returns(null);
 			return this.oAddXmlPlugin._isEditable(this.oPanelOverlay).then(function(bEditable) {
@@ -132,7 +144,7 @@ sap.ui.define([
 			const aMenuItems = await this.oAddXmlPlugin.getMenuItems([this.oPanelOverlay]);
 			assert.strictEqual(
 				aMenuItems[0].text,
-				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_ADDXML")} (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_REUSE")})`,
+				`${oResourceBundle.getText("CTX_ADDXML")} (${oResourceBundle.getText("CTX_DISABLED_REUSE")})`,
 				"then the menu item has the correct text"
 			);
 		});
@@ -143,7 +155,7 @@ sap.ui.define([
 			const aMenuItems = await this.oAddXmlPlugin.getMenuItems([this.oPanelOverlay]);
 			assert.strictEqual(
 				aMenuItems[0].text,
-				`${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_ADDXML")} (${Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_DISABLED_NO_STABLE_ID")})`,
+				`${oResourceBundle.getText("CTX_ADDXML")} (${oResourceBundle.getText("CTX_DISABLED_NO_STABLE_ID")})`,
 				"then the menu item has the correct text"
 			);
 		});

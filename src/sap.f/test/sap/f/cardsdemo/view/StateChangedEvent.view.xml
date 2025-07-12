@@ -30,10 +30,6 @@
 				<Button text="Hide Message" press=".onHideMessage"
 					visible="{= !!${stateChangedEventPage>/messageStripVisible}}" />
 
-				<Button text="Previous Page" press=".onPreviousPage"
-					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
-				<Button text="Next Page" press=".onNextPage"
-					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
 				<Button text="Change Filter" press=".onChangeSelectFilter"
 					visible="{= ${stateChangedEventPage>/selectedKey} === 'filter' }" />
 				<Button text="Initial Filter" press=".onInitialSelectFilter"

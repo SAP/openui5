@@ -632,7 +632,11 @@ sap.ui.define([
 					await this._oSerializer.clearCommandStack(/* bRemoveChanges = */true);
 				}
 			}
-			const oReloadInfo = bSkipRestart ? {} : await ReloadManager.checkReloadOnExit({
+			const bSkipRestartViaSessionStorage = window.sessionStorage.getItem("sap.ui.rta.skipReload");
+			if (bSkipRestartViaSessionStorage) {
+				window.sessionStorage.removeItem("sap.ui.rta.skipReload");
+			}
+			const oReloadInfo = (bSkipRestart || bSkipRestartViaSessionStorage) ? {} : await ReloadManager.checkReloadOnExit({
 				layer: this.getLayer(),
 				selector: this.getRootControlInstance(),
 				isDraftAvailable: this._oVersionsModel.getProperty("/draftAvailable"),

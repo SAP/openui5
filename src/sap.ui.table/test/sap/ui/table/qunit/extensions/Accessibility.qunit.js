@@ -224,10 +224,6 @@ sap.ui.define([
 			aLabels.push(sRowId + "-highlighttext");
 		}
 
-		if (iIndex === 0) {
-			aLabels.push(sTableId + "-ariafixedcolumn");
-		}
-
 		if (!bGroup) {
 			if (iIndex === 4) {
 				aLabels.push(oCell.getId());
@@ -249,13 +245,6 @@ sap.ui.define([
 
 	function testAriaLabelsForNonFocusedDataCell(oTable, oCellElement, iRow, iCol, assert) {
 		const aLabels = [];
-		const oRow = oTable.getRows()[iRow];
-		const oCell = oRow.getCells()[iCol];
-		const iIndex = Column.ofCell(oCell).getIndex();
-
-		if (iIndex === 0) {
-			aLabels.push(oTable.getId() + "-ariafixedcolumn");
-		}
 
 		assert.strictEqual(
 			(oCellElement.getAttribute("aria-labelledby") || "").trim(),
@@ -707,7 +696,7 @@ sap.ui.define([
 	function testAriaLabelsForColumnHeader($Cell, iCol, assert, mParams = {}) {
 		const bFocus = !!mParams.focus;
 		const sTableId = oTable.getId();
-		const aLabels = [];
+		const aLabels = [$Cell.attr("id") + "-inner"];
 
 		if (iCol === 0) {
 			aLabels.push(sTableId + "-ariafixedcolumn");
@@ -721,16 +710,12 @@ sap.ui.define([
 			aLabels.push(sTableId + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
 		}
 
-		if (bFocus && iCol === 4) {
+		if (iCol === 4) {
 			aLabels.push(sTableId + "-ariarequired");
 		}
 
 		if ($Cell.attr("colspan")) {
 			aLabels.push(sTableId + "-ariacolspan");
-		}
-
-		if (bFocus && aLabels.length > 0) {
-			aLabels.unshift($Cell.attr("id") + "-inner");
 		}
 
 		assert.strictEqual(

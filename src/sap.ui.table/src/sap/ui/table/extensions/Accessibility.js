@@ -423,9 +423,7 @@ sap.ui.define([
 			const bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell, oRow);
 			const bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell);
 			const aDefaultLabels = ExtensionHelper.getAriaAttributesForDataCell(this, {
-					index: iCol,
-					column: oTableInstances.column,
-					fixed: TableUtils.isFixedColumn(oTable, iCol)
+					index: iCol
 				})["aria-labelledby"] || [];
 			const aDescriptions = [];
 			let aLabels = [];
@@ -526,7 +524,6 @@ sap.ui.define([
 			const oTable = this.getTable();
 			const $Cell = jQuery(oCellInfo.cell);
 			const oColumn = Element.getElementById($Cell.attr("data-sap-ui-colid"));
-			const oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 			const mAttributes = ExtensionHelper.getAriaAttributesForColumnHeader(this, {
 					headerId: $Cell.attr("id"),
 					column: oColumn,
@@ -535,10 +532,6 @@ sap.ui.define([
 			const sText = ExtensionHelper.getColumnTooltip(oColumn);
 			const aLabels = mAttributes["aria-labelledby"] || [];
 			const iSpan = oCellInfo.columnSpan;
-
-			if (oColumnLabel?.getRequired?.()) {
-				aLabels.push(oTable.getId() + "-ariarequired");
-			}
 
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
@@ -552,10 +545,6 @@ sap.ui.define([
 
 			if (iSpan <= 1 && oColumn && oColumn.getFiltered()) {
 				aLabels.push(oTable.getId() + "-ariacolfiltered");
-			}
-
-			if (aLabels.length > 0) {
-				aLabels.unshift($Cell.attr("id") + "-inner");
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
@@ -750,12 +739,18 @@ sap.ui.define([
 
 			const oColumn = mParams && mParams.column;
 			const bHasColSpan = mParams && mParams.colspan;
+			const oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 
 			mAttributes["role"] = "columnheader";
 			mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 
+			mAttributes["aria-labelledby"] = [mParams.headerId + "-inner"];
 			if (mParams && (mParams.index < oTable.getComputedFixedColumnCount())) {
-				mAttributes["aria-labelledby"] = [sTableId + "-ariafixedcolumn"];
+				mAttributes["aria-labelledby"].push([sTableId + "-ariafixedcolumn"]);
+			}
+
+			if (oColumnLabel?.getRequired?.()) {
+				mAttributes["aria-labelledby"].push(sTableId + "-ariarequired");
 			}
 
 			if (!bHasColSpan && oColumn) {
@@ -775,7 +770,7 @@ sap.ui.define([
 		 * Returns the aria attributes for a data cell.
 		 *
 		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension
-		 * @param {{index: int, column: sap.ui.table.Column, row: sap.ui.table.Row,	fixed: boolean,	rowSelected: boolean}} mParams An object
+		 * @param {{index: int}} mParams An object
 		 * containing the index of the row, the instance of the column, the instance of the row, whether the column is fixed and whether the row is
 		 * selected
 		 * @returns {object} An object containing the aria attributes
@@ -783,14 +778,10 @@ sap.ui.define([
 		getAriaAttributesForDataCell: function(oExtension, mParams) {
 			const mAttributes = {};
 			const oTable = oExtension.getTable();
-			const sTableId = oTable.getId();
 
 			mAttributes["role"] = "gridcell";
 			mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 
-			if (mParams.column && mParams.fixed) {
-				mAttributes["aria-labelledby"] = [sTableId + "-ariafixedcolumn"];
-			}
 			return mAttributes;
 		},
 

@@ -1454,28 +1454,14 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype.addToolbarContent = function(oContent) {
-		if (oContent && oContent.isA("sap.m.Title")) {
-			this._observeHeaderTitleText(oContent);
-			const oHeader = this._getHeader(),
-				sLabel = `${this._getHeader().getId()}-Title`;
-			oHeader.setTitle(oContent.getText());
-			oContent.setVisible(false);
-			this.addAriaLabelledBy(sLabel);
-		}
+		this._prepareHeaderTitle(oContent);
 		this.addAggregation("toolbarContent", oContent);
 
 		return this;
 	 };
 
 	PlanningCalendar.prototype.insertToolbarContent = function(oContent, iIndex) {
-		if (oContent && oContent.isA("sap.m.Title")) {
-			this._observeHeaderTitleText(oContent);
-			const oHeader = this._getHeader(),
-				sLabel = `${this._getHeader().getId()}-Title`;
-			oHeader.setTitle(oContent.getText());
-			oContent.setVisible(false);
-			this.addAriaLabelledBy(sLabel);
-		}
+		this._prepareHeaderTitle(oContent);
 		this.insertAggregation("toolbarContent", oContent, iIndex);
 
 		return this;
@@ -1531,6 +1517,21 @@ sap.ui.define([
 		this._getHeaderObserver().observe(oTitle, {
 			properties: ["text"]
 		});
+	};
+
+	PlanningCalendar.prototype._prepareHeaderTitle = function (oTitle) {
+		if (oTitle && oTitle.isA("sap.m.Title")) {
+			this._observeHeaderTitleText(oTitle);
+			const oHeader = this._getHeader(),
+				sLabel = `${this._getHeader().getId()}-Title`,
+				oLevel = oTitle.getLevel(),
+				oTitleStyle = oTitle.getTitleStyle();
+			oHeader.setTitle(oTitle.getText());
+			oHeader.setLevel(oLevel);
+			oHeader.setTitleStyle(oTitleStyle);
+			oTitle.setVisible(false);
+			this.addAriaLabelledBy(sLabel);
+		}
 	};
 
 	PlanningCalendar.prototype._handleTitleTextChange = function (oChanges) {

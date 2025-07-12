@@ -4,84 +4,48 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/library",
 	"sap/ui/core/Element",
+	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
+	"sap/ui/core/library",
+	"sap/ui/fl/util/getContainerUserInfo",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/rta/Utils",
+	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
-	"sap/ui/fl/util/getContainerUserInfo"
+	"sap/ui/rta/Utils"
 ], function(
 	Log,
 	ManagedObject,
-	Fragment,
-	coreLibrary,
 	Element,
+	Fragment,
 	Lib,
+	coreLibrary,
+	getContainerUserInfo,
 	JSONModel,
-	RtaUtils,
+	ResourceModel,
 	AddIFrameDialogController,
-	getContainerUserInfo
+	RtaUtils
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
 	var {ValueState} = coreLibrary;
 	var _oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
-	var _sDocumentationURL = "https://help.sap.com/docs/search?q=Embedding%20Content%20%28Object%20Pages%29";
-	var _sDocumentationHTML = `${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT")} (` + `<a href=${_sDocumentationURL}>${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT")}</a>)`;
-	var _mText = {
-		dialogTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
-		dialogCreateTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
-		dialogUpdateTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_UPDATE_TITLE"),
-		sizeTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SIZE_TITLE"),
-		widthLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_WIDTH_LABEL"),
-		widthUnitLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_WIDTH_UNITLABEL"),
-		heightLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_HEIGHT_LABEL"),
-		heightUnitLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_HEIGHT_UNITLABEL"),
-		dimensionsErrorText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_DIMENSIONS_ERROR"),
-		saveText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_SAVE"),
-		cancelText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_CANCEL"),
-		previewUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PREVIEW_URL_LABEL"),
-		previewUrlMessage: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_PREVIEW_MESSAGE"),
-		previewButtonText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_SHOW_PREVIEW"),
-		showPreviewButton: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_SHOW_PREVIEW"),
-		updatePreviewButton: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_BUTTON_UPDATE_PREVIEW"),
-		previewFrameLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PREVIEW_FRAME_LABEL"),
-		parameterSearchLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETER_SEARCH_LABEL"),
-		editUrlLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_EDIT_URL_LABEL"),
-		parametersLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_PARAMETERS_LABEL"),
-		columnParameterLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_PARAMETER_LABEL"),
-		columnUiValueLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TABLE_UI_VALUE_LABEL"),
-		containerTitleLabel: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_LABEL"),
-		containerTitleDefaultValue: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_DEFAULT_VALUE_TEXT"),
-		selectAdditionalTextPercentSection: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_SECTION"),
-		selectAdditionalTextPercentHeader: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_HEADER"),
-		selectAdditionalTextVh: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_VH"),
-		selectAdditionalTextPx: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX"),
-		selectAdditionalTextRem: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM"),
-		advancedSettingsTitle: _oTextResources.getText("IFRAME_ADDIFRAME_ADVANCED_SETTINGS"),
-		additionalParametersSecurityWarningText: _oTextResources.getText("IFRAME_ADDIFRAME_ADDITIONAL_PARAMETERS_SECURITY_WARNING_TEXT"),
-		additionalParametersWarningMoreInfoText: _oTextResources.getText("IFRAME_ADDIFRAME_ADDITIONAL_PARAMETERS_WARNING_MORE_INFO_TEXT"),
-		additionalSandboxParametersLabel: _oTextResources.getText("IFRAME_ADDIFRAME_ADD_ADDITIONAL_SANDBOX_PARAMETERS_LABEL"),
-		additionalSandboxParametersPlaceholder: _oTextResources.getText("IFRAME_ADDIFRAME_ADD_ADDITIONAL_SANDBOX_PARAMETERS_PLACEHOLDER")
-	};
 
 	function createJSONModel(bSetUpdateTitle, bAsContainer, sFrameWidthValue, sFrameHeightValue, oAdvancedSettings) {
-		_mText.dialogTitle = bSetUpdateTitle ? _mText.dialogUpdateTitle : _mText.dialogCreateTitle;
-
 		var sSelectAdditionalTextPercent = bAsContainer
-			? _mText.selectAdditionalTextPercentSection
-			: _mText.selectAdditionalTextPercentHeader;
+			? _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_SECTION")
+			: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_HEADER");
 
 		return new JSONModel({
-			text: _mText,
+			dialogTitle: bSetUpdateTitle ?
+				_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_UPDATE_TITLE") :
+				_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
 			asContainer: {
 				value: bAsContainer
 			},
 			title: {
-				value: _mText.containerTitleDefaultValue,
+				value: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_DEFAULT_VALUE_TEXT"),
 				valueState: ValueState.None,
 				id: "sapUiRtaAddIFrameDialog_ContainerTitle_TitleInput"
 			},
@@ -94,7 +58,7 @@ sap.ui.define([
 				value: "%"
 			},
 			frameHeight: {
-				value: parseFloat(sFrameHeightValue) || 50,
+				value: parseFloat(sFrameHeightValue) || 35,
 				valueState: ValueState.None,
 				id: "sapUiRtaAddIFrameDialog_HeightInput"
 			},
@@ -112,29 +76,26 @@ sap.ui.define([
 				value: undefined
 			},
 			previewUrl: { value: "" },
-			documentationLink: {
-				HTML: _sDocumentationHTML
-			},
 			parameters: { value: [] },
 			unitsOfWidthMeasure: [{
 				unit: "%",
 				descriptionText: sSelectAdditionalTextPercent
 			}, {
 				unit: "px",
-				descriptionText: _mText.selectAdditionalTextPx
+				descriptionText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX")
 			}, {
 				unit: "rem",
-				descriptionText: _mText.selectAdditionalTextRem
+				descriptionText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
 			}],
 			unitsOfHeightMeasure: [{
 				unit: "vh",
-				descriptionText: _mText.selectAdditionalTextVh
+				descriptionText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_VH")
 			}, {
 				unit: "px",
-				descriptionText: _mText.selectAdditionalTextPx
+				descriptionText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX")
 			}, {
 				unit: "rem",
-				descriptionText: _mText.selectAdditionalTextRem
+				descriptionText: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
 			}],
 			advancedSettings: {
 				value: {
@@ -146,6 +107,9 @@ sap.ui.define([
 				}
 			},
 			settingsUpdate: {
+				value: false
+			},
+			showParameters: {
 				value: false
 			}
 		});
@@ -212,6 +176,8 @@ sap.ui.define([
 			this._oDialog.setModel(this._oJSONModel, "dialogInfo");
 			this._oDialog.setModel(oReferenceControl.getModel());
 			this._oDialog.setBindingContext(oReferenceControl.getBindingContext());
+			const oI18nModel = new ResourceModel({ bundleName: "sap.ui.rta.messagebundle" });
+			this._oDialog.setModel(oI18nModel, "i18n");
 			this._openDialog();
 		}.bind(this)).catch(function(oError) {
 			Log.error("Error loading fragment sap.ui.rta.plugin.iframe.AddIFrameDialog: ", oError);
@@ -225,7 +191,6 @@ sap.ui.define([
 	 */
 	AddIFrameDialog.prototype._openDialog = function() {
 		this._oDialog.attachAfterOpen(function() {
-			this._disablePanelExpand();
 			const oIframe = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
 			const oUserModel = oIframe.getModel("$user");
 			this._oDialog.setModel(oUserModel, "$user");
@@ -240,18 +205,6 @@ sap.ui.define([
 		}.bind(this));
 
 		this._oDialog.open();
-	};
-
-	/**
-	 * Disables the opening of the Panel at start
-	 *
-	 * @private
-	 */
-	AddIFrameDialog.prototype._disablePanelExpand = function() {
-		var oPanelButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
-		if (oPanelButton) {
-			oPanelButton.setEnabled(false);
-		}
 	};
 
 	/**

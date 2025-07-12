@@ -1366,7 +1366,6 @@ sap.ui.define([
 			});
 	});
 
-
 	QUnit.test("List with pagination - client side", function (assert) {
 		var oManifest = {
 			"sap.app": {
@@ -1420,7 +1419,49 @@ sap.ui.define([
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			});
 
-		assert.expect(3);
+		// Act
+		return oCard.resolveManifest()
+			.then(function (oRes) {
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage1, "content for first page is resolved correctly");
+				assert.deepEqual(oRes["sap.card"].footer.paginator, oExpectedPaginatorPage1, "paginator for first page is resolved correctly");
+			});
+	});
+
+
+	QUnit.test("List with pagination with large amount of data - client side", function (assert) {
+		const aData = new Array(100).fill({ Name: "Name" });
+		const oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": aData
+					},
+					"item": {
+						"title": "{Name}"
+					}
+				},
+				"footer": {
+					"paginator": {
+						"pageSize": 2
+					}
+				}
+			}
+		};
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+		const oExpectedItemsPage1 = aData.map((oItem) => { return { title: "Name" }; });
+		const oExpectedPaginatorPage1 = {
+			"pageCount": 1,
+			"pageIndex": 0
+		};
 
 		// Act
 		return oCard.resolveManifest()
@@ -1428,7 +1469,7 @@ sap.ui.define([
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage1, "content for first page is resolved correctly");
 				assert.deepEqual(oRes["sap.card"].footer.paginator, oExpectedPaginatorPage1, "paginator for first page is resolved correctly");
-				assert.ok(oExpectedPaginatorPage1);
+
 			});
 	});
 

@@ -123,6 +123,7 @@ sap.ui.define([
 
 	function checkModel(assert, oModelPart, oCheckValues) {
 		assert.strictEqual(oModelPart.key, oCheckValues.key, "'key' is set correctly to the model");
+		assert.notOk(oModelPart.title.startsWith("TXT_"), "'title' is not a resource bundle key");
 		assert.strictEqual(oModelPart.title, oCheckValues.title, "'text' is set correctly to the model");
 		assert.strictEqual(oModelPart.icon, oCheckValues.icon, "'icon' is set correctly to the model");
 		assert.strictEqual(oModelPart.count, oCheckValues.count, "the number of changes is correct");
@@ -342,6 +343,24 @@ sap.ui.define([
 				icon: "sap-icon://add",
 				count: 5
 			};
+			this.oCheckModelRename = {
+				key: "rename",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_RENAME", [0]),
+				icon: "sap-icon://edit",
+				count: 1
+			};
+			this.oCheckModelRemove = {
+				key: "remove",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_REMOVE", [0]),
+				icon: "sap-icon://less",
+				count: 0
+			};
+			this.oCheckModelOther = {
+				key: "other",
+				title: oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_OVERVIEW_OTHER", [0]),
+				icon: "sap-icon://key-user-settings",
+				count: 0
+			};
 			return startVisualization(this.oRta)
 			.then(function() {
 				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
@@ -362,9 +381,12 @@ sap.ui.define([
 				);
 				const aMenuItems = aPopoverContent[1].getItems();
 				checkModel(assert, aVizModel[0], this.oCheckModelAll);
-				checkModel(assert, aVizModel[2], this.oCheckModelMove);
 				checkModel(assert, aVizModel[1], this.oCheckModelAdd);
+				checkModel(assert, aVizModel[2], this.oCheckModelMove);
+				checkModel(assert, aVizModel[3], this.oCheckModelRename);
 				checkModel(assert, aVizModel[4], this.oCheckModelCombineAndSplit);
+				checkModel(assert, aVizModel[5], this.oCheckModelRemove);
+				checkModel(assert, aVizModel[6], this.oCheckModelOther);
 				checkBinding(assert, aVizModel[0], aMenuItems[0]);
 				checkBinding(assert, aVizModel[2], aMenuItems[2]);
 				checkBinding(assert, aVizModel[1], aMenuItems[1]);

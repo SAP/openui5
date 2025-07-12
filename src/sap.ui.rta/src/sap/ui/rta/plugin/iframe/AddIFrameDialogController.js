@@ -55,6 +55,14 @@ sap.ui.define([
 		return new Token({key: sText, text: sText});
 	}
 
+	function setNewPreviewSize(sPropertyName) {
+		const sUnit = this._oJSONModel.getProperty(`${sPropertyName}Unit/value`);
+		const sValue = this._oJSONModel.getProperty(`${sPropertyName}/value`);
+		const oIFramePreview = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
+		const sIFramePropertyName = sPropertyName === "/frameWidth" ? "width" : "height";
+		oIFramePreview.setProperty(sIFramePropertyName, sValue + sUnit);
+	}
+
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
 		// eslint-disable-next-line object-shorthand
 		constructor: function(oJSONModel, mSettings) {
@@ -136,9 +144,8 @@ sap.ui.define([
 
 		/**
 		 * Event handler for Show Preview button
-		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
-		onShowPreview() {
+		onPreviewPress() {
 			const sReturnedURL = this._buildReturnedURL();
 			const sURL = this._buildPreviewURL();
 
@@ -146,15 +153,6 @@ sap.ui.define([
 				return;
 			}
 			const oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
-			// enable/disable expanding the Panel
-			const oPanel = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
-			const oPanelButton = oPanel.getDependents()[0];
-			if (sURL) {
-				oPanelButton.setEnabled(true);
-			} else {
-				oPanel.setExpanded(false);
-				oPanelButton.setEnabled(false);
-			}
 			try {
 				this._oJSONModel.setProperty("/previousFrameUrl/value", sReturnedURL);
 				this._oJSONModel.setProperty("/settingsUpdate/value", false);
@@ -162,9 +160,21 @@ sap.ui.define([
 				oIFrame.applySettings({ url: sURL, advancedSettings: {...this._oJSONModel.getProperty("/advancedSettings/value")} });
 				// Use the URL from the IFrame to ensure that the complete path is shown
 				this._oJSONModel.setProperty("/previewUrl/value", oIFrame.getUrl());
+				// Prevent the URL preview link (next element in the DOM) from getting the focus because it looks bad
+				setTimeout(() => {
+					Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLink").getFocusDomRef().blur();
+				}, 0);
 			} catch (oError) {
 				Log.error("Error previewing the URL: ", oError);
 			}
+		},
+
+		/**
+		 * Event handler for handling the visibility of the parameters table
+		 */
+		toggleParameterVisibility() {
+			const bValue = this._oJSONModel.getProperty("/showParameters/value");
+			this._oJSONModel.setProperty("/showParameters/value", !bValue);
 		},
 
 		/**
@@ -185,6 +195,34 @@ sap.ui.define([
 			var oFilter = new Filter("label", FilterOperator.Contains, oEvent.getParameter("newValue"));
 			var oBinding = Element.getElementById("sapUiRtaAddIFrameDialog_ParameterTable").getBinding("items");
 			oBinding.filter([oFilter]);
+		},
+
+		/**
+		 * Event handler for size value change - can be the width or height
+		 * This is used to update the iFrame size in the preview
+		 * @param {sap.ui.base.Event} oEvent - Event
+		 */
+		onSizeValueChange(oEvent) {
+			// Get changed field and retrieve its unit from this._oJSONModel
+			const oSource = oEvent.getSource();
+			const sPropertyPath = oSource.getBindingInfo("value").parts[0].path;
+			// Extract "/frameWidth" or "/frameHeight" from the binding path (e.g. /frameWidth/value)
+			const sPropertyName = sPropertyPath.replace(/\/value$/, "");
+			setNewPreviewSize.call(this, sPropertyName);
+		},
+
+		/**
+		 * Event handler for size unit change - can be the width or height
+		 * This is used to update the iFrame size in the preview
+		 * @param {sap.ui.base.Event} oEvent - Event
+		 */
+		onSizeUnitChange(oEvent) {
+			// Get changed field and retrieve its unit from this._oJSONModel
+			const oSource = oEvent.getSource();
+			const sPropertyPath = oSource.getBindingInfo("selectedKey").parts[0].path;
+			// Extract "/frameWidth" or "/frameHeight" from the binding path (e.g. /frameWidthUnit/value)
+			const sPropertyName = sPropertyPath.replace(/Unit\/value$/, "");
+			setNewPreviewSize.call(this, sPropertyName);
 		},
 
 		/**
