@@ -128,7 +128,15 @@ sap.ui.define([
 			 * @ui5-restricted sap.ui.unified.MonthsRow
 			 * @since 1.109.0
 			 */
-			 secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"}
+			 secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
+
+			/**
+			 * If not set, the grid cells aren't announced as selectable.
+			 *
+			 * @private
+			 * @since 1.139.0
+			 */
+			selectableAccessibilitySemantics : {type : "boolean", group : "Behavior", defaultValue : true, visibility: "hidden"}
 		},
 		aggregations : {
 

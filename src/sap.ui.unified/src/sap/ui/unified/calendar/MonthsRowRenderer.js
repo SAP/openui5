@@ -245,6 +245,8 @@ sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', '
 	 */
 	MonthsRowRenderer.renderMonth = function(oRm, oMonthsRow, oDate, oHelper, sWidth){
 		CalendarUtils._checkCalendarDate(oDate);
+		var sRole = oMonthsRow._getAriaRole();
+		var bSelectable = (sRole === "gridcell") && oMonthsRow.getProperty("selectableAccessibilitySemantics");
 
 		var bHasSecondaryCalendarType = !!oMonthsRow._getSecondaryCalendarType(),
 			oSecondaryTypeInfo;
@@ -255,9 +257,9 @@ sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', '
 
 		var mAccProps = {
 			role: oMonthsRow._getAriaRole(),
-			selected: false,
+			selected: bSelectable ? false : null,
 			label: "",
-			describedby: oMonthsRow._getMonthDescription()
+			describedby: bSelectable ? oMonthsRow._getMonthDescription() : null
 		};
 
 		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDate.toUTCJSDate(), true);
@@ -278,7 +280,10 @@ sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', '
 
 		if (iSelected > 0) {
 			oRm.class("sapUiCalItemSel"); // day selected
-			mAccProps["selected"] = true;
+
+			if (bSelectable) {
+				mAccProps["selected"] = true;
+			}
 		}
 		if (iSelected == 2) {
 			oRm.class("sapUiCalItemSelStart"); // interval start

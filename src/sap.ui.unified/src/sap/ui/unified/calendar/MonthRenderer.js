@@ -418,11 +418,12 @@ sap.ui.define([
 	MonthRenderer.renderDay = function(oRm, oMonth, oDay, oHelper, bOtherMonth, bWeekNum, iNumber, sWidth, bDayName){
 		CalendarUtils._checkCalendarDate(oDay);
 		var oSecondaryDay = new CalendarDate(oDay, oHelper.sSecondaryCalendarType),
+			bSelectable = oMonth._getAriaRole() === "gridcell" && oMonth._getSelectableAccessibilitySemantics(),
 			mAccProps = {
 				role: oMonth._getAriaRole(),
-				selected: false,
+				selected: bSelectable ? false : null,
 				label: "",
-				describedby: oMonth._getDayDescription()
+				describedby: bSelectable ? oMonth._getDayDescription() : null
 			},
 			bBeforeFirstYear = oDay._bBeforeFirstYear,
 			sAriaType = "",
@@ -477,10 +478,13 @@ sap.ui.define([
 
 		if (iSelected > 0) {
 			oRm.class("sapUiCalItemSel"); // day selected
-			mAccProps["selected"] = true;
-		} else {
+			if (bSelectable) {
+				mAccProps["selected"] = true;
+			}
+		} else if (bSelectable) {
 			mAccProps["selected"] = false;
 		}
+
 		if (iSelected === 2) {
 			oRm.class("sapUiCalItemSelStart"); // interval start
 			mAccProps["describedby"] = `${mAccProps["describedby"]} ${sStartDateText}`.trim();
