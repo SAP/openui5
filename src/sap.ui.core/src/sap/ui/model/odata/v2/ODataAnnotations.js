@@ -29,6 +29,8 @@ sap.ui.define([
 	 * @param {boolean} mOptions.skipMetadata Whether the metadata document will not be parsed for
 	 *   annotations
 	 * @param {string} [mOptions.cacheKey] A valid cache key
+	 * @param {boolean} [mOptions.withCredentials=false] If set to <code>true</code>, the user credentials are included
+	 *   in a cross-origin request
 	 * @public
 	 *
 	 * @class Annotation loader for OData V2 services
@@ -47,6 +49,7 @@ sap.ui.define([
 			var that = this;
 			// Allow event subscription in constructor options
 			EventProvider.apply(this, [ mOptions ]);
+			this.bWithCredentials = mOptions?.withCredentials === true;
 			this._oMetadata = oMetadata;
 			// The promise to have (loaded,) parsed and merged the previously added source.
 			// This promise should never reject; to assign another promise "pPromise" use
@@ -725,16 +728,19 @@ sap.ui.define([
 	ODataAnnotations.prototype._loadUrl = function(mSource) {
 		assert(mSource.type === "url", "Source type must be \"url\" in order to be loaded");
 
-		return new Promise(function(fnResolve, fnReject) {
+		return new Promise((fnResolve, fnReject) => {
 			var mAjaxOptions = {
-				url: mSource.data,
-				async: true,
-				headers: this._getHeaders(),
-				beforeSend: function(oXHR) {
-					// Force text/plain so the XML parser does not run twice
-					oXHR.overrideMimeType("text/plain");
-				}
-			};
+					url: mSource.data,
+					async: true,
+					headers: this._getHeaders(),
+					...(this.bWithCredentials === true
+						? {xhrFields: {withCredentials: true}}
+						: {}),
+					beforeSend: function(oXHR) {
+						// Force text/plain so the XML parser does not run twice
+						oXHR.overrideMimeType("text/plain");
+					}
+				};
 
 			var fnSuccess = function(sData, sStatusText, oXHR) {
 				mSource.xml = oXHR.responseText;
@@ -758,7 +764,7 @@ sap.ui.define([
 			};
 
 			jQuery.ajax(mAjaxOptions).done(fnSuccess).fail(fnFail);
-		}.bind(this));
+		});
 	};
 
 	/**

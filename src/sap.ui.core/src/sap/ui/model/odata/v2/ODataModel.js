@@ -465,7 +465,8 @@ sap.ui.define([
 				headers: this.mCustomHeaders,
 				combineEvents: true,
 				cacheKey: this._getAnnotationCacheKey(this.sMetadataUrl),
-				useCache: this.bUseCache
+				useCache: this.bUseCache,
+				withCredentials: this.bWithCredentials
 			});
 			if (!this.bDisableSoftStateHeader) {
 				delete this.mCustomHeaders["sap-contextid-accept"];
