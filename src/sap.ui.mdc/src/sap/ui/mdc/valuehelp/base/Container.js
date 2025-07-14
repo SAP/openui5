@@ -1055,8 +1055,8 @@ sap.ui.define([
 	 * @since 1.138
 	 */
 	Container.prototype.isRestrictedToFixedValues = function() {
-		const oContent = this.getContent();
-		return oContent?.[0].isRestrictedToFixedValues();
+		const aContent = this.getContent();
+		return aContent?.[0]?.isRestrictedToFixedValues();
 	};
 
 
