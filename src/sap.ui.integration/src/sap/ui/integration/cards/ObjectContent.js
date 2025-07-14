@@ -263,8 +263,7 @@ sap.ui.define([
 
 				if (oGroup.items) {
 					oGroup.items.forEach(function (oItem) {
-						var oResolvedGroupItem = this._resolveGroupItem(oItem, oItem.path, sObjectContentPath);
-						aResolvedGroupItems.push(oResolvedGroupItem);
+						aResolvedGroupItems.push(this._resolveGroupItem(oItem, sObjectContentPath));
 					}.bind(this));
 				}
 
@@ -275,10 +274,10 @@ sap.ui.define([
 		return oConfiguration;
 	};
 
-	ObjectContent.prototype._resolveGroupItem = function (oItem, sItemPath, sObjectContentPath) {
+	ObjectContent.prototype._resolveGroupItem = function (oItem, sObjectContentPath) {
 		var oResolvedGroupItem = merge({}, oItem),
-			aResolvedItems = [],
-			sFullPath = sObjectContentPath + sItemPath,
+			sItemPath = oItem.path || "/",
+			oTemplate = oItem.template,
 			bIsFormInput = ["TextArea", "Input", "ComboBox", "Duration", "DateRange"].includes(oItem.type),
 			bHasItemsToResolve = ["ButtonGroup", "IconGroup"].includes(oItem.type);
 
@@ -289,8 +288,8 @@ sap.ui.define([
 		if (oItem.type === "ComboBox") {
 			if (oItem.item) {
 				bHasItemsToResolve = true;
-				sFullPath = sObjectContentPath + oItem.item.path.substring(1);
-				oItem.template = oItem.item.template;
+				sItemPath = oItem.item.path;
+				oTemplate = oItem.item.template;
 				delete oResolvedGroupItem.item;
 			} else {
 				bHasItemsToResolve = false;
@@ -298,19 +297,14 @@ sap.ui.define([
 		}
 
 		if (bHasItemsToResolve) {
-			var oTemplate = oItem.template,
-				aData = this.getModel().getProperty(sFullPath);
+			const aResolvedItems = BindingResolver.resolveListBinding(sItemPath, sObjectContentPath, oTemplate, this);
 
-			aData.forEach(function (oItemData, iIndex) {
-				var oResolvedItem = BindingResolver.resolveValue(oTemplate, this, sFullPath + "/" + iIndex + "/");
-
+			aResolvedItems.forEach(function (oResolvedItem) {
 				if (oResolvedItem.icon && oResolvedItem.icon.src) {
 					oResolvedItem.icon.src = this._oIconFormatter.formatSrc(oResolvedItem.icon.src);
 				} else if (oResolvedItem.icon && typeof oResolvedItem.icon === "string") {
 					oResolvedItem.icon = this._oIconFormatter.formatSrc(oResolvedItem.icon);
 				}
-
-				aResolvedItems.push(oResolvedItem);
 			}.bind(this));
 
 			oResolvedGroupItem.items = aResolvedItems;

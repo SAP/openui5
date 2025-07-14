@@ -237,7 +237,13 @@ sap.ui.define([
 	};
 
 	BindingHelper.isAbsolutePath = function (sPath) {
-		return sPath.startsWith("/");
+		const aParts = sPath.split(">");
+
+		if (aParts.length > 1) {
+			return aParts[1].startsWith("/");
+		}
+
+		return aParts[0].startsWith("/");
 	};
 
 	/**
@@ -338,7 +344,19 @@ sap.ui.define([
 		return oObj.hasOwnProperty("path") || (oObj.hasOwnProperty("parts") && (oObj.hasOwnProperty("formatter") || oObj.hasOwnProperty("binding")));
 	};
 
+	BindingHelper.getModelName = function (sPath) {
+		if (typeof sPath !== "string") {
+			return undefined;
+		}
 
+		const aParts = sPath.split(">");
+
+		if (aParts.length > 1) {
+			return aParts[0].trim();
+		}
+
+		return undefined;
+	};
 
 	return BindingHelper;
 });
