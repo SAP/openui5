@@ -409,7 +409,7 @@ function(
 			bIsFirst = this._isFirst(sDirection, iCurrentIndex),
 			bIsLast = this._isLast(sDirection, iCurrentIndex, aFocusableElements);
 
-			if (this._shouldAllowDefaultBehavior(oActiveElement, oEvent)) {
+			if (this._shouldAllowDefaultBehavior(oActiveDomElement, oActiveElement, oEvent)) {
 				return;
 			}
 
@@ -441,19 +441,23 @@ function(
 		return (iCurrentIndex === aFocusableElements.length - 1) && (sDirection === "forward" || sDirection === "down");
 	};
 
-	Toolbar.prototype._shouldAllowDefaultBehavior = function(oActiveElement, oEvent) {
+	Toolbar.prototype._shouldAllowDefaultBehavior = function(oActiveDomElement, oActiveElement, oEvent) {
 		if (!oActiveElement) {
 			return false;
 		}
-		var sActiveElementName = oActiveElement.getMetadata().getName(),
-			bIsSelectOrCombobox = ["sap.m.Select", "sap.m.ComboBox", "sap.m.Tokenizer"].includes(sActiveElementName),
+		var oClosestElement = Element.closestTo(oActiveDomElement),
+			fnHasType = function(vType) {
+				return [oActiveElement, oClosestElement].some(function(oElement) {
+					return oElement && oElement.isA(vType);
+				});
+			},
+			bIsSelectOrComboBox = fnHasType(["sap.m.Select", "sap.m.ComboBox"]),
 			bIsUpOrDownArrowKey = [KeyCodes.ARROW_UP, KeyCodes.ARROW_DOWN].includes(oEvent.keyCode),
-			bIsBreadcrumbs = sActiveElementName === "sap.m.Breadcrumbs",
-			bIsSlider = ["sap.m.Slider", "sap.m.RangeSlider"].includes(sActiveElementName),
-			bIsTokenizer = ["sap.m.OverflowToolbarTokenizer"].includes(sActiveElementName);
+			bIsBreadcrumbs = fnHasType("sap.m.Breadcrumbs"),
+			bIsSlider = fnHasType(["sap.m.Slider", "sap.m.RangeSlider"]),
+			bIsTokenizer = fnHasType("sap.m.OverflowToolbarTokenizer");
 
-
-		if (bIsUpOrDownArrowKey && bIsSelectOrCombobox || bIsBreadcrumbs || bIsSlider || bIsTokenizer) {
+		if (bIsUpOrDownArrowKey && bIsSelectOrComboBox || bIsBreadcrumbs || bIsSlider || bIsTokenizer) {
 			return true;
 		}
 
