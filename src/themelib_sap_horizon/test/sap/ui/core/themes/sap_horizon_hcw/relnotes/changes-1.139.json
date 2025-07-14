@@ -3,6 +3,16 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "244a7a95668035936f09f5825a6823b8848a8a41",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Padding added at the end of the text"
+      },
+      {
+        "id": "9b87a7f18ed8f8b9f9444234bb96dc34c220419f",
+        "type": "FEATURE",
+        "text": " sap.m.OverflowToolbarTokenizer: sap.m.Tokenizer is now integrated into the Toolbar and OverflowToolbar controls"
+      },
+      {
         "id": "d08a85383514b20bcb70001a93e91b024a1626a5",
         "type": "FIX",
         "text": " sap.m.Button: focus the button on mobile before firing press event"

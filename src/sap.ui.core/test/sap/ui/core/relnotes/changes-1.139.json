@@ -21,6 +21,11 @@
         "id": "39d23a5fecf3c2cb351e0b416eb1c5b6c91c0e02",
         "type": "FIX",
         "text": " ComponentContainer: always propagate propagation listeners"
+      },
+      {
+        "id": "0c3513ce1e59d6be7f703471eff89da8dae88453",
+        "type": "FIX",
+        "text": " ResourceBundle: Improve performance"
       }
     ]
   }

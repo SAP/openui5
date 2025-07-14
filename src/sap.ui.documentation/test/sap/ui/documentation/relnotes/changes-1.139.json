@@ -3,6 +3,11 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "a83887c16abc6ec6f221a93da3a678343edda6ac",
+        "type": "FIX",
+        "text": " Demo Kit: SubApiDetail variable name changed"
+      },
+      {
         "id": "bc9ec04a28185bc5b6e869349aef90c90cd36857",
         "type": "FIX",
         "text": " Demo Kit: Hide news button if news-config.json is missing"

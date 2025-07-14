@@ -3,6 +3,11 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "d0c0d80f36a2ca510e8ed7a5160b744dd9f94ca6",
+        "type": "FIX",
+        "text": " Integration Cards: Creation of duplicate SAC widgets is now prevented"
+      },
+      {
         "id": "0ca386f982cf14e12d7a9d1a0161f3e68eb3be78",
         "type": "FEATURE",
         "text": " Integration Cards: Child cards now reuse destinations from main card"

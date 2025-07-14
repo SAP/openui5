@@ -1,0 +1,12 @@
+{
+  "1.139.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "6806458e249819a102ecf3b90f7a0b0aedbefefe",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: specialDates customData aggregation is written in DOM"
+      }
+    ]
+  }
+}

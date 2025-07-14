@@ -3,6 +3,81 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "a73306c16a17d84e347e35dc6c939f7dbb66f39f",
+        "type": "FIX",
+        "text": " We've now set the width of the File Preview dialog to 100% for the UploadSetWithTable plugin"
+      },
+      {
+        "id": "2b178f208a5aa69a6ed995be1479df1810625722",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: introduce \"level\" and \"titleStyle\" properties to sap.m.PlanningCalendar header title"
+      },
+      {
+        "id": "97e46d498e5f9299235a72f35ce221fa0abb25a9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: fix scrolling down the page"
+      },
+      {
+        "id": "2119e70b9f1d38e9891f34526887776019f86859",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: valueHelpIconSrc is applied correctly in mobile view"
+      },
+      {
+        "id": "0e0a1509e21cd0bab7672cae37a48614637411e3",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Test for flexibility changes improved"
+      },
+      {
+        "id": "cce0a59cc5f9c6d2583270239ad2633d98681c92",
+        "type": "FIX",
+        "text": " sap.m.NotificationList: Focus handling on item removal is now fixed"
+      },
+      {
+        "id": "6cbdafa84fcf357c10733b2ac4937c3daed028a9",
+        "type": "FIX",
+        "text": " We've now removed ExportUtil dependency for file downloads in the UploadSetwithTable plugin"
+      },
+      {
+        "id": "a9633f4f91b14e7fa237c974c4f26f671964767d",
+        "type": "FIX",
+        "text": " sap.m.ObjectMarker: The default action is prevented now when clicking on the icon"
+      },
+      {
+        "id": "c0aa8b9f3b4356d6779bdca83f01da6023962880",
+        "type": "FIX",
+        "text": " sap.m.NotificationList: Focus handling on item removal is now fixed"
+      },
+      {
+        "id": "0c2c213deb5d621b082ce06a19e2aedef91f04e5",
+        "type": "FIX",
+        "text": " sap.m.SemanticConfiguration: Improved text"
+      },
+      {
+        "id": "cd4c0ba0b2211fc37168c0752b5e34ae1ab0441a",
+        "type": "FIX",
+        "text": "sap.m.MultiComboBox: value state error is now reset correctly"
+      },
+      {
+        "id": "9b87a7f18ed8f8b9f9444234bb96dc34c220419f",
+        "type": "FEATURE",
+        "text": " sap.m.OverflowToolbarTokenizer: sap.m.Tokenizer is now integrated into the Toolbar and OverflowToolbar controls"
+      },
+      {
+        "id": "d98e8cc7eb22b76a95ef3aaf368fddfe229d2fac",
+        "type": "FIX",
+        "text": " sap.m.Wizard: aria-labelledby invisible text is set correctly"
+      },
+      {
+        "id": "588018949a387360289ee184c15dad83752e032d",
+        "type": "FIX",
+        "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
+      },
+      {
+        "id": "515d0e4c222db723fca01cfb0994191c1a163ba7",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Wrapping in display-only mode corrected"
+      },
+      {
         "id": "6d62e563b8b35fefc54e72c62e0d2a18e4eca934",
         "type": "FIX",
         "text": " sap.m.Link: icon is correctly aligned now"
@@ -76,6 +151,11 @@
         "id": "0f85b24fa736a15b5d2a0e9d65c913a61769efb5",
         "type": "FIX",
         "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
+      },
+      {
+        "id": "1700d5378bfe1ff12f0b5f07316a78204d774ddd",
+        "type": "FIX",
+        "text": " sap.m.SelectDialogBase: UI Flex restrictions now work correctly"
       },
       {
         "id": "e47628e508f2fbb4bd4745f287b6eee93ece6b6d",

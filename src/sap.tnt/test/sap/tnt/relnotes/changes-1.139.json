@@ -3,6 +3,16 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "244a7a95668035936f09f5825a6823b8848a8a41",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Padding added at the end of the text"
+      },
+      {
+        "id": "7c83e63e39c3353144122ed17900632e66b207a3",
+        "type": "FIX",
+        "text": " sap.tnt: Link Shop Administration Tool app tests is now updated"
+      },
+      {
         "id": "af8d3f2dc0e3d8982f02af5cf91bf5f35314ac00",
         "type": "FIX",
         "text": "sap.tnt.NavigationListItem: Tooltip behavior is now changed"
