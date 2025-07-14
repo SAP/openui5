@@ -422,11 +422,8 @@ sap.ui.define([
 			const sRowId = oRow.getId();
 			const bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell, oRow);
 			const bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell);
-			const aDefaultLabels = ExtensionHelper.getAriaAttributesForDataCell(this, {
-					index: iCol
-				})["aria-labelledby"] || [];
 			const aDescriptions = [];
-			let aLabels = [];
+			const aLabels = [];
 			const bIsGroupHeader = oRow.isGroupHeader();
 			const bIsSummary = oRow.isSummary();
 
@@ -441,8 +438,6 @@ sap.ui.define([
 			if (TableUtils.hasRowHighlights(oTable) && !bIsGroupHeader && !bIsSummary && oChangeInfo.rowChange) {
 				aLabels.push(sRowId + "-highlighttext");
 			}
-
-			aLabels = aLabels.concat(aDefaultLabels);
 
 			if (!bHidden && oTableInstances.cell) {
 				oInfo = ACCInfoHelper.getAccInfoOfControl(oTableInstances.cell);
@@ -464,7 +459,7 @@ sap.ui.define([
 				}
 			}
 
-			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText, oChangeInfo,
+			ExtensionHelper.performCellModifications(this, $Cell, null, null, aLabels, aDescriptions, sText, oChangeInfo,
 				function(aLabels, aDescriptions, bRowChange, bColChange) {
 					if (bIsGroupHeader && bRowChange) {
 						aLabels.splice(1, 0, sRowId + "-groupHeader");
@@ -527,7 +522,7 @@ sap.ui.define([
 			const mAttributes = ExtensionHelper.getAriaAttributesForColumnHeader(this, {
 					headerId: $Cell.attr("id"),
 					column: oColumn,
-					index: $Cell.attr("data-sap-ui-colindex")
+					index: oTable._getVisibleColumns().indexOf(oColumn)
 				});
 			const sText = ExtensionHelper.getColumnTooltip(oColumn);
 			const aLabels = mAttributes["aria-labelledby"] || [];
@@ -663,12 +658,12 @@ sap.ui.define([
 			if (mRenderConfig.headerSelector.visible) {
 				if (mRenderConfig.headerSelector.type === "toggle") {
 					mAttributes["role"] = ["checkbox"];
-					if (mParams && mParams.enabled) {
+					if (mParams.enabled) {
 						mAttributes["aria-checked"] = mParams.checked ? "true" : "false";
 					}
 				} else if (mRenderConfig.headerSelector.type === "custom") {
 					mAttributes["role"] = ["button"];
-					if (!mParams || !mParams.enabled) {
+					if (!mParams.enabled) {
 						mAttributes["aria-disabled"] = "true";
 					}
 				}
@@ -737,15 +732,16 @@ sap.ui.define([
 			const oTable = oExtension.getTable();
 			const sTableId = oTable.getId();
 
-			const oColumn = mParams && mParams.column;
-			const bHasColSpan = mParams && mParams.colspan;
+			const oColumn = mParams.column;
+			const iColIndex = oTable._getVisibleColumns().indexOf(oColumn);
+			const bHasColSpan = mParams.colspan;
 			const oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 
 			mAttributes["role"] = "columnheader";
-			mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
+			mAttributes["aria-colindex"] = iColIndex + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 
 			mAttributes["aria-labelledby"] = [mParams.headerId + "-inner"];
-			if (mParams && (mParams.index < oTable.getComputedFixedColumnCount())) {
+			if (iColIndex < oTable.getComputedFixedColumnCount()) {
 				mAttributes["aria-labelledby"].push([sTableId + "-ariafixedcolumn"]);
 			}
 
@@ -788,9 +784,10 @@ sap.ui.define([
 		getAriaAttributesForDataCell: function(oExtension, mParams) {
 			const mAttributes = {};
 			const oTable = oExtension.getTable();
+			const oColumn = mParams.column;
 
 			mAttributes["role"] = "gridcell";
-			mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
+			mAttributes["aria-colindex"] = oTable._getVisibleColumns().indexOf(oColumn) + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 
 			return mAttributes;
 		},
@@ -1013,7 +1010,7 @@ sap.ui.define([
 					"role": ""
 				};
 				if (oTable.getBinding()) {
-					if (mParams && mParams.row) {
+					if (mParams.row) {
 						if (mParams.row.isExpandable()) {
 							const sText = TableUtils.getResourceText("TBL_COLLAPSE_EXPAND");
 							mAttributes["title"] = sText;

@@ -655,6 +655,21 @@ sap.ui.define([
 		assert.notOk(oRowDomRefs.rowActionPart.getAttribute("aria-level"), "aria-level is not set on row action");
 	});
 
+	QUnit.test("aria-colindex", async function(assert) {
+		function testAriaColIndex(oTable, assert) {
+			for (let i = 0; i < oTable._getVisibleColumns().length; i++) {
+				const oCell = oTable.qunit.getDataCell(0, i);
+				assert.strictEqual(oCell.getAttribute("aria-colindex"), (i + 2).toString(), "aria-colindex of cell [0, " + i + "]");
+			}
+		}
+
+		testAriaColIndex(this.oTable, assert);
+		this.oTable.getColumns()[0].setVisible(false);
+		this.oTable.getColumns()[3].setVisible(false);
+		await nextUIUpdate();
+		testAriaColIndex(this.oTable, assert);
+	});
+
 	QUnit.test("Other ARIA attributes of data cell", async function(assert) {
 		const oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();
 		this.oTable.addDependent(oSelectionPlugin);
@@ -994,6 +1009,21 @@ sap.ui.define([
 	QUnit.test("role", function(assert) {
 		assert.strictEqual(oTable.getColumns()[0].getDomRef().getAttribute("role"), "columnheader", "First column");
 		assert.strictEqual(oTable.getColumns()[1].getDomRef().getAttribute("role"), "columnheader", "Second column");
+	});
+
+	QUnit.test("aria-colindex", async function(assert) {
+		function testAriaColIndex(oTable, assert) {
+			for (let i = 0; i < oTable._getVisibleColumns().length; i++) {
+				const oCell = getColumnHeader(i);
+				assert.strictEqual(oCell.attr("aria-colindex"), (i + 2).toString(), "aria-colindex of column header [" + i + "]");
+			}
+		}
+
+		testAriaColIndex(oTable, assert);
+		oTable.getColumns()[0].setVisible(false);
+		oTable.getColumns()[3].setVisible(false);
+		await nextUIUpdate();
+		testAriaColIndex(oTable, assert);
 	});
 
 	QUnit.module("Row Header", {
