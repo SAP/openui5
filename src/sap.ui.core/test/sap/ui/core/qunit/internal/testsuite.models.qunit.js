@@ -262,6 +262,10 @@ sap.ui.define(function() {
 				title : "sap.ui.model.odata.v2.ODataAnnotations",
 				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataAnnotationsV2.qunit"]
 			},
+			ODataAnnotationsV2NoFakeService : {
+				title : "sap.ui.model.odata.v2.ODataAnnotationsV2NoFakeService",
+				module : ["test-resources/sap/ui/core/qunit/odata/v2/ODataAnnotationsV2NoFakeService.qunit"]
+			},
 			ODataPropertyBinding : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.v2.ODataPropertyBinding",
