@@ -889,5 +889,15 @@
         "text": " sap/ui/model/odata/ODataMetadata#__getPropertyMetadata: fix nested complex type properties"
       }
     ]
+  },
+  "1.96.40": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "18ed020f90c2d8e2844a4e10190c388264a74b11",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Invalid groupingSize configuration disables grouping"
+      }
+    ]
   }
 }

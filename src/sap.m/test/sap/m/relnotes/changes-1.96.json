@@ -2101,5 +2101,20 @@
         ]
       }
     ]
+  },
+  "1.96.40": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "d83aae5641eff83eba9f8064c337393281b9140e",
+        "type": "FIX",
+        "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
+      },
+      {
+        "id": "4c12efa565d342703c5355a2bb2f1939e65739c0",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments customData aggregation is written in DOM now"
+      }
+    ]
   }
 }
