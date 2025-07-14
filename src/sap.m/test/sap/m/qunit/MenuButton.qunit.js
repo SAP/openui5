@@ -386,10 +386,12 @@ sap.ui.define([
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			splitButton = oInnerButton.getDomRef(),
+			sTypeDescription = oCore.byId(splitButton.getAttribute("aria-describedby")).getText();
 
 		//assert
-		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
+		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1, '"aria-labelledby" is present and has correct id references');
+		assert.strictEqual(sTypeDescription, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"), "The aria-describedby attribute has the correct value");
 	});
 
 	QUnit.test("Semantic MenuButton with tooltip in Split mode", function (assert) {
@@ -405,11 +407,13 @@ sap.ui.define([
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			splitButton = oInnerButton.getDomRef(),
+			sTypeDescription = oCore.byId(splitButton.getAttribute("aria-describedby")).getText();
 
 		//assert
 		assert.strictEqual(oInnerButton.$().attr("title"), sTooltip, "The inner split button has a title property with the provided tooltip");
-		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
+		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1, '"aria-labelledby" is present and has correct id references');
+		assert.strictEqual(sTypeDescription, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"), "The aria-describedby attribute has the correct value");
 	});
 
 	QUnit.test("Semantic MenuButton IconOnly in Split mode", function (assert) {
@@ -424,10 +428,12 @@ sap.ui.define([
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"));
+			splitButton = oInnerButton.getDomRef(),
+			sTypeDescription = oCore.byId(splitButton.getAttribute("aria-describedby")).getText();
 
 		//assert
-		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct id references');
+		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1, '"aria-labelledby" is present and has correct id references');
+		assert.strictEqual(sTypeDescription, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_EMPHASIZED"), "The aria-describedby attribute has the correct value");
 	});
 
 	QUnit.test("Semantic MenuButton IconOnly with tooltip in Split mode", function (assert) {
@@ -444,11 +450,13 @@ sap.ui.define([
 			bHasAriaLabeledBy = oInnerButton.getDomRef().hasAttribute("aria-labelledby"),
 			aAriaLabelledByIds = oInnerButton.$().attr("aria-labelledby").trim().split(" "),
 			bAriaLabeledByHasCorrectValue1 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("SPLIT_BUTTON_KEYBOARD_HINT")),
-			bAriaLabeledByHasCorrectValue2 = AriaLabeledByHasCorrectValue(aAriaLabelledByIds, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"));
+			splitButton = oInnerButton.getDomRef(),
+			sTypeDescription = oCore.byId(splitButton.getAttribute("aria-describedby")).getText();
 
 		//assert
-		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1 && bAriaLabeledByHasCorrectValue2, '"aria-labelledby" is present and has correct value');
+		assert.ok(bHasAriaLabeledBy && bAriaLabeledByHasCorrectValue1, '"aria-labelledby" is present and has correct value');
 		assert.strictEqual(oInnerButton.$().attr('title'), sTooltip, "The icon tooltip is successfully set");
+		assert.strictEqual(sTypeDescription, Library.getResourceBundleFor("sap.m").getText("BUTTON_ARIA_TYPE_REJECT"), "The aria-describedby attribute has the correct value");
 	});
 
 	QUnit.test("Semantic MenuButton disabled in Split mode", function (assert) {
