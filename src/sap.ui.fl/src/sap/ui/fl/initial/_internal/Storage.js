@@ -202,6 +202,7 @@ sap.ui.define([
 	 * @param {number} [mPropertyBag.version] - Number of the version for which the data should be loaded
 	 * @param {boolean} [mPropertyBag.allContexts] Includes also restricted context
 	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation to be loaded
+	 * @param {string} [mPropertyBag.skipLoadBundle=false] - If true only the partial flex data is loaded, without the bundle
 	 * @returns {Promise<object>} Resolves with the responses from all configured connectors merged into one object
 	 */
 	Storage.loadFlexData = function(mPropertyBag) {
@@ -209,7 +210,7 @@ sap.ui.define([
 			return Promise.reject("No reference was provided");
 		}
 
-		return StorageUtils.getLoadConnectors()
+		return StorageUtils.getLoadConnectors(mPropertyBag.skipLoadBundle)
 		.then(_loadFlexDataFromConnectors.bind(this, mPropertyBag))
 		.then(_flattenAndMergeResultPromise);
 	};

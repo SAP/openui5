@@ -14,7 +14,7 @@ sap.ui.define([
 	ManagedObject,
 	ManifestUtils,
 	Settings,
-	ApplyStorage,
+	Storage,
 	StorageUtils
 ) {
 	"use strict";
@@ -153,15 +153,16 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
 		 * @param {number} [mPropertyBag.version] - Number of the version in which the state should be initialized
 		 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be initialized
-		 * @param {object} [mPropertyBag.partialFlexData] - Contains current flexstate for this reference, indicator to reload bundles from storage
+		 * @param {boolean} [mPropertyBag.skipLoadBundle=false] - If true only the partial flex data is loaded, without the bundle
 		 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted context
+		 * @param {object} [mPropertyBag.partialFlexData] - Already loaded data if only the bundle has to be loaded
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
 		loadFlexData(mPropertyBag) {
 			var sComponentName = ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest);
 
 			if (mPropertyBag.partialFlexData) {
-				return ApplyStorage.completeFlexData({
+				return Storage.completeFlexData({
 					reference: mPropertyBag.reference,
 					componentName: sComponentName,
 					partialFlexData: mPropertyBag.partialFlexData
@@ -171,7 +172,7 @@ sap.ui.define([
 			// the cache key cannot be used in case of a reinitialization
 			var sCacheKey = mPropertyBag.reInitialize ? undefined : ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.reference, mPropertyBag.asyncHints);
 
-			return ApplyStorage.loadFlexData({
+			return Storage.loadFlexData({
 				preview: ManifestUtils.getPreviewSectionFromAsyncHints(mPropertyBag.asyncHints),
 				reference: mPropertyBag.reference,
 				componentName: sComponentName,
@@ -180,7 +181,8 @@ sap.ui.define([
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version,
 				allContexts: mPropertyBag.allContexts,
-				adaptationId: mPropertyBag.adaptationId
+				adaptationId: mPropertyBag.adaptationId,
+				skipLoadBundle: mPropertyBag.skipLoadBundle
 			})
 			.then(applyDeactivateChanges.bind())
 			.then(filterInvalidFileNames.bind())
@@ -198,7 +200,7 @@ sap.ui.define([
 			// the settings are available due to previous loadFlexData calls or
 			// not available due to an async hint stating that no changes are available, thus also no author mapping needed
 			const oSettings = Settings.getInstanceOrUndef();
-			return oSettings?.getIsVariantAuthorNameAvailable() ? ApplyStorage.loadVariantsAuthors(sReference) : Promise.resolve({});
+			return oSettings?.getIsVariantAuthorNameAvailable() ? Storage.loadVariantsAuthors(sReference) : Promise.resolve({});
 		}
 	};
 });

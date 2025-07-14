@@ -958,11 +958,11 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when initialize is called three times with the same reference and first call has partialFlexState", function(assert) {
+		QUnit.test("when initialize is called three times with the same reference and first call has skipLoadBundle", function(assert) {
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId,
-				partialFlexState: true
+				skipLoadBundle: true
 			})
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
@@ -992,11 +992,11 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when initialize is called three times with the same reference and first and second call has partialFlexState", function(assert) {
+		QUnit.test("when initialize is called three times with the same reference and first and second call has skipLoadBundle", function(assert) {
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId,
-				partialFlexState: true
+				skipLoadBundle: true
 			})
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called once");
@@ -1007,7 +1007,7 @@ sap.ui.define([
 			.then(FlexState.initialize.bind(null, {
 				reference: sReference,
 				componentId: sComponentId,
-				partialFlexState: true
+				skipLoadBundle: true
 			}))
 			.then(function() {
 				assert.equal(this.oLoaderSpy.callCount, 1, "loader is called not called again");
@@ -1042,7 +1042,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when initialize is called in parallel after partialFlexState is set", function(assert) {
+		QUnit.test("when initialize is called in parallel after skipLoadBundle is set", function(assert) {
 			var mResponse = merge(
 				{},
 				mEmptyResponse,
@@ -1061,7 +1061,7 @@ sap.ui.define([
 			return FlexState.initialize({
 				reference: sReference,
 				componentId: sComponentId,
-				partialFlexState: true
+				skipLoadBundle: true
 			})
 			.then(function() {
 				assert.equal(oFlexStateSpy.callCount, 1, "flexstate is called once");
