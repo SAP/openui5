@@ -894,6 +894,7 @@ sap.ui.define([
 				new Item({ key: "2", text: ListMode.SingleSelectLeft }),
 				new Item({ key: "3", text: ListMode.SingleSelectMaster}),
 				new Item({ key: "4", text: ListMode.MultiSelect }),
+				new Item({key: "5", text: ListMode.MultiSelectRight}),
 				new Item({ key: "5", text: ListMode.Delete })
 			],
 			selectedItem: "0",
