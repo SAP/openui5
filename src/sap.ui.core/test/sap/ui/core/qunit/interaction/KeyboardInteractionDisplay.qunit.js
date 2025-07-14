@@ -3,10 +3,15 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Lib",
 	"sap/ui/util/XMLHelper",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/interaction/KeyboardInteractionDisplay"
-], function (Device, Library, XMLHelper, jQuery, KeyboardInteractionDisplay) {
+], function (Device, Library, XMLHelper, KeyboardInteractionDisplay) {
 	"use strict";
+
+	const annotateAndTranslateKbdTags = KeyboardInteractionDisplay._.annotateAndTranslateKbdTags;
+	const getNormalizedShortcutString = KeyboardInteractionDisplay._.getNormalizedShortcutString;
+	const getInteractions = KeyboardInteractionDisplay._.getInteractions;
+	const localizeKeys = KeyboardInteractionDisplay._.localizeKeys;
+	const translateInteractionXML = KeyboardInteractionDisplay._.translateInteractionXML;
 
 	QUnit.module("KeyboardInteractionDisplay Utilities", {
 		beforeEach: function() {
@@ -21,43 +26,43 @@ sap.ui.define([
 	QUnit.test("getNormalizedShortcutString (Win devices)", function (assert) {
 		Device.os.macintosh = false;
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Alt+S"),
+			getNormalizedShortcutString("Ctrl+Alt+S"),
 			"Ctrl+Alt+S",
 			"'Ctrl+Alt+S' correctly normalized to 'Ctrl+Alt+S'"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("ctrl+Alt+ s"),
+			getNormalizedShortcutString("ctrl+Alt+ s"),
 			"Ctrl+Alt+S",
 			"'ctrl+Alt+ s' correctly normalized to 'Ctrl+Alt+S'"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Alt+ ctrl+ s"),
+			getNormalizedShortcutString("Alt+ ctrl+ s"),
 			"Ctrl+Alt+S",
 			"'Alt+ ctrl+ s' correctly normalized to 'Ctrl+Alt+S'"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Shift+K"),
+			getNormalizedShortcutString("Ctrl+Shift+K"),
 			"Ctrl+Shift+K",
 			"Correctly normalized"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Shift"),
+			getNormalizedShortcutString("Shift"),
 			"Shift",
 			"Single 'Shift' key is correctly normalized"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("shift"),
+			getNormalizedShortcutString("shift"),
 			"Shift",
 			"'shift' key is correctly normalized to 'Shift'"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl"),
+			getNormalizedShortcutString("Ctrl"),
 			"Ctrl",
 			"Single 'Ctrl' key is correctly normalized"
 		);
@@ -66,55 +71,55 @@ sap.ui.define([
 	QUnit.test("getNormalizedShortcutString (Mac devices)", function (assert) {
 		Device.os.macintosh = true;
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Alt+S"),
+			getNormalizedShortcutString("Ctrl+Alt+S"),
 			"Cmd+Alt+S",
 			"'Ctrl+Alt+S' correctly normalized to 'Cmd+Alt+S' for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("ctrl+Alt+ s"),
+			getNormalizedShortcutString("ctrl+Alt+ s"),
 			"Cmd+Alt+S",
 			"'ctrl+Alt+ s' correctly normalized to 'Cmd+Alt+S' for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Alt+ ctrl+ s"),
+			getNormalizedShortcutString("Alt+ ctrl+ s"),
 			"Cmd+Alt+S",
 			"'Alt+ ctrl+ s' correctly normalized to 'Cmd+Alt+S' for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+Shift+K"),
+			getNormalizedShortcutString("Ctrl+Shift+K"),
 			"Cmd+Shift+K",
 			"'Ctrl+Shift+K' correctly normalized to 'Cmd+Shift+K' for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Shift"),
+			getNormalizedShortcutString("Shift"),
 			"Shift",
 			"Single 'Shift' key is correctly normalized for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("shift"),
+			getNormalizedShortcutString("shift"),
 			"Shift",
 			"'shift' key is correctly normalized to 'Shift' for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl"),
+			getNormalizedShortcutString("Ctrl"),
 			"Cmd",
 			"Single 'Ctrl' key is correctly normalized to 'Cmd' for Mac"
 		);
 
 		assert.strictEqual(
-			KeyboardInteractionDisplay._.getNormalizedShortcutString("Ctrl+ArrowUp"),
+			getNormalizedShortcutString("Ctrl+ArrowUp"),
 			"Cmd+ArrowUp",
 			"Single 'Ctrl+ArrowUp' key is correctly normalized to 'Cmd+ArrowUp' for Mac"
 		);
 	});
 
-	QUnit.test("translateShortcut", function (assert) {
+	QUnit.test("localizeKeys", function (assert) {
 		const bundle = {
 			getText: (key) => {
 				if (key === "Keyboard.Shortcut.Ctrl") { return "Strg"; }
@@ -125,7 +130,7 @@ sap.ui.define([
 		};
 
 		const getResourceBundleForStub = sinon.stub(Library, "getResourceBundleFor").returns(bundle);
-		const sResult = KeyboardInteractionDisplay._.translateShortcut("Ctrl+S");
+		const sResult = localizeKeys("Ctrl+S");
 		assert.strictEqual(sResult, "Strg+S", "Correctly translated shortcut text");
 
 		getResourceBundleForStub.restore();
@@ -145,11 +150,9 @@ sap.ui.define([
 		const div = document.createElement("div");
 		div.innerHTML = "<kbd>Ctrl+S</kbd>";
 
-		const annotated = KeyboardInteractionDisplay._.annotateAndTranslateKbdTags(div);
-		const kbd = annotated.querySelector("kbd");
-
-		assert.strictEqual(kbd.getAttribute("data-sap-ui-kbd-raw"), "Ctrl+S", "Attribute is set correctly.");
-		assert.strictEqual(kbd.textContent, "Strg+S", "Text is translated correctly");
+		const aKbds = annotateAndTranslateKbdTags(div.querySelectorAll("kbd"));
+		assert.strictEqual(aKbds[0].getAttribute("data-sap-ui-kbd-raw"), "Ctrl+S", "Attribute is set correctly.");
+		assert.strictEqual(aKbds[0].textContent, "Strg+S", "Text is translated correctly");
 
 		getResourceBundleForStub.restore();
 	});
@@ -182,7 +185,9 @@ sap.ui.define([
 		`;
 
 		const xml = XMLHelper.parse(xmlString);
-		const interactions = KeyboardInteractionDisplay._.getInteractions("sap.ui.test.Dummy", xml);
+
+		const translatedXML = translateInteractionXML(xml);
+		const interactions = getInteractions("sap.ui.test.Dummy", translatedXML);
 		assert.ok(Array.isArray(interactions));
 		assert.strictEqual(interactions.length, 2);
 		assert.deepEqual(interactions[0].kbd[0], {
