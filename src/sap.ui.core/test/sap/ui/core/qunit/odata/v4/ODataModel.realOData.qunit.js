@@ -575,6 +575,8 @@ sap.ui.define([
 				});
 			});
 		} finally {
+			Messaging.removeAllMessages();
+
 			//TODO State of the resource (entity) was changed (If-Match)
 			oSalesOrder1.setProperty("@odata.etag", "*", null);
 			oSalesOrder2.setProperty("@odata.etag", "*", null);
