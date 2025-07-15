@@ -784,6 +784,26 @@ sap.ui.define([
 		oModel.setProperty("/value", "testvalue");
 	});
 
+	QUnit.test("Bind property formatter in string with scope object", function(assert) {
+		const oStub = this.stub().returns("ABC");
+		const oInstance = new TestManagedObject({
+			value: "{path: '/value', formatter: '.formatters.upperCase.bind($control)'}"
+		}, {
+			formatters: {
+				upperCase: oStub
+			}
+		});
+		oInstance.setModel(oModel);
+
+		assert.equal(oInstance.isBound("value"), true, "isBound must return true for bound properties");
+		assert.equal(oInstance.getProperty("value"), "ABC", "Property must return model value");
+		assert.equal(oStub.callCount, 1, "Formatter must be called once");
+		sinon.assert.calledOn(oStub, oInstance);
+		sinon.assert.calledWith(oStub, "testvalue");
+
+		oInstance.destroy();
+	});
+
 	QUnit.test("Bind property Composite with type set as class", function(assert) {
 		this.obj.bindProperty("value", {
 			parts: [
