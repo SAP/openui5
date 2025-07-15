@@ -40,7 +40,7 @@ sap.ui.define([
 
 			this.bCache = true;
 			this.aPendingRequestHandles = [];
-			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
+			this.mUnsupportedFilterOperators = {All: true, Any: true, NotAll: true, NotAny: true};
 
 			if (typeof oData == "string") {
 				this.loadData(oData);

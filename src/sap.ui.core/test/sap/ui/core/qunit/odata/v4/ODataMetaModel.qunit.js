@@ -1317,6 +1317,26 @@ sap.ui.define([
 				})
 			}));
 		}, /unsupported FilterOperator/, "ClientModel/ClientListBinding doesn't support \"All\"");
+		assert.throws(function () {
+			oMetaModel.checkFilter(new Filter({
+				path : "path",
+				operator : FilterOperator.NotAny
+			}));
+		}, /unsupported FilterOperator/,
+			"ClientModel/ClientListBinding doesn't support \"NotAny\"");
+		assert.throws(function () {
+			oMetaModel.checkFilter(new Filter({
+				path : "path",
+				operator : FilterOperator.NotAll,
+				variable : "foo",
+				condition : new Filter({
+					path : "foo/bar",
+					operator : FilterOperator.GT,
+					value1 : 0
+				})
+			}));
+		}, /unsupported FilterOperator/,
+			"ClientModel/ClientListBinding doesn't support \"NotAll\"");
 
 		// code under test
 		oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl, aAnnotationUris);

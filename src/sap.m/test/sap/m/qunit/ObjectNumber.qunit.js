@@ -296,6 +296,24 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
+	QUnit.test("ariaLabelledBy", async function (assert) {
+		var oText = new Text("label", {
+				text: "Label"
+			}),
+			oControlRef;
+
+		this.oON.addAriaLabelledBy(oText);
+
+		oText.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		oControlRef = this.oON.getDomRef();
+		assert.strictEqual(oControlRef.getAttribute("aria-describedby"), "label ON-number ON-unit",
+			"ObjectNumber's content information is added in aria-describedby alongside the label");
+		oText.destroy();
+	});
+
+
 	QUnit.test("ObjectNumber with state (different than 'None')", async function (assert) {
 		var sErrorText = Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 			oStateElement;
@@ -342,8 +360,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		oControlRef = this.oON.getDomRef();
-		assert.strictEqual(oControlRef.getAttribute("aria-labelledby"), "label ON-unit",
-			"ObjectNumber's unit information is added in aria-labelledby alongside the label when there is no number and EmptyIndicatoMode is Off");
+		assert.strictEqual(oControlRef.getAttribute("aria-describedby"), "label ON-unit",
+			"ObjectNumber's unit information is added in aria-describedby alongside the label when there is no number and EmptyIndicatorMode is Off");
 		oLabel.destroy();
 	});
 
@@ -360,8 +378,8 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		oControlRef = this.oON.getDomRef();
-		assert.strictEqual(oControlRef.getAttribute("aria-labelledby"), "label ",
-			"ObjectNumber's content information is not added in aria-labelledby alongside the label when there is no number and EmptyIndicatoMode is On");
+		assert.strictEqual(oControlRef.getAttribute("aria-describedby"), "label",
+			"ObjectNumber's content information is not added in aria-describedby alongside the label when there is no number and EmptyIndicatoMode is On");
 		oLabel.destroy();
 	});
 

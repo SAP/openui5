@@ -1626,7 +1626,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Settings for blocking message that ocurred in a {@link sap.ui.integration.widgets.Card}
+	 * Settings for blocking message that occurred in a {@link sap.ui.integration.widgets.Card}
 	 *
 	 * @typedef {object} sap.ui.integration.BlockingMessageSettings
 	 * @property {sap.ui.integration.CardBlockingMessageType} type Blocking message type
@@ -2725,10 +2725,30 @@ sap.ui.define([
 	};
 
 	/**
-	 * Performs an HTTP request using the given configuration.
+	 * Settings for card request error.
+	 *
+	 * <b>Note:</b> For backward compatibility, the object can also be accessed as an array
+	 * with the properties in the order - message, response, and responseText.
+	 *
+	 * @typedef {object} sap.ui.integration.CardRequestError
+	 * @property {string} message The error message
+	 * @property {object} response The response object
+	 * @property {string} responseText The response text
+	 * @public
+	 * @experimental As of version 1.139
+	 */
+
+	/**
+	 * Performs an asynchronous network request using the specified request settings,
+	 * enabling dynamic bindings to card configurations, such as CSRF tokens, destinations, and parameters.
+	 * If the request is successful, it returns a Promise that resolves with the response data.
+	 *
+	 * If an error occurs during the request, the Promise will reject with a {@link sap.ui.integration.CardRequestError}.
+	 *
+	 * For more details on card data handling and request settings see [Card Explorer Data Section]{@link https://ui5.sap.com/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/index.html#/learn/features/data}.
 	 *
 	 * @public
-	 * @experimental since 1.79
+	 * @since 1.79
 	 * @param {object} oConfiguration The configuration of the request.
 	 * @param {string} oConfiguration.url The URL of the resource.
 	 * @param {string} [oConfiguration.mode="cors"] The mode of the request. Possible values are "cors", "no-cors", "same-origin".
@@ -2764,7 +2784,8 @@ sap.ui.define([
 	 *</ul>
 	 * @param {string} [oConfiguration.dataType="json"] Deprecated. Use the correct <code>Accept</code> headers and set correct <code>Content-Type</code> header in the response.
 	 * @param {object} [oConfiguration.headers] The HTTP headers of the request.
-	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether cross-site requests should be made using credentials.
+	 * @param {boolean} [oConfiguration.withCredentials=false] Indicates whether
+	 * cross-site requests should be made using credentials. Same-origin requests are always made using credentials.
 	 * @returns {Promise<any>} Resolves when the request is successful, rejects otherwise.
 	 */
 	Card.prototype.request = function (oConfiguration) {
@@ -2778,7 +2799,19 @@ sap.ui.define([
 					true)
 				.setAllowCustomDataType(true)
 				.attachDataChanged((e) => { resolve(e.getParameter("data")); })
-				.attachError((e) => { reject([e.getParameter("message"), e.getParameter("response"), e.getParameter("responseText"), e.getParameter("settings")]); })
+				.attachError((e) => {
+					const oResult = [e.getParameter("message"),
+						e.getParameter("response"),
+						e.getParameter("responseText"),
+						e.getParameter("settings")];
+
+					oResult.message = e.getParameter("message");
+					oResult.response = e.getParameter("response");
+					oResult.responseText = e.getParameter("responseText");
+					oResult._requestSettings = e.getParameter("settings");
+
+					reject(oResult);
+				})
 				.triggerDataUpdate();
 			});
 		});

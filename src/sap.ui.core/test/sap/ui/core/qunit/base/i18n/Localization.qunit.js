@@ -357,6 +357,8 @@ sap.ui.define([
 		beforeEach: function() {
 			mURLConfigStubValues = {};
 			oSinonSandbox = sinon.createSandbox();
+			oSinonSandbox.stub(TimezoneUtils, "getLocalTimezone").returns("defaultTimezone");
+			BaseConfig._.invalidate();
 			Localization.setLanguage("en");
 			Localization.setTimezone(null);
 		},
@@ -418,7 +420,6 @@ sap.ui.define([
 	QUnit.test("setTimezone", function(assert) {
 		assert.expect(5);
 		var sExpectedTimezone;
-		oSinonSandbox.stub(TimezoneUtils, "getLocalTimezone").returns("defaultTimezone");
 		function localizationChanged(oEvent) {
 			assert.strictEqual(Localization.getTimezone(), sExpectedTimezone, "Should return expected LanguageTag '" + sExpectedTimezone + "'");
 			assert.strictEqual(oEvent.timezone, sExpectedTimezone, "Change event should contain the correct LanguageTag '" + sExpectedTimezone + "'");

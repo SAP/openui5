@@ -1154,7 +1154,9 @@
 .sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf {
 
 	.sapMBtn.sapMGTMoreIcon {
-		top: 0.6rem;
+		position: relative;
+		bottom: 1rem;
+		padding-left: 0.5rem;
 
 		.sapMBtnInner {
 			left: 0.2rem;
@@ -1166,8 +1168,6 @@
 .sapMGT.sapMGTScopeActions.sapMGTIconMode.TwoByHalf.sapMTileSmallPhone {
 
 	.sapMBtn.sapMGTMoreIcon {
-		top: 1.1rem;
-
 		.sapMBtnInner {
 			left: 0;
 		}
@@ -2706,6 +2706,23 @@ html[data-sap-ui-browser*='ff'] {
 	box-sizing: border-box;
 }
 
+.sapMGT.sapMGTTwoByHalf.sapMGTIconMode > :first-child {
+	flex-shrink: 0;
+}
+
+.sapMGT.sapMGTTwoByHalf.sapMGTIconMode > :last-child {
+	flex-shrink: 0;
+	margin-left: auto; // push last element to the right
+}
+
+.sapMGT.sapMGTTwoByHalf.sapMGTIconMode .sapMGTHdrContent {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .sapMGTTwoByHalf  > .TwoByHalf > .sapMGTHdrTxt > .sapMText {
 	font-size: var(--sapFontSize);
 	color: var(--sapTile_TitleTextColor);
@@ -2722,7 +2739,7 @@ html[data-sap-ui-browser*='ff'] {
 		height: auto;
 		padding-top: 0;
 		padding-left: 1rem;
-		max-width: 16rem;
+		max-width: none;
 		max-height: 2rem;
 		align-items: center;
 	}
@@ -2872,7 +2889,6 @@ html[data-sap-ui-browser*='ff'] {
 
 	.sapMGTHdrContent {
 		height: auto;
-		max-width: 12.5rem;
 	}
 
 	.sapMGTTwoByHalfIcon .sapMGTileBadge {
