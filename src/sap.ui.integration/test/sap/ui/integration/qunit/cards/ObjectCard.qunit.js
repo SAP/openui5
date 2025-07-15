@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/m/library",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"qunit/testResources/nextCardReadyEvent",
 	"qunit/testResources/genericTests/actionEnablementTests"
 ], function(
+	Localization,
 	Log,
 	Configuration,
 	mLibrary,
@@ -3191,6 +3193,82 @@ sap.ui.define([
 		this.oCard.validateControls();
 
 		assert.strictEqual(oTextArea.getValueState(), ValueState.None, "Validation passed");
+	});
+
+	QUnit.module("Form controls: DateRange", {
+		beforeEach: function() {
+			this.oCard = new Card({
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Timezone", async function (assert) {
+		const sTimezone = Localization.getTimezone();
+		const oCard = this.oCard;
+		const done = assert.async();
+
+		Localization.setTimezone("America/Los_Angeles");
+
+		oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.object.dateRangeTimezone",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "test"
+				},
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"id": "date",
+									"label": "Date",
+									"type": "DateRange",
+									"value": {
+										"option": "date",
+										"values": ["2025-03-10"]
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		});
+
+		await nextCardReadyEvent(oCard);
+
+		oCard.attachAction((oEvent) => {
+			const oParams = oEvent.getParameter("parameters");
+
+			const oExpectedRange = {
+				end: "2025-03-11T06:59:59.999Z",
+				endLocalDate: "2025-03-10",
+				start: "2025-03-10T07:00:00.000Z",
+				startLocalDate: "2025-03-10"
+			};
+
+			assert.deepEqual(oParams.data.date.range, oExpectedRange, "The output start and end dates in UTC and local zones are as expected.");
+
+			// clean up - reset timezone
+			Localization.setTimezone(sTimezone);
+
+			done();
+		});
+
+		oCard.triggerAction({
+			type: CardActionType.Submit
+		});
 	});
 
 	QUnit.module("'Image' items", {
