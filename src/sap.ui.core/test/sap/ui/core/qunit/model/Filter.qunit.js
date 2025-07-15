@@ -188,15 +188,21 @@ sap.ui.define([
 			variable: "d",
 			condition: new Filter("path", FilterOperator.EQ, 200)
 		});
-		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter created");
-		assert.ok(true, "Filter 'Any' is created without an error");
 
-		// "Any" without variable and condition (object syntax)
+		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter 'Any' (object syntax) created");
+		assert.strictEqual(oFilter.getPath(), "Order_Details");
+		assert.strictEqual(oFilter.getOperator(), FilterOperator.Any);
+		assert.strictEqual(oFilter.getVariable(), "d");
+		assert.ok(oFilter.getCondition() instanceof Filter);
+
+		// code under test
 		oFilter = new Filter({
 			path: "Order_Details",
 			operator: FilterOperator.Any
 		});
-		assert.ok(true, "Filter 'Any' is created without an error");
+
+		assert.strictEqual(oFilter.getVariable(), undefined);
+		assert.strictEqual(oFilter.getCondition(), undefined);
 	});
 
 	QUnit.test("constructor - create Filter NotAny - ok", function (assert) {
@@ -207,15 +213,21 @@ sap.ui.define([
 			variable: "d",
 			condition: new Filter("path", FilterOperator.EQ, 200)
 		});
-		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter created");
-		assert.ok(true, "Filter 'NotAny' is created without an error");
 
-		// code under test - "NotAny" without variable and condition (object syntax)
+		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter 'NotAny' (object syntax) created");
+		assert.strictEqual(oFilter.getPath(), "Order_Details");
+		assert.strictEqual(oFilter.getOperator(), FilterOperator.NotAny);
+		assert.strictEqual(oFilter.getVariable(), "d");
+		assert.ok(oFilter.getCondition() instanceof Filter);
+
+		// code under test
 		oFilter = new Filter({
 			path: "Order_Details",
 			operator: FilterOperator.NotAny
 		});
-		assert.ok(true, "Filter 'NotAny' is created without an error");
+
+		assert.strictEqual(oFilter.getVariable(), undefined);
+		assert.strictEqual(oFilter.getCondition(), undefined);
 	});
 
 	QUnit.test("constructor - create Filter NotAll - ok", function (assert) {
@@ -226,8 +238,12 @@ sap.ui.define([
 			variable: "d",
 			condition: new Filter("path", FilterOperator.EQ, 200)
 		});
-		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter created");
-		assert.ok(true, "Filter 'NotAll' is created without an error");
+
+		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter 'NotAll' (object syntax) created");
+		assert.strictEqual(oFilter.getPath(), "Order_Details");
+		assert.strictEqual(oFilter.getOperator(), FilterOperator.NotAll);
+		assert.strictEqual(oFilter.getVariable(), "d");
+		assert.ok(oFilter.getCondition() instanceof Filter);
 	});
 
 [FilterOperator.Any, FilterOperator.All, FilterOperator.NotAny, FilterOperator.NotAll].forEach((sOperator) => {
@@ -833,6 +849,7 @@ sap.ui.define([
 		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
 		assert.strictEqual(Filter.NONE.getTest()(), false);
 		assert.throws(() => {
+			// code under test
 			Filter.NONE.getAST();
 		}, new Error("Unknown operator: undefined"));
 	});
@@ -870,7 +887,7 @@ sap.ui.define([
 		Filter.checkFilterNone(oFilter);
 
 		// code under test
-		assert.throws(function () {
+		assert.throws(() => {
 			Filter.checkFilterNone([new Filter("path", FilterOperator.EQ, "value"), Filter.NONE]);
 		}, new Error("Filter.NONE cannot be used together with other filters"));
 	});
