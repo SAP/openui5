@@ -360,10 +360,11 @@ sap.ui.define([
 				 * Assertion to check that there is the overflow popover visible.
 				 * @memberof onTheMDCChart
 				 * @method iShouldSeeTheOverflowPopover
+				 * @param {string} sChartId The ID of the <code>sap.ui.mdc.Chart</code>
 				 * @returns {Promise} OPA waitFor
 				 */
-				iShouldSeeAnOverflowPopover: function() {
-					return chartAssertions.iShouldSeeAnOverflowPopover.call(this);
+				iShouldSeeAnOverflowPopover: function(sChartId) {
+					return chartAssertions.iShouldSeeAnOverflowPopover.call(this, sChartId);
 				},
 				/**
 				 * Assertion to check visible dimensions on the <code>sap.ui.mdc.Chart</code>.
