@@ -505,7 +505,7 @@
 		function registerProvider(oProvider) {
 			if (aProvider.indexOf(oProvider) === -1) {
 				aProvider.push(oProvider);
-				invalidate();
+				Configuration._.invalidate();
 				bGlobalIgnoreExternal = get(mUrlParamOptions);
 			}
 		}

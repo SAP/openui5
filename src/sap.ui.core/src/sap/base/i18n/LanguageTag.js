@@ -134,6 +134,11 @@ sap.ui.define([
 		 */
 		privateUseSubtags;
 
+		/**
+		 * @private
+		 */
+		#tagAsString;
+
 		constructor(sLanguageTag) {
 			var aResult = rLanguageTag.exec(sLanguageTag.replace(/_/g, "-"));
 			// If the given language tag string cannot be parsed by the regular expression above,
@@ -165,16 +170,17 @@ sap.ui.define([
 			if ( this.region ) {
 				this.region = this.region.toUpperCase();
 			}
-			Object.freeze(this);
-		}
-		toString() {
-			return this.#join(
+			this.#tagAsString = this.#join(
 				this.language,
 				this.script,
 				this.region,
 				this.variant,
 				this.extension,
 				this.privateUse);
+			Object.freeze(this);
+		}
+		toString() {
+			return this.#tagAsString;
 		}
 		#join() {
 			return Array.prototype.filter.call(arguments, Boolean).join("-");
