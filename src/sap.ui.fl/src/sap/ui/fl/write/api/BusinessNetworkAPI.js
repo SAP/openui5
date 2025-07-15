@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], (
@@ -20,6 +21,7 @@ sap.ui.define([
 	FlexInfoSession,
 	FlexObjectManager,
 	Storage,
+	ChangesWriteAPI,
 	Layer,
 	Utils
 ) => {
@@ -153,6 +155,33 @@ sap.ui.define([
 		oFlexInfoSession.saveChangeKeepSession = true;
 		FlexInfoSession.setByReference(oFlexInfoSession, sReference);
 		window.sessionStorage.setItem("sap.ui.rta.skipReload", true);
+	};
+
+	/**
+	 * Deletes a list of control variants and their associated changes, and saves.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.variants.VariantManagement} mPropertyBag.vmControl - Variant Management control instance
+	 * @param {string[]} mPropertyBag.variants - Variant IDs to be deleted
+	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer="CUSTOMER"] - Layer of the variants to be deleted
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of flex objects that were deleted
+	 * @private
+	 * @ui5-restricted SAP Business Network
+	 */
+	BusinessNetworkAPI.deleteVariants = async function(mPropertyBag) {
+		const aFlexObjectsToDelete = ChangesWriteAPI.deleteVariantsAndRelatedObjects({
+			variantManagementControl: mPropertyBag.vmControl,
+			variants: mPropertyBag.variants,
+			layer: mPropertyBag.layer || Layer.CUSTOMER,
+			forceDelete: true // Skips the deletion checks such as draft status
+		});
+		await FlexObjectManager.saveFlexObjects({
+			selector: mPropertyBag.vmControl,
+			flexObjects: aFlexObjectsToDelete,
+			layer: mPropertyBag.layer || Layer.CUSTOMER,
+			includeCtrlVariants: true
+		});
+		return aFlexObjectsToDelete;
 	};
 
 	return BusinessNetworkAPI;

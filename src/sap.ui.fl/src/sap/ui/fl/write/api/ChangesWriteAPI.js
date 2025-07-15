@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/descriptorRelated/api/DescriptorChangeFactory",
@@ -23,7 +24,9 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/controlVariants/ControlVariantWriteUtils",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
@@ -38,6 +41,7 @@ sap.ui.define([
 	ChangesUtils,
 	FlexObjectFactory,
 	States,
+	VariantManagementState,
 	FlexObjectState,
 	ManifestUtils,
 	DescriptorChangeFactory,
@@ -46,7 +50,9 @@ sap.ui.define([
 	ControlVariantWriteUtils,
 	FlexObjectManager,
 	ContextBasedAdaptationsAPI,
+	FeaturesAPI,
 	VersionsAPI,
+	Layer,
 	Utils
 ) {
 	"use strict";
@@ -345,14 +351,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deletes the variants and their related FlexObjects. Only variants that are in the draft or dirty state can be deleted,
-	 * as they have no dependencies on them. Returns all FlexObjects that were deleted in the process.
+	 * Deletes the variants and their related FlexObjects. By default, only variants that are in the draft
+	 * or dirty state can be deleted, as they have no dependencies on them.
+	 * The Business Network scenario can delete any variants (forceDelete=true).
+	 * Returns all FlexObjects that were deleted in the process.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.core.Control} mPropertyBag.variantManagementControl - Variant management control
 	 * @param {string[]} mPropertyBag.variants - Variant IDs to be deleted
-	 * @param {string} mPropertyBag.layer - Layer to get the draft objects from
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of deleted FlexObjects
+	 * @param {string} mPropertyBag.layer - Layer that the variants belong to
+	 * @param {boolean} [mPropertyBag.forceDelete=false] - If set to true, the deletion will not check for draft or dirty state of the variants
+	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Promise resolving with the array of deleted FlexObjects
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
@@ -364,20 +373,33 @@ sap.ui.define([
 		const oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
 		const sVariantManagementReference = JsControlTreeModifier.getSelector(oVariantManagementControl, oAppComponent).id;
 		const sFlexReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
-		const aDraftFilenames = VersionsAPI.getDraftFilenames({
-			control: oVariantManagementControl,
-			layer: mPropertyBag.layer
+		// Filter out passed variants from other layers
+		let aVariantsToBeDeleted = mPropertyBag.variants.filter((sVariantId) => {
+			const oVariant = VariantManagementState.getVariant({
+				vmReference: sVariantManagementReference,
+				reference: sFlexReference,
+				vReference: sVariantId
+			});
+			if (!oVariant) {
+				Log.warning(`Variant with ID '${sVariantId}' does not exist in the Variant Management control.`);
+				return false;
+			}
+			return oVariant.layer === mPropertyBag.layer;
 		});
-		const aDirtyFlexObjectIds = FlexObjectState.getDirtyFlexObjects(sFlexReference).map((oFlexObject) => (
-			oFlexObject.getId()
-		));
-		const aVariantsToBeDeleted = mPropertyBag.variants.filter((sVariantID) => (
-			aDraftFilenames.includes(sVariantID) || aDirtyFlexObjectIds.includes(sVariantID)
-		));
+		if (!mPropertyBag.forceDelete) {
+			const aDraftFilenames = VersionsAPI.getDraftFilenames({
+				control: oVariantManagementControl,
+				layer: mPropertyBag.layer
+			});
+			const aDirtyFlexObjectIds = FlexObjectState.getDirtyFlexObjects(sFlexReference).map((oFlexObject) => (
+				oFlexObject.getId()
+			));
+			aVariantsToBeDeleted = aVariantsToBeDeleted.filter((sVariantID) => (
+				aDraftFilenames.includes(sVariantID) || aDirtyFlexObjectIds.includes(sVariantID)
+			));
+		}
 		return aVariantsToBeDeleted
-		.map((sVariantId) => (
-			ControlVariantWriteUtils.deleteVariant(sFlexReference, sVariantManagementReference, sVariantId)
-		))
+		.map((sVariantId) => (ControlVariantWriteUtils.deleteVariant(sFlexReference, sVariantManagementReference, sVariantId)))
 		.flat();
 	};
 

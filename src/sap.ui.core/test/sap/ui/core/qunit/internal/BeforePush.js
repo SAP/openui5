@@ -100,8 +100,8 @@
 			return 0;
 		}
 		iCount = parseInt(mParameters.frames);
-		if (!(iCount >= 1 && iCount <= 4)) { // this includes NaN
-			setStatus("Frames set to 1. Use 1 up to 4 frames.");
+		if (!(iCount >= 1 && iCount <= 8)) { // this includes NaN
+			setStatus("Frames set to 1. Use 1 up to 8 frames.");
 			iCount = 1;
 		}
 		return iCount;
