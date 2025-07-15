@@ -174,20 +174,18 @@ sap.ui.define([
 	 *   Second value to use with the given filter operator, used only for the
 	 *   {@link sap.ui.model.FilterOperator.BT "BT" between} and
 	 *   {@link sap.ui.model.FilterOperator.NB "NB" not between} filter operators
-	 * @throws {Error}
-	 *   If <code>vFilterInfo</code> or <code>vFilterInfo.filters</code> are arrays containing the
-	 *   {@link sap.ui.model.Filter.NONE}, or
-	 *   if <code>vFilterInfo.condition</code> is {@link sap.ui.model.Filter.NONE}, or
-	 *   for the following incorrect combinations of filter operators and conditions:
+	 * @throws {Error} If
 	 *   <ul>
-	 *     <li>"Any" or "NotAny": if only a lambda variable or only a condition is given
-	 *     <li>"Any", "All", "NotAny", or "NotAll": If
-	 *       <ul>
-	 *         <li>the <code>vFilterInfo</code> parameter is not in object notation,
-	 *         <li><code>vFilterInfo.variable</code> is not a string,
-	 *         <li><code>vFilterInfo.condition</code> is not an instance of
-	 *               {@link sap.ui.model.Filter}.
-	 *     </ul>
+	 *     <li><code>vFilterInfo</code> or <code>vFilterInfo.filters</code> are arrays containing
+	 *        {@link sap.ui.model.Filter.NONE}.
+	 *     <li><code>vFilterInfo.condition</code> is {@link sap.ui.model.Filter.NONE}.
+	 *     <li>for operators "Any" or "NotAny": Of the two required properties <code>variable</code> and
+	 *        <code>condition</code>, only one is set (either both must be set or both omitted).
+	 *     <li>for operators "All" or "NotAll": <code>variable</code> is not of type <code>string</code>.
+	 *     <li>for operators "All" or "NotAll": <code>condition</code> is not an instance of
+	 *        {@link sap.ui.model.Filter}.
+	 *     <li>for any lambda operator ("Any", "All", "NotAny", "NotAll"): the parameters are not passed in object
+	 *        notation.
 	 *   </ul>
 	 *
 	 * @public
@@ -240,7 +238,7 @@ sap.ui.define([
 				throw new Error("Filter.NONE not allowed as condition");
 			}
 			if (this.sOperator === FilterOperator.Any || this.sOperator === FilterOperator.NotAny) {
-				// for the Any operator we only have to further check the arguments if both are given
+				// for Any/NotAny operators we only have to further check the arguments if both are given
 				if (this.sVariable && this.oCondition) {
 					this._checkLambdaArgumentTypes();
 				} else if (!this.sVariable && !this.oCondition) {
@@ -255,7 +253,7 @@ sap.ui.define([
 			} else if (Array.isArray(this.aFilters) && !this.sPath && !this.sOperator
 					&& !this.oValue1 && !this.oValue2) {
 				this._bMultiFilter = true;
-				if ( !this.aFilters.every(isFilter) ) {
+				if (!this.aFilters.every(isFilter)) {
 					Log.error("Filter in aggregation of multi filter has to be instance of"
 						+ " sap.ui.model.Filter");
 				}
