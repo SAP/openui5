@@ -3700,6 +3700,20 @@ sap.ui.define([
 						},
 						"sap.card": {
 							"type": "List",
+							"configuration": {
+								"destinations": {
+									"serviceName": {
+										"name": "serviceName",
+										"defaultUrl": "/fakeService"
+									}
+								},
+								"parameters": {
+									"urlName": {
+										"value": "Products",
+										"type": "string"
+									}
+								}
+							},
 							"header": {},
 							"content": {
 								"data": {
@@ -3719,6 +3733,72 @@ sap.ui.define([
 				this.oCard.destroy();
 				this.oCard = null;
 			}
+		});
+
+		QUnit.test("Request data using bindings to destination and parameter", async function (assert) {
+			// Arrange
+			const oServer = sinon.fakeServer.create({
+				autoRespond: true
+			});
+
+			const oResponseData = {
+				"results": [{
+					"Name": "Product 1"
+				}]
+			};
+
+			oServer.respondWith("/fakeService/Products", function (oXhr) {
+				oXhr.respond(200, {
+					"Content-Type": "application/json"
+				}, JSON.stringify(oResponseData));
+			});
+
+			// Act
+			const oResult = await this.oCard.request({
+				"url": "{{destinations.serviceName}}/{parameters>/urlName/value}",
+				"method": "GET"
+			});
+
+			// Assert
+			assert.deepEqual(oResult, oResponseData, "request should be successful");
+
+			// Clean up
+			oServer.restore();
+		});
+
+		QUnit.test("Request unsuccessful", function (assert) {
+			const done = assert.async();
+
+			// Arrange
+			const oServer = sinon.fakeServer.create({
+				autoRespond: true
+			});
+
+			oServer.respondWith("/fakeService/Products", function (oXhr) {
+				oXhr.respond(400, {"Content-Type": "text/plain"}, "Error");
+			});
+
+			// Act
+			this.oCard.request({
+				"url": "{{destinations.serviceName}}/{parameters>/urlName/value}",
+				"method": "GET"
+			}).catch(function(oResult) {
+				assert.strictEqual(oResult.message, "400 Bad Request", "request is unsuccessful");
+				assert.strictEqual(oResult.response.status, 400, "status code is 400");
+				assert.notOk(oResult.response.ok, "request is unsuccessful");
+				assert.strictEqual(oResult.responseText, "Error", "status text is 'Error'");
+				assert.strictEqual(oResult._requestSettings.url, '/fakeService/Products', "request URL is resolved");
+
+				assert.strictEqual(oResult[0], oResult.message, "message is accessible as array item");
+				assert.strictEqual(oResult[1], oResult.response, "response is accessible as array item");
+				assert.strictEqual(oResult[2], oResult.responseText, "responseText is accessible as array item");
+				assert.strictEqual(oResult[3], oResult._requestSettings, "_requestSettings is accessible as array item");
+
+				// Clean up
+				oServer.restore();
+
+				done();
+			});
 		});
 
 		QUnit.test("Request data with FormData", async function (assert) {
@@ -3742,14 +3822,14 @@ sap.ui.define([
 			oFormData.append("key", "value");
 
 			// Act
-			const res = await this.oCard.request({
+			const oResult = await this.oCard.request({
 				"url": "/uploadFormData",
 				"method": "POST",
 				"parameters": oFormData
 			});
 
 			// Assert
-			assert.strictEqual(res, "Success", "FormData should be uploaded successfully");
+			assert.strictEqual(oResult, "Success", "FormData should be uploaded successfully");
 
 			// Clean up
 			oServer.restore();

@@ -29,6 +29,7 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+		rLambdaOperators = /All|Any|NotAll|NotAny/,
 		mSupportedEvents = {
 			AggregatedDataStateChange : true,
 			change : true,
@@ -2075,11 +2076,14 @@ sap.ui.define([
 				}
 
 				sOperator = oFilter.getOperator();
-				if (sOperator === FilterOperator.All || sOperator === FilterOperator.Any) {
+				if (rLambdaOperators.test(sOperator)) {
+					const bNot = sOperator.startsWith("Not");
+					sOperator = sOperator.replace("Not", "");
+					const sPrefix = (bNot ? "not " : "") + oFilter.getPath() + "/";
 					oCondition = oFilter.getCondition();
 					sLambdaVariable = oFilter.getVariable();
-					if (sOperator === FilterOperator.Any && !oCondition) {
-						return oFilter.getPath() + "/any()";
+					if (sOperator === "Any" && !oCondition) {
+						return sPrefix + "any()";
 					}
 					// multifilters are processed in parallel, so clone mLambdaVariableToPath
 					// to allow same lambda variables in different filters
@@ -2087,10 +2091,8 @@ sap.ui.define([
 					mLambdaVariableToPath[sLambdaVariable]
 						= replaceLambdaVariables(oFilter.getPath(), mLambdaVariableToPath);
 
-					return fetchFilter(
-						oCondition, mLambdaVariableToPath
-					).then(function (sFilterValue) {
-						return oFilter.getPath() + "/" + oFilter.getOperator().toLowerCase()
+					return fetchFilter(oCondition, mLambdaVariableToPath).then((sFilterValue) => {
+						return sPrefix + sOperator.toLowerCase()
 							+ "(" + sLambdaVariable + ":" + sFilterValue + ")";
 					});
 				}

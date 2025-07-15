@@ -46,6 +46,7 @@ ObjectNumberRenderer.render = function(oRm, oON) {
 	var sTooltip = oON.getTooltip_AsString(),
 		sTextDir = oON.getTextDirection(),
 		sTextAlign = oON.getTextAlign(),
+		sAriaLabelIds = oON._generateSelfLabellingIds(),
 		oAccAttributes = {};
 
 	oRm.openStart("div", oON);
@@ -85,10 +86,18 @@ ObjectNumberRenderer.render = function(oRm, oON) {
 	}
 
 	if (oON._hasExternalLabelling()) {
-		oAccAttributes["labelledby"] = {
-			value: oON._generateSelfLabellingIds(),
-			append: true
-		};
+		if (oON._isActive()) {
+			oAccAttributes["labelledby"] = {
+				value: sAriaLabelIds,
+				append: true
+			};
+		} else {
+			oAccAttributes["labelledby"] = null;
+			oAccAttributes["describedby"] = {
+				value: `${oON._getAriaLabelledBy()} ${sAriaLabelIds}`.trim(),
+				append: true
+			};
+		}
 	}
 
 	oRm.accessibilityState(oON, oAccAttributes);

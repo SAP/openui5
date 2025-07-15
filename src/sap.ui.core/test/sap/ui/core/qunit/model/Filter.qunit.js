@@ -181,95 +181,116 @@ sap.ui.define([
 	});
 
 	QUnit.test("constructor - create Filter Any/All - ok", function (assert) {
-		// "Any", object syntax
-		var oFilter = new Filter({
+		// code under test - "Any", object syntax
+		let oFilter = new Filter({
 			path: "Order_Details",
 			operator: FilterOperator.Any,
 			variable: "d",
 			condition: new Filter("path", FilterOperator.EQ, 200)
 		});
-		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter created");
-		assert.ok(true, "Filter 'Any' is created without an error");
 
-		// "Any" without variable and condition (object syntax)
+		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter 'Any' (object syntax) created");
+		assert.strictEqual(oFilter.getPath(), "Order_Details");
+		assert.strictEqual(oFilter.getOperator(), FilterOperator.Any);
+		assert.strictEqual(oFilter.getVariable(), "d");
+		assert.ok(oFilter.getCondition() instanceof Filter);
+
+		// code under test
 		oFilter = new Filter({
 			path: "Order_Details",
 			operator: FilterOperator.Any
 		});
-		assert.ok(true, "Filter 'Any' is created without an error");
+
+		assert.strictEqual(oFilter.getVariable(), undefined);
+		assert.strictEqual(oFilter.getCondition(), undefined);
 	});
 
-	QUnit.test("constructor - wrong args", function (assert) {
-		var sLegacyAnyAll = "The filter operators 'Any' and 'All' are only supported with the "
-				+ "parameter object notation.";
+	QUnit.test("constructor - create Filter NotAny - ok", function (assert) {
+		// code under test - "NotAny", object syntax
+		let oFilter = new Filter({
+			path: "Order_Details",
+			operator: FilterOperator.NotAny,
+			variable: "d",
+			condition: new Filter("path", FilterOperator.EQ, 200)
+		});
 
-		//"Any" and "All" with legacy syntax
-		assert.throws(
-			function() {
-				return new Filter("test", FilterOperator.Any, "notSupported");
-			},
-			new Error(sLegacyAnyAll),
-			"'Any' is not accepted with legacy syntax"
-		);
-		assert.throws(
-			function() {
-				return new Filter("test", FilterOperator.All, "notSupported");
-			},
-			new Error(sLegacyAnyAll),
-			"'All' is not accepted with legacy syntax"
-		);
-		assert.throws(
-			function() {
-				return new Filter("test", FilterOperator.Any);
-			},
-			new Error(sLegacyAnyAll),
-			"'Any' is not accepted with legacy syntax and missing 3rd and 4th argument"
-		);
+		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter 'NotAny' (object syntax) created");
+		assert.strictEqual(oFilter.getPath(), "Order_Details");
+		assert.strictEqual(oFilter.getOperator(), FilterOperator.NotAny);
+		assert.strictEqual(oFilter.getVariable(), "d");
+		assert.ok(oFilter.getCondition() instanceof Filter);
 
-		// "Any" with missing args, object syntax
-		assert.throws(
-			function() {
-				return new Filter({
-					path: "foo",
-					operator: FilterOperator.Any,
-					variable: "blub"
-				});
-			},
-			new Error("When using the filter operator 'Any', a lambda variable and a condition have"
-				+ " to be given or neither."),
-			"Error thrown if condition is Missing in 'Any'."
-		);
+		// code under test
+		oFilter = new Filter({
+			path: "Order_Details",
+			operator: FilterOperator.NotAny
+		});
 
-		// "All" with missing args, object syntax
-		assert.throws(
-			function() {
-				return new Filter({
-					path: "foo",
-					operator: FilterOperator.All,
-					variable: "blub"
-				});
-			},
-			new Error("When using the filter operator 'Any' or 'All', a valid instance of "
-				+ "sap.ui.model.Filter has to be given as argument 'condition'."),
-			"Error thrown if condition is Missing in 'All'."
-		);
-
-		// "All" with no args, object syntax
-		assert.throws(
-			function() {
-				return new Filter({
-					path: "foo",
-					operator: FilterOperator.All
-				});
-			},
-			new Error("When using the filter operators 'Any' or 'All', a string has to be given as "
-				+ "argument 'variable'."),
-			"Error thrown if no args are given with 'All' operator"
-		);
+		assert.strictEqual(oFilter.getVariable(), undefined);
+		assert.strictEqual(oFilter.getCondition(), undefined);
 	});
 
-	QUnit.test("Simple filters", function (assert) {
+	QUnit.test("constructor - create Filter NotAll - ok", function (assert) {
+		// code under test - "NotAll", object syntax
+		const oFilter = new Filter({
+			path: "Order_Details",
+			operator: FilterOperator.NotAll,
+			variable: "d",
+			condition: new Filter("path", FilterOperator.EQ, 200)
+		});
 
+		assert.ok(oFilter.getMetadata().isA("sap.ui.model.Filter"), "Filter 'NotAll' (object syntax) created");
+		assert.strictEqual(oFilter.getPath(), "Order_Details");
+		assert.strictEqual(oFilter.getOperator(), FilterOperator.NotAll);
+		assert.strictEqual(oFilter.getVariable(), "d");
+		assert.ok(oFilter.getCondition() instanceof Filter);
+	});
+
+[FilterOperator.Any, FilterOperator.All, FilterOperator.NotAny, FilterOperator.NotAll].forEach((sOperator) => {
+	QUnit.test("constructor - wrong args (legacy syntax) - " + sOperator, (assert) => {
+		const sLegacyAnyAll = "The filter operators 'Any', 'All', 'NotAny', and 'NotAll' are only supported with the"
+			+ " parameter object notation.";
+
+		// code under test
+		assert.throws(() => new Filter("test", sOperator, "notSupported"),
+			new Error(sLegacyAnyAll),
+			"'" + sOperator + "' is not accepted with legacy syntax");
+		// code under test
+		assert.throws(() => new Filter("test", sOperator),
+			new Error(sLegacyAnyAll),
+			"'" + sOperator + "' is not accepted with legacy syntax and missing 3rd and 4th argument");
+	});
+});
+
+[FilterOperator.Any, FilterOperator.NotAny].forEach((sOperator) => {
+	QUnit.test("constructor - wrong args (object syntax: missing condition) - " + sOperator, (assert) => {
+		// code under test
+		assert.throws(() => new Filter({path: "foo", operator: sOperator, variable: "blub"}),
+			new Error("When using the filter operator 'Any' or 'NotAny', you need to provide both a lambda variable and"
+				+ " a condition, or neither."),
+			"Error thrown if condition is Missing in '" + sOperator + "'."
+		);
+	});
+});
+
+[FilterOperator.All, FilterOperator.NotAll].forEach((sOperator) => {
+	QUnit.test("constructor - wrong args (object syntax: missing variable/condition) - " + sOperator, (assert) => {
+		// code under test
+		assert.throws(() => new Filter({path: "foo", operator: sOperator, variable: "blub"}),
+			new Error("When using the filter operator 'Any', 'All', 'NotAny', or 'NotAll', a valid instance of"
+				+ " sap.ui.model.Filter has to be given as the 'condition' argument."),
+			"Error thrown if condition is Missing in '" + sOperator + "'."
+		);
+		// code under test
+		assert.throws(() => new Filter({path: "foo", operator: sOperator}),
+			new Error("When using the filter operators 'Any', 'All', 'NotAny', or 'NotAll', a string has to be given"
+				+ " as the 'variable' argument."),
+			"Error thrown if no args are given with '" + sOperator + "' operator"
+		);
+	});
+});
+
+	QUnit.test("getAST: Simple filters", function (assert) {
 		assert.deepEqual(new Filter("path", FilterOperator.EQ, "value").getAST(), {
 			type: "Binary",
 			op: "==",
@@ -509,7 +530,7 @@ sap.ui.define([
 		}, "NotEndsWith operator");
 	});
 
-	QUnit.test("Multi filters", function (assert) {
+	QUnit.test("getAST: Multi filters", function (assert) {
 		var oFilter;
 
 		oFilter = new Filter([
@@ -718,18 +739,17 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Lambda filters", function (assert) {
-		var oFilter;
-
-		oFilter = new Filter({
-			operator: "Any",
+[FilterOperator.Any, FilterOperator.All].forEach((sOperator) => {
+	QUnit.test("getAST: Lambda filters - " + sOperator, function (assert) {
+		const oFilter = new Filter({
+			operator: sOperator,
 			path: "path",
 			variable: "item",
 			condition: new Filter("item/path", FilterOperator.EQ, "value")
 		});
 		assert.deepEqual(oFilter.getAST(), {
 			type: "Lambda",
-			op: "Any",
+			op: sOperator,
 			ref: {
 				type: "Reference",
 				path: "path"
@@ -750,41 +770,50 @@ sap.ui.define([
 					value: "value"
 				}
 			}
-		}, "Lambdafilter Any");
-
-		oFilter = new Filter({
-			operator: "All",
-			path: "path",
-			variable: "item",
-			condition: new Filter("item/path", FilterOperator.EQ, "value")
-		});
-		assert.deepEqual(oFilter.getAST(), {
-			type: "Lambda",
-			op: "All",
-			ref: {
-				type: "Reference",
-				path: "path"
-			},
-			variable: {
-				type: "Variable",
-				name: "item"
-			},
-			condition: {
-				type: "Binary",
-				op: "==",
-				left: {
-					type: "Reference",
-					path: "item/path"
-				},
-				right: {
-					type: "Literal",
-					value: "value"
-				}
-			}
-		}, "Lambdafilter All");
+		}, "Lambdafilter " + sOperator);
 	});
+});
 
-	QUnit.test("Origin information", function (assert) {
+[FilterOperator.NotAny, FilterOperator.NotAll].forEach((sOperator) => {
+	QUnit.test("getAST: Lambda filters - " + sOperator, function (assert) {
+		const oFilter = new Filter({
+			operator: sOperator,
+			path: "path",
+			variable: "item",
+			condition: new Filter("item/path", FilterOperator.EQ, "value")
+		});
+		assert.deepEqual(oFilter.getAST(), {
+			type: "Unary",
+			op: "!",
+			arg: {
+				type: "Lambda",
+				op: sOperator === FilterOperator.NotAny ? FilterOperator.Any : FilterOperator.All,
+				ref: {
+					type: "Reference",
+					path: "path"
+				},
+				variable: {
+					type: "Variable",
+					name: "item"
+				},
+				condition: {
+					type: "Binary",
+					op: "==",
+					left: {
+						type: "Reference",
+						path: "item/path"
+					},
+					right: {
+						type: "Literal",
+						value: "value"
+					}
+				}
+			}
+		}, "Lambdafilter " + sOperator);
+	});
+});
+
+	QUnit.test("getAST: Origin information", function (assert) {
 		assert.equal(new Filter("path", FilterOperator.EQ, "value").getAST(true).origin, "EQ");
 		assert.equal(new Filter("path", FilterOperator.NE, "value").getAST(true).origin, "NE");
 		assert.equal(new Filter("path", FilterOperator.GT, "value").getAST(true).origin, "GT");
@@ -814,12 +843,13 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Static never fulfilled filter", function(assert) {
+	QUnit.test("getAST: Static never fulfilled filter", function(assert) {
 		assert.ok(Filter.NONE instanceof Filter);
 		assert.strictEqual(Filter.NONE.getPath(), "/");
 		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
 		assert.strictEqual(Filter.NONE.getTest()(), false);
 		assert.throws(() => {
+			// code under test
 			Filter.NONE.getAST();
 		}, new Error("Unknown operator: undefined"));
 	});
@@ -857,7 +887,7 @@ sap.ui.define([
 		Filter.checkFilterNone(oFilter);
 
 		// code under test
-		assert.throws(function () {
+		assert.throws(() => {
 			Filter.checkFilterNone([new Filter("path", FilterOperator.EQ, "value"), Filter.NONE]);
 		}, new Error("Filter.NONE cannot be used together with other filters"));
 	});

@@ -27,7 +27,7 @@
 			"sample": {
 				"files": [
 					"view/MultiValueField.view.xml",
-					"controller/Controller.controller.js",
+					"controller/MultiValueField.controller.js",
 					"delegate/MultiValueFieldDelegate.js",
 					"delegate/ValueHelpDelegate.js"
 				]

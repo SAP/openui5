@@ -307,6 +307,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Generates a string containing all IDs of the labels associated with the control.
+	 * @returns {string} The IDs of the labels or an empty string if there are no labels.
+	 * @private
+	 */
+	ObjectNumber.prototype._getAriaLabelledBy = function() {
+		var aAriaLabelledBy = this.getAriaLabelledBy(),
+			aLabels = LabelEnablement.getReferencingLabels(this);
+
+		return aAriaLabelledBy.concat(aLabels).join(" ");
+	};
+
+	/**
 	 * Generates a string containing all internal elements' IDs, which provide information to the screen reader user.
 	 * @returns {string}
 	 * @private

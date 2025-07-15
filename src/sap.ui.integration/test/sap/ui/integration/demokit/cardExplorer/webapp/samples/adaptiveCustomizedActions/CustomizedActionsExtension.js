@@ -26,7 +26,7 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 		if (mFormData.Name === "Enter your name") {
 			oCard.showMessage("Please enter your name", "Error");
 		} else if (mFormData.Name === "") {
-			oCard.showMessage("You can't submit an empty name", "Error");
+			oCard.showMessage("Submission of an empty name is not allowed.", "Error");
 		} else {
 			// Submits to a mock server
 			oCard.request({
@@ -35,8 +35,8 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 				"parameters": mFormData
 			}).then(function () {
 				oCard.showMessage("Your name has been submitted successfully", "Success");
-			}).catch(function(sErrorMessage) {
-				oCard.showMessage(sErrorMessage, "Error");
+			}).catch(function(oErrorInfo) {
+				oCard.showMessage(oErrorInfo.message, "Error");
 			});
 		}
 

@@ -33,8 +33,8 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 			"parameters": mFormData
 		}).then(function () {
 			oCard.showMessage("{i18n>SUCCESSFUL_SUBMIT}", "Success");
-		}).catch(function(aErrorInfo) {
-			oCard.showMessage(aErrorInfo[0], "Error");
+		}).catch(function(oErrorInfo) {
+			oCard.showMessage(oErrorInfo.message, "Error");
 		});
 	};
 
