@@ -16,8 +16,8 @@ sap.ui.define([
 	const ControlVariantWriteUtils = {};
 
 	/**
-	 * Deletes a control variant and its associated changes. This is only possible for USER layer variants
-	 * and CUSTOMER layer variants which are part of a draft (not activated).
+	 * Deletes a control variant and its associated changes. This is only possible in the Business Network scenario
+	 * or for USER layer variants or CUSTOMER layer variants which are part of a draft (not activated).
 	 *
 	 * @param {string} sReference - Flex reference
 	 * @param {string} sVMReference - Variant management reference

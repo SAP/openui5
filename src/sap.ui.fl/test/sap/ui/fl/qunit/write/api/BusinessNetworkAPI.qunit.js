@@ -9,6 +9,8 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/BusinessNetworkAPI",
+	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
@@ -21,6 +23,8 @@ sap.ui.define([
 	FlexObjectManager,
 	Storage,
 	BusinessNetworkAPI,
+	ChangesWriteAPI,
+	FeaturesAPI,
 	Layer,
 	Utils,
 	sinon
@@ -140,6 +144,31 @@ sap.ui.define([
 				/Error: Invalid reference provided: invalidRef/,
 				"then an error is thrown with a meaningful message"
 			);
+		});
+
+		QUnit.test("when deleteVariants is called", async function(assert) {
+			const aExpectedDeletedObjects = ["variant1", "variant2", "DeletedObject1", "DeletedObject2"];
+			sandbox.stub(ChangesWriteAPI, "deleteVariantsAndRelatedObjects")
+			.withArgs({
+				variantManagementControl: "DummyVMControl",
+				variants: ["variant1", "variant2"],
+				layer: Layer.CUSTOMER,
+				forceDelete: true
+			})
+			.returns(aExpectedDeletedObjects);
+			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
+			const oSaveFlexObjectsStub = sandbox.stub(FlexObjectManager, "saveFlexObjects")
+			.withArgs({
+				selector: "DummyVMControl",
+				flexObjects: aExpectedDeletedObjects,
+				includeCtrlVariants: true
+			});
+			const aDeletedObjects = await BusinessNetworkAPI.deleteVariants({
+				vmControl: "DummyVMControl",
+				variants: ["variant1", "variant2"]
+			});
+			assert.deepEqual(aDeletedObjects, aExpectedDeletedObjects, "then the deleted objects are returned");
+			assert.ok(oSaveFlexObjectsStub, "then the saveFlexObjects function is called once with the correct parameters");
 		});
 	});
 

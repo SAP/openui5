@@ -10,7 +10,7 @@
 		rows="{
 				path : '/EMPLOYEES',
 				parameters : {
-					$count : false,
+					$count : true,
 					$filter : 'STATUS ne \'Out\'',
 					$orderby : 'AGE',
 					$$patchWithoutSideEffects : true
@@ -20,7 +20,8 @@
 		selectionMode="None">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
-				<m:Title id="title" level="H1" text="Organizational Chart"/>
+				<m:Title id="title" level="H1"
+					text="Organizational Chart: {header>$count} Employees ({header>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://hide" press=".onCreateRoot($event, true)"
@@ -142,7 +143,7 @@
 		rows="{
 				path : '/EMPLOYEES',
 				parameters : {
-					$count : false,
+					$count : true,
 					$filter : 'STATUS ne \'Out\'',
 					$orderby : 'AGE',
 					$$patchWithoutSideEffects : true
@@ -152,7 +153,8 @@
 		selectionMode="None">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
-				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
+				<m:Title id="treeTitle" level="H1"
+					text="Organizational Chart - TreeTable: {treeHeader>$count} Employees ({treeHeader>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRootInTreeTable"
 					tooltip="Create New Root"/>

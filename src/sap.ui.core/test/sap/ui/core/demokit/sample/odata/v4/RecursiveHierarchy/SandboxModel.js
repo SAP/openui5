@@ -14,6 +14,9 @@ sap.ui.define([
 			sFilterBase : "/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/",
 			mFixture : {},
 			aRegExps : [{
+				regExp : /^GET \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\/\$count.*$/,
+				response : {buildResponse : buildCountResponse}
+			}, {
 				regExp : /^DELETE \/sap\/opu\/odata4\/IWBEP\/TEA\/default\/IWBEP\/TEA_BUSI\/0001\/EMPLOYEES\('([^']*)'\)$/,
 				response : {buildResponse : buildDeleteResponse, code : 204}
 			}, {
@@ -270,6 +273,17 @@ sap.ui.define([
 		delete oResultNode.DistanceFromRoot;
 		delete oResultNode.DrillState;
 		oResponse.message = JSON.stringify(oResultNode);
+	}
+
+	/**
+	 * Builds the response for a GET request for the $count of the "EMPLOYEES" collection, but does
+	 * not count nodes that are filtered out.
+	 *
+	 * @param {string[]} _aMatches - The matches against the RegExp
+	 * @param {object} oResponse - Response object to fill
+	 */
+	function buildCountResponse(_aMatches, oResponse) {
+		oResponse.message = String(aAllNodes.length);
 	}
 
 	/**
