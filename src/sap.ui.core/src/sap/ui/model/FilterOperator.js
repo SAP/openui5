@@ -146,12 +146,20 @@ sap.ui.define(function() {
 			NotEndsWith: "NotEndsWith",
 
 			/**
-			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent subitems.
-			 * <code>All</code> returns a list of those items for which <b>all</b> dependent subitems match the filter criteria of the nested filter.
-			 * For example, a list of customers can be filtered by filter criteria that are applied to the list of orders the customer placed in the past.
-			 * The filter returns a list of those customers that <b>always</b> ordered a specific product.
+			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent
+			 * subitems. <code>All</code> returns a list of all items for which it is <b>true</b> that all dependent
+			 * subitems match the filter criteria of the nested filter. This means that <b>every</b> dependent subitem
+			 * matches the filter criteria.
 			 *
 			 * This filter operator is only supported in OData V4 models.
+			 *
+			 * @example <caption>Retrieve all individuals whose trips are all named "Walldorf":</caption>
+			 * new Filter({
+			 *   path: "Trips",
+			 *   operator: FilterOperator.All,
+			 *   variable: "trip",
+			 *   condition: new Filter({ path: "trip/Name", operator: FilterOperator.EQ, value1: "Walldorf" })
+			 * });
 			 *
 			 * @since 1.48.0
 			 * @public
@@ -159,17 +167,79 @@ sap.ui.define(function() {
 			All: "All",
 
 			/**
-			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent subitems.
-			 * <code>Any</code> returns a list of those items for which <b>at least one</b> dependent subitem matches the filter criteria of the nested filter.
-			 * For example, a list of customers can be filtered by filter criteria that are applied to the list of orders the customer placed in the past.
-			 * The filter returns a list of those customers that <b>at least once</b> ordered a specific product.
+			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent
+			 * subitems. <code>NotAll</code> returns a list of all items for which it is <b>false</b> that all
+			 * dependent subitems match the filter criteria of the nested filter. This means that <b>at least one</b>
+			 * dependent subitem does not match the filter criteria.
 			 *
 			 * This filter operator is only supported in OData V4 models.
+			 *
+			 * @example <caption>Retrieve all individuals whose trips do not all have the name "Walldorf":</caption>
+			 * new Filter({
+			 *   path: "Trips",
+			 *   operator: FilterOperator.NotAll,
+			 *   variable: "trip",
+			 *   condition: new Filter({ path: "trip/Name", operator: FilterOperator.EQ, value1: "Walldorf" })
+			 * });
+			 *
+			 * @since 1.139.0
+			 * @public
+			 */
+			NotAll: "NotAll",
+
+			/**
+			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent
+			 * subitems. <code>Any</code> returns a list of all items for which <b>at least one</b> dependent subitem
+			 * matches the filter criteria of the nested filter.
+			 *
+			 * This filter operator is only supported in OData V4 models.
+			 *
+			 * @example <caption>Retrieve all individuals who have at least one trip:</caption>
+			 * new Filter({
+			 *   path: "Trips",
+			 *   operator: FilterOperator.Any
+			 * });
+			 *
+			 * @example <caption>Retrieve all individuals who have at least one trip with a budget exceeding 1000:</caption>
+			 * new Filter({
+			 *   path: "Trips",
+			 *   operator: FilterOperator.Any,
+			 *   variable: "trip",
+			 *   condition: new Filter({ path: "trip/Budget", operator: FilterOperator.GT, value1: 1000 })
+			 * });
 			 *
 			 * @since 1.48.0
 			 * @public
 			 */
-			Any: "Any"
+			Any: "Any",
+
+			/**
+			 * Used to filter a list based on filter criteria that are defined in a nested filter for dependent
+			 * subitems. <code>NotAny</code> returns a list of all items for which <b>none</b> of the dependent
+			 * subitems match the filter criteria of the nested filter. If no filter condition is given,
+			 * <code>NotAny</code> returns all items that do not have any dependent subitems (i.e., for which the
+			 * collection is empty).
+			 *
+			 * This filter operator is only supported in OData V4 models.
+			 *
+			 * @example <caption>Retrieve all individuals who have no trips at all (the result of any() is empty):</caption>
+			 * new Filter({
+			 *   path: "Trips",
+			 *   operator: FilterOperator.NotAny
+			 * });
+			 *
+			 * @example <caption>Retrieve all individuals who have no trips with the status "Rejected":</caption>
+			 * new Filter({
+			 *   path: "Trips",
+			 *   operator: FilterOperator.NotAny,
+			 *   variable: "trip",
+			 *   condition: new Filter({ path: "trip/Status", operator: FilterOperator.EQ, value1: "Rejected" })
+			 * });
+			 *
+			 * @since 1.139.0
+			 * @public
+			 */
+			NotAny: "NotAny"
 	};
 
 	return FilterOperator;

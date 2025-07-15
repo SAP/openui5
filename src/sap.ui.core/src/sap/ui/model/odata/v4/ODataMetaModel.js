@@ -596,8 +596,8 @@ sap.ui.define([
 		this.mSupportedBindingModes = {OneTime : true, OneWay : true};
 		this.bSupportReferences = bSupportReferences !== false; // default is true
 		// ClientListBinding#filter calls checkFilter on the model; ClientModel does
-		// not support "All" and "Any" filters
-		this.mUnsupportedFilterOperators = {All : true, Any : true};
+		// not support "All", "Any", "NotAll", and "NotAny" filters
+		this.mUnsupportedFilterOperators = {All : true, Any : true, NotAll : true, NotAny : true};
 		this.sUrl = sUrl;
 	}
 

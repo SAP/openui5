@@ -59,7 +59,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Simple Filters - Unsupported are not OK - Incorrect lambda operator", function(assert) {
-		// Any
 		var oUnsupported3 = new Filter({
 			path: "x",
 			operator: FilterOperator.Any,
@@ -71,10 +70,9 @@ sap.ui.define([
 				this.oModel.checkFilter(oUnsupported3);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.Any),
-			"Invalid operators are not supported (object syntax)"
+			"Filter operator \"Any\" is not supported (object syntax)"
 		);
 
-		// All
 		var oUnsupported4 = new Filter({
 			path: "y",
 			operator: FilterOperator.All,
@@ -86,7 +84,35 @@ sap.ui.define([
 				this.oModel.checkFilter(oUnsupported4);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
-			"Invalid operators are not supported (object syntax)"
+			"Filter operator \"All\" is not supported (object syntax)"
+		);
+
+		var oUnsupported5 = new Filter({
+			path: "z",
+			operator: FilterOperator.NotAny,
+			variable: "abc",
+			condition: new Filter()
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilter(oUnsupported5);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.NotAny),
+			"Filter operator \"NotAny\" is not supported (object syntax)"
+		);
+
+		var oUnsupported6 = new Filter({
+			path: "w",
+			operator: FilterOperator.NotAll,
+			variable: "abc",
+			condition: new Filter()
+		});
+		assert.throws(
+			function() {
+				this.oModel.checkFilter(oUnsupported6);
+			}.bind(this),
+			this.getErrorWithMessage(FilterOperator.NotAll),
+			"Filter operator \"NotAll\" is not supported (object syntax)"
 		);
 	});
 

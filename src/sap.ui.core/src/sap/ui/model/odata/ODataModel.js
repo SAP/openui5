@@ -127,8 +127,8 @@ sap.ui.define([
 
 			this.oServiceData = {};
 			this.sDefaultBindingMode = BindingMode.OneWay;
-			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
-			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
+			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay": true};
+			this.mUnsupportedFilterOperators = {All: true, Any: true, NotAll: true, NotAny: true};
 			this.bCountSupported = true;
 			this.bJSON = bJSON;
 			this.bCache = true;
