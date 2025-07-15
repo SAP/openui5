@@ -1460,7 +1460,7 @@ sap.ui.define([
 
 			jQuery(oContent.getFocusDomRef()).val("B");
 			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-			assert.equal(iValidationSuccess, 1, "ValidationSuccess fired");
+			assert.equal(iValidationSuccess, 2, "ValidationSuccess fired"); // once from outer binding, once from inner validation
 			assert.equal(oValidationSuccessParameters?.element, oField3, "ValidationSuccess fired for Field");
 			assert.equal(oValidationSuccessParameters?.property, "value", "ValidationSuccess 'property'");
 			assert.equal(oValidationSuccessParameters?.type, oType3, "ValidationSuccess 'type'");

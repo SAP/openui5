@@ -2534,9 +2534,7 @@ sap.ui.define([
 				const sId = oEvent.getId();
 				oEvent.cancelBubble();
 				oEvent.preventDefault();
-				if (sId !== "validationSuccess" || !oParameter.type) { // for bound properties the ValidationSuccess is alredy triggered if the Fields outer property is updated. No second event needed
-					this.fireEvent(sId, oParameter, false, true);
-				}
+				this.fireEvent(sId, oParameter, false, true); // for bound properties the ValidationSuccess is alredy triggered if the Fields outer property is updated. But if changed to the same value no update is triggered. We cannot be 100% sure if binding fires ValidationSuccess for all cases, so it might be fired twice. But this should not lead to an issue, just tries to remove message again.
 			} else {
 				// For compatibility reasons set valueState on Field if changed internal too, even if no binding is there on Field itself
 				const oBinding = oEvent.getSource().getBinding("valueState");
