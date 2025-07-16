@@ -1,34 +1,14 @@
 sap.ui.define([
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/Controller"
-], function (JSONModel, Controller) {
+], function (Controller) {
 	"use strict";
 
 	return Controller.extend("sap.f.FlexibleColumnLayoutWithTwoColumnStart.controller.FlexibleColumnLayout", {
 		onInit: function () {
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oRouter.attachRouteMatched(this.onRouteMatched, this);
-			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 			// Navigating to a random product in order to display two columns initially
 			this.oRouter.navTo("detail", {layout: "TwoColumnsMidExpanded", product: "95"});
-		},
-
-		onBeforeRouteMatched: function(oEvent) {
-
-			var oModel = this.getOwnerComponent().getModel();
-
-			var sLayout = oEvent.getParameters().arguments.layout;
-
-			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
-			if (!sLayout) {
-				var oNextUIState = this.getOwnerComponent().getHelper().getNextUIState(0);
-				sLayout = oNextUIState.layout;
-			}
-
-			// Update the layout of the FlexibleColumnLayout
-			if (sLayout) {
-				oModel.setProperty("/layout", sLayout);
-			}
 		},
 
 		onRouteMatched: function (oEvent) {
@@ -64,7 +44,6 @@ sap.ui.define([
 
 		onExit: function () {
 			this.oRouter.detachRouteMatched(this.onRouteMatched, this);
-			this.oRouter.detachBeforeRouteMatched(this.onBeforeRouteMatched, this);
 		}
 	});
 });
