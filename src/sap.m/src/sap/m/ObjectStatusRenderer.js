@@ -39,7 +39,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 		oRm.openStart("div", oObjStatus);
 
 		if (oObjStatus._isEmpty() && oObjStatus.getEmptyIndicatorMode() === EmptyIndicatorMode.Off) {
-			oRm.style("display", "none");
+			oRm.class("sapMObjStatus");
 			oRm.openEnd();
 		} else {
 
