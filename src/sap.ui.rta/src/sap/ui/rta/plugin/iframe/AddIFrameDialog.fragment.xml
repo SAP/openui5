@@ -24,7 +24,11 @@
 					id="sapUiRtaAddIFrameDialog_VL"
 					width="100%"
 					class="sapUiRtaAddIFrameDialogVlWrapper">
-				<VBox visible="{dialogInfo>/asContainer/value}" class="sapUiRtaAddIFrameDialogContainer sapUiSmallMarginTop" renderType="Bare">
+				<VBox
+					id="sapUiRtaAddIFrameDialog_ContainerTitle"
+					visible="{dialogInfo>/asContainer/value}"
+					class="sapUiRtaAddIFrameDialogContainer sapUiSmallMarginTop"
+					renderType="Bare">
 					<items>
 						<Label
 							id="sapUiRtaAddIFrameDialog_ContainerTitleLabel"

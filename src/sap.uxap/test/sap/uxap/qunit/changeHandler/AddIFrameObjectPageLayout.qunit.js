@@ -108,6 +108,7 @@ sap.ui.define([
 			changeSpecificData: this.mSpecificChangeData,
 			selector: this.oObjectPageLayout
 		}).then(function(oChange) {
+			oChange.setText("title", "Test IFrame", "XTIT");
 			this.oChange = oChange;
 		}.bind(this));
 	}
@@ -126,10 +127,20 @@ sap.ui.define([
 			assert.strictEqual(this.oObjectPageLayout.getSections().length, 2, "after the change there are 2 sections in the object page layout");
 			var oCreatedSection = this.oObjectPageLayout.getSections()[iExpectedCreatedSectionIndex];
 			assert.ok(oCreatedSection.getId() === BASE_ID, "the created section matches the expected baseId");
+			assert.strictEqual(
+				oCreatedSection.getTitle(),
+				"Test IFrame",
+				"the created sub section has the correct title"
+			);
 			var aSubSections = oCreatedSection.getSubSections();
 			assert.strictEqual(aSubSections.length, 1, "The created section contains one sub section");
 			var oCreatedSubSection = aSubSections[0];
 			assert.ok(oCreatedSubSection.getId().indexOf(BASE_ID) === 0, "the created sub section starts with the expected baseId");
+			assert.strictEqual(
+				oCreatedSubSection.getTitle(),
+				"Test IFrame",
+				"the created sub section has the correct title"
+			);
 			var aBlocks = oCreatedSubSection.getBlocks();
 			assert.strictEqual(aBlocks.length, 1, "The created sub section contains one block");
 			var oCreatedIFrame = aBlocks[0];
@@ -219,6 +230,7 @@ sap.ui.define([
 					changeSpecificData: this.mSpecificChangeData,
 					selector: this.oTempObjectPageLayout
 				}).then(function(oChange) {
+					oChange.setText("title", "Test IFrame", "XTIT");
 					this.oChange = oChange;
 				}.bind(this));
 			}.bind(this));
@@ -232,11 +244,21 @@ sap.ui.define([
 			var oObjectPageLayoutSectionsAggregation = this.oObjectPageLayout.childNodes[0];
 			assert.strictEqual(oObjectPageLayoutSectionsAggregation.childNodes.length, 2, "after the addXML there are two sections in the object page layout");
 			var oCreatedSection = oObjectPageLayoutSectionsAggregation.childNodes[iExpectedCreatedSectionIndex];
+			assert.strictEqual(
+				oCreatedSection.getAttribute("title"),
+				"Test IFrame",
+				"the created section has the correct title"
+			);
 			assert.ok(oCreatedSection.getAttribute("id") === BASE_ID, "the created sections matches the expected baseId");
 			var aSubSections = oCreatedSection.childNodes;
 			assert.strictEqual(aSubSections.length, 1, "The created section contains one sub section");
 			var oCreatedSubSection = aSubSections[0];
 			assert.ok(oCreatedSubSection.getAttribute("id").indexOf(BASE_ID) === 0, "the created sub section starts with the expected baseId");
+			assert.strictEqual(
+				oCreatedSubSection.getAttribute("title"),
+				"Test IFrame",
+				"the created section has the correct title"
+			);
 			var aBlocks = oCreatedSubSection.childNodes;
 			assert.strictEqual(aBlocks.length, 1, "The created sub section contains one block");
 			var oCreatedIFrame = aBlocks[0];

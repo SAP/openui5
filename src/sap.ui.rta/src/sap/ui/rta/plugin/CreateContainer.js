@@ -3,15 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/BaseCreate",
-	"sap/ui/fl/Utils",
+	"sap/base/util/uid",
 	"sap/ui/dt/Util",
-	"sap/base/util/uid"
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/rename/RenameDialog",
+	"sap/ui/rta/plugin/BaseCreate",
+	"sap/ui/rta/plugin/Plugin"
 ], function(
-	BaseCreate,
-	FlexUtils,
+	uid,
 	DtUtil,
-	uid
+	FlexUtils,
+	RenameDialog,
+	BaseCreate,
+	Plugin
 ) {
 	"use strict";
 
@@ -37,6 +41,11 @@ sap.ui.define([
 			events: {}
 		}
 	});
+
+	CreateContainer.prototype.init = function(...aArgs) {
+		Plugin.prototype.init.apply(this, aArgs);
+		this._oDialog = new RenameDialog();
+	};
 
 	/**
 	 * Returns true if create container action is enabled for the selected element overlays
@@ -65,43 +74,50 @@ sap.ui.define([
 		return this._getText(vAction, oElement, oDesignTimeMetadata, sText);
 	};
 
-	CreateContainer.prototype.handleCreate = function(bSibling, oOverlay) {
-		var vAction = this.getCreateAction(bSibling, oOverlay);
-		var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
-		var oParent = oParentOverlay.getElement();
-		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
-		var oView = FlexUtils.getViewForControl(oParent);
+	CreateContainer.prototype.handleCreate = async function(bSibling, oOverlay) {
+		const vAction = this.getCreateAction(bSibling, oOverlay);
+		const oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
+		const oParent = oParentOverlay.getElement();
+		const oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
+		const oView = FlexUtils.getViewForControl(oParent);
+		const oSiblingElement = bSibling ? oOverlay.getElement() : null;
+		const sNewControlID = oView.createId(uid());
+		const fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
+		const iIndex = this._determineIndex(oParent, oSiblingElement, vAction.aggregation, fnGetIndex);
+		const sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
+		const sDefaultContainerTitle = this._getContainerTitle(vAction, oParent, oDesignTimeMetadata);
 
-		var oSiblingElement;
-		if (bSibling) {
-			oSiblingElement = oOverlay.getElement();
+		const sNewText = await this._oDialog.openDialogAndHandleRename({
+			overlay: oOverlay,
+			action: vAction,
+			currentText: sDefaultContainerTitle,
+			acceptSameText: true,
+			dialogSettings: {
+				title: this.getCreateContainerText(bSibling, oOverlay)
+			}
+		});
+
+		if (!sNewText) {
+			// If the user cancels the dialog, do not create a container
+			return;
 		}
 
-		var sNewControlID = oView.createId(uid());
+		try {
+			const oCreateCommand = await this.getCommandFactory().getCommandFor(oParent, "createContainer", {
+				newControlId: sNewControlID,
+				label: sNewText,
+				index: iIndex,
+				parentId: oParent.getId()
+			}, oDesignTimeMetadata, sVariantManagementReference);
 
-		var fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
-		var iIndex = this._determineIndex(oParent, oSiblingElement, vAction.aggregation, fnGetIndex);
-
-		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
-
-		return this.getCommandFactory().getCommandFor(oParent, "createContainer", {
-			newControlId: sNewControlID,
-			label: this._getContainerTitle(vAction, oParent, oDesignTimeMetadata),
-			index: iIndex,
-			parentId: oParent.getId()
-		}, oDesignTimeMetadata, sVariantManagementReference)
-
-		.then(function(oCreateCommand) {
 			this.fireElementModified({
 				command: oCreateCommand,
 				action: vAction,
 				newControlId: sNewControlID
 			});
-		}.bind(this))
-
-		.catch(function(oMessage) {
-			throw DtUtil.createError("CreateContainer#handleCreate", oMessage, "sap.ui.rta");
-		});
+		} catch (oError) {
+			throw DtUtil.createError("CreateContainer#handleCreate", oError, "sap.ui.rta");
+		}
 	};
 
 	/**
@@ -144,6 +160,12 @@ sap.ui.define([
 	 */
 	CreateContainer.prototype.getActionName = function() {
 		return "createContainer";
+	};
+
+	CreateContainer.prototype.destroy = function(...args) {
+		Plugin.prototype.destroy.apply(this, args);
+		this._oDialog.destroy();
+		delete this._oDialog;
 	};
 
 	return CreateContainer;

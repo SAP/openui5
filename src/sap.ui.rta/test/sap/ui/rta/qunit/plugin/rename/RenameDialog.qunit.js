@@ -22,7 +22,7 @@ sap.ui.define([
 	const sandbox = sinon.createSandbox();
 	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
-	async function openDialog(oRenameDialog, oOverlay, fnCallback, action) {
+	async function openDialog(oRenameDialog, oOverlay, fnCallback, mCustomPropertyBag) {
 		const oCreatePopupStub = sandbox.stub(oRenameDialog, "_createPopup");
 		oCreatePopupStub.callsFake(async function(...args) {
 			const oPopover = await oCreatePopupStub.wrappedMethod.apply(this, args);
@@ -30,20 +30,23 @@ sap.ui.define([
 				fnCallback({
 					oOkButton: oPopover.getBeginButton(),
 					oCancelButton: oPopover.getEndButton(),
-					oInput: oPopover.getContent()[0].getItems()[1]
+					oInput: oPopover.getContent()[0].getItems()[1],
+					sTitle: oPopover.getTitle()
 				});
 			});
 			return oPopover;
 		});
-		const sNewLabel = await oRenameDialog.openDialogAndHandleRename({
+		const mPropertyBag = {
 			overlay: oOverlay,
 			domRef: oOverlay.getDomRef(),
-			action: action || {
+			action: {
 				getTextMutators: () => ({
 					getText: () => oOverlay.getElement().getDomRef().innerText
 				})
-			}
-		});
+			},
+			...(mCustomPropertyBag || {})
+		};
+		const sNewLabel = await oRenameDialog.openDialogAndHandleRename(mPropertyBag);
 		oCreatePopupStub.restore();
 		return sNewLabel;
 	}
@@ -51,7 +54,7 @@ sap.ui.define([
 	QUnit.module("Basic functionality", {
 		async beforeEach(assert) {
 			const fnDone = assert.async();
-			this.oButton = new Button("button", {text: "My Button"});
+			this.oButton = new Button("button", { text: "My Button" });
 			this.oButton.placeAt("qunit-fixture");
 			await nextUIUpdate();
 			this.oRenameDialog = new RenameDialog();
@@ -71,7 +74,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when opening the dialog", function(assert) {
-			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput}) => {
+			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oCancelButton, oInput }) => {
 				assert.strictEqual(
 					document.activeElement,
 					oInput.getFocusDomRef(),
@@ -85,13 +88,28 @@ sap.ui.define([
 				assert.strictEqual(oInput.getValue(), "My Button", "then the input has the correct value");
 				assert.strictEqual(oInput.getValueState(), "None", "then the input is valid");
 				assert.strictEqual(oInput.getValueStateText(), "", "then the input has no error message");
-				assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is enabled");
-				oOkButton.firePress();
+				assert.strictEqual(oOkButton.getEnabled(), false, "then the OK button is initially disabled");
+				oCancelButton.firePress();
 			});
 		});
 
+		QUnit.test("when setting the acceptSameText property", async function(assert) {
+			const sNewText = await openDialog(
+				this.oRenameDialog,
+				this.oButtonOverlay,
+				({ oOkButton }) => {
+					assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is initially enabled");
+					oOkButton.firePress();
+				},
+				{
+					acceptSameText: true
+				}
+			);
+			assert.strictEqual(sNewText, "My Button", "then the same text is returned");
+		});
+
 		QUnit.test("when renaming to a valid text", async function(assert) {
-			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput}) => {
+			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput }) => {
 				oInput.setValue("New");
 				oInput.fireLiveChange({ value: "New" });
 				assert.strictEqual(oInput.getValueState(), "None", "then the input is valid");
@@ -103,7 +121,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when cancel is pressed", async function(assert) {
-			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput}) => {
+			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput }) => {
 				oInput.setValue("New");
 				oInput.fireLiveChange({ value: "New" });
 				oCancelButton.firePress();
@@ -112,21 +130,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when renaming back to the original label", async function(assert) {
-			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput}) => {
+			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oCancelButton, oInput }) => {
 				oInput.setValue("New");
 				oInput.fireLiveChange({ value: "New" });
 				oInput.setValue("My Button");
 				oInput.fireLiveChange({ value: "My Button" });
 				assert.strictEqual(oInput.getValueState(), "None", "then the input is valid");
 				assert.strictEqual(oInput.getValueStateText(), "", "then the input has no error message");
-				assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is enabled");
-				oOkButton.firePress();
+				assert.strictEqual(oOkButton.getEnabled(), false, "then the OK button is disabled");
+				oCancelButton.firePress();
 			});
 			assert.strictEqual(sNewText, undefined, "then no new text is returned");
 		});
 
 		QUnit.test("when renaming to an invalid label", function(assert) {
-			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput}) => {
+			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput }) => {
 				oInput.setValue("{someBinding}");
 				oInput.fireLiveChange({ value: "{someBinding}" });
 				assert.strictEqual(oInput.getValueState(), "Error", "then the input is invalid");
@@ -146,18 +164,24 @@ sap.ui.define([
 		});
 
 		QUnit.test("when renaming from an invalid label to the original label", function(assert) {
-			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oCancelButton, oInput}) => {
-				oInput.setValue("{someBinding}");
-				oInput.fireLiveChange({ value: "{someBinding}" });
-				assert.strictEqual(oInput.getValueState(), "Error", "then the input is invalid");
-				assert.strictEqual(oOkButton.getEnabled(), false, "then the OK button is disabled");
-				oInput.setValue("My Button");
-				oInput.fireLiveChange({ value: "My Button" });
-				assert.strictEqual(oInput.getValueState(), "None", "then the input is valid");
-				assert.strictEqual(oInput.getValueStateText(), "", "then the input has no error message");
-				assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is enabled");
-				oCancelButton.firePress();
-			});
+			return openDialog(
+				this.oRenameDialog,
+				this.oButtonOverlay,
+				({ oOkButton, oCancelButton, oInput }) => {
+					oInput.setValue("{someBinding}");
+					oInput.fireLiveChange({ value: "{someBinding}" });
+					assert.strictEqual(oInput.getValueState(), "Error", "then the input is invalid");
+					assert.strictEqual(oOkButton.getEnabled(), false, "then the OK button is disabled");
+					oInput.setValue("My Button");
+					oInput.fireLiveChange({ value: "My Button" });
+					assert.strictEqual(oInput.getValueState(), "None", "then the input is valid");
+					assert.strictEqual(oInput.getValueStateText(), "", "then the input has no error message");
+					assert.strictEqual(oOkButton.getEnabled(), true, "then the OK button is enabled");
+					oCancelButton.firePress();
+				},
+				{
+					acceptSameText: true
+				});
 		});
 
 		QUnit.test("when custom validators are registered", function(assert) {
@@ -176,7 +200,7 @@ sap.ui.define([
 			return openDialog(
 				this.oRenameDialog,
 				this.oButtonOverlay,
-				({ oOkButton, oCancelButton, oInput}) => {
+				({ oOkButton, oCancelButton, oInput }) => {
 					oInput.setValue("Invalid");
 					oInput.fireLiveChange({ value: "Invalid" });
 					assert.strictEqual(oInput.getValueState(), "Error", "then the input is invalid");
@@ -188,12 +212,14 @@ sap.ui.define([
 					assert.strictEqual(oOkButton.getEnabled(), false, "then the OK button is disabled");
 					oCancelButton.firePress();
 				},
-				oAction
+				{
+					action: oAction
+				}
 			);
 		});
 
 		QUnit.test("when renaming to an empty label", async function(assert) {
-			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput}) => {
+			const sNewText = await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput }) => {
 				oInput.setValue("");
 				oInput.fireLiveChange({ value: "" });
 				oOkButton.firePress();
@@ -201,26 +227,50 @@ sap.ui.define([
 			assert.strictEqual(sNewText, "\xa0", "then a non-empty space is returned");
 		});
 
+		QUnit.test("when passing a predefined text", function(assert) {
+			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput }) => {
+				assert.strictEqual(oInput.getValue(), "Predefined Text", "then the input has the initial value");
+				oCancelButton.firePress();
+			}, {
+				currentText: "Predefined Text"
+			});
+		});
+
+		QUnit.test("when passing a custom title", function(assert) {
+			return openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, sTitle }) => {
+				assert.strictEqual(
+					sTitle,
+					"Custom Title",
+					"then the dialog has the custom title"
+				);
+				oCancelButton.firePress();
+			}, {
+				dialogSettings: {
+					title: "Custom Title"
+				}
+			});
+		});
+
 		QUnit.test("when reopening the dialog", async function(assert) {
-			await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput}) => {
+			await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput }) => {
 				oInput.setValue("abc");
 				oInput.fireLiveChange({ value: "abc" });
 				oCancelButton.firePress();
 			});
-			await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput}) => {
+			await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput }) => {
 				assert.strictEqual(oInput.getValue(), "My Button", "then the input has the initial value");
 				oCancelButton.firePress();
 			});
 		});
 
 		QUnit.test("when creating a second dialog (e.g. two plugins)", async function(assert) {
-			await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput}) => {
+			await openDialog(this.oRenameDialog, this.oButtonOverlay, ({ oCancelButton, oInput }) => {
 				oInput.setValue("abc");
 				oInput.fireLiveChange({ value: "abc" });
 				oCancelButton.firePress();
 			});
 			const oSecondRenameDialog = new RenameDialog();
-			const sNewText = await openDialog(oSecondRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput}) => {
+			const sNewText = await openDialog(oSecondRenameDialog, this.oButtonOverlay, ({ oOkButton, oInput }) => {
 				oInput.setValue("New");
 				oInput.fireLiveChange({ value: "New" });
 				oOkButton.firePress();

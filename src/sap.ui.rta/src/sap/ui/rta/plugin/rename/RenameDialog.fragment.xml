@@ -7,7 +7,7 @@
 		resizable="false"
 		draggable="true"
 		contentWidth="50rem"
-		title="{i18n>RENAME_DIALOG_TITLE}"
+		title="{= ${/dialogSettings/title} || ${i18n>RENAME_DIALOG_TITLE}}"
 		class="sapUiContentPadding"
 		initialFocus="sapUiRtaRenameDialog_input"
 		escapeHandler=".onCancel"
@@ -45,7 +45,7 @@
 		<beginButton>
 			<Button
 				id="sapUiRtaRenameDialog_saveButton"
-				enabled="{= ${/validationError} === undefined }"
+				enabled="{/isSaveEnabled}"
 				type="Emphasized"
 				text="{i18n>RENAME_DIALOG_CONFIRM}"
 				press="onSave"

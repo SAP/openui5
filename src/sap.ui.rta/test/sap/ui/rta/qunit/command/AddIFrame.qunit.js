@@ -14,13 +14,32 @@ sap.ui.define([
 		url: "https://www.sap.com",
 		width: "myFancyWidth",
 		height: "myFancyHeight",
-		title: "Potato",
 		advancedSettings: {
 			additionalSandboxParameters: []
 		}
 	};
 
 	basicCommandTest({
+		moduleName: "When a title is provided",
+		commandName: "addIFrame",
+		designtimeActionStructure: "addIFrame"
+	}, {
+		...mProperties,
+		title: "Test IFrame",
+		changeType: "addIFrame"
+	}, {
+		changeType: "addIFrame",
+		content: { ...mProperties },
+		texts: {
+			title: {
+				value: "Test IFrame",
+				type: "XTIT"
+			}
+		}
+	});
+
+	basicCommandTest({
+		moduleName: "When no title is provided",
 		commandName: "addIFrame",
 		designtimeActionStructure: "addIFrame"
 	}, {
@@ -28,7 +47,8 @@ sap.ui.define([
 		changeType: "addIFrame"
 	}, {
 		changeType: "addIFrame",
-		content: { ...mProperties }
+		content: { ...mProperties },
+		texts: {}
 	});
 
 	QUnit.done(function() {

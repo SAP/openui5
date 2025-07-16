@@ -45,7 +45,7 @@ sap.ui.define([
 				value: bAsContainer
 			},
 			title: {
-				value: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_DEFAULT_VALUE_TEXT"),
+				value: bAsContainer ? _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_CONTAINER_TITLE_DEFAULT_VALUE_TEXT") : null,
 				valueState: ValueState.None,
 				id: "sapUiRtaAddIFrameDialog_ContainerTitle_TitleInput"
 			},
