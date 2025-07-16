@@ -33389,6 +33389,8 @@ sap.ui.define([
 	// * Delete Beta again. See that Alpha becomes a leaf.
 	// JIRA: CPOUI5ODATAV4-2224
 	// JIRA: CPOUI5ODATAV4-2345
+	//
+	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
 [false, true].forEach(function (bExpanded) {
 	const sState = bExpanded ? "expanded" : "collapsed";
 	QUnit.test(`Recursive Hierarchy: delete single ${sState} child`, async function (assert) {
@@ -33400,7 +33402,8 @@ sap.ui.define([
 		parameters : {
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
-			}
+			},
+			$count : true
 		}}">
 	<Text id="expanded" text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
@@ -33439,7 +33442,8 @@ sap.ui.define([
 		//   1 Beta (deleted while Gamma is loaded)
 		//     2 Gamma (allows expanding Beta)
 		// 3 Delta (only helps with the eventing)
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+		this.expectRequest("EMPLOYEES/$count", 4)
+			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
 				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
 				+ ",Levels=1)"
 				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
@@ -33461,6 +33465,12 @@ sap.ui.define([
 
 		await this.createView(assert, sView, oModel);
 
+		oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oListBinding.getCount(), 4);
+
 		this.expectRequest("EMPLOYEES"
 				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
 				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
@@ -33474,8 +33484,6 @@ sap.ui.define([
 			})
 			.expectChange("expanded", [true,, false])
 			.expectChange("name", [, "Beta", "Delta"]);
-
-		oTable = this.oView.byId("table");
 
 		await Promise.all([
 			oTable.getItems()[0].getBindingContext().expand(),
@@ -33517,7 +33525,8 @@ sap.ui.define([
 		}
 
 		this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('1')");
-		this.expectRequest("DELETE EMPLOYEES('1')", createErrorInsideBatch())
+		this.expectRequest("#4 DELETE EMPLOYEES('1')", createErrorInsideBatch())
+			.expectRequest("#4 EMPLOYEES/$count") // no response required
 			.expectMessages([{
 				code : "CODE",
 				message : "Request intentionally failed",
@@ -33533,11 +33542,15 @@ sap.ui.define([
 		]);
 
 		expectTable("after failed delete", bExpanded);
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oListBinding.getCount(), undefined); // TODO: revert to old value
 
 		if (bExpanded) {
 			this.expectChange("expanded", [, false]); // Beta is collapsed before being deleted
 		}
-		this.expectRequest("DELETE EMPLOYEES('1')")
+		this.expectRequest("#5 DELETE EMPLOYEES('1')")
+			.expectRequest("#5 EMPLOYEES/$count",
+				42) // dummy to show #getCount takes its value from here
 			.expectChange("expanded", [undefined]) // Alpha is now a leaf
 			.expectChange("name", [, "Delta"]);
 
@@ -33552,13 +33565,17 @@ sap.ui.define([
 		], [
 			[undefined, 1, "0", "", "Alpha"], // now a leaf
 			[false, 1, "3", "", "Delta"]
-		], 2);
+		]);
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oListBinding.getCount(), 42);
 	});
 });
 
 	//*********************************************************************************************
 	// Scenario: Delete multiple nodes in a recursive hierarchy
 	// JIRA: CPOUI5ODATAV4-2302
+	//
+	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
 	QUnit.test("Recursive Hierarchy: delete multiple nodes", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -33566,7 +33583,8 @@ sap.ui.define([
 		parameters : {
 			$$aggregation : {
 				hierarchyQualifier : 'OrgChart'
-			}
+			},
+			$count : true
 		}}">
 	<Text text="{= %{@$ui5.node.isExpanded} }"/>
 	<Text text="{= %{@$ui5.node.level} }"/>
@@ -33579,7 +33597,8 @@ sap.ui.define([
 		//   1 Beta (deleted)
 		//   2 Gamma (deleted)
 		//   3 Delta
-		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+		this.expectRequest("EMPLOYEES/$count", 4)
+			.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
 				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
 				+ ",Levels=1)"
 				+ "&$select=DrillState,ID,MANAGER_ID,Name&$count=true&$skip=0&$top=100", {
@@ -33593,6 +33612,12 @@ sap.ui.define([
 			});
 
 		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		const oListBinding = oTable.getBinding("items");
+
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oListBinding.getCount(), 4);
 
 		this.expectRequest("EMPLOYEES"
 				+ "?$apply=descendants($root/EMPLOYEES,OrgChart,ID,filter(ID eq '0'),1)"
@@ -33616,8 +33641,6 @@ sap.ui.define([
 				}]
 			});
 
-		const oTable = this.oView.byId("table");
-
 		await Promise.all([
 			oTable.getItems()[0].getBindingContext().expand(),
 			this.waitForChanges(assert, "expand Alpha")
@@ -33635,8 +33658,11 @@ sap.ui.define([
 			[undefined, 2, "3", "0", "Delta"]
 		]);
 
-		this.expectRequest("DELETE EMPLOYEES('1')")
-			.expectRequest("DELETE EMPLOYEES('2')");
+		this.expectRequest("#3 DELETE EMPLOYEES('1')")
+			.expectRequest("#3 DELETE EMPLOYEES('2')")
+			.expectRequest("#3 EMPLOYEES/$count", 2)
+			// TODO: second $count request in same $batch not needed
+			.expectRequest("#3 EMPLOYEES/$count", 2);
 
 		await Promise.all([
 			// code under test
@@ -33652,6 +33678,8 @@ sap.ui.define([
 			[true, 1, "0", "", "Alpha"],
 			[undefined, 2, "3", "0", "Delta"]
 		]);
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oListBinding.getCount(), 2);
 	});
 
 	//*********************************************************************************************
@@ -39317,6 +39345,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2454
 	//
 	// Siblings of out-of-place nodes (JIRA: CPOUI5ODATAV4-2652)
+	//
+	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
 	QUnit.test("Recursive Hierarchy: out of place", async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
@@ -39796,13 +39826,20 @@ sap.ui.define([
 				[undefined, 1, "4", "Delta*"]
 			]);
 
-		this.expectRequest("DELETE Artists(ArtistID='11',IsActiveEntity=false)");
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oBinding.getCount(), 10);
+
+		this.expectRequest("DELETE Artists(ArtistID='11',IsActiveEntity=false)")
+			.expectRequest(sCountUrl, 42); // dummy to show #getCount takes its value from here
 
 		await Promise.all([
 			// code under test
 			oNew1.delete(),
 			this.waitForChanges(assert, "(5) delete New1")
 		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oBinding.getCount(), 42);
 
 		// After deleting New1 & side-effects refresh
 		// Server:                          UI:
@@ -40007,6 +40044,9 @@ sap.ui.define([
 			oBinding.getHeaderContext().requestSideEffects([""]),
 			this.waitForChanges(assert, "(6) side-effects refresh")
 		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-3049)
+		assert.strictEqual(oBinding.getCount(), 9);
 
 		this.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
@@ -40227,6 +40267,7 @@ sap.ui.define([
 		]);
 
 		this.expectRequest("DELETE Artists(ArtistID='1',IsActiveEntity=false)")
+			.expectRequest(sCountUrl, 5)
 			.expectRequest(baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
