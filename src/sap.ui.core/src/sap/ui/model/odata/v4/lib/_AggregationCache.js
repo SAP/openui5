@@ -609,16 +609,25 @@ sap.ui.define([
 
 	/**
 	 * Creates a new <code>this.oCountPromise</code> (suitable for a recursive hierarchy), which has
-	 * to be resolved by a following {@link #readCount} call.
+	 * to be resolved by a following {@link #readCount} call. If the old count promise is still
+	 * pending, no new promise is created in order to avoid duplicate $count requests.
 	 *
 	 * @private
 	 */
 	_AggregationCache.prototype.createCountPromise = function () {
+		const oOldCountPromise = this.oCountPromise;
+		if (oOldCountPromise?.isPending()) {
+			return;
+		}
+
 		let fnResolve;
 		this.oCountPromise = new SyncPromise(function (resolve) {
 			fnResolve = resolve;
 		});
 		this.oCountPromise.$resolve = fnResolve;
+		this.oCountPromise.$restore = () => {
+			fnResolve(oOldCountPromise);
+		};
 	};
 
 	/**
@@ -1922,7 +1931,11 @@ sap.ui.define([
 				+ this.oRequestor.buildQueryString(/*sMetaPath*/null, mQueryOptions);
 
 			return this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
-				.then(fnResolve); // Note: $count is already of type number here
+				.then(fnResolve) // Note: $count is already of type number here
+				.catch((oError) => {
+					this.oCountPromise.$restore();
+					throw oError;
+				});
 		}
 	};
 

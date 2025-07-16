@@ -33391,6 +33391,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2345
 	//
 	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
+	// If a $batch with DELETE fails, the count is unchanged (JIRA: CPOUI5ODATAV4-3066)
+	// Wait for pending count promise with requestProperty("$count") (JIRA: CPOUI5ODATAV4-3067)
 [false, true].forEach(function (bExpanded) {
 	const sState = bExpanded ? "expanded" : "collapsed";
 	QUnit.test(`Recursive Hierarchy: delete single ${sState} child`, async function (assert) {
@@ -33524,6 +33526,8 @@ sap.ui.define([
 			expectTable("after collapse", false);
 		}
 
+		const oHeaderContext = oListBinding.getHeaderContext();
+
 		this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('1')");
 		this.expectRequest("#4 DELETE EMPLOYEES('1')", createErrorInsideBatch())
 			.expectRequest("#4 EMPLOYEES/$count") // no response required
@@ -33537,13 +33541,17 @@ sap.ui.define([
 
 		await Promise.all([
 			// code under test
-			oBeta.delete().then(mustFail(assert), function (_oError) {}),
+			oBeta.delete().then(mustFail(assert), function () {}),
+			// code under test (JIRA: CPOUI5ODATAV4-3067)
+			oHeaderContext.requestProperty("$count").then(function (iResult) {
+				assert.strictEqual(iResult, 4);
+			}),
 			this.waitForChanges(assert, "failing to delete Beta")
 		]);
 
 		expectTable("after failed delete", bExpanded);
-		// code under test (JIRA: CPOUI5ODATAV4-3049)
-		assert.strictEqual(oListBinding.getCount(), undefined); // TODO: revert to old value
+		// code under test (JIRA: CPOUI5ODATAV4-3066)
+		assert.strictEqual(oListBinding.getCount(), 4);
 
 		if (bExpanded) {
 			this.expectChange("expanded", [, false]); // Beta is collapsed before being deleted
@@ -33556,6 +33564,10 @@ sap.ui.define([
 
 		await Promise.all([
 			oBeta.delete(), // code under test
+			// code under test (JIRA: CPOUI5ODATAV4-3067)
+			oHeaderContext.requestProperty("$count").then(function (iResult) {
+				assert.strictEqual(iResult, 42);
+			}),
 			this.waitForChanges(assert, "delete Beta")
 		]);
 
@@ -33576,6 +33588,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2302
 	//
 	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
+	// If a $batch with multiple DELETE fails, the count is unchanged (JIRA: CPOUI5ODATAV4-3066)
+	// Only one $count request for multiple deletes in one $batch (JIRA: CPOUI5ODATAV4-3065)
 	QUnit.test("Recursive Hierarchy: delete multiple nodes", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -33657,17 +33671,39 @@ sap.ui.define([
 			[undefined, 2, "2", "0", "Gamma"],
 			[undefined, 2, "3", "0", "Delta"]
 		]);
+		const [, oBeta, oGamma] = oListBinding.getAllCurrentContexts();
 
-		this.expectRequest("#3 DELETE EMPLOYEES('1')")
-			.expectRequest("#3 DELETE EMPLOYEES('2')")
-			.expectRequest("#3 EMPLOYEES/$count", 2)
-			// TODO: second $count request in same $batch not needed
-			.expectRequest("#3 EMPLOYEES/$count", 2);
+		this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('1')");
+		this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('2')");
+		this.expectRequest("#3 DELETE EMPLOYEES('1')", createErrorInsideBatch())
+			.expectRequest("#3 DELETE EMPLOYEES('2')") // no response required
+			.expectRequest("#3 EMPLOYEES/$count") // no response required
+			.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+
+		await Promise.all([
+			// code under test (JIRA: CPOUI5ODATAV4-3066)
+			oBeta.delete().then(mustFail(assert), function () {}),
+			oGamma.delete().then(mustFail(assert), function () {}),
+			this.waitForChanges(assert, "failed to delete Beta and Gamma")
+		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-3066)
+		assert.strictEqual(oListBinding.getCount(), 4);
+
+		this.expectRequest("#4 DELETE EMPLOYEES('1')")
+			.expectRequest("#4 DELETE EMPLOYEES('2')")
+			.expectRequest("#4 EMPLOYEES/$count", 2);
 
 		await Promise.all([
 			// code under test
-			oTable.getItems()[1].getBindingContext().delete(),
-			oTable.getItems()[2].getBindingContext().delete(),
+			oBeta.delete(),
+			oGamma.delete(),
 			this.waitForChanges(assert, "delete Beta and Gamma")
 		]);
 
