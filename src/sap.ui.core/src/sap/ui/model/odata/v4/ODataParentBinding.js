@@ -1095,7 +1095,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataParentBinding.prototype.getGeneration = function () {
-		return this.bRelative && this.oContext.getGeneration && this.oContext.getGeneration() || 0;
+		return this.bRelative && this.oContext?.getGeneration?.() || 0;
 	};
 
 	/**
