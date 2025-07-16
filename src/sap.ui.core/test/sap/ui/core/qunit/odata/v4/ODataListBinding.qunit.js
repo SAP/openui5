@@ -423,11 +423,17 @@ sap.ui.define([
 	QUnit.test("setAggregation: pending changes", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES");
 
+		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(oBinding).expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", "~oAggregation~").returns(false);
+		this.mock(oBinding).expects("hasFilterNone").withExactArgs().returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getKeepAlivePredicates").never();
+		this.mock(oBinding).expects("applyParameters").never();
 
 		assert.throws(function () {
 			// code under test
-			oBinding.setAggregation({});
+			oBinding.setAggregation("~oAggregation~");
 		}, new Error("Cannot set $$aggregation due to pending changes"));
 	});
 
@@ -436,24 +442,33 @@ sap.ui.define([
 		const oBinding = this.bindList("/EMPLOYEES", undefined, undefined, Filter.NONE,
 			{$$operationMode : OperationMode.Server});
 
+		this.mock(oBinding).expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", "~oAggregation~").returns(false);
+		this.mock(oBinding).expects("hasFilterNone").withExactArgs().returns(true);
+		this.mock(oBinding).expects("hasPendingChanges").never();
+		this.mock(oBinding).expects("getKeepAlivePredicates").never();
+		this.mock(oBinding).expects("applyParameters").never();
+
 		assert.throws(function () {
 			// code under test
-			oBinding.setAggregation({});
+			oBinding.setAggregation("~oAggregation~");
 		}, new Error("Cannot combine Filter.NONE with $$aggregation"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setAggregation: unchanged aggregation (undefined -> undefined)", function () {
+	QUnit.test("setAggregation: unchanged aggregation", function () {
 		const oBinding = this.bindList("/EMPLOYEES");
 
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(oBinding).expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", "~oAggregation~").returns(true);
 		this.mock(oBinding).expects("hasFilterNone").never();
 		this.mock(oBinding).expects("hasPendingChanges").never();
 		this.mock(oBinding).expects("getKeepAlivePredicates").never();
 		this.mock(oBinding).expects("applyParameters").never();
 
 		// code under test
-		oBinding.setAggregation();
+		oBinding.setAggregation("~oAggregation~");
 	});
 
 	//*********************************************************************************************
@@ -495,6 +510,8 @@ sap.ui.define([
 			mExpectedNewParameters.$$aggregation = "~oNewAggregation~cloned~";
 		}
 		this.mock(oBinding).expects("checkTransient").withExactArgs();
+		this.mock(oBinding).expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", sinon.match.same(oNewAggregation)).returns(false);
 		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getKeepAlivePredicates").exactly(i === j ? 0 : 1)
 			.withExactArgs().returns(["('0')"]);
@@ -524,6 +541,8 @@ sap.ui.define([
 	QUnit.test("setAggregation: null", function () {
 		var oBinding = this.bindList("/EMPLOYEES");
 
+		this.mock(oBinding).expects("isUnchangedParameter").withExactArgs("$$aggregation", null)
+			.returns(false);
 		// Note: this is an artefact due to undefined !== null
 		this.mock(oBinding).expects("getKeepAlivePredicates").withExactArgs().returns([]);
 		this.mock(oBinding).expects("resetKeepAlive").never();
@@ -557,6 +576,8 @@ sap.ui.define([
 		if (oAggregation) {
 			mExpectedParameters.$$aggregation = "~oAggregation~cloned~";
 		}
+		this.mock(oBinding).expects("isUnchangedParameter")
+			.withExactArgs("$$aggregation", sinon.match.same(oAggregation)).returns(false);
 		this.mock(oBinding).expects("getKeepAlivePredicates").exactly(oAggregation ? 0 : 1)
 			.withExactArgs().returns([]);
 		this.mock(oBinding).expects("resetKeepAlive").never();
@@ -10633,6 +10654,26 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oBinding.isUnchangedParameter("$$aggregation", "~vOtherValue~"),
 			"~result3~");
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("$$aggregation", undefined), false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("isUnchangedParameter: $$aggregation === undefined", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		this.mock(_Helper).expects("clone").never();
+		this.mock(_AggregationHelper).expects("buildApply").never();
+		this.mock(_Helper).expects("cloneNo$").never();
+		this.mock(_Helper).expects("deepEqual").never();
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("$$aggregation", undefined), true);
+
+		// code under test
+		assert.strictEqual(oBinding.isUnchangedParameter("$$aggregation", null), false,
+			"let's be strict here, although '<code>null</code> is not supported.'");
 	});
 
 	//*********************************************************************************************

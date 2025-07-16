@@ -3630,6 +3630,10 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.isUnchangedParameter = function (sName, vOtherValue) {
 		if (sName === "$$aggregation") {
+			if (!vOtherValue) {
+				return this.mParameters.$$aggregation === vOtherValue;
+			}
+
 			// Note: $fetchMetadata is lost here, but never mind - $apply does not matter, only
 			// normalization is needed
 			vOtherValue = _Helper.clone(vOtherValue); // avoid modification due to normalization
@@ -4931,7 +4935,7 @@ sap.ui.define([
 		}
 
 		this.checkTransient();
-		if (oAggregation === undefined && this.mParameters.$$aggregation === undefined) {
+		if (this.isUnchangedParameter("$$aggregation", oAggregation)) {
 			return;
 		}
 		if (this.hasFilterNone()) {

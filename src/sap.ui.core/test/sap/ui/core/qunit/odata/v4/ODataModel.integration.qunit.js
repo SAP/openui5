@@ -30110,6 +30110,10 @@ sap.ui.define([
 	// Ensure that a Return Value Context is created and the structure of the path is same like the
 	// binding parameter
 	// JIRA: CPOUI5ODATAV4-2096
+	//
+	// Check that #setAggregation with an unchanged $$aggregation parameter does not throw due to
+	// pending changes of a kept-alive context.
+	// JIRA: CPOUI5ODATAV4-3054
 	QUnit.test("Recursive Hierarchy: edit w/ currency", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oChild,
@@ -30118,18 +30122,19 @@ sap.ui.define([
 			oRoot,
 			oRootAmountBinding,
 			oTable,
-			sView = '\
-<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\', suspended : true}" />\
-<t:Table id="table" rows="{TEAM_2_EMPLOYEES}" threshold="0" visibleRowCount="2">\
-	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
-	<Text text="{= %{@$ui5.node.level} }"/>\
-	<Text text="{ID}"/>\
-	<Text text="{MANAGER_ID}"/>\
-	<Input value="{SALARY/YEARLY_BONUS_AMOUNT}"/>\
-	<Text text="{SALARY/BONUS_CURR}"/>\
-	<Text text="{TEAM_ID}"/>\
-	<Text text="{EMPLOYEE_2_TEAM/MEMBER_COUNT}"/>\
-</t:Table>',
+			sView = `
+<FlexBox id="form" binding="{path : '/TEAMS(\\\'42\\\')', suspended : true}" />
+<t:Table id="table" rows="{parameters : {$$ownRequest : true}, path : 'TEAM_2_EMPLOYEES'}"
+		threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Input value="{SALARY/YEARLY_BONUS_AMOUNT}"/>
+	<Text text="{SALARY/BONUS_CURR}"/>
+	<Text text="{TEAM_ID}"/>
+	<Text text="{EMPLOYEE_2_TEAM/MEMBER_COUNT}"/>
+</t:Table>`,
 			that = this;
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -30334,6 +30339,13 @@ sap.ui.define([
 				[true, 1, "0", "", "23.23", "GBP", "23", "10"],
 				[undefined, 2, "1", "0", "42.42", "USD", "42", "10"]
 			]);
+
+			oRoot.setKeepAlive(true);
+			oRoot.setProperty("SALARY/YEARLY_BONUS_AMOUNT", "4567", "doNotSubmit");
+			// code under test
+			oRoot.getBinding().setAggregation({hierarchyQualifier : "OrgChart"});
+
+			return that.waitForChanges(assert, "no changes expected!");
 		});
 	});
 
