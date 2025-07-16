@@ -109,15 +109,13 @@ sap.ui.define([
 		},
 		/**
 		 * Assertion that checks for the existence of an overflow popover.
+		 * @param {string} sChartId The ID of the <code>sap.ui.mdc.Chart</code>
 		 * @returns {Promise} OPA waitFor
 		 */
-		iShouldSeeAnOverflowPopover: function() {
+		iShouldSeeAnOverflowPopover: function(sChartId) {
 			return this.waitFor({
-				controlType: "sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover",
-				success: function(aPopovers) {
-					Opa5.assert.ok(aPopovers.length, "Overflow popovers were found");
-
-					const oPopover = aPopovers.find((o) => o.getId().includes("toolbar-popover"));
+				id: sChartId + "--toolbar-popover",
+				success: function(oPopover) {
 					Opa5.assert.ok(oPopover, "Overflow popover is opened");
 				},
 				errorMessage: "No overflow popovers found"
