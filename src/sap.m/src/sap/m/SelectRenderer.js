@@ -142,8 +142,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.attr("tabindex", "0");
 			}
 
-			this.renderTooltip(oRm, oSelect);
-
 			oRm.openEnd();
 
 			if (oSelectedItem && !bIconOnly) {
@@ -153,37 +151,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			}
 
 			oRm.close('div');
-		};
-
-		/**
-		 * Generates and renders the tooltip text. Icon only aware.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.m.Select} oSelect An object representation of the Select control.
-		 * @private
-		 */
-		SelectRenderer.renderTooltip = function (oRm, oSelect) {
-			var oIconInfo,
-				sTooltip = oSelect.getTooltip_AsString(),
-				bIconOnly = oSelect.getType() === SelectType.IconOnly;
-
-			if (!sTooltip && bIconOnly) {
-				oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
-				if (oIconInfo) {
-					sTooltip = oIconInfo.text;
-				}
-			}
-
-			if (!sTooltip) {
-				return;
-			}
-
-			oRm.attr("title", sTooltip);
-
-			if (bIconOnly) {
-				// if in IconOnly mode, similarly to sap.m.Button the tooltip should also be part of the accessibleName
-				oRm.attr("aria-label", sTooltip);
-			}
 		};
 
 		/**
@@ -224,22 +191,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		SelectRenderer.renderLabel = function(oRm, oSelect) {
-			var oSelectedItem = oSelect.getSelectedItem(),
-				sTextDir = oSelect.getTextDirection(),
+			var sTextDir = oSelect.getTextDirection(),
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
 				CSS_CLASS = SelectRenderer.CSS_CLASS,
-				bEditabledAndEnabled = oSelect.getEnabled() && oSelect.getEditable(),
-				sTooltip = oSelect.getTooltip_AsString();
+				bEditabledAndEnabled = oSelect.getEnabled() && oSelect.getEditable();
 
 			oRm.openStart("span", oSelect.getId() + "-label");
 			oRm.attr("aria-hidden", true);
 			oRm.class(CSS_CLASS + "Label");
-
-			// since focusable element has sapUiPseudoInvisibleText class
-			// the tooltip is also set to the label element to be visually displayed
-			if (sTooltip) {
-				oRm.attr("title", sTooltip);
-			}
 
 			if (oSelect.getValueState() !== ValueState.None && bEditabledAndEnabled) {
 				oRm.class(CSS_CLASS + "LabelState");
@@ -266,9 +225,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.openStart("span", oSelect.getId() + "-labelText");
 				oRm.class("sapMSelectListItemText");
 				oRm.openEnd();
-
-				oRm.text(oSelectedItem && oSelectedItem.getParent() ? oSelectedItem.getText() : null);
-
+				oRm.text(oSelect._getSelectedItemText());
 				oRm.close("span");
 			}
 			oRm.close("span");
@@ -282,8 +239,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @private
 		 */
 		SelectRenderer.renderArrow = function(oRm, oSelect) {
-			var CSS_CLASS = SelectRenderer.CSS_CLASS,
-				sTooltip = oSelect.getTooltip_AsString();
+			var CSS_CLASS = SelectRenderer.CSS_CLASS;
 
 			oRm.openStart("span", oSelect.getId() + "-arrow");
 			oRm.attr("aria-hidden", true);
@@ -291,10 +247,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 
 			if (oSelect.getValueState() !== ValueState.None) {
 				oRm.class(CSS_CLASS + "ArrowState");
-			}
-
-			if (sTooltip) {
-				oRm.attr("title", sTooltip);
 			}
 
 			oRm.openEnd().close("span");
