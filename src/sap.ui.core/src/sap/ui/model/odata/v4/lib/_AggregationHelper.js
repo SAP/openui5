@@ -432,7 +432,7 @@ sap.ui.define([
 		 * DistanceFromRoot, DrillState, LimitedDescendantCount, LimitedRank, NodeProperty, and
 		 * ParentNavigationProperty are stored at <code>oAggregation</code> using a "$" prefix (if
 		 * not already stored). The "com.sap.vocabularies.Hierarchy.v1.RecursiveHierarchyActions"
-		 * annotation is stored as "$Actions".
+		 * annotation is stored as "$Actions". "expandTo" is normalized.
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
@@ -556,6 +556,9 @@ sap.ui.define([
 					delete mQueryOptions.$orderby;
 				}
 				oAggregation.expandTo ??= 1;
+				if (oAggregation.expandTo > Number.MAX_SAFE_INTEGER) { // normalization
+					oAggregation.expandTo = Number.MAX_SAFE_INTEGER;
+				}
 				const sExpandLevels = !bAllLevels && oAggregation.$ExpandLevels;
 				sApply += sSapHierarchy + "TopLevels(HierarchyNodes=$root"
 					+ (oAggregation.$path || "")

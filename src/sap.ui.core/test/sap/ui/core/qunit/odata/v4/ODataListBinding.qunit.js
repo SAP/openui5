@@ -10677,6 +10677,51 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("isUnchangedParameter: buildApply normalizes expandTo", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters = {
+			$$aggregation : {
+				expandTo : Number.MAX_SAFE_INTEGER,
+				hierarchyQualifier : "X"
+			}
+		};
+
+		assert.strictEqual(
+			// code under test
+			oBinding.isUnchangedParameter("$$aggregation",
+				{expandTo : Number.MAX_SAFE_INTEGER - 1, hierarchyQualifier : "X"}),
+			false);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.isUnchangedParameter("$$aggregation",
+				{expandTo : Number.MAX_SAFE_INTEGER, hierarchyQualifier : "X"}),
+			true);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.isUnchangedParameter("$$aggregation",
+				{expandTo : Number.MAX_SAFE_INTEGER + 1, hierarchyQualifier : "X"}),
+			true);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.isUnchangedParameter("$$aggregation",
+				{expandTo : 1E16, hierarchyQualifier : "X"}),
+			true);
+
+		oBinding.mParameters.$$aggregation.expandTo = 1;
+
+		assert.strictEqual(
+			// code under test
+			oBinding.isUnchangedParameter("$$aggregation", {hierarchyQualifier : "X"}),
+			true,
+			"1 is the default");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getCount", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding);

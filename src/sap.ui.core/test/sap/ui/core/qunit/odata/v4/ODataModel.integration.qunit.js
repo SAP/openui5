@@ -29590,9 +29590,13 @@ sap.ui.define([
 			// code under test (BCP: 2370045709)
 			oListBinding.changeParameters({
 				$$aggregation : {
-					expandTo : Number.MAX_SAFE_INTEGER,
+					expandTo : 1E16, // synonym for Number.MAX_SAFE_INTEGER
 					hierarchyQualifier : sHierarchyQualifier
 				}
+			});
+			assert.deepEqual(oListBinding.getAggregation(), {
+				expandTo : Number.MAX_SAFE_INTEGER, // #changeParameters has been ignored
+				hierarchyQualifier : sHierarchyQualifier
 			});
 			assert.strictEqual(oListBinding.getAggregation().expandTo, Number.MAX_SAFE_INTEGER);
 			// code under test
@@ -34563,6 +34567,10 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oRoot = oTable.getRows()[0].getBindingContext();
 			oListBinding = oRoot.getBinding();
+			assert.deepEqual(oListBinding.getAggregation(), {
+				expandTo : Number.MAX_SAFE_INTEGER, // normalized
+				hierarchyQualifier : "OrgChart"
+			});
 			assert.throws(function () {
 				// code under test
 				oListBinding.getHeaderContext().move({parent : null});
