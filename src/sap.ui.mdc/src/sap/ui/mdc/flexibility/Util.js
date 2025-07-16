@@ -141,6 +141,11 @@ sap.ui.define([
 					return fApply(oChange, oControl, mPropertyBag, Util.APPLY)
 						.then(() => {
 							fConfigModified(oControl, oChange);
+						})
+						.catch((oError) => {
+							SAPLog.error(`Error during mdc flex handling - change appliance: ${oError}`);
+							resumeInvalidation(oControl);
+							throw oError;
 						});
 				},
 				completeChangeContent: function(oChange, mChangeSpecificInfo, mPropertyBag) {
@@ -153,6 +158,11 @@ sap.ui.define([
 					return fRevert(oChange, oControl, mPropertyBag, Util.REVERT)
 						.then(() => {
 							fConfigModified(oControl, oChange);
+						})
+						.catch((oError) => {
+							SAPLog.error(`Error during mdc flex handling - change appliance: ${oError}`);
+							resumeInvalidation(oControl);
+							throw oError;
 						});
 				},
 				onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
