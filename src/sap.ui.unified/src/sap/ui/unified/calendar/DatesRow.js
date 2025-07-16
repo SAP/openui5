@@ -75,7 +75,15 @@ sap.ui.define([
 			 * Note: This property should not be used with <code>Month.prototype.firstDayOfWeek</code> property.
 			 * @since 1.110.0
 			 */
-			 calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null}
+			 calendarWeekNumbering : { type : "sap.base.i18n.date.CalendarWeekNumbering", group : "Appearance", defaultValue: null},
+
+			/**
+			 * If not set, the grid cells aren't announced as selectable.
+			 *
+			 * @private
+			 * @since 1.139.0
+			 */
+			selectableAccessibilitySemantics : {type : "boolean", group : "Behavior", defaultValue : true, visibility: "hidden"}
 
 		}
 	}, renderer: DatesRowRenderer});
@@ -413,6 +421,13 @@ sap.ui.define([
 	 */
 	DatesRow.prototype._getCachedWeekNumbers = function() {
 		return this._aWeekNumbers;
+	};
+
+	/**
+	 * @override
+	 */
+	DatesRow.prototype._getSelectableAccessibilitySemantics = function() {
+		return this.getProperty("selectableAccessibilitySemantics");
 	};
 
 	return DatesRow;

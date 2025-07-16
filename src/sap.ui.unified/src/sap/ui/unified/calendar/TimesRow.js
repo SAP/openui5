@@ -140,7 +140,15 @@ sap.ui.define([
 			 * @ui5-restricted sap.ui.unified.TimesRow
 			 * @since 1.109.0
 			 */
-			secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"}
+			secondaryCalendarType : {type : "sap.base.i18n.date.CalendarType", group : "Appearance"},
+
+			/**
+			 * If not set, the grid cells aren't announced as selectable.
+			 *
+			 * @private
+			 * @since 1.139.0
+			 */
+			selectableAccessibilitySemantics : {type : "boolean", group : "Behavior", defaultValue : true, visibility: "hidden"}
 		},
 		aggregations : {
 
@@ -1010,18 +1018,6 @@ sap.ui.define([
 
 		return this._invisibleDayHint;
 	};
-
-	TimesRow.prototype._updateItemARIASelected = function($oDomRef, bSelect) {
-		var sRole = this._getAriaRole();
-
-		if (sRole === "gridcell") {
-			// aria-selected is valid only for role=gridcell and not for role=button
-			$oDomRef.attr("aria-selected", bSelect);
-		}
-
-		return this;
-	};
-
 
 	function _initItemNavigation(){
 
