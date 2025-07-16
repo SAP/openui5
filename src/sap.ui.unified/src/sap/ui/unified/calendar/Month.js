@@ -2011,10 +2011,14 @@ sap.ui.define([
 					if ($DomRef.attr("data-sap-day") === sYyyymmdd) {
 						if (iSelected > 0) {
 							$DomRef.removeClass("sapUiCalItemSel");
-							$DomRef.attr("aria-selected", "false");
+							if (this._getSelectableAccessibilitySemantics()) {
+								$DomRef.attr("aria-selected", "false");
+							}
 						} else {
 							$DomRef.addClass("sapUiCalItemSel");
-							$DomRef.attr("aria-selected", "true");
+							if (this._getSelectableAccessibilitySemantics()) {
+								$DomRef.attr("aria-selected", "true");
+							}
 						}
 					}
 				}
@@ -2023,6 +2027,14 @@ sap.ui.define([
 
 		return true;
 
+	};
+
+	/**
+	 * @private
+	 * @returns {boolean} true if selectable accessibility semantics should be applied
+	 */
+	Month.prototype._getSelectableAccessibilitySemantics = function() {
+		return true;
 	};
 
 	Month.prototype._getSpecialDates = function() {

@@ -38,7 +38,7 @@ ObjectStatusRenderer.render = function(oRm, oObjStatus){
 	oRm.openStart("div", oObjStatus);
 
 	if (oObjStatus._isEmpty() && oObjStatus.getEmptyIndicatorMode() === EmptyIndicatorMode.Off) {
-		oRm.style("display", "none");
+		oRm.class("sapMObjStatus");
 		oRm.openEnd();
 	} else {
 

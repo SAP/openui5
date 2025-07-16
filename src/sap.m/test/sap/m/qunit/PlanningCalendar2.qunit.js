@@ -1802,6 +1802,45 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("Header interval accessibility", function(assert) {
+		// Prepare
+		var oPC = new PlanningCalendar();
+		oPC.placeAt("qunit-fixture");
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		var oTimesRow = oPC._oTimesRow.getDomRef(),
+			oTimesRowItem = oTimesRow.querySelector("[role='gridcell']");
+
+		// Assert
+		assert.notOk(oTimesRowItem.getAttribute("aria-describedby"), "TimesRow has no activation hint");
+		assert.notOk(oTimesRowItem.getAttribute("aria-selected"), "TimesRow has no aria-selected attribute");
+
+		// Act
+		oPC.setViewKey(CalendarIntervalType.Day);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		var oDatesRow = oPC._oDatesRow.getDomRef(),
+			oDatesRowItem = oDatesRow.querySelector("[role='gridcell']");
+
+		// Assert
+		assert.notOk(oDatesRowItem.getAttribute("aria-describedby"), "DatesRow has no activation hint");
+		assert.notOk(oDatesRowItem.getAttribute("aria-selected"), "DatesRow has no aria-selected attribute");
+
+		// Act
+		oPC.setViewKey(CalendarIntervalType.Month);
+		nextUIUpdate.runSync()/*fake timer is used in module*/;
+
+		var oMonthsRow = oPC._oMonthsRow.getDomRef(),
+			oMonthsRowItem = oMonthsRow.querySelector("[role='gridcell']");
+
+		// Assert
+		assert.notOk(oMonthsRowItem.getAttribute("aria-describedby"), "MonthsRow has no activation hint");
+		assert.notOk(oMonthsRowItem.getAttribute("aria-selected"), "MonthsRow has no aria-selected attribute");
+
+		// Clean
+		oPC.destroy();
+	});
+
 	QUnit.module("views", {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar();

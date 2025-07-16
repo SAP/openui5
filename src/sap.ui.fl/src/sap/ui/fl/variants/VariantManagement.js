@@ -876,8 +876,6 @@ sap.ui.define([
 
 					this._oVM.setModel(oModel, sModelName);
 
-					this._oVM.setSupportDefault(true);
-
 					this._createItemsModel(sModelName);
 
 					this._oVM.bindProperty("selectedKey", {

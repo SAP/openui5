@@ -1958,7 +1958,7 @@ function(
 
 			// update Accessibility text for suggestion
 			this._oInvisibleMessage?.announce(sAriaText, CoreLibrary.InvisibleMessageMode.Polite);
-		}.bind(this), 0);
+		}.bind(this), 100);
 	};
 
 	/**

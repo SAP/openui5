@@ -243,20 +243,20 @@ sap.ui.define([
 
 		// Change Chart type to stacked bar chart, which has zoom buttons enabled.
 		When.onTheMDCChart.iOpenTheOverflowPopover(sChartId);
-		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover(sChartId);
 		When.onTheMDCChart.iSelectAChartType(sChartId, "Stacked Bar Chart");
 		Then.onTheMDCChart.iShouldSeeTheChartWithChartType(sChartId, "stacked_bar");
 		// Selecting chart type closes overflow popover
 
 		// Click zoom in button and check that overflow popover stays open.
 		When.onTheMDCChart.iOpenTheOverflowPopover(sChartId);
-		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover(sChartId);
 		When.onTheMDCChart.iClickOnZoomIn(sChartId);
-		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover(sChartId);
 
 		// Click zoom out button and check that overflow popover stays open.
 		When.onTheMDCChart.iClickOnZoomOut(sChartId);
-		Then.onTheMDCChart.iShouldSeeAnOverflowPopover();
+		Then.onTheMDCChart.iShouldSeeAnOverflowPopover(sChartId);
 
 		Then.iTeardownMyAppFrame();
 	});
