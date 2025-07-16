@@ -1354,6 +1354,7 @@ sap.ui.define([
 		if (this.hasListeners("intervalSelect")) {
 			oInterval._setAriaRole("columnheader"); // set new aria role
 		} else {
+			oInterval.setProperty("selectableAccessibilitySemantics", false);
 			oInterval._setAriaRole("gridcell"); // set new aria role
 		}
 	};

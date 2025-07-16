@@ -206,12 +206,13 @@ TimesRowRenderer.getHelper = function(oTimesRow, oDate){
 
 TimesRowRenderer.renderTime = function(oRm, oTimesRow, oDate, oHelper, sWidth, sAmPm){
 	var sRole = oTimesRow._getAriaRole();
+	var bSelectable = (sRole === "gridcell") && oTimesRow.getProperty("selectableAccessibilitySemantics");
 	var mAccProps = {
 			role: sRole,
 			// aria-selected isn't valid for role="button"
-			selected: sRole !== "gridcell" ? null : false,
+			selected: bSelectable ? false : null,
 			label: "",
-			describedby: oTimesRow._getTimeDescription()
+			describedby: bSelectable ? oTimesRow._getTimeDescription() : null
 		};
 
 	var sYyyyMMddHHmm = oTimesRow._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);
@@ -236,7 +237,7 @@ TimesRowRenderer.renderTime = function(oRm, oTimesRow, oDate, oHelper, sWidth, s
 	if (iSelected > 0) {
 		oRm.class("sapUiCalItemSel"); // time selected
 
-		if (sRole === "gridcell") {
+		if (bSelectable) {
 			// aria-selected isn't valid for role="button"
 			mAccProps["selected"] = true;
 		}

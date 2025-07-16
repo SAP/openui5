@@ -834,11 +834,11 @@ sap.ui.define([
 					this.setAggregation("_select", new Select({items: [new Item({text: "Item 1"}), new Item({text: "Item 2"})]}));
 				},
 				_getToolbarInteractive: function() { return true; },
-				renderer: function (rm, ctrl) {
-					rm.write("<div");
-					rm.write(">");
-					rm.renderControl(ctrl.getAggregation("_select"));
-					rm.write("</div>");
+				renderer: function (oRm, oControl) {
+					oRm.openStart("div", oControl);
+					oRm.openEnd();
+					oRm.renderControl(oControl.getAggregation("_select"));
+					oRm.close("div");
 				}
 			}),
 			oSelectWrapper = new SelectWrapper(),

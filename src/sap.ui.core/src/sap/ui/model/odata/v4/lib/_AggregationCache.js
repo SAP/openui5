@@ -118,9 +118,14 @@ sap.ui.define([
 				_Helper.getPrivateAnnotation(oElement, "transientPredicate"));
 		}
 
-		return SyncPromise.resolve(
-			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement})
-		).then(() => {
+		if (this.oCountPromise) {
+			this.createCountPromise();
+		}
+
+		return SyncPromise.all([
+			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement}),
+			this.readCount(oGroupLock)
+		]).then(() => {
 			this.oTreeState.delete(oElement);
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
@@ -603,6 +608,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a new <code>this.oCountPromise</code> (suitable for a recursive hierarchy), which has
+	 * to be resolved by a following {@link #readCount} call.
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.createCountPromise = function () {
+		let fnResolve;
+		this.oCountPromise = new SyncPromise(function (resolve) {
+			fnResolve = resolve;
+		});
+		this.oCountPromise.$resolve = fnResolve;
+	};
+
+	/**
 	 * Creates a cache for the children (next group level or leaves) of the given group node.
 	 * Creates the first level cache if there is no group node.
 	 *
@@ -690,11 +709,7 @@ sap.ui.define([
 		this.oCountPromise = undefined;
 		if (this.mQueryOptions.$count) {
 			if (oAggregation.hierarchyQualifier) {
-				let fnResolve;
-				this.oCountPromise = new SyncPromise(function (resolve) {
-					fnResolve = resolve;
-				});
-				this.oCountPromise.$resolve = fnResolve;
+				this.createCountPromise();
 			} else if (oAggregation.groupLevels.length) {
 				this.setQueryOptions({...this.mQueryOptions, $$leaves : true});
 				this.oCountPromise = new SyncPromise(function (resolve) {

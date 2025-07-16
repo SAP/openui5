@@ -4603,7 +4603,7 @@ sap.ui.define([
 		// Act
 		oInput.onfocusin();
 		oInput._$input.trigger("focus").val("I").trigger("input");
-		this.clock.tick(400);
+		this.clock.tick(500);
 
 		//Assert
 		assert.ok(oAnnounceSpy.calledWith(oMessageBundle.getText("INPUT_SUGGESTIONS_MORE_HITS", [2])), "The description has correct text.");

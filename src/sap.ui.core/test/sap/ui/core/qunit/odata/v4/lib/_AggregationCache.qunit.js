@@ -713,6 +713,8 @@ sap.ui.define([
 				hierarchyQualifier : "n/a" // unrealistic for i !== 1, but never mind
 			});
 			this.mock(oCache).expects("getDownloadUrl").withExactArgs("").returns("~sDownloadUrl~");
+			this.mock(oCache).expects("createCountPromise").exactly(bCount && i === 1 ? 1 : 0)
+				.withExactArgs();
 			this.mock(oCache).expects("setQueryOptions").exactly(bCount && i > 1 ? 1 : 0)
 				.withExactArgs({$count : true, $$leaves : true});
 			this.mock(oCache).expects("createGroupLevelCache")
@@ -755,18 +757,14 @@ sap.ui.define([
 			assert.ok("oCountPromise" in oCache, "be nice to V8");
 			assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
 
-			if (bCount && i) {
+			if (bCount && i > 1) { // 0: no count needed, 1: recursive hierarchy uses createCountPromise
 				assert.ok(oCache.oCountPromise.isPending());
-				if (i === 1) { // recursive hierarchy
-					// code under test
-					oCache.oCountPromise.$resolve(42);
-				} else { // visual grouping (bCountLeaves)
-					// code under test
-					assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oCountPromise);
 
-					// code under test
-					fnLeaves({UI5__leaves : "42"});
-				}
+				// code under test
+				assert.strictEqual(oCache.fetchValue(null, "$count"), oCache.oCountPromise);
+
+				// code under test
+				fnLeaves({UI5__leaves : "42"});
 
 				assert.ok(oCache.oCountPromise.isFulfilled());
 				assert.strictEqual(oCache.oCountPromise.getResult(), 42);
@@ -6233,7 +6231,9 @@ sap.ui.define([
 		{firstLevel : false, parentLeaf : true}
 	].forEach(function (oFixture) {
 		[false, true].forEach((bCreated) => {
-			const sTitle = `_delete: ${JSON.stringify(oFixture)}, ${bCreated}`;
+			[false, true].forEach((bCount) => {
+				const sTitle = `_delete: ${JSON.stringify(oFixture)}, created=${bCreated}`
+					+ `, count=${bCount}`;
 
 		QUnit.test(sTitle, function (assert) {
 			var oCountExpectation, oRemoveExpectation;
@@ -6241,6 +6241,9 @@ sap.ui.define([
 			const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 				hierarchyQualifier : "X"
 			});
+			if (bCount) {
+				oCache.oCountPromise = "~oCountPromise~";
+			}
 			const fnCallback = sinon.spy();
 			const oParentCache = {
 				getValue : mustBeMocked,
@@ -6262,6 +6265,7 @@ sap.ui.define([
 			oHelperMock.expects("getPrivateAnnotation")
 				.withExactArgs(sinon.match.same(oElement), "predicate")
 				.returns("~predicate~");
+			this.mock(oCache).expects("createCountPromise").exactly(bCount ? 1 : 0).withExactArgs();
 			this.mock(this.oRequestor).expects("request")
 				.withExactArgs("DELETE", "~editUrl~", "~oGroupLock~", {
 					"If-Match" : sinon.match.same(oElement)
@@ -6297,6 +6301,7 @@ sap.ui.define([
 
 					return Promise.resolve();
 				});
+			this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~").resolves("n/a");
 
 			// code under test
 			const oDeletePromise = oCache._delete("~oGroupLock~", "~editUrl~", "2", "n/a", fnCallback);
@@ -6311,6 +6316,7 @@ sap.ui.define([
 				}
 			});
 		});
+			});
 		});
 	});
 
@@ -6327,6 +6333,7 @@ sap.ui.define([
 			.withExactArgs("DELETE", "~editUrl~", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oElement)})
 			.returns(Promise.reject("~error~"));
+		this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~");
 
 		// code under test
 		const oDeletePromise = oCache._delete("~oGroupLock~", "~editUrl~", "2", "n/a", fnCallback);
@@ -6366,6 +6373,7 @@ sap.ui.define([
 		this.mock(oParentCache).expects("_delete")
 			.withExactArgs("~oGroupLock~", "~editUrl~", "~transientPredicate~")
 			.returns("~promise~");
+		this.mock(oCache).expects("readCount").never();
 
 		assert.strictEqual(
 			// code under test
@@ -6389,6 +6397,7 @@ sap.ui.define([
 		this.mock(this.oRequestor).expects("request").never();
 		this.mock(oCache).expects("removeElement").never();
 		this.mock(_Helper).expects("updateAll").never();
+		this.mock(oCache).expects("readCount").never();
 
 		assert.throws(function () {
 			oCache._delete("~oGroupLock~", "edit/url", "2");
@@ -6402,6 +6411,7 @@ sap.ui.define([
 			});
 		this.mock(oCache).expects("removeElement").never();
 		this.mock(_Helper).expects("updateAll").never();
+		this.mock(oCache).expects("readCount").never();
 
 		assert.throws(function () {
 			oCache._delete("~oGroupLock~", "~sEditUrl~", "('1')");
@@ -7624,5 +7634,24 @@ sap.ui.define([
 				foo : "bar"
 			}, "unchanged");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+
+		assert.strictEqual(oCache.oCountPromise, undefined);
+
+		// code under test
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$resolve("foo");
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
 	});
 });
