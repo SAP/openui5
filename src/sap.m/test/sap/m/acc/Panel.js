@@ -24,13 +24,13 @@ sap.ui.define([
 		}),
 
 		panel1 = new Panel({
-			headerText : "This is an expandable Panel with landmark role region",
+			headerText : "This is an expandable Panel with landmark role complementary",
 			width: "auto",
 			expandable: true,
 			content : [
 				new MText({ text : "This is a sap.m.Text control inside a sap.m.Panel. Can be read with virtual cursor (INS+Z)." })
 			],
-			accessibleRole: PanelAccessibleRole.Region
+			accessibleRole: PanelAccessibleRole.Complementary
 		}).addStyleClass("sapUiResponsiveMargin"),
 
 		label2 = new Label({ text : "This is a non active infoToolbar" }),
