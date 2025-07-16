@@ -67,25 +67,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.table.extensions.KeyboardDelegate
 	 */
-	const KeyboardDelegate = BaseObject.extend("sap.ui.table.extensions.KeyboardDelegate", /* @lends sap.ui.table.extensions.KeyboardDelegate */ {
-		constructor: function(sType) {
-			BaseObject.call(this);
-		},
-
-		/*
-		 * @see sap.ui.base.Object#destroy
-		 */
-		destroy: function() {
-			BaseObject.prototype.destroy.apply(this, arguments);
-		},
-
-		/*
-		 * @see sap.ui.base.Object#getInterface
-		 */
-		getInterface: function() {
-			return this;
-		}
-	});
+	const KeyboardDelegate = BaseObject.extend("sap.ui.table.extensions.KeyboardDelegate");
 
 	/**
 	 * Moves the focus one row down, but stays in the same column. The focus is set to the cell, or the first interactive element inside that cell.

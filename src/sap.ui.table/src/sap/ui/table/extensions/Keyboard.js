@@ -275,11 +275,11 @@ sap.ui.define([
 		 * @inheritDoc
 		 * @returns {string} The name of this extension.
 		 */
-		_init: function(oTable, sTableType, mSettings) {
+		_init: function(oTable, mSettings) {
 			this._itemNavigation = null;
 			this._itemNavigationInvalidated = false; // determines whether item navigation should be reapplied from scratch
 			this._itemNavigationSuspended = false; // switch off event forwarding to item navigation
-			this._delegate = new KeyboardDelegate(sTableType);
+			this._delegate = new KeyboardDelegate();
 			this._actionMode = false;
 
 			// Register the delegates in correct order
