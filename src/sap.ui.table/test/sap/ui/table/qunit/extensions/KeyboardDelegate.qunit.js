@@ -5384,7 +5384,7 @@ sap.ui.define([
 		await oMenuOpen.promise;
 		assert.ok(true, "Space: #openBy was called on the header menu instance");
 
-		qutils.triggerKeyup(oColumnHeaderCell, Key.ENTER);
+		qutils.triggerKeydown(oColumnHeaderCell, Key.ENTER);
 		await oMenuOpen.promise;
 		assert.ok(true, "Enter: #openBy was called on the header menu instance");
 	});
