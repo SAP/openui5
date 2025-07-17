@@ -1027,17 +1027,20 @@ sap.ui.define([
 		});
 
 		// MDC Table: combination of remove and add
-		QUnit.test("remove / add columns", function(assert) {
-			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 4, 4, assert)
-			.then(revertAndApplyNew.bind(this))
-			.then(function() {
-				var oTable = Element.getElementById("view--mdcTable");
-				var aColumns = oTable.getColumns();
-				assert.strictEqual(aColumns.length, 3, `Expected number of MDC columns: ${3}`);
-				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column3", `${sValueMsg}column3`);
-				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", `${sValueMsg}column2`);
-				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column4", `${sValueMsg}column4`);
-			});
+		QUnit.test("remove / add columns", async function(assert) {
+			const aChanges = await loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 5, 5, assert);
+			await revertAndApplyNew.call(this);
+
+			assert.strictEqual(aChanges[0].getChangeType(), "removeColumn", "the deletes are sorted to the front");
+			assert.strictEqual(aChanges[1].getChangeType(), "removeColumn", "the deletes are sorted to the front");
+			assert.strictEqual(aChanges[2].getChangeType(), "removeColumn", "the deletes are sorted to the front");
+			assert.strictEqual(aChanges[3].getChangeType(), "addColumn", "the creates are sorted afterwards");
+			assert.strictEqual(aChanges[4].getChangeType(), "addColumn", "the creates are sorted afterwards");
+			const oTable = Element.getElementById("view--mdcTable");
+			const aColumns = oTable.getColumns();
+			assert.strictEqual(aColumns.length, 2, `Expected number of MDC columns: ${2}`);
+			assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column3", `${sValueMsg}column3`);
+			assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column4", `${sValueMsg}column4`);
 		});
 
 		[[], [0, 2, 3, 4]].forEach(function(aBackendChanges) {
