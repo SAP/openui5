@@ -372,6 +372,7 @@ sap.ui.define([
 		this.mock(_Cache).expects("create").never();
 		oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
 			.withExactArgs("").returns("~downloadUrl~");
+		this.mock(_AggregationCache.prototype).expects("createCountPromise").never();
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
 			.withExactArgs(null, bHasGrandTotal || bCountLeaves).returns(oFirstLevelCache);
 		if (bHasGrandTotal) {
@@ -541,6 +542,8 @@ sap.ui.define([
 		this.mock(_Cache).expects("create").never();
 		oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
 			.withExactArgs("").returns("~downloadUrl~");
+		this.mock(_AggregationCache.prototype).expects("createCountPromise").exactly(bCount ? 1 : 0)
+			.withExactArgs();
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
 			.withExactArgs(null, false).returns("~firstLevelCache~");
 		this.mock(_ConcatHelper).expects("enhanceCache").never();
@@ -571,19 +574,10 @@ sap.ui.define([
 		assert.strictEqual(oCache.oFirstLevel, "~firstLevelCache~");
 		assert.notOk("$$leaves" in oCache.mQueryOptions);
 		assert.ok("oCountPromise" in oCache, "be nice to V8");
+		assert.strictEqual(oCache.oCountPromise, undefined);
 		assert.strictEqual(oCache.oGrandTotalPromise, undefined);
 		assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
 		assert.strictEqual(oCache.isDeletingInOtherGroup(), false);
-		if (bCount) {
-			assert.ok(oCache.oCountPromise.isPending());
-
-			// code under test
-			oCache.oCountPromise.$resolve(42);
-
-			assert.strictEqual(oCache.oCountPromise.getResult(), 42);
-		} else {
-			assert.strictEqual(oCache.oCountPromise, undefined);
-		}
 		assert.ok(oCache.oTreeState instanceof _TreeState);
 		assert.strictEqual(oCache.oTreeState.sNodeProperty, "node/property");
 		assert.strictEqual(oCache.bUnifiedCache, false);
@@ -1652,7 +1646,8 @@ sap.ui.define([
 			};
 
 		oCache.oCountPromise = {
-			$resolve : true // will not be called :-)
+			$resolve : true, // will not be called :-)
+			$restore : sinon.spy()
 		};
 		this.mock(this.oRequestor).expects("buildQueryString").withExactArgs(null, {})
 			.returns("?~query~");
@@ -1666,6 +1661,7 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);
+			assert.strictEqual(oCache.oCountPromise.$restore.callCount, 1);
 		});
 	});
 
@@ -1727,7 +1723,8 @@ sap.ui.define([
 		}
 		oCache = _AggregationCache.create(this.oRequestor, "~", "", mQueryOptions, oAggregation);
 		oCache.oCountPromise = {
-			$resolve : fnResolve
+			$resolve : fnResolve,
+			$restore : mustBeMocked // must not be called
 		};
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, oFixture.mExpectedQueryOptions).returns("?~query~");
@@ -4533,6 +4530,7 @@ sap.ui.define([
 			.exactly(sGroupId ? 0 : 1).withExactArgs();
 		const oGetExpandLevelsExpectation = this.mock(oCache.oTreeState).expects("getExpandLevels")
 			.withExactArgs().returns("~sExpandLevels~");
+		this.mock(oCache).expects("createCountPromise").exactly(bCount ? 1 : 0).withExactArgs();
 		this.mock(oCache).expects("createGroupLevelCache").withExactArgs()
 			.returns("~oFirstLevelCache~");
 
@@ -4571,16 +4569,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.oBackup.bUnifiedCache, "~bUnifiedCache~");
 			assert.strictEqual(oCache.bUnifiedCache, true);
 		}
-		if (bCount) {
-			assert.ok(oCache.oCountPromise.isPending());
-
-			// code under test
-			oCache.oCountPromise.$resolve(42);
-
-			assert.strictEqual(oCache.oCountPromise.getResult(), 42);
-		} else {
-			assert.strictEqual(oCache.oCountPromise, undefined);
-		}
+		assert.strictEqual(oCache.oCountPromise, undefined);
 		assert.strictEqual(oCache.oFirstLevel, "~oFirstLevelCache~");
 	});
 	});
@@ -6253,7 +6242,9 @@ sap.ui.define([
 	{firstLevel : false, parentLeaf : true}
 ].forEach(function (oFixture) {
 	[false, true].forEach((bCreated) => {
-		const sTitle = `_delete: ${JSON.stringify(oFixture)}, ${bCreated}`;
+		[false, true].forEach((bCount) => {
+			const sTitle = `_delete: ${JSON.stringify(oFixture)}, created=${bCreated}`
+				+ `, count=${bCount}`;
 
 	QUnit.test(sTitle, function (assert) {
 		var oCountExpectation, oRemoveExpectation;
@@ -6261,6 +6252,9 @@ sap.ui.define([
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X"
 		});
+		if (bCount) {
+			oCache.oCountPromise = "~oCountPromise~";
+		}
 		const fnCallback = sinon.spy();
 		const oParentCache = {
 			getValue : mustBeMocked,
@@ -6282,6 +6276,7 @@ sap.ui.define([
 		oHelperMock.expects("getPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate")
 			.returns("~predicate~");
+		this.mock(oCache).expects("createCountPromise").exactly(bCount ? 1 : 0).withExactArgs();
 		this.mock(this.oRequestor).expects("request")
 			.withExactArgs("DELETE", "~editUrl~", "~oGroupLock~", {
 				"If-Match" : sinon.match.same(oElement)
@@ -6317,6 +6312,7 @@ sap.ui.define([
 
 				return Promise.resolve();
 			});
+		this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~").resolves("n/a");
 
 		// code under test
 		const oDeletePromise = oCache._delete("~oGroupLock~", "~editUrl~", "2", "n/a", fnCallback);
@@ -6331,6 +6327,7 @@ sap.ui.define([
 			}
 		});
 	});
+		});
 	});
 });
 
@@ -6347,6 +6344,7 @@ sap.ui.define([
 			.withExactArgs("DELETE", "~editUrl~", "~oGroupLock~",
 				{"If-Match" : sinon.match.same(oElement)})
 			.returns(Promise.reject("~error~"));
+		this.mock(oCache).expects("readCount").withExactArgs("~oGroupLock~");
 
 		// code under test
 		const oDeletePromise = oCache._delete("~oGroupLock~", "~editUrl~", "2", "n/a", fnCallback);
@@ -6386,6 +6384,7 @@ sap.ui.define([
 		this.mock(oParentCache).expects("_delete")
 			.withExactArgs("~oGroupLock~", "~editUrl~", "~transientPredicate~")
 			.returns("~promise~");
+		this.mock(oCache).expects("readCount").never();
 
 		assert.strictEqual(
 			// code under test
@@ -6409,6 +6408,7 @@ sap.ui.define([
 		this.mock(this.oRequestor).expects("request").never();
 		this.mock(oCache).expects("removeElement").never();
 		this.mock(_Helper).expects("updateAll").never();
+		this.mock(oCache).expects("readCount").never();
 
 		assert.throws(function () {
 			oCache._delete("~oGroupLock~", "edit/url", "2");
@@ -6422,6 +6422,7 @@ sap.ui.define([
 			});
 		this.mock(oCache).expects("removeElement").never();
 		this.mock(_Helper).expects("updateAll").never();
+		this.mock(oCache).expects("readCount").never();
 
 		assert.throws(function () {
 			oCache._delete("~oGroupLock~", "~sEditUrl~", "('1')");
@@ -7645,4 +7646,80 @@ sap.ui.define([
 		}, "unchanged");
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+
+		assert.strictEqual(oCache.oCountPromise, undefined);
+
+		// code under test
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$resolve("foo");
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+
+		// code under test: $restore has no effect on a resolved promise
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise: $restore initial value", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise: $restore previous value", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.oCountPromise = SyncPromise.resolve("foo");
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise: $restore, don't overwrite pending promise", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.oCountPromise = SyncPromise.resolve("foo");
+		oCache.createCountPromise();
+		const oPendingPromise = oCache.oCountPromise;
+
+		// code under test: don't overwrite pending promise
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise, oPendingPromise);
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+	});
 });
