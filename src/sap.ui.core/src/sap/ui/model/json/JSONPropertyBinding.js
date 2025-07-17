@@ -30,7 +30,16 @@ sap.ui.define([
 	 * @extends sap.ui.model.ClientPropertyBinding
 	 * @protected
 	 */
-	var JSONPropertyBinding = ClientPropertyBinding.extend("sap.ui.model.json.JSONPropertyBinding");
+	var JSONPropertyBinding = ClientPropertyBinding.extend("sap.ui.model.json.JSONPropertyBinding", /** @lends sap.ui.model.JSONPropertyBinding.prototype */ {
+
+		constructor : function(oModel, sPath, oContext, mParameters){
+			ClientPropertyBinding.apply(this, arguments);
+			if (this.isRelative()) {
+				this.sPreviousResolvedPath = this.getResolvedPath();
+			}
+		}
+
+	});
 
 	/*
 	 * @see sap.ui.model.PropertyBinding.prototype.setValue
@@ -62,10 +71,13 @@ sap.ui.define([
 		}
 
 		var oValue = this._getValue();
-		if (!deepEqual(oValue, this.oValue) || bForceupdate) {// optimize for not firing the events when unneeded
+		if (!deepEqual(oValue, this.oValue)
+				|| (this.isRelative() && this.sPreviousResolvedPath !== this.getResolvedPath())
+				|| bForceupdate) {
 			this.oValue = oValue;
 			this.getDataState().setValue(this.oValue);
 			this.checkDataState();
+			this.sPreviousResolvedPath = this.getResolvedPath();
 			this._fireChange({reason: ChangeReason.Change});
 		}
 	};
