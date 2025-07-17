@@ -4287,7 +4287,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getGeneration", function (assert) {
-		var oBinding = new ODataParentBinding();
+		var oBinding = new ODataParentBinding({bRelative : false});
 
 		// code under test
 		assert.strictEqual(oBinding.getGeneration(), 0);
@@ -4305,6 +4305,14 @@ sap.ui.define([
 
 		oBinding = new ODataParentBinding({
 			oContext : {},
+			bRelative : true
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.getGeneration(), 0);
+
+		oBinding = new ODataParentBinding({
+			oContext : null, // relative, but unresolved!
 			bRelative : true
 		});
 
