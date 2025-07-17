@@ -140,6 +140,7 @@ sap.ui.define([
 		if (!oTable) {
 			oTable = new ResponsiveTable({
 				id: this.getId() + "-Table",
+				sticky: ["ColumnHeaders", "GroupHeaders"],
 				showSeparators: ListSeparators.None,
 				ariaLabelledBy: this.getHeaderTitleId()
 			});
@@ -187,6 +188,15 @@ sap.ui.define([
 		if (oConfiguration.row && oConfiguration.row.columns) {
 			this._setColumns(oConfiguration.row);
 		}
+	};
+
+	/**
+	 * @override
+	 */
+	TableContent.prototype.onOpenInDialog = function () {
+		const oTable = this._getTable();
+		oTable.setWidth("auto");
+		oTable.setFixedLayout(false);
 	};
 
 	/**

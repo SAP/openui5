@@ -78,6 +78,24 @@
 				</w:Card>
 			</f:GridContainer>
 		</Panel>
+		<Panel headerText="Table" class="sapUiSmallMargin" backgroundDesign="Transparent">
+			<f:GridContainer class="sapUiSmallMargin">
+				<w:Card id="tablecard7"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+						manifest="{manifests>/tablecard7}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+				<w:Card id="tablecard8"
+						baseUrl="{cardsPlayground>/playgroundBaseUrl}"
+						manifest="{manifests>/tablecard8}">
+					<w:layoutData>
+						<f:GridContainerItemLayoutData columns="4" />
+					</w:layoutData>
+				</w:Card>
+			</f:GridContainer>
+		</Panel>
 		<Panel headerText="WebPage" class="sapUiSmallMargin" backgroundDesign="Transparent">
 			<f:GridContainer class="sapUiSmallMargin">
 				<w:Card
