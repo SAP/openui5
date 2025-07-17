@@ -104,7 +104,7 @@
 	& .sapMObjStatusLink .sapMObjStatusText {
 		border-radius: @sapUiButtonBorderCornerRadius;
 	}
-	& .sapMObjStatusIcon {
+	c .sapMObjStatusIcon {
 		border-radius: @sapUiButtonBorderCornerRadius 0 0 @sapUiButtonBorderCornerRadius;
 	}
 	& .sapMObjStatusIcon + .sapMObjStatusText {
@@ -227,6 +227,11 @@
 	}
 	.sapMObjStatusIcon + .sapMObjStatusText {
 		border-left: none;
+	}
+	.sapMObjStatusText,
+	.sapMObjStatusTitle,
+	.sapMObjStatusLink {
+		vertical-align: middle;
 	}
 }
 
