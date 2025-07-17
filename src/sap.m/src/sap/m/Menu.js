@@ -210,6 +210,7 @@ sap.ui.define([
 			}
 			oPopover._getPopup().setDurations(this._openDuration, 0);
 			oPopover.openBy(oControl);
+			this.bIgnoreOpenerFocus = true; // reset the flag to allow the opener to be focused after the menu is closed
 
 			return this;
 		};
@@ -248,6 +249,7 @@ sap.ui.define([
 		Menu.prototype._handleItemSelected = function(oEvent) {
 			oEvent.cancelBubble();
 			this.fireItemSelected({item: oEvent.getParameter("item")});
+			this.bIgnoreOpenerFocus = false; // allow the opener to be focused after the menu is closed
 		};
 
 		/**
@@ -474,12 +476,12 @@ sap.ui.define([
 			this._fnEnhanceUnifiedMenuAccState = fn;
 		};
 
-        Menu.prototype._menuClosed = function(oEvent) {
+		Menu.prototype._menuClosed = function(oEvent) {
 			const oOpener = oEvent && oEvent.getParameter("openBy");
 
 			this.fireClosed();
 
-			if (oOpener) {
+			if (oOpener && !this.bIgnoreOpenerFocus) {
 				try {
 					oOpener.focus();
 				} catch (e) {
