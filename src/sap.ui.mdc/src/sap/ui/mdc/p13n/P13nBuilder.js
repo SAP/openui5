@@ -318,6 +318,27 @@ sap.ui.define([
 			}, {});
 		},
 
+
+
+		_loadFlex: function() {
+			const fnRequireFlexAPI = () => {
+				return new Promise((fResolve) => {
+					sap.ui.require([
+						"sap/ui/fl/write/api/FieldExtensibility",
+						"sap/ui/core/EventBus"
+					], (FieldExtensibility, EventBus) => fResolve(FieldExtensibility, EventBus));
+				});
+			};
+			if (!this._oFlLibrary) {
+				this._oFlLibrary = new Promise((fResolve) => {
+					Library.load({ name: 'sap.ui.fl' })
+					.then(() => {
+						fnRequireFlexAPI().then(fResolve);
+					});
+				});
+			}
+			return this._oFlLibrary;
+		},
 		/**
 		 *
 		 * @param {object} oDialog AdaptFiltersDialog
@@ -336,68 +357,71 @@ sap.ui.define([
 			}
 
 			return new Promise((resolve) => {
-				sap.ui.require([
-					"sap/ui/fl/write/api/FieldExtensibility", "sap/ui/core/EventBus"
-				], (FieldExtensibility, EventBus) => {
 
-					const oControlModel = oDialogParent && oDialogParent.getModel();
-					const sServiceUrl = oControlModel && oControlModel.sServiceUrl ? oControlModel.sServiceUrl : "";
-					const oHandleExtensibility = Promise.all([
-						FieldExtensibility.onControlSelected(oDialogParent),
-						FieldExtensibility.isServiceOutdated(sServiceUrl),
-						FieldExtensibility.isExtensibilityEnabled(oDialogParent)
-					]);
+				const oControlModel = oDialogParent && oDialogParent.getModel();
+				const sServiceUrl = oControlModel && oControlModel.sServiceUrl ? oControlModel.sServiceUrl : "";
+				let FieldExtensibility, EventBus;
 
-					return oHandleExtensibility.then((aResult) => {
-							if (aResult[1]) {
-								FieldExtensibility.setServiceValid(sServiceUrl);
-								// needs FLP to trigger UI restart popup
-								EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
-							}
-							bExtensibilityEnabled = !!aResult[2];
-							return bExtensibilityEnabled;
-						})
-						.then((bExtensibilityEnabled) => {
-							let oCustomHeader = oDialog.getCustomHeader();
-							const sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
-								oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+				this._loadFlex()
+					.then((oFieldExtensibility, oEventBus) => {
+						FieldExtensibility = oFieldExtensibility;
+						EventBus = oEventBus;
 
-							if (!oCustomHeader) {
-								const oBar = new Bar({
-									contentLeft: [
-										new Title({
-											text: oDialog.getTitle(),
-											level: TitleLevel.H1
-										})
-									]
-								});
-								oDialog.setCustomHeader(oBar);
-								oCustomHeader = oDialog.getCustomHeader();
-							}
+						const oHandleExtensibility = Promise.all([
+							FieldExtensibility.onControlSelected(oDialogParent),
+							FieldExtensibility.isServiceOutdated(sServiceUrl),
+							FieldExtensibility.isExtensibilityEnabled(oDialogParent)
+						]);
+						return oHandleExtensibility;
+					}).then((aResult) => {
+						if (aResult[1]) {
+							FieldExtensibility.setServiceValid(sServiceUrl);
+							// needs FLP to trigger UI restart popup
+							EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
+						}
+						bExtensibilityEnabled = !!aResult[2];
+						return bExtensibilityEnabled;
+					})
+					.then((bExtensibilityEnabled) => {
+						let oCustomHeader = oDialog.getCustomHeader();
+						const sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
+							oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
-							if (bExtensibilityEnabled) {
-								oCustomHeader.addContentRight(new Button(sId + "-addCustomField", {
-									icon: "sap-icon://add",
-									enabled: bExtensibilityEnabled,
-									tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
-									press: function(oEvt) {
-										const sRtaStyleClassName = "sapUiRTABorder",
-											  oAdaptDialog = oEvt.getSource().getParent().getParent();
+						if (!oCustomHeader) {
+							const oBar = new Bar({
+								contentLeft: [
+									new Title({
+										text: oDialog.getTitle(),
+										level: TitleLevel.H1
+									})
+								]
+							});
+							oDialog.setCustomHeader(oBar);
+							oCustomHeader = oDialog.getCustomHeader();
+						}
 
-										FieldExtensibility.getExtensionData().then((oExtensibilityInfo) => {
-											FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
-											oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
-										});
-									}
-								}));
+						if (bExtensibilityEnabled) {
+							oCustomHeader.addContentRight(new Button(sId + "-addCustomField", {
+								icon: "sap-icon://add",
+								enabled: bExtensibilityEnabled,
+								tooltip: oResourceBundle.getText("p13nDialog.rtaAddTooltip"),
+								press: function(oEvt) {
+									const sRtaStyleClassName = "sapUiRTABorder",
+											oAdaptDialog = oEvt.getSource().getParent().getParent();
 
-								oDialog.setCustomHeader(oCustomHeader);
-								resolve(oDialog);
-							}
+									FieldExtensibility.getExtensionData().then((oExtensibilityInfo) => {
+										FieldExtensibility.onTriggerCreateExtensionData(oExtensibilityInfo, sRtaStyleClassName);
+										oAdaptDialog.close(); // close as if there is newly created custom field, next time user tries to open it - it checks for service outdated and shows correct information
+									});
+								}
+							}));
 
-						});
+							oDialog.setCustomHeader(oCustomHeader);
+							resolve(oDialog);
+						}
 
-				});
+					});
+
 			});
 		}
 
