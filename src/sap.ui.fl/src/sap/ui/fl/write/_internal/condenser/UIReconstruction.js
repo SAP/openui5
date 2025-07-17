@@ -118,7 +118,9 @@ sap.ui.define([
 	 * @returns {int} Target index of the index-related change
 	 */
 	function getTargetIndex(oCondenserInfo) {
-		return oCondenserInfo.getTargetIndex(oCondenserInfo.change);
+		// Destroy does not have a target index. But it can be sorted to the front of the array to first
+		// reduce the number of changes in the container to the same as the target UI
+		return oCondenserInfo.classification === "destroy" ? -1 : oCondenserInfo.getTargetIndex(oCondenserInfo.change);
 	}
 
 	/**
