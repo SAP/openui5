@@ -33,7 +33,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./ListBaseRenderer", "sap/ui/core/Invisi
 			aDescribedBy.push(sBaseDescribedBy);
 		}
 
-		return aDescribedBy.length ? aDescribedBy.join(" ") : null;
+		return aDescribedBy.length ? aDescribedBy.join(" ") : undefined;
 	};
 
 	return ListRenderer;
