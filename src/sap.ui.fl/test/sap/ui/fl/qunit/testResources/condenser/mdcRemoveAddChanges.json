@@ -56,5 +56,19 @@
 		},
 		"layer": "USER",
 		"creation": "2020-02-13T06:33:51.192Z"
+	},{
+		"fileName": "id_03_removeColumn",
+		"changeType": "removeColumn",
+		"reference": "test",
+		"content": {
+			"name": "column2",
+			"id": "mdcTable--column2"
+		},
+		"selector": {
+			"id": "view--mdcTable",
+			"idIsLocal": false
+		},
+		"layer": "USER",
+		"creation": "2020-02-13T06:33:51.192Z"
 	}
 ]
