@@ -156,7 +156,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + A</kbd> <description>
-				<p>Je-li fokus na buňce, selektoru řádek nebo na <span class="uicontrol">Vybrat vše</span>, přepíná se tímto zaškrtávací pole <span class="uicontrol">Vybrat vše</span>: Vyberou se všechny řádky nebo se výběr všech řádek zruší.</p>
+				<p>Je-li fokus na buňce, selektoru řádek nebo na <span class="uicontrol">Vybrat vše</span>, přepíná se tímto zaškrtávací pole <span class="uicontrol">Vybrat vše</span>: Vyberou se všechny řádky nebo se výběr všech řádek zruší..</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>

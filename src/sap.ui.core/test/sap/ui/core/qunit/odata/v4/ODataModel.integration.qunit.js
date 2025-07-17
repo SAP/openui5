@@ -77937,10 +77937,7 @@ sap.ui.define([
 				payload : {TeamID : "42"},
 				url : "EMPLOYEES('0')/" + sAction
 			}, {/* don't care */})
-			.expectRequest({
-				batchNo : 1,
-				url : "EMPLOYEES('0')?$select=ID"
-			}, {ID : "0"});
+			.expectRequest("#1 EMPLOYEES('0')?$select=ID", {ID : "0"});
 
 		await Promise.all([
 			oAction.setParameter("TeamID", "42")

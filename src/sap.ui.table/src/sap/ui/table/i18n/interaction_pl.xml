@@ -161,11 +161,11 @@
 		</interaction>
 		<interaction> <kbd>Ctrl + Shift + A</kbd> <description>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
-				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, następuje usunięcie zaznaczenia dowolnych wierszy i komórek.</p>
+				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, następuje usunięcie zaznaczenia wszelkich wierszy i komórek.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Alt + ArrowUp</kbd> <kbd>Alt + ArrowDown</kbd> <kbd>F4</kbd> <description>
-				<p>Jeśli fokus jest na komórce, następuje jego przesunięcie do jej zawartości (z wyjątkiem tekstu tylko do odczytu).</p>
+				<p>Jeśli fokus jest ustawiony na komórce, następuje jego przesunięcie do jej zawartości (z wyjątkiem tekstu tylko do odczytu).</p>
 				<p>Jeśli fokus jest ustawiony na nagłówku grupy lub na węźle drzewa bez liści, następuje przełączenie rozszerzenia grupy: grupa jest odpowiednio rozszerzana lub zwijana.</p>
 			</description>
 		</interaction>

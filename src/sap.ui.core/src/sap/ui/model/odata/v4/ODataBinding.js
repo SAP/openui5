@@ -359,7 +359,7 @@ sap.ui.define([
 		if (this.bRelative) { // quasi-absolute or relative binding
 			// mCacheByResourcePath has to be reset if parameters are changing
 			oCache = this.mCacheByResourcePath && this.mCacheByResourcePath[sResourcePath];
-			iGeneration = oContext.getGeneration && oContext.getGeneration() || 0;
+			iGeneration = oContext.getGeneration?.() ?? 0;
 			if (oCache && oCache.$generation >= iGeneration) {
 				oCache.setActive(true);
 			} else {

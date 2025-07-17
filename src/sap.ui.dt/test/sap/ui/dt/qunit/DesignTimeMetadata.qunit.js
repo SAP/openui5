@@ -1,25 +1,27 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/dt/DesignTimeMetadata",
-	"sap/ui/layout/form/SimpleForm",
+	"sap/base/i18n/ResourceBundle",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/m/Label",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
-	"sap/m/Button",
-	"sap/m/Label",
-	"sap/m/Input",
-	"sap/ui/test/utils/nextUIUpdate"
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/layout/form/SimpleForm",
+	"sap/ui/test/utils/nextUIUpdate",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
-	DesignTimeMetadata,
-	SimpleForm,
+	ResourceBundle,
+	Button,
+	Input,
+	Label,
 	Lib,
 	Title,
-	Button,
-	Label,
-	Input,
-	nextUIUpdate
+	DesignTimeMetadata,
+	SimpleForm,
+	nextUIUpdate,
+	sinon
 ) {
 	"use strict";
 
@@ -166,20 +168,45 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when getLibraryText is called", function(assert) {
-			var oFakeElement = {
+		QUnit.test("when getLibraryText is called for a designtime bundle", function(assert) {
+			const oFakeElement = {
 				getMetadata: sandbox.stub().returns({
 					getLibraryName: sandbox.stub().returns("fakeLibrary")
 				})
 			};
-			var oFakeLibBundle = {
-				getText: sandbox.stub().returns("translated text"),
-				hasText: sandbox.stub().returns(true)
+			const aArgs = ["value1", "value2"];
+
+			const oFakeLibBundle = {
+				getText: sandbox.stub().withArgs("I18N_KEY", aArgs).returns("translated text with value1 and value2"),
+				hasText: sandbox.stub().withArgs("I18N_KEY").returns(true)
+			};
+			sandbox.stub(ResourceBundle, "create").returns(oFakeLibBundle);
+			assert.equal(
+				this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY", aArgs),
+				"translated text with value1 and value2",
+				"then you get the text from the resource bundle of the corresponding library"
+			);
+		});
+
+		QUnit.test("when getLibraryText is called and a designtime bundle is not present", function(assert) {
+			const oFakeElement = {
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("fakeLibrary")
+				})
+			};
+			const aArgs = ["value1", "value2"];
+
+			const oFakeLibBundle = {
+				getText: sandbox.stub().withArgs("I18N_KEY", aArgs).returns("translated text with value1 and value2"),
+				hasText: sandbox.stub().withArgs("I18N_KEY").returns(true)
 			};
 			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
+
+			sandbox.stub(ResourceBundle, "create").returns(undefined);
+
 			assert.equal(
-				this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"),
-				"translated text",
+				this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY", aArgs),
+				"translated text with value1 and value2",
 				"then you get the text from the resource bundle of the corresponding library"
 			);
 		});

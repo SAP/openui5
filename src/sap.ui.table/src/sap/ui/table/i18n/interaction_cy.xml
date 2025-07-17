@@ -106,7 +106,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + Spacebar</kbd> <kbd>Shift + Enter</kbd> <description>
-				<p>Os yw'r ffocws ar bennawd colofn a <kbd>Spacebar</kbd> neu <kbd>Enter</kbd> yn cael ei bwyso, ni fydd y digwyddiad cyfatebol yn cael ei sbarduno.</p>
+				<p>Os yw'r ffocws ar bennawd colofn, a <kbd>Spacebar</kbd> neu <kbd>Enter</kbd> yn cael ei bwyso, ni fydd y digwyddiad cyfatebol yn cael ei sbarduno.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Shift + ArrowUp</kbd> <description>
