@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
+	"sap/m/Input",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/m/MenuItemGroup",
@@ -13,16 +14,14 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/Label",
-	"sap/ui/core/Item",
-	"sap/m/MenuListItem",
-	"sap/ui/core/CustomData",
-	"sap/ui/core/Control",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	merge,
 	Device,
 	Element,
 	jQuery,
+	Input,
 	Menu,
 	MenuItem,
 	MenuItemGroup,
@@ -32,10 +31,7 @@ sap.ui.define([
 	Filter,
 	FilterOperator,
 	Label,
-	Item,
-	MenuListItem,
-	CustomData,
-	Control,
+	KeyCodes,
 	nextUIUpdate
 ) {
 	"use strict";
@@ -1176,5 +1172,60 @@ sap.ui.define([
 		// Cleanup
 		oButton.destroy();
 		oButton = null;
+	});
+
+	QUnit.test("focus management", async function (assert) {
+		// Arrange
+		const oMenu = this.oMenu;
+		var oStub = this.stub(oMenu, "_openDuration").value(null);
+		const oButton = new Button({
+				text: "Open Menu"
+			});
+		const oInput = new Input();
+
+		oButton.placeAt("qunit-fixture");
+		oInput.placeAt("qunit-fixture");
+		await nextUIUpdate(this.clock);
+
+		// Act - open the menu
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		// Act - close the menu
+		oInput.getFocusDomRef().focus();
+		await nextUIUpdate(this.clock);
+
+		// Assert - focus is on the input field
+		assert.strictEqual(document.activeElement, oInput.getFocusDomRef(), "Focus is on input");
+		assert.notStrictEqual(document.activeElement, oButton.getDomRef(), "Button is not allowed to have focus");
+
+		// Act - open the menu
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		// Act - select the first item in the menu and close the menu
+		oMenu.getItems()[0].$().trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert - focus is on the button
+		assert.notStrictEqual(document.activeElement, oInput.getFocusDomRef(), "Focus is not on input");
+		assert.strictEqual(document.activeElement, oButton.getDomRef(), "Button is allowed to have focus");
+
+		// Act - open the menu again
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		// Act - close the menu with ESCAPE key
+		oMenu.getItems()[0].$().trigger({type: "keydown", keyCode: KeyCodes.ESCAPE});
+		await nextUIUpdate(this.clock);
+
+		// Assert - focus is back on the button
+		assert.notStrictEqual(document.activeElement, oInput.getFocusDomRef(), "Focus is not on input");
+		assert.strictEqual(document.activeElement, oButton.getDomRef(), "Button is allowed to have focus");
+
+		oMenu.destroy();
+		oButton.destroy();
+		oInput.destroy();
+		oStub.restore();
 	});
 });
