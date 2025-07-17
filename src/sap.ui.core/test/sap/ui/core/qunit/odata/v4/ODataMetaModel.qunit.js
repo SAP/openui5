@@ -38,7 +38,12 @@ sap.ui.define([
 	// tea_busi_product.v0001 := com.sap.gateway.default.iwbep.tea_busi_product.v0001
 	// tea_busi_supplier.v0001 := com.sap.gateway.default.iwbep.tea_busi_supplier.v0001
 	// UI := com.sap.vocabularies.UI.v1
-	var oDynamicProperty = Object.freeze({
+	var oCountProperty = Object.freeze({
+			$kind : "Property",
+			$Type : "Edm.Int64",
+			"@$ui5.$count" : true
+		}),
+		oDynamicProperty = Object.freeze({
 			$kind : "Property",
 			$Type : "Edm.Untyped"
 		}),
@@ -868,6 +873,11 @@ sap.ui.define([
 					$Type : "tea_busi.TEAM", // $OpenType : false
 					$Nullable : false
 				},
+				FavoritePlaces : {
+					$kind : "Property",
+					$isCollection : true,
+					$Type : "tea_busi.ComplexType_Location" // $OpenType : true
+				},
 				LOCATION : {
 					$kind : "Property",
 					$Type : "tea_busi.ComplexType_Location" // $OpenType : true
@@ -1517,6 +1527,8 @@ sap.ui.define([
 						$Type : "Edm.String"
 					}
 				});
+				assert.deepEqual(that.oMetaModel.getObject("/Edm.GeographyPoint/bbox/$count"),
+					oCountProperty, "$count at collection-valued structural property");
 				assert.deepEqual(mRootScope["Edm.Geography"], mRootScope["Edm.Geometry"]);
 				aGeographyTypes.forEach((sGeographyName) => {
 					assert.deepEqual(mRootScope[sGeographyName], {
@@ -1688,6 +1700,12 @@ sap.ui.define([
 		"/TEAMS/TEAM_2_MANAGER/$ReferentialConstraint/Address%2FCountry" : "WorkAddress/Country",
 		"/TEAMS/TEAM_2_MANAGER/$ReferentialConstraint/Address%2FCountry@Common.Label"
 			: "Common Country",
+		// $count - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		// Note: "tea_busi.Worker" has $OpenType : true - still, $count is handled specially
+		"/EMPLOYEES/$count" : sinon.match(oCountProperty),
+		"/EMPLOYEES/FavoritePlaces/$count" : sinon.match(oCountProperty),
+		"/TEAMS/TEAM_2_EMPLOYEES/$count" : sinon.match(oCountProperty),
+		// "/Edm.GeographyPoint/bbox/$count", // @see "fetchEntityContainer - ..."
 		// OpenType - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		"/EMPLOYEES/dynamic" : sinon.match(oDynamicProperty),
 		"/EMPLOYEES/dynamic/$" : sinon.match(oDynamicProperty),
@@ -2041,7 +2059,6 @@ sap.ui.define([
 	//TODO special cases where inline and external targeting annotations need to be merged!
 	//TODO support also external targeting from a different schema!
 	//TODO MySchema.MyFunction/MyParameter --> requires search in array?!
-	//TODO $count?
 	//TODO "For annotations targeting a property of an entity type or complex type, the path
 	// expression is evaluated starting at the outermost entity type or complex type named in the
 	// Target of the enclosing edm:Annotations element, i.e. an empty path resolves to the
@@ -2060,6 +2077,7 @@ sap.ui.define([
 		"/tea_busi.Worker/EMPLOYEE_2_TEAM/missing", // being an open type is not inherited
 		"/tea_busi.Worker/LOCATION/City/missing", // being an open type is not inherited
 		"/tea_busi.Worker/SALÃRY/missing", // being an open type is not inherited
+		"/tea_busi.Worker/$missing", // technical properties cannot be dynamic
 		"/tea_busi.Worker/dynamic/tea_busi.TEAM/missing", // type cast works fine
 		"/OverloadedAction/@$ui5.overload/0/@Core.OperationAvailable", // no external targeting here
 		"/ChangeManagerOfTeam/$Action/0/$ReturnType/@Common.Label", // no external targeting here
@@ -2160,6 +2178,24 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fetchObject for a $count property", function (assert) {
+		this.oMetaModelMock.expects("fetchEntityContainer")
+			.returns(SyncPromise.resolve(mScope));
+
+		// code under test
+		const oSyncPromise = this.oMetaModel.fetchObject("/EMPLOYEES/$count");
+
+		assert.strictEqual(oSyncPromise.isFulfilled(), true);
+		assert.deepEqual(oSyncPromise.getResult(), oCountProperty);
+		assert.throws(function () {
+			oSyncPromise.getResult().$isCollection = true;
+		}, /TypeError: /); // Cannot add property $isCollection, object is not extensible"
+		assert.throws(function () {
+			oSyncPromise.getResult().$kind = "n/a";
+		}, /TypeError: /); // Cannot assign to read only property '$kind' of object '#<Object>'
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchObject with empty $Annotations", function (assert) {
 		var oSyncPromise;
 
@@ -2217,6 +2253,13 @@ sap.ui.define([
 			"/tea_busi.NewAction@Core.OperationAvailable/$PropertyPath/$" : "Unknown child n"
 				+ " of tea_busi.NewAction"
 				+ " at /tea_busi.NewAction@Core.OperationAvailable/$PropertyPath",
+			// Unsupported path before $count ------------------------------------------------------
+			"/Me/$count" : "Unsupported path before $count",
+			"/TEAMS/TEAM_2_MANAGER/$count" : "Unsupported path before $count",
+			"/OverloadedAction/parameter0/$count" : "Unsupported path before $count",
+			"/T€AMS/tea_busi.NewAction/_it/$count" : "Unsupported path before $count",
+			// Unsupported path after $count ------------------------------------------------------
+			"/EMPLOYEES/$count/@sapui.name" : "Unsupported path after $count",
 			// Unsupported path before @sapui.name ------------------------------------------------
 			"/$EntityContainer@sapui.name" : "Unsupported path before @sapui.name",
 			"/tea_busi.FuGetEmployeeMaxAge/0@sapui.name" : "Unsupported path before @sapui.name",
@@ -4635,10 +4678,11 @@ sap.ui.define([
 		assertContextPaths(oBinding.getContexts(0, 2), ["ID", "AGE"]);
 		assertContextPaths(oBinding.getContexts(1, 2), ["AGE", "EMPLOYEE_2_CONTAINED_S"]);
 		assertContextPaths(oBinding.getContexts(), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "LOCATION", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "FavoritePlaces", "LOCATION", "SALÃRY"]);
 		assertContextPaths(oBinding.getContexts(0, 10), ["ID", "AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "LOCATION", "SALÃRY"]);
-		assertContextPaths(oBinding.getContexts(4, 10), ["EMPLOYEE_2_TEAM", "LOCATION", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "FavoritePlaces", "LOCATION", "SALÃRY"]);
+		assertContextPaths(oBinding.getContexts(4, 10),
+			["EMPLOYEE_2_TEAM", "FavoritePlaces", "LOCATION", "SALÃRY"]);
 
 		oBinding.attachEvent("sort", function () {
 			assert.ok(false, "unexpected sort event");
@@ -4646,14 +4690,16 @@ sap.ui.define([
 
 		oBinding.sort(new Sorter("@sapui.name"));
 		assertContextPaths(oBinding.getContexts(), ["AGE", "EMPLOYEE_2_CONTAINED_S",
-			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "ID", "LOCATION", "SALÃRY"]);
+			"EMPLOYEE_2_EQUIPM€NTS", "EMPLOYEE_2_TEAM", "FavoritePlaces", "ID", "LOCATION",
+			"SALÃRY"]);
 
 		oBinding.attachEvent("filter", function () {
 			assert.ok(false, "unexpected filter event");
 		});
 
 		oBinding.filter(new Filter("$kind", "EQ", "Property"));
-		assertContextPaths(oBinding.getContexts(), ["AGE", "ID", "LOCATION", "SALÃRY"]);
+		assertContextPaths(oBinding.getContexts(),
+			["AGE", "FavoritePlaces", "ID", "LOCATION", "SALÃRY"]);
 	});
 
 	//*********************************************************************************************
@@ -4674,6 +4720,7 @@ sap.ui.define([
 			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
 			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
 			"/EMPLOYEES/EMPLOYEE_2_TEAM",
+			"/EMPLOYEES/FavoritePlaces",
 			"/EMPLOYEES/LOCATION",
 			"/EMPLOYEES/SALÃRY"
 		]
@@ -4688,6 +4735,7 @@ sap.ui.define([
 			"/EMPLOYEES/EMPLOYEE_2_CONTAINED_S",
 			"/EMPLOYEES/EMPLOYEE_2_EQUIPM€NTS",
 			"/EMPLOYEES/EMPLOYEE_2_TEAM",
+			"/EMPLOYEES/FavoritePlaces",
 			"/EMPLOYEES/LOCATION",
 			"/EMPLOYEES/SALÃRY"
 		]
