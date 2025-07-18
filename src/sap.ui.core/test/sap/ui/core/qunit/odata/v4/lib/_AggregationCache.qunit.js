@@ -1633,7 +1633,8 @@ sap.ui.define([
 			};
 
 		oCache.oCountPromise = {
-			$resolve : true // will not be called :-)
+			$resolve : true, // will not be called :-)
+			$restore : sinon.spy()
 		};
 		this.mock(this.oRequestor).expects("buildQueryString").withExactArgs(null, {})
 			.returns("?~query~");
@@ -1647,6 +1648,7 @@ sap.ui.define([
 			assert.ok(false);
 		}, function (oResult) {
 			assert.strictEqual(oResult, oError);
+			assert.strictEqual(oCache.oCountPromise.$restore.callCount, 1);
 		});
 	});
 
@@ -1708,7 +1710,8 @@ sap.ui.define([
 		}
 		oCache = _AggregationCache.create(this.oRequestor, "~", "", mQueryOptions, oAggregation);
 		oCache.oCountPromise = {
-			$resolve : fnResolve
+			$resolve : fnResolve,
+			$restore : mustBeMocked // must not be called
 		};
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(null, oFixture.mExpectedQueryOptions).returns("?~query~");
@@ -7674,6 +7677,63 @@ sap.ui.define([
 
 		// code under test
 		oCache.oCountPromise.$resolve("foo");
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+
+		// code under test: $restore has no effect on a resolved promise
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise: $restore initial value", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise: $restore previous value", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.oCountPromise = SyncPromise.resolve("foo");
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$restore();
+
+		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCountPromise: $restore, don't overwrite pending promise", function (assert) {
+		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
+			hierarchyQualifier : "X"
+		});
+		oCache.oCountPromise = SyncPromise.resolve("foo");
+		oCache.createCountPromise();
+		const oPendingPromise = oCache.oCountPromise;
+
+		// code under test: don't overwrite pending promise
+		oCache.createCountPromise();
+
+		assert.strictEqual(oCache.oCountPromise, oPendingPromise);
+		assert.strictEqual(oCache.oCountPromise.isPending(), true);
+
+		// code under test
+		oCache.oCountPromise.$restore();
 
 		assert.strictEqual(oCache.oCountPromise.getResult(), "foo");
 	});
