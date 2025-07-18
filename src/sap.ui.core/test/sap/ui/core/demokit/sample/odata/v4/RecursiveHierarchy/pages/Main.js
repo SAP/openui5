@@ -11,6 +11,21 @@ sap.ui.define([
 	var bTreeTable,
 		sViewName = "sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy";
 
+	function findParent(sParent) {
+		this.waitFor({
+			actions : new EnterText({clearTextFirst : true, text : sParent}),
+			controlType : "sap.m.SearchField",
+			errorMessage : `Could not find parent with ID ${sParent}`,
+			matchers : function (oControl) {
+				return oControl.getId().includes("searchField");
+			},
+			success : function () {
+				Opa5.assert.ok(true, `Found parent with ID ${sParent}`);
+			},
+			viewName : sViewName
+		});
+	}
+
 	function getTableAsString(oTable, bCheckName, bCheckAge) {
 		let sResult = "";
 
@@ -52,17 +67,18 @@ sap.ui.define([
 		return bTreeTable ? "sap.ui.table.TreeTable" : "sap.ui.table.Table";
 	}
 
-	function pressButton(rButtonId, fnMatchers, sComment) {
+	function pressButton(rButtonId, fnMatchers, sComment, bDoNotUseViewName,
+			sControlType = "sap.m.Button") {
 		this.waitFor({
 			actions : new Press(),
-			controlType : "sap.m.Button",
+			controlType : sControlType,
 			errorMessage : `Could not press button ${sComment}`,
 			id : rButtonId,
 			matchers : fnMatchers,
 			success : function () {
 				Opa5.assert.ok(true, `Pressed button ${sComment}`);
 			},
-			viewName : sViewName
+			viewName : bDoNotUseViewName ? undefined : sViewName
 		});
 	}
 
@@ -75,6 +91,37 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
+				checkIndexInMessageBox : function (iIndex) {
+					 this.waitFor({
+						controlType : "sap.m.Dialog",
+						errorMessage : "The message box was not found",
+						matchers : function (oControl) {
+							return oControl.getTitle() === "New Node Created";
+						},
+						success : function (aControls) {
+							Opa5.assert.strictEqual(aControls[0].getContent()[0].getText(),
+								"Index: " + iIndex);
+
+							pressButton.call(this, undefined, function (oControl) {
+									return oControl.getText() === "OK";
+								}, "OK in the message box", true);
+						}
+					});
+				},
+				copyToParent : function (sId, sParent, sComment) {
+					pressButtonInRow.call(this, sId,
+						bTreeTable ? /copyToParentTreeTable/ : /copyToParent\b/,
+						"Copy to parent", sComment);
+					findParent.call(this, sParent);
+					pressButton.call(this, undefined, function (oControl) {
+							return oControl.getBindingContext().getProperty("ID") === sParent;
+						}, `to select parent with ID ${sParent}`, false, "sap.m.StandardListItem");
+				},
+				copyToRoot : function (sId, sComment) {
+					pressButtonInRow.call(this, sId,
+						bTreeTable ? /copyToRootTreeTable/ : /copyToRoot\b/, "Copy to root",
+						sComment);
+				},
 				createNewChild : function (sId, sComment) {
 					this.waitFor({
 						actions : new Press(),

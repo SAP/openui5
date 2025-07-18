@@ -408,4 +408,16 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getFocusControlAfterTokenRemoval", (assert) => {
+
+		const oContentPromise = oConditions.getContent();
+		return oContentPromise.then((oContent) => {
+			const oDefineConditionPanel = oContent.getContent()[0];
+			sinon.stub(oDefineConditionPanel, "getFocusControlAfterTokenRemoval").returns({id: "Test"});
+
+			assert.deepEqual(oConditions.getFocusControlAfterTokenRemoval(), {id: "Test"}, "initialFocusControl of DefineConditionPanel returned");
+		});
+
+	});
+
 });

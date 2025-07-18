@@ -303,6 +303,14 @@ sap.ui.define([
 	 */
 	BaseContent.prototype.applyConfiguration = function () { };
 
+	/**
+	 * Called when card is opened inside a dialog as a result of Pagination or Show More action.
+	 * To be implemented by subclasses.
+	 * @virtual
+	 * @protected
+	 */
+	BaseContent.prototype.onOpenInDialog = function () { };
+
 	BaseContent.prototype.setLoadDependenciesPromise = function (oPromise) {
 		this._pLoadDependencies = oPromise;
 		this.awaitEvent("_loadDependencies");

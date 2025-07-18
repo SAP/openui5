@@ -248,7 +248,9 @@ sap.ui.define(["sap/ui/core/Lib", "sap/ui/base/DataType", "sap/ui/core/library"]
 				{ ruleId: "jQueryThreeDeprecation", libName: "sap.ui.core" },
 				{ ruleId: "deprecatedJSViewUsage", libName: "sap.ui.core" },
 
-				{ ruleId: "smartTableDeprecatedModel", libName: "sap.ui.comp" }
+				{ ruleId: "smartTableDeprecatedModel", libName: "sap.ui.comp" },
+				{ ruleId: "deprecatedIllustrationSize", libName: "sap.m" },
+				{ ruleId: "deprecatedIllustrationType", libName: "sap.m" }
 			]
 		}
 	};

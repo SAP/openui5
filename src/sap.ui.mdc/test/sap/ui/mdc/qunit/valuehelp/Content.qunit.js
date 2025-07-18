@@ -175,6 +175,12 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getFocusControlAfterTokenRemoval", (assert) => {
+
+		assert.equal(oContent.getFocusControlAfterTokenRemoval(), null, "result");
+
+	});
+
 	QUnit.test("getItemForValue", (assert) => {
 
 		assert.notOk(oContent.getItemForValue({}), "Just existance check");

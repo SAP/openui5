@@ -44,8 +44,8 @@
 						"value": "{ProductName}"
 					},
 					{
-						"title": "Units in Stock",
-						"value": "{UnitsInStock}"
+						"title": "Quantity Per Unit",
+						"value": "{QuantityPerUnit}"
 					}
 				]
 			}
