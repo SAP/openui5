@@ -71,8 +71,7 @@ sap.ui.define([
 		this.aUnseenFeatures = await WhatsNewUtils.getFilteredFeatures(aDontShowAgainFeatureIds, this.getLayer());
 	};
 
-	WhatsNew.prototype.initializeWhatsNewDialog = async function(aExcludeFeatureIds = []) {
-		const aDontShowAgainFeatureIds = await FeaturesAPI.getSeenFeatureIds({ layer: this.getLayer() });
+	WhatsNew.prototype.initializeWhatsNewDialog = async function(aDontShowAgainFeatureIds, aExcludeFeatureIds = []) {
 		await this.setDontShowAgainFeatureIds(aDontShowAgainFeatureIds);
 		if (this.aUnseenFeatures.length === 0 || this.getLayer() !== "CUSTOMER") {
 			return;
