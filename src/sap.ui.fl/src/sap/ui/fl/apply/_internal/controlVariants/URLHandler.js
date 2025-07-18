@@ -375,11 +375,11 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.variants.VariantModel
 	 */
-	 URLHandler.attachHandlers = function(mPropertyBag) {
+	URLHandler.attachHandlers = function(mPropertyBag) {
 		function observerHandler() {
 			// variant switch promise needs to be checked, since there might be a pending on-going variants switch
 			// which might result in unnecessary data being stored
-			return mPropertyBag.model._oVariantSwitchPromise.then(function() {
+			mPropertyBag.model.waitForAllVMSwitchPromises().then(function() {
 				mPropertyBag.model._oHashData.controlPropertyObservers.forEach(function(oObserver) {
 					oObserver.destroy();
 				});

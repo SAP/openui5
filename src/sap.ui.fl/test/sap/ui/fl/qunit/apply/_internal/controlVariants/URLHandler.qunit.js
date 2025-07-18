@@ -125,15 +125,19 @@ sap.ui.define([
 			URLHandler.attachHandlers({vmReference: sVariantManagementReference, updateURL: true, model: this.oModel}); // app component's destroy handlers are attached here
 
 			var fnVariantSwitchPromiseStub = sandbox.stub();
-			this.oModel._oVariantSwitchPromise = new Promise(function(resolve) {
+			this.oModel._oVariantSwitchPromises = {};
+			this.oModel._oVariantSwitchPromises[sVariantManagementReference] = new Promise(function(resolve) {
 				setTimeout(function() {
 					resolve();
 				}, 0);
 			}).then(fnVariantSwitchPromiseStub);
+			this.oModel.waitForAllVMSwitchPromises = function() {
+				return this.oModel._oVariantSwitchPromises[sVariantManagementReference];
+			}.bind(this);
 
 			this.oAppComponent.destroy();
 
-			return this.oModel._oVariantSwitchPromise.then(function() {
+			return this.oModel._oVariantSwitchPromises[sVariantManagementReference].then(function() {
 				var aCallArgs = this.fnDestroyUnobserverSpy.getCall(0).args;
 				assert.equal(this.oModel.destroy.callCount, 1, "then variant model resetMap() was called");
 				assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver unobserve() was called for the AppComponent");

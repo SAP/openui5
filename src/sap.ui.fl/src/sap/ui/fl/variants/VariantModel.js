@@ -180,7 +180,7 @@ sap.ui.define([
 	 */
 	function _setVariantModelBusy(fnCallback, oModel, sVMReference) {
 		// if there are multiple switches triggered very quickly this makes sure that they are being executed one after another
-		oModel._oVariantSwitchPromise = oModel._oVariantSwitchPromise
+		oModel._oVariantSwitchPromises[sVMReference] = oModel._oVariantSwitchPromises[sVMReference]
 		// if the previous promise error is not caught
 			.catch(function() {})
 			.then(_setBusy.bind(null, oModel, sVMReference, true))
@@ -190,8 +190,8 @@ sap.ui.define([
 				_setBusy(oModel, sVMReference, false);
 				throw oError;
 			});
-		oModel.oFlexController.setVariantSwitchPromise(oModel._oVariantSwitchPromise);
-		return oModel._oVariantSwitchPromise;
+		oModel.oFlexController.setVariantSwitchPromise(oModel._oVariantSwitchPromises[sVMReference]);
+		return oModel._oVariantSwitchPromises[sVMReference];
 	}
 
 	/**
@@ -325,7 +325,7 @@ sap.ui.define([
 			this.sFlexReference = this.oChangePersistence.getComponentName();
 			this.oAppComponent = mPropertyBag.appComponent;
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-			this._oVariantSwitchPromise = Promise.resolve();
+			this._oVariantSwitchPromises = {};
 			this._oVariantAppliedListeners = {};
 
 			// set variant model data
@@ -379,6 +379,10 @@ sap.ui.define([
 				//initialize hash data - variants map & model should exist at this point (set on constructor)
 				URLHandler.initialize({ model: this });
 			}.bind(this));
+	};
+
+	VariantModel.prototype.waitForAllVMSwitchPromises = function() {
+		return Promise.all(Object.values(this._oVariantSwitchPromises));
 	};
 
 	/**
@@ -1426,13 +1430,6 @@ sap.ui.define([
 			vmControl: oVariantManagementControl
 		});
 
-		if (this.oData[sVariantManagementReference].initPromise) {
-			this.oData[sVariantManagementReference].initPromise.resolveFunction();
-			delete this.oData[sVariantManagementReference].initPromise;
-		}
-
-		this.oData[sVariantManagementReference].init = true;
-
 		// the initial changes are not applied via a variant switch
 		// to enable early variant switches to work properly they need to wait for the initial changes
 		// so the initial changes are set as a variant switch
@@ -1442,7 +1439,15 @@ sap.ui.define([
 			vmReference: sVariantManagementReference,
 			flexController: this.oFlexController
 		};
-		this._oVariantSwitchPromise = this._oVariantSwitchPromise.then(VariantManagementState.waitForInitialVariantChanges.bind(undefined, mParameters));
+		this._oVariantSwitchPromises[sVariantManagementReference] = Promise.resolve()
+		.then(VariantManagementState.waitForInitialVariantChanges.bind(undefined, mParameters));
+
+		if (this.oData[sVariantManagementReference].initPromise) {
+			this.oData[sVariantManagementReference].initPromise.resolveFunction();
+			delete this.oData[sVariantManagementReference].initPromise;
+		}
+
+		this.oData[sVariantManagementReference].init = true;
 	};
 
 	VariantModel.prototype.waitForVMControlInit = function(sVMReference) {
