@@ -446,7 +446,7 @@ function(
 			bShowExceededText = this.getShowExceededText(),
 			iMaxLength = this.getMaxLength();
 
-		if (!bShowExceededText && iMaxLength && sValue.length > iMaxLength) {
+		if (!bShowExceededText && !this._bIsComposingCharacter && iMaxLength && sValue.length > iMaxLength) {
 			sValue = sValue.substring(0, iMaxLength);
 			oTextAreaRef.value = sValue;
 		}
