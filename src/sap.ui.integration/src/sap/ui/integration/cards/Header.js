@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/util/subtitleToSubTitle",
 	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	Element,
@@ -26,6 +27,7 @@ sap.ui.define([
 	BindingResolver,
 	LoadingProvider,
 	Utils,
+	subtitleToSubTitle,
 	IconFormatter
 ) {
 	"use strict";
@@ -254,6 +256,8 @@ sap.ui.define([
 		if (oConfiguration.icon && oConfiguration.icon.src) {
 			oConfiguration.icon.src = this._oIconFormatter.formatSrc(BindingResolver.resolveValue(oConfiguration.icon.src, this));
 		}
+
+		subtitleToSubTitle(oConfiguration);
 
 		return oConfiguration;
 	};

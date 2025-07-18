@@ -263,7 +263,7 @@ sap.ui.define([
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Contact Details", "Double curly bracket translation syntax is resolved");
-				assert.strictEqual(oRes["sap.card"].header.subtitle, "Contact Details", "Translation syntax is resolved from i18n model");
+				assert.strictEqual(oRes["sap.card"].header.subTitle, "Contact Details", "Translation syntax is resolved from i18n model");
 
 				oCard.destroy();
 			});
@@ -328,7 +328,7 @@ sap.ui.define([
 				var sResolvedStatusText = oRes["sap.card"].header.status.text;
 				assert.strictEqual(sResolvedStatusText, "1 of 3", "Predefined translation key is correctly resolved");
 
-				var sResolvedFormattedTranslation = oRes["sap.card"].header.subtitle;
+				var sResolvedFormattedTranslation = oRes["sap.card"].header.subTitle;
 				assert.strictEqual(sResolvedFormattedTranslation, "2 categories, 3 items", "Formatted translation from i18n file is correctly resolved");
 
 				oCard.destroy();
@@ -3585,5 +3585,128 @@ sap.ui.define([
 
 		// Act
 		oCard.startManifestProcessing();
+	});
+
+	QUnit.module("Property subtitle and subtitleMaxLines");
+
+	QUnit.test("Subtitle is resolved for header", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card.headeSubtitle",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Test Title",
+					"subtitle": "Test Subtitle",
+					"subtitleMaxLines": 3
+				},
+				"content": {
+					"item": {
+						"title": "test"
+					}
+				}
+			}
+		};
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		const oResult = await ManifestResolver.resolveCard(oCard);
+
+		assert.strictEqual(oResult["sap.card"].header.subTitle, oManifest["sap.card"].header.subtitle, "subtitle was resolved correctly to subTitle");
+		assert.strictEqual(oResult["sap.card"].header.subTitleMaxLines, oManifest["sap.card"].header.subtitleMaxLines, "subtitleMaxLines was resolved correctly to subTitleMaxLines");
+		assert.notOk(oResult["sap.card"].header.hasOwnProperty("subtitle"), "The subtitle property should be removed from the resolved manifest.");
+		assert.notOk(oResult["sap.card"].header.hasOwnProperty("subtitleMaxLines"), "The subtitleMaxLines property should be removed from the resolved manifest.");
+
+		oCard.destroy();
+	});
+
+	QUnit.test("Subtitle is resolved for numeric header", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card.headeNumericSubtitle",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"title": "Test Title",
+					"subtitle": "Test Subtitle",
+					"subtitleMaxLines": 4
+				},
+				"content": {
+					"item": {
+						"title": "test"
+					}
+				}
+			}
+		};
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		const oResult = await ManifestResolver.resolveCard(oCard);
+
+		assert.strictEqual(oResult["sap.card"].header.subTitle, oManifest["sap.card"].header.subtitle, "subtitle was resolved correctly to subTitle");
+		assert.strictEqual(oResult["sap.card"].header.subTitleMaxLines, oManifest["sap.card"].header.subtitleMaxLines, "subtitleMaxLines was resolved correctly to subTitleMaxLines");
+		assert.notOk(oResult["sap.card"].header.hasOwnProperty("subtitle"), "The subtitle property should be removed from the resolved manifest.");
+		assert.notOk(oResult["sap.card"].header.hasOwnProperty("subtitleMaxLines"), "The subtitleMaxLines property should be removed from the resolved manifest.");
+
+		oCard.destroy();
+	});
+
+	QUnit.test("Subtitle is resolved for object group item overlay", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card.imageOverlaySubtitle",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "Object",
+				"header": {
+					"title": "Card with overlay"
+				},
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"type": "Image",
+									"src": "./images/natureAndChildren.jpg",
+									"overlay": {
+										"title": "Hello, John",
+										"subtitle": "Today will be a good day!"
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		const oResult = await ManifestResolver.resolveCard(oCard);
+		const oResultOverlay = oResult["sap.card"].content.groups[0].items[0].overlay;
+		const oOriginalOverlay = oManifest["sap.card"].content.groups[0].items[0].overlay;
+
+		assert.strictEqual(oResultOverlay.subTitle, oOriginalOverlay.subtitle, "subtitle was resolved correctly to subTitle");
+		assert.notOk(oResultOverlay.hasOwnProperty("subtitle"), "The subtitle property should be removed from the resolved manifest.");
+
+		oCard.destroy();
 	});
 });
