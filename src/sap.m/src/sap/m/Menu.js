@@ -155,7 +155,7 @@ sap.ui.define([
 			this._openDuration = Device.system.phone ? null : 0;
 		};
 
-        /**
+		/**
 		 * Called from parent if the control is destroyed.
 		 */
 		Menu.prototype.exit = function() {
@@ -204,12 +204,22 @@ sap.ui.define([
 		 * @public
 		 */
 		Menu.prototype.openBy = function(oControl) {
-			const oPopover = this._getPopover();
+			const oPopover = this._getPopover(),
+				oBinding = this.getBinding("items");
+
 			if (!oControl) {
 				oControl = document.body;
 			}
-			oPopover._getPopup().setDurations(this._openDuration, 0);
-			oPopover.openBy(oControl);
+
+			if (oBinding && oBinding.isA("sap.ui.model.odata.v4.ODataListBinding")) {
+				// Wait for the binding data to be received, then open
+				oBinding.attachEventOnce("dataReceived", function() {
+					this._openPopoverBy(oPopover, oControl);
+				}, this);
+			} else {
+				this._openPopoverBy(oPopover, oControl);
+			}
+
 			this.bIgnoreOpenerFocus = true; // reset the flag to allow the opener to be focused after the menu is closed
 
 			return this;
@@ -238,6 +248,18 @@ sap.ui.define([
 			}
 
 			return this;
+		};
+
+		/**
+		 * Opens the given popover next to the specified control, using the configured open duration.
+		 *
+		 * @param {sap.m.ResponsivePopover} oPopover The popover instance to open.
+		 * @param {sap.ui.core.Control|HTMLElement} oControl The control or DOM element that defines the position for the popover.
+		 * @private
+		 */
+		Menu.prototype._openPopoverBy = function(oPopover, oControl) {
+			oPopover._getPopup().setDurations(this._openDuration, 0);
+			oPopover.openBy(oControl);
 		};
 
 		/**
@@ -392,7 +414,7 @@ sap.ui.define([
 			oPointerParent.insertBefore(oPointerElement, oPointerSibling);
 			oPointerElement.style.insetInlineStart = `${iX}px`;
 			oPointerElement.style.insetBlockStart = `${iY}px`;
-		    oPointerElement.setAttribute("aria-hidden", "true");
+			oPointerElement.setAttribute("aria-hidden", "true");
 
 			oPopover.openBy(oPointerElement);
 			oPopover.attachAfterClose(this._onContextMenuClose, this);
