@@ -127,6 +127,10 @@ sap.ui.define([
 			this.readCount(oGroupLock)
 		]).then(() => {
 			this.oTreeState.delete(oElement);
+			if (this.aElements.$count === undefined) {
+				return; // concurrent side-effects refresh takes care of cleanup
+			}
+
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
@@ -715,7 +719,6 @@ sap.ui.define([
 		this.sToString = this.getDownloadUrl("");
 
 		const aAdditionalRowHandlers = [];
-		this.oCountPromise = undefined;
 		if (this.mQueryOptions.$count) {
 			if (oAggregation.hierarchyQualifier) {
 				this.createCountPromise();
@@ -728,7 +731,11 @@ sap.ui.define([
 						resolve(parseInt(oLeaves.UI5__leaves));
 					});
 				});
+			} else {
+				this.oCountPromise = undefined;
 			}
+		} else {
+			this.oCountPromise = undefined;
 		}
 		this.oGrandTotalPromise = bHasGrandTotal
 			? new SyncPromise((resolve) => {
