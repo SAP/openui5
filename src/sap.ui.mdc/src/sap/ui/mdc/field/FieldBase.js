@@ -3179,6 +3179,25 @@ sap.ui.define([
 			}
 		} else if (bChangeAfterError) { // last valid value choosen again
 			_triggerChange.call(this, aConditions, true);
+
+			if (oContent) { // fire validation success on content directly, as triggered only after ENTER or Focusout. (As we don't know the internal content behaviour we cannot just fake ENTER or Focusout)
+				for (const sProperty in oContent.getMetadata().getAllProperties()) {
+					if (oContent.getBindingPath(sProperty) === "/conditions") {
+						const oBinding = oContent.getBinding(sProperty);
+						const oType = oBinding?.getType();
+						if (oType instanceof ConditionsType) {
+							oContent.fireValidationSuccess({
+									element: oContent,
+									property: sProperty,
+									type: oType,
+									newValue: oContent.getDOMValue?.(),
+									oldValue: oContent.getProperty(sProperty)
+								}, false, true); // bAllowPreventDefault, bEnableEventBubbling
+							break;
+						}
+					}
+				}
+			}
 		}
 	}
 
