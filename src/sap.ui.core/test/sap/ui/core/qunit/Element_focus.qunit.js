@@ -657,4 +657,37 @@ sap.ui.define([
 			}, 0);
 		});
 	});
+
+	QUnit.test("'FocusFail' should be fired when the current busy control isn't focusable during setting 'busy' to false", async function(assert) {
+		const oUIArea = createAndAppendDiv("uiarea_focus");
+
+		const oButton1 = new Button({
+			text: "Button 1",
+			enabled: false,
+			busy: true,
+			busyIndicatorDelay: 0
+		});
+
+		const oButton2 = new Button({
+			text: "Button 2"
+		});
+
+		const oPanel = new Panel({
+			content: [ oButton1, oButton2 ]
+		});
+
+		oPanel.placeAt("uiarea_focus");
+		await nextUIUpdate();
+
+		// let the busy block layer to be focused, so that the focus will be
+		// restored to the button after the busy state is set to false
+		oButton1.getDomRef().querySelector(".sapUiLocalBusyIndicator").focus();
+		oButton1.setBusy(false);
+
+		await Promise.resolve();
+		assert.ok(oButton2.getDomRef().contains(document.activeElement), "After the busy state is set to false, the focus should be restored to the next focusable button");
+
+		oPanel.destroy();
+		oUIArea.remove();
+	});
 });
