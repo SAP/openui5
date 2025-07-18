@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/BusinessNetworkAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Versions,
 	BusinessNetworkAPI,
 	ChangesWriteAPI,
+	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
@@ -843,6 +845,38 @@ sap.ui.define([
 
 			assert.ok(oReloadManagerSpy.calledOnce, "then handleReloadOnExit was called");
 			assert.ok(Object.keys(oArgs).length === 0, "handleReloadOnExit was called without a reload Info object");
+		});
+
+		QUnit.test("when UI Adaptation is started and the What's New dialog is initialized", async function(assert) {
+			sandbox.stub(FeaturesAPI, "isSeenFeaturesAvailable").returns(true);
+			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").returns([]);
+			const sessionStorageSpy = sandbox.spy(sessionStorage, "setItem").withArgs("sap.ui.rta.dontShowWhatsNewAfterReload", true);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+
+			assert.ok(DOMUtil.isVisible(document.getElementById("sapUiRtaWhatsNewDialog")), "then the WhatsNew dialog is visible");
+			assert.ok(
+				sessionStorageSpy.calledOnceWithExactly("sap.ui.rta.dontShowWhatsNewAfterReload", true),
+				"then the WhatsNew dialog doesn't show after reload flag is set"
+			);
+		});
+
+		QUnit.test("when UI Adaptation is started and the dontShowWhatsNewAfterReload flag is set", async function(assert) {
+			sandbox.stub(FeaturesAPI, "isSeenFeaturesAvailable").returns(true);
+			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").returns([]);
+			sessionStorage.setItem("sap.ui.rta.dontShowWhatsNewAfterReload", true);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+
+			assert.notOk(DOMUtil.isVisible(document.getElementById("sapUiRtaWhatsNewDialog")), "then the WhatsNew dialog is not visible");
 		});
 	});
 
