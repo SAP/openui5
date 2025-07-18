@@ -720,6 +720,13 @@ sap.ui.define([
 			return oCtrl;
 		},
 
+		getFocusControlAfterTokenRemoval: function () {
+			const oGrid = this.getAggregation("_content").getContent()[1];
+			const aContent = oGrid.getContent();
+			const oCtrl = aContent[2] ? aContent[2] : aContent[0]; // If value field exist take it, otherwise operator
+			return oCtrl;
+		},
+
 		// TODO: remove this function and replace by getValueHelp once FieldHelp association is completetly removed.
 		_getValueHelp: function() {
 

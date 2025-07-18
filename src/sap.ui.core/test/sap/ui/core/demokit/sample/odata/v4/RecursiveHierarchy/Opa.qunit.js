@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/pages/Main",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/collapseAll",
+	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/copy",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/createEdit",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/expandAll",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/collapseAll_expandTo3",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Helper, Main, collapseAll, createEdit, expandAll, collapseAll_expandTo3,
+], function (Helper, Main, collapseAll, copy, createEdit, expandAll, collapseAll_expandTo3,
 		pageExpandCollapse, recursiveHierarchyBasics, sideEffectsRefresh, SandboxModel, opaTest,
 		TestUtils) {
 	"use strict";
@@ -113,6 +114,18 @@ sap.ui.define([
 			Main.setTreeTable(bTreeTable);
 
 			collapseAll_expandTo3(Given, When, Then);
+		});
+	}
+
+	//*****************************************************************************
+	{
+		const sTitle = "copy; w/ TreeTable: " + bTreeTable + ", threshold: " + sThreshold;
+		opaTest(sTitle, function (Given, When, Then) {
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
+				sThreshold);
+			Main.setTreeTable(bTreeTable);
+
+			copy(Given, When, Then);
 		});
 	}
 });

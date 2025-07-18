@@ -27,8 +27,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
-	"sap/ui/thirdparty/datajs"
-], function(Log, Localization, SyncPromise, Messaging, Supportability, UI5Date, Message, _Helper, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData) {
+	"sap/ui/thirdparty/datajs",
+	"sap/ui/thirdparty/jquery"
+], function(Log, Localization, SyncPromise, Messaging, Supportability, UI5Date, Message, _Helper, BaseContext, FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, OData, jQuery) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -287,6 +288,63 @@ sap.ui.define([
 			assert.strictEqual(oModel.bTokenHandling, oFixture.member);
 			assert.deepEqual(oModel.oSharedServerData, oFixture.parameter === "skipServerCache" ? undefined : oServerCache);
 			assert.strictEqual(oModel.oHeaders["x-csrf-token"], oFixture.headerIsSet ? "~token" : undefined);
+
+			return oPromise;
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false, "~vInvalidValueForWithCredentials"].forEach((vWithCredentials) => {
+		QUnit.test("constructor: withCredentials is propagated to ODataAnnotations", function (assert) {
+			const mParameters = {
+					annotationURI : ["~annotationURI"],
+					serviceUrl : "~serviceUrl",
+					skipMetadataAnnotationParsing : true, // skip unnecessary code branches
+					tokenHandling: "skipServerCache", // skip unnecessary code branches
+					warmupUrl : "~sWarmupUrl",
+					withCredentials : vWithCredentials
+				};
+			const oDataModelMock = this.mock(ODataModel);
+			oDataModelMock.expects("_getSharedData").withExactArgs("service", "~serviceUrl").returns({});
+			const oMetadata = {
+				oMetadata : {
+					isLoaded() {},
+					loaded() {}
+				}
+			};
+			oDataModelMock.expects("_getSharedData").withExactArgs("meta", "~sWarmupUrl").returns(oMetadata);
+			this.mock(ODataModel.prototype).expects("_cacheSupported").withExactArgs("~sWarmupUrl").returns(false);
+			this.mock(ODataModel.prototype).expects("_getAnnotationCacheKey")
+				.withExactArgs("~sWarmupUrl")
+				.returns(undefined);
+			// called in ODataModel#constructor and ODataAnnotations#constructor
+			const oPromise = Promise.resolve("~metadata");
+			this.mock(oMetadata.oMetadata).expects("loaded").withExactArgs().exactly(2).returns(oPromise);
+			this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+			const oAjaxRequest = {
+				done() {},
+				fail() {}
+			};
+			// ajax request to load the OData annotations during the ODataAnnotations#constructor
+			this.mock(jQuery).expects("ajax")
+				.withExactArgs(sinon.match((mAjaxOptions) => {
+					if (vWithCredentials === true) {
+						// xhrFields.withCredentials is only set if withCredentials is true
+						assert.strictEqual(mAjaxOptions.xhrFields.withCredentials, true);
+					} else {
+						assert.ok(!mAjaxOptions.hasOwnProperty("xhrFields"));
+					}
+					return true;
+				}))
+				.returns(oAjaxRequest);
+			this.mock(oAjaxRequest).expects("done").withExactArgs(sinon.match.func).returns(oAjaxRequest);
+			this.mock(oAjaxRequest).expects("fail").withExactArgs(sinon.match.func).returns();
+			this.mock(ODataModel.prototype).expects("_initializeMetadata").withExactArgs();
+
+			// code under test
+			const oModel = new ODataModel(mParameters);
+
+			assert.strictEqual(oModel.bWithCredentials, oModel.oAnnotations.bWithCredentials);
 
 			return oPromise;
 		});

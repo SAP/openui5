@@ -326,11 +326,11 @@ sap.ui.define([
 			assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
 			aItems = aPanelContent[0].getItems();
 			assert.equal(aItems.length, 2, "HBox content length");
-			const oTokenMultiInput = aItems[0];
-			const oBindingInfo = oTokenMultiInput.getBindingInfo("tokens");
+			const oTokenizer = aItems[0];
+			const oBindingInfo = oTokenizer.getBindingInfo("tokens");
 			assert.equal(oBindingInfo.length, 50, "Tokens - Bindinginfo length");
 			assert.equal(oBindingInfo.startIndex, -50, "Tokens - Bindinginfo startIndex");
-			const aTokens = oTokenMultiInput.getTokens();
+			const aTokens = oTokenizer.getTokens();
 			assert.equal(aTokens.length, 1, "number of tokens");
 			assert.equal(aTokens[0].getText(), "Text", "Token text");
 			const oBinding = aTokens[0].getBinding("text");
@@ -351,7 +351,7 @@ sap.ui.define([
 			};
 			assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 			const oButton = aItems[1];
-			assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
+			assert.ok(oTokenizer.isA("sap.m.Tokenizer"), "Tokenizer is first HBox item");
 			assert.ok(oButton.isA("sap.m.Button"), "Button is second HBox item");
 			assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 			assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
@@ -421,8 +421,8 @@ sap.ui.define([
 			assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
 			aItems = aPanelContent[0].getItems();
 			assert.equal(aItems.length, 2, "HBox content length");
-			const oTokenMultiInput = aItems[0];
-			const aTokens = oTokenMultiInput.getTokens();
+			const oTokenizer = aItems[0];
+			const aTokens = oTokenizer.getTokens();
 			assert.equal(aTokens.length, 1, "number of tokens");
 			assert.equal(aTokens[0].getText(), "Text", "Token text");
 			const oBinding = aTokens[0].getBinding("text");
@@ -443,9 +443,7 @@ sap.ui.define([
 			};
 			assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 			const oButton = aItems[1];
-			assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "Tokenizer is first HBox item");
-			assert.notOk(oTokenMultiInput.getShowSuggestion(), "Tokenizer has no suggestion");
-			assert.notOk(oTokenMultiInput.getShowValueHelp(), "Tokenizer has no value help");
+			assert.ok(oTokenizer.isA("sap.m.Tokenizer"), "Tokenizer is first HBox item");
 			assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
 			assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
 			assert.equal(oButton.getIcon(), "sap-icon://decline", "Button icon");
@@ -539,8 +537,8 @@ sap.ui.define([
 					const oPanel = aItems[1];
 					const aPanelContent = oPanel.getContent();
 					aItems = aPanelContent[0].getItems();
-					const oTokenMultiInput = aItems[0];
-					let aTokens = oTokenMultiInput.getTokens();
+					const oTokenizer = aItems[0];
+					let aTokens = oTokenizer.getTokens();
 					let oBinding = aTokens[0].getBinding("text");
 					let oBindingType = oBinding.getType();
 					assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
@@ -560,8 +558,7 @@ sap.ui.define([
 					assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
 
 					// the inner input element has to been set to transparent.
-					assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
-					assert.equal(jQuery(oTokenMultiInput.getDomRef("inner")).css("opacity"), "0", "input part of multiInput is not visible");
+					assert.ok(oTokenizer.isA("sap.m.Tokenizer"), "Tokenizer is first HBox item");
 
 					// simulate ok-button click
 					const aButtons = oContainer.getButtons();
@@ -595,7 +592,7 @@ sap.ui.define([
 								setTimeout(() => { // wait until open
 									assert.equal(iOpened, 2, "Opened event fired again");
 									assert.ok(oContainer.isOpen(), "sap.m.Dialog is open");
-									aTokens = oTokenMultiInput.getTokens();
+									aTokens = oTokenizer.getTokens();
 									oBinding = aTokens[0].getBinding("text");
 									oBindingType = oBinding.getType();
 									assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
@@ -1037,13 +1034,16 @@ sap.ui.define([
 				const oPanel = aItems[1];
 				const aPanelContent = oPanel.getContent();
 				aItems = aPanelContent[0].getItems();
-				const oTokenMultiInput = aItems[0];
-				const aTokens = oTokenMultiInput.getTokens();
+				const oTokenizer = aItems[0];
+				const aTokens = oTokenizer.getTokens();
 
-				oTokenMultiInput.fireTokenUpdate({removedTokens: aTokens});
+				sinon.spy(oContent, "getFocusControlAfterTokenRemoval");
+				sinon.spy(oDialog.oButtonOK, "focus");
+				oTokenizer.fireTokenDelete({tokens: aTokens});
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
 				assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
+				assert.ok(oContent.getFocusControlAfterTokenRemoval.calledOnce, "getFocusControlAfterTokenRemoval called on Content");
 
 				oModel.setData({
 					_config: oValueHelpConfig,
@@ -1051,6 +1051,7 @@ sap.ui.define([
 					conditions: []
 				}); // simulate data update
 				assert.equal(oPanel.getHeaderText(), "TokenizerTitle", "Panel headerText");
+				assert.ok(oDialog.oButtonOK.focus.calledOnce, "OK-Button focussed");
 
 				fnDone();
 			}).catch((oError) => {
@@ -1085,11 +1086,15 @@ sap.ui.define([
 				const aPanelContent = oPanel.getContent();
 				aItems = aPanelContent[0].getItems();
 				const oButton = aItems[1];
+				sinon.spy(oContent, "getFocusControlAfterTokenRemoval");
+				sinon.spy(oDialog.oButtonOK, "focus");
 
 				oButton.firePress();
 				assert.equal(iSelect, 1, "select event fired");
 				assert.deepEqual(aConditions, [], "select event conditions");
 				assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+				assert.ok(oContent.getFocusControlAfterTokenRemoval.calledOnce, "getFocusControlAfterTokenRemoval called on Content");
+				assert.ok(oDialog.oButtonOK.focus.calledOnce, "OK-Button focussed");
 
 				fnDone();
 			}).catch((oError) => {

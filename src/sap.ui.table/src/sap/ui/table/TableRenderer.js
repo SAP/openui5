@@ -463,8 +463,7 @@ sap.ui.define([
 
 		const mAccParams = {
 			column: oColumn,
-			headerId: sHeaderId,
-			index: iIndex
+			headerId: sHeaderId
 		};
 
 		if (nSpan > 1) {
@@ -1095,7 +1094,6 @@ sap.ui.define([
 			const bIsLastFixedColumn = bFixedTable && iLastFixedColumnIndex === iColIndex;
 
 			const oParams = {
-				index: iColIndex,
 				column: oColumn,
 				row: oRow,
 				fixed: bFixedTable,

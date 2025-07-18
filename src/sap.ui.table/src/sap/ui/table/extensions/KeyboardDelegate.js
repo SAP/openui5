@@ -404,6 +404,9 @@ sap.ui.define([
 		} else if (oCellInfo.isOfType(CellType.ROWHEADER)) {
 			selectItems();
 
+		} else if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
+			TableUtils.Menu.openContextMenu(oTable, oEvent);
+
 		} else if (oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)) {
 			// The action mode should only be entered when cellClick is not handled and no selection is performed.
 			let bEnterActionMode = !oTable.hasListeners("cellClick");
@@ -1028,11 +1031,7 @@ sap.ui.define([
 			delete this._oRangeSelection;
 		}
 
-		if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
-			if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) || KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
-				TableUtils.Menu.openContextMenu(this, oEvent);
-			}
-		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
+		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			handleSpaceAndEnter(this, oEvent);
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE, ModKey.SHIFT)) {
 			TableUtils.toggleRowSelection(this, oCellInfo.rowIndex);
