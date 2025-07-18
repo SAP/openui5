@@ -189,6 +189,7 @@ sap.ui.define([
 				flexController: oFlexController,
 				appComponent: oComponent
 			});
+			this.oModel._oVariantSwitchPromises[sVMReference] = Promise.resolve();
 			oComponent.setModel(this.oModel, ControlVariantApplyAPI.getVariantModelName());
 			return this.oModel.initialize();
 		},
