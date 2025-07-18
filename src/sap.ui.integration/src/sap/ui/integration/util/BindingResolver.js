@@ -135,7 +135,6 @@ sap.ui.define([
 
 		/**
 		 * Resolves a binding syntax.
-		 * NOTE: This will only work with one unnamed model.
 		 *
 		 * @param {*} vValue The value to resolve.
 		 * @param {*} vModelOrObject The model.
@@ -154,6 +153,36 @@ sap.ui.define([
 			} else {
 				return vValue;
 			}
+		};
+
+		/**
+		 * Resolves list binding.
+		 *
+		 * @param {string} sListPath Path to the list.
+		 * @param {string} sRootPath The root path, which will prefix the path to the list, in case it is relative.
+		 * @param {object} oTemplate Template to create the items.
+		 * @param {*} vModelOrObject Model or object to resolve the binding.
+		 * @returns {any[]} The resolved list of items.
+		 */
+		BindingResolver.resolveListBinding = function (sListPath, sRootPath, oTemplate, vModelOrObject) {
+			const sModelName = BindingHelper.getModelName(sListPath);
+			let sFullPath = sListPath;
+
+			if (BindingHelper.getModelName(sRootPath) === sModelName && !BindingHelper.isAbsolutePath(sListPath)) {
+				let sPathErasedModelName = sListPath;
+
+				if (sModelName) {
+					sPathErasedModelName = sListPath.replace(new RegExp("^" + sModelName + ">"), "");
+				}
+
+				sFullPath = sRootPath + sPathErasedModelName;
+			}
+
+			const aData = BindingResolver.resolveValue(`{${sFullPath}}`, vModelOrObject);
+
+			return aData.map(function (oItemData, iIndex) {
+				return BindingResolver.resolveValue(oTemplate, vModelOrObject, `${sFullPath}/${iIndex}/`);
+			});
 		};
 
 		return BindingResolver;
