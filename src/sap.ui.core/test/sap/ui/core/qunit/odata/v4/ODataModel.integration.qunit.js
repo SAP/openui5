@@ -29379,9 +29379,13 @@ sap.ui.define([
 				// code under test (BCP: 2370045709)
 				oListBinding.changeParameters({
 					$$aggregation : {
-						expandTo : Number.MAX_SAFE_INTEGER,
+						expandTo : 1E16, // synonym for Number.MAX_SAFE_INTEGER
 						hierarchyQualifier : sHierarchyQualifier
 					}
+				});
+				assert.deepEqual(oListBinding.getAggregation(), {
+					expandTo : Number.MAX_SAFE_INTEGER, // #changeParameters has been ignored
+					hierarchyQualifier : sHierarchyQualifier
 				});
 				assert.strictEqual(oListBinding.getAggregation().expandTo, Number.MAX_SAFE_INTEGER);
 				// code under test
@@ -29899,6 +29903,10 @@ sap.ui.define([
 	// Ensure that a Return Value Context is created and the structure of the path is same like the
 	// binding parameter
 	// JIRA: CPOUI5ODATAV4-2096
+	//
+	// Check that #setAggregation with an unchanged $$aggregation parameter does not throw due to
+	// pending changes of a kept-alive context.
+	// JIRA: CPOUI5ODATAV4-3054
 	QUnit.test("Recursive Hierarchy: edit w/ currency", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oChild,
@@ -29907,18 +29915,19 @@ sap.ui.define([
 			oRoot,
 			oRootAmountBinding,
 			oTable,
-			sView = '\
-<FlexBox id="form" binding="{path : \'/TEAMS(\\\'42\\\')\', suspended : true}" />\
-<t:Table id="table" rows="{TEAM_2_EMPLOYEES}" threshold="0" visibleRowCount="2">\
-	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
-	<Text text="{= %{@$ui5.node.level} }"/>\
-	<Text text="{ID}"/>\
-	<Text text="{MANAGER_ID}"/>\
-	<Input value="{SALARY/YEARLY_BONUS_AMOUNT}"/>\
-	<Text text="{SALARY/BONUS_CURR}"/>\
-	<Text text="{TEAM_ID}"/>\
-	<Text text="{EMPLOYEE_2_TEAM/MEMBER_COUNT}"/>\
-</t:Table>',
+			sView = `
+<FlexBox id="form" binding="{path : '/TEAMS(\\\'42\\\')', suspended : true}" />
+<t:Table id="table" rows="{parameters : {$$ownRequest : true}, path : 'TEAM_2_EMPLOYEES'}"
+		threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{MANAGER_ID}"/>
+	<Input value="{SALARY/YEARLY_BONUS_AMOUNT}"/>
+	<Text text="{SALARY/BONUS_CURR}"/>
+	<Text text="{TEAM_ID}"/>
+	<Text text="{EMPLOYEE_2_TEAM/MEMBER_COUNT}"/>
+</t:Table>`,
 			that = this;
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -30123,6 +30132,13 @@ sap.ui.define([
 				[true, 1, "0", "", "23.23", "GBP", "23", "10"],
 				[undefined, 2, "1", "0", "42.42", "USD", "42", "10"]
 			]);
+
+			oRoot.setKeepAlive(true);
+			oRoot.setProperty("SALARY/YEARLY_BONUS_AMOUNT", "4567", "doNotSubmit");
+			// code under test
+			oRoot.getBinding().setAggregation({hierarchyQualifier : "OrgChart"});
+
+			return that.waitForChanges(assert, "no changes expected!");
 		});
 	});
 
@@ -33180,6 +33196,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2345
 	//
 	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
+	// If a $batch with DELETE fails, the count is unchanged (JIRA: CPOUI5ODATAV4-3066)
+	// Wait for pending count promise with requestProperty("$count") (JIRA: CPOUI5ODATAV4-3067)
 	[false, true].forEach(function (bExpanded) {
 		const sState = bExpanded ? "expanded" : "collapsed";
 		QUnit.test(`Recursive Hierarchy: delete single ${sState} child`, async function (assert) {
@@ -33313,6 +33331,8 @@ sap.ui.define([
 				expectTable("after collapse", false);
 			}
 
+			const oHeaderContext = oListBinding.getHeaderContext();
+
 			this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('1')");
 			this.expectRequest("#4 DELETE EMPLOYEES('1')", createErrorInsideBatch())
 				.expectRequest("#4 EMPLOYEES/$count") // no response required
@@ -33326,13 +33346,17 @@ sap.ui.define([
 
 			await Promise.all([
 				// code under test
-				oBeta.delete().then(mustFail(assert), function (_oError) {}),
+				oBeta.delete().then(mustFail(assert), function () {}),
+				// code under test (JIRA: CPOUI5ODATAV4-3067)
+				oHeaderContext.requestProperty("$count").then(function (iResult) {
+					assert.strictEqual(iResult, 4);
+				}),
 				this.waitForChanges(assert, "failing to delete Beta")
 			]);
 
 			expectTable("after failed delete", bExpanded);
-			// code under test (JIRA: CPOUI5ODATAV4-3049)
-			assert.strictEqual(oListBinding.getCount(), undefined); // TODO: revert to old value
+			// code under test (JIRA: CPOUI5ODATAV4-3066)
+			assert.strictEqual(oListBinding.getCount(), 4);
 
 			if (bExpanded) {
 				this.expectChange("expanded", [, false]); // Beta is collapsed before being deleted
@@ -33345,6 +33369,10 @@ sap.ui.define([
 
 			await Promise.all([
 				oBeta.delete(), // code under test
+				// code under test (JIRA: CPOUI5ODATAV4-3067)
+				oHeaderContext.requestProperty("$count").then(function (iResult) {
+					assert.strictEqual(iResult, 42);
+				}),
 				this.waitForChanges(assert, "delete Beta")
 			]);
 
@@ -33365,6 +33393,8 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2302
 	//
 	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
+	// If a $batch with multiple DELETE fails, the count is unchanged (JIRA: CPOUI5ODATAV4-3066)
+	// Only one $count request for multiple deletes in one $batch (JIRA: CPOUI5ODATAV4-3065)
 	QUnit.test("Recursive Hierarchy: delete multiple nodes", async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
@@ -33446,17 +33476,39 @@ sap.ui.define([
 			[undefined, 2, "2", "0", "Gamma"],
 			[undefined, 2, "3", "0", "Delta"]
 		]);
+		const [, oBeta, oGamma] = oListBinding.getAllCurrentContexts();
 
-		this.expectRequest("#3 DELETE EMPLOYEES('1')")
-			.expectRequest("#3 DELETE EMPLOYEES('2')")
-			.expectRequest("#3 EMPLOYEES/$count", 2)
-			// TODO: second $count request in same $batch not needed
-			.expectRequest("#3 EMPLOYEES/$count", 2);
+		this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('1')");
+		this.oLogMock.expects("error").withArgs("Failed to delete /EMPLOYEES('2')");
+		this.expectRequest("#3 DELETE EMPLOYEES('1')", createErrorInsideBatch())
+			.expectRequest("#3 DELETE EMPLOYEES('2')") // no response required
+			.expectRequest("#3 EMPLOYEES/$count") // no response required
+			.expectMessages([{
+				code : "CODE",
+				message : "Request intentionally failed",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
+
+		await Promise.all([
+			// code under test (JIRA: CPOUI5ODATAV4-3066)
+			oBeta.delete().then(mustFail(assert), function () {}),
+			oGamma.delete().then(mustFail(assert), function () {}),
+			this.waitForChanges(assert, "failed to delete Beta and Gamma")
+		]);
+
+		// code under test (JIRA: CPOUI5ODATAV4-3066)
+		assert.strictEqual(oListBinding.getCount(), 4);
+
+		this.expectRequest("#4 DELETE EMPLOYEES('1')")
+			.expectRequest("#4 DELETE EMPLOYEES('2')")
+			.expectRequest("#4 EMPLOYEES/$count", 2);
 
 		await Promise.all([
 			// code under test
-			oTable.getItems()[1].getBindingContext().delete(),
-			oTable.getItems()[2].getBindingContext().delete(),
+			oBeta.delete(),
+			oGamma.delete(),
 			this.waitForChanges(assert, "delete Beta and Gamma")
 		]);
 
@@ -34304,6 +34356,10 @@ sap.ui.define([
 				oTable = that.oView.byId("table");
 				oRoot = oTable.getRows()[0].getBindingContext();
 				oListBinding = oRoot.getBinding();
+				assert.deepEqual(oListBinding.getAggregation(), {
+					expandTo : Number.MAX_SAFE_INTEGER, // normalized
+					hierarchyQualifier : "OrgChart"
+				});
 				assert.throws(function () {
 					// code under test
 					oListBinding.getHeaderContext().move({parent : null});

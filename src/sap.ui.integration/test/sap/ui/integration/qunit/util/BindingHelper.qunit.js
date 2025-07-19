@@ -531,4 +531,27 @@ function (
 		});
 	});
 
+	QUnit.module("Static method #isAbsolutePath");
+
+	QUnit.test("Absolute paths", function (assert) {
+		assert.ok(BindingHelper.isAbsolutePath("/"), "Should return true for absolute path.");
+		assert.ok(BindingHelper.isAbsolutePath("/some/path"), "Should return true for absolute path.");
+		assert.ok(BindingHelper.isAbsolutePath("someName>/some/path"), "Should return true for absolute path with model name.");
+	});
+
+	QUnit.test("Relative paths", function (assert) {
+		assert.notOk(BindingHelper.isAbsolutePath(""), "Should return false for relative path.");
+		assert.notOk(BindingHelper.isAbsolutePath("some/path"), "Should return false for relative path.");
+		assert.notOk(BindingHelper.isAbsolutePath("someName>some/path"), "Should return false for relative path.");
+	});
+
+	QUnit.module("Static method #getModelName");
+
+	QUnit.test("Get model name", function (assert) {
+		assert.strictEqual(BindingHelper.getModelName("/some/path"), undefined, "Should return 'undefined' for absolute path without model name.");
+		assert.strictEqual(BindingHelper.getModelName("someName>/some/path"), "someName", "Should return model name for absolute path with model name.");
+		assert.strictEqual(BindingHelper.getModelName("someName>"), "someName", "Should return model name for relative path with model name.");
+		assert.strictEqual(BindingHelper.getModelName("someName>some/path"), "someName", "Should return model name for relative path with model name.");
+	});
+
 });

@@ -507,7 +507,9 @@ sap.ui.define([
 			}
 			setBlockedOnRootElements.call(this, true);
 
-			const bGuidedTourAutostart = await shouldAutoStartGuidedTour(this.getRootControlInstance(), this.getLayer());
+			const aSeenFeatureIds = await FeaturesAPI.getSeenFeatureIds({ layer: this.getLayer() });
+
+			const bGuidedTourAutostart = await shouldAutoStartGuidedTour(this.getRootControlInstance(), this.getLayer(), aSeenFeatureIds);
 
 			if (bGuidedTourAutostart) {
 				const oGuidedTour = this.getGuidedTour();
@@ -515,12 +517,12 @@ sap.ui.define([
 					if (this.getWhatsNew) {
 						// we want to exclude the guided tour feature from the whats new dialog if the tour opens before the dialog
 						const aExcludeGuidedTourFeature = ["GuidedTour"];
-						this.getWhatsNew().initializeWhatsNewDialog(aExcludeGuidedTourFeature);
+						this.getWhatsNew().initializeWhatsNewDialog(aSeenFeatureIds, aExcludeGuidedTourFeature);
 					}
 				});
 				oGuidedTour.autoStart(GeneralTour.getTourContent());
 			} else if (this.getWhatsNew) {
-				this.getWhatsNew().initializeWhatsNewDialog();
+				this.getWhatsNew().initializeWhatsNewDialog(aSeenFeatureIds);
 			}
 
 			// PopupManager sets the toolbar to already open popups' autoCloseAreas
@@ -1070,7 +1072,7 @@ sap.ui.define([
 	 * @returns {Promise<boolean>} Resolves to a boolean indicating if the guided tour should be started automatically
 	 * @ui5-restricted sap.ui.rta
 	 */
-	async function shouldAutoStartGuidedTour(oRootControl, sLayer) {
+	async function shouldAutoStartGuidedTour(oRootControl, sLayer, aSeenFeatureIds) {
 		const aConnectors = FlexUtils.getConnectors();
 		const aProhibitedConnectors = ["LocalStorageConnector", "SessionStorageConnector"];
 		const bHasConnectors = aConnectors.length > 0;
@@ -1107,17 +1109,17 @@ sap.ui.define([
 			sUserId
 		);
 
-		if (!aHasOwnChanges || aHasOwnChanges.length > 0 || aVersionsFromUser.length > 0) {
-			return false;
-		}
+		let bAutostartGuidedTour = true;
 
-		const bHasSeenWNFeatures = (await FeaturesAPI.getSeenFeatureIds({ layer: sLayer })).length > 0;
+		if (!aHasOwnChanges || aHasOwnChanges.length > 0 || aVersionsFromUser.length > 0 || aSeenFeatureIds.length > 0) {
+			bAutostartGuidedTour = false;
+		}
 
 		// UI Adaptation Tour should only be shown once per session
-		if (!bHasSeenWNFeatures) {
+		if (bAutostartGuidedTour) {
 			window.sessionStorage.setItem(sUIAdaptationTourReloadFlag, true);
 		}
-		return !bHasSeenWNFeatures;
+		return bAutostartGuidedTour;
 	}
 
 	function showTechnicalError(vError) {

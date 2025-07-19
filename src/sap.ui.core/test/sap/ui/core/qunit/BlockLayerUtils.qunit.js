@@ -45,6 +45,9 @@ sap.ui.define([
 		this.oButton.setBusyIndicatorDelay(0);
 		this.oButton.setBusy(true);
 
+		const oBlockLayer = queryAll('.sapUiLocalBusyIndicator')[0];
+		assert.ok(oBlockLayer.classList.contains("sapUiSkipFocusFail"), "block layer should have class 'sapUiSkipFocusFail'");
+
 		// check for relative position
 		assert.equal($button.css("position"), "relative", "css position attribute was changed to 'relative'");
 
@@ -61,6 +64,9 @@ sap.ui.define([
 
 		this.oButton.setBusyIndicatorDelay(0);
 		this.oButton.setBusy(true);
+
+		const oBlockLayer = queryAll('.sapUiLocalBusyIndicator')[0];
+		assert.ok(oBlockLayer.classList.contains("sapUiSkipFocusFail"), "block layer should have class 'sapUiSkipFocusFail'");
 
 		// check for fixed position
 		assert.equal($button.css("position"), "fixed", "after setBusy(true) the position is still 'fixed'");
@@ -103,6 +109,7 @@ sap.ui.define([
 				// check of previous tabbable span
 				oSiblingDomRef = getSibling(oDomRef, "prev");
 				assert.equal(oSiblingDomRef.getAttribute("tabindex"), 0, "Previous tabbable span should be available.");
+				assert.ok(oSiblingDomRef.classList.contains("sapUiSkipFocusFail"), "Previous tabbable span should have the sapUiSkipFocusFail class.");
 
 				// Get previous element of previous tabbable span element
 				var oPrevSiblingDomRef = getSibling(oSiblingDomRef, "prev");
@@ -111,6 +118,7 @@ sap.ui.define([
 				// check of next tabbable span
 				oSiblingDomRef = getSibling(oDomRef, "next");
 				assert.equal(oSiblingDomRef.getAttribute("tabindex"), 0, "Next tabbable span should be available.");
+				assert.ok(oSiblingDomRef.classList.contains("sapUiSkipFocusFail"), "next tabbable span should have the sapUiSkipFocusFail class.");
 
 				// Get the next element after the next tabbable span
 				var oNextSiblingDomRef = getSibling(oSiblingDomRef, "next");

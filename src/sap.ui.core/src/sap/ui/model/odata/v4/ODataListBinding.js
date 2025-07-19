@@ -3630,6 +3630,10 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.isUnchangedParameter = function (sName, vOtherValue) {
 		if (sName === "$$aggregation") {
+			if (!vOtherValue) {
+				return this.mParameters.$$aggregation === vOtherValue;
+			}
+
 			// Note: $fetchMetadata is lost here, but never mind - $apply does not matter, only
 			// normalization is needed
 			vOtherValue = _Helper.clone(vOtherValue); // avoid modification due to normalization
@@ -4811,7 +4815,9 @@ sap.ui.define([
 		 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
 		 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
 		 *   <code>expandTo >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels
-		 *   (<code>1E16</code> is recommended inside XML views for simplicity).
+		 *   (<code>1E16</code> is recommended inside XML views for simplicity). Since 1.139.0,
+		 *   {@link #getAggregation} returns <code>expandTo : Number.MAX_SAFE_INTEGER</code> instead of
+		 *   values greater than this. These differences do not count as changes.
 		 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 		 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 		 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
@@ -4922,7 +4928,7 @@ sap.ui.define([
 		}
 
 		this.checkTransient();
-		if (oAggregation === undefined && this.mParameters.$$aggregation === undefined) {
+		if (this.isUnchangedParameter("$$aggregation", oAggregation)) {
 			return;
 		}
 		if (this.hasFilterNone()) {

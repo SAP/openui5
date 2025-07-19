@@ -413,6 +413,47 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("When a change indicater is created with other types of changes", function(assert) {
+			const oPayloadDefault = {
+				description: "defaultDescription",
+				descriptionTooltip: "defaultDescriptionTooltip"
+			};
+			const aChanges = [
+				createMockChange("id5", this.oButton.getId(), "reveal", "reveal", oPayloadDefault),
+				createMockChange("id6", this.oButton.getId(), "addDelegateProperty", "addViaDelegate", oPayloadDefault),
+				createMockChange("id7", this.oButton.getId(), "addIFrame", "addIFrame", oPayloadDefault),
+				createMockChange("id8", this.oButton.getId(), "other", "other", oPayloadDefault)
+			];
+			this.oChangeIndicator.setChanges(aChanges);
+
+			this.oChangeIndicator._oDetailModel.getData().forEach((item, idx) => {
+				assert.notOk(
+					item.description && item.description.includes("_CHANGEVISUALIZATION_"),
+					`DetailModel data at index ${idx} has a missing description: ${item.description}`
+				);
+			});
+			assert.strictEqual(
+				this.oChangeIndicator._oDetailModel.getData()[0].description,
+				oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_OTHER", [0]),
+				"the description is correct"
+			);
+			assert.strictEqual(
+				this.oChangeIndicator._oDetailModel.getData()[1].description,
+				oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_ADDIFRAME", [0]),
+				"the description is correct"
+			);
+			assert.strictEqual(
+				this.oChangeIndicator._oDetailModel.getData()[2].description,
+				oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_ADDDELEGATEPROPERTY", ["TestButton"]),
+				"the description is correct"
+			);
+			assert.strictEqual(
+				this.oChangeIndicator._oDetailModel.getData()[3].description,
+				oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_REVEAL", ["TestButton"]),
+				"the description is correct"
+			);
+		});
+
 		QUnit.test("when a change indicator with two changes is created", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
