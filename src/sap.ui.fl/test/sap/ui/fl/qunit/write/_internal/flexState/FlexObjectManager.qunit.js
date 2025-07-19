@@ -511,7 +511,8 @@ sap.ui.define([
 			this.oDHRemoveFromDependenciesSpy = sandbox.spy(DependencyHandler, "removeChangeFromDependencies");
 			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
 				persistedVersion: Version.Number.Original,
-				draftFilenames: ["ChangeFileName1", "ChangeFileName2"]
+				draftFilenames: ["ChangeFileName1", "ChangeFileName2"],
+				versioningEnabled: true
 			}));
 			this.oVersionsUpdateStub = sandbox.stub(Versions, "updateAfterSave");
 		},
@@ -521,7 +522,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("with draft handling and two changes that are not saved via condense", async function(assert) {
+		QUnit.test("with draft handling and two changes that are not saved via condense and versioning is disabled", async function(assert) {
 			const aAdditionalChanges = UIChangeManager.addDirtyChanges(sReference, [
 				{
 					fileName: "notSavedChange1", layer: Layer.CUSTOMER, selector: { id: "control1" }
@@ -530,6 +531,12 @@ sap.ui.define([
 					fileName: "notSavedChange2", layer: Layer.CUSTOMER, selector: { id: "control1" }
 				}
 			], this.oAppComponent);
+			Versions.getVersionsModel.restore();
+			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+				persistedVersion: Version.Number.Original,
+				draftFilenames: ["ChangeFileName1", "ChangeFileName2"],
+				versioningEnabled: false
+			}));
 			const oReturn = await FlexObjectManager.saveFlexObjects({
 				selector: this.oAppComponent,
 				layer: Layer.CUSTOMER
@@ -551,7 +558,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				transport: "",
 				isLegacyVariant: false,
-				parentVersion: Version.Number.Original
+				parentVersion: undefined
 			}, "the condense was called with the correct parameters");
 			this.aChanges.forEach((oChange) => {
 				assert.strictEqual(oChange.getState(), States.LifecycleState.PERSISTED, "the change is in the PERSISTED state");

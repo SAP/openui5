@@ -229,6 +229,152 @@ function (JSONModel, ManagedObject, BindingResolver, BindingHelper, UI5Date) {
 		assert.strictEqual(BindingResolver.resolveValue(oData, new JSONModel()).value, oData.value, "Date instance is not modified");
 	});
 
+	QUnit.module("BindingResolver resolveListBinding");
+
+	QUnit.test("Using absolute path", function (assert) {
+		// Arrange
+		const oModel = new JSONModel({
+			content: {
+				items: [
+					{ id: "item1" },
+					{ id: "item2" }
+				]
+			}
+		});
+		const oTemplate = {
+			"title": "{id}"
+		};
+		const aExpected = [
+			{ title: "item1" },
+			{ title: "item2" }
+		];
+
+		// Assert
+		assert.deepEqual(BindingResolver.resolveListBinding("/content/items", "/someIrrelevantRootPath", oTemplate, oModel), aExpected, "Should resolve list binding.");
+		assert.deepEqual(BindingResolver.resolveListBinding("/content/items", undefined, oTemplate, oModel), aExpected, "Should resolve list binding.");
+	});
+
+	QUnit.test("Using absolute path and named model", function (assert) {
+		// Arrange
+		const oObject = new ManagedObject();
+		const oModel = new JSONModel({
+			content: {
+				items: [
+					{ id: "item1" },
+					{ id: "item2" }
+				]
+			}
+		});
+		oObject.setModel(oModel, "namedModel");
+		const oTemplate = {
+			"title": "{namedModel>id}"
+		};
+		const aExpected = [
+			{ title: "item1" },
+			{ title: "item2" }
+		];
+
+		// Assert
+		assert.deepEqual(BindingResolver.resolveListBinding("namedModel>/content/items", "/someIrrelevantRootPath", oTemplate, oObject), aExpected, "Should resolve list binding.");
+		assert.deepEqual(BindingResolver.resolveListBinding("namedModel>/content/items", undefined, oTemplate, oObject), aExpected, "Should resolve list binding.");
+	});
+
+	QUnit.test("Using relative path", function (assert) {
+		// Arrange
+		const oModel = new JSONModel({
+			content: {
+				items: [
+					{ id: "item1" },
+					{ id: "item2" }
+				]
+			}
+		});
+		// oObject.setModel(oModel, "namedModel");
+		const oTemplate = {
+			"title": "{id}"
+		};
+		const aExpected = [
+			{ title: "item1" },
+			{ title: "item2" }
+		];
+
+		// Assert
+		assert.deepEqual(BindingResolver.resolveListBinding("content/items", "/", oTemplate, oModel), aExpected, "Should resolve list binding.");
+		assert.deepEqual(BindingResolver.resolveListBinding("items", "/content/", oTemplate, oModel), aExpected, "Should resolve list binding.");
+		assert.throws(
+			function () {
+				BindingResolver.resolveListBinding("content/items", undefined, oTemplate, oModel);
+			},
+			"Should throw an error when root path is not provided for relative path."
+		);
+	});
+
+	QUnit.test("Using relative path and named model", function (assert) {
+		// Arrange
+		const oObject = new ManagedObject();
+		const oModel = new JSONModel({
+			content: {
+				items: [
+					{ id: "item1" },
+					{ id: "item2" }
+				]
+			}
+		});
+		oObject.setModel(oModel, "namedModel");
+		const oTemplate = {
+			"title": "{namedModel>id}"
+		};
+		const aExpected = [
+			{ title: "item1" },
+			{ title: "item2" }
+		];
+
+		// Assert
+		assert.deepEqual(BindingResolver.resolveListBinding("namedModel>content/items", "namedModel>/", oTemplate, oObject), aExpected, "Should resolve list binding.");
+		assert.deepEqual(BindingResolver.resolveListBinding("namedModel>items", "namedModel>/content/", oTemplate, oObject), aExpected, "Should resolve list binding.");
+		assert.throws(
+			function () {
+				BindingResolver.resolveListBinding("namedModel>content/items", undefined, oTemplate, oModel);
+			},
+			"Should throw an error when root path is not provided for relative path."
+		);
+	});
+
+	QUnit.test("Template with mixture of binding paths and static values", function (assert) {
+		// Arrange
+		const oObject = new ManagedObject();
+
+		oObject.setModel(new JSONModel({
+			"textFromDefaultModel": "This is a static text from default model"
+		}));
+		oObject.setModel(new JSONModel({
+			content: {
+				items: [
+					{ id: "item1" },
+					{ id: "item2" }
+				]
+			}
+		}), "namedModel");
+
+		const oTemplate = {
+			"title": "Item id: {namedModel>id}, static text: {/textFromDefaultModel}",
+			"description": "Item description: {notExistingDescription}"
+		};
+		const aExpected = [
+			{
+				title: "Item id: item1, static text: This is a static text from default model",
+				description: "Item description: "
+			},
+			{
+				title: "Item id: item2, static text: This is a static text from default model",
+				description: "Item description: "
+			}
+		];
+
+		// Assert
+		assert.deepEqual(BindingResolver.resolveListBinding("namedModel>content/items", "namedModel>/", oTemplate, oObject), aExpected, "Should resolve list binding with template containing both binding paths and static values.");
+	});
+
 	QUnit.module("Resolve values that are already parsed");
 
 	QUnit.test("Object that is binding info with 'path'", function (assert) {

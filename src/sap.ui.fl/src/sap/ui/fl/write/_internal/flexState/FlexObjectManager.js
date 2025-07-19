@@ -520,6 +520,7 @@ sap.ui.define([
 			reference: sReference,
 			layer: mPropertyBag.layer
 		});
+		const bVersioningEnabled = oVersionModel && oVersionModel.getProperty("/versioningEnabled");
 		if (mPropertyBag.removeOtherLayerChanges && mPropertyBag.layer) {
 			await removeOtherLayerChanges(oAppComponent, mPropertyBag.layer, sReference);
 		}
@@ -536,8 +537,8 @@ sap.ui.define([
 			skipUpdateCache: mPropertyBag.skipUpdateCache,
 			condenseAnyLayer: mPropertyBag.condenseAnyLayer,
 			appComponent: oAppComponent,
-			parentVersion: oVersionModel ? oVersionModel.getProperty("/persistedVersion") : undefined,
-			draftFilenames: oVersionModel ? oVersionModel.getProperty("/draftFilenames") : undefined
+			parentVersion: bVersioningEnabled ? oVersionModel.getProperty("/persistedVersion") : undefined,
+			draftFilenames: bVersioningEnabled ? oVersionModel.getProperty("/draftFilenames") : undefined
 		});
 
 		if (bConsiderDraftHandling) {

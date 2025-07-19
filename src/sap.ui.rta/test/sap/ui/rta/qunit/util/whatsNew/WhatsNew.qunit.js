@@ -105,7 +105,7 @@ sap.ui.define([
 		},
 		async beforeEach() {
 			this.oFeaturesStub = sandbox.stub(WhatsNewUtils, "getFilteredFeatures").returns(aFeatureCollection);
-			await this.oWhatsNew.initializeWhatsNewDialog(["excludedFeature"]);
+			await this.oWhatsNew.initializeWhatsNewDialog([], ["excludedFeature"]);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
 			[this.oCarousel] = this.oWhatsNewDialog.getContent();
@@ -250,7 +250,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When the Dialog is opened with the wrong layer", async function(assert) {
 			this.oWhatsNew = new WhatsNew({ layer: "DEVELOPER" });
-			await this.oWhatsNew.initializeWhatsNewDialog();
+			await this.oWhatsNew.initializeWhatsNewDialog([]);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
 			assert.notOk(this.oWhatsNewDialog, "then the dialog is not opened");
@@ -260,9 +260,8 @@ sap.ui.define([
 			const aFilteredFeatures = await WhatsNewUtils.getFilteredFeatures([]);
 			const aFeatureIdList = aFilteredFeatures.map((oFeature) => oFeature.featureId);
 
-			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").resolves(aFeatureIdList);
 			this.oWhatsNew = new WhatsNew({ layer: "CUSTOMER" });
-			await this.oWhatsNew.initializeWhatsNewDialog();
+			await this.oWhatsNew.initializeWhatsNewDialog(aFeatureIdList);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");
 			await nextUIUpdate();
 			assert.notOk(this.oWhatsNewDialog, "then the dialog is not opened");
@@ -272,7 +271,7 @@ sap.ui.define([
 			const sLayer = "CUSTOMER";
 			const oSetSeenFeatureIdsSpy = sandbox.spy(FeaturesAPI, "setSeenFeatureIds");
 			this.oWhatsNew = new WhatsNew({ layer: sLayer });
-			await this.oWhatsNew.initializeWhatsNewDialog();
+			await this.oWhatsNew.initializeWhatsNewDialog([]);
 			const aFilteredFeatures = await WhatsNewUtils.getFilteredFeatures([]);
 			const aFeatureIdList = aFilteredFeatures.map((oFeature) => oFeature.featureId);
 			this.oWhatsNewDialog = Element.getElementById("sapUiRtaWhatsNewDialog");

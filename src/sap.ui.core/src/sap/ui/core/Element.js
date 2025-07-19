@@ -580,9 +580,15 @@ sap.ui.define([
 					oParent = oParent?.getParent();
 					oParentDomRef = oParent?.getDomRef?.();
 				} else {
-					// If the lost focus element is outside the parent, look for the parent's first focusable element
-					// jQuery Plugin "firstFocusableDomRef"
-					oFocusTarget = oParentDomRef && jQuery(oParentDomRef).firstFocusableDomRef();
+					// If the lost focus element is outside the parent, look for the parent's first focusable element (including the parent itself)
+					// jQuery custom selectors ":sapFocusable"
+					if (jQuery(oParentDomRef).is(":sapFocusable")) {
+						// If the parent is focusable, we can focus it
+						oFocusTarget = oParentDomRef;
+					} else {
+						// jQuery Plugin "firstFocusableDomRef"
+						oFocusTarget = oParentDomRef && jQuery(oParentDomRef).firstFocusableDomRef();
+					}
 					break;
 				}
 			} while ((!oRes || oRes.startOver) && oDomRef);
@@ -1305,7 +1311,8 @@ sap.ui.define([
 				// should not fire 'FocusFail' even when the oFocusDomRef isn't
 				// focusable because not all controls defines the 'getFocusDomRef'
 				// method properly
-				if (oDomRef && !oDomRef.contains(document.activeElement) ) {
+				if ((document.activeElement?.closest(".sapUiSkipFocusFail"))
+						|| (oDomRef && !oDomRef.contains(document.activeElement))) {
 					Element.fireFocusFail.call(this, FocusMode.DEFAULT);
 				}
 			}
