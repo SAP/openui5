@@ -52,7 +52,6 @@ sap.ui.define([
 			bHasGrandTotal) {
 		var fnCount = function () {}, // no specific handling needed for "UI5__count" here
 			fnLeaves = null,
-			fnResolve,
 			that = this;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, true);
@@ -68,10 +67,7 @@ sap.ui.define([
 		this.oCountPromise = undefined;
 		if (mQueryOptions.$count) {
 			if (oAggregation.hierarchyQualifier) {
-				this.oCountPromise = new SyncPromise(function (resolve) {
-					fnResolve = resolve;
-				});
-				this.oCountPromise.$resolve = fnResolve;
+				this.createCountPromise();
 			} else if (oAggregation.groupLevels.length) {
 				mQueryOptions.$$leaves = true; // do this after #getDownloadUrl
 				this.oCountPromise = new SyncPromise(function (resolve) {
@@ -174,9 +170,14 @@ sap.ui.define([
 				_Helper.getPrivateAnnotation(oElement, "transientPredicate"));
 		}
 
-		return SyncPromise.resolve(
-			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement})
-		).then(() => {
+		if (this.oCountPromise) {
+			this.createCountPromise();
+		}
+
+		return SyncPromise.all([
+			this.oRequestor.request("DELETE", sEditUrl, oGroupLock, {"If-Match" : oElement}),
+			this.readCount(oGroupLock)
+		]).then(() => {
 			this.oTreeState.delete(oElement);
 			// the element might have moved due to parallel insert/delete
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
@@ -657,6 +658,29 @@ sap.ui.define([
 
 			return oEntityData;
 		});
+	};
+
+	/**
+	 * Creates a new <code>this.oCountPromise</code> (suitable for a recursive hierarchy), which has
+	 * to be resolved by a following {@link #readCount} call. If the old count promise is still
+	 * pending, no new promise is created in order to avoid duplicate $count requests.
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.createCountPromise = function () {
+		const oOldCountPromise = this.oCountPromise;
+		if (oOldCountPromise?.isPending()) {
+			return;
+		}
+
+		let fnResolve;
+		this.oCountPromise = new SyncPromise(function (resolve) {
+			fnResolve = resolve;
+		});
+		this.oCountPromise.$resolve = fnResolve;
+		this.oCountPromise.$restore = () => {
+			fnResolve(oOldCountPromise);
+		};
 	};
 
 	/**
@@ -1908,7 +1932,11 @@ sap.ui.define([
 				+ this.oRequestor.buildQueryString(/*sMetaPath*/null, mQueryOptions);
 
 			return this.oRequestor.request("GET", sResourcePath, oGroupLock.getUnlockedCopy())
-				.then(fnResolve); // Note: $count is already of type number here
+				.then(fnResolve) // Note: $count is already of type number here
+				.catch((oError) => {
+					this.oCountPromise.$restore();
+					throw oError;
+				});
 		}
 	};
 
@@ -2398,8 +2426,7 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.reset = function (aKeptElementPredicates, sGroupId, mQueryOptions,
 			oAggregation, bIsGrouped) {
-		var fnResolve,
-			that = this;
+		var that = this;
 
 		if (bIsGrouped) {
 			throw new Error("Unsupported grouping via sorter");
@@ -2434,10 +2461,7 @@ sap.ui.define([
 		this.oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 		this.oCountPromise = undefined;
 		if (mQueryOptions.$count) {
-			this.oCountPromise = new SyncPromise(function (resolve) {
-				fnResolve = resolve;
-			});
-			this.oCountPromise.$resolve = fnResolve;
+			this.createCountPromise();
 		}
 		this.oFirstLevel = this.createGroupLevelCache();
 	};
