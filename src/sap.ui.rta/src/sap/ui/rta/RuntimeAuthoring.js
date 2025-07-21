@@ -263,11 +263,8 @@ sap.ui.define([
 				return FeaturesAPI.isSeenFeaturesAvailable();
 			}.bind(this))
 			.then(function(bIsAvailable) {
-				// The What's new should only be shown once per session
-				const sWhatsNewReloadFlag = "sap.ui.rta.dontShowWhatsNewAfterReload";
-				if (bIsAvailable && !window.sessionStorage.getItem(sWhatsNewReloadFlag)) {
+				if (bIsAvailable) {
 					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
-					window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 				}
 				this.addDependent(new GuidedTour(), "guidedTour");
 				return Promise.resolve();
@@ -511,18 +508,24 @@ sap.ui.define([
 
 			const bGuidedTourAutostart = await shouldAutoStartGuidedTour(this.getRootControlInstance(), this.getLayer(), aSeenFeatureIds);
 
+			// The What's new should only be shown once per session
+			const sWhatsNewReloadFlag = "sap.ui.rta.dontShowWhatsNewAfterReload";
+			const bShowWhatsNew = this.getWhatsNew && !window.sessionStorage.getItem(sWhatsNewReloadFlag);
+
 			if (bGuidedTourAutostart) {
 				const oGuidedTour = this.getGuidedTour();
 				oGuidedTour.attachTourClosed(() => {
-					if (this.getWhatsNew) {
+					if (bShowWhatsNew) {
 						// we want to exclude the guided tour feature from the whats new dialog if the tour opens before the dialog
 						const aExcludeGuidedTourFeature = ["GuidedTour"];
 						this.getWhatsNew().initializeWhatsNewDialog(aSeenFeatureIds, aExcludeGuidedTourFeature);
+						window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 					}
 				});
 				oGuidedTour.autoStart(GeneralTour.getTourContent());
-			} else if (this.getWhatsNew) {
+			} else if (bShowWhatsNew) {
 				this.getWhatsNew().initializeWhatsNewDialog(aSeenFeatureIds);
+				window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 			}
 
 			// PopupManager sets the toolbar to already open popups' autoCloseAreas
