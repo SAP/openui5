@@ -2673,6 +2673,137 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("Resolve ButtonGroup and IconGroup type items using named data section with base path", function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "card.bundle.object",
+				"type": "card",
+				"i18n": "i18n/i18n.properties"
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"request": {
+						"url": "./employee.json"
+					},
+					"name": "myDataSection",
+					"path": "myDataSection>/"
+				},
+				"header": {
+					"title": "Title"
+				},
+				"content": {
+					"groups": [{
+						"title": "Group Title",
+						"items": [
+							{
+								"label": "Icons",
+								"type": "IconGroup",
+								"path": "myDataSection>team",
+								"template": {
+									"icon": {
+										"src": "{myDataSection>imageUrl}",
+										"initials": "{= format.initials(${myDataSection>firstName} + ' ' + ${myDataSection>lastName}) }"
+									},
+									"actions": [{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{myDataSection>imageUrl}"
+										}
+									}]
+								}
+							},
+							{
+								"label": "Buttons",
+								"type": "ButtonGroup",
+								"path": "myDataSection>/attachments",
+								"template": {
+									"icon": "{myDataSection>icon}",
+									"text": "{myDataSection>title}",
+									"actions": [{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{myDataSection>url}"
+										}
+									}]
+								}
+							}
+						]
+					}
+					]
+				}
+			}
+		};
+
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				const oExpectedButtonGroup = {
+					"label": "Buttons",
+					"type": "ButtonGroup",
+					"items": [{
+						"icon": "sap-icon://excel-attachment",
+						"text": "Schedule",
+						"actions": [{
+							"type": "Navigation",
+							"parameters": {
+								"url": "./somefile.csv"
+							}
+						}]
+					},
+					{
+						"icon": "sap-icon://attachment",
+						"text": "Attachment 2",
+						"actions": [{
+							"type": "Navigation",
+							"parameters": {
+								"url": "./somefile.csv"
+							}
+						}]
+					}
+					]
+				};
+				const oExpectedIconGroup = {
+					"label": "Icons",
+					"type": "IconGroup",
+					"items": [
+						{
+							"icon": {
+								"src": "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/../../images/Woman_avatar_01.png",
+								"initials": "EE"
+							},
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {
+									"url": "../../images/Woman_avatar_01.png"
+								}
+							}]
+						},
+						{
+							"icon": {
+								"initials": "JM"
+							},
+							"actions": [{
+								"type": "Navigation",
+								"parameters": {}
+							}]
+						}
+					]
+				};
+				// Assert
+				assert.deepEqual(oRes["sap.card"].content.groups[0].items[0], oExpectedIconGroup);
+				assert.deepEqual(oRes["sap.card"].content.groups[0].items[1], oExpectedButtonGroup);
+
+				oCard.destroy();
+			});
+	});
+
 	QUnit.test("Resolve ButtonGroup and IconGroup type items using 2 data sections", function (assert) {
 		// Arrange
 		const oManifest = {

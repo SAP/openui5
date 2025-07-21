@@ -298,7 +298,7 @@ function (
 		assert.notStrictEqual(BindingHelper.prependRelativePaths(oBindingInfo, ""), oBindingInfo, "Parameter should be cloned.");
 	});
 
-	QUnit.test("Absolute paths are NOT be prepended", function (assert) {
+	QUnit.test("Absolute paths are NOT prepended", function (assert) {
 		// arrange
 		var oBindingInfo = {
 			path: "/absolute"
@@ -311,6 +311,19 @@ function (
 		assert.strictEqual(oRes.path, oBindingInfo.path, "Absolute path should NOT be prepended.");
 	});
 
+	QUnit.test("Absolute paths using named models are NOT prepended", function (assert) {
+		// arrange
+		var oBindingInfo = {
+			path: "someModel>/absolute"
+		};
+
+		// act
+		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "someModel>/root");
+
+		// assert
+		assert.strictEqual(oRes.path, oBindingInfo.path, "Absolute path should NOT be prepended.");
+	});
+
 	QUnit.test("Relative paths are prepended", function (assert) {
 		// arrange
 		var oBindingInfo = {
@@ -318,10 +331,36 @@ function (
 		};
 
 		// act
-		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "/root");
+		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "/root/");
 
 		// assert
 		assert.strictEqual(oRes.path, "/root/" + oBindingInfo.path, "Relative path should be prepended.");
+	});
+
+	QUnit.test("Relative paths using named models are prepended", function (assert) {
+		// arrange
+		var oBindingInfo = {
+			path: "someModel>relative"
+		};
+
+		// act
+		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "someModel>/root/");
+
+		// assert
+		assert.strictEqual(oRes.path, "someModel>/root/relative", "Relative path should be prepended.");
+	});
+
+	QUnit.test("Paths using different models are NOT prepended", function (assert) {
+		// arrange
+		var oBindingInfo = {
+			path: "someModel>relative"
+		};
+
+		// act
+		var oRes = BindingHelper.prependRelativePaths(oBindingInfo, "/root/");
+
+		// assert
+		assert.strictEqual(oRes.path, "someModel>relative", "Relative path from different model should NOT be prepended.");
 	});
 
 	QUnit.test("'parts' of the binding info are also processed", function (assert) {
@@ -358,7 +397,7 @@ function (
 		];
 
 		// act
-		var aResult = BindingHelper.prependRelativePaths(aValues, "/items");
+		var aResult = BindingHelper.prependRelativePaths(aValues, "/items/");
 
 		// assert
 		assert.strictEqual(oSpy.callCount, 3, "All values of the given array should be processed.");
@@ -396,7 +435,7 @@ function (
 		};
 
 		// act
-		var oResult = BindingHelper.prependRelativePaths(oValue, "/items");
+		var oResult = BindingHelper.prependRelativePaths(oValue, "/items/");
 
 		// assert
 		assert.strictEqual(oSpy.callCount, 9, "All values should be processed.");
@@ -407,6 +446,33 @@ function (
 
 		// clean up
 		oSpy.restore();
+	});
+
+	QUnit.module("Static method #prependPath");
+
+	QUnit.test("Relative paths", function (assert) {
+		assert.strictEqual(BindingHelper.prependPath("", "/root"), "/root/", "Empty path should be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("", "/root/"), "/root/", "Empty path should be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("", "someName>/root"), "someName>/root/", "Empty path should be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("", "someName>/root/"), "someName>/root/", "Empty path should be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("some/path", "/root"), "/root/some/path", "Relative path should be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("some/path", "/root/"), "/root/some/path", "Relative path should be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath(undefined, "/root"), undefined, "'undefined' path should NOT be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath(null, "/root"), null, "'null' path should NOT be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("someName>some/path", "/root"), "someName>some/path", "Relative path with model name should NOT be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("someName>some/path", "/root/"), "someName>some/path", "Relative path with model name should NOT be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("someName>some/path", "someName>/root"), "someName>/root/some/path", "Relative path with model name should be prepended with the root of the same model.");
+		assert.strictEqual(BindingHelper.prependPath("someName>some/path", "someName>/root/"), "someName>/root/some/path", "Relative path with model name should be prepended with the root of the same model.");
+		assert.strictEqual(BindingHelper.prependPath("someName>", "someName>/root"), "someName>/root/", "Relative path with model name should be prepended with the root of the same model.");
+		assert.strictEqual(BindingHelper.prependPath("someName>", "someName>/root/"), "someName>/root/", "Relative path with model name should be prepended with the root of the same model.");
+		assert.strictEqual(BindingHelper.prependPath("someName>some/path", "otherModel>/root"), "someName>some/path", "Relative path with model name should NOT be prepended with the root of another model.");
+	});
+
+	QUnit.test("Absolute paths", function (assert) {
+		assert.strictEqual(BindingHelper.prependPath("/absolute", "/root"), "/absolute", "Absolute path should NOT be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("someName>/absolute", "/root"), "someName>/absolute", "Absolute path with model name should NOT be prepended with the root.");
+		assert.strictEqual(BindingHelper.prependPath("someName>/absolute", "someName>/root"), "someName>/absolute", "Absolute path with model name should NOT be prepended with the root of the same model.");
+		assert.strictEqual(BindingHelper.prependPath("someName>/absolute", "otherModel>/root"), "someName>/absolute", "Absolute path with model name should NOT be prepended with the root of another model.");
 	});
 
 	QUnit.module("Static method #propagateModels");

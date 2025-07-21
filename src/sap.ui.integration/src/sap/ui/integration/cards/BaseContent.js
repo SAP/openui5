@@ -966,5 +966,17 @@ sap.ui.define([
 		return this.hasListeners("press");
 	};
 
+	BaseContent.prototype.getDataPath = function () {
+		if (this._sContentBindingPath === null) {
+			return "";
+		}
+
+		return this._sContentBindingPath;
+	};
+
+	BaseContent.prototype.getCardDataPath = function () {
+		return this.getCardInstance()?._getDataPath();
+	};
+
 	return BaseContent;
 });
