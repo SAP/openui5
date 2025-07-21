@@ -191,5 +191,15 @@
         "text": " odata.v4.TableDelegate: Clear selection when updating the binding"
       }
     ]
+  },
+  "1.108.43": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "04e9a9542a3a26cabc983fdb201b345abeecbe99",
+        "type": "FIX",
+        "text": " MDC: Include AdaptationFilterBar triggerSearch before invalidation"
+      }
+    ]
   }
 }

@@ -742,5 +742,20 @@
         "text": " sap/ui/model/odata/v2/ODataModel: updating properties of type Edm.Binary"
       }
     ]
+  },
+  "1.108.43": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "c3f6297c32c5bb3e8e031f8f72300738758aad9a",
+        "type": "FIX",
+        "text": " Introduce caching for sap/base/i18n/Localization"
+      },
+      {
+        "id": "19eaf993163c400dd9adff022b9c6146ccac17f4",
+        "type": "FIX",
+        "text": " sap.ui.core.format.NumberFormat: Invalid groupingSize configuration disables grouping"
+      }
+    ]
   }
 }

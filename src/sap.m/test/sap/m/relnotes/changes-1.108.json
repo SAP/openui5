@@ -1897,5 +1897,20 @@
         "text": " sap.ui.unified.calendar.Month: Improve day re-rendering peformance"
       }
     ]
+  },
+  "1.108.43": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "d96c575cdd4ded7ad010ef66720e20572f61cd4f",
+        "type": "FIX",
+        "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
+      },
+      {
+        "id": "074023accd509aa5b1500276fe800e52f8a79a89",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments customData aggregation is written in DOM now"
+      }
+    ]
   }
 }
