@@ -291,10 +291,11 @@ sap.ui.define([
 
 	/**
 	 * Waits for the registered indicators to be rendered.
-	 * @returns {Promise} Resolves when all registered indicators are rendered.
+	 * @returns {Promise} Resolves when all visible indicators are rendered.
 	 */
 	ChangeIndicatorRegistry.prototype.waitForIndicatorRendering = function() {
-		return Promise.all(this.getChangeIndicators().map((oIndicator) => oIndicator.waitForRendering()));
+		const aVisibleIndicators = this.getChangeIndicators().filter((oIndicator) => oIndicator.getVisible());
+		return Promise.all(aVisibleIndicators.map((oIndicator) => oIndicator.waitForRendering()));
 	};
 
 	/**

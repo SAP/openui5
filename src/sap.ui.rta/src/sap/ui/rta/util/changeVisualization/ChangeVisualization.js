@@ -631,7 +631,7 @@ sap.ui.define([
 		// Set the tabindex according the sorting
 		// Focus the first visible indicator
 		await this._oChangeIndicatorRegistry.waitForIndicatorRendering();
-		const aVisibleIndicators = [];
+
 		this._oChangeIndicatorRegistry.getChangeIndicators().forEach((oIndicator) => {
 			const oOverlay = OverlayRegistry.getOverlay(oIndicator.getOverlayId());
 			// As setting the focus happens asynchronously after rendering,
@@ -641,12 +641,12 @@ sap.ui.define([
 			}
 			if (oIndicator.getVisible()) {
 				oOverlay.setFocusable(true);
-				aVisibleIndicators.push(oIndicator);
 			} else {
 				oOverlay.setFocusable(false);
 			}
 		});
 
+		const aVisibleIndicators = this._oChangeIndicatorRegistry.getChangeIndicators().filter((oIndicator) => oIndicator.getVisible());
 		if (aVisibleIndicators.length > 0) {
 			aVisibleIndicators.sort(function(oIndicator1, oIndicator2) {
 				const iDeltaY = oIndicator1.getPosY() - oIndicator2.getPosY();

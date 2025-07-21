@@ -1427,6 +1427,54 @@ sap.ui.define([
 				"then back in adaptation mode the overlay without change is focusable again"
 			);
 		});
+
+		QUnit.test("overlay focusability on category change", async function(assert) {
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1"),
+				createMockChange("testRename2", "rename", "Comp1---idMain1--rb2"),
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
+			]);
+			await startRta.call(this);
+			await startVisualization.call(this, this.oRta);
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
+			await this.oChangeVisualization._oChangeIndicatorRegistry.waitForIndicatorRendering();
+			await nextUIUpdate();
+			const oOverlayRename1 = OverlayRegistry.getOverlay("Comp1---idMain1--Label1");
+			assert.strictEqual(
+				oOverlayRename1.getFocusable(),
+				true,
+				"then the overlay with rename change is focusable when category 'ALL' is selected");
+			const oOverlayRename2 = OverlayRegistry.getOverlay("Comp1---idMain1--rb2");
+			assert.strictEqual(
+				oOverlayRename2.getFocusable(),
+				true,
+				"then the overlay with the second rename change is focusable when category 'ALL' is selected"
+			);
+			const oOverlayAdd = OverlayRegistry.getOverlay("Comp1---idMain1--rb1");
+			assert.strictEqual(
+				oOverlayAdd.getFocusable(),
+				true,
+				"then the overlay with add change is focusable when category 'ALL' is selected"
+			);
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("rename"));
+			await this.oChangeVisualization._oChangeIndicatorRegistry.waitForIndicatorRendering();
+			await nextUIUpdate();
+			assert.strictEqual(
+				oOverlayRename1.getFocusable(),
+				true,
+				"After switching to rename, the overlay with rename change is still focusable"
+			);
+			assert.strictEqual(
+				oOverlayRename2.getFocusable(),
+				true,
+				"After switching to rename, the overlay with the second rename change is still focusable"
+			);
+			assert.strictEqual(
+				oOverlayAdd.getFocusable(),
+				false,
+				"After switching to rename, the overlay with the add change is not focusable any more"
+			);
+		});
 	});
 
 	QUnit.module("On Save", {
