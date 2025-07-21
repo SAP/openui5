@@ -673,12 +673,7 @@ function(
 			}
 
 			if (vItem) {
-				var sSeparator = "\u2013",
-					sMainText = vItem?.getParent() ? vItem.getText() : null,
-					sAdditionalText = vItem?.getParent() ? vItem.getAdditionalText?.() : null,
-					sText = sAdditionalText && this.getShowSecondaryValues() ? `${sMainText} ${sSeparator} ${sAdditionalText}` : sMainText;
-
-				return sText;
+				return vItem.getText();
 			}
 
 			return "";
@@ -1519,7 +1514,6 @@ function(
 			this._attachHiddenSelectHandlers();
 			this._clearReferencingLabelsHandlers();
 			this._handleReferencingLabels();
-			this._updateToolTip();
 		};
 
 		Select.prototype.exit = function() {
@@ -3303,54 +3297,6 @@ function(
 				oInfo.description = sDescription;
 			}
 			return oInfo;
-		};
-
-		Select.prototype._updateToolTip = function() {
-			var sTooltip = this.getTooltip_AsString(),
-				oFocusableDomRef = this.getFocusDomRef(),
-				bIconOnly = this.getType() === SelectType.IconOnly,
-				oIconInfo;
-
-			if (!this.getEnabled()) {
-				return;
-			}
-
-			if (!sTooltip && bIconOnly) {
-				oIconInfo = IconPool.getIconInfo(this.getIcon());
-				if (oIconInfo) {
-					sTooltip = oIconInfo.text;
-				}
-			}
-
-			if (sTooltip) {
-				this._setTooltip(sTooltip);
-				bIconOnly && oFocusableDomRef.setAttribute("aria-label", sTooltip);
-			} else if (!this.getEditable() && this._isTextTruncated() && !bIconOnly) {
-				// if the control is not editable and the text is truncated, set the tooltip to the selected item text
-				this._setTooltip(this._getSelectedItemText());
-			}
-		};
-
-		Select.prototype._setTooltip = function (sTooltip) {
-			var oFocusableDomRef = this.getFocusDomRef();
-
-			oFocusableDomRef.setAttribute("title", sTooltip);
-			this.$().find(".sapMSltLabel").attr("title", sTooltip);
-			this.$().find(".sapMSltArrow").attr("title", sTooltip); //IconOnly does not have arrow
-		};
-
-		Select.prototype._isTextTruncated = function () {
-			var oLabel = this.getDomRef().querySelector(".sapMSltLabel");
-
-			if (!oLabel) {
-				return false;
-			}
-
-			if (oLabel.scrollWidth > oLabel.clientWidth) {
-				return true;
-			}
-
-			return false;
 		};
 
 		/**
