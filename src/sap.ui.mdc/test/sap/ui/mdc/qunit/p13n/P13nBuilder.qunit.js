@@ -1,5 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/p13n/BasePanel",
 	"sap/ui/model/json/JSONModel",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
     "sap/ui/fl/write/api/FieldExtensibility",
     "sap/ui/rta/Utils"
-], function(P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
+], function(Library, P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -280,11 +281,83 @@ sap.ui.define([
                     FieldExtensibility.onControlSelected.restore();
                     Utils.isServiceUpToDate.restore();
                     FieldExtensibility.isExtensibilityEnabled.restore();
+					oLibraryResourceBundleStub.restore();
                     done();
                 });
+        });
+    });
 
+	QUnit.test("loadFlex: is called before addRTACustomFieldButton", function(assert){
+		// SNOW: CS20250010082539
+        const done = assert.async();
+
+        // Arrange
+        sinon.stub(FieldExtensibility, "onControlSelected").returns(Promise.resolve(undefined));
+        sinon.stub(Utils, "isServiceUpToDate").returns(Promise.resolve(false));
+        sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
+        const oLoadLibrarySpy = sinon.spy(Library, "load");
+
+        const oLibraryResourceBundleStub = sinon.stub(Library.getResourceBundleFor("sap.ui.mdc"), "getText");
+        oLibraryResourceBundleStub.withArgs("p13nDialog.rtaAddTooltip").returns("OK");
+
+        const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+        const oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
+
+        P13nBuilder.createP13nDialog(oPanel, {
+            title: "Test",
+            reset: {
+                onExecute: function() {}
+            },
+            id: "myTestDialog"
+        }).then(function(oDialog){
+            // Arrange
+            P13nBuilder.addRTACustomFieldButton(oDialog)
+                .then(function(oDialogEnhanced) {
+                    assert.ok(oLoadLibrarySpy.called, "_loadLibrary");
+                    assert.ok(oLoadLibrarySpy.calledBefore(FieldExtensibility.onControlSelected), "called before onControlSelected");
+                    assert.ok(oLoadLibrarySpy.calledBefore(Utils.isServiceUpToDate), "called before isServiceUpToDate");
+					assert.ok(oLoadLibrarySpy.calledBefore(FieldExtensibility.isExtensibilityEnabled), "called before isExtensibilityEnabled");
+                })
+                .finally(function () {
+                    // Cleanup
+                    oDialog.destroy();
+                    FieldExtensibility.onControlSelected.restore();
+                    Utils.isServiceUpToDate.restore();
+                    FieldExtensibility.isExtensibilityEnabled.restore();
+					oLibraryResourceBundleStub.restore();
+                    oLoadLibrarySpy.restore();
+                    done();
+                });
         });
 
+    });
+
+	QUnit.test("loadFlex: loads flex correctly", function(assert){
+        const done = assert.async();
+
+		// Arrange
+        const oLibraryResourceBundleStub = sinon.stub(Library.getResourceBundleFor("sap.ui.mdc"), "getText");
+        oLibraryResourceBundleStub.withArgs("p13nDialog.rtaAddTooltip").returns("OK");
+
+        const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);
+        const oPanel = new BasePanel();
+        oPanel.setP13nData(oP13nData.items);
+
+		delete P13nBuilder._oFlLibrary;
+		// Assert
+		assert.notOk(P13nBuilder._oFlLibrary, "P13nBuilder._oFlLibrary is not set yet");
+
+		// Act
+        const oPromise = P13nBuilder._loadFlex();
+
+		// Assert
+		assert.ok(oPromise instanceof Promise, "_loadFlex returns a Promise");
+
+		oPromise.then(function(oFlexData) {
+			assert.ok(P13nBuilder._oFlLibrary, "P13nBuilder._oFlLibrary is set");
+			done();
+		});
     });
 
 });
