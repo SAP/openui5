@@ -219,7 +219,7 @@ sap.ui.define([
 		const oResult1 = await ManifestResolver.resolveCard(oCard);
 		const oHeader1 = oResult1["sap.card"].header;
 		assert.strictEqual(oHeader1.title, "SAC Card", "Title is correct after first state change.");
-		assert.notOk(oHeader1.subtitle, "Subtitle is correct after first state change.");
+		assert.notOk(oHeader1.subTitle, "Subtitle is correct after first state change.");
 
 		// Simulate successful rendering
 		const oOptions = sap.sac.api.widget.renderWidget.firstCall.args[4];
@@ -231,7 +231,7 @@ sap.ui.define([
 		const oResult2 = await ManifestResolver.resolveCard(oCard);
 		const oHeader2 = oResult2["sap.card"].header;
 		assert.strictEqual(oHeader2.title, "Gross Margin, Quantity sold per City", "Title is correct after second state change.");
-		assert.strictEqual(oHeader2.subtitle, "Year to date", "Subtitle is correct after second state change.");
+		assert.strictEqual(oHeader2.subTitle, "Year to date", "Subtitle is correct after second state change.");
 
 		// Clean up
 		oCard.destroy();

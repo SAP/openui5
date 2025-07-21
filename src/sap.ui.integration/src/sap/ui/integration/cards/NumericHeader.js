@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/util/extend",
+	"sap/base/util/merge",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
@@ -13,9 +14,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
+	"sap/ui/integration/util/subtitleToSubTitle",
 	"sap/ui/integration/controls/Microchart"
 ], function (
 	extend,
+	merge,
 	FNumericHeader,
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
@@ -26,6 +29,7 @@ sap.ui.define([
 	JSONModel,
 	BindingResolver,
 	LoadingProvider,
+	subtitleToSubTitle,
 	Microchart
 ) {
 	"use strict";
@@ -167,6 +171,8 @@ sap.ui.define([
 			}
 		}
 
+		oHeader._oConfiguration = mConfiguration;
+
 		return oHeader;
 	};
 
@@ -253,7 +259,6 @@ sap.ui.define([
 		}.bind(this)));
 	};
 
-
 	NumericHeader.prototype.setServiceManager = function (oServiceManager) {
 		this._oServiceManager = oServiceManager;
 		return this;
@@ -262,6 +267,17 @@ sap.ui.define([
 	NumericHeader.prototype.setDataProviderFactory = function (oDataProviderFactory) {
 		this._oDataProviderFactory = oDataProviderFactory;
 		return this;
+	};
+
+	/**
+	 * @returns {object} Header configuration with static values.
+	 */
+	NumericHeader.prototype.getStaticConfiguration = function () {
+		const oConfiguration = merge({}, this._oConfiguration);
+
+		subtitleToSubTitle(oConfiguration);
+
+		return oConfiguration;
 	};
 
 	/**
