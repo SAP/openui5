@@ -51,7 +51,7 @@
 		"type": "List",
 		"header": {
 			"title": "{{TITLE}}",
-			"subTitle": "{{SUBTITLE}}",
+			"subtitle": "{{SUBTITLE}}",
 			"icon": {
 				"src": "sap-icon://product"
 			},

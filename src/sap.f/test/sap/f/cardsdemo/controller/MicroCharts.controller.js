@@ -15,7 +15,7 @@ sap.ui.define([
 			"header": {
 				"type": "Numeric",
 				"title": "Income from products",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"status": {
 					"text": "5 of 20"
 				},

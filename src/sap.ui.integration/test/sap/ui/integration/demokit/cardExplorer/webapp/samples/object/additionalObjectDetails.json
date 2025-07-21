@@ -33,7 +33,7 @@
 				"shape": "Square"
 			},
 			"title": "ACME Consulting",
-			"subTitle": "Overdue Billing"
+			"subtitle": "Overdue Billing"
 		},
 		"content": {
 			"data": {

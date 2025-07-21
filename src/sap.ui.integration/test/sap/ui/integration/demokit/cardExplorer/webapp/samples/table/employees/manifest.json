@@ -20,7 +20,7 @@
 		"type": "Table",
 		"header": {
 			"title": "Employees Info",
-			"subTitle": "Birthdates of Employees"
+			"subtitle": "Birthdates of Employees"
 		},
 		"content": {
 			"data": {

@@ -57,7 +57,7 @@ sap.ui.define([
 			"header": {
 				"title": "L3 Request list content Card",
 				"titleMaxLines": 1,
-				"subTitle": "Card subtitle",
+				"subtitle": "Card subtitle",
 				"icon": {
 					"src": "sap-icon://accept"
 				},
@@ -142,7 +142,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "List Card",
-				"subTitle": "With static list items",
+				"subtitle": "With static list items",
 				"icon": {
 					"src": "sap-icon://business-objects-experience"
 				},

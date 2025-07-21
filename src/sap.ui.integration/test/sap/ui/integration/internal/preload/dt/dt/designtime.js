@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"cols": 1
 					},
 					"subtitle": {
-						"manifestpath": "/sap.card/header/subTitle",
+						"manifestpath": "/sap.card/header/subtitle",
 						"type": "string",
 						"translatable": true,
 						"label": "Card Subtitle",

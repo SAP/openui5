@@ -24,7 +24,7 @@ sap.ui.define([
 					}
 				],
 				"title": "Top 5 Products",
-				"subTitle": "These are the top sellers this month",
+				"subtitle": "These are the top sellers this month",
 				"icon": {
 					"src": "sap-icon://desktop-mobile",
 					"alt": "Desktop-mobile icon"
@@ -81,7 +81,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "Top 5 Products",
-				"subTitle": "These are the top sellers this month",
+				"subtitle": "These are the top sellers this month",
 				"icon": {
 					"src": "sap-icon://desktop-mobile",
 					"alt": "Desktop-mobile icon"

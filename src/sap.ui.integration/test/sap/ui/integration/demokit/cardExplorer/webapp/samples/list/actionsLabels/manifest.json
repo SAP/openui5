@@ -30,7 +30,7 @@
 		"type": "List",
 		"header": {
 			"title": "{parameters>/title/value}",
-			"subTitle": "{parameters>/subTitle/value}",
+			"subtitle": "{parameters>/subtitle/value}",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},
@@ -44,7 +44,7 @@
 				"title": {
 					"value": "List Card with Top 4 Products"
 				},
-				"subTitle": {
+				"subtitle": {
 					"value": "These are the top sellers this month"
 				},
 				"maxItems": {

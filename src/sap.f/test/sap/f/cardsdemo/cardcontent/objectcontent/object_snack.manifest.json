@@ -31,7 +31,7 @@
 		"header": {
 			"type": "Numeric",
 			"title": "Julia Neil",
-			"subTitle": "Complete your time recording",
+			"subtitle": "Complete your time recording",
 			"mainIndicator": {
 				"number": "35",
 				"unit": "h",

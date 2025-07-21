@@ -34,7 +34,7 @@
 		},
 		"header": {
 			"title": "Products",
-			"subTitle": "In Stock Information",
+			"subtitle": "In Stock Information",
 			"icon": {
 				"src": "sap-icon://product"
 			},

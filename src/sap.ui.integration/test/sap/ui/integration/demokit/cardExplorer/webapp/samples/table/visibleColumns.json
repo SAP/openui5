@@ -120,7 +120,7 @@
 		},
 		"header": {
 			"title": "Sales Orders for Key Accounts",
-			"subTitle": "Today"
+			"subtitle": "Today"
 		},
 		"content": {
 			"data": {

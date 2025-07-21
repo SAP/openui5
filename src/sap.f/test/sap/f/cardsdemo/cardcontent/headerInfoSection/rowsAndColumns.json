@@ -22,7 +22,7 @@
 				}
 			],
 			"title": "Header Info Section with Flex Layout",
-			"subTitle": "Revenue",
+			"subtitle": "Revenue",
 			"unitOfMeasurement": "EUR",
 			"infoSection": {
 				"rows": [

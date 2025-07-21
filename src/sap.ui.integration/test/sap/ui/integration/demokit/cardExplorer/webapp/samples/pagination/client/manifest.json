@@ -35,8 +35,8 @@
 		"header": {
 			"title": "Available Products in Store with Stock Details per Category",
 			"titleMaxLines": 1,
-			"subTitle": "In Stock Information - Presented Units Depend on the Product Category",
-			"subTitleMaxLines": 1,
+			"subtitle": "In Stock Information - Presented Units Depend on the Product Category",
+			"subtitleMaxLines": 1,
 			"icon": {
 				"src": "sap-icon://product"
 			},

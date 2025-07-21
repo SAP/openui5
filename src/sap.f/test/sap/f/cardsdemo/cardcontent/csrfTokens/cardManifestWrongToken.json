@@ -52,7 +52,7 @@
 		},
 		"header": {
 			"title": "Wrong Token URL",
-			"subTitle": "(token someWrongTokenUrl/Tokens)"
+			"subtitle": "(token someWrongTokenUrl/Tokens)"
 		},
 		"content": {
 			"data": {

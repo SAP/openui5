@@ -35,7 +35,7 @@ sap.ui.define([
 						"type": "Object",
 						"header": {
 							"title": sLongText,
-							"subTitle": sLongText
+							"subtitle": sLongText
 						},
 						"content": { }
 					}
@@ -66,7 +66,7 @@ sap.ui.define([
 						"header": {
 							"type": "Numeric",
 							"title": sLongText,
-							"subTitle": sLongText,
+							"subtitle": sLongText,
 							"details": sLongText,
 							"sideIndicators": [
 								{

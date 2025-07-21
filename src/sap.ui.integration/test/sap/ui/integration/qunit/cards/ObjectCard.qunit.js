@@ -90,7 +90,7 @@ sap.ui.define([
 					"src": "{photo}"
 				},
 				"title": "{firstName} {lastName}",
-				"subTitle": "{position}"
+				"subtitle": "{position}"
 			},
 			"content": {
 				"groups": [{
@@ -265,7 +265,7 @@ sap.ui.define([
 					"src": "{photo}"
 				},
 				"title": "{firstName} {lastName}",
-				"subTitle": "{position}"
+				"subtitle": "{position}"
 			},
 			"content": {
 				"groups": [{
@@ -720,7 +720,7 @@ sap.ui.define([
 					"src": "sap-icon://product"
 				},
 				"title": "PR255 - MacBook Purchase",
-				"subTitle": "Procurement Purchase Requisition"
+				"subtitle": "Procurement Purchase Requisition"
 			},
 			"content": {
 				"groups": [
@@ -860,7 +860,7 @@ sap.ui.define([
 					"src": "sap-icon://product"
 				},
 				"title": "PR255 - MacBook Purchase",
-				"subTitle": "Procurement Purchase Requisition"
+				"subtitle": "Procurement Purchase Requisition"
 			},
 			"content": {
 				"groups": [
@@ -1016,7 +1016,7 @@ sap.ui.define([
 					"src": "{photo}"
 				},
 				"title": "{firstName} {lastName}",
-				"subTitle": "{position}"
+				"subtitle": "{position}"
 			},
 			"content": {
 				"groups": [{
@@ -1737,7 +1737,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "Donna Moore",
-					"subTitle": "Complete your time recording",
+					"subtitle": "Complete your time recording",
 					"visible": false
 				},
 				"content": {
@@ -3297,7 +3297,7 @@ sap.ui.define([
 										"overlay": {
 											"supertitle": "Sun, May 28",
 											"title": "Hello, John",
-											"subTitle": "Today will be a good day!",
+											"subtitle": "Today will be a good day!",
 											"textColor": "#fff",
 											"verticalPosition": "Center",
 											"horizontalPosition": "End",
@@ -3370,7 +3370,7 @@ sap.ui.define([
 		assert.equal(aGroups[0].getItems()[0].getTooltip(), "Green grass", "Image's tooltip is correctly set.");
 		assert.equal(aGroups[0].getItems()[0].getSupertitle(), "Sun, May 28", "Image's supertitle is correctly set.");
 		assert.equal(aGroups[0].getItems()[0].getTitle(), "Hello, John", "Image's title is correctly set.");
-		assert.equal(aGroups[0].getItems()[0].getSubTitle(), "Today will be a good day!", "Image's subtitle is correctly set.");
+		assert.equal(aGroups[0].getItems()[0].getSubtitle(), "Today will be a good day!", "Image's subtitle is correctly set.");
 		assert.equal(aGroups[0].getItems()[0].getVerticalPosition(), "Center", "Image's verticalPosition is correctly set.");
 		assert.equal(aGroups[0].getItems()[0].getHorizontalPosition(), "End", "Image's horizontalPosition is correctly set.");
 		assert.equal(aGroups[0].getItems()[0].getTextColor(), "#fff", "Image's textColor is correctly set.");
@@ -3492,5 +3492,57 @@ sap.ui.define([
 
 			done();
 		});
+	});
+
+	QUnit.module("Test deprecated image overlay subTitle", {
+		beforeEach: function() {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
+				manifest: {
+					"sap.app": {
+						"id": "test.cards.object.card2",
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "Object",
+						"header": {
+							"title": "Title"
+						},
+						"content": {
+							"groups": [{
+								"items": [
+									{
+										"type": "Image",
+										"overlay": {
+											"subTitle": "Today will be a good day!"
+										}
+									}
+								]
+							}]
+						}
+					}
+				}
+			});
+
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Check that the deprecated subTitle property still works", async function (assert) {
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		var oObjectContent = this.oCard.getAggregation("_content");
+		var oContent = oObjectContent.getAggregation("_content");
+		var aGroups = oContent.getItems()[0].getContent();
+
+		// Image
+		assert.equal(aGroups[0].getItems()[0].getSubtitle(), "Today will be a good day!", "Image's subtitle is correctly set.");
 	});
 });

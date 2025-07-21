@@ -13,7 +13,7 @@
 		},
 		"header": {
 			"title": "Products",
-			"subTitle": "{= format.text(${i18n>subtitle_data_count}, [${uniqueCategories}, ${count}]) }",
+			"subtitle": "{= format.text(${i18n>subtitle_data_count}, [${uniqueCategories}, ${count}]) }",
 			"status": {
 				"text": {
 					"format": {

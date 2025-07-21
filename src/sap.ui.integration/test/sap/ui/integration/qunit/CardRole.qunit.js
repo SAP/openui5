@@ -27,7 +27,7 @@ sap.ui.define([
 							"type": "Object",
 							"header": {
 								"title": sLongText,
-								"subTitle": sLongText
+								"subtitle": sLongText
 							},
 							"content": {
 								"groups": []
@@ -64,7 +64,7 @@ sap.ui.define([
 							"type": "Object",
 							"header": {
 								"title": sLongText,
-								"subTitle": sLongText
+								"subtitle": sLongText
 							},
 							"content": {
 								"groups": []

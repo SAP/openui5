@@ -108,7 +108,7 @@
 	  },
 	  "header": {
 		"title": "Card Action",
-		"subTitle": "Today"
+		"subtitle": "Today"
 	  },
 	  "content": {
 		"maxItems": 3,

@@ -82,7 +82,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -450,7 +450,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle"
+					"subtitle": "Card subtitle"
 				},
 				"content": {
 					"data": {
@@ -1488,7 +1488,7 @@ sap.ui.define([
 							}
 						],
 						"title": "L3 Request list content Card",
-						"subTitle": "Card subtitle",
+						"subtitle": "Card subtitle",
 						"icon": {
 							"initials": "AJ",
 							"shape": "Circle",
@@ -1564,7 +1564,7 @@ sap.ui.define([
 							}
 						},
 						"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-						"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+						"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 						"unitOfMeasurement": "EUR",
 						"mainIndicator": {
 							"number": "{n}",
@@ -3387,7 +3387,7 @@ sap.ui.define([
 							}
 						},
 						"title": "Top 5 Products Sales",
-						"subTitle": "By Average Price",
+						"subtitle": "By Average Price",
 						"unitOfMeasurement": "EUR",
 						"mainIndicator": {
 							"number": "{number}",

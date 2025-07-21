@@ -38,7 +38,7 @@
 		},
 		"header": {
 			"title": "No cache",
-			"subTitle": "{firstName} {lastName} {position}"
+			"subtitle": "{firstName} {lastName} {position}"
 		},
 		"content": {
 			"groups": [

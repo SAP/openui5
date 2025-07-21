@@ -32,7 +32,7 @@
 				"src": "sap-icon://end-user-experience-monitoring"
 			},
 			"title": "Running distance",
-			"subTitle": "Data from last competition"
+			"subtitle": "Data from last competition"
 		},
 		"content": {
 			"groups": [

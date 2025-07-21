@@ -24,7 +24,7 @@
 		"type": "List",
 		"header": {
 			"title": "Discount status",
-			"subTitle": "Discounts exceeding {= format.percent(0.50)} are highlighted as important",
+			"subtitle": "Discounts exceeding {= format.percent(0.50)} are highlighted as important",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},

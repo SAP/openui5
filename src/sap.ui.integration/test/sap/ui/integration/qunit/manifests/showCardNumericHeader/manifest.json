@@ -103,7 +103,7 @@
 			"status": {
 				"text": "Visible {parameters>/visibleItems}"
 			},
-			"subTitle": "By Average Price",
+			"subtitle": "By Average Price",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"number": "{number}",

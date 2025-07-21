@@ -31,7 +31,7 @@
 		},
 		"header": {
 			"title": "Adaptive Card - Inline Templating",
-			"subTitle": "Templating using 'data' on 'card' level",
+			"subtitle": "Templating using 'data' on 'card' level",
 			"icon": {
 				"src": "sap-icon://sap-ui5"
 			}

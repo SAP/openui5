@@ -4,7 +4,7 @@
 		"id": "card.explorer.adaptive.extensionSample",
 		"i18n": "i18n/i18n.properties",
 		"title":"Extension, Adaptive Card",
-		"subTitle": "Extension, Adaptive Card, Submit and Error handling",
+		"subtitle": "Extension, Adaptive Card, Submit and Error handling",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
@@ -53,7 +53,7 @@
 		"type": "AdaptiveCard",
 		"header": {
 			"title": "Edit product from Northwind",
-			"subTitle": "ProductID: {parameters>/productId/value}"
+			"subtitle": "ProductID: {parameters>/productId/value}"
 		},
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

@@ -30,7 +30,7 @@
 		"extension": "./DetailsDialogExtension",
 		"header": {
 			"title": "Join Next Meeting",
-			"subTitle": "Starts in 2 Hours",
+			"subtitle": "Starts in 2 Hours",
 			"icon": {
 				"src": "sap-icon://appointment"
 			},

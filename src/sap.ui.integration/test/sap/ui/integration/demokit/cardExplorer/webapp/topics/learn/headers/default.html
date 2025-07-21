@@ -68,11 +68,15 @@
 						<td>1.107</td>
 					</tr>
 					<tr>
-						<td>subTitle</td>
+						<td>subtitle</td>
 						<td>string</td>
 						<td></td>
 						<td>No</td>
-						<td>The subtitle.</td>
+						<td>
+							The subtitle.
+							<br>
+							<b>Note:</b> The property subTitle (with capital T) is now deprecated. Use subtitle instead.
+						</td>
 						<td>1.14.0</td>
 						<td>1.64</td>
 					</tr>
@@ -84,6 +88,8 @@
 						<td>
 							Limits the number of lines for the subtitle.<br>
 							<b>Note:</b> This property is experimental and may change!
+							<br>
+							<b>Note:</b> The property subTitleMaxLines (with capital T) is now deprecated. Use subtitleMaxLines instead.
 						</td>
 						<td>1.47.0</td>
 						<td>1.107</td>
@@ -313,7 +319,7 @@
 
 			<pre class="lang-json">"header": {
 	"title": "An example title",
-	"subTitle": "Some subtitle",
+	"subtitle": "Some subtitle",
 	"icon": {
 		"src": "sap-icon://business-objects-experience",
 		"visible": true

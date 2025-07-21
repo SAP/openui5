@@ -240,7 +240,7 @@ sap.ui.define([
 				"type": "Object",
 				"header": {
 					"title": "{{contactDetails}}",
-					"subTitle": "{i18n>contactDetails}"
+					"subtitle": "{i18n>contactDetails}"
 				},
 				"content": {
 					"groups": [
@@ -263,7 +263,7 @@ sap.ui.define([
 			.then(function (oRes) {
 				// Assert
 				assert.strictEqual(oRes["sap.card"].header.title, "Contact Details", "Double curly bracket translation syntax is resolved");
-				assert.strictEqual(oRes["sap.card"].header.subTitle, "Contact Details", "Translation syntax is resolved from i18n model");
+				assert.strictEqual(oRes["sap.card"].header.subtitle, "Contact Details", "Translation syntax is resolved from i18n model");
 
 				oCard.destroy();
 			});
@@ -289,7 +289,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Products",
-					"subTitle": "{= format.text(${i18n>subtitle_data_count}, [${uniqueCategories}, ${count}]) }",
+					"subtitle": "{= format.text(${i18n>subtitle_data_count}, [${uniqueCategories}, ${count}]) }",
 					"status": {
 						"text": {
 							"format": {
@@ -328,7 +328,7 @@ sap.ui.define([
 				var sResolvedStatusText = oRes["sap.card"].header.status.text;
 				assert.strictEqual(sResolvedStatusText, "1 of 3", "Predefined translation key is correctly resolved");
 
-				var sResolvedFormattedTranslation = oRes["sap.card"].header.subTitle;
+				var sResolvedFormattedTranslation = oRes["sap.card"].header.subtitle;
 				assert.strictEqual(sResolvedFormattedTranslation, "2 categories, 3 items", "Formatted translation from i18n file is correctly resolved");
 
 				oCard.destroy();
@@ -1215,7 +1215,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Notebooks Distribution",
-					"subTitle": "by years",
+					"subtitle": "by years",
 					"status": {
 						"text": "3 of 11"
 					}

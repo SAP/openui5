@@ -48,7 +48,7 @@
 				"src": "sap-icon://product"
 			},
 			"title": "PR255 - Laptop Purchase",
-			"subTitle": "Purchase Requisition"
+			"subtitle": "Purchase Requisition"
 		},
 		"content": {
 			"groups": [

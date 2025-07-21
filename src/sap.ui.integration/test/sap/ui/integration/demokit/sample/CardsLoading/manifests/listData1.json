@@ -1,7 +1,7 @@
 {
 	"header": {
 		"title": "Title",
-		"subTitle": "Subtitle",
+		"subtitle": "Subtitle",
 		"mainIndicator": {
 			"number": 55
 		}

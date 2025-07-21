@@ -19,7 +19,7 @@
 		},
 		"header": {
 			"title": "{/header/title}",
-			"subTitle": "{/header/subTitle}"
+			"subtitle": "{/header/subtitle}"
 		},
 		"content": {
 			"groups": [
@@ -34,7 +34,7 @@
 								"state": "Good",
 								"size": "S"
 							},
-							"details": "{/header/subTitle}"
+							"details": "{/header/subtitle}"
 						}
 					]
 				}

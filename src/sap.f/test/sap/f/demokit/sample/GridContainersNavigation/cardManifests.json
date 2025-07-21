@@ -9,7 +9,7 @@
 				"type": "Table",
 				"header": {
 					"title": "Employees Info",
-					"subTitle": "Birthdates of Employees"
+					"subtitle": "Birthdates of Employees"
 				},
 				"content": {
 					"data": {
@@ -66,7 +66,7 @@
 				"type": "AdaptiveCard",
 				"header": {
 					"title": "Short Summary",
-					"subTitle": "With a link to more details",
+					"subtitle": "With a link to more details",
 					"icon": {
 						"src": "sap-icon://business-card"
 					}
@@ -117,7 +117,7 @@
 						"text": "DM"
 					},
 					"title": "{firstName} {lastName}",
-					"subTitle": "{position}"
+					"subtitle": "{position}"
 				},
 				"content": {
 					"groups": [
@@ -230,7 +230,7 @@
 						}
 					],
 					"title": "Integration Card with action",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://activities"
 					},
@@ -292,7 +292,7 @@
 				"type": "List",
 				"header": {
 					"title": "Tasks",
-					"subTitle": "Upcoming",
+					"subtitle": "Upcoming",
 					"icon": {
 						"src": "sap-icon://activities"
 					}
@@ -321,7 +321,7 @@
 				"type": "List",
 				"header": {
 					"title": "Contacts",
-					"subTitle": "Recent",
+					"subtitle": "Recent",
 					"icon": {
 						"src": "sap-icon://activities"
 					}
@@ -364,7 +364,7 @@
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},

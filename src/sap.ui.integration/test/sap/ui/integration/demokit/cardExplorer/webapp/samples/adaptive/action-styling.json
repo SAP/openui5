@@ -34,7 +34,7 @@
 		"type": "AdaptiveCard",
 		"header": {
 			"title": "Board Meeting",
-			"subTitle": "Invitation",
+			"subtitle": "Invitation",
 			"icon": {
 				"src": "sap-icon://appointment"
 			}

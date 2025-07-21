@@ -67,7 +67,7 @@ sap.ui.define([
 						}
 					}],
 					"title": "Action on card level and header level",
-					"subTitle": "sematicRole - listitem"
+					"subtitle": "sematicRole - listitem"
 				},
 				"content": {
 					"data": {
@@ -154,7 +154,7 @@ sap.ui.define([
 					},
 					"header": {
 						"title": "Action on card level",
-						"subTitle": "sematicRole - listitem"
+						"subtitle": "sematicRole - listitem"
 					},
 					"content": {
 						"data": {
@@ -262,7 +262,7 @@ sap.ui.define([
 					},
 					"header": {
 						"title": "Card and List Item Actions",
-						"subTitle": "sematicRole - listitem"
+						"subtitle": "sematicRole - listitem"
 					},
 					"content": {
 						"data": {
@@ -383,7 +383,7 @@ sap.ui.define([
 							}
 						}],
 						"title": "Action on card level and header level",
-						"subTitle": "sematicRole - listitem"
+						"subtitle": "sematicRole - listitem"
 					},
 					"content": {
 						"data": {
@@ -523,7 +523,7 @@ sap.ui.define([
 							"src": "{photo}"
 						},
 						"title": "Action on card level",
-						"subTitle": "{position}"
+						"subtitle": "{position}"
 					},
 					"content": {
 						"groups": [
@@ -776,7 +776,7 @@ sap.ui.define([
 							"src": "{photo}"
 						},
 						"title": "Action on card and content levels",
-						"subTitle": "{position}"
+						"subtitle": "{position}"
 					},
 					"content": {
 						"actions": [{
@@ -1229,7 +1229,7 @@ sap.ui.define([
 							}
 						}],
 						"title": "Action on card level and header level",
-						"subTitle": "sematicRole - listitem"
+						"subtitle": "sematicRole - listitem"
 					},
 					"content": {
 						"data": {

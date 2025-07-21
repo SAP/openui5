@@ -7,7 +7,7 @@
 		"type": "List",
 		"header": {
 			"title": "Department Budget State",
-			"subTitle": "2019",
+			"subtitle": "2019",
 			"icon": {
 				"src": "sap-icon://collections-insight"
 			}

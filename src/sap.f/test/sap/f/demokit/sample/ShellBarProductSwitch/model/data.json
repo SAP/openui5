@@ -3,17 +3,17 @@
 		{
 			"src": "sap-icon://home",
 			"title": "Home",
-			"subTitle": "Central Home"
+			"subtitle": "Central Home"
 		},
 		{
 			"src": "sap-icon://business-objects-experience",
 			"title": "Analytics Cloud",
-			"subTitle": "Analytics Cloud"
+			"subtitle": "Analytics Cloud"
 		},
 		{
 			"src": "sap-icon://contacts",
 			"title": "Catalog",
-			"subTitle": "Ariba"
+			"subtitle": "Ariba"
 		},
 		{
 			"src": "sap-icon://credit-card",
@@ -26,12 +26,12 @@
 		{
 			"src": "sap-icon://flight",
 			"title": "Travel & Expense",
-			"subTitle": "Concur"
+			"subtitle": "Concur"
 		},
 		{
 			"src": "sap-icon://shipping-status",
 			"title": "Vendor Management",
-			"subTitle": "Fieldglass"
+			"subtitle": "Fieldglass"
 		},
 		{
 			"src": "sap-icon://customer",
@@ -40,17 +40,17 @@
 		{
 			"src": "sap-icon://sales-notification",
 			"title": "Sales Cloud",
-			"subTitle": "Sales Cloud"
+			"subtitle": "Sales Cloud"
 		},
 		{
 			"src": "sap-icon://retail-store",
 			"title": "Commerce Cloud",
-			"subTitle": "Commerce cloud"
+			"subtitle": "Commerce cloud"
 		},
 		{
 			"src": "sap-icon://marketing-campaign",
 			"title": "Marketing Cloud",
-			"subTitle": "Marketing Cloud"
+			"subtitle": "Marketing Cloud"
 		},
 		{
 			"src": "sap-icon://family-care",

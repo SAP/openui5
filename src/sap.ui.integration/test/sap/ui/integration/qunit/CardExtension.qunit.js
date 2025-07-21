@@ -398,7 +398,7 @@ sap.ui.define([
 						"type": "List",
 						"header": {
 							"title": "Title",
-							"subTitle": "Sub Title"
+							"subtitle": "Sub Title"
 						},
 						"extension": "./extensions/ExtensionLegacy"
 					}
