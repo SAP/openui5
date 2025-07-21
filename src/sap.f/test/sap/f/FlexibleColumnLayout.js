@@ -1,4 +1,4 @@
-sap.ui.require(["sap/ui/core/Core"], Core => Core.ready(function() {
+sap.ui.require(["sap/ui/core/Core"], (Core) => Core.ready(function() {
 	"use strict";
 
 	sap.ui.require([

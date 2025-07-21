@@ -1,4 +1,4 @@
-sap.ui.require(["sap/ui/core/Core"], Core => Core.ready(function () {
+sap.ui.require(["sap/ui/core/Core"], (Core) => Core.ready(function () {
 	"use strict";
 
 	// create a mobile app and display page1 initially

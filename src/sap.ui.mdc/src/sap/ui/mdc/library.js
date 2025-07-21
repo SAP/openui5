@@ -11,7 +11,7 @@ sap.ui.define([
  "sap/ui/core/library",
  // library dependency
  "sap/m/library"
-], Library => {
+], (Library) => {
  "use strict";
 
  /**
