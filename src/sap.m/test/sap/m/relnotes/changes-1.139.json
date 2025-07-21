@@ -3,6 +3,51 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "1e6ef3a9584999b3fce448453f5266a616f7ac6c",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed Month view layout (320-340px)"
+      },
+      {
+        "id": "e3076a80366928b08eefefe4a59ec906ee2c96b0",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed menu opening when items are bound to OData V4 model"
+      },
+      {
+        "id": "13afdf79497a47746120c026c0ea19220db0a4a3",
+        "type": "FIX",
+        "text": " sap.m.Menu: Focus handling for Menu open/close"
+      },
+      {
+        "id": "0e77114fa461a2df8c72ccf93f80e5ddadfeb75d",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Legacy API removed from test"
+      },
+      {
+        "id": "11b63dd9d55bba6a441cac1a49751526b2ea6649",
+        "type": "FIX",
+        "text": " sap.m.Input: Invisible message is announced correctly"
+      },
+      {
+        "id": "2cdbd943b163bb70f93d77228796e03753492b5f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: header interval announcements adjusted"
+      },
+      {
+        "id": "eb8f422689a2a068f7a2d4d638952272bc4988df",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: labelledby properly applied"
+      },
+      {
+        "id": "6915e18897e794ee959e1af6fe96b64618c57bbd",
+        "type": "FIX",
+        "text": " sap.m.SplitButton: type announcement adjusted"
+      },
+      {
+        "id": "57e48435ba22a38da1c2d380ba16762a51037f43",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: retain the minimum height of the empty placeholder"
+      },
+      {
         "id": "a73306c16a17d84e347e35dc6c939f7dbb66f39f",
         "type": "FIX",
         "text": " We've now set the width of the File Preview dialog to 100% for the UploadSetWithTable plugin"
@@ -11,6 +56,11 @@
         "id": "2b178f208a5aa69a6ed995be1479df1810625722",
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: introduce \"level\" and \"titleStyle\" properties to sap.m.PlanningCalendar header title"
+      },
+      {
+        "id": "6a1588d9c9cb1462cb93462682c2d84dde963206",
+        "type": "FIX",
+        "text": " sap.m.Toolbar: Focus issue prevented"
       },
       {
         "id": "97e46d498e5f9299235a72f35ce221fa0abb25a9",

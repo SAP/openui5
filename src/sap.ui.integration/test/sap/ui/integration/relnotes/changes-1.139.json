@@ -3,6 +3,11 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "d4197dc6d0ce7a48f056451c6298b224f07cfe05",
+        "type": "FIX",
+        "text": " Integration Cards: Object cards no longer flicker when initializing"
+      },
+      {
         "id": "d0c0d80f36a2ca510e8ed7a5160b744dd9f94ca6",
         "type": "FIX",
         "text": " Integration Cards: Creation of duplicate SAC widgets is now prevented"

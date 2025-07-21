@@ -3,6 +3,11 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "2cdbd943b163bb70f93d77228796e03753492b5f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: header interval announcements adjusted"
+      },
+      {
         "id": "6806458e249819a102ecf3b90f7a0b0aedbefefe",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: specialDates customData aggregation is written in DOM"

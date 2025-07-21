@@ -3,6 +3,26 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "b1593ee458d6a33b95a23404436598de44cf45de",
+        "type": "FIX",
+        "text": " P13nBuilder: load flex before usage"
+      },
+      {
+        "id": "8a862d8b192daa0f8bbe0e2c5568b7a41ce21645",
+        "type": "FIX",
+        "text": " Field: error state not removed after reverting input"
+      },
+      {
+        "id": "f0b586bc7ae28299da3d6dc2a2853e5fefe7de89",
+        "type": "FIX",
+        "text": " MultiValueField: demokit sample breaks"
+      },
+      {
+        "id": "06ac205c3e776830e4f17f858abe6cced552fc9d",
+        "type": "FIX",
+        "text": " Container.isRestrictedToFixedValues fails if no Content"
+      },
+      {
         "id": "479385d1c92e46d8535d8939d0d5d1a2f2698a8e",
         "type": "FIX",
         "text": " Mdc.FieldBase: Mark keydown event on escape-induced valuehelp close"

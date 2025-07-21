@@ -3,6 +3,26 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "43eddc276a9bfe174e496edf62f9fcb3929d0a5d",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONPropertyBinding.js#checkUpdate: Fix logic to determine whether an update of the DataState has to be done"
+      },
+      {
+        "id": "fe53f042ac3384d9a51e15d5f3f8e83a5ed97662",
+        "type": "FIX",
+        "text": " core: Prevent BlockLayer from being considered as focus candidate"
+      },
+      {
+        "id": "f2cf5800d37d7e5d32a1f9292258bc404ab944b7",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataAnnotations: Propagate 'withCredentials' flag when loading annotations"
+      },
+      {
+        "id": "f1fe18c0355f92223f3d34d4b941a0b01518db52",
+        "type": "FEATURE",
+        "text": " sap/ui/model/FilterOperator/NotAny and NotAll: Support for v4 ODataListBinding"
+      },
+      {
         "id": "2942e517379f24b569278b0d12cd2f57eebae1d7",
         "type": "FIX",
         "text": " base/DataType: log error once per class and property combination"
