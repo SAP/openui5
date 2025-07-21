@@ -138,14 +138,15 @@ sap.ui.define([
 	/**
 	 * Provides all mandatory connectors required to apply or write data depending on the given namespace.
 	 *
-	 * @param {string} sNameSpace Namespace to determine the path to the configured connectors
-	 * @param {boolean} bLoadConnectors Flag to determine if the loading scenario is used and the StaticFileConnector should be included
+	 * @param {string} sNameSpace - Namespace to determine the path to the configured connectors
+	 * @param {boolean} bLoadConnectors - Flag to determine if the loading scenario is used and the StaticFileConnector should be included
+	 * @param {boolean} bSkipAddStaticFileConnector - Flag to determine if the StaticFileConnector should be added
 	 * @returns {Promise<map[]>} Resolving with a list of maps for all configured connectors and their requested modules
 	 */
-	StorageUtils.getConnectors = function(sNameSpace, bLoadConnectors) {
+	StorageUtils.getConnectors = function(sNameSpace, bLoadConnectors, bSkipAddStaticFileConnector) {
 		var aConfiguredConnectors = FlexConfiguration.getFlexibilityServices();
 		var mConnectors = [];
-		if (bLoadConnectors) {
+		if (bLoadConnectors && !bSkipAddStaticFileConnector) {
 			mConnectors = [STATIC_FILE_CONNECTOR_CONFIGURATION];
 		}
 
@@ -158,10 +159,11 @@ sap.ui.define([
 	 * Provides all mandatory connectors required to read data for the initial case; these are the static
 	 * file connector as well as all connectors mentioned in the core-Configuration.
 	 *
+	 * @param {boolean} bSkipAddStaticFileConnector - Flag to determine if the StaticFileConnector should be added
 	 * @returns {Promise<map[]>} Resolving with a list of maps for all configured initial connectors and their requested modules
 	 */
-	StorageUtils.getLoadConnectors = function() {
-		return this.getConnectors(INITIAL_CONNECTOR_NAME_SPACE, true);
+	StorageUtils.getLoadConnectors = function(bSkipAddStaticFileConnector) {
+		return this.getConnectors(INITIAL_CONNECTOR_NAME_SPACE, true, bSkipAddStaticFileConnector);
 	};
 
 	/**

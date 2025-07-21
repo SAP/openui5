@@ -79,7 +79,7 @@ sap.ui.define([
 	 * 		},
 	 * 		maxLayer: <string>,
 	 * 		emptyState: <boolean>,
-	 *		partialFlexState: <boolean>,
+	 *		skipLoadBundle: <boolean>,
 	 *		componentId: "<componentId>",
 	 *		componentData: {...}
 	 *	}
@@ -399,7 +399,7 @@ sap.ui.define([
 
 	async function loadAndCacheFlexData(mPropertyBag) {
 		const mResponse = await Loader.loadFlexData(mPropertyBag);
-		if (!mPropertyBag.partialFlexState) {
+		if (!mPropertyBag.skipLoadBundle) {
 			mResponse.authors = await Loader.loadVariantsAuthors(mPropertyBag.reference);
 		}
 		_mCachedFlexData[mPropertyBag.reference] = merge({}, mResponse);
@@ -412,7 +412,7 @@ sap.ui.define([
 			preparedMaps: {},
 			componentId: mPropertyBag.componentId,
 			componentData: mPropertyBag.componentData,
-			partialFlexState: mPropertyBag.partialFlexState,
+			skipLoadBundle: mPropertyBag.skipLoadBundle,
 			version: mPropertyBag.version,
 			allContextsProvided: mPropertyBag.allContextsProvided
 		});
@@ -432,8 +432,8 @@ sap.ui.define([
 
 	function checkPartialFlexState(mInitProperties) {
 		var oFlexInstance = _mInstances[mInitProperties.reference];
-		if (oFlexInstance.partialFlexState === true && mInitProperties.partialFlexState !== true) {
-			oFlexInstance.partialFlexState = false;
+		if (oFlexInstance.skipLoadBundle === true && mInitProperties.skipLoadBundle !== true) {
+			oFlexInstance.skipLoadBundle = false;
 			mInitProperties.partialFlexData = merge({}, _mCachedFlexData[mInitProperties.reference].changes);
 			mInitProperties.reInitialize = true;
 		}
@@ -498,7 +498,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
 	 * @param {string} [mPropertyBag.version] - Number of the version in which the state should be initialized
 	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be initialized
-	 * @param {boolean} [mPropertyBag.partialFlexState=false] - if true state is initialized partially and does not include flex bundles
+	 * @param {boolean} [mPropertyBag.skipLoadBundle=false] - if true state is initialized partially and does not include flex bundles
 	 * @returns {Promise<undefined>} Resolves a promise as soon as FlexState is initialized
 	 */
 	FlexState.initialize = async function(mPropertyBag) {

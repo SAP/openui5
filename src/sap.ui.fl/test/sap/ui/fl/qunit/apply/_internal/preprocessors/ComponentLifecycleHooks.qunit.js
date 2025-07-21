@@ -624,7 +624,7 @@ sap.ui.define([
 				asyncHints: oAsyncHints,
 				componentId: this.oAppComponent.getId(),
 				reference: this.oAppComponent.getId(),
-				partialFlexState: true
+				skipLoadBundle: true
 			}, "FlexState was initialized with the correct parameters");
 			assert.deepEqual(this.oFlexStateInitStub.getCall(0).args[0], this.oFlexStateInitStub.getCall(1).args[0]);
 			assert.deepEqual(this.oFlexStateInitStub.getCall(1).args[0], this.oFlexStateInitStub.getCall(2).args[0]);
@@ -678,7 +678,7 @@ sap.ui.define([
 				asyncHints: oAsyncHints,
 				componentId: this.oAppComponent.getId(),
 				reference: this.oAppComponent.getId(),
-				partialFlexState: true
+				skipLoadBundle: true
 			}, "FlexState was initialized with the correct parameters");
 
 			assert.ok(this.oSetAnnotationChangeStub1.calledOnce, "the promise was set on the first model");
