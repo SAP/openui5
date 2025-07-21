@@ -245,11 +245,12 @@
 						<form:SimpleForm
 								id="sapUiRtaAddIFrameDialog_WidthForm"
 								editable="true"
-								layout="ResponsiveLayout"
+								layout="ColumnLayout"
 								class="sapUiRtaAddIFrameDialogWidthForm"
 								adjustLabelSpan="false"
 								singleContainerFullSize="false"
 								ariaLabelledBy="sapUiRtaAddIFrameDialog_WidthLabel"
+								columnsXL="2" columnsL="2" columnsM="2" columnsS="2"
 								labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4"
 								emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
 						>
@@ -277,12 +278,21 @@
 									change="onSizeUnitChange"
 								>
 									<core:ListItem key="{dialogInfo>unit}" text="{dialogInfo>unit}" additionalText="{dialogInfo>descriptionText}"/>
+									<layoutData>
+										<form:ColumnElementData cellsLarge="5" cellsSmall="5" />
+									</layoutData>
 								</Select>
 							</form:content>
 						</form:SimpleForm>
 						<form:SimpleForm
-							id="sapUiRtaAddIFrameDialog_HeightForm" editable="true" layout="ResponsiveLayout" class="sapUiRtaAddIFrameDialogHeightForm"
-							adjustLabelSpan="false" singleContainerFullSize="false" ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightLabel"
+							id="sapUiRtaAddIFrameDialog_HeightForm"
+							editable="true"
+							layout="ColumnLayout"
+							class="sapUiRtaAddIFrameDialogHeightForm"
+							adjustLabelSpan="false"
+							singleContainerFullSize="false"
+							ariaLabelledBy="sapUiRtaAddIFrameDialog_HeightLabel"
+							columnsXL="2" columnsL="2" columnsM="2" columnsS="2"
 							labelSpanXL="2" labelSpanL="2" labelSpanM="2" labelSpanS="4"
 							emptySpanXL="2" emptySpanL="2" emptySpanM="2" emptySpanS="0"
 						>
@@ -310,6 +320,9 @@
 									maxWidth="400px"
 									change="onSizeUnitChange">
 										<core:ListItem key="{dialogInfo>unit}" text="{= ${dialogInfo>unit} === 'vh' ? '%' : ${dialogInfo>unit}}" additionalText="{dialogInfo>descriptionText}"/>
+										<layoutData>
+											<form:ColumnElementData cellsLarge="5" cellsSmall="5" />
+										</layoutData>
 								</Select>
 							</form:content>
 						</form:SimpleForm>
