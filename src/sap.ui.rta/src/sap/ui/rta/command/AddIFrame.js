@@ -85,11 +85,18 @@ sap.ui.define([
 
 	AddIFrame.prototype._getChangeSpecificData = function() {
 		var mChangeSpecificData = FlexCommand.prototype._getChangeSpecificData.call(this);
-		var sChangeType = mChangeSpecificData.changeType;
-		delete mChangeSpecificData.changeType;
+		const { title: sTitle, ...oContent } = mChangeSpecificData.content;
 		return {
-			changeType: sChangeType,
-			content: mChangeSpecificData.content
+			changeType: mChangeSpecificData.changeType,
+			content: oContent,
+			texts: sTitle
+				? {
+					title: {
+						value: sTitle,
+						type: "XTIT"
+					}
+				}
+				: {}
 		};
 	};
 

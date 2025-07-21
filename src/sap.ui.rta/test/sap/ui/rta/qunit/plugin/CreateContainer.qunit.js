@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -14,14 +15,15 @@ sap.ui.define([
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	uid,
 	XMLView,
+	Lib,
 	Title,
 	DesignTime,
 	OverlayRegistry,
@@ -33,11 +35,11 @@ sap.ui.define([
 	FormLayout,
 	SimpleForm,
 	VerticalLayout,
+	nextUIUpdate,
 	CommandFactory,
 	CreateContainerPlugin,
 	sinon,
-	RtaQunitUtils,
-	nextUIUpdate
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -52,7 +54,8 @@ sap.ui.define([
 		QUnit.start();
 	});
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
+	const oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
 		async beforeEach(assert) {
@@ -347,7 +350,7 @@ sap.ui.define([
 				"then the correct id is returned");
 		});
 
-		QUnit.test("when a child overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+		QUnit.test("when a child overlay has createContainer action designTime metadata and handleCreate() is called, ", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oFormOverlay.setDesignTimeMetadata({
@@ -371,6 +374,7 @@ sap.ui.define([
 
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
 				var oCommand = oEvent.getParameter("command");
+				assert.strictEqual(oCommand.getLabel(), "My New Group", "then the container is correctly labeled");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.CreateContainer", "and command is of the correct type");
 				assert.strictEqual(oEvent.getParameter("action").changeType, "addGroup", "then the correct action is passed to the event");
@@ -378,10 +382,54 @@ sap.ui.define([
 			});
 			assert.ok(true, "then plugin createContainer is called with this overlay");
 
-			this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+			await RtaQunitUtils.simulateRename(sandbox, "My New Group", () => {
+				this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+			});
 		});
 
-		QUnit.test("when a sibling overlay has createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+		QUnit.test("when the rename during the creation flow is invalid", function(assert) {
+			const fnDone = assert.async();
+
+			this.oFormOverlay.setDesignTimeMetadata({
+				aggregations: {
+					formContainers: {
+						childNames: {
+							singular: "GROUP_CONTROL_NAME",
+							plural: "GROUP_CONTROL_NAME_PLURAL"
+						},
+						actions: {
+							createContainer: {
+								changeType: "addGroup",
+								isEnabled: true,
+								validators: ["noEmptyText"]
+							}
+						}
+					}
+				}
+			});
+			this.oCreateContainer.deregisterElementOverlay(this.oFormOverlay);
+			this.oCreateContainer.registerElementOverlay(this.oFormOverlay);
+
+			const oCreateCommandSpy = sandbox.spy(CommandFactory, "getCommandFor");
+			RtaQunitUtils.simulateRename(
+				sandbox,
+				"",
+				() => {
+					this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+				},
+				(sError) => {
+					assert.ok(oCreateCommandSpy.notCalled, "then no command is created");
+					assert.strictEqual(
+						sError,
+						oResourceBundle.getText("RENAME_EMPTY_ERROR_TEXT"),
+						"then the error message is correct"
+					);
+					fnDone();
+				}
+			);
+		});
+
+		QUnit.test("when a sibling overlay has createContainer action designTime metadata and handleCreate() is called, ", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
@@ -412,7 +460,9 @@ sap.ui.define([
 				}
 			});
 
-			this.oCreateContainer.handleCreate(true, this.oFormContainerOverlay);
+			await RtaQunitUtils.simulateRename(sandbox, "My New Group", () => {
+				this.oCreateContainer.handleCreate(true, this.oFormContainerOverlay);
+			});
 		});
 	});
 
@@ -455,7 +505,7 @@ sap.ui.define([
 			this.oDesignTime.destroy();
 		}
 	}, function() {
-		QUnit.test("when a child overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+		QUnit.test("when a child overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
@@ -468,10 +518,12 @@ sap.ui.define([
 			}.bind(this));
 			assert.ok(true, "then plugin createContainer is called with this overlay");
 
-			this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+			await RtaQunitUtils.simulateRename(sandbox, "My New Group", () => {
+				this.oCreateContainer.handleCreate(false, this.oFormOverlay);
+			});
 		});
 
-		QUnit.test("when a sibling overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", function(assert) {
+		QUnit.test("when a sibling overlay has propagated createContainer action designTime metadata and handleCreate() is called, ", async function(assert) {
 			var fnDone = assert.async();
 
 			this.oCreateContainer.attachEventOnce("elementModified", function(oEvent) {
@@ -484,7 +536,9 @@ sap.ui.define([
 			}.bind(this));
 			assert.ok(true, "then plugin createContainer is called with this overlay");
 
-			this.oCreateContainer.handleCreate(true, this.oGroupOverlay);
+			await RtaQunitUtils.simulateRename(sandbox, "My New Group", () => {
+				this.oCreateContainer.handleCreate(true, this.oGroupOverlay);
+			});
 		});
 	});
 

@@ -51,14 +51,20 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oComponent = mPropertyBag.appComponent;
 		var oBaseSelector = oContent.selector;
-		// keep default title for legacy changes (without subsequent rename)
-		var sDefaultTitle = Library.getResourceBundleFor("sap.uxap").getText("SECTION_TITLE_FOR_IFRAME");
+
+		// There are three versions of this change handler regarding the title:
+		// v1: No rename in the dialog, thus no immediate rename change
+		// v2: Rename change immediately created by the dialog, default title is ignored
+		// v3: Translated title within the addIframe change, no immediate rename change
+		// All renames via updateIframe lead to a dedicated rename change
+		const sDefaultTitle = Library.getResourceBundleFor("sap.uxap").getText("SECTION_TITLE_FOR_IFRAME");
+		const sTitle = oChange.getText("title") || sDefaultTitle;
 
 		var oOPSection;
 		var oOPSubSection;
 		return Promise.resolve()
 			.then(oModifier.createControl.bind(oModifier, "sap.uxap.ObjectPageSection", oComponent, oView, oBaseSelector, {
-					title: sDefaultTitle
+					title: sTitle
 				}, false)
 			)
 			.then(function(oOPSectionLocal) {
@@ -66,7 +72,7 @@ sap.ui.define([
 				var oOPSubSectionSelector = Object.create(oBaseSelector);
 				oOPSubSectionSelector.id += "-subSection";
 				return oModifier.createControl("sap.uxap.ObjectPageSubSection", oComponent, oView, oOPSubSectionSelector, {
-					title: sDefaultTitle
+					title: sTitle
 				}, false);
 			})
 			.then(function(oOPSubSectionLocal) {
