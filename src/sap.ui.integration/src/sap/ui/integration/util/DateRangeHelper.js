@@ -86,6 +86,28 @@ sap.ui.define([
 			+ "-" + oDate.getDate().toString().padStart(2, "0");
 	}
 
+	/**
+	 * Converts a short date string in ISO 8601 format (yyyy-MM-dd) into a date object within the local timezone.
+	 *
+	 * @param {*} vDate The date input to be parsed. If it is in format yyyy-MM-dd, it will be converted to a UI5Date instance in the local timezone.
+	 * @returns {UI5Date} A UI5Date instance representing the date.
+	 */
+	function fromShortDate(vDate) {
+		// Using UI5Date.getInstance(year, month, day) ensures the date is created in the local timezone,
+		// unlike the default UTC handling when using a single string value in UI5Date.getInstance(value).
+
+		if (typeof vDate !== "string") {
+			return vDate;
+		}
+
+		const aParts = vDate.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+		if (aParts) {
+			return UI5Date.getInstance(parseInt(aParts[1]), parseInt(aParts[2]) - 1, parseInt(aParts[3]));
+		}
+
+		return UI5Date.getInstance(vDate);
+	}
+
 	var DateRangeHelper = {};
 
 	DateRangeHelper.createInput = function (oConfig, oCard, bIsFormInput) {
@@ -131,7 +153,7 @@ sap.ui.define([
 				operator: sOption,
 				values: oResolvedValue.values.map(function (vValue, i) {
 					if (aTypes[i] === "date" || aTypes[i] === "datetime") {
-						return UI5Date.getInstance(vValue);
+						return fromShortDate(vValue);
 					}
 					return vValue;
 				})
@@ -148,7 +170,7 @@ sap.ui.define([
 		if (oControl.isA("sap.m.DatePicker") && oControl.getValue() && oControl.isValidValue()) {
 			oDateRangeValue = {
 				operator: "DATE",
-				values: [UI5Date.getInstance(oControl.getValue())]
+				values: [oControl.getDateValue()]
 			};
 		} else if (oControl.isA("sap.m.DynamicDateRange")) {
 			oDateRangeValue = oControl.getValue();
