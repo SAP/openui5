@@ -83,6 +83,10 @@ sap.ui.define([
 			return oSelectedContext;
 		},
 
+		onBeforeOpenContextMenu: function(oEvent) {
+			oEvent.getSource().setSelectedIndex(oEvent.getParameter("rowIndex"));
+		},
+
 		onDragStart: function(oEvent) {
 			const oDraggedRow = oEvent.getParameter("target");
 			const oDragSession = oEvent.getParameter("dragSession");

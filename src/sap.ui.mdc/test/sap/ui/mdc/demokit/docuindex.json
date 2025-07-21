@@ -294,7 +294,7 @@
 			},{
 				"id": "sap.ui.mdc.demokit.sample.table.TableCopyPaste",
 				"name": "Table - with copy and paste",
-				"description": "A table using the CopyProvider, paste event and CellSelector for copy and paste capabilities."
+				"description": "A table with copy and paste features using CopyProvider, paste event, CellSelector, and a custom context menu for copying selected rows to the clipboard."
 			},{
 				"id": "sap.ui.mdc.demokit.sample.table.TablePropertyInfos",
 				"name": "Table - with column width calculation and additional property infos",
