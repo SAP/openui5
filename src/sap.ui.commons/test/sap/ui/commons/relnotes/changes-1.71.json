@@ -1,0 +1,12 @@
+{
+  "1.71.72": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "87c8e8b7a0ee5a047023e92617d7532031be4444",
+        "type": "FIX",
+        "text": " sap.ui.commons.ToolbarRightItems: fix unstable tests"
+      }
+    ]
+  }
+}

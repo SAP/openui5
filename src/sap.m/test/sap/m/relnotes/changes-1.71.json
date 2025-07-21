@@ -3982,5 +3982,31 @@
         "text": " sap.m.FormattedText: Formatting issue fixed"
       }
     ]
+  },
+  "1.71.72": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "1f29f9d0bec4e39c640b00aaf66cd844924ebd9c",
+        "type": "FIX",
+        "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
+      },
+      {
+        "id": "dc2e431db5d7cb81db5b475d76a4f0b8b7e65031",
+        "type": "FIX",
+        "text": " We've now fixed an issue where the FeedInput text area remained greyed out even after being enabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070012667"
+          }
+        ]
+      },
+      {
+        "id": "e480eebcfc5cf4823d0ff6a057b6865914f2eead",
+        "type": "FIX",
+        "text": " sap.m ScrollContainer: unstable QUnit tests are now skipped"
+      }
+    ]
   }
 }

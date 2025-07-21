@@ -336,5 +336,20 @@
         ]
       }
     ]
+  },
+  "1.71.72": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "9f4be22daa43609d4d21dfb4671466ffde144d28",
+        "type": "FIX",
+        "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
+      },
+      {
+        "id": "efb9d87b5adc2ba9c9ece7e6bf6399297033f650",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Remove restrictions for text size"
+      }
+    ]
   }
 }
