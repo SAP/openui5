@@ -1,11 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component: Consumption of an OData V4 service.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/UIComponent",

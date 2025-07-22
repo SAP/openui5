@@ -1,11 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component for field groups and side effectes with OData V4.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {
