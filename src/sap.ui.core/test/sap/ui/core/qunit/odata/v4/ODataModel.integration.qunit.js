@@ -33409,6 +33409,7 @@ sap.ui.define([
 	// ODLB#getCount, provide updated $count after deleting nodes (JIRA: CPOUI5ODATAV4-3049)
 	// If a $batch with DELETE fails, the count is unchanged (JIRA: CPOUI5ODATAV4-3066)
 	// Wait for pending count promise with requestProperty("$count") (JIRA: CPOUI5ODATAV4-3067)
+	// Combine delete with a side-effects refresh in one $batch (JIRA: CPOUI5ODATAV4-3070)
 [false, true].forEach(function (bExpanded) {
 	const sState = bExpanded ? "expanded" : "collapsed";
 	QUnit.test(`Recursive Hierarchy: delete single ${sState} child`, async function (assert) {
@@ -33587,7 +33588,7 @@ sap.ui.define([
 			this.waitForChanges(assert, "delete Beta")
 		]);
 
-		checkTable("after delete", assert, oTable, [
+		checkTable("after delete Beta", assert, oTable, [
 			"/EMPLOYEES('0')",
 			"/EMPLOYEES('3')"
 		], [
@@ -33596,6 +33597,40 @@ sap.ui.define([
 		]);
 		// code under test (JIRA: CPOUI5ODATAV4-3049)
 		assert.strictEqual(oListBinding.getCount(), 42);
+
+		const oDelta = oListBinding.getAllCurrentContexts()[1];
+
+		this.expectRequest("#6 DELETE EMPLOYEES('3')")
+			.expectRequest("#6 EMPLOYEES/$count", 1)
+			.expectRequest("#6 EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels"
+				+ "(HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart',NodeProperty='ID'"
+				// TODO: ExpandLevels not needed, see CPOUI5ODATAV4-2550
+				+ ",Levels=1,ExpandLevels=" + JSON.stringify([{NodeID : "0", Levels : 1}]) + ")"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,MANAGER_ID,Name"
+				+ "&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "0",
+					DrillState : "leaf",
+					ID : "0",
+					MANAGER_ID : null,
+					Name : "Alpha"
+				}]
+			});
+
+		await Promise.all([
+			// code under test (JIRA: CPOUI5ODATAV4-3070)
+			oDelta.delete(),
+			oListBinding.getHeaderContext().requestSideEffects([""]),
+			this.waitForChanges(assert, "delete Delta")
+		]);
+
+		checkTable("after delete Delta", assert, oTable, [
+			"/EMPLOYEES('0')"
+		], [
+			[undefined, 1, "0", "", "Alpha"]
+		]);
 	});
 });
 
