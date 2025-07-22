@@ -751,9 +751,13 @@ sap.ui.define([
 	 * Connects the keyboard event listeners so resizing via keyboard will be possible
 	 */
 	FlexibleColumnLayout.prototype._enableKeyboardListeners = function() {
-		this.onsaprightmodifiers     = this._keyListeners.increase;
-		this.onsapleftmodifiers      = this._keyListeners.decrease;
+		this.onsaprightmodifiers     = this._keyListeners.increase; //right or down key to increase column width
+		this.onsapdownmodifiers      = this._keyListeners.increase;
+		this.onsapleftmodifiers      = this._keyListeners.decrease; //left or up key to decrease column width
+		this.onsapupmodifiers        = this._keyListeners.decrease;
 		this.onsapright              = this._keyListeners.increaseMore;
+		this.onsapdown               = this._keyListeners.increaseMore;
+		this.onsapup                 = this._keyListeners.decreaseMore;
 		this.onsapleft               = this._keyListeners.decreaseMore;
 		this.onsapend                = this._keyListeners.max;
 		this.onsaphome               = this._keyListeners.min;
