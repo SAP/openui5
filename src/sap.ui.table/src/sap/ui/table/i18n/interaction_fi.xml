@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
 				<p>Jos kohdistus on taulukon sisällä ja soluja on valittu, solujen valinta poistetaan.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Jos solun valinta on käytössä:</span></p>
-				<p>Jos solut on valittu, <kbd>Shift + click</kbd> eri solun kohdalla laajentaa valinnan napsautettuun soluun asti.</p>
+				<p>Jos solut on valittu, <kbd>Shift + MouseClick</kbd> eri solun kohdalla laajentaa valinnan napsautettuun soluun asti.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

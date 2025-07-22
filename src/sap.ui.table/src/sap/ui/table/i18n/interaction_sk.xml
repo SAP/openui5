@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
 				<p>Ak je zameranie vnútri tabuľky a sú vybraté bunky, výber buniek sa odstráni.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Ak je povolený výber buniek:</span></p>
-				<p>Ak sú vybraté bunky, <kbd>Shift + click</kbd> v inej bunke sa výber rozšíri až po bunku, na ktorú sa klikne.</p>
+				<p>Ak sú vybraté bunky, <kbd>Shift + MouseClick</kbd> v inej bunke sa výber rozšíri až po bunku, na ktorú sa klikne.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

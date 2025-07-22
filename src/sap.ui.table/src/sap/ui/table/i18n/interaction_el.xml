@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
 				<p>Αν η εστίαση βρίσκεται μέσα στον πίνακα και τα κελιά επιλεγούν, η επιλογή των κελιών καταργείται.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
-				<p>Αν τα κελιά επιλεχτούν, το <kbd>Shift + click</kbd> σε διαφορετικό κελί βελτιώνει την επιλογή μέχρι το κελί που έχει επιλεχτεί.</p>
+				<p>Αν τα κελιά επιλεχτούν, το <kbd>Shift + MouseClick</kbd> σε διαφορετικό κελί βελτιώνει την επιλογή μέχρι το κελί που έχει επιλεχτεί.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

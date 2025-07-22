@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
 				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, a komórki są zaznaczone, zaznaczenie komórek jest usuwane.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
-				<p>Jeśli komórki są zaznaczone, <kbd>Shift + click</kbd> na innej komórce powoduje rozszerzenie zaznaczenia do klikniętej komórki.</p>
+				<p>Jeśli komórki są zaznaczone, <kbd>Shift + MouseClick</kbd> na innej komórce powoduje rozszerzenie zaznaczenia do klikniętej komórki.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

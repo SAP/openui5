@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
 				<p>Если фокус находится на таблице и ячейки выбраны, выбор ячеек удаляется.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Если активирован выбор ячейки:</span></p>
-				<p>Если ячейки выбраны, <kbd>Shift + click</kbd> в другой ячейке расширяет выбор до ячейки щелчка.</p>
+				<p>Если ячейки выбраны, <kbd>Shift + MouseClick</kbd> в другой ячейке расширяет выбор до ячейки щелчка.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

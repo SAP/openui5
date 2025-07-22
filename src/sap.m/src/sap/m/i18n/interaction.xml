@@ -179,7 +179,7 @@
 			<kbd>Shift + MouseClick</kbd>
 			<description>
 				<p><span class="emphasis">If cell selection is enabled</span>:</p>
-				<p>If cells are selected, <kbd>Shift</kbd> + click on a different cell enhances
+				<p>If cells are selected, <kbd>Shift + MouseClick</kbd> on a different cell enhances
 					the selection up to the clicked cell.</p>
 			</description>
 		</interaction>

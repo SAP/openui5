@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
 				<p>Je-li fokus v tabulce a buňky jsou vybrány, výběr buněk se odebere.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Když je aktivován výběr buňky:</span></p>
-				<p>Jsou-li buňky vybrány, <kbd>Shift + click</kbd> na jinou buňku rozšíří výběr až po buňku, na niž se klikne.</p>
+				<p>Jsou-li buňky vybrány, <kbd>Shift + MouseClick</kbd> na jinou buňku rozšíří výběr až po buňku, na niž se klikne.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

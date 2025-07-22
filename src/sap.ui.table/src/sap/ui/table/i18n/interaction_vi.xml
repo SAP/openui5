@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
 				<p>Nếu tiêu điểm nằm bên trong bảng và các ô được chọn, lựa chọn ô sẽ bị loại bỏ.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Nếu lựa chọn ô được bật:</span></p>
-				<p>Nếu các ô đang được chọn, <kbd>Shift + click</kbd> trên một ô khác sẽ mở rộng phạm vi chọn đến ô được nhấp.</p>
+				<p>Nếu các ô đang được chọn, <kbd>Shift + MouseClick</kbd> trên một ô khác sẽ mở rộng phạm vi chọn đến ô được nhấp.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

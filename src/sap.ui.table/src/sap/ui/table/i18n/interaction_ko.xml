@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
 				<p>테이블 내부에 포커스가 있고 셀이 선택되어 있으면 셀에 대한 선택이 제거됩니다.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">셀 선택이 활성화된 경우:</span></p>
-				<p>셀이 선택된 경우, 다른 셀에서 <kbd>Shift + click</kbd> 클릭 시 클릭한 셀까지 선택이 확장됩니다.</p>
+				<p>셀이 선택된 경우, 다른 셀에서 <kbd>Shift + MouseClick</kbd> 클릭 시 클릭한 셀까지 선택이 확장됩니다.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

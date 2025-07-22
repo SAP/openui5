@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
 				<p>Dacă focalizarea este în interiorul tabelului și sunt selectate celule, selecția celulelor este eliminată.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Dacă selecția celulei este activată:</span></p>
-				<p>Dacă sunt selectate celule, <kbd>Shift + click</kbd> pe o celulă diferită extinde selecția până la celula pe care s-a efectuat click.</p>
+				<p>Dacă sunt selectate celule, <kbd>Shift + MouseClick</kbd> pe o celulă diferită extinde selecția până la celula pe care s-a efectuat click.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
