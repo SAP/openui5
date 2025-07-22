@@ -1236,6 +1236,7 @@ sap.ui.define([
 			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file");
 			oDialog?.getButtons()[1].firePress();
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
 			oMdcTable.destroy();
 			done();
@@ -1320,6 +1321,7 @@ sap.ui.define([
 			assert.ok(oDialog.getContent()[0].getPages()[4].getAggregation("items")[0].hasStyleClass("image-scale"),"image has style to Fit within the viewport without cropping");
 			oDialog?.getButtons()[1].firePress();
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
 			oMdcTable.destroy();
 			done();
@@ -1410,6 +1412,7 @@ sap.ui.define([
 			oDialog.close();
 
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
 
 			oMdcTable.destroy();
@@ -1502,6 +1505,7 @@ sap.ui.define([
 			oDialog.close();
 
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
 
 			oMdcTable.destroy();
@@ -1609,6 +1613,7 @@ sap.ui.define([
 			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file and custom content with xml code editor is inserted");
 			oDialog?.getButtons()[1].firePress();
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
 			oMdcTable.destroy();
 			done();
@@ -1714,6 +1719,7 @@ sap.ui.define([
 			assert.ok(oDialog?.isOpen(), "File preview dialog is opened with the selected file and custom content handler callback rejects the promise to display default illustration message");
 			oDialog?.getButtons()[1].firePress();
 			assert.ok(oUploadSetwithTablePluginCarouselPlugin.calledOnce, "DestroyPages is called");
+			assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
 			oUploadSetwithTablePluginCarouselPlugin.restore();
 			oMdcTable.destroy();
 			done();
@@ -2525,13 +2531,4 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("FilePreviewDialog: contentWidth should be 100%", function(assert) {
-		var oFilePreviewDialog = new FilePreviewDialog();
-		oFilePreviewDialog._oCarousel = { getActivePage: function() { return "id"; }, getPages: function() { return [{ sId: "id" }]; } };
-		oFilePreviewDialog._oCarouselItems = [{ getFileName: function() { return "test.txt"; } }];
-
-		var oDialog = oFilePreviewDialog._createDialog();
-		assert.strictEqual(oDialog.getContentWidth(), "100%", "FilePreviewDialog dialog contentWidth is set to 100% by default");
-		oFilePreviewDialog.destroy();
-	});
 });
