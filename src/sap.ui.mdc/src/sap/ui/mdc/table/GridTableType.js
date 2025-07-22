@@ -608,7 +608,7 @@ sap.ui.define([
 		const oState = oTable._getXConfig();
 		const oTypeState = oState?.aggregations?.type;
 
-		this.oTypeSettingsModel.setProperty("/p13nFixedColumnCount", oTypeState?.GridTable?.fixedColumnCount ?? 0);
+		this.oTypeSettingsModel.setProperty("/p13nFixedColumnCount", oTypeState?.GridTable?.fixedColumnCount);
 	};
 
 	/**

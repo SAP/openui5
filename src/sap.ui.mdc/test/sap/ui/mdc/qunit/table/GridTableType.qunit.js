@@ -353,8 +353,7 @@ sap.ui.define([
 		oType.onModifications(); // Emulate change with ColumnFreeze
 		await nextUIUpdate();
 
-		assert.equal(oInnerTable.getFixedColumnCount(), 0, "Fixed column count is now 2");
-		assert.equal(oType.getFixedColumnCount(), 1, "The value of the fixedColumnCount property is still 1");
+		assert.equal(oInnerTable.getFixedColumnCount(), 1, "Fixed column count is equal to the configured fixedColumnCount");
 
 		fnGetCurrentStateStub.restore();
 	});
@@ -394,12 +393,10 @@ sap.ui.define([
 		assert.equal(oInnerTable.getFixedColumnCount(), 2, "Fixed column count is now 2");
 
 		fnGetCurrentStateStub.returns({
-			"xConfig": {
-				"aggregations": {
-					"type": {
-						"GridTable": {
-							"fixedColumnCount": 0
-						}
+			"aggregations": {
+				"type": {
+					"GridTable": {
+						"fixedColumnCount": 0
 					}
 				}
 			}
