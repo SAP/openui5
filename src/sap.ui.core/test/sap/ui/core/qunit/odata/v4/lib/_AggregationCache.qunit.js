@@ -2523,7 +2523,16 @@ sap.ui.define([
 				read : function () {},
 				setQueryOptions : function () {}
 			},
-			mQueryOptions = {$count : true, foo : "bar"},
+			mQueryOptions = {
+				$apply : "A.P.P.L.E.",
+				$count : true, // dropped
+				$expand : {expand : null},
+				$orderby : "orderby",
+				$search : "search",
+				$select : ["Name"],
+				foo : "bar",
+				"sap-client" : "123"
+			},
 			sQueryOptions = JSON.stringify(mQueryOptions),
 			aReadResult = [{}];
 
@@ -2531,7 +2540,15 @@ sap.ui.define([
 
 		this.mock(oGroupLevelCache).expects("getQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
-		this.mock(oGroupLevelCache).expects("setQueryOptions").withExactArgs({foo : "bar"}, true);
+		this.mock(oGroupLevelCache).expects("setQueryOptions").withExactArgs({
+				$apply : "A.P.P.L.E.",
+				$expand : {expand : null},
+				$orderby : "orderby",
+				$search : "search",
+				$select : ["Name"],
+				foo : "bar",
+				"sap-client" : "123"
+			}, true);
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(1, 1, 0, "~oGroupLock~", "~fnDataRequested~", true)
 			.returns(SyncPromise.resolve({value : aReadResult}));
