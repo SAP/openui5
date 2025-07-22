@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/performance/trace/FESRHelper"
 ], function(
 	Button,
 	Input,
@@ -38,7 +39,8 @@ sap.ui.define([
 	containsOrEquals,
 	QUnitUtils,
 	createAndAppendDiv,
-	nextUIUpdate
+	nextUIUpdate,
+	FESRHelper
 ) {
 	"use strict";
 
