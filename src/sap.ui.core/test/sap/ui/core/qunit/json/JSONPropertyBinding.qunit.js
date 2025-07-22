@@ -12,10 +12,11 @@ sap.ui.define([
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Date"
 ], function (deepClone, Label, Input, Configuration, UI5Date, ChangeReason, BindingMode, FormatException,
-		ParseException, SimpleType, ValidateException, JSONModel, FloatType, DateType
+		ParseException, SimpleType, ValidateException, JSONModel, JSONPropertyBinding, FloatType, DateType
 ) {
 	"use strict";
 
@@ -112,6 +113,22 @@ sap.ui.define([
 			}, this);
 		}
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function(bRelative) {
+	QUnit.test(`constructor: bRelative=${bRelative}`, function(assert) {
+		const oJSONPropertyBindingPrototypeMock = this.mock(JSONPropertyBinding.prototype);
+		oJSONPropertyBindingPrototypeMock.expects("isRelative").withExactArgs().returns(bRelative);
+		oJSONPropertyBindingPrototypeMock.expects("getResolvedPath")
+			.exactly(bRelative ? 1 : 0)
+			.returns(bRelative ? "~sPreviousResolvedPath" : undefined);
+
+		// code under test
+		const oBinding = new JSONPropertyBinding(this.oModel, "~sPath", "~oContext", {}/*mParameters*/);
+
+		assert.strictEqual(oBinding.sPreviousResolvedPath, (bRelative ? "~sPreviousResolvedPath" : undefined));
+	});
+});
 
 	QUnit.test("getValue", function(assert) {
 		var bindings = this.createPropertyBindings("/teamMembers", "lastName");
@@ -652,5 +669,114 @@ sap.ui.define([
 		oInput.setValue("blubb");
 		oInput.destroy();
 		done();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: bSuspended=true, bForceUpdate=false; no update is performed", function (assert) {
+		const oJSONPropertyBinding = {
+			bSuspended: true,
+			checkDataState() {},
+			getDataState() {},
+			getResolvedPath() {},
+			_fireChange() {},
+			_getValue() {}
+		};
+		const oJSONPropertyBindingMock = this.mock(oJSONPropertyBinding);
+		oJSONPropertyBindingMock.expects("_getValue").never();
+		oJSONPropertyBindingMock.expects("getResolvedPath").never();
+		oJSONPropertyBindingMock.expects("getDataState").never();
+		oJSONPropertyBindingMock.expects("checkDataState").never();
+		oJSONPropertyBindingMock.expects("_fireChange").never();
+
+		//code under test
+		JSONPropertyBinding.prototype.checkUpdate.call(oJSONPropertyBinding, false);
+	});
+
+	//*********************************************************************************************
+[{
+	bForceUpdate: false,
+	sCurrentPath: "~sCurrentPath",
+	oCurrentValue: "~oSameValue",
+	bIsRelative: true,
+	sPreviousResolvedPath: "~sDifferentPath",
+	oPreviousValue: "~oSameValue",
+	sTitle: "Different paths, same value"
+}, {
+	bForceUpdate: false,
+	sCurrentPath: "~sSamePath",
+	oCurrentValue: "~oCurrentValue",
+	bIsRelative: false,
+	sPreviousResolvedPath: "~sSamePath",
+	oPreviousValue: "~oDifferentValue",
+	sTitle: "Different values, same path"
+}, {
+	bForceUpdate: true,
+	sCurrentPath: "~sSamePath",
+	oCurrentValue: "~oSameValue",
+	bIsRelative: true,
+	sPreviousResolvedPath: "~sSamePath",
+	oPreviousValue: "~oSameValue",
+	sTitle: "bForceUpdate = true"
+}].forEach(({bForceUpdate, sCurrentPath, oCurrentValue, bIsRelative,
+		sPreviousResolvedPath, oPreviousValue, sTitle}) => {
+	QUnit.test(`checkUpdate performs update due to: ${sTitle}`, function (assert) {
+		const oJSONPropertyBinding = {
+			sPreviousResolvedPath: sPreviousResolvedPath,
+			bSuspended: false,
+			oValue: oPreviousValue,
+			checkDataState() {},
+			getDataState() {},
+			getResolvedPath() {},
+			isRelative() {},
+			_fireChange() {},
+			_getValue() {}
+		};
+		const oJSONPropertyBindingMock = this.mock(oJSONPropertyBinding);
+		oJSONPropertyBindingMock.expects("_getValue").withExactArgs().returns(oCurrentValue);
+		oJSONPropertyBindingMock.expects("getResolvedPath")
+			.withExactArgs()
+			.exactly((oPreviousValue === oCurrentValue || bForceUpdate) ? 2 : 1)
+			.returns(sCurrentPath);
+		oJSONPropertyBindingMock.expects("isRelative")
+			.withExactArgs()
+			.exactly(bIsRelative ? 1 : 0)
+			.returns(bIsRelative);
+		const oDataState = {setValue() {}};
+		oJSONPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(oDataState).expects("setValue").withExactArgs(oCurrentValue);
+		oJSONPropertyBindingMock.expects("checkDataState").withExactArgs();
+		oJSONPropertyBindingMock.expects("_fireChange").withExactArgs({reason: "change"});
+
+		// code under test
+		JSONPropertyBinding.prototype.checkUpdate.call(oJSONPropertyBinding, bForceUpdate);
+
+		assert.strictEqual(oJSONPropertyBinding.oValue, oCurrentValue);
+		assert.strictEqual(oJSONPropertyBinding.sPreviousResolvedPath, sCurrentPath);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate performs no update as the binding is the same", function (assert) {
+		const oJSONPropertyBinding = {
+			sPreviousResolvedPath: "~sSamePath",
+			bSuspended: false,
+			oValue: "~sSameValue",
+			checkDataState() {},
+			getDataState() {},
+			getResolvedPath() {},
+			isRelative() {},
+			_fireChange() {},
+			_getValue() {}
+		};
+		const oJSONPropertyBindingMock = this.mock(oJSONPropertyBinding);
+		oJSONPropertyBindingMock.expects("_getValue").withExactArgs().returns("~sSameValue");
+		oJSONPropertyBindingMock.expects("getResolvedPath").withExactArgs().returns("~sSamePath");
+		oJSONPropertyBindingMock.expects("isRelative").withExactArgs().returns(true);
+		oJSONPropertyBindingMock.expects("getDataState").never();
+		oJSONPropertyBindingMock.expects("checkDataState").never();
+		oJSONPropertyBindingMock.expects("_fireChange").never();
+
+		//code under test
+		JSONPropertyBinding.prototype.checkUpdate.call(oJSONPropertyBinding, false);
 	});
 });
