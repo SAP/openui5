@@ -544,12 +544,7 @@ sap.ui.define([
 				response: [...this.aChanges].map((oChange) => oChange.convertToFileContent())
 			}, "the function returns the changes that were saved");
 			assert.strictEqual(this.oCompVariantsPersistAllStub.callCount, 1, "the CompVariant changes were saved");
-			assert.strictEqual(this.oVersionsUpdateStub.callCount, 1, "the versions model was updated");
-			assert.deepEqual(this.oVersionsUpdateStub.firstCall.args[0], {
-				reference: sReference,
-				layer: Layer.CUSTOMER,
-				backendResponse: oReturn
-			}, "the versions model was updated with the correct parameters");
+			assert.strictEqual(this.oVersionsUpdateStub.callCount, 0, "the versions model was not updated");
 			assert.deepEqual(this.oStorageCondenseStub.firstCall.args[0], {
 				allChanges: this.aChanges.concat(aAdditionalChanges),
 				condensedChanges: this.aChanges,
