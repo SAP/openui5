@@ -8,7 +8,7 @@
 			"type": "Table",
 			"header": {
 				"title": "Table Card",
-				"subTitle": "Table Card subtitle"
+				"subtitle": "Table Card subtitle"
 			},
 			"content": {
 				"data": {

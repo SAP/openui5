@@ -21,7 +21,7 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 					"url": "someurltotest"
 				},
 				"title": "{{title}}",
-				"subTitle": "{TODAY_ISO}"
+				"subtitle": "{TODAY_ISO}"
 			},
 			"content": {
 				"items": [
@@ -50,7 +50,7 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 					"url": "someurltotest"
 				},
 				"title": "{{title}}",
-				"subTitle": "{TODAY_ISO}"
+				"subtitle": "{TODAY_ISO}"
 			},
 			"content": {
 				"items": [
@@ -210,7 +210,7 @@ sap.ui.define(["sap/ui/integration/util/Manifest", "sap/ui/core/Manifest", "sap/
 			assert.ok(oManifest.oJson, "Should have created a JSON.");
 			assert.ok(Object.isFrozen(oManifest.oJson), "Should have frozen the JSON.");
 			assert.equal(oManifest.get("/sap.card/header/title"), sTranslatedText, "Should have translated the title.");
-			assert.notOk(oManifest.get("/sap.card/header/subTitle").indexOf("{{parameters.TODAY_ISO}}") > -1, "Should have replaced the placeholder inside the subTitle.");
+			assert.notOk(oManifest.get("/sap.card/header/subtitle").indexOf("{{parameters.TODAY_ISO}}") > -1, "Should have replaced the placeholder inside the subtitle.");
 			assert.equal(oManifest.get("/sap.card/content/items/2/id"), sTranslatedText, "Should have translated the item id.");
 			assert.notOk(oManifest.get("/sap.card/content/items/1/date").indexOf("{{parameters.NOW_ISO}}") > -1, "Should have replaced the placeholder inside the item date.");
 			assert.notOk(oManifest.get("/sap.card/content/items/1/date2").indexOf("{{parameters.NOW_ISO}}") > -1, "Should have replaced the placeholder inside the item date2.");

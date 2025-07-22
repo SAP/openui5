@@ -34,7 +34,7 @@
 		},
 		"header": {
 		  "title": "Card and Items Action Strip",
-		  "subTitle": "sematicRole - listitem"
+		  "subtitle": "sematicRole - listitem"
 		},
 		"content": {
 			"data": {

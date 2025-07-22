@@ -51,7 +51,7 @@
 		},
 		"header": {
 			"title": "{firstName} {lastName}",
-			"subTitle": "{position}"
+			"subtitle": "{position}"
 		},
 		"content": {
 			"groups": [

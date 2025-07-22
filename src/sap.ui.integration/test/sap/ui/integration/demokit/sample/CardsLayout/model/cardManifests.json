@@ -199,7 +199,7 @@
 					"text": "DM"
 				},
 				"title": "{firstName} {lastName}",
-				"subTitle": "{position}"
+				"subtitle": "{position}"
 			},
 			"content": {
 				"groups": [
@@ -315,7 +315,7 @@
 			"type": "List",
 			"header": {
 				"title": "Incidents in the last 24 hours",
-				"subTitle": "Suddent storm wind damaged 3 polinating hives",
+				"subtitle": "Suddent storm wind damaged 3 polinating hives",
 				"icon": {
 					"src": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/CompanyLogo.png"
 				}
@@ -443,7 +443,7 @@
 			},
 			"header": {
 				"title": "Sales Orders for Key Accounts",
-				"subTitle": "Today",
+				"subtitle": "Today",
 				"status": {
 					"text": "{headerData/statusText}"
 				}
@@ -483,7 +483,7 @@
 			"type": "Timeline",
 			"header": {
 				"title": "Schedule for today",
-				"subTitle": "9:32 AM",
+				"subtitle": "9:32 AM",
 				"status": {
 					"text": "3 of 3"
 				},
@@ -702,7 +702,7 @@
 			},
 			"header": {
 				"title": "My calendar",
-				"subTitle": "Team Balkan",
+				"subtitle": "Team Balkan",
 				"status": {
 					"text":  {
 						"format": {

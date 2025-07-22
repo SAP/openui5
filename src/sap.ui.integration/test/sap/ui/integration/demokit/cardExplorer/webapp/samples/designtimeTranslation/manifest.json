@@ -48,7 +48,7 @@
 		},
 		"header": {
 			"title": "{{CARDTITLE}}",
-			"subTitle": "{{CARDSUBTITLE}}",
+			"subtitle": "{{CARDSUBTITLE}}",
 			"icon": {
 				"src": "sap-icon://accept"
 			}

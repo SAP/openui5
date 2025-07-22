@@ -4,7 +4,7 @@ function init() {
 		sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {
 			var oEditor = new CardEditor({
 				card: {
-					manifest: './manifest.json', baseUrl: sBaseUrl, manifestChanges: [{ "undefined": "undefined", "/sap.card/header/title": "Card Title1", "/sap.card/header/subTitle": "Card Sub Title1", "/sap.card/header/icon/src": "sap-icon://accept", "/sap.card/configuration/destinations/dest/name": "", "/sap.card/configuration/destinations/destLabel/name": "", "/sap.card/configuration/destinations/destLabelTrans/name": "", ":layer": 0, ":errors": false }, { "undefined": "undefined", "/sap.card/header/title": "new diff qqq", "/sap.card/header/subTitle": "Card Sub Title12", "/sap.card/header/icon/src": "sap-icon://accept", ":layer": 5, ":errors": false }],
+					manifest: './manifest.json', baseUrl: sBaseUrl, manifestChanges: [{ "undefined": "undefined", "/sap.card/header/title": "Card Title1", "/sap.card/header/subtitle": "Card Sub Title1", "/sap.card/header/icon/src": "sap-icon://accept", "/sap.card/configuration/destinations/dest/name": "", "/sap.card/configuration/destinations/destLabel/name": "", "/sap.card/configuration/destinations/destLabelTrans/name": "", ":layer": 0, ":errors": false }, { "undefined": "undefined", "/sap.card/header/title": "new diff qqq", "/sap.card/header/subtitle": "Card Sub Title12", "/sap.card/header/icon/src": "sap-icon://accept", ":layer": 5, ":errors": false }],
 				},
 				mode: "content",
 				allowSettings: true,

@@ -42,7 +42,7 @@
 		  }
 		},
 		"title": "Card level Action",
-		"subTitle": "Revenue",
+		"subtitle": "Revenue",
 		"unitOfMeasurement": "EUR",
 		"mainIndicator": {
 		  "number": "{number}",

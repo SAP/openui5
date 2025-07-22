@@ -64,7 +64,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle",
+					"subtitle": "Card Subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -92,7 +92,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle"
+					"subtitle": "Card Subtitle"
 				},
 				"content": {
 					"data": {
@@ -130,7 +130,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle",
+					"subtitle": "Card Subtitle",
 					"actions": [{
 						"parameters": {
 							"url": "https://www.sap.com"
@@ -181,7 +181,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle",
+					"subtitle": "Card Subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -227,7 +227,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle"
+					"subtitle": "Card Subtitle"
 				},
 				"content": {
 					"data": {
@@ -276,7 +276,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "List Card",
-					"subTitle": "With static list items"
+					"subtitle": "With static list items"
 				},
 				"content": {
 					"data": {
@@ -324,7 +324,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Sales Orders",
-					"subTitle": "Static Data",
+					"subtitle": "Static Data",
 					"icon": {
 						"src": "sap-icon://sales-order"
 					},
@@ -372,7 +372,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Sales Orders",
-					"subTitle": "Static Data",
+					"subtitle": "Static Data",
 					"icon": {
 						"src": "sap-icon://sales-order"
 					},
@@ -421,7 +421,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Sales Orders",
-					"subTitle": "Static Data",
+					"subtitle": "Static Data",
 					"icon": {
 						"src": "sap-icon://sales-order"
 					},
@@ -477,7 +477,7 @@ sap.ui.define([
 						"src": "{photo}"
 					},
 					"title": "{firstName} {lastName}",
-					"subTitle": "{position}"
+					"subtitle": "{position}"
 				},
 				"content": {
 					"groups": [{
@@ -595,7 +595,7 @@ sap.ui.define([
 						"src": "{photo}"
 					},
 					"title": "{firstName} {lastName}",
-					"subTitle": "{position}",
+					"subtitle": "{position}",
 					"actions": [{
 						"type": "Navigation",
 						"parameters": {
@@ -723,7 +723,7 @@ sap.ui.define([
 						}
 					}],
 					"title": "Integration Card with action",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://activities"
 					},
@@ -785,7 +785,7 @@ sap.ui.define([
 				"type": "Table",
 				"header": {
 					"title": "Table Card with Top 5 Products",
-					"subTitle": "These are the top sellers this month",
+					"subtitle": "These are the top sellers this month",
 					"icon": {
 						"src": "sap-icon://sales-order"
 					},
@@ -897,7 +897,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "List Card",
-					"subTitle": "With static list items"
+					"subtitle": "With static list items"
 				},
 				"content": {
 					"data": {

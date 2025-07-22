@@ -12,7 +12,7 @@ var baseUrl = document.location.pathname.substring(0, document.location.pathname
 		},
 		"header": {
 			"title": "Card Title",
-			"subTitle": "Card Sub Title",
+			"subtitle": "Card Sub Title",
 			"icon": {
 				"src": "sap-icon://accept"
 			}

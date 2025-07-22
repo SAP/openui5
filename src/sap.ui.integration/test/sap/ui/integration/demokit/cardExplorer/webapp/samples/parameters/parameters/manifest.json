@@ -75,7 +75,7 @@
 		},
 		"header": {
 			"title": "Orders update until {parameters>/to/value}",
-			"subTitle": "Situated in {parameters>/country/value} with freight limit {parameters>/freightLimit/value}",
+			"subtitle": "Situated in {parameters>/country/value} with freight limit {parameters>/freightLimit/value}",
 			"icon": {
 				"src": "sap-icon://choropleth-chart"
 			}

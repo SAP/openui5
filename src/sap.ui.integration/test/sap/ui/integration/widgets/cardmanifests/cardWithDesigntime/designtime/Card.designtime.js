@@ -13,10 +13,10 @@
 					path: "header/title",
 					maxLength: 30
 				},
-				subTitle: {
+				subtitle: {
 					label: "Subtitle",
 					type: "string",
-					path: "header/subTitle"
+					path: "header/subtitle"
 				},
 				icon: {
 					label: "Icon src",

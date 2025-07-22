@@ -46,7 +46,7 @@
 				"src": "./../../images/DonnaMoore.png"
 			},
 			"title": "Dona Moore",
-			"subTitle": "Purchase Requisition Denial"
+			"subtitle": "Purchase Requisition Denial"
 		},
 		"content": {
 			"groups": [

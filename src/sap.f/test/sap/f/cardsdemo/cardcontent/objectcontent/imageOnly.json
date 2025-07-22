@@ -18,7 +18,7 @@
 				"src": "sap-icon://business-objects-experience"
 			},
 			"title": "Object Card",
-			"subTitle": "With Image Only and Action on the Content"
+			"subtitle": "With Image Only and Action on the Content"
 		},
 		"content": {
 			"groups": [

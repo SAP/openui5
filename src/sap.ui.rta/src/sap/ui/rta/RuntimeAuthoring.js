@@ -15,10 +15,8 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/Overlay",
-	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
@@ -64,10 +62,8 @@ sap.ui.define([
 	DOMUtil,
 	ElementUtil,
 	Overlay,
-	OverlayRegistry,
 	DtUtil,
 	KeyCodes,
-	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	Version,
 	ContextBasedAdaptationsAPI,
@@ -263,11 +259,8 @@ sap.ui.define([
 				return FeaturesAPI.isSeenFeaturesAvailable();
 			}.bind(this))
 			.then(function(bIsAvailable) {
-				// The What's new should only be shown once per session
-				const sWhatsNewReloadFlag = "sap.ui.rta.dontShowWhatsNewAfterReload";
-				if (bIsAvailable && !window.sessionStorage.getItem(sWhatsNewReloadFlag)) {
+				if (bIsAvailable) {
 					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
-					window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 				}
 				this.addDependent(new GuidedTour(), "guidedTour");
 				return Promise.resolve();
@@ -511,18 +504,24 @@ sap.ui.define([
 
 			const bGuidedTourAutostart = await shouldAutoStartGuidedTour(this.getRootControlInstance(), this.getLayer(), aSeenFeatureIds);
 
+			// The What's new should only be shown once per session
+			const sWhatsNewReloadFlag = "sap.ui.rta.dontShowWhatsNewAfterReload";
+			const bShowWhatsNew = this.getWhatsNew && !window.sessionStorage.getItem(sWhatsNewReloadFlag);
+
 			if (bGuidedTourAutostart) {
 				const oGuidedTour = this.getGuidedTour();
 				oGuidedTour.attachTourClosed(() => {
-					if (this.getWhatsNew) {
+					if (bShowWhatsNew) {
 						// we want to exclude the guided tour feature from the whats new dialog if the tour opens before the dialog
 						const aExcludeGuidedTourFeature = ["GuidedTour"];
 						this.getWhatsNew().initializeWhatsNewDialog(aSeenFeatureIds, aExcludeGuidedTourFeature);
+						window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 					}
 				});
 				oGuidedTour.autoStart(GeneralTour.getTourContent());
-			} else if (this.getWhatsNew) {
+			} else if (bShowWhatsNew) {
 				this.getWhatsNew().initializeWhatsNewDialog(aSeenFeatureIds);
+				window.sessionStorage.setItem(sWhatsNewReloadFlag, true);
 			}
 
 			// PopupManager sets the toolbar to already open popups' autoCloseAreas
@@ -1757,86 +1756,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Triggers a callback when a control gets created and its associated overlay is visible.
-	 *
-	 * @param {string} sNewControlID - ID of the newly created control
-	 * @param {Function} fnCallback - Callback to execute when the conditions are met, the overlay is the only parameter
-	 */
-	function scheduleOnCreatedAndVisible(sNewControlID, fnCallback) {
-		function onGeometryChanged(oEvent) {
-			const oElementOverlay = oEvent.getSource();
-			if (oElementOverlay.getGeometry() && oElementOverlay.getGeometry().visible) {
-				oElementOverlay.detachEvent("geometryChanged", onGeometryChanged);
-				fnCallback(oElementOverlay);
-			}
-		}
-
-		function onGeometryCheck(oElementOverlay) {
-			// the control can be set to visible, but still have no size when we do the check
-			// that's why we also attach to 'geometryChanged' and check if the overlay has a size
-			if (!oElementOverlay.getGeometry() || !oElementOverlay.getGeometry().visible) {
-				oElementOverlay.attachEvent("geometryChanged", onGeometryChanged);
-			} else {
-				fnCallback(oElementOverlay);
-			}
-		}
-
-		scheduleOnCreated.call(this, sNewControlID, function(oNewOverlay) {
-			// the overlay needs to be rendered
-			if (oNewOverlay.isRendered()) {
-				onGeometryCheck(oNewOverlay);
-			} else {
-				oNewOverlay.attachEventOnce("afterRendering", function(oEvent) {
-					onGeometryCheck(oEvent.getSource());
-				});
-			}
-		});
-	}
-
-	/**
-	 * Function to automatically start the rename plugin on a container when it gets created
-	 *
-	 * @param {object} vAction - The create action from designtime metadata
-	 * @param {string} sNewControlID - The id of the newly created container
-	 * @param {string} sNewContainerName - The name of the newly created container
-	 */
-	function scheduleRenameOnCreatedContainer(vAction, sNewControlID, sNewContainerName) {
-		const fnStartEdit = function(oElementOverlay) {
-			if (oElementOverlay.getSelectable()) {
-				oElementOverlay.setSelected(true);
-			} else {
-				// TODO todos#7
-				// The async editableByPlugin evaluation has not finished yet
-				// thus the overlay is not selectable yet and setSelected would fail
-				oElementOverlay.attachEventOnce("selectableChange", () => {
-					oElementOverlay.setSelected(true);
-				});
-			}
-			this.getPluginManager().getPlugin("rename").startEdit(oElementOverlay);
-		}.bind(this);
-
-		scheduleOnCreatedAndVisible.call(this, sNewControlID, async function(oElementOverlay) {
-			// get container of the new control for rename
-			const sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(
-				vAction,
-				oElementOverlay.getElement().getId()
-			);
-			const oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
-			if (oContainerElementOverlay) {
-				if (sNewContainerName) {
-					await this.getPluginManager().getPlugin("rename").createRenameCommand(oContainerElementOverlay, sNewContainerName);
-					// The create container and rename must be a single command in the stack
-					this.getCommandStack().compositeLastTwoCommands();
-				} else {
-					fnStartEdit(oContainerElementOverlay);
-				}
-			} else {
-				scheduleOnCreatedAndVisible.call(this, sNewContainerID, fnStartEdit);
-			}
-		}.bind(this));
-	}
-
-	/**
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
@@ -1846,8 +1765,6 @@ sap.ui.define([
 		// events are synchronously reset after the handlers are called
 		const oCommand = oEvent.getParameter("command");
 		const sNewControlID = oEvent.getParameter("newControlId");
-		const vAction = oEvent.getParameter("action");
-		const sContainerTitle = oEvent.getParameter("title");
 
 		this._pElementModified = this._pElementModified.then(function() {
 			this.getPluginManager().handleStopCutPaste();
@@ -1861,9 +1778,6 @@ sap.ui.define([
 							fnSelect(oElementOverlay.getElement());
 						}
 					});
-					if (vAction) {
-						scheduleRenameOnCreatedContainer.call(this, vAction, sNewControlID, sContainerTitle);
-					}
 				}
 				return this.getCommandStack().pushAndExecute(oCommand)
 				// Error handling when a command fails is done in the Stack

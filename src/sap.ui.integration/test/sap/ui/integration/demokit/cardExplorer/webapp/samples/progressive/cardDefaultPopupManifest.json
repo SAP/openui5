@@ -13,7 +13,7 @@
 		"header": {
 			"type": "Standard",
 			"title": "Standard Header Title with a slightly long text",
-			"subTitle": "Standard Header Subtitle with an even longer longer text",
+			"subtitle": "Standard Header Subtitle with an even longer longer text",
 			"icon": {
 				"src": "sap-icon://desktop-mobile",
 				"backgroundColor": "Accent6"

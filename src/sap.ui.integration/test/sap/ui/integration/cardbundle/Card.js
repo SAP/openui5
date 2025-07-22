@@ -13,7 +13,7 @@ sap.ui.define([
 			"type": "List",
 			"header": {
 				"title": "{{appTitle}}",
-				"subTitle": "{{appDescription}}",
+				"subtitle": "{{appDescription}}",
 				"icon": {
 					"src": "./icons/edit.png"
 				}

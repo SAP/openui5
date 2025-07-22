@@ -138,6 +138,7 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.onActivate = function(oTable) {
 		SelectionPlugin.prototype.onActivate.apply(this, arguments);
 		this.oInnerSelectionPlugin = createInnerSelectionPlugin(oTable);
+		this.oInnerSelectionPlugin.setSelectionMode(this.getSelectionMode());
 		this.oInnerSelectionPlugin.attachSelectionChange(this._onSelectionChange, this);
 		attachToBinding(this, oTable.getBinding());
 		oTable.addAggregation("_hiddenDependents", this.oInnerSelectionPlugin);
@@ -259,18 +260,14 @@ sap.ui.define([
 	}
 
 	MultiSelectionPlugin.prototype.setSelectionMode = function(sSelectionMode) {
-		const oTable = this.getParent();
+		this.setProperty("selectionMode", sSelectionMode, true);
 
-		if (oTable) {
-			oTable.setProperty("selectionMode", sSelectionMode, true);
+		if (!this.isActive()) {
+			return this;
 		}
 
-		if (this.oInnerSelectionPlugin) {
-			this.oInnerSelectionPlugin.setSelectionMode(sSelectionMode);
-		}
-
-		this.setProperty("selectionMode", sSelectionMode);
-
+		this.getControl().setProperty("selectionMode", sSelectionMode);
+		this.oInnerSelectionPlugin.setSelectionMode(sSelectionMode);
 		updateHeaderSelectorIcon(this);
 
 		return this;
@@ -323,6 +320,10 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.selectAll = function(oEventPayload) {
+		if (!this.isActive()) {
+			return Promise.reject(new Error("Plugin is disabled"));
+		}
+
 		if (!this._bLimitDisabled) {
 			return Promise.reject(new Error("Not possible if the limit is enabled"));
 		}
@@ -416,6 +417,10 @@ sap.ui.define([
 		const oTable = this.getControl();
 		const sSelectionMode = this.getSelectionMode();
 
+		if (!this.isActive()) {
+			return Promise.reject(new Error("Plugin is disabled"));
+		}
+
 		if (sSelectionMode === SelectionMode.None) {
 			return Promise.reject(new Error("SelectionMode is '" + SelectionMode.None + "'"));
 		}
@@ -474,6 +479,10 @@ sap.ui.define([
 	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
 		const oTable = this.getControl();
 		const sSelectionMode = this.getSelectionMode();
+
+		if (!this.isActive()) {
+			return Promise.reject(new Error("Plugin is disabled"));
+		}
 
 		if (sSelectionMode === SelectionMode.None) {
 			return Promise.reject(new Error("SelectionMode is '" + SelectionMode.None + "'"));

@@ -108,7 +108,7 @@
 	  },
 	  "header": {
 		"title": "Card and Items Actions",
-		"subTitle": "Today"
+		"subtitle": "Today"
 	  },
 	  "content": {
 		"maxItems": 3,

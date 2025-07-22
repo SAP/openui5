@@ -70,7 +70,7 @@ function(
 					}
 				],
 				"title": "Integration Card with action",
-				"subTitle": "Card subtitle",
+				"subtitle": "Card subtitle",
 				"icon": {
 					"src": "sap-icon://activities"
 				},

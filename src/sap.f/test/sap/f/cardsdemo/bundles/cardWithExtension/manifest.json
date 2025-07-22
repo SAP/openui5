@@ -33,7 +33,7 @@
 		"type": "List",
 		"header": {
 			"title": "List Card",
-			"subTitle": "City {parameters>/city/value}"
+			"subtitle": "City {parameters>/city/value}"
 		},
 		"content": {
 			"item": {

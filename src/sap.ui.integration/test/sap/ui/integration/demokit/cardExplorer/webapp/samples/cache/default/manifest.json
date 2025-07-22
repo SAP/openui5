@@ -38,7 +38,7 @@
 		},
 		"header": {
 			"title": "Default Behavior - Stale While Revalidate",
-			"subTitle": "Cached data is displayed while a request for fresh data is done",
+			"subtitle": "Cached data is displayed while a request for fresh data is done",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}

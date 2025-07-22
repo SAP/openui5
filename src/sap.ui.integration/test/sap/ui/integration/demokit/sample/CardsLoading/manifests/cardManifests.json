@@ -13,7 +13,7 @@
 		  "path": "/header"
 		},
 		"title": "{title}",
-		"subTitle": "{subTitle}",
+		"subtitle": "{subtitle}",
 		"icon": {
 		  "src": "sap-icon://newspaper"
 		}
@@ -57,7 +57,7 @@
 		  "path": "/header"
 		},
 		"title": "{title}",
-		"subTitle": "Subtitle",
+		"subtitle": "Subtitle",
 		"status": {
 		  "text": "2 of {count}"
 		},
@@ -101,7 +101,7 @@
 		  "path": "/header"
 		},
 		"title": "Error Test Case ",
-		"subTitle": "Unable to fetch data",
+		"subtitle": "Unable to fetch data",
 		"icon": {
 		  "src": "{src}"
 		}
@@ -143,7 +143,7 @@
 		  "path": "/header"
 		},
 		"title": "{title}",
-		"subTitle": "Subtitle",
+		"subtitle": "Subtitle",
 		"status": {
 		  "text": "3 of {count}"
 		},
@@ -188,7 +188,7 @@
 		  "path": "/header"
 		},
 		"title": "{title}",
-		"subTitle": "Subtitle",
+		"subtitle": "Subtitle",
 		"status": {
 		  "text": "3 of {count}"
 		},
@@ -230,7 +230,7 @@
 		  "path": "/header"
 		},
 		"title": "{title}",
-		"subTitle": "Subtitle",
+		"subtitle": "Subtitle",
 		"status": {
 		  "text": "2 of {count}"
 		},
@@ -275,7 +275,7 @@
 		  "path": "/header"
 		},
 		"title": "Table Card ",
-		"subTitle": "{revenue}",
+		"subtitle": "{revenue}",
 		"unitOfMeasurement": "EUR",
 		"mainIndicator": {
 		  "number": "{number}",
@@ -346,7 +346,7 @@
 		  "path": "/header"
 		},
 		"title": "{details}",
-		"subTitle": "Analytical Card",
+		"subtitle": "Analytical Card",
 		"unitOfMeasurement": "EUR",
 		"mainIndicator": {
 		  "number": "{number}",
@@ -431,7 +431,7 @@
 	  },
 	  "header": {
 		"title": "My calendar",
-		"subTitle": "Team Balkan",
+		"subtitle": "Team Balkan",
 		"status": {
 		  "text":  {
 			"format": {
@@ -507,7 +507,7 @@
 		  "src": "{photo}"
 		},
 		"title": "Object Card",
-		"subTitle": "{position}"
+		"subtitle": "{position}"
 	  },
 	  "content": {
 		"groups": [

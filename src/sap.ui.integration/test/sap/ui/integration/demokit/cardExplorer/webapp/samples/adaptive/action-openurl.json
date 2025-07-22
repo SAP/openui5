@@ -26,7 +26,7 @@
 		"type": "AdaptiveCard",
 		"header": {
 			"title": "Short Summary",
-			"subTitle": "With a link to more details",
+			"subtitle": "With a link to more details",
 			"icon": {
 				"src": "sap-icon://business-card"
 			}

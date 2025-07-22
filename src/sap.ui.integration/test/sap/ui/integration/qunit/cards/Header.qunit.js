@@ -105,7 +105,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -136,10 +136,63 @@ sap.ui.define([
 		assert.ok(oHeader.getAggregation("_dataTimestamp") && oHeader.getAggregation("_dataTimestamp").getDomRef(), "Card header dataTimestamp should be created and rendered.");
 
 		assert.equal(oHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Card header title should be correct.");
-		assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Card header subtitle should be correct.");
+		assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subtitle, "Card header subtitle should be correct.");
 		assert.equal(oHeader.getAggregation("_avatar").getSrc(), oManifest["sap.card"].header.icon.src, "Card header icon src should be correct.");
 		assert.equal(oHeader.getStatusText(), oManifest["sap.card"].header.status.text, "Card header status should be correct.");
 		assert.equal(oHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
+	});
+
+	QUnit.test("Check that the deprecated subTitle property still works", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.card1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"subTitle": "Card subtitle"
+				}
+			}
+		};
+		this.oCard.setManifest(oManifest);
+		await nextUIUpdate();
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const oHeader = this.oCard.getAggregation("_header");
+		assert.ok(oHeader, "Card should have header.");
+		assert.ok(oHeader.getAggregation("_subtitle") && oHeader.getAggregation("_subtitle").getDomRef(), "Card header subTitle should be created and rendered.");
+
+		assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Card header subTitle should be correct.");
+	});
+
+	QUnit.test("Check that the deprecated subTitleMaxLines property still works", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.card1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"subTitle": "Card subtitle but very long subtitle that should be truncated",
+					"subTitleMaxLines": 1
+				}
+			}
+		};
+		this.oCard.setManifest(oManifest);
+		await nextUIUpdate();
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const oHeader = this.oCard.getAggregation("_header");
+		assert.ok(oHeader, "Card should have header.");
+		assert.equal(oHeader.getSubtitleMaxLines(), oManifest["sap.card"].header.subTitleMaxLines, "Card header subTitleMaxLines should be correct.");
 	});
 
 	QUnit.test("Default Header Avatar", async function (assert) {
@@ -651,7 +704,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -680,7 +733,7 @@ sap.ui.define([
 		assert.ok(oClonedHeader.getAggregation("_avatar") && oClonedHeader.getAggregation("_avatar").getDomRef(), "Cloned header avatar should be created and rendered.");
 		assert.ok(oClonedHeader.getAggregation("_dataTimestamp") && oClonedHeader.getAggregation("_dataTimestamp").getDomRef(), "Cloned header dataTimestamp should be created and rendered.");
 		assert.equal(oClonedHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Cloned header title should be correct.");
-		assert.equal(oClonedHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Cloned header subtitle should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subtitle, "Cloned header subtitle should be correct.");
 		assert.equal(oClonedHeader.getAggregation("_avatar").getSrc(), oManifest["sap.card"].header.icon.src, "Cloned header icon src should be correct.");
 		assert.equal(oClonedHeader.getStatusText(), oManifest["sap.card"].header.status.text, "Cloned header status should be correct.");
 		assert.equal(oClonedHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Cloned header dataTimestamp should be correct.");

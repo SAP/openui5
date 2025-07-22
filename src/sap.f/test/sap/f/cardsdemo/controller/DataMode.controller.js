@@ -29,7 +29,7 @@ sap.ui.define([
 					"path": "/kpiInfos/kpi"
 				},
 				"title": "{{contactDetails}}",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{number}",

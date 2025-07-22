@@ -66,7 +66,7 @@
 		  "src": "{photo}"
 		},
 		"title": "Action on card level",
-		"subTitle": "{position}"
+		"subtitle": "{position}"
 	  },
 	  "content": {
 		"groups": [

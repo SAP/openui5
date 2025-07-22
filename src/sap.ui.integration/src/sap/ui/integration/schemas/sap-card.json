@@ -65,7 +65,8 @@
         "1.52.0",
         "1.53.0",
         "1.54.0",
-        "1.55.0"
+        "1.55.0",
+        "1.56.0"
       ]
     },
     "designtime": {
@@ -495,6 +496,15 @@
           "default": 3
         },
         "subTitle": {
+          "description": "[Deprecated] Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
+          "$ref": "#/$defs/i18n_key_string",
+          "deprecated": true,
+          "i18n": {
+            "type": "XTIT",
+            "comment": "Header subtitle"
+          }
+        },
+        "subtitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "$ref": "#/$defs/i18n_key_string",
           "i18n": {
@@ -503,6 +513,19 @@
           }
         },
         "subTitleMaxLines": {
+          "description": "[Deprecated] Limit the number of lines for the sub title",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ],
+          "deprecated": true,
+          "default": 2
+        },
+        "subtitleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the sub title",
           "oneOf": [
             {
@@ -586,7 +609,7 @@
           ],
           "default": 3
         },
-        "subTitle": {
+        "subtitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
           "$ref": "#/$defs/i18n_key_string",
           "i18n": {
@@ -594,7 +617,16 @@
             "comment": "Header subtitle"
           }
         },
-        "subTitleMaxLines": {
+        "subTitle": {
+          "description": "[Deprecated] Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
+          "$ref": "#/$defs/i18n_key_string",
+          "i18n": {
+            "type": "XTIT",
+            "comment": "Header subtitle"
+          },
+          "deprecated": true
+        },
+        "subtitleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the sub title",
           "oneOf": [
             {
@@ -604,6 +636,19 @@
               "$ref": "#/$defs/simpleBinding"
             }
           ],
+          "default": 2
+        },
+        "subTitleMaxLines": {
+          "description": "[Deprecated] Limit the number of lines for the sub title",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/simpleBinding"
+            }
+          ],
+          "deprecated": true,
           "default": 2
         },
         "actions": {
@@ -1844,9 +1889,14 @@
               "description": "The title",
               "type": "string"
             },
-            "subTitle": {
-              "description": "The subTitle",
+            "subtitle": {
+              "description": "The subtitle",
               "type": "string"
+            },
+            "subTitle": {
+              "description": "The subtitle",
+              "type": "string",
+              "deprecated": true
             },
             "verticalPosition": {
               "description": "The vertical alignment of the texts",

@@ -27,7 +27,7 @@
 		},
 		"header": {
 			"title": "Markdown support",
-			"subTitle": "This is a sample of the markdown feature of MS Adaptive Cards.",
+			"subtitle": "This is a sample of the markdown feature of MS Adaptive Cards.",
 			"icon": {
 				"src": "sap-icon://text-formatting"
 			}

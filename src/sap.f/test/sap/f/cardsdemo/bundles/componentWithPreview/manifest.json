@@ -76,10 +76,10 @@
 				}
 			},
 			"title": "{title}",
-			"subTitle": "{subTitle}",
-			"status": "{subTitle}",
+			"subtitle": "{subtitle}",
+			"status": "{subtitle}",
 			"icon": {
-				"src": "{subTitle}"
+				"src": "{subtitle}"
 			}
 		}
 	}

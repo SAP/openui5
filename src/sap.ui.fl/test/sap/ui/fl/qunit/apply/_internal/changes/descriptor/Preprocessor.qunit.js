@@ -247,7 +247,7 @@ sap.ui.define([
 				assert.equal(this.fnApplierUtilsSpy.callCount, 1, "ApplierUtils.applyChanges is called once");
 				assert.equal(this.fnApplyChangeSpy.callCount, 0, "AddLibrary.applyChange is not called as there are no descriptor changes");
 				assert.equal(oLrepConnectorStub.callCount, 1, "LrepConnector is called once");
-				assert.equal(oStaticFileConnectorSpy.callCount, 1, "StaticFileConnector is called once");
+				assert.equal(oStaticFileConnectorSpy.callCount, 0, "StaticFileConnector is not called yet");
 				assert.equal(oStorageLoadFlexData.callCount, 1, "Storage.loadFlexData is called once");
 				assert.equal(oStorageCompleteFlexData.callCount, 0, "Storage.completeFlexData is not called");
 
@@ -262,7 +262,7 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.fnFlexStateSpy.callCount, 2, "FlexState is initialized for the second time");
 				assert.equal(this.fnGetAppDescriptorChangesSpy.callCount, 1, "FlexState.getAppDescriptorChanges is still only called once");
-				assert.equal(oStaticFileConnectorSpy.callCount, 2, "StaticFileConnector is called for the second time");
+				assert.equal(oStaticFileConnectorSpy.callCount, 1, "StaticFileConnector is called");
 				assert.equal(oStorageLoadFlexData.callCount, 1, "Storage.loadFlexData is still called only once");
 				assert.equal(oStorageCompleteFlexData.callCount, 1, "Storage.completeFlexData is called once");
 

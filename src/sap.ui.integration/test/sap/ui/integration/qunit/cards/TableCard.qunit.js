@@ -252,7 +252,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "Sales Orders for Key Accounts",
-					"subTitle": "Today"
+					"subtitle": "Today"
 				},
 				"content": {
 					"data": {
@@ -449,7 +449,7 @@ sap.ui.define([
 			"type": "Table",
 			"header": {
 				"title": "Table Card with Static content",
-				"subTitle": "Table Card subtitle"
+				"subtitle": "Table Card subtitle"
 			},
 			"content": {
 				"columns": [

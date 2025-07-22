@@ -429,6 +429,8 @@ sap.ui.define([
 				}
 			},
 
+			"util/subtitleToSubTitle": {},
+
 			"model/ContextModel": {
 				coverage: {
 					only: [

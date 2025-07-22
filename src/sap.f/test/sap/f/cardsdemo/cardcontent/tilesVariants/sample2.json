@@ -14,8 +14,8 @@
 			},
 			"title": "{title}",
 			"titleMaxLines": 1,
-			"subTitle": "{subTitle}",
-			"subTitleMaxLines": 1,
+			"subtitle": "{subtitle}",
+			"subtitleMaxLines": 1,
 			"icon": {
 				"src": "{numericIndicator/iconSrc}"
 			},

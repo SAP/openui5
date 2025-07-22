@@ -52,7 +52,7 @@
 		},
 		"header": {
 			"title": "Expired Token that Cannot be Renewed",
-			"subTitle": "(token /csrfTokens/expiredToken)"
+			"subtitle": "(token /csrfTokens/expiredToken)"
 		},
 		"content": {
 			"data": {

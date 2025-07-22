@@ -32,7 +32,7 @@
 				"path": "/header"
 			},
 			"title": "{title}",
-			"subTitle": "{subTitle}",
+			"subtitle": "{subtitle}",
 			"icon": {
 				"src": "sap-icon://list"
 			}

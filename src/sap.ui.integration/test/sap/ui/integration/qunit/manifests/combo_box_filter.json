@@ -87,7 +87,7 @@
 		},
 		"header": {
 			"title": "{filters>/category/selectedItem/title}",
-			"subTitle": "{filters>/category/selectedItem/additionalText}",
+			"subtitle": "{filters>/category/selectedItem/additionalText}",
 			"icon": {
 				"src": "sap-icon://product"
 			}

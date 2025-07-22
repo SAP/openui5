@@ -51,7 +51,7 @@
 		},
 		"header": {
 			"title": "Top orders for last {parameters>/periodAge/value} years",
-			"subTitle": "Since: {= format.dateTime(dateRange.start(${parameters>/periodInterval/value}, ${parameters>/periodAge/value}), {pattern: 'MMMM d, y'})}",
+			"subtitle": "Since: {= format.dateTime(dateRange.start(${parameters>/periodInterval/value}, ${parameters>/periodAge/value}), {pattern: 'MMMM d, y'})}",
 			"icon": {
 				"src": "sap-icon://compare-2"
 			},

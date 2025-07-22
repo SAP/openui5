@@ -235,10 +235,18 @@ sap.ui.define([
 				var mConnectorsSorted = sortConnectors(mConnectors);
 				assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
 				assert.equal(this.oConfigurationSpy.callCount, 1, "configuration is called once");
-				assert.equal(mConnectors.length, 2, "result contains only one connector");
+				assert.equal(mConnectors.length, 2, "result contains two connector");
 				assert.equal(mConnectorsSorted[0].connector, "StaticFileConnector", "first connector is of type StaticFileConnector");
 				assert.equal(mConnectorsSorted[1].connector, "LrepConnector", "second connector is of type LrepConnector");
 			}.bind(this));
+		});
+
+		QUnit.test("when getLoadConnectors is called with bSkipAddStaticFileConnector", async function(assert) {
+			const mConnectors = await Utils.getLoadConnectors(true);
+			assert.equal(this.oGetConnectorsSpy.callCount, 1, "the getConnector is called once");
+			assert.equal(this.oConfigurationSpy.callCount, 1, "configuration is called once");
+			assert.equal(mConnectors.length, 1, "result contains only one connector");
+			assert.equal(mConnectors[0].connector, "LrepConnector", "the connector is of type LrepConnector");
 		});
 	});
 

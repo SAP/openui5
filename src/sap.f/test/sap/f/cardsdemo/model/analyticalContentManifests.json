@@ -15,7 +15,7 @@
 					"path": "/kpiInfos/kpi"
 				},
 				"title": "Project Cloud Transformation",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{number}",
@@ -96,7 +96,7 @@
 					"path": "/kpiInfos/kpi"
 				},
 				"title": "Project Cloud Transformation",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{number}",
@@ -180,7 +180,7 @@
 					}
 				},
 				"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-				"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+				"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{n}",
@@ -263,7 +263,7 @@
 					}
 				},
 				"title": "Project revenue",
-				"subTitle": "Success Rate",
+				"subtitle": "Success Rate",
 				"mainIndicator": {
 					"number": "{n}",
 					"unit": "{u}",
@@ -338,7 +338,7 @@
 						"valueColor": "Critical"
 					}
 				},
-				"subTitle": "Success Rate",
+				"subtitle": "Success Rate",
 				"mainIndicator": {
 					"number": "{n}",
 					"unit": "{u}",
@@ -1019,7 +1019,7 @@
 					}
 				},
 				"title": "Project Cloud Transformation",
-				"subTitle": "Revenue",
+				"subtitle": "Revenue",
 				"unitOfMeasurement": "EUR",
 				"mainIndicator": {
 					"number": "{number}",

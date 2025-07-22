@@ -45,7 +45,7 @@
 				"path": "/kpiInfos/kpi"
 			},
 			"title": "Stale while revalidate with update interval of 30s",
-			"subTitle": "Data is changed each time",
+			"subtitle": "Data is changed each time",
 			"mainIndicator": {
 				"number": "{number}",
 				"unit": "{unit}",

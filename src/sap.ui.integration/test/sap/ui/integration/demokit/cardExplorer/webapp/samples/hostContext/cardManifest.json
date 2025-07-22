@@ -57,7 +57,7 @@
 		},
 		"header": {
 			"title": "Host context sample",
-			"subTitle": "Top {parameters>/maxItems/value} products for supplier {context>/sample/supplier/title/value} in category {context>/sample/category/title/value}",
+			"subtitle": "Top {parameters>/maxItems/value} products for supplier {context>/sample/supplier/title/value} in category {context>/sample/category/title/value}",
 			"status": {
 				"text": "top {parameters>/maxItems/value}"
 			}

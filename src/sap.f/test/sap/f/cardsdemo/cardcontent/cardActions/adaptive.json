@@ -37,7 +37,7 @@
 	  },
 	  "header": {
 		"title": "{firstName} {lastName}",
-		"subTitle": "{position}",
+		"subtitle": "{position}",
 		"icon": {
 		  "src": "{image}"
 		}
@@ -48,7 +48,7 @@
 		  "title" : {
 			"value": "Employee ID card"
 		  },
-		  "subTitle": {
+		  "subtitle": {
 			"value": "Obligations and Responsibilities"
 		  }
 		}

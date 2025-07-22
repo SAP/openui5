@@ -29,7 +29,7 @@
 		"type": "List",
 		"header": {
 			"title": "{{TITLE}}",
-			"subTitle": "Translation with model. {i18n>SUBTITLE}",
+			"subtitle": "Translation with model. {i18n>SUBTITLE}",
 			"icon": {
 				"src": "sap-icon://product"
 			}

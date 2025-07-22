@@ -658,6 +658,28 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("When the dialog is opened in header mode (asContainer = false)", async function(assert) {
+			this.oAddIFrameDialog.attachOpened(function() {
+				assert.notOk(
+					Element.getElementById("sapUiRtaAddIFrameDialog_ContainerTitle").getVisible(),
+					"then the title section is not visible"
+				);
+				clickOnSave();
+			}, this);
+
+			const oResponse = await this.oAddIFrameDialog.open(
+				{
+					frameUrl: "test_url"
+				},
+				oReferenceControl
+			);
+			assert.strictEqual(
+				oResponse.title,
+				null,
+				"then no title is set for header iframes (asContainer is false)"
+			);
+		});
+
 		QUnit.test("When the iframe is opened without advancedSettings", async function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
 				aTextInputFields.forEach(function(sFieldName) {

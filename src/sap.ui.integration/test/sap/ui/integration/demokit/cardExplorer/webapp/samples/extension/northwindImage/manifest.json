@@ -50,7 +50,7 @@
 		},
 		"header": {
 			"title": "{FirstName} {LastName}",
-			"subTitle": "{Title}",
+			"subtitle": "{Title}",
 			"icon": {
 				"src": "{= extension.formatters.convertNorthwindImage(${Photo})}"
 			}

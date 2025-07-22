@@ -23,7 +23,7 @@
 		},
 		"header": {
 			"title": "Card Title",
-			"subTitle": "Card Sub Title",
+			"subtitle": "Card Sub Title",
 			"icon": {
 				"src": "sap-icon://accept",
 				"backgroundColor": ""

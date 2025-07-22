@@ -41,7 +41,7 @@
 			"status": {
 				"text": "5 of 20"
 			},
-			"subTitle": "Revenue",
+			"subtitle": "Revenue",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"number": "{number}",

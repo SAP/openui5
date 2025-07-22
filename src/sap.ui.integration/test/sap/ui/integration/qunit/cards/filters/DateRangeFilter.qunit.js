@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/DynamicDateRange",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate",
 	"qunit/testResources/nextCardReadyEvent"
 ], function(
+	Localization,
 	DynamicDateRange,
 	Element,
 	coreLibrary,
@@ -482,6 +484,34 @@ sap.ui.define([
 
 		// Assert
 		assert.notEqual(this.oDRF.getValue(), oOldValue, "Value should be changed after new value is entered");
+	});
+
+	QUnit.test("Timezone", function (assert) {
+		const sTimezone = Localization.getTimezone();
+
+		Localization.setTimezone("America/Los_Angeles");
+
+		// Arrange
+		this.oDRF.setConfig({
+			value: {
+				option: "date",
+				values: ["2025-03-10"]
+			}
+		});
+		const oModelValue = this.oDRF.getValueForModel();
+
+		const oExpectedRange = {
+			end: "2025-03-11T06:59:59.999Z",
+			endLocalDate: "2025-03-10",
+			start: "2025-03-10T07:00:00.000Z",
+			startLocalDate: "2025-03-10"
+		};
+
+		// Assert
+		assert.deepEqual(oModelValue.range, oExpectedRange, "Result date range is correct");
+
+		// reset timezone
+		Localization.setTimezone(sTimezone);
 	});
 
 	QUnit.module("DateRangeFilter Properties");

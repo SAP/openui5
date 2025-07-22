@@ -194,7 +194,7 @@ sap.ui.define([
 						},
 						"header": {
 							"title": "Card and Header and List Item Actions",
-							"subTitle": "sematicRole - listitem",
+							"subtitle": "sematicRole - listitem",
 							"actions": [
 								{
 									"type": "Navigation",

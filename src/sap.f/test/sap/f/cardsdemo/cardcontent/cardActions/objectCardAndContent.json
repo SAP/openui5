@@ -73,7 +73,7 @@
 		  "src": "{photo}"
 		},
 		"title": "Action on card and content levels",
-		"subTitle": "{position}"
+		"subtitle": "{position}"
 	  },
 	  "content": {
 		"groups": [

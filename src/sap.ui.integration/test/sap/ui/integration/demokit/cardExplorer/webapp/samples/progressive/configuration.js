@@ -168,7 +168,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"allowDynamicValues": true
 					},
 					"subtitle": {
-						"manifestpath": "/sap.card/header/subTitle",
+						"manifestpath": "/sap.card/header/subtitle",
 						"type": "string",
 						"translatable": true,
 						"label": "Card Subtitle",

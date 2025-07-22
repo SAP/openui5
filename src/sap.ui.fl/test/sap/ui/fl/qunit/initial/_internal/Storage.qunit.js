@@ -274,6 +274,17 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Given loadFlexData is called with skipLoadBundle", async function(assert) {
+			const oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			const oJsObjectConnectorStub = sandbox.stub(JsObjectConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+			const oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves(StorageUtils.getEmptyFlexDataResponse());
+
+			await Storage.loadFlexData({reference: sFlexReference, skipLoadBundle: true});
+			assert.strictEqual(oStaticFileConnectorStub.callCount, 0, "the StaticFileConnector.loadFlexData was not called");
+			assert.strictEqual(oJsObjectConnectorStub.callCount, 1, "the JsObjectConnector.loadFlexData was called once");
+			assert.strictEqual(oLrepConnectorStub.callCount, 1, "the LrepConnector.loadFlexData was called once");
+		});
+
 		QUnit.test("Given 2 connectors provide their own cacheKey values", function(assert) {
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER]},

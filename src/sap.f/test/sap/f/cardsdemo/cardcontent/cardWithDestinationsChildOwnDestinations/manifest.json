@@ -51,7 +51,7 @@
 		},
 		"header": {
 			"title": "Resolve Destinations",
-			"subTitle": "First {parameters>/maxItems/value} products from 'Northwind'"
+			"subtitle": "First {parameters>/maxItems/value} products from 'Northwind'"
 		},
 		"content": {
 			"data": {
