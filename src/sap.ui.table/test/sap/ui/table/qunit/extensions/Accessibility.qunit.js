@@ -1325,6 +1325,7 @@ sap.ui.define([
 		const oColumnHeader = this.oTable.qunit.getRowActionHeaderCell();
 		assert.equal(oColumnHeader.getAttribute("role"), "columnheader", "role is correct");
 		assert.equal(oColumnHeader.getAttribute("aria-colindex"), 3, "aria-colindex is correct");
+		assert.equal(oColumnHeader.getAttribute("aria-label"), TableUtils.getResourceText("TBL_ROW_ACTION_COLUMN_LABEL"), "aria-label is correct");
 	});
 
 	QUnit.test("aria-labelledby with focus", async function(assert) {
