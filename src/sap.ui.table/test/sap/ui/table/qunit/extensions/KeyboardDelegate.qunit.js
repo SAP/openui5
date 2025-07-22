@@ -523,20 +523,6 @@ sap.ui.define([
 		oSetSilentFocusSpy.restore();
 	});
 
-	QUnit.module("Basics", {
-		beforeEach: async function() {
-			await setupTest();
-		},
-		afterEach: function() {
-			teardownTest();
-		}
-	});
-
-	QUnit.test("getInterface", function(assert) {
-		const oDelegate = new KeyboardDelegate();
-		assert.ok(oDelegate === oDelegate.getInterface(), "getInterface returns the object itself");
-	});
-
 	QUnit.module("Selection plugin integration", {
 		beforeEach: function() {
 			this.oSelectionPlugin = new TableQUnitUtils.TestSelectionPlugin();

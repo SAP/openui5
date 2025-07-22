@@ -32,14 +32,6 @@ sap.ui.define([
 		_table: null,
 
 		/**
-		 * The type of the table this extension is applied to.
-		 *
-		 * @type {sap.ui.table.extensions.ExtensionBase.TABLETYPES}
-		 * @protected
-		 */
-		_type: null,
-
-		/**
 		 * The settings this extension instance has been initialized with.
 		 *
 		 * @type {Object}
@@ -53,14 +45,7 @@ sap.ui.define([
 			this._table = oTable;
 			this._settings = mSettings || {};
 
-			this._type = ExtensionBase.TABLETYPES.STANDARD;
-			if (oTable.isA("sap.ui.table.TreeTable")) {
-				this._type = ExtensionBase.TABLETYPES.TREE;
-			} else if (oTable.isA("sap.ui.table.AnalyticalTable")) {
-				this._type = ExtensionBase.TABLETYPES.ANALYTICAL;
-			}
-
-			const sExtensionName = this._init(this._table, this._type, this._settings);
+			const sExtensionName = this._init(this._table, this._settings);
 
 			// Attach a getter to the table to get the instance of this extension.
 			if (sExtensionName) {
@@ -75,7 +60,6 @@ sap.ui.define([
 		 */
 		destroy: function() {
 			this._table = null;
-			this._type = null;
 			this.bIsDestroyed = true;
 			BaseObject.prototype.destroy.apply(this, arguments);
 		},
@@ -86,19 +70,6 @@ sap.ui.define([
 		 */
 		getInterface: function() { return this; }
 	});
-
-	/**
-	 * Type of the table.
-	 *
-	 * @type {{TREE: string, ANALYTICAL: string, STANDARD: string}}
-	 * @public
-	 * @static
-	 */
-	ExtensionBase.TABLETYPES = {
-		TREE: "TREE",
-		ANALYTICAL: "ANALYTICAL",
-		STANDARD: "STANDARD"
-	};
 
 	/**
 	 * Returns the related table control.
@@ -115,13 +86,12 @@ sap.ui.define([
 	 * Initialize the extension.
 	 *
 	 * @param {sap.ui.table.Table} oTable Instance of the table.
-	 * @param {sap.ui.table.extensions.ExtensionBase.TABLETYPES} sTableType The type of the table.
 	 * @param {Object} [mSettings] Additional settings.
 	 * @returns {string|null} Derived classes should return the name of the extension.
 	 * @abstract
 	 * @protected
 	 */
-	ExtensionBase.prototype._init = function(oTable, sTableType, mSettings) { return null; };
+	ExtensionBase.prototype._init = function(oTable, mSettings) { return null; };
 
 	/**
 	 * Hook which allows the extension to attach for additional native event listeners after the rendering of the table control.

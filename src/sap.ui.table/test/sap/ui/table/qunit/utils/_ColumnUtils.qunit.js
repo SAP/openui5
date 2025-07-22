@@ -1,29 +1,21 @@
-/*global QUnit, oTable, oTreeTable */
+/*global QUnit, oTable */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/core/Control",
-	"sap/ui/Device",
-	"sap/m/Label",
-	"sap/m/Text",
-	"sap/m/Link"
+	"sap/ui/Device"
 ], function(
 	TableQUnitUtils,
 	nextUIUpdate,
 	TableUtils,
-	JSONModel,
 	Table,
 	Column,
 	Control,
-	Device,
-	Label,
-	Text,
-	Link
+	Device
 ) {
 	"use strict";
 
@@ -501,194 +493,174 @@ sap.ui.define([
 		assert.equal(ColumnUtils.getHeaderSpan(aColumns[3], 0), 2, "Span OK for c4, level 0");
 	});
 
-	QUnit.module("ColumnMove", {
-		beforeEach: async function() {
-			await createTables();
+	QUnit.module("Move columns", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				columns: [
+					new Column({template: new TestControl()}),
+					new Column({template: new TestControl()}),
+					new Column({template: new TestControl()}),
+					new Column({template: new TestControl()}),
+					new Column({template: new TestControl()})
+				],
+				enableColumnReordering: true,
+				fixedColumnCount: 1
+			});
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("isColumnMovable()", async function(assert) {
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "Fixed Column");
-		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Non-Fixed Column");
-		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Non-Fixed Column");
-		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0]), "First column in TreeTable");
-		assert.ok(ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2]), "Other column in TreeTable");
+	QUnit.test("isColumnMovable", function(assert) {
+		const aColumns = this.oTable.getColumns();
 
-		oTable.setEnableColumnReordering(false);
-		oTreeTable.setEnableColumnReordering(false);
-		await nextUIUpdate();
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[0]), false, "Fixed Column");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1]), true, "Non-Fixed Column");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[2]), true, "Non-Fixed Column");
 
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0]), "ColumnReordering Disabled: Fixed Column");
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "ColumnReordering Disabled: Non-Fixed Column");
-		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0]), "ColumnReordering Disabled: First column in TreeTable");
-		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2]), "ColumnReordering Disabled: Other column in TreeTable");
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Tree);
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[0]), false, "First column in tree mode");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1]), true, "Other column in tree mode");
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
 
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[0], true), "ColumnReordering Disabled, but ignored: Fixed Column");
-		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[1], true), "ColumnReordering Disabled, but ignored: Non-Fixed Column");
-		assert.ok(ColumnUtils.isColumnMovable(oTable.getColumns()[2], true), "ColumnReordering Disabled, but ignored: Non-Fixed Column");
-		assert.ok(!ColumnUtils.isColumnMovable(oTreeTable.getColumns()[0], true),
-			"ColumnReordering Disabled, but ignored: First column in TreeTable");
-		assert.ok(ColumnUtils.isColumnMovable(oTreeTable.getColumns()[2], true), "ColumnReordering Disabled, but ignored: Other column in TreeTable");
+		this.oTable.setEnableColumnReordering(false);
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[0]), false, "Column reordering disabled: Fixed Column");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1]), false, "Column reordering disabled: Non-Fixed Column");
 
-		oTable.setEnableColumnReordering(true);
-		oTreeTable.setEnableColumnReordering(true);
-		oTable.getColumns()[1].setHeaderSpan(2);
-		await nextUIUpdate();
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[0], true), false, "Column reordering disabled, but ignored: Fixed Column");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1], true), true, "Column reordering disabled, but ignored: Non-Fixed Column");
 
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column");
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column");
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Tree);
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[0], true), false,
+			"ColumnReordering Disabled, but ignored: First column in tree mode");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1], true), true,
+			"Colum reordering disabled, but ignored: Other column in tree mode");
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Flat);
 
-		oTable.getColumns()[1].setHeaderSpan([2, 1]);
-		oTable.getColumns()[1].addMultiLabel(new TestControl());
-		oTable.getColumns()[1].addMultiLabel(new TestControl());
-		await nextUIUpdate();
+		this.oTable.setEnableColumnReordering(true);
+		aColumns[1].setHeaderSpan(2);
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1]), false, "Spanning Column");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[2]), false, "Spanned Column");
 
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[1]), "Spanning Column (Multi Header)");
-		assert.ok(!ColumnUtils.isColumnMovable(oTable.getColumns()[2]), "Spanned Column (Multi Header)");
+		aColumns[1].setHeaderSpan([2, 1]);
+		aColumns[1].addMultiLabel(new TestControl());
+		aColumns[1].addMultiLabel(new TestControl());
+
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[1]), false, "Spanning Column (Multi Header)");
+		assert.strictEqual(ColumnUtils.isColumnMovable(aColumns[2]), false, "Spanned Column (Multi Header)");
+
+		this.oTable.setFixedColumnCount(0);
+		this.oTable.insertColumn(new Column(), 0);
+		assert.strictEqual(ColumnUtils.isColumnMovable(this.oTable.getColumns()[1]), true, "First visible column. First column is invisible");
+
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Tree);
+		assert.strictEqual(ColumnUtils.isColumnMovable(this.oTable.getColumns()[1]), false,
+			"First visible column in tree mode. First column is invisible");
 	});
 
-	QUnit.test("isColumnMovableTo()", async function(assert) {
-		let oColumn = oTable.getColumns()[2];
-		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+	QUnit.test("isColumnMovableTo", function(assert) {
+		const aColumns = this.oTable.getColumns();
+		const oColumn = aColumns[2];
 
-		let bExpect;
-		let i;
-
-		oTable.setEnableColumnReordering(false);
-		await nextUIUpdate();
-
-		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
-			bExpect = false;
-			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+		for (let i = -1; i <= aColumns.length + 2; i++) {
+			assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, i), i >= 1, "Move to index " + i);
 		}
 
-		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
-			bExpect = true;
-			if (i < 1) {
-				bExpect = false;
-			}
-			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i, true) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
+		this.oTable.setEnableColumnReordering(false);
+		for (let i = -1; i <= aColumns.length + 2; i++) {
+			assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, i), false, "Column reordering disabled: Move to index " + i);
+			assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, i, true), i >= 1,
+				"Column reordering disabled, but ignored: Move to index " + i);
 		}
 
-		oTable.setEnableColumnReordering(true);
-		await nextUIUpdate();
+		this.oTable.setEnableColumnReordering(true);
+		aColumns[3].setHeaderSpan(2);
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 3), true, "Move before span");
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 4), false, "Move inside span");
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 5), true, "Move after span");
 
-		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
-			bExpect = true;
-			if (i < 1) {
-				bExpect = false;
-			}
-			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
-		}
+		aColumns[3].setHeaderSpan([2, 1]);
+		aColumns[3].addMultiLabel(new TestControl());
+		aColumns[3].addMultiLabel(new TestControl());
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 3), true, "Move before span (Multi Header)");
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 4), false, "Move inside span (Multi Header)");
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 5), true, "Move after span (Multi Header)");
 
-		oTable.getColumns()[3].setHeaderSpan(2);
-		await nextUIUpdate();
+		aColumns[3].setHeaderSpan(1);
+		aColumns[3].destroyMultiLabels();
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 3), true, "Move before span of 1");
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 4), true, "Move after span of 1");
 
-		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
-			bExpect = true;
-			if (i < 1 || i === 4) {
-				bExpect = false;
-			}
-			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
-		}
+		this.oTable.setFixedColumnCount(0);
+		TableUtils.Grouping.setHierarchyMode(this.oTable, TableUtils.Grouping.HierarchyMode.Tree);
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 0), false, "Move to index 0 in tree mode");
 
-		oTable.getColumns()[3].setHeaderSpan([2, 1]);
-		oTable.getColumns()[3].addMultiLabel(new TestControl());
-		oTable.getColumns()[3].addMultiLabel(new TestControl());
-		await nextUIUpdate();
+		this.oTable.insertColumn(new Column(), 0);
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 0), false, "Move to index 0 in tree mode with invisible first column");
 
-		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
-			bExpect = true;
-			if (i < 1 || i === 4) {
-				bExpect = false;
-			}
-			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
-		}
-
-		oTable.getColumns()[1].setHeaderSpan(2);
-		oTable.getColumns()[3].setHeaderSpan(1);
-		oTable.getColumns()[3].destroyMultiLabels();
-		await nextUIUpdate();
-
-		oColumn = oTable.getColumns()[4];
-
-		for (i = -1; i <= oTable.getColumns().length + 2; i++) {
-			bExpect = true;
-			if (i < 1 || i === 2) {
-				bExpect = false;
-			}
-			assert.ok(ColumnUtils.isColumnMovableTo(oColumn, i) === bExpect, "Move to index " + i + (bExpect ? "" : " not") + " possible");
-		}
+		this.oTable.insertColumn(new Column(), 0);
+		assert.strictEqual(ColumnUtils.isColumnMovableTo(oColumn, 1), false,
+			"Move to index 1 in tree mode with 2 invisible columns at the beginning");
 	});
 
-	QUnit.test("moveColumnTo() - Do a move", async function(assert) {
+	QUnit.test("moveColumnTo - Do a move", function(assert) {
 		assert.expect(4);
 
-		const oColumn = oTable.getColumns()[2];
+		const oColumn = this.oTable.getColumns()[2];
 		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
 
-		oTable.attachColumnMove(function(oEvent) {
+		this.oTable.attachColumnMove(function(oEvent) {
 			assert.equal(oEvent.getParameter("newPos"), 3, "Correct Index in event parameter");
 			assert.ok(oEvent.getParameter("column") === oColumn, "Correct Column in event parameter");
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		await nextUIUpdate();
-
-		assert.equal(oTable.indexOfColumn(oColumn), 3, "Correct Index after move.");
+		assert.equal(this.oTable.indexOfColumn(oColumn), 3, "Correct Index after move");
 	});
 
-	QUnit.test("moveColumnTo() - Column not movable", async function(assert) {
+	QUnit.test("moveColumnTo - Column not movable", function(assert) {
 		assert.expect(2);
 
-		const oColumn = oTable.getColumns()[0];
-		assert.ok(!ColumnUtils.isColumnMovable(oColumn), "Ensure column is not movable");
+		const oColumn = this.oTable.getColumns()[0];
+		assert.ok(!ColumnUtils.isColumnMovable(oColumn), "Column is not movable");
 
-		oTable.attachColumnMove(function(oEvent) {
+		this.oTable.attachColumnMove(function(oEvent) {
 			assert.ok(false, "No event was triggered");
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		await nextUIUpdate();
-
-		assert.equal(oTable.indexOfColumn(oColumn), 0, "Correct Index after move.");
+		assert.equal(this.oTable.indexOfColumn(oColumn), 0, "Correct Index after move");
 	});
 
-	QUnit.test("moveColumnTo() - Move to current position", async function(assert) {
+	QUnit.test("moveColumnTo - Move to current position", function(assert) {
 		assert.expect(2);
 
-		const oColumn = oTable.getColumns()[4];
-		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+		const oColumn = this.oTable.getColumns()[4];
+		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Column is movable");
 
-		oTable.attachColumnMove(function(oEvent) {
+		this.oTable.attachColumnMove(function(oEvent) {
 			assert.ok(false, "No event was triggered");
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		await nextUIUpdate();
-
-		assert.equal(oTable.indexOfColumn(oColumn), 4, "Correct Index after move.");
+		assert.equal(this.oTable.indexOfColumn(oColumn), 4, "Correct Index after move.");
 	});
 
-	QUnit.test("moveColumnTo() - Prevent movement", async function(assert) {
+	QUnit.test("moveColumnTo - Prevent movement", function(assert) {
 		assert.expect(4);
 
-		const oColumn = oTable.getColumns()[2];
-		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Ensure column is movable");
+		const oColumn = this.oTable.getColumns()[2];
+		assert.ok(ColumnUtils.isColumnMovable(oColumn), "Column is movable");
 
-		oTable.attachColumnMove(function(oEvent) {
+		this.oTable.attachColumnMove(function(oEvent) {
 			assert.equal(oEvent.getParameter("newPos"), 3, "Correct Index in event parameter");
 			assert.ok(oEvent.getParameter("column") === oColumn, "Correct Column in event parameter");
 			oEvent.preventDefault();
 		});
 
 		ColumnUtils.moveColumnTo(oColumn, 4);
-		await nextUIUpdate();
-
-		assert.equal(oTable.indexOfColumn(oColumn), 2, "Correct Index after move.");
+		assert.equal(this.oTable.indexOfColumn(oColumn), 2, "Correct Index after move.");
 	});
 
 	QUnit.module("Column Widths", {
