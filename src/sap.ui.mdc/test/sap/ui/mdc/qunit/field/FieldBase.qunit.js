@@ -2273,7 +2273,7 @@ sap.ui.define([
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(iParseError, 0, "ParseError event not fired");
 		assert.equal(iValidationError, 0, "ValidationError event not fired");
-		assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+		assert.equal(iValidationSuccess, 2, "ValidationSuccess event fired"); // once for inner control and once from ConditionModel-Binding
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
 		assert.ok(bValid, "change event valid");
@@ -3179,7 +3179,7 @@ sap.ui.define([
 			setTimeout(() => { // as parsing is async (in PasteHandler) validation is called async too
 				assert.equal(iParseError, 0, "ParseError event not fired");
 				assert.equal(iValidationError, 0, "ValidationError event not fired");
-				assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+				assert.equal(iValidationSuccess, 2, "ValidationSuccess event fired"); // once for inner control and once from ConditionModel-Binding
 				fnDone();
 			}, 0);
 		}).catch((oException) => {
@@ -6202,6 +6202,7 @@ sap.ui.define([
 				assert.equal(oContent2.getValueState(), "Error", "ValueState set on unit Content");
 				// don't check ValueState on Field here, as this is handled in Field.js and tested there. Here only validation of Currency selected form ValueHelp needs to be tested
 
+				iValidationSuccess = 0;
 				jQuery(oContent1.getFocusDomRef()).val("10");
 				qutils.triggerKeydown(oContent1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				assert.equal(iCount, 1, "change event fired once");
@@ -6211,7 +6212,7 @@ sap.ui.define([
 					assert.equal(aConditions[0].values[0][0], 10, "condition value0");
 					assert.equal(aConditions[0].values[0][1], "JPY", "condition value1");
 					assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
-					assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+					assert.equal(iValidationSuccess, 2, "ValidationSuccess event fired"); // once for inner control and once from ConditionModel-Binding
 					assert.equal(oContent1.getValueState(), "None", "ValueState not set on number Content");
 					assert.equal(oContent2.getValueState(), "None", "ValueState not set on unit Content");
 
