@@ -306,5 +306,23 @@ sap.ui.define([
 		});
 	};
 
+	RtaQunitUtils.waitForMethodCall = function(sandbox, oObject, sMethodName) {
+		// Returns a promise which is resolved with the return value
+		// of the given method after it was first called
+		// Doesn't work with event handlers
+		return new Promise(function(resolve) {
+			sandbox.stub(oObject, sMethodName)
+			.callsFake(function(...aArgs) {
+				if (oObject[sMethodName].wrappedMethod) {
+					const oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
+					resolve(oResult);
+				}
+			});
+		})
+		.then(function() {
+			oObject[sMethodName].restore();
+		});
+	};
+
 	return RtaQunitUtils;
 });
