@@ -306,5 +306,20 @@
         "text": " SAP-icons: fix icon 'eam-work-order' in v5"
       }
     ]
+  },
+  "1.120.33": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "f51de51952c91498967b2338e1ed97df5817fc25",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fix title / text alignment of inverted status"
+      },
+      {
+        "id": "205f44eaff37b898a4b415d514552a1fb475ecdc",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Focus cutting is fixed"
+      }
+    ]
   }
 }

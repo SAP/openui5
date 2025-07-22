@@ -142,5 +142,20 @@
         "text": " sap.uxap.BlockBase: Error with duplicate ID prevented"
       }
     ]
+  },
+  "1.120.33": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "d8e6a6c187c0b6089d45344af205b2848b7e831b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Fix AnchorBar accessibility"
+      },
+      {
+        "id": "1d4ad5c020d1777286b16d471da9dfdc89640ec4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageSection: Fix fast navigation"
+      }
+    ]
   }
 }

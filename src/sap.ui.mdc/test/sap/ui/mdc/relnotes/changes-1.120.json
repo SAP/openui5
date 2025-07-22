@@ -225,5 +225,15 @@
         "text": " Field: Typeahed - announce table headers on arrow navigation"
       }
     ]
+  },
+  "1.120.33": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "a8954674031e0318197685bdc6756e4475fbff1a",
+        "type": "FIX",
+        "text": " P13nBuilder: load flex before usage"
+      }
+    ]
   }
 }

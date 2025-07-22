@@ -1251,5 +1251,40 @@
         "text": " We've now introduced a private read only flag to help the developers determine item sync delegation for the upload complete and item deletion actions"
       }
     ]
+  },
+  "1.120.33": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "f51de51952c91498967b2338e1ed97df5817fc25",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Fix title / text alignment of inverted status"
+      },
+      {
+        "id": "1285769c0b2861924207c5f48eda2ef481e3c123",
+        "type": "FIX",
+        "text": " sap.m.NotificationList: Focus handling on item removal is now fixed"
+      },
+      {
+        "id": "57a13026368f11424a466afc9239c1a9e7a7dd27",
+        "type": "FIX",
+        "text": " We now ensure that a PDF loads irrespective of the contentType if isTrustedSource is set to true"
+      },
+      {
+        "id": "797ba14d815c4cef9c3fc1bf0531c68d0832c5a8",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: appointments customData aggregation is written in DOM now"
+      },
+      {
+        "id": "6dab706444ab9e594ea8e5a9aa8e720f1fe8d1fd",
+        "type": "FIX",
+        "text": " sap.m.Page: headerContent controls are now selectable in UI Adapt mode"
+      },
+      {
+        "id": "6cb39bf618ed41dc37b0ff7a4aee3089ee544b75",
+        "type": "FIX",
+        "text": " p13n.Engine: provide a way to pass event handler context to stateHandlerRegistry"
+      }
+    ]
   }
 }

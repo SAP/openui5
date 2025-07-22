@@ -30,5 +30,15 @@
         ]
       }
     ]
+  },
+  "1.120.33": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "6dab706444ab9e594ea8e5a9aa8e720f1fe8d1fd",
+        "type": "FIX",
+        "text": " sap.m.Page: headerContent controls are now selectable in UI Adapt mode"
+      }
+    ]
   }
 }
