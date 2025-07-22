@@ -10,10 +10,11 @@ sap.ui.define([
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONPropertyBinding",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/type/Date"
 ], function(Label, Input, Configuration, ChangeReason, BindingMode, FormatException, ParseException,
-		SimpleType, ValidateException, JSONModel, FloatType, DateType) {
+		SimpleType, ValidateException, JSONModel, JSONPropertyBinding, FloatType, DateType) {
 	"use strict";
 
 	var sDefaultLanguage = Configuration.getLanguage();
@@ -119,6 +120,24 @@ sap.ui.define([
 			}, this);
 		}
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function(bRelative) {
+	QUnit.test("constructor: bRelative=" + bRelative, function(assert) {
+		var oBinding,
+			oJSONPropertyBindingPrototypeMock = this.mock(JSONPropertyBinding.prototype);
+
+		oJSONPropertyBindingPrototypeMock.expects("isRelative").withExactArgs().returns(bRelative);
+		oJSONPropertyBindingPrototypeMock.expects("getResolvedPath")
+			.exactly(bRelative ? 1 : 0)
+			.returns(bRelative ? "~sPreviousResolvedPath" : undefined);
+
+		// code under test
+		oBinding = new JSONPropertyBinding(this.oModel, "~sPath", "~oContext", {}/*mParameters*/);
+
+		assert.strictEqual(oBinding.sPreviousResolvedPath, (bRelative ? "~sPreviousResolvedPath" : undefined));
+	});
+});
 
 	QUnit.test("getValue", function(assert) {
 		var bindings = this.createPropertyBindings("/teamMembers", "lastName");
@@ -659,5 +678,116 @@ sap.ui.define([
 		oInput.setValue("blubb");
 		oInput.destroy();
 		done();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate: bSuspended=true, bForceUpdate=false; no update is performed", function (assert) {
+		var oJSONPropertyBinding = {
+				bSuspended: true,
+				checkDataState: function () {},
+				getDataState: function () {},
+				getResolvedPath: function () {},
+				_fireChange: function () {},
+				_getValue: function () {}
+			},
+			oJSONPropertyBindingMock = this.mock(oJSONPropertyBinding);
+
+		oJSONPropertyBindingMock.expects("_getValue").never();
+		oJSONPropertyBindingMock.expects("getResolvedPath").never();
+		oJSONPropertyBindingMock.expects("getDataState").never();
+		oJSONPropertyBindingMock.expects("checkDataState").never();
+		oJSONPropertyBindingMock.expects("_fireChange").never();
+
+		//code under test
+		JSONPropertyBinding.prototype.checkUpdate.call(oJSONPropertyBinding, false);
+	});
+
+	//*********************************************************************************************
+[{
+	bForceUpdate: false,
+	sCurrentPath: "~sCurrentPath",
+	oCurrentValue: "~oSameValue",
+	bIsRelative: true,
+	sPreviousResolvedPath: "~sDifferentPath",
+	oPreviousValue: "~oSameValue",
+	sTitle: "Different paths, same value"
+}, {
+	bForceUpdate: false,
+	sCurrentPath: "~sSamePath",
+	oCurrentValue: "~oCurrentValue",
+	bIsRelative: false,
+	sPreviousResolvedPath: "~sSamePath",
+	oPreviousValue: "~oDifferentValue",
+	sTitle: "Different values, same path"
+}, {
+	bForceUpdate: true,
+	sCurrentPath: "~sSamePath",
+	oCurrentValue: "~oSameValue",
+	bIsRelative: true,
+	sPreviousResolvedPath: "~sSamePath",
+	oPreviousValue: "~oSameValue",
+	sTitle: "bForceUpdate = true"
+}].forEach(function (oFixture) {
+	QUnit.test("checkUpdate performs update due to: " + oFixture.sTitle, function (assert) {
+		var oDataState = {setValue: function () {}},
+			oJSONPropertyBinding = {
+				sPreviousResolvedPath: oFixture.sPreviousResolvedPath,
+				bSuspended: false,
+				oValue: oFixture.oPreviousValue,
+				checkDataState: function () {},
+				getDataState: function () {},
+				getResolvedPath: function () {},
+				isRelative: function () {},
+				_fireChange: function () {},
+				_getValue: function () {}
+			},
+			oJSONPropertyBindingMock = this.mock(oJSONPropertyBinding);
+
+		oJSONPropertyBindingMock.expects("_getValue").withExactArgs().returns(oFixture.oCurrentValue);
+		oJSONPropertyBindingMock.expects("getResolvedPath")
+			.withExactArgs()
+			.exactly((oFixture.oPreviousValue === oFixture.oCurrentValue || oFixture.bForceUpdate) ? 2 : 1)
+			.returns(oFixture.sCurrentPath);
+		oJSONPropertyBindingMock.expects("isRelative")
+			.withExactArgs()
+			.exactly(oFixture.bIsRelative ? 1 : 0)
+			.returns(oFixture.bIsRelative);
+		oJSONPropertyBindingMock.expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(oDataState).expects("setValue").withExactArgs(oFixture.oCurrentValue);
+		oJSONPropertyBindingMock.expects("checkDataState").withExactArgs();
+		oJSONPropertyBindingMock.expects("_fireChange").withExactArgs({reason: "change"});
+
+		// code under test
+		JSONPropertyBinding.prototype.checkUpdate.call(oJSONPropertyBinding, oFixture.bForceUpdate);
+
+		assert.strictEqual(oJSONPropertyBinding.oValue, oFixture.oCurrentValue);
+		assert.strictEqual(oJSONPropertyBinding.sPreviousResolvedPath, oFixture.sCurrentPath);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate performs no update as the binding is the same", function (assert) {
+		var oJSONPropertyBinding = {
+				sPreviousResolvedPath: "~sSamePath",
+				bSuspended: false,
+				oValue: "~sSameValue",
+				checkDataState: function () {},
+				getDataState: function () {},
+				getResolvedPath: function () {},
+				isRelative: function () {},
+				_fireChange: function () {},
+				_getValue: function () {}
+			},
+			oJSONPropertyBindingMock = this.mock(oJSONPropertyBinding);
+
+		oJSONPropertyBindingMock.expects("_getValue").withExactArgs().returns("~sSameValue");
+		oJSONPropertyBindingMock.expects("getResolvedPath").withExactArgs().returns("~sSamePath");
+		oJSONPropertyBindingMock.expects("isRelative").withExactArgs().returns(true);
+		oJSONPropertyBindingMock.expects("getDataState").never();
+		oJSONPropertyBindingMock.expects("checkDataState").never();
+		oJSONPropertyBindingMock.expects("_fireChange").never();
+
+		//code under test
+		JSONPropertyBinding.prototype.checkUpdate.call(oJSONPropertyBinding, false);
 	});
 });
