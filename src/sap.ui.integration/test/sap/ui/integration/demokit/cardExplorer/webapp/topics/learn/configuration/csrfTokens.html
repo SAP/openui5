@@ -14,19 +14,19 @@
 		<div class="content">
 			<h1 id="overview">CSRF Tokens</h1>
 			<p>
-				A CSRF (Cross Site Request Forgery) Token is a secret, unique and unpredictable value that
+				A CSRF (Cross-Site Request Forgery) Token is a secret, unique and unpredictable value that
 				server-side application generates in order to protect CSRF vulnerable resources.
 
 				The tokens are generated and submitted by the server-side
 				application in a subsequent HTTP request made by the client.
 			</p>
+
+			<h2 id="definingTokens">Defining CSRF Tokens</h2>
 			<p>
 				Card developers describe the CSRF tokens in the <code>configuration/csrfTokens</code> subsection of the manifest.
-				These tokens can be referred inside a data request using a binding syntax like
-				<code>{csrfTokens>/myCSRFToken/value}</code>.
+				These tokens can be referred inside a data request using a binding syntax, such as <code>{csrfTokens>/myCSRFToken/value}</code>.
 			</p>
-
-			<h2 id="properties">CSRF Token Properties</h2>
+			<h3 id="properties">Properties</h3>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -52,8 +52,17 @@
 				</table>
 			</div>
 
-			<h2 id="csrfTokensModel">CSRF Tokens Model</h2>
-			<p>The following values are available for every CSRF token and can be used in data requests:</p>
+			<h2 id="usingTokens">Using CSRF Tokens</h2>
+			<p>
+				CSRF tokens are stored in the <code>csrfTokens</code> model and can be referenced by their key using a binding syntax, such as <code>{csrfTokens>/myCSRFToken/value}</code>.
+				This syntax is resolved only within data requests in the <code>"sap.card"</code> namespace.
+			</p>
+			<p>
+				Additionally, the same syntax can be used in the <code>Card#request()</code> method.
+			</p>
+
+			<h3 id="csrfTokensModel">CSRF Tokens Model</h3>
+			<p>The following values are available for every CSRF token:</p>
 			<table>
 				<tr>
 					<th>Path</th>

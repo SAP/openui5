@@ -66,8 +66,8 @@
 						<td>string</td>
 						<td>No</td>
 						<td></td>
-						<td>Default url for the destination. If the destination can not be resolved by the host, this
-							url will be used.</td>
+						<td>Default URL for the destination. If the destination can not be resolved by the host, this
+							URL will be used.</td>
 						<td>1.21.0</td>
 						<td>1.77</td>
 					</tr>
@@ -76,7 +76,10 @@
 
 			<h2 id="usingDestinations">Using Destinations</h2>
 			<p>
-				Described destinations can be referenced by their key using the following specific syntax: <code>{{destinations.myDestinationKey}}</code>.
+				Described destinations can be referenced by their key using the following specific syntax: <code>{{destinations.myDestinationKey}}</code> within <code>"sap.card"</code> namespace, but not within the definition of another destination.
+			</p>
+			<p>
+				Additionally, the same syntax can be used in the <code>Card#request()</code> method.
 			</p>
 			<p>
 				<b>Note</b>: For Component cards a dedicated API is provided. For more information, see the
