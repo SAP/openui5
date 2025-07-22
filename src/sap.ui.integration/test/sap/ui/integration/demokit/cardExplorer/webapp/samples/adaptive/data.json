@@ -31,7 +31,7 @@
 				"src": "{photo}"
 			},
 			"title": "{firstName} {lastName}",
-			"subTitle": "{position}"
+			"subtitle": "{position}"
 		},
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",

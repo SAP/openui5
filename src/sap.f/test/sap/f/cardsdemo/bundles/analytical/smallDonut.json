@@ -10,7 +10,7 @@
 		"header": {
 			"type": "Default",
 			"title": "minHeight of content should be 10rem",
-			"subTitle": "",
+			"subtitle": "",
 			"actions": [{
 				"type": "Navigation",
 				"parameters": {

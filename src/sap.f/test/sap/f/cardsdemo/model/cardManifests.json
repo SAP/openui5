@@ -9,7 +9,7 @@
 				"header": {
 					"iconSrc": "sap-icon://accept",
 					"title": "Card Title",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"status": {
 						"text": "Count"
 					},
@@ -35,7 +35,7 @@
 			"sap.card": {
 				"header": {
 					"title": "This Line is a very very very very very very very very very very very very very very very very very very long one",
-					"subTitle": " Thi is a very very  very very very very very very very very very very very very very very very very very very long one",
+					"subtitle": " Thi is a very very  very very very very very very very very very very very very very very very very very very long one",
 					"icon": {
 						"src": "./images/Woman_avatar_01.png",
 						"shape": "Square"
@@ -56,7 +56,7 @@
 				"type": "List",
 				"header": {
 					"title": "L3 Request List Content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://activity-items"
 					},
@@ -74,7 +74,7 @@
 			"sap.card": {
 				"header": {
 					"title": "This Line is the Title of Card and a very very very very very very very very very very very very very very very very very very long one",
-					"subTitle": " Thi is a Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"subtitle": " Thi is a Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
 					"icon": {
 						"text": "GK"
 					},
@@ -94,8 +94,8 @@
 				"header": {
 					"title": "This Line is the Title of Card and a very very very very very very very very very very very very very very very very very very long one",
 					"titleMaxLines": 1,
-					"subTitle": " Thi is a Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
-					"subTitleMaxLines": 1,
+					"subtitle": " Thi is a Card subtitle and a very very  very very very very very very very very very very very very very very very very  very very long one",
+					"subtitleMaxLines": 1,
 					"icon": {
 						"text": "GK"
 					},
@@ -252,7 +252,7 @@
 						"src": "sap-icon://accept"
 					},
 					"title": "Card Title 2x2",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"status": "Count",
 					"actions": [{
 						"type": "Navigation",
@@ -271,7 +271,7 @@
 				"header": {
 					"type": "Numeric",
 					"title": "Card Title 1x1",
-					"subTitle": "Card Subtitle",
+					"subtitle": "Card Subtitle",
 					"mainIndicator": {
 						"number": "99",
 						"unit": "Problems"
@@ -295,7 +295,7 @@
 						"src": "sap-icon://accept"
 					},
 					"title": "Card Title 2x1",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"status": "Count"
 				},
 				"type": "List"
@@ -317,7 +317,7 @@
 				"type": "List",
 				"header": {
 					"title": "Request List Content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -362,7 +362,7 @@
 				"type": "List",
 				"header": {
 					"title": "Request List Content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -407,7 +407,7 @@
 				"type": "Table",
 				"header": {
 					"title": "Table Card",
-					"subTitle": "Table Card subtitle"
+					"subtitle": "Table Card subtitle"
 				},
 				"content": {
 					"data": {
@@ -548,7 +548,7 @@
 						"path": "/kpiInfos/kpi"
 					},
 					"title": "Project Cloud Transformation",
-					"subTitle": "Revenue",
+					"subtitle": "Revenue",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"number": "{number}",
@@ -599,7 +599,7 @@
 							"valueColor": "Critical"
 						}
 					},
-					"subTitle": "Success Rate",
+					"subtitle": "Success Rate",
 					"mainIndicator": {
 						"number": "{n}",
 						"unit": "{u}",
@@ -634,7 +634,7 @@
 						}
 					},
 					"title": "Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 					"status": {
 						"text": "On Track"
 					},
@@ -676,7 +676,7 @@
 					"status": {
 						"text": "8 of 346"
 					},
-					"subTitle": "Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards "
+					"subtitle": "Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards Card to check that kpi changes don't brake other cards "
 				},
 				"content": {
 					"data": {
@@ -732,8 +732,8 @@
 					},
 					"title": "Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
 					"titleMaxLines": 1,
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
-					"subTitleMaxLines": 1,
+					"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"subtitleMaxLines": 1,
 					"status": {
 						"text": "On Track"
 					},
@@ -780,7 +780,7 @@
 					"status": {
 						"text": "5 of 344"
 					},
-					"subTitle": "Revenue",
+					"subtitle": "Revenue",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"number": "{number}",
@@ -841,7 +841,7 @@
 						"path": "/kpiInfos/kpi"
 					},
 					"title": "Numeric Header with only Title and Subtitle",
-					"subTitle": "Some subtitle"
+					"subtitle": "Some subtitle"
 				},
 				"type": "Table",
 				"content": {
@@ -940,7 +940,7 @@
 						}
 					},
 					"title": "Main and Side Indicators Both Visible",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"visible": "{visibility}",
@@ -986,7 +986,7 @@
 						}
 					},
 					"title": "Only Main Indicator Visible",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"visible": "{!visibility}",
@@ -1032,7 +1032,7 @@
 						}
 					},
 					"title": "Neither Main nor Side Indicators Visible",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"visible": "{visibility}",
@@ -1078,7 +1078,7 @@
 						}
 					},
 					"title": "Main and Only One Side Indicators Visible",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"visible": "{!visibility}",
@@ -1124,7 +1124,7 @@
 						}
 					},
 					"title": "Only Side Indicators Visible",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"visible": "{visibility}",
@@ -1191,7 +1191,7 @@
 				"type": "List",
 				"header": {
 					"title": "Request List Content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -1287,7 +1287,7 @@
 				"type": "Timeline",
 				"header": {
 					"title": "Upcoming Activities",
-					"subTitle": "For Today"
+					"subtitle": "For Today"
 				},
 				"content": {
 					"maxItems": "3",
@@ -1335,7 +1335,7 @@
 				"type": "Timeline",
 				"header": {
 					"title": "Timeline Card with minItems",
-					"subTitle": "For Today"
+					"subtitle": "For Today"
 				},
 				"content": {
 					"minItems": 1,
@@ -1966,7 +1966,7 @@
 				},
 				"header": {
 				"title": "My calendar",
-				"subTitle": "Team Balkan",
+				"subtitle": "Team Balkan",
 				"status": {
 					"text":  {
 					"format": {
@@ -2070,7 +2070,7 @@
 				"type": "List",
 				"header": {
 					"title": "List Card",
-					"subTitle": "Without Content",
+					"subtitle": "Without Content",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -2139,7 +2139,7 @@
 				"header": {
 					"type": "Numeric",
 					"title": "No Content and Custom Height",
-					"subTitle": "Tickets currently in escalation.",
+					"subtitle": "Tickets currently in escalation.",
 					"mainIndicator": {
 						"number": "10",
 						"unit": "Tickets"
@@ -2207,7 +2207,7 @@
 		  "type": "List",
 		  "header": {
 			"title": "List Without Data in Response",
-			"subTitle": ""
+			"subtitle": ""
 		  },
 		  "content": {
 			"data": {
@@ -2233,7 +2233,7 @@
 		  "type": "Table",
 		  "header": {
 			"title": "Table Without Data in Response",
-			"subTitle": ""
+			"subtitle": ""
 		  },
 		  "content": {
 			"data": {
@@ -2320,7 +2320,7 @@
 		  "type": "List",
 		  "header": {
 			"title": "List with Bad Request",
-			"subTitle": ""
+			"subtitle": ""
 		  },
 		  "content": {
 			"data": {
@@ -2366,7 +2366,7 @@
 						}
 					},
 					"title": "No Height (Content min-height is 14rem)",
-					"subTitle": "Analytical Card",
+					"subtitle": "Analytical Card",
 					"mainIndicator": {
 						"number": "{n}",
 						"unit": "{u}",
@@ -2431,7 +2431,7 @@
 				"type": "List",
 				"header": {
 					"title": "No Height (Content min-height is calculated)",
-					"subTitle": "List Card",
+					"subtitle": "List Card",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -2507,10 +2507,10 @@
 				},
 				"header": {
 					"title": "{title}",
-					"subTitle": "{subTitle}",
-					"status": "{subTitle}",
+					"subtitle": "{subtitle}",
+					"status": "{subtitle}",
 					"icon": {
-						"src": "{subTitle}"
+						"src": "{subtitle}"
 					}
 				},
 				"content": {
@@ -2547,10 +2547,10 @@
 				},
 				"header": {
 					"title": "{title}",
-					"subTitle": "{subTitle}",
-					"status": "{subTitle}",
+					"subtitle": "{subtitle}",
+					"status": "{subtitle}",
 					"icon": {
-						"src": "{subTitle}"
+						"src": "{subtitle}"
 					}
 				}
 			}
@@ -2580,7 +2580,7 @@
 						}
 					},
 					"title": "{title}",
-					"subTitle": "{subtitle}",
+					"subtitle": "{subtitle}",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"number": "{n}",
@@ -2686,7 +2686,7 @@
 				},
 				"header": {
 					"title": "Sales Orders for Key Accounts",
-					"subTitle": "Today"
+					"subtitle": "Today"
 				},
 				"content": {
 					"maxItems": 6,
@@ -2758,7 +2758,7 @@
 				},
 				"header": {
 					"title": "{title}",
-					"subTitle": "{position}",
+					"subtitle": "{position}",
 					"icon": {
 						"src": "{image}"
 					}
@@ -2768,7 +2768,7 @@
 						"title" : {
 							"value": "Employee ID card"
 						},
-						"subTitle": {
+						"subtitle": {
 							"value": "Obligations and Responsibilities"
 						}
 					}
@@ -3432,7 +3432,7 @@
 						"text": "DM"
 					},
 					"title": "Donna Moore",
-					"subTitle": "Complete your time recording"
+					"subtitle": "Complete your time recording"
 				},
 				"configuration": {
 					"filters": {
@@ -3502,7 +3502,7 @@
 						"path": "/kpiInfos/kpi"
 					},
 					"title": "Numeric Header with Only Title and Subtitle",
-					"subTitle": "Some subtitle"
+					"subtitle": "Some subtitle"
 				},
 				"type": "Table",
 				"content": {

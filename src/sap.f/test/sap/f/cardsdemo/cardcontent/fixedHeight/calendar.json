@@ -121,7 +121,7 @@
 		},
 		"header": {
 			"title": "My calendar",
-			"subTitle": "Team Balkan"
+			"subtitle": "Team Balkan"
 		},
 		"content": {
 			"date": "2020-09-18",

@@ -159,7 +159,7 @@ sap.ui.define([
 				oHeader.setNumberSize("S");
 			}
 
-			if (!mConfiguration.subtitleMaxLines) {
+			if (!mConfiguration.subtitleMaxLines && !mConfiguration.subTitleMaxLines) {
 				oHeader.setSubtitleMaxLines(1);
 			}
 		}
@@ -208,7 +208,7 @@ sap.ui.define([
 				oHeader.setNumberSize("S");
 			}
 
-			if (!mConfiguration.subtitleMaxLines) {
+			if (!mConfiguration.subtitleMaxLines && !mConfiguration.subTitleMaxLines) {
 				oHeader.setSubtitleMaxLines(1);
 			}
 		}

@@ -45,7 +45,7 @@
 		},
 		"header": {
 			"title": "Destinations sample",
-			"subTitle": "Top orders from destination 'Northwind'",
+			"subtitle": "Top orders from destination 'Northwind'",
 			"icon": {
 				"src": "sap-icon://compare-2"
 			},

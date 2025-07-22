@@ -48,7 +48,7 @@
 				"visible": "{visible}"
 			},
 			"title": "{firstName} {lastName}",
-			"subTitle": "{position}"
+			"subtitle": "{position}"
 		},
 		"content": {
 			"groups": [

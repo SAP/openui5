@@ -39,8 +39,8 @@ sap.ui.define([
 				sPath = "/ProductSet('HT-1021')/ToSupplier",
 				oViewContainer = new VBox({
 					items : [
-						new Title({text : "This is meant to be a pure code sample. "
-							+ "(To run it, you would need a proxy which is configured properly.)",
+						new Title({text : "Run this code sample with UI5 Tooling. "
+							+ "See the example in 'XML Templating' in the Demo Kit.",
 							titleStyle : TitleLevel.H3})
 					]
 				});

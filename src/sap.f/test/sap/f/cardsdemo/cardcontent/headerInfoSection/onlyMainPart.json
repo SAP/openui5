@@ -22,7 +22,7 @@
 				}
 			],
 			"title": "Project Cloud Transformation",
-			"subTitle": "Revenue",
+			"subtitle": "Revenue",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"number": "{number}",

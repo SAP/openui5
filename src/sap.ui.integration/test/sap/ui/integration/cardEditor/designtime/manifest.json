@@ -365,7 +365,7 @@
 		},
 		"header": {
 			"title": "{parameters>/cardTitle/value}",
-			"subTitle": "{parameters>/objectsWithPropertiesDefinedAndValueFromJsonList/value/0/text}",
+			"subtitle": "{parameters>/objectsWithPropertiesDefinedAndValueFromJsonList/value/0/text}",
 			"icon": {
 				"src": "sap-icon://add-document",
 				"shape": "Circle",

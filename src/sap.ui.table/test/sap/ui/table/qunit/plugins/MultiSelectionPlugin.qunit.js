@@ -431,17 +431,49 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change SelectionMode", function(assert) {
+		const oMultiSelectionPlugin = new MultiSelectionPlugin({
+			selectionMode: library.SelectionMode.Single
+		});
+
 		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is correctly initialized");
 
-		this.oTable.removeAllDependents();
-		this.oTable.addDependent(new MultiSelectionPlugin({
-			selectionMode: "Single"
-		}));
-		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.Single, "SelectionMode is correctly initialized");
+		this.oTable.destroyDependents();
+		this.oTable.addDependent(oMultiSelectionPlugin);
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.Single, "SelectionMode is correctly initialized");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin.getSelectionMode(), SelectionMode.Single,
+			"SelectionMode is properly set in the inner selection plugin");
 		assert.equal(this.oTable.getSelectionMode(), SelectionMode.Single, "SelectionMode is properly set in the Table");
 
-		this.oTable._getSelectionPlugin().setSelectionMode(SelectionMode.MultiToggle);
-		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is properly set");
+		oMultiSelectionPlugin.setSelectionMode(SelectionMode.MultiToggle);
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is properly set");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle,
+			"SelectionMode is properly set in the inner selection plugin");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.MultiToggle, "The SelectionMode is properly set in the Table");
+
+		oMultiSelectionPlugin.setEnabled(false);
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is properly set");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.None, "The SelectionMode is properly set in the Table");
+
+		oMultiSelectionPlugin.setSelectionMode(SelectionMode.Single);
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.Single, "SelectionMode is properly set");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.None, "The SelectionMode is properly set in the Table");
+
+		oMultiSelectionPlugin.setEnabled(true);
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.Single, "SelectionMode is correctly initialized");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin.getSelectionMode(), SelectionMode.Single,
+			"SelectionMode is properly set in the inner selection plugin");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.Single, "SelectionMode is properly set in the Table");
+
+		oMultiSelectionPlugin.setSelectionMode(SelectionMode.None);
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.None, "SelectionMode is properly set");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin.getSelectionMode(), SelectionMode.None,
+			"SelectionMode is properly set in the inner selection plugin");
+		assert.equal(this.oTable.getSelectionMode(), SelectionMode.None, "The SelectionMode is properly set in the Table");
+
+		oMultiSelectionPlugin.setSelectionMode();
+		assert.equal(oMultiSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is properly set");
+		assert.equal(oMultiSelectionPlugin.oInnerSelectionPlugin.getSelectionMode(), SelectionMode.MultiToggle,
+			"SelectionMode is properly set in the inner selection plugin");
 		assert.equal(this.oTable.getSelectionMode(), SelectionMode.MultiToggle, "The SelectionMode is properly set in the Table");
 	});
 
@@ -495,6 +527,19 @@ sap.ui.define([
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+
+		}).then(function() {
+			oSelectionPlugin.setEnabled(false);
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oSelectionPlugin.addSelectionInterval(6, 7).then(function() {
+				assert.ok(false, "The promise should have been rejected because the plugin is disabled");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Plugin is disabled", "Promise rejected with Error: Plugin is disabled");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
@@ -745,6 +790,19 @@ sap.ui.define([
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
 			});
+
+		}).then(function() {
+			oSelectionPlugin.setEnabled(false);
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oSelectionPlugin.setSelectionInterval(6, 7).then(function() {
+				assert.ok(false, "The promise should have been rejected because the plugin is disabled");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Plugin is disabled", "Promise rejected with Error: Plugin is disabled");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
 		});
 	});
 
@@ -872,6 +930,19 @@ sap.ui.define([
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+
+		}).then(function() {
+			oSelectionPlugin.setEnabled(false);
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oSelectionPlugin.setSelectedIndex(1).then(function() {
+				assert.ok(false, "The promise should have been rejected because the plugin is disabled");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Plugin is disabled", "Promise rejected with Error: Plugin is disabled");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
@@ -1119,6 +1190,19 @@ sap.ui.define([
 				assert.ok(false, "The promise should have been rejected because the selection mode is \"None\"");
 			}).catch(function(oError) {
 				assert.equal(oError.toString(), "Error: SelectionMode is 'None'", "Promise rejected with Error: SelectionMode is 'None'");
+				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
+				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
+				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");
+			});
+
+		}).then(function() {
+			oSelectionPlugin.setEnabled(false);
+			fnGetContexts.resetHistory();
+			oSelectionChangeSpy.resetHistory();
+			oSelectionPlugin.selectAll().then(function() {
+				assert.ok(false, "The promise should have been rejected because the plugin is disabled");
+			}).catch(function(oError) {
+				assert.equal(oError.toString(), "Error: Plugin is disabled", "Promise rejected with Error: Plugin is disabled");
 				assert.ok(fnGetContexts.notCalled, "getContexts was not called");
 				assert.equal(oSelectionPlugin.getSelectedCount(), 0, "No items are selected");
 				assert.ok(oSelectionChangeSpy.notCalled, "The \"selectionChange\" event was not fired");

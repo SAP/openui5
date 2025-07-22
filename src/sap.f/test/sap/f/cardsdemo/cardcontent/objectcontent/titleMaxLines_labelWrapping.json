@@ -46,7 +46,7 @@
 				"src": "{photo}"
 			},
 			"title": "Employment Form",
-			"subTitle": "{firstName} {lastName}"
+			"subtitle": "{firstName} {lastName}"
 		},
 		"content": {
 			"groups": [

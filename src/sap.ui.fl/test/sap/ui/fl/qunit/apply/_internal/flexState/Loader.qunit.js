@@ -116,7 +116,8 @@ sap.ui.define([
 				componentData: oComponentData,
 				version: Version.Number.Draft,
 				allContexts: true,
-				adaptationId: "id_1234"
+				adaptationId: "id_1234",
+				skipLoadBundle: true
 			};
 
 			var oExpectedProperties = {
@@ -128,7 +129,8 @@ sap.ui.define([
 				appDescriptor: this.oRawManifest,
 				version: Version.Number.Draft,
 				allContexts: true,
-				adaptationId: "id_1234"
+				adaptationId: "id_1234",
+				skipLoadBundle: true
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -136,6 +138,7 @@ sap.ui.define([
 				assert.equal(this.oLoadFlexDataStub.callCount, 1, "the Storage.loadFlexData was called");
 				assert.equal(this.oCompleteFlexDataStub.callCount, 0, "the Storage.completeFlexData was not called");
 				assert.equal(this.oLoadFlexDataStub.getCall(0).args[0].siteId, "siteId", "the siteId was retrieved from the Utils");
+				assert.equal(this.oLoadFlexDataStub.getCall(0).args[0].skipLoadBundle, true, "the bundle loading was skipped");
 				assert.equal(this.oGetBaseCompNameStub.callCount, 1, "the name was retrieved from the Utils");
 				assert.equal(this.oGetCacheKeyStub.callCount, 1, "the cache key was retrieved from the Utils");
 				var mPassedPropertyBag = this.oLoadFlexDataStub.firstCall.args[0];
@@ -160,7 +163,8 @@ sap.ui.define([
 				componentName: "baseName",
 				version: undefined,
 				allContexts: undefined,
-				adaptationId: undefined
+				adaptationId: undefined,
+				skipLoadBundle: undefined
 			};
 
 			return Loader.loadFlexData(mPropertyBag).then(function(oResult) {
@@ -291,7 +295,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("partialFlexState", {
+	QUnit.module("partialFlexData", {
 		beforeEach() {
 			this.oStorageCompleteFlexDataStub = sandbox.spy(ApplyStorage, "completeFlexData");
 			this.oStorageLoadFlexDataStub = sandbox.spy(ApplyStorage, "loadFlexData");
@@ -407,7 +411,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load variant author name", {
-		beforeEach() {},
 		afterEach() {
 			sandbox.restore();
 		}

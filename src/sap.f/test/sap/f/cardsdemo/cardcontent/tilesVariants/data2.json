@@ -1,6 +1,6 @@
 {
 	"title": "Top 5 Products Sales and a Long Title",
-	"subTitle": "By Average Price and very very long subtitle",
+	"subtitle": "By Average Price and very very long subtitle",
 	"url": "http://sap.com",
 	"numericIndicator": {
 		"iconSrc": "sap-icon://line-charts",

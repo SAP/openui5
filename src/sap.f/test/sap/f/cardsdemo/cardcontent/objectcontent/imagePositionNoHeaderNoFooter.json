@@ -10,7 +10,7 @@
 				"src": "sap-icon://business-objects-experience"
 			},
 			"title": "Object Card",
-			"subTitle": "With Image and No Header and No Footer",
+			"subtitle": "With Image and No Header and No Footer",
 			"visible": false
 		},
 		"content": {

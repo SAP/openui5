@@ -60,7 +60,7 @@
 		},
 		"header": {
 			"title": "Invoice",
-			"subTitle": "Invoice Details",
+			"subtitle": "Invoice Details",
 			"icon": {
 				"src": "sap-icon://sales-quote"
 			}

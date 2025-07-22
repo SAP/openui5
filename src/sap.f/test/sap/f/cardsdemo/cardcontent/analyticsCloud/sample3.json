@@ -36,7 +36,7 @@
 		},
 		"header": {
 			"title": "{widgetInfo>/title}",
-			"subTitle": "{widgetInfo>/subtitle}"
+			"subtitle": "{widgetInfo>/subtitle}"
 		},
 		"content": {
 			"minHeight": "25rem",

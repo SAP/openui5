@@ -13,7 +13,7 @@
 				"path": "/header"
 			},
 			"title": "{details}",
-			"subTitle": "Analytical Card",
+			"subtitle": "Analytical Card",
 			"unitOfMeasurement": "EUR",
 			"mainIndicator": {
 				"number": "{number}",

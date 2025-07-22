@@ -14,7 +14,7 @@
 				"src": "{photo}"
 			},
 			"title": "Object Card",
-			"subTitle": "{position}"
+			"subtitle": "{position}"
 		},
 		"content": {
 			"groups": [

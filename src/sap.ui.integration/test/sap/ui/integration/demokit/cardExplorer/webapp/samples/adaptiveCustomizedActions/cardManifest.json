@@ -37,7 +37,7 @@
 	"type": "AdaptiveCard",
 	"header": {
 		"title": "Adaptive Card with Customized Actions and Extension",
-		"subTitle": "Actions are modified via the app's controller or the extension module",
+		"subtitle": "Actions are modified via the app's controller or the extension module",
 		"icon": {
 			"src": "sap-icon://business-card"
 		}

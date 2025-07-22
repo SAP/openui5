@@ -60,6 +60,12 @@ sap.ui.require(["sap/ui/integration/widgets/Card", "sap/ui/integration/designtim
 					"type": "string",
 					"path": "/sap.package/title"
 				},
+				"packageSubtitle": {
+					"tags": ["package"],
+					"label": "Package Subtitle",
+					"type": "string",
+					"path": "/sap.package/subtitle"
+				},
 				"packageSubTitle": {
 					"tags": ["package"],
 					"label": "Package Subtitle",

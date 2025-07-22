@@ -60,7 +60,7 @@ sap.ui.define([
 				},
 				"header": {
 					"title": "{{destinations.innerDestination}} {title}",
-					"subTitle": "{parameters>/subtitle/value}",
+					"subtitle": "{parameters>/subtitle/value}",
 					"data": {
 						"request": {
 							"url": "{{destinations.headerDestination}}/header.json"

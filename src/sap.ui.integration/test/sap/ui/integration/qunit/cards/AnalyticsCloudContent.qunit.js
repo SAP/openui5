@@ -54,7 +54,7 @@ sap.ui.define([
 			},
 			"header": {
 				"title": "{= ${widgetInfo>/title} || 'SAC Card'}",
-				"subTitle": "{widgetInfo>/subtitle}"
+				"subtitle": "{widgetInfo>/subtitle}"
 			},
 			"content": {
 				"minHeight": "25rem",
@@ -88,7 +88,7 @@ sap.ui.define([
 			},
 			"header": {
 				"title": "Demonstration SAC Card",
-				"subTitle": "Shows a widget from story"
+				"subtitle": "Shows a widget from story"
 			},
 			"content": {
 				"minHeight": "25rem",

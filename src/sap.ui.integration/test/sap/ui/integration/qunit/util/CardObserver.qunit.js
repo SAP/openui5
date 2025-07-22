@@ -30,7 +30,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle"
+					"subtitle": "Card Subtitle"
 				},
 				"content": {
 					"data": {

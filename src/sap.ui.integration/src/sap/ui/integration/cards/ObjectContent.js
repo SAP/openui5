@@ -38,6 +38,7 @@ sap.ui.define([
 	"sap/ui/integration/util/Form",
 	"sap/ui/integration/util/DateRangeHelper",
 	"sap/ui/integration/util/Duration",
+	"sap/ui/integration/util/subtitleToSubTitle",
 	"sap/ui/integration/controls/ImageWithOverlay",
 	"sap/f/AvatarGroup",
 	"sap/f/AvatarGroupItem",
@@ -85,6 +86,7 @@ sap.ui.define([
 	Form,
 	DateRangeHelper,
 	Duration,
+	subtitleToSubTitle,
 	ImageWithOverlay,
 	AvatarGroup,
 	AvatarGroupItem,
@@ -262,6 +264,10 @@ sap.ui.define([
 							if (oItem.src) {
 								oItem.src = this._oIconFormatter.formatSrc(oItem.src);
 							}
+
+							if (oItem.type === "Image" && oItem.overlay) {
+								subtitleToSubTitle(oItem.overlay);
+							}
 						}.bind(this));
 					}
 				}.bind(this));
@@ -308,6 +314,10 @@ sap.ui.define([
 			} else {
 				bHasItemsToResolve = false;
 			}
+		}
+
+		if (oItem.type === "Image" && oResolvedGroupItem.overlay) {
+			subtitleToSubTitle(oResolvedGroupItem.overlay);
 		}
 
 		if (bHasItemsToResolve) {
@@ -941,7 +951,7 @@ sap.ui.define([
 				tooltip: oItem.tooltip,
 				supertitle:  oItem.overlay.supertitle,
 				title: oItem.overlay.title,
-				subTitle: oItem.overlay.subTitle,
+				subtitle: oItem.overlay.subtitle || oItem.overlay.subTitle,
 				verticalPosition: oItem.overlay.verticalPosition,
 				horizontalPosition: oItem.overlay.horizontalPosition,
 				textColor: oItem.overlay.textColor,

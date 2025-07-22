@@ -57,7 +57,7 @@
 				"src": "sap-icon://sap-ui5"
 			},
 			"title": "Order for {ShipName}",
-			"subTitle": "For {ShipAddress}",
+			"subtitle": "For {ShipAddress}",
 			"status": {
 				"text": "ID {OrderID}"
 			}

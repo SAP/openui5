@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/util/subtitleToSubTitle",
 	"sap/ui/integration/formatters/IconFormatter"
 ], function (
 	AvatarColor,
@@ -26,6 +27,7 @@ sap.ui.define([
 	BindingResolver,
 	LoadingProvider,
 	Utils,
+	subtitleToSubTitle,
 	IconFormatter
 ) {
 	"use strict";
@@ -76,8 +78,8 @@ sap.ui.define([
 		var mSettings = {
 			title: mConfiguration.title,
 			titleMaxLines: mConfiguration.titleMaxLines,
-			subtitle: mConfiguration.subTitle,
-			subtitleMaxLines: mConfiguration.subTitleMaxLines,
+			subtitle: mConfiguration.subtitle || mConfiguration.subTitle,
+			subtitleMaxLines: mConfiguration.subtitleMaxLines || mConfiguration.subTitleMaxLines,
 			dataTimestamp: mConfiguration.dataTimestamp,
 			visible: mConfiguration.visible,
 			wrappingType: mConfiguration.wrappingType
@@ -251,6 +253,8 @@ sap.ui.define([
 		if (oConfiguration.icon && oConfiguration.icon.src) {
 			oConfiguration.icon.src = this._oIconFormatter.formatSrc(BindingResolver.resolveValue(oConfiguration.icon.src, this));
 		}
+
+		subtitleToSubTitle(oConfiguration);
 
 		return oConfiguration;
 	};

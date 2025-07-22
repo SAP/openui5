@@ -13,7 +13,7 @@
 		},
 		"header": {
 			"title": "List Card with Products",
-			"subTitle": "The Top Sellers This Month",
+			"subtitle": "The Top Sellers This Month",
 			"status": {
 				"text": {
 					"format": {

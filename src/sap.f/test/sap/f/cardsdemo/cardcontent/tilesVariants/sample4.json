@@ -12,7 +12,7 @@
 					}
 			},
 			"title": "{title}",
-			"subTitle": "{subTitle}",
+			"subtitle": "{subtitle}",
 			"icon": {
 				"src": "{icon/src}",
 				"shape": "{icon/shape}"

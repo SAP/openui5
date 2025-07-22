@@ -16,7 +16,7 @@
 		  "path": "/header"
 		},
 		"title": "Table Card ",
-		"subTitle": "{revenue}",
+		"subtitle": "{revenue}",
 		"unitOfMeasurement": "EUR",
 		"mainIndicator": {
 		  "number": "{number}",

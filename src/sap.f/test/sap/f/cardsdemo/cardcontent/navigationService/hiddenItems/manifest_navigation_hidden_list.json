@@ -20,7 +20,7 @@
 		},
 		"header": {
 			"title": "Request List Content Card 2",
-			"subTitle": "Card Subtitle",
+			"subtitle": "Card Subtitle",
 			"icon": {
 				"src": "sap-icon://accept"
 			},

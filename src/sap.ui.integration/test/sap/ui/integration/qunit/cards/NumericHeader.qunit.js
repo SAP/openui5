@@ -145,7 +145,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information",
+					"subtitle": "Forecasted goal achievement depending on business logic and other important information",
 					"unitOfMeasurement": "EUR",
 					"dataTimestamp": "2021-03-18T12:00:00Z",
 					"details": "Details, additional information"
@@ -165,10 +165,65 @@ sap.ui.define([
 
 		// Assert properties
 		assert.equal(oHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Card header title should be correct.");
-		assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Card header subtitle should be correct.");
+		assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subtitle, "Card header subtitle should be correct.");
 		assert.equal(oHeader.getAggregation("_unitOfMeasurement").getText(), oManifest["sap.card"].header.unitOfMeasurement, "Card header unitOfMeasurement should be correct.");
 		assert.equal(oHeader.getAggregation("_details").getText(), oManifest["sap.card"].header.details, "Card header details should be correct.");
 		assert.equal(oHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Card header dataTimestamp should be correct.");
+	});
+
+	QUnit.test("Check that the deprecated subTitle property still works", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.card1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"subTitle": "Card subtitle"
+				}
+			}
+		};
+		this.oCard.setManifest(oManifest);
+		await nextUIUpdate();
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const oHeader = this.oCard.getAggregation("_header");
+		assert.ok(oHeader, "Card should have header.");
+		assert.ok(oHeader.getAggregation("_subtitle") && oHeader.getAggregation("_subtitle").getDomRef(), "Card header subTitle should be created and rendered.");
+
+		assert.equal(oHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Card header subTitle should be correct.");
+	});
+
+	QUnit.test("Check that the deprecated subTitleMaxLines property still works", async function (assert) {
+		// Arrange
+		const oManifest = {
+			"sap.app": {
+				"id": "test.card.card1"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
+					"subTitle": "Card subtitle but very long subtitle that should be truncated",
+					"subTitleMaxLines": 1
+				}
+			}
+		};
+		this.oCard.setManifest(oManifest);
+		await nextUIUpdate();
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Assert
+		const oHeader = this.oCard.getAggregation("_header");
+		assert.ok(oHeader, "Card should have header.");
+		assert.equal(oHeader.getSubtitleMaxLines(), oManifest["sap.card"].header.subTitleMaxLines, "Card header subTitleMaxLines should be correct.");
 	});
 
 	QUnit.test("Numeric Header main indicator with json data", async function (assert) {
@@ -313,7 +368,7 @@ sap.ui.define([
 				"header": {
 					"type": "Numeric",
 					"title": "Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation Project Cloud Transformation ",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
+					"subtitle": "Forecasted goal achievement depending on business logic and other important information Forecasted goal achievement depending on business logic and other important information",
 					"unitOfMeasurement": "EUR"
 				}
 			}
@@ -396,7 +451,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Card title",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"unitOfMeasurement": "EUR",
 					"mainIndicator": {
 						"visible": false,
@@ -663,7 +718,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation",
-					"subTitle": "Forecasted goal achievement depending on business logic and other important information",
+					"subtitle": "Forecasted goal achievement depending on business logic and other important information",
 					"unitOfMeasurement": "EUR",
 					"dataTimestamp": "2021-03-18T12:00:00Z",
 					"details": "Details, additional information"
@@ -684,7 +739,7 @@ sap.ui.define([
 		// Assert
 		assert.ok(oClonedHeader.getDomRef(), "Cloned Numeric header should be rendered.");
 		assert.equal(oClonedHeader.getAggregation("_title").getText(), oManifest["sap.card"].header.title, "Cloned header title should be correct.");
-		assert.equal(oClonedHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subTitle, "Cloned header subtitle should be correct.");
+		assert.equal(oClonedHeader.getAggregation("_subtitle").getText(), oManifest["sap.card"].header.subtitle, "Cloned header subtitle should be correct.");
 		assert.equal(oClonedHeader.getAggregation("_unitOfMeasurement").getText(), oManifest["sap.card"].header.unitOfMeasurement, "Cloned header unitOfMeasurement should be correct.");
 		assert.equal(oClonedHeader.getAggregation("_details").getText(), oManifest["sap.card"].header.details, "Cloned header details should be correct.");
 		assert.equal(oClonedHeader.getDataTimestamp(), oManifest["sap.card"].header.dataTimestamp, "Cloned header dataTimestamp should be correct.");

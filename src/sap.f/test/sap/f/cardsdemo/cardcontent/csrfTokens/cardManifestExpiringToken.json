@@ -52,7 +52,7 @@
 		},
 		"header": {
 			"title": "With Expiring Token",
-			"subTitle": "(token /csrfTokens/expiringToken)"
+			"subtitle": "(token /csrfTokens/expiringToken)"
 		},
 		"content": {
 			"data": {

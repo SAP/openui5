@@ -41,7 +41,7 @@
 		},
 		"header": {
 			"title": "Cache is disabled",
-			"subTitle": "Data will not be stored in the browser's cache",
+			"subtitle": "Data will not be stored in the browser's cache",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}

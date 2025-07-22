@@ -7,7 +7,7 @@
 		"type": "Timeline",
 		"header": {
 			"title": "Upcoming Activities",
-			"subTitle": "For Today"
+			"subtitle": "For Today"
 		},
 		"content": {
 			"maxItems": "3",

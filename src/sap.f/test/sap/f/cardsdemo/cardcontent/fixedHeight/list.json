@@ -27,7 +27,7 @@
 		},
 		"header": {
 			"title": "Products (Server Side Pagination)",
-			"subTitle": "In Stock Information",
+			"subtitle": "In Stock Information",
 			"icon": {
 				"src": "sap-icon://product"
 			},

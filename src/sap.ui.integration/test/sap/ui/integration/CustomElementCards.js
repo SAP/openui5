@@ -26,7 +26,7 @@ sap.ui.define([
 		  "type": "Table",
 		  "header": {
 			  "title": "Table Card with Top 5 Products",
-			  "subTitle": "These are the top sellers this month",
+			  "subtitle": "These are the top sellers this month",
 			  "icon": {
 				  "src": "sap-icon://sales-order"
 			  },

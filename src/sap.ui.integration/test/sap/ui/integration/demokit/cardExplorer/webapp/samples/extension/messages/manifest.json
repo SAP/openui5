@@ -33,7 +33,7 @@
 				"src": "sap-icon://flag-2"
 			},
 			"title": "Messages using showMessage API",
-			"subTitle": "Triggered from the Extension"
+			"subtitle": "Triggered from the Extension"
 		},
 		"content": {
 			"groups": [

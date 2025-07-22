@@ -50,7 +50,7 @@
 		},
 		"header": {
 			"title": "{parameters>/title/value}",
-			"subTitle": "{parameters>/subtitle/value}",
+			"subtitle": "{parameters>/subtitle/value}",
 			"icon": {
 				"src": "{parameters>/headericon/value}"
 			},

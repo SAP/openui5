@@ -39,7 +39,7 @@
 		},
 		"header": {
 			"title": "Stale while revalidate",
-			"subTitle": "Data is not changed"
+			"subtitle": "Data is not changed"
 		},
 		"content": {
 			"row": {

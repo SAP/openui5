@@ -27,7 +27,7 @@
 		"type": "List",
 		"header": {
 			"title": "Invalid card.request",
-			"subTitle": "City {parameters>/city/value}"
+			"subtitle": "City {parameters>/city/value}"
 		},
 		"content": {
 			"item": {

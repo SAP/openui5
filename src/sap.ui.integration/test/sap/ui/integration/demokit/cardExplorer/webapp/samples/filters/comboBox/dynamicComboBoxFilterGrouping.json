@@ -63,7 +63,7 @@
 		"type": "List",
 		"header": {
 			"title": "Orders from {filters>/country/value}",
-			"subTitle": "{filters>/country/selectedItem/title}, key: {filters>/country/selectedItem/key}, additional text: {filters>/country/selectedItem/additionalText}",
+			"subtitle": "{filters>/country/selectedItem/title}, key: {filters>/country/selectedItem/key}, additional text: {filters>/country/selectedItem/additionalText}",
 			"icon": {
 				"src": "sap-icon://product"
 			}

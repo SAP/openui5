@@ -15,7 +15,7 @@
 		"type": "Timeline",
 		"header": {
 			"title": "Upcoming Activities",
-			"subTitle": "For Today",
+			"subtitle": "For Today",
 			"status": {
 				"text": "{parameters>/visibleItems} of 20"
 			}

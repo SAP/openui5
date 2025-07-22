@@ -53,7 +53,7 @@
 				"path": "/kpiInfos/kpi"
 			},
 			"title": "Stale while revalidate",
-			"subTitle": "The data is changed each time",
+			"subtitle": "The data is changed each time",
 			"mainIndicator": {
 				"number": "{number}",
 				"unit": "{unit}",

@@ -31,7 +31,7 @@ function init() {
 			"type": "List",
 			"header": {
 				"title": "List Card with Top 5 Products",
-				"subTitle": "These are the top sellers this month",
+				"subtitle": "These are the top sellers this month",
 				"icon": {
 					"src": "sap-icon://desktop-mobile"
 				},
@@ -96,7 +96,7 @@ function init() {
 					"cols": 2
 				},
 				"subtitle": {
-					"manifestpath": "/sap.card/header/subTitle",
+					"manifestpath": "/sap.card/header/subtitle",
 					"type": "string",
 					"translatable": true,
 					"label": "Card Subtitle",

@@ -81,7 +81,7 @@
 		},
 		"header": {
 			"title": "List Card",
-			"subTitle": "Card subtitle",
+			"subtitle": "Card subtitle",
 			"icon": {
 				"src": "sap-icon://accept"
 			},

@@ -71,7 +71,7 @@
 				"src": "sap-icon://contacts"
 			},
 			"title": "Details For Order {parameters>/orderId/value}",
-			"subTitle": "Press card to show details"
+			"subtitle": "Press card to show details"
 		},
 		"content": {
 			"groups": [

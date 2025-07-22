@@ -139,7 +139,7 @@
 		},
 		"header": {
 			"title": "Calendar overview",
-			"subTitle": "See activities",
+			"subtitle": "See activities",
 			"icon": {
 				"src": "sap-icon://calendar"
 			}

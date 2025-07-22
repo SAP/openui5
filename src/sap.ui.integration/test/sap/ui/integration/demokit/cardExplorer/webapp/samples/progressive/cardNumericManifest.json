@@ -15,7 +15,7 @@
 		"header": {
 			"type": "Numeric",
 			"title": "Numeric Header Title with a slightly long text",
-			"subTitle": "Numeric Header Subtitle with an even longer longer text",
+			"subtitle": "Numeric Header Subtitle with an even longer longer text",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			},

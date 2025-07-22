@@ -42,7 +42,7 @@
 		},
 		"header": {
 			"title": "Stale While Revalidate with Max Age: 1 Hour",
-			"subTitle": "Cached data is considered fresh for 1 hour, then card acts as default",
+			"subtitle": "Cached data is considered fresh for 1 hour, then card acts as default",
 			"icon": {
 				"src": "sap-icon://desktop-mobile"
 			}

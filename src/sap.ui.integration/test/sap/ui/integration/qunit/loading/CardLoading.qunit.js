@@ -84,7 +84,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Some title",
-					"subTitle": "{some}",
+					"subtitle": "{some}",
 					"icon": {
 						"src": "{totalResults}"
 					},
@@ -111,7 +111,7 @@ sap.ui.define([
 						"path": "/"
 					},
 					"title": "Some title",
-					"subTitle": "{some}",
+					"subtitle": "{some}",
 					"icon": {
 						"src": "{totalResults}"
 					},
@@ -141,7 +141,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Some title",
-					"subTitle": "{some}",
+					"subtitle": "{some}",
 					"icon": {
 						"src": "{img}"
 					},
@@ -166,7 +166,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation {n}",
-					"subTitle": "Depending on {n}",
+					"subtitle": "Depending on {n}",
 					"unitOfMeasurement": "{n}",
 					"mainIndicator": {
 						"number": "{n}",
@@ -207,7 +207,7 @@ sap.ui.define([
 						"path": "/"
 					},
 					"title": "Project Cloud Transformation {n}",
-					"subTitle": "Depending on {n}",
+					"subtitle": "Depending on {n}",
 					"unitOfMeasurement": "{n}",
 					"mainIndicator": {
 						"number": "{n}",
@@ -253,7 +253,7 @@ sap.ui.define([
 						}
 					},
 					"title": "Project Cloud Transformation {n}",
-					"subTitle": "Depending on {n}",
+					"subtitle": "Depending on {n}",
 					"unitOfMeasurement": "{n}",
 					"mainIndicator": {
 						"number": "{n}",
@@ -290,7 +290,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -343,7 +343,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -396,7 +396,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -491,7 +491,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -541,7 +541,7 @@ sap.ui.define([
 				"type": "Analytical",
 				"header": {
 					"title": "L3 Request list content Card",
-					"subTitle": "Card subtitle",
+					"subtitle": "Card subtitle",
 					"icon": {
 						"src": "sap-icon://accept"
 					},
@@ -678,7 +678,7 @@ sap.ui.define([
 						"src": "{photo}"
 					},
 					"title": "{firstName} {lastName}",
-					"subTitle": "{position}"
+					"subtitle": "{position}"
 				},
 				"content": {
 					"groups": [{
@@ -972,7 +972,7 @@ sap.ui.define([
 						}
 					},
 					"title": "{some}",
-					"subTitle": "{some}",
+					"subtitle": "{some}",
 					"icon": {
 						"src": "sap-icon://list"
 					}
@@ -994,7 +994,7 @@ sap.ui.define([
 				"type": "Calendar",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -1081,7 +1081,7 @@ sap.ui.define([
 				"type": "Calendar",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -1171,7 +1171,7 @@ sap.ui.define([
 				"type": "Calendar",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},
@@ -1367,7 +1367,7 @@ sap.ui.define([
 				"type": "Calendar",
 				"header": {
 					"title": "Title",
-					"subTitle": "Test Subtitle",
+					"subtitle": "Test Subtitle",
 					"icon": {
 						"src": "sap-icon://business-objects-experience"
 					},

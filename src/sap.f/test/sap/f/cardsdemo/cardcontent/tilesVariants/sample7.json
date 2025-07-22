@@ -12,7 +12,7 @@
 					}
 			},
 			"title": "{title}",
-			"subTitle": "{subTitle}",
+			"subtitle": "{subtitle}",
 			"wrappingType": "Hyphenated",
 			"actions": [
 				{

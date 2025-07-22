@@ -34,7 +34,7 @@
 		},
 		"header": {
 			"title": "Action on card level",
-			"subTitle": "sematicRole - listitem"
+			"subtitle": "sematicRole - listitem"
 		},
 		"content": {
 			"data": {

@@ -36,7 +36,7 @@
 		},
 		"header": {
 			"title": "Destinations sample 2",
-			"subTitle": "Data in body. No host associated so defaultUrl is used",
+			"subtitle": "Data in body. No host associated so defaultUrl is used",
 			"status": {
 			    "text": "top {{parameters.maxItems}}"
 			}

@@ -32,7 +32,7 @@ ListRenderer.getAriaDescribedBy = function(oControl) {
 		aDescribedBy.push(sBaseDescribedBy);
 	}
 
-	return aDescribedBy.length ? aDescribedBy.join(" ") : null;
+	return aDescribedBy.length ? aDescribedBy.join(" ") : undefined;
 };
 
 return ListRenderer;
