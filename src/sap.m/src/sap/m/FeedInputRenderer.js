@@ -20,6 +20,7 @@ sap.ui.define(["sap/ui/core/Lib"],
 	 */
 	FeedInputRenderer.render = function (oRm, oControl) {
 		var sMyId = oControl.getId();
+		var oActionButton = oControl._getActionButtonIfValid();
 
 		oRm.openStart("div", oControl);
 		oRm.class("sapMFeedInBase");
@@ -40,9 +41,15 @@ sap.ui.define(["sap/ui/core/Lib"],
 		}
 		oRm.openStart("div", sMyId + "-container");
 		oRm.class("sapMFeedInContainer");
+		if (oActionButton) {
+			oRm.class("sapMFeedInAcitonButtonContainer");
+		}
 		oRm.openEnd();
 		var oTextArea = oControl._getTextArea();
 		oRm.renderControl(oTextArea);
+		if (oActionButton) {
+			oRm.renderControl(oActionButton.addStyleClass("sapMFeedInActionButton"));
+		}
 		oRm.renderControl(oControl._getPostButton());
 		oRm.close("div");
 		oRm.close("div");
