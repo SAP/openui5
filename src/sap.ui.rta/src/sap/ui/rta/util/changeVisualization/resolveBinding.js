@@ -13,9 +13,9 @@ sap.ui.define([
 	"use strict";
 
 	// Helper class to resolve bindings
-	var HelperControl = ManagedObject.extend("sap.ui.fl.util.HelperControl", {
+	var HelperControl = ManagedObject.extend("sap.ui.rta.util.changeVisualization.HelperControl", {
 		metadata: {
-			library: "sap.ui.fl",
+			library: "sap.ui.rta",
 			properties: {
 				resolved: {
 					type: "any"
@@ -35,10 +35,10 @@ sap.ui.define([
 	 * @function
 	 * @author SAP SE
 	 * @version ${version}
-	 * @alias sap.ui.fl.util.resolveBinding
-	 * @since 1.91
+	 * @alias sap.ui.rta.util.ChangeVisualization.resolveBinding
+	 * @since 1.140
 	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.dt
+	 * @ui5-restricted sap.ui.rta
 	 */
 	return function(vValue, oReferenceControl) {
 		const oView = FlUtils.getViewForControl(oReferenceControl);
