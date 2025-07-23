@@ -3,14 +3,34 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "02a01be1836636078bc80db1d49b423e4d115637",
+        "type": "FEATURE",
+        "text": " We now support the use of UploadSetwithTable plugin in the Tree Table control"
+      },
+      {
+        "id": "97c0a72a53f712852384d9d1ef9ca4efd33fed8d",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Layout issue caused by empty item prevented"
+      },
+      {
         "id": "1e6ef3a9584999b3fce448453f5266a616f7ac6c",
         "type": "FIX",
         "text": " sap.m.SinglePlanningCalendarMonthGrid: fixed Month view layout (320-340px)"
       },
       {
+        "id": "c87ca4d5215d744aff800df97921ae83cca6e210",
+        "type": "FEATURE",
+        "text": " We've now enabled actions on the FeedInput control"
+      },
+      {
         "id": "e3076a80366928b08eefefe4a59ec906ee2c96b0",
         "type": "FIX",
         "text": " sap.m.Menu: fixed menu opening when items are bound to OData V4 model"
+      },
+      {
+        "id": "de39c187b92c6283a412de5c7b49f1564a6b0534",
+        "type": "FIX",
+        "text": " List: Avoid aria-describedby=\"null\""
       },
       {
         "id": "13afdf79497a47746120c026c0ea19220db0a4a3",

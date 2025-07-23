@@ -3,6 +3,16 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "089146d23c5890f2b4304f6339973de890cbdfab",
+        "type": "FEATURE",
+        "text": " Empty-Operator: support different text for DynamicDateRange"
+      },
+      {
+        "id": "ea33d10f3950bd53f4485c4597aef884e0e95745",
+        "type": "FIX",
+        "text": " Field: error message not removed if old value selected"
+      },
+      {
         "id": "b1593ee458d6a33b95a23404436598de44cf45de",
         "type": "FIX",
         "text": " P13nBuilder: load flex before usage"

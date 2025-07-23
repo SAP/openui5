@@ -3,6 +3,11 @@
     "date": "July 2025",
     "notes": [
       {
+        "id": "ba8a584abe02b84d36555c13aef72e3cddacb014",
+        "type": "FEATURE",
+        "text": " sap.f.FlexibleColumnLayout: Column resize using Up and Down keys enabled"
+      },
+      {
         "id": "a8ae0d8abbb6cd1321d2b2b8d2cc2602a71a08d0",
         "type": "FIX",
         "text": " Integration Cards: Manifest Resolver sample is fixed"
