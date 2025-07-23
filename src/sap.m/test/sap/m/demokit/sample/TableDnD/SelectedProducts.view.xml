@@ -1,5 +1,6 @@
 <mvc:View
 	controllerName="sap.m.sample.TableDnD.SelectedProducts"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:dnd="sap.ui.core.dnd"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:c="sap.ui.core"
@@ -17,6 +18,9 @@
 			sorter: {path: 'Rank', descending: true}
 		}"
 		noDataText="Please drag-and-drop products here.">
+		<dependents>
+			<plugins:ContextMenuSetting scope="Selection"/>
+		</dependents>
 		<contextMenu>
 			<Menu>
 				<MenuItem text="Move to Available Products" press="moveToAvailableProductsTable" />

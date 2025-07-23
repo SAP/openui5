@@ -17,6 +17,7 @@
 				selectionMode="Multi"
 				enablePaste="true"
 				showPasteButton="true"
+				beforeOpenContextMenu="onBeforeOpenContextMenu"
 				delegate="{
 					name: 'mdc/sample/delegate/JSONTableDelegate',
 					payload: {
@@ -50,11 +51,19 @@
 					<Text text="{mountains>height}"/>
 				</mdct:Column>
 				<mdc:copyProvider>
-					<plugins.CopyProvider />
+					<plugins.CopyProvider id="copyProvider"/>
 				</mdc:copyProvider>
 				<mdc:cellSelector>
 					<plugins.CellSelector />
 				</mdc:cellSelector>
+				<mdc:dependents>
+					<plugins.ContextMenuSetting id="contextMenuSetting"/>
+				</mdc:dependents>
+				<mdc:contextMenu>
+					<Menu>
+						<MenuItem text="Copy Selected Rows" press="copySelectionData" />
+					</Menu>
+				</mdc:contextMenu>
 			</mdc:Table>
 		</f:content>
 	</f:DynamicPage>

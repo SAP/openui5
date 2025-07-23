@@ -1,5 +1,6 @@
 <mvc:View
 	controllerName="sap.m.sample.TableDnD.AvailableProducts"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:dnd="sap.ui.core.dnd"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:c="sap.ui.core"
@@ -15,6 +16,9 @@
 			path: '/ProductCollection',
 			filters: {path: 'Rank', operator: 'EQ', value1: '0'}
 		}">
+		<dependents>
+			<plugins:ContextMenuSetting scope="Selection"/>
+		</dependents>
 		<contextMenu>
 			<Menu>
 				<MenuItem text="Move to Selected Products" press="moveToSelectedProductsTable" />
