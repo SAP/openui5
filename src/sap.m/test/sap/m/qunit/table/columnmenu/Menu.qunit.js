@@ -687,6 +687,7 @@ sap.ui.define([
 	QUnit.module("Events", {
 		beforeEach: async function() {
 			this.oColumnMenu = new Menu({
+				showTableSettingsButton: true,
 				items: [
 					new ActionItem({
 						label: "Test ActionItem"
@@ -737,6 +738,18 @@ sap.ui.define([
 		this.oColumnMenu.openBy(this.oButton);
 		this.oColumnMenu.close();
 		clock.tick(500);
+	});
+
+	QUnit.test("FESR registration", function(assert) {
+		const oMenu = this.oColumnMenu;
+
+		oMenu.openBy(this.oButton);
+
+		const oSettingsButton = oMenu._oPopover.getEndButton();
+
+		assert.equal(FESRHelper.getSemanticStepname(oSettingsButton, "press"),
+			"tbl:p13n",
+			"FESR is registered for the table settings button on the Menu");
 	});
 
 	QUnit.test("ActionItem press", function(assert) {
