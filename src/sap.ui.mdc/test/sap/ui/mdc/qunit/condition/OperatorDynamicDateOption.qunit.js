@@ -720,4 +720,76 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Empty - for different types", {
+		beforeEach() {
+			oType = new DateType({style: "long", calendarType: "Gregorian"});
+			oOperator = new Operator({
+				name: "MyEmpty",
+				filterOperator: FilterOperator.EQ,
+				tokenParse: "^<#tokenText#>$",
+				tokenFormat: "<#tokenText#>",
+				longText: "Empty",
+				longTextForTypes: {Date: "Not Specified"},
+				tokenText: "empty",
+				tokenTextForTypes: {Date: "Not Specified (empty)"},
+				groupsForTypes: {Date: {id: "901", text: "No Date / Range"}},
+				valueTypes: [],
+				getModelFilter: function(oCondition, sFieldPath, oType, bCaseSensitive, sBaseType) {
+					return "MyFilter"; // not tested here
+				}
+			});
+			oOperatorDynamicDateOption = new OperatorDynamicDateOption("O1", {
+				key: "Date-MyEmpty",
+				operator: oOperator,
+				type: oType,
+				baseType: BaseType.Date
+			});
+			DynamicDateUtil.addOption(oOperatorDynamicDateOption);
+
+			oDynamicDateRange = new DynamicDateRange("DDR1", { // needed for UI functions
+				formatter: {date: {style: "long"}}
+			});
+		},
+
+		afterEach: fnTeardown
+	});
+
+	QUnit.test("getGroup", function(assert) {
+
+		const iGroup = oOperatorDynamicDateOption.getGroup();
+		assert.equal(iGroup, 901, "Group");
+
+	});
+
+	QUnit.test("getGroupHeader", function(assert) {
+
+		const sText = oOperatorDynamicDateOption.getGroupHeader();
+		assert.equal(sText, "No Date / Range", "Group header");
+
+	});
+
+	QUnit.test("format", function(assert) {
+
+		const oValue = {
+			operator: "Date-MyEmpty",
+			values: []
+		};
+
+		const sResult = oOperatorDynamicDateOption.format(oValue);
+		assert.equal(sResult, "Not Specified (empty)", "formatted value");
+
+	});
+
+	QUnit.test("parse", function(assert) {
+
+		const oValue = {
+			operator: "Date-MyEmpty",
+			values: []
+		};
+
+		const oResult = oOperatorDynamicDateOption.parse("Not Specified"); // as DynamicDateRangle removes brackets
+		assert.deepEqual(oResult, oValue, "parsed value");
+
+	});
+
 });
