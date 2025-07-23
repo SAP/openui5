@@ -41,9 +41,9 @@ sap.ui.define([
 			"fallbackfromurl",
 			"The theme name isn't changed and is still 'fallbackfromurl'");
 
-		assert.equal(oLinkSapUiCore.href, `${sPath}/sap/ui/core/themes/sap_fiori_3/library.css?version=${sCoreVersion}`,
+		assert.equal(oLinkSapUiCore.href, `${sPath}/sap/ui/core/themes/sap_fiori_3/library.css?sap-ui-dist-version=${sCoreVersion}`,
 			"sap.ui.core stylesheet href should be correct");
-		assert.equal(oLinkSapM.href, `${sPath}/sap/m/themes/sap_fiori_3/library.css?version=${sCoreVersion}`,
+		assert.equal(oLinkSapM.href, `${sPath}/sap/m/themes/sap_fiori_3/library.css?sap-ui-dist-version=${sCoreVersion}`,
 			"sap.m stylesheet href should be correct");
 	});
 
@@ -76,9 +76,9 @@ sap.ui.define([
 			"The theme name isn't changed and is still '2nd_tier_fallback_from_url'");
 
 		// The unsupported SAP theme uses the "_hcw" suffix to validate that we fall up to "sap_horizon_hcw".
-		assert.equal(oLinkSapUiCore.href, `${sPath}/sap/ui/core/themes/sap_horizon_hcw/library.css?version=${sCoreVersion}`,
+		assert.equal(oLinkSapUiCore.href, `${sPath}/sap/ui/core/themes/sap_horizon_hcw/library.css?sap-ui-dist-version=${sCoreVersion}`,
 			"sap.ui.core stylesheet href should be correct");
-		assert.equal(oLinkSapM.href, `${sPath}/sap/m/themes/sap_horizon_hcw/library.css?version=${sCoreVersion}`,
+		assert.equal(oLinkSapM.href, `${sPath}/sap/m/themes/sap_horizon_hcw/library.css?sap-ui-dist-version=${sCoreVersion}`,
 			"sap.m stylesheet href should be correct");
 	});
 });

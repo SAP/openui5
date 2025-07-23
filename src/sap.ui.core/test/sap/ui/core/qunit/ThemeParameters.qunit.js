@@ -1,25 +1,63 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/core/Control",
-	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
-	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/base/Log"
-], function(Parameters, Control, Element, Icon, Library, Theming, includeStylesheet, Bar, URI, nextUIUpdate, Log) {
+], function(
+	OwnStatics,
+	Parameters,
+	Control,
+	Icon,
+	Library,
+	Theming,
+	Bar,
+	URI,
+	nextUIUpdate,
+	Log
+) {
 	"use strict";
+
+	const { attachChange } = OwnStatics.get(Theming);
+	const oLibInitSpy = sinon.spy(Library, "init");
+	const mAllRequiredLibCss = new Set();
+
+	attachChange((oEvent) => {
+		if (oEvent.library) {
+			mAllRequiredLibCss.add(oEvent.library.libName);
+		}
+	});
+
+	function checkCssAddedInCorrectOrder(assert) {
+		const aAllCssElements = document.querySelectorAll("link[id^=sap-ui-theme-]");
+		let sMessage = `Link tags for libraries: '${[...mAllRequiredLibCss].join("', '")}' have been added in the expected order.`;
+		assert.ok([...mAllRequiredLibCss].every((id, idx, allLibs) => {
+			const oLibLoadCall = oLibInitSpy.getCall(idx);
+			if (oLibLoadCall && oLibLoadCall.args[0].name !== id) {
+				sMessage = `Lib.init call for '${oLibLoadCall.args[0].name}' and Theming.change event for '${id}' did not occur in the same order`;
+				return false;
+			}
+			if (allLibs[idx + 1]) {
+				return document.getElementById(`sap-ui-theme-${id}`).compareDocumentPosition(document.getElementById(`sap-ui-theme-${allLibs[idx + 1]}`)) === Node.DOCUMENT_POSITION_FOLLOWING;
+			} else {
+				return aAllCssElements[aAllCssElements.length - 1].getAttribute("id").replace("sap-ui-theme-", "") === id;
+			}
+		}), sMessage);
+	}
 
 	QUnit.module("Parmeters.get", {
 		before: function() {
 			// For some reasons performance.getResourceByType does only return the first 250?!
 			// entries therefore clear the resource timings upfront
 			performance.clearResourceTimings();
-		}
+		},
+		afterEach: checkCssAddedInCorrectOrder
 	});
 
 	QUnit.test("InitialCheck", function(assert) {
@@ -65,29 +103,14 @@ sap.ui.define([
 			return oResource.name.endsWith("themeParameters/lib" + sLibNumber + "/themes/sap_horizon_hcb/library-parameters.json");
 		});
 	}
-	function createLinkElement (sId, bBase) {
-		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib17/themes/" + (bBase ? "base" : "sap_horizon_hcb") + "/library.css");
-		return includeStylesheet({
-			url: sUrl,
-			id: bBase ? sId : undefined
-		}).then(function () {
-			if (bBase) {
-				return;
-			}
-			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
-				if (!oLink.getAttribute("id") && oLink.getAttribute("href") === sUrl) {
-					oLink.setAttribute("data-sap-ui-foucmarker", sId);
-				}
-			});
-		});
-	}
 
 	QUnit.module("Parmeters.get (async)", {
 		before: function() {
 			// For some reasons performance.getResourceByType does only return the first 250?!
 			// entries therefore clear the resource timings upfront
 			performance.clearResourceTimings();
-		}
+		},
+		afterEach: checkCssAddedInCorrectOrder
 	});
 
 	QUnit.test("Dynamically Loaded Library", function (assert) {
@@ -101,14 +124,18 @@ sap.ui.define([
 			apiVersion: 2
 		});
 
-		Parameters.get({
+		const callback = function (sParamValue) {
+			assert.equal(sParamValue, "0.5rem", "sapUiAsyncThemeParamForLib5 must be defined as '0.5rem'");
+			assert.strictEqual(checkLibraryParametersJsonRequestForLib("5").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib5");
+			done();
+		};
+		const sParamValue = Parameters.get({
 			name: "sapUiAsyncThemeParamForLib5",
-			callback: function (sParamValue) {
-				assert.equal(sParamValue, "0.5rem", "sapUiAsyncThemeParamForLib5 must be defined as '0.5rem'");
-				assert.strictEqual(checkLibraryParametersJsonRequestForLib("5").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib5");
-				done();
-			}
+			callback
 		});
+		if (sParamValue) {
+			callback(sParamValue);
+		}
 	});
 
 	QUnit.test("Read scoped parameters (from testlibs.themeParameters.lib6)", async function(assert) {
@@ -116,28 +143,32 @@ sap.ui.define([
 
 		await Library.load({name: "testlibs.themeParameters.lib6"});
 
-		Parameters.get({
+		const callback = function (sParamValue) {
+			assert.equal(sParamValue, "#ababab", "No scope set - default value should get returned");
+			oControl.addStyleClass("sapTestScope");
+
+			assert.equal(Parameters.get({
+				name: "sapUiAsyncThemeParamWithScopeForLib6",
+				scopeElement: oControl
+			}), "#222222", "Scope set directly on control - scoped param should be returned");
+
+			assert.equal(Parameters.get({
+				name: "sapUiAsyncThemeParamWithoutScopeForLib6",
+				scopeElement: oControl
+			}), "#aaaaaa", "Scope set directly on control but no scoped value defined - default value should get returned");
+
+			assert.strictEqual(checkLibraryParametersJsonRequestForLib("6").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib6");
+
+			done();
+		};
+		const sParamValue = Parameters.get({
 			name: "sapUiAsyncThemeParamWithScopeForLib6",
 			scopeElement: oControl,
-			callback: function (sParamValue) {
-				assert.equal(sParamValue, "#ababab", "No scope set - default value should get returned");
-				oControl.addStyleClass("sapTestScope");
-
-				assert.equal(Parameters.get({
-					name: "sapUiAsyncThemeParamWithScopeForLib6",
-					scopeElement: oControl
-				}), "#222222", "Scope set directly on control - scoped param should be returned");
-
-				assert.equal(Parameters.get({
-					name: "sapUiAsyncThemeParamWithoutScopeForLib6",
-					scopeElement: oControl
-				}), "#aaaaaa", "Scope set directly on control but no scoped value defined - default value should get returned");
-
-				assert.strictEqual(checkLibraryParametersJsonRequestForLib("6").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib6");
-
-				done();
-			}
+			callback
 		});
+		if (sParamValue) {
+			callback(sParamValue);
+		}
 	});
 
 	QUnit.test("Read multiple given parameters (including undefined param name)", async function (assert) {
@@ -170,34 +201,44 @@ sap.ui.define([
 	});
 
 	QUnit.test("Call Parameters.get multiple times with same callback function should only be executed once", async function (assert) {
-		assert.expect(3);
-		var done = assert.async(), callback = function (oParamResult) {
-			assert.deepEqual(oParamResult, {
-				"sapUiThemeParam1ForLib8": "#123456",
-				"sapUiThemeParam2ForLib8": "#654321"
-			}, "Callback should be called once with values for the given params 'sapUiThemeParam1ForLib8' and 'sapUiThemeParam2ForLib8'");
-			assert.strictEqual(checkLibraryParametersJsonRequestForLib("8").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib8");
-		};
+		// Also need to expect the assert from afterEach
+		assert.expect(4);
+		var done = assert.async(),
+			firstCallback = function (oParamResult) {
+				assert.deepEqual(oParamResult, {
+					"sapUiThemeParam1ForLib8": "#123456",
+					"sapUiThemeParam2ForLib8": "#654321"
+				}, "Callback should be called once with values for the given params 'sapUiThemeParam1ForLib8' and 'sapUiThemeParam2ForLib8'");
+				assert.strictEqual(checkLibraryParametersJsonRequestForLib("8").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib8");
+			},
+			secondCallBack = function (sParamResult) {
+				assert.strictEqual(sParamResult, "#654321", "Different callback function should be called once with value for the given param 'sapUiThemeParam2ForLib8' should be returned");
+				done();
+			};
 
 		await Library.load({name: "testlibs.themeParameters.lib8"});
 
 		Parameters.get({
 			name: "sapUiThemeParam1ForLib8",
-			callback: callback
+			callback: firstCallback
 		});
 
-		Parameters.get({
+		const oParamResult = Parameters.get({
 			name: ["sapUiThemeParam1ForLib8", "sapUiThemeParam2ForLib8"],
-			callback: callback
+			callback: firstCallback
 		});
 
-		Parameters.get({
+		if (oParamResult) {
+			firstCallback(oParamResult);
+		}
+
+		const sParamValue = Parameters.get({
 			name: "sapUiThemeParam2ForLib8",
-			callback: function (sParamResult) {
-				assert.strictEqual(sParamResult, "#654321", "Different callback function should be called once with value for the given param 'sapUiThemeParam2ForLib8' should be returned");
-				done();
-			}
+			callback: secondCallBack
 		});
+		if (sParamValue) {
+			secondCallBack(sParamValue);
+		}
 	});
 
 	QUnit.test("Read not defined parameter using callback (future=true)", async function (assert) {
@@ -243,7 +284,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getActiveScopesFor: Check scope chain for given rendered control", async function(assert) {
-		assert.expect(18);
+		// Also need to expect the assert from afterEach
+		assert.expect(13);
 		var done = assert.async();
 
 		var oInnerIcon1 =  new Icon();
@@ -284,14 +326,6 @@ sap.ui.define([
 		await Library.load({name: "testlibs.themeParameters.lib11" });
 
 		Theming.attachApplied(fnAssertApplied);
-
-		// No scope in css defined therefore empty scope chain for all combinations
-		assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oInnerBar, true), [], "InnerBar - TestScope1 - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon2, true), [], "OuterIcon2 - TestScope1 - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon2, true), [], "InnerIcon2 - TestScope1 - no scope defined ==> empty scope chain");
 	});
 
 
@@ -328,23 +362,6 @@ sap.ui.define([
 		await Library.load({name: "testlibs.themeParameters.lib13"});
 
 		Theming.attachApplied(fnApplied);
-	});
-
-	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
-		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
-
-		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
-		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
-		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {
-			assert.strictEqual(Parameters.get({ name: "sapUiThemeParamForLib17" }), "#fafafa", "Parameter 'sapUiThemeParamForLib17' has value: '#fafafa'");
-
-			// Cleanup
-			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
-				if (oLink.getAttribute("id") === sPrefixedLibId || oLink.getAttribute("data-sap-ui-foucmarker") === sPrefixedLibId) {
-					oLink.remove();
-				}
-			});
-		});
 	});
 
 	QUnit.test("Relative URLs in parameters", async function(assert) {

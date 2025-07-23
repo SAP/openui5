@@ -2,18 +2,22 @@
 
 sap.ui.define([
 	"sap/base/Event",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper",
 	"sap/ui/test/utils/waitForThemeApplied"
 ], function (
 	BaseEvent,
+	OwnStatics,
 	URLConfigurationProvider,
 	Theming,
 	ThemeHelper,
 	themeApplied
 ) {
 	"use strict";
+
+	const { attachChange, detachChange } = OwnStatics.get(Theming);
 
 	var oURLConfigurationProviderStub,
 		mConfigStubValues,
@@ -62,7 +66,7 @@ sap.ui.define([
 			oURLConfigurationProviderStub.callsFake(function(sKey) {
 					return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
 			});
-			Theming.attachChange(checkChange);
+			attachChange(checkChange);
 			Theming.attachApplied(checkApplied);
 			if (bThemeManagerNotActive) {
 				assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
@@ -74,7 +78,7 @@ sap.ui.define([
 			};
 		},
 		afterEach: function () {
-			Theming.detachChange(checkChange);
+			detachChange(checkChange);
 			Theming.detachApplied(checkApplied);
 			oURLConfigurationProviderStub.restore();
 		}

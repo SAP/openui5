@@ -98,6 +98,10 @@ sap.ui.define([
 	 * 					(In this case <code>#tokenText#</code> is used in <code>tokenFormat</code>, <code>tokenTest</code>, or <code>tokenParse</code>.)
 	 * 					For operators just showing the value and a operator symbol, no token text is needed.<br>
 	 *					If the token text is not given, the <code>longText</code> is used.
+	 *					If <code>tokenTextForTypes</code> is provided for a special type, this one will be used for the corresponding type.
+	 * @param {object} [oConfiguration.tokenTextForTypes] Object holding String representation of the operator as a token text for single basic types.<br>
+	 * 					This text is shown in a single-value field as text or a multi-value field as token.<br>
+	 * 					This is needed if the text depends on the used data type. For example the "equal" operator should be named "Not Specified (empty)" if a date or time type is used.
 	 * @param {object} [oConfiguration.longTextForTypes] Object holding String representation of the operator as a long text for single basic types.<br>
 	 * 					This text is shown in the operator dropdown of the value help.<br>
 	 * 					This is needed if the text depends on the used data type. For example the "less than" operator should be named "before" if a date or time type is used.
@@ -132,7 +136,9 @@ sap.ui.define([
 	 * group: {id : 1} - adds the operator to existing group 1 'Single Dates'<br>
 	 * group: {id : 2, text: "new group"} - inserts a new group with id 2. Existing group 2 will be shifted to 3, 4....<br>
 	 * group: {id : 10, text: "new group at the end"} - adds a new group with id 10 and text "new group as the end" to the end of all groups<br>
+	 * <b>Note:</b> The ids 900-999 are reserved for internal mdc usage, please use ids outside this range
 	 * @param {string} [oConfiguration.group.text] Group title for the operator. When used a new group with this title will be added.
+	 * @param {object} [oConfiguration.groupsForTypes] Additional group settings for the operator depending on the type. For every type a group object can be defined.
 	 * @param {function} [oConfiguration.getTextForCopy] Function to determine the text copied into clipboard
 	 * @constructor
 	 * @author SAP SE
@@ -171,6 +177,7 @@ sap.ui.define([
 
 			this.longText = oConfiguration.longText || "";
 			this.tokenText = oConfiguration.tokenText || "";
+			this.tokenTextForTypes = oConfiguration.tokenTextForTypes || {};
 			this.longTextForTypes = oConfiguration.longTextForTypes || {};
 			if (!this.longText) {
 				if (this.tokenText) {
@@ -237,6 +244,9 @@ sap.ui.define([
 				if (!this.group.text) {
 					this.group.text = oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP" + this.group.id);
 				}
+			}
+			if (oConfiguration.groupsForTypes) {
+				this.groupsForTypes = oConfiguration.groupsForTypes;
 			}
 
 			this.symbol = oConfiguration.symbol;
@@ -383,17 +393,18 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @param {string} [sCustomFormat] Custom text format which should be formatted
+	 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 	 * @returns {string} formatted text
 	 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.format = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, sCustomFormat) { // sDisplay, oAdditionalType and aAdditionalCompositeTypes needed in EQ formatter
+	Operator.prototype.format = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, sCustomFormat, sBaseType) { // sDisplay, oAdditionalType and aAdditionalCompositeTypes needed in EQ formatter
 
 		const aValues = oCondition.values;
 		const iCount = this.valueTypes.length;
-		const sTextFormat = sCustomFormat || this.tokenFormat;
+		const sTextFormat = sCustomFormat || this.getTokenFormat(sBaseType);
 		let sTokenText = bHideOperator && iCount === 1 ? "{0}" : sTextFormat;
 		for (let i = 0; i < iCount; i++) {
 			let oUseType;
@@ -477,15 +488,16 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so if the user enters it, it is part of the text
+	 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 	 * @returns {any[]} array of values
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.parse = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator) {
+	Operator.prototype.parse = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator, sBaseType) {
 
-		const aValues = this.getValues(sText, sDisplayFormat, bDefaultOperator, bHideOperator);
+		const aValues = this.getValues(sText, sDisplayFormat, bDefaultOperator, bHideOperator, sBaseType);
 		let aResult; // might remain undefined - if no match
 		if (aValues) {
 			aResult = [];
@@ -653,17 +665,18 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type[]} [aCompositeTypes] Additional types used for each part of a <code>CompositeType</code>
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
+	 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 	 * @returns {string} key/description piar seperated by TAB
 	 * @throws {sap.ui.model.FormatException} if the values cannot be formatted
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.getTextForCopy = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes) {
+	Operator.prototype.getTextForCopy = function(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, sBaseType) {
 
 		// in default case just return the standard formatting as "description"
 		// This needs to be parsed from the target FilterField to determine the operator
-		return "\t" + this.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
+		return "\t" + this.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, undefined, sBaseType);
 
 	};
 
@@ -737,14 +750,15 @@ sap.ui.define([
 	 * Checks if a text is suitable for an operator.
 	 *
 	 * @param {string} sText Text
+	 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 	 * @returns {boolean} true valid
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.test = function(sText) {
+	Operator.prototype.test = function(sText, sBaseType) {
 
-		return this.tokenTestRegExp.test(sText);
+		return this.getTokenTestRegExp(sBaseType).test(sText);
 
 	};
 
@@ -757,15 +771,16 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.enums.FieldDisplay} sDisplayFormat Display format
 	 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so if the user enters it, it is part of the text
+	 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 	 * @returns {string[]} array of value parts without operator sign
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.77.0
 	 */
-	Operator.prototype.getValues = function(sText, sDisplayFormat, bDefaultOperator, bHideOperator) {
+	Operator.prototype.getValues = function(sText, sDisplayFormat, bDefaultOperator, bHideOperator, sBaseType) {
 
-		const regExp = bHideOperator ? this.hiddenOperatorRegExp : this.tokenParseRegExp; // if operator symbol is not used -> use complete text
+		const regExp = bHideOperator ? this.hiddenOperatorRegExp : this.getTokenParseRegExp(sBaseType); // if operator symbol is not used -> use complete text
 		let aMatch = sText.match(regExp); // as RegExp might be complex and return longer arry we take the last value(s)
 		let aValues;
 		if (aMatch) {
@@ -796,16 +811,17 @@ sap.ui.define([
 	 * @param {sap.ui.model.Type} [oAdditionalType] Data type for additional value
 	 * @param {sap.ui.model.Type[]} [aAdditionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>oAdditionalType</code> is a <code>CompositeType</code>)
 	 * @param {boolean} [bHideOperator=false] If set, the operator must not be visible for the user, so if the user enters it, it is part of the text
+	 * @param {sap.ui.mdc.enums.BaseType} [sBaseType] Basic type
 	 * @returns {sap.ui.mdc.condition.ConditionObject} The condition for the text
 	 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Operator.prototype.getCondition = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator) {
+	Operator.prototype.getCondition = function(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator, sBaseType) {
 
-		if (this.test(sText) || ((bDefaultOperator || bHideOperator) && sText && this.hasRequiredValues())) {
-			const aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator);
+		if (this.test(sText, sBaseType) || ((bDefaultOperator || bHideOperator) && sText && this.hasRequiredValues())) {
+			const aValues = this.parse(sText, oType, sDisplayFormat, bDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator, sBaseType);
 			if ((aValues && aValues.length === this.valueTypes.length) || this.valueTypes[0] === OperatorValueType.Static ||
 				(aValues && aValues.length === 1 && this.valueTypes.length === 2 && !this.valueTypes[1])) { // EQ also valid without description
 				const oCondition = Condition.createCondition(this.name, aValues);
@@ -989,6 +1005,117 @@ sap.ui.define([
 			return fnPrevious.bind(this);
 		}
 		throw "Operator: Illegal overwrite detected. Please see sap.ui.mdc.enums.OperatorOverwrite";
+	};
+
+	function _getTokenTextForType(sBaseType) {
+
+		if (sBaseType === BaseType.Time || sBaseType === BaseType.DateTime) {
+			sBaseType = BaseType.Date; // use the date type operator tokenText for all Time and DateTime types.
+		}
+		return this.tokenTextForTypes[sBaseType];
+
+	}
+
+	/**
+	 * Gets the regular expression for parsing user input for an operator.
+	 *
+	 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
+	 * @returns {string} regular expression
+	 *
+	 * @private
+	 * @since 1.139
+	 */
+	Operator.prototype.getTokenParseRegExp = function(sBaseType) {
+
+		const sTokenText = _getTokenTextForType.call(this, sBaseType);
+
+		if (sTokenText) {
+			// a special tokenText exists -> use this one
+			const sLongText = this.getLongText(sBaseType);
+
+			if (sLongText) { // as DynamicDateRange removes brackets from user input - also test for long text
+				return new RegExp(escapeRegExp(sTokenText) + "|" + escapeRegExp(sLongText), "i");
+			} else {
+				return new RegExp(escapeRegExp(sTokenText), "i");
+			}
+		}
+
+		return this.tokenParseRegExp; // use default one
+
+	};
+
+	/**
+	 * Gets the regular expression for testing user input for an operator.
+	 *
+	 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
+	 * @returns {string} regular expression
+	 *
+	 * @private
+	 * @since 1.139
+	 */
+	Operator.prototype.getTokenTestRegExp = function(sBaseType) {
+
+		const sTokenText = _getTokenTextForType.call(this, sBaseType);
+
+		if (sTokenText) {
+			// a special tokenText exists -> use this one
+			const sLongText = this.getLongText(sBaseType);
+
+			if (sLongText) { // as DynamicDateRange removes brackets from user input - also test for long text
+				return new RegExp(escapeRegExp(sTokenText) + "|" + escapeRegExp(sLongText), "i");
+			} else {
+				return new RegExp(escapeRegExp(sTokenText), "i");
+			}
+		}
+
+		return this.tokenTestRegExp; // use default one
+
+	};
+
+	/**
+	 * Gets the regular expression for formatting a condition for an operator.
+	 *
+	 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
+	 * @returns {string} regular expression
+	 *
+	 * @private
+	 * @since 1.139
+	 */
+	Operator.prototype.getTokenFormat = function(sBaseType) {
+
+		const sTokenText = _getTokenTextForType.call(this, sBaseType);
+
+		if (sTokenText) {
+			// a special tokenText exists -> use this one
+			return sTokenText;
+		}
+
+		return this.tokenFormat; // use default one
+
+	};
+
+	/**
+	 * Gets the group information for an operator.
+	 *
+	 * @param {sap.ui.mdc.enums.BaseType} sBaseType Basic type
+	 * @returns {object} group information
+	 *
+	 * @private
+	 * @since 1.139
+	 */
+	Operator.prototype.getGroup = function(sBaseType) {
+
+		if (sBaseType === BaseType.Time || sBaseType === BaseType.DateTime) {
+			sBaseType = BaseType.Date; // use the date type operator group for all Time and DateTime types.
+		}
+
+		if (this.groupsForTypes?.[sBaseType] || this.groupsForTypes?.[sBaseType] === sBaseType) {
+				// a special group exists -> use this one
+			return this.groupsForTypes[sBaseType];
+		}
+
+		return this.group; // use default one
+
 	};
 
 	return Operator;

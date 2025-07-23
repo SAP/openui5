@@ -352,6 +352,33 @@ sap.ui.define([
 		assert.ok(aSelectedContexts.every((oContext) => oContext.isSelected()), "Plugin disabled: Contexts are still selected");
 	});
 
+	QUnit.test("#getSelectedContexts cache", async function(assert) {
+		this.oTable.destroy();
+		this.oTable = TableQUnitUtils.createTable(TableQUnitUtils.createSettingsForList({
+			tableSettings: {
+				rows: {
+					events: {
+						change: () => {
+							assert.strictEqual(this.oTable.getDependents()[0].getSelectedContexts().length, 0, "Binding change");
+						}
+					}
+				}
+			}
+		}));
+		this.oSelectionPlugin = this.oTable.getDependents()[0];
+		await this.oTable.qunit.whenRenderingFinished();
+		const oContext = this.oTable.getRows()[0].getBindingContext();
+
+		oContext.setSelected(true);
+		await TableQUnitUtils.nextEvent("selectionChange", this.oSelectionPlugin);
+		assert.strictEqual(this.oSelectionPlugin.getSelectedContexts().length, 1);
+
+		this.stub(oContext, "isSelected").returns(false);
+		assert.strictEqual(this.oSelectionPlugin.getSelectedContexts().length, 1, "Context deselected");
+
+		this.oTable.getBinding().refresh();
+	});
+
 	QUnit.test("#getSelectedCount", function(assert) {
 		const aRows = this.oTable.getRows();
 

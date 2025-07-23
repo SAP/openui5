@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/m/library",
 	"./QuickAction",
 	"./QuickActionItem",
-	"sap/m/Switch"
+	"sap/m/Switch",
+	"sap/ui/performance/trace/FESRHelper"
 ], function (
 	library,
 	QuickAction,
 	QuickActionItem,
-	Switch
+	Switch,
+	FESRHelper
 ) {
 	"use strict";
 
@@ -74,12 +76,16 @@ sap.ui.define([
 	};
 
 	QuickTotalItem.prototype._createContent = function() {
-		return new Switch({
+		const oSwitch = new Switch({
 			state: this.getTotaled(),
 			customTextOn: " ",
 			customTextOff: " ",
 			change: [{item: this}, this._onTotalChange, this]
 		});
+
+		FESRHelper.setSemanticStepname(oSwitch, "change", "tbl:p13n:aggregate");
+
+		return oSwitch;
 	};
 
 	/*

@@ -1,18 +1,9 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters"
-], function(Core, Theming, Parameters) {
+], function(Theming, Parameters) {
 	"use strict";
-
-	/**
-	 * Test that no theme CSS was loaded as the "preloadLibCss" configuration should prevent it
-	 */
-	QUnit.test("No Library CSS loaded", function(assert) {
-		assert.equal(document.getElementById("sap-ui-theme-sap.ui.core"), null, "'sap.ui.core' theme should not be included");
-		assert.equal(document.getElementById("sap-ui-theme-sap.ui.testlib"), null, "'sap.ui.testlib' theme should not be included");
-	});
 
 	/**
 	 * Test that even though "preloadLibCss" prevents including the library.css, the registered modulepaths

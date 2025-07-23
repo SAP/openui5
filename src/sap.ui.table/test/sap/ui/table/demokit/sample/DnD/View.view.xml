@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.ui.table.sample.DnD.Controller"
 	xmlns="sap.ui.table"
+	xmlns:plugins="sap.m.plugins"
 	xmlns:dnd="sap.ui.core.dnd"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:c="sap.ui.core"
@@ -16,6 +17,7 @@
 					id="table1"
 					selectionMode="Single"
 					ariaLabelledBy="title"
+					beforeOpenContextMenu="onBeforeOpenContextMenu"
 					rows="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
@@ -25,6 +27,14 @@
 							<m:Title id="title" text="Available Products"/>
 						</m:OverflowToolbar>
 					</extension>
+					<dependents>
+						<plugins:ContextMenuSetting scope="Selection"/>
+					</dependents>
+					<contextMenu>
+						<m:Menu>
+							<m:MenuItem text="Move to Selected Products" press="moveToTable2" />
+						</m:Menu>
+					</contextMenu>
 					<columns>
 						<Column
 							sortProperty="Name"
@@ -80,12 +90,23 @@
 					id="table2"
 					selectionMode="Single"
 					ariaLabelledBy="title2"
+					beforeOpenContextMenu="onBeforeOpenContextMenu"
 					rows="{
 						path: '/ProductCollection',
 						filters: {path: 'Rank', operator: 'GT', value1: '0'},
 						sorter: {path: 'Rank', descending: true}
 					}"
 					noData="Please drag-and-drop products here.">
+					<dependents>
+						<plugins:ContextMenuSetting scope="Selection"/>
+					</dependents>
+					<contextMenu>
+						<m:Menu>
+							<m:MenuItem text="Move to Available Products" press="moveToTable1" />
+							<m:MenuItem text="Move up" press="moveUp" />
+							<m:MenuItem text="Move down" press="moveDown" />
+						</m:Menu>
+					</contextMenu>
 					<extension>
 						<m:OverflowToolbar style="Clear">
 							<m:Title id="title2" text="Selected Products"/>

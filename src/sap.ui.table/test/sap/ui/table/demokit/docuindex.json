@@ -134,7 +134,7 @@
 			{
 				"id": "sap.ui.table.sample.DnD",
 				"name": "Drag and Drop",
-				"description": "Shows the different kinds of drag-and-drop capabilities."
+				"description": "Shows various drag-and-drop capabilities along with custom context menu alternatives for each action."
 			},
 			{
 				"id": "sap.ui.table.sample.SelectCopyPaste",

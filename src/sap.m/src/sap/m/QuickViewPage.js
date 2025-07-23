@@ -156,8 +156,6 @@ sap.ui.define([
 		renderer: QuickViewPageRenderer
 	});
 
-	QuickViewPage.prototype.init =  function() {};
-
 	QuickViewPage.prototype.exit = function() {
 		if (this._oPage) {
 			this._oPage.destroy();

@@ -3,10 +3,14 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/LoaderExtensions",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/dom/includeScript"
-], function(Log, ResourceBundle, LoaderExtensions, Library, includeScript) {
+], function(Log, ResourceBundle, LoaderExtensions, OwnStatics, Library, Theming, includeScript) {
 	"use strict";
+
+	OwnStatics.get(Theming);
 
 	QUnit.module("Instance methods");
 

@@ -174,6 +174,32 @@ sap.ui.define([
 		assert.equal(oDefineConditionPanel != null, true, "instance can be created");
 	});
 
+	QUnit.test("OperatorModel", (assert) => {
+
+		const aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
+		const aOperatorsData = oDefineConditionPanel.oOperatorModel?.getData();
+
+		assert.equal(aOperatorsData.length, aOriginalOperators.length, "Number of Operators");
+
+		for (let i = 0; i < aOperatorsData.length; i++) {
+			const oOperatorData = aOperatorsData[i];
+			if (oOperatorData.key === OperatorName.EQ) { // just test one including operator
+				assert.equal(oOperatorData.text, oMessageBundle.getText("operators.EQ.longText"), "EQ: Operator text");
+				assert.equal(oOperatorData.groupId, "1", "EQ: Operator group-id");
+				assert.equal(oOperatorData.groupText, oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP1"), "EQ: Operator group-text");
+			} else if (oOperatorData.key === OperatorName.NE) { // just test one excluding operator
+				assert.equal(oOperatorData.text, oMessageBundle.getText("operators.NE.longText"), "NE: Operator text");
+				assert.equal(oOperatorData.groupId, "2", "NE: Operator group-id");
+				assert.equal(oOperatorData.groupText, oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP2"), "NE: Operator group-text");
+			} else if (oOperatorData.key === OperatorName.Empty) { // as for Date different texts and group
+				assert.equal(oOperatorData.text, oMessageBundle.getText("operators.Empty.longText"), "Empty: Operator text");
+				assert.equal(oOperatorData.groupId, "1", "Empty: Operator group-id");
+				assert.equal(oOperatorData.groupText, oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP1"), "Empty: Operator group-text");
+			}
+		}
+
+	});
+
 	QUnit.test("bind empty condition Model and add one condition", async (assert) => {
 
 		let aConditions = _getModelConditions();
@@ -1079,6 +1105,35 @@ sap.ui.define([
 			assert.ok(oType instanceof IntegerType, "Type of Field binding");
 			assert.equal(typeof oField.getValue(), "number", "Value of Field is Number");
 			assert.equal(oField.getValue(), 5, "Value");
+			fnDone();
+		}, 0);
+
+	});
+
+	QUnit.test("use date type - Empty", async (assert) => {
+
+		const oDateType = new DateType();
+		await _initType(oDateType, Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated), BaseType.Date);
+
+		const fnDone = assert.async();
+		setTimeout(() => { // to wait for retemplating
+			const oGrid = Element.getElementById("DCP1--conditions");
+			const aContent = oGrid.getContent();
+			const oOperatorField = aContent[0];
+			assert.equal(aContent.length, 4, "One row with no field created - Grid contains 4 controls");
+			assert.equal(oOperatorField.getValue(), OperatorName.Empty, "Operator - value");
+
+			// just check operatorModel to not wait for ValueHelp update and Field-content update (changing data-type on runtime is not a real use-case)
+			const aOperatorsData = oDefineConditionPanel.oOperatorModel?.getData();
+			for (let i = 0; i < aOperatorsData.length; i++) {
+				const oOperatorData = aOperatorsData[i];
+				if (oOperatorData.key === OperatorName.Empty) {
+					assert.equal(oOperatorData.text, oMessageBundle.getText("operators.Empty.longText.date"), "Operator text");
+					assert.equal(oOperatorData.groupId, "901", "Operator group-id");
+					assert.equal(oOperatorData.groupText, oMessageBundle.getText("VALUEHELP.OPERATOR.GROUP3"), "Operator group-text");
+					break;
+				}
+			}
 			fnDone();
 		}, 0);
 

@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickSortItem",
 	"sap/m/Button",
 	"sap/m/library",
-	"sap/ui/core/library"
-], function(nextUIUpdate, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, CoreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/performance/trace/FESRHelper"
+], function(nextUIUpdate, QUnitUtils, Menu, QuickSort, QuickSortItem, Button, library, CoreLibrary, FESRHelper) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -133,6 +134,25 @@ sap.ui.define([
 
 		oSegmentedButton.setSelectedKey("Descending");
 		oSegmentedButton.fireSelectionChange({item: oSegmentedButton.getItems()[0]});
+	});
+
+	QUnit.test("FESR registration", function(assert) {
+		this.oColumnMenu.getAggregation("quickActions").forEach((oAction) => {
+			oAction.getEffectiveQuickActions().forEach((oQuickAction) => {
+				const oSegmentedButton = oQuickAction.getContent()[0];
+				const [oSortNoneButton, oSortAscendingButton, oSortDescendingButton] = oSegmentedButton.getItems();
+
+				assert.equal(FESRHelper.getSemanticStepname(oSortNoneButton, "press"),
+						"tbl:p13n:sort:none",
+						"FESR is registered for the None button");
+				assert.equal(FESRHelper.getSemanticStepname(oSortAscendingButton, "press"),
+						"tbl:p13n:sort:asc",
+						"FESR is registered for the Ascending button");
+				assert.equal(FESRHelper.getSemanticStepname(oSortDescendingButton, "press"),
+						"tbl:p13n:sort:desc",
+						"FESR is registered for the Descending button");
+			});
+		});
 	});
 
 	QUnit.module("Aggregations", {

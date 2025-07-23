@@ -326,7 +326,7 @@ sap.ui.define([
 						}
 
 						const sTextForCopy = oTest.hasOwnProperty("textForCopy") ? oTest.textForCopy : "\t" + sFormattedText;
-						assert.equal(oOperator.getTextForCopy.apply(oOperator, oTest.formatArgs), sTextForCopy, "getTextForCopy");
+						assert.equal(oOperator.getTextForCopy.apply(oOperator, oTest.textForCopyArgs || oTest.formatArgs), sTextForCopy, "getTextForCopy");
 					}
 
 					// EQ-Operator.parse("=Test") --> ["Test"]
@@ -406,6 +406,10 @@ sap.ui.define([
 
 					if (oTest.hasOwnProperty("valueDefaults")) {
 						assert.deepEqual(oOperator.valueDefaults, oTest.valueDefaults, "has expected default values");
+					}
+
+					if (oTest.hasOwnProperty("group")) {
+						assert.deepEqual(oOperator.getGroup(oTest.baseType || BaseType.String), oTest.group, "has expected Group");
 					}
 				}
 			}
@@ -1725,7 +1729,8 @@ sap.ui.define([
 						oType: new StringType({}, {nullable: false}),
 						baseType: BaseType.String,
 						longText: mdcMessageBundle.getText("operators.Empty.longText"),
-						tokenText: mdcMessageBundle.getText("operators.Empty.tokenText")
+						tokenText: mdcMessageBundle.getText("operators.Empty.tokenText"),
+						group: {id: "1", text: mdcMessageBundle.getText("VALUEHELP.OPERATOR.GROUP1")}
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
@@ -1752,28 +1757,36 @@ sap.ui.define([
 						baseType: BaseType.String
 					},
 					{
-						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
-						formatValue: "<empty>", // TODO: right result without operator?
+						formatArgs: [Condition.createCondition(OperatorName.Empty, []), new DateType(), FieldDisplay.Value, false, undefined, undefined, undefined, undefined, BaseType.Date],
+						formatValue: "Not Specified (empty)",
+						parseArgs: ["Not Specified (empty)", new DateType(), FieldDisplay.Value, false, undefined, undefined, undefined, false, BaseType.Date],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						textForCopyArgs: [Condition.createCondition(OperatorName.Empty, []), new DateType(), FieldDisplay.Value, false, undefined, undefined, undefined, BaseType.Date],
 						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
+						longText: "Not Specified", // tokenText is tested via FormatValue
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						oType: new DateType(),
 						baseType: BaseType.Date,
-						filter: {path: "test", operator: FilterOperator.EQ, value1: null}
+						filter: {path: "test", operator: FilterOperator.EQ, value1: null},
+						group: {id: "901", text: mdcMessageBundle.getText("VALUEHELP.OPERATOR.GROUP3")}
 					},
 					{
-						formatArgs: [Condition.createCondition(OperatorName.Empty, [])],
-						formatValue: "<empty>", // TODO: right result without operator?
+						formatArgs: [Condition.createCondition(OperatorName.Empty, []), new DateTimeOffsetType({}, {V4: true, nullable: true}), FieldDisplay.Value, false, undefined, undefined, undefined, undefined, BaseType.DateTime],
+						formatValue: "Not Specified (empty)",
+						parseArgs: ["Not Specified (empty)", new DateTimeOffsetType({}, {V4: true, nullable: true}), FieldDisplay.Value, false, undefined, undefined, undefined, false, BaseType.DateTime],
 						parsedValue: "", // empty array (which is the current return value), joined with space. Better check whether it matches  TODO
+						textForCopyArgs: [Condition.createCondition(OperatorName.Empty, []), new DateTimeOffsetType({}, {V4: true, nullable: true}), FieldDisplay.Value, false, undefined, undefined, undefined, BaseType.DateTime],
 						condition: Condition.createCondition(OperatorName.Empty, [], undefined, undefined, ConditionValidated.NotValidated),
+						longText: "Not Specified", // tokenText is tested via FormatValue
 						isEmpty: false,
 						valid: true,
 						isSingleValue: true,
 						oType: new DateTimeOffsetType({}, {V4: true, nullable: true}),
 						baseType: BaseType.DateTime,
-						filter: {path: "test", operator: FilterOperator.EQ, value1: null}
+						filter: {path: "test", operator: FilterOperator.EQ, value1: null},
+						group: {id: "901", text: mdcMessageBundle.getText("VALUEHELP.OPERATOR.GROUP3")}
 					}
 				],
 				[OperatorName.NotEmpty]: [{
@@ -1789,7 +1802,8 @@ sap.ui.define([
 						filter: {path: "test", operator: FilterOperator.NE, value1: ""},
 						isSingleValue: true,
 						longText: mdcMessageBundle.getText("operators.NotEmpty.longText"),
-						tokenText: mdcMessageBundle.getText("operators.NotEmpty.tokenText")
+						tokenText: mdcMessageBundle.getText("operators.NotEmpty.tokenText"),
+						group: {id: "2", text: mdcMessageBundle.getText("VALUEHELP.OPERATOR.GROUP2")}
 					},
 					{
 						formatArgs: [Condition.createCondition(OperatorName.NotEmpty, [])],
@@ -2229,6 +2243,16 @@ sap.ui.define([
 		oExpected = FilterOperatorUtil.getOperator(OperatorName.Contains, aAllOperators);
 		assert.strictEqual(aOperators.length, 1, "there should be one matching operator");
 		assert.deepEqual(aOperators[0], oExpected, "'*middle*' should match the Contains operator");
+
+		aOperators = FilterOperatorUtil.getMatchingOperators(aAllOperators, "<empty>");
+		oExpected = FilterOperatorUtil.getOperator(OperatorName.Empty, aAllOperators);
+		assert.strictEqual(aOperators.length, 2, "there should be two matching operators"); // LT and EMPTY. Is filtered in ConditionType, should not change the behaviour here
+		assert.ok(aOperators.indexOf(oExpected) >= 0, "'<empty>' should match the Contains operator");
+
+		aOperators = FilterOperatorUtil.getMatchingOperators(aAllOperators, "Not Specified (empty)", BaseType.Date);
+		oExpected = FilterOperatorUtil.getOperator(OperatorName.Empty, aAllOperators);
+		assert.strictEqual(aOperators.length, 1, "there should be one matching operator");
+		assert.deepEqual(aOperators[0], oExpected, "'Not Specified (empty)' should match the Contains operator");
 
 	});
 

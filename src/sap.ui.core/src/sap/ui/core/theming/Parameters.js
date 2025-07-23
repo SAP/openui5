@@ -2,19 +2,27 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/Lib',
 	'sap/ui/core/Theming',
 	'sap/ui/thirdparty/URI',
 	'../Element',
 	'sap/base/Log',
-	'sap/base/util/extend',
 	'sap/base/util/syncFetch',
-	'sap/ui/core/theming/ThemeManager',
-	'./ThemeHelper'
-], function(Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+	'sap/ui/base/OwnStatics',
+	'./ThemeManager'
+], function(
+	Theming,
+	URI,
+	Element,
+	Log,
+	syncFetch,
+	OwnStatics,
+	ThemeManager
+) {
 	"use strict";
 
-	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
+	const syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
+	const { attachChange } = OwnStatics.get(Theming);
+	const { getAllLibraryInfoObjects } = OwnStatics.get(ThemeManager);
 
 	/**
 	 * A helper used for (read-only) access to CSS parameters at runtime.
@@ -30,7 +38,7 @@ sap.ui.define([
 	var mParameters = null;
 	var sTheme = null;
 
-	var aParametersToLoad = [];
+	var aParametersToLoad = [...getAllLibraryInfoObjects().keys()];
 
 	var aCallbackRegistry = [];
 
@@ -39,8 +47,6 @@ sap.ui.define([
 
 	// match a CSS url
 	var rCssUrl = /url[\s]*\('?"?([^\'")]*)'?"?\)/;
-
-	var bUseInlineParameters = new URLSearchParams(window.location.search).get("sap-ui-xx-no-inline-theming-parameters") !== "true";
 
 	/**
 	 * Resolves relative URLs in parameter values.
@@ -112,15 +118,15 @@ sap.ui.define([
 	}
 
 	function forEachStyleSheet(fnCallback) {
-		document.querySelectorAll("link[id^=sap-ui-theme-]").forEach(function(linkNode) {
-			fnCallback(linkNode.getAttribute("id"));
-		});
+		for (const [libId, libInfo] of getAllLibraryInfoObjects()) {
+			fnCallback(libId, libInfo);
+		}
 	}
 
-	function parseParameters(sId, bAsync) {
-		var oUrl = getThemeBaseUrlForId(sId);
+	function parseParameters(libInfo, bAsync) {
+		var oUrl = getThemeBaseUrlForId(libInfo);
 
-		var bThemeApplied = ThemeHelper.checkAndRemoveStyle({ id: sId });
+		var bThemeApplied = libInfo.finishedLoading;
 
 		if (!bThemeApplied && !bAsync) {
 			Log.warning("Parameters have been requested but theme is not applied, yet.", "sap.ui.core.theming.Parameters");
@@ -128,8 +134,8 @@ sap.ui.define([
 
 		// In some browsers (e.g. Safari) it might happen that after switching the theme or adopting the <link>'s href,
 		// the parameters from the previous stylesheet are taken. This can be prevented by checking whether the theme is applied.
-		if (bThemeApplied && bUseInlineParameters) {
-			var oLink = document.getElementById(sId);
+		if (bThemeApplied) {
+			var oLink = document.getElementById(libInfo.linkId);
 			var sDataUri = window.getComputedStyle(oLink).getPropertyValue("background-image");
 			var aParams = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)$/i.exec(sDataUri);
 			if (aParams && aParams.length >= 2) {
@@ -164,14 +170,14 @@ sap.ui.define([
 
 	/**
 	 * Load parameters for a library/theme combination as identified by the URL of the library.css
-	 * @param {string} sId the library name for which parameters might be loaded
+	 * @param {object} libInfo Library info object from ThemeManager
 	 */
-	function loadParameters(sId) {
-		var oUrl = getThemeBaseUrlForId(sId);
+	function loadParameters(libInfo) {
+		var oUrl = getThemeBaseUrlForId(libInfo);
 
 		// try to parse the inline-parameters for the given library
 		// this may fail for a number of reasons, see below
-		if (!parseParameters(sId)) {
+		if (!parseParameters(libInfo)) {
 			// derive parameter file URL from CSS file URL
 			// $1: name of library (incl. variants)
 			// $2: additional parameters, e.g. for sap-ui-merged, version/sap-ui-dist-version
@@ -209,16 +215,14 @@ sap.ui.define([
 		}
 	}
 
-	function getThemeBaseUrlForId (sId) {
+	function getThemeBaseUrlForId (libInfo) {
 		// read inline parameters from css style rule
 		// (can be switched off for testing purposes via private URI parameter "sap-ui-xx-no-inline-theming-parameters=true")
-		var oLink = document.getElementById(sId);
-
-		if (!oLink) {
-			throw new Error(`sap.ui.core.theming.Parameters: Could not find stylesheet element with ID "${sId}"`);
+		if (!libInfo.getUrl() && !libInfo.cssLinkElement) {
+			throw new Error(`sap.ui.core.theming.Parameters: Could not find stylesheet element with ID "${libInfo.id}"`);
 		}
 
-		var sStyleSheetUrl = oLink.href;
+		var sStyleSheetUrl = libInfo.getUrl() || libInfo.cssLinkElement?.getAttribute("href");
 
 		// Remove CSS file name and query to create theme base url (to resolve relative urls)
 		return {
@@ -295,13 +299,13 @@ sap.ui.define([
 			// Merge an empty parameter set to initialize the internal object
 			mergeParameters({}, "");
 
-			forEachStyleSheet(function (sId) {
+			forEachStyleSheet(function (libId, libInfo) {
 				if (bAsync) {
-					if (!parseParameters(sId, bAsync)) {
-						aParametersToLoad.push(sId);
+					if (!parseParameters(libInfo, bAsync)) {
+						aParametersToLoad.push(libId);
 					}
 				} else {
-					loadParameters(sId);
+					loadParameters(libInfo);
 				}
 			});
 		}
@@ -314,7 +318,7 @@ sap.ui.define([
 
 		aParametersToLoad.forEach(function (sId) {
 			// Try to parse parameters (in case theme is already applied). Else keep parameter ID for later
-			if (!parseParameters(sId, /*bAsync=*/true)) {
+			if (!parseParameters(getAllLibraryInfoObjects(sId), /*bAsync=*/true)) {
 				aPendingThemes.push(sId);
 			}
 		});
@@ -328,7 +332,7 @@ sap.ui.define([
 	 */
 	function loadPendingLibraryParameters() {
 		// lazy loading of further library parameters
-		aParametersToLoad.forEach(loadParameters);
+		aParametersToLoad.map((id) => getAllLibraryInfoObjects(id)).forEach(loadParameters);
 
 		// clear queue
 		aParametersToLoad = [];
@@ -341,12 +345,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Parameters._addLibraryTheme = function(sLibId) {
-		// only queue new libraries if some have been loaded already
-		// otherwise they will be loaded when the first one requests a parameter
-		// see "Parameters.get" for lazy loading of queued library parameters
-		if (mParameters) {
-			aParametersToLoad.push("sap-ui-theme-" + sLibId);
-		}
+		aParametersToLoad.push(sLibId);
 	};
 
 	/**
@@ -383,14 +382,8 @@ sap.ui.define([
 
 		// Sync: Fallback path for when parameter could not be found so far, library.css MIGHT be not loaded
 		if (mOptions.loadPendingParameters && typeof sParamValue === "undefined" && !bAsync) {
-			// Include library theme in case it's not already done, since link tag for library
-			// is added asynchronous after initLibrary has been executed
-			var aAllLibrariesRequireCss = Library.getAllInstancesRequiringCss();
-			aAllLibrariesRequireCss.forEach(function (oLibThemingInfo) {
-				ThemeManager._includeLibraryThemeAndEnsureThemeRoot(oLibThemingInfo);
-			});
-
 			loadPendingLibraryParameters();
+
 			sParamValue = getParam({
 				parameterName: mOptions.parameterName,
 				scopeName: mOptions.scopeName,
@@ -443,7 +436,7 @@ sap.ui.define([
 	 */
 	Parameters._getScopes = function(bAvoidLoading, bAsync) {
 		if ( bAvoidLoading && !mParameters ) {
-			return;
+			return undefined;
 		}
 		var oParams = getParameters(bAsync);
 		var aScopes = Object.keys(oParams["scopes"]);
@@ -489,7 +482,7 @@ sap.ui.define([
 					};
 
 					while (domRef) {
-						var aFoundScopeClasses = aScopes.filter(fnNodeHasStyleClass);
+						const aFoundScopeClasses = aScopes.filter(fnNodeHasStyleClass);
 						if (aFoundScopeClasses.length > 0) {
 							aScopeChain.push(aFoundScopeClasses);
 						}
@@ -501,7 +494,7 @@ sap.ui.define([
 					};
 
 					while (oElement) {
-						var aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
+						const aFoundScopeClasses = aScopes.filter(fnControlHasStyleClass);
 						if (aFoundScopeClasses.length > 0) {
 							aScopeChain.push(aFoundScopeClasses);
 						}
@@ -748,49 +741,18 @@ sap.ui.define([
 	}
 
 	/**
-	 *
-	 * Uses the parameters provide to re-set the parameters map or
-	 * reloads them as usually.
-	 *
-	 * @param {Object} mLibraryParameters
-	 * @private
-	 */
-	Parameters._setOrLoadParameters = function(mLibraryParameters) {
-
-		// don't use this.reset(), as it will set the variable to null
-		mParameters = {
-			"default": {},
-			"scopes": {}
-		};
-		sTheme = Theming.getTheme();
-		forEachStyleSheet(function(sId) {
-			var sLibname = sId.substr(13); // length of sap-ui-theme-
-			if (mLibraryParameters[sLibname]) {
-				// if parameters are already provided for this lib, use them (e.g. from LessSupport)
-				extend(mParameters["default"], mLibraryParameters[sLibname]);
-			} else {
-				// otherwise use inline-parameters or library-parameters.json
-				loadParameters(sId);
-			}
-		});
-	};
-
-	/**
 	 * Resets the CSS parameters which finally will reload the parameters
 	 * the next time they are queried via the method <code>get</code>.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.core.theming
 	 */
-	Parameters._reset = function() {
-		// hidden parameter {boolean} bOnlyWhenNecessary
-		var bOnlyWhenNecessary = arguments[0] === true;
-		if ( !bOnlyWhenNecessary || Theming.getTheme() !== sTheme ) {
+	function reset() {
+		if ( bForce || Theming.getTheme() !== sTheme ) {
 			sTheme = Theming.getTheme();
-			aParametersToLoad = [];
+			aParametersToLoad = [...getAllLibraryInfoObjects().keys()];
 			mParameters = null;
 		}
-	};
+	}
+
+	attachChange(reset);
 
 	return Parameters;
 });

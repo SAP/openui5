@@ -46,7 +46,6 @@ sap.ui.define([
 
 	var oOptions = window.oTestOptions = {
 		async: /-async(?:-|$)/.test(sTestName),
-		versionedLibCss: /-on(?:-|$)/.test(sTestName),
 		customcss: /-customcss(?:-|$)/.test(sTestName)
 	};
 
