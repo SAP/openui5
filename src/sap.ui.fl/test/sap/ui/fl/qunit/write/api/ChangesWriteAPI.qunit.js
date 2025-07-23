@@ -641,9 +641,9 @@ sap.ui.define([
 			assert.strictEqual(oReturnAnnotationChange, "myAnnotationChangeHandler", "the function returns the expected value");
 		});
 
-		QUnit.test("when deleteVariantsAndRelatedObjects is called without a Variant Management control", async function(assert) {
+		QUnit.test("when deleteVariantsAndRelatedObjects is called without a Variant Management control", function(assert) {
 			try {
-				await ChangesWriteAPI.deleteVariantsAndRelatedObjects({});
+				ChangesWriteAPI.deleteVariantsAndRelatedObjects({});
 			} catch (oError) {
 				assert.strictEqual(oError.message, "Please provide a valid Variant Management control", "the function throws an error");
 			}
@@ -765,7 +765,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when deleteVariantsAndRelatedObjects is called with an invalid variant", async function(assert) {
+		QUnit.test("when deleteVariantsAndRelatedObjects is called with an invalid variant", function(assert) {
 			const oVariantManagement = new VariantManagement("vmId");
 			this.aObjectsToDestroy.push(oVariantManagement);
 			sandbox.stub(JsControlTreeModifier, "getSelector").returns({id: "vmReference"});
@@ -786,7 +786,7 @@ sap.ui.define([
 			sandbox.stub(FlexObjectState, "getDirtyFlexObjects").returns([]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			const oDeleteVariantStub = createDeleteVariantStub();
-			const aDeletedObjects = await ChangesWriteAPI.deleteVariantsAndRelatedObjects({
+			const aDeletedObjects = ChangesWriteAPI.deleteVariantsAndRelatedObjects({
 				variantManagementControl: oVariantManagement,
 				layer: Layer.CUSTOMER,
 				variants: ["draftVariant", "invalidVariant"]
