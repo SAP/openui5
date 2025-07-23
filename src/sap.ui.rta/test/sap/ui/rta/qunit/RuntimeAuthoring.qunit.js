@@ -12,8 +12,10 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/BusinessNetworkAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/_internal/Versions",
@@ -38,8 +40,10 @@ sap.ui.define([
 	DOMUtil,
 	KeyCodes,
 	FlexRuntimeInfoAPI,
-	PersistenceWriteAPI,
+	BusinessNetworkAPI,
 	ChangesWriteAPI,
+	FeaturesAPI,
+	PersistenceWriteAPI,
 	ReloadInfoAPI,
 	VersionsAPI,
 	Versions,
@@ -722,6 +726,53 @@ sap.ui.define([
 			this.oRta.setMetadataScope("some other scope");
 			assert.equal(this.oRta.getMetadataScope(), "someScope", "then the scope in RTA didn't change");
 			assert.equal(oErrorStub.callCount, 1, "and an error was logged");
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is started and the UI Adaptation Tour autostarts", {
+		before() {
+			return oComponentPromise;
+		},
+		beforeEach() {
+			 this.oMessageBoxStub = sandbox.stub(RtaUtils, "showMessageBox");
+		},
+		afterEach() {
+			cleanInfoSessionStorage();
+			window.sessionStorage.clear();
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when UI Adaptation is started and the What's New dialog is initialized", async function(assert) {
+			sandbox.stub(FeaturesAPI, "isSeenFeaturesAvailable").returns(true);
+			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").returns([]);
+			const sessionStorageSpy = sandbox.spy(sessionStorage, "setItem").withArgs("sap.ui.rta.dontShowWhatsNewAfterReload", true);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+
+			assert.ok(DOMUtil.isVisible(document.getElementById("sapUiRtaWhatsNewDialog")), "then the WhatsNew dialog is visible");
+			assert.ok(
+				sessionStorageSpy.calledOnceWithExactly("sap.ui.rta.dontShowWhatsNewAfterReload", true),
+				"then the WhatsNew dialog doesn't show after reload flag is set"
+			);
+		});
+
+		QUnit.test("when UI Adaptation is started and the dontShowWhatsNewAfterReload flag is set", async function(assert) {
+			sandbox.stub(FeaturesAPI, "isSeenFeaturesAvailable").returns(true);
+			sandbox.stub(FeaturesAPI, "getSeenFeatureIds").returns([]);
+			sessionStorage.setItem("sap.ui.rta.dontShowWhatsNewAfterReload", true);
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			await RtaQunitUtils.clear();
+			await this.oRta.start();
+
+			assert.notOk(DOMUtil.isVisible(document.getElementById("sapUiRtaWhatsNewDialog")), "then the WhatsNew dialog is not visible");
 		});
 	});
 
