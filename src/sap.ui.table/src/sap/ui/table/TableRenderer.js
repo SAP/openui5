@@ -345,12 +345,8 @@ sap.ui.define([
 			rm.class("sapUiTableHeaderCell");
 			rm.class("sapUiTableRowActionHeaderCell");
 			rm.attr("tabindex", "-1");
+			rm.attr("aria-label", TableUtils.getResourceText("TBL_ROW_ACTION_COLUMN_LABEL"));
 			rm.openEnd();
-			rm.openStart("span");
-
-			rm.openEnd();
-			rm.text(TableUtils.getResourceText("TBL_ROW_ACTION_COLUMN_LABEL"));
-			rm.close("span");
 
 			rm.close("div");
 		}

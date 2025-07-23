@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
 				<p>Ha a fókusz a táblán belül van, és cellák vannak kijelölve, akkor megszünteti a cellák kijelölését.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Ha engedélyezett a cellakijelölés:</span></p>
-				<p>Ha vannak kijelölve cellák, és egy másik cellánál lenyomja a(z) <kbd>Shift + click</kbd> billentyűkombinációt, akkor a kijelölés kibővül a kattintott celláig.</p>
+				<p>Ha vannak kijelölve cellák, és egy másik cellánál lenyomja a(z) <kbd>Shift + MouseClick</kbd> billentyűkombinációt, akkor a kijelölés kibővül a kattintott celláig.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

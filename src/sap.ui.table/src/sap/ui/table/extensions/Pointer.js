@@ -677,7 +677,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 * @returns {string} The name of this extension.
 		 */
-		_init: function(oTable, sTableType, mSettings) {
+		_init: function(oTable, mSettings) {
 			this._delegate = ExtensionDelegate;
 
 			// Register the delegate
@@ -685,7 +685,6 @@ sap.ui.define([
 
 			oTable._iLastHoveredVisibleColumnIndex = 0;
 			oTable._bIsColumnResizerMoving = false;
-			oTable._iFirstReorderableIndex = sTableType === ExtensionBase.TABLETYPES.TREE ? 1 : 0;
 
 			return "PointerExtension";
 		},

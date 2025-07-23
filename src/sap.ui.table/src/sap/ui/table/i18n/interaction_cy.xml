@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
 				<p>Os yw'r ffocws y tu mewn i'r tabl a chelloedd yn cael eu dewis, bydd y dewis o gelloedd yn cael ei dynnu.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>Os caiff celloedd eu dewis, bydd <kbd>Shift + click</kbd> ar gell wahanol yn ymestyn y dewis hyd at y gell y cliciwyd arni.</p>
+				<p>Os caiff celloedd eu dewis, bydd <kbd>Shift + MouseClick</kbd> ar gell wahanol yn ymestyn y dewis hyd at y gell y cliciwyd arni.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

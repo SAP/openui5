@@ -4357,6 +4357,9 @@ sap.ui.define([
 
 		const oIcon = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: (oEvent) => {} }).placeAt("content"); // just dummy handler to make Icon focusable
 		oField.setMaxConditions(2);
+		oField.attachValidationError(_myValidationErrorHandler);
+		oField.attachValidationSuccess(_myValidationSuccessHandler);
+		Messaging.registerObject(oField, true); // to test valueState
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
 		oValueHelp.setValidateInput(false); // to show keys if not found in help
 		const oConfig = {
@@ -4427,6 +4430,7 @@ sap.ui.define([
 
 		// simulate select event to see if field is updated
 		oValueHelp.getItemForValue.resetHistory();
+		iValidationSuccess = 0;
 		iCount = 0;
 		sValue = ""; bValid = undefined;
 		sinon.stub(oField._oContentFactory._oConditionsType, "parseValue").throws(new ParseException("Error"));
@@ -4449,6 +4453,8 @@ sap.ui.define([
 		assert.equal(oContent.getValueState(), "None", "No ValueState on inner content");
 		assert.equal(oContent.getValueStateText(), "", "No ValueStateText on inner content");
 		assert.notOk(oField.isInvalidInput(), "no parse error");
+		assert.equal(iValidationSuccess, 1, "ValidationSuccess event fired once");
+		iValidationSuccess = 0;
 
 		// simulate select event with close to see if field is updated
 		oValueHelp.getItemForValue.resetHistory();

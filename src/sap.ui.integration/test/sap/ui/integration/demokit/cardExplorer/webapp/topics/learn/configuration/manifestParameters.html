@@ -16,12 +16,8 @@
 			<h1 id="overview">
 				Manifest Parameters
 			</h1>
-
 			<p>
 				Parameters are means to provide dynamic values for certain card attributes.
-				The manifest parameters are replaced during manifest processing and
-				can be used with a double bracket syntax like: "<code>{parameters>/city/value}</code>".
-				Parameters can be used inside "<code>sap.card</code>" scope.
 			</p>
 			<p>
 				There are two groups of parameters:
@@ -44,10 +40,6 @@
 				Parameters are defined in the "configuration" section of the manifest.
 				All parameters are replaced during manifest processing and changing them will cause re-processing of the
 				manifest.
-			</p>
-			<p>
-				Since version 1.87 user-defined parameters can also be accessed in expression binding with single brackets binding syntax
-				"{parameters>/city/value}".
 			</p>
 
 			<h3 id="properties">Parameter properties</h3>
@@ -166,6 +158,15 @@
 					<td>Replaced with the locale for the current language in BCP47-compliant language tag.</td>
 				</tr>
 			</table>
+
+			<h2 id="usingParameters">Using Parameters</h2>
+			<p>
+				Parameters are stored in the <code>parameters</code> model and can be referenced by their key using a binding syntax, such as <code>{parameters>/myParameter/value}</code>.
+				This syntax can be used within the <code>"sap.card"</code> namespace, but not within the definition of another parameter.
+			</p>
+			<p>
+				Additionally, the same syntax can be used in the <code>Card#request()</code> method.
+			</p>
 
 			<h2 id="examples">
 				Examples

@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ако е овозможен избор на ќелија:</span> </p>
 				<p>Aко фокусот е внатре во табелата и ако се избрани ќелии, изборот на ќелиите се отстранува.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Ако е овозможен избор на ќелија:</span> </p>
-				<p>Ако се избрани ќелии, <kbd>Shift + click</kbd> на различна ќелија, се проширува изборот до ќелијата што е кликната. </p>
+				<p>Ако се избрани ќелии, <kbd>Shift + MouseClick</kbd> на различна ќелија, се проширува изборот до ќелијата што е кликната. </p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

@@ -284,7 +284,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 * @returns {string} The name of this extension.
 		 */
-		_init: function(oTable, sTableType, mSettings) {
+		_init: function(oTable, mSettings) {
 			this._oDelegate = ExtensionDelegate;
 
 			TableUtils.addDelegate(oTable, this._oDelegate, oTable);

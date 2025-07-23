@@ -173,24 +173,6 @@ sap.ui.define([
 		return oChange;
 	}
 
-	function waitForMethodCall(oObject, sMethodName) {
-		// Returns a promise which is resolved with the return value
-		// of the given method after it was first called
-		// Doesn't work with event handlers
-		return new Promise(function(resolve) {
-			sandbox.stub(oObject, sMethodName)
-			.callsFake(function(...aArgs) {
-				if (oObject[sMethodName].wrappedMethod) {
-					const oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
-					resolve(oResult);
-				}
-			});
-		})
-		.then(function() {
-			oObject[sMethodName].restore();
-		});
-	}
-
 	function collectIndicatorReferences() {
 		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function(oDomRef) {
@@ -200,7 +182,7 @@ sap.ui.define([
 
 	async function startVisualization(oRta) {
 		oRta.setMode("visualization");
-		await waitForMethodCall(oRta.getToolbar(), "setModel");
+		await RtaQunitUtils.waitForMethodCall(sandbox, oRta.getToolbar(), "setModel");
 		await nextUIUpdate();
 	}
 
@@ -271,7 +253,7 @@ sap.ui.define([
 		QUnit.test("Without changes - Check if Menu is bound correctly to the model", function(assert) {
 			return startVisualization(this.oRta)
 			.then(function() {
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -301,7 +283,7 @@ sap.ui.define([
 				this.oChangeVisualization._updateVisualizationModel({
 					versioningAvailable: true
 				});
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -363,7 +345,7 @@ sap.ui.define([
 			};
 			return startVisualization(this.oRta)
 			.then(function() {
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -403,7 +385,7 @@ sap.ui.define([
 				this.oChangeVisualization._updateVisualizationModel({
 					versioningAvailable: true
 				});
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -448,7 +430,7 @@ sap.ui.define([
 			OverlayRegistry.getOverlay("Comp1---idMain1--lb2").destroy();
 			return startVisualization(this.oRta)
 			.then(function() {
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -473,7 +455,7 @@ sap.ui.define([
 			prepareChanges(this.aMockChanges);
 			await startVisualization(this.oRta);
 
-			const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+			const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 			this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 			await oOpenPopoverPromise;
 
@@ -510,7 +492,7 @@ sap.ui.define([
 			this.oCheckModelAll.tooltip = oRtaResourceBundle.getText("TOOLTIP_CHANGEVISUALIZATION_OVERVIEW_ADDITIONAL_CHANGES");
 			return startVisualization(this.oRta)
 			.then(function() {
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -531,7 +513,7 @@ sap.ui.define([
 			this.oCheckModelAll.count = 3;
 			return startVisualization(this.oRta)
 			.then(function() {
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -567,7 +549,7 @@ sap.ui.define([
 
 		QUnit.test("Menu & Model are in correct order", function(assert) {
 			return startVisualization(this.oRta).then(function() {
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))
@@ -925,7 +907,7 @@ sap.ui.define([
 					return oIndicator.mProperties.selectorId === "Comp1---idMain1--lb2";
 				});
 				oOverlay = Element.getElementById(oChangeIndicator.getOverlayId()).getDomRef();
-				const oCreatePopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
+				const oCreatePopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oOverlay);
 				return oCreatePopoverPromise;
 			})
@@ -960,7 +942,7 @@ sap.ui.define([
 			const fnClickSpy = sandbox.spy(this.oChangeVisualization, "_fnOnClickHandler");
 			assert.strictEqual(this.oChangeVisualization.getRootControlId(), undefined, "then the RootControlId was not set before");
 			assert.strictEqual(this.oChangeVisualization.getIsActive(), false, "then the ChangeVisualization was inactive before");
-			waitForMethodCall(this.oChangeVisualization, "triggerModeChange")
+			RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "triggerModeChange")
 			.then(function() {
 				assert.strictEqual(this.oChangeVisualization.getRootControlId(), "Comp1", "then the RootControlId is set afterwards");
 				assert.strictEqual(this.oChangeVisualization.getIsActive(), true, "then the ChangeVisualization is active afterwards");
@@ -1060,7 +1042,7 @@ sap.ui.define([
 			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 			let oDependentOverlayDomRef;
 			return startVisualization(this.oRta).then(function() {
-				const oSelectChangePromise = waitForMethodCall(this.oChangeVisualization, "_selectChange");
+				const oSelectChangePromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "_selectChange");
 				const oChangeIndicator = collectIndicatorReferences()[0];
 				oChangeIndicator.fireSelectChange({
 					changeId: oChangeIndicator.getChanges()[0].id
@@ -1081,7 +1063,7 @@ sap.ui.define([
 					3,
 					"then all the ChangeIndicators are shown"
 				);
-				return waitForMethodCall(oDependentOverlayDomRef.classList, "remove");
+				return RtaQunitUtils.waitForMethodCall(sandbox, oDependentOverlayDomRef.classList, "remove");
 			}).then(async function() {
 				await nextUIUpdate();
 				assert.notOk(
@@ -1232,7 +1214,7 @@ sap.ui.define([
 				this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
 				[oChangeIndicator] = collectIndicatorReferences();
 				iInitialTabindex = oChangeIndicator.getDomRef().getAttribute("tabindex");
-				const oOpenPopoverPromise = waitForMethodCall(oChangeIndicator, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, oChangeIndicator, "setAggregation");
 				QUnitUtils.triggerEvent("click", oChangeIndicator.getDomRef());
 
 				return oOpenPopoverPromise;
@@ -1427,6 +1409,54 @@ sap.ui.define([
 				"then back in adaptation mode the overlay without change is focusable again"
 			);
 		});
+
+		QUnit.test("overlay focusability on category change", async function(assert) {
+			prepareChanges([
+				createMockChange("testRename", "rename", "Comp1---idMain1--Label1"),
+				createMockChange("testRename2", "rename", "Comp1---idMain1--rb2"),
+				createMockChange("testAdd", "addDelegateProperty", "Comp1---idMain1--rb1")
+			]);
+			await startRta.call(this);
+			await startVisualization.call(this, this.oRta);
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent(ChangeCategories.ALL));
+			await this.oChangeVisualization._oChangeIndicatorRegistry.waitForIndicatorRendering();
+			await nextUIUpdate();
+			const oOverlayRename1 = OverlayRegistry.getOverlay("Comp1---idMain1--Label1");
+			assert.strictEqual(
+				oOverlayRename1.getFocusable(),
+				true,
+				"then the overlay with rename change is focusable when category 'ALL' is selected");
+			const oOverlayRename2 = OverlayRegistry.getOverlay("Comp1---idMain1--rb2");
+			assert.strictEqual(
+				oOverlayRename2.getFocusable(),
+				true,
+				"then the overlay with the second rename change is focusable when category 'ALL' is selected"
+			);
+			const oOverlayAdd = OverlayRegistry.getOverlay("Comp1---idMain1--rb1");
+			assert.strictEqual(
+				oOverlayAdd.getFocusable(),
+				true,
+				"then the overlay with add change is focusable when category 'ALL' is selected"
+			);
+			this.oChangeVisualization.onChangeCategorySelection(prepareMockEvent("rename"));
+			await this.oChangeVisualization._oChangeIndicatorRegistry.waitForIndicatorRendering();
+			await nextUIUpdate();
+			assert.strictEqual(
+				oOverlayRename1.getFocusable(),
+				true,
+				"After switching to rename, the overlay with rename change is still focusable"
+			);
+			assert.strictEqual(
+				oOverlayRename2.getFocusable(),
+				true,
+				"After switching to rename, the overlay with the second rename change is still focusable"
+			);
+			assert.strictEqual(
+				oOverlayAdd.getFocusable(),
+				false,
+				"After switching to rename, the overlay with the add change is not focusable any more"
+			);
+		});
 	});
 
 	QUnit.module("On Save", {
@@ -1466,7 +1496,7 @@ sap.ui.define([
 				assert.ok(oResetSpy.called, "then changeIndicatorRegistry gets reset");
 				assert.ok(oSelectStateChangeSpy.called, "then selected changeState gets reset");
 				assert.ok(oMenuModelUpdateSpy.called, "then the menu model gets updated");
-				const oOpenPopoverPromise = waitForMethodCall(this.oChangeVisualization, "setAggregation");
+				const oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeVisualization, "setAggregation");
 				this.oRta.getToolbar().getControl("toggleChangeVisualizationMenuButton").firePress();
 				return oOpenPopoverPromise;
 			}.bind(this))

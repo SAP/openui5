@@ -296,7 +296,8 @@ sap.ui.define([
 					contentEdit: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test creation of internal content
 					fieldInfo: GenericTestCollection.ExcludeReason.SetterNeedsSpecificSettings, // we want to test standard content
 					items: GenericTestCollection.ExcludeReason.OnlyChangeableViaBinding // as tested with binding
-				}
+				},
+				countControlInstances: false // the create function above is not deterministic with regards to control counts, it relies on the timing of a Dialog opening
 			},
 			"sap.ui.mdc.valuehelp.base.DefineConditionPanel": {
 				create: async (DefineConditionPanel, mSettings) => {

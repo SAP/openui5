@@ -1873,8 +1873,20 @@ function(
 			"Column's width should be 20 pixels less");
 	});
 
+	QUnit.test("Up arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_UP);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth - 20,
+			"Column's width should be 20 pixels less");
+	});
+
 	QUnit.test("Right arrow", function (assert) {
 		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_RIGHT);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth + 20,
+			"Column's width should be 20 pixels bigger");
+	});
+
+	QUnit.test("Down arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_DOWN);
 		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth + 20,
 			"Column's width should be 20 pixels bigger");
 	});
@@ -1885,8 +1897,20 @@ function(
 			"Column's width should be 1 pixel less");
 	});
 
+	QUnit.test("Shift + Up arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_UP, true);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth - 1,
+			"Column's width should be 1 pixel less");
+	});
+
 	QUnit.test("Shift + Right arrow", function (assert) {
 		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_RIGHT, true);
+		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth + 1,
+			"Column's width should be 1 pixel bigger");
+	});
+
+	QUnit.test("Shift + Down arrow", function (assert) {
+		QUnitUtils.triggerKeydown(this.beginSeparatorDOM, KeyCodes.ARROW_DOWN, true);
 		assert.strictEqual(this.beginColumnDOM.offsetWidth, this.beginColumnInitialWidth + 1,
 			"Column's width should be 1 pixel bigger");
 	});
