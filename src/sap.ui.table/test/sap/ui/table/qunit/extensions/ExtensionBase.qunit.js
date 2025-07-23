@@ -4,142 +4,83 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/Table",
-	"sap/ui/table/TreeTable",
-	"sap/ui/table/AnalyticalTable",
 	"sap/ui/base/Object"
 ], function(
 	nextUIUpdate,
 	ExtensionBase,
 	Table,
-	TreeTable,
-	AnalyticalTable,
 	BaseObject
 ) {
 	"use strict";
 
-	//************************************************************************
-	// Preparation Code
-	//************************************************************************
-
-	const TABLETYPES = ExtensionBase.TABLETYPES;
-	let oStandardTable; let oTreeTable; let oAnalyticalTable;
-
 	const MyExtension = ExtensionBase.extend("sap.ui.table.test.MyExtension", {
-		_init: function(oTable, sTableType, mSettings) {
-
-			if (mSettings.assert) {
-				mSettings.assert.ok(!!mSettings, "Init: Settings exists");
-				mSettings.assert.ok(!!oTable, "Init: Table exists");
-				mSettings.assert.ok(sTableType === TABLETYPES.ANALYTICAL || sTableType === TABLETYPES.TREE || sTableType === TABLETYPES.STANDARD,
-					"Init: Type exists");
-
-				switch (sTableType) {
-					case TABLETYPES.ANALYTICAL:
-						mSettings.assert.ok(oTable === oAnalyticalTable, "Init: Correct Table type (ANALYTICAL)");
-						break;
-					case TABLETYPES.TREE:
-						mSettings.assert.ok(oTable === oTreeTable, "Init: Correct Table type (TREE)");
-						break;
-					default:
-						mSettings.assert.ok(oTable === oStandardTable, "Init: Correct Table type (STANDARD)");
-						break;
-				}
-			}
-
+		_init: function(oTable, mSettings) {
+			mSettings.assert?.ok(!!mSettings, "Init: Settings exists");
+			mSettings.assert?.ok(!!oTable, "Init: Table exists");
 			return mSettings.name || null;
 		}
 	});
 
-	//************************************************************************
-	// Test Code
-	//************************************************************************
-
-	QUnit.module("ExtensionBase", {
+	QUnit.module("", {
 		beforeEach: function() {
-			oStandardTable = new Table();
-			oTreeTable = new TreeTable();
-			oAnalyticalTable = new AnalyticalTable();
+			this.oTable = new Table();
 		},
 		afterEach: function() {
-			if (oStandardTable) {
-				oStandardTable.destroy();
-				oStandardTable = null;
-			}
-			if (oTreeTable) {
-				oTreeTable.destroy();
-				oTreeTable = null;
-			}
-			if (oAnalyticalTable) {
-				oAnalyticalTable.destroy();
-				oAnalyticalTable = null;
-			}
+			this.oTable.destroy();
 		}
 	});
 
 	QUnit.test("enrich - wrong type", function(assert) {
-		const iNumberOfStandardExtensions = oStandardTable._aExtensions.length;
-		const oExtension = ExtensionBase.enrich(oStandardTable, BaseObject, {name: "TEST"});
+		const iNumberOfStandardExtensions = this.oTable._aExtensions.length;
+		const oExtension = ExtensionBase.enrich(this.oTable, BaseObject, {name: "TEST"});
 		assert.strictEqual(oExtension, null, "enrich does not accept other types than ExtensionBase");
-		assert.ok(!oStandardTable._getTEST, "No getter for Extension created");
-		assert.ok(oStandardTable._aExtensions.length === iNumberOfStandardExtensions, "Number of registered Extensions not changed");
+		assert.ok(!this.oTable._getTEST, "No getter for Extension created");
+		assert.ok(this.oTable._aExtensions.length === iNumberOfStandardExtensions, "Number of registered Extensions not changed");
 	});
 
 	QUnit.test("enrich - correct type", function(assert) {
-		const iNumberOfStandardExtensions = oStandardTable._aExtensions.length;
-		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST2"});
+		const iNumberOfStandardExtensions = this.oTable._aExtensions.length;
+		const oExtension = ExtensionBase.enrich(this.oTable, MyExtension, {name: "TEST2"});
 		assert.ok(oExtension instanceof MyExtension, "enrich does not accept other types than ExtensionBase");
-		assert.ok(typeof oStandardTable._getTEST2 === "function", "Getter for Extension created");
+		assert.ok(typeof this.oTable._getTEST2 === "function", "Getter for Extension created");
 
-		const aExtensions = oStandardTable._aExtensions;
+		const aExtensions = this.oTable._aExtensions;
 		assert.ok(aExtensions.length === iNumberOfStandardExtensions + 1, "Number of registered Extensions");
 		assert.ok(aExtensions[aExtensions.length - 1] === oExtension, "Extension registered");
 	});
 
-	QUnit.test("init parameters - Table", function(assert) {
-		assert.expect(4);
-		ExtensionBase.enrich(oStandardTable, MyExtension, {
+	QUnit.test("init parameters", function(assert) {
+		assert.expect(2);
+		ExtensionBase.enrich(this.oTable, MyExtension, {
 			name: "TEST",
 			assert: assert
 		});
-	});
-
-	QUnit.test("init parameters - AnalyticalTable", function(assert) {
-		assert.expect(4);
-		ExtensionBase.enrich(oAnalyticalTable, MyExtension, {
-			name: "TEST",
-			assert: assert
-		});
-	});
-
-	QUnit.test("init parameters - TreeTable", function(assert) {
-		assert.expect(4);
-		ExtensionBase.enrich(oTreeTable, MyExtension, {name: "TEST", assert: assert});
 	});
 
 	QUnit.test("Cleanup", function(assert) {
 		assert.expect(3);
-		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST"});
+		const oExtension = ExtensionBase.enrich(this.oTable, MyExtension, {name: "TEST"});
 		oExtension.destroy = function() {
 			assert.ok(true, "Destroy called");
 		};
-		oStandardTable._detachExtensions();
-		assert.ok(!oStandardTable._aExtensions, "No extension registered");
-		assert.ok(!oStandardTable._bExtensionsInitialized, "Extensions cleaned up");
-		oStandardTable._detachExtensions(); // Double detach should not lead to errors
+		this.oTable._detachExtensions();
+		assert.ok(!this.oTable._aExtensions, "No extension registered");
+		assert.ok(!this.oTable._bExtensionsInitialized, "Extensions cleaned up");
+		this.oTable._detachExtensions(); // Double detach should not lead to errors
 	});
 
 	QUnit.test("Generated Getter", function(assert) {
-		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST"});
-		assert.ok(typeof oStandardTable._getTEST === "function", "Getter for Extension created");
-		assert.strictEqual(oStandardTable._getTEST(), oExtension, "Getter returns extension instance");
+		const oExtension = ExtensionBase.enrich(this.oTable, MyExtension, {name: "TEST"});
+		assert.ok(typeof this.oTable._getTEST === "function", "Getter for Extension created");
+		assert.strictEqual(this.oTable._getTEST(), oExtension, "Getter returns extension instance");
 
 		// Extension without name and getter possible -> no error should occur
-		ExtensionBase.enrich(oStandardTable, MyExtension, {});
+		ExtensionBase.enrich(this.oTable, MyExtension, {});
 	});
 
 	QUnit.test("Functions", function(assert) {
-		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST"});
-		assert.ok(oExtension.getTable() === oStandardTable, "getTable");
+		const oExtension = ExtensionBase.enrich(this.oTable, MyExtension, {name: "TEST"});
+		assert.ok(oExtension.getTable() === this.oTable, "getTable");
 		assert.ok(oExtension.getInterface() === oExtension, "getInterface");
 	});
 
@@ -149,7 +90,7 @@ sap.ui.define([
 		let iCounter = 0;
 		let iCount = 0;
 		let bActive = true;
-		const oExtension = ExtensionBase.enrich(oStandardTable, MyExtension, {name: "TEST"});
+		const oExtension = ExtensionBase.enrich(this.oTable, MyExtension, {name: "TEST"});
 		oExtension._attachEvents = function() {
 			if (bActive) {
 				assert.ok(true, "_attachEvents called");
@@ -165,21 +106,21 @@ sap.ui.define([
 			}
 		};
 
-		oStandardTable.placeAt("qunit-fixture");
+		this.oTable.placeAt("qunit-fixture");
 		await nextUIUpdate();
 		assert.ok(iCount === 0, "Balanced calls of attach and detach"); // beforeRendering calls _detachEvents, afterRendering _attachEvents
 		assert.ok(iCounter === 2, "Attach and detach called");
 
-		ExtensionBase.detachEvents(oStandardTable);
+		ExtensionBase.detachEvents(this.oTable);
 		assert.ok(iCount === -1, "detach called");
-		ExtensionBase.attachEvents(oStandardTable);
+		ExtensionBase.attachEvents(this.oTable);
 		assert.ok(iCount === 0, "attach called");
 
-		oStandardTable._detachExtensions();
+		this.oTable._detachExtensions();
 		iCounter = 0;
-		ExtensionBase.attachEvents(oStandardTable);
+		ExtensionBase.attachEvents(this.oTable);
 		assert.ok(iCounter === 0, "Attach not called");
-		ExtensionBase.detachEvents(oStandardTable);
+		ExtensionBase.detachEvents(this.oTable);
 		assert.ok(iCounter === 0, "Detach not called");
 
 		bActive = false;
@@ -187,8 +128,9 @@ sap.ui.define([
 
 	QUnit.test("isEnrichedWith", function(assert) {
 		assert.strictEqual(ExtensionBase.isEnrichedWith(), false, "Returned false: No table passed");
-		assert.strictEqual(ExtensionBase.isEnrichedWith(oStandardTable), false, "Returned false: No extension name passed");
-		assert.strictEqual(ExtensionBase.isEnrichedWith(oStandardTable, "wrong name"), false, "Returned false: No Extension with this name exists");
-		assert.strictEqual(ExtensionBase.isEnrichedWith(oStandardTable, "sap.ui.table.extensions.Scrolling"), true, "Enriched with the scroll extension");
+		assert.strictEqual(ExtensionBase.isEnrichedWith(this.oTable), false, "Returned false: No extension name passed");
+		assert.strictEqual(ExtensionBase.isEnrichedWith(this.oTable, "wrong name"), false, "Returned false: No Extension with this name exists");
+		assert.strictEqual(ExtensionBase.isEnrichedWith(this.oTable, "sap.ui.table.extensions.Scrolling"), true,
+			"Enriched with the scroll extension");
 	});
 });

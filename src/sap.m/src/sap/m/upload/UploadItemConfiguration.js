@@ -62,7 +62,16 @@ sap.ui.define([
 					 * Set this property to the path in the model that determines if the file is uploaded from a trusted source.
 					 * @since 1.125
 					 */
-					isTrustedSourcePath: {type: "string", defaultValue: null}
+					isTrustedSourcePath: {type: "string", defaultValue: null},
+					/**
+					 * Specifies the path in the model to confirm if it is a file or a directory.
+					 * This is used to determine if the context is file or a directory.
+					 * If it is a directory, it cannot be previewed.
+					 * Set this property to the path in the model to determine if it is a file or a directory.
+					 * The value of this path evaluated should be boolean.
+					 * @since 1.139
+					 */
+					isDirectoryPath: {type: "string", defaultValue: null}
 				}
 			}
     });
@@ -212,6 +221,29 @@ sap.ui.define([
 			}
 		}
 		Log.error(`Invalid isTrustedSource value at ${oBindingContext.getPath()}. Expected Boolean.`);
+		return false;
+	};
+
+	/**
+	 * Validates the configuration of the isDirectory path value.
+	 * @param {sap.ui.model.Context} oBindingContext context of the item
+	 * @returns {boolean} true if the isDirectory is valid, false otherwise.
+	 * @private
+	 */
+	UploadItemConfiguration.prototype._isDirectoryPathValidator = function (oBindingContext) {
+		const sPath = this.getIsDirectoryPath();
+		if (!sPath) {
+			return false;
+		}
+		const value = oBindingContext?.getProperty(sPath);
+		if (typeof value === "boolean") {
+			return true;
+		} else if (typeof value === "string") {
+			if (value.toLowerCase() === "true" || value.toLowerCase() === "false") {
+				return true;
+			}
+		}
+		Log.error(`Invalid isDirectory value at ${oBindingContext.getPath()}. Expected Boolean.`);
 		return false;
 	};
 

@@ -331,13 +331,13 @@ sap.ui.define([
 			// all columns which are somehow related to each other by spanning column headers are collected now.
 			// It is time to calculate the boundaries, which is the start index and the end index in the columns aggregation
 			// of the table
-			let iColumnIndex = oTable.indexOfColumn(oColumnMapItem.column);
+			let iColumnIndex = oColumnMapItem.column.getIndex();
 			const mBoundaries = {startColumn: oColumnMapItem.column, startIndex: iColumnIndex, endColumn: oColumnMapItem.column, endIndex: -1};
 			const aColumns = oTable.getColumns();
 			const aKeys = Object.getOwnPropertyNames(mColumns);
 			for (let i = 0; i < aKeys.length; i++) {
 				const oColumn = mColumns[aKeys[i]];
-				iColumnIndex = oTable.indexOfColumn(oColumn);
+				iColumnIndex = oColumn.getIndex();
 				const iHeaderSpan = ColumnUtils._getMaxHeaderSpan(oColumn);
 				// start
 				if (iColumnIndex < mBoundaries.startIndex) {
@@ -372,10 +372,11 @@ sap.ui.define([
 				return false;
 			}
 
-			const iCurrentIndex = oTable.indexOfColumn(oColumn);
+			const iCurrentIndex = oColumn.getIndex();
 
-			if (iCurrentIndex < oTable.getComputedFixedColumnCount() || iCurrentIndex < oTable._iFirstReorderableIndex) {
-				// No movement of fixed columns or e.g. the first column in the TreeTable
+			if (iCurrentIndex < oTable.getComputedFixedColumnCount()
+				|| ColumnUtils.TableUtils.Grouping.isInTreeMode(oTable) && oTable._getVisibleColumns()[0] === oColumn) {
+				// No movement of fixed columns or the first visible column in tree mode
 				return false;
 			}
 
@@ -397,7 +398,7 @@ sap.ui.define([
 		 */
 		_normalizeColumnMoveTargetIndex: function(oColumn, iNewIndex) {
 			const oTable = oColumn._getTable();
-			const iCurrentIndex = oTable.indexOfColumn(oColumn);
+			const iCurrentIndex = oColumn.getIndex();
 			const aColumns = oTable.getColumns();
 
 			if (iNewIndex > iCurrentIndex) {
@@ -435,12 +436,13 @@ sap.ui.define([
 
 			iNewIndex = ColumnUtils._normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
 
-			if (iNewIndex < oTable.getComputedFixedColumnCount() || iNewIndex < oTable._iFirstReorderableIndex) {
-				// No movement of fixed columns or e.g. the first column in the TreeTable
+			if (iNewIndex < oTable.getComputedFixedColumnCount()
+				|| ColumnUtils.TableUtils.Grouping.isInTreeMode(oTable) && iNewIndex <= oTable._getVisibleColumns()[0].getIndex()) {
+				// No movement inside the fixed columns area or the before the first visible column in tree mode
 				return false;
 			}
 
-			const iCurrentIndex = oTable.indexOfColumn(oColumn);
+			const iCurrentIndex = oColumn.getIndex();
 			const aColumns = oTable.getColumns();
 
 			if (iNewIndex > iCurrentIndex) { // Column moved to higher index
@@ -477,7 +479,7 @@ sap.ui.define([
 			}
 
 			const oTable = oColumn._getTable();
-			const iCurrentIndex = oTable.indexOfColumn(oColumn);
+			const iCurrentIndex = oColumn.getIndex();
 
 			if (iNewIndex === iCurrentIndex) {
 				return false;

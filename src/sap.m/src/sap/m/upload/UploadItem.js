@@ -65,7 +65,13 @@ sap.ui.define([
 					 * This property must be set to true if the file is from a trusted source.
 					 * @since 1.125
 					 */
-					isTrustedSource: {type: "boolean", defaultValue: false}
+					isTrustedSource: {type: "boolean", defaultValue: false},
+					/**
+					 * Specifies whether the item is a file or a directory.
+					 * Used mainly for plugin with the tree table structure.
+					 * @since 1.139
+					 */
+					isDirectory: {type: "boolean", defaultValue: false}
 				},
 				aggregations: {
 					/**

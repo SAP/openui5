@@ -119,7 +119,7 @@
 			</description>
 		</interaction>
 		<interaction>
-			<kbd>ESC</kbd>
+			<kbd>Escape</kbd>
 			<description>
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
 				<p>If the focus is inside of the table and cells are selected, the selection of the cells is removed.</p>
@@ -236,10 +236,10 @@
 			</description>
 		</interaction>
 		<interaction>
-			<kbd>Shift + mouse click</kbd>
+			<kbd>Shift + MouseClick</kbd>
 			<description>
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
-				<p>If cells are selected, <kbd>Shift + click</kbd> on a different cell enhances the selection up to the clicked cell.</p>
+				<p>If cells are selected, <kbd>Shift + MouseClick</kbd> on a different cell enhances the selection up to the clicked cell.</p>
 			</description>
 		</interaction>
 		<interaction>

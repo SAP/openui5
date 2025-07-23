@@ -29,11 +29,12 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/upload/FilePreviewDialog",
 	"sap/ui/codeeditor/CodeEditor",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/table/TreeTable"
 ], function (Text, MTable, MColumn, ColumnListItem, UploadSetwithTable, MDCTable, MDCColumn, JSONModel,
 			qutils, nextUIUpdate, GridColumn, GridTable, TemplateHelper, ActionsPlaceholder, OverflowToolbar,
 			Uploader, Boolean, EventBase, UploadItem, mLibrary, Log, Event, UploadItemConfiguration, Dialog,
-			FilePreviewDialog, CodeEditor, Button) {
+			FilePreviewDialog, CodeEditor, Button, TreeTable) {
 	"use strict";
 
 	const oJSONModel = new JSONModel();
@@ -134,6 +135,25 @@ sap.ui.define([
 		oTable.placeAt("qunit-fixture");
 		await nextUIUpdate();
 
+		return oTable;
+	}
+
+	async function createTreeTable(oSettings = {}) {
+
+		const mSettings = Object.assign({
+			columns: [
+				new GridColumn({ name: "File Name", template: TemplateHelper.getFileNameColumnTemplate() }),
+				new GridColumn({ name: "ID", template: TemplateHelper.getIdColumnTemplate() }),
+				new GridColumn({ name: "Status", template: TemplateHelper.getStatusColumnTemplate() })
+			],
+			rows: "{/documents}",
+			models: oJSONModel
+		}, oSettings);
+
+		const oTable = new TreeTable(mSettings);
+		oTable.placeAt("qunit-fixture");
+
+		await nextUIUpdate();
 		return oTable;
 	}
 
@@ -257,6 +277,30 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Plugin works with Tree Table", async function (assert) {
+		// arrange
+		const done = assert.async();
+
+		this.oTable = await createTreeTable();
+		this.oTable.addDependent(new UploadSetwithTable());
+
+		this.oUploadSetwithTablePlugin = this.oTable?.getDependents()?.find((oPlugin) => oPlugin.isA("sap.m.plugins.UploadSetwithTable"));
+
+		// act
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			const oBinding = this.oTable.getBinding("rows");
+
+			// assert
+			assert.ok(oBinding, "Table's items are bound");
+			assert.ok(this.oUploadSetwithTablePlugin, "UploadSetwithTable plugin is available as table's dependent.");
+
+			assert.equal(this.oUploadSetwithTablePlugin.getControl(), this.oTable, "The table is set as plugin owner for the UploadSetwithTable plugin");
+			assert.ok(this.oUploadSetwithTablePlugin.getEnabled(), "UploadSetwithTable Plugin is enabled");
+			assert.ok(this.oUploadSetwithTablePlugin.isActive(), "UploadSetwithTable is active");
+			done();
+		});
+	});
+
 	QUnit.test("plugin to fire onActivated & exit events on need", async function (assert) {
 		//arrange
 		const oTable = await createMDCTable();
@@ -359,6 +403,33 @@ sap.ui.define([
 		assert.ok(oUploadButton?.getAggregation("_actionButton")?.isA("sap.ui.unified.FileUploader") , "Grid Table has upload button rendered");
 
 		oGridTable.destroy();
+
+		/**
+		 * Tree Table with ActionsPlaceholder
+		 */
+
+		// arrange
+		const oTreeTable = await createTreeTable({
+			extension: [
+				new ActionsPlaceholder({ id:"uploadButton", placeholderFor:"UploadButtonPlaceholder"})
+			]
+		});
+
+		const oTreeTableUploadInstance = new UploadSetwithTable({
+			actions: ["uploadButton"]
+		});
+
+		// act
+		oTreeTable.addDependent(oTreeTableUploadInstance);
+
+		const oTreeTableToolbar = oTreeTable.getExtension();
+
+		const oTreeTableUploadButton = oTreeTableToolbar?.find((oAction) => oAction?.isA("sap.m.upload.ActionsPlaceholder"));
+
+		// assert
+		assert.ok(oTreeTableUploadButton?.getAggregation("_actionButton")?.isA("sap.ui.unified.FileUploader") , "Tree Table has upload button rendered");
+
+		oTreeTable.destroy();
 	});
 
 	QUnit.test("Plugin to render upload from cloud button at desired position in the view with correct actions association configured", async function (assert) {
@@ -456,6 +527,29 @@ sap.ui.define([
 
 		oGridTable.destroy();
 
+		/**
+		 * Tree table with ActionsPlaceholder
+		 */
+
+		// arrange
+		const oTreeTable = await createTreeTable({
+			extension: [
+				new ActionsPlaceholder({ id:"cloudUploadButtonTree", placeholderFor:"CloudFilePickerButtonPlaceholder"})
+			]
+		});
+		const oTreeTableUploadInstance = new UploadSetwithTable({
+			cloudFilePickerEnabled: true,
+			actions: ["cloudUploadButtonTree"]
+		});
+
+		// act
+		oTreeTable.addDependent(oTreeTableUploadInstance);
+		const oTreeTableToolbar = oTreeTable.getExtension();
+		const oTreeTableUploadButton = oTreeTableToolbar?.find((oAction) => oAction?.isA("sap.m.upload.ActionsPlaceholder"));
+
+		// assert
+		assert.ok(oTreeTableUploadButton?.getAggregation("_actionButton")?.isA("sap.m.Button") , "Tree Table has upload button rendered");
+		oTreeTable.destroy();
 
 	});
 
@@ -505,6 +599,20 @@ sap.ui.define([
 		// assert
 		assert.ok(!oGridUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin coonected to grid table - uploading is disabled");
 		assert.ok(!oGridTable.getDragDropConfig().length, "DragDropConfig is not added to the table");
+
+		const oTreeTable = await createTreeTable();
+		const oTreeUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: false
+
+		});
+
+		oTreeTable.addDependent(oTreeUploadSetwithTablePlugin);
+
+
+		assert.ok(!oTreeUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Tree table - uploading is disabled");
+		assert.ok(!oTreeTable.getDragDropConfig().length, "DragDropConfig is not added to the table");
+
+		oTreeTable.destroy();
 	});
 
 	// Test to verify if dragdrop config is added to the table when uploadEnabled is enabled.
@@ -555,6 +663,20 @@ sap.ui.define([
 		assert.ok(oGridTable.getDragDropConfig().length, "DragDropConfig is added to the table");
 
 		oGridTable.destroy();
+
+		const oTreeTable = await createTreeTable();
+		const oTreeUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+		});
+
+		// act
+		oTreeTable.addDependent(oTreeUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(oTreeUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Tree table - upload is enabled");
+		assert.ok(oTreeTable.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oTreeTable.destroy();
 	});
 
 	// Test to verify if dragdrop config is removed from the table when uploadEnabled is toiggeled from enabled to disabled.
@@ -640,6 +762,31 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oGridUploadSetwithTablePlugin.getConfig.calledWithExactly("cleanupPluginInstanceSettings", oGridTable, oGridUploadSetwithTablePlugin), "oGridTable Plugin cleanupPluginInstanceSettings settings are set");
+
+
+		const oTreeTable = await createTreeTable();
+		const oTreeUploadSetwithTablePlugin = new UploadSetwithTable({
+			uploadEnabled: true
+
+		});
+		this.spy(oTreeUploadSetwithTablePlugin, "getConfig");
+
+		// act
+		oTreeTable.addDependent(oTreeUploadSetwithTablePlugin);
+
+		// assert
+		assert.ok(oTreeUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Tree table - uploading is enabled");
+		assert.ok(oTreeTable.getDragDropConfig().length, "DragDropConfig is added to the table");
+
+		oTreeUploadSetwithTablePlugin.setUploadEnabled(false);
+
+		// assert
+		assert.ok(oTreeUploadSetwithTablePlugin.getConfig.calledWithExactly("resetDragDropConfig", oTreeTable, oTreeUploadSetwithTablePlugin), "oTreeTable Plugin resetDragDropConfig settings are set");
+		assert.ok(!oTreeUploadSetwithTablePlugin.getUploadEnabled(), "UploadSetwithTable Plugin connected to Tree table - uploading is disabled");
+		assert.ok(!oTreeTable.getDragDropConfig().length, "DragDropConfig is removed from the table");
+		assert.ok(oTreeUploadSetwithTablePlugin.getConfig.calledWithExactly("setPluginDefaultSettings", oTreeTable, oTreeUploadSetwithTablePlugin), "oTreeTable Plugin setPluginDefaultSettings settings are set");
+		oTreeTable.destroy();
+
 	});
 
 	QUnit.test("Plugin to fire fileTypeMismatch event when file type is not supported", async function (assert) {

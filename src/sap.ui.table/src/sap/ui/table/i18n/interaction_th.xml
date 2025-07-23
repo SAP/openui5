@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">ถ้าเปิดใช้งานการเลือกเซลล์:</span></p>
 				<p>ถ้าโฟกัสอยู่ภายในตาราง และมีการเลือกแถว การเลือกเซลล์จะถูกย้ายออก</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">ถ้าเปิดใช้งานการเลือกเซลล์:</span></p>
-				<p>ถ้ามีการเลือกเซลล์ การกด <kbd>Shift + click</kbd> ที่เซลล์อื่นจะเพิ่มเติมการเลือกจนถึงเซลล์ที่คลิก</p>
+				<p>ถ้ามีการเลือกเซลล์ การกด <kbd>Shift + MouseClick</kbd> ที่เซลล์อื่นจะเพิ่มเติมการเลือกจนถึงเซลล์ที่คลิก</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

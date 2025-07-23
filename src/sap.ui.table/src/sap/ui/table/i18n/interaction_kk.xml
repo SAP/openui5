@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
 				<p>Фокус кесте ішінде болса және ұяшықтар таңдалса, ұяшықтардың таңдауы алып тасталады.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
-				<p>Ұяшықтар таңдалса, басқа ұяшықта <kbd>Shift + click</kbd> таңдауды басылған ұяшыққа дейін кеңейтеді.</p>
+				<p>Ұяшықтар таңдалса, басқа ұяшықта <kbd>Shift + MouseClick</kbd> таңдауды басылған ұяшыққа дейін кеңейтеді.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

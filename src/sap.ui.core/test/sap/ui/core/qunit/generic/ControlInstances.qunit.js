@@ -29,7 +29,12 @@ sap.ui.define([
 			let bIgnore = false;
 
 			if (oCapabilities.create === false) {
-				assert.ok(true, "WARNING: " + sControlName + " cannot be tested and has therefore been EXCLUDED");
+				assert.ok(true, "WARNING: " + sControlName + " cannot be created and has therefore been EXCLUDED");
+				bIgnore = true;
+			}
+
+			if (oCapabilities.countControlInstances === false) {
+				assert.ok(true, "WARNING: " + sControlName + " cannot be tested for instance creation and has therefore been EXCLUDED");
 				bIgnore = true;
 			}
 

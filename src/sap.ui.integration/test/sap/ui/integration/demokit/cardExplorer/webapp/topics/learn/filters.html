@@ -77,9 +77,10 @@
 
 			<h2 id="filtersModel">Filters Model</h2>
 			<p>
-				The value of each filter is stored in the <code>filters</code> model.
-				It can be referenced throughout the manifest with the following syntax: <code>{filters>/keyOfTheFilter/value}</code>.
-				Depending on the filter type different values are available.
+				Each filter is stored in the <code>filters</code> model.
+				Filters can be referenced by their key using binding syntax, such as <code>{filters>/keyOfTheFilter/value}</code>.
+				This syntax can be used within the <code>"sap.card"</code> namespace, but not within the definition of a CSRF Token, parameter or destination.
+				Depending on the filter type, different values are available.
 			</p>
 		</div>
 	</div>

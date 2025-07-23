@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
 	"sap/ui/rta/util/changeVisualization/commands/RenameVisualization",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
 	DateFormat,
@@ -23,7 +24,8 @@ sap.ui.define([
 	nextUIUpdate,
 	ChangeIndicator,
 	RenameVisualization,
-	sinon
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -44,16 +46,6 @@ sap.ui.define([
 			descriptionPayload: mPayload,
 			affectedElementId: sAffectedElementId
 		};
-	}
-
-	function waitForMethodCall(oObject, sMethodName) {
-		return new Promise(function(resolve) {
-			sandbox.stub(oObject, sMethodName)
-			.onFirstCall().callsFake(function(...aArgs) {
-				resolve(oObject[sMethodName].wrappedMethod.apply(this, aArgs));
-			})
-			.callThrough();
-		});
 	}
 
 	QUnit.module("Basic tests", {
@@ -108,7 +100,7 @@ sap.ui.define([
 				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
 			await nextUIUpdate();
-			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
@@ -189,7 +181,7 @@ sap.ui.define([
 				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
 			await nextUIUpdate();
-			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
@@ -253,7 +245,7 @@ sap.ui.define([
 				}]
 			});
 			await nextUIUpdate();
-			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
 				"then the indicator is vertically centered"
@@ -293,7 +285,7 @@ sap.ui.define([
 			});
 			await nextUIUpdate();
 
-			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 
 			return oOpenPopoverPromise
@@ -463,7 +455,7 @@ sap.ui.define([
 			});
 			await nextUIUpdate();
 
-			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
 			assert.strictEqual(
 				this.oChangeIndicator.getDomRef().title,
 				"2 changes",
@@ -760,7 +752,7 @@ sap.ui.define([
 				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
 
-			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
 
 			await nextUIUpdate();
 			assert.ok(this.oChangeIndicator.getVisible(), "then the indicator is visible");

@@ -127,7 +127,7 @@ sap.ui.define([
 				title: oTextResources.getText("TIT_TOUR_GENERAL_STEP_VERSIONS_DROPDOWN_TITLE"),
 				description: oTextResources.getText("TXT_TOUR_GENERAL_STEP_VERSIONS_DROPDOWN_DESCRIPTION"),
 				listContent: [],
-				markerSelector: "sapUIRta_toolbar_fragment--sapUiRta_versionHistoryDialog--originalVersionList",
+				markerSelector: "sapUIRta_toolbar_fragment--sapUiRta_versionHistoryDialog--popover",
 				waitForElement: true,
 				actionSelectors: ["sapUIRta_toolbar_fragment--sapUiRta_versionButton"]
 			},

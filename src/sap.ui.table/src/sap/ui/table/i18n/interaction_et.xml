@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
 				<p>Kui fookus on tabelis ja valitud on lahtreid, eemaldatakse lahtrite valik.</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">Kui lahtrivalik on lubatud</span></p>
-				<p>Kui valitud on lahtreid, siis otsetee <kbd>Shift + click</kbd> kasutamine muul lahtril laiendab valiku kuni klõpsatud lahtrini.</p>
+				<p>Kui valitud on lahtreid, siis otsetee <kbd>Shift + MouseClick</kbd> kasutamine muul lahtril laiendab valiku kuni klõpsatud lahtrini.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

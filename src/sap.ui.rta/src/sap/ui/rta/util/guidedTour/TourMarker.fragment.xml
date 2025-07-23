@@ -36,7 +36,7 @@
 			<OverflowToolbar>
 				<ToolbarSpacer/>
 				<Button
-					id="previewsButton"
+					id="previousButton"
 					text="{i18n>BTN_GUIDED_TOUR_PREV}"
 					visible="{= !${/isFirstStep}}"
 					press=".onPreviousPress" />

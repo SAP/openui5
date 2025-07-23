@@ -92,7 +92,7 @@
 				</ul>
 			</description>
 		</interaction>
-		<interaction> <kbd>ESC</kbd> <description>
+		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
 				<p>若焦點在表格內且已選擇儲存格，則會移除儲存格選擇。</p>
 			</description>
@@ -176,7 +176,7 @@
 		</interaction>
 		<interaction> <kbd>Shift + mouse click</kbd> <description>
 				<p><span class="emphasis">若已啟用儲存格選擇：</span></p>
-				<p>若已選擇儲存格，則 <kbd>Shift + click</kbd> 在其他儲存格可增強至所點擊儲存格的選擇。</p>
+				<p>若已選擇儲存格，則 <kbd>Shift + MouseClick</kbd> 在其他儲存格可增強至所點擊儲存格的選擇。</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>

@@ -541,7 +541,7 @@ sap.ui.define([
 			draftFilenames: bVersioningEnabled ? oVersionModel.getProperty("/draftFilenames") : undefined
 		});
 
-		if (bConsiderDraftHandling) {
+		if (bConsiderDraftHandling && bVersioningEnabled) {
 			Versions.updateAfterSave({
 				reference: sReference,
 				layer: mPropertyBag.layer,
