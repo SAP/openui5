@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickTotal",
 	"sap/m/table/columnmenu/QuickTotalItem",
-	"sap/m/Button"
-], function(nextUIUpdate, QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button) {
+	"sap/m/Button",
+	"sap/ui/performance/trace/FESRHelper"
+], function(nextUIUpdate, QUnitUtils, Menu, QuickTotal, QuickTotalItem, Button, FESRHelper) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -156,5 +157,17 @@ sap.ui.define([
 
 		oSwitch.setState(true);
 		oSwitch.fireChange({state: true});
+	});
+
+	QUnit.test("FESR registration", function(assert) {
+		this.oColumnMenu.getAggregation("quickActions").forEach((oAction) => {
+			oAction.getEffectiveQuickActions().forEach((oQuickAction) => {
+				const oSwitch = oQuickAction.getContent()[0];
+
+				assert.equal(FESRHelper.getSemanticStepname(oSwitch, "change"),
+						"tbl:p13n:aggregate",
+						"FESR is registered for the content of the QuickTotalItem");
+			});
+		});
 	});
 });
