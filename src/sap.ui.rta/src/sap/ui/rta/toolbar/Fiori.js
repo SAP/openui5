@@ -3,18 +3,18 @@
  */
 
 sap.ui.define([
-	"sap/m/Image",
-	"./Adaptation",
-	"../Utils",
 	"sap/base/Log",
-	"sap/ui/rta/toolbar/AdaptationRenderer"
+	"sap/m/Image",
+	"sap/ui/rta/toolbar/Adaptation",
+	"sap/ui/rta/toolbar/AdaptationRenderer",
+	"sap/ui/rta/Utils"
 ],
 function(
+	Log,
 	Image,
 	Adaptation,
-	Utils,
-	Log,
-	AdaptationRenderer
+	AdaptationRenderer,
+	Utils
 ) {
 	"use strict";
 

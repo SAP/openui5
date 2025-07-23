@@ -7,11 +7,11 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
-	"./getContainerUserInfo",
+	"sap/ui/fl/util/getContainerUserInfo",
 	"sap/base/security/URLListValidator",
 	"sap/base/Log",
-	"./IFrameRenderer",
-	"../library",
+	"sap/ui/fl/util/IFrameRenderer",
+	"sap/ui/fl/library",
 	"sap/ui/core/library"
 ], function(
 	uid,
