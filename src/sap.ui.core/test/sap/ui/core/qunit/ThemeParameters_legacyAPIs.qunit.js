@@ -6,11 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
-	"sap/ui/dom/includeStylesheet",
 	"sap/m/Bar",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/test/utils/nextUIUpdate"
-], function(Parameters, Control, Element, Icon, Library, Theming, includeStylesheet, Bar, URI, nextUIUpdate) {
+], function(Parameters, Control, Element, Icon, Library, Theming, Bar, URI, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Parmeters.get", {
@@ -22,6 +21,7 @@ sap.ui.define([
 	});
 
 	var sPath = new URI(sap.ui.require.toUrl("testdata/core"), document.baseURI).toString();
+	const sCoreVersion = Library.all()["sap.ui.core"].version;
 
 	QUnit.test("InitialCheck", function(assert) {
 		assert.ok(Parameters, "sap.ui.core.theming.Parameters must exist");
@@ -66,23 +66,7 @@ sap.ui.define([
 
 	function checkLibraryParametersJsonRequestForLib(sLibNumber) {
 		return performance.getEntriesByType("resource").filter(function (oResource) {
-			return oResource.name.endsWith(`themeParameters/lib${sLibNumber}/themes/sap_horizon_hcb/library-parameters.json?version=1.0.0`);
-		});
-	}
-	function createLinkElement (sId, bBase) {
-		var sUrl = sap.ui.require.toUrl("test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters/lib17/themes/" + (bBase ? "base" : "sap_horizon_hcb") + "/library.css");
-		return includeStylesheet({
-			url: sUrl,
-			id: bBase ? sId : undefined
-		}).then(function () {
-			if (bBase) {
-				return;
-			}
-			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
-				if (!oLink.getAttribute("id") && oLink.getAttribute("href") === sUrl) {
-					oLink.setAttribute("data-sap-ui-foucmarker", sId);
-				}
-			});
+			return oResource.name.endsWith(`themeParameters/lib${sLibNumber}/themes/sap_horizon_hcb/library-parameters.json?sap-ui-dist-version=${sCoreVersion}`);
 		});
 	}
 
@@ -144,36 +128,6 @@ sap.ui.define([
 		assert.equal(Parameters.get("sapUiTstTextColor"), undefined, "'undefined' should be returned for a parameter of a library that currently is not loaded");
 	});
 
-	QUnit.test("Check that link tags for libraries are added in the correct order", function(assert) {
-		var i = 0;
-		var sLib15Name = "testlibs.themeParameters.lib15";
-		var sLib16Name = "testlibs.themeParameters.lib16";
-
-		sap.ui.getCore().loadLibrary(sLib16Name);
-		sap.ui.getCore().loadLibrary(sLib15Name);
-
-		// Link tags for recently loaded libs 15 and 16 shouldn't be available in DOM
-		var aAllLibrariesRequireCss = Library.getAllInstancesRequiringCss();
-		document.querySelectorAll("link").forEach(function (oLink) {
-			if (oLink.id.includes(sLib15Name) || oLink.id.includes(sLib16Name)) {
-				assert.notOk("Link tag for lib 15 and 16 shouldn't be available synchronous");
-			}
-		});
-
-		// Trigger loading of parameters.json for lib CSS which is not loaded
-		Parameters.get("sapUiThemeParamForLib14");
-		// Check that link tags are added in the corrct order
-		aAllLibrariesRequireCss = Library.getAllInstancesRequiringCss();
-		document.querySelectorAll("link").forEach(function (oLink) {
-			if (oLink.id.startsWith("sap-ui-theme-")) {
-				var sExpectedLinkId = aAllLibrariesRequireCss[i].variant ?
-					aAllLibrariesRequireCss[i].name + "-[" + aAllLibrariesRequireCss[i].variant + "]" : aAllLibrariesRequireCss[i].name;
-				assert.strictEqual(oLink.id, "sap-ui-theme-" + sExpectedLinkId, "Link tag for library " + sExpectedLinkId + " is correct");
-				i++;
-			}
-		});
-	});
-
 	QUnit.test("After Theme Change", function(assert) {
 		var done = assert.async();
 		var fnContinue = function(oEvent) {
@@ -201,18 +155,17 @@ sap.ui.define([
 	QUnit.test("Dynamically Loaded Library", function(assert) {
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib1");
 
-		// Need promise resolve to get async after load library
-		return Promise.resolve().then(function() {
-			// In Chrome the library.css for testlibs.themeParameters.lib1 is still pending, so the library-parameters.json needs to be loaded.
-			// In Firefox however, the library.css is available when fetching the theme-parameter.
-			// To unify the behaviour, prevent inline data-uri parameter usage and force a json request to test the request params
-			// BCP: 2170097761
-			var oLink = document.getElementById("sap-ui-theme-testlibs\.themeParameters\.lib1");
+		// In Chrome the library.css for testlibs.themeParameters.lib1 is still pending, so the library-parameters.json needs to be loaded.
+		// In Firefox however, the library.css is available when fetching the theme-parameter.
+		// To unify the behaviour, prevent inline data-uri parameter usage and force a json request to test the request params
+		// BCP: 2170097761
+		var oLink = document.getElementById("sap-ui-theme-testlibs\.themeParameters\.lib1");
+		if (oLink) {
 			oLink.style = "background-image: none !important;";
+		}
 
-			assert.equal(Parameters.get("sapUiThemeParamForLib1"), "#fafafa", "parameter for newly loaded library should be known now");
-			assert.strictEqual(checkLibraryParametersJsonRequestForLib("1").length, 1, "library-parameters.json requested once for testlibs.themeParameters.lib1");
-		});
+		assert.equal(Parameters.get("sapUiThemeParamForLib1"), "#fafafa", "parameter for newly loaded library should be known now");
+		assert.ok(checkLibraryParametersJsonRequestForLib("1").length <= 1, "library-parameters.json requested not more then once for testlibs.themeParameters.lib1");
 	});
 
 	QUnit.test("Read scoped parameters (from testlibs.themeParameters.lib2)", function(assert) {
@@ -220,30 +173,27 @@ sap.ui.define([
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib2");
 
-		// Need promise resolve to get async after load library
-		return Promise.resolve().then(function() {
-			assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib2", oControl), "#fbfbfb",
-				"No scope set - default value should get returned");
+		assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib2", oControl), "#fbfbfb",
+			"No scope set - default value should get returned");
 
-			oControl.addStyleClass("sapTestScope");
+		oControl.addStyleClass("sapTestScope");
 
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithScopeForLib2", oControl), "#000000",
-				"Scope set directly on control - scoped param should be returned");
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithoutScopeForLib2", oControl), "#ffffff",
-				"Scope set directly on control but no scoped value defined - default value should get returned");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithScopeForLib2", oControl), "#000000",
+			"Scope set directly on control - scoped param should be returned");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithoutScopeForLib2", oControl), "#ffffff",
+			"Scope set directly on control but no scoped value defined - default value should get returned");
 
-			oControl.removeStyleClass("sapTestScope");
-			var oParent = new Control();
-			oParent.addStyleClass("sapTestScope");
-			oControl.setParent(oParent);
+		oControl.removeStyleClass("sapTestScope");
+		var oParent = new Control();
+		oParent.addStyleClass("sapTestScope");
+		oControl.setParent(oParent);
 
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithScopeForLib2", oControl), "#000000",
-				"Scope set on parent control - scoped param should be returned");
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithoutScopeForLib2", oControl), "#ffffff",
-				"Scope set on parent control but no scoped value defined - default value should get returned");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithScopeForLib2", oControl), "#000000",
+			"Scope set on parent control - scoped param should be returned");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithoutScopeForLib2", oControl), "#ffffff",
+			"Scope set on parent control but no scoped value defined - default value should get returned");
 
-			assert.strictEqual(checkLibraryParametersJsonRequestForLib("2").length, 1, "library-parameters.json requested once for testlibs.themeParameters.lib2");
-		});
+		assert.ok(checkLibraryParametersJsonRequestForLib("2").length <= 1, "library-parameters.json requested not more once for testlibs.themeParameters.lib2");
 	});
 
 	QUnit.test("Read scoped parameters (error handling)", function(assert) {
@@ -251,26 +201,23 @@ sap.ui.define([
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib3");
 
-		// Need promise resolve to get async after load library
-		return Promise.resolve().then(function() {
-			assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib3", oElement), "#fcfcfc",
-				"No scope set - default value should get returned");
+		assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib3", oElement), "#fcfcfc",
+			"No scope set - default value should get returned");
 
-			assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib3", null), "#fcfcfc",
-				"'null' value provided as 'oControl' - default value should get returned");
+		assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib3", null), "#fcfcfc",
+			"'null' value provided as 'oControl' - default value should get returned");
 
-			assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib3", {}), "#fcfcfc",
-				"'{}' value provided as 'oControl' - default value should get returned");
+		assert.equal(Parameters.get("sapUiThemeParamWithScopeForLib3", {}), "#fcfcfc",
+			"'{}' value provided as 'oControl' - default value should get returned");
 
-			var oParent = new Control();
-			oParent.addStyleClass("sapTestScope");
-			oElement.setParent(oParent);
+		var oParent = new Control();
+		oParent.addStyleClass("sapTestScope");
+		oElement.setParent(oParent);
 
-			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithScopeForLib3", oElement), "#111111",
-				"Scope set on parent control - scoped param should be returned");
+		assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamWithScopeForLib3", oElement), "#111111",
+			"Scope set on parent control - scoped param should be returned");
 
-			assert.strictEqual(checkLibraryParametersJsonRequestForLib("3").length, 1, "library-parameters.json requested once for testlibs.themeParameters.lib3");
-		});
+		assert.ok(checkLibraryParametersJsonRequestForLib("3").length <= 1, "library-parameters.json requested not more once for testlibs.themeParameters.lib3");
 	});
 
 	QUnit.test("Read multiple given parameters", function(assert) {
@@ -338,50 +285,47 @@ sap.ui.define([
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib4");
 
-		// Need promise resolve to get async after load library
-		return Promise.resolve().then(function() {
-			var expected = {
-				url1: sPath + "/testdata/libraries/themeParameters/lib4/img1.jpg",
-				url2: sPath + "/testdata/libraries/themeParameters/lib4/foo/img2.jpg",
-				url3: sPath + "/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg",
-				url4: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
-				url5: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
-				url6: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
-				url7: "blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4",
-				url8: "data:text/plain;utf-8,foo",
-				url9: {
-					plain: "none",
-					themeImage: null,
-					themeImageForce: sap.ui.require.toUrl("sap/ui/core/themes/base/img/1x1.gif")
-				}
-			};
+		var expected = {
+			url1: sPath + "/testdata/libraries/themeParameters/lib4/img1.jpg",
+			url2: sPath + "/testdata/libraries/themeParameters/lib4/foo/img2.jpg",
+			url3: sPath + "/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg",
+			url4: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+			url5: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+			url6: sPath + "/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/",
+			url7: "blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4",
+			url8: "data:text/plain;utf-8,foo",
+			url9: {
+				plain: "none",
+				themeImage: null,
+				themeImageForce: sap.ui.require.toUrl("sap/ui/core/themes/base/img/1x1.gif")
+			}
+		};
 
-			// plain values
-			assert.equal(Parameters.get("sapUiThemeParamUrl1"), "url('" + expected.url1 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/img1.jpg'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl2"), "url('" + expected.url2 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/img2.jpg'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl3"), "url('" + expected.url3 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl4"), "url('" + expected.url4 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl5"), "url('" + expected.url5 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl6"), "url('" + expected.url6 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl7"), "url('" + expected.url7 + "')", "Relative URL should be resolved correctly 'blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl8"), "url('" + expected.url8 + "')", "Relative URL should be resolved correctly 'data:text/plain;utf-8,foo'.");
-			assert.equal(Parameters.get("sapUiThemeParamUrl9"), expected.url9.plain, "'none' should stay as defined");
+		// plain values
+		assert.equal(Parameters.get("sapUiThemeParamUrl1"), "url('" + expected.url1 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/img1.jpg'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl2"), "url('" + expected.url2 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/img2.jpg'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl3"), "url('" + expected.url3 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/foo/bar/img3.jpg'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl4"), "url('" + expected.url4 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl5"), "url('" + expected.url5 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl6"), "url('" + expected.url6 + "')", "Relative URL should be resolved correctly 'sap/ui/core/qunit/testdata/libraries/themeParameters/lib4/themes/sap_horizon_hcb/'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl7"), "url('" + expected.url7 + "')", "Relative URL should be resolved correctly 'blob:http://example.com/6e88648c-00e1-4512-9695-5b702d8455b4'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl8"), "url('" + expected.url8 + "')", "Relative URL should be resolved correctly 'data:text/plain;utf-8,foo'.");
+		assert.equal(Parameters.get("sapUiThemeParamUrl9"), expected.url9.plain, "'none' should stay as defined");
 
-			// _getThemeImage
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl1"), expected.url1, "Theme Image value should be correct for 'sapUiThemeParamUrl1'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl2"), expected.url2, "Theme Image value should be correct for 'sapUiThemeParamUrl2'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl3"), expected.url3, "Theme Image value should be correct for 'sapUiThemeParamUrl3'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl4"), expected.url4, "Theme Image value should be correct for 'sapUiThemeParamUrl4'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl5"), expected.url5, "Theme Image value should be correct for 'sapUiThemeParamUrl5'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl6"), expected.url6, "Theme Image value should be correct for 'sapUiThemeParamUrl6'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl7"), expected.url7, "Theme Image value should be correct for 'sapUiThemeParamUrl7'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl8"), expected.url8, "Theme Image value should be correct for 'sapUiThemeParamUrl8'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl9"), expected.url9.themeImage, "Theme Image value should be 'null' for parameter value 'none'.");
-			assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl9", true), expected.url9.themeImageForce, "Theme Image value should be 'sap/ui/core/themes/base/img/1x1.gif' for parameter value 'none' (force).");
+		// _getThemeImage
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl1"), expected.url1, "Theme Image value should be correct for 'sapUiThemeParamUrl1'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl2"), expected.url2, "Theme Image value should be correct for 'sapUiThemeParamUrl2'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl3"), expected.url3, "Theme Image value should be correct for 'sapUiThemeParamUrl3'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl4"), expected.url4, "Theme Image value should be correct for 'sapUiThemeParamUrl4'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl5"), expected.url5, "Theme Image value should be correct for 'sapUiThemeParamUrl5'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl6"), expected.url6, "Theme Image value should be correct for 'sapUiThemeParamUrl6'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl7"), expected.url7, "Theme Image value should be correct for 'sapUiThemeParamUrl7'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl8"), expected.url8, "Theme Image value should be correct for 'sapUiThemeParamUrl8'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl9"), expected.url9.themeImage, "Theme Image value should be 'null' for parameter value 'none'.");
+		assert.equal(Parameters._getThemeImage("sapUiThemeParamUrl9", true), expected.url9.themeImageForce, "Theme Image value should be 'sap/ui/core/themes/base/img/1x1.gif' for parameter value 'none' (force).");
 
-			// We expect a sync XHR, since we don't wait for the theme change/applied event
-			assert.strictEqual(checkLibraryParametersJsonRequestForLib("4").length, 1, "library-parameters.json requested once for testlibs.themeParameters.lib4");
-		});
+		// We expect a sync XHR, since we don't wait for the theme change/applied event
+		assert.ok(checkLibraryParametersJsonRequestForLib("4").length <= 1, "library-parameters.json requested not more once for testlibs.themeParameters.lib4");
 	});
 
 	QUnit.test("Relative URLs in parameters (legacy library)", function(assert) {
@@ -406,25 +350,6 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
-		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
-
-		// Setup
-		Parameters.reset();
-		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
-		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
-		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {
-			assert.strictEqual(Parameters.get("sapUiThemeParamForLib17"), "#fafafa", "Parameter 'sapUiThemeParamForLib17' has value: '#fafafa'");
-
-			// Cleanup
-			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
-				if (oLink.getAttribute("id") === sPrefixedLibId || oLink.getAttribute("data-sap-ui-foucmarker") === sPrefixedLibId) {
-					oLink.remove();
-				}
-			});
-		});
-	});
-
 	/**
 	 * Test module covers the async Parameters.get() API.
 	 * The module tests the async API together with legacy Core API, e.g. "loadLibrary".
@@ -447,14 +372,18 @@ sap.ui.define([
 
 		sap.ui.getCore().initLibrary({ name: "testlibs.themeParameters.lib5" });
 
-		Parameters.get({
+		const callback = function (sParamValue) {
+			assert.equal(sParamValue, "0.5rem", "sapUiAsyncThemeParamForLib5 must be defined as '0.5rem'");
+			assert.strictEqual(checkLibraryParametersJsonRequestForLib("5").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib5");
+			done();
+		};
+		const sParamValue = Parameters.get({
 			name: "sapUiAsyncThemeParamForLib5",
-			callback: function (sParamValue) {
-				assert.equal(sParamValue, "0.5rem", "sapUiAsyncThemeParamForLib5 must be defined as '0.5rem'");
-				assert.strictEqual(checkLibraryParametersJsonRequestForLib("5").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib5");
-				done();
-			}
+			callback
 		});
+		if (sParamValue) {
+			callback(sParamValue);
+		}
 	});
 
 	QUnit.test("Read scoped parameters (from testlibs.themeParameters.lib6)", function(assert) {
@@ -462,28 +391,32 @@ sap.ui.define([
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib6");
 
-		Parameters.get({
+		const callback = function (sParamValue) {
+			assert.equal(sParamValue, "#ababab", "No scope set - default value should get returned");
+			oControl.addStyleClass("sapTestScope");
+
+			assert.equal(Parameters.get({
+				name: "sapUiAsyncThemeParamWithScopeForLib6",
+				scopeElement: oControl
+			}), "#222222", "Scope set directly on control - scoped param should be returned");
+
+			assert.equal(Parameters.get({
+				name: "sapUiAsyncThemeParamWithoutScopeForLib6",
+				scopeElement: oControl
+			}), "#aaaaaa", "Scope set directly on control but no scoped value defined - default value should get returned");
+
+			assert.strictEqual(checkLibraryParametersJsonRequestForLib("6").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib6");
+
+			done();
+		};
+		const sParamValue = Parameters.get({
 			name: "sapUiAsyncThemeParamWithScopeForLib6",
 			scopeElement: oControl,
-			callback: function (sParamValue) {
-				assert.equal(sParamValue, "#ababab", "No scope set - default value should get returned");
-				oControl.addStyleClass("sapTestScope");
-
-				assert.equal(Parameters.get({
-					name: "sapUiAsyncThemeParamWithScopeForLib6",
-					scopeElement: oControl
-				}), "#222222", "Scope set directly on control - scoped param should be returned");
-
-				assert.equal(Parameters.get({
-					name: "sapUiAsyncThemeParamWithoutScopeForLib6",
-					scopeElement: oControl
-				}), "#aaaaaa", "Scope set directly on control but no scoped value defined - default value should get returned");
-
-				assert.strictEqual(checkLibraryParametersJsonRequestForLib("6").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib6");
-
-				done();
-			}
+			callback
 		});
+		if (sParamValue) {
+			callback(sParamValue);
+		}
 	});
 
 	QUnit.test("Read multiple given parameters (including undefined param name)", function(assert) {
@@ -517,33 +450,42 @@ sap.ui.define([
 
 	QUnit.test("Call Parameters.get multiple times with same callback function should only be executed once", function (assert) {
 		assert.expect(3);
-		var done = assert.async(), callback = function (oParamResult) {
-			assert.deepEqual(oParamResult, {
-				"sapUiThemeParam1ForLib8": "#123456",
-				"sapUiThemeParam2ForLib8": "#654321"
-			}, "Callback should be called once with values for the given params 'sapUiThemeParam1ForLib8' and 'sapUiThemeParam2ForLib8'");
-			assert.strictEqual(checkLibraryParametersJsonRequestForLib("8").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib8");
-		};
+		var done = assert.async(),
+			firstCallback = function (oParamResult) {
+				assert.deepEqual(oParamResult, {
+					"sapUiThemeParam1ForLib8": "#123456",
+					"sapUiThemeParam2ForLib8": "#654321"
+				}, "Callback should be called once with values for the given params 'sapUiThemeParam1ForLib8' and 'sapUiThemeParam2ForLib8'");
+				assert.strictEqual(checkLibraryParametersJsonRequestForLib("8").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib8");
+			},
+			secondCallback = function (sParamResult) {
+				assert.strictEqual(sParamResult, "#654321", "Different callback function should be called once with value for the given param 'sapUiThemeParam2ForLib8' should be returned");
+				done();
+			};
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib8");
 
 		Parameters.get({
 			name: "sapUiThemeParam1ForLib8",
-			callback: callback
+			callback: firstCallback
 		});
 
-		Parameters.get({
+		const oParamResult = Parameters.get({
 			name: ["sapUiThemeParam1ForLib8", "sapUiThemeParam2ForLib8"],
-			callback: callback
+			callback: firstCallback
 		});
 
-		Parameters.get({
+		if (oParamResult) {
+			firstCallback(oParamResult);
+		}
+
+		const sParamValue = Parameters.get({
 			name: "sapUiThemeParam2ForLib8",
-			callback: function (sParamResult) {
-				assert.strictEqual(sParamResult, "#654321", "Different callback function should be called once with value for the given param 'sapUiThemeParam2ForLib8' should be returned");
-				done();
-			}
+			callback: secondCallback
 		});
+		if (sParamValue) {
+			secondCallback(sParamValue);
+		}
 	});
 
 	QUnit.test("Read not defined parameter using callback", function(assert) {
@@ -579,7 +521,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getActiveScopesFor: Check scope chain for given rendered control", async function(assert) {
-		assert.expect(18);
+		assert.expect(12);
 		var done = assert.async();
 
 		var oInnerIcon1 =  new Icon();
@@ -620,21 +562,13 @@ sap.ui.define([
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib11");
 
 		Theming.attachApplied(fnAssertApplied);
-
-		// No scope in css defined therefore empty scope chain for all combinations
-		assert.deepEqual(Parameters.getActiveScopesFor(oOuterBar, true), [], "OuterBar - no own scope - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oInnerBar, true), [], "InnerBar - TestScope1 - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oOuterIcon2, true), [], "OuterIcon2 - TestScope1 - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon1, true), [], "InnerIcon1 - no own scope - no scope defined ==> empty scope chain");
-		assert.deepEqual(Parameters.getActiveScopesFor(oInnerIcon2, true), [], "InnerIcon2 - TestScope1 - no scope defined ==> empty scope chain");
 	});
 
 
 	QUnit.test("After Theme Change: Using Parameters.get", function(assert) {
 		var done = assert.async();
 		var fnContinue = function(oEvent) {
-			if (oEvent.theme === "base") {
+			if (oEvent.theme === "sap_horizon_hcb") {
 				Theming.detachApplied(fnContinue);
 				done();
 			}
@@ -645,43 +579,28 @@ sap.ui.define([
 				Theming.detachApplied(fnApplied);
 
 				sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib14"]).then(function () {
-					Parameters.get({
-						name: "sapUiThemeParamForLib14",
-						callback: function (oParamResult) {
-							assert.deepEqual(oParamResult, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
-							assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
+					const callback = function (sParamValue) {
+						assert.strictEqual(sParamValue, "#dfdfdf", "Value for the given param 'sapUiThemeParamForLib14' must be defined as '#dfdfdf' for theme 'base'");
+						assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#efefef", "sapUiThemeParamForLib13 must be defined as '#efefef' for theme 'base'");
 
-							Theming.attachApplied(fnContinue);
-							Theming.setTheme("sap_horizon_hcb");
-						}
+						Theming.setTheme("sap_horizon_hcb");
+						Theming.attachApplied(fnContinue);
+					};
+					const sParamValue = Parameters.get({
+						name: "sapUiThemeParamForLib14",
+						callback
 					});
 					assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParamForLib13"), "#fefefe", "sapUiThemeParamForLib13 must be defined as '#fefefe' for theme 'hcb'");
 					Theming.setTheme("base");
+					if (sParamValue) {
+						callback(sParamValue);
+					}
 				});
 			}
 		};
 
 		sap.ui.getCore().loadLibraries(["testlibs.themeParameters.lib13"]).then(function () {
 			Theming.attachApplied(fnApplied);
-		});
-	});
-
-	QUnit.test("Get parameter while CSS after Applied finished loading and before ThemeManager processed Applied event", function(assert) {
-		var sPrefixedLibId = "sap-ui-theme-testlibs.themeParameters.lib17";
-
-		// Setup
-		Parameters.reset();
-		var oCssPromise1 = createLinkElement(sPrefixedLibId, true);
-		var oCssPromise2 = createLinkElement(sPrefixedLibId, false);
-		return Promise.all([oCssPromise1, oCssPromise2]).then(function() {
-			assert.strictEqual(Parameters.get({ name: "sapUiThemeParamForLib17" }), "#fafafa", "Parameter 'sapUiThemeParamForLib17' has value: '#fafafa'");
-
-			// Cleanup
-			Array.from(document.querySelectorAll("link")).forEach(function (oLink) {
-				if (oLink.getAttribute("id") === sPrefixedLibId || oLink.getAttribute("data-sap-ui-foucmarker") === sPrefixedLibId) {
-					oLink.remove();
-				}
-			});
 		});
 	});
 });

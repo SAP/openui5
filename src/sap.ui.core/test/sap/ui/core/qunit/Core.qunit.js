@@ -5,6 +5,7 @@ sap.ui.define([
 	'sap/base/i18n/ResourceBundle',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/ObjectPath',
+	'sap/ui/base/OwnStatics',
 	'sap/ui/Device',
 	'sap/ui/base/Interface',
 	'sap/ui/VersionInfo',
@@ -18,14 +19,16 @@ sap.ui.define([
 	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
-	"sap/ui/test/utils/nextUIUpdate"
-], function(Log, Localization, ResourceBundle, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+	'sap/ui/test/utils/waitForThemeApplied'
+], function(Log, Localization, ResourceBundle, LoaderExtensions, ObjectPath, OwnStatics, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, RenderManager, Theming, ThemeManager, createAndAppendDiv, waitForThemeApplied) {
 	"use strict";
 
 	/**
 	 * @deprecated As of version 1.120 as it is used by deprecated tests only
 	 */
 	const privateLoaderAPI = sap.ui.loader._;
+	const { getThemePath } = OwnStatics.get(Theming);
+	const { getAllLibraryInfoObjects } = OwnStatics.get(ThemeManager);
 
 	function _providesPublicMethods(/**sap.ui.base.Object*/oObject, /** function */ fnClass, /**boolean*/ bFailEarly) {
 		var aMethodNames = fnClass.getMetadata().getAllPublicMethods(),
@@ -178,7 +181,9 @@ sap.ui.define([
 	/**
 	 * @deprecated Since 1.119, loadLibrary is deprecated
 	 */
-	QUnit.test("loadLibrary", function(assert) {
+	QUnit.test("loadLibrary", async function(assert) {
+		await waitForThemeApplied();
+
 		assert.equal(typeof oCore.loadLibrary, "function", "Core has method loadLibrary");
 		assert.ok(privateLoaderAPI.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
 		assert.ok(!ObjectPath.get("sap.ui.testlib"), "testlib namespace doesn't exists");
@@ -285,7 +290,9 @@ sap.ui.define([
 	/**
 	 * @deprecated since 1.119
 	 */
-	QUnit.test("testSetThemeRoot", function(assert) {
+	QUnit.test("testSetThemeRoot", async function(assert) {
+		await waitForThemeApplied();
+
 		var corePath, mobilePath, otherPath, oCoreLink;
 
 		const sCoreVersion = Library.all()["sap.ui.core"].version;
@@ -294,42 +301,43 @@ sap.ui.define([
 		oCore.setThemeRoot("my_theme", "http://custom.something.corp");
 		oCore.setThemeRoot("my_theme", ["sap.m"], "http://mobile.something.corp");
 
-		return Promise.resolve().then(function () {
-			corePath = ThemeManager._getThemePath("sap.ui.core", "my_theme");
-			mobilePath = ThemeManager._getThemePath("sap.m", "my_theme");
-			otherPath = ThemeManager._getThemePath("sap.ui.other", "my_theme");
+		corePath = getThemePath("sap.ui.core", "my_theme");
+		mobilePath = getThemePath("sap.m", "my_theme");
+		otherPath = getThemePath("sap.ui.other", "my_theme");
 
-			assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
-			assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
-			assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
+		assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
+		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
+		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
-			corePath = sap.ui.require.toUrl("sap/ui/core/themes/my_theme/");
-			mobilePath = sap.ui.require.toUrl("sap/m/themes/my_theme/");
-			otherPath = sap.ui.require.toUrl("sap/ui/other/themes/my_theme/");
+		corePath = sap.ui.require.toUrl("sap/ui/core/themes/my_theme/");
+		mobilePath = sap.ui.require.toUrl("sap/m/themes/my_theme/");
+		otherPath = sap.ui.require.toUrl("sap/ui/other/themes/my_theme/");
 
-			assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
-			assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
-			assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
+		assert.equal(corePath, "http://core.something.corp/sap/ui/core/themes/my_theme/", "path should be as configured");
+		assert.equal(mobilePath, "http://mobile.something.corp/sap/m/themes/my_theme/", "path should be as configured");
+		assert.equal(otherPath, "http://custom.something.corp/sap/ui/other/themes/my_theme/", "path should be as configured");
 
-			// Set theme root for all libs with forceUpdate
-			oCore.setThemeRoot("test_theme", "/foo/", true);
-		}).then(function () {
-			corePath = ThemeManager._getThemePath("sap.ui.core", "test_theme");
-			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
+		// Set theme root for all libs with forceUpdate
+		oCore.setThemeRoot("test_theme", "/foo/", true);
 
-			assert.equal(corePath, "/foo/sap/ui/core/themes/test_theme/", "path should be as configured");
-			assert.equal(oCoreLink.getAttribute("href"), new URL(`/foo/sap/ui/core/themes/test_theme/library.css?version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
+		// wait for library CSS promise to ensure the link element has been updated
+		await getAllLibraryInfoObjects("sap.ui.core").cssLoaded;
+		corePath = getThemePath("sap.ui.core", "test_theme");
+		oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
 
-			// Set theme root for sap.ui.core lib with forceUpdate
-			oCore.setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
-		}).then(function () {
-			corePath = ThemeManager._getThemePath("sap.ui.core", "test_theme");
-			oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
+		assert.equal(corePath, "/foo/sap/ui/core/themes/test_theme/", "path should be as configured");
+		assert.equal(oCoreLink.getAttribute("href"), new URL(`/foo/sap/ui/core/themes/test_theme/library.css?sap-ui-dist-version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
 
-			assert.equal(corePath, "/bar/sap/ui/core/themes/test_theme/", "path should be as configured");
-			assert.equal(oCoreLink.getAttribute("href"), new URL(`/bar/sap/ui/core/themes/test_theme/library.css?version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
-		});
+		// Set theme root for sap.ui.core lib with forceUpdate
+		oCore.setThemeRoot("test_theme", ["sap.ui.core"], "/bar/", true);
 
+		// wait for library CSS promise to ensure the link element has been updated
+		await getAllLibraryInfoObjects("sap.ui.core").cssLoaded;
+		corePath = getThemePath("sap.ui.core", "test_theme");
+		oCoreLink = document.getElementById("sap-ui-theme-sap.ui.core");
+
+		assert.equal(corePath, "/bar/sap/ui/core/themes/test_theme/", "path should be as configured");
+		assert.equal(oCoreLink.getAttribute("href"), new URL(`/bar/sap/ui/core/themes/test_theme/library.css?sap-ui-dist-version=${sCoreVersion}`, document.baseURI).href, "Stylesheet should have been updated");
 	});
 
 	// now check the location of the preconfigured themes
@@ -337,24 +345,24 @@ sap.ui.define([
 	 * @deprecated since 1.119
 	 */
 	QUnit.test("themeRoot configuration", function(assert) {
-		var corePath = ThemeManager._getThemePath("sap.ui.core", "my_preconfigured_theme");
-		var mobilePath = ThemeManager._getThemePath("sap.m", "my_preconfigured_theme");
-		var otherPath = ThemeManager._getThemePath("sap.ui.other", "my_preconfigured_theme");
+		var corePath = getThemePath("sap.ui.core", "my_preconfigured_theme");
+		var mobilePath = getThemePath("sap.m", "my_preconfigured_theme");
+		var otherPath = getThemePath("sap.ui.other", "my_preconfigured_theme");
 
 		assert.equal(corePath, "http://preconfig.com/ui5-themes/sap/ui/core/themes/my_preconfigured_theme/", "path should be as configured");
 		assert.equal(mobilePath, "http://preconfig.com/ui5-themes/sap/m/themes/my_preconfigured_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_preconfigured_theme/", "path should be as configured");
 
-		corePath = ThemeManager._getThemePath("sap.ui.core", "my_second_preconfigured_theme");
-		mobilePath = ThemeManager._getThemePath("sap.m", "my_second_preconfigured_theme");
-		otherPath = ThemeManager._getThemePath("sap.ui.other", "my_second_preconfigured_theme");
+		corePath = getThemePath("sap.ui.core", "my_second_preconfigured_theme");
+		mobilePath = getThemePath("sap.m", "my_second_preconfigured_theme");
+		otherPath = getThemePath("sap.ui.other", "my_second_preconfigured_theme");
 
 		assert.equal(corePath, "http://core.preconfig.com/ui5-themes/sap/ui/core/themes/my_second_preconfigured_theme/", "path should be as configured");
 		assert.equal(mobilePath, "http://mobile.preconfig.com/ui5-themes/sap/m/themes/my_second_preconfigured_theme/", "path should be as configured");
 		assert.equal(otherPath, "http://preconfig.com/ui5-themes/sap/ui/other/themes/my_second_preconfigured_theme/", "path should be as configured");
 
 		// read from script tag
-		corePath = ThemeManager._getThemePath("sap.ui.core", "my_third_preconfigured_theme");
+		corePath = getThemePath("sap.ui.core", "my_third_preconfigured_theme");
 		assert.equal(corePath, "http://third.preconfig.com/ui5-themes/sap/ui/core/themes/my_third_preconfigured_theme/", "path should be as configured");
 	});
 

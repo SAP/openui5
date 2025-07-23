@@ -5,11 +5,14 @@ sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/DataType",
+	"sap/ui/base/OwnStatics",
 	"sap/ui/core/Lib",
-	"sap/ui/core/theming/ThemeManager",
+	"sap/ui/core/Theming",
 	"sap/ui/dom/includeScript"
-], function(Log, ResourceBundle, LoaderExtensions, ObjectPath, DataType, Library, ThemeManager, includeScript) {
+], function(Log, ResourceBundle, LoaderExtensions, ObjectPath, DataType, OwnStatics, Library, Theming, includeScript) {
 	"use strict";
+
+	const { attachChange, detachChange } = OwnStatics.get(Theming);
 
 	QUnit.module("Instance methods");
 
@@ -141,23 +144,20 @@ sap.ui.define([
 	 * @deprecated
 	 */
 	QUnit.test("Instance method 'includeTheme'", function(assert) {
-		var done = assert.async();
-		var oLib1 = Library._get('testlibs.scenario1.lib1', true);
+		assert.expect(1);
 
-		this.spy(ThemeManager, "includeLibraryTheme");
-		var aLibsRequiringCss = Library.getAllInstancesRequiringCss();
-		var iLength = aLibsRequiringCss.length;
+		const done = assert.async();
+		const change = (oEvent) => {
+			assert.strictEqual(oEvent.library.libName, 'testlibs.scenario1.lib1', "includeLibraryTheme was called once for the correct library.");
+			detachChange(change);
+			done();
+		};
+
+		attachChange(change);
+
+		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
 
 		oLib1._includeTheme();
-
-		aLibsRequiringCss = Library.getAllInstancesRequiringCss();
-		assert.equal(aLibsRequiringCss.length - iLength, 1, "One lib more is requiring CSS");
-		assert.equal(aLibsRequiringCss[iLength].name, "testlibs.scenario1.lib1");
-
-		setTimeout(function() {
-			sinon.assert.calledOnce(ThemeManager.includeLibraryTheme);
-			done();
-		}, 0);
 	});
 
 	QUnit.test("Instance method 'loadResourceBundle' and 'getResourceBundle'", function(assert) {

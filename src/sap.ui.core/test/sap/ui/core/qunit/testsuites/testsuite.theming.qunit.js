@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define([], function() {
 
 	"use strict";
 	return {
@@ -77,7 +77,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
 						},
 						"customTheme": {
-							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/libraries/customCss/"
+							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/libraries/customCss/",
+							"testlibs.customCss.lib2": "test-resources/sap/ui/core/qunit/testdata/customcss/"
 						}
 					}
 				},
@@ -85,7 +86,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					paths: {
 							"sap/ui/customthemefallback/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib-custom-theme-fallback/",
 							"sap/ui/failingcssimport/testlib" : "test-resources/sap/ui/core/qunit/testdata/uilib-failing-css-import/",
-							"testlibs/customCss/lib1" : "test-resources/sap/ui/core/qunit/testdata/libraries/customCss/lib1/"
+							"testlibs/customCss/lib1" : "test-resources/sap/ui/core/qunit/testdata/libraries/customCss/lib1/",
+							"testlibs/customCss/lib2" : "test-resources/sap/ui/core/qunit/testdata/libraries/customCss/lib2/"
 					}
 				}
 			},

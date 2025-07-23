@@ -1,9 +1,10 @@
 /* global QUnit */
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/URI"
-], function(jQuery, createAndAppendDiv, URI) {
+], function(jQuery, Theming, createAndAppendDiv, URI) {
 	"use strict";
 
 	/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
@@ -11,7 +12,7 @@ sap.ui.define([
 	var sPath = sap.ui.require.toUrl("testdata/core/");
 
 	/**
-	 * 	<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/sap_belize/library.css" data-marker="42">
+	 * 	<link rel="stylesheet" id="sap-ui-theme-sap.ui.layout" href="../../../../../resources/sap/ui/layout/themes/<theme_name>/library.css" data-marker="42">
 	 * <div id="includeStyleSheetTest" class="sap-jsunitIncludeStyleSheetTest" >
 	 *   Test area for includeStyleSheet
 	 * </div>
@@ -19,7 +20,7 @@ sap.ui.define([
 	var link = document.createElement('link');
 	link.id = "sap-ui-theme-sap.ui.layout";
 	link.rel = 'stylesheet';
-	link.href = 'resources/sap/ui/layout/themes/sap_belize/library.css';
+	link.href = `resources/sap/ui/layout/themes/${Theming.getTheme()}/library.css`;
 	link.setAttribute("data-marker",'42');
 	document.body.appendChild(link);
 
@@ -311,7 +312,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("don't load twice", function(assert) {
-			var sStyleSheetUrl = "resources/sap/ui/layout/themes/sap_belize/library.css";
+			var sStyleSheetUrl = `resources/sap/ui/layout/themes/${Theming.getTheme()}/library.css`;
 			var $link = jQueryById("sap-ui-theme-sap.ui.layout");
 			assert.equal($link.length, 1, "initially, there should be exactly one matching link)");
 			assert.equal($link.attr("data-marker"), "42", "initially, the link object should be the declarative one");
