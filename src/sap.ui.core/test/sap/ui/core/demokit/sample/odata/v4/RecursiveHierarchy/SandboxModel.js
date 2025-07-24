@@ -685,7 +685,7 @@ sap.ui.define([
 		oNode = {...oNode};
 		oNode.ID = sNewID;
 		oNode.MANAGER_ID = sNewManagerID;
-		oNode.Name = "Copy of " + (oNode.Name || sNewID);
+		oNode.Name = "Copy of " + (oNode.Name || sOldID);
 
 		aAllNodes.push(oNode); // Note: preorder (parent before child)
 		mNodeById[sNewID] = oNode;
