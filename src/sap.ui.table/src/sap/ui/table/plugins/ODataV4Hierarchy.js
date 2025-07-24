@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @since 1.139
+	 * @since 1.140
 	 * @alias sap.ui.table.plugins.ODataV4Hierarchy
 	 * @see {@link topic:7d914317c0b64c23824bf932cc8a4ae1 OData V4: Data Aggregation and Recursive Hierarchy}
 	 *

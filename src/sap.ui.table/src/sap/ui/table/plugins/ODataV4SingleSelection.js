@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @public
-	 * @since 1.139
+	 * @since 1.140
 	 * @alias sap.ui.table.plugins.ODataV4SingleSelection
 	 * @see {@link topic:ec55312f796f45e8883810af3b68b46c OData V4: Selection}
 	 *
