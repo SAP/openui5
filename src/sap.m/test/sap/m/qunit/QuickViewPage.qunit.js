@@ -353,4 +353,24 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oRenderedAvatar, "Avatar is not created and error is not thrown");
 	});
+
+	/**
+	 * @deprecated As of version 1.111
+	 */
+	QUnit.module("Cross application navigation");
+
+	/**
+	 * @deprecated As of version 1.111
+	 */
+	QUnit.test("No avatar but titleUrl", function (assert) {
+		// Arrange
+		const oSpy = this.spy(QuickViewPage.prototype, "_initCrossAppNavigationService");
+		const oQVP = new QuickViewPage();
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Service should not be initialized yet");
+
+		// Clean up
+		oQVP.destroy();
+	});
 });
