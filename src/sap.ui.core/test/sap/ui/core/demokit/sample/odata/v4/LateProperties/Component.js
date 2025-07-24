@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {

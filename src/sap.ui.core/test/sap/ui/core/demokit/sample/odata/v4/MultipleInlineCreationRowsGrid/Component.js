@@ -1,12 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component to use for demo of Multiple Inactive Rows feature with the
- *   grid table.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {
