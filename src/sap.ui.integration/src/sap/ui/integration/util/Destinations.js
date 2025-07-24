@@ -14,6 +14,7 @@ sap.ui.define([
 	Utils
 ) {
 	"use strict";
+	/* global Map */
 
 	var rPattern = /\{\{destinations.([^\}]+)/;
 
@@ -42,7 +43,7 @@ sap.ui.define([
 			BaseObject.call(this);
 			this._oHost = mConfig.host;
 			this._oCard = mConfig.card;
-			this._oConfiguration = mConfig.configuration;
+			this._oConfiguration = mConfig.manifestConfig;
 			this._mResolved = new Map();
 		}
 	});
@@ -136,14 +137,17 @@ sap.ui.define([
 	 * @private
 	 */
 	Destinations.prototype._resolveUrl = function (sKey) {
-		const oConfig = this._oConfiguration ? this._oConfiguration[sKey] : null;
+		var oConfig = this._oConfiguration ? this._oConfiguration[sKey] : null,
+			sName,
+			sDefaultUrl,
+			pResult;
 
 		if (!oConfig) {
 			return Promise.reject("Configuration for destination '" + sKey + "' was not found in the manifest.");
 		}
 
-		const sName = oConfig.name;
-		const sDefaultUrl = oConfig.defaultUrl;
+		sName = oConfig.name;
+		sDefaultUrl = oConfig.defaultUrl;
 
 		if (!sName && !sDefaultUrl) {
 			return Promise.reject("Can not resolve destination '" + sKey + "'. Neither 'name' nor 'defaultUrl' is configured.");
@@ -161,7 +165,7 @@ sap.ui.define([
 			return Promise.resolve(sDefaultUrl);
 		}
 
-		const pResult = Utils.timeoutPromise(this._oHost.getDestination(sName, this._oCard));
+		pResult = Utils.timeoutPromise(this._oHost.getDestination(sName, this._oCard));
 
 		if (sDefaultUrl) {
 			return pResult.catch(function (sMessage) {
