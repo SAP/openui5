@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/core/Supportability",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/VersionInfo"
 ], function(
 	Log,
@@ -25,7 +24,6 @@ sap.ui.define([
 	Supportability,
 	UIComponent,
 	UIComponentMetadata,
-	ThemeManager,
 	VersionInfo
 ) {
 	"use strict";
@@ -55,9 +53,6 @@ sap.ui.define([
 		constructor(sandbox) {
 			this.sandbox = sandbox;
 			this.#resetMocks();
-			// stub the `fireThemeApplied`` method away as it sporadically requires
-			// sap/ui/core/theming/Parameters which hinders the tests' expectations
-			this.sandbox.stub(ThemeManager, "fireThemeApplied");
 		}
 		#resetMocks() {
 			this.amdMock =

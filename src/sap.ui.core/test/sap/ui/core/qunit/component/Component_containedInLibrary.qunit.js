@@ -9,63 +9,21 @@ sap.ui.define([
 	function noop() {}
 
 	QUnit.module("When a Component is contained in a Library,", {
-		/**
-		 * Fakes a server responding to a "sap-ui-version.json" request.
-		 */
-		initFakeServer: function(oResponse) {
-			this.oServer = sinon.createFakeServer();
-			this.oServer.autoRespond = true;
-			this.oServer.respondWith("GET", sap.ui.require.toUrl("sap-ui-version.json"), [
-				200,
-				{
-					"Content-Type": "application/json"
-				},
-				JSON.stringify(oResponse)
-			]);
-		},
-		before: async function() {
-			// inject mocked version info
-			this.initFakeServer({
-				"name": "qunit",
-				"version": "1.0.0",
-				"buildTimestamp": "<TIMESTAMP>",
-				"scmRevision": "<HASH>",
-				"gav": "<GAV>",
-				"libraries": [],
-				"components": {
-					"testdata.componentContainedInLibrary.Comp1": {
-						"library": "testdata.componentContainedInLibrary",
-						"manifestHints": {
-							"dependencies": {
-								"libs": {
-									"sap.m": {},
-									"sap.ui.core": {},
-									"sap.ui.layout": {}
-								}
-							}
-						}
-					},
-					"testdata.componentContainedInLibrary.Comp2": {
-						"hasOwnPreload": true,
-						"library": "testdata.componentContainedInLibrary",
-						"manifestHints": {
-							"dependencies": {
-								"libs": {
-									"sap.m": {},
-									"sap.ui.core": {},
-									"sap.ui.layout": {},
-									"sap.ui.unified": {}
-								}
-							}
-						}
-					}
-				}
+		beforeEach: function() {
+			this.oGetTransitiveDependencyForComponentStub = sinon.stub(VersionInfo, "_getTransitiveDependencyForComponent");
+			this.oGetTransitiveDependencyForComponentStub.withArgs("testdata.componentContainedInLibrary.Comp1").returns({
+				dependencies: ["sap.m", "sap.ui.core", "sap.ui.layout"],
+				hasOwnPreload: false,
+				library: "testdata.componentContainedInLibrary"
 			});
-
-			await VersionInfo.load();
+			this.oGetTransitiveDependencyForComponentStub.withArgs("testdata.componentContainedInLibrary.Comp2").returns({
+				dependencies: ["sap.m", "sap.ui.core", "sap.ui.layout", "sap.ui.unified"],
+				hasOwnPreload: true,
+				library: "testdata.componentContainedInLibrary"
+			});
 		},
-		after: function() {
-			this.oServer.restore();
+		afterEach: function() {
+			this.oGetTransitiveDependencyForComponentStub.restore();
 		}
 	});
 

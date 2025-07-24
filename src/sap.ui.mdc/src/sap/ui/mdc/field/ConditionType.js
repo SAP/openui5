@@ -261,15 +261,16 @@ sap.ui.define([
 			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			const aCompositeTypes = this._getCompositeTypes();
 			const aAdditionalCompositeTypes = this._getAdditionalCompositeTypes();
+			const sBaseType = this._getBaseType(oType);
 
 			if (!oOperator) {
 				throw new FormatException("No valid condition provided, Operator wrong.");
 			}
 
-			let sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
+			let sResult = oOperator.format(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, undefined, sBaseType);
 			const bConvertWhitespaces = this.oFormatOptions.convertWhitespaces;
 
-			if (bConvertWhitespaces && (this._getBaseType(oType) === BaseType.String || sDisplay !== FieldDisplay.Value)) {
+			if (bConvertWhitespaces && (sBaseType === BaseType.String || sDisplay !== FieldDisplay.Value)) {
 				// convert only string types to prevent unwanted side effects
 				sResult = whitespaceReplacer(sResult);
 			}
@@ -336,8 +337,9 @@ sap.ui.define([
 			const aCompositeTypes = this._getCompositeTypes();
 			const oAdditionalType = this._getAdditionalValueType();
 			const aAdditionalCompositeTypes = this._getAdditionalCompositeTypes();
+			const sBaseType = this._getBaseType(oType);
 
-			return oOperator.getTextForCopy(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes);
+			return oOperator.getTextForCopy(oCondition, oType, sDisplay, bHideOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, sBaseType);
 
 		};
 
@@ -410,6 +412,7 @@ sap.ui.define([
 			}
 
 			const oType = this._getValueType();
+			const sBaseType = this._getBaseType(oType);
 			let oCondition;
 			const oNavigateCondition = this.oFormatOptions.navigateCondition;
 			if (oNavigateCondition) {
@@ -456,7 +459,7 @@ sap.ui.define([
 						oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
 						bUseDefaultOperator = true;
 					} else {
-						const aMatchingOperators = FilterOperatorUtil.getMatchingOperators(aOperators, vValue);
+						const aMatchingOperators = FilterOperatorUtil.getMatchingOperators(aOperators, vValue, sBaseType);
 
 						if (aMatchingOperators.length === 0) {
 							// use default operator if nothing found
@@ -507,7 +510,7 @@ sap.ui.define([
 									// parse using unit part
 									oCondition = Condition.createCondition(oOperator.name, [oType.parseValue(vValue, "string", oType._aCurrentValue)], undefined, undefined, ConditionValidated.NotValidated);
 								} else {
-									oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator);
+									oCondition = oOperator.getCondition(vValue, oType, sDisplay, bUseDefaultOperator, aCompositeTypes, oAdditionalType, aAdditionalCompositeTypes, bHideOperator, sBaseType);
 								}
 							} catch (oException) {
 								let oMyException = oException;
@@ -755,7 +758,7 @@ sap.ui.define([
 			let oCondition;
 
 			if (oOperator && aOperators.indexOf(oOperator.name) >= 0) {
-				oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true, undefined, oAdditionalType, undefined, bHideOperator); // use Value as displayFormat if nothing found in ValueHelp
+				oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true, undefined, oAdditionalType, undefined, bHideOperator, this._getBaseType(oType)); // use Value as displayFormat if nothing found in ValueHelp
 				oCondition.validated = ConditionValidated.NotValidated;
 			}
 
@@ -786,7 +789,7 @@ sap.ui.define([
 				throw new ParseException("Cannot parse value " + vValue); // use original value in message
 			}
 
-			const oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true, undefined, oAdditionalType, undefined, bHideOperator); // use display format Value as entered string should used as it is
+			const oCondition = oOperator.getCondition(vValue, oType, FieldDisplay.Value, true, undefined, oAdditionalType, undefined, bHideOperator, this._getBaseType(oType)); // use display format Value as entered string should used as it is
 
 			if (oCondition) {
 				oCondition.validated = ConditionValidated.NotValidated;

@@ -115,7 +115,8 @@ sap.ui.define([
 		oTable.setProperty("selectionMode", this.getSelectionMode());
 		attachToBinding(this, oBinding);
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
-		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, onTableUnbindRows, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateRows, clearSelectionCache, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, clearSelectionCache, this);
 	};
 
 	ODataV4Selection.prototype.onDeactivate = function(oTable) {
@@ -127,9 +128,9 @@ sap.ui.define([
 		delete _private(this).iSelectionChangeTimeout;
 		detachFromBinding(this, oTable.getBinding());
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.RowsBound, onTableRowsBound, this);
-		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, onTableUnbindRows, this);
-		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
-		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
+		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Table.UpdateRows, clearSelectionCache, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UnbindRows, clearSelectionCache, this);
+		clearSelectionCache.call(this);
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
@@ -465,26 +466,18 @@ sap.ui.define([
 		attachToBinding(this, oBinding);
 	}
 
-	function onTableUnbindRows() {
-		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
-		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
-	}
-
 	function attachToBinding(oPlugin, oBinding) {
 		oBinding?.attachEvent("selectionChanged", onBindingSelectionChanged, oPlugin);
-		oBinding?.attachChange(onBindingChange, oPlugin);
 	}
 
 	function detachFromBinding(oPlugin, oBinding) {
 		oBinding?.detachEvent("selectionChanged", onBindingSelectionChanged, oPlugin);
-		oBinding?.detachChange(onBindingChange, oPlugin);
 	}
 
 	function onBindingSelectionChanged(oEvent) {
 		const oContext = oEvent.getParameter("context");
 
-		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
-		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
+		clearSelectionCache.call(this);
 
 		try {
 			validateSelection(this, oContext.getBinding(), oContext);
@@ -503,7 +496,7 @@ sap.ui.define([
 		}, 0);
 	}
 
-	function onBindingChange(oEvent) {
+	function clearSelectionCache() {
 		delete _private(this).aSelectedContexts; // Delete the cached selected contexts to force a recalculation.
 		delete _private(this).iSelectionCount; // Delete the cached selection count to force a recalculation.
 		delete _private(this).iSelectableCount; // Delete the cached selectable count to force a recalculation.

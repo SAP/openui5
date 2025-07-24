@@ -24,10 +24,8 @@ sap.ui.define([
 			globalThis.testresults.bSapUiCoreLoaded = !!sap.ui.require("sap/ui/core/Core");
 			if ( globalThis.testresults.bSapUiCoreLoaded ) {
 				globalThis.testresults.sThemeBefore = Theming.getTheme();
-				globalThis.testresults.oLinksBefore = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
 				try {
 					Theming.setTheme("SapSampleTheme2");
-					globalThis.testresults.oLinksAfter = document.querySelectorAll('head > link[id^="sap-ui-theme-"]');
 					globalThis.testresults.sThemeAfter = Theming.getTheme();
 					globalThis.testresults.bApplyThemeFails = false;
 				} catch (e) {

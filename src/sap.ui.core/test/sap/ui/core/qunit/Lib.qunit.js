@@ -1,11 +1,9 @@
 /*global QUnit sinon*/
 sap.ui.define([
-	"sap/base/Log",
 	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/Lib",
 	"sap/ui/dom/includeScript"
-], function(Log, ResourceBundle, LoaderExtensions, Library, includeScript) {
+], function(ResourceBundle, Library, includeScript) {
 	"use strict";
 
 	QUnit.config.reorder = false;

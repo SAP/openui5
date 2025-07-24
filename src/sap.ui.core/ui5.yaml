@@ -157,7 +157,6 @@ builder:
 
               # core plugins, shouldn't be packaged by default
               - "!sap/ui/core/plugin/DeclarativeSupport.js"
-              - "!sap/ui/core/plugin/LessSupport.js"
 
               # CLDR files must not be packaged
               - "!sap/ui/core/cldr/"

@@ -698,7 +698,7 @@ sap.ui.define([
 
 			jQuery(oContent.getFocusDomRef()).val("1");
 			qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
-			assert.equal(iValidationSuccess, 1, "ValidationSuccess fired");
+			assert.equal(iValidationSuccess, 2, "ValidationSuccess event fired"); // once from inner control and once from ConditionModel-Binding (As we cannot be sure that there is a real model update if same value is chosen again.)
 			assert.equal(oValidationSuccessParameters?.element, oFilterField, "ValidationSuccess fired for FilterField");
 			assert.equal(oValidationSuccessParameters?.property, "conditions", "ValidationSuccess 'property'");
 			assert.notOk(oValidationSuccessParameters?.type, "ValidationSuccess 'type'");

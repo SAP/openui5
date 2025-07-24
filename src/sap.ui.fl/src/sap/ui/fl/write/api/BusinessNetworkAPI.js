@@ -124,7 +124,7 @@ sap.ui.define([
 	 * Saves all the changes.
 	 *
 	 * @param {sap.ui.core.Element} oControl - Control instance
-	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} All saved Flex objects
+	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Resolves with all saved Flex Objects
 	 * @private
 	 * @ui5-restricted SAP Business Network
 	 */
@@ -164,7 +164,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.variants.VariantManagement} mPropertyBag.vmControl - Variant Management control instance
 	 * @param {string[]} mPropertyBag.variants - Variant IDs to be deleted
 	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer="CUSTOMER"] - Layer of the variants to be deleted
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of flex objects that were deleted
+	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Resolves with an array of Flex Objects that were deleted
 	 * @private
 	 * @ui5-restricted SAP Business Network
 	 */

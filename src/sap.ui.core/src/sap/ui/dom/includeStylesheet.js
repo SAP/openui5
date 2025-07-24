@@ -13,7 +13,9 @@ sap.ui.define(["sap/base/assert"],
 			// create the new link element
 			var oLink = document.createElement("link");
 			oLink.rel = "stylesheet";
-			oLink.href = sUrl;
+			if (sUrl) {
+				oLink.href = sUrl;
+			}
 			if (mAttributes && typeof mAttributes === "object") {
 				Object.keys(mAttributes).forEach(function(sKey) {
 					if (mAttributes[sKey] != null) {
@@ -24,7 +26,6 @@ sap.ui.define(["sap/base/assert"],
 
 			function listener(oEvent) {
 				var bError = oEvent.type === "error";
-				oLink.setAttribute("data-sap-ui-ready", !bError);
 				oLink.removeEventListener("load", listener);
 				oLink.removeEventListener("error", listener);
 				var fnCallback = bError ? fnErrorCallback : fnLoadCallback;

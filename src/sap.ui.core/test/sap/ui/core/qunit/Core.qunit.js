@@ -1,10 +1,15 @@
 /*global QUnit */
 sap.ui.define([
 	'sap/base/i18n/Localization',
+	'sap/ui/base/OwnStatics',
 	'sap/ui/Device',
-	"sap/ui/test/utils/nextUIUpdate"
-], function(Localization, Device, nextUIUpdate) {
+	'sap/ui/core/Theming',
+	'sap/ui/core/theming/ThemeManager'
+], function(Localization, OwnStatics, Device, Theming, ThemeManager) {
 	"use strict";
+
+	OwnStatics.get(Theming);
+	OwnStatics.get(ThemeManager);
 
 
 	// ---------------------------------------------------------------------------

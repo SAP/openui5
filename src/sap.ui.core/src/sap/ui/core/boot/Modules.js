@@ -90,18 +90,7 @@ sap.ui.define([
 					})
 				).then(() => {
 					if (sWaitForTheme) {
-						const aLibInfos = Library.getAllInstancesRequiringCss();
-						let pReady = Promise.resolve();
-						if (aLibInfos.length > 0) {
-							pReady = Promise.all([
-								context,
-								...aLibInfos.map((libInfo) => {
-									// wait for the library.started which indicates theme loading
-									return libInfo.started;
-								})
-							]);
-						}
-						return pReady.then(() => {
+						return Promise.all([context]).then(() => {
 							return new Promise((resolve, reject) => {
 								sap.ui.require(["sap/ui/core/Rendering", "sap/ui/core/Theming"], (Rendering, Theming) => {
 									Rendering.suspend();

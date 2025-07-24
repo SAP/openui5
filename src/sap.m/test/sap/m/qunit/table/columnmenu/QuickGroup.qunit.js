@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/m/table/columnmenu/QuickGroup",
 	"sap/m/table/columnmenu/QuickGroupItem",
 	"sap/m/Button",
-	"sap/m/library"
-], function(nextUIUpdate, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library) {
+	"sap/m/library",
+	"sap/ui/performance/trace/FESRHelper"
+], function(nextUIUpdate, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, FESRHelper) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -157,5 +158,17 @@ sap.ui.define([
 
 		oSwitch.setState(true);
 		oSwitch.fireChange({state: true});
+	});
+
+	QUnit.test("FESR registration", function(assert) {
+		this.oColumnMenu.getAggregation("quickActions").forEach((oAction) => {
+			oAction.getEffectiveQuickActions().forEach((oQuickAction) => {
+				const oSwitch = oQuickAction.getContent()[0];
+
+				assert.equal(FESRHelper.getSemanticStepname(oSwitch, "change"),
+						"tbl:p13n:group",
+						"FESR is registered for the content of the QuickGroupItem");
+			});
+		});
 	});
 });

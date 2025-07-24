@@ -361,7 +361,7 @@ sap.ui.define([
 	 * @param {string[]} mPropertyBag.variants - Variant IDs to be deleted
 	 * @param {string} mPropertyBag.layer - Layer that the variants belong to
 	 * @param {boolean} [mPropertyBag.forceDelete=false] - If set to true, the deletion will not check for draft or dirty state of the variants
-	 * @returns {Promise<sap.ui.fl.apply._internal.flexObjects.FlexObject[]>} Promise resolving with the array of deleted FlexObjects
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} Array of deleted Flex Objects
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */

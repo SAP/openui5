@@ -2,6 +2,16 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 
 	"use strict";
 
+	// Simulate preloaded CSS without providing a dedicated HTML test page for test "BootstrapCustomBootTaskPreloadCss"
+	// Adding the CSS as part of the before bootstrap or a custom boot task is to late since the Theming is already active
+	if (new URLSearchParams(window.location.search).get("test") === "BootstrapCustomBootTaskPreloadCss") {
+		var oLink = document.createElement("link");
+		oLink.rel = "stylesheet";
+		oLink.href = "test-resources/sap/ui/core/qunit/bootstrap/preloadedCss/themes/base/library.css";
+		oLink.setAttribute("id", "sap-ui-theme-fantasyLib");
+		document.head.appendChild(oLink);
+	}
+
 	// Define theme root for current theme for testing purposes
 	const mDefaultThemeInfo = ThemeHelper.getDefaultThemeInfo();
 	const sDefaultTheme = `${mDefaultThemeInfo.DEFAULT_THEME}${mDefaultThemeInfo.DARK_MODE ? "_dark" : ""}`;
@@ -76,7 +86,6 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 					reorder: false
 				},
 				ui5: {
-					preloadLibCss: [ "!sap.ui.core", "sap.ui.testlib" ],
 					// Define theme root for current theme for testing purposes
 					themeRoots: {
 						[sDefaultTheme]: "foo/bar"
@@ -89,8 +98,7 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib"
 					}
 				},
-				bootManifest: "boot/customboot.json@test-resources/sap/ui/core/qunit/bootstrap",
-				beforeBootstrap: "./BootstrapCustomBootTaskPreloadCss.beforeBootstrap.qunit"
+				bootManifest: "boot/customboot.json@test-resources/sap/ui/core/qunit/bootstrap"
 			},
 
 			"BootstrapMainModule": {
@@ -277,7 +285,6 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 							"sap.ui.core": "test-resources/sap/ui/core/qunit/testdata/customcss/"
 						}
 					},
-					versionedLibCss: true,
 					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",
@@ -295,7 +302,6 @@ sap.ui.define(["sap/ui/core/theming/ThemeHelper"], function(ThemeHelper) {
 					language: "en",
 					theme: "base",
 					preload: "async",
-					versionedLibCss: true,
 					XxWaitForTheme: "init"
 				},
 				beforeBootstrap: "./ThemeVersion.beforeBootstrap.qunit",

@@ -7,15 +7,14 @@ sap.ui.define([
 	"sap/ui/Global",
 	"sap/ui/core/Lib",
 	"sap/ui/core/boot/loadBootManifest",
-	"sap/ui/core/boot/Splash",
-	"sap/ui/core/theming/ThemeManager"
+	"sap/ui/core/boot/Splash"
 ], (
 	config,
 	Deferred,
 	Global,
 	Lib,
 	loadBootManifest,
-	Splash /*, ThemeManager needed for early css loading*/
+	Splash
 ) => {
 	"use strict";
 

@@ -1060,13 +1060,15 @@ sap.ui.define([
 	function _hasMultipleOperatorGroups() {
 		let firstGroupId;
 		const aOperators = _getOperators.call(this);
+		const oType = _getType.call(this);
+		const sType = _getBaseType.call(this, oType);
 
 		for (const sOperator of aOperators) {
 			const oOperator = FilterOperatorUtil.getOperator(sOperator);
 
 			if (!firstGroupId) {
-				firstGroupId = oOperator.group.id;
-			} else if (firstGroupId !== oOperator.group.id) {
+				firstGroupId = oOperator.getGroup(sType).id;
+			} else if (firstGroupId !== oOperator.getGroup(sType).id) {
 				return true;
 			}
 		}
@@ -1080,6 +1082,7 @@ sap.ui.define([
 		}
 
 		const oType = _getType.call(this);
+		const sType = _getBaseType.call(this, oType);
 		// assert(oOperatorConfig == null, "oOperatorConfig does not exist - no operators for Select control can be added");
 		const aOperators = _getOperators.call(this);
 		const aOperatorsData = [];
@@ -1108,7 +1111,8 @@ sap.ui.define([
 			}
 
 			// try to load the operator longText which is type dependent
-			const sText = oOperator.getLongText(_getBaseType.call(this, oType));
+			const sText = oOperator.getLongText(sType);
+			const oGroup = oOperator.getGroup(sType);
 
 			//Update the additionalInfo text for the operator
 			let sAdditionalText = oOperator.additionalInfo;
@@ -1116,26 +1120,26 @@ sap.ui.define([
 				if (sAdditionalText !== "" && oOperator.formatRange) {
 					sAdditionalText = oOperator.formatRange(oOperator._getRange(undefined, oType), oType);
 				} else if (!bHasMultipleGroups) {
-					sAdditionalText = oOperator.group.text;
+					sAdditionalText = oGroup.text;
 				}
 			}
 
 			let sGroupId = oOperator.exclude ? "2" : "1";
-			if (oOperator.group.text && oOperator.group.id) {
+			if (oGroup.text && oGroup.id) {
 				// only use the group.id when a text exist. This might be not the case for DynamicDatRange custom operators inside existing groups
-				sGroupId = oOperator.group.id;
+				sGroupId = oGroup.id;
 			}
 			aOperatorsData.push({
 				key: oOperator.name,
 				text: sText,
 				additionalText: sAdditionalText,
 				groupId: sGroupId,
-				groupText: oOperator.group.text
+				groupText: oGroup.text
 			});
 		}
 
 		oFixedList.destroyItems(); // to destroy old bindings and internal items and let them create new.
-		this.oOperatorModel.setData(); // to make sure taht model data changed
+		this.oOperatorModel.setData(); // to make sure that model data changed
 		this.oOperatorModel.setData(aOperatorsData);
 	}
 

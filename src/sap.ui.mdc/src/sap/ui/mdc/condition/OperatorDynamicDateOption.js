@@ -396,8 +396,10 @@ sap.ui.define([
 
 	OperatorDynamicDateOption.prototype.getGroupHeader = function() {
 		const oOperator = this.getOperator();
-		if (oOperator.group && oOperator.group.text) {
-			return oOperator.group.text;
+		const sBaseType = this.getBaseType();
+		const oGroup = oOperator.getGroup(sBaseType);
+		if (oGroup && oGroup.text) {
+			return oGroup.text;
 		}
 
 		return DynamicDateOption.prototype.getGroupHeader.apply(this, arguments); // "Default group header still used!"; //TODO how to create a custom Option inside an existing group?
@@ -405,8 +407,10 @@ sap.ui.define([
 
 	OperatorDynamicDateOption.prototype.getGroup = function() {
 		const oOperator = this.getOperator();
-		if (oOperator.group) {
-			return oOperator.group.id;
+		const sBaseType = this.getBaseType();
+		const oGroup = oOperator.getGroup(sBaseType);
+		if (oGroup) {
+			return oGroup.id;
 		}
 		return DynamicDateOption.prototype.getGroup.apply(this, arguments);
 	};
@@ -445,17 +449,19 @@ sap.ui.define([
 	OperatorDynamicDateOption.prototype.format = function(oValue) {
 		const oOperator = this.getOperator();
 		const oType = this.getType();
-		return oOperator.format(oValue, oType, FieldDisplay.Value);
+		const sBaseType = this.getBaseType();
+		return oOperator.format(oValue, oType, FieldDisplay.Value, undefined, undefined, undefined, undefined, undefined, sBaseType);
 	};
 
 	OperatorDynamicDateOption.prototype.parse = function(sValue) {
 		const oOperator = this.getOperator();
 		const oType = this.getType();
+		const sBaseType = this.getBaseType();
 
-		if (sValue && oOperator.test(sValue)) {
+		if (sValue && oOperator.test(sValue, sBaseType)) {
 			const oResult = {};
 			oResult.operator = this.getKey();
-			oResult.values = oOperator.parse(sValue, oType, FieldDisplay.Value);
+			oResult.values = oOperator.parse(sValue, oType, FieldDisplay.Value, undefined, undefined, undefined, undefined, undefined, sBaseType);
 			return oResult;
 		}
 	};

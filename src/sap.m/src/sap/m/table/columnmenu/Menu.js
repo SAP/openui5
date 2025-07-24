@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/GridData",
+	"sap/ui/performance/trace/FESRHelper",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/ControlEvents",
@@ -61,6 +62,7 @@ sap.ui.define([
 	FormElement,
 	ResponsiveGridLayout,
 	GridData,
+	FESRHelper,
 	jQuery,
 	containsOrEquals,
 	ControlEvents,
@@ -237,7 +239,7 @@ sap.ui.define([
 	};
 
 	function createTableSettingsButton(oMenu) {
-		return new Button({
+		const oButton = new Button({
 			icon: "sap-icon://action-settings",
 			tooltip: oMenu._getResourceText("table.COLUMNMENU_TABLE_SETTINGS"),
 			press: () => {
@@ -245,6 +247,10 @@ sap.ui.define([
 				oMenu.fireTableSettingsPressed();
 			}
 		});
+
+		FESRHelper.setSemanticStepname(oButton, "press", "tbl:p13n");
+
+		return oButton;
 	}
 
 	/**
