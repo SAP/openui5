@@ -27,22 +27,24 @@ sap.ui.define([
 	 *
 	 * @borrows sap.ui.table.plugins.PluginBase.findOn as findOn
 	 */
-	const SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {metadata: {
-		"abstract": true,
-		library: "sap.ui.table",
-		properties: {
-			/**
-			 * Indicates whether this plugin is enabled.
-			 */
-			enabled: {type: "boolean", defaultValue: true} // TODO: Inherited from private PluginBase. Remove once PluginBase is public.
-		},
-		events: {
-			/**
-			 * This event is fired when the selection is changed.
-			 */
-			selectionChange: {}
+	const SelectionPlugin = PluginBase.extend("sap.ui.table.plugins.SelectionPlugin", {
+		metadata: {
+			"abstract": true,
+			library: "sap.ui.table",
+			properties: {
+				/**
+				 * Indicates whether this plugin is enabled.
+				 */
+				enabled: {type: "boolean", defaultValue: true} // TODO: Inherited from private PluginBase. Remove once PluginBase is public.
+			},
+			events: {
+				/**
+				 * This event is fired when the selection is changed.
+				 */
+				selectionChange: {}
+			}
 		}
-    }});
+	});
 
 	SelectionPlugin.findOn = PluginBase.findOn;
 

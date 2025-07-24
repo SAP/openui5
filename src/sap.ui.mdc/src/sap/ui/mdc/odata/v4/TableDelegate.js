@@ -129,6 +129,9 @@ sap.ui.define([
 	 * {@link sap.ui.mdc.table.GridTableType GridTable}. The <code>p13nMode</code> <code>Group</code> is not supported if the table type is
 	 * {@link sap.ui.mdc.table.TreeTableType TreeTable}. This cannot be changed in your delegate implementation.
 	 *
+	 * All binding-related limitations regarding selection also apply in the context of this delegate. For details, see
+	 * {@link sap.ui.model.odata.v4.Context#setSelected} and {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 *
 	 * @author SAP SE
 	 * @namespace
 	 * @alias module:sap/ui/mdc/odata/v4/TableDelegate
@@ -251,6 +254,10 @@ sap.ui.define([
 		// Custom $$aggregation is not supported if analytical features are enabled.
 		if (isAnalyticsEnabled(oTable)) {
 			updateAggregation(oTable, oBindingInfo);
+		} else {
+			const oModel = oTable.getModel("$sap.ui.mdc.Table");
+			oModel.setProperty("/@custom/hasDataAggregation", false);
+			oModel.setProperty("/@custom/hasGrandTotal", false);
 		}
 
 		if (!oBinding || oBinding.getPath() !== oBindingInfo.path) {
@@ -503,19 +510,10 @@ sap.ui.define([
 	};
 
 	async function configureGridTable(oTable) {
-		const [V4AggregationPlugin] = await loadModules("sap/ui/table/plugins/V4Aggregation");
+		const [ODataV4AggregationPlugin] = await loadModules("sap/ui/table/plugins/ODataV4Aggregation");
 
-		oTable._oTable.addDependent(new V4AggregationPlugin({
-			enabled: {
-				parts: [
-					{path: "$sap.ui.mdc.Table>/p13nMode"},
-					{path: "$sap.ui.mdc.Table>/groupConditions"},
-					{path: "$sap.ui.mdc.Table>/aggregateConditions"}
-				],
-				formatter: function(sP13nMode, aGroupConditions, aAggregateConditions) {
-					return isAnalyticsEnabled(oTable);
-				}
-			},
+		oTable._oTable.addDependent(new ODataV4AggregationPlugin({
+			enabled: "{= !!${$sap.ui.mdc.Table>/@custom/hasDataAggregation} }",
 			groupHeaderFormatter: function(oContext) {
 				const aGroupedPropertyKeys = oTable._getGroupedProperties().map((mGroupLevel) => mGroupLevel.name);
 				const sGroupLevelKey = aGroupedPropertyKeys[oContext.getProperty("@$ui5.node.level") - 1];
@@ -536,37 +534,49 @@ sap.ui.define([
 	};
 
 	function initializeGridTableSelection(oTable) {
-		const mSelectionModeMap = {
-			Single: "Single",
-			SingleMaster: "Single",
-			Multi: "MultiToggle"
-		};
+		return loadModules([
+			"sap/ui/table/plugins/ODataV4MultiSelection",
+			"sap/ui/table/plugins/ODataV4SingleSelection"
+		]).then((aModules) => {
+			const [ODataV4MultiSelectionPlugin, ODataV4SingleSelectionPlugin] = aModules;
 
-		return loadModules("sap/ui/table/plugins/ODataV4Selection").then((aModules) => {
-			const ODataV4SelectionPlugin = aModules[0];
+			function initSelection(oEvent) {
+				if (!oTable._isOfType(TableType.Table, true)) {
+					return;
+				}
 
-			oTable._oTable.addDependent(new ODataV4SelectionPlugin({
-				limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
-				enableNotification: true,
-				hideHeaderSelector: "{= !${$sap.ui.mdc.Table#type>/showHeaderSelector} }",
-				selectionMode: {
-					path: "$sap.ui.mdc.Table>/selectionMode",
-					formatter: function(sSelectionMode) {
-						return mSelectionModeMap[sSelectionMode];
-					}
-				},
-				enabled: {
-					path: "$sap.ui.mdc.Table>/selectionMode",
-					formatter: function(sSelectionMode) {
-						return sSelectionMode in mSelectionModeMap;
-					}
-				},
-				selectionChange: function(oEvent) {
-					oTable._onSelectionChange({
-						selectAll: oEvent.getParameter("selectAll")
+				const sSelectionMode = oTable.getSelectionMode();
+				let oSelectionPlugin;
+
+				if (oEvent && oTable.getSelectedContexts().length > 0) {
+					oTable.clearSelection();
+					oTable.fireSelectionChange();
+				}
+
+				PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Selection")?.destroy();
+
+				if (sSelectionMode === SelectionMode.Multi) {
+					oSelectionPlugin = new ODataV4MultiSelectionPlugin({
+						limit: "{$sap.ui.mdc.Table#type>/selectionLimit}",
+						enableNotification: true,
+						hideHeaderSelector: "{= !${$sap.ui.mdc.Table#type>/showHeaderSelector} }",
+						selectionChange: () => oTable._onSelectionChange({selectAll: undefined})
+					});
+				} else if (sSelectionMode === SelectionMode.Single || sSelectionMode === SelectionMode.SingleMaster) {
+					oSelectionPlugin = new ODataV4SingleSelectionPlugin({
+						selectionChange: () => oTable._onSelectionChange({selectAll: undefined})
 					});
 				}
-			}));
+
+				oTable._oTable.addDependent(oSelectionPlugin);
+			}
+
+			initSelection();
+
+			if (!oTable._oSelectionModeBinding) {
+				oTable._oSelectionModeBinding = oTable.getModel("$sap.ui.mdc.Table").bindProperty("/selectionMode");
+				oTable._oSelectionModeBinding.attachChange(initSelection);
+			}
 		});
 	}
 
@@ -622,14 +632,15 @@ sap.ui.define([
 		}
 
 		oBindingInfo.parameters.$$aggregation = mAggregation;
+		oTable.getModel("$sap.ui.mdc.Table").setProperty("/@custom/hasDataAggregation", !!mAggregation);
 
 		const bHasGrandTotal = Object.keys(mAggregation?.aggregate || {}).some((sKey) => {
 			return mAggregation.aggregate[sKey].grandTotal;
 		});
 		oTable.getModel("$sap.ui.mdc.Table").setProperty("/@custom/hasGrandTotal", bHasGrandTotal);
 
-		const V4AggregationPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.V4Aggregation");
-		V4AggregationPlugin?.declareColumnsHavingTotals(getColumnsWithTotals(oTable).map((oColumn) => oColumn.getInnerColumn()));
+		const oODataV4AggregationPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.ODataV4Aggregation");
+		oODataV4AggregationPlugin?.declareColumnsHavingTotals(getColumnsWithTotals(oTable).map((oColumn) => oColumn.getInnerColumn()));
 	}
 
 	function getVisiblePropertyKeys(oTable) {

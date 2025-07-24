@@ -29,7 +29,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	"sap/ui/table/Column",
 	"sap/ui/table/plugins/SelectionPlugin",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
-	"sap/ui/table/plugins/ODataV4Selection",
+	"sap/ui/table/plugins/ODataV4MultiSelection",
+	"sap/ui/table/plugins/ODataV4SingleSelection",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/RowSettings",
@@ -71,7 +72,8 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 	Column,
 	SelectionPlugin,
 	MultiSelectionPlugin,
-	ODataV4Selection,
+	ODataV4MultiSelection,
+	ODataV4SingleSelection,
 	RowAction,
 	RowActionItem,
 	RowSettings,
@@ -574,28 +576,54 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 						NONE: {
 							text: "None",
 							action: function(oTable) {
-								oTable.destroyDependents();
+								SelectionPlugin.findOn(oTable)?.destroy();
+								TABLESETTINGS.actions.SELECTION.group.SELECTIONPLUGINENABLED.disabled = true;
+								oSettingsMenu.removeAllContent();
+								oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
 							}
 						},
 						MULTISELECTIONPLUGIN: {
 							text: "MultiSelection",
 							action: function(oTable) {
-								oTable.destroyDependents();
+								SelectionPlugin.findOn(oTable)?.destroy();
 								const oPlugin = new MultiSelectionPlugin({
 									limit: 20,
 									enableNotification: true
 								});
 								oTable.addDependent(oPlugin);
 								Element.getElementById("__select5").setSelectedKey(oPlugin.getSelectionMode().toUpperCase());
+								TABLESETTINGS.actions.SELECTION.group.SELECTIONPLUGINENABLED.disabled = false;
+								oSettingsMenu.removeAllContent();
+								oSettingsMenu.addContent(initForm(TABLESETTINGS.actions));
 							}
 						},
-						ODATAV4SELECTION: {
-							text: "ODataV4Selection",
+						ODATAV4MULTISELECTION: {
+							text: "ODataV4MultiSelection",
 							action: function(oTable) {
-								oTable.destroyDependents();
-								oTable.addDependent(new ODataV4Selection());
+								SelectionPlugin.findOn(oTable)?.destroy();
+								oTable.addDependent(new ODataV4MultiSelection());
+								TABLESETTINGS.actions.SELECTION.group.SELECTIONPLUGINENABLED.disabled = false;
+							}
+						},
+						ODATAV4SINGLEELECTION: {
+							text: "ODataV4SingleSelection",
+							action: function(oTable) {
+								SelectionPlugin.findOn(oTable)?.destroy();
+								oTable.addDependent(new ODataV4SingleSelection());
+								TABLESETTINGS.actions.SELECTION.group.SELECTIONPLUGINENABLED.disabled = false;
 							}
 						}
+					}
+				},
+				SELECTIONPLUGINENABLED: {
+					disabled: true,
+					text: "Selection Plugin Enabled",
+					value: function(oTable) {
+						return SelectionPlugin.findOn(oTable)?.getEnabled() ?? false;
+					},
+					input: "boolean",
+					action: function(oTable, bValue) {
+						SelectionPlugin.findOn(oTable).setEnabled(bValue);
 					}
 				},
 				CELLSELECTIONPLUGIN: {
