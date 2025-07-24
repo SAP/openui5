@@ -695,10 +695,11 @@ sap.ui.define([
 	 * Aggregate the controls from this array of elements [el1, el2, el3] to an array of arrays and elements [el1, [el2, el3]].
 	 * This is needed because groups of elements and single elements share same overflow logic.
 	 * In order to sort elements and group arrays there are _index and _priority property to group array.
+	 * @param fnFilter only elements that pass this filter will be included
 	 * @returns {*|Array.<T>}
 	 * @private
 	 */
-	OverflowToolbar.prototype._aggregateMovableControls = function () {
+	OverflowToolbar.prototype._aggregateMovableControls = function (fnFilter) {
 		var oGroups = {},
 			aAggregatedControls = [],
 			iControlGroup,
@@ -708,8 +709,11 @@ sap.ui.define([
 			aGroup;
 
 		this._aMovableControls.forEach(function (oControl) {
-				iControlGroup = OverflowToolbar._getControlGroup(oControl);
-				oPriorityOrder = OverflowToolbar._oPriorityOrder;
+			if (fnFilter && !fnFilter(oControl)) {
+				return;
+			}
+			iControlGroup = OverflowToolbar._getControlGroup(oControl);
+			oPriorityOrder = OverflowToolbar._oPriorityOrder;
 
 			if (iControlGroup) {
 				sControlPriority = this._getControlPriority(oControl);
@@ -892,11 +896,15 @@ sap.ui.define([
 	 * @private
 	 */
 	OverflowToolbar.prototype._moveControlsToPopover = function(iToolbarSize) {
-		var aAggregatedMovableControls = [];
+		var aAggregatedMovableControls = [],
+			fnControlOccupiesSpace = function(oControl) {
+				var iCachedWidth = this._aControlSizes[oControl.getId()];
+				return iCachedWidth > 0 && iCachedWidth > OverflowToolbar._getControlMargins(oControl);
+			}.bind(this);
 
 		if (this._aMovableControls.length) {
 
-			aAggregatedMovableControls = this._aggregateMovableControls();
+			aAggregatedMovableControls = this._aggregateMovableControls(fnControlOccupiesSpace);
 
 			// Define the overflow order, depending on items` priority and index.
 			aAggregatedMovableControls.sort(this._sortByPriorityAndIndex.bind(this));

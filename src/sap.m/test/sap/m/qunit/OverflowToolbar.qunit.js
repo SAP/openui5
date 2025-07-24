@@ -4019,6 +4019,51 @@ sap.ui.define([
 		oOtb.destroy();
 	 });
 
+	QUnit.test("Button with no width is not moved to the overflow", async function (assert) {
+		// Arrange
+		var CustomButtonWithNoWidth = Button.extend("CustomButtonWithNoWidth", {
+			interfaces: ["sap.m.IOverflowToolbarContent"],
+			renderer: function (oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.openEnd();
+				oRm.close("div");
+			},
+			getOverflowToolbarConfig: function() {
+				return {
+					canOverflow: true,
+					propsUnrelatedToSize: ["enabled", "type"]
+				};
+			}
+		}),
+		oNonOverflowingButton = new Button(
+			{text: "Cannot overflow",
+			layoutData: new OverflowToolbarLayoutData({priority: OverflowToolbarPriority.NeverOverflow})
+		}),
+		oCustomButtonWithNoWidth = new CustomButtonWithNoWidth({text: "Custom button with no width"}),
+		oOtb = new OverflowToolbar({
+			content: [
+				oCustomButtonWithNoWidth,
+				oNonOverflowingButton
+			]
+		});
+
+		oOtb.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// Assert init state
+		assert.strictEqual(oCustomButtonWithNoWidth.getDomRef().offsetWidth, 0, "Custom button has no width");
+
+		 // Act: Set OTB width to one that requires overflow
+		oOtb.getDomRef().style.width = (oNonOverflowingButton.getDomRef().offsetWidth - 2) + "px";
+		oOtb._moveControlsToPopover(oOtb.getDomRef().offsetWidth);
+
+		// Assert: Custom button with no width is not moved to the overflow
+		assert.notOk(oOtb._aButtonsToMoveToPopover.includes(oCustomButtonWithNoWidth), "Custom button with no width is NOT in the list of buttons to move to Popover");
+
+		//Cleanup
+		oOtb.destroy();
+	});
+
 	QUnit.module("Associative popover");
 
 	QUnit.test("Popover _recalculateMargins method overwrite", function (assert) {
