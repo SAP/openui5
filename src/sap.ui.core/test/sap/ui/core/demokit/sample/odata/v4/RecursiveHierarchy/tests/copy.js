@@ -9,12 +9,9 @@ sap.ui.define([
 	"use strict";
 
 	return function (Given, When, Then) {
-		function checkIndexInMessageBox(iIndex) {
-			When.onTheMainPage.checkIndexInMessageBox(iIndex);
-		}
-
-		function checkTable(sComment, sExpected) {
-			Then.onTheMainPage.checkTable(sComment, sExpected, /*bCheckName*/true);
+		function checkTable(sComment, iExpectedFirstVisibleRow, sExpected) {
+			Then.onTheMainPage.checkTable(sComment, sExpected, /*bCheckName*/true,
+				/*bCheckAge*/ false, iExpectedFirstVisibleRow);
 		}
 
 		function copyToParent(sId, sParent, sComment) {
@@ -37,7 +34,7 @@ sap.ui.define([
 
 		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
-		checkTable("Initial state", `
+		checkTable("Initial state", 0, `
 - 0 Alpha
 	- 1 Beta
 		+ 1.1 Gamma
@@ -46,8 +43,7 @@ sap.ui.define([
 	* 3 Lambda`);
 
 		copyToParent("1", "2", "Copy 1 (Beta) to 2 (Kappa)");
-		checkIndexInMessageBox(5);
-		checkTable("After copy 1 (Beta) to 2 (Kappa)", `
+		checkTable("After copy 1 (Beta) to 2 (Kappa)", 0, `
 - 0 Alpha
 	- 1 Beta
 		+ 1.1 Gamma
@@ -56,8 +52,7 @@ sap.ui.define([
 		+ A Copy of Beta`);
 
 		copyToRoot("1.1", "Copy 1.1 (Gamma) to root");
-		checkIndexInMessageBox(0);
-		checkTable("After copy 1.1 (Gamma) to root", `
+		checkTable("After copy 1.1 (Gamma) to root", 0, `
 - B Copy of Gamma
 	* B.1 Copy of Delta
 	* B.2 Copy of Epsilon

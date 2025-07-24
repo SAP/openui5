@@ -170,9 +170,6 @@ sap.ui.define([
 					parent : null
 				});
 
-				if (bCopy) {
-					MessageBox.information("Index: " + iCopyIndex, {title : "New Node Created"});
-				}
 				this.scrollTo(iCopyIndex ?? oNode.getIndex(),
 					oEvent.getSource().getParent().getParent().getParent());
 			} catch (oError) {
@@ -222,11 +219,6 @@ sap.ui.define([
 						nextSibling : this._vNextSibling,
 						parent : oParent
 					});
-
-					if (this._bCopy) {
-						MessageBox.information("Index: " + iCopyIndex,
-							{title : "New Node Created"});
-					}
 				}
 
 				this.scrollTo(oParent.getIndex(),
