@@ -36,15 +36,14 @@ sap.ui.define([],
 				oLandmarkInfo = oControl.getLandmarkInfo(),
 				sHeaderTag = oControl._getHeaderTag(oLandmarkInfo),
 				sFooterTag = oControl._getFooterTag(oLandmarkInfo),
-				bHeaderRoleSet = oLandmarkInfo && oLandmarkInfo.getHeaderRole(),
-				bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
-				bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
-				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole(),
+				bHeaderRoleSet = !!(oLandmarkInfo && oLandmarkInfo.getHeaderRole()),
+				bHeaderLabelSet = !!(oLandmarkInfo && oLandmarkInfo.getHeaderLabel()),
+				bRootRoleSet = !!(oLandmarkInfo && oLandmarkInfo.getRootRole()),
+				bNavigationRoleSet = !!(oLandmarkInfo && oLandmarkInfo.getNavigationRole()),
 				sRootRole = bRootRoleSet ? oLandmarkInfo.getRootRole() : undefined,
 				sHeaderRole = bHeaderRoleSet ? oLandmarkInfo.getHeaderRole() : undefined,
 				sNavigationRole = bNavigationRoleSet ? oLandmarkInfo.getNavigationRole() : undefined,
-				bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
-				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole(),
+				bRootLabelSet = !!(oLandmarkInfo && oLandmarkInfo.getRootLabel()),
 				bShowFooter = oControl.getShowFooter();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
@@ -58,7 +57,7 @@ sap.ui.define([],
 			if (sRootRole !== "None") {
 				oRm.attr("aria-roledescription", oRb.getText("ROOT_ROLE_DESCRIPTION"));
 			}
-			if (!bRootLabelSet) {
+			if (!bRootLabelSet && sRootRole !== "None") {
 				oRm.attr("aria-label", sRootAriaLabelText);
 			}
 			oRm.class("sapUxAPObjectPageLayout");
@@ -91,7 +90,7 @@ sap.ui.define([],
 				oRm.attr("aria-roledescription", oRb.getText("HEADER_ROLE_DESCRIPTION"));
 			}
 
-			if (!bHeaderLabelSet) {
+			if (!bHeaderLabelSet && sHeaderRole !== "None") {
 				oRm.attr("aria-label", sHeaderAriaLabelText);
 			}
 			oRm.attr("data-sap-ui-customfastnavgroup", true)
