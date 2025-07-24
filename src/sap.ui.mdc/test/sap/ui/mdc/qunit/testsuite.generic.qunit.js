@@ -272,12 +272,12 @@ sap.ui.define([
 					oMTable.getContent(); // to create internal controls
 					oDialog.getContainerControl(); // to create internal controls
 					oValueHelp.open(false);
+					let fResolve;
 					const oPromise = new Promise(function(fnResolve, fnReject) {
-						setTimeout(function() { // wait for resolving promise and Dialog started to open
-							setTimeout(function() { // wait until Dialog has opened (has some animation duration)
-								fnResolve();
-							}, 301);
-						}, 0);
+						fResolve = fnResolve;
+					});
+					oValueHelp.attachOpened((oEvent) => { // wait until Dialog has opened
+						fResolve();
 					});
 					await oPromise;
 					return oField;
