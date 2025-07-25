@@ -18364,6 +18364,113 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Display the 1st name and $count of a collection-valued navigation property in a
+	// list. This worked even before JIRA: CPOUI5ODATAV4-1002. Make sure the request does not change
+	// in an incompatible way.
+[
+	// $count after $select
+	`<Table id="table" items="{/TEAMS}">
+		<Text id="id" text="{Team_Id}"/>
+		<Text id="name" text="{TEAM_2_EMPLOYEES/0/Name}"/>
+		<Text id="count" text="{TEAM_2_EMPLOYEES/$count}"/>
+	</Table>`,
+	// $count before $select
+	// object binding means $select does not use bIsProperty
+	`<Table id="table" items="{/TEAMS}">
+		<Text id="id" text="{Team_Id}"/>
+		<Text id="count" text="{TEAM_2_EMPLOYEES/$count}"/>
+		<Text binding="{TEAM_2_EMPLOYEES/0}" id="name" text="{Name}"/>
+	</Table>`,
+	// $expand as object means mCountQueryOptions does not use bAdd
+	// ($select is only used to have the same order inside the request in both cases)
+	`<Table id="table" items="{
+			path : '/TEAMS',
+			parameters : {$select : 'Team_Id', $expand : {TEAM_2_EMPLOYEES : {}}}
+		}">
+		<Text id="id" text="{Team_Id}"/>
+		<Text id="count" text="{TEAM_2_EMPLOYEES/$count}"/>
+		<Text id="name" text="{TEAM_2_EMPLOYEES/0/Name}"/>
+	</Table>`
+].forEach((sView, i) => {
+	QUnit.test("before CPOUI5ODATAV4-1002, #" + i, function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+
+		// Note: RAP does not currently support $count inside $expand!
+		this.expectRequest("TEAMS?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($select=ID,Name)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Team_Id : "TEAM_00",
+					TEAM_2_EMPLOYEES : [{
+						ID : "0",
+						Name : "Frederic Fall"
+					}]
+				}, {
+					Team_Id : "TEAM_01",
+					TEAM_2_EMPLOYEES : [{
+						ID : "1",
+						Name : "Jonathan Smith"
+					}, {
+						ID : "0",
+						Name : "Frederic Fall"
+					}]
+				}, {
+					Team_Id : "TEAM_02",
+					TEAM_2_EMPLOYEES : [{
+						ID : "2",
+						Name : "Peter Burke"
+					}, {
+						ID : "1",
+						Name : "Jonathan Smith"
+					}, {
+						ID : "0",
+						Name : "Frederic Fall"
+					}]
+				}]
+			})
+			.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"])
+			.expectChange("count", ["1", "2", "3"])
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Display the $count of a collection-valued navigation property in a list. Opt-in to
+	// new request with $count inside $expand.
+	// JIRA: CPOUI5ODATAV4-1002
+	QUnit.test("JIRA: CPOUI5ODATAV4-1002", function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/TEAMS}">
+	<Text id="id" text="{Team_Id}"/>
+	<Text id="count" text="{TEAM_2_EMPLOYEES/$count}"/>
+</Table>`;
+
+		//TODO $expand=TEAM_2_EMPLOYEES/$count
+		this.expectRequest("TEAMS?$select=Team_Id&$expand=TEAM_2_EMPLOYEES($count=true;$top=0)"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Team_Id : "TEAM_00",
+					"TEAM_2_EMPLOYEES@odata.count" : "10", // Edm.Int64
+					TEAM_2_EMPLOYEES : []
+				}, {
+					Team_Id : "TEAM_01",
+					"TEAM_2_EMPLOYEES@odata.count" : "11",
+					TEAM_2_EMPLOYEES : []
+				}, {
+					Team_Id : "TEAM_02",
+					"TEAM_2_EMPLOYEES@odata.count" : "12",
+					TEAM_2_EMPLOYEES : []
+				}]
+			})
+			.expectChange("id", ["TEAM_00", "TEAM_01", "TEAM_02"])
+			.expectChange("count", ["10", "11", "12"]);
+
+		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: sap.chart.Chart wants to read all data w/o paging
 	QUnit.test("no paging", function (assert) {
 		var fnGetContexts = ODataListBinding.prototype.getContexts,

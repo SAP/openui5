@@ -685,6 +685,99 @@ sap.ui.define([
 		aggregatedQueryOptions : {$expand : {foo : {$select : ["bar"]}}},
 		childQueryOptions : {},
 		expectedQueryOptions : {$expand : {foo : {$select : ["bar"]}}}
+	}, {
+		aggregatedQueryOptions : {
+			$expand : {
+				foo : {}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				foo : { // Note: @see mCountQueryOptions => accepted
+					$count : true,
+					$top : 0
+				}
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				foo : {
+					$count : true,
+					$top : 0
+				}
+			}
+		}
+	}, {
+		aggregatedQueryOptions : {
+			$expand : {
+				foo : { // Note: @see mCountQueryOptions => dropped
+					$count : true,
+					$top : 0
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				foo : {
+					$select : ["bar"]
+				}
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				foo : {
+					$select : ["bar"]
+				}
+			}
+		}
+	}, {
+		bIsProperty : true,
+		aggregatedQueryOptions : {
+			$expand : {
+				foo : {
+					$select : ["bar"]
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				foo : { // Note: @see mCountQueryOptions => ignored
+					$count : true,
+					$top : 0
+				}
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				foo : {
+					$select : ["bar"]
+				}
+			}
+		}
+	}, {
+		bIsProperty : true,
+		aggregatedQueryOptions : {
+			$expand : {
+				foo : {
+					$select : ["bar"]
+				}
+			}
+		},
+		childQueryOptions : {
+			$expand : {
+				foo : {
+					$count : true
+				}
+			}
+		},
+		expectedQueryOptions : {
+			$expand : {
+				foo : {
+					$count : true, // accepted
+					$select : ["bar"]
+				}
+			}
+		}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("aggregateQueryOptions returns true: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
@@ -799,6 +892,15 @@ sap.ui.define([
 	}, {
 		aggregatedQueryOptions : {$filter : "Amount gt 3"},
 		childQueryOptions : {$filter : "Price gt 300"}
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$top : 0} // missing $count
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$count : true, $top : undefined} // unsupported $top
+	}, {
+		aggregatedQueryOptions : {},
+		childQueryOptions : {$count : true, $top : 1} // unsupported $top
 	}].forEach(function (oFixture, i) {
 		QUnit.test("aggregateQueryOptions returns false: " + i, function (assert) {
 			var oBinding = new ODataParentBinding({
@@ -822,32 +924,43 @@ sap.ui.define([
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		initial : true,
-		$kind : "Property"
+		metadata : {$kind : "Property"}
 	}, {
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		initial : false,
-		$kind : "Property"
+		metadata : {$kind : "Property"}
 	}, {
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		initial : true,
-		$kind : "NavigationProperty"
+		metadata : {$kind : "NavigationProperty"}
 	}, {
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : true,
 		initial : false,
-		$kind : "NavigationProperty"
+		metadata : {$kind : "NavigationProperty"}
 	}, {
 		canMergeQueryOptions : true,
 		hasChildQueryOptions : false, // child path has segments which are no properties
 		initial : true,
-		$kind : "Property"
+		metadata : {$kind : "Property"}
 	}, {
 		canMergeQueryOptions : false,
 		hasChildQueryOptions : true,
 		initial : true,
-		$kind : "NavigationProperty"
+		metadata : {$kind : "NavigationProperty"}
+	}, {
+		canMergeQueryOptions : true,
+		hasChildQueryOptions : true, // has mCountQueryOptions ;-)
+		initial : false,
+		isCount : true,
+		metadata : {
+			$kind : "Property",
+			// $Type : "Edm.Int64",
+			"@$ui5.$count" : true
+		},
+		reducedChildMetaPath : "foo/$count" // JIRA: CPOUI5ODATAV4-1002
 	}].forEach(function (oFixture, i) {
 		[true, false].forEach(function (bCacheCreationPending) {
 			QUnit.test("fetchIfChildCanUseCache, multiple calls aggregate query options, "
@@ -878,13 +991,20 @@ sap.ui.define([
 							sPath : "path"
 						}),
 						oBindingMock = this.mock(oBinding),
-						mChildQueryOptions = oFixture.hasChildQueryOptions ? {} : undefined,
 						mClonedQueryOptions = {},
 						oContext = Context.create(this.oModel, oBinding, "/Set('2')"),
+						mCountQueryOptions = {
+							$expand : {
+								// Note: think "foo/$count" instead of "childPath" here ;-)
+								ch : {$count : true, $top : 0}
+							}
+						},
 						oHelperMock = this.mock(_Helper),
 						mLocalQueryOptions = {},
 						oModelMock = this.mock(oBinding.oModel),
-						oPromise;
+						oPromise,
+						sReducedChildMetaPath = oFixture.reducedChildMetaPath
+							?? "reducedChildMetaPath";
 
 					oModelMock.expects("resolve")
 						.withExactArgs("childPath", sinon.match.same(oContext))
@@ -902,7 +1022,7 @@ sap.ui.define([
 							oBindingMock.expects("selectKeyProperties")
 								.exactly(oFixture.initial ? 1 : 0)
 								.withExactArgs(sinon.match.same(mClonedQueryOptions), "/Set");
-							return {$kind : oFixture.$kind};
+							return oFixture.metadata;
 						}));
 					oBindingMock.expects("getBaseForPathReduction")
 						.withExactArgs().returns("/base/path");
@@ -913,18 +1033,22 @@ sap.ui.define([
 						.returns("/reduced/child/metapath");
 					oHelperMock.expects("getRelativePath")
 						.withExactArgs("/reduced/child/metapath", "/Set")
-						.returns("reducedChildMetaPath");
+						.returns(sReducedChildMetaPath);
 					oHelperMock.expects("clone").exactly(oFixture.initial ? 1 : 0)
 						.withExactArgs(sinon.match.same(mLocalQueryOptions))
 						.returns(mClonedQueryOptions);
-					oHelperMock.expects("wrapChildQueryOptions")
-						.withExactArgs("/Set", "reducedChildMetaPath", {},
+					oHelperMock.expects("wrapChildQueryOptions").exactly(oFixture.isCount ? 0 : 1)
+						.withExactArgs("/Set", sReducedChildMetaPath, {},
 							sinon.match.same(fnFetchMetadata))
-						.returns(mChildQueryOptions);
+						.returns(
+							oFixture.hasChildQueryOptions ? "~mChildQueryOptions~" : undefined);
 					oBindingMock.expects("aggregateQueryOptions")
 						.exactly(oFixture.hasChildQueryOptions ? 1 : 0)
-						.withExactArgs(sinon.match.same(mChildQueryOptions), "/Set",
-							bCacheCreationPending ? sinon.match.falsy : true, "~bIsProperty~")
+						.withExactArgs(oFixture.isCount
+								? mCountQueryOptions
+								: "~mChildQueryOptions~",
+							"/Set", bCacheCreationPending ? sinon.match.falsy : true,
+							"~bIsProperty~")
 						.returns(oFixture.canMergeQueryOptions);
 
 					// code under test
@@ -1586,6 +1710,7 @@ sap.ui.define([
 				doFetchOrGetQueryOptions : function () {
 					return SyncPromise.resolve({});
 				},
+				getHeaderContext : mustBeMocked,
 				oModel : {
 					getMetaModel : function () { return oMetaModel; },
 					oInterface : {
@@ -1600,6 +1725,8 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			oPromise;
 
+		this.mock(oContext).expects("isEffectivelyKeptAlive").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getHeaderContext").withExactArgs().returns(oContext);
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
 			.returns("/base/path");
 		this.mock(oBinding.oModel).expects("resolve")
@@ -1611,7 +1738,11 @@ sap.ui.define([
 			.returns("/resolved/child/metaPath");
 		oHelperMock.expects("fetchPropertyAndType")
 			.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
-			.returns(SyncPromise.resolve());
+			.returns(SyncPromise.resolve({
+				$kind : "Property",
+				$Type : "Edm.Int64",
+				"@$ui5.$count" : true // MUST not make a difference (due to header context)
+			}));
 		oHelperMock.expects("clone").never();
 		this.mock(oBinding).expects("selectKeyProperties").never();
 		this.mock(oMetaModel).expects("getReducedPath")

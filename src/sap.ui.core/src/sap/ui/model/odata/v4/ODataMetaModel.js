@@ -57,6 +57,11 @@ sap.ui.define([
 		}),
 		oBooleanType,
 		mCodeListUrl2Promise = {},
+		oCountProperty = Object.freeze({
+			$kind : "Property",
+			$Type : "Edm.Int64",
+			"@$ui5.$count" : true
+		}),
 		DEBUG = Log.Level.DEBUG,
 		oDynamicProperty = Object.freeze({
 			$kind : "Property",
@@ -1502,6 +1507,23 @@ sap.ui.define([
 			function step(sSegment, i, aSegments) {
 				var iIndexOfAt, bResultIsObject, bSplitSegment;
 
+				/*
+				 * Sets the result to the given value, which must not be
+				 * <code>undefined</code>, and checks that the current segment is the last.
+				 *
+				 * @param {any} vValue - the new <code>vResult</code>
+				 * @returns {boolean} <code>false</code>
+				 */
+				function terminal(vValue) {
+					vResult = vValue;
+					if (vResult === undefined) {
+						log(WARNING, "Unsupported path before ", sSegment);
+					} else if (i + 1 < aSegments.length) {
+						log(WARNING, "Unsupported path after ", sSegment);
+					}
+					return false;
+				}
+
 				if (sSegment === "$Annotations") {
 					return log(WARNING, "Invalid segment: $Annotations");
 				}
@@ -1547,6 +1569,13 @@ sap.ui.define([
 					}
 
 					if (bODataMode) {
+						if (sSegment === "$count") {
+							return terminal(vResult.$kind === "EntitySet"
+								|| vResult.$isCollection && (vResult.$kind === "NavigationProperty"
+									|| vResult.$kind === "Property")
+								? oCountProperty
+								: undefined);
+						}
 						if (sSegment[0] === "$"
 								&& sSegment !== "$Parameter" && sSegment !== "$ReturnType"
 							|| rNumber.test(sSegment)) {
@@ -1667,24 +1696,6 @@ sap.ui.define([
 						return i + 1 >= aSegments.length || log(WARNING, "Invalid empty segment");
 					}
 					if (sSegment[0] === "@") {
-						/*
-						 * Sets the result to the given value, which must not be
-						 * <code>undefined</code>, and checks that the current segment is the last.
-						 *
-						 * @param {any} vValue - the new <code>vResult</code>
-						 * @returns {boolean} <code>false</code>
-						 */
-						// eslint-disable-next-line no-inner-declarations
-						function terminal(vValue) {
-							vResult = vValue;
-							if (vResult === undefined) {
-								log(WARNING, "Unsupported path before ", sSegment);
-							} else if (i + 1 < aSegments.length) {
-								log(WARNING, "Unsupported path after ", sSegment);
-							}
-							return false;
-						}
-
 						if (sSegment === "@sapui.name") {
 							if (sName === undefined && bSplitSegment && i
 								&& aSegments[i - 1] === "$NavigationPropertyBinding") {
@@ -1725,7 +1736,7 @@ sap.ui.define([
 					}
 					sName = bODataMode || sSegment[0] === "@" ? sSegment : undefined;
 					sTarget = bODataMode ? sTarget + "/" + sSegment : undefined;
-					vResult = bOpenType && !bInsideAnnotation && !(sSegment in vResult)
+					vResult = bODataMode && bOpenType && !(sSegment in vResult)
 						? oDynamicProperty
 						: vResult[sSegment];
 				}
@@ -3196,6 +3207,10 @@ sap.ui.define([
 	 * are invalid. This way, "/acme.DefaultContainer/EMPLOYEES" addresses the "EMPLOYEES" child of
 	 * the schema child named "acme.DefaultContainer". This also works indirectly
 	 * ("/$EntityContainer/EMPLOYEES") and implicitly ("/EMPLOYEES", see below).
+	 *
+	 * Since 1.140.0, the special name "$count" can be used as the last segment instead of an OData
+	 * simple identifier. For an entity set or a collection-valued (structural or navigation)
+	 * property, it is treated as a property of type "Edm.Int64". Otherwise, it is invalid.
 	 *
 	 * A segment which represents an OData simple identifier (or the special names "$ReturnType",
 	 * since 1.71.0, or "$Parameter", since 1.73.0) needs special preparations. The same applies to
