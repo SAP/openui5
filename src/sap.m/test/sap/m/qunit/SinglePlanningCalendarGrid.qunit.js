@@ -920,4 +920,53 @@ sap.ui.define([
 		// cleanup
 		oGrid.destroy();
 	});
+
+
+	QUnit.module("Misc");
+	var sMyxml = "<mvc:View xmlns:mvc=\"sap.ui.core.mvc\" xmlns:unified=\"sap.ui.unified\" xmlns=\"sap.m\">" +
+	"		<SinglePlanningCalendarGrid" +
+	"			id=\"SPC1\"" +
+	"			startDate=\"{path: '/startDate'}\"" +
+	"			appointments=\"{path: '/appointments'}\">" +
+	"			<appointments>" +
+	"				<unified:CalendarAppointment" +
+	"					title= \"{title}\"" +
+	"					startDate= \"{startDate}\"" +
+	"					endDate= \"{endDate}\">" +
+	"				</unified:CalendarAppointment>" +
+	"			</appointments>" +
+	"		</SinglePlanningCalendarGrid>" +
+	"	</mvc:View>";
+
+	QUnit.test("Appointment dom ref in compact mode is got correctly", function (assert) {
+		var done = assert.async(),
+			that = this;
+		sap.ui.require(["sap/ui/core/mvc/XMLView", "sap/ui/model/json/JSONModel"],
+			function (XMLView, JSONModel) {
+				var oModel = new JSONModel({
+					startDate: new Date(),
+					appointments: [{
+						startDate: new Date(),
+						endDate: new Date(new Date().getTime() + 3600000), // 1 hour later
+						title: "Meeting"
+					}]
+				});
+				XMLView.create({
+					id: "dtt.one.two.three.four---",
+					definition: sMyxml
+				}).then(async function(oView) {
+					oView.setModel(oModel);
+					document.getElementById("qunit-fixture").classList.add("sapUiSizeCompact");
+					try {
+						oView.placeAt("qunit-fixture");
+						await nextUIUpdate(that.clock);
+						assert.equal(1, 1, "Appointment dom ref in compact mode is got correctly and no error is thrown");
+						done();
+					} catch (e) {
+						assert.equal(1, 0, "Throws an error " + e.stack);
+					}
+				});
+		});
+	});
+
 });

@@ -1444,7 +1444,7 @@ sap.ui.define([
 				{}, {}, {}, {}, {}
 			]
 		});
-		let iSelectionCount = -1;
+		const oSelectionChange = this.spy();
 		let bRowPressFired = false;
 		let oSelectionPlugin = null;
 
@@ -1479,9 +1479,7 @@ sap.ui.define([
 				header: "test",
 				template: new Text()
 			}),
-			selectionChange: () => {
-				iSelectionCount = this.oTable.getSelectedContexts().length;
-			},
+			selectionChange: oSelectionChange,
 			rowPress: () => {
 				bRowPressFired = true;
 			}
@@ -1489,9 +1487,7 @@ sap.ui.define([
 		this.oTable.placeAt("qunit-fixture");
 
 		await this.oTable.initialized();
-		await new Promise((resolve) => {
-			this.oTable._oTable.attachEventOnce("rowsUpdated", resolve);
-		});
+		await TableQUnitUtils.nextEvent("rowsUpdated", this.oTable._oTable);
 
 		oSelectionPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.SelectionPlugin");
 
@@ -1508,65 +1504,74 @@ sap.ui.define([
 
 		await selectRow(this.oTable._oTable.getRows()[0], true);
 		assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
-		assert.equal(iSelectionCount, 1, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
+		oSelectionChange.resetHistory();
 		await selectRow(this.oTable._oTable.getRows()[1], true);
-		assert.equal(iSelectionCount, 1, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
-		iSelectionCount = -1;
+		oSelectionChange.resetHistory();
 		this.oTable.clearSelection();
-		assert.equal(iSelectionCount, -1, "No selection change event");
 		assert.equal(this.oTable.getSelectedContexts().length, 0, "No rows selected");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
+		oSelectionChange.resetHistory();
 		this.oTable.setSelectionMode("SingleMaster");
 		assert.equal(this.oTable.getSelectionMode(), "SingleMaster", "Selection Mode Single - MDCTable");
 		assert.equal(oSelectionPlugin.getSelectionMode(), "Single", "Selection Mode Single - MultiSelectionPlugin");
 		assert.equal(this.oTable._oTable.getSelectionBehavior(), "RowOnly", "Selection Behavior RowOnly");
 		await nextUIUpdate();
 
+		oSelectionChange.resetHistory();
 		await selectRow(this.oTable._oTable.getRows()[0], true, true);
 		assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
-		assert.equal(iSelectionCount, 1, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
+		oSelectionChange.resetHistory();
 		await selectRow(this.oTable._oTable.getRows()[1], true, true);
-		assert.equal(iSelectionCount, 1, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 		assert.ok(!bRowPressFired, "rowPress event not fired");
 
-		iSelectionCount = -1;
+		oSelectionChange.resetHistory();
 		this.oTable.clearSelection();
-		assert.equal(iSelectionCount, -1, "No selection change event");
 		assert.equal(this.oTable.getSelectedContexts().length, 0, "No rows selected");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
+		oSelectionChange.resetHistory();
 		this.oTable.setSelectionMode("Multi");
 		assert.equal(this.oTable.getSelectionMode(), "Multi", "Selection Mode Multi - MDCTable");
 		assert.equal(oSelectionPlugin.getSelectionMode(), "MultiToggle", "Selection Mode MultiToggle - MultiSelectionPlugin");
 		assert.equal(this.oTable._oTable.getSelectionBehavior(), "RowSelector", "Selection Behavior RowSelector");
 		await nextUIUpdate();
 
+		oSelectionChange.resetHistory();
 		await selectRow(this.oTable._oTable.getRows()[0], true);
 		assert.equal(this.oTable.getSelectedContexts().length, 1, "Item selected");
-		assert.equal(iSelectionCount, 1, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
+		oSelectionChange.resetHistory();
 		await selectRow(this.oTable._oTable.getRows()[1], true);
-		assert.equal(iSelectionCount, 2, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
+		oSelectionChange.resetHistory();
 		await selectRow(this.oTable._oTable.getRows()[2], true);
-		assert.equal(iSelectionCount, 3, "Selection change event");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
-		iSelectionCount = -1;
+		oSelectionChange.resetHistory();
 		this.oTable.clearSelection();
-		assert.equal(iSelectionCount, -1, "No selection change event");
 		assert.equal(this.oTable.getSelectedContexts().length, 0, "No rows selected");
+		assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 
 		// Simulate enable notification scenario via selection over limit
+		oSelectionChange.resetHistory();
 		this.oTable.setSelectionMode("Multi");
 		this.oTable.getType().setSelectionLimit(3);
 		assert.ok(oSelectionPlugin.getEnableNotification(), true);
 
 		await new Promise((resolve) => {
 			oSelectionPlugin.attachEventOnce("selectionChange", () => {
-				assert.equal(iSelectionCount, 3, "Selection change event");
 				assert.equal(this.oTable.getSelectedContexts().length, 3, "Rows selected");
+				assert.equal(oSelectionChange.callCount, 1, "Selection change event");
 				resolve();
 			});
 			// select all existing rows

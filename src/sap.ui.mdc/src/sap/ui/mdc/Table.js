@@ -2812,11 +2812,9 @@ sap.ui.define([
 	};
 
 	Table.prototype._onSelectionChange = function(mPropertyBag) {
-		if (!this._bSelectionChangedByAPI) {
-			this.fireSelectionChange({
-				selectAll: mPropertyBag.selectAll
-			});
-		}
+		this.fireSelectionChange({
+			selectAll: mPropertyBag.selectAll
+		});
 	};
 
 	Table.prototype._onColumnResize = function(mPropertyBag) {
@@ -2970,9 +2968,7 @@ sap.ui.define([
 	 */
 	Table.prototype.clearSelection = function() {
 		if (this.isControlDelegateInitialized()) {
-			this._bSelectionChangedByAPI = true;
 			this.getControlDelegate().clearSelection(this);
-			this._bSelectionChangedByAPI = false;
 		}
 	};
 

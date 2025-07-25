@@ -52,6 +52,13 @@ sap.ui.define([
 	const versionInfoLoaded = VersionInfo.load().then((oVersionInfo) => {
 		sUi5Version = oVersionInfo.version;
 		mAllDistLibraries = new Set(oVersionInfo.libraries.map((library) => library.name));
+	}, (e) => {
+		throw new Error(
+			`${MODULE_NAME}: UI5 theming lifecycle requires valid version information. Please investigate why the version info could not be loaded in this system.`,
+			{
+				cause: e
+			}
+		);
 	});
 
 	/**

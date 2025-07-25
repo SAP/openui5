@@ -22,6 +22,19 @@ sap.ui.define([
 
 	const QUnitUtils = {};
 
+	/**
+	 * Attachs an event handler for the next event with the given name to the given EventProvider instance.
+	 *
+	 * @param {string} sEventName Name of the event
+	 * @param {sap.ui.base.EventProvider} oEventProvider EventProvider where the event handler is attached
+	 * @returns {Promise<sap.ui.base.Event>} Resolves with the event instance
+	 */
+	QUnitUtils.nextEvent = (sEventName, oEventProvider) => {
+		return new Promise((fnResolve) => {
+			oEventProvider.attachEventOnce(sEventName, fnResolve);
+		});
+	};
+
 	QUnitUtils.waitForBindingInfo = function(oTable) {
 		const sRowsAggregationName = getRowsAggregationName(oTable);
 		let oObserver;

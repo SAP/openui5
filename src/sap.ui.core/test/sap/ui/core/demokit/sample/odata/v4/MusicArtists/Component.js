@@ -1,12 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component to display information on entities from the
- *   music artist OData service.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {

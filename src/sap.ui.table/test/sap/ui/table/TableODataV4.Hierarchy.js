@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
-	"sap/ui/table/plugins/V4Aggregation",
-	"sap/ui/table/plugins/ODataV4Selection",
+	"sap/ui/table/plugins/ODataV4Hierarchy",
+	"sap/ui/table/plugins/ODataV4MultiSelection",
 	"sap/m/OverflowToolbar",
 	"sap/m/Title",
 	"sap/m/ToggleButton",
@@ -16,8 +16,8 @@ sap.ui.define([
 	Table,
 	TreeTable,
 	Column,
-	V4Aggregation,
-	ODataV4Selection,
+	ODataV4Hierarchy,
+	ODataV4MultiSelection,
 	OverflowToolbar,
 	Title,
 	ToggleButton,
@@ -39,8 +39,8 @@ sap.ui.define([
 		enableBusyIndicator: true,
 		busyIndicatorDelay: 0,
 		dependents: [
-			new V4Aggregation(),
-			new ODataV4Selection({enableNotification: true})
+			new ODataV4Hierarchy(),
+			new ODataV4MultiSelection({enableNotification: true})
 		]
 	});
 	window.oTable = oTable;
@@ -72,7 +72,7 @@ sap.ui.define([
 		enableBusyIndicator: true,
 		busyIndicatorDelay: 0,
 		dependents: [
-			new ODataV4Selection({enableNotification: true})
+			new ODataV4MultiSelection({enableNotification: true})
 		]
 	});
 	window.oTreeTable = oTreeTable;

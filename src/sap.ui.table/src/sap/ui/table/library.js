@@ -20,6 +20,19 @@ sap.ui.define([
  /**
   * Table-like controls, mainly for desktop scenarios.
   *
+  * Basic support for OData V4 is provided, especially by the following plugins:
+  * <ul>
+  *   <li>{@link sap.ui.table.plugins.ODataV4MultiSelection ODataV4MultiSelection}</li>
+  *   <li>{@link sap.ui.table.plugins.ODataV4SingleSelection ODataV4SingleSelection}</li>
+  *   <li>{@link sap.ui.table.plugins.ODataV4Aggregation ODataV4Aggregation}</li>
+  *   <li>{@link sap.ui.table.plugins.ODataV4Hierarchy ODataV4Hierarchy}</li>
+  * </ul>
+  * With OData V4, use one of the OData V4 selection plugins instead of the table's built-in selection or a different selection plugin.
+  *
+  * For more extensive functionality, the SAP Fiori Elements framework for OData V4 provides the
+  * {@link topic:549749bd901440d4bb242282a16b0ec2 Flexible Programming Model}. It offers building blocks that can be used without additional
+  * integration effort. For more table-related information, see the {@link topic:3801656db27b4b7a9099b6ed5fa1d769 Table Building Block}.
+  *
   * @namespace
   * @alias sap.ui.table
   * @author SAP SE
@@ -61,7 +74,10 @@ sap.ui.define([
 		 "sap.ui.table.rowmodes.Auto",
 		 "sap.ui.table.plugins.SelectionPlugin",
 		 "sap.ui.table.plugins.MultiSelectionPlugin",
-		 "sap.ui.table.plugins.ODataV4Selection"
+		 "sap.ui.table.plugins.ODataV4MultiSelection",
+		 "sap.ui.table.plugins.ODataV4SingleSelection",
+		 "sap.ui.table.plugins.ODataV4Aggregation",
+		 "sap.ui.table.plugins.ODataV4Hierarchy"
 	 ],
 	 extensions: {
 		 flChangeHandlers: {
