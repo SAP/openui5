@@ -169,6 +169,9 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				group: "Util",
 				module: "./util/{name}.qunit"
 			},
+			/**
+			 * @deprecated As of version 1.136
+			 */
 			"PropertyHelperUtil": {
 				group: "Util",
 				module: "./util/{name}.qunit"
