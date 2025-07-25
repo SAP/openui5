@@ -1843,7 +1843,8 @@ sap.ui.define([
 		 *   values for controls have been set
 		 */
 		createView : function (assert, sViewXML, oModel, oController, mPreprocessors) {
-			var fnLockGroup,
+			var bHasBatchNo, // whether each request inside a $batch (uniformly!) has a batchNo
+				fnLockGroup,
 				fnReportError,
 				that = this;
 
@@ -1928,6 +1929,7 @@ sap.ui.define([
 					});
 				}
 
+				bHasBatchNo = undefined; // reset for every $batch
 				that.iBatchNo += 1;
 
 				return processRequests(aRequests, 0);
@@ -2004,7 +2006,20 @@ sap.ui.define([
 					}
 					if ("batchNo" in oExpectedRequest) {
 						oActualRequest.batchNo = iBatchNo ?? -that.iBatchNo;
-					}
+						if (bHasBatchNo === false) {
+							assert.ok(false, "A previous request within this $batch did not have"
+								+ " batchNo : " + oActualRequest.batchNo
+								+ ", but this one has");
+						}
+						bHasBatchNo = true;
+					} else if (iBatchNo !== undefined) {
+						if (bHasBatchNo === true) {
+							assert.ok(false, "All previous requests within this $batch did have"
+								+ " batchNo : " + oActualRequest.batchNo
+								+ ", but this one doesn't");
+						}
+						bHasBatchNo = false;
+					} // else: $direct/$single
 					if ("changeSetNo" in oExpectedRequest) {
 						oActualRequest.changeSetNo = iChangeSetNo;
 					}
@@ -39749,7 +39764,7 @@ sap.ui.define([
 		// code under test (JIRA: CPOUI5ODATAV4-2652)
 		checkSiblingOrder(assert, /*in place*/[oBeta], /*out of place*/[oNew1, oNew2, oNew3]);
 
-		this.expectRequest(sCountUrl, 10)
+		this.expectRequest("#15 " + sCountUrl, 10)
 			.expectRequest("#15 " + baseUrl(sExpandLevels)
 				+ "&$select=ArtistID,IsActiveEntity,Name,_/DescendantCount,_/DistanceFromRoot"
 				+ ",_/DrillState,_/NodeID"
@@ -40835,7 +40850,7 @@ sap.ui.define([
 		checkSiblingOrder(assert, /*in place*/[], /*out of place*/[oTheta]);
 		checkSiblingOrder(assert, /*in*/[oAlpha, oBeta, oGamma, oEpsilon], /*out*/[oEta, oZeta]);
 
-		this.expectRequest(sCountUrl, 8)
+		this.expectRequest("#9 " + sCountUrl, 8)
 			.expectRequest("#9 " + sUrlWithExpandLevels
 				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
 				+ "&$count=true&$skip=0&$top=4", {
@@ -68699,7 +68714,7 @@ make root = ${bMakeRoot}`;
 				};
 
 			if (bLate) {
-				that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)"
+				that.expectRequest("#" + iBatchNo + " Artists(ArtistID='A1',IsActiveEntity=true)"
 						+ "?$select=HasDraftEntity,Messages,lastUsedChannel",
 						oResponse);
 			} else { // if not late, the list's properties are also part of the request
@@ -68715,7 +68730,8 @@ make root = ${bMakeRoot}`;
 						defaultChannel : "Channel 1"
 					}));
 			}
-			that.expectRequest("Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
+			that.expectRequest("#" + iBatchNo
+					+ " Artists(ArtistID='A1',IsActiveEntity=true)/_Publication"
 					+ "?$select=PublicationID&$skip=0&$top=100",
 					{value : [{PublicationID : "P1"}]}
 				)
