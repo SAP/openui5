@@ -588,6 +588,7 @@ sap.ui.define([
 			var oScrollContainer = document.createElement("div");
 			oScrollContainer.classList.add(S_SCROLLCONTAINER_CLASSNAME);
 			oScrollContainer.setAttribute("data-sap-ui-dt-scrollContainerIndex", iIndex);
+			oScrollContainer.setAttribute("tabindex", -1);
 
 			if (mScrollContainer.aggregations) {
 				_intersection( // filters ignored aggregations

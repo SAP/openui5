@@ -22,9 +22,7 @@ sap.ui.define([
 				}
 			});
 
-			this.getView().byId("card1")
-				.setHost(oHost)
-				.setBaseUrl(sap.ui.require.toUrl("sap/ui/integration/sample/childCardUsingDestinations/cardBundle/"));
+			this.getView().byId("card1").setHost(oHost);
 		}
 	});
 });

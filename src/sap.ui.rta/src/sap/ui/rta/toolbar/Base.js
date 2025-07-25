@@ -5,21 +5,21 @@
 sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/Element",
-	"sap/ui/core/StaticArea",
 	"sap/ui/core/Lib",
+	"sap/ui/core/StaticArea",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/rta/util/Animation",
-	"./BaseRenderer"
+	"sap/ui/rta/toolbar/BaseRenderer",
+	"sap/ui/rta/util/Animation"
 ], function(
 	HBox,
 	Element,
-	StaticArea,
 	Lib,
+	StaticArea,
 	ZIndexManager,
 	ResourceModel,
-	Animation,
-	BaseRenderer
+	BaseRenderer,
+	Animation
 ) {
 	"use strict";
 
