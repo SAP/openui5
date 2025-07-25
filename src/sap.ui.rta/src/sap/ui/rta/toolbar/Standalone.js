@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"./Adaptation",
-	"./AdaptationRenderer"
+	"sap/ui/rta/toolbar/Adaptation",
+	"sap/ui/rta/toolbar/AdaptationRenderer"
 ],
 function(
 	Adaptation,

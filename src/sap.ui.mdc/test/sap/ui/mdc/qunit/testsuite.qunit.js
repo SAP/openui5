@@ -187,11 +187,6 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 				module: "./util/{name}.qunit"
 			},
 
-			"PropertyHelperUtil": {
-				group: "Util",
-				module: "./util/{name}.qunit"
-			},
-
 			"loadModules": {
 				group: "Util",
 				module: "./util/loadModules.qunit",

@@ -4,8 +4,8 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"./Actions",
-	"./Assertions"
+	"test-resources/sap/ui/fl/testutils/opa/variants/Actions",
+	"test-resources/sap/ui/fl/testutils/opa/variants/Assertions"
 ], function(
 	Opa5,
 	Actions,

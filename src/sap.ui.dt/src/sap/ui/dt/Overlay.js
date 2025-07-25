@@ -348,7 +348,7 @@ sap.ui.define([
 			id: this.getId(),
 			"data-sap-ui": this.getId(),
 			"class": this._aStyleClasses.join(" "),
-			tabindex: this.isFocusable() ? 0 : null
+			tabindex: this.isFocusable() ? 0 : -1
 		};
 	};
 
@@ -541,7 +541,7 @@ sap.ui.define([
 		if (this.getFocusable() !== bFocusable) {
 			this.setProperty("focusable", bFocusable);
 			this.toggleStyleClass("sapUiDtOverlayFocusable");
-			this.getDomRef()?.setAttribute("tabindex", bFocusable ? 0 : null);
+			this.getDomRef()?.setAttribute("tabindex", bFocusable ? 0 : -1);
 		}
 	};
 
