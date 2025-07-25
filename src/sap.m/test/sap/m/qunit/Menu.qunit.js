@@ -1228,4 +1228,56 @@ sap.ui.define([
 		oInput.destroy();
 		oStub.restore();
 	});
+
+	QUnit.test("EndContent Button press event fires on mouse and keyboard", async function(assert) {
+		// Arrange
+		var oPressSpy = sinon.spy();
+		var oMenu = new Menu({
+				items: [
+					new MenuItem({
+						text: "Item with EndContent",
+						endContent: [
+							new Button({
+								icon: "sap-icon://accept",
+								press: oPressSpy
+							})
+						]
+					})
+				]
+			}),
+			oButton = new Button({ text: "Open Menu" }).placeAt("qunit-fixture");
+
+		await nextUIUpdate(this.clock);
+
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		var oEndContentButton = oMenu.getItems()[0].getEndContent()[0];
+		var $EndContentButton = jQuery(oEndContentButton.getDomRef());
+
+		// Act: Mouse click
+		$EndContentButton.trigger("mousedown");
+		$EndContentButton.trigger("mouseup");
+		$EndContentButton.trigger("click");
+		await nextUIUpdate(this.clock);
+
+		// Assert: Mouse click fires press
+		assert.ok(oPressSpy.calledOnce, "Press event fired on mouse click");
+
+		// Act: Keyboard (Enter)
+		oMenu.openBy(oButton);
+		await nextUIUpdate(this.clock);
+
+		$EndContentButton.trigger({ type: "keydown", key: "Enter", keyCode: 13, which: 13 });
+		await nextUIUpdate(this.clock);
+
+		// Assert: Keyboard fires press
+		assert.ok(oPressSpy.calledTwice, "Press event fired on keyboard Enter");
+
+		// Cleanup
+		oMenu.destroy();
+		oButton.destroy();
+		oEndContentButton.destroy();
+	});
+
 });
