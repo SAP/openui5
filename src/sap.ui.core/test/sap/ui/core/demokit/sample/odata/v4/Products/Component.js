@@ -1,12 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component to display information on products from the zui5_epm_sample
- * OData service.
- * @version @version@
- */
 sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/UIComponent",

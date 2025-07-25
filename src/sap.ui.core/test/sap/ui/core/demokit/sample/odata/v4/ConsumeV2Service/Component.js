@@ -1,12 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component to show the consumption of an OData V2 service with an
- * OData V4 model.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {

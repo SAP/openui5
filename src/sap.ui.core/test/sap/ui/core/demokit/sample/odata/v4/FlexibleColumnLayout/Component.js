@@ -1,11 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component to use for demo to show the FCL scenario.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {

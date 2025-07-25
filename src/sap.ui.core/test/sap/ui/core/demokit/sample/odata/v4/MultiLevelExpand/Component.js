@@ -1,11 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component for OData V4 Data Aggregation w/ RAP MultiLevelExpand.
- * @version @version@
- */
 sap.ui.define([
 	"sap/ui/core/UIComponent"
 ], function (UIComponent) {

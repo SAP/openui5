@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
-	"sap/ui/table/plugins/ODataV4Selection",
+	"sap/ui/table/plugins/ODataV4MultiSelection",
 	"sap/m/OverflowToolbar",
 	"sap/m/Title",
 	"sap/m/ToggleButton",
@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(
 	Table,
 	Column,
-	ODataV4Selection,
+	ODataV4MultiSelection,
 	OverflowToolbar,
 	Title,
 	ToggleButton,
@@ -33,7 +33,7 @@ sap.ui.define([
 		enableBusyIndicator: true,
 		busyIndicatorDelay: 0,
 		dependents: [
-			new ODataV4Selection({enableNotification: true})
+			new ODataV4MultiSelection({enableNotification: true})
 		]
 	});
 	window.oTable = oTable;

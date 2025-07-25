@@ -1,10 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @version @version@
- */
 sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/UIComponent",

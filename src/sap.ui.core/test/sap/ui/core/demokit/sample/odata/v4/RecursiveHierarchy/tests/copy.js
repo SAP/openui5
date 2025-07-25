@@ -56,6 +56,7 @@ sap.ui.define([
 		+ A Copy of Beta`);
 
 		copyToRoot("1.1", "Copy 1.1 (Gamma) to root");
+		checkIndexInMessageBox(0);
 		checkTable("After copy 1.1 (Gamma) to root", `
 - B Copy of Gamma
 	* B.1 Copy of Delta

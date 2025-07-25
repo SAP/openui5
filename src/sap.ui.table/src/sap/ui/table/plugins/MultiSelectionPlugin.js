@@ -47,6 +47,10 @@ sap.ui.define([
 	 * This plugin is intended for server-side models and multi-selection mode. Range selections, including Select All, only work properly if the
 	 * count is known. Make sure the model/binding is configured to request the count from the service.
 	 * For ease of use, client-side models and single selection are also supported.
+	 *
+	 * With ODataV4, use the {@link sap.ui.table.plugins.ODataV4MultiSelection ODataV4MultiSelection} plugin or the
+	 * {@link sap.ui.table.plugins.ODataV4SingleSelection ODataV4SingleSelection} plugin instead of this one.
+	 *
 	 * @extends sap.ui.table.plugins.SelectionPlugin
 	 *
 	 * @author SAP SE
@@ -160,7 +164,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		oTable.setProperty("selectionMode", SelectionMode.None);
+		oTable.setProperty("selectionMode", library.SelectionMode.None);
 		detachFromBinding(this, oTable.getBinding());
 		this.oInnerSelectionPlugin?.destroy();
 		delete this.oInnerSelectionPlugin;

@@ -1,12 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * @fileOverview Application component to display information on entities from the TEA_BUSI
- *   OData service.
- * @version @version@
- */
 sap.ui.define([
 	"sap/m/HBox",
 	"sap/ui/core/UIComponent",

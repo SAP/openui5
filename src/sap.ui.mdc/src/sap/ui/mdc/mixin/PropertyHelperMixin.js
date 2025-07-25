@@ -294,9 +294,8 @@ sap.ui.define([
 				return [aProperties, PropertyHelper];
 			});
 		}).then((aResult) => {
-			return PropertyHelperUtil.checkValidationExceptions().then((bValidationDisabled) => {
-				return aResult.concat(bValidationDisabled);
-			});
+			const bValidationDisabled = PropertyHelperUtil.checkValidationExceptions();
+			return Promise.resolve(aResult.concat(bValidationDisabled));
 		}).then((aResult) => {
 			if (this.isDestroyed()) {
 				return undefined;

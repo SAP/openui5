@@ -4,8 +4,8 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
-	"sap/ui/table/plugins/V4Aggregation",
-	"sap/ui/table/plugins/ODataV4Selection",
+	"sap/ui/table/plugins/ODataV4Aggregation",
+	"sap/ui/table/plugins/ODataV4MultiSelection",
 	"sap/m/OverflowToolbar",
 	"sap/m/Title",
 	"sap/m/Text",
@@ -16,8 +16,8 @@ sap.ui.define([
 	Table,
 	Column,
 	FixedRowMode,
-	V4Aggregation,
-	ODataV4Selection,
+	ODataV4Aggregation,
+	ODataV4MultiSelection,
 	OverflowToolbar,
 	Title,
 	Text,
@@ -80,8 +80,8 @@ sap.ui.define([
 		enableBusyIndicator: true,
 		busyIndicatorDelay: 0,
 		dependents: [
-			new V4Aggregation(),
-			new ODataV4Selection({enableNotification: true})
+			new ODataV4Aggregation(),
+			new ODataV4MultiSelection({enableNotification: true})
 		]
 	});
 	window.oTable = oTable;

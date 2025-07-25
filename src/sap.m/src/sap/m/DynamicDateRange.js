@@ -1616,6 +1616,8 @@ sap.ui.define([
 					showSeparators: ListSeparators.None,
 					mode: ListMode.SingleSelectMaster
 				});
+
+				this._oOptionsList.applyAriaRole("listbox");
 			}
 
 			if (!this._oNavContainer) {

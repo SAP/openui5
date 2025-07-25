@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/table/plugins/ODataV4Selection",
+	"sap/ui/table/plugins/ODataV4MultiSelection",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/VBox",
 	"sap/m/FlexItemData"
-], function(Element, ODataV4Selection, ODataModel, TreeTable, Column, HBox, Icon, Text, OverflowToolbar, Title, Input, Toolbar, VBox, FlexItemData) {
+], function(Element, ODataV4MultiSelection, ODataModel, TreeTable, Column, HBox, Icon, Text, OverflowToolbar, Title, Input, Toolbar, VBox, FlexItemData) {
 	"use strict";
 	/*global TABLESETTINGS */
 	const oTable = new TreeTable({
@@ -71,7 +71,7 @@ sap.ui.define([
 				]
 			})
 		],
-		plugins: new ODataV4Selection({
+		plugins: new ODataV4MultiSelection({
 			enableNotification: true
 		}),
 		visibleRowCountMode: "Auto"
