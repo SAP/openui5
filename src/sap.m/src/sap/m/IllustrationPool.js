@@ -378,9 +378,10 @@ sap.ui.define([
 				oAssetDOM = document.getElementById(sExtractedAssetId);
 				if (oAssetDOM !== null) {
 					oDOMPool.removeChild(oAssetDOM);
-					aSymbolsInDOM.splice(aSymbolsInDOM.indexOf(sId), 1);
 				}
 			}
+
+            aSymbolsInDOM.splice(aSymbolsInDOM.indexOf(sId), 1);
 		};
 
 		/**
