@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/ui/core/sample/common/Helper",
-	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/pages/Main",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/collapseAll",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/copy",
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/tests/createEdit",
@@ -15,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/sample/odata/v4/RecursiveHierarchy/SandboxModel",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/TestUtils"
-], function (Helper, Main, collapseAll, copy, createEdit, expandAll, collapseAll_expandTo3,
+], function (Helper, collapseAll, copy, createEdit, expandAll, collapseAll_expandTo3,
 		pageExpandCollapse, recursiveHierarchyBasics, sideEffectsRefresh, SandboxModel, opaTest,
 		TestUtils) {
 	"use strict";
@@ -26,16 +25,17 @@ sap.ui.define([
 			SandboxModel.reset();
 		});
 
-[false, true].forEach(function (bTreeTable) {
-	const sThreshold = bTreeTable ? "10" : "0";
+["N", "Y"].forEach(function (sTreeTable) {
+	const sThreshold = sTreeTable === "Y" ? "10" : "0";
 	//*****************************************************************************
 	{
-		const sTitle = "page, expand, collapse; w/ TreeTable: " + bTreeTable
+		const sTitle = "page, expand, collapse; w/ TreeTable: " + sTreeTable
 			+ ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			pageExpandCollapse(Given, When, Then);
 		});
@@ -43,12 +43,12 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "create, edit; w/ TreeTable: " + bTreeTable
-			+ ", threshold: " + sThreshold;
+		const sTitle = "create, edit; w/ TreeTable: " + sTreeTable + ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			createEdit(Given, When, Then);
 		});
@@ -56,12 +56,13 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "recursive hierarchy basics; w/ TreeTable: " + bTreeTable
+		const sTitle = "recursive hierarchy basics; w/ TreeTable: " + sTreeTable
 			+ ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			recursiveHierarchyBasics(Given, When, Then);
 		});
@@ -69,12 +70,13 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "side-effects refresh; w/ TreeTable: " + bTreeTable
+		const sTitle = "side-effects refresh; w/ TreeTable: " + sTreeTable
 			+ ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			sideEffectsRefresh(Given, When, Then);
 		});
@@ -82,11 +84,12 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "expandAll; w/ TreeTable: " + bTreeTable + ", threshold: " + sThreshold;
+		const sTitle = "expandAll; w/ TreeTable: " + sTreeTable + ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			expandAll(Given, When, Then);
 		});
@@ -94,11 +97,12 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "collapseAll; w/ TreeTable: " + bTreeTable + ", threshold: " + sThreshold;
+		const sTitle = "collapseAll; w/ TreeTable: " + sTreeTable + ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			collapseAll(Given, When, Then);
 		});
@@ -106,12 +110,13 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "collapse all, expandTo:3; w/ TreeTable: " + bTreeTable
+		const sTitle = "collapse all, expandTo:3; w/ TreeTable: " + sTreeTable
 			+ ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			collapseAll_expandTo3(Given, When, Then);
 		});
@@ -119,11 +124,12 @@ sap.ui.define([
 
 	//*****************************************************************************
 	{
-		const sTitle = "copy; w/ TreeTable: " + bTreeTable + ", threshold: " + sThreshold;
+		const sTitle = "copy; w/ TreeTable: " + sTreeTable + ", threshold: " + sThreshold;
 		opaTest(sTitle, function (Given, When, Then) {
 			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.threshold",
 				sThreshold);
-			Main.setTreeTable(bTreeTable);
+			TestUtils.setData("sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable",
+				sTreeTable);
 
 			copy(Given, When, Then);
 		});
