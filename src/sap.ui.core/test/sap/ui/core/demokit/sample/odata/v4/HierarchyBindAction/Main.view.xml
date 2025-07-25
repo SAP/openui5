@@ -8,7 +8,7 @@
 	xmlns:plugins="sap.ui.table.plugins"
 	xmlns:rm="sap.ui.table.rowmodes">
 
-	<TreeTable id="table" ariaLabelledBy="title"
+	<TreeTable ariaLabelledBy="title" id="table"
 		rows="{
 				path : '_Hierarchy',
 				parameters : {
@@ -23,7 +23,7 @@
 			<plugins:ODataV4Selection enableNotification="true"/>
 		</dependents>
 		<extension>
-			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+			<m:Toolbar class="sapMTBHeader-CTX" design="Transparent">
 				<m:Title id="title" level="H1"
 					text="{header>$count} Items ({header>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
@@ -43,7 +43,7 @@
 			</m:Toolbar>
 		</extension>
 		<rowMode>
-			<rm:Interactive rowCount="10" minRowCount="2"/>
+			<rm:Interactive minRowCount="2" rowCount="10"/>
 		</rowMode>
 		<rowSettingsTemplate>
 			<RowSettings highlight="{= %{@$ui5.context.isTransient} === undefined ? 'None' : 'Information' }"/>
