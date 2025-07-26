@@ -1,7 +1,7 @@
 {
 	"_version": "1.20.0",
 	"sap.app": {
-		"id": "card.explorer.features.destinations",
+		"id": "card.explorer.sample.scp.destinations",
 		"type": "card",
 		"title": "Sample of Destinations",
 		"subTitle": "Sample of Destinations",
@@ -23,7 +23,7 @@
 		"type": "List",
 		"data": {
 			"request": {
-				"url": "{{destinations.myDestination}}/Products",
+				"url": "{{destinations.Northwind}}/Products",
 				"parameters": {
 					"$format": "json",
 					"$top": "{parameters>/maxItems/value}",
@@ -33,11 +33,9 @@
 		},
 		"configuration": {
 			"destinations": {
-				"myDestination": {
-					"name": "Northwind_V4"
-				},
-				"myNavigation": {
-					"name": "Navigation"
+				"Northwind": {
+					"name": "Northwind",
+					"defaultUrl": "/destinations/northwind/V3/Northwind/Northwind.svc"
 				}
 			},
 			"parameters": {
@@ -50,8 +48,11 @@
 			}
 		},
 		"header": {
-			"title": "Resolve Destinations",
-			"subtitle": "First {parameters>/maxItems/value} products from 'Northwind'"
+			"title": "Destinations Sample",
+			"subtitle": "First {parameters>/maxItems/value} products from destination 'Northwind'",
+			"status": {
+				"text": "top {parameters>/maxItems/value}"
+			}
 		},
 		"content": {
 			"data": {
@@ -60,15 +61,7 @@
 			"maxItems": "{parameters>/maxItems/value}",
 			"item": {
 				"title": "{ProductName}",
-				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
-				"actions": [
-					{
-						"type": "Navigation",
-						"parameters": {
-							"city": "{{destinations.myNavigation}}/{ProductName}"
-						}
-					}
-				]
+				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}"
 			}
 		}
 	}

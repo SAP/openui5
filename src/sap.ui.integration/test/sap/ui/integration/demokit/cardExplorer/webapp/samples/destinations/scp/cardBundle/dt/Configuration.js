@@ -1,7 +1,8 @@
-sap.ui.define(["sap/ui/integration/Designtime"], (Designtime) => {
+sap.ui.define(["sap/ui/integration/Designtime"], function (
+	Designtime
+) {
 	"use strict";
-
-	return () => {
+	return function () {
 		return new Designtime({
 			"form": {
 				"items": {

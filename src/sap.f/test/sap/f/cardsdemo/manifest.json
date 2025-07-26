@@ -373,11 +373,6 @@
 					"pattern": "fixedHeight",
 					"name": "fixedHeight",
 					"target": "fixedHeight"
-				},
-				{
-					"pattern": "destinations",
-					"name": "destinations",
-					"target": "destinations"
 				}
 			],
 			"targets": {
@@ -668,11 +663,6 @@
 				"fixedHeight": {
 					"id": "fixedHeight",
 					"name": "FixedHeight",
-					"level": 1
-				},
-				"destinations": {
-					"id": "destinations",
-					"name": "Destinations",
 					"level": 1
 				}
 			}

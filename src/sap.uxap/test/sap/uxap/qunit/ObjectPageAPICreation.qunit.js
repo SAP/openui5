@@ -4001,6 +4001,18 @@ function(
 		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-label"), undefined, "Navigation label  is not set");
 		assert.strictEqual(oObjectPage.$("anchorBar").attr("aria-roledescription"), undefined, "Navigation roledescription is not set");
 
+		oLandmarkInfo = new ObjectPageAccessibleLandmarkInfo({
+			rootRole: "None",
+			headerRole: "None"
+		});
+
+		oObjectPage.setLandmarkInfo(oLandmarkInfo);
+		await nextUIUpdate();
+
+		assert.strictEqual(oObjectPage.$().attr("aria-label"), undefined, "When rootRole is None and no label is set, root label is not set.");
+		assert.strictEqual(oObjectPage.$("headerTitle").attr("aria-label"), undefined, "When headerRole is None and no label is set, header label is not set.");
+
+
 		oObjectPage.destroy();
 	});
 

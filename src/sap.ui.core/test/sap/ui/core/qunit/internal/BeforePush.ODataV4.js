@@ -96,7 +96,8 @@ sap.ui.define([
 		"GridTable" : true,
 		"HierarchyBindAction" : false,
 		"MultiLevelExpand" : true,
-		"MusicArtists" : true
+		"MusicArtists" : true,
+		"Travel_CAP" : true
 	};
 	for (const sName in mName2Sandbox) {
 		mApps[sName] = [

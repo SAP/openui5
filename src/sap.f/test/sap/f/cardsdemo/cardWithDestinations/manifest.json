@@ -1,7 +1,7 @@
 {
 	"_version": "1.20.0",
 	"sap.app": {
-		"id": "card.destinations.child",
+		"id": "card.explorer.features.destinations",
 		"type": "card",
 		"title": "Sample of Destinations",
 		"subTitle": "Sample of Destinations",
@@ -34,7 +34,7 @@
 		"configuration": {
 			"destinations": {
 				"myDestination": {
-					"name": "Northwind_V4"
+					"name": "Northwind"
 				},
 				"myNavigation": {
 					"name": "Navigation"
@@ -63,27 +63,13 @@
 				"description": "Unit Price {= format.currency(${UnitPrice}, 'EUR')}",
 				"actions": [
 					{
-						"type": "Custom",
+						"type": "Navigation",
 						"parameters": {
 							"city": "{{destinations.myNavigation}}/{ProductName}"
 						}
 					}
 				]
 			}
-		},
-		"footer": {
-			"actionsStrip": [
-				{
-					"type": "Button",
-					"text": "Open Child Card",
-					"actions": [{
-						"type": "ShowCard",
-						"parameters": {
-							"manifest": "./childCardManifest.json"
-						}
-					}]
-				}
-			]
 		}
 	}
 }

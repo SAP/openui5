@@ -203,12 +203,15 @@ sap.ui.define([
 			return (bIsProperty || !bInsideExpand
 				|| Object.keys(mAggregatedQueryOptions).every(function (sName) {
 					return sName in mQueryOptions0 || sName === "$count" || sName === "$expand"
-						|| sName === "$select";
+						|| sName === "$select" || sName === "$top";
 				}))
 				// merge $count, $expand and $select; check that all others equal the aggregate
 				&& Object.keys(mQueryOptions0).every(function (sName) {
 					switch (sName) {
 						case "$count":
+							if (mQueryOptions0.$top === 0 && mAggregatedQueryOptions.$select) {
+								return true; // see below: @see mCountQueryOptions => ignore
+							}
 							if (mQueryOptions0.$count) {
 								mAggregatedQueryOptions.$count = true;
 							}
@@ -218,7 +221,22 @@ sap.ui.define([
 							return Object.keys(mQueryOptions0.$expand).every(mergeExpandPath);
 						case "$select":
 							mAggregatedQueryOptions.$select ??= [];
+							if (mAggregatedQueryOptions.$top === 0) {
+								// Note: @see mCountQueryOptions => drop
+								// (w/o $top, all data is ready anyway, no $count needed)
+								delete mAggregatedQueryOptions.$count;
+								// ($select needs data and thus contradicts $top : 0)
+								delete mAggregatedQueryOptions.$top;
+							}
 							return mQueryOptions0.$select.every(mergeSelectPath);
+						case "$top":
+							if (mQueryOptions0.$top !== 0 || !mQueryOptions0.$count) {
+								return false; // not mCountQueryOptions => unsupported
+							}
+							if (!mAggregatedQueryOptions.$select) {
+								mAggregatedQueryOptions.$top = 0;
+							} // else: see above: @see mCountQueryOptions => ignore
+							return true;
 						default:
 							if (bAdd) {
 								mAggregatedQueryOptions[sName] = mQueryOptions0[sName];
@@ -846,6 +864,7 @@ sap.ui.define([
 		];
 		oCanUseCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mChildQueryOptions = aResult[2] || {},
+				mCountQueryOptions,
 				mWrappedChildQueryOptions,
 				mLocalQueryOptions = aResult[0],
 				oProperty = aResult[1],
@@ -869,7 +888,14 @@ sap.ui.define([
 					mChildQueryOptions, bIsProperty);
 			}
 
-			if (bDependsOnOperation || sReducedChildMetaPath === "$count"
+			if (oProperty?.["@$ui5.$count"]
+					&& oContext !== oContext.getBinding().getHeaderContext?.()) {
+				mCountQueryOptions = {
+					$expand : {
+						[sChildPath.slice(0, -7)] : {$count : true, $top : 0}
+					}
+				};
+			} else if (bDependsOnOperation || sReducedChildMetaPath === "$count"
 					|| sReducedChildMetaPath.endsWith("/$count")
 					|| sReducedChildMetaPath === "$selectionCount") {
 				return sReducedPath;
@@ -890,9 +916,10 @@ sap.ui.define([
 			if (sReducedChildMetaPath === ""
 				|| oProperty
 				&& (oProperty.$kind === "Property" || oProperty.$kind === "NavigationProperty")) {
-				mWrappedChildQueryOptions = _Helper.wrapChildQueryOptions(sBaseMetaPath,
-					sReducedChildMetaPath, mChildQueryOptions,
-					that.oModel.oInterface.fetchMetadata);
+				mWrappedChildQueryOptions = mCountQueryOptions
+					?? _Helper.wrapChildQueryOptions(sBaseMetaPath,
+						sReducedChildMetaPath, mChildQueryOptions,
+						that.oModel.oInterface.fetchMetadata);
 				if (mWrappedChildQueryOptions) {
 					return that.aggregateQueryOptions(mWrappedChildQueryOptions, sBaseMetaPath,
 							bCacheImmutable, bIsProperty)

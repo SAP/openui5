@@ -79,7 +79,18 @@ sap.ui.define([
 				if (oUriParameters.has("createInPlace")) {
 					this._oAggregation.createInPlace = true;
 				}
-				const sTreeTable = oUriParameters.get("TreeTable");
+				let sTreeTable;
+				switch (TestUtils.retrieveData( // controlled by OPA
+							"sap.ui.core.sample.odata.v4.RecursiveHierarchy.TreeTable")
+						|| oUriParameters.get("TreeTable")) {
+					case "both":
+						break;
+					case "N":
+						sTreeTable = "N";
+						break;
+					default:
+						sTreeTable = "Y";
+				}
 				const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
 					|| oUriParameters.get("visibleRowCount");

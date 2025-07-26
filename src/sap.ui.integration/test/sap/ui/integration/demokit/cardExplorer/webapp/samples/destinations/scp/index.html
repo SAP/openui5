@@ -1,3 +1,4 @@
+<!-- This file will be actually loaded and shown in the iframe. "indexTemplate.html" is used just for the code editor -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,18 +6,18 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Destinations</title>
 	<link rel="icon" href="../images/favicon.ico" type="image/x-icon">
+
 	<script id="sap-ui-bootstrap"
 			src="../../../../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
+			data-sap-ui-on-init="module:sap/ui/integration/sample/scp/script"
 			data-sap-ui-resource-roots='{
-				"sap.ui.integration.sample.childCardUsingDestinations": "./"
+				"sap.ui.integration.sample.scp": "./"
 			}'
 	>
 	</script>
-	<link rel="stylesheet" href="./indexTemplate.css">
 </head>
 
 <body class="sapUiBody">
-	<div data-sap-ui-component data-name="sap.ui.integration.sample.childCardUsingDestinations" data-id="container" data-settings="{&quot;id&quot; : &quot;destinations&quot;}"></div>
-	</body>
+	<div id="content"></div>
+</body>
 </html>

@@ -1,0 +1,2317 @@
+{
+	"@odata.context": "$metadata#Travels(TravelUUID,TravelID,BeginDate,EndDate,BookingFee,TotalPrice,CurrencyCode_code,Description,CustomerName,TravelStatus(name,code),to_Agency(AgencyID,Name),to_Booking())",
+	"@odata.metadataEtag": "W/\"9608d01ba0d2dceda5261a148db1382f628a339661f1d6eb57cbb6c478c73960\"",
+	"@odata.count": "4133",
+	"value": [
+		{
+			"TravelUUID": "00667221A8E4645C17002DF03754AB66",
+			"TravelID": 175,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-05-29",
+			"BookingFee": "60.000",
+			"TotalPrice": "23439.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Sightseeing in Singapore",
+			"CustomerName": "Volker D´Oultrement",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070029",
+				"Name": "Up 'n' Away"
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00677221A8E4645C17002DF03754AB66",
+			"TravelID": 431,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "40.000",
+			"TotalPrice": "13806.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation to Singapore",
+			"CustomerName": "Georg D´Oultrement",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070023",
+				"Name": "Asia By Plane"
+			},
+			"to_Booking@odata.count": "4",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00687221A8E4645C17002DF03754AB66",
+			"TravelID": 687,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "8318.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Business Trip for Peter, Stephen",
+			"CustomerName": "Jean-Luc Detemple",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070009",
+				"Name": "Honauer Reisen GmbH"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00697221A8E4645C17002DF03754AB66",
+			"TravelID": 943,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "6410.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Amelie Moyano",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070001",
+				"Name": "Sunshine Travel"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "006A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1199,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "30.000",
+			"TotalPrice": "18032.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation",
+			"CustomerName": "Anneliese Madeira",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070005",
+				"Name": "Your Choice"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "006B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1455,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "3842.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip for Anneliese, Christoph",
+			"CustomerName": "Juan Barth",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070010",
+				"Name": "Travel from Walldorf"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "006C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1711,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "20.000",
+			"TotalPrice": "8763.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Illya Legrand",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070046",
+				"Name": "Hendrik's"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "006D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1967,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "4128.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Sightseeing in Tokyo, Honshu",
+			"CustomerName": "Achim Moyano",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070029",
+				"Name": "Up 'n' Away"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "006E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2223,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "10.000",
+			"TotalPrice": "2436.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Johannes Miguel",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070041",
+				"Name": "Maxitrip"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "006F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2479,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "10.000",
+			"TotalPrice": "2359.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Sightseeing in Tokyo, Honshu",
+			"CustomerName": "Anneliese Simonen",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070028",
+				"Name": "Aussie Travel"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00707221A8E4645C17002DF03754AB66",
+			"TravelID": 2735,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "9658.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip",
+			"CustomerName": "Uli Domenech",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070038",
+				"Name": "Cap Travels Ltd."
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00717221A8E4645C17002DF03754AB66",
+			"TravelID": 2991,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4880.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Sightseeing in Venice",
+			"CustomerName": "Juan Mechler",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070029",
+				"Name": "Up 'n' Away"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00727221A8E4645C17002DF03754AB66",
+			"TravelID": 3247,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "30.000",
+			"TotalPrice": "4902.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Astrid Sommer",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070049",
+				"Name": "Miles and More"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00737221A8E4645C17002DF03754AB66",
+			"TravelID": 3503,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "2997.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Walter Sessler",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070004",
+				"Name": "Pink Panther"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00747221A8E4645C17002DF03754AB66",
+			"TravelID": 3759,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "30.000",
+			"TotalPrice": "10161.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Holm Jeremias",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070045",
+				"Name": "Submit and Return"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "00757221A8E4645C17002DF03754AB66",
+			"TravelID": 4015,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "10.000",
+			"TotalPrice": "1708.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation",
+			"CustomerName": "Harish Illner",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070004",
+				"Name": "Pink Panther"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01667221A8E4645C17002DF03754AB66",
+			"TravelID": 176,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2023-08-03",
+			"BookingFee": "40.000",
+			"TotalPrice": "16041.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip to Singapore",
+			"CustomerName": "Gisela Hunter",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070020",
+				"Name": "No Return"
+			},
+			"to_Booking@odata.count": "4",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01677221A8E4645C17002DF03754AB66",
+			"TravelID": 432,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "60.000",
+			"TotalPrice": "21258.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation for Thomas, Ludwig, Fabio,",
+			"CustomerName": "Hendrik Meier",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070012",
+				"Name": "Ben McCloskey Ltd."
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01687221A8E4645C17002DF03754AB66",
+			"TravelID": 688,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "12532.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation for Christoph, Dominik, Georg",
+			"CustomerName": "Christoph Columbo",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070014",
+				"Name": "Kangeroos"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01697221A8E4645C17002DF03754AB66",
+			"TravelID": 944,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "10.000",
+			"TotalPrice": "3325.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Business Trip for Matthias",
+			"CustomerName": "Cindy Ryan",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070010",
+				"Name": "Travel from Walldorf"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "016A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1200,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "20.000",
+			"TotalPrice": "11930.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation",
+			"CustomerName": "Friedrich Heller",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070043",
+				"Name": "Intertravel"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "016B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1456,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "10.000",
+			"TotalPrice": "1908.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Visiting Irmtraut",
+			"CustomerName": "Astrid Detemple",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070034",
+				"Name": "Supercheap"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "016C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1712,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "10.000",
+			"TotalPrice": "4426.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip",
+			"CustomerName": "Georg Legrand",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070039",
+				"Name": "Rainy, Stormy, Cloudy"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "016D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1968,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "1424.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Visiting Allen",
+			"CustomerName": "Pierre Lautenbach",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070034",
+				"Name": "Supercheap"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "016E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2224,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "20.000",
+			"TotalPrice": "4908.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Visiting Christoph",
+			"CustomerName": "August Moyano",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070034",
+				"Name": "Supercheap"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "016F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2480,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "10.000",
+			"TotalPrice": "2371.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Business Trip to Japan",
+			"CustomerName": "Hendrik Prinz",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070016",
+				"Name": "Ali's Bazar"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01707221A8E4645C17002DF03754AB66",
+			"TravelID": 2736,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "6428.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Thomas Miguel",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070005",
+				"Name": "Your Choice"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01717221A8E4645C17002DF03754AB66",
+			"TravelID": 2992,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4843.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Theresia Simonen",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070042",
+				"Name": "The Ultimate Answer"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01727221A8E4645C17002DF03754AB66",
+			"TravelID": 3248,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "10.000",
+			"TotalPrice": "1614.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Florian Mechler",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070003",
+				"Name": "Happy Hopping"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01737221A8E4645C17002DF03754AB66",
+			"TravelID": 3504,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "6006.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Walter Pan",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070004",
+				"Name": "Pink Panther"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01747221A8E4645C17002DF03754AB66",
+			"TravelID": 3760,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "20.000",
+			"TotalPrice": "6742.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip for Illya, Siegfried",
+			"CustomerName": "Uli Vrsic",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070006",
+				"Name": "Bella Italia"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "01757221A8E4645C17002DF03754AB66",
+			"TravelID": 4016,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "30.000",
+			"TotalPrice": "5037.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation",
+			"CustomerName": "Irmtraut Ryan",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070003",
+				"Name": "Happy Hopping"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02667221A8E4645C17002DF03754AB66",
+			"TravelID": 177,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2023-08-03",
+			"BookingFee": "20.000",
+			"TotalPrice": "8011.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation for James,",
+			"CustomerName": "Volker Neubasler",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070011",
+				"Name": "Voyager Enterprises"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02677221A8E4645C17002DF03754AB66",
+			"TravelID": 433,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2023-08-02",
+			"BookingFee": "20.000",
+			"TotalPrice": "298.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Business Trip for Jean-Luc, Lothar",
+			"CustomerName": "Gisela Miguel",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070008",
+				"Name": "Burns Nuclear"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02687221A8E4645C17002DF03754AB66",
+			"TravelID": 689,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "4237.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation",
+			"CustomerName": "Stephen Madeira",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070049",
+				"Name": "Miles and More"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02697221A8E4645C17002DF03754AB66",
+			"TravelID": 945,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "30.000",
+			"TotalPrice": "9635.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Andreas Vrsic",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070045",
+				"Name": "Submit and Return"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "026A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1201,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "20.000",
+			"TotalPrice": "12204.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip to USA",
+			"CustomerName": "Hendrik Delon",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070017",
+				"Name": "Super Agency"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "026B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1457,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "10.000",
+			"TotalPrice": "1940.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip to Japan",
+			"CustomerName": "Guenther D´Oultrement",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070017",
+				"Name": "Super Agency"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "026C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1713,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "20.000",
+			"TotalPrice": "8873.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip for Irene, Christoph",
+			"CustomerName": "Ruth Wohl",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070007",
+				"Name": "Hot Socks Travel"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "026D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1969,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "4268.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip to Japan",
+			"CustomerName": "Peter Hunter",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070018",
+				"Name": "Wang Chong"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "026E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2225,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "10.000",
+			"TotalPrice": "2477.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Juan Barth",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070043",
+				"Name": "Intertravel"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "026F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2481,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "30.000",
+			"TotalPrice": "7084.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation to Japan",
+			"CustomerName": "Felix Delon",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070024",
+				"Name": "Everywhere"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02707221A8E4645C17002DF03754AB66",
+			"TravelID": 2737,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "3231.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Christa Buchholm",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070048",
+				"Name": "Rocky Horror Tours"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02717221A8E4645C17002DF03754AB66",
+			"TravelID": 2993,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "10.000",
+			"TotalPrice": "2421.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Allen Pan",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070005",
+				"Name": "Your Choice"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02727221A8E4645C17002DF03754AB66",
+			"TravelID": 3249,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "3242.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to Germany",
+			"CustomerName": "Annemarie Hansmann",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070019",
+				"Name": "Around the World"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02737221A8E4645C17002DF03754AB66",
+			"TravelID": 3505,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "8858.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Business Trip to Japan",
+			"CustomerName": "Roland Sudhoff",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070019",
+				"Name": "Around the World"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02747221A8E4645C17002DF03754AB66",
+			"TravelID": 3761,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "10.000",
+			"TotalPrice": "3385.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to Italy",
+			"CustomerName": "Illya Müller",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070018",
+				"Name": "Wang Chong"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "02757221A8E4645C17002DF03754AB66",
+			"TravelID": 4017,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "10.000",
+			"TotalPrice": "1686.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation",
+			"CustomerName": "Salvador Fischmann",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070043",
+				"Name": "Intertravel"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03667221A8E4645C17002DF03754AB66",
+			"TravelID": 178,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-05-29",
+			"BookingFee": "60.000",
+			"TotalPrice": "23725.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Sightseeing in Singapore",
+			"CustomerName": "Andreas Babilon",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070029",
+				"Name": "Up 'n' Away"
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03677221A8E4645C17002DF03754AB66",
+			"TravelID": 434,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2023-08-02",
+			"BookingFee": "30.000",
+			"TotalPrice": "506.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Business Trip for Uli, Jean, Gisela",
+			"CustomerName": "Stephen Hoffen",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070009",
+				"Name": "Honauer Reisen GmbH"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03687221A8E4645C17002DF03754AB66",
+			"TravelID": 690,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "13182.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation to USA",
+			"CustomerName": "Achim Sisko",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070022",
+				"Name": "Caribian Dreams"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03697221A8E4645C17002DF03754AB66",
+			"TravelID": 946,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "6644.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation for Lee, Roland",
+			"CustomerName": "Lee Gutenberg",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070015",
+				"Name": "Bavarian Castle"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "036A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1202,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "30.000",
+			"TotalPrice": "18356.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Sightseeing in San Francisco, California",
+			"CustomerName": "Dominik Sommer",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070029",
+				"Name": "Up 'n' Away"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "036B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1458,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "3898.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation to Japan",
+			"CustomerName": "Cindy Schneider",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070024",
+				"Name": "Everywhere"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "036C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1714,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "30.000",
+			"TotalPrice": "13681.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to USA",
+			"CustomerName": "Allen Gahl",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070020",
+				"Name": "No Return"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "036D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1970,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "1409.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip",
+			"CustomerName": "August Gahl",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070036",
+				"Name": "Fly Now, Pay Later"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "036E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2226,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "10.000",
+			"TotalPrice": "2468.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation to Germany",
+			"CustomerName": "Jean Hunter",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070024",
+				"Name": "Everywhere"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "036F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2482,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4813.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Uli Koslowski",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070003",
+				"Name": "Happy Hopping"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03707221A8E4645C17002DF03754AB66",
+			"TravelID": 2738,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "6567.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip for Theresia, Thilo",
+			"CustomerName": "Ida Leisert",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070009",
+				"Name": "Honauer Reisen GmbH"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03717221A8E4645C17002DF03754AB66",
+			"TravelID": 2994,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-05",
+			"BookingFee": "60.000",
+			"TotalPrice": "14628.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation to Italy",
+			"CustomerName": "Johannes Henry",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070021",
+				"Name": "Special Agency Peru"
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03727221A8E4645C17002DF03754AB66",
+			"TravelID": 3250,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "3281.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Anne-Marie Koslowski",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070049",
+				"Name": "Miles and More"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03737221A8E4645C17002DF03754AB66",
+			"TravelID": 3506,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "2920.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Sightseeing in Tokyo, Honshu",
+			"CustomerName": "Cindy Lindwurm",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070030",
+				"Name": "Trans World Travel"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03747221A8E4645C17002DF03754AB66",
+			"TravelID": 3762,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "10.000",
+			"TotalPrice": "3458.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation to Italy",
+			"CustomerName": "Florian Fischmann",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070021",
+				"Name": "Special Agency Peru"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "03757221A8E4645C17002DF03754AB66",
+			"TravelID": 4018,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "30.000",
+			"TotalPrice": "5096.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Sightseeing in New York City, New York",
+			"CustomerName": "Allen Detemple",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070030",
+				"Name": "Trans World Travel"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04667221A8E4645C17002DF03754AB66",
+			"TravelID": 179,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-05-29",
+			"BookingFee": "90.000",
+			"TotalPrice": "36048.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Sightseeing in Singapore",
+			"CustomerName": "Horst Babilon",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070027",
+				"Name": "Fly Low"
+			},
+			"to_Booking@odata.count": "9",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04677221A8E4645C17002DF03754AB66",
+			"TravelID": 435,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-06-01",
+			"BookingFee": "60.000",
+			"TotalPrice": "906.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation for Stephen, Lee, Guenther,",
+			"CustomerName": "Guillermo Dumbach",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070012",
+				"Name": "Ben McCloskey Ltd."
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04687221A8E4645C17002DF03754AB66",
+			"TravelID": 691,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "8890.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Sightseeing in San Francisco, California",
+			"CustomerName": "Volker Miguel",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070029",
+				"Name": "Up 'n' Away"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04697221A8E4645C17002DF03754AB66",
+			"TravelID": 947,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "6680.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Sightseeing in Frankfurt/Main",
+			"CustomerName": "Achim Moyano",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070030",
+				"Name": "Trans World Travel"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "046A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1203,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "30.000",
+			"TotalPrice": "18792.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip for Georg, Jean-Luc, Jean",
+			"CustomerName": "Andreas Vrsic",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070009",
+				"Name": "Honauer Reisen GmbH"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "046B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1459,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "30.000",
+			"TotalPrice": "6023.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation to Japan",
+			"CustomerName": "Friedrich Marshall",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070022",
+				"Name": "Caribian Dreams"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "046C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1715,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "20.000",
+			"TotalPrice": "9233.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Visiting Uli",
+			"CustomerName": "Kurt Benjamin",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070031",
+				"Name": "Bright Side of Life"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "046D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1971,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "4404.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip",
+			"CustomerName": "Sophie Delon",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070039",
+				"Name": "Rainy, Stormy, Cloudy"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "046E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2227,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "20.000",
+			"TotalPrice": "4905.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Lothar Lautenbach",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070046",
+				"Name": "Hendrik's"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "046F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2483,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4733.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Business Trip",
+			"CustomerName": "Horst Hunter",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070038",
+				"Name": "Cap Travels Ltd."
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04707221A8E4645C17002DF03754AB66",
+			"TravelID": 2739,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "3292.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Stephen Hoffen",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070046",
+				"Name": "Hendrik's"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04717221A8E4645C17002DF03754AB66",
+			"TravelID": 2995,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "30.000",
+			"TotalPrice": "7563.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Achim Moyano",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070004",
+				"Name": "Pink Panther"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04727221A8E4645C17002DF03754AB66",
+			"TravelID": 3251,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "3264.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to Germany",
+			"CustomerName": "Adam Heller",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070017",
+				"Name": "Super Agency"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04737221A8E4645C17002DF03754AB66",
+			"TravelID": 3507,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "2920.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Business Trip to Japan",
+			"CustomerName": "Claire Cesari",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070020",
+				"Name": "No Return"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04747221A8E4645C17002DF03754AB66",
+			"TravelID": 3763,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "10.000",
+			"TotalPrice": "3548.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to Italy",
+			"CustomerName": "Astrid Detemple",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070020",
+				"Name": "No Return"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "04757221A8E4645C17002DF03754AB66",
+			"TravelID": 4019,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "10.000",
+			"TotalPrice": "1676.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Business Trip to USA",
+			"CustomerName": "Horst Goelke",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070018",
+				"Name": "Wang Chong"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05667221A8E4645C17002DF03754AB66",
+			"TravelID": 180,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2023-08-02",
+			"BookingFee": "30.000",
+			"TotalPrice": "13052.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation",
+			"CustomerName": "Thomas Miguel",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070004",
+				"Name": "Pink Panther"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05677221A8E4645C17002DF03754AB66",
+			"TravelID": 436,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-06-01",
+			"BookingFee": "40.000",
+			"TotalPrice": "633.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Vacation for Astrid, Sophie,",
+			"CustomerName": "Sophie Neubasler",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070012",
+				"Name": "Ben McCloskey Ltd."
+			},
+			"to_Booking@odata.count": "4",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05687221A8E4645C17002DF03754AB66",
+			"TravelID": 692,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "4431.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Sightseeing in San Francisco, California",
+			"CustomerName": "Theresia Simonen",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070028",
+				"Name": "Aussie Travel"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05697221A8E4645C17002DF03754AB66",
+			"TravelID": 948,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "10.000",
+			"TotalPrice": "3302.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Thomas Picard",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070005",
+				"Name": "Your Choice"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "056A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1204,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "10.000",
+			"TotalPrice": "6230.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation",
+			"CustomerName": "Simon Heller",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070047",
+				"Name": "All British Air Planes"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "056B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1460,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4011.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation",
+			"CustomerName": "August Buchholm",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070046",
+				"Name": "Hendrik's"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "056C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1716,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "20.000",
+			"TotalPrice": "9361.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation for Thilo, Siegfried",
+			"CustomerName": "Thilo Neubasler",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070014",
+				"Name": "Kangeroos"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "056D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1972,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "4260.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Visiting Andreas",
+			"CustomerName": "Friedrich Schneider",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070033",
+				"Name": "Fly & Smile"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "056E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2228,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "20.000",
+			"TotalPrice": "4975.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Visiting Andrej",
+			"CustomerName": "Jean Detemple",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070032",
+				"Name": "Sunny, Sunny, Sunny"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "056F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2484,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4755.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Business Trip for Florian, Achim",
+			"CustomerName": "Siegfried Benjamin",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070010",
+				"Name": "Travel from Walldorf"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05707221A8E4645C17002DF03754AB66",
+			"TravelID": 2740,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "6697.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to USA",
+			"CustomerName": "Peter Kramer",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070017",
+				"Name": "Super Agency"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05717221A8E4645C17002DF03754AB66",
+			"TravelID": 2996,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-05",
+			"BookingFee": "60.000",
+			"TotalPrice": "14827.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Business Trip to Italy",
+			"CustomerName": "Adam Buchholm",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070020",
+				"Name": "No Return"
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05727221A8E4645C17002DF03754AB66",
+			"TravelID": 3252,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "30.000",
+			"TotalPrice": "4876.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation for Holm, Christoph, Achim",
+			"CustomerName": "Christoph Waldmann",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070015",
+				"Name": "Bavarian Castle"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05737221A8E4645C17002DF03754AB66",
+			"TravelID": 3508,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "5834.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Achim Sisko",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070046",
+				"Name": "Hendrik's"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05747221A8E4645C17002DF03754AB66",
+			"TravelID": 3764,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "20.000",
+			"TotalPrice": "6960.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Guenther Madeira",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070045",
+				"Name": "Submit and Return"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "05757221A8E4645C17002DF03754AB66",
+			"TravelID": 4020,
+			"BeginDate": "2024-05-30",
+			"EndDate": "2024-05-30",
+			"BookingFee": "10.000",
+			"TotalPrice": "1672.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Business Trip for Jean",
+			"CustomerName": "Dominik Benz",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070009",
+				"Name": "Honauer Reisen GmbH"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06667221A8E4645C17002DF03754AB66",
+			"TravelID": 181,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-05-29",
+			"BookingFee": "60.000",
+			"TotalPrice": "24266.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation to Singapore",
+			"CustomerName": "Peter Kramer",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070021",
+				"Name": "Special Agency Peru"
+			},
+			"to_Booking@odata.count": "6",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06677221A8E4645C17002DF03754AB66",
+			"TravelID": 437,
+			"BeginDate": "2023-08-02",
+			"EndDate": "2024-06-01",
+			"BookingFee": "20.000",
+			"TotalPrice": "313.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Business Trip",
+			"CustomerName": "Jean-Luc Gahl",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070040",
+				"Name": "Women only"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06687221A8E4645C17002DF03754AB66",
+			"TravelID": 693,
+			"BeginDate": "2023-08-01",
+			"EndDate": "2023-08-01",
+			"BookingFee": "30.000",
+			"TotalPrice": "13483.000",
+			"CurrencyCode_code": "USD",
+			"Description": "Sightseeing in San Francisco, California",
+			"CustomerName": "Hendrik Prinz",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070030",
+				"Name": "Trans World Travel"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06697221A8E4645C17002DF03754AB66",
+			"TravelID": 949,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "6783.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Fabio Fischer",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070005",
+				"Name": "Your Choice"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "066A7221A8E4645C17002DF03754AB66",
+			"TravelID": 1205,
+			"BeginDate": "2023-08-03",
+			"EndDate": "2023-08-03",
+			"BookingFee": "10.000",
+			"TotalPrice": "6238.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Vacation",
+			"CustomerName": "Friedrich Heller",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070002",
+				"Name": "Fly High"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "066B7221A8E4645C17002DF03754AB66",
+			"TravelID": 1461,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "20.000",
+			"TotalPrice": "4013.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Business Trip to Japan",
+			"CustomerName": "Dominik Illner",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070017",
+				"Name": "Super Agency"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "066C7221A8E4645C17002DF03754AB66",
+			"TravelID": 1717,
+			"BeginDate": "2024-05-27",
+			"EndDate": "2024-05-27",
+			"BookingFee": "20.000",
+			"TotalPrice": "9503.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Sophie Heller",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070042",
+				"Name": "The Ultimate Answer"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "066D7221A8E4645C17002DF03754AB66",
+			"TravelID": 1973,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "1440.000",
+			"CurrencyCode_code": "SGD",
+			"Description": "Visiting Theresia",
+			"CustomerName": "Sophie Gahl",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070032",
+				"Name": "Sunny, Sunny, Sunny"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "066E7221A8E4645C17002DF03754AB66",
+			"TravelID": 2229,
+			"BeginDate": "2024-05-31",
+			"EndDate": "2024-05-31",
+			"BookingFee": "20.000",
+			"TotalPrice": "4930.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Ulla Columbo",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070042",
+				"Name": "The Ultimate Answer"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "066F7221A8E4645C17002DF03754AB66",
+			"TravelID": 2485,
+			"BeginDate": "2023-08-05",
+			"EndDate": "2023-08-05",
+			"BookingFee": "30.000",
+			"TotalPrice": "7169.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Vacation",
+			"CustomerName": "Kurt Kreiss",
+			"TravelStatus": {
+				"name": "Canceled",
+				"code": "X"
+			},
+			"to_Agency": {
+				"AgencyID": "070005",
+				"Name": "Your Choice"
+			},
+			"to_Booking@odata.count": "3",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06707221A8E4645C17002DF03754AB66",
+			"TravelID": 2741,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "3364.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Irene Illner",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070004",
+				"Name": "Pink Panther"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06717221A8E4645C17002DF03754AB66",
+			"TravelID": 2997,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-05",
+			"BookingFee": "40.000",
+			"TotalPrice": "9999.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation",
+			"CustomerName": "Anneliese Henry",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070047",
+				"Name": "All British Air Planes"
+			},
+			"to_Booking@odata.count": "4",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06727221A8E4645C17002DF03754AB66",
+			"TravelID": 3253,
+			"BeginDate": "2023-08-04",
+			"EndDate": "2023-08-04",
+			"BookingFee": "20.000",
+			"TotalPrice": "3317.000",
+			"CurrencyCode_code": "EUR",
+			"Description": "Vacation to Germany",
+			"CustomerName": "Ruth Cesari",
+			"TravelStatus": {
+				"name": "Open",
+				"code": "O"
+			},
+			"to_Agency": {
+				"AgencyID": "070025",
+				"Name": "Happy Holiday"
+			},
+			"to_Booking@odata.count": "2",
+			"to_Booking": []
+		},
+		{
+			"TravelUUID": "06737221A8E4645C17002DF03754AB66",
+			"TravelID": 3509,
+			"BeginDate": "2024-06-01",
+			"EndDate": "2024-06-01",
+			"BookingFee": "10.000",
+			"TotalPrice": "3011.000",
+			"CurrencyCode_code": "JPY",
+			"Description": "Visiting Astrid",
+			"CustomerName": "Harish Trensch",
+			"TravelStatus": {
+				"name": "Accepted",
+				"code": "A"
+			},
+			"to_Agency": {
+				"AgencyID": "070035",
+				"Name": "Hitchhiker"
+			},
+			"to_Booking@odata.count": "1",
+			"to_Booking": []
+		}
+	]
+}

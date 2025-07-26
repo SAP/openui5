@@ -1806,23 +1806,11 @@ sap.ui.define([
 			this._oDataProviderFactory.destroy();
 		}
 
-		const oMainCard = this._getMainCard();
-		let oDestinationsCard = this,
-			oDestinationsConfiguration;
-
-		if (this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS)) {
-			oDestinationsConfiguration = this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS);
-		} else if (oMainCard && oMainCard.getManifestEntry(MANIFEST_PATHS.DESTINATIONS)) {
-			oDestinationsCard = oMainCard;
-			oDestinationsConfiguration = oMainCard.getManifestEntry(MANIFEST_PATHS.DESTINATIONS);
-		}
-
 		this._oDestinations = new Destinations({
 			host: this.getHostInstance(),
-			card: oDestinationsCard,
-			configuration: oDestinationsConfiguration
+			card: this,
+			manifestConfig: this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS)
 		});
-
 		this._oIconFormatter = new IconFormatter({
 			card: this
 		});
@@ -3206,7 +3194,7 @@ sap.ui.define([
 	 * Gets the card which has opened this one if any.
 	 * @private
 	 * @ui5-restricted
-	 * @returns {sap.ui.integration.widgets.CardFacade|null} The card which opened the current one.
+	 * @returns {sap.ui.integration.widgets.Card} The card which opened the current one.
 	 */
 	Card.prototype.getOpener = function () {
 		var oOpener = Element.getElementById(this.getAssociation("openerReference"));
@@ -3406,16 +3394,6 @@ sap.ui.define([
 	 */
 	Card.prototype.isDataReady = function () {
 		return !!this._bDataReady;
-	};
-
-	Card.prototype._getMainCard = function () {
-		let oParentCard = Element.getElementById(this.getAssociation("openerReference"));
-
-		while (oParentCard && oParentCard.getAssociation("openerReference")) {
-			oParentCard = Element.getElementById(this.getAssociation("openerReference"));
-		}
-
-		return oParentCard || this;
 	};
 
 	return Card;

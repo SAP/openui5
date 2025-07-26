@@ -1,0 +1,97 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.Travel_CAP.Main"
+	xmlns="sap.ui.table"
+	xmlns:core="sap.ui.core"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<Table id="table" ariaLabelledBy="title"
+		rows="{path : '/Travels', parameters : {$count : true}}" selectionMode="None">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="{$count} Travels"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive minRowCount="2"/>
+		</rowMode>
+		<Column hAlign="End" sortProperty="TravelID" width="5em">
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{TravelID}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="CustomerName" width="10em">
+			<m:Label text="Customer Name"/>
+			<template>
+				<m:Text text="{CustomerName}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="Description" width="20em">
+			<m:Label text="Description"/>
+			<template>
+				<m:Text text="{Description}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="BeginDate" width="7em">
+			<m:Label text="Begin"/>
+			<template>
+				<m:Text text="{BeginDate}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="EndDate" width="7em">
+			<m:Label text="End"/>
+			<template>
+				<m:Text text="{EndDate}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="to_Agency/Name" width="10em">
+			<m:Label text="Travel Agency"/>
+			<template>
+				<m:Text text="{to_Agency/Name}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="TravelStatus/name" width="10em">
+			<m:Label text="Travel Status"/>
+			<template>
+				<m:Text text="{TravelStatus/name}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column hAlign="End" sortProperty="BookingFee" width="7em">
+			<m:Label text="Booking Fee"/>
+			<template>
+				<m:Text text="{
+					parts : ['BookingFee', 'CurrencyCode_code', {
+						mode : 'OneTime',
+						path : '/##@@requestCurrencyCodes',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Currency',
+					formatOptions : { showMeasure : false }
+				}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column hAlign="End" sortProperty="TotalPrice" width="7em">
+			<m:Label text="Total Price"/>
+			<template>
+				<m:Text text="{
+					parts : ['TotalPrice', 'CurrencyCode_code', {
+						mode : 'OneTime',
+						path : '/##@@requestCurrencyCodes',
+						targetType : 'any'
+					}],
+					type : 'sap.ui.model.odata.type.Currency',
+					formatOptions : { showMeasure : false }
+				}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column sortProperty="to_Booking/$count" width="7em">
+			<m:Label text="No. Of Bookings"/>
+			<template>
+				<m:Text text="{to_Booking/$count}" wrapping="false"/>
+			</template>
+		</Column>
+	</Table>
+</mvc:View>
