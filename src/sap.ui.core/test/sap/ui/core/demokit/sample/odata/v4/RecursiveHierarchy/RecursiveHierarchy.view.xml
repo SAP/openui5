@@ -6,7 +6,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:rm="sap.ui.table.rowmodes">
 
-	<Table id="table" ariaLabelledBy="title"
+	<Table ariaLabelledBy="title" id="table"
 		rows="{
 				path : '/EMPLOYEES',
 				parameters : {
@@ -19,7 +19,7 @@
 			}"
 		selectionMode="None">
 		<extension>
-			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+			<m:Toolbar class="sapMTBHeader-CTX" design="Transparent">
 				<m:Title id="title" level="H1"
 					text="Organizational Chart: {header>$count} Employees ({header>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
@@ -36,7 +36,7 @@
 			</m:Toolbar>
 		</extension>
 		<rowMode>
-			<rm:Interactive rowCount="5" minRowCount="2"/>
+			<rm:Interactive minRowCount="2" rowCount="5"/>
 		</rowMode>
 		<rowSettingsTemplate>
 			<RowSettings highlight="{= %{@$ui5.context.isTransient} === undefined ? 'None' : 'Information' }"/>
@@ -77,7 +77,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input id="name" value="{Name}" change=".onNameChanged"/>
+				<m:Input change=".onNameChanged" id="name" value="{Name}"/>
 			</template>
 		</Column>
 		<Column>
@@ -129,17 +129,17 @@
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://delete"
 						press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
-						icon="sap-icon://expand-group" press=".onExpandAll"
-						id="expandAll" tooltip="Expand All"/>
+						icon="sap-icon://expand-group" id="expandAll" press=".onExpandAll"
+						tooltip="Expand All"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true}"
-						icon="sap-icon://collapse-group" press=".onCollapseAll"
-						id="collapseAll" tooltip="Collapse All"/>
+						icon="sap-icon://collapse-group" id="collapseAll" press=".onCollapseAll"
+						tooltip="Collapse All"/>
 				</m:FlexBox>
 			</template>
 		</Column>
 	</Table>
 
-	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
+	<TreeTable ariaLabelledBy="treeTitle" id="treeTable"
 		rows="{
 				path : '/EMPLOYEES',
 				parameters : {
@@ -152,7 +152,7 @@
 			}"
 		selectionMode="None">
 		<extension>
-			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+			<m:Toolbar class="sapMTBHeader-CTX" design="Transparent">
 				<m:Title id="treeTitle" level="H1"
 					text="Organizational Chart - TreeTable: {treeHeader>$count} Employees ({treeHeader>$selectionCount} selected)"/>
 				<m:ToolbarSpacer/>
@@ -172,7 +172,7 @@
 			</m:Toolbar>
 		</extension>
 		<rowMode>
-			<rm:Interactive rowCount="5" minRowCount="2"/>
+			<rm:Interactive minRowCount="2" rowCount="5"/>
 		</rowMode>
 		<rowSettingsTemplate>
 			<RowSettings highlight="{= %{@$ui5.context.isTransient} === undefined ? 'None' : 'Information' }"/>
@@ -198,7 +198,7 @@
 		<Column>
 			<m:Label text="Name"/>
 			<template>
-				<m:Input id="nameInTreeTable" value="{Name}" change=".onNameChanged"/>
+				<m:Input change=".onNameChanged" id="nameInTreeTable" value="{Name}"/>
 			</template>
 		</Column>
 		<Column>
@@ -250,11 +250,11 @@
 					<m:Button enabled="{= %{STATUS} !== 'Out' }" icon="sap-icon://delete"
 						press=".onDelete" tooltip="Delete"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined }"
-						icon="sap-icon://expand-group" press=".onExpandAll"
-						id="expandAllTreeTable" tooltip="Expand All"/>
+						icon="sap-icon://expand-group" id="expandAllTreeTable"
+						press=".onExpandAll" tooltip="Expand All"/>
 					<m:Button enabled="{= %{@$ui5.node.isExpanded} === true }"
-						icon="sap-icon://collapse-group" press=".onCollapseAll"
-						id="collapseAllTreeTable" tooltip="Collapse All"/>
+						icon="sap-icon://collapse-group" id="collapseAllTreeTable"
+						press=".onCollapseAll" tooltip="Collapse All"/>
 				</m:FlexBox>
 			</template>
 		</Column>
@@ -275,5 +275,5 @@
 			&lt;li> &lt;code>firstVisibleRow&lt;/code> A number; default 0
 			&lt;li> &lt;code>threshold&lt;/code> A number; default 0
 			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 5
-			&lt;li> &lt;code>TreeTable&lt;/code> Y for yes, N for no; default is both tables"/>
+			&lt;li> &lt;code>TreeTable&lt;/code> Y for yes, N for no, 'both' for both; default is Y"/>
 </mvc:View>

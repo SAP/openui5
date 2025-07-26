@@ -1,0 +1,2359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Aggregation.V1.xml">
+		<edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Analytics.xml">
+		<edmx:Include Alias="Analytics" Namespace="com.sap.vocabularies.Analytics.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+		<edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+		<edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+		<edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/HTML5.xml">
+		<edmx:Include Alias="HTML5" Namespace="com.sap.vocabularies.HTML5.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Measures.V1.xml">
+		<edmx:Include Alias="Measures" Namespace="Org.OData.Measures.V1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Validation.V1.xml">
+		<edmx:Include Alias="Validation" Namespace="Org.OData.Validation.V1"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="AnalyticsService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+			<EntityContainer Name="EntityContainer">
+				<EntitySet Name="Bookings" EntityType="AnalyticsService.Bookings">
+					<NavigationPropertyBinding Path="to_Travel" Target="Travels"/>
+					<NavigationPropertyBinding Path="to_Carrier" Target="Airline"/>
+					<NavigationPropertyBinding Path="to_Flight" Target="Flight"/>
+				</EntitySet>
+				<EntitySet Name="BookingStatus" EntityType="AnalyticsService.BookingStatus">
+					<NavigationPropertyBinding Path="texts" Target="BookingStatus_texts"/>
+					<NavigationPropertyBinding Path="localized" Target="BookingStatus_texts"/>
+				</EntitySet>
+				<EntitySet Name="Travels" EntityType="AnalyticsService.Travels">
+					<NavigationPropertyBinding Path="CurrencyCode" Target="Currencies"/>
+					<NavigationPropertyBinding Path="TravelStatus" Target="TravelStatus"/>
+					<NavigationPropertyBinding Path="to_Agency" Target="TravelAgency"/>
+					<NavigationPropertyBinding Path="to_Customer" Target="Passenger"/>
+					<NavigationPropertyBinding Path="to_Booking" Target="Bookings"/>
+				</EntitySet>
+				<EntitySet Name="Airline" EntityType="AnalyticsService.Airline">
+					<NavigationPropertyBinding Path="CurrencyCode" Target="Currencies"/>
+				</EntitySet>
+				<EntitySet Name="Flight" EntityType="AnalyticsService.Flight">
+					<NavigationPropertyBinding Path="CurrencyCode" Target="Currencies"/>
+					<NavigationPropertyBinding Path="to_Airline" Target="Airline"/>
+					<NavigationPropertyBinding Path="to_Connection" Target="FlightConnection"/>
+				</EntitySet>
+				<EntitySet Name="Currencies" EntityType="AnalyticsService.Currencies">
+					<NavigationPropertyBinding Path="texts" Target="Currencies_texts"/>
+					<NavigationPropertyBinding Path="localized" Target="Currencies_texts"/>
+				</EntitySet>
+				<EntitySet Name="TravelStatus" EntityType="AnalyticsService.TravelStatus">
+					<NavigationPropertyBinding Path="texts" Target="TravelStatus_texts"/>
+					<NavigationPropertyBinding Path="localized" Target="TravelStatus_texts"/>
+				</EntitySet>
+				<EntitySet Name="TravelAgency" EntityType="AnalyticsService.TravelAgency">
+					<NavigationPropertyBinding Path="CountryCode" Target="Countries"/>
+				</EntitySet>
+				<EntitySet Name="Passenger" EntityType="AnalyticsService.Passenger">
+					<NavigationPropertyBinding Path="CountryCode" Target="Countries"/>
+				</EntitySet>
+				<EntitySet Name="FlightConnection" EntityType="AnalyticsService.FlightConnection">
+					<NavigationPropertyBinding Path="DepartureAirport" Target="Airport"/>
+					<NavigationPropertyBinding Path="DestinationAirport" Target="Airport"/>
+					<NavigationPropertyBinding Path="to_Airline" Target="Airline"/>
+				</EntitySet>
+				<EntitySet Name="Countries" EntityType="AnalyticsService.Countries">
+					<NavigationPropertyBinding Path="texts" Target="Countries_texts"/>
+					<NavigationPropertyBinding Path="localized" Target="Countries_texts"/>
+				</EntitySet>
+				<EntitySet Name="Airport" EntityType="AnalyticsService.Airport">
+					<NavigationPropertyBinding Path="CountryCode" Target="Countries"/>
+				</EntitySet>
+				<EntitySet Name="BookingStatus_texts" EntityType="AnalyticsService.BookingStatus_texts"/>
+				<EntitySet Name="Currencies_texts" EntityType="AnalyticsService.Currencies_texts"/>
+				<EntitySet Name="TravelStatus_texts" EntityType="AnalyticsService.TravelStatus_texts"/>
+				<EntitySet Name="Countries_texts" EntityType="AnalyticsService.Countries_texts"/>
+			</EntityContainer>
+			<EntityType Name="Bookings">
+				<Key>
+					<PropertyRef Name="ID"/>
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"/>
+				<Property Name="TravelID" Type="Edm.Int32" DefaultValue="0"/>
+				<Property Name="BookingID" Type="Edm.Int32"/>
+				<Property Name="CombinedID" Type="Edm.String"/>
+				<Property Name="ConnectionID" Type="Edm.String" MaxLength="4"/>
+				<Property Name="FlightDate" Type="Edm.Date"/>
+				<Property Name="CurrencyCode_code" Type="Edm.String" MaxLength="3"/>
+				<Property Name="FlightPrice" Type="Edm.Decimal" Precision="16" Scale="3"/>
+				<Property Name="status" Type="Edm.String" MaxLength="1"/>
+				<Property Name="statusName" Type="Edm.String" MaxLength="255"/>
+				<Property Name="airline" Type="Edm.String" MaxLength="3"/>
+				<Property Name="airlineName" Type="Edm.String" MaxLength="40"/>
+				<Property Name="BookingDate" Type="Edm.Date"/>
+				<NavigationProperty Name="to_Travel" Type="AnalyticsService.Travels" Partner="to_Booking">
+					<ReferentialConstraint Property="to_Travel_TravelUUID" ReferencedProperty="TravelUUID"/>
+				</NavigationProperty>
+				<Property Name="to_Travel_TravelUUID" Type="Edm.String"/>
+				<NavigationProperty Name="to_Carrier" Type="AnalyticsService.Airline">
+					<ReferentialConstraint Property="to_Carrier_AirlineID" ReferencedProperty="AirlineID"/>
+				</NavigationProperty>
+				<Property Name="to_Carrier_AirlineID" Type="Edm.String" MaxLength="3"/>
+				<NavigationProperty Name="to_Flight" Type="AnalyticsService.Flight">
+					<ReferentialConstraint Property="airline" ReferencedProperty="AirlineID"/>
+					<ReferentialConstraint Property="FlightDate" ReferencedProperty="FlightDate"/>
+					<ReferentialConstraint Property="ConnectionID" ReferencedProperty="ConnectionID"/>
+				</NavigationProperty>
+				<Property Name="PlaneType" Type="Edm.String" MaxLength="10"/>
+				<Property Name="Distance" Type="Edm.Int32"/>
+				<Property Name="DistanceUnit" Type="Edm.String" MaxLength="3"/>
+				<Property Name="DepAirport" Type="Edm.String" MaxLength="3"/>
+				<Property Name="DepCity" Type="Edm.String" MaxLength="40"/>
+				<Property Name="DestAirport" Type="Edm.String" MaxLength="3"/>
+				<Property Name="DestCity" Type="Edm.String" MaxLength="40"/>
+			</EntityType>
+			<EntityType Name="BookingStatus">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="1" Nullable="false"/>
+				<NavigationProperty Name="texts" Type="Collection(AnalyticsService.BookingStatus_texts)">
+					<OnDelete Action="Cascade"/>
+				</NavigationProperty>
+				<NavigationProperty Name="localized" Type="AnalyticsService.BookingStatus_texts">
+					<ReferentialConstraint Property="code" ReferencedProperty="code"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="Travels">
+				<Key>
+					<PropertyRef Name="TravelUUID"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="LastChangedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="LastChangedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="TravelUUID" Type="Edm.String" Nullable="false"/>
+				<Property Name="TravelID" Type="Edm.Int32" DefaultValue="0"/>
+				<Property Name="BeginDate" Type="Edm.Date"/>
+				<Property Name="EndDate" Type="Edm.Date"/>
+				<Property Name="BookingFee" Type="Edm.Decimal" Precision="16" Scale="3"/>
+				<Property Name="TotalPrice" Type="Edm.Decimal" Precision="16" Scale="3"/>
+				<NavigationProperty Name="CurrencyCode" Type="AnalyticsService.Currencies">
+					<ReferentialConstraint Property="CurrencyCode_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="CurrencyCode_code" Type="Edm.String" MaxLength="3"/>
+				<Property Name="Description" Type="Edm.String" MaxLength="1024"/>
+				<NavigationProperty Name="TravelStatus" Type="AnalyticsService.TravelStatus">
+					<ReferentialConstraint Property="TravelStatus_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="TravelStatus_code" Type="Edm.String" MaxLength="1" DefaultValue="O"/>
+				<NavigationProperty Name="to_Agency" Type="AnalyticsService.TravelAgency">
+					<ReferentialConstraint Property="to_Agency_AgencyID" ReferencedProperty="AgencyID"/>
+				</NavigationProperty>
+				<Property Name="to_Agency_AgencyID" Type="Edm.String" MaxLength="6"/>
+				<NavigationProperty Name="to_Customer" Type="AnalyticsService.Passenger">
+					<ReferentialConstraint Property="to_Customer_CustomerID" ReferencedProperty="CustomerID"/>
+				</NavigationProperty>
+				<Property Name="to_Customer_CustomerID" Type="Edm.String" MaxLength="6"/>
+				<NavigationProperty Name="to_Booking" Type="Collection(AnalyticsService.Bookings)" Partner="to_Travel">
+					<OnDelete Action="Cascade"/>
+				</NavigationProperty>
+				<Property Name="CustomerName" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Airline">
+				<Key>
+					<PropertyRef Name="AirlineID"/>
+				</Key>
+				<Property Name="AirlineID" Type="Edm.String" MaxLength="3" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" MaxLength="40"/>
+				<NavigationProperty Name="CurrencyCode" Type="AnalyticsService.Currencies">
+					<ReferentialConstraint Property="CurrencyCode_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="CurrencyCode_code" Type="Edm.String" MaxLength="3"/>
+				<Property Name="AirlinePicURL" Type="Edm.String"/>
+			</EntityType>
+			<EntityType Name="Flight">
+				<Key>
+					<PropertyRef Name="AirlineID"/>
+					<PropertyRef Name="FlightDate"/>
+					<PropertyRef Name="ConnectionID"/>
+				</Key>
+				<Property Name="AirlineID" Type="Edm.String" MaxLength="3" Nullable="false"/>
+				<Property Name="FlightDate" Type="Edm.Date" Nullable="false"/>
+				<Property Name="ConnectionID" Type="Edm.String" MaxLength="4" Nullable="false"/>
+				<Property Name="Price" Type="Edm.Decimal" Precision="16" Scale="3"/>
+				<NavigationProperty Name="CurrencyCode" Type="AnalyticsService.Currencies">
+					<ReferentialConstraint Property="CurrencyCode_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="CurrencyCode_code" Type="Edm.String" MaxLength="3"/>
+				<Property Name="PlaneType" Type="Edm.String" MaxLength="10"/>
+				<Property Name="MaximumSeats" Type="Edm.Int32"/>
+				<Property Name="OccupiedSeats" Type="Edm.Int32"/>
+				<NavigationProperty Name="to_Airline" Type="AnalyticsService.Airline">
+					<ReferentialConstraint Property="AirlineID" ReferencedProperty="AirlineID"/>
+				</NavigationProperty>
+				<NavigationProperty Name="to_Connection" Type="AnalyticsService.FlightConnection">
+					<ReferentialConstraint Property="AirlineID" ReferencedProperty="AirlineID"/>
+					<ReferentialConstraint Property="ConnectionID" ReferencedProperty="ConnectionID"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="Currencies">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+				<Property Name="symbol" Type="Edm.String" MaxLength="5"/>
+				<Property Name="minorUnit" Type="Edm.Int16"/>
+				<Property Name="numcode" Type="Edm.Int32"/>
+				<Property Name="exponent" Type="Edm.Int32"/>
+				<Property Name="minor" Type="Edm.String"/>
+				<NavigationProperty Name="texts" Type="Collection(AnalyticsService.Currencies_texts)">
+					<OnDelete Action="Cascade"/>
+				</NavigationProperty>
+				<NavigationProperty Name="localized" Type="AnalyticsService.Currencies_texts">
+					<ReferentialConstraint Property="code" ReferencedProperty="code"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="TravelStatus">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="1" Nullable="false" DefaultValue="O"/>
+				<Property Name="fieldControl" Type="Edm.Byte"/>
+				<Property Name="createDeleteHidden" Type="Edm.Boolean"/>
+				<Property Name="insertDeleteRestriction" Type="Edm.Boolean"/>
+				<NavigationProperty Name="texts" Type="Collection(AnalyticsService.TravelStatus_texts)">
+					<OnDelete Action="Cascade"/>
+				</NavigationProperty>
+				<NavigationProperty Name="localized" Type="AnalyticsService.TravelStatus_texts">
+					<ReferentialConstraint Property="code" ReferencedProperty="code"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="TravelAgency">
+				<Key>
+					<PropertyRef Name="AgencyID"/>
+				</Key>
+				<Property Name="AgencyID" Type="Edm.String" MaxLength="6" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" MaxLength="80"/>
+				<Property Name="Street" Type="Edm.String" MaxLength="60"/>
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10"/>
+				<Property Name="City" Type="Edm.String" MaxLength="40"/>
+				<NavigationProperty Name="CountryCode" Type="AnalyticsService.Countries">
+					<ReferentialConstraint Property="CountryCode_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="CountryCode_code" Type="Edm.String" MaxLength="3"/>
+				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30"/>
+				<Property Name="EMailAddress" Type="Edm.String" MaxLength="256"/>
+				<Property Name="WebAddress" Type="Edm.String" MaxLength="256"/>
+			</EntityType>
+			<EntityType Name="Passenger">
+				<Key>
+					<PropertyRef Name="CustomerID"/>
+				</Key>
+				<Property Name="createdAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="createdBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="LastChangedAt" Type="Edm.DateTimeOffset" Precision="7"/>
+				<Property Name="LastChangedBy" Type="Edm.String" MaxLength="255"/>
+				<Property Name="CustomerID" Type="Edm.String" MaxLength="6" Nullable="false"/>
+				<Property Name="FirstName" Type="Edm.String" MaxLength="40"/>
+				<Property Name="LastName" Type="Edm.String" MaxLength="40"/>
+				<Property Name="Title" Type="Edm.String" MaxLength="10"/>
+				<Property Name="Street" Type="Edm.String" MaxLength="60"/>
+				<Property Name="PostalCode" Type="Edm.String" MaxLength="10"/>
+				<Property Name="City" Type="Edm.String" MaxLength="40"/>
+				<NavigationProperty Name="CountryCode" Type="AnalyticsService.Countries">
+					<ReferentialConstraint Property="CountryCode_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="CountryCode_code" Type="Edm.String" MaxLength="3"/>
+				<Property Name="PhoneNumber" Type="Edm.String" MaxLength="30"/>
+				<Property Name="EMailAddress" Type="Edm.String" MaxLength="256"/>
+			</EntityType>
+			<EntityType Name="FlightConnection">
+				<Key>
+					<PropertyRef Name="ConnectionID"/>
+					<PropertyRef Name="AirlineID"/>
+				</Key>
+				<Property Name="ConnectionID" Type="Edm.String" MaxLength="4" Nullable="false"/>
+				<Property Name="AirlineID" Type="Edm.String" MaxLength="3" Nullable="false"/>
+				<NavigationProperty Name="DepartureAirport" Type="AnalyticsService.Airport">
+					<ReferentialConstraint Property="DepartureAirport_AirportID" ReferencedProperty="AirportID"/>
+				</NavigationProperty>
+				<Property Name="DepartureAirport_AirportID" Type="Edm.String" MaxLength="3"/>
+				<NavigationProperty Name="DestinationAirport" Type="AnalyticsService.Airport">
+					<ReferentialConstraint Property="DestinationAirport_AirportID" ReferencedProperty="AirportID"/>
+				</NavigationProperty>
+				<Property Name="DestinationAirport_AirportID" Type="Edm.String" MaxLength="3"/>
+				<Property Name="DepartureTime" Type="Edm.TimeOfDay"/>
+				<Property Name="ArrivalTime" Type="Edm.TimeOfDay"/>
+				<Property Name="Distance" Type="Edm.Int32"/>
+				<Property Name="DistanceUnit" Type="Edm.String" MaxLength="3"/>
+				<NavigationProperty Name="to_Airline" Type="AnalyticsService.Airline">
+					<ReferentialConstraint Property="AirlineID" ReferencedProperty="AirlineID"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="Countries">
+				<Key>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+				<NavigationProperty Name="texts" Type="Collection(AnalyticsService.Countries_texts)">
+					<OnDelete Action="Cascade"/>
+				</NavigationProperty>
+				<NavigationProperty Name="localized" Type="AnalyticsService.Countries_texts">
+					<ReferentialConstraint Property="code" ReferencedProperty="code"/>
+				</NavigationProperty>
+			</EntityType>
+			<EntityType Name="Airport">
+				<Key>
+					<PropertyRef Name="AirportID"/>
+				</Key>
+				<Property Name="AirportID" Type="Edm.String" MaxLength="3" Nullable="false"/>
+				<Property Name="Name" Type="Edm.String" MaxLength="40"/>
+				<Property Name="City" Type="Edm.String" MaxLength="40"/>
+				<NavigationProperty Name="CountryCode" Type="AnalyticsService.Countries">
+					<ReferentialConstraint Property="CountryCode_code" ReferencedProperty="code"/>
+				</NavigationProperty>
+				<Property Name="CountryCode_code" Type="Edm.String" MaxLength="3"/>
+			</EntityType>
+			<EntityType Name="BookingStatus_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="1" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="Currencies_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="TravelStatus_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="1" Nullable="false" DefaultValue="O"/>
+			</EntityType>
+			<EntityType Name="Countries_texts">
+				<Key>
+					<PropertyRef Name="locale"/>
+					<PropertyRef Name="code"/>
+				</Key>
+				<Property Name="locale" Type="Edm.String" MaxLength="14" Nullable="false"/>
+				<Property Name="name" Type="Edm.String" MaxLength="255"/>
+				<Property Name="descr" Type="Edm.String" MaxLength="1000"/>
+				<Property Name="code" Type="Edm.String" MaxLength="3" Nullable="false"/>
+			</EntityType>
+			<Annotations Target="AnalyticsService.Bookings">
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="FlightPrice" String="Edm.Decimal"/>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="CurrencyCode_code" String="Edm.String"/>
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record Type="Aggregation.ApplySupportedType">
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>topcount</String>
+								<String>bottomcount</String>
+								<String>identity</String>
+								<String>concat</String>
+								<String>groupby</String>
+								<String>filter</String>
+								<String>search</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="GroupableProperties">
+							<Collection>
+								<PropertyPath>TravelID</PropertyPath>
+								<PropertyPath>BookingID</PropertyPath>
+								<PropertyPath>CombinedID</PropertyPath>
+								<PropertyPath>ConnectionID</PropertyPath>
+								<PropertyPath>FlightDate</PropertyPath>
+								<PropertyPath>CurrencyCode_code</PropertyPath>
+								<PropertyPath>status</PropertyPath>
+								<PropertyPath>airline</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="AggregatableProperties">
+							<Collection>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property" PropertyPath="status"/>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property" PropertyPath="FlightPrice"/>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property" PropertyPath="ID"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.SemanticKey">
+					<Collection>
+						<PropertyPath>ID</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Booking"/>
+				<Annotation Term="Analytics.AggregatedProperty" Qualifier="countBookings">
+					<Record Type="Analytics.AggregatedPropertyType">
+						<PropertyValue Property="Name" String="countBookings"/>
+						<PropertyValue Property="AggregationMethod" String="countdistinct"/>
+						<PropertyValue Property="AggregatableProperty" PropertyPath="ID"/>
+						<Annotation Term="Common.Label" String="Bookings"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Analytics.AggregatedProperty" Qualifier="minPrice">
+					<Record Type="Analytics.AggregatedPropertyType">
+						<PropertyValue Property="Name" String="minPrice"/>
+						<PropertyValue Property="AggregationMethod" String="min"/>
+						<PropertyValue Property="AggregatableProperty" PropertyPath="FlightPrice"/>
+						<Annotation Term="Common.Label" String="Minimal Price"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Analytics.AggregatedProperty" Qualifier="maxPrice">
+					<Record Type="Analytics.AggregatedPropertyType">
+						<PropertyValue Property="Name" String="maxPrice"/>
+						<PropertyValue Property="AggregationMethod" String="max"/>
+						<PropertyValue Property="AggregatableProperty" PropertyPath="FlightPrice"/>
+						<Annotation Term="Common.Label" String="Maximum Price"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Analytics.AggregatedProperty" Qualifier="avgPrice">
+					<Record Type="Analytics.AggregatedPropertyType">
+						<PropertyValue Property="Name" String="avgPrice"/>
+						<PropertyValue Property="AggregationMethod" String="average"/>
+						<PropertyValue Property="AggregatableProperty" PropertyPath="FlightPrice"/>
+						<Annotation Term="Common.Label" String="Average Price"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="TravelID"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+							<Annotation Term="HTML5.CssDefaults">
+								<Record Type="HTML5.CssDefaultsType">
+									<PropertyValue Property="width" String="8em"/>
+								</Record>
+							</Annotation>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="BookingID"/>
+							<PropertyValue Property="Label" String="Booking"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+							<Annotation Term="HTML5.CssDefaults">
+								<Record Type="HTML5.CssDefaultsType">
+									<PropertyValue Property="width" String="8em"/>
+								</Record>
+							</Annotation>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="airline"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+							<Annotation Term="HTML5.CssDefaults">
+								<Record Type="HTML5.CssDefaultsType">
+									<PropertyValue Property="width" String="14em"/>
+								</Record>
+							</Annotation>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ConnectionID"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+							<Annotation Term="HTML5.CssDefaults">
+								<Record Type="HTML5.CssDefaultsType">
+									<PropertyValue Property="width" String="8em"/>
+								</Record>
+							</Annotation>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="FlightDate"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="FlightPrice"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+							<Annotation Term="HTML5.CssDefaults">
+								<Record Type="HTML5.CssDefaultsType">
+									<PropertyValue Property="width" String="12em"/>
+								</Record>
+							</Annotation>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="status"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+							<Annotation Term="HTML5.CssDefaults">
+								<Record Type="HTML5.CssDefaultsType">
+									<PropertyValue Property="width" String="8em"/>
+								</Record>
+							</Annotation>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.Chart">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="Title" String="Bookings"/>
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Column"/>
+						<PropertyValue Property="DynamicMeasures">
+							<Collection>
+								<AnnotationPath>@Analytics.AggregatedProperty#minPrice</AnnotationPath>
+								<AnnotationPath>@Analytics.AggregatedProperty#maxPrice</AnnotationPath>
+								<AnnotationPath>@Analytics.AggregatedProperty#avgPrice</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>airline</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="DynamicMeasure" AnnotationPath="@Analytics.AggregatedProperty#minPrice"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension" PropertyPath="airline"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="GroupBy">
+							<Collection>
+								<PropertyPath>airline</PropertyPath>
+								<PropertyPath>status</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Total">
+							<Collection>
+								<PropertyPath>FlightPrice</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart</AnnotationPath>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="pvAirline">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#chartAirline</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart" Qualifier="chartAirline">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Bar"/>
+						<PropertyValue Property="DynamicMeasures">
+							<Collection>
+								<AnnotationPath>@Analytics.AggregatedProperty#countBookings</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>airline</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="DynamicMeasure" AnnotationPath="@Analytics.AggregatedProperty#countBookings"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension" PropertyPath="airline"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="pvStatus">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#chartStatus</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart" Qualifier="chartStatus">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Bar"/>
+						<PropertyValue Property="DynamicMeasures">
+							<Collection>
+								<AnnotationPath>@Analytics.AggregatedProperty#countBookings</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>status</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="DynamicMeasure" AnnotationPath="@Analytics.AggregatedProperty#countBookings"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension" PropertyPath="status"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="pvFlightDate">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="Common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="FlightDate"/>
+									<PropertyValue Property="Descending" Bool="true"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#chartFlightDate</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart" Qualifier="chartFlightDate">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="Title" String="Bookings over FlightDate"/>
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Line"/>
+						<PropertyValue Property="DynamicMeasures">
+							<Collection>
+								<AnnotationPath>@Analytics.AggregatedProperty#countBookings</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>FlightDate</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="DynamicMeasure" AnnotationPath="@Analytics.AggregatedProperty#countBookings"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension" PropertyPath="FlightDate"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.KPI" Qualifier="myKPI1">
+					<Record Type="UI.KPIType">
+						<PropertyValue Property="DataPoint">
+							<Record Type="UI.DataPointType">
+								<PropertyValue Property="Value" Path="FlightPrice"/>
+								<PropertyValue Property="Title" String="TOT"/>
+								<PropertyValue Property="Description" String="{i18n>Total Price}"/>
+								<PropertyValue Property="CriticalityCalculation">
+									<Record Type="UI.CriticalityCalculationType">
+										<PropertyValue Property="ImprovementDirection" EnumMember="UI.ImprovementDirectionType/Maximize"/>
+										<PropertyValue Property="AcceptanceRangeLowValue" Int="26000000"/>
+										<PropertyValue Property="ToleranceRangeLowValue" Int="24000000"/>
+										<PropertyValue Property="DeviationRangeLowValue" Int="22000000"/>
+									</Record>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Detail">
+							<Record Type="UI.KPIDetailType">
+								<PropertyValue Property="DefaultPresentationVariant">
+									<Record Type="UI.PresentationVariantType">
+										<PropertyValue Property="Visualizations">
+											<Collection>
+												<AnnotationPath>@UI.Chart#kpi1</AnnotationPath>
+											</Collection>
+										</PropertyValue>
+									</Record>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="SelectionVariant">
+							<Record Type="UI.SelectionVariantType">
+								<PropertyValue Property="SelectOptions">
+									<Collection>
+										<Record Type="UI.SelectOptionType">
+											<PropertyValue Property="PropertyName" PropertyPath="FlightPrice"/>
+											<PropertyValue Property="Ranges">
+												<Collection>
+													<Record Type="UI.SelectionRangeType">
+														<PropertyValue Property="Sign" EnumMember="UI.SelectionRangeSignType/E"/>
+														<PropertyValue Property="Option" EnumMember="UI.SelectionRangeOptionType/EQ"/>
+														<PropertyValue Property="Low" Int="0"/>
+													</Record>
+												</Collection>
+											</PropertyValue>
+										</Record>
+									</Collection>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Chart" Qualifier="kpi1">
+					<Record Type="UI.ChartDefinitionType">
+						<PropertyValue Property="ChartType" EnumMember="UI.ChartType/Line"/>
+						<PropertyValue Property="Measures">
+							<Collection>
+								<PropertyPath>FlightPrice</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Dimensions">
+							<Collection>
+								<PropertyPath>FlightDate</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="MeasureAttributes">
+							<Collection>
+								<Record Type="UI.ChartMeasureAttributeType">
+									<PropertyValue Property="Measure" PropertyPath="FlightPrice"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartMeasureRoleType/Axis1"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="DimensionAttributes">
+							<Collection>
+								<Record Type="UI.ChartDimensionAttributeType">
+									<PropertyValue Property="Dimension" PropertyPath="FlightDate"/>
+									<PropertyValue Property="Role" EnumMember="UI.ChartDimensionRoleType/Category"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="CombinedID"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.HeaderInfo">
+					<Record Type="UI.HeaderInfoType">
+						<PropertyValue Property="TypeName" String="Bookings"/>
+						<PropertyValue Property="TypeNamePlural" String="Bookings"/>
+						<PropertyValue Property="Title">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="CombinedID"/>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Description">
+							<Record Type="UI.DataField">
+								<PropertyValue Property="Value" Path="CombinedID"/>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.Facets">
+					<Collection>
+						<Record Type="UI.CollectionFacet">
+							<PropertyValue Property="Label" String="Booking Details"/>
+							<PropertyValue Property="ID" String="Booking"/>
+							<PropertyValue Property="Facets">
+								<Collection>
+									<Record Type="UI.ReferenceFacet">
+										<PropertyValue Property="ID" String="TravelData"/>
+										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#TravelInformation"/>
+										<PropertyValue Property="Label" String="Travel"/>
+									</Record>
+									<Record Type="UI.ReferenceFacet">
+										<PropertyValue Property="ID" String="BookingData"/>
+										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#BookingInformation"/>
+										<PropertyValue Property="Label" String="Booking"/>
+									</Record>
+									<Record Type="UI.ReferenceFacet">
+										<PropertyValue Property="ID" String="FlightData"/>
+										<PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#FlightInformation"/>
+										<PropertyValue Property="Label" String="Flight"/>
+									</Record>
+								</Collection>
+							</PropertyValue>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="TravelInformation">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="to_Travel/TravelID"/>
+									<PropertyValue Property="Label" String="Travel"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="to_Travel/Description"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="to_Travel/to_Agency/Name"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="to_Travel/CustomerName"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="to_Travel/TravelStatus/code"/>
+									<PropertyValue Property="Label" String="Status"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="BookingInformation">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="BookingID"/>
+									<PropertyValue Property="Label" String="Booking ID"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="BookingDate"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="FlightDate"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="FlightPrice"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="status"/>
+									<PropertyValue Property="Label" String="Status"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.FieldGroup" Qualifier="FlightInformation">
+					<Record Type="UI.FieldGroupType">
+						<PropertyValue Property="Data">
+							<Collection>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="airline"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="to_Carrier/AirlinePicURL"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="ConnectionID"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="PlaneType"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="DepAirport"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="DestAirport"/>
+								</Record>
+								<Record Type="UI.DataField">
+									<PropertyValue Property="Value" Path="Distance"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>FlightDate</PropertyPath>
+						<PropertyPath>status</PropertyPath>
+						<PropertyPath>airline</PropertyPath>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/Bookings">
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="FlightPrice" String="Edm.Decimal"/>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="CurrencyCode_code" String="Edm.String"/>
+				<Annotation Term="Aggregation.ApplySupported">
+					<Record Type="Aggregation.ApplySupportedType">
+						<PropertyValue Property="Transformations">
+							<Collection>
+								<String>aggregate</String>
+								<String>topcount</String>
+								<String>bottomcount</String>
+								<String>identity</String>
+								<String>concat</String>
+								<String>groupby</String>
+								<String>filter</String>
+								<String>search</String>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="GroupableProperties">
+							<Collection>
+								<PropertyPath>TravelID</PropertyPath>
+								<PropertyPath>BookingID</PropertyPath>
+								<PropertyPath>CombinedID</PropertyPath>
+								<PropertyPath>ConnectionID</PropertyPath>
+								<PropertyPath>FlightDate</PropertyPath>
+								<PropertyPath>CurrencyCode_code</PropertyPath>
+								<PropertyPath>status</PropertyPath>
+								<PropertyPath>airline</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="AggregatableProperties">
+							<Collection>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property" PropertyPath="status"/>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property" PropertyPath="FlightPrice"/>
+								</Record>
+								<Record Type="Aggregation.AggregatablePropertyType">
+									<PropertyValue Property="Property" PropertyPath="ID"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="GroupBy">
+							<Collection>
+								<PropertyPath>airline</PropertyPath>
+								<PropertyPath>status</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Total">
+							<Collection>
+								<PropertyPath>FlightPrice</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart</AnnotationPath>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="pvAirline">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#chartAirline</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="pvStatus">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#chartStatus</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="pvFlightDate">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="Common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="FlightDate"/>
+									<PropertyValue Property="Descending" Bool="true"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.Chart#chartFlightDate</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.KPI" Qualifier="myKPI1">
+					<Record Type="UI.KPIType">
+						<PropertyValue Property="DataPoint">
+							<Record Type="UI.DataPointType">
+								<PropertyValue Property="Value" Path="FlightPrice"/>
+								<PropertyValue Property="Title" String="TOT"/>
+								<PropertyValue Property="Description" String="{i18n>Total Price}"/>
+								<PropertyValue Property="CriticalityCalculation">
+									<Record Type="UI.CriticalityCalculationType">
+										<PropertyValue Property="ImprovementDirection" EnumMember="UI.ImprovementDirectionType/Maximize"/>
+										<PropertyValue Property="AcceptanceRangeLowValue" Int="26000000"/>
+										<PropertyValue Property="ToleranceRangeLowValue" Int="24000000"/>
+										<PropertyValue Property="DeviationRangeLowValue" Int="22000000"/>
+									</Record>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="Detail">
+							<Record Type="UI.KPIDetailType">
+								<PropertyValue Property="DefaultPresentationVariant">
+									<Record Type="UI.PresentationVariantType">
+										<PropertyValue Property="Visualizations">
+											<Collection>
+												<AnnotationPath>@UI.Chart#kpi1</AnnotationPath>
+											</Collection>
+										</PropertyValue>
+									</Record>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+						<PropertyValue Property="SelectionVariant">
+							<Record Type="UI.SelectionVariantType">
+								<PropertyValue Property="SelectOptions">
+									<Collection>
+										<Record Type="UI.SelectOptionType">
+											<PropertyValue Property="PropertyName" PropertyPath="FlightPrice"/>
+											<PropertyValue Property="Ranges">
+												<Collection>
+													<Record Type="UI.SelectionRangeType">
+														<PropertyValue Property="Sign" EnumMember="UI.SelectionRangeSignType/E"/>
+														<PropertyValue Property="Option" EnumMember="UI.SelectionRangeOptionType/EQ"/>
+														<PropertyValue Property="Low" Int="0"/>
+													</Record>
+												</Collection>
+											</PropertyValue>
+										</Record>
+									</Collection>
+								</PropertyValue>
+							</Record>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/ID">
+				<Annotation Term="UI.Hidden" Bool="false"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/TravelID">
+				<Annotation Term="Common.Text" Path="Description"/>
+				<Annotation Term="Common.Label" String="Travel"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/BookingID">
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Booking ID"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/CombinedID">
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Travel/Booking ID"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/ConnectionID">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Flight"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="to_Carrier_AirlineID"/>
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ConnectionID"/>
+									<PropertyValue Property="ValueListProperty" String="ConnectionID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="FlightDate"/>
+									<PropertyValue Property="ValueListProperty" String="FlightDate"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="FlightPrice"/>
+									<PropertyValue Property="ValueListProperty" String="Price"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="CurrencyCode_code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="to_Airline/Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PlaneType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="MaximumSeats"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="OccupiedSeats"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="PresentationVariantQualifier" String="SortOrderPV"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Flight Number"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/FlightDate">
+				<Annotation Term="Common.ValueList" Qualifier="vlFlightDate">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Bookings"/>
+						<PropertyValue Property="PresentationVariantQualifier" String="pvFlightDate"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="FlightDate"/>
+									<PropertyValue Property="ValueListProperty" String="FlightDate"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Flight"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="to_Carrier_AirlineID"/>
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ConnectionID"/>
+									<PropertyValue Property="ValueListProperty" String="ConnectionID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="FlightDate"/>
+									<PropertyValue Property="ValueListProperty" String="FlightDate"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="FlightPrice"/>
+									<PropertyValue Property="ValueListProperty" String="Price"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="CurrencyCode_code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="to_Airline/Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PlaneType"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="MaximumSeats"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="OccupiedSeats"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Flight Date"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/CurrencyCode_code">
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Currency Code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/FlightPrice">
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode_code"/>
+				<Annotation Term="Common.Label" String="Flight Price"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/status">
+				<Annotation Term="Common.Text" Path="statusName">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+				</Annotation>
+				<Annotation Term="Common.ValueList" Qualifier="vlStatus">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Bookings"/>
+						<PropertyValue Property="PresentationVariantQualifier" String="pvStatus"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="status"/>
+									<PropertyValue Property="ValueListProperty" String="status"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="BookingStatus"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="status"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Booking Status"/>
+				<Annotation Term="Validation.AllowedValues">
+					<Collection>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="New"/>
+							<PropertyValue Property="Value" String="N"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Booked"/>
+							<PropertyValue Property="Value" String="B"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Canceled"/>
+							<PropertyValue Property="Value" String="X"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/statusName">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/airline">
+				<Annotation Term="Common.Text" Path="airlineName"/>
+				<Annotation Term="Common.ValueList" Qualifier="vlAirline">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Bookings"/>
+						<PropertyValue Property="PresentationVariantQualifier" String="pvAirline"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="airline"/>
+									<PropertyValue Property="ValueListProperty" String="airline"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Airline"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="airline"/>
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Airline"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/airlineName">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/BookingDate">
+				<Annotation Term="Common.Label" String="Booking Date"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/to_Travel">
+				<Annotation Term="UI.Hidden" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/to_Travel_TravelUUID">
+				<Annotation Term="UI.Hidden" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/to_Carrier">
+				<Annotation Term="Common.Label" String="Airline"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/to_Carrier_AirlineID">
+				<Annotation Term="Common.Text" Path="to_Carrier/Name"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Airline"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="to_Carrier_AirlineID"/>
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CurrencyCode_code"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Airline"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/PlaneType">
+				<Annotation Term="Common.Label" String="Plane Type"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/Distance">
+				<Annotation Term="Common.Label" String="Distance"/>
+				<Annotation Term="Measures.Unit" Path="DistanceUnit"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/DepAirport">
+				<Annotation Term="Common.Label" String="Departure Airport"/>
+				<Annotation Term="Common.Text" Path="DepCity"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Bookings/DestAirport">
+				<Annotation Term="Common.Label" String="Arrival Airport"/>
+				<Annotation Term="Common.Text" Path="DestCity"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="name"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Core.Description" String="Aspect for a code list with name and description&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-codelist"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus/code">
+				<Annotation Term="Common.Text" Path="name">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+				</Annotation>
+				<Annotation Term="Validation.AllowedValues">
+					<Collection>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="New"/>
+							<PropertyValue Property="Value" String="N"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Booked"/>
+							<PropertyValue Property="Value" String="B"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Canceled"/>
+							<PropertyValue Property="Value" String="X"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels">
+				<Annotation Term="Common.Label" String="Travel"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/Travels">
+				<Annotation Term="Capabilities.FilterRestrictions">
+					<Record Type="Capabilities.FilterRestrictionsType">
+						<PropertyValue Property="FilterExpressionRestrictions">
+							<Collection>
+								<Record Type="Capabilities.FilterExpressionRestrictionType">
+									<PropertyValue Property="Property" PropertyPath="BeginDate"/>
+									<PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+								</Record>
+								<Record Type="Capabilities.FilterExpressionRestrictionType">
+									<PropertyValue Property="Property" PropertyPath="EndDate"/>
+									<PropertyValue Property="AllowedExpressions" String="SingleRange"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/createdAt">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Created On"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/createdBy">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="A user's unique ID"/>
+				<Annotation Term="Common.Label" String="Created By"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/LastChangedAt">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Changed On"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/LastChangedBy">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="A user's unique ID"/>
+				<Annotation Term="Common.Label" String="Changed By"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/TravelUUID">
+				<Annotation Term="UI.Hidden" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/TravelID">
+				<Annotation Term="Common.Label" String="Travel"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/BeginDate">
+				<Annotation Term="Common.Label" String="Starting Date"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/EndDate">
+				<Annotation Term="Common.Label" String="End Date"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/BookingFee">
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode_code"/>
+				<Annotation Term="Common.Label" String="Booking Fee"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/TotalPrice">
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode_code"/>
+				<Annotation Term="Common.Label" String="Total Price"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/CurrencyCode">
+				<Annotation Term="Common.Label" String="Currency"/>
+				<Annotation Term="Core.Description" String="A currency code as specified in ISO 4217"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/CurrencyCode_code">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Currencies"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="descr"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="symbol"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="minor"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.UnitSpecificScale" String="Decimals"/>
+				<Annotation Term="Common.Label" String="Currency"/>
+				<Annotation Term="Core.Description" String="A currency code as specified in ISO 4217"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/Description">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/TravelStatus">
+				<Annotation Term="Common.Label" String="Travel Status"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/TravelStatus_code">
+				<Annotation Term="Common.Text" Path="TravelStatus/name">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+				</Annotation>
+				<Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+				<Annotation Term="Common.Label" String="Travel Status"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="Label" String="Travel Status"/>
+						<PropertyValue Property="CollectionPath" String="TravelStatus"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="TravelStatus_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/to_Agency">
+				<Annotation Term="Common.Label" String="Agency"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/to_Agency_AgencyID">
+				<Annotation Term="Common.Text" Path="to_Agency/Name"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="TravelAgency"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="to_Agency_AgencyID"/>
+									<PropertyValue Property="ValueListProperty" String="AgencyID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Street"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PostalCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="City"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CountryCode_code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PhoneNumber"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="EMailAddress"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="WebAddress"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Agency"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/to_Customer">
+				<Annotation Term="Common.Label" String="Customer"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/to_Customer_CustomerID">
+				<Annotation Term="Common.Text" Path="to_Customer/LastName"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Passenger"/>
+						<PropertyValue Property="Label" String="Customer ID"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="to_Customer_CustomerID"/>
+									<PropertyValue Property="ValueListProperty" String="CustomerID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="FirstName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="LastName"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Title"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Street"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PostalCode"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="City"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CountryCode_code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="PhoneNumber"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="EMailAddress"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Customer"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Travels/CustomerName">
+				<Annotation Term="Common.Label" String="Customer Name"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airline">
+				<Annotation Term="Common.Label" String="Airline"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/Airline">
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airline/AirlineID">
+				<Annotation Term="Common.Text" Path="Name"/>
+				<Annotation Term="Common.Label" String="Airline"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airline/Name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airline/CurrencyCode">
+				<Annotation Term="Common.Label" String="Currency Code"/>
+				<Annotation Term="Core.Description" String="A currency code as specified in ISO 4217"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airline/CurrencyCode_code">
+				<Annotation Term="Common.UnitSpecificScale" String="Decimals"/>
+				<Annotation Term="Common.Label" String="Currency Code"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="Label" String="Currency Code"/>
+						<PropertyValue Property="CollectionPath" String="Currencies"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Core.Description" String="A currency code as specified in ISO 4217"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airline/AirlinePicURL">
+				<Annotation Term="UI.IsImageURL" Bool="true"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight">
+				<Annotation Term="UI.PresentationVariant" Qualifier="SortOrderPV">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="Common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="FlightDate"/>
+									<PropertyValue Property="Descending" Bool="true"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Flight"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/Flight">
+				<Annotation Term="UI.PresentationVariant" Qualifier="SortOrderPV">
+					<Record Type="UI.PresentationVariantType">
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="Common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="FlightDate"/>
+									<PropertyValue Property="Descending" Bool="true"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/AirlineID">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Airline"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="AirlineID"/>
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CurrencyCode"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Airline"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/FlightDate">
+				<Annotation Term="Common.Label" String="Flight Date"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/ConnectionID">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="FlightConnection"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="AirlineID"/>
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="ConnectionID"/>
+									<PropertyValue Property="ValueListProperty" String="ConnectionID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AirlineID_Text"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="DepartureAirport"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="DestinationAirport"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="DepartureTime"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="ArrivalTime"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Distance"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="DistanceUnit"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Flight Number"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/Price">
+				<Annotation Term="Measures.ISOCurrency" Path="CurrencyCode_code"/>
+				<Annotation Term="Common.Label" String="Price"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/CurrencyCode">
+				<Annotation Term="Common.Label" String="Currency Code"/>
+				<Annotation Term="Core.Description" String="A currency code as specified in ISO 4217"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/CurrencyCode_code">
+				<Annotation Term="Common.UnitSpecificScale" String="Decimals"/>
+				<Annotation Term="Common.Label" String="Currency Code"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="Label" String="Currency Code"/>
+						<PropertyValue Property="CollectionPath" String="Currencies"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CurrencyCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Core.Description" String="A currency code as specified in ISO 4217"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/PlaneType">
+				<Annotation Term="Common.Label" String="Plane Type"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/MaximumSeats">
+				<Annotation Term="Common.Label" String="Maximum Seats"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Flight/OccupiedSeats">
+				<Annotation Term="Common.Label" String="Occupied Seats"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="name"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Core.Description" String="Code list for currencies&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#entity-currencies"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies/code">
+				<Annotation Term="Common.Text" Path="name"/>
+				<Annotation Term="Common.Label" String="Currency Code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies/symbol">
+				<Annotation Term="Common.Label" String="Currency Symbol"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies/minorUnit">
+				<Annotation Term="Common.Label" String="Currency Minor Unit Fractions"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="name"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Core.Description" String="Aspect for a code list with name and description&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#aspect-codelist"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus/code">
+				<Annotation Term="Common.Text" Path="name">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+				</Annotation>
+				<Annotation Term="Validation.AllowedValues">
+					<Collection>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Open"/>
+							<PropertyValue Property="Value" String="O"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Accepted"/>
+							<PropertyValue Property="Value" String="A"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Canceled"/>
+							<PropertyValue Property="Value" String="X"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency">
+				<Annotation Term="Common.Label" String="Travel Agency"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/TravelAgency">
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/AgencyID">
+				<Annotation Term="Common.Text" Path="Name"/>
+				<Annotation Term="Common.Label" String="Agency"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/Name">
+				<Annotation Term="Common.Label" String="Agency Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/Street">
+				<Annotation Term="Common.Label" String="Street"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/PostalCode">
+				<Annotation Term="Common.Label" String="Postal Code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/City">
+				<Annotation Term="Common.Label" String="City"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/CountryCode">
+				<Annotation Term="Common.Label" String="Country Code"/>
+				<Annotation Term="Core.Description" String="A country/region code as specified in ISO 3166-1"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/CountryCode_code">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Countries"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CountryCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="descr"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Country Code"/>
+				<Annotation Term="Core.Description" String="A country/region code as specified in ISO 3166-1"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/PhoneNumber">
+				<Annotation Term="Common.Label" String="Phone Number"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/EMailAddress">
+				<Annotation Term="Common.Label" String="EMail Address"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelAgency/WebAddress">
+				<Annotation Term="Common.Label" String="Web Address"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger">
+				<Annotation Term="Common.Label" String="Passenger"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/Passenger">
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/createdAt">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Created On"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/createdBy">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Immutable" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="A user's unique ID"/>
+				<Annotation Term="Common.Label" String="Created By"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/LastChangedAt">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Common.Label" String="Changed On"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/LastChangedBy">
+				<Annotation Term="UI.HiddenFilter" Bool="true"/>
+				<Annotation Term="UI.ExcludeFromNavigationContext" Bool="true"/>
+				<Annotation Term="Core.Computed" Bool="true"/>
+				<Annotation Term="Core.Description" String="A user's unique ID"/>
+				<Annotation Term="Common.Label" String="Changed By"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/CustomerID">
+				<Annotation Term="Common.Text" Path="LastName"/>
+				<Annotation Term="Common.Label" String="Customer"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/FirstName">
+				<Annotation Term="Common.Label" String="First name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/LastName">
+				<Annotation Term="Common.Label" String="Last Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/Title">
+				<Annotation Term="Common.Label" String="Title"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/Street">
+				<Annotation Term="Common.Label" String="Street"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/PostalCode">
+				<Annotation Term="Common.Label" String="Postal Code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/City">
+				<Annotation Term="Common.Label" String="City"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/CountryCode">
+				<Annotation Term="Common.Label" String="Country Code"/>
+				<Annotation Term="Core.Description" String="A country/region code as specified in ISO 3166-1"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/CountryCode_code">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Countries"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CountryCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="descr"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Common.Label" String="Country Code"/>
+				<Annotation Term="Core.Description" String="A country/region code as specified in ISO 3166-1"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/PhoneNumber">
+				<Annotation Term="Common.Label" String="Phone Number"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Passenger/EMailAddress">
+				<Annotation Term="Common.Label" String="EMail Address"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/FlightConnection">
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.FlightConnection/AirlineID">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Airline"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="AirlineID"/>
+									<PropertyValue Property="ValueListProperty" String="CarrierID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AirlineID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CurrencyCode"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.FlightConnection/DepartureAirport_AirportID">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Airport"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="DepartureAirport_AirportID"/>
+									<PropertyValue Property="ValueListProperty" String="Airport_ID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AirportID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="City"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CountryCode"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.FlightConnection/DestinationAirport_AirportID">
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="CollectionPath" String="Airport"/>
+						<PropertyValue Property="Label" String=""/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="DestinationAirport_AirportID"/>
+									<PropertyValue Property="ValueListProperty" String="Airport_ID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="AirportID"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="Name"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="City"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="CountryCode"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.FlightConnection/Distance">
+				<Annotation Term="Common.Label" String="Distance"/>
+				<Annotation Term="Measures.Unit" Path="DistanceUnit"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries">
+				<Annotation Term="UI.Identification">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="name"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Core.Description" String="Code list for countries&#xA;&#xA;See https://cap.cloud.sap/docs/cds/common#entity-countries"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries/code">
+				<Annotation Term="Common.Text" Path="name"/>
+				<Annotation Term="Common.Label" String="Country Code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.EntityContainer/Airport">
+				<Annotation Term="Capabilities.DeleteRestrictions">
+					<Record Type="Capabilities.DeleteRestrictionsType">
+						<PropertyValue Property="Deletable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.InsertRestrictions">
+					<Record Type="Capabilities.InsertRestrictionsType">
+						<PropertyValue Property="Insertable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.UpdateRestrictions">
+					<Record Type="Capabilities.UpdateRestrictionsType">
+						<PropertyValue Property="Updatable" Bool="false"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airport/AirportID">
+				<Annotation Term="Common.Text" Path="City"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airport/CountryCode">
+				<Annotation Term="Common.Label" String="Country/Region"/>
+				<Annotation Term="Core.Description" String="A country/region code as specified in ISO 3166-1"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Airport/CountryCode_code">
+				<Annotation Term="Common.Label" String="Country/Region"/>
+				<Annotation Term="Common.ValueList">
+					<Record Type="Common.ValueListType">
+						<PropertyValue Property="Label" String="Country/Region"/>
+						<PropertyValue Property="CollectionPath" String="Countries"/>
+						<PropertyValue Property="Parameters">
+							<Collection>
+								<Record Type="Common.ValueListParameterInOut">
+									<PropertyValue Property="LocalDataProperty" PropertyPath="CountryCode_code"/>
+									<PropertyValue Property="ValueListProperty" String="code"/>
+								</Record>
+								<Record Type="Common.ValueListParameterDisplayOnly">
+									<PropertyValue Property="ValueListProperty" String="name"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Core.Description" String="A country/region code as specified in ISO 3166-1"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus_texts/locale">
+				<Annotation Term="Common.Label" String="Language Code"/>
+				<Annotation Term="Core.Description" String="Type for a language code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus_texts/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus_texts/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.BookingStatus_texts/code">
+				<Annotation Term="Common.Text" Path="name">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+				</Annotation>
+				<Annotation Term="Validation.AllowedValues">
+					<Collection>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="New"/>
+							<PropertyValue Property="Value" String="N"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Booked"/>
+							<PropertyValue Property="Value" String="B"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Canceled"/>
+							<PropertyValue Property="Value" String="X"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies_texts/locale">
+				<Annotation Term="Common.Label" String="Language Code"/>
+				<Annotation Term="Core.Description" String="Type for a language code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies_texts/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies_texts/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Currencies_texts/code">
+				<Annotation Term="Common.Text" Path="name"/>
+				<Annotation Term="Common.Label" String="Currency Code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus_texts/locale">
+				<Annotation Term="Common.Label" String="Language Code"/>
+				<Annotation Term="Core.Description" String="Type for a language code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus_texts/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus_texts/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.TravelStatus_texts/code">
+				<Annotation Term="Common.Text" Path="name">
+					<Annotation Term="UI.TextArrangement" EnumMember="UI.TextArrangementType/TextOnly"/>
+				</Annotation>
+				<Annotation Term="Validation.AllowedValues">
+					<Collection>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Open"/>
+							<PropertyValue Property="Value" String="O"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Accepted"/>
+							<PropertyValue Property="Value" String="A"/>
+						</Record>
+						<Record Type="Validation.AllowedValue">
+							<Annotation Term="Core.SymbolicName" String="Canceled"/>
+							<PropertyValue Property="Value" String="X"/>
+						</Record>
+					</Collection>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries_texts/locale">
+				<Annotation Term="Common.Label" String="Language Code"/>
+				<Annotation Term="Core.Description" String="Type for a language code"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries_texts/name">
+				<Annotation Term="Common.Label" String="Name"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries_texts/descr">
+				<Annotation Term="Common.Label" String="Description"/>
+			</Annotations>
+			<Annotations Target="AnalyticsService.Countries_texts/code">
+				<Annotation Term="Common.Text" Path="name"/>
+				<Annotation Term="Common.Label" String="Country Code"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

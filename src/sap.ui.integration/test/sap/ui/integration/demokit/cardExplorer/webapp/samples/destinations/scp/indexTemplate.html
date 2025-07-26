@@ -1,4 +1,3 @@
-<!-- This file will be actually loaded and shown in the iframe. "indexTemplate.html" is used just for the code editor -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,15 +9,13 @@
 			src="../../../../../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-on-init="module:sap/ui/core/ComponentSupport"
 			data-sap-ui-resource-roots='{
-				"sap.ui.integration.sample.childCardUsingDestinations": "./"
+				"sap.ui.integration.sample.scp": "./"
 			}'
 	>
 	</script>
-	<script src="./editorOutput.js"></script>
-	<link rel="stylesheet" href="./index.css">
 </head>
 
 <body class="sapUiBody">
-	<div data-sap-ui-component data-name="sap.ui.integration.sample.childCardUsingDestinations" data-id="container" data-settings="{&quot;id&quot; : &quot;destinations&quot;}"></div>
+	<div data-sap-ui-component data-name="sap.ui.integration.sample.scp" data-id="container" data-settings="{&quot;id&quot; : &quot;scp&quot;}"></div>
 	</body>
 </html>
