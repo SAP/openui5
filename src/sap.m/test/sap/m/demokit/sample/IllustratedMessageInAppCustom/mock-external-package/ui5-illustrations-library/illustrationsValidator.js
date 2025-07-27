@@ -156,7 +156,7 @@ class Validator {
         return;
       }
 
-      const [_, setId, size, illustrationId] = match;
+      const [, setId, size, illustrationId] = match;
 
       // Store SetID
       setIds.add(setId);
