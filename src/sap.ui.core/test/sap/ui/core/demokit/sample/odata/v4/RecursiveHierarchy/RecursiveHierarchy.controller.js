@@ -190,6 +190,7 @@ sap.ui.define([
 			const oSelectDialog = this.byId("moveDialog");
 			oSelectDialog.setBindingContext(this._oNode);
 			const oListBinding = oSelectDialog.getBinding("items");
+			oListBinding.filter();
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();
 			} else {
