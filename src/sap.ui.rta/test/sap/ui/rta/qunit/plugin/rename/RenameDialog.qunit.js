@@ -39,11 +39,7 @@ sap.ui.define([
 		const mPropertyBag = {
 			overlay: oOverlay,
 			domRef: oOverlay.getDomRef(),
-			action: {
-				getTextMutators: () => ({
-					getText: () => oOverlay.getElement().getDomRef().innerText
-				})
-			},
+			action: {},
 			...(mCustomPropertyBag || {})
 		};
 		const sNewLabel = await oRenameDialog.openDialogAndHandleRename(mPropertyBag);
@@ -184,7 +180,7 @@ sap.ui.define([
 				});
 		});
 
-		QUnit.test("when custom validators are registered", function(assert) {
+		QUnit.test("when getLabel and custom validators are registered", function(assert) {
 			const oCustomValidator = {
 				validatorFunction(someText) {
 					return someText !== "Invalid";
@@ -192,15 +188,18 @@ sap.ui.define([
 				errorMessage: "Custom error message"
 			};
 			const oAction = {
-				getTextMutators: () => ({
-					getText: () => this.oButton.getDomRef().innerText
-				}),
+				getLabel: () => "My original label",
 				validators: [oCustomValidator]
 			};
 			return openDialog(
 				this.oRenameDialog,
 				this.oButtonOverlay,
 				({ oOkButton, oCancelButton, oInput }) => {
+					assert.strictEqual(
+						oInput.getValue(),
+						"My original label",
+						"then the initial label is retrieved via the designtime"
+					);
 					oInput.setValue("Invalid");
 					oInput.fireLiveChange({ value: "Invalid" });
 					assert.strictEqual(oInput.getValueState(), "Error", "then the input is invalid");

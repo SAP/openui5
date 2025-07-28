@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
+	"sap/ui/dt/ElementUtil",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/util/validateText",
@@ -14,6 +15,7 @@ sap.ui.define([
 	ManagedObject,
 	Element,
 	Fragment,
+	ElementUtil,
 	JSONModel,
 	ResourceModel,
 	validateText,
@@ -62,12 +64,7 @@ sap.ui.define([
 		}
 		const oOverlay = mPropertyBag.overlay;
 		const oElement = oOverlay.getElement();
-		const oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		const oEditableControlDomRef = oDesignTimeMetadata.getAssociatedDomRef(oElement, mPropertyBag.domRef);
-		if (typeof mPropertyBag.action.getTextMutators === "function") {
-			return mPropertyBag.action.getTextMutators(oElement).getText();
-		}
-		return oEditableControlDomRef.textContent;
+		return ElementUtil.getLabelForElement(oElement, mPropertyBag.action.getLabel);
 	}
 
 	/**

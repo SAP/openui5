@@ -39,16 +39,6 @@ sap.ui.define([
 								domRef: function(oControl) { // mandatory
 									return oControl.$();
 								},
-								getTextMutators: function(oControl) { // optional
-									return {
-										getText: function() {
-											return oControl.getDomRef().textContent;
-										},
-										setText: function(sNewText) {
-											oControl.getDomRef().textContent = sNewText;
-										}
-									};
-								},
 								CAUTION_variantIndependent: true
 							},
 							remove: null,

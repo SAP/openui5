@@ -22,16 +22,6 @@ sap.ui.define([],
 					changeType: "rename",
 					domRef: function (oControl) {
 						return oControl.getDomRef()._getRealDomRef().querySelector(".ui5-tab-strip-itemText");
-					},
-					getTextMutators: function (oControl) {
-						return {
-							getText: function () {
-								return oControl.getText();
-							},
-							setText: function (sNewText) {
-								oControl.setText(sNewText);
-							}
-						};
 					}
 				}
 			}

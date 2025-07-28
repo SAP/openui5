@@ -427,21 +427,17 @@ sap.ui.define([
 			assert.ok(this.oLayoutOverlay.getSelected(), "then the overlay is still selected after the rename");
 		});
 
-		QUnit.test("when the designtime provides a custom text mutator", async function(assert) {
+		QUnit.test("when the designtime provides a custom label getter", async function(assert) {
 			sandbox.stub(CommandFactory.prototype, "getCommandFor").resolves();
 			const oDesignTimeMetadata = this.oLayoutOverlay.getDesignTimeMetadata();
-			const oGetTextStub = sinon.stub();
+			const oGetLabelStub = sinon.stub();
 			sandbox.stub(oDesignTimeMetadata, "getAction")
 			.callThrough()
 			.withArgs("rename")
 			.callsFake(function(...aArgs) {
 				return {
 					...oDesignTimeMetadata.getAction.wrappedMethod.apply(this, aArgs),
-					getTextMutators() {
-						return {
-							getText: oGetTextStub
-						};
-					}
+					getLabel: oGetLabelStub
 				};
 			});
 
@@ -449,7 +445,7 @@ sap.ui.define([
 				this.oRenamePlugin.handler([this.oLayoutOverlay]);
 			});
 
-			assert.strictEqual(oGetTextStub.callCount, 1, "then the custom getter is called");
+			assert.strictEqual(oGetLabelStub.callCount, 1, "then the custom getter is called");
 		});
 
 		QUnit.test("when the Label gets renamed with a responsible element", function(assert) {

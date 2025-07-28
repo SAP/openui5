@@ -58,15 +58,8 @@ sap.ui.define([],
 						domRef: function (oControl) {
 							return oControl.getDomRef().getDomRef().querySelector(".ui5-list-header");
 						},
-						getTextMutators: function (oControl) {
-							return {
-								getText: function () {
-									return oControl.getHeaderText();
-								},
-								setText: function (sNewText) {
-									oControl.setHeaderText(sNewText);
-								}
-							};
+						getLabel: function(oControl) {
+							return oControl.getHeaderText();
 						},
 						isEnabled: function (oControl) {
 							return oControl.getHeaderText().length > 0;
