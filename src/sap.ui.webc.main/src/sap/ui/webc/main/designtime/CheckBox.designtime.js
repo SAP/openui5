@@ -21,16 +21,6 @@ sap.ui.define([],
 					domRef: function (oControl) {
 						return oControl.getDomRef().getDomRef().querySelector(".ui5-checkbox-label");
 					},
-					getTextMutators: function (oControl) {
-						return {
-							getText: function () {
-								return oControl.getText();
-							},
-							setText: function (sNewText) {
-								oControl.setText(sNewText);
-							}
-						};
-					},
 					isEnabled: function (oControl) {
 						return oControl.getText().length > 0;
 					},

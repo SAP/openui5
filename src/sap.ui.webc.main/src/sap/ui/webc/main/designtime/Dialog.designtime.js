@@ -24,15 +24,8 @@ sap.ui.define([],
 					domRef: function (oControl) {
 						return oControl.getDomRef().shadowRoot.querySelector(".ui5-popup-header-text");
 					},
-					getTextMutators: function (oControl) {
-						return {
-							getText: function () {
-								return oControl.getDomRef().getAttribute("header-text");
-							},
-							setText: function (sNewText) {
-								oControl.getDomRef().setAttribute("header-text", sNewText);
-							}
-						};
+					getLabel: function(oControl) {
+						return oControl.getDomRef().getAttribute("header-text");
 					}
 				}
 			}
