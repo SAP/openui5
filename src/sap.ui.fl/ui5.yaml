@@ -59,7 +59,6 @@ builder:
               - sap/ui/fl/FakeLrepConnector.js
               - sap/ui/fl/descriptorRelated/api/DescriptorVariantFactory.js
               - sap/ui/fl/descriptorRelated/api/DescriptorInlineChangeFactory.js
-              - sap/ui/fl/util/resolveBinding.js
               - sap/ui/fl/write/
               - sap/ui/fl/variants/VariantManager.js
               # exclude all bundles
