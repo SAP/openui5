@@ -98,5 +98,60 @@
         "text": " Make the experimental new bootstrap the productive one"
       }
     ]
+  },
+  "1.136.3": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "cd348159fcd61b04e66cd7306397e2affa7643b7",
+        "type": "FIX",
+        "text": " core: Prevent BlockLayer from being considered as focus candidate"
+      },
+      {
+        "id": "23f2b77e71157b4c09891612c07e8cea7da9b2c0",
+        "type": "FIX",
+        "text": " sap.ui.model.json.JSONPropertyBinding.js#checkUpdate: Fix logic to determine whether an update of the DataState has to be done"
+      },
+      {
+        "id": "eb5c3e640786ab97a6e629712dc1d436335d7542",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataAnnotations: Propagate 'withCredentials' flag when loading annotations"
+      },
+      {
+        "id": "15bc45104c9f1bff266bf782bc339a3bf0a5727b",
+        "type": "FIX",
+        "text": " Introduce caching for sap/base/i18n/Localization"
+      },
+      {
+        "id": "a8fc2a77ca281ace637c9c4f176cc3f6d8528151",
+        "type": "FIX",
+        "text": " base/DataType: log error once per class and property combination"
+      },
+      {
+        "id": "0ebbb5dd34b71e9f49aaca55c0c718f7b582cdf6",
+        "type": "FEATURE",
+        "text": " sap.ui.core: make sap/ui/Device a standard AMD module"
+      },
+      {
+        "id": "a756049f13b187676062b9eacada92863ce3a5c9",
+        "type": "FEATURE",
+        "text": " sap/ui/base: enable static inheritance for UI5 classes"
+      },
+      {
+        "id": "4067b4720900a77181422452da34a00b6729bca3",
+        "type": "FIX",
+        "text": " sap.base.config: fix logging for URL parameters"
+      },
+      {
+        "id": "d99d21eea058cef4a9a6bf64a45030aff280f13a",
+        "type": "FIX",
+        "text": " sap/ui/core/AppCAcheBuster.js: Core.ready() does not resolve"
+      },
+      {
+        "id": "a6a4893661033cad8c7b24019d0fa52b6fb93489",
+        "type": "FEATURE",
+        "text": " Make the experimental new bootstrap the productive one"
+      }
+    ]
   }
 }

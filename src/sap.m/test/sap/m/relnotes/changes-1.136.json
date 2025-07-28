@@ -243,5 +243,40 @@
         "text": " sap.m.MultiInput: tokens list stays opened for readonly MultiInput"
       }
     ]
+  },
+  "1.136.3": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "6fe73d40a5a2c87c877aa7669229c49fd0aa0324",
+        "type": "FIX",
+        "text": " sap.m.QuickViewPage: Remove synchronous request during initalization"
+      },
+      {
+        "id": "c55bfd1bd82a185794e6f6379e3870cf1b705f9c",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Layout issue caused by empty item prevented"
+      },
+      {
+        "id": "8bc5afcf0710dafa9d628956d8e0bafa1f5c4d9f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: focus outline is fixed for high contrast themes"
+      },
+      {
+        "id": "501dd2654c4b6dd5bf639214bcf6ab05515bd100",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Tokens are properly updated in the n-more list after delete"
+      },
+      {
+        "id": "4558331fb5e9d590f912c1255a6283c523b57faa",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: aria-controls attribute is now set correctly"
+      },
+      {
+        "id": "933ed16d2c2db6b926a8675edee7533d3d3aed07",
+        "type": "FIX",
+        "text": " sap.m.NotificationList: Focus handling on item removal is now fixed"
+      }
+    ]
   }
 }

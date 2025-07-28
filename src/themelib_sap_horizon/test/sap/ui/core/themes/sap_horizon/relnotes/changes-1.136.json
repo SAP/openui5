@@ -43,5 +43,15 @@
         "text": " sap.m.Button: focus the button on mobile before firing press event"
       }
     ]
+  },
+  "1.136.3": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "8bc5afcf0710dafa9d628956d8e0bafa1f5c4d9f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: focus outline is fixed for high contrast themes"
+      }
+    ]
   }
 }
