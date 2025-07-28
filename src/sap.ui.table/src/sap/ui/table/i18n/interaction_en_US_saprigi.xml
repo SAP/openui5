@@ -174,7 +174,7 @@
 				<p>⁪⁪⁪‌‌‌‌​​‌‍​‍​‍‍‌‌‍‌‍‌‍‌‌‌‍‌​‌​​‍‍‌​​​‌‍‌​‍‌⁪If the focus is on the column header, the column header menu is opened.⁪⁪</p>
 			</description>
 		</interaction>
-		<interaction>⁪⁪⁪‍‌‌​​‌‍​‍​‌‌‌​‍‌‌‌‍‌​‌​‍​​‍‌‍‍​‍​‍‍‌​‍‍​⁪ <kbd>Shift + mouse click</kbd> ⁪⁪<description>
+		<interaction>⁪⁪⁪‍‌‌​​‌‍​‍​‌‌‌​‍‌‌‌‍‌​‌​‍​​‍‌‍‍​‍​‍‍‌​‍‍​⁪ <kbd>Shift + MouseClick</kbd> ⁪⁪<description>
 				<p>⁪⁪⁪‌‌​‌‌‍​‌‍​‌‌‍‍‌‍‍​​‍‌​​‌‌​​​‍​‍‌‌‌​‍‍‍​‌‍⁪<span class="emphasis">If cell selection is enabled:</span>⁪⁪</p>
 				<p>⁪⁪⁪‌‍‍​‌​‍​‍‍‌‍‍‌‌‌​‍‌​​‍​​‌‍​‍‍​‌‍‌‌‍‌‌‍‌​⁪If cells are selected, <kbd>Shift + MouseClick</kbd> on a different cell enhances the selection up to the clicked cell.⁪⁪</p>
 			</description>
