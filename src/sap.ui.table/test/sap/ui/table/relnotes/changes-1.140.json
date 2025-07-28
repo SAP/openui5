@@ -1,0 +1,12 @@
+{
+  "1.140.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "5feb6fb61e7397daeb1b62cfebc408fd30d86927",
+        "type": "FEATURE",
+        "text": " Table: Add ODataV4-specific plugins for selection and tree support"
+      }
+    ]
+  }
+}

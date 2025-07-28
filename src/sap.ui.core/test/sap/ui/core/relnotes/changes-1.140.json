@@ -1,0 +1,12 @@
+{
+  "1.140.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "c099608b890f00dca45625b0ec9680615503c6ff",
+        "type": "FIX",
+        "text": " ThemeManager: Improve robustness of versionInfo loading"
+      }
+    ]
+  }
+}

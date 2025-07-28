@@ -1,0 +1,37 @@
+{
+  "1.140.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "1848ae222c7eb599d6cfff9b8b18cdece9aa35b6",
+        "type": "FIX",
+        "text": " sap.m.Menu: fixed endContent controls `press` event firing"
+      },
+      {
+        "id": "10aae7ba402c076f310c79c2c180509cd5d5bb6a",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarGrid: get appointment domref correctly"
+      },
+      {
+        "id": "43829511cb670380382934dfb555011d4abe2e23",
+        "type": "FIX",
+        "text": " We've now applied 4px padding between the title and the image of the slide tile when height is less than 180px"
+      },
+      {
+        "id": "9869ff3475865e41d3828a029f716ae35e0461d9",
+        "type": "FIX",
+        "text": " sap.m.QuickViewPage: Remove synchronous request during initalization"
+      },
+      {
+        "id": "5feb6fb61e7397daeb1b62cfebc408fd30d86927",
+        "type": "FEATURE",
+        "text": " Table: Add ODataV4-specific plugins for selection and tree support"
+      },
+      {
+        "id": "a871c4394cd755977096b920fb8308cb187443bc",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: options list accessibility semantics adjusted"
+      }
+    ]
+  }
+}

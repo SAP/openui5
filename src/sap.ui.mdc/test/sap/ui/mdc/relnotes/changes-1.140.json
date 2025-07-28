@@ -1,0 +1,17 @@
+{
+  "1.140.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "2b3690e7e91869af60d9314a305580202510eb03",
+        "type": "FIX",
+        "text": " PropertyHelperUtil: check UI5 2.0 availability by deprecations"
+      },
+      {
+        "id": "5feb6fb61e7397daeb1b62cfebc408fd30d86927",
+        "type": "FEATURE",
+        "text": " Table: Add ODataV4-specific plugins for selection and tree support"
+      }
+    ]
+  }
+}

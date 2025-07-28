@@ -1,0 +1,12 @@
+{
+  "1.140.0": {
+    "date": "July 2025",
+    "notes": [
+      {
+        "id": "9db72ee488c260f8c876095d6afb3dfca4c5e9b8",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Improve accessibility behavior"
+      }
+    ]
+  }
+}
