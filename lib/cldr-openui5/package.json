@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@istanbuljs/esm-loader-hook": "^0.3.0",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.0.0",
     "extend": "^3.0.2",
     "http-server": "^14.1.1",
     "json2json": "^0.2.8",
