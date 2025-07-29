@@ -59,8 +59,8 @@ sap.ui.define([
 		// 3. a library with an exception is loaded in the app (FE)
 		// 4. a library with an exception is loaded in the app (DF)
 		// 5. it has not explicitly been enabled via url param
-		// 6. whether deprecated functions prior to v2.0 are available -> if no, UI5 version is >=2.0
-		return (bDisabledViaConfig || bDisabledViaURLParam || bExceptionForFE || bDisabledForDF) && !bExplicitlyEnabled && !bHasDeprecations;
+		// 6. whether deprecated functions prior to v2.0 are available -> if true, UI5 version is <2.0
+		return (bDisabledViaConfig || bDisabledViaURLParam || bExceptionForFE || bDisabledForDF) && !bExplicitlyEnabled && bHasDeprecations;
 	};
 
     return PropertyHelperUtil;
