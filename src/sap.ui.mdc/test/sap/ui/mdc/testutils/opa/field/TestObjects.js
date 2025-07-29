@@ -25,11 +25,12 @@ sap.ui.define([
 				 * @param {string | Object} vIdentifier ID or a plain object providing properties identifying of the given <code>sap.ui.mdc.Field</code>
 				 * @param {string} sValue Value that is entered in the <code>sap.ui.mdc.Field</code>
 				 * @param {boolean} [bPressEnter] Optional boolean determining whether Enter should be pressed after entering the text. Default is false
+				 * @param {boolean} [bKeepFocus] Optional boolean determining whether the focus should stay in the field after entering the text. Default is false
 				 * @returns {Promise} OPA waitFor
 				 * @public
 				 */
-				iEnterTextOnTheField: function(vIdentifier, sValue, bPressEnter) {
-					return fieldActions.iEnterTextOnTheField.call(this, vIdentifier, sValue, bPressEnter);
+				iEnterTextOnTheField: function(vIdentifier, sValue, bPressEnter, bKeepFocus) {
+					return fieldActions.iEnterTextOnTheField.call(this, vIdentifier, sValue, bPressEnter, bKeepFocus);
 				},
 				/**
 				 * OPA5 test action
