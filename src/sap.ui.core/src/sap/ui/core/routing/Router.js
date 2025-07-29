@@ -43,7 +43,25 @@ sap.ui.define([
 		var oRouters = {};
 
 		/**
-		 * Instantiates a router
+		 * A Router is responsible for managing navigation within an application by interpreting and responding to
+		 * changes in the URL hash. It enables applications to define routes, map them to Views/Components, and control
+		 * their placement and transitions — all in a structured and declarative way.
+		 *
+		 * A router:
+		 * <ul>
+		 *   <li>Listens to hash changes and matches them to configured route patterns</li>
+		 *   <li>Instantiates Views/Components dynamically when a route is matched and caches them for better
+		 *   performance</li>
+		 *   <li>Places Views/Components into UI containers based on the defined targets and aggregations</li>
+		 *   <li>Maintains the browser history and consistent back/forward navigation behavior</li>
+		 *   <li>Fires events such as <code>routeMatched</code> and <code>routePatternMatched</code>, allowing
+		 *   developers to run logic when routes change</li>
+		 *   <li>Handles unmatched routes through a special bypassed configuration for displaying "Not Found" View(s) or
+		 *   fallbacks</li>
+		 * </ul>
+		 *
+		 * It can be used directly or via a {@link sap.ui.core.UIComponent UIComponent}'s metadata (manifest.json) to
+		 * create scalable, maintainable, and testable navigation structures across complex applications.
 		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider
