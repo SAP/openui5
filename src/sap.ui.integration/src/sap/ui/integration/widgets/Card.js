@@ -1892,7 +1892,8 @@ sap.ui.define([
 			return;
 		}
 
-		this.bindObject(BindingResolver.resolveValue(oDataSettings.path || "/", this));
+		this._sBindingPath = oDataSettings.path || "/";
+		this.bindObject(BindingResolver.resolveValue(this._sBindingPath, this));
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -2314,6 +2315,15 @@ sap.ui.define([
 		const sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE);
 
 		return sCardType?.toLowerCase() === "component";
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {string|undefined} The binding path for the card.
+	 */
+	Card.prototype._getDataPath = function () {
+		return this._sBindingPath || "/";
 	};
 
 	/**

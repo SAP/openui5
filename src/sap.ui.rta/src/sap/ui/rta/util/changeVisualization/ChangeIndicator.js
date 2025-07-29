@@ -9,14 +9,14 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/ui/core/StaticArea",
+	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/util/resolveBinding",
 	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/util/changeVisualization/commands/getCommandVisualization",
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
-	"sap/ui/dt/OverlayRegistry"
+	"sap/ui/rta/util/changeVisualization/resolveBinding"
 ], function(
 	DateFormat,
 	Control,
@@ -24,14 +24,14 @@ sap.ui.define([
 	Fragment,
 	Lib,
 	StaticArea,
+	OverlayRegistry,
 	KeyCodes,
-	resolveBinding,
 	FlUtils,
 	JSONModel,
 	getCommandVisualization,
 	ChangeCategories,
 	ChangeVisualizationUtils,
-	OverlayRegistry
+	resolveBinding
 ) {
 	"use strict";
 

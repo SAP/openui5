@@ -1110,6 +1110,13 @@ var FrameType = library.FrameType;
 
 	});
 
+	QUnit.test("Slide Tile should have the class sapMSTSmallScreen if its less than 180px", async function(assert) {
+		this.initializeMobileView();
+		this.oSlideTile = this.createSlideTile(true).placeAt("qunit-fixture");
+		await nextUIUpdate();
+		assert.ok(this.oSlideTile.hasStyleClass("sapMSTSmallScreen"), "The class is present");
+	});
+
 	QUnit.test("Slide Tile should not have the class sapMSTLargeScreen if its less than 800px", async function(assert) {
 		this.initializeMobileView();
 		this.oSlideTile = this.createSlideTile(true).placeAt("qunit-fixture");

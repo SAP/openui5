@@ -899,6 +899,14 @@ sap.ui.define([
 					]
 				}
 			},
+			"util/changeVisualization/resolveBinding": {
+				group: "Change visualization",
+				coverage: {
+					only: [
+						"sap/ui/rta/util/changeVisualization/resolveBinding"
+					]
+				}
+			},
 			"util/whatsNew/WhatsNew": {
 				group: "Whats New",
 				qunit: {

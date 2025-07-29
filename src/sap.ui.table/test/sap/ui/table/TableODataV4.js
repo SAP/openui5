@@ -36,6 +36,7 @@ sap.ui.define([
 			new ODataV4MultiSelection({enableNotification: true})
 		]
 	});
+	oTable.getColumns().forEach((oColumn) => {oColumn.setWidth();});
 	window.oTable = oTable;
 
 	oTable.setModel(oTable.getModel(), "headerContext");
