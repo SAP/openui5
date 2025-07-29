@@ -38,11 +38,11 @@ sap.ui.require([
 
 				// Test Units
 				When.onTheMainPage.changeMeasure("12.3 NO");
-				Then.onTheMainPage.checkMeasure("12.30 NO"); // "NO": 2 decimals
+				Then.onTheMainPage.checkMeasure("12.30\u00a0NO"); // "NO": 2 decimals
 				Then.onTheMainPage.checkMeasureValueState("None");
 
 				When.onTheMainPage.changeMeasure("21");
-				Then.onTheMainPage.checkMeasure("21.00 NO");
+				Then.onTheMainPage.checkMeasure("21.00\u00a0NO");
 				Then.onTheMainPage.checkMeasureValueState("None");
 
 				When.onTheMainPage.changeMeasure("12.345 NO");
@@ -52,7 +52,7 @@ sap.ui.require([
 				Then.onTheMainPage.checkMeasureValueState("Error");
 
 				When.onTheMainPage.changeMeasure("32");
-				Then.onTheMainPage.checkMeasure("32.00 NO"); // use last valid unit
+				Then.onTheMainPage.checkMeasure("32.00\u00a0NO"); // use last valid unit
 				Then.onTheMainPage.checkMeasureValueState("None");
 
 				When.onTheMainPage.changeMeasure("123.456789 µG");
