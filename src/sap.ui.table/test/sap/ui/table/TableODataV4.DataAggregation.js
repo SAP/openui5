@@ -45,11 +45,11 @@ sap.ui.define([
 		...mTableSettingsForDataAggregation,
 		columns: mTableSettingsForDataAggregation.columns.concat([
 			new Column({
-				label: new Title({text: "Segment"}),
+				label: new Text({text: "Segment"}),
 				template: new Text({text: "{Segment}"})
 			}),
 			new Column({
-				label: new Title({text: "Sales Amount (local currency)"}),
+				label: new Text({text: "Sales Amount (local currency)"}),
 				template: new Text({
 					text: {
 						parts: [
@@ -62,11 +62,11 @@ sap.ui.define([
 				})
 			}),
 			new Column({
-				label: new Title({text: "Sales Number"}),
+				label: new Text({text: "Sales Number"}),
 				template: new Text({text: "{SalesNumber}"})
 			}),
 			new Column({
-				label: new Title({text: "Account Responsible"}),
+				label: new Text({text: "Account Responsible"}),
 				template: new Text({text: "{AccountResponsible}"})
 			})
 		]),
@@ -84,6 +84,7 @@ sap.ui.define([
 			new ODataV4MultiSelection({enableNotification: true})
 		]
 	});
+	oTable.getColumns().forEach((oColumn) => {oColumn.setWidth();});
 	window.oTable = oTable;
 
 	TABLESETTINGS.init(oTable, function(oButton) {

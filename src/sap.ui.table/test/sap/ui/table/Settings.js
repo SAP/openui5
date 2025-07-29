@@ -583,7 +583,7 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 							}
 						},
 						MULTISELECTIONPLUGIN: {
-							text: "MultiSelection",
+							text: "MultiSelectionPlugin",
 							action: function(oTable) {
 								SelectionPlugin.findOn(oTable)?.destroy();
 								const oPlugin = new MultiSelectionPlugin({

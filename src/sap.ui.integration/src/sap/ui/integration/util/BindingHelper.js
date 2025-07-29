@@ -260,8 +260,8 @@ sap.ui.define([
 		if (BindingHelper.isBindingInfo(vItem)) {
 			var oBindingInfoClone = extend({}, vItem);
 
-			if (oBindingInfoClone.path && !this.isAbsolutePath(oBindingInfoClone.path)) {
-				oBindingInfoClone.path = sPath + "/" + oBindingInfoClone.path;
+			if (oBindingInfoClone.path) {
+				oBindingInfoClone.path = BindingHelper.prependPath(oBindingInfoClone.path, sPath);
 			}
 
 			if (oBindingInfoClone.parts) {
@@ -290,6 +290,34 @@ sap.ui.define([
 		}
 
 		return vItem;
+	};
+
+	/**
+	 * Prepends path with root path, depending on the model name.
+	 * @param {string} sPath The path to prepend.
+	 * @param {string} sRootPath The root path to prepend to the given path.
+	 * @returns {string} The full path with the root path prepended.
+	 */
+	BindingHelper.prependPath = function (sPath, sRootPath) {
+		if (typeof sPath !== "string") {
+			return sPath;
+		}
+
+		const sModelName = BindingHelper.getModelName(sPath);
+		let sFullPath = sPath;
+
+		if (sPath === "" || BindingHelper.getModelName(sRootPath) === sModelName && !BindingHelper.isAbsolutePath(sPath)) {
+			let sPathErasedModelName = sPath;
+
+			if (sModelName) {
+				sPathErasedModelName = sPath.replace(new RegExp("^" + sModelName + ">"), "");
+			}
+
+			const _sRootPath = sRootPath.endsWith("/") ? sRootPath : sRootPath + "/";
+			sFullPath = _sRootPath + sPathErasedModelName;
+		}
+
+		return sFullPath;
 	};
 
 	/**

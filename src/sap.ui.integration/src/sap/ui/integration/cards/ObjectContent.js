@@ -250,32 +250,8 @@ sap.ui.define([
 	 * @override
 	 */
 	ObjectContent.prototype.getStaticConfiguration = function () {
-		var oConfiguration = this.getParsedConfiguration(),
-			sObjectContentPath;
-
-		if (!this.getBindingContext()) {
-			if (oConfiguration && oConfiguration.groups) {
-				oConfiguration.groups.forEach(function (oGroup) {
-					if (oGroup.items) {
-						oGroup.items.forEach(function (oItem) {
-							if (oItem.icon && oItem.icon.src) {
-								oItem.icon.src = this._oIconFormatter.formatSrc(oItem.icon.src);
-							}
-							if (oItem.src) {
-								oItem.src = this._oIconFormatter.formatSrc(oItem.src);
-							}
-
-							if (oItem.type === "Image" && oItem.overlay) {
-								subtitleToSubTitle(oItem.overlay);
-							}
-						}.bind(this));
-					}
-				}.bind(this));
-			}
-			return oConfiguration;
-		} else {
-			sObjectContentPath = this.getBindingContext().getPath();
-		}
+		const oConfiguration = this.getParsedConfiguration();
+		const sObjectContentPath = BindingHelper.prependPath(this.getDataPath(), this.getCardDataPath());
 
 		if (oConfiguration.groups) {
 			oConfiguration.groups.forEach(function (oGroup) {

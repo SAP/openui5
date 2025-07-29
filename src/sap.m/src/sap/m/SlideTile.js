@@ -273,6 +273,9 @@ sap.ui.define([
 		if (bIsScreenLarge) {
 			this.getTiles().forEach((oTile) => oTile._setHeaderContentBackgroundImage());
 		}
+		if (this.getDomRef()?.offsetHeight < 180) {
+			this.addStyleClass("sapMSTSmallScreen");
+		}
 	};
 
 	/**

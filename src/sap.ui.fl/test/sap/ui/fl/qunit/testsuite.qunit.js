@@ -1113,12 +1113,6 @@ sap.ui.define([
 				}
 			},
 
-			"util/resolveBinding": {
-				coverage: {
-					only: ["sap/ui/fl/util/resolveBinding"]
-				}
-			},
-
 			// ChangeHandler tests:
 			"changeHandler/AddIFrame": {
 				group: "ChangeHandler",

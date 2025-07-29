@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/util/resolveBinding",
+	"sap/ui/rta/util/changeVisualization/resolveBinding",
 	"sap/ui/test/utils/nextUIUpdate"
 ], function(
 	sinon,

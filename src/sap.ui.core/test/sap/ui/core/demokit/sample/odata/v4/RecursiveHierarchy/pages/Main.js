@@ -60,8 +60,7 @@ sap.ui.define([
 		return sResult;
 	}
 
-	function pressButton(rButtonId, fnMatchers, sComment, bDoNotUseViewName,
-			sControlType = "sap.m.Button") {
+	function pressButton(rButtonId, fnMatchers, sComment, sControlType = "sap.m.Button") {
 		this.waitFor({
 			actions : new Press(),
 			controlType : sControlType,
@@ -71,7 +70,7 @@ sap.ui.define([
 			success : function () {
 				Opa5.assert.ok(true, `Pressed button ${sComment}`);
 			},
-			viewName : bDoNotUseViewName ? undefined : sViewName
+			viewName : sViewName
 		});
 	}
 
@@ -84,29 +83,12 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
-				checkIndexInMessageBox : function (iIndex) {
-					 this.waitFor({
-						controlType : "sap.m.Dialog",
-						errorMessage : "The message box was not found",
-						matchers : function (oControl) {
-							return oControl.getTitle() === "New Node Created";
-						},
-						success : function (aControls) {
-							Opa5.assert.strictEqual(aControls[0].getContent()[0].getText(),
-								"Index: " + iIndex);
-
-							pressButton.call(this, undefined, function (oControl) {
-									return oControl.getText() === "OK";
-								}, "OK in the message box", true);
-						}
-					});
-				},
 				copyToParent : function (sId, sParent, sComment) {
 					pressButtonInRow.call(this, sId, /copyToParent/, "Copy to parent", sComment);
 					findParent.call(this, sParent);
 					pressButton.call(this, undefined, function (oControl) {
 							return oControl.getBindingContext().getProperty("ID") === sParent;
-						}, `to select parent with ID ${sParent}`, false, "sap.m.StandardListItem");
+						}, `to select parent with ID ${sParent}`, "sap.m.StandardListItem");
 				},
 				copyToRoot : function (sId, sComment) {
 					pressButtonInRow.call(this, sId, /copyToRoot/, "Copy to root", sComment);
@@ -188,13 +170,18 @@ sap.ui.define([
 				}
 			},
 			assertions : {
-				checkTable : function (sComment, sExpected, bCheckName, bCheckAge) {
+				checkTable : function (sComment, sExpected, bCheckName, bCheckAge,
+						iExpectedFirstVisibleRow) {
 					this.waitFor({
 						id : rTableId,
 						success : function (aControls) {
 							const oTable = aControls[0];
 							const sResult = getTableAsString(oTable, bCheckName, bCheckAge);
 							Opa5.assert.strictEqual(sResult, sExpected, sComment);
+							if (iExpectedFirstVisibleRow !== undefined) {
+								Opa5.assert.strictEqual(
+									oTable.getFirstVisibleRow(), iExpectedFirstVisibleRow);
+							}
 						},
 						viewName : sViewName
 					});

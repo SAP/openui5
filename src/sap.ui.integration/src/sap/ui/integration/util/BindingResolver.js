@@ -165,19 +165,7 @@ sap.ui.define([
 		 * @returns {any[]} The resolved list of items.
 		 */
 		BindingResolver.resolveListBinding = function (sListPath, sRootPath, oTemplate, vModelOrObject) {
-			const sModelName = BindingHelper.getModelName(sListPath);
-			let sFullPath = sListPath;
-
-			if (BindingHelper.getModelName(sRootPath) === sModelName && !BindingHelper.isAbsolutePath(sListPath)) {
-				let sPathErasedModelName = sListPath;
-
-				if (sModelName) {
-					sPathErasedModelName = sListPath.replace(new RegExp("^" + sModelName + ">"), "");
-				}
-
-				sFullPath = sRootPath + sPathErasedModelName;
-			}
-
+			const sFullPath = BindingHelper.prependPath(sListPath, sRootPath);
 			const aData = BindingResolver.resolveValue(`{${sFullPath}}`, vModelOrObject);
 
 			return aData.map(function (oItemData, iIndex) {
