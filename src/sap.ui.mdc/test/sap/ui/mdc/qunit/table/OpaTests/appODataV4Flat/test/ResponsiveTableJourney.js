@@ -95,7 +95,7 @@ sap.ui.define([
 	QUnit.module("Column resize");
 
 	opaTest("Resize column and persist the change", function(Given, When, Then) {
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created On");
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created At");
 		When.onTheAppMDCTable.iEnterColumnWidthValue(100);
 		Then.onTheAppMDCTable.iCheckColumnWidth(sTableId, `${sTableId}-CreatedAt`, 100);
 		When.onTheAppMDCTable.iCloseTheColumnMenu();
@@ -104,7 +104,7 @@ sap.ui.define([
 		When.P13nActions.iSaveVariantAs("Standard", "TestVariant3");
 		When.iSelectVariant("Standard");
 
-		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created On");
+		When.onTheAppMDCTable.iPressOnColumnHeader(sTableId, "Created At");
 		When.onTheAppMDCTable.iEnterColumnWidthValue(200);
 		Then.onTheAppMDCTable.iCheckColumnWidth(sTableId, `${sTableId}-CreatedAt`, 200);
 		When.onTheAppMDCTable.iCloseTheColumnMenu();

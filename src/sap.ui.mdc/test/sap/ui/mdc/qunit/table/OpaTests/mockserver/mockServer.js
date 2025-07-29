@@ -36,8 +36,6 @@ sap.ui.define([
 
 			function generateResponse(fServer) {
 				fServer.respondWith("GET", /\/sap\/opu\/odata4\/IWBEP\/V4_SAMPLE\/default\/IWBEP\/V4_GW_SAMPLE_BASIC\/0001\//, function(xhr, id) {
-					const oParams = new URLSearchParams(xhr.url);
-					let sFilter = oParams.get("$filter");
 					const oFilteredData = jQuery.extend({}, (mockData));
 					if (xhr.url.indexOf("metadata") > -1) {
 						return xhr.respond(200, {
@@ -47,26 +45,19 @@ sap.ui.define([
 					}
 					//search
 					if (xhr.url.indexOf("$search") > -1) {
-						const sSearchString = oParams.get("$search");
-
+						const sSearchString = xhr.url.match(/\$search=([^&]+)/)[1];
 						oFilteredData.value = searchData(sSearchString, oFilteredData.value);
 					}
 					if (xhr.url.indexOf("$filter") > 0) {
-						//sFilter = xhr.url.match(/\$filter=(.*)&/)[1];
-
-						if (sFilter.indexOf("&$skip=0") > -1) {
-							sFilter = sFilter.slice(0, sFilter.indexOf("&$skip=0"));
-						}
-
+						const sFilter = decodeURIComponent(xhr.url.match(/\$filter=([^&]+)/)[1]);
 						oFilteredData.value = recursiveOdataQueryFilter(mockData.value, sFilter);
-
 					}
 					if (xhr.url.indexOf("$orderby") > -1) {
 						let bDesc = false;
 						if (xhr.url.indexOf("desc") > -1) {
 							bDesc = true;
 						}
-						const sOrderByProperty = oParams.get("$orderby");
+						const sOrderByProperty = xhr.url.match(/\$orderby=([^&]+)/)[1];
 						//sEntitySet = "ProductList",
 						//sEntityType = "Product",
 						const sOrderByString = sOrderByProperty.split(' ')[0];
@@ -76,6 +67,18 @@ sap.ui.define([
 							"SupplierName", "MeasureUnit", "WeightUnit", "CurrencyCode", "DimUnit"
 						];
 						oFilteredData.value = sortData(sOrderByString, oFilteredData.value, aSearchableProperty, bDesc);
+					}
+					if (xhr.url.indexOf("$select") > -1) {
+						const aSelect = xhr.url.match(/\$select=([^&]+)/)[1].split(",");
+						oFilteredData.value = oFilteredData.value.map((oEntry) => {
+							const mNewEntry = {};
+							for (const sProperty of aSelect) {
+								if (sProperty in oEntry) {
+									mNewEntry[sProperty] = oEntry[sProperty];
+								}
+							}
+							return mNewEntry;
+						});
 					}
 					if (xhr.url.indexOf("ProductList") > -1) {
 						return xhr.respond(200, {
@@ -294,11 +297,6 @@ sap.ui.define([
 
 						// base case
 						if (aParts.length === 1) {
-							// IE8 handling
-							if (sODataQueryValue.match(/ +and | or +/)) {
-								throw new Error("400");
-							}
-
 							return filterData(aDataSet, trim(sODataQueryValue));
 						}
 

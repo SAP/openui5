@@ -31,13 +31,10 @@ sap.ui.define([
 			{ p13nItem: "Breakout Year", selected: false },
 			{ p13nItem: "Changed On", selected: false },
 			{ p13nItem: "City of Origin", selected: false },
-			{ p13nItem: "City of Origin + Text", selected: false },
 			{ p13nItem: "Country", selected: false },
-			{ p13nItem: "Country + Text", selected: false },
 			{ p13nItem: "Created (Complex)", selected: false },
 			{ p13nItem: "Created By", selected: false },
-			{ p13nItem: "regionOfOrigin_code", selected: false },
-			{ p13nItem: "regionOfOrigin_code + Text", selected: false }
+			{ p13nItem: "regionOfOrigin_code", selected: false }
 		];
 
 		let aSortItems = [
@@ -316,11 +313,8 @@ sap.ui.define([
 				{ p13nItem: "artistUUID", selected: false },
 				{ p13nItem: "Changed On", selected: false },
 				{ p13nItem: "City of Origin", selected: false },
-				{ p13nItem: "City of Origin + Text", selected: false },
-				{ p13nItem: "Country + Text", selected: false },
 				{ p13nItem: "Created (Complex)", selected: false },
-				{ p13nItem: "regionOfOrigin_code", selected: false },
-				{ p13nItem: "regionOfOrigin_code + Text", selected: false }
+				{ p13nItem: "regionOfOrigin_code", selected: false }
 			];
 
 			Then.iShouldSeeP13nItems(aTableItems);
@@ -415,13 +409,10 @@ sap.ui.define([
 				{ p13nItem: "Breakout Year", selected: true },
 				{ p13nItem: "Changed On", selected: true },
 				{ p13nItem: "City of Origin", selected: true },
-				{ p13nItem: "City of Origin + Text", selected: true },
 				{ p13nItem: "Country", selected: true },
-				{ p13nItem: "Country + Text", selected: true },
 				{ p13nItem: "Created (Complex)", selected: true },
 				{ p13nItem: "Created By", selected: true },
-				{ p13nItem: "regionOfOrigin_code", selected: true },
-				{ p13nItem: "regionOfOrigin_code + Text", selected: true }
+				{ p13nItem: "regionOfOrigin_code", selected: true }
 			];
 
 			Then.iShouldSeeP13nItems(aTableItems);

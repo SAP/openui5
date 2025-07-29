@@ -33,13 +33,10 @@ sap.ui.define([
 			{p13nItem: "Breakout Year", selected: false},
 			{p13nItem: "Changed On", selected: false},
 			{p13nItem: "City of Origin", selected: false},
-			{p13nItem: "City of Origin + Text", selected: false},
 			{p13nItem: "Country", selected: false},
-			{p13nItem: "Country + Text", selected: false},
 			{p13nItem: "Created (Complex)", selected: false},
 			{p13nItem: "Created By", selected: false},
-			{p13nItem: "regionOfOrigin_code", selected: false},
-			{p13nItem: "regionOfOrigin_code + Text", selected: false}
+			{p13nItem: "regionOfOrigin_code", selected: false}
 		];
 
 		const sTableID = "FlexTestComponent---IDViewTableOpaTest--FlexTestApp";
@@ -268,11 +265,8 @@ sap.ui.define([
 				{p13nItem: "artistUUID", selected: false},
 				{p13nItem: "Changed On", selected: false},
 				{p13nItem: "City of Origin", selected: false},
-				{p13nItem: "City of Origin + Text", selected: false},
-				{p13nItem: "Country + Text", selected: false},
 				{p13nItem: "Created (Complex)", selected: false},
-				{p13nItem: "Created By", selected: false},
-				{p13nItem: "regionOfOrigin_code + Text", selected: false}
+				{p13nItem: "Created By", selected: false}
 			];
 
 			//Reopen the dialog
@@ -314,11 +308,8 @@ sap.ui.define([
 			Then.iShouldSeeP13nItem("artistUUID", 7, false);
 			Then.iShouldSeeP13nItem("Changed On", 8, false);
 			Then.iShouldSeeP13nItem("City of Origin", 9, false);
-			Then.iShouldSeeP13nItem("City of Origin + Text", 10, false);
-			Then.iShouldSeeP13nItem("Country + Text", 11, false);
-			Then.iShouldSeeP13nItem("Created (Complex)", 12, false);
-			Then.iShouldSeeP13nItem("Created By", 13, false);
-			Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
+			Then.iShouldSeeP13nItem("Created (Complex)", 10, false);
+			Then.iShouldSeeP13nItem("Created By", 11, false);
 			Given.closeModalDialog("OK");
 		});
 
@@ -340,11 +331,8 @@ sap.ui.define([
 			Then.iShouldSeeP13nItem("artistUUID", 7, false);
 			Then.iShouldSeeP13nItem("Changed On", 8, false);
 			Then.iShouldSeeP13nItem("City of Origin", 9, false);
-			Then.iShouldSeeP13nItem("City of Origin + Text", 10, false);
-			Then.iShouldSeeP13nItem("Country + Text", 11, false);
-			Then.iShouldSeeP13nItem("Created (Complex)", 12, false);
-			Then.iShouldSeeP13nItem("Created By", 13, false);
-			Then.iShouldSeeP13nItem("regionOfOrigin_code + Text", 14, false);
+			Then.iShouldSeeP13nItem("Created (Complex)", 10, false);
+			Then.iShouldSeeP13nItem("Created By", 11, false);
 
 			//close Dialog
 			When.iPressDialogOk();

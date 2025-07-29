@@ -28,12 +28,12 @@ sap.ui.define([
 		// url-param sap-ui-xx-p13n-hide-descriptions
 		const hideDescriptionsParam = window.location.search.includes("sap-ui-xx-p13n-hide-descriptions=true");
 
-		return oODataProps.then(function (aProperties) {
+		return oODataProps.then(function(aProperties) {
 
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
 			// Provide the ValueHelp for some of the properties. Without ValueHelp the filter panel will not provide the expected VH.
 			// TODO ValueHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
-			aProperties.forEach(function(oProperty){
+			aProperties.forEach(function(oProperty) {
 				if (oProperty.name === "title") {
 					oProperty.caseSensitive = false;
 				}
@@ -67,6 +67,20 @@ sap.ui.define([
 				}
 
 			});
+
+			aProperties.push(...[{
+				name: "author/name",
+				path: "author/name",
+				label: "Name",
+				dataType: "Edm.String"
+			}, {
+				name: "author_ID_ComplexWithText",
+				label: "Author ID + Text",
+				propertyInfos: ["author_ID", "author/name"],
+				exportSettings: {
+					template: "{0} ({1})"
+				}
+			}]);
 
 			DelegateCache.add(oTable, {
 				"author_ID": {valueHelp: "FH1", display: FieldDisplay.Description},
