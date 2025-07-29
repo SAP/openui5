@@ -1171,12 +1171,26 @@ sap.ui.define([
 		assert.ok(oColumn.getHeader().hasListeners("_change"), "Property change event handler is added for the new column header");
 
 		sut.setMode("MultiSelect");
+		await nextUIUpdate();
 		$tblHeader = sut.$("tblHeader").trigger("focus");
 		oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . Select All Rows . Name . Color . Number .",
 			"Custom announcement for column header in MultiSelect mode");
 
+		const $tblSelectionColumnHeder = sut.$("tblHeadModeCol");
+		assert.equal($tblSelectionColumnHeder.attr("role"), "columnheader", "Selection column header has role columnheader");
+		assert.equal($tblSelectionColumnHeder.attr("aria-label"), oResourceBundle.getText("TABLE_SELECTION_COLUMNHEADER"),
+					"Selection column header has correct aria-label");
+		assert.equal($tblSelectionColumnHeder.attr("aria-description"),
+					oResourceBundle.getText("TABLE_SELECTION_COLUMNHEADER_DESCRIPTION") + " " + oResourceBundle.getText("ACC_CTR_STATE_NOT_CHECKED"),
+					"Selection column header has correct aria-description");
+
 		sut.selectAll();
+
+		assert.equal($tblSelectionColumnHeder.attr("aria-description"),
+					oResourceBundle.getText("TABLE_SELECTION_COLUMNHEADER_DESCRIPTION") + " " + oResourceBundle.getText("ACC_CTR_STATE_CHECKED"),
+					"Selection column header aria-description has updated to checked state");
+
 		$tblHeader = sut.$("tblHeader").trigger("focus");
 		oInvisibleText = document.getElementById($tblHeader.attr("aria-labelledby"));
 		assert.equal(oInvisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " . All Selected . Name . Color . Number .",
