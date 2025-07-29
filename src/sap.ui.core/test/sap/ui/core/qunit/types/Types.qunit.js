@@ -21,10 +21,13 @@ sap.ui.define([
 	"sap/ui/model/type/Time",
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
+	"sap/ui/model/odata/type/Int16",
+	"sap/ui/model/odata/type/Int32",
+	"sap/ui/model/odata/type/Int64",
 	"sap/ui/test/TestUtils"
 ], function(future, Log, Formatting, Localization, Library, UI5Date, NumberFormat, FormatException, ParseException,
 		ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType,
-		IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
+		IntegerType, StringType, TimeType, TimeIntervalType, UnitType, Int16, Int32, Int64, TestUtils) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -2971,7 +2974,11 @@ sap.ui.define([
 		const oUnitType = {};
 		if (aTypes[0]) {
 			aTypes[0].isA = () => {};
-			this.mock(aTypes[0]).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
+			const oTypeMock = this.mock(aTypes[0]);
+			oTypeMock.expects("isA")
+				.withExactArgs(["sap.ui.model.odata.type.Int", "sap.ui.model.odata.type.Int64"])
+				.returns(false);
+			oTypeMock.expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(true);
 		}
 
 		// code under test
@@ -2982,14 +2989,43 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("Unit: processPartTypes, first part has non-Decimal type", function (assert) {
-		const oUnitType = {iScale : 42};
+[
+	{aTypes: [], iDecimals: 3},
+	{aTypes: [new Int16()], iDecimals: 0},
+	{aTypes: [new Int32()], iDecimals: 0},
+	{aTypes: [new Int64()], iDecimals: 0}
+].forEach(({aTypes, iDecimals}, i) => {
+	QUnit.test("Unit: processPartTypes sets decimals to '0' if measure part is interger, i=" + i, function (assert) {
+		const oUnitType = {oFormatOptions: {decimals: 3}};
+		if (aTypes[0]) {
+			const oTypeMock = this.mock(aTypes[0]);
+			oTypeMock.expects("isA")
+				.withExactArgs(["sap.ui.model.odata.type.Int", "sap.ui.model.odata.type.Int64"])
+				.returns(true);
+			oTypeMock.expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(false);
+		}
+
+		// code under test
+		UnitType.prototype.processPartTypes.call(oUnitType, aTypes);
+
+		assert.strictEqual(oUnitType.oFormatOptions.decimals, iDecimals);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("Unit: processPartTypes, first part has non-Decimal and non-Integer type", function (assert) {
+		const oUnitType = {iScale: 42 , oFormatOptions: {decimals: 3}};
 		const oNonDecimalType = {isA() {}};
-		this.mock(oNonDecimalType).expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(false);
+		const oNonDecimalTypeMock = this.mock(oNonDecimalType);
+		oNonDecimalTypeMock.expects("isA")
+			.withExactArgs(["sap.ui.model.odata.type.Int", "sap.ui.model.odata.type.Int64"])
+			.returns(false);
+		oNonDecimalTypeMock.expects("isA").withExactArgs("sap.ui.model.odata.type.Decimal").returns(false);
 
 		// code under test
 		UnitType.prototype.processPartTypes.call(oUnitType, [oNonDecimalType]);
 
 		assert.strictEqual(oUnitType.iScale, 42);
+		assert.strictEqual(oUnitType.oFormatOptions.decimals, 3);
 	});
 });
