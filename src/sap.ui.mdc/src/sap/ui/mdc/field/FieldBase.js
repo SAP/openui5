@@ -2562,6 +2562,7 @@ sap.ui.define([
 			// as there might be a sync change after it, do not handle it twice.
 			this._aAsyncChanges[iLength - 1].changeFired = true;
 			this._aAsyncChanges[iLength - 1].changeEvent = oChangeEvent;
+			_clearLiveChangeTimer.call(this); // do not trigger async suggestion after change is triggered
 			_triggerChange.call(this, undefined, undefined, undefined, this._aAsyncChanges[iLength - 1].promise);
 			return;
 		}
