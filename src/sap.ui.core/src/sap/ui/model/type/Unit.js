@@ -323,6 +323,9 @@ sap.ui.define([
 	 */
 	Unit.prototype.processPartTypes = function (aPartTypes) {
 		const oQuantityType = aPartTypes[0];
+		if (oQuantityType?.isA(["sap.ui.model.odata.type.Int", "sap.ui.model.odata.type.Int64"])) {
+			this.oFormatOptions.decimals = 0;
+		}
 		if (oQuantityType?.isA("sap.ui.model.odata.type.Decimal")) {
 			this.iScale = oQuantityType.oConstraints?.scale || 0;
 		}

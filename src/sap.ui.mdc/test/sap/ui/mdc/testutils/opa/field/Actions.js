@@ -22,11 +22,12 @@ sap.ui.define([
 	"use strict";
 
 	var oActions =  {
-		iEnterTextOnTheField: function(vIdentifier, sValue, bPressEnter) {
+		iEnterTextOnTheField: function(vIdentifier, sValue, bPressEnter, bKeepFocus) {
 			return waitForField.call(this, Utils.enhanceWaitFor(vIdentifier, {
 				actions: new EnterText({
 					text: sValue,
-					pressEnterKey: bPressEnter ?? undefined
+					pressEnterKey: bPressEnter ?? undefined,
+					keepFocus: bKeepFocus ?? undefined
 				}),
 				success: function() {
 					Opa5.assert.ok(true, 'The text "' + sValue + '" was entered into the field');
