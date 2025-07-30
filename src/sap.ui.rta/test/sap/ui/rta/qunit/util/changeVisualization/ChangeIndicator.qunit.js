@@ -446,7 +446,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator with two changes is created", async function(assert) {
+		QUnit.test("when a change indicator with two changes is created and the details view gets opened by spacebar", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
 					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
@@ -461,13 +461,14 @@ sap.ui.define([
 				"2 changes",
 				"then the correct title (tooltip) is set"
 			);
-			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
+			// Making Sure the popover can be opened by spacebar
+			QUnitUtils.triggerKeyEvent("keydown", this.oChangeIndicator.getDomRef(), "SPACE");
 
 			return oOpenPopoverPromise
 			.then(function() {
 				assert.ok(
 					this.oChangeIndicator.getAggregation("_popover"),
-					"then the popover is opened on click"
+					"then the popover is opened on spacebar press"
 				);
 				assert.ok(
 					this.oChangeIndicator.getAggregation("_popover").getContent()[0].getVisible(),
@@ -500,7 +501,29 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a change indicator with six changes is created", async function(assert) {
+		QUnit.test("when a change indicator with two changes is created and the details view gets opened by click", async function(assert) {
+			this.oChangeIndicator.getModel().setData({
+				changes: [
+					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
+					createMockChange("someOtherChangeId", this.oButton.getId(), "addDelegateProperty", "add")
+				]
+			});
+			await nextUIUpdate();
+
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
+			// Making Sure the popover can be opened by click
+			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
+
+			return oOpenPopoverPromise
+			.then(function() {
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover"),
+					"then the popover is opened on click"
+				);
+			}.bind(this));
+		});
+
+		QUnit.test("when a change indicator with six changes is created and the details view gets opened by enter", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
 					createMockChange("someChangeId", this.oButton.getId(), "move", "move", undefined, new Date(2023)),
@@ -547,6 +570,18 @@ sap.ui.define([
 				"someOtherChangeIdTwo",
 				"then the indicator is correctly sorted"
 			);
+
+			var oOpenPopoverPromise = RtaQunitUtils.waitForMethodCall(sandbox, this.oChangeIndicator, "setAggregation");
+			// Making Sure the popover can be opened by enter
+			QUnitUtils.triggerKeyEvent("keydown", this.oChangeIndicator.getDomRef(), "ENTER");
+
+			return oOpenPopoverPromise
+			.then(function() {
+				assert.ok(
+					this.oChangeIndicator.getAggregation("_popover"),
+					"then the popover is opened on enter press"
+				);
+			}.bind(this));
 		});
 
 		QUnit.test("when a change indicator is focused before it is rendered", async function(assert) {
