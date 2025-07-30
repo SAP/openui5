@@ -10,11 +10,11 @@ sap.ui.define([
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Preprocessor",
 	"sap/ui/fl/apply/_internal/flexState/communication/FLPAboutInfo",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/preprocessors/ComponentLifecycleHooks",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/changeHandler/ChangeAnnotation",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/base/DesignTime",
 	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
@@ -26,11 +26,11 @@ sap.ui.define([
 	ExtensionPoint,
 	Preprocessor,
 	FLPAboutInfo,
-	ManifestUtils,
 	ComponentLifecycleHooks,
 	DelegateMediatorAPI,
 	ChangeAnnotation,
 	ChangeHandlerRegistration,
+	ManifestUtils,
 	DesignTime
 ) {
 	"use strict";

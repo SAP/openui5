@@ -5,7 +5,7 @@ sap.ui.define([
 	"sap/ui/core/ExtensionPoint",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/write/_internal/extensionPoint/Processor",
 	"sap/ui/thirdparty/sinon-4"
 ], function(

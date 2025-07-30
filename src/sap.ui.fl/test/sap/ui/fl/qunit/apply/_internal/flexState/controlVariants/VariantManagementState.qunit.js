@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/initial/_internal/Loader",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",

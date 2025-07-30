@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/Storage",

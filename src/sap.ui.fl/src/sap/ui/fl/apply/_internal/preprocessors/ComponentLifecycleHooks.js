@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/InlineApplier",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -27,9 +27,9 @@ sap.ui.define([
 	InlineApplier,
 	ChangesApplier,
 	FlexState,
-	ManifestUtils,
 	ControlVariantApplyAPI,
 	ChangeHandlerRegistration,
+	ManifestUtils,
 	VariantModel,
 	Layer,
 	Utils,
@@ -39,6 +39,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// TODO: Move to initial and make dependencies to apply lazy
 	/**
 	 * @namespace sap.ui.fl.apply._internal.preprocessors.ComponentLifecycleHooks
 	 * @since 1.114
