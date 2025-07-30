@@ -9,32 +9,37 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		 * Constructor for a new <code>sap.f.routing.Router</code>.
 		 *
 		 * @class
-		 * The <code>sap.f.routing.Router</code> class is intended to be used with
-		 * <code>{@link sap.f.FlexibleColumnLayout}</code> as a root control.
+		 * The <code>sap.f.routing.Router</code> extends the capabilities of the standard <code>{@link
+		 * sap.ui.core.routing.Router}</code> to support flexible and responsive layouts based on <code>{@link
+		 * sap.f.FlexibleColumnLayout}</code> as the root control.
 		 *
-		 * The difference to the <code>{@link sap.ui.core.routing.Router}</code> are the
-		 * <code>level</code>, <code>transition</code>, and <code>transitionParameters</code>
-		 * properties that you can specify in every Route or Target created by this router.
+		 * This router enables advanced navigation scenarios tailored to flexible column layouts, such as changing both
+		 * the layout type (e.g., OneColumn, TwoColumnsMidExpanded) and the currently displayed views within individual
+		 * columns.
 		 *
-		 * The difference to the <code>{@link sap.m.routing.Router}</code> is the additional
-		 * <code>layout</code> property that can be specified in every Route, in which case it
-		 * is applied to the root control. Also, the <code>sap.f.routing.Router</code> supports
-		 * navigations that involve both change of <code>{@link sap.f.LayoutType}</code>
-		 * and change of the current page within a single column of the
-		 * <code>sap.f.FlexibleColumnLayout</code>.
+		 * Compared to <code>{@link sap.ui.core.routing.Router}</code>, it adds support for additional target properties:
+		 * <ul>
+		 *  <li><code>level</code>: Defines the hierarchical level of the target view for proper history and back
+		 *  navigation handling</li>
+		 *  <li><code>transition</code>: Specifies the type of transition animation between views (e.g.,
+		 *  <code>slide</code>, <code>fade</code>)</li>
+		 *  <li><code>transitionParameters</code>: Custom parameters for transitions</li>
+		 * </ul>
+		 *
+		 * Compared to <code>{@link sap.m.routing.Router}</code>, it further introduces a <code>layout</code> property
+		 * on each route, allowing you to define the desired <code>{@link sap.f.LayoutType}</code> to be applied to the
+		 * <code>FlexibleColumnLayout</code> root control during navigation.
 		 *
 		 * See <code>{@link sap.ui.core.routing.Router}</code> for the constructor arguments.
 		 *
 		 * @extends sap.ui.core.routing.Router
 		 *
 		 * @param {object|object[]} [oRoutes] may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.
-
-		 * @param {string|string[]} [oConfig.bypassed.target] One or multiple names of targets that will be displayed, if no route of the router is matched.
-		 *
+		 * @param {string|string[]} [oConfig.bypassed.target] One or multiple names of targets that will be displayed,
+		 * if no route of the router is matched.
 		 * @param {sap.ui.core.UIComponent} [oOwner] the Component of all the views that will be created by this Router,
 		 * will get forwarded to the {@link sap.ui.core.routing.Views#constructor}.
 		 * If you are using the componentMetadata to define your routes you should skip this parameter.
-		 *
 		 * @param {object} [oTargetsConfig]
 		 * the target configuration, see {@link sap.f.routing.Targets#constructor} documentation (the options object).
 		 *

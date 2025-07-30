@@ -6,14 +6,28 @@ sap.ui.define(['sap/ui/core/routing/Router', './TargetHandler', './Targets'],
 		"use strict";
 
 		/**
-		 * Constructor for a new <code>sap.m.routing.Router</code>. See <code>{@link sap.ui.core.routing.Router}</code>
-		 * for the constructor arguments.
+		 * Constructor for a new <code>sap.m.routing.Router</code>.
 		 *
 		 * @class
-		 * SAPUI5 mobile <code>Router</code>.
-		 * The difference to the {@link sap.ui.core.routing.Router} are the <code>level</code>,
-		 * <code>transition</code>, and <code>transitionParameters</code> properties that you can
-		 * specify in every Route or Target created by this router.
+		 * The <code>sap.m.routing.Router</code> is a specialized extension of <code>{@link
+		 * sap.ui.core.routing.Router}</code>, designed specifically for the following containers in the
+		 * <code>sap.m</code> library: <code>sap.m.App</code>, <code>sap.m.SplitApp</code>, or
+		 * <code>sap.m.NavContainer</code>.
+		 *
+		 * It provides additional target and route configuration options that are optimized for the containers,
+		 * including support for animated transitions and navigation hierarchy levels.
+		 *
+		 * Compared to <code>{@link sap.ui.core.routing.Router}</code>, it adds support for additional Target
+		 * properties:
+		 * <ul>
+		 *  <li><code>level</code>: Defines the hierarchical level of the target view for proper history and back
+		 *  navigation handling</li>
+		 *  <li><code>transition</code>: Specifies the type of transition animation between views (e.g.,
+		 *  <code>slide</code>, <code>fade</code>)</li>
+		 *  <li><code>transitionParameters</code>: Custom parameters for transitions</li>
+		 * </ul>
+		 *
+		 * For constructor parameters, see <code>{@link sap.ui.core.routing.Router#constructor}</code>.
 		 *
 		 * @extends sap.ui.core.routing.Router
 		 * @param {object|object[]} [oRoutes] may contain many Route configurations as {@link sap.ui.core.routing.Route#constructor}.<br/>
