@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/uxap/library",
 	"sap/uxap/ObjectPageDynamicHeaderTitle",
@@ -24,7 +25,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Title",
 	"sap/ui/core/HTML"],
-function(Element, $,nextUIUpdate, Core, Control, coreLibrary, XMLView, ResizeHandler, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
+function(Element, $,nextUIUpdate, Core, Control, coreLibrary, XMLView, ResizeHandler, KeyCodes, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, Title, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -1455,6 +1456,29 @@ function(Element, $,nextUIUpdate, Core, Control, coreLibrary, XMLView, ResizeHan
 
 		// Assert
 		assert.ok(oSubSectionWithTitle.$().hasClass("sapUxAPObjectPageSubSectionFocusable"), 'region', "Subsections with titles should be focusable");
+	});
+
+	QUnit.test("_handleInteractiveElF7 not called on marked events", function(assert) {
+		// Arrange
+		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+			oTitlePressSpy = this.spy(ObjectPageSubSectionClass.prototype, "_handleInteractiveElF7"),
+			oDummyEvent = {
+				keyCode: KeyCodes.F7,
+				isMarked: function() { return true; },
+				stopPropagation: function() {},
+				target: {
+					id: "Dummy"
+				}
+			};
+
+		// Act - simulate onkeydown call with dummy event
+		oSubSectionWithoutTitle.onkeydown(oDummyEvent);
+
+		// Assert
+		assert.strictEqual(oTitlePressSpy.callCount, 0, "_handleInteractiveElF7 not called on marked event");
+
+		// Cleanup
+		oTitlePressSpy.resetHistory();
 	});
 
 	QUnit.module("Title ID propagation");
