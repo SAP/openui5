@@ -602,6 +602,7 @@ sap.ui.define([
 
 		const { promise: cssLoaded, resolve, reject} = Promise.withResolvers();
 		const handleDataSapUiReady = function(bError) {
+			oLibInfo.finishedLoading = true;
 			if (bError) {
 				reject();
 			} else {
