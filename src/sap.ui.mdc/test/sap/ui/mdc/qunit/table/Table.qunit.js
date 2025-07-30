@@ -5782,16 +5782,29 @@ n = 0;
 	});
 
 	QUnit.test("Trigger 'Export' via API", async function(assert) {
+		const done = assert.async();
+
 		this.createTable({
+			columns: [
+				new Column({
+					propertyKey: "name"
+				})
+			],
 			enableExport: false
-		});
+		}, [{
+			key: "name",
+			path: "name",
+			label: "name",
+			dataType: "String"
+		}]);
 		this.oTable.placeAt("qunit-fixture");
 		await this.oTable.initialized();
 		await nextUIUpdate();
 
 		const oOnExportSpy = this.spy(this.oTable, "_onExport");
+		const oMessageBoxSpy = sinon.spy(sap.m.MessageBox, "error");
 
-		assert.expect(3);
+		assert.expect(7);
 
 		const oPromise = this.oTable.triggerExport();
 		try {
@@ -5804,19 +5817,31 @@ n = 0;
 		assert.ok(oOnExportSpy.notCalled, "_onExport not called");
 
 		this.oTable.setEnableExport(true);
-		this.oTable.triggerExport();
 
-		await new Promise((resolve) => {
-			sap.ui.require([
-				"sap/m/MessageBox"
-			], (MessageBox) => {
-				this.stub(MessageBox, "error").callsFake(function() {
-					assert.ok(oOnExportSpy.calledOnce, "_onExport called");
-					MessageBox.error.restore();
-					resolve();
-				});
-			});
-		});
+		try {
+			await this.oTable.triggerExport();
+			assert.ok(oOnExportSpy.calledOnce, "_onExport called");
+			assert.ok(true, "Promise should not be rejected");
+		} catch (oError) {
+			assert.ok(false, "Promise should not be rejected");
+		}
+
+		this.oTable.removeColumn(this.oTable.getColumns()[0]);
+
+		try {
+			await this.oTable.triggerExport();
+			assert.ok(false, "Promise should be rejected");
+		} catch (oError) {
+			assert.ok(true, "Promise rejected");
+		}
+
+		setTimeout(() => {
+			assert.ok(oMessageBoxSpy.notCalled, "MessageBox.error never called");
+			oMessageBoxSpy.restore();
+			done();
+		}, 300);
+
+		assert.ok(oOnExportSpy.calledTwice, "_onExport called");
 	});
 
 	QUnit.test("Trigger 'Export as' via keyboard shortcut", async function(assert) {
@@ -5963,6 +5988,9 @@ n = 0;
 		assert.expect(5);
 
 		sinon.stub(Library, "load").returns(Promise.reject("test"));
+		sinon.stub(Library, "all").returns({
+			hasOwnProperty: sinon.stub().withArgs("sap.ui.export").returns(false)
+		});
 		sinon.stub(MessageBox, "error");
 
 		await this.oTable.initialized();
@@ -5984,6 +6012,7 @@ n = 0;
 		});
 
 		Library.load.restore();
+		Library.all.restore();
 		MessageBox.error.restore();
 	});
 
