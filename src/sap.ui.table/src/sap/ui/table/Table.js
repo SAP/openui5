@@ -1522,21 +1522,11 @@ sap.ui.define([
 	};
 
 	Table.prototype.setFirstVisibleRow = function(iRowIndex) {
-		if (iRowIndex == null) {
-			iRowIndex = 0;
-		} else if (iRowIndex < 0) {
+		if (iRowIndex < 0) {
 			Log.error("The index of the first visible row must be greater than or equal to 0. The value has been set to 0.", this);
-			iRowIndex = 0;
-		} else if (this._bContextsAvailable) {
-			const iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
-
-			if (iMaxRowIndex < iRowIndex) {
-				Log.warning("The index of the first visible row is too high. The value has been set to " + iMaxRowIndex + ".", this);
-				iRowIndex = iMaxRowIndex;
-			}
 		}
 
-		this._setFirstVisibleRowIndex(iRowIndex);
+		this._setFirstVisibleRowIndex(this.validateProperty("firstVisibleRow", iRowIndex));
 
 		return this;
 	};

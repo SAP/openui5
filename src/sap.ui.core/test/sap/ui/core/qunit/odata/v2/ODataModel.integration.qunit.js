@@ -11646,6 +11646,41 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: For Unit Types do not show any decimal places if the type of the measure part is an integer type.
+	// SNOW: DINC0532239
+	QUnit.test("UnitType with measure part as integer", async function (assert) {
+		const oModel = createSpecialCasesModel({defaultBindingMode : "TwoWay"});
+		const sView = `
+<FlexBox binding="{/ProductSet('P1')}">
+	<Input id="weight" value="{
+		parts : [{
+			path : 'WeightMeasure',
+			type : 'sap.ui.model.odata.type.Int32'
+		}, {
+			path : 'WeightUnit',
+			type : 'sap.ui.model.odata.type.String'
+		}, {
+			mode : 'OneTime',
+			path : '/##@@requestUnitsOfMeasure',
+			targetType : 'any'
+		}],
+		mode : 'TwoWay',
+		type : 'sap.ui.model.odata.type.Unit'
+	}"/>
+</FlexBox>`;
+		this.expectHeadRequest()
+			.expectRequest("ProductSet('P1')", {
+				ProductID : "P1",
+				WeightMeasure : 12,
+				WeightUnit : "mass-kilogram"
+			})
+			.expectValue("weight", "12")
+			.expectValue("weight", "12 kg");
+
+		await this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Do not show more decimal places than available for the amount/quantity part
 	// Observe different formats if the scale of the amount part type's changes
 	// JIRA: CPOUI5MODELS-1600

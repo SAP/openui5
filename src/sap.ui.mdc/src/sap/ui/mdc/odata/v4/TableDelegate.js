@@ -184,7 +184,7 @@ sap.ui.define([
 			oBindingInfo.parameters.$$aggregation = {expandTo: oCurrentAggregation.expandTo};
 		}
 
-		if (!isAnalyticsEnabled(oTable)) {
+		if (!isDataAggregationEnabled(oTable)) {
 			const aInResultPropertyKeys = getInResultPropertyKeys(oTable);
 
 			if (aInResultPropertyKeys.length > 0) {
@@ -219,7 +219,7 @@ sap.ui.define([
 		let aSorters = TableDelegate.getSorters.apply(this, arguments);
 
 		// Sorting by a property that is not in the aggregation info (sorting by a property that is not requested) causes a back end error.
-		if (isAnalyticsEnabled(oTable)) {
+		if (isDataAggregationEnabled(oTable)) {
 			const oPropertyHelper = oTable.getPropertyHelper();
 			const aVisiblePropertyPaths = getVisiblePropertyKeys(oTable).map((sPropertyKey) => oPropertyHelper.getProperty(sPropertyKey).path);
 
@@ -251,8 +251,8 @@ sap.ui.define([
 	 * @override
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
-		// Custom $$aggregation is not supported if analytical features are enabled.
-		if (isAnalyticsEnabled(oTable)) {
+		// Custom $$aggregation is not supported if data aggregation is enabled.
+		if (isDataAggregationEnabled(oTable)) {
 			updateAggregation(oTable, oBindingInfo);
 		} else {
 			const oModel = oTable.getModel("$sap.ui.mdc.Table");
@@ -404,8 +404,8 @@ sap.ui.define([
 	};
 
 	function validateSortState(oTable, oState) {
-		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
-			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+		if (isDataAggregationEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
+			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible with data aggregation.
 			// Corresponding sort conditions are not applied.
 			return {
 				validation: MessageType.Information,
@@ -472,13 +472,13 @@ sap.ui.define([
 		}
 
 		if (hasStateForInvisibleColumns(oTable, oState.items, aAggregateProperties)) {
-			// Aggregating by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+			// Aggregating by properties that are not visible in the table (not requested from the backend) is not possible with data aggregation.
 			// Corresponding aggregate conditions are not applied.
 			sMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_TOTAL_RESTRICTION");
 		}
 
-		if (isAnalyticsEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
-			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible in analytical scenarios.
+		if (isDataAggregationEnabled(oTable) && hasStateForInvisibleColumns(oTable, oState.items, oState.sorters)) {
+			// Sorting by properties that are not visible in the table (not requested from the backend) is not possible with data aggregation.
 			// Corresponding sort conditions are not applied.
 			const sSortMessage = oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION");
 			sMessage = sMessage ? sMessage + "\n" + sSortMessage : sSortMessage;
@@ -763,7 +763,7 @@ sap.ui.define([
 	 * @returns {boolean} Whether aggregation features are used
 	 * @see sap.ui.model.odata.v4.ODataListBinding#setAggregation
 	 */
-	function isAnalyticsEnabled(oTable) {
+	function isDataAggregationEnabled(oTable) {
 		return oTable._isOfType(TableType.Table) && (oTable._getGroupedProperties().length > 0 || oTable.isGroupingEnabled() ||
 			Object.keys(oTable._getAggregatedProperties()).length > 0 || oTable.isAggregationEnabled());
 	}
