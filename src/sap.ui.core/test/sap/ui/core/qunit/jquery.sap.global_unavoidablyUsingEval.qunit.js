@@ -3,8 +3,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/thirdparty/URI"
-], function(jQuery, Theming, createAndAppendDiv, URI) {
+	"sap/ui/thirdparty/URI",
+	"sap/ui/test/utils/waitForThemeApplied"
+], function(jQuery, Theming, createAndAppendDiv, URI, themeApplied) {
 	"use strict";
 
 	/* !!! MOVE TO HEAD - DUE TO SAFARI ISSUES DURING TEST SETUP !!! */
@@ -342,7 +343,8 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("stylesheet count", function(assert) {
+		QUnit.test("stylesheet count", async function(assert) {
+			await themeApplied();
 
 			function getStyleId(i) {
 				return "style" + (i + 1);

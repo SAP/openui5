@@ -317,8 +317,10 @@ sap.ui.define([
 					pAllCssRequests.finally(function() {
 						if (this === pAllCssRequests) {
 							Log.debug("Theme change finished", undefined, MODULE_NAME);
-							ThemeManager.themeLoaded = true;
-							if (suppressFOUC) {
+							// Even if suppressFOUC is not set, we must fire the event if themeLoaded was previously set to false,
+							// because this indicates that at least one theme change was caused by a theming-relevant trigger.
+							if (suppressFOUC || !ThemeManager.themeLoaded) {
+								ThemeManager.themeLoaded = true;
 								oEventing.fireEvent("applied", {
 									theme: Theming.getTheme()
 								});
