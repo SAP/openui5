@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentHooks",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",

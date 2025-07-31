@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/Layer",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/AddXMLAtExtensionPoint",

@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/TranslationAPI",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Utils",
 	"sap/ui/core/Control"
