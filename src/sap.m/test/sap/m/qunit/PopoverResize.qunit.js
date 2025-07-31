@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -36,6 +36,8 @@ sap.ui.define([
 
 	const mouseMoveOffset = 20;
 	const acceptableMargin = 4;
+
+	const PlacementType = mLibrary.PlacementType;
 
 	document.body.insertBefore(createAndAppendDiv("content"), document.body.firstChild);
 
@@ -658,5 +660,30 @@ sap.ui.define([
 
 		assert.strictEqual(popover._getActualOffsetX(), -1, "offsetX is correct");
 		assert.strictEqual(popover._getActualOffsetY(), popoverOffsetY, "offsetY is correct");
+	});
+
+	QUnit.test("Test calculated offset", async function (assert) {
+		const popover = Element.getElementById("popover");
+		const oSpy = sinon.spy(Popover.prototype, "_calcOffset");
+		popover.setPlacement(undefined);
+
+		await nextUIUpdate();
+
+		await openPopover();
+
+		const resizeHandle = getResizeHandle(popover);
+		const boundingRect = resizeHandle.getBoundingClientRect();
+
+		qutils.triggerMouseEvent(resizeHandle, "mousedown", 0, 0, boundingRect.left, boundingRect.top);
+		qutils.triggerMouseEvent(document, "mousemove", 0, 0, boundingRect.left - mouseMoveOffset, boundingRect.top - mouseMoveOffset);
+		qutils.triggerMouseEvent(document, "mouseup");
+
+		await nextUIUpdate();
+
+		assert.strictEqual(popover._oCalcedPos, undefined, "Calculated position is not set");
+		assert.strictEqual(popover._getCalculatedPlacement(), PlacementType.Right, "Calculated placement is Right as a default");
+		assert.ok(oSpy.firstCall.args[0], "Method _calcOffset is called with no non null argument");
+
+		oSpy.restore();
 	});
 });

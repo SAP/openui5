@@ -399,7 +399,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype._onKeyDown = function(oEvent) {
-		if (oEvent.keyCode === KeyCodes.ENTER) {
+		if (oEvent.keyCode === KeyCodes.ENTER || oEvent.keyCode === KeyCodes.SPACE) {
 			this._onSelect(oEvent);
 		}
 

@@ -128,6 +128,15 @@
 					"sap.ui.mdc.demokit.sample.table.TreeTable",
 					"sap.ui.mdc.demokit.sample.table.UploadSetwithTablePlugin"
 				]
+			},
+			{
+				"id": "sap.ui.mdc.Chart",
+				"name": "Chart",
+				"category": "Metadata-Driven Controls (sap.ui.mdc)",
+				"since": "1.138",
+				"samples": [
+					"sap.ui.mdc.demokit.sample.Chart.ChartJS"
+				]
 			}
 		],
 		"samples": [
@@ -205,9 +214,9 @@
 				"name": "4.1 Table",
 				"description": "first Table example"
 			}, {
-				"id": "sap.ui.mdc.sample.Chart",
-				"name": "5.1 Chart",
-				"description": "first Chart example"
+				"id": "sap.ui.mdc.demokit.sample.Chart.ChartJS",
+				"name": "MDC Chart using ChartJS",
+				"description": "Sample showing usage of Mdc chart with ChartJS"
 			}, {
 				"id": "sap.ui.mdc.sample.TableWithFilterBar",
 				"name": "6.1 Table with FilterBar",

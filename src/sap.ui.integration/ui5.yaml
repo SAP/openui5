@@ -411,52 +411,6 @@ builder:
               - sap/ui/integration/customElements/CustomElementEditor.js
       bundleOptions:
         optimize: true
-    - bundleDefinition:
-        name: sap-ui-integration-shell-toolkit.js
-        sections:
-          - mode: raw
-            filters:
-              - sap/ui/integration/sap-ui-integration-config.js
-              - ui5loader-autoconfig.js
-            declareRawModules: false
-            resolve: true
-            sort: true
-          - mode: preload
-            name: sap-ui-integration
-            filters:
-              - sap/ui/core/Core.js
-              - sap/ui/core/CustomData.js
-              - sap/ui/core/UIComponent.js
-              - sap/ui/core/mvc/XMLView.js
-              - sap/ui/integration/
-              - sap/f/cards/
-              - sap/ui/core/date/Gregorian.js
-              - sap/m/IconTabBar.js
-              - sap/m/GenericTile.js
-              - sap/m/TileContent.js
-              - sap/m/ImageContent.js
-              - "!sap/ui/integration/sap-ui-integration-config.js"
-              - "!sap/ui/integration/customElements/CustomElementCardEditor.js"
-              - "!sap/ui/integration/customElements/CustomElementEditor.js"
-              - "!sap/ui/core/plugin/"
-              - "!sap/ui/core/support/"
-              - "!sap/ui/core/tmpl/"
-              - "!sap/ui/core/util/serializer/"
-              - "!sap/ui/integration/*-preload.js"
-              - "!sap/ui/integration/designtime/"
-              - "!sap/ui/integration/editor/"
-              - sap/ui/core/support/Hotkeys.js
-              - "!sap/ui/integration/thirdparty/"
-              - "!sap/ui/integration/designtime/thirdparty/"
-            resolve: true
-            renderer: true
-          - mode: require
-            filters:
-              - sap/ui/integration/library-bootstrap.js
-      bundleOptions:
-        optimize: true
-        decorateBootstrapModule: true
-        addTryCatchRestartWrapper: true
   jsdoc:
     excludes:
       - "sap/ui/integration/thirdparty/**"
@@ -468,6 +422,5 @@ builder:
       - sap-ui-integration-editor.js
       - sap-ui-integration-card-editor.js
       - sap-ui-integration-cardEditor.js
-      - sap-ui-integration-shell-toolkit.js
       - sap/ui/integration/thirdparty/**
       - sap/ui/integration/designtime/cardEditor/ConfigurationTemplate.js

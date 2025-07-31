@@ -1,0 +1,43 @@
+
+<mvc:View
+	class="sapUiSizeCompact" displayBlock="true"
+	controllerName="sap.ui.mdc.demokit.sample.Chart.ChartJS.controller.Demo"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcc="sap.ui.mdc.chart"
+	xmlns:variants="sap.ui.fl.variants"
+	xmlns="sap.m">
+	<App id="app">
+		<Page>
+			<mdc:Chart id="chart"
+					   autoBindOnInit="true"
+					   noDataText="Oops, something went wrong..."
+					   p13nMode="Type,Item,Sort,Filter"
+					   showChartTooltip="true"
+					   showSelectionDetails="false"
+					   legendVisible="true"
+					   delegate="{
+				'name': 'sap/ui/mdc/demokit/sample/Chart/ChartJS/delegate/ChartJSDelegate',
+				'payload': {
+					model: 'products>/',
+					infomodel: 'propertyinfos'
+				}
+			}"
+					   chartType="bar"
+					   header="mdc Chart Demo"
+					   height="100%"
+					   width="100%"
+					   ignoreToolbarActions= "DrillDownUp">
+				<mdc:variant>
+					<variants:VariantManagement id="IDVariantManagementOfChart" for="chart"/>
+				</mdc:variant>
+				<mdc:items>
+					<mdcc:Item propertyKey="Name" type="groupable" label="Name" role="category" />
+					<mdcc:Item propertyKey="Price" type="aggregatable" role="axis1" label="Price"/>
+					<mdcc:Item propertyKey="Quantity" type="aggregatable" role="axis1" label="Quantity"/>
+				</mdc:items>
+			</mdc:Chart>
+		</Page>
+	</App>
+</mvc:View>

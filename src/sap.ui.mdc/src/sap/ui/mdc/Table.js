@@ -2532,21 +2532,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows to manually trigger the default export without the Export As features and resolves even if <code>preventDefault()</code> is called in
+	 * Allows manual triggering of the default export without the Export As features and resolves even if <code>preventDefault()</code> is called in
 	 * the <code>beforeExport</code> event if no error is thrown.
 	 *
 	 * <b>Note:</b>
 	 * <ul>
-	 *   <li>Export must be enabled by setting the property <code>enableExport</code> to <code>true</code></li>
-	 *   <li>The "sap.ui.export" library must be available.</li>
+	 *   <li>Export must be enabled by setting the <code>enableExport</code> property to <code>true</code></li>
+	 *   <li>The <code>sap.ui.export</code> library must be available.</li>
 	 *   <li>The table must have at least one visible column.</li>
 	 *   <li>Resolves even if <code>preventDefault()</code> is called in the <code>beforeExport</code> event if no error is thrown.</li>
 	 * </ul>
 	 *
 	 * @ui5-restricted sap.ux.eng.fioriai.reuse
 	 * @returns {Promise}
-	 *   Promise that resolves when the export is finished, rejects if the table does not have columns, the export is disabled, or the sap.ui.export
-	 *   library is unavailable.
+	 * <code>Promise</code> that resolves if the export is finished, rejects if the table does not have columns, the export is disabled,
+	 * or the <code>sap.ui.export</code> library is unavailable.
 	 * @private
 	 */
 	Table.prototype.triggerExport = function() {
@@ -2554,29 +2554,34 @@ sap.ui.define([
 			return Promise.reject("Export is not enabled for this table.");
 		}
 
-		return this._onExport();
+		return this._onExport(false, true);
 	};
 
 	/**
 	 * Triggers export via "sap.ui.export"/"Document Export Services" export functionality
 	 *
-	 * @param {boolean} bExportAs controls whether the regular export or the Export As dialog should be called
+	 * @param {boolean} bExportAs Controls whether the regular export or the Export As dialog is called
+	 * @param {boolean} [bSuppressErrors=false] Indicates whether error messages are suppressed
 	 * @returns {Promise} Resolves when the export process is finished
 	 * @private
 	 */
-	Table.prototype._onExport = function(bExportAs) {
+	Table.prototype._onExport = function(bExportAs, bSuppressErrors = false) {
 		const that = this;
+
 		return this._createExportColumnConfiguration().then((aSheetColumns) => {
 
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
 				const sErrorMessage = Library.getResourceBundleFor("sap.ui.mdc").getText("table.NO_COLS_EXPORT");
 
-				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
-					MessageBox.error(sErrorMessage, {
-						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
-					});
-				}.bind(that));
+				if (!bSuppressErrors) {
+					sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
+						MessageBox.error(sErrorMessage, {
+							styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
+						});
+					}.bind(that));
+				}
+
 				throw new Error(sErrorMessage);
 			}
 

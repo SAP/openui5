@@ -48,7 +48,7 @@ sap.ui.define([
 								new NavigationListItem({ text: "Supply Chain", tooltip: "Custom tooltip" }),
 								new NavigationListItem({ text: "Production with a long overflowing title"}),
 								new NavigationListItem({ selectable: false, href: "https://sap.com", target: "_blank", text: "External Link", icon: "sap-icon://attachment" }),
-								new NavigationListItem({ text: "Schematics" })
+								new NavigationListItem({ text: "Schematics a long text to overflow for two tooltips to be visualized", tooltip: "Custom tooltip" })
 							]
 						})
 					]
