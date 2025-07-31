@@ -1799,29 +1799,14 @@ sap.ui.define([
 		afterEach: function() {
 			this.destroyTable();
 		},
-		initTable: function(mSettings) {
+		initTable: function(mSettings, aPropertyInfos) {
 			this.destroyTable();
 			this.oTable = new Table({
 				autoBindOnInit: false,
 				delegate: {
 					name: "odata.v4.TestDelegate",
 					payload: {
-						propertyInfo: [{
-							key: "ID",
-							path: "ID_Path",
-							label: "ID_Label",
-							dataType: "String"
-						}, {
-							key: "Name",
-							path: "Name_Path",
-							label: "Name_Label",
-							dataType: "String"
-						}, {
-							key: "FirstName",
-							path: "FirstName_Path",
-							label: "FirstName_Label",
-							dataType: "String"
-						}]
+						propertyInfo: aPropertyInfos
 					}
 				},
 				...mSettings
@@ -1862,23 +1847,41 @@ sap.ui.define([
 					values: ["test"]
 				}]
 			}
-		});
+		}, [{
+			key: "ID",
+			path: "ID_Path",
+			label: "ID_Label",
+			dataType: "String"
+		}, {
+			key: "Name",
+			path: "Name_Path",
+			label: "Name_Label",
+			dataType: "String"
+		}, {
+			key: "FirstName",
+			path: "FirstName_Path",
+			label: "FirstName_Label",
+			dataType: "String"
+		}]);
 
 		const oBindingInfo = {};
 		const aExpectedSorter = [new Sorter("Name_Path", true)];
 		const aExpectedFilter = [
 			FilterUtil.getFilterInfo(this.oTable.getControlDelegate().getTypeMap(),
 				this.oTable.getConditions(),
-				this.oTable.getPropertyHelper().getProperties()).filters
+				this.oTable.getPropertyHelper().getProperties()
+			).filters
 		];
 
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
-		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, TableType.Table);
+		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter});
 
-		this.oTable.setType(TableType.ResponsiveTable);
+		// Disable data aggregation
+		this.oTable.setP13nMode(["Sort", "Filter"]);
 		aExpectedSorter.push(new Sorter("FirstName_Path", true));
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
-		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter}, TableType.ResponsiveTable);
+		assert.deepEqual(oBindingInfo, {parameters: {}, sorter: aExpectedSorter, filters: aExpectedFilter},
+			"Data aggregation disabled");
 	});
 
 	QUnit.test("$$aggregation.expandTo binding parameter", async function(assert) {
@@ -1886,8 +1889,9 @@ sap.ui.define([
 
 		const oBindingInfo = {};
 
-		sinon.stub(this.oTable, "getRowBinding").returns({
-			getAggregation: () => {return {expandTo: 3};}
+		this.stub(this.oTable, "getRowBinding").returns({
+			getAggregation: this.stub().returns({expandTo: 3}),
+			getModel: this.stub().returns({})
 		});
 
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
@@ -1897,15 +1901,18 @@ sap.ui.define([
 			}
 		});
 
-		this.oTable.getRowBinding.returns({
-			getAggregation: () => undefined
-		});
+		this.oTable.getRowBinding().getAggregation.returns(undefined);
 		TableDelegate.updateBindingInfo(this.oTable, oBindingInfo);
 		assert.deepEqual(oBindingInfo.parameters, {});
 	});
 
 	QUnit.test("#getInResultPropertyKeys", async function(assert) {
-		await this.initTable();
+		await this.initTable(null, [{
+			key: "Name",
+			path: "Name_Path",
+			label: "Name_Label",
+			dataType: "String"
+		}]);
 
 		sinon.stub(this.oTable.getControlDelegate(), "getInResultPropertyKeys").returns(["Name"]);
 
