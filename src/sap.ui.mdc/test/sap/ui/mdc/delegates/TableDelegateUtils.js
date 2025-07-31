@@ -41,6 +41,45 @@ sap.ui.define([
 		}
 	};
 
+	function parseBindingPath(sBindingPath) {
+		const oResult = {
+			modelName: undefined,
+			path: sBindingPath
+		};
+		const iSeparatorPos = sBindingPath.indexOf(">");
+
+		if (iSeparatorPos > 0) {
+			oResult.modelName = sBindingPath.substr(0, iSeparatorPos);
+			oResult.path = sBindingPath.substr(iSeparatorPos + 1);
+		}
+
+		return oResult;
+	}
+
+	TableDelegateUtils.getModelName = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.bindingPath || oPayload?.collectionPath) {
+			return parseBindingPath(oPayload?.bindingPath || oPayload?.collectionPath).modelName;
+		} else {
+			return oPayload?.modelName;
+		}
+	};
+
+	TableDelegateUtils.getModel = function(oTable) {
+		return oTable.getModel(this.getModelName(oTable));
+	};
+
+	TableDelegateUtils.getEntitySetPath = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.bindingPath || oPayload?.collectionPath) {
+			return parseBindingPath(oPayload?.bindingPath || oPayload?.collectionPath).path;
+		} else {
+			return "/" + oPayload.collectionName;
+		}
+	};
+
 	/**
 	 * Creates the column for the specified property and table.
 	 *
@@ -92,10 +131,12 @@ sap.ui.define([
 	 * @private
 	 */
 	TableDelegateUtils.createColumnTemplate = function(oTable, oProperty) {
+		const oPropertyHelper = oTable.getPropertyHelper();
+
 		if (oProperty.isComplex()) {
 			return new VBox({
-				items: oProperty.getSimpleProperties().map(function(oProperty) {
-					return new Text({path: oProperty.path});
+				items: oProperty.getSimpleProperties().map((oProperty) => {
+					return new Text({path: this.getColumnTemplateBindingPath(oTable, oProperty.path)});
 				})
 			});
 		}
@@ -103,8 +144,8 @@ sap.ui.define([
 		if (oProperty.unit) {
 			return Promise.resolve(new Currency({
 				useSymbol: false,
-				value: {path: oProperty.path},
-				currency: {path: oProperty._unit.path}
+				value: {path: this.getColumnTemplateBindingPath(oTable, oProperty.path)},
+				currency: {path: this.getColumnTemplateBindingPath(oTable, oPropertyHelper.getProperty(oProperty.unit).path)}
 			}));
 		}
 
@@ -112,8 +153,8 @@ sap.ui.define([
 			return new Text({
 				text: {
 					parts: [
-						{path: oProperty.path},
-						{path: oProperty._text.path}
+						{path: this.getColumnTemplateBindingPath(oTable, oProperty.path)},
+						{path: this.getColumnTemplateBindingPath(oTable, oPropertyHelper.getProperty(oProperty.text).path)}
 					],
 					formatter: function(sValue, sTextValue) {
 						return sValue + (sTextValue ? "(" + sTextValue + ")" : "");
@@ -122,41 +163,16 @@ sap.ui.define([
 			});
 		}
 
-		return new Text({text: {path: oProperty.path}});
+		return new Text({text: {path: this.getColumnTemplateBindingPath(oTable, oProperty.path)}});
 	};
 
-	function parseBindingPath(sBindingPath) {
-		const oResult = {
-			modelName: undefined,
-			path: sBindingPath
-		};
-		const iSeparatorPos = sBindingPath.indexOf(">");
+	TableDelegateUtils.getColumnTemplateBindingPath = function(oTable, sPath) {
+		const sModelName = this.getModelName(oTable);
 
-		if (iSeparatorPos > 0) {
-			oResult.modelName = sBindingPath.substr(0, iSeparatorPos);
-			oResult.path = sBindingPath.substr(iSeparatorPos + 1);
-		}
-
-		return oResult;
-	}
-
-	TableDelegateUtils.getModel = function(oTable) {
-		const oPayload = oTable.getPayload();
-
-		if (oPayload?.bindingPath || oPayload?.collectionPath) {
-			return oTable.getModel(parseBindingPath(oPayload?.bindingPath || oPayload?.collectionPath).modelName);
+		if (sModelName) {
+			return sModelName + ">" + sPath;
 		} else {
-			return oTable.getModel(oPayload?.modelName);
-		}
-	};
-
-	TableDelegateUtils.getEntitySetPath = function(oTable) {
-		const oPayload = oTable.getPayload();
-
-		if (oPayload?.bindingPath || oPayload?.collectionPath) {
-			return parseBindingPath(oPayload?.bindingPath || oPayload?.collectionPath).path;
-		} else {
-			return "/" + oPayload.collectionName;
+			return sPath;
 		}
 	};
 

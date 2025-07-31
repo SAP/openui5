@@ -40,12 +40,8 @@ sap.ui.define([
 
 				return new Currency({
 					useSymbol: false,
-					value: {
-						path: aProperties[0].path
-					},
-					currency: {
-						path: aProperties[1].path
-					}
+					value: {path: TableDelegateUtils.getColumnTemplateBindingPath(oTable, aProperties[0].path)},
+					currency: {path: TableDelegateUtils.getColumnTemplateBindingPath(oTable, aProperties[1].path)}
 				});
 			} else 	if (oProperty.key.endsWith("_ComplexWithText")) {
 				aProperties = oProperty.getSimpleProperties();
@@ -53,8 +49,8 @@ sap.ui.define([
 				return new Text({
 					text: {
 						parts: [
-							{path: aProperties[0].path},
-							{path: aProperties[1].path}
+							{path: TableDelegateUtils.getColumnTemplateBindingPath(oTable, aProperties[0].path)},
+							{path: TableDelegateUtils.getColumnTemplateBindingPath(oTable, aProperties[1].path)}
 						],
 						formatter: function(sValue, sTextValue) {
 							return sTemplate.replace(/\{0\}/g, sValue).replace(/\{1\}/g, sTextValue);
@@ -63,7 +59,7 @@ sap.ui.define([
 				});
 			} else 	if (oProperty.text) { // just show value, as value & text is shown is special column
 				return new Text({
-					text: {path: oProperty.path}
+					text: {path: TableDelegateUtils.getColumnTemplateBindingPath(oTable, oProperty.path)}
 				});
 			}
 		}).then(function(oColumn) {
