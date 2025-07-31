@@ -78,18 +78,7 @@ sap.ui.define([
 
 	TestTableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegate.updateBindingInfo.apply(this, arguments);
-		var oMetadataInfo = oTable.getPayload();
-		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
-		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
-
-		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
-		var oDataStateIndicator = oTable.getDataStateIndicator();
-		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
-			var aFilters = this.getFilters(oTable);
-			if (aFilters.length) {
-				oBindingInfo.filters = aFilters;
-			}
-		}
+		TableDelegateUtils.updateBindingInfo(oTable, oBindingInfo);
 
 		if (PayloadSearchKeys.inUse(oTable)) {
 			oBindingInfo.parameters["$search"] = undefined;
@@ -158,9 +147,8 @@ sap.ui.define([
 	}
 
 	function createPropertyInfos(oTable, oModel) {
-		var oMetadataInfo = TableDelegateUtils.getMetadataInfo(oTable);
 		var aProperties = [];
-		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
+		var sEntitySetPath = TableDelegateUtils.getEntitySetPath(oTable);
 		var oMetaModel = oModel.getMetaModel();
 
 		return Promise.all([
@@ -204,26 +192,20 @@ sap.ui.define([
 						mConstraints.scale = oDataObject.$Scale;
 					}
 
-					var oType;
-					try {
-						oType = oDataObject.$Type; //, null, mConstraints);
-					} catch (error) {
-						Log.error(error);
-					}
-
 					const bIsKey = oEntityType.$Key.indexOf(sKey) > -1;
 					var oPropertyInfo = {
-						name: sKey,
+						key: sKey,
+						name: sKey, // legacy support
 						path: sKey,
 						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
 						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
 						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
-						dataType: oType,
+						dataType: oDataObject.$Type,
 						constraints : mConstraints,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo[sKey]?.allowedExpressions) ? -1 : 1,
 						groupable: bIsKey || oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] || false,
-						unit: !bUnitIsFromNavigationProperty && oUnitAnnotation?.$Path || "",
-						text: bTextIsFromNavigationProperty && oTextAnnotation?.$Path || "",
+						unit: !bUnitIsFromNavigationProperty && oUnitAnnotation?.$Path || undefined,
+						text: !bTextIsFromNavigationProperty && oTextAnnotation?.$Path || undefined,
 						isKey: bIsKey,
 						caseSensitive : !bIsUpperCase
 					};
@@ -253,7 +235,8 @@ sap.ui.define([
 							}
 						};
 						aProperties.push({
-							name: sKey + "_" + oPropertyInfo.unit + "_ComplexWithUnit",
+							key: sKey + "_" + oPropertyInfo.unit + "_ComplexWithUnit",
+							name: sKey + "_" + oPropertyInfo.unit + "_ComplexWithUnit", // legacy support
 							label: oPropertyInfo.label + " + Unit",
 							propertyInfos: [sKey, oPropertyInfo.unit],
 							exportSettings: {
@@ -278,24 +261,13 @@ sap.ui.define([
 						}
 
 						aProperties.push({
-							name: sKey /*+ "_" + oPropertyInfo.text*/ + "_ComplexWithText",
+							key: sKey + "_ComplexWithText",
+							name: sKey + "_ComplexWithText", // legacy support
 							label: oPropertyInfo.label + " + Text",
 							propertyInfos: [sKey, oPropertyInfo.text],
 							exportSettings: {
 								template: sTemplate
 							}
-						});
-						aProperties.push({ // dummy property for navigation
-							name: oPropertyInfo.text,
-							path: oPropertyInfo.text,
-							label: oPropertyInfo.text,
-							sortable: false,
-							filterable: false,
-							dataType: "Edm.String",
-							visible: false,
-							maxConditions: 1,
-							groupable: false,
-							caseSensitive : false
 						});
 					}
 				}
