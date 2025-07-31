@@ -906,16 +906,20 @@ sap.ui.define([
 		Util.hideSelectionLimitPopover();
 
 		if (this._selectAllCheckBox && this.getMultiSelectMode() != "ClearAll") {
-			var aItems = this.getItems(),
+			const aItems = this.getItems(),
 				iSelectedItemCount = this.getSelectedItems().length,
 				iSelectableItemCount = aItems.filter(function(oItem) {
 					return oItem.isSelectable();
 				}).length;
 
 			// set state of the checkbox by comparing item length and selected item length
-			var bSelected = aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
+			const bSelected = aItems.length > 0 && iSelectedItemCount == iSelectableItemCount;
 			this.$("tblHeader").find(".sapMTblCellFocusable").addBack().attr("aria-selected", bSelected);
 			this._selectAllCheckBox.setSelected(bSelected);
+
+			const oBundle = Library.getResourceBundleFor("sap.m");
+			const sCheckedState = bSelected ? oBundle.getText("ACC_CTR_STATE_CHECKED") : oBundle.getText("ACC_CTR_STATE_NOT_CHECKED");
+			this.$("tblHeadModeCol").attr("aria-description", oBundle.getText("TABLE_SELECTION_COLUMNHEADER_DESCRIPTION") + " " + sCheckedState);
 		} else if (this._clearAllIcon) {
 			this._clearAllIcon.toggleStyleClass("sapMTableDisableClearAll", !this.getSelectedItems().length);
 		}
