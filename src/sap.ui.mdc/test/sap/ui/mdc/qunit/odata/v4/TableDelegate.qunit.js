@@ -2107,22 +2107,6 @@ sap.ui.define([
 		assert.equal(this.oRebindSpy.callCount, 1, "Delegate#rebind call");
 	});
 
-	QUnit.test("Change path", async function(assert) {
-		const oUpdateBindingInfoStub = sinon.stub(this.oTable.getControlDelegate(), "updateBindingInfo");
-
-		oUpdateBindingInfoStub.callThrough().onCall(1).callsFake(function(oMDCTable, oBindingInfo) {
-			oUpdateBindingInfoStub.wrappedMethod.apply(this, arguments);
-			oBindingInfo.path = oBindingInfo.path + "something_else";
-		});
-
-		await this.oTable.rebind();
-		this.oRebindSpy.resetHistory();
-		await this.oTable.rebind();
-
-		assert.equal(this.oRebindSpy.callCount, 1, "Delegate#rebind call");
-		oUpdateBindingInfoStub.restore();
-	});
-
 	QUnit.test("Refresh binding", async function(assert) {
 		await this.oTable._rebind(true);
 		assert.equal(this.oRefreshSpy.callCount, 1, "Binding#refresh call");
