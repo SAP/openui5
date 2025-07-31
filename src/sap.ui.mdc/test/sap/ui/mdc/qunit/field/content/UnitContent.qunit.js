@@ -338,7 +338,7 @@ sap.ui.define([
 			}
 			case "getEdit": {
 				assert.deepEqual(oFormatOptions, {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "DataType: FormatOptions");
-				assert.deepEqual(oUnitFormatOptions, {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "UnitType: FormatOptions");
+				assert.deepEqual(oUnitFormatOptions, {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: "", parseAsString: true, unitOptional: false}, "UnitType: FormatOptions");
 				assert.deepEqual(oUnitOriginalFormatOptions, {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}, "UnitOriginalType: FormatOptions");
 
 				assert.ok(aControls[0].getAriaDescribedBy().indexOf(sInvisibleTextIdNumber) >= 0, "InvisibleText set on ariaDescribedBy for Number");
@@ -360,7 +360,7 @@ sap.ui.define([
 			}
 			case "getEditMultiValue": {
 				assert.deepEqual(oFormatOptions, {decimals: 3, showNumber: true, showMeasure: false, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "DataType: FormatOptions");
-				assert.deepEqual(oUnitFormatOptions, {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: false}, "UnitType: FormatOptions");
+				assert.deepEqual(oUnitFormatOptions, {decimals: 3, showNumber: false, showMeasure: true, strictParsing: true, preserveDecimals: true, emptyString: "", parseAsString: true, unitOptional: false}, "UnitType: FormatOptions");
 				assert.deepEqual(oUnitOriginalFormatOptions, {decimals: 3, preserveDecimals: true, emptyString: 0, parseAsString: true, unitOptional: true}, "UnitOriginalType: FormatOptions");
 
 				assert.ok(aControls[0].getAriaDescribedBy().indexOf(sInvisibleTextIdNumber) >= 0, "InvisibleText set on ariaDescribedBy for Number");
