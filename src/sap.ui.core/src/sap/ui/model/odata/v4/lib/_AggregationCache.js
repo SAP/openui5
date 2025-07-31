@@ -2465,6 +2465,7 @@ sap.ui.define([
 		} else {
 			this.oTreeState.reset();
 		}
+		oAggregation = Object.assign({}, oAggregation);
 		oAggregation.$ExpandLevels = this.oTreeState.getExpandLevels();
 
 		this.doReset(oAggregation, _AggregationHelper.hasGrandTotal(oAggregation.aggregate));

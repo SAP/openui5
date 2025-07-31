@@ -4538,8 +4538,10 @@ sap.ui.define([
 			oFirstLevel = oCache.oFirstLevel,
 			aKeptElementPredicates = ["foo", "bar"],
 			oNewAggregation = {
+				aggregate : "~aggregate~",
 				hierarchyQualifier : "Y"
-			};
+			},
+			sNewAggregation = JSON.stringify(oNewAggregation);
 
 		oCache.aElements.$byPredicate = {
 			bar : {
@@ -4576,10 +4578,14 @@ sap.ui.define([
 			.exactly(sGroupId ? 0 : 1).withExactArgs();
 		const oGetExpandLevelsExpectation = this.mock(oCache.oTreeState).expects("getExpandLevels")
 			.withExactArgs().returns("~sExpandLevels~");
-		this.mock(_AggregationHelper).expects("hasGrandTotal")
-			.withExactArgs(sinon.match.same(oNewAggregation.aggregate)).returns(bHasGrandTotal);
+		this.mock(_AggregationHelper).expects("hasGrandTotal").withExactArgs("~aggregate~")
+			.returns(bHasGrandTotal);
 		const oDoResetExpectation = this.mock(oCache).expects("doReset")
-			.withExactArgs(sinon.match.same(oNewAggregation), bHasGrandTotal);
+			.withExactArgs({
+				aggregate : "~aggregate~",
+				hierarchyQualifier : "Y",
+				$ExpandLevels : "~sExpandLevels~"
+			}, bHasGrandTotal);
 
 		// code under test
 		oCache.reset(aKeptElementPredicates, sGroupId, "~mQueryOptions~", oNewAggregation);
@@ -4588,7 +4594,6 @@ sap.ui.define([
 			sinon.assert.callOrder(oTreeStateResetExpectation, oGetExpandLevelsExpectation);
 		}
 		sinon.assert.callOrder(oResetExpectation, oGetExpandLevelsExpectation, oDoResetExpectation);
-		assert.strictEqual(oNewAggregation.$ExpandLevels, "~sExpandLevels~");
 		assert.deepEqual(oCache.aElements.$byPredicate, {
 			bar : {
 				"@$ui5._" : {predicate : "bar"},
@@ -4618,6 +4623,7 @@ sap.ui.define([
 			assert.strictEqual(oCache.oBackup.oFirstLevel, oFirstLevel);
 			assert.strictEqual(oCache.bUnifiedCache, true);
 		}
+		assert.strictEqual(JSON.stringify(oNewAggregation), sNewAggregation, "unchanged");
 	});
 	});
 });
