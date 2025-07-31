@@ -24,12 +24,30 @@ sap.ui.define([
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, "products");
 
-
-			this.getRouter().initialize();
+			this.oRouter = this.getRouter();
+			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+			this.oRouter.initialize();
 		},
+
+		onBeforeRouteMatched: function(oEvent) {
+
+			var oModel = this.getModel();
+
+			var sLayout = oEvent.getParameters().arguments.layout;
+
+			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
+			if (!sLayout) {
+				sLayout = LayoutType.OneColumn;
+			}
+
+			// Update the layout of the FlexibleColumnLayout
+			oModel.setProperty("/layout", sLayout);
+		},
+
 		getFCL: function () {
 			return this.getRootControl().byId("fcl");
 		},
+
 		/**
 		 * Returns an instance of the semantic helper
 		 * @returns {sap.f.FlexibleColumnLayoutSemanticHelper} An instance of the semantic helper
@@ -45,5 +63,7 @@ sap.ui.define([
 			return FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL, oSettings);
 		}
 	});
+
 	return Component;
+
 });

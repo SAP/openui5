@@ -24,8 +24,24 @@ sap.ui.define([
 			oProductsModel.setSizeLimit(1000);
 			this.setModel(oProductsModel, "products");
 
+			this.oRouter = this.getRouter();
+			this.oRouter.attachBeforeRouteMatched(this.onBeforeRouteMatched, this);
+			this.oRouter.initialize();
+		},
 
-			this.getRouter().initialize();
+		onBeforeRouteMatched: function(oEvent) {
+
+			var oModel = this.getModel();
+
+			var sLayout = oEvent.getParameters().arguments.layout;
+
+			// If there is no layout parameter, query for the default level 0 layout (normally OneColumn)
+			if (!sLayout) {
+				sLayout = LayoutType.OneColumn;
+			}
+
+			// Update the layout of the FlexibleColumnLayout
+			oModel.setProperty("/layout", sLayout);
 		},
 
 		/**

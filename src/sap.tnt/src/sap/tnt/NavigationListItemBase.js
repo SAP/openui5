@@ -424,6 +424,11 @@ sap.ui.define([
 		oEvent.stopPropagation();
 
 		const oTooltipElement = this._getTooltipElement();
+
+		if (!oTooltipElement) {
+			return;
+		}
+
 		const oTextElement = oTooltipElement.querySelector(".sapMText") || oTooltipElement.querySelector(".sapTntNLGroupText");
 
 		if (oTextElement.offsetWidth >= oTextElement.scrollWidth) {
@@ -462,10 +467,12 @@ sap.ui.define([
 		const oTooltipElement = this._getTooltipElement();
 		const sTooltip = oSrcControl?.getTooltip_AsString();
 
-		if (sTooltip) {
-			oTooltipElement.setAttribute("title", sTooltip);
-		} else {
-			oTooltipElement.removeAttribute("title");
+		if (oTooltipElement) {
+			if (sTooltip) {
+				oTooltipElement.setAttribute("title", sTooltip);
+			} else {
+				oTooltipElement.removeAttribute("title");
+			}
 		}
 	};
 
