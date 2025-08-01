@@ -821,6 +821,32 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("getParsedHash", function(assert) {
+			const oParsedHash = {
+				semanticObject: "testSemanticObject",
+				action: "testAction",
+				params: {par: "testpar"}
+			};
+			return DescriptorVariantFactory.createNew({
+				id: "a.id",
+				parsedHash: oParsedHash,
+				reference: "a.reference"
+			}).then(function(oDescriptorVariant) {
+				assert.strictEqual(oDescriptorVariant.getId(), "a.id");
+				assert.deepEqual(oDescriptorVariant.getParsedHash(), oParsedHash);
+			});
+		});
+
+		QUnit.test("getParsedHash without filled parameter in creation", function(assert) {
+			return DescriptorVariantFactory.createNew({
+				id: "a.id",
+				reference: "a.reference"
+			}).then(function(oDescriptorVariant) {
+				assert.strictEqual(oDescriptorVariant.getId(), "a.id");
+				assert.deepEqual(oDescriptorVariant.getParsedHash(), undefined);
+			});
+		});
+
 		QUnit.test("setReference failure", function(assert) {
 			return DescriptorVariantFactory.createNew({
 				id: "a.id",

@@ -80,7 +80,8 @@ sap.ui.define([
 	 * @description Creates all the manifest inline changes for different change types.
 	 */
 	AppVariantManager.prototype.createAllInlineChanges = function(oAppVariantSpecificData, vSelector) {
-		const sAppVariantId = AppVariantUtils.getId(oAppVariantSpecificData.referenceAppId);
+		// TODO Refactor, this sets a global as side effect
+		AppVariantUtils.getId(oAppVariantSpecificData.referenceAppId);
 		const aAllInlineChangeOperations = [];
 		let oPropertyChange = {};
 
@@ -100,44 +101,20 @@ sap.ui.define([
 		oPropertyChange = AppVariantUtils.getInlineChangeInputIcon(oAppVariantSpecificData.icon);
 		aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_ui_setIcon", vSelector));
 
-		/** *********************************************************Inbounds handling******************************************************************/
-		return AppVariantUtils.getInboundInfo(oAppVariantSpecificData.inbounds)
-		.then(function(oInboundInfo) {
-			const sCurrentRunningInboundId = oInboundInfo.currentRunningInbound;
-
-			// If there is no inbound, create a new inbound
-			if (oInboundInfo.addNewInboundRequired) {
-				// create a inline change using a change type 'appdescr_app_addNewInbound'
-				const oInlineChangePromise = AppVariantUtils.prepareAddNewInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData)
-				.then(function(oPropertyChange) {
-					return AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_addNewInbound", vSelector);
-				});
-
-				aAllInlineChangeOperations.push(oInlineChangePromise);
-			} else {
-				// create a inline change using a change type 'appdescr_app_changeInbound'
-				oPropertyChange = AppVariantUtils.prepareChangeInboundChange(sCurrentRunningInboundId, sAppVariantId, oAppVariantSpecificData);
-				aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_changeInbound", vSelector));
-			}
-
-			// remove all other inbounds except appVariant inbound
-			// create a inline change using a change type 'appdescr_app_removeAllInboundsExceptOne'
-			oPropertyChange = AppVariantUtils.prepareRemoveAllInboundsExceptOneChange(sCurrentRunningInboundId);
-			aAllInlineChangeOperations.push(AppVariantUtils.createInlineChange(oPropertyChange, "appdescr_app_removeAllInboundsExceptOne", vSelector));
-
-			return Promise.all(aAllInlineChangeOperations);
-		});
+		return Promise.all(aAllInlineChangeOperations);
 	};
 
 	/**
 	 * @param {string} sAppVariantId - Application variant ID
+	 * @param {object} oParsedHash - Parsed Hash containing semantic object, action and parameters for inbound
 	 * @param {sap.ui.fl.Selector} vSelector - Selector
 	 * @returns {Promise} Resolved promise
 	 * @description Creates the app variant with all inline changes in backend.
 	 */
-	AppVariantManager.prototype.createAppVariant = function(sAppVariantId, vSelector) {
+	AppVariantManager.prototype.createAppVariant = function(sAppVariantId, oParsedHash, vSelector) {
 		const mPropertyBag = {
 			id: sAppVariantId,
+			parsedHash: oParsedHash,
 			layer: this.getLayer()
 		};
 		return AppVariantUtils.createAppVariant(vSelector, mPropertyBag);

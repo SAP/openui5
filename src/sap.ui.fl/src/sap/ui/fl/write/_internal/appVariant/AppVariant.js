@@ -24,6 +24,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mPropertyBag Parameters
 	 * @param {string} mPropertyBag.id ID of the app variant to be provided for a new app variant and for deleting an app variant
+	 * @param {object} [mPropertyBag.oParsedHash] - Parsed Hash containing semantic object, action and parameters for inbound
 	 * @param {string} [mPropertyBag.reference] Proposed referenced descriptor or app variant ID (might be overwritten by the back end) to be provided when creating a new app variant
 	 * @param {string} [mPropertyBag.transport] Transport with which the app variant should be transported
 	 * @param {string} [mPropertyBag.package] Package of the app variant
@@ -160,6 +161,10 @@ sap.ui.define([
 
 	AppVariant.prototype.getId = function() {
 		return this._oDefinition.id;
+	};
+
+	AppVariant.prototype.getParsedHash = function() {
+		return this._oDefinition.parsedHash;
 	};
 
 	AppVariant.prototype.getNamespace = function() {
@@ -302,6 +307,10 @@ sap.ui.define([
 
 		if (this._oDefinition.parentVersion) {
 			mPropertyBag.parentVersion = this._oDefinition.parentVersion;
+		}
+
+		if (this._oDefinition.parsedHash) {
+			mPropertyBag.parsedHash = this._oDefinition.parsedHash;
 		}
 
 		if (mMap.layer) {

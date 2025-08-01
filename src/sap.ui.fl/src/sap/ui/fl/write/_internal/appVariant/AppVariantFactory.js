@@ -78,6 +78,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Parameters
 	 * @param {string} mPropertyBag.id Id of the app variant
 	 * @param {string} mPropertyBag.reference Proposed referenced descriptor or app variant ID (might be overwritten by the back end)
+	 * @param {object} [mPropertyBag.oParsedHash] - Parsed Hash containing semantic object, action and parameters for inbound
 	 * @param {string} [mPropertyBag.transport] Transport with which the app variant should be transported
 	 * @param {string} [mPropertyBag.package] Package of the app variant
 	 * @param {string} [mPropertyBag.version] Version of the app variant
@@ -93,6 +94,10 @@ sap.ui.define([
 		try {
 			Utils.checkParameterAndType(mPropertyBag, "reference", "string");
 			Utils.checkParameterAndType(mPropertyBag, "id", "string");
+
+			if (mPropertyBag.parsedHash) {
+				Utils.checkParameterAndType(mPropertyBag, "parsedHash", "object");
+			}
 
 			if (mPropertyBag.version) {
 				Utils.checkParameterAndType(mPropertyBag, "version", "string");

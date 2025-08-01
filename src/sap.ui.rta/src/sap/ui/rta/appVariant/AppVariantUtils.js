@@ -146,52 +146,17 @@ sap.ui.define([
 		};
 	};
 
-	AppVariantUtils.getInboundInfo = function(oInbounds) {
-		var oInboundInfo = {};
-		if (!oInbounds) {
-			oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-			oInboundInfo.addNewInboundRequired = true;
-			return Promise.resolve(oInboundInfo);
-		}
-
+	AppVariantUtils.getParsedHash = function() {
 		return FlexUtils.getUShellService("URLParsing")
 		.then(function(oURLParsingService) {
 			return FlexUtils.getParsedURLHash(oURLParsingService);
 		})
 		.then(function(oParsedHash) {
-			var aInbounds = Object.keys(oInbounds);
-			var aInboundsFound = [];
-
-			// This will only happen if app variants are created on top of app variants
-			if (aInbounds.length === 1 && aInbounds[0] === "customer.savedAsAppVariant") {
-				return {
-					currentRunningInbound: "customer.savedAsAppVariant",
-					addNewInboundRequired: false
-				};
-			}
-
-			aInbounds.forEach(function(sInboundId) {
-				if ((oInbounds[sInboundId].action === oParsedHash.action) && (oInbounds[sInboundId].semanticObject === oParsedHash.semanticObject)) {
-					aInboundsFound.push(sInboundId);
-				}
-			});
-
-			switch (aInboundsFound.length) {
-				case 0:
-					oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-					oInboundInfo.addNewInboundRequired = true;
-					break;
-				case 1:
-					[oInboundInfo.currentRunningInbound] = aInboundsFound;
-					oInboundInfo.addNewInboundRequired = false;
-					break;
-				default:
-					oInboundInfo.currentRunningInbound = "customer.savedAsAppVariant";
-					oInboundInfo.addNewInboundRequired = true;
-					break;
-			}
-
-			return oInboundInfo;
+			return {
+				action: oParsedHash.action,
+				semanticObject: oParsedHash.semanticObject,
+				params: oParsedHash.params
+			};
 		});
 	};
 
