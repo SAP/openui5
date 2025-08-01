@@ -58067,7 +58067,7 @@ make root = ${bMakeRoot}`;
 				}]
 			})
 			.expectChange("weightMeasure", "12.340") // Scale=3 in property metadata => 3 decimals
-			.expectChange("weight", "12.340 KG")
+			.expectChange("weight", "12.340\u00a0KG")
 			.expectChange("weight0", "12.340")
 			.expectChange("weight1", "12.340");
 
@@ -58106,7 +58106,7 @@ make root = ${bMakeRoot}`;
 		}).then(function () {
 			oControl = that.oView.byId("weight");
 
-			that.expectChange("weight", "23.400 KG")
+			that.expectChange("weight", "23.400\u00a0KG")
 				.expectChange("weight0", "23.400")
 				.expectChange("weight1", "23.400")
 				.expectChange("weightMeasure", "23.400")
@@ -58125,8 +58125,8 @@ make root = ${bMakeRoot}`;
 			// fnTypeChangedCallback and v4.ODataPropertyBinding#setType itself fires changes also.
 			// This is ok because the usecase for changing a binding part's type of a composite
 			// binding is very rare.
-			that.expectChange("weight", "23.40 KG")
-				.expectChange("weight", "23.40 KG");
+			that.expectChange("weight", "23.40\u00a0KG")
+				.expectChange("weight", "23.40\u00a0KG");
 
 			// code under test: change scale of amount part from 3 to 2
 			oControl.getBinding("value").getBindings()[0].setType(
@@ -58134,7 +58134,7 @@ make root = ${bMakeRoot}`;
 
 			return that.waitForChanges(assert, "JIRA: CPOUI5MODELS-1606");
 		}).then(function () {
-			that.expectChange("weight", "34.51 KG")
+			that.expectChange("weight", "34.51\u00a0KG")
 				.expectChange("weightMeasure", "34.510")
 				.expectChange("weight0", "34.510")
 				.expectChange("weight1", "34.510")
@@ -58169,7 +58169,7 @@ make root = ${bMakeRoot}`;
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// Check that the previous setValue led to the correct result
-			assert.strictEqual(oControl.getValue(), "0.00 KG");
+			assert.strictEqual(oControl.getValue(), "0.00\u00a0KG");
 
 			that.expectMessages([{
 					message : "EnterNumberFraction 5",
@@ -58179,7 +58179,7 @@ make root = ${bMakeRoot}`;
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
-				oControl.setValue("12.123456 KG");
+				oControl.setValue("12.123456\u00a0KG");
 			});
 
 			return that.waitForChanges(assert);

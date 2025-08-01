@@ -11797,25 +11797,25 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					ExternalCode : "KWH"
 				}]
 			})
-			.expectValue("weight", "12.341 KWH"); // amount type's scale wins
+			.expectValue("weight", "12.341\u00a0KWH"); // amount type's scale wins
 
 		return this.createView(assert, sView, oModel).then(() => {
 			oBindingPart = this.oView.byId("weight").getBinding("value").getBindings()[0];
-			this.expectValue("weight", "12.3410000 KWH");
+			this.expectValue("weight", "12.3410000\u00a0KWH");
 
 			// code under test
 			oBindingPart.setType(new Decimal(undefined, {precision : 13, scale : "variable"}));
 
 			return this.waitForChanges(assert, "change scale to variable -> unit's decimals wins");
 		}).then(() => {
-			this.expectValue("weight", "12.34 KWH");
+			this.expectValue("weight", "12.34\u00a0KWH");
 
 			// code under test
 			oBindingPart.setType(new Decimal(undefined, {precision : 13, scale : 2}));
 
 			return this.waitForChanges(assert, "change scale to 2 -> amount type's scale wins");
 		}).then(() => {
-			this.expectValue("weight", "12 KWH");
+			this.expectValue("weight", "12\u00a0KWH");
 
 			// code under test
 			oBindingPart.setType(new Decimal(undefined, {precision : 13}));
@@ -11833,12 +11833,12 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// JIRA: CPOUI5MODELS-1600
 	// SNOW: DINC0152691 => consider scale default value 0 for sap.ui.model.odata.type.Decimal
 [
-	{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3 KWH"},  // maxFractionDigits wins
-	{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000 KWH"}, // unit's decimal places wins
-	{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341 KWH"}, // scale wins
-	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000 KWH"}, // unit's decimal places wins
+	{iMaxFractionDigits: 1, iScale: 3, sExpected: "12.3\u00a0KWH"},  // maxFractionDigits wins
+	{iMaxFractionDigits: 9, iScale: 3, sExpected: "12.3410000\u00a0KWH"}, // unit's decimal places wins
+	{iMaxFractionDigits: undefined, iScale: 3, sExpected: "12.341\u00a0KWH"}, // scale wins
+	{iMaxFractionDigits: undefined, iScale: "'variable'", sExpected: "12.3410000\u00a0KWH"}, // decimal places win
 	// DINC0152691: Decimal type scale defaults to 0 => scale wins
-	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12 KWH"}
+	{iMaxFractionDigits: undefined, iScale: undefined, sExpected: "12\u00a0KWH"}
 ].forEach(({iMaxFractionDigits, iScale, sExpected}, i) => {
 	QUnit.test(`CPOUI5MODELS-1600: UnitType with unit maxFractionDigits, ${i}`, function (assert) {
 		const oModel = createModel("/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/?sap-language=EN",
@@ -12639,20 +12639,20 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					UnitCode : "KG"
 				}]
 			})
-			.expectValue("weight", "12.340 KG");
+			.expectValue("weight", "12.340\u00a0KG");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oControl = that.oView.byId("weight");
 
 			// change event for each part of the composite type
-			that.expectValue("weight", "23.400 KG")
-				.expectValue("weight", "23.400 KG");
+			that.expectValue("weight", "23.400\u00a0KG")
+				.expectValue("weight", "23.400\u00a0KG");
 
 			// code under test
 			oControl.setValue("23.4 KG");
 
-			that.expectValue("weight", "0.000 KG")
-				.expectValue("weight", "0.000 KG");
+			that.expectValue("weight", "0.000\u00a0KG")
+				.expectValue("weight", "0.000\u00a0KG");
 
 			// code under test
 			oControl.setValue("");
@@ -12682,13 +12682,13 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					type : "Error"
 				}]
 				: [])
-				.expectValue("weight", "1.1 EA")
+				.expectValue("weight", "1.1\u00a0EA")
 				.expectValueState(that.oView.byId("weight"), oFixture.sMessageType,
 					oFixture.sMessageText);
 
 			TestUtils.withNormalizedMessages(function () {
 				// code under test
-				oControl.setValue("1.1 EA");
+				oControl.setValue("1.1\u00a0EA");
 			});
 
 			return that.waitForChanges(assert);

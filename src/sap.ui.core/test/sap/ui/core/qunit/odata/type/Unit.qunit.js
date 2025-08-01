@@ -81,7 +81,7 @@ sap.ui.define([
 			oType = new Unit();
 
 		// make customizing available on type instance so that it can be used in parseValue
-		assert.strictEqual(oType.formatValue([42, "KG", mCustomizing], "string"), "42.00 KG");
+		assert.strictEqual(oType.formatValue([42, "KG", mCustomizing], "string"), "42.00\u00a0KG");
 
 		this.mock(BaseUnit.prototype).expects("parseValue")
 			.withExactArgs("42 KG", "string")
