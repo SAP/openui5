@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/InitialPrepareFunctions",
-	"sap/ui/fl/initial/_internal/Loader",
-	"sap/ui/fl/initial/_internal/ManifestUtils",
+	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/LayerUtils"

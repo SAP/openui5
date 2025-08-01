@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/initial/_internal/ManifestUtils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	UI2PersonalizationState,
 	FlexState,

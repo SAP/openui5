@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/UI2Personalization/UI2PersonalizationState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/base/util/restricted/_omit"
 ], function(
-	ManifestUtils,
 	UI2PersonalizationState,
+	ManifestUtils,
 	_omit
 ) {
 	"use strict";
