@@ -41,7 +41,9 @@ function(
 		assert.deepEqual(DefaultTypeMap.getUnitOptions({}, {}, {}), [{strictParsing: true, showNumber: false, showMeasure: false},{}], "oFormatOptions from oCustomOptions");
 		assert.deepEqual(DefaultTypeMap.getUnitOptions({}, {}, {showNumber: true, showMeasure: true}), [{strictParsing: true, showNumber: true, showMeasure: true},{}], "oFormatOptions from oCustomOptions");
 		assert.deepEqual(DefaultTypeMap.getUnitOptions({unitOptional: true}, {}), [{},{}], "oFormatOptions without unitOptional");
-
+		assert.deepEqual(DefaultTypeMap.getUnitOptions({emptyString: 0}, {}, {showNumber: true, showMeasure: false}), [{emptyString: 0, strictParsing: true, showNumber: true, showMeasure: false}, {}], "oFormatOptions for number-only and emptyString");
+		assert.deepEqual(DefaultTypeMap.getUnitOptions({emptyString: 0}, {}, {showNumber: false, showMeasure: true}), [{emptyString: "", strictParsing: true, showNumber: false, showMeasure: true}, {}], "oFormatOptions for unit-only and emptyString");
+		assert.deepEqual(DefaultTypeMap.getUnitOptions({emptyString: 0}, {}, {showNumber: true, showMeasure: true}), [{emptyString: 0, strictParsing: true, showNumber: true, showMeasure: true}, {}], "oFormatOptions for number and unit and emptyString");
 	});
 
 	QUnit.module("Legacy tests - sap.ui.mdc.DefaultTypeMap");

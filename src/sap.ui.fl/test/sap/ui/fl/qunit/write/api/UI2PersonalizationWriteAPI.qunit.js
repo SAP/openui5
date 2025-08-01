@@ -1,7 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
 	"sap/ui/core/Manifest",

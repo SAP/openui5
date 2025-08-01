@@ -234,9 +234,9 @@ sap.ui.define([
 	 * {@link module:sap/ui/mdc/TableDelegate.updateBindingInfo updateBindingInfo}. If an update is not possible, it rebinds the table.
 	 *
 	 * Compares the current and previous state of the table to detect whether rebinding is necessary.
-	 * The diffing is done for the sorters, filters, aggregation, parameters, and the path of the binding.
-	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys, such as <code>events</code> or <code>model</code>, must be
-	 * provided in <code>updateBindingInfo</code>, and those keys must not be changed conditionally.
+	 * The diffing is done for the sorters, filters, aggregation, parameters.
+	 * Other {@link sap.ui.base.ManagedObject.AggregationBindingInfo binding info} keys, such as <code>path</code>, <code>events</code>,
+	 * or <code>model</code>, must be provided in <code>updateBindingInfo</code>, and those keys must not be changed conditionally.
 	 *
 	 * <b>Note:</b> To remove a binding info parameter, the value must be set to <code>undefined</code> in
 	 * <code>updateBindingInfo</code>. For more information, see {@link sap.ui.model.odata.v4.ODataListBinding#changeParameters}.
@@ -260,7 +260,7 @@ sap.ui.define([
 			oModel.setProperty("/@custom/hasGrandTotal", false);
 		}
 
-		if (!oBinding || oBinding.getPath() !== oBindingInfo.path) {
+		if (!oBinding) {
 			this.rebind(oTable, oBindingInfo);
 			return;
 		}

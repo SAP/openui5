@@ -3,21 +3,21 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/dt/Util",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/base/util/values",
-	"sap/ui/base/DesignTime"
+	"sap/ui/base/DesignTime",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/Plugin"
 ], function(
-	Plugin,
+	values,
+	DesignTime,
 	DtUtil,
-	FlUtils,
 	ExtensionPointRegistryAPI,
 	ManifestUtils,
-	values,
-	DesignTime
+	FlUtils,
+	Plugin
 ) {
 	"use strict";
 

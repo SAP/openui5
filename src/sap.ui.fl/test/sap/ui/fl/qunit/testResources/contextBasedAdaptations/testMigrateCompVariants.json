@@ -107,9 +107,9 @@
 	},
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -135,9 +135,9 @@
     },
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -164,9 +164,9 @@
     },
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -193,9 +193,9 @@
     },
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -222,9 +222,9 @@
     },
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -251,9 +251,9 @@
     },
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -279,9 +279,9 @@
     },
     {
         "changeType": "dragOrResize",
-        "reference": "ZDEMOOVP_RESIZE",
-        "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-        "projectId": "ZDEMOOVP_RESIZE",
+        "reference": "com.sap.app",
+        "namespace": "apps/com.sap.app/changes/",
+        "projectId": "com.sap.app",
         "packageName": "",
         "support": {
             "generator": "sap.ui.rta.command",
@@ -312,9 +312,9 @@
     "variants": [
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "user": "TESTUSER1",
@@ -347,9 +347,9 @@
         },
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "user": "TESTUSER1",
@@ -385,9 +385,9 @@
         },
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "user": "TESTUSER1",
@@ -423,9 +423,9 @@
         },
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "user": "TESTUSER1",
@@ -461,9 +461,9 @@
         },
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "sapui5Version": "1.112.0-SNAPSHOT",
@@ -503,9 +503,9 @@
         },
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "sapui5Version": "1.112.0-SNAPSHOT",
@@ -545,9 +545,9 @@
         },
         {
             "changeType": "page",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "sap.ui.rta.command",
                 "sapui5Version": "1.112.0-SNAPSHOT",
@@ -589,9 +589,9 @@
     "changes": [
         {
             "changeType": "updateVariant",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "sapui5Version": "1.113.0-SNAPSHOT",
                 "user": "TESTUSER1"
@@ -614,9 +614,9 @@
         },
         {
             "changeType": "updateVariant",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "sapui5Version": "1.113.0-SNAPSHOT",
                 "user": "TESTUSER1"
@@ -639,9 +639,9 @@
         },
         {
             "changeType": "updateVariant",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "sapui5Version": "1.113.0-SNAPSHOT",
                 "user": "TESTUSER1"
@@ -668,9 +668,9 @@
     "defaultVariants": [
         {
             "changeType": "defaultVariant",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "CompVariantState.defaultVariant",
                 "sapui5Version": "1.113.0-SNAPSHOT",
@@ -693,9 +693,9 @@
         },
         {
             "changeType": "defaultVariant",
-            "reference": "ZDEMOOVP_RESIZE",
-            "namespace": "apps/ZDEMOOVP_RESIZE/changes/",
-            "projectId": "ZDEMOOVP_RESIZE",
+            "reference": "com.sap.app",
+            "namespace": "apps/com.sap.app/changes/",
+            "projectId": "com.sap.app",
             "support": {
                 "generator": "CompVariantState.defaultVariant",
                 "sapui5Version": "1.112.0-SNAPSHOT",

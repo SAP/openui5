@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/Settings",
@@ -1965,7 +1965,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Given no restricted CompVariants and at least one unrestricted CompVariant are present", async function(assert) {
-			var oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
+			const oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateCompVariants.json"),
 				async: false
@@ -1982,9 +1982,8 @@ sap.ui.define([
 				}
 			});
 			await FlQUnitUtils.initializeFlexStateWithData(sandbox, "com.sap.app", oCompVariantFlexDataResponse);
-			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
-				assert.strictEqual(bCanMigrate, false, "then no migration needed");
-			});
+			const bCanMigrate = await ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag);
+			assert.strictEqual(bCanMigrate, false, "then no migration needed");
 		});
 
 		QUnit.test("Given no restricted FLVariants and at least one unrestricted FLVariants are present", async function(assert) {
@@ -2080,7 +2079,7 @@ sap.ui.define([
 		}
 
 		QUnit.test("Given at least one restricted CompVariants and at least one unrestricted CompVariant are present", async function(assert) {
-			var oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
+			const oCompVariantFlexDataResponse = LoaderExtensions.loadResource({
 				dataType: "json",
 				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/testResources/contextBasedAdaptations/testMigrateCompVariants.json"),
 				async: false
@@ -2089,101 +2088,96 @@ sap.ui.define([
 			this.oCreateContextBasedAdaptationStub = sandbox.stub(Storage.contextBasedAdaptation, "create").resolves({status: 201});
 			this.oWriteChangesStub = sandbox.stub(Storage, "write").resolves("Success");
 
-			return ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag).then(function(bCanMigrate) {
-				assert.strictEqual(bCanMigrate, true, "then migration needed");
-				return ContextBasedAdaptationsAPI.migrate(this.mPropertyBag);
-			}.bind(this)).then(function() {
-				assertMigrationContent.call(this, [
-					{
-						adaptation: {
-							contexts: {
-								role: ["/IPRO/MANAGER"]
-							},
-							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/MANAGER"])
+			const bCanMigrate = await ContextBasedAdaptationsAPI.canMigrate(this.mPropertyBag);
+			assert.strictEqual(bCanMigrate, true, "then migration needed");
+			await ContextBasedAdaptationsAPI.migrate(this.mPropertyBag);
+
+			assertMigrationContent.call(this, [
+				{
+					adaptation: {
+						contexts: {
+							role: ["/IPRO/MANAGER"]
 						},
-						changes: {
-							clonedFrom: [
-								"restricted4managerKeyUser_customer_page",
-								"restricted4managerKeyUser_customer_page_UIChange",
-								"unrestricted_customer_page",
-								"updateVariant_unrestricted_customer_page",
-								"unrestricted_customer_page_UIChange",
-								"nonVariantUIChange",
-								"control1_defaultVariant",
-								"control2_defaultVariant",
-								"nonVariantManifestChange",
-								"nonVariantAnnotationChange"
-							],
-							hides4CompVar: []
-						}
+						id: "someFileName",
+						title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/MANAGER"])
 					},
-					{
-						adaptation: {
-							contexts: {
-								role: ["Z_SAP_UI_FLEX_KEY_USER"]
-							},
-							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["Z_SAP_UI_FLEX_KEY_USER"])
-						},
-						changes: {
-							clonedFrom: [
-								"restricted4managerKeyUser_customer_page",
-								"restricted4managerKeyUser_customer_page_UIChange",
-								"restricted4viewerKeyUser_customer_page",
-								"restricted4viewerKeyUser_customer_page_UIChange",
-								"unrestricted_customer_page",
-								"updateVariant_unrestricted_customer_page",
-								"unrestricted_customer_page_UIChange",
-								"nonVariantUIChange",
-								"control1_defaultVariant",
-								"control2_defaultVariant",
-								"nonVariantManifestChange",
-								"nonVariantAnnotationChange"
-							],
-							hides4CompVar: [
-								"restricted4Manager_vendor_page"
-							]
-						} },
-					{
-						adaptation: {
-							contexts: {
-								role: ["/IPRO/CONTRACT_VIEWER"]
-							},
-							id: "someFileName",
-							title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/CONTRACT_VIEWER"])
-						},
-						changes: {
-							clonedFrom: [
-								"restricted4viewerKeyUser_customer_page",
-								"restricted4viewerKeyUser_customer_page_UIChange",
-								"unrestricted_customer_page",
-								"updateVariant_unrestricted_customer_page",
-								"unrestricted_customer_page_UIChange",
-								"nonVariantUIChange",
-								"control1_defaultVariant",
-								"control2_defaultVariant",
-								"nonVariantManifestChange",
-								"nonVariantAnnotationChange"
-							],
-							hides4CompVar: [
-								"restricted4Manager_vendor_page"
-							]
-						}
-					},
-					{
-						changes: {
-							clonedFrom: [
-							],
-							hides4CompVar: [
-								"restricted4Manager_vendor_page",
-								"restricted4managerKeyUser_customer_page",
-								"restricted4viewerKeyUser_customer_page"
-							]
-						}
+					changes: {
+						clonedFrom: [
+							"restricted4managerKeyUser_customer_page",
+							"restricted4managerKeyUser_customer_page_UIChange",
+							"unrestricted_customer_page",
+							"updateVariant_unrestricted_customer_page",
+							"unrestricted_customer_page_UIChange",
+							"nonVariantUIChange",
+							"control1_defaultVariant",
+							"control2_defaultVariant",
+							"nonVariantManifestChange",
+							"nonVariantAnnotationChange"],
+						hides4CompVar: []
 					}
-				], assert);
-			}.bind(this));
+				},
+				{
+					adaptation: {
+						contexts: {
+							role: ["Z_SAP_UI_FLEX_KEY_USER"]
+						},
+						id: "someFileName",
+						title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["Z_SAP_UI_FLEX_KEY_USER"])
+					},
+					changes: {
+						clonedFrom: [
+							"restricted4managerKeyUser_customer_page",
+							"restricted4managerKeyUser_customer_page_UIChange",
+							"restricted4viewerKeyUser_customer_page",
+							"restricted4viewerKeyUser_customer_page_UIChange",
+							"unrestricted_customer_page",
+							"updateVariant_unrestricted_customer_page",
+							"unrestricted_customer_page_UIChange",
+							"nonVariantUIChange",
+							"control1_defaultVariant",
+							"control2_defaultVariant",
+							"nonVariantManifestChange",
+							"nonVariantAnnotationChange"],
+						hides4CompVar: [
+							"restricted4Manager_vendor_page"
+						]
+					} },
+				{
+					adaptation: {
+						contexts: {
+							role: ["/IPRO/CONTRACT_VIEWER"]
+						},
+						id: "someFileName",
+						title: this.oResourceBundle.getText("CBA_MIGRATED_ADAPTATION_TITLE", ["/IPRO/CONTRACT_VIEWER"])
+					},
+					changes: {
+						clonedFrom: [
+							"restricted4viewerKeyUser_customer_page",
+							"restricted4viewerKeyUser_customer_page_UIChange",
+							"unrestricted_customer_page",
+							"updateVariant_unrestricted_customer_page",
+							"unrestricted_customer_page_UIChange",
+							"nonVariantUIChange",
+							"control1_defaultVariant",
+							"control2_defaultVariant",
+							"nonVariantManifestChange",
+							"nonVariantAnnotationChange"],
+						hides4CompVar: [
+							"restricted4Manager_vendor_page"
+						]
+					}
+				},
+				{
+					changes: {
+						clonedFrom: [],
+						hides4CompVar: [
+							"restricted4Manager_vendor_page",
+							"restricted4managerKeyUser_customer_page",
+							"restricted4viewerKeyUser_customer_page"
+						]
+					}
+				}
+			], assert);
 		});
 
 		QUnit.test("Given at least one restricted and one unrestricted FLVariant are present", async function(assert) {

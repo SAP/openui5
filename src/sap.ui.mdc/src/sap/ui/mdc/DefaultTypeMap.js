@@ -50,8 +50,11 @@ sap.ui.define([
 		if (oCustomOptions) {
 			oFormatOptions = Object.assign({}, oFormatOptions, { strictParsing: true, showNumber: !!oCustomOptions.showNumber, showMeasure: !!oCustomOptions.showMeasure });
 		}
-		if (oFormatOptions && oFormatOptions.hasOwnProperty("unitOptional")) { // as per default set if both, showNumber and showMeasure set
+		if (oFormatOptions?.hasOwnProperty("unitOptional")) { // as per default set if both, showNumber and showMeasure set
 			delete oFormatOptions.unitOptional; // let the type determine the right default
+		}
+		if (oFormatOptions?.showMeasure && !oFormatOptions?.showNumber) { // unit only
+			oFormatOptions.emptyString = ""; // set it to default for unit. (as if set for both it is used for number)
 		}
 		return [oFormatOptions, oConstraints];
 	};

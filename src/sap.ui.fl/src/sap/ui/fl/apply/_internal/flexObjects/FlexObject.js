@@ -32,7 +32,7 @@ sap.ui.define([
 	 * @constant
 	 * @typedef {object} sap.ui.fl.apply._internal.flexObjects.FlexObject.FlexObjectMetadata
 	 * @property {string} changeType - Type of the flexObject
-	 * @property {string} reference - Application component name
+	 * @property {string} reference - Flexibility reference of the app
 	 * @property {string} namespace - Namespace of the flex object file
 	 * @property {string} creation - Timestamp of creation date
 	 * @property {string} projectId - Project ID of the flex object file

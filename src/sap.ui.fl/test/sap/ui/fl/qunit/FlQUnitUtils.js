@@ -2,7 +2,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/Loader"
+	"sap/ui/fl/initial/_internal/Loader"
 ], function(
 	merge,
 	StorageUtils,

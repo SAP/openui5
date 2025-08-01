@@ -106,6 +106,20 @@ sap.ui.define([
 				}
 			},
 
+			"initial/_internal/Loader": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/Loader"]
+				}
+			},
+
+			"initial/_internal/ManifestUtils": {
+				group: "Initial Internal",
+				coverage: {
+					only: ["sap/ui/fl/initial/_internal/ManifestUtils"]
+				}
+			},
+
 			"initial/_internal/Settings": {
 				group: "Initial Internal",
 				coverage: {
@@ -330,7 +344,10 @@ sap.ui.define([
 			"apply/_internal/changes/descriptor/app/AddTechnicalAttributes": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddTechnicalAttributes", "sap/ui/fl/util/DescriptorChangeCheck"]
+					only: [
+						"sap/ui/fl/apply/_internal/changes/descriptor/app/AddTechnicalAttributes",
+						"sap/ui/fl/util/DescriptorChangeCheck"
+					]
 				}
 			},
 
@@ -650,27 +667,6 @@ sap.ui.define([
 				}
 			},
 
-			"apply/_internal/flexState/Loader": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/Loader"]
-				}
-			},
-
-			"apply/_internal/flexState/ManifestUtils": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/ManifestUtils"]
-				}
-			},
-
-			"apply/_internal/flexState/compVariants/prepareCompVariantsMap": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap"]
-				}
-			},
-
 			"apply/_internal/flexState/compVariants/Utils": {
 				group: "Apply Internal",
 				coverage: {
@@ -891,10 +887,10 @@ sap.ui.define([
 				}
 			},
 
-			"write/_internal/flexState/compVariants/CompVariantState": {
+			"write/_internal/flexState/compVariants/CompVariantManager": {
 				group: "Write Internal",
 				coverage: {
-					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState"]
+					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager"]
 				}
 			},
 

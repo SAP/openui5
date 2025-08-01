@@ -17,6 +17,69 @@ sap.ui.define([
 
 	var TableDelegateUtils = {};
 
+	TableDelegateUtils.updateBindingInfo = function(oTable, oBindingInfo) {
+		var oPayload = oTable.getPayload();
+
+		if (!oPayload) {
+			return;
+		}
+
+		if (oPayload.bindingPath && (oPayload.collectionPath || oPayload.collectionName || oPayload.modelName)) {
+			throw new Error("If 'bindingPath' is set, 'collectionPath', 'collectionName', or 'modelName' must not be set in the payload.");
+		}
+
+		if (oPayload.collectionPath && (oPayload.collectionName || oPayload.modelName)) {
+			throw new Error("If 'collectionPath' is set, 'collectionName', or 'modelName' must not be set in the payload.");
+		}
+
+		// Legacy support for collectionPath, collectionName, and modelName
+		if (oPayload.bindingPath || oPayload.collectionPath) {
+			oBindingInfo.path = oPayload.bindingPath || oPayload.collectionPath;
+		} else {
+			oBindingInfo.path = "/" + oPayload.collectionName;
+			oBindingInfo.model = oPayload.modelName;
+		}
+	};
+
+	function parseBindingPath(sBindingPath) {
+		const oResult = {
+			modelName: undefined,
+			path: sBindingPath
+		};
+		const iSeparatorPos = sBindingPath.indexOf(">");
+
+		if (iSeparatorPos > 0) {
+			oResult.modelName = sBindingPath.substr(0, iSeparatorPos);
+			oResult.path = sBindingPath.substr(iSeparatorPos + 1);
+		}
+
+		return oResult;
+	}
+
+	TableDelegateUtils.getModelName = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.bindingPath || oPayload?.collectionPath) {
+			return parseBindingPath(oPayload?.bindingPath || oPayload?.collectionPath).modelName;
+		} else {
+			return oPayload?.modelName;
+		}
+	};
+
+	TableDelegateUtils.getModel = function(oTable) {
+		return oTable.getModel(this.getModelName(oTable));
+	};
+
+	TableDelegateUtils.getEntitySetPath = function(oTable) {
+		const oPayload = oTable.getPayload();
+
+		if (oPayload?.bindingPath || oPayload?.collectionPath) {
+			return parseBindingPath(oPayload?.bindingPath || oPayload?.collectionPath).path;
+		} else {
+			return "/" + oPayload.collectionName;
+		}
+	};
+
 	/**
 	 * Creates the column for the specified property and table.
 	 *
@@ -68,10 +131,12 @@ sap.ui.define([
 	 * @private
 	 */
 	TableDelegateUtils.createColumnTemplate = function(oTable, oProperty) {
+		const oPropertyHelper = oTable.getPropertyHelper();
+
 		if (oProperty.isComplex()) {
 			return new VBox({
-				items: oProperty.getSimpleProperties().map(function(oProperty) {
-					return new Text({path: oProperty.path});
+				items: oProperty.getSimpleProperties().map((oProperty) => {
+					return new Text({path: this.getColumnTemplateBindingPath(oTable, oProperty.path)});
 				})
 			});
 		}
@@ -79,8 +144,8 @@ sap.ui.define([
 		if (oProperty.unit) {
 			return Promise.resolve(new Currency({
 				useSymbol: false,
-				value: {path: oProperty.path},
-				currency: {path: oProperty._unit.path}
+				value: {path: this.getColumnTemplateBindingPath(oTable, oProperty.path)},
+				currency: {path: this.getColumnTemplateBindingPath(oTable, oPropertyHelper.getProperty(oProperty.unit).path)}
 			}));
 		}
 
@@ -88,8 +153,8 @@ sap.ui.define([
 			return new Text({
 				text: {
 					parts: [
-						{path: oProperty.path},
-						{path: oProperty._text.path}
+						{path: this.getColumnTemplateBindingPath(oTable, oProperty.path)},
+						{path: this.getColumnTemplateBindingPath(oTable, oPropertyHelper.getProperty(oProperty.text).path)}
 					],
 					formatter: function(sValue, sTextValue) {
 						return sValue + (sTextValue ? "(" + sTextValue + ")" : "");
@@ -98,15 +163,17 @@ sap.ui.define([
 			});
 		}
 
-		return new Text({text: {path: oProperty.path}});
+		return new Text({text: {path: this.getColumnTemplateBindingPath(oTable, oProperty.path)}});
 	};
 
-	TableDelegateUtils.getMetadataInfo = function(oTable) {
-		return oTable.getDelegate().payload;
-	};
+	TableDelegateUtils.getColumnTemplateBindingPath = function(oTable, sPath) {
+		const sModelName = this.getModelName(oTable);
 
-	TableDelegateUtils.getModel = function(oTable) {
-		return oTable.getModel(this.getMetadataInfo(oTable).model);
+		if (sModelName) {
+			return sModelName + ">" + sPath;
+		} else {
+			return sPath;
+		}
 	};
 
 	return TableDelegateUtils;

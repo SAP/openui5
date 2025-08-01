@@ -9,19 +9,19 @@ sap.ui.define([
 		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {
 
 			aProperties.forEach(function(oProperty){
-				if (!oProperty.name.endsWith("_ComplexWithText") && !oProperty.name.endsWith("_ComplexWithUnit")) {
+				if (!oProperty.key.endsWith("_ComplexWithText") && !oProperty.key.endsWith("_ComplexWithUnit")) {
 					oProperty.groupable = true;
 				}
 
-				if (oProperty.name == "cityOfOrigin_city"){
+				if (oProperty.key == "cityOfOrigin_city"){
 					oProperty.label = "City of Origin";
-				} else if (oProperty.name == "cityOfOrigin_city_ComplexWithText"){
+				} else if (oProperty.key == "cityOfOrigin_city_ComplexWithText"){
 					oProperty.label = "City of Origin + Text";
 				}
 			});
 
 			aProperties.push({
-				name: "created_complex",
+				key: "created_complex",
 				label: "Created (Complex)",
 				propertyInfos: ["createdAt", "createdBy"]
 			});
@@ -43,7 +43,7 @@ sap.ui.define([
 		let aFoundValue = [];
 		if (aInfo){
 			aFoundValue = aInfo.find(function(oProp){
-				return oProp.name == sPropertyInfoName;
+				return oProp.key == sPropertyInfoName;
 			});
 		}
 

@@ -13,8 +13,8 @@ sap.ui.define([
 
 	const { ValueState } = coreLibrary;
 
-	const _getUnitTypeInstance = function(oTypeUtil, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
-		return oTypeUtil.getUnitTypeInstance ? oTypeUtil.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeUtil.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, { showNumber: bShowNumber, showMeasure: bShowMeasure });
+	const _getUnitTypeInstance = function(oTypeMap, oType, oFormatOptions, oConstraints, bShowNumber, bShowMeasure) {
+		return oTypeMap.getUnitTypeInstance ? oTypeMap.getUnitTypeInstance(oType, bShowNumber, bShowMeasure) : oTypeMap.getDataTypeInstance(oType.getMetadata().getName(), oFormatOptions, oConstraints, { showNumber: bShowNumber, showMeasure: bShowMeasure });
 	};
 
 	/**

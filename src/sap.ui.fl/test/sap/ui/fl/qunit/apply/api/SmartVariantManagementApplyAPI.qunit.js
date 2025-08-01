@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/base/util/LoaderExtensions",
@@ -16,6 +17,7 @@ sap.ui.define([
 	UIComponent,
 	Control,
 	States,
+	CompVariantManagementState,
 	FlexState,
 	LrepConnector,
 	LoaderExtensions,
@@ -33,6 +35,7 @@ sap.ui.define([
 		},
 		afterEach() {
 			FlexState.clearState();
+			FlexState.clearRuntimeSteadyObjects("sap.ui.core", "AppComponent21");
 			if (this.oControl) {
 				this.oControl.destroy();
 			}
@@ -40,7 +43,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function(assert) {
+		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", async function(assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
 			this.oControl.getPersonalizableControlPersistencyKey = function() {
@@ -56,134 +59,144 @@ sap.ui.define([
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
 
+			const sReference = "sap.ui.demoapps.rta.fiorielements";
 			var aVariants = [{
-				id: "variant_3",
+				id: "#variant_3",
 				name: "C Variant",
-				content: {}
+				content: {},
+				reference: sReference,
+				fileType: "variant"
 			}, {
-				id: "variant_4",
+				id: "#variant_4",
 				executeOnSelection: true,
 				name: "B Variant",
-				content: {}
+				content: {},
+				reference: sReference,
+				fileType: "variant"
 			}, {
-				id: "variant_5",
+				id: "#variant_5",
 				name: "A Variant",
-				content: {}
+				content: {},
+				reference: sReference,
+				fileType: "variant"
 			}];
-			var oStandardVariant = {
-				name: sStandardVariantTitle
-			};
 
-			var oExternalDataStored = {
-				variants: aVariants,
-				standardVariant: oStandardVariant,
-				controlId: "controlId1"
+			var oStandardVariant = {
+				name: sStandardVariantTitle,
+				reference: sReference,
+				fileType: "variant"
 			};
-			return SmartVariantManagementApplyAPI.loadVariants({
+			await FlexState.initialize({reference: sReference, componentId: "AppComponent21"});
+			const oResponse = await SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
 				standardVariant: oStandardVariant,
 				variants: aVariants
-			})
-			.then(function(oResponse) {
-				assert.deepEqual(
-					FlexState.getInitialNonFlCompVariantData("sap.ui.core"),
-					{variantManagement1: oExternalDataStored},
-					"external data is stored correctly"
-				);
-				var oStandardVariant = oResponse.standardVariant;
-				assert.strictEqual(oStandardVariant.getVariantId(), "*standard*", "the first is the standard variant passed");
-				assert.strictEqual(oStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
-				assert.strictEqual(
-					oStandardVariant.getExecuteOnSelection(),
-					true,
-					"and is executed on selection by a standardVariant change"
-				);
-				assert.strictEqual(oStandardVariant.getFavorite(), true, "which is by default a favorite");
-				assert.strictEqual(oStandardVariant.getChanges().length, 1, "one change was applied on the standard variant");
-				assert.strictEqual(oStandardVariant.getChanges()[0].getId(), "id_1607667712160_48_standardVariant", "with the correct id");
-				assert.strictEqual(
-					oStandardVariant.getState(),
-					States.LifecycleState.PERSISTED,
-					"the state of the standard variant is set to persisted"
-				);
-
-				assert.strictEqual(oResponse.defaultVariantId, "variant_2", "the correct variant is returned as default");
-
-				assert.strictEqual(oStandardVariant.getVariantId(), "*standard*", "the first is the standard variant passed");
-				assert.strictEqual(oStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
-				assert.strictEqual(
-					oStandardVariant.getExecuteOnSelection(),
-					true,
-					"and is executed on selection by a standardVariant change"
-				);
-				assert.strictEqual(oStandardVariant.getFavorite(), true, "which is by default a favorite");
-				assert.strictEqual(oStandardVariant.getChanges().length, 1, "one change was applied on the standard variant");
-				assert.strictEqual(oStandardVariant.getChanges()[0].getId(), "id_1607667712160_48_standardVariant", "with the correct id");
-
-				var aVariants = oResponse.variants;
-				assert.strictEqual(aVariants.length, 6, "then six entities are returned");
-				assert.strictEqual(aVariants[0].getVariantId(), "variant_3", "variant_3 is found");
-				assert.strictEqual(aVariants[0].getFavorite(), true, "which was changed to be a favorite");
-				assert.strictEqual(aVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.strictEqual(aVariants[0].getName(), "C Variant", "and the oData variant has the correct title");
-				assert.ok(
-					aVariants.every((oVariant) => oVariant.getState() === States.LifecycleState.PERSISTED),
-					"the state of other variants is set to persisted"
-				);
-				assert.strictEqual(aVariants[1].getVariantId(), "variant_4", "variant_4 is found");
-				assert.strictEqual(aVariants[1].getFavorite(), false, "which is NOT a favorite");
-				assert.strictEqual(
-					aVariants[1].getExecuteOnSelection(),
-					true,
-					"and is executed on selection, because it is flagged within the object"
-				);
-				assert.strictEqual(aVariants[1].getName(), "B Variant", "and the oData variant has the correct title");
-				assert.strictEqual(aVariants[2].getVariantId(), "variant_5", "variant_5 is found");
-				assert.strictEqual(aVariants[2].getFavorite(), false, "which is NOT a favorite");
-				assert.strictEqual(aVariants[2].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.strictEqual(aVariants[2].getName(), "A Variant", "and the oData variant has the correct title");
-				assert.strictEqual(aVariants[3].getVariantId(), "variant_1", "variant_1 is found");
-				assert.strictEqual(
-					aVariants[3].getFavorite(),
-					false,
-					"which is NOT a favorite, because it was added as a favorite and afterwards removed"
-				);
-				assert.strictEqual(aVariants[3].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.strictEqual(aVariants[3].getName(), "B Variant", "and the variant has the correct title");
-				assert.strictEqual(aVariants[4].getVariantId(), "variant_2", "variant_2 is found");
-				assert.strictEqual(
-					aVariants[4].getFavorite(),
-					true,
-					"which is a favorite, because it is flagged as one within the content"
-				);
-				assert.strictEqual(
-					aVariants[4].getExecuteOnSelection(),
-					true,
-					"and is executed on selection, because it is flagged within the content"
-				);
-				assert.strictEqual(aVariants[4].getName(), "B Variant2", "and the variant has the correct title");
-				assert.strictEqual(
-					aVariants[5].getFavorite(),
-					false,
-					"which is a favorite, because it is flagged as one within the content"
-				);
-				assert.strictEqual(
-					aVariants[5].getExecuteOnSelection(),
-					false,
-					"and is executed on selection, because it is flagged within the content"
-				);
-				assert.strictEqual(aVariants[5].getName(), "a new name", "and the variant has the correct title");
-				assert.deepEqual(aVariants[5].getContexts(), {
-					ROLE: ["SOME_ROLE"]
-				}, "the variant has roles because of the update");
-				assert.deepEqual(aVariants[5].getContent(), {
-					some: "property",
-					another: "value"
-				}, "and the variants content was updated");
 			});
+
+			var oReturnedStandardVariant = oResponse.standardVariant;
+			assert.strictEqual(oReturnedStandardVariant.getVariantId(), "*standard*", "the first is the standard variant passed");
+			assert.strictEqual(oReturnedStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
+			assert.strictEqual(
+				oReturnedStandardVariant.getExecuteOnSelection(),
+				true,
+				"and is executed on selection by a standardVariant change"
+			);
+			assert.strictEqual(oReturnedStandardVariant.getFavorite(), true, "which is by default a favorite");
+			const aStandardVariantChanges = CompVariantManagementState.getVariantChanges(oReturnedStandardVariant);
+			assert.strictEqual(aStandardVariantChanges.length, 1, "one change was applied on the standard variant");
+			assert.strictEqual(aStandardVariantChanges[0].getId(), "id_1607667712160_48_standardVariant", "with the correct id");
+			assert.strictEqual(
+				oReturnedStandardVariant.getState(),
+				States.LifecycleState.PERSISTED,
+				"the state of the standard variant is set to persisted"
+			);
+
+			assert.strictEqual(oResponse.defaultVariantId, "variant_2", "the correct variant is returned as default");
+
+			assert.strictEqual(oReturnedStandardVariant.getVariantId(), "*standard*", "the first is the standard variant passed");
+			assert.strictEqual(oReturnedStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
+			assert.strictEqual(
+				oReturnedStandardVariant.getExecuteOnSelection(),
+				true,
+				"and is executed on selection by a standardVariant change"
+			);
+
+			var aReturnedVariants = oResponse.variants;
+			assert.strictEqual(aReturnedVariants.length, 6, "then six entities are returned");
+
+			// variant 1
+			assert.strictEqual(aReturnedVariants[0].getVariantId(), "variant_1", "variant_1 is found");
+			assert.strictEqual(
+				aReturnedVariants[0].getFavorite(),
+				false,
+				"which is NOT a favorite, because it was added as a favorite and afterwards removed"
+			);
+			assert.strictEqual(aReturnedVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
+			assert.strictEqual(aReturnedVariants[0].getName(), "B Variant", "and the variant has the correct title");
+
+			// variant 2
+			assert.strictEqual(aReturnedVariants[1].getVariantId(), "variant_2", "variant_2 is found");
+			assert.strictEqual(
+				aReturnedVariants[1].getFavorite(),
+				true,
+				"which is a favorite, because it is flagged as one within the content"
+			);
+			assert.strictEqual(
+				aReturnedVariants[1].getExecuteOnSelection(),
+				true,
+				"and is executed on selection, because it is flagged within the content"
+			);
+			assert.strictEqual(aReturnedVariants[1].getName(), "B Variant2", "and the variant has the correct title");
+
+			// variant 3
+			assert.strictEqual(
+				aReturnedVariants[2].getFavorite(),
+				false,
+				"which is a favorite, because it is flagged as one within the content"
+			);
+			assert.strictEqual(
+				aReturnedVariants[2].getExecuteOnSelection(),
+				false,
+				"and is executed on selection, because it is flagged within the content"
+			);
+			assert.strictEqual(aReturnedVariants[2].getName(), "a new name", "and the variant has the correct title");
+			assert.deepEqual(aReturnedVariants[2].getContexts(), {
+				ROLE: ["SOME_ROLE"]
+			}, "the variant has roles because of the update");
+			assert.deepEqual(aReturnedVariants[2].getContent(), {
+				some: "property",
+				another: "value"
+			}, "and the variants content was updated");
+
+			// variant 4
+			assert.strictEqual(aReturnedVariants[3].getVariantId(), "_HASHTAG_variant_3", "#variant_3 is found");
+			assert.strictEqual(aReturnedVariants[3].getFavorite(), true, "which was changed to be a favorite");
+			assert.strictEqual(aReturnedVariants[3].getExecuteOnSelection(), false, "and is not executed on selection by default");
+			assert.strictEqual(aReturnedVariants[3].getName(), "C Variant", "and the oData variant has the correct title");
+
+			// variant 5
+			assert.strictEqual(aReturnedVariants[4].getVariantId(), "_HASHTAG_variant_4", "#variant_4 is found");
+			assert.strictEqual(aReturnedVariants[4].getFavorite(), false, "which is NOT a favorite");
+			assert.strictEqual(
+				aReturnedVariants[4].getExecuteOnSelection(),
+				true,
+				"and is executed on selection, because it is flagged within the object"
+			);
+			assert.strictEqual(aReturnedVariants[4].getName(), "B Variant", "and the oData variant has the correct title");
+
+			// variant 6
+			assert.strictEqual(aReturnedVariants[5].getVariantId(), "_HASHTAG_variant_5", "#variant_5 is found");
+			assert.strictEqual(aReturnedVariants[5].getFavorite(), false, "which is NOT a favorite");
+			assert.strictEqual(aReturnedVariants[5].getExecuteOnSelection(), false, "and is not executed on selection by default");
+			assert.strictEqual(aReturnedVariants[5].getName(), "A Variant", "and the oData variant has the correct title");
+
+			assert.ok(
+				aReturnedVariants.every((oVariant) => oVariant.getState() === States.LifecycleState.PERSISTED),
+				"the state of other variants is set to persisted"
+			);
 		});
 
-		QUnit.test("When loadVariants() is called and multiple variants, of which multiple are a overruling the standard variant, are present for the persistencyKey of the passed control", function(assert) {
+		QUnit.test("When loadVariants() is called and multiple variants, of which multiple are a overruling the standard variant, are present for the persistencyKey of the passed control", async function(assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
 			this.oControl.getPersonalizableControlPersistencyKey = function() {
@@ -200,103 +213,72 @@ sap.ui.define([
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
 
-			var aVariants = [{
-				id: "variant_3",
+			let aVariants = [{
+				id: "#variant_3",
 				name: "C variant" // explicitly no content to test the optional content parameter
 			}, {
-				id: "variant_4",
+				id: "#variant_4",
 				executeOnSelection: true,
 				name: "A variant",
 				content: {}
 			}, {
-				id: "variant_5",
+				id: "#variant_5",
 				name: "A Variant",
 				content: {}
 			}];
 
-			return SmartVariantManagementApplyAPI.loadVariants({
+			await FlexState.initialize({reference: "sap.ui.core", componentId: "AppComponent21"});
+			const oResponse = await SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
-				standardVariant: {
-					name: sStandardVariantTitle
-				},
+				standardVariant: oStandardVariant,
 				variants: aVariants
-			})
-			.then(function(oResponse) {
-				var oStandardVariant = oResponse.standardVariant;
-				assert.strictEqual(oStandardVariant.getVariantId(), "variant_standard2", "the first is the overwritten standard variant");
-				assert.strictEqual(
-					oStandardVariant.getText("variantName"),
-					"This another of my very own standard variant text",
-					"with the title from the variant file"
-				);
-				assert.strictEqual(oStandardVariant.getExecuteOnSelection(), true, "and not is executed on selection due to a change");
-				assert.strictEqual(oStandardVariant.getFavorite(), true, "and it is a favorite");
-
-				assert.strictEqual(oResponse.defaultVariantId, "", "no default variant is returned (as none was set)");
-
-				var aVariants = oResponse.variants;
-				assert.strictEqual(aVariants.length, 5, "then five entities are returned");
-				assert.strictEqual(aVariants[0].getVariantId(), "variant_3", "the six is the variant provided from the loadFlexData");
-				assert.strictEqual(aVariants[0].getFavorite(), true, "which was changed to be a favorite");
-				assert.strictEqual(aVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.strictEqual(aVariants[1].getVariantId(), "variant_4", "the third is the variant provided from the loadFlexData");
-				assert.strictEqual(aVariants[1].getFavorite(), false, "which is NOT a favorite");
-				assert.strictEqual(
-					aVariants[1].getExecuteOnSelection(),
-					true,
-					"and is executed on selection, because it is flagged within the object"
-				);
-				assert.strictEqual(aVariants[2].getVariantId(), "variant_5", "the second is the variant provided from the loadFlexData");
-				assert.strictEqual(aVariants[2].getFavorite(), false, "which is NOT a favorite");
-				assert.strictEqual(aVariants[2].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.strictEqual(aVariants[3].getVariantId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
-				assert.strictEqual(
-					aVariants[3].getFavorite(),
-					false,
-					"which is NOT a favorite, because it was added as a favorite and afterwards removed"
-				);
-				assert.strictEqual(aVariants[3].getExecuteOnSelection(), false, "and is not executed on selection by default");
-				assert.strictEqual(aVariants[4].getVariantId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
-				assert.strictEqual(
-					aVariants[4].getFavorite(),
-					true,
-					"which is a favorite, because it is flagged as one within the content"
-				);
-				assert.strictEqual(
-					aVariants[4].getExecuteOnSelection(),
-					true,
-					"and is executed on selection, because it is flagged within the content"
-				);
-			});
-		});
-
-		QUnit.test("When loadVariants() is called and an end user default variant was set to favorite = false by a key user", function(assert) {
-			this.oControl = new Control("controlId1");
-			var sPersistencyKey = "variantManagement1";
-			this.oControl.getPersonalizableControlPersistencyKey = function() {
-				return sPersistencyKey;
-			};
-
-			var mFlexData = LoaderExtensions.loadResource({
-				dataType: "json",
-				url: sap.ui.require.toUrl(
-					"test-resources/sap/ui/fl/qunit/apply/api/" +
-					"SmartVariantManagementAPI.loadVariantsTestSetup-default-notfavorite.json"
-				)
 			});
 
-			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
+			var oStandardVariant = oResponse.standardVariant;
+			assert.strictEqual(oStandardVariant.getVariantId(), "variant_standard2", "the first is the overwritten standard variant");
+			assert.strictEqual(
+				oStandardVariant.getText("variantName"),
+				"This another of my very own standard variant text",
+				"with the title from the variant file"
+			);
+			assert.strictEqual(oStandardVariant.getExecuteOnSelection(), true, "and not is executed on selection due to a change");
+			assert.strictEqual(oStandardVariant.getFavorite(), true, "and it is a favorite");
 
-			return SmartVariantManagementApplyAPI.loadVariants({
-				control: this.oControl,
-				standardVariant: {
-					name: sStandardVariantTitle
-				}
-			})
-			.then(function(oResponse) {
-				var aVariants = oResponse.variants;
-				assert.ok(aVariants[0].getFavorite(), "then the default variant is set to favorite");
-			});
+			assert.strictEqual(oResponse.defaultVariantId, "", "no default variant is returned (as none was set)");
+
+			aVariants = oResponse.variants;
+			assert.strictEqual(aVariants.length, 5, "then five entities are returned");
+			assert.strictEqual(aVariants[0].getVariantId(), "variant_1", "the first is the variant provided from the API");
+			assert.strictEqual(aVariants[0].getFavorite(), false, "which was changed two times to be not a favorite");
+			assert.strictEqual(aVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
+			assert.strictEqual(aVariants[1].getVariantId(), "variant_2", "the second is the variant provided from the API");
+			assert.strictEqual(aVariants[1].getFavorite(), true, "which is a favorite");
+			assert.strictEqual(
+				aVariants[1].getExecuteOnSelection(),
+				true,
+				"and is executed on selection, because it is flagged within the object"
+			);
+			assert.strictEqual(aVariants[2].getVariantId(), "_HASHTAG_variant_3", "the third is the variant provided from the API");
+			assert.strictEqual(aVariants[2].getFavorite(), true, "which is changed to be a favorite");
+			assert.strictEqual(aVariants[2].getExecuteOnSelection(), false, "and is not executed on selection by default");
+			assert.strictEqual(aVariants[3].getVariantId(), "_HASHTAG_variant_4", "the fourth is the variant provided from the API");
+			assert.strictEqual(
+				aVariants[3].getFavorite(),
+				false,
+				"which is NOT a favorite, because it was added as a favorite and afterwards removed"
+			);
+			assert.strictEqual(aVariants[3].getExecuteOnSelection(), true, "and is not executed on selection by default");
+			assert.strictEqual(aVariants[4].getVariantId(), "_HASHTAG_variant_5", "the fifth is the variant provided from the API");
+			assert.strictEqual(
+				aVariants[4].getFavorite(),
+				false,
+				"which is a favorite, because it is flagged as one within the content"
+			);
+			assert.strictEqual(
+				aVariants[4].getExecuteOnSelection(),
+				false,
+				"and is executed on selection, because it is flagged within the content"
+			);
 		});
 	});
 

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/support/_internal/extractChangeDependencies",
 	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/support/api/SupportAPI",
@@ -73,7 +73,7 @@ sap.ui.define([
 			const oInsideIFrameModules = await new Promise((resolve) => {
 				this.oIFrame.getDomRef().contentWindow.sap.ui.require([
 					"sap/ui/fl/Utils",
-					"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+					"sap/ui/fl/initial/_internal/ManifestUtils",
 					"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState"
 				], (FlUtils, ManifestUtils, UIChangesState) => {
 					resolve({FlUtils, ManifestUtils, UIChangesState});

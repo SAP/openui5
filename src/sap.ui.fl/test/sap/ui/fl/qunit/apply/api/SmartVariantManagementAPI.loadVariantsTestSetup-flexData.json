@@ -27,6 +27,7 @@
       "fileName": "defaultVariant1",
       "fileType": "change",
       "changeType": "defaultVariant",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector": {
         "persistencyKey": "variantManagement1"
       },
@@ -38,6 +39,7 @@
       "fileName": "variant_1",
       "fileType": "variant",
       "layer": "USER",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector": {
         "persistencyKey": "variantManagement1"
       },
@@ -50,6 +52,7 @@
     },{
       "fileName": "variant_2",
       "fileType": "variant",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector": {
         "persistencyKey": "variantManagement1"
       },
@@ -65,6 +68,7 @@
     },{
       "fileName": "variant_6",
       "fileType": "variant",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector": {
         "persistencyKey": "variantManagement1"
       },
@@ -80,6 +84,7 @@
     {
       "fileName": "variant_invisible",
       "fileType": "variant",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector": {
         "persistencyKey": "variantManagement1"
       },
@@ -88,7 +93,7 @@
       "favorite": true,
       "texts": {
         "variantName": {
-          "value": "Variant which will be set to invisble"
+          "value": "Variant which will be set to invisible"
         }
       }
     }],
@@ -166,7 +171,7 @@
       "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
-        "key": "variant_3",
+        "key": "#variant_3",
         "visible": true
       },
       "selector": {

@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/Utils"
 ], function(
 	merge,
@@ -258,34 +258,19 @@ sap.ui.define([
 		}));
 	};
 
-	function getCompVariantEntities(sReference) {
-		const aEntities = [];
-		const mCompEntities = FlexState.getCompVariantsMap(sReference);
-		for (const sPersistencyKey in mCompEntities) {
-			const mCompVariantsOfPersistencyKey = mCompEntities[sPersistencyKey];
-			for (const sId in mCompVariantsOfPersistencyKey.byId) {
-				aEntities.push(mCompVariantsOfPersistencyKey.byId[sId]);
-			}
-		}
-		return aEntities;
-	}
-
-	function isNewChangeDeleted(oFlexObject) {
-		return !(oFlexObject.getState() === States.LifecycleState.DELETED && oFlexObject._sPreviousState === States.LifecycleState.NEW);
-	}
-
 	/**
 	 * Collects modified changes from the different states within the <code>sap.ui.fl</code> library.
-	 * TODO: remove special CompVariant handling todos#5
 	 *
 	 * @param {object} sReference - Flex Reference
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} All dirty Flex objects
 	 */
 	FlexObjectState.getDirtyFlexObjects = function(sReference) {
-		const aCompVariantEntities = getCompVariantEntities(sReference);
-		return oAllDirtyFlexObjectsDataSelector.get({reference: sReference})
-		.concat(aCompVariantEntities.filter((oFlexObject) => oFlexObject.getState() !== States.LifecycleState.PERSISTED))
-		// change is not dirty when it is created and deleted in the same session
+		function isNewChangeDeleted(oFlexObject) {
+			return !(oFlexObject.getState() === States.LifecycleState.DELETED && oFlexObject._sPreviousState === States.LifecycleState.NEW);
+		}
+
+		return oAllDirtyFlexObjectsDataSelector
+		.get({reference: sReference})
 		.filter((oFlexObject) => isNewChangeDeleted(oFlexObject));
 	};
 

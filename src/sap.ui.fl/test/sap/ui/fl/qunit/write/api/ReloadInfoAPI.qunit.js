@@ -2,11 +2,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/Settings",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
@@ -21,7 +21,7 @@ sap.ui.define([
 	FlexInfoSession,
 	Version,
 	Settings,
-	CompVariantState,
+	CompVariantManager,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
@@ -38,7 +38,7 @@ sap.ui.define([
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start, ", {
 		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
-			this.oCheckSVMStub = sandbox.stub(CompVariantState, "checkSVMControlsForDirty").returns(false);
+			this.oCheckSVMStub = sandbox.stub(CompVariantManager, "checkSVMControlsForDirty").returns(false);
 		},
 		afterEach() {
 			sandbox.restore();
