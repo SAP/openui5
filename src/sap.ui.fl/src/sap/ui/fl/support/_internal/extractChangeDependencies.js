@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
-	"sap/ui/fl/initial/_internal/ManifestUtils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
 ], function(
 	JsControlTreeModifier,
 	Element,

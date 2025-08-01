@@ -4,15 +4,15 @@
 
 sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/Layer"
 ], function(
 	CompVariantManager,
+	ManifestUtils,
 	CompVariantUtils,
 	FlexState,
-	ManifestUtils,
 	Layer
 ) {
 	"use strict";
