@@ -780,9 +780,9 @@ sap.ui.define([
 			type: UnitType
 		});
 		assert.equal(this.obj.isBound("value"), true, "isBound must return true for bound properties");
-		assert.equal(this.obj.getProperty("value"), "123.000 KG", "Property must return model value");
+		assert.equal(this.obj.getProperty("value"), "123.000\u00a0KG", "Property must return model value");
 		oModel.setProperty("/number", 234);
-		assert.equal(this.obj.getProperty("value"), "234.000 KG", "New model value must be reflected");
+		assert.equal(this.obj.getProperty("value"), "234.000\u00a0KG", "New model value must be reflected");
 		this.obj.setProperty("value", "345 KG");
 		assert.equal(oModel.getProperty("/number"), 345, "Control property change must update model");
 		oModel.setProperty("/number", 123);

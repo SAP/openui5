@@ -47,18 +47,19 @@ sap.ui.define([
 	let sUi5Version;
 	let mAllDistLibraries;
 
+	function isVersionInfoNeeded() {
+		const theme = Theming.getTheme();
+		return !ThemeHelper.isStandardTheme(theme) && Theming.getThemeRoot(theme);
+	}
 	// UI5 version is only needed in case a theming service is active but we always add it to the request
 	// therefore request it as early as possible
 	const versionInfoLoaded = VersionInfo.load().then((oVersionInfo) => {
 		sUi5Version = oVersionInfo.version;
 		mAllDistLibraries = new Set(oVersionInfo.libraries.map((library) => library.name));
 	}, (e) => {
-		throw new Error(
-			`${MODULE_NAME}: UI5 theming lifecycle requires valid version information. Please investigate why the version info could not be loaded in this system.`,
-			{
-				cause: e
-			}
-		);
+		if (isVersionInfoNeeded()) {
+			Log.error("UI5 theming lifecycle requires valid version information when a theming service is active. Please check why the version info could not be loaded in this system.", e, MODULE_NAME);
+		}
 	});
 
 	/**
@@ -249,6 +250,9 @@ sap.ui.define([
 			ThemeManager.themeLoaded = false;
 			Log.debug(`Register theme change for library ${libInfo.id}`, undefined, MODULE_NAME);
 		}
+		if (!sUi5Version && isVersionInfoNeeded()) {
+			Log.error("[FUTURE FATAL] UI5 theming lifecycle requires valid version information when a theming service is active. Please check why the version info could not be loaded in this system.", undefined, MODULE_NAME);
+		}
 		// Compare the link including the UI5 version only if it is already available; otherwise, compare the link without the version to prevent unnecessary requests.
 		const sOldUrl = sUi5Version ? libInfo.cssLinkElement?.getAttribute("href") : libInfo.cssLinkElement?.getAttribute("href").replace(/\?.*/, "");
 		const sUrl = libInfo.getUrl({sTheme: theme});
@@ -302,8 +306,10 @@ sap.ui.define([
 					pAllCssRequests.finally(function() {
 						if (this === pAllCssRequests) {
 							Log.debug("Theme change finished", undefined, MODULE_NAME);
-							ThemeManager.themeLoaded = true;
-							if (suppressFOUC) {
+							// Even if suppressFOUC is not set, we must fire the event if themeLoaded was previously set to false,
+							// because this indicates that at least one theme change was caused by a theming-relevant trigger.
+							if (suppressFOUC || !ThemeManager.themeLoaded) {
+								ThemeManager.themeLoaded = true;
 								oEventing.fireEvent("applied", {
 									theme: Theming.getTheme()
 								});

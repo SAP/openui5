@@ -2126,7 +2126,7 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit
-		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000 mass-kilogram",
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000\u00a0mass-kilogram",
 			"Format of unknown unit returns number and measure (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
@@ -2190,7 +2190,7 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit (excluded by local config)
-		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000 mass-kilogram",
+		assert.strictEqual(oType.formatValue([100, "mass-kilogram"], "string"), "100.000\u00a0mass-kilogram",
 			"Format of unknown unit leads to empty string (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
@@ -2199,7 +2199,7 @@ sap.ui.define([
 			"ParseException is thrown for wrong unit");
 
 		// format and parse invalid unit (excluded by local config)
-		assert.strictEqual(oType.formatValue([123.4, "lebkuchen"], "string"), "123.400 lebkuchen",
+		assert.strictEqual(oType.formatValue([123.4, "lebkuchen"], "string"), "123.400\u00a0lebkuchen",
 			"Lebkuchen is formatted with the default of 3 decimal places");
 		assert.throws(function () {
 			oType.parseValue("1234.56 LKs", "string");

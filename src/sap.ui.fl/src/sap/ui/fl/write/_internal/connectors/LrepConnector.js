@@ -102,6 +102,9 @@ sap.ui.define([
 		if (mPropertyBag.parentVersion) {
 			mParameters.parentVersion = mPropertyBag.parentVersion;
 		}
+		if (mPropertyBag.parsedHash) {
+			mParameters.parsedHash = JSON.stringify(mPropertyBag.parsedHash);
+		}
 		InitialUtils.addSAPLogonLanguageInfo(mParameters);
 		InitialConnector._addClientInfo(mParameters);
 		// single update --> fileName needs to be in the url

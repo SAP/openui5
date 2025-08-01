@@ -143,11 +143,12 @@ sap.ui.define([
 
 			oServer = sinon.fakeServer.create();
 
-			const oParsedHashStub = {
+			const oParsedHash = {
 				semanticObject: "testSemanticObject",
-				action: "testAction"
+				action: "testAction",
+				params: {par: "testpar"}
 			};
-			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHashStub);
+			sandbox.stub(FlUtils, "getParsedURLHash").returns(oParsedHash);
 
 			this.oAppVariantData = {
 				description: "App Variant Description",
@@ -164,10 +165,11 @@ sap.ui.define([
 			oServer.restore();
 		}
 	}, function() {
-		const assertChanges = function(assert, oAppVariantManager, oAppVariantData, oAppComponent, bAddNewInboundRequired) {
-			sandbox.stub(AppVariantUtils, "getInboundInfo").returns(Promise.resolve({
-				currentRunningInbound: "customer.savedAsAppVariant",
-				addNewInboundRequired: bAddNewInboundRequired
+		const assertChanges = function(assert, oAppVariantManager, oAppVariantData, oAppComponent) {
+			sandbox.stub(AppVariantUtils, "getParsedHash").returns(Promise.resolve({
+				semanticObject: "testSemanticObject",
+				action: "testAction",
+				params: {par: "testpar"}
 			}));
 			sandbox.stub(FlexRuntimeInfoAPI, "getFlexReference").returns("testComponent");
 			const fnCreateChangesSpy = sandbox.spy(ChangesWriteAPI, "create");
@@ -179,10 +181,6 @@ sap.ui.define([
 					const sChangeType = oInlineChange._oInlineChange.getMap().changeType;
 					assert.equal(DescriptorChangeTypes.getChangeTypes().includes(sChangeType), true, `then inline change ${sChangeType} got successfully created`);
 				});
-				assert.equal(aAllInlineChanges.some(function(oInlineChange) {
-					const sChangeType = oInlineChange._oInlineChange.getMap().changeType;
-					return sChangeType === "appdescr_app_removeAllInboundsExceptOne";
-				}), true, "inline changes include appdescr_app_removeAllInboundsExceptOne change");
 			});
 		};
 
@@ -236,6 +234,11 @@ sap.ui.define([
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
 
 			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
+			this.oParsedHash = {
+				semanticObject: "testSemanticObject",
+				action: "testAction",
+				params: {par: "testpar"}
+			};
 			oServer = sinon.fakeServer.create();
 		},
 		afterEach() {
@@ -246,9 +249,9 @@ sap.ui.define([
 		QUnit.test("When createAppVariant() method is called", function(assert) {
 			const fnSaveAsAppVariantStub = sandbox.stub(AppVariantWriteAPI, "saveAs").resolves();
 
-			return this.oAppVariantManager.createAppVariant("customer.appvar.id", this.oRootControl)
+			return this.oAppVariantManager.createAppVariant("customer.appvar.id", this.oParsedHash, this.oRootControl)
 			.then(function() {
-				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oRootControl, id: "customer.appvar.id", layer: Layer.CUSTOMER, version: "1.0.0"}));
+				assert.ok(fnSaveAsAppVariantStub.calledWithExactly({selector: this.oRootControl, id: "customer.appvar.id", parsedHash: this.oParsedHash, layer: Layer.CUSTOMER, version: "1.0.0"}));
 			}.bind(this));
 		});
 
@@ -292,7 +295,7 @@ sap.ui.define([
 			const oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves(oResponse);
 			const fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
 
-			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", parsedHash: this.oParsedHash, reference: "TestIdBaseApp"})
 			.then(function(oManifest) {
 				return this.oAppVariantManager.triggerCatalogPublishing(oManifest.getId(), oManifest.getReference(), true);
 			}.bind(this))
@@ -316,7 +319,7 @@ sap.ui.define([
 			const oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves(oResponse);
 			const fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
 
-			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", parsedHash: this.oParsedHash, reference: "TestIdBaseApp"})
 			.then(function(oManifest) {
 				return this.oAppVariantManager.triggerCatalogPublishing(oManifest.getId(), oManifest.getReference(), false);
 			}.bind(this))
@@ -345,7 +348,7 @@ sap.ui.define([
 			const fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 			const fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
 
-			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", parsedHash: this.oParsedHash, reference: "TestIdBaseApp"})
 			.then(function(oManifest) {
 				return this.oAppVariantManager.triggerCatalogPublishing(oManifest.getId(), oManifest.getReference(), true);
 			}.bind(this))
@@ -377,7 +380,7 @@ sap.ui.define([
 			const fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 			const fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
 
-			return AppVariantFactory.prepareCreate({id: "customer.TestId", reference: "TestIdBaseApp"})
+			return AppVariantFactory.prepareCreate({id: "customer.TestId", parsedHash: this.oParsedHash, reference: "TestIdBaseApp"})
 			.then(function(oManifest) {
 				return this.oAppVariantManager.triggerCatalogPublishing(oManifest.getId(), oManifest.getReference(), false);
 			}.bind(this))
@@ -399,6 +402,7 @@ sap.ui.define([
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
+				parsedHash: this.oParsedHash,
 				reference: "TestIdBaseApp"
 			}).then(function(oManifest) {
 				return this.oAppVariantManager.showSuccessMessage(oManifest, true).then(function() {
@@ -414,6 +418,7 @@ sap.ui.define([
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
+				parsedHash: this.oParsedHash,
 				reference: "TestIdBaseApp"
 			}).then(function(oManifest) {
 				return this.oAppVariantManager.showSuccessMessage(oManifest, true).then(function() {
@@ -431,6 +436,7 @@ sap.ui.define([
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
+				parsedHash: this.oParsedHash,
 				reference: "TestIdBaseApp"
 			}).then(function(oManifest) {
 				return this.oAppVariantManager.showSuccessMessage(oManifest, false).then(function() {
@@ -448,6 +454,7 @@ sap.ui.define([
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
+				parsedHash: this.oParsedHash,
 				reference: "TestIdBaseApp"
 			}).then(function(oManifest) {
 				return this.oAppVariantManager.showSuccessMessage(oManifest, false).then(function() {
