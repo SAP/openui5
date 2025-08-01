@@ -41,7 +41,8 @@ sap.ui.define([
 					parseShellHash() {
 						return {
 							semanticObject: "testSemanticObject",
-							action: "testAction"
+							action: "testAction",
+							params: {par: "testpar"}
 						};
 					}
 				});
@@ -116,90 +117,15 @@ sap.ui.define([
 			assert.deepEqual(AppVariantUtils.prepareRemoveAllInboundsExceptOneChange("testInbound"), {content: {inboundId: "testInbound"}}, "then the content of remove inbound inline change is correct");
 		});
 
-		QUnit.test("When getInboundInfo() is called, the running app has no inbounds present in the manifest", function(assert) {
-			return AppVariantUtils.getInboundInfo()
-			.then(function(mInboundInfo) {
-				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
-			});
-		});
-
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does not match with inbounds present in the manifest", function(assert) {
-			const oInbounds = {
-				inbound1: {
-					semanticObject: "semanticObject1",
-					action: "action1"
-				},
-				inbound2: {
-					semanticObject: "semanticObject2",
-					action: "action2"
-				},
-				inbound3: {
-					semanticObject: "semanticObject3",
-					action: "action3"
-				}
+		QUnit.test("When getParsedHash() is called", function(assert) {
+			const oExpectedParsedHash = {
+				action: "testAction",
+				semanticObject: "testSemanticObject",
+				params: {par: "testpar"}
 			};
-
-			return AppVariantUtils.getInboundInfo(oInbounds)
-			.then(function(mInboundInfo) {
-				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
-			});
-		});
-
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound does match with an inbound present in the manifest", function(assert) {
-			const oInbounds = {
-				"customer.savedAsAppVariant": {
-					semanticObject: "testSemanticObject",
-					action: "testAction"
-				}
-			};
-
-			return AppVariantUtils.getInboundInfo(oInbounds)
-			.then(function(mInboundInfo) {
-				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: false}, "then the existing inbound will be reused");
-			});
-		});
-
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 1 inbounds' SO and action", function(assert) {
-			const oInbounds = {
-				inbound1: {
-					semanticObject: "semanticObject1",
-					action: "action1"
-				},
-				inbound2: {
-					semanticObject: "testSemanticObject",
-					action: "testAction"
-				},
-				inbound3: {
-					semanticObject: "semanticObject3",
-					action: "action3"
-				}
-			};
-
-			return AppVariantUtils.getInboundInfo(oInbounds)
-			.then(function(mInboundInfo) {
-				assert.deepEqual(mInboundInfo, {currentRunningInbound: "inbound2", addNewInboundRequired: false}, "then the current inbound info is correct");
-			});
-		});
-
-		QUnit.test("When getInboundInfo() is called, the semantic object and action of running inbound match with 2 inbounds' SO and action", function(assert) {
-			const oInbounds = {
-				inbound1: {
-					semanticObject: "semanticObject1",
-					action: "action1"
-				},
-				inbound2: {
-					semanticObject: "testSemanticObject",
-					action: "testAction"
-				},
-				inbound3: {
-					semanticObject: "testSemanticObject",
-					action: "testAction"
-				}
-			};
-
-			return AppVariantUtils.getInboundInfo(oInbounds)
-			.then(function(mInboundInfo) {
-				assert.deepEqual(mInboundInfo, {currentRunningInbound: "customer.savedAsAppVariant", addNewInboundRequired: true}, "then the current inbound info is correct");
+			return AppVariantUtils.getParsedHash()
+			.then(function(oParsedHash) {
+				assert.deepEqual(oParsedHash, oExpectedParsedHash, "then the parsed hash is returned");
 			});
 		});
 
@@ -652,7 +578,12 @@ sap.ui.define([
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
-				reference: "TestIdBaseApp"
+				reference: "TestIdBaseApp",
+				parsedHash: {
+					action: "testAction",
+					semanticObject: "testSemanticObject",
+					params: {par: "testpar"}
+				}
 			})
 			.then(function(oAppVariant) {
 				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, false);
@@ -669,7 +600,12 @@ sap.ui.define([
 
 			return AppVariantFactory.prepareCreate({
 				id: "customer.TestId",
-				reference: "TestIdBaseApp"
+				reference: "TestIdBaseApp",
+				parsedHash: {
+					action: "testAction",
+					semanticObject: "testSemanticObject",
+					params: {par: "testpar"}
+				}
 			})
 			.then(function(oAppVariant) {
 				return AppVariantUtils.buildSuccessInfo(oAppVariant.getId(), false, true);

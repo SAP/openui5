@@ -308,6 +308,24 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("When prepareCreate is called and getting parsed hash is checked", function(assert) {
+			return AppVariantFactory.prepareCreate({
+				id: "a.id",
+				parsedHash: {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				},
+				reference: "a.reference"
+			}).then(function(oVariant) {
+				assert.deepEqual(oVariant.getParsedHash(), {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				});
+			});
+		});
+
 		QUnit.test("When prepareCreate is called and setting id of app variant is cross checked", function(assert) {
 			return AppVariantFactory.prepareCreate({
 				id: "a.id",
@@ -454,10 +472,20 @@ sap.ui.define([
 		QUnit.test("When prepareCreate is called, variant saved into backend and checking app variant properties", function(assert) {
 			return AppVariantFactory.prepareCreate({
 				id: "a.id",
+				parsedHash: {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				},
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.notEqual(oVariant, null);
 				assert.equal(oVariant.getId(), "a.id");
+				assert.deepEqual(oVariant.getParsedHash(), {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				});
 				assert.equal(oVariant.getReference(), "a.reference");
 				assert.equal(oVariant.getMode(), "NEW");
 				assert.equal(oVariant._getMap().layer, Layer.CUSTOMER);
@@ -551,18 +579,29 @@ sap.ui.define([
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
+					parsedHash: {
+						semanticObject: "testSemanticObject",
+						action: "testAction",
+						params: {par: "testpar"}
+					},
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
 			});
 			return AppVariantFactory.prepareCreate({
 				id: "a.id",
+				parsedHash: {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				},
 				reference: "a.reference"
 			}).then(function(oAppVariant) {
 				return oAppVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
+				assert.equal(oNewConnectorStub.getCall(0).args[0],
+					"/sap/bc/lrep/appdescr_variants/?parsedHash=%7b%22semanticObject%22%3a%22testSemanticObject%22%2c%22action%22%3a%22testAction%22%2c%22params%22%3a%7b%22par%22%3a%22testpar%22%7d%7d&sap-language=EN");
 			});
 		});
 
@@ -570,19 +609,30 @@ sap.ui.define([
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
+					parsedHash: {
+						semanticObject: "testSemanticObject",
+						action: "testAction",
+						params: {par: "testpar"}
+					},
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
 			});
 			return AppVariantFactory.prepareCreate({
 				id: "a.id",
+				parsedHash: {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				},
 				reference: "a.reference",
 				referenceVersion: "1.1"
 			}).then(function(oAppVariant) {
 				return oAppVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
+				assert.equal(oNewConnectorStub.getCall(0).args[0],
+					"/sap/bc/lrep/appdescr_variants/?parsedHash=%7b%22semanticObject%22%3a%22testSemanticObject%22%2c%22action%22%3a%22testAction%22%2c%22params%22%3a%7b%22par%22%3a%22testpar%22%7d%7d&sap-language=EN");
 				assert.equal(JSON.parse(oNewConnectorStub.getCall(0).args[2].payload).referenceVersion, "1.1");
 			});
 		});
@@ -690,6 +740,11 @@ sap.ui.define([
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
+					parsedHash: {
+						semanticObject: "testSemanticObject",
+						action: "testAction",
+						params: {par: "testpar"}
+					},
 					reference: "a.reference",
 					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
@@ -697,12 +752,18 @@ sap.ui.define([
 			});
 			return AppVariantFactory.prepareCreate({
 				id: "a.id",
+				parsedHash: {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				},
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				return oVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?sap-language=EN");
+				assert.equal(oNewConnectorStub.getCall(0).args[0],
+					"/sap/bc/lrep/appdescr_variants/?parsedHash=%7b%22semanticObject%22%3a%22testSemanticObject%22%2c%22action%22%3a%22testAction%22%2c%22params%22%3a%7b%22par%22%3a%22testpar%22%7d%7d&sap-language=EN");
 			});
 		});
 
@@ -710,6 +771,11 @@ sap.ui.define([
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
 					id: "a.id",
+					parsedHash: {
+						semanticObject: "testSemanticObject",
+						action: "testAction",
+						params: {par: "testpar"}
+					},
 					reference: "a.reference",
 					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
@@ -717,13 +783,19 @@ sap.ui.define([
 			});
 			return AppVariantFactory.prepareCreate({
 				id: "a.id",
+				parsedHash: {
+					semanticObject: "testSemanticObject",
+					action: "testAction",
+					params: {par: "testpar"}
+				},
 				reference: "a.reference",
 				parentVersion: "versionGUID"
 			}).then(function(oVariant) {
 				return oVariant.submit();
 			}).then(function(oResponse) {
 				assert.notEqual(oResponse, null);
-				assert.equal(oNewConnectorStub.getCall(0).args[0], "/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&sap-language=EN");
+				assert.equal(oNewConnectorStub.getCall(0).args[0],
+					"/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&parsedHash=%7b%22semanticObject%22%3a%22testSemanticObject%22%2c%22action%22%3a%22testAction%22%2c%22params%22%3a%7b%22par%22%3a%22testpar%22%7d%7d&sap-language=EN");
 			});
 		});
 

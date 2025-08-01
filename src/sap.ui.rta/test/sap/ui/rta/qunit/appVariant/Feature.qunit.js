@@ -53,7 +53,8 @@ sap.ui.define([
 					parseShellHash() {
 						return {
 							semanticObject: "Action",
-							action: "somestring"
+							action: "somestring",
+							params: {par: "testpar"}
 						};
 					}
 				});
@@ -259,7 +260,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedManifestData);
 			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(false);
 
-			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
+			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getParsedHash");
 
 			const oRootControl = new Control();
 			const oStack = new Stack();
@@ -268,7 +269,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is visible");
-				assert.equal(oInboundInfoSpy.callCount, 0, "then the getInboundInfo is not called");
+				assert.equal(oInboundInfoSpy.callCount, 0, "then the getParsedHash is not called");
 			});
 		});
 
@@ -282,7 +283,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedManifestData);
 			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(true);
 
-			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
+			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getParsedHash");
 
 			const oRootControl = new Control();
 			const oStack = new Stack();
@@ -291,7 +292,7 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, true, "then the 'i' button is visible");
-				assert.equal(oInboundInfoSpy.callCount, 1, "then the getInboundInfo is called once");
+				assert.equal(oInboundInfoSpy.callCount, 1, "then the getParsedHash is called once");
 				assert.equal(oInboundInfoSpy.getCall(0).args[0], undefined, "then the parameter passed is correct");
 			});
 		});
@@ -317,7 +318,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedManifestData);
 			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(true);
 
-			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
+			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getParsedHash");
 			const oRootControl = new Control();
 			const oStack = new Stack();
 
@@ -342,14 +343,14 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedManifestData);
-			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
+			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getParsedHash");
 
 			const oRootControl = new Control();
 			const oStack = new Stack();
 
 			return RtaAppVariantFeature.isSaveAsAvailable(oRootControl, Layer.CUSTOMER, oStack).then(function(bIsSaveAsAvailable) {
 				assert.equal(bIsSaveAsAvailable, false, "then the 'i' button is not visible");
-				assert.equal(oInboundInfoSpy.callCount, 0, "then the getInboundInfo method is never called");
+				assert.equal(oInboundInfoSpy.callCount, 0, "then the getParsedHash method is never called");
 			});
 		});
 
@@ -363,7 +364,7 @@ sap.ui.define([
 			sandbox.stub(FlUtils, "getAppDescriptor").returns(oMockedManifestData);
 			sandbox.stub(FeaturesAPI, "isSaveAsAvailable").resolves(true);
 
-			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getInboundInfo");
+			const oInboundInfoSpy = sandbox.spy(AppVariantUtils, "getParsedHash");
 
 			const oRootControl = new Control();
 			const oStack = new Stack();
@@ -694,8 +695,13 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, "then ChangesWriteAPI.create method is called 6 times");
+				assert.equal(oCreateChangesSpy.callCount, 4, "then ChangesWriteAPI.create method is called 4 times");
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oGetOverviewSpy.callCount, 1, "then the overview loads only once after the new app variant has been saved to LREP");
 				assert.strictEqual(oCatchErrorDialog.getCall(0).args[1], "MSG_SAVE_APP_VARIANT_FAILED", "then the oCatchErrorDialog method is called with correct message key");
 			});
@@ -741,8 +747,13 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.save method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 1, "then the showSuccessMessage method is called once");
 				assert.equal(oGetOverviewSpy.callCount, 1, "then the overview loads only once after the new app variant has been saved to LREP");
@@ -798,8 +809,13 @@ sap.ui.define([
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assertCreateAppVariantWithEmptyCatalogsIdDialogFlow(oMessageBoxShowStub, assert);
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 1, "then the showSuccessMessage method is called twice");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
@@ -853,8 +869,13 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 2, "then the showSuccessMessage method is called twice");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
@@ -907,8 +928,13 @@ sap.ui.define([
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assertCreateAppVariantWithEmptyCatalogsIdDialogFlow(oMessageBoxShowStub, assert);
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 1, "then the showSuccessMessage method is called twice");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
@@ -960,8 +986,13 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 2, "then the showSuccessMessage method is called twice");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
@@ -1019,8 +1050,13 @@ sap.ui.define([
 
 			return fnTriggerSaveAs().then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessage.callCount, 1, "then the showSuccessMessage method is called once");
 				assert.ok(oGetOverviewStub.notCalled, "then the overview is not opened");
@@ -1077,8 +1113,13 @@ sap.ui.define([
 			return RtaAppVariantFeature.onSaveAs(true, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assertCreateAppVariantWithEmptyCatalogsIdDialogFlow(oMessageBoxShowStub, assert);
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 1, "then the showSuccessMessage method is called twice");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
@@ -1132,8 +1173,13 @@ sap.ui.define([
 
 			return RtaAppVariantFeature.onSaveAs(true, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
 				assert.equal(oProcessSaveAsDialog.callCount, 1, "then the processSaveAsDialog method is called once");
-				assert.equal(oCreateChangesSpy.callCount, 6, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
+				assert.equal(oCreateChangesSpy.callCount, 4, `then ChangesWriteAPI.create method is called ${oCreateChangesSpy.callCount} times`);
 				assert.equal(oSaveAsAppVariantStub.callCount, 1, "then the AppVariantWriteAPI.saveAs method is called once");
+				assert.deepEqual(oSaveAsAppVariantStub.getCall(0).args[0].parsedHash, {
+					action: "somestring",
+					params: {par: "testpar"},
+					semanticObject: "Action"
+				}, "then the parsed hash is stored in AppVariantUtils");
 				assert.equal(oClearRTACommandStack.callCount, 1, "then the clearRTACommandStack method is called once");
 				assert.equal(oShowSuccessMessageStub.callCount, 2, "then the showSuccessMessage method is called twice");
 				assert.equal(oTriggerCatalogPublishing.callCount, 1, "then the triggerCatalogPublishing method is not called once");
