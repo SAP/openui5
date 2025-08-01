@@ -1529,7 +1529,7 @@ sap.ui.define([
 	QUnit.test("NumberFormat.getDefaultUnitPattern() - Default unitPattern-count-other pattern", function(assert) {
 		var sDefaultPattern = NumberFormat.getDefaultUnitPattern("MyOwnUnit");
 
-		assert.strictEqual(sDefaultPattern, "{0} MyOwnUnit", "Correct default pattern was created");
+		assert.strictEqual(sDefaultPattern, "{0}\u00a0MyOwnUnit", "Correct default pattern was created");
 
 		// check usage
 		var oFormat = NumberFormat.getUnitInstance({
@@ -1543,7 +1543,7 @@ sap.ui.define([
 
 		var sFormatted = oFormat.format(1234, "MY");
 
-		assert.strictEqual(sFormatted, "1,234.00 MyOwnUnit", "Pattern can be used for formatting");
+		assert.strictEqual(sFormatted, "1,234.00\u00a0MyOwnUnit", "Pattern can be used for formatting");
 		assert.deepEqual(oFormat.parse(sFormatted), [1234, "MY"], "Pattern can be used for parsing");
 	});
 
@@ -1666,8 +1666,8 @@ sap.ui.define([
 		var oLocale = new Locale("en");
 		var oFormat = NumberFormat.getUnitInstance({}, oLocale);
 
-		assert.strictEqual(oFormat.format(1123, "coordinateUnit"), "1,123 coordinateUnit", "invalid unit pattern");
-		assert.strictEqual(oFormat.format(1123, "per"), "1,123 per", "invalid unit pattern");
+		assert.strictEqual(oFormat.format(1123, "coordinateUnit"), "1,123\u00a0coordinateUnit", "invalid unit pattern");
+		assert.strictEqual(oFormat.format(1123, "per"), "1,123\u00a0per", "invalid unit pattern");
 	});
 
 	QUnit.test("Unit format with unknown locale", function (assert) {
@@ -1710,7 +1710,7 @@ sap.ui.define([
 		}, oLocale);
 
 		// test exclusiveness
-		assert.strictEqual(oFormat.format(20, "area-hectare"), "20 area-hectare", "20 ha");
+		assert.strictEqual(oFormat.format(20, "area-hectare"), "20\u00a0area-hectare", "20 ha");
 
 		// test "other" units
 		assert.strictEqual(oFormat.format(20, "olf"), "20 olfers", "20 olfers");
@@ -2108,9 +2108,9 @@ sap.ui.define([
 		assert.strictEqual(oFormat.format(20, "IND"), "20 H", "20 H");
 		assert.strictEqual(oFormat.format(20, "MTR"), "20 m", "20 m");
 		assert.strictEqual(oFormat.format(20, "MET"), "20 m", "20 m");
-		assert.strictEqual(oFormat.format(20, "DET"), "20 DET", "mapping of mapping");
-		assert.strictEqual(oFormat.format(20, "one"), "20 one", "recursive mapping");
-		assert.strictEqual(oFormat.format(20, "two"), "20 two", "recursive mapping");
+		assert.strictEqual(oFormat.format(20, "DET"), "20\u00a0DET", "mapping of mapping");
+		assert.strictEqual(oFormat.format(20, "one"), "20\u00a0one", "recursive mapping");
+		assert.strictEqual(oFormat.format(20, "two"), "20\u00a0two", "recursive mapping");
 
 		Formatting.setCustomUnits(undefined);
 		Formatting.setUnitMappings(undefined);
@@ -2369,7 +2369,7 @@ sap.ui.define([
 		//invalid unit
 		assert.strictEqual(oFormat.format(12, 33), "", "");
 		assert.strictEqual(oFormat.format(12, ""), "12", "");
-		assert.strictEqual(oFormat.format(12, "a"), "12 a", "a");
+		assert.strictEqual(oFormat.format(12, "a"), "12\u00a0a", "a");
 		assert.strictEqual(oFormat.format(12, true), "", "boolean true");
 		assert.strictEqual(oFormat.format(12, false), "", "boolean false");
 		assert.strictEqual(oFormat.format(12, null), "12", "null");

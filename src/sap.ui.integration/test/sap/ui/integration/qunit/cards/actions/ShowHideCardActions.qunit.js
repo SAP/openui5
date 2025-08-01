@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
@@ -261,6 +261,79 @@ sap.ui.define([
 		// Assert
 		assert.ok(oSnackCard.isDestroyed(), "Child card should be destroyed");
 		assert.ok(oDialog.isDestroyed(),  "Dialog should be destroyed");
+	});
+
+	QUnit.test("Multiple levels of child cards", async function (assert) {
+		const oServer = sinon.createFakeServer({
+			autoRespond: true,
+			respondImmediately: true
+		});
+
+		oServer.respondWith("GET", /test-resources\/sap\/ui\/integration\/qunit\/testResources\/snackManifest\.json.*/, (oXhr) => {
+			const iLevel = parseInt(oXhr.url.match(/Manifest\.json(\d+)/)[1]);
+			const iNextLevel = iLevel + 1;
+			oXhr.respond(
+				200,
+				{ "Content-Type": "application/json" },
+				JSON.stringify({
+					"sap.app": {
+						"id": "card.level" + iLevel,
+						"type": "card"
+					},
+					"sap.card": {
+						"type": "Object",
+						"header": {
+							"title": "Level " + iLevel,
+							"actions": [{
+								"type": "ShowCard",
+								"parameters": {
+									"manifest": "test-resources/sap/ui/integration/qunit/testResources/snackManifest.json" + iNextLevel
+								}
+							}]
+						},
+						"content": {
+							"groups": [{
+								"items": [{
+									"value": "Child card content"
+								}]
+							}]
+						}
+					}
+				})
+			);
+		});
+
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/snackManifest.json0");
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		// Act - Open first child card
+		this.oCard.getCardHeader().firePress();
+		const oDialog = this.oCard.getDependents()[0];
+		const oChildCard = oDialog.getContent()[0];
+		await Promise.all([
+			nextCardReadyEvent(oChildCard),
+			new Promise((resolve) => { oDialog.attachAfterOpen(resolve); })
+		]);
+		await nextUIUpdate();
+
+		// Act - Open second child card
+		const oChildCardHeader = oChildCard.getCardHeader();
+		oChildCardHeader.firePress();
+		const oSecondDialog = oChildCard.getDependents()[0];
+		const oSecondChildCard = oSecondDialog.getContent()[0];
+
+		await Promise.all([
+			nextCardReadyEvent(oSecondChildCard),
+			new Promise((resolve) => { oSecondDialog.attachAfterOpen(resolve); })
+		]);
+
+		// Assert
+		assert.strictEqual(oSecondChildCard.getCardHeader().getTitle(), "Level 2", "Second child card is opened with correct title");
+
+		// Clean up
+		oServer.restore();
 	});
 
 	QUnit.module("Show/Hide Card Actions - Resizing", {

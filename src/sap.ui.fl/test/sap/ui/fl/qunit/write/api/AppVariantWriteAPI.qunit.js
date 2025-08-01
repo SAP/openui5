@@ -247,6 +247,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("(Save As scenario) when saveAs is called with versioning", function(assert) {
+			const oParsedHash = {
+				semanticObject: "testSemanticObject",
+				action: "testAction",
+				params: {par: "testpar"}
+			};
 			var oAppComponent = createAppComponent();
 			simulateSystemConfig(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
@@ -257,12 +262,14 @@ sap.ui.define([
 			}));
 			var oNewConnectorCall = sandbox.stub(WriteUtils, "sendRequest").resolves();
 
-			return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", version: "1.0.0", layer: Layer.CUSTOMER})
+			return AppVariantWriteAPI.saveAs({selector: oAppComponent, id: "customer.reference.app.id", parsedHash: oParsedHash, version: "1.0.0", layer: Layer.CUSTOMER})
 			.then(function() {
 				var oAppVariant = JSON.parse(oNewConnectorCall.firstCall.args[2].payload);
 				assert.strictEqual(oAppVariant.packageName, "", "then the app variant will be saved with an empty package");
 				assert.strictEqual(oAppVariant.id, "customer.reference.app.id", "then the app variant id is correct");
-				assert.equal(oNewConnectorCall.getCalls()[0].args[0], "/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&sap-language=EN", "true", "then backend call is triggered with correct parameters");
+				assert.equal(oNewConnectorCall.getCalls()[0].args[0],
+					"/sap/bc/lrep/appdescr_variants/?parentVersion=versionGUID&parsedHash=%7b%22semanticObject%22%3a%22testSemanticObject%22%2c%22action%22%3a%22testAction%22%2c%22params%22%3a%7b%22par%22%3a%22testpar%22%7d%7d&sap-language=EN",
+					"then backend call is triggered with correct parameters");
 				assert.equal(oNewConnectorCall.getCalls()[0].args[1], "POST", "true", "then backend call is triggered with POST");
 				assert.strictEqual(
 					FlexObjectState.getDirtyFlexObjects(sReference).length,

@@ -30,11 +30,11 @@ sap.ui.define([
 
 			// Test Units
 			When.onTheMainPage.changeMeasure("12.3 NO");
-			Then.onTheMainPage.checkMeasure("12.30 NO"); // "NO": 2 decimals
+			Then.onTheMainPage.checkMeasure("12.30\u00a0NO"); // "NO": 2 decimals
 			Then.onTheMainPage.checkMeasureValueState("None");
 
 			When.onTheMainPage.changeMeasure("21");
-			Then.onTheMainPage.checkMeasure("21.00 NO");
+			Then.onTheMainPage.checkMeasure("21.00\u00a0NO");
 			Then.onTheMainPage.checkMeasureValueState("None");
 
 			When.onTheMainPage.changeMeasure("12.345 NO");
@@ -44,7 +44,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkMeasureValueState("Error");
 
 			When.onTheMainPage.changeMeasure("32");
-			Then.onTheMainPage.checkMeasure("32.00 NO"); // use last valid unit
+			Then.onTheMainPage.checkMeasure("32.00\u00a0NO"); // use last valid unit
 			Then.onTheMainPage.checkMeasureValueState("None");
 
 			When.onTheMainPage.changeMeasure("123.456789 µG");
@@ -128,14 +128,14 @@ sap.ui.define([
 			Then.onTheMainPage.checkProductIDValueState("Error");
 			Then.onTheMainPage.checkProductID("H-100");
 			Then.onTheMainPage.checkName("Notebook Basic 16");
-			Then.onTheMainPage.checkMeasure("18 KG");
+			Then.onTheMainPage.checkMeasure("18\u00a0KG");
 			Then.onTheMainPage.checkPrice("700.00\u00a0USD");
 			Then.onTheMainPage.checkProductIDIsEditable(true);
 
 			When.onTheMainPage.changeProductID("H-1001");
 			Then.onTheMainPage.checkProductID("H-1001");
 			Then.onTheMainPage.checkName("Notebook Basic 16");
-			Then.onTheMainPage.checkMeasure("18 KG");
+			Then.onTheMainPage.checkMeasure("18\u00a0KG");
 			Then.onTheMainPage.checkPrice("700.00\u00a0USD");
 			Then.onTheMainPage.checkProductIDIsEditable(false);
 
