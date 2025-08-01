@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",

@@ -301,6 +301,44 @@ html[dir='rtl'] {
 	}
 }
 
+// Fix for Safari bug - "rem" is not correctly calculated on zoom in, so "em" should be used
+// Isolated HTML and CSS example - snippix 759642
+// Customer ticket CS20250010123348
+html[data-sap-ui-browser^="sf"] {
+	.sapMRbB .sapMRbBInn,
+	.sapMRb .sapMRbB .sapMRbBOut {
+		font-size: 1rem;
+		transform: translate(0.675em, 0.675em);
+	}
+
+	.sapUiSizeCompact {
+
+		.sapMRbB .sapMRbBInn,
+		.sapMRb .sapMRbB .sapMRbBOut {
+			font-size: 1rem;
+			transform: translate(0.5em, 0.5em);
+		}
+	}
+
+	&[dir='rtl'] {
+
+		.sapMRbB .sapMRbBInn,
+		.sapMRb .sapMRbB .sapMRbBOut {
+			font-size: 1rem;
+			transform: translate(-0.675em, 0.675em);
+		}
+
+		.sapUiSizeCompact {
+
+			.sapMRbB .sapMRbBInn,
+			.sapMRb .sapMRbB .sapMRbBOut {
+				font-size: 1rem;
+				transform: translate(-0.5em, 0.5em);
+			}
+		}
+	}
+}
+
 /* Condensed size */
 .sapUiSizeCondensed.sapUiTable,
 .sapUiSizeCondensed .sapUiTable {

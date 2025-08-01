@@ -6,13 +6,14 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/Settings",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/fl/Layer",
@@ -31,7 +32,8 @@ sap.ui.define([
 	InitialStorage,
 	StorageUtils,
 	Settings,
-	CompVariantState,
+	CompVariantManager,
+	CompVariantManagementState,
 	ContextBasedAdaptationsAPI,
 	SmartVariantManagementWriteAPI,
 	Layer,
@@ -45,26 +47,34 @@ sap.ui.define([
 
 	var oControl;
 	var sReference = "odata.app";
+	var oAppComponent = new UIComponent(sReference);
+	function clearAll() {
+		sandbox.restore();
+		FlexState.clearState(sReference);
+		FlexState.clearRuntimeSteadyObjects(sReference, sReference);
+		Settings.clearInstance();
+		oControl?.destroy?.();
+	}
 
 	QUnit.module("SmartVariantManagementWriteAPI", {
+		beforeEach() {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+			this.oGetFlexReferenceStub = sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
+			this.oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+		},
 		afterEach() {
-			sandbox.restore();
-			if (oControl) {
-				oControl.destroy();
-			}
-			FlexState.clearState(sReference);
-			Settings.clearInstance();
+			clearAll();
 		}
 	}, function() {
 		[{
 			details: "addVariant without layer",
 			apiFunctionName: "addVariant",
-			compVariantStateFunctionName: "addVariant",
+			CompVariantManagerFunctionName: "addVariant",
 			expectedSpecificData: {}
 		}, {
 			details: "addVariant with layer",
 			apiFunctionName: "addVariant",
-			compVariantStateFunctionName: "addVariant",
+			CompVariantManagerFunctionName: "addVariant",
 			additionPropertyBag: {
 				layer: Layer.CUSTOMER
 			},
@@ -74,11 +84,11 @@ sap.ui.define([
 		}, {
 			details: "save without layer",
 			apiFunctionName: "save",
-			compVariantStateFunctionName: "persist"
+			CompVariantManagerFunctionName: "persist"
 		}, {
 			details: "setDefaultVariantId without layer",
 			apiFunctionName: "setDefaultVariantId",
-			compVariantStateFunctionName: "setDefault"
+			CompVariantManagerFunctionName: "setDefault"
 		}].forEach(function(testData) {
 			QUnit.test(`When ${testData.details} is called`, function(assert) {
 				// mock control
@@ -88,14 +98,12 @@ sap.ui.define([
 						return sPersistencyKey;
 					}
 				};
-				let oControl = oSVMControl;
-				if (testData.bIsNoSVM) {
-					oControl = {
-						getVariantManagement() {
-							return oSVMControl;
-						}
-					};
-				}
+				oControl = testData.bIsNoSVM ? {
+					getVariantManagement() {
+						return oSVMControl;
+					}
+				} : oSVMControl;
+
 				let mPropertyBag = {
 					control: oControl,
 					changeSpecificData: {},
@@ -114,35 +122,33 @@ sap.ui.define([
 				));
 
 				const oMockResponse = testData.mockedResponse || {};
-				const oCompVariantStateStub = sandbox.stub(CompVariantState, testData.compVariantStateFunctionName).returns(oMockResponse);
-				const oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
+				const oCompVariantManagerStub = sandbox.stub(CompVariantManager, testData.CompVariantManagerFunctionName).returns(oMockResponse);
 
 				const oResponse = SmartVariantManagementWriteAPI[testData.apiFunctionName](mPropertyBag);
-				assert.equal(oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
+				assert.equal(this.oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
 				assert.equal(oResponse, testData.expectedResponse || oMockResponse, "the response was passed to the caller,");
-				assert.equal(oCompVariantStateStub.callCount, 1, "the CompVariantState function was called once,");
-				const oCompVariantStateFunctionArguments = oCompVariantStateStub.getCall(0).args[0];
-				assert.equal(oCompVariantStateFunctionArguments, mPropertyBag, "the propertyBag was passed,");
-				assert.equal(oCompVariantStateFunctionArguments.reference, sReference, "the reference was added,");
-				assert.equal(oCompVariantStateFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
+				assert.equal(oCompVariantManagerStub.callCount, 1, "the CompVariantManager function was called once,");
+				const oCompVariantManagerFunctionArguments = oCompVariantManagerStub.getCall(0).args[0];
+				assert.equal(oCompVariantManagerFunctionArguments, mPropertyBag, "the propertyBag was passed,");
+				assert.equal(oCompVariantManagerFunctionArguments.reference, sReference, "the reference was added,");
+				assert.equal(oCompVariantManagerFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
 				if (testData.expectedSpecificData) {
-					assert.deepEqual(oCompVariantStateFunctionArguments.changeSpecificData, testData.expectedSpecificData, "and the specific data was set");
+					assert.deepEqual(oCompVariantManagerFunctionArguments.changeSpecificData, testData.expectedSpecificData, "and the specific data was set");
 				}
 			});
 		});
 
 		var sPersistencyKey = "someKey";
 
-		QUnit.test("when removeVariant is called", function(assert) {
-			var mPropertyBag = {};
-			var oGetFlexReferenceForControlStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-			var oCompVariantStateRemoveVariantStub = sandbox.stub(CompVariantState, "removeVariant").resolves();
+		QUnit.test("when removeVariant is called", async function(assert) {
+			const mPropertyBag = {};
+			const oCompVariantManagerRemoveVariantStub = sandbox.stub(CompVariantManager, "removeVariant").resolves();
 
-			return SmartVariantManagementWriteAPI.removeVariant(mPropertyBag).then(function() {
-				assert.equal(oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
-				assert.equal(oCompVariantStateRemoveVariantStub.callCount, 1, "then the CompVariantState.removeVariant was called");
-				assert.equal(oCompVariantStateRemoveVariantStub.getCall(0).args[0], mPropertyBag, "and the propertyBag was passed");
-			});
+			await SmartVariantManagementWriteAPI.removeVariant(mPropertyBag);
+
+			assert.equal(this.oGetFlexReferenceForControlStub.getCall(0).args[0], mPropertyBag.control, "then the reference was requested for the passed control,");
+			assert.equal(oCompVariantManagerRemoveVariantStub.callCount, 1, "then the CompVariantManager.removeVariant was called");
+			assert.equal(oCompVariantManagerRemoveVariantStub.getCall(0).args[0], mPropertyBag, "and the propertyBag was passed");
 		});
 
 		[{
@@ -354,13 +360,9 @@ sap.ui.define([
 				}
 			}
 		}].forEach(function(testData) {
-			QUnit.test(`When updateVariant is called, ${testData.details}`, function(assert) {
-				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				const oAppComponent = new UIComponent();
+			QUnit.test(`When updateVariant is called, ${testData.details}`, async function(assert) {
 				oControl = new Control("controlId1");
-				oControl.getPersistencyKey = function() {
-					return sPersistencyKey;
-				};
+				oControl.getPersistencyKey = () => sPersistencyKey;
 
 				const aVariants = [{
 					id: "oData_variant_1",
@@ -372,7 +374,6 @@ sap.ui.define([
 					name: "A Variant",
 					content: {}
 				}];
-				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 				sandbox.stub(InitialStorage, "loadFlexData").resolves({
 					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
@@ -380,7 +381,9 @@ sap.ui.define([
 						compVariants: [],
 						variants: [{
 							fileName: "flex_variant_1",
+							fileType: "variant",
 							name: "F Variant",
+							reference: sReference,
 							layer: Layer.VENDOR,
 							content: {},
 							favorite: true,
@@ -399,30 +402,29 @@ sap.ui.define([
 					}
 				});
 
-				return SmartVariantManagementApplyAPI.loadVariants({
+				await SmartVariantManagementApplyAPI.loadVariants({
 					control: oControl,
 					standardVariant: {
 						name: "sStandardVariantTitle"
 					},
 					variants: aVariants
-				}).then(function() {
-					testData.updateVariantPropertyBag.control = oControl;
-					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
-				}).then(function(oVariant) {
-					assert.equal(oVariant.getChanges().length, 1, "one change was added");
-					const oChange = oVariant.getChanges()[0];
-					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
-					assert.equal(oChange.getChangeType(), "updateVariant", "changeType ist updateVariant");
-					assert.deepEqual(oChange.getContent(), testData.expected.changeContent, "change content ist updateVariant");
-					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag flag is set correct");
-					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is set correct");
-					assert.deepEqual(oVariant.getContexts(), testData.expected.contexts, "the contexts section is set correct");
-					// also test the name in case it is part of the update
-					if (testData.updateVariantPropertyBag.name) {
-						assert.equal(oVariant.getName(), testData.expected.name, "the name is set correct");
-						assert.deepEqual(oChange.getText("variantName"), testData.expected.changeTextsVariantName, "the change has the name set correct in the texts section");
-					}
 				});
+
+				testData.updateVariantPropertyBag.control = oControl;
+				const oVariant = await SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
+				assert.equal(CompVariantManagementState.getVariantChanges(oVariant).length, 1, "one change was added");
+				const oChange = CompVariantManagementState.getVariantChanges(oVariant)[0];
+				assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
+				assert.equal(oChange.getChangeType(), "updateVariant", "changeType ist updateVariant");
+				assert.deepEqual(oChange.getContent(), testData.expected.changeContent, "change content ist updateVariant");
+				assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag flag is set correct");
+				assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is set correct");
+				assert.deepEqual(oVariant.getContexts(), testData.expected.contexts, "the contexts section is set correct");
+				// also test the name in case it is part of the update
+				if (testData.updateVariantPropertyBag.name) {
+					assert.equal(oVariant.getName(), testData.expected.name, "the name is set correct");
+					assert.deepEqual(oChange.getText("variantName"), testData.expected.changeTextsVariantName, "the change has the name set correct in the texts section");
+				}
 			});
 		});
 
@@ -656,8 +658,6 @@ sap.ui.define([
 			}
 		}].forEach(function(testData) {
 			QUnit.test(`When updateVariant is called with adaptationId, ${testData.details}`, function(assert) {
-				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				const oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
 				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
@@ -675,7 +675,6 @@ sap.ui.define([
 					name: "A Variant",
 					content: {}
 				}];
-				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 				sandbox.stub(InitialStorage, "loadFlexData").resolves({
 					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
@@ -684,6 +683,8 @@ sap.ui.define([
 						variants: [{
 							fileName: "flex_variant_1",
 							name: "F Variant",
+							fileType: "variant",
+							reference: sReference,
 							layer: Layer.VENDOR,
 							content: {},
 							favorite: true,
@@ -724,8 +725,8 @@ sap.ui.define([
 					return SmartVariantManagementWriteAPI.updateVariant(testData.updateVariantPropertyBag);
 				})
 				.then(function(oVariant) {
-					assert.equal(oVariant.getChanges().length, 1, "one change was added");
-					const oChange = oVariant.getChanges()[0];
+					assert.equal(CompVariantManagementState.getVariantChanges(oVariant).length, 1, "one change was added");
+					const oChange = CompVariantManagementState.getVariantChanges(oVariant)[0];
 					assert.equal(oChange.getLayer(), testData.expected.layer, "the layer is set correct");
 					assert.equal(oChange.getChangeType(), "updateVariant", "changeType ist updateVariant");
 					assert.deepEqual(oChange.getContent(), testData.expected.changeContent, "change content ist updateVariant");
@@ -757,14 +758,11 @@ sap.ui.define([
 			expectedChange: true
 		}].forEach(function(oTestData) {
 			QUnit.test(`When updateVariant is called ${oTestData.testDetails}`, function(assert) {
-				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-				const oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
 				oControl.getPersistencyKey = function() {
 					return sPersistencyKey;
 				};
 
-				sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 				sandbox.stub(InitialStorage, "loadFlexData").resolves({
 					...StorageUtils.getEmptyFlexDataResponse(),
 					changes: [],
@@ -772,7 +770,9 @@ sap.ui.define([
 						compVariants: [],
 						variants: [{
 							fileName: "flex_variant_1",
+							fileType: "variant",
 							name: "F Variant",
+							reference: sReference,
 							layer: Layer.VENDOR,
 							packageName: oTestData.packageName,
 							content: {},
@@ -815,11 +815,11 @@ sap.ui.define([
 					});
 				}).then(function(oVariant) {
 					if (oTestData.expectedChange) {
-						assert.equal(oVariant.getChanges().length, 1, "one change was added");
-						assert.equal(oVariant.getChanges()[0].getFlexObjectMetadata().packageName, "PACKAGE_A", "the packageName was set correct");
+						assert.equal(CompVariantManagementState.getVariantChanges(oVariant).length, 1, "one change was added");
+						assert.equal(CompVariantManagementState.getVariantChanges(oVariant)[0].getFlexObjectMetadata().packageName, "PACKAGE_A", "the packageName was set correct");
 						assert.equal(oVariant.getState(), States.LifecycleState.PERSISTED, "the change is not flagged as updated");
 					} else {
-						assert.equal(oVariant.getChanges().length, 0, "no change was added");
+						assert.equal(CompVariantManagementState.getVariantChanges(oVariant).length, 0, "no change was added");
 						assert.equal(oVariant.getState(), States.LifecycleState.UPDATED, "the change is not flagged as updated");
 					}
 				});
@@ -834,7 +834,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -850,7 +852,7 @@ sap.ui.define([
 				content: {},
 				favorite: false,
 				executeOnSelection: false,
-				action: CompVariantState.updateActionType.UPDATE_METADATA
+				action: CompVariantManager.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new content",
@@ -862,7 +864,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -882,7 +886,7 @@ sap.ui.define([
 				},
 				executeOnSelection: false,
 				favorite: false,
-				action: CompVariantState.updateActionType.UPDATE
+				action: CompVariantManager.updateActionType.UPDATE
 			}
 		}, {
 			details: "save variant content",
@@ -891,7 +895,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -911,7 +917,7 @@ sap.ui.define([
 				},
 				executeOnSelection: false,
 				favorite: false,
-				action: CompVariantState.updateActionType.SAVE
+				action: CompVariantManager.updateActionType.SAVE
 			}
 		}, {
 			details: "a new executeOnSelection flag",
@@ -921,7 +927,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -941,7 +949,7 @@ sap.ui.define([
 				},
 				executeOnSelection: true,
 				favorite: false,
-				action: CompVariantState.updateActionType.UPDATE_METADATA
+				action: CompVariantManager.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new favorite flag",
@@ -951,7 +959,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -971,7 +981,7 @@ sap.ui.define([
 				},
 				executeOnSelection: false,
 				favorite: true,
-				action: CompVariantState.updateActionType.UPDATE_METADATA
+				action: CompVariantManager.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new executeOnSelection flag overwriting an old one",
@@ -981,7 +991,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -1001,7 +1013,7 @@ sap.ui.define([
 				},
 				executeOnSelection: true,
 				favorite: false,
-				action: CompVariantState.updateActionType.UPDATE_METADATA
+				action: CompVariantManager.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new favorite flag overwriting an old one",
@@ -1011,7 +1023,9 @@ sap.ui.define([
 			},
 			mockedVariant: {
 				fileName: "test_variant",
+				fileType: "variant",
 				layer: Layer.CUSTOMER,
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -1031,7 +1045,7 @@ sap.ui.define([
 				},
 				executeOnSelection: false,
 				favorite: true,
-				action: CompVariantState.updateActionType.UPDATE_METADATA
+				action: CompVariantManager.updateActionType.UPDATE_METADATA
 			}
 		}, {
 			details: "a new content and existing flags for executeOnSelection and favorite",
@@ -1044,6 +1058,9 @@ sap.ui.define([
 			mockedVariant: {
 				fileName: "test_variant",
 				layer: Layer.CUSTOMER,
+				fileType: "variant",
+				name: "F Variant",
+				reference: sReference,
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -1094,27 +1111,27 @@ sap.ui.define([
 					componentData: {}
 				}).then(Settings.getInstance)
 				.then(function() {
+					let oVariant;
+
 					switch (testData.details) {
 						case "a new name for a variant":
 						case "a new executeOnSelection flag":
 						case "a new favorite flag":
 						case "a new executeOnSelection flag overwriting an old one":
 						case "a new favorite flag overwriting an old one":
-							SmartVariantManagementWriteAPI.updateVariantMetadata(testData.propertyBag);
+							oVariant = SmartVariantManagementWriteAPI.updateVariantMetadata(testData.propertyBag);
 							break;
 						case "a new content":
-							SmartVariantManagementWriteAPI.updateVariantContent(testData.propertyBag);
+							oVariant = SmartVariantManagementWriteAPI.updateVariantContent(testData.propertyBag);
 							break;
 						case "save variant content":
-							SmartVariantManagementWriteAPI.saveVariantContent(testData.propertyBag);
+							oVariant = SmartVariantManagementWriteAPI.saveVariantContent(testData.propertyBag);
 							break;
 						case "a new content and existing flags for executeOnSelection and favorite":
-							SmartVariantManagementWriteAPI.updateVariant(testData.propertyBag);
+							oVariant = SmartVariantManagementWriteAPI.updateVariant(testData.propertyBag);
 							break;
 						default:
 					}
-
-					const oVariant = FlexState.getCompVariantsMap(sReference)[testData.propertyBag.persistencyKey].byId[testData.propertyBag.id];
 
 					assert.equal(oVariant.getText("variantName"), testData.expected.name, "the name is correct");
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
@@ -1186,23 +1203,24 @@ sap.ui.define([
 
 	QUnit.module("loadVariants with legacy content", {
 		beforeEach() {
-			this.oAppComponent = new UIComponent("AppComponent21");
-			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+			// reference must match the mocked request
+			sandbox.stub(ManifestUtils, "getFlexReference").returns("sap.ui.demoapps.rta.fiorielements");
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("sap.ui.demoapps.rta.fiorielements");
 			FlexState.clearState();
 		},
 		afterEach() {
-			sandbox.restore();
-			this.oControl && this.oControl.destroy();
+			clearAll(this.oControl);
 		}
 	}, function() {
-		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function(assert) {
-			this.oControl = new Control();
-			var sPersistencyKey = "variantManagement1";
-			this.oControl.getPersonalizableControlPersistencyKey = function() {
+		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", async function(assert) {
+			oControl = new Control();
+			const sPersistencyKey = "variantManagement1";
+			oControl.getPersonalizableControlPersistencyKey = function() {
 				return sPersistencyKey;
 			};
 
-			var mFlexData = {
+			const mFlexData = {
 				...StorageUtils.getEmptyFlexDataResponse(),
 				...(LoaderExtensions.loadResource({
 					dataType: "json",
@@ -1211,44 +1229,43 @@ sap.ui.define([
 					)
 				}))
 			};
-
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
-			var oVariant;
 
-			return SmartVariantManagementApplyAPI.loadVariants({
-				control: this.oControl,
+			const oResponse = await SmartVariantManagementApplyAPI.loadVariants({
+				control: oControl,
 				standardVariant: {}
-			})
-			.then(function(oResponse) {
-				[oVariant] = oResponse.variants; // user variant with 2 legacy changes (addFavorite & removeFavorite)
-			})
-			.then(function() {
-				SmartVariantManagementWriteAPI.updateVariant({
-					isUserDependent: true,
-					id: oVariant.getId(),
-					control: this.oControl,
-					favorite: true
-				});
-			}.bind(this))
-			.then(function() {
-				var aVariantChanges = oVariant.getChanges();
-				assert.equal(aVariantChanges.length, 3, "a new change was created");
-				assert.equal(aVariantChanges[2].getChangeType(), "updateVariant", "a new update was written");
 			});
+			const oVariant = oResponse.variants[2]; // user variant with 2 legacy changes (addFavorite & removeFavorite)
+			await SmartVariantManagementWriteAPI.updateVariant({
+				isUserDependent: true,
+				id: oVariant.getId(),
+				control: oControl,
+				favorite: true
+			});
+
+			const aVariantChanges = CompVariantManagementState.getVariantChanges(oVariant);
+			assert.equal(aVariantChanges.length, 2, "a change was updated");
+			assert.deepEqual(aVariantChanges[1].getContent(), {
+				favorite: true,
+				variantContent: {
+					another: "value",
+					some: "property"
+				}
+			}, "the change content was updated");
 		});
 	});
 
 	QUnit.module("revert", {
 		beforeEach() {
-			if (oControl) {
-				oControl.destroy();
-			}
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 		},
 		afterEach() {
-			sandbox.restore();
+			clearAll();
 		}
 	}, function() {
-		QUnit.test("Given a variant was removed", function(assert) {
+		QUnit.test("Given a variant was removed", async function(assert) {
 			const sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId1");
 			oControl.getPersistencyKey = function() {
@@ -1260,6 +1277,8 @@ sap.ui.define([
 				comp: {
 					variants: [{
 						fileName: "test_variant",
+						reference: sReference,
+						fileType: "variant",
 						selector: {
 							persistencyKey: sPersistencyKey
 						},
@@ -1279,42 +1298,40 @@ sap.ui.define([
 				}
 			});
 
-			return FlexState.initialize({
+			await FlexState.initialize({
 				reference: sReference,
 				componentId: "__component0",
 				manifest: {},
 				componentData: {}
-			})
-			.then(function() {
-				return SmartVariantManagementWriteAPI.removeVariant({
-					reference: sReference,
-					persistencyKey: sPersistencyKey,
-					id: "test_variant",
-					control: oControl
-				});
-			})
-			.then(function(oRemovedVariant) {
-				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
-				let aRevertData = oRemovedVariant.getRevertData();
-				assert.equal(aRevertData.length, 1, "revertData was stored");
-				const oLastRevertData = aRevertData[0];
-				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
-				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
-
-				SmartVariantManagementWriteAPI.revert({
-					reference: sReference,
-					persistencyKey: sPersistencyKey,
-					id: "test_variant",
-					control: oControl
-				});
-
-				aRevertData = oRemovedVariant.getRevertData();
-				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
-				assert.equal(oRemovedVariant.getState(), States.LifecycleState.PERSISTED, "and the change is flagged as new");
 			});
+
+			const oRemovedVariant = await SmartVariantManagementWriteAPI.removeVariant({
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				id: "test_variant",
+				control: oControl
+			});
+
+			assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
+			let aRevertData = oRemovedVariant.getRevertData();
+			assert.equal(aRevertData.length, 1, "revertData was stored");
+			const oLastRevertData = aRevertData[0];
+			assert.equal(oLastRevertData.getType(), CompVariantManager.operationType.StateUpdate, "it is stored that the state was updated ...");
+			assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
+
+			SmartVariantManagementWriteAPI.revert({
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				id: "test_variant",
+				control: oControl
+			});
+
+			aRevertData = oRemovedVariant.getRevertData();
+			assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
+			assert.equal(oRemovedVariant.getState(), States.LifecycleState.PERSISTED, "and the change is flagged as new");
 		});
 
-		QUnit.test("Given a variant with adaptation id was removed", function(assert) {
+		QUnit.test("Given a variant with adaptation id was removed", async function(assert) {
 			const sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId2");
 			oControl.getPersistencyKey = function() {
@@ -1327,6 +1344,8 @@ sap.ui.define([
 					variants: [{
 						adaptationId: "id12345_123",
 						fileName: "test_variant",
+						reference: sReference,
+						fileType: "variant",
 						selector: {
 							persistencyKey: sPersistencyKey
 						},
@@ -1355,72 +1374,75 @@ sap.ui.define([
 				}
 			));
 
-			return FlexState.update({
+			await FlexState.initialize({
 				reference: sReference,
 				componentId: "__component0",
 				manifest: {},
 				componentData: {}
-			}).then(function() {
-				return SmartVariantManagementWriteAPI.removeVariant({
-					layer: Layer.CUSTOMER,
-					reference: sReference,
-					persistencyKey: sPersistencyKey,
-					id: "test_variant",
-					control: oControl
-				});
-			}).then(function(oRemovedVariant) {
-				assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
-				let aRevertData = oRemovedVariant.getRevertData();
-				assert.equal(aRevertData.length, 1, "revertData was stored");
-				const oLastRevertData = aRevertData[0];
-				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
-				assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
-
-				SmartVariantManagementWriteAPI.revert({
-					reference: sReference,
-					persistencyKey: sPersistencyKey,
-					id: "test_variant",
-					control: oControl
-				});
-
-				aRevertData = oRemovedVariant.getRevertData();
-				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
-				assert.equal(oRemovedVariant.getState(), States.LifecycleState.PERSISTED, "and the change is flagged as new");
 			});
+
+			await FlexState.update({
+				reference: sReference,
+				componentId: "__component0",
+				manifest: {},
+				componentData: {}
+			});
+			const oRemovedVariant = await SmartVariantManagementWriteAPI.removeVariant({
+				layer: Layer.CUSTOMER,
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				fileType: "variant",
+				id: "test_variant",
+				control: oControl
+			});
+
+			assert.equal(oRemovedVariant.getState(), States.LifecycleState.DELETED, "the variant is flagged for deletion");
+			let aRevertData = oRemovedVariant.getRevertData();
+			assert.equal(aRevertData.length, 1, "revertData was stored");
+			const oLastRevertData = aRevertData[0];
+			assert.equal(oLastRevertData.getType(), CompVariantManager.operationType.StateUpdate, "it is stored that the state was updated ...");
+			assert.deepEqual(oLastRevertData.getContent(), {previousState: States.LifecycleState.PERSISTED}, "... to PERSISTED");
+
+			SmartVariantManagementWriteAPI.revert({
+				reference: sReference,
+				persistencyKey: sPersistencyKey,
+				id: "test_variant",
+				control: oControl
+			});
+
+			aRevertData = oRemovedVariant.getRevertData();
+			assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
+			assert.equal(oRemovedVariant.getState(), States.LifecycleState.PERSISTED, "and the change is flagged as new");
 		});
 	});
 
 	QUnit.module("discardVariantContent", {
-		beforeEach() {
-			if (oControl) {
-				oControl.destroy();
-			}
-		},
 		afterEach() {
-			sandbox.restore();
+			clearAll();
 		}
 	}, function() {
-		QUnit.test("discardVariantContent function calls CompVariantState.discardVariantContent", function(assert) {
+		QUnit.test("discardVariantContent function calls CompVariantManager.discardVariantContent", function(assert) {
 			var sPersistencyKey = "persistency.key";
 			oControl = new Control("controlId1");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
 			oControl.getPersistencyKey = function() {
 				return sPersistencyKey;
 			};
-			var oCompVariantStateDiscardVariantStub = sandbox.stub(CompVariantState, "discardVariantContent");
+			var oCompVariantManagerDiscardVariantStub = sandbox.stub(CompVariantManager, "discardVariantContent");
 			SmartVariantManagementWriteAPI.discardVariantContent({
 				reference: sReference,
 				persistencyKey: sPersistencyKey,
 				id: "test_variant",
 				control: oControl
 			});
-			assert.equal(oCompVariantStateDiscardVariantStub.calledOnce, true, "function was called");
-			assert.equal(oCompVariantStateDiscardVariantStub.getCall(0).args[0].action, CompVariantState.updateActionType.DISCARD, "with correct action type");
+			assert.equal(oCompVariantManagerDiscardVariantStub.calledOnce, true, "function was called");
+			assert.equal(oCompVariantManagerDiscardVariantStub.getCall(0).args[0].action, CompVariantManager.updateActionType.DISCARD, "with correct action type");
 		});
 	});
 
 	QUnit.module("_getTransportSelection", {
 		afterEach() {
-			sandbox.restore();
+			clearAll();
 		}
 	}, function() {
 		QUnit.test("Given TransportSelection was requested and a PUBLIC layer is available", function(assert) {

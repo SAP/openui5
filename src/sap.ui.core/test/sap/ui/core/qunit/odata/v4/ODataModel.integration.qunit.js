@@ -46637,6 +46637,105 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: A recursive hierarchy is bound relative to a context. The hierarchy is in unified
+	// cache (via createInPlace). When expanding a node, the hierarchy is refreshed via a
+	// side-effects refresh which contains ExpandLevels. When resolving the hierarchy with another
+	// context, the ExpandLevels is cleared.
+	// SNOW: DINC0592197
+	QUnit.test("Recursive Hierarchy: DINC0592197", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{path : 'TEAM_2_EMPLOYEES',
+		parameters : {$$aggregation : {createInPlace : true, hierarchyQualifier : 'OrgChart'}}}">
+	<Text id="name" text="{Name}"/>
+</Table>`;
+
+		this.expectChange("name", []);
+
+		await this.createView(assert, sView, oModel);
+		const oTable = this.oView.byId("table");
+
+		this.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES"
+				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES"
+				+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "collapsed",
+					ID : "1",
+					Name : "Alpha"
+				}]
+			})
+			.expectChange("name", ["Alpha"]);
+
+		oTable.bindElement("/TEAMS('TEAM_01')");
+
+		await this.waitForChanges(assert, "bind TEAM_01");
+		const [oAlpha] = oTable.getBinding("items").getCurrentContexts();
+
+		this.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES"
+				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES"
+				+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1"
+				+ ",ExpandLevels=" + JSON.stringify([{NodeID : "1", Levels : 1}]) + ")"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "2",
+				value : [{
+					DescendantCount : "1",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "1",
+					DrillState : "leaf",
+					ID : "2",
+					Name : "Beta"
+				}]
+			})
+			.expectChange("name", [, "Beta"]);
+
+		await Promise.all([
+			oAlpha.expand(),
+			this.waitForChanges(assert, "expand Alpha")
+		]);
+		checkTable("after expand Alpha", assert, oTable, [
+			oAlpha, // "/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('1')",
+			"/TEAMS('TEAM_01')/TEAM_2_EMPLOYEES('2')"
+		], [
+			["Alpha"],
+			["Beta"]
+		]);
+
+		this.expectRequest("TEAMS('TEAM_02')/TEAM_2_EMPLOYEES"
+				+ "?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+				+ "HierarchyNodes=$root/TEAMS('TEAM_02')/TEAM_2_EMPLOYEES"
+				+ ",HierarchyQualifier='OrgChart',NodeProperty='ID',Levels=1)"
+				+ "&$select=DrillState,ID,Name&$count=true&$skip=0&$top=100", {
+				"@odata.count" : "1",
+				value : [{
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Gamma"
+				}]
+			})
+			.expectChange("name", ["Gamma"]);
+
+		// code under test
+		oTable.bindElement("/TEAMS('TEAM_02')");
+
+		await this.waitForChanges(assert, "bind TEAM_02");
+		checkTable("after bind TEAM_02", assert, oTable, [
+			"/TEAMS('TEAM_02')/TEAM_2_EMPLOYEES('3')"
+		], [
+			["Gamma"]
+		]);
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a context, bind a list relative to it (the list binding has not yet
 	// determined its cache then), and create a transient context in this binding. Reset the
 	// changes. No catch handler must be required on the nested context's created() promise.

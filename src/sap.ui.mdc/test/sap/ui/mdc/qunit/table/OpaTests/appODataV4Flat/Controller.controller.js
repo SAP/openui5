@@ -12,6 +12,9 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.table.OpaTests.appODataV4Flat.Controller", {
+		onInit: function() {
+			window.oTable = this.getView().byId("mdcTable");
+		},
 		onBeforeExport: function(oEvent) {
 			const mExcelSettings = oEvent.getParameter("exportSettings");
 

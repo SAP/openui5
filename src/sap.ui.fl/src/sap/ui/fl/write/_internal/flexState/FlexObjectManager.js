@@ -11,15 +11,15 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/changes/UIChangesState",
-	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantManagementState",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantManager",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/Layer",
@@ -34,7 +34,6 @@ sap.ui.define([
 	States,
 	DependencyHandler,
 	UIChangesState,
-	CompVariantMerger,
 	VariantManagementState,
 	FlexObjectState,
 	FlexState,
@@ -42,7 +41,8 @@ sap.ui.define([
 	Settings,
 	Version,
 	Condenser,
-	CompVariantState,
+	CompVariantManagementState,
+	CompVariantManager,
 	Storage,
 	Versions,
 	Layer,
@@ -62,38 +62,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	const FlexObjectManager = {};
-
-	function getCompVariantEntities(mPropertyBag) {
-		const aEntities = [];
-		const mCompEntities = FlexState.getCompVariantsMap(mPropertyBag.reference);
-		for (const sPersistencyKey in mCompEntities) {
-			const mCompVariantsOfPersistencyKey = mCompEntities[sPersistencyKey];
-			for (const sId in mCompVariantsOfPersistencyKey.byId) {
-				aEntities.push(mCompVariantsOfPersistencyKey.byId[sId]);
-			}
-		}
-		return LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aEntities, mPropertyBag.currentLayer);
-	}
-
-	// Enhance CompVariantsMap with external data and standard variant after FlexState was cleared and reinitialized
-	function updateCompEntities(mPropertyBag) {
-		const mCompEntities = FlexState.getCompVariantsMap(mPropertyBag.reference);
-		const oDataToRestore = FlexState.getInitialNonFlCompVariantData(mPropertyBag.reference);
-		if (oDataToRestore) {
-			Object.keys(oDataToRestore).forEach((sPersistencyKey) => {
-				mCompEntities._initialize(
-					sPersistencyKey,
-					oDataToRestore[sPersistencyKey].variants,
-					oDataToRestore[sPersistencyKey].controlId
-				);
-				CompVariantMerger.merge(
-					sPersistencyKey,
-					mCompEntities[sPersistencyKey],
-					oDataToRestore[sPersistencyKey].standardVariant
-				);
-			});
-		}
-	}
 
 	function removeFlexObjectFromDependencyHandler(sReference, oFlexObject) {
 		if (oFlexObject.isValidForDependencyMap()) {
@@ -183,11 +151,6 @@ sap.ui.define([
 		// and have the same reference (relevant for app variants)
 		const aRelevantChanges = FlexState.getFlexObjectsDataSelector().get({reference: sReference})
 		.filter((oChange) => {
-			// CompVariants are currently saved separately and should not be part of the condense request
-			// TODO: Remove CompVariant special handling todos#5
-			if (oChange instanceof CompVariant) {
-				return false;
-			}
 			if (sLayer === Layer.CUSTOMER && aDraftFilenames) {
 				return oChange.getState() === States.LifecycleState.PERSISTED && aDraftFilenames.includes(oChange.getId());
 			}
@@ -365,7 +328,7 @@ sap.ui.define([
 	 */
 	FlexObjectManager.filterHiddenFlexObjects = function(aFlexObjects, sReference) {
 		const aFilteredFlexObjects = VariantManagementState.filterHiddenFlexObjects(aFlexObjects, sReference);
-		return CompVariantState.filterHiddenFlexObjects(aFilteredFlexObjects, sReference);
+		return CompVariantManager.filterHiddenFlexObjects(aFilteredFlexObjects, sReference);
 	};
 
 	/**
@@ -390,10 +353,10 @@ sap.ui.define([
 			const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 			mPropertyBag.componentId = oAppComponent.getId();
 			await FlexState.update(mPropertyBag);
-			updateCompEntities(mPropertyBag);
 		}
 
-		let aRelevantFlexObjects = UIChangesState.getVariantIndependentUIChanges(mPropertyBag.reference);
+		let aRelevantFlexObjects = UIChangesState.getVariantIndependentUIChanges(mPropertyBag.reference)
+		.concat(CompVariantManagementState.getCompEntities(mPropertyBag));
 
 		// getInitialUIChanges will only add variant related UIChanges from the initial variants,
 		// with includeCtrlVariants set all variant related flex objects are added
@@ -431,7 +394,7 @@ sap.ui.define([
 			});
 		}
 
-		return aRelevantFlexObjects.concat(getCompVariantEntities(mPropertyBag));
+		return aRelevantFlexObjects;
 	};
 
 	/**
@@ -444,7 +407,7 @@ sap.ui.define([
 	 */
 	FlexObjectManager.hasDirtyFlexObjects = function(mPropertyBag) {
 		const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		return FlexObjectState.getDirtyFlexObjects(sReference).length > 0 || CompVariantState.hasDirtyChanges(sReference);
+		return FlexObjectState.getDirtyFlexObjects(sReference).length > 0;
 	};
 
 	/**
@@ -513,7 +476,6 @@ sap.ui.define([
 	FlexObjectManager.saveFlexObjects = async function(mPropertyBag) {
 		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
-		await CompVariantState.persistAll(sReference);
 
 		const bConsiderDraftHandling = mPropertyBag.layer === Layer.CUSTOMER;
 		const oVersionModel = bConsiderDraftHandling && Versions.getVersionsModel({

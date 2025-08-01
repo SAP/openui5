@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/fl/apply/_internal/flexState/Loader",
+	"sap/ui/fl/initial/_internal/Loader",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/api/BusinessNetworkAPI",

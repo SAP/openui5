@@ -10,9 +10,9 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/flexState/changes/UIChangeManager",
@@ -30,9 +30,9 @@ sap.ui.define([
 	FlexCustomData,
 	UIChange,
 	FlexState,
-	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	FlexInfoSession,
+	ManifestUtils,
 	Settings,
 	Condenser,
 	UIChangeManager,
@@ -109,23 +109,19 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 */
-	PersistenceWriteAPI.hasHigherLayerChanges = function(mPropertyBag) {
+	PersistenceWriteAPI.hasHigherLayerChanges = async function(mPropertyBag) {
 		mPropertyBag.upToLayer ||= LayerUtils.getCurrentLayer();
 
-		return FlexObjectManager.getFlexObjects(mPropertyBag)
-		.then(function(aFlexObjects) {
-			return aFlexObjects.filter(function(oFlexObject) {
-				return LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer);
-			});
-		})
-		.then(function(aFilteredFlexObjects) {
-			if (aFilteredFlexObjects.length === 0) {
-				return false;
-			}
-			// Hidden control variants and their related changes might be necessary for referenced variants, but are not relevant for this check
-			// Same apply for changes of deleted comp variants
-			return FlexObjectManager.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
-		});
+		const aFlexObjects = await FlexObjectManager.getFlexObjects(mPropertyBag);
+		const aFilteredFlexObjects = aFlexObjects.filter(
+			(oFlexObject) => LayerUtils.isOverLayer(oFlexObject.getLayer(), mPropertyBag.upToLayer)
+		);
+		if (aFilteredFlexObjects.length === 0) {
+			return false;
+		}
+		// Hidden control variants and their related changes might be necessary for referenced variants, but are not relevant for this check
+		// Same apply for changes of deleted comp variants
+		return FlexObjectManager.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
 	};
 
 	/**

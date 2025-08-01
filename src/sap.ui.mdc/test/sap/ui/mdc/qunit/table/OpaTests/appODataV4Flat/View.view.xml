@@ -59,7 +59,7 @@
                     </template:if>
                 </mdc:type>
                 <mdc:columns>
-                    <mdcTable:Column id="mdcTable-CreatedAt" header="Created On" tooltip="Created On" propertyKey="CreatedAt">
+                    <mdcTable:Column id="mdcTable-CreatedAt" header="Created At" tooltip="Created At" propertyKey="CreatedAt">
                         <Text text="{CreatedAt}" />
                         <mdcTable:extendedSettings>
                             <mdcTable:ResponsiveColumnSettings importance="Low"/>

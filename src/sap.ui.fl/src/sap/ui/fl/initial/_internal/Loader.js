@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/ManifestUtils",
 	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils"
@@ -184,8 +184,8 @@ sap.ui.define([
 				adaptationId: mPropertyBag.adaptationId,
 				skipLoadBundle: mPropertyBag.skipLoadBundle
 			})
-			.then(applyDeactivateChanges.bind())
-			.then(filterInvalidFileNames.bind())
+			.then(applyDeactivateChanges)
+			.then(filterInvalidFileNames)
 			.then(migrateSelectorFlags.bind(undefined, isMigrationNeeded(mPropertyBag.manifest)))
 			.then(formatFlexData);
 		},
