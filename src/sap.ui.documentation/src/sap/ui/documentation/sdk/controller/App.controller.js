@@ -113,8 +113,10 @@ sap.ui.define([
 				iCounter = 0;
 				aNodes = [];
 				while (aOriginalArr[i] && aOriginalArr[i].groupTitle && aOriginalArr[i].groupTitle === sCurrGroupTitle) {
-					aNodes.push(aOriginalArr[i]);
-					iCounter++;
+					if (!aOriginalArr[i]?.version?.includes("legacy-free")) {
+						aNodes.push(aOriginalArr[i]);
+						iCounter++;
+					}
 					i++;
 				}
 				i--;
