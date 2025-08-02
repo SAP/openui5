@@ -684,7 +684,7 @@ function(
 			return this.getDeleteControl(bCreateIfNotExist);
 		}
 
-		if (sMode == ListMode.MultiSelect) {
+		if (sMode == ListMode.MultiSelect || sMode == ListMode.MultiSelectRight) {
 			return this.getMultiSelectControl(bCreateIfNotExist);
 		}
 
@@ -890,7 +890,8 @@ function(
 			this.getListProperty("includeItemInSelection") && (
 				sMode == ListMode.SingleSelectLeft ||
 				sMode == ListMode.SingleSelect ||
-				sMode == ListMode.MultiSelect
+				sMode == ListMode.MultiSelect ||
+				sMode == ListMode.MultiSelectRight
 			)
 		);
 	};
@@ -987,7 +988,7 @@ function(
 		if (this.isIncludedIntoSelection()) {
 
 			// update selected property
-			if (this.getMode() == ListMode.MultiSelect) {
+			if (this.getMode() == ListMode.MultiSelect || ListMode.MultiSelectRight) {
 				this.setSelected(!this.getSelected());
 				this.informList("Select", this.getSelected());
 			} else if (!this.getSelected()) {
@@ -1110,7 +1111,7 @@ function(
 		}
 
 		// update selected property
-		if (this.getMode() == ListMode.MultiSelect) {
+		if (this.getMode() == ListMode.MultiSelect || ListMode.MultiSelectRight) {
 			this.setSelected(!this.getSelected());
 			this.informList("Select", this.getSelected());
 		} else if (!this.getSelected()) {
