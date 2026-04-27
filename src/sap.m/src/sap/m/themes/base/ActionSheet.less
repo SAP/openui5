@@ -38,7 +38,7 @@
 }
 
 /* ====== BEGIN ====== */
-/*Style for ActionSheet shown as a dialog sliding in from bottom*/
+/* Style for ActionSheet shown as a dialog sliding in from bottom */
 /* ====== ====== ===== */
 
 .sapMDialog.sapMActionSheetDialog {
@@ -62,11 +62,11 @@
 
 .sapMActionSheetDialog .sapMBar.sapMHeader-CTX > .sapMBarMiddle > .sapMBarPH > .sapMDialogTitle {
 	color: contrast(fade(@sapUiBlockLayerBackground, 60), @sapUiGroupTitleTextColor, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapMDialog.sapMActionSheetDialog > .sapMDialogSection {
-	box-shadow: @sapUiShadowLevel1;
+	box-shadow: var(--sapContent_Shadow1);
 }
 
 .sapMDialog.sapMActionSheetDialog > .sapMDialogSection {
@@ -79,10 +79,10 @@
 }
 
 /* ====== BEGIN ====== */
-/*Style for ActionSheet shown as a Popover*/
+/* Style for ActionSheet shown as a Popover */
 /* ====== ====== ===== */
 .sapMActionSheetPopover.sapMPopover {
-	box-shadow: @sapUiShadowLevel1;
+	box-shadow: var(--sapContent_Shadow1);
 }
 
 .sapMActionSheetPopover .sapMActionSheetButton {
@@ -119,7 +119,3 @@
 		padding: 0.25rem 0.5rem;
 	}
 }
-
-/* ====== END ====== */
-/*Style for ActionSheet shown as a Popover*/
-/* ====== ====== ===== */
