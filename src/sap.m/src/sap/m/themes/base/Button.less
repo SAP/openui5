@@ -16,10 +16,12 @@
 .sapMBtn:focus {
 	outline: none;
 }
+
 .sapMBtn::-moz-focus-inner {
 	padding: 0;
 	border: 0
 }
+
 .sapMBtn:not(.sapMBtnDisabled) {
 	cursor: pointer;
 }
@@ -50,8 +52,7 @@
 	vertical-align: top;
 	-webkit-appearance: none;
 	-webkit-user-select: none;
-	-moz-user-select: none;
-	-webkit-background-clip: padding-box;
+	user-select: none;
 	background-clip: padding-box;
 	box-sizing: border-box;
 	font-family: var(--sapButton_FontFamily);
@@ -72,6 +73,7 @@
 .sapMBtnInner::-moz-focus-inner {
 	border: 0;
 }
+
 .sapMBtnInner:focus,
 .sapMBtnContent > span:focus {
 	outline: none;
@@ -95,7 +97,7 @@
 }
 
 /* unstyled button content line height should be normal on iOS devices to fit into the button */
-html[data-sap-ui-os^="iOS"] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
+html[data-sap-ui-os^='iOS'] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
 	line-height: normal;
 }
 
@@ -161,8 +163,8 @@ html[data-sap-ui-os^="iOS"] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
 		height: 1.250rem;
 		width: auto;
 		max-width: 1.250rem;
-		margin-left: 0rem;
-		margin-right: 0rem;
+		margin-left: 0;
+		margin-right: 0;
 	}
 }
 
@@ -214,9 +216,9 @@ html[data-sap-ui-os^="iOS"] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
 	}
 }
 
-/* ---------------------------------------------------------------------*/
-/* Disabled, hover and active states:                                   */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
+/* Disabled, hover and active states:                                    */
+/* --------------------------------------------------------------------- */
 
 .sapMBtnDisabled {
 	text-shadow: none;
@@ -253,9 +255,9 @@ html[data-sap-ui-os^="iOS"] .sapMBtnBase:not(.sapMBtn) .sapMBtnContent {
 	color: var(--sapButton_Active_TextColor);
 }
 
-/* ---------------------------------------------------------------------*/
-/* Special buttons have the same look on a page and in a header/footer. */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
+/* Special buttons have the same look on a page and in a header/footer.  */
+/* --------------------------------------------------------------------- */
 
 span.sapMBtnInner.sapMBtnAccept {
 	background-image: none;
@@ -379,7 +381,8 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	color: var(--sapButton_Emphasized_TextColor);
 	text-shadow: 0 0 0.125rem var(--sapButton_Emphasized_TextShadow);
 
-	.sapUiIcon, sapMBtnIcon {
+	.sapUiIcon,
+	.sapMbtnIcon {
 		color: var(--sapButton_Emphasized_TextColor);
 	}
 }
@@ -537,11 +540,12 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	}
 }
 
-/* ---------------------------------------------------------------------*/
-/* Styles for buttons in Toolbar of type Info.                          */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
+/* Styles for buttons in Toolbar of type Info.                           */
+/* --------------------------------------------------------------------- */
 
 .sapMIBar.sapMTB-Info-CTX {
+
 	.sapMBtn .sapMBtnInner.sapMBtnDefault .sapUiIcon,
 	.sapMBtn .sapMBtnInner.sapMBtnDefault:not(.sapMToggleBtnPressed),
 	.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault,
@@ -556,6 +560,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 }
 
 .sapMIBar.sapMTB-Info-CTX.sapMTBInactive {
+
 	.sapMBtn .sapMBtnInner.sapMBtnDefault .sapUiIcon,
 	.sapMBtn .sapMBtnInner.sapMBtnDefault:not(.sapMToggleBtnPressed),
 	.sapMBtn:hover:not(.sapMBtnDisabled):not(.sapMSBActive) > .sapMBtnHoverable:not(.sapMBtnDisabled):not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBtnTransparent).sapMBtnDefault,
@@ -589,10 +594,10 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	pointer-events: none;
 }
 
-/* ---------------------------------------------------------------------*/
-/* Transparent buttons looks like normal one in a header/footer.        */
-/* The following rules are overridden in a bar below:                   */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
+/* Transparent buttons looks like normal one in a header/footer.         */
+/* The following rules are overridden in a bar below:                    */
+/* --------------------------------------------------------------------- */
 
 .sapMBtnBack,
 .sapMBtnTransparent {
@@ -604,7 +609,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 
 .sapMBtnGhost {
 	background-image: none;
-	border-color: fade(@sapUiButtonLiteTextColor, 50);
+	border-color: ~'hsl(from var(--sapButton_Lite_TextColor) h s l / .50)';
 	background-color: transparent;
 	color: var(--sapButton_Lite_TextColor);
 }
@@ -639,7 +644,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 }
 
 .sapMBtn:hover > .sapMBtnGhost.sapMBtnHoverable {
-	background-color: fade(@sapUiButtonLiteTextColor, 20);
+	background-color: ~'hsl(from var(--sapButton_Lite_TextColor) h s l / .20)';
 }
 
 :not(.sapMBtnDisabled) > .sapMBtnBack.sapMBtnActive,
@@ -697,7 +702,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	}
 
 	.sapMBar-CTX .sapMBtnInner.sapMBtnGhost:not(.sapMBtnDisabled) {
-		border-color: fade(@sapUiButtonLiteTextColor, 50)
+		border-color: ~'hsl(from var(--sapButton_Lite_TextColor) h s l / .50)';
 	}
 
 	.sapMBtnFocusDiv {
@@ -736,9 +741,9 @@ span.sapMBtnInner.sapMBtnEmphasized {
 	}
 }
 
-/* ----------------------*/
-/* Badges                */
-/* ----------------------*/
+/* ---------------------- */
+/* Badges                 */
+/* ---------------------- */
 
 .sapMBtn {
 	overflow: visible;
@@ -760,6 +765,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 			border-color: var(--sapContent_BadgeBorderColor);
 			color: var(--sapContent_BadgeTextColor);
 		}
+
 		.sapMBadgeIndicator.sapMBadgeAttention {
 			width: 0.75rem;
 			height: 0.75rem;

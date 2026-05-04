@@ -1,9 +1,11 @@
 /* ============================= */
 /* CSS for control sap.m/Button  */
-/* Horizon theme                 */
+/* Morning Horizon theme         */
 /* ============================= */
 
-@_sap_m_Button_EmphasizedFocusColor: var(--sapContent_FocusColor);
+.sapMBtn {
+	--_sap_m_Button_EmphasizedFocusColor: var(--sapContent_FocusColor);
+}
 
 .sapMBtn {
 	height: 2.75rem;
@@ -21,7 +23,7 @@
 /* Inner area            */
 /* --------------------- */
 .sapMBtnInner {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	height: var(--sapElement_Height);
 	min-width: 2.25rem;
 	margin: 0;
@@ -133,9 +135,9 @@
 	}
 }
 
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
 /* Custom focus border:                                                 */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
 
 .sapMBtn:not(.sapMBtnFocusFromTouch):focus-visible > .sapMFocusable:not(.sapMBadgeIndicator)::before,
 html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator)::before {
@@ -171,7 +173,7 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable:not(.sapMBtnActi
 	text-shadow: var(--sapContent_TextShadow);
 }
 
-// Value State Message buttons
+/* Value State Message buttons */
 :not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnCritical.sapMBtnActive {
 	border-color: var(--sapButton_Critical_BorderColor);
 }
@@ -185,19 +187,21 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable:not(.sapMBtnActi
 }
 
 .sapMBtn {
+
 	.sapMBtnCritical,
 	.sapMBtnNegative,
 	.sapMBtnSuccess,
 	.sapMBtnNeutral {
+
 		&.sapMBtnInner.sapMBtnActive {
 			text-shadow: none;
 		}
 	}
 }
 
-/* ---------------------------------------------------------------------*/
-/* Disabled, hover and active states:                                   */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
+/* Disabled, hover and active states:                                    */
+/* --------------------------------------------------------------------- */
 
 .sapMBtnDisabled {
 	opacity: var(--sapContent_DisabledOpacity);
@@ -279,7 +283,7 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	background-color: var(--sapButton_Active_Background);
 }
 
-// text color for enabled buttons
+/* text color for enabled buttons */
 :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAccept.sapMBtnActive,
 :not(.sapMBtnDisabled) > .sapMBtnInner.sapMBtnAccept.sapMBtnActive .sapMBtnIcon {
 	color: var(--sapButton_Accept_Active_TextColor);
@@ -300,9 +304,9 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	color: var(--sapButton_Lite_TextColor);
 }
 
-/* ----------------------*/
-/* Badges                */
-/* ----------------------*/
+/* ---------------------- */
+/* Badges                 */
+/* ---------------------- */
 
 .sapMBtn .sapMBadge .sapMBadgeIndicator::after {
 	background-color: var(--sapContent_BadgeBackground);
