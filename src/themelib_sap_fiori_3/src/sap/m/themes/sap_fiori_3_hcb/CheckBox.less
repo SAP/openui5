@@ -86,9 +86,7 @@ html.sap-desktop {
 	}
 
 	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
-		outline-width: 0.125rem;
-		outline-style: dotted;
-		outline-color: var(--sapContent_FocusColor);
+		outline: var(--sapContent_FocusColor) dotted 0.125rem;
 		outline-offset: 0.0625rem;
 	}
 
@@ -111,7 +109,7 @@ html.sap-desktop {
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus::before {
-		left: 0px; /* Cb in SimpleForm: left border adjustment */
+		left: 0; /* Cb in SimpleForm: left border adjustment */
 	}
 }
 
@@ -151,11 +149,11 @@ html.sap-desktop {
 }
 
 .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked::before {
-	color: fade(@sapUiContentIconColor, 25);
+	color: ~'hsl(from var(--sapContent_IconColor) h s l / .25)';
 }
 
 /* Compact size */
-.sapUiSizeCompact{
+.sapUiSizeCompact {
 
 	.sapUiForm .sapMCbBg { /* In forms, align left with '0.1875rem(3px)' ( the focus width) */
 		left: 3px; /* Must be in pixels to behave correctly in IE */
@@ -188,7 +186,7 @@ html.sap-desktop {
 		}
 
 		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus::before {
-			left: 0px;
+			left: 0;
 		}
 
 		.sapMCbBg {
@@ -204,6 +202,7 @@ html.sap-desktop {
 
 	.sapUiSizeCondensed.sapUiTable,
 	.sapUiSizeCondensed .sapUiTable {
+
 		.sapMCb:not(.sapMCbErr):not(.sapMCbInfo):not(.sapMCbWarn) > .sapMCbBg {
 			line-height: 0.625rem;
 		}
