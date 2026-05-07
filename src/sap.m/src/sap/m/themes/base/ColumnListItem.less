@@ -3,7 +3,9 @@
 /* Base theme                            */
 /* ===================================== */
 
-@_sap_m_table_SelectionControlWidth: 3rem;
+.sapMListTblRow {
+	--_sap_m_ColumnListItem_SelectionControlWidth: 3rem;
+}
 
 .sapMListTblRow.sapMListTblRowTop > td {
 	vertical-align: top;
@@ -18,7 +20,7 @@
 }
 
 .sapMListBGTransparent .sapMListTblSubRow {
-	background: fade(@sapUiListBackground, 0%);
+	background: ~"hsl(from var(--sapList_Background) h s l / 0)";
 }
 
 .sapMListTblSubRow {
@@ -82,7 +84,7 @@
 /* selectionControl width + cell padding */
 .sapMListModeMultiSelect .sapMListTblSubCnt,
 .sapMListModeSingleSelectLeft .sapMListTblSubCnt {
-	padding-left: calc(@_sap_m_table_SelectionControlWidth + 0.5rem);
+	padding-left: ~'calc(var(--_sap_m_ColumnListItem_SelectionControlWidth) + 0.5rem)';
 }
 
 .sapMListTblSubCntRow {
@@ -123,7 +125,7 @@
 }
 
 .sapMListTblSubCntSpr {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	padding-right: .5rem;
 
 	&::before {
@@ -139,8 +141,8 @@
 	flex-wrap: wrap;
 }
 
- /* separators */
- .sapMLIBShowSeparator > td {
+/* separators */
+.sapMLIBShowSeparator > td {
 	border-top: 1px solid var(--sapList_BorderColor);
 }
 
@@ -151,11 +153,6 @@
 
 .sapMListShowSeparatorsAll .sapMListTblSubRow:last-child > td:not(.sapMListTblDummyCell),
 .sapMListShowSeparatorsAll .sapMLIBShowSeparator:last-child > td:not(.sapMListTblDummyCell) {
-	border-bottom: 1px solid var(--sapList_BorderColor);
-}
-
-.sapMListShowSeparatorsAll .sapMLIBShowSeparator:last-child > td:not(.sapMListTblDummyCell),
-.sapMListShowSeparatorsAll .sapMListTblSubRow:last-child > td:not(.sapMListTblDummyCell) {
 	border-bottom: 1px solid var(--sapList_TableFooterBorder);
 }
 
@@ -172,7 +169,7 @@
 	outline: none;
 }
 
-.sapMListTblRow.sapMLIBFocusable:focus .sapMLIBHighlight, 
+.sapMListTblRow.sapMLIBFocusable:focus .sapMLIBHighlight,
 .sapMListTblRow.sapMLIBFocusable:focus .sapMLIBNavigated {
 	top: 3px;
 	bottom: 4px;
