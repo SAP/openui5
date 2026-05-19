@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/layout/VerticalLayout', 'sap/ui/layout/VerticalLayoutRend
 
 	FilterItemLayout.prototype._setLabel = function(oFilterField) {
 		this._oLabel = new Label(oFilterField.getId() + "-label", {
-			required: oFilterField.getRequired()
+			wrapping: true
 		});
 		this._oLabel.setParent(this);
 
