@@ -1,6 +1,6 @@
 /* ================================== */
 /* CSS for control sap.m/GenericTile  */
-/* Fiori 3 theme                      */
+/* Quartz Light theme                 */
 /* ================================== */
 
 .sapMGT.sapMGTBackgroundImage {
@@ -41,7 +41,7 @@
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	cursor: pointer;
 	color: var(--sapContent_NonInteractiveIconColor);
-	text-shadow: @sapUiShadowText;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMGTLineMode.sapMGTDisabled > .sapMGTTouchArea > *:not(.sapMGTActionsContainer) {
@@ -62,10 +62,10 @@
 }
 
 .sapMGTLineMode .sapMGTLineModeHelpContainer:not(:last-child) {
-	-webkit-mask-image: linear-gradient(to right, #FFF ~"calc(100% - 1.5rem)", transparent);
+	-webkit-mask-image: linear-gradient(to right, #FFF ~'calc(100% - 1.5rem)', transparent);
 
-	html[dir~=rtl] & {
-		-webkit-mask-image: linear-gradient(to left, #FFF ~"calc(100% - 1.5rem)", transparent);
+	html[dir~='rtl'] & {
+		-webkit-mask-image: linear-gradient(to left, #FFF ~'calc(100% - 1.5rem)', transparent);
 	}
 
 	.sapMGTHdrTxt,
@@ -107,10 +107,10 @@
 	}
 
 	.sapMGT.sapMGTLineMode {
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 
 		& * {
-			font-size: @sapMFontMediumSize;
+			font-size: var(--sapFontSize);
 		}
 
 		&.sapMGTDisabled {
@@ -165,14 +165,14 @@
 
 .sapMGTLineMode .sapMGTHdrTxt {
 	color: var(--sapLinkColor);
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
+	font-size: var(--sapFontSize);
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMGTLineMode .sapMGTSubHdrTxt {
 	color: var(--sapTile_TextColor);
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
+	font-size: var(--sapFontSize);
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMGTWithoutImageHoverOverlay,
@@ -209,7 +209,6 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 
 	&.sapMGTScopeActions .sapMTileCntContent::after {
 		background-color: var(--sapTile_Active_Background);
-		// opacity: 0.7;
 	}
 }
 

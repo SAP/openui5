@@ -13,7 +13,7 @@
 	background-position: 0;
 	background: var(--sapTile_Background);
 	border: 1px solid var(--sapTile_BorderColor);
-	box-shadow: @sapUiShadowLevel0;
+	box-shadow: var(--sapContent_Shadow0);
 	overflow: hidden;
 	vertical-align: top;
 
@@ -267,17 +267,6 @@
 		animation-iteration-count: infinite;
 		animation-name: placeHolderShimmer;
 		animation-timing-function: linear;
-	}
-}
-
-@keyframes placeHolderShimmer {
-
-	0% {
-		background-position: -468px 0;
-	}
-
-	100% {
-		background-position: 468px 0;
 	}
 }
 
@@ -886,7 +875,7 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	color: var(--sapTile_TextColor);
 }
@@ -924,7 +913,7 @@
 	min-height: 2.5rem;
 	font-size: 2.5rem;
 	font-family: var(--sapFontHeaderFamily);
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	color: var(--sapTile_IconColor);
 }
 
@@ -1213,7 +1202,7 @@
 	background-color: var(--sapGroup_ContentBackground);
 	border: var(--sapTile_BorderColor);
 	border-radius: 0.25rem;
-	box-shadow: @sapUiShadowLevel0;
+	box-shadow: var(--sapContent_Shadow0);
 }
 
 /* COZY */
@@ -1248,7 +1237,7 @@
 
 	.sapMGTLineMode .sapMGTHdrTxt {
 		position: relative;
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 		display: inline-block;
 		white-space: nowrap;
 		text-overflow: ellipsis;
@@ -1263,7 +1252,7 @@
 
 	.sapMGTLineMode .sapMGTSubHdrTxt {
 		display: inline-block;
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 		line-height: 1.375rem;
 		margin-top: 0;
 		max-width: 100%;
@@ -1447,7 +1436,7 @@
 	background-color: var(--sapTile_Background);
 	border: var(--sapTile_BorderColor);
 	border-radius: 0.25rem;
-	box-shadow: @sapUiShadowLevel0;
+	box-shadow: var(--sapContent_Shadow0);
 }
 
 /* COZY */
@@ -1475,7 +1464,7 @@
 		background-color: var(--sapTile_Background);
 		border: var(--sapTile_BorderColor);
 		border-radius: 0.25rem;
-		box-shadow: @sapUiShadowLevel0;
+		box-shadow: var(--sapContent_Shadow0);
 		position: relative;
 		padding: 0.5rem 0.5rem 0.5rem 0;
 		@line-height: 2.75rem;
@@ -2016,7 +2005,7 @@ html[data-sap-ui-browser*='ff'] {
 				.Medium {
 
 					.sapMTilePriorityCnt {
-						color: @sapWarningColor;
+						color: var(--sapCriticalElementColor);
 					}
 				}
 

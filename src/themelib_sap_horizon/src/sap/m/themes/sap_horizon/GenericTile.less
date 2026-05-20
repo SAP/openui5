@@ -1,6 +1,6 @@
 /* ================================== */
 /* CSS for control sap.m/GenericTile  */
-/* Horizon theme                      */
+/* Morning Horizon theme              */
 /* ================================== */
 
 .sapMGT.sapMGTBackgroundImage {
@@ -125,7 +125,7 @@
 .sapMGTLineMode .sapMGTLineModeFailedIcon {
 	cursor: pointer;
 	color: var(--sapContent_NonInteractiveIconColor);
-	text-shadow: @sapUiShadowText;
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMGTLineMode.sapMGTDisabled > .sapMGTTouchArea > *:not(.sapMGTActionsContainer) {
@@ -159,10 +159,10 @@
 }
 
 .sapMGTLineMode .sapMGTLineModeHelpContainer:not(:last-child) {
-	-webkit-mask-image: linear-gradient(to right, #FFF ~"calc(100% - 1.5rem)", transparent);
+	-webkit-mask-image: linear-gradient(to right, #FFF ~'calc(100% - 1.5rem)', transparent);
 
-	html[dir~=rtl] & {
-		-webkit-mask-image: linear-gradient(to left, #FFF ~"calc(100% - 1.5rem)", transparent);
+	html[dir~='rtl'] & {
+		-webkit-mask-image: linear-gradient(to left, #FFF ~'calc(100% - 1.5rem)', transparent);
 	}
 
 	.sapMGTHdrTxt,
@@ -204,10 +204,10 @@
 	}
 
 	.sapMGT.sapMGTLineMode {
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 
 		& * {
-			font-size: @sapMFontMediumSize;
+			font-size: var(--sapFontSize);
 		}
 
 		&.sapMGTDisabled {
@@ -263,14 +263,14 @@
 
 .sapMGTLineMode .sapMGTHdrTxt {
 	color: var(--sapTile_TitleTextColor);
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
+	font-size: var(--sapFontSize);
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMGTLineMode .sapMGTSubHdrTxt {
 	color: var(--sapTile_TextColor);
-	font-size: @sapMFontMediumSize;
-	text-shadow: @sapUiShadowText;
+	font-size: var(--sapFontSize);
+	text-shadow: var(--sapContent_TextShadow);
 }
 
 .sapMGTWithoutImageHoverOverlay,
@@ -317,7 +317,7 @@ html.sap-tablet .sapMGTWithImageHoverOverlay {
 	}
 
 	&.sapMGTScopeActions .sapMTileCntContent::after {
-		background-color: fade(@sapUiTileHoverBackground, 70);
+		background-color: ~'hsl(from var(--sapTile_Hover_Background) h s l / .70)';
 	}
 }
 
