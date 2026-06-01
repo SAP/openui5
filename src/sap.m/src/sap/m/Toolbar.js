@@ -15,7 +15,8 @@ sap.ui.define([
 	'./ToolbarRenderer',
 	"sap/m/Button",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/delegate/ItemNavigation"
 ],
 function(
 	BarInPageEnabler,
@@ -29,7 +30,8 @@ function(
 	ToolbarRenderer,
 	Button,
 	jQuery,
-	coreLibrary
+	coreLibrary,
+	ItemNavigation
 ) {
 	"use strict";
 
@@ -617,6 +619,7 @@ function(
 	// gets called when a control is removed from content aggregation
 	Toolbar.prototype._onContentRemoved = function(oControl) {
 		if (oControl) {
+			this._unregisterContentItemNavigations(oControl);
 			oControl.detachEvent("_change", this._onContentPropertyChanged, this);
 			oControl.removeEventDelegate(this._oContentDelegate, oControl);
 		}
@@ -658,7 +661,95 @@ function(
 		var oToolbar = this.getParent();
 		if (oToolbar && oToolbar.isA("sap.m.Toolbar")) {
 			oToolbar._updateActiveButtonText();
+			oToolbar._registerContentItemNavigations(this);
 		}
+	};
+
+	/**
+	 * Attaches BorderReached handlers so arrow keys at composite borders continue toolbar navigation.
+	 * @param {sap.ui.core.Element} oToolbarItem Toolbar content control
+	 * @private
+	 */
+	Toolbar.prototype._registerContentItemNavigations = function(oToolbarItem) {
+		var aItemNavigations,
+			oToolbar = this,
+			aEventHandlerReference = [];
+
+		this._unregisterContentItemNavigations(oToolbarItem);
+
+		if (!this._isInteractiveToolbarControl(oToolbarItem)) {
+			return;
+		}
+
+		aItemNavigations = this._getItemNavigationDelegates(oToolbarItem);
+
+		aItemNavigations.forEach(function(oItemNavigation) {
+			var fnHandler = function(oEvt) {
+				oToolbar._onContentBorderReached(oEvt);
+			};
+
+			oItemNavigation.attachEvent(ItemNavigation.Events.BorderReached, fnHandler);
+			aEventHandlerReference.push({
+				oItemNavigation: oItemNavigation,
+				fnHandler: fnHandler
+			});
+		});
+
+		if (aEventHandlerReference.length) {
+			oToolbarItem.data("_sapMToolbarItemNavBorderReached", aEventHandlerReference);// store to allow later unregistration
+		}
+	};
+
+	/**
+	 * Detaches BorderReached handlers from ItemNavigation delegates of toolbar content.
+	 * @param {sap.ui.core.Element} oContent Toolbar content control
+	 * @private
+	 */
+	Toolbar.prototype._unregisterContentItemNavigations = function(oContent) {
+		var aEventHandlerReference = oContent.data("_sapMToolbarItemNavBorderReached");
+
+		if (aEventHandlerReference) {
+			aEventHandlerReference.forEach(function(aEventHandlerReference) {
+				aEventHandlerReference.oItemNavigation.detachEvent(ItemNavigation.Events.BorderReached, aEventHandlerReference.fnHandler);
+			});
+			oContent.data("_sapMToolbarItemNavBorderReached", null);
+		}
+	};
+
+	/**
+	 * @param {sap.ui.core.Element} oControl Toolbar content control
+	 * @returns {sap.ui.core.delegate.ItemNavigation[]} ItemNavigation delegates on the control
+	 * @private
+	 */
+	Toolbar.prototype._getItemNavigationDelegates = function(oControl) {
+		return (oControl.aDelegates || []).map(function(oEntry) {
+			return oEntry.oDelegate;
+		}).filter(function(oDelegate) {
+			return oDelegate instanceof ItemNavigation;
+		});
+	};
+
+	/**
+	 * @param {sap.ui.base.Event} oEvt BorderReached event from ItemNavigation
+	 * @private
+	 */
+	Toolbar.prototype._onContentBorderReached = function(oEvt) {
+		var oKeyEvent = oEvt.getParameter("event"),
+			sDirection;
+
+		if (!oKeyEvent) {
+			return;
+		}
+
+		if (oKeyEvent.keyCode === KeyCodes.ARROW_RIGHT || oKeyEvent.keyCode === KeyCodes.ARROW_DOWN) {
+			sDirection = "forward";
+		} else if (oKeyEvent.keyCode === KeyCodes.ARROW_LEFT || oKeyEvent.keyCode === KeyCodes.ARROW_UP) {
+			sDirection = "backward";
+		} else {
+			return;
+		}
+
+		this._moveFocus(sDirection, oKeyEvent);
 	};
 
 	/**
@@ -718,13 +809,15 @@ function(
 	 * @returns {Array} Toolbar interactive Controls
 	 * @private
 	 */
-
 	Toolbar.prototype._getToolbarInteractiveControls = function () {
-		return this.getContent().filter(function (oControl) {
-			return oControl.getVisible()
-				&& oControl.isA("sap.m.IToolbarInteractiveControl")
-				&& typeof (oControl._getToolbarInteractive) === "function" && oControl._getToolbarInteractive();
-		}, this);
+		return this.getContent().filter(this._isInteractiveToolbarControl, this);
+	};
+
+	Toolbar.prototype._isInteractiveToolbarControl = function (oControl) {
+		return oControl.getVisible()
+			&& oControl.isA("sap.m.IToolbarInteractiveControl")
+			&& typeof oControl._getToolbarInteractive === "function"
+			&& oControl._getToolbarInteractive();
 	};
 
 	/**
