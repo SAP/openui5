@@ -1531,6 +1531,10 @@ sap.ui.define([
 		if (oData.results && Array.isArray(oData.results)) {
 			aList = [];
 			each(oData.results, function(i, entry) {
+				if (typeof entry !== "object") {
+					aList.push(entry);
+					return;
+				}
 				var sKey = that._getKey(entry);
 				sKey = that._importData(entry, mChangedEntities, oResponse, /*oRequest*/undefined,
 					sPath.substr(0, sPath.lastIndexOf("/")), sDeepPath, sKey,

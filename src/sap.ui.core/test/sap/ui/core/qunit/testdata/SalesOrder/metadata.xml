@@ -898,6 +898,8 @@
 					<Parameter Name="Parameter_With_On_Demand_ValueList" Type="Edm.String" Mode="In"
 						sap:value-list="standard" sap:label="Parameter with on demand ValueList"/>
 				</FunctionImport>
+				<FunctionImport Name="GetStringList" ReturnType="Collection(Edm.String)"
+					m:HttpMethod="GET" />
 			</EntityContainer>
 			<EntityContainer Name="gwsample_basic_Entities_2" sap:message-scope-supported="false">
 			</EntityContainer>

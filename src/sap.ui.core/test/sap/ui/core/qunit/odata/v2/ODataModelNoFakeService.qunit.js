@@ -1429,6 +1429,26 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_importData: collection of strings", function (assert) {
+		const oData = {
+			results : ["Foo", "Bar"]
+		};
+		const oModel = {
+			_getKey() {},
+			_importData() {}
+		};
+		this.mock(oModel).expects("_getKey").never();
+		this.mock(oModel).expects("_importData").never();
+
+		assert.deepEqual(
+			// code under test
+			ODataModel.prototype._importData.call(oModel, oData, "mChangedEntities", "oResponse",
+				{/*oRequest*/}, "sPath", "sDeepPath", "sKey", "bFunctionImport",
+				"sPathFromCanonicalParent", "bSideEffects"),
+			oData.results);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("_importData: collection; passes bSideEffects", function (assert) {
 		var oEntity0 = {},
 			oEntity1 = {},

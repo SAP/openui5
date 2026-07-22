@@ -1160,8 +1160,10 @@ sap.ui.define([
 						// oResponse needs __metadata for ODataModel.prototype._getKey
 						if (oResponse.data && Array.isArray(oResponse.data.results)) {
 							oResponse.data.results.forEach(function (oResponseItem, i) {
-								oResponseItem.__metadata = oResponseItem.__metadata
-									|| _getResponseMetadata(oExpectedRequest.requestUri, i);
+								if (typeof oResponseItem === "object") {
+									oResponseItem.__metadata = oResponseItem.__metadata
+										|| _getResponseMetadata(oExpectedRequest.requestUri, i);
+								}
 							});
 						} else if (oExpectedRequest.method !== "HEAD"
 								&& !oExpectedRequest.requestUri.includes("/$count")) {
@@ -11266,6 +11268,37 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				return that.waitForChanges(assert);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: In a batch response, a function import returns Collection(Edm.String) wrapped in a
+	// "results" object. The success handler receives the returned strings.
+	QUnit.test("callFunction: Collection(Edm.String) in results wrapper", async function (assert) {
+		const oResult = {results : ["Foo", "Bar", "Baz", "FooBar"]};
+		const oModel = createSalesOrdersModelSpecialFunctionImports({tokenHandling : false});
+		const oEventHandlers = {
+			error() {},
+			success() {}
+		};
+		const oMock = this.mock(oEventHandlers);
+
+		oMock.expects("error").never();
+		oMock.expects("success").withExactArgs(sinon.match(oResult), sinon.match.object);
+
+		await this.createView(assert, /*sView*/"", oModel);
+
+		this.expectRequest({
+			batchNo : 1,
+			requestUri : "GetStringList"
+		}, oResult);
+
+		// code under test
+		oModel.callFunction("/GetStringList", {
+			error : oEventHandlers.error,
+			success : oEventHandlers.success
+		});
+
+		await this.waitForChanges(assert);
 	});
 
 	//*********************************************************************************************
