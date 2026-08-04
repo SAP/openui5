@@ -74,6 +74,9 @@ sap.ui.define([
 			const sValue = oEvent.getSource().getValue(),
 				oNavigationList = this.byId("navigationList");
 
+			// The application drives the search: it merges the matching items into the flexible
+			// list and empties the fixed list (see _executeSearch). Because the fixed list is then
+			// empty, the SideNavigation renders a single, correctly announced navigation landmark.
 			this._executeSearch(sValue);
 			oNavigationList.setHighlightedText(sValue);
 		},

@@ -61,8 +61,6 @@ sap.ui.define([
 	});
 
 	QUnit.test('SetExpanded true', function (assert) {
-		var oRB = Library.getResourceBundleFor("sap.tnt");
-
 		this.sideNavigation.getItem().addItem(new NavigationListItem({ text: "Text"}));
 		this.sideNavigation.getFixedItem().addItem(new NavigationListItem({ text: "Fixed Text"}));
 		this.sideNavigation.setExpanded(true);
@@ -73,9 +71,12 @@ sap.ui.define([
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), true, 'should not collapse the NavigationList in item aggregation');
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), true, 'should not collapse the NavigationList in fixedItem aggregation');
 
-		this.sideNavigation.$().find('.sapTntNL').each(function (index, item) {
-			assert.strictEqual(item.getAttribute('role'), 'tree', 'ul should have role "tree"');
-			assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE"), 'ul should have aria-roledescription "Navigation list tree"');
+		this.sideNavigation.$().find('.sapTntSideNavigationFlexible .sapTntNL').each(function (index, item) {
+			assert.strictEqual(item.getAttribute('role'), 'tree', 'flexible ul should have role "tree"');
+		});
+
+		this.sideNavigation.$().find('.sapTntSideNavigationFixed .sapTntNL').each(function (index, item) {
+			assert.strictEqual(item.getAttribute('role'), 'tree', 'fixed ul should have role "tree"');
 		});
 
 		this.sideNavigation.$().find('.sapTntNLIFirstLevel.sapTntNLI a').each(function (index, item) {
@@ -262,19 +263,20 @@ sap.ui.define([
 			assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');
 			assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), false, 'should collapse the NavigationList in fixedItem aggregation');
 
-			this.sideNavigation.$().find('.sapTntNL').each(function (index, item) {
-				assert.strictEqual(item.getAttribute('role'), 'menubar', 'ul should have role "menubar"');
-				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR"), 'ul should have aria-roledescription "Navigation list menu bar"');
+			this.sideNavigation.$().find('.sapTntSideNavigationFlexible .sapTntNL').each(function (index, item) {
+				assert.strictEqual(item.getAttribute('role'), 'menubar', 'flexible ul should have role "menubar"');
+			});
+
+			this.sideNavigation.$().find('.sapTntSideNavigationFixed .sapTntNL').each(function (index, item) {
+				assert.strictEqual(item.getAttribute('role'), 'menubar', 'fixed ul should have role "menubar"');
 			});
 
 			this.sideNavigation.$().find("li:not(.sapTntNLOverflow) a").each(function (index, item) {
 				assert.strictEqual(item.getAttribute('role'), 'menuitemradio', 'li should have role "menuitemradio"');
-				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
 			});
 
 			this.sideNavigation.$().find(".sapTntNLOverflow").each(function (index, item) {
 				assert.strictEqual(item.querySelector("a").getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
-				assert.strictEqual(item.querySelector("a").getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
 				assert.strictEqual(item.querySelector("a").getAttribute('aria-label'), oRB.getText("NAVIGATION_LIST_OVERFLOW_ITEM_LABEL"), 'li should have aria-label "Displays remaining navigation items"');
 				assert.ok(item.classList.contains("sapTntNLIHidden"), 'overflow item is hidden');
 			});
@@ -778,8 +780,12 @@ sap.ui.define([
 	QUnit.module("Accessibility", {
 		beforeEach: async function () {
 			this.sideNavigation = new SideNavigation({
-				item: new NavigationList(),
-				fixedItem: new NavigationList()
+				item: new NavigationList({
+					items: [new NavigationListItem({ text: "Item" })]
+				}),
+				fixedItem: new NavigationList({
+					items: [new NavigationListItem({ text: "Fixed Item" })]
+				})
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
 			await nextUIUpdate(); // no fake timer active in beforeEach
@@ -789,31 +795,78 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Aria attributes - aria-roledescription", function (assert) {
-
-		var sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
-			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
-
-		this.sideNavigation.setExpanded(true);
-		this.clock.tick(1000);
-
-		this.sideNavigation.$().find('.sapTntNL').each(function (index, item) {
-			assert.strictEqual(item.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, 'aria-roledescription is as expected');
-		});
-	});
-
 	QUnit.test("Aria attributes - aria-label", async function (assert) {
 		const oRB = Library.getResourceBundleFor("sap.tnt");
 		var label = "Side navigation menu with options";
+		const getNavigation = () => this.sideNavigation.getDomRef("navigation");
 
-		assert.notOk(this.sideNavigation.$().attr('aria-label'),  'aria-label is not set initially');
+		assert.strictEqual(getNavigation().getAttribute("role"), "navigation", "the navigation landmark wraps the lists");
+		assert.strictEqual(getNavigation().getAttribute("aria-label"), oRB.getText("SIDE_NAVIGATION_LABEL_EXPANDED"), "navigation aria-label defaults to the expanded label");
 
+		this.sideNavigation.setExpanded(false);
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(getNavigation().getAttribute("aria-label"), oRB.getText("SIDE_NAVIGATION_LABEL_COLLAPSED"), "navigation aria-label switches to the collapsed label when collapsed");
+
+		this.sideNavigation.setExpanded(true);
 		this.sideNavigation.setAriaLabel(label);
 		await nextUIUpdate(this.clock);
 
-		assert.strictEqual(this.sideNavigation.$().attr('aria-label'), label, 'aria-label is as expected');
+		assert.strictEqual(getNavigation().getAttribute("aria-label"), label, "an explicitly set aria-label takes precedence over the default");
+
+		const sDescriptionId = getNavigation().getAttribute("aria-describedby");
+		assert.ok(sDescriptionId, "aria-describedby is set on the navigation landmark");
+		assert.strictEqual(document.getElementById(sDescriptionId).textContent, oRB.getText("SIDE_NAVIGATION_DESCRIPTION"), "aria-describedby points to the invisible description text");
+
+		assert.notOk(this.sideNavigation.getDomRef().getAttribute("aria-label"), "the outer element no longer carries the navigation label");
+
 		assert.strictEqual(this.sideNavigation.getAggregation("item").$().attr('aria-label'), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), 'ul for flexible list should have aria-label "Primary Navigation Menu"');
 		assert.strictEqual(this.sideNavigation.getAggregation("fixedItem").$().attr('aria-label'), oRB.getText("SIDE_NAVIGATION_FIXED_LIST_LABEL"), 'ul for fixed list should have aria-label "Footer Navigation Menu"');
+
+		this.sideNavigation.setExpanded(false);
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(this.sideNavigation.getAggregation("item").$().attr('aria-label'), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL_COLLAPSED"), 'collapsed flexible list (menubar) uses the dedicated "Primary Navigation Menu" label');
+	});
+
+	QUnit.test("collapsed flexible list renders as a menubar with the dedicated label", async function (assert) {
+		const oRB = Library.getResourceBundleFor("sap.tnt");
+		const oFlexibleList = this.sideNavigation.getItem();
+
+		// While expanded, the flexible list is a tree carrying its default label.
+		assert.strictEqual(oFlexibleList.$().attr("role"), "tree", "expanded flexible list is a tree");
+		assert.notOk(oFlexibleList.$().attr("aria-orientation"), "expanded tree has no explicit orientation");
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "expanded flexible list uses the default label");
+
+		// Collapsing it turns the flexible list into a vertical menubar with the dedicated collapsed label.
+		this.sideNavigation.setExpanded(false);
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oFlexibleList.$().attr("role"), "menubar", "collapsed flexible list renders as a menubar");
+		assert.strictEqual(oFlexibleList.$().attr("aria-orientation"), "vertical", "collapsed menubar has vertical orientation");
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL_COLLAPSED"), "collapsed flexible list uses the dedicated collapsed label");
+	});
+
+	QUnit.test("flexible list keeps its label even when it is the only list", async function (assert) {
+		const oRB = Library.getResourceBundleFor("sap.tnt");
+		const oFlexibleList = this.sideNavigation.getItem();
+		const oFixedList = this.sideNavigation.getFixedItem();
+
+		// With items in both lists, the flexible list carries its own label.
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list has its label while the fixed list has items");
+
+		// Emptying the fixed list makes the flexible list the only list, but it keeps its label so the
+		// tree stays named for assistive technology.
+		oFixedList.removeAllItems();
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list keeps its label once the fixed list is empty");
+
+		// Adding an item back to the fixed list leaves the flexible list's label unchanged.
+		oFixedList.addItem(new NavigationListItem({ text: "Fixed Item" }));
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list still has its label when the fixed list has items again");
 	});
 
 	QUnit.module("Rendering", {
@@ -830,14 +883,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Separator and fixed list are hidden when fixedItem has no items", function (assert) {
+	QUnit.test("Separator and fixed list are hidden via CSS when fixedItem has no items", function (assert) {
 		const oDomRef = this.sideNavigation.getDomRef();
 		const oSeparator = oDomRef.querySelector(".sapTntSideNavigationSeparator");
 		const oFixedListNL = oDomRef.querySelector(".sapTntSideNavigationFixed .sapTntNL");
 
-		assert.ok(oSeparator, "Separator element exists in the DOM");
+		assert.ok(oSeparator, "Separator element is always rendered");
+		assert.strictEqual(window.getComputedStyle(oSeparator).display, "none", "Separator has display:none when fixedItem has no visible items");
 		assert.ok(oFixedListNL, "Fixed list NavigationList element exists in the DOM");
-		assert.strictEqual(window.getComputedStyle(oSeparator).display, "none", "Separator has display:none when fixedItem has no items");
 		assert.strictEqual(window.getComputedStyle(oFixedListNL).display, "none", "Fixed list has display:none when fixedItem has no items");
 	});
 
@@ -891,9 +944,10 @@ sap.ui.define([
 		const oFilterSection = oDomRef.querySelector(".sapTntSideNavigationFilterSection");
 		const oFlexibleList = oDomRef.querySelector(".sapTntSideNavigationFlexible");
 
-		const iFilterIndex = Array.prototype.indexOf.call(oDomRef.children, oFilterSection);
-		const iFlexibleIndex = Array.prototype.indexOf.call(oDomRef.children, oFlexibleList);
-		assert.ok(iFilterIndex < iFlexibleIndex, "filterSection is rendered before the flexible list");
+		// The flexible list now lives inside the navigation landmark wrapper, so compare
+		// document order rather than direct-sibling index.
+		const bFilterBeforeList = !!(oFilterSection.compareDocumentPosition(oFlexibleList) & Node.DOCUMENT_POSITION_FOLLOWING);
+		assert.ok(bFilterBeforeList, "filterSection is rendered before the flexible list");
 	});
 
 	QUnit.test("getFilterSection returns the aggregated control", function (assert) {
@@ -972,5 +1026,106 @@ sap.ui.define([
 				done();
 			}.bind(this), 500);
 		}.bind(this), 500);
+	});
+
+	QUnit.module("Empty fixed list (merged search)", {
+		beforeEach: async function () {
+			this.oSearchField = new SideNavigationSearchField();
+			this.sideNavigation = new SideNavigation({
+				filterSection: this.oSearchField,
+				item: new NavigationList({
+					items: [
+						new NavigationListItem({ text: "Item 1", key: "item1" }),
+						new NavigationListItem({ text: "Item 2", key: "item2" })
+					]
+				}),
+				fixedItem: new NavigationList({
+					items: [
+						new NavigationListItem({ text: "Fixed Item", key: "fixed1" })
+					]
+				})
+			});
+			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
+			await nextUIUpdate(); // no fake timer active in beforeEach
+		},
+		afterEach: function () {
+			this.sideNavigation.destroy();
+		}
+	});
+
+	QUnit.test("swapping or clearing the fixedItem aggregation updates the rendering", async function (assert) {
+		const oRB = Library.getResourceBundleFor("sap.tnt");
+		const oFlexibleList = this.sideNavigation.getItem();
+		const oOriginalFixedList = this.sideNavigation.getFixedItem();
+
+		// Removing the whole fixed list aggregation makes the flexible list the only list.
+		this.sideNavigation.setFixedItem(null);
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list keeps its label once the fixed list aggregation is removed");
+		assert.notOk(this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationFixed"), "no fixed list is rendered once the aggregation is removed");
+		assert.notOk(this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationSeparator"), "no separator is rendered once the fixed list aggregation is removed");
+
+		oOriginalFixedList.destroy();
+
+		// Setting a fresh, non-empty fixed list renders it with the separator visible again.
+		this.sideNavigation.setFixedItem(new NavigationList({
+			items: [new NavigationListItem({ text: "New Fixed Item" })]
+		}));
+		await nextUIUpdate(this.clock);
+
+		const oSeparator = this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationSeparator");
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list keeps its label once a non-empty fixed list is set");
+		assert.ok(this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationFixed .sapTntNL"), "the newly set fixed list is rendered");
+		assert.ok(oSeparator, "the separator is rendered for the newly set fixed list");
+		assert.notStrictEqual(window.getComputedStyle(oSeparator).display, "none", "the separator is visible once a non-empty fixed list is set");
+
+		// Emptying the newly set list hides the separator again via CSS.
+		this.sideNavigation.getFixedItem().removeAllItems();
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(window.getComputedStyle(this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationSeparator")).display, "none", "separator is hidden again once the newly set fixed list is emptied");
+	});
+
+	QUnit.test("emptying and re-filling the fixed list toggles the separator and the fixed list visibility", async function (assert) {
+		const oRB = Library.getResourceBundleFor("sap.tnt");
+		const oFlexibleList = this.sideNavigation.getItem();
+		const getFixedListUl = () => this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationFixed .sapTntNL");
+		const getSeparator = () => this.sideNavigation.getDomRef().querySelector(".sapTntSideNavigationSeparator");
+
+		// While both lists have items, the flexible list carries its label, the fixed list is visible
+		// and the separator is visible.
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list carries its label while the fixed list has items");
+		assert.notStrictEqual(window.getComputedStyle(getFixedListUl()).display, "none", "fixed list is visible while it has items");
+		assert.notStrictEqual(window.getComputedStyle(getSeparator()).display, "none", "separator is visible while the fixed list has items");
+
+		// Emptying the fixed list makes the flexible list the only list: it keeps its label, and both
+		// the fixed list and the separator are hidden via CSS (.sapTntNL:empty and the :has selector).
+		this.sideNavigation.getFixedItem().removeAllItems();
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list keeps its aria-label when it is the only list");
+		assert.strictEqual(oFlexibleList.$().attr("role"), "tree", "flexible list stays a real tree when it is the only list");
+		assert.strictEqual(window.getComputedStyle(getFixedListUl()).display, "none", "fixed list is hidden once it is empty");
+		assert.strictEqual(window.getComputedStyle(getSeparator()).display, "none", "separator is hidden once the fixed list is empty");
+
+		// Adding an item back restores the fixed list's and the separator's visibility.
+		this.sideNavigation.getFixedItem().addItem(new NavigationListItem({ text: "Fixed Item" }));
+		await nextUIUpdate(this.clock);
+
+		assert.strictEqual(oFlexibleList.$().attr("aria-label"), oRB.getText("SIDE_NAVIGATION_FLEXIBLE_LIST_LABEL"), "flexible list keeps its label once the fixed list has items again");
+		assert.notStrictEqual(window.getComputedStyle(getFixedListUl()).display, "none", "fixed list is visible again once it has items");
+		assert.notStrictEqual(window.getComputedStyle(getSeparator()).display, "none", "separator is visible again once the fixed list has items");
+	});
+
+	QUnit.test("there is exactly one navigation landmark and the outer element is not one", function (assert) {
+		const oDomRef = this.sideNavigation.getDomRef();
+		const aLandmarks = oDomRef.querySelectorAll('[role="navigation"]');
+
+		assert.strictEqual(aLandmarks.length, 1, "exactly one navigation landmark is rendered");
+		assert.strictEqual(aLandmarks[0], this.sideNavigation.getDomRef("navigation"), "the landmark is the inner navigation wrapper");
+
+		assert.strictEqual(oDomRef.tagName, "DIV", "the outer element is a plain div, not a nav element");
+		assert.notOk(oDomRef.getAttribute("role"), "the outer element does not carry a role, so it is not an implicit landmark");
 	});
 });
