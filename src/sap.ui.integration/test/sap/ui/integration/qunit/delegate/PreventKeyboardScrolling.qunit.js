@@ -2,23 +2,37 @@
 
 sap.ui.define([
 	"sap/ui/integration/library",
+	"sap/base/util/Deferred",
 	"sap/ui/integration/widgets/Card",
 	"sap/m/VBox",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
-	"qunit/testResources/nextCardReadyEvent"
+	"qunit/testResources/nextCardReadyEvent",
+	"sap/ui/integration/delegate/OverflowHandler"
 ], (
 	library,
+	Deferred,
 	Card,
 	VBox,
 	QUnitUtils,
 	nextUIUpdate,
-	nextCardReadyEvent
+	nextCardReadyEvent,
+	OverflowHandler
 ) => {
 	"use strict";
 	const {CardOverflow} = library;
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
+
+	function nextFooterAfterRendering(oFooter) {
+		const oDeferred = new Deferred();
+		oFooter.addEventDelegate({
+			onAfterRendering: function () {
+				oDeferred.resolve();
+			}
+		});
+		return oDeferred.promise;
+	}
 
 	const oTestManifest1 = {
 		"sap.app": {
@@ -76,8 +90,12 @@ sap.ui.define([
 				items: [this.oCard]
 			});
 
+			this.oIsOverflowingSpy = this.spy(OverflowHandler.prototype, "_isOverflowing");
 			this.vBox.placeAt(DOM_RENDER_LOCATION);
 			await nextCardReadyEvent(this.oCard);
+
+			const oFooter = this.oCard.getCardFooter();
+			await nextFooterAfterRendering(oFooter);
 			await nextUIUpdate();
 		},
 		afterEach: function () {
@@ -88,18 +106,21 @@ sap.ui.define([
 
 	QUnit.test("When space is not enough", function (assert) {
 		// Arrange
-		const oList = this.oCard.getCardContent().getInnerList();
+		const oFooter = this.oCard.getCardFooter();
+		const oContent = this.oCard.getCardContent();
+		const oList = oContent.getInnerList();
 
 		oList.focus();
 
-		QUnitUtils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		this.oCard.getCardContent()._oOverflowHandler._oPreventKeyboardScrolling._scroll(); // @todo the scroll event should be fired, but is not
+		assert.ok(this.oIsOverflowingSpy, "The _isOverflowing method is called");
 
 		QUnitUtils.triggerKeydown(document.activeElement, "ARROW_DOWN");
-		this.oCard.getCardContent()._oOverflowHandler._oPreventKeyboardScrolling._scroll();
+		oContent._oOverflowHandler._oPreventKeyboardScrolling._scroll(); // @todo the scroll event should be fired, but is not
+
+		QUnitUtils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+		oContent._oOverflowHandler._oPreventKeyboardScrolling._scroll();
 
 		// Assert
-		const oFooter = this.oCard.getCardFooter();
 		const oShowMore = oFooter.getAggregation("_showMore");
 		const oContentSection = this.oCard.getDomRef("contentSection");
 
