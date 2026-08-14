@@ -210,11 +210,17 @@
 			<kbd>Ctrl + A</kbd>
 			<description>
 				<p>If the focus is on a cell, the row selector, or <span class="uicontrol">Select All</span>, this toggles the <span class="uicontrol">Select All</span> checkbox: All rows get selected or deselected respectively.</p>
+				<p>The shortcut has no effect if the focus is on a column header cell.</p>
+				<p>The shortcut has no effect if the focus is on a text input field, as the browser handles the text selection in this case.</p>
+				<p><span class="emphasis">If cell selection is enabled:</span></p>
+				<p>If the focus is on a cell, all available cells are selected up to the selection limit. If all available cells are already selected, the cell selection is removed.</p>
 			</description>
 		</interaction>
 		<interaction>
 			<kbd>Ctrl + Shift + A</kbd>
 			<description>
+				<p>If the focus is on a cell, the row selector, or <span class="uicontrol">Select All</span>, the selection of all rows is removed.</p>
+				<p>The shortcut has no effect if the focus is on a column header cell or on a text input field.</p>
 				<p><span class="emphasis">If cell selection is enabled:</span></p>
 				<p>If the focus is inside of the table, the selection for any rows and cells is removed.</p>
 			</description>
