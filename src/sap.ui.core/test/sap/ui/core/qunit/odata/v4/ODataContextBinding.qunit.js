@@ -2720,6 +2720,8 @@ sap.ui.define([
 		this.mock(this.oModel.oRequestor).expects("buildQueryString")
 			.withExactArgs("~sPath~/@$ui5.overload/0/$ReturnType", "~mCacheQueryOptions~")
 			.returns("~queryString~");
+		const oGroupLock = {unlock : mustBeMocked};
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
 		this.mock(this.oModel.oRequestor).expects("fetch")
 			.withExactArgs(sOperation === "Action" ? "POST" : "GET", "~sResourcePath~",
 				"~queryString~", sOperation === "Action" ? "~copiedParameters~" : undefined)
@@ -2727,7 +2729,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oBinding.createCacheAndRequest("~GroupLock~", "~sPath~", oOperationMetadata,
+			oBinding.createCacheAndRequest(oGroupLock, "~sPath~", oOperationMetadata,
 				"~mParameters~", undefined, undefined, undefined, true),
 			"~fetchPromise~");
 	});

@@ -10463,16 +10463,22 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// 1) Fetch a stream
 	// 2) Fetch answered with 503 "Retry-After"
 	// 3) Invoke a second stream while waiting for "Retry-After"
-	// 4) No additional request is sent until "Retry-After" is resolved
-	// 5) After resolving "Retry-After", both requests are sent (again)
+	// 4) Call oModel.delete() while waiting for "Retry-After" (uses XHR, not fetch)
+	//    (JIRA: CPOUI5ODATAV4-3671)
+	// 5) No additional request is sent until "Retry-After" is resolved
+	// 6) After resolving "Retry-After", both stream requests and the delete request are sent
 	// JIRA: CPOUI5ODATAV4-3624
 	QUnit.test('Edm.Stream response with 503, "Retry-After" handling', async function (assert) {
-		const oModel = this.createTeaBusiModel123();
-		const sPath = "EMPLOYEES('1')"
-			+ "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcDownloadDocument";
-		const oBinding = oModel.bindContext("/" + sPath + "(...)");
-		let fnResolveRetryAfter;
+		const oModel = this.createModel(sTeaBusi + "?sap-client=123", {}, {
+			[sTeaBusi + "$metadata?sap-client=123"] : {source : "odata/v4/data/metadata.xml"},
+			["DELETE " + sTeaBusi + "EMPLOYEES('2')?sap-client=123"] : {code : 204}
+		});
+		oModel.$keepSend = true; // do not stub sendBatch/-Request
+
+		await this.createView(assert, "", oModel); // needed to monitor the lifecycle of group locks
+
 		let fnResolveCallback;
+		let fnResolveRetryAfter;
 		const oCallbackPromise = new Promise((resolve) => {
 			fnResolveCallback = resolve;
 		});
@@ -10489,6 +10495,17 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			});
 		});
 
+		const aRequests = [];
+		TestUtils.onRequest((sPayload) => {
+			if (sPayload) {
+				aRequests.push(
+					...sPayload.split("\r\n").filter((sLine) => sLine.startsWith("DELETE ")));
+			}
+		});
+
+		const sPath = "EMPLOYEES('1')"
+			+ "/com.sap.gateway.default.iwbep.tea_busi.v0001.__FAKE__AcDownloadDocument";
+		const oBinding = oModel.bindContext("/" + sPath + "(...)");
 		const oRequestorMock = this.mock(_Requestor);
 		const mHeaders = {
 			Accept : "*/*",
@@ -10523,6 +10540,13 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 		// code under test - invoke a second stream while waiting for retry-after
 		const oInvokePromise1 = oBinding.setParameter("locale", "en-US").invoke("$stream");
 
+		// code under test (JIRA: CPOUI5ODATAV4-3671)
+		const oDeletePromise = oModel.delete("/EMPLOYEES('2')", "$single");
+
+		await resolveLater(null, /*iDelay*/15); // Note: Sinon.JS' autorespond waits 10ms
+
+		assert.deepEqual(aRequests, [], "DELETE is waiting for Retry-After");
+
 		oRequestorMock.expects("fetch")
 			.withExactArgs(sTeaBusi + sPath + "?sap-client=123", {
 				headers : mHeaders,
@@ -10551,6 +10575,10 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 
 		assert.deepEqual(await oInvokePromise0, {body : "~body~", headers : "~headers~"});
 		assert.deepEqual(await oInvokePromise1, {body : "~body2~", headers : "~headers2~"});
+		await oDeletePromise;
+		assert.deepEqual(aRequests, ["DELETE EMPLOYEES('2')?sap-client=123 HTTP/1.1"]);
+
+		TestUtils.onRequest(null);
 	});
 
 	//*********************************************************************************************

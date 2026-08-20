@@ -207,7 +207,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.odata.v4.Context|{body: ReadableStream,headers: Headers}|undefined>}
 	 *   A promise that is resolved without data or with a return value context or with the
 	 *   response's body and headers when the operation call succeeded, or rejected with an
-	 *   <code>Error</code> instance <code>oError</code> in case of failure.
+	 *   <code>Error</code> instance in case of failure.
 	 *
 	 * @private
 	 * @see #invoke for details
@@ -688,6 +688,7 @@ sap.ui.define([
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
 		if (bStream) {
+			oGroupLock.unlock();
 			return oRequestor.fetch(bAction ? "POST" : "GET", sPath,
 				oRequestor.buildQueryString(sMetaPath, this.mCacheQueryOptions),
 				bAction ? mParameters : undefined);
