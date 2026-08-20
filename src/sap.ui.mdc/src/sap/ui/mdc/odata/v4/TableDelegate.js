@@ -85,6 +85,15 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.ui.mdc.odata.v4.TableDelegate.Payload
 	 * @property {object} [aggregationConfiguration] The configuration that is applied if data aggregation is enabled in the delegate.
+	 * @property {boolean} [aggregationConfiguration.enabled]
+	 *     You can override the automatic detection of whether data aggregation is enabled in the delegate.
+	 *     If set to <code>true</code>, data aggregation is enabled if supported by the table type.
+	 *     If set to <code>false</code>, data aggregation is disabled. Group and aggregate conditions, as well as the <code>p13nMode</code>
+	 *     <code>Group</code> and <code>Aggregate</code>, are ignored, and the corresponding personalization is not offered.
+	 *     If not set, the automatic detection applies (see {@link module:sap/ui/mdc/odata/v4/TableDelegate}).
+	 *     This setting only takes effect for table types that support it. Currently, this is the {@link sap.ui.mdc.table.GridTableType GridTable}.
+	 *     Additional table types might support this setting in the future.
+	 *     {@since 1.153}
 	 * @property {boolean} [aggregationConfiguration.leafLevel=false]
 	 *     Determines whether aggregation on the leaf level is enabled. If it is enabled, every column change affects the data in the table.
 	 * @public
@@ -270,20 +279,24 @@ sap.ui.define([
 	 * @override
 	 */
 	Delegate.updateBinding = function(oTable, oBindingInfo, oBinding, mSettings) {
+		const oTableModel = oTable.getModel("$sap.ui.mdc.Table");
+		let bHasDataAggregation = false;
+
 		// Use compact selection counter when selections are cleared on filter, as they can never exceed the visible count.
 		oTable._oTableTitle?.setShowExtendedView(!oBindingInfo.parameters?.$$clearSelectionOnFilter);
 
 		// Custom $$aggregation is not supported if data aggregation is enabled.
 		if (isDataAggregationEnabled(oTable)) {
 			updateAggregation(oTable, oBindingInfo);
+			// $$aggregation can be undefined (e.g. no visible columns) even when aggregation is enabled.
+			bHasDataAggregation = !!oBindingInfo.parameters.$$aggregation;
 		} else {
-			const oModel = oTable.getModel("$sap.ui.mdc.Table");
-			oModel.setProperty("/@custom/hasDataAggregation", false);
-			oModel.setProperty("/@custom/hasGrandTotal", false);
+			oTableModel.setProperty("/@custom/hasGrandTotal", false);
 		}
 
 		if (!oBinding || hasPathChanged(oBinding.getPath(), oBindingInfo.path)) {
 			this.rebind(oTable, oBindingInfo);
+			oTableModel.setProperty("/@custom/hasDataAggregation", bHasDataAggregation);
 			return;
 		}
 
@@ -316,6 +329,7 @@ sap.ui.define([
 				bHasRootBindingAndWasNotSuspended = false;
 			}
 		} finally {
+			oTableModel.setProperty("/@custom/hasDataAggregation", bHasDataAggregation);
 			if (bHasRootBindingAndWasNotSuspended && oRootBinding.isSuspended()) {
 				oRootBinding.resume();
 			}
@@ -390,8 +404,9 @@ sap.ui.define([
 	 */
 	Delegate.getSupportedFeatures = function(oTable) {
 		const mSupportedFeatures = TableDelegate.getSupportedFeatures.apply(this, arguments);
+		const bIsGridTable = oTable._isOfType(TableType.Table);
 
-		if (oTable._isOfType(TableType.Table)) {
+		if (bIsGridTable) {
 			const aP13nModes = mSupportedFeatures.p13nModes;
 
 			if (!aP13nModes.includes(P13nMode.Group)) {
@@ -400,6 +415,13 @@ sap.ui.define([
 			if (!aP13nModes.includes(P13nMode.Aggregate)) {
 				aP13nModes.push(P13nMode.Aggregate);
 			}
+		}
+
+		// When data aggregation is forced off, suppress related p13nModes.
+		if (oTable.getPayload()?.aggregationConfiguration?.enabled === false) {
+			mSupportedFeatures.p13nModes = mSupportedFeatures.p13nModes.filter(
+				(sMode) => sMode !== P13nMode.Aggregate && !(bIsGridTable && sMode === P13nMode.Group)
+			);
 		}
 
 		return {
@@ -702,7 +724,6 @@ sap.ui.define([
 		}
 
 		oBindingInfo.parameters.$$aggregation = mAggregation;
-		oTable.getModel("$sap.ui.mdc.Table").setProperty("/@custom/hasDataAggregation", !!mAggregation);
 
 		const bHasGrandTotal = Object.keys(mAggregation?.aggregate || {}).some((sKey) => {
 			return mAggregation.aggregate[sKey].grandTotal;
@@ -855,8 +876,24 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataListBinding#setAggregation
 	 */
 	function isDataAggregationEnabled(oTable) {
-		return oTable._isOfType(TableType.Table) && (oTable._getGroupedProperties().length > 0 || oTable.isGroupingEnabled() ||
-			Object.keys(oTable._getAggregatedProperties()).length > 0 || oTable.isAggregationEnabled());
+		const bEnabled = oTable.getPayload()?.aggregationConfiguration?.enabled;
+
+		if (bEnabled === false) {
+			// Hard-disabled
+			return false;
+		}
+
+		if (bEnabled === true) {
+			// Force-enabled, but only for supported table types.
+			return oTable._isOfType(TableType.Table);
+		}
+
+		// Default: Automatic detection
+		return oTable._isOfType(TableType.Table)
+			&& (oTable._getGroupedProperties().length > 0
+				|| oTable.isGroupingEnabled()
+				|| Object.keys(oTable._getAggregatedProperties()).length > 0
+				|| oTable.isAggregationEnabled());
 	}
 
 	function create$$Aggregation(oTable) {

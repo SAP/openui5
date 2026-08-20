@@ -541,10 +541,12 @@ sap.ui.define([
 
 			this.aCollected$$Aggregation = [];
 			sinon.stub(this.oTable._getType(), "bindRows").callsFake(function(oBindingInfo) {
-				that.aCollected$$Aggregation.push({...oBindingInfo.parameters.$$aggregation});
+				that.aCollected$$Aggregation.push(oBindingInfo.parameters.$$aggregation);
 				this.bindRows.wrappedMethod.apply(this, arguments);
-				sinon.stub(this.getRowBinding(), "setAggregation").callsFake((mAggregation) => {
+				const oBinding = this.getRowBinding();
+				sinon.stub(oBinding, "setAggregation").callsFake(function(mAggregation) {
 					that.aCollected$$Aggregation.push(mAggregation);
+					oBinding.setAggregation.wrappedMethod.call(oBinding, mAggregation);
 				});
 			});
 		},
@@ -631,7 +633,7 @@ sap.ui.define([
 			}]
 		});
 		await this.oTable.rebind();
-		this.verify$$aggregation({});
+		this.verify$$aggregation(undefined);
 	});
 
 	QUnit.test("Complex property", async function(assert) {
@@ -785,6 +787,233 @@ sap.ui.define([
 			},
 			groupLevels: []
 		});
+	});
+
+	QUnit.test("Data aggregation forced on when auto-detection would not enable", async function(assert) {
+		await this.initTable({
+			p13nMode: []
+		}, ["Country"], {
+			aggregationConfiguration: {
+				enabled: true
+			},
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+
+		const oPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.ODataV4Aggregation");
+		assert.ok(oPlugin.getEnabled(), "Data aggregation plugin is enabled");
+		assert.notOk(this.oTable.getModel("$sap.ui.mdc.Table").getProperty("/@custom/hasGrandTotal"), "No grand total");
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {}
+			},
+			groupLevels: []
+		});
+	});
+
+	QUnit.test("Data aggregation forced on is ignored for TreeTable and ResponsiveTable", async function(assert) {
+		for (const TableType of [TreeTableType, ResponsiveTableType]) {
+			await this.initTable({
+				type: new TableType(),
+				p13nMode: []
+			}, ["Country"], {
+				aggregationConfiguration: {
+					enabled: true
+				},
+				propertyInfo: [{
+					key: "Country",
+					path: "CountryPath",
+					label: "Country Label",
+					dataType: "String",
+					extension: {
+						technicallyGroupable: true
+					}
+				}]
+			});
+			await this.oTable.rebind();
+
+			// The ODataV4Aggregation plugin is only added for GridTable, so it must be absent here.
+			const oPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.ODataV4Aggregation");
+			assert.notOk(oPlugin, "No data aggregation plugin for " + TableType.getMetadata().getName());
+			this.verify$$aggregation(undefined);
+
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Data aggregation forced off when auto-detection would enable", async function(assert) {
+		await this.initTable({
+			groupConditions: {
+				groupLevels: [{name: "Country"}]
+			},
+			aggregateConditions: {
+				SalesAmount: {}
+			}
+		}, ["Country", "SalesAmount"], {
+			aggregationConfiguration: {
+				enabled: false
+			},
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}, {
+				key: "SalesAmount",
+				path: "SalesAmountPath",
+				label: "SalesAmount Label",
+				dataType: "String",
+				extension: {
+					technicallyAggregatable: true
+				}
+			}]
+		});
+		await this.oTable.rebind();
+
+		const oPlugin = PluginBase.getPlugin(this.oTable._oTable, "sap.ui.table.plugins.ODataV4Aggregation");
+		assert.notOk(oPlugin.getEnabled(), "Data aggregation plugin is disabled despite group and aggregate conditions");
+		assert.notOk(this.oTable.getModel("$sap.ui.mdc.Table").getProperty("/@custom/hasDataAggregation"), "hasDataAggregation is false");
+		this.verify$$aggregation(undefined);
+	});
+
+	QUnit.test("Data aggregation setting unset keeps auto-detection", async function(assert) {
+		await this.initTable({
+			p13nMode: []
+		}, ["Country"], {
+			aggregationConfiguration: {}, // no "enabled"
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+
+		await this.oTable.rebind();
+		this.verify$$aggregation(undefined);
+
+		this.oTable.setP13nMode(["Group"]);
+		await this.oTable.rebind();
+		this.verify$$aggregation({
+			aggregate: {},
+			grandTotalAtBottomOnly: true,
+			subtotalsAtBottomOnly: true,
+			group: {
+				CountryPath: {}
+			},
+			groupLevels: []
+		});
+
+		this.oTable.setP13nMode([]);
+		await this.oTable.rebind();
+		this.verify$$aggregation(undefined);
+	});
+
+	QUnit.test("Data aggregation forced off disabled Group/Aggregate personalization", async function(assert) {
+		await this.initTable({
+			p13nMode: ["Column", "Group", "Aggregate"]
+		}, ["Country"], {
+			aggregationConfiguration: {
+				enabled: false
+			},
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+
+		const mSupportedFeatures = TableDelegate.getSupportedFeatures(this.oTable);
+		assert.notOk(mSupportedFeatures.p13nModes.includes("Group"), "Group not supported when forced off");
+		assert.notOk(mSupportedFeatures.p13nModes.includes("Aggregate"), "Aggregate not supported when forced off");
+		assert.ok(mSupportedFeatures.p13nModes.includes("Column"), "Column still supported");
+	});
+
+	QUnit.test("Data aggregation forced off does not disable Group personalization for ResponsiveTable", async function(assert) {
+		await this.initTable({
+			type: new ResponsiveTableType()
+		}, ["Country"], {
+			aggregationConfiguration: {
+				enabled: false
+			},
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+
+		const mSupportedFeatures = TableDelegate.getSupportedFeatures(this.oTable);
+		assert.ok(mSupportedFeatures.p13nModes.includes("Group"), "Group still supported for ResponsiveTable");
+	});
+
+	QUnit.test("Data aggregation forced on does not enable Aggregate personalization for ResponsiveTable", async function(assert) {
+		await this.initTable({
+			type: new ResponsiveTableType()
+		}, ["Country"], {
+			aggregationConfiguration: {
+				enabled: true
+			},
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+
+		const mSupportedFeatures = TableDelegate.getSupportedFeatures(this.oTable);
+		assert.notOk(mSupportedFeatures.p13nModes.includes("Aggregate"), "Aggregate not supported for ResponsiveTable");
+	});
+
+	QUnit.test("Data aggregation forced on does not enable Group personalization for TreeTable", async function(assert) {
+		await this.initTable({
+			type: new TreeTableType()
+		}, ["Country"], {
+			aggregationConfiguration: {
+				enabled: true
+			},
+			propertyInfo: [{
+				key: "Country",
+				path: "CountryPath",
+				label: "Country Label",
+				dataType: "String",
+				extension: {
+					technicallyGroupable: true
+				}
+			}]
+		});
+
+		const mSupportedFeatures = TableDelegate.getSupportedFeatures(this.oTable);
+		assert.notOk(mSupportedFeatures.p13nModes.includes("Group"), "Group not supported for TreeTable");
 	});
 
 	QUnit.test("Add and remove group conditions", async function(assert) {
@@ -2591,6 +2820,103 @@ sap.ui.define([
 			group: {Name_Path: {}},
 			groupLevels: []
 		}, "$$aggregation parameter");
+	});
+
+	QUnit.test("Data aggregation toggled OFF→ON→OFF in place (Binding#setAggregation)", async function(assert) {
+		const oPlugin = PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.ODataV4Aggregation");
+		const oSetEnabledSpy = this.spy(oPlugin, "setEnabled");
+
+		// Initial bind with disabled data aggregation
+		this.oTable.setP13nMode();
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin initially disabled");
+		this.oSetAggregationSpy.resetHistory();
+		this.oRebindSpy.resetHistory();
+		oSetEnabledSpy.resetHistory();
+
+		// Enable
+		this.oTable.setP13nMode(["Group"]);
+		await this.oTable.rebind();
+		assert.ok(oPlugin.getEnabled(), "Plugin enabled after rebind: OFF→ON");
+		sinon.assert.callOrder(this.oSetAggregationSpy, oSetEnabledSpy);
+		assert.equal(this.oRebindSpy.callCount, 0, "Update-in-place was used (no fallback rebind)");
+		this.oSetAggregationSpy.resetHistory();
+		this.oRebindSpy.resetHistory();
+		oSetEnabledSpy.resetHistory();
+
+		// Disable
+		this.oTable.setP13nMode();
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin disabled after rebind: ON→OFF");
+		sinon.assert.callOrder(this.oSetAggregationSpy, oSetEnabledSpy);
+		assert.equal(this.oRebindSpy.callCount, 0, "Update-in-place was used (no fallback rebind)");
+	});
+
+	QUnit.test("Data aggregation toggled OFF→ON→OFF via forced rebind (Table#bindRows)", async function(assert) {
+		const oPlugin = PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.ODataV4Aggregation");
+
+		// Initial bind with disabled data aggregation
+		this.oTable.setP13nMode();
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin initially disabled");
+		this.oRebindSpy.resetHistory();
+
+		// Enable
+		this.oTable.setP13nMode(["Group"]);
+		this.oTable._bForceRebind = true;
+		await this.oTable.rebind();
+		assert.ok(oPlugin.getEnabled(), "Plugin enabled after rebind: OFF→ON");
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind path was used");
+		this.oRebindSpy.resetHistory();
+
+		// Disable
+		this.oTable.setP13nMode();
+		this.oTable._bForceRebind = true;
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin disabled after rebind: ON→OFF");
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind path was used");
+	});
+
+	QUnit.test("Data aggregation toggled OFF→ON→OFF via rebind in error case (Table#bindRows)", async function(assert) {
+		const oPlugin = PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.ODataV4Aggregation");
+
+		// Initial bind with disabled data aggregation
+		this.oTable.setP13nMode();
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin initially disabled");
+		this.oRebindSpy.resetHistory();
+
+		// Enable
+		this.oTable.setP13nMode(["Group"]);
+		this.oSuspendSpy.restore();
+		this.stub(this.oRowBinding, "suspend").throws();
+		await this.oTable.rebind();
+		assert.ok(oPlugin.getEnabled(), "Plugin enabled after rebind: OFF→ON");
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind path was used");
+		this.oRebindSpy.resetHistory();
+
+		// Disable
+		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
+		this.stub(this.oTable.getRowBinding(), "suspend").throws();
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin disabled after rebind: ON→OFF");
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind path was used");
+	});
+
+	QUnit.test("Data aggregation toggled ON→OFF via rebind in catch-block (Table#bindRows)", async function(assert) {
+		const oPlugin = PluginBase.getPlugin(this.oInnerTable, "sap.ui.table.plugins.ODataV4Aggregation");
+
+		await this.oTable.rebind();
+		assert.ok(oPlugin.getEnabled(), "Plugin initially enabled");
+		this.oRebindSpy.resetHistory();
+
+		this.oTable.setP13nMode(["Column", "Sort", "Filter"]);
+		this.oChangeParametersSpy.restore();
+		this.oChangeParametersSpy = this.stub(this.oRowBinding, "changeParameters").throws();
+
+		await this.oTable.rebind();
+		assert.notOk(oPlugin.getEnabled(), "Plugin disabled after catch-block rebind ON→OFF");
+		assert.equal(this.oRebindSpy.callCount, 1, "Rebind path was used");
 	});
 
 	QUnit.module("#validateState", {
