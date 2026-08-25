@@ -220,7 +220,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		assert.ok(iMaxHeight > parseFloat(oDomRef.style.maxHeight), "dialog max height is bigger when there is no dialog footer.");
+		assert.ok(iMaxHeight === parseFloat(oDomRef.style.maxHeight), "dialog max height is the same when there is no dialog footer.");
 
 		// Clean up
 		oDialog.destroy();
@@ -635,6 +635,34 @@ sap.ui.define([
 
 		assert.notOk(bContrastApplied, "Should NOT have contrast classes applied on footer for message dialog.");
 
+		oDialog.destroy();
+	});
+
+	QUnit.test("Buttons are not moved to the overflow area when there is enough space", function (assert) {
+		// Arrange
+		const oButton1 = new Button({ text: "12345678901234567890" });
+		const oButton2 = new Button({ text: "lorem ipsum dolar bla bla" });
+		const oDialog = new Dialog({
+			title: "Title",
+			buttons: [oButton1, oButton2]
+		});
+
+		// Act
+		oDialog.open();
+		this.clock.tick(500);
+
+		// Assert
+		const oToolbar = oDialog._oToolbar;
+		assert.notOk(oToolbar._getOverflowButtonNeeded(), "No overflow button is needed - there is enough space for both buttons.");
+
+		const aVisibleContent = oToolbar._getVisibleAndNonOverflowContent();
+		assert.ok(aVisibleContent.includes(oButton1), "First button is visible and not in the overflow area.");
+		assert.ok(aVisibleContent.includes(oButton2), "Second button is visible and not in the overflow area.");
+
+		assert.ok(oButton1.getDomRef() && oButton1.$().is(":visible"), "First button is rendered and visible.");
+		assert.ok(oButton2.getDomRef() && oButton2.$().is(":visible"), "Second button is rendered and visible.");
+
+		// Clean up
 		oDialog.destroy();
 	});
 

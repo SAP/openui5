@@ -273,7 +273,6 @@ html.sap-desktop .sapMDialog {
 	&.sapMDialog,
 	.sapMDialog {
 		min-height: @_sap_m_Dialog_BarCompactHeight;
-		padding-bottom: @_sap_m_Dialog_BarCompactHeight;
 
 		&.sapMDialogWithSubHeader {
 
@@ -346,17 +345,12 @@ html.sap-desktop .sapMDialog {
 .sapMDialog {
 	box-sizing: content-box;
 	min-height: @_sap_m_Dialog_BarHeight;
-	padding-bottom: @_sap_m_Dialog_BarHeight;
 
 	.sapMDialogFooter {
 
 		.sapMTB.sapMFooter-CTX {
 			border-bottom: none;
 		}
-	}
-
-	&.sapMDialog-NoFooter {
-		padding-bottom: 0;
 	}
 
 	&.sapMDialogWithSubHeader {
@@ -411,11 +405,8 @@ html.sap-desktop .sapMDialog {
 	}
 
 	& > .sapMDialogFooter {
-		bottom: 0;
 		height: @_sap_m_Dialog_BarHeight;
-		left: 0;
-		position: absolute;
-		right: 0;
+		position: relative;
 	}
 
 	&.sapMDialogDraggable > .sapMDialogHeader {
