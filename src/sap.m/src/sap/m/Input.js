@@ -2013,14 +2013,22 @@ function(
 	 *
 	 * Adds the aria-describedby text with the number of available suggestions.
 	 *
-	 * @param {int} iNumItems
+	 * @param {int} iNumItems Number of visible suggestion items
+	 * @param {object} oFilterResults Optional filter results containing groups information
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Input.prototype._applySuggestionAcc = function(iNumItems) {
+	Input.prototype._applySuggestionAcc = function(iNumItems, oFilterResults) {
 		var sAriaText = "",
 			oRb = this._oRb,
-			bIpadSafari = Device.system.tablet && Device.os.macintosh && Device.browser.safari;
+			bIpadSafari = Device.system.tablet && Device.os.macintosh && Device.browser.safari,
+			iVisibleGroupCount = 0;
+
+		if (oFilterResults && oFilterResults.groups && oFilterResults.groups.length > 0) {
+			iVisibleGroupCount = oFilterResults.groups.filter(function (oGroup) {
+				return oGroup.visible;
+			}).length;
+		}
 
 		// timeout should not be used on Ipad Safari due to rendering issues
 		const iTimeoutDuration = bIpadSafari ? 0 : 100;
@@ -2033,9 +2041,21 @@ function(
 		setTimeout(function () {
 			// add items to list
 			if (iNumItems === 1) {
-				sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
+				if (iVisibleGroupCount === 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT_WITH_GROUP");
+				} else if (iVisibleGroupCount > 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT_WITH_GROUPS", [iVisibleGroupCount]);
+				} else {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
+				}
 			} else if (iNumItems > 1) {
-				sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", [iNumItems]);
+				if (iVisibleGroupCount === 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS_WITH_GROUP", [iNumItems]);
+				} else if (iVisibleGroupCount > 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS_WITH_GROUPS", [iNumItems, iVisibleGroupCount]);
+				} else {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", [iNumItems]);
+				}
 			} else {
 				sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
 			}
@@ -2095,7 +2115,7 @@ function(
 			this._hideSuggestionPopup();
 		}
 
-		this._applySuggestionAcc(iSuggestionsLength);
+		this._applySuggestionAcc(iSuggestionsLength, oFilterResults);
 	};
 
 	/**
@@ -3354,7 +3374,7 @@ function(
 			this._hideSuggestionPopup();
 		}
 
-		this._applySuggestionAcc(iSuggestionsLength);
+		this._applySuggestionAcc(iSuggestionsLength, oFilterResults);
 
 		this.setFilterFunction(fnFilterStore); // Restore filtering function
 	};
