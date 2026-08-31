@@ -84,7 +84,7 @@
 }
 
 .sapMObjectAttributeDiv {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapMLIBActive .sapMObjectAttributeText,
@@ -96,15 +96,15 @@
 	max-width: 100%;
 }
 
-/*=========================================== */
+/* =========================================== */
 /* Custom design for Responsive Object Header */
-/*=========================================== */
+/* =========================================== */
 
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeTitle,
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeText {
 	display: inline-block;
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	color: var(--sapContent_LabelColor);
 	white-space: nowrap;
@@ -127,7 +127,7 @@
 .sapMOHR .sapMOHRAttr .sapMObjectAttributeColon {
 	display: inline-block;
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	color: var(--sapContent_LabelColor);
 	white-space: pre;
@@ -155,9 +155,9 @@ html.sap-desktop .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:fo
 	text-overflow: ellipsis;
 }
 
-/*=========================================== */
+/* =========================================== */
 /* Custom design for Static Object Header     */
-/*=========================================== */
+/* =========================================== */
 
 .sapMOH .sapMOHAttr .sapMObjectAttributeDiv {
 	max-height: 2rem;
@@ -168,7 +168,7 @@ html.sap-desktop .sapMOHR .sapMObjectAttributeActive .sapMObjectAttributeText:fo
 .sapMOH .sapMOHAttr .sapMObjectAttributeText,
 .sapMOH .sapMOHAttr .sapMObjectAttributeColon {
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-weight: normal;
 	color: var(--sapContent_LabelColor);
 }
