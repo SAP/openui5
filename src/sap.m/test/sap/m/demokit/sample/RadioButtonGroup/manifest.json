@@ -21,6 +21,7 @@
 			"sample": {
 				"files": [
 					"V.view.xml",
+					"V.controller.js",
 					"manifest.json"
 				]
 			}

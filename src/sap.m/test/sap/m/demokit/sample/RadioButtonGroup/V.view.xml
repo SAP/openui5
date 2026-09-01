@@ -1,6 +1,6 @@
-<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
+<mvc:View controllerName="sap.m.sample.RadioButtonGroup.V" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc">
 	<VBox class="sapUiSmallMargin">
-		<Label labelFor="rbg1" text="An example with 'matrix' layout" />
+		<Label labelFor="rbg1" text="An example with 'matrix' layout:" />
 		<RadioButtonGroup id="rbg1" columns="3" width="100%" class="sapUiMediumMarginBottom">
 			<RadioButton id="RB1-1" text="Long Option Number 1" />
 			<RadioButton id="RB1-2" text="Option 2" enabled="false" />
@@ -9,7 +9,7 @@
 			<RadioButton id="RB1-5" text="Option 5" />
 			<RadioButton id="RB1-6" text="Nr. 6" />
 		</RadioButtonGroup>
-		<Label labelFor="rbg2" text="An example with 3 buttons and 2 columns" />
+		<Label labelFor="rbg2" text="An example with 3 buttons and 2 columns:" />
 		<RadioButtonGroup id="rbg2" columns="2" selectedIndex="2" class="sapUiMediumMarginBottom">
 			<RadioButton id="RB2-1" text="Option 1" />
 			<RadioButton id="RB2-2" text="Option 2" editable="false" />
@@ -21,10 +21,16 @@
 			<RadioButton id="RB3-2" text="Option 2" />
 			<RadioButton id="RB3-3" text="Option 3" />
 		</RadioButtonGroup>
-		<Label labelFor="rbg4" text="An example of a group in warning state" />
+		<Label labelFor="rbg4" text="An example of a group in warning state:" />
 		<RadioButtonGroup id="rbg4" valueState="Warning">
 			<RadioButton id="RB4-1" text="Option 1" />
 			<RadioButton id="RB4-2" text="Option 2" />
+		</RadioButtonGroup>
+		<Label labelFor="rbg5" text="A required group with no selection:" />
+		<RadioButtonGroup id="rbg5" required="true" valueState="Error" selectedIndex="-1" select=".onRequiredGroupSelect">
+			<RadioButton id="RB5-1" text="Option 1" />
+			<RadioButton id="RB5-2" text="Option 2" />
+			<RadioButton id="RB5-3" text="Option 3" />
 		</RadioButtonGroup>
 	</VBox>
 </mvc:View>

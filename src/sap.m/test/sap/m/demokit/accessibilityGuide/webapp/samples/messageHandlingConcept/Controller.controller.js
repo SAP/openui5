@@ -22,6 +22,7 @@ sap.ui.define([
 			this.oView.setModel(oModel);
 
 			this._MessageManager.registerObject(this.oView.byId("formContainer"), true);
+			this._MessageManager.registerObject(this.oView.byId("formContainerEmployment"), true);
 			this.oView.setModel(this._MessageManager.getMessageModel(),"message");
 
 			MessageToast.show('Press "Save" to trigger validation.');
@@ -104,9 +105,30 @@ sap.ui.define([
 			}
 		},
 
+		onEmploymentTypeSelect: function (oEvent) {
+			this.handleRequiredRadioButtonGroup(oEvent.getSource());
+		},
+
+		handleRequiredRadioButtonGroup: function (oGroup) {
+			const sTarget = oGroup.getBindingContext().getPath() + "/" + oGroup.getBindingPath("selectedIndex");
+
+			this.removeMessageFromTarget(sTarget);
+
+			if (oGroup.getSelectedIndex() < 0) {
+				this._MessageManager.addMessages(
+					new Message({
+						message: "A mandatory field is required",
+						type: MessageType.Error,
+						additionalText: "Invalid Employment Type",
+						target: sTarget,
+						processor: this.getView().getModel()
+					})
+				);
+			}
+		},
+
 		handleRequiredField: function (oInput) {
 			var sTarget = oInput.getBindingContext().getPath() + "/" + oInput.getBindingPath("value");
-
 			this.removeMessageFromTarget(sTarget);
 
 			if (!oInput.getValue()) {
@@ -236,14 +258,17 @@ sap.ui.define([
 				oRequiredNameInput = this.oView.byId("formContainer").getItems()[4].getContent()[2],
 				oNumericZipInput = this.oView.byId("formContainer").getItems()[5].getContent()[7],
 				oEmailInput = this.oView.byId("formContainer").getItems()[6].getContent()[13],
-				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[13];
+				oEmploymentTypeRadioButtonGroup = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[2],
+				iWeeklyHours = this.oView.byId("formContainerEmployment").getItems()[0].getContent()[15];
 
 			oButton.setVisible(true);
+			oEmploymentTypeRadioButtonGroup.setSelectedIndex(-1);
 			oRequiredNameInput.setValue("");
 			oNumericZipInput.setValue("AAA");
 			oEmailInput.setValue("MariaFontes.com");
 			iWeeklyHours.setValue(400);
 
+			this.handleRequiredRadioButtonGroup(oEmploymentTypeRadioButtonGroup);
 			this.handleRequiredField(oRequiredNameInput);
 			this.checkInputConstraints(iWeeklyHours);
 
