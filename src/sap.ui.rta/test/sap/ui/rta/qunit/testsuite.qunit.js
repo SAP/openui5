@@ -31,6 +31,23 @@ sap.ui.define([
 		// keep tests in alphabetical order!
 		tests: {
 			// API
+			"api/FrontendActionsAPI": {
+				group: "API",
+				coverage: {
+					only: [
+						"sap/ui/rta/api/FrontendActionsAPI",
+						"sap/ui/rta/util/ai/FrontendActionError",
+						"sap/ui/rta/util/ai/FrontendActionResult"
+					]
+				},
+				ui5: {
+					flexibilityServices: '[{"connector": "LocalStorageConnector"}]',
+					resourceroots: {
+						"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+						"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+					}
+				}
+			},
 			"api/startKeyUserAdaptation": {
 				group: "API",
 				coverage: {
@@ -765,6 +782,12 @@ sap.ui.define([
 			},
 
 			// utilities
+			"util/ai/AIVisualization": {
+				group: "util",
+				coverage: {
+					only: ["sap/ui/rta/util/ai/AIVisualization"]
+				}
+			},
 			"util/adaptationStarter": {
 				group: "util",
 				coverage: {

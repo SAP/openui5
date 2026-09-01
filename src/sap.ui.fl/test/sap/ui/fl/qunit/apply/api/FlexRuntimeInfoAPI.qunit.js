@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/_internal/ManifestUtils",
+	"sap/ui/fl/initial/_internal/Settings",
 	"sap/ui/fl/initial/api/InitialFlexAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -24,6 +25,7 @@ sap.ui.define([
 	FlexConfiguration,
 	FlexInfoSession,
 	ManifestUtils,
+	Settings,
 	InitialFlexAPI,
 	Layer,
 	Utils,
@@ -294,6 +296,26 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getAppVersionFromManifest").returns("someAppVersion");
 			const oReturnedValue = await FlexRuntimeInfoAPI.getFeedbackInformation({ rootControl: "someRootControl" });
 			assert.deepEqual(oReturnedValue, oExpectedReturnValue, "the function returns the configured value");
+		});
+	});
+
+	QUnit.module("getClient", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when the settings are available", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				getClient() {
+					return "010";
+				}
+			});
+			assert.strictEqual(FlexRuntimeInfoAPI.getClient(), "010", "then the client of the connected back end is returned");
+		});
+
+		QUnit.test("when the settings are not available", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns(undefined);
+			assert.strictEqual(FlexRuntimeInfoAPI.getClient(), undefined, "then undefined is returned");
 		});
 	});
 

@@ -263,6 +263,18 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks if the Settings are available and if so returns the client information
+		 *
+		 * @returns {string} Client number of the connected back end or undefined (when property <code>client</code> does not exist in the flex settings file)
+		 * @since 1.153
+		 * @private
+		 * @ui5-restricted sap.ui.rta, sap.ui.fl
+		 */
+		getClient() {
+			return Settings.getInstanceOrUndef()?.getClient();
+		},
+
+		/**
 		 * Returns the user id of the current user.
 		 *
 		 * @returns {string} returns the user id

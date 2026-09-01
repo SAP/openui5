@@ -55,6 +55,8 @@ sap.ui.define([
 
 	var Utils = {};
 
+	Utils.nonInteractiveMode = false;
+
 	Utils.RESOLVED_PROMISE = Promise.resolve(true);
 
 	Utils._sFocusableOverlayClass = ".sapUiDtOverlaySelectable";
@@ -360,6 +362,10 @@ sap.ui.define([
 		mOptions.emphasizedAction = sEmphasizedAction || mPropertyBag.emphasizedAction;
 		if (bShowCancel) {
 			mOptions.actions.push(MessageBox.Action.CANCEL);
+		}
+
+		if (Utils.nonInteractiveMode) {
+			return Promise.resolve(mOptions.emphasizedAction);
 		}
 
 		return messageBoxPromise(sMessageType, sMessage, mOptions);
