@@ -77,4 +77,16 @@ sap.ui.define([
 
 		Then.iTeardownMyAppFrame();
 	});
+
+	opaTest("When I click on a Link fast more than once, I should see no errors for duplicated IDs", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link/opa/appUnderTestAdditionalContent/start.html");
+		Then.iShouldSeeColumnWithName("Product ID");
+
+		When.onTheMDCLink.iPressTheLink({ text: "2212-121-828" });
+		When.onTheMDCLink.iPressTheLink({ text: "1239102" });
+		When.onTheMDCLink.iPressTheLink({ text: "1239102" });
+		Then.onTheMDCLink.iShouldSeeAPopover({ text: "1239102" });
+
+		// Then.iTeardownMyAppFrame();
+	});
 });

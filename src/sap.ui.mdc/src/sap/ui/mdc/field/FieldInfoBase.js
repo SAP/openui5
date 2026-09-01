@@ -19,6 +19,42 @@ sap.ui.define([
 
 	// shortcut for sap.m.PlacementType
 	const { PlacementType } = mobileLibrary;
+	class AsyncQueue {
+		aQueue = [];
+		bProcessing = false;
+
+		add(asyncFn) {
+			return new Promise((resolve, reject) => {
+				this.aQueue.push({ asyncFn, resolve, reject });
+				this.processNext();
+			});
+		}
+
+		async processNext() {
+			if (this.bProcessing || this.aQueue.length === 0) {
+				return;
+			}
+
+			this.bProcessing = true;
+			const { asyncFn, resolve, reject } = this.aQueue.shift();
+
+			try {
+			const result = await asyncFn();
+				resolve(result);
+			} catch (error) {
+				reject(error);
+			} finally {
+				this.bProcessing = false;
+				this.processNext();
+			}
+		}
+
+		get size() {
+			return this.aQueue.length;
+		}
+	}
+
+	const oPopoverQueue = new AsyncQueue();
 
 	/**
 	 * Constructor for a new <code>FieldInfoBase</code>.
@@ -95,21 +131,17 @@ sap.ui.define([
 		if (!oControl) {
 			throw new Error("sap.ui.mdc.field.FieldInfoBase: popover can not be open because the control is undefined");
 		}
-		// Avoid creation of a new popover instance if the same triggerable control is triggered again.
-		const oDependentPopover = this.getPopover();
-		if (oDependentPopover && oDependentPopover.isOpen()) {
-			return Promise.resolve();
-		}
 
 		const bNavigate = await this.checkDirectNavigation(oEvent);
 		if (bNavigate === false) {
-			const oPopover = await this.createPopover();
-			if (oPopover && !this.isDestroyed() && !oControl.isDestroyed()) {
-				oPopover.openBy(oControl);
-				oPopover.attachAfterOpen(() => {
-					this.firePopoverAfterOpen();
-				});
-			}
+			return oPopoverQueue.add(this.createPopover.bind(this)).then((oPopover) => {
+				if (oPopover && !this.isDestroyed() && !oControl.isDestroyed()) {
+					oPopover.openBy(oControl);
+					oPopover.attachAfterOpen(() => {
+						this.firePopoverAfterOpen();
+					});
+				}
+			});
 		}
 		return Promise.resolve();
 	};
@@ -155,6 +187,15 @@ sap.ui.define([
 	 */
 	FieldInfoBase.prototype.createPopover = async function() {
 		try {
+			// Avoid creation of a new popover instance if the same triggerable control is triggered again.
+			const oDependentPopover = this.getPopover();
+			if (oDependentPopover &&
+				(oDependentPopover.isOpen() ||
+				!oDependentPopover.isDestroyStarted() ||
+				!oDependentPopover.isDestroyed())) {
+				return Promise.resolve();
+			}
+
 			const oPanel = await this.getContent(() => {
 				return this.getPopover();
 			});
