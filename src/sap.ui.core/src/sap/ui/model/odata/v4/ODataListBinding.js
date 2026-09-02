@@ -761,7 +761,8 @@ sap.ui.define([
 	 * @param {boolean} [bAll]
 	 *   Whether to collapse the node and all its descendants
 	 * @param {boolean} [bSilent]
-	 *   Whether no ("change") events should be fired
+	 *   Whether no ("change") events should be fired and no changes to the tree state should be
+	 *   recorded
 	 * @param {number} [iCount]
 	 *   The count of nodes affected by the collapse, in case the cache already performed it
 	 * @throws {Error}
@@ -783,7 +784,7 @@ sap.ui.define([
 
 		iCount ??= this.oCache.collapse(
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
-			this.getKeepAlivePredicates(), bAll ? this.lockGroup() : undefined, bSilent, false);
+			this.getKeepAlivePredicates(), bSilent, bAll ? this.lockGroup() : undefined, false);
 
 		if (iCount > 0) {
 			const aContexts = this.aContexts;
@@ -1835,7 +1836,8 @@ sap.ui.define([
 	 *   The number of levels to expand, <code>iLevels >= Number.MAX_SAFE_INTEGER</code> can be
 	 *   used to expand all levels
 	 * @param {boolean} [bSilent]
-	 *   Whether no ("change") events should be fired
+	 *   Whether no ("change") events should be fired and no changes to the tree state should be
+	 *   recorded
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise that is resolved when the expand is successful and rejected when it fails
 	 * @throws {Error}
@@ -1858,7 +1860,7 @@ sap.ui.define([
 		const sPath = _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath());
 
 		return this.oCache.expand(this.lockGroup(), sPath, iLevels, this.getKeepAlivePredicates(),
-			/*fnDataRequested*/ () => {
+			bSilent, /*fnDataRequested*/ () => {
 				bDataRequested = true;
 				this.fireDataRequested();
 			}

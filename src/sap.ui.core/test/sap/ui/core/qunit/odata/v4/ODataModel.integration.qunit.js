@@ -40769,9 +40769,10 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// Optionally, collapse OOP node's parent before side-effects refresh (JIRA: CPOUI5ODATAV4-3626)
 	// Optionally, use "expand all" to cause side-effects refresh (JIRA: CPOUI5ODATAV4-3643)
 	// After "expand all", collapse child and cause side-effects refresh (JIRA: CPOUI5ODATAV4-3643)
+	// Optionally, treat parent/child/grand child as inside the collection.
 [1, 4].forEach((iExpandTo) => {
 	[undefined, true].forEach((bSelected) => {
-		[false, true].forEach((bParentChild) => {
+		[false, true, 1].forEach((bParentChild) => { // 1: inside, not outside
 			[0, false, true].forEach((bCollapse) => { // 0: expand all
 	const sTitle = "Recursive Hierarchy: DINC0921191"
 		+ ", side-effects refresh w/ out-of-place node outside the collection"
@@ -40780,6 +40781,8 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 		+ ", parent&child OOP = " + bParentChild
 		+ ", collapse parent before side-effects refresh = " + bCollapse;
 
+	const bInside = bParentChild === 1;
+	bParentChild = !!bParentChild;
 	const bExpandAll = bCollapse === 0;
 	bCollapse = !!bCollapse;
 
@@ -40862,7 +40865,9 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			.expectRequest("#0 EMPLOYEES/$count?$filter=not startswith(Name, 'Out')", 2)
 			.expectRequestIf(iExpandTo > 1,
 				"#A " + sBaseUrl + "&$filter=ID eq 'Out'&$select=LimitedRank", {
-				value : [] // filtered out, thus no rank
+				value : bInside
+					? [{LimitedRank : "0"}]
+					: [] // filtered out, thus no rank
 			});
 
 		const oOut = oListBinding.create({Name : "Out"}, /*bSkipRefresh*/true);
@@ -40912,7 +40917,9 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			.expectRequest("#0 EMPLOYEES/$count?$filter=not startswith(Name, 'Out')", 2)
 			.expectRequestIf(iExpandTo > 1,
 				"#A " + sBaseUrl + "&$filter=ID eq 'Child'&$select=LimitedRank", {
-				value : [] // filtered out, thus no rank
+				value : bInside
+					? [{LimitedRank : "1"}]
+					: [] // filtered out, thus no rank
 			});
 
 		const oOutChild = oListBinding.create({
@@ -40953,7 +40960,9 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			.expectRequest("#0 EMPLOYEES/$count?$filter=not startswith(Name, 'Out')", 2)
 			.expectRequestIf(iExpandTo > 1,
 				"#A " + sBaseUrl + "&$filter=ID eq 'Grand'&$select=LimitedRank", {
-				value : [] // filtered out, thus no rank
+				value : bInside
+					? [{LimitedRank : "2"}]
+					: [] // filtered out, thus no rank
 			});
 
 		const oOutGrandChild = oListBinding.create({
@@ -41033,13 +41042,49 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			} : undefined);
 		}
 
-		const expectSideEffectsRefresh = (bRefreshKeptElements, aExpandLevels) => {
+		const expectSideEffectsRefresh
+			= (bRefreshKeptElements, bOutExpanded, bChildExpanded, aExpandLevels) => {
 			if (iExpandTo > 1) {
 				aExpandLevels = aExpandLevels.filter((oExpandLevel) => oExpandLevel.Levels !== 1);
 			}
 			const sNewBaseUrl = aExpandLevels.length
 				? sBaseUrl.slice(0, -1) + ",ExpandLevels=" + JSON.stringify(aExpandLevels) + ")"
 				: sBaseUrl;
+			const aOutNodesWithRank = !bInside ? [] : [{
+				// eslint-disable-next-line no-nested-ternary
+				DescendantCount : bOutExpanded ? (bChildExpanded ? "2" : "1") : "0",
+				DistanceFromRoot : "0",
+				DrillState : bOutExpanded ? "expanded" : "collapsed",
+				ID : "Out",
+				LimitedRank : "0",
+				Name : "Out"
+			}, {
+				DescendantCount : bChildExpanded ? "1" : "0",
+				DistanceFromRoot : "1",
+				DrillState : bChildExpanded ? "expanded" : "collapsed",
+				ID : "Child",
+				LimitedRank : "1",
+				Name : "Out_Child"
+			}, {
+				DescendantCount : "0",
+				DistanceFromRoot : "2",
+				DrillState : "leaf",
+				ID : "Grand",
+				LimitedRank : "2",
+				Name : "Out_Grand_Child"
+			}];
+			if (!bChildExpanded || !bOutExpanded) {
+				aOutNodesWithRank.pop(); // remove Grand
+			}
+			if (!bOutExpanded) {
+				aOutNodesWithRank.pop(); // remove Child
+			}
+			const aOutNodes = aOutNodesWithRank.map((oNode) => { // either LimitedRank or Name!
+				const oCopy = {...oNode};
+				delete oCopy.LimitedRank;
+				delete oNode.Name;
+				return oCopy;
+			});
 			this.expectRequestIf(bRefreshKeptElements, "#0 EMPLOYEES?$filter="
 					+ "ID eq 'Child' or ID eq 'Grand' or ID eq 'Out'&$select=AGE,ID,Name&$top=3", {
 					value : [
@@ -41052,8 +41097,8 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				.expectRequest("#0 " + sNewBaseUrl
 					+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
 					+ "&$count=true&$skip=0&$top=10", {
-					"@odata.count" : "2",
-					value : [{
+					"@odata.count" : "" + (aOutNodes.length + 2),
+					value : [...aOutNodes, {
 						DescendantCount : "0", // Note: "Out" child ignored here!
 						DistanceFromRoot : "0",
 						DrillState : "leaf", // Note: "Out" child ignored here!
@@ -41073,15 +41118,16 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 					+ "&$filter=" + (bParentChild
 						? "ID eq 'Child' or ID eq 'Grand' or ID eq 'Out'&$top=3"
 						: "ID eq '0' or ID eq 'Child' or ID eq 'Grand' or ID eq 'Out'&$top=4"), {
-					value : bParentChild
-						? []
-						: [{
+					value : [
+						...aOutNodesWithRank,
+						...(bParentChild ? [] : [{
 							DescendantCount : "0",
 							DistanceFromRoot : "0",
 							DrillState : "leaf",
 							ID : "0",
-							LimitedRank : "0"
-						}]
+							LimitedRank : bInside ? "3" : "0"
+						}])
+					]
 				})
 				// the out-of-place node's data
 				.expectRequest("#0 EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
@@ -41107,7 +41153,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 		const aCollapsed = iExpandTo > 1
 			? [{NodeID : bParentChild ? "Out" : "0", Levels : 0}]
 			: [];
-		expectSideEffectsRefresh(bSelected && !bExpandAll, [
+		expectSideEffectsRefresh(bSelected && !bExpandAll, bParentChild && !bCollapse, true, [
 			...(bCollapse
 				? aCollapsed
 				: [{NodeID : bParentChild ? "Out" : "0", Levels : (bExpandAll ? null : 1)}]),
@@ -41117,7 +41163,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 		await Promise.all([
 			// code under test
 			bExpandAll
-				? oOutChild.getParent().expand(/*bAll*/true)
+				? oOutChild.getParent().expand(true)
 				: oListBinding.getHeaderContext().requestSideEffects([""]),
 			this.waitForChanges(assert, "side-effects refresh, keeping tree state")
 		]);
@@ -41172,7 +41218,7 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			};
 			checkTableAfterCollapseChild("after collapse child");
 
-			expectSideEffectsRefresh(bSelected, [
+			expectSideEffectsRefresh(bSelected, true, false, [
 				{NodeID : "Out", Levels : (bExpandAll ? null : 1)},
 				...(bExpandAll || iExpandTo > 1 ? [{NodeID : "Child", Levels : 0}] : [])
 			]);

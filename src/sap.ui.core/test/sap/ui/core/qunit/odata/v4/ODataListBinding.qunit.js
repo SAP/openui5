@@ -11442,7 +11442,7 @@ sap.ui.define([
 
 		oExpectation = this.mock(oBinding.oCache).expects("expand")
 			.withExactArgs(sinon.match.same(oGroupLock), "~cachepath~", iLevels,
-				"~mKeepAlivePredicates~", sinon.match.func)
+				"~mKeepAlivePredicates~", bSilent, sinon.match.func)
 			.returns(Promise.resolve().then(function () {
 				if (bSuccess) {
 					that.mock(oBinding).expects("getModelIndex").exactly(iCount > 0 ? 1 : 0)
@@ -11491,7 +11491,7 @@ sap.ui.define([
 		that.mock(oBinding).expects("fireDataRequested").exactly(bDataRequested ? 1 : 0)
 			.withExactArgs();
 		if (bDataRequested) {
-			oExpectation.args[0][4]();
+			oExpectation.args[0][5]();
 		}
 
 		return oPromise;
@@ -11648,8 +11648,8 @@ sap.ui.define([
 			.withExactArgs().returns("~predicates~");
 		oCollapseExpectation = this.mock(oBinding.oCache).expects("collapse")
 			.exactly(bCountGiven ? 0 : 1)
-			.withExactArgs("~cachepath~", "~predicates~", bAll ? "~oGroupLock~" : undefined,
-				bSilent, false)
+			.withExactArgs("~cachepath~", "~predicates~", bSilent,
+				bAll ? "~oGroupLock~" : undefined, false)
 			.returns(iCount);
 		oFireChangeExpectation = this.mock(oBinding).expects("_fireChange")
 			.exactly(iCount && !bSilent ? 1 : 0)

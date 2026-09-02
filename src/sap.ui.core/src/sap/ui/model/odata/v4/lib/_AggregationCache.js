@@ -379,27 +379,36 @@ sap.ui.define([
 	 * @param {Object<boolean>} mKeptElementPredicates
 	 *   The set of key predicates for all (effectively) kept-alive elements incl. exceptions of
 	 *   selection
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired and no changes to the tree state should be
+	 *   recorded
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
 	 *   An unlocked lock for the group to associate the clean-up request with; this indicates
 	 *   whether to collapse the node and all its descendants
-	 * @param {boolean} [bSilent]
-	 *   Whether no ("change") events should be fired
 	 * @param {boolean} [bNested]
 	 *   Whether the "collapse all" was performed at an ancestor
 	 * @returns {number}
 	 *   The number of descendant nodes that were affected
+	 * @throws {Error}
+	 *   If a silent (nested) "collapse all" is requested
 	 *
 	 * @public
 	 * @see #expand
 	 */
 	_AggregationCache.prototype.collapse = function (sGroupNodePath, mKeptElementPredicates,
-			oGroupLock, bSilent, bNested) {
+			bSilent, oGroupLock, bNested) {
 		const oGroupNode = this.getValue(sGroupNodePath);
 		const oCollapsed = _AggregationHelper.getCollapsedObject(oGroupNode);
 		_Helper.updateAll(bSilent ? {} : this.mChangeListeners, sGroupNodePath, oGroupNode,
 			oCollapsed);
 		const bAll = !!oGroupLock;
-		this.oTreeState.collapse(oGroupNode, bAll, bNested);
+		if (bSilent) {
+			if (bAll || bNested) {
+				throw new Error("Unsupported silent mode");
+			}
+		} else {
+			this.oTreeState.collapse(oGroupNode, bAll, bNested);
+		}
 
 		const aElements = this.aElements;
 		const iIndex = aElements.indexOf(oGroupNode);
@@ -421,7 +430,7 @@ sap.ui.define([
 			const sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 			if (bAll && oElement["@$ui5.node.isExpanded"]) {
 				iRemaining
-					-= this.collapse(sPredicate, mKeptElementPredicates, oGroupLock, bSilent, true);
+					-= this.collapse(sPredicate, mKeptElementPredicates, bSilent, oGroupLock, true);
 			}
 			if (!mKeptElementPredicates?.[sPredicate]) {
 				delete aElements.$byPredicate[sPredicate];
@@ -857,6 +866,9 @@ sap.ui.define([
 	 * @param {Object<boolean>} mKeptElementPredicates
 	 *   The set of key predicates for all (effectively) kept-alive elements incl. exceptions of
 	 *   selection
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired and no changes to the tree state should be
+	 *   recorded
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
@@ -864,12 +876,14 @@ sap.ui.define([
 	 *   A promise that is resolved with the number of nodes at the next level, 0 if the node or
 	 *   one of its parent is collapsed again before the response arrived, or -1 if the cache needs
 	 *   to be refreshed (a unified cache)
+	 * @throws {Error}
+	 *   If we cannot silently expand after a previous collapse (via "spliced")
 	 *
 	 * @public
 	 * @see #collapse
 	 */
 	_AggregationCache.prototype.expand = function (oGroupLock, vGroupNodeOrPath, iLevels,
-			mKeptElementPredicates, fnDataRequested) {
+			mKeptElementPredicates, bSilent, fnDataRequested) {
 		var iCount,
 			oGroupNode = typeof vGroupNodeOrPath === "string"
 				? this.getValue(vGroupNodeOrPath)
@@ -879,12 +893,17 @@ sap.ui.define([
 
 		if (vGroupNodeOrPath !== oGroupNode) {
 			// Note: this also prevents a 2nd expand of the same node
-			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
+			_Helper.updateAll(bSilent ? {} : this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
 				_AggregationHelper.getOrCreateExpandedObject(this.oAggregation, oGroupNode));
-			this.oTreeState.expand(oGroupNode, iLevels);
+			if (!bSilent) {
+				this.oTreeState.expand(oGroupNode, iLevels);
+			}
 		} // else: no update needed!
 
 		if (iLevels >= Number.MAX_SAFE_INTEGER) { // expand all below oGroupNode
+			if (bSilent) {
+				throw new Error("Unsupported silent mode");
+			}
 			return SyncPromise.resolve(this.validateAndDeleteExpandInfo(oGroupLock, oGroupNode))
 				.then(() => -1); // refresh needed
 		}
@@ -933,6 +952,9 @@ sap.ui.define([
 				}
 			});
 			return SyncPromise.resolve(iCount);
+		}
+		if (bSilent) {
+			throw new Error("Unsupported silent mode");
 		}
 		if (this.bUnifiedCache || oGroupNode["@$ui5.node.level"] < this.oAggregation.expandTo) {
 			return SyncPromise.resolve(-1); // refresh needed
@@ -1901,7 +1923,8 @@ sap.ui.define([
 
 				const bExpanded = oNode["@$ui5.node.isExpanded"];
 				if (bExpanded) {
-					this.collapse(sNodePredicate, {}); // no mKeptElementPredicates needed
+					// no mKeptElementPredicates needed
+					this.collapse(sNodePredicate, {}, /*bSilent*/true);
 				}
 				this.aElements.splice(iNodeIndex, 1);
 
@@ -1920,7 +1943,7 @@ sap.ui.define([
 
 				this.aElements.splice(iParentIndex + 1, 0, oNode);
 				if (bExpanded) { // no mKeptElementPredicates needed
-					this.expand(_GroupLock.$cached, sNodePredicate, 1, {});
+					this.expand(_GroupLock.$cached, sNodePredicate, 1, {}, /*bSilent*/true);
 				}
 				oNode["@$ui5.node.level"] ??= oParent ? oParent["@$ui5.node.level"] + 1 : 1;
 			}

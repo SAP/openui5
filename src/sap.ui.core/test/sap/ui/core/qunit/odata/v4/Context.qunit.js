@@ -1810,8 +1810,6 @@ sap.ui.define([
 					.withExactArgs("Foo/Bar('42')", true);
 				that.mock(oModel).expects("reportError").exactly(bFailure ? 1 : 0)
 					.withExactArgs("Failed to delete /Foo/Bar('42')", sClassName, "~oError~");
-				that.mock(oContext).expects("checkUpdate").exactly(bFailure ? 1 : 0)
-					.withExactArgs();
 				if (bFailure) {
 					oContext.oModel = undefined; // simulate destruction
 					throw "~oError~";

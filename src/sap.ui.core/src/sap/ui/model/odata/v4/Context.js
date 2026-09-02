@@ -478,7 +478,6 @@ sap.ui.define([
 			});
 		}).catch(function (oError) {
 			oModel.reportError("Failed to delete " + that.getPath(), sClassName, oError);
-			that.checkUpdate();
 			throw oError;
 		});
 		// Note: #deleteFromCache may cancel request and thus deselect synchronously!
