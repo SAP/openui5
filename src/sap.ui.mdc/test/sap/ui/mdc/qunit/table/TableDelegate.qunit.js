@@ -150,8 +150,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("validateP13nState default resolves true", async function(assert) {
-		const bResult = await this.oTable.getControlDelegate().validateP13nState(this.oTable, {});
-		assert.strictEqual(bResult, true, "Default resolves true");
+		const vResult = this.oTable.getControlDelegate().validateP13nState(this.oTable, {});
+		assert.ok(vResult instanceof Promise, "Always returns a Promise");
+		assert.strictEqual(await vResult, true, "Default resolves true");
 	});
 
 	QUnit.test("updateBindingInfo", function(assert) {

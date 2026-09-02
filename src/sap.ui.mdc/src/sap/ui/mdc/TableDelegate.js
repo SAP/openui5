@@ -499,13 +499,16 @@ sap.ui.define([
 	 * Providing accessible feedback (e.g. screen reader announcements) while the validation is ongoing
 	 * or once it has completed is the responsibility of the implementation.
 	 *
+	 * By default, this method returns a <code>Promise</code> that resolves to <code>true</code>, which allows the dialog to close.
+	 * When overriding this method, consider calling the <code>validateP13nState</code> method of the <code>TableDelegate</code>
+	 * base class, as it may provide additional validation in future versions.
+	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the table
 	 * @param {object} oState
 	 *     The theoretical (not yet applied) external state of the table's personalization. The format matches the one processed by
 	 *     {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
-	 * @returns {Promise<boolean>|boolean}
-	 *     A promise that resolves to <code>false</code> (or the literal value <code>false</code>) to prevent the dialog from closing. Any other
-	 *     value allows the dialog to close.
+	 * @returns {Promise<boolean>}
+	 *     A promise that resolves to <code>true</code> if the dialog may close, or <code>false</code> to prevent it from closing.
 	 * @protected
 	 * @since 1.152
 	 */
