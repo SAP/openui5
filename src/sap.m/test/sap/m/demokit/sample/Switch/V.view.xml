@@ -74,5 +74,59 @@
 				</layoutData>
 			</Switch>
 		</HBox>
+
+		<HBox>
+			<Switch type="AcceptReject" state="true" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch type="AcceptReject" state="false" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch type="AcceptReject" state="true" enabled="false" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
+
+		<HBox>
+			<Switch state="true" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="false" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="true" enabled="false" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
+
+		<HBox>
+			<Switch state="true" customTextOn="Yes" customTextOff="No" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="false" customTextOn="Yes" customTextOff="No" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+			<Switch state="true" customTextOn="Yes" customTextOff="No" enabled="false" editable="false">
+				<layoutData>
+					<FlexItemData growFactor="1" />
+				</layoutData>
+			</Switch>
+		</HBox>
 	</VBox>
 </mvc:View>
