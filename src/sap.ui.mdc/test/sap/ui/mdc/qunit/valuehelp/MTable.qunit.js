@@ -263,6 +263,7 @@ sap.ui.define([
 		oListBinding.getRootBinding = () => { return undefined;};
 		oListBinding.suspend = () => {};
 		oListBinding.resume = () => {};
+		oListBinding.isSuspended = () => { return false; };
 	};
 
 	QUnit.module("Typeahead", {
@@ -1875,6 +1876,42 @@ sap.ui.define([
 
 			oMTable.onHide();
 		});
+
+	});
+
+	QUnit.test("skip selection update while OData V4 list binding is suspended", async (assert) => {
+
+		const oListBinding = oMTable.getListBinding();
+		_fakeV4Binding(oListBinding);
+
+		// Simulate a suspended OData V4 root binding (e.g. during applyFilters / changeParameters).
+		// Must be set up before rendering so that the initial _handleUpdateFinished also sees it.
+		oListBinding.isSuspended = sinon.stub().returns(true);
+
+		await _renderScrollContainer(); // makes isOpen() return true so _handleUpdateFinished fires selection
+
+		await oMTable.onBeforeShow(true);
+		await oMTable.onShow(); // triggers handleConditionsUpdate -> _updateSelectionAsync -> _updateSelection
+
+		// While root binding is suspended, _updateSelection must bail out: no item should be selected
+		const aItems = oTable.getItems();
+		assert.notOk(aItems[0].getSelected(), "Item0 not selected while binding suspended");
+		assert.notOk(aItems[1].getSelected(), "Item1 not selected while binding suspended");
+		assert.notOk(aItems[2].getSelected(), "Item2 not selected while binding suspended");
+
+		// Simulate resume: root binding is no longer suspended
+		oListBinding.isSuspended.returns(false);
+
+		// _handleUpdateFinished fires once new data arrives after resume
+		oMTable._handleUpdateFinished();
+		await new Promise((resolve) => { setTimeout(resolve, 0); }); // let _updateSelectionAsync settle
+
+		// Now selection must reflect the condition (I2 is the pre-set condition)
+		assert.notOk(aItems[0].getSelected(), "Item0 (I1) not selected after resume");
+		assert.ok(aItems[1].getSelected(), "Item1 (I2) selected after resume");
+		assert.notOk(aItems[2].getSelected(), "Item2 (I3) not selected after resume");
+
+		oMTable.onHide();
 
 	});
 

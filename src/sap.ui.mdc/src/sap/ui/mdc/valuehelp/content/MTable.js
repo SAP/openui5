@@ -124,6 +124,13 @@ sap.ui.define([
 	function _updateSelection() {
 		const oTable = this._getTable();
 		if (oTable) {
+			const oListBinding = this.getListBinding();
+			if (oListBinding.isSuspended()) {
+				// Root binding is suspended (e.g. during parameter update in applyFilters): OData V4 contexts
+				// are not readable yet. Skip now — _handleUpdateFinished will re-run once data is available.
+				return;
+			}
+
 			const aItems = oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
@@ -173,6 +180,8 @@ sap.ui.define([
 					if (!this.isDestroyed()) {
 						_updateSelection.call(this);
 					}
+					delete this._oUpdateSelectionPromise;
+					this._iUpdateSelectionTimeout = null;
 					resolve();
 				}, 0);
 			});
