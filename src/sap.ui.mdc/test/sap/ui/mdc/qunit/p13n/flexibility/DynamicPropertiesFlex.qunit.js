@@ -1364,6 +1364,114 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("retrieveExternalState - 'items' contains inactive keys", async function(assert) {
+			const oState = await StateUtil.retrieveExternalState(this.oControl);
+
+			assert.deepEqual(
+				oState.items.map((oItem) => oItem.key),
+				["dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"items reflects propertyKeys order including inactive key"
+			);
+		});
+
+		QUnit.test("retrieveExternalState - 'filter' contains inactive key", async function(assert) {
+			await StateUtil.applyExternalState(this.oControl, {
+				filter: { dynamicInactive: [{ operator: "EQ", values: ["test"] }] }
+			});
+
+			const oState = await StateUtil.retrieveExternalState(this.oControl);
+
+			assert.ok(Object.hasOwn(oState.filter, "dynamicInactive"),
+				"filter state contains the inactive key");
+			assert.deepEqual(oState.filter.dynamicInactive, [{ operator: "EQ", values: ["test"] }],
+				"filter condition for inactive key is preserved");
+		});
+
+		if (oConfig.name === "Table") {
+			QUnit.test("retrieveExternalState - 'sorters' contains inactive key", async function(assert) {
+				await StateUtil.applyExternalState(this.oControl, {
+					sorters: [{ key: "dynamicInactive", descending: false }]
+				});
+
+				const oState = await StateUtil.retrieveExternalState(this.oControl);
+
+				assert.ok(oState.sorters.some(function(oSorter) { return oSorter.key === "dynamicInactive"; }),
+					"sorters state contains the inactive key");
+			});
+
+			QUnit.test("retrieveExternalState - 'groupLevels' contains inactive key", async function(assert) {
+				await StateUtil.applyExternalState(this.oControl, {
+					groupLevels: [{ key: "dynamicInactive" }]
+				});
+
+				const oState = await StateUtil.retrieveExternalState(this.oControl);
+
+				assert.ok(oState.groupLevels.some(function(oGroup) { return oGroup.key === "dynamicInactive"; }),
+					"groupLevels state contains the inactive key");
+			});
+
+			QUnit.test("retrieveExternalState - 'aggregations' contains inactive key", async function(assert) {
+				await StateUtil.applyExternalState(this.oControl, {
+					aggregations: { dynamicInactive: {} }
+				});
+
+				const oState = await StateUtil.retrieveExternalState(this.oControl);
+
+				assert.ok(Object.hasOwn(oState.aggregations, "dynamicInactive"),
+					"aggregations state contains the inactive key");
+			});
+		}
+
+		QUnit.test("Applying the same state produces no changes", async function(assert) {
+			const oState = await StateUtil.retrieveExternalState(this.oControl);
+			const aChanges = await StateUtil.applyExternalState(this.oControl, oState);
+
+			await this.oControl.awaitPendingModification();
+			assert.strictEqual(aChanges.length, 0, "no changes when applying retrieved state");
+			assert.deepEqual(
+				this.oControl.getPropertyKeys(),
+				["dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"propertyKeys unchanged"
+			);
+		});
+
+		QUnit.test("Hide and show inactive property", async function(assert) {
+			const aChanges = await StateUtil.applyExternalState(this.oControl, {
+				items: [{key: "dynamicInactive", visible: false}]
+			});
+			await this.oControl.awaitPendingModification();
+
+			assert.ok(aChanges.some(function(oChange) {return oChange.getChangeType() === oConfig.removeItemChangeType;}), "remove change created");
+			assert.deepEqual(
+				this.oControl.getPropertyKeys(),
+				["staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicInactive removed from propertyKeys"
+			);
+			assert.deepEqual(
+				oConfig.getItems(this.oControl).map(function(oItem) {return oItem.getPropertyKey();}),
+				["staticProp1", "staticProp2", "dynamicActive"],
+				"Aggregation unchanged (dynamicInactive was not materialized)"
+			);
+
+			const aReAddChanges = await StateUtil.applyExternalState(this.oControl, {
+				items: [{key: "dynamicInactive", position: 0}]
+			});
+			await this.oControl.awaitPendingModification();
+
+			assert.ok(aReAddChanges.some(function(oChange) {return oChange.getChangeType() === oConfig.addItemChangeType;}),
+				"Add change created for re-add");
+			assert.deepEqual(
+				this.oControl.getPropertyKeys(),
+				["dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicInactive re-added to propertyKeys at index 0"
+			);
+			assert.deepEqual(
+				oConfig.getItems(this.oControl).map(function(oItem) {return oItem.getPropertyKey();}),
+				["staticProp1", "staticProp2", "dynamicActive"],
+				"Aggregation still unchanged (dynamicInactive remains inactive)"
+			);
+		});
+
 		QUnit.test("Deactivate active dynamic property (isActive: false)", async function (assert) {
 			const aChanges = await StateUtil.applyExternalState(this.oControl, {
 				supplementaryConfig: {
@@ -1448,6 +1556,16 @@ sap.ui.define([
 				["staticProp1", "staticProp2", "dynamicActive"],
 				"Items unchanged"
 			);
+
+			// Applying the same state again must not create another change
+			const aChanges2 = await StateUtil.applyExternalState(this.oControl, {
+				supplementaryConfig: {
+					propertyInfo: {
+						dynamicActive: { isActive: true }
+					}
+				}
+			});
+			assert.strictEqual(aChanges2.length, 0, "0 changes created when applying the same isActive: true again");
 		});
 
 		QUnit.test("Set isActive: false for already-inactive property", async function (assert) {
@@ -1475,6 +1593,16 @@ sap.ui.define([
 				["staticProp1", "staticProp2", "dynamicActive"],
 				"Items unchanged"
 			);
+
+			// Applying the same state again must not create another change
+			const aChanges2 = await StateUtil.applyExternalState(this.oControl, {
+				supplementaryConfig: {
+					propertyInfo: {
+						dynamicInactive: { isActive: false }
+					}
+				}
+			});
+			assert.strictEqual(aChanges2.length, 0, "0 changes created when applying the same isActive: false again");
 		});
 
 		QUnit.test("Activate property not in propertyKeys", async function (assert) {
@@ -1573,7 +1701,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("Add item at beginning - aggregation index 0 maps to propertyKeys index 1", async function (assert) {
+		QUnit.test("Add item at beginning", async function(assert) {
 			const aChanges = await StateUtil.applyExternalState(this.oControl, {
 				items: [{ key: "newProp", position: 0 }]
 			});
@@ -1582,48 +1710,46 @@ sap.ui.define([
 			assert.ok(aChanges.some(function(oChange) {return oChange.getChangeType() === oConfig.addItemChangeType;}), "add change created");
 
 			const oAddChange = aChanges.find(function (oChange) { return oChange.getChangeType() === oConfig.addItemChangeType; });
-			assert.strictEqual(oAddChange.getContent().index, 1,
-				"Change content stores propertyKeys index 1, not aggregation index 0");
+			assert.strictEqual(oAddChange.getContent().index, 0, "Flex change carries the propertyKeys-space position");
 
 			assert.deepEqual(
 				this.oControl.getPropertyKeys(),
-				["dynamicInactive", "newProp", "staticProp1", "staticProp2", "dynamicActive"],
-				"propertyKeys: newProp inserted at index 1 (after inactive)"
+				["newProp", "dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"newProp inserted at index 0"
 			);
 
 			assert.deepEqual(
 				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
 				["newProp", "staticProp1", "staticProp2", "dynamicActive"],
-				"Items: newProp at aggregation index 0"
+				"newProp is the first active item"
 			);
 		});
 
-		QUnit.test("Move item to end - aggregation index 2 maps to propertyKeys index 3", async function (assert) {
+		QUnit.test("Move item to end", async function(assert) {
 			const aChanges = await StateUtil.applyExternalState(this.oControl, {
-				items: [{ key: "staticProp1", position: 2 }]
+				items: [{key: "staticProp1", position: 3}]
 			});
 
 			await this.oControl.awaitPendingModification();
 			assert.ok(aChanges.some(function(oChange) {return oChange.getChangeType() === oConfig.moveItemChangeType;}), "move change created");
 
 			const oMoveChange = aChanges.find(function (oChange) { return oChange.getChangeType() === oConfig.moveItemChangeType; });
-			assert.strictEqual(oMoveChange.getContent().index, 3,
-				"Change content stores propertyKeys index 3, not aggregation index 2");
+			assert.strictEqual(oMoveChange.getContent().index, 3, "Flex change carries the propertyKeys-space position");
 
 			assert.deepEqual(
 				this.oControl.getPropertyKeys(),
 				["dynamicInactive", "staticProp2", "dynamicActive", "staticProp1"],
-				"propertyKeys: staticProp1 moved to index 3"
+				"staticProp1 moved to index 3"
 			);
 
 			assert.deepEqual(
 				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
 				["staticProp2", "dynamicActive", "staticProp1"],
-				"Items: staticProp1 moved to aggregation index 2"
+				"staticProp1 is the last active item"
 			);
 		});
 
-		QUnit.test("Remove + re-add item - re-add at aggregation index 0 maps to propertyKeys index 1", async function (assert) {
+		QUnit.test("Remove and re-add item", async function(assert) {
 			const aRemoveChanges = await StateUtil.applyExternalState(this.oControl, {
 				items: [{ key: "staticProp1", visible: false }]
 			});
@@ -1634,35 +1760,34 @@ sap.ui.define([
 			assert.deepEqual(
 				this.oControl.getPropertyKeys(),
 				["dynamicInactive", "staticProp2", "dynamicActive"],
-				"After remove: staticProp1 removed from propertyKeys"
+				"staticProp1 removed from propertyKeys"
 			);
 
 			assert.deepEqual(
 				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
 				["staticProp2", "dynamicActive"],
-				"After remove: staticProp1 removed from items"
+				"staticProp1 removed from items"
 			);
 
 			const aAddChanges = await StateUtil.applyExternalState(this.oControl, {
-				items: [{ key: "staticProp1", position: 0 }]
+				items: [{key: "staticProp1", position: 1}]
 			});
 			await this.oControl.awaitPendingModification();
 			assert.ok(aAddChanges.some(function(oChange) {return oChange.getChangeType() === oConfig.addItemChangeType;}), "add change created for re-add");
 
 			const oReAddChange = aAddChanges.find(function (oChange) { return oChange.getChangeType() === oConfig.addItemChangeType; });
-			assert.strictEqual(oReAddChange.getContent().index, 1,
-				"Re-add change content stores propertyKeys index 1, not aggregation index 0");
+			assert.strictEqual(oReAddChange.getContent().index, 1, "Flex change carries the propertyKeys-space position");
 
 			assert.deepEqual(
 				this.oControl.getPropertyKeys(),
 				["dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
-				"After re-add: staticProp1 back at propertyKeys index 1 (after inactive)"
+				"staticProp1 re-added at index 1"
 			);
 
 			assert.deepEqual(
 				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
 				["staticProp1", "staticProp2", "dynamicActive"],
-				"After re-add: staticProp1 at aggregation index 0"
+				"staticProp1 is the first active item after re-add"
 			);
 		});
 
@@ -1756,18 +1881,17 @@ sap.ui.define([
 			);
 
 			const oAddChange = aChanges.find(function (oChange) { return oChange.getChangeType() === oConfig.addItemChangeType; });
-			assert.strictEqual(oAddChange.getContent().index, 1,
-				"Change content stores propertyKeys index 1, not aggregation index 0");
+			assert.strictEqual(oAddChange.getContent().index, 0, "Flex change carries the propertyKeys-space position");
 
 			assert.deepEqual(
 				this.oControl.getPropertyKeys(),
-				["dynamicInactive", "dynamicNotInShadow", "staticProp1", "staticProp2", "dynamicActive"],
-				"propertyKeys: dynamicNotInShadow added at index 1 (after inactive)"
+				["dynamicNotInShadow", "dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicNotInShadow added at index 0"
 			);
 			assert.deepEqual(
 				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
 				["dynamicNotInShadow", "staticProp1", "staticProp2", "dynamicActive"],
-				"Items: dynamicNotInShadow materialized at aggregation index 0"
+				"dynamicNotInShadow is the first active item"
 			);
 
 			// Undo and repeat with finalized PropertyInfo
@@ -1797,18 +1921,18 @@ sap.ui.define([
 			);
 
 			const oAddChangeFinalized = aChanges.find(function (oChange) { return oChange.getChangeType() === oConfig.addItemChangeType; });
-			assert.strictEqual(oAddChangeFinalized.getContent().index, 1,
-				"Change content stores propertyKeys index 1, not aggregation index 0 (PropertyInfo finalized)");
+			assert.strictEqual(oAddChangeFinalized.getContent().index, 0,
+				"Flex change carries the propertyKeys-space position (PropertyInfo finalized)");
 
 			assert.deepEqual(
 				this.oControl.getPropertyKeys(),
-				["dynamicInactive", "dynamicNotInShadow", "staticProp1", "staticProp2", "dynamicActive"],
-				"propertyKeys: dynamicNotInShadow added at index 1 (PropertyInfo finalized)"
+				["dynamicNotInShadow", "dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicNotInShadow added at index 0 (PropertyInfo finalized)"
 			);
 			assert.deepEqual(
 				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
 				["dynamicNotInShadow", "staticProp1", "staticProp2", "dynamicActive"],
-				"Items: dynamicNotInShadow materialized at aggregation index 0 (PropertyInfo finalized)"
+				"dynamicNotInShadow is the first active item (PropertyInfo finalized)"
 			);
 		});
 

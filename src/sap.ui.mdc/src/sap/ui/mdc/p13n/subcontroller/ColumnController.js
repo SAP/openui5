@@ -44,6 +44,10 @@ sap.ui.define([
 		};
 	};
 
+	ColumnController.prototype.getP13nData = function(...args) {
+		return this.injectInactivePropertyKeys(BaseController.prototype.getP13nData.apply(this, args));
+	};
+
 	/**
 	 * Strips the <code>name</code> property from column state items returned by
 	 * <code>changesToState</code>, enforcing the <code>sap.ui.mdc.State.Items</code>

@@ -122,6 +122,24 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"SelectionController": {
+				group: "Controllers",
+				module: "./subcontroller/SelectionController.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"ColumnController": {
+				group: "Controllers",
+				module: "./subcontroller/ColumnController.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"ChartItemPanel": {
 				group: "UI Panels",
 				module: "./ChartItemPanel.qunit",

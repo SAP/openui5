@@ -27,6 +27,41 @@ sap.ui.define([
 	"use strict";
 
 	const sTableView =
+	`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdc="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
+		<Table id="myTable"
+			p13nMode="Column,Sort,Filter,Group,Aggregate"
+			propertyKeys="inactive,colA,colB"
+			delegate='${JSON.stringify({
+				name: "test-resources/sap/ui/mdc/delegates/TableDelegate",
+				payload: {
+					collectionPath: "/testPath",
+					propertyInfo: [{
+						key: "inactive",
+						label: "Inactive",
+						dataType: "String",
+						isActive: false
+					}, {
+						key: "colA",
+						label: "Column A",
+						path: "a",
+						dataType: "String",
+						groupable: true
+					}, {
+						key: "colB",
+						label: "Column B",
+						path: "b",
+						dataType: "String",
+						groupable: true
+					}]
+				}
+			})}'>
+			<mdc:type>
+				<mdcTable:GridTableType enableColumnFreeze="true"/>
+			</mdc:type>
+		</Table>
+	</mvc:View>`;
+
+	const sTableAggregationModeView =
 	`<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">
 		<Table id="myTable"
 			p13nMode="Column,Sort,Filter,Group,Aggregate"
@@ -60,8 +95,7 @@ sap.ui.define([
 			const mCreatedApp = await createAppEnvironment(sTableView, "Table");
 
 			this.oUiComponentContainer = mCreatedApp.container;
-			this.oTable = mCreatedApp.view.byId('myTable');
-			this.oTable._getType().setEnableColumnFreeze(true);
+			this.oTable = mCreatedApp.view.byId("myTable");
 			this.oEngine = this.oTable.getEngine();
 
 			sinon.stub(TableDelegate, "getSupportedFeatures").callsFake(function() {
@@ -139,6 +173,53 @@ sap.ui.define([
 		}, "Current state is correct");
 	});
 
+	QUnit.test("createColumnReorderChange", function(assert) {
+		const oColumnB = this.oTable.getColumns()[1];
+
+		PersonalizationUtils.createColumnReorderChange(this.oTable, {column: oColumnB, index: 0});
+
+		assert.equal(this.oEngine.createChanges.callCount, 1, "Engine#createChanges call");
+		sinon.assert.calledWithExactly(this.oEngine.createChanges, {
+			control: this.oTable,
+			key: "Column",
+			state: [{
+				key: "colB",
+				/**
+				 * @deprecated As of version 1.124.0
+				 */
+				name: "colB",
+				position: 1
+			}]
+		});
+	});
+
+	QUnit.test("createColumnReorderChange - aggregation mode", async function(assert) {
+		const mCreatedApp = await createAppEnvironment(sTableAggregationModeView, "TableAggregationMode");
+		const oContainer = mCreatedApp.container;
+		const oTable = mCreatedApp.view.byId("myTable");
+		const oColumnA = oTable.getColumns()[0];
+
+		await oTable.initialized();
+
+		PersonalizationUtils.createColumnReorderChange(oTable, {column: oColumnA, index: 1});
+
+		assert.equal(this.oEngine.createChanges.callCount, 1, "Engine#createChanges call");
+		sinon.assert.calledWithExactly(this.oEngine.createChanges, {
+			control: oTable,
+			key: "Column",
+			state: [{
+				key: "colA",
+				/**
+				 * @deprecated As of version 1.124.0
+				 */
+				name: "colA",
+				position: 1
+			}]
+		});
+
+		oContainer.destroy();
+	});
+
 	QUnit.module("User personalization detection", {
 		before: async function() {
 			sinon.stub(TableDelegate, "addItem").callsFake(function(oTable, sProperty) {
@@ -153,7 +234,7 @@ sap.ui.define([
 				});
 			});
 
-			const mCreatedApp = await createAppEnvironment(sTableView, "Table");
+			const mCreatedApp = await createAppEnvironment(sTableAggregationModeView, "Table");
 			this.oUiComponentContainer = mCreatedApp.container;
 			this.oTable = mCreatedApp.view.byId('myTable');
 
@@ -316,7 +397,7 @@ sap.ui.define([
 			});
 		},
 		beforeEach: async function() {
-			const mCreatedApp = await createAppEnvironment(sTableView, "Table");
+			const mCreatedApp = await createAppEnvironment(sTableAggregationModeView, "Table");
 			this.oUiComponentContainer = mCreatedApp.container;
 			this.oTable = mCreatedApp.view.byId('myTable');
 			this.oResetSpy = sinon.spy(this.oTable.getEngine(), "reset");

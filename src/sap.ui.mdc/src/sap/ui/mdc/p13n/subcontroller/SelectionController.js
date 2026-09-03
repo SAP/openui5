@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/m/p13n/SelectionController", "sap/ui/mdc/util/getKey", "sap/ui/mdc/util/DynamicPropertiesUtil"
-], (SelectionController, getKey, DynamicPropertiesUtil) => {
+	"sap/m/p13n/SelectionController", "sap/ui/mdc/util/getKey"
+], (SelectionController, getKey) => {
 	"use strict";
 
 	/**
@@ -105,23 +105,6 @@ sap.ui.define([
 		mDeltaConfig.deltaAttributes.push("name");
 
 		const aChanges = SelectionController.prototype.getDelta.apply(this, arguments);
-
-		// In property keys mode, translate aggregation indices to propertyKeys indices.
-		// The base SelectionController computes indices in aggregation space (active items only),
-		// but ItemBaseFlex operates on the propertyKeys array (which could include inactive items).
-		const oControl = mDeltaConfig.control;
-		if (oControl.isInPropertyKeysMode?.()) {
-			aChanges.forEach((oChange) => {
-				const oContent = oChange.changeSpecificData.content;
-
-				if (oContent.index != null &&
-					(oChange.changeSpecificData.changeType === mDeltaConfig.changeOperations.add ||
-						oChange.changeSpecificData.changeType === mDeltaConfig.changeOperations.move)) {
-
-					oContent.index = DynamicPropertiesUtil.translateAggregationToPropertyKeysIndex(oControl, oContent.index);
-				}
-			});
-		}
 
 		return aChanges;
 	};
@@ -232,6 +215,41 @@ sap.ui.define([
 			mMap[sKey].position = iIndex;
 			return mMap;
 		}, {});
+	};
+
+	/**
+	 * Inserts placeholder entries for inactive property keys at their canonical
+	 * <code>propertyKeys</code> positions so that absolute application of the
+	 * dialog state does not drop inactive keys on confirm.
+	 *
+	 * No-op unless the adaptation control is in propertyKeys mode and
+	 * <code>aData</code> is an array, so callers may invoke this unconditionally.
+	 *
+	 * @param {object[]} aData Panel data array to augment. Not mutated, a shallow copy is returned when modified.
+	 * @returns {object[]} Augmented copy, or the original reference when no injection is needed
+	 */
+	MDCSelectionController.prototype.injectInactivePropertyKeys = function(aData) {
+		const oControl = this.getAdaptationControl();
+		if (!oControl.isInPropertyKeysMode?.() || !Array.isArray(aData)) {
+			return aData;
+		}
+
+		aData = aData.slice();
+		const oPropertyHelper = oControl.getPropertyHelper();
+		const oPresent = new Set(aData.map(getKey));
+		let iSlot = 0;
+
+		oControl.getPropertyKeys().forEach((sKey) => {
+			if (oPresent.has(sKey)) {
+				iSlot++;
+			} else if (oPropertyHelper.getProperty(sKey, true)?.isActive === false) {
+				aData.splice(iSlot, 0, {key: sKey, name: sKey});
+				oPresent.add(sKey);
+				iSlot++;
+			}
+		});
+
+		return aData;
 	};
 
 	return MDCSelectionController;

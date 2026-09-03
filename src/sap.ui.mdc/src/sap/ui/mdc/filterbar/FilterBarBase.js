@@ -570,20 +570,26 @@ sap.ui.define([
 
 			oState.filter = merge({}, this.getFilterConditions());
 
-			const aFilterItems = this.getFilterItems();
-			const aItems = [];
-			aFilterItems.forEach((oFilterField) => {
-				const sPropertyKey = oFilterField.getPropertyKey();
-				aItems.push({
-					key: sPropertyKey,
+			if (this.isInPropertyKeysMode?.()) {
+				oState.items = this.getPropertyKeys().map((sKey) => ({
+					key: sKey,
 					/**
 					 * @deprecated As of version 1.124.0
 					 */
-					name: sPropertyKey
+					name: sKey
+				}));
+			} else {
+				oState.items = this.getFilterItems().map((oFilterField) => {
+					const sPropertyKey = oFilterField.getPropertyKey();
+					return {
+						key: sPropertyKey,
+						/**
+						 * @deprecated As of version 1.124.0
+						 */
+						name: sPropertyKey
+					};
 				});
-			});
-
-			oState.items = aItems;
+			}
 
 			return oState;
 		};
