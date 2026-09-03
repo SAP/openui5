@@ -198,6 +198,71 @@ function(
 		.then(checkPropertyInfos.bind(this, assert));
 	});
 
+	QUnit.test("when getting the entity type for a path", async function(assert) {
+		const oModel = this.oView.byId("someGroup").getModel();
+
+		assert.strictEqual(
+			await ODataV2ReadDelegate.getEntityTypeByPath(oModel, "/EntityTypes('1')"),
+			"AdditionalElementsTest.EntityType01",
+			"then the entity type is returned"
+		);
+	});
+
+	QUnit.test("when the meta context provides an entity type reference", async function(assert) {
+		const oMetaModel = {
+			loaded() {
+				return Promise.resolve();
+			},
+			getMetaContext() {
+				return {
+					getObject() {
+						return {
+							entityType: "TestService.EntityType01",
+							name: "EntityType01"
+						};
+					}
+				};
+			}
+		};
+		const oModel = {
+			getMetadata() {
+				return { getName() { return "sap.ui.model.odata.v2.ODataModel"; } };
+			},
+			getMetaModel() {
+				return oMetaModel;
+			}
+		};
+
+		assert.strictEqual(
+			await ODataV2ReadDelegate.getEntityTypeByPath(oModel, "/EntityTypes('1')"),
+			"TestService.EntityType01",
+			"then the entity type reference is preferred over the name"
+		);
+	});
+
+	QUnit.test("when loading the meta model fails", async function(assert) {
+		const oExpectedError = new Error("Metadata loading failed");
+		const oModel = {
+			getMetadata() {
+				return { getName() { return "sap.ui.model.odata.v2.ODataModel"; } };
+			},
+			getMetaModel() {
+				return {
+					loaded() {
+						return Promise.reject(oExpectedError);
+					}
+				};
+			}
+		};
+
+		try {
+			await ODataV2ReadDelegate.getEntityTypeByPath(oModel, "/EntityTypes('1')");
+			assert.ok(false, "the call should reject");
+		} catch (oError) {
+			assert.strictEqual(oError, oExpectedError, "then the metadata error is propagated unchanged");
+		}
+	});
+
 	QUnit.done(function() {
 		document.getElementById("qunit-fixture").style.display = "none";
 	});

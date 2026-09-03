@@ -1,7 +1,11 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/model/ListBinding"], function(ListBinding) {
+sap.ui.define([
+	"sap/ui/model/ListBinding"
+], function(
+	ListBinding
+) {
 	"use strict";
 
 	/**
@@ -261,6 +265,16 @@ sap.ui.define(["sap/ui/model/ListBinding"], function(ListBinding) {
 	 * @private
 	 */
 	var ODataV2ReadDelegate = {}; /** @lends sap/ui/fl/write/_internal/delegates/oDataV2ReadDelegate */
+
+	/**
+	 * @inheritdoc
+	 */
+	ODataV2ReadDelegate.getEntityTypeByPath = async function(oModel, sPath) {
+		const oMetaModel = oModel.getMetaModel();
+		await oMetaModel.loaded();
+		const oEntityType = getODataEntityFromMetaModel(oMetaModel, sPath);
+		return oEntityType?.entityType ?? oEntityType?.name;
+	};
 
 	/**
 	 *	@inheritdoc

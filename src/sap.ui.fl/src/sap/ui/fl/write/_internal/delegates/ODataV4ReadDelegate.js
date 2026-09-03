@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
+sap.ui.define([
+	"sap/ui/base/Object"
+], function(
+	BaseObject
+) {
 	"use strict";
 	/**
 	 * Is property of complex type.
@@ -197,6 +201,15 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		return Promise.resolve([]);
 	}
 	var Delegate = {
+		/**
+		 * @inheritdoc
+		 */
+		getEntityTypeByPath(oModel, sPath) {
+			const oMetaModel = oModel.getMetaModel();
+			const oMetaModelContext = oMetaModel.getMetaContext(sPath);
+			return oMetaModel.requestObject("$Type", oMetaModelContext);
+		},
+
 		/**
 		 * @param {object} mPropertyBag Object with parameters as properties
 		 * @param {string} mPropertyBag.element Element instance the delegate is attached to
