@@ -235,6 +235,82 @@ function(
 			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
 			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
 		});
+
+		QUnit.test("when sync is called with bForce=true, targets are updated synchronously without requestAnimationFrame (rAF)", function(assert) {
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
+
+			this.oPanel1.scrollTop = 40;
+			this.oPanel1.scrollLeft = 60;
+
+			this.oScrollbarSynchronizer.sync(this.oPanel1, true);
+
+			assert.equal(this.oPanel2.scrollTop, 40, "then panel2 scrollTop is updated synchronously");
+			assert.equal(this.oPanel2.scrollLeft, 60, "then panel2 scrollLeft is updated synchronously");
+			assert.notOk(this.oScrollbarSynchronizer.isSyncing(), "then no rAF is pending after bForce=true sync");
+		});
+
+		QUnit.test("when sync is called with bForce=true while a rAF is pending, the pending rAF is cancelled", function(assert) {
+			const fnDone = assert.async();
+
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
+
+			// Trigger the rAF path (bForce=false via scroll event)
+			this.oPanel1.scrollTop = 20;
+			this.oPanel1.scrollLeft = 30;
+			// Dispatch a synthetic scroll event to enter the rAF path
+			this.oPanel1.dispatchEvent(new Event("scroll"));
+			assert.ok(this.oScrollbarSynchronizer.isSyncing(), "then a rAF is pending after scroll event");
+
+			// Now call sync with bForce=true — must cancel the pending rAF and apply immediately
+			this.oPanel1.scrollTop = 50;
+			this.oPanel1.scrollLeft = 70;
+			this.oScrollbarSynchronizer.sync(this.oPanel1, true);
+
+			assert.notOk(this.oScrollbarSynchronizer.isSyncing(), "then the pending rAF is cancelled");
+			assert.equal(this.oPanel2.scrollTop, 50, "then panel2 reflects the bForce values, not the pre-rAF values");
+			assert.equal(this.oPanel2.scrollLeft, 70, "then panel2 scrollLeft reflects the bForce values");
+
+			// Confirm the cancelled rAF does not fire after the frame
+			window.requestAnimationFrame(function() {
+				assert.equal(this.oPanel2.scrollTop, 50, "then panel2 scrollTop is not overwritten by the cancelled rAF");
+				fnDone();
+			}.bind(this));
+		});
+
+		QUnit.test("when sync is called with bForce=true, the synced event is fired", function(assert) {
+			const fnDone = assert.async();
+
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
+
+			this.oScrollbarSynchronizer.attachEventOnce("synced", function() {
+				assert.ok(true, "then the synced event is fired synchronously for the bForce path");
+				fnDone();
+			});
+
+			this.oPanel1.scrollTop = 30;
+			this.oScrollbarSynchronizer.sync(this.oPanel1, true);
+		});
+
+		QUnit.test("when _syncTargets is called, it only writes positions that differ from the source", function(assert) {
+			this.oScrollbarSynchronizer.addTarget(this.oPanel1);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel2);
+			this.oScrollbarSynchronizer.addTarget(this.oPanel3);
+
+			// Pre-align panel2 but not panel3
+			this.oPanel1.scrollTop = 40;
+			this.oPanel2.scrollTop = 40;
+			this.oPanel3.scrollTop = 0;
+
+			const iOriginalScrollTopPanel2 = this.oPanel2.scrollTop;
+			this.oScrollbarSynchronizer.sync(this.oPanel1, true);
+
+			assert.equal(this.oPanel2.scrollTop, 40, "then panel2 scrollTop stays at 40 (no unnecessary write)");
+			assert.equal(iOriginalScrollTopPanel2, this.oPanel2.scrollTop, "then panel2 is not written when already in sync");
+			assert.equal(this.oPanel3.scrollTop, 40, "then panel3 scrollTop is updated to match panel1");
+		});
 	});
 
 	QUnit.done(function() {

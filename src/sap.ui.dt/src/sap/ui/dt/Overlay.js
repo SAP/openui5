@@ -25,9 +25,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var OVERLAY_CONTAINER_ID = "overlay-container";
-	var oOverlayContainer;
-	var oMutationObserver;
+	const OVERLAY_CONTAINER_ID = "overlay-container";
+	let oOverlayContainer;
+	let oMutationObserver;
 
 	/**
 	 * Constructor for an Overlay.
@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
 	 */
-	var Overlay = Element.extend("sap.ui.dt.Overlay", /** @lends sap.ui.dt.Overlay.prototype */ {
+	const Overlay = Element.extend("sap.ui.dt.Overlay", /** @lends sap.ui.dt.Overlay.prototype */ {
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
@@ -222,7 +222,7 @@ sap.ui.define([
 				}
 			}.bind(this))
 			.catch(function(vError) {
-				var oError = Util.propagateError(
+				const oError = Util.propagateError(
 					vError,
 					"Overlay#asyncInit",
 					`Error initializing overlay (id='${this.getId()}'). Original error: ${Util.wrapError(vError).message}`
@@ -235,7 +235,7 @@ sap.ui.define([
 
 			// Attach stored browser events
 			this.attachEventOnce("afterRendering", function(oEvent) {
-				var oDomRef = oEvent.getParameter("domRef");
+				const oDomRef = oEvent.getParameter("domRef");
 				this._aBindParameters.forEach(function(mBrowserEvent) {
 					if (oDomRef) {
 						oDomRef.addEventListener(mBrowserEvent.sEventType, mBrowserEvent.fnProxy);
@@ -573,7 +573,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Overlay.prototype.applyStyles = function(bForceScrollbarSync, bSkipForceCalculation) {
-		var oGeometry;
+		let oGeometry;
 		this.fireBeforeGeometryChanged();
 
 		if (!this.isRendered() || this._bIsBeingDestroyed || this.getShouldBeDestroyed()) {
@@ -585,15 +585,15 @@ sap.ui.define([
 			oGeometry = this.getGeometry(!bSkipForceCalculation);
 		}
 
-		var oGeometryChangedPromise = Promise.resolve();
+		let oGeometryChangedPromise = Promise.resolve();
 		if (this.isVisible()) {
 			if (oGeometry && oGeometry.visible) {
 				this._ensureVisibility(this.getDomRef());
 				this._setSize(this.getDomRef(), oGeometry);
-				var oRenderingParent = this._getRenderingParent();
+				const oRenderingParent = this._getRenderingParent();
 
 				if (!this.isRoot()) {
-					var aPromises = [];
+					const aPromises = [];
 					this.getParent()._oScrollbarSynchronizers.forEach(function(oScrollbarSynchronizer) {
 						if (oScrollbarSynchronizer.isSyncing()) {
 							aPromises.push(
@@ -640,12 +640,12 @@ sap.ui.define([
 			this._setZIndex(oGeometry, this.getDomRef());
 		}
 		// We need to know when all our children have correct positions
-		var aPromises = this.getChildren()
+		const aPromises = this.getChildren()
 		.filter(function(oChild) {
 			return oChild.isRendered();
 		})
 		.map(function(oChild) {
-			var mParameters = {};
+			const mParameters = {};
 			mParameters.bForceScrollbarSync = bForceScrollbarSync;
 			return new Promise(function(fnResolve) {
 				oChild.attachEventOnce("geometryChanged", fnResolve);
@@ -664,8 +664,8 @@ sap.ui.define([
 	 * @param {HTMLObject} oOverlayDomRef - DOM element to receive the z-index
 	 */
 	Overlay.prototype._setZIndex = function(oGeometry, oOverlayDomRef) {
-		var oOriginalDomRef = oGeometry.domRef;
-		var iZIndex = DOMUtil.getZIndex(oOriginalDomRef);
+		const oOriginalDomRef = oGeometry.domRef;
+		const iZIndex = DOMUtil.getZIndex(oOriginalDomRef);
 		if (Util.isInteger(iZIndex)) {
 			oOverlayDomRef.style.zIndex = iZIndex;
 		} else if (this.isRoot()) {
@@ -690,7 +690,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Overlay.prototype._setSize = function(oTarget, oGeometry) {
-		var mSize = oGeometry.size;
+		const mSize = oGeometry.size;
 
 		// ASSIGN SIZE
 		oTarget.style.width = `${mSize.width}px`;
@@ -705,7 +705,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Overlay.prototype._setPosition = function(oTarget, oGeometry, oParent) {
-		var mPosition = DOMUtil.getOffsetFromParent(oGeometry, oParent);
+		const mPosition = DOMUtil.getOffsetFromParent(oGeometry, oParent);
 		oTarget.style.transform = `translate(${mPosition.left}px, ${mPosition.top}px)`;
 	};
 
@@ -715,7 +715,7 @@ sap.ui.define([
 	 * @param {HTMLElement} oSource - DOM element from which the clip-path property will be copied
 	 */
 	Overlay.prototype._setClipPath = function(oTarget, oSource) {
-		var sClipPath = window.getComputedStyle(oSource).clipPath;
+		const sClipPath = window.getComputedStyle(oSource).clipPath;
 		oTarget.style.clipPath = sClipPath;
 	};
 
@@ -726,7 +726,7 @@ sap.ui.define([
 				this._aBindParameters ||= [];
 				oListener ||= this;
 
-				var fnProxy = fnHandler.bind(oListener);
+				const fnProxy = fnHandler.bind(oListener);
 
 				this._aBindParameters.push({
 					sEventType,
@@ -765,9 +765,9 @@ sap.ui.define([
 
 				// remove the bind parameters from the stored array
 				if (this._aBindParameters) {
-					var oParamSet;
-					var oDomRef = this.getDomRef();
-					for (var i = this._aBindParameters.length - 1; i >= 0; i--) {
+					let oParamSet;
+					const oDomRef = this.getDomRef();
+					for (let i = this._aBindParameters.length - 1; i >= 0; i--) {
 						oParamSet = this._aBindParameters[i];
 						if (oParamSet.sEventType === sEventType && oParamSet.fnHandler === fnHandler && oParamSet.oListener === oListener) {
 							this._aBindParameters.splice(i, 1);
@@ -792,9 +792,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Overlay.prototype._deleteDummyContainer = function(oTargetDomRef, oTargetOverlay, oOriginalDomRef) {
-		var aDummyScrollContainer = oTargetDomRef.querySelectorAll(":scope > .sapUiDtDummyScrollContainer");
+		const aDummyScrollContainer = oTargetDomRef.querySelectorAll(":scope > .sapUiDtDummyScrollContainer");
 		if (aDummyScrollContainer.length) {
-			var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get(oTargetDomRef);
+			const oScrollbarSynchronizer = this._oScrollbarSynchronizers.get(oTargetDomRef);
 			aDummyScrollContainer[0].remove();
 			// Ensure that the element positions are synced before destroying
 			oScrollbarSynchronizer.attachEventOnce("synced", function() {
@@ -852,10 +852,16 @@ sap.ui.define([
 				oDummyScrollContainer.style.height = `${iScrollHeight}px`;
 				oDummyScrollContainer.style.width = `${iScrollWidth}px`;
 
+				const mMaxSize = oTargetOverlay?._getMaxScrollContainerSize();
+				const fnHasSameSize = (sType) => {
+					const iSize = mMaxSize?.[sType] ?? oTargetOverlay.getGeometry()?.size[sType];
+					return oGeometry.size[sType] === iSize;
+				};
+
 				if (
 					oTargetOverlay
 					&& DOMUtil.hasVerticalScrollBar(oOriginalDomRef)
-					&& oTargetOverlay._hasSameSize(oGeometry, "height")
+					&& fnHasSameSize("height")
 				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarVertical");
@@ -864,7 +870,7 @@ sap.ui.define([
 				if (
 					oTargetOverlay
 					&& DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)
-					&& oTargetOverlay._hasSameSize(oGeometry, "width")
+					&& fnHasSameSize("width")
 				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
@@ -903,12 +909,12 @@ sap.ui.define([
 	 */
 	Overlay.prototype.getGeometry = function(bForceCalculation) {
 		if (bForceCalculation || !this._mGeometry) {
-			var oDomRef = this.getAssociatedDomRef();
-			var aChildrenGeometry;
+			const oDomRef = this.getAssociatedDomRef();
+			let aChildrenGeometry;
 
 			// oDomRef is either on DOM Node or an array of DOM nodes
 			if (oDomRef) {
-				var bIsRoot = this.isRoot();
+				const bIsRoot = this.isRoot();
 				if (oDomRef instanceof Array) {
 					aChildrenGeometry = oDomRef.map(function(oElement) {
 						return DOMUtil.getGeometry(oElement, bIsRoot);
