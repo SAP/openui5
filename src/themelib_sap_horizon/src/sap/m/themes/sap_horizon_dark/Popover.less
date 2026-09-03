@@ -3,9 +3,12 @@
 /* Evening Horizon theme          */
 /* ============================== */
 
-@_sap_m_Popover_BorderCornerRadius: var(--sapPopover_BorderCornerRadius);
+.sapUI5Scope {
+	--_sap_m_Popover_BorderCornerRadius: var(--sapPopover_BorderCornerRadius);
+}
 
 .sapMPopoverWithBar > .sapMPopoverArr {
+
 	&.sapMPopoverArrUp::after,
 	&.sapMPopoverHeaderAlignArr::after {
 		background-color: var(--sapPageHeader_Background);
@@ -29,6 +32,7 @@
 	position: relative;
 	z-index: 2;
 }
+
 .sapMPopover {
 
 	.sapMPopoverCont {
