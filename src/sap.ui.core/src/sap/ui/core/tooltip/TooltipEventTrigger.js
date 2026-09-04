@@ -38,9 +38,12 @@ sap.ui.define([
 			document.removeEventListener("keydown", onDocumentKeyDown, true);
 		}
 
-		function hasTextSelection() {
+		// Only reports a selection anchored inside oContainer, so a selection on an
+		// unrelated element does not suppress this element's tooltip.
+		function hasTextSelection(oContainer) {
 			const oSel = window.getSelection && window.getSelection();
-			return !!(oSel && oSel.toString().length > 0);
+			return !!(oSel && oSel.toString().length > 0 &&
+				oContainer && oSel.anchorNode && oContainer.contains(oSel.anchorNode));
 		}
 
 		/**
@@ -288,7 +291,7 @@ sap.ui.define([
 			if (oEvent.button === 2) {
 				return;
 			}
-			if (hasTextSelection()) {
+			if (hasTextSelection(this._fnDomRefProvider && this._fnDomRefProvider())) {
 				return;
 			}
 			this._fnOnClose();
@@ -304,8 +307,8 @@ sap.ui.define([
 			if (this._isMoveWithinHoverTarget(oEvent)) {
 				return;
 			}
-			// A live selection means a likely right-click / drag-select; opening would clear it.
-			if (hasTextSelection()) {
+			// A live selection within this element means a likely drag-select; opening would clear it.
+			if (hasTextSelection(this._fnDomRefProvider && this._fnDomRefProvider())) {
 				return;
 			}
 			this._fnOnOpen(true, "hover");
