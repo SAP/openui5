@@ -340,7 +340,7 @@ sap.ui.define([
 			return {
 				stepName: "newStepName",
 				appNameLong: "newAppNameLong",
-				appNameShort: "newAppNameShort",
+				appNameShort: "new,AppName,Short",
 				timeToInteractive: 1000,
 				interactionType: 1
 			};

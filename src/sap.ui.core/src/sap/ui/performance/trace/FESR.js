@@ -159,7 +159,8 @@ sap.ui.define([
 		} else {
 			vField = bCutFromFront ? vField.substr(-iLength, iLength) : vField.substr(0, iLength);
 		}
-		return vField;
+		// strings must not contain ',', as the FESR payload is comma separated.
+		return vField?.replaceAll(",", "");
 	}
 
 	/* Format a int number to fesr compliant specs
