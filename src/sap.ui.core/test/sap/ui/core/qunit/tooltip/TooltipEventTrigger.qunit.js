@@ -569,6 +569,107 @@ sap.ui.define([
 			"class removed once the touch moves");
 	});
 
+	QUnit.module("Phone events - keyboard wiring", {
+		beforeEach: async function () {
+			TooltipEventTrigger._resetInitialFocusForTesting();
+			this.oDeviceStub = sinon.stub(Device, "system")
+				.value({ desktop: false, combi: false, phone: true, tablet: false });
+			this.oHost = new FocusableHost();
+			await renderHost(this.oHost, this.clock);
+			this.oDomRef = this.oHost.getDomRef();
+			// Stub :focus-visible so the element reports keyboard focus.
+			this.fnOrigMatches = this.oDomRef.matches;
+			this.oDomRef.matches = function (s) {
+				return s === ":focus-visible" || this.fnOrigMatches.call(this.oDomRef, s);
+			}.bind(this);
+			this.oConfig = makeConfig(this.oHost, this.oDomRef);
+			this.oTrigger = new TooltipEventTrigger(this.oConfig);
+			// Clear initial-focus suppression with a Tab keydown.
+			dispatch(document, new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+		},
+		afterEach: async function () {
+			this.oDomRef.matches = this.fnOrigMatches;
+			this.oTrigger.destroy();
+			this.oHost.destroy();
+			this.oDeviceStub.restore();
+			await this.clock.tickAsync(2000);
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("phone: focusin with :focus-visible after Tab invokes onOpen(true)", function (assert) {
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+		assert.ok(this.oConfig.onOpen.calledOnceWith(true),
+			"keyboard focus on phone opens the tooltip");
+	});
+
+	QUnit.test("phone: focusin during initial focus does not invoke onOpen", function (assert) {
+		// Re-create trigger before any keyboard navigation occurs.
+		this.oTrigger.destroy();
+		TooltipEventTrigger._resetInitialFocusForTesting();
+		this.oConfig = makeConfig(this.oHost, this.oDomRef);
+		this.oTrigger = new TooltipEventTrigger(this.oConfig);
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+		assert.notOk(this.oConfig.onOpen.called,
+			"initial-focus suppression still works on phone");
+	});
+
+	QUnit.test("phone: focusout invokes onClose(true)", function (assert) {
+		dispatch(this.oDomRef, new FocusEvent("focusout", { bubbles: true }));
+		assert.ok(this.oConfig.onClose.calledOnceWith(true),
+			"focus leaving the target closes the tooltip on phone");
+	});
+
+	QUnit.test("phone: Escape invokes onClose(false) and consumes the event when isPendingOrOpen returns true", function (assert) {
+		this.oConfig.isPendingOrOpen.returns(true);
+		const oEvent = new KeyboardEvent("keydown", { key: "Escape", cancelable: true, bubbles: true });
+		dispatch(this.oDomRef, oEvent);
+		assert.ok(this.oConfig.onClose.calledOnce && !this.oConfig.onClose.firstCall.args[0],
+			"onClose called without deferred flag");
+		assert.ok(oEvent.defaultPrevented, "event default prevented");
+	});
+
+	QUnit.test("phone: Escape is a no-op when isPendingOrOpen returns false", function (assert) {
+		const oEvent = new KeyboardEvent("keydown", { key: "Escape", cancelable: true, bubbles: true });
+		dispatch(this.oDomRef, oEvent);
+		assert.notOk(this.oConfig.onClose.called, "onClose not called");
+		assert.notOk(oEvent.defaultPrevented, "event not consumed");
+	});
+
+	QUnit.module("Tablet events - keyboard wiring", {
+		beforeEach: async function () {
+			TooltipEventTrigger._resetInitialFocusForTesting();
+			this.oDeviceStub = sinon.stub(Device, "system")
+				.value({ desktop: false, combi: false, phone: false, tablet: true });
+			this.oHost = new FocusableHost();
+			await renderHost(this.oHost, this.clock);
+			this.oDomRef = this.oHost.getDomRef();
+			// Stub :focus-visible so the element reports keyboard focus.
+			this.fnOrigMatches = this.oDomRef.matches;
+			this.oDomRef.matches = function (s) {
+				return s === ":focus-visible" || this.fnOrigMatches.call(this.oDomRef, s);
+			}.bind(this);
+			this.oConfig = makeConfig(this.oHost, this.oDomRef);
+			this.oTrigger = new TooltipEventTrigger(this.oConfig);
+			// Clear initial-focus suppression.
+			dispatch(document, new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+		},
+		afterEach: async function () {
+			this.oDomRef.matches = this.fnOrigMatches;
+			this.oTrigger.destroy();
+			this.oHost.destroy();
+			this.oDeviceStub.restore();
+			await this.clock.tickAsync(2000);
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("tablet: focusin with :focus-visible after Tab invokes onOpen(true)", function (assert) {
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+		assert.ok(this.oConfig.onOpen.calledOnceWith(true),
+			"keyboard focus on tablet opens the tooltip");
+	});
+
 	QUnit.module("Combi events (desktop wiring, no mobile)", {
 		beforeEach: async function () {
 			this.oDeviceStub = sinon.stub(Device, "system")
