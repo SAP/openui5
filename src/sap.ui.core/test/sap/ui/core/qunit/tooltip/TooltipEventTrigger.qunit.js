@@ -288,6 +288,30 @@ sap.ui.define([
 		assert.notOk(oEvent.defaultPrevented);
 	});
 
+	QUnit.test("Enter invokes onClose(false)", function (assert) {
+		dispatch(this.oDomRef, new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+		assert.ok(this.oConfig.onClose.calledOnce && !this.oConfig.onClose.firstCall.args[0],
+			"Enter closes the tooltip immediately, like activation via mouse click");
+	});
+
+	QUnit.test("Space invokes onClose(false)", function (assert) {
+		dispatch(this.oDomRef, new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+		assert.ok(this.oConfig.onClose.calledOnce && !this.oConfig.onClose.firstCall.args[0],
+			"Space closes the tooltip immediately, like activation via mouse click");
+	});
+
+	QUnit.test("Enter close is scoped to the focus target", function (assert) {
+		const oOutside = document.createElement("div");
+		document.body.appendChild(oOutside);
+		try {
+			dispatch(oOutside, new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+			assert.notOk(this.oConfig.onClose.called,
+				"Enter outside the focus target does not close");
+		} finally {
+			oOutside.remove();
+		}
+	});
+
 	QUnit.module("Multiple focus targets", {
 		beforeEach: async function () {
 			TooltipFocusGuard._resetForTesting();
@@ -609,7 +633,7 @@ sap.ui.define([
 
 	QUnit.module("Phone events - keyboard wiring", {
 		beforeEach: async function () {
-			TooltipEventTrigger._resetInitialFocusForTesting();
+			TooltipFocusGuard._resetForTesting();
 			this.oDeviceStub = sinon.stub(Device, "system")
 				.value({ desktop: false, combi: false, phone: true, tablet: false });
 			this.oHost = new FocusableHost();
@@ -644,7 +668,7 @@ sap.ui.define([
 	QUnit.test("phone: focusin during initial focus does not invoke onOpen", function (assert) {
 		// Re-create trigger before any keyboard navigation occurs.
 		this.oTrigger.destroy();
-		TooltipEventTrigger._resetInitialFocusForTesting();
+		TooltipFocusGuard._resetForTesting();
 		this.oConfig = makeConfig(this.oHost, this.oDomRef);
 		this.oTrigger = new TooltipEventTrigger(this.oConfig);
 		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
@@ -674,9 +698,15 @@ sap.ui.define([
 		assert.notOk(oEvent.defaultPrevented, "event not consumed");
 	});
 
+	QUnit.test("phone: Enter invokes onClose(false)", function (assert) {
+		dispatch(this.oDomRef, new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+		assert.ok(this.oConfig.onClose.calledOnce && !this.oConfig.onClose.firstCall.args[0],
+			"keyboard activation closes the tooltip on phone");
+	});
+
 	QUnit.module("Tablet events - keyboard wiring", {
 		beforeEach: async function () {
-			TooltipEventTrigger._resetInitialFocusForTesting();
+			TooltipFocusGuard._resetForTesting();
 			this.oDeviceStub = sinon.stub(Device, "system")
 				.value({ desktop: false, combi: false, phone: false, tablet: true });
 			this.oHost = new FocusableHost();

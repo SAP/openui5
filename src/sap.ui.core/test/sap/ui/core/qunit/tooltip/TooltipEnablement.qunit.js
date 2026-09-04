@@ -465,11 +465,25 @@ sap.ui.define([
 		assert.strictEqual(this.oEnablement.isOpen(), false, "not open");
 	});
 
-	QUnit.test("non-Escape keydown does nothing", async function(assert) {
+	QUnit.test("Enter closes an open tooltip (keyboard activation)", async function(assert) {
 		this.oEnablement.open();
 		await waitForOpen(this.clock, this.oEnablement);
 		dispatch(this.oHost, new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
-		assert.strictEqual(this.oEnablement.isOpen(), true, "still open on Enter");
+		assert.strictEqual(this.oEnablement.isOpen(), false, "closed on Enter, like a mouse click");
+	});
+
+	QUnit.test("Space closes an open tooltip (keyboard activation)", async function(assert) {
+		this.oEnablement.open();
+		await waitForOpen(this.clock, this.oEnablement);
+		dispatch(this.oHost, new KeyboardEvent("keydown", { key: " ", bubbles: true }));
+		assert.strictEqual(this.oEnablement.isOpen(), false, "closed on Space, like a mouse click");
+	});
+
+	QUnit.test("unrelated keydown does nothing", async function(assert) {
+		this.oEnablement.open();
+		await waitForOpen(this.clock, this.oEnablement);
+		dispatch(this.oHost, new KeyboardEvent("keydown", { key: "a", bubbles: true }));
+		assert.strictEqual(this.oEnablement.isOpen(), true, "still open on an unrelated key");
 	});
 
 	QUnit.module("Imperative open/close", {
