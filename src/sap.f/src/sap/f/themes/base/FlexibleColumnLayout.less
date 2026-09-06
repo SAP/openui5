@@ -3,14 +3,16 @@
 /* Base theme                                  */
 /* =========================================== */
 
-/* synced with FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH */
-@_sap_f_FCL_SeparatorWidth: 1rem;
-@_sap_f_FCL_SeparatorActiveDecorationColors: var(--sapHighlightColor), var(--sapHighlightColor);
-@_sap_f_FCL_SeparatorDecorationColors: var(--sapHighlightColor), fade(@sapUiHighlight, 0);
-@_sap_f_FCL_SeparatorBorder: none;
-@_sap_f_FCL_SeparatorHoverIconBorderColor: var(--sapButton_Lite_BorderColor);
-@_sap_f_FCL_SeparatorHoverIconBackground: var(--sapButton_Lite_Background);
-@_sap_f_FCL_SeparatorButtonColor: var(--sapContent_IconColor);
+.sapUI5Scope {
+	/* synced with FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH */
+	--_sap_f_FlexibleColumnLayout_SeparatorWidth: 1rem;
+	--_sap_f_FlexibleColumnLayout_SeparatorActiveDecorationColors: var(--sapHighlightColor), var(--sapHighlightColor);
+	--_sap_f_FlexibleColumnLayout_SeparatorDecorationColors: var(--sapHighlightColor), ~'hsl(from var(--sapHighlightColor) h s l / 0)';
+	--_sap_f_FlexibleColumnLayout_SeparatorBorder: none;
+	--_sap_f_FlexibleColumnLayout_SeparatorHoverIconBorderColor: var(--sapButton_Lite_BorderColor);
+	--_sap_f_FlexibleColumnLayout_SeparatorHoverIconBackground: var(--sapButton_Lite_Background);
+	--_sap_f_FlexibleColumnLayout_SeparatorButtonColor: var(--sapContent_IconColor);
+}
 
 .sapFFCL {
 
@@ -54,7 +56,7 @@
 		}
 
 		&.sapFFCLColumnInset {
-			padding: 0 0 0 @_sap_f_FCL_SeparatorWidth;
+			padding: 0 0 0 var(--_sap_f_FlexibleColumnLayout_SeparatorWidth);
 		}
 	}
 
@@ -68,7 +70,7 @@
 }
 
 .sapFFCL .sapFFCLColumnSeparator {
-	color: @_sap_f_FCL_SeparatorButtonColor;
+	color: var(--_sap_f_FlexibleColumnLayout_SeparatorButtonColor);
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	user-select: none;
@@ -102,12 +104,12 @@
 
 	.sapFFCLColumnSeparatorDecorationBefore {
 		flex-grow: 1;
-		background-image: linear-gradient(to top, @_sap_f_FCL_SeparatorActiveDecorationColors);
+		background-image: linear-gradient(to top, var(--_sap_f_FlexibleColumnLayout_SeparatorActiveDecorationColors));
 	}
 
 	.sapFFCLColumnSeparatorDecorationAfter {
 		flex-grow: 1;
-		background-image: linear-gradient(to bottom ,@_sap_f_FCL_SeparatorActiveDecorationColors);
+		background-image: linear-gradient(to bottom , var(--_sap_f_FlexibleColumnLayout_SeparatorActiveDecorationColors));
 	}
 }
 
@@ -119,14 +121,14 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border-left: @_sap_f_FCL_SeparatorBorder;
-	border-right: @_sap_f_FCL_SeparatorBorder;
+	border-left: var(--_sap_f_FlexibleColumnLayout_SeparatorBorder);
+	border-right: var(--_sap_f_FlexibleColumnLayout_SeparatorBorder);
 	vertical-align: top;
 
 	.sapFFCLColumnSeparatorDecorationBefore {
 		width: 1rem;
 		height: 4rem;
-		background-image: linear-gradient(to top, @_sap_f_FCL_SeparatorDecorationColors);
+		background-image: linear-gradient(to top, var(--_sap_f_FlexibleColumnLayout_SeparatorDecorationColors));
 		background-size: 0.0625rem 100%;
 		background-repeat: no-repeat;
 		background-position: center;
@@ -135,8 +137,7 @@
 	.sapFFCLColumnSeparatorDecorationAfter {
 		width: 1rem;
 		height: 4rem;
-		height: 4rem;
-		background-image: linear-gradient(to bottom, @_sap_f_FCL_SeparatorDecorationColors);
+		background-image: linear-gradient(to bottom, var(--_sap_f_FlexibleColumnLayout_SeparatorDecorationColors));
 		background-size: 0.0625rem 100%;
 		background-repeat: no-repeat;
 		background-position: center;
@@ -152,7 +153,7 @@
 
 		.sapFFCLColumnSeparatorGripIcon {
 			cursor: col-resize;
-			line-height: ~"calc(1.625rem - var(--sapButton_BorderWidth) - var(--sapButton_BorderWidth))"; /* center the icon vertically */
+			line-height: ~'calc(1.625rem - var(--sapButton_BorderWidth) - var(--sapButton_BorderWidth))'; /* center the icon vertically */
 			box-sizing: border-box;
 			height: 1.625rem;
 			width: 1.5rem;
@@ -172,8 +173,8 @@
 		}
 
 		.sapFFCLColumnSeparatorGripIcon {
-			background: @_sap_f_FCL_SeparatorHoverIconBackground;
-			border-color: @_sap_f_FCL_SeparatorHoverIconBorderColor;
+			background: var(--_sap_f_FlexibleColumnLayout_SeparatorHoverIconBackground);
+			border-color: var(--_sap_f_FlexibleColumnLayout_SeparatorHoverIconBorderColor);
 		}
 	}
 }
@@ -230,14 +231,15 @@
 			margin-right: 0;
 		}
 	}
+
 	&::before {
-		background-image: linear-gradient(to top, var(--sapHighlightColor), fade(@sapUiHighlight, 0));
+		background-image: linear-gradient(to top, var(--sapHighlightColor), ~'hsl(from var(--sapHighlightColor) h s l / 0)');
 		background-position-y: -0.3125rem;
 		bottom: 100%;
 	}
 
 	&::after {
-		background-image: linear-gradient(to bottom, var(--sapHighlightColor),  fade(@sapUiHighlight, 0));
+		background-image: linear-gradient(to bottom, var(--sapHighlightColor), ~'hsl(from var(--sapHighlightColor) h s l / 0)');
 		background-position-y: 0.3125rem;
 		top: 100%;
 	}
@@ -252,13 +254,15 @@
 		transition: all 0.1s ease-in;
 		background-repeat: no-repeat;
 		background-size: 0.0625rem 100%;
-		background-position-x: calc(50% - 0.03125rem);
+		background-position-x: calc(50% - 0.0313rem);
 	}
-	&:hover{
-			&::after,
-			&::before {
-				height: 7rem;
-			}
+
+	&:hover {
+
+		&::after,
+		&::before {
+			height: 7rem;
+		}
 	}
 }
 
@@ -271,7 +275,7 @@
 
 .sapFFCLColumnMid {
 	z-index: 2;
-	width:100%;
+	width: 100%;
 	overflow-x: auto;
 }
 

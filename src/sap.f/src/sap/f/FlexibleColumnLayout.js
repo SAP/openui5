@@ -686,7 +686,7 @@ sap.ui.define([
 	FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME = "sapFFCLPinnedColumn";
 	FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME = "sapFFCLAnimatedColumn";
 	FlexibleColumnLayout.COLUMN_ORDER = ["begin", "mid", "end"]; // natural order of the columns in FCL
-	// synced with @_sap_f_FCL_SeparatorWidth in base less file
+	// synced with @_sap_f_FlexibleColumnLayout_SeparatorWidth in base less file
 	FlexibleColumnLayout.COLUMN_SEPARATOR_WIDTH = DomUnitsRem.toPx("1rem");
 
 	FlexibleColumnLayout.prototype.init = function () {
