@@ -14,7 +14,7 @@
 .sapMActionSelectPicker .sapMBtn {
 
 	.sapMBtnInner {
-		border-top: 1px solid @sapUiButtonActionSelectBorderColor;
+		border-top: 1px solid var(--sapList_BorderColor);
 		border-bottom: 0;
 		border-left: 0;
 		border-right: 0;
@@ -33,8 +33,8 @@
 /* override standard buttons inside the action select */
 
 .sapMActionSelectPicker .sapMBtnDefault {
-	background: @sapUiButtonActionSelectBackground;
-	border-color: @sapUiButtonActionSelectBorderColor;
+	background: var(--sapList_Background);
+	border-color: var(--sapList_BorderColor);
 
 	/* override the default text-shadow */
 	text-shadow: none;
@@ -42,11 +42,11 @@
 
 .sapMActionSelectPicker .sapMBtn,
 .sapMActionSelectPicker .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
-	border-color: @sapUiButtonActionSelectBorderColor;
+	border-color: var(--sapList_BorderColor);
 }
 
 html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtnDefault:not(.sapMBtnActive):hover {
-	background: @sapUiButtonLiteActionSelectHoverBackground;
+	background: var(--sapList_Hover_Background);
 }
 
 /* ==================================================================================== */
@@ -67,7 +67,7 @@ html.sap-desktop .sapMActionSelectPicker .sapMBtn:not(.sapMBtnDisabled) .sapMBtn
 	height: 2rem;
 	border-radius: 0;
 	border: 0;
-	border-top: 1px solid @sapUiButtonActionSelectBorderColor;
+	border-top: 1px solid var(--sapList_BorderColor);
 
 	.sapMBtnContent {
 		line-height: 2rem;
