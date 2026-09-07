@@ -1,0 +1,12 @@
+{
+  "1.153.0": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "487f648b5c9aef686064c3ec92461bc9e31a2d29",
+        "type": "FIX",
+        "text": "sap.ui.dt: use show-edit icon for View Changes button"
+      }
+    ]
+  }
+}

@@ -1,7 +1,12 @@
 {
   "1.153.0": {
-    "date": "August 2026",
+    "date": "September 2026",
     "notes": [
+      {
+        "id": "7c7f706729b090c41cc6053f2f3dc933adda5d92",
+        "type": "FIX",
+        "text": " sap.m.Link: Fix hover text-decoration for Link in HCB and HCW themes"
+      },
       {
         "id": "95b098f0fe0761358032d43a1b2952ec101b77c9",
         "type": "FEATURE",

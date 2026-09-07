@@ -1,7 +1,42 @@
 {
   "1.153.0": {
-    "date": "August 2026",
+    "date": "September 2026",
     "notes": [
+      {
+        "id": "7671942fa4779c9121fb5215f66c833b2287c918",
+        "type": "FIX",
+        "text": " sap.m.Title: visual test is now linked to control"
+      },
+      {
+        "id": "bd65353fc590e003bd3ccd80779b7db3c1864c38",
+        "type": "FEATURE",
+        "text": " sap.m.Input: Description is now alignable to the right via the new descriptionAlign property"
+      },
+      {
+        "id": "a3201226425d12322f10c29bd79c56d9f0072b4c",
+        "type": "FIX",
+        "text": " sap.m.Dialog: reserve vertical scrollbar space via scrollbar-gutter"
+      },
+      {
+        "id": "82107de19bc4348c01a4c32e4200b7aae421135d",
+        "type": "FEATURE",
+        "text": " sap.m.Link: add enhanced tooltip support"
+      },
+      {
+        "id": "eaab3f7fd74877fac7666b08694d1740d3f0f3b3",
+        "type": "FIX",
+        "text": " sap.m.Popover: Stay open on resize while opener is in the viewport"
+      },
+      {
+        "id": "bdcee8e2c438084eca10b9d122e62156cd0f5472",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Introduce Tooltip Enablement"
+      },
+      {
+        "id": "9095fc80b494c4bda4a4bcdc1daac59b52f59fd9",
+        "type": "FIX",
+        "text": " sap.m.Select: Announce items with VoiceOver on macOS Chrome"
+      },
       {
         "id": "95b098f0fe0761358032d43a1b2952ec101b77c9",
         "type": "FEATURE",
@@ -56,6 +91,11 @@
         "id": "efd806bae9e403635e49cf33023076bea95bf1bd",
         "type": "FEATURE",
         "text": " Calendar related controls focus management for mobile devices accessed by keyboard"
+      },
+      {
+        "id": "bf76eca96196894765afc7db1b30ebeb0ef8f7bd",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: announce color count in palette region labels"
       }
     ]
   }

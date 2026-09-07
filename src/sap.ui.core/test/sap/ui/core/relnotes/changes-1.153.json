@@ -1,7 +1,22 @@
 {
   "1.153.0": {
-    "date": "August 2026",
+    "date": "September 2026",
     "notes": [
+      {
+        "id": "fe0a30bda9aa109e6d45db8624c38b569e967753",
+        "type": "FIX",
+        "text": " base/ManagedObject: notify observer on destroyAggregation for altTypes"
+      },
+      {
+        "id": "8067cb5a221c15e489cec199d9fb15457548d315",
+        "type": "FIX",
+        "text": " sap.ui.core.tooltip.Tooltip: wrap over-long unbreakable text"
+      },
+      {
+        "id": "bdcee8e2c438084eca10b9d122e62156cd0f5472",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Introduce Tooltip Enablement"
+      },
       {
         "id": "95b098f0fe0761358032d43a1b2952ec101b77c9",
         "type": "FEATURE",

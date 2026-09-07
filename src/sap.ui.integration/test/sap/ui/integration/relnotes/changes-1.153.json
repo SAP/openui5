@@ -1,0 +1,17 @@
+{
+  "1.153.0": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "fe0a30bda9aa109e6d45db8624c38b569e967753",
+        "type": "FIX",
+        "text": " base/ManagedObject: notify observer on destroyAggregation for altTypes"
+      },
+      {
+        "id": "554675b02448b252117eb3f4062731f7d692d370",
+        "type": "FIX",
+        "text": " sap.ui.integration: Editor- fix keyboard navigation for dynamic icon grid width"
+      }
+    ]
+  }
+}
