@@ -964,7 +964,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("relative parsing escape special charaters in pattern, e.g. '.'", function (assert) {
+	QUnit.test("relative parsing escape special characters in pattern, e.g. '.'", function (assert) {
 		const oDateFormat = DateFormat.getDateInstance({relative: true, relativeStyle: "short"}, new Locale("de"));
 
 		// set now to 12.03.2021, 4:30 (GMT+1, Europe/Berlin)

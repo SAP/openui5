@@ -1537,7 +1537,7 @@ sap.ui.define([
 					bValid = oParseHelper.checkValid(oPart.type, bPartInvalid, oFormat);
 				} else {
 					sPart = oFormat.oLocaleData.getCalendarWeek(oPart.digits === 3 ? "narrow" : "wide");
-					const rWeekNumber = new RegExp(sPart.split("{0}").map(escapeRegExp).join("([0-9]+)"));
+					const rWeekNumber = new RegExp(sPart.split("{0}").map(escapeRegExp).join("(\\d+)"));
 					const oResult = rWeekNumber.exec(sValue);
 					if (oResult) {
 						// e.g. for input "CW 01" create pattern "CW ([0-9]+)"
