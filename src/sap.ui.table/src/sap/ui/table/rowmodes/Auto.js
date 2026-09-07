@@ -464,7 +464,13 @@ sap.ui.define([
 		}
 
 		const oReferenceElement = _private(this).bTableIsFlexItem ? oTableDomRef : oTableDomRef.parentNode;
-		const iNewAvailableSpace = Math.max(0, Math.floor(oReferenceElement.getBoundingClientRect().height - iUsedHeight));
+		const oReferenceElementStyle = window.getComputedStyle(oReferenceElement);
+		const iNewAvailableSpace = Math.max(0, Math.floor(
+			parseFloat(oReferenceElementStyle.height)
+			- parseFloat(oReferenceElementStyle.paddingTop)
+			- parseFloat(oReferenceElementStyle.paddingBottom)
+			- iUsedHeight
+		));
 		const iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - _private(this).iLastAvailableSpace);
 
 		if (iAvailableSpaceDifference >= 5) {

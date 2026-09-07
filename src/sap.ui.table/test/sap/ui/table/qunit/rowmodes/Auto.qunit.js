@@ -378,6 +378,28 @@ sap.ui.define([
 		assert.equal(oTableContainer.clientHeight, oTableContainer.scrollHeight, "The table container has no vertical overflow");
 	});
 
+	QUnit.test("Parent with top and bottom padding", async function(assert) {
+		const oTableContainer = this.oTable.getDomRef().parentNode;
+		const sOriginalBoxSizing = oTableContainer.style.boxSizing;
+		const sOriginalPaddingTop = oTableContainer.style.paddingTop;
+		const sOriginalPaddingBottom = oTableContainer.style.paddingBottom;
+
+		// The container has content-box sizing by default. Switch to border-box so the padding is subtracted from the container height (reduces the
+		// content area) instead of expanding the container.
+		oTableContainer.style.boxSizing = "border-box";
+		oTableContainer.style.paddingTop = "48px";
+		oTableContainer.style.paddingBottom = "48px";
+
+		// The container content area is 765px minus the 96px padding.
+		await this.oTable.qunit.resize({height: "765px"});
+		assert.equal(this.oTable.getRows().length, 7, "Row count reflects the padding-reduced content area");
+
+		oTableContainer.style.boxSizing = sOriginalBoxSizing;
+		oTableContainer.style.paddingTop = sOriginalPaddingTop;
+		oTableContainer.style.paddingBottom = sOriginalPaddingBottom;
+		await this.oTable.qunit.resetSize();
+	});
+
 	QUnit.test("Table is not rendered", function(assert) {
 		const oRowMode = new AutoRowMode();
 		const oTable = new Table({rowMode: oRowMode});
