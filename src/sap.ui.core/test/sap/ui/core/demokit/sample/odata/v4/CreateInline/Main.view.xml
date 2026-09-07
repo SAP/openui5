@@ -1,0 +1,79 @@
+<mvc:View class="sapUiSizeCompact" controllerName="sap.ui.core.sample.odata.v4.CreateInline.Main"
+	xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+	<App>
+		<Page showHeader="false">
+			<Table id="salesOrderList" growing="true" growingThreshold="10"
+				items="{ path: '/SalesOrderList', parameters: { $count: true } }">
+				<headerToolbar>
+					<Toolbar>
+						<Title id="salesOrdersTitle" text="{$count} Sales Orders"/>
+						<ToolbarSpacer/>
+						<SearchField id="searchField" placeholder="Filter by Buyer ID" search=".onFilter"
+							width="20rem"/>
+						<Button icon="{= %{ui>/bDescending} === undefined
+								? 'sap-icon://sort'
+								: (%{ui>/bDescending}
+										? 'sap-icon://sort-descending'
+										: 'sap-icon://sort-ascending') }"
+							press=".onSort" tooltip="Sort by Sales Order ID"/>
+						<Button icon="sap-icon://refresh" press=".onRefresh" tooltip="Refresh"/>
+					</Toolbar>
+				</headerToolbar>
+				<columns>
+					<Column width="6rem">
+						<Text text="Internal row state"/>
+					</Column>
+					<Column>
+						<Text text="Sales Order ID"/>
+					</Column>
+					<Column width="18rem">
+						<Text text="Buyer"/>
+					</Column>
+					<Column width="5rem">
+						<Text text="Currency"/>
+					</Column>
+					<Column>
+						<Text text="Gross Amount"/>
+					</Column>
+					<Column>
+						<Text text="Note"/>
+					</Column>
+					<Column>
+						<Text text="Status"/>
+					</Column>
+					<Column width="4rem"/>
+				</columns>
+				<ColumnListItem
+						highlight="{= (%{@$ui5.context.isInactive} === false
+								|| %{@$ui5.context.isInactive} === 1) ? 'Information' : 'None' }"
+						highlightText="Newly Created">
+					<core:Icon
+						src="{= %{@$ui5.context.isInactive}
+								? 'sap-icon://sys-minus'
+								: (%{@$ui5.context.isTransient}
+										? 'sap-icon://sys-add'
+										: (%{@$ui5.context.isTransient} === undefined
+												? 'sap-icon://cloud'
+												: 'sap-icon://sys-enter')) }"
+						tooltip="{= %{@$ui5.context.isInactive}
+								? 'Inactive'
+								: (%{@$ui5.context.isTransient}
+										? 'Transient'
+										: (%{@$ui5.context.isTransient} === undefined
+												? 'From Server'
+												: 'Persisted')) }"/>
+					<Text text="{SalesOrderID}"/>
+					<Input description="{SO_2_BP/CompanyName}"
+						editable="{= %{@$ui5.context.isTransient} === true }"
+						placeholder="Buyer (required)" value="{BuyerID}"/>
+					<Text text="{CurrencyCode}"/>
+					<Text text="{GrossAmount}"/>
+					<Input placeholder="Note" value="{Note}"/>
+					<Text text="{LifecycleStatusDesc}"/>
+					<Button visible="{= %{@$ui5.context.isInactive} !== true }" press=".onDelete"
+						icon="sap-icon://decline" tooltip="Delete"/>
+				</ColumnListItem>
+			</Table>
+		</Page>
+	</App>
+</mvc:View>
