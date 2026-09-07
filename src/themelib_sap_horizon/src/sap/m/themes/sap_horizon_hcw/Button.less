@@ -3,7 +3,9 @@
 /* Horizon High Contrast White theme  */
 /* ================================== */
 
-@_sap_m_Button_EmphasizedFocusColor: var(--sapContent_FocusColor);
+.sapMBtn {
+	--_sap_m_Button_EmphasizedFocusColor: var(--sapContent_FocusColor);
+}
 
 .sapMBtn {
 	height: 2.75rem;
@@ -22,7 +24,7 @@
 /* Inner area            */
 /* --------------------- */
 .sapMBtnInner {
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	height: var(--sapElement_Height);
 	min-width: 2.25rem;
 	margin: 0;
@@ -142,9 +144,9 @@
 	}
 }
 
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
 /* Custom focus outline:                                                */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
 
 .sapMBtn:not(.sapMBtnFocusFromTouch):focus-visible > .sapMFocusable,
 html.sap-desktop .sapMBtn:focus > .sapMFocusable {
@@ -179,9 +181,9 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable
 	border-color: var(--sapButton_Lite_BorderColor);
 }
 
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
 /* Disabled, hover and active states:                                   */
-/* ---------------------------------------------------------------------*/
+/* --------------------------------------------------------------------- */
 
 .sapMBtnDisabled {
 	opacity: var(--sapContent_DisabledOpacity);
@@ -243,9 +245,9 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	border-color: var(--sapButton_Lite_Active_BorderColor);
 }
 
-/* ----------------------*/
-/* Badges                */
-/* ----------------------*/
+/* ---------------------- */
+/* Badges                 */
+/* ---------------------- */
 
 .sapMBtn .sapMBadge .sapMBadgeIndicator::after {
 	background-color: var(--sapContent_BadgeBackground);
