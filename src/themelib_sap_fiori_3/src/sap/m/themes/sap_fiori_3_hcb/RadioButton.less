@@ -45,7 +45,7 @@
 }
 
 /* Right to left */
-.sapMRbG[dir=rtl] .sapMRbHasLabel.sapMRb:focus::before {
+.sapMRbG[dir='rtl'] .sapMRbHasLabel.sapMRb:focus::before {
 	left: 0;
 	right: 0.5rem;
 }
@@ -65,7 +65,7 @@
 .sapUiSizeCompact {
 
 	.sapMRbB {
-		height:2rem;
+		height: 2rem;
 		line-height: 2rem;
 		width: 2rem;
 	}
@@ -95,7 +95,7 @@
 	fill: var(--sapSelectedColor); /* contrast themes specific */
 }
 
-.sapMRb:focus:before {
+.sapMRb:focus::before {
 	border: var(--sapContent_FocusWidth) var(--sapContent_FocusStyle) var(--sapContent_FocusColor);
 	bottom: 0.5rem;
 	top: 0.5rem;

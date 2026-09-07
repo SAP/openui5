@@ -3,7 +3,9 @@
 /* Base theme                         */
 /* ================================== */
 
-@_sap_m_Radio_Button_Read_Only_fill: var(--sapContent_NonInteractiveIconColor);
+.sapUI5Scope {
+	--_sap_m_Radio_Button_Read_Only_fill: var(--sapContent_NonInteractiveIconColor);
+}
 
 .sapMRb {
 	height: 3rem;
@@ -35,6 +37,7 @@
 .sapMILI-CTX .sapMRb {
 	float: right;
 }
+
 .sapMListTblCell > .sapMRb {
 	float: inherit;
 	display: inline-block;
@@ -122,6 +125,7 @@
 	stroke: transparent;
 	fill: none;
 	-webkit-user-select: none;
+	user-select: none;
 	align-self: center;
 	r: 22%;
 }
@@ -138,7 +142,7 @@
 }
 
 /* Right to left */
-.sapMRbG[dir=rtl] .sapMRbHasLabel.sapMRb:focus::before {
+.sapMRbG[dir='rtl'] .sapMRbHasLabel.sapMRb:focus::before {
 	left: 0;
 	right: .6875rem;
 }
@@ -165,7 +169,7 @@
 	}
 
 	&.sapMRbSel .sapMRbBInn {
-		fill: @_sap_m_Radio_Button_Read_Only_fill;
+		fill: var(--_sap_m_Radio_Button_Read_Only_fill);
 		stroke: none;
 	}
 }
@@ -259,7 +263,7 @@
 	}
 
 	/* Right to left */
-	.sapMRbG[dir=rtl] .sapMRbHasLabel.sapMRb:focus::before  {
+	.sapMRbG[dir='rtl'] .sapMRbHasLabel.sapMRb:focus::before {
 		left: 0;
 		right: .3875rem;
 	}
@@ -296,10 +300,11 @@ html[dir='rtl'] {
 	}
 }
 
-// Fix for Safari bug - "rem" is not correctly calculated on zoom in, so "em" should be used
-// Isolated HTML and CSS example - snippix 759642
-// Customer ticket CS20250010123348
-html[data-sap-ui-browser^="sf"] {
+/* Fix for Safari bug - "rem" is not correctly calculated on zoom in, so "em" should be used
+   Isolated HTML and CSS example - snippix 759642
+   Customer ticket CS20250010123348 */
+html[data-sap-ui-browser^='sf'] {
+
 	.sapMRbB .sapMRbBInn,
 	.sapMRb .sapMRbB .sapMRbBOut {
 		font-size: 1rem;
