@@ -21,7 +21,7 @@ link[id^="sap-ui-theme-"]::after,
 	-webkit-tap-highlight-color: rgba(0,0,0,0); /* to prevent touch highlight on the entire body */
 }
 
-html:has(> body.sapUiBody) {
+html[class*='sapUiTheme-'] {
 	forced-color-adjust: var(--sapContent_ForcedColorAdjust);
 }
 
