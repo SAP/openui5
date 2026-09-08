@@ -3,10 +3,13 @@
 /* Horizon High Contrast Black theme  */
 /* ================================== */
 
-@_sap_m_Popover_ThickShadowSize: 0.125rem;
-@_sap_m_Popover_BorderCornerRadius: var(--sapPopover_BorderCornerRadius);
+.sapUI5Scope {
+	--_sap_m_Popover_ThickShadowSize: 0.125rem;
+	--_sap_m_Popover_BorderCornerRadius: var(--sapPopover_BorderCornerRadius);
+}
 
 .sapMPopoverWithBar > .sapMPopoverArr {
+
 	&.sapMPopoverArrUp::after,
 	&.sapMPopoverHeaderAlignArr::after {
 		background-color: var(--sapPageHeader_Background);
@@ -24,6 +27,7 @@
 .sapMPopover .sapMIBar.sapMSubHeader-CTX {
 	background-color: var(--sapPageHeader_Background);
 }
+
 .sapMPopoverHeader,
 .sapMPopoverSubHeader {
 	position: relative;

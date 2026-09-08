@@ -3,7 +3,9 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-@_sap_m_Popover_ThickShadowSize: 0.125rem;
+.sapUI5Scope {
+	--_sap_m_Popover_ThickShadowSize: 0.125rem;
+}
 
 .sapMPopoverArr::after {
 	border-style: solid;
@@ -14,6 +16,7 @@
 .sapMPopoverWithBar > .sapMPopoverArr.sapMPopoverArrUp::after {
 	background-color: var(--sapPageHeader_Background);
 }
+
 .sapMPopoverHeader,
 .sapMPopoverSubHeader {
 	position: relative;
