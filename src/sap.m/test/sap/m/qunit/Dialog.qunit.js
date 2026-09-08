@@ -4735,5 +4735,36 @@ sap.ui.define([
 
 		assert.ok(bCallbackCalled, "closeAllDialogs callback is called even when the dialog is destroyed during closing");
 	});
+
+	QUnit.module("Busy state", {
+		beforeEach: function () {
+			this.oDialog = new Dialog({
+				title: "Busy Dialog",
+				content: new Text({ text: "Some content" })
+			});
+		},
+		afterEach: function () {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("Busy indicator has rounded corners matching the Dialog", function (assert) {
+		// Arrange - show the busy indicator immediately, no default delay
+		this.oDialog.setBusyIndicatorDelay(0);
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		// Act
+		this.oDialog.setBusy(true);
+		this.clock.tick(500);
+
+		var oBusyEl = this.oDialog.getDomRef().querySelector(".sapUiLocalBusyIndicator");
+
+		// Assert
+		assert.ok(oBusyEl, "Local busy indicator is rendered inside the Dialog");
+
+		var sBusyRadius = window.getComputedStyle(oBusyEl).borderRadius;
+		assert.notStrictEqual(sBusyRadius, "0px", "Busy indicator has a non-zero border-radius (rounded corners)");
+	});
 });
 

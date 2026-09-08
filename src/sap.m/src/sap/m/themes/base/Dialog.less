@@ -495,7 +495,14 @@ html[data-sap-ui-animation='off'] .sapMDialog {
 	font-size: 0;
 }
 
-/* to show the busy indicator over the title group */
-.sapMDialog .sapUiLocalBusyIndicator {
-	z-index: 4;
+.sapMDialog {
+	.sapUiLocalBusyIndicator {
+		/* to show the busy indicator over the title group */
+		z-index: 4;
+		border-radius: var(--sapElement_BorderCornerRadius);
+
+		&:focus::after {
+			border-radius: var(--sapElement_BorderCornerRadius);
+		}
+	}
 }
