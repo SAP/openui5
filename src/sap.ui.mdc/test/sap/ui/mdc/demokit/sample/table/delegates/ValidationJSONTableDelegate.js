@@ -29,7 +29,7 @@ sap.ui.define([
 				});
 			}
 
-			return true;
+			return JSONTableDelegate.validateP13nState(oTable, oState);
 		}
 	};
 
