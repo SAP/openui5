@@ -194,7 +194,8 @@ sap.ui.define([
 	 *   If this option is not specified, all units are allowed.
 	 * @property {Object<string,object>} [customUnits]
 	 *   Defines a set of custom units, for example:
-	 *   <pre><code>{"electric-inductance": {
+	 *   <pre>
+	 * {"electric-inductance": {
 	 *      "displayName": "henry",
 	 *      "unitPattern-count-one": "{0} H",
 	 *      "unitPattern-count-other": "{0} H",
@@ -202,7 +203,8 @@ sap.ui.define([
 	 *      "decimals": 2,
 	 *      "precision": 4
 	 *   }
-	 * }</code></pre>
+	 * }
+	 * </pre>
 	 * @property {int} [decimals]
 	 *   The number of decimal digits.
 	 * @property {int} [decimalPadding]
@@ -239,19 +241,17 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   When decimals aren't preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @property {boolean} [showMeasure]
-	 *   Defines whether the unit of measure is shown in the formatted string, for example 1 day for locale "en"
-	 *   <pre><code>NumberFormat.getUnitInstance({showMeasure: true})
-	 *     .format(1, "duration-day"); // "1 day"</code></pre>
-	 *   <pre><code>NumberFormat.getUnitInstance({showMeasure: false})
-	 *     .format(1, "duration-day"); // "1"</code></pre>
+	 *   Defines whether the unit of measure is shown in the formatted string, for example, <code>1 day</code> for
+	 *   locale <code>"en"</code>.
+	 *   <code>NumberFormat.getUnitInstance({showMeasure: true}).format(1, "duration-day"); // "1 day"</code>
+	 *   <code>NumberFormat.getUnitInstance({showMeasure: false}).format(1, "duration-day"); // "1"</code>
 	 *   If both <code>showMeasure</code> and <code>showNumber</code> are set to false, an empty string is returned.
 	 * @property {boolean} [showNumber]
-	 *   Defines whether the number is shown as part of the formatted string, for example 1 day for locale "en"
-	 *   <pre><code>NumberFormat.getUnitInstance({showNumber: true})
-	 *     .format(1, "duration-day"); // "1 day"</code></pre>
-	 *   <pre><code>NumberFormat.getUnitInstance({showNumber: false})
-	 *     .format(1, "duration-day"); // "day"</code></pre>
-	 *   If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
+	 *   Defines whether the number is shown as part of the formatted string, for example, <code>1 day</code> for
+	 *   locale <code>"en"</code>.
+	 *   <code>NumberFormat.getUnitInstance({showNumber: true}).format(1, "duration-day"); // "1 day"</code>
+	 *   <code>NumberFormat.getUnitInstance({showNumber: false}).format(1, "duration-day"); // "day"</code>
+	 *   If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned.
 	 * @property {"short"|"long"|"standard"} [style]
 	 *   The style of format.
 	 *   When set to <code>short</code> or <code>long</code>, numbers are formatted into compact forms.
@@ -272,8 +272,8 @@ sap.ui.define([
 	 *   The currency symbol is displayed when this option is set to
 	 *   <code>false</code> and a symbol has been defined for the given currency code.
 	 * @property {"standard"|"accounting"|"sap-standard"|"sap-accounting"} [currencyContext]
-	 *   Can be set either to 'standard'
-	 *   (the default value) or to 'accounting' for an accounting-specific currency display
+	 *   Can be set either to 'standard' (the default value) or to 'accounting' for an accounting-specific currency
+	 *   display.
 	 * @property {Object<string,object>} [customCurrencies]
 	 *   Defines a set of custom currencies exclusive to this NumberFormat instance.
 	 *   Custom currencies must not only consist of digits.
@@ -321,15 +321,17 @@ sap.ui.define([
 	 *   <code>maxFractionDigits</code> format option allows.
 	 *   When decimals aren't preserved, the formatted number is rounded to <code>maxFractionDigits</code>.
 	 * @property {boolean} [showMeasure]
-	 *   Defines whether the currency code/symbol is shown in the formatted string,
-	 *   e.g. true: "1.00 EUR", false: "1.00" for locale "en"
-	 *   If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
+	 *   Defines whether the currency code/symbol is shown in the formatted string, for example, <code>1 EUR</code> for
+	 *   locale <code>"en"</code>.
+	 *   <code>NumberFormat.getCurrencyInstance({showMeasure: true}).format(1, "EUR"); // "1.00 EUR"</code>
+	 *   <code>NumberFormat.getCurrencyInstance({showMeasure: false}).format(1, "EUR"); // "1.00"</code>
+	 *   If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned.
 	 * @property {boolean} [showNumber]
-	 *   Defines whether the number is shown as part of the result string,
-	 *   e.g. 1 EUR for locale "en"
-	 *   <pre><code>NumberFormat.getCurrencyInstance({showNumber: true}).format(1, "EUR"); // "1.00 EUR"</code></pre>
-	 *   <pre><code>NumberFormat.getCurrencyInstance({showNumber: false}).format(1, "EUR"); // "EUR"</code></pre>
-	 *   If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
+	 *   Defines whether the number is shown as part of the result string, for example, <code>1 EUR</code> for locale
+	 *   <code>"en"</code>.
+	 *   <code>NumberFormat.getCurrencyInstance({showNumber: true}).format(1, "EUR"); // "1.00 EUR"</code>
+	 *   <code>NumberFormat.getCurrencyInstance({showNumber: false}).format(1, "EUR"); // "EUR"</code>
+	 *   If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned.
 	 * @property {"short"|"long"|"standard"} [style]
 	 *   The style of format.
      *   When set to <code>short</code> or <code>long</code>, numbers are formatted into the <code>short</code> form
