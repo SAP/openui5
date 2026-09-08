@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
-	"sap/base/util/restricted/_intersection",
-	"sap/base/util/restricted/_max"
+	"sap/base/util/restricted/_intersection"
 ], function(
 	BaseObject,
 	Overlay,
@@ -34,12 +33,11 @@ sap.ui.define([
 	Log,
 	isPlainObject,
 	merge,
-	_intersection,
-	_max
+	_intersection
 ) {
 	"use strict";
 
-	var S_SCROLLCONTAINER_CLASSNAME = "sapUiDtOverlayScrollContainer";
+	const S_SCROLLCONTAINER_CLASSNAME = "sapUiDtOverlayScrollContainer";
 
 	/**
 	 * Constructor for an ElementOverlay.
@@ -60,7 +58,7 @@ sap.ui.define([
 	 * @since 1.30
 	 * @alias sap.ui.dt.ElementOverlay
 	 */
-	var ElementOverlay = Overlay.extend("sap.ui.dt.ElementOverlay", {
+	const ElementOverlay = Overlay.extend("sap.ui.dt.ElementOverlay", {
 		metadata: {
 			library: "sap.ui.dt",
 			aggregations: {
@@ -195,8 +193,8 @@ sap.ui.define([
 				: this._loadDesignTimeMetadata()
 		).then(function() {
 			this.attachEvent("elementModified", function(oEvent) {
-				var oParams = oEvent.getParameters();
-				var sName = oParams.name;
+				const oParams = oEvent.getParameters();
+				const sName = oParams.name;
 
 				if (oParams.type === "propertyChanged") {
 					if (sName === "visible") {
@@ -226,15 +224,15 @@ sap.ui.define([
 			return;
 		}
 
-		var iIndex = mProperties.index;
-		var oScrollContainer = this.getScrollContainerById(iIndex);
-		var oNewScrollContainer = this.getScrollContainers(true)[iIndex];
-		var aAggregationsCopy = [].concat(oNewScrollContainer.aggregations);
-		var aCurrentScrollContainerChildren = Array.from(oScrollContainer.querySelectorAll(":scope >:not(.sapUiDtDummyScrollContainer)"));
+		const iIndex = mProperties.index;
+		const oScrollContainer = this.getScrollContainerById(iIndex);
+		const oNewScrollContainer = this.getScrollContainers(true)[iIndex];
+		const aAggregationsCopy = [].concat(oNewScrollContainer.aggregations);
+		const aCurrentScrollContainerChildren = Array.from(oScrollContainer.querySelectorAll(":scope >:not(.sapUiDtDummyScrollContainer)"));
 
 		// first check if the current scroll container content is correct, and if not move it to the children div
 		aCurrentScrollContainerChildren.forEach(function(oAggregationNode) {
-			var sAggregationName = oAggregationNode.getAttribute("data-sap-ui-dt-aggregation");
+			const sAggregationName = oAggregationNode.getAttribute("data-sap-ui-dt-aggregation");
 			if (oNewScrollContainer.aggregations.includes(sAggregationName)) {
 				aAggregationsCopy.splice(aAggregationsCopy.indexOf(sAggregationName), 1);
 			} else {
@@ -247,14 +245,14 @@ sap.ui.define([
 
 		// then move the new aggregations to the scroll container
 		aAggregationsCopy.forEach(function(sAggregationName) {
-			var oAggregationNode = this.getAggregationOverlay(sAggregationName).getDomRef();
+			const oAggregationNode = this.getAggregationOverlay(sAggregationName).getDomRef();
 			this.getChildrenDomRef().removeChild(oAggregationNode);
 			DOMUtil.appendChild(oScrollContainer, oAggregationNode);
 		}.bind(this));
 	};
 
 	ElementOverlay.prototype._onRootChanged = function(oEvent) {
-		var bRootChangedValue = oEvent.getParameter("value");
+		const bRootChangedValue = oEvent.getParameter("value");
 		this._subscribeToMutationObserver(bRootChangedValue);
 	};
 
@@ -264,8 +262,8 @@ sap.ui.define([
 	};
 
 	ElementOverlay.prototype._subscribeToMutationObserver = function(bIsRoot) {
-		var oMutationObserver = Overlay.getMutationObserver();
-		var oDomRef = this.getAssociatedDomRef();
+		const oMutationObserver = Overlay.getMutationObserver();
+		const oDomRef = this.getAssociatedDomRef();
 		this._sObservableNodeId = oDomRef?.id;
 
 		if (this._sObservableNodeId) {
@@ -278,7 +276,7 @@ sap.ui.define([
 
 	ElementOverlay.prototype._unsubscribeFromMutationObserver = function() {
 		if (this._sObservableNodeId) {
-			var oMutationObserver = Overlay.getMutationObserver();
+			const oMutationObserver = Overlay.getMutationObserver();
 			oMutationObserver.deregisterHandler(this._sObservableNodeId);
 			delete this._sObservableNodeId;
 		}
@@ -347,7 +345,7 @@ sap.ui.define([
 	ElementOverlay.prototype._loadDesignTimeMetadata = function() {
 		return this.getElement().getMetadata().loadDesignTime(this.getElement(), this.getMetadataScope())
 		.then(function(mDesignTimeMetadata) {
-			var oElement = this.getElement();
+			const oElement = this.getElement();
 
 			// if element is destroyed during designtime metadata loading
 			if (!oElement || oElement.bIsDestroyed) {
@@ -377,13 +375,14 @@ sap.ui.define([
 		// Apply Overlay position first, then extra logic based on this new position
 		Overlay.prototype._setPosition.apply(this, aArgs);
 
-		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-			// TODO: write Unit test for the case when getAssociatedDomRef() returns undefined (domRef func returns undefined)
-			var oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || undefined;
-			var oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+		const aScrollContainers = this.getScrollContainers();
+
+		aScrollContainers.forEach(function(mScrollContainer, iIndex) {
+			const oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
+			const oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
 			if (oScrollContainerDomRef) {
-				var mScrollContainerGeometry = DOMUtil.getGeometry(oScrollContainerDomRef);
+				const mScrollContainerGeometry = DOMUtil.getGeometry(oScrollContainerDomRef);
 				this._ensureVisibility(oScrollContainerOverlayDomRef);
 				this._setSize(oScrollContainerOverlayDomRef, mScrollContainerGeometry);
 				Overlay.prototype._setPosition.call(this, oScrollContainerOverlayDomRef, mScrollContainerGeometry, this.getDomRef());
@@ -402,8 +401,8 @@ sap.ui.define([
 			this._sortChildren(this.getChildrenDomRef());
 			if (!this.bIsDestroyed) {
 				this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-					var oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
-					var oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+					const oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
+					const oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
 					if (oScrollContainerDomRef) {
 						this._sortChildren(oScrollContainerOverlayDomRef);
@@ -425,12 +424,12 @@ sap.ui.define([
 		function compareChildren(mChildrenGeometry, oChild1, oChild2) {
 			const oGeometry1 = mChildrenGeometry.get(oChild1);
 			const oGeometry2 = mChildrenGeometry.get(oChild2);
-			var oPosition1 = oGeometry1 && oGeometry1.position;
-			var oPosition2 = oGeometry2 && oGeometry2.position;
+			const oPosition1 = oGeometry1 && oGeometry1.position;
+			const oPosition2 = oGeometry2 && oGeometry2.position;
 
 			if (oPosition1 && oPosition2) {
-				var iBottom1 = oPosition1.top + oGeometry1.size.height;
-				var iBottom2 = oPosition2.top + oGeometry2.size.height;
+				const iBottom1 = oPosition1.top + oGeometry1.size.height;
+				const iBottom2 = oPosition2.top + oGeometry2.size.height;
 
 				if (oPosition1.top < oPosition2.top) {
 					if (iBottom1 >= iBottom2 && oPosition2.left < oPosition1.left) {
@@ -490,7 +489,7 @@ sap.ui.define([
 		// drops into in different event loops (JS execution cycles) which leads to invalid intermediate position
 		// on the screen with following sorting. That said, sorting happens for intermediate state and then for real
 		// state of the elements in viewport once again. Thus, excluding these elements allow us to avoid 2 extra sortings.
-		var aChildren = Array.from(oContainer.querySelectorAll(":scope >:not(.sapUiDtDummyScrollContainer)"));
+		const aChildren = Array.from(oContainer.querySelectorAll(":scope >:not(.sapUiDtDummyScrollContainer)"));
 		// Batch all geometry reads up front (one per child) before any comparison, so the sort
 		// does not interleave reads with the writes that just positioned these nodes.
 		const mChildrenGeometry = new Map(aChildren.map(function(oChild) {
@@ -498,7 +497,7 @@ sap.ui.define([
 		}));
 		const aSorted = aChildren.slice().sort(compareChildren.bind(null, mChildrenGeometry));
 
-		var bOrderChanged = aChildren.some(function(oChild, iIndex) {
+		const bOrderChanged = aChildren.some(function(oChild, iIndex) {
 			return oChild !== aSorted[iIndex];
 		});
 
@@ -537,8 +536,8 @@ sap.ui.define([
 	 * @override
 	 */
 	ElementOverlay.prototype.setDesignTimeMetadata = function(vDesignTimeMetadata) {
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var mDesignTimeMetadata;
+		let oDesignTimeMetadata = this.getDesignTimeMetadata();
+		let mDesignTimeMetadata;
 
 		if (typeof vDesignTimeMetadata === "function") {
 			if (!oDesignTimeMetadata) {
@@ -558,7 +557,7 @@ sap.ui.define([
 			mDesignTimeMetadata = vDesignTimeMetadata;
 
 			// enhance metadata by custom functions
-			var fnEnhancer;
+			let fnEnhancer;
 			while (fnEnhancer = this._aMetadataEnhancers.shift()) { // eslint-disable-line no-cond-assign
 				mDesignTimeMetadata = fnEnhancer.call(this, mDesignTimeMetadata);
 			}
@@ -588,10 +587,10 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementOverlay.prototype._renderChildren = function(...aArgs) {
-		var aChildren = Overlay.prototype._renderChildren.apply(this, aArgs);
+		const aChildren = Overlay.prototype._renderChildren.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-			var oScrollContainer = document.createElement("div");
+			const oScrollContainer = document.createElement("div");
 			oScrollContainer.classList.add(S_SCROLLCONTAINER_CLASSNAME);
 			oScrollContainer.setAttribute("data-sap-ui-dt-scrollContainerIndex", iIndex);
 			oScrollContainer.setAttribute("tabindex", -1);
@@ -601,8 +600,8 @@ sap.ui.define([
 					mScrollContainer.aggregations,
 					this.getAggregationNames()
 				).forEach(function(sAggregationName) {
-					var oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
-					var iAggregationOverlayIndex = aChildren.indexOf(oAggregationOverlay.getDomRef());
+					const oAggregationOverlay = this.getAggregationOverlay(sAggregationName);
+					const iAggregationOverlayIndex = aChildren.indexOf(oAggregationOverlay.getDomRef());
 					oAggregationOverlay.setScrollContainerId(iIndex);
 					oScrollContainer.append(aChildren[iAggregationOverlayIndex]);
 					aChildren.splice(iAggregationOverlayIndex, 1);
@@ -629,9 +628,9 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var vDomRef = oDesignTimeMetadata?.getDomRef();
-		var oDomRef = oDesignTimeMetadata?.getAssociatedDomRef(this.getElement(), vDomRef);
+		const oDesignTimeMetadata = this.getDesignTimeMetadata();
+		const vDomRef = oDesignTimeMetadata?.getDomRef();
+		let oDomRef = oDesignTimeMetadata?.getAssociatedDomRef(this.getElement(), vDomRef);
 		oDomRef ||= ElementUtil.getDomRef(this.getElement());
 
 		if (oDomRef) {
@@ -673,9 +672,9 @@ sap.ui.define([
 			this.setProperty("selected", bSelected);
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
 
-			var mAggregationBindingInfo = OverlayUtil.getClosestBoundControl(this);
+			const mAggregationBindingInfo = OverlayUtil.getClosestBoundControl(this);
 			if (mAggregationBindingInfo.overlayId) {
-				var oBoundOverlay = OverlayRegistry.getOverlay(mAggregationBindingInfo.overlayId);
+				const oBoundOverlay = OverlayRegistry.getOverlay(mAggregationBindingInfo.overlayId);
 				highlightTemplateCloneElements(mAggregationBindingInfo, oBoundOverlay);
 			}
 
@@ -689,9 +688,9 @@ sap.ui.define([
 
 	function highlightTemplateCloneElements(mAggregationBindingInfo, oElementOverlay, iStackIndex) {
 		iStackIndex = iStackIndex === undefined ? mAggregationBindingInfo.stack.length - 1 : iStackIndex;
-		var mStackEntry = mAggregationBindingInfo.stack[iStackIndex];
-		var bLastStackEntry = iStackIndex === 0;
-		var bTemplateSelected = mAggregationBindingInfo.stack.length === 1;
+		const mStackEntry = mAggregationBindingInfo.stack[iStackIndex];
+		const bLastStackEntry = iStackIndex === 0;
+		const bTemplateSelected = mAggregationBindingInfo.stack.length === 1;
 		if (mStackEntry) {
 			oElementOverlay.getChildren().forEach(function(oChildAggregationOverlay) {
 				if (oChildAggregationOverlay.getAggregationName() === mStackEntry.aggregation) {
@@ -780,9 +779,9 @@ sap.ui.define([
 	 * @returns {string[]} - aggregation names
 	 */
 	ElementOverlay.prototype.getAggregationNames = function() {
-		var oElement = this.getElement();
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var mAggregations = oElement.getMetadata().getAllAggregations();
+		const oElement = this.getElement();
+		const oDesignTimeMetadata = this.getDesignTimeMetadata();
+		const mAggregations = oElement.getMetadata().getAllAggregations();
 
 		return []
 		.concat(Object.keys(mAggregations), Object.keys(oDesignTimeMetadata.getAggregations()))
@@ -799,9 +798,9 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent - event object
 	 */
 	ElementOverlay.prototype._onChildAdded = function(oEvent) {
-		var oAggregationOverlay = oEvent.getSource();
+		const oAggregationOverlay = oEvent.getSource();
 		if (this.isRendered() && !oAggregationOverlay.isRendered()) {
-			var oTarget = (
+			const oTarget = (
 				Util.isInteger(oAggregationOverlay.getScrollContainerId())
 					? this.getScrollContainerById(oAggregationOverlay.getScrollContainerId())
 					: this.getChildrenDomRef()
@@ -862,7 +861,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementDestroyed = function(oEvent) {
-		var sElementId = oEvent.getSource().getTarget();
+		const sElementId = oEvent.getSource().getTarget();
 		this.fireElementDestroyed({ targetId: sElementId });
 		if (this._bInit) {
 			this.destroy();
@@ -879,7 +878,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getAggregationOverlay = function(sAggregationName, sAggregationType) {
-		var sGetterFunction = `get${sAggregationType || "Children"}`;
+		const sGetterFunction = `get${sAggregationType || "Children"}`;
 		return this[sGetterFunction]().filter(function(oAggregationOverlay) {
 			return oAggregationOverlay.getAggregationName() === sAggregationName;
 		}).pop();
@@ -891,7 +890,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getParentElementOverlay = function() {
-		var oParentAggregationOverlay = this.getParentAggregationOverlay();
+		const oParentAggregationOverlay = this.getParentAggregationOverlay();
 		if (oParentAggregationOverlay) {
 			return oParentAggregationOverlay.getParent();
 		}
@@ -904,7 +903,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getParentAggregationOverlay = function() {
-		var oParentAggregationOverlay = this.getParent();
+		const oParentAggregationOverlay = this.getParent();
 		return BaseObject.isObjectA(oParentAggregationOverlay, "sap.ui.dt.AggregationOverlay") ? oParentAggregationOverlay : null;
 	};
 
@@ -950,9 +949,9 @@ sap.ui.define([
 	 * @return {boolean} if the overlay's elementInstance is editable
 	 */
 	ElementOverlay.prototype._getElementInstanceVisible = function() {
-		var oElement = this.getElement();
+		const oElement = this.getElement();
 		if (oElement) {
-			var oGeometry = this.getGeometry();
+			const oGeometry = this.getGeometry();
 			return oGeometry && oGeometry.visible;
 		}
 		return false;
@@ -965,12 +964,12 @@ sap.ui.define([
 	 * @returns {boolean|undefined} Returns the visibility of the associated Element or undefined, if it is not a control and has no domRef
 	 */
 	ElementOverlay.prototype.getElementVisibility = function() {
-		var oElement = this.getElement();
+		const oElement = this.getElement();
 		if (oElement instanceof Control) {
 			return oElement.getVisible();
 		}
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var fnisVisible = oDesignTimeMetadata && oDesignTimeMetadata.getData().isVisible;
+		const oDesignTimeMetadata = this.getDesignTimeMetadata();
+		const fnisVisible = oDesignTimeMetadata && oDesignTimeMetadata.getData().isVisible;
 		if (!fnisVisible) {
 			return undefined;
 		}
@@ -978,17 +977,17 @@ sap.ui.define([
 	};
 
 	ElementOverlay.prototype.isElementVisible = function() {
-		var oElement = this.getElement();
-		var bVisible = false;
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var oDTData = oDesignTimeMetadata.getData();
+		const oElement = this.getElement();
+		let bVisible = false;
+		const oDesignTimeMetadata = this.getDesignTimeMetadata();
+		const oDTData = oDesignTimeMetadata.getData();
 
 		if (oDesignTimeMetadata.isIgnored(oElement)) {
 			bVisible = false;
 		} else if (typeof oDTData.isVisible === "function") {
 			bVisible = oDTData.isVisible(oElement);
 		} else {
-			var oGeometry = this.getGeometry();
+			const oGeometry = this.getGeometry();
 			if (oGeometry) {
 				bVisible = oGeometry.visible;
 			} else if (oElement instanceof Control) {
@@ -1013,7 +1012,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getRelevantContainer = function(bForParent) {
-		var oDesignTimeMetadata = this.getDesignTimeMetadata();
+		const oDesignTimeMetadata = this.getDesignTimeMetadata();
 		if (oDesignTimeMetadata &&
 			oDesignTimeMetadata.getData().relevantContainer) {
 			return oDesignTimeMetadata.getData().relevantContainer;
@@ -1021,26 +1020,23 @@ sap.ui.define([
 			return this.getElement();
 		}
 		// setting the default value to direct parent
-		var oParentOverlay = this.getParentElementOverlay();
+		const oParentOverlay = this.getParentElementOverlay();
 		return oParentOverlay ? oParentOverlay.getElement() : undefined;
 	};
 
-	ElementOverlay.prototype._hasSameSize = function(mScrollContainerGeometry, sType) {
-		var aScrollContainers = this.getScrollContainers();
-		var iSize;
-
-		if (aScrollContainers.length) {
-			iSize = _max(
-				aScrollContainers.map(function(mScrollContainer, iIndex) {
-					var mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex));
-					return mGeometry.size[sType];
-				}, this)
-			);
-		} else {
-			iSize = this.getGeometry().size[sType];
+	ElementOverlay.prototype._getMaxScrollContainerSize = function() {
+		const aScrollContainers = this.getScrollContainers();
+		if (!aScrollContainers.length) {
+			return this.getGeometry()?.size;
 		}
-
-		return mScrollContainerGeometry.size[sType] === iSize;
+		return aScrollContainers.reduce((mMax, mScrollContainer, iIndex) => {
+			const mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex));
+			if (!mGeometry) { return mMax; }
+			return {
+				width: Math.max(mMax.width, mGeometry.size.width),
+				height: Math.max(mMax.height, mGeometry.size.height)
+			};
+		}, { width: 0, height: 0 });
 	};
 
 	/**

@@ -1081,6 +1081,20 @@ sap.ui.define([
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop = 100;
 		});
 
+		QUnit.test("when the scroll container's associated domRef cannot be resolved (getAssociatedDomRef returns undefined)", async function(assert) {
+			const oDesignTimeMetadata = this.oSimpleScrollControlOverlay.getDesignTimeMetadata();
+			sandbox.stub(oDesignTimeMetadata, "getAssociatedDomRef").returns(undefined);
+
+			await this.oSimpleScrollControlOverlay.applyStyles();
+
+			const oScrollContainerOverlayDomRef = this.oSimpleScrollControlOverlay.getScrollContainerById(0);
+			assert.strictEqual(
+				window.getComputedStyle(oScrollContainerOverlayDomRef).display,
+				"none",
+				"then the scroll container overlay is hidden"
+			);
+		});
+
 		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
 			var fnDone = assert.async();
 			var mInitialValues = createInitialScrollHandlerValues.call(this);

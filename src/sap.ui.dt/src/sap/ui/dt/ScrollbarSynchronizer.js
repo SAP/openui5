@@ -27,7 +27,7 @@ function(
 	 * @since 1.54
 	 * @alias sap.ui.dt.ScrollbarSynchronizer
 	 */
-	var ScrollbarSynchronizer = ManagedObject.extend("sap.ui.dt.ScrollbarSynchronizer", {
+	const ScrollbarSynchronizer = ManagedObject.extend("sap.ui.dt.ScrollbarSynchronizer", {
 		metadata: {
 			library: "sap.ui.dt",
 			properties: {
@@ -67,7 +67,7 @@ function(
 	 * @param {Element|Element[]} vTarget Target element or array of target elements
 	 */
 	ScrollbarSynchronizer.prototype.setTargets = function(vTarget) {
-		var aTargets = Array.isArray(vTarget) ? vTarget : [vTarget];
+		const aTargets = Array.isArray(vTarget) ? vTarget : [vTarget];
 
 		// 1. detach scroll events from old targets
 		this.getTargets().forEach(this.removeTarget.bind(this));
@@ -95,7 +95,7 @@ function(
 	 * Pass any number of elements to this function to add them as targets
 	 */
 	ScrollbarSynchronizer.prototype.addTarget = function(...aArgs) {
-		var aTargets = Array.prototype.slice.call(aArgs);
+		const aTargets = Array.prototype.slice.call(aArgs);
 
 		if (!aTargets.length) {
 			return;
@@ -103,7 +103,7 @@ function(
 
 		this._removeDeadNodes();
 		aTargets.forEach(this._attachScrollEvent, this);
-		var aNextTargets = this.getTargets().concat(aTargets);
+		const aNextTargets = this.getTargets().concat(aTargets);
 		this.setProperty("targets", aNextTargets);
 		this.sync(aNextTargets[0]);
 	};
@@ -150,23 +150,33 @@ function(
 		) {
 			this.setScrollTop(oSourceDomNode.scrollTop);
 			this.setScrollLeft(oSourceDomNode.scrollLeft);
+
 			if (this._bSyncing) {
 				this._abortSync();
 			}
 
+			if (bForce) {
+				// Synchronous fast-path for layout-driven calls (bForce=true):
+				// apply positions immediately instead of scheduling a new requestAnimationFrame (rAF),
+				// so the scroll correction lands in the same layout pass as the caller,
+				// avoiding extra UpdateLayoutTree cycles from deferred rAF flushes.
+				this._syncTargets(oSourceDomNode);
+				this.fireSynced();
+				return;
+			}
+
 			this._bSyncing = true;
 			this.animationFrame = window.requestAnimationFrame(function() {
-				this.getTargets()
-				.filter(function(oDomNode) {
-					return oSourceDomNode !== oDomNode;
-				})
-				.forEach(function(oDomNode) {
-					DOMUtil.syncScroll(oSourceDomNode, oDomNode);
-				});
+				this._syncTargets(oSourceDomNode);
 				this._bSyncing = false;
 				this.fireSynced();
 			}.bind(this));
 		}
+	};
+
+	ScrollbarSynchronizer.prototype._syncTargets = function(oSourceDomNode) {
+		const aTargets = this.getTargets().filter((oDomNode) => oSourceDomNode !== oDomNode);
+		DOMUtil.syncScroll(oSourceDomNode, aTargets);
 	};
 
 	ScrollbarSynchronizer.prototype._abortSync = function() {

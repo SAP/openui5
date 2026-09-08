@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @alias sap.ui.dt.DOMUtil
 	 */
 
-	var DOMUtil = {};
+	const DOMUtil = {};
 
 	/**
 	 * Derives the document offset from an already-read bounding client rect.
@@ -62,7 +62,7 @@ sap.ui.define([
 	 * @returns {Array} aParents - Array containing Parents which match selector
 	 */
 	DOMUtil.getParents = function(oElement, sSelector) {
-		var aParents = [];
+		const aParents = [];
 		while ((oElement = oElement.parentNode) && oElement !== document) {
 			if (!sSelector || oElement.matches(sSelector)) {
 				aParents.unshift(oElement);
@@ -88,12 +88,12 @@ sap.ui.define([
 	 * @returns {PositionObject} the calculated offset containing left and top values
 	 */
 	DOMUtil.getOffsetFromParent = function(oGeometry, oParent) {
-		var iScrollTop = oParent ? oParent.scrollTop : null;
-		var iScrollLeft = oParent ? DOMUtil.getScrollLeft(oParent) : null;
+		const iScrollTop = oParent ? oParent.scrollTop : null;
+		const iScrollLeft = oParent ? DOMUtil.getScrollLeft(oParent) : null;
 
-		var mParentOffset = oParent ? DOMUtil.getOffset(oParent) : null;
+		const mParentOffset = oParent ? DOMUtil.getOffset(oParent) : null;
 
-		var mOffset = {
+		const mOffset = {
 			left: oGeometry.position.left,
 			top: oGeometry.position.top
 		};
@@ -104,7 +104,7 @@ sap.ui.define([
 		}
 
 		if (Localization.getRTL()) {
-			var iParentWidth = oParent ? oParent.offsetWidth : window.innerWidth;
+			const iParentWidth = oParent ? oParent.offsetWidth : window.innerWidth;
 			// TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
 			if (Device.browser.safari && !Device.browser.mobile && DOMUtil.hasVerticalScrollBar(oParent)) {
 				mOffset.left -= DOMUtil.getScrollbarWidth();
@@ -132,11 +132,11 @@ sap.ui.define([
 			return oElement.scrollLeft;
 		}
 
-		var iScrollLeftRTL = jQuery(oElement).scrollLeftRTL();
+		const iScrollLeftRTL = jQuery(oElement).scrollLeftRTL();
 
 		// jQuery scrollLeftRTL function considers zero scrollLeft when the scrollBar is all the way to the left
 		// and moves positively to the right
-		var iMaxScrollValue = oElement.scrollWidth - oElement.clientWidth;
+		const iMaxScrollValue = oElement.scrollWidth - oElement.clientWidth;
 		return iScrollLeftRTL - iMaxScrollValue;
 	};
 
@@ -154,12 +154,12 @@ sap.ui.define([
 	};
 
 	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection) {
-		var oRelevantDomRef = oDomRef[0] || oDomRef;
-		var iOffsetWidth = oRelevantDomRef[`offset${sMeasure}`];
-		var iValue = 0;
-		for (var i = 0; i < 2; i++) {
+		const oRelevantDomRef = oDomRef[0] || oDomRef;
+		const iOffsetWidth = oRelevantDomRef[`offset${sMeasure}`];
+		let iValue = 0;
+		for (let i = 0; i < 2; i++) {
 			// remove border
-			var sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)[`border${aDirection[ i ]}${sMeasure}`];
+			const sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)[`border${aDirection[ i ]}${sMeasure}`];
 			iValue -= sBorderMeasure ? parseInt(sBorderMeasure.slice(0, -2)) : 0;
 		}
 		return iOffsetWidth + iValue;
@@ -180,7 +180,7 @@ sap.ui.define([
 	 */
 	DOMUtil.hasVerticalScrollBar = function(oDomRef) {
 		if (oDomRef) {
-			var bOverflowYScroll = window.getComputedStyle(oDomRef)["overflow-y"] === "auto" || window.getComputedStyle(oDomRef)["overflow-y"] === "scroll";
+			const bOverflowYScroll = window.getComputedStyle(oDomRef)["overflow-y"] === "auto" || window.getComputedStyle(oDomRef)["overflow-y"] === "scroll";
 			return bOverflowYScroll && oDomRef.scrollHeight > DOMUtil._getElementHeight(oDomRef);
 		}
 		return false;
@@ -193,7 +193,7 @@ sap.ui.define([
 	 */
 	DOMUtil.hasHorizontalScrollBar = function(oDomRef) {
 		if (oDomRef) {
-			var bOverflowXScroll = window.getComputedStyle(oDomRef)["overflow-x"] === "auto" || window.getComputedStyle(oDomRef)["overflow-x"] === "scroll";
+			const bOverflowXScroll = window.getComputedStyle(oDomRef)["overflow-x"] === "auto" || window.getComputedStyle(oDomRef)["overflow-x"] === "scroll";
 			return bOverflowXScroll && oDomRef.scrollWidth > DOMUtil._getElementWidth(oDomRef);
 		}
 		return false;
@@ -215,22 +215,22 @@ sap.ui.define([
 	DOMUtil.getScrollbarWidth = function() {
 		if (typeof DOMUtil.getScrollbarWidth._cache === "undefined") {
 			// add outer div
-			var oOuter = document.createElement("div");
+			const oOuter = document.createElement("div");
 			oOuter.style.position = "absolute";
 			oOuter.style.top = "-9999px";
 			oOuter.style.left = "-9999px";
 			oOuter.style.width = "100px";
 			document.body.append(oOuter);
 
-			var iWidthNoScroll = oOuter.offsetWidth;
+			const iWidthNoScroll = oOuter.offsetWidth;
 			oOuter.style.overflow = "scroll";
 
 			// add inner div
-			var oInner = document.createElement("div");
+			const oInner = document.createElement("div");
 			oInner.style.width = "100%";
 			oOuter.append(oInner);
 
-			var iWidthWithScroll = oInner.offsetWidth;
+			const iWidthWithScroll = oInner.offsetWidth;
 
 			// clean up
 			oOuter.remove();
@@ -246,9 +246,10 @@ sap.ui.define([
 	 * @returns {object} Object with overflowX and overflowY
 	 */
 	DOMUtil.getOverflows = function(oDomRef) {
+		const oStyle = window.getComputedStyle(oDomRef);
 		return {
-			overflowX: window.getComputedStyle(oDomRef)["overflow-x"],
-			overflowY: window.getComputedStyle(oDomRef)["overflow-y"]
+			overflowX: oStyle["overflow-x"],
+			overflowY: oStyle["overflow-y"]
 		};
 	};
 
@@ -276,19 +277,30 @@ sap.ui.define([
 		return undefined;
 	};
 
-	DOMUtil.syncScroll = function(oSourceDom, oTargetDom) {
-		var oTargetScrollTop = oTargetDom.scrollTop;
-		var oTargetScrollLeft = oTargetDom.scrollLeft;
-		var oSourceScrollTop = oSourceDom.scrollTop;
-		var oSourceScrollLeft = oSourceDom.scrollLeft;
+	/**
+	 * Synchronizes the scroll position of one or more target DOM nodes with a source DOM node.
+	 * When multiple targets are passed, all scroll positions are read before any write, so that
+	 * iterating over the targets does not trigger write-then-read reflows.
+	 * @param {Element} oSourceDom - Element whose scroll position is the source of truth
+	 * @param {Element|Element[]} vTargetDom - Target element, or array of target elements, to synchronize
+	 */
+	DOMUtil.syncScroll = function(oSourceDom, vTargetDom) {
+		const aTargets = Array.isArray(vTargetDom) ? vTargetDom : [vTargetDom];
+		const iSourceScrollTop = oSourceDom.scrollTop;
+		const iSourceScrollLeft = oSourceDom.scrollLeft;
+		const aTargetScrollPositions = aTargets.map((oTargetDom) => ({
+			scrollTop: oTargetDom.scrollTop,
+			scrollLeft: oTargetDom.scrollLeft
+		}));
 
-		if (oSourceScrollTop !== oTargetScrollTop) {
-			oTargetDom.scrollTop = oSourceScrollTop;
-		}
-
-		if (oSourceScrollLeft !== oTargetScrollLeft) {
-			oTargetDom.scrollLeft = oSourceScrollLeft;
-		}
+		aTargets.forEach((oTargetDom, iIndex) => {
+			if (iSourceScrollTop !== aTargetScrollPositions[iIndex].scrollTop) {
+				oTargetDom.scrollTop = iSourceScrollTop;
+			}
+			if (iSourceScrollLeft !== aTargetScrollPositions[iIndex].scrollLeft) {
+				oTargetDom.scrollLeft = iSourceScrollLeft;
+			}
+		});
 	};
 
 	/**
@@ -328,9 +340,9 @@ sap.ui.define([
 	 */
 	DOMUtil.isVisible = function(oDomRef) {
 		if (oDomRef) {
-			var oBBox = oDomRef.getBBox && oDomRef.getBBox();
-			var iWidth = oBBox ? oBBox.width : oDomRef.offsetWidth;
-			var iHeight = oBBox ? oBBox.height : oDomRef.offsetHeight;
+			const oBBox = oDomRef.getBBox && oDomRef.getBBox();
+			const iWidth = oBBox ? oBBox.width : oDomRef.offsetWidth;
+			const iHeight = oBBox ? oBBox.height : oDomRef.offsetHeight;
 			return iWidth > 0 && iHeight > 0;
 		}
 		return false;
@@ -343,11 +355,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DOMUtil._copyStylesTo = function(oStyles, oDest) {
-		var sStyles = "";
-		var sStyle = "";
-		var iLength = oStyles.length;
+		let sStyles = "";
+		let sStyle = "";
+		const iLength = oStyles.length;
 		// Styles is an array, but has some special access functions
-		for (var i = 0; i < iLength; i++) {
+		for (let i = 0; i < iLength; i++) {
 			sStyle = oStyles[i];
 			sStyles = `${sStyles + sStyle}:${oStyles.getPropertyValue(sStyle)};`;
 		}
@@ -356,8 +368,8 @@ sap.ui.define([
 	};
 
 	DOMUtil._copyPseudoElement = function(sPseudoElement, oSrc, oDest) {
-		var mStyles = window.getComputedStyle(oSrc, sPseudoElement);
-		var sContent = mStyles.getPropertyValue("content");
+		const mStyles = window.getComputedStyle(oSrc, sPseudoElement);
+		let sContent = mStyles.getPropertyValue("content");
 		if (sContent && sContent !== "none") {
 			sContent = String(sContent).trim();
 			if (sContent.indexOf("attr(") === 0) {
@@ -371,7 +383,7 @@ sap.ui.define([
 
 			// pseudo elements can't be inserted via js, so we should create a real elements,
 			// which copy pseudo styling
-			var oPseudoElement = document.createElement("span");
+			const oPseudoElement = document.createElement("span");
 			if (sPseudoElement === ":after") {
 				oDest.appendChild(oPseudoElement);
 			} else {
@@ -385,7 +397,7 @@ sap.ui.define([
 	};
 
 	DOMUtil.copyComputedStyle = function(oSrc, oDest) {
-		var mStyles = window.getComputedStyle(oSrc);
+		const mStyles = window.getComputedStyle(oSrc);
 
 		if (mStyles.getPropertyValue("display") === "none") {
 			oDest.style.display = "none";
@@ -399,7 +411,7 @@ sap.ui.define([
 	};
 
 	DOMUtil.copyComputedStyles = function(oSrc, oDest) {
-		for (var i = 0; i < oSrc.children.length; i++) {
+		for (let i = 0; i < oSrc.children.length; i++) {
 			DOMUtil.copyComputedStyles(oSrc.children[i], oDest.children[i]);
 		}
 
@@ -416,7 +428,7 @@ sap.ui.define([
 	};
 
 	DOMUtil.cloneDOMAndStyles = function(oNode, oTarget) {
-		var oCopy = oNode.cloneNode(true);
+		const oCopy = oNode.cloneNode(true);
 		DOMUtil.copyComputedStyles(oNode, oCopy);
 
 		oTarget.append(oCopy);
@@ -429,7 +441,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if a potential parent contains the target node
 	 */
 	DOMUtil.contains = function(sId, oTargetNode) {
-		var oNode = document.getElementById(sId);
+		const oNode = document.getElementById(sId);
 		return !!oNode && oNode.contains(oTargetNode);
 	};
 
@@ -439,8 +451,8 @@ sap.ui.define([
 	 * @param {HTMLElement} oChildNode - Child node to be appended to specified target
 	 */
 	DOMUtil.appendChild = function(oTargetNode, oChildNode) {
-		var iScrollTop = oChildNode.scrollTop;
-		var iScrollLeft = oChildNode.scrollLeft;
+		const iScrollTop = oChildNode.scrollTop;
+		const iScrollLeft = oChildNode.scrollLeft;
 		oTargetNode.appendChild(oChildNode);
 		oChildNode.scrollTop = iScrollTop;
 		oChildNode.scrollLeft = iScrollLeft;
