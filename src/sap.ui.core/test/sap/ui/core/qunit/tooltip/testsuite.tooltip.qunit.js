@@ -31,22 +31,16 @@ sap.ui.define(function() {
 				}
 			},
 			TooltipEnablement: {
-				title: "QUnit Page for sap.ui.core.tooltip.TooltipEnablement",
-				ui5: {
-					libs: "sap.m"
-				}
+				title: "QUnit Page for sap.ui.core.tooltip.TooltipEnablement"
 			},
 			TooltipEventTrigger: {
-				title: "QUnit Page for sap.ui.core.tooltip.TooltipEventTrigger",
-				ui5: {
-					libs: "sap.m"
-				}
+				title: "QUnit Page for sap.ui.core.tooltip.TooltipEventTrigger"
+			},
+			TooltipFocusGuard: {
+				title: "QUnit Page for sap.ui.core.tooltip.TooltipFocusGuard"
 			},
 			TooltipManager: {
-				title: "QUnit Page for sap.ui.core.tooltip.TooltipManager",
-				ui5: {
-					libs: "sap.m"
-				}
+				title: "QUnit Page for sap.ui.core.tooltip.TooltipManager"
 			}
 		}
 	};
