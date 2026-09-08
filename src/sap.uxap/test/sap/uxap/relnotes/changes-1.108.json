@@ -195,5 +195,37 @@
         "text": " sap.m.Button: Press event is fired correctly on pressing SPACE"
       }
     ]
+  },
+  "1.108.54": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "e324a51d3133f2085660d04af8fe95ad00a2e2b5",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fix failing QUnits",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280193628"
+          }
+        ]
+      },
+      {
+        "id": "4a4796b2ee5df55f764af2fe6844d5773b14e940",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: Fix failing QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280188051"
+          }
+        ]
+      },
+      {
+        "id": "9cef24cb2e602f4fcce722d5d0fa96ef04faddc6",
+        "type": "FIX",
+        "text": " sap.uxap.AnchorBar: fix Firefox-flaky resize test"
+      }
+    ]
   }
 }

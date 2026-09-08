@@ -2048,5 +2048,15 @@
         "text": " We've now fixed the scroll arrow buttons not working when a single item is larger than the HeaderContainer"
       }
     ]
+  },
+  "1.108.54": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "650af9ba345d8e59a46a3e86cf12253cd4730516",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Dialog opens when tapping on mobile"
+      }
+    ]
   }
 }
