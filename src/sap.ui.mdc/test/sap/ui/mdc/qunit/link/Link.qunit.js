@@ -833,6 +833,30 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.test("createPopover - open it multiple times should not throw errors", async function (assert) {
+		const done = assert.async();
+		const oLink = new Link();
+		const oText = new Text({
+			text: "Dummy Text"
+		});
+
+		oText.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		let bExceptionRaised = false;
+		try {
+			await Promise.all([
+				oLink.open(oText), oLink.open(oText), oLink.open(oText)
+			]);
+		} catch (e) {
+			bExceptionRaised = true;
+		} finally {
+			assert.notOk(bExceptionRaised);
+			done();
+		}
+	});
+
 	QUnit.test("createPopover - without links, without additional content", async function(assert) {
 		const done = assert.async();
 
