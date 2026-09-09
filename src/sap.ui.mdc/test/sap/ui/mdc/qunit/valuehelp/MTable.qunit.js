@@ -2354,6 +2354,11 @@ sap.ui.define([
 			iConfirm++;
 		});
 
+		oTable.setGrowing(true);
+		oTable.setGrowingThreshold(10);
+		sinon.spy(ValueHelpDelegate, "checkListBindingPending");
+		const oListBinding = oTable.getBinding("items");
+
 		oMTable.setFilterValue("X");
 		const oContent = oMTable.getContent();
 
@@ -2383,6 +2388,7 @@ sap.ui.define([
 				assert.equal(oScrollContainer.getContent().length, 1, "ScrollContainer number of items");
 				assert.equal(oScrollContainer.getContent()[0], oTable, "Table inside ScrollContainer");
 				assert.equal(oMTable.getScrollDelegate(), oScrollContainer.getScrollDelegate(), "ScrollDelegate");
+				assert.ok(ValueHelpDelegate.checkListBindingPending.calledWith(oValueHelp, oListBinding, 10), "ValuehelpDelegate.checkListBindingPending called with growingTreshold");
 
 				assert.equal(oTable.getMode(), ListMode.MultiSelect, "Table mode");
 				// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
@@ -2428,9 +2434,11 @@ sap.ui.define([
 
 				oMTable.onHide();
 				assert.notOk(oTable.hasStyleClass("sapMComboBoxList"), "List style class sapMComboBoxList removed");
+				ValueHelpDelegate.checkListBindingPending.restore();
 			});
 		}).catch((oError) => {
 			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+			ValueHelpDelegate.checkListBindingPending.restore();
 		});
 
 	});

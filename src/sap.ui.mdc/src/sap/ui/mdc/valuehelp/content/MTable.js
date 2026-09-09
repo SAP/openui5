@@ -277,7 +277,8 @@ sap.ui.define([
 			const oValueHelp = this.getValueHelpInstance();
 
 			const oListBindingInfo = this.getListBindingInfo();
-			const iLength = oListBindingInfo && oListBindingInfo.length;
+			const oTable = this._getTable();
+			const iLength = oTable.getGrowing() ? oTable.getGrowingThreshold() : oListBindingInfo?.length; // in growing mode for first request, use trashold
 			oDelegate.updateBindingInfo(oValueHelp, this, oListBindingInfo);
 			oDelegate.updateBinding(oValueHelp, oListBinding, oListBindingInfo, this);
 			oFilterApplicationPromise = Promise.resolve(oDelegate.checkListBindingPending(oValueHelp, oListBinding, iLength));
