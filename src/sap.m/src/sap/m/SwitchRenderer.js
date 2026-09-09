@@ -35,7 +35,6 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 			sTooltip = oSwitch.getTooltip_AsString(),
 			bEnabled = oSwitch.getEnabled(),
 			bEditable = oSwitch.getEditable(),
-			bReadOnly = bEnabled && !bEditable,
 			sName = oSwitch.getName(),
 			bAccessibilityEnabled = ControlBehavior.isAccessibilityEnabled(),
 			sAnimationMode = ControlBehavior.getAnimationMode(),
@@ -48,7 +47,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 			oRm.class(CSS_CLASS + "ContDisabled");
 		}
 
-		if (bReadOnly) {
+		if (!bEditable) {
 			oRm.class(CSS_CLASS + "ContReadOnly");
 		}
 
@@ -82,7 +81,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 			oRm.class(CSS_CLASS + "Disabled");
 		}
 
-		if (bReadOnly) {
+		if (!bEditable) {
 			oRm.class(CSS_CLASS + "ReadOnly");
 		}
 
@@ -198,9 +197,7 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 	 */
 	SwitchRenderer.writeAccessibilityState = function(oRm, oSwitch) {
 		var mAriaLabelledby = oSwitch.getAriaLabelledBy(),
-			bEnabled = oSwitch.getEnabled(),
 			bEditable = oSwitch.getEditable(),
-			bReadOnly = bEnabled && !bEditable,
 			mAccessibilityStates,
 			bState = oSwitch.getState(),
 			oInvisibleText = oSwitch.getInvisibleElementText(bState);
@@ -216,10 +213,10 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 			role: "switch",
 			checked: oSwitch.getState(),
 			labelledby: mAriaLabelledby,
-			readonly: bReadOnly ? true : undefined
+			readonly: !bEditable ? true : undefined
 		};
 
-		if (bReadOnly) {
+		if (!bEditable) {
 			mAccessibilityStates.describedby = {
 				value: oSwitch._getDescribedByElementId(),
 				append: true

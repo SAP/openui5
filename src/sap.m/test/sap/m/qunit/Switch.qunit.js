@@ -527,6 +527,54 @@ sap.ui.define([
 		}
 	}
 
+	QUnit.test("disabled switch has disabled CSS classes and no read-only CSS classes", function (assert) {
+		// arrange
+		var oSwitch = new Switch({ enabled: false, editable: true });
+		oSwitch.placeAt("content");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oSwitch.$().hasClass("sapMSwtContDisabled"), 'Container has "sapMSwtContDisabled"');
+		assert.ok(oSwitch.$().children(".sapMSwt").hasClass("sapMSwtDisabled"), 'Switch has "sapMSwtDisabled"');
+		assert.notOk(oSwitch.$().hasClass("sapMSwtContReadOnly"), 'Container does not have "sapMSwtContReadOnly"');
+		assert.notOk(oSwitch.$().children(".sapMSwt").hasClass("sapMSwtReadOnly"), 'Switch does not have "sapMSwtReadOnly"');
+
+		// cleanup
+		oSwitch.destroy();
+	});
+
+	QUnit.test("read-only switch has read-only CSS classes and no disabled CSS classes", function (assert) {
+		// arrange
+		var oSwitch = new Switch({ enabled: true, editable: false });
+		oSwitch.placeAt("content");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oSwitch.$().hasClass("sapMSwtContReadOnly"), 'Container has "sapMSwtContReadOnly"');
+		assert.ok(oSwitch.$().children(".sapMSwt").hasClass("sapMSwtReadOnly"), 'Switch has "sapMSwtReadOnly"');
+		assert.notOk(oSwitch.$().hasClass("sapMSwtContDisabled"), 'Container does not have "sapMSwtContDisabled"');
+		assert.notOk(oSwitch.$().children(".sapMSwt").hasClass("sapMSwtDisabled"), 'Switch does not have "sapMSwtDisabled"');
+
+		// cleanup
+		oSwitch.destroy();
+	});
+
+	QUnit.test("disabled read-only switch has both disabled and read-only CSS classes", function (assert) {
+		// arrange
+		var oSwitch = new Switch({ enabled: false, editable: false });
+		oSwitch.placeAt("content");
+		oCore.applyChanges();
+
+		// assert
+		assert.ok(oSwitch.$().hasClass("sapMSwtContDisabled"), 'Container has "sapMSwtContDisabled"');
+		assert.ok(oSwitch.$().children(".sapMSwt").hasClass("sapMSwtDisabled"), 'Switch has "sapMSwtDisabled"');
+		assert.ok(oSwitch.$().hasClass("sapMSwtContReadOnly"), 'Container has "sapMSwtContReadOnly"');
+		assert.ok(oSwitch.$().children(".sapMSwt").hasClass("sapMSwtReadOnly"), 'Switch has "sapMSwtReadOnly"');
+
+		// cleanup
+		oSwitch.destroy();
+	});
+
 	// There should be no text ellipsis used in this control labels
 	// BCP: 1770146840
 	QUnit.test("No ellipsis", function (oAssert) {
@@ -1138,5 +1186,31 @@ sap.ui.define([
 		assert.ok(sDescribedBy, "aria-describedby attribute is set");
 		assert.ok(oDescribedByElement, "The element referenced by aria-describedby exists");
 		assert.strictEqual(oDescribedByElement.textContent, Library.getResourceBundleFor("sap.m").getText("CONTROL_READONLY"), "The aria-describedby element has the correct text");
+	});
+
+	QUnit.test("editable switch has no aria-readonly attribute", function(assert) {
+		// arrange – switch starts editable by default
+
+		// assert
+		assert.strictEqual(this.switch.getDomRef().getAttribute("aria-readonly"), null, "aria-readonly is not set on an editable switch");
+	});
+
+	QUnit.test("read-only switch (enabled=true, editable=false) has aria-readonly set to true", function(assert) {
+		// act
+		this.switch.setEditable(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this.switch.getDomRef().getAttribute("aria-readonly"), "true", "aria-readonly is set to true on a read-only switch");
+	});
+
+	QUnit.test("disabled read-only switch (enabled=false, editable=false) has aria-readonly set to true", function(assert) {
+		// act
+		this.switch.setEnabled(false);
+		this.switch.setEditable(false);
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(this.switch.getDomRef().getAttribute("aria-readonly"), "true", "aria-readonly is set to true on a disabled read-only switch");
 	});
 });
