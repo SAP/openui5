@@ -2,10 +2,12 @@
 /* Shared CSS Horizon High Contrast Black theme  */
 /* ============================================= */
 
-@_sap_m_Badge_AttentionBackgroundColor: @sapUiContentIconColor;
+.sapUI5Scope {
+	--_sap_m_Badge_AttentionBackgroundColor: var(--sapContent_IconColor);
+}
 
 .sapMBadge,
-.sapMBadge[class*=sapMBadgeAccentColor] {
+.sapMBadge[class*='sapMBadgeAccentColor'] {
 
 	.sapMBadgeIndicator::after {
 		background-color: var(--sapContent_BadgeBackground);
