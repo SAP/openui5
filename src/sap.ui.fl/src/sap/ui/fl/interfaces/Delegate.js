@@ -113,6 +113,21 @@ sap.ui.define([
 	 */
 	return /** @lends sap.ui.fl.interfaces.Delegate */ {
 		/**
+		 * Returns the entity type for an OData model path.
+		 *
+		 * @param {sap.ui.model.Model} oModel - Model containing the path
+		 * @param {string} sPath - Absolute binding path
+		 * @returns {Promise<string|undefined>} Entity type or <code>undefined</code> if it cannot be resolved
+		 *
+		 * @private
+		 * @ui5-restricted
+		 * @abstract
+		 */
+		getEntityTypeByPath(/* oModel, sPath */) {
+			return Promise.reject(new Error("not implemented"));
+		},
+
+		/**
 		 * Provides all properties that are available at the current binding context. In OData, this will probably
 		 * be all properties of the entityType. Technical properties, such as field control, should not be returned.
 		 *

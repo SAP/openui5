@@ -346,4 +346,48 @@ sap.ui.define(["sap/ui/fl/write/_internal/delegates/ODataV4ReadDelegate"], funct
 			done();
 		});
 	});
+
+	QUnit.test("Delegate: getEntityTypeByPath", async function(assert) {
+		const { oTestContext } = this;
+		oTestContext.getModel().setData({
+			$Type: "testService1.TestEntityT1",
+			TestEntityT1: {
+				$kind: "EntityType"
+			}
+		});
+
+		assert.strictEqual(
+			await ReadDelegate.getEntityTypeByPath(oTestContext.getModel(), "/TestEntityT1(ID=...,IsActiveEntity=...)"),
+			"testService1.TestEntityT1",
+			"the entity type is returned"
+		);
+	});
+
+	QUnit.test("Delegate: getEntityTypeByPath propagates errors", async function(assert) {
+		const oExpectedError = new Error("Metadata request failed");
+		const oModel = {
+			isA(sType) { return sType === "sap.ui.model.odata.v4.ODataModel"; },
+			getMetaModel() {
+				return {
+					getMetaContext() {
+						return {};
+					},
+					requestObject() {
+						return Promise.reject(oExpectedError);
+					}
+				};
+			}
+		};
+
+		try {
+			await ReadDelegate.getEntityTypeByPath(oModel, "/TestEntityT1");
+			assert.ok(false, "the call should reject");
+		} catch (oError) {
+			assert.strictEqual(oError, oExpectedError, "the metadata error is propagated unchanged");
+		}
+	});
+
+	QUnit.done(function() {
+		document.getElementById("qunit-fixture").style.display = "none";
+	});
 });
