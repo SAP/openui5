@@ -123,11 +123,10 @@ sap.ui.define([
 		assert.notOk(this.oConfig.onClose.called);
 	});
 
-	QUnit.test("mousedown is ignored while text is selected", function (assert) {
+	QUnit.test("mousedown is ignored while text is selected within the target", function (assert) {
 		const oOrig = window.getSelection;
-		window.getSelection = function () {
-			return { toString: function () { return "selected"; } };
-		};
+		// Anchor inside the target element suppresses the gesture.
+		window.getSelection = () => ({ toString: () => "selected", anchorNode: this.oDomRef });
 		try {
 			dispatch(this.oDomRef, new MouseEvent("mousedown", { button: 0, bubbles: true }));
 			assert.notOk(this.oConfig.onClose.called);
@@ -141,16 +140,54 @@ sap.ui.define([
 		assert.ok(this.oConfig.onOpen.calledOnceWith(true));
 	});
 
-	QUnit.test("mouseover is ignored while text is selected", function (assert) {
+	QUnit.test("mouseover is ignored while text is selected within the target", function (assert) {
 		const oOrig = window.getSelection;
-		window.getSelection = function () {
-			return { toString: function () { return "selected"; } };
-		};
+		// Anchor inside the target element suppresses the gesture.
+		window.getSelection = () => ({ toString: () => "selected", anchorNode: this.oDomRef });
 		try {
 			dispatch(this.oDomRef, new MouseEvent("mouseover", { bubbles: true }));
 			assert.notOk(this.oConfig.onOpen.called);
 		} finally {
 			window.getSelection = oOrig;
+		}
+	});
+
+	QUnit.test("mouseover opens tooltip even when text is selected on an unrelated element (regression)", function (assert) {
+		// Arrange: a sibling element outside the trigger's target that has a text selection.
+		const oUnrelated = document.createElement("span");
+		oUnrelated.textContent = "unrelated text";
+		document.getElementById("qunit-fixture").appendChild(oUnrelated);
+		const oOrig = window.getSelection;
+		// Selection anchored in oUnrelated, not in this.oDomRef.
+		window.getSelection = () => ({ toString: () => "selected", anchorNode: oUnrelated });
+		try {
+			// Act: hover over the trigger's own target.
+			dispatch(this.oDomRef, new MouseEvent("mouseover", { bubbles: true }));
+			// Assert: onOpen IS called — the external selection must not suppress it.
+			assert.ok(this.oConfig.onOpen.calledOnceWith(true),
+				"tooltip opens despite text selected on a different element");
+		} finally {
+			window.getSelection = oOrig;
+			oUnrelated.remove();
+		}
+	});
+
+	QUnit.test("mouseover does not open tooltip when text is selected within the target element", function (assert) {
+		// Arrange: selection anchored inside the trigger's own target.
+		const oTextNode = document.createTextNode("tooltip host text");
+		this.oDomRef.appendChild(oTextNode);
+		const oOrig = window.getSelection;
+		// Selection anchored in oTextNode, which is inside this.oDomRef.
+		window.getSelection = () => ({ toString: () => "selected", anchorNode: oTextNode });
+		try {
+			// Act: hover over the trigger's own target.
+			dispatch(this.oDomRef, new MouseEvent("mouseover", { bubbles: true }));
+			// Assert: onOpen is NOT called — internal selection suppresses drag-select.
+			assert.notOk(this.oConfig.onOpen.called,
+				"tooltip suppressed while text is being drag-selected within the target");
+		} finally {
+			window.getSelection = oOrig;
+			this.oDomRef.removeChild(oTextNode);
 		}
 	});
 
