@@ -156,9 +156,9 @@
 		<control name="sap.m.p13n.SortPanel"/>
 		<interaction> <kbd>ArrowUp</kbd> <kbd>ArrowDown</kbd> <description>
 				<p><kbd>ArrowUp</kbd></p>
-				<p>將項目向上移動一個位置 (若有)。</p>
+				<p>將項目向上移動一個位置 (若可用)。</p>
 				<p><kbd>ArrowDown</kbd></p>
-				<p>將項目向下移動一個位置 (若有)。</p>
+				<p>將項目向下移動一個位置 (若可用)。</p>
 			</description>
 		</interaction>
 	</control-interactions>
