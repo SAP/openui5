@@ -76,10 +76,6 @@ sap.ui.define(['./ColorPickerDisplayMode', "sap/ui/Device", "sap/ui/core/Lib"],
 	ColorPickerRenderer.renderSliders = function(oRm, oControl) {
 		oRm.openStart("div");
 		oRm.class("sapUiCPSlidersWrapper");
-		oRm.accessibilityState({
-			role: "group",
-			label: oRb.getText("COLORPICKER_SLIDERS_GROUP_LABEL")
-		});
 		oRm.openEnd();
 		oRm.renderControl(oControl.getAggregation("_oSlider"));
 		oRm.renderControl(oControl.getAggregation("_oAlphaSlider"));
