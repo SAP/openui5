@@ -2419,7 +2419,8 @@ sap.ui.define([
 
 	/**
 	 * Sets the session context. Starts a keep-alive timer in case there is a session context and
-	 * a timeout of 60 seconds or more is indicated. This timer runs for at most 30 minutes.
+	 * a timeout of 60 seconds or more is indicated. This timer sends a keep-alive request every
+	 * 60 seconds and runs for at most 30 minutes.
 	 *
 	 * @param {string} [sContextId] The value of the header 'SAP-ContextId'
 	 * @param {string} [sSAPHttpSessionTimeout] The value of the header 'SAP-Http-Session-Timeout',
@@ -2464,7 +2465,7 @@ sap.ui.define([
 								that.clearSessionContext(/*bTimeout*/true);
 							} // else keep the timer running
 						});
-				}, (iTimeoutSeconds - 5) * 1000);
+				}, 60 * 1000); // ping every 60s
 			} else if (sSAPHttpSessionTimeout !== null) {
 				Log.warning("Unsupported SAP-Http-Session-Timeout header", sSAPHttpSessionTimeout,
 					sClassName);
