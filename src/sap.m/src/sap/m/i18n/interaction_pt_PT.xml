@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Se a seleção de células estiver ativada:</span></p>
-				<p>Se o foco estiver dentro da tabela e as células estiverem selecionadas, a seleção das células é removida.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copia as linhas ou células selecionadas para a área de transferência, se disponível, e a funcionalidade é ativada.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

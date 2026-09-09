@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ako je omogućen odabir ćelije:</span></p>
-				<p>Ako je fokus unutar tabele, a ćelije su odabrane, odabir ćelija se uklanja.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Kopira odabrane redove ili ćelije u međuspremnik, ako je dostupan, a obilježje se aktivira.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

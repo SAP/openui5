@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ak je aktivovaný výber buniek:</span></p>
-				<p>Ak je zameranie vnútri tabuľky a sú vybraté bunky, výber buniek sa odstráni.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Skopíruje vybraté riadky alebo bunky do schránky, ak je k dispozícii a funkcia je povolená.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

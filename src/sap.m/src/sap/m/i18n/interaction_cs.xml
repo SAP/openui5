@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Zkopíruje vybrané řádky nebo buňky do schránky, pokud je dostupná a tato funkce je aktivována.</p>
+				<p>Zkopíruje vybrané řádky nebo buňky do schránky (pokud je dostupná) a tato funkce je aktivována.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

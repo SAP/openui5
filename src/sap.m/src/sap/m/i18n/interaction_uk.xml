@@ -145,7 +145,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + Enter</kbd> <description>
-				<p>Зберігає нове подання у діалоговому вікні &quot;Зберегти як&quot;</p>
+				<p>Зберігає нове подання у діалоговому вікні &quot;Зберегти як&quot;.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + S</kbd> <description>

@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Ұяшық таңдауы қосулы болса:</span></p>
-				<p>Фокус кесте ішінде болса және ұяшықтар таңдалса, ұяшықтардың таңдауы алып тасталады.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Қолжетімді болса және функция қосулы болса, таңдалған жолдарды немесе ұяшықтарды аралық сақтағышқа көшіреді.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

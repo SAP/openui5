@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Jeśli zaznaczanie komórki jest włączone:</span></p>
-				<p>Jeśli fokus jest ustawiony wewnątrz tabeli, a komórki są zaznaczone, zaznaczenie komórek jest usuwane.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Kopiuje zaznaczone wiersze lub komórki do schowka, jeśli są dostępne, a ta funkcja jest włączona.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

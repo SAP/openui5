@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">यदि सेल चयन सक्षम है:</span></p>
-				<p>यदि यह फ़ोकस तालिका के अंदर है और सेल चयनित हैं, तो सेल का चयन निकाल दिया जाता है.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>यदि उपलब्ध हो और सुविधा सक्षम हो, तो चयनित पंक्तियों या सेल की क्लिपबोर्ड पर प्रति बनाता है.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

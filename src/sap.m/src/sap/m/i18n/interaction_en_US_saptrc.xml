@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction>6v8LN1kEtcCKTvvIKXYPvQ_ <kbd>Escape</kbd> <description>
 				<p>knmd+HJ9yjXI/+CO4LMqwA_<span class="emphasis">If cell selection is enabled:</span></p>
-				<p>j0F6+GW5kSVir+ZZ1c928w_If the focus is inside of the table, and cells are selected, the selection of the cells is removed.</p>
+				<p>e+nf9O7+Rq9VzSXNsGBnWg_If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction>EOngFGcmBvgzyojUSU3MNg_ <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction>gX89mqUrHInWPkXPFDqC8g_ <kbd>Ctrl + C</kbd> <description>
-				<p>jcTls78q92jxSzyVgqJsmQ_Copies the selected rows or cells to the clipboard if available, and the feature is enabled.</p>
+				<p>6hGEkXVsfH/srsU8HCujBw_Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction>suXiKmY/SmxlThYIRYzdXw_ <kbd>Ctrl + V</kbd> <description>

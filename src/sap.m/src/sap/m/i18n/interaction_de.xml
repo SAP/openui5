@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Wenn die Zellenmarkierung aktiviert ist:</span></p>
-				<p>Wenn der Fokus innerhalb der Tabelle liegt und Zellen markiert sind, wird die Markierung der Zellen entfernt.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Kopiert die markierten Zeilen oder Zellen in die Zwischenablage, falls verfügbar und die Funktion aktiviert ist.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
