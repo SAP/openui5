@@ -817,14 +817,20 @@ sap.ui.define([
 
 	/**
 	 * Handle overflow from controls and sync with overlay
-	 * @private
+	 * @param {object} oGeometry - Geometry object of the scroll container
+	 * @param {HTMLElement} oTargetDomRef - DOM reference of the overlay to sync
+	 * @param {sap.ui.dt.ElementOverlay} oTargetOverlay - Overlay to add scroll bar style classes to
+	 * @param {boolean} bForceScrollbarSync - Whether to force an immediate scrollbar sync
+	 * @param {object[]} [aScrollContainers] - Pre-resolved scroll container list; fetched if omitted
+	 * @protected
 	 */
-	Overlay.prototype._handleOverflowScroll = function(oGeometry, oTargetDomRef, oTargetOverlay, bForceScrollbarSync) {
+	Overlay.prototype._handleOverflowScroll = function(oGeometry, oTargetDomRef, oTargetOverlay, bForceScrollbarSync, aScrollContainers) {
 		const oOriginalDomRef = oGeometry.domRef;
 		const mSize = oGeometry.size;
 
 		// OVERFLOW & SCROLLING
-		const oOverflows = DOMUtil.getOverflows(oOriginalDomRef);
+		const oStyle = window.getComputedStyle(oOriginalDomRef);
+		const oOverflows = DOMUtil.getOverflows(oOriginalDomRef, oStyle);
 
 		const iScrollHeight = oOriginalDomRef.scrollHeight;
 		const iScrollWidth = oOriginalDomRef.scrollWidth;
@@ -852,7 +858,7 @@ sap.ui.define([
 				oDummyScrollContainer.style.height = `${iScrollHeight}px`;
 				oDummyScrollContainer.style.width = `${iScrollWidth}px`;
 
-				const mMaxSize = oTargetOverlay?._getMaxScrollContainerSize();
+				const mMaxSize = oTargetOverlay?._getMaxScrollContainerSize(aScrollContainers);
 				const fnHasSameSize = (sType) => {
 					const iSize = mMaxSize?.[sType] ?? oTargetOverlay.getGeometry()?.size[sType];
 					return oGeometry.size[sType] === iSize;
@@ -860,7 +866,7 @@ sap.ui.define([
 
 				if (
 					oTargetOverlay
-					&& DOMUtil.hasVerticalScrollBar(oOriginalDomRef)
+					&& DOMUtil.hasVerticalScrollBar(oOriginalDomRef, oStyle)
 					&& fnHasSameSize("height")
 				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
@@ -869,7 +875,7 @@ sap.ui.define([
 
 				if (
 					oTargetOverlay
-					&& DOMUtil.hasHorizontalScrollBar(oOriginalDomRef)
+					&& DOMUtil.hasHorizontalScrollBar(oOriginalDomRef, oStyle)
 					&& fnHasSameSize("width")
 				) {
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");

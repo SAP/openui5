@@ -270,7 +270,8 @@ sap.ui.define([
 			oMutationObserver.registerHandler(this._sObservableNodeId, this._domChangedCallback.bind(this), bIsRoot);
 		} else if (bIsRoot) {
 			// Needs to be a logged error, otherwise the LayoutEditor isn't working anymore.
-			Log.error("sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly");
+			Log.error("sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper"
+				+ " domRef and id to ensure that RTA is working properly");
 		}
 	};
 
@@ -375,10 +376,11 @@ sap.ui.define([
 		// Apply Overlay position first, then extra logic based on this new position
 		Overlay.prototype._setPosition.apply(this, aArgs);
 
+		const oDesignTimeMetadata = this.getDesignTimeMetadata();
 		const aScrollContainers = this.getScrollContainers();
 
-		aScrollContainers.forEach(function(mScrollContainer, iIndex) {
-			const oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
+		aScrollContainers.forEach((mScrollContainer, iIndex) => {
+			const oScrollContainerDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
 			const oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
 			if (oScrollContainerDomRef) {
@@ -386,30 +388,32 @@ sap.ui.define([
 				this._ensureVisibility(oScrollContainerOverlayDomRef);
 				this._setSize(oScrollContainerOverlayDomRef, mScrollContainerGeometry);
 				Overlay.prototype._setPosition.call(this, oScrollContainerOverlayDomRef, mScrollContainerGeometry, this.getDomRef());
-				this._handleOverflowScroll(mScrollContainerGeometry, oScrollContainerOverlayDomRef, this, bForceScrollbarSync);
+				this._handleOverflowScroll(
+					mScrollContainerGeometry, oScrollContainerOverlayDomRef, this, bForceScrollbarSync, aScrollContainers
+				);
 				this._setZIndex(mScrollContainerGeometry, oScrollContainerOverlayDomRef);
 				this._setClipPath(oScrollContainerOverlayDomRef, oScrollContainerDomRef);
 			} else {
 				oScrollContainerOverlayDomRef.style.display = "none";
 			}
-		}, this);
+		});
 	};
 
-	ElementOverlay.prototype._applySizes = function(...aArgs) {
-		return Overlay.prototype._applySizes.apply(this, aArgs)
-		.then(function() {
-			this._sortChildren(this.getChildrenDomRef());
-			if (!this.bIsDestroyed) {
-				this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
-					const oScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
-					const oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
+	ElementOverlay.prototype._applySizes = async function(...aArgs) {
+		await Overlay.prototype._applySizes.apply(this, aArgs);
+		this._sortChildren(this.getChildrenDomRef());
+		if (!this.bIsDestroyed) {
+			const oDesignTimeMetadata = this.getDesignTimeMetadata();
+			const aScrollContainers = this.getScrollContainers();
+			aScrollContainers.forEach((mScrollContainer, iIndex) => {
+				const oScrollContainerDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.getElement(), mScrollContainer.domRef);
+				const oScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
-					if (oScrollContainerDomRef) {
-						this._sortChildren(oScrollContainerOverlayDomRef);
-					}
-				}, this);
-			}
-		}.bind(this));
+				if (oScrollContainerDomRef) {
+					this._sortChildren(oScrollContainerOverlayDomRef);
+				}
+			});
+		}
 	};
 
 	/**
@@ -520,10 +524,12 @@ sap.ui.define([
 					Overlay.getOverlayContainer().append(this.render());
 					this.applyStyles();
 				} else {
-					Log.error("sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?");
+					Log.error("sap.ui.dt.ElementOverlay: overlay is already rendered and can't be placed"
+						+ " in overlay container. Isn't it already there?");
 				}
 			} else {
-				Log.error("sap.ui.dt.ElementOverlay: it\'s not possible to place overlay inside overlay container while it\'s part of some hierarchy");
+				Log.error("sap.ui.dt.ElementOverlay: it's not possible to place overlay inside overlay container"
+					+ " while it's part of some hierarchy");
 			}
 		} else {
 			Log.error('sap.ui.dt.ElementOverlay: overlay is not ready yet. Please wait until "init" event happens');
@@ -812,7 +818,7 @@ sap.ui.define([
 	/**
 	 * There are cases where the aggregation overlay is not yet rendered (because it had no children)
 	 * and a new child is added to that aggregation. We then render the aggregation here.
-	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - The aggregation overlay where the child is being added.
+	 * @param {...any} aArgs - Arguments forwarded to Overlay.prototype.addChild; first element is the AggregationOverlay
 	 */
 	ElementOverlay.prototype.addChild = function(...aArgs) {
 		const [oAggregationOverlay] = aArgs;
@@ -838,6 +844,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {object} mParameters - Mutation parameters passed by the MutationObserver
 	 * @private
 	 */
 	ElementOverlay.prototype._domChangedCallback = function(mParameters) {
@@ -858,6 +865,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @param {sap.ui.base.Event} oEvent - The element destroyed event
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementDestroyed = function(oEvent) {
@@ -944,7 +952,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns if the overlay's elementInstance is visible in DOM (or is invisible, but consumes screen space, like opacity 0 or visibility hidden)
+	 * Returns if the overlay's elementInstance is visible in DOM (or is invisible, but consumes screen space,
+	 * like opacity 0 or visibility hidden)
 	 * @private
 	 * @return {boolean} if the overlay's elementInstance is editable
 	 */
@@ -1024,12 +1033,18 @@ sap.ui.define([
 		return oParentOverlay ? oParentOverlay.getElement() : undefined;
 	};
 
-	ElementOverlay.prototype._getMaxScrollContainerSize = function() {
-		const aScrollContainers = this.getScrollContainers();
-		if (!aScrollContainers.length) {
+	/**
+	 * Returns the maximum size among all scroll container overlays, or the overlay's own geometry size if there are none.
+	 * @param {object[]} [aScrollContainers] - Pre-resolved scroll container list; fetched via getScrollContainers() if omitted
+	 * @returns {object|undefined} Size object with width and height, or undefined if no geometry
+	 * @private
+	 */
+	ElementOverlay.prototype._getMaxScrollContainerSize = function(aScrollContainers) {
+		const aContainers = aScrollContainers ?? this.getScrollContainers();
+		if (!aContainers.length) {
 			return this.getGeometry()?.size;
 		}
-		return aScrollContainers.reduce((mMax, mScrollContainer, iIndex) => {
+		return aContainers.reduce((mMax, mScrollContainer, iIndex) => {
 			const mGeometry = DOMUtil.getGeometry(this.getScrollContainerById(iIndex));
 			if (!mGeometry) { return mMax; }
 			return {

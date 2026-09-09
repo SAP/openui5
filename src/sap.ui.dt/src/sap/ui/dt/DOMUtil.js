@@ -153,35 +153,45 @@ sap.ui.define([
 		return isNaN(zIndex) ? zIndex : +zIndex;
 	};
 
-	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection) {
+	/**
+	 * @param {HTMLElement|jQuery} oDomRef - DOM element or jQuery object
+	 * @param {string} sMeasure - "Width" or "Height"
+	 * @param {string[]} aDirection - Two CSS border-direction suffixes (e.g. ["Right", "Left"])
+	 * @param {CSSStyleDeclaration} [oStyle] - Pre-read computed style; computed if omitted
+	 * @returns {number} Element dimension minus borders
+	 */
+	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection, oStyle) {
 		const oRelevantDomRef = oDomRef[0] || oDomRef;
 		const iOffsetWidth = oRelevantDomRef[`offset${sMeasure}`];
+		const oComputedStyle = oStyle || window.getComputedStyle(oRelevantDomRef, null);
 		let iValue = 0;
 		for (let i = 0; i < 2; i++) {
-			// remove border
-			const sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)[`border${aDirection[ i ]}${sMeasure}`];
+			const sBorderMeasure = oComputedStyle[`border${aDirection[i]}${sMeasure}`];
 			iValue -= sBorderMeasure ? parseInt(sBorderMeasure.slice(0, -2)) : 0;
 		}
 		return iOffsetWidth + iValue;
 	};
 
-	DOMUtil._getElementWidth = function(oDomRef) {
-		return DOMUtil._getElementDimensions(oDomRef, "Width", ["Right", "Left"]);
+	DOMUtil._getElementWidth = function(oDomRef, oStyle) {
+		return DOMUtil._getElementDimensions(oDomRef, "Width", ["Right", "Left"], oStyle);
 	};
 
-	DOMUtil._getElementHeight = function(oDomRef) {
-		return DOMUtil._getElementDimensions(oDomRef, "Height", ["Top", "Bottom"]);
+	DOMUtil._getElementHeight = function(oDomRef, oStyle) {
+		return DOMUtil._getElementDimensions(oDomRef, "Height", ["Top", "Bottom"], oStyle);
 	};
 
 	/**
 	 * Checks whether DOM Element has vertical scrollbar
 	 * @param {HTMLElement} oDomRef - DOM Element
+	 * @param {CSSStyleDeclaration} [oStyle] - Pre-read computed style; computed if omitted
 	 * @returns {boolean} <code>true</code> if vertical scrollbar is available on DOM Element.
 	 */
-	DOMUtil.hasVerticalScrollBar = function(oDomRef) {
+	DOMUtil.hasVerticalScrollBar = function(oDomRef, oStyle) {
 		if (oDomRef) {
-			const bOverflowYScroll = window.getComputedStyle(oDomRef)["overflow-y"] === "auto" || window.getComputedStyle(oDomRef)["overflow-y"] === "scroll";
-			return bOverflowYScroll && oDomRef.scrollHeight > DOMUtil._getElementHeight(oDomRef);
+			const oComputedStyle = oStyle || window.getComputedStyle(oDomRef);
+			const sOverflowY = oComputedStyle["overflow-y"];
+			const bOverflowYScroll = sOverflowY === "auto" || sOverflowY === "scroll";
+			return bOverflowYScroll && oDomRef.scrollHeight > DOMUtil._getElementHeight(oDomRef, oComputedStyle);
 		}
 		return false;
 	};
@@ -189,12 +199,15 @@ sap.ui.define([
 	/**
 	 * Checks whether DOM Element has horizontal scrollbar
 	 * @param {HTMLElement} oDomRef - DOM Element
+	 * @param {CSSStyleDeclaration} [oStyle] - Pre-read computed style; computed if omitted
 	 * @returns {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element
 	 */
-	DOMUtil.hasHorizontalScrollBar = function(oDomRef) {
+	DOMUtil.hasHorizontalScrollBar = function(oDomRef, oStyle) {
 		if (oDomRef) {
-			const bOverflowXScroll = window.getComputedStyle(oDomRef)["overflow-x"] === "auto" || window.getComputedStyle(oDomRef)["overflow-x"] === "scroll";
-			return bOverflowXScroll && oDomRef.scrollWidth > DOMUtil._getElementWidth(oDomRef);
+			const oComputedStyle = oStyle || window.getComputedStyle(oDomRef);
+			const sOverflowX = oComputedStyle["overflow-x"];
+			const bOverflowXScroll = sOverflowX === "auto" || sOverflowX === "scroll";
+			return bOverflowXScroll && oDomRef.scrollWidth > DOMUtil._getElementWidth(oDomRef, oComputedStyle);
 		}
 		return false;
 	};
@@ -205,7 +218,9 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if the DOM element has a scrollbar
 	 */
 	DOMUtil.hasScrollBar = function(oDomRef) {
-		return DOMUtil.hasVerticalScrollBar(oDomRef) || DOMUtil.hasHorizontalScrollBar(oDomRef);
+		if (!oDomRef) { return false; }
+		const oStyle = window.getComputedStyle(oDomRef);
+		return DOMUtil.hasVerticalScrollBar(oDomRef, oStyle) || DOMUtil.hasHorizontalScrollBar(oDomRef, oStyle);
 	};
 
 	/**
@@ -243,13 +258,14 @@ sap.ui.define([
 
 	/**
 	 * @param {HTMLElement} oDomRef - DOM element
-	 * @returns {object} Object with overflowX and overflowY
+	 * @param {CSSStyleDeclaration} [oStyle] - Pre-read computed style; computed if omitted
+	 * @returns {{ overflowX: string, overflowY: string }} Object with overflowX and overflowY values
 	 */
-	DOMUtil.getOverflows = function(oDomRef) {
-		const oStyle = window.getComputedStyle(oDomRef);
+	DOMUtil.getOverflows = function(oDomRef, oStyle) {
+		const oComputedStyle = oStyle || window.getComputedStyle(oDomRef);
 		return {
-			overflowX: oStyle["overflow-x"],
-			overflowY: oStyle["overflow-y"]
+			overflowX: oComputedStyle["overflow-x"],
+			overflowY: oComputedStyle["overflow-y"]
 		};
 	};
 
