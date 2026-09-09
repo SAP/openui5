@@ -86,8 +86,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
 				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * <b>Note:</b> Always set the conditions from outside the value help only as long the value help is closed.
 				 */
 				conditions: {
 					type: "object[]",
@@ -126,9 +125,6 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This property must only be set by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
-				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				filterValue: {
 					type: "string",
@@ -190,9 +186,6 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
-				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				select: {
 					parameters: {
@@ -221,9 +214,6 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
 				 * belongs to, not by the application.
-				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
 				 */
 				disconnect: {},
 
@@ -268,8 +258,8 @@ sap.ui.define([
 				/**
 				 * This event is fired after the user navigated, using the arrow keys, in the value help.
 				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
+				 * belongs to, not by the application.
 				 */
 				navigated: {
 					parameters: {
@@ -297,15 +287,16 @@ sap.ui.define([
 				/**
 				 * This event is fired if the user wants to switch from typeahead to value help.
 				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
+				 * belongs to, not by the application.
 				 */
 				switchToValueHelp: {},
 				/**
 				 * This event is fired after a suggested item has been found for a type-ahead.
 				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
+				 * belongs to, not by the application.
+				 *
 				 * @since 1.120.0
 				 */
 				typeaheadSuggested: {
@@ -342,8 +333,9 @@ sap.ui.define([
 				 *
 				 * In this case the visual focus needs to be removed from the opening field, but the real focus must stay there.
 				 *
-				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * <b>Note:</b> This event must only be handled by the control the <code>ValueHelp</code> element
+				 * belongs to, not by the application.
+				 *
 				 * @since 1.127.0
 				 */
 				visualFocusSet: {
@@ -406,8 +398,7 @@ sap.ui.define([
 	 * @param {object} [payload] Payload of the field delegate (required for condition panel)
 	 * @param {string} [defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [emptyAllowed] If <code>true</code> the connected control could be made empty (no Conditions)
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @public
 	 */
 
 	/**
@@ -425,8 +416,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oControl Control to which the <code>ValueHelp</code> element is connected to
 	 * @param {sap.ui.mdc.valuehelp.base.ConnectConfig} [oConfig] Configuration object that holds required data of the connected control
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.connect = function(oControl, oConfig) {
 		const oTypeahead = this.getTypeahead();
@@ -473,8 +463,7 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @returns {sap.ui.core.Control} Control to which the <code>ValueHelp</code> element is connected to
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.valuehelp.base.Container
+	 * @public
 	 */
 	ValueHelp.prototype.getControl = function() {
 		return this._oControl;
@@ -611,8 +600,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bTypeahead Flag that determines whether value help is opened for type-ahead or for complex help
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.open = function(bTypeahead) {
 		const oContainer = bTypeahead ? this.getTypeahead() : _getValueHelpContainer.call(this);
@@ -644,8 +632,7 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @param {boolean} bDoNotRestoreFocus If set, closing must not restore the focus on the field
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.close = function(bDoNotRestoreFocus) {
 		const oTypeahead = this.getTypeahead();
@@ -668,8 +655,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bTypeahead Flag that determines whether value help is opened for type-ahead or for complex help
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.toggleOpen = function(bTypeahead) {
 		const oTypeahead = this.getTypeahead();
@@ -697,8 +683,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} true if open or opening
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.isOpen = function() {
 		const oTypeahead = this.getTypeahead();
@@ -714,8 +699,7 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.skipOpening = function() { // ? Use close based logic instead?
 		const oTypeahead = this.getTypeahead();
@@ -761,10 +745,12 @@ sap.ui.define([
 	/**
 	 * Determines if the value help typeahead is to be opened on user interaction, navigation, or configuration changes.
 	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
  	 * @param {sap.ui.mdc.enums.RequestShowContainerReason} sReason Interaction event possibly triggering the opening of the value help
 	 * @returns {Promise<boolean>} <code>true</code> if the value help container is shown
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 * @since 1.136
 	 */
 	ValueHelp.prototype.requestShowTypeahead = async function(sReason) {
@@ -778,9 +764,11 @@ sap.ui.define([
 	/**
 	 * Determines if the value help is to be opened with a dialog or typeahead in value help mode.
 	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
 	 * @returns {Promise<boolean>} <code>true</code> if the value help container is to be shown
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 * @since 1.136
 	 */
 	ValueHelp.prototype.requestShowValueHelp = async function() {
@@ -852,10 +840,12 @@ sap.ui.define([
 	/**
 	 * Determines if the focus is set in the value help or stays in the calling control.
 	 *
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
 	 * @returns {boolean} if true, focus goes to the value help, if false it stays in the calling control.
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.isFocusInHelp = function() { // find more elegant way?
 
@@ -867,8 +857,10 @@ sap.ui.define([
 	/**
 	 * The focus visualization of the field help needs to be removed as the user starts typing into the field.
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @public
 	 */
 	ValueHelp.prototype.removeVisualFocus = function() {
 		const oTypeahead = this.getTypeahead();
@@ -881,8 +873,10 @@ sap.ui.define([
 	/**
 	 * The focus visualization of the field help needs to be set as the user starts naigation into the value help items.
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
+	 * belongs to, not by the application.
+	 *
+	 * @public
 	 * @since 1.127.0
 	 */
 	ValueHelp.prototype.setVisualFocus = function() {
@@ -901,8 +895,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.navigate = function(iStep) { // pass through to container
 		const oTypeahead = this.getTypeahead();
@@ -928,8 +921,7 @@ sap.ui.define([
 	 * @param {int} iStep Number of steps for navigation (e.g. 1 means next item, -1 means previous item)
 	 *
 	 * @returns {boolean} If <code>true</code>, the navigation should be enabled if value help is closed
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.isNavigationEnabled = function(iStep) {
 		const oTypeahead = this.getTypeahead();
@@ -992,8 +984,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.mdc.valuehelp.base.ValueHelpItem>} Promise returning object containing description, key and payload.
 	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
+	 * @public
 	 */
 	ValueHelp.prototype.getItemForValue = function(oConfig) {
 		// TODO: Discuss how we handle binding / typeahead changes ??
@@ -1015,8 +1006,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} True if value help can be used for input validation
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.isValidationSupported = function() { // isUsableForValidation also necessary?
 
@@ -1035,8 +1025,7 @@ sap.ui.define([
 	 * <b>Note:</b> This function must only be called by the control the <code>ValueHelp</code> element
 	 * belongs to, not by the application.
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.onControlChange = function() {
 
@@ -1054,8 +1043,7 @@ sap.ui.define([
 	 *
 	 * @returns {null|string} Name of the icon. If <code>null</code> no value help icon will be shown and it is used only as typeahead.
 	 *
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 */
 	ValueHelp.prototype.getIcon = function() {
 
@@ -1299,8 +1287,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sHighlightId control id of the item to be highlighted
 	 *
-	 * @private
- 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 * @since 1.123.0
 	 */
 	ValueHelp.prototype.setHighlightId = function(sHighlightId) {
@@ -1340,8 +1327,7 @@ sap.ui.define([
 	 * If set, the connected field must not allow other values than the items of the <code>FixedList</code>. Free text must be prevented.
 	 *
 	 * @returns {boolean} If set, only fixed values are allowed
-	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @public
 	 * @since 1.138
 	 */
 	ValueHelp.prototype.isRestrictedToFixedValues = function() {
