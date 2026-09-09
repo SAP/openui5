@@ -5366,7 +5366,7 @@ sap.ui.define([
 
 		this.mock(oRequestor).expects("clearSessionContext").withExactArgs();
 		this.mock(window).expects("setInterval")
-			.withExactArgs(sinon.match.func, 55000)
+			.withExactArgs(sinon.match.func, 60000) // 60s regardless of the given timeout
 			.returns(iSessionTimer);
 
 		// code under test
@@ -5423,7 +5423,7 @@ sap.ui.define([
 			oAjaxSettings.xhrFields = {withCredentials : true};
 		}
 		oExpectation = this.mock(window).expects("setInterval")
-			.withExactArgs(sinon.match.func, 115000);
+			.withExactArgs(sinon.match.func, 60000); // 60s regardless of the given timeout
 
 		oRequestor.setSessionContext("context", "120");
 
@@ -5446,7 +5446,7 @@ sap.ui.define([
 					oRequestor = _Requestor.create(sServiceUrl, oModelInterface, {}, {}, "4.0");
 
 				oExpectation = that.mock(window).expects("setInterval")
-					.withExactArgs(sinon.match.func, 115000);
+					.withExactArgs(sinon.match.func, 60000); // 60s regardless of the given timeout
 
 				oRequestor.setSessionContext("context", "120");
 
@@ -5495,7 +5495,7 @@ sap.ui.define([
 		oClock = sinon.useFakeTimers();
 		try {
 			oExpectation = this.mock(window).expects("setInterval")
-				.withExactArgs(sinon.match.func, 115000);
+				.withExactArgs(sinon.match.func, 60000); // 60s regardless of the given timeout
 
 			oRequestor.setSessionContext("context", "120");
 
@@ -5540,7 +5540,7 @@ sap.ui.define([
 
 			// send a request that starts a session with timeout=960 (16 min)
 			oRequestor.sendRequest("POST", sResourcePath).then(function () {
-				oJQueryMock.expects("ajax").withExactArgs(sServiceUrl, {
+				oJQueryMock.expects("ajax").exactly(29).withExactArgs(sServiceUrl, {
 						headers : sinon.match({
 							"SAP-ContextId" : "context"
 						}),
@@ -5548,12 +5548,12 @@ sap.ui.define([
 					})
 					.returns(createMock(assert, undefined, "OK", {}));
 
-				// expect a "ping" request after 15 min 55 sec
-				oClock.tick(955000);
+				// expect 29 "ping" requests, one per minute
+				oClock.tick(29 * 60 * 1000);
 
-				// expect no "ping" request, but a terminated session after another 15 min 55 sec
+				// expect no "ping" request, but a terminated session after the next passed minute
 				// (more than 30 min have passed since the latest request)
-				oClock.tick(955000);
+				oClock.tick(60 * 1000);
 
 				assert.notOk("SAP-ContextId" in oRequestor.mHeaders);
 				resolve();
