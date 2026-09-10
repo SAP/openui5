@@ -152,7 +152,8 @@
           "unit": "ABC",
           "class": "Employee",
           "fte": 1,
-          "weeklyHours": 0
+          "weeklyHours": 0,
+          "employmentType": -1
       }
     ]
   }

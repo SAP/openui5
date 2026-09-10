@@ -26,6 +26,13 @@ describe('sap.m.RadioButtonGroup', function() {
 		expect(takeScreenshot(group2)).toLookAs('3_value_state_warning');
 	});
 
+	// required group with no selection -> invalid
+	it('should visualize required group with no selection as invalid', function () {
+		browser.executeScript("document.getElementById('RBGRequired').scrollIntoView()").then(function() {
+			expect(takeScreenshot(element(by.id('RBGRequired')))).toLookAs('3a_required_no_selection_invalid');
+		});
+	});
+
 	// 3 columns 100% width
 	it('should visualize group with 3 columns 100% width (container 350px)', function () {
 		var group3 = element(by.id('RBG3'));

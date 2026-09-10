@@ -66,7 +66,8 @@ sap.ui.define([
 
 		// ARIA
 		oRM.accessibilityState(oRBGroup, {
-			role: "radiogroup"
+			role: "radiogroup",
+			required: oRBGroup._isRequired() || undefined
 		});
 
 		oRM.openEnd();

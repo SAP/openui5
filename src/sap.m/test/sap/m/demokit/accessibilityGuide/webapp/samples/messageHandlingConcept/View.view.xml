@@ -83,6 +83,18 @@
 									columnsXL="2">
 							<f:content>
 								<core:Title text="Information" />
+								<Label text="Employment Type" />
+								<RadioButtonGroup id="employmentTypeRadioButtonGroup"
+										columns="3"
+										required="true"
+										select=".onEmploymentTypeSelect"
+										selectedIndex="{employmentType}">
+									<buttons>
+										<RadioButton text="Full-time" />
+										<RadioButton text="Part-time" />
+										<RadioButton text="Contract" />
+									</buttons>
+								</RadioButtonGroup>
 								<Label text="Job Classification" />
 								<Input value="{jobTitle}"/>
 								<Label text="Pay Grade" />

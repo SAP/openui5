@@ -1148,6 +1148,54 @@ sap.ui.define([
 		}
 	};
 
+	const oManifest_RequiredRadioButtonGroup = {
+		"sap.app": {
+			"id": "test.cards.object.requiredRadioButtonGroup",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "Object",
+			"header": {
+				"title": "Required RadioButtonGroup Test"
+			},
+			"data": {
+				"json": {
+					"priorityLevels": [
+						{ "key": "low", "text": "Low Priority" },
+						{ "key": "medium", "text": "Medium Priority" },
+						{ "key": "high", "text": "High Priority" }
+					]
+				}
+			},
+			"content": {
+				"groups": [
+					{
+						"title": "Required Selection",
+						"items": [
+							{
+								"id": "priority",
+								"label": "Priority Level",
+								"type": "RadioButtonGroup",
+								"item": {
+									"path": "/priorityLevels",
+									"template": {
+										"key": "{key}",
+										"title": "{text}"
+									}
+								},
+								"validations": [
+									{
+										"required": true
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		}
+	};
+
 	actionEnablementTests("Status in NumericHeader", {
 		manifest: {
 			"sap.app": {
@@ -3934,6 +3982,23 @@ sap.ui.define([
 
 		var oFormData = this.oCard.getModel("form").getProperty("/priority");
 		assert.strictEqual(oFormData.selectedIndex, 1, "Form model reflects correct selected index");
+	});
+
+	QUnit.test("Creation of a required RadioButtonGroup", async function (assert) {
+		this.oCard.setManifest(oManifest_RequiredRadioButtonGroup);
+
+		await nextCardReadyEvent(this.oCard);
+		await nextUIUpdate();
+
+		const oLayout = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
+		const oGroup = oLayout.getContent()[0];
+		const oLabel = oGroup.getItems()[1];
+		const oRadioButtonGroup = oGroup.getItems()[2];
+
+		assert.ok(oRadioButtonGroup.isA("sap.m.RadioButtonGroup"), "RadioButtonGroup control is created");
+		assert.strictEqual(oRadioButtonGroup.getRequired(), true, "The required property is set on the RadioButtonGroup control itself");
+		assert.ok(oLabel.isA("sap.m.Label"), "Label control is created");
+		assert.strictEqual(oLabel.getRequired(), false, "The required indicator is carried by the control, not by the label");
 	});
 
 	QUnit.module("Form controls with Validation", {

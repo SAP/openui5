@@ -344,6 +344,32 @@ sap.ui.define([
 		direction: "Column"
 	});
 
+	// Required RadioButtonGroup - invalid while no button is selected (selectedIndex < 0)
+	const oRBGRequired = new RadioButtonGroup("RBGRequired", {
+		columns: 1,
+		required: true,
+		selectedIndex: -1,
+		buttons: [
+			new RadioButton({text: "Option 1"}),
+			new RadioButton({text: "Option 2"}),
+			new RadioButton({text: "Option 3"})
+		]
+	});
+
+	const oLabelRBGRequired = new Label({
+		text: "Required group with no selection: ",
+		labelFor: oRBGRequired
+	});
+
+	const flexBoxRBGRequired = new FlexBox("rbgRequired", {
+		alignItems: "Start",
+		direction: "Column",
+		items: [
+			oLabelRBGRequired,
+			oRBGRequired
+		]
+	});
+
 	var oRBGroupRBG2 = new RadioButtonGroup("RBG2");
 	oRBGroupRBG2.setColumns(2);
 	oRBGroupRBG2.setValueState(ValueState.Warning);
@@ -717,6 +743,7 @@ sap.ui.define([
 							flexBoxRBG1a,
 							flexBoxRBGStates,
 							flexBoxRBGWrap,
+							flexBoxRBGRequired,
 							flexBoxRBG2,
 							flexBoxRBG3,
 							flexBoxRBG31

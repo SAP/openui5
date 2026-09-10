@@ -8,7 +8,11 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
-	"sap/ui/core/Core",
+	"sap/m/Label",
+	"sap/ui/core/Messaging",
+	"sap/ui/core/message/Message",
+	"sap/ui/core/message/MessageType",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	qutils,
@@ -18,7 +22,11 @@ sap.ui.define([
 	KeyCodes,
 	RadioButtonGroup,
 	RadioButton,
-	Core,
+	Label,
+	Messaging,
+	Message,
+	MessageType,
+	JSONModel,
 	nextUIUpdate
 ) {
 	"use strict";
@@ -38,18 +46,19 @@ sap.ui.define([
 	/* Test: Default Values                    */
 	/* --------------------------------------- */
 
-	QUnit.test("Default Values", function(assert){
+	QUnit.test("Default Values", async function(assert){
 
-		var bEnabled = true;
-		var bEditable = true;
-		var bVisible = true;
-		var nColumns = 1;
-		var oValueState = ValueState.None;
-		var nSelectedIndex = 0;
+		const bEnabled = true;
+		const bEditable = true;
+		const bVisible = true;
+		const nColumns = 1;
+		const oValueState = ValueState.None;
+		const nSelectedIndex = 0;
+		const bRequired = false;
 
 		// system under test
-		var oRBGroup = new RadioButtonGroup();
-		var oRadioButton = new RadioButton("option1");
+		const oRBGroup = new RadioButtonGroup();
+		let oRadioButton = new RadioButton("option1");
 		oRadioButton.setText("Option 1");
 		oRadioButton.setTooltip("Tooltip 1");
 		oRBGroup.addButton(oRadioButton);
@@ -61,7 +70,7 @@ sap.ui.define([
 
 		// arrange
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oRBGroup.getColumns(), nColumns, "Property 'columns': Default value should be '" + nColumns + "'");
@@ -70,6 +79,7 @@ sap.ui.define([
 		assert.strictEqual(oRBGroup.getValueState(), oValueState, "Property 'valueState': Default value should be '" + oValueState + "'");
 		assert.strictEqual(oRBGroup.getSelectedIndex(), nSelectedIndex, "Property 'selectedIndex': Default value should be '" + nSelectedIndex + "'");
 		assert.strictEqual(oRBGroup.getEnabled(), bEnabled, "Property 'enabled': Default value should be '" + bEnabled + "'");
+		assert.strictEqual(oRBGroup.getRequired(), bRequired, "Property 'required': Default value should be '" + bRequired + "'");
 
 		// cleanup
 		oRBGroup.destroyButtons();
@@ -80,7 +90,7 @@ sap.ui.define([
 	/* Test: 'visible=false'                           */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'visible=false'", function(assert){
+	QUnit.test("'visible=false'", async function(assert){
 
 		// system under test
 		var oRBGroup = new RadioButtonGroup({visible: false});
@@ -96,7 +106,7 @@ sap.ui.define([
 
 		// arrange
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.ok(!oRBGroup.getDomRef(), "visible=true: RadioButtonGroup should not have been rendered");
@@ -110,7 +120,7 @@ sap.ui.define([
 	/* Test: 'enabled=false'                            */
 	/* ----------------------------------------------- */
 
-	QUnit.test("'enabled=false'", function(assert){
+	QUnit.test("'enabled=false'", async function(assert){
 
 		// system under test
 		var bEnabled = false;
@@ -129,7 +139,7 @@ sap.ui.define([
 
 		// arrange
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		for (var i = 0; i < aRadioButtons.length; i++) {
@@ -143,12 +153,46 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	/* -------------------------------- */
-	/* 	   tests for setSelectedIndex() */
-	/* -------------------------------- */
+	/* ----------------------------------------------- */
+	/* Test: 'required'                                */
+	/* ----------------------------------------------- */
+	QUnit.test("'required' true/false", async function(assert) {
+		// system under test
+		const oRBGroup = new RadioButtonGroup({
+			required: true,
+			buttons: [
+				new RadioButton({text: "Option 1"}),
+				new RadioButton({text: "Option 2"})
+			]
+		});
+		const oLabel = new Label({text: "Group", labelFor: oRBGroup});
 
-	QUnit.test("setSelectedIndex()", function(assert) {
+		// arrange
+		oLabel.placeAt("qunit-fixture");
+		oRBGroup.placeAt("qunit-fixture");
+		await nextUIUpdate();
 
+		// assertions
+		assert.strictEqual(oRBGroup.getRequired(), true, "Property 'required' should be 'true'");
+		assert.strictEqual(oRBGroup.$().attr("aria-required"), "true", "Attribute 'aria-required' should be 'true'");
+		assert.ok(oLabel.$().hasClass("sapMLabelRequired"), "Associated Label should have class 'sapMLabelRequired'");
+
+		// act
+		oRBGroup.setRequired(false);
+		await nextUIUpdate();
+
+		// assertions
+		assert.strictEqual(oRBGroup.getRequired(), false, "Property 'required' should be 'false'");
+		assert.strictEqual(oRBGroup.$().attr("aria-required"), undefined, "Attribute 'aria-required' should not be rendered");
+		assert.notOk(oLabel.$().hasClass("sapMLabelRequired"), "Associated Label should not have class 'sapMLabelRequired'");
+
+		// cleanup
+		oLabel.destroy();
+		oRBGroup.destroyButtons();
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("setSelectedIndex()", async function(assert) {
 		var oRBGroup = new RadioButtonGroup("RBG");
 		var iSelectedIndex = 1;
 
@@ -163,8 +207,7 @@ sap.ui.define([
 		oRadioButton2.setTooltip("Tooltip 2");
 		oRBGroup.addButton(oRadioButton2);
 
-		Core.applyChanges();
-
+		await nextUIUpdate();
 
 		oRBGroup.placeAt("qunit-fixture");
 		oRBGroup.setSelectedIndex(iSelectedIndex);
@@ -181,7 +224,7 @@ sap.ui.define([
 	/*	--------------------------------------- 	*/
 	/*			tests for keyboard handling			*/
 	/*	--------------------------------------- 	*/
-	QUnit.test("'keyboard handling'", function(assert) {
+	QUnit.test("'keyboard handling'", async function(assert) {
 		//setup RadioButtonGroups
 		var iRadiosCount = 4;
 		var columnsCount = 2;
@@ -196,42 +239,42 @@ sap.ui.define([
 			oRBGroup.addButton(oRadioButton);
 		}
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Focus first radio
 		oRBGroup.placeAt("qunit-fixture");
 		qutils.triggerMouseEvent("RBG1-0", "click");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		// Test arrow pressing
 		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_RIGHT);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
 		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_DOWN);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_LEFT);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
 		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_UP);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		qutils.triggerKeydown("RBG1", KeyCodes.END);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 		qutils.triggerKeydown("RBG1", KeyCodes.HOME);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 		qutils.triggerKeydown("RBG1", KeyCodes.ARROW_LEFT);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 		assert.strictEqual(oRBGroup.getDomRef().querySelectorAll(".sapMRb[tabindex='0']").length, 1, "only one button has tabindex='0'");
@@ -242,7 +285,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("tabIndex is correct after initially selected button is selected again (programmatically) - BCP 2380027793", function(assert) {
+	QUnit.test("tabIndex is correct after initially selected button is selected again (programmatically) - BCP 2380027793", async function(assert) {
 		var oRBGroup = new RadioButtonGroup("RBG1", {
 			selectedIndex: 0,
 			buttons: [
@@ -252,13 +295,13 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oRBGroup.getButtons()[0].getDomRef().tabIndex, 0, "tabindex='0' for the initially selected radio button");
 
 		// select again the same radio button
 		oRBGroup.setSelectedIndex(0);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oRBGroup.getButtons()[0].getDomRef().tabIndex, 0, "tabindex='0' after initially selected radio button is selected again");
 
@@ -270,7 +313,7 @@ sap.ui.define([
 	/*	        tests textDirection	            	*/
 	/*	--------------------------------------- 	*/
 
-	QUnit.test("textDirection set to RTL", function(assert) {
+	QUnit.test("textDirection set to RTL", async function(assert) {
 		// arrange
 		var oRBGroup = new RadioButtonGroup({
 			textDirection: TextDirection.RTL,
@@ -282,7 +325,7 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "rtl", "Control has 'dir' property set to right to left");
@@ -291,7 +334,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("textDirection set to LTR", function(assert) {
+	QUnit.test("textDirection set to LTR", async function(assert) {
 		// arrange
 		var oRBGroup = new RadioButtonGroup({
 			textDirection: TextDirection.LTR,
@@ -303,7 +346,7 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.equal(jQuery(oRBGroup.getDomRef()).attr("dir"), "ltr", "Control has 'dir' property set to left to right");
@@ -312,7 +355,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("setWidth() && setEntireWidth()", function(assert) {
+	QUnit.test("setWidth() && setEntireWidth()", async function(assert) {
 
 		// arrange
 		const oRBGroup = new RadioButtonGroup({
@@ -325,7 +368,7 @@ sap.ui.define([
 			]
 		});
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.equal(oRBGroup.getButtons()[0].$("label").children().first().css("width"), "48px", "Width of the label should be 50px");
@@ -334,7 +377,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Invisible buttons", function(assert) {
+	QUnit.test("Invisible buttons", async function(assert) {
 		var oRBGroup = new RadioButtonGroup({
 			buttons: [
 				new RadioButton({
@@ -350,13 +393,13 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assertions
 		assert.strictEqual(oRBGroup.getSelectedIndex(), 0, "selectedIndex=0");
 
 		oRBGroup.getButtons()[0].setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oRBGroup.getSelectedIndex(), 0, "selectedIndex=0");
 		assert.strictEqual(oRBGroup.getButtons()[1].getDomRef().tabIndex, 0, "tabIndex=0");
@@ -365,7 +408,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Invisible buttons - selected index", function(assert) {
+	QUnit.test("Invisible buttons - selected index", async function(assert) {
 		var oRBGroup = new RadioButtonGroup({
 			selectedIndex: 2,
 			buttons: [
@@ -381,7 +424,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oRBGroup.getButtons()[2].getSelected(), "correct button is selected");
 		assert.strictEqual(oRBGroup._oItemNavigation.getFocusedIndex(), 1, "item navigation focused index is correct");
@@ -390,7 +433,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Invisible buttons - changing focus", function (assert) {
+	QUnit.test("Invisible buttons - changing focus", async function (assert) {
 		var oRBGroup = new RadioButtonGroup({
 			buttons: [
 				new RadioButton({
@@ -405,7 +448,7 @@ sap.ui.define([
 				})
 			]
 		}).placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act
 		oRBGroup.getButtons()[0].focus();
@@ -424,7 +467,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Setters", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.rbg = new RadioButtonGroup({
 				buttons: [
 					new RadioButton({enabled: false, text: "Option 1"}),
@@ -434,19 +477,19 @@ sap.ui.define([
 			});
 
 			this.rbg.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach : function() {
 			this.rbg.destroy();
 		}
 	});
 
-	QUnit.test("setEnabled doesn't modify RadioButton state", function(assert) {
+	QUnit.test("setEnabled doesn't modify RadioButton state", async function(assert) {
 		var aButtons = this.rbg.getButtons();
 
 		// act
 		this.rbg.setEnabled(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(aButtons[0].getEnabled(), false, "First RadioButton is disabled");
@@ -464,13 +507,13 @@ sap.ui.define([
 		assert.equal(aButtons[2].getEnabled(), true, "Third RadioButton is enabled");
 	});
 
-	QUnit.test("setEditable doesn't modify RadioButton state", function(assert) {
+	QUnit.test("setEditable doesn't modify RadioButton state", async function(assert) {
 		var aButtons = this.rbg.getButtons();
 		var oPropagateStateStub = this.stub(RadioButton.prototype, "_setEditableParent");
 
 		// act
 		this.rbg.setEditable(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oPropagateStateStub.called, "Propagation should be called");
@@ -505,7 +548,7 @@ sap.ui.define([
 		assert.strictEqual(this.rbg.getSelectedIndex(), 1, "Selected index should be properly set");
 	});
 
-	QUnit.test("setValueState", function (assert) {
+	QUnit.test("setValueState", async function (assert) {
 		var aButtons = this.rbg.getButtons(),
 			oDisabledRB = aButtons[0],
 			oReadOnlyRB = aButtons[1],
@@ -513,7 +556,7 @@ sap.ui.define([
 
 		// act
 		this.rbg.setValueState(ValueState.Error);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oDisabledRB.$().hasClass("sapMRbErr"), "Setting state to the group doesn't modify disabled buttons");
@@ -522,7 +565,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Methods", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.rbg = new RadioButtonGroup({
 				buttons: [
 					new RadioButton("firstRadioButton", {enabled: false, text: "Option 1"})
@@ -530,14 +573,14 @@ sap.ui.define([
 			});
 
 			this.rbg.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.rbg.destroy();
 		}
 	});
 
-	QUnit.test("InsertRadioButton", function(assert) {
+	QUnit.test("InsertRadioButton", async function(assert) {
 
 		// insert a button at out of bounds indexes
 
@@ -547,15 +590,15 @@ sap.ui.define([
 		oNewButton = new RadioButton({text: 'radio-200'});
 		this.rbg.insertButton(oNewButton, -200);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.rbg.$().find('.sapMRb').length, 3, "Buttons are rendered correctly");
 	});
 
-	QUnit.test("RemoveAllButtons", function(assert) {
+	QUnit.test("RemoveAllButtons", async function(assert) {
 		var aButtons = this.rbg.removeAllButtons();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.equal(this.rbg.$().find('.sapMRb').length, 0, "All buttons are removed");
@@ -589,7 +632,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("#destroyButtons should NOT modify the 'selectedIndex'", function (assert) {
+	QUnit.test("#destroyButtons should NOT modify the 'selectedIndex'", async function (assert) {
 		// arrange
 		var iSelectedIndex = 1;
 		this.rbg.insertButton(new RadioButton({text: "radio 2"}));
@@ -597,7 +640,7 @@ sap.ui.define([
 
 		// act
 		this.rbg.destroyButtons();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(this.rbg.getSelectedIndex(), iSelectedIndex, "Selected index is preserved after destroying buttons");
@@ -616,7 +659,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.rbg = new RadioButtonGroup({
 				buttons: [
 					new RadioButton("firstRadioButton"),
@@ -626,7 +669,7 @@ sap.ui.define([
 			});
 
 			this.rbg.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.rbg.destroy();
@@ -634,22 +677,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Button selection", function (assert) {
-		var fnSpy = sinon.spy(),
+		const fnSpy = sinon.spy(),
+			done = assert.async(),
 			oFirstButton = this.rbg.getButtons()[1];
 
 		this.rbg.attachSelect(fnSpy);
 
 		// act
 		qutils.triggerEvent("tap", oFirstButton.getId());
-		this.clock.tick(300);
 
-		// assert
-		assert.strictEqual(fnSpy.callCount, 1, "Click on a radio button should fire 'select'.");
+		setTimeout(() => {
+			// assert
+			assert.strictEqual(fnSpy.callCount, 1, "Click on a radio button should fire 'select'.");
+
+			done();
+		}, 300);
 	});
 
 	QUnit.module("Buttons selection");
 
-	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", function (assert) {
+	QUnit.test("setSelected should check RadioButton and uncheck all other RadioButtons from the same group", async function (assert) {
 
 		// arrange
 		var oRBGroup =  new RadioButtonGroup("RBG1"),
@@ -662,7 +709,7 @@ sap.ui.define([
 		oRadioButton2.setSelected(true);
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
@@ -674,7 +721,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("'selectedIndex' should NOT be modified onBeforeRendering", function (assert) {
+	QUnit.test("'selectedIndex' should NOT be modified onBeforeRendering", async function (assert) {
 		// arrange
 
 		var oRBGroup =  new RadioButtonGroup({
@@ -685,7 +732,7 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(oRBGroup.getButtons()[0].getSelected(), "First radio button of the group should be selected");
@@ -696,7 +743,7 @@ sap.ui.define([
 		assert.strictEqual(oRBGroup.getSelectedIndex(), 100, "'selectedIndex' is set on the group");
 
 		// act
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oRBGroup.getSelectedIndex(), 100, "'selectedIndex' is kept after rendering");
@@ -705,7 +752,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Initially selected button in the group should be the last whose setSelected(true) was called", function (assert) {
+	QUnit.test("Initially selected button in the group should be the last whose setSelected(true) was called", async function (assert) {
 		// arrange
 		var oButton1 = new RadioButton("RB1"),
 			oButton2 = new RadioButton("RB2"),
@@ -723,7 +770,7 @@ sap.ui.define([
 		oButton3.setSelected(true);
 		oButton2.setSelected(true);
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oButton1.getSelected(), "'RB1' shouldn't be selected");
@@ -734,7 +781,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Selected button in the group should be the last whose setSelected(true) was called", function (assert) {
+	QUnit.test("Selected button in the group should be the last whose setSelected(true) was called", async function (assert) {
 		// arrange
 		var oButton1 = new RadioButton("RB1"),
 			oButton2 = new RadioButton("RB2"),
@@ -748,14 +795,14 @@ sap.ui.define([
 		});
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// act - after rendering of the group
 		oButton1.setSelected(true);
 		oButton3.setSelected(true);
 		oButton2.setSelected(true);
 		oButton1.setSelected(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oButton1.getSelected(), "'RB1' shouldn't be selected");
@@ -766,7 +813,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("Selected button and selectedIndex combination", function (assert) {
+	QUnit.test("Selected button and selectedIndex combination", async function (assert) {
 		// arrange
 		var oRBGroup =  new RadioButtonGroup({
 			selectedIndex: 2
@@ -779,7 +826,7 @@ sap.ui.define([
 		oRBGroup.addButton(new RadioButton("RB3"));
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.notOk(oRBGroup.getButtons()[0].getSelected(), "'RB1' shouldn't be selected");
@@ -790,7 +837,7 @@ sap.ui.define([
 		oRBGroup.destroy();
 	});
 
-	QUnit.test("No Preselection by Default", function(assert) {
+	QUnit.test("No Preselection by Default", async function(assert) {
 		// arrange
 		var oRBGroup = new RadioButtonGroup("RBG1"),
 			oRadioButton1 = new RadioButton(),
@@ -803,7 +850,7 @@ sap.ui.define([
 		oRadioButton2.setSelected(false);
 
 		oRBGroup.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.ok(!oRadioButton1.getSelected(), "RadioButton should not be selected");
@@ -815,9 +862,7 @@ sap.ui.define([
 
 	QUnit.module("Navigation through Radio Button Groups");
 
-	QUnit.test("After mouse selection tab focus should be on the last pressed item.", function (assert) {
-
-		this.clock.restore();
+	QUnit.test("After mouse selection tab focus should be on the last pressed item.", async function (assert) {
 		// arrange
 		var oRBGroup = new RadioButtonGroup("RBG1"),
 			oRadioButton1 = new RadioButton("RB1"),
@@ -840,7 +885,7 @@ sap.ui.define([
 		oRBGroup.placeAt("qunit-fixture");
 		oRBGroup2.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oRBGroup2.attachEventOnce("select", function() {
 			// assert 1
@@ -865,9 +910,7 @@ sap.ui.define([
 
 	QUnit.module("Destroying and adding radio buttons on Select");
 
-	QUnit.test("The focus should be on the correct radio button.", function (assert) {
-
-		this.clock.restore();
+	QUnit.test("The focus should be on the correct radio button.", async function (assert) {
 		// arrange
 		var oRBGroup = new RadioButtonGroup("RBG1"),
 			oRadioButton1 = new RadioButton("RB1"),
@@ -894,7 +937,7 @@ sap.ui.define([
 
 		oRBGroup.placeAt("qunit-fixture");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 			oRBGroup.attachEventOnce("select", async function() {
 				// assert
 				await nextUIUpdate();
@@ -906,5 +949,97 @@ sap.ui.define([
 			});
 		// act 1
 		qutils.triggerEvent("tap", "RB3" );
+	});
+
+	QUnit.module("Message support", {
+		beforeEach: async function() {
+			this.oRBGroup = new RadioButtonGroup({
+				selectedIndex: "{/selectedIndex}",
+				buttons: [
+					new RadioButton({text: "Option 1"}),
+					new RadioButton({text: "Option 2"})
+				]
+			});
+			this.oRBGroup.setModel(new JSONModel({selectedIndex: -1}));
+			this.oRBGroup.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oRBGroup.destroy();
+		}
+	});
+
+	QUnit.test("MessageMixin is applied", function(assert) {
+		assert.strictEqual(typeof this.oRBGroup.refreshDataState, "function", "MessageMixin's 'refreshDataState' is added to the prototype");
+		assert.strictEqual(typeof this.oRBGroup.setValueStateText, "function", "'setValueStateText' setter is available");
+	});
+
+	QUnit.test("setValueStateText sets the hidden property", function(assert) {
+		// act
+		this.oRBGroup.setValueStateText("Custom value state text");
+
+		// assert
+		assert.strictEqual(this.oRBGroup.getProperty("valueStateText"), "Custom value state text", "The hidden 'valueStateText' property is set");
+	});
+
+	QUnit.test("'valueState' is propagated from a message targeting 'selectedIndex'", function(assert) {
+		// arrange
+		const done = assert.async();
+		const oMessage = new Message({
+			type: MessageType.Error,
+			target: "/selectedIndex",
+			processor: this.oRBGroup.getModel()
+		});
+
+		Messaging.registerObject(this.oRBGroup, true);
+
+		// The value state is propagated from the message model asynchronously via the
+		// binding's data state change, so wait for it instead of using an arbitrary timeout
+		this.oRBGroup.getBinding("selectedIndex").attachEventOnce("AggregatedDataStateChange", () => {
+			// assert
+			assert.strictEqual(this.oRBGroup.getValueState(), ValueState.Error, "The 'valueState' should be taken from the message");
+
+			// cleanup
+			Messaging.removeAllMessages();
+			done();
+		});
+
+		// act
+		Messaging.addMessages([oMessage]);
+	});
+
+	QUnit.test("'valueState' is reset to None when the message is removed", function(assert) {
+		// arrange
+		const done = assert.async();
+		const oBinding = this.oRBGroup.getBinding("selectedIndex");
+		const oMessage = new Message({
+			type: MessageType.Warning,
+			target: "/selectedIndex",
+			processor: this.oRBGroup.getModel()
+		});
+
+		Messaging.registerObject(this.oRBGroup, true);
+
+		// The value state is propagated from the message model asynchronously via the
+		// binding's data state change, so wait for it instead of using an arbitrary timeout
+		oBinding.attachEventOnce("AggregatedDataStateChange", () => {
+			// assert - message is applied
+			assert.strictEqual(this.oRBGroup.getValueState(), ValueState.Warning, "The 'valueState' should be taken from the message");
+
+			oBinding.attachEventOnce("AggregatedDataStateChange", () => {
+				// assert - value state is reset
+				assert.strictEqual(this.oRBGroup.getValueState(), ValueState.None, "The 'valueState' should be reset to 'None' when the message is removed");
+				done();
+			});
+
+			// act - remove the message after the current data state change cycle has
+			// finished, otherwise the binding would suppress the follow-up event
+			Promise.resolve().then(() => {
+				Messaging.removeAllMessages();
+			});
+		});
+
+		// act
+		Messaging.addMessages([oMessage]);
 	});
 });
