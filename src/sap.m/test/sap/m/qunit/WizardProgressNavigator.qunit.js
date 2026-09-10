@@ -408,10 +408,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Current step should have aria-current=true", function(assert) {
+	QUnit.test("Current step should have aria-current=step", function(assert) {
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-current"), "true",
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
 			"aria-current=step should be present on first step");
 	});
 
@@ -430,8 +430,8 @@ sap.ui.define([
 
 		var $steps = this.oProgressNavigator.$().find(".sapMWizardProgressNavStep");
 
-		assert.strictEqual($steps.eq(0).attr("aria-current"), "true",
-			"first step should have aria-current=true");
+		assert.strictEqual($steps.eq(0).attr("aria-current"), "step",
+			"first step should have aria-current=step");
 
 		assert.strictEqual($steps.eq(1).attr("aria-current"), undefined,
 			"second step should NOT have aria-current attribute");

@@ -434,7 +434,7 @@ function(
 		if (oStepNew) {
 			oStepNew
 				.setAttribute(
-					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, true);
+					WizardProgressNavigatorRenderer.ATTRIBUTES.ARIA_CURRENT, "step");
 		}
 	};
 
