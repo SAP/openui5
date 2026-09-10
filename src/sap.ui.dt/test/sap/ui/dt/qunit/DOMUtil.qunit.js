@@ -5,17 +5,19 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/HorizontalLayout",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DOMUtil,
 	Button,
 	HTML,
 	HorizontalLayout,
-	nextUIUpdate
+	nextUIUpdate,
+	sinon
 ) {
 	"use strict";
 
-	var style = document.createElement("style");
+	const style = document.createElement("style");
 	document.head.appendChild(style);
 	style.sheet.insertRule('\
 		#left-part .withAfterElement::after {\
@@ -68,7 +70,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
-			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
+			const oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			assert.strictEqual(
 				DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer).left,
 				30,
@@ -80,7 +82,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getOffsetFromParent is called for the content after scrolling on the container", function(assert) {
-			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
+			const oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			this.oContainer.scrollLeft = 50;
 			this.oContainer.scrollTop = 60;
 			assert.strictEqual(
@@ -112,10 +114,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the DOM reference is available", function(assert) {
-			var oButtonDomRef = this.oButton.getDomRef();
+			const oButtonDomRef = this.oButton.getDomRef();
 
 			document.getElementById("qunit-fixture").style.zIndex = 1000;
-			var zIndex = DOMUtil.getZIndex(oButtonDomRef);
+			const zIndex = DOMUtil.getZIndex(oButtonDomRef);
 			assert.equal(zIndex, "1000", 'and the static method "getZIndex" returns the right value');
 		});
 
@@ -161,11 +163,11 @@ sap.ui.define([
 			this.oDomElement.setAttribute("id", "parent");
 			this.oDomElement.classList.add("parent");
 
-			var oChild1 = document.createElement("div");
+			const oChild1 = document.createElement("div");
 			oChild1.setAttribute("id", "first-child");
 			oChild1.classList.add("child");
 			this.oDomElement.append(oChild1);
-			var oChild2 = document.createElement("div");
+			const oChild2 = document.createElement("div");
 			oChild2.setAttribute("id", "second-child");
 			oChild2.classList.add("child");
 			this.oDomElement.append(oChild2);
@@ -177,36 +179,36 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref", function(assert) {
-			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
+			const oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref");
 			assert.ok(oDomRef, "one element found");
 			assert.strictEqual(oDomRef.getAttribute("id"), "parent", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > #first-child", function(assert) {
-			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > #first-child");
+			const oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > #first-child");
 			assert.ok(oDomRef, "one element found");
 			assert.strictEqual(oDomRef.getAttribute("id"), "first-child", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for :first-child", function(assert) {
-			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":first-child");
+			const oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":first-child");
 			assert.ok(oDomRef, "one element found");
 			assert.strictEqual(oDomRef.getAttribute("id"), "first-child", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for :sap-domref > .child", function(assert) {
-			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > .child");
+			const oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, ":sap-domref > .child");
 			assert.strictEqual(oDomRef.id, "first-child", "then the first element is returned");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called for '> #third-child,> #first-child'", function(assert) {
-			var oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, "> #third-child, > #first-child");
+			const oDomRef = DOMUtil.getDomRefForCSSSelector(this.oDomElement, "> #third-child, > #first-child");
 			assert.ok(oDomRef, "one element found");
 			assert.strictEqual(oDomRef.getAttribute("id"), "first-child", "right element found");
 		});
 
 		QUnit.test("when the getDomRefForCSSSelector is called without arguments", function(assert) {
-			var oDomRef = DOMUtil.getDomRefForCSSSelector();
+			const oDomRef = DOMUtil.getDomRefForCSSSelector();
 			assert.notOk(oDomRef, "then no element is returned");
 		});
 	});
@@ -217,12 +219,12 @@ sap.ui.define([
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
 		beforeEach() {
 			// TODO: check why classes are not considered when using JS
-			var oLeftPart = document.createElement("div");
+			const oLeftPart = document.createElement("div");
 			oLeftPart.style.cssText = "float: left; width: 50%; height: 100%;";
 			oLeftPart.id = "left-part";
 			document.getElementById("qunit-fixture").appendChild(oLeftPart);
 
-			var oRightPart = document.createElement("div");
+			const oRightPart = document.createElement("div");
 			oRightPart.style.cssText = "float: left; width: 50%; height: 100%;";
 			oRightPart.id = "right-part";
 			document.getElementById("qunit-fixture").appendChild(oRightPart);
@@ -232,7 +234,7 @@ sap.ui.define([
 			this.oDomElement.className = "withBeforeElement";
 			this.oDomElement.style.cssText = "width:200px; height: 200px;";
 
-			var oSpanElement = document.createElement("span");
+			const oSpanElement = document.createElement("span");
 			oSpanElement.setAttribute("data-find", "span");
 			oSpanElement.className = "withAfterElement";
 			oSpanElement.style.color = "rgb(255, 0, 0)";
@@ -249,21 +251,21 @@ sap.ui.define([
 		QUnit.test("when this element, it's children and styling is copied", function(assert) {
 			DOMUtil.cloneDOMAndStyles(this.oDomElement, document.getElementById("right-part"));
 
-			var oCopyDiv = document.querySelector("#right-part > [data-find='div']");
+			const oCopyDiv = document.querySelector("#right-part > [data-find='div']");
 			assert.ok(oCopyDiv, "element is copied");
 			assert.strictEqual(oCopyDiv.style.width, "200px", "styles for element are also copied");
 
-			var sBeforeDivContent = window.getComputedStyle(this.oDomElement, ":before").getPropertyValue("content").replace(/[\"\']/g, "");
-			var sBeforeCopyDivContent = oCopyDiv.firstElementChild.innerHTML;
+			const sBeforeDivContent = window.getComputedStyle(this.oDomElement, ":before").getPropertyValue("content").replace(/[\"\']/g, "");
+			const sBeforeCopyDivContent = oCopyDiv.firstElementChild.innerHTML;
 			assert.strictEqual(sBeforeCopyDivContent, sBeforeDivContent, "and the pseudoElements are also copied");
 
-			var oCopySpan = oCopyDiv.querySelector("[data-find='span']");
+			const oCopySpan = oCopyDiv.querySelector("[data-find='span']");
 			assert.ok(oCopySpan, "child element is copied");
 			assert.strictEqual(window.getComputedStyle(oCopySpan).color, "rgb(255, 0, 0)", "styles for child element are also copied");
 
-			var oOriginalSpan = this.oDomElement.querySelector("span");
-			var sAfterSpanContent = window.getComputedStyle(oOriginalSpan, ":after").getPropertyValue("content").replace(/[\"\']/g, "");
-			var sAfterCopySpanContent = oCopySpan.lastElementChild.innerHTML;
+			const oOriginalSpan = this.oDomElement.querySelector("span");
+			const sAfterSpanContent = window.getComputedStyle(oOriginalSpan, ":after").getPropertyValue("content").replace(/[\"\']/g, "");
+			const sAfterCopySpanContent = oCopySpan.lastElementChild.innerHTML;
 			assert.strictEqual(sAfterCopySpanContent, sAfterSpanContent, "and the pseudoElements are also copied");
 		});
 	});
@@ -328,8 +330,8 @@ sap.ui.define([
 		QUnit.test("when copyComputedStyle is called and css-attribute display is set to none", function(assert) {
 			this.oSrcDomElement.style.display = "none";
 			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
-			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement);
-			var mDestStyles = window.getComputedStyle(this.oDestDomElement);
+			const mSrcStyles = window.getComputedStyle(this.oSrcDomElement);
+			const mDestStyles = window.getComputedStyle(this.oDestDomElement);
 			assert.strictEqual(mDestStyles.display, "none", "css-attribute display is copied to source dom element");
 			assert.notEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 				"css-attribute background on source and dest Element are not equal");
@@ -337,29 +339,29 @@ sap.ui.define([
 
 		QUnit.test("when copyComputedStyle is called without pseudoElements", function(assert) {
 			DOMUtil.copyComputedStyle(this.oSrcDomElement, this.oDestDomElement);
-			var mSrcStyles = window.getComputedStyle(this.oSrcDomElement);
-			var mDestStyles = window.getComputedStyle(this.oDestDomElement);
+			const mSrcStyles = window.getComputedStyle(this.oSrcDomElement);
+			const mDestStyles = window.getComputedStyle(this.oDestDomElement);
 			assert.strictEqual(mDestStyles["background-color"], mSrcStyles["background-color"],
 				"css styles of source and dest element are equal");
 		});
 
 		QUnit.test("when copyComputedStyle is called with pseudoElements", function(assert) {
-			var oLeftPart = document.createElement("div");
+			const oLeftPart = document.createElement("div");
 			oLeftPart.style.cssText = "float: left; width: 50%; height: 100%;";
 			oLeftPart.id = "left-part";
 			document.getElementById("qunit-fixture").appendChild(oLeftPart);
 
-			var oRightPart = document.createElement("div");
+			const oRightPart = document.createElement("div");
 			oRightPart.style.cssText = "float: left; width: 50%; height: 100%;";
 			oRightPart.id = "right-part";
 			document.getElementById("qunit-fixture").appendChild(oRightPart);
 
-			var oDomElement = document.createElement("div");
+			const oDomElement = document.createElement("div");
 			oDomElement.setAttribute("data-find", "div");
 			oDomElement.className = "withBeforeElementAndAttrContent";
 			oDomElement.style.cssText = "width:200px; height: 200px;";
 
-			var oSpanElement = document.createElement("span");
+			const oSpanElement = document.createElement("span");
 			oSpanElement.setAttribute("data-find", "span");
 			oSpanElement.className = "withAfterElement";
 			oSpanElement.style.color = "rgb(255, 0, 0)";
@@ -370,14 +372,14 @@ sap.ui.define([
 
 			DOMUtil.copyComputedStyle(oDomElement, this.oDestDomElement);
 
-			var oSpan = document.querySelector("#second-child span");
+			const oSpan = document.querySelector("#second-child span");
 			assert.strictEqual(oSpan !== null, true, "oDestDomElement contains the span element");
 		});
 	});
 
 	QUnit.module("getScrollLeft()", {
 		beforeEach() {
-			var oInnerDiv = document.createElement("div");
+			const oInnerDiv = document.createElement("div");
 			oInnerDiv.style.width = "200px";
 			oInnerDiv.style.height = "200px";
 			this.oPanel = document.createElement("div");
@@ -395,11 +397,11 @@ sap.ui.define([
 			assert.strictEqual(DOMUtil.getScrollLeft(this.oPanel), 0);
 		});
 		QUnit.test("scrolled to the most right position", function(assert) {
-			var iMaxScrollLeftValue = this.oPanel.scrollWidth - this.oPanel.clientWidth;
+			const iMaxScrollLeftValue = this.oPanel.scrollWidth - this.oPanel.clientWidth;
 
 			this.oPanel.scrollLeft = iMaxScrollLeftValue;
 
-			var iExpectedMaxScrollLeftLTRValue = DOMUtil.getScrollLeft(this.oPanel);
+			const iExpectedMaxScrollLeftLTRValue = DOMUtil.getScrollLeft(this.oPanel);
 			assert.strictEqual(Math.round(iExpectedMaxScrollLeftLTRValue), iMaxScrollLeftValue);
 		});
 	});
@@ -477,11 +479,112 @@ sap.ui.define([
 		QUnit.test("when called with null as parameter value", function(assert) {
 			assert.strictEqual(DOMUtil.hasVerticalScrollBar(null), false);
 		});
+
+		QUnit.test("when a pre-read CSSStyleDeclaration is passed, it is reused instead of calling getComputedStyle again", function(assert) {
+			this.oInnerPanel.style.height = "200px";
+			const oStyle = window.getComputedStyle(this.oOuterPanel);
+			const oSpy = sinon.spy(window, "getComputedStyle");
+
+			const bResult = DOMUtil.hasVerticalScrollBar(this.oOuterPanel, oStyle);
+
+			assert.strictEqual(bResult, true, "correctly detects vertical scrollbar");
+			assert.strictEqual(oSpy.callCount, 0, "getComputedStyle was not called again");
+			oSpy.restore();
+		});
+	});
+
+	QUnit.module("hasHorizontalScrollBar() with pre-read style", {
+		beforeEach() {
+			this.oInnerPanel = document.createElement("div");
+			this.oInnerPanel.style.width = "100px";
+			this.oOuterPanel = document.createElement("div");
+			this.oOuterPanel.style.width = "100px";
+			this.oOuterPanel.style.height = "100px";
+			this.oOuterPanel.style.overflow = "auto";
+			this.oOuterPanel.append(this.oInnerPanel);
+			document.getElementById("qunit-fixture").append(this.oOuterPanel);
+		}
+	}, function() {
+		QUnit.test("when a pre-read CSSStyleDeclaration is passed, it is reused instead of calling getComputedStyle again", function(assert) {
+			this.oInnerPanel.style.width = "200px";
+			const oStyle = window.getComputedStyle(this.oOuterPanel);
+			const oSpy = sinon.spy(window, "getComputedStyle");
+
+			const bResult = DOMUtil.hasHorizontalScrollBar(this.oOuterPanel, oStyle);
+
+			assert.strictEqual(bResult, true, "correctly detects horizontal scrollbar");
+			assert.strictEqual(oSpy.callCount, 0, "getComputedStyle was not called again");
+			oSpy.restore();
+		});
+	});
+
+	QUnit.module("hasScrollBar() — null guard and shared style", {
+		beforeEach() {
+			this.oInnerPanel = document.createElement("div");
+			this.oInnerPanel.style.width = "100px";
+			this.oInnerPanel.style.height = "100px";
+			this.oOuterPanel = document.createElement("div");
+			this.oOuterPanel.style.width = "100px";
+			this.oOuterPanel.style.height = "100px";
+			this.oOuterPanel.style.overflow = "auto";
+			this.oOuterPanel.append(this.oInnerPanel);
+			document.getElementById("qunit-fixture").append(this.oOuterPanel);
+		}
+	}, function() {
+		QUnit.test("when called with null, returns false without throwing", function(assert) {
+			assert.strictEqual(DOMUtil.hasScrollBar(null), false);
+		});
+
+		QUnit.test("when there is a scrollbar, getComputedStyle is called exactly once for both axis checks", function(assert) {
+			this.oInnerPanel.style.height = "200px";
+			const oSpy = sinon.spy(window, "getComputedStyle");
+
+			DOMUtil.hasScrollBar(this.oOuterPanel);
+
+			assert.strictEqual(oSpy.callCount, 1, "getComputedStyle called only once for both axis checks");
+			oSpy.restore();
+		});
+	});
+
+	QUnit.module("getOverflows()", {
+		beforeEach() {
+			this.oDomRef = document.createElement("div");
+			this.oDomRef.style.overflowX = "auto";
+			this.oDomRef.style.overflowY = "scroll";
+			document.getElementById("qunit-fixture").append(this.oDomRef);
+		}
+	}, function() {
+		QUnit.test("returns overflowX and overflowY values", function(assert) {
+			const oResult = DOMUtil.getOverflows(this.oDomRef);
+			assert.strictEqual(oResult.overflowX, "auto", "overflowX is correct");
+			assert.strictEqual(oResult.overflowY, "scroll", "overflowY is correct");
+		});
+
+		QUnit.test("calls getComputedStyle once when no style is passed", function(assert) {
+			const oSpy = sinon.spy(window, "getComputedStyle");
+
+			DOMUtil.getOverflows(this.oDomRef);
+
+			assert.strictEqual(oSpy.callCount, 1, "getComputedStyle called exactly once");
+			oSpy.restore();
+		});
+
+		QUnit.test("uses the provided style and skips getComputedStyle when oStyle is passed", function(assert) {
+			const oStyle = window.getComputedStyle(this.oDomRef);
+			const oSpy = sinon.spy(window, "getComputedStyle");
+
+			const oResult = DOMUtil.getOverflows(this.oDomRef, oStyle);
+
+			assert.strictEqual(oSpy.callCount, 0, "getComputedStyle not called again");
+			assert.strictEqual(oResult.overflowX, "auto", "overflowX is correct from provided style");
+			assert.strictEqual(oResult.overflowY, "scroll", "overflowY is correct from provided style");
+			oSpy.restore();
+		});
 	});
 
 	QUnit.module("appendChild()", {
 		beforeEach() {
-			var oChildInner = document.createElement("div");
+			const oChildInner = document.createElement("div");
 			oChildInner.style.width = "1000px";
 			oChildInner.style.height = "1000px";
 			oChildInner.style.backgroundColor = "green";
@@ -549,19 +652,19 @@ sap.ui.define([
 
 	QUnit.module("when isVisible is called with svg", {
 		beforeEach() {
-			var ns = "http://www.w3.org/2000/svg";
+			const ns = "http://www.w3.org/2000/svg";
 
-			var svg01 = document.createElementNS(ns, "svg");
+			const svg01 = document.createElementNS(ns, "svg");
 			svg01.id = "svg01";
 			svg01.setAttribute("width", "100px");
 			svg01.setAttribute("height", "100px");
 
-			var g01 = document.createElementNS(ns, "g");
+			const g01 = document.createElementNS(ns, "g");
 			g01.id = "g01";
 			g01.setAttribute("width", "100px");
 			g01.setAttribute("height", "100px");
 
-			var rect01 = document.createElementNS(ns, "rect");
+			const rect01 = document.createElementNS(ns, "rect");
 			rect01.id = "rect01";
 			rect01.setAttribute("width", "100px");
 			rect01.setAttribute("height", "100px");
@@ -579,26 +682,26 @@ sap.ui.define([
 		});
 
 		QUnit.test("a svg with 0 height", function(assert) {
-			var g01 = this.oNode.querySelector("#g01");
+			const g01 = this.oNode.querySelector("#g01");
 			g01.setAttribute("height", "0px");
-			var rect01 = this.oNode.querySelector("#rect01");
+			const rect01 = this.oNode.querySelector("#rect01");
 			rect01.setAttribute("height", "0px");
 			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with height 0 the domRef is not visible");
 		});
 
 		QUnit.test("a svg with 0 width", function(assert) {
-			var g01 = this.oNode.querySelector("#g01");
+			const g01 = this.oNode.querySelector("#g01");
 			g01.setAttribute("width", "0px");
-			var rect01 = this.oNode.querySelector("#rect01");
+			const rect01 = this.oNode.querySelector("#rect01");
 			rect01.setAttribute("width", "0px");
 			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with width 0 the domRef is not visible");
 		});
 
 		QUnit.test("a svg with 0 width and 0 height", function(assert) {
-			var g01 = this.oNode.querySelector("#g01");
+			const g01 = this.oNode.querySelector("#g01");
 			g01.setAttribute("height", "0px");
 			g01.setAttribute("width", "0px");
-			var rect01 = this.oNode.querySelector("#rect01");
+			const rect01 = this.oNode.querySelector("#rect01");
 			rect01.setAttribute("height", "0px");
 			rect01.setAttribute("width", "0px");
 			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with both height 0 and width 0 domRef is not visible");
@@ -612,38 +715,38 @@ sap.ui.define([
 
 	QUnit.module("contains()", function() {
 		QUnit.test("when nodes are real relatives", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
+			const oFixtureNode = document.getElementById("qunit-fixture");
 
 			// Create Node1
-			var oNode1 = document.createElement("div");
+			const oNode1 = document.createElement("div");
 			oNode1.id = "node1";
 			oFixtureNode.appendChild(oNode1);
 
 			// Create Node2
-			var oNode2 = document.createElement("div");
+			const oNode2 = document.createElement("div");
 			oNode1.appendChild(oNode2);
 
 			assert.strictEqual(DOMUtil.contains("node1", oNode2), true);
 		});
 
 		QUnit.test("when provided id doesn't exist", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
-			var oNode = document.createElement("div");
+			const oFixtureNode = document.getElementById("qunit-fixture");
+			const oNode = document.createElement("div");
 			oFixtureNode.appendChild(oNode);
 
 			assert.strictEqual(DOMUtil.contains("unknown-node-id", oNode), false);
 		});
 
 		QUnit.test("when both nodes are siblings", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
+			const oFixtureNode = document.getElementById("qunit-fixture");
 
 			// Create Node1
-			var oNode1 = document.createElement("div");
+			const oNode1 = document.createElement("div");
 			oNode1.id = "node1";
 			oFixtureNode.appendChild(oNode1);
 
 			// Create Node2
-			var oNode2 = document.createElement("div");
+			const oNode2 = document.createElement("div");
 			oFixtureNode.appendChild(oNode2);
 
 			assert.strictEqual(DOMUtil.contains("node1", oNode2), false);
@@ -652,15 +755,15 @@ sap.ui.define([
 
 	QUnit.module("syncScroll()", function() {
 		QUnit.test("basic functionality", function(assert) {
-			var oFixtureNode = document.getElementById("qunit-fixture");
+			const oFixtureNode = document.getElementById("qunit-fixture");
 
 			function createScrollableBlock() {
-				var oOuterNode = document.createElement("div");
+				const oOuterNode = document.createElement("div");
 				oOuterNode.style.backgroundColor = "blue";
 				oOuterNode.style.width = "200px";
 				oOuterNode.style.height = "200px";
 				oOuterNode.style.overflow = "scroll";
-				var oInnerNodeNode = document.createElement("div");
+				const oInnerNodeNode = document.createElement("div");
 				oInnerNodeNode.style.width = "500px";
 				oInnerNodeNode.style.height = "500px";
 				oOuterNode.appendChild(oInnerNodeNode);
@@ -668,8 +771,8 @@ sap.ui.define([
 				return oOuterNode;
 			}
 
-			var oNode1 = createScrollableBlock();
-			var oNode2 = createScrollableBlock();
+			const oNode1 = createScrollableBlock();
+			const oNode2 = createScrollableBlock();
 
 			oFixtureNode.appendChild(oNode1);
 			oFixtureNode.appendChild(oNode2);

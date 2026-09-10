@@ -72,7 +72,7 @@ sap.ui.define([
 	// Please keep this tag without any styling.
 	document.getElementById("qunit-fixture").removeAttribute("style");
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Creation of the overlay container", {
 		beforeEach() {
@@ -83,14 +83,14 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("check whether container is there", function(assert) {
-			var aContainer = document.querySelectorAll("#overlay-container");
+			const aContainer = document.querySelectorAll("#overlay-container");
 			assert.strictEqual(aContainer.length, 1);
 		});
 	});
 
 	QUnit.module("Given that an overlay is created for a control", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -126,8 +126,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control gets a new width and the Overlay is rerendered", function(assert) {
-			var fnDone = assert.async();
-			var iLastZIndex = window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"];
+			const fnDone = assert.async();
+			const iLastZIndex = window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"];
 
 			this.oElementOverlay.attachEventOnce("geometryChanged", function() {
 				assert.strictEqual(this.oButton.getDomRef().getBoundingClientRect().width, this.oElementOverlay.getDomRef().getBoundingClientRect().width, "the overlay has the new width as well");
@@ -139,8 +139,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when overlay is enabled/disabled", async function(assert) {
-			var sWidth;
-			var fnGetWidth = function(oOverlay) {
+			let sWidth;
+			const fnGetWidth = function(oOverlay) {
 				return oOverlay.getDomRef().style.width;
 			};
 
@@ -163,7 +163,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when overlay is destroyed and applyStyles function is called", function(assert) {
-			var oApplySizesSpy = sandbox.spy(this.oElementOverlay, "_applySizes");
+			const oApplySizesSpy = sandbox.spy(this.oElementOverlay, "_applySizes");
 			this.oElementOverlay.destroy();
 			return this.oElementOverlay.applyStyles()
 			.then(function() {
@@ -173,8 +173,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("elementModified event — property change ('visible')", function(assert) {
-			var fnDone = assert.async();
-			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
+			const fnDone = assert.async();
+			const oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
 				assert.equal(oEvent.getParameter("type"), "propertyChanged");
@@ -188,8 +188,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("elementModified event — property change ('text')", function(assert) {
-			var fnDone = assert.async();
-			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
+			const fnDone = assert.async();
+			const oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
 				assert.equal(oEvent.getParameter("type"), "propertyChanged");
@@ -203,8 +203,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("elementModified event — after rendering", function(assert) {
-			var fnDone = assert.async();
-			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
+			const fnDone = assert.async();
+			const oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
 				assert.equal(oEvent.getParameter("type"), "afterRendering");
@@ -216,9 +216,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("elementModified event — setParent", function(assert) {
-			var fnDone = assert.async();
-			var oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
-			var oLayout = new VerticalLayout();
+			const fnDone = assert.async();
+			const oSetRelevantSpy = sandbox.spy(this.oElementOverlay, "setRelevantOverlays");
+			const oLayout = new VerticalLayout();
 
 			this.oElementOverlay.attachEventOnce("elementModified", function(oEvent) {
 				assert.equal(oEvent.getParameter("type"), "setParent");
@@ -232,8 +232,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("elementModified event — insertAggregation", async function(assert) {
-			var fnDone = assert.async();
-			var oLayout = new VerticalLayout();
+			const fnDone = assert.async();
+			const oLayout = new VerticalLayout();
 
 			oLayout.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -243,8 +243,8 @@ sap.ui.define([
 				isRoot: true,
 				element: oLayout,
 				init: async function(oEvent) {
-					var oLayoutOverlay = oEvent.getSource();
-					var oSetRelevantSpy = sandbox.spy(oLayoutOverlay, "setRelevantOverlays");
+					const oLayoutOverlay = oEvent.getSource();
+					const oSetRelevantSpy = sandbox.spy(oLayoutOverlay, "setRelevantOverlays");
 					oLayoutOverlay.placeInOverlayContainer();
 					oLayoutOverlay.attachEventOnce("elementModified", function(oEvent) {
 						assert.equal(oEvent.getParameter("type"), "addOrSetAggregation");
@@ -264,23 +264,23 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control is rendered", function(assert) {
-			var oDomRef = this.oElementOverlay.getDomRef();
+			const oDomRef = this.oElementOverlay.getDomRef();
 
 			assert.ok(oDomRef.classList.contains("sapUiDtOverlay"), "and the right CSS class overlay is set to the element");
 			assert.ok(oDomRef.classList.contains("sapUiDtElementOverlay"), "and the right CSS element overlay class is set to the element");
 
-			var mElementOffset = DOMUtil.getOffset(this.oElementOverlay.getElement().getDomRef());
-			var mOverlayOffset = DOMUtil.getOffset(oDomRef);
+			const mElementOffset = DOMUtil.getOffset(this.oElementOverlay.getElement().getDomRef());
+			const mOverlayOffset = DOMUtil.getOffset(oDomRef);
 			assert.equal(Math.ceil(mOverlayOffset.top), Math.ceil(mElementOffset.top), "and the right position 'top' is applied to the overlay");
 			assert.equal(Math.ceil(mOverlayOffset.left), Math.ceil(mElementOffset.left), "and the right position 'left' is applied to the overlay");
 			assert.equal(window.getComputedStyle(this.oElementOverlay.getDomRef())["z-index"], window.getComputedStyle(oDomRef)["z-index"], "and the right z-index is applied to the overlay");
 
-			var oDesignTimeMetadata = this.oElementOverlay.getDesignTimeMetadata();
+			const oDesignTimeMetadata = this.oElementOverlay.getDesignTimeMetadata();
 			assert.ok(oDesignTimeMetadata instanceof ElementDesignTimeMetadata, "and the design time metadata for the control is set");
 		});
 
 		QUnit.test("when CSS animation takes place in UI", function(assert) {
-			var style = document.createElement("style");
+			const style = document.createElement("style");
 			document.head.appendChild(style);
 			style.sheet.insertRule("\
 				@keyframes example {\
@@ -296,7 +296,7 @@ sap.ui.define([
 				}\
 			");
 
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oElementOverlay.attachEvent(
 				"geometryChanged",
@@ -321,7 +321,7 @@ sap.ui.define([
 		QUnit.test("when the overlay is rerendered", function(assert) {
 			assert.ok(this.oElementOverlay.isRendered(), "ElementOverlay is initially rendered");
 
-			var oDomRef = this.oElementOverlay.getDomRef();
+			const oDomRef = this.oElementOverlay.getDomRef();
 
 			assert.strictEqual(oDomRef, this.oElementOverlay.render(), "then DOM Nodes are the same after second render()");
 		});
@@ -347,7 +347,7 @@ sap.ui.define([
 
 		QUnit.test("when setEditable is called on the overlay with true", function(assert) {
 			assert.equal(this.oElementOverlay.isEditable(), false, "then the overlay is initially not editable");
-			var oEventSpy = sandbox.spy(this.oElementOverlay, "fireEditableChange");
+			const oEventSpy = sandbox.spy(this.oElementOverlay, "fireEditableChange");
 			this.oElementOverlay.setEditable(true);
 			assert.equal(this.oElementOverlay.isEditable(), true, "then the overlay is editable");
 			assert.strictEqual(oEventSpy.callCount, 1, "then 'editableChange' was fired");
@@ -467,7 +467,7 @@ sap.ui.define([
 
 		QUnit.test("when the overlay is selected and selected again", function(assert) {
 			this.oElementOverlay.setSelected(true);
-			var bFired = false;
+			let bFired = false;
 			this.oElementOverlay.attachSelectionChange(function() {
 				bFired = true;
 			}, this);
@@ -479,7 +479,7 @@ sap.ui.define([
 			this.oElementOverlay.setSelectable(false);
 			assert.ok(!this.oElementOverlay.isSelectable(), "then the state of the overlay is 'not selectable'");
 
-			var bFired = false;
+			let bFired = false;
 			this.oElementOverlay.attachSelectionChange(function() {
 				bFired = true;
 			}, this);
@@ -522,7 +522,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the overlay is being destroyed and applyStyles is triggered", function(assert) {
-			var oIsVisibleSpy = sinon.spy(this.oElementOverlay, "isVisible");
+			const oIsVisibleSpy = sinon.spy(this.oElementOverlay, "isVisible");
 			this.oElementOverlay.destroy();
 			return this.oElementOverlay.applyStyles()
 			.then(function() {
@@ -531,8 +531,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the overlay is being renamed several times in a row", function(assert) {
-			var fnDone = assert.async();
-			var fnHandlerSpy = sinon.spy(function() {
+			const fnDone = assert.async();
+			const fnHandlerSpy = sinon.spy(function() {
 				window.requestAnimationFrame(function() {
 					assert.strictEqual(fnHandlerSpy.callCount, 1, "then geometryChanged event is called just once");
 					fnDone();
@@ -545,9 +545,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the _domChangedCallback function is being called twice in a row", function(assert) {
-			var fnDone = assert.async();
-			var mParameters = { name: "parameter_name" };
-			var iCounter = 0;
+			const fnDone = assert.async();
+			const mParameters = { name: "parameter_name" };
+			let iCounter = 0;
 			this.oElementOverlay.attachApplyStylesRequired(function(oEvent) {
 				iCounter++;
 				window.requestAnimationFrame(function(mResultParameters) {
@@ -562,7 +562,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the 'visible' property is set to false and then back to true", function(assert) {
-			var sPreviousVisibility = this.oElementOverlay.getDomRef().style.visibility;
+			const sPreviousVisibility = this.oElementOverlay.getDomRef().style.visibility;
 
 			this.oElementOverlay.setVisible(false);
 			assert.strictEqual(this.oElementOverlay.getDomRef().style.visibility, "hidden", "first the visibility is set to hidden");
@@ -581,7 +581,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for a control with an invisible domRef", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oLabel = new Label();
 			this.oLabel.placeAt("qunit-fixture");
 			await nextUIUpdate();
@@ -610,7 +610,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oLabel = new Label({ text: "text" });
 			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
@@ -633,7 +633,7 @@ sap.ui.define([
 	}, function() {
 		// TODO: BUG - Invisible layout still has a rendered overlay
 		QUnit.test("when the layout's domRef is changed to visible...", async function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			assert.strictEqual(this.oLayoutOverlay.isVisible(), false, "the layout's overlay should not be in the DOM when the layout is invisible");
 			this.oLabelOverlay.attachEventOnce("geometryChanged", function() {
 				assert.ok(true, "the geometry changed event called first on the label (child) overlay");
@@ -652,7 +652,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oLabel1 = new Label({ text: "text 1" });
 			this.oLabel2 = new Label({ text: "text 2" });
 			this.oInnerLayout = new VerticalLayout({ content: [this.oLabel2] });
@@ -677,7 +677,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the layout is switched to invisible and the back to visible...", async function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oVerticalLayout.setVisible(false);
 			await nextUIUpdate();
@@ -696,7 +696,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("layout shifting: scenario 1", async function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).top), "top position of the Layout overlay is correct");
@@ -727,7 +727,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("layout shifting: scenario 2", async function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oLayoutOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oVerticalLayout.getDomRef()).top), "top position of the Layout overlay is correct");
@@ -760,7 +760,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for a layout with child controls", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oButton1 = new Button({
 				text: "Button 1"
 			});
@@ -830,14 +830,14 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the design time metadata is retrieved", function(assert) {
-			var oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
+			const oDesignTimeMetadata = this.oOverlay.getDesignTimeMetadata();
 			assert.equal(oDesignTimeMetadata.getData().name, "My Custom Metadata", "then the right custom data is set");
 		});
 	});
 
 	QUnit.module("Given that an Overlay is created for a control marked as ignored in the designtime Metadata", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -875,7 +875,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for two layouts with two child controls", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oButton1 = new Button({
 				text: "Button 1",
 				id: "Button1"
@@ -932,10 +932,10 @@ sap.ui.define([
 		QUnit.test("when a control is moved to another layout", function(assert) {
 			ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 1);
 
-			var oDomRefButton1 = this.oOverlayButton1.getDomRef();
-			var oDomRefButton2 = this.oOverlayButton2.getDomRef();
-			var oDomRefButton3 = this.oOverlayButton3.getDomRef();
-			var oDomRefButton4 = this.oOverlayButton4.getDomRef();
+			const oDomRefButton1 = this.oOverlayButton1.getDomRef();
+			const oDomRefButton2 = this.oOverlayButton2.getDomRef();
+			const oDomRefButton3 = this.oOverlayButton3.getDomRef();
+			const oDomRefButton4 = this.oOverlayButton4.getDomRef();
 
 			assert.strictEqual(oDomRefButton3, oDomRefButton2.previousElementSibling, "then Overlay DOM elements in target layout are in correct order - button3 before button2");
 			assert.strictEqual(oDomRefButton4, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order - button4 after button2");
@@ -946,8 +946,8 @@ sap.ui.define([
 			this.oOverlayLayout2.getDomRef().prepend(document.createElement("div"));
 			ElementUtil.insertAggregation(this.oVerticalLayout2, "content", this.oButton2, 0);
 
-			var oDomRefButton2 = this.oOverlayButton2.getDomRef();
-			var oDomRefButton3 = this.oOverlayButton3.getDomRef();
+			const oDomRefButton2 = this.oOverlayButton2.getDomRef();
+			const oDomRefButton3 = this.oOverlayButton3.getDomRef();
 
 			assert.strictEqual(oDomRefButton3, oDomRefButton2.nextElementSibling, "then Overlay DOM elements in target layout are in correct order");
 			assert.strictEqual(null, oDomRefButton2.previousElementSibling, "and extra element is not taken into account");
@@ -956,16 +956,16 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created for a control in the content of a scrollable container", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oContainer = document.createElement("div");
 			this.oContainer.style.height = "400px";
 			this.oContainer.style.width = "200px";
 			this.oContainer.style.overflowY = "auto";
 			this.oContainer.setAttribute("id", "scroll-container");
-			var oChild1 = document.createElement("div");
+			const oChild1 = document.createElement("div");
 			oChild1.style.width = "100%";
 			oChild1.style.height = "100px";
-			var oChild2 = document.createElement("div");
+			const oChild2 = document.createElement("div");
 			oChild2.style.height = "500px";
 			oChild2.setAttribute("id", "scroll-content");
 			this.oContainer.append(oChild1, oChild2);
@@ -993,7 +993,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when the container is scrolled", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oOverlay.attachEventOnce("geometryChanged", function() {
 				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oOverlay.getDomRef()).top), Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).top), "overlay has same top position as a control");
 				assert.deepEqual(Math.ceil(DOMUtil.getOffset(this.oOverlay.getDomRef()).left), Math.ceil(DOMUtil.getOffset(this.oButton.getDomRef()).left), "overlay has same left position as a control");
@@ -1005,7 +1005,7 @@ sap.ui.define([
 
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
 			this.oSimpleScrollControl.addContent1(
@@ -1066,17 +1066,17 @@ sap.ui.define([
 		}
 
 		QUnit.test("when the control is scrolled", function(assert) {
-			var fnDone = assert.async();
-			var mInitialValues = createInitialScrollHandlerValues.call(this);
+			const fnDone = assert.async();
+			const mInitialValues = createInitialScrollHandlerValues.call(this);
 			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, fnDone, mInitialValues));
-			var oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
+			const oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
 			oScrollContainerDOM.scrollTop = 100;
 		});
 
 		QUnit.test("when the overlay is scrolled", function(assert) {
-			var fnDone = assert.async();
-			var mInitialValues = createInitialScrollHandlerValues.call(this);
-			var oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
+			const fnDone = assert.async();
+			const mInitialValues = createInitialScrollHandlerValues.call(this);
+			const oScrollContainerDOM = this.oSimpleScrollControl.getDomRef().querySelector(".sapUiDtTestSSCScrollContainer");
 			oScrollContainerDOM.addEventListener("scroll", scrollHandler.bind(this, assert, fnDone, mInitialValues));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop = 100;
 		});
@@ -1096,11 +1096,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
-			var fnDone = assert.async();
-			var mInitialValues = createInitialScrollHandlerValues.call(this);
+			const fnDone = assert.async();
+			const mInitialValues = createInitialScrollHandlerValues.call(this);
 			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, fnDone, mInitialValues));
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").off();
-			var oDelegate = {
+			const oDelegate = {
 				onAfterRendering() {
 					this.oSimpleScrollControl.removeEventDelegate(oDelegate);
 					this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
@@ -1111,8 +1111,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the scroll container needs updating", function(assert) {
-			var oScrollContainer = this.oSimpleScrollControlOverlay.getScrollContainerById(1);
-			var aOverlayChildrenDomRef = this.oSimpleScrollControlOverlay.getChildrenDomRef();
+			const oScrollContainer = this.oSimpleScrollControlOverlay.getScrollContainerById(1);
+			const aOverlayChildrenDomRef = this.oSimpleScrollControlOverlay.getChildrenDomRef();
 
 			assert.strictEqual(oScrollContainer.children.length, 2, "initially there are two aggregations in the scroll container");
 			assert.strictEqual(aOverlayChildrenDomRef.children.length, 4, "and 4 children in the element overlay");
@@ -1164,7 +1164,7 @@ sap.ui.define([
 
 	QUnit.module("Postponed an aggregation overlay rendering", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oPanel = new Panel({
 				height: "300px",
 				width: "300px"
@@ -1196,10 +1196,10 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a control is added to an empty aggregation", async function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			assert.ok(this.oPanelOverlay.isRendered());
 			assert.notOk(this.oContentAggregationOverlay.isRendered(), "then the aggregation overlay for an empty aggregation is not rendered");
-			var oButton = new Button({
+			const oButton = new Button({
 				text: "test"
 			});
 
@@ -1208,7 +1208,7 @@ sap.ui.define([
 				assert.ok(this.oContentAggregationOverlay.isRendered(), "then the aggregation overlay is rendered");
 
 				// Control inside aggregation has been rendered
-				var oButtonOverlay = OverlayRegistry.getOverlay(oButton);
+				const oButtonOverlay = OverlayRegistry.getOverlay(oButton);
 				assert.ok(oButtonOverlay.isRendered(), "then the new control is rendered");
 				assert.ok(oButtonOverlay.isVisible());
 				fnDone();
@@ -1220,19 +1220,19 @@ sap.ui.define([
 
 	QUnit.module("Aggregation sorting", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
-			var fnDone2 = assert.async();
+			const fnDone = assert.async();
+			const fnDone2 = assert.async();
 
-			var oSubSection = new ObjectPageSubSection("subsection", {
+			const oSubSection = new ObjectPageSubSection("subsection", {
 				blocks: [new Button({ text: "abc" }), new Button({ text: "def" }), new Button({ text: "ghi" })]
 			});
-			var oSubSection2 = new ObjectPageSubSection("subsection2", {
+			const oSubSection2 = new ObjectPageSubSection("subsection2", {
 				blocks: [new Button({ text: "foo" }), new Button({ text: "bar" }), new Button({ text: "foobar" })]
 			});
-			var oSection = new ObjectPageSection("section", {
+			const oSection = new ObjectPageSection("section", {
 				subSections: [oSubSection]
 			});
-			var oSection2 = new ObjectPageSection("section2", {
+			const oSection2 = new ObjectPageSection("section2", {
 				subSections: [oSubSection2]
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
@@ -1273,15 +1273,15 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("check position in DOM tree", function(assert) {
-			var aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
-			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
-			var aScrollContainerChildren = Array.from(oScrollContainer.children);
+			const aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
+			const oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
+			const aScrollContainerChildren = Array.from(oScrollContainer.children);
 
-			var iIndexHeaderTitleOverlay = aChildren.indexOf(this.oHeaderTitleOverlay.getDomRef());
-			var iScrollContainer = aChildren.indexOf(oScrollContainer);
-			var iIndexFooterOverlay = aChildren.indexOf(this.oFooterOverlay.getDomRef());
-			var iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
-			var iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
+			const iIndexHeaderTitleOverlay = aChildren.indexOf(this.oHeaderTitleOverlay.getDomRef());
+			const iScrollContainer = aChildren.indexOf(oScrollContainer);
+			const iIndexFooterOverlay = aChildren.indexOf(this.oFooterOverlay.getDomRef());
+			const iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
+			const iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
 
 			assert.ok(iIndexHeaderTitleOverlay < iScrollContainer, "then the overlay for headerTitle is above scrollcontainer");
 			assert.ok(iScrollContainer < iIndexFooterOverlay, "then the scrollcontainer is above the overlay for headerTitle");
@@ -1289,17 +1289,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("check whether scrollbar position doesn't affect sorting", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
-			var oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
-			var aScrollContainerChildren = Array.from(oScrollContainer.children);
-			var iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
-			var iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
+			const oScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
+			const aScrollContainerChildren = Array.from(oScrollContainer.children);
+			const iIndexHeaderContentOverlay = aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef());
+			const iIndexSectionsOverlay = aScrollContainerChildren.indexOf(this.oSectionsOverlay.getDomRef());
 
-			var oScrollbarSynchronizer = this.oLayoutOverlay._oScrollbarSynchronizers.get(oScrollContainer);
+			const oScrollbarSynchronizer = this.oLayoutOverlay._oScrollbarSynchronizers.get(oScrollContainer);
 			oScrollbarSynchronizer.attachEventOnce("synced", function() {
-				var aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
-				var aScrollContainerChildren = Array.from(oScrollContainer.children);
+				const aChildren = Array.from(this.oLayoutOverlay.getChildrenDomRef().children);
+				const aScrollContainerChildren = Array.from(oScrollContainer.children);
 				assert.ok(aChildren.indexOf(this.oHeaderTitleOverlay.getDomRef()) < aChildren.indexOf(oScrollContainer));
 				assert.ok(aChildren.indexOf(oScrollContainer) < aChildren.indexOf(this.oFooterOverlay.getDomRef()));
 				assert.strictEqual(aScrollContainerChildren.indexOf(this.oHeaderContentOverlay.getDomRef()), iIndexHeaderContentOverlay);
@@ -1313,7 +1313,7 @@ sap.ui.define([
 
 	QUnit.module("Given another SimpleScrollControl with Overlays and one scroll container aggregation is ignored", {
 		async beforeEach(assert) {
-			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
+			const ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: {
 						aggregations: {
@@ -1326,7 +1326,7 @@ sap.ui.define([
 				renderer: SimpleScrollControl.getMetadata().getRenderer()
 			});
 
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollControl = new ScrollControl({
 				id: "scrollControl",
@@ -1369,7 +1369,7 @@ sap.ui.define([
 
 	QUnit.module("Given a control with control domRef defined in dt-metadata", {
 		async beforeEach(assert) {
-			var AnyControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.AnyControl", {
+			const AnyControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.AnyControl", {
 				metadata: {
 					designtime: {
 						domRef: ".sapUiDtTestSSCScrollContainer",
@@ -1379,7 +1379,7 @@ sap.ui.define([
 				renderer: SimpleScrollControl.getMetadata().getRenderer()
 			});
 
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oAnyControl = new AnyControl({
 				id: "control"
@@ -1412,7 +1412,7 @@ sap.ui.define([
 
 	QUnit.module("Scrollbar classes", function() {
 		QUnit.test("when one aggregation loses its scrolling, the scrollbar classes must not persist on the parent overlay (as the aggregation with scrollbar doesn't take the whole space inside the control)", async function(assert) {
-			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
+			const ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: {
 						...SimpleScrollControl.getMetadata()._oDesignTime,
@@ -1422,7 +1422,7 @@ sap.ui.define([
 				renderer: SimpleScrollControl.getMetadata().getRenderer()
 			});
 
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollControl = new ScrollControl({
 				id: "scrollControl",
@@ -1446,10 +1446,10 @@ sap.ui.define([
 			this.oScrollControl.placeAt("qunit-fixture");
 			await nextUIUpdate();
 
-			var oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
+			const oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
 			oContent1DOM.style.height = "300px";
 			oContent1DOM.style.overflow = "auto";
-			var oContent2DOM = this.oScrollControl.getDomRef().querySelector("[id*='content2']");
+			const oContent2DOM = this.oScrollControl.getDomRef().querySelector("[id*='content2']");
 			oContent2DOM.style.height = "300px";
 			oContent2DOM.style.overflow = "auto";
 
@@ -1464,7 +1464,7 @@ sap.ui.define([
 					&& this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBarVertical")
 				);
 				this.oScrollControlOverlay.getAggregationOverlay("content2").getChildren()[0].attachEventOnce("geometryChanged", function(oEvent) {
-					var oAggregationOverlay = oEvent.getSource();
+					const oAggregationOverlay = oEvent.getSource();
 					assert.strictEqual(oAggregationOverlay.getDomRef().querySelectorAll(".sapUiDtDummyScrollContainer").length, 0, "make sure dummy container has been removed");
 					assert.notOk(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
@@ -1479,7 +1479,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the aggregation has a scrolling which takes the whole space of the control", async function(assert) {
-			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
+			const ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: {
 						...SimpleScrollControl.getMetadata()._oDesignTime,
@@ -1489,7 +1489,7 @@ sap.ui.define([
 				renderer: SimpleScrollControl.getMetadata().getRenderer()
 			});
 
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 
 			this.oScrollControl = new ScrollControl({
 				id: "scrollControl",
@@ -1506,7 +1506,7 @@ sap.ui.define([
 			this.oScrollControl.placeAt("qunit-fixture");
 			await nextUIUpdate();
 
-			var oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
+			const oContent1DOM = this.oScrollControl.getDomRef().querySelector("[id*='content1']");
 			oContent1DOM.style.height = "500px";
 			oContent1DOM.style.overflow = "auto";
 
@@ -1522,7 +1522,7 @@ sap.ui.define([
 				);
 
 				this.oScrollControlOverlay.getAggregationOverlay("content1").getChildren()[0].attachEventOnce("geometryChanged", function(oEvent) {
-					var oAggregationOverlay = oEvent.getSource().getParentAggregationOverlay();
+					const oAggregationOverlay = oEvent.getSource().getParentAggregationOverlay();
 					assert.strictEqual(oAggregationOverlay.getDomRef().querySelectorAll(".sapUiDtDummyScrollContainer").length, 1, "make sure dummy container has been created");
 					assert.ok(
 						this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
@@ -1537,8 +1537,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when scrollcontainer loses scrolling, then scrollbar classes have to be removed", async function(assert) {
-			var fnDone = assert.async();
-			var oVerticalLayout = new VerticalLayout("layout", {
+			const fnDone = assert.async();
+			const oVerticalLayout = new VerticalLayout("layout", {
 				content: [
 					this.oScrollControl = new SimpleScrollControl({
 						id: "scrollControl",
@@ -1569,8 +1569,8 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-				var mScrollSynchronizersMap = this.oScrollControlOverlay._oScrollbarSynchronizers;
-				var oScrollbarSynchronizer = mScrollSynchronizersMap.get(Array.from(mScrollSynchronizersMap.keys())[0]);
+				const mScrollSynchronizersMap = this.oScrollControlOverlay._oScrollbarSynchronizers;
+				const oScrollbarSynchronizer = mScrollSynchronizersMap.get(Array.from(mScrollSynchronizersMap.keys())[0]);
 				this.oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
 				assert.ok(
 					this.oScrollControlOverlay.hasStyleClass("sapUiDtOverlayWithScrollBar")
@@ -1595,8 +1595,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when scrollcontainer is removed, the corresponding overlay must be hidden", async function(assert) {
-			var fnDone = assert.async();
-			var oVerticalLayout = new VerticalLayout("layout", {
+			const fnDone = assert.async();
+			const oVerticalLayout = new VerticalLayout("layout", {
 				content: [
 					this.oScrollControl = new SimpleScrollControl({
 						id: "scrollControl",
@@ -1634,7 +1634,7 @@ sap.ui.define([
 				// setTimeout is needed, because synced event doesn"t wait until all async processes are done
 				setTimeout(async function() {
 					this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-					var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
+					const oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
 					assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
 					this.oScrollControlOverlay.attachEvent("geometryChanged", function() {
 						assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "none");
@@ -1649,8 +1649,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when applyStyles is running whith scrollcontainer exists and the synchroninzer is destroyed", async function(assert) {
-			var fnDone = assert.async();
-			var oVerticalLayout = new VerticalLayout("layout", {
+			const fnDone = assert.async();
+			const oVerticalLayout = new VerticalLayout("layout", {
 				content: [
 					this.oScrollControl = new SimpleScrollControl({
 						id: "scrollControl",
@@ -1686,10 +1686,10 @@ sap.ui.define([
 
 			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oScrollControlOverlay = OverlayRegistry.getOverlay(this.oScrollControl);
-				var oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
-				var oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
+				const oTextAreaOverlay = OverlayRegistry.getOverlay(this.oTextArea);
+				const oScrollContainerOverlayDomRef = this.oScrollControlOverlay.getScrollContainerById(0);
 				assert.strictEqual(window.getComputedStyle(oScrollContainerOverlayDomRef).display, "block");
-				var oGeometryChangedSpy = sandbox.spy();
+				const oGeometryChangedSpy = sandbox.spy();
 				oTextAreaOverlay.attachEvent("geometryChanged", oGeometryChangedSpy);
 				this.oDesignTime.attachEventOnce("synced", function() {
 					assert.ok(true, "then the synched event is fired by the designtime");
@@ -1709,7 +1709,7 @@ sap.ui.define([
 
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -1744,12 +1744,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("then", function(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel);
 			this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 			this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
 
-			var fnAssertPositions = function() {
+			const fnAssertPositions = function() {
 				// Math.ceil is required for IE and Edge
 				assert.equal(
 					Math.ceil(DOMUtil.getOffset(this.oPanelOverlay.getDomRef()).left),
@@ -1802,7 +1802,7 @@ sap.ui.define([
 
 	QUnit.module("Error handling", function() {
 		QUnit.test("when creating an ElementOverlay with incorrect elemement object", function(assert) {
-			var oManagedObject = new ManagedObject();
+			const oManagedObject = new ManagedObject();
 
 			assert.throws(
 				function() {
@@ -1820,7 +1820,7 @@ sap.ui.define([
 
 	QUnit.module("Highlighting on selection - Given a List with bound items and a List with unbound items", {
 		async beforeEach(assert) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			this.oHorizontalLayout = await TestUtil.createListWithBoundItems();
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oHorizontalLayout]
@@ -1857,8 +1857,8 @@ sap.ui.define([
 			}
 		].forEach(function(options) {
 			QUnit.test(options.description, function(assert) {
-				var oSelectedOverlay = OverlayRegistry.getOverlay(options.selected.id);
-				var oFirstListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin.id);
+				const oSelectedOverlay = OverlayRegistry.getOverlay(options.selected.id);
+				const oFirstListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin.id);
 				oSelectedOverlay.setSelectable(true);
 				oSelectedOverlay.setSelected(true);
 				assert.equal(oSelectedOverlay.isSelectable(), true, "then the overlay is selectable");
@@ -1872,7 +1872,7 @@ sap.ui.define([
 						? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"}`
 				);
 				if (options.twin1) {
-					var oSecondListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin1.id);
+					const oSecondListItemButtonOverlay = OverlayRegistry.getOverlay(options.twin1.id);
 					assert.strictEqual(oSecondListItemButtonOverlay.hasStyleClass("sapUiDtOverlayHighlighted"), options.twin1.highlighted,
 						`then the second twin Overlay ${options.twin1.highlighted
 							? "do have the highlighted StyleClss" : "does not have the highlighted StyleClass"}`
