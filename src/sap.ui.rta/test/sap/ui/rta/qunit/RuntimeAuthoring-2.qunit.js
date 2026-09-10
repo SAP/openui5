@@ -445,6 +445,34 @@ sap.ui.define([
 			assert.strictEqual(oRootControlBlockedStub.lastCall.args[0], false, "and set to false");
 		});
 
+		QUnit.test("when RTA is started, the adaptation border element is created and visible in adaptation mode", function(assert) {
+			assert.ok(this.oRta._oAdaptationBorderElement, "then the border element exists");
+			assert.ok(
+				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+				"then the border is visible in adaptation mode"
+			);
+		});
+
+		QUnit.test("when mode is changed to navigation and back to adaptation, the border visibility is toggled", function(assert) {
+			this.oRta.setMode("navigation");
+			assert.notOk(
+				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+				"then the border is hidden in navigation mode"
+			);
+
+			this.oRta.setMode("adaptation");
+			assert.ok(
+				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+				"then the border is visible again in adaptation mode"
+			);
+		});
+
+		QUnit.test("when RTA is stopped, the adaptation border element is removed", async function(assert) {
+			assert.ok(this.oRta._oAdaptationBorderElement, "then the border element exists before stop");
+			await this.oRta.stop();
+			assert.notOk(this.oRta._oAdaptationBorderElement, "then the border element is removed after stop");
+		});
+
 		QUnit.test("when waitForCommandExecutionResult is called after a command executed successfully", async function(assert) {
 			sandbox.stub(this.oRta.getCommandStack(), "pushAndExecute").resolves();
 			this.oRta.getPluginManager().getDefaultPlugins().rename.fireElementModified({
@@ -481,6 +509,26 @@ sap.ui.define([
 			await this.oRta.waitForPendingActions();
 			assert.ok(true, "then waitForPendingActions resolves despite the failure");
 			assert.ok(oLogErrorStub.called, "and the failure was logged as before");
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is started without toolbars (adaptation project)", {
+		beforeEach() {
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				showToolbars: false
+			});
+			return this.oRta.start();
+		},
+		afterEach() {
+			this.oRta.destroy();
+			sandbox.restore();
+			cleanInfoSessionStorage();
+		}
+	}, function() {
+		QUnit.test("the adaptation border element is not created", function(assert) {
+			assert.notOk(this.oRta._oAdaptationBorderElement,
+				"then no border element is attached to the RTA instance");
 		});
 	});
 
