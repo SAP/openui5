@@ -273,7 +273,8 @@ sap.ui.define([
 	QUnit.module("Given that RuntimeAuthoring is started", {
 		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp
+				rootControl: oComp,
+				flexSettings: { developerMode: false }
 			});
 
 			this.oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
@@ -498,6 +499,27 @@ sap.ui.define([
 			}
 		});
 
+		QUnit.test("when RTA is started, the adaptation border element is created and visible", function(assert) {
+			assert.ok(this.oRta._oAdaptationBorderElement, "then the border element exists");
+			assert.ok(
+				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+				"then the border is visible in adaptation mode"
+			);
+		});
+
+		QUnit.test("when mode is changed to navigation and back, the border visibility is toggled", function(assert) {
+			this.oRta.setMode("navigation");
+			assert.notOk(
+				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+				"then the border is hidden in navigation mode"
+			);
+			this.oRta.setMode("adaptation");
+			assert.ok(
+				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+				"then the border is visible again in adaptation mode"
+			);
+		});
+
 		QUnit.test("when a command fails, the internal element-modified chain still swallows the error", async function(assert) {
 			const oError = new Error("the change handler blew up");
 			sandbox.stub(this.oRta.getCommandStack(), "pushAndExecute").rejects(oError);
@@ -512,11 +534,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that RuntimeAuthoring is started without toolbars (adaptation project)", {
+	QUnit.module("Given that RuntimeAuthoring is started in developer mode (e.g. Adaptation Project)", {
 		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
-				showToolbars: false
+				flexSettings: { developerMode: true }
 			});
 			return this.oRta.start();
 		},
