@@ -10,9 +10,6 @@ sap.ui.define([
 
 	var sDefaultLanguage = Localization.getLanguage();
 
-	//var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$\u00a0US", "$US", "$", "US$", "US$", "$",
-	//	"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
-
 	/*
 	"getOrientation", "getLanguages", "getScripts", "getTerritories", "getMonths", "getDays", "getQuarters", "getDayPeriods",
 	"getDatePattern", "getTimePattern", "getDateTimePattern", "getNumberSymbol"
@@ -87,7 +84,7 @@ sap.ui.define([
 			assert.ok(Array.isArray(oLocaleData.getCustomIntervalPattern("yMd", "", sCalendarType)), "getCustomIntervalPattern(\"yMd\", \"\", \"" + sCalendarType + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yw", "y", sCalendarType), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + sCalendarType + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("Q", "Q", sCalendarType), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + sCalendarType + "\")");
-			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
+			[undefined, "wide", "short", "narrow"].forEach(function(sStyle) {
 				assert.equal(typeof oLocaleData.getDisplayName("era", sStyle), "string", "getDisplayName(\"era\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 				assert.equal(typeof oLocaleData.getDisplayName("year", sStyle), "string", "getDisplayName(\"year\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 				assert.equal(typeof oLocaleData.getDisplayName("quarter", sStyle), "string", "getDisplayName(\"quarter\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
@@ -166,7 +163,7 @@ sap.ui.define([
 	}
 
 	var customTests = {
-		ar_SA: function customTests_ar_SA(assert, oLocaleData) {
+		ar_SA: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getPluralCategories().length, 6, "six plural forms");
 			assert.equal(oLocaleData.getPluralCategories()[0], "zero", "special plural form for zero");
 			assert.equal(oLocaleData.getPluralCategories()[1], "one", "special plural form for one");
@@ -180,11 +177,11 @@ sap.ui.define([
 			assert.equal(oLocaleData.getPreferredCalendarType(), "Islamic", "islamic calendar preferred");
 		},
 
-		de_AT: function customTests_de_AT(assert, oLocaleData) {
+		de_AT: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getMonths("wide")[0], "Jänner", "1st month");
 		},
 
-		de_DE: function customTests_de_DE(assert, oLocaleData) {
+		de_DE: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "Deutsch", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "Lateinisch", "scripts");
@@ -285,7 +282,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getPreferredCalendarType(), "Gregorian", "gregorian calendar preferred");
 		},
 
-		de_XX: function customTests_de_XX(assert, oLocaleData) {
+		de_XX: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getMonths("wide")[0], "Januar", "1st month");
 			assert.equal(oLocaleData.getMonths("abbreviated")[0], "Jan.", "1st month abbreviated");
@@ -303,7 +300,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getLenientNumberSymbols("minusSign"), "-－﹣‑‒−⁻₋➖");
 		},
 
-		en_GB: function customTests_en_GB(assert, oLocaleData) {
+		en_GB: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "German", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "Latin", "scripts");
@@ -423,7 +420,7 @@ sap.ui.define([
 			assert.strictEqual(oLocaleData.getCompactDecimalPattern("short", sPowerOfTen), "000tn");
 		},
 
-		en_ZA: function customTests_en_ZA(assert, oLocaleData) {
+		en_ZA: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getDatePattern("medium"), "dd MMM y", "date pattern \"medium\"");
 			assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 			assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
@@ -431,7 +428,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊➕");
 		},
 
-		en_US: function customTests_en_US(assert, oLocaleData) {
+		en_US: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getDayPeriods("abbreviated")[0], "AM", "day periods \"abbreviated\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("jms"), "h:mm:ss\u202Fa", "datetime format \"jms\"");
 			assert.equal(oLocaleData.getCustomDateTimePattern("Jms"), "h:mm:ss\u202F", "datetime format \"Jms\"");
@@ -445,15 +442,15 @@ sap.ui.define([
 				"h:mm\u2009\u2013\u2009h:mm\u202Fa", "interval format \"jm\", { Hour: true }");
 		},
 
-		he_IL: function customTests_he_IL(assert, oLocaleData) {
+		he_IL: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "right-to-left", "orientation");
 		},
 
-		fa_IR: function customTests_fa_IR(assert, oLocaleData) {
+		fa_IR: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getPreferredCalendarType(), "Persian", "persian calendar preferred");
 		},
 
-		fr_FR: function customTests_fr_FR(assert, oLocaleData) {
+		fr_FR: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "allemand", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "latin", "scripts");
@@ -482,7 +479,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getLenientNumberSymbols("plusSign"), "+＋﬩﹢⁺₊➕");
 		},
 
-		ja_JP: function customTests_ja_JP(assert, oLocaleData) {
+		ja_JP: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "ドイツ語", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "ラテン文字", "scripts");
@@ -517,11 +514,11 @@ sap.ui.define([
 			assert.ok(oLocaleData.getCalendarWeek("wide", 0).toLowerCase().indexOf("week") === -1, "calendar week should be translated");
 		},
 
-		nl_BE: function customTests_nl_BE(assert, oLocaleData) {
+		nl_BE: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getDatePattern("medium"), "d MMM y", "date pattern \"medium\"");
 		},
 
-		sr_Latn: function customTests_sr_Latn(assert, oLocaleData) {
+		sr_Latn: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "nemački", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "latinica", "scripts");
@@ -585,7 +582,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getPluralCategory("10"), "other", "plural category many for 10");
 			assert.equal(oLocaleData.getPluralCategory("101"), "one", "plural category one for 101");
 		},
-		sr: function customTests_sr_Latn(assert, oLocaleData) {
+		sr: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "немачки", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "латиница", "scripts");
@@ -650,7 +647,7 @@ sap.ui.define([
 			assert.equal(oLocaleData.getPluralCategory("101"), "one", "plural category one for 101");
 		},
 
-		ru_RU: function customTests_ru_RU(assert, oLocaleData) {
+		ru_RU: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getOrientation(), "left-to-right", "orientation");
 			assert.equal(oLocaleData.getLanguages()["de"], "немецкий", "language");
 			assert.equal(oLocaleData.getScripts()["Latn"], "латиница", "scripts");
@@ -718,23 +715,22 @@ sap.ui.define([
 			assert.equal(oLocaleData.getPluralCategory("101"), "one", "plural category one for 101");
 		},
 
-		pt_BR: function customTests_pt_BR(assert, oLocaleData) {
+		pt_BR: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
 			assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 			assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 		},
 
-		pt_PT: function customTests_pt_PT(assert, oLocaleData) {
+		pt_PT: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getFirstDayOfWeek(), 0, "first day of week");
 			assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 			assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 		},
 
-		th_TH: function customTests_th_TH(assert, oLocaleData) {
+		th_TH: function (assert, oLocaleData) {
 			assert.equal(oLocaleData.getPreferredCalendarType(), "Buddhist", "buddhist calendar preferred");
 		}
 	};
-
 
 	QUnit.module("Generic LocaleData", {
 		afterEach : function () {
