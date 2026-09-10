@@ -68,5 +68,15 @@
         "text": " SimpleForm: use sap.m.Title for rendering"
       }
     ]
+  },
+  "1.148.8": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "2b5dd29493027dd977ffbf138efb3bc92d3c179e",
+        "type": "FIX",
+        "text": " sap.ui.test.actions.Action: fix focus issue on Firefox"
+      }
+    ]
   }
 }

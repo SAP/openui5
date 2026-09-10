@@ -33,5 +33,15 @@
         "text": " Integration Cards: List items with empty icons no longer have incorrect height"
       }
     ]
+  },
+  "1.148.8": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "72fa0f1a42a1a6e6237b0800572f06137746afe8",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: Stabilize PreventKeyboardScrolling test"
+      }
+    ]
   }
 }

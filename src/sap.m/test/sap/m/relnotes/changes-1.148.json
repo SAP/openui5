@@ -373,5 +373,25 @@
         "text": " m.Table: No columns message not visible"
       }
     ]
+  },
+  "1.148.8": {
+    "date": "September 2026",
+    "notes": [
+      {
+        "id": "f878f0dbcca3ba6785d6489fedd731c034bbead0",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Screen reader no longer announces the footer button before the link in content"
+      },
+      {
+        "id": "1a27e89d06e4a21bd950a0e6c8fd206c9567e0b9",
+        "type": "FIX",
+        "text": " sap.m.Popover: Screen reader and focus handling are improved"
+      },
+      {
+        "id": "cb73784dcab0599caaba67d396091e1f03372556",
+        "type": "FIX",
+        "text": "sap.m.ComboBox: Dialog opens when tapping on mobile"
+      }
+    ]
   }
 }
