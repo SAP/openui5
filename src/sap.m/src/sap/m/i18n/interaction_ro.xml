@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copiază liniile selectate sau celulele în clipboard, dacă opțiunea este disponibilă și caracteristica activată.</p>
+				<p>Copiază liniile sau celulele selectate în clipboard, dacă opțiunea este disponibilă și caracteristica activată.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
@@ -161,9 +161,9 @@
 				<p><kbd>ArrowDown</kbd></p>
 				<p>Mută elementul o poziție în jos, dacă este disponibilă.</p>
 				<p><kbd>Home</kbd></p>
-				<p>Mută elementul în partea de sus, dacă este disponibilă.</p>
+				<p>Mută elementul la început, dacă este disponibil.</p>
 				<p><kbd>End</kbd></p>
-				<p>Mută elementul în partea de jos, dacă este disponibilă.</p>
+				<p>Mută elementul la sfârșit, dacă este disponibil.</p>
 			</description>
 		</interaction>
 	</control-interactions>

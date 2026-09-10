@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Kopira odabrane redove ili ćelije u prelaznu memoriju, ako je dostupno i ako je funkcija aktivirana.</p>
+				<p>Kopira odabrane redove ili ćelije u prelaznu memoriju (ako je dostupno) i ako je funkcija aktivirana.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

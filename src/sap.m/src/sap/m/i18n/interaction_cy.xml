@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Os yw dewis cell wedi'i alluogi:</span></p>
-				<p>Os yw'r ffocws y tu mewn i'r tabl a chelloedd yn cael eu dewis, bydd y dewis o gelloedd yn cael ei dynnu.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Yn copïo’r rhesi neu'r celloedd a ddewiswyd i'r clipfwrdd, os yw ar gael a bod y nodwedd wedi'i galluogi.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

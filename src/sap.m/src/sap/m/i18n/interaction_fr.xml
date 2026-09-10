@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Copie les lignes ou cellules sélectionnées vers le presse-papiers, si cette option est disponible et si la fonctionnalité est activée.</p>
+				<p>Copie les lignes ou cellules sélectionnées vers le presse-papiers (si disponible) et la fonctionnalité est activée.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>

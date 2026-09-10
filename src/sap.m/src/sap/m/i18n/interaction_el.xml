@@ -109,7 +109,7 @@
 		</interaction>
 		<interaction> <kbd>Escape</kbd> <description>
 				<p><span class="emphasis">Αν είναι ενεργοποιημένη η επιλογή κελιού:</span></p>
-				<p>Αν η εστίαση βρίσκεται μέσα στον πίνακα και τα κελιά επιλεγούν, η επιλογή των κελιών καταργείται.</p>
+				<p>If the focus is inside the table, and cells are selected, the selection of the cells is removed.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>F2</kbd> <description>
@@ -126,7 +126,7 @@
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + C</kbd> <description>
-				<p>Αντιγράφει τις επιλεγμένες σειρές και τα επιλεγμένα κελιά στο πρόχειρο, αν υπάρχει και το χαρακτηριστικό ενεργοποιείται.</p>
+				<p>Copies the selected rows or cells to the clipboard (if available), and the feature is enabled.</p>
 			</description>
 		</interaction>
 		<interaction> <kbd>Ctrl + V</kbd> <description>
