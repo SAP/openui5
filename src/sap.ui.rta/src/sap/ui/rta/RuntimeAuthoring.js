@@ -618,8 +618,8 @@ sap.ui.define([
 			Overlay.getOverlayContainer().classList.add("sapUiRta");
 			// RTA Visual Improvements
 			document.body.classList.add("sapUiRtaMode");
-			// In adaptation projects the toolbar is hidden and the current adaptation border would be misplaced
-			if (this.getShowToolbars()) {
+			// In developer mode (e.g. adaptation projects) the toolbar is hidden and the border would be misplaced
+			if (!this.getFlexSettings().developerMode) {
 				createOrRemoveAdaptationBorder(this, true);
 			}
 			this._oDesignTime.getSelectionManager().attachChange(function(oEvent) {
@@ -787,7 +787,7 @@ sap.ui.define([
 			}
 			this.setProperty("mode", sNewMode);
 			this.fireModeChanged({ mode: sNewMode });
-			if (this.getShowToolbars()) {
+			if (!this.getFlexSettings().developerMode) {
 				toggleAdaptationBorder(this, sNewMode === "adaptation");
 			}
 		}
