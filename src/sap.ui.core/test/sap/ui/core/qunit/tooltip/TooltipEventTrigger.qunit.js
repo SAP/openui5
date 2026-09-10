@@ -1,10 +1,11 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/tooltip/TooltipEventTrigger",
+	"sap/ui/core/tooltip/TooltipFocusGuard",
 	"./FakeControls",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/Device"
-], function (TooltipEventTrigger, FakeControls, nextUIUpdate, Device) {
+], function (TooltipEventTrigger, TooltipFocusGuard, FakeControls, nextUIUpdate, Device) {
 	"use strict";
 
 	const { FocusableHost, SelectableTextHost, TwoTargetHost } = FakeControls;
@@ -95,7 +96,7 @@ sap.ui.define([
 
 	QUnit.module("Desktop events", {
 		beforeEach: async function () {
-			TooltipEventTrigger._resetInitialFocusForTesting();
+			TooltipFocusGuard._resetForTesting();
 			this.oDeviceStub = sinon.stub(Device, "system")
 				.value({ desktop: true, combi: false, phone: false, tablet: false });
 			this.oHost = new FocusableHost();
@@ -289,7 +290,7 @@ sap.ui.define([
 
 	QUnit.module("Multiple focus targets", {
 		beforeEach: async function () {
-			TooltipEventTrigger._resetInitialFocusForTesting();
+			TooltipFocusGuard._resetForTesting();
 			this.oDeviceStub = sinon.stub(Device, "system")
 				.value({ desktop: true, combi: false, phone: false, tablet: false });
 			this.oHost = new TwoTargetHost("multiHost");
@@ -663,14 +664,14 @@ sap.ui.define([
 
 	QUnit.module("Initial-focus document listener lifecycle", {
 		beforeEach: function () {
-			TooltipEventTrigger._resetInitialFocusForTesting();
+			TooltipFocusGuard._resetForTesting();
 			this.oAddSpy = sinon.spy(document, "addEventListener");
 			this.oRemoveSpy = sinon.spy(document, "removeEventListener");
 		},
 		afterEach: function () {
 			this.oAddSpy.restore();
 			this.oRemoveSpy.restore();
-			TooltipEventTrigger._resetInitialFocusForTesting();
+			TooltipFocusGuard._resetForTesting();
 		},
 		keydownAdds: function () {
 			return this.oAddSpy.getCalls().filter((oCall) => oCall.args[0] === "keydown").length;
@@ -788,5 +789,215 @@ sap.ui.define([
 		this.endTouch();
 		assert.strictEqual(window.getComputedStyle(this.oInner).userSelect, "text",
 			"after touch release: nested selectable text is selectable again");
+	});
+
+	QUnit.module("Dialog-open focus suppression", {
+		beforeEach: async function () {
+			TooltipFocusGuard._resetForTesting();
+			this.oDeviceStub = sinon.stub(Device, "system")
+				.value({ desktop: true, combi: false, phone: false, tablet: false });
+			this.oHost = new FocusableHost();
+			await renderHost(this.oHost, this.clock);
+			this.oDomRef = this.oHost.getDomRef();
+			// Make the target always report :focus-visible.
+			const oOrig = this.oDomRef.matches;
+			this.oDomRef.matches = function (s) { return s === ":focus-visible" || oOrig.call(this, s); };
+			this.oConfig = makeConfig(this.oHost, this.oDomRef);
+			this.oTrigger = new TooltipEventTrigger(this.oConfig);
+			// Leave initial focus so focusin is not suppressed by the page-load guard.
+			dispatch(document, new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+			// Wrap the target in a dialog ancestor; bInitial adds the open-focus marker.
+			this.wrapInDialog = function (bInitial) {
+				const oDialog = document.createElement("div");
+				oDialog.classList.add("sapMDialog");
+				if (bInitial) {
+					oDialog.classList.add("sapUiPopupInitial");
+				}
+				this.oDomRef.parentNode.insertBefore(oDialog, this.oDomRef);
+				oDialog.appendChild(this.oDomRef);
+				this.oDialogWrap = oDialog;
+			};
+		},
+		afterEach: async function () {
+			this.oTrigger.destroy();
+			this.oHost.destroy();
+			this.oDeviceStub.restore();
+			await this.clock.tickAsync(2000);
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("keyboard focusin during a modal dialog's open-focus is suppressed", function (assert) {
+		// Arrange: focus target sits in a modal dialog still in its open-focus phase.
+		this.wrapInDialog(true);
+
+		// Act
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.notOk(this.oConfig.onOpen.called, "onOpen suppressed on dialog open-focus");
+	});
+
+	QUnit.test("keyboard focusin inside an already-open modal dialog opens normally", function (assert) {
+		// Arrange: modal dialog ancestor without the open-focus marker class.
+		this.wrapInDialog(false);
+
+		// Act
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.ok(this.oConfig.onOpen.calledOnce, "onOpen fires for later focus inside the dialog");
+	});
+
+	QUnit.test("suppression is scoped to the open-focus: next focusin opens normally", function (assert) {
+		// Arrange: open-focus phase suppresses the first focusin.
+		this.wrapInDialog(true);
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+		assert.notOk(this.oConfig.onOpen.called, "first focusin suppressed");
+
+		// Act: opening completes, the marker class is dropped, a fresh focusin arrives.
+		this.oDialogWrap.classList.remove("sapUiPopupInitial");
+		dispatch(this.oDomRef, new FocusEvent("focusout", { bubbles: true }));
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.ok(this.oConfig.onOpen.calledOnce, "second focusin opens normally");
+	});
+
+	QUnit.test("open-focus inside a modal popover is NOT suppressed (dialogs only)", function (assert) {
+		// Arrange: modal popover carries the marker but is not a sapMDialog.
+		const oPopover = document.createElement("div");
+		oPopover.classList.add("sapMPopover", "sapUiPopupInitial");
+		this.oDomRef.parentNode.insertBefore(oPopover, this.oDomRef);
+		oPopover.appendChild(this.oDomRef);
+
+		// Act
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.ok(this.oConfig.onOpen.calledOnce, "onOpen fires for popover open-focus");
+	});
+
+	QUnit.module("Page-leave dismissal", {
+		beforeEach: async function () {
+			TooltipFocusGuard._resetForTesting();
+			this.oDeviceStub = sinon.stub(Device, "system")
+				.value({ desktop: true, combi: false, phone: false, tablet: false });
+			this.oHost = new FocusableHost();
+			await renderHost(this.oHost, this.clock);
+			this.oDomRef = this.oHost.getDomRef();
+			// Make the target always report :focus-visible.
+			const oOrig = this.oDomRef.matches;
+			this.oDomRef.matches = function (s) { return s === ":focus-visible" || oOrig.call(this, s); };
+			this.oConfig = makeConfig(this.oHost, this.oDomRef, {
+				isPendingOrOpen: sinon.stub().returns(true)
+			});
+			this.oTrigger = new TooltipEventTrigger(this.oConfig);
+			// Leave initial focus so focusin is not suppressed by the page-load guard.
+			dispatch(document, new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+			// Make document.hidden return true for one visibilitychange dispatch.
+			this.fnSimulatePageHidden = function () {
+				Object.defineProperty(document, "hidden", {
+					configurable: true,
+					get: function () { return true; }
+				});
+				try {
+					dispatch(document, new Event("visibilitychange"));
+				} finally {
+					Object.defineProperty(document, "hidden", {
+						configurable: true,
+						get: function () { return false; }
+					});
+				}
+			};
+		},
+		afterEach: async function () {
+			// Ensure document.hidden is restored to its original value.
+			Object.defineProperty(document, "hidden", {
+				configurable: true,
+				get: function () { return false; }
+			});
+			this.oTrigger.destroy();
+			this.oHost.destroy();
+			this.oDeviceStub.restore();
+			await this.clock.tickAsync(2000);
+			this.clock.restore();
+		}
+	});
+
+	QUnit.test("visibilitychange while hidden calls onClose instantly for an open tooltip", function (assert) {
+		// Act
+		this.fnSimulatePageHidden();
+
+		// Assert: onClose called with no delay argument (falsy first arg)
+		assert.ok(this.oConfig.onClose.calledOnce, "onClose called on page leave");
+		assert.notOk(this.oConfig.onClose.firstCall.args[0], "onClose called with no delay (instant)");
+	});
+
+	QUnit.test("visibilitychange while hidden does nothing when tooltip is not open", function (assert) {
+		// Arrange
+		this.oConfig.isPendingOrOpen.returns(false);
+
+		// Act
+		this.fnSimulatePageHidden();
+
+		// Assert
+		assert.notOk(this.oConfig.onClose.called, "onClose not called when tooltip was not open");
+	});
+
+	QUnit.test("focusin on the same element after page-leave dismissal does not reopen", function (assert) {
+		// Arrange: dismiss via page leave
+		this.fnSimulatePageHidden();
+		this.oConfig.onOpen.resetHistory();
+
+		// Act: focusin on the same element (no focusout in between)
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.notOk(this.oConfig.onOpen.called,
+			"onOpen blocked after page-leave until a fresh interaction");
+	});
+
+	QUnit.test("focusout then focusin after dismissal reopens normally", function (assert) {
+		// Arrange: dismiss via page leave
+		this.fnSimulatePageHidden();
+		this.oConfig.onOpen.resetHistory();
+
+		// Act: focus leaves and returns — a real refocus
+		dispatch(this.oDomRef, new FocusEvent("focusout", { bubbles: true }));
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.ok(this.oConfig.onOpen.calledOnce,
+			"onOpen fires after real refocus post-dismissal");
+	});
+
+	QUnit.test("mouseover after page-leave dismissal clears the wait so tooltip reopens", function (assert) {
+		// Arrange: dismiss via page leave
+		this.fnSimulatePageHidden();
+		this.oConfig.onOpen.resetHistory();
+
+		// Act: hover onto the element clears the wait
+		dispatch(this.oDomRef, new MouseEvent("mouseover", { bubbles: true }));
+
+		// Assert: mouseover itself calls onOpen (hover path), confirming the wait was cleared
+		assert.ok(this.oConfig.onOpen.calledOnce,
+			"mouseover clears the reentry wait and invokes onOpen");
+	});
+
+	QUnit.test("mousedown after page-leave dismissal clears the wait", function (assert) {
+		// Arrange: dismiss via page leave
+		this.fnSimulatePageHidden();
+		this.oConfig.onOpen.resetHistory();
+
+		// Act: mousedown on the target clears the wait flag
+		dispatch(this.oDomRef, new MouseEvent("mousedown", { button: 0, bubbles: true }));
+
+		// A subsequent focusin should now open normally
+		dispatch(this.oDomRef, new FocusEvent("focusin", { bubbles: true }));
+
+		// Assert
+		assert.ok(this.oConfig.onOpen.calledOnce,
+			"focusin opens normally after mousedown clears the reentry wait");
 	});
 });

@@ -5,38 +5,18 @@
 // Provides class sap.ui.core.tooltip.TooltipEventTrigger.
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/ui/base/Object"
+	"sap/ui/base/Object",
+	"sap/ui/core/tooltip/TooltipFocusGuard"
 ],
 	function(
 		Device,
-		BaseObject
+		BaseObject,
+		TooltipFocusGuard
 	) {
 		"use strict";
 
 		// Long-press threshold in ms for touch devices.
 		const LONG_PRESS_MS = 500;
-
-		// If the focus is the first page focus after page load. Sticky flag, once set to false it is not reset.
-		let bInitialFocus = true;
-
-		// Live instance count; the shared listener is attached only while > 0.
-		let iInstancesCount = 0;
-
-		function onDocumentKeyDown() {
-			bInitialFocus = false;
-			detachInitialFocusListener();
-		}
-
-		function attachInitialFocusListener() {
-			// Only relevant while still waiting for the first navigation.
-			if (bInitialFocus) {
-				document.addEventListener("keydown", onDocumentKeyDown, true);
-			}
-		}
-
-		function detachInitialFocusListener() {
-			document.removeEventListener("keydown", onDocumentKeyDown, true);
-		}
 
 		// Only reports a selection anchored inside oContainer, so a selection on an
 		// unrelated element does not suppress this element's tooltip.
@@ -96,11 +76,10 @@ sap.ui.define([
 
 				this._iLongPressTimer = null;
 
-				// First instance arms the shared initial-focus listener.
-				if (iInstancesCount === 0) {
-					attachInitialFocusListener();
-				}
-				iInstancesCount++;
+				this._oFocusGuard = new TooltipFocusGuard({
+					isPendingOrOpen: () => this._fnIsPendingOrOpen && this._fnIsPendingOrOpen(),
+					onClose: () => this._fnOnClose && this._fnOnClose()
+				});
 
 				this._oDelegate = this._buildDelegate();
 				if (this._oHost) {
@@ -169,11 +148,8 @@ sap.ui.define([
 			this._fnIsPendingOrOpen = null;
 			this._fnHasText = null;
 
-			iInstancesCount--;
-			// Last instance gone: drop the shared document listener.
-			if (iInstancesCount === 0) {
-				detachInitialFocusListener();
-			}
+			this._oFocusGuard.destroy();
+			this._oFocusGuard = null;
 
 			BaseObject.prototype.destroy.apply(this, arguments);
 		};
@@ -288,6 +264,8 @@ sap.ui.define([
 			if (!this._isForHoverTarget(oEvent)) {
 				return;
 			}
+			// Fresh interaction.
+			this._oFocusGuard.noteFreshInteraction();
 			if (oEvent.button === 2) {
 				return;
 			}
@@ -307,7 +285,9 @@ sap.ui.define([
 			if (this._isMoveWithinHoverTarget(oEvent)) {
 				return;
 			}
-			// A live selection within this element means a likely drag-select; opening would clear it.
+			// Fresh interaction.
+			this._oFocusGuard.noteFreshInteraction();
+			// A live selection here means a likely drag-select; opening would clear it.
 			if (hasTextSelection(this._fnDomRefProvider && this._fnDomRefProvider())) {
 				return;
 			}
@@ -339,8 +319,7 @@ sap.ui.define([
 			if (!(oTarget && oTarget.matches && oTarget.matches(":focus-visible"))) {
 				return;
 			}
-			// Suppress the tooltip on the initial page-load focus.
-			if (bInitialFocus) {
+			if (this._oFocusGuard.shouldSuppressFocusOpen(oTarget)) {
 				return;
 			}
 			this._fnOnOpen(true, "focus");
@@ -353,6 +332,8 @@ sap.ui.define([
 			if (!this._isForFocusTarget(oEvent)) {
 				return;
 			}
+			// Fresh interaction.
+			this._oFocusGuard.noteFreshInteraction();
 			this._fnOnClose(true);
 		};
 
@@ -440,17 +421,6 @@ sap.ui.define([
 		 */
 		TooltipEventTrigger.prototype._onAfterRendering = function() {
 			this._syncTouchSuppression();
-		};
-
-		/**
-		 * Resets the sticky initial-focus state. Test-only.
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		TooltipEventTrigger._resetInitialFocusForTesting = function() {
-			detachInitialFocusListener();
-			bInitialFocus = true;
-			iInstancesCount = 0;
 		};
 
 		return TooltipEventTrigger;
