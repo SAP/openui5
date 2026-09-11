@@ -170,7 +170,7 @@ sap.ui.define([
 			oLevel.level = oLayout?._sFormTitleLevel || TitleLevel.H4;
 			oLevel.style = oLayout?._sFormTitleStyle || TitleLevel.Auto;
 		} else if (this.isA("sap.ui.layout.form.FormContainer")) {
-			const oLayout = this.getParent()?.getLayout();
+			const oLayout = this.getParent()?.getLayout?.(); // as parent might be an XMLView in case a fragment is used
 			oLevel.level = oLayout?._sFormSubTitleLevel || TitleLevel.H5;
 			oLevel.style = oLayout?._sFormSubTitleStyle || TitleLevel.Auto;
 		}
