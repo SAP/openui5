@@ -545,6 +545,27 @@ sap.ui.define([
 		assert.notOk(jQuery("#FC1").attr("aria-labelledby"), "no aria-labelledby");
 	});
 
+	QUnit.test("Title with parent change", async function(assert) {
+		const oFormContainer1 = new FormContainer("FC1", {title: "Test"});
+		const oToolbar = new Toolbar("TB1", {
+			dependents: [oFormContainer1]
+		}); // use Toolbar in test, but normally issue occurs if parent is XMLView if FormContainer is used in a fragment
+
+		const oRenderingTitle = oFormContainer1.getAggregation("_renderingTitle");
+		assert.equal(oRenderingTitle.getText(), "Test", "rendering Title: Text");
+		assert.equal(oRenderingTitle.getLevel(), coreLibrary.TitleLevel.H5, "rendering Title: Level");
+		assert.equal(oRenderingTitle.getTitleStyle(), coreLibrary.TitleLevel.H5, "rendering Title: TitleStyle");
+		assert.notOk(oRenderingTitle.getTooltip(), "rendering Title: Tooltip");
+
+		oForm.addFormContainer(oFormContainer1);
+		await nextUIUpdate();
+
+		assert.equal(oRenderingTitle.getLevel(), coreLibrary.TitleLevel.H5, "rendering Title: Level");
+		assert.equal(oRenderingTitle.getTitleStyle(), coreLibrary.TitleLevel.H6, "rendering Title: TitleStyle");
+
+		oToolbar.destroy();
+	});
+
 	QUnit.test("Toolbar", async function(assert) {
 		var oFormContainer1 = new FormContainer("FC1");
 		var oToolbar = new Toolbar("TB1");
