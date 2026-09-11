@@ -113,16 +113,16 @@ sap.ui.define([
 		});
 	};
 
-	AdaptFiltersController.prototype.getP13nData = function() {
-		return this._oPanel.getP13nData().items;
-	};
-
 	AdaptFiltersController.prototype.update = function(oPropertyHelper) {
 		if (this._oPanel) {
 			const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 			this._oPanel.setP13nData(oAdaptationData);
 			this.getAdaptationControl().getInbuiltFilter().createFilterFields();
 		}
+	};
+
+	AdaptFiltersController.prototype.getP13nData = function() {
+		return this.injectInactivePropertyKeys(this._oPanel.getP13nData().items);
 	};
 
 	AdaptFiltersController.prototype.mixInfoAndState = function(oPropertyHelper) {

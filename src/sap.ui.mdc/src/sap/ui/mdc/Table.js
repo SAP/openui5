@@ -2119,7 +2119,17 @@ sap.ui.define([
 		const aP13nMode = this.getActiveP13nModes();
 
 		if (aP13nMode.indexOf("Column") > -1) {
-			oState.items = this._getVisibleProperties();
+			if (this.isInPropertyKeysMode()) {
+				oState.items = this.getPropertyKeys().map((sKey) => ({
+					key: sKey,
+					/**
+					 * @deprecated As of version 1.124.0
+					 */
+					name: sKey
+				}));
+			} else {
+				oState.items = this._getVisibleProperties();
+			}
 		}
 
 		if (this.isSortingEnabled()) {

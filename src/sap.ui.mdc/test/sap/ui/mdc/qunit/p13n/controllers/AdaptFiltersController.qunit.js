@@ -6,7 +6,77 @@ sap.ui.define([
 ], function (AdaptFiltersController, AdaptationFilterBar, MDCControl) {
 	"use strict";
 
-    QUnit.module("determineValidationState",{
+	/**
+	 * Builds an AdaptFiltersController instance with a stubbed panel and adaptation control.
+	 *
+	 * @param {object} mConfig
+	 * @param {*} mConfig.panelData Value the panel's getP13nData returns.
+	 * @param {string[]} mConfig.propertyKeys The canonical propertyKeys order.
+	 * @param {object} mConfig.properties Map of property key to PropertyInfo (with isActive).
+	 * @param {boolean} [mConfig.propertyKeysMode=true] Whether the control reports propertyKeys mode.
+	 * @returns {sap.ui.mdc.p13n.subcontroller.AdaptFiltersController} Controller under test.
+	 */
+	function createController(mConfig) {
+		const oControl = {
+			isInPropertyKeysMode: function() {
+				return mConfig.propertyKeysMode !== false;
+			},
+			getPropertyKeys: function() {
+				return mConfig.propertyKeys;
+			},
+			getPropertyHelper: function() {
+				return {
+					getProperty: function(sKey) {
+						return mConfig.properties[sKey];
+					}
+				};
+			}
+		};
+
+		const oController = Object.create(AdaptFiltersController.prototype);
+		oController.getAdaptationControl = function() {
+			return oControl;
+		};
+		oController._oPanel = {
+			getP13nData: function() {
+				return mConfig.panelData;
+			}
+		};
+		return oController;
+	}
+
+	QUnit.module("getP13nData");
+
+	QUnit.test("Unwraps {items:[...]} panel shape and injects inactive keys", function(assert) {
+		const oController = createController({
+			panelData: {items: [{key: "A", name: "A"}, {key: "B", name: "B"}]},
+			propertyKeys: ["I", "A", "B"],
+			properties: {I: {isActive: false}, A: {isActive: true}, B: {isActive: true}}
+		});
+
+		assert.deepEqual(
+			oController.getP13nData(),
+			[{key: "I", name: "I"}, {key: "A", name: "A"}, {key: "B", name: "B"}],
+			"Unwraps {items:[...]} then injects inactive key I at its propertyKeys position"
+		);
+	});
+
+	QUnit.test("Unwraps {items:[...]} panel shape without injection when not in propertyKeys mode", function(assert) {
+		const oController = createController({
+			panelData: {items: [{key: "A", name: "A"}, {key: "B", name: "B"}]},
+			propertyKeys: ["I", "A", "B"],
+			properties: {I: {isActive: false}, A: {isActive: true}, B: {isActive: true}},
+			propertyKeysMode: false
+		});
+
+		assert.deepEqual(
+			oController.getP13nData(),
+			[{key: "A", name: "A"}, {key: "B", name: "B"}],
+			"Unwraps to plain array; no injection in aggregation mode"
+		);
+	});
+
+	QUnit.module("determineValidationState",{
         beforeEach: function(){
             this.oControl = new MDCControl();
             AdaptationFilterBar.prototype._checkAdvancedParent = sinon.stub().returns(true);
