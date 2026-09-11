@@ -55,7 +55,6 @@ sap.ui.define([
 			bStretched = oDialog.getStretch(),
 			oValueStateText = oDialog.getAggregation("_valueState"),
 			oFooter = oDialog.getFooter(),
-			sContentHeight = oDialog.getContentHeight(),
 			sContentWidth = oDialog.getContentWidth(),
 			oRb = Library.getResourceBundleFor("sap.m");
 
@@ -67,7 +66,6 @@ sap.ui.define([
 
 		if (!bStretched) {
 			oRM.style("width", sContentWidth);
-			oRM.style("height", sContentHeight);
 		}
 
 		oRM.class("sapMDialog")
@@ -265,7 +263,7 @@ sap.ui.define([
 		oRM.openStart("div", sId + "-scrollCont")
 			.class("sapMDialogScrollCont");
 
-		if (bStretched || sContentHeight) {
+		if (bStretched || oDialog.getContentHeight()) {
 			oRM.class("sapMDialogStretchContent");
 		}
 

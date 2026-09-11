@@ -1233,7 +1233,6 @@ function(
 			}
 
 			if (bResize) {
-
 				iMaxHeight = oAreaDimensions.bottom - mOffset.top - iDialogOuterHeight + iDialogHeight;
 
 				if (oEvent.keyCode === KeyCodes.ARROW_DOWN) {
@@ -1316,7 +1315,16 @@ function(
 				//set the size to the content
 				if (!this._oManuallySetSize) {
 					oStyles.width = this.getContentWidth() || undefined;
-					oStyles.height = this.getContentHeight() || undefined;
+
+					const sContentHeight = this.getContentHeight();
+					if (sContentHeight && sContentHeight !== 'auto') {
+						// The footer is part of the Dialog's normal flow (position: relative), so its
+						// height is subtracted from the available space. Add the footer height on top of
+						// the requested contentHeight, so that the content area actually gets contentHeight.
+						oStyles.height = "calc(" + sContentHeight + " + " + this._getFooterHeight() + "px)";
+					} else {
+						oStyles.height = undefined;
+					}
 				} else {
 					oStyles.width = this._oManuallySetSize.width;
 					oStyles.height = this._oManuallySetSize.height;
@@ -1325,10 +1333,6 @@ function(
 
 			if (oStyles.width == 'auto') {
 				oStyles.width = undefined;
-			}
-
-			if (oStyles.height == 'auto') {
-				oStyles.height = undefined;
 			}
 
 			if (bStretch && !bMessageType) {
@@ -1347,12 +1351,6 @@ function(
 
 			if (!this._oManuallySetSize && !this._bDisableRepositioning) {
 				$this.css(this._calcPosition());
-			}
-
-			//In Chrome when the dialog is stretched the footer is not rendered in the right position;
-			if (window.navigator.userAgent.toLowerCase().indexOf("chrome") !== -1 && bStretch) {
-				//forcing repaint
-				$this.find('> .sapMDialogFooter').css({bottom: '0.001px'});
 			}
 		};
 
@@ -1474,8 +1472,7 @@ function(
 				$this = this.$(),
 				iHeaderHeight = $this.find(".sapMDialogTitleGroup").height() || 0,
 				iSubHeaderHeight = $this.find(".sapMDialogSubHeader").height() || 0,
-				iFooterHeight = $this.find("> .sapMDialogFooter").height() || 0,
-				iHeightAsPadding = iHeaderHeight + iSubHeaderHeight + iFooterHeight,
+				iHeightAsPadding = iHeaderHeight + iSubHeaderHeight,
 				iMaxHeight,
 				iMaxWidth;
 
@@ -1484,7 +1481,7 @@ function(
 				iMaxHeight = oAreaDimensions.height - iHeightAsPadding;
 			} else {
 				iMaxWidth = this._percentOfSize(oAreaDimensions.width, 100 - 2 * HORIZONTAL_MARGIN); // 90% of available width
-				iMaxHeight = this._percentOfSize(oAreaDimensions.height, 100 - 2 * VERTICAL_MARGIN) - iHeightAsPadding; // 94% of available height minus paddings for headers and footer
+				iMaxHeight = this._percentOfSize(oAreaDimensions.height, 100 - 2 * VERTICAL_MARGIN) - iHeightAsPadding; // 94% of available height minus paddings for headers
 			}
 
 			return {
@@ -1524,6 +1521,10 @@ function(
 			oAreaDimensions.bottom = oAreaDimensions.top + oAreaDimensions.height;
 
 			return oAreaDimensions;
+		};
+
+		Dialog.prototype._getFooterHeight = function () {
+			return this.$().find("> .sapMDialogFooter").height() || 0;
 		};
 
 		Dialog.prototype._percentOfSize = function (iSize, iPercent) {
@@ -2530,12 +2531,16 @@ function(
 						});
 					};
 				} else if (bResize) {
-					var styles = {};
-					var minWidth = parseInt(that._$dialog.css('min-width'));
-					var maxLeftOffset = initial.x + initial.width - minWidth;
+					const styles = {};
+					const minWidth = parseInt(that._$dialog.css('min-width'));
+					const maxLeftOffset = initial.x + initial.width - minWidth;
 
-					var handleOffsetX = $target.width() - e.offsetX;
-					var handleOffsetY = $target.height() - e.offsetY;
+					// The dialog cannot be resized smaller than its min-height plus the footer height,
+					// otherwise the resize handle would overlap the dialog content instead of staying at the bottom.
+					const minHeight = parseInt(that._$dialog.css('min-height')) + that._getFooterHeight();
+
+					const handleOffsetX = $target.width() - e.offsetX;
+					const handleOffsetY = $target.height() - e.offsetY;
 
 					mouseMoveHandler = function (event) {
 						fnMouseMoveHandlerDelayed(function () {
@@ -2553,7 +2558,7 @@ function(
 
 							that._oManuallySetSize = {
 								width: initial.width + event.clientX - initial.x,
-								height: initial.height + event.clientY - initial.y
+								height: Math.max(minHeight, initial.height + event.clientY - initial.y)
 							};
 
 							if (that._bRTL) {
