@@ -126,11 +126,10 @@ sap.ui.define([
 		return oCondenserInfo;
 	};
 
-	AddIFrameObjectPageSection.getChangeVisualizationInfo = function(oChange) {
-		var oSelector = oChange.getContent().selector;
+	AddIFrameObjectPageSection.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		return {
-			affectedControls: [oSelector],
-			displayControls: [oSelector]
+			...BaseAddIFrame.getChangeVisualizationInfo(oChange, oAppComponent),
+			displayControls: [oChange.getContent().selector]
 		};
 	};
 

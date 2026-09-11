@@ -118,7 +118,6 @@ sap.ui.define([
 		var oSelector = oContent.selector;
 		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		var oAnchorBar = oElement.getParent().getAggregation("_anchorBar");
-		var aAffectedControls = [oSelector];
 		var aDisplayControls = [oSelector];
 
 		oAnchorBar.getAggregation("items").forEach(function(oAnchorBarItem) {
@@ -128,14 +127,8 @@ sap.ui.define([
 		});
 
 		return {
-			affectedControls: aAffectedControls,
-			displayControls: aDisplayControls,
-			// Wrap the URL as { raw: ... } so the change indicator does not run it
-			// through binding resolution — iframe URLs can contain placeholders
-			// that must be shown verbatim, not resolved.
-			descriptionPayload: {
-				url: { raw: oContent.url }
-			}
+			...BaseAddIFrame.getChangeVisualizationInfo(oChange, oAppComponent),
+			displayControls: aDisplayControls
 		};
 	};
 

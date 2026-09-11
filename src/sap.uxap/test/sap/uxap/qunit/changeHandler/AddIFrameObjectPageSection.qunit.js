@@ -304,6 +304,48 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("getChangeVisualizationInfo", {
+		beforeEach: async function() {
+			this.oChangeHandler = AddIFrameObjectPageSection;
+			this.oSection = new ObjectPageSection();
+			this.oObjectPageLayout = new ObjectPageLayout({
+				sections: [this.oSection]
+			});
+			this.oObjectPageLayout.placeAt("qunit-fixture");
+			await nextUIUpdate();
+		},
+		afterEach: function() {
+			this.oObjectPageLayout.destroy();
+		}
+	}, function() {
+		QUnit.test("when the change carries a URL", function(assert) {
+			const sUrl = "embed/content?category={Product/Category}";
+			const oSelector = { id: this.oSection.getId(), idIsLocal: false };
+			const oChange = {
+				getContent: () => ({
+					selector: oSelector,
+					url: sUrl
+				})
+			};
+			const mVizInfo = this.oChangeHandler.getChangeVisualizationInfo(oChange, {});
+			assert.deepEqual(
+				mVizInfo.affectedControls,
+				[oSelector],
+				"then the affected control is the change selector (delegated to the base handler)"
+			);
+			assert.deepEqual(
+				mVizInfo.displayControls,
+				[oSelector],
+				"then the display control is the subsection selector"
+			);
+			assert.deepEqual(
+				mVizInfo.descriptionPayload,
+				{ url: { raw: sUrl } },
+				"then the URL is surfaced wrapped as { raw } so it is not resolved as a binding"
+			);
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
