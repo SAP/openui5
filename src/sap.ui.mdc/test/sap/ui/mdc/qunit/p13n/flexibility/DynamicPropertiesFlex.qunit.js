@@ -1701,6 +1701,108 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("Deactivate and hide active property in one call", async function (assert) {
+			const aChanges = await StateUtil.applyExternalState(this.oControl, {
+				supplementaryConfig: {
+					propertyInfo: {
+						dynamicActive: { isActive: false }
+					}
+				},
+				items: [{ key: "dynamicActive", visible: false }]
+			});
+			await this.oControl.awaitPendingModification();
+
+			assert.ok(aChanges.some(function (oChange) { return oChange.getChangeType() === "setPropertyAttribute"; }),
+				"setPropertyAttribute change created for deactivation"
+			);
+			assert.ok(aChanges.some(function (oChange) { return oChange.getChangeType() === oConfig.removeItemChangeType; }),
+				oConfig.removeItemChangeType + " change created for hide"
+			);
+
+			assert.deepEqual(
+				this.oControl.getPropertyKeys(),
+				["dynamicInactive", "staticProp1", "staticProp2"],
+				"dynamicActive removed from propertyKeys"
+			);
+			assert.deepEqual(
+				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
+				["staticProp1", "staticProp2"],
+				"dynamicActive item removed from aggregation"
+			);
+
+			const oRetrievedState = await StateUtil.retrieveExternalState(this.oControl);
+			assert.strictEqual(oRetrievedState.supplementaryConfig.propertyInfo.dynamicActive.isActive, false,
+				"Retrieved state shows isActive: false for dynamicActive"
+			);
+		});
+
+		QUnit.test("Activate and show inactive property in one call", async function (assert) {
+			const aChanges = await StateUtil.applyExternalState(this.oControl, {
+				supplementaryConfig: {
+					propertyInfo: {
+						dynamicInactive: { isActive: true }
+					}
+				},
+				items: [{ key: "dynamicInactive", position: 0 }]
+			});
+			await this.oControl.awaitPendingModification();
+
+			assert.ok(aChanges.some(function (oChange) { return oChange.getChangeType() === "setPropertyAttribute"; }),
+				"setPropertyAttribute change created for activation"
+			);
+
+			assert.deepEqual(
+				this.oControl.getPropertyKeys(),
+				["dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicInactive remains in propertyKeys at position 0"
+			);
+			assert.deepEqual(
+				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
+				["dynamicInactive", "staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicInactive item now appears in aggregation"
+			);
+
+			const oRetrievedState = await StateUtil.retrieveExternalState(this.oControl);
+			assert.strictEqual(oRetrievedState.supplementaryConfig.propertyInfo.dynamicInactive.isActive, true,
+				"Retrieved state shows isActive: true for dynamicInactive"
+			);
+		});
+
+		QUnit.test("Activate and hide inactive property in one call", async function (assert) {
+			const aChanges = await StateUtil.applyExternalState(this.oControl, {
+				supplementaryConfig: {
+					propertyInfo: {
+						dynamicInactive: { isActive: true }
+					}
+				},
+				items: [{ key: "dynamicInactive", visible: false }]
+			});
+			await this.oControl.awaitPendingModification();
+
+			assert.ok(aChanges.some(function (oChange) { return oChange.getChangeType() === "setPropertyAttribute"; }),
+				"setPropertyAttribute change created for activation"
+			);
+			assert.ok(aChanges.some(function (oChange) { return oChange.getChangeType() === oConfig.removeItemChangeType; }),
+				oConfig.removeItemChangeType + " change created for hide"
+			);
+
+			assert.deepEqual(
+				this.oControl.getPropertyKeys(),
+				["staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicInactive removed from propertyKeys"
+			);
+			assert.deepEqual(
+				oConfig.getItems(this.oControl).map(function (oItem) { return oItem.getPropertyKey(); }),
+				["staticProp1", "staticProp2", "dynamicActive"],
+				"dynamicInactive item not materialized (hidden)"
+			);
+
+			const oRetrievedState = await StateUtil.retrieveExternalState(this.oControl);
+			assert.strictEqual(oRetrievedState.supplementaryConfig.propertyInfo.dynamicInactive.isActive, true,
+				"Retrieved state shows isActive: true for dynamicInactive"
+			);
+		});
+
 		QUnit.test("Add item at beginning", async function(assert) {
 			const aChanges = await StateUtil.applyExternalState(this.oControl, {
 				items: [{ key: "newProp", position: 0 }]
