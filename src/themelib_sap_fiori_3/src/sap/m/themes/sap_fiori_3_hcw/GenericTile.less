@@ -35,7 +35,7 @@
 
 .sapMGTLineMode.sapMGTFailed,
 .sapMGTLineMode.sapMGTDisabled {
-	border-color: @sapUiHcReducedForeground;
+	border-color: var(--sapList_BorderColor);
 
 	.sapMGTHdrTxt,
 	.sapMGTSubHdrTxt {
@@ -48,13 +48,13 @@
 .sapUiMedia-GenericTileDeviceSet-large {
 
 	.sapMGT.sapMGTLineMode {
-		font-size: @sapMFontMediumSize;
+		font-size: var(--sapFontSize);
 		border: none;
 
 		.sapMGTHdrTxt {
 			color: var(--sapTile_TitleTextColor);
 			font-weight: bold;
-			font-size: @sapMFontMediumSize;
+			font-size: var(--sapFontSize);
 			font-family: var(--sapFontFamily);
 		}
 
@@ -67,7 +67,7 @@
 		.sapMGTLineStyleHelper {
 
 			.sapMGTLineStyleHelperInner {
-				box-shadow: @sapUiShadowLevel0;
+				box-shadow: var(--sapContent_Shadow0);
 				bottom: 1px;
 			}
 
@@ -98,7 +98,7 @@
 		&.sapMGTDisabled {
 
 			.sapMGTLineStyleHelperInner {
-				box-shadow: 0 0 0 1px @sapUiHcReducedForeground;
+				box-shadow: 0 0 0 1px var(--sapList_BorderColor);
 			}
 
 			.sapMGTHdrTxt,
@@ -116,10 +116,6 @@
 		margin-top: 1px;
 		margin-bottom: 1px;
 	}
-
-	/* &:focus { */
-	/* 	border: 0.125rem dotted @sapUiContentFocusColor; */
-	/* } */
 
 	&:focus .sapMGTLineStyleHelperInner::before {
 		content: '';
@@ -189,6 +185,7 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 .sapMGT.sapMGTScopeActions.sapMGTIconMode .sapMBtnBase.sapMGTMoreIcon .sapMBtnIcon {
 	line-height: 2.125rem !important;
 }
+
 .sapUiSizeCompact {
 
 	.sapMGT.sapMGTScopeActions.sapMGTIconMode .sapMBtnBase.sapMGTMoreIcon .sapMBtnIcon {
