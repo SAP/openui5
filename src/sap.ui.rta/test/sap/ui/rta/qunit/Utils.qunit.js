@@ -565,6 +565,50 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("showMessageBox in nonInteractiveMode", {
+		beforeEach() {
+			sandbox.stub(Utils, "getRtaStyleClassName").returns("RtaStyleClass");
+			this.oWarningStub = sandbox.stub(MessageBox, "warning");
+			this.oErrorStub = sandbox.stub(MessageBox, "error");
+			this.oRtaMessageBundle = Lib.getResourceBundleFor("sap.ui.rta");
+			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake((sKey) => `${sKey}_Text`);
+			Utils.nonInteractiveMode = true;
+		},
+		afterEach() {
+			Utils.nonInteractiveMode = false;
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when nonInteractiveMode is on", function(assert) {
+			return Utils.showMessageBox("warning", "TEXTKEY", {
+				titleKey: "TITLEKEY",
+				actionKeys: ["ACTIONKEY", "ACTIONKEY2"],
+				emphasizedActionKey: "ACTIONKEY"
+			})
+			.then((sAction) => {
+				assert.strictEqual(
+					this.oWarningStub.callCount, 0,
+					"then no MessageBox is shown"
+				);
+				assert.strictEqual(
+					sAction, "ACTIONKEY_Text",
+					"then the emphasized action is resolved automatically"
+				);
+			});
+		});
+
+		QUnit.test("when nonInteractiveMode is on and no emphasized action is given", function(assert) {
+			return Utils.showMessageBox("error", "TEXTKEY", {
+				titleKey: "TITLEKEY",
+				actionKeys: ["ACTIONKEY", "ACTIONKEY2"]
+			})
+			.then((sAction) => {
+				assert.strictEqual(this.oErrorStub.callCount, 0, "then no MessageBox is shown");
+				assert.notOk(sAction, "then the (absent) emphasized action is resolved");
+			});
+		});
+	});
+
 	QUnit.module("getSystemSpecificDocumentationUrl", {
 		beforeEach() {
 			this.oDocumentationUrls = {

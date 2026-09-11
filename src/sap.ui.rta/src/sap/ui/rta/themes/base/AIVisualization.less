@@ -1,0 +1,108 @@
+/* ================================================ */
+/* CSS for control sap.ui.rta/api/ai/AIVisualization */
+/* Base theme                                       */
+/* ================================================ */
+
+/*
+ * On-screen "AI magic" status visualization for the Flex frontend actions
+ * (see sap.ui.rta.api.ai.AIVisualization). The JS side only creates the
+ * #sapUiRtaAIVisualizationBlocker element / toggles the highlight class and
+ * writes the caption into the data-status attribute; all styling lives here.
+ *
+ * Brand-fidelity literals are kept in the base theme so the Horizon look does
+ * not silently shift. The sap_hcb variant overrides only the color variables
+ * with high-contrast-safe theme params.
+ */
+
+/* stylelint-disable selector-id-pattern -- #sapUiRtaAIVisualizationBlocker is a UI5-convention camelCase DOM id set from JS */
+@_sap_ui_rta_AIVisualization_ColorBlue: #5582ff;
+@_sap_ui_rta_AIVisualization_ColorPurple: #aa6eff;
+@_sap_ui_rta_AIVisualization_ColorPink: #ff6ec7;
+@_sap_ui_rta_AIVisualization_InnerGlow: fade(#5582ff, 35%);
+@_sap_ui_rta_AIVisualization_PillShadow: fade(#000000, 30%);
+@_sap_ui_rta_AIVisualization_PillTextColor: #ffffff;
+
+/*
+ * Sit ABOVE typical app and RTA overlay z-indices but below a plausible
+ * chat/assistant client allocation, so an embedding shell can still layer
+ * its own conversation UI on top of the AI-magic frame. 9999 keeps the
+ * frame visible while leaving headroom (>= 10000) for that client.
+ */
+@_sap_ui_rta_AIVisualization_ZIndex: 9999;
+
+@keyframes sapUiRtaAIPulse {
+
+	from, to { opacity: 0.55; }
+
+	50% { opacity: 1;    }
+}
+
+@keyframes sapUiRtaAIHighlightPulse {
+
+	from, to { box-shadow: 0 0 0 2px fade(@_sap_ui_rta_AIVisualization_ColorBlue, 85%), 0 0 18px 4px fade(@_sap_ui_rta_AIVisualization_ColorBlue, 55%); }
+
+	50% { box-shadow: 0 0 0 3px fade(@_sap_ui_rta_AIVisualization_ColorPurple, 100%),  0 0 28px 8px fade(@_sap_ui_rta_AIVisualization_ColorPurple, 75%); }
+}
+
+#sapUiRtaAIVisualizationBlocker {
+	position: fixed;
+	inset: 0;
+	z-index: @_sap_ui_rta_AIVisualization_ZIndex;
+	pointer-events: all;
+	background: transparent;
+	/*
+	 * Small inward glow: a single soft inset shadow bleeds the AI-magic
+	 * colour a short way in from the screen edges. Kept subtle so it just
+	 * accents the crisp conic border (::before) rather than washing the
+	 * content. Static — does not pulse.
+	 */
+	box-shadow: inset 0 0 40px 6px @_sap_ui_rta_AIVisualization_InnerGlow;
+}
+
+#sapUiRtaAIVisualizationBlocker::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	padding: 6px;
+	border-radius: 6px;
+	background: conic-gradient(
+		from 0deg,
+		@_sap_ui_rta_AIVisualization_ColorBlue,
+		@_sap_ui_rta_AIVisualization_ColorPurple,
+		@_sap_ui_rta_AIVisualization_ColorPink,
+		@_sap_ui_rta_AIVisualization_ColorBlue
+	);
+	/* stylelint-disable property-no-vendor-prefix -- the pipeline has no autoprefixer; -webkit-mask is required for WebKit/Safari */
+	-webkit-mask: linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	/* stylelint-enable property-no-vendor-prefix */
+	mask: linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	mask-composite: exclude;
+	filter: blur(0.5px);
+	animation: sapUiRtaAIPulse 2.4s ease-in-out infinite;
+	pointer-events: none;
+}
+
+#sapUiRtaAIVisualizationBlocker::after {
+	content: attr(data-status);
+	position: absolute;
+	left: 50%;
+	bottom: 28px;
+	transform: translateX(-50%);
+	padding: 12px 24px;
+	font: 600 16px/1.45 '72', '72full', Arial, sans-serif;
+	color: @_sap_ui_rta_AIVisualization_PillTextColor;
+	background: linear-gradient(90deg, fade(@_sap_ui_rta_AIVisualization_ColorBlue, 92%), fade(@_sap_ui_rta_AIVisualization_ColorPurple, 92%));
+	border-radius: 999px;
+	box-shadow: 0 6px 18px @_sap_ui_rta_AIVisualization_PillShadow;
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0.95;
+}
+
+.sapUiRtaAIVisualizationHighlight {
+	animation: sapUiRtaAIHighlightPulse 1.4s ease-in-out infinite;
+	border-radius: 4px;
+}

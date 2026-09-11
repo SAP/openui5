@@ -109,6 +109,7 @@ sap.ui.define([
 	const STOPPED = "STOPPED";
 	const FAILED = "FAILED";
 	const sParametersAfterRestartKey = "sap.ui.rta.RuntimeAuthoring.parametersAfterRestart";
+	let oCurrentInstance;
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -134,6 +135,22 @@ sap.ui.define([
 				}
 			},
 			properties: {
+				/**
+				 * Deferred object that resolves once RuntimeAuthoring is started again after a soft reload.
+				 */
+				softReloadDeferred: {
+					type: "any"
+				},
+
+				/**
+				 * All Dialogs and MessageBoxes will be suppressed when this property is set to true.
+				 */
+				nonInteractiveMode: {
+					type: "boolean",
+					defaultValue: false,
+					group: "restoreAfterReload"
+				},
+
 				/** Whether the create custom field button should be shown */
 				showToolbars: {
 					type: "boolean",
@@ -234,6 +251,9 @@ sap.ui.define([
 		constructor: function(...aArgs) {
 			ManagedObject.apply(this, aArgs);
 
+			if (this.getNonInteractiveMode()) {
+				Utils.nonInteractiveMode = true;
+			}
 			this._dependents = {};
 			this._mUShellServices = {};
 			this._pElementModified = Promise.resolve();
@@ -270,6 +290,7 @@ sap.ui.define([
 					this.addDependent(new WhatsNew({ layer: this.getLayer() }), "whatsNew");
 				}
 				this.addDependent(new GuidedTour(), "guidedTour");
+				oCurrentInstance = this; // eslint-disable-line consistent-this
 				return Promise.resolve();
 			}.bind(this));
 		}
@@ -460,6 +481,7 @@ sap.ui.define([
 					};
 				});
 				window.sessionStorage.setItem(sParametersAfterRestartKey, JSON.stringify(aProperties));
+				RuntimeAuthoring.softReloadDeferred = this.getSoftReloadDeferred();
 				// FLP Plugin reacts on this error string and doesn't pass the error on the UI
 				throw Error("Reload triggered");
 			}
@@ -587,6 +609,10 @@ sap.ui.define([
 			this.fireStart({
 				editablePluginsCount: this.getPluginManager().getEditableOverlaysCount()
 			});
+			if (RuntimeAuthoring.softReloadDeferred) {
+				RuntimeAuthoring.softReloadDeferred.resolve(this);
+				delete RuntimeAuthoring.softReloadDeferred;
+			}
 			await this.pServices;
 		} catch (vError) {
 			if (vError.message === "Reload triggered") {
@@ -845,6 +871,11 @@ sap.ui.define([
 
 		window.onbeforeunload = this._oldUnloadHandler;
 
+		if (oCurrentInstance === this) {
+			oCurrentInstance = undefined;
+		}
+		Utils.nonInteractiveMode = false;
+
 		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
@@ -897,6 +928,17 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.willRTAStartAfterReload = function(sLayer) {
 		return InitialFlexAPI.isAutomaticRtaStartEnabled(sLayer || Layer.CUSTOMER);
+	};
+
+	/**
+	 * Returns the currently running RuntimeAuthoring instance, or <code>undefined</code> if none is active.
+	 *
+	 * @returns {sap.ui.rta.RuntimeAuthoring|undefined} The active instance
+	 * @private
+	 * @ui5-restricted sap.ui.rta, sap.ui.fl
+	 */
+	RuntimeAuthoring.getCurrentInstance = function() {
+		return oCurrentInstance;
 	};
 
 	/**

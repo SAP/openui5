@@ -154,6 +154,20 @@ sap.ui.define([
 			);
 		});
 
+		QUnit.test("when UI Adaptation is started, then the live instance is published for external drivers", function(assert) {
+			assert.strictEqual(
+				RuntimeAuthoring.getCurrentInstance(), this.oRta,
+				"then the running RTA instance is exposed via RuntimeAuthoring.getCurrentInstance()"
+			);
+
+			this.oRta.destroy();
+
+			assert.notOk(
+				RuntimeAuthoring.getCurrentInstance(),
+				"then the reference is cleared on destroy so a later driver does not adopt a dead instance"
+			);
+		});
+
 		QUnit.test("when UI Adaptation is started and the UI Adaptation Tour flag is available", function(assert) {
 			assert.ok(
 				sessionStorage.getItem("sap.ui.rta.dontShowUIAdaptationTourAfterReload"),
@@ -744,6 +758,40 @@ sap.ui.define([
 			await this.oRta.start();
 
 			assert.ok(true, "RTA started again successfully after being stopped");
+		});
+
+		QUnit.test("when RTA is created with nonInteractiveMode, then dialogs are globally suppressed", function(assert) {
+			assert.strictEqual(RtaUtils.nonInteractiveMode, false, "given the global suppression flag starts off");
+
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl"),
+				nonInteractiveMode: true
+			});
+
+			assert.strictEqual(
+				this.oRta.getNonInteractiveMode(), true,
+				"then the property reflects the passed value"
+			);
+			assert.strictEqual(
+				RtaUtils.nonInteractiveMode, true,
+				"then the constructor flips the global suppression flag so Utils.showMessageBox auto-resolves"
+			);
+
+			this.oRta.destroy();
+
+			assert.strictEqual(
+				RtaUtils.nonInteractiveMode, false,
+				"then destroy resets the global flag so a later interactive session is not affected"
+			);
+		});
+
+		QUnit.test("when RTA is created without nonInteractiveMode, then the global flag is untouched", function(assert) {
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp.getAggregation("rootControl")
+			});
+
+			assert.strictEqual(this.oRta.getNonInteractiveMode(), false, "then the property defaults to false");
+			assert.strictEqual(RtaUtils.nonInteractiveMode, false, "then the global suppression flag stays off");
 		});
 	});
 
