@@ -167,10 +167,11 @@ sap.ui.define([
 				oDelegate.onmousedown = this._onMouseDown;
 				oDelegate.onmouseover = this._onMouseOver;
 				oDelegate.onmouseout  = this._onMouseOut;
-				oDelegate.onfocusin   = this._onFocusIn;
-				oDelegate.onfocusout  = this._onFocusOut;
-				oDelegate.onsapescape = this._onSapEscape;
 			}
+
+			oDelegate.onfocusin   = this._onFocusIn;
+			oDelegate.onfocusout  = this._onFocusOut;
+			oDelegate.onsapescape = this._onSapEscape;
 
 			// Touch-only (phone or tablet, not combi).
 			if ((Device.system.phone || Device.system.tablet) && !Device.system.combi) {
