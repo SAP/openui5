@@ -242,7 +242,7 @@ sap.ui.define([
 				 * In this case the visual focus needs to be removed from the opening field, but the real focus must stay there.
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase
+				 * @ui5-restricted sap.ui.mdc.ValueHelp
 				 * @since 1.127.0
 				 */
 				visualFocusSet: {
