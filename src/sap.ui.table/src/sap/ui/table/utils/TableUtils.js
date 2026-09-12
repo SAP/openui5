@@ -602,9 +602,10 @@ sap.ui.define([
 				return;
 			}
 
-			const [Popover, Bar, Title, Text, HBox, coreLib, mLib] = await new Promise((resolve) => {
+			const [Popover, Bar, Title, Text, HBox, coreLib, mLib, Device, KeyCodes] = await new Promise((resolve) => {
 				sap.ui.require([
-					"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library"
+					"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library",
+					"sap/ui/Device", "sap/ui/events/KeyCodes"
 				], (...aModules) => {
 					resolve(aModules);
 				});
@@ -634,6 +635,18 @@ sap.ui.define([
 				oPopover.addStyleClass("sapUiContentPadding");
 				oTable._oNotificationPopover = oPopover;
 				oTable.addAggregation("_hiddenDependents", oTable._oNotificationPopover);
+
+				// The popover is focused in the static area, out of reach of the table's KeyboardDelegate.
+				oPopover.addEventDelegate({
+					onkeydown: function(oEvent) {
+						const bCtrl = Device.os.macintosh ? oEvent.metaKey : oEvent.ctrlKey;
+						if (!bCtrl || oEvent.altKey || oEvent.keyCode !== KeyCodes.A) {
+							return;
+						}
+						oEvent.preventDefault();
+						oTable._getSelectionPlugin().onKeyboardShortcut(oEvent.shiftKey ? "clear" : "toggle");
+					}
+				});
 			} else {
 				oPopover.getContent()[0].setText(sMessage);
 			}

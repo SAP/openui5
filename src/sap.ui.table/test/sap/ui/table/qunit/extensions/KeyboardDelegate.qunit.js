@@ -775,7 +775,12 @@ sap.ui.define([
 
 		this.oTable.addExtension(new TestInputControl());
 		this.oTable.setFooter(new TestInputControl());
+		this.oTable.addColumn(TableQUnitUtils.createTextColumn({interactiveLabel: true, focusable: true, tabbable: true}));
+		this.oTable.addColumn(TableQUnitUtils.createInputColumn());
 		await this.oTable.qunit.rendered();
+
+		const iInteractiveColumn = this.oTable.getColumns().length - 2;
+		const iInputColumn = this.oTable.getColumns().length - 1;
 
 		test(this.oTable.qunit.getSelectAllCell());
 		test(this.oTable.qunit.getDataCell(0, 0));
@@ -784,6 +789,18 @@ sap.ui.define([
 		test(this.oTable.qunit.getColumnHeaderCell(0), false);
 		test(this.oTable.getExtension()[0].getDomRef(), false);
 		test(this.oTable.getFooter().getDomRef(), false);
+
+		test(TableUtils.getInteractiveElements(this.oTable.qunit.getColumnHeaderCell(iInteractiveColumn))[0], false);
+		test(TableUtils.getInteractiveElements(this.oTable.qunit.getDataCell(0, iInteractiveColumn))[0], true);
+
+		const oInput = TableUtils.getInteractiveElements(this.oTable.qunit.getDataCell(0, iInputColumn))[0];
+		oOnKeyboardShortcut.resetHistory();
+		qutils.triggerKeydown(oInput, Key.A, false, false, true);
+		sinon.assert.notCalled(oOnKeyboardShortcut);
+		oOnKeyboardShortcut.resetHistory();
+		qutils.triggerKeydown(oInput, Key.A, true, false, true);
+		sinon.assert.alwaysCalledWithExactly(oOnKeyboardShortcut, "clear");
+		sinon.assert.callCount(oOnKeyboardShortcut, 1);
 	});
 
 	QUnit.test("Shift+Up & Shift+Down", async function(assert) {
@@ -5770,26 +5787,31 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("On an element where the default should be prevented", function(assert) {
+	QUnit.test("On an element where the default should be prevented", async function(assert) {
 		const test = (oTarget) => {
 			oTarget.focus();
 			qutils.triggerKeydown(oTarget, Key.A, false, false, true);
 			qutils.triggerKeyup(oTarget, Key.A, false, false, true);
 		};
 
+		this.oTable.addExtension(new TestControl("SuppressExtension", {text: "Extension", tabbable: true}));
+		this.oTable.setFooter(new TestControl("SuppressFooter", {text: "Footer", tabbable: true}));
 		this.oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
 				assert.ok(oEvent.isDefaultPrevented(), "Default is prevented on " + oEvent.target.id);
 			}
 		});
+		await this.oTable.qunit.rendered();
 
-		assert.expect(5);
+		assert.expect(7);
 
 		test(this.oTable.qunit.getSelectAllCell());
 		test(this.oTable.qunit.getRowHeaderCell(0));
 		test(this.oTable.qunit.getDataCell(0, 0));
 		test(this.oTable.qunit.getRowActionCell(0));
 		test(this.oTable.qunit.getColumnHeaderCell(0));
+		test(this.oTable.getExtension()[0].getDomRef());
+		test(this.oTable.getFooter().getDomRef());
 	});
 
 	QUnit.test("On an element where the default should not be prevented", async function(assert) {
@@ -5804,16 +5826,11 @@ sap.ui.define([
 		});
 		await this.oTable.qunit.rendered();
 
-		const oCell = this.oTable.qunit.getDataCell(0, 0);
-		oCell.classList.remove("sapUiTableDataCell");
-		oCell.classList.add("sapUiTablePseudoCell");
-
 		const aTestElements = [
 			this.oTable.getExtension()[0].getDomRef(),
 			this.oTable.getFooter().getDomRef(),
 			/** @deprecated As of version 1.72 */
 			this.oTable.getTitle().getDomRef(),
-			oCell,
 			this.oTable.getRows()[0].getCells()[0].getDomRef()
 		];
 
@@ -5821,7 +5838,7 @@ sap.ui.define([
 
 		for (const oElement of aTestElements) {
 			oElement.focus();
-			qutils.triggerKeydown(oElement, Key.A, true, false, true);
+			qutils.triggerKeydown(oElement, Key.A, false, false, true);
 		}
 	});
 
@@ -5844,55 +5861,35 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("On an element where the default should be prevented", function(assert) {
+	QUnit.test("On an element where the default should be prevented", async function(assert) {
 		const test = (oTarget) => {
 			oTarget.focus();
 			qutils.triggerKeydown(oTarget, Key.A, true, false, true);
 			qutils.triggerKeyup(oTarget, Key.A, true, false, true);
 		};
 
+		this.oTable.addExtension(new TestInputControl("EditableExtension"));
+		this.oTable.setFooter(new TestInputControl("EditableFooter"));
+		this.oTable.addExtension(new TestControl("SuppressExtension", {text: "Extension", tabbable: true}));
+
 		this.oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
 				assert.ok(oEvent.isDefaultPrevented(), "Default is prevented on " + oEvent.target.id);
 			}
 		});
+		await this.oTable.qunit.rendered();
 
-		assert.expect(4);
+		assert.expect(9);
 
 		test(this.oTable.qunit.getSelectAllCell());
 		test(this.oTable.qunit.getRowHeaderCell(0));
 		test(this.oTable.qunit.getDataCell(0, 0));
 		test(this.oTable.qunit.getRowActionCell(0));
-	});
-
-	QUnit.test("On an element where the default should not be prevented", async function(assert) {
-		this.oTable.addExtension(new TestInputControl());
-		this.oTable.setFooter(new TestInputControl());
-		this.oTable.addEventDelegate({
-			onkeydown: function(oEvent) {
-				assert.ok(!oEvent.isDefaultPrevented(), "Default action is not prevented on " + oEvent.target.id);
-			}
-		});
-		await this.oTable.qunit.rendered();
-
-		const oCell = this.oTable.qunit.getDataCell(0, 0);
-		oCell.classList.remove("sapUiTableDataCell");
-		oCell.classList.add("sapUiTablePseudoCell");
-
-		const aTestElements = [
-			this.oTable.getExtension()[0].getDomRef(),
-			this.oTable.getFooter().getDomRef(),
-			oCell,
-			this.oTable.getRows()[0].getCells()[0].getDomRef(),
-			this.oTable.qunit.getColumnHeaderCell(0)
-		];
-
-		assert.expect(aTestElements.length);
-
-		for (const oElement of aTestElements) {
-			oElement.focus();
-			qutils.triggerKeydown(oElement, Key.A, true, false, true);
-		}
+		test(this.oTable.qunit.getColumnHeaderCell(0));
+		test(this.oTable.getExtension()[0].getDomRef());
+		test(this.oTable.getExtension()[1].getDomRef());
+		test(this.oTable.getFooter().getDomRef());
+		test(this.oTable.getRows()[0].getCells()[0].getDomRef());
 	});
 
 	QUnit.module("Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse)", {

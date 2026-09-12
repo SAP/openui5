@@ -44,6 +44,16 @@ sap.ui.define([
 	}
 
 	/**
+	 * Checks whether the given element handles text selection natively (e.g. input, textarea, contenteditable).
+	 *
+	 * @param {HTMLElement} oElement The element to check.
+	 * @returns {boolean} Whether the element handles text selection natively.
+	 */
+	function isTextInputElement(oElement) {
+		return oElement.matches("input, textarea, [contenteditable=true]");
+	}
+
+	/**
 	 * Prevents the event default and stops propagation if the event target is a table cell.
 	 *
 	 * @param {jQuery.Event} oEvent The event object.
@@ -217,7 +227,7 @@ sap.ui.define([
 
 		// If only the up or down key was pressed in text input elements, navigation should not be performed.
 		return !oEvent.isMarked()
-			   && (bCtrlKeyPressed || !(oEvent.target instanceof window.HTMLInputElement) && !(oEvent.target instanceof window.HTMLTextAreaElement));
+			   && (bCtrlKeyPressed || !isTextInputElement(oEvent.target));
 	}
 
 	function waitForRowsUpdated(oTable) {
@@ -866,6 +876,25 @@ sap.ui.define([
 		const sSelectionMode = this.getSelectionMode();
 		const oSelectionPlugin = this._getSelectionPlugin();
 
+		const bIsCtrlA = KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL);
+		const bIsCtrlShiftA = KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT);
+
+		if (bIsCtrlA || bIsCtrlShiftA) {
+			if (bIsCtrlA && isTextInputElement(oEvent.target)) {
+				return;
+			}
+			oEvent.preventDefault();
+
+			const oParentCell = TableUtils.getParentCell(this, oEvent.target);
+			const bInSelectableCell = oParentCell != null
+				&& TableUtils.getCellInfo(oParentCell).isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER);
+
+			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) || bInSelectableCell) {
+				oSelectionPlugin.onKeyboardShortcut(bIsCtrlShiftA ? "clear" : "toggle");
+			}
+			return;
+		}
+
 		// Toggle the action mode by changing the focus between a cell and its interactive controls.
 		if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F2)) {
 			const bIsInActionMode = oKeyboardExtension.isInActionMode();
@@ -914,21 +943,6 @@ sap.ui.define([
 			(oCellInfo.isOfType(CellType.DATACELL | CellType.ROWACTION)))) {
 
 			startRangeSelectionMode(this);
-
-		// Ctrl+A: Select/Deselect all.
-		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL)) {
-			oEvent.preventDefault(); // Prevent full page text selection.
-
-			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
-				oSelectionPlugin.onKeyboardShortcut("toggle");
-			}
-
-		// Ctrl+Shift+A: Deselect all.
-		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
-			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
-				oEvent.preventDefault();
-				oSelectionPlugin.onKeyboardShortcut("clear");
-			}
 
 		// F4: Enter the action mode.
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.F4)) {
