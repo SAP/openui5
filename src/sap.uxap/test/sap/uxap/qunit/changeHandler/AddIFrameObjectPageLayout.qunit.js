@@ -335,6 +335,11 @@ sap.ui.define([
 				"then the affected control is the change selector"
 			);
 			assert.deepEqual(
+				mVizInfo.displayControls,
+				[{ id: this.oSection.getId(), idIsLocal: false }],
+				"then the display control is the section selector"
+			);
+			assert.deepEqual(
 				mVizInfo.descriptionPayload,
 				{ url: { raw: sUrl } },
 				"then the URL is surfaced wrapped as { raw } so it is not resolved as a binding"
