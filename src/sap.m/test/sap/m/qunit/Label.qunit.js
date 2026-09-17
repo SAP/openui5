@@ -380,14 +380,19 @@ sap.ui.define([
 		assert.strictEqual(oInfo.required, false, "Required");
 	});
 
-	QUnit.test("getAccessibilityInfo with required=true", function(assert) {
-		this.label.setRequired(true);
+	QUnit.test("getAccessibilityInfo required combinations", function(assert) {
+		[
+			{required: false, columnHeader: false, expected: false},
+			{required: true, columnHeader: false, expected: true},
+			{required: false, columnHeader: true, expected: false},
+			{required: true, columnHeader: true, expected: false} // announced via aria-describedby instead
+		].forEach((oCase) => {
+			this.label.setRequired(oCase.required);
+			this.label.setIsInColumnHeaderContext(oCase.columnHeader);
 
-		var oInfo = this.label.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Label", "Description");
-		assert.ok(oInfo.required, "Required");
-
-		this.label.setRequired(false);
+			assert.strictEqual(this.label.getAccessibilityInfo().required, oCase.expected,
+				"required=" + oCase.required + ", columnHeader=" + oCase.columnHeader);
+		});
 	});
 
 	QUnit.test("Label rendering when no labelFor association is set", function (assert) {
