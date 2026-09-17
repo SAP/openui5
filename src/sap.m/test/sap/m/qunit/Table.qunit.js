@@ -1390,19 +1390,19 @@ sap.ui.define([
 		const sRequired = oBundle.getText("ELEMENT_REQUIRED");
 
 		assert.strictEqual(oListItem.getContentAnnouncement(),
-							"First Name Max . Last Name Mustermann . Available Checkbox Not Checked " + sRequired,
+							"First Name Max " + sRequired + " . Last Name Mustermann . Available Checkbox Not Checked " + sRequired,
 							"Content announcement for ColumnListItem");
 		assert.strictEqual(oListItem.getAccessibilityInfo().description,
-							oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max . Last Name Mustermann . Available Checkbox Not Checked " + sRequired,
+							oBundle.getText("LIST_ITEM_NAVIGATION") + " . " + "First Name Max " + sRequired + " . Last Name Mustermann . Available Checkbox Not Checked " + sRequired,
 							"Announcement of required state");
 
 		aColumns[0].setOrder(1);
 		aColumns[1].setOrder(0);
 		assert.strictEqual(oListItem.getContentAnnouncement(),
-							"Last Name Mustermann . First Name Max . Available Checkbox Not Checked " + sRequired,
+							"Last Name Mustermann . First Name Max " + sRequired + " . Available Checkbox Not Checked " + sRequired,
 							"Accessibility order is updated");
 
-		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[0]), "Max");
+		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[0]), "Max " + sRequired);
 		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[1]), "Mustermann");
 		assert.strictEqual(oListItem.getContentAnnouncementOfCell(aColumns[2]), "Checkbox Not Checked " + sRequired);
 

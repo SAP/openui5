@@ -208,7 +208,7 @@ function(
 
 		return {
 			description: sDescription,
-			required: this.isRequired()
+			required: this._isInColumnHeaderContext ? false : this.isRequired()
 		};
 	};
 
