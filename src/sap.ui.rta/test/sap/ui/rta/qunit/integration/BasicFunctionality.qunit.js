@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Element",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/qunit/utils/nextUIUpdate",
@@ -13,14 +12,12 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/Stack",
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/Device"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	Log,
 	Element,
 	OverlayRegistry,
-	KeyCodes,
 	Layer,
 	LayerUtils,
 	nextUIUpdate,
@@ -28,8 +25,7 @@ sap.ui.define([
 	CommandFactory,
 	Stack,
 	RuntimeAuthoring,
-	sinon,
-	Device
+	sinon
 ) {
 	"use strict";
 
@@ -159,22 +155,11 @@ sap.ui.define([
 		});
 	});
 
-	function triggerKeyDownEvent(oDomRef, iKeyCode) {
-		const oParams = {};
-		oParams.keyCode = iKeyCode;
-		oParams.which = oParams.keyCode;
-		oParams.ctrlKey = true;
-		document.dispatchEvent(new KeyboardEvent("keydown", oParams));
-	}
-
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
 		before() {
 			return oComponentPromise;
 		},
 		beforeEach() {
-			this.bMacintoshOriginal = Device.os.macintosh;
-			Device.os.macintosh = false;
-
 			this.fnUndoSpy = sandbox.spy(RuntimeAuthoring.prototype, "undo");
 			this.fnRedoSpy = sandbox.spy(RuntimeAuthoring.prototype, "redo");
 
@@ -197,7 +182,6 @@ sap.ui.define([
 		afterEach() {
 			sandbox.restore();
 			this.oRta.destroy();
-			Device.os.macintosh = this.bMacintoshOriginal;
 			return RtaQunitUtils.clear();
 		}
 	}, function() {
@@ -206,20 +190,20 @@ sap.ui.define([
 			assert.ok(this.oElementOverlay, "then the overlay for the group element is available");
 			this.oElementOverlay.getDomRef().focus();
 
-			triggerKeyDownEvent(document, KeyCodes.Z);
+			RtaQunitUtils.triggerUndo();
 			assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
 
-			triggerKeyDownEvent(document, KeyCodes.Y);
+			RtaQunitUtils.triggerRedo();
 			assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
 		});
 
 		QUnit.test("with focus on the toolbar", function(assert) {
 			this.oRta.getToolbar().getControl("exit").focus();
 
-			triggerKeyDownEvent(document, KeyCodes.Z);
+			RtaQunitUtils.triggerUndo();
 			assert.equal(this.fnUndoSpy.callCount, 1, "then _onUndo was called once");
 
-			triggerKeyDownEvent(document, KeyCodes.Y);
+			RtaQunitUtils.triggerRedo();
 			assert.equal(this.fnRedoSpy.callCount, 1, "then _onRedo was called once");
 		});
 
@@ -267,9 +251,9 @@ sap.ui.define([
 					return;
 				}
 				oDialog.attachOpened(async function() {
-					triggerKeyDownEvent(document, KeyCodes.Z);
+					RtaQunitUtils.triggerUndo();
 					assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
-					triggerKeyDownEvent(document, KeyCodes.Y);
+					RtaQunitUtils.triggerRedo();
 					assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
 					const oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());

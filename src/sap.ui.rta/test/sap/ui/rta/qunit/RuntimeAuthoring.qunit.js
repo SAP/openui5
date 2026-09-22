@@ -64,18 +64,6 @@ sap.ui.define([
 		oComp = oCompContainer.getComponentInstance();
 	});
 
-	function triggerKeydown(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
-		var oParams = {};
-		oParams.keyCode = iKeyCode;
-		oParams.which = oParams.keyCode;
-		oParams.shiftKey = bShiftKey;
-		oParams.altKey = bAltKey;
-		// This test module deliberately distinguishes mac and win (meta vs ctrl key)
-		oParams.metaKey = bMetaKey;
-		oParams.ctrlKey = bCtrlKey;
-		document.dispatchEvent(new KeyboardEvent("keydown", oParams));
-	}
-
 	function cleanInfoSessionStorage() {
 		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({ element: oComp });
 		window.sessionStorage.removeItem(`sap.ui.fl.info.${sFlexReference}`);
@@ -186,7 +174,7 @@ sap.ui.define([
 				if (fnStackModifiedSpy.calledOnce) {
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 0, "after CTRL + Z the stack is empty");
 					// redo -> execute -> fireModified (inside promise)
-					triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Y, false, false, true, false);
+					RtaQunitUtils.triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Y, { ctrlKey: true, onDocument: true });
 				} else if (fnStackModifiedSpy.calledTwice) {
 					assert.equal(this.oCommandStack.getAllExecutedCommands().length, 1, "after CTRL + Y is again 1 command in the stack");
 					done();
@@ -197,7 +185,7 @@ sap.ui.define([
 
 			// undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
-			triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, false, false, true, false);
+			RtaQunitUtils.triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, { ctrlKey: true, onDocument: true });
 		});
 
 		QUnit.test("when handleElementModified is called and the command fails because of dependencies", function(assert) {
