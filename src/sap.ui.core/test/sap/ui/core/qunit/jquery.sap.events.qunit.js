@@ -817,8 +817,9 @@ sap.ui.define([
 		oElement.off("taphold");
 	};
 
-	// test iOS specific behaviour
-	if (Device.ios) {
+	// test iOS specific behaviour (also covers iPad requesting desktop site,
+	// which is detected as macOS with touch support)
+	if (Device.os.ios || (Device.os.macintosh && Device.support.touch)) {
 		QUnit.module("jQuery.sap.events context menu simulation for iOS", {
 			beforeEach: cleanupDelegatesAndEventListener,
 			afterEach: cleanupDelegatesAndEventListener

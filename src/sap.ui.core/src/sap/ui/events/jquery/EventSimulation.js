@@ -216,8 +216,13 @@ sap.ui.define([
 	oEventSimulation._initContextMenuSimulation = function() {
 		//map the taphold event to contextmenu event
 		var fnSimulatedFunction = function(oEvent, oConfig) {
-			var oNewEvent = jQuery.event.fix(oEvent.originalEvent || oEvent);
-			oNewEvent.type = oConfig.sapEventName;
+			// Create a new jQuery event based on the taphold event. Coordinate
+			// properties (pageX/Y, clientX/Y, screenX/Y) are inherited via
+			// jQuery.Event getter delegation to originalEvent (the taphold event).
+			// Set button to 2 (right-click equivalent) so that consumers like
+			// sap.m.Menu recognize the event as carrying valid page coordinates.
+			var oNewEvent = new jQuery.Event(oEvent, {type: oConfig.sapEventName, button: 2});
+			oNewEvent.originalEvent.button = 2;
 
 			// The original handler is called only when there's no text selected
 			if (!window.getSelection || !window.getSelection() || window.getSelection().toString() === "") {
@@ -420,7 +425,11 @@ sap.ui.define([
 		oEventSimulation._initTouchEventSimulation();
 
 		// polyfill for iOS context menu event (mapped to taphold)
-		if (Device.os.ios) {
+		// With iPadOS 13+, "Request Desktop Website" is enabled by default, causing the iPad
+		// to be detected as macOS instead of iOS (Device.os.ios === false). Since the native
+		// contextmenu event is not reliably fired on touch-based long-press in Safari, the
+		// taphold-to-contextmenu simulation must also be activated for these devices.
+		if (Device.os.ios || (Device.os.macintosh && Device.support.touch)) {
 			oEventSimulation._initContextMenuSimulation();
 		}
 
