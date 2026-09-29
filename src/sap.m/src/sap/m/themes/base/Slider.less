@@ -4,28 +4,29 @@
 /* ============================= */
 
 /* Slider commons styles */
-
-@_sap_m_Slider_Height: 3rem;
-@_sap_m_Slider_Height_Compact: 2rem;
-@_sap_m_Slider_Progress: .1875rem;
-@_sap_m_Slider_Progress_Border: 0px;
-@_sap_m_Slider_Track_Total_Height: @_sap_m_Slider_Progress + (2 * @_sap_m_Slider_Progress_Border);
-@_sap_m_Slider_Top_Bottom_Padding: @_sap_m_Slider_Height - @_sap_m_Slider_Track_Total_Height;
-@_sap_m_Slider_Top_Bottom_Padding_Compact: @_sap_m_Slider_Height_Compact - @_sap_m_Slider_Track_Total_Height;
+.sapUI5Scope {
+	--_sap_m_Slider_Height: 2.75rem;
+	--_sap_m_Slider_Height_Compact: 2rem;
+	--_sap_m_Slider_Progress_Border: 0.0625rem;
+	--_sap_m_Slider_Progress: 0.25rem;
+	--_sap_m_Slider_Track_Total_Height: ~"calc(var(--_sap_m_Slider_Progress) + 2 * var(--_sap_m_Slider_Progress_Border))";
+	--_sap_m_Slider_Top_Bottom_Padding: ~"calc(var(--_sap_m_Slider_Height) - var(--_sap_m_Slider_Track_Total_Height))";
+	--_sap_m_Slider_Top_Bottom_Padding_Compact: ~"calc(var(--_sap_m_Slider_Height_Compact) - var(--_sap_m_Slider_Track_Total_Height))";
+}
 
 .sapMSlider {
 	display: inline-block;
 	vertical-align: top;
 	box-sizing: border-box;
 	position: relative;
-	height: @_sap_m_Slider_Height;
-	padding: calc(@_sap_m_Slider_Top_Bottom_Padding ~"/" 2) 1.0625rem;
+	height: var(--_sap_m_Slider_Height);
+	padding: ~"calc(var(--_sap_m_Slider_Top_Bottom_Padding) / 2)" 1.0625rem;
 	z-index: 0;
 }
 
 .sapMSliderInner {
 	width: 100%;
-	height: @_sap_m_Slider_Progress;
+	height: var(--_sap_m_Slider_Progress);
 	min-width: 4rem;
 	border-radius: 0.25rem;
 	position: relative;
@@ -125,7 +126,7 @@
 	margin-left: -1rem;
 	height: 2rem;
 	width: 2rem;
-	top: (@_sap_m_Slider_Track_Total_Height - 2rem ) / 2;
+	top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 2rem) / 2)";
 	direction: ltr;
 	cursor: pointer;
 
@@ -156,8 +157,8 @@
 .sapUiSizeCompact {
 
 	.sapMSlider {
-		height: @_sap_m_Slider_Height_Compact;
-		padding: calc(@_sap_m_Slider_Top_Bottom_Padding_Compact ~"/" 2) .875rem;
+		height: var(--_sap_m_Slider_Height_Compact);
+		padding: ~"calc(var(--_sap_m_Slider_Top_Bottom_Padding_Compact) / 2)" .875rem;
 	}
 
 	/* slider handle */
@@ -165,7 +166,7 @@
 		height: 1.625rem;
 		width: 1.625rem;
 		margin-left: -0.8125rem;
-		top: (@_sap_m_Slider_Track_Total_Height - 1.625rem ) / 2;
+		top: ~"calc((var(--_sap_m_Slider_Track_Total_Height) - 1.625rem) / 2)";
 	}
 
 	.sapMSliderTickmarks {
