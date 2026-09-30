@@ -157,7 +157,11 @@ sap.ui.define([
 				assert.ok(true, "then the start promise rejects");
 				assert.equal(oFireFailedStub.callCount, 0, "and fireFailed was not called");
 				assert.equal(oError.message, "Reload triggered", "and the Error is 'Reload triggered'");
-				assert.equal(fnRemovePopupFilterStub.callCount, 2, "then the popup filter from the old rta popupManager are removed from ZIndexManager");
+				assert.strictEqual(
+					fnRemovePopupFilterStub.callCount,
+					2,
+					"then the popup filter from the old rta popupManager are removed from ZIndexManager"
+				);
 			});
 		});
 
@@ -229,7 +233,11 @@ sap.ui.define([
 		QUnit.test("when _onUnload is called with changes", function(assert) {
 			createCommandstackStub(this.oRta, true, true);
 			const sMessage = this.oRta._onUnload();
-			assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_UNSAVED_CHANGES"), "then the function returns the correct message");
+			assert.strictEqual(
+				sMessage,
+				this.oRta._getTextResources().getText("MSG_UNSAVED_CHANGES"),
+				"then the function returns the correct message"
+			);
 		});
 
 		QUnit.test("when _onUnload is called with changes but 'showWindowUnloadDialog' set to false", function(assert) {
@@ -306,7 +314,11 @@ sap.ui.define([
 			const done2 = assert.async();
 			const oSetBlockedStub = sandbox.stub(oComp.getRootControl(), "setBlocked");
 
-			assert.equal(this.oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called 1 time on oRta.start()");
+			assert.strictEqual(
+				this.oPreparePluginsSpy.callCount,
+				1,
+				" and getPluginManager.preparePlugins() have been called 1 time on oRta.start()"
+			);
 			assert.ok(!isEmptyObject(this.oRta.getPlugins()), "then plugins are created on start");
 
 			this.oRta.attachStop(function() {
@@ -448,32 +460,61 @@ sap.ui.define([
 			assert.strictEqual(oRootControlBlockedStub.lastCall.args[0], false, "and set to false");
 		});
 
-		QUnit.test("when RTA is started, the adaptation border element is created and visible in adaptation mode", function(assert) {
-			assert.ok(this.oRta._oAdaptationBorderElement, "then the border element exists");
-			assert.ok(
-				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+		QUnit.test("when RTA is started, the adaptation border is attached to the toolbar and visible in adaptation mode", function(assert) {
+			const oToolbar = this.oRta.getToolbar();
+			assert.strictEqual(
+				oToolbar.hasStyleClass("sapUiRtaAdaptationBorder"),
+				true,
+				"then the toolbar carries the adaptation border style class"
+			);
+			assert.strictEqual(
+				oToolbar.hasStyleClass("sapUiRtaAdaptationBorderVisible"),
+				true,
 				"then the border is visible in adaptation mode"
 			);
 		});
 
 		QUnit.test("when mode is changed to navigation and back to adaptation, the border visibility is toggled", function(assert) {
+			const oToolbar = this.oRta.getToolbar();
 			this.oRta.setMode("navigation");
-			assert.notOk(
-				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+			assert.strictEqual(
+				oToolbar.hasStyleClass("sapUiRtaAdaptationBorderVisible"),
+				false,
 				"then the border is hidden in navigation mode"
 			);
 
 			this.oRta.setMode("adaptation");
-			assert.ok(
-				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
+			assert.strictEqual(
+				oToolbar.hasStyleClass("sapUiRtaAdaptationBorderVisible"),
+				true,
 				"then the border is visible again in adaptation mode"
 			);
 		});
 
-		QUnit.test("when RTA is stopped, the adaptation border element is removed", async function(assert) {
-			assert.ok(this.oRta._oAdaptationBorderElement, "then the border element exists before stop");
-			await this.oRta.stop();
-			assert.notOk(this.oRta._oAdaptationBorderElement, "then the border element is removed after stop");
+		QUnit.test("when RTA is started, the adaptation border requires no JS positioning machinery", function(assert) {
+			const oToolbarDomRef = document.querySelector(".sapUiRtaToolbar");
+			assert.strictEqual(!!oToolbarDomRef, true, "then the toolbar DOM reference is available");
+			// The border is a pseudo-element on the toolbar itself (.sapUiRtaToolbar.sapUiRtaAdaptationBorder::after),
+			// so it tracks the toolbar's bottom edge purely via CSS, without a separate border DOM element.
+			assert.strictEqual(
+				"_oAdaptationBorderElement" in this.oRta,
+				false,
+				"then no separate border DOM element is attached to the RTA instance"
+			);
+		});
+
+		QUnit.test("when RTA is destroyed, the toolbar carrying the adaptation border is removed from the DOM", function(assert) {
+			assert.strictEqual(
+				!!document.querySelector(".sapUiRtaToolbar.sapUiRtaAdaptationBorder"),
+				true,
+				"then the toolbar with the adaptation border exists in the DOM before destroy"
+			);
+			this.oRta.destroy();
+			assert.strictEqual(
+				document.querySelector(".sapUiRtaToolbar.sapUiRtaAdaptationBorder"),
+				null,
+				"then the toolbar and its adaptation border are gone after destroy"
+			);
 		});
 
 		QUnit.test("when waitForCommandExecutionResult is called after a command executed successfully", async function(assert) {
@@ -499,27 +540,6 @@ sap.ui.define([
 			} catch (oCaughtError) {
 				assert.strictEqual(oCaughtError, oError, "then the returned promise rejects with the underlying error");
 			}
-		});
-
-		QUnit.test("when RTA is started, the adaptation border element is created and visible", function(assert) {
-			assert.ok(this.oRta._oAdaptationBorderElement, "then the border element exists");
-			assert.ok(
-				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
-				"then the border is visible in adaptation mode"
-			);
-		});
-
-		QUnit.test("when mode is changed to navigation and back, the border visibility is toggled", function(assert) {
-			this.oRta.setMode("navigation");
-			assert.notOk(
-				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
-				"then the border is hidden in navigation mode"
-			);
-			this.oRta.setMode("adaptation");
-			assert.ok(
-				this.oRta._oAdaptationBorderElement.classList.contains("sapUiRtaAdaptationBorderVisible"),
-				"then the border is visible again in adaptation mode"
-			);
 		});
 
 		QUnit.test("when a command fails, the internal element-modified chain still swallows the error", async function(assert) {
@@ -550,9 +570,44 @@ sap.ui.define([
 			cleanInfoSessionStorage();
 		}
 	}, function() {
-		QUnit.test("the adaptation border element is not created", function(assert) {
-			assert.notOk(this.oRta._oAdaptationBorderElement,
-				"then no border element is attached to the RTA instance");
+		QUnit.test("the adaptation border is attached to the toolbar while a toolbar is shown", function(assert) {
+			// The border is tied to the presence of a toolbar (it is a pseudo-element on the toolbar),
+			// not to developer mode. With the default showToolbars=true, the border class is set on the toolbar.
+			assert.strictEqual(
+				this.oRta.getToolbar().hasStyleClass("sapUiRtaAdaptationBorder"),
+				true,
+				"then the toolbar carries the adaptation border style class"
+			);
+		});
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is started without a toolbar", {
+		beforeEach() {
+			this.oRta = new RuntimeAuthoring({
+				rootControl: oComp,
+				showToolbars: false,
+				flexSettings: { developerMode: true }
+			});
+			return this.oRta.start();
+		},
+		afterEach() {
+			this.oRta.destroy();
+			sandbox.restore();
+			cleanInfoSessionStorage();
+		}
+	}, function() {
+		QUnit.test("the adaptation border is not created", function(assert) {
+			// No toolbar to attach the border pseudo-element to, so the border is suppressed entirely.
+			assert.strictEqual(
+				typeof this.oRta.getToolbar,
+				"undefined",
+				"then no toolbar getter exists on the RTA instance"
+			);
+			assert.strictEqual(
+				document.querySelector(".sapUiRtaAdaptationBorder"),
+				null,
+				"then no element carrying the adaptation border class exists in the DOM"
+			);
 		});
 	});
 
@@ -583,22 +638,74 @@ sap.ui.define([
 			await this.oRta.start();
 			assert.strictEqual(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/adaptationMode"), true, "then the mode is initially set to 'Adaptation'");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"),
+				false,
+				"then the saveAs Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"),
+				false,
+				"then the saveAs Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/adaptationMode"),
+				true,
+				"then the mode is initially set to 'Adaptation'"
+			);
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the reset button is disabled");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"),
+				false,
+				"then the reset button is disabled"
+			);
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/visible"), false, "then the reset button is hidden");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/highlightAllChanges/enabled"), false, "then the 'Highlight All Changes' button is initially disabled");
-			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/changesNeedHardReload"), false, "then no changes need a hard reload");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"),
+				false,
+				"then the translation button is disabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/translation/visible"),
+				false,
+				"then the translation button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/highlightAllChanges/enabled"),
+				false,
+				"then the 'Highlight All Changes' button is initially disabled"
+			);
+			assert.strictEqual(
+				this.oRta._oVersionsModel.getProperty("/publishVersionVisible"),
+				false,
+				"then the publish version button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/changesNeedHardReload"),
+				false,
+				"then no changes need a hard reload"
+			);
 			assert.strictEqual(this.oRta.getToolbar().isA("sap.ui.rta.toolbar.Standalone"), true, "then the toolbar is of type Standalone");
 
 			const oExpectedSettings = {
@@ -623,8 +730,16 @@ sap.ui.define([
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves([]);
 
 			await this.oRta.start();
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the Translate Button is disabled");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/translation/visible"),
+				true,
+				"then the Translate Button is visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"),
+				false,
+				"then the Translate Button is disabled"
+			);
 		});
 
 		QUnit.test("when RTA gets started with an enabled key user translation and already translatable changes", async function(assert) {
@@ -636,11 +751,19 @@ sap.ui.define([
 			sandbox.stub(TranslationAPI, "getSourceLanguages").returns(oPromise);
 
 			await this.oRta.start();
-			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/translation/visible"),
+				true,
+				"then the Translate Button is visible"
+			);
 			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "first Translate Button is disable");
 			fnResolve(["en"]);
 			return oPromise.then(function() {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "then the Translate Button is enabled");
+				assert.strictEqual(
+					this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"),
+					true,
+					"then the Translate Button is enabled"
+				);
 			}.bind(this));
 		});
 
@@ -651,13 +774,41 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
-			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), true, "then the publish version button is not visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"),
+				true,
+				"then the 'AppVariant Overview' Icon Button is visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"),
+				false,
+				"then the saveAs Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"),
+				true,
+				"then the saveAs Button is visible"
+			);
+			assert.strictEqual(
+				this.oRta._oVersionsModel.getProperty("/publishVersionVisible"),
+				true,
+				"then the publish version button is not visible"
+			);
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but the manifest of an app is not supported", async function(assert) {
@@ -667,12 +818,36 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"),
+				true,
+				"then the 'AppVariant Overview' Menu Button is visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"),
+				false,
+				"then the saveAs Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"),
+				true,
+				"then the saveAs Button is visible"
+			);
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but uses a pseudo sap-app-id", async function(assert) {
@@ -682,20 +857,52 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(true);
 
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"),
+				true,
+				"then the 'AppVariant Overview' Menu Button is visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"),
+				false,
+				"then the saveAs Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"),
+				true,
+				"then the saveAs Button is visible"
+			);
 		});
 
 		QUnit.test("when RTA is started without versioning", async function(assert) {
 			stubToolbarButtonsVisibility(false, true);
 			disableVersioning();
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
-			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.strictEqual(
+				this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"),
+				false,
+				"then the publish version button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oVersionsModel.getProperty("/publishVersionVisible"),
+				false,
+				"then the publish version button is not visible"
+			);
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/visible"), true, "then the reset button is visible");
 		});
 
@@ -704,8 +911,16 @@ sap.ui.define([
 			disableVersioning();
 			this.oRta.setHideReset(true);
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
-			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.strictEqual(
+				this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"),
+				false,
+				"then the publish version button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oVersionsModel.getProperty("/publishVersionVisible"),
+				false,
+				"then the publish version button is not visible"
+			);
 			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/restore/visible"), false, "then the reset button is hidden");
 		});
 
@@ -725,12 +940,36 @@ sap.ui.define([
 			});
 
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"),
+				false,
+				"then the 'AppVariant Overview' Icon Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"),
+				false,
+				"then the saveAs Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"),
+				false,
+				"then the saveAs Button is not visible"
+			);
 		});
 
 		const DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
@@ -738,7 +977,9 @@ sap.ui.define([
 			ContextBasedAdaptationsAPI.clearInstances();
 			stubToolbarButtonsVisibility(true, false);
 			sandbox.stub(FeaturesAPI, "isContextBasedAdaptationAvailable").resolves(true);
-			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({ adaptations: [{ id: "12345" }, DEFAULT_ADAPTATION] });
+			this.oContextBasedAdaptationsAPILoadStub = sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({
+				adaptations: [{ id: "12345" }, DEFAULT_ADAPTATION]
+			});
 			this.oFlexUtilsGetManifest = sandbox.stub(FlexUtils, "getAppDescriptor").returns({ "sap.app": { id: "1" } });
 			sandbox.stub(FlexUtils, "getUShellService").callThrough().withArgs("AppLifeCycle").resolves({
 				getCurrentApplication() {
@@ -751,8 +992,16 @@ sap.ui.define([
 		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", async function(assert) {
 			stubCBA.call(this);
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), true, "then the 'Context Based Adaptation' Menu Button is enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), true, "then the 'Context Based Adaptation' Menu Button is visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"),
+				true,
+				"then the 'Context Based Adaptation' Menu Button is enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"),
+				true,
+				"then the 'Context Based Adaptation' Menu Button is visible"
+			);
 			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is load");
 		});
 
@@ -761,8 +1010,16 @@ sap.ui.define([
 			this.oFlexUtilsGetManifest.returns({ "sap.app": { id: "1" }, "sap.ovp": {} });
 
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), false, "then the 'Context Based Adaptation' Menu Button is not enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), false, "then the 'Context Based Adaptation' Menu Button is not visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"),
+				false,
+				"then the 'Context Based Adaptation' Menu Button is not enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"),
+				false,
+				"then the 'Context Based Adaptation' Menu Button is not visible"
+			);
 		});
 
 		QUnit.test("when RTA is started a 2nd time, context based adaptation feature is available and data has changed on the backend and another adaptation has been shown by end user", async function(assert) {
@@ -781,8 +1038,16 @@ sap.ui.define([
 
 			await this.oRta.start();
 			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 2, "CBA Model is loaded again");
-			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{ id: "12345", rank: 1 }, { id: "67890", rank: 2 }], "then the adaptations are up to date");
-			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "67890", "then the displayed adaptation is correct");
+			assert.deepEqual(
+				this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"),
+				[{ id: "12345", rank: 1 }, { id: "67890", rank: 2 }],
+				"then the adaptations are up to date"
+			);
+			assert.deepEqual(
+				this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"),
+				"67890",
+				"then the displayed adaptation is correct"
+			);
 		});
 
 		QUnit.test("when RTA is doing a restart during switch, context based adaptation feature is available", async function(assert) {
@@ -802,8 +1067,16 @@ sap.ui.define([
 
 			await this.oRta.start();
 			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is not loaded again");
-			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{ id: "12345", rank: 1 }], "then the adaptations are still the same");
-			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "12345", "then the displayed adaptation is correct");
+			assert.deepEqual(
+				this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"),
+				[{ id: "12345", rank: 1 }],
+				"then the adaptations are still the same"
+			);
+			assert.deepEqual(
+				this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"),
+				"12345",
+				"then the displayed adaptation is correct"
+			);
 		});
 
 		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app cannot be detected for home page check", async function(assert) {
@@ -821,12 +1094,36 @@ sap.ui.define([
 			});
 
 			await this.oRta.start();
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), true, "then the 'AppVariant Overview' Menu Button is enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), true, "then the 'AppVariant Overview' Icon Button is enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), true, "then the saveAs Button is enabled");
-			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"),
+				true,
+				"then the 'AppVariant Overview' Menu Button is enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"),
+				false,
+				"then the 'AppVariant Overview' Menu Button is not visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"),
+				true,
+				"then the 'AppVariant Overview' Icon Button is enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"),
+				true,
+				"then the 'AppVariant Overview' Icon Button is visible"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"),
+				true,
+				"then the saveAs Button is enabled"
+			);
+			assert.strictEqual(
+				this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"),
+				true,
+				"then the saveAs Button is visible"
+			);
 		});
 
 		QUnit.test("when save is triggered via the toolbar with an manifest change", async function(assert) {
@@ -863,7 +1160,11 @@ sap.ui.define([
 					});
 				}.bind(this));
 			}.bind(this)).then(function() {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "the translation button is still enabled");
+				assert.strictEqual(
+					this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"),
+					true,
+					"the translation button is still enabled"
+				);
 				assert.strictEqual(this.oRta.bPersistedDataTranslatable, true, "the serialize function was called once");
 			}.bind(this));
 		});
