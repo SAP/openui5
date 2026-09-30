@@ -251,11 +251,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Event handler for handling the visibility of the parameters table
+		 * Event handler for the parameters info button
+		 * Opens a popover explaining what the parameters are and how to use them
+		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
-		toggleParameterVisibility() {
-			const bValue = this._oJSONModel.getProperty("/showParameters/value");
-			this._oJSONModel.setProperty("/showParameters/value", !bValue);
+		onParameterInfoPress(oEvent) {
+			const oPopover = Element.getElementById("sapUiRtaAddIFrameDialog_ParametersInfoPopover");
+			oPopover.openBy(oEvent.getSource());
 		},
 
 		/**

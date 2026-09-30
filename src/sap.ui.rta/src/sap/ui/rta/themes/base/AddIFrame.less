@@ -23,20 +23,18 @@
 				padding: 0 var(--sapContent_Space_Small);
 			}
 
-			.sapUiRtaAddIFrameDialogShowParametersButton {
-				position: relative;
-				top: 1.375rem;
-			}
+			.sapUiRtaAddIFrameDialogHeaderToolbar {
+				/* both column headings use the same toolbar so they render at the
+				   same height and stay aligned; drop its padding so the heading
+				   lines up with the field below it */
+				padding: 0;
 
-			.sapUiRtaAddIFrameDialogHideParametersButton {
-				margin-top: ~'calc(-1 * var(--sapContent_Space_Small))';
-			}
-
-			.sapUiRtaAddIFrameParametersHeader {
-				margin-bottom: ~'calc(-1 * var(--sapContent_Space_Tiny))';
+				/* keep its natural height in the flex column so it is not compressed
+				   into the field below it */
+				flex-shrink: 0;
 
 				.sapUiRtaAddIFrameDialogParametersLabel {
-					/* avoid label beeing too long */
+					/* avoid label being too long */
 					max-width: 20.5rem;
 				}
 			}
@@ -47,18 +45,47 @@
 
 			.sapUiRtaAddIFrameDialogEditGrid {
 				margin-top: var(--sapContent_Space_Small);
+				height: 15rem;
 
-				.sapUiRtaAddIFrameDialogParameters {
-
-					.sapMScrollCont {
-						border: 0.0625rem solid var(--_sap_ui_rta_AddIFrame_BorderColor); /* 1px */
-					}
+				/* Stretch both grid columns to the full grid height so the URL field
+				   and the parameters box end up the same size side by side */
+				> div {
+					height: 100%;
 				}
 
 				.sapUiRtaAddIFrameDialogEditUrl {
+					height: 100%;
 
+					/* URL text area fills the column below its label */
 					.sapMTextArea {
-						margin-bottom: 0;
+						flex: 1 1 auto;
+						min-height: 0;
+
+						.sapMTextAreaInner {
+							height: 100%;
+						}
+					}
+				}
+
+				.sapUiRtaAddIFrameDialogParameters {
+					/* the parameters box fills its column ... */
+					flex: 1 1 auto;
+					min-height: 0;
+					height: 100%;
+
+					/* the search field keeps its natural height so it is not compressed either */
+					.sapMSF {
+						flex-shrink: 0;
+						/* the search field's intrinsic top padding offsets its input box; remove it
+						   so the box sits flush like the URL text area and both line up */
+						padding-top: 0;
+					}
+
+					/* ... and the list fills the space left under the header and search field */
+					.sapMScrollCont {
+						flex: 1 1 auto;
+						min-height: 0;
+						border: 0.0625rem solid var(--_sap_ui_rta_AddIFrame_BorderColor); /* 1px */
 					}
 				}
 			}
@@ -94,24 +121,6 @@
 				border: 0.0625rem solid var(--_sap_ui_rta_AddIFrame_BorderColor); /* 1px */
 				overflow: auto;
 				height: 230px;
-			}
-		}
-	}
-}
-
-.sapUiRtaMode.sapUiSizeCozy {
-
-	.sapUiRtaAddIFrameDialog {
-
-		.sapUiRtaAddIFrameDialogVlWrapper {
-
-			.sapUiRtaAddIFrameDialogHideParametersButton {
-				position: relative;
-				top: -0.3125rem;
-			}
-
-			.sapUiRtaAddIFrameParametersHeader {
-				margin-bottom: var(--sapContent_Space_Small);
 			}
 		}
 	}
