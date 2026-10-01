@@ -358,8 +358,9 @@ sap.ui.define([
 				"sap/m/Title",
 				"sap/ui/core/Icon",
 				"sap/ui/core/library",
-				"sap/m/Text"
-			], function(Popover, Bar, HBox, Title, Icon, coreLib, Text) {
+				"sap/m/Text",
+				"sap/m/Button"
+			], function(Popover, Bar, HBox, Title, Icon, coreLib, Text, Button) {
 				fnResolve({
 					Popover: Popover,
 					Bar: Bar,
@@ -367,7 +368,8 @@ sap.ui.define([
 					Title: Title,
 					Icon: Icon,
 					coreLib: coreLib,
-					Text: Text
+					Text: Text,
+					Button: Button
 				});
 			});
 		})).then(function(oModules) {
@@ -375,13 +377,26 @@ sap.ui.define([
 			var sIconColor = oModules.coreLib.IconColor.Critical,
 			sTitleLevel = oModules.coreLib.TitleLevel.H1;
 
+			var oOKButton = new oModules.Button({
+				text: oResourceBundle.getText("TABLE_SELECT_LIMIT_OK"),
+				press: function() {
+					oSelectAllNotificationPopover.close();
+				}
+			});
+
+			var oWarningIcon = new oModules.Icon({
+				src: "sap-icon://message-warning",
+				color: sIconColor,
+				decorative: false,
+				alt: oResourceBundle.getText("SEMANTIC_COLOR_CRITICAL")
+			}).addStyleClass("sapUiTinyMarginEnd");
+
 			oSelectAllNotificationPopover = new oModules.Popover({
 				customHeader: new oModules.Bar({
 					contentMiddle: [
 						new oModules.HBox({
 							items: [
-								new oModules.Icon({src: "sap-icon://message-warning", color: sIconColor})
-									.addStyleClass("sapUiTinyMarginEnd"),
+								oWarningIcon,
 								new oModules.Title({text: oResourceBundle.getText("TABLE_SELECT_LIMIT_TITLE"), level: sTitleLevel})
 							],
 							renderType: "Bare",
@@ -390,7 +405,12 @@ sap.ui.define([
 						})
 					]
 				}),
-				content: [new oModules.Text()]
+				ariaLabelledBy: [oWarningIcon],
+				content: [new oModules.Text()],
+				footer: new oModules.Bar({
+					contentRight: [oOKButton]
+				}),
+				initialFocus: oOKButton
 			}).addStyleClass("sapUiContentPadding");
 			return {
 				oSelectAllNotificationPopover: oSelectAllNotificationPopover,
@@ -415,9 +435,6 @@ sap.ui.define([
 			var sMessage = oResourceBundle.getText("TABLE_SELECT_LIMIT", [iLimit]);
 			oPopover.getContent()[0].setText(sMessage); //Content contains a single text element
 			if (oSelectAllDomRef) {
-				oPopover.attachEventOnce("afterOpen", function() {
-					InvisibleMessage.getInstance().announce(sMessage);
-				});
 				oPopover.openBy(oSelectAllDomRef);
 			}
 		});

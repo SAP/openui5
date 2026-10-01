@@ -55,10 +55,6 @@ sap.ui.define([
 
 			Device.media.attachHandler(this.onDeviceSizeChange, this);
 			this.onDeviceSizeChange();
-
-			oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
-				oCookieMgmtComponent.enable(oComponent.getRootControl());
-			});
 		},
 
 		onExit: function () {

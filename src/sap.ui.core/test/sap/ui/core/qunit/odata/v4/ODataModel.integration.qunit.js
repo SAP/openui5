@@ -260,7 +260,7 @@ sap.ui.define([
 				}
 
 				const aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
-				if (aSpliced) {
+				if (aSpliced?.length) {
 					visitElements(aSpliced, true, iLevel + 1 - aSpliced[0]["@$ui5.node.level"],
 						iRank - aSpliced.$rank);
 				}
@@ -505,11 +505,15 @@ sap.ui.define([
 	 *   handled as <code>undefined</code>
 	 * @param {number} [iExpectedLength=aExpectedPaths.length] - Expected length
 	 * @param {boolean} [bLengthFinal=true] - Whether the length is expected to be "final"
+	 * @param {any[][]} [aExpectedRowStates]
+	 *   In case of a <t:Table> with ODataV4Aggregation plugin, an array of arrays can be given to
+	 *   check the state of each row; the inner arrays represent the following properties in order:
+	 *   type|level|expandable|expanded|title
 	 * @throws {Error} If <code>iExpectedLength</code> is given but not <code>aExpectedPaths</code>
 	 */
 	// eslint-disable-next-line valid-jsdoc -- [][] is unsupported
 	function checkTable(sTitle, assert, oTable, aExpectedPaths, aExpectedContent, iExpectedLength,
-			bLengthFinal = true) {
+			bLengthFinal = true, aExpectedRowStates = null) {
 		var oListBinding = oTable.getBinding("items") || oTable.getBinding("rows"),
 			aRows = oTable.getItems ? oTable.getItems() : oTable.getRows();
 
@@ -551,6 +555,16 @@ sap.ui.define([
 					return oCell.getText ? oCell.getText() : oCell.getValue();
 				});
 			}), aExpectedContent, sTitle);
+		}
+
+		if (aExpectedRowStates) {
+			while (aExpectedRowStates.length < aRows.length) { // pad with "empty" rows
+				aExpectedRowStates.push(["Standard", 0, false, false, ""]);
+			}
+			assert.deepEqual(aRows.map(function (oRow) {
+				return [oRow.getType(), oRow.getLevel(), oRow.isExpandable(), oRow.isExpanded(),
+					oRow.getTitle()];
+			}), aExpectedRowStates, `${sTitle}: checking row states via ODataV4Aggregation`);
 		}
 
 		checkSelectionCount(assert, oListBinding);
@@ -867,7 +881,7 @@ sap.ui.define([
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"'
-			+ ' xmlns:plugins="sap.m.plugins"'
+			+ ' xmlns:plugins="sap.m.plugins" xmlns:t_plugins="sap.ui.table.plugins"'
 			+ ' xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes"'
 			+ ' xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"'
 			+ (sViewXML.startsWith(" ") ? "" : ">")
@@ -916,6 +930,7 @@ sap.ui.define([
 				oChildNode = aChildNodes[j];
 				if (oChildNode.nodeType === Node.ELEMENT_NODE
 						&& oChildNode.localName !== "Column"
+						&& oChildNode.localName !== "dependents"
 						&& oChildNode.localName !== "rowMode") {
 					oColumn = document.createElementNS("sap.ui.table", "Column");
 					oElement.insertBefore(oColumn, oChildNode);
@@ -29043,16 +29058,25 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// JIRA: CPOUI5ODATAV4-825
 	//
 	// All levels present as groups (JIRA: CPOUI5ODATAV4-2755)
-	// Delete with visual grouping is not allowed (JIRA: CPOUI5ODATAV4-3229)
 	// Editing works via navigation on leaf level (JIRA: CPOUI5ODATAV4-3438)
 	// Overlapping paths for "additionally" on different group levels (JIRA: CPOUI5ODATAV4-3438)
 	// Late property requests via API & UI (JIRA: CPOUI5ODATAV4-3438)
-	QUnit.test("Data Aggregation: additionally via navigation", function (assert) {
-		var oArtist1,
-			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
-			oTable,
-			sView = '\
+	// Delete w/ visual grouping works on leaf level w/ $count & outdated (JIRA: CPOUI5ODATAV4-3398)
+	[false, true].forEach((bEdit) => {
+		const sTitle = "Data Aggregation: additionally via navigation; edit before delete = " + bEdit;
+
+		QUnit.test(sTitle, function (assert) {
+			var oArtist1,
+				oIsActiveEntityTrue,
+				oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
+				oNameB,
+				oTable,
+				sView = '\
+<Text id="count" text="{$count}"/>\
+<Text id="isOutdatedHeader" text="{= %{@$ui5.context.isOutdated} }"/>\
 <t:Table id="table" rows="{path : \'/Artists\',\
+	filters : [{path : \'Name\', operator : \'NE\', value1 : \'TAFKAP\'},\
+		{path : \'sendsAutographs\', operator : \'GE\', value1 : false}],\
 	parameters : {\
 		$$aggregation : {\
 			aggregate : {\
@@ -29066,11 +29090,14 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 				Name : {additionally : [\'Address/RegionName\', \'BestFriend/Name\']}\
 			},\
 			groupLevels : [\'IsActiveEntity\', \'Name\', \'ArtistID\'],\
+			search : \'covfefe\',\
 			subtotalsAtBottomOnly : true\
 		},\
+		$count : true,\
 		$orderby :\
 \'BestPublication/DraftAdministrativeData/InProcessByUser desc,BestFriend/Name,Address/City asc\'\
 	}}" threshold="0" visibleRowCount="6">\
+	<t:dependents><t_plugins:ODataV4Aggregation/></t:dependents>\
 	<Text id="groupLevelCount" text="{= %{@$ui5.node.groupLevelCount} }"/>\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -29084,263 +29111,438 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	<Text id="sendsAutographs" text="{= %{sendsAutographs} }"/>\
 </t:Table>\
 <Text id="regionID" text="{Address/RegionID}"/>',
-			that = this;
+				that = this;
 
-		this.expectRequest("Artists?$apply=groupby"
-				+ "((IsActiveEntity,BestPublication/DraftAdministrativeData/InProcessByUser))"
-				+ "/orderby(BestPublication/DraftAdministrativeData/InProcessByUser desc)"
-				+ "&$count=true&$skip=0&$top=6", {
-				"@odata.count" : "2",
-				value : [{
-					BestPublication : {
-						DraftAdministrativeData : {
-							InProcessByUser : "JOHNDOE"
-						}
+			// IsActiveEntity > Name > ArtistID
+			// false
+			//                  n/a
+			//                         n/a
+			// true
+			//                  A
+			//                         n/a
+			//                  B
+			//                         1
+			//                         2
+
+			this.expectRequest("Artists"
+					+ "?$apply=filter(Name ne 'TAFKAP' and sendsAutographs ge false)/search(covfefe)"
+					+ "/concat(groupby((ArtistID,IsActiveEntity,Name))/aggregate($count as UI5__leaves)"
+					+ ",groupby((IsActiveEntity,BestPublication/DraftAdministrativeData/InProcessByUser"
+						+ "))/orderby(BestPublication/DraftAdministrativeData/InProcessByUser desc)"
+						+ "/concat(aggregate($count as UI5__count),top(6)))", {
+					value : [{
+						UI5__leaves : "4"
+					}, {
+						UI5__count : "2"
+					}, {
+						BestPublication : {
+							DraftAdministrativeData : {
+								InProcessByUser : "JOHNDOE"
+							}
+						},
+						IsActiveEntity : false
+					}, {
+						BestPublication : {
+							DraftAdministrativeData : {
+								InProcessByUser : null
+							}
+						},
+						IsActiveEntity : true
+					}]
+				})
+				.expectChange("count")
+				.expectChange("isOutdatedHeader")
+				.expectChange("groupLevelCount", [undefined, undefined])
+				.expectChange("isExpanded", [false, false])
+				.expectChange("isTotal", [false, false])
+				.expectChange("level", [1, 1])
+				.expectChange("isActiveEntity", [false, true])
+				.expectChange("inProcessByUser", ["JOHNDOE", ""])
+				.expectChange("name", [null, null])
+				.expectChange("bestFriendName", [null, null])
+				.expectChange("artistID", [null, null])
+				.expectChange("city", [null, null])
+				.expectChange("sendsAutographs", [undefined, undefined])
+				.expectChange("regionID");
+
+			return this.createView(assert, sView, oModel).then(function () {
+				oTable = that.oView.byId("table");
+				oIsActiveEntityTrue = oTable.getRows()[1].getBindingContext();
+				const oHeaderContext = oIsActiveEntityTrue.getBinding().getHeaderContext();
+
+				that.expectChange("count", "4")
+					.expectChange("isOutdatedHeader", undefined);
+
+				that.oView.byId("count").setBindingContext(oHeaderContext);
+				that.oView.byId("isOutdatedHeader").setBindingContext(oHeaderContext);
+
+				return that.waitForChanges(assert, "set header context");
+			}).then(function () {
+				assert.deepEqual(oIsActiveEntityTrue.getObject(), {
+					"@$ui5.node.isExpanded" : false,
+					"@$ui5.node.isTotal" : false,
+					"@$ui5.node.level" : 1,
+					Address : {
+						"City@$ui5.noData" : true,
+						"RegionName@$ui5.noData" : true
 					},
-					IsActiveEntity : false
-				}, {
+					"ArtistID@$ui5.noData" : true,
+					BestFriend : {
+						"Name@$ui5.noData" : true
+					},
 					BestPublication : {
 						DraftAdministrativeData : {
 							InProcessByUser : null
 						}
 					},
-					IsActiveEntity : true
-				}]
-			})
-			.expectChange("groupLevelCount", [undefined, undefined])
-			.expectChange("isExpanded", [false, false])
-			.expectChange("isTotal", [false, false])
-			.expectChange("level", [1, 1])
-			.expectChange("isActiveEntity", [false, true])
-			.expectChange("inProcessByUser", ["JOHNDOE", ""])
-			.expectChange("name", [null, null])
-			.expectChange("bestFriendName", [null, null])
-			.expectChange("artistID", [null, null])
-			.expectChange("city", [null, null])
-			.expectChange("sendsAutographs", [undefined, undefined])
-			.expectChange("regionID");
-
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
-			const oIsActiveEntityTrue = oTable.getRows()[1].getBindingContext();
-			assert.deepEqual(oIsActiveEntityTrue.getObject(), {
-				"@$ui5.node.isExpanded" : false,
-				"@$ui5.node.isTotal" : false,
-				"@$ui5.node.level" : 1,
-				Address : {
-					"City@$ui5.noData" : true,
-					"RegionName@$ui5.noData" : true
-				},
-				"ArtistID@$ui5.noData" : true,
-				BestFriend : {
-					"Name@$ui5.noData" : true
-				},
-				BestPublication : {
-					DraftAdministrativeData : {
-						InProcessByUser : null
-					}
-				},
-				IsActiveEntity : true,
-				"Name@$ui5.noData" : true,
-				"sendsAutographs@$ui5.noData" : true
-			});
-
-			// code under test (no "Failed to drill-down into ...")
-			oIsActiveEntityTrue.requestProperty("Address/RegionName").then((sRegionName) => {
-				assert.strictEqual(sRegionName, undefined, "not available here");
-			});
-
-			that.expectRequest("Artists?$apply=filter(IsActiveEntity eq true)"
-					+ "/groupby((Name,Address/RegionName,BestFriend/Name))/orderby(BestFriend/Name)"
-					+ "&$count=true&$skip=0&$top=6", {
-					"@odata.count" : "2",
-					value : [{
-						Address : {RegionName : "England"},
-						BestFriend : {Name : "A's best friend"},
-						Name : "A"
-					}, {
-						Address : {RegionName : "England"},
-						BestFriend : {Name : "B's best friend"},
-						Name : "B"
-					}]
-				})
-				.expectChange("groupLevelCount", [, 2, undefined, undefined])
-				.expectChange("isExpanded", [, true, false, false])
-				.expectChange("isTotal", [,, false, false])
-				.expectChange("level", [,, 2, 2])
-				.expectChange("isActiveEntity", [,, true, true])
-				.expectChange("inProcessByUser", [,, "", ""]) // Note: inherited from parent
-				.expectChange("name", [,, "A", "B"])
-				.expectChange("bestFriendName", [,, "A's best friend", "B's best friend"])
-				.expectChange("artistID", [,, null, null])
-				.expectChange("city", [,, null, null])
-				.expectChange("sendsAutographs", [,, undefined, undefined]);
-
-			return Promise.all([
-				// code under test
-				oIsActiveEntityTrue.expand(),
-				that.waitForChanges(assert, "1st expand")
-			]);
-		}).then(function () {
-			const oNameB = oTable.getRows()[3].getBindingContext();
-			assert.deepEqual(oNameB.getObject(), {
-				"@$ui5.node.isExpanded" : false,
-				"@$ui5.node.isTotal" : false,
-				"@$ui5.node.level" : 2,
-				Address : {
-					"City@$ui5.noData" : true,
-					RegionName : "England"
-				},
-				"ArtistID@$ui5.noData" : true,
-				BestFriend : {
-					Name : "B's best friend"
-				},
-				BestPublication : {
-					DraftAdministrativeData : {
-						InProcessByUser : null
-					}
-				},
-				IsActiveEntity : true,
-				Name : "B",
-				"sendsAutographs@$ui5.noData" : true
-			});
-
-			// code under test (no "Failed to drill-down into ...")
-			oNameB.requestProperty("Address/City").then((sCity) => {
-				assert.strictEqual(sCity, undefined, "not available here");
-			});
-
-			that.expectRequest("Artists?$count=true"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
-						+ ",BestPublication($select=PublicationID"
-							+ ";$expand=DraftAdministrativeData($select=DraftID,InProcessByUser))"
-					+ "&$filter=IsActiveEntity eq true and Name eq 'B'&$orderby=Address/City asc"
-					+ "&$select=Address/City,Address/RegionName,ArtistID,IsActiveEntity,Name"
-						+ ",sendsAutographs"
-					+ "&$skip=0&$top=6", {
-					"@odata.count" : "2",
-					value : [{
-						Address : {City : "Liverpool", RegionName : "England"},
-						ArtistID : "1",
-						BestFriend : {
-							ArtistID : "BF4E",
-							IsActiveEntity : true,
-							Name : "B's best friend"
-						},
-						BestPublication : {
-							DraftAdministrativeData : {
-								DraftID : "n/a",
-								InProcessByUser : null
-							},
-							PublicationID : "0815"
-						},
-						IsActiveEntity : true,
-						Name : "B",
-						// Note: think of "sendsAutographs" as a weird custom aggregate ;-)
-						sendsAutographs : false
-					}, {
-						Address : {City : "London", RegionName : "England"},
-						ArtistID : "2",
-						BestFriend : {
-							ArtistID : "n/a",
-							IsActiveEntity : true,
-							Name : "B's best friend"
-						},
-						BestPublication : {
-							DraftAdministrativeData : {
-								DraftID : "n/a",
-								InProcessByUser : null
-							},
-							PublicationID : "n/a"
-						},
-						IsActiveEntity : true,
-						Name : "B",
-						sendsAutographs : true
-					}]
-				})
-				.expectChange("groupLevelCount", [,,, 2, undefined, undefined])
-				.expectChange("isExpanded", [,,, true, undefined, undefined])
-				.expectChange("isTotal", [false, false], 4)
-				.expectChange("level", [3, 3], 4)
-				.expectChange("isActiveEntity", [true, true], 4)
-				.expectChange("inProcessByUser", ["", ""], 4)
-				.expectChange("name", ["B", "B"], 4)
-				.expectChange("bestFriendName", ["B's best friend", "B's best friend"], 4)
-				.expectChange("artistID", ["1", "2"], 4)
-				.expectChange("city", ["Liverpool", "London"], 4)
-				.expectChange("sendsAutographs", [false, true], 4);
-
-			return Promise.all([
-				// code under test
-				oNameB.expand(),
-				that.waitForChanges(assert, "2nd expand")
-			]);
-		}).then(function () {
-			oArtist1 = oTable.getRows()[4].getBindingContext();
-			assert.strictEqual(oArtist1.isAggregated(), false);
-			assert.strictEqual(oArtist1.isExpanded(), undefined);
-			assert.throws(function () {
-				// code under test (JIRA: CPOUI5ODATAV4-3229)
-				oArtist1.delete();
-			}, new Error("Unsupported on aggregated data: " + oArtist1));
-			assert.deepEqual(oArtist1.getObject(), {
-				"@$ui5.node.isTotal" : false,
-				"@$ui5.node.level" : 3,
-				Address : {
-					City : "Liverpool",
-					RegionName : "England"
-				},
-				ArtistID : "1",
-				BestFriend : {
-					ArtistID : "BF4E",
 					IsActiveEntity : true,
-					Name : "B's best friend"
-				},
-				BestPublication : {
-					DraftAdministrativeData : {
-						DraftID : "n/a",
-						InProcessByUser : null
+					"Name@$ui5.noData" : true,
+					"sendsAutographs@$ui5.noData" : true
+				});
+
+				// code under test (no "Failed to drill-down into ...")
+				oIsActiveEntityTrue.requestProperty("Address/RegionName").then((sRegionName) => {
+					assert.strictEqual(sRegionName, undefined, "not available here");
+				});
+
+				that.expectRequest("Artists?$apply=filter(IsActiveEntity eq true"
+						+ " and (Name ne 'TAFKAP' and sendsAutographs ge false))/search(covfefe)"
+						+ "/groupby((Name,Address/RegionName,BestFriend/Name))/orderby(BestFriend/Name)"
+						+ "&$count=true&$skip=0&$top=6", {
+						"@odata.count" : "2",
+						value : [{
+							Address : {RegionName : "England"},
+							BestFriend : {Name : "A's best friend"},
+							Name : "A"
+						}, {
+							Address : {RegionName : "England"},
+							BestFriend : {Name : "B's best friend"},
+							Name : "B"
+						}]
+					})
+					.expectChange("groupLevelCount", [, 2, undefined, undefined])
+					.expectChange("isExpanded", [, true, false, false])
+					.expectChange("isTotal", [,, false, false])
+					.expectChange("level", [,, 2, 2])
+					.expectChange("isActiveEntity", [,, true, true])
+					.expectChange("inProcessByUser", [,, "", ""]) // Note: inherited from parent
+					.expectChange("name", [,, "A", "B"])
+					.expectChange("bestFriendName", [,, "A's best friend", "B's best friend"])
+					.expectChange("artistID", [,, null, null])
+					.expectChange("city", [,, null, null])
+					.expectChange("sendsAutographs", [,, undefined, undefined]);
+
+				return Promise.all([
+					// code under test
+					oIsActiveEntityTrue.expand(),
+					that.waitForChanges(assert, "1st expand")
+				]);
+			}).then(function () {
+				oNameB = oTable.getRows()[3].getBindingContext();
+				assert.deepEqual(oNameB.getObject(), {
+					"@$ui5.node.isExpanded" : false,
+					"@$ui5.node.isTotal" : false,
+					"@$ui5.node.level" : 2,
+					Address : {
+						"City@$ui5.noData" : true,
+						RegionName : "England"
 					},
-					PublicationID : "0815"
-				},
-				IsActiveEntity : true,
-				Name : "B",
-				sendsAutographs : false
+					"ArtistID@$ui5.noData" : true,
+					BestFriend : {
+						Name : "B's best friend"
+					},
+					BestPublication : {
+						DraftAdministrativeData : {
+							InProcessByUser : null
+						}
+					},
+					IsActiveEntity : true,
+					Name : "B",
+					"sendsAutographs@$ui5.noData" : true
+				});
+
+				// code under test (no "Failed to drill-down into ...")
+				oNameB.requestProperty("Address/City").then((sCity) => {
+					assert.strictEqual(sCity, undefined, "not available here");
+				});
+
+				that.expectRequest("Artists?$count=true"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
+							+ ",BestPublication($select=PublicationID"
+								+ ";$expand=DraftAdministrativeData($select=DraftID,InProcessByUser))"
+						+ "&$filter=IsActiveEntity eq true and Name eq 'B'"
+							+ " and (Name ne 'TAFKAP' and sendsAutographs ge false)"
+						+ "&$orderby=Address/City asc&$search=covfefe"
+						+ "&$select=Address/City,Address/RegionName,ArtistID,IsActiveEntity,Name"
+							+ ",sendsAutographs"
+						+ "&$skip=0&$top=6", {
+						"@odata.count" : "2",
+						value : [{
+							Address : {City : "Liverpool", RegionName : "England"},
+							ArtistID : "1",
+							BestFriend : {
+								ArtistID : "BF4E",
+								IsActiveEntity : true,
+								Name : "B's best friend"
+							},
+							BestPublication : {
+								DraftAdministrativeData : {
+									DraftID : "n/a",
+									InProcessByUser : null
+								},
+								PublicationID : "0815"
+							},
+							IsActiveEntity : true,
+							Name : "B",
+							// Note: think of "sendsAutographs" as a weird custom aggregate ;-)
+							sendsAutographs : false
+						}, {
+							Address : {City : "London", RegionName : "England"},
+							ArtistID : "2",
+							BestFriend : {
+								ArtistID : "n/a",
+								IsActiveEntity : true,
+								Name : "B's best friend"
+							},
+							BestPublication : {
+								DraftAdministrativeData : {
+									DraftID : "n/a",
+									InProcessByUser : null
+								},
+								PublicationID : "n/a"
+							},
+							IsActiveEntity : true,
+							Name : "B",
+							sendsAutographs : true
+						}]
+					})
+					.expectChange("groupLevelCount", [,,, 2, undefined, undefined])
+					.expectChange("isExpanded", [,,, true, undefined, undefined])
+					.expectChange("isTotal", [false, false], 4)
+					.expectChange("level", [3, 3], 4)
+					.expectChange("isActiveEntity", [true, true], 4)
+					.expectChange("inProcessByUser", ["", ""], 4)
+					.expectChange("name", ["B", "B"], 4)
+					.expectChange("bestFriendName", ["B's best friend", "B's best friend"], 4)
+					.expectChange("artistID", ["1", "2"], 4)
+					.expectChange("city", ["Liverpool", "London"], 4)
+					.expectChange("sendsAutographs", [false, true], 4);
+
+				return Promise.all([
+					// code under test
+					oNameB.expand(),
+					that.waitForChanges(assert, "2nd expand")
+				]);
+			}).then(function () {
+				oArtist1 = oTable.getRows()[4].getBindingContext();
+				assert.strictEqual(oArtist1.isAggregated(), false);
+				assert.strictEqual(oArtist1.isExpanded(), undefined);
+				assert.deepEqual(oArtist1.getObject(), {
+					"@$ui5.node.isTotal" : false,
+					"@$ui5.node.level" : 3,
+					Address : {
+						City : "Liverpool",
+						RegionName : "England"
+					},
+					ArtistID : "1",
+					BestFriend : {
+						ArtistID : "BF4E",
+						IsActiveEntity : true,
+						Name : "B's best friend"
+					},
+					BestPublication : {
+						DraftAdministrativeData : {
+							DraftID : "n/a",
+							InProcessByUser : null
+						},
+						PublicationID : "0815"
+					},
+					IsActiveEntity : true,
+					Name : "B",
+					sendsAutographs : false
+				});
+
+				if (!bEdit) {
+					return;
+				}
+
+				that.expectChange("isOutdatedHeader", true)
+					.expectChange("bestFriendName", [,,,, "B's best friend 4ever!"])
+					.expectChange("inProcessByUser", [,,,, "JANEDOE"])
+					.expectRequest("#0 PATCH Artists(ArtistID='BF4E',IsActiveEntity=true)", {
+						payload : {Name : "B's best friend 4ever!"}
+					}, oNO_CONTENT)
+					.expectRequest("#0 PATCH Publications('0815')/DraftAdministrativeData", {
+						payload : {InProcessByUser : "JANEDOE"}
+					}, oNO_CONTENT);
+
+				return Promise.all([
+					// code under test (JIRA: CPOUI5ODATAV4-3438)
+					oArtist1.setProperty("BestFriend/Name", "B's best friend 4ever!"),
+					oArtist1.setProperty("BestPublication/DraftAdministrativeData/InProcessByUser",
+						"JANEDOE"),
+					that.waitForChanges(assert, "edit via navigation")
+				]);
+			}).then(function () {
+				that.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
+						+ "?$select=Address/RegionID,Address/ZIP", {
+						Address : {RegionID : 42, ZIP : "L2 6RE"}
+					})
+					.expectChange("regionID", "42");
+
+				// code under test (JIRA: CPOUI5ODATAV4-3438)
+				that.oView.byId("regionID").setBindingContext(oArtist1);
+
+				return Promise.all([
+					// code under test (JIRA: CPOUI5ODATAV4-3438)
+					oArtist1.requestProperty("Address/ZIP").then(function (sZIP) {
+						assert.strictEqual(sZIP, "L2 6RE");
+					}),
+					that.waitForChanges(assert, "request late properties")
+				]);
+			}).then(function () {
+				const sInProcessByUser = bEdit ? "JANEDOE" : "";
+				const sBestFriendName = bEdit ? "B's best friend 4ever!" : "B's best friend";
+				checkTable("before delete", assert, oTable, [
+					"/Artists(IsActiveEntity=false)",
+					oIsActiveEntityTrue,
+					"/Artists(IsActiveEntity=true,Name='A')",
+					oNameB,
+					oArtist1,
+					"/Artists(ArtistID='2',IsActiveEntity=true)"
+				], [ // groupLevelCount|isExpanded|isTotal|level|isActiveEntity|inProcessByUser|name|...
+					// ...|bestFriendName|artistID|city|sendsAutographs
+					["", "false", "false", "1", "false", "JOHNDOE", "", "", "", "", ""],
+					["2", "true", "false", "1", "true", "", "", "", "", "", ""],
+					["", "false", "false", "2", "true", "", "A", "A's best friend", "", "", ""],
+					["2", "true", "false", "2", "true", "", "B", "B's best friend", "", "", ""],
+					["", "", "false", "3", "true", sInProcessByUser, "B", sBestFriendName, "1",
+						"Liverpool", "false"],
+					["", "", "false", "3", "true", "", "B", "B's best friend", "2", "London", "true"]
+				]);
+
+				that.expectChangeIf(!bEdit, "isOutdatedHeader", true)
+					.expectRequest("#0 DELETE Artists(ArtistID='1',IsActiveEntity=true)", oNO_CONTENT)
+					.expectRequest("#0 Artists/$count"
+						+ "?$filter=Name ne 'TAFKAP' and sendsAutographs ge false&$search=covfefe", 3)
+					.expectChange("count", "3")
+					//TODO: .expectChange("groupLevelCount", [,,, 1])
+					.expectChangeIf(bEdit, "inProcessByUser", [""], 4)
+					.expectChangeIf(bEdit, "bestFriendName", ["B's best friend"], 4)
+					.expectChange("artistID", ["2"], 4)
+					.expectChange("city", ["London"], 4)
+					.expectChange("sendsAutographs", [true], 4)
+					.expectChange("regionID", null);
+
+				return Promise.all([
+					// code under test (JIRA: CPOUI5ODATAV4-3398)
+					oArtist1.delete(),
+					that.waitForChanges(assert, "delete 1st leaf")
+				]);
+			}).then(function () {
+				checkTable("after delete 1st leaf", assert, oTable, [
+					"/Artists(IsActiveEntity=false)",
+					oIsActiveEntityTrue,
+					"/Artists(IsActiveEntity=true,Name='A')",
+					oNameB,
+					"/Artists(ArtistID='2',IsActiveEntity=true)"
+				], [ // groupLevelCount|isExpanded|isTotal|level|isActiveEntity|inProcessByUser|name|...
+					// ...|bestFriendName|artistID|city|sendsAutographs
+					["", "false", "false", "1", "false", "JOHNDOE", "", "", "", "", ""],
+					["2", "true", "false", "1", "true", "", "", "", "", "", ""],
+					["", "false", "false", "2", "true", "", "A", "A's best friend", "", "", ""],
+					["2", "true", "false", "2", "true", "", "B", "B's best friend", "", "", ""],
+					["", "", "false", "3", "true", "", "B", "B's best friend", "2", "London", "true"]
+				]);
+				const oArtist2 = oTable.getRows()[4].getBindingContext();
+
+				that.expectRequest("#0 DELETE Artists(ArtistID='2',IsActiveEntity=true)", oNO_CONTENT)
+					.expectRequest("#0 Artists/$count"
+						+ "?$filter=Name ne 'TAFKAP' and sendsAutographs ge false&$search=covfefe", 2)
+					.expectChange("count", "2");
+					//TODO: .expectChange("groupLevelCount", [,,, 0])
+
+				return Promise.all([
+					// code under test (JIRA: CPOUI5ODATAV4-3398)
+					oArtist2.delete(),
+					that.waitForChanges(assert, "delete 2nd leaf")
+				]);
+			}).then(function () {
+				checkTable("after delete 2nd leaf", assert, oTable, [
+					"/Artists(IsActiveEntity=false)",
+					oIsActiveEntityTrue,
+					"/Artists(IsActiveEntity=true,Name='A')",
+					oNameB
+				], [ // groupLevelCount|isExpanded|isTotal|level|isActiveEntity|inProcessByUser|name|...
+					// ...|bestFriendName|artistID|city|sendsAutographs
+					["", "false", "false", "1", "false", "JOHNDOE", "", "", "", "", ""],
+					["2", "true", "false", "1", "true", "", "", "", "", "", ""],
+					["", "false", "false", "2", "true", "", "A", "A's best friend", "", "", ""],
+					["2", "true", "false", "2", "true", "", "B", "B's best friend", "", "", ""]
+				], 4, true, [ // type|level|expandable|expanded|title
+					["GroupHeader", 1, true, false, "No"],
+					["GroupHeader", 1, true, true, "Yes"],
+					["GroupHeader", 2, true, false, "A"],
+					["GroupHeader", 2, true, /*look here*/true, "B"]
+				]);
+
+				that.expectChange("isExpanded", [,,, false])
+					.expectEvents(assert, oNameB.getBinding(), [
+						[, "change", {reason : "change"}] // needed to update ODataV4Aggregation
+					]);
+
+				// code under test (JIRA: CPOUI5ODATAV4-3398)
+				oNameB.collapse();
+
+				return that.waitForChanges(assert, "collapse empty group");
+			}).then(function () {
+				checkTable("after collapse empty group", assert, oTable, [
+					"/Artists(IsActiveEntity=false)",
+					oIsActiveEntityTrue,
+					"/Artists(IsActiveEntity=true,Name='A')",
+					oNameB
+				], [ // groupLevelCount|isExpanded|isTotal|level|isActiveEntity|inProcessByUser|name|...
+					// ...|bestFriendName|artistID|city|sendsAutographs
+					["", "false", "false", "1", "false", "JOHNDOE", "", "", "", "", ""],
+					["2", "true", "false", "1", "true", "", "", "", "", "", ""],
+					["", "false", "false", "2", "true", "", "A", "A's best friend", "", "", ""],
+					["2", "false", "false", "2", "true", "", "B", "B's best friend", "", "", ""]
+				], 4, true, [ // type|level|expandable|expanded|title
+					["GroupHeader", 1, true, false, "No"],
+					["GroupHeader", 1, true, true, "Yes"],
+					["GroupHeader", 2, true, false, "A"],
+					["GroupHeader", 2, true, /*look here*/false, "B"]
+				]);
+
+				that.expectChange("isExpanded", [,,, true])
+					.expectEvents(assert, oNameB.getBinding(), [
+						[, "change", {reason : "change"}] // needed to update ODataV4Aggregation
+					]);
+
+				return Promise.all([
+					// code under test (JIRA: CPOUI5ODATAV4-3398)
+					oNameB.expand(),
+					that.waitForChanges(assert, "expand empty group")
+				]);
+			}).then(function () {
+				checkTable("after expand empty group", assert, oTable, [
+					"/Artists(IsActiveEntity=false)",
+					oIsActiveEntityTrue,
+					"/Artists(IsActiveEntity=true,Name='A')",
+					oNameB
+				], [ // groupLevelCount|isExpanded|isTotal|level|isActiveEntity|inProcessByUser|name|...
+					// ...|bestFriendName|artistID|city|sendsAutographs
+					["", "false", "false", "1", "false", "JOHNDOE", "", "", "", "", ""],
+					["2", "true", "false", "1", "true", "", "", "", "", "", ""],
+					["", "false", "false", "2", "true", "", "A", "A's best friend", "", "", ""],
+					["2", "true", "false", "2", "true", "", "B", "B's best friend", "", "", ""]
+				], 4, true, [ // type|level|expandable|expanded|title
+					["GroupHeader", 1, true, false, "No"],
+					["GroupHeader", 1, true, true, "Yes"],
+					["GroupHeader", 2, true, false, "A"],
+					["GroupHeader", 2, true, /*look here*/true, "B"]
+				]);
 			});
-
-			that.expectChange("bestFriendName", [,,,, "B's best friend 4ever!"])
-				.expectChange("inProcessByUser", [,,,, "JANEDOE"])
-				.expectRequest("#0 PATCH Artists(ArtistID='BF4E',IsActiveEntity=true)", {
-					payload : {Name : "B's best friend 4ever!"}
-				}, oNO_CONTENT)
-				.expectRequest("#0 PATCH Publications('0815')/DraftAdministrativeData", {
-					payload : {InProcessByUser : "JANEDOE"}
-				}, oNO_CONTENT);
-
-			return Promise.all([
-				// code under test (JIRA: CPOUI5ODATAV4-3438)
-				oArtist1.setProperty("BestFriend/Name", "B's best friend 4ever!"),
-				oArtist1.setProperty("BestPublication/DraftAdministrativeData/InProcessByUser",
-					"JANEDOE"),
-				that.waitForChanges(assert, "edit via navigation")
-			]);
-		}).then(function () {
-			that.expectRequest("Artists(ArtistID='1',IsActiveEntity=true)"
-					+ "?$select=Address/RegionID,Address/ZIP", {
-					Address : {RegionID : 42, ZIP : "L2 6RE"}
-				})
-				.expectChange("regionID", "42");
-
-			// code under test (JIRA: CPOUI5ODATAV4-3438)
-			that.oView.byId("regionID").setBindingContext(oArtist1);
-
-			return Promise.all([
-				// code under test (JIRA: CPOUI5ODATAV4-3438)
-				oArtist1.requestProperty("Address/ZIP").then(function (sZIP) {
-					assert.strictEqual(sZIP, "L2 6RE");
-				}),
-				that.waitForChanges(assert, "request late properties")
-			]);
 		});
 	});
 
@@ -72831,13 +73033,19 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 	// JIRA: CPOUI5ODATAV4-3555
 	//
 	// Check that auto-$expand/$select works, incl. manual $select (JIRA: CPOUI5ODATAV4-3438)
+	// Check that "createCompleted" and "createSent" events are fired (JIRA: CPOUI5ODATAV4-3684)
 	["delete", "resetChanges", "setProperty"].forEach((sMethod) => {
 		const sTitle = "Data Aggregation: setContext w/ transient; finally do " + sMethod;
 
 		QUnit.test(sTitle, async function (assert) {
-			const oModel = this.createSalesOrdersModel({autoExpandSelect : true}, {}, [],
-				/*bExpandAfterConcatSupported*/true);
-			const sView = `
+			var oCreateCompletedPromise,
+				oCreateSentPromise,
+				oModel = this.createSalesOrdersModel({autoExpandSelect : true}, {}, [],
+					/*bExpandAfterConcatSupported*/true),
+				fnResolveCreateCompleted,
+				fnResolveCreateSent,
+				oTransientContext,
+				sView = `
 	<FlexBox id="flexbox" binding="{/SalesOrderList('42')}">
 		<t:Table id="table" rows="{path : 'SO_2_SOITEM',
 				parameters : {
@@ -72860,6 +73068,51 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 			<Text id="tax" text="{TaxAmount}"/>
 		</t:Table>
 	</FlexBox>`;
+
+			/*
+			 * Event handler for createCompleted event. Checks that "context" and "success" parameters
+			 * are as expected and resolves the promise for the createCompleted event.
+			 */
+			function onCreateCompleted(oEvent) {
+				assert.ok(fnResolveCreateCompleted, "expect createCompleted");
+				assert.strictEqual(oEvent.getParameter("context"), oTransientContext);
+				assert.strictEqual(oEvent.getParameter("success"), fnResolveCreateCompleted.bSuccess);
+				fnResolveCreateCompleted();
+				fnResolveCreateCompleted = undefined;
+			}
+
+			/*
+			 * Event handler for createSent event. Checks that the "context" parameter is as expected
+			 * and resolves the promise for the createSent event.
+			 */
+			function onCreateSent(oEvent) {
+				assert.ok(fnResolveCreateSent, "expect createSent");
+				assert.strictEqual(oEvent.getParameter("context"), oTransientContext);
+				fnResolveCreateSent();
+				fnResolveCreateSent = undefined;
+			}
+
+			/*
+			 * Creates a pending promise for the createCompleted event. It is resolved when the event
+			 * handler for createCompleted is called.
+			 * @param {boolean} bSuccess The expected success flag in the createCompleted event payload
+			 */
+			function expectCreateCompleted(bSuccess) {
+				return new Promise(function (resolve) {
+					fnResolveCreateCompleted = resolve;
+					fnResolveCreateCompleted.bSuccess = bSuccess;
+				});
+			}
+
+			/*
+			 * Creates a pending promise for the createSent event. It is resolved when the event handler
+			 * for createSent is called.
+			 */
+			function expectCreateSent() {
+				return new Promise(function (resolve) {
+					fnResolveCreateSent = resolve;
+				});
+			}
 
 			const sUrl = "SalesOrderList('42')/SO_2_SOITEM?"
 				+ "$apply=concat(aggregate(TaxAmount,CurrencyCode)"
@@ -72906,7 +73159,8 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 
 			this.expectChange("tax", [, "80", "250"]);
 
-			const oTransientContext = oListBinding.create({TaxAmount : "80"}, true, true);
+			// code under test
+			oTransientContext = oListBinding.create({TaxAmount : "80"}, true, true);
 
 			await this.waitForChanges(assert, "create transient");
 
@@ -72985,6 +73239,11 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 					break;
 
 				case "setProperty":
+					oCreateCompletedPromise = expectCreateCompleted(true);
+					oListBinding.attachCreateCompleted(onCreateCompleted);
+					oCreateSentPromise = expectCreateSent();
+					oListBinding.attachCreateSent(onCreateSent);
+
 					this.expectChange("tax", [, "81"])
 						.expectRequest("#4 POST SalesOrderList('42')/SO_2_SOITEM", {
 							payload : {
@@ -73012,6 +73271,8 @@ constraints:{'maxLength':5},formatOptions:{'parseKeepsEmptyString':true}\
 						// code under test
 						oTransientContext.setProperty("TaxAmount", "81", "update"),
 						oTransientContext.created(),
+						oCreateSentPromise,
+						oCreateCompletedPromise,
 						oModel.submitBatch("update")
 					]).then(() => {
 						assert.deepEqual(oTransientContext.getObject(), {

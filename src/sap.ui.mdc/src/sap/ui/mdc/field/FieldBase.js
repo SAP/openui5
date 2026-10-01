@@ -3148,6 +3148,7 @@ sap.ui.define([
 		}
 
 		let bChangeAfterError = false;
+		let bUpdateConditionType = false; // to update conditionType even if nothing changed
 		if (oContent && oContent.setDOMValue) {
 			if (this.getMaxConditionsForHelp() === 1 && aConditions.length > 0) {
 				// the focus is still in the Field. The update of the inner control is done via ManagedObjectModel binding.
@@ -3181,9 +3182,11 @@ sap.ui.define([
 			} else if (bClose) {
 				oContent.setDOMValue(""); // as value property of MultiInput control might still be empty during typing. So setValue (via Binding) doesn't updates DOM-value (as no change is recognized).
 				this._sFilterValue = "";
+				bUpdateConditionType = this._bIgnoreInputValue;
 				this._bIgnoreInputValue = false; // just clean up
 				this._oFocusInHelp = undefined; // user input not longer from interest
 			} else {
+				bUpdateConditionType = !this._bIgnoreInputValue;
 				this._bIgnoreInputValue = true; // after something is selected, the value just stays for filtering -> don't use to create token
 			}
 
@@ -3212,9 +3215,14 @@ sap.ui.define([
 				oValueHelp.onControlChange();
 				_triggerChange.call(this, aConditions, true);
 			}
-		} else if (bChangeAfterError) { // last valid value choosen again
-			_fireValidationSuccessForContent.call(this, oContent);
-			_triggerChange.call(this, aConditions, true);
+		} else {
+			if (bChangeAfterError) { // last valid value choosen again
+				_fireValidationSuccessForContent.call(this, oContent);
+				_triggerChange.call(this, aConditions, true);
+			}
+			if (bUpdateConditionType) {
+				this.getContentFactory().updateConditionType();
+			}
 		}
 	}
 

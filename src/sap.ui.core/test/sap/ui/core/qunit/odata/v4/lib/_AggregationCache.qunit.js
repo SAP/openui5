@@ -1654,7 +1654,7 @@ sap.ui.define([
 				oCountPromise.$old = "~oldCountPromise~";
 			}
 			oCache.oCountPromise = oCountPromise;
-			this.mock(oCache).expects("registerChangeListener").exactly(bRecursiveHierarchy ? 1 : 0)
+			this.mock(oCache).expects("registerChangeListener")
 				.withExactArgs("./$count", "~oListener~");
 			this.mock(oCache.oFirstLevel).expects("fetchValue").never();
 			this.mock(oCache).expects("drillDown").never();
@@ -1935,6 +1935,30 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("readCount: $leafLevelAggregated", function (assert) {
+		var oAggregation = {
+				$leafLevelAggregated : true,
+				groupLevels : ["X"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", {}, oAggregation),
+			oGroupLock = {
+				getUnlockedCopy : mustBeMocked
+			};
+
+		oCache.oCountPromise = {
+			$resolve : "~fnResolve~", // will not be called :-)
+			$restore : mustBeMocked
+		};
+		this.mock(this.oRequestor).expects("request").never();
+		this.mock(_Helper).expects("fireChange").never();
+
+		assert.throws(function () {
+			// code under test
+			oCache.readCount(oGroupLock);
+		}, new Error("Unsupported on aggregated data"));
+	});
+
+	//*********************************************************************************************
 	[undefined, true].forEach(function (bRetryIfFailed) {
 		[false, true].forEach(function (bOtherRequestFailed) {
 			const sTitle = "readCount: GET fails, bRetryIfFailed=" + bRetryIfFailed
@@ -1958,8 +1982,8 @@ sap.ui.define([
 				// simulate that the count request failed because another request in the $batch failed
 				oError.cause = "~cause~";
 			}
-			this.mock(this.oRequestor).expects("buildQueryString").withExactArgs("/~", {})
-				.returns("?~query~");
+			this.mock(this.oRequestor).expects("buildQueryString")
+				.withExactArgs("/~", {}, false, false, false).returns("?~query~");
 			this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 				.returns("~oGroupLockCopy~");
 			this.mock(this.oRequestor).expects("request")
@@ -2012,9 +2036,27 @@ sap.ui.define([
 			foo : "bar",
 			"sap-client" : "123"
 		}
+	}, {
+		// NO $filter
+		$$filterBeforeAggregate : "Is_Manager",
+		mExpectedQueryOptions : {
+			$filter : "Is_Manager",
+			foo : "bar",
+			"sap-client" : "123"
+		}
 	}].forEach(function (oFixture, i) {
-		QUnit.test("readCount: #" + i, function (assert) {
-			var oAggregation = {
+		[false, true].forEach((bDataAggregation) => {
+			if (bDataAggregation && oFixture.$filter) {
+				return; // avoid "Unsupported system query option: $filter"
+			}
+
+		QUnit.test("readCount: #" + i + ", D.A.: " + bDataAggregation, function (assert) {
+			var oAggregation = bDataAggregation ? {
+					aggregate : {},
+					group : {},
+					groupLevels : ["X"],
+					search : oFixture.search
+				} : {
 					hierarchyQualifier : "X",
 					search : oFixture.search
 				},
@@ -2039,13 +2081,17 @@ sap.ui.define([
 			if ("$filter" in oFixture) {
 				mQueryOptions.$filter = oFixture.$filter;
 			}
+			if ("$$filterBeforeAggregate" in oFixture) {
+				mQueryOptions.$$filterBeforeAggregate = oFixture.$$filterBeforeAggregate;
+			}
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", mQueryOptions, oAggregation);
 			oCache.oCountPromise = {
 				$resolve : fnResolve,
 				$restore : mustBeMocked // must not be called
 			};
 			this.mock(this.oRequestor).expects("buildQueryString")
-				.withExactArgs("/~", oFixture.mExpectedQueryOptions).returns("?~query~");
+				.withExactArgs("/~", oFixture.mExpectedQueryOptions, false, false, bDataAggregation)
+				.returns("?~query~");
 			this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 				.returns("~oGroupLockCopy~");
 			this.mock(this.oRequestor).expects("request")
@@ -2066,6 +2112,7 @@ sap.ui.define([
 			return oResult.then(function () {
 				assert.strictEqual(fnResolve.args[0][0], 42);
 			});
+		});
 		});
 	});
 
@@ -7744,6 +7791,7 @@ sap.ui.define([
 		{firstLevel : true},
 		{firstLevel : false, parentLeaf : false},
 		{firstLevel : false, parentLeaf : true},
+		{firstLevel : false, parentLeaf : true, isDataAggregation : true},
 		{firstLevel : false, noParentCache : true, parentLeaf : false}
 	].forEach(function (oFixture) {
 		[false, true].forEach((bCreated) => {
@@ -7759,9 +7807,8 @@ sap.ui.define([
 		QUnit.test(sTitle, function (assert) {
 			var oCountExpectation, oRemoveExpectation;
 
-			const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
-				hierarchyQualifier : "X"
-			});
+			const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {},
+				oFixture.isDataAggregation ? {groupLevels : ["group"]} : {hierarchyQualifier : "X"});
 			if (bCount) {
 				oCache.oCountPromise = "~oCountPromise~";
 			}
@@ -7814,7 +7861,8 @@ sap.ui.define([
 				oCountExpectation = this.mock(oParentCache).expects("getValue")
 					.exactly(oFixture.firstLevel || oFixture.noParentCache ? 0 : 1)
 					.withExactArgs("$count").returns(oFixture.parentLeaf ? 0 : 5);
-				this.mock(oCache).expects("makeLeaf").exactly(oFixture.parentLeaf ? 1 : 0)
+				this.mock(oCache).expects("makeLeaf")
+					.exactly(oFixture.parentLeaf && !oFixture.isDataAggregation ? 1 : 0)
 					.withExactArgs("~oParent~");
 				this.mock(oCache).expects("shiftRank")
 					.withExactArgs(4, oFixture.firstLevel ? -4 : -1);

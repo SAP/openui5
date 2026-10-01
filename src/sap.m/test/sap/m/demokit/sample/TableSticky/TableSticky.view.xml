@@ -1,0 +1,61 @@
+<mvc:View
+	controllerName="sap.m.sample.TableSticky.TableSticky"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	height="100%">
+	<Page showHeader="false" enableScrolling="true">
+		<Table
+			id="idProductsTable"
+			sticky="HeaderToolbar,InfoToolbar,ColumnHeaders,GroupHeaders"
+			items="{
+				path: '/ProductCollection',
+				sorter: {path: 'Category', group: true}
+			}">
+			<headerToolbar>
+				<OverflowToolbar>
+					<Title text="Products" level="H2"/>
+					<ToolbarSpacer/>
+					<ToggleButton id="btnHeaderToolbar" text="HeaderToolbar" pressed="true" press=".onToggleSticky"/>
+					<ToggleButton id="btnInfoToolbar" text="InfoToolbar" pressed="true" press=".onToggleSticky"/>
+					<ToggleButton id="btnColumnHeaders" text="ColumnHeaders" pressed="true" press=".onToggleSticky"/>
+					<ToggleButton id="btnGroupHeaders" text="GroupHeaders" pressed="true" press=".onToggleSticky"/>
+				</OverflowToolbar>
+			</headerToolbar>
+			<infoToolbar>
+				<Toolbar>
+					<Text text="Scroll down to observe the sticky headers and toolbars."/>
+				</Toolbar>
+			</infoToolbar>
+			<columns>
+				<Column>
+					<Text text="Product"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="Supplier"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true">
+					<Text text="Category"/>
+				</Column>
+				<Column minScreenWidth="Tablet" demandPopin="true" hAlign="End">
+					<Text text="Price"/>
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem vAlign="Middle">
+					<cells>
+						<ObjectIdentifier title="{Name}" text="{ProductId}"/>
+						<Text text="{SupplierName}"/>
+						<Text text="{Category}"/>
+						<ObjectNumber
+							number="{
+								parts: [{path: 'Price'}, {path: 'CurrencyCode'}],
+								type: 'sap.ui.model.type.Currency',
+								formatOptions: {showMeasure: false}
+							}"
+							unit="{CurrencyCode}"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+	</Page>
+</mvc:View>

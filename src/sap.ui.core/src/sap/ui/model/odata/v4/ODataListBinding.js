@@ -804,6 +804,9 @@ sap.ui.define([
 			if (!bSilent) {
 				this._fireChange({reason : ChangeReason.Change});
 			}
+		} else if (!bSilent && _Helper.isDataAggregation(this.mParameters)) {
+			// Note: w/ D.A., collapse empty group needs to inform UI
+			this._fireChange({reason : ChangeReason.Change});
 		} // else: collapse before expand has finished
 	};
 
@@ -1354,6 +1357,7 @@ sap.ui.define([
 
 		this.iDeletedContexts += 1;
 		const bSelected = oContext.isSelected();
+		that.setOutdated("delete");
 
 		return oContext.doDelete(oGroupLock, sEditUrl, sPath, oETagEntity, this,
 			function (iIndex, iOffset) {
@@ -1878,10 +1882,11 @@ sap.ui.define([
 			}
 			if (iCount) {
 				this.insertGap(this.getModelIndex(oContext), iCount);
-				if (!bSilent) {
-					this._fireChange({reason : ChangeReason.Change});
-				}
 			} // else: collapse before expand has finished, oContext already destroyed
+			if (!bSilent && (iCount || _Helper.isDataAggregation(this.mParameters))) {
+				// Note: w/ D.A., expand empty group needs to inform UI
+				this._fireChange({reason : ChangeReason.Change});
+			}
 			if (bDataRequested) {
 				this.fireDataReceived({});
 			}
@@ -5438,6 +5443,9 @@ sap.ui.define([
 	 *   Whether to force setting the outdated flags. Either use <code>sForce</code> or
 	 *   <code>aPaths</code>. Supported values are:
 	 *   - "both": force setting the outdated flags at the grand total and the header context
+	 *   - "delete": delete in data aggregation with visual grouping, sets the outdated flag at the
+	 *     header context (which also affects subtotals) only in case of visual grouping; MUST not
+	 *     be combined with <code>aPaths</code> or <code>bNoRequest</code>
 	 *   - "header": force setting the outdated flag at the header context
 	 *   - "" or undefined, the outdated flags are set only if needed
 	 * @param {string[]} [aPaths]
@@ -5458,13 +5466,15 @@ sap.ui.define([
 	ODataListBinding.prototype.setOutdated = function (sForce, aPaths, bNoRequest) {
 		if (_Helper.isDataAggregation(this.mParameters)) {
 			const oAggregation = this.mParameters.$$aggregation;
-			const bGrandTotalOutdated = sForce === "both"
-				|| this.mParameters.$search
-				|| oAggregation.search
-				|| Object.keys(this.mParameters).some((sKey) => sKey[0] !== "$")
-				|| this.isFilteredBy(aPaths);
-			const bHeaderContextOutdated = sForce === "header" || bGrandTotalOutdated
-				|| this.isSortedBy(aPaths);
+			const bGrandTotalOutdated = sForce === "delete"
+				? false
+				: sForce === "both"
+					|| this.mParameters.$search || oAggregation.search
+					|| Object.keys(this.mParameters).some((sKey) => sKey[0] !== "$")
+					|| this.isFilteredBy(aPaths);
+			const bHeaderContextOutdated = sForce === "delete"
+				? oAggregation.groupLevels?.length > 0
+				: bGrandTotalOutdated || sForce === "header" || this.isSortedBy(aPaths);
 			if (bNoRequest
 					&& (bHeaderContextOutdated
 					|| _AggregationHelper.isUsedForGrandTotal(aPaths, oAggregation.aggregate))) {

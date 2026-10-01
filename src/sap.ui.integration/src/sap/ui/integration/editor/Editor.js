@@ -20,21 +20,19 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/base/Log",
 	"sap/ui/core/Popup",
-	"sap/base/i18n/ResourceBundle",
-	"sap/ui/integration/editor/EditorResourceBundles",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
 	"sap/base/util/ObjectPath",
 	"sap/m/MessageStrip",
-	"sap/ui/model/resource/ResourceModel",
 	"./Manifest",
 	"./Merger",
 	"./Constants",
 	"sap/m/Tree",
 	"sap/m/StandardTreeItem",
 	"./EditorRenderer",
-	"./EditorFieldManager"
+	"./EditorFieldManager",
+	"./EditorTranslation"
 ], function(
 	Localization,
 	Control,
@@ -53,21 +51,19 @@ sap.ui.define([
 	Popover,
 	Log,
 	Popup,
-	ResourceBundle,
-	EditorResourceBundles,
 	includeStylesheet,
 	LoaderExtensions,
 	Parameters,
 	ObjectPath,
 	MessageStrip,
-	ResourceModel,
 	Manifest,
 	Merger,
 	Constants,
 	Tree,
 	StandardTreeItem,
 	EditorRenderer,
-	EditorFieldManager
+	EditorFieldManager,
+	EditorTranslation
 ) {
 	"use strict";
 
@@ -437,21 +433,27 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the languages map from this editor class or any of its superclasses.
+	 *
+	 * @returns {object}
+	 */
+	Editor.prototype._getLanguages = function () {
+		var oMetadata = this.getMetadata();
+		while (oMetadata) {
+			var oClass = oMetadata.getClass();
+			if (Object.hasOwn(oClass, "_oLanguages")) {
+				return oClass._oLanguages;
+			}
+			oMetadata = oMetadata.getParent();
+		}
+		return {};
+	};
+
+	/**
 	 * Init the Resource Bundles for Multi Translation
 	 */
 	Editor.prototype._initResourceBundlesForMultiTranslation = function () {
-		var vI18n = this._oManifest.get("/sap.app/i18n");
-		var sResourceBundleURL;
-		if (typeof vI18n === "string") {
-			sResourceBundleURL = this.getBaseUrl() + vI18n;
-		} else if (typeof vI18n === "object" && vI18n.bundleUrl) {
-			sResourceBundleURL = this.getBaseUrl() + vI18n.bundleUrl;
-		}
-		this._oEditorResourceBundles = new EditorResourceBundles({
-			url: sResourceBundleURL,
-			languages: Editor._oLanguages
-		});
-		this._oEditorResourceBundles.loadResourceBundles();
+		EditorTranslation.initResourceBundlesForMultiTranslation(this, this._getLanguages());
 	};
 
 	/**
@@ -469,28 +471,12 @@ sap.ui.define([
 		}
 	};
 
-	Editor.prototype._loadDefaultTranslations = async function () {
-		if (this._defaultTranslationsLoaded) {
-			return;
-		}
-
-		var oResourceModel = new ResourceModel({
-			bundle: this._oResourceBundle
-		});
-
-		// wait for the promise returned by #getResourceBundle to resolve before accessing model data
-		await oResourceModel.getResourceBundle();
-
-		this.setModel(oResourceModel, "i18n");
-		this._defaultTranslationsLoaded = true;
+	Editor.prototype._loadDefaultTranslations = function () {
+		return EditorTranslation.loadDefaultTranslations(this);
 	};
 
-	Editor.prototype._enhanceI18nModel = async function (oResourceBundle) {
-		var oResourceModel = this.getModel("i18n");
-		if (oResourceModel.getResourceBundle().oUrlInfo.url !== oResourceBundle.oUrlInfo.url) {
-			await oResourceModel.enhance(oResourceBundle);
-			this._oResourceBundle = await oResourceModel.getResourceBundle();
-		}
+	Editor.prototype._enhanceI18nModel = function (oResourceBundle) {
+		return EditorTranslation.enhanceI18nModel(this, oResourceBundle);
 	};
 
 	Editor.prototype._loadExtension = function () {
@@ -1195,7 +1181,7 @@ sap.ui.define([
 			EditorFieldManager.requireFields().then(function () {
 				// TODO: Editor.Fields is never read anywhere — remove this line
 				Editor.Fields = EditorFieldManager.Fields;
-				EditorFieldManager.startEditor(that);
+				EditorFieldManager.startEditor(that, that._getLanguages());
 			});
 		});
 	};
@@ -2074,25 +2060,11 @@ sap.ui.define([
 	};
 
 	Editor.prototype.getTranslationValueInTexts = function (sLanguage, sManifestPath) {
-		var sTranslationPath = "/texts/" + sLanguage;
-		var oProperty = this._oSettingsModel.getProperty(sTranslationPath) || {};
-		return oProperty[sManifestPath];
+		return EditorTranslation.getTranslationValueInTexts(this, sLanguage, sManifestPath);
 	};
 
 	Editor.prototype.deleteAllTranslationValuesInTexts = function (sManifestPath) {
-		var that = this;
-		var oData = that._oSettingsModel.getData();
-		if (!oData || !oData.texts) {
-			return;
-		}
-		var sTranslationPath = "/texts";
-		var oTexts = deepClone(oData.texts, 500);
-		for (var n in oTexts) {
-			if (oTexts[n][sManifestPath]) {
-				delete oTexts[n][sManifestPath];
-			}
-		}
-		this._oSettingsModel.setProperty(sTranslationPath, oTexts);
+		EditorTranslation.deleteAllTranslationValuesInTexts(this, sManifestPath);
 	};
 
 	Editor.prototype._createHint = function (sHint, sHintIdPrefix) {
@@ -2103,85 +2075,11 @@ sap.ui.define([
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists
 	 */
 	Editor.prototype._getCurrentLanguageSpecificText = function (sKey) {
-		if (this._oTranslationBundle) {
-			var sText = this._oTranslationBundle.getText(sKey, [], true);
-			if (sText === undefined) {
-				return "";
-			}
-			return sText;
-		}
-		return "";
+		return EditorTranslation.getCurrentLanguageSpecificText(this, sKey);
 	};
 
-	Editor.prototype._loadSpecialTranslations = async function () {
-		if (this._oTranslationBundle) {
-			return;
-		}
-		var sLanguage = this._language;
-		if (!sLanguage) {
-			return;
-		}
-		var vI18n = this._oManifest.get("/sap.app/i18n"),
-			sResourceBundleURL,
-			aSupportedLocales;
-		if (!vI18n) {
-			return;
-		}
-		if (typeof vI18n === "string") {
-			sResourceBundleURL = this.getBaseUrl() + vI18n;
-		} else if (typeof vI18n === "object") {
-			if (vI18n.bundleUrl) {
-				sResourceBundleURL = this.getBaseUrl() + vI18n.bundleUrl;
-			}
-			if (Array.isArray(vI18n.supportedLocales)) {
-				aSupportedLocales = vI18n.supportedLocales;
-				for (var i = 0; i < aSupportedLocales.length; i++) {
-					aSupportedLocales[i] = aSupportedLocales[i].replaceAll('_', '-');
-				}
-			}
-		}
-		if (sResourceBundleURL) {
-			var aFallbacks = [sLanguage];
-			if (sLanguage.indexOf("-") > -1) {
-				aFallbacks.push(sLanguage.substring(0, sLanguage.indexOf("-")));
-			}
-			//add en into fallbacks
-			if (!aFallbacks.includes("en")) {
-				aFallbacks.push("en");
-			}
-			aFallbacks = this._filterSupportedFallbackLanguages(aFallbacks, aSupportedLocales);
-			// load the ResourceBundle relative to the manifest
-			var oResourceBundle = await ResourceBundle.create({
-				url: sResourceBundleURL,
-				async: true,
-				locale: aFallbacks[0],
-				supportedLocales: aFallbacks,
-				fallbackLocale: "en"
-			});
-
-			var oResourceModel = new ResourceModel({
-				bundle: oResourceBundle
-			});
-
-			// wait for the promise returned by #getResourceBundle to resolve before accessing model data
-			this._oTranslationBundle = await oResourceModel.getResourceBundle();
-		}
-	};
-
-	/**
-	 * Filter the supported fallback languages
-	 */
-	Editor.prototype._filterSupportedFallbackLanguages = function (aFallbacks, aSupportedLocales) {
-		if (Array.isArray(aSupportedLocales)) {
-			var aSupportedFallbacks = [];
-			for (var i = 0; i < aFallbacks.length; i++) {
-				if (aSupportedLocales.includes(aFallbacks[i])) {
-					aSupportedFallbacks.push(aFallbacks[i]);
-				}
-			}
-			aFallbacks = aSupportedFallbacks;
-		}
-		return aFallbacks;
+	Editor.prototype._loadSpecialTranslations = function () {
+		return EditorTranslation.loadSpecialTranslations(this);
 	};
 
 

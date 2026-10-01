@@ -12,9 +12,7 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/table/RowSettings",
 	"sap/ui/core/Control",
-	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
-	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/base/Object",
 	"sap/ui/thirdparty/jquery",
@@ -32,9 +30,7 @@ sap.ui.define([
 	TableLibrary,
 	RowSettings,
 	Control,
-	Lib,
 	Theming,
-	InvisibleMessage,
 	MessageType,
 	BaseObject,
 	jQuery
@@ -789,61 +785,60 @@ sap.ui.define([
 
 	QUnit.test("showNotificationPopoverAtIndex", async function(assert) {
 		const oTable = this.oTable;
-		const oAfterOpenSpy = sinon.spy();
-		const fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
-		const sWarning = Lib.getResourceBundleFor("sap.m").getText("SEMANTIC_COLOR_CRITICAL");
 		let sMessage;
 
 		assert.notOk(oTable._oNotificationPopover, "the notification popover is not initialized");
 
 		await TableUtils.showNotificationPopoverAtIndex(oTable, 0, 3);
 		assert.ok(oTable._oNotificationPopover, "the notification popover is initialized");
-		const oTitle = oTable._oNotificationPopover.getCustomHeader().getContentMiddle()[0].getItems()[1];
-		assert.strictEqual(oTitle.getLevel(), "H1", "the notification popover title has heading level H1");
-		sMessage = oTable._oNotificationPopover.getContent()[0].getText();
-		assert.equal(sMessage, TableUtils.getResourceText("TBL_SELECT_LIMIT", [3]),
-			"the notification message is correct");
 
-		const oOpenSpy = sinon.spy(oTable._oNotificationPopover, "openBy");
-		const oCloseSpy = sinon.spy(oTable._oNotificationPopover, "close");
-		oTable._oNotificationPopover.attachAfterOpen(oAfterOpenSpy);
-		assert.ok(fnInvisibleMessageAnnounce.calledOnceWith(sWarning + ". " + sMessage), "The message text is announced");
+		const oPopover = oTable._oNotificationPopover;
+		const oHeader = oPopover.getCustomHeader().getContentMiddle()[0];
+		const oIcon = oHeader.getItems()[0];
+		const oTitle = oHeader.getItems()[1];
+		assert.strictEqual(oTitle.getLevel(), "H1", "the notification popover title has heading level H1");
+		sMessage = oPopover.getContent()[0].getText();
+		assert.equal(sMessage, TableUtils.getResourceText("TBL_SELECT_LIMIT", [3]), "the notification message is correct");
+
+		assert.strictEqual(oIcon.getDecorative(), false, "the warning icon is not decorative");
+		assert.strictEqual(oPopover.getAriaLabelledBy()[0], oIcon.getId(),
+			"the icon is referenced in the popover's ariaLabelledBy association");
+
+		const oOkButton = oPopover.getFooter().getContentRight()[0];
+		assert.strictEqual(oOkButton.getText(), TableUtils.getResourceText("TBL_SELECT_LIMIT_OK"),
+			"the footer has an OK button with the correct text");
+		assert.strictEqual(document.activeElement.id, oOkButton.getId(), "the initial focus is on the OK button");
+
+		const oCloseSpy = sinon.spy(oPopover, "close");
+		oOkButton.firePress();
+		assert.ok(oCloseSpy.calledOnce, "pressing the OK button closes the popover");
+		oCloseSpy.resetHistory();
+
+		const oOpenSpy = sinon.spy(oPopover, "openBy");
 		oTable.fireFirstVisibleRowChanged({firstVisibleRow: 1});
 		assert.ok(oCloseSpy.calledOnce, "the popover closes on scroll");
-		fnInvisibleMessageAnnounce.resetHistory();
+		oCloseSpy.resetHistory();
 
 		await TableUtils.showNotificationPopoverAtIndex(oTable, 1, 5);
-		sMessage = oTable._oNotificationPopover.getContent()[0].getText();
-		assert.equal(sMessage, TableUtils.getResourceText("TBL_SELECT_LIMIT", [5]),
-			"the notification message is correct");
+		sMessage = oPopover.getContent()[0].getText();
+		assert.equal(sMessage, TableUtils.getResourceText("TBL_SELECT_LIMIT", [5]), "the notification message is correct");
 		oOpenSpy.calledOnceWithExactly(oTable.getRows()[1].getDomRefs().rowSelector, "the popover is opened by the correct element");
-		assert.ok(oAfterOpenSpy.calledOnce, "the afterOpen event is fired");
-		assert.ok(fnInvisibleMessageAnnounce.calledOnceWith(sWarning + ". " + sMessage), "The message text is announced");
 
-		oTable._oNotificationPopover.close();
-		oAfterOpenSpy.resetHistory();
+		oPopover.close();
 		oOpenSpy.resetHistory();
-		fnInvisibleMessageAnnounce.resetHistory();
+		oCloseSpy.resetHistory();
 
 		await TableUtils.showNotificationPopoverAtIndex(oTable, 2, 3);
-		sMessage = oTable._oNotificationPopover.getContent()[0].getText();
-		assert.equal(sMessage, TableUtils.getResourceText("TBL_SELECT_LIMIT", [3]),
-			"the notification message is correct");
+		sMessage = oPopover.getContent()[0].getText();
+		assert.equal(sMessage, TableUtils.getResourceText("TBL_SELECT_LIMIT", [3]), "the notification message is correct");
 		oOpenSpy.calledOnceWithExactly(oTable.getRows()[2].getDomRefs().rowSelector);
-		assert.ok(oAfterOpenSpy.calledOnce, "the popover is opened by the correct element");
-		assert.ok(fnInvisibleMessageAnnounce.calledOnceWith(sWarning + ". " + sMessage), "The message text is announced");
 
-		oTable._oNotificationPopover.close();
-		oAfterOpenSpy.resetHistory();
+		oPopover.close();
 		oOpenSpy.resetHistory();
-		fnInvisibleMessageAnnounce.resetHistory();
+		oCloseSpy.resetHistory();
 
 		await TableUtils.showNotificationPopoverAtIndex(oTable, 999, 3);
 		assert.ok(oOpenSpy.notCalled, "the popover is not opened, because the row at index 999 does not exist");
-		assert.ok(oAfterOpenSpy.notCalled, "the popover is not opened");
-		assert.ok(fnInvisibleMessageAnnounce.notCalled, "The message text is not announced");
-
-		fnInvisibleMessageAnnounce.restore();
 	});
 
 	QUnit.test("loadContexts", async function(assert) {

@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(Localization, Formatting, Device, Element, ControlBehavior, Security) {
 	"use strict";
 
-	const DEBUG_TOOL_NAME = "UI5 Debug Tools (experimental!)";
+	const DEBUG_TOOL_NAME = "UI5 Debug Tools";
 	const HEADER_COLOR = "#FC4229";
 	const GROUP_COLOR = "#0070F2";
 

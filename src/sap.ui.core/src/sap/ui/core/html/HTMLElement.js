@@ -368,24 +368,49 @@ function(
 		}
 	};
 
-	HTMLElement.prototype._attachCustomEventsListeners = function() {
+	HTMLElement.prototype.attachEvent = function(sEventId) {
+		const hadListeners = this.hasListeners(sEventId);
+		Control.prototype.attachEvent.apply(this, arguments);
+		if (!hadListeners) { // transition from 0 to 1
+			// Lazily wire up the native DOM listener, only for events that are actually used
+			this._connectNativeEvent(sEventId);
+		}
+		return this;
+	};
+
+	HTMLElement.prototype.detachEvent = function(sEventId) {
+		Control.prototype.detachEvent.apply(this, arguments);
+		if (!this.hasListeners(sEventId)) {
+			this._connectNativeEvent(sEventId, true);
+		}
+		return this;
+	};
+
+	HTMLElement.prototype._connectNativeEvent = function(sEventId, bDeregister) {
 		const oDomRef = this.getDomRef();
-		const oEvents = this.getMetadata().getCustomEvents();
-		for (const sEventName in oEvents) {
-			const sCustomEventName = oEvents[sEventName]._sCustomEventName;
+		const oEvent = this.getMetadata().getEvent(sEventId);
+		const sCustomEventName = oEvent?._sCustomEventName;
+
+		if (!oDomRef || !sCustomEventName) {
+			return;
+		}
+
+		if (bDeregister) {
+			oDomRef.removeEventListener(sCustomEventName, this._handleCustomEvent);
+		} else {
 			oDomRef.addEventListener(sCustomEventName, this._handleCustomEvent);
 		}
 	};
 
-	HTMLElement.prototype._detachCustomEventsListeners = function() {
-		const oDomRef = this.getDomRef();
-		if (!oDomRef) {
-			return;
+	HTMLElement.prototype._attachCustomEventsListeners = function() {
+		for (const sEventId in this.mEventRegistry) {
+			this._connectNativeEvent(sEventId);
 		}
-		const oEvents = this.getMetadata().getCustomEvents();
-		for (const sEventName in oEvents) {
-			const sCustomEventName = oEvents[sEventName]._sCustomEventName;
-			oDomRef.removeEventListener(sCustomEventName, this._handleCustomEvent);
+	};
+
+	HTMLElement.prototype._detachCustomEventsListeners = function() {
+		for (const sEventId in this.mEventRegistry) {
+			this._connectNativeEvent(sEventId, true);
 		}
 	};
 

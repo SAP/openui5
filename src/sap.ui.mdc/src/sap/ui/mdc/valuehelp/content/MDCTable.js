@@ -303,7 +303,7 @@ sap.ui.define([
 			}
 
 			if (this._oTable.isPropertyInitial("headerLevel")) {
-				this._oTable.setHeaderLevel(TitleLevel.H2);
+				this._oTable.setHeaderLevel(this.getGroup() ? TitleLevel.H3 : TitleLevel.H2);
 			}
 
 			if (this._oTable.isPropertyInitial("headerStyle")) {

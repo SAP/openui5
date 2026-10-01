@@ -180,7 +180,8 @@ sap.ui.define([
 			const iOffset = iDescendants + 1;
 			if (oParentCache === this.oFirstLevel) {
 				this.adjustDescendantCount(oElement, iIndex, -iOffset);
-			} else if (oParentCache && !oParentCache.getValue("$count")) {
+			} else if (oParentCache && !oParentCache.getValue("$count")
+					&& this.oAggregation.hierarchyQualifier) {
 				// make parent a leaf (the direct predecessor)
 				this.makeLeaf(this.aElements[iIndex - 1]);
 			}
@@ -897,8 +898,8 @@ sap.ui.define([
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise<number>}
 	 *   A promise that is resolved with the number of nodes at the next level, 0 if the node or
-	 *   one of its parent is collapsed again before the response arrived, or -1 if the cache needs
-	 *   to be refreshed (a unified cache)
+	 *   one of its ancestors is collapsed again before the response arrived, or -1 if the cache
+	 *   needs to be refreshed (a unified cache)
 	 * @throws {Error}
 	 *   If we cannot silently expand after a previous collapse (via "spliced")
 	 *
@@ -1008,7 +1009,7 @@ sap.ui.define([
 				_Helper.deletePrivateAnnotation(oGroupNode, "spliced");
 				return 0;
 			}
-			if (!iIndex) { // some parent already collapsed again
+			if (!iIndex) { // some ancestor already collapsed again
 				_Helper.setPrivateAnnotation(oGroupNode, "expanding", true);
 				return 0;
 			}
@@ -1175,13 +1176,11 @@ sap.ui.define([
 
 		if (sPath === "$count") {
 			if (this.oCountPromise) {
-				if (this.oAggregation.hierarchyQualifier) {
-					// "$count" cannot be used as change listener path because e.g. #_delete calls
-					// indirectly _Helper.addCount with this.mChangeListeners to update the count of
-					// the root nodes. This count must not be propagated to the listeners. So use a
-					// name similar to "$count" which never conflicts with any other valid path.
-					this.registerChangeListener("./$count", oListener);
-				}
+				// "$count" cannot be used as change listener path because e.g. #_delete calls
+				// indirectly _Helper.addCount with this.mChangeListeners to update the count of
+				// the root nodes. This count must not be propagated to the listeners. So use a
+				// name similar to "$count" which never conflicts with any other valid path.
+				this.registerChangeListener("./$count", oListener);
 				if (oGroupLock === _GroupLock.$cached && this.oCountPromise.$old) {
 					// return the old count promise if the $count is now being requested
 					// synchronously and a new count has already been requested (e.g. when creating
@@ -2120,8 +2119,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reads the count of data (in case of a recursive hierarchy), taking the current filter and
-	 * search into account.
+	 * Reads the count of data (in case of a recursive hierarchy or data aggregation with single
+	 * entities on leaf level), taking the current filter and search into account.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   An original lock for the group ID to be used for the GET request, to be cloned via
@@ -2137,25 +2136,33 @@ sap.ui.define([
 	_AggregationCache.prototype.readCount = function (oGroupLock) {
 		var mQueryOptions,
 			fnResolve = this.oCountPromise && this.oCountPromise.$resolve,
-			sResourcePathWithQuery;
+			sResourcePathWithQuery,
+			bSortSystemQueryOptions = !this.oAggregation.hierarchyQualifier;
 
 		if (fnResolve) {
+			if (this.oAggregation.$leafLevelAggregated) {
+				throw new Error("Unsupported on aggregated data");
+			}
 			delete this.oCountPromise.$resolve;
 
 			mQueryOptions = Object.assign({}, this.mQueryOptions);
-			// drop collection related system query options (except $filter, $search)
+			// drop not needed system query options
 			delete mQueryOptions.$apply;
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$expand;
-			// keep mQueryOptions.$filter;
+			if (mQueryOptions.$$filterBeforeAggregate) { // Note: no $filter present in this case
+				mQueryOptions.$filter = mQueryOptions.$$filterBeforeAggregate;
+				delete mQueryOptions.$$filterBeforeAggregate;
+			} // else: keep mQueryOptions.$filter;
 			delete mQueryOptions.$orderby;
+			// Note: _AggregationCache cannot be combined with $search
 			if (this.oAggregation.search) {
-				// Note: A recursive hierarchy cannot be combined with "$search"
 				mQueryOptions.$search = this.oAggregation.search;
 			}
 			delete mQueryOptions.$select;
 			sResourcePathWithQuery = this.sResourcePath + "/$count"
-				+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions);
+				+ this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false, false,
+					bSortSystemQueryOptions);
 
 			return this.oRequestor.request("GET", sResourcePathWithQuery,
 					oGroupLock.getUnlockedCopy())
@@ -2493,9 +2500,7 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.requestCount = function (oGroupLock) {
 		if (this.oAggregation.hierarchyQualifier || this.oAggregation.groupLevels.length) {
-			// recursive hierarchy has a specific implementation in #readCount, and data aggregation
-			// with groupLevels requires a different approach for requesting the count (oFirstLevel
-			// would not be responsible for single entities)
+			// for recursive hierarchy and data aggregation with groupLevels: use #readCount
 			throw new Error("Unsupported with recursive hierarchy or groupLevels");
 		}
 

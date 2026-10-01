@@ -1473,6 +1473,18 @@ sap.ui.define([
 
 		oTable.bindItems({path: "/items", template: oItemTemplate.clone(), length: 10});
 		_attachNavigated();
+		let iConfirm = 0;
+		oMTable.attachEvent("confirm", (oEvent) => {
+			iConfirm++;
+		});
+		let iSelect = 0;
+		let aConditions;
+		let sType;
+		oMTable.attachEvent("select", (oEvent) => {
+			iSelect++;
+			aConditions = oEvent.getParameter("conditions");
+			sType = oEvent.getParameter("type");
+		});
 
 		await _renderScrollContainer();
 
@@ -1493,16 +1505,19 @@ sap.ui.define([
 			oMTable.navigate(1);
 			await _checkNavigatedItem(assert, oTable, true, -1, -1, undefined, false, true);
 			assert.ok(oButton.focus.called, "Button focused");
-			sinon.stub(oContainer, "getDomRef").returns(undefined); // to fake focus in field (outside Popover)
 
-			qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-			await _checkNavigatedItem(assert, oTable, true, 2, 2, Condition.createItemCondition("I3", "X-Item 3"), false, true);
-
-			oContainer.getDomRef.restore();
-
-			oButton.focus();
-			oScrollContainer.getContent()[1].focus(); // fake focus somethere else
-			await _checkNavigatedItem(assert, oTable, true, 0, 0, Condition.createItemCondition("I1", "Item 1"), false, true);
+			qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.TAB, false, false, false);
+			assert.equal(iConfirm, 1, "Confim event fired if TAB on Botton pressed");
+			assert.equal(iSelect, 1, "select event fired if TAB on Botton pressed");
+			assert.deepEqual(aConditions, [], "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+			iConfirm = 0;
+			iSelect = 0;
+			qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.TAB, true, false, false);
+			assert.equal(iConfirm, 1, "Confim event fired if Shift-TAB on Botton pressed");
+			assert.equal(iSelect, 1, "select event fired if Shift-TAB on Botton pressed");
+			assert.deepEqual(aConditions, [], "select event conditions");
+			assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 
 			oFooterContent.destroy();
 		}).catch((oError) => {
@@ -1568,6 +1583,13 @@ sap.ui.define([
 			assert.deepEqual(aConditions, aNewConditions, "select event conditions");
 			assert.equal(sType, ValueHelpSelectionType.Remove, "select event type");
 			assert.equal(iConfirm, 1, "confirm event fired");
+
+			iConfirm = 0;
+			qutils.triggerKeydown(aItems[1].getFocusDomRef().id, KeyCodes.TAB, false, false, false);
+			assert.equal(iConfirm, 1, "Confim event fired if TAB on Botton pressed");
+			iConfirm = 0;
+			qutils.triggerKeydown(aItems[1].getFocusDomRef().id, KeyCodes.TAB, true, false, false);
+			assert.equal(iConfirm, 1, "Confim event fired if Shift-TAB on Botton pressed");
 		});
 
 	});
@@ -1611,6 +1633,14 @@ sap.ui.define([
 
 		oTable.bindItems({path: "/items", template: oItemTemplate.clone(), length: 10});
 		_attachNavigated();
+		let iConfirm = 0;
+		oMTable.attachEvent("confirm", (oEvent) => {
+			iConfirm++;
+		});
+		let iSelect = 0;
+		oMTable.attachEvent("select", (oEvent) => {
+			iSelect++;
+		});
 
 		await _renderScrollContainer();
 
@@ -1652,13 +1682,12 @@ sap.ui.define([
 					assert.ok(oButton.focus.called, "Button focused");
 
 					aItems[2].focus.reset();
-					qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-					assert.ok(aItems[2].focus.called, "3rd item focused");
-					assert.equal(iNavigate, 0, "Navigated Event not fired");
-
-					oButton.focus();
-					oTable.focus(); // fake focus somethere else
-					await _checkNavigatedItem(assert, oTable, true, -1, -1, undefined, true, true);
+					qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.TAB, false, false, false);
+					assert.equal(iConfirm, 1, "Confim event fired if TAB on Botton pressed");
+					assert.equal(iSelect, 0, "select event not fired if TAB on Botton pressed");
+					qutils.triggerKeydown(oButton.getFocusDomRef().id, KeyCodes.TAB, true, false, false);
+					assert.equal(iConfirm, 1, "Confim event not fired if Shift-TAB on Botton pressed");
+					assert.equal(iSelect, 0, "select event not fired if Shift-TAB on Botton pressed");
 
 					oFooterContent.destroy();
 				});

@@ -526,7 +526,11 @@ sap.ui.define([
 					}
 				});
 
-				return this._processChanges(oControl, mChangeMap);
+				// Queue the appliance so that it becomes the control's pendingModification.
+				// Otherwise waitForChanges (e.g. in the flex fConfigModified re-entrancy guard)
+				// would resolve before the appliance and _onModifications would be triggered
+				// once per applied change instead of once for the whole appliance.
+				return this._addToQueue(oControl, () => this._processChanges(oControl, mChangeMap));
 			});
 		});
 	};
