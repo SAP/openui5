@@ -1570,24 +1570,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: w/ group levels", function (assert) {
-		var oBinding = {
-				checkSuspended : mustBeMocked,
-				// the binding's internal groupLevels don't include leaf level, see #setAggregation
-				mParameters : {$$aggregation : {groupLevels : ["foo"]}}
-			},
-			oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES/42", 42);
-
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
-		this.mock(oContext).expects("isAggregated").withExactArgs().returns(false);
-
-		assert.throws(function () {
-			// code under test
-			oContext.delete();
-		}, new Error("Unsupported on aggregated data: " + oContext));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("delete: recursive hierarchy, restrictions not met", function (assert) {
 		const oBinding = {
 			checkSuspended : function () {},

@@ -412,4 +412,53 @@ sap.ui.define([
         }, oControl);
     });
 
+    QUnit.test("Resume invalidation on the UIArea captured at suppress time (control left its UIArea before resume)", async function(assert){
+        // Scenario: A ValueHelp FilterBar has its invalidation suppressed while its Dialog is open (control is
+        // in the static UIArea). The Dialog is closed before _onModifications finishes, so at resume time the
+        // control is no longer assigned to that UIArea. The resume must still target the UIArea on which the
+        // suppression was registered - otherwise it stays suppressed forever and the control never rerenders.
+        const oControl = new Control();
+        oControl.placeAt("qunit-fixture");
+        const oOriginalUIArea = oControl.getUIArea();
+
+        const resumeSpy = sinon.spy(oOriginalUIArea, "resumeInvalidationFor");
+
+        // Keep _onModifications pending so we can close the "Dialog" before the resume happens.
+        const oOnModifications = Promise.withResolvers();
+        oControl._onModifications = () => oOnModifications.promise;
+
+        sinon.stub(Engine.getInstance(), "waitForChanges").resolves();
+
+        const oChangeHandler = Util.createChangeHandler({
+            apply: () => Promise.resolve(),
+            revert: () => Promise.resolve()
+        });
+
+        // applyChange suppresses invalidation synchronously and schedules fConfigModified (which sets up
+        // _pPendingModification) once the apply promise resolves. Awaiting the returned promise guarantees
+        // fConfigModified has run, so _pPendingModification is set.
+        await oChangeHandler.changeHandler.applyChange({
+            getChangeType: function() {},
+            getContent: function() {}
+        }, oControl);
+
+        assert.ok(oControl._bInvalidationSuppressed, "Invalidation has been suppressed");
+        assert.ok(oControl._pPendingModification, "Pending modification has been set up");
+
+        // Simulate the Dialog closing: the control loses its UIArea assignment before _onModifications resolves.
+        sinon.stub(oControl, "getUIArea").returns(null);
+
+        // Now let _onModifications resolve, which triggers the resume in the fConfigModified 'finally'.
+        oOnModifications.resolve();
+        await oControl._pPendingModification;
+
+        assert.ok(resumeSpy.calledOnceWithExactly(oControl), "Resume was performed on the UIArea captured at suppress time");
+        assert.notOk(oControl._bInvalidationSuppressed, "Suppression flag has been cleared");
+
+        oControl.getUIArea.restore();
+        Engine.getInstance().waitForChanges.restore();
+        oOriginalUIArea.resumeInvalidationFor.restore();
+        oControl.destroy();
+    });
+
 });

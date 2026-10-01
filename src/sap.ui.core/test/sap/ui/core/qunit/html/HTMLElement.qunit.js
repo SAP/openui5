@@ -618,4 +618,168 @@ sap.ui.define([
 
 		oElement.destroy();
 	});
+
+	QUnit.module("HTMLElement Native Event Listeners", {
+		before: function() {
+			// Test class with custom events
+			this.EventElement = HTMLElement.extend("test.EventElement", {
+				metadata: {
+					tag: "event-test-element",
+					events: {
+						press: {},
+						select: {},
+						doubleClick: {} // maps to the hyphenated native event name "double-click"
+					}
+				}
+			});
+		},
+		afterEach: function() {
+			if (this.oHTMLElement) {
+				this.oHTMLElement.destroy();
+				this.oHTMLElement = null;
+			}
+			this.EventElement = null;
+		}
+	});
+
+	// Records the type of every addEventListener/removeEventListener call on a DOM node
+	function spyNativeListeners(oDomRef) {
+		const aAdded = [];
+		const aRemoved = [];
+		const fnAdd = oDomRef.addEventListener.bind(oDomRef);
+		const fnRemove = oDomRef.removeEventListener.bind(oDomRef);
+		oDomRef.addEventListener = function(sType) {
+			aAdded.push(sType);
+			return fnAdd.apply(this, arguments);
+		};
+		oDomRef.removeEventListener = function(sType) {
+			aRemoved.push(sType);
+			return fnRemove.apply(this, arguments);
+		};
+		return { added: aAdded, removed: aRemoved };
+	}
+
+	QUnit.test("Only used events get a native listener on initial rendering", async function(assert) {
+		this.oHTMLElement = new this.EventElement();
+		this.oHTMLElement.attachPress(function() {});
+
+		// Track which event ids are handled during onAfterRendering
+		const aConnected = [];
+		const fnOrig = this.oHTMLElement._connectNativeEvent;
+		this.oHTMLElement._connectNativeEvent = function(sEventId, bDeregister) {
+			if (!bDeregister) {
+				aConnected.push(sEventId);
+			}
+			return fnOrig.apply(this, arguments);
+		};
+
+		this.oHTMLElement.placeAt("html-element-fixture-container");
+		await nextUIUpdate();
+
+		assert.deepEqual(aConnected, ["press"],
+			"Native listener is wired only for the attached event, not for unused events");
+	});
+
+	QUnit.test("event listener is called when native DOM event is dispatched", async function(assert) {
+		this.oHTMLElement = new this.EventElement();
+		let oFiredEvent = null;
+		this.oHTMLElement.attachPress(function(oEvent) {
+			oFiredEvent = oEvent;
+		});
+
+		this.oHTMLElement.placeAt("html-element-fixture-container");
+		await nextUIUpdate();
+
+		this.oHTMLElement.getDomRef().dispatchEvent(new window.CustomEvent("press", { detail: {} }));
+
+		assert.ok(oFiredEvent, "UI5 event listener is called when a native event is dispatched");
+	});
+
+	QUnit.test("Attaching event after rendering connects the native listener", async function(assert) {
+		this.oHTMLElement = new this.EventElement();
+		this.oHTMLElement.placeAt("html-element-fixture-container");
+		await nextUIUpdate();
+
+		const oDomRef = this.oHTMLElement.getDomRef();
+		const oSpy = spyNativeListeners(oDomRef);
+
+		let bFired = false;
+		this.oHTMLElement.attachPress(function() {
+			bFired = true;
+		});
+
+		assert.deepEqual(oSpy.added, ["press"], "Native listener is added when a listener is attached after rendering");
+
+		oDomRef.dispatchEvent(new window.CustomEvent("press", { detail: {} }));
+		assert.ok(bFired, "Late listener fires on the native event");
+	});
+
+	QUnit.test("Detaching the last listener removes the native listener and stops firing", async function(assert) {
+		this.oHTMLElement = new this.EventElement();
+		let iCount = 0;
+		const fnHandler = function() {
+			iCount++;
+		};
+		this.oHTMLElement.attachPress(fnHandler);
+		this.oHTMLElement.placeAt("html-element-fixture-container");
+		await nextUIUpdate();
+
+		const oDomRef = this.oHTMLElement.getDomRef();
+		oDomRef.dispatchEvent(new window.CustomEvent("press", { detail: {} }));
+		assert.equal(iCount, 1, "listener fires while it is attached");
+
+		const oSpy = spyNativeListeners(oDomRef);
+		this.oHTMLElement.detachPress(fnHandler);
+
+		assert.deepEqual(oSpy.removed, ["press"], "Native listener is removed when the last listener is detached");
+
+		oDomRef.dispatchEvent(new window.CustomEvent("press", { detail: {} }));
+		assert.equal(iCount, 1, "listener no longer fires after being detached");
+	});
+
+	QUnit.test("Detaching one of several listeners keeps the native listener", async function(assert) {
+		this.oHTMLElement = new this.EventElement();
+		let iCount = 0;
+		const fnFirst = function() {
+			iCount++;
+		};
+		const fnSecond = function() {
+			iCount++;
+		};
+		this.oHTMLElement.attachPress(fnFirst);
+		this.oHTMLElement.attachPress(fnSecond);
+		this.oHTMLElement.placeAt("html-element-fixture-container");
+		await nextUIUpdate();
+
+		const oDomRef = this.oHTMLElement.getDomRef();
+		const oSpy = spyNativeListeners(oDomRef);
+
+		this.oHTMLElement.detachPress(fnFirst);
+		assert.deepEqual(oSpy.removed, [],
+			"Native listener is kept while another listener for the same event remains");
+
+		iCount = 0;
+		oDomRef.dispatchEvent(new window.CustomEvent("press", { detail: {} }));
+		assert.equal(iCount, 1, "Remaining listener still fires");
+	});
+
+	QUnit.test("Non-custom events in the registry are ignored and do not throw", async function(assert) {
+		this.oHTMLElement = new this.EventElement();
+		this.oHTMLElement.placeAt("html-element-fixture-container");
+		await nextUIUpdate();
+
+		const oDomRef = this.oHTMLElement.getDomRef();
+		const oSpy = spyNativeListeners(oDomRef);
+
+		// "validationSuccess" is an inherited event from ManagedObject, not an event of the sample control
+		this.oHTMLElement.attachEvent("validationSuccess", function() {});
+		assert.deepEqual(oSpy.added, [], "No native listener is added for a non-custom event");
+
+		// Force a re-render so both the detach and attach listener loops iterate the registry,
+		// which now contains the non-custom event id.
+		this.oHTMLElement.invalidate();
+		await nextUIUpdate();
+
+		assert.ok(true, "Re-rendering with a non-custom event in the registry does not throw");
+	});
 });

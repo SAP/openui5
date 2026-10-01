@@ -313,16 +313,15 @@ sap.ui.define([
 			const oPanel = aItems[1];
 			assert.equal(oDialogTab.getContent(), oContent.getDisplayContent(), "Content control");
 
-			assert.ok(oPanel.isA("sap.m.Panel"), "Panel is second VBox item");
+			assert.ok(oPanel.isA("sap.m.VBox"), "Panel is second VBox item");
 			assert.ok(oPanel.getVisible, "Panel is visible");
-			assert.equal(oPanel.getHeaderText(), "TokenizerTitle", "Panel headerText");
-			assert.equal(oPanel.getBackgroundDesign(), mLibrary.BackgroundDesign.Transparent, "Panel backgroundDesign");
-			assert.ok(oPanel.getExpanded(), "Panel expanded");
-			assert.notOk(oPanel.getExpandable(), "Panel expandable");
-			const aPanelContent = oPanel.getContent();
-			assert.equal(aPanelContent.length, 1, "Panel content length");
-			assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
-			aItems = aPanelContent[0].getItems();
+			aItems = oPanel.getItems();
+			const oHeaderText = aItems[0];
+			assert.ok(oHeaderText.isA("sap.m.Text"), "Header text is first content of panel");
+			assert.equal(oHeaderText.getText(), "TokenizerTitle", "Header text");
+			const oPanelContent = aItems[1];
+			assert.ok(oPanelContent.isA("sap.m.HBox"), "HBox is inside Panel");
+			aItems = oPanelContent.getItems();
 			assert.equal(aItems.length, 2, "HBox content length");
 			const oTokenizer = aItems[0];
 			const oBindingInfo = oTokenizer.getBindingInfo("tokens");
@@ -429,16 +428,15 @@ sap.ui.define([
 			assert.equal(oIconTabFilter.getText(), "Content title2", "IconTabFilter text");
 			assert.ok(oContent2.getFormattedTitle.calledWith(1), "Content2 getFormattedTitle called with Count");
 
-			assert.ok(oPanel.isA("sap.m.Panel"), "Panel is second VBox item");
+			assert.ok(oPanel.isA("sap.m.VBox"), "Panel is second VBox item");
 			assert.ok(oPanel.getVisible, "Panel is visible");
-			assert.equal(oPanel.getHeaderText(), formatMessage(oResourceBundle.getText("valuehelp.TOKENIZERTITLE"), 1), "Panel headerText");
-			assert.equal(oPanel.getBackgroundDesign(), mLibrary.BackgroundDesign.Transparent, "Panel backgroundDesign");
-			assert.ok(oPanel.getExpanded(), "Panel expanded");
-			assert.notOk(oPanel.getExpandable(), "Panel expandable");
-			const aPanelContent = oPanel.getContent();
-			assert.equal(aPanelContent.length, 1, "Panel content length");
-			assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
-			aItems = aPanelContent[0].getItems();
+			aItems = oPanel.getItems();
+			const oHeaderText = aItems[0];
+			assert.ok(oHeaderText.isA("sap.m.Text"), "Header text is first content of panel");
+			assert.equal(oHeaderText.getText(), formatMessage(oResourceBundle.getText("valuehelp.TOKENIZERTITLE"), 1), "Header text");
+			const oPanelContent = aItems[1];
+			assert.ok(oPanelContent.isA("sap.m.HBox"), "HBox is inside Panel");
+			aItems = oPanelContent.getItems();
 			assert.equal(aItems.length, 2, "HBox content length");
 			const oTokenizer = aItems[0];
 			const aTokens = oTokenizer.getTokens();
@@ -554,8 +552,18 @@ sap.ui.define([
 					let aItems = aDialogContent[0].getItems();
 
 					const oPanel = aItems[1];
-					const aPanelContent = oPanel.getContent();
-					aItems = aPanelContent[0].getItems();
+					aItems = oPanel.getItems();
+					const oHeaderText = aItems[0];
+					let oDomRef = oPanel.getDomRef();
+					assert.equal(oDomRef.getAttribute("role"), "region", "Tokenizer panel: role");
+					assert.equal(oDomRef.getAttribute("aria-labelledby"), oHeaderText.getId(), "Tokenizer panel: aria-labelledby");
+					oDomRef = oHeaderText.getDomRef();
+					assert.equal(oDomRef.getAttribute("role"), "status", "Tokenizer header: role");
+					assert.equal(oDomRef.getAttribute("aria-live"), "polite", "Tokenizer header: aria-live");
+					assert.equal(oDomRef.getAttribute("aria-atomic"), "true", "Tokenizer header: aria-atomic");
+
+					const oPanelContent = aItems[1];
+					aItems = oPanelContent.getItems();
 					const oTokenizer = aItems[0];
 					let aTokens = oTokenizer.getTokens();
 					let oBinding = aTokens[0].getBinding("text");
@@ -896,7 +904,8 @@ sap.ui.define([
 							assert.ok(oDialog._oGroupSelect.focus.calledOnce, "CollectiveSearchSelect focussed");
 
 							const oPanel = aItems[1];
-							assert.equal(oPanel.getHeaderText(), formatMessage(oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER")), "Panel headerText");
+							const oHeaderText = oPanel.getItems()[0];
+							assert.equal(oHeaderText.getText(), formatMessage(oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER")), "Panel headerText");
 
 							oDialog.close();
 							setTimeout(() => { // wait until closed
@@ -1097,8 +1106,9 @@ sap.ui.define([
 				const aDialogContent = oContainer.getContent();
 				let aItems = aDialogContent[0].getItems();
 				const oPanel = aItems[1];
-				const aPanelContent = oPanel.getContent();
-				aItems = aPanelContent[0].getItems();
+				const oHeaderText = oPanel.getItems()[0];
+				const oPanelContent = oPanel.getItems()[1];
+				aItems = oPanelContent.getItems();
 				const oTokenizer = aItems[0];
 				const aTokens = oTokenizer.getTokens();
 
@@ -1115,7 +1125,7 @@ sap.ui.define([
 					filterValue: "X",
 					conditions: []
 				}); // simulate data update
-				assert.equal(oPanel.getHeaderText(), "TokenizerTitle", "Panel headerText");
+				assert.equal(oHeaderText.getText(), "TokenizerTitle", "Panel headerText");
 				assert.ok(oDialog.oButtonOK.focus.calledOnce, "OK-Button focussed");
 
 				fnDone();
@@ -1148,8 +1158,8 @@ sap.ui.define([
 				const aDialogContent = oContainer.getContent();
 				let aItems = aDialogContent[0].getItems();
 				const oPanel = aItems[1];
-				const aPanelContent = oPanel.getContent();
-				aItems = aPanelContent[0].getItems();
+				const oPanelContent = oPanel.getItems()[1];
+				aItems = oPanelContent.getItems();
 				const oButton = aItems[1];
 				sinon.spy(oContent, "getFocusControlAfterTokenRemoval");
 				sinon.spy(oDialog.oButtonOK, "focus");

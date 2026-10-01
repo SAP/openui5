@@ -267,6 +267,37 @@ sap.ui.define([
 			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 		});
 	});
+
+	QUnit.test("getContent for dialog with collectiveSearch", (assert) => {
+		oMdcTableWrapper.setGroup("myGroup");
+		const oContent = oMdcTableWrapper.getContent();
+		return oContent?.then((oContent) => {
+
+			sinon.stub(oTable, "isTableBound").returns(true);
+			sinon.stub(StateUtil, "applyExternalState").returns(Promise.resolve(true));
+			sinon.stub(StateUtil, "retrieveExternalState").returns(Promise.resolve({filter: {}}));
+			sinon.stub(StateUtil, "diffState").returns(Promise.resolve({filter: {}}));
+
+			return oTable.initialized().then(() => {
+				return oMdcTableWrapper.onBeforeShow(true).then(() => {
+					oMdcTableWrapper.onShow(true);
+					assert.ok(oContent, "Content returned");
+					assert.equal(oTable.getHeaderLevel(), TitleLevel.H3, "Table headerLevel");
+					assert.equal(oTable.getHeaderStyle(), TitleLevel.H5, "Table headerStyle");
+
+					oTable.isTableBound.restore();
+					StateUtil.applyExternalState.restore();
+					StateUtil.retrieveExternalState.restore();
+					StateUtil.diffState.restore();
+
+					oMdcTableWrapper.onHide();
+				}); // to update selection and scroll
+			});
+		}).catch((oError) => {
+			assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+		});
+	});
+
 	QUnit.test("isQuickSelectSupported", (assert) => {
 		assert.ok(oMdcTableWrapper.isQuickSelectSupported(), "quick select supported");
 	});

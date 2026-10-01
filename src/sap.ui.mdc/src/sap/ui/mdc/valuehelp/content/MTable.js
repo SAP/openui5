@@ -1085,25 +1085,19 @@ sap.ui.define([
 												this.navigate(9999);
 											}
 										},
-										onsapfocusleave(oEvent) {
-											const oFocusedControl = oEvent.relatedControlId && Element.getElementById(oEvent.relatedControlId);
-											const oContainer = this.getParent();
-											if (oContainer && oFocusedControl && containsOrEquals(oContainer.getDomRef(), oFocusedControl.getFocusDomRef())) { // focus still on Popover
-												oEvent.stopPropagation();
-												oEvent.stopImmediatePropagation(true);
-												oEvent.preventDefault();
-												const oTable = this._getTable();
-												if (oTable.getMode() === ListMode.MultiSelect) {
-													// go back to field (to break out of the focus-cycle on popover)
-													if (!this._bFocusTable) { // not focused via arrow-up
-														this.fireNavigated({ condition: undefined, itemId: undefined, leaveFocus: true }); // to restore autocomplete
-													}
-													delete this._bFocusTable;
-												} else {
-													// Single-Select mode -> navigate to first item
-													this.navigate(-9999);
-												}
+										onsaptabprevious: function (oEvent) {
+											const oTable = this._getTable();
+											if (oTable.getMode() !== ListMode.MultiSelect) { // om multiSelect focus automatically goes to Table
+												this._fireSelect({ type: ValueHelpSelectionType.Set, conditions: [] }); // to make sure nothing is selected
+												this.fireConfirm({ close: true }); // to let focus go to previous control outside the popover
 											}
+										},
+										onsaptabnext: function (oEvent) {
+											const oTable = this._getTable();
+											if (oTable.getMode() !== ListMode.MultiSelect) {
+												this._fireSelect({ type: ValueHelpSelectionType.Set, conditions: [] }); // to make sure nothing is selected
+											}
+											this.fireConfirm({ close: true }); // to let focus go to next control outside the popover
 										}
 									};
 
@@ -1208,7 +1202,19 @@ sap.ui.define([
 					}
 				}
 				break;
-				default:
+			case "saptabprevious":
+				if (this.isTypeahead()) {
+					this.fireConfirm({ close: true }); // to let focus go to previous control outside the popover
+					oEvent.setMarked(); // to prevent Tables logic
+				}
+				break;
+			case "saptabnext":
+				if (this.isTypeahead() && !this._oShowAllItemsButton) { // if showAll button is rendered, tab to it
+					this.fireConfirm({ close: true }); // to let focus go to next control outside the popover
+					oEvent.setMarked(); // to prevent Tables logic
+				}
+				break;
+			default:
 				break;
 		}
 	};
@@ -1294,6 +1300,8 @@ sap.ui.define([
 			this._oTableDelegate = this._oTableDelegate || {
 				onsapprevious: this._handleTableEvent,
 				onsapnext: this._handleTableEvent,
+				onsaptabprevious: this._handleTableEvent,
+				onsaptabnext: this._handleTableEvent,
 				cellClick: this._handleTableEvent
 			};
 			oTable.addDelegate(this._oTableDelegate, true, this);

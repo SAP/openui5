@@ -64,8 +64,8 @@ In principle, you may be interested in other features of the UI5 CLI than _servi
 
 An experimental installation of UI5 CLI v5 is available alongside the default v4. Two npm scripts are provided in the **root directory** to try it out:
 
-- `start-cli-v5`: Serves the TestSuite using UI5 CLI v5
-- `testsuite-cli-v5`: Serves the TestSuite using UI5 CLI v5 and opens it in the browser
+- `start-cli-next`: Serves the TestSuite using UI5 CLI v5
+- `testsuite-cli-next`: Serves the TestSuite using UI5 CLI v5 and opens it in the browser
 
 
 

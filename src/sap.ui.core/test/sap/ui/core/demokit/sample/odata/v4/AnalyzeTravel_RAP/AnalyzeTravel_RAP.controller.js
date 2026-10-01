@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.AnalyzeTravel_RAP.AnalyzeTravel_RAP", {
-		onActivate : function () { //TODO: factor out code common w/ onEdit, onDiscard?
+		onActivate : async function () { //TODO: factor out code common w/ onEdit, onDiscard?
 			const oContext = this.byId("selectTravel").getSelectedItem()?.getBindingContext();
 			if (!oContext) {
 				MessageToast.show("No travel selected");
@@ -21,28 +21,28 @@ sap.ui.define([
 			}
 			const oView = this.getView();
 			oView.setBusy(true);
-			//TODO: preparation might have side effects, activation could fail...
-			Promise.all([
-				oView.getModel().bindContext(
-						"com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Prepare(...)",
-						oContext)
-					.invoke(), // Note: no return value
-				oView.getModel().bindContext(
-						"com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Activate(...)",
-						oContext, {$$inheritExpandSelect : true})
-					// Note: ignore ETag in case preparation has side effects
-					.invoke("$auto", /*bIgnoreETag*/true, /*fnOnStrictHandlingFailed*/null,
-						/*bReplaceWithRVC*/true)
-					.then((oActiveContext) => {
-						this.onChangeTravel(null, oActiveContext);
+			try {
+				//TODO: preparation might have side effects, activation could fail...
+				const [, oActiveContext] = await Promise.all([
+					oView.getModel().bindContext(
+							"com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Prepare(...)",
+							oContext)
+						.invoke(), // Note: no return value
+					oView.getModel().bindContext(
+							"com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Activate(...)",
+							oContext, {$$inheritExpandSelect : true})
+						// Note: ignore ETag in case preparation has side effects
+						.invoke("$auto", /*bIgnoreETag*/true, /*fnOnStrictHandlingFailed*/null,
+							/*bReplaceWithRVC*/true)
+				]);
 
-						MessageToast.show("Activate action invoked successfully");
-					})
-			]).catch((oError) => {
+				this.onChangeTravel(null, oActiveContext);
+				MessageToast.show("Activate action invoked successfully");
+			} catch (oError) {
 				MessageBox.error(oError.message);
-			}).finally(() => {
+			} finally {
 				oView.setBusy(false);
-			});
+			}
 		},
 
 		onBookingStatusChanged : function (oEvent) {
@@ -100,38 +100,41 @@ sap.ui.define([
 			}, /*bSkipRefresh*/true, bAtEnd, bInactive);
 		},
 
-		onDeleteBooking : function () {
+		onDeleteBooking : async function () {
 			const oView = this.getView();
 			oView.setBusy(true);
-			this.byId("details").getBindingContext().delete().then(() => {
+			try {
+				await this.byId("details").getBindingContext().delete();
+
 				MessageToast.show("Booking deleted successfully");
 				this.byId("details").setBindingContext(null);
-			}, (oError) => {
+			} catch (oError) {
 				MessageBox.error(oError.message);
-			}).finally(() => {
+			} finally {
 				oView.setBusy(false);
-			});
+			}
 		},
 
-		onDeleteBookingViaModel : function () {
+		onDeleteBookingViaModel : async function () {
 			const oView = this.getView();
 			oView.setBusy(true);
 			const oContext = this.byId("details").getBindingContext();
-			oContext.getModel()
-				// code under test (JIRA: CPOUI5ODATAV4-3460)
-				// Note: passing oContext is for a different use case!
-				.delete(oContext.getCanonicalPath(), "$single", /*bRejectIfNotFound*/true)
-				.then(() => {
-					MessageToast.show("Booking deleted successfully");
-					this.byId("details").setBindingContext(null);
-				}, (oError) => {
-					MessageBox.error(oError.message);
-				}).finally(() => {
-					oView.setBusy(false);
-				});
+			try {
+				await oContext.getModel()
+					// code under test (JIRA: CPOUI5ODATAV4-3460)
+					// Note: passing oContext is for a different use case!
+					.delete(oContext.getCanonicalPath(), "$single", /*bRejectIfNotFound*/true);
+
+				MessageToast.show("Booking deleted successfully");
+				this.byId("details").setBindingContext(null);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			} finally {
+				oView.setBusy(false);
+			}
 		},
 
-		onDiscard : function () { //TODO: factor out code common w/ onEdit?
+		onDiscard : async function () { //TODO: factor out code common w/ onEdit?
 			const oContext = this.byId("selectTravel").getSelectedItem()?.getBindingContext();
 			if (!oContext) {
 				MessageToast.show("No travel selected");
@@ -139,34 +142,33 @@ sap.ui.define([
 			}
 			const oView = this.getView();
 			oView.setBusy(true);
-			oView.getModel()
-				.bindContext("SiblingEntity(...)", oContext, {$$inheritExpandSelect : true})
-				.invoke("$auto", /*bIgnoreETag*/false, /*fnOnStrictHandlingFailed*/null,
-					/*bReplaceWithRVC*/true)
-				.then((oActiveContext) => {
-					this.onChangeTravel(null, oActiveContext);
+			try {
+				const oActiveContext = await oView.getModel()
+					.bindContext("SiblingEntity(...)", oContext, {$$inheritExpandSelect : true})
+					.invoke("$auto", /*bIgnoreETag*/false, /*fnOnStrictHandlingFailed*/null,
+						/*bReplaceWithRVC*/true);
+				this.onChangeTravel(null, oActiveContext);
 
-					return oView.getModel().bindContext(
-							"com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Discard(...)",
-							oContext)
-						.invoke()
-						.then(() => {
-							MessageToast.show("Discard action invoked successfully");
-						});
-				}).catch((oError) => {
-					MessageBox.error(oError.message);
-				}).finally(() => {
-					oView.setBusy(false);
-				});
+				await oView.getModel().bindContext(
+						"com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Discard(...)",
+						oContext)
+					.invoke();
+
+				MessageToast.show("Discard action invoked successfully");
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			} finally {
+				oView.setBusy(false);
+			}
 		},
 
-		onDownload : function () {
-			this.byId("table").getBinding("rows").requestDownloadUrl().then(function (sUrl) {
-				window.open(sUrl, sUrl);
-			});
+		onDownload : async function () {
+			const sUrl = await this.byId("table").getBinding("rows").requestDownloadUrl();
+
+			window.open(sUrl, sUrl);
 		},
 
-		onEdit : function () {
+		onEdit : async function () {
 			const oContext = this.byId("selectTravel").getSelectedItem()?.getBindingContext();
 			if (!oContext) {
 				MessageToast.show("No travel selected");
@@ -174,20 +176,20 @@ sap.ui.define([
 			}
 			const oView = this.getView();
 			oView.setBusy(true);
-			oView.getModel() //TODO: who destroys this ODCB?
-				.bindContext("com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Edit(...)",
-					oContext, {$$inheritExpandSelect : true})
-				.setParameter("PreserveChanges", true) //TODO: do we ever need false here?
-				.invoke("$auto", /*bIgnoreETag*/false, /*fnOnStrictHandlingFailed*/null,
-					/*bReplaceWithRVC*/true)
-				.then((oDraftContext) => {
-					MessageToast.show("Edit action invoked successfully");
-					this.onChangeTravel(null, oDraftContext);
-				}, (oError) => {
-					MessageBox.error(oError.message);
-				}).finally(() => {
-					oView.setBusy(false);
-				});
+			try {
+				const oDraftContext = await oView.getModel() //TODO: who destroys this ODCB?
+					.bindContext("com.sap.gateway.srvd.zee_ui_travel_editanly_d_d.v0001.Edit(...)",
+						oContext, {$$inheritExpandSelect : true})
+					.setParameter("PreserveChanges", true) //TODO: do we ever need false here?
+					.invoke("$auto", /*bIgnoreETag*/false, /*fnOnStrictHandlingFailed*/null,
+						/*bReplaceWithRVC*/true);
+				MessageToast.show("Edit action invoked successfully");
+				this.onChangeTravel(null, oDraftContext);
+			} catch (oError) {
+				MessageBox.error(oError.message);
+			} finally {
+				oView.setBusy(false);
+			}
 		},
 
 		onExit : function () {

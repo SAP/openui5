@@ -204,7 +204,9 @@ sap.ui.define([
 			vMaxItems = oPaginator.getPageSize();
 		}
 
-		if (vMaxItems) {
+		// Skip growing when running headlessly via SkeletonCard (Mobile SDK), so that all items
+		// are rendered and getStaticConfiguration() can return the full untruncated list.
+		if (vMaxItems && !this.getCardInstance().isSkeleton()) {
 			oList.applySettings({
 				growing: true,
 				growingThreshold: vMaxItems

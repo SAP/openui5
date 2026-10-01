@@ -252,7 +252,6 @@ sap.ui.define([
 	QUnit.test("showSelectionLimitPopover & hideSelectionLimitPopover", async function(assert) {
 		const done = assert.async();
 		const fnGetSelectAllPopoverSpy = sinon.spy(Util, "getSelectAllPopover");
-		const fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
 		const oElement = new List();
 		oElement.placeAt("qunit-fixture");
 		await nextUIUpdate();
@@ -270,9 +269,14 @@ sap.ui.define([
 			const oTitle = oPopover.getCustomHeader().getContentMiddle()[0].getItems()[1];
 			assert.strictEqual(oTitle.getLevel(), "H1", "Popover title has heading level H1");
 			assert.ok(oPopover.isOpen(), "Popover should be open");
-			assert.ok(fnInvisibleMessageAnnounce.calledOnceWith(sMessage), "The message text is announced");
+			const oOKButton = oPopover.getFooter().getContentRight()[0];
+			assert.strictEqual(oOKButton.getText(), oResourceBundle.getText("TABLE_SELECT_LIMIT_OK"), "The footer contains an OK button");
+			assert.strictEqual(document.activeElement.id, oOKButton.getId(), "OK button receives initial focus");
+			const oWarningIcon = oPopover.getCustomHeader().getContentMiddle()[0].getItems()[0];
+			assert.strictEqual(oWarningIcon.getDecorative(), false, "the warning icon is not decorative");
+			assert.ok(oPopover.getAriaLabelledBy().includes(oWarningIcon.getId()), "Warning icon is in the ariaLabelledBy association of the popover");
+			assert.strictEqual(oWarningIcon.getAlt(), oResourceBundle.getText("SEMANTIC_COLOR_CRITICAL"), "Warning icon has the correct alt text");
 			Util.hideSelectionLimitPopover();
-			fnInvisibleMessageAnnounce.restore();
 		});
 		oPopover.attachEventOnce("afterClose", function() {
 			assert.notOk(oPopover.isOpen(), "Popover should be closed");

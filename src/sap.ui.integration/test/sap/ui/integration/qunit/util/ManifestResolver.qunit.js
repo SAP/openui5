@@ -408,10 +408,9 @@ sap.ui.define([
 		// Act
 		return ManifestResolver.resolveCard(oCard)
 			.then(function (oRes) {
-				// Assert
-
 				var sResolvedStatusText = oRes["sap.card"].header.status.text;
-				assert.strictEqual(sResolvedStatusText, "1 of 3", "Predefined translation key is correctly resolved");
+				// Assert
+				assert.strictEqual(sResolvedStatusText, "3 of 3", "Predefined translation key is correctly resolved");
 
 				var sResolvedFormattedTranslation = oRes["sap.card"].header.subTitle;
 				assert.strictEqual(sResolvedFormattedTranslation, "2 categories, 3 items", "Formatted translation from i18n file is correctly resolved");
@@ -1258,7 +1257,8 @@ sap.ui.define([
 								}
 							]
 						}
-					]
+					],
+					"maxItems": 5
 				};
 
 				// Assert
@@ -1441,11 +1441,98 @@ sap.ui.define([
 								}
 							]
 						}
-					]
+					],
+					"maxItems": 3
 				};
 
 				// Assert
 				assert.deepEqual(oRes["sap.card"].content, oExpectedResult, "list template is resolved correctly");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("List with maxItems - all items are returned when card is SkeletonCard", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{ "Name": "Item 1" },
+							{ "Name": "Item 2" },
+							{ "Name": "Item 3" },
+							{ "Name": "Item 4" },
+							{ "Name": "Item 5" }
+						]
+					},
+					"maxItems": 2,
+					"item": {
+						"title": "{Name}"
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				var aItems = oRes["sap.card"].content.groups[0].items;
+
+				// Assert - all 5 items must be returned despite maxItems: 2
+				assert.strictEqual(aItems.length, 5, "All items are returned regardless of maxItems when resolved via SkeletonCard");
+				assert.strictEqual(aItems[0].title, "Item 1", "First item is correct");
+				assert.strictEqual(aItems[4].title, "Item 5", "Last item is correct");
+
+				oCard.destroy();
+			});
+	});
+
+	QUnit.test("List with maxItems - maxItems is present in the resolved manifest", function (assert) {
+		var oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"content": {
+					"data": {
+						"json": [
+							{ "Name": "Item 1" },
+							{ "Name": "Item 2" },
+							{ "Name": "Item 3" }
+						]
+					},
+					"maxItems": 2,
+					"item": {
+						"title": "{Name}"
+					}
+				}
+			}
+		};
+
+		var oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		return ManifestResolver.resolveCard(oCard)
+			.then(function (oRes) {
+				var oContent = oRes["sap.card"].content;
+
+				// Assert - maxItems must be present so the Android SDK can enforce it on its side
+				assert.strictEqual(oContent.maxItems, 2, "maxItems is included in the resolved content");
 
 				oCard.destroy();
 			});

@@ -284,6 +284,10 @@ sap.ui.define([
 			oStaticConfiguration.popinLayout = BindingResolver.resolveValue(oConfiguration.popinLayout, this, this.getBindingContext().getPath());
 		}
 
+		if (oConfiguration.maxItems) {
+			oStaticConfiguration.maxItems = BindingResolver.resolveValue(oConfiguration.maxItems, this);
+		}
+
 		return oStaticConfiguration;
 	};
 

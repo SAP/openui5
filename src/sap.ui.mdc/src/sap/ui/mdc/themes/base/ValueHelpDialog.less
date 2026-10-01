@@ -8,28 +8,27 @@
 }
 
 /* give all panels on the valueHelpPanel a left/right padding */
-.sapMdcValueHelpPanel .sapMPanel {
-	padding-top: 0.5rem;
+.sapMdcTokenizerPanel {
+	padding: 0.5rem 2rem 1rem 2rem;
+	overflow: hidden;
+}
+
+.sapMdcTokenizerPanelHeader {
+	line-height: 2rem;
+	height: 2rem;
+	display: block;
+}
+
+.sapMdcTablePanel {
 	padding-left: 1rem;
 	padding-right: 1rem;
 }
 
-.sapMdcTokenizerPanel > .sapMPanelContent {
-	padding: 0 1rem 1rem 1rem;
-	overflow: hidden;
-}
-
 .sapMdcTablePanel > .sapMPanelContent {
-	padding-top: 0;
-	padding-bottom: 0;
+	padding: 0 1rem;
 }
 
-.sapMdcValueHelpPanel .sapMPanel.sapMdcTokenizerPanel {
-	background-color: var(--sapBackgroundColor);
-}
-
-.sapMdcTablePanel > .sapMPanelHeadingDiv > .sapMPanelHdr,
-.sapMdcTokenizerPanel > .sapMPanelHeadingDiv > .sapMPanelHdr {
+.sapMdcTablePanel > .sapMPanelHeadingDiv > .sapMPanelHdr {
 	border: none;
 }
 
@@ -51,6 +50,7 @@
 	padding-top: 1px;
 	padding-left: 5px;
 	padding-right: 2px;
+	margin: 0;
 	display: block;
 	box-sizing: border-box;
 	min-height: 2.25rem;
@@ -61,6 +61,11 @@
 .sapUiSizeCompact .sapMdcTokenizerPanel .sapMTokenizer {
 	padding-top: 4px;
 	min-height: 32px;
+}
+
+.sapUiSizeCozy .sapMdcTokenizerPanel .sapMdcTokenRemoveAll  {
+	padding: 0;
+	height: 2.25rem;
 }
 
 /* make the ITB header height 3rem */

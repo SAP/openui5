@@ -3,37 +3,27 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Lib",
+	'sap/ui/core/Lib',
 	'sap/ui/mdc/valuehelp/base/Container',
-	'sap/ui/mdc/valuehelp/base/DialogTab',
 	'sap/ui/mdc/util/loadModules',
-	'sap/ui/Device',
-	'sap/m/VBox',
-	'sap/m/FlexItemData',
-	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/mdc/util/Common',
-	'sap/ui/mdc/enums/ValueHelpSelectionType',
-	'sap/base/strings/formatMessage',
+	'sap/ui/Device',
+	'sap/ui/model/resource/ResourceModel',
 	'sap/base/i18n/Localization',
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleMessage',
-	'sap/ui/mdc/util/DensityHelper'
+	'sap/ui/core/IconPool'
 ], (
 	Library,
 	Container,
-	DialogTab,
 	loadModules,
-	Device,
-	VBox,
-	FlexItemData,
-	ResourceModel,
 	Common,
-	ValueHelpSelectionType,
-	formatMessage,
+	Device,
+	ResourceModel,
 	Localization,
 	coreLibrary,
 	InvisibleMessage,
-	DensityHelper
+	IconPool
 ) => {
 	"use strict";
 
@@ -55,8 +45,8 @@ sap.ui.define([
 		oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	});
 
-	let MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter;
-	let Panel, HBox, Tokenizer, Token, Filter;
+	let MDialog, MLibrary, Button, ManagedObjectModel, IconTabBar, IconTabFilter, VBox, FlexItemData, DialogTab, DensityHelper, formatMessage;
+	let HBox, MText, Tokenizer, Token, Filter, ValueHelpSelectionType;
 	const { InvisibleMessageMode } = coreLibrary;
 
 	/**
@@ -226,14 +216,16 @@ sap.ui.define([
 				return loadModules([
 					"sap/m/Dialog",
 					"sap/m/Button",
+					"sap/m/VBox",
+					"sap/m/FlexItemData",
+					"sap/m/library",
+					"sap/base/strings/formatMessage",
 					"sap/ui/model/base/ManagedObjectModel",
-					"sap/m/library"
+					"sap/ui/mdc/valuehelp/base/DialogTab",
+					"sap/ui/mdc/util/DensityHelper"
 				]).then((aModules) => {
 
-					MDialog = aModules[0];
-					Button = aModules[1];
-					ManagedObjectModel = aModules[2];
-					MLibrary = aModules[3];
+					[MDialog, Button, VBox, FlexItemData, MLibrary, formatMessage, ManagedObjectModel, DialogTab, DensityHelper] = aModules;
 
 					if (this.isDestroyStarted()) {
 						return null;
@@ -525,8 +517,7 @@ sap.ui.define([
 				return loadModules([
 					"sap/m/IconTabBar", "sap/m/IconTabFilter"
 				]).then((aModules) => {
-					IconTabBar = aModules[0];
-					IconTabFilter = aModules[1];
+					[IconTabBar, IconTabFilter] = aModules;
 					const { IconTabHeaderMode } = MLibrary;
 
 					if (this.isDestroyStarted()) {
@@ -584,28 +575,25 @@ sap.ui.define([
 		if (!this.oTokenizerPanel) {
 			return this._retrievePromise("TokenizerPanel", () => {
 				return loadModules([
-					'sap/m/Panel',
 					'sap/m/HBox',
-					'sap/m/VBox',
+					'sap/m/Text',
 					'sap/m/Tokenizer',
 					'sap/m/Token',
 					'sap/ui/model/Filter',
-					'sap/ui/mdc/field/ConditionType'
+					'sap/ui/mdc/field/ConditionType',
+					'sap/ui/mdc/enums/ValueHelpSelectionType'
 				]).then((aModules) => {
 
 					let ConditionType;
-					[Panel, HBox, VBox, Tokenizer, Token, Filter, ConditionType] = aModules;
-					const { BackgroundDesign, ButtonType } = MLibrary;
+					[HBox, MText, Tokenizer, Token, Filter, ConditionType, ValueHelpSelectionType] = aModules;
+					const { ButtonType } = MLibrary;
 
 					if (this.isDestroyStarted()) {
 						return null;
 					}
 
-					this.oTokenizerPanel = new Panel(this.getId() + "-TokenPanel", {
-						backgroundDesign: BackgroundDesign.Transparent,
-						expanded: true,
-						visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired },
-						headerText: {
+					const oHeaderText = new MText(this.getId() + "-TokenPanel-header", {
+						text: {
 							parts: ['$valueHelp>/conditions', '$help>/_selectableContents'],
 							formatter: function(aConditions, aContent) {
 								let iCount = 0;
@@ -618,25 +606,23 @@ sap.ui.define([
 
 								this.oTokenizer.invalidate(); // invalidate Tokenizer to update more-indicator even if binding not updated because of length-limit
 
-								let sTitle;
-								if (aContent && aContent.length === 1) { // in case of single content the title will be provided by the content
-									sTitle = aContent[0].getFormattedTokenizerTitle(iCount);
-									return sTitle;
-								} else {
-									// default title
-									sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLE");
-									if (iCount === 0) {
-										// in case of no items do not show a number
-										sTitle = this._oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER");
-									}
+								if (aContent?.length === 1) { // in case of single content the title will be provided by the content
+									return aContent[0].getFormattedTokenizerTitle(iCount);
+								} else { // in case of no items do not show a number, otherwise show default title
+									const sTitle = iCount === 0 ? this._oResourceBundle.getText("valuehelp.TOKENIZERTITLENONUMBER") : this._oResourceBundle.getText("valuehelp.TOKENIZERTITLE");
 									return formatMessage(sTitle, iCount);
 								}
 							}.bind(this)
 						}
-					});
-					this.oTokenizerPanel.addStyleClass("sapMdcTokenizerPanel");
-
-					const oHBox = new HBox(this.getId() + "-TokenBox", { fitContainer: true, width: "100%" });
+					}).addStyleClass("sapMdcTokenizerPanelHeader sapMTitle sapMTitleStyleH5 sapMTitleNoWrap sapMTitleMaxWidth");
+					oHeaderText.addDelegate({
+						onAfterRendering: (oEvent) => {
+							const oDomRef = oEvent.srcControl.getDomRef();
+							oDomRef?.setAttribute("role", "status");
+							oDomRef?.setAttribute("aria-live", "polite");
+							oDomRef?.setAttribute("aria-atomic", "true");
+						}
+					}, false, this);
 
 					const oFormatOptions = _getConditionFormatOptions.call(this);
 					this._oConditionType = new ConditionType(oFormatOptions);
@@ -653,6 +639,7 @@ sap.ui.define([
 					this.oTokenizer = new Tokenizer(this.getId() + "-Tokenizer", {
 						width: "100%",
 						editable: true,
+						ariaLabelledBy: [oHeaderText],
 						tokenDelete: function(oEvent) {
 							if (oEvent.getParameter("tokens")) {
 								const aRemovedTokens = oEvent.getParameter("tokens");
@@ -678,7 +665,7 @@ sap.ui.define([
 						layoutData: new FlexItemData({ growFactor: 1, maxWidth: "calc(100% - 2rem)" })
 					});
 
-					// show right count on more-indicator even not all loaded
+					// show right count on more-indicator even if not all loaded
 					this.oTokenizer._handleNMoreIndicator = function (iHiddenTokensCount) {
 
 						const oBinding = this.getBinding("tokens");
@@ -717,10 +704,6 @@ sap.ui.define([
 								});
 								delete this.oTokenizer._aMDCSelectedIndexes;
 							}
-							if (!this.bAddAriaLabelledOnlyOnce) {
-								this.bAddAriaLabelledOnlyOnce = true;
-								this.oTokenizer.addAriaLabelledBy(this.oTokenizerPanel._getLabellingElementId());
-							}
 						}.bind(this)
 					}, false, this);
 
@@ -736,9 +719,9 @@ sap.ui.define([
 							fnSetFocusForNoToken();
 						}.bind(this),
 						type: ButtonType.Transparent,
-						icon: "sap-icon://decline",
+						icon: IconPool.getIconURI("decline"),
 						tooltip: "{$i18n>valuehelp.REMOVEALLTOKEN}",
-						layoutData: new FlexItemData({ growFactor: 0, baseSize: "2rem" }),
+						layoutData: new FlexItemData(this.getId() + "-TokenRemoveAll-FID", { growFactor: 0, baseSize: "2rem" }),
 						enabled: {
 							path: "$valueHelp>/conditions",
 							formatter: function(aConditions) {
@@ -753,12 +736,26 @@ sap.ui.define([
 								return iCount > 0;
 							}
 						}
-					});
-					this.oRemoveAllBtn.addStyleClass("sapUiTinyMarginBegin");
+					}).addStyleClass("sapMdcTokenRemoveAll sapUiTinyMarginBegin");
 
-					oHBox.addItem(this.oTokenizer);
-					oHBox.addItem(this.oRemoveAllBtn);
-					this.oTokenizerPanel.addContent(oHBox);
+					const oHBox = new HBox(this.getId() + "-TokenBox", {
+						fitContainer: true,
+						width: "100%",
+						items: [this.oTokenizer, this.oRemoveAllBtn]
+					});
+
+					this.oTokenizerPanel = new VBox(this.getId() + "-TokenPanel", { // use own vBox as it need to be a separate region
+						visible: { parts: ['$valueHelp>/_config/maxConditions', '$help>/content'], formatter: _isTokenizerRequired },
+						items: [oHeaderText, oHBox]
+					}).addStyleClass("sapMdcTokenizerPanel");
+					this.oTokenizerPanel.addDelegate({
+						onAfterRendering: (oEvent) => {
+							const oVBox = oEvent.srcControl;
+							const oDomRef = oVBox.getDomRef();
+							oDomRef?.setAttribute("role", "region");
+							oDomRef?.setAttribute("aria-labelledby", oVBox.getItems()[0].getId());
+						}
+					}, false, this);
 
 					return this.oTokenizerPanel;
 				});
@@ -1001,7 +998,7 @@ sap.ui.define([
 	};
 
 	Dialog.prototype.getValueHelpIcon = function() {
-		return "sap-icon://value-help";
+		return IconPool.getIconURI("value-help");
 	};
 
 	Dialog.prototype.getAriaAttributes = function(iMaxConditions) {

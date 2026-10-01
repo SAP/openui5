@@ -463,31 +463,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the languages map from the editor class or any of its superclasses
-	 *
-	 * @param {sap.ui.integration.editor.Editor} oEditor
-	 * @returns {object}
-	 */
-	EditorFieldManager._getLanguages = function (oEditor) {
-		var oMetadata = oEditor.getMetadata();
-		while (oMetadata) {
-			var oClass = oMetadata.getClass();
-			if (Object.hasOwn(oClass, "_oLanguages")) {
-				return oClass._oLanguages;
-			}
-			oMetadata = oMetadata.getParent();
-		}
-		return {};
-	};
-
-	/**
 	 * Adds an item to the _formContent aggregation based on the config settings
 	 *
 	 * @param {sap.ui.integration.editor.Editor} oEditor
 	 * @param {object} oConfig
 	 * @param {string} sParameterKey
+	 * @param {object} oLanguages
 	 */
-	EditorFieldManager._addItem = function (oEditor, oConfig, sParameterKey) {
+	EditorFieldManager._addItem = function (oEditor, oConfig, sParameterKey, oLanguages) {
 		var sMode = oEditor.getMode();
 		if (oEditor.getAllowDynamicValues() === false || !oConfig.allowDynamicValues) {
 			oConfig.allowDynamicValues = false;
@@ -516,7 +499,7 @@ sap.ui.define([
 		}
 		var oNewLabel = null;
 		var sLanguage = Utils._language;
-		if (!EditorFieldManager._getLanguages(oEditor)[sLanguage] && sLanguage.indexOf("-") > -1) {
+		if (!oLanguages[sLanguage] && sLanguage.indexOf("-") > -1) {
 			sLanguage = sLanguage.substring(0, sLanguage.indexOf("-"));
 		}
 		if (sMode === Constants.EDITOR_MODE.TRANSLATION) {
@@ -536,7 +519,7 @@ sap.ui.define([
 			origLangFieldConfig._settingspath += "/_language";
 			origLangFieldConfig.editable = false;
 			origLangFieldConfig.required = false;
-			if (EditorFieldManager._getLanguages(oEditor)[sLanguage]) {
+			if (oLanguages[sLanguage]) {
 				var sTranslateText = oEditor.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
 				if (sTranslateText) {
 					origLangFieldConfig.value = sTranslateText;
@@ -582,7 +565,7 @@ sap.ui.define([
 				oConfig.value = oEditor._oCurrentLayerChange[oConfig.manifestpath];
 				oConfig._beforeLayerChange = oConfig.value;
 			}
-			if (oConfig.type === "string" && EditorFieldManager._getLanguages(oEditor)[sLanguage]) {
+			if (oConfig.type === "string" && oLanguages[sLanguage]) {
 				var sTranslateText = oEditor.getTranslationValueInTexts(sLanguage, oConfig.manifestpath);
 				if (sTranslateText) {
 					oConfig.value = sTranslateText;
@@ -636,8 +619,9 @@ sap.ui.define([
 	 * Starts the editor by building and populating all form fields
 	 *
 	 * @param {sap.ui.integration.editor.Editor} oEditor
+	 * @param {object} oLanguages
 	 */
-	EditorFieldManager.startEditor = function (oEditor) {
+	EditorFieldManager.startEditor = function (oEditor, oLanguages) {
 		var oContents = oEditor.getAggregation("_formContent");
 		if (oContents && oContents.length > 0) {
 			oEditor.destroyAggregation("_formContent");
@@ -709,7 +693,7 @@ sap.ui.define([
 					translatable: true,
 					expandable: false,
 					expanded: true,
-					label: oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + EditorFieldManager._getLanguages(oEditor)[sLanguage]
+					label: oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + oLanguages[sLanguage]
 				}, "translationTopPanel");
 			}
 			for (var n in oItems) {
@@ -834,7 +818,7 @@ sap.ui.define([
 
 		for (var n in oItems) {
 			var oItem = oItems[n];
-			EditorFieldManager._addItem(oEditor, oItem, n);
+			EditorFieldManager._addItem(oEditor, oItem, n, oLanguages);
 		}
 		var editorHeight = oEditor._oSettingsModel.getProperty("/form/height") !== undefined ? oEditor._oSettingsModel.getProperty("/form/height") : "350px",
 			editorWidth = oEditor._oSettingsModel.getProperty("/form/width") !== undefined ? oEditor._oSettingsModel.getProperty("/form/width") : "100%";

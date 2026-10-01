@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/core/Theming",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Lib",
-	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/message/MessageType",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
@@ -34,7 +33,6 @@ sap.ui.define([
 	Theming,
 	Icon,
 	Lib,
-	InvisibleMessage,
 	MessageType,
 	ChangeReason,
 	jQuery,
@@ -604,9 +602,9 @@ sap.ui.define([
 				return;
 			}
 
-			const [Popover, Bar, Title, Text, HBox, coreLib, mLib, Device, KeyCodes] = await new Promise((resolve) => {
+			const [Popover, Bar, Title, Text, HBox, Button, coreLib, mLib, Device, KeyCodes] = await new Promise((resolve) => {
 				sap.ui.require([
-					"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library",
+					"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/m/Button", "sap/ui/core/library", "sap/m/library",
 					"sap/ui/Device", "sap/ui/events/KeyCodes"
 				], (...aModules) => {
 					resolve(aModules);
@@ -614,14 +612,23 @@ sap.ui.define([
 			});
 
 			if (!oPopover) {
+				const oIcon = new Icon({src: "sap-icon://message-warning", color: coreLib.IconColor.Critical, decorative: false})
+					.addStyleClass("sapUiTinyMarginEnd");
+				const oOkButton = new Button({
+					text: TableUtils.getResourceText("TBL_SELECT_LIMIT_OK"),
+					press: function() {
+						oPopover.close();
+					}
+				});
 				oPopover = new Popover(oTable.getId() + "-notificationPopover", {
+					ariaLabelledBy: [oIcon],
+					initialFocus: oOkButton,
 					customHeader: [
 						new Bar({
 							contentMiddle: [
 								new HBox({
 									items: [
-										new Icon({src: "sap-icon://message-warning", color: coreLib.IconColor.Critical})
-											.addStyleClass("sapUiTinyMarginEnd"),
+										oIcon,
 										new Title({text: sTitle, level: coreLib.TitleLevel.H1})
 									],
 									renderType: mLib.FlexRendertype.Bare,
@@ -631,7 +638,10 @@ sap.ui.define([
 							]
 						})
 					],
-					content: new Text({text: sMessage})
+					content: new Text({text: sMessage}),
+					footer: new Bar({
+						contentRight: [oOkButton]
+					})
 				});
 
 				oPopover.addStyleClass("sapUiContentPadding");
@@ -662,14 +672,7 @@ sap.ui.define([
 				return;
 			}
 
-			await new Promise((resolve) => {
-				oPopover.attachEventOnce("afterOpen", () => {
-					const sWarning = Lib.getResourceBundleFor("sap.m").getText("SEMANTIC_COLOR_CRITICAL");
-					InvisibleMessage.getInstance().announce(sWarning + ". " + sMessage);
-					resolve();
-				});
-				oPopover.openBy(oRowSelector);
-			});
+			oPopover.openBy(oRowSelector);
 		},
 
 		_onFirstVisibleRowChange: function(oEvent) {

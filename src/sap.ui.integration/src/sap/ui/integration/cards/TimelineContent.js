@@ -257,6 +257,10 @@ sap.ui.define([
 			items: aResolvedItems
 		};
 
+		if (oConfiguration.maxItems) {
+			oStaticConfiguration.maxItems = BindingResolver.resolveValue(oConfiguration.maxItems, this);
+		}
+
 		return oStaticConfiguration;
 	};
 

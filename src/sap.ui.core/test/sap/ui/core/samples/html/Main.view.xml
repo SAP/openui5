@@ -1,4 +1,4 @@
-<mvc:View xmlns="sap.html" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:m="sap.m">
+<mvc:View xmlns="sap.html" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:m="sap.m" controllerName="htmlsample.Main">
 	<div>
 		<h2>{myModel&gt;/title}</h2>
 	</div>
@@ -39,6 +39,13 @@
 				This text content even has a binding 😱: {myModel&gt;/title}
 				<!-- this would break! -->
 				<!-- <br>foo</br> -->
+			</p>
+			<p>
+				<button click=".nativeButtonClick" mouseover=".nativeButtonMouseover">
+					<span>I'm a native button!</span>
+					<br />
+					<span><b>DO NOT click me!</b></span>
+				</button>
 			</p>
 		</div>
 	</div>

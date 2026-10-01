@@ -193,6 +193,7 @@ sap.ui.define([], function () {
 			.class("sapFGridContainerDummyArea")
 			.attr("tabindex", iTabIndex)
 			.attr("role", "none")
+			.attr("aria-hidden", "true")
 			.openEnd()
 			.close("div");
 	};

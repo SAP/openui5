@@ -719,7 +719,7 @@ sap.ui.define([
 
 	QUnit.test("RenderManager.prototype.icon with font-family which has space inside", function(assert) {
 		var fnOrigGetIconInfo = IconPool.getIconInfo,
-			sFontFamily = "fontfamily which has space inside";
+			sFontFamily = "21st fontfamily which has space inside";
 
 		this.stub(IconPool, "getIconInfo").callsFake(function (sIconName) {
 			var oRes = fnOrigGetIconInfo(sIconName);
