@@ -25,7 +25,7 @@
     "@ui5/webcomponents-icons-business-suite": "2.27.2",
     "@ui5/webcomponents-icons-tnt": "2.27.2",
     "fs-extra": "11.4.0",
-    "ui5-tooling-modules": "3.37.9"
+    "ui5-tooling-modules": "3.41.1"
   },
   "scripts": {
     "build-webcomponents": "ui5 build --dest ./src/sap/f --output-style flat --config ui5-build.yaml --exclude-task \\* --include-task ui5-tooling-modules-task",

@@ -404,6 +404,15 @@ License Text: https://github.com/UI5/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-3.0.0/**
 
 
+Library: sap.ui.geomap:
+
+Component: UI5 Web Components Geomap, version: 0.1.0
+Copyright: SAP
+License: Apache-2.0
+License Text: https://github.com/UI5/openui5/blob/master/LICENSES/Apache-2.0.txt
+Contained in: src/sap.ui.geomap/src/sap/ui/geomap/thirdparty/**
+
+
 Library: sap.ui.integration:
 
 Component: UI5 Web Components, version: 2.15.0

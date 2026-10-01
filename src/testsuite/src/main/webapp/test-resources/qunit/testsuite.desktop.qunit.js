@@ -7,6 +7,7 @@ sap.ui.define([], function() {
 			page: "test-resources/{name}/qunit/testsuite.qunit.html"
 		},
 		tests: {
+			"sap/html": {},
 			"sap/ui/codeeditor": {},
 			/**
 			 * @deprecated As of version 1.38, together with the sap.ui.commons library
@@ -16,7 +17,7 @@ sap.ui.define([], function() {
 			"sap/ui/documentation/sdk": {},
 			"sap/ui/dt": {},
 			"sap/ui/fl": {},
-			"sap/html": {},
+			"sap/ui/geomap": {},
 			"sap/ui/mdc": {},
 			"sap/ui/integration": {},
 			"sap/ui/layout": {},

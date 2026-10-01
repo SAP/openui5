@@ -1,0 +1,36 @@
+<mvc:View controllerName="sap.ui.geomap.sample.basic.Main"
+		width="100%" height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m"
+		xmlns:gm="sap.ui.geomap">
+
+	<App id="MyApp" defaultTransitionName="show">
+		<Page id="P0" title="Geomap basic usage showing spot" titleLevel="H1">
+			<Text class="sapUiResponsiveMargin" text="This sample explains basic usage of sap.ui.geomap. Clicking on the spot opens the popover with additional information." />
+			<gm:Geomap id="map"
+				width="100%"
+				height="90%"
+				centerLat="49.19224998218536"
+				centerLng="9.209693384445245"
+				zoom="12.47447780">
+				<gm:mapControls>
+					<!-- MAP PROVIDER - defines where the map is fetched from -->
+					<gm:GeomapProvider id="mapProvider" styleUrl="https://basemaps-api.arcgis.com/arcgis/rest/services/styles/ArcGIS:Streets?type=style&amp;token="></gm:GeomapProvider>
+					<!-- Show the navigation controls -->
+					<gm:GeomapNavigationControl></gm:GeomapNavigationControl>
+					<!-- Show the scale controls at bottom left-->
+					<gm:GeomapScaleControl position="BottomLeft"></gm:GeomapScaleControl>
+					<gm:GeomapCopyrightControl position="BottomRight">
+							<Text class="copyright" text="Map data from "/>
+							<Link class="sapUiTinyMarginBegin" target="_blank" text="OpenStreetMap" href="https://www.openstreetmap.org/copyright"/>
+					</gm:GeomapCopyrightControl>
+				</gm:mapControls>
+				<gm:items>
+					<!-- Add a spot to one of the most beautiful places in the world -->
+					<gm:GeomapSpot lat="49.210056" lng="9.203700" color="black" click=".spotClick"></gm:GeomapSpot>
+				</gm:items>
+			</gm:Geomap>
+		</Page>
+	</App>
+
+</mvc:View>

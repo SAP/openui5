@@ -1,0 +1,5 @@
+{
+	"modulesWithNamedExports": [
+		"sap/ui/geomap/gen/ui5/webcomponents_geomap"
+	]
+}

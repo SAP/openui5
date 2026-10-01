@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<library xmlns="http://www.sap.com/sap.ui.library.xsd">
+
+	<name>sap.ui.geomap</name>
+	<vendor>SAP SE</vendor>
+	<copyright>${copyright}</copyright>
+	<version>${version}</version>
+
+	<documentation>SAPUI5 library with Geomap controls.</documentation>
+
+	<dependencies>
+		<dependency>
+			<libraryName>sap.ui.core</libraryName>
+		</dependency>
+	</dependencies>
+
+	<appData>
+		<selenium xmlns="http://www.sap.com/ui5/buildext/selenium" package="com.sap.ui5.selenium.geomap" />
+		<jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc">
+			<exclude name="sap.ui.geomap.gen." />
+			<exclude name="sap.ui.geomap.thirdparty." />
+		</jsdoc>
+		<jscoverage xmlns="http://www.sap.com/ui5/buildext/jscoverage">
+			<exclude name="sap.ui.geomap.gen." />
+			<exclude name="sap.ui.geomap.thirdparty." />
+		</jscoverage>
+		<documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
+			indexUrl="../../../../test-resources/sap/ui/geomap/demokit/docuindex.json"
+			resolve="lib" />
+		<releasenotes xmlns="http://www.sap.com/ui5/buildext/releasenotes"
+			url="../../../../test-resources/sap/ui/geomap/relnotes/changes-{major}.{minor}.json"
+			resolve="lib" />
+		<ownership xmlns="http://www.sap.com/ui5/buildext/ownership">
+			<component>CA-UI5-CMP</component>
+		</ownership>
+
+		<!-- Thirdparty references -->
+		<thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty">
+			<lib name="ui5-web-components-geomap" displayName="UI5 Web Components Geomap" npmName="@ui5/webcomponents-geomap" version="0.1.0" homepage="https://github.com/UI5/webcomponents-geomap" id="73555000106100461812">
+				<license url="https://github.com/UI5/webcomponents-geomap/blob/-/LICENSE.txt" type="Apache-2.0"></license>
+				<copyright>SAP</copyright>
+				<pattern>sap/ui/geomap/thirdparty/**</pattern>
+			</lib>
+		</thirdparty>
+	</appData>
+
+</library>

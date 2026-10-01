@@ -1,0 +1,32 @@
+{
+	"demo": { },
+	"explored": {
+		"entitiesDefaults": {
+			"formFactors": "ML"
+		},
+		"samplesRef": [
+			{
+				"namespace": "sap.ui.geomap.sample.basic",
+				"ref": "test-resources/sap/ui/geomap/demokit/sample/basic"
+			}
+		],
+		"entities": [
+			{
+				"id": "sap.ui.geomap.Geomap",
+				"name": "Geomap",
+				"category": "Container",
+				"since": "1.142",
+				"samples": [
+					"sap.ui.geomap.sample.basic"
+				]
+			}
+		],
+		"samples": [
+			{
+				"id": "sap.ui.geomap.sample.basic",
+				"name": "Basic usage",
+				"description": "Basic usage of Geomap displaying spot."
+			}
+		]
+	}
+}
