@@ -1,0 +1,7 @@
+// Note: the HTML page 'ObjectPageF6Navigation.html' loads this module via data-sap-ui-on-init
+
+sap.ui.define(["sap/ui/core/mvc/XMLView"], function (XMLView) {
+	"use strict";
+	XMLView.create({ definition: document.getElementById("view1").textContent })
+		.then(function (oView) { oView.placeAt("content"); });
+});

@@ -32,8 +32,8 @@
 	box-sizing: border-box;
 	color: var(--sapTextColor);
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
-	background-color: lighten(@sapUiContentForegroundColor,7);
+	font-size: var(--sapFontSize);
+	background-color: ~'hsl(from var(--sapContent_ForegroundColor) h s calc(l + 7))';
 
 	&:hover {
 		background-color: var(--sapList_Hover_Background);
@@ -112,7 +112,7 @@ html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMar
 	box-sizing: border-box;
 	color: var(--sapTextColor);
 	font-family: var(--sapFontFamily);
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 }
 
 .sapMSPCMonthGrid .sapMSPCMonthLnkMore {
@@ -339,5 +339,5 @@ html.sap-phone {
 /* Disable text selection while dragging the cursor */
 .sapMSinglePCGrid * {
 	-webkit-user-select: none; /* Safari */
-	user-select: none; /* Standard syntax */
+	user-select: none;
 }

@@ -48,7 +48,12 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 			oRm.attr("aria-labelledby", oLabelledByTitleID);
 		}
 
-		oRm.attr("data-sap-ui-fastnavgroup", true);
+		var vFastNavGroup = oControl.data("sap-ui-fastnavgroup");
+		if (vFastNavGroup === "false") {
+			oRm.attr("data-sap-ui-customfastnavgroup", "true");
+		} else {
+			oRm.attr("data-sap-ui-fastnavgroup", vFastNavGroup !== null ? vFastNavGroup : true);
+		}
 
 		oRm.openEnd();
 

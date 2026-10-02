@@ -1919,7 +1919,7 @@ sap.ui.define([
 			const mRowCounts = oTable._getRowCounts();
 			const iFirstRow = iFirstRowIndex + 1 + mRowCounts.fixedTop;
 			const iLastRow = iFirstRow - 1 + mRowCounts.scrollable;
-			const bTotalKnown = oTable.getBinding().isLengthFinal();
+			const bTotalKnown = oTable.getBinding().isLengthFinal?.();
 			let sText;
 
 			if (bTotalKnown) {
@@ -1995,6 +1995,12 @@ sap.ui.define([
 				}
 
 				_private(oTable).bHandleDragging = true;
+
+				// Grabbing the handle is an explicit user intent to take over control. Cancel any ongoing momentum animation and clear the
+				// touch-scroll state so the handle drag is debounced by the large-data scrolling logic just like a regular scrollbar-thumb drag.
+				ScrollingHelper._stopMomentumAnimation.call(oTable, _private(oTable).mTouchSessionData);
+				delete oScrollExtension._bTouchScroll;
+
 				// Seed the large-data scroll speed baseline, just like a mousedown on the scrollbar does. Dragging the handle
 				// scrolls the scrollbar without dispatching a mousedown on it, so without this the first movement would be
 				// measured against no baseline and debounced.
@@ -2320,13 +2326,7 @@ sap.ui.define([
 				const oTouchObject = oEvent.touches ? oEvent.touches[0] : oEvent;
 
 				// Cancel any active momentum animation
-				const mExistingTouchSessionData = _private(this).mTouchSessionData;
-				if (mExistingTouchSessionData) {
-					if (mExistingTouchSessionData.momentumAnimationFrame) {
-						window.cancelAnimationFrame(mExistingTouchSessionData.momentumAnimationFrame);
-					}
-					mExistingTouchSessionData.isMomentumActive = false;
-				}
+				ScrollingHelper._stopMomentumAnimation.call(this, _private(this).mTouchSessionData);
 
 				_private(this).mTouchSessionData = {
 					initialPageX: oTouchObject.pageX,
@@ -2676,6 +2676,26 @@ sap.ui.define([
 
 			// Start the animation loop
 			mTouchSessionData.momentumAnimationFrame = window.requestAnimationFrame(fnAnimationStep);
+		},
+
+		/**
+		 * Cancels an ongoing momentum scrolling animation.
+		 *
+		 * This is the counterpart to {@link #_startMomentumAnimation}. It stops the animation loop by cancelling the pending animation frame and
+		 * marking the momentum as inactive.
+		 *
+		 * @param {object} mTouchSessionData The touch session data holding the momentum animation state.
+		 * @private
+		 */
+		_stopMomentumAnimation: function(mTouchSessionData) {
+			if (!mTouchSessionData) {
+				return;
+			}
+
+			if (mTouchSessionData.momentumAnimationFrame) {
+				window.cancelAnimationFrame(mTouchSessionData.momentumAnimationFrame);
+			}
+			delete _private(this).mTouchSessionData;
 		},
 
 		/**
@@ -3053,13 +3073,7 @@ sap.ui.define([
 				delete _private(oTable).bHandleDragging;
 
 				// Cancel any active momentum animation
-				const mTouchSessionData = _private(oTable).mTouchSessionData;
-				if (mTouchSessionData && mTouchSessionData.momentumAnimationFrame) {
-					Log.debug("###cancel animation frame in destroy");
-					window.cancelAnimationFrame(mTouchSessionData.momentumAnimationFrame);
-					mTouchSessionData.isMomentumActive = false;
-				}
-				delete _private(oTable).mTouchSessionData;
+				ScrollingHelper._stopMomentumAnimation.call(this, _private(oTable).mTouchSessionData);
 			}
 
 			ExtensionBase.prototype.destroy.apply(this, arguments);

@@ -3,9 +3,11 @@
 /* Base theme                              */
 /* ======================================= */
 
-@_sap_m_RadioButtonGroup_WidthWithLabel: 3rem;
+.sapUI5Scope {
+	--_sap_m_RadioButtonGroup_WidthWithLabel: 3rem;
+}
 
-.sapMRbG{
+.sapMRbG {
 	display: inline-block;
 }
 
@@ -13,13 +15,11 @@
 	outline: none;
 }
 
-.sapMRbGTab{
-	display: -webkit-box;
-	display: -webkit-flex;
+.sapMRbGTab {
 	display: flex;
 }
 
-.sapMRbGCol{
+.sapMRbGCol {
 	vertical-align: top;
 	min-width: 10px;
 	margin-right: 0;
@@ -27,23 +27,23 @@
 }
 
 .sapMRbG > .sapMRb,
-.sapMRbGCol > .sapMRb{
+.sapMRbGCol > .sapMRb {
 	float: left;
 	clear: left;
 	text-overflow: ellipsis;
 }
 
-.sapMRbG.sapMRbG1Row > .sapMRb{
+.sapMRbG.sapMRbG1Row > .sapMRb {
 	clear: none;
 }
 
-.sapMRbGCol > .sapMRb{
+.sapMRbGCol > .sapMRb {
 	width: 100%;
 	outline-offset: -1px;
 }
 
 .sapMRbG .sapMRbHasLabel .sapMRbB {
-	width: @_sap_m_RadioButtonGroup_WidthWithLabel;
+	width: var(--_sap_m_RadioButtonGroup_WidthWithLabel);
 }
 
 .sapMRbG .sapMRbHasLabel .sapMRbBOut {
@@ -51,38 +51,41 @@
 }
 
 /* Right to left */
-.sapMRbG[dir=rtl] .sapMRbBLabel:not(.sapMLabelNoText) {
+.sapMRbG[dir='rtl'] .sapMRbBLabel:not(.sapMLabelNoText) {
 	padding-left: 0.125rem;
 	padding-right: 0;
 }
 
 /* Align RadioButton in Form with other controls */
-.sapUiForm.sapUiFormEdit-CTX{
-	.sapMRbG{
+.sapUiForm.sapUiFormEdit-CTX {
+
+	.sapMRbG {
+
 		.sapMRbBLabel:not(.sapMLabelNoText) {
 			padding-right: 0.125rem;
 		}
 
-		> .sapMRbGCol{
-			padding-left: 0.5rem; // to align to spaced between Form cells
+		> .sapMRbGCol {
+			padding-left: 0.5rem; /* to align to spaced between Form cells */
 		}
 
-		> .sapMRbGCol:first-child{
+		> .sapMRbGCol:first-child {
 			padding-left: 0;
 		}
 	}
 
-	.sapMRbG[dir=rtl] .sapMRbBLabel {
+	.sapMRbG[dir='rtl'] .sapMRbBLabel {
 		padding-left: 0;
 	}
 
-	.sapMRbG.sapMRbG1Row{
-		.sapMRb{
+	.sapMRbG.sapMRbG1Row {
+
+		.sapMRb {
 			padding-left: 0;
-			margin-left: 0.5rem; // to align to spaced between Form cells
+			margin-left: 0.5rem; /* to align to spaced between Form cells */
 		}
 
-		.sapMRb:first-child{
+		.sapMRb:first-child {
 			margin-left: 0;
 		}
 	}
@@ -90,6 +93,7 @@
 
 /* Compact Size */
 .sapUiSizeCompact {
+
 	.sapMRbG .sapMRbHasLabel .sapMRbB {
 		width: 2rem;
 	}
@@ -98,7 +102,7 @@
 		margin: 0.5rem;
 	}
 
-	.sapMRbG[dir=rtl] .sapMRbBLabel {
+	.sapMRbG[dir='rtl'] .sapMRbBLabel {
 		padding-left: 0.125rem;
 	}
 }

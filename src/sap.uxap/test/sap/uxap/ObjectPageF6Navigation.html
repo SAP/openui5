@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>sap.uxap - F6 Fast Navigation</title>
+	<link rel="stylesheet" href="./ObjectPageF6Navigation.css">
+	<script id="sap-ui-bootstrap"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m, sap.uxap, sap.ui.layout"
+			data-sap-ui-on-init="module:local/ObjectPageF6Navigation"
+			data-sap-ui-resource-roots='{
+				"local": "./"
+			}'
+	></script>
+
+	<!--
+		Reproduces: SNOW DINC0741781 / CA-UI5-CTR
+		F6 group skipping enters a Section that the app opted out of via CustomData.
+
+		ROOT CAUSE (before fix):
+		  ObjectPageSectionRenderer stamped data-sap-ui-fastnavgroup="true" unconditionally,
+		  ignoring any CustomData sap-ui-fastnavgroup=false set by the app. The section acted
+		  as an F6 group boundary, so inner groups (e.g. a Table's F6 group) stopped F6 inside
+		  the opted-out section instead of skipping to the next section.
+
+		FIX:
+		  - ObjectPageSectionRenderer writes data-sap-ui-customfastnavgroup="true" for opted-out
+		    sections instead of data-sap-ui-fastnavgroup. This causes F6Navigation to fire the
+		    BeforeFastNavigationFocus event on the ObjectPageSection control (even when an inner
+		    group such as a Table would otherwise intercept navigation).
+		  - ObjectPageSection.onBeforeFastNavigationFocus intercepts the event and redirects
+		    focus to the next non-opted-out visible section.
+
+		  sap-ui-fastnavgroup only affects F6 fast navigation; TAB reachability is unchanged.
+		  Opted-out sections keep tabindex="0" and remain TAB stops, keeping the two navigation
+		  mechanisms independent as required by the Fiori Keyboard Interaction Specification.
+
+		HOW TO TEST (F6):
+		  1. Click the "Sub Section 1.1" tab in the anchor bar.
+		  2. Press F6.
+		  EXPECTED: Focus jumps to "Section 2" (one stop), skipping Section 1 and its Table.
+		            Press F6 again: focus returns to the anchor bar.
+		  BEFORE FIX: F6 stopped inside Section 1 on its Table's F6 group and never reached
+		              Section 2, because the section was stamped as an F6 group boundary.
+
+		HOW TO TEST (TAB - must stay independent of F6):
+		  Press TAB from the anchor bar: focus must still reach "Section 1" itself
+		  (tabindex="0") before entering its content. The opt-out must not remove it from
+		  the TAB sequence.
+	-->
+
+	<script id="view1" type="text/xml">
+		<core:View xmlns:core="sap.ui.core"
+			xmlns="sap.uxap"
+			xmlns:m="sap.m"
+			height="100%">
+
+			<ObjectPageLayout id="opl"
+				subSectionLayout="TitleOnLeft"
+				showTitleInHeaderContent="true"
+				upperCaseAnchorBar="false">
+
+				<headerTitle>
+					<ObjectPageHeader objectTitle="F6 Navigation Test"/>
+				</headerTitle>
+
+				<sections>
+
+					<!-- Section 1: app opts out of being an F6 group boundary.
+					     Both Section and SubSection set sap-ui-fastnavgroup=false
+					     because the Table inside is already its own F6 group. -->
+					<ObjectPageSection id="section1" title="Section 1">
+						<customData>
+							<core:CustomData key="sap-ui-fastnavgroup" value="false" writeToDom="true"/>
+						</customData>
+						<subSections>
+							<ObjectPageSubSection id="subSec1" title="Sub Section 1.1">
+								<customData>
+									<core:CustomData key="sap-ui-fastnavgroup" value="false" writeToDom="true"/>
+								</customData>
+								<blocks>
+									<m:Table id="idProductsTable">
+										<m:columns>
+											<m:Column><m:Text text="Product"/></m:Column>
+											<m:Column><m:Text text="Supplier"/></m:Column>
+										</m:columns>
+										<m:items>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Input value="Notebook Pro"/>
+													<m:Input value="SAP SE"/>
+												</m:cells>
+											</m:ColumnListItem>
+											<m:ColumnListItem>
+												<m:cells>
+													<m:Input value="Monitor HD"/>
+													<m:Input value="Acme Corp"/>
+												</m:cells>
+											</m:ColumnListItem>
+										</m:items>
+									</m:Table>
+								</blocks>
+								<moreBlocks>
+									<m:Text text="Additional content"/>
+								</moreBlocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+					<!-- Section 2: the intended F6 target from Section 1. -->
+					<ObjectPageSection id="section2" title="Section 2">
+						<subSections>
+							<ObjectPageSubSection id="subSec2" title="">
+								<blocks>
+									<m:Input id="targetInput" placeholder="F6 from anchor bar should reach here"/>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+
+				</sections>
+			</ObjectPageLayout>
+		</core:View>
+	</script>
+</head>
+<body id="content" class="sapUiBody">
+
+</body>
+</html>

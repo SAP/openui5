@@ -3,12 +3,17 @@
 /* Base theme                                    */
 /* ============================================= */
 
-@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact: 3rem;
-@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 2.75rem;
-@_sap_m_SinglePlanningCalendarGrid_HoursBackground: var(--sapList_Background);
+.sapUI5Scope {
+	--_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact: 3rem;
+	--_sap_m_PlanningCalendarHeader_ActionsToolbarHeight: 2.75rem;
+	--_sap_m_SinglePlanningCalendarGrid_HoursBackground: var(--sapList_Background);
+}
 
-.sapMPlanCal:not(.sapUiLocalBusy), .sapMSinglePC:not(.sapUiLocalBusy),
-.sapMPlanCal:not(.sapUiLocalBusy), .sapMSinglePC:not(.sapUiLocalBusy) {
+.sapMPlanCal:not(.sapUiLocalBusy),
+.sapMSinglePC:not(.sapUiLocalBusy),
+.sapMPlanCal:not(.sapUiLocalBusy),
+.sapMSinglePC:not(.sapUiLocalBusy) {
+
 	.sapMPCHead, .sapMSinglePCColumnHeader {
 		position: sticky;
 		z-index: 4;
@@ -25,7 +30,7 @@
 .sapMSinglePCStickyNavBarAndColHeaders {
 
 	.sapMPCHead {
-		top: -@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight;
+		top: ~'calc(-1 * var(--_sap_m_PlanningCalendarHeader_ActionsToolbarHeight))';
 	}
 
 	/* If the actions toolbar are hidden, then the navigation toolbar will */
@@ -43,13 +48,13 @@
 	.sapMSinglePCStickyNavBarAndColHeaders {
 
 		.sapMPCHead {
-			top: -@_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact;
+			top: ~'calc(-1 * var(--_sap_m_PlanningCalendarHeader_ActionsToolbarHeight_Compact))';
 		}
 	}
 }
 
 html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel):hover {
-	background-color: darken(@sapUiContentForegroundColor,5);
+	background-color: ~'hsl(from var(--sapContent_ForegroundColor) h s calc(l - 5))';
 }
 
 html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover {
@@ -57,5 +62,5 @@ html.sap-desktop .sapMSinglePC .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCa
 }
 
 .sapMSinglePCGridContent {
-	background-color: @_sap_m_SinglePlanningCalendarGrid_HoursBackground;
+	background-color: var(--_sap_m_SinglePlanningCalendarGrid_HoursBackground);
 }

@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/CustomData",
 	"sap/ui/core/Element",
 	"sap/ui/test/utils/nextUIUpdate",
 	"sap/ui/thirdparty/jquery",
@@ -13,11 +14,12 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
+	"sap/m/Button",
 	"sap/m/OverflowToolbar",
 	"sap/m/Text",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
 ],
-function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, OverflowToolbar, Text) {
+function(AnimationMode, ControlBehavior, CustomData, Element, nextUIUpdate, jQuery, KeyCodes, QUtils, Device, F6Navigation, XMLView, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, Button, OverflowToolbar, Text) {
 	"use strict";
 
 	const sAnchorSelector = ".sapUxAPObjectPageNavigation .sapMITBHead .sapMITBFilter";
@@ -969,5 +971,187 @@ function(AnimationMode, ControlBehavior, Element, nextUIUpdate, jQuery, KeyCodes
 		// Assert
 		assert.ok(iNewScrollTop >= iFirstVisibleSectionOffsetTop, "scrolled down to focused section");
 		assert.ok(oObjectPage._isClosestScrolledSection(oFirstVisibleSection.getId()), "scrolled down to focused section");
+	});
+
+	QUnit.module("sap-ui-fastnavgroup CustomData on Section", {
+		beforeEach: async function () {
+			this.oSection = new ObjectPageSection({
+				title: "Section with fastnavgroup=false",
+				customData: [new CustomData({ key: "sap-ui-fastnavgroup", value: "false", writeToDom: true })],
+				subSections: [new ObjectPageSubSection({
+					title: "Sub",
+					blocks: [new Text({ text: "content" })]
+				})]
+			});
+			this.oOtherSection = new ObjectPageSection({
+				title: "Other Section",
+				subSections: [new ObjectPageSubSection({
+					title: "Other Sub",
+					blocks: [new Text({ text: "other content" })]
+				})]
+			});
+			this.oOPL = new ObjectPageLayout({
+				sections: [this.oSection, this.oOtherSection]
+			});
+			this.oOPL.placeAt("qunit-fixture");
+			await nextUIUpdate();
+			await waitForDOMReady(this.oOPL);
+		},
+		afterEach: function () {
+			this.oOPL.destroy();
+		}
+	});
+
+	QUnit.test("Section with sap-ui-fastnavgroup=false renders data-sap-ui-customfastnavgroup='true' on DOM", function (assert) {
+		// Assert
+		assert.strictEqual(
+			this.oSection.getDomRef().getAttribute("data-sap-ui-customfastnavgroup"),
+			"true",
+			"Section with CustomData sap-ui-fastnavgroup=false must render data-sap-ui-customfastnavgroup='true' so F6Navigation fires BeforeFastNavigationFocus"
+		);
+		assert.notEqual(
+			this.oSection.getDomRef().getAttribute("data-sap-ui-fastnavgroup"),
+			"true",
+			"Section with CustomData sap-ui-fastnavgroup=false must not render data-sap-ui-fastnavgroup='true'"
+		);
+	});
+
+	QUnit.test("Section with sap-ui-fastnavgroup=false remains TAB-reachable (tabindex='0') when selected", function (assert) {
+		// Act - trigger focus value assignment as if this section is the selected one
+		this.oOPL._setSectionsFocusValues(this.oSection.getId());
+
+		// Assert - sap-ui-fastnavgroup only affects F6, not TAB reachability, so the
+		// selected section must still be a TAB stop
+		assert.strictEqual(
+			this.oSection.getDomRef().getAttribute("tabindex"),
+			"0",
+			"Section with sap-ui-fastnavgroup=false must remain focusable via TAB (tabindex='0'); the CustomData only affects F6 navigation"
+		);
+	});
+
+	QUnit.test("F6 from anchor bar skips section with sap-ui-fastnavgroup=false", function (assert) {
+		// Arrange
+		const oAnchorBar = this.oOPL.getAggregation("_anchorBar");
+		const oAnchorBarDomRef = oAnchorBar && oAnchorBar.getDomRef();
+		assert.ok(oAnchorBarDomRef, "AnchorBar DOM is present");
+
+		// Focus the anchor bar and trigger F6
+		oAnchorBarDomRef.focus();
+		QUtils.triggerKeydown(oAnchorBarDomRef, KeyCodes.F6);
+
+		// Assert - focus must NOT land on the section element with fastnavgroup=false
+		assert.notStrictEqual(
+			document.activeElement,
+			this.oSection.getDomRef(),
+			"F6 from anchor bar must not land on a section with sap-ui-fastnavgroup=false"
+		);
+	});
+
+	QUnit.test("F6 from anchor bar skips all tabbable content inside a section with sap-ui-fastnavgroup=false", async function (assert) {
+		// Arrange - extend the opted-out section with a tabbable Button and add a Button in the normal section
+		const oButtonInOptedOut = new Button({ text: "Button in opted-out section" });
+		const oButtonInNormal = new Button({ text: "Button in normal section" });
+
+		this.oSection.getSubSections()[0].addBlock(oButtonInOptedOut);
+		this.oOtherSection.getSubSections()[0].addBlock(oButtonInNormal);
+		await nextUIUpdate();
+
+		const oAnchorBarDomRef = this.oOPL.getAggregation("_anchorBar").getDomRef();
+		oAnchorBarDomRef.focus();
+
+		// Act
+		QUtils.triggerKeydown(oAnchorBarDomRef, KeyCodes.F6);
+
+		// Assert - focus must land somewhere inside the NORMAL section, not inside the opted-out section
+		assert.ok(
+			!this.oSection.getDomRef().contains(document.activeElement),
+			"F6 from anchor bar must skip all tabbable content inside a section with sap-ui-fastnavgroup=false"
+		);
+		assert.ok(
+			this.oOtherSection.getDomRef().contains(document.activeElement),
+			"F6 from anchor bar must land inside the normal (non-opted-out) section"
+		);
+	});
+
+	QUnit.test("Shift+F6 backward: no eligible previous section falls back to anchor bar", function (assert) {
+		// oSection (opted-out) is at index 0 - no section precedes it
+		// Shift+F6 from the normal section travels backward, hits oSection, finds no earlier eligible section
+		const oNormalDom = this.oOtherSection.getDomRef();
+		oNormalDom.focus();
+
+		QUtils.triggerKeydown(oNormalDom, KeyCodes.F6, /*shift=*/true);
+
+		const oAnchorBarDom = this.oOPL.getAggregation("_anchorBar").getDomRef();
+		assert.ok(
+			oAnchorBarDom.contains(document.activeElement),
+			"Shift+F6 backward with no eligible previous section must fall back to anchor bar"
+		);
+	});
+
+	QUnit.test("F6 forward: no eligible next section falls back to anchor bar", async function (assert) {
+		// Create a layout where the opted-out section is LAST, so F6 forward finds no eligible section
+		const oNormalSection = new ObjectPageSection({
+			title: "Normal",
+			subSections: [new ObjectPageSubSection({
+				title: "Sub",
+				blocks: [new Button({ text: "btn" })]
+			})]
+		});
+		const oOptedOutLast = new ObjectPageSection({
+			title: "Opted-out last",
+			customData: [new CustomData({ key: "sap-ui-fastnavgroup", value: "false", writeToDom: true })],
+			subSections: [new ObjectPageSubSection({
+				title: "Sub",
+				blocks: [new Button({ text: "btn2" })]
+			})]
+		});
+		const oLayout = new ObjectPageLayout({ sections: [oNormalSection, oOptedOutLast] });
+		oLayout.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		await waitForDOMReady(oLayout);
+
+		// Focus normal section, then F6 forward - next group is opted-out with no eligible section after it
+		const oNormalDom = oNormalSection.getDomRef();
+		oNormalDom.focus();
+		QUtils.triggerKeydown(oNormalDom, KeyCodes.F6);
+
+		const oAnchorBarDom = oLayout.getAggregation("_anchorBar").getDomRef();
+		assert.ok(
+			oAnchorBarDom.contains(document.activeElement),
+			"F6 forward with no eligible next section must fall back to anchor bar"
+		);
+
+		oLayout.destroy();
+	});
+
+	QUnit.test("F6 from anchor bar skips multiple consecutive opted-out sections", async function (assert) {
+		const oOptedOut2 = new ObjectPageSection({
+			title: "Opted-out 2",
+			customData: [new CustomData({ key: "sap-ui-fastnavgroup", value: "false", writeToDom: true })],
+			subSections: [new ObjectPageSubSection({
+				title: "Sub",
+				blocks: [new Button({ text: "btn in opted-out 2" })]
+			})]
+		});
+		// Insert a second opted-out section between oSection and oOtherSection
+		this.oOPL.insertSection(oOptedOut2, 1);
+		await nextUIUpdate();
+
+		const oAnchorBarDom = this.oOPL.getAggregation("_anchorBar").getDomRef();
+		oAnchorBarDom.focus();
+		QUtils.triggerKeydown(oAnchorBarDom, KeyCodes.F6);
+
+		assert.ok(
+			!this.oSection.getDomRef().contains(document.activeElement),
+			"F6 must skip opted-out section 1"
+		);
+		assert.ok(
+			!oOptedOut2.getDomRef().contains(document.activeElement),
+			"F6 must skip opted-out section 2"
+		);
+		assert.ok(
+			this.oOtherSection.getDomRef().contains(document.activeElement),
+			"F6 must land inside the first non-opted-out section"
+		);
 	});
 });

@@ -192,6 +192,9 @@ const UNWANTED_APIS: Record<string, {attributes?: string[], events?: string[]}> 
       "headingoffset", // experimental, only available in FF
       "headingreset", // experimental, only available in FF
       "writingsuggestions", // experimental, not available in FF
+      // this attribute opens a freeform DOM editing surface that cannot be reconciled with the UI5
+      // control tree (user edits/pasted markup will not create new controls and any change will be lost on rerender)
+      "contenteditable",
     ],
     events: [
       "contextlost", // experimental, not available in SF, fired only on Canvas

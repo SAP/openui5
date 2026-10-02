@@ -1,7 +1,7 @@
-/* ======================================= */
-/* CSS for control sap.m/TimePickerSliders */
-/* Base Styles                             */
-/* ======================================= */
+/* ======================================== */
+/* CSS for control sap.m/TimePickerSliders  */
+/* Base Styles                              */
+/* ======================================== */
 
 .TPSliderItemHidden {
 	display: none;
@@ -166,7 +166,7 @@
 			.sapMTimePickerItem {
 				background: var(--sapSelectedColor);
 				border: 1px solid var(--sapList_BorderColor);
-				font-size: @sapMFontMediumSize;
+				font-size: var(--sapFontSize);
 				color: var(--sapContent_ContrastTextColor);
 				text-align: center;
 
@@ -277,8 +277,8 @@
 				}
 
 				.sapMTimePickerSlider {
-					height: ~"calc(100% - 6rem)";
-					max-height: ~"calc(100% - 6rem)";
+					height: ~'calc(100% - 6rem)';
+					max-height: ~'calc(100% - 6rem)';
 				}
 
 				.sapMTimePickerSlider.SliderValues3 {
@@ -387,7 +387,7 @@
 					box-sizing: border-box;
 					background: var(--sapSelectedColor);
 					border: 1px solid var(--sapList_BorderColor);
-					font-size: @sapMFontMediumSize;
+					font-size: var(--sapFontSize);
 					color: var(--sapContent_ContrastTextColor);
 					text-align: center;
 
@@ -424,7 +424,7 @@
 				}
 
 				.sapMTimePickerSlider {
-					height: calc(100% - 2rem);
+					height: ~'calc(100% - 2rem)';
 					/* for Android 4.1 - 4.3 calc is not supported, so use 100% instead */
 					max-height: 100%;
 					overflow: hidden;

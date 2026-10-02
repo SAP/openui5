@@ -3,13 +3,6 @@
 /* Evening Horizon theme                    */
 /* ======================================== */
 
-@_sap_ui_unified_Calendar_ItemColor: var(--sapLegend_WorkingBackground);
-@_sap_ui_unified_Calendar_ItemHoverColor: var(--sapList_Hover_Background);
-@_sap_ui_unified_Calendar_ItemBorderColor: var(--sapList_Background);
-@_sap_ui_unified_Calendar_ItemWeekEndColor: var(--sapLegend_NonWorkingBackground);
-@_sap_ui_unified_Calendar_ItemWeekEndHoverColor: var(--sapList_Hover_Background);
-@_sap_ui_unified_Calendar_ItemOtherMonthColor: var(--sapContent_LabelColor);
-
 .sapUiCal {
 	border-radius: 0.5rem;
 }
@@ -148,7 +141,7 @@ html.sap-desktop .sapUiCalHead .sapUiCalHeadB:active {
 .sapUiCalWH,
 .sapUiCalItem,
 .sapUiCalItemSelBetween.sapUiCalItemSel {
-	border: 0.0625rem solid @_sap_ui_unified_Calendar_ItemBorderColor;
+	border: 0.0625rem solid var(--sapList_Background);
 }
 
 .sapUiCalItem {
@@ -278,7 +271,7 @@ html.sap-desktop .sapUiCalRow .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiC
 }
 
 .sapUiCalItemNow:not(.sapUiCalItemSel):not(.sapUiCalItemSelBetween) > .sapUiCalItemText {
-	box-shadow: inset 0 0 0 0.1875rem @_sap_ui_unified_Calendar_ItemBorderColor;
+	box-shadow: inset 0 0 0 0.1875rem var(--sapList_Background);
 }
 
 html.sap-desktop .sapUiCalItemSel:not(.sapUiCalItemNow):not(.sapUiCalItemSelBetween):focus > .sapUiCalDayName,
@@ -604,7 +597,7 @@ html.sap-desktop .sapUiSizeCozy .sapUiCalItem.sapUiCalItemNow:focus,
 
 .sapUiCalItemOtherMonth {
 	background-color: var(--sapList_Background);
-	color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
+	color: var(--sapContent_LabelColor);
 }
 
 .sapUiCalMonthSecType {
@@ -615,7 +608,7 @@ html.sap-desktop .sapUiSizeCozy .sapUiCalItem.sapUiCalItemNow:focus,
 		&:not(.sapUiCalItemSel) {
 
 			.sapUiCalItemSecText {
-				color: @_sap_ui_unified_Calendar_ItemOtherMonthColor;
+				color: var(--sapContent_LabelColor);
 			}
 		}
 	}
@@ -1218,7 +1211,7 @@ html.sap-desktop .sapUiSizeCompact .sapUiCalItem.sapUiCalItemNow:focus,
 }
 
 html.sap-desktop .sapUiCalItemSelBetween:hover {
-	background-color: @sapUiListSelectionHoverBackground;
+	background-color: var(--sapList_Hover_SelectionBackground);
 }
 
 html.sap-desktop .sapUiCalItemSelBetween:focus:not(:hover),
@@ -1630,23 +1623,23 @@ html.sap-desktop .sapUiSizeCompact .sapUiCalMonthSecType .sapUiCalItem.sapUiCalI
 	}
 }
 
-.dayColorMixIn(sapUiCalItemType01, @_sap_ui_unified_Calendar_sapUiCalItemType01);
-.dayColorMixIn(sapUiCalItemType02, @_sap_ui_unified_Calendar_sapUiCalItemType02);
-.dayColorMixIn(sapUiCalItemType03, @_sap_ui_unified_Calendar_sapUiCalItemType03);
-.dayColorMixIn(sapUiCalItemType04, @_sap_ui_unified_Calendar_sapUiCalItemType04);
-.dayColorMixIn(sapUiCalItemType05, @_sap_ui_unified_Calendar_sapUiCalItemType05);
-.dayColorMixIn(sapUiCalItemType06, @_sap_ui_unified_Calendar_sapUiCalItemType06);
-.dayColorMixIn(sapUiCalItemType07, @_sap_ui_unified_Calendar_sapUiCalItemType07);
-.dayColorMixIn(sapUiCalItemType08, @_sap_ui_unified_Calendar_sapUiCalItemType08);
-.dayColorMixIn(sapUiCalItemType09, @_sap_ui_unified_Calendar_sapUiCalItemType09);
-.dayColorMixIn(sapUiCalItemType10, @_sap_ui_unified_Calendar_sapUiCalItemType10);
-.dayColorMixIn(sapUiCalItemType11, @_sap_ui_unified_Calendar_sapUiCalItemType11);
-.dayColorMixIn(sapUiCalItemType12, @_sap_ui_unified_Calendar_sapUiCalItemType12);
-.dayColorMixIn(sapUiCalItemType13, @_sap_ui_unified_Calendar_sapUiCalItemType13);
-.dayColorMixIn(sapUiCalItemType14, @_sap_ui_unified_Calendar_sapUiCalItemType14);
-.dayColorMixIn(sapUiCalItemType15, @_sap_ui_unified_Calendar_sapUiCalItemType15);
-.dayColorMixIn(sapUiCalItemType16, @_sap_ui_unified_Calendar_sapUiCalItemType16);
-.dayColorMixIn(sapUiCalItemType17, @_sap_ui_unified_Calendar_sapUiCalItemType17);
-.dayColorMixIn(sapUiCalItemType18, @_sap_ui_unified_Calendar_sapUiCalItemType18);
-.dayColorMixIn(sapUiCalItemType19, @_sap_ui_unified_Calendar_sapUiCalItemType19);
-.dayColorMixIn(sapUiCalItemType20, @_sap_ui_unified_Calendar_sapUiCalItemType20);
+.dayColorMixIn(sapUiCalItemType01, var(--_sap_ui_unified_Calendar_sapUiCalItemType01));
+.dayColorMixIn(sapUiCalItemType02, var(--_sap_ui_unified_Calendar_sapUiCalItemType02));
+.dayColorMixIn(sapUiCalItemType03, var(--_sap_ui_unified_Calendar_sapUiCalItemType03));
+.dayColorMixIn(sapUiCalItemType04, var(--_sap_ui_unified_Calendar_sapUiCalItemType04));
+.dayColorMixIn(sapUiCalItemType05, var(--_sap_ui_unified_Calendar_sapUiCalItemType05));
+.dayColorMixIn(sapUiCalItemType06, var(--_sap_ui_unified_Calendar_sapUiCalItemType06));
+.dayColorMixIn(sapUiCalItemType07, var(--_sap_ui_unified_Calendar_sapUiCalItemType07));
+.dayColorMixIn(sapUiCalItemType08, var(--_sap_ui_unified_Calendar_sapUiCalItemType08));
+.dayColorMixIn(sapUiCalItemType09, var(--_sap_ui_unified_Calendar_sapUiCalItemType09));
+.dayColorMixIn(sapUiCalItemType10, var(--_sap_ui_unified_Calendar_sapUiCalItemType10));
+.dayColorMixIn(sapUiCalItemType11, var(--_sap_ui_unified_Calendar_sapUiCalItemType11));
+.dayColorMixIn(sapUiCalItemType12, var(--_sap_ui_unified_Calendar_sapUiCalItemType12));
+.dayColorMixIn(sapUiCalItemType13, var(--_sap_ui_unified_Calendar_sapUiCalItemType13));
+.dayColorMixIn(sapUiCalItemType14, var(--_sap_ui_unified_Calendar_sapUiCalItemType14));
+.dayColorMixIn(sapUiCalItemType15, var(--_sap_ui_unified_Calendar_sapUiCalItemType15));
+.dayColorMixIn(sapUiCalItemType16, var(--_sap_ui_unified_Calendar_sapUiCalItemType16));
+.dayColorMixIn(sapUiCalItemType17, var(--_sap_ui_unified_Calendar_sapUiCalItemType17));
+.dayColorMixIn(sapUiCalItemType18, var(--_sap_ui_unified_Calendar_sapUiCalItemType18));
+.dayColorMixIn(sapUiCalItemType19, var(--_sap_ui_unified_Calendar_sapUiCalItemType19));
+.dayColorMixIn(sapUiCalItemType20, var(--_sap_ui_unified_Calendar_sapUiCalItemType20));

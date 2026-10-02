@@ -403,14 +403,19 @@ TableRenderer.renderNoData = function(rm, oControl) {
 	}
 	rm.openEnd();
 
-	// Without visible columns the header only has the highlight + navigated cells (getColCount() is 2),
-	// so skip the pad cells and let nodata-text span all columns; otherwise colspan would be 0 (message invisible).
 	const bHasVisibleColumns = oControl.shouldRenderItems();
+	const bTrailingDummyColumn = bHasVisibleColumns && oControl.shouldRenderDummyColumn() && !oControl.hasPopin();
 	if (bHasVisibleColumns) {
 		rm.openStart("td").attr("role", "none").openEnd().close("td"); // empty cell for the highlight column
 	}
 	rm.openStart("td", oControl.getId("nodata-text"));
-	rm.attr("colspan", bHasVisibleColumns ? oControl.getColCount() - 2 : oControl.getColCount());
+	if (bHasVisibleColumns) {
+		// if the dummy column is included, only leave out the highlight cell; otherwise leave out highlight and navigated
+		rm.attr("colspan", oControl.getColCount() - (bTrailingDummyColumn ? 1 : 2));
+	} else {
+		// with no columns, the header only has the highlight and navigated cells, so span both of them
+		rm.attr("colspan", oControl.getColCount());
+	}
 	rm.class("sapMListTblCell").class("sapMListTblCellNoData");
 	if (oControl.getNoData() === null || ( typeof oControl.getNoData() === "string" || !oControl.getNoData().isA("sap.m.IllustratedMessage"))) {
 		rm.class("sapMListTblCellNoIllustratedMessage");
@@ -429,7 +434,8 @@ TableRenderer.renderNoData = function(rm, oControl) {
 	}
 
 	rm.close("td");
-	if (bHasVisibleColumns) {
+	if (bHasVisibleColumns && !bTrailingDummyColumn) {
+		// not needed when the dummy column is included, since nodata cell already covers the navigated column
 		rm.openStart("td").attr("role", "none").openEnd().close("td"); // empty cell for the navigated column
 	}
 	rm.close("tr");

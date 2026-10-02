@@ -223,10 +223,6 @@ sap.ui.define(["sap/ui/core/html/HTMLElement", "sap/html/library"], function (HT
 					"type": "boolean",
 					"mapping": "property"
 				},
-				"contenteditable": {
-					"type": "string",
-					"mapping": "property"
-				},
 				"dir": {
 					"type": "sap.html.enums.Direction",
 					"mapping": "property"

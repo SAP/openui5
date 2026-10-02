@@ -565,6 +565,56 @@ sap.ui.define([
 		return ObjectPageSection._getLibraryResourceBundle().getText(bHide ? "HIDE_ALL" : "SHOW_ALL");
 	};
 
+	/**
+	 * Intercepts F6 fast navigation when this section is opted out via CustomData sap-ui-fastnavgroup=false.
+	 * Redirects focus to the next (or previous) non-opted-out visible section, or falls back to the
+	 * anchor bar when no such section exists in the requested direction.
+	 *
+	 * @param {jQuery.Event} oEvent The <code>BeforeFastNavigationFocus</code> event
+	 * @private
+	 */
+	ObjectPageSection.prototype.onBeforeFastNavigationFocus = function (oEvent) {
+		if (this.data("sap-ui-fastnavgroup") !== "false") {
+			return;
+		}
+
+		var oLayout = this._getObjectPageLayout();
+		if (!oLayout) {
+			return;
+		}
+
+		var aSections = oLayout._getVisibleSections();
+		var iMyIdx = aSections.indexOf(this);
+
+		function isNotOptedOut(oSection) {
+			return oSection.data("sap-ui-fastnavgroup") !== "false";
+		}
+
+		var oTargetSection = oEvent.forward
+			? aSections.slice(iMyIdx + 1).find(isNotOptedOut)
+			: aSections.slice(0, iMyIdx).reverse().find(isNotOptedOut);
+
+		if (oTargetSection) {
+			var oDom = oTargetSection.getDomRef();
+			if (!oDom) {
+				return;
+			}
+			oEvent.preventDefault();
+			oLayout._setSectionsFocusValues(oTargetSection.getId());
+			oDom.focus();
+			return;
+		}
+
+		// No eligible section in the requested direction - fall back to the anchor bar
+		var oAnchorBar = oLayout.getAggregation("_anchorBar");
+		var oAnchorBarDom = oAnchorBar && oAnchorBar.getDomRef();
+		var oFocusable = oAnchorBarDom && oAnchorBarDom.querySelector('[tabindex="0"]');
+		if (oFocusable) {
+			oEvent.preventDefault();
+			oFocusable.focus();
+		}
+	};
+
 	StashedControlSupport.mixInto(ObjectPageSection);
 
 	return ObjectPageSection;

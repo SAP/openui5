@@ -1,10 +1,12 @@
 /* ====================================================== */
 /* CSS for control sap.m/SinglePlanningCalendarMonthGrid  */
-/* Horizon theme                                          */
+/* Morning Horizon theme                                  */
 /* ====================================================== */
 
 .calendarSpecialDayTypeColorMixIn(@class, @color) {
+
 	.sapMSPCMonthGrid {
+
 		.@{class} .specialDateIndicator {
 			background-color: @color;
 		}
@@ -33,7 +35,7 @@
 .calendarSpecialDayTypeColorMixIn(sapUiCalendarSpecialDayType20, @sapLegendColor20);
 
 html.sap-desktop .sapMSPCMonthDay:not(.sapMSPCMonthDayToday):focus::after,
-.sapMSPCMonthDay:not(.sapUiCalItemFocusFromTouch):not(.sapMSPCMonthDayToday):focus-visible::after  {
+.sapMSPCMonthDay:not(.sapUiCalItemFocusFromTouch):not(.sapMSPCMonthDayToday):focus-visible::after {
 	border: 0.125rem solid var(--sapContent_FocusColor);
 }
 
@@ -63,17 +65,21 @@ html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMar
 }
 
 html.sap-desktop .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
-    &:focus {
-        .sapUiCalendarAppCont::after {
-            border: .125rem solid var(--sapContent_FocusColor);
-        }
-    }
+
+	&:focus {
+
+		.sapUiCalendarAppCont::after {
+			border: .125rem solid var(--sapContent_FocusColor);
+		}
+	}
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
-    &:focus-visible {
-        .sapUiCalendarAppCont::after {
+
+	&:focus-visible {
+
+		.sapUiCalendarAppCont::after {
 			border: .125rem solid var(--sapContent_FocusColor);
-        }
-    }
+		}
+	}
 }

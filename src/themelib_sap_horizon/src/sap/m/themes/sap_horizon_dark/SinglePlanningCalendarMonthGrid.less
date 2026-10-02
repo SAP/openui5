@@ -4,7 +4,9 @@
 /* ====================================================== */
 
 .calendarSpecialDayTypeColorMixIn(@class, @color) {
+
 	.sapMSPCMonthGrid {
+
 		.@{class} .specialDateIndicator {
 			background-color: @color;
 		}
@@ -63,17 +65,21 @@ html.sap-desktop .sapMSPCMonthDay.sapMSPCMonthDayToday:focus .sapMSPCMonthNowMar
 }
 
 html.sap-desktop .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
-    &:focus {
-        .sapUiCalendarAppCont::after {
-            border: .125rem solid var(--sapContent_FocusColor);
-        }
-    }
+
+	&:focus {
+
+		.sapUiCalendarAppCont::after {
+			border: .125rem solid var(--sapContent_FocusColor);
+		}
+	}
 }
 
 .sapMSinglePCAppointmentWrap.sapUiCalendarRowApps {
-    &:focus-visible {
-        .sapUiCalendarAppCont::after {
+
+	&:focus-visible {
+
+		.sapUiCalendarAppCont::after {
 			border: .125rem solid var(--sapContent_FocusColor);
-        }
-    }
+		}
+	}
 }
