@@ -31,6 +31,13 @@ sap.ui.define([
 		oDomRef.dispatchEvent(oEvent);
 	}
 
+	// Reads the computed user-select value cross-browser. Safari exposes it as
+	// webkitUserSelect even when the style sheet uses the unprefixed property.
+	function getUserSelect(oEl) {
+		const oStyle = window.getComputedStyle(oEl);
+		return oStyle.userSelect || oStyle.webkitUserSelect;
+	}
+
 	QUnit.module("Construction");
 
 	QUnit.test("getEnableForTouchDevices defaults to true", function (assert) {
@@ -901,24 +908,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("touchstart disables selection on the host in computed styles", function (assert) {
-		assert.strictEqual(window.getComputedStyle(this.oDomRef).userSelect, "text",
+		assert.strictEqual(getUserSelect(this.oDomRef), "text",
 			"before touch: host text is selectable");
 		this.startTouch();
-		assert.strictEqual(window.getComputedStyle(this.oDomRef).userSelect, "none",
+		assert.strictEqual(getUserSelect(this.oDomRef), "none",
 			"after touch: host selection disabled");
 		this.endTouch();
-		assert.strictEqual(window.getComputedStyle(this.oDomRef).userSelect, "text",
+		assert.strictEqual(getUserSelect(this.oDomRef), "text",
 			"after touch release: host text is selectable again");
 	});
 
 	QUnit.test("touchstart disables selection on nested .sapUiSelectable text in computed styles", function (assert) {
-		assert.strictEqual(window.getComputedStyle(this.oInner).userSelect, "text",
+		assert.strictEqual(getUserSelect(this.oInner), "text",
 			"before touch: nested selectable text is selectable");
 		this.startTouch();
-		assert.strictEqual(window.getComputedStyle(this.oInner).userSelect, "none",
+		assert.strictEqual(getUserSelect(this.oInner), "none",
 			"after touch: nested selectable text selection disabled");
 		this.endTouch();
-		assert.strictEqual(window.getComputedStyle(this.oInner).userSelect, "text",
+		assert.strictEqual(getUserSelect(this.oInner), "text",
 			"after touch release: nested selectable text is selectable again");
 	});
 

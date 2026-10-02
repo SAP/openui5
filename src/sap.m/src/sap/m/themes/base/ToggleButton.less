@@ -85,19 +85,19 @@ html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
 	text-shadow: none;
 
 	&.sapMBtnReject {
-		background-color: darken(@sapUiButtonRejectActiveBackground, 5);
+		background-color: ~'hsl(from var(--sapButton_Reject_Active_Background) h s calc(l - .05))';
 		border-color: var(--sapButton_Reject_Active_BorderColor);
 		color: contrast(lighten(@sapUiButtonRejectActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	}
 
 	&.sapMBtnAccept {
-		background-color: darken(@sapUiButtonAcceptActiveBackground, 5);
+		background-color: ~'hsl(from var(--sapButton_Accept_Active_Background) h s calc(l - .05))';
 		border-color: var(--sapButton_Accept_Active_BorderColor);
 		color: contrast(lighten(@sapUiButtonAcceptActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	}
 
 	&.sapMBtnAttention {
-		background-color: darken(@sapUiButtonAttentionActiveBackground, 5);
+		background-color: ~'hsl(from var(--sapButton_Attention_Active_Background) h s calc(l - .05))';
 		border-color: var(--sapButton_Attention_Active_BorderColor);
 		color: contrast(lighten(@sapUiButtonAttentionActiveBackground, 5), @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 	}

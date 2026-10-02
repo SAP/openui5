@@ -1,21 +1,19 @@
 /* ========================================= */
 /* CSS for control sap.m/ViewSettingsDialog  */
-/* Fiori 3 theme                             */
+/* Quartz Light theme                        */
 /* ========================================= */
-
-@_sap_m_ViewSettingsDialog_HeaderBorderColor: darken(@sapUiGroupContentBackground, 8);
 
 .sapMVSD .sapMPageHeader {
 	z-index: 2;
 
 	.sapMBarTitleStart .sapMBarPH {
-		padding-left: 0rem;
+		padding-left: 0;
 	}
 }
 
 .sapMTB.sapMVSDFilterHeaderToolbar {
 	background-color: var(--sapGroup_ContentBackground);
-	border-bottom: 1px solid @_sap_m_ViewSettingsDialog_HeaderBorderColor;
+	border-bottom: 1px solid ~'hsl(from var(--sapGroup_ContentBackground) h s calc(l - 8))';
 	padding-left: 0;
 
 	.sapMBarChild.sapMCb {
@@ -33,7 +31,7 @@
 }
 
 .sapMVSD .sapMVSDBar {
-	box-shadow: @sapUiShadowHeader;
+	box-shadow: var(--sapContent_HeaderShadow);
 }
 
 .sapMVSDBarWithSearch.sapMBar,

@@ -3,7 +3,9 @@
 /* Base theme                  */
 /* =========================== */
 
-@_sap_m_Text_TextShadowInTransparentToolbar: none;
+.sapUI5Scope {
+	--_sap_m_Text_TextShadowInTransparentToolbar: none;
+}
 
 .sapMText {
 	display: inline-block;
@@ -11,7 +13,7 @@
 	white-space: pre-line;
 	word-wrap: break-word; /* works only if browser knows the width */
 	cursor: text;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	font-family: var(--sapFontFamily);
 	line-height: normal;
 	color: var(--sapTextColor);
@@ -77,7 +79,7 @@ html[data-sap-ui-browser='sf10'] {
 	cursor: pointer;
 }
 
-/*Necessary to align vertically to labels */
+/* Necessary to align vertically to labels */
 .sapUiForm .sapMText {
 	overflow: hidden;
 }
@@ -111,11 +113,11 @@ html[data-sap-ui-browser='sf10'] {
 	vertical-align: text-bottom;
 }
 
-/* Transparent Toolbar Context*/
+/* Transparent Toolbar Context */
 .sapMTB-Transparent-CTX .sapMText {
-	font-weight: @sapUiFontHeaderWeight;
+	font-weight: normal;
 	font-family: var(--sapFontHeaderFamily);
-	text-shadow: @_sap_m_Text_TextShadowInTransparentToolbar;
+	text-shadow: var(--_sap_m_Text_TextShadowInTransparentToolbar);
 	color: var(--sapGroup_TitleTextColor);
 }
 
@@ -142,8 +144,8 @@ html[data-sap-ui-browser^='cr'] .sapUiSizeCompact .sapUiFormEdit .sapMText {
 
 .sapUiTableHeaderDataCell .sapMText,
 .sapMColumnHeader .sapMText {
-	font-weight: @sapUiColumnHeaderFontWeight;
-	font-size: @sapUiColumnHeaderFontSize;
+	font-weight: normal;
+	font-size: var(--sapFontSize);
 	color: var(--sapList_HeaderTextColor);
 }
 
