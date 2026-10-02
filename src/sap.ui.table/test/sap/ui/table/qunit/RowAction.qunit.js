@@ -436,6 +436,23 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
+	QUnit.test("onKeyboardShortcut", function(assert) {
+		let oEventParams1;
+		let oEventParams2;
+		const oRowActionItem1 = new RowActionItem("I1", {type: "Navigation", press: (oEvent) => { oEventParams1 = oEvent.getParameters(); }});
+		const oRowActionItem2 = new RowActionItem("I2", {type: "Delete", press: (oEvent) => { oEventParams2 = oEvent.getParameters(); }});
+		this.oRowAction.addItem(oRowActionItem1);
+		this.oRowAction.addItem(oRowActionItem2);
+
+		oRowActionItem1.onKeyboardShortcut("navigation");
+		oRowActionItem2.onKeyboardShortcut("navigation");
+
+		assert.ok(!!oEventParams1, "Press Event Triggered on navigation item");
+		assert.equal(oEventParams1.row, this.oRow, "Event Parameter 'row'");
+		assert.equal(oEventParams1.item, oRowActionItem1, "Event Parameter 'item'");
+		assert.notOk(!!oEventParams2, "Press Event not Triggered on deletion item");
+	});
+
 	QUnit.module("ACC", {
 		beforeEach: async function() {
 			this.oRowAction = new RowAction();

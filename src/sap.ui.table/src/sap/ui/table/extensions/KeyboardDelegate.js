@@ -1979,5 +1979,26 @@ sap.ui.define([
 		handleSpaceAndEnter(this, oEvent);
 	};
 
+	KeyboardDelegate.prototype.onsapentermodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			return;
+		}
+
+		const oKeyboardExtension = this._getKeyboardExtension();
+
+		if (oKeyboardExtension.isInActionMode()) {
+			return;
+		}
+
+		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.ALT)) {
+			const oCellInfo = TableUtils.getCellInfo(oEvent.target);
+			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
+				const oRow = this.getRows()[oCellInfo.rowIndex];
+				oRow.onKeyboardShortcut("navigation");
+				handleNavigationEvent(oEvent);
+			}
+		}
+	};
+
 	return KeyboardDelegate;
 });

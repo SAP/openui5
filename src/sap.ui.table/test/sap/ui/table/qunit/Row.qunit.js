@@ -308,6 +308,20 @@ sap.ui.define([
 			"_setFocus(true): focus is set on the first interactive element");
 	});
 
+	QUnit.test("Keyboard-shortcut on Row", function(assert) {
+		const oRow = this.oTable.getRows()[0];
+		const oRowAction = oRow.getRowAction();
+		const oRowActionItem1 = oRowAction.getItems()[0];
+		const oRowActionItem2 = oRowAction.getItems()[1];
+		sinon.spy(oRowActionItem1, "onKeyboardShortcut");
+		sinon.spy(oRowActionItem2, "onKeyboardShortcut");
+
+		oRow.onKeyboardShortcut("navigation");
+
+		assert.ok(oRowActionItem1.onKeyboardShortcut.calledWith("navigation"), "onKeyboardShortcut called on first action item");
+		assert.ok(oRowActionItem2.onKeyboardShortcut.calledWith("navigation"), "onKeyboardShortcut called on second action item");
+	});
+
 	QUnit.module("Hooks", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable();

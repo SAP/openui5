@@ -2991,6 +2991,80 @@ sap.ui.define([
 		table.destroy();
 	});
 
+	QUnit.test("Navigation with Alt+Enter", async function(assert) {
+		const sut = createSUT(true, true, "SingleSelectMaster");
+		const fnItemPressSpy = sinon.spy();
+		sut.getItems()[0].setType("Navigation");
+		sut.attachItemPress(fnItemPressSpy);
+		sut.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		sut.getItems()[0].focus();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.calledOnce, "ItemPress event is triggered once on navigateable row");
+		fnItemPressSpy.reset();
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.calledOnce, "ItemPress event is triggered once on navigateable cell");
+		fnItemPressSpy.reset();
+
+		sut.getItems()[1].focus();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.notCalled, "ItemPress event is not triggered on not-navigateable row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.notCalled, "ItemPress event is not triggered on not navigateable cell");
+		sut.destroy();
+	});
+
+	QUnit.test("Navigation with Alt+Enter in Popin", async function(assert) {
+		const sut = createSUT(true, true, "SingleSelectMaster");
+		const fnItemPressSpy = sinon.spy();
+		sut.getItems()[0].setType("Navigation");
+		sut.attachItemPress(fnItemPressSpy);
+
+		for (const oColumn of sut.getColumns()) {
+			oColumn.setDemandPopin(true);
+			oColumn.setMinScreenWidth("48000px");
+		}
+
+		sut.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		sut.getItems()[0].focus();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.calledOnce, "ItemPress event is triggered once");
+		fnItemPressSpy.reset();
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT"); // first cell
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT"); // navigation cell
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT"); // sub-row
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.calledOnce, "ItemPress event is triggered once");
+		fnItemPressSpy.reset();
+
+		sut.getItems()[1].focus();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.notCalled, "ItemPress event is not triggered");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT"); // first cell
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT"); // navigation cell
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT"); // sub-row
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER, false, true, false);
+		await timeout();
+		assert.ok(fnItemPressSpy.notCalled, "ItemPress event is not triggered");
+		sut.destroy();
+	});
+
 	QUnit.module("Forced columns");
 
 	QUnit.test("The one column must stay in the tabular layout", async function(assert) {

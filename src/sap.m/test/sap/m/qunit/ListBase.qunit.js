@@ -1978,6 +1978,14 @@ sap.ui.define([
 			fnItemPressSpy.resetHistory();
 			fnPressSpy.resetHistory();
 
+			qutils.triggerKeydown(document.activeElement, "ENTER", false, true, false);
+			await timeout();
+
+			assert.strictEqual(fnItemPressSpy.callCount, 1, "ItemPress event is fired async when alt+Enter is pressed while focus is at the item");
+			assert.strictEqual(fnPressSpy.callCount, 1, "Press event is fired async when alt+Enter is pressed while focus is at the item");
+			fnItemPressSpy.resetHistory();
+			fnPressSpy.resetHistory();
+
 			qutils.triggerEvent("keydown", document.activeElement, {code: "KeyE", ctrlKey: true});
 			assert.strictEqual(fnDetailPressSpy.callCount, 0, "DetailPress event is not called since first item has not Edit type");
 
