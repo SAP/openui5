@@ -6,9 +6,9 @@ sap.ui.define([
 	'sap/m/library',
 	'sap/ui/core/library',
 	"sap/ui/core/ControlBehavior",
-	"sap/ui/dom/getScrollbarSize",
+	"sap/ui/core/Lib",
 	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
-], function(Device, library, coreLibrary, ControlBehavior, getScrollbarSize) {
+], function(Device, library, coreLibrary, ControlBehavior, Library) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -233,6 +233,10 @@ sap.ui.define([
 				.close("span");	// arrow tip
 		}
 
+		if (oControl.getResizable()) {
+			PopoverRenderer.renderKeyboardResizeHandle(oRm, oControl);
+		}
+
 		if (Device.system.desktop) {
 			//invisible element for desktop keyboard navigation
 			oRm.openStart("span", oControl.getId() + "-middlefe")
@@ -312,13 +316,40 @@ sap.ui.define([
 		return aClassNames.concat(oControl.aCustomStyleClasses);
 	};
 
+	/**
+	 * Renders the hidden, focusable element for keyboard-driven resizing.
+	 *
+	 * Kept separate from the mouse-only corner handle so the whole popover can show a
+	 * resize focus outline (via CSS <code>:has()</code>) without disturbing content focus.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager
+	 * @param {sap.m.Popover} oControl The popover being rendered
+	 */
+	PopoverRenderer.renderKeyboardResizeHandle = function(oRm, oControl) {
+		const oRb = Library.getResourceBundleFor("sap.m"),
+			oDescText = oControl._getResizeHandleDescribedByText();
+
+		oRm.openStart("span", oControl.getId() + "-keyboardHandle")
+			.class("sapMPopoverKeyboardResizeHandle")
+			.attr("tabindex", "0")
+			.attr("role", "img")
+			.attr("aria-roledescription", oRb.getText("POPOVER_HANDLE_ARIA_ROLEDESCRIPTION"))
+			.attr("aria-label", oRb.getText("POPOVER_RESIZE_HANDLE_ARIA_LABEL"))
+			.attr("aria-describedby", oDescText.getId())
+			.openEnd()
+			.close("span");
+
+		// Invisible description announcing the resize shortcut.
+		oRm.renderControl(oDescText);
+	};
+
 	PopoverRenderer.renderResizeHandle = function(oRm, sId) {
 		oRm.openStart("div", sId + "-resizeHandle")
 			.class("sapMPopoverResizeHandle")
 			.openEnd();
 
 		oRm.icon("sap-icon://resize-corner", ["sapMPopoverResizeHandleIcon"], {
-			"aria-hidden": true
+			"title": Library.getResourceBundleFor("sap.m").getText("POPOVER_RESIZE_HANDLE_TOOLTIP"), "aria-label": null
 		});
 
 		oRm.close("div");

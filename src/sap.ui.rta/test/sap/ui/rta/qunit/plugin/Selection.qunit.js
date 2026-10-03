@@ -515,6 +515,20 @@ sap.ui.define([
 			assert.ok(oHBoxOverlay.getMovable(), "then the parent is movable again after mouse-leave event");
 		});
 
+		QUnit.test("Invoking Mouse-Over on a second Overlay when the Mouse-Leave of the first was skipped (e.g. context menu)", function(assert) {
+			const oHBoxOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("container1"));
+			oHBoxOverlay.setMovable(true);
+			const oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			const oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			oOverlay1.getDomRef().dispatchEvent(new Event("mouseover"));
+			assert.notOk(oHBoxOverlay.getMovable(), "then the movable parent is not movable while the first overlay is hovered");
+			// No "mouseleave" is fired for the first overlay, e.g. because a context menu was opened
+			oOverlay2.getDomRef().dispatchEvent(new Event("mouseover"));
+			assert.notOk(oHBoxOverlay.getMovable(), "then the movable parent is still not movable while the second overlay is hovered");
+			oOverlay2.getDomRef().dispatchEvent(new Event("mouseleave"));
+			assert.ok(oHBoxOverlay.getMovable(), "then the parent is movable again after the mouse-leave of the second overlay");
+		});
+
 		QUnit.test("Invoking Mouse-Over on an Overlay which is not selectable", function(assert) {
 			const oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);

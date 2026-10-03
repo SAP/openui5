@@ -558,9 +558,20 @@ function(
 		const oDynamicPageTitle = oDynamicPage.getTitle();
 		const oDynamicPageHeader = oDynamicPage.getHeader();
 
-		assert.strictEqual(this.oDynamicPage.$("header").css("z-index"), "3", "z-index of DynamicPageTitleWrapper is bigger than all FCL columns - begin, mid, end");
+		assert.strictEqual(this.oDynamicPage.$("header").css("z-index"), "4", "z-index of DynamicPageTitleWrapper is bigger than all FCL columns - begin, mid, end");
 		assert.strictEqual(oDynamicPageTitle.$().css("z-index"), "4", "z-index of DynamicPageTitle is bigger than all FCL columns - begin, mid, end");
 		assert.strictEqual(oDynamicPageHeader.$().css("z-index"), "3", "z-index of DynamicPageHeader is bigger than all FCL columns - begin, mid, end");
+	});
+
+	QUnit.test("DynamicPageTitleWrapper z-index is always higher than DynamicPageHeader to prevent title overlap during scroll", function (assert) {
+		const oDynamicPage = this.oDynamicPage;
+		const oDynamicPageHeader = oDynamicPage.getHeader();
+
+		const iTitleWrapperZIndex = parseInt(oDynamicPage.$("header").css("z-index"));
+		const iHeaderZIndex = parseInt(oDynamicPageHeader.$().css("z-index"));
+
+		assert.ok(iTitleWrapperZIndex > iHeaderZIndex,
+			"TitleWrapper z-index (" + iTitleWrapperZIndex + ") is higher than header z-index (" + iHeaderZIndex + ")");
 	});
 
 	QUnit.test("DynamicPage Page, Title and Header rendered", function (assert) {

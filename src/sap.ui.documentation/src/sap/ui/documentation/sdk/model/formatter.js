@@ -139,13 +139,17 @@ sap.ui.define([
 			formatApiHref: function (sClassName, sEntityId, sEntityType, bStatic) {
 				var sHref;
 
-				if (bStatic) {
+				if (bStatic && !(sClassName.startsWith("module:") && sEntityType === "events")) {
 					sEntityId = sClassName + "." + sEntityId;
 				}
 
 				sHref = "api/" + sClassName;
 				if (sEntityType !== "class") {
-					sHref += "/" + sEntityType + "/" + sEntityId;
+					if (sClassName.startsWith("module:")) {
+						sHref += "#" + sEntityType + "/" + sEntityId;
+					} else {
+						sHref += "/" + sEntityType + "/" + sEntityId;
+					}
 				}
 				return sHref;
 			},

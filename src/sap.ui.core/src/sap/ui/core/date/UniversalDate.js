@@ -815,7 +815,7 @@ sap.ui.define([
 	 * Sets the UTC calendar week
 	 *
 	 * @param {{week: int, year: int}} oWeek the calendar week, note: week index starts with <code>0</code>,
-	 *   <code>oWeek.year</code> is optional and defaults to {@link sap.ui.core.date.UniversalDate#getFullYear}
+	 *   <code>oWeek.year</code> is optional and defaults to {@link sap.ui.core.date.UniversalDate#getUTCFullYear}
 	 * @param {sap.ui.core.Locale} [oLocale] the locale used to get the calendar week calculation properties, defaults to the formatLocale
 	 * @param {module:sap/base/i18n/date/CalendarWeekNumbering|{firstDayOfWeek: int, minimalDaysInFirstWeek: int}} [vCalendarWeekNumbering]
 	 *   calendar week numbering or object with fields <code>firstDayOfWeek</code> and <code>minimalDaysInFirstWeek</code>,
@@ -832,7 +832,7 @@ sap.ui.define([
 	 * </ul>
 	 */
 	UniversalDate.prototype.setUTCWeek = function(oWeek, oLocale, vCalendarWeekNumbering) {
-		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week, oLocale, vCalendarWeekNumbering);
+		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getUTCFullYear(), oWeek.week, oLocale, vCalendarWeekNumbering);
 		this.setUTCFullYear(oDate.year, oDate.month, oDate.day);
 	};
 

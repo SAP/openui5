@@ -298,6 +298,13 @@ sap.ui.define([
 				preventEventDefaultAndPropagation(oEvent);
 			}
 		} else if (oOverlay.isSelectable()) {
+			// The "mouseleave" event is not always fired before the next "mouseover" (e.g. while a
+			// context menu is open and the mouse moves back onto an overlay). Release the parent held
+			// by the previously hovered overlay first, otherwise the still non-movable parent would be
+			// skipped when determining the first movable parent below and could never be reset again.
+			if (this._oHoverTarget) {
+				OverlayUtil.setFirstParentMovable(this._oHoverTarget, true);
+			}
 			OverlayUtil.setFirstParentMovable(oOverlay, false);
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();

@@ -306,6 +306,24 @@ sap.ui.define([
 			new UniversalDate(Date.UTC(2020, 11, 27)).getJSDate().toUTCString());
 	});
 
+	QUnit.test("setUTCWeek without year", function (assert) {
+		this.dateSpy.restore();
+
+		const sTimezone = Localization.getTimezone();
+		Localization.setTimezone("Europe/Berlin");
+		// Local date is already in 2027, while the UTC date is still in 2026.
+		const oDate = new UniversalDate(Date.UTC(2026, 11, 31, 23, 30));
+
+		// code under test
+		oDate.setUTCWeek({week: 39}, new Locale("de"), CalendarWeekNumbering.ISO_8601);
+
+		assert.strictEqual(
+			oDate.getJSDate().toUTCString(),
+			new UniversalDate(Date.UTC(2026, 8, 28, 23, 30)).getJSDate().toUTCString()
+		);
+		Localization.setTimezone(sTimezone);
+	});
+
 	QUnit.test("getWeek/getUTCWeek with locale en_US (split week)", function (assert) {
 		this.dateSpy.restore();
 

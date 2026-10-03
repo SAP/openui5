@@ -39,16 +39,16 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	// Full popover: title, focusable content actions and a footer with buttons.
 	const popover = new Popover("popover", {
 		title: "Popover Popover Popover Popover",
 		placement: mLibrary.PlacementType.Top,
 		content: [
 			new Text({
-				text: "This is a Popover control. Popover is a dialog that appears on top of the content and must be closed by user interaction. It can contain any kind of content. This is a Popover control. Popover is a dialog that appears on top of the content and must be closed by user interaction. It can contain any kind of content. "
+				text: "This is a Popover control. Popover is a dialog that appears on top of the content and must be closed by user interaction. It can contain any kind of content."
 			})
 		],
-		contentWidth: "200px",
-		contentHeight: "100px",
+		contentWidth: "300px",
 		resizable: true,
 		initialFocus: "closeBtn",
 		footer: new OverflowToolbar({
@@ -70,6 +70,36 @@ sap.ui.define([
 		})
 	});
 
+	// No title/header: observe where focus lands and how the handle is reached
+	// when there is no header bar to stop at.
+	const popoverNoTitle = new Popover("popoverNoTitle", {
+		showHeader: false,
+		placement: mLibrary.PlacementType.Top,
+		content: [
+			new Text({
+				text: "This Popover has no title/header. On open, the keyboard resize handle is focused."
+			})
+		],
+		contentWidth: "220px",
+		resizable: true
+	}).addStyleClass("sapUiContentPadding");
+
+	// No focusable elements at all: plain text, no header, no footer. The resize
+	// handle is the only focus target — useful to see where focus goes on open.
+	const popoverNoFocus = new Popover("popoverNoFocus", {
+		showHeader: false,
+		placement: mLibrary.PlacementType.Top,
+		content: [
+			new Text({
+				text: "This Popover has no focusable content, no header and no footer. The keyboard resize handle is the only focusable element inside it."
+			})
+		],
+		contentWidth: "220px",
+		resizable: true
+	}).addStyleClass("sapUiContentPadding");
+
+	const aPopovers = [popover, popoverNoTitle, popoverNoFocus];
+
 	const simpleForm = new SimpleForm({
 		editable: true,
 		content: [
@@ -84,7 +114,7 @@ sap.ui.define([
 					new SegmentedButtonItem("left", { text: "Left", key: "Left" })
 				],
 				selectionChange: (event) => {
-					popover.setPlacement(event.getSource().getSelectedKey());
+					aPopovers.forEach((p) => p.setPlacement(event.getSource().getSelectedKey()));
 				}
 			}),
 			new Label({
@@ -97,7 +127,7 @@ sap.ui.define([
 					new SegmentedButtonItem("offsetXM100", { text: "-100", key: "-100" })
 				],
 				selectionChange: (event) => {
-					popover.setOffsetX(parseInt(event.getSource().getSelectedKey()));
+					aPopovers.forEach((p) => p.setOffsetX(parseInt(event.getSource().getSelectedKey())));
 				}
 			}),
 			new Label({
@@ -110,7 +140,7 @@ sap.ui.define([
 					new SegmentedButtonItem("offsetYM50", { text: "-50", key: "-50" })
 				],
 				selectionChange: (event) => {
-					popover.setOffsetY(parseInt(event.getSource().getSelectedKey()));
+					aPopovers.forEach((p) => p.setOffsetY(parseInt(event.getSource().getSelectedKey())));
 				}
 			}),
 			new Label({
@@ -135,7 +165,7 @@ sap.ui.define([
 				customTextOn: "On",
 				customTextOff: "Off",
 				change: function (event) {
-					popover.setShowArrow(event.getParameter("state"));
+					aPopovers.forEach((p) => p.setShowArrow(event.getParameter("state")));
 				}
 			}),
 			new Switch("rtl", {
@@ -161,9 +191,21 @@ sap.ui.define([
 				alignItems: mLibrary.FlexAlignItems.Center,
 				items: [
 					new Button("btnOpen", {
-						text: "Open Popover",
+						text: "Open (title + footer)",
 						press: function () {
 							popover.openBy(this);
+						}
+					}),
+					new Button("btnOpenNoTitle", {
+						text: "Open (no title)",
+						press: function () {
+							popoverNoTitle.openBy(this);
+						}
+					}),
+					new Button("btnOpenNoFocus", {
+						text: "Open (no focusable content)",
+						press: function () {
+							popoverNoFocus.openBy(this);
 						}
 					})
 				]
