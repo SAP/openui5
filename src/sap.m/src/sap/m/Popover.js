@@ -24,13 +24,13 @@ sap.ui.define([
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/StaticArea',
 	'./PopoverRenderer',
+	'./PopoverResize',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/base/util/clamp",
 	"sap/m/dialogUtils/PreventKeyboardEvents",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable",
@@ -58,13 +58,13 @@ sap.ui.define([
 		ResizeHandler,
 		StaticArea,
 		PopoverRenderer,
+		PopoverResize,
 		containsOrEquals,
 		Rem,
 		jQuery,
 		getScrollbarSize,
 		KeyCodes,
 		Log,
-		clamp,
 		PreventKeyboardEvents
 	) {
 		"use strict";
@@ -287,7 +287,7 @@ sap.ui.define([
 
 					/**
 					 * Any control that needed to be displayed in the header area. When this is set, the showHeader property is ignored, and only this customHeader is shown on the top of popover.
-					* <br/><b>Note:</b> To improve accessibility, titles with heading level <code>H1</code> should be used inside the custom header.
+					 * <br/><b>Note:</b> To improve accessibility, titles with heading level <code>H1</code> should be used inside the custom header.
 					 */
 					customHeader: {type: "sap.ui.core.Control", multiple: false},
 
@@ -425,10 +425,7 @@ sap.ui.define([
 			// min-width: 6.25rem;
 			// min-height: 2rem;
 			// This property is used to limit the resizing
-			this._minDimensions = {
-				width: 100,
-				height: 32
-			};
+			this._oResize = new PopoverResize(this);
 
 			this._initialWindowDimensions = {};
 
@@ -628,7 +625,7 @@ sap.ui.define([
 				}
 
 				that._deregisterContentResizeHandler();
-				that._resetSizes();
+				that._resetResizeValues();
 
 				if (this._sTimeoutId && arguments.length > 1) {
 					clearTimeout(this._sTimeoutId);
@@ -806,7 +803,6 @@ sap.ui.define([
 
 			this.removeDelegate(this._oRestoreFocusDelegate);
 			this._oRestoreFocusDelegate = null;
-			this._sResizeHandleClass = null;
 
 			if (this.oPopup) {
 				this.oPopup.detachClosed(this._handleClosed, this);
@@ -829,6 +825,10 @@ sap.ui.define([
 				this._headerTitle = null;
 			}
 
+			if (this._oResize) {
+				this._oResize.destroy();
+				this._oResize = null;
+			}
 		};
 		/* =========================================================== */
 		/*                   end: lifecycle methods                    */
@@ -1140,6 +1140,10 @@ sap.ui.define([
 		 * @private
 		 */
 		Popover.prototype._includeScrollWidth = function () {
+			if (this.isDestroyed()) {
+				return;
+			}
+
 			var sContentWidth = this._getActualContentWidth(),
 				$popover = this.$(),
 				iMaxWidth = Math.floor(window.innerWidth * 0.9), //90% of the max screen size
@@ -1182,8 +1186,9 @@ sap.ui.define([
 
 			// Set focus to the first visible focusable element
 			var sFocusId = this._getInitialFocusId(),
-			oControl = Element.getElementById(sFocusId),
-			oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
+				oControl = Element.getElementById(sFocusId),
+				oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
+
 			if (oControl && oControl.getFocusDomRef()){
 				oControl.getFocusDomRef().focus();
 			} else if (!oControl && oDomById){
@@ -1208,7 +1213,7 @@ sap.ui.define([
 			// If the popover is closed, the focused element has to be blurred on mobile device to close the on
 			// screen keyboard when the element isn't visible
 			if (!this.oPopup._bModal && !Device.system.desktop && document.activeElement && !jQuery(document.activeElement).is(":visible")) {
-				 document.activeElement.blur();
+				document.activeElement.blur();
 			}
 
 			this.fireAfterClose({openBy: this._oOpenBy});
@@ -1305,7 +1310,10 @@ sap.ui.define([
 				//event should not trigger any further actions
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
+				return;
 			}
+
+			this._keyboardResize(oEvent);
 		};
 
 		/**
@@ -1323,290 +1331,70 @@ sap.ui.define([
 			}
 		};
 
-		Popover.prototype._getResizeHandlePlacement = function () {
-			if (this._resizeHandlePlacement) {
-				return this._resizeHandlePlacement;
-			}
+		/* =========================================================== */
+		/*                      resize delegation                      */
+		/* =========================================================== */
 
-			const popoverWrapper = this.getDomRef().querySelector(".sapMPopoverWrapper");
-			const opener = this._getOpenByDomRef();
-			const offset = 2;
-
-			const openerRect = opener.getBoundingClientRect();
-			const popoverWrapperRect = popoverWrapper.getBoundingClientRect();
-
-			let openerCX = Math.floor(openerRect.x + openerRect.width / 2);
-			const openerCY = Math.floor(openerRect.y + openerRect.height / 2);
-
-			let popoverCX = Math.floor(popoverWrapperRect.x + popoverWrapperRect.width / 2);
-			const popoverCY = Math.floor(popoverWrapperRect.y + popoverWrapperRect.height / 2);
-
-			if (Localization.getRTL()) {
-				openerCX = -openerCX;
-				popoverCX = -popoverCX;
-			}
-
-			switch (this._getCalculatedPlacement()) {
-				case PlacementType.Left:
-					if (popoverCY > openerCY + offset) {
-						return "BottomLeft";
-					}
-
-					return "TopLeft";
-				case PlacementType.Right:
-					if (popoverCY + offset < openerCY) {
-						return "TopRight";
-					}
-
-					return "BottomRight";
-				case PlacementType.Bottom:
-					if (!this.getShowArrow()) {
-						return "BottomRight";
-					}
-
-					if (popoverCX + offset < openerCX) {
-						return "BottomLeft";
-					}
-
-					return "BottomRight";
-				case PlacementType.Top:
-				default:
-					if (!this.getShowArrow()) {
-						return "TopRight";
-					}
-
-					if (popoverCX + offset < openerCX) {
-						return "TopLeft";
-					}
-
-					return "TopRight";
-			}
-		};
-
-		/**
-		 * Takes care of resizing the popover
-		 * @param {jQuery.Event} oEvent The event object
-		 */
 		Popover.prototype.onmousedown = function (oEvent) {
-			if (!oEvent.target.closest(".sapMPopoverResizeHandle")) {
-				return;
-			}
-
-			const $d = jQuery(document);
-			const $popover = this.$();
-			const $popoverContent = this.$("cont");
-			const contentHeight = $popoverContent.height();
-			const $arrow = this.$("arrow");
-			const $scrollArea = this.$("scroll");
-			const calculatedPlacement = this._getCalculatedPlacement();
-			const posParams = this._getPositionParams($popover, $arrow, $popoverContent, $scrollArea);
-			const contentDimensions = this._getContentDimensionsCss(calculatedPlacement, posParams);
-
-			$popover.addClass('sapMPopoverResizing');
-
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
-
-			// Consider user-defined maxHeight if set
-			const userMaxHeight = this.getMaxHeight();
-			let maxContentHeight = parseFloat(contentDimensions["max-height"]);
-
-			if (userMaxHeight) {
-				// Convert user's maxHeight to pixels if needed and subtract header/footer height
-				const footerHeaderHeight = $popover.height() - contentHeight;
-				let userMaxHeightPx;
-
-				if (userMaxHeight.endsWith('%')) {
-					userMaxHeightPx = (parseFloat(userMaxHeight) / 100) * posParams._fDocumentHeight;
-				} else if (userMaxHeight.endsWith('rem')) {
-					userMaxHeightPx = Rem.toPx(userMaxHeight);
-				} else {
-					userMaxHeightPx = parseFloat(userMaxHeight);
-				}
-
-				const userMaxContentHeight = userMaxHeightPx - footerHeaderHeight;
-				maxContentHeight = Math.min(maxContentHeight, userMaxContentHeight);
-			}
-
-			const initial = {
-				x: oEvent.pageX,
-				y: oEvent.pageY,
-
-				width: $popover.width(),
-				height: contentHeight,
-				maxWidth: parseFloat(contentDimensions["max-width"]),
-				maxHeight: maxContentHeight,
-				footerHeaderHeight: $popover.height() - contentHeight,
-				offsetX: this._getActualOffsetX(),
-				offsetY: this._getActualOffsetY(),
-				left: parseFloat($popover.css("left")),
-				top: parseFloat($popover.css("top")),
-				posParams: posParams,
-				// Snapshot the margins now so the drag uses fixed bounds — the opener
-				// does not move during a resize, so its reserved margins stay constant.
-				margins: Positioning.getEffectiveMargins(this._getMarginFoldParams(calculatedPlacement))
-			};
-
-			// prevent autoclose during resizing
-			const isAutoClose = this.oPopup.getAutoClose();
-			this.oPopup.setAutoClose(false);
-
-			this._resizeHandlePlacement = this._getResizeHandlePlacement();
-
-			$d.on("mousemove.sapMPopover", (e) => {
-				this._resize(initial, e);
-			});
-
-			$d.on("mouseup.sapMPopover", () => {
-				$popover.removeClass("sapMPopoverResizing");
-				$d.off("mouseup.sapMPopover, mousemove.sapMPopover");
-				this._resizeHandlePlacement = null;
-
-				if (this.oPopup) {
-					this.oPopup.setAutoClose(isAutoClose);
-				}
-			});
+			this._oResize.onmousedown(oEvent);
 		};
 
-		Popover.prototype._resize = function (initial, e) {
-			this._resized = true;
+		Popover.prototype._keyboardResize = function (oEvent) {
+			return this._oResize._keyboardResize(oEvent);
+		};
 
-			const placement = this._getCalculatedPlacement();
-			const resizeHandlePlacement = this._getResizeHandlePlacement();
-			const posParams = initial.posParams;
-			const withinAreaWidth = posParams._fWithinAreaWidth;
-			const withinAreaHeight = posParams._fWithinAreaHeight;
-			const isRTL = Localization.getRTL();
+		Popover.prototype._getResizeHandlePlacement = function () {
+			return this._oResize._getResizeHandlePlacement();
+		};
 
-			let dx;
-			let dy = initial.y - e.pageY;
-			let width;
-			let height;
-			let offsetX;
-			let offsetY;
-
-			if (isRTL) {
-				dx = initial.x - e.pageX;
-			} else {
-				dx = e.pageX - initial.x;
-			}
-
-			let maxWidthLeftSide;
-			let maxWidthRightSide;
-
-			if (isRTL) {
-				maxWidthRightSide = initial.width + initial.left - initial.margins.left;
-				maxWidthLeftSide = withinAreaWidth - initial.left - initial.margins.right;
-			} else {
-				maxWidthLeftSide = initial.width + initial.left - initial.margins.left;
-				maxWidthRightSide = withinAreaWidth - initial.left - initial.margins.right;
-			}
-
-			const maxHeightTopSide = initial.height + initial.top - initial.margins.top;
-			const maxHeightBottomSide = withinAreaHeight - initial.footerHeaderHeight - initial.top - initial.margins.bottom;
-
-			if (!this.getShowArrow() && (placement === PlacementType.Top || placement === PlacementType.Bottom)) {
-				if (placement === PlacementType.Bottom) {
-					dy = -dy;
-				}
-
-				this.resizedWidth = Math.max(initial.width + dx, this._minDimensions.width) + 'px';
-				this.resizedHeight = Math.max(initial.height + dy, this._minDimensions.height) + 'px';
-
-				this.invalidate();
-				return;
-			}
-
-			switch (placement) {
-				case PlacementType.Top:
-					height = clamp(initial.height + dy, this._minDimensions.height, Math.min(maxHeightTopSide, initial.maxHeight));
-
-					if (resizeHandlePlacement === "TopRight") {
-						width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
-						offsetX = Math.max(0, initial.offsetX + (width - initial.width) / 2);
-					} else { // TopLeft
-						width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
-						offsetX = Math.min(-1, initial.offsetX + (initial.width - width) / 2);
-					}
-
-					this.resizedOffsetX = Math.round(offsetX);
-					break;
-				case PlacementType.Bottom:
-					height = clamp(initial.height - dy, this._minDimensions.height, Math.min(maxHeightBottomSide, initial.maxHeight));
-
-					if (resizeHandlePlacement === "BottomRight") {
-						width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
-						offsetX = Math.max(0, initial.offsetX + (width - initial.width) / 2);
-					} else { // TopLeft
-						width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
-						offsetX = Math.min(-1, initial.offsetX + (initial.width - width) / 2);
-					}
-
-					this.resizedOffsetX = Math.round(offsetX);
-					break;
-				case PlacementType.Left:
-					width = clamp(initial.width - dx, this._minDimensions.width, maxWidthLeftSide);
-
-					if (resizeHandlePlacement === "TopLeft") {
-						height = clamp(initial.height + dy, this._minDimensions.height, Math.min(maxHeightTopSide, initial.maxHeight));
-						offsetY = Math.min(0, initial.offsetY + (initial.height - height) / 2);
-					} else { // BottomLeft
-						height = clamp(initial.height - dy, this._minDimensions.height, Math.min(maxHeightBottomSide, initial.maxHeight));
-						offsetY = Math.max(1, initial.offsetY + (height - initial.height) / 2);
-					}
-
-					this.resizedOffsetY = Math.round(offsetY);
-					break;
-				case PlacementType.Right:
-					width = clamp(initial.width + dx, this._minDimensions.width, maxWidthRightSide);
-
-					if (resizeHandlePlacement === "TopRight") {
-						height = clamp(initial.height + dy, this._minDimensions.height, Math.min(maxHeightTopSide, initial.maxHeight));
-						offsetY = Math.min(-1, initial.offsetY + (initial.height - height) / 2);
-					}	else { // BottomRight
-						height = clamp(initial.height - dy, this._minDimensions.height, Math.min(maxHeightBottomSide, initial.maxHeight));
-						offsetY = Math.max(0, initial.offsetY + (height - initial.height) / 2);
-					}
-
-					this.resizedOffsetY = Math.round(offsetY);
-					break;
-			}
-
-			this.resizedWidth = `${width}px`;
-			this.resizedHeight = `${height}px`;
-
-			this._calcPlacement();
+		Popover.prototype._updateResizeHandlePlacement = function () {
+			return this._oResize._updateResizeHandlePlacement();
 		};
 
 		/**
 		 * @private
 		 */
 		Popover.prototype.isResized = function () {
-			return this._resized;
+			return this._oResize.isResized();
 		};
 
-		Popover.prototype._resetSizes = function () {
-			this._resized = false;
-			delete this.resizedOffsetX;
-			delete this.resizedOffsetY;
-			delete this.resizedWidth;
-			delete this.resizedHeight;
+		Popover.prototype._resetResizeValues = function () {
+			return this._oResize._reset();
 		};
 
 		Popover.prototype._getActualContentWidth = function () {
-			return this.resizedWidth !== undefined ? this.resizedWidth : this.getContentWidth();
+			return this._oResize._getActualContentWidth();
 		};
 
 		Popover.prototype._getActualContentHeight = function () {
-			return this.resizedHeight !== undefined ? this.resizedHeight : this.getContentHeight();
+			return this._oResize._getActualContentHeight();
 		};
 
 		Popover.prototype._getActualOffsetX = function () {
-			return this.resizedOffsetX !== undefined ? this.resizedOffsetX : this.getOffsetX();
+			return this._oResize._getActualOffsetX();
 		};
 
 		Popover.prototype._getActualOffsetY = function () {
-			return this.resizedOffsetY !== undefined ? this.resizedOffsetY : this.getOffsetY();
+			return this._oResize._getActualOffsetY();
+		};
+
+		/**
+		 * Sets the minimum dimensions used to limit the resizing of the popover.
+		 * @param {{width: int, height: int}} oMinDimensions The minimum width and height in px
+		 * @private
+		 * @ui5-restricted sap.m
+		 */
+		Popover.prototype._setMinDimensions = function (oMinDimensions) {
+			this._oResize._minDimensions = oMinDimensions;
+		};
+
+		/**
+		 * Returns the invisible text announcing the keyboard resize shortcut.
+		 * @returns {sap.ui.core.InvisibleText} The aria-describedby target for the resize handle
+		 * @private
+		 */
+		Popover.prototype._getResizeHandleDescribedByText = function () {
+			return this._oResize._oResizeHandleDescribedByText;
 		};
 
 		/* =========================================================== */
@@ -2145,22 +1933,6 @@ sap.ui.define([
 			this._afterAdjustPositionAndArrowHook();
 		};
 
-		Popover.prototype._updateResizeHandlePlacement = function () {
-			if (!this.getResizable()) {
-				return;
-			}
-
-			const oDomRef = this.getDomRef();
-			const sResizeHandleClass = `sapMPopoverResizeHandle${this._getResizeHandlePlacement()}`;
-
-			if (this._sResizeHandleClass) {
-				oDomRef.classList.remove(this._sResizeHandleClass);
-			}
-
-			oDomRef.classList.add(sResizeHandleClass);
-			this._sResizeHandleClass = sResizeHandleClass;
-		};
-
 		/**
 		 * Adapt position and offsets variables if the Popover is used without arrow.
 		 *
@@ -2325,6 +2097,7 @@ sap.ui.define([
 			return this.getInitialFocus()
 				|| this._getFirstVisibleButtonId()
 				|| this._getFirstFocusableContentElementId()
+				|| this._getKeyboardHandleId()
 				|| this.getId();
 		};
 
@@ -2340,6 +2113,10 @@ sap.ui.define([
 			}
 
 			return sButtonId;
+		};
+
+		Popover.prototype._getKeyboardHandleId = function () {
+			return this.getDomRef("keyboardHandle")?.id;
 		};
 
 		Popover.prototype._getFirstFocusableContentElementId = function () {
@@ -2360,8 +2137,8 @@ sap.ui.define([
 			if (this.isOpen()) {
 				//restore the focus after rendering when popover is already open
 				var sFocusId = this._getInitialFocusId(),
-				oControl = Element.getElementById(sFocusId),
-				oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
+					oControl = Element.getElementById(sFocusId),
+					oDomById = (sFocusId ? window.document.getElementById(sFocusId) : null);
 				if (oControl && oControl.getFocusDomRef()){
 					oControl.getFocusDomRef().focus();
 				} else if (!oControl && oDomById){
@@ -2399,7 +2176,7 @@ sap.ui.define([
 
 			if ($content.length > 0) {
 				$content.scrollLeft(this._oScrollPosDesktop.x).
-					scrollTop(this._oScrollPosDesktop.y);
+				scrollTop(this._oScrollPosDesktop.y);
 
 				this._oScrollPosDesktop = null;
 			}

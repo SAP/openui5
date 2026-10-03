@@ -126,13 +126,18 @@ sap.ui.define([
 							sHref;
 
 						// oCustomData[3].getValue() is true if method is static, else it is false
-						if (oCustomData[3].getValue()) {
+						if (oCustomData[3].getValue() && !(sClassName.startsWith("module:") && sEntityType === "events")) {
 							sEntityId = sClassName + "." + sEntityId;
 						}
 
 						sHref = "api/" + sClassName;
 						if (sEntityType !== "class") {
-							sHref += "/" + sEntityType + "/" + sEntityId;
+							// Module-type APIs use anchor-based URLs (#entityType/entityId) instead of path segments
+							if (sClassName.startsWith("module:")) {
+								sHref += "#" + sEntityType + "/" + sEntityId;
+							} else {
+								sHref += "/" + sEntityType + "/" + sEntityId;
+							}
 						}
 
 						// Set link href to allow open in new window functionality

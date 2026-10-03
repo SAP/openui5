@@ -30,7 +30,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	min-width: 3rem;
-	font-size: @sapMFontMediumSize;
+	font-size: var(--sapFontSize);
 	margin-left: 1rem;
 	text-align: right;
 	color: var(--sapContent_LabelColor);
@@ -43,7 +43,7 @@
 	line-height: 3rem;
 }
 
-html[dir=rtl] .sapMDLIValue {
+html[dir='rtl'] .sapMDLIValue {
 	text-align: left;
 }
 
@@ -65,5 +65,5 @@ html[dir=rtl] .sapMDLIValue {
 }
 
 .sapUiSizeCompact .sapMDLILabel {
-	font-size: @sapFontSize;
+	font-size: var(--sapFontSize);
 }
