@@ -3657,13 +3657,13 @@ sap.ui.define([
 		assert.strictEqual(this.oDP._isHighZoom(), false, "not high zoom at 1280px");
 	});
 
-	QUnit.test("_isHighZoom returns true at 320px viewport width", function(assert) {
-		stubViewportWidth(this.oSandbox, 320);
-		assert.strictEqual(this.oDP._isHighZoom(), true, "high zoom at exactly 320px");
+	QUnit.test("_isHighZoom returns true at 300px viewport width", function(assert) {
+		stubViewportWidth(this.oSandbox, 300);
+		assert.strictEqual(this.oDP._isHighZoom(), true, "high zoom at exactly 300px");
 	});
 
 	QUnit.test("value-help icon is hidden at high zoom", async function(assert) {
-		stubViewportWidth(this.oSandbox, 320);
+		stubViewportWidth(this.oSandbox, 300);
 		this.oDP.invalidate();
 		await nextUIUpdate();
 		var oIcon = this.oDP._getValueHelpIcon();

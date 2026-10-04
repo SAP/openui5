@@ -4037,23 +4037,23 @@ sap.ui.define([
 		assert.strictEqual(this.oTP._isHighZoom(), false, "not high zoom at 1280 px");
 	});
 
-	QUnit.test("_isHighZoom returns true at 320px viewport width", function(assert) {
-		stubViewportWidth(this.oSandbox, 320);
-		assert.strictEqual(this.oTP._isHighZoom(), true, "high zoom at exactly 320 px");
+	QUnit.test("_isHighZoom returns true at 300px viewport width", function(assert) {
+		stubViewportWidth(this.oSandbox, 300);
+		assert.strictEqual(this.oTP._isHighZoom(), true, "high zoom at exactly 300 px");
 	});
 
-	QUnit.test("_isHighZoom returns true below 320px", function(assert) {
+	QUnit.test("_isHighZoom returns true below 300px", function(assert) {
 		stubViewportWidth(this.oSandbox, 200);
-		assert.strictEqual(this.oTP._isHighZoom(), true, "high zoom below 320 px");
+		assert.strictEqual(this.oTP._isHighZoom(), true, "high zoom below 300 px");
 	});
 
-	QUnit.test("_isHighZoom returns false above 320px", function(assert) {
-		stubViewportWidth(this.oSandbox, 321);
-		assert.strictEqual(this.oTP._isHighZoom(), false, "not high zoom above 320 px");
+	QUnit.test("_isHighZoom returns false above 300px", function(assert) {
+		stubViewportWidth(this.oSandbox, 301);
+		assert.strictEqual(this.oTP._isHighZoom(), false, "not high zoom above 300 px");
 	});
 
 	QUnit.test("value-help icon is hidden at high zoom", async function(assert) {
-		stubViewportWidth(this.oSandbox, 320);
+		stubViewportWidth(this.oSandbox, 300);
 		this.oTP.invalidate();
 		await nextUIUpdate();
 		var oIcon = this.oTP._getValueHelpIcon();
