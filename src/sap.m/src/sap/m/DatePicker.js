@@ -2168,11 +2168,11 @@ sap.ui.define([
 	 */
 
 	// ============================================================
-	// High-zoom (≤320px) Year/Month/Day selects
+	// High-zoom (≤300px) Year/Month/Day selects
 	// ============================================================
 
 	/**
-	 * Called by DateTimeFieldZoomMixin when the viewport width crosses the 320px boundary.
+	 * Called by DateTimeFieldZoomMixin when the viewport width crosses the 300px boundary.
 	 * @param {boolean} bHighZoom
 	 * @private
 	 */

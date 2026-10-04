@@ -4,6 +4,8 @@
 sap.ui.define([], function() {
 	"use strict";
 
+	const HIGH_ZOOM_VIEWPORT_THRESHOLD = 300;
+
 	/**
 	 * Mixin that adds browser-zoom awareness to DateTimeField-based controls
 	 * (TimePicker, DatePicker, DateTimePicker, DateRangeSelection).
@@ -13,7 +15,7 @@ sap.ui.define([], function() {
 	 * to perform its own content switch.
 	 *
 	 * Provides:
-	 *  - _isHighZoom()           — true when viewport ≤ 320 px
+	 *  - _isHighZoom()           — true when viewport ≤ 300 px
 	 *  - _updateIconVisibility() — hides the value-help icon at high zoom
 	 *  - _startZoomWatch()       — registers resize listeners; calls _onZoomChange(bHighZoom)
 	 *  - _stopZoomWatch()        — removes the listeners (call from exit())
@@ -26,7 +28,7 @@ sap.ui.define([], function() {
 	const DateTimeFieldZoomMixin = {
 
 		/**
-		 * Returns true when the viewport width is ≤ 320 px — either because the browser
+		 * Returns true when the viewport width is ≤ 300 px — either because the browser
 		 * is zoomed to ≥ 200%, or because the physical screen is that narrow (e.g. small phone).
 		 * Uses visualViewport.width when available (zoom-aware); falls back to window.innerWidth.
 		 * @returns {boolean}
@@ -34,7 +36,7 @@ sap.ui.define([], function() {
 		 */
 		_isHighZoom() {
 			const iWidth = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
-			return iWidth <= 320;
+			return iWidth <= HIGH_ZOOM_VIEWPORT_THRESHOLD;
 		},
 
 		/**
@@ -89,7 +91,7 @@ sap.ui.define([], function() {
 
 		/**
 		 * Called when the zoom level changes. Override in each subclass to perform the switch.
-		 * @param {boolean} bHighZoom - true when viewport ≤ 320 px
+		 * @param {boolean} bHighZoom - true when viewport ≤ 300 px
 		 * @private
 		 */
 		_onZoomChange(_bHighZoom) {
