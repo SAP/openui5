@@ -395,8 +395,8 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 /* define outline for the block layer */
 .sapMListTblCnt > .sapMTableOverlay:focus {
-	outline: @_sap_m_ListItemBase_Focus_Outline;
-	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
+	outline: var(--_sap_m_ListItemBase_Focus_Outline);
+	outline-offset: var(--_sap_m_ListItemBase_Focus_OffsetWithGap);
 }
 
 /* table footer */
@@ -504,8 +504,8 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 }
 
 .sapMColumnHeaderActive:focus {
-	outline: @_sap_m_ListItemBase_Focus_Outline;
-	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
+	outline: var(--_sap_m_ListItemBase_Focus_Outline);
+	outline-offset: var(--_sap_m_ListItemBase_Focus_OffsetWithGap);
 }
 
 .sapMColumnHeaderActive:active {
@@ -528,8 +528,8 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 }
 
 .sapMTableTH:focus {
-	outline: @_sap_m_ListItemBase_Focus_Outline;
-	outline-offset: @_sap_m_ListItemBase_Focus_OffsetWithGap;
+	outline: var(--_sap_m_ListItemBase_Focus_Outline);
+	outline-offset: var(--_sap_m_ListItemBase_Focus_OffsetWithGap);
 }
 
 /* sort icons */
@@ -578,8 +578,8 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 		pointer-events: none;
 		top: 0px;
 		bottom: 1px; /* mimics outline-offset: -1px */
-		border-top: @_sap_m_ListItemBase_Focus_Outline;
-		border-bottom: @_sap_m_ListItemBase_Focus_Outline;
+		border-top: var(--_sap_m_ListItemBase_Focus_Outline);
+		border-bottom: var(--_sap_m_ListItemBase_Focus_Outline);
 		margin-right: 1px; /* make the focus border clearly visible on all sides */
 	}
 
@@ -595,13 +595,13 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 
 	& > .sapMTblFirstVisibleCell::before,
 	& + .sapMListTblSubRow > .sapMTblFirstVisibleCell::before {
-		border-left: @_sap_m_ListItemBase_Focus_Outline;
+		border-left: var(--_sap_m_ListItemBase_Focus_Outline);
 		margin-left: 1px !important; /* mimics outline-offset */
 	}
 
 	& > .sapMTblLastVisibleCell::before,
 	& + .sapMListTblSubRow > .sapMTblLastVisibleCell::before {
-		border-right: @_sap_m_ListItemBase_Focus_Outline;
+		border-right: var(--_sap_m_ListItemBase_Focus_Outline);
 		margin-right: 1px !important; /* mimics outline-offset */
 	}
 }
