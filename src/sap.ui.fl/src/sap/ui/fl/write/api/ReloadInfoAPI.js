@@ -53,8 +53,7 @@ sap.ui.define([
 			selector: oReloadInfo.selector,
 			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
 			upToLayer: oReloadInfo.layer,
-			includeCtrlVariants: oReloadInfo.includeCtrlVariants,
-			includeDirtyChanges: true
+			includeCtrlVariants: oReloadInfo.includeCtrlVariants
 		});
 		// not yet saved personalization on SmartVariantManagement controls is not tracked as a FlexObject,
 		// but it should be treated the same as already saved higher layer changes

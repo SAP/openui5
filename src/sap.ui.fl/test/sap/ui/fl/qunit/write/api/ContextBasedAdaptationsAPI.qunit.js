@@ -148,7 +148,6 @@ sap.ui.define([
 			selector: this.mPropertyBag.control,
 			invalidateCache: false,
 			includeCtrlVariants: true,
-			includeDirtyChanges: true,
 			includeManifestChanges: true,
 			includeAnnotationChanges: true
 		 })

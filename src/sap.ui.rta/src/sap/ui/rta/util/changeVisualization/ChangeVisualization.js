@@ -233,7 +233,6 @@ sap.ui.define([
 			invalidateCache: false,
 			includeCtrlVariants: true,
 			currentLayer: Layer.CUSTOMER,
-			includeDirtyChanges: true,
 			onlyCurrentVariants: true
 		};
 		return PersistenceWriteAPI._getUIChanges(mPropertyBag);

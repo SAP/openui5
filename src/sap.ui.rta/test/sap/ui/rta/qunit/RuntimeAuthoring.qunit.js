@@ -378,8 +378,7 @@ sap.ui.define([
 					oComponent: oComp,
 					selector: oComp,
 					invalidateCache: false,
-					currentLayer: this.oRta.getLayer(),
-					includeDirtyChanges: true
+					currentLayer: this.oRta.getLayer()
 				};
 				return PersistenceWriteAPI._getUIChanges(mPropertyBag);
 			}.bind(this))
@@ -446,8 +445,7 @@ sap.ui.define([
 					oComponent: oComp,
 					selector: oComp,
 					invalidateCache: false,
-					currentLayer: this.oRta.getLayer(),
-					includeDirtyChanges: true
+					currentLayer: this.oRta.getLayer()
 				};
 				return PersistenceWriteAPI._getUIChanges(mPropertyBag).then(function(aChanges) {
 					assert.ok(

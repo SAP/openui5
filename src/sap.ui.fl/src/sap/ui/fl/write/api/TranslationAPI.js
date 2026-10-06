@@ -29,7 +29,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
-	var TranslationAPI = /** @lends sap.ui.fl.write.api.TranslationAPI */ {};
+	const TranslationAPI = /** @lends sap.ui.fl.write.api.TranslationAPI */ {};
 
 	/**
 	 * Determines if an application has changes with translatable texts.
@@ -71,11 +71,11 @@ sap.ui.define([
 			return Promise.reject(new Error("No layer was provided"));
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
 		return Promise.resolve()
-		.then(Storage.translation.getTexts.bind(undefined, mPropertyBag));
+		.then(Storage.translation.getTexts.bind(undefined, { ...mPropertyBag, reference: sReference }));
 	};
 
 	/**
@@ -96,12 +96,12 @@ sap.ui.define([
 			return Promise.reject(new Error("No layer was provided"));
 		}
 
-		var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
-		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.selector);
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
 
-		return Storage.translation.getSourceLanguages(mPropertyBag)
+		return Storage.translation.getSourceLanguages({ ...mPropertyBag, reference: sReference })
 		.then(function(aLanguages) {
-			var sCurrentLanguage = Localization.getLanguage();
+			const sCurrentLanguage = Localization.getLanguage();
 			if (!aLanguages.includes(sCurrentLanguage) && TranslationAPI.hasTranslationRelevantDirtyChanges(mPropertyBag)) {
 				aLanguages.push(sCurrentLanguage);
 			}

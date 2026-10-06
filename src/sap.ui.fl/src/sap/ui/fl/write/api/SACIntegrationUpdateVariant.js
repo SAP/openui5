@@ -51,19 +51,23 @@ sap.ui.define([
 			return Promise.reject(new Error("content must be provided"));
 		}
 
-		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
-		mPropertyBag.persistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
+		const sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+		const sPersistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
 
-		const aFlexObjects = FlexState.getFlexObjectsDataSelector().get(mPropertyBag);
+		const aFlexObjects = FlexState.getFlexObjectsDataSelector().get({
+			...mPropertyBag,
+			reference: sReference,
+			persistencyKey: sPersistencyKey
+		});
 		const oVariant = aFlexObjects.find((oFlexObject) => oFlexObject.getId() === mPropertyBag.id);
 
 		if (oVariant?.getFileType() !== "variant") {
 			return Promise.reject(new Error("no variant with the ID found"));
 		}
 
-		mPropertyBag.layer = oVariant.getLayer();
+		const sLayer = oVariant.getLayer();
 
-		if (![Layer.USER, Layer.PUBLIC].includes(mPropertyBag.layer)) {
+		if (![Layer.USER, Layer.PUBLIC].includes(sLayer)) {
 			return Promise.reject(new Error("only variants in the USER and PUBLIC layer can be updated"));
 		}
 
@@ -71,7 +75,8 @@ sap.ui.define([
 			return Promise.reject(new Error("the user is not authorized to edit the PUBLIC variant (no author nor key user)"));
 		}
 
-		CompVariantManager.updateVariant(mPropertyBag);
-		return CompVariantManager.persist(mPropertyBag);
+		const mProperties = { ...mPropertyBag, reference: sReference, persistencyKey: sPersistencyKey, layer: sLayer };
+		CompVariantManager.updateVariant(mProperties);
+		return CompVariantManager.persist(mProperties);
 	};
 });

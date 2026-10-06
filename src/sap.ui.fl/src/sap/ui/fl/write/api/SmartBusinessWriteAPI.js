@@ -26,13 +26,13 @@ sap.ui.define([
 
 	function _checkSettingsAndExecuteActionByName(sActionName, mPropertyBag) {
 		return Settings.getInstance().then(function(oSettings) {
-			if (oSettings.getIsAtoEnabled()) {
+			return SaveAs[sActionName](
+				oSettings.getIsAtoEnabled()
 				// For smart business, we already set the transport and skipIam flag,
 				// so that there should be no transport handling done on connector level.
-				mPropertyBag.skipIam = true;
-				mPropertyBag.transport = "ATO_NOTIFICATION";
-			}
-			return SaveAs[sActionName](mPropertyBag);
+					? { ...mPropertyBag, skipIam: true, transport: "ATO_NOTIFICATION" }
+					: mPropertyBag
+			);
 		});
 	}
 
@@ -41,14 +41,14 @@ sap.ui.define([
 			return Promise.reject(new Error("App Variant ID must be provided"));
 		}
 
-		mPropertyBag.selector = {
-			appId: mPropertyBag.appId
-		};
-
-		mPropertyBag.id = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+		const oSelector = { appId: mPropertyBag.appId };
 		// Pass a flag to know which consumer is calling SaveAs handler
-		mPropertyBag.isForSmartBusiness = true;
-		return Promise.resolve(mPropertyBag);
+		return Promise.resolve({
+			...mPropertyBag,
+			selector: oSelector,
+			id: ManifestUtils.getFlexReferenceForSelector(oSelector),
+			isForSmartBusiness: true
+		});
 	}
 
 	/**
@@ -97,12 +97,12 @@ sap.ui.define([
 				return Promise.reject(new Error("App variant ID must be provided"));
 			}
 
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-
-			// Pass a flag to determine the consumer who is calling SaveAs handler
-			mPropertyBag.isForSmartBusiness = true;
-
-			return _checkSettingsAndExecuteActionByName("saveAs", mPropertyBag);
+			return _checkSettingsAndExecuteActionByName("saveAs", {
+				...mPropertyBag,
+				reference: ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector),
+				// Pass a flag to determine the consumer who is calling SaveAs handler
+				isForSmartBusiness: true
+			});
 		},
 
 		/**
@@ -201,10 +201,7 @@ sap.ui.define([
 			if (!mPropertyBag.changeSpecificData) {
 				return Promise.reject(new Error("changeSpecificData must be provided"));
 			}
-			mPropertyBag.selector = {
-				appId: mPropertyBag.appId
-			};
-			return ChangesWriteAPI.create(mPropertyBag);
+			return ChangesWriteAPI.create({ ...mPropertyBag, selector: { appId: mPropertyBag.appId } });
 		},
 
 		/**
@@ -225,10 +222,7 @@ sap.ui.define([
 			if (!mPropertyBag.change) {
 				return Promise.reject(new Error("Change instance must be provided"));
 			}
-			mPropertyBag.selector = {
-				appId: mPropertyBag.appId
-			};
-			return PersistenceWriteAPI.add(mPropertyBag);
+			return PersistenceWriteAPI.add({ ...mPropertyBag, selector: { appId: mPropertyBag.appId } });
 		},
 
 		/**

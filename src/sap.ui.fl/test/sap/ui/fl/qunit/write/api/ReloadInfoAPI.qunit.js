@@ -69,8 +69,7 @@ sap.ui.define([
 					selector: oReloadParameters.selector,
 					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
 					upToLayer: oReloadParameters.layer,
-					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
-					includeDirtyChanges: true
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
 				assert.deepEqual(oUpdateResetAndPublishInfoAPIStub.callCount, 0, "updateResetAndPublishInfo was not called");
@@ -183,8 +182,7 @@ sap.ui.define([
 				selector: oStubs.oReloadParameters.selector,
 				ignoreMaxLayerParameter: oStubs.oReloadParameters.ignoreMaxLayerParameter,
 				upToLayer: oStubs.oReloadParameters.layer,
-				includeCtrlVariants: oStubs.oReloadParameters.includeCtrlVariants,
-				includeDirtyChanges: true
+				includeCtrlVariants: oStubs.oReloadParameters.includeCtrlVariants
 			};
 			const oFlexInfoSession = FlexInfoSession.getByReference();
 			assert.deepEqual(oStubs.oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
@@ -225,8 +223,7 @@ sap.ui.define([
 					selector: oReloadParameters.selector,
 					ignoreMaxLayerParameter: oReloadParameters.ignoreMaxLayerParameter,
 					upToLayer: oReloadParameters.layer,
-					includeCtrlVariants: oReloadParameters.includeCtrlVariants,
-					includeDirtyChanges: true
+					includeCtrlVariants: oReloadParameters.includeCtrlVariants
 				};
 				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");

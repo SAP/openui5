@@ -157,20 +157,21 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta, similar tools
 	 */
 	ChangesWriteAPI.create = function(mPropertyBag) {
-		const { changeSpecificData: oChangeSpecificData, selector: oSelector } = mPropertyBag;
+		const oChangeSpecificData = { ...mPropertyBag.changeSpecificData };
+		const oSelector = mPropertyBag.selector;
 
 		if (oChangeSpecificData.changeType === "codeExt") {
 			return FlexObjectFactory.createControllerExtensionChange(oChangeSpecificData);
 		}
 
-		mPropertyBag.appComponent = Utils.getAppComponentForSelector(oSelector.view || oSelector);
-		if (oSelector?.appId || ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent)) {
-			oChangeSpecificData.reference = oSelector?.appId || ManifestUtils.getFlexReferenceForControl(mPropertyBag.appComponent);
+		const oAppComponent = Utils.getAppComponentForSelector(oSelector.view || oSelector);
+		if (oSelector?.appId || ManifestUtils.getFlexReferenceForControl(oAppComponent)) {
+			oChangeSpecificData.reference = oSelector?.appId || ManifestUtils.getFlexReferenceForControl(oAppComponent);
 		}
 
 		const mContextBasedAdaptationBag = {
 			layer: oChangeSpecificData.layer,
-			control: mPropertyBag.appComponent,
+			control: oAppComponent,
 			reference: oChangeSpecificData.reference
 		};
 
@@ -179,15 +180,15 @@ sap.ui.define([
 		}
 
 		if (DescriptorChangeTypes.getChangeTypes().includes(oChangeSpecificData.changeType)) {
-			return createDescriptorChange(mPropertyBag);
+			return createDescriptorChange({ ...mPropertyBag, changeSpecificData: oChangeSpecificData, appComponent: oAppComponent });
 		}
 
-		if (mPropertyBag.changeSpecificData.changeType === "deactivateChanges") {
-			return FlexObjectFactory.createFlexObject(mPropertyBag.changeSpecificData);
+		if (oChangeSpecificData.changeType === "deactivateChanges") {
+			return FlexObjectFactory.createFlexObject(oChangeSpecificData);
 		}
 
 		if (mPropertyBag.annotationChange) {
-			return createAnnotationChange(mPropertyBag);
+			return createAnnotationChange({ ...mPropertyBag, changeSpecificData: oChangeSpecificData, appComponent: oAppComponent });
 		}
 
 		// if a component instance is passed only a base change is created
@@ -199,18 +200,20 @@ sap.ui.define([
 		if (oSelector.name && oSelector.view) {
 			oChangeSpecificData.selector = {
 				name: oSelector.name,
-				viewSelector: JsControlTreeModifier.getSelector(oSelector.view.getId(), mPropertyBag.appComponent)
+				viewSelector: JsControlTreeModifier.getSelector(oSelector.view.getId(), oAppComponent)
 			};
-			return createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag);
+			return createAndCompleteFlexObjectWithChangeHandlerInfo({ ...mPropertyBag, changeSpecificData: oChangeSpecificData, appComponent: oAppComponent });
 		}
 
 		// in other cases if a control instance or selector is passed then change handler's completeChangeContent() is called
 		const sControlId = oSelector.id || oSelector.getId();
-		oChangeSpecificData.selector ||= {};
-		Object.assign(oChangeSpecificData.selector, JsControlTreeModifier.getSelector(sControlId, mPropertyBag.appComponent));
+		oChangeSpecificData.selector = {
+			...oChangeSpecificData.selector,
+			...JsControlTreeModifier.getSelector(sControlId, oAppComponent)
+		};
 
-		mPropertyBag.controlType = oSelector.controlType || Utils.getControlType(oSelector);
-		return createAndCompleteFlexObjectWithChangeHandlerInfo(mPropertyBag);
+		const sControlType = oSelector.controlType || Utils.getControlType(oSelector);
+		return createAndCompleteFlexObjectWithChangeHandlerInfo({ ...mPropertyBag, changeSpecificData: oChangeSpecificData, appComponent: oAppComponent, controlType: sControlType });
 	};
 
 	/**
@@ -230,14 +233,18 @@ sap.ui.define([
 			return Promise.reject(new Error("Please provide an Element"));
 		}
 
-		mPropertyBag.appComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
-		mPropertyBag.modifier ||= JsControlTreeModifier;
+		const oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
+		const oModifier = mPropertyBag.modifier || JsControlTreeModifier;
 
-		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
+		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, {
+			..._omit(mPropertyBag, ["element", "change"]),
+			appComponent: oAppComponent,
+			modifier: oModifier
+		})
 		.then(function(oResult) {
 			var aDependentChanges = FlexObjectState.getOpenDependentChangesForControl(
-				JsControlTreeModifier.getControlIdBySelector(mPropertyBag.change.getSelector(), mPropertyBag.appComponent),
-				mPropertyBag.appComponent
+				JsControlTreeModifier.getControlIdBySelector(mPropertyBag.change.getSelector(), oAppComponent),
+				oAppComponent
 			);
 			if (aDependentChanges.length > 0) {
 				return ChangesWriteAPI.revert({

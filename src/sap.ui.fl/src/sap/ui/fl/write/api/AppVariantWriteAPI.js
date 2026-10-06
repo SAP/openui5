@@ -23,10 +23,12 @@ sap.ui.define([
 			return Promise.reject(new Error("Layer must be provided"));
 		}
 
-		mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		mPropertyBag.url = "/sap/bc/lrep";
 		// Since this method is only called for Save As App Variant scenario on ABAP platform, the direct usage of write LrepConnector is triggered.
-		return LrepConnector.appVariant[sFunctionName](mPropertyBag);
+		return LrepConnector.appVariant[sFunctionName]({
+			...mPropertyBag,
+			reference: ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector),
+			url: "/sap/bc/lrep"
+		});
 	};
 
 	/**
@@ -59,13 +61,16 @@ sap.ui.define([
 			if (!mPropertyBag.id) {
 				return Promise.reject(new Error("App variant ID must be provided"));
 			}
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
+			const sReference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 			return FeaturesAPI.isVersioningEnabled(mPropertyBag.layer)
 			.then(function(bVersioningEnabled) {
-				if (bVersioningEnabled) {
-					mPropertyBag.parentVersion = Versions.getVersionsModel(mPropertyBag).getProperty("/displayedVersion");
-				}
-				return SaveAs.saveAs(mPropertyBag);
+				return SaveAs.saveAs({
+					...mPropertyBag,
+					reference: sReference,
+					...(bVersioningEnabled && {
+						parentVersion: Versions.getVersionsModel({ ...mPropertyBag, reference: sReference }).getProperty("/displayedVersion")
+					})
+				});
 			});
 		},
 
@@ -83,9 +88,10 @@ sap.ui.define([
 			if (!mPropertyBag.layer) {
 				return Promise.reject(new Error("Layer must be provided"));
 			}
-			mPropertyBag.id = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-
-			return SaveAs.deleteAppVariant(mPropertyBag);
+			return SaveAs.deleteAppVariant({
+				...mPropertyBag,
+				id: ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector)
+			});
 		},
 		/**
 		 * Lists all the app variants based on the reference application

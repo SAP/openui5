@@ -186,8 +186,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves as soon as the clearance and the requesting is triggered.
 	 */
 	VersionsAPI.loadDraftForApplication = function(mPropertyBag) {
-		mPropertyBag.version = Version.Number.Draft;
-		return VersionsAPI.loadVersionForApplication(mPropertyBag);
+		return VersionsAPI.loadVersionForApplication({ ...mPropertyBag, version: Version.Number.Draft });
 	};
 
 	/**
@@ -211,18 +210,16 @@ sap.ui.define([
 			throw Error("No layer was provided");
 		}
 		const oModel = getVersionsModel(mPropertyBag);
+		const sVersion = mPropertyBag.version !== undefined ? mPropertyBag.version : oModel?.getProperty("/activeVersion");
 		if (oModel) {
-			if (mPropertyBag.version === undefined) {
-				mPropertyBag.version = oModel.getProperty("/activeVersion");
-			}
-			oModel.setProperty("/displayedVersion", mPropertyBag.version);
-			oModel.setProperty("/persistedVersion", mPropertyBag.version);
+			oModel.setProperty("/displayedVersion", sVersion);
+			oModel.setProperty("/persistedVersion", sVersion);
 			const bIsPublishAvailable = await FeaturesAPI.isPublishAvailable();
-			if (mPropertyBag.version !== Version.Number.Draft && bIsPublishAvailable) {
+			if (sVersion !== Version.Number.Draft && bIsPublishAvailable) {
 				const aVersions = oModel.getProperty("/versions");
 				if (aVersions.length) {
 					const oVersion = aVersions.find(function(oVersion) {
-						return oVersion.version === mPropertyBag.version;
+						return oVersion.version === sVersion;
 					});
 					if (oVersion) {
 						oModel.setProperty("/publishVersionEnabled", !oVersion.isPublished);
@@ -235,7 +232,7 @@ sap.ui.define([
 		const oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 		const sReference = getFlexReferenceForControl(oAppComponent);
 		const oFlexInfo = FlexInfoSession.getByReference(sReference);
-		oFlexInfo.version = mPropertyBag.version;
+		oFlexInfo.version = sVersion;
 		oFlexInfo.displayedAdaptationId = sDisplayedAdaptationId;
 		FlexInfoSession.setByReference(oFlexInfo, sReference);
 	};
@@ -356,10 +353,11 @@ sap.ui.define([
 		if (!mPropertyBag.version) {
 			return Promise.reject(new Error("No version was provided"));
 		}
-		mPropertyBag.styleClass ||= "";
-		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.selector);
-
-		return Versions.publish(mPropertyBag);
+		return Versions.publish({
+			...mPropertyBag,
+			styleClass: mPropertyBag.styleClass || "",
+			reference: getFlexReferenceForControl(mPropertyBag.selector)
+		});
 	};
 
 	/**
