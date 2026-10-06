@@ -581,6 +581,311 @@ sap.ui.define([
 			const oMenuItem = aMenuItems[0];
 			await oMenuItem.handler([this.oButtonOverlay], { menuItem: oMenuItem });
 		});
+
+		QUnit.test("When getMenuItems is called, then each item exposes an AI description and the programmatic hooks", async function(assert) {
+			configureDefaultActionAndUpdateOverlay.call(this);
+
+			const aMenuItems = await this.oAnnotationPlugin.getMenuItems([this.oButtonOverlay]);
+			assert.strictEqual(aMenuItems.length, 1, "then one menu item is returned");
+			assert.ok(
+				aMenuItems[0].description.includes("My Action Title"),
+				"then the description references the localized action text"
+			);
+			assert.ok(
+				aMenuItems[0].description.includes("myChangeType"),
+				"then the description references the annotation change type"
+			);
+			assert.ok(
+				aMenuItems[0].description.includes("annotationChange1"),
+				"then the description references the feature key to pass to createCommands"
+			);
+			assert.strictEqual(typeof aMenuItems[0].createCommands, "function", "then the createCommands hook is exposed");
+			assert.strictEqual(typeof aMenuItems[0].getContext, "function", "then the getContext hook is exposed");
+			assert.strictEqual(aMenuItems[0].parameters.length, 2, "then the plugin parameters are attached to the menu item");
+		});
+
+		RtaQunitUtils.testGetParameters(function() {
+			return this.oAnnotationPlugin;
+		}, ["featureKey", "changes"]);
+
+		QUnit.test("When getContext is called for an overlay with an annotation action", async function(assert) {
+			const oGetChangeInfoStub = sandbox.stub().resolves({
+				serviceUrl: "testServiceUrl",
+				properties: [
+					{ annotationPath: "Path1", propertyName: "Prop1", label: "Label 1", currentValue: "Value1" },
+					{ annotationPath: "Path2", propertyName: "Prop2", currentValue: false }
+				],
+				possibleValues: [{ key: "A", text: "Option A" }]
+			});
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							type: AnnotationTypes.StringType,
+							annotation: "myAnnotation",
+							delegate: { getAnnotationsChangeInfo: oGetChangeInfoStub }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+
+			const oContext = await this.oAnnotationPlugin.getContext(this.oButtonOverlay);
+
+			assert.ok(oContext.annotationActions.description, "then the context exposes a description for the annotation actions");
+			assert.ok(
+				oGetChangeInfoStub.calledWith(this.oButton, "myAnnotation"),
+				"then the delegate is queried with the element and the annotation"
+			);
+			const oActionContext = oContext.annotationActions.value.annotationChange1;
+			assert.ok(oActionContext, "then the action context is keyed by its feature key");
+			assert.strictEqual(oActionContext.title, "My Action Title", "then the action title is provided");
+			assert.strictEqual(oActionContext.valueType, AnnotationTypes.StringType, "then the value type is provided");
+			assert.strictEqual(oActionContext.changeType, "myChangeType", "then the change type is provided");
+			assert.strictEqual(oActionContext.serviceUrl, "testServiceUrl", "then the delegate service url is provided");
+			assert.strictEqual(oActionContext.properties.length, 2, "then all editable properties are provided");
+			assert.deepEqual(
+				oActionContext.properties[0],
+				{ annotationPath: "Path1", propertyName: "Prop1", label: "Label 1", currentValue: "Value1" },
+				"then the first property is mapped with all fields"
+			);
+			assert.strictEqual(
+				oActionContext.properties[1].label,
+				"Prop2",
+				"then the label falls back to the property name when the delegate omits it"
+			);
+			assert.strictEqual(oActionContext.properties[1].currentValue, false, "then a falsy current value is preserved");
+			assert.deepEqual(
+				oActionContext.possibleValues,
+				[{ key: "A", text: "Option A" }],
+				"then the possible values from the delegate are provided"
+			);
+		});
+
+		QUnit.test("When getContext is called and the delegate omits properties and possible values", async function(assert) {
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							annotation: "myAnnotation",
+							delegate: { getAnnotationsChangeInfo: sandbox.stub().resolves({ serviceUrl: "testServiceUrl" }) }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+
+			const oContext = await this.oAnnotationPlugin.getContext(this.oButtonOverlay);
+			const oActionContext = oContext.annotationActions.value.annotationChange1;
+			assert.deepEqual(oActionContext.properties, [], "then the properties default to an empty array");
+			assert.deepEqual(oActionContext.possibleValues, [], "then the possible values default to an empty array");
+		});
+
+		QUnit.test("When createCommands is called for a non-string action", async function(assert) {
+			const fnDone = assert.async();
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							type: AnnotationTypes.BooleanType,
+							annotation: "myAnnotation",
+							delegate: { getAnnotationsChangeInfo: sandbox.stub().resolves({ serviceUrl: "testServiceUrl" }) }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+
+			this.oAnnotationPlugin.attachEventOnce("elementModified", function(oEvent) {
+				const aCommands = oEvent.getParameter("command").getCommands();
+				assert.strictEqual(aCommands.length, 1, "then one annotation command is created");
+				const oChange = aCommands[0].getPreparedChange();
+				assert.strictEqual(oChange.getChangeType(), "myChangeType", "then the change has the correct change type");
+				assert.strictEqual(oChange.getServiceUrl(), "testServiceUrl", "then the change carries the delegate service url");
+				assert.strictEqual(oChange.getContent().annotationPath, "Path1", "then the change targets the given annotation path");
+				assert.strictEqual(oChange.getContent().value, true, "then a non-string value is stored as 'value'");
+				fnDone();
+			});
+
+			await this.oAnnotationPlugin.createCommands(this.oButtonOverlay, {
+				featureKey: "annotationChange1",
+				changes: [{ annotationPath: "Path1", value: true }]
+			});
+		});
+
+		QUnit.test("When createCommands is called for a string action", async function(assert) {
+			const fnDone = assert.async();
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							type: AnnotationTypes.StringType,
+							annotation: "myAnnotation",
+							delegate: { getAnnotationsChangeInfo: sandbox.stub().resolves({ serviceUrl: "testServiceUrl" }) }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+
+			this.oAnnotationPlugin.attachEventOnce("elementModified", function(oEvent) {
+				const aCommands = oEvent.getParameter("command").getCommands();
+				assert.strictEqual(aCommands.length, 1, "then one annotation command is created");
+				const oChange = aCommands[0].getPreparedChange();
+				assert.strictEqual(oChange.getContent().annotationPath, "Path1", "then the change targets the given annotation path");
+				assert.deepEqual(
+					oChange.convertToFileContent().texts.annotationText,
+					{ type: "XFLD", value: "New Label" },
+					"then a string value is stored as translatable text"
+				);
+				fnDone();
+			});
+
+			await this.oAnnotationPlugin.createCommands(this.oButtonOverlay, {
+				featureKey: "annotationChange1",
+				changes: [{ annotationPath: "Path1", value: "New Label" }]
+			});
+		});
+
+		QUnit.test("When createCommands is called with an unknown feature key", async function(assert) {
+			configureDefaultActionAndUpdateOverlay.call(this);
+
+			try {
+				await this.oAnnotationPlugin.createCommands(this.oButtonOverlay, {
+					featureKey: "doesNotExist",
+					changes: [{ annotationPath: "Path1", value: "x" }]
+				});
+				assert.ok(false, "then the promise should have rejected");
+			} catch (oError) {
+				assert.ok(
+					oError.message.includes("doesNotExist"),
+					"then an error naming the missing feature key is thrown"
+				);
+			}
+		});
+
+		QUnit.test("When createCommands is called for a misconfigured action (singleRename without controlBasedRenameChangeType)", async function(assert) {
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							type: AnnotationTypes.StringType,
+							annotation: "myAnnotation",
+							singleRename: true,
+							delegate: { getAnnotationsChangeInfo: sandbox.stub().resolves({ serviceUrl: "testServiceUrl" }) }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+
+			sandbox.stub(Log, "error");
+			try {
+				await this.oAnnotationPlugin.createCommands(this.oButtonOverlay, {
+					featureKey: "annotationChange1",
+					changes: [{ annotationPath: "Path1", value: "New Label" }]
+				});
+				assert.ok(false, "then the promise should have rejected");
+			} catch (oError) {
+				assert.ok(
+					oError.message.includes("annotationChange1"),
+					"then an error naming the misconfigured feature key is thrown"
+				);
+			}
+		});
+
+		QUnit.test("When createCommands is called without any changes", async function(assert) {
+			let bFired = false;
+			const oGetChangeInfoStub = sandbox.stub().resolves({ serviceUrl: "testServiceUrl" });
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							annotation: "myAnnotation",
+							delegate: { getAnnotationsChangeInfo: oGetChangeInfoStub }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.attachEventOnce("elementModified", function() {
+				bFired = true;
+			});
+
+			await this.oAnnotationPlugin.createCommands(this.oButtonOverlay, { featureKey: "annotationChange1", changes: [] });
+
+			assert.strictEqual(bFired, false, "then no command is created");
+			assert.strictEqual(oGetChangeInfoStub.callCount, 0, "then the delegate is not queried when there is nothing to change");
+		});
+
+		QUnit.test("When createCommands is called for a singleRename action, then legacy rename changes are removed", async function(assert) {
+			const fnDone = assert.async();
+			this.oButtonOverlay.setDesignTimeMetadata({
+				actions: {
+					annotation: {
+						annotationChange1: {
+							changeType: "myChangeType",
+							title: () => "My Action Title",
+							type: AnnotationTypes.StringType,
+							annotation: "myAnnotation",
+							singleRename: true,
+							controlBasedRenameChangeType: "myRename",
+							delegate: { getAnnotationsChangeInfo: sandbox.stub().resolves({ serviceUrl: "testServiceUrl" }) }
+						}
+					}
+				}
+			});
+			this.oAnnotationPlugin.deregisterElementOverlay(this.oButtonOverlay);
+			this.oAnnotationPlugin.registerElementOverlay(this.oButtonOverlay);
+			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves([
+				FlexObjectFactory.createFromFileContent({
+					fileName: "change1", selector: { id: "button" }, changeType: "myRename"
+				}),
+				FlexObjectFactory.createFromFileContent({
+					fileName: "change2", selector: { id: "anotherControl" }, changeType: "myRename"
+				}),
+				FlexObjectFactory.createFromFileContent({
+					fileName: "change3", selector: { id: "button" }, changeType: "anotherChangeType"
+				}),
+				FlexObjectFactory.createFromFileContent({
+					fileName: "change4", selector: { id: "button" }, changeType: "myRename"
+				})
+			]);
+
+			this.oAnnotationPlugin.attachEventOnce("elementModified", function(oEvent) {
+				const aCommands = oEvent.getParameter("command").getCommands();
+				assert.strictEqual(aCommands.length, 1, "then one annotation command is created");
+				assert.strictEqual(
+					aCommands[0].getChangesToDelete().length,
+					2,
+					"then only the matching legacy rename changes on the element are marked for deletion"
+				);
+				fnDone();
+			});
+
+			await this.oAnnotationPlugin.createCommands(this.oButtonOverlay, {
+				featureKey: "annotationChange1",
+				changes: [{ annotationPath: "Path1", value: "New Label" }]
+			});
+		});
 	});
 
 	QUnit.done(function() {

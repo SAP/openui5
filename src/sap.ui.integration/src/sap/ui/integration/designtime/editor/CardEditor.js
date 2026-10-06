@@ -4,7 +4,6 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
-	"sap/ui/core/Lib",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/editor/Constants",
 	"sap/ui/integration/widgets/Card",
@@ -15,12 +14,10 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/designtime/editor/CardPreview",
 	"sap/base/util/extend",
-	"sap/ui/integration/util/Utils",
 	"sap/base/Log",
-	"sap/base/util/deepClone"
+	"sap/ui/integration/editor/EditorContext"
 ], function(
 	Element,
-	Library,
 	Editor,
 	Constants,
 	Card,
@@ -31,9 +28,8 @@ sap.ui.define([
 	library,
 	CardPreview,
 	extend,
-	Utils,
 	Log,
-	deepClone
+	EditorContext
 ) {
 	"use strict";
 
@@ -317,7 +313,7 @@ sap.ui.define([
 			await this._loadSpecialTranslations();
 		}
 		//add a context model
-		this._createContextModel();
+		EditorContext.createContextModel(this, CONTEXT_ENTRIES, "card.internal");
 		if (this._oManifest && this._oManifest.getResourceBundle()) {
 			var oResourceBundle = this._oManifest.getResourceBundle();
 			var oResourceModel = new ResourceModel({
@@ -383,19 +379,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	CardEditor.prototype._mergeContextData = function (oContextData) {
-		var oData = {};
-		//empty entry
-		oData["empty"] = CONTEXT_ENTRIES.empty;
-		//custom entries
-		for (var n in oContextData) {
-			oData[n] = oContextData[n];
-		}
-		//editor internal
-		oData["card.internal"] = CONTEXT_ENTRIES["card.internal"];
-		return oData;
-	};
-
+	// TODO: Check if this can reuse EditorContext.initContextEntries
 	//init context entries
 	CardEditor.initContextEntries = function() {
 		return {

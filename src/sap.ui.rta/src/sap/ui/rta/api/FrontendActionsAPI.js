@@ -278,6 +278,7 @@ sap.ui.define([
 				frontendAction("callAction", FrontendActionsAPI.callAction),
 				frontendAction("getContext", FrontendActionsAPI.getContext),
 				frontendAction("saveChanges", FrontendActionsAPI.saveChanges),
+				frontendAction("saveAndReloadApp", FrontendActionsAPI.saveAndReloadApp),
 				frontendAction("saveAndActivateChanges", FrontendActionsAPI.saveAndActivateChanges),
 				frontendAction("getApplicationInfo", FrontendActionsAPI.getApplicationInfo),
 				frontendAction("cleanup", FrontendActionsAPI.cleanup)
@@ -533,7 +534,8 @@ sap.ui.define([
 				Log.info("FrontendActionsAPI: callAction returning", JSON.stringify(oResult));
 				return oResult;
 			}
-			const oResult = FrontendActionResult.success(true);
+			const bNeedReload = await oRta.isReloadNeeded();
+			const oResult = FrontendActionResult.success({ reloadNeeded: bNeedReload });
 			Log.info("FrontendActionsAPI: callAction returning", JSON.stringify(oResult));
 			return oResult;
 		},
@@ -635,6 +637,31 @@ sap.ui.define([
 					oError.message
 				);
 				Log.info("FrontendActionsAPI: saveChanges returning", JSON.stringify(oResult));
+				return oResult;
+			}
+		},
+
+		async saveAndReloadApp() {
+			Log.info("FrontendActionsAPI: saveAndReloadApp called");
+			if (!oRta) {
+				return notStartedResult();
+			}
+			oRta.setMode("adaptation");
+			oStatusReporter.setStatus(getText("AI_STATUS_RELOADING", [oStatusReporter.getAgentName()]));
+			try {
+				const bReloadNeeded = await oRta.isReloadNeeded();
+				if (bReloadNeeded) {
+					await oRta.saveAndReload();
+				}
+				const oResult = FrontendActionResult.success(true);
+				Log.info("FrontendActionsAPI: saveAndReloadApp returning", JSON.stringify(oResult));
+				return oResult;
+			} catch (oError) {
+				const oResult = FrontendActionResult.failure(
+					FrontendActionError.ErrorCodes.GENERIC_ERROR,
+					oError.message
+				);
+				Log.info("FrontendActionsAPI: saveAndReloadApp returning", JSON.stringify(oResult));
 				return oResult;
 			}
 		},

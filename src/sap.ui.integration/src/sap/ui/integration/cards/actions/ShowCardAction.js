@@ -59,6 +59,10 @@ sap.ui.define([
 				oChildCard = oParentCard._createChildCard(oModifiedParameters);
 			}
 
+			if (!oChildCard) {
+				return;
+			}
+
 			oHost.onShowCard(oChildCard, oParameters);
 			return;
 		}

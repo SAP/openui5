@@ -2718,7 +2718,7 @@ sap.ui.define([
 	  *
 	  * @enum {string}
 	  * @public
-	  * @ui5-experimental-since 1.121
+	  * @since 1.121
 	  */
 	 thisLib.IconTabFilterInteractionMode = {
 

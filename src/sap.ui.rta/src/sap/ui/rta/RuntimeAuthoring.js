@@ -1072,6 +1072,51 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks whether the already saved or still pending changes require a hard reload of the
+	 * application to take effect (e.g. annotation changes).
+	 *
+	 * @returns {Promise<boolean>} Resolves with <code>true</code> if a reload is needed
+	 * @since 1.154
+	 * @private
+	 * @ui5-restricted
+	 */
+	RuntimeAuthoring.prototype.isReloadNeeded = async function() {
+		return this._bSavedChangesNeedReload || (await this._oSerializer.needsReload());
+	};
+
+	/**
+	 * Saves all pending changes and triggers a reload of the application so that changes which
+	 * require a reload (e.g. annotation changes) take effect. If versioning is enabled, the
+	 * correct version (draft or displayed) is loaded after the reload.
+	 *
+	 * @returns {Promise<undefined>} Resolves once the changes have been saved and the reload has been triggered
+	 * @since 1.154
+	 * @private
+	 * @ui5-restricted
+	 */
+	RuntimeAuthoring.prototype.saveAndReload = async function() {
+		await this.save();
+		if (this._oVersionsModel.getProperty("/versioningEnabled")) {
+			if (isDraftAvailable.call(this)) {
+				await VersionsAPI.loadDraftForApplication({
+					control: this.getRootControlInstance(),
+					layer: this.getLayer()
+				});
+			} else {
+				await VersionsAPI.loadVersionForApplication({
+					control: this.getRootControlInstance(),
+					layer: this.getLayer(),
+					version: this._oVersionsModel.getProperty("/displayedVersion")
+				});
+			}
+		}
+		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
+		persistHighlightAllChangesState.call(this);
+		await this.stop(true, true, true);
+		await ReloadManager.triggerReload({});
+	};
+
+	/**
 	 * Condenses the given changes and saves the result.
 	 * For the function to do anything at least two changes have to be passed.
 	 *
@@ -1338,7 +1383,7 @@ sap.ui.define([
 					"/translation/enabled",
 					this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
 				);
-				const bChangesNeedHardReload = this._bSavedChangesNeedReload || (await this._oSerializer.needsReload());
+				const bChangesNeedHardReload = await this.isReloadNeeded();
 				this._oToolbarControlsModel.setProperty("/changesNeedHardReload", bChangesNeedHardReload);
 			}
 			if (this.getChangeVisualization && this.getChangeVisualization()?.getInitialized()) {
@@ -1418,25 +1463,7 @@ sap.ui.define([
 				return;
 			}
 		}
-		await this.save();
-		if (this._oVersionsModel.getProperty("/versioningEnabled")) {
-			if (isDraftAvailable.call(this)) {
-				await VersionsAPI.loadDraftForApplication({
-					control: this.getRootControlInstance(),
-					layer: this.getLayer()
-				});
-			} else {
-				await VersionsAPI.loadVersionForApplication({
-					control: this.getRootControlInstance(),
-					layer: this.getLayer(),
-					version: this._oVersionsModel.getProperty("/displayedVersion")
-				});
-			}
-		}
-		RuntimeAuthoring.enableRestart(this.getLayer(), this.getRootControlInstance());
-		persistHighlightAllChangesState.call(this);
-		await this.stop(true, true, true);
-		await ReloadManager.triggerReload({});
+		await this.saveAndReload();
 	}
 
 	function saveOnly(oEvent) {
@@ -1828,7 +1855,7 @@ sap.ui.define([
 		});
 		this.bPersistedDataTranslatable = false;
 
-		const bChangesNeedHardReload = this._bSavedChangesNeedReload || (await this._oSerializer.needsReload());
+		const bChangesNeedHardReload = await this.isReloadNeeded();
 		const oAppComponent = FlexUtils.getAppComponentForControl(this.getRootControlInstance());
 		this._oToolbarControlsModel = new JSONModel({
 			appName: oAppComponent.getManifestObject().getEntry("/sap.app/title"),

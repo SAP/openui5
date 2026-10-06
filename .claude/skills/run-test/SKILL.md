@@ -1,82 +1,80 @@
 ---
 name: run-test
-description: Use when user asks to run tests, run qunit, execute unit tests, test this module, test this change, find test URL, test Button/Router/Table/Dialog/MessageBox/Input/Control, locate .qunit.html, search testsuite, can't find test file, where is qunit test, how to run UI5 module test, or needs test-resources URL for OpenUI5 modules
+description: 'Run QUnit and OPA tests for OpenUI5 modules via headless Chrome. This is the ONLY way to run tests — never use karma, npm test, or browser MCP tools. Use whenever tests need execution: run tests, run unit tests, check tests pass, verify my change, do the tests still pass, run QUnit, run OPA, execute test suite, test this module, test Button/Router/Table/Dialog/MessageBox/Input/Control, run journey, check regressions. Even if the user does not say "test" explicitly but wants to verify a code change works, use this skill.'
+argument-hint: 'Example: /run-test sap.m.Button or /run-test Button or /run-test src/sap.m/test/sap/m/qunit/Button.qunit.js or /run-test sap.ui.core.util.Popup'
+user-invocable: true
 ---
 
-# Run Test
+# Run Test — Execute QUnit Tests via Headless Chrome
 
-Finds and runs QUnit unit tests for OpenUI5 modules using a bundled script that handles
-port detection, file search, testsuite parsing, and URL construction in one shot.
+Run existing tests and get structured results. The script handles everything: test file resolution, headless Chrome lifecycle, QUnit hook injection, and result collection.
 
-## Usage
+**Not for writing tests** — this skill only runs existing tests.
 
-```
-/run-test <module_name>
-```
+## Inputs
 
-Examples: `sap.m.Button`, `RenderManager`, `sap/ui/core/routing/Router`
+Optional argument — a test identifier:
 
-## How It Works
+| Input form | Example | Resolution |
+|-----------|---------|------------|
+| File path (`.qunit.js`) | `src/sap.m/test/.../Button.qunit.js` | Direct — fastest, no search needed |
+| Fully-qualified module | `sap.m.Button` | Converts dots to path, finds test file |
+| Short name | `Button` | Matches against all test dirs |
+| Slash notation | `sap/ui/core/routing/Router` | Converted to dot notation |
 
-Run the bundled script. The path is relative to this SKILL.md file's directory:
+**OPA tests**: Pass fully-qualified module names or short names the same way. OPA tests are auto-detected at runtime and get a longer default timeout (300s vs 120s for QUnit).
 
-```bash
-node <this-skill-dir>/scripts/find-test-url.js <module_name> <repo_root>
-```
+## Procedure
 
-The script does everything automatically:
-1. Scans ports 8080-8090 for the openui5-testsuite dev server
-2. Finds all matching `.qunit.js` test files
-3. Parses testsuite files to determine the correct URL type
-4. Returns structured output with all matches
+### Step 1 — Run the test
 
-## Interpreting the Output
-
-**Single match** (MATCHES: 1) — run the test using the TEST_URL (see "Running the Test" below).
-
-**Multiple matches** (MATCHES: N) — present all options with `AskUserQuestion` so the user can pick:
-- Each match has `MATCH_N_LIBRARY`, `MATCH_N_TEST_KEY`, and `MATCH_N_TEST_URL`
-- The first match is the most likely (preferred library files come first)
-
-**No dev server** (ERROR: No dev server found) — tell the user to start the server first with `npm run start`, then retry.
-
-**Test not found** (ERROR: No test found) — relay the error. The output includes a FINDER_URL pointing to the interactive test finder page where the user can search manually.
-
-## Running the Test
-
-After resolving the test URL, run the test using one of the available runners.
-Check which tools are available and offer the user a choice via `AskUserQuestion`
-if more than one is available. If only one is available, use it directly.
-
-### Chrome DevTools MCP
-
-Use when `mcp__chrome-devtools__` tools are available:
-
-```javascript
-mcp__chrome-devtools__new_page({ url: testUrl })
-mcp__chrome-devtools__wait_for({ text: ["tests completed"], timeout: 120000 })
-mcp__chrome-devtools__take_snapshot()
-```
-
-### Playwright MCP
-
-Use when `mcp__playwright__` tools are available:
-
-```javascript
-mcp__playwright__browser_navigate({ url: testUrl })
-mcp__playwright__browser_wait_for({ text: "tests completed" })
-mcp__playwright__browser_snapshot()
-```
-
-### Fallback
-
-If no browser MCP tools are available, present the test URL to the user so they can
-open it in a browser manually.
-
-## Running the Script's Own Tests
-
-The script has integration tests at `tests/find-test-url.test.js` (requires a running dev server):
+**Do not pipe the output through `tail`, `head`, or any truncation.** The output is already bounded. Truncating risks losing the results table or failure details.
 
 ```bash
-node <this-skill-dir>/tests/find-test-url.test.js
+node <this-skill-dir>/scripts/run-test-headless.js --input "<ARGUMENT>"
 ```
+
+**Flags:**
+- `--input "<X>"` — repeatable, each resolved independently
+- `--filter "<substring>"` — binds to preceding `--input`, filters QUnit test names by substring (not regex). Use when the user mentions a specific method — runs only matching tests, much faster
+- `--coverage` — only when user explicitly asks
+- `--timeout <ms>` — override default (120s QUnit, 300s OPA auto-detected)
+
+**Per-input filters** — each `--filter` applies to the `--input` before it:
+```bash
+node <this-skill-dir>/scripts/run-test-headless.js \
+  --input "<PATH_1>" --filter "<FILTER_1>" --input "<PATH_2>" --filter "<FILTER_2>"
+```
+
+### Step 2 — Interpret and report
+
+**Exit codes:**
+
+| Exit | Meaning | Action |
+|------|---------|--------|
+| 0 | All tests pass | Report the table |
+| 1 | Failures or filter matched 0 tests | Read failure details or check the filter substring |
+| 2 | Timeout | Check which test hung (printed after the table) |
+| 3 | Infra error (dev server, Chrome) | Report to user |
+| 4 | Ambiguous input | Output lists candidates. Pick the right one using context, or ask user. Re-run with `<lib>.<testName>` (e.g. `sap.m.Button`) |
+
+**No dev server** — if the script reports no dev server found, tell the user to start it with `npm start`, then retry.
+
+**Interpreting failures** — the remote branch is always green (tests must pass before merge):
+
+- **Load-error flake** → a `Died on test #1` accompanied by a `failed to load ... resource` load/console error is a transient cold-server flake. The script already retries such a test once automatically. If it still reports after the automatic retry, re-run the command once more; only investigate if it persists across a fresh run.
+- **Consistent failure** → caused by the local change. Investigate and fix.
+- **Intermittent failure (passes on re-run)** → likely flaky. Re-run once to confirm. If it passes, note the flakiness but don't block.
+- **Failure in a module you didn't touch** → still caused by the local change (shared utility modified, dependency changed). Investigate the connection.
+
+**Never stash, commit, or revert changes to check whether a failure is "pre-existing".** The base/remote branch is always green. Every failure on top of a green base is caused by the local change — find the connection instead of trying to prove it isn't yours.
+
+**After a filtered PASS**: A filtered run validates only a subset. Always offer to run the full unfiltered suite to check for regressions.
+
+Present results as a table to the user, including failure details and console errors. On a failing run the output may include these sections after the table — report them, don't discard them:
+
+- `**Module — Load errors:**` — console errors logged before any test started (page load phase).
+- `[console] …` under a failing test — errors logged while that test ran. Only errors attributable to a failing test are printed; errors captured during passing tests are not surfaced.
+- `**Module — Console errors dropped at capture (caps: 20 outside tests / 20 per test / 500 total):** N …` — an in-page capture cap was hit and N further `console.error` calls were never recorded. If you added debug logging and see this (or expect `[console]` lines that are absent), the capture may not reflect the failing test's messages — the caps were filled by other (earlier or louder) tests.
+
+Nothing is printed on passing runs: captured console errors/warnings are only surfaced when the run has failures.

@@ -2590,6 +2590,10 @@ sap.ui.define([
 
 		while (oAncestor) {
 			for (const { manifest } of Object.values(mChildCards)) {
+				if (typeof manifest !== "string") {
+					continue;
+				}
+
 				let sAncestorUrl;
 
 				if (typeof oAncestor.getManifest() === "string") {
@@ -3673,10 +3677,14 @@ sap.ui.define([
 	 * @param {string} oParameters.baseUrl If the manifest is an object, specify the base URL for the card.
 	 * @param {object} oParameters.parameters Parameters to be provided to the new card.
 	 * @param {object} oParameters.data Data to be provided to the new card.
-	 * @returns {Promise} A promise that resolves with the created card.
+	 * @returns {Promise<sap.ui.integration.widgets.Card|null>} A promise resolving with the created card, or <code>null</code> if the child card configuration is invalid.
 	 */
 	Card.prototype.showCard = function (oParameters) {
 		var oChildCard = this._createChildCard(oParameters);
+
+		if (!oChildCard) {
+			return Promise.resolve(null);
+		}
 
 		oParameters._cardId = oChildCard.getId();
 
@@ -3716,27 +3724,41 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a child card with the provided parameters.
+	 * Resolves the manifest value for a child card from the action parameters.
+	 * When <code>childCardKey</code> is given, reads from the <code>childCards</code> configuration.
+	 * Otherwise returns <code>oParameters.manifest</code> directly.
+	 * Logs an error and returns <code>null</code> when the key is not found.
 	 *
 	 * @private
-	 * @ui5-restricted
-	 * @param {Object} oParameters The parameters for the card creation.
-	 * @returns {sap.ui.integration.widgets.Card} The newly created card instance.
+	 * @param {Object} oParameters ShowCard action parameters.
+	 * @returns {string|Object|null} The manifest value, or <code>null</code> if not found.
 	 */
-	Card.prototype._createChildCard = function (oParameters) {
-		const mChildCards = this._oCardManifest.get(MANIFEST_PATHS.CHILD_CARDS);
-		let vManifest;
-
-		if (oParameters.childCardKey) {
-			vManifest = mChildCards?.[oParameters.childCardKey]?.manifest;
-
-			if (!vManifest) {
-				Log.error("'ShowCard' action cannot find a child card with key '" + oParameters.childCardKey + "'.", null, "sap.ui.integration.widgets.Card");
-			}
-		} else {
-			vManifest = oParameters.manifest;
+	Card.prototype._resolveChildCardManifest = function (oParameters) {
+		if (!oParameters.childCardKey) {
+			return oParameters.manifest ?? null;
 		}
 
+		const mChildCards = this._oCardManifest.get(MANIFEST_PATHS.CHILD_CARDS);
+		const vManifest = mChildCards?.[oParameters.childCardKey]?.manifest;
+
+		if (!vManifest) {
+			Log.error("'ShowCard' action cannot find a child card with key '" + oParameters.childCardKey + "'.", null, "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		return vManifest;
+	};
+
+	/**
+	 * Instantiates a child <code>Card</code> and configures it from a manifest value and parameters.
+	 * Supports both manifest URL strings and inline manifest objects.
+	 *
+	 * @private
+	 * @param {string|Object} vManifest Manifest URL or inline manifest object.
+	 * @param {Object} oParameters ShowCard action parameters.
+	 * @returns {sap.ui.integration.widgets.Card} The configured child card.
+	 */
+	Card.prototype._buildChildCard = function (vManifest, oParameters) {
 		const sBaseUrl = oParameters.baseUrl,
 			oData = oParameters.data,
 			oChildCard = this._createCard({
@@ -3769,6 +3791,49 @@ sap.ui.define([
 		}
 
 		return oChildCard;
+	};
+
+	/**
+	 * Creates a child card. Supports both manifest URL strings and inline manifest objects.
+	 * Used by <code>showCard</code> and the host <code>onShowCard</code> callback.
+	 *
+	 * @private
+	 * @ui5-restricted
+	 * @param {Object} oParameters The parameters for the card creation.
+	 * @returns {sap.ui.integration.widgets.Card|null} The created card, or <code>null</code> on error.
+	 */
+	Card.prototype._createChildCard = function (oParameters) {
+		const vManifest = this._resolveChildCardManifest(oParameters);
+
+		if (vManifest === null) {
+			return null;
+		}
+
+		return this._buildChildCard(vManifest, oParameters);
+	};
+
+	/**
+	 * Creates a child card for display in a dialog. The manifest must be a URL string;
+	 * inline manifest objects are rejected. Used by <code>openCardDialog</code>.
+	 *
+	 * @private
+	 * @ui5-restricted
+	 * @param {Object} oParameters The parameters for the card creation.
+	 * @returns {sap.ui.integration.widgets.Card|null} The created card, or <code>null</code> on error.
+	 */
+	Card.prototype._createChildCardForDialog = function (oParameters) {
+		const vManifest = this._resolveChildCardManifest(oParameters);
+
+		if (vManifest === null) {
+			return null;
+		}
+
+		if (oParameters.childCardKey && typeof vManifest !== "string") {
+			Log.error("'childCards' manifest must be a URL string. Inline manifest objects are not supported. Child card with key '" + oParameters.childCardKey + "' will not be shown.", null, "sap.ui.integration.widgets.Card");
+			return null;
+		}
+
+		return this._buildChildCard(vManifest, oParameters);
 	};
 
 	/**
