@@ -295,6 +295,29 @@ sap.ui.define([
 		assert.notOk(oEvent.defaultPrevented);
 	});
 
+	QUnit.test("Escape marks the event as handled when isPendingOrOpen returns true", function (assert) {
+		// Arrange: tooltip is pending/open
+		this.oConfig.isPendingOrOpen.returns(true);
+		const oEvent = new KeyboardEvent("keydown", { key: "Escape", cancelable: true, bubbles: true });
+
+		// Act
+		dispatch(this.oDomRef, oEvent);
+
+		// Assert: mark prevents an ancestor Dialog/Popover from also closing
+		assert.ok(oEvent["_sapui_handledByControl"], "event marked as handled by control");
+	});
+
+	QUnit.test("Escape does not mark the event when isPendingOrOpen returns false", function (assert) {
+		// Arrange: no tooltip open
+		const oEvent = new KeyboardEvent("keydown", { key: "Escape", cancelable: true, bubbles: true });
+
+		// Act
+		dispatch(this.oDomRef, oEvent);
+
+		// Assert: mark absent so an ancestor Dialog/Popover still closes on ESC
+		assert.notOk(oEvent["_sapui_handledByControl"], "event not marked when no tooltip is open");
+	});
+
 	QUnit.test("Enter invokes onClose(false)", function (assert) {
 		dispatch(this.oDomRef, new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
 		assert.ok(this.oConfig.onClose.calledOnce && !this.oConfig.onClose.firstCall.args[0],

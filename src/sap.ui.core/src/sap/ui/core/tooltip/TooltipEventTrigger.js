@@ -341,14 +341,14 @@ sap.ui.define([
 		};
 
 		/**
-		 * Escape closes a pending or open tooltip without swallowing the event
-		 * from ancestors (e.g. a Dialog's Escape).
+		 * Escape closes a pending or open tooltip.
 		 * @private
 		 */
 		TooltipEventTrigger.prototype._onSapEscape = function(oEvent) {
 			if (this._fnIsPendingOrOpen && this._fnIsPendingOrOpen()) {
 				this._fnOnClose();
 				oEvent.preventDefault();
+				oEvent.setMarked();
 			}
 		};
 
